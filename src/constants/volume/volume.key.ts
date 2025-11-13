@@ -1,0 +1,21 @@
+import type {
+  GetVolumeFilesPayload,
+  GetVolumesPayload,
+} from "@/types/volume/volume.type";
+
+const volumeKeys = {
+  default: ["volume"],
+  list: (payload: GetVolumesPayload) => [
+    ...volumeKeys.default,
+    "list",
+    ...Object.values(payload),
+  ],
+  detail: (id: string) => [...volumeKeys.default, "detail", id],
+  fileList: (payload: GetVolumeFilesPayload) => [
+    ...volumeKeys.default,
+    "fileList",
+    ...Object.values(payload),
+  ],
+};
+
+export default volumeKeys;

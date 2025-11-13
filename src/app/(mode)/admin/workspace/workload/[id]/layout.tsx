@@ -1,0 +1,110 @@
+"use client";
+
+import { type PropsWithChildren, useEffect, useState } from "react";
+import type { TabsSeparatedItem } from "xiilab-ui";
+
+// import { useSearchParams } from "next/navigation";
+
+import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { RouteTab } from "@/components/common/tab";
+import { UpdateWorkloadModal } from "@/components/workload/detail/update-workload-modal";
+import { WorkloadDetailPageAside } from "@/components/workload/detail/workload-detail-page-aside";
+import { PageHeader } from "@/layouts/common/page-header";
+import {
+  DetailContentSection,
+  DetailPageBody,
+  DetailPageContent,
+} from "@/styles/layers/detail-page-layers.styled";
+import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+
+const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
+  {
+    title: "대시보드",
+    icon: "Dashboard",
+    href: "/admin",
+  },
+  { title: "워크스페이스 관리", href: "/admin/workspace" },
+  { title: "워크스페이스 정보", href: "/admin/workspace/[workspaceId]" },
+  { title: "워크로드 정보" },
+];
+
+const TAB_ITEMS: TabsSeparatedItem[] = [
+  {
+    key: "",
+    label: "상세정보",
+    icon: "Information",
+  },
+  {
+    key: "log",
+    label: "로그",
+    icon: "Log",
+  },
+  {
+    key: "terminal",
+    label: "웹터미널",
+    icon: "Terminal",
+  },
+  {
+    key: "monitoring",
+    label: "모니터링",
+    icon: "Monitoring01",
+  },
+  {
+    key: "file",
+    label: "파일 목록",
+    icon: "Folder",
+  },
+  {
+    key: "security",
+    label: "보안 취약점",
+    icon: "Security",
+  },
+];
+
+/**
+ * 워크로드 상세 페이지 레이아웃
+ *
+ * 이 레이아웃은 /admin/workspace/workload/[id] 하위의 모든 페이지에 적용됩니다.
+ */
+export default function AdminWorkloadDetailLayout({
+  children,
+}: PropsWithChildren) {
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      const workspaceIdParam = url.searchParams.get("workspaceId");
+      setWorkspaceId(workspaceIdParam);
+    }
+  }, []);
+
+  return (
+    <>
+      {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
+      <PageHeader
+        title="워크로드 정보"
+        icon="Back"
+        description="Workload Information"
+        customPathname={`/admin/workspace/${workspaceId}`}
+      >
+        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
+      </PageHeader>
+
+      {/* 상세 페이지 메인 콘텐츠 영역 */}
+      <DetailPageBody>
+        {/* 왼쪽 사이드바 영역 - 워크로드 요약 정보 */}
+        <WorkloadDetailPageAside />
+        {/* 오른쪽 메인 콘텐츠 영역 */}
+        <DetailPageContent>
+          {/* 상단 탭 네비게이션 */}
+          <RouteTab items={TAB_ITEMS} />
+          {/* 탭별 콘텐츠 영역 */}
+          <DetailContentSection>{children}</DetailContentSection>
+        </DetailPageContent>
+      </DetailPageBody>
+      {/* 워크로드 수정 모달 */}
+      <UpdateWorkloadModal />
+    </>
+  );
+}

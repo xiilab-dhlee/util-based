@@ -1,0 +1,27 @@
+import type { UseQueryResult } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { isEmpty } from "lodash";
+
+import redfishKeys from "@/constants/node/redfish.key";
+import { useServices } from "@/providers/service-provider";
+
+/**
+ * 서버 최대 전력 정보 조회
+ */
+export const useGetRedfishSystemMaxPower = (
+  bmcIp: string,
+  systemId: string,
+  isActive: boolean,
+): UseQueryResult<any, Error> => {
+  const { redfishService } = useServices();
+
+  return useQuery({
+    queryKey: redfishKeys.maxPowerInfo(bmcIp, systemId),
+    queryFn: async () => {
+      const { data } = await redfishService.getSystemMaxPower(bmcIp, systemId);
+      return data;
+    },
+    enabled: !isEmpty(systemId) && isActive,
+  });
+};
+

@@ -1,0 +1,109 @@
+"use client";
+
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { SessionProvider } from "next-auth/react";
+import type { PropsWithChildren } from "react";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
+import { MSWProvider } from "@/providers/msw-provider";
+import { ServiceProvider } from "@/providers/service-provider";
+import { StoreProvider } from "@/providers/store-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
+import {
+  getErrorMessage,
+  logErrorInfo,
+  shouldShowToast,
+} from "@/utils/error/error-utils";
+
+// App Router용 클라이언트 프로바이더 컴포넌트
+export function Providers({ children }: PropsWithChildren) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 3,
+            staleTime: 3 * 60 * 1000, // 3분
+            gcTime: 5 * 60 * 1000, // 5분
+            refetchOnWindowFocus: false,
+          },
+          mutations: {
+            retry: 1,
+          },
+        },
+        queryCache: new QueryCache({
+          onError: (error, query) => {
+            // 🎯 전역 쿼리 에러 처리
+            const { queryKey } = query;
+
+            // 개발 모드에서 디버깅 정보 출력
+            logErrorInfo(queryKey, error);
+
+            // 메타 정보 또는 설정 기반 토스트 표시 여부 결정
+            const showToastFromMeta = query.meta?.showToastOnError;
+            const showToastFromConfig = shouldShowToast(queryKey);
+
+            // 메타 정보가 있으면 우선, 없으면 설정 사용
+            const showToast =
+              showToastFromMeta !== undefined
+                ? showToastFromMeta
+                : showToastFromConfig;
+
+            if (showToast) {
+              const errorMessage = getErrorMessage(queryKey, error);
+              toast.error(errorMessage);
+            }
+          },
+        }),
+        mutationCache: new MutationCache({
+          onError: (error, variables, context, mutation) => {
+            // 🎯 전역 뮤테이션 에러 처리
+            const queryKey = mutation.options.mutationKey || ["unknown"];
+
+            // 개발 모드에서 디버깅 정보 출력
+            logErrorInfo(queryKey, error);
+
+            // 뮤테이션은 기본적으로 토스트 표시
+            const showToast = mutation.meta?.showToastOnError !== false;
+
+            if (showToast) {
+              const errorMessage = getErrorMessage(queryKey, error);
+              toast.error(errorMessage);
+            }
+          },
+        }),
+      }),
+  );
+
+  return (
+    <MSWProvider>
+      <SessionProvider refetchInterval={10000}>
+        {/* <AuthWrapper> */}
+        <QueryClientProvider client={queryClient}>
+          <StoreProvider>
+            <ServiceProvider>
+              <ThemeProvider>
+                {children}
+                <ToastContainer />
+              </ThemeProvider>
+            </ServiceProvider>
+          </StoreProvider>
+          {process.env.NODE_ENV === "development" && (
+            <ReactQueryDevtools
+              initialIsOpen={false}
+              position="bottom"
+              buttonPosition="bottom-left"
+            />
+          )}
+        </QueryClientProvider>
+      </SessionProvider>
+    </MSWProvider>
+  );
+}

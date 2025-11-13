@@ -17,18 +17,65 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noConsole": {
+          "options": {
+            "allow": ["assert", "error", "info", "warn", "table"]
+          }
+        }
+      },
+      "style": {
+        "noDefaultExport": "error"
+      },
+      "a11y": {
+        "useKeyWithMouseEvents": "off"
+      }
     },
+
     "domains": {
       "next": "recommended",
       "react": "recommended"
     }
   },
+
   "assist": {
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "identifierOrder": "natural",
+            "groups": [
+              ":NODE:",
+              ":PACKAGE:",
+              ":PACKAGE_WITH_PROTOCOL:",
+              ":BLANK_LINE:",
+              ["@/**"],
+              ":ALIAS:",
+              ":PATH:"
+            ]
+          }
+        }
       }
     }
-  }
+  },
+
+  "overrides": [
+    {
+      "includes": ["src/app/**", "next.config.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
 }
