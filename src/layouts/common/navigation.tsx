@@ -2,63 +2,162 @@
 
 import { usePathname } from "next/navigation";
 import styled from "styled-components";
-import { AstraGoNav, Icon, type MenuItem } from "xiilab-ui";
+import { AstraGoNav, type AstraGoNavMenu } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icons";
 import { WorkspaceSelect } from "@/components/common/select/workspace-select";
-import layoutConstants from "@/constants/common/layout.constant";
 import { useActiveMenu } from "@/hooks/common/use-active-menu";
 import { Profile } from "@/layouts/common/profile";
-import type { CoreNavMenu } from "@/types/common/core.model";
 import { isAdminMode } from "@/utils/common/router.util";
 
-/**
- * MenuItem의 icon을 Icon 컴포넌트로 매핑하는 함수
- */
-const mapMenuItemIcon = (item: MenuItem | null): MenuItem | null => {
-  if (!item) {
-    return item;
-  }
+const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
+  {
+    title: "Entire",
+    items: [
+      {
+        key: "dashboard",
+        label: "대시보드",
+        icon: <MyIcon name="Dashboard" />,
+      },
+      {
+        type: "divider",
+      },
+    ],
+  },
+  {
+    title: "WORK",
+    items: [
+      {
+        key: "workload",
+        label: "워크로드",
+        icon: <MyIcon name="Workload" />,
+      },
+      // {
+      //   key: "compare",
+      //   label: "비교실험",
+      //   icon: "ComparativeExperiment",
+      // },
+      {
+        key: "private-registry",
+        label: "내부 레지스트리",
+        icon: <MyIcon name="Image" />,
+      },
+      // {
+      //   key: "public-registry",
+      //   label: "외부 레지스트리",
+      //   icon: "PublicRegistry",
+      // },
+      {
+        key: "sourcecode",
+        label: "소스코드",
+        icon: <MyIcon name="SourceCode" />,
+      },
+      {
+        key: "volume",
+        label: "볼륨",
+        icon: <MyIcon name="Volume" />,
+      },
+      // {
+      //   key: "model",
+      //   label: "모델관리",
+      //   icon: "Model",
+      // },
+      // {
+      //   key: "service",
+      //   label: "서비스",
+      //   icon: "Service",
+      // },
+      {
+        key: "hub",
+        label: "허브",
+        icon: <MyIcon name="Hub" />,
+      },
+    ],
+  },
+  {
+    title: "Setting",
+    items: [
+      {
+        key: "setting",
+        label: "설정",
+        icon: <MyIcon name="Setting01" />,
+      },
+    ],
+  },
+];
 
-  // divider 타입은 그대로 반환
-  if ("type" in item && item.type === "divider") {
-    return item;
-  }
-
-  // children이 있는 경우 (서브메뉴)
-  if ("children" in item && item.children) {
-    return {
-      ...item,
-      children: item.children.map(mapMenuItemIcon),
-    } as MenuItem;
-  }
-
-  // icon이 문자열인 경우 ReactNode로 변환
-  if ("icon" in item && item.icon && typeof item.icon === "string") {
-    return {
-      ...item,
-      icon: (
-        <Icon
-          name={item.icon}
-          size={layoutConstants.navIconSize}
-          color={layoutConstants.navIconColor}
-        />
-      ),
-    } as MenuItem;
-  }
-
-  return item;
-};
-
-/**
- * 메뉴 아이템의 icon을 Icon 컴포넌트로 매핑하는 함수
- */
-const mapIconToComponent = (menus: CoreNavMenu[]): CoreNavMenu[] =>
-  menus.map((menu) => ({
-    ...menu,
-    items: menu.items
-      .map(mapMenuItemIcon)
-      .filter((item): item is MenuItem => item !== null),
-  }));
+const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
+  {
+    title: "Menu",
+    items: [
+      {
+        key: "monitoring-root",
+        label: "모니터링",
+        icon: <MyIcon name="Monitoring01" />,
+        children: [
+          { key: "monitoring", label: "모니터링 메인" },
+          { key: "system-monitoring", label: "시스템 모니터링" },
+          { key: "cluster-monitoring", label: "클러스터 모니터링" },
+          { key: "monitoring-notification", label: "모니터링 알림" },
+        ],
+      },
+      {
+        key: "node",
+        label: "노드 관리",
+        icon: <MyIcon name="SingleNode" />,
+      },
+      // {
+      //   key: "schedule",
+      //   label: "스케쥴링 큐 관리",
+      //   icon: "Calendar",
+      // },
+      {
+        key: "security-root",
+        label: "보안 관리",
+        icon: <MyIcon name="SecurityCheck" />,
+        children: [
+          { key: "registry-security", label: "레지스트리 보안" },
+          { key: "file-security", label: "파일 시스템 보안" },
+        ],
+      },
+      {
+        key: "workspace",
+        label: "워크스페이스 관리",
+        icon: <MyIcon name="Workspace01" />,
+      },
+      {
+        key: "registry-root",
+        label: "레지스트리",
+        icon: <MyIcon name="Image" />,
+        children: [
+          { key: "registry", label: "레지스트리 메인" },
+          { key: "request-image", label: "이미지 사용 요청 관리" },
+          { key: "private-registry", label: "내부 레지스트리" },
+          // { key: "registry-public", label: "외부 레지스트리" },
+        ],
+      },
+      {
+        key: "report",
+        label: "리포트",
+        icon: <MyIcon name="Image" />,
+      },
+    ],
+  },
+  {
+    title: "Setting",
+    items: [
+      {
+        key: "setting-root",
+        label: "설정",
+        icon: <MyIcon name="Setting01" />,
+        children: [
+          { key: "user", label: "계정 관리" },
+          { key: "alert", label: "알림 관리" },
+        ],
+      },
+    ],
+  },
+];
 
 export function MyNavigation() {
   const pathname = usePathname();
@@ -67,15 +166,10 @@ export function MyNavigation() {
 
   const isAdmin = isAdminMode(pathname);
 
-  // 메뉴 데이터에 icon 매핑 적용
-  const processedMenu = mapIconToComponent(
-    layoutConstants[isAdmin ? "adminNavMenus" : "standardNavMenus"],
-  );
-
   return (
     <AstraGoNav
       defaultActiveMenuKey={activeMenuKey}
-      menu={processedMenu}
+      menu={isAdmin ? ADMIN_NAV_MENU : STANDARD_NAV_MENU}
       logoImgSrc="/images/logo.png"
       onMenuClick={onMenuClick}
       header={

@@ -1,7 +1,7 @@
 import type { CompoundDropdownProps } from "xiilab-ui";
 import { CompoundDropdown } from "xiilab-ui";
 
-import { Core } from "@/models/core.model";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 
 export type MySelectOption = {
   label: string;
@@ -35,7 +35,7 @@ export function MySelect({
     >
       {/* 전체 선택 옵션 */}
       {isAll && (
-        <CompoundDropdown.Option value={Core.ALL_VALUE}>
+        <CompoundDropdown.Option value={ALL_OPTION.value}>
           전체
         </CompoundDropdown.Option>
       )}

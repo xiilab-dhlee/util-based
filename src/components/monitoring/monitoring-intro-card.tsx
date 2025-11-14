@@ -5,7 +5,7 @@ import { Typography } from "xiilab-ui";
 
 import { gradientBackgroundButtonStyle } from "@/styles/mixins/button";
 import { subTitleStyle } from "@/styles/mixins/text";
-import MyIcon from "../common/icons";
+import { MyIcon } from "../common/icons";
 
 export function MonitoringIntroCard() {
   return (
@@ -46,7 +46,6 @@ export function MonitoringIntroCard() {
     </Container>
   );
 }
-
 
 const Container = styled.div`
   width: 100%;

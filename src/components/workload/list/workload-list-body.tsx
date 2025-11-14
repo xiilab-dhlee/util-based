@@ -8,8 +8,8 @@ import {
 } from "@/atoms/workload/workload-list.atom";
 import { createWorkloadColumn } from "@/components/common/columns/create-workload-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkloads } from "@/hooks/workload/use-get-workloads";
-import { Workload } from "@/models/workload.model";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 /**
@@ -27,7 +27,7 @@ export function WorkloadListBody() {
 
   const { data } = useGetWorkloads({
     page,
-    size: Workload.LIST_PAGE_SIZE,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 

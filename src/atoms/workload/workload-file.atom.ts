@@ -4,7 +4,7 @@ import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
 } from "@/atoms/common/filetree.atom";
-import { Core } from "@/models/core.model";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { FileTreeType } from "@/schemas/filetree.schema";
 
 // 워크로드 트리 데이터 상태
@@ -12,7 +12,7 @@ export const workloadFileTreeDataAtom = atomWithReset<FileTreeType[]>([]);
 
 // 선택된 노드 상태
 export const workloadFileSelectedKeyAtom = atomWithReset<React.Key>(
-  Core.ALL_VALUE,
+  ALL_OPTION.value,
 );
 
 // 체크된 노드들 상태

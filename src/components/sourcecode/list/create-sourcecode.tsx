@@ -31,8 +31,8 @@ import {
   SourcecodeFormTooltipTitle,
 } from "@/styles/layers/sourcecode-form-layers.styled";
 import type { CreateSourcecodePayload } from "@/types/sourcecode/sourcecode.type";
-import ManageCredential from "../manage-credential";
-import ManageParameter from "../manage-parameter";
+import { ManageCredential } from "../manage-credential";
+import { ManageParameter } from "../manage-parameter";
 
 /**
  * 소스코드 생성 컴포넌트
@@ -395,7 +395,6 @@ export function CreateSourcecode() {
     </>
   );
 }
-
 
 /**
  * 가이드 아티클 스타일

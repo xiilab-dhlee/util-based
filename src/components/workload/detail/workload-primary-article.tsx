@@ -1,30 +1,28 @@
 "use client";
 
-import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import { MyIcon } from "@/components/common/icons";
-import { Workload } from "@/models/workload.model";
 import type { WorkloadDetailType } from "@/schemas/workload.schema";
 import {
   DetailContentArticle,
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
+import { getWorkloadJobTypeInfo } from "@/utils/workload/workload.util";
 
-/**
- * 워크로드 상세 페이지 기본 정보 아티클의 props 인터페이스
- */
 interface WorkloadPrimaryArticleProps extends WorkloadDetailType {}
 
 /**
- * 워크로드 상세 페이지 기본 정보 아티클 컴포넌트
+ * 워크로드 기본 정보 아티클 컴포넌트
+ *
+ * 워크로드 잡 타입, 노드 타입, IDE 정보를 표시합니다.
  */
 export function WorkloadPrimaryArticle({
   // workspaceName,
   jobType,
-}: PropsWithChildren<WorkloadPrimaryArticleProps>) {
-  const { displayName, ideName, ideIconName, nodeType, nodeIconName } =
-    Workload.getJobTypeInfo(jobType);
+}: WorkloadPrimaryArticleProps) {
+  const { label, ideName, ideIcon, nodeType, nodeIcon } =
+    getWorkloadJobTypeInfo(jobType);
 
   return (
     <DetailContentArticle>
@@ -41,9 +39,9 @@ export function WorkloadPrimaryArticle({
         <DetailContentSubTitle>Job Type</DetailContentSubTitle>
         <ColumnBody>
           <IconWraper className="jobtype">
-            <MyIcon name={ideIconName} />
+            <MyIcon name={ideIcon} />
           </IconWraper>
-          <JobTypeText>{displayName}</JobTypeText>
+          <JobTypeText>{label}</JobTypeText>
           <Description>{ideName}</Description>
         </ColumnBody>
       </Column>
@@ -51,7 +49,7 @@ export function WorkloadPrimaryArticle({
         <DetailContentSubTitle>노드 타입</DetailContentSubTitle>
         <ColumnBody>
           <IconWraper>
-            <MyIcon name={nodeIconName} color="var(--icon-fill)" size={18} />
+            <MyIcon name={nodeIcon} color="var(--icon-fill)" size={18} />
           </IconWraper>
           <NodeTypeText>{nodeType} Node</NodeTypeText>
         </ColumnBody>

@@ -2,9 +2,9 @@ import { HttpResponse, http } from "msw";
 
 import filetreeConstants from "@/constants/common/filetree.constant";
 import {
-  vulnerabilityListMock,
   workloadDetailMock,
   workloadListMock,
+  workloadVulnerabilityListMock,
 } from "@/mocks/workload.mock";
 import { generateCustomTree } from "@/utils/common/filetree-generator.util";
 
@@ -23,7 +23,7 @@ export const workloadHandlers = [
   // 워크로드 보안 취약점 목록 조회 (동적 파라미터 경로보다 먼저 배치)
   http.get("/core-api/v1/core/workload/vulnerabilities", () => {
     return HttpResponse.json({
-      content: vulnerabilityListMock,
+      content: workloadVulnerabilityListMock,
       totalSize: 100,
     });
   }),

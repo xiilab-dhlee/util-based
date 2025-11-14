@@ -107,4 +107,3 @@ export function ChassisRow({ children, rowData, ...restProps }: any) {
     </>
   );
 }
-

@@ -4,7 +4,7 @@ import { Typography } from "xiilab-ui";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
-import DashboardResourceClusterChart from "../dashboard/dashboard-resource-cluster-chart";
+import { DashboardResourceClusterChart } from "../dashboard/dashboard-resource-cluster-chart";
 
 interface DashboardResourceClusterProps {
   series: number;
@@ -64,7 +64,6 @@ export function MonitoringClusterResource({
     </Container>
   );
 }
-
 
 /**
  * 클러스터 자원 정보 카드

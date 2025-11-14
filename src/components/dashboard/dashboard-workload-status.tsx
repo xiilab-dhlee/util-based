@@ -1,212 +1,188 @@
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+import { Typography } from "xiilab-ui";
 
-import coreConstants from "@/constants/common/core.constant";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { WorkloadStatusType } from "@/schemas/workload.schema";
-import { getStatusInfo } from "@/utils/workload/workload.util";
+import { getWorkloadStatusInfo } from "@/utils/workload/workload.util";
+import { MyIcon } from "../common/icons";
 
-/**
- * 대시보드 워크로드 상태 컴포넌트의 Props 인터페이스
- */
 interface DashboardWorkloadStatusProps {
-  /** 워크로드 상태 (ALL, RUNNING, PENDING, FAILED 등) */
-  status: string;
-  /** 총 개수 */
-  total: number;
+  status: WorkloadStatusType;
 }
 
 /**
- * DashboardWorkloadStatus 컴포넌트
+ * DashboardResourceWorkloadStatus 컴포넌트
  *
  * 대시보드에서 워크로드 상태별 통계를 표시하는 컴포넌트입니다.
- * 각 상태별로 색상과 아이콘이 다르게 표시되며, 총 개수와 증감률을 보여줍니다.
+ * 각 상태별로 색상과 아이콘이 다르게 표시되며, 증감률과 총 개수를 보여줍니다.
  *
- * 주요 기능:
- * - 워크로드 상태별 시각적 구분 (색상, 아이콘)
- * - 총 개수 표시 (왼쪽 하단)
- * - 증감 수치와 방향 아이콘 표시 (오른쪽 하단)
- * - 상태별 CSS 변수를 통한 동적 스타일링
- * - 카드 형태의 UI 디자인
- *
- * @param status - 워크로드 상태 (ALL, RUNNING, PENDING, FAILED 등)
+ * @param status - 워크로드 상태
  * @returns 워크로드 상태 통계 컴포넌트
  *
- * @example
- * ```tsx
- * <DashboardWorkloadStatus
- *   status="RUNNING"
- *   diff={15}
- * />
- * ```
  */
 export function DashboardWorkloadStatus({
   status,
-  total,
 }: DashboardWorkloadStatusProps) {
   // 상태에 따른 텍스트와 아이콘 정보 가져오기
-  const { text, icon } =
-    status === coreConstants.all.value
-      ? coreConstants.all
-      : getStatusInfo(status as WorkloadStatusType);
+  const { label, icon } =
+    status === ALL_OPTION.value ? ALL_OPTION : getWorkloadStatusInfo(status);
 
   return (
-    <Container>
-      {/* 헤더 영역: 제목과 상태 아이콘 */}
-      <Header>
-        <Title>{text}</Title>
-        <IconWrapper className={status}>
-          <Icon name={icon} color="var(--icon-fill)" size={18} />
-        </IconWrapper>
-      </Header>
-
-      {/* 본문 영역: 총 개수와 증감 정보 */}
-      <Body>
-        {/* 왼쪽: 총 개수 */}
-        <BodyLeft>
-          <Total>{total.toLocaleString()}</Total>
-          <TotalUnit>개</TotalUnit>
-        </BodyLeft>
-      </Body>
+    <Container key={status} className={status}>
+      <Legend variant="body-2-4">{label}</Legend>
+      <DataLabel>
+        <Typography.Text variant="subtitle-2-1" color="#fff">
+          {Number(9999).toLocaleString()}건
+        </Typography.Text>
+      </DataLabel>
+      <Boundary />
+      <IconWrapper>
+        <MyIcon name={icon} color="var(--icon-fill)" size={18} />
+      </IconWrapper>
     </Container>
   );
 }
 
-
 /**
- * 워크로드 상태 카드의 메인 컨테이너
+ * 워크로드 상태 아이템의 메인 컨테이너
  *
- * 워크로드 상태별 통계를 표시하는 카드 형태의 컨테이너입니다.
- * 고정 높이(86px)를 가지며 세로 방향으로 레이아웃이 구성됩니다.
- * 연한 회색 배경과 그림자 효과로 카드 느낌을 제공합니다.
+ * 각 워크로드 상태별 통계를 표시하는 개별 아이템입니다.
+ * 상태별로 다른 색상 테마를 가지며, 세로 방향으로 레이아웃이 구성됩니다.
+ * 인접한 아이템과는 좌측 테두리로 구분됩니다.
  */
 const Container = styled.div`
-  flex: 1;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  padding: 8px 10px 0px 10px;
-  box-shadow: 0px 4px 4px 0px rgba(171, 171, 171, 0.15);
-  background-color: #f7f9fb;
-  height: 86px;
   display: flex;
   flex-direction: column;
-`;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
 
-/**
- * 카드 헤더 영역
- *
- * 제목과 상태 아이콘을 포함하는 상단 영역입니다.
- * 하단 테두리로 본문과 구분되며, 좌우 정렬로 구성됩니다.
- */
-const Header = styled.div`
-  height: 31px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 9px;
-`;
-
-/**
- * 상태 아이콘 래퍼
- *
- * 헤더 우측에 위치하는 원형 아이콘 컨테이너입니다.
- * 상태별로 다른 색상과 테두리를 가지며, 아이콘을 중앙에 배치합니다.
- */
-const IconWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1px solid var(--border-color);
+  /* 인접한 아이템과의 구분선 */
+  & + & {
+    border-left: 1px solid var(--primary-border-color);
+  }
 
   /* 전체 상태 테마 (보라색) */
-  &.${coreConstants.all.value} {
-    --icon-fill: #aa00ff;
-    --border-color: #ded0ff;
+  &.${ALL_OPTION.value} {
+    --primary-color: #d77bff;
+    --secondary-color: #ae8dff7a;
+    --icon-fill: #d77bff;
+    --circle-bg-color: linear-gradient(180deg, #ae8dff66 0%, #171b2600 15%);
   }
 
   /* 실행 중 상태 테마 (파란색) */
   &.RUNNING {
-    --icon-fill: #1f5bff;
-    --border-color: #c7d3e8;
+    --primary-color: #86b6ff;
+    --secondary-color: #86b6ff7a;
+    --icon-fill: #86b6ff;
+    --circle-bg-color: linear-gradient(180deg, #86b6ff66 0%, #171b2600 15%);
   }
 
   /* 대기 중 상태 테마 (초록색) */
   &.PENDING {
-    --icon-fill: #2dc598;
-    --border-color: #84d681;
+    --primary-color: #52bc4a;
+    --secondary-color: #bababa7a;
+    --icon-fill: #4f9838;
+    --circle-bg-color: linear-gradient(180deg, #6ecf2d57 0%, #1b261700 15%);
+  }
+
+  /* 종료 상태 테마 (초록색) */
+  &.COMPLETED {
+    --primary-color: #bdbdbd;
+    --secondary-color: #bababa66;
+    --icon-fill: #a3afd0;
+    --circle-bg-color: linear-gradient(180deg, #c3c3c366 0%, #171b2600 15%);
   }
 
   /* 실패 상태 테마 (빨간색) */
   &.FAILED {
-    --icon-fill: #ff5858;
-    --border-color: #ffd0dd;
+    --primary-color: #ff8080;
+    --secondary-color: #ff80807a;
+    --icon-fill: #ff8080;
+    --circle-bg-color: linear-gradient(180deg, #ff808066 0%, #171b2600 15%);
   }
 `;
 
 /**
- * 상태 제목 텍스트
+ * 원형 배경 경계선
  *
- * 헤더 좌측에 표시되는 상태명 텍스트입니다.
- * 굵은 폰트와 검은색으로 주요 정보를 강조합니다.
+ * 아이템 중앙에 위치하는 원형 배경입니다.
+ * 점선 테두리와 그라데이션 배경을 가지며, 상태별 색상이 적용됩니다.
  */
-const Title = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 16px;
-  color: #000;
+const Boundary = styled.div`
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px dashed var(--primary-color);
+  background: var(--circle-bg-color);
 `;
 
 /**
- * 카드 본문 영역
+ * 중앙 아이콘 래퍼
  *
- * 총 개수와 증감 정보를 포함하는 하단 영역입니다.
- * 좌우 정렬로 구성되며 남은 공간을 모두 차지합니다.
+ * 원형 배경 중앙에 위치하는 아이콘을 감싸는 컨테이너입니다.
+ * 검은색 배경과 상태별 색상의 테두리를 가지며, 아이콘을 중앙에 배치합니다.
  */
-const Body = styled.div`
-  flex: 1;
+const IconWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--secondary-color);
+  background-color: #000;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 `;
 
 /**
- * 본문 왼쪽 영역
+ * 상태명 범례
  *
- * 총 개수와 단위를 표시하는 영역입니다.
- * 좌측 정렬로 배치되며 작은 간격으로 구성됩니다.
+ * 아이템 좌상단에 표시되는 상태명 텍스트입니다.
+ * 텍스트 앞에 상태별 색상의 작은 원형 인디케이터가 표시됩니다.
  */
-const BodyLeft = styled.div`
+const Legend = styled(Typography.Text)`
+  position: relative;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: #bdbdbd;
+  margin-left: 14px;
+  margin-top: 4px;
+
+  /* 상태별 색상의 작은 원형 인디케이터 */
+  &::before {
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    content: "";
+    width: 4px;
+    height: 4px;
+    background-color: var(--primary-color);
+  }
+`;
+
+/**
+ * 데이터 라벨 컨테이너
+ *
+ * 아이템 하단에 표시되는 총 개수와 증감률을 포함하는 컨테이너입니다.
+ * 중앙 정렬되어 표시되며, 하단 패딩을 통해 적절한 여백을 제공합니다.
+ */
+const DataLabel = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   gap: 4px;
-`;
-
-/**
- * 총 개수 텍스트
- *
- * 워크로드의 총 개수를 표시하는 큰 텍스트입니다.
- * 굵은 폰트와 큰 크기로 주요 수치를 강조합니다.
- */
-const Total = styled.div`
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 100%;
-  color: #000;
-`;
-
-/**
- * 총 개수 단위 텍스트
- *
- * 총 개수 옆에 표시되는 단위 텍스트입니다.
- * 중간 굵기의 폰트로 보조 정보를 제공합니다.
- */
-const TotalUnit = styled.div`
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 16px;
-  color: #000;
+  padding-bottom: 14px;
 `;

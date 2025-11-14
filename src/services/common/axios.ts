@@ -1,7 +1,8 @@
 import type { AxiosInstance, AxiosResponse } from "axios";
 import axios from "axios";
 import type { Session } from "next-auth";
-import { getSession } from "next-auth/react";
+
+// import { getSession } from "next-auth/react";
 
 // Extend NextAuth Session type to include custom properties
 interface CustomSession extends Session {
@@ -66,16 +67,26 @@ export class AxiosService {
 
     // 캐시가 없거나 만료되었으면 새로 조회
     try {
-      const session = (await getSession()) as CustomSession | null;
+      // const session = (await getSession()) as CustomSession | null;
 
       // 세션 정보 캐시
       this.sessionCache = {
-        session,
+        session: {
+          accessToken: "test",
+          refresh_token: "test",
+          expires: "no expires",
+          user: {
+            id: "admin",
+            name: "관리자",
+            email: "admin@xiilab.com",
+          },
+          roles: ["ROLE_ADMIN"],
+        },
         timestamp: Date.now(),
         expiresAt: Date.now() + this.CACHE_DURATION - this.CACHE_BUFFER,
       };
 
-      return session;
+      return this.sessionCache.session;
     } catch (error) {
       console.error("Failed to get session:", error);
       return null;

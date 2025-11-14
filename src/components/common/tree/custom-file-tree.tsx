@@ -4,7 +4,7 @@ import type { ComponentType, ReactNode } from "react";
 import { createElement, useCallback, useState } from "react";
 import styled from "styled-components";
 
-import { Core } from "@/models/core.model";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { FileTreeType } from "@/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/types/common/core.interface";
 import { CustomFileNode, RootCustomFileNode } from "./custom-file-node";
@@ -199,7 +199,7 @@ export function CustomFileTree({
   const renderRootNode = (): ReactNode => (
     <RootCustomFileNode>
       {createElement(fileButton, {
-        activeKey: Core.ALL_VALUE,
+        activeKey: ALL_OPTION.value,
         fileName: "전체",
       })}
     </RootCustomFileNode>

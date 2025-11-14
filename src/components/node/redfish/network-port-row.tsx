@@ -80,4 +80,3 @@ export function NetworkPortRow({ children, rowData, ...restProps }: any) {
     </>
   );
 }
-

@@ -1,5 +1,10 @@
 import classNames from "classnames";
-import type { DetailedHTMLProps, HTMLAttributes, ReactElement } from "react";
+import type {
+  DetailedHTMLProps,
+  HTMLAttributes,
+  PropsWithChildren,
+  ReactElement,
+} from "react";
 import { Children, cloneElement, isValidElement } from "react";
 import { Icon } from "xiilab-ui";
 
@@ -23,12 +28,13 @@ export function ToggleTableRow({
   ...restProps
 }: ToggleTableRowProps) {
   const mapToChildren = Children.map(children, (child, index) => {
-    let posCondition;
+    let posCondition: boolean;
     if (togglePosition === "last") {
-      posCondition = index === (children as any).length - 1;
+      posCondition = index === (children as ReactElement[]).length - 1;
     } else {
       posCondition = index === 0;
     }
+
     if (isValidElement(child) && posCondition) {
       const newProps = {
         children: (
@@ -41,11 +47,10 @@ export function ToggleTableRow({
         ),
       };
 
-      return cloneElement(child as ReactElement<any>, newProps);
+      return cloneElement(child as ReactElement<PropsWithChildren>, newProps);
     }
     return child;
   });
 
   return <tr {...restProps}>{mapToChildren}</tr>;
 }
-

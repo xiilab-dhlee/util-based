@@ -1,11 +1,18 @@
-export function Core() {}
-Core.ICON_COLUMN_WIDTH = 40;
-Core.CHECK_COLUMN_WIDTH = 40;
-Core.ALL_VALUE = "ALL";
-Core.ALL_DISPLAY_NAME = "전체";
-Core.ALL_ICON = "Entire";
-
-Core.THEME_OPTIONS = [
+import type { CoreThemeOption } from "@/types/common/core.model";
+/** 목록 페이지 크기 */
+export const LIST_PAGE_SIZE = 20;
+/** 아이콘 컬럼 너비 */
+export const ICON_COLUMN_WIDTH = 40;
+/** 체크박스 컬럼 너비 */
+export const CHECKBOX_COLUMN_WIDTH = 40;
+/** 전체 옵션 */
+export const ALL_OPTION = {
+  label: "전체",
+  value: "ALL",
+  icon: "Entire",
+};
+/** 기본 테마 옵션 */
+export const THEME_OPTIONS: CoreThemeOption[] = [
   {
     key: "theme-primary",
     name: "기본 테마 1",

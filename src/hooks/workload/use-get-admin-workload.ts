@@ -1,7 +1,7 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import workloadKeys from "@/constants/workload/workload.key";
+import { workloadKeys } from "@/constants/workload/workload.key";
 import { useServices } from "@/providers/service-provider";
 import type { WorkloadDetailType } from "@/schemas/workload.schema";
 import type { GetWorkloadPayload } from "@/types/workload/workload.type";
@@ -22,4 +22,3 @@ export const useGetAdminWorkload = (
     },
   });
 };
-

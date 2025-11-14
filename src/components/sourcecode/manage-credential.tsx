@@ -10,22 +10,18 @@ import { useGetCredentials } from "@/hooks/credential/use-get-credentials";
 import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
 import type { Credential } from "@/types/credential/credential.model";
 
-/**
- * ManageCredential 컴포넌트 Props 인터페이스
- */
 interface ManageCredentialProps {
-  /** 기본값으로 설정할 크레덴셜 (옵셔널) */
   defaultCredential?: Credential;
 }
 
 /**
- * 크레덴셜 관리 컴포넌트
+ * ManageCredential 컴포넌트
  *
- * Git 리포지토리 접근을 위한 크레덴셜을 선택하고 URL 검증을 수행합니다.
+ * Git 리포지토리 접근을 위한 크레덴셜을 선택하고 URL 검증을 수행하는 컴포넌트입니다.
  * 기본값이 제공되면 자동으로 해당 크레덴셜을 선택하고 URL 검증을 활성화합니다.
  *
- * @param defaultCredential - 기본값으로 설정할 크레덴셜 (옵셔널)
- * @returns 크레덴셜 선택 UI와 URL 검증 버튼을 포함한 JSX 요소
+ * @param defaultCredential - 기본값으로 설정할 크레덴셜 (기본값으로 사용)
+ * @returns 크레덴셜 관리 UI 컴포넌트
  */
 export function ManageCredential({ defaultCredential }: ManageCredentialProps) {
   // URL 검증 여부 - 기본값이 있으면 true로 초기화
@@ -67,12 +63,6 @@ export function ManageCredential({ defaultCredential }: ManageCredentialProps) {
     }
   }, [defaultCredential, setValue]);
 
-  /**
-   * URL 검증 핸들러
-   *
-   * 크레덴셜이 선택되었는지 확인하고, 선택되었다면 URL 검증을 완료 상태로 변경합니다.
-   * 크레덴셜이 선택되지 않은 경우 에러 토스트를 표시합니다.
-   */
   const handleValidateUrl = () => {
     if (!value) {
       toast.error("크레덴셜을 선택해 주세요.");
@@ -121,4 +111,3 @@ export function ManageCredential({ defaultCredential }: ManageCredentialProps) {
     </>
   );
 }
-

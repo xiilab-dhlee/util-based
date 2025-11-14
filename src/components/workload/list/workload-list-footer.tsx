@@ -6,9 +6,9 @@ import {
   workloadPageAtom,
   workloadSearchTextAtom,
 } from "@/atoms/workload/workload-list.atom";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkloadsByMode } from "@/hooks/workload/use-get-workloads-by-mode";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
-import { Workload } from "@/models/workload.model";
 
 /**
  * 워크로드 목록 페이지 하단 푸터 컴포넌트
@@ -27,7 +27,7 @@ export function WorkloadListFooter() {
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetWorkloadsByMode({
     page,
-    size: Workload.LIST_PAGE_SIZE,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -40,7 +40,7 @@ export function WorkloadListFooter() {
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
-      pageSize={Workload.LIST_PAGE_SIZE}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
     />

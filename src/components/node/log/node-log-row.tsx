@@ -72,7 +72,6 @@ export function NodeLogRow({ children, rowData, ...restProps }: any) {
   );
 }
 
-
 /** 확장 영역 테이블 셀 스타일 */
 const CollapseCell = styled.td`
   padding: 0 !important;

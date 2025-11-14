@@ -4,7 +4,7 @@ import { Tooltip } from "xiilab-ui";
 import { MyIcon } from "@/components/common/icons";
 import { ClusterResourceInfoTooltipTitle } from "@/components/common/tooltip-title/cluster-resource-info-tooltip-content";
 import { DashboardQuickMenu } from "@/components/dashboard/dashboard-quick-menu";
-import { DashboardResourceCluster } from "@/components/monitoring/monitoring-cluster-resource";
+import { MonitoringClusterResource } from "@/components/monitoring/monitoring-cluster-resource";
 import { MonitoringIntroCard } from "@/components/monitoring/monitoring-intro-card";
 import monitoringConstants from "@/constants/monitoring/monitoring.constant";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
@@ -35,38 +35,38 @@ export function MonitoringMainSection() {
         </RightHeader>
         <RightBody>
           <ResourceRow>
-            <DashboardResourceCluster
+            <MonitoringClusterResource
               series={70}
               gradientToColors={["#CCB7FF", "#8B59FF"]}
               resourceType="GPU"
             />
-            <DashboardResourceCluster
+            <MonitoringClusterResource
               series={70}
               gradientToColors={["#CCB7FF", "#8B59FF"]}
               resourceType="MIG"
             />
-            <DashboardResourceCluster
+            <MonitoringClusterResource
               series={70}
               gradientToColors={["#CCB7FF", "#8B59FF"]}
               resourceType="MPS"
             />
           </ResourceRow>
           <ResourceColumn>
-            <DashboardResourceCluster
+            <MonitoringClusterResource
               series={70}
               gradientToColors={["#B7CAFF", "#6459FF"]}
               resourceType="CPU"
             />
           </ResourceColumn>
           <ResourceColumn>
-            <DashboardResourceCluster
+            <MonitoringClusterResource
               series={70}
               gradientToColors={["#6ADFC7", "#007D43"]}
               resourceType="MEM"
             />
           </ResourceColumn>
           <ResourceColumn>
-            <DashboardResourceCluster
+            <MonitoringClusterResource
               series={70}
               gradientToColors={["#C7EAFF", "#1FB2ED"]}
               resourceType="DISK"
@@ -77,7 +77,6 @@ export function MonitoringMainSection() {
     </Container>
   );
 }
-
 
 const Container = styled.section`
   border-radius: 10px;

@@ -34,7 +34,7 @@ export function DashboardSubSection() {
                 alert("준비 중입니다.");
               },
               pageSize: 8,
-              total: 100,
+              total: 10,
             }}
           />
         </ListWrapper>
@@ -63,7 +63,7 @@ export function DashboardSubSection() {
                 alert("준비 중입니다.");
               },
               pageSize: 8,
-              total: 100,
+              total: 10,
             }}
           />
         </ListWrapper>

@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 
 import { workloadJobTypeAtom } from "@/atoms/workload/workload-list.atom";
 import { MySelect } from "@/components/common/select";
-import { Workload } from "@/models/workload.model";
+import { WORKLOAD_JOB_OPTIONS } from "@/constants/workload/workload.constant";
 
 /**
  * 워크로드 목록 페이지 작업 유형 정렬 컴포넌트
@@ -25,7 +25,7 @@ export function WorkloadJobTypeSort() {
 
   return (
     <MySelect
-      options={Workload.JOB_TYPE_OPTIONS}
+      options={WORKLOAD_JOB_OPTIONS}
       placeholder="워크로드 잡 타입"
       setValue={handleChange}
       value={jobtype}

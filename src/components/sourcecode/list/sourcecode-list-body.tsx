@@ -11,7 +11,7 @@ import { sourcecodeListColumn } from "@/components/sourcecode/sourcecode-list-co
 import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.constant";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import SourcecodeRow from "./sourcecode-row";
+import { SourcecodeRow } from "./sourcecode-row";
 
 /**
  * 소스코드 목록 페이지 본문 컴포넌트
@@ -42,4 +42,3 @@ export function SourcecodeListBody() {
     </ListWrapper>
   );
 }
-

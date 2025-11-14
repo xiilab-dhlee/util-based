@@ -7,34 +7,34 @@ import type {
 
 export const workloadKeys = {
   default: ["workload"],
-  list: (payload: GetWorkloadsPayload): string[] => [
+  list: (payload: GetWorkloadsPayload) => [
     ...workloadKeys.default,
     "list",
-    ...(Object.values(payload) as string[]),
+    ...Object.values(payload),
   ],
-  adminList: (payload: GetWorkloadsPayload): string[] => [
+  adminList: (payload: GetWorkloadsPayload) => [
     ...workloadKeys.default,
     "adminList",
-    ...(Object.values(payload) as string[]),
+    ...Object.values(payload),
   ],
-  detail: (payload: GetWorkloadPayload): string[] => [
+  detail: (payload: GetWorkloadPayload) => [
     ...workloadKeys.default,
     "detail",
-    ...(Object.values(payload) as string[]),
+    ...Object.values(payload),
   ],
-  adminDetail: (payload: GetWorkloadPayload): string[] => [
+  adminDetail: (payload: GetWorkloadPayload) => [
     ...workloadKeys.default,
     "adminDetail",
-    ...(Object.values(payload) as string[]),
+    ...Object.values(payload),
   ],
-  fileList: (payload: GetWorkloadFilesPayload): string[] => [
+  fileList: (payload: GetWorkloadFilesPayload) => [
     ...workloadKeys.default,
     "fileList",
-    ...(Object.values(payload) as string[]),
+    ...Object.values(payload),
   ],
-  vulnerabilityList: (payload: GetWorkloadVulnerabilitiesPayload): string[] => [
+  vulnerabilityList: (payload: GetWorkloadVulnerabilitiesPayload) => [
     ...workloadKeys.default,
     "vulnerabilityList",
-    ...(Object.values(payload) as string[]),
+    ...Object.values(payload),
   ],
 };

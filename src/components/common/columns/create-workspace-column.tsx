@@ -3,7 +3,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { WorkspaceAllCheck } from "@/components/workspace/list/workspace-all-check";
 import { WorkspaceItemCheck } from "@/components/workspace/list/workspace-item-check";
-import coreConstants from "@/constants/common/core.constant";
+import { ICON_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type { WorkspaceListType } from "@/schemas/workspace.schema";
 import {
   ColumnAlignCenterWrap,
@@ -26,7 +26,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: <WorkspaceAllCheck />,
       dataIndex: "checkbox",
       align: "center",
-      width: coreConstants.iconColumnWidth,
+      width: ICON_COLUMN_WIDTH,
       render: (_, record: WorkspaceListType) => {
         return <WorkspaceItemCheck workspace={record} />;
       },
@@ -207,4 +207,3 @@ export const createWorkspaceColumn = (
 
   return applyColumnConfigs(columnList, config);
 };
-

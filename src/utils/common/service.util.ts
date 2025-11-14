@@ -1,6 +1,6 @@
 import { isEmpty } from "lodash";
 
-import { Core } from "@/models/core.model";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { CorePayload } from "@/types/common/api.interface";
 
 /**
@@ -13,7 +13,7 @@ export function payloadToParams(payload: CorePayload): URLSearchParams {
 
   Object.entries(payload).forEach(([key, value]) => {
     // ALL 값은 제외
-    if (!isEmpty(value) && value !== Core.ALL_VALUE) {
+    if (!isEmpty(value) && value !== ALL_OPTION.value) {
       params.append(key, encodeURIComponent(String(value)));
     }
   });

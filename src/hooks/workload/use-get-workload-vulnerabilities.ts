@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import { workloadKeys } from "@/constants/workload/workload.key";
 import { useServices } from "@/providers/service-provider";
-import type { Vulnerability } from "@/types/security/security.model";
+import type { VulnerabilityListType } from "@/schemas/vulnerability.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetWorkloadVulnerabilitiesPayload } from "@/types/workload/workload.type";
 
 /**
@@ -11,7 +12,7 @@ import type { GetWorkloadVulnerabilitiesPayload } from "@/types/workload/workloa
  */
 export const useGetWorkloadVulnerabilities = (
   payload: GetWorkloadVulnerabilitiesPayload,
-): UseQueryResult<{ content: Vulnerability[]; total: number }, Error> => {
+): UseQueryResult<CoreListResponse<VulnerabilityListType>, Error> => {
   const { workloadService } = useServices();
 
   return useQuery({
@@ -19,7 +20,6 @@ export const useGetWorkloadVulnerabilities = (
     queryFn: async () => {
       const response = await workloadService.getVulnerabilities(payload);
 
-      console.log(response.data);
       return response.data;
     },
   });

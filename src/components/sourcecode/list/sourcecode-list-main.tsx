@@ -1,6 +1,6 @@
 "use client";
 
-import CreateSourcecode from "./create-sourcecode";
+import { CreateSourcecode } from "./create-sourcecode";
 
 /**
  * 소스코드 목록 페이지의 메인 컴포넌트
@@ -13,4 +13,3 @@ import CreateSourcecode from "./create-sourcecode";
 export function SourcecodeListMain() {
   return <CreateSourcecode />;
 }
-

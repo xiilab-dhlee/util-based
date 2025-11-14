@@ -7,7 +7,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { SessionProvider } from "next-auth/react";
+import type { AxiosError } from "axios";
 import type { PropsWithChildren } from "react";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -22,7 +22,6 @@ import {
   shouldShowToast,
 } from "@/utils/error/error-utils";
 
-// App Router용 클라이언트 프로바이더 컴포넌트
 export function Providers({ children }: PropsWithChildren) {
   const [queryClient] = useState(
     () =>
@@ -44,7 +43,7 @@ export function Providers({ children }: PropsWithChildren) {
             const { queryKey } = query;
 
             // 개발 모드에서 디버깅 정보 출력
-            logErrorInfo(queryKey, error);
+            logErrorInfo(queryKey, error as AxiosError);
 
             // 메타 정보 또는 설정 기반 토스트 표시 여부 결정
             const showToastFromMeta = query.meta?.showToastOnError;
@@ -57,7 +56,10 @@ export function Providers({ children }: PropsWithChildren) {
                 : showToastFromConfig;
 
             if (showToast) {
-              const errorMessage = getErrorMessage(queryKey, error);
+              const errorMessage = getErrorMessage(
+                queryKey,
+                error as AxiosError,
+              );
               toast.error(errorMessage);
             }
           },
@@ -68,13 +70,16 @@ export function Providers({ children }: PropsWithChildren) {
             const queryKey = mutation.options.mutationKey || ["unknown"];
 
             // 개발 모드에서 디버깅 정보 출력
-            logErrorInfo(queryKey, error);
+            logErrorInfo(queryKey, error as AxiosError);
 
             // 뮤테이션은 기본적으로 토스트 표시
             const showToast = mutation.meta?.showToastOnError !== false;
 
             if (showToast) {
-              const errorMessage = getErrorMessage(queryKey, error);
+              const errorMessage = getErrorMessage(
+                queryKey,
+                error as AxiosError,
+              );
               toast.error(errorMessage);
             }
           },
@@ -84,26 +89,23 @@ export function Providers({ children }: PropsWithChildren) {
 
   return (
     <MSWProvider>
-      <SessionProvider refetchInterval={10000}>
-        {/* <AuthWrapper> */}
-        <QueryClientProvider client={queryClient}>
-          <StoreProvider>
-            <ServiceProvider>
-              <ThemeProvider>
-                {children}
-                <ToastContainer />
-              </ThemeProvider>
-            </ServiceProvider>
-          </StoreProvider>
-          {process.env.NODE_ENV === "development" && (
-            <ReactQueryDevtools
-              initialIsOpen={false}
-              position="bottom"
-              buttonPosition="bottom-left"
-            />
-          )}
-        </QueryClientProvider>
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <StoreProvider>
+          <ServiceProvider>
+            <ThemeProvider>
+              {children}
+              <ToastContainer />
+            </ThemeProvider>
+          </ServiceProvider>
+        </StoreProvider>
+        {process.env.NODE_ENV === "development" && (
+          <ReactQueryDevtools
+            initialIsOpen={false}
+            position="bottom"
+            buttonPosition="bottom-left"
+          />
+        )}
+      </QueryClientProvider>
     </MSWProvider>
   );
 }

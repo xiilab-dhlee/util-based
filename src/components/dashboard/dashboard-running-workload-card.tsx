@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
-import withSafeProps from "@/components/common/hocs/with-safe-props";
 import type { WorkloadListType } from "@/schemas/workload.schema";
 
 interface DashboardRunningWorkloadCardProps extends WorkloadListType {}
@@ -25,7 +24,7 @@ interface DashboardRunningWorkloadCardProps extends WorkloadListType {}
  * @param workloadName - 워크로드 이름
  * @returns 실행 중인 워크로드 정보를 담은 카드 컴포넌트
  */
-function DashboardRunningWorkloadCardComponent({
+export function DashboardRunningWorkloadCard({
   id,
   workloadName,
   workspaceId,
@@ -91,22 +90,6 @@ function DashboardRunningWorkloadCardComponent({
     </Card>
   );
 }
-
-/**
- * DashboardRunningWorkloadCard 컴포넌트
- *
- * withSafeProps HOC로 감싸진 실행 중인 워크로드 카드 컴포넌트입니다.
- * props의 안전성을 보장하고 에러 경계를 제공합니다.
- *
- * @param props - Workload 타입의 props
- * @returns 안전성이 보장된 실행 중인 워크로드 카드 컴포넌트
- */
-const DashboardRunningWorkloadCard = (
-  props: DashboardRunningWorkloadCardProps,
-) => {
-  return withSafeProps(DashboardRunningWorkloadCardComponent)(props);
-};
-
 
 // ===== Styled Components =====
 

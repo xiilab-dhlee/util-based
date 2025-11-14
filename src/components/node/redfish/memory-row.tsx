@@ -162,4 +162,3 @@ export function MemoryRow({ children, rowData, ...restProps }: any) {
     </>
   );
 }
-

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+import type { WorkloadStatusType } from "@/schemas/workload.schema";
 import {
   DashboardCategoryTitle,
   DashboardSectionDescription,
@@ -10,7 +11,7 @@ import type { CoreResourceType } from "@/types/common/core.interface";
 import { DashboardResourceArticle } from "./dashboard-resource-article";
 import { DashboardResourceCard } from "./dashboard-resource-card";
 import { DashboardResourceRecoveryArticle } from "./dashboard-resource-recovery-article";
-import { DashobardResourceWorkloadStatus } from "./dashboard-resource-workload-status";
+import { DashboardWorkloadStatus } from "./dashboard-workload-status";
 
 export function DashboardMainSection() {
   return (
@@ -41,7 +42,10 @@ export function DashboardMainSection() {
           <WorkloadStatusWrapper>
             {["ALL", "RUNNING", "COMPLETED", "PENDING", "FAILED"].map(
               (status) => (
-                <DashobardResourceWorkloadStatus key={status} status={status} />
+                <DashboardWorkloadStatus
+                  key={status}
+                  status={status as WorkloadStatusType}
+                />
               ),
             )}
           </WorkloadStatusWrapper>

@@ -1,6 +1,6 @@
 "use client";
 
-import type { UseQueryResult } from "@tanstack/react-query";
+import type { QueryKey, UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 
@@ -37,7 +37,7 @@ export const useGetWorkloadByMode = (
   const isAdmin = isAdminMode(pathname);
 
   // 모드에 따라 적절한 쿼리 키와 쿼리 함수를 설정
-  let queryKey: string[];
+  let queryKey: QueryKey;
   let queryFn: () => Promise<WorkloadDetailType>;
   if (isAdmin) {
     // 관리자 모드: 관리자 전용 서비스와 쿼리 키 사용

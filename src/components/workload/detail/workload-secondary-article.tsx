@@ -1,7 +1,6 @@
 "use client";
 
 import { format } from "date-fns";
-import { useSetAtom } from "jotai";
 import styled from "styled-components";
 
 import { openCreateCommitImageModalAtom } from "@/atoms/workload/workload-detail.atom";
@@ -11,19 +10,31 @@ import { CustomizedTable } from "@/components/common/table/customized-table";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import { workloadEnvColumn } from "@/components/workload/detail/workload-env-column";
 import { workloadPortColumn } from "@/components/workload/detail/workload-port-column";
-import { Workload } from "@/models/workload.model";
+import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import type { WorkloadDetailType } from "@/schemas/workload.schema";
 import {
   DetailContentArticle,
   DetailContentKey,
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
+import { getWorkloadImageTypeInfo } from "@/utils/workload/workload.util";
 import { WorkloadSourcecodeCard } from "./workload-sourcecode-card";
 import { WorkloadVolumeCard } from "./workload-volume-card";
 
 interface WorkloadSecondaryArticleProps extends WorkloadDetailType {}
 
-// 워크로드 상세 페이지 추가 정보 아티클
+/**
+ * 워크로드 추가 정보 아티클 컴포넌트
+ *
+ * 워크로드 이미지, 환경 변수, 포트, 소스코드, 볼륨, 생성자, 생성일을 표시합니다.
+ * @param image - 워크로드 이미지
+ * @param envs - 워크로드 환경 변수
+ * @param ports - 워크로드 포트
+ * @param sourcecodes - 워크로드 소스코드
+ * @param volumes - 워크로드 볼륨
+ * @param creatorName - 워크로드 생성자
+ * @param creatorDate - 워크로드 생성일
+ */
 export function WorkloadSecondaryArticle({
   image,
   envs,
@@ -33,16 +44,13 @@ export function WorkloadSecondaryArticle({
   creatorName,
   creatorDate,
 }: WorkloadSecondaryArticleProps) {
-  // 커밋 이미지 모달 표시 설정
-  const setOpenCreateCommitImageModal = useSetAtom(
-    openCreateCommitImageModalAtom,
-  );
+  const { onOpen } = useGlobalModal(openCreateCommitImageModalAtom);
 
   const handleClickCommitImage = () => {
-    setOpenCreateCommitImageModal(true);
+    onOpen();
   };
 
-  const { displayName, icon } = Workload.getImageTypeInfo(image.type);
+  const { label, icon } = getWorkloadImageTypeInfo(image.type);
 
   return (
     <Container>
@@ -56,7 +64,7 @@ export function WorkloadSecondaryArticle({
               <IconWraper>
                 <MyIcon name={icon} color="var(--icon-fill)" size={18} />
               </IconWraper>
-              {displayName} Image
+              {label} Image
             </ImageName>
             <div>
               <Code>{image.name}</Code>
@@ -88,7 +96,6 @@ export function WorkloadSecondaryArticle({
             </SecurityStatuses>
           </SecurityValue>
         </KeyValueContainer>
-        {/* Output 영역 */}
         <DetailContentSubTitle>Output</DetailContentSubTitle>
         <KeyValueContainer className="split">
           <LeftKey>Output 경로</LeftKey>
@@ -100,7 +107,6 @@ export function WorkloadSecondaryArticle({
             </Text>
           </Value>
         </KeyValueContainer>
-        {/* 실행 영역 */}
         <DetailContentSubTitle>실행 경로, 실행 명령어</DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <LeftKey>실행 경로</LeftKey>
@@ -118,7 +124,6 @@ export function WorkloadSecondaryArticle({
             </Text>
           </Value>
         </KeyValueContainer>
-        {/* 환경 변수 영역 */}
         <DetailContentSubTitle>환경 변수</DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <CustomizedTable
@@ -130,7 +135,6 @@ export function WorkloadSecondaryArticle({
             activePadding
           />
         </KeyValueContainer>
-        {/* 포트 영역 */}
         <DetailContentSubTitle>포트</DetailContentSubTitle>
         <KeyValueContainer className="split">
           <CustomizedTable
@@ -142,8 +146,6 @@ export function WorkloadSecondaryArticle({
             activePadding
           />
         </KeyValueContainer>
-
-        {/* 포트 영역 */}
         <DetailContentSubTitle>생성 정보</DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <LeftKey>생성자</LeftKey>

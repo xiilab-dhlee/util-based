@@ -7,10 +7,13 @@ import { SelectVolumeTypeModal } from "@/components/volume/select-volume-type-mo
 import { WorkloadListBody } from "@/components/workload/list/workload-list-body";
 import { WorkloadListFilter } from "@/components/workload/list/workload-list-filter";
 import { WorkloadListFooter } from "@/components/workload/list/workload-list-footer";
+import {
+  WORKLOAD_GUIDE_IMAGES,
+  WORKLOAD_GUIDES,
+} from "@/constants/workload/workload.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
-import { Workload } from "@/models/workload.model";
 import {
   ListPageAside,
   ListPageBody,
@@ -32,11 +35,7 @@ export function WorkloadListMain() {
 
   return (
     <>
-      <PageHeader
-        title={Workload.TITLE}
-        icon="Workload"
-        description={Workload.TITLE_ENG}
-      >
+      <PageHeader title="워크로드" icon="Workload" description="Workload">
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />
       </PageHeader>
 
@@ -45,12 +44,15 @@ export function WorkloadListMain() {
         {/* 워크로드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng={Workload.GUIDE_TITLE_ENG}
-            title={Workload.GUIDE_TITLE}
+            titleEng="Create Workload"
+            title="워크로드 생성"
             icon="Plus"
-            description={Workload.GUIDE_DESCRIPTION}
-            backgroundImageName={Workload.GUIDE_BG_IMAGE}
-            guides={Workload.GUIDES}
+            description={[
+              "원하는 Job Type, 이미지 및 리소스, 소스 코드 등을 입력해",
+              "워크로드를 생성해보세요.",
+            ]}
+            backgroundImageName="workload-intro-background.png"
+            guides={WORKLOAD_GUIDES}
             buttonOptions={{
               enabled: true,
               text: "워크로드 생성하기",
@@ -61,7 +63,7 @@ export function WorkloadListMain() {
           {/* 워크로드 가이드 이미지 카드 */}
           <PageImageGuide
             title="워크로드 가이드"
-            guideImages={Workload.GUIDE_IMAGES}
+            guideImages={WORKLOAD_GUIDE_IMAGES}
           />
         </ListPageAside>
 

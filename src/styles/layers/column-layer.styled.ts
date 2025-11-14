@@ -66,6 +66,8 @@ export const ColumnIconWrap = styled.button`
   &:disabled {
     background-color: #f3f3f3;
     border-color: #e8e8e8;
+    cursor: not-allowed;
+
     --icon-fill: #d1d1d1;
   }
 `;

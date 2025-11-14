@@ -11,7 +11,7 @@ import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.cons
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
 import { MySearchFilter } from "@/layouts/common/search-filter";
-import SourcecodeTypeSort from "./sourcecode-type-sort";
+import { SourcecodeTypeSort } from "./sourcecode-type-sort";
 
 /**
  * 소스코드 목록 페이지 상단 필터 컴포넌트
@@ -43,4 +43,3 @@ export function SourcecodeListFilter() {
     </MySearchFilter>
   );
 }
-

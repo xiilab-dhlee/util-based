@@ -1,16 +1,17 @@
 import styled from "styled-components";
 
-import createWorkloadListColumn from "@/components/common/columns/create-workload-column";
+import { createWorkloadColumn } from "@/components/common/columns/create-workload-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { DashboardRunningWorkloadCard } from "@/components/dashboard/dashboard-running-workload-card";
-import { DashboardWorkloadStatus } from "@/components/dashboard/dashboard-workload-status";
+import { MonitoringWorkloadStatus } from "@/components/monitoring/monitoring-workload-status";
 import { VolumeWorkloadCard } from "@/components/volume/detail/volume-workload-card";
 import { workloadListMock } from "@/mocks/workload.mock";
 import { workspaceListMock } from "@/mocks/workspace.mock";
+import type { WorkloadStatusType } from "@/schemas/workload.schema";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 import { statusTextStyle } from "@/styles/mixins/text";
-import createWorkspaceColumn from "../common/columns/create-workspace-column";
+import { createWorkspaceColumn } from "../common/columns/create-workspace-column";
 
 export function MonitoringSubSection() {
   return (
@@ -57,7 +58,7 @@ export function MonitoringSubSection() {
 
           <LeftBody>
             <CustomizedTable
-              columns={createWorkloadListColumn(false, [
+              columns={createWorkloadColumn([
                 { dataIndex: "workloadName" },
                 { dataIndex: "creatorName", title: "사용자" },
                 { dataIndex: "labels" },
@@ -76,9 +77,9 @@ export function MonitoringSubSection() {
         </ArticleTitle>
         <WorkloadStatuses>
           {["ALL", "RUNNING", "PENDING", "FAILED"].map((status) => (
-            <DashboardWorkloadStatus
+            <MonitoringWorkloadStatus
               key={status}
-              status={status}
+              status={status as WorkloadStatusType}
               total={9999}
             />
           ))}
@@ -103,7 +104,6 @@ export function MonitoringSubSection() {
     </Container>
   );
 }
-
 
 const Container = styled.section`
   display: flex;

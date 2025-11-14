@@ -9,10 +9,10 @@ import {
 import { SearchInput } from "@/components/common/input/search-input";
 import { WorkloadJobTypeSort } from "@/components/workload/list/workload-job-type-sort";
 import { WorkloadStatusSort } from "@/components/workload/list/workload-status-sort";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetWorkloads } from "@/hooks/workload/use-get-workloads";
 import { MySearchFilter } from "@/layouts/common/search-filter";
-import { Workload } from "@/models/workload.model";
 
 /**
  * 워크로드 목록 페이지 상단 필터 컴포넌트
@@ -30,7 +30,7 @@ export function WorkloadListFilter() {
 
   const { data } = useGetWorkloads({
     page,
-    size: Workload.LIST_PAGE_SIZE,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 

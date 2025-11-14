@@ -7,7 +7,7 @@ import { WorkloadLogButton } from "@/components/workload/list/workload-log-butto
 import { WorkloadMonitoringButton } from "@/components/workload/list/workload-monitoring-button";
 import { WorkloadNameLink } from "@/components/workload/list/workload-name-link";
 import { WorkloadTerminalButton } from "@/components/workload/list/workload-terminal-button";
-import { Core } from "@/models/core.model";
+import { ICON_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type {
   WorkloadJobType,
   WorkloadListType,
@@ -21,21 +21,13 @@ import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 import { applyColumnConfigs } from "@/utils/common/column.util";
 import { formatElapsedTime } from "@/utils/common/date.util";
 
-/**
- * 워크로드 컬럼 정의
- * dataIndex는 workloadListSchema의 필드명과 일치
- * 순서는 여기서 정의한 순서대로 표시됨
- *
- * @param isAdmin 관리자 모드 여부
- * @returns 컬럼 배열
- */
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       dataIndex: "isPinned",
       title: "고정",
       align: "center",
-      width: Core.ICON_COLUMN_WIDTH,
+      width: ICON_COLUMN_WIDTH,
       render: (isPinned: boolean) => {
         return (
           <ColumnAlignCenterWrap>
@@ -101,12 +93,11 @@ const createColumnList = (): ResponsiveColumnType[] => {
         );
       },
     },
-    // 액션 컬럼들
     {
       dataIndex: "log",
       title: "로그",
       align: "center",
-      width: Core.ICON_COLUMN_WIDTH,
+      width: ICON_COLUMN_WIDTH,
       render: (_, { workspaceId, id, status }: WorkloadListType) => {
         return (
           <WorkloadLogButton
@@ -121,7 +112,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "terminal",
       title: "웹터미널",
       align: "center",
-      width: Core.ICON_COLUMN_WIDTH,
+      width: ICON_COLUMN_WIDTH,
       render: (_, { workspaceId, id, status }: WorkloadListType) => {
         return (
           <WorkloadTerminalButton
@@ -136,7 +127,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "port",
       title: "포트",
       align: "center",
-      width: Core.ICON_COLUMN_WIDTH,
+      width: ICON_COLUMN_WIDTH,
       render: (_, record: WorkloadListType) => {
         return (
           <ColumnAlignCenterWrap>
@@ -154,7 +145,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "monitoring",
       title: "모니터링",
       align: "center",
-      width: Core.ICON_COLUMN_WIDTH,
+      width: ICON_COLUMN_WIDTH,
       render: (_, { workspaceId, id, status }: WorkloadListType) => {
         return (
           <WorkloadMonitoringButton
@@ -169,7 +160,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "power",
       title: "종료",
       align: "center",
-      width: Core.ICON_COLUMN_WIDTH,
+      width: ICON_COLUMN_WIDTH,
       render: (_, record: WorkloadListType) => {
         return (
           <ColumnAlignCenterWrap>
@@ -187,7 +178,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "delete",
       title: "삭제",
       align: "center",
-      width: Core.ICON_COLUMN_WIDTH,
+      width: ICON_COLUMN_WIDTH,
       render: (_, record: WorkloadListType) => {
         return (
           <ColumnAlignCenterWrap>
@@ -205,9 +196,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
 };
 
 /**
- * 워크로드 목록 컬럼 생성
+ * 워크로드 관련 테이블 컬럼 생성
  *
- * @param isAdmin 관리자 모드 여부
  * @param config 컬럼 설정 (배열 형태)
  * @returns 컬럼 배열
  *

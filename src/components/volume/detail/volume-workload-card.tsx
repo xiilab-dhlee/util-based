@@ -2,14 +2,12 @@
 
 import { format } from "date-fns";
 import Link from "next/link";
-import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
-import withSafeProps from "@/components/common/hocs/with-safe-props";
 import { WorkloadStatusText } from "@/components/common/text/workload-status-text";
 import type { WorkloadListType } from "@/schemas/workload.schema";
 import { statusColorStyle } from "@/styles/mixins/color";
-import { getStatusInfo } from "@/utils/workload/workload.util";
+import { getWorkloadStatusInfo } from "@/utils/workload/workload.util";
 
 /**
  * VolumeWorkloadCard 컴포넌트의 Props 인터페이스
@@ -26,7 +24,7 @@ interface VolumeWorkloadCardProps extends WorkloadListType {}
  * @param status - 워크로드의 현재 상태
  * @returns 워크로드 정보를 표시하는 카드 컴포넌트
  */
-function VolumeWorkloadCardComponent({
+export function VolumeWorkloadCard({
   id,
   workspaceId,
   workloadName,
@@ -35,12 +33,12 @@ function VolumeWorkloadCardComponent({
   status,
 }: VolumeWorkloadCardProps) {
   // 워크로드 상태에 따른 색상 정보 가져오기
-  const { color } = getStatusInfo(status);
+  const { colorVariant } = getWorkloadStatusInfo(status);
 
   return (
     <Container href={`/standard/workload/${id}?workspaceId=${workspaceId}`}>
       {/* 왼쪽 영역: 워크로드 기본 정보 */}
-      <Left className={color}>
+      <Left className={colorVariant}>
         {/* 워크로드 이름 (긴 텍스트는 truncate 처리) */}
         <Title className="truncate">{workloadName}</Title>
         {/* 워크로드 메타 정보 (생성일, 사용자명) */}
@@ -57,20 +55,6 @@ function VolumeWorkloadCardComponent({
     </Container>
   );
 }
-
-/**
- * VolumeWorkloadCard 메인 컴포넌트
- * withSafeProps HOC로 감싸서 안전한 props 처리를 보장
- *
- * @param props - VolumeWorkloadCardProps와 children을 포함한 props
- * @returns 안전한 props 처리가 적용된 VolumeWorkloadCard 컴포넌트
- */
-const VolumeWorkloadCard = (
-  props: PropsWithChildren<VolumeWorkloadCardProps>,
-) => {
-  return withSafeProps(VolumeWorkloadCardComponent)(props);
-};
-
 
 /**
  * VolumeWorkloadCard의 메인 컨테이너 스타일

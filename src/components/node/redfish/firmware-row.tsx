@@ -80,4 +80,3 @@ export function FirmwareRow({ children, rowData, ...restProps }: any) {
     </>
   );
 }
-

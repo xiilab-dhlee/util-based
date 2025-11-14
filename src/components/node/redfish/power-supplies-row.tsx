@@ -137,4 +137,3 @@ export function PowerSuppliesRow({ children, rowData, ...restProps }: any) {
     </>
   );
 }
-
