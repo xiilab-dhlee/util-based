@@ -3,13 +3,12 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Checkbox, Icon, Input, Modal, Typography } from "xiilab-ui";
-import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
-import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openManageMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
-import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
-import { USER_EVENTS } from "@/constants/common/pubsub.constant";
-
+import {
+  MONITORING_EVENTS,
+  USER_EVENTS,
+} from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpsertMonitoringNotification } from "@/hooks/monitoring/use-upsert-notification";
@@ -19,8 +18,6 @@ import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-not
 import { FormLabel } from "../common/form/form-label";
 import { MyIcon } from "../common/icons";
 import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
-import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
-import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ManageMonitoringNotificationModal() {
   const publish = usePublish();

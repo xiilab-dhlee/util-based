@@ -1,10 +1,8 @@
 ﻿import { Button } from "xiilab-ui";
-import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { redfishNetworkAdapterColumn } from "@/components/common/columns/redfish-network-adapter-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
-
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useToggle } from "@/hooks/common/use-toggle";
 import {
@@ -18,7 +16,6 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * Redfish 네트워크 어댑터 테이블의 확장 가능한 행 컴포넌트
@@ -126,4 +123,3 @@ export function NetworkAdapterRow({ children, rowData, ...restProps }: any) {
     </>
   );
 }
-

@@ -3,17 +3,14 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
-import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openViewMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
 import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
-
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetMonitoringNotificationSetting } from "@/hooks/monitoring/use-get-monitoring-notification-setting";
-import ModalDetailCard from "../common/card/modal-detail-card";
-import ReadOnlyMonitoringNotificationSetting from "./read-only-monitoring-notification-setting";
-import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
+import { ModalDetailCard } from "../common/card/modal-detail-card";
+import { ReadOnlyMonitoringNotificationSetting } from "./read-only-monitoring-notification-setting";
 
 export function ViewMonitoringNotificationModal() {
   const publish = usePublish();
@@ -32,13 +29,10 @@ export function ViewMonitoringNotificationModal() {
     onClose();
   };
 
-  useSubscribe<any>(
-    MONITORING_EVENTS.sendNotificationSetting,
-    ({ id }) => {
-      setId(id);
-      onOpen();
-    },
-  );
+  useSubscribe<any>(MONITORING_EVENTS.sendNotificationSetting, ({ id }) => {
+    setId(id);
+    onOpen();
+  });
 
   return (
     <Modal
@@ -89,7 +83,6 @@ export function ViewMonitoringNotificationModal() {
     </Modal>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

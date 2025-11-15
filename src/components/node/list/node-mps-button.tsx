@@ -1,9 +1,7 @@
 ﻿import { Button } from "xiilab-ui";
+
 import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
-
-
 import { usePublish } from "@/hooks/common/use-pub-sub";
-import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * NodeGpuMpsButton 컴포넌트의 Props 인터페이스
@@ -51,4 +49,3 @@ export function NodeGpuMpsButton({ nodeName }: NodeGpuMpsButtonProps) {
     </Button>
   );
 }
-

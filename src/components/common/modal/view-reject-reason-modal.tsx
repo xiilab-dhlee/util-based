@@ -2,15 +2,12 @@
 
 import { useState } from "react";
 import { Icon, InfoModal } from "xiilab-ui";
-import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openViewRejectReasonModalAtom } from "@/atoms/common/modal.atom";
 import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
-
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { ModalDisplayReason } from "@/styles/layers/modal-layers.styled";
-import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ViewRejectReasonModal() {
   const { open, onOpen, onClose } = useGlobalModal(
@@ -39,4 +36,3 @@ export function ViewRejectReasonModal() {
     </InfoModal>
   );
 }
-

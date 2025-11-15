@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import { Icon, Input, Modal } from "xiilab-ui";
-import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openManageBmcModalAtom } from "@/atoms/node/node-detail.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
-
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateBmc } from "@/hooks/node/use-create-bmc";
@@ -17,7 +15,6 @@ import type {
   CreateBmcPayload,
   UpdateBmcPayload,
 } from "@/types/node/redfish.interface";
-import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ManageBmcModal() {
   const { open, onOpen, onClose } = useGlobalModal(openManageBmcModalAtom);
@@ -74,19 +71,16 @@ export function ManageBmcModal() {
     },
   );
 
-  useSubscribe<UpdateBmcPayload>(
-    REDFISH_EVENTS.sendUpdateBmc,
-    (eventData) => {
-      setMode("update");
-      setNodeIp(eventData.nodeIp);
-      setBmcId(eventData.id);
-      setBmcIp(eventData.bmcIp);
-      setBmcUserName(eventData.bmcUserName);
-      setBmcPassword(eventData.bmcPassword);
+  useSubscribe<UpdateBmcPayload>(REDFISH_EVENTS.sendUpdateBmc, (eventData) => {
+    setMode("update");
+    setNodeIp(eventData.nodeIp);
+    setBmcId(eventData.id);
+    setBmcIp(eventData.bmcIp);
+    setBmcUserName(eventData.bmcUserName);
+    setBmcPassword(eventData.bmcPassword);
 
-      onOpen();
-    },
-  );
+    onOpen();
+  });
 
   return (
     <Modal

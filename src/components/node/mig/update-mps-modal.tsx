@@ -3,14 +3,10 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
-import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
-import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openUpdateMpsModalAtom } from "@/atoms/node/node-list.atom";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
-import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
-import { USER_EVENTS } from "@/constants/common/pubsub.constant";
-
+import { NODE_EVENTS, USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetNodeMpsInfo } from "@/hooks/node/use-get-mps-info";
@@ -18,8 +14,6 @@ import { useUpdateMps } from "@/hooks/node/use-update-mps";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import type { UpdateMpsPayload } from "@/types/node/node.interface";
 import { formatFileSize } from "@/utils/common/file.util";
-import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
-import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * MPS 설정 모달 컴포넌트
@@ -142,7 +136,6 @@ export function UpdateMpsModal() {
     </Modal>
   );
 }
-
 
 // 섹션 제목 스타일 (대시보드 섹션 제목 확장)
 const SectionTitle = styled(DashboardSectionTitle)`

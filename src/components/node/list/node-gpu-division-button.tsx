@@ -1,13 +1,10 @@
 ﻿import styled from "styled-components";
 import { Button } from "xiilab-ui";
-import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { MyDropdown } from "@/components/common/dropdown";
 import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
-
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
-import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * NodeGpuDivisionButton 컴포넌트의 Props 인터페이스
@@ -27,7 +24,9 @@ interface NodeGpuDivisionButtonProps {
  * @param nodeName - GPU 분할 설정을 변경할 대상 노드의 이름
  * @returns GPU 분할 설정 드롭다운 버튼 컴포넌트
  */
-export function NodeGpuDivisionButton({ nodeName }: NodeGpuDivisionButtonProps) {
+export function NodeGpuDivisionButton({
+  nodeName,
+}: NodeGpuDivisionButtonProps) {
   // Pub/Sub 이벤트 발행을 위한 훅
   const publish = usePublish();
 
@@ -75,7 +74,6 @@ export function NodeGpuDivisionButton({ nodeName }: NodeGpuDivisionButtonProps) 
     </MyDropdown>
   );
 }
-
 
 /**
  * 드롭다운 메뉴 아이템용 스타일된 버튼 컴포넌트
