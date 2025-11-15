@@ -1,10 +1,13 @@
-"use client";
+﻿"use client";
 
 import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Button, Icon, Typography } from "xiilab-ui";
 
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import {
+  PRIVATE_REGISTRY_EVENTS,
+  PRIVATE_REGISTRY_EVENTS,
+} from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetPrivateRegistryImage } from "@/hooks/registry/use-get-private-registry-image";
 import {
@@ -27,7 +30,7 @@ export function RegistryImageDetailBody() {
   });
 
   const handleDelete = () => {
-    publish(pubsubConstants.registry.sendDeletePrivateRegistryImage, {
+    publish(PRIVATE_REGISTRY_EVENTS.sendDeleteImage, {
       registryName,
       imageId,
     });
@@ -94,7 +97,6 @@ export function RegistryImageDetailBody() {
     </Container>
   );
 }
-
 
 const Container = styled(ListPageBody)``;
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import styled from "styled-components";
@@ -8,7 +8,7 @@ import { openUpdatePasswordModalAtom } from "@/atoms/common/modal.atom";
 import { LoggedInUserCard } from "@/components/common/card/logged-in-user-card";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icons";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { COMMON_EVENTS, USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpdateUser } from "@/hooks/user/use-update-user";
@@ -40,7 +40,7 @@ export function UpdatePasswordModal() {
       // TODO: validation 추가 필요
       updateUser.mutate(payload, {
         onSuccess: () => {
-          publish(pubsubConstants.user.sendUpdateUser, payload);
+          publish(USER_EVENTS.sendUpdateUser, payload);
           onClose();
         },
       });
@@ -59,7 +59,7 @@ export function UpdatePasswordModal() {
   };
 
   useSubscribe<Pick<UserListType, "name" | "email">>(
-    pubsubConstants.common.sendUpdatePassword,
+    COMMON_EVENTS.sendUpdatePassword,
     ({ name, email }) => {
       setUsername(name);
       setEmail(email);

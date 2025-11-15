@@ -2,7 +2,7 @@
 
 import { Icon } from "xiilab-ui";
 
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { WorkspaceRequestResourceListType } from "@/schemas/workspace-request-resource.schema";
 import {
@@ -18,7 +18,7 @@ export function ViewRejectResourceButton({ resource }: ViewRejectReasonButtonPro
   const publish = usePublish();
 
   const handleClickIcon = () => {
-    publish(pubsubConstants.workspace.sendRejectResource, resource);
+    publish(WORKSPACE_EVENTS.sendRejectResource, resource);
   };
 
   return (

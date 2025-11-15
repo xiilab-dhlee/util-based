@@ -1,13 +1,16 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Icon, InfoModal } from "xiilab-ui";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openViewRequestReasonModalAtom } from "@/atoms/common/modal.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { ModalDisplayReason } from "@/styles/layers/modal-layers.styled";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ViewRequestReasonModal() {
   const { open, onOpen, onClose } = useGlobalModal(
@@ -16,7 +19,7 @@ export function ViewRequestReasonModal() {
 
   const [reason, setReason] = useState<string>("");
 
-  useSubscribe<string>(pubsubConstants.common.sendRequestReason, (reason) => {
+  useSubscribe<string>(COMMON_EVENTS.sendRequestReason, (reason) => {
     setReason(reason);
     onOpen();
   });

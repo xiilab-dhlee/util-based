@@ -12,7 +12,7 @@ import {
   openSelectVolumeModalAtom,
 } from "@/atoms/volume/volume-list.atom";
 import { VolumeStorageCard } from "@/components/volume/list/volume-storage-card";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import volumeListConstants from "@/constants/volume/volume-list.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -64,7 +64,7 @@ export function SelectVolumeTypeModal() {
   /**
    * 선택된 스토리지 타입 초기화 핸들러
    */
-  useSubscribe(pubsubConstants.volume.clearSelectVolumeModal, () => {
+  useSubscribe(VOLUME_EVENTS.clearSelectVolumeModal, () => {
     setStorageType(null);
   });
 

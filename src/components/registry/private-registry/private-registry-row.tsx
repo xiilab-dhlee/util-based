@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useAtom } from "jotai";
 import type { HTMLAttributes } from "react";
 
-import { privateRegistrySelectedItemAtom } from "@/atoms/registry/private-registry-list.atom";
+import { privateRegistrySelectedItemAtom } from "@/atoms/registry/private-registry.atom";
 import type { PrivateRegistry } from "@/types/private-registry/private-registry.model";
 
 interface PrivateRegistryRowProps extends HTMLAttributes<HTMLTableRowElement> {

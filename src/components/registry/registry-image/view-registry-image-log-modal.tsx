@@ -1,6 +1,6 @@
 import { Icon, InfoModal } from "xiilab-ui";
 
-import { openRegistryImageLogModalAtom } from "@/atoms/registry/private-registry-image-detail.atom";
+import { openRegistryImageLogModalAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
 import { WorkloadLogBody } from "@/components/workload/log/workload-log-body";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 
@@ -24,4 +24,3 @@ export function ViewRegistryImageLogModal() {
     </InfoModal>
   );
 }
-

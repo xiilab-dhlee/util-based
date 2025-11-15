@@ -6,7 +6,7 @@ import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openUpdateWorkloadModalAtom } from "@/atoms/workload/workload-detail.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpdateWorkload } from "@/hooks/workload/use-update-workload";
@@ -71,7 +71,7 @@ export function UpdateWorkloadModal() {
 
   // 동기화 이벤트 구독
   useSubscribe<WorkloadDetailType>(
-    pubsubConstants.workload.sendUpdateWorkload,
+    WORKLOAD_EVENTS.sendUpdateWorkload,
     (eventData) => {
       const { id, workspaceId, workloadName, description } = eventData;
 

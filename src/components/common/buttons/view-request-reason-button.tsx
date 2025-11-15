@@ -1,12 +1,13 @@
-"use client";
+﻿"use client";
 
-import pubsubConstants from "@/constants/common/pubsub.constant";
+
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
 } from "@/styles/layers/column-layer.styled";
 import { MyIcon } from "../icons";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 
 interface ViewRequestReasonButtonProps {
   reason: string;
@@ -18,7 +19,7 @@ export function ViewRequestReasonButton({
   const publish = usePublish();
 
   const handleClickIcon = () => {
-    publish(pubsubConstants.common.sendRequestReason, reason);
+    publish(COMMON_EVENTS.sendRequestReason, reason);
   };
 
   return (

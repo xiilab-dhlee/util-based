@@ -8,7 +8,7 @@ import type { CreateCommitImagePayload } from "@/types/workload/workload.type";
  * 워크로드 커밋 이미지 생성
  */
 export const useCreateCommitImage = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateCommitImagePayload,
   unknown
@@ -20,4 +20,3 @@ export const useCreateCommitImage = (): UseMutationResult<
     onSuccess: () => {},
   });
 };
-

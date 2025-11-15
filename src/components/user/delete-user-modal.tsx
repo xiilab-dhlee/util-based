@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
 import { openDeleteSourcecodeModalAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeleteUser } from "@/hooks/user/use-delete-user";
@@ -50,7 +50,7 @@ export function DeleteUserModal() {
   /**
    * 사용자 삭제 모달 데이터 구독
    */
-  useSubscribe(pubsubConstants.user.sendDeleteUser, (users: string[]) => {
+  useSubscribe(USER_EVENTS.sendDeleteUser, (users: string[]) => {
     // 삭제할 사용자 목록 설정
     setDeleteUsers(users);
     // 삭제 모달 열기

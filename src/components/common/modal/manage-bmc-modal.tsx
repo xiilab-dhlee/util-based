@@ -1,11 +1,13 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Icon, Input, Modal } from "xiilab-ui";
+import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openManageBmcModalAtom } from "@/atoms/node/node-detail.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateBmc } from "@/hooks/node/use-create-bmc";
@@ -15,6 +17,7 @@ import type {
   CreateBmcPayload,
   UpdateBmcPayload,
 } from "@/types/node/redfish.interface";
+import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ManageBmcModal() {
   const { open, onOpen, onClose } = useGlobalModal(openManageBmcModalAtom);
@@ -58,7 +61,7 @@ export function ManageBmcModal() {
   };
 
   useSubscribe<{ nodeIp: string }>(
-    pubsubConstants.redfish.sendCreateBmc,
+    REDFISH_EVENTS.sendCreateBmc,
     (eventData) => {
       setMode("create");
       setNodeIp(eventData.nodeIp);
@@ -72,7 +75,7 @@ export function ManageBmcModal() {
   );
 
   useSubscribe<UpdateBmcPayload>(
-    pubsubConstants.redfish.sendUpdateBmc,
+    REDFISH_EVENTS.sendUpdateBmc,
     (eventData) => {
       setMode("update");
       setNodeIp(eventData.nodeIp);

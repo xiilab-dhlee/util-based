@@ -1,5 +1,6 @@
-import pubsubConstants from "@/constants/common/pubsub.constant";
+﻿
 import { usePublish } from "@/hooks/common/use-pub-sub";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 interface MonitoringNotificationNameButtonProps {
   id: string;
@@ -13,7 +14,7 @@ export function MonitoringNotificationNameButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(pubsubConstants.monitoring.sendNotificationSetting, { id });
+    publish(MONITORING_EVENTS.sendNotificationSetting, { id });
   };
 
   return (

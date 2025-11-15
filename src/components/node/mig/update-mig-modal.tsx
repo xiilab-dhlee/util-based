@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { groupBy, map } from "lodash";
@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 import { Icon, Modal, Radio } from "xiilab-ui";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 import {
   migGpuProductAtom,
@@ -16,7 +17,8 @@ import {
   selectedMigGpuIndexAtom,
 } from "@/atoms/node/node-list.atom";
 import { GuideTooltip } from "@/components/common/tooltip/guide-tooltip";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetNodeMigInfo } from "@/hooks/node/use-get-mig-info";
@@ -30,8 +32,10 @@ import MigConfigSelect from "./mig-config-select";
 import MigCountSelect from "./mig-count-select";
 import MigGpuItem from "./mig-gpu-item";
 import SelectDisplayConfig from "./select-display-config";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 // import { useDisableMig } from "@/hooks/node/use-disable-mig";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * MIG 설정 변경 모달 컴포넌트
@@ -164,7 +168,7 @@ export function UpdateMigModal() {
   /**
    * MIG 설정 변경 모달 열기 이벤트 구독
    *
-   * pubsubConstants.node.sendUpdateMig 이벤트를 구독하여
+   * NODE_EVENTS.sendUpdateMig 이벤트를 구독하여
    * 다른 컴포넌트에서 MIG 설정 변경 모달을 열도록 요청할 때 호출됩니다.
    *
    * 처리 과정:
@@ -175,7 +179,7 @@ export function UpdateMigModal() {
    * 5. 모달 열기
    */
   useSubscribe<any>(
-    pubsubConstants.node.sendUpdateMig,
+    NODE_EVENTS.sendUpdateMig,
     async ({ nodeName }) => {
       // 노드 이름 설정
       setNodeName(nodeName);

@@ -14,7 +14,7 @@ import { SearchInput } from "@/components/common/input/search-input";
 import { CustomFileTree } from "@/components/common/tree/custom-file-tree";
 import { DeleteGroupModal } from "@/components/group/delete-group-modal";
 import { GroupButton } from "@/components/group/group-button";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { GROUP_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetAllGroups } from "@/hooks/group/use-get-all-groups";
@@ -53,7 +53,7 @@ export function GroupMain() {
   };
 
   const handleDeleteGroup = () => {
-    publish(pubsubConstants.group.sendDeleteGroup, "test");
+    publish(GROUP_EVENTS.sendDeleteGroup, "test");
   };
 
   useEffect(() => {

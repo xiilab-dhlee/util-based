@@ -9,8 +9,8 @@ import {
   workspaceSearchTextAtom,
 } from "@/atoms/workspace/workspace-list.atom";
 import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
-import pubsubConstants from "@/constants/common/pubsub.constant";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -35,7 +35,7 @@ export function WorkspaceListFooter() {
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetWorkspaces({
     page,
-    size: workspaceListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -55,7 +55,7 @@ export function WorkspaceListFooter() {
     }
     // 워크스페이스 삭제 모달에 데이터 전달
     publish(
-      pubsubConstants.workspace.sendDeleteWorkspace,
+      WORKSPACE_EVENTS.sendDeleteWorkspace,
       Array.from(selectedWorkspaces),
     );
   };
@@ -64,11 +64,10 @@ export function WorkspaceListFooter() {
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
-      pageSize={workspaceListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
       rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
     />
   );
 }
-

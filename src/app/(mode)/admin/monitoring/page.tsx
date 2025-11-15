@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { MonitoringMain } from "@/components/monitoring/monitoring-main";
 
 export const metadata: Metadata = {
-  title: "모니터링 | AstraGo",
+  title: "모니터링",
 };
 
 /**

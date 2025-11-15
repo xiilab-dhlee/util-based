@@ -9,8 +9,8 @@ import {
   workspaceMemberSearchTextAtom,
 } from "@/atoms/workspace/workspace-member.atom";
 import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
-import pubsubConstants from "@/constants/common/pubsub.constant";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
+import workspaceListConstants from "@/constants/workspace/workspace.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetWorkspaceMembers } from "@/hooks/workspace/use-get-workspace-members";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -46,7 +46,7 @@ export function WorkspaceMemberFooter() {
     }
 
     publish(
-      pubsubConstants.workspace.sendDeleteWorkspaceMember,
+      WORKSPACE_EVENTS.sendDeleteWorkspaceMember,
       Array.from(selectedWorkspaceMembers),
     );
   };
@@ -62,4 +62,3 @@ export function WorkspaceMemberFooter() {
     />
   );
 }
-

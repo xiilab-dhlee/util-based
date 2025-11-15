@@ -8,7 +8,7 @@ import { openUpdateWorkspaceMemberModalAtom } from "@/atoms/workspace/workspace-
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MySelect } from "@/components/common/select";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -49,7 +49,7 @@ export function UpdateWorkspaceMemberModal() {
   };
 
   useSubscribe<WorkspaceMemberListType>(
-    pubsubConstants.workspace.sendUpdateWorkspaceMember,
+    WORKSPACE_EVENTS.sendUpdateWorkspaceMember,
     async (eventData) => {
       setWorkspaceMember(eventData);
       role.setValue(eventData.role);

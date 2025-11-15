@@ -2,7 +2,7 @@
 
 import { Icon } from "xiilab-ui";
 
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { WorkspaceMemberListType } from "@/schemas/workspace-member.schema";
 import {
@@ -16,7 +16,7 @@ export function UpdateWorkspaceMemberButton(props: UpdateWorkspaceMemberButtonPr
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(pubsubConstants.workspace.sendUpdateWorkspaceMember, props);
+    publish(WORKSPACE_EVENTS.sendUpdateWorkspaceMember, props);
   };
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { privateRegistryImageTagSearchTextAtom } from "@/atoms/registry/private-registry-image-detail.atom";
+import { privateRegistryImageTagSearchTextAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { useSearch } from "@/hooks/common/use-search";
 import { MySearchFilter } from "@/layouts/common/search-filter";
@@ -16,4 +16,3 @@ export function RegistryImageTagListFilter() {
     </MySearchFilter>
   );
 }
-

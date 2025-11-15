@@ -6,7 +6,7 @@ import { WorkspaceRequestResourceMain } from "@/components/workspace/request-res
  * 관리자 리소스 신청 관리 페이지 메타데이터
  */
 export const metadata: Metadata = {
-  title: "리소스 신청 관리 | AstraGo",
+  title: "리소스 신청 관리",
 };
 
 /**

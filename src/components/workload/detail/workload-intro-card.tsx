@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Icon, Tag } from "xiilab-ui";
 
 import { WorkloadStatusText } from "@/components/common/text/workload-status-text";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { WorkloadDetailType } from "@/schemas/workload.schema";
 import {
@@ -52,7 +52,7 @@ export function WorkloadIntroCard({
    * Pub/Sub 시스템을 통해 워크로드 수정 이벤트를 발행합니다.
    */
   const handleModify = () => {
-    publish(pubsubConstants.workload.sendUpdateWorkload, {
+    publish(WORKLOAD_EVENTS.sendUpdateWorkload, {
       id,
       workspaceId,
       workloadName,

@@ -7,7 +7,19 @@ import { DeleteWorkspaceModal } from "@/components/workspace/delete-workspace-mo
 import { WorkspaceListBody } from "@/components/workspace/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/components/workspace/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/components/workspace/list/workspace-list-footer";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import {
+  WORKSPACE_GUIDE_IMAGES,
+  WORKSPACE_GUIDES,
+} from "@/constants/workspace/workspace.constant";
+import { useGlobalModal } from "@/hooks/common/use-global-modal";
+import { PageGuide } from "@/layouts/common/page-guide";
+import { PageHeader } from "@/layouts/common/page-header";
+import { PageImageGuide } from "@/layouts/common/page-image-guide";
+import {
+  ListPageAside,
+  ListPageBody,
+  ListPageMain,
+} from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
@@ -19,20 +31,6 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   { title: "워크스페이스 관리" },
 ];
 
-import { useGlobalModal } from "@/hooks/common/use-global-modal";
-import { PageGuide } from "@/layouts/common/page-guide";
-import { PageHeader } from "@/layouts/common/page-header";
-import { PageImageGuide } from "@/layouts/common/page-image-guide";
-import {
-  ListPageAside,
-  ListPageBody,
-  ListPageMain,
-} from "@/styles/layers/list-page-layers.styled";
-
-/**
- * 워크스페이스 목록 페이지의 메인 컴포넌트
- *
- */
 export function WorkspaceListMain() {
   const { onOpen } = useGlobalModal(openCreateWorkspaceModalAtom);
 
@@ -42,7 +40,6 @@ export function WorkspaceListMain() {
 
   return (
     <>
-      {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
         title="워크스페이스 관리"
         icon="Workspace01"
@@ -64,7 +61,7 @@ export function WorkspaceListMain() {
               "있습니다. 생성된 워크스페이스를 확인하고 관리하세요.",
             ]}
             backgroundImageName="workload-intro-background.png"
-            guides={workspaceListConstants.guides}
+            guides={WORKSPACE_GUIDES}
             buttonOptions={{
               enabled: true,
               text: "워크스페이스 생성하기",
@@ -75,7 +72,7 @@ export function WorkspaceListMain() {
           {/* 워크스페이스 가이드 이미지 카드 */}
           <PageImageGuide
             title="워크스페이스 가이드"
-            guideImages={workspaceListConstants.guideImages}
+            guideImages={WORKSPACE_GUIDE_IMAGES}
           />
         </ListPageAside>
 

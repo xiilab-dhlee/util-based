@@ -5,7 +5,7 @@ import { useAtom, useAtomValue } from "jotai";
 import {
   privateRegistryPageAtom,
   privateRegistrySearchTextAtom,
-} from "@/atoms/registry/private-registry-list.atom";
+} from "@/atoms/registry/private-registry.atom";
 import privateRegistryListConstants from "@/constants/registry/private-registry-list.constant";
 import { useGetPrivateRegistries } from "@/hooks/registry/use-get-private-registries";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -38,4 +38,3 @@ export function PrivateRegistryListFooter() {
     />
   );
 }
-

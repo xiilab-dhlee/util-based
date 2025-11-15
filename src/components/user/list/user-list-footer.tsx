@@ -9,7 +9,7 @@ import {
   userSearchTextAtom,
 } from "@/atoms/user/user-list.atom";
 import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import userListConstants from "@/constants/user/user-list.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetUsers } from "@/hooks/user/use-get-users";
@@ -54,7 +54,7 @@ export function UserListFooter() {
       return;
     }
     // 사용자 삭제 모달에 데이터 전달
-    publish(pubsubConstants.user.sendDeleteUser, Array.from(selectedUsers));
+    publish(USER_EVENTS.sendDeleteUser, Array.from(selectedUsers));
   };
 
   return (

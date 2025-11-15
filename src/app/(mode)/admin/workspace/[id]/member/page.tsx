@@ -6,7 +6,7 @@ import { WorkspaceMemberMain } from "@/components/workspace/member/workspace-mem
  * 워크스페이스 관리 페이지 메타데이터
  */
 export const metadata: Metadata = {
-  title: "워크스페이스 관리 | AstraGo",
+  title: "워크스페이스 관리",
 };
 
 /**

@@ -6,7 +6,7 @@ import { SourcecodeDetailMain } from "@/components/sourcecode/detail/sourcecode-
  * 소스코드 페이지 메타데이터
  */
 export const metadata: Metadata = {
-  title: "소스코드 | AstraGo",
+  title: "소스코드",
 };
 
 /**

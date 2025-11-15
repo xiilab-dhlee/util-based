@@ -1,10 +1,13 @@
-import styled from "styled-components";
+﻿import styled from "styled-components";
 import { Button } from "xiilab-ui";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { MyDropdown } from "@/components/common/dropdown";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * NodeGpuDivisionButton 컴포넌트의 Props 인터페이스
@@ -32,11 +35,11 @@ export function NodeGpuDivisionButton({ nodeName }: NodeGpuDivisionButtonProps) 
    * MIG 설정 버튼 클릭 핸들러
    *
    * MIG 설정 옵션 클릭 시 MIG 설정 변경 모달을 열기 위한 이벤트를 발행합니다.
-   * pubsubConstants.node.sendUpdateMig 이벤트와 함께 노드 이름을 전달하여
+   * NODE_EVENTS.sendUpdateMig 이벤트와 함께 노드 이름을 전달하여
    * 해당 노드의 MIG 설정 변경 모달이 열리도록 합니다.
    */
   const handleClickMig = () => {
-    publish(pubsubConstants.node.sendUpdateMig, {
+    publish(NODE_EVENTS.sendUpdateMig, {
       nodeName,
     });
   };
@@ -45,11 +48,11 @@ export function NodeGpuDivisionButton({ nodeName }: NodeGpuDivisionButtonProps) 
    * MPS 설정 버튼 클릭 핸들러
    *
    * MPS 설정 옵션 클릭 시 MPS 설정 변경 모달을 열기 위한 이벤트를 발행합니다.
-   * pubsubConstants.node.sendUpdateMps 이벤트와 함께 노드 이름을 전달하여
+   * NODE_EVENTS.sendUpdateMps 이벤트와 함께 노드 이름을 전달하여
    * 해당 노드의 MPS 설정 변경 모달이 열리도록 합니다.
    */
   const handleClickMps = () => {
-    publish(pubsubConstants.node.sendUpdateMps, {
+    publish(NODE_EVENTS.sendUpdateMps, {
       nodeName,
     });
   };

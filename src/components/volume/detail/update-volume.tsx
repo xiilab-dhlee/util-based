@@ -8,7 +8,7 @@ import { Button, Input, Tag } from "xiilab-ui";
 
 import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetVolume } from "@/hooks/volume/use-get-volume";
 import { useUpdateVolume } from "@/hooks/volume/use-update-volume";
@@ -95,7 +95,7 @@ export function UpdateVolume() {
    */
   const handleDelete = () => {
     // 삭제 모달 열기 - PubSub 이벤트 발행
-    publish(pubsubConstants.volume.sendDeleteVolume, [
+    publish(VOLUME_EVENTS.sendDeleteVolume, [
       { uid: selectedVolume || "" },
     ]);
   };

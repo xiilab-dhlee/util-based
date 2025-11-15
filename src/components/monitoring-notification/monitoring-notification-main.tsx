@@ -1,10 +1,12 @@
-"use client";
+﻿"use client";
 
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
+
 import monitoringNotificationConstants from "@/constants/monitoring/monitoring-notification.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { PageGuide } from "@/layouts/common/page-guide";
@@ -16,6 +18,7 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   {
@@ -30,6 +33,7 @@ import ManageMonitoringNotificationModal from "./manage-monitoring-notification-
 import MonitoringNotificationListArticle from "./monitoring-notification-list-article";
 import MonitoringNotificationSettingArticle from "./monitoring-notification-setting-article";
 import ViewMonitoringNotificationModal from "./view-monitoring-notification-modal";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * 모니터링 알림 페이지의 메인 컴포넌트
@@ -44,7 +48,7 @@ export function MonitoringNotificationMain() {
   const publish = usePublish();
 
   const handleCreateNotification = () => {
-    publish(pubsubConstants.monitoring.sendUpsertNotification, {
+    publish(MONITORING_EVENTS.sendUpsertNotification, {
       id: -1,
       name: "",
       isEmail: false,

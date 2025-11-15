@@ -12,17 +12,6 @@ import { isAdminMode } from "@/utils/common/router.util";
 
 /**
  * 워크로드 상세 조회 (모드에 따라 다른 서비스 사용)
- *
- * 현재 경로가 관리자 모드인지 확인하여 적절한 서비스를 선택하고
- * 해당 서비스를 통해 워크로드 상세 정보를 조회합니다.
- *
- * @param payload - 워크로드 조회에 필요한 페이로드 (ID 등)
- * @returns React Query의 UseQueryResult 객체
- *
- * @example
- * ```tsx
- * const { data, isLoading, error } = useGetWorkloadByMode({ id: "workload-123" });
- * ```
  */
 export const useGetWorkloadByMode = (
   payload: GetWorkloadPayload,

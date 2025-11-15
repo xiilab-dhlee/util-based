@@ -1,13 +1,17 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { openDeleteRegistryImageModalAtom } from "@/atoms/registry/private-registry-image-detail.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { openDeleteRegistryImageModalAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
+import {
+  PRIVATE_REGISTRY_EVENTS,
+  PRIVATE_REGISTRY_EVENTS,
+  PRIVATE_REGISTRY_EVENTS,
+} from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeletePrivateRegistryImage } from "@/hooks/registry/use-delete-private-registry-image";
-import type { DeletePrivateRegistryImagePayload } from "@/types/registry/registry.interface";
+import type { DeletePrivateRegistryImagePayload } from "@/types/private-registry/private-registry.type";
 
 export function DeleteRegistryImageModal() {
   // 모달 상태 관리
@@ -50,7 +54,7 @@ export function DeleteRegistryImageModal() {
    * 삭제 모달 데이터 구독
    */
   useSubscribe<DeletePrivateRegistryImagePayload>(
-    pubsubConstants.registry.sendDeletePrivateRegistryImage,
+    PRIVATE_REGISTRY_EVENTS.sendDeleteImage,
     (payload: DeletePrivateRegistryImagePayload) => {
       // 삭제할 컨테이너 이미지 정보 설정
       setRegistryName(payload.registryName);
@@ -78,4 +82,3 @@ export function DeleteRegistryImageModal() {
     </Modal>
   );
 }
-

@@ -8,7 +8,7 @@ import {
   privateRegistryImageTagCheckedListAtom,
   privateRegistryImageTagPageAtom,
   privateRegistryImageTagSearchTextAtom,
-} from "@/atoms/registry/private-registry-image-detail.atom";
+} from "@/atoms/private-registry-image/admin-private-registry-image.atom";
 import privateRegistryImageDetailConstants from "@/constants/registry/private-registry-image-detail.constant";
 import { useGetPrivateRegistryImageTags } from "@/hooks/registry/use-get-private-registry-image-tags";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
@@ -77,4 +77,3 @@ export function RegistryImageTagAllCheck() {
     </ColumnAlignCenterWrap>
   );
 }
-

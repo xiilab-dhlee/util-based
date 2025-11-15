@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 
 import { workspaceRequestResourcePageAtom } from "@/atoms/workspace/workspace-request-resource.atom";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import workspaceListConstants from "@/constants/workspace/workspace.constant";
 import workspaceRequestResourceConstants from "@/constants/workspace/workspace-request-resource.constant";
 import { useGetWorkspaceRequestResources } from "@/hooks/workspace/use-get-workspace-request-resources";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -33,4 +33,3 @@ export function WorkspaceRequestResourceFooter() {
     />
   );
 }
-

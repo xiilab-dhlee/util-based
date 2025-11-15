@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import {
   privateRegistryPageAtom,
   privateRegistrySelectedItemAtom,
-} from "@/atoms/registry/private-registry-list.atom";
+} from "@/atoms/registry/private-registry.atom";
 import { sourcecodeSearchTextAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
 import { privateRegistryListColumn } from "@/components/common/columns/private-registry-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
@@ -44,4 +44,3 @@ export function PrivateRegistryListBody() {
     </ListWrapper>
   );
 }
-

@@ -1,0 +1,60 @@
+"use client";
+
+import { useAtom } from "jotai";
+import { Checkbox } from "xiilab-ui";
+
+import { privateRegistryImageTagCheckedListAtom } from "@/atoms/private-registry-image/private-registry-image.atom";
+import type { PrivateRegistryImageTagListType } from "@/schemas/private-registry-image-tag.schema";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
+
+interface PrivateRegistryImageTagItemCheckProps {
+  /** 태그 데이터 */
+  tag: PrivateRegistryImageTagListType;
+}
+
+/**
+ * 개별 내부 레지스트리 이미지 태그 선택 체크박스 컴포넌트
+ *
+ * 개별 태그를 선택/해제할 수 있는 체크박스를 제공합니다.
+ * 체크된 상태는 privateRegistryImageTagCheckedListAtom으로 관리됩니다.
+ *
+ * @param tag - 태그 데이터
+ * @returns 개별 선택 체크박스 컴포넌트
+ */
+export function PrivateRegistryImageTagItemCheck({
+  tag,
+}: PrivateRegistryImageTagItemCheckProps) {
+  const [checkedList, setCheckedList] = useAtom(
+    privateRegistryImageTagCheckedListAtom,
+  );
+
+  // 현재 태그가 선택되었는지 확인
+  const isChecked = checkedList.has(tag.id);
+
+  // 개별 선택/해제 처리
+  const handleSelect = (checked: boolean) => {
+    setCheckedList((prev) => {
+      // 기존 체크된 목록의 Set을 복사
+      const next = new Set(prev);
+
+      if (checked) {
+        next.add(tag.id);
+      } else {
+        next.delete(tag.id);
+      }
+
+      return next;
+    });
+  };
+
+  return (
+    <ColumnAlignCenterWrap>
+      <Checkbox
+        size="small"
+        checked={isChecked}
+        onChange={(e) => handleSelect(e.target.checked)}
+      />
+    </ColumnAlignCenterWrap>
+  );
+}
+

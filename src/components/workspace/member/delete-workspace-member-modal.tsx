@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
 import { openDeleteWorkspaceMemberModalAtom } from "@/atoms/workspace/workspace-member.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeleteWorkspaceMember } from "@/hooks/workspace/use-delete-workspace-member";
@@ -51,7 +51,7 @@ export function DeleteWorkspaceMemberModal() {
    * 워크스페이스 멤버 삭제 모달 데이터 구독
    */
   useSubscribe(
-    pubsubConstants.workspace.sendDeleteWorkspaceMember,
+    WORKSPACE_EVENTS.sendDeleteWorkspaceMember,
     (members: string[]) => {
       // 삭제할 워크스페이스 멤버 목록 설정
       setDeleteMembers(members);

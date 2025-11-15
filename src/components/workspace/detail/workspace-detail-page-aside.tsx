@@ -4,9 +4,9 @@ import styled from "styled-components";
 
 import { AsideFillCard } from "@/layouts/aside/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
-import WorkspaceIntroCard from "./workspace-intro-card";
-import WorkspaceResourceAllocCard from "./workspace-resource-alloc-card";
-import WorkspaceResourceUsageCard from "./workspace-resource-usage-card";
+import { WorkspaceIntroCard } from "./workspace-intro-card";
+import { WorkspaceResourceAllocCard } from "./workspace-resource-alloc-card";
+import { WorkspaceResourceUsageCard } from "./workspace-resource-usage-card";
 
 /**
  * 워크스페이스 상세 페이지의 공통 사이드바 컴포넌트
@@ -27,7 +27,6 @@ export function WorkspaceDetailPageAside() {
     </DetailPageAside>
   );
 }
-
 
 const CardWrapper = styled.div`
   display: flex;

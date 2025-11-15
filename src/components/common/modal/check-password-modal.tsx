@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import styled from "styled-components";
@@ -8,7 +8,7 @@ import { openCheckPasswordModalAtom } from "@/atoms/common/modal.atom";
 import { LoggedInUserCard } from "@/components/common/card/logged-in-user-card";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icons";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCheckPassword } from "@/hooks/user/use-check-password";
@@ -56,7 +56,7 @@ export function CheckPasswordModal() {
   };
 
   useSubscribe<Pick<UserListType, "name" | "email">>(
-    pubsubConstants.common.sendCheckPassword,
+    COMMON_EVENTS.sendCheckPassword,
     ({ name, email }) => {
       setUsername(name);
       setEmail(email);

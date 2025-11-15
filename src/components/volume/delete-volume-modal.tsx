@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
 import { openDeleteVolumeModalAtom } from "@/atoms/volume/volume-list.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeleteVolume } from "@/hooks/volume/use-delete-volume";
@@ -46,7 +46,7 @@ export function DeleteVolumeModal() {
    * 볼륨 삭제 모달 데이터 구독
    */
   useSubscribe(
-    pubsubConstants.volume.sendDeleteVolume,
+    VOLUME_EVENTS.sendDeleteVolume,
     (volumes: Pick<VolumeListType, "uid">[]) => {
       // 삭제할 볼륨 목록 설정
       setDeleteVolumes(volumes);

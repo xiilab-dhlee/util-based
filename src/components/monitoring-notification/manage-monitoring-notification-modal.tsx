@@ -1,11 +1,15 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import styled from "styled-components";
 import { Checkbox, Icon, Input, Modal, Typography } from "xiilab-ui";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openManageMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpsertMonitoringNotification } from "@/hooks/monitoring/use-upsert-notification";
@@ -15,6 +19,8 @@ import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-not
 import { FormLabel } from "../common/form/form-label";
 import { MyIcon } from "../common/icons";
 import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ManageMonitoringNotificationModal() {
   const publish = usePublish();
@@ -48,7 +54,7 @@ export function ManageMonitoringNotificationModal() {
     if (payload) {
       upsertNotification.mutate(payload, {
         onSuccess: () => {
-          publish(pubsubConstants.user.sendUpdateUser, payload);
+          publish(USER_EVENTS.sendUpdateUser, payload);
           onClose();
         },
       });
@@ -67,7 +73,7 @@ export function ManageMonitoringNotificationModal() {
   };
 
   useSubscribe<any>(
-    pubsubConstants.monitoring.sendUpsertNotification,
+    MONITORING_EVENTS.sendUpsertNotification,
     ({ id, name, nodeName, isEmail, isSystem, settings }) => {
       if (id) {
         setId(id);

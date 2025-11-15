@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
 import { openDeleteSourcecodeModalAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { SOURCECODE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeleteSourcecode } from "@/hooks/sourcecode/use-delete-sourcecode";
@@ -54,7 +54,7 @@ export function DeleteSourcecodeModal() {
    * 소스코드 삭제 모달 데이터 구독
    */
   useSubscribe(
-    pubsubConstants.sourcecode.sendDeleteSourcecode,
+    SOURCECODE_EVENTS.sendDeleteSourcecode,
     (sourcecodes: Pick<SourcecodeListType, "id">[]) => {
       // 삭제할 소스코드 목록 설정
       setDeleteSourcecodes(sourcecodes);

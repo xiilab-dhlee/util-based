@@ -12,7 +12,7 @@ import {
 } from "@/atoms/volume/volume-list.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { StorageSelect } from "@/components/common/select/storage-select";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish } from "@/hooks/common/use-pub-sub";
@@ -82,7 +82,7 @@ export function CreateAstragoVolumeModal() {
           toast.success("볼륨 생성 성공");
           onClose();
           handleClear();
-          publish(pubsubConstants.volume.clearSelectVolumeModal, payload);
+          publish(VOLUME_EVENTS.clearSelectVolumeModal, payload);
         },
       });
     }

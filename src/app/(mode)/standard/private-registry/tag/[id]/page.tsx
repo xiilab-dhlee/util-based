@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PrivateRegistryTagDetailMain } from "@/components/private-registry/tag-detail/private-registry-tag-detail-main";
 
 export const metadata: Metadata = {
-  title: "태그 상세정보 | AstraGo",
+  title: "태그 상세정보",
   description: "컨테이너 이미지 태그의 상세 정보를 확인하세요.",
 };
 

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { UserPendingListMain } from "@/components/user/pending/user-pending-list-main";
 
 export const metadata: Metadata = {
-  title: "가입 승인 관리 | AstraGo",
+  title: "가입 승인 관리",
 };
 
 /**

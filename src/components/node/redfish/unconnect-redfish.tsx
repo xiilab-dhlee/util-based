@@ -1,13 +1,15 @@
-"use client";
+﻿"use client";
 
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { Button, Icon } from "xiilab-ui";
+import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
-import pubsubConstants from "@/constants/common/pubsub.constant";
+
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetNode } from "@/hooks/node/use-get-node";
 import { SearchNoResult } from "@/layouts/common/search-no-result";
+import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * Redfish 미연동 상태를 표시하는 컴포넌트
@@ -35,7 +37,7 @@ export function UnconnectRedfish() {
   const handleClickConnectRedfish = () => {
     if (data?.node?.ip) {
       // BMC 생성 이벤트 발행 (노드 IP와 함께)
-      publish(pubsubConstants.redfish.sendCreateBmc, { nodeIp: data.node.ip });
+      publish(REDFISH_EVENTS.sendCreateBmc, { nodeIp: data.node.ip });
     } else {
       // IP 정보가 없는 경우 에러 메시지 표시
       toast.error("노드 IP 정보를 찾을 수 없습니다.");

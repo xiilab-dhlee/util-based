@@ -9,7 +9,7 @@ import {
   volumeSearchTextAtom,
 } from "@/atoms/volume/volume-list.atom";
 import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import volumeListConstants from "@/constants/volume/volume-list.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetVolumes } from "@/hooks/volume/use-get-volumes";
@@ -59,7 +59,7 @@ export function VolumeListFooter() {
     }
     // 삭제 모달에 데이터 전달
     publish(
-      pubsubConstants.volume.sendDeleteVolume,
+      VOLUME_EVENTS.sendDeleteVolume,
       Array.from(selectedVolumes),
     );
   };

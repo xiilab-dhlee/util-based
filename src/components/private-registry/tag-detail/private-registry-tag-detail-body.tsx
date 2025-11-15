@@ -5,7 +5,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Button, Card, Table, Typography } from "xiilab-ui";
 
-import { openTagLogViewModalAtom } from "@/atoms/private-registry/private-registry-modal.atom";
+// import { openTagLogViewModalAtom } from "@/atoms/private-registry/private-registry-modal.atom";
 import {
   SEVERITY_LEVEL_SECONDARY_COLORS,
   SEVERITY_LEVELS,
@@ -13,7 +13,8 @@ import {
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { AsideFillCard } from "@/layouts/aside/aside-fill-card";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
-import VulnerabilityDetailModal from "../modal/vulnerability-detail-modal";
+
+// import VulnerabilityDetailModal from "../modal/vulnerability-detail-modal";
 
 interface TagDetailBodyProps {
   isVerifying?: boolean;
@@ -24,7 +25,7 @@ export function PrivateRegistryTagDetailBody({
 }: TagDetailBodyProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
-  const { onOpen: openLogModal } = useGlobalModal(openTagLogViewModalAtom);
+  // const { onOpen: openLogModal } = useGlobalModal(openTagLogViewModalAtom);
 
   // 취약점 상세 모달 상태
   const [isVulnerabilityModalOpen, setIsVulnerabilityModalOpen] =
@@ -241,7 +242,7 @@ information about this vulnerability.`,
             variant="gradient"
             size="small"
             icon="SourceCode"
-            onClick={openLogModal}
+            // onClick={openLogModal}
             width={100}
           >
             로그 보기
@@ -267,11 +268,11 @@ information about this vulnerability.`,
       />
 
       {/* 취약점 상세 모달 */}
-      <VulnerabilityDetailModal
+      {/* <VulnerabilityDetailModal
         open={isVulnerabilityModalOpen}
         onClose={() => setIsVulnerabilityModalOpen(false)}
         vulnerabilityDetail={selectedVulnerability?.detail}
-      />
+      /> */}
     </VulnerabilityContainer>
   );
 }
@@ -374,7 +375,6 @@ export function CriticalVulnerabilityList() {
     </AsideFillCard>
   );
 }
-
 
 const VulnerabilityContainer = styled.div`
   display: flex;

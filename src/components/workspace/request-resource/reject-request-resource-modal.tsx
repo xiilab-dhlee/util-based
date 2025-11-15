@@ -5,7 +5,7 @@ import { Icon, Modal, TextArea } from "xiilab-ui";
 
 import { openRejectResourceModalAtom } from "@/atoms/workspace/workspace-request-resource.atom";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import type { WorkspaceRequestResourceListType } from "@/schemas/workspace-request-resource.schema";
@@ -36,7 +36,7 @@ export function RejectResourceModal() {
   const handleSubmit = () => {};
 
   useSubscribe<WorkspaceRequestResourceListType>(
-    pubsubConstants.workspace.sendRejectResource,
+    WORKSPACE_EVENTS.sendRejectResource,
     (eventData) => {
       setWorkspaceName(eventData.workspaceName);
       setGpuReq(eventData.gpuReq);

@@ -1,4 +1,4 @@
-import { atom } from "jotai";
+import { type Atom, atom } from "jotai";
 
 import type { FileTreeType } from "@/schemas/filetree.schema";
 
@@ -10,8 +10,8 @@ import type { FileTreeType } from "@/schemas/filetree.schema";
  * @returns 선택된 노드 정보 atom
  */
 export function createSelectedNodeInfoAtom<T extends FileTreeType>(
-  treeDataAtom: any,
-  selectedKeyAtom: any,
+  treeDataAtom: Atom<T[]>,
+  selectedKeyAtom: Atom<React.Key>,
 ) {
   return atom<T | null>((get) => {
     const treeData = get(treeDataAtom);
@@ -44,8 +44,8 @@ export function createSelectedNodeInfoAtom<T extends FileTreeType>(
  * @returns 체크된 노드들의 정보 atom
  */
 export function createCheckedNodesInfoAtom<T extends FileTreeType>(
-  treeDataAtom: any,
-  checkedNodesAtom: any,
+  treeDataAtom: Atom<T[]>,
+  checkedNodesAtom: Atom<Set<string>>,
 ) {
   return atom<T[]>((get) => {
     const treeData = get(treeDataAtom);

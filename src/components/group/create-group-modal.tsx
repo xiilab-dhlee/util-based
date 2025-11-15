@@ -46,7 +46,7 @@ export function CreateGroupModal() {
       //     toast.success("볼륨 생성 성공");
       //     onClose();
       //     handleClear();
-      //     publish(pubsubConstants.volume.clearSelectVolumeModal, payload);
+      //     publish(VOLUME_EVENTS.clearSelectVolumeModal, payload);
       //   },
       // });
     }

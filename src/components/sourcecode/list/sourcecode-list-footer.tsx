@@ -9,7 +9,7 @@ import {
   sourcecodeSearchTextAtom,
 } from "@/atoms/sourcecode/sourcecode-list.atom";
 import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { SOURCECODE_EVENTS } from "@/constants/common/pubsub.constant";
 import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
@@ -59,7 +59,7 @@ export function SourcecodeListFooter() {
     }
     // 소스코드 삭제 모달에 데이터 전달
     publish(
-      pubsubConstants.sourcecode.sendDeleteSourcecode,
+      SOURCECODE_EVENTS.sendDeleteSourcecode,
       Array.from(selectedSourcecodes),
     );
   };

@@ -6,7 +6,7 @@ import { PrivateRegistryDetailMain } from "@/components/private-registry/detail/
  * 내부 레지스트리 상세 페이지 메타데이터
  */
 export const metadata: Metadata = {
-  title: "컨테이너 이미지 상세정보 | AstraGo",
+  title: "컨테이너 이미지 상세정보",
   description: "컨테이너 이미지의 상세 정보를 확인하세요.",
 };
 

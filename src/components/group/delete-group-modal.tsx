@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
 import { openDeleteGroupModalAtom } from "@/atoms/group/group.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { GROUP_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeleteGroup } from "@/hooks/group/use-delete-group";
@@ -42,7 +42,7 @@ export function DeleteGroupModal() {
   /**
    * 그룹 삭제 모달 데이터 구독
    */
-  useSubscribe(pubsubConstants.group.sendDeleteGroup, (groupId) => {
+  useSubscribe(GROUP_EVENTS.sendDeleteGroup, (groupId) => {
     // 삭제할 그룹 ID 설정
     setDeleteGroupId(groupId as string);
     // 삭제 모달 열기

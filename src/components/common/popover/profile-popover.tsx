@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { usePathname, useRouter } from "next/navigation";
 import styled from "styled-components";
@@ -6,7 +6,11 @@ import { Button, Icon } from "xiilab-ui";
 
 import { openProfilePopoverAtom } from "@/atoms/common/modal.atom";
 import { AstragoIcon } from "@/components/common/icons/astrago-icon";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import {
+  ADMIN_ROOT_PATH,
+  STANDARD_ROOT_PATH,
+} from "@/constants/common/core.constant";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { isAdminMode } from "@/utils/common/router.util";
@@ -33,17 +37,17 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
   const handleModeSwitch = () => {
     if (isAdmin) {
       // 관리자 모드에서 사용자 모드로 전환
-      router.replace("/standard");
+      router.replace(STANDARD_ROOT_PATH);
     } else {
       // 사용자 모드에서 관리자 모드로 전환
-      router.replace("/admin");
+      router.replace(ADMIN_ROOT_PATH);
     }
   };
 
   const handleClickEdit = () => {
     onClose();
 
-    publish(pubsubConstants.common.sendCheckPassword, {
+    publish(COMMON_EVENTS.sendCheckPassword, {
       userName,
       email,
     });

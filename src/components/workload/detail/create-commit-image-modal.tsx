@@ -6,7 +6,7 @@ import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openCreateCommitImageModalAtom } from "@/atoms/workload/workload-detail.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateCommitImage } from "@/hooks/workload/use-create-commit-image";
@@ -80,7 +80,7 @@ export function CreateCommitImageModal() {
    * Commit Image 생성 모달 데이터 구독
    */
   useSubscribe<CreateCommitImagePayload>(
-    pubsubConstants.workload.sendCommitImage,
+    WORKLOAD_EVENTS.sendCommitImage,
     (eventData) => {
       // 워크로드 정보 설정
       setWorkloadId(eventData.workloadId);

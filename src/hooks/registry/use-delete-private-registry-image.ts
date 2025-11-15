@@ -2,7 +2,7 @@ import type { UseMutationResult } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
 import { useServices } from "@/providers/service-provider";
-import type { DeletePrivateRegistryImagePayload } from "@/types/registry/registry.interface";
+import type { DeletePrivateRegistryImagePayload } from "@/types/private-registry/private-registry.type";
 
 /**
  * 내부 레지스트리 내 이미지 삭제
@@ -22,4 +22,3 @@ export const useDeletePrivateRegistryImage = (): UseMutationResult<
     onSuccess: () => {},
   });
 };
-

@@ -6,7 +6,7 @@ import { RegistryImageDetailMain } from "@/components/registry/registry-image/re
  * 관리자 내부 레지스트리 페이지 메타데이터
  */
 export const metadata: Metadata = {
-  title: "내부 레지스트리 | AstraGo",
+  title: "내부 레지스트리",
 };
 
 // 관리자 레지스트리 이미지 상세 페이지

@@ -1,6 +1,6 @@
 "use client";
 
-import { privateRegistrySearchTextAtom } from "@/atoms/registry/private-registry-list.atom";
+import { privateRegistrySearchTextAtom } from "@/atoms/registry/private-registry.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { useSearch } from "@/hooks/common/use-search";
 import { MySearchFilter } from "@/layouts/common/search-filter";
@@ -16,4 +16,3 @@ export function PrivateRegistryListFilter() {
     </MySearchFilter>
   );
 }
-

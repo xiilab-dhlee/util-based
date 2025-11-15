@@ -3,7 +3,7 @@
 import { Icon } from "xiilab-ui";
 
 import { MonitoringChart } from "@/components/common/chart/monitoring-chart";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import {
   LikeCompactCardBody,
@@ -58,7 +58,7 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
    */
   const handleClickIcon = () => {
     // 모달과 데이터 동기화를 위한 PubSub 이벤트 발행
-    publish(pubsubConstants.workload.sendWorkloadMonitoring, {
+    publish(WORKLOAD_EVENTS.sendWorkloadMonitoring, {
       title: text,
       series,
       unit,

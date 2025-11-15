@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetWorkspace } from "@/hooks/workspace/use-get-workspace";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
@@ -27,7 +27,7 @@ export function WorkspaceIntroCard() {
    * Pub/Sub 시스템을 통해 워크스페이스 삭제 이벤트를 발행합니다.
    */
   const handleDelete = () => {
-    publish(pubsubConstants.workspace.sendDeleteWorkspace, [id]);
+    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, [id]);
   };
 
   return (

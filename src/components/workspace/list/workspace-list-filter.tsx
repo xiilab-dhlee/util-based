@@ -7,11 +7,11 @@ import {
   workspaceSearchTextAtom,
 } from "@/atoms/workspace/workspace-list.atom";
 import { SearchInput } from "@/components/common/input/search-input";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";
 import { MySearchFilter } from "@/layouts/common/search-filter";
-import WorkspaceSort from "./workspace-sort";
+import { WorkspaceSort } from "./workspace-sort";
 
 /**
  * 워크스페이스 목록 페이지 상단 필터 컴포넌트
@@ -29,7 +29,7 @@ export function WorkspaceListFilter() {
 
   const { data } = useGetWorkspaces({
     page,
-    size: workspaceListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -42,4 +42,3 @@ export function WorkspaceListFilter() {
     </MySearchFilter>
   );
 }
-

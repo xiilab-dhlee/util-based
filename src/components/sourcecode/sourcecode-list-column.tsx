@@ -4,6 +4,7 @@ import { Tag } from "xiilab-ui";
 
 import { SourcecodeAllCheck } from "@/components/sourcecode/list/sourcecode-all-check";
 import { SourcecodeItemCheck } from "@/components/sourcecode/list/sourcecode-item-check";
+import { CHECKBOX_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type {
   SourcecodeCodeType,
   SourcecodeListType,
@@ -14,9 +15,9 @@ import { ColumnAlignCenterWrap } from "../../styles/layers/column-layer.styled";
 export const sourcecodeListColumn: ResponsiveColumnType[] = [
   {
     title: <SourcecodeAllCheck />,
-    dataIndex: "id",
+    dataIndex: "checkbox",
     align: "center",
-    width: 40,
+    width: CHECKBOX_COLUMN_WIDTH,
     render: (id: string, record: SourcecodeListType) => {
       return <SourcecodeItemCheck sourcecode={record} />;
     },
@@ -70,4 +71,3 @@ export const sourcecodeListColumn: ResponsiveColumnType[] = [
     },
   },
 ];
-

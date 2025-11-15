@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openCreateVolumeFolderModalAtom } from "@/atoms/volume/volume-list.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateVolumeFolder } from "@/hooks/volume/use-create-volume-folder";
@@ -48,7 +48,7 @@ export function CreateVolumeFolderModal() {
   };
 
   useSubscribe(
-    pubsubConstants.volume.sendCreateVolumeFolder,
+    VOLUME_EVENTS.sendCreateVolumeFolder,
     (eventData: any) => {
       setFilePath(eventData.filePath);
       onOpen();

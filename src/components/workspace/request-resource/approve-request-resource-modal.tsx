@@ -5,7 +5,7 @@ import { Icon, Modal } from "xiilab-ui";
 
 import { openApproveResourceModalAtom } from "@/atoms/workspace/workspace-request-resource.atom";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import type { WorkspaceRequestResourceListType } from "@/schemas/workspace-request-resource.schema";
@@ -38,7 +38,7 @@ export function ApproveResourceModal() {
   const handleSubmit = () => {};
 
   useSubscribe<WorkspaceRequestResourceListType>(
-    pubsubConstants.workspace.sendApproveResource,
+    WORKSPACE_EVENTS.sendApproveResource,
     (eventData) => {
       setWorkspaceName(eventData.workspaceName);
       setGpuReq(eventData.gpuReq);

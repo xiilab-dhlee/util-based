@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
 import { volumeFileSelectedNodeInfoAtom } from "@/atoms/volume/volume-file.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
 
@@ -30,7 +30,7 @@ export function VolumeCreateFolderButton() {
       return;
     }
     // 압축 이벤트를 Pub/Sub 시스템을 통해 발행
-    publish(pubsubConstants.volume.sendCreateVolumeFolder, {
+    publish(VOLUME_EVENTS.sendCreateVolumeFolder, {
       filePath: selectedFile.path,
     });
   };

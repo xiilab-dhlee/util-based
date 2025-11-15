@@ -6,7 +6,7 @@ import styled from "styled-components";
 import {
   privateRegistryImagePageAtom,
   privateRegistrySelectedItemAtom,
-} from "@/atoms/registry/private-registry-list.atom";
+} from "@/atoms/registry/private-registry.atom";
 import privateRegistryListConstants from "@/constants/registry/private-registry-list.constant";
 import { useGetPrivateRegistryImages } from "@/hooks/registry/use-get-private-registry-images";
 import PrivateRegistryImageCard from "./private-registry-image-card";
@@ -29,7 +29,6 @@ export function PrivateRegistryImageListBody() {
     </Container>
   );
 }
-
 
 const Container = styled.div`
   flex: 1;

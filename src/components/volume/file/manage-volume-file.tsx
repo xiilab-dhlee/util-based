@@ -1,16 +1,18 @@
-"use client";
+﻿"use client";
 
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { volumeFileTreeDataAtom } from "@/atoms/volume/volume-file.atom";
 import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
 import { MyDropdown } from "@/components/common/dropdown";
 import { RootCustomFileNode } from "@/components/common/tree/custom-file-node";
 import { CustomFileTree } from "@/components/common/tree/custom-file-tree";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
+
 import securityConstants from "@/constants/security/security.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetVolumeFiles } from "@/hooks/volume/use-get-volume-files";
@@ -24,6 +26,7 @@ import { VolumeCompressFileButton } from "./volume-compress-file-button";
 import { VolumeCreateFolderButton } from "./volume-create-folder-button";
 import { VolumeFileButton } from "./volume-file-button";
 import { VolumeFileCheckbox } from "./volume-file-checkbox";
+import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * ManageVolumeFile 컴포넌트
@@ -88,7 +91,7 @@ export function ManageVolumeFile() {
    */
   const handleShowVulnerability = () => {
     publish(
-      pubsubConstants.common.sendVulnerability,
+      COMMON_EVENTS.sendVulnerability,
       securityConstants.vulnerabilityDemo,
     );
   };

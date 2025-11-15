@@ -2,7 +2,7 @@ import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 
 import registryKeys from "@/constants/registry/registry.key";
 import { useServices } from "@/providers/service-provider";
-import type { GetPrivateRegistryImageTagVulnerabilityListPayload } from "@/types/registry/registry.interface";
+import type { GetPrivateRegistryImageTagVulnerabilityListPayload } from "@/types/private-registry/private-registry.type";
 import type { Vulnerability } from "@/types/security/security.model";
 
 /**
@@ -26,4 +26,3 @@ export const useGetPrivateRegistryImageTagVulnerabilities = (
     enabled: !!payload.tagId,
   });
 };
-

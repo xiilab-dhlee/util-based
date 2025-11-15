@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
 import { DrawerCloseButton } from "@/components/common/buttons/drawer-close-button";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { SOURCECODE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetSourcecode } from "@/hooks/sourcecode/use-get-sourcecode";
 import { useUpdateSourcecode } from "@/hooks/sourcecode/use-update-sourcecode";
@@ -106,7 +106,7 @@ export function UpdateSourcecode() {
    */
   const handleDelete = () => {
     // 소스코드 삭제 모달에 데이터 전달
-    publish(pubsubConstants.sourcecode.sendDeleteSourcecode, [id]);
+    publish(SOURCECODE_EVENTS.sendDeleteSourcecode, [id]);
   };
 
   /**

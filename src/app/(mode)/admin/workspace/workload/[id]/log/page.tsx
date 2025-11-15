@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { WorkloadLogMain } from "@/components/workload/log/workload-log-main";
 
 export const metadata: Metadata = {
-  title: "워크로드 상세 | AstraGo",
+  title: "워크로드 상세",
 };
 
 /**

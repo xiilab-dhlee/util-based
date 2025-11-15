@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { privateRegistryImageTagCheckedListAtom } from "@/atoms/registry/private-registry-image-detail.atom";
+import { privateRegistryImageTagCheckedListAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import type { RegistryImageTag } from "@/types/registry/registry.model";
 
@@ -48,4 +48,3 @@ export function RegistryImageTagItemCheck({
     </ColumnAlignCenterWrap>
   );
 }
-

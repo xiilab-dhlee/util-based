@@ -1,10 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import { Icon, Modal, TextArea } from "xiilab-ui";
+import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openRejectRequestImageModalAtom } from "@/atoms/request-image/request-image-list.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import type { RequestImageListType } from "@/schemas/request-image.schema";
@@ -12,6 +14,7 @@ import { FormItem } from "@/styles/layers/form-layer.styled";
 import { ModalDescription } from "@/styles/layers/modal-layers.styled";
 import type { UpdateRequestImagePayload } from "@/types/request-image/request-image.type";
 import FormLabel from "../common/form/form-label";
+import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function RejectRequestImageModal() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -40,7 +43,7 @@ export function RejectRequestImageModal() {
   };
 
   useSubscribe<RequestImageListType>(
-    pubsubConstants.requestImage.sendRejectImage,
+    REQUEST_IMAGE_EVENTS.sendRejectImage,
     (eventData: any) => {
       setId(eventData.id);
       onOpen();

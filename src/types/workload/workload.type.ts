@@ -8,7 +8,7 @@ export type WorkloadFileIndentPosition = "first" | "middle" | "last";
 
 export interface GetWorkloadsPayload
   extends CorePayload,
-    CorePaginate,
+    Partial<CorePaginate>,
     CoreSearchText {}
 
 export interface GetWorkloadPayload extends CorePayload {

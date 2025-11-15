@@ -38,7 +38,7 @@ const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "ComparativeExperiment",
       // },
       {
-        key: "private-registry",
+        key: "private-registry-image",
         label: "내부 레지스트리",
         icon: <MyIcon name="Image" />,
       },

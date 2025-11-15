@@ -5,6 +5,10 @@ export const LIST_PAGE_SIZE = 20;
 export const ICON_COLUMN_WIDTH = 40;
 /** 체크박스 컬럼 너비 */
 export const CHECKBOX_COLUMN_WIDTH = 40;
+/** 사용자 모드 루트 경로 */
+export const STANDARD_ROOT_PATH = "/standard/dashboard";
+/** 관리자 모드 루트 경로 */
+export const ADMIN_ROOT_PATH = "/admin/monitoring";
 /** 전체 옵션 */
 export const ALL_OPTION = {
   label: "전체",

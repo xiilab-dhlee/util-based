@@ -5,7 +5,7 @@ import { useAtom, useAtomValue } from "jotai";
 import {
   privateRegistryImageTagSearchTextAtom,
   privateRegistryImageTagVulnerabilityPageAtom,
-} from "@/atoms/registry/private-registry-image-detail.atom";
+} from "@/atoms/private-registry-image/admin-private-registry-image.atom";
 import { registryImageTagListColumn } from "@/components/common/columns/registry-image-tag-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import privateRegistryImageDetailConstants from "@/constants/registry/private-registry-image-detail.constant";
@@ -40,4 +40,3 @@ export function RegistryImageTagListBody() {
     </ListWrapper>
   );
 }
-

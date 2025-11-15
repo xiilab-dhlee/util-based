@@ -6,7 +6,7 @@ import { PrivateRegistryListMain } from "@/components/private-registry/list/priv
  * 표준 사용자 프라이빗 레지스트리 페이지 메타데이터
  */
 export const metadata: Metadata = {
-  title: "내부 레지스트리 | AstraGo",
+  title: "내부 레지스트리",
   description: "내부 컨테이너 레지스트리를 관리하세요.",
 };
 

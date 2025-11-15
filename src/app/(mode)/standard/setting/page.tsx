@@ -6,7 +6,7 @@ import type { Metadata } from "next";
  * 표준 사용자 설정 페이지 메타데이터
  */
 export const metadata: Metadata = {
-  title: "설정 | AstraGo",
+  title: "설정",
   description: "멤버 관리, 워크스페이스 정보, 리소스 신청 현황을 관리하세요.",
 };
 

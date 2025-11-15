@@ -8,7 +8,7 @@ import { openUpdateUserModalAtom } from "@/atoms/user/user-list.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MySelect } from "@/components/common/select";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -46,7 +46,7 @@ export function UpdateUserModal() {
   };
 
   useSubscribe<UserListType>(
-    pubsubConstants.user.sendUpdateUser,
+    USER_EVENTS.sendUpdateUser,
     async (eventData) => {
       setUser(eventData);
       role.setValue(eventData.role);

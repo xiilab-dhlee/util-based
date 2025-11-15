@@ -1,11 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
+import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
-import pubsubConstants from "@/constants/common/pubsub.constant";
+
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetNodeBmcInfo } from "@/hooks/node/use-get-bmc-info";
 import { useGetNode } from "@/hooks/node/use-get-node";
@@ -36,6 +37,7 @@ import ReadonlyNetworkAdapter from "./readonly-network-adapter";
 import ReadonlyPowerSupplies from "./readonly-power-supplies";
 import ReadonlyProcessor from "./readonly-processor";
 import ReadonlyThermal from "./readonly-thermal";
+import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * Redfish 연동 상태의 메인 컴포넌트
@@ -74,7 +76,7 @@ export function ReadyRedfish() {
    */
   const handleClickUpdateBmc = () => {
     if (bmcData) {
-      publish(pubsubConstants.redfish.sendUpdateBmc, bmcData);
+      publish(REDFISH_EVENTS.sendUpdateBmc, bmcData);
     } else {
       toast.error("노드 BMC 정보를 찾을 수 없습니다.");
     }

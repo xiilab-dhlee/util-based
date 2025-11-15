@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
 import { openCompressVolumeFileModalAtom } from "@/atoms/volume/volume-list.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCompressVolumeFile } from "@/hooks/volume/use-compress-volume-file";
@@ -37,7 +37,7 @@ export function CompressVolumeFileModal() {
   };
 
   useSubscribe(
-    pubsubConstants.volume.sendCompressVolumeFile,
+    VOLUME_EVENTS.sendCompressVolumeFile,
     (eventData: any) => {
       setFilePaths(eventData.filePaths);
       onOpen();

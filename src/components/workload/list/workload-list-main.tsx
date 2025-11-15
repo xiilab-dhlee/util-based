@@ -27,7 +27,7 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
     icon: "Dashboard",
     href: "/standard",
   },
-  { title: "워크로드", href: "/standard/workload" },
+  { title: "워크로드" },
 ];
 
 export function WorkloadListMain() {

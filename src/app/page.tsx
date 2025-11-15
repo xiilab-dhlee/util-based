@@ -1,4 +1,9 @@
 import { redirect } from "next/navigation";
+
+import {
+  ADMIN_ROOT_PATH,
+  STANDARD_ROOT_PATH,
+} from "@/constants/common/core.constant";
 // import { getServerSession } from "next-auth";
 
 // import { authOptions } from "@/lib/auth";
@@ -25,9 +30,9 @@ export default async function HomePage() {
 
   // 관리자는 관리자 대시보드로
   if (userRoles.includes("admin")) {
-    redirect("/admin");
+    redirect(ADMIN_ROOT_PATH);
   }
 
   // 표준 사용자는 표준 대시보드로
-  redirect("/standard");
+  redirect(STANDARD_ROOT_PATH);
 }

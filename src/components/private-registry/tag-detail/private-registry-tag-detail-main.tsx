@@ -10,10 +10,11 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import TagLogViewModal from "../modal/tag-log-view-modal";
-import PrivateRegistryTagDetailAside from "./private-registry-tag-detail-aside";
-import PrivateRegistryTagDetailBody, {
+// import TagLogViewModal from "../modal/tag-log-view-modal";
+import { PrivateRegistryTagDetailAside } from "./private-registry-tag-detail-aside";
+import {
   CriticalVulnerabilityList,
+  PrivateRegistryTagDetailBody,
 } from "./private-registry-tag-detail-body";
 
 interface TagDetailMainProps {
@@ -76,7 +77,7 @@ export function PrivateRegistryTagDetailMain({
       </ListPageMain>
 
       {/* 로그 보기 모달 */}
-      <TagLogViewModal />
+      {/* <TagLogViewModal /> */}
     </>
   );
 }

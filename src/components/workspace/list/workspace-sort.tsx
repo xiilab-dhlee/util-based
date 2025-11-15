@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 
 import { workspaceSortAtom } from "@/atoms/workspace/workspace-list.atom";
 import { MySelect } from "@/components/common/select";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import { WORKSPACE_SORT_OPTIONS } from "@/constants/workspace/workspace.constant";
 
 /**
  * 워크스페이스 정렬 컴포넌트
@@ -16,7 +16,6 @@ import workspaceListConstants from "@/constants/workspace/workspace-list.constan
  * @returns 워크스페이스 정렬 선택 드롭다운 컴포넌트
  */
 export function WorkspaceSort() {
-  // Jotai atom을 사용하여 워크스페이스 정렬 기준 관리
   const [sortBy, setSortBy] = useAtom(workspaceSortAtom);
 
   /**
@@ -32,13 +31,12 @@ export function WorkspaceSort() {
 
   return (
     <MySelect
-      options={workspaceListConstants.sort} // 워크스페이스 정렬 옵션들
-      placeholder="정렬" // 플레이스홀더 텍스트
-      setValue={handleChange} // 값 변경 핸들러
-      value={sortBy} // 현재 선택된 정렬 기준 값
-      width={160} // 선택기 너비
-      height={30} // 선택기 높이
+      options={WORKSPACE_SORT_OPTIONS}
+      placeholder="정렬"
+      setValue={handleChange}
+      value={sortBy}
+      width={160}
+      height={30}
     />
   );
 }
-

@@ -4,7 +4,7 @@ import type {
   GetPrivateRegistryImagesPayload,
   GetPrivateRegistryImageTagsPayload,
   GetPrivateRegistryImageTagVulnerabilityListPayload,
-} from "@/types/registry/registry.interface";
+} from "@/types/private-registry/private-registry.type";
 
 const registryKeys = {
   default: ["registry"],
@@ -14,18 +14,7 @@ const registryKeys = {
     "private-registry-list",
     ...Object.values(payload),
   ],
-  // 내부 레지스트리 이미지 목록
-  privateRegistryimageList: (payload: GetPrivateRegistryImagesPayload) => [
-    ...registryKeys.default,
-    "private-registry-image-list",
-    ...Object.values(payload),
-  ],
-  // 내부 레지스트리 내 이미지 상세
-  privateRegistryImageDetail: (payload: GetPrivateRegistryImagePayload) => [
-    ...registryKeys.default,
-    "private-registry-image-detail",
-    ...Object.values(payload),
-  ],
+
   // 내부 레지스트리 내 이미지 태그 목록
   privateRegistryImageTags: (payload: GetPrivateRegistryImageTagsPayload) => [
     ...registryKeys.default,

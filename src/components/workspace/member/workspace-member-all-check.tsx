@@ -9,7 +9,7 @@ import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
 } from "@/atoms/workspace/workspace-member.atom";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import workspaceListConstants from "@/constants/workspace/workspace.constant";
 import { useGetWorkspaceMembers } from "@/hooks/workspace/use-get-workspace-members";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
@@ -84,4 +84,3 @@ export function WorkspaceMemberAllCheck() {
     </ColumnAlignCenterWrap>
   );
 }
-

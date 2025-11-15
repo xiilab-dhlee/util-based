@@ -1,0 +1,23 @@
+import { atom } from "jotai";
+import { atomWithReset } from "jotai/utils";
+
+// 검색 필터 - 페이지 번호
+export const privateRegistryImagePageAtom = atomWithReset<number>(1);
+// 검색 필터 - 검색어
+export const privateRegistryImageSearchTextAtom = atom<string>("");
+// 체크된 이미지 목록
+export const privateRegistryImageCheckedListAtom = atomWithReset<Set<number>>(
+  new Set(),
+);
+// 태그 검색 필터 - 페이지 번호
+export const privateRegistryImageTagPageAtom = atomWithReset<number>(1);
+// 태그 검색 필터 - 검색어
+export const privateRegistryImageTagSearchTextAtom = atom<string>("");
+// 체크된 태그 목록
+export const privateRegistryImageTagCheckedListAtom = atomWithReset<
+  Set<number>
+>(new Set());
+// 내부 레지스트리 이미지 생성 모달 표시 여부
+export const openCreatePrivateRegistryImageModalAtom = atom<boolean>(false);
+// 내부 레지스트리 이미지 수정 모달 표시 여부
+export const openUpdatePrivateRegistryImageModalAtom = atom<boolean>(false);

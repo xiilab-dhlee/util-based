@@ -6,9 +6,9 @@ import {
   workspacePageAtom,
   workspaceSearchTextAtom,
 } from "@/atoms/workspace/workspace-list.atom";
-import createWorkspaceListColumn from "@/components/common/columns/create-workspace-column";
+import { createWorkspaceColumn } from "@/components/common/columns/create-workspace-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -27,14 +27,14 @@ export function WorkspaceListBody() {
 
   const { data } = useGetWorkspaces({
     page,
-    size: workspaceListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={createWorkspaceListColumn([
+        columns={createWorkspaceColumn([
           { dataIndex: "checkbox" },
           { dataIndex: "name" },
           { dataIndex: "creatorName" },
@@ -50,8 +50,8 @@ export function WorkspaceListBody() {
           { dataIndex: "memQuota" },
         ])}
         data={data?.content || []}
+        columnHeight={40}
       />
     </ListWrapper>
   );
 }
-

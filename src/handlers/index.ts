@@ -3,11 +3,14 @@
  * 모든 도메인별 핸들러를 하나로 통합하여 export
  */
 
-import { notificationHandlers } from "./notification.handler";
 import { groupHandlers } from "./group.handler";
 import { hubHandlers } from "./hub.handler";
 import { monitoringHandlers } from "./monitoring.handler";
 import { nodeHandlers } from "./node.handler";
+import { notificationHandlers } from "./notification.handler";
+import { privateRegistryHandlers } from "./private-registry.handler";
+import { privateRegistryImageHandlers } from "./private-registry-image.handler";
+import { privateRegistryImageTagHandlers } from "./private-registry-image-tag.handler";
 import { requestImageHandlers } from "./request-image.handler";
 import { sourcecodeHandlers } from "./sourcecode.handler";
 import { userHandlers } from "./user.handler";
@@ -30,4 +33,7 @@ export const combinedHandlers = [
   ...groupHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,
+  ...privateRegistryHandlers,
+  ...privateRegistryImageHandlers,
+  ...privateRegistryImageTagHandlers,
 ];

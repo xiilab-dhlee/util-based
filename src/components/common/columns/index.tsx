@@ -48,5 +48,17 @@ export const commonColumns: ResponsiveColumnType[] = [
       return <span>{format(creatorDateTime, "yyyy.MM.dd HH:mm:ss")}</span>;
     },
   },
+  {
+    dataIndex: "updatedAt",
+    title: "수정일",
+    align: "center",
+    width: 140,
+    render: (updatedAt: string) => {
+      return (
+        <ColumnAlignCenterWrap>
+          {format(updatedAt, "yyyy.MM.dd")}
+        </ColumnAlignCenterWrap>
+      );
+    },
+  },
 ];
-

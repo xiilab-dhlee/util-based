@@ -3,7 +3,7 @@ import { Icon, InfoModal } from "xiilab-ui";
 
 import { openViewWorkloadMonitoringModalAtom } from "@/atoms/workload/workload-detail.atom";
 import { MonitoringChart } from "@/components/common/chart/monitoring-chart";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 
@@ -35,7 +35,7 @@ type SyncWorkloadMonitoringPayload = {
  *
  * 사용법:
  * 1. openViewWorkloadMonitoringModalAtom을 true로 설정하여 모달 열기
- * 2. pubsubConstants.workload.sendWorkloadMonitoring 이벤트로 데이터 전송
+ * 2. WORKLOAD_EVENTS.sendWorkloadMonitoring 이벤트로 데이터 전송
  * 3. 모달이 자동으로 데이터를 수신하고 차트 업데이트
  *
  * @returns 워크로드 모니터링 모달 JSX 요소
@@ -54,11 +54,11 @@ export function ViewWorkloadMonitoringModal() {
 
   /**
    * 워크로드 모니터링 데이터 구독
-   * pubsubConstants.workload.sendWorkloadMonitoring 이벤트를 구독하여
+   * WORKLOAD_EVENTS.sendWorkloadMonitoring 이벤트를 구독하여
    * 실시간으로 모니터링 데이터를 수신하고 상태를 업데이트합니다.
    */
   useSubscribe<SyncWorkloadMonitoringPayload>(
-    pubsubConstants.workload.sendWorkloadMonitoring,
+    WORKLOAD_EVENTS.sendWorkloadMonitoring,
     (eventData) => {
       setTitle(eventData.title);
       setSeries(eventData.series);

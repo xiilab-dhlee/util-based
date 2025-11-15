@@ -1,12 +1,16 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openUpdateMpsModalAtom } from "@/atoms/node/node-list.atom";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetNodeMpsInfo } from "@/hooks/node/use-get-mps-info";
@@ -14,6 +18,8 @@ import { useUpdateMps } from "@/hooks/node/use-update-mps";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import type { UpdateMpsPayload } from "@/types/node/node.interface";
 import { formatFileSize } from "@/utils/common/file.util";
+import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
+import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * MPS 설정 모달 컴포넌트
@@ -53,7 +59,7 @@ export function UpdateMpsModal() {
     if (payload) {
       updateMps.mutate(payload, {
         onSuccess: () => {
-          publish(pubsubConstants.user.sendUpdateUser, payload);
+          publish(USER_EVENTS.sendUpdateUser, payload);
           onClose();
         },
       });
@@ -70,7 +76,7 @@ export function UpdateMpsModal() {
   };
 
   // MPS 업데이트 이벤트 구독
-  useSubscribe<any>(pubsubConstants.node.sendUpdateMps, ({ nodeName }) => {
+  useSubscribe<any>(NODE_EVENTS.sendUpdateMps, ({ nodeName }) => {
     setNodeName(nodeName);
     onOpen();
   });

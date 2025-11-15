@@ -3,7 +3,6 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { NotificationService } from "@/services/notification/notification.service";
 import { CredentialService } from "@/services/credential/credential.service";
 import { GroupService } from "@/services/group/group.service";
 import { HubService } from "@/services/hub/hub.service";
@@ -11,7 +10,10 @@ import { MonitoringService } from "@/services/monitoring/monitoring.service";
 import { NodeService } from "@/services/node/node.service";
 import { RedfishService } from "@/services/node/redfish.service";
 import { RedfishBmcService } from "@/services/node/redfish-bmc.service";
-import { PrivateRegistryService } from "@/services/registry/private-registry.service";
+import { NotificationService } from "@/services/notification/notification.service";
+import { PrivateRegistryService } from "@/services/private-registry/private-registry.service";
+import { AdminPrivateRegistryImageService } from "@/services/private-registry-image/admin-private-registry-image.service";
+import { PrivateRegistryImageService } from "@/services/private-registry-image/private-registry-image.service";
 import { RequestImageService } from "@/services/request-image/request-image.service";
 import { SourcecodeService } from "@/services/sourcecode/sourcecode.service";
 import { StorageService } from "@/services/storage/storage.service";
@@ -40,6 +42,8 @@ interface ServiceContextType {
   redfishService: RedfishService;
   requestImageService: RequestImageService;
   privateRegistryService: PrivateRegistryService;
+  privateRegistryImageService: PrivateRegistryImageService;
+  adminPrivateRegistryImageService: AdminPrivateRegistryImageService;
 }
 
 // 서비스 컨텍스트 생성
@@ -77,6 +81,8 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     redfishService: new RedfishService(),
     requestImageService: new RequestImageService(),
     privateRegistryService: new PrivateRegistryService(),
+    privateRegistryImageService: new PrivateRegistryImageService(),
+    adminPrivateRegistryImageService: new AdminPrivateRegistryImageService(),
   };
 
   return (

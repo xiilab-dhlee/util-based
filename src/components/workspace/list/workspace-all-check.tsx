@@ -9,7 +9,7 @@ import {
   workspacePageAtom,
   workspaceSearchTextAtom,
 } from "@/atoms/workspace/workspace-list.atom";
-import workspaceListConstants from "@/constants/workspace/workspace-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";
 import type { WorkspaceListType } from "@/schemas/workspace.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
@@ -30,7 +30,7 @@ export function WorkspaceAllCheck() {
   // 현재 페이지의 워크스페이스 목록 조회
   const { data } = useGetWorkspaces({
     page,
-    size: workspaceListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -64,10 +64,14 @@ export function WorkspaceAllCheck() {
 
       if (checked) {
         // 현재 페이지의 모든 워크스페이스 선택
-        currentPageIds.forEach((id: string) => next.add(id));
+        currentPageIds.forEach((id: string) => {
+          next.add(id);
+        });
       } else {
         // 현재 페이지의 모든 워크스페이스 선택 해제
-        currentPageIds.forEach((id: string) => next.delete(id));
+        currentPageIds.forEach((id: string) => {
+          next.delete(id);
+        });
       }
 
       return next;
@@ -85,4 +89,3 @@ export function WorkspaceAllCheck() {
     </ColumnAlignCenterWrap>
   );
 }
-

@@ -1,16 +1,19 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openViewMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
-import pubsubConstants from "@/constants/common/pubsub.constant";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
+
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetMonitoringNotificationSetting } from "@/hooks/monitoring/use-get-monitoring-notification-setting";
 import ModalDetailCard from "../common/card/modal-detail-card";
 import ReadOnlyMonitoringNotificationSetting from "./read-only-monitoring-notification-setting";
+import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ViewMonitoringNotificationModal() {
   const publish = usePublish();
@@ -25,12 +28,12 @@ export function ViewMonitoringNotificationModal() {
   const { data } = useGetMonitoringNotificationSetting(id);
 
   const handleSubmit = () => {
-    publish(pubsubConstants.monitoring.sendUpsertNotification, data);
+    publish(MONITORING_EVENTS.sendUpsertNotification, data);
     onClose();
   };
 
   useSubscribe<any>(
-    pubsubConstants.monitoring.sendNotificationSetting,
+    MONITORING_EVENTS.sendNotificationSetting,
     ({ id }) => {
       setId(id);
       onOpen();

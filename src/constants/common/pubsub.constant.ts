@@ -4,7 +4,7 @@
  */
 
 // 워크스페이스 관련 이벤트
-const WORKSPACE_EVENTS = {
+export const WORKSPACE_EVENTS = {
   // 워크스페이스 삭제에 필요한 정보 전달 이벤트
   sendDeleteWorkspace: "workspace:send-delete-workspace",
   // 워크스페이스 멤버 계정 정보 수정에 필요한 정보 전달 이벤트
@@ -22,7 +22,7 @@ const WORKSPACE_EVENTS = {
 } as const;
 
 // 워크로드 관련 이벤트
-const WORKLOAD_EVENTS = {
+export const WORKLOAD_EVENTS = {
   // 워크로드 수정에 필요한 정보 전달 이벤트
   sendUpdateWorkload: "workload:send-update-workload",
   // 커밋 이미지 생성에 필요한 정보 전달 이벤트
@@ -32,13 +32,13 @@ const WORKLOAD_EVENTS = {
 } as const;
 
 // 소스코드 관련 이벤트
-const SOURCECODE_EVENTS = {
+export const SOURCECODE_EVENTS = {
   // 소스코드 삭제에 필요한 정보 전달 이벤트
   sendDeleteSourcecode: "sourcecode:send-delete-sourcecode",
 } as const;
 
 // 볼륨 관련 이벤트
-const VOLUME_EVENTS = {
+export const VOLUME_EVENTS = {
   // 볼륨 삭제에 필요한 정보 전달 이벤트
   sendDeleteVolume: "volume:send-delete-volume",
   // 볼륨 선택 모달 초기화 이벤트
@@ -49,17 +49,14 @@ const VOLUME_EVENTS = {
   sendCreateVolumeFolder: "volume:send-create-volume-folder",
 } as const;
 
-// 허브 관련 이벤트
-const HUB_EVENTS = {} as const;
-
 // 그룹 관련 이벤트
-const GROUP_EVENTS = {
+export const GROUP_EVENTS = {
   // 그룹 삭제에 필요한 정보 전달 이벤트
   sendDeleteGroup: "group:send-delete-group",
 } as const;
 
 // 사용자 관련 이벤트
-const USER_EVENTS = {
+export const USER_EVENTS = {
   // 사용자 정보 수정에 필요한 정보 전달 이벤트
   sendUpdateUser: "user:send-update-user",
   // 사용자 삭제에 필요한 정보 전달 이벤트
@@ -69,7 +66,7 @@ const USER_EVENTS = {
 } as const;
 
 // 노드 관련 이벤트
-const NODE_EVENTS = {
+export const NODE_EVENTS = {
   // MPS 설정 수정에 필요한 정보 전달 이벤트
   sendUpdateMps: "node:send-update-mps",
   // MIG 설정 수정에 필요한 정보 전달 이벤트
@@ -77,7 +74,7 @@ const NODE_EVENTS = {
 } as const;
 
 // Redfish 관련 이벤트
-const REDFISH_EVENTS = {
+export const REDFISH_EVENTS = {
   // BMC 관리(Create/Update)에 필요한 정보 전달 이벤트
   sendCreateBmc: "redfish:send-manage-bmc",
   sendUpdateBmc: "redfish:send-manage-bmc",
@@ -86,17 +83,25 @@ const REDFISH_EVENTS = {
 } as const;
 
 // 이미지 요청 관련 이벤트
-const REQUEST_IMAGE_EVENTS = {
+export const REQUEST_IMAGE_EVENTS = {
   // 이미지 요청 승인 모달에 필요한 정보 전달 이벤트
   sendApproveImage: "request-image:send-approve-image",
   // 이미지 요청 반려 모달에 필요한 정보 전달 이벤트
   sendRejectImage: "request-image:send-reject-image",
 } as const;
 
-// 레지스트리 관련 이벤트
-const REGISTRY_EVENTS = {
+// 내부 레지스트리 관련 이벤트
+export const PRIVATE_REGISTRY_EVENTS = {
   // 내부 레지스트리 내 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeletePrivateRegistryImage: "registry:send-delete-private-registry-image",
+  sendDeleteImage: "registry:send-delete-private-registry-image",
+} as const;
+
+// 내부 레지스트리 이미지 관련 이벤트
+export const PRIVATE_REGISTRY_IMAGE_EVENTS = {
+  // 내부 레지스트리 이미지 수정에 필요한 정보 전달 이벤트
+  sendUpdateImage: "private-registry-image:send-update-private-registry-image",
+  // 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
+  sendDeleteImage: "private-registry-image:send-delete-private-registry-image",
 } as const;
 
 // 리포트 관련 이벤트
@@ -105,14 +110,14 @@ const REGISTRY_EVENTS = {
 //   sendCreateReport: "report:send-create-report",
 // } as const;
 // 모니터링 관련 이벤트
-const MONITORING_EVENTS = {
+export const MONITORING_EVENTS = {
   // 모니터링 알림 설정 모달에 필요한 정보 전달 이벤트
   sendUpsertNotification: "monitoring:send-upsert-monitoring-notification",
   sendNotificationSetting: "monitoring:send-notification-setting",
 } as const;
 
 // 공통 이벤트
-const COMMON_EVENTS = {
+export const COMMON_EVENTS = {
   // 공통 취약점 모달에 필요한 정보 전달 이벤트
   sendVulnerability: "common:send-vulnerability",
   // 공통 신청 사유 모달에 필요한 정보 전달 이벤트
@@ -126,23 +131,3 @@ const COMMON_EVENTS = {
   // 비밀번호 수정 모달에 필요한 정보 전달 이벤트
   sendUpdatePassword: "user:send-update-password",
 } as const;
-
-// 전체 이벤트 상수 객체
-const pubsubConstants = {
-  workspace: WORKSPACE_EVENTS,
-  workload: WORKLOAD_EVENTS,
-  sourcecode: SOURCECODE_EVENTS,
-  volume: VOLUME_EVENTS,
-  hub: HUB_EVENTS,
-  group: GROUP_EVENTS,
-  user: USER_EVENTS,
-  node: NODE_EVENTS,
-  redfish: REDFISH_EVENTS,
-  registry: REGISTRY_EVENTS,
-  requestImage: REQUEST_IMAGE_EVENTS,
-  // report: REPORT_EVENTS,
-  monitoring: MONITORING_EVENTS,
-  common: COMMON_EVENTS,
-} as const;
-
-export default pubsubConstants;
