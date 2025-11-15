@@ -3,10 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // React 컴파일러 활성화
   reactCompiler: true,
+  // styled-components 활성화
   compiler: {
     styledComponents: true,
   },
-  // API 프록시 설정 - CORS 문제 해결 및 API 경로 단순화
+  // API 프록시 설정
   rewrites: async () => {
     const rewriteRules = [
       {
@@ -26,8 +27,6 @@ const nextConfig: NextConfig = {
         destination: `${process.env.NEXT_PUBLIC_PREDICTION_API_URL}/:path*`,
       },
     ];
-
-    console.table(rewriteRules);
 
     return rewriteRules;
   },

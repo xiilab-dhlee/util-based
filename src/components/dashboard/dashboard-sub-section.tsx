@@ -9,7 +9,7 @@ import { CustomizedTable } from "../common/table/customized-table";
 export function DashboardSubSection() {
   return (
     <Container>
-      <Left>
+      <Pane>
         <ArticleTitle>
           <SectionTitle>고정 워크로드 정보</SectionTitle>
           <ArticleDescription>
@@ -38,8 +38,8 @@ export function DashboardSubSection() {
             }}
           />
         </ListWrapper>
-      </Left>
-      <Right>
+      </Pane>
+      <Pane>
         <ArticleTitle>
           <SectionTitle>자원회수 워크로드 정보</SectionTitle>
           <ArticleDescription>
@@ -49,7 +49,9 @@ export function DashboardSubSection() {
         <ListWrapper>
           <CustomizedTable
             columns={createWorkloadColumn([
-              { dataIndex: "workloadName", title: "이름" },
+              // { dataIndex: "workloadName", title: "이름" },
+              { dataIndex: "workloadName" },
+              { dataIndex: "jobType" },
               { dataIndex: "creatorName", title: "사용자" },
               { dataIndex: "labels", title: "라벨" },
               { dataIndex: "status" },
@@ -67,7 +69,7 @@ export function DashboardSubSection() {
             }}
           />
         </ListWrapper>
-      </Right>
+      </Pane>
     </Container>
   );
 }
@@ -80,7 +82,7 @@ const Container = styled.section`
   height: 492px;
 `;
 
-const Left = styled.article`
+const Pane = styled.article`
   flex: 1;
   height: 100%;
   padding: 23px;
@@ -92,10 +94,10 @@ const Left = styled.article`
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
 `;
 
-const Right = styled(Left)`
-  flex: 0;
-  flex-basis: 620px;
-`;
+// const Right = styled(Left)`
+//   flex: 0;
+//   flex-basis: 620px;
+// `;
 
 const ArticleTitle = styled.div`
   display: flex;
