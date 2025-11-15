@@ -13,7 +13,7 @@ import { useGetHubs } from "@/hooks/hub/use-get-hubs";
 import { ListEmpty } from "@/layouts/list/list-empty";
 import type { HubListType } from "@/schemas/hub.schema";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import HubCard from "./hub-card";
+import { HubCard } from "./hub-card";
 
 /**
  * HubListBody 컴포넌트
@@ -21,18 +21,6 @@ import HubCard from "./hub-card";
  * 허브 목록 페이지의 본문 컴포넌트입니다.
  * 허브 데이터를 그리드 형태로 표시하며, 페이지네이션과 검색 기능을 지원합니다.
  * 데이터 로드 시 첫 번째 허브를 자동으로 선택하여 사이드바에 상세 정보를 표시합니다.
- *
- * 주요 기능:
- * - 허브 목록을 그리드 형태로 표시
- * - 페이지네이션 지원 (페이지 번호, 페이지 크기)
- * - 검색 기능 지원 (검색어 기반 필터링)
- * - 첫 번째 허브 자동 선택
- * - 반응형 그리드 레이아웃 (최소 280px, 최대 4컬럼)
- *
- * 상태 관리:
- * - hubPageAtom: 현재 페이지 번호
- * - hubSearchTextAtom: 검색 텍스트
- * - hubSelectedAtom: 선택된 허브 ID
  *
  * @returns 허브 목록을 그리드로 표시하는 본문 컴포넌트 JSX 요소
  */
@@ -81,4 +69,3 @@ export function HubListBody() {
     </ListWrapper>
   );
 }
-

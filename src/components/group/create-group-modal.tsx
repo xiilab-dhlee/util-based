@@ -6,14 +6,16 @@ import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 // import { toast } from "react-toastify";
 
+// import { toast } from "react-toastify";
+
 import { openCreateGroupModalAtom } from "@/atoms/group/group.atom";
 import { memberAddModalOpenAtom } from "@/atoms/setting/setting-modal.atom";
 import { CreateModelButton } from "@/components/common/buttons/create-model-button";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyMultipleSelect } from "@/components/common/select/multiple";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { CreateGroupPayload } from "@/types/group/group.type";
 
 export function CreateGroupModal() {
@@ -134,4 +136,3 @@ export function CreateGroupModal() {
     </Modal>
   );
 }
-

@@ -5,13 +5,13 @@ import { toast } from "react-toastify";
 import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openUpdateWorkloadModalAtom } from "@/atoms/workload/workload-detail.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import pubsubConstants from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpdateWorkload } from "@/hooks/workload/use-update-workload";
 import type { WorkloadDetailType } from "@/schemas/workload.schema";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { UpdateWorkloadPayload } from "@/types/workload/workload.type";
 
 /**
@@ -132,4 +132,3 @@ export function UpdateWorkloadModal() {
     </Modal>
   );
 }
-

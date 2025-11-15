@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { Card, CardImageContainer, CardImagePlaceholder } from "xiilab-ui";
 
 import { hubSelectedAtom } from "@/atoms/hub/hub-list.atom";
-import withSafeProps from "@/components/common/hocs/with-safe-props";
 import type { HubListType } from "@/schemas/hub.schema";
 
 interface HubCardProps extends HubListType {}
@@ -17,16 +16,9 @@ interface HubCardProps extends HubListType {}
  * 허브 정보를 카드 형태로 표시하며, 클릭 시 해당 허브를 선택합니다.
  * 허브의 썸네일 이미지, 제목, 설명을 포함한 주요 정보를 시각적으로 표현합니다.
  *
- * 주요 기능:
- * - 허브 썸네일 이미지 표시
- * - 허브 제목과 부제목 표시
- * - 허브 설명 텍스트 표시 (최대 3줄, 초과 시 줄임표 처리)
- * - 카드 클릭 시 허브 선택 상태 변경
- * - 선택된 허브 카드 시각적 구분
- *
  * @returns 허브 정보를 담은 카드 컴포넌트
  */
-function HubCardComponent({ id, title, description }: HubCardProps) {
+export function HubCard({ id, title, description }: HubCardProps) {
   // 허브 선택 상태를 변경하기 위한 atom setter
   const [selectedHub, setSelectedHub] = useAtom(hubSelectedAtom);
 
@@ -60,20 +52,6 @@ function HubCardComponent({ id, title, description }: HubCardProps) {
     </Card>
   );
 }
-
-/**
- * HubCard 컴포넌트
- *
- * withSafeProps HOC로 감싸진 허브 카드 컴포넌트입니다.
- * props의 안전성을 보장하고 에러 경계를 제공합니다.
- *
- * @param props - HubCardProps 타입의 props
- * @returns 안전성이 보장된 허브 카드 컴포넌트
- */
-const HubCard = (props: HubCardProps) => {
-  return withSafeProps(HubCardComponent)(props);
-};
-
 
 /**
  * 허브 설명 텍스트를 위한 스타일드 컴포넌트

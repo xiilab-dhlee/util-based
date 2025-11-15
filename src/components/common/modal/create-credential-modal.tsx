@@ -4,14 +4,13 @@ import { useRef } from "react";
 import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
-import { FormRow } from "@/components/common/form/form-row";
 import { MySelect } from "@/components/common/select";
 import credentialListConstants from "@/constants/credential/credential-list.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSelect } from "@/hooks/common/use-select";
 import { useCreateCredential } from "@/hooks/credential/use-create-credential";
+import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type {
   CreateCredentialPayload,
   CredentialType,
@@ -153,4 +152,3 @@ export function CreateCredentialModal() {
     </Modal>
   );
 }
-

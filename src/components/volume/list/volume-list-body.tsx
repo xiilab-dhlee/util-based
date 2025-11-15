@@ -14,7 +14,7 @@ import { useGetVolumes } from "@/hooks/volume/use-get-volumes";
 import { ListEmpty } from "@/layouts/list/list-empty";
 import type { VolumeListType } from "@/schemas/volume.schema";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import VolumeCard from "./volume-card";
+import { VolumeCard } from "./volume-card";
 
 /**
  * 볼륨 목록 페이지 본문 컴포넌트
@@ -67,7 +67,6 @@ export function VolumeListBody() {
     </ListWrapper>
   );
 }
-
 
 const StyledGridList = styled(GridList)`
   --icon-fill: #5b29c7;

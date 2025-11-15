@@ -10,9 +10,7 @@ import {
   openCreateAstragoVolumeModalAtom,
   openSelectVolumeModalAtom,
 } from "@/atoms/volume/volume-list.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
-import { FormRow } from "@/components/common/form/form-row";
 import { StorageSelect } from "@/components/common/select/storage-select";
 import pubsubConstants from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
@@ -20,6 +18,7 @@ import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useUploadFile } from "@/hooks/common/use-upload-file";
 import { useCreateVolume } from "@/hooks/volume/use-create-volume";
+import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
 import { formatFileSize } from "@/utils/common/file.util";
 import { AstragoIcon } from "../common/icons/astrago-icon";
@@ -205,7 +204,6 @@ export function CreateAstragoVolumeModal() {
     </Modal>
   );
 }
-
 
 /**
  * 모달 아이콘 래퍼 스타일

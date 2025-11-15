@@ -10,9 +10,9 @@ import {
   openUpdateWorkspaceModalAtom,
   updateWorkspaceModalDataAtom,
 } from "@/atoms/workspace/workspace-modal.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import { useUpdateWorkspace } from "@/hooks/workspace/use-update-workspace";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { UpdateWorkspacePayload } from "@/types/workspace/workspace.interface";
 
 /**
@@ -134,4 +134,3 @@ export function UpdateWorkspaceModal() {
     </Modal>
   );
 }
-

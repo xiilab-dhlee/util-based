@@ -6,7 +6,6 @@ import { Input, Modal } from "xiilab-ui";
 
 import { openUpdatePasswordModalAtom } from "@/atoms/common/modal.atom";
 import { LoggedInUserCard } from "@/components/common/card/logged-in-user-card";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icons";
 import pubsubConstants from "@/constants/common/pubsub.constant";
@@ -15,6 +14,7 @@ import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpdateUser } from "@/hooks/user/use-update-user";
 import type { UserListType } from "@/schemas/user.schema";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { UpdateUserPayload } from "@/types/user/user.type";
 
 /**

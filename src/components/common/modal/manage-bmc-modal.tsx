@@ -4,13 +4,13 @@ import { useState } from "react";
 import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openManageBmcModalAtom } from "@/atoms/node/node-detail.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import pubsubConstants from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateBmc } from "@/hooks/node/use-create-bmc";
 import { useUpdateBmc } from "@/hooks/node/use-update-bmc";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type {
   CreateBmcPayload,
   UpdateBmcPayload,
@@ -148,4 +148,3 @@ export function ManageBmcModal() {
     </Modal>
   );
 }
-

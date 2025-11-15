@@ -3,7 +3,7 @@
  * 모든 도메인별 핸들러를 하나로 통합하여 export
  */
 
-import { alertHandlers } from "./alert.handler";
+import { notificationHandlers } from "./notification.handler";
 import { groupHandlers } from "./group.handler";
 import { hubHandlers } from "./hub.handler";
 import { monitoringHandlers } from "./monitoring.handler";
@@ -28,6 +28,6 @@ export const combinedHandlers = [
   ...nodeHandlers,
   ...userHandlers,
   ...groupHandlers,
-  ...alertHandlers,
+  ...notificationHandlers,
   ...monitoringHandlers,
 ];

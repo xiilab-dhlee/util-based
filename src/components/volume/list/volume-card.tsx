@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
-import withSafeProps from "@/components/common/hocs/with-safe-props";
 import { MyIcon } from "@/components/common/icons";
 import { PreviewTag } from "@/components/common/tag/preview-tag";
 import type { VolumeListType } from "@/schemas/volume.schema";
@@ -21,7 +20,7 @@ interface VolumeCardProps extends VolumeListType {
  * 볼륨 정보를 카드 형태로 표시하며, 클릭 시 상세 페이지로 이동합니다.
  * 보안 취약점 정보와 태그를 포함한 볼륨의 주요 정보를 시각적으로
  */
-function VolumeCardComponent({
+export function VolumeCard({
   uid,
   name,
   creatorName,
@@ -101,22 +100,6 @@ function VolumeCardComponent({
     </Card>
   );
 }
-
-/**
- * VolumeCard 컴포넌트
- *
- * withSafeProps HOC로 감싸진 볼륨 카드 컴포넌트입니다.
- * props의 안전성을 보장하고 에러 경계를 제공합니다.
- *
- * @param props - Volume 타입의 props
- * @returns 안전성이 보장된 볼륨 카드 컴포넌트
- */
-const VolumeCard = (props: VolumeCardProps) => {
-  return withSafeProps(VolumeCardComponent)(props);
-};
-
-
-// ===== Styled Components =====
 
 /**
  * 카드 컨테이너 스타일

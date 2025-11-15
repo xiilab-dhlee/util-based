@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SettingMain } from "@/components/setting/setting-main";
+// import { SettingMain } from "@/components/setting/setting-main";
 
 /**
  * 표준 사용자 설정 페이지 메타데이터
@@ -19,5 +19,6 @@ export const metadata: Metadata = {
  * 참고: 인증 및 권한 체크는 middleware.ts에서 처리됨
  */
 export default async function StandardSettingPage() {
-  return <SettingMain />;
+  // return <SettingMain />;
+  return null;
 }

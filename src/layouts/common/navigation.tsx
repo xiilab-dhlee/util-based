@@ -152,7 +152,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         icon: <MyIcon name="Setting01" />,
         children: [
           { key: "user", label: "계정 관리" },
-          { key: "alert", label: "알림 관리" },
+          { key: "notification", label: "알림 관리" },
         ],
       },
     ],

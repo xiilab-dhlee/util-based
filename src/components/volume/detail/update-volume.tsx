@@ -29,8 +29,8 @@ import {
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
 import type { UpdateVolumePayload } from "@/types/volume/volume.type";
-import EmptyVolumeWorkload from "./empty-volume-workload";
-import VolumeWorkloadCard from "./volume-workload-card";
+import { EmptyVolumeWorkload } from "./empty-volume-workload";
+import { VolumeWorkloadCard } from "./volume-workload-card";
 
 /**
  * 볼륨 수정 컴포넌트
@@ -352,7 +352,6 @@ export function UpdateVolume() {
     </>
   );
 }
-
 
 const SecondaryArticle = styled(AsideDetailArticle)`
   flex: 1;

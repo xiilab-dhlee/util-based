@@ -10,12 +10,11 @@ import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpsertMonitoringNotification } from "@/hooks/monitoring/use-upsert-notification";
 import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
+import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-notification/monitoring-notification.type";
-import FormItem from "../common/form/form-item";
-import FormLabel from "../common/form/form-label";
-import FormRow from "../common/form/form-row";
-import MyIcon from "../common/icons";
-import ManageMonitoringNotificationSetting from "./manage-monitoring-notification-setting";
+import { FormLabel } from "../common/form/form-label";
+import { MyIcon } from "../common/icons";
+import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
 
 export function ManageMonitoringNotificationModal() {
   const publish = usePublish();
@@ -174,7 +173,6 @@ export function ManageMonitoringNotificationModal() {
     </Modal>
   );
 }
-
 
 const ChannelRow = styled.div`
   display: flex;

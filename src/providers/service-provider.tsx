@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { AlertService } from "@/services/alert/alert.service";
+import { NotificationService } from "@/services/notification/notification.service";
 import { CredentialService } from "@/services/credential/credential.service";
 import { GroupService } from "@/services/group/group.service";
 import { HubService } from "@/services/hub/hub.service";
@@ -32,7 +32,7 @@ interface ServiceContextType {
   hubService: HubService;
   userService: UserService;
   groupService: GroupService;
-  alertService: AlertService;
+  notificationService: NotificationService;
   monitoringService: MonitoringService;
   adminWorkloadService: AdminWorkloadService;
   nodeService: NodeService;
@@ -69,7 +69,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     hubService: new HubService(),
     userService: new UserService(),
     groupService: new GroupService(),
-    alertService: new AlertService(),
+    notificationService: new NotificationService(),
     monitoringService: new MonitoringService(),
     adminWorkloadService: new AdminWorkloadService(),
     nodeService: new NodeService(),

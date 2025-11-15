@@ -9,9 +9,9 @@ import pubsubConstants from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateVolumeFolder } from "@/hooks/volume/use-create-volume-folder";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumeFolderPayload } from "@/types/volume/volume.type";
-import FormItem from "../common/form/form-item";
-import FormLabel from "../common/form/form-label";
+import { FormLabel } from "../common/form/form-label";
 
 export function CreateVolumeFolderModal() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -92,4 +92,3 @@ export function CreateVolumeFolderModal() {
     </Modal>
   );
 }
-

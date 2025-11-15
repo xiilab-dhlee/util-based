@@ -8,13 +8,12 @@ import { toast } from "react-toastify";
 import { DateRange, Icon, Modal } from "xiilab-ui";
 
 import { openCreateReportModalAtom } from "@/atoms/report/report.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
-import { FormRow } from "@/components/common/form/form-row";
 import { MySelect } from "@/components/common/select";
 import reportConstants from "@/constants/report/report.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSelect } from "@/hooks/common/use-select";
+import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 
 export function CreateReportModal() {
   const router = useRouter();
@@ -113,4 +112,3 @@ export function CreateReportModal() {
     </Modal>
   );
 }
-

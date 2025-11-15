@@ -28,9 +28,9 @@ import {
 import type { UpdateSourcecodePayload } from "@/types/sourcecode/sourcecode.type";
 import { getBackPathname } from "@/utils/common/router.util";
 import { getSourcecodeTypeInfo } from "@/utils/sourcecode/sourcecode.util";
-import ManageCredential from "../manage-credential";
-import ManageParameter from "../manage-parameter";
-import ReadOnlyParameter from "./read-only-parameter";
+import { ManageCredential } from "../manage-credential";
+import { ManageParameter } from "../manage-parameter";
+import { ReadOnlyParameter } from "./read-only-parameter";
 
 /**
  * 소스코드 수정 컴포넌트
@@ -326,7 +326,6 @@ export function UpdateSourcecode() {
     </AsideDetailForm>
   );
 }
-
 
 /**
  * 두 번째 아티클 스타일

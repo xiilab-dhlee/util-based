@@ -10,7 +10,7 @@ import pubsubConstants from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { isAdminMode } from "@/utils/common/router.util";
-import { UserAlert } from "../../../layouts/common/user-alert";
+import { UserNotification } from "../../../layouts/common/user-notification";
 
 interface ProfilePopoverProps {
   userName: string;
@@ -118,7 +118,7 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
           </Button>
         </User>
         {/* 알림 */}
-        <UserAlert />
+        <UserNotification />
       </Body>
     </Container>
   );

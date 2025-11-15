@@ -19,11 +19,11 @@ import {
   AsideDetailArticleBody,
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
-import PreviewVolumeFile from "./preview-volume-file";
-import VolumeCompressFileButton from "./volume-compress-file-button";
-import VolumeCreateFolderButton from "./volume-create-folder-button";
-import VolumeFileButton from "./volume-file-button";
-import VolumeFileCheckbox from "./volume-file-checkbox";
+import { PreviewVolumeFile } from "./preview-volume-file";
+import { VolumeCompressFileButton } from "./volume-compress-file-button";
+import { VolumeCreateFolderButton } from "./volume-create-folder-button";
+import { VolumeFileButton } from "./volume-file-button";
+import { VolumeFileCheckbox } from "./volume-file-checkbox";
 
 /**
  * ManageVolumeFile 컴포넌트
@@ -214,7 +214,6 @@ export function ManageVolumeFile() {
     </>
   );
 }
-
 
 // ============================================================================
 // Styled Components

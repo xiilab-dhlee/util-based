@@ -6,7 +6,6 @@ import { Input, Modal } from "xiilab-ui";
 
 import { openCheckPasswordModalAtom } from "@/atoms/common/modal.atom";
 import { LoggedInUserCard } from "@/components/common/card/logged-in-user-card";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icons";
 import pubsubConstants from "@/constants/common/pubsub.constant";
@@ -14,6 +13,7 @@ import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCheckPassword } from "@/hooks/user/use-check-password";
 import type { UserListType } from "@/schemas/user.schema";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { CheckPasswordPayload } from "@/types/user/user.type";
 
 /**

@@ -6,7 +6,6 @@ import { Icon, Modal } from "xiilab-ui";
 
 import { openUpdateUserModalAtom } from "@/atoms/user/user-list.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MySelect } from "@/components/common/select";
 import pubsubConstants from "@/constants/common/pubsub.constant";
@@ -16,6 +15,7 @@ import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useSelect } from "@/hooks/common/use-select";
 import { useUpdateUser } from "@/hooks/user/use-update-user";
 import type { UserListType } from "@/schemas/user.schema";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 import type { UpdateWorkspaceMemberPayload } from "@/types/workspace/workspace.interface";
 
@@ -119,7 +119,6 @@ export function UpdateUserModal() {
     </Modal>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

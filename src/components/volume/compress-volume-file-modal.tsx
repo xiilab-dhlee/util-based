@@ -10,7 +10,7 @@ import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCompressVolumeFile } from "@/hooks/volume/use-compress-volume-file";
 import type { CoreFileCompressionType } from "@/types/common/core.interface";
-import FormLabel from "../common/form/form-label";
+import { FormLabel } from "../common/form/form-label";
 
 export function CompressVolumeFileModal() {
   // 모달 상태 관리
@@ -74,7 +74,6 @@ export function CompressVolumeFileModal() {
     </InfoModal>
   );
 }
-
 
 /**
  * 스토리지 타입 카드들을 감싸는 스타일드 컴포넌트

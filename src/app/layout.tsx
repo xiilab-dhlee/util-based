@@ -1,4 +1,3 @@
-// 전역 스타일 및 외부 라이브러리 CSS 임포트
 import "@xterm/xterm/css/xterm.css";
 import "react-toastify/dist/ReactToastify.css";
 

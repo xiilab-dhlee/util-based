@@ -5,10 +5,10 @@ import styled from "styled-components";
 import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateWorkspaceModalAtom } from "@/atoms/common/modal.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useCreateWorkspace } from "@/hooks/workspace/use-create-workspace";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { CreateWorkspacePayload } from "@/types/workspace/workspace.interface";
 
 /**
@@ -104,7 +104,6 @@ export function CreateWorkspaceModal() {
     </Modal>
   );
 }
-
 
 const Resources = styled.ul`
   display: flex;

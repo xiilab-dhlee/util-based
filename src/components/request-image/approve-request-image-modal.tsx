@@ -8,9 +8,9 @@ import pubsubConstants from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import type { RequestImageListType } from "@/schemas/request-image.schema";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import { ModalDescription } from "@/styles/layers/modal-layers.styled";
 import type { UpdateRequestImagePayload } from "@/types/request-image/request-image.type";
-import FormItem from "../common/form/form-item";
 import FormLabel from "../common/form/form-label";
 
 export function ApproveRequestImageModal() {
@@ -86,4 +86,3 @@ export function ApproveRequestImageModal() {
     </Modal>
   );
 }
-

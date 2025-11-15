@@ -13,8 +13,8 @@ import {
   AsideDetailHeader,
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
-import ManageVolumeFile from "../file/manage-volume-file";
-import UpdateVolume from "./update-volume";
+import { ManageVolumeFile } from "../file/manage-volume-file";
+import { UpdateVolume } from "./update-volume";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {
@@ -97,4 +97,3 @@ export function AsideVolume() {
     </AsideDetailContainer>
   );
 }
-

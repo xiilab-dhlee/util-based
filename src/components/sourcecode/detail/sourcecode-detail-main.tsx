@@ -1,6 +1,6 @@
 "use client";
 
-import UpdateSourcecode from "./update-sourcecode";
+import { UpdateSourcecode } from "./update-sourcecode";
 
 /**
  * 소스코드 목록 페이지의 메인 컴포넌트
@@ -13,4 +13,3 @@ import UpdateSourcecode from "./update-sourcecode";
 export function SourcecodeDetailMain() {
   return <UpdateSourcecode />;
 }
-

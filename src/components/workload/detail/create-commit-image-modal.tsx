@@ -5,12 +5,12 @@ import { toast } from "react-toastify";
 import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openCreateCommitImageModalAtom } from "@/atoms/workload/workload-detail.atom";
-import { FormItem } from "@/components/common/form/form-item";
 import { FormLabel } from "@/components/common/form/form-label";
 import pubsubConstants from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateCommitImage } from "@/hooks/workload/use-create-commit-image";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { CreateCommitImagePayload } from "@/types/workload/workload.type";
 
 /**
@@ -138,4 +138,3 @@ export function CreateCommitImageModal() {
     </Modal>
   );
 }
-
