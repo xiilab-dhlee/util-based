@@ -6,8 +6,8 @@ import type {
   ReactElement,
 } from "react";
 import { Children, cloneElement, isValidElement } from "react";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import { ColumnIconWrap } from "../../../styles/layers/column-layer.styled";
 
 interface ToggleTableRowProps
@@ -42,7 +42,7 @@ export function ToggleTableRow({
             onClick={onToggle}
             className={classNames("hide-box", { rotate: toggle })}
           >
-            <Icon name="Dropdown" color="#000" size={16} />
+            <MyIcon name="Dropdown" color="#000" size={16} />
           </ColumnIconWrap>
         ),
       };

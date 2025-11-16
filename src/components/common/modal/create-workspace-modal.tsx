@@ -2,10 +2,11 @@
 
 import { useRef } from "react";
 import styled from "styled-components";
-import { Icon, Input, Modal, TextArea } from "xiilab-ui";
+import { Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateWorkspaceModalAtom } from "@/atoms/common/modal.atom";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useCreateWorkspace } from "@/hooks/workspace/use-create-workspace";
 import { FormItem } from "@/styles/layers/form-layer.styled";
@@ -48,7 +49,7 @@ export function CreateWorkspaceModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Plus" color="#fff" size={18} />}
+      icon={<MyIcon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

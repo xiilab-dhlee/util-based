@@ -1,7 +1,8 @@
 import type { SelectProps } from "antd";
 import { Select } from "antd";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+
+import { MyIcon } from "@/components/common/icon";
 
 interface MyMultipleSelectProps extends SelectProps {}
 
@@ -11,14 +12,13 @@ export function MyMultipleSelect({ ...props }: MyMultipleSelectProps) {
       mode="multiple"
       suffixIcon={
         <IconWrapper>
-          <Icon name="Dropdown" color="var(--icon-fill)" size={18} />
+          <MyIcon name="Dropdown" color="var(--icon-fill)" size={18} />
         </IconWrapper>
       }
       {...props}
     />
   );
 }
-
 
 const IconWrapper = styled.div`
   display: flex;

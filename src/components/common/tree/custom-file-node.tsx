@@ -4,8 +4,8 @@ import classNames from "classnames";
 import type { ComponentType, PropsWithChildren, ReactNode } from "react";
 import { createElement } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import type { FileTreeType } from "@/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/types/common/core.interface";
 import type { CoreFileButton } from "@/types/common/core.model";
@@ -48,7 +48,7 @@ export function RootCustomFileNode({ children }: PropsWithChildren) {
   return (
     <Container>
       <ListIconWrapper>
-        <Icon name="FormatListBulleted" color="#fff" size={20} />
+        <MyIcon name="FormatListBulleted" color="#fff" size={20} />
       </ListIconWrapper>
       {children}
     </Container>
@@ -211,7 +211,7 @@ export function CustomFileNode({
         })}
         onClick={handleIconClick}
       >
-        <Icon name="CaretDown" color="var(--icon-fill)" size={16} />
+        <MyIcon name="CaretDown" color="var(--icon-fill)" size={16} />
       </IconWrapper>
       {createElement(fileButton, {
         activeKey: path,

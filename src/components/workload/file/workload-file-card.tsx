@@ -1,9 +1,9 @@
 "use client";
 import { useSetAtom } from "jotai";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
 import { workloadFileSelectedKeyAtom } from "@/atoms/workload/workload-file.atom";
+import { MyIcon } from "@/components/common/icon";
 import type { FileTreeType } from "@/schemas/filetree.schema";
 import { WorkloadFileCheckbox } from "./workload-file-checkbox";
 
@@ -19,7 +19,7 @@ export function WorkloadFileCard({
 }: WorkloadFileCardProps) {
   const setSelectedKey = useSetAtom(workloadFileSelectedKeyAtom);
 
-  // 파일 타입에 따른 아이콘 이름을 반환하는 함수
+  // ?�일 ?�?�에 ?�른 ?�이�??�름??반환?�는 ?�수
   const getFileIcon = (): string => {
     if (type === "directory") return "FolderFiled";
 
@@ -58,7 +58,7 @@ export function WorkloadFileCard({
         </CheckboxWraper>
       )}
       <Body>
-        <Icon
+        <MyIcon
           name={getFileIcon()}
           size={34}
           color={type === "directory" ? "#9DA6BC" : ""}

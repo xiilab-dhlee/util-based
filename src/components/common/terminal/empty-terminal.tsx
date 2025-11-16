@@ -1,12 +1,13 @@
 "use client";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+
+import { MyIcon } from "@/components/common/icon";
 
 export function EmptyTerminal() {
   return (
     <Container>
       <IconWrapper>
-        <Icon name="Terminal" size={48} color="var(--gray04)" />
+        <MyIcon name="Terminal" size={48} color="var(--gray04)" />
       </IconWrapper>
       <Title>터미널을 시작하려면 연결 정보를 설정하세요</Title>
       <Description>
@@ -15,7 +16,6 @@ export function EmptyTerminal() {
     </Container>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+
+import { MyIcon } from "@/components/common/icon";
 
 /**
  * 대시보드 빠른 메뉴 컴포넌트의 Props 인터페이스
@@ -66,12 +67,12 @@ export function DashboardQuickMenu({
     <Container href={href} $height={height}>
       {/* 메인 기능 아이콘 - 좌상단에 위치 */}
       <FeatureIconWrapper>
-        <Icon name={icon} color="var(--icon-fill)" size={iconSize} />
+        <MyIcon name={icon} color="var(--icon-fill)" size={iconSize} />
       </FeatureIconWrapper>
 
       {/* 빠른 메뉴 표시 아이콘 - 우상단에 위치 */}
       <QuickMenuIconWrapper>
-        <Icon name="Decrease" color="var(--icon-fill)" size={24} />
+        <MyIcon name="Decrease" color="var(--icon-fill)" size={24} />
         <span className="sr-only">페이지 바로가기</span>
       </QuickMenuIconWrapper>
 
@@ -83,7 +84,6 @@ export function DashboardQuickMenu({
     </Container>
   );
 }
-
 
 /**
  * 빠른 메뉴 카드의 메인 컨테이너 스타일

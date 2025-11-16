@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon, Modal } from "xiilab-ui";
+import { Modal } from "xiilab-ui";
 
 import { openUpdateWorkspaceMemberModalAtom } from "@/atoms/workspace/workspace-member.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
-import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
+import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/constants/workspace/workspace-member.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useSelect } from "@/hooks/common/use-select";
@@ -30,7 +31,7 @@ export function UpdateWorkspaceMemberModal() {
   const [workspaceMember, setWorkspaceMember] =
     useState<WorkspaceMemberListType | null>(null);
 
-  const role = useSelect("", workspaceMemberConstants.role);
+  const role = useSelect("", WORKSPACE_MEMBER_ROLE_OPTIONS);
 
   const handleSubmit = () => {
     const payload = createPayload();
@@ -61,7 +62,7 @@ export function UpdateWorkspaceMemberModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Edit02" color="#fff" size={18} />}
+      icon={<MyIcon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

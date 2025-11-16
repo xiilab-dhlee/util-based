@@ -1,9 +1,10 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { Icon, InfoModal } from "xiilab-ui";
+import { InfoModal } from "xiilab-ui";
 
 import { openViewRequestReasonModalAtom } from "@/atoms/common/modal.atom";
+import { MyIcon } from "@/components/common/icon";
 import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -25,7 +26,7 @@ export function ViewRequestReasonModal() {
     <InfoModal
       type="primary"
       modalWidth={300}
-      icon={<Icon name="AllowRequest" color="#fff" size={18} />}
+      icon={<MyIcon name="AllowRequest" color="#fff" size={18} />}
       open={open}
       closable
       onClose={onClose}

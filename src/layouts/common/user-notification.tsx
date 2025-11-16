@@ -3,8 +3,8 @@
 import classNames from "classnames";
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import { useSelect } from "@/hooks/common/use-select";
 import { ListEmpty } from "@/layouts/list/list-empty";
@@ -57,7 +57,7 @@ export function UserNotification() {
               <>
                 <Item>
                   <IconWrapper>
-                    <Icon name="NotiFilled" color="#A4C8FF" size={14} />
+                    <MyIcon name="NotiFilled" color="#A4C8FF" size={14} />
                   </IconWrapper>
                   <ItemBody>
                     <ItemMessage>
@@ -68,7 +68,7 @@ export function UserNotification() {
                 </Item>
                 <Item>
                   <IconWrapper>
-                    <Icon name="Delete" color="#fff" size={14} />
+                    <MyIcon name="Delete" color="#fff" size={14} />
                   </IconWrapper>
                   <ItemBody>
                     <ItemMessage>
@@ -79,7 +79,7 @@ export function UserNotification() {
                 </Item>
                 <Item>
                   <IconWrapper>
-                    <Icon name="PriorityHigh" color="#FFA3A3" size={14} />
+                    <MyIcon name="PriorityHigh" color="#FFA3A3" size={14} />
                   </IconWrapper>
                   <ItemBody>
                     <ItemMessage>
@@ -90,7 +90,7 @@ export function UserNotification() {
                 </Item>
                 <Item>
                   <IconWrapper>
-                    <Icon name="PersonFilled" color="#A4C8FF" size={14} />
+                    <MyIcon name="PersonFilled" color="#A4C8FF" size={14} />
                   </IconWrapper>
                   <ItemBody>
                     <ItemMessage>
@@ -101,7 +101,7 @@ export function UserNotification() {
                 </Item>
                 <Item>
                   <IconWrapper>
-                    <Icon name="Delete" color="#fff" size={14} />
+                    <MyIcon name="Delete" color="#fff" size={14} />
                   </IconWrapper>
                   <ItemBody>
                     <ItemMessage className="read">
@@ -112,7 +112,7 @@ export function UserNotification() {
                 </Item>
                 <Item>
                   <IconWrapper>
-                    <Icon name="Delete" color="#fff" size={14} />
+                    <MyIcon name="Delete" color="#fff" size={14} />
                   </IconWrapper>
                   <ItemBody>
                     <ItemMessage className="read">

@@ -2,12 +2,10 @@
 
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Button, Icon, Typography } from "xiilab-ui";
+import { Button, Typography } from "xiilab-ui";
 
-import {
-  PRIVATE_REGISTRY_EVENTS,
-  PRIVATE_REGISTRY_EVENTS,
-} from "@/constants/common/pubsub.constant";
+import { MyIcon } from "@/components/common/icon";
+import { PRIVATE_REGISTRY_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetPrivateRegistryImage } from "@/hooks/registry/use-get-private-registry-image";
 import {
@@ -53,28 +51,28 @@ export function RegistryImageDetailBody() {
         <Pane>
           <Record>
             <IconWrapper>
-              <Icon name="Workspace02" color="var(--icon-fill)" size={20} />
+              <MyIcon name="Workspace02" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>컨테이너 :</Key>
             <Value>{data?.image?.imageName || "-"}</Value>
           </Record>
           <Record>
             <IconWrapper>
-              <Icon name="Workspace01" color="var(--icon-fill)" size={20} />
+              <MyIcon name="Workspace01" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>워크스페이스 :</Key>
             <Value>{data?.image?.workspaceName || "-"}</Value>
           </Record>
           <Record>
             <IconWrapper>
-              <Icon name="Person" color="var(--icon-fill)" size={16} />
+              <MyIcon name="Person" color="var(--icon-fill)" size={16} />
             </IconWrapper>
             <Key>생성자 :</Key>
             <Value>{data?.image?.creator || "-"}</Value>
           </Record>
           <Record>
             <IconWrapper>
-              <Icon name="Calendar" color="var(--icon-fill)" size={20} />
+              <MyIcon name="Calendar" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>생성일 :</Key>
             <Value>{data?.image?.createTime || "-"}</Value>
@@ -83,7 +81,7 @@ export function RegistryImageDetailBody() {
         <Pane>
           <Record>
             <IconWrapper>
-              <Icon name="Description" color="var(--icon-fill)" size={20} />
+              <MyIcon name="Description" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>설명 :</Key>
           </Record>

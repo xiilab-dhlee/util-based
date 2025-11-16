@@ -2,14 +2,16 @@
 
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { Icon, Input, Modal } from "xiilab-ui";
+import { Input, Modal } from "xiilab-ui";
 
 import { openCreateCommitImageModalAtom } from "@/atoms/workload/workload-detail.atom";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useCreateCommitImage } from "@/hooks/workload/use-create-commit-image";
+import type { WorkloadDetailType } from "@/schemas/workload.schema";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { CreateCommitImagePayload } from "@/types/workload/workload.type";
 
@@ -79,13 +81,13 @@ export function CreateCommitImageModal() {
   /**
    * Commit Image 생성 모달 데이터 구독
    */
-  useSubscribe<CreateCommitImagePayload>(
+  useSubscribe(
     WORKLOAD_EVENTS.sendCommitImage,
-    (eventData) => {
+    (eventData: WorkloadDetailType) => {
       // 워크로드 정보 설정
-      setWorkloadId(eventData.workloadId);
+      setWorkloadId(eventData.id);
       setWorkspaceId(eventData.workspaceId);
-      setWorkloadType(eventData.workloadType);
+      setWorkloadType(eventData.jobType);
 
       // 모달 열기
       onOpen();
@@ -95,7 +97,7 @@ export function CreateCommitImageModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Plus" color="#fff" size={18} />}
+      icon={<MyIcon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

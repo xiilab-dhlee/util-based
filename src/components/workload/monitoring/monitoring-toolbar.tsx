@@ -1,7 +1,7 @@
 "use client";
 /**
- * @fileoverview 워크로드 모니터링 페이지의 툴바 컴포넌트
- * 모니터링 제어를 위한 일시정지/재생 버튼과 현재 상태 정보를 표시합니다.
+ * @fileoverview ?�크로드 모니?�링 ?�이지???�바 컴포?�트
+ * 모니?�링 ?�어�??�한 ?�시?��?/?�생 버튼�??�재 ?�태 ?�보�??�시?�니??
  *
  * @author XiiLab
  * @since 2024
@@ -10,31 +10,33 @@
 "use client";
 
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+import {} from "xiilab-ui";
+
+import { MyIcon } from "@/components/common/icon";
 
 /**
- * 모니터링 툴바 컴포넌트의 Props 인터페이스
+ * 모니?�링 ?�바 컴포?�트??Props ?�터?�이??
  */
 interface MonitoringToolbarProps {
-  /** 일시정지/재생 상태 */
+  /** ?�시?��?/?�생 ?�태 */
   isPaused?: boolean;
-  /** 레벨 텍스트 */
+  /** ?�벨 ?�스??*/
   level?: string;
-  /** 시간 텍스트 */
+  /** ?�간 ?�스??*/
   time?: string;
-  /** 일시정지/재생 버튼 클릭 핸들러 */
+  /** ?�시?��?/?�생 버튼 ?�릭 ?�들??*/
   onTogglePause?: () => void;
 }
 
 /**
- * 워크로드 모니터링 페이지의 툴바 컴포넌트
+ * ?�크로드 모니?�링 ?�이지???�바 컴포?�트
  *
- * 모니터링 일시정지/재생 버튼과 현재 레벨, 시간 정보를 표시합니다.
+ * 모니?�링 ?�시?��?/?�생 버튼�??�재 ?�벨, ?�간 ?�보�??�시?�니??
  *
- * @param isPaused - 일시정지 상태 (기본값: false)
- * @param level - 레벨 표시 텍스트 (기본값: "LEVE")
- * @param time - 시간 표시 텍스트 (기본값: "16:01:08")
- * @param onTogglePause - 일시정지/재생 버튼 클릭 핸들러
+ * @param isPaused - ?�시?��? ?�태 (기본�? false)
+ * @param level - ?�벨 ?�시 ?�스??(기본�? "LEVE")
+ * @param time - ?�간 ?�시 ?�스??(기본�? "16:01:08")
+ * @param onTogglePause - ?�시?��?/?�생 버튼 ?�릭 ?�들??
  */
 export function MonitoringToolbar({
   isPaused = false,
@@ -44,15 +46,15 @@ export function MonitoringToolbar({
 }: MonitoringToolbarProps) {
   return (
     <Container>
-      {/* 왼쪽 영역: 일시정지/재생 버튼 */}
+      {/* ?�쪽 ?�역: ?�시?��?/?�생 버튼 */}
       <Left onClick={onTogglePause}>
-        <Icon
+        <MyIcon
           name={isPaused ? "Play" : "Pause"}
           color="var(--icon-fill)"
           size={24}
         />
       </Left>
-      {/* 오른쪽 영역: 레벨과 시간 정보 */}
+      {/* ?�른�??�역: ?�벨�??�간 ?�보 */}
       <Right>
         <Badge>{level}</Badge>
         <Time>{time}</Time>
@@ -61,10 +63,9 @@ export function MonitoringToolbar({
   );
 }
 
-
 /**
- * 툴바 컨테이너
- * 전체 툴바의 크기와 레이아웃을 정의
+ * ?�바 컨테?�너
+ * ?�체 ?�바???�기?� ?�이?�웃???�의
  */
 const Container = styled.div`
   width: 142px;
@@ -80,8 +81,8 @@ const Container = styled.div`
 `;
 
 /**
- * 왼쪽 영역 (일시정지/재생 버튼)
- * 클릭 가능한 아이콘 버튼 영역
+ * ?�쪽 ?�역 (?�시?��?/?�생 버튼)
+ * ?�릭 가?�한 ?�이�?버튼 ?�역
  */
 const Left = styled.div`
   display: flex;
@@ -101,8 +102,8 @@ const Left = styled.div`
 `;
 
 /**
- * 오른쪽 영역 (레벨과 시간 정보)
- * 레벨 배지와 시간 정보를 표시하는 영역
+ * ?�른�??�역 (?�벨�??�간 ?�보)
+ * ?�벨 배�??� ?�간 ?�보�??�시?�는 ?�역
  */
 const Right = styled.div`
   flex: 1;
@@ -114,8 +115,8 @@ const Right = styled.div`
 `;
 
 /**
- * 레벨 배지
- * 현재 모니터링 레벨을 표시하는 작은 배지
+ * ?�벨 배�?
+ * ?�재 모니?�링 ?�벨???�시?�는 ?��? 배�?
  */
 const Badge = styled.div`
   padding: 4px 6px;
@@ -129,8 +130,8 @@ const Badge = styled.div`
 `;
 
 /**
- * 시간 표시
- * 현재 모니터링 시간을 표시하는 텍스트
+ * ?�간 ?�시
+ * ?�재 모니?�링 ?�간???�시?�는 ?�스??
  */
 const Time = styled.time`
   font-weight: 400;

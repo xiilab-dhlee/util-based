@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import { ResourceProgress } from "@/components/common/progress/resource-progress";
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
@@ -29,7 +29,7 @@ export function WorkspaceResourceCard({
     <Container>
       <Header>
         <IconWrapper>
-          <Icon name={icon} color="var(--icon-fill)" size={22} />
+          <MyIcon name={icon} color="var(--icon-fill)" size={22} />
         </IconWrapper>
         <Title>
           <ResourceType>{resourceType}</ResourceType>
@@ -58,22 +58,21 @@ export function WorkspaceResourceCard({
       </Body>
       <Footer>
         <RowFooterItem>
-          <Category className={`${resourceType} usage`}>사용</Category>
+          <Category className={`${resourceType} usage`}>?�용</Category>
           <Count>{usage}</Count>
         </RowFooterItem>
         <RowFooterItem>
-          <Category className={`${resourceType} remain`}>잔여</Category>
+          <Category className={`${resourceType} remain`}>?�여</Category>
           <Count>{limit - usage}</Count>
         </RowFooterItem>
         <RowFooterItem>
-          <Category className="total">전체</Category>
+          <Category className="total">?�체</Category>
           <Count>{limit}</Count>
         </RowFooterItem>
       </Footer>
     </Container>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

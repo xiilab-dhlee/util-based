@@ -8,7 +8,7 @@ import {
 } from "@/atoms/workspace/workspace-member.atom";
 import { workspaceMemberColumn } from "@/components/common/column/workspace-member-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaceMembers } from "@/hooks/workspace/use-get-workspace-members";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -20,7 +20,7 @@ export function WorkspaceMemberBody() {
 
   const { data } = useGetWorkspaceMembers({
     page,
-    size: workspaceMemberConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 

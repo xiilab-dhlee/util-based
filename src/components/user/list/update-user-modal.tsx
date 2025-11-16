@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon, Modal } from "xiilab-ui";
+import { Modal } from "xiilab-ui";
 
 import { openUpdateUserModalAtom } from "@/atoms/user/user-list.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
@@ -45,19 +46,16 @@ export function UpdateUserModal() {
     };
   };
 
-  useSubscribe<UserListType>(
-    USER_EVENTS.sendUpdateUser,
-    async (eventData) => {
-      setUser(eventData);
-      role.setValue(eventData.role);
-      onOpen();
-    },
-  );
+  useSubscribe<UserListType>(USER_EVENTS.sendUpdateUser, async (eventData) => {
+    setUser(eventData);
+    role.setValue(eventData.role);
+    onOpen();
+  });
 
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Edit02" color="#fff" size={18} />}
+      icon={<MyIcon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

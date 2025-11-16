@@ -1,8 +1,8 @@
 "use client";
 
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import { gradientBackgroundButtonStyle } from "@/styles/mixins/button";
 import type { CoreGuideItem } from "@/types/common/core.model";
 import { PageGuideItem } from "./page-guide-item";
@@ -50,7 +50,7 @@ export function PageGuide({
           <TitleEng>{titleEng}</TitleEng>
           <Title>
             <TitleIconWrapper>
-              <Icon name={icon} color="var(--icon-fill)" />
+              <MyIcon name={icon} color="var(--icon-fill)" />
             </TitleIconWrapper>
             <span>{title}</span>
           </Title>

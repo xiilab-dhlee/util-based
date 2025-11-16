@@ -4,7 +4,7 @@ import type {
   GetWorkspacesPayload,
 } from "@/types/workspace/workspace.interface";
 
-const workspaceKeys = {
+export const workspaceKeys = {
   default: ["workspace"],
   list: (payload: GetWorkspacesPayload) => [
     ...workspaceKeys.default,
@@ -23,5 +23,3 @@ const workspaceKeys = {
     ...Object.values(payload),
   ],
 };
-
-export default workspaceKeys;

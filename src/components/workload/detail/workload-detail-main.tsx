@@ -1,9 +1,8 @@
 "use client";
 
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { MyIcon } from "@/components/common/icon";
-import { useGetWorkloadByMode } from "@/hooks/workload/use-get-workload-by-mode";
 import {
   DetailContentButton,
   DetailContentHeader,
@@ -16,19 +15,7 @@ import { WorkloadPrimaryArticle } from "./workload-primary-article";
 import { WorkloadSecondaryArticle } from "./workload-secondary-article";
 
 export function WorkloadDetailMain() {
-  const params = useParams();
-  const searchParams = useSearchParams();
   const pathname = usePathname();
-
-  // 매개변수 추출
-  const workspaceId = searchParams?.get("workspaceId");
-  const workloadId = params?.id as string;
-
-  // hooks는 항상 최상위에서 호출
-  const { data } = useGetWorkloadByMode({
-    workspaceId: workspaceId || "",
-    workloadId: workloadId || "",
-  });
 
   const isStandard = isUserMode(pathname);
 
@@ -55,9 +42,9 @@ export function WorkloadDetailMain() {
         </DetailContentTitleTool>
       </DetailContentHeader>
       {/* 워크로드 상세 페이지 기본 정보 아티클 */}
-      {data && <WorkloadPrimaryArticle {...data} />}
+      <WorkloadPrimaryArticle />
       {/* 워크로드 상세 페이지 추가 정보 아티클 */}
-      {data && <WorkloadSecondaryArticle {...data} />}
+      <WorkloadSecondaryArticle />
       {/* 커밋 이미지 생성 모달 */}
       <CreateCommitImageModal />
     </>

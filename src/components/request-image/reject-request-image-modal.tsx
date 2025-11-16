@@ -1,7 +1,9 @@
 ﻿"use client";
 
 import { useRef, useState } from "react";
-import { Icon, Modal, TextArea } from "xiilab-ui";
+import { Modal, TextArea } from "xiilab-ui";
+
+import { MyIcon } from "../common/icons";
 import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openRejectRequestImageModalAtom } from "@/atoms/request-image/request-image-list.atom";
@@ -54,7 +56,7 @@ export function RejectRequestImageModal() {
     <Modal
       modalWidth={370}
       type="danger"
-      icon={<Icon name="Edit02" color="#fff" size={18} />}
+      icon={<MyIcon name="Edit02" color="#fff" size={18} />}
       open={open}
       closable
       title="이미지 사용 반려"

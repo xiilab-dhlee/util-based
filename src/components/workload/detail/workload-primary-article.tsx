@@ -1,28 +1,33 @@
 "use client";
 
+import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
 import { MyIcon } from "@/components/common/icon";
-import type { WorkloadDetailType } from "@/schemas/workload.schema";
+import { useGetWorkloadByMode } from "@/hooks/workload/use-get-workload-by-mode";
 import {
   DetailContentArticle,
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
 import { getWorkloadJobTypeInfo } from "@/utils/workload/workload.util";
 
-interface WorkloadPrimaryArticleProps extends WorkloadDetailType {}
-
 /**
  * 워크로드 기본 정보 아티클 컴포넌트
  *
  * 워크로드 잡 타입, 노드 타입, IDE 정보를 표시합니다.
  */
-export function WorkloadPrimaryArticle({
-  // workspaceName,
-  jobType,
-}: WorkloadPrimaryArticleProps) {
+export function WorkloadPrimaryArticle() {
+  const { id } = useParams();
+  const searchParams = useSearchParams();
+
+  // hooks는 항상 최상위에서 호출
+  const { data } = useGetWorkloadByMode({
+    workspaceId: String(searchParams?.get("workspaceId")),
+    workloadId: String(id),
+  });
+
   const { label, ideName, ideIcon, nodeType, nodeIcon } =
-    getWorkloadJobTypeInfo(jobType);
+    getWorkloadJobTypeInfo(data?.jobType);
 
   return (
     <DetailContentArticle>

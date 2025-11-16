@@ -5,10 +5,11 @@ import { isDate } from "lodash";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { DateRange, Icon, Modal } from "xiilab-ui";
+import { DateRange, Modal } from "xiilab-ui";
 
 import { openCreateReportModalAtom } from "@/atoms/report/report.atom";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import reportConstants from "@/constants/report/report.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -57,7 +58,7 @@ export function CreateReportModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Plus" color="#fff" size={18} />}
+      icon={<MyIcon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

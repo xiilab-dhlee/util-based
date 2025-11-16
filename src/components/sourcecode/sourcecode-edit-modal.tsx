@@ -2,17 +2,10 @@
 
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import {
-  Dropdown,
-  Icon,
-  Input,
-  Modal,
-  Tag,
-  Tooltip,
-  Typography,
-} from "xiilab-ui";
+import { Dropdown, Input, Modal, Tag, Tooltip, Typography } from "xiilab-ui";
 
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 
 /**
  * 소스코드 수정 모달의 props 인터페이스
@@ -94,7 +87,7 @@ export function SourceCodeEditModal({
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Edit01" color="#fff" size={18} />}
+      icon={<MyIcon name="Edit01" color="#fff" size={18} />}
       modalWidth={370}
       open={isOpen}
       closable
@@ -163,7 +156,7 @@ export function SourceCodeEditModal({
               }
             >
               <TooltipIconWrapper>
-                <Icon name="Tooltip" size={16} color="#5F6368" />
+                <MyIcon name="Tooltip" size={16} color="#5F6368" />
               </TooltipIconWrapper>
             </Tooltip>
           </LabelWithTooltip>
@@ -179,7 +172,6 @@ export function SourceCodeEditModal({
     </Modal>
   );
 }
-
 
 // ===== Styled Components =====
 

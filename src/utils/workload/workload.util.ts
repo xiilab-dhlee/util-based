@@ -8,7 +8,7 @@ import type {
  * 워크로드 잡 타입 정보 조회
  * @param jobType - 워크로드 잡 타입
  */
-export const getWorkloadJobTypeInfo = (jobType: WorkloadJobType) => {
+export const getWorkloadJobTypeInfo = (jobType?: WorkloadJobType) => {
   // 잡 타입 표시 텍스트
   let label = "";
   // 노드
@@ -51,7 +51,7 @@ export const getWorkloadJobTypeInfo = (jobType: WorkloadJobType) => {
  * 워크로드 상태 정보 조회
  * @param status - 워크로드 상태
  */
-export const getWorkloadStatusInfo = (status: WorkloadStatusType) => {
+export const getWorkloadStatusInfo = (status?: WorkloadStatusType) => {
   // 상태 표시 텍스트
   let label = "";
   // 상태 색상
@@ -84,7 +84,7 @@ export const getWorkloadStatusInfo = (status: WorkloadStatusType) => {
  * 워크로드 이미지 타입 정보 조회
  * @param imageType - 워크로드 이미지 타입
  */
-export const getWorkloadImageTypeInfo = (imageType: WorkloadImageType) => {
+export const getWorkloadImageTypeInfo = (imageType?: WorkloadImageType) => {
   // 이미지 타입 표시 텍스트
   let label = "";
   // 이미지 타입 아이콘

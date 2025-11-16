@@ -1,7 +1,6 @@
 ﻿"use client";
 
-import { Icon } from "xiilab-ui";
-
+import { MyIcon } from "@/components/common/icon";
 import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { RequestImageListType } from "@/schemas/request-image.schema";
@@ -26,7 +25,7 @@ export function ViewRejectRequestImageButton({
   return (
     <ColumnAlignCenterWrap>
       <ColumnIconWrap onClick={handleClickIcon} disabled={false}>
-        <Icon name="Close" color="var(--icon-fill)" size={16} />
+        <MyIcon name="Close" color="var(--icon-fill)" size={16} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
   );

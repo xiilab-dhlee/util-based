@@ -1,8 +1,9 @@
 "use client";
 
-import { Button, Icon } from "xiilab-ui";
+import { Button } from "xiilab-ui";
 
 import { openCreateReportModalAtom } from "@/atoms/report/report.atom";
+import { MyIcon } from "@/components/common/icon";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { SearchNoResult } from "@/layouts/common/search-no-result";
 import {
@@ -34,11 +35,10 @@ export function UnreadyReport() {
         </Button>
       </DetailContentHeader>
       <SearchNoResult
-        icon={<Icon name="DocumentFilled" color="#878898" size={32} />}
+        icon={<MyIcon name="DocumentFilled" color="#878898" size={32} />}
         title="생성된 리포트가 없습니다."
         description="상단의 리포트 생성 버튼을 클릭하여 리포트를 생성해 보세요."
       />
     </>
   );
 }
-

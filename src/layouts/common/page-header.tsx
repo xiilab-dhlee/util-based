@@ -3,8 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import { getBackPathname } from "@/utils/common/router.util";
 
 type PageHeaderProps = {
@@ -41,12 +41,12 @@ export function PageHeader({
         {/* 페이지 depth가 2이상인 경우 */}
         {icon === "Back" ? (
           <BackIconWrapper onClick={handleBack}>
-            <Icon name="Back" color="var(--icon-fill)" size={24} />
+            <MyIcon name="Back" color="var(--icon-fill)" size={24} />
             <span className="sr-only">뒤로가기</span>
           </BackIconWrapper>
         ) : (
           <IconWrapper>
-            <Icon name={icon} color="var(--icon-fill)" size={16} />;
+            <MyIcon name={icon} color="var(--icon-fill)" size={16} />
           </IconWrapper>
         )}
 

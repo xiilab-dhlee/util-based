@@ -1,17 +1,18 @@
 "use client";
 
 import { format } from "date-fns";
+import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
-import { openCreateCommitImageModalAtom } from "@/atoms/workload/workload-detail.atom";
 import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { MyIcon } from "@/components/common/icon";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import { workloadEnvColumn } from "@/components/workload/detail/workload-env-column";
 import { workloadPortColumn } from "@/components/workload/detail/workload-port-column";
-import { useGlobalModal } from "@/hooks/common/use-global-modal";
-import type { WorkloadDetailType } from "@/schemas/workload.schema";
+import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
+import { usePublish } from "@/hooks/common/use-pub-sub";
+import { useGetWorkloadByMode } from "@/hooks/workload/use-get-workload-by-mode";
 import {
   DetailContentArticle,
   DetailContentKey,
@@ -21,36 +22,28 @@ import { getWorkloadImageTypeInfo } from "@/utils/workload/workload.util";
 import { WorkloadSourcecodeCard } from "./workload-sourcecode-card";
 import { WorkloadVolumeCard } from "./workload-volume-card";
 
-interface WorkloadSecondaryArticleProps extends WorkloadDetailType {}
-
 /**
  * 워크로드 추가 정보 아티클 컴포넌트
  *
- * 워크로드 이미지, 환경 변수, 포트, 소스코드, 볼륨, 생성자, 생성일을 표시합니다.
- * @param image - 워크로드 이미지
- * @param envs - 워크로드 환경 변수
- * @param ports - 워크로드 포트
- * @param sourcecodes - 워크로드 소스코드
- * @param volumes - 워크로드 볼륨
- * @param creatorName - 워크로드 생성자
- * @param creatorDate - 워크로드 생성일
+ * 워크로드 이미지, 환경 변수, 포트, 소스코드, 볼륨, 생성자, 생성일을 표시합니다
  */
-export function WorkloadSecondaryArticle({
-  image,
-  envs,
-  ports,
-  sourcecodes,
-  volumes,
-  creatorName,
-  creatorDate,
-}: WorkloadSecondaryArticleProps) {
-  const { onOpen } = useGlobalModal(openCreateCommitImageModalAtom);
+export function WorkloadSecondaryArticle() {
+  const publish = usePublish();
+
+  const { id } = useParams();
+  const searchParams = useSearchParams();
+
+  // hooks는 항상 최상위에서 호출
+  const { data } = useGetWorkloadByMode({
+    workspaceId: String(searchParams?.get("workspaceId")),
+    workloadId: String(id),
+  });
 
   const handleClickCommitImage = () => {
-    onOpen();
+    publish(WORKLOAD_EVENTS.sendCommitImage, data);
   };
 
-  const { label, icon } = getWorkloadImageTypeInfo(image.type);
+  const { label, icon } = getWorkloadImageTypeInfo(data?.image.type);
 
   return (
     <Container>
@@ -67,7 +60,7 @@ export function WorkloadSecondaryArticle({
               {label} Image
             </ImageName>
             <div>
-              <Code>{image.name}</Code>
+              <Code>{data?.image.name}</Code>
             </div>
           </Value>
         </KeyValueContainer>
@@ -128,7 +121,7 @@ export function WorkloadSecondaryArticle({
         <KeyValueContainer className="connect">
           <CustomizedTable
             columns={workloadEnvColumn}
-            data={envs}
+            data={data?.envs || []}
             headerHeight={26}
             columnHeight={32}
             bodyBgColor="transparent"
@@ -139,7 +132,7 @@ export function WorkloadSecondaryArticle({
         <KeyValueContainer className="split">
           <CustomizedTable
             columns={workloadPortColumn}
-            data={ports}
+            data={data?.ports || []}
             headerHeight={26}
             columnHeight={32}
             bodyBgColor="transparent"
@@ -150,13 +143,17 @@ export function WorkloadSecondaryArticle({
         <KeyValueContainer className="connect">
           <LeftKey>생성자</LeftKey>
           <Value>
-            <Text>{creatorName}</Text>
+            <Text>{data?.creatorName}</Text>
           </Value>
         </KeyValueContainer>
         <KeyValueContainer className="connect">
           <LeftKey>생성일</LeftKey>
           <Value>
-            <Text>{format(creatorDate, "yyyy.MM.dd")}</Text>
+            <Text>
+              {data?.creatorDate
+                ? format(data?.creatorDate, "yyyy.MM.dd")
+                : "-"}
+            </Text>
           </Value>
         </KeyValueContainer>
       </Pane>
@@ -191,7 +188,7 @@ export function WorkloadSecondaryArticle({
         <KeyValueContainer className="connect">
           <RightKey>소스코드</RightKey>
           <Value>
-            {sourcecodes.map((v) => (
+            {data?.sourcecodes.map((v) => (
               <WorkloadSourcecodeCard key={v.id} {...v} />
             ))}
           </Value>
@@ -199,7 +196,7 @@ export function WorkloadSecondaryArticle({
         <KeyValueContainer>
           <RightKey>Volume</RightKey>
           <Value>
-            {volumes.map((v) => (
+            {data?.volumes.map((v) => (
               <WorkloadVolumeCard key={v.id} {...v} />
             ))}
           </Value>

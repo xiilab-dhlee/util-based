@@ -4,13 +4,14 @@ import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Icon, InfoModal } from "xiilab-ui";
+import { InfoModal } from "xiilab-ui";
 
 import {
   openCreateAstragoVolumeModalAtom,
   openCreateOnPremiseVolumeModalAtom,
   openSelectVolumeModalAtom,
 } from "@/atoms/volume/volume-list.atom";
+import { MyIcon } from "@/components/common/icon";
 import { VolumeStorageCard } from "@/components/volume/list/volume-storage-card";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { VOLUME_STORAGE_OPTIONS } from "@/constants/volume/volume.constant";
@@ -72,7 +73,7 @@ export function SelectVolumeTypeModal() {
     <InfoModal
       modalWidth={580}
       type="primary"
-      icon={<Icon name="Folder" color="#fff" size={18} />}
+      icon={<MyIcon name="Folder" color="#fff" size={18} />}
       open={open}
       closable
       title="볼륨 선택"

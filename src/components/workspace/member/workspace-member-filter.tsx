@@ -9,7 +9,7 @@ import {
   workspaceMemberSearchTextAtom,
 } from "@/atoms/workspace/workspace-member.atom";
 import { SearchInput } from "@/components/common/input/search-input";
-import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetWorkspaceMembers } from "@/hooks/workspace/use-get-workspace-members";
@@ -23,7 +23,7 @@ export function WorkspaceMemberFilter() {
 
   const { data } = useGetWorkspaceMembers({
     page,
-    size: workspaceMemberConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -50,4 +50,3 @@ export function WorkspaceMemberFilter() {
     </MySearchFilter>
   );
 }
-

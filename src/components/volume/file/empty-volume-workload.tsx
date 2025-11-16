@@ -1,13 +1,14 @@
 "use client";
 
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+
+import { MyIcon } from "@/components/common/icon";
 
 export function EmptyVolumeWorkload() {
   return (
     <Container>
       <IconWrapper>
-        <Icon name="PriorityHigh" color="var(--icon-fill)" />
+        <MyIcon name="PriorityHigh" color="var(--icon-fill)" />
       </IconWrapper>
       <Body>
         <WorkloadEmptyTitle>
@@ -20,7 +21,6 @@ export function EmptyVolumeWorkload() {
     </Container>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

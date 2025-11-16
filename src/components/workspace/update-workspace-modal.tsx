@@ -3,7 +3,7 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Icon, Input, Modal, TextArea } from "xiilab-ui";
+import { Input, Modal, TextArea } from "xiilab-ui";
 
 import {
   closeUpdateWorkspaceModalAtom,
@@ -11,29 +11,30 @@ import {
   updateWorkspaceModalDataAtom,
 } from "@/atoms/workspace/workspace-modal.atom";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { useUpdateWorkspace } from "@/hooks/workspace/use-update-workspace";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 import type { UpdateWorkspacePayload } from "@/types/workspace/workspace.interface";
 
 /**
- * 워크스페이스 수정 모달 컴포넌트
+ * ?�크?�페?�스 ?�정 모달 컴포?�트
  *
- * 워크스페이스의 이름과 설명을 수정할 수 있는 모달입니다.
- * 설정 페이지에서 사용되는 모달입니다.
+ * ?�크?�페?�스???�름�??�명???�정?????�는 모달?�니??
+ * ?�정 ?�이지?�서 ?�용?�는 모달?�니??
  */
 export function UpdateWorkspaceModal() {
-  // 모달 상태 관리
+  // 모달 ?�태 관�?
   const [open] = useAtom(openUpdateWorkspaceModalAtom);
   const [modalData] = useAtom(updateWorkspaceModalDataAtom);
   const closeModal = useSetAtom(closeUpdateWorkspaceModalAtom);
 
-  // 폼 상태
+  // ???�태
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
   const updateWorkspace = useUpdateWorkspace();
 
-  // 모달이 열릴 때 데이터를 폼에 설정
+  // 모달???�릴 ???�이?��? ?�에 ?�정
   useEffect(() => {
     if (modalData) {
       setName(modalData.name);
@@ -42,13 +43,13 @@ export function UpdateWorkspaceModal() {
   }, [modalData]);
 
   /**
-   * 폼 제출 처리 함수
+   * ???�출 처리 ?�수
    *
-   * 워크스페이스 수정 데이터를 서버로 전송하고 모달을 닫습니다.
+   * ?�크?�페?�스 ?�정 ?�이?��? ?�버�??�송?�고 모달???�습?�다.
    */
   const handleSubmit = () => {
     if (!modalData?.id || !name.trim()) {
-      toast.error("워크스페이스 이름을 입력해주세요.");
+      toast.error("?�크?�페?�스 ?�름???�력?�주?�요.");
       return;
     }
 
@@ -60,25 +61,25 @@ export function UpdateWorkspaceModal() {
 
     updateWorkspace.mutate(payload, {
       onSuccess: () => {
-        toast.success("워크스페이스 수정이 완료되었습니다.");
+        toast.success("?�크?�페?�스 ?�정???�료?�었?�니??");
         closeModal();
-        // 폼 상태 초기화
+        // ???�태 초기??
         setName("");
         setDescription("");
       },
       onError: (error) => {
-        toast.error("워크스페이스 수정에 실패했습니다.");
+        toast.error("?�크?�페?�스 ?�정???�패?�습?�다.");
         console.error("Workspace update error:", error);
       },
     });
   };
 
   /**
-   * 모달 닫기 처리 함수
+   * 모달 ?�기 처리 ?�수
    */
   const handleCancel = () => {
     closeModal();
-    // 폼 상태 초기화
+    // ???�태 초기??
     setName("");
     setDescription("");
   };
@@ -86,15 +87,15 @@ export function UpdateWorkspaceModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Edit01" color="#fff" size={18} />}
+      icon={<MyIcon name="Edit01" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable
-      title="워크스페이스 수정"
+      title="?�크?�페?�스 ?�정"
       showCancelButton
       cancelText="취소"
       onCancel={handleCancel}
-      okText="수정 완료"
+      okText="?�정 ?�료"
       onOk={handleSubmit}
       centered
       showHeaderBorder
@@ -104,27 +105,27 @@ export function UpdateWorkspaceModal() {
       }}
     >
       <form>
-        {/* 워크스페이스 이름 입력 필드 */}
+        {/* ?�크?�페?�스 ?�름 ?�력 ?�드 */}
         <FormItem>
-          <FormLabel htmlFor="updateWorkspaceName">워크스페이스 이름</FormLabel>
+          <FormLabel htmlFor="updateWorkspaceName">?�크?�페?�스 ?�름</FormLabel>
           <Input
             type="text"
             id="updateWorkspaceName"
-            placeholder="워크스페이스 이름을 입력해 주세요."
+            placeholder="?�크?�페?�스 ?�름???�력??주세??"
             value={name}
             onChange={(e) => setName(e.target.value)}
             width="100%"
           />
         </FormItem>
 
-        {/* 워크스페이스 설명 입력 필드 */}
+        {/* ?�크?�페?�스 ?�명 ?�력 ?�드 */}
         <FormItem>
           <FormLabel htmlFor="updateWorkspaceDescription">
-            워크스페이스 설명
+            ?�크?�페?�스 ?�명
           </FormLabel>
           <TextArea
             id="updateWorkspaceDescription"
-            placeholder="Infra Core 모델에서 활용할 WorkSpace입니다. yolov5, yolov8 Detect model을 활용한 연구를 진행합니다. AI Model 학습을 위한 워크스페이스입니다."
+            placeholder="Infra Core 모델?�서 ?�용??WorkSpace?�니?? yolov5, yolov8 Detect model???�용???�구�?진행?�니?? AI Model ?�습???�한 ?�크?�페?�스?�니??"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}

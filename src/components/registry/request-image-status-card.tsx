@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import type { WorkspaceRequestResourceStatus } from "@/types/workspace/workspace.interface";
 import { getRequestResourceStatusInfo } from "@/utils/workspace/workspace.util";
 
@@ -18,7 +18,7 @@ export function RequestImageStatusCard({
     <Container>
       <Left>
         <IconWrapper $borderColor={iconColor}>
-          <Icon name={icon} size={24} color={iconColor} />
+          <MyIcon name={icon} size={24} color={iconColor} />
         </IconWrapper>
       </Left>
       <Right>
@@ -28,7 +28,6 @@ export function RequestImageStatusCard({
     </Container>
   );
 }
-
 
 const Container = styled.div`
   flex: 1;

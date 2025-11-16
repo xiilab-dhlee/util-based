@@ -2,21 +2,21 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Checkbox, Icon, Input, Modal, Typography } from "xiilab-ui";
+import { Checkbox, Input, Modal, Typography } from "xiilab-ui";
 
 import { openManageMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
 import {
   MONITORING_EVENTS,
   USER_EVENTS,
 } from "@/constants/common/pubsub.constant";
+import { FormLabel } from "../common/form/form-label";
+import { MyIcon } from "../common/icons";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpsertMonitoringNotification } from "@/hooks/monitoring/use-upsert-notification";
 import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-notification/monitoring-notification.type";
-import { FormLabel } from "../common/form/form-label";
-import { MyIcon } from "../common/icon";
 import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
 
 export function ManageMonitoringNotificationModal() {
@@ -90,7 +90,7 @@ export function ManageMonitoringNotificationModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name={id ? "Edit01" : "Plus"} color="#fff" size={14} />}
+      icon={<MyIcon name={id ? "Edit01" : "Plus"} color="#fff" size={14} />}
       modalWidth={580}
       open={open}
       closable

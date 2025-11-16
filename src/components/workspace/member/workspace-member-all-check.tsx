@@ -9,7 +9,7 @@ import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
 } from "@/atoms/workspace/workspace-member.atom";
-import workspaceListConstants from "@/constants/workspace/workspace.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaceMembers } from "@/hooks/workspace/use-get-workspace-members";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
@@ -29,15 +29,13 @@ export function WorkspaceMemberAllCheck() {
   // 현재 페이지의 워크스페이스 목록 조회
   const { data } = useGetWorkspaceMembers({
     page,
-    size: workspaceListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
   // 현재 페이지의 워크스페이스 ID 목록
   const currentPageIds = useMemo(() => {
-    return (
-      data?.content?.map((workspaceMember: any) => workspaceMember.id) || []
-    );
+    return data?.content?.map((workspaceMember) => workspaceMember.id) || [];
   }, [data?.content]);
 
   // 현재 페이지의 모든 워크스페이스가 선택되었는지 확인
@@ -63,10 +61,14 @@ export function WorkspaceMemberAllCheck() {
 
       if (checked) {
         // 현재 페이지의 모든 워크스페이스 선택
-        currentPageIds.forEach((id: string) => next.add(id));
+        currentPageIds.forEach((id: string) => {
+          next.add(id);
+        });
       } else {
         // 현재 페이지의 모든 워크스페이스 선택 해제
-        currentPageIds.forEach((id: string) => next.delete(id));
+        currentPageIds.forEach((id: string) => {
+          next.delete(id);
+        });
       }
 
       return next;

@@ -2,8 +2,9 @@
 
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Icon, Label } from "xiilab-ui";
+import { Label } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import nodeDetailConstants from "@/constants/node/node-detail.constant";
 import { useGetNode } from "@/hooks/node/use-get-node";
 import {
@@ -56,7 +57,7 @@ export function NodeIntroCard() {
         <DetailIntroCardRow>
           <DetailIntroCardDescriptionRowBody>
             <DetailIntroCardRowIconWrapper>
-              <Icon name="SingleNode" color="var(--icon-fill)" size={22} />
+              <MyIcon name="SingleNode" color="var(--icon-fill)" size={22} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               {name}
@@ -77,7 +78,7 @@ export function NodeIntroCard() {
         <DetailIntroCardDescriptionRow>
           <DetailIntroCardDescriptionRowBody>
             <DetailIntroCardRowIconWrapper>
-              <Icon name="Description" color="var(--icon-fill)" size={20} />
+              <MyIcon name="Description" color="var(--icon-fill)" size={20} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               {nodeDetailConstants.title}
@@ -96,7 +97,6 @@ export function NodeIntroCard() {
     </DetailIntroCardContainer>
   );
 }
-
 
 /**
  * 노드 실행 상태 라벨 스타일

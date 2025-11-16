@@ -3,9 +3,9 @@
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
 import { redfishLogColumn } from "@/components/common/column/redfish-log-column";
+import { MyIcon } from "@/components/common/icon";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetNodeBmcInfo } from "@/hooks/node/use-get-bmc-info";
 import { useGetNode } from "@/hooks/node/use-get-node";
@@ -107,14 +107,14 @@ export function ReadyLog() {
           onClick={handleBackClick}
           disabled={page === 1}
         >
-          <Icon name="Back" color="var(--icon-fill)" size={20} />
+          <MyIcon name="Back" color="var(--icon-fill)" size={20} />
         </IconWrapper>
         <IconWrapper
           type="button"
           onClick={handleFrontClick}
           disabled={!hasMoreData}
         >
-          <Icon name="Front" color="var(--icon-fill)" size={20} />
+          <MyIcon name="Front" color="var(--icon-fill)" size={20} />
         </IconWrapper>
       </Footer>
     </Article>

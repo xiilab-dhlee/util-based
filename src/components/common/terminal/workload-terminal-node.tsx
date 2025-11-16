@@ -7,10 +7,10 @@ import { useAtomValue } from "jotai";
 import { isNumber } from "lodash";
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 import { Arthur } from "xterm-theme";
 
 import { terminalThemeAtom } from "@/atoms/common/terminal.atom";
+import { MyIcon } from "@/components/common/icon";
 import terminalConstants from "@/constants/common/terminal.constant";
 import {
   createTermBgClasses,
@@ -360,13 +360,13 @@ export function WorkloadTerminalNode({
               onClick={onSplitHorizon}
               className="horizontally"
             >
-              <Icon name="SplitDown" color="var(--icon-fill)" />
+              <MyIcon name="SplitDown" color="var(--icon-fill)" />
             </HeaderButton>
           )}
           {/* 수직 분할 버튼 */}
           {isShowAddVertical && (
             <HeaderButton type="button" onClick={onSplitVertical}>
-              <Icon name="SplitRight" color="var(--icon-fill)" />
+              <MyIcon name="SplitRight" color="var(--icon-fill)" />
             </HeaderButton>
           )}
         </HeaderButtonWrapper>
@@ -375,7 +375,7 @@ export function WorkloadTerminalNode({
         <div>
           {!isSingle && (
             <span role="button" onClick={(evt) => onDelete?.(evt, x, y)}>
-              <Icon name="Close" color="var(--icon-fill)" />
+              <MyIcon name="Close" color="var(--icon-fill)" />
             </span>
           )}
         </div>
@@ -386,7 +386,6 @@ export function WorkloadTerminalNode({
     </Container>
   );
 }
-
 
 /**
  * TerminalNode 컴포넌트의 스타일드 컴포넌트들

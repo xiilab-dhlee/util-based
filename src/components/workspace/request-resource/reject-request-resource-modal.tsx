@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { Icon, Modal, TextArea } from "xiilab-ui";
+import { Icon, Modal, TextArea } from "xiilab-ui";`n`nimport { MyIcon } from "@/components/common/icon";
 
 import { openRejectResourceModalAtom } from "@/atoms/workspace/workspace-request-resource.atom";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
@@ -49,21 +49,21 @@ export function RejectResourceModal() {
   return (
     <Modal
       variant="delete"
-      icon={<Icon name="Close" color="#fff" size={18} />}
+      icon={<MyIcon name="Close" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable
-      title="리소스 반려"
+      title="리소??반려"
       showCancelButton
       cancelText="취소"
       onCancel={onClose}
-      okText="리소스 요청 반려"
+      okText="리소???�청 반려"
       onOk={handleSubmit}
       centered
       showHeaderBorder
       okButtonProps={
         {
-          // disabled: updateWorkspaceMember.isPending, // MIG 업데이트 중일 때 확인 버튼 비활성화
+          // disabled: updateWorkspaceMember.isPending, // MIG ?�데?�트 중일 ???�인 버튼 비활?�화
         }
       }
     >
@@ -71,10 +71,10 @@ export function RejectResourceModal() {
         <UpdateResourceModalWorkspace>
           <UpdateResourceModalWorkspaceLeft>
             <UpdateResourceModalIconWrapper>
-              <Icon name="Workspace01" color="var(--icon-fill)" size={16} />
+              <MyIcon name="Workspace01" color="var(--icon-fill)" size={16} />
             </UpdateResourceModalIconWrapper>
             <UpdateResourceModalIconDescription>
-              워크스페이스
+              ?�크?�페?�스
             </UpdateResourceModalIconDescription>
           </UpdateResourceModalWorkspaceLeft>
           <UpdateResourceModalWorkspaceRight>
@@ -130,10 +130,10 @@ export function RejectResourceModal() {
         </UpdateResourceModalResource>
         <UpdateResourceModalResource>
           <UpdateResourceModalResourceTitle>
-            반려 사유
+            반려 ?�유
           </UpdateResourceModalResourceTitle>
           <TextArea
-            placeholder="리소스 요청 반려 사유를 입력해 주세요."
+            placeholder="리소???�청 반려 ?�유�??�력??주세??"
             rows={4}
           />
         </UpdateResourceModalResource>

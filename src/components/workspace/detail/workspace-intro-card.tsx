@@ -2,29 +2,29 @@
 
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
+import { MyIcon } from "@/components/common/icon";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetWorkspace } from "@/hooks/workspace/use-get-workspace";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 /**
- * 워크스페이스 상세 페이지의 소개 카드 컴포넌트
+ * ?�크?�페?�스 ?�세 ?�이지???�개 카드 컴포?�트
  *
- * 워크스페이스의 기본 정보(이름, 설명, 생성자, 생성일, GPU 등)를 표시하고,
- * 삭제 기능을 제공합니다.
+ * ?�크?�페?�스??기본 ?�보(?�름, ?�명, ?�성?? ?�성?? GPU ??�??�시?�고,
+ * ??�� 기능???�공?�니??
  */
 export function WorkspaceIntroCard() {
   const { id } = useParams();
-  // Pub/Sub 시스템을 통한 이벤트 발행 훅
+  // Pub/Sub ?�스?�을 ?�한 ?�벤??발행 ??
   const publish = usePublish();
 
   const { data } = useGetWorkspace(id as string);
 
   /**
-   * 워크스페이스 삭제 모달을 열기 위한 핸들러
-   * Pub/Sub 시스템을 통해 워크스페이스 삭제 이벤트를 발행합니다.
+   * ?�크?�페?�스 ??�� 모달???�기 ?�한 ?�들??
+   * Pub/Sub ?�스?�을 ?�해 ?�크?�페?�스 ??�� ?�벤?��? 발행?�니??
    */
   const handleDelete = () => {
     publish(WORKSPACE_EVENTS.sendDeleteWorkspace, [id]);
@@ -32,66 +32,70 @@ export function WorkspaceIntroCard() {
 
   return (
     <>
-      {/* 워크스페이스 소개 카드 메인 컨테이너 */}
+      {/* ?�크?�페?�스 ?�개 카드 메인 컨테?�너 */}
       <Container>
-        {/* 헤더 영역: 워크스페이스 이름과 도구 버튼들 */}
+        {/* ?�더 ?�역: ?�크?�페?�스 ?�름�??�구 버튼??*/}
         <Header>
-          {/* 워크스페이스 이름 표시 영역 */}
-          <HeaderTitle>워크스페이스 기본정보</HeaderTitle>
-          {/* 도구 버튼 영역 */}
+          {/* ?�크?�페?�스 ?�름 ?�시 ?�역 */}
+          <HeaderTitle>?�크?�페?�스 기본?�보</HeaderTitle>
+          {/* ?�구 버튼 ?�역 */}
           <ToolBox>
-            {/* 워크스페이스 삭제 버튼 */}
+            {/* ?�크?�페?�스 ??�� 버튼 */}
             <IconWrapper onClick={handleDelete}>
-              <Icon name="Delete" color="var(--icon-fill)" size={24} />
-              <span className="sr-only">워크스페이스 삭제</span>
+              <MyIcon name="Delete" color="var(--icon-fill)" size={24} />
+              <span className="sr-only">?�크?�페?�스 ??��</span>
             </IconWrapper>
           </ToolBox>
         </Header>
 
-        {/* 본문 영역: 워크스페이스 상세 정보 */}
+        {/* 본문 ?�역: ?�크?�페?�스 ?�세 ?�보 */}
         <Body>
-          {/* 워크로드 상태 정보 행 */}
+          {/* ?�크로드 ?�태 ?�보 ??*/}
           {/* <Row>
             <RowBody>
               <RowIconWrapper>
-                <Icon name="Info" color="var(--icon-fill)" size={24} />
+                <MyIcon name="Info" color="var(--icon-fill)" size={24} />
               </RowIconWrapper>
               <RowTitle>
-                <RowKey>워크로드 상태</RowKey>
+                <RowKey>?�크로드 ?�태</RowKey>
                 <WorkloadStatusText status={status} />
               </RowTitle>
             </RowBody>
           </Row> */}
-          {/* 워크로드 설명 정보 행 (확장 가능) */}
+          {/* ?�크로드 ?�명 ?�보 ??(?�장 가?? */}
           <Row>
             <DescriptionRowBody>
               <RowIconWrapper>
-                <Icon name="Description" color="var(--icon-fill)" size={22} />
+                <MyIcon name="Description" color="var(--icon-fill)" size={22} />
               </RowIconWrapper>
-              <RowTitle>이름</RowTitle>
+              <RowTitle>?�름</RowTitle>
             </DescriptionRowBody>
-            {/* 워크로드 설명 텍스트 (스크롤 가능) */}
+            {/* ?�크로드 ?�명 ?�스??(?�크�?가?? */}
             <Description>{data?.workspace.name}</Description>
           </Row>
 
-          {/* 워크로드 설명 정보 행 (확장 가능) */}
+          {/* ?�크로드 ?�명 ?�보 ??(?�장 가?? */}
           <DescriptionRow>
             <DescriptionRowBody>
               <RowIconWrapper>
-                <Icon name="Description" color="var(--icon-fill)" size={22} />
+                <MyIcon name="Description" color="var(--icon-fill)" size={22} />
               </RowIconWrapper>
-              <RowTitle>워크로드 설명</RowTitle>
+              <RowTitle>?�크로드 ?�명</RowTitle>
             </DescriptionRowBody>
-            {/* 워크로드 설명 텍스트 (스크롤 가능) */}
+            {/* ?�크로드 ?�명 ?�스??(?�크�?가?? */}
             <Description>{data?.workspace.description}</Description>
           </DescriptionRow>
           <Row>
             <RowBody>
               <RowIconWrapper>
-                <Icon name="PersonFilled" color="var(--icon-fill)" size={24} />
+                <MyIcon
+                  name="PersonFilled"
+                  color="var(--icon-fill)"
+                  size={24}
+                />
               </RowIconWrapper>
               <RowTitle>
-                <RowKey>생성자 :</RowKey>
+                <RowKey>?�성??:</RowKey>
                 <RowValue>{data?.workspace.createUserName}</RowValue>
               </RowTitle>
             </RowBody>
@@ -99,10 +103,10 @@ export function WorkspaceIntroCard() {
           <Row>
             <RowBody>
               <RowIconWrapper>
-                <Icon name="Calendar01" color="var(--icon-fill)" size={24} />
+                <MyIcon name="Calendar01" color="var(--icon-fill)" size={24} />
               </RowIconWrapper>
               <RowTitle>
-                <RowKey>생성일 :</RowKey>
+                <RowKey>?�성??:</RowKey>
                 <RowValue>{data?.workspace.createUserName}</RowValue>
               </RowTitle>
             </RowBody>
@@ -110,7 +114,7 @@ export function WorkspaceIntroCard() {
           <Row>
             <RowBody>
               <RowIconWrapper>
-                <Icon name="Gpu" color="var(--icon-fill)" size={24} />
+                <MyIcon name="Gpu" color="var(--icon-fill)" size={24} />
               </RowIconWrapper>
               <RowTitle>
                 <RowKey>GPU :</RowKey>
@@ -124,14 +128,13 @@ export function WorkspaceIntroCard() {
   );
 }
 
-
 // ============================================================================
 // Styled Components
 // ============================================================================
 
 /**
- * 워크스페이스 소개 카드 메인 컨테이너
- * 고정 높이와 스크롤 처리를 위한 스타일링
+ * ?�크?�페?�스 ?�개 카드 메인 컨테?�너
+ * 고정 ?�이?� ?�크�?처리�??�한 ?��??�링
  */
 const Container = styled.div`
   width: 100%;
@@ -146,8 +149,8 @@ const Container = styled.div`
 `;
 
 /**
- * 카드 헤더 영역
- * 워크스페이스 이름과 도구 버튼들을 좌우로 배치
+ * 카드 ?�더 ?�역
+ * ?�크?�페?�스 ?�름�??�구 버튼?�을 좌우�?배치
  */
 const Header = styled.div`
   display: flex;
@@ -158,8 +161,8 @@ const Header = styled.div`
 `;
 
 /**
- * 카드 본문 영역
- * 워크스페이스 상세 정보들을 세로로 배치
+ * 카드 본문 ?�역
+ * ?�크?�페?�스 ?�세 ?�보?�을 ?�로�?배치
  */
 const Body = styled.div`
   flex: 1;
@@ -170,8 +173,8 @@ const Body = styled.div`
 `;
 
 /**
- * 정보 행 기본 스타일
- * 각 정보 섹션(상태, 라벨)을 위한 공통 스타일
+ * ?�보 ??기본 ?��???
+ * �??�보 ?�션(?�태, ?�벨)???�한 공통 ?��???
  */
 const Row = styled.div`
   display: flex;
@@ -184,16 +187,16 @@ const Row = styled.div`
 `;
 
 /**
- * 설명 정보 행
- * 확장 가능한 높이를 가진 설명 전용 행
+ * ?�명 ?�보 ??
+ * ?�장 가?�한 ?�이�?가�??�명 ?�용 ??
  */
 const DescriptionRow = styled(Row)`
   flex: 1;
 `;
 
 /**
- * 행 본문 영역
- * 아이콘과 제목을 포함하는 상단 영역
+ * ??본문 ?�역
+ * ?�이콘과 ?�목???�함?�는 ?�단 ?�역
  */
 const RowBody = styled.div`
   display: flex;
@@ -205,16 +208,16 @@ const RowBody = styled.div`
 `;
 
 /**
- * 설명 행 본문 영역
- * 하단 여백이 추가된 설명 전용 본문
+ * ?�명 ??본문 ?�역
+ * ?�단 ?�백??추�????�명 ?�용 본문
  */
 const DescriptionRowBody = styled(RowBody)`
   margin-bottom: 6px;
 `;
 
 /**
- * 행 제목 영역
- * 각 정보 섹션의 제목을 표시
+ * ???�목 ?�역
+ * �??�보 ?�션???�목???�시
  */
 const RowTitle = styled.div`
   display: inline-block;
@@ -225,8 +228,8 @@ const RowTitle = styled.div`
 `;
 
 /**
- * 워크로드 상태 제목
- * 상태 섹션의 제목을 표시 (우측 여백 추가)
+ * ?�크로드 ?�태 ?�목
+ * ?�태 ?�션???�목???�시 (?�측 ?�백 추�?)
  */
 const RowKey = styled.span`
   margin-right: 4px;
@@ -237,8 +240,8 @@ const RowKey = styled.span`
 `;
 
 /**
- * 워크스페이스 이름 표시 영역
- * 긴 이름에 대한 텍스트 자르기 처리
+ * ?�크?�페?�스 ?�름 ?�시 ?�역
+ * �??�름???�???�스???�르�?처리
  */
 const HeaderTitle = styled.div`
   display: flex;
@@ -252,8 +255,8 @@ const HeaderTitle = styled.div`
 `;
 
 /**
- * 도구 버튼 컨테이너
- * 수정, 전원 제어 등의 액션 버튼들을 배치
+ * ?�구 버튼 컨테?�너
+ * ?�정, ?�원 ?�어 ?�의 ?�션 버튼?�을 배치
  */
 const ToolBox = styled.div`
   display: flex;
@@ -263,8 +266,8 @@ const ToolBox = styled.div`
 `;
 
 /**
- * 아이콘 버튼 래퍼
- * 헤더의 액션 버튼들을 위한 스타일링
+ * ?�이�?버튼 ?�퍼
+ * ?�더???�션 버튼?�을 ?�한 ?��??�링
  */
 const IconWrapper = styled.button`
   display: flex;
@@ -280,8 +283,8 @@ const IconWrapper = styled.button`
 `;
 
 /**
- * 행 아이콘 래퍼
- * 각 정보 행의 아이콘을 위한 스타일링
+ * ???�이�??�퍼
+ * �??�보 ?�의 ?�이콘을 ?�한 ?��??�링
  */
 const RowIconWrapper = styled.span`
   display: flex;
@@ -297,8 +300,8 @@ const RowIconWrapper = styled.span`
 `;
 
 /**
- * 워크스페이스 설명 텍스트
- * 긴 설명에 대한 스크롤 처리
+ * ?�크?�페?�스 ?�명 ?�스??
+ * �??�명???�???�크�?처리
  */
 const Description = styled.p`
   font-weight: 400;

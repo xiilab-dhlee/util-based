@@ -3,7 +3,9 @@
 import { atom, useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
-import { Icon, Modal, Table, Typography } from "xiilab-ui";
+import { Modal, Table, Typography } from "xiilab-ui";
+
+import { MyIcon } from "@/components/common/icon";
 
 // 워크로드 목록에서 가져오기 모달 상태 관리
 export const workloadImportModalAtom = atom(false);
@@ -214,7 +216,7 @@ export function WorkloadImportModal() {
       modalWidth={580}
       centered
       type="primary"
-      icon={<Icon name="Copy" size={20} color="#FFF" />}
+      icon={<MyIcon name="Copy" size={20} color="#FFF" />}
       okText="가져오기"
       cancelText="취소"
       onOk={handleImport}
@@ -397,4 +399,3 @@ const StatusDot = styled.div<{ status: "Running" | "Waiting" | "Completed" }>`
     }
   }};
 `;
-

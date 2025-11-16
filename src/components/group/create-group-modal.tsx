@@ -2,16 +2,13 @@
 
 import { useSetAtom } from "jotai";
 import { useRef } from "react";
-import { Icon, Input, Modal, TextArea } from "xiilab-ui";
-
-// import { toast } from "react-toastify";
-
-// import { toast } from "react-toastify";
+import { Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateGroupModalAtom } from "@/atoms/group/group.atom";
 import { memberAddModalOpenAtom } from "@/atoms/setting/setting-modal.atom";
 import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { MyMultipleSelect } from "@/components/common/select/multiple";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -80,7 +77,7 @@ export function CreateGroupModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Plus" color="#fff" size={18} />}
+      icon={<MyIcon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

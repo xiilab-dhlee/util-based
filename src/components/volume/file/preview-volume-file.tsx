@@ -3,9 +3,9 @@
 import { format } from "date-fns";
 import { useAtom } from "jotai";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
 import { volumeFileSelectedNodeInfoAtom } from "@/atoms/volume/volume-file.atom";
+import { MyIcon } from "@/components/common/icon";
 import {
   AsideDetailArticle,
   AsideDetailArticleRow,
@@ -33,7 +33,7 @@ export function PreviewVolumeFile() {
       <AsideDetailArticleRow>
         <Preview>
           <IconWrapper>
-            <Icon name="FolderFiled" color="var(--icon-fill)" size={58} />
+            <MyIcon name="FolderFiled" color="var(--icon-fill)" size={58} />
           </IconWrapper>
           <FileName>{selectedNode.name}</FileName>
         </Preview>
@@ -63,7 +63,6 @@ export function PreviewVolumeFile() {
     </AsideDetailArticle>
   );
 }
-
 
 const Preview = styled.div`
   border: 1px solid #d1d5dc;

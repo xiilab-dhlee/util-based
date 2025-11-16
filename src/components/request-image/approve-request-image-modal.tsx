@@ -1,20 +1,18 @@
 ﻿"use client";
 
 import { useRef, useState } from "react";
-import { Icon, Modal, TextArea } from "xiilab-ui";
-import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
+import { Modal, TextArea } from "xiilab-ui";
 
 import { openApproveRequestImageModalAtom } from "@/atoms/request-image/request-image-list.atom";
+import FormLabel from "../common/form/form-label";
+import { MyIcon } from "../common/icons";
 import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
-
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import type { RequestImageListType } from "@/schemas/request-image.schema";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 import { ModalDescription } from "@/styles/layers/modal-layers.styled";
 import type { UpdateRequestImagePayload } from "@/types/request-image/request-image.type";
-import FormLabel from "../common/form/form-label";
-import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 
 export function ApproveRequestImageModal() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -54,7 +52,7 @@ export function ApproveRequestImageModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<Icon name="Edit02" color="#fff" size={18} />}
+      icon={<MyIcon name="Edit02" color="#fff" size={18} />}
       open={open}
       closable
       title="이미지 사용 승인"

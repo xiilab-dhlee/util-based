@@ -5,7 +5,7 @@ import { groupBy, map } from "lodash";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
-import { Icon, Modal, Radio } from "xiilab-ui";
+import { Modal, Radio } from "xiilab-ui";
 
 import {
   migGpuProductAtom,
@@ -15,6 +15,7 @@ import {
   selectedMigCountAtom,
   selectedMigGpuIndexAtom,
 } from "@/atoms/node/node-list.atom";
+import { MyIcon } from "@/components/common/icon";
 import { GuideTooltip } from "@/components/common/tooltip/guide-tooltip";
 import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -238,7 +239,7 @@ export function UpdateMigModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Information" color="#fff" size={14} />}
+      icon={<MyIcon name="Information" color="#fff" size={14} />}
       modalWidth={580}
       open={open}
       closable

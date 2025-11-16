@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { Icon, Input, Modal, TextArea } from "xiilab-ui";
+import { Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import credentialListConstants from "@/constants/credential/credential-list.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -66,7 +67,7 @@ export function CreateCredentialModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Plus" color="#fff" size={18} />}
+      icon={<MyIcon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

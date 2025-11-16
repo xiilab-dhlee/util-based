@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+
+import { MyIcon } from "@/components/common/icon";
 
 /**
  * 리스트가 비어있을 때 표시되는 빈 상태 컴포넌트
@@ -29,7 +30,7 @@ export function ListEmpty({ title, message, theme = "light" }: ListEmptyProps) {
       <Body>
         {/* 경고 아이콘을 원형 배경에 표시 */}
         <IconWrapper>
-          <Icon name="PriorityHigh" color="var(--icon-fill)" />
+          <MyIcon name="PriorityHigh" color="var(--icon-fill)" />
         </IconWrapper>
         {/* 제목과 설명 메시지 영역 */}
         <Message>

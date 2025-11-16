@@ -9,8 +9,8 @@ import {
   workspaceMemberSearchTextAtom,
 } from "@/atoms/workspace/workspace-member.atom";
 import { ListDeleteButton } from "@/components/common/button/list-delete-button";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
-import workspaceListConstants from "@/constants/workspace/workspace.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetWorkspaceMembers } from "@/hooks/workspace/use-get-workspace-members";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -27,7 +27,7 @@ export function WorkspaceMemberFooter() {
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetWorkspaceMembers({
     page,
-    size: workspaceListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -55,7 +55,7 @@ export function WorkspaceMemberFooter() {
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
-      pageSize={workspaceListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
       rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
