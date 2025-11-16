@@ -1,8 +1,10 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import requestImageKeys from "@/constants/request-image/request-image.key";
+import { requestImageKeys } from "@/constants/request-image/request-image.key";
 import { useServices } from "@/providers/service-provider";
+import type { RequestImageListType } from "@/schemas/request-image.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetWaitingRequestImagesPayload } from "@/types/request-image/request-image.type";
 
 /**
@@ -10,7 +12,7 @@ import type { GetWaitingRequestImagesPayload } from "@/types/request-image/reque
  */
 export const useGetWaitingRequestImages = (
   payload: GetWaitingRequestImagesPayload,
-): UseQueryResult<any, Error> => {
+): UseQueryResult<CoreListResponse<RequestImageListType>, Error> => {
   const { requestImageService } = useServices();
 
   return useQuery({
@@ -21,4 +23,3 @@ export const useGetWaitingRequestImages = (
     },
   });
 };
-

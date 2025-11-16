@@ -25,7 +25,7 @@ const basePrivateRegistryImageTagSchema = z.object({
   /** 마지막 확인일 */
   lastCheckedAt: z.string().datetime(),
   /** 생성자 */
-  creator: z.string(),
+  creatorName: z.string(),
   /** 사용 가능 여부 */
   available: z.boolean(),
   /** 요청 사유 */

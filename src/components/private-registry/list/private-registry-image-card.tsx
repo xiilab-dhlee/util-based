@@ -9,13 +9,9 @@ import {
   CompactCardKeyValueRow,
   CompactCardValue,
 } from "@/components/common/card/compact-card-layer.styled";
-import type { RegistryImage } from "@/types/registry/registry.model";
+import type { PrivateRegistryImageListType } from "@/schemas/private-registry-image.schema";
 
-interface PrivateRegistryImageCardProps
-  extends Pick<
-    RegistryImage,
-    "id" | "projectId" | "name" | "description" | "pullCnt" | "updateTime"
-  > {}
+interface PrivateRegistryImageCardProps extends PrivateRegistryImageListType {}
 
 export function PrivateRegistryImageCard({
   id,
@@ -23,7 +19,7 @@ export function PrivateRegistryImageCard({
   name,
   description,
   pullCnt,
-  updateTime,
+  updatedAt,
 }: PrivateRegistryImageCardProps) {
   const router = useRouter();
 
@@ -48,7 +44,7 @@ export function PrivateRegistryImageCard({
         </Row>
         <Row>
           <Key>최근 업로드 일시</Key>
-          <Value>{updateTime}</Value>
+          <Value>{updatedAt}</Value>
         </Row>
         <Row>
           <Key>이미지 전체 크기</Key>
@@ -73,7 +69,6 @@ export function PrivateRegistryImageCard({
     </Card>
   );
 }
-
 
 const Body = styled.div`
   display: flex;

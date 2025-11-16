@@ -7,17 +7,17 @@ import {
   privateRegistryImagePageAtom,
   privateRegistrySelectedItemAtom,
 } from "@/atoms/private-registry/private-registry.atom";
-import privateRegistryListConstants from "@/constants/registry/private-registry-list.constant";
-import { useGetPrivateRegistryImages } from "@/hooks/registry/use-get-private-registry-images";
-import PrivateRegistryImageCard from "./private-registry-image-card";
+import { useGetAdminPrivateRegistryImages } from "@/hooks/private-registry-image/use-get-admin-private-registry-images";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
+import { PrivateRegistryImageCard } from "./private-registry-image-card";
 
 export function PrivateRegistryImageListBody() {
   const page = useAtomValue(privateRegistryImagePageAtom);
   const selectedItem = useAtomValue(privateRegistrySelectedItemAtom);
 
-  const { data } = useGetPrivateRegistryImages({
+  const { data } = useGetAdminPrivateRegistryImages({
     page,
-    size: privateRegistryListConstants.imagePageSize,
+    size: 10,
     registryName: selectedItem,
   });
 
@@ -33,9 +33,11 @@ export function PrivateRegistryImageListBody() {
 const Container = styled.div`
   flex: 1;
   overflow-y: auto;
-  height: 100%;
+  max-height: 690px;
 
   & > * {
     margin-bottom: 8px;
   }
+
+  ${customScrollbar()}
 `;

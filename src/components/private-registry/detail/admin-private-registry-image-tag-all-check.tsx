@@ -1,31 +1,33 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
+import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { Checkbox } from "xiilab-ui";
 
 import {
-  privateRegistryImageTagCheckedListAtom,
-  privateRegistryImageTagPageAtom,
-  privateRegistryImageTagSearchTextAtom,
+  adminPrivateRegistryImageTagCheckedListAtom,
+  adminPrivateRegistryImageTagPageAtom,
+  adminPrivateRegistryImageTagSearchTextAtom,
 } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
-import privateRegistryImageDetailConstants from "@/constants/registry/private-registry-image-detail.constant";
-import { useGetPrivateRegistryImageTags } from "@/hooks/registry/use-get-private-registry-image-tags";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
+import { useGetAdminPrivateRegistryImageTags } from "@/hooks/private-registry-image/use-get-admin-private-registry-image-tags";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
-export function RegistryImageTagAllCheck() {
+export function AdminPrivateRegistryImageTagAllCheck() {
+  const { id, name } = useParams();
   const [checkedList, setCheckedList] = useAtom(
-    privateRegistryImageTagCheckedListAtom,
+    adminPrivateRegistryImageTagCheckedListAtom,
   );
-  const page = useAtomValue(privateRegistryImageTagPageAtom);
-  const searchText = useAtomValue(privateRegistryImageTagSearchTextAtom);
+  const page = useAtomValue(adminPrivateRegistryImageTagPageAtom);
+  const searchText = useAtomValue(adminPrivateRegistryImageTagSearchTextAtom);
 
-  // 현재 페이지의 소스코드 목록 조회
-  const { data } = useGetPrivateRegistryImageTags({
+  const { data } = useGetAdminPrivateRegistryImageTags({
     page,
-    size: privateRegistryImageDetailConstants.tagPageSize,
-    imageId: 1,
+    size: LIST_PAGE_SIZE,
     searchText,
+    registryName: String(name),
+    imageId: Number(id),
   });
 
   // 현재 페이지의 소스코드 ID 목록
@@ -56,10 +58,14 @@ export function RegistryImageTagAllCheck() {
 
       if (checked) {
         // 현재 페이지의 모든 소스코드 선택
-        currentPageIds.forEach((id) => next.add(id));
+        currentPageIds.forEach((id) => {
+          next.add(id);
+        });
       } else {
         // 현재 페이지의 모든 소스코드 선택 해제
-        currentPageIds.forEach((id) => next.delete(id));
+        currentPageIds.forEach((id) => {
+          next.delete(id);
+        });
       }
 
       return next;

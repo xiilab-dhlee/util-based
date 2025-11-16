@@ -1,5 +1,7 @@
 import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
+export const ADMIN_PRIVATE_REGISTRY_IMAGE_TAG_PAGE_SIZE = 10;
+
 export const PRIVATE_REGISTRY_IMAGE_GUIDES: CoreGuide[] = [
   {
     icon: "Image",

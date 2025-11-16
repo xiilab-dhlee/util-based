@@ -91,10 +91,7 @@ export const REQUEST_IMAGE_EVENTS = {
 } as const;
 
 // 내부 레지스트리 관련 이벤트
-export const PRIVATE_REGISTRY_EVENTS = {
-  // 내부 레지스트리 내 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImage: "registry:send-delete-private-registry-image",
-} as const;
+export const PRIVATE_REGISTRY_EVENTS = {} as const;
 
 // 내부 레지스트리 이미지 관련 이벤트
 export const PRIVATE_REGISTRY_IMAGE_EVENTS = {
@@ -105,6 +102,9 @@ export const PRIVATE_REGISTRY_IMAGE_EVENTS = {
   // 내부 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
   sendDeleteImageTag:
     "private-registry-image:send-delete-private-registry-image-tag",
+  // 관리자 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
+  sendDeleteAdminRegistryImage:
+    "private-registry-image:send-delete-admin-private-registry-image",
 } as const;
 
 // 리포트 관련 이벤트

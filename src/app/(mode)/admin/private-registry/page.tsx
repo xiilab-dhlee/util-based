@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
 
-import { PrivateRegistryListMain } from "@/components/private-registry/private-registry-list-main";
+import { PrivateRegistryListMain } from "@/components/private-registry/list/private-registry-list-main";
 
-/**
- * 관리자 내부 레지스트리 페이지 메타데이터
- */
 export const metadata: Metadata = {
-  title: "내부 레지스트리",
+  title: "Private Registry",
 };
 
-// 관리자 레지스트리 메인 페이지
 export default function AdminPrivateRegistryPage() {
   return <PrivateRegistryListMain />;
 }

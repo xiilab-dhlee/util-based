@@ -1,34 +1,35 @@
 ﻿"use client";
 
+import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
 import { MyIcon } from "@/components/common/icon";
-import { PRIVATE_REGISTRY_EVENTS } from "@/constants/common/pubsub.constant";
+import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
-import { useGetPrivateRegistryImage } from "@/hooks/registry/use-get-private-registry-image";
+import { useGetAdminPrivateRegistryImage } from "@/hooks/private-registry-image/use-get-admin-private-registry-image";
 import {
   ListPageBody,
   ListSectionTitle,
 } from "@/styles/layers/list-page-layers.styled";
-import RegistryImageTagListBody from "./registry-image-tag-list-body";
-import RegistryImageTagListFilter from "./registry-image-tag-list-filter";
+import { AdminPrivateRegistryImageTagListBody } from "./admin-private-registry-image-tag-list-body";
+import { AdminPrivateRegistryImageTagListFilter } from "./admin-private-registry-image-tag-list-filter";
 
-export function RegistryImageDetailBody() {
+export function AdminPrivateRegistryImageDetailBody() {
   const { id, name } = useParams();
   const publish = usePublish();
 
   const registryName = name as string;
   const imageId = Number(id);
 
-  const { data } = useGetPrivateRegistryImage({
+  const { data } = useGetAdminPrivateRegistryImage({
     registryName,
     imageId,
   });
 
   const handleDelete = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendDeleteImage, {
+    publish(PRIVATE_REGISTRY_IMAGE_EVENTS.sendDeleteAdminRegistryImage, {
       registryName,
       imageId,
     });
@@ -54,28 +55,32 @@ export function RegistryImageDetailBody() {
               <MyIcon name="Workspace02" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>컨테이너 :</Key>
-            <Value>{data?.image?.imageName || "-"}</Value>
+            <Value>{data?.name || "-"}</Value>
           </Record>
           <Record>
             <IconWrapper>
               <MyIcon name="Workspace01" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>워크스페이스 :</Key>
-            <Value>{data?.image?.workspaceName || "-"}</Value>
+            <Value>-</Value>
           </Record>
           <Record>
             <IconWrapper>
               <MyIcon name="Person" color="var(--icon-fill)" size={16} />
             </IconWrapper>
             <Key>생성자 :</Key>
-            <Value>{data?.image?.creator || "-"}</Value>
+            <Value>{data?.creatorName || "-"}</Value>
           </Record>
           <Record>
             <IconWrapper>
               <MyIcon name="Calendar" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>생성일 :</Key>
-            <Value>{data?.image?.createTime || "-"}</Value>
+            <Value>
+              {data?.creatorDate
+                ? format(data?.creatorDate, "yyyy.MM.dd")
+                : "-"}
+            </Value>
           </Record>
         </Pane>
         <Pane>
@@ -86,12 +91,12 @@ export function RegistryImageDetailBody() {
             <Key>설명 :</Key>
           </Record>
           <DescriptionRecord>
-            <DescriptionValue>{data?.image?.description}</DescriptionValue>
+            <DescriptionValue>{data?.description}</DescriptionValue>
           </DescriptionRecord>
         </Pane>
       </Body>
-      <RegistryImageTagListFilter />
-      <RegistryImageTagListBody />
+      <AdminPrivateRegistryImageTagListFilter />
+      <AdminPrivateRegistryImageTagListBody />
     </Container>
   );
 }

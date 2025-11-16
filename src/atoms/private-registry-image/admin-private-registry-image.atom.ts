@@ -16,5 +16,3 @@ export const adminPrivateRegistryImageTagCheckedListAtom = atomWithReset<
 >(new Set());
 // 이미지 삭제 모달
 export const openDeleteAdminRegistryImageModalAtom = atom<boolean>(false);
-// 이미지 로그 모달
-export const openAdminRegistryImageLogModalAtom = atom<boolean>(false);

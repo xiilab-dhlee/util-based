@@ -8,10 +8,10 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-import PrivateRegistryListAside from "./private-registry-list-aside";
-import PrivateRegistryListBody from "./private-registry-list-body";
-import PrivateRegistryListFilter from "./private-registry-list-filter";
-import PrivateRegistryListFooter from "./private-registry-list-footer";
+import { PrivateRegistryListAside } from "./private-registry-list-aside";
+import { PrivateRegistryListBody } from "./private-registry-list-body";
+import { PrivateRegistryListFilter } from "./private-registry-list-filter";
+import { PrivateRegistryListFooter } from "./private-registry-list-footer";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   ADMIN_ROOT_BREADCRUMB_ITEM,

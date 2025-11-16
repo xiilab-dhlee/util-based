@@ -6,7 +6,7 @@ import {
   privateRegistryPageAtom,
   privateRegistrySearchTextAtom,
 } from "@/atoms/private-registry/private-registry.atom";
-import privateRegistryListConstants from "@/constants/registry/private-registry-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPrivateRegistries } from "@/hooks/private-registry/use-get-private-registries";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 
@@ -16,7 +16,7 @@ export function PrivateRegistryListFooter() {
 
   const { data, isLoading } = useGetPrivateRegistries({
     page,
-    size: privateRegistryListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -30,9 +30,9 @@ export function PrivateRegistryListFooter() {
 
   return (
     <ListPageFooter
-      total={data?.total || 0}
+      total={data?.totalSize || 0}
       page={page}
-      pageSize={privateRegistryListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
     />

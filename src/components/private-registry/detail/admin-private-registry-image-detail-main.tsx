@@ -3,17 +3,17 @@
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { ViewRejectReasonModal } from "@/components/common/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/components/common/modal/view-request-reason-modal";
+import { ViewPrivateRegistryImageTagLogModal } from "@/components/private-registry-image/view-private-registry-image-tag-log-modal";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import { ListPageMain } from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-import DeleteRegistryImageModal from "./delete-registry-image-modal";
-import RegistryImageDetailAside from "./registry-image-detail-aside";
-import RegistryImageDetailBody from "./registry-image-detail-body";
-import ViewRegistryImageLogModal from "./view-registry-image-log-modal";
+import { DeleteAdminPrivateRegistryImageModal } from "../delete-admin-private-registry-image-modal";
+import { AdminPrivateRegistryImageDetailAside } from "./admin-private-registry-image-detail-aside";
+import { AdminPrivateRegistryImageDetailBody } from "./admin-private-registry-image-detail-body";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   {
     title: "레지스트리",
     href: "/admin/registry",
@@ -25,7 +25,7 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   { title: "컨테이너 이미지 상세정보" },
 ];
 
-export function RegistryImageDetailMain() {
+export function AdminPrivateRegistryImageDetailMain() {
   return (
     <>
       {/* 페이지 헤더 */}
@@ -39,18 +39,18 @@ export function RegistryImageDetailMain() {
       {/* 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 목록 페이지 - 왼쪽 영역 */}
-        <RegistryImageDetailBody />
+        <AdminPrivateRegistryImageDetailBody />
         {/* 목록 페이지 - 오른쪽 영역 */}
-        <RegistryImageDetailAside />
+        <AdminPrivateRegistryImageDetailAside />
       </ListPageMain>
       {/* 요청 사유 모달 */}
       <ViewRequestReasonModal />
       {/* 반려 사유 모달 */}
       <ViewRejectReasonModal />
       {/* 이미지 삭제 모달 */}
-      <DeleteRegistryImageModal />
-      {/* 이미지 로그 모달 */}
-      <ViewRegistryImageLogModal />
+      <DeleteAdminPrivateRegistryImageModal />
+      {/* 이미지 태그 로그 모달 */}
+      <ViewPrivateRegistryImageTagLogModal />
     </>
   );
 }

@@ -3,24 +3,24 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { privateRegistryImageTagCheckedListAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
+import { adminPrivateRegistryImageTagCheckedListAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
+import type { PrivateRegistryImageTagListType } from "@/schemas/private-registry-image-tag.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
-import type { RegistryImageTag } from "@/types/registry/registry.model";
 
-interface RegistryImageTagItemCheckProps {
+interface AdminPrivateRegistryImageTagItemCheckProps {
   /** 소스코드 데이터 */
-  content: RegistryImageTag;
+  tag: PrivateRegistryImageTagListType;
 }
 
-export function RegistryImageTagItemCheck({
-  content,
-}: RegistryImageTagItemCheckProps) {
+export function AdminPrivateRegistryImageTagItemCheck({
+  tag,
+}: AdminPrivateRegistryImageTagItemCheckProps) {
   const [checkedList, setCheckedList] = useAtom(
-    privateRegistryImageTagCheckedListAtom,
+    adminPrivateRegistryImageTagCheckedListAtom,
   );
 
   // 현재 소스코드가 선택되었는지 확인
-  const isChecked = checkedList.has(content.id);
+  const isChecked = checkedList.has(tag.id);
 
   // 개별 선택/해제 처리
   const handleSelect = (checked: boolean) => {
@@ -29,9 +29,9 @@ export function RegistryImageTagItemCheck({
       const next = new Set(prev);
 
       if (checked) {
-        next.add(content.id);
+        next.add(tag.id);
       } else {
-        next.delete(content.id);
+        next.delete(tag.id);
       }
 
       return next;

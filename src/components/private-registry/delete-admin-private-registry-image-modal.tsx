@@ -2,28 +2,24 @@
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { openDeleteRegistryImageModalAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
-import {
-  PRIVATE_REGISTRY_EVENTS,
-  PRIVATE_REGISTRY_EVENTS,
-  PRIVATE_REGISTRY_EVENTS,
-} from "@/constants/common/pubsub.constant";
+import { openDeleteAdminRegistryImageModalAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
+import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
-import { useDeletePrivateRegistryImage } from "@/hooks/registry/use-delete-admin-private-registry-image";
-import type { DeletePrivateRegistryImagePayload } from "@/types/private-registry/private-registry.type";
+import { useDeleteAdminPrivateRegistryImage } from "@/hooks/private-registry-image/use-delete-admin-private-registry-image";
+import type { DeleteAdminPrivateRegistryImagePayload } from "@/types/private-registry-image/private-registry-image.type";
 
-export function DeleteRegistryImageModal() {
+export function DeleteAdminPrivateRegistryImageModal() {
   // 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(
-    openDeleteRegistryImageModalAtom,
+    openDeleteAdminRegistryImageModalAtom,
   );
 
   // 삭제에 필요한 정보
   const [registryName, setRegistryName] = useState<string>("");
   const [imageId, setImageId] = useState<number>(-1);
 
-  const deletePrivateRegistryImage = useDeletePrivateRegistryImage();
+  const deletePrivateRegistryImage = useDeleteAdminPrivateRegistryImage();
 
   /**
    * 폼 제출 처리 함수
@@ -50,12 +46,9 @@ export function DeleteRegistryImageModal() {
     );
   };
 
-  /**
-   * 삭제 모달 데이터 구독
-   */
-  useSubscribe<DeletePrivateRegistryImagePayload>(
-    PRIVATE_REGISTRY_EVENTS.sendDeleteImage,
-    (payload: DeletePrivateRegistryImagePayload) => {
+  useSubscribe(
+    PRIVATE_REGISTRY_IMAGE_EVENTS.sendDeleteAdminRegistryImage,
+    (payload: DeleteAdminPrivateRegistryImagePayload) => {
       // 삭제할 컨테이너 이미지 정보 설정
       setRegistryName(payload.registryName);
       setImageId(payload.imageId);

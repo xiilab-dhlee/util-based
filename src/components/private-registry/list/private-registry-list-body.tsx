@@ -8,12 +8,12 @@ import {
   privateRegistrySelectedItemAtom,
 } from "@/atoms/private-registry/private-registry.atom";
 import { sourcecodeSearchTextAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
-import { privateRegistryListColumn } from "@/components/common/column/private-registry-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import privateRegistryListConstants from "@/constants/registry/private-registry-list.constant";
+import { privateRegistryListColumn } from "@/components/private-registry/list/private-registry-list-column";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPrivateRegistries } from "@/hooks/private-registry/use-get-private-registries";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import PrivateRegistryRow from "./private-registry-row";
+import { PrivateRegistryRow } from "./private-registry-row";
 
 export function PrivateRegistryListBody() {
   const page = useAtomValue(privateRegistryPageAtom);
@@ -22,7 +22,7 @@ export function PrivateRegistryListBody() {
 
   const { data } = useGetPrivateRegistries({
     page,
-    size: privateRegistryListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 

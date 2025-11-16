@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import { Label, type ResponsiveColumnType } from "xiilab-ui";
 
+import { AdminPrivateRegistryImageTagAllCheck } from "@/components/private-registry/detail/admin-private-registry-image-tag-all-check";
+import { AdminPrivateRegistryImageTagItemCheck } from "@/components/private-registry/detail/admin-private-registry-image-tag-item-check";
 import { PrivateRegistryImageTagAllCheck } from "@/components/private-registry-image/detail/private-registry-image-tag-all-check";
 import { PrivateRegistryImageTagItemCheck } from "@/components/private-registry-image/detail/private-registry-image-tag-item-check";
 import { PrivateRegistryImageTagLink } from "@/components/private-registry-image/detail/private-registry-image-tag-link";
@@ -20,8 +22,17 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "checkbox",
       align: "center",
       width: CHECKBOX_COLUMN_WIDTH,
-      render: (_: string, record: PrivateRegistryImageTagListType) => {
+      render: (_, record: PrivateRegistryImageTagListType) => {
         return <PrivateRegistryImageTagItemCheck tag={record} />;
+      },
+    },
+    {
+      title: <AdminPrivateRegistryImageTagAllCheck />,
+      dataIndex: "admin-checkbox",
+      align: "center",
+      width: CHECKBOX_COLUMN_WIDTH,
+      render: (_, record: PrivateRegistryImageTagListType) => {
+        return <AdminPrivateRegistryImageTagItemCheck tag={record} />;
       },
     },
     {
@@ -39,7 +50,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "보안 검사 상태",
-      dataIndex: "lastCheckedAt",
+      dataIndex: "scanStatus",
       align: "center",
       width: 90,
       render: () => {
@@ -109,12 +120,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
         return <span>{status}</span>;
       },
     },
-    {
-      title: "보안 검사 진행 상태",
-      dataIndex: "scanStatus",
-      align: "center",
-      width: 110,
-    },
+
     {
       title: "요청 사유",
       dataIndex: "requestReason",
