@@ -4,7 +4,7 @@ import { Typography } from "xiilab-ui";
 import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { WorkloadStatusType } from "@/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/utils/workload/workload.util";
-import { MyIcon } from "../common/icons";
+import { MyIcon } from "../common/icon";
 
 interface DashboardWorkloadStatusProps {
   status: WorkloadStatusType;

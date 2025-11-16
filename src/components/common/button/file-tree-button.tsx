@@ -4,7 +4,7 @@ import classNames from "classnames";
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
-import { MyIcon } from "../icons";
+import { MyIcon } from "../icon";
 
 /**
  * WorkloadFileButton 컴포넌트의 props 인터페이스

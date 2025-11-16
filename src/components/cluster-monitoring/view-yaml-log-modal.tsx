@@ -3,7 +3,7 @@ import { InfoModal } from "xiilab-ui";
 import { openYamlLogModalAtom } from "@/atoms/monitoring/cluster-monitoring.atom";
 import { WorkloadLogBody } from "@/components/workload/log/workload-log-body";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
-import { MyIcon } from "../common/icons";
+import { MyIcon } from "../common/icon";
 
 export function ViewYamlLogModal() {
   // 모달 상태 관리

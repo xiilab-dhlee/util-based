@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { WorkloadStatusText } from "@/components/common/text/workload-status-text";
 import { WorkloadLogButton } from "@/components/workload/list/workload-log-button";
 import { WorkloadMonitoringButton } from "@/components/workload/list/workload-monitoring-button";

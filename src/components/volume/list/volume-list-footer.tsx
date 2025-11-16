@@ -8,7 +8,7 @@ import {
   volumePageAtom,
   volumeSearchTextAtom,
 } from "@/atoms/volume/volume-list.atom";
-import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
+import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";

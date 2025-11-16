@@ -1,6 +1,6 @@
 "use client";
 
-import redfishFirmwareColumn from "@/components/common/columns/redfish-firmware-column";
+import redfishFirmwareColumn from "@/components/common/column/redfish-firmware-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemFirmware } from "@/hooks/node/use-get-redfish-system-firmware";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
@@ -39,4 +39,3 @@ export function ReadonlyFirmware({ bmcIp }: ReadonlyFirmwareProps) {
     </DetailContentFeature>
   );
 }
-

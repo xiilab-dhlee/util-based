@@ -4,8 +4,8 @@ import { RegistryImageTagAllCheck } from "@/components/registry/registry-image/r
 import { RegistryImageTagItemCheck } from "@/components/registry/registry-image/registry-image-tag-item-check";
 import type { RegistryImageTag } from "@/types/registry/registry.model";
 import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
-import ViewRejectReasonButton from "../buttons/view-reject-reason-button";
-import ViewRequestReasonButton from "../buttons/view-request-reason-button";
+import ViewRejectReasonButton from "../button/view-reject-reason-button";
+import ViewRequestReasonButton from "../button/view-request-reason-button";
 import SecurityTooltip from "../tooltip/security-tooltip";
 
 export const registryImageTagListColumn: ResponsiveColumnType[] = [
@@ -102,4 +102,3 @@ export const registryImageTagListColumn: ResponsiveColumnType[] = [
     },
   },
 ];
-

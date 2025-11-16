@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetPrivateRegistryImageTag } from "@/hooks/private-registry-image/use-get-private-registry-image-tag";

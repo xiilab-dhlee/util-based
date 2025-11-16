@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
-import withSafeProps from "@/components/common/hocs/with-safe-props";
+import withSafeProps from "@/components/common/hoc/with-safe-props";
 import { WorkloadStatusText } from "@/components/common/text/workload-status-text";
 import type { WorkloadListType } from "@/schemas/workload.schema";
 import { statusColorStyle } from "@/styles/mixins/color";
@@ -65,7 +65,6 @@ const VolumeWorkloadCard = (
 ) => {
   return withSafeProps(VolumeWorkloadCardComponent)(props);
 };
-
 
 /**
  * VolumeWorkloadCard의 메인 컨테이너 스타일

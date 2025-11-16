@@ -10,7 +10,7 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import redfishChassisColumn from "../../common/columns/redfish-chassis-column";
+import redfishChassisColumn from "../../common/column/redfish-chassis-column";
 
 /**
  * Redfish 디바이스 인벤토리 테이블의 확장 가능한 행 컴포넌트

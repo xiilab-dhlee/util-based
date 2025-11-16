@@ -10,7 +10,7 @@ import {
 } from "@/styles/layers/column-layer.styled";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 import { applyColumnConfigs } from "@/utils/common/column.util";
-import MyIcon from "../icons";
+import MyIcon from "../icon";
 
 /**
  * 컬럼 정의 배열 생성 (dataIndex 한 번만 정의)
@@ -76,4 +76,3 @@ export const createMonitoringNotificationColumn = (
 
   return applyColumnConfigs(columnList, config);
 };
-

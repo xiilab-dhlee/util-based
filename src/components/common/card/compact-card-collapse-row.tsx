@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { useState } from "react";
 import styled from "styled-components";
 
-import { MyIcon } from "../icons";
+import { MyIcon } from "../icon";
 import { CompactCardKey, CompactCardValue } from "./compact-card-layer.styled";
 
 interface CompactCardCollapseKeyValueProps {

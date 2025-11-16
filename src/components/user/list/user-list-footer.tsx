@@ -8,7 +8,7 @@ import {
   userPageAtom,
   userSearchTextAtom,
 } from "@/atoms/user/user-list.atom";
-import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
+import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import userListConstants from "@/constants/user/user-list.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
@@ -68,4 +68,3 @@ export function UserListFooter() {
     />
   );
 }
-

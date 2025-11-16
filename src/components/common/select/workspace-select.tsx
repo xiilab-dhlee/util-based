@@ -6,8 +6,8 @@ import { Checkbox, Input } from "xiilab-ui";
 
 import { openCreateWorkspaceModalAtom } from "@/atoms/common/modal.atom";
 import { ActiveOutsideClick } from "@/components/common/active-outside-click";
-import { CreateModelButton } from "@/components/common/buttons/create-model-button";
-import { MyIcon } from "@/components/common/icons";
+import { CreateModelButton } from "@/components/common/button/create-model-button";
+import { MyIcon } from "@/components/common/icon";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";
 import type { WorkspaceListType } from "@/schemas/workspace.schema";

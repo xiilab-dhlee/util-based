@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Tooltip, type TooltipProps } from "xiilab-ui";
 
-import MyIcon from "../icons";
+import MyIcon from "../icon";
 
 interface GuideTooltipProps extends TooltipProps {}
 
@@ -15,7 +15,6 @@ export function GuideTooltip({ ...props }: GuideTooltipProps) {
     </Tooltip>
   );
 }
-
 
 /** 아이콘 래퍼 */
 const IconWrapper = styled.span`

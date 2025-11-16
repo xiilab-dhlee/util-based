@@ -16,7 +16,7 @@ import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-not
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-notification/monitoring-notification.type";
 import { FormLabel } from "../common/form/form-label";
-import { MyIcon } from "../common/icons";
+import { MyIcon } from "../common/icon";
 import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
 
 export function ManageMonitoringNotificationModal() {

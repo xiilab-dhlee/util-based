@@ -6,7 +6,7 @@ import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
 } from "@/atoms/workspace/workspace-member.atom";
-import { workspaceMemberColumn } from "@/components/common/columns/workspace-member-column";
+import { workspaceMemberColumn } from "@/components/common/column/workspace-member-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
 import { useGetWorkspaceMembers } from "@/hooks/workspace/use-get-workspace-members";
@@ -33,4 +33,3 @@ export function WorkspaceMemberBody() {
     </ListWrapper>
   );
 }
-

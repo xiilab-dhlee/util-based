@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
-import { CreateModelButton } from "@/components/common/buttons/create-model-button";
+import { CreateModelButton } from "@/components/common/button/create-model-button";
 import monitoringNotificationConstants from "@/constants/monitoring/monitoring-notification.constant";
 import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
 import FormLabel from "../common/form/form-label";
@@ -172,7 +172,6 @@ export function ManageMonitoringNotificationSetting({
     </div>
   );
 }
-
 
 // ===== Styled Components =====
 

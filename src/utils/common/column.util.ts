@@ -1,6 +1,6 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import { commonColumns } from "@/components/common/columns";
+import { commonColumns } from "@/components/common/column";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 
 /**

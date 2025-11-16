@@ -10,7 +10,7 @@ import { useGetMonitoringNotifications } from "@/hooks/monitoring/use-get-monito
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import createMonitoringNotificationColumn from "../common/columns/create-monitoring-notification-column";
+import createMonitoringNotificationColumn from "../common/column/create-monitoring-notification-column";
 import SearchInput from "../common/input/search-input";
 
 export function MonitoringNotificationListArticle() {
@@ -72,7 +72,6 @@ export function MonitoringNotificationListArticle() {
     </Container>
   );
 }
-
 
 const Container = styled.article`
   flex: 1;

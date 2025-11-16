@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
-import { CreateModelButton } from "@/components/common/buttons/create-model-button";
+import { CreateModelButton } from "@/components/common/button/create-model-button";
 import type { SourcecodeParameterType } from "@/schemas/sourcecode.schema";
 
 interface ManageParameterProps {

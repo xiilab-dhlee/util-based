@@ -1,20 +1,21 @@
 ﻿import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
-import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 import { openViewNetworkPortsModalAtom } from "@/atoms/node/node-detail.atom";
-import { redfishNetworkDeviceColumn } from "@/components/common/columns/redfish-network-device-column";
-import { redfishNetworkPortColumn } from "@/components/common/columns/redfish-network-port-column";
+import { redfishNetworkDeviceColumn } from "@/components/common/column/redfish-network-device-column";
+import { redfishNetworkPortColumn } from "@/components/common/column/redfish-network-port-column";
 import { StateTab } from "@/components/common/state-tab";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
-
+import {
+  REDFISH_EVENTS,
+  REDFISH_EVENTS,
+  REDFISH_EVENTS,
+} from "@/constants/common/pubsub.constant";
 import redfishConstants from "@/constants/node/redfish.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import NetworkPortRow from "./network-port-row";
-import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 
 /**
  * 네트워크 어댑터 상세정보 모달 컴포넌트
@@ -79,7 +80,6 @@ export function ViewNetworkAdapterModal() {
     </InfoModal>
   );
 }
-
 
 /** 모달 컨테이너 */
 const Container = styled.div`

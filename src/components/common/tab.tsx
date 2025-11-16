@@ -5,7 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 import { TabsSeparated } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { useCustomSearchParams } from "@/hooks/common/use-custom-search-params";
 
 /**

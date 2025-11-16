@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload/workload-detail.atom";
 import { WorkloadMonitoringCard } from "@/components/workload/detail/workload-monitoring-card";
-import { DrawerCloseButton } from "../buttons/drawer-close-button";
+import { DrawerCloseButton } from "../button/drawer-close-button";
 
 /**
  * 워크로드 모니터링 정보를 표시하는 우측 드로어 컴포넌트

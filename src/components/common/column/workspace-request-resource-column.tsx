@@ -9,8 +9,8 @@ import type {
 } from "@/schemas/workspace-request-resource.schema";
 import type { WorkspaceRequestResourceStatus } from "@/types/workspace/workspace.interface";
 import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
-import ViewRejectReasonButton from "../buttons/view-reject-reason-button";
-import ViewRequestReasonButton from "../buttons/view-request-reason-button";
+import ViewRejectReasonButton from "../button/view-reject-reason-button";
+import ViewRequestReasonButton from "../button/view-request-reason-button";
 import WorkspaceRequestResourceStatusText from "../text/workspace-request-resource-status-text";
 import ColumnMig from "./column-mig";
 
@@ -123,4 +123,3 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     },
   },
 ];
-

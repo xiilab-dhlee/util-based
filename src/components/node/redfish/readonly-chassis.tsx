@@ -1,6 +1,6 @@
 "use client";
 
-import { redfishChassisColumn } from "@/components/common/columns/redfish-chassis-column";
+import { redfishChassisColumn } from "@/components/common/column/redfish-chassis-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { ChassisRow } from "@/components/node/redfish/chassis-row";
 import { useGetRedfishSystemChassis } from "@/hooks/node/use-get-redfish-system-chassis";
@@ -39,4 +39,3 @@ export function ReadonlyChassis({ bmcIp }: ReadonlyChassisProps) {
     </DetailContentFeature>
   );
 }
-

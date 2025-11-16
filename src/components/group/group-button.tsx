@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 
 import { groupSelectedKeyAtom } from "@/atoms/group/group.atom";
 import type { CoreFileButton } from "@/types/common/core.model";
-import FileTreeButton from "../common/buttons/file-tree-button";
+import FileTreeButton from "../common/button/file-tree-button";
 
 /**
  * GroupButton 컴포넌트의 props 인터페이스
@@ -47,4 +47,3 @@ export function GroupButton({
     </FileTreeButton>
   );
 }
-

@@ -3,7 +3,7 @@
 import { useAtomValue } from "jotai";
 
 import { nodePageAtom } from "@/atoms/node/node-list.atom";
-import { nodeListColumn } from "@/components/common/columns/node-list-column";
+import { nodeListColumn } from "@/components/common/column/node-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import nodeListConstants from "@/constants/node/node-list.constant";
 import { useGetNodes } from "@/hooks/node/use-get-nodes";

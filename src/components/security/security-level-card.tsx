@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import type { CoreSecurityLevel } from "@/types/common/core.interface";
 import { getSecurityLevelInfo } from "@/utils/common/security.util";
-import MyIcon from "../common/icons";
+import MyIcon from "../common/icon";
 
 interface RegistrySecurityResourceCardProps {
   level: CoreSecurityLevel;
@@ -31,7 +31,6 @@ export function RegistrySecurityLevelCard({
     </Container>
   );
 }
-
 
 const Container = styled.div`
   flex: 1;

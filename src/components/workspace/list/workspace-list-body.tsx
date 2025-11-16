@@ -6,7 +6,7 @@ import {
   workspacePageAtom,
   workspaceSearchTextAtom,
 } from "@/atoms/workspace/workspace-list.atom";
-import { createWorkspaceColumn } from "@/components/common/columns/create-workspace-column";
+import { createWorkspaceColumn } from "@/components/common/column/create-workspace-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";

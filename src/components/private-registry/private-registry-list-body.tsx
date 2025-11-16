@@ -8,7 +8,7 @@ import {
   privateRegistrySelectedItemAtom,
 } from "@/atoms/private-registry/private-registry.atom";
 import { sourcecodeSearchTextAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
-import { privateRegistryListColumn } from "@/components/common/columns/private-registry-list-column";
+import { privateRegistryListColumn } from "@/components/common/column/private-registry-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import privateRegistryListConstants from "@/constants/registry/private-registry-list.constant";
 import { useGetPrivateRegistries } from "@/hooks/private-registry/use-get-private-registries";

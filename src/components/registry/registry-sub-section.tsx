@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import { useGetPrivateRegistryImages } from "@/hooks/private-registry-image/use-get-private-registry-images";
-import { createPrivateRegistryImageColumn } from "../common/columns/create-private-registry-image-column";
+import { createPrivateRegistryImageColumn } from "../common/column/create-private-registry-image-column";
 import { CustomizedTable } from "../common/table/customized-table";
 import { UserPrivateRegistryListFilter } from "./user-private-registry-list-filter";
 

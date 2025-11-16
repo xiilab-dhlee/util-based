@@ -6,8 +6,8 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import { notificationSelectedAtom } from "@/atoms/notification/notification-list.atom";
-import { withSafeProps } from "@/components/common/hocs/with-safe-props";
-import { MyIcon } from "@/components/common/icons";
+import { withSafeProps } from "@/components/common/hoc/with-safe-props";
+import { MyIcon } from "@/components/common/icon";
 import type { NotificationListType } from "@/schemas/notification.schema";
 
 interface NotificationCardProps extends NotificationListType {
@@ -101,7 +101,6 @@ const NotificationCard = (props: NotificationCardProps) => {
   return withSafeProps(NotificationCardComponent)(props);
 };
 
-
 // ===== Styled Components =====
 
 const Container = styled.div`
@@ -178,4 +177,3 @@ const PriorityLabel = styled.span`
     color: #e85a5a;
   }
 `;
-

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import redfishNetworkPortColumn from "@/components/common/columns/redfish-network-port-column";
+import redfishNetworkPortColumn from "@/components/common/column/redfish-network-port-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { useToggle } from "@/hooks/common/use-toggle";
 import {

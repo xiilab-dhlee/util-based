@@ -1,4 +1,4 @@
-import redfishMemoryColumn from "@/components/common/columns/redfish-memory-column";
+import redfishMemoryColumn from "@/components/common/column/redfish-memory-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { useToggle } from "@/hooks/common/use-toggle";
 import {

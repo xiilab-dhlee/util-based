@@ -6,7 +6,7 @@ import {
   userPendingPageAtom,
   userPendingSearchTextAtom,
 } from "@/atoms/user/user-pending-list.atom";
-import { userPendingListColumn } from "@/components/common/columns/user-pending-list-column";
+import { userPendingListColumn } from "@/components/common/column/user-pending-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import userListConstants from "@/constants/user/user-list.constant";
 import { useGetPendingUsers } from "@/hooks/user/use-get-pending-users";
@@ -41,4 +41,3 @@ export function UserPendingListBody() {
     </ListWrapper>
   );
 }
-

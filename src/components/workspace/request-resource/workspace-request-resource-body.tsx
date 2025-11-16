@@ -3,7 +3,7 @@
 import { useAtomValue } from "jotai";
 
 import { workspaceRequestResourcePageAtom } from "@/atoms/workspace/workspace-request-resource.atom";
-import { workspaceRequestResourceColumn } from "@/components/common/columns/workspace-request-resource-column";
+import { workspaceRequestResourceColumn } from "@/components/common/column/workspace-request-resource-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import workspaceRequestResourceConstants from "@/constants/workspace/workspace-request-resource.constant";
 import { useGetWorkspaceRequestResources } from "@/hooks/workspace/use-get-workspace-request-resources";
@@ -28,4 +28,3 @@ export function WorkspaceRequestResourceBody() {
     </ListWrapper>
   );
 }
-

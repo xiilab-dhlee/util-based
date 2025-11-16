@@ -9,7 +9,7 @@ import monitoringNotificationConstants from "@/constants/monitoring/monitoring-n
 import { useGetMonitoringNotificationSettings } from "@/hooks/monitoring/use-get-monitoring-notification-settings";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import createMonitoringNotificationColumn from "../common/columns/create-monitoring-notification-column";
+import createMonitoringNotificationColumn from "../common/column/create-monitoring-notification-column";
 
 export function MonitoringNotificationSettingArticle() {
   const [page, setPage] = useState(1);
@@ -52,7 +52,6 @@ export function MonitoringNotificationSettingArticle() {
     </Container>
   );
 }
-
 
 const Container = styled.article`
   height: 328px;

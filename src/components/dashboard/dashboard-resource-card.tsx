@@ -4,7 +4,7 @@ import { Typography } from "xiilab-ui";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
-import { MyIcon } from "../common/icons";
+import { MyIcon } from "../common/icon";
 import { ResourceProgress } from "../common/progress/resource-progress";
 
 interface DashboardResourceCardProps {

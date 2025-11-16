@@ -6,7 +6,7 @@ import { Input, Modal, Tag } from "xiilab-ui";
 
 import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image/private-registry-image.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { FormItem } from "@/styles/layers/form-layer.styled";

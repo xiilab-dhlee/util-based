@@ -10,7 +10,7 @@ import { CustomizedTable } from "@/components/common/table/customized-table";
 import requestImageListConstants from "@/constants/request-image/request-image-list.constant";
 import { useGetRequestImages } from "@/hooks/request-image/use-get-request-images";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { createRequestImageColumn } from "../common/columns/create-request-image-column";
+import { createRequestImageColumn } from "../common/column/create-request-image-column";
 
 /**
  * 이미지 요청 목록 페이지 본문 컴포넌트

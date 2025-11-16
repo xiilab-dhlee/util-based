@@ -9,8 +9,8 @@ import type { PrivateRegistryImageTagListType } from "@/schemas/private-registry
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 import { applyColumnConfigs } from "@/utils/common/column.util";
-import { ViewRejectReasonButton } from "../buttons/view-reject-reason-button";
-import { ViewRequestReasonButton } from "../buttons/view-request-reason-button";
+import { ViewRejectReasonButton } from "../button/view-reject-reason-button";
+import { ViewRequestReasonButton } from "../button/view-request-reason-button";
 import { SecurityTooltip } from "../tooltip/security-tooltip";
 
 const createColumnList = (): ResponsiveColumnType[] => {

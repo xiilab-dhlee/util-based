@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload/workload-detail.atom";
-import { TerminalThemeButton } from "@/components/common/buttons/terminal-theme-button";
+import { TerminalThemeButton } from "@/components/common/button/terminal-theme-button";
 import { MonitoringDrawer } from "@/components/common/drawer/monitoring-drawer";
 import { WorkloadTerminal } from "@/components/common/terminal/workload-terminal";
 import { ViewWorkloadMonitoringModal } from "@/components/workload/detail/view-workload-monitoring-modal";
@@ -84,7 +84,6 @@ export function WorkloadTerminalMain() {
     </>
   );
 }
-
 
 const TerminalContent = styled.div`
   position: relative;

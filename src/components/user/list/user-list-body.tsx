@@ -3,7 +3,7 @@
 import { useAtomValue } from "jotai";
 
 import { userPageAtom, userSearchTextAtom } from "@/atoms/user/user-list.atom";
-import { createUserColumn } from "@/components/common/columns/create-user-column";
+import { createUserColumn } from "@/components/common/column/create-user-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import userListConstants from "@/constants/user/user-list.constant";
 import { useGetUsers } from "@/hooks/user/use-get-users";
@@ -37,4 +37,3 @@ export function UserListBody() {
     </ListWrapper>
   );
 }
-

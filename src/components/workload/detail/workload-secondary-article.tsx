@@ -4,8 +4,8 @@ import { format } from "date-fns";
 import styled from "styled-components";
 
 import { openCreateCommitImageModalAtom } from "@/atoms/workload/workload-detail.atom";
-import { CreateModelButton } from "@/components/common/buttons/create-model-button";
-import { MyIcon } from "@/components/common/icons";
+import { CreateModelButton } from "@/components/common/button/create-model-button";
+import { MyIcon } from "@/components/common/icon";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import { workloadEnvColumn } from "@/components/workload/detail/workload-env-column";

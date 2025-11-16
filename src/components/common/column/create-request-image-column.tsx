@@ -9,8 +9,8 @@ import { applyColumnConfigs } from "@/utils/common/column.util";
 import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
 import { ViewApproveRequestImageButton } from "../../request-image/view-approve-request-image-button";
 import { ViewRejectRequestImageButton } from "../../request-image/view-reject-request-image-button";
-import { ViewRejectReasonButton } from "../buttons/view-reject-reason-button";
-import { ViewRequestReasonButton } from "../buttons/view-request-reason-button";
+import { ViewRejectReasonButton } from "../button/view-reject-reason-button";
+import { ViewRequestReasonButton } from "../button/view-request-reason-button";
 import { WorkspaceRequestResourceStatusText } from "../text/workspace-request-resource-status-text";
 import { SecurityTooltip } from "../tooltip/security-tooltip";
 

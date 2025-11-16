@@ -10,7 +10,7 @@ import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateGroupModalAtom } from "@/atoms/group/group.atom";
 import { memberAddModalOpenAtom } from "@/atoms/setting/setting-modal.atom";
-import { CreateModelButton } from "@/components/common/buttons/create-model-button";
+import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyMultipleSelect } from "@/components/common/select/multiple";
 import { useClearForm } from "@/hooks/common/use-clear-form";

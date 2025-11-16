@@ -8,7 +8,7 @@ import { Icon } from "xiilab-ui";
 
 import { openProfilePopoverAtom } from "@/atoms/common/modal.atom";
 import { ActiveOutsideClick } from "@/components/common/active-outside-click";
-import { AstragoIcon } from "@/components/common/icons/astrago-icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { ProfilePopover } from "../../components/common/popover/profile-popover";
 

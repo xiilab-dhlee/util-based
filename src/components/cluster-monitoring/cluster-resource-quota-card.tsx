@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
-import MyIcon from "../common/icons";
+import MyIcon from "../common/icon";
 import ResourceProgress from "../common/progress/resource-progress";
 
 interface ClusterResourceQuotaCardProps {
@@ -56,7 +56,6 @@ export function ClusterResourceQuotaCard({
     </Containter>
   );
 }
-
 
 const Containter = styled.div`
   flex: 1;

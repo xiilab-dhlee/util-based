@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { PreviewTag } from "@/components/common/tag/preview-tag";
 import type { VolumeListType } from "@/schemas/volume.schema";
 

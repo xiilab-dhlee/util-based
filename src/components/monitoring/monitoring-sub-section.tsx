@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { createWorkloadColumn } from "@/components/common/columns/create-workload-column";
+import { createWorkloadColumn } from "@/components/common/column/create-workload-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { DashboardRunningWorkloadCard } from "@/components/dashboard/dashboard-running-workload-card";
 import { MonitoringWorkloadStatus } from "@/components/monitoring/monitoring-workload-status";
@@ -11,7 +11,7 @@ import type { WorkloadStatusType } from "@/schemas/workload.schema";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 import { statusTextStyle } from "@/styles/mixins/text";
-import { createWorkspaceColumn } from "../common/columns/create-workspace-column";
+import { createWorkspaceColumn } from "../common/column/create-workspace-column";
 
 export function MonitoringSubSection() {
   return (

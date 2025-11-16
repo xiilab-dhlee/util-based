@@ -3,7 +3,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
-import { MyIcon } from "../icons";
+import { MyIcon } from "../icon";
 
 interface CreateModelButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {

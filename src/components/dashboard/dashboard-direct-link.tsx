@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { ArrowIcon } from "../common/icons/arrow-icon";
+import { ArrowIcon } from "../common/icon/arrow-icon";
 
 interface DashboardDirectLinkProps {
   className?: string;
@@ -18,7 +18,6 @@ export function DashboardDirectLink({ className }: DashboardDirectLinkProps) {
     </Container>
   );
 }
-
 
 const Container = styled.div`
   position: absolute;

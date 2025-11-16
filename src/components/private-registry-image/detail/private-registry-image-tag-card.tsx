@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import styled from "styled-components";
 import { Card, Typography } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import type { PrivateRegistryImageTagListType } from "@/schemas/private-registry-image-tag.schema";
 
 interface PrivateRegistryImageTagCardProps

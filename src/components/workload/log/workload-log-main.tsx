@@ -3,8 +3,8 @@
 import styled from "styled-components";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload/workload-detail.atom";
-import { TerminalThemeButton } from "@/components/common/buttons/terminal-theme-button";
-import { MyIcon } from "@/components/common/icons";
+import { TerminalThemeButton } from "@/components/common/button/terminal-theme-button";
+import { MyIcon } from "@/components/common/icon";
 import { ViewWorkloadMonitoringModal } from "@/components/workload/detail/view-workload-monitoring-modal";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import {

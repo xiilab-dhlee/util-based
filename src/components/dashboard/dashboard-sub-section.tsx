@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { workloadListMock } from "@/mocks/workload.mock";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { createWorkloadColumn } from "../common/columns/create-workload-column";
+import { createWorkloadColumn } from "../common/column/create-workload-column";
 import { CustomizedTable } from "../common/table/customized-table";
 
 export function DashboardSubSection() {

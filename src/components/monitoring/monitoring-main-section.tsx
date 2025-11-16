@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Tooltip } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { ClusterResourceInfoTooltipTitle } from "@/components/common/tooltip-title/cluster-resource-info-tooltip-content";
 import { DashboardQuickMenu } from "@/components/dashboard/dashboard-quick-menu";
 import { MonitoringClusterResource } from "@/components/monitoring/monitoring-cluster-resource";

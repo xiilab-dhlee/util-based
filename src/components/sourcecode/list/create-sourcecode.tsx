@@ -8,7 +8,7 @@ import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
 import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
-import { CreateModelButton } from "@/components/common/buttons/create-model-button";
+import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { CreateCredentialModal } from "@/components/common/modal/create-credential-modal";
 import { GuidePopover } from "@/components/common/popover/guide-popover";
 import { MySelect } from "@/components/common/select";

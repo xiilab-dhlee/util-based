@@ -21,7 +21,7 @@ import { useCreateVolume } from "@/hooks/volume/use-create-volume";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
 import { formatFileSize } from "@/utils/common/file.util";
-import { AstragoIcon } from "../common/icons/astrago-icon";
+import { AstragoIcon } from "../common/icon/astrago-icon";
 
 /**
  * AstraGo 볼륨 생성 모달 컴포넌트

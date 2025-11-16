@@ -1,4 +1,4 @@
-import redfishPowerSupplyColumn from "@/components/common/columns/redfish-power-supply-column";
+import redfishPowerSupplyColumn from "@/components/common/column/redfish-power-supply-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { useToggle } from "@/hooks/common/use-toggle";
 import {

@@ -8,7 +8,7 @@ import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
 } from "../../../styles/layers/column-layer.styled";
-import { MyIcon } from "../icons";
+import { MyIcon } from "../icon";
 
 export const userPendingListColumn: ResponsiveColumnType[] = [
   {

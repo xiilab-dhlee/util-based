@@ -1,14 +1,14 @@
 import type { IconProps } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
-import { AstragoIcon } from "@/components/common/icons/astrago-icon";
-import { BuiltinIcon } from "@/components/common/icons/builtin-icon";
-import { GuideIcon } from "@/components/common/icons/guide-icon";
-import { JupyterIcon } from "@/components/common/icons/jupyter-icon";
-import { MigIcon } from "@/components/common/icons/mig-icon";
-import { MpsIcon } from "@/components/common/icons/mps-icon";
-import { PytorchIcon } from "@/components/common/icons/pytorch-icon";
-import { StorageIcon } from "@/components/common/icons/storage-icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
+import { BuiltinIcon } from "@/components/common/icon/builtin-icon";
+import { GuideIcon } from "@/components/common/icon/guide-icon";
+import { JupyterIcon } from "@/components/common/icon/jupyter-icon";
+import { MigIcon } from "@/components/common/icon/mig-icon";
+import { MpsIcon } from "@/components/common/icon/mps-icon";
+import { PytorchIcon } from "@/components/common/icon/pytorch-icon";
+import { StorageIcon } from "@/components/common/icon/storage-icon";
 import { ArrowIcon } from "./arrow-icon";
 import { CirclePlusIcon } from "./circle-plus-icon";
 

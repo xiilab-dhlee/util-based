@@ -1,4 +1,4 @@
-import { redfishFirmwareColumn } from "@/components/common/columns/redfish-firmware-column";
+import { redfishFirmwareColumn } from "@/components/common/column/redfish-firmware-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { useToggle } from "@/hooks/common/use-toggle";
 import {

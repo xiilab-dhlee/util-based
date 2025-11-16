@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 import { useCustomSearchParams } from "@/hooks/common/use-custom-search-params";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-import { MyIcon } from "./icons";
+import { MyIcon } from "./icon";
 
 interface MyBreadcrumbProps {
   items: CoreBreadcrumbItem[];

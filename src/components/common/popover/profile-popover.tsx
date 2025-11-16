@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Button, Icon } from "xiilab-ui";
 
 import { openProfilePopoverAtom } from "@/atoms/common/modal.atom";
-import { AstragoIcon } from "@/components/common/icons/astrago-icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 import {
   ADMIN_ROOT_PATH,
   STANDARD_ROOT_PATH,

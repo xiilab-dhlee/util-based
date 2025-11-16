@@ -11,7 +11,7 @@ import {
 } from "xiilab-ui";
 
 import { customScrollbar } from "@/styles/mixins/scrollbar";
-import { withRowData } from "../hocs/with-row-data";
+import { withRowData } from "../hoc/with-row-data";
 
 /**
  * CustomizedTable 컴포넌트의 props 인터페이스

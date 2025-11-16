@@ -9,7 +9,7 @@ import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 import type { CoreSecurityLevel } from "@/types/common/core.interface";
-import createRegistrySecurityColumn from "../common/columns/create-security-column";
+import createRegistrySecurityColumn from "../common/column/create-security-column";
 import CustomizedTable from "../common/table/customized-table";
 import RegistrySecurityLevelCard from "./security-level-card";
 
@@ -71,7 +71,6 @@ export function RegistrySecurityAside() {
     </AsideDetailContainer>
   );
 }
-
 
 const Category = styled.div`
   display: flex;

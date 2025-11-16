@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import styled from "styled-components";
 
-import { nodeAllocatedResourcesColumn } from "@/components/common/columns/node-allocated-resources-column";
+import { nodeAllocatedResourcesColumn } from "@/components/common/column/node-allocated-resources-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetNodeResources } from "@/hooks/node/use-get-node-resources";
 import {
@@ -303,7 +303,6 @@ export function NodeSecondaryPane() {
     </DetailContentPane>
   );
 }
-
 
 /**
  * 테이블 섹션 스타일

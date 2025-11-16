@@ -7,7 +7,7 @@ import { Input, Modal } from "xiilab-ui";
 import { openCheckPasswordModalAtom } from "@/atoms/common/modal.atom";
 import { LoggedInUserCard } from "@/components/common/card/logged-in-user-card";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";

@@ -1,6 +1,6 @@
 "use client";
 
-import { redfishPowerSupplyColumn } from "@/components/common/columns/redfish-power-supply-column";
+import { redfishPowerSupplyColumn } from "@/components/common/column/redfish-power-supply-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemChassis } from "@/hooks/node/use-get-redfish-system-chassis";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
@@ -39,4 +39,3 @@ export function ReadonlyPowerSupplies({ bmcIp }: ReadonlyPowerSuppliesProps) {
     </DetailContentFeature>
   );
 }
-

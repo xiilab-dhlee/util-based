@@ -7,7 +7,7 @@ import { REGISTRY_QUICK_MENUS } from "@/constants/registry/registry.constant";
 import { useGetWaitingRequestImages } from "@/hooks/request-image/use-get-waiting-request-images";
 import { MySearchFilter } from "@/layouts/common/search-filter";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
-import { createRequestImageColumn } from "../common/columns/create-request-image-column";
+import { createRequestImageColumn } from "../common/column/create-request-image-column";
 import { CustomizedTable } from "../common/table/customized-table";
 import { DashboardQuickMenu } from "../dashboard/dashboard-quick-menu";
 import { RequestImageStatusCard } from "./request-image-status-card";

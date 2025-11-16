@@ -3,7 +3,7 @@
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import registrySecurityConstants from "@/constants/security/registry-security.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import createSecurityColumn from "../common/columns/create-security-column";
+import createSecurityColumn from "../common/column/create-security-column";
 
 export function SecurityScanListBody() {
   return (
@@ -41,4 +41,3 @@ export function SecurityScanListBody() {
     </ListWrapper>
   );
 }
-

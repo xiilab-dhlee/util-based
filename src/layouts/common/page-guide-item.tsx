@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import type { CoreGuideItem } from "@/types/common/core.model";
 
 /**

@@ -3,7 +3,7 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { Tag } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import type { WorkloadVolumeType } from "@/schemas/workload.schema";
 import {
   LikeCompactCardBody,

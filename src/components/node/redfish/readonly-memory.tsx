@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import styled from "styled-components";
 
-import { redfishMemoryColumn } from "@/components/common/columns/redfish-memory-column";
+import { redfishMemoryColumn } from "@/components/common/column/redfish-memory-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemMemory } from "@/hooks/node/use-get-redfish-system-memory";
 import {
@@ -137,7 +137,6 @@ export function ReadonlyMemory({ bmcIp, systemId }: ReadonlyMemoryProps) {
     </DetailContentFeature>
   );
 }
-
 
 /** 메모리 요약 정보 바디 스타일 */
 const StyledDetailContentFeatureBody = styled(DetailContentFeatureBody)`

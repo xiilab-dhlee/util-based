@@ -2,7 +2,7 @@
 
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { useGetWorkloadByMode } from "@/hooks/workload/use-get-workload-by-mode";
 import {
   DetailContentButton,

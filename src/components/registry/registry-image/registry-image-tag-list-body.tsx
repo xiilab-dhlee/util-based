@@ -6,7 +6,7 @@ import {
   privateRegistryImageTagSearchTextAtom,
   privateRegistryImageTagVulnerabilityPageAtom,
 } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
-import { registryImageTagListColumn } from "@/components/common/columns/registry-image-tag-list-column";
+import { registryImageTagListColumn } from "@/components/common/column/registry-image-tag-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import privateRegistryImageDetailConstants from "@/constants/registry/private-registry-image-detail.constant";
 import { useGetPrivateRegistryImageTags } from "@/hooks/registry/use-get-private-registry-image-tags";

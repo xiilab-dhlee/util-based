@@ -6,7 +6,7 @@ import {
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
 } from "@/atoms/sourcecode/sourcecode-list.atom";
-import { createSourcecodeColumn } from "@/components/common/columns/create-sourcecode-column";
+import { createSourcecodeColumn } from "@/components/common/column/create-sourcecode-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { DateRange, Typography } from "xiilab-ui";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import { SystemMonitoringCard } from "@/components/system-monitoring/system-monitoring-card";
 import { PageHeader } from "@/layouts/common/page-header";

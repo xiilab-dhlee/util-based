@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import type { Service } from "@/types/service/service.model";
-import withSafeProps from "../common/hocs/with-safe-props";
+import withSafeProps from "../common/hoc/with-safe-props";
 import WorkloadStatusText from "../common/text/workload-status-text";
 import DashboardDirectLink from "./dashboard-direct-link";
 
@@ -58,7 +58,6 @@ const DashboardServiceCard = (
 ) => {
   return withSafeProps(DashboardServiceCardComponent)(props);
 };
-
 
 const Container = styled(Link)`
   display: flex;

@@ -3,8 +3,8 @@
 import classNames from "classnames";
 import styled from "styled-components";
 
-import { AstragoIcon } from "@/components/common/icons/astrago-icon";
-import { StorageIcon } from "@/components/common/icons/storage-icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
+import { StorageIcon } from "@/components/common/icon/storage-icon";
 import type { VolumeStorageType } from "@/schemas/volume.schema";
 
 /**
@@ -96,7 +96,6 @@ export function VolumeStorageCard({
     </Container>
   );
 }
-
 
 // ===== Styled Components =====
 

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styled from "styled-components";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import type { CoreSecurityLevel } from "@/types/common/core.interface";
 import { getSecurityLevelInfo } from "@/utils/common/security.util";

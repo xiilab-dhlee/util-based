@@ -8,7 +8,7 @@ import {
   privateRegistryImagePageAtom,
   privateRegistryImageSearchTextAtom,
 } from "@/atoms/private-registry-image/private-registry-image.atom";
-import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
+import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";

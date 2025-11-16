@@ -18,7 +18,7 @@ import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useCreateVolume } from "@/hooks/volume/use-create-volume";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
-import { StorageIcon } from "../common/icons/storage-icon";
+import { StorageIcon } from "../common/icon/storage-icon";
 
 export function CreateOnPremVolumeModal() {
   const formRef = useRef<HTMLFormElement>(null);

@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
 import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { StateTab } from "@/components/common/tab";
 import { useGetVolume } from "@/hooks/volume/use-get-volume";
 import {

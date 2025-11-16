@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { MyIcon } from "../icons";
+import { MyIcon } from "../icon";
 
 /**
  * DrawerCloseButton 컴포넌트 Props 인터페이스

@@ -1,6 +1,6 @@
 ﻿import { Button } from "xiilab-ui";
 
-import { redfishNetworkAdapterColumn } from "@/components/common/columns/redfish-network-adapter-column";
+import { redfishNetworkAdapterColumn } from "@/components/common/column/redfish-network-adapter-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";

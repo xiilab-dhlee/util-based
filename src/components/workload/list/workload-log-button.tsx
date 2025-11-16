@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import { ColumnRouteIcon } from "@/components/common/columns/column-route-icon";
+import { ColumnRouteIcon } from "@/components/common/column/column-route-icon";
 import { isAdminMode } from "@/utils/common/router.util";
 
 interface WorkloadLogButtonProps {

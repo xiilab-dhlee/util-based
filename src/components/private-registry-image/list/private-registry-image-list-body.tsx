@@ -6,7 +6,7 @@ import {
   privateRegistryImagePageAtom,
   privateRegistryImageSearchTextAtom,
 } from "@/atoms/private-registry-image/private-registry-image.atom";
-import { createPrivateRegistryImageColumn } from "@/components/common/columns/create-private-registry-image-column";
+import { createPrivateRegistryImageColumn } from "@/components/common/column/create-private-registry-image-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPrivateRegistryImages } from "@/hooks/private-registry-image/use-get-private-registry-images";

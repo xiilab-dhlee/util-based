@@ -5,7 +5,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { redfishLogColumn } from "@/components/common/columns/redfish-log-column";
+import { redfishLogColumn } from "@/components/common/column/redfish-log-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetNodeBmcInfo } from "@/hooks/node/use-get-bmc-info";
 import { useGetNode } from "@/hooks/node/use-get-node";

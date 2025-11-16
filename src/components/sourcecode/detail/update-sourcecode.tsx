@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
-import { DrawerCloseButton } from "@/components/common/buttons/drawer-close-button";
+import { DrawerCloseButton } from "@/components/common/button/drawer-close-button";
 import { SOURCECODE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetSourcecode } from "@/hooks/sourcecode/use-get-sourcecode";

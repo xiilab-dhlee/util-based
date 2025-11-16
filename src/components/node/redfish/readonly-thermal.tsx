@@ -1,6 +1,6 @@
 "use client";
 
-import { redfishThermalColumn } from "@/components/common/columns/redfish-thermal-column";
+import { redfishThermalColumn } from "@/components/common/column/redfish-thermal-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemChassis } from "@/hooks/node/use-get-redfish-system-chassis";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
@@ -36,4 +36,3 @@ export function ReadonlyThermal({ bmcIp }: ReadonlyThermalProps) {
     </DetailContentFeature>
   );
 }
-

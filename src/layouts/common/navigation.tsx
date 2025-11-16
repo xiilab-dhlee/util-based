@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import styled from "styled-components";
 import { AstraGoNav, type AstraGoNavMenu } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icons";
+import { MyIcon } from "@/components/common/icon";
 import { WorkspaceSelect } from "@/components/common/select/workspace-select";
 import { useActiveMenu } from "@/hooks/common/use-active-menu";
 import { Profile } from "@/layouts/common/profile";

@@ -1,6 +1,6 @@
 "use client";
 
-import redfishNetworkAdapterColumn from "@/components/common/columns/redfish-network-adapter-column";
+import redfishNetworkAdapterColumn from "@/components/common/column/redfish-network-adapter-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemNetworkAdapter } from "@/hooks/node/use-get-redfish-system-network-adapter";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
@@ -44,4 +44,3 @@ export function ReadonlyNetworkAdapter({
     </DetailContentFeature>
   );
 }
-

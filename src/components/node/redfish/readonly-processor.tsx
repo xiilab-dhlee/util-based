@@ -1,6 +1,6 @@
 "use client";
 
-import redfishProcessorColumn from "@/components/common/columns/redfish-processor-column";
+import redfishProcessorColumn from "@/components/common/column/redfish-processor-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemProcessors } from "@/hooks/node/use-get-redfish-system-processors";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
@@ -41,4 +41,3 @@ export function ReadonlyProcessor({ bmcIp, systemId }: ReadonlyProcessorProps) {
     </DetailContentFeature>
   );
 }
-
