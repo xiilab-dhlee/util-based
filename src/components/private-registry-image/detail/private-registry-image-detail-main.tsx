@@ -19,7 +19,7 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   {
     title: "대시보드",
     icon: "Dashboard",
-    href: "/standard",
+    href: "/standard/dashboard",
   },
   {
     title: "내부 레지스트리",

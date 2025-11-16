@@ -1,5 +1,4 @@
-"use client";
-
+import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
@@ -19,14 +18,15 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   {
     title: "대시보드",
     icon: "Dashboard",
-    href: "/standard",
+    href: "/standard/dashboard",
   },
   { title: "소스코드" },
 ];
 
-/**
- * 소스코드 페이지 레이아웃
- */
+export const metadata: Metadata = {
+  title: "Source Code",
+};
+
 export default function SourcecodeLayout({ children }: PropsWithChildren) {
   return (
     <>

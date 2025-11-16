@@ -1,10 +1,11 @@
+import type { Metadata } from "next";
+
 import { DashboardMain } from "@/components/dashboard/dashboard-main";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Dashboard",
-  description: "",
 };
 
-export default async function StandardDashboardPage() {
+export default function StandardDashboardPage() {
   return <DashboardMain />;
 }

@@ -1,5 +1,4 @@
-"use client";
-
+import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
@@ -19,7 +18,7 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   {
     title: "대시보드",
     icon: "Dashboard",
-    href: "/standard",
+    href: "/standard/dashboard",
   },
   { title: "워크로드", href: "/standard/workload" },
   { title: "워크로드 정보" },
@@ -58,11 +57,10 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
   },
 ];
 
-/**
- * 워크로드 상세 페이지 레이아웃
- *
- * 이 레이아웃은 workload/[id] 하위의 모든 페이지에 적용됩니다.
- */
+export const metadata: Metadata = {
+  title: "Workload",
+};
+
 export default function WorkloadDetailLayout({ children }: PropsWithChildren) {
   return (
     <>

@@ -7,8 +7,7 @@ import type { PropsWithChildren } from "react";
 import { Providers } from "@/app/providers";
 
 export const metadata: Metadata = {
-  title: "AstraGo Frontend v2",
-  description: "Cloud-native platform frontend application",
+  title: "AstraGo",
 };
 
 export const viewport: Viewport = {

@@ -10,7 +10,6 @@ import {
 
 export const metadata = {
   title: "AstraGo",
-  description: "Cloud-native platform frontend application",
 };
 
 /**

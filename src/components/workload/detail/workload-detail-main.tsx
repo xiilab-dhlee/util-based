@@ -40,9 +40,7 @@ export function WorkloadDetailMain() {
         <DetailContentTitleTool>
           {isStandard && (
             <div style={{ width: 120, height: 30 }}>
-              <DetailContentButton
-                onClick={() => alert("워크로드 복제 action")}
-              >
+              <DetailContentButton onClick={() => alert("준비 중입니다.")}>
                 <MyIcon name="Copy" color="var(--icon-fill)" />
                 워크로드 복제
               </DetailContentButton>
@@ -50,7 +48,7 @@ export function WorkloadDetailMain() {
           )}
 
           <div style={{ width: 80, height: 30 }}>
-            <DetailContentButton onClick={() => alert("워크로드 삭제 action")}>
+            <DetailContentButton onClick={() => alert("준비 중입니다.")}>
               삭제
             </DetailContentButton>
           </div>

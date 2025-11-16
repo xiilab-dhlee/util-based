@@ -25,7 +25,7 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   {
     title: "대시보드",
     icon: "Dashboard",
-    href: "/standard",
+    href: "/standard/dashboard",
   },
   { title: "워크로드" },
 ];

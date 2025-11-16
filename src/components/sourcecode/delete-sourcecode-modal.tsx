@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
@@ -81,4 +83,3 @@ export function DeleteSourcecodeModal() {
     </Modal>
   );
 }
-
