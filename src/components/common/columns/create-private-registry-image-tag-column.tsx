@@ -3,6 +3,7 @@ import { Label, type ResponsiveColumnType } from "xiilab-ui";
 
 import { PrivateRegistryImageTagAllCheck } from "@/components/private-registry-image/detail/private-registry-image-tag-all-check";
 import { PrivateRegistryImageTagItemCheck } from "@/components/private-registry-image/detail/private-registry-image-tag-item-check";
+import { PrivateRegistryImageTagLink } from "@/components/private-registry-image/detail/private-registry-image-tag-link";
 import { CHECKBOX_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type { PrivateRegistryImageTagListType } from "@/schemas/private-registry-image-tag.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
@@ -27,6 +28,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "태그",
       dataIndex: "tag",
       align: "left",
+      render: (tag: string, record: PrivateRegistryImageTagListType) => {
+        return <PrivateRegistryImageTagLink tagId={record.id} tagName={tag} />;
+      },
     },
     {
       title: "이미지 크기",

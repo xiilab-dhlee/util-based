@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtomValue } from "jotai";
+import { useParams } from "next/navigation";
 
 import {
   privateRegistryImageTagPageAtom,
@@ -20,6 +21,8 @@ import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
  * @returns 내부 레지스트리 이미지 태그 목록 페이지 본문 컴포넌트
  */
 export function PrivateRegistryImageTagListBody() {
+  const { id } = useParams();
+
   const page = useAtomValue(privateRegistryImageTagPageAtom);
   const searchText = useAtomValue(privateRegistryImageTagSearchTextAtom);
 
@@ -27,7 +30,7 @@ export function PrivateRegistryImageTagListBody() {
     page,
     size: LIST_PAGE_SIZE,
     searchText,
-    imageId: 1,
+    imageId: Number(id),
   });
 
   return (
