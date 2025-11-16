@@ -20,5 +20,6 @@ export const useGetPrivateRegistryImageTags = (
       const response = await privateRegistryImageService.getTagList(payload);
       return response.data;
     },
+    enabled: !!payload.imageId,
   });
 };

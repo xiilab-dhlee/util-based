@@ -42,7 +42,7 @@ export function SourcecodeRow({
   return (
     <tr
       {...restProps}
-      className={classNames({ active: isActive }, className)}
+      className={classNames("pointer", { active: isActive }, className)}
       onClick={handleClickRow}
     >
       {children}

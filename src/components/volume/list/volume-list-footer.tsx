@@ -9,8 +9,8 @@ import {
   volumeSearchTextAtom,
 } from "@/atoms/volume/volume-list.atom";
 import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
+import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
-import volumeListConstants from "@/constants/volume/volume-list.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetVolumes } from "@/hooks/volume/use-get-volumes";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -36,7 +36,7 @@ export function VolumeListFooter() {
   // 볼륨 목록 데이터 조회 (React Query 훅 사용)
   const { data, isLoading } = useGetVolumes({
     page,
-    size: volumeListConstants.pageSize,
+    size: CARD_PAGE_SIZE,
     searchText,
   });
 
@@ -58,21 +58,17 @@ export function VolumeListFooter() {
       return;
     }
     // 삭제 모달에 데이터 전달
-    publish(
-      VOLUME_EVENTS.sendDeleteVolume,
-      Array.from(selectedVolumes),
-    );
+    publish(VOLUME_EVENTS.sendDeleteVolume, Array.from(selectedVolumes));
   };
 
   return (
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
-      pageSize={volumeListConstants.pageSize}
+      pageSize={CARD_PAGE_SIZE}
       onChange={handlePage}
       rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
       isLoading={isLoading}
     />
   );
 }
-

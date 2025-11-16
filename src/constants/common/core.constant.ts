@@ -1,6 +1,8 @@
 import type { CoreThemeOption } from "@/types/common/core.model";
 /** 목록 페이지 크기 */
 export const LIST_PAGE_SIZE = 20;
+/** 카드 페이지 크기 */
+export const CARD_PAGE_SIZE = 12;
 /** 아이콘 컬럼 너비 */
 export const ICON_COLUMN_WIDTH = 40;
 /** 체크박스 컬럼 너비 */

@@ -6,9 +6,9 @@ import {
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
 } from "@/atoms/sourcecode/sourcecode-list.atom";
+import { createSourcecodeColumn } from "@/components/common/columns/create-sourcecode-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import { sourcecodeListColumn } from "@/components/sourcecode/sourcecode-list-column";
-import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { SourcecodeRow } from "./sourcecode-row";
@@ -28,14 +28,14 @@ export function SourcecodeListBody() {
 
   const { data } = useGetSourcecodes({
     page,
-    size: sourcecodeListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={sourcecodeListColumn}
+        columns={createSourcecodeColumn()}
         data={data?.content || []}
         customRow={SourcecodeRow}
       />

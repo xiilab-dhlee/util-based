@@ -7,7 +7,7 @@ const basePrivateRegistryImageTagSchema = z.object({
   /** 태그명 */
   tag: z.string().min(1),
   /** 이미지 크기 */
-  imageSize: z.string(),
+  imageSize: z.number().int().min(0).max(999),
   /** 치명적(Critical) 취약점 수 */
   critical: z.number().int().min(0).max(999),
   /** 높은(High) 취약점 수 */

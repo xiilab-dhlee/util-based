@@ -9,7 +9,7 @@ import {
   volumeSearchTextAtom,
   volumeSelectedAtom,
 } from "@/atoms/volume/volume-list.atom";
-import volumeListConstants from "@/constants/volume/volume-list.constant";
+import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetVolumes } from "@/hooks/volume/use-get-volumes";
 import { ListEmpty } from "@/layouts/list/list-empty";
 import type { VolumeListType } from "@/schemas/volume.schema";
@@ -35,7 +35,7 @@ export function VolumeListBody() {
   // 볼륨 목록 데이터 조회 (React Query 훅 사용)
   const { data } = useGetVolumes({
     page,
-    size: volumeListConstants.pageSize,
+    size: CARD_PAGE_SIZE,
     searchText,
   });
 

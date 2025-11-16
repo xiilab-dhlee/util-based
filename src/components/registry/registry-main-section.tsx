@@ -3,15 +3,15 @@ import Image from "next/image";
 import styled from "styled-components";
 
 import { userWaitingRequestImageListSearchTextAtom } from "@/atoms/registry/registry.atom";
-import registryConstants from "@/constants/registry/registry.constant";
+import { REGISTRY_QUICK_MENUS } from "@/constants/registry/registry.constant";
 import { useGetWaitingRequestImages } from "@/hooks/request-image/use-get-waiting-request-images";
 import { MySearchFilter } from "@/layouts/common/search-filter";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
-import CustomizedTable from "../common/table/customized-table";
-import DashboardQuickMenu from "../dashboard/dashboard-quick-menu";
-import createRequestImageListColumn from "../request-image/create-request-image-list-column";
-import RequestImageStatusCard from "./request-image-status-card";
-import UserRequestImageWaitingListFilter from "./request-image-waiting-list-filter";
+import { createRequestImageColumn } from "../common/columns/create-request-image-column";
+import { CustomizedTable } from "../common/table/customized-table";
+import { DashboardQuickMenu } from "../dashboard/dashboard-quick-menu";
+import { RequestImageStatusCard } from "./request-image-status-card";
+import { UserRequestImageWaitingListFilter } from "./request-image-waiting-list-filter";
 
 export function RegistryMainSection() {
   const searchText = useAtomValue(userWaitingRequestImageListSearchTextAtom);
@@ -31,7 +31,7 @@ export function RegistryMainSection() {
           />
         </Thumbnail>
         <QuickMenus>
-          {registryConstants.quickMenus.map((menu) => (
+          {REGISTRY_QUICK_MENUS.map((menu) => (
             <DashboardQuickMenu key={menu.title} height={120} {...menu} />
           ))}
         </QuickMenus>
@@ -55,11 +55,11 @@ export function RegistryMainSection() {
             <UserRequestImageWaitingListFilter />
             <WaitRequestImageBody>
               <CustomizedTable
-                columns={createRequestImageListColumn([
-                  "imageName",
-                  "imageTag",
-                  "security",
-                  "creatorName",
+                columns={createRequestImageColumn([
+                  { dataIndex: "imageName" },
+                  { dataIndex: "imageTag" },
+                  { dataIndex: "security" },
+                  { dataIndex: "creatorName" },
                 ])}
                 data={data?.content || []}
                 activePadding
@@ -72,7 +72,6 @@ export function RegistryMainSection() {
     </Container>
   );
 }
-
 
 /**
  * 관리자 대시보드 섹션의 메인 컨테이너

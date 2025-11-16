@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { PrivateRegistryListMain } from "@/components/registry/private-registry/private-registry-list-main";
+import { PrivateRegistryListMain } from "@/components/private-registry/private-registry-list-main";
 
 /**
  * 관리자 내부 레지스트리 페이지 메타데이터

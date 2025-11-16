@@ -8,7 +8,7 @@ import {
   hubSearchTextAtom,
   hubSelectedAtom,
 } from "@/atoms/hub/hub-list.atom";
-import hubListConstants from "@/constants/hub/hub-list.constant";
+import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetHubs } from "@/hooks/hub/use-get-hubs";
 import { ListEmpty } from "@/layouts/list/list-empty";
 import type { HubListType } from "@/schemas/hub.schema";
@@ -37,7 +37,7 @@ export function HubListBody() {
   // 허브 목록 데이터 조회 (React Query 훅 사용)
   const { data } = useGetHubs({
     page,
-    size: hubListConstants.pageSize,
+    size: CARD_PAGE_SIZE,
     searchText,
   });
 

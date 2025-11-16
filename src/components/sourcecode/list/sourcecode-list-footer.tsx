@@ -9,8 +9,8 @@ import {
   sourcecodeSearchTextAtom,
 } from "@/atoms/sourcecode/sourcecode-list.atom";
 import { ListDeleteButton } from "@/components/common/buttons/list-delete-button";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { SOURCECODE_EVENTS } from "@/constants/common/pubsub.constant";
-import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -36,7 +36,7 @@ export function SourcecodeListFooter() {
   // 소스코드 목록 데이터 조회 (React Query 훅 사용)
   const { data, isLoading } = useGetSourcecodes({
     page,
-    size: sourcecodeListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -68,11 +68,10 @@ export function SourcecodeListFooter() {
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
-      pageSize={sourcecodeListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
       rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
     />
   );
 }
-

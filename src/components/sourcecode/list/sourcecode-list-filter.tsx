@@ -7,7 +7,7 @@ import {
   sourcecodeSearchTextAtom,
 } from "@/atoms/sourcecode/sourcecode-list.atom";
 import { SearchInput } from "@/components/common/input/search-input";
-import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
 import { MySearchFilter } from "@/layouts/common/search-filter";
@@ -30,7 +30,7 @@ export function SourcecodeListFilter() {
 
   const { data } = useGetSourcecodes({
     page,
-    size: sourcecodeListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 

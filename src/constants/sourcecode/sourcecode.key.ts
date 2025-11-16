@@ -1,6 +1,6 @@
 import type { GetSourcecodesPayload } from "@/types/sourcecode/sourcecode.type";
 
-const sourcecodeKeys = {
+export const sourcecodeKeys = {
   default: ["sourcecode"],
   list: (payload: GetSourcecodesPayload) => [
     ...sourcecodeKeys.default,
@@ -9,5 +9,3 @@ const sourcecodeKeys = {
   ],
   detail: (id: number) => [...sourcecodeKeys.default, "detail", id],
 };
-
-export default sourcecodeKeys;

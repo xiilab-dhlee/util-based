@@ -1,16 +1,14 @@
 ﻿"use client";
 
 import { Icon } from "xiilab-ui";
+
 import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
-
-
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { RequestImageListType } from "@/schemas/request-image.schema";
 import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
 } from "@/styles/layers/column-layer.styled";
-import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 
 interface ViewRejectRequestImageButtonProps {
   requestImage: RequestImageListType;
@@ -33,4 +31,3 @@ export function ViewRejectRequestImageButton({
     </ColumnAlignCenterWrap>
   );
 }
-

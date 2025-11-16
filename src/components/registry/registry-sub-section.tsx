@@ -1,48 +1,83 @@
 import styled from "styled-components";
 
-import privateRegistryListConstants from "@/constants/registry/private-registry-list.constant";
-import privateRegistryListColumn from "../common/columns/private-registry-list-column";
-import CustomizedTable from "../common/table/customized-table";
-import UserPrivateRegistryListFilter from "./user-private-registry-list-filter";
-import UserPublicRegistryListFilter from "./user-public-registry-list-filter";
+import { useGetPrivateRegistryImages } from "@/hooks/private-registry-image/use-get-private-registry-images";
+import { createPrivateRegistryImageColumn } from "../common/columns/create-private-registry-image-column";
+import { CustomizedTable } from "../common/table/customized-table";
+import { UserPrivateRegistryListFilter } from "./user-private-registry-list-filter";
 
 export function RegistrySubSection() {
+  const { data } = useGetPrivateRegistryImages({
+    page: 1,
+    size: 100,
+    searchText: "",
+  });
   return (
     <Container>
       <Pane>
-        <UserPublicRegistryListFilter />
-        <RightBody>
+        <UserPrivateRegistryListFilter />
+        <PaneBody>
           <CustomizedTable
-            columns={privateRegistryListColumn}
-            data={privateRegistryListConstants.listDemo}
+            columns={createPrivateRegistryImageColumn([
+              {
+                dataIndex: "imageName",
+              },
+              {
+                dataIndex: "tagCnt",
+              },
+              {
+                dataIndex: "pullCount",
+              },
+              {
+                dataIndex: "creatorName",
+              },
+              {
+                dataIndex: "creatorDate",
+              },
+            ])}
+            data={data?.content || []}
             activePadding
             pagination={{
-              onChange: function Xs() {}, // 페이지 변경 핸들러 (현재 미구현)
-              pageSize: 8, // 한 페이지당 표시할 항목 수
+              onChange: function Xs() {},
+              pageSize: 10,
               total: 100,
             }}
           />
-        </RightBody>
+        </PaneBody>
       </Pane>
       <Pane>
         <UserPrivateRegistryListFilter />
-        <RightBody>
+        <PaneBody>
           <CustomizedTable
-            columns={privateRegistryListColumn}
-            data={privateRegistryListConstants.listDemo}
+            columns={createPrivateRegistryImageColumn([
+              {
+                dataIndex: "imageName",
+              },
+              {
+                dataIndex: "tagCnt",
+              },
+              {
+                dataIndex: "pullCount",
+              },
+              {
+                dataIndex: "creatorName",
+              },
+              {
+                dataIndex: "creatorDate",
+              },
+            ])}
+            data={data?.content || []}
             activePadding
             pagination={{
-              onChange: function Xs() {}, // 페이지 변경 핸들러 (현재 미구현)
-              pageSize: 8, // 한 페이지당 표시할 항목 수
+              onChange: function Xs() {},
+              pageSize: 10,
               total: 100,
             }}
           />
-        </RightBody>
+        </PaneBody>
       </Pane>
     </Container>
   );
 }
-
 
 const Container = styled.section`
   display: flex;
@@ -64,7 +99,7 @@ const Pane = styled.article`
   overflow: hidden;
 `;
 
-const RightBody = styled.div`
+const PaneBody = styled.div`
   flex: 1;
   width: 100%;
   height: 100%;

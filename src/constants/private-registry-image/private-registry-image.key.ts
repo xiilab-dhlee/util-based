@@ -2,7 +2,9 @@ import type {
   GetAdminPrivateRegistryImagePayload,
   GetAdminPrivateRegistryImagesPayload,
   GetPrivateRegistryImagesPayload,
+  GetPrivateRegistryImageTagDetailPayload,
   GetPrivateRegistryImageTagsPayload,
+  GetPrivateRegistryImageVulnerabilityListPayload,
 } from "@/types/private-registry-image/private-registry-image.type";
 
 export const privateRegistryImageKeys = {
@@ -37,10 +39,24 @@ export const privateRegistryImageKeys = {
     "tagList",
     ...Object.values(payload),
   ],
+  // 내부 레지스트리 이미지 태그 상세
+  tagDetail: (payload: GetPrivateRegistryImageTagDetailPayload) => [
+    ...privateRegistryImageKeys.default,
+    "tagDetail",
+    ...Object.values(payload),
+  ],
   // 관리자 내부 레지스스트리 이미지 태그 목록
   adminTagList: (payload: GetPrivateRegistryImageTagsPayload) => [
     ...privateRegistryImageKeys.default,
     "adminTagList",
+    ...Object.values(payload),
+  ],
+  // 내부 레지스트리 이미지 태그 취약점 목록
+  tagVulnerabilityList: (
+    payload: GetPrivateRegistryImageVulnerabilityListPayload,
+  ) => [
+    ...privateRegistryImageKeys.default,
+    "tagVulnerabilityList",
     ...Object.values(payload),
   ],
 };

@@ -2,7 +2,7 @@ import { useAtom } from "jotai";
 
 import { sourcecodeTypeAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
 import { MySelect } from "@/components/common/select";
-import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.constant";
+import { SOURCECODE_TYPE_OPTIONS } from "@/constants/sourcecode/sourcecode.constant";
 
 /**
  * 소스코드 타입별 정렬 컴포넌트
@@ -28,14 +28,13 @@ export function SourcecodeTypeSort() {
 
   return (
     <MySelect
-      options={sourcecodeListConstants.codeType} // 소스코드 타입 옵션들
-      placeholder="타입" // 플레이스홀더 텍스트
-      setValue={handleChange} // 값 변경 핸들러
-      value={codeType} // 현재 선택된 타입 값
-      width={120} // 선택기 너비
-      height={30} // 선택기 높이
-      isAll // 전체 선택 옵션 표시
+      options={SOURCECODE_TYPE_OPTIONS}
+      placeholder="타입"
+      setValue={handleChange}
+      value={codeType}
+      width={120}
+      height={30}
+      isAll
     />
   );
 }
-

@@ -3,6 +3,9 @@ import { HttpResponse, http } from "msw";
 import {
   privateRegistryImageDetailMock,
   privateRegistryImageListMock,
+  privateRegistryImageTagDetailMock,
+  privateRegistryImageTagListMock,
+  privateRegistryImageTagVulnerabilityListMock,
 } from "@/mocks/private-registry-image.mock";
 
 /**
@@ -13,6 +16,27 @@ export const privateRegistryImageHandlers = [
   http.get("/core-api/v1/core/private-registry-image", () => {
     return HttpResponse.json({
       content: privateRegistryImageListMock,
+      totalSize: 100,
+    });
+  }),
+  // 내부 레지스트리 이미지 취약점 목록 조회
+  http.get(
+    "/core-api/v1/core/private-registry-image/:id/tag/:tagId/vulnerability",
+    () => {
+      return HttpResponse.json({
+        content: privateRegistryImageTagVulnerabilityListMock,
+        totalSize: 100,
+      });
+    },
+  ),
+  // 내부 레지스트리 이미지 태그 상세 조회
+  http.get("/core-api/v1/core/private-registry-image/:id/tag/:tagId", () => {
+    return HttpResponse.json(privateRegistryImageTagDetailMock);
+  }),
+  // 내부 레지스트리 이미지 태그 목록 조회
+  http.get("/core-api/v1/core/private-registry-image/:id/tag", () => {
+    return HttpResponse.json({
+      content: privateRegistryImageTagListMock,
       totalSize: 100,
     });
   }),

@@ -9,7 +9,7 @@ import {
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
 } from "@/atoms/sourcecode/sourcecode-list.atom";
-import sourcecodeListConstants from "@/constants/sourcecode/sourcecode-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
 import type { SourcecodeListType } from "@/schemas/sourcecode.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
@@ -30,7 +30,7 @@ export function SourcecodeAllCheck() {
   // 현재 페이지의 소스코드 목록 조회
   const { data } = useGetSourcecodes({
     page,
-    size: sourcecodeListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -62,10 +62,14 @@ export function SourcecodeAllCheck() {
 
       if (checked) {
         // 현재 페이지의 모든 소스코드 선택
-        currentPageIds.forEach((id) => next.add(id));
+        currentPageIds.forEach((id) => {
+          next.add(id);
+        });
       } else {
         // 현재 페이지의 모든 소스코드 선택 해제
-        currentPageIds.forEach((id) => next.delete(id));
+        currentPageIds.forEach((id) => {
+          next.delete(id);
+        });
       }
 
       return next;
@@ -83,4 +87,3 @@ export function SourcecodeAllCheck() {
     </ColumnAlignCenterWrap>
   );
 }
-

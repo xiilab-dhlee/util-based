@@ -1,23 +1,30 @@
-import type { CorePaginate, CoreSearchText } from "../common/api.interface";
+import type {
+  CorePaginate,
+  CorePayload,
+  CoreSearchText,
+} from "../common/api.interface";
 
-export interface GetVolumesPayload extends CorePaginate, CoreSearchText {}
+export interface GetVolumesPayload
+  extends CorePayload,
+    CorePaginate,
+    CoreSearchText {}
 
-export interface GetVolumeFilesPayload {
+export interface GetVolumeFilesPayload extends CorePayload {
   id: string;
   path: string;
 }
 export interface CreateVolumePayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface UpdateVolumePayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface CompressVolumeFilePayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface CreateVolumeFolderPayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }

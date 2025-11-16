@@ -1,13 +1,12 @@
-import hubListConstants from "@/constants/hub/hub-list.constant";
+import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { hubDetailSchema, hubListSchema } from "@/schemas/hub.schema";
 import { makeMock } from "@/utils/common/mock.util";
 
 /**
  * 허브 목록 모킹 데이터
  */
-export const hubListMock = Array.from(
-  { length: hubListConstants.pageSize },
-  () => makeMock(hubListSchema),
+export const hubListMock = Array.from({ length: CARD_PAGE_SIZE }, () =>
+  makeMock(hubListSchema),
 );
 
 /**

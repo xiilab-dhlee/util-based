@@ -1,6 +1,6 @@
 import type { GetHubsPayload } from "@/types/hub/hub.type";
 
-const hubKeys = {
+export const hubKeys = {
   default: ["hub"],
   list: (payload: GetHubsPayload) => [
     ...hubKeys.default,
@@ -9,5 +9,3 @@ const hubKeys = {
   ],
   detail: (id: number) => [...hubKeys.default, "detail", id],
 };
-
-export default hubKeys;

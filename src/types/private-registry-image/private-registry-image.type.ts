@@ -27,6 +27,18 @@ export interface GetPrivateRegistryImageTagsPayload
   imageId: number;
 }
 
+export interface GetPrivateRegistryImageTagDetailPayload {
+  imageId: number;
+  tagId: number;
+}
+
+export interface GetPrivateRegistryImageVulnerabilityListPayload
+  extends CorePayload,
+    CorePaginate {
+  imageId: number;
+  tagId: number;
+}
+
 export interface GetAdminPrivateRegistryImageTagsPayload
   extends CorePayload,
     CorePaginate,

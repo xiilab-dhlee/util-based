@@ -1,3 +1,10 @@
-import type { CorePaginate, CoreSearchText } from "../common/api.interface";
+import type {
+  CorePaginate,
+  CorePayload,
+  CoreSearchText,
+} from "../common/api.interface";
 
-export interface GetHubsPayload extends CorePaginate, CoreSearchText {}
+export interface GetHubsPayload
+  extends CorePayload,
+    CorePaginate,
+    CoreSearchText {}

@@ -23,7 +23,7 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   },
   {
     title: "내부 레지스트리",
-    href: "/standard/private-registry",
+    href: "/standard/private-registry-image",
   },
   { title: "컨테이너 이미지 상세정보" },
 ];

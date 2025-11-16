@@ -13,7 +13,7 @@ import {
 } from "@/atoms/volume/volume-list.atom";
 import { VolumeStorageCard } from "@/components/volume/list/volume-storage-card";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
-import volumeListConstants from "@/constants/volume/volume-list.constant";
+import { VOLUME_STORAGE_OPTIONS } from "@/constants/volume/volume.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import type { VolumeStorageType } from "@/schemas/volume.schema";
@@ -83,7 +83,7 @@ export function SelectVolumeTypeModal() {
       {/* 스토리지 타입 카드들을 감싸는 컨테이너 */}
       <Container>
         {/* 사용 가능한 스토리지 타입들을 카드 형태로 렌더링 */}
-        {volumeListConstants.storageType.map((item) => (
+        {VOLUME_STORAGE_OPTIONS.map((item) => (
           <VolumeStorageCard
             key={item.value}
             storageType={item.value as VolumeStorageType}
@@ -95,7 +95,6 @@ export function SelectVolumeTypeModal() {
     </InfoModal>
   );
 }
-
 
 /**
  * 스토리지 타입 카드들을 감싸는 스타일드 컴포넌트

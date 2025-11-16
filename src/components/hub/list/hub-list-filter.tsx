@@ -11,7 +11,7 @@ import {
 } from "@/atoms/hub/hub-list.atom";
 // 향후 검색 기능 구현 시 사용될 컴포넌트
 import { SearchInput } from "@/components/common/input/search-input";
-import hubListConstants from "@/constants/hub/hub-list.constant";
+import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetHubs } from "@/hooks/hub/use-get-hubs";
 import { MySearchFilter } from "@/layouts/common/search-filter";
@@ -52,7 +52,7 @@ export function HubListFilter() {
   // 허브 목록 데이터 조회 (React Query 훅 사용)
   const { data } = useGetHubs({
     page,
-    size: hubListConstants.pageSize,
+    size: CARD_PAGE_SIZE,
     searchText,
   });
 
@@ -74,4 +74,3 @@ export function HubListFilter() {
     </MySearchFilter>
   );
 }
-

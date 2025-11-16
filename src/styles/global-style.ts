@@ -2,7 +2,7 @@
 
 import { createGlobalStyle } from "styled-components";
 
-const MyGlobalStyle = createGlobalStyle`
+export const MyGlobalStyle = createGlobalStyle`
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -81,6 +81,10 @@ button {
   white-space: nowrap;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .tooltip-icon {
   cursor: help;
 }
@@ -104,5 +108,3 @@ button {
   margin-inline-start: 0 !important;
 }
 `;
-
-export default MyGlobalStyle;

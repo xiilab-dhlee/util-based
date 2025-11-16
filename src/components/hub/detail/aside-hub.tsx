@@ -55,7 +55,7 @@ export function AsideHub() {
       {/* 허브 헤더 영역: 제목과 워크로드 생성 버튼 */}
       <AsideDetailHeader>
         <AsideDetailHeaderTitle>
-          <span>{data?.detail.title}</span>
+          <span>{data?.title}</span>
         </AsideDetailHeaderTitle>
         <Button
           color="primary"
@@ -74,13 +74,12 @@ export function AsideHub() {
       {/* 허브 README 콘텐츠 영역: 스크롤 가능한 마크다운 렌더링 */}
       <FillArticle>
         <AsideDetailArticleBody>
-          <MarkdownToHtml markdown={data?.readme} />
+          <MarkdownToHtml markdown={data?.readme || ""} />
         </AsideDetailArticleBody>
       </FillArticle>
     </AsideDetailContainer>
   );
 }
-
 
 /**
  * 스크롤 가능한 콘텐츠 영역을 위한 스타일드 컴포넌트

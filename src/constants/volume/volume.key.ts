@@ -3,7 +3,7 @@ import type {
   GetVolumesPayload,
 } from "@/types/volume/volume.type";
 
-const volumeKeys = {
+export const volumeKeys = {
   default: ["volume"],
   list: (payload: GetVolumesPayload) => [
     ...volumeKeys.default,
@@ -17,5 +17,3 @@ const volumeKeys = {
     ...Object.values(payload),
   ],
 };
-
-export default volumeKeys;

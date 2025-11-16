@@ -11,7 +11,7 @@ import {
   volumeSelectedAtom,
 } from "@/atoms/volume/volume-list.atom";
 import { SearchInput } from "@/components/common/input/search-input";
-import volumeListConstants from "@/constants/volume/volume-list.constant";
+import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetVolumes } from "@/hooks/volume/use-get-volumes";
@@ -36,7 +36,7 @@ export function VolumeListFilter() {
 
   const { data } = useGetVolumes({
     page,
-    size: volumeListConstants.pageSize,
+    size: CARD_PAGE_SIZE,
     searchText,
   });
 
@@ -69,4 +69,3 @@ export function VolumeListFilter() {
     </MySearchFilter>
   );
 }
-

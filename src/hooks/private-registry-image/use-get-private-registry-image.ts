@@ -19,5 +19,6 @@ export const useGetPrivateRegistryImage = (
       const response = await privateRegistryImageService.getDetail(id);
       return response.data;
     },
+    enabled: !!id,
   });
 };

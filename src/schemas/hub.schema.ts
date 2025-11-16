@@ -12,6 +12,8 @@ const baseHubSchema = z.object({
   description: z.string().min(1).max(500),
   /** 썸네일 파일 URL */
   thumbnailFileUrl: z.string().url(),
+  /** README */
+  readme: z.string(),
 });
 
 // 목록 조회용 스키마

@@ -1,8 +1,10 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import sourcecodeKeys from "@/constants/sourcecode/sourcecode.key";
+import { sourcecodeKeys } from "@/constants/sourcecode/sourcecode.key";
 import { useServices } from "@/providers/service-provider";
+import type { SourcecodeListType } from "@/schemas/sourcecode.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetSourcecodesPayload } from "@/types/sourcecode/sourcecode.type";
 
 /**
@@ -11,7 +13,7 @@ import type { GetSourcecodesPayload } from "@/types/sourcecode/sourcecode.type";
  */
 export const useGetSourcecodes = (
   payload: GetSourcecodesPayload,
-): UseQueryResult<any, Error> => {
+): UseQueryResult<CoreListResponse<SourcecodeListType>, Error> => {
   const { sourcecodeService } = useServices();
 
   return useQuery({
@@ -22,4 +24,3 @@ export const useGetSourcecodes = (
     },
   });
 };
-

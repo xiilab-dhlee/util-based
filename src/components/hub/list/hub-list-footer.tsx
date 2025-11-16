@@ -3,7 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 
 import { hubPageAtom, hubSearchTextAtom } from "@/atoms/hub/hub-list.atom";
-import hubListConstants from "@/constants/hub/hub-list.constant";
+import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetHubs } from "@/hooks/hub/use-get-hubs";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 
@@ -37,7 +37,7 @@ export function HubListFooter() {
   // 허브 목록 데이터 조회 (React Query 훅 사용)
   const { data, isLoading } = useGetHubs({
     page,
-    size: hubListConstants.pageSize,
+    size: CARD_PAGE_SIZE,
     searchText,
   });
 
@@ -55,10 +55,9 @@ export function HubListFooter() {
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
-      pageSize={hubListConstants.pageSize}
+      pageSize={CARD_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
     />
   );
 }
-

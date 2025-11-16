@@ -1,17 +1,12 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icons";
 import { PrivateRegistryImageAllCheck } from "@/components/private-registry-image/list/private-registry-image-all-check";
 import { PrivateRegistryImageItemCheck } from "@/components/private-registry-image/list/private-registry-image-item-check";
 import { PrivateRegistryImageNameLink } from "@/components/private-registry-image/list/private-registry-image-name-link";
-import {
-  CHECKBOX_COLUMN_WIDTH,
-  ICON_COLUMN_WIDTH,
-} from "@/constants/common/core.constant";
+import { CHECKBOX_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type { PrivateRegistryImageListType } from "@/schemas/private-registry-image.schema";
 import {
   ColumnAlignCenterWrap,
-  ColumnIconWrap,
   ColumnTruncateText,
 } from "@/styles/layers/column-layer.styled";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
