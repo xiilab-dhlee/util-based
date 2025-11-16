@@ -31,7 +31,7 @@ import { isUserMode } from "@/utils/common/router.util";
 interface WorkloadIntroCardProps extends WorkloadDetailType {}
 
 /**
- * ?�크로드 ?�세 ?�이지???�개 카드 컴포?�트
+ * 워크로드 상세 페이지의 소개 카드 컴포넌트
  *
  */
 export function WorkloadIntroCard({
@@ -42,15 +42,15 @@ export function WorkloadIntroCard({
   labels,
   workspaceId,
 }: WorkloadIntroCardProps) {
-  // Pub/Sub ?�스?�을 ?�한 ?�벤??발행 ??
+  // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
   const pathname = usePathname();
 
   const isStandard = isUserMode(pathname);
 
   /**
-   * ?�크로드 ?�정 모달???�기 ?�한 ?�들??
-   * Pub/Sub ?�스?�을 ?�해 ?�크로드 ?�정 ?�벤?��? 발행?�니??
+   * 워크로드 수정 모달을 열기 위한 핸들러
+   * Pub/Sub 시스템을 통해 워크로드 수정 이벤트를 발행합니다.
    */
   const handleModify = () => {
     publish(WORKLOAD_EVENTS.sendUpdateWorkload, {
@@ -62,75 +62,75 @@ export function WorkloadIntroCard({
   };
 
   /**
-   * ?�크로드 ?�원 ?�어 ?�들??
-   * ?�재??준�?�?메시지�??�시?�니??
-   * TODO: ?�제 ?�원 ?�어 기능 구현 ?�요
+   * 워크로드 전원 제어 핸들러
+   * 현재는 준비 중 메시지를 표시합니다.
+   * TODO: 실제 전원 제어 기능 구현 필요
    */
   const handleClickPower = () => {
-    alert("준�?중입?�다.");
+    alert("준비 중입니다.");
   };
 
   return (
     <DetailIntroCardContainer>
-      {/* ?�더 ?�역: ?�크로드 ?�름�??�구 버튼??*/}
+      {/* 헤더 영역: 워크로드 이름과 도구 버튼들 */}
       <DetailIntroCardHeader>
-        {/* ?�크로드 ?�름 ?�시 ?�역 */}
+        {/* 워크로드 이름 표시 영역 */}
         <DetailIntroCardTitle>
           <span className="truncate">{workloadName}</span>
         </DetailIntroCardTitle>
-        {/* ?�구 버튼 ?�역 */}
+        {/* 도구 버튼 영역 */}
         <ToolBox>
-          {/* ?�크로드 ?�정 버튼 */}
+          {/* 워크로드 수정 버튼 */}
           {isStandard && (
             <IconWrapper onClick={handleModify}>
               <MyIcon name="Edit02" color="var(--icon-fill)" size={24} />
-              <span className="sr-only">?�크로드 ?�명, ?�벨 ?�정</span>
+              <span className="sr-only">워크로드 설명, 라벨 수정</span>
             </IconWrapper>
           )}
-          {/* ?�크로드 ?�원 ?�어 버튼 */}
+          {/* 워크로드 전원 제어 버튼 */}
           <IconWrapper onClick={handleClickPower}>
             <MyIcon name="Power" color="var(--icon-fill)" size={24} />
-            <span className="sr-only">?�크로드 ?�원 On/Off</span>
+            <span className="sr-only">워크로드 전원 On/Off</span>
           </IconWrapper>
         </ToolBox>
       </DetailIntroCardHeader>
 
-      {/* 본문 ?�역: ?�크로드 ?�세 ?�보 */}
+      {/* 본문 영역: 워크로드 상세 정보 */}
       <DetailIntroCardBody>
-        {/* ?�크로드 ?�태 ?�보 ??*/}
+        {/* 워크로드 상태 정보 행 */}
         <DetailIntroCardRow>
           <DetailIntroCardRowBody>
             <DetailIntroCardRowIconWrapper>
               <MyIcon name="Info" color="var(--icon-fill)" size={24} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
-              <WorkloadStatusTitle>?�크로드 ?�태</WorkloadStatusTitle>
+              <WorkloadStatusTitle>워크로드 상태</WorkloadStatusTitle>
               <WorkloadStatusText status={status} />
             </DetailIntroCardRowTitle>
           </DetailIntroCardRowBody>
         </DetailIntroCardRow>
 
-        {/* ?�크로드 ?�명 ?�보 ??(?�장 가?? */}
+        {/* 워크로드 설명 정보 행 (확장 가능) */}
         <DetailIntroCardDescriptionRow>
           <DetailIntroCardDescriptionRowBody>
             <DetailIntroCardRowIconWrapper>
               <MyIcon name="Description" color="var(--icon-fill)" size={22} />
             </DetailIntroCardRowIconWrapper>
-            <DetailIntroCardRowTitle>?�크로드 ?�명</DetailIntroCardRowTitle>
+            <DetailIntroCardRowTitle>워크로드 설명</DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
-          {/* ?�크로드 ?�명 ?�스??(?�크�?가?? */}
+          {/* 워크로드 설명 텍스트 (스크롤 가능) */}
           <DetailIntroCardDescription>{description}</DetailIntroCardDescription>
         </DetailIntroCardDescriptionRow>
 
-        {/* ?�크로드 ?�벨 ?�보 ??*/}
-        {/* TODO: ?�벨 UI ?�책 ?�정 ?�요 */}
+        {/* 워크로드 라벨 정보 행 */}
+        {/* TODO: 라벨 UI 정책 설정 필요 */}
         <DetailIntroCardRow>
           <DetailIntroCardRowBody>
             <DetailIntroCardRowIconWrapper>
               <MyIcon name="Label" color="var(--icon-fill)" size={24} />
             </DetailIntroCardRowIconWrapper>
-            <LabelTitle>?�벨</LabelTitle>
-            {/* ?�벨 ?�그 목록 (?�크�?가?? */}
+            <LabelTitle>라벨</LabelTitle>
+            {/* 라벨 태그 목록 (스크롤 가능) */}
             <Labels>
               {labels.map((label) => (
                 <Tag
@@ -155,24 +155,24 @@ export function WorkloadIntroCard({
 // ============================================================================
 
 /**
- * ?�벨 ?�목 ?�역
- * ?�벨 ?�션???�목???�시 (?�측 ?�백 추�?)
+ * 라벨 제목 영역
+ * 라벨 섹션의 제목을 표시 (우측 여백 추가)
  */
 const LabelTitle = styled(DetailIntroCardRowTitle)`
   margin-right: 20px;
 `;
 
 /**
- * ?�크로드 ?�태 ?�목
- * ?�태 ?�션???�목???�시 (?�측 ?�백 추�?)
+ * 워크로드 상태 제목
+ * 상태 섹션의 제목을 표시 (우측 여백 추가)
  */
 const WorkloadStatusTitle = styled.span`
   margin-right: 10px;
 `;
 
 /**
- * ?�구 버튼 컨테?�너
- * ?�정, ?�원 ?�어 ?�의 ?�션 버튼?�을 배치
+ * 도구 버튼 컨테이너
+ * 수정, 전원 제어 등의 액션 버튼들을 배치
  */
 const ToolBox = styled.div`
   display: flex;
@@ -182,8 +182,8 @@ const ToolBox = styled.div`
 `;
 
 /**
- * ?�이�?버튼 ?�퍼
- * ?�더???�션 버튼?�을 ?�한 ?��??�링
+ * 아이콘 버튼 래퍼
+ * 헤더의 액션 버튼들을 위한 스타일링
  */
 const IconWrapper = styled.button`
   display: flex;
@@ -199,8 +199,8 @@ const IconWrapper = styled.button`
 `;
 
 /**
- * ?�벨 ?�그 컨테?�너
- * ?�벨 ?�그?�을 배치?�고 ?�크�?처리
+ * 라벨 태그 컨테이너
+ * 라벨 태그들을 배치하고 스크롤 처리
  */
 const Labels = styled.div`
   display: flex;

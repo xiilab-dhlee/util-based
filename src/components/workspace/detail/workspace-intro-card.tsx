@@ -10,121 +10,91 @@ import { useGetWorkspace } from "@/hooks/workspace/use-get-workspace";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 /**
- * ?�크?�페?�스 ?�세 ?�이지???�개 카드 컴포?�트
+ * 워크스페이스 상세 페이지의 소개 카드 컴포넌트
  *
- * ?�크?�페?�스??기본 ?�보(?�름, ?�명, ?�성?? ?�성?? GPU ??�??�시?�고,
- * ??�� 기능???�공?�니??
+ * 워크스페이스의 기본 정보(이름, 설명, 생성자, 생성일, GPU 등)를 표시하고,
+ * 삭제 기능을 제공합니다.
  */
 export function WorkspaceIntroCard() {
   const { id } = useParams();
-  // Pub/Sub ?�스?�을 ?�한 ?�벤??발행 ??
+  // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
 
   const { data } = useGetWorkspace(id as string);
 
   /**
-   * ?�크?�페?�스 ??�� 모달???�기 ?�한 ?�들??
-   * Pub/Sub ?�스?�을 ?�해 ?�크?�페?�스 ??�� ?�벤?��? 발행?�니??
+   * 워크스페이스 삭제 모달을 열기 위한 핸들러
+   * Pub/Sub 시스템을 통해 워크스페이스 삭제 이벤트를 발행합니다.
    */
   const handleDelete = () => {
     publish(WORKSPACE_EVENTS.sendDeleteWorkspace, [id]);
   };
 
   return (
-    <>
-      {/* ?�크?�페?�스 ?�개 카드 메인 컨테?�너 */}
-      <Container>
-        {/* ?�더 ?�역: ?�크?�페?�스 ?�름�??�구 버튼??*/}
-        <Header>
-          {/* ?�크?�페?�스 ?�름 ?�시 ?�역 */}
-          <HeaderTitle>?�크?�페?�스 기본?�보</HeaderTitle>
-          {/* ?�구 버튼 ?�역 */}
-          <ToolBox>
-            {/* ?�크?�페?�스 ??�� 버튼 */}
-            <IconWrapper onClick={handleDelete}>
-              <MyIcon name="Delete" color="var(--icon-fill)" size={24} />
-              <span className="sr-only">?�크?�페?�스 ??��</span>
-            </IconWrapper>
-          </ToolBox>
-        </Header>
-
-        {/* 본문 ?�역: ?�크?�페?�스 ?�세 ?�보 */}
-        <Body>
-          {/* ?�크로드 ?�태 ?�보 ??*/}
-          {/* <Row>
-            <RowBody>
-              <RowIconWrapper>
-                <MyIcon name="Info" color="var(--icon-fill)" size={24} />
-              </RowIconWrapper>
-              <RowTitle>
-                <RowKey>?�크로드 ?�태</RowKey>
-                <WorkloadStatusText status={status} />
-              </RowTitle>
-            </RowBody>
-          </Row> */}
-          {/* ?�크로드 ?�명 ?�보 ??(?�장 가?? */}
-          <Row>
-            <DescriptionRowBody>
-              <RowIconWrapper>
-                <MyIcon name="Description" color="var(--icon-fill)" size={22} />
-              </RowIconWrapper>
-              <RowTitle>?�름</RowTitle>
-            </DescriptionRowBody>
-            {/* ?�크로드 ?�명 ?�스??(?�크�?가?? */}
-            <Description>{data?.workspace.name}</Description>
-          </Row>
-
-          {/* ?�크로드 ?�명 ?�보 ??(?�장 가?? */}
-          <DescriptionRow>
-            <DescriptionRowBody>
-              <RowIconWrapper>
-                <MyIcon name="Description" color="var(--icon-fill)" size={22} />
-              </RowIconWrapper>
-              <RowTitle>?�크로드 ?�명</RowTitle>
-            </DescriptionRowBody>
-            {/* ?�크로드 ?�명 ?�스??(?�크�?가?? */}
-            <Description>{data?.workspace.description}</Description>
-          </DescriptionRow>
-          <Row>
-            <RowBody>
-              <RowIconWrapper>
-                <MyIcon
-                  name="PersonFilled"
-                  color="var(--icon-fill)"
-                  size={24}
-                />
-              </RowIconWrapper>
-              <RowTitle>
-                <RowKey>?�성??:</RowKey>
-                <RowValue>{data?.workspace.createUserName}</RowValue>
-              </RowTitle>
-            </RowBody>
-          </Row>
-          <Row>
-            <RowBody>
-              <RowIconWrapper>
-                <MyIcon name="Calendar01" color="var(--icon-fill)" size={24} />
-              </RowIconWrapper>
-              <RowTitle>
-                <RowKey>?�성??:</RowKey>
-                <RowValue>{data?.workspace.createUserName}</RowValue>
-              </RowTitle>
-            </RowBody>
-          </Row>
-          <Row>
-            <RowBody>
-              <RowIconWrapper>
-                <MyIcon name="Gpu" color="var(--icon-fill)" size={24} />
-              </RowIconWrapper>
-              <RowTitle>
-                <RowKey>GPU :</RowKey>
-                <RowValue>{data?.workspace.createUserName}</RowValue>
-              </RowTitle>
-            </RowBody>
-          </Row>
-        </Body>
-      </Container>
-    </>
+    <Container>
+      <Header>
+        <HeaderTitle>워크스페이스 기본정보</HeaderTitle>
+        <ToolBox>
+          <IconWrapper onClick={handleDelete}>
+            <MyIcon name="Delete" color="var(--icon-fill)" size={24} />
+            <span className="sr-only">워크스페이스 삭제</span>
+          </IconWrapper>
+        </ToolBox>
+      </Header>
+      <Body>
+        <Row>
+          <DescriptionRowBody>
+            <RowIconWrapper>
+              <MyIcon name="Description" color="var(--icon-fill)" size={22} />
+            </RowIconWrapper>
+            <RowTitle>이름</RowTitle>
+          </DescriptionRowBody>
+          <Description>{data?.name}</Description>
+        </Row>
+        <DescriptionRow>
+          <DescriptionRowBody>
+            <RowIconWrapper>
+              <MyIcon name="Description" color="var(--icon-fill)" size={22} />
+            </RowIconWrapper>
+            <RowTitle>설명</RowTitle>
+          </DescriptionRowBody>
+          <Description>{data?.description}</Description>
+        </DescriptionRow>
+        <Row>
+          <RowBody>
+            <RowIconWrapper>
+              <MyIcon name="PersonFilled" color="var(--icon-fill)" size={24} />
+            </RowIconWrapper>
+            <RowTitle>
+              <RowKey>생성자 :</RowKey>
+              <RowValue>{data?.creatorName}</RowValue>
+            </RowTitle>
+          </RowBody>
+        </Row>
+        <Row>
+          <RowBody>
+            <RowIconWrapper>
+              <MyIcon name="Calendar01" color="var(--icon-fill)" size={24} />
+            </RowIconWrapper>
+            <RowTitle>
+              <RowKey>생성일 :</RowKey>
+              <RowValue>{data?.creatorDate}</RowValue>
+            </RowTitle>
+          </RowBody>
+        </Row>
+        <Row>
+          <RowBody>
+            <RowIconWrapper>
+              <MyIcon name="Gpu" color="var(--icon-fill)" size={24} />
+            </RowIconWrapper>
+            <RowTitle>
+              <RowKey>GPU :</RowKey>
+              <RowValue>{data?.gpu}</RowValue>
+            </RowTitle>
+          </RowBody>
+        </Row>
+      </Body>
+    </Container>
   );
 }
 
@@ -133,8 +103,8 @@ export function WorkspaceIntroCard() {
 // ============================================================================
 
 /**
- * ?�크?�페?�스 ?�개 카드 메인 컨테?�너
- * 고정 ?�이?� ?�크�?처리�??�한 ?��??�링
+ * 워크스페이스 소개 카드 메인 컨테이너
+ * 고정 높이와 스크롤 처리를 위한 스타일링
  */
 const Container = styled.div`
   width: 100%;
@@ -149,8 +119,8 @@ const Container = styled.div`
 `;
 
 /**
- * 카드 ?�더 ?�역
- * ?�크?�페?�스 ?�름�??�구 버튼?�을 좌우�?배치
+ * 카드 헤더 영역
+ * 워크스페이스 이름과 도구 버튼들을 좌우로 배치
  */
 const Header = styled.div`
   display: flex;
@@ -161,8 +131,8 @@ const Header = styled.div`
 `;
 
 /**
- * 카드 본문 ?�역
- * ?�크?�페?�스 ?�세 ?�보?�을 ?�로�?배치
+ * 카드 본문 영역
+ * 워크스페이스 상세 정보들을 세로로 배치
  */
 const Body = styled.div`
   flex: 1;
@@ -173,8 +143,8 @@ const Body = styled.div`
 `;
 
 /**
- * ?�보 ??기본 ?��???
- * �??�보 ?�션(?�태, ?�벨)???�한 공통 ?��???
+ * 정보 행 기본 스타일
+ * 각 정보 섹션(상태, 라벨)을 위한 공통 스타일
  */
 const Row = styled.div`
   display: flex;
@@ -187,16 +157,16 @@ const Row = styled.div`
 `;
 
 /**
- * ?�명 ?�보 ??
- * ?�장 가?�한 ?�이�?가�??�명 ?�용 ??
+ * 설명 정보 행
+ * 확장 가능한 높이를 가진 설명 전용 행
  */
 const DescriptionRow = styled(Row)`
   flex: 1;
 `;
 
 /**
- * ??본문 ?�역
- * ?�이콘과 ?�목???�함?�는 ?�단 ?�역
+ * 행 본문 영역
+ * 아이콘과 제목을 포함하는 상단 영역
  */
 const RowBody = styled.div`
   display: flex;
@@ -208,16 +178,16 @@ const RowBody = styled.div`
 `;
 
 /**
- * ?�명 ??본문 ?�역
- * ?�단 ?�백??추�????�명 ?�용 본문
+ * 설명 행 본문 영역
+ * 하단 여백이 추가된 설명 전용 본문
  */
 const DescriptionRowBody = styled(RowBody)`
   margin-bottom: 6px;
 `;
 
 /**
- * ???�목 ?�역
- * �??�보 ?�션???�목???�시
+ * 행 제목 영역
+ * 각 정보 섹션의 제목을 표시
  */
 const RowTitle = styled.div`
   display: inline-block;
@@ -228,8 +198,8 @@ const RowTitle = styled.div`
 `;
 
 /**
- * ?�크로드 ?�태 ?�목
- * ?�태 ?�션???�목???�시 (?�측 ?�백 추�?)
+ * 워크로드 상태 제목
+ * 상태 섹션의 제목을 표시 (우측 여백 추가)
  */
 const RowKey = styled.span`
   margin-right: 4px;
@@ -240,8 +210,8 @@ const RowKey = styled.span`
 `;
 
 /**
- * ?�크?�페?�스 ?�름 ?�시 ?�역
- * �??�름???�???�스???�르�?처리
+ * 워크스페이스 이름 표시 영역
+ * 긴 이름에 대한 텍스트 자르기 처리
  */
 const HeaderTitle = styled.div`
   display: flex;
@@ -255,8 +225,8 @@ const HeaderTitle = styled.div`
 `;
 
 /**
- * ?�구 버튼 컨테?�너
- * ?�정, ?�원 ?�어 ?�의 ?�션 버튼?�을 배치
+ * 도구 버튼 컨테이너
+ * 수정, 전원 제어 등의 액션 버튼들을 배치
  */
 const ToolBox = styled.div`
   display: flex;
@@ -266,8 +236,8 @@ const ToolBox = styled.div`
 `;
 
 /**
- * ?�이�?버튼 ?�퍼
- * ?�더???�션 버튼?�을 ?�한 ?��??�링
+ * 아이콘 버튼 래퍼
+ * 헤더의 액션 버튼들을 위한 스타일링
  */
 const IconWrapper = styled.button`
   display: flex;
@@ -283,8 +253,8 @@ const IconWrapper = styled.button`
 `;
 
 /**
- * ???�이�??�퍼
- * �??�보 ?�의 ?�이콘을 ?�한 ?��??�링
+ * 행 아이콘 래퍼
+ * 각 정보 행의 아이콘을 위한 스타일링
  */
 const RowIconWrapper = styled.span`
   display: flex;
@@ -300,8 +270,8 @@ const RowIconWrapper = styled.span`
 `;
 
 /**
- * ?�크?�페?�스 ?�명 ?�스??
- * �??�명???�???�크�?처리
+ * 워크스페이스 설명 텍스트
+ * 긴 설명에 대한 스크롤 처리
  */
 const Description = styled.p`
   font-weight: 400;

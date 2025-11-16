@@ -1,5 +1,8 @@
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
-import { workspaceListSchema } from "@/schemas/workspace.schema";
+import {
+  workspaceDetailSchema,
+  workspaceListSchema,
+} from "@/schemas/workspace.schema";
 import { workspaceMemberListSchema } from "@/schemas/workspace-member.schema";
 import { workspaceRequestResourceListSchema } from "@/schemas/workspace-request-resource.schema";
 import { makeMock } from "@/utils/common/mock.util";
@@ -10,6 +13,11 @@ import { makeMock } from "@/utils/common/mock.util";
 export const workspaceListMock = Array.from({ length: LIST_PAGE_SIZE }, () =>
   makeMock(workspaceListSchema),
 );
+
+/**
+ * 워크스페이스 상세 모킹 데이터
+ */
+export const workspaceDetailMock = makeMock(workspaceDetailSchema);
 
 /**
  * 워크스페이스 멤버 목록 모킹 데이터

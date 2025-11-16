@@ -1,9 +1,10 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { Icon, Modal } from "xiilab-ui";`n`nimport { MyIcon } from "@/components/common/icon";
+import { Modal } from "xiilab-ui";
 
 import { openApproveResourceModalAtom } from "@/atoms/workspace/workspace-request-resource.atom";
+import { MyIcon } from "@/components/common/icon";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -55,17 +56,17 @@ export function ApproveResourceModal() {
       modalWidth={370}
       open={open}
       closable
-      title="리소???�인"
+      title="리소스 승인"
       showCancelButton
       cancelText="취소"
       onCancel={onClose}
-      okText="리소???�인"
+      okText="리소스 승인"
       onOk={handleSubmit}
       centered
       showHeaderBorder
       okButtonProps={
         {
-          // disabled: updateWorkspaceMember.isPending, // MIG ?�데?�트 중일 ???�인 버튼 비활?�화
+          // disabled: updateWorkspaceMember.isPending, // MIG 업데이트 중일 때 확인 버튼 비활성화
         }
       }
     >
@@ -76,7 +77,7 @@ export function ApproveResourceModal() {
               <MyIcon name="Workspace01" color="var(--icon-fill)" size={16} />
             </UpdateResourceModalIconWrapper>
             <UpdateResourceModalIconDescription>
-              ?�크?�페?�스
+              워크스페이스
             </UpdateResourceModalIconDescription>
           </UpdateResourceModalWorkspaceLeft>
           <UpdateResourceModalWorkspaceRight>
@@ -131,4 +132,3 @@ export function ApproveResourceModal() {
     </Modal>
   );
 }
-

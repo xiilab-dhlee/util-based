@@ -1,4 +1,5 @@
 "use client";
+
 import { useSetAtom } from "jotai";
 import styled from "styled-components";
 
@@ -19,7 +20,7 @@ export function WorkloadFileCard({
 }: WorkloadFileCardProps) {
   const setSelectedKey = useSetAtom(workloadFileSelectedKeyAtom);
 
-  // ?�일 ?�?�에 ?�른 ?�이�??�름??반환?�는 ?�수
+  // 파일 타입에 따른 아이콘 이름을 반환하는 함수
   const getFileIcon = (): string => {
     if (type === "directory") return "FolderFiled";
 

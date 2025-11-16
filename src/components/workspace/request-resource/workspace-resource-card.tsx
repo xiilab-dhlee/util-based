@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import styled from "styled-components";
 
@@ -58,15 +58,15 @@ export function WorkspaceResourceCard({
       </Body>
       <Footer>
         <RowFooterItem>
-          <Category className={`${resourceType} usage`}>?�용</Category>
+          <Category className={`${resourceType} usage`}>사용</Category>
           <Count>{usage}</Count>
         </RowFooterItem>
         <RowFooterItem>
-          <Category className={`${resourceType} remain`}>?�여</Category>
+          <Category className={`${resourceType} remain`}>잔여</Category>
           <Count>{limit - usage}</Count>
         </RowFooterItem>
         <RowFooterItem>
-          <Category className="total">?�체</Category>
+          <Category className="total">전체</Category>
           <Count>{limit}</Count>
         </RowFooterItem>
       </Footer>

@@ -9,6 +9,8 @@ const baseWorkspaceSchema = z.object({
   id: z.string().uuid(),
   /** 워크스페이스 이름 */
   name: z.string().min(1).max(100),
+  /** 워크스페이스 설명 */
+  description: z.string().min(1).max(500),
   /** 생성자 이름 */
   creatorName: z.string().min(1).max(100),
   /** 생성일 */

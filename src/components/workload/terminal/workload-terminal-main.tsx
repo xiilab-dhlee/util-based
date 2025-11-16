@@ -3,7 +3,6 @@
 import { useSetAtom } from "jotai";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
-import {} from "xiilab-ui";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload/workload-detail.atom";
 import { TerminalThemeButton } from "@/components/common/button/terminal-theme-button";
@@ -50,14 +49,14 @@ export function WorkloadTerminalMain() {
 
   return (
     <>
-      {/* 로그 ?�이지 ?�역 */}
+      {/* 로그 페이지 영역 */}
       <DetailContentHeader>
-        <DetailContentTitle>?�터미널</DetailContentTitle>
+        <DetailContentTitle>웹터미널</DetailContentTitle>
         <DetailContentTitleTool>
           <div style={{ width: 90, height: 30 }}>
             <DetailContentButton onClick={handleToggleMonitoring}>
               <MyIcon name="Monitoring01" color="var(--icon-fill)" />
-              모니?�링
+              모니터링
             </DetailContentButton>
           </div>
           <div style={{ width: 30, height: 30 }}>
@@ -71,16 +70,16 @@ export function WorkloadTerminalMain() {
         </DetailContentTitleTool>
       </DetailContentHeader>
       <TerminalContent>
-        {/* 모니?�링 ?�로??*/}
+        {/* 모니터링 드로어 */}
         <MonitoringDrawer />
-        {/* ?�크로드 ?��???*/}
+        {/* 워크로드 터미널 */}
         <WorkloadTerminal
           workspaceId={workspaceId as string}
           workloadId={id as string}
-          workloadType={data?.jobType}
+          workloadType={data?.jobType || ""}
         />
       </TerminalContent>
-      {/* ?�크로드 모니?�링 모달 */}
+      {/* 워크로드 모니터링 모달 */}
       <ViewWorkloadMonitoringModal />
     </>
   );

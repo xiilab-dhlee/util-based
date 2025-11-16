@@ -1,9 +1,10 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { Icon, Modal, TextArea } from "xiilab-ui";`n`nimport { MyIcon } from "@/components/common/icon";
+import { Modal, TextArea } from "xiilab-ui";
 
 import { openRejectResourceModalAtom } from "@/atoms/workspace/workspace-request-resource.atom";
+import { MyIcon } from "@/components/common/icon";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -53,17 +54,17 @@ export function RejectResourceModal() {
       modalWidth={370}
       open={open}
       closable
-      title="리소??반려"
+      title="리소스 반려"
       showCancelButton
       cancelText="취소"
       onCancel={onClose}
-      okText="리소???�청 반려"
+      okText="리소스 요청 반려"
       onOk={handleSubmit}
       centered
       showHeaderBorder
       okButtonProps={
         {
-          // disabled: updateWorkspaceMember.isPending, // MIG ?�데?�트 중일 ???�인 버튼 비활?�화
+          // disabled: updateWorkspaceMember.isPending, // MIG 업데이트 중일 때 확인 버튼 비활성화
         }
       }
     >
@@ -74,7 +75,7 @@ export function RejectResourceModal() {
               <MyIcon name="Workspace01" color="var(--icon-fill)" size={16} />
             </UpdateResourceModalIconWrapper>
             <UpdateResourceModalIconDescription>
-              ?�크?�페?�스
+              워크스페이스
             </UpdateResourceModalIconDescription>
           </UpdateResourceModalWorkspaceLeft>
           <UpdateResourceModalWorkspaceRight>
@@ -130,10 +131,10 @@ export function RejectResourceModal() {
         </UpdateResourceModalResource>
         <UpdateResourceModalResource>
           <UpdateResourceModalResourceTitle>
-            반려 ?�유
+            반려 사유
           </UpdateResourceModalResourceTitle>
           <TextArea
-            placeholder="리소???�청 반려 ?�유�??�력??주세??"
+            placeholder="리소스 요청 반려 사유를 입력해 주세요."
             rows={4}
           />
         </UpdateResourceModalResource>
@@ -141,4 +142,3 @@ export function RejectResourceModal() {
     </Modal>
   );
 }
-

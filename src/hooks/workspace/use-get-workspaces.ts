@@ -1,8 +1,10 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import workspaceKeys from "@/constants/workspace/workspace.key";
+import { workspaceKeys } from "@/constants/workspace/workspace.key";
 import { useServices } from "@/providers/service-provider";
+import type { WorkspaceListType } from "@/schemas/workspace.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetWorkspacesPayload } from "@/types/workspace/workspace.interface";
 
 /**
@@ -10,7 +12,7 @@ import type { GetWorkspacesPayload } from "@/types/workspace/workspace.interface
  */
 export const useGetWorkspaces = (
   payload: GetWorkspacesPayload,
-): UseQueryResult<any, Error> => {
+): UseQueryResult<CoreListResponse<WorkspaceListType>, Error> => {
   const { workspaceService } = useServices();
 
   return useQuery({
@@ -21,4 +23,3 @@ export const useGetWorkspaces = (
     },
   });
 };
-

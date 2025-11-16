@@ -1,6 +1,7 @@
 import { HttpResponse, http } from "msw";
 
 import {
+  workspaceDetailMock,
   workspaceListMock,
   workspaceMemberListMock,
   workspaceRequestResourceListMock,
@@ -32,5 +33,10 @@ export const workspaceHandlers = [
       content: workspaceRequestResourceListMock,
       totalSize: 100,
     });
+  }),
+
+  // 워크스페이스 상세 조회
+  http.get("/core-api/v1/core/workspace/:id", () => {
+    return HttpResponse.json(workspaceDetailMock);
   }),
 ];

@@ -1,4 +1,3 @@
-import workspaceDetailConstants from "@/constants/workspace/workspace-detail.constant";
 import { AxiosService } from "@/services/common/axios";
 import type {
   GetWorkspaceMembersPayload,
@@ -21,7 +20,7 @@ export class WorkspaceService extends AxiosService {
 
   /** 상세 조회 */
   public async getDetail(id: string) {
-    return { workspace: workspaceDetailConstants.demoWorkspace, id };
+    return this.getAxios().get(`${this.BASE_URL}/${id}`);
   }
 
   /** 워크스페이스 수정 */
