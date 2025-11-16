@@ -7,11 +7,11 @@ import {
   requestImageSearchTextAtom,
 } from "@/atoms/request-image/request-image-list.atom";
 import { SearchInput } from "@/components/common/input/search-input";
-import requestImageListConstants from "@/constants/request-image/request-image-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetRequestImages } from "@/hooks/request-image/use-get-request-images";
 import { MySearchFilter } from "@/layouts/common/search-filter";
-import RequestImageStatusSort from "./request-image-status-sort";
+import { RequestImageStatusSort } from "./request-image-status-sort";
 
 /**
  * 이미지 요청 목록 페이지 상단 필터 컴포넌트
@@ -32,7 +32,7 @@ export function RequestImageListFilter() {
   // 이미지 요청 목록 데이터 조회
   const { data } = useGetRequestImages({
     page,
-    size: requestImageListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -45,4 +45,3 @@ export function RequestImageListFilter() {
     </MySearchFilter>
   );
 }
-

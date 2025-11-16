@@ -1,5 +1,8 @@
+import type { HTMLAttributes, MouseEvent } from "react";
+
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { useToggle } from "@/hooks/common/use-toggle";
+import type { ProcessorInfoType } from "@/schemas/redfish.schema";
 import {
   TableCollapseRowBody,
   TableCollapseRowContainer,
@@ -10,7 +13,11 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import redfishChassisColumn from "../../common/column/redfish-chassis-column";
+import { redfishChassisColumn } from "./redfish-chassis-column";
+
+interface DeviceRowProps extends HTMLAttributes<HTMLTableRowElement> {
+  rowData: ProcessorInfoType;
+}
 
 /**
  * Redfish 디바이스 인벤토리 테이블의 확장 가능한 행 컴포넌트
@@ -22,7 +29,7 @@ import redfishChassisColumn from "../../common/column/redfish-chassis-column";
  * @param rowData - 디바이스 데이터
  * @param restProps - 기타 테이블 행 속성
  */
-export function DeviceRow({ children, rowData, ...restProps }: any) {
+export function DeviceRow({ children, rowData, ...restProps }: DeviceRowProps) {
   // 토글 상태 관리
   const [toggle, onToggle] = useToggle();
 
@@ -31,8 +38,8 @@ export function DeviceRow({ children, rowData, ...restProps }: any) {
    *
    * @param e - 클릭 이벤트
    */
-  const handleToggleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggleClick = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.stopPropagation();
 
     if (rowData) {
       onToggle();
@@ -44,7 +51,7 @@ export function DeviceRow({ children, rowData, ...restProps }: any) {
       {/* 확장 가능한 테이블 행 */}
       <ToggleTableRow
         toggle={toggle}
-        onToggle={handleToggleClick}
+        onClickIcon={handleToggleClick}
         togglePosition="last"
         {...restProps}
       >

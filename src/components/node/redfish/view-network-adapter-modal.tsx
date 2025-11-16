@@ -1,19 +1,28 @@
 ﻿import { useState } from "react";
 import styled from "styled-components";
-import { InfoModal } from "xiilab-ui";
+import { InfoModal, type TabsSeparatedItem } from "xiilab-ui";
 
 import { openViewNetworkPortsModalAtom } from "@/atoms/node/node-detail.atom";
-import { redfishNetworkDeviceColumn } from "@/components/common/column/redfish-network-device-column";
-import { redfishNetworkPortColumn } from "@/components/common/column/redfish-network-port-column";
 import { MyIcon } from "@/components/common/icon";
-import { StateTab } from "@/components/common/state-tab";
+import { StateTab } from "@/components/common/tab";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
-import redfishConstants from "@/constants/node/redfish.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
-import NetworkPortRow from "./network-port-row";
+import { NetworkPortRow } from "./network-port-row";
+import { redfishNetworkDeviceColumn } from "./redfish-network-device-column";
+import { redfishNetworkPortColumn } from "./redfish-network-port-column";
 
+const TAB_ITEMS: TabsSeparatedItem[] = [
+  {
+    key: "port",
+    label: "Network Ports",
+  },
+  {
+    key: "device",
+    label: "Network Devices",
+  },
+];
 /**
  * 네트워크 어댑터 상세정보 모달 컴포넌트
  *
@@ -23,7 +32,7 @@ import NetworkPortRow from "./network-port-row";
  */
 export function ViewNetworkAdapterModal() {
   // 모달 내부 상태 관리
-  const [rowData, setRowData] = useState<any>(null);
+  const [rowData, setRowData] = useState<unknown>(null);
   // 현재 선택된 탭 상태 관리
   const [selectedTab, setSelectedTab] = useState("port");
 
@@ -33,7 +42,7 @@ export function ViewNetworkAdapterModal() {
   );
 
   // 네트워크 어댑터 데이터 수신 및 모달 열기
-  useSubscribe<any>(REDFISH_EVENTS.sendNetworkAdapter, (eventData) => {
+  useSubscribe(REDFISH_EVENTS.sendNetworkAdapter, (eventData) => {
     setRowData(eventData);
     // 모달 열기
     onOpen();
@@ -53,7 +62,7 @@ export function ViewNetworkAdapterModal() {
       <Container>
         {/* 탭 네비게이션 */}
         <StateTab
-          tabs={redfishConstants.networkAdapterTabs}
+          items={TAB_ITEMS}
           selectedKey={selectedTab}
           setSelectedKey={setSelectedTab}
         />

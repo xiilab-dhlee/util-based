@@ -4,8 +4,12 @@ import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
-import monitoringNotificationConstants from "@/constants/monitoring/monitoring-notification.constant";
+import {
+  MONITORING_NOTIFICATION_GUIDE_IMAGES,
+  MONITORING_NOTIFICATION_GUIDES,
+} from "@/constants/monitoring/monitoring-notification.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -22,23 +26,10 @@ import { MonitoringNotificationSettingArticle } from "./monitoring-notification-
 import { ViewMonitoringNotificationModal } from "./view-monitoring-notification-modal";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "모니터링 알림" },
 ];
 
-/**
- * 모니터링 알림 페이지의 메인 컴포넌트
- *
- * 이 컴포넌트는 모니터링 알림을 표시하는 페이지의 주요 레이아웃을 담당합니다.
- * 알림 가이드, 필터링, 표시, 페이지네이션 등의 기능을 포함합니다.
- * 서버에서 전달받은 초기 데이터를 클라이언트 컴포넌트에 전달합니다.
- *
- * @returns 모니터링 알림 페이지 JSX
- */
 export function MonitoringNotificationMain() {
   const publish = usePublish();
 
@@ -54,10 +45,9 @@ export function MonitoringNotificationMain() {
 
   return (
     <>
-      {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
         title="모니터링 알림"
-        icon="Monitoring01"
+        icon="Alarm"
         description="Monitoring Notifications"
       >
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />
@@ -76,7 +66,7 @@ export function MonitoringNotificationMain() {
               "알림 설정을 통해 모니터링 알림을 관리해 보세요.",
             ]}
             backgroundImageName="workload-intro-background.png"
-            guides={monitoringNotificationConstants.guides}
+            guides={MONITORING_NOTIFICATION_GUIDES}
             buttonOptions={{
               enabled: true,
               text: "알림 추가",
@@ -87,7 +77,7 @@ export function MonitoringNotificationMain() {
           {/* 모니터링 알림 가이드 이미지 카드 */}
           <PageImageGuide
             title="알림 추가 가이드"
-            guideImages={monitoringNotificationConstants.guideImages}
+            guideImages={MONITORING_NOTIFICATION_GUIDE_IMAGES}
           />
         </ListPageAside>
 

@@ -24,10 +24,7 @@ import {
   DetailContentFeatureRow,
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
-import {
-  getHealthStatusInfo,
-  getRedfishSystemId,
-} from "@/utils/node/redfish.util";
+import { getRedfishSystemId } from "@/utils/node/redfish.util";
 import { ReadonlyChassis } from "./readonly-chassis";
 import { ReadonlyDevice } from "./readonly-device";
 import { ReadonlyFirmware } from "./readonly-firmware";
@@ -56,10 +53,10 @@ export function ReadyRedfish() {
   const { data } = useGetNode(String(name));
 
   // BMC 정보 조회
-  const { data: bmcData } = useGetNodeBmcInfo(data?.node.ip || "");
+  const { data: bmcData } = useGetNodeBmcInfo(data?.ip || "");
 
   // Redfish 시스템 정보 조회
-  const { data: systemData } = useGetRedfishSystems(bmcData?.bmcIp);
+  const { data: systemData } = useGetRedfishSystems(bmcData?.bmcIp || "");
 
   // 시스템 ID 추출
   const systemId = getRedfishSystemId(

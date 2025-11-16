@@ -1,10 +1,7 @@
 "use client";
 
-import type {
-  GpuInstanceRow,
-  GpuModelConfig,
-} from "@/types/node/node.interface";
-import GenerateGpuInstance from "./generate-gpu-instance";
+import type { GpuInstanceRow, GpuModelConfig } from "@/types/node/node.type";
+import { GenerateGpuInstance } from "./generate-gpu-instance";
 
 /**
  * A30 GPU 설정을 기반으로 GpuInstanceRow 배열을 생성합니다.
@@ -91,4 +88,3 @@ export function GenerateDisplayConfigAlpha({
 
   return <GenerateGpuInstance rows={rows} />;
 }
-

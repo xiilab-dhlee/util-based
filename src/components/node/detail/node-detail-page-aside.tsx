@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { AsideFillCard } from "@/layouts/aside/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { ListSectionTitle } from "@/styles/layers/list-page-layers.styled";
-import NodeIntroCard from "./node-intro-card";
+import { NodeIntroCard } from "./node-intro-card";
 
 /**
  * NodeDetailPageAside 컴포넌트
@@ -61,7 +61,6 @@ export function NodeDetailPageAside() {
     </DetailPageAside>
   );
 }
-
 
 /**
  * 가이드 섹션 제목 스타일

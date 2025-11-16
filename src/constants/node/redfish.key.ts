@@ -1,4 +1,4 @@
-const redfishKeys = {
+export const redfishKeys = {
   default: ["redfish"],
   list: (bmcIp: string) => [...redfishKeys.default, "list", bmcIp],
   detail: (bmcIp: string, systemId: string) => [
@@ -42,5 +42,3 @@ const redfishKeys = {
     size,
   ],
 };
-
-export default redfishKeys;

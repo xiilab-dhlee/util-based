@@ -1,6 +1,6 @@
 import type { MySelectOption } from "@/components/common/select";
 import nodeMigConstants from "@/constants/node/node-mig.constant";
-import type { GpuModelConfig } from "@/types/node/node.interface";
+import type { GpuModelConfig } from "@/types/node/node.type";
 
 /**
  * MIG 설정 관련 유틸리티 클래스

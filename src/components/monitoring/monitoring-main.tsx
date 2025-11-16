@@ -7,7 +7,11 @@ import { PageHeader } from "@/layouts/common/page-header";
 export function MonitoringMain() {
   return (
     <>
-      <PageHeader title="모니터링" icon="Dashboard" description="Monitoring" />
+      <PageHeader
+        title="모니터링"
+        icon="Monitoring01"
+        description="Monitoring"
+      />
       <MonitoringMainSection />
       <MonitoringSubSection />
     </>

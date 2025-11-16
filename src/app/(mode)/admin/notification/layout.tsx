@@ -2,10 +2,11 @@
 
 import type { PropsWithChildren } from "react";
 
+import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { NotificationListBody } from "@/components/notification/list/notification-list-body";
 import { NotificationListFilter } from "@/components/notification/list/notification-list-filter";
 import { NotificationListFooter } from "@/components/notification/list/notification-list-footer";
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageBody,
@@ -14,18 +15,16 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "알림 관리" },
 ];
 
 /**
  * 알림 관리 목록 페이지 레이아웃
  */
-export default function AdminNotificationLayout({ children }: PropsWithChildren) {
+export default function AdminNotificationLayout({
+  children,
+}: PropsWithChildren) {
   return (
     <>
       <PageHeader title="알림 관리" icon="" description="Manage Notification">
@@ -47,4 +46,3 @@ export default function AdminNotificationLayout({ children }: PropsWithChildren)
     </>
   );
 }
-

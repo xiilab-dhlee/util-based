@@ -6,6 +6,7 @@ import { DeleteSourcecodeModal } from "@/components/sourcecode/delete-sourcecode
 import { SourcecodeListBody } from "@/components/sourcecode/list/sourcecode-list-body";
 import { SourcecodeListFilter } from "@/components/sourcecode/list/sourcecode-list-filter";
 import { SourcecodeListFooter } from "@/components/sourcecode/list/sourcecode-list-footer";
+import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
@@ -15,11 +16,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/standard/dashboard",
-  },
+  STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "소스코드" },
 ];
 

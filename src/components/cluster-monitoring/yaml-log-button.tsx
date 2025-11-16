@@ -1,7 +1,7 @@
 import { openYamlLogModalAtom } from "@/atoms/monitoring/cluster-monitoring.atom";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { ColumnIconWrap } from "@/styles/layers/column-layer.styled";
-import MyIcon from "../common/icon";
+import { MyIcon } from "../common/icon";
 
 export function YamlLogButton() {
   const { onOpen } = useGlobalModal(openYamlLogModalAtom);

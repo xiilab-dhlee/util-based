@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   DetailContentSection,
@@ -18,11 +19,7 @@ import { PrivateRegistryImageTagVulnerabilityListFilter } from "./private-regist
 import { PrivateRegistryImageTagVulnerabilityListFooter } from "./private-registry-image-tag-vulnerability-list-footer";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/standard/dashboard",
-  },
+  STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "내부 레지스트리", href: "/standard/private-registry-image" },
   {
     title: "컨테이너 이미지 상세정보",

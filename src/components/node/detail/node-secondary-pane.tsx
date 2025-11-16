@@ -39,7 +39,7 @@ export function NodeSecondaryPane() {
   const { data } = useGetNodeResources(String(name));
 
   // GPU 정보 표시 여부 확인
-  const isShowGpuInfo = !!data?.resources.gpuType;
+  const isShowGpuInfo = !!data?.gpuType;
 
   /**
    * 할당된 리소스 정보를 테이블 형태로 변환하는 함수
@@ -48,23 +48,23 @@ export function NodeSecondaryPane() {
    * @returns 할당된 리소스 정보 배열
    */
   const getAllocatedResources = () => {
-    let allocatedResources: any[] = [];
-    if (data?.resources.requests && data?.resources.limits) {
+    let allocatedResources: unknown[] = [];
+    if (data?.requests && data?.limits) {
       allocatedResources = [
         {
           resourceName: "CPU",
-          requests: `${data.resources.requests.cpu}m (${data.resources.requests.cpuPercent}%)`,
-          limits: `${data.resources.limits.cpu}m (${data.resources.limits.cpuPercent}%)`,
+          requests: `${data.requests.cpu}m (${data.requests.cpuPercent}%)`,
+          limits: `${data.limits.cpu}m (${data.limits.cpuPercent}%)`,
         },
         {
           resourceName: "Memory",
-          requests: `${data.resources.requests.memory}Ki (${data.resources.requests.memoryPercent}%)`,
-          limits: `${data.resources.limits.memory}m (${data.resources.limits.memoryPercent}%)`,
+          requests: `${data.requests.memory}Ki (${data.requests.memoryPercent}%)`,
+          limits: `${data.limits.memory}m (${data.limits.memoryPercent}%)`,
         },
         {
           resourceName: "Nvidia.com/GPU",
-          requests: `${data.resources.requests.gpu} (${data.resources.requests.gpuPercent}%)`,
-          limits: `${data.resources.limits.gpu} (${data.resources.limits.gpuPercent}%)`,
+          requests: `${data.requests.gpu} (${data.requests.gpuPercent}%)`,
+          limits: `${data.limits.gpu} (${data.limits.gpuPercent}%)`,
         },
       ];
     }
@@ -88,20 +88,14 @@ export function NodeSecondaryPane() {
               <DetailContentFeaturePane>
                 <DetailContentFeatureRow>
                   <DetailContentKey>Type</DetailContentKey>
-                  <DetailContentPaneValue
-                    className="truncate"
-                    title={data?.resources.gpuType}
-                  >
-                    {data?.resources.gpuType}
+                  <DetailContentPaneValue className="truncate">
+                    {data?.gpuType}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
                 <DetailContentFeatureRow>
                   <DetailContentKey>Count</DetailContentKey>
-                  <DetailContentPaneValue
-                    className="truncate"
-                    title={data?.resources.gpuCount}
-                  >
-                    {data?.resources.gpuCount}
+                  <DetailContentPaneValue className="truncate">
+                    {data?.gpuCount}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
               </DetailContentFeaturePane>
@@ -109,20 +103,14 @@ export function NodeSecondaryPane() {
               <DetailContentFeaturePane>
                 <DetailContentFeatureRow>
                   <DetailContentKey>Memory</DetailContentKey>
-                  <DetailContentPaneValue
-                    className="truncate"
-                    title={data?.resources.gpuMem}
-                  >
-                    {data?.resources.gpuMem}
+                  <DetailContentPaneValue className="truncate">
+                    {data?.gpuMem}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
                 <DetailContentFeatureRow>
                   <DetailContentKey>Driver version</DetailContentKey>
-                  <DetailContentPaneValue
-                    className="truncate"
-                    title={data?.resources.gpuDriverVersion}
-                  >
-                    {data?.resources.gpuDriverVersion}
+                  <DetailContentPaneValue className="truncate">
+                    {data?.gpuDriverVersion}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
               </DetailContentFeaturePane>
@@ -139,36 +127,36 @@ export function NodeSecondaryPane() {
                 <DetailContentKey>CPU</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.capacity?.capacityCpu}
+                  title={data?.capacity?.capacityCpu}
                 >
-                  {data?.resources.capacity?.capacityCpu}
+                  {data?.capacity?.capacityCpu}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Eephemeral storage</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.capacity?.capacityEphemeralStorage}
+                  title={data?.capacity?.capacityEphemeralStorage}
                 >
-                  {data?.resources.capacity?.capacityEphemeralStorage}
+                  {data?.capacity?.capacityEphemeralStorage}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Hugepages-1Gi</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.capacity?.capacityHugepages1Gi}
+                  title={data?.capacity?.capacityHugepages1Gi}
                 >
-                  {data?.resources.capacity?.capacityHugepages1Gi}
+                  {data?.capacity?.capacityHugepages1Gi}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Hugepages-2Mi</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.capacity?.capacityHugepages2Mi}
+                  title={data?.capacity?.capacityHugepages2Mi}
                 >
-                  {data?.resources.capacity?.capacityHugepages2Mi}
+                  {data?.capacity?.capacityHugepages2Mi}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
@@ -178,27 +166,27 @@ export function NodeSecondaryPane() {
                 <DetailContentKey>Memory</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.capacity?.capacityMemory}
+                  title={data?.capacity?.capacityMemory}
                 >
-                  {data?.resources.capacity?.capacityMemory}
+                  {data?.capacity?.capacityMemory}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Nvidia.com/GPU</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.capacity?.capacityGpu}
+                  title={data?.capacity?.capacityGpu}
                 >
-                  {data?.resources.capacity?.capacityGpu}
+                  {data?.capacity?.capacityGpu}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Pods</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.capacity?.capacityPods}
+                  title={data?.capacity?.capacityPods}
                 >
-                  {data?.resources.capacity?.capacityPods}
+                  {data?.capacity?.capacityPods}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>
@@ -215,38 +203,36 @@ export function NodeSecondaryPane() {
                 <DetailContentKey>CPU</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.allocatable?.allocatableCpu}
+                  title={data?.allocatable?.allocatableCpu}
                 >
-                  {data?.resources.allocatable?.allocatableCpu}
+                  {data?.allocatable?.allocatableCpu}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Eephemeral storage</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={
-                    data?.resources.allocatable?.allocatableEphemeralStorage
-                  }
+                  title={data?.allocatable?.allocatableEphemeralStorage}
                 >
-                  {data?.resources.allocatable?.allocatableEphemeralStorage}
+                  {data?.allocatable?.allocatableEphemeralStorage}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Hugepages-1Gi</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.allocatable?.allocatableHugepages1Gi}
+                  title={data?.allocatable?.allocatableHugepages1Gi}
                 >
-                  {data?.resources.allocatable?.allocatableHugepages1Gi}
+                  {data?.allocatable?.allocatableHugepages1Gi}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Hugepages-2Mi</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.allocatable?.allocatableHugepages2Mi}
+                  title={data?.allocatable?.allocatableHugepages2Mi}
                 >
-                  {data?.resources.allocatable?.allocatableHugepages2Mi}
+                  {data?.allocatable?.allocatableHugepages2Mi}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
@@ -256,27 +242,27 @@ export function NodeSecondaryPane() {
                 <DetailContentKey>Memory</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.allocatable?.allocatableMemory}
+                  title={data?.allocatable?.allocatableMemory}
                 >
-                  {data?.resources.allocatable?.allocatableMemory}
+                  {data?.allocatable?.allocatableMemory}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Nvidia.com/GPU</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.allocatable?.allocatableGpu}
+                  title={data?.allocatable?.allocatableGpu}
                 >
-                  {data?.resources.allocatable?.allocatableGpu}
+                  {data?.allocatable?.allocatableGpu}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Pods</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.resources.allocatable?.allocatablePods}
+                  title={data?.allocatable?.allocatablePods}
                 >
-                  {data?.resources.allocatable?.allocatablePods}
+                  {data?.allocatable?.allocatablePods}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>

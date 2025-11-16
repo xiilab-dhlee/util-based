@@ -3,7 +3,7 @@
 import { useAtomValue } from "jotai";
 
 import { nodePageAtom } from "@/atoms/node/node-list.atom";
-import nodeListConstants from "@/constants/node/node-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNodes } from "@/hooks/node/use-get-nodes";
 import { MySearchFilter } from "@/layouts/common/search-filter";
 
@@ -19,7 +19,7 @@ export function NodeListFilter() {
 
   const { data } = useGetNodes({
     page,
-    size: nodeListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
   });
 
   return (
@@ -28,4 +28,3 @@ export function NodeListFilter() {
     </MySearchFilter>
   );
 }
-

@@ -10,13 +10,13 @@ import {
   CompactCardKeyValueRow,
   CompactCardValue,
 } from "@/components/common/card/compact-card-layer.styled";
-import type { NodeCondition } from "@/types/node/node.model";
+import type { NodeConditionType } from "@/schemas/node.schema";
 
 /**
  * NodeConditionCard 컴포넌트의 Props 인터페이스
  * NodeCondition 타입을 확장하여 노드 상태 정보를 받습니다.
  */
-interface NodeConditionCardProps extends NodeCondition {}
+interface NodeConditionCardProps extends NodeConditionType {}
 
 /**
  * NodeConditionCard 컴포넌트
@@ -73,7 +73,6 @@ export function NodeConditionCard({
     </Card>
   );
 }
-
 
 /**
  * 노드 상태 카드의 본문 영역 스타일

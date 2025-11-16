@@ -1,9 +1,9 @@
-import type { ColumnsType } from "antd/es/table";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
-import redfishStateColumn from "./redfish-state-column";
-import redfishStatusColumn from "./redfish-status-column";
+import { redfishStateColumn } from "./redfish-state-column";
+import { redfishStatusColumn } from "./redfish-status-column";
 
-export const redfishThermalColumn: ColumnsType<any> = [
+export const redfishThermalColumn: ResponsiveColumnType[] = [
   {
     title: "Location",
     dataIndex: "Location",
@@ -18,11 +18,10 @@ export const redfishThermalColumn: ColumnsType<any> = [
     title: "Speed",
     dataIndex: "Reading",
     align: "center",
-    render: (Reading: number) => {
+    render: (Reading) => {
       return <span>{Reading || 0} %</span>;
     },
   },
   ...redfishStateColumn,
   ...redfishStatusColumn,
 ];
-

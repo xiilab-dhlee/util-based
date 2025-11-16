@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import type { CoreSecurityLevel } from "@/types/common/core.interface";
 import { getSecurityLevelInfo } from "@/utils/common/security.util";
-import MyIcon from "../common/icon";
+import { MyIcon } from "../common/icon";
 
 interface RegistrySecurityResourceCardProps {
   level: CoreSecurityLevel;

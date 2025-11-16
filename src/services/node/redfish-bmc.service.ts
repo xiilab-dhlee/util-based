@@ -1,4 +1,3 @@
-import redfishConstants from "@/constants/node/redfish.constant";
 import { AxiosService } from "@/services/common/axios";
 import type {
   CreateBmcPayload,
@@ -10,10 +9,8 @@ export class RedfishBmcService extends AxiosService {
 
   /** BMC 단일 조회 */
   public async getBmc(nodeIp: string) {
-    console.log(nodeIp);
-    // const encodeNodeIp = encodeURIComponent(nodeIp as string);
-    // return this.getAxios().get(`${this.BASE_URL}/bmc/${encodeNodeIp}`);
-    return redfishConstants.demoBmcInfo;
+    const encodeNodeIp = encodeURIComponent(nodeIp as string);
+    return this.getAxios().get(`${this.BASE_URL}/bmc/${encodeNodeIp}`);
   }
 
   /** BMC 등록 */

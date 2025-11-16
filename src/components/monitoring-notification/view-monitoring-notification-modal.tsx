@@ -5,12 +5,12 @@ import styled from "styled-components";
 import { Modal } from "xiilab-ui";
 
 import { openViewMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
-import { MyIcon } from "../common/icons";
 import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetMonitoringNotificationSetting } from "@/hooks/monitoring/use-get-monitoring-notification-setting";
 import { ModalDetailCard } from "../common/card/modal-detail-card";
+import { MyIcon } from "../common/icon";
 import { ReadOnlyMonitoringNotificationSetting } from "./read-only-monitoring-notification-setting";
 
 export function ViewMonitoringNotificationModal() {
@@ -30,10 +30,13 @@ export function ViewMonitoringNotificationModal() {
     onClose();
   };
 
-  useSubscribe<any>(MONITORING_EVENTS.sendNotificationSetting, ({ id }) => {
-    setId(id);
-    onOpen();
-  });
+  useSubscribe(
+    MONITORING_EVENTS.sendNotificationSetting,
+    ({ id }: { id: string }) => {
+      setId(id);
+      onOpen();
+    },
+  );
 
   return (
     <Modal

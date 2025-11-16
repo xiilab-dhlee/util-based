@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
+
 import { NodeLogMain } from "@/components/node/log/node-log-main";
 
-/**
- * 관리자 노드 로그 페이지
- */
+export const metadata: Metadata = {
+  title: "Node Management",
+};
+
 export default function AdminNodeLogPage() {
   return <NodeLogMain />;
 }

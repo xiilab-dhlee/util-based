@@ -5,6 +5,7 @@ import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { HubListBody } from "@/components/hub/list/hub-list-body";
 import { HubListFilter } from "@/components/hub/list/hub-list-filter";
 import { HubListFooter } from "@/components/hub/list/hub-list-footer";
+import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageBody,
@@ -13,11 +14,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/standard/dashboard",
-  },
+  STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "허브" },
 ];
 

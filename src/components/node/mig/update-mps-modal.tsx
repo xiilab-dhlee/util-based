@@ -13,7 +13,7 @@ import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetNodeMpsInfo } from "@/hooks/node/use-get-mps-info";
 import { useUpdateMps } from "@/hooks/node/use-update-mps";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
-import type { UpdateMpsPayload } from "@/types/node/node.interface";
+import type { UpdateMpsPayload } from "@/types/node/node.type";
 import { formatFileSize } from "@/utils/common/file.util";
 
 /**

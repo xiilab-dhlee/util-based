@@ -13,8 +13,8 @@ import { statusTextStyle } from "@/styles/mixins/text";
 import type { MonitoringMetricType } from "@/types/monitoring/monitoring.type";
 import { mapToChartData } from "@/utils/common/chart.util";
 import { getMetricInfo } from "@/utils/monitoring/monitoring.util";
-import GuideTooltip from "../common/tooltip/guide-tooltip";
-import GpuUtilizationTooltipTitle from "../common/tooltip-title/gpu-utilization-tooltip-title";
+import { GuideTooltip } from "../common/tooltip/guide-tooltip";
+import { GpuUtilizationTooltipTitle } from "../common/tooltip-title/gpu-utilization-tooltip-title";
 
 /**
  * 워크로드 모니터링 카드 컴포넌트의 Props 인터페이스

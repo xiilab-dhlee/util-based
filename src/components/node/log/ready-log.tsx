@@ -4,9 +4,10 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import styled from "styled-components";
 
-import { redfishLogColumn } from "@/components/common/column/redfish-log-column";
 import { MyIcon } from "@/components/common/icon";
 import { CustomizedTable } from "@/components/common/table/customized-table";
+import { redfishLogColumn } from "@/components/node/redfish/redfish-log-column";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNodeBmcInfo } from "@/hooks/node/use-get-bmc-info";
 import { useGetNode } from "@/hooks/node/use-get-node";
 import { useGetRedfishSystemLog } from "@/hooks/node/use-get-redfish-system-log";
@@ -37,10 +38,10 @@ export function ReadyLog() {
   const { data } = useGetNode(String(name));
 
   // BMC 정보 조회
-  const { data: bmcData } = useGetNodeBmcInfo(data?.node.ip || "");
+  const { data: bmcData } = useGetNodeBmcInfo(data?.ip || "");
 
   // Redfish 시스템 정보 조회
-  const { data: systemData } = useGetRedfishSystems(bmcData?.bmcIp);
+  const { data: systemData } = useGetRedfishSystems(bmcData?.bmcIp || "");
 
   // 시스템 ID 추출
   const systemId = getRedfishSystemId(
@@ -49,7 +50,7 @@ export function ReadyLog() {
 
   // 시스템 로그 조회
   const { data: logData } = useGetRedfishSystemLog(
-    bmcData?.bmcIp,
+    bmcData?.bmcIp || "",
     systemId,
     page,
   );
@@ -57,7 +58,7 @@ export function ReadyLog() {
   // 로그 데이터 처리
   const logs = logData?.logs?.Members || [];
   const currentLogCount = logs.length;
-  const pageSize = 10; // DEFAULT_PAGE_SIZE와 동일
+  const pageSize = LIST_PAGE_SIZE;
   const hasMoreData = currentLogCount === pageSize; // 현재 페이지가 가득 찬 경우 더 많은 데이터가 있을 가능성
 
   /**

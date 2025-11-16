@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { workspaceRequestResourcePageAtom } from "@/atoms/workspace/workspace-request-resource.atom";
 import { workspaceRequestResourceColumn } from "@/components/common/column/workspace-request-resource-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import workspaceRequestResourceConstants from "@/constants/workspace/workspace-request-resource.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaceRequestResources } from "@/hooks/workspace/use-get-workspace-request-resources";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -15,7 +15,7 @@ export function WorkspaceRequestResourceBody() {
 
   const { data } = useGetWorkspaceRequestResources({
     page,
-    size: workspaceRequestResourceConstants.pageSize,
+    size: LIST_PAGE_SIZE,
   });
 
   return (

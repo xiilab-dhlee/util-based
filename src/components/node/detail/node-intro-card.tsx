@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { Label } from "xiilab-ui";
 
 import { MyIcon } from "@/components/common/icon";
-import nodeDetailConstants from "@/constants/node/node-detail.constant";
 import { useGetNode } from "@/hooks/node/use-get-node";
 import {
   DetailIntroCardBody,
@@ -39,8 +38,8 @@ export function NodeIntroCard() {
 
   // 노드 실행 상태 확인
   let isRunning = false;
-  if (data?.node.nodeCondition) {
-    isRunning = isNodeRunning(data.node.nodeCondition);
+  if (data?.nodeCondition) {
+    isRunning = isNodeRunning(data.nodeCondition);
   }
 
   return (
@@ -49,7 +48,7 @@ export function NodeIntroCard() {
       <DetailIntroCardHeader>
         {/* 노드 상세 페이지 제목 표시 영역 */}
         <DetailIntroCardTitle>
-          <span>{nodeDetailConstants.title}</span>
+          <span>노드 자원 상세정보 · 리소스 정보</span>
         </DetailIntroCardTitle>
       </DetailIntroCardHeader>
       <DetailIntroCardBody>
@@ -81,7 +80,7 @@ export function NodeIntroCard() {
               <MyIcon name="Description" color="var(--icon-fill)" size={20} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
-              {nodeDetailConstants.title}
+              노드 자원 상세정보 · 리소스 정보
             </DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
           <DetailIntroCardDescription>

@@ -1,6 +1,8 @@
-import redfishMemoryColumn from "@/components/common/column/redfish-memory-column";
+import type { HTMLAttributes, MouseEvent } from "react";
+
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { useToggle } from "@/hooks/common/use-toggle";
+import type { MemoryMemberType } from "@/schemas/redfish.schema";
 import {
   TableCollapseRowBody,
   TableCollapseRowContainer,
@@ -11,6 +13,11 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
+import { redfishMemoryColumn } from "./redfish-memory-column";
+
+type MemoryRowProps = HTMLAttributes<HTMLTableRowElement> & {
+  rowData: MemoryMemberType;
+};
 
 /**
  * Redfish 메모리 테이블의 확장 가능한 행 컴포넌트
@@ -23,7 +30,7 @@ import {
  * @param rowData - 메모리 데이터
  * @param restProps - 기타 테이블 행 속성
  */
-export function MemoryRow({ children, rowData, ...restProps }: any) {
+export function MemoryRow({ children, rowData, ...restProps }: MemoryRowProps) {
   // 토글 상태 관리
   const [toggle, onToggle] = useToggle();
 
@@ -32,8 +39,8 @@ export function MemoryRow({ children, rowData, ...restProps }: any) {
    *
    * @param e - 클릭 이벤트
    */
-  const handleToggleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggleClick = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.stopPropagation();
 
     if (rowData) {
       onToggle();
@@ -45,7 +52,7 @@ export function MemoryRow({ children, rowData, ...restProps }: any) {
       {/* 확장 가능한 테이블 행 */}
       <ToggleTableRow
         toggle={toggle}
-        onToggle={handleToggleClick}
+        onClickIcon={handleToggleClick}
         togglePosition="last"
         {...restProps}
       >
@@ -75,18 +82,18 @@ export function MemoryRow({ children, rowData, ...restProps }: any) {
                   </TableCollapseRowKeyValueContainer>
                   <TableCollapseRowKeyValueContainer>
                     <TableCollapseRowRecordKey>
-                      HPE Memory
+                      Part Number
                     </TableCollapseRowRecordKey>
                     <TableCollapseRowRecordValue>
-                      {rowData?.Oem?.Hpe?.Attributes?.[0] || "-"}
+                      {rowData?.PartNumber || "-"}
                     </TableCollapseRowRecordValue>
                   </TableCollapseRowKeyValueContainer>
                   <TableCollapseRowKeyValueContainer>
                     <TableCollapseRowRecordKey>
-                      Minimum voltage
+                      Device Locator
                     </TableCollapseRowRecordKey>
                     <TableCollapseRowRecordValue>
-                      {`${rowData?.Oem?.Hpe?.MinimumVoltageVoltsX10 || 0} volts`}
+                      {rowData?.DeviceLocator || "-"}
                     </TableCollapseRowRecordValue>
                   </TableCollapseRowKeyValueContainer>
                 </TableCollapseRowRecord>

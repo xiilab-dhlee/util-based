@@ -11,6 +11,7 @@ export function RegistrySubSection() {
     size: 100,
     searchText: "",
   });
+
   return (
     <Container>
       <Pane>
@@ -39,7 +40,7 @@ export function RegistrySubSection() {
             pagination={{
               onChange: function Xs() {},
               pageSize: 10,
-              total: 100,
+              total: data?.content?.length || 0,
             }}
           />
         </PaneBody>
@@ -70,7 +71,7 @@ export function RegistrySubSection() {
             pagination={{
               onChange: function Xs() {},
               pageSize: 10,
-              total: 100,
+              total: data?.content?.length || 0,
             }}
           />
         </PaneBody>

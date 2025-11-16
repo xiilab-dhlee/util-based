@@ -2,11 +2,8 @@
 
 import { Col, Row } from "antd";
 
-import type {
-  GpuInstanceNode,
-  GpuInstanceRow,
-} from "@/types/node/node.interface";
-import GpuInstance from "./gpu-instance";
+import type { GpuInstanceNode, GpuInstanceRow } from "@/types/node/node.type";
+import { GpuInstance } from "./gpu-instance";
 
 const gutter: [number, number] = [4, 4];
 
@@ -39,12 +36,12 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
   const renderRow = (row: GpuInstanceRow, rowIndex: number) => {
     return (
       <Row key={rowIndex} gutter={gutter} style={{ height: row.height }}>
-        {row.nodes.map((node, nodeIndex) => {
+        {row.nodes.map((node) => {
           if (node.type === "node") {
             // 단일 노드인 경우 span 계산
             const span = 24 / row.nodes.length;
             return (
-              <Col key={nodeIndex} span={span}>
+              <Col key={node.name} span={span}>
                 {renderNodeElement(node)}
               </Col>
             );
@@ -54,7 +51,7 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
             // 컬럼인 경우 자식들을 처리
             const span = 24 / row.nodes.length;
             return (
-              <Col key={nodeIndex} span={span}>
+              <Col key={node.name} span={span}>
                 <div
                   style={{
                     height: "100%",
@@ -63,10 +60,10 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
                     gap: gutter[1],
                   }}
                 >
-                  {node.children.map((child, childIndex) => {
+                  {node.children.map((child) => {
                     if (child.type === "node") {
                       return (
-                        <div key={childIndex} style={{ height: "50%" }}>
+                        <div key={child.name} style={{ height: "50%" }}>
                           {renderNodeElement(child)}
                         </div>
                       );
@@ -75,13 +72,13 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
                     if (child.type === "column" && child.children) {
                       return (
                         <Row
-                          key={childIndex}
+                          key={child.name}
                           gutter={gutter}
                           style={{ height: "50%" }}
                         >
-                          {child.children.map((grandChild, grandChildIndex) => (
+                          {child.children.map((grandChild) => (
                             <Col
-                              key={grandChildIndex}
+                              key={grandChild.name}
                               span={24 / child.children!.length}
                             >
                               {renderNodeElement(grandChild)}
@@ -106,4 +103,3 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
 
   return rows.map((row, rowIndex) => renderRow(row, rowIndex));
 }
-

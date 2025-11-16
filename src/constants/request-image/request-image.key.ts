@@ -3,7 +3,7 @@ import type {
   GetWaitingRequestImagesPayload,
 } from "@/types/request-image/request-image.type";
 
-const requestImageKeys = {
+export const requestImageKeys = {
   default: ["requestImage"],
   list: (payload: GetRequestImagesPayload) => [
     ...requestImageKeys.default,
@@ -21,5 +21,3 @@ const requestImageKeys = {
     ...Object.values(payload),
   ],
 };
-
-export default requestImageKeys;

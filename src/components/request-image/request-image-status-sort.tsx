@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 
 import { requestImageStatusAtom } from "@/atoms/request-image/request-image-list.atom";
 import { MySelect } from "@/components/common/select";
-import requestImageListConstants from "@/constants/request-image/request-image-list.constant";
+import { REQUEST_IMAGE_STATUS_OPTIONS } from "@/constants/request-image/request-image.constant";
 
 /**
  * 이미지 요청 상태별 정렬 컴포넌트
@@ -31,7 +31,7 @@ export function RequestImageStatusSort() {
 
   return (
     <MySelect
-      options={requestImageListConstants.status} // 이미지 요청 상태 옵션들
+      options={REQUEST_IMAGE_STATUS_OPTIONS} // 이미지 요청 상태 옵션들
       placeholder="상태" // 플레이스홀더 텍스트
       setValue={handleChange} // 값 변경 핸들러
       value={status} // 현재 선택된 상태 값
@@ -40,4 +40,3 @@ export function RequestImageStatusSort() {
     />
   );
 }
-

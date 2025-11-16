@@ -3,7 +3,7 @@
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import clusterMonitoringConstants from "@/constants/monitoring/cluster-monitoring.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import clusterResourceListColumn from "./cluster-resource-list-column";
+import { clusterResourceListColumn } from "./cluster-resource-list-column";
 
 export function ClusterResourceListBody() {
   return (
@@ -24,4 +24,3 @@ export function ClusterResourceListBody() {
     </ListWrapper>
   );
 }
-

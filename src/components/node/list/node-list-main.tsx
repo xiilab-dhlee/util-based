@@ -1,7 +1,8 @@
 "use client";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import nodeListConstants from "@/constants/node/node-list.constant";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
+import { NODE_GUIDE_IMAGES, NODE_GUIDES } from "@/constants/node/node.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -11,29 +12,20 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-import UpdateMigModal from "../mig/update-mig-modal";
-import UpdateMpsModal from "../mig/update-mps-modal";
-import NodeListBody from "./node-list-body";
-import NodeListFilter from "./node-list-filter";
-import NodeListFooter from "./node-list-footer";
+import { UpdateMigModal } from "../mig/update-mig-modal";
+import { UpdateMpsModal } from "../mig/update-mps-modal";
+import { NodeListBody } from "./node-list-body";
+import { NodeListFilter } from "./node-list-filter";
+import { NodeListFooter } from "./node-list-footer";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "노드 관리" },
 ];
 
-/**
- * 노드 목록 페이지의 메인 컴포넌트
- *
- */
 export function NodeListMain() {
   return (
     <>
-      {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
         title="노드관리"
         icon="ComparativeExperiment"
@@ -56,13 +48,13 @@ export function NodeListMain() {
               "여부 등을 종합적으로 확인하고 개별 노드의",
               "Activity 상세 확인 가능",
             ]}
-            guides={nodeListConstants.guides}
+            guides={NODE_GUIDES}
           />
 
           {/* 노드 가이드 이미지 카드 */}
           <PageImageGuide
             title="노드 관리 가이드"
-            guideImages={nodeListConstants.guideImages}
+            guideImages={NODE_GUIDE_IMAGES}
           />
         </ListPageAside>
         {/* 노드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

@@ -1,6 +1,6 @@
-import type { GetNodesPayload } from "@/types/node/node.interface";
+import type { GetNodesPayload } from "@/types/node/node.type";
 
-const nodeKeys = {
+export const nodeKeys = {
   default: ["node"],
   list: (payload: GetNodesPayload) => [
     ...nodeKeys.default,
@@ -13,5 +13,3 @@ const nodeKeys = {
   migInfo: (nodeName: string) => [...nodeKeys.default, "migInfo", nodeName],
   bmcInfo: (nodeIp: string) => [...nodeKeys.default, "bmcInfo", nodeIp],
 };
-
-export default nodeKeys;

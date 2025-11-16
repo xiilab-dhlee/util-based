@@ -1,6 +1,7 @@
 "use client";
 
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
 import { Typography } from "xiilab-ui";
 
 import { ClusterEventCard } from "@/components/cluster-monitoring/cluster-event-card";
@@ -9,6 +10,7 @@ import { ClusterMonitoringAside } from "@/components/cluster-monitoring/cluster-
 import { ClusterResourceQuotaCard } from "@/components/cluster-monitoring/cluster-resource-quota-card";
 import { ViewYamlLogModal } from "@/components/cluster-monitoring/view-yaml-log-modal";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
@@ -19,11 +21,7 @@ import { subTitleStyle } from "@/styles/mixins/text";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "클러스터 모니터링" },
 ];
 
@@ -32,8 +30,8 @@ export function ClusterMonitoringMain() {
     <>
       <PageHeader
         title="클러스터 모니터링"
-        icon="Dashboard"
-        description="Monitoring Clusters"
+        icon="Monitoring01"
+        description="Cluster Monitoring"
       >
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />
       </PageHeader>
@@ -86,8 +84,8 @@ export function ClusterMonitoringMain() {
           </EventHeader>
           <EventBody>
             <EventGridWrapper>
-              {Array.from({ length: 10 }).map((_, index) => (
-                <ClusterEventCard key={index} />
+              {Array.from({ length: 10 }).map((_) => (
+                <ClusterEventCard key={uuidv4()} />
               ))}
             </EventGridWrapper>
 

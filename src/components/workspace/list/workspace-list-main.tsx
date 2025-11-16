@@ -7,6 +7,7 @@ import { DeleteWorkspaceModal } from "@/components/workspace/delete-workspace-mo
 import { WorkspaceListBody } from "@/components/workspace/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/components/workspace/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/components/workspace/list/workspace-list-footer";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import {
   WORKSPACE_GUIDE_IMAGES,
   WORKSPACE_GUIDES,
@@ -23,11 +24,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "워크스페이스 관리" },
 ];
 

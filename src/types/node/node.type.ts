@@ -1,18 +1,8 @@
+import type { CorePaginate, CorePayload } from "../common/api.interface";
 import type { NodeMigInfo } from "./node.model";
 
-/**
- * Payload for fetching node list
- */
-export interface GetNodesPayload {
-  /** Page number (1-based) */
-  page: number;
-  /** Number of items per page */
-  size: number;
-}
+export interface GetNodesPayload extends CorePayload, CorePaginate {}
 
-/**
- * Payload for fetching node detail
- */
 export interface GetNodePayload {
   /** Node ID */
   id: string;

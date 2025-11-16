@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
-import type { MigGpu } from "@/types/node/node.interface";
+import type { MigGpu } from "@/types/node/node.type";
 
 // 검색 필터 - 페이지 번호만 관리
 export const nodePageAtom = atomWithReset<number>(1);

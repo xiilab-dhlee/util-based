@@ -1,12 +1,12 @@
 import classNames from "classnames";
 import { useAtom } from "jotai";
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, MouseEvent } from "react";
 
 import { privateRegistrySelectedItemAtom } from "@/atoms/private-registry/private-registry.atom";
-import type { PrivateRegistry } from "@/types/private-registry/private-registry.model";
+import type { PrivateRegistryListType } from "@/schemas/private-registry.schema";
 
 interface PrivateRegistryRowProps extends HTMLAttributes<HTMLTableRowElement> {
-  rowData: PrivateRegistry;
+  rowData: PrivateRegistryListType;
 }
 
 /**
@@ -31,7 +31,7 @@ export function PrivateRegistryRow({
   );
   const isActive = selectedItem === rowData?.name;
 
-  const handleClickRow = (evt: React.MouseEvent) => {
+  const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
 
     if (rowData) {

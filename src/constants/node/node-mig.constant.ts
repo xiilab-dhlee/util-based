@@ -1,4 +1,4 @@
-import type { GpuConfigMap } from "@/types/node/node.interface";
+import type { GpuConfigMap } from "@/types/node/node.type";
 
 const GPU_ALPHA_CONFIGMAP = {
   1: [{ gpuIndex: 0, compute: 4 }],

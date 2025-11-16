@@ -5,7 +5,7 @@ import {
   ColumnAlignCenterWrap,
   ColumnTruncateText,
 } from "../../styles/layers/column-layer.styled";
-import YamlLogButton from "./yaml-log-button";
+import { YamlLogButton } from "./yaml-log-button";
 
 export const clusterResourceListColumn: ResponsiveColumnType[] = [
   {
@@ -68,4 +68,3 @@ export const clusterResourceListColumn: ResponsiveColumnType[] = [
     },
   },
 ];
-

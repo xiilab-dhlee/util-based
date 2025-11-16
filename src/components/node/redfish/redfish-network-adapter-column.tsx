@@ -1,9 +1,9 @@
-import type { ColumnsType } from "antd/es/table";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
-import redfishExpandColumn from "./redfish-expand-column";
-import redfishStatusColumn from "./redfish-status-column";
+import { redfishExpandColumn } from "./redfish-expand-column";
+import { redfishStatusColumn } from "./redfish-status-column";
 
-export const redfishNetworkAdapterColumn: ColumnsType<any> = [
+export const redfishNetworkAdapterColumn: ResponsiveColumnType[] = [
   {
     title: "Model",
     dataIndex: "Name",
@@ -22,4 +22,3 @@ export const redfishNetworkAdapterColumn: ColumnsType<any> = [
   ...redfishStatusColumn,
   ...redfishExpandColumn,
 ];
-

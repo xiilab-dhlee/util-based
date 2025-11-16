@@ -1,7 +1,7 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
 import { useServices } from "@/providers/service-provider";
-import type { UpdateMpsPayload } from "@/types/node/node.interface";
+import type { UpdateMpsPayload } from "@/types/node/node.type";
 
 /**
  * MPS 설정 수정
@@ -20,4 +20,3 @@ export const useUpdateMps = (): UseMutationResult<
     },
   });
 };
-

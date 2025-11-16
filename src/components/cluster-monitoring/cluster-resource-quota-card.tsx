@@ -5,8 +5,8 @@ import styled from "styled-components";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
-import MyIcon from "../common/icon";
-import ResourceProgress from "../common/progress/resource-progress";
+import { MyIcon } from "../common/icon";
+import { ResourceProgress } from "../common/progress/resource-progress";
 
 interface ClusterResourceQuotaCardProps {
   resourceName: CoreResourceType;

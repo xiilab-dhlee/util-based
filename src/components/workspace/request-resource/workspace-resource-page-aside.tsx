@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 
-import WorkspaceResourceCard from "./workspace-resource-card";
+import { WorkspaceResourceCard } from "./workspace-resource-card";
 
 export function WorkspaceResourcePageAside() {
   return (
@@ -33,7 +33,6 @@ export function WorkspaceResourcePageAside() {
     </Container>
   );
 }
-
 
 // ============================================================================
 // Styled Components

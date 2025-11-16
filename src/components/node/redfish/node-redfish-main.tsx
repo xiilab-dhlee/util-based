@@ -4,8 +4,8 @@ import { useParams } from "next/navigation";
 
 import { ManageBmcModal } from "@/components/common/modal/manage-bmc-modal";
 import { useGetNode } from "@/hooks/node/use-get-node";
-import NodeRedfishBody from "./node-redfish-body";
-import ViewNetworkAdapterModal from "./view-network-adapter-modal";
+import { NodeRedfishBody } from "./node-redfish-body";
+import { ViewNetworkAdapterModal } from "./view-network-adapter-modal";
 
 /**
  * 노드 Redfish 페이지의 최상위 컴포넌트
@@ -24,7 +24,7 @@ export function NodeRedfishMain() {
   return (
     <>
       {/* 노드 IP가 있는 경우에만 Redfish 바디 렌더링 */}
-      {data?.node?.ip && <NodeRedfishBody nodeIp={data.node.ip} />}
+      {data?.ip && <NodeRedfishBody nodeIp={data.ip} />}
       {/* BMC 관리(Create/Update) 모달 */}
       <ManageBmcModal />
       {/* Network Adapter 모달 */}
@@ -32,4 +32,3 @@ export function NodeRedfishMain() {
     </>
   );
 }
-

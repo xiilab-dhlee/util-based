@@ -1,7 +1,7 @@
 "use client";
 
-import RedfishPrimaryArticle from "./redfish-primary-article";
-import UnconnectRedfish from "./unconnect-redfish";
+import { RedfishPrimaryArticle } from "./redfish-primary-article";
+import { UnconnectRedfish } from "./unconnect-redfish";
 
 /**
  * Redfish 미연동 상태를 표시하는 컴포넌트
@@ -22,4 +22,3 @@ export function UnreadyRedfish() {
     </>
   );
 }
-

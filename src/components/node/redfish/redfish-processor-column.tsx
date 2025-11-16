@@ -1,10 +1,10 @@
-import type { ColumnsType } from "antd/es/table";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
-import redfishExpandColumn from "./redfish-expand-column";
-import redfishStateColumn from "./redfish-state-column";
-import redfishStatusColumn from "./redfish-status-column";
+import { redfishExpandColumn } from "./redfish-expand-column";
+import { redfishStateColumn } from "./redfish-state-column";
+import { redfishStatusColumn } from "./redfish-status-column";
 
-export const redfishProcessorColumn: ColumnsType<any> = [
+export const redfishProcessorColumn: ResponsiveColumnType[] = [
   {
     title: "Socket",
     dataIndex: "Socket",
@@ -29,7 +29,7 @@ export const redfishProcessorColumn: ColumnsType<any> = [
     title: "Max Speed",
     dataIndex: "MaxSpeedMHz",
     align: "left",
-    render: (MaxSpeedMHz: number) => {
+    render: (MaxSpeedMHz) => {
       return <span>{MaxSpeedMHz || 0} MHz</span>;
     },
   },
@@ -37,4 +37,3 @@ export const redfishProcessorColumn: ColumnsType<any> = [
   ...redfishStatusColumn,
   ...redfishExpandColumn,
 ];
-

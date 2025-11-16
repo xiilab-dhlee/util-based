@@ -1,6 +1,7 @@
 "use client";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageBody,
@@ -13,11 +14,7 @@ import PrivateRegistryListFilter from "./private-registry-list-filter";
 import PrivateRegistryListFooter from "./private-registry-list-footer";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   {
     title: "레지스트리",
     href: "/admin/registry",

@@ -1,13 +1,13 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import { MyIcon } from "@/components/common/icon";
 import { getBackPathname } from "@/utils/common/router.util";
 
-type PageHeaderProps = {
+interface PageHeaderProps {
   // 페이지 타이틀
   title: string;
   // 페이지 타이틀 아이콘 타입
@@ -16,7 +16,22 @@ type PageHeaderProps = {
   description: string;
   // 기존 구조와 다른 라우팅 필요 시 정의
   customPathname?: string;
-};
+}
+
+/**
+ * customPathname의 쿼리 파라미터 플레이스홀더를 searchParams 값으로 대체
+ * 예: /admin/workspace/{workspaceId} + searchParams.workspaceId=test → /admin/workspace/test
+ */
+function replacePathParams(
+  path: string,
+  searchParams: URLSearchParams,
+): string {
+  return path.replace(/\{([^}]+)\}/g, (match, key) => {
+    const value = searchParams.get(key);
+    return value || match; // 값이 없으면 원본 {key} 유지
+  });
+}
+
 // 페이지 헤더 영역
 export function PageHeader({
   title,
@@ -27,10 +42,14 @@ export function PageHeader({
 }: PropsWithChildren<PageHeaderProps>) {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   // 뒤로가기 버튼 클릭 시 목록 페이지로 이동
   const handleBack = () => {
     if (customPathname) {
-      router.replace(customPathname);
+      // [workspaceId] 같은 동적 세그먼트를 searchParams 값으로 대체
+      const resolvedPath = replacePathParams(customPathname, searchParams);
+      router.replace(resolvedPath);
     } else {
       router.replace(getBackPathname(pathname));
     }
@@ -49,12 +68,7 @@ export function PageHeader({
             <MyIcon name={icon} color="var(--icon-fill)" size={16} />
           </IconWrapper>
         )}
-
-        {/* 주로 목록 페이지인 경우 */}
-
-        {/* after: xiilab-ui Typography 사용, headline01 */}
         <Title>{title}</Title>
-        {/* after: xiilab-ui Typography 사용, Body01 */}
         <Description>{description}</Description>
       </Left>
       {children && <Right>{children}</Right>}

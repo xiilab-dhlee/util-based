@@ -15,7 +15,7 @@ type SyncWorkloadMonitoringPayload = {
   /** 모달 제목 */
   title: string;
   /** 차트에 표시할 데이터 시리즈 배열 */
-  series: any[];
+  series: unknown[];
   /** 데이터 단위 (예: %, MB, GB 등) */
   unit: string;
   /** 차트 색상 배열 */
@@ -44,7 +44,7 @@ type SyncWorkloadMonitoringPayload = {
 export function ViewWorkloadMonitoringModal() {
   // 모달 내부 상태 관리
   const [title, setTitle] = useState("");
-  const [series, setSeries] = useState<any[]>([]);
+  const [series, setSeries] = useState<unknown[]>([]);
   const [unit, setUnit] = useState("");
   const [colors, setColors] = useState<string[]>([]);
 
@@ -58,9 +58,9 @@ export function ViewWorkloadMonitoringModal() {
    * WORKLOAD_EVENTS.sendWorkloadMonitoring 이벤트를 구독하여
    * 실시간으로 모니터링 데이터를 수신하고 상태를 업데이트합니다.
    */
-  useSubscribe<SyncWorkloadMonitoringPayload>(
+  useSubscribe(
     WORKLOAD_EVENTS.sendWorkloadMonitoring,
-    (eventData) => {
+    (eventData: SyncWorkloadMonitoringPayload) => {
       setTitle(eventData.title);
       setSeries(eventData.series);
       setUnit(eventData.unit);

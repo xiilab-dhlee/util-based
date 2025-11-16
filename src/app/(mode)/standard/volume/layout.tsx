@@ -12,6 +12,7 @@ import { VolumeListBody } from "@/components/volume/list/volume-list-body";
 import { VolumeListFilter } from "@/components/volume/list/volume-list-filter";
 import { VolumeListFooter } from "@/components/volume/list/volume-list-footer";
 import { SelectVolumeTypeModal } from "@/components/volume/select-volume-type-modal";
+import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageBody,
@@ -20,11 +21,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/standard/dashboard",
-  },
+  STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "볼륨" },
 ];
 

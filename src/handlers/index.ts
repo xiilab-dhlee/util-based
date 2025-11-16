@@ -10,6 +10,7 @@ import { nodeHandlers } from "./node.handler";
 import { notificationHandlers } from "./notification.handler";
 import { privateRegistryHandlers } from "./private-registry.handler";
 import { privateRegistryImageHandlers } from "./private-registry-image.handler";
+import { redfishHandlers } from "./redfish.handler";
 import { requestImageHandlers } from "./request-image.handler";
 import { sourcecodeHandlers } from "./sourcecode.handler";
 import { userHandlers } from "./user.handler";
@@ -28,6 +29,7 @@ export const combinedHandlers = [
   ...workspaceHandlers,
   ...requestImageHandlers,
   ...nodeHandlers,
+  ...redfishHandlers,
   ...userHandlers,
   ...groupHandlers,
   ...notificationHandlers,

@@ -5,20 +5,20 @@ import styled from "styled-components";
 import { DateRange, Typography } from "xiilab-ui";
 
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import monitoringNotificationConstants from "@/constants/monitoring/monitoring-notification.constant";
+import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/constants/monitoring/monitoring-notification.constant";
 import { useGetMonitoringNotifications } from "@/hooks/monitoring/use-get-monitoring-notifications";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import createMonitoringNotificationColumn from "../common/column/create-monitoring-notification-column";
-import SearchInput from "../common/input/search-input";
+import { createMonitoringNotificationColumn } from "../common/column/create-monitoring-notification-column";
+import { SearchInput } from "../common/input/search-input";
 
 export function MonitoringNotificationListArticle() {
   const [page, setPage] = useState(1);
 
   const { data } = useGetMonitoringNotifications({
     page,
-    size: monitoringNotificationConstants.pageSize,
+    size: MONITORING_NOTIFICATION_PAGE_SIZE,
     searchText: "",
   });
 
@@ -65,7 +65,7 @@ export function MonitoringNotificationListArticle() {
         <ListPageFooter
           total={100}
           page={page}
-          pageSize={monitoringNotificationConstants.pageSize}
+          pageSize={MONITORING_NOTIFICATION_PAGE_SIZE}
           onChange={(page: number) => setPage(page)}
         />
       </ArticleBody>

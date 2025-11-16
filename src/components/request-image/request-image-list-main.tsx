@@ -1,7 +1,11 @@
 "use client";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import requestImageListConstants from "@/constants/request-image/request-image-list.constant";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
+import {
+  REQUEST_IMAGE_GUIDE_IMAGES,
+  REQUEST_IMAGE_GUIDES,
+} from "@/constants/request-image/request-image.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -20,11 +24,7 @@ import { RequestImageListFilter } from "./request-image-list-filter";
 import { RequestImageListFooter } from "./request-image-list-footer";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   {
     title: "레지스트리",
     href: "/admin/registry",
@@ -66,13 +66,13 @@ export function RequestImageListMain() {
               "확인하여, 해당 요청을 승인하거나 반려할 수 있는 화면입니다.",
             ]}
             backgroundImageName="request-image-intro-background.png"
-            guides={requestImageListConstants.guides}
+            guides={REQUEST_IMAGE_GUIDES}
           />
 
           {/* 이미지 요청 가이드 이미지 카드 */}
           <PageImageGuide
             title="이미지 사용 요청 목록 가이드"
-            guideImages={requestImageListConstants.guideImages}
+            guideImages={REQUEST_IMAGE_GUIDE_IMAGES}
           />
         </ListPageAside>
 

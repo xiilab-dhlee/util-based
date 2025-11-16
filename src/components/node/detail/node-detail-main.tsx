@@ -2,8 +2,8 @@
 
 import styled from "styled-components";
 
-import NodePrimaryPane from "./node-primary-pane";
-import NodeSecondaryPane from "./node-secondary-pane";
+import { NodePrimaryPane } from "./node-primary-pane";
+import { NodeSecondaryPane } from "./node-secondary-pane";
 
 /**
  * NodeDetailMain 컴포넌트
@@ -24,7 +24,6 @@ export function NodeDetailMain() {
     </Container>
   );
 }
-
 
 /**
  * 노드 상세 페이지 메인 컨테이너 스타일

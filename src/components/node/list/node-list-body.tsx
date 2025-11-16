@@ -3,9 +3,9 @@
 import { useAtomValue } from "jotai";
 
 import { nodePageAtom } from "@/atoms/node/node-list.atom";
-import { nodeListColumn } from "@/components/common/column/node-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import nodeListConstants from "@/constants/node/node-list.constant";
+import { nodeListColumn } from "@/components/node/list/node-list-column";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNodes } from "@/hooks/node/use-get-nodes";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -22,12 +22,16 @@ export function NodeListBody() {
 
   const { data } = useGetNodes({
     page,
-    size: nodeListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
   });
 
   return (
     <ListWrapper>
-      <CustomizedTable columns={nodeListColumn} data={data?.content || []} />
+      <CustomizedTable
+        columns={nodeListColumn}
+        data={data?.content || []}
+        columnHeight={40}
+      />
     </ListWrapper>
   );
 }

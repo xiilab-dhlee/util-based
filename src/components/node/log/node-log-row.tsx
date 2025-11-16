@@ -1,14 +1,20 @@
+import type { HTMLAttributes, MouseEvent } from "react";
 import styled from "styled-components";
 
-import redfishNetworkPortColumn from "@/components/common/column/redfish-network-port-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
+import { redfishNetworkPortColumn } from "@/components/node/redfish/redfish-network-port-column";
 import { useToggle } from "@/hooks/common/use-toggle";
+import type { LogInfoType } from "@/schemas/redfish.schema";
 import {
   TableCollapseRowBody,
   TableCollapseRowContainer,
   TableCollapseRowHeader,
   TableCollapseRowHeaderTitle,
 } from "@/styles/layers/table-collapse-row.styled";
+
+interface NodeLogRowProps extends HTMLAttributes<HTMLTableRowElement> {
+  rowData: LogInfoType;
+}
 
 /**
  * 노드 로그 테이블의 확장 가능한 행 컴포넌트
@@ -20,7 +26,11 @@ import {
  * @param rowData - 로그 데이터 (Oem.Hpe.RecommendedAction 포함)
  * @param restProps - 기타 테이블 행 속성
  */
-export function NodeLogRow({ children, rowData, ...restProps }: any) {
+export function NodeLogRow({
+  children,
+  rowData,
+  ...restProps
+}: NodeLogRowProps) {
   // 토글 상태 관리
   const [toggle, onToggle] = useToggle();
 
@@ -29,8 +39,8 @@ export function NodeLogRow({ children, rowData, ...restProps }: any) {
    *
    * @param e - 클릭 이벤트
    */
-  const handleToggleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggleClick = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.stopPropagation();
 
     if (rowData) {
       onToggle();
@@ -42,7 +52,7 @@ export function NodeLogRow({ children, rowData, ...restProps }: any) {
       {/* 확장 가능한 테이블 행 */}
       <ToggleTableRow
         toggle={toggle}
-        onToggle={handleToggleClick}
+        onClickIcon={handleToggleClick}
         togglePosition="last"
         {...restProps}
       >

@@ -9,7 +9,7 @@ import {
   selectedMigConfigIdAtom,
 } from "@/atoms/node/node-list.atom";
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
-import type { GpuInstanceNode } from "@/types/node/node.interface";
+import type { GpuInstanceNode } from "@/types/node/node.type";
 
 /**
  * GPU 인스턴스 컴포넌트 Props
@@ -64,7 +64,6 @@ export function GpuInstance({ gpuIndex, name }: GpuInstanceProps) {
     </Container>
   );
 }
-
 
 /**
  * GPU 인스턴스 컨테이너 스타일

@@ -1,10 +1,7 @@
 "use client";
 
-import type {
-  GpuInstanceRow,
-  GpuModelConfig,
-} from "@/types/node/node.interface";
-import GenerateGpuInstance from "./generate-gpu-instance";
+import type { GpuInstanceRow, GpuModelConfig } from "@/types/node/node.type";
+import { GenerateGpuInstance } from "./generate-gpu-instance";
 
 /**
  * GPU 설정을 기반으로 GpuInstanceRow 배열을 생성합니다.
@@ -135,9 +132,10 @@ interface GenerateDisplayConfigBetaProps {
 /**
  * GPU 설정을 기반으로 MIG 인스턴스 표시를 생성하는 공통 컴포넌트
  */
-export function GenerateDisplayConfigBeta({ config }: GenerateDisplayConfigBetaProps) {
+export function GenerateDisplayConfigBeta({
+  config,
+}: GenerateDisplayConfigBetaProps) {
   const rows = generateRowsFromConfig(config);
 
   return <GenerateGpuInstance rows={rows} />;
 }
-

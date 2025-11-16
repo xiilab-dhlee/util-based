@@ -1,6 +1,6 @@
 "use client";
 
-import UnconnectRedfish from "../redfish/unconnect-redfish";
+import { UnconnectRedfish } from "../redfish/unconnect-redfish";
 
 /**
  * Redfish 미연동 상태의 로그 컴포넌트
@@ -11,4 +11,3 @@ import UnconnectRedfish from "../redfish/unconnect-redfish";
 export function UnreadyLog() {
   return <UnconnectRedfish />;
 }
-

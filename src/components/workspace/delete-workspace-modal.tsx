@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
@@ -50,15 +52,12 @@ export function DeleteWorkspaceModal() {
   /**
    * 워크스페이스 삭제 모달 데이터 구독
    */
-  useSubscribe(
-    WORKSPACE_EVENTS.sendDeleteWorkspace,
-    (workspaces: string[]) => {
-      // 삭제할 워크스페이스 목록 설정
-      setDeleteWorkspaces(workspaces);
-      // 삭제 모달 열기
-      onOpen();
-    },
-  );
+  useSubscribe(WORKSPACE_EVENTS.sendDeleteWorkspace, (workspaces: string[]) => {
+    // 삭제할 워크스페이스 목록 설정
+    setDeleteWorkspaces(workspaces);
+    // 삭제 모달 열기
+    onOpen();
+  });
 
   return (
     <Modal
@@ -78,4 +77,3 @@ export function DeleteWorkspaceModal() {
     </Modal>
   );
 }
-

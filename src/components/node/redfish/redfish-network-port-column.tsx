@@ -1,8 +1,8 @@
-import type { ColumnsType } from "antd/es/table";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
-import redfishExpandColumn from "./redfish-expand-column";
+import { redfishExpandColumn } from "./redfish-expand-column";
 
-export const redfishNetworkPortColumn: ColumnsType<any> = [
+export const redfishNetworkPortColumn: ResponsiveColumnType[] = [
   {
     title: "ID",
     dataIndex: "Id",
@@ -17,7 +17,7 @@ export const redfishNetworkPortColumn: ColumnsType<any> = [
     title: "Signal Detected",
     dataIndex: "LinkStatus",
     align: "left",
-    render: (LinkStatus: string) => {
+    render: (LinkStatus) => {
       return <span>{LinkStatus || "No"}</span>;
     },
   },
@@ -25,7 +25,7 @@ export const redfishNetworkPortColumn: ColumnsType<any> = [
     title: "Link Status",
     dataIndex: "LinkStatus",
     align: "left",
-    render: (LinkStatus: string) => {
+    render: (LinkStatus) => {
       return <span>{LinkStatus || "No"}</span>;
     },
   },
@@ -36,4 +36,3 @@ export const redfishNetworkPortColumn: ColumnsType<any> = [
   },
   ...redfishExpandColumn,
 ];
-

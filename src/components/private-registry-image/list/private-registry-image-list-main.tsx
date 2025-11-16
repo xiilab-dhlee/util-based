@@ -5,6 +5,7 @@ import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { PrivateRegistryImageListBody } from "@/components/private-registry-image/list/private-registry-image-list-body";
 import { PrivateRegistryImageListFilter } from "@/components/private-registry-image/list/private-registry-image-list-filter";
 import { PrivateRegistryImageListFooter } from "@/components/private-registry-image/list/private-registry-image-list-footer";
+import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import {
   PRIVATE_REGISTRY_IMAGE_GUIDE_IMAGES,
   PRIVATE_REGISTRY_IMAGE_GUIDES,
@@ -23,11 +24,7 @@ import { DeletePrivateRegistryImageModal } from "../delete-private-registry-imag
 import { CreatePrivateRegistryImageModal } from "./create-private-registry-image-modal";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/standard/dashboard",
-  },
+  STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "내부 레지스트리" },
 ];
 

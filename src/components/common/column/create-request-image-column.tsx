@@ -55,7 +55,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "requestReason",
       title: "요청 사유",
       align: "center",
-      width: 50,
+      width: 70,
       render: (requestReason: string) => {
         return <ViewRequestReasonButton reason={requestReason} />;
       },

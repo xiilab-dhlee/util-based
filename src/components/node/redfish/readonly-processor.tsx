@@ -1,11 +1,11 @@
 "use client";
 
-import redfishProcessorColumn from "@/components/common/column/redfish-processor-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemProcessors } from "@/hooks/node/use-get-redfish-system-processors";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
 import { DetailContentFeature } from "@/styles/layers/detail-page-vertical-layers.styled";
-import ProcessorRow from "./processor-row";
+import { ProcessorRow } from "./processor-row";
+import { redfishProcessorColumn } from "./redfish-processor-column";
 
 /**
  * Redfish 시스템의 프로세서 정보를 읽기 전용으로 표시하는 컴포넌트

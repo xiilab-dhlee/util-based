@@ -9,10 +9,10 @@ import type {
 } from "@/schemas/workspace-request-resource.schema";
 import type { WorkspaceRequestResourceStatus } from "@/types/workspace/workspace.interface";
 import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
-import ViewRejectReasonButton from "../button/view-reject-reason-button";
-import ViewRequestReasonButton from "../button/view-request-reason-button";
-import WorkspaceRequestResourceStatusText from "../text/workspace-request-resource-status-text";
-import ColumnMig from "./column-mig";
+import { ViewRejectReasonButton } from "../button/view-reject-reason-button";
+import { ViewRequestReasonButton } from "../button/view-request-reason-button";
+import { WorkspaceRequestResourceStatusText } from "../text/workspace-request-resource-status-text";
+import { ColumnMig } from "./column-mig";
 
 export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
   {
@@ -81,7 +81,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     title: "신청사유",
     dataIndex: "requestReason",
     align: "center",
-    width: 50,
+    width: 70,
     render: (requestReason: string) => {
       return <ViewRequestReasonButton reason={requestReason} />;
     },
@@ -90,7 +90,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     title: "승인여부",
     dataIndex: "status",
     align: "center",
-    width: 80,
+    width: 70,
     render: (status: WorkspaceRequestResourceStatus) => {
       return <WorkspaceRequestResourceStatusText status={status} />;
     },
@@ -99,7 +99,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     title: "반려사유",
     dataIndex: "rejectReason",
     align: "center",
-    width: 50,
+    width: 70,
     render: (rejectReason: string) => {
       return <ViewRejectReasonButton reason={rejectReason} />;
     },
@@ -108,7 +108,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     title: "반려",
     dataIndex: "id",
     align: "center",
-    width: 40,
+    width: 50,
     render: (_: number, record: WorkspaceRequestResourceListType) => {
       return <ViewRejectResourceButton resource={record} />;
     },
@@ -117,7 +117,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     title: "승인",
     dataIndex: "id",
     align: "center",
-    width: 40,
+    width: 50,
     render: (_: number, record: WorkspaceRequestResourceListType) => {
       return <ViewApproveResourceButton resource={record} />;
     },

@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import type {
-  DetailedHTMLProps,
   HTMLAttributes,
+  MouseEvent,
   PropsWithChildren,
   ReactElement,
 } from "react";
@@ -10,20 +10,16 @@ import { Children, cloneElement, isValidElement } from "react";
 import { MyIcon } from "@/components/common/icon";
 import { ColumnIconWrap } from "../../../styles/layers/column-layer.styled";
 
-interface ToggleTableRowProps
-  extends DetailedHTMLProps<
-    HTMLAttributes<HTMLTableRowElement>,
-    HTMLTableRowElement
-  > {
+interface ToggleTableRowProps extends HTMLAttributes<HTMLTableRowElement> {
   toggle: boolean;
-  onToggle: () => void;
+  onClickIcon: (evt: MouseEvent<HTMLButtonElement>) => void;
   togglePosition: "last" | "first";
 }
 
 export function ToggleTableRow({
   children,
   toggle,
-  onToggle,
+  onClickIcon,
   togglePosition,
   ...restProps
 }: ToggleTableRowProps) {
@@ -39,7 +35,8 @@ export function ToggleTableRow({
       const newProps = {
         children: (
           <ColumnIconWrap
-            onClick={onToggle}
+            type="button"
+            onClick={onClickIcon}
             className={classNames("hide-box", { rotate: toggle })}
           >
             <MyIcon name="Dropdown" color="#000" size={16} />

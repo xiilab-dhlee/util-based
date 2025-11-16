@@ -1,8 +1,10 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import requestImageKeys from "@/constants/request-image/request-image.key";
+import { requestImageKeys } from "@/constants/request-image/request-image.key";
 import { useServices } from "@/providers/service-provider";
+import type { RequestImageListType } from "@/schemas/request-image.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetRequestImagesPayload } from "@/types/request-image/request-image.type";
 
 /**
@@ -11,7 +13,7 @@ import type { GetRequestImagesPayload } from "@/types/request-image/request-imag
  */
 export const useGetRequestImages = (
   payload: GetRequestImagesPayload,
-): UseQueryResult<any, Error> => {
+): UseQueryResult<CoreListResponse<RequestImageListType>, Error> => {
   const { requestImageService } = useServices();
 
   return useQuery({
@@ -22,4 +24,3 @@ export const useGetRequestImages = (
     },
   });
 };
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { redfishDeviceColumn } from "@/components/common/column/redfish-device-column";
+import { redfishDeviceColumn } from "./redfish-device-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { DeviceRow } from "@/components/node/redfish/device-row";
 import { useGetRedfishSystemDevice } from "@/hooks/node/use-get-redfish-system-device";

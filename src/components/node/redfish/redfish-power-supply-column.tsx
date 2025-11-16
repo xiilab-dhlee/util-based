@@ -1,10 +1,10 @@
-import type { ColumnsType } from "antd/es/table";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
-import redfishExpandColumn from "./redfish-expand-column";
-import redfishStateColumn from "./redfish-state-column";
-import redfishStatusColumn from "./redfish-status-column";
+import { redfishExpandColumn } from "./redfish-expand-column";
+import { redfishStateColumn } from "./redfish-state-column";
+import { redfishStatusColumn } from "./redfish-status-column";
 
-export const redfishPowerSupplyColumn: ColumnsType<any> = [
+export const redfishPowerSupplyColumn: ResponsiveColumnType[] = [
   {
     title: "Name",
     dataIndex: "Name",
@@ -25,7 +25,7 @@ export const redfishPowerSupplyColumn: ColumnsType<any> = [
     dataIndex: "PowerCapacityWattsy",
     align: "left",
     width: 100,
-    render: (PowerCapacityWattsy: number) => {
+    render: (PowerCapacityWattsy) => {
       return <span>{PowerCapacityWattsy || 0} watts</span>;
     },
   },
@@ -33,7 +33,7 @@ export const redfishPowerSupplyColumn: ColumnsType<any> = [
     title: "Average Power Output",
     dataIndex: "AveragePowerOutputWatts",
     align: "left",
-    render: (AveragePowerOutputWatts: number) => {
+    render: (AveragePowerOutputWatts) => {
       return <span>{AveragePowerOutputWatts || 0} watts</span>;
     },
   },
@@ -41,4 +41,3 @@ export const redfishPowerSupplyColumn: ColumnsType<any> = [
   ...redfishStatusColumn,
   ...redfishExpandColumn,
 ];
-

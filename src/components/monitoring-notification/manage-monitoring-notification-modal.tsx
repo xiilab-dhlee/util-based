@@ -9,14 +9,14 @@ import {
   MONITORING_EVENTS,
   USER_EVENTS,
 } from "@/constants/common/pubsub.constant";
-import { FormLabel } from "../common/form/form-label";
-import { MyIcon } from "../common/icons";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useUpsertMonitoringNotification } from "@/hooks/monitoring/use-upsert-notification";
 import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-notification/monitoring-notification.type";
+import { FormLabel } from "../common/form/form-label";
+import { MyIcon } from "../common/icon";
 import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
 
 export function ManageMonitoringNotificationModal() {
@@ -69,9 +69,16 @@ export function ManageMonitoringNotificationModal() {
     };
   };
 
-  useSubscribe<any>(
+  useSubscribe(
     MONITORING_EVENTS.sendUpsertNotification,
-    ({ id, name, nodeName, isEmail, isSystem, settings }) => {
+    ({
+      id,
+      name,
+      nodeName,
+      isEmail,
+      isSystem,
+      settings,
+    }: UpsertMonitoringNotificationPayload) => {
       if (id) {
         setId(id);
       } else {

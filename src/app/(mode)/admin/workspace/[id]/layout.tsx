@@ -1,5 +1,4 @@
-"use client";
-
+import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
@@ -7,6 +6,7 @@ import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { DeleteWorkspaceModal } from "@/components/workspace/delete-workspace-modal";
 import { WorkspaceDetailPageAside } from "@/components/workspace/detail/workspace-detail-page-aside";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   DetailContentSection,
@@ -16,11 +16,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "워크스페이스 관리", href: "/admin/workspace" },
   { title: "워크스페이스 정보" },
 ];
@@ -38,12 +34,10 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
   },
 ];
 
-/**
- * 워크스페이스 상세 페이지 레이아웃
- *
- * 이 레이아웃은 admin/workspace/[id] 하위의 모든 페이지에 적용됩니다.
- * 워크스페이스 상세 정보와 관련된 모든 페이지의 공통 레이아웃을 제공합니다.
- */
+export const metadata: Metadata = {
+  title: "Workspace Management",
+};
+
 export default function WorkspaceDetailLayout({ children }: PropsWithChildren) {
   return (
     <>

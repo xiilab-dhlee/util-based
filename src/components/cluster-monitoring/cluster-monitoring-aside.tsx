@@ -4,10 +4,10 @@ import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
-import ClusterResourceCard from "./cluster-resource-card";
-import ClusterResourceListBody from "./cluster-resource-list-body";
-import ClusterResourceListFilter from "./cluster-resource-list-filter";
-import ClusterResourceListFooter from "./cluster-resource-list-footer";
+import { ClusterResourceCard } from "./cluster-resource-card";
+import { ClusterResourceListBody } from "./cluster-resource-list-body";
+import { ClusterResourceListFilter } from "./cluster-resource-list-filter";
+import { ClusterResourceListFooter } from "./cluster-resource-list-footer";
 
 const RESOURCE = [
   "Nodes",
@@ -47,7 +47,6 @@ export function ClusterMonitoringAside() {
     </AsideDetailContainer>
   );
 }
-
 
 const Header = styled.div`
   display: flex;

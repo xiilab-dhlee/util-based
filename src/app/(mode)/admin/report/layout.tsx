@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateReportModal } from "@/components/report/create-report-modal";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import reportConstants from "@/constants/report/report.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -16,11 +17,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "리포트" },
 ];
 

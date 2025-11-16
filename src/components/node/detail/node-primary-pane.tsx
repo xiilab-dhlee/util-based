@@ -22,8 +22,7 @@ import {
   DetailContentPaneBody,
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
-import type { NodeCondition } from "@/types/node/node.model";
-import NodeConditionCard from "./node-condition-card";
+import { NodeConditionCard } from "./node-condition-card";
 
 /**
  * NodePrimaryPane 컴포넌트
@@ -89,27 +88,24 @@ export function NodePrimaryPane() {
                 <DetailContentKey>Node Name</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeName}
+                  title={data?.nodeName}
                 >
-                  {data?.node.nodeName}
+                  {data?.nodeName}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Internal IP</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.node.ip}
-                >
-                  {data?.node.ip}
+                <DetailContentPaneValue className="truncate" title={data?.ip}>
+                  {data?.ip}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Host Name</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.hostName}
+                  title={data?.hostName}
                 >
-                  {data?.node.hostName}
+                  {data?.hostName}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
@@ -117,22 +113,17 @@ export function NodePrimaryPane() {
             <DetailContentFeaturePane>
               <DetailContentFeatureRow>
                 <DetailContentKey>Roles</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.node.role}
-                >
-                  {data?.node.role}
+                <DetailContentPaneValue className="truncate" title={data?.role}>
+                  {data?.role}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Creation Timestamp</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={
-                    data && format(data.node.creationTimestamp, "yyyy.MM.dd")
-                  }
+                  title={data && format(data.creationTimestamp, "yyyy.MM.dd")}
                 >
-                  {data && format(data.node.creationTimestamp, "yyyy.MM.dd")}
+                  {data && format(data.creationTimestamp, "yyyy.MM.dd")}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>
@@ -149,45 +140,45 @@ export function NodePrimaryPane() {
                 <DetailContentKey>Machine ID</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.machineID}
+                  title={data?.nodeSystemInfo?.machineID}
                 >
-                  {data?.node.nodeSystemInfo?.machineID}
+                  {data?.nodeSystemInfo?.machineID}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>System UUID</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.systemUUID}
+                  title={data?.nodeSystemInfo?.systemUUID}
                 >
-                  {data?.node.nodeSystemInfo?.systemUUID}
+                  {data?.nodeSystemInfo?.systemUUID}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Boot ID</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.bootID}
+                  title={data?.nodeSystemInfo?.bootID}
                 >
-                  {data?.node.nodeSystemInfo?.bootID}
+                  {data?.nodeSystemInfo?.bootID}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Kernel Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.kernelVersion}
+                  title={data?.nodeSystemInfo?.kernelVersion}
                 >
-                  {data?.node.nodeSystemInfo?.kernelVersion}
+                  {data?.nodeSystemInfo?.kernelVersion}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>OS Image</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.osImage}
+                  title={data?.nodeSystemInfo?.osImage}
                 >
-                  {data?.node.nodeSystemInfo?.osImage}
+                  {data?.nodeSystemInfo?.osImage}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
@@ -197,36 +188,36 @@ export function NodePrimaryPane() {
                 <DetailContentKey>Operating System</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.operatingSystem}
+                  title={data?.nodeSystemInfo?.operatingSystem}
                 >
-                  {data?.node.nodeSystemInfo?.operatingSystem}
+                  {data?.nodeSystemInfo?.operatingSystem}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Container Runtime Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.containerRuntimeVersion}
+                  title={data?.nodeSystemInfo?.containerRuntimeVersion}
                 >
-                  {data?.node.nodeSystemInfo?.containerRuntimeVersion}
+                  {data?.nodeSystemInfo?.containerRuntimeVersion}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Kubelet Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.kubeletVersion}
+                  title={data?.nodeSystemInfo?.kubeletVersion}
                 >
-                  {data?.node.nodeSystemInfo?.kubeletVersion}
+                  {data?.nodeSystemInfo?.kubeletVersion}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Kube-Proxy Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.node.nodeSystemInfo?.kubeProxyVersion}
+                  title={data?.nodeSystemInfo?.kubeProxyVersion}
                 >
-                  {data?.node.nodeSystemInfo?.kubeProxyVersion}
+                  {data?.nodeSystemInfo?.kubeProxyVersion}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>
@@ -238,18 +229,15 @@ export function NodePrimaryPane() {
           <DetailContentSubTitle>Conditions</DetailContentSubTitle>
           <DetailContentFeatureGridBody>
             {/* 노드 상태 카드들을 그리드 형태로 표시 */}
-            {data?.node.nodeCondition.map(
-              (condition: NodeCondition, index: number) => (
-                <NodeConditionCard key={index} {...condition} />
-              ),
-            )}
+            {data?.nodeCondition.map((condition) => (
+              <NodeConditionCard key={condition.reason} {...condition} />
+            ))}
           </DetailContentFeatureGridBody>
         </DetailContentFeature>
       </DetailContentPaneBody>
     </DetailContentPane>
   );
 }
-
 
 /**
  * 서버 전원 상태 키 스타일

@@ -7,6 +7,7 @@ import { SelectVolumeTypeModal } from "@/components/volume/select-volume-type-mo
 import { WorkloadListBody } from "@/components/workload/list/workload-list-body";
 import { WorkloadListFilter } from "@/components/workload/list/workload-list-filter";
 import { WorkloadListFooter } from "@/components/workload/list/workload-list-footer";
+import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import {
   WORKLOAD_GUIDE_IMAGES,
   WORKLOAD_GUIDES,
@@ -22,11 +23,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/standard/dashboard",
-  },
+  STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "워크로드" },
 ];
 

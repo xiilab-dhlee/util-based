@@ -3,7 +3,7 @@
 import { useAtomValue } from "jotai";
 
 import { workspaceRequestResourcePageAtom } from "@/atoms/workspace/workspace-request-resource.atom";
-import workspaceRequestResourceConstants from "@/constants/workspace/workspace-request-resource.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaceRequestResources } from "@/hooks/workspace/use-get-workspace-request-resources";
 import { MySearchFilter } from "@/layouts/common/search-filter";
 
@@ -12,9 +12,8 @@ export function WorkspaceRequestResourceFilter() {
 
   const { data } = useGetWorkspaceRequestResources({
     page,
-    size: workspaceRequestResourceConstants.pageSize,
+    size: LIST_PAGE_SIZE,
   });
 
   return <MySearchFilter title="리소스 신청 목록" total={data?.totalSize} />;
 }
-

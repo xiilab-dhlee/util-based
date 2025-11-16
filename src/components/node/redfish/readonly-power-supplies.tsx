@@ -1,11 +1,11 @@
 "use client";
 
-import { redfishPowerSupplyColumn } from "@/components/common/column/redfish-power-supply-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemChassis } from "@/hooks/node/use-get-redfish-system-chassis";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
 import { DetailContentFeature } from "@/styles/layers/detail-page-vertical-layers.styled";
-import PowerSuppliesRow from "./power-supplies-row";
+import { PowerSuppliesRow } from "./power-supplies-row";
+import { redfishPowerSupplyColumn } from "./redfish-power-supply-column";
 
 /**
  * Redfish 시스템의 전원 공급 장치 정보를 읽기 전용으로 표시하는 컴포넌트

@@ -2,7 +2,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { MonitoringNotificationNameButton } from "@/components/monitoring-notification/monitoring-notification-name-button";
 import { MonitoringNotificationSettingSwitch } from "@/components/monitoring-notification/monitoring-notification-setting-switch";
-import coreConstants from "@/constants/common/core.constant";
+import { ICON_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type { MonitoringNotificationListType } from "@/schemas/monitoring-notification.schema";
 import {
   ColumnAlignCenterWrap,
@@ -10,7 +10,7 @@ import {
 } from "@/styles/layers/column-layer.styled";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 import { applyColumnConfigs } from "@/utils/common/column.util";
-import MyIcon from "../icon";
+import { MyIcon } from "../icon";
 
 /**
  * 컬럼 정의 배열 생성 (dataIndex 한 번만 정의)
@@ -55,7 +55,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "삭제",
       dataIndex: "delete",
       align: "center",
-      width: coreConstants.iconColumnWidth,
+      width: ICON_COLUMN_WIDTH,
       render: () => {
         return (
           <ColumnAlignCenterWrap>

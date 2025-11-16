@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 
 import { ManageBmcModal } from "@/components/common/modal/manage-bmc-modal";
 import { useGetNode } from "@/hooks/node/use-get-node";
-import NodeLogBody from "./node-log-body";
+import { NodeLogBody } from "./node-log-body";
 
 /**
  * 노드 로그 페이지의 최상위 컴포넌트
@@ -23,10 +23,9 @@ export function NodeLogMain() {
   return (
     <>
       {/* 노드 IP가 있는 경우에만 로그 바디 렌더링 */}
-      {data?.node?.ip && <NodeLogBody nodeIp={data.node.ip} />}
+      {data?.ip && <NodeLogBody nodeIp={data.ip} />}
       {/* BMC 관리(Create/Update) 모달 */}
       <ManageBmcModal />
     </>
   );
 }
-

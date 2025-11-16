@@ -6,6 +6,7 @@ import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { UpdateWorkloadModal } from "@/components/workload/detail/update-workload-modal";
 import { WorkloadDetailPageAside } from "@/components/workload/detail/workload-detail-page-aside";
+import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   DetailContentSection,
@@ -15,11 +16,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/standard/dashboard",
-  },
+  STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "워크로드", href: "/standard/workload" },
   { title: "워크로드 정보" },
 ];

@@ -13,7 +13,7 @@ import {
   ColumnAlignLeftWrap,
   ColumnLink,
 } from "../../../styles/layers/column-layer.styled";
-import NodeStatusText from "../text/node-status-text";
+import { NodeStatusText } from "../../common/text/node-status-text";
 
 export const nodeListColumn: ResponsiveColumnType[] = [
   {
@@ -109,7 +109,7 @@ export const nodeListColumn: ResponsiveColumnType[] = [
     dataIndex: "age",
     align: "center",
     width: 120,
-    render: (age: any) => {
+    render: (age: NodeListType["age"]) => {
       // age.days, age.hour, age.minutes를 현재 날짜에서 빼서 과거 날짜 계산
       const now = new Date();
       const pastDate = new Date(now);
@@ -172,4 +172,3 @@ export const nodeListColumn: ResponsiveColumnType[] = [
     },
   },
 ];
-

@@ -1,4 +1,4 @@
-import monitoringNotificationConstants from "@/constants/monitoring/monitoring-notification.constant";
+import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/constants/monitoring/monitoring-notification.constant";
 import {
   monitoringNotificationDetailSchema,
   monitoringNotificationListSchema,
@@ -9,7 +9,7 @@ import { makeMock } from "@/utils/common/mock.util";
  * 모니터링 알림 목록 Mock 데이터
  */
 export const monitoringNotificationListMock = Array.from(
-  { length: monitoringNotificationConstants.pageSize },
+  { length: MONITORING_NOTIFICATION_PAGE_SIZE },
   () => makeMock(monitoringNotificationListSchema),
 );
 

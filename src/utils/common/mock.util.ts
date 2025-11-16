@@ -40,6 +40,7 @@ const stringMap: Record<string, () => string> = {
 
   // 메시지
   message: () => faker.internet.password({ length: 100 }),
+  RecommendedAction: () => faker.internet.password({ length: 100 }),
   requestReason: () => faker.internet.password({ length: 100 }),
   rejectReason: () => faker.internet.password({ length: 100 }),
 };

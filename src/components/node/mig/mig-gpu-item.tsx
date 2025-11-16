@@ -12,7 +12,7 @@ import {
   selectedMigGpuIndexAtom,
 } from "@/atoms/node/node-list.atom";
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
-import type { MigGpu } from "@/types/node/node.interface";
+import type { MigGpu } from "@/types/node/node.type";
 
 /**
  * MIG GPU 아이템 컴포넌트 Props
@@ -94,7 +94,6 @@ export function MigGpuItem({ gpuIndex }: MigGpuItemProps) {
     </Container>
   );
 }
-
 
 /**
  * MIG GPU 아이템 컨테이너 스타일

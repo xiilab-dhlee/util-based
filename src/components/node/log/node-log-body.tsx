@@ -3,9 +3,9 @@
 import styled from "styled-components";
 
 import { useGetNodeBmcInfo } from "@/hooks/node/use-get-bmc-info";
-import RedfishPrimaryArticle from "../redfish/redfish-primary-article";
-import ReadyLog from "./ready-log";
-import UnreadyLog from "./unready-log";
+import { RedfishPrimaryArticle } from "../redfish/redfish-primary-article";
+import { ReadyLog } from "./ready-log";
+import { UnreadyLog } from "./unready-log";
 
 /**
  * 노드 로그 페이지의 메인 바디 컴포넌트
@@ -35,7 +35,6 @@ export function NodeLogBody({ nodeIp }: NodeLogBodyProps) {
     </Container>
   );
 }
-
 
 /** 메인 컨테이너 - 세로 방향 레이아웃 */
 const Container = styled.div`

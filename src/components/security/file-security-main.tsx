@@ -4,17 +4,7 @@ import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
-  { title: "파일 시스템 보안" },
-];
-
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
@@ -22,10 +12,16 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import SecurityAside from "./security-aside";
-import SecurityPolicySetting from "./security-policy-setting";
-import SecurityScanListBody from "./security-scan-list-body";
-import SecurityScanListFooter from "./security-scan-list-footer";
+import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import { SecurityAside } from "./security-aside";
+import { SecurityPolicySetting } from "./security-policy-setting";
+import { SecurityScanListBody } from "./security-scan-list-body";
+import { SecurityScanListFooter } from "./security-scan-list-footer";
+
+const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
+  ADMIN_ROOT_BREADCRUMB_ITEM,
+  { title: "파일 시스템 보안" },
+];
 
 export function FileSecurityMain() {
   return (

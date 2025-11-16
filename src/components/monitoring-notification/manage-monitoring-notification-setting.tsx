@@ -5,10 +5,13 @@ import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
 import { CreateModelButton } from "@/components/common/button/create-model-button";
-import monitoringNotificationConstants from "@/constants/monitoring/monitoring-notification.constant";
+import {
+  MONITORING_NOTIFICATION_OPERATOR_OPTIONS,
+  MONITORING_NOTIFICATION_TYPE_OPTIONS,
+} from "@/constants/monitoring/monitoring-notification.constant";
 import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
-import FormLabel from "../common/form/form-label";
-import MySelect from "../common/select";
+import { FormLabel } from "../common/form/form-label";
+import { MySelect } from "../common/select";
 
 interface ManageMonitoringNotificationSettingsProps {
   defaultSettings?: MonitoringNotificationSettingType[];
@@ -112,11 +115,11 @@ export function ManageMonitoringNotificationSetting({
         </Column>
         {/* 파라미터 입력 필드들 */}
         {settings.map((setting, index) => (
-          <Column key={index}>
+          <Column key={setting.item}>
             {/* 항목 선택 필드 */}
             <Field>
               <MySelect
-                options={monitoringNotificationConstants.type}
+                options={MONITORING_NOTIFICATION_TYPE_OPTIONS}
                 placeholder="항목 선택"
                 setValue={(value: string | null) =>
                   handleItemChange(index, value)
@@ -129,7 +132,7 @@ export function ManageMonitoringNotificationSetting({
             {/* 연산자 선택 필드 */}
             <Field>
               <MySelect
-                options={monitoringNotificationConstants.operator}
+                options={MONITORING_NOTIFICATION_OPERATOR_OPTIONS}
                 placeholder="연산자 선택"
                 setValue={(value: string | null) =>
                   handleOperatorChange(index, value)

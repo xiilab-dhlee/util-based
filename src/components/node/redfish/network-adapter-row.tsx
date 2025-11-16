@@ -1,10 +1,11 @@
-﻿import { Button } from "xiilab-ui";
+﻿import type { HTMLAttributes, MouseEvent } from "react";
+import { Button } from "xiilab-ui";
 
-import { redfishNetworkAdapterColumn } from "@/components/common/column/redfish-network-adapter-column";
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useToggle } from "@/hooks/common/use-toggle";
+import type { NetworkAdapterInfoType } from "@/schemas/redfish.schema";
 import {
   TableCollapseRowBody,
   TableCollapseRowContainer,
@@ -16,7 +17,11 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
+import { redfishNetworkAdapterColumn } from "./redfish-network-adapter-column";
 
+interface NetworkAdapterRowProps extends HTMLAttributes<HTMLTableRowElement> {
+  rowData: NetworkAdapterInfoType;
+}
 /**
  * Redfish 네트워크 어댑터 테이블의 확장 가능한 행 컴포넌트
  *
@@ -27,7 +32,11 @@ import {
  * @param rowData - 네트워크 어댑터 데이터
  * @param restProps - 기타 테이블 행 속성
  */
-export function NetworkAdapterRow({ children, rowData, ...restProps }: any) {
+export function NetworkAdapterRow({
+  children,
+  rowData,
+  ...restProps
+}: NetworkAdapterRowProps) {
   // Pub/Sub 메시지 발행을 위한 훅
   const publish = usePublish();
 
@@ -39,8 +48,8 @@ export function NetworkAdapterRow({ children, rowData, ...restProps }: any) {
    *
    * @param e - 클릭 이벤트
    */
-  const handleToggleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggleClick = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.stopPropagation();
 
     if (rowData) {
       onToggle();
@@ -61,7 +70,7 @@ export function NetworkAdapterRow({ children, rowData, ...restProps }: any) {
       {/* 확장 가능한 테이블 행 */}
       <ToggleTableRow
         toggle={toggle}
-        onToggle={handleToggleClick}
+        onClickIcon={handleToggleClick}
         togglePosition="last"
         {...restProps}
       >

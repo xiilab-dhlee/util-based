@@ -1,26 +1,28 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import nodeKeys from "@/constants/node/node.key";
+import { nodeKeys } from "@/constants/node/node.key";
 import { useServices } from "@/providers/service-provider";
+import type { BmcInfoType } from "@/schemas/redfish.schema";
 
 /**
  * 노드 BMC 정보 조회
  */
-export const useGetNodeBmcInfo = (nodeIp: string): UseQueryResult<any, Error> => {
-  const { redfishBmcService, redfishService } = useServices();
+export const useGetNodeBmcInfo = (
+  nodeIp: string,
+): UseQueryResult<BmcInfoType, Error> => {
+  const { redfishBmcService } = useServices();
 
   return useQuery({
     queryKey: nodeKeys.bmcInfo(nodeIp),
     queryFn: async () => {
       const response = await redfishBmcService.getBmc(nodeIp);
       // BMC 정보가 있으면 연결
-      if (response?.bmcUserName && response?.bmcPassword) {
-        redfishService.connect(response?.bmcUserName, response?.bmcPassword);
-      }
+      // if (response?.bmcUserName && response?.bmcPassword) {
+      //   redfishService.connect(response?.bmcUserName, response?.bmcPassword);
+      // }
 
-      return response;
+      return response.data;
     },
   });
 };
-

@@ -1,5 +1,8 @@
+import type { HTMLAttributes, MouseEvent } from "react";
+
 import { ToggleTableRow } from "@/components/common/table/toggle-table-row";
 import { useToggle } from "@/hooks/common/use-toggle";
+import type { ChassisInfoType } from "@/schemas/redfish.schema";
 import {
   TableCollapseRowBody,
   TableCollapseRowContainer,
@@ -10,7 +13,11 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import redfishChassisColumn from "../../common/column/redfish-chassis-column";
+import { redfishChassisColumn } from "./redfish-chassis-column";
+
+interface ChassisRowProps extends HTMLAttributes<HTMLTableRowElement> {
+  rowData: ChassisInfoType;
+}
 
 /**
  * Redfish 케이스 테이블의 확장 가능한 행 컴포넌트
@@ -22,17 +29,15 @@ import redfishChassisColumn from "../../common/column/redfish-chassis-column";
  * @param rowData - 케이스 데이터
  * @param restProps - 기타 테이블 행 속성
  */
-export function ChassisRow({ children, rowData, ...restProps }: any) {
-  // 토글 상태 관리
+export function ChassisRow({
+  children,
+  rowData,
+  ...restProps
+}: ChassisRowProps) {
   const [toggle, onToggle] = useToggle();
 
-  /**
-   * 행 확장/축소 토글 핸들러
-   *
-   * @param e - 클릭 이벤트
-   */
-  const handleToggleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggleClick = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.stopPropagation();
 
     if (rowData) {
       onToggle();
@@ -44,7 +49,7 @@ export function ChassisRow({ children, rowData, ...restProps }: any) {
       {/* 확장 가능한 테이블 행 */}
       <ToggleTableRow
         toggle={toggle}
-        onToggle={handleToggleClick}
+        onClickIcon={handleToggleClick}
         togglePosition="last"
         {...restProps}
       >
@@ -82,9 +87,7 @@ export function ChassisRow({ children, rowData, ...restProps }: any) {
                     <TableCollapseRowRecordKey>
                       Asset Tag
                     </TableCollapseRowRecordKey>
-                    <TableCollapseRowRecordValue>
-                      {rowData?.AssetTag || "-"}
-                    </TableCollapseRowRecordValue>
+                    <TableCollapseRowRecordValue>-</TableCollapseRowRecordValue>
                   </TableCollapseRowKeyValueContainer>
                 </TableCollapseRowRecord>
 
@@ -94,9 +97,7 @@ export function ChassisRow({ children, rowData, ...restProps }: any) {
                     <TableCollapseRowRecordKey>
                       Environmental Class
                     </TableCollapseRowRecordKey>
-                    <TableCollapseRowRecordValue>
-                      {rowData?.EnvironmentalClass || "-"}
-                    </TableCollapseRowRecordValue>
+                    <TableCollapseRowRecordValue>-</TableCollapseRowRecordValue>
                   </TableCollapseRowKeyValueContainer>
                 </TableCollapseRowRecord>
               </TableCollapseRowBody>

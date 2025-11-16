@@ -1,14 +1,12 @@
-"use client";
-
-import { type PropsWithChildren, useEffect, useState } from "react";
+import type { Metadata } from "next";
+import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
-
-// import { useSearchParams } from "next/navigation";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { UpdateWorkloadModal } from "@/components/workload/detail/update-workload-modal";
 import { WorkloadDetailPageAside } from "@/components/workload/detail/workload-detail-page-aside";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   DetailContentSection,
@@ -18,11 +16,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "워크스페이스 관리", href: "/admin/workspace" },
   { title: "워크스페이스 정보", href: "/admin/workspace/[workspaceId]" },
   { title: "워크로드 정보" },
@@ -61,24 +55,13 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
   },
 ];
 
-/**
- * 워크로드 상세 페이지 레이아웃
- *
- * 이 레이아웃은 /admin/workspace/workload/[id] 하위의 모든 페이지에 적용됩니다.
- */
-export default function AdminWorkloadDetailLayout({
+export const metadata: Metadata = {
+  title: "Workspace Management",
+};
+
+export default async function AdminWorkloadDetailLayout({
   children,
 }: PropsWithChildren) {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      const workspaceIdParam = url.searchParams.get("workspaceId");
-      setWorkspaceId(workspaceIdParam);
-    }
-  }, []);
-
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
@@ -86,7 +69,7 @@ export default function AdminWorkloadDetailLayout({
         title="워크로드 정보"
         icon="Back"
         description="Workload Information"
-        customPathname={`/admin/workspace/${workspaceId}`}
+        customPathname="/admin/workspace/{workspaceId}"
       >
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />
       </PageHeader>

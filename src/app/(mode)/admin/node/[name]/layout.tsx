@@ -7,6 +7,7 @@ import type { TabsSeparatedItem } from "xiilab-ui";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { NodeDetailPageAside } from "@/components/node/detail/node-detail-page-aside";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   DetailContentSection,
@@ -16,11 +17,7 @@ import {
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "노드 관리", href: "/admin/node" },
   { title: "노드 정보" },
 ];
@@ -43,11 +40,6 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
   },
 ];
 
-/**
- * 워크로드 상세 페이지 레이아웃
- *
- * 이 레이아웃은 workload/[id] 하위의 모든 페이지에 적용됩니다.
- */
 export default function AdminNodeDetailLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
 

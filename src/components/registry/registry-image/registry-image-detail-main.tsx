@@ -3,6 +3,7 @@
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { ViewRejectReasonModal } from "@/components/common/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/components/common/modal/view-request-reason-modal";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import { ListPageMain } from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
@@ -12,11 +13,7 @@ import RegistryImageDetailBody from "./registry-image-detail-body";
 import ViewRegistryImageLogModal from "./view-registry-image-log-modal";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM
   {
     title: "레지스트리",
     href: "/admin/registry",

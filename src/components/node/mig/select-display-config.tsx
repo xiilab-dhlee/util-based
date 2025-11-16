@@ -4,8 +4,8 @@ import { useAtomValue } from "jotai";
 
 import { migGpuProductAtom } from "@/atoms/node/node-list.atom";
 import nodeMigConstants from "@/constants/node/node-mig.constant";
-import GenerateDisplayConfigAlpha from "./generate-display-config-alpha";
-import GenerateDisplayConfigBeta from "./generate-display-config-beta";
+import { GenerateDisplayConfigAlpha } from "./generate-display-config-alpha";
+import { GenerateDisplayConfigBeta } from "./generate-display-config-beta";
 
 /**
  * 디스플레이 설정 선택 컴포넌트
@@ -56,4 +56,3 @@ export function SelectDisplayConfig() {
 
   return renderComponent(migGpuProduct);
 }
-

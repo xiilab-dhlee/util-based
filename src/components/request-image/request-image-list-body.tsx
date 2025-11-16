@@ -7,7 +7,7 @@ import {
   requestImageSearchTextAtom,
 } from "@/atoms/request-image/request-image-list.atom";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import requestImageListConstants from "@/constants/request-image/request-image-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetRequestImages } from "@/hooks/request-image/use-get-request-images";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { createRequestImageColumn } from "../common/column/create-request-image-column";
@@ -27,7 +27,7 @@ export function RequestImageListBody() {
 
   const { data } = useGetRequestImages({
     page,
-    size: requestImageListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -37,6 +37,7 @@ export function RequestImageListBody() {
         columns={createRequestImageColumn()}
         data={data?.content || []}
         activePadding
+        columnHeight={40}
       />
     </ListWrapper>
   );

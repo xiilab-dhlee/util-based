@@ -1,6 +1,7 @@
 "use client";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
@@ -8,29 +9,21 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-import ViewRejectReasonModal from "../../common/modal/view-reject-reason-modal";
-import ViewRequestReasonModal from "../../common/modal/view-request-reason-modal";
-import ApproveResourceModal from "./approve-request-resource-modal";
-import RejectResourceModal from "./reject-request-resource-modal";
-import WorkspaceRequestResourceBody from "./workspace-request-resource-body";
-import WorkspaceRequestResourceFilter from "./workspace-request-resource-filter";
-import WorkspaceRequestResourceFooter from "./workspace-request-resource-footer";
-import WorkspaceResourcePageAside from "./workspace-resource-page-aside";
+import { ViewRejectReasonModal } from "../../common/modal/view-reject-reason-modal";
+import { ViewRequestReasonModal } from "../../common/modal/view-request-reason-modal";
+import { ApproveResourceModal } from "./approve-request-resource-modal";
+import { RejectResourceModal } from "./reject-request-resource-modal";
+import { WorkspaceRequestResourceBody } from "./workspace-request-resource-body";
+import { WorkspaceRequestResourceFilter } from "./workspace-request-resource-filter";
+import { WorkspaceRequestResourceFooter } from "./workspace-request-resource-footer";
+import { WorkspaceResourcePageAside } from "./workspace-resource-page-aside";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "워크스페이스 관리", href: "/admin/workspace" },
   { title: "리소스 신청 관리" },
 ];
 
-/**
- * 워크스페이스 리소스 요청 목록 페이지의 메인 컴포넌트
- *
- */
 export function WorkspaceRequestResourceMain() {
   return (
     <>

@@ -3,9 +3,12 @@
 import { useMemo } from "react";
 import styled from "styled-components";
 
-import { redfishMemoryColumn } from "@/components/common/column/redfish-memory-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { useGetRedfishSystemMemory } from "@/hooks/node/use-get-redfish-system-memory";
+import type {
+  MemoryInfoType,
+  MemoryMemberType,
+} from "@/schemas/redfish.schema";
 import {
   DetailContentKey,
   DetailContentSubTitle,
@@ -17,7 +20,8 @@ import {
   DetailContentFeatureRow,
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
-import MemoryRow from "./memory-row";
+import { MemoryRow } from "./memory-row";
+import { redfishMemoryColumn } from "./redfish-memory-column";
 
 /**
  * Redfish 시스템의 메모리 정보를 읽기 전용으로 표시하는 컴포넌트
@@ -44,7 +48,10 @@ export function ReadonlyMemory({ bmcIp, systemId }: ReadonlyMemoryProps) {
     if (!memories) return "-";
     if (memories.length === 0) return "0 GiB";
     const totalMemoryMB = memories.reduce(
-      (sum: number, board: any) => sum + board.BoardTotalMemorySize,
+      (
+        sum: number,
+        board: MemoryInfoType["Oem"]["Hpe"]["MemoryList"][number],
+      ) => sum + board.BoardTotalMemorySize,
       0,
     );
     const totalMemoryGB = totalMemoryMB / 1024;
@@ -126,7 +133,7 @@ export function ReadonlyMemory({ bmcIp, systemId }: ReadonlyMemoryProps) {
       </StyledDetailContentFeatureBody>
 
       {/* 개별 메모리 모듈 테이블 */}
-      <CustomizedTable
+      <CustomizedTable<MemoryMemberType>
         columns={redfishMemoryColumn}
         data={data?.members || []}
         columnHeight={32}

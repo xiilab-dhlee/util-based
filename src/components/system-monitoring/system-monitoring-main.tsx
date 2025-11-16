@@ -7,16 +7,13 @@ import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import { SystemMonitoringCard } from "@/components/system-monitoring/system-monitoring-card";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "시스템 모니터링" },
 ];
 
@@ -25,7 +22,7 @@ export function SystemMonitoringMain() {
     <>
       <PageHeader
         title="시스템 모니터링"
-        icon="Dashboard"
+        icon="Monitoring01"
         description="System monitoring"
       >
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />

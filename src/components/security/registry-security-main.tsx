@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
@@ -12,17 +13,13 @@ import {
 } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-import SecurityAside from "./security-aside";
-import SecurityPolicySetting from "./security-policy-setting";
-import SecurityScanListBody from "./security-scan-list-body";
-import SecurityScanListFooter from "./security-scan-list-footer";
+import { SecurityAside } from "./security-aside";
+import { SecurityPolicySetting } from "./security-policy-setting";
+import { SecurityScanListBody } from "./security-scan-list-body";
+import { SecurityScanListFooter } from "./security-scan-list-footer";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  {
-    title: "대시보드",
-    icon: "Dashboard",
-    href: "/admin",
-  },
+  ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "레지스트리 보안" },
 ];
 

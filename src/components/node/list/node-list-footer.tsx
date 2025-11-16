@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 
 import { nodePageAtom } from "@/atoms/node/node-list.atom";
-import nodeListConstants from "@/constants/node/node-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNodes } from "@/hooks/node/use-get-nodes";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 
@@ -22,7 +22,7 @@ export function NodeListFooter() {
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetNodes({
     page,
-    size: nodeListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
   });
 
   // 페이지 변경 핸들러
@@ -32,13 +32,12 @@ export function NodeListFooter() {
 
   return (
     <ListPageFooter
-      total={data?.total || 0}
+      total={data?.totalSize || 0}
       page={page}
-      pageSize={nodeListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
       // 삭제 버튼 제거
     />
   );
 }
-

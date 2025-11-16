@@ -3,8 +3,8 @@
 import styled from "styled-components";
 
 import { useGetNodeBmcInfo } from "@/hooks/node/use-get-bmc-info";
-import ReadyRedfish from "./ready-redfish";
-import UnreadyRedfish from "./unready-redfish";
+import { ReadyRedfish } from "./ready-redfish";
+import { UnreadyRedfish } from "./unready-redfish";
 
 /**
  * 노드 Redfish 페이지의 메인 바디 컴포넌트
@@ -24,7 +24,6 @@ export function NodeRedfishBody({ nodeIp }: NodeRedfishBodyProps) {
 
   return <Container>{data ? <ReadyRedfish /> : <UnreadyRedfish />}</Container>;
 }
-
 
 /** 메인 컨테이너 - 세로 방향 레이아웃 */
 const Container = styled.div`

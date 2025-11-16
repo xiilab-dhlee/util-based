@@ -1,11 +1,10 @@
-import nodeDetailConstants from "@/constants/node/node-detail.constant";
 import { AxiosService } from "@/services/common/axios";
 import type {
   GetNodesPayload,
   UpdateMigPayload,
   UpdateMpsPayload,
   UpdateNodeSchedulingPayload,
-} from "@/types/node/node.interface";
+} from "@/types/node/node.type";
 import { payloadToParams } from "@/utils/common/service.util";
 
 export class NodeService extends AxiosService {
@@ -19,20 +18,12 @@ export class NodeService extends AxiosService {
 
   /** 상세 조회 */
   public async getDetail(nodeName: string) {
-    if (process.env.NEXT_PUBLIC_DEMO_ENABLE === "Y") {
-      return { node: nodeDetailConstants.demoNode };
-    } else {
-      return this.getAxios().get(`${this.BASE_URL}/${nodeName}`);
-    }
+    return this.getAxios().get(`${this.BASE_URL}/${nodeName}`);
   }
 
   /** 노드 자원 상세 조회 */
   public async getResources(nodeName: string) {
-    if (process.env.NEXT_PUBLIC_DEMO_ENABLE === "Y") {
-      return { resources: nodeDetailConstants.demoResources };
-    } else {
-      return this.getAxios().get(`${this.BASE_URL}/${nodeName}/resources`);
-    }
+    return this.getAxios().get(`${this.BASE_URL}/${nodeName}/resources`);
   }
 
   /** MPS 설정 조회 */

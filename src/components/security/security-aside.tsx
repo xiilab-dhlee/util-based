@@ -9,13 +9,13 @@ import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 import type { CoreSecurityLevel } from "@/types/common/core.interface";
-import createRegistrySecurityColumn from "../common/column/create-security-column";
-import CustomizedTable from "../common/table/customized-table";
-import RegistrySecurityLevelCard from "./security-level-card";
+import { createSecurityColumn } from "../common/column/create-security-column";
+import { CustomizedTable } from "../common/table/customized-table";
+import { RegistrySecurityLevelCard } from "./security-level-card";
 
 const LEVELS: CoreSecurityLevel[] = ["CRITICAL", "HIGH", "MEDIUM", "LOW"];
 
-export function RegistrySecurityAside() {
+export function SecurityAside() {
   return (
     <AsideDetailContainer>
       <Category>
@@ -33,7 +33,7 @@ export function RegistrySecurityAside() {
       <Body>
         <ListWrapper>
           <CustomizedTable
-            columns={createRegistrySecurityColumn([
+            columns={createSecurityColumn([
               { dataIndex: "creatorName", title: "사용자" },
               { dataIndex: "imageCount", title: "이미지 개수" },
               { dataIndex: "total", title: "취약점 개수", width: 80 },

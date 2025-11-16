@@ -6,7 +6,7 @@ import {
   requestImagePageAtom,
   requestImageSearchTextAtom,
 } from "@/atoms/request-image/request-image-list.atom";
-import requestImageListConstants from "@/constants/request-image/request-image-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetRequestImages } from "@/hooks/request-image/use-get-request-images";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 
@@ -27,7 +27,7 @@ export function RequestImageListFooter() {
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetRequestImages({
     page,
-    size: requestImageListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -38,12 +38,11 @@ export function RequestImageListFooter() {
 
   return (
     <ListPageFooter
-      total={data?.total || 0}
+      total={data?.totalSize || 0}
       page={page}
-      pageSize={requestImageListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
     />
   );
 }
-

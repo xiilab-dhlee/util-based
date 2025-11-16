@@ -11,7 +11,7 @@ import {
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
 import { MigUtil } from "@/utils/node/mig.util";
 import type { MySelectOption } from "../../common/select";
-import MySelect from "../../common/select";
+import { MySelect } from "../../common/select";
 
 /**
  * MIG 설정 선택 컴포넌트
@@ -78,4 +78,3 @@ export function MigConfigSelect() {
     />
   );
 }
-

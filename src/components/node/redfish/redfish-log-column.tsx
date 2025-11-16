@@ -1,22 +1,22 @@
-import type { ColumnsType } from "antd/es/table";
 import { format } from "date-fns";
-import { Label } from "xiilab-ui";
+import type { ResponsiveColumnType } from "xiilab-ui";
+import { Label, type LabelColorVariant } from "xiilab-ui";
 
 import { getHealthStatusInfo } from "@/utils/node/redfish.util";
-import redfishExpandColumn from "./redfish-expand-column";
+import { redfishExpandColumn } from "./redfish-expand-column";
 
-export const redfishLogColumn: ColumnsType<any> = [
+export const redfishLogColumn: ResponsiveColumnType[] = [
   {
     title: "Status",
     dataIndex: "Severity",
     align: "left",
     width: 100,
-    render: (Severity: any) => {
+    render: (Severity) => {
       const healthInfo = getHealthStatusInfo(Severity);
       const color = healthInfo?.color || "default";
       return (
         <span>
-          <Label variant={color} theme="light">
+          <Label variant={color as LabelColorVariant} theme="light">
             {Severity}
           </Label>
         </span>
@@ -32,7 +32,7 @@ export const redfishLogColumn: ColumnsType<any> = [
     title: "Date",
     dataIndex: "Created",
     align: "left",
-    render: (Created: any) => {
+    render: (Created) => {
       return <span>{format(Created, "MM/dd/yyyy HH:mm:ss ")}</span>;
     },
   },
@@ -40,10 +40,9 @@ export const redfishLogColumn: ColumnsType<any> = [
     title: "Owner",
     dataIndex: "Oem",
     align: "center",
-    render: (Oem: any) => {
+    render: (Oem) => {
       return <span>{Oem?.Hpe?.Categories.join(", ")}</span>;
     },
   },
   ...redfishExpandColumn,
 ];
-
