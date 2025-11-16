@@ -1,6 +1,6 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 
-import registryKeys from "@/constants/registry/registry.key";
+import registryKeys from "@/constants/registry/private-registry.key";
 import { useServices } from "@/providers/service-provider";
 import type { GetPrivateRegistryImagePayload } from "@/types/private-registry/private-registry.type";
 

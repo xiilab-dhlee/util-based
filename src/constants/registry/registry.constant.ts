@@ -1,4 +1,4 @@
-const QUICK_MENUS = [
+export const REGISTRY_QUICK_MENUS = [
   {
     title: "이미지 사용 요청 관리",
     titleEng: "Manage Image usage request",
@@ -21,9 +21,3 @@ const QUICK_MENUS = [
   //   href: "/admin/",
   // },
 ];
-
-const registryConstants = {
-  quickMenus: QUICK_MENUS,
-};
-
-export default registryConstants;

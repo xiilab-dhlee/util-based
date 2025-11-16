@@ -19,6 +19,7 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import { DeletePrivateRegistryImageModal } from "../delete-private-registry-image-modal";
 import { CreatePrivateRegistryImageModal } from "./create-private-registry-image-modal";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
@@ -86,7 +87,10 @@ export function PrivateRegistryImageListMain() {
           <PrivateRegistryImageListFooter />
         </ListPageBody>
       </ListPageMain>
+      {/* 컨테이너 이미지 생성 모달 */}
       <CreatePrivateRegistryImageModal />
+      {/* 컨테이너 이미지 삭제 모달 */}
+      <DeletePrivateRegistryImageModal />
     </>
   );
 }

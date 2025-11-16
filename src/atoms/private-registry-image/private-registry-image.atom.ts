@@ -21,3 +21,7 @@ export const privateRegistryImageTagCheckedListAtom = atomWithReset<
 export const openCreatePrivateRegistryImageModalAtom = atom<boolean>(false);
 // 내부 레지스트리 이미지 수정 모달 표시 여부
 export const openUpdatePrivateRegistryImageModalAtom = atom<boolean>(false);
+// 내부 레지스트리 이미지 삭제 모달 표시 여부
+export const openDeletePrivateRegistryImageModalAtom = atom<boolean>(false);
+// 내부 레지스트리 이미지 태그 삭제 모달 표시 여부
+export const openDeletePrivateRegistryImageTagModalAtom = atom<boolean>(false);

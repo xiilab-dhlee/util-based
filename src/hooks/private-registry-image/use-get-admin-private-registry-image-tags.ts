@@ -9,7 +9,7 @@ import type { GetAdminPrivateRegistryImageTagsPayload } from "@/types/private-re
 /**
  * 관리자 내부 레지스트리의 이미지 태그 목록 조회
  */
-export const useGetPrivateRegistryImageTags = (
+export const useGetAdminPrivateRegistryImageTags = (
   payload: GetAdminPrivateRegistryImageTagsPayload,
 ): UseQueryResult<CoreListResponse<PrivateRegistryImageTagListType>, Error> => {
   const { adminPrivateRegistryImageService } = useServices();

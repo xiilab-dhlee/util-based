@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
+import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { Checkbox } from "xiilab-ui";
 
@@ -9,8 +10,8 @@ import {
   privateRegistryImageTagPageAtom,
   privateRegistryImageTagSearchTextAtom,
 } from "@/atoms/private-registry-image/private-registry-image.atom";
-import privateRegistryImageDetailConstants from "@/constants/registry/private-registry-image-detail.constant";
-import { useGetPrivateRegistryImageTags } from "@/hooks/registry/use-get-private-registry-image-tags";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
+import { useGetPrivateRegistryImageTags } from "@/hooks/private-registry-image/use-get-private-registry-image-tags";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 /**
@@ -22,6 +23,7 @@ import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
  * @returns 전체 선택 체크박스 컴포넌트
  */
 export function PrivateRegistryImageTagAllCheck() {
+  const { id } = useParams();
   const [checkedList, setCheckedList] = useAtom(
     privateRegistryImageTagCheckedListAtom,
   );
@@ -31,9 +33,9 @@ export function PrivateRegistryImageTagAllCheck() {
   // 현재 페이지의 태그 목록 조회
   const { data } = useGetPrivateRegistryImageTags({
     page,
-    size: privateRegistryImageDetailConstants.tagPageSize,
-    imageId: 1,
+    size: LIST_PAGE_SIZE,
     searchText,
+    imageId: Number(id),
   });
 
   // 현재 페이지의 태그 ID 목록

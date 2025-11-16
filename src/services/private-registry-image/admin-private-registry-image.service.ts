@@ -1,5 +1,6 @@
 import { AxiosService } from "@/services/common/axios";
 import type {
+  DeleteAdminPrivateRegistryImagePayload,
   GetAdminPrivateRegistryImagePayload,
   GetAdminPrivateRegistryImagesPayload,
   GetAdminPrivateRegistryImageTagsPayload,
@@ -34,6 +35,13 @@ export class AdminPrivateRegistryImageService extends AxiosService {
       {
         params,
       },
+    );
+  }
+
+  /** 삭제 */
+  public deleteImage(payload: DeleteAdminPrivateRegistryImagePayload) {
+    return this.getAxios().delete(
+      `${this.BASE_URL}/${payload.registryName}/${payload.imageId}`,
     );
   }
 }

@@ -30,7 +30,7 @@ export function WorkspaceListFooter() {
   // 검색어
   const searchText = useAtomValue(workspaceSearchTextAtom);
   // 체크된 워크스페이스 목록
-  const selectedWorkspaces = useAtomValue(workspaceCheckedListAtom);
+  const checkedList = useAtomValue(workspaceCheckedListAtom);
 
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetWorkspaces({
@@ -49,15 +49,12 @@ export function WorkspaceListFooter() {
    */
   const handleClickDelete = () => {
     // 삭제할 워크스페이스가 없으면 에러 메시지 표시
-    if (selectedWorkspaces.size === 0) {
+    if (checkedList.size === 0) {
       toast.error("삭제할 워크스페이스를 선택해 주세요.");
       return;
     }
     // 워크스페이스 삭제 모달에 데이터 전달
-    publish(
-      WORKSPACE_EVENTS.sendDeleteWorkspace,
-      Array.from(selectedWorkspaces),
-    );
+    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, Array.from(checkedList));
   };
 
   return (

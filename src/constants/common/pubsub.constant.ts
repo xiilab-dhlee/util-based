@@ -102,6 +102,9 @@ export const PRIVATE_REGISTRY_IMAGE_EVENTS = {
   sendUpdateImage: "private-registry-image:send-update-private-registry-image",
   // 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
   sendDeleteImage: "private-registry-image:send-delete-private-registry-image",
+  // 내부 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
+  sendDeleteImageTag:
+    "private-registry-image:send-delete-private-registry-image-tag",
 } as const;
 
 // 리포트 관련 이벤트

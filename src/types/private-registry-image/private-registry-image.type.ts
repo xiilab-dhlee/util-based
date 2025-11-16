@@ -36,3 +36,8 @@ export interface GetAdminPrivateRegistryImageTagsPayload
 }
 
 export interface UpdatePrivateRegistryImagePayload extends CorePayload {}
+
+export interface DeleteAdminPrivateRegistryImagePayload {
+  registryName: string;
+  imageId: number;
+}

@@ -2,26 +2,20 @@
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { openDeleteRegistryImageModalAtom } from "@/atoms/private-registry-image/admin-private-registry-image.atom";
-import {
-  PRIVATE_REGISTRY_EVENTS,
-  PRIVATE_REGISTRY_EVENTS,
-  PRIVATE_REGISTRY_EVENTS,
-} from "@/constants/common/pubsub.constant";
+import { openDeletePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image/private-registry-image.atom";
+import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
-import { useDeletePrivateRegistryImage } from "@/hooks/registry/use-delete-admin-private-registry-image";
-import type { DeletePrivateRegistryImagePayload } from "@/types/private-registry/private-registry.type";
+import { useDeletePrivateRegistryImage } from "@/hooks/private-registry-image/use-delete-private-registry-image";
 
-export function DeleteRegistryImageModal() {
+export function DeletePrivateRegistryImageModal() {
   // 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(
-    openDeleteRegistryImageModalAtom,
+    openDeletePrivateRegistryImageModalAtom,
   );
 
   // 삭제에 필요한 정보
-  const [registryName, setRegistryName] = useState<string>("");
-  const [imageId, setImageId] = useState<number>(-1);
+  const [ids, setIds] = useState<number[]>([]);
 
   const deletePrivateRegistryImage = useDeletePrivateRegistryImage();
 
@@ -32,33 +26,28 @@ export function DeleteRegistryImageModal() {
    * 삭제 성공 시 관련 컴포넌트에서 데이터가 자동으로 갱신됩니다.
    */
   const handleOk = () => {
-    if (!registryName || imageId === -1) {
+    if (ids.length === 0) {
       toast.error("삭제할 컨테이너 이미지를 선택해 주세요.");
       return;
     }
 
     // 삭제 실행
-    deletePrivateRegistryImage.mutate(
-      { registryName, imageId },
-      {
-        onSuccess: () => {
-          toast.success("컨테이너 이미지 삭제 완료");
-          // 모달 닫기
-          onClose();
-        },
+    deletePrivateRegistryImage.mutate(ids, {
+      onSuccess: () => {
+        toast.success("컨테이너 이미지 삭제 완료");
+        // 모달 닫기
+        onClose();
       },
-    );
+    });
   };
 
   /**
    * 삭제 모달 데이터 구독
    */
-  useSubscribe<DeletePrivateRegistryImagePayload>(
-    PRIVATE_REGISTRY_EVENTS.sendDeleteImage,
-    (payload: DeletePrivateRegistryImagePayload) => {
-      // 삭제할 컨테이너 이미지 정보 설정
-      setRegistryName(payload.registryName);
-      setImageId(payload.imageId);
+  useSubscribe(
+    PRIVATE_REGISTRY_IMAGE_EVENTS.sendDeleteImage,
+    (ids: number[]) => {
+      setIds(ids);
       // 삭제 모달 열기
       onOpen();
     },

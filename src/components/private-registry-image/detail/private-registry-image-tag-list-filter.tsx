@@ -10,7 +10,7 @@ import { MySearchFilter } from "@/layouts/common/search-filter";
  *
  * 태그 검색을 위한 필터를 제공합니다.
  */
-export function PrivateRegistryImageDetailFilter() {
+export function PrivateRegistryImageTagListFilter() {
   const { onSubmit } = useSearch(privateRegistryImageTagSearchTextAtom);
 
   return (

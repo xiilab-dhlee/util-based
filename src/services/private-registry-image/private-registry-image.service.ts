@@ -33,9 +33,23 @@ export class PrivateRegistryImageService extends AxiosService {
   }
 
   /** 수정 */
-  public updatePrivateRegistryImage(
-    payload: UpdatePrivateRegistryImagePayload,
-  ) {
+  public updateImage(payload: UpdatePrivateRegistryImagePayload) {
     return this.getAxios().put(this.BASE_URL, payload);
+  }
+
+  /** 삭제 */
+  public deleteImage(images: number[]) {
+    return Promise.all(
+      images.map((image) =>
+        this.getAxios().delete(`${this.BASE_URL}/${image}`),
+      ),
+    );
+  }
+
+  /** 태그 삭제 */
+  public deleteImageTag(tags: number[]) {
+    return Promise.all(
+      tags.map((tag) => this.getAxios().delete(`${this.BASE_URL}/tag/${tag}`)),
+    );
   }
 }

@@ -1,17 +1,19 @@
 "use client";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import { ViewRejectReasonModal } from "@/components/common/modal/view-reject-reason-modal";
-import { ViewRequestReasonModal } from "@/components/common/modal/view-request-reason-modal";
 import { PrivateRegistryImageDetailAside } from "@/components/private-registry-image/detail/private-registry-image-detail-aside";
-import { PrivateRegistryImageDetailBody } from "@/components/private-registry-image/detail/private-registry-image-detail-body";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
-  ListPageAside,
-  ListPageBody,
-  ListPageMain,
-} from "@/styles/layers/list-page-layers.styled";
+  DetailContentSection,
+  DetailPageBody,
+  DetailPageContent,
+} from "@/styles/layers/detail-page-layers.styled";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import { DeletePrivateRegistryImageModal } from "../delete-private-registry-image-modal";
+import { DeletePrivateRegistryImageTagModal } from "./delete-private-registry-image-tag-modal";
+import { PrivateRegistryImageTagListBody } from "./private-registry-image-tag-list-body";
+import { PrivateRegistryImageTagListFilter } from "./private-registry-image-tag-list-filter";
+import { PrivateRegistryImageTagListFooter } from "./private-registry-image-tag-list-footer";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   {
@@ -21,6 +23,7 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   },
   {
     title: "내부 레지스트리",
+    href: "/standard/private-registry",
   },
   { title: "컨테이너 이미지 상세정보" },
 ];
@@ -34,29 +37,27 @@ export function PrivateRegistryImageDetailMain() {
       {/* 페이지 헤더 */}
       <PageHeader
         title="컨테이너 이미지 상세정보"
-        icon="Image"
+        icon="Back"
         description="Container Image Details"
       >
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />
       </PageHeader>
 
       {/* 내부 레지스트리 이미지 상세 페이지 메인 영역 */}
-      <ListPageMain>
-        {/* 내부 레지스트리 이미지 상세 페이지 - 왼쪽 영역 (기본정보) */}
-        <ListPageAside $width={400}>
-          <PrivateRegistryImageDetailAside />
-        </ListPageAside>
-
-        {/* 내부 레지스트리 이미지 상세 페이지 - 오른쪽 영역 (태그 목록) */}
-        <ListPageBody>
-          <PrivateRegistryImageDetailBody />
-        </ListPageBody>
-      </ListPageMain>
-
-      {/* 요청 사유 모달 */}
-      <ViewRequestReasonModal />
-      {/* 반려 사유 모달 */}
-      <ViewRejectReasonModal />
+      <DetailPageBody>
+        <PrivateRegistryImageDetailAside />
+        <DetailPageContent>
+          <DetailContentSection>
+            <PrivateRegistryImageTagListFilter />
+            <PrivateRegistryImageTagListBody />
+            <PrivateRegistryImageTagListFooter />
+          </DetailContentSection>
+        </DetailPageContent>
+      </DetailPageBody>
+      {/* 내부 레지스트리 이미지 태그 삭제 모달 */}
+      <DeletePrivateRegistryImageTagModal />
+      {/* 컨테이너 이미지 삭제 모달 */}
+      <DeletePrivateRegistryImageModal />
     </>
   );
 }
