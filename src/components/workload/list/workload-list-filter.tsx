@@ -38,7 +38,7 @@ export function WorkloadListFilter() {
     <MySearchFilter title="워크로드 목록" total={data?.totalSize}>
       <WorkloadJobTypeSort />
       <WorkloadStatusSort />
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} data-testid="workload-list-search-form">
         <SearchInput />
       </form>
     </MySearchFilter>

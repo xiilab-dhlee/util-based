@@ -79,3 +79,7 @@ export interface CoreChartSeries {
   name?: string;
   data: Array<[number, number]>;
 }
+// 테스트 선택자 인터페이스
+export interface CoreTestSelector {
+  testId?: string;
+}

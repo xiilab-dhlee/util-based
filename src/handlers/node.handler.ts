@@ -35,6 +35,12 @@ export const nodeHandlers = [
     return HttpResponse.json(nodeMigConstants.migInfoDemo);
   }),
 
+  // MIG 설정 업데이트
+  http.patch("/core-api/v1/core/nodes/mig", async ({ request }) => {
+    const body = await request.json();
+    return HttpResponse.json({ success: true, data: body });
+  }),
+
   // 노드 상세 조회
   http.get("/core-api/v1/core/nodes/:nodeName", () => {
     return HttpResponse.json(nodeDetailMock);

@@ -68,7 +68,7 @@
 
   "overrides": [
     {
-      "includes": ["src/app/**", "next.config.ts"],
+      "includes": ["src/app/**", "next.config.ts", "playwright.config.ts"],
       "linter": {
         "rules": {
           "style": {

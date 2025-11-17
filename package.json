@@ -3,12 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env MSW_ENABLE=false next dev",
+    "dev:msw": "cross-env MSW_ENABLE=true next dev",
+    "dev:no-msw": "cross-env MSW_ENABLE=false next dev",
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "organize-imports": "biome check --write"
+    "organize-imports": "biome check --write",
+    "test": "cross-env MSW_ENABLE=false cucumber-js",
+    "test:ui": "cross-env MSW_ENABLE=false playwright test --ui",
+    "test:debug": "cross-env MSW_ENABLE=false cucumber-js --inspect",
+    "test:mig": "cross-env MSW_ENABLE=false cucumber-js tests/features/mig",
+    "test:workload": "cross-env MSW_ENABLE=false cucumber-js tests/features/workload",
+    "test:report": "playwright show-report tests/reports/playwright-html",
+    "test:trace": "playwright show-trace",
+    "test:codegen": "cross-env MSW_ENABLE=false playwright codegen http://localhost:3000"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.14.0",
@@ -48,7 +58,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
-    "@playwright/test": "^1.56.1",
+    "@cucumber/cucumber": "^10.0.0",
+    "@cucumber/gherkin": "^30.0.0",
+    "@cucumber/messages": "^24.0.0",
+    "@playwright/test": "^1.48.0",
     "@types/lodash": "^4.17.20",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -60,6 +73,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
     "msw": "^2.11.6",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

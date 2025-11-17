@@ -9,16 +9,16 @@ import { combinedHandlers } from "@/handlers";
 /**
  * MSW Provider
  * 개발 환경에서 API mocking을 위한 MSW 초기화
+ *
+ * 동작 조건:
+ * - MSW_ENABLE 환경변수가 "true"일 때만 활성화
  */
 export function MSWProvider({ children }: PropsWithChildren) {
-  const [isReady, setIsReady] = useState(
-    // 개발 환경이 아니면 즉시 준비 상태로 설정
-    process.env.NODE_ENV !== "development",
-  );
+  const [isReady, setIsReady] = useState(process.env.MSW_ENABLE !== "true");
 
   useEffect(() => {
-    // MSW는 개발 환경에서만 활성화
-    if (process.env.NODE_ENV !== "development") {
+    // MSW가 비활성화되어 있으면 즉시 준비 상태로 설정
+    if (process.env.MSW_ENABLE !== "true") {
       return;
     }
 
@@ -41,21 +41,19 @@ export function MSWProvider({ children }: PropsWithChildren) {
         // Service Worker 활성화 후 추가 대기 시간
         // 이렇게 하면 Service Worker가 완전히 등록되고 요청을 가로챌 준비가 됨
         await new Promise((resolve) => setTimeout(resolve, 100));
-
-        setIsReady(true);
       } catch (error) {
         console.error("[MSW] Service Worker 시작 실패:", error);
         console.warn("[MSW] 실제 API를 호출합니다.");
-        setIsReady(true); // 실패해도 앱은 계속 동작
+      } finally {
+        setIsReady(true);
       }
     };
 
     initMSW();
   }, []);
 
-  // MSW가 준비될 때까지 children을 렌더링하지 않음
-  // 이렇게 하면 MSW가 먼저 초기화되어 초기 요청도 모킹 가능
-  if (!isReady) {
+  // MSW가 활성화되어 있고 아직 준비되지 않았으면 로딩 화면 표시
+  if (process.env.MSW_ENABLE === "true" && !isReady) {
     return (
       <div
         style={{
@@ -63,8 +61,6 @@ export function MSWProvider({ children }: PropsWithChildren) {
           alignItems: "center",
           justifyContent: "center",
           height: "100vh",
-          fontFamily: "system-ui, sans-serif",
-          color: "#666",
         }}
       >
         <div style={{ textAlign: "center" }}>
@@ -79,7 +75,7 @@ export function MSWProvider({ children }: PropsWithChildren) {
               margin: "0 auto 16px",
             }}
           />
-          <div>MSW 초기화 중...</div>
+          <div>Mocking Service Worker 구동 중...</div>
           <style>{`
             @keyframes spin {
               0% { transform: rotate(0deg); }

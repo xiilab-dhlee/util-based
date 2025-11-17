@@ -13,10 +13,21 @@ import { generateCustomTree } from "@/utils/common/filetree-generator.util";
  */
 export const workloadHandlers = [
   // 워크로드 목록 조회
-  http.get("/core-api/v1/core/workload", () => {
+  http.get("/core-api/v1/core/workload", ({ request }) => {
+    const url = new URL(request.url);
+    const searchText = url.searchParams.get("searchText");
+    
+    // 검색어가 있는 경우 필터링
+    let filteredContent = workloadListMock;
+    if (searchText) {
+      filteredContent = workloadListMock.filter((workload) =>
+        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    
     return HttpResponse.json({
-      content: workloadListMock,
-      totalSize: 100,
+      content: filteredContent,
+      totalSize: filteredContent.length,
     });
   }),
 
@@ -43,10 +54,21 @@ export const workloadHandlers = [
   }),
 
   // 관리자 워크로드 목록 조회
-  http.get("/core-api/v1/core/admin/workload", () => {
+  http.get("/core-api/v1/core/admin/workload", ({ request }) => {
+    const url = new URL(request.url);
+    const searchText = url.searchParams.get("searchText");
+    
+    // 검색어가 있는 경우 필터링
+    let filteredContent = workloadListMock;
+    if (searchText) {
+      filteredContent = workloadListMock.filter((workload) =>
+        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    
     return HttpResponse.json({
-      content: workloadListMock,
-      totalSize: 100,
+      content: filteredContent,
+      totalSize: filteredContent.length,
     });
   }),
 
