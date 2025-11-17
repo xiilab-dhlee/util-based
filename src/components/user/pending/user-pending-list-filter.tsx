@@ -8,7 +8,7 @@ import {
   userPendingSearchTextAtom,
 } from "@/atoms/user/user-pending-list.atom";
 import { SearchInput } from "@/components/common/input/search-input";
-import userListConstants from "@/constants/user/user-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetPendingUsers } from "@/hooks/user/use-get-pending-users";
 import { MySearchFilter } from "@/layouts/common/search-filter";
@@ -29,7 +29,7 @@ export function UserPendingListFilter() {
 
   const { data } = useGetPendingUsers({
     page,
-    size: userListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -63,4 +63,3 @@ export function UserPendingListFilter() {
     </MySearchFilter>
   );
 }
-

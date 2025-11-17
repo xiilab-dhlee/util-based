@@ -8,7 +8,7 @@ import {
   notificationStartDateAtom,
 } from "@/atoms/notification/notification-list.atom";
 import { ListRangePicker } from "@/components/common/datepicker/list-range-picker";
-import notificationListConstants from "@/constants/notification/notification-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNotifications } from "@/hooks/notification/use-get-notifications";
 import { MySearchFilter } from "@/layouts/common/search-filter";
 
@@ -26,7 +26,7 @@ export function NotificationListFilter() {
 
   const { data } = useGetNotifications({
     page,
-    size: notificationListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     startDate,
     endDate,
   });
@@ -40,4 +40,3 @@ export function NotificationListFilter() {
     </MySearchFilter>
   );
 }
-

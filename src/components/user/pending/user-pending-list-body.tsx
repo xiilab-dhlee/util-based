@@ -8,7 +8,7 @@ import {
 } from "@/atoms/user/user-pending-list.atom";
 import { userPendingListColumn } from "@/components/common/column/user-pending-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import userListConstants from "@/constants/user/user-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPendingUsers } from "@/hooks/user/use-get-pending-users";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -27,7 +27,7 @@ export function UserPendingListBody() {
 
   const { data } = useGetPendingUsers({
     page,
-    size: userListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -37,6 +37,7 @@ export function UserPendingListBody() {
         columns={userPendingListColumn}
         data={data?.content || []}
         activePadding
+        columnHeight={38}
       />
     </ListWrapper>
   );

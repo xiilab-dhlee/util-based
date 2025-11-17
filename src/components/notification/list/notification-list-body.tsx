@@ -7,10 +7,10 @@ import {
   notificationPageAtom,
   notificationStartDateAtom,
 } from "@/atoms/notification/notification-list.atom";
-import { notificationListColumn } from "@/components/notification/notification-list-column";
-import { NotificationRow } from "@/components/notification/list/notification-row";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import notificationListConstants from "@/constants/notification/notification-list.constant";
+import { NotificationRow } from "@/components/notification/list/notification-row";
+import { notificationListColumn } from "@/components/notification/notification-list-column";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNotifications } from "@/hooks/notification/use-get-notifications";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -29,7 +29,7 @@ export function NotificationListBody() {
 
   const { data } = useGetNotifications({
     page,
-    size: notificationListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     startDate,
     endDate,
   });
@@ -41,8 +41,8 @@ export function NotificationListBody() {
         data={data?.content || []}
         customRow={NotificationRow}
         activePadding
+        columnHeight={32}
       />
     </ListWrapper>
   );
 }
-

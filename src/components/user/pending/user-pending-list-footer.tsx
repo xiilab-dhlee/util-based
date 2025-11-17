@@ -6,7 +6,7 @@ import {
   userPendingPageAtom,
   userPendingSearchTextAtom,
 } from "@/atoms/user/user-pending-list.atom";
-import userListConstants from "@/constants/user/user-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPendingUsers } from "@/hooks/user/use-get-pending-users";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 
@@ -27,7 +27,7 @@ export function UserPendingListFooter() {
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetPendingUsers({
     page,
-    size: userListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -38,12 +38,11 @@ export function UserPendingListFooter() {
 
   return (
     <ListPageFooter
-      total={data?.total || 0}
+      total={data?.totalSize || 0}
       page={page}
-      pageSize={userListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
     />
   );
 }
-

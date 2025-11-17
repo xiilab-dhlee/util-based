@@ -10,7 +10,7 @@ import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
-import workspaceMemberConstants from "@/constants/workspace/workspace-member.constant";
+import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/constants/workspace/workspace-member.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useSelect } from "@/hooks/common/use-select";
@@ -28,7 +28,7 @@ export function UpdateUserModal() {
 
   const [user, setUser] = useState<UserListType | null>(null);
 
-  const role = useSelect("", workspaceMemberConstants.role);
+  const role = useSelect("", WORKSPACE_MEMBER_ROLE_OPTIONS);
 
   const handleSubmit = () => {
     const payload = createPayload();

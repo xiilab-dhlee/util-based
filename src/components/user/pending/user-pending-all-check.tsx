@@ -9,7 +9,7 @@ import {
   userPendingPageAtom,
   userPendingSearchTextAtom,
 } from "@/atoms/user/user-pending-list.atom";
-import userListConstants from "@/constants/user/user-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPendingUsers } from "@/hooks/user/use-get-pending-users";
 import type { UserListType } from "@/schemas/user.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
@@ -26,7 +26,7 @@ export function UserPendingAllCheck() {
   // 현재 페이지의 사용자 목록 조회
   const { data } = useGetPendingUsers({
     page,
-    size: userListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -58,10 +58,14 @@ export function UserPendingAllCheck() {
 
       if (checked) {
         // 현재 페이지의 모든 사용자 선택
-        currentPageIds.forEach((id: string) => next.add(id));
+        currentPageIds.forEach((id: string) => {
+          next.add(id);
+        });
       } else {
         // 현재 페이지의 모든 사용자 선택 해제
-        currentPageIds.forEach((id: string) => next.delete(id));
+        currentPageIds.forEach((id: string) => {
+          next.delete(id);
+        });
       }
 
       return next;
@@ -79,4 +83,3 @@ export function UserPendingAllCheck() {
     </ColumnAlignCenterWrap>
   );
 }
-

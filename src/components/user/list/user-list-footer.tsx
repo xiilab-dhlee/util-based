@@ -9,8 +9,8 @@ import {
   userSearchTextAtom,
 } from "@/atoms/user/user-list.atom";
 import { ListDeleteButton } from "@/components/common/button/list-delete-button";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
-import userListConstants from "@/constants/user/user-list.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetUsers } from "@/hooks/user/use-get-users";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
@@ -35,7 +35,7 @@ export function UserListFooter() {
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetUsers({
     page,
-    size: userListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -61,7 +61,7 @@ export function UserListFooter() {
     <ListPageFooter
       total={data?.total || 0}
       page={page}
-      pageSize={userListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
       rightChildren={<ListDeleteButton onClick={handleClickDelete} />}

@@ -121,9 +121,13 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         ],
       },
       {
-        key: "workspace",
+        key: "workspace-root",
         label: "워크스페이스 관리",
         icon: <MyIcon name="Workspace01" />,
+        children: [
+          { key: "workspace", label: "워크스페이스" },
+          { key: "request-resource", label: "리소스 신청 관리" },
+        ],
       },
       {
         key: "registry-root",

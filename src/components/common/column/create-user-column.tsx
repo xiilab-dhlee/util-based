@@ -5,7 +5,7 @@ import { UpdateUserButton } from "@/components/user/list/update-user-button";
 import { UserAllCheck } from "@/components/user/list/user-all-check";
 import { UserItemCheck } from "@/components/user/list/user-item-check";
 import { UserStatusSwitch } from "@/components/user/list/user-status-switch";
-import coreConstants from "@/constants/common/core.constant";
+import { ICON_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type { UserListType } from "@/schemas/user.schema";
 import {
   ColumnAlignCenterWrap,
@@ -24,7 +24,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: <UserAllCheck />,
       dataIndex: "checkbox",
       align: "center",
-      width: coreConstants.iconColumnWidth,
+      width: ICON_COLUMN_WIDTH,
       render: (_, record: UserListType) => {
         return <UserItemCheck user={record} />;
       },

@@ -7,7 +7,7 @@ import {
   notificationPageAtom,
   notificationStartDateAtom,
 } from "@/atoms/notification/notification-list.atom";
-import notificationListConstants from "@/constants/notification/notification-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNotifications } from "@/hooks/notification/use-get-notifications";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 
@@ -29,7 +29,7 @@ export function NotificationListFooter() {
   // 알림 목록 데이터 조회 (React Query 훅 사용)
   const { data, isLoading } = useGetNotifications({
     page,
-    size: notificationListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     startDate,
     endDate,
   });
@@ -46,10 +46,9 @@ export function NotificationListFooter() {
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
-      pageSize={notificationListConstants.pageSize}
+      pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
     />
   );
 }
-

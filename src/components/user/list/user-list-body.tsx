@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { userPageAtom, userSearchTextAtom } from "@/atoms/user/user-list.atom";
 import { createUserColumn } from "@/components/common/column/create-user-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
-import userListConstants from "@/constants/user/user-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetUsers } from "@/hooks/user/use-get-users";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -24,7 +24,7 @@ export function UserListBody() {
 
   const { data } = useGetUsers({
     page,
-    size: userListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -33,6 +33,7 @@ export function UserListBody() {
       <CustomizedTable
         columns={createUserColumn()}
         data={data?.content || []}
+        columnHeight={38}
       />
     </ListWrapper>
   );

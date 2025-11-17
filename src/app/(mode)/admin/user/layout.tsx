@@ -8,9 +8,9 @@ import { openCreateGroupModalAtom } from "@/atoms/group/group.atom";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { CreateGroupModal } from "@/components/group/create-group-modal";
-import { MemberAddModal } from "@/components/setting/modal/member-add-modal";
+// import { MemberAddModal } from "@/components/setting/modal/member-add-modal";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import userListConstants from "@/constants/user/user-list.constant";
+import { USER_GUIDE_IMAGES, USER_GUIDES } from "@/constants/user/user.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -73,7 +73,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
               "추가하거나 제거하여 효율적으로 사용자 관리를 할 수 있습니다.",
             ]}
             backgroundImageName="user-intro-background.png"
-            guides={userListConstants.guides}
+            guides={USER_GUIDES}
             buttonOptions={{
               enabled: true,
               text: "그룹 추가",
@@ -84,7 +84,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
           {/* 사용자 가이드 이미지 카드 */}
           <PageImageGuide
             title="계정 관리 가이드"
-            guideImages={userListConstants.guideImages}
+            guideImages={USER_GUIDE_IMAGES}
           />
         </ListPageAside>
 
@@ -97,7 +97,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
       {/* 그룹 생성 모달 */}
       <CreateGroupModal />
       {/* 멤버 추가 모달 */}
-      <MemberAddModal />
+      {/* <MemberAddModal /> */}
     </>
   );
 }

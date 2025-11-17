@@ -1,6 +1,6 @@
-import type { PageGuideItemType } from "@/layouts/common/page-guide";
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
-const GUIDE_IMAGES = [
+export const USER_GUIDE_IMAGES: CoreGuideImage[] = [
   {
     id: "1",
     src: "/images/user-guide1.png",
@@ -18,9 +18,9 @@ const GUIDE_IMAGES = [
   },
 ];
 
-const GUIDES: PageGuideItemType[] = [
+export const USER_GUIDES: CoreGuide[] = [
   {
-    iconName: "SystemFilled",
+    icon: "SystemFilled",
     title: "그룹 관리란?",
     description: [
       "초기 가입 시 사용자가 선택한 그룹이 기본값으로 설정됩니다.",
@@ -28,7 +28,7 @@ const GUIDES: PageGuideItemType[] = [
     ],
   },
   {
-    iconName: "Delete",
+    icon: "Delete",
     title: "그룹 삭제란?",
     description: [
       "관리자는 생성된 그룹을 생성, 수정, 삭제하여 관리할 수 있습니다.",
@@ -36,14 +36,3 @@ const GUIDES: PageGuideItemType[] = [
     ],
   },
 ];
-
-const userListConstants = {
-  // 페이지 크기
-  pageSize: 20,
-  // 가이드 이미지
-  guideImages: GUIDE_IMAGES,
-  // 가이드 항목들
-  guides: GUIDES,
-};
-
-export default userListConstants;

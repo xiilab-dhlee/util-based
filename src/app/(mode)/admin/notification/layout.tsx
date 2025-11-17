@@ -27,7 +27,11 @@ export default function AdminNotificationLayout({
 }: PropsWithChildren) {
   return (
     <>
-      <PageHeader title="알림 관리" icon="" description="Manage Notification">
+      <PageHeader
+        title="알림 관리"
+        icon="Alarm"
+        description="Manage Notification"
+      >
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />
       </PageHeader>
       {/* 알림 목록 페이지 메인 영역 */}

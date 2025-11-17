@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 
 import { userPageAtom, userSearchTextAtom } from "@/atoms/user/user-list.atom";
 import { SearchInput } from "@/components/common/input/search-input";
-import userListConstants from "@/constants/user/user-list.constant";
+import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetUsers } from "@/hooks/user/use-get-users";
 import { MySearchFilter } from "@/layouts/common/search-filter";
@@ -25,7 +25,7 @@ export function UserListFilter() {
 
   const { data } = useGetUsers({
     page,
-    size: userListConstants.pageSize,
+    size: LIST_PAGE_SIZE,
     searchText,
   });
 
@@ -37,4 +37,3 @@ export function UserListFilter() {
     </MySearchFilter>
   );
 }
-

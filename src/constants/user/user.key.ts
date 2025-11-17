@@ -3,7 +3,7 @@ import type {
   GetUsersPayload,
 } from "@/types/user/user.type";
 
-const userKeys = {
+export const userKeys = {
   default: ["user"],
   list: (payload: GetUsersPayload) => [
     ...userKeys.default,
@@ -17,5 +17,3 @@ const userKeys = {
   ],
   detail: (id: string) => [...userKeys.default, "detail", id],
 };
-
-export default userKeys;

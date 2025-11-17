@@ -5,7 +5,7 @@
 
 // import ClusterReportMain from "./cluster-report-main";
 // import SystemReportMain from "./system-report-main";
-import UnreadyReport from "./unready-report";
+import { UnreadyReport } from "./unready-report";
 
 /**
  * 리포트 페이지의 메인 컴포넌트
@@ -32,4 +32,3 @@ export function ReportMain() {
 
   return <>{render}</>;
 }
-

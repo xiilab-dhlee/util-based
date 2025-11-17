@@ -1,8 +1,10 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import userKeys from "@/constants/user/user.key";
+import { userKeys } from "@/constants/user/user.key";
 import { useServices } from "@/providers/service-provider";
+import type { UserListType } from "@/schemas/user.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetPendingUsersPayload } from "@/types/user/user.type";
 
 /**
@@ -10,7 +12,7 @@ import type { GetPendingUsersPayload } from "@/types/user/user.type";
  */
 export const useGetPendingUsers = (
   payload: GetPendingUsersPayload,
-): UseQueryResult<any, Error> => {
+): UseQueryResult<CoreListResponse<UserListType>, Error> => {
   const { userService } = useServices();
 
   return useQuery({
@@ -21,4 +23,3 @@ export const useGetPendingUsers = (
     },
   });
 };
-
