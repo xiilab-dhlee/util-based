@@ -58,10 +58,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
-    "@cucumber/cucumber": "^10.0.0",
-    "@cucumber/gherkin": "^30.0.0",
-    "@cucumber/messages": "^24.0.0",
-    "@playwright/test": "^1.48.0",
     "@types/lodash": "^4.17.20",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -73,7 +69,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
     "msw": "^2.11.6",
-    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
