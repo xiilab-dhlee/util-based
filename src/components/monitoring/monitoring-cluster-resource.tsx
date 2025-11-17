@@ -21,10 +21,13 @@ export function MonitoringClusterResource({
   return (
     <Container className={classNames({ "gpu-only": resourceType === "GPU" })}>
       <Left>
-        <DashboardResourceClusterChart
-          series={series}
-          gradientToColors={gradientToColors}
-        />
+        <ChartWrapper>
+          <DashboardResourceClusterChart
+            series={series}
+            gradientToColors={gradientToColors}
+          />
+        </ChartWrapper>
+
         <ChartLabel>
           <ChartLabelItem>
             <ChartTitle>{resourceType}</ChartTitle>
@@ -73,6 +76,7 @@ export function MonitoringClusterResource({
  */
 const Container = styled.div`
   width: 100%;
+  height: 100%;
   overflow: hidden;
   display: flex;
   justify-content: flex-start;
@@ -91,8 +95,18 @@ const Container = styled.div`
  */
 const Left = styled.div`
   width: 172px;
+  height: 100%;
   overflow: hidden;
   position: relative;
+`;
+
+const ChartWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 172px;
+  height: 172px;
 `;
 
 const Right = styled.div`
@@ -102,7 +116,7 @@ const Right = styled.div`
 
 const ChartLabel = styled.div`
   position: absolute;
-  top: 54%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 98px;

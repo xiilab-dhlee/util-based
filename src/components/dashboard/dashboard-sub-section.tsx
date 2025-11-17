@@ -26,7 +26,7 @@ export function DashboardSubSection() {
               { dataIndex: "status" },
               { dataIndex: "elapsedTime" },
             ])}
-            columnHeight={40}
+            columnHeight={38}
             activePadding
             data={workloadListMock}
             pagination={{
@@ -57,7 +57,7 @@ export function DashboardSubSection() {
               { dataIndex: "status" },
               { dataIndex: "elapsedTime" },
             ])}
-            columnHeight={40}
+            columnHeight={38}
             activePadding
             data={workloadListMock}
             pagination={{

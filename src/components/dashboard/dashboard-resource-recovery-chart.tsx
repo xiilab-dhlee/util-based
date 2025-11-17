@@ -64,8 +64,6 @@ export function DashboardResourceRecoveryChart({
   );
 }
 
-
 const ChartWrapper = styled.div`
   width: 100%;
-  max-width: 280px;
 `;

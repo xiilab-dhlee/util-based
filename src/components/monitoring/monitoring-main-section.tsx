@@ -103,7 +103,7 @@ const Left = styled.div`
 `;
 
 const Right = styled.div`
-  width: 892px;
+  min-width: 892px;
   display: flex;
   flex-direction: column;
   gap: 20px;

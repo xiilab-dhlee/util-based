@@ -4,21 +4,26 @@
   "private": true,
   "scripts": {
     "dev": "cross-env MSW_ENABLE=false next dev",
-    "dev:msw": "cross-env MSW_ENABLE=true next dev",
-    "dev:no-msw": "cross-env MSW_ENABLE=false next dev",
+    "dev:mock": "cross-env MSW_ENABLE=true next dev",
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
     "organize-imports": "biome check --write",
-    "test": "cross-env MSW_ENABLE=false cucumber-js",
-    "test:ui": "cross-env MSW_ENABLE=false playwright test --ui",
-    "test:debug": "cross-env MSW_ENABLE=false cucumber-js --inspect",
-    "test:mig": "cross-env MSW_ENABLE=false cucumber-js tests/features/mig",
-    "test:workload": "cross-env MSW_ENABLE=false cucumber-js tests/features/workload",
+    "test": "bddgen && cross-env MSW_ENABLE=false playwright test",
+    "test:bdd": "bddgen && cross-env MSW_ENABLE=false playwright test",
+    "test:ui": "bddgen && cross-env MSW_ENABLE=false playwright test --ui",
+    "test:headed": "bddgen && cross-env MSW_ENABLE=false playwright test --headed",
+    "test:debug": "bddgen && cross-env MSW_ENABLE=false playwright test --debug",
+    "test:chromium": "bddgen && cross-env MSW_ENABLE=false playwright test --project=chromium",
+    "test:firefox": "bddgen && cross-env MSW_ENABLE=false playwright test --project=firefox",
+    "test:webkit": "bddgen && cross-env MSW_ENABLE=false playwright test --project=webkit",
+    "test:workload": "bddgen && cross-env MSW_ENABLE=false playwright test tests/features/workload",
+    "test:smoke": "bddgen && cross-env MSW_ENABLE=false playwright test --grep @smoke",
     "test:report": "playwright show-report tests/reports/playwright-html",
     "test:trace": "playwright show-trace",
-    "test:codegen": "cross-env MSW_ENABLE=false playwright codegen http://localhost:3000"
+    "test:codegen": "cross-env MSW_ENABLE=false playwright codegen http://localhost:3000",
+    "bddgen": "npx playwright-bdd export"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.14.0",
@@ -58,6 +63,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
+    "@cucumber/cucumber": "^12.2.0",
+    "@playwright/test": "^1.56.1",
     "@types/lodash": "^4.17.20",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -69,6 +76,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
     "msw": "^2.11.6",
+    "playwright-bdd": "^8.4.1",
     "typescript": "^5"
   }
 }

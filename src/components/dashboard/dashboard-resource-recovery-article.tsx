@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useState } from "react";
 import styled from "styled-components";
 
-import dashboardConstants from "@/constants/dashboard/dashboard.constant";
 import { DashboardCategoryTitle } from "@/styles/layers/dashboard-layers.styled";
 import { DashboardResourceRecoveryChart } from "./dashboard-resource-recovery-chart";
 
@@ -18,7 +17,10 @@ export function DashboardResourceRecoveryArticle() {
   return (
     <Container>
       <DashboardCategoryTitle>자원 회수 정보</DashboardCategoryTitle>
-      <DashboardResourceRecoveryChart series={70} />
+      <ChartWrapper>
+        <DashboardResourceRecoveryChart series={70} />
+      </ChartWrapper>
+
       <ResourceButtons>
         {["GPU", "CPU", "MEM"].map((v) => (
           <ResourceButton
@@ -55,19 +57,29 @@ export function DashboardResourceRecoveryArticle() {
 }
 
 const Container = styled.article`
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 280px;
   padding-left: 20px;
   padding-bottom: 30px;
   margin-bottom: 24px;
+  height: 371px;
 
   border-left: 1px solid #292b32;
 `;
 
+const ChartWrapper = styled.div`
+  position: absolute;
+  top: 42px;
+  left: 20px;
+  width: 260px;
+`;
+
 const ChartStand = styled.div`
   position: absolute;
-  bottom: calc(100% + 1rem);
+  bottom: calc(100%);
   left: 50%;
   transform: translateX(-50%);
   width: 70px;

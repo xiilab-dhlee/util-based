@@ -103,7 +103,6 @@ export function DashboardResourceClusterChart({
   );
 }
 
-
 /**
  * 차트를 감싸는 래퍼 스타일
  *
