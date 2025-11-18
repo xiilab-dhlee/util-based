@@ -7,7 +7,7 @@ import { useServices } from "@/providers/service-provider";
  * 워크스페이스 멤버 삭제
  */
 export const useDeleteWorkspaceMember = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   string[],
   unknown
@@ -15,10 +15,9 @@ export const useDeleteWorkspaceMember = (): UseMutationResult<
   const { workspaceService } = useServices();
 
   return useMutation({
-    mutationFn: (members: string[]): Promise<any> => {
+    mutationFn: (members: string[]) => {
       return workspaceService.deleteWorkspaceMember(members);
     },
     onSuccess: () => {},
   });
 };
-

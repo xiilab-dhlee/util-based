@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
 
-import filetreeConstants from "@/constants/common/filetree.constant";
+import { ML_PROJECT_TEMPLATE } from "@/constants/common/filetree.constant";
 import {
   workloadDetailMock,
   workloadListMock,
@@ -16,15 +16,15 @@ export const workloadHandlers = [
   http.get("/core-api/v1/core/workload", ({ request }) => {
     const url = new URL(request.url);
     const searchText = url.searchParams.get("searchText");
-    
+
     // 검색어가 있는 경우 필터링
     let filteredContent = workloadListMock;
     if (searchText) {
       filteredContent = workloadListMock.filter((workload) =>
-        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase())
+        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase()),
       );
     }
-    
+
     return HttpResponse.json({
       content: filteredContent,
       totalSize: filteredContent.length,
@@ -42,7 +42,7 @@ export const workloadHandlers = [
   // 워크로드 파일 조회 (동적 파라미터 경로보다 먼저 배치)
   http.get("/core-api/v1/core/workload/:id/files/list", () => {
     return HttpResponse.json({
-      content: generateCustomTree(filetreeConstants.mlProjectTemplate),
+      content: generateCustomTree(ML_PROJECT_TEMPLATE),
       directoryCnt: 10,
       totalSize: 100,
     });
@@ -57,15 +57,15 @@ export const workloadHandlers = [
   http.get("/core-api/v1/core/admin/workload", ({ request }) => {
     const url = new URL(request.url);
     const searchText = url.searchParams.get("searchText");
-    
+
     // 검색어가 있는 경우 필터링
     let filteredContent = workloadListMock;
     if (searchText) {
       filteredContent = workloadListMock.filter((workload) =>
-        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase())
+        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase()),
       );
     }
-    
+
     return HttpResponse.json({
       content: filteredContent,
       totalSize: filteredContent.length,

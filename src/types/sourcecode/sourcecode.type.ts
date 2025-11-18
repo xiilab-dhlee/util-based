@@ -1,11 +1,18 @@
-import type { CorePaginate, CoreSearchText } from "../common/api.interface";
+import type {
+  CorePaginate,
+  CorePayload,
+  CoreSearchText,
+} from "../common/api.interface";
 
-export interface GetSourcecodesPayload extends CorePaginate, CoreSearchText {}
+export interface GetSourcecodesPayload
+  extends CorePayload,
+    CorePaginate,
+    CoreSearchText {}
 
 export interface CreateSourcecodePayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface UpdateSourcecodePayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }

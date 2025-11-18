@@ -19,7 +19,7 @@ export const useMigHelper = () => {
     // GPU 제품을 기반으로 MigUtil 인스턴스 생성
     const util = new MigUtil(gpuProduct);
 
-    let instances;
+    let instances: boolean[];
     if (configId === -1) {
       instances = util.generateSelectInstances();
     } else {
@@ -60,4 +60,3 @@ export const useMigHelper = () => {
 
   return { initMig, updateMig, getInstance, getInstanceCount };
 };
-

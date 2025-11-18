@@ -53,4 +53,3 @@ export function SourcecodeItemCheck({ sourcecode }: SourcecodeItemCheckProps) {
     </ColumnAlignCenterWrap>
   );
 }
-

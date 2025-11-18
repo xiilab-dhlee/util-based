@@ -1,9 +1,8 @@
-import credentialListConstants from "@/constants/credential/credential-list.constant";
 import { AxiosService } from "@/services/common/axios";
 import type {
   CreateCredentialPayload,
   GetCredentialsPayload,
-} from "@/types/credential/credential.interface";
+} from "@/types/credential/credential.type";
 import { payloadToParams } from "@/utils/common/service.util";
 
 export class CredentialService extends AxiosService {
@@ -12,11 +11,7 @@ export class CredentialService extends AxiosService {
   /** 크레덴셜 목록 조회 */
   public getList(payload: GetCredentialsPayload) {
     const params = payloadToParams(payload);
-    return {
-      credentials: credentialListConstants.listDemo,
-      total: 100,
-      params,
-    };
+    return this.getAxios().get(`${this.BASE_URL}`, { params });
   }
 
   /** 크레덴셜 생성 */

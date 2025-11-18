@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
 
 import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
 
@@ -45,30 +46,30 @@ export function ReadOnlyMonitoringNotificationSetting({
         <BodyRow>
           {/* 왼쪽 컬럼: 파라미터 키들을 세로로 나열 */}
           <KeyColumn>
-            {items.map((item, index) => (
-              <Value key={`item-${index}`} className="truncate" title={item}>
+            {items.map((item) => (
+              <Value key={uuidv4()} className="truncate" title={item}>
                 {item}
               </Value>
             ))}
           </KeyColumn>
           {/* 오른쪽 컬럼: 파라미터 값들을 세로로 나열 */}
           <ValueColumn>
-            {operators.map((v, index) => (
-              <Value key={`operator-${index}`} className="truncate" title={v}>
+            {operators.map((v) => (
+              <Value key={uuidv4()} className="truncate" title={v}>
                 {v}
               </Value>
             ))}
           </ValueColumn>
           <ValueColumn>
-            {thresholds.map((v, index) => (
-              <Value key={`threshold-${index}`} className="truncate" title={v}>
+            {thresholds.map((v) => (
+              <Value key={uuidv4()} className="truncate" title={v}>
                 {v}
               </Value>
             ))}
           </ValueColumn>
           <ValueColumn>
-            {durations.map((v, index) => (
-              <Value key={`duration-${index}`} className="truncate" title={v}>
+            {durations.map((v) => (
+              <Value key={uuidv4()} className="truncate" title={v}>
                 {v}
               </Value>
             ))}
@@ -78,7 +79,6 @@ export function ReadOnlyMonitoringNotificationSetting({
     </Container>
   );
 }
-
 
 // ===== Styled Components =====
 

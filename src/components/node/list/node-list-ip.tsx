@@ -21,7 +21,6 @@ export function NodeListIp({ ip, type }: NodeListIpProps) {
   );
 }
 
-
 const Container = styled.div`
   border: 1px solid var(--border-color);
   background-color: var(--bg-color);

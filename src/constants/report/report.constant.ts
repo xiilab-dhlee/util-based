@@ -1,7 +1,7 @@
 import type { MySelectOption } from "@/components/common/select";
-import type { PageGuideItemType } from "@/layouts/common/page-guide";
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
-const GUIDE_IMAGES = [
+export const REPORT_GUIDE_IMAGES: CoreGuideImage[] = [
   {
     id: "1",
     src: "/images/report-guide1.png",
@@ -19,7 +19,7 @@ const GUIDE_IMAGES = [
   },
 ];
 
-const DATE_TYPE: MySelectOption[] = [
+export const REPORT_DATE_TYPE_OPTIONS: MySelectOption[] = [
   {
     label: "주간",
     value: "WEEKLY",
@@ -30,7 +30,7 @@ const DATE_TYPE: MySelectOption[] = [
   },
 ];
 
-const REPORT_TYPE: MySelectOption[] = [
+export const REPORT_TYPE_OPTIONS: MySelectOption[] = [
   {
     label: "시스템 리포트",
     value: "SYSTEM",
@@ -41,9 +41,9 @@ const REPORT_TYPE: MySelectOption[] = [
   },
 ];
 
-const GUIDES: PageGuideItemType[] = [
+export const REPORT_GUIDES: CoreGuide[] = [
   {
-    iconName: "Reportsolid",
+    icon: "Reportsolid",
     title: "리포트란?",
     description: [
       "자원 활용 현황, 통계 등의 정보를 모아 볼 수 있는 기능입니다.",
@@ -51,7 +51,7 @@ const GUIDES: PageGuideItemType[] = [
     ],
   },
   {
-    iconName: "ReportReservationsolid",
+    icon: "ReportReservationsolid",
     title: "리포트 예약이란?",
     description: [
       "리포트 생성 주기와 받는 사람을 지정하여 리포트를 생성하는",
@@ -59,15 +59,3 @@ const GUIDES: PageGuideItemType[] = [
     ],
   },
 ];
-
-const reportConstants = {
-  // 가이드 이미지
-  guideImages: GUIDE_IMAGES,
-  // 리포트 타입
-  dateType: DATE_TYPE,
-  reportType: REPORT_TYPE,
-  // 가이드 항목들
-  guides: GUIDES,
-};
-
-export default reportConstants;

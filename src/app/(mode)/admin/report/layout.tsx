@@ -5,7 +5,10 @@ import type { PropsWithChildren } from "react";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateReportModal } from "@/components/report/create-report-modal";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import reportConstants from "@/constants/report/report.constant";
+import {
+  REPORT_GUIDE_IMAGES,
+  REPORT_GUIDES,
+} from "@/constants/report/report.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -44,7 +47,7 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
               ] as string[]
             }
             backgroundImageName="report-intro-background.png"
-            guides={reportConstants.guides}
+            guides={REPORT_GUIDES}
             buttonOptions={{
               enabled: true,
               text: "리포트 예약 바로가기",
@@ -56,7 +59,7 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
           {/* 가이드 이미지 카드 */}
           <PageImageGuide
             title="리포트 설정 가이드"
-            guideImages={reportConstants.guideImages}
+            guideImages={REPORT_GUIDE_IMAGES}
           />
         </ListPageAside>
 

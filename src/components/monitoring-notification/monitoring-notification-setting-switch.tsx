@@ -10,4 +10,3 @@ export function MonitoringNotificationSettingSwitch() {
 
   return <Switch checked={checked} onChange={handleChange} />;
 }
-

@@ -41,4 +41,3 @@ export type NotificationListType = z.infer<typeof notificationListSchema>;
 export type NotificationDetailType = z.infer<typeof notificationDetailSchema>;
 export type NotificationType = Notification["type"];
 export type NotificationPriority = Notification["priority"];
-

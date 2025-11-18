@@ -9,7 +9,7 @@ const DynamicApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 interface MonitoringChartProps {
-  series: any[];
+  series: ApexOptions["series"];
   height?: number;
   unit: string;
   colors?: string[];
@@ -131,4 +131,3 @@ export function MonitoringChart({
     />
   );
 }
-

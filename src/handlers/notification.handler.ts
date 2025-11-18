@@ -1,6 +1,9 @@
 import { HttpResponse, http } from "msw";
 
-import { notificationDetailMock, notificationListMock } from "@/mocks/notification.mock";
+import {
+  notificationDetailMock,
+  notificationListMock,
+} from "@/mocks/notification.mock";
 
 /**
  * 알림 API 핸들러
@@ -18,4 +21,3 @@ export const notificationHandlers = [
     return HttpResponse.json(notificationDetailMock);
   }),
 ];
-

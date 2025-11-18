@@ -1,6 +1,7 @@
 import type { GpuConfigMap } from "@/types/node/node.type";
 
-const GPU_ALPHA_CONFIGMAP = {
+/** A30 Config */
+export const MIG_GPU_ALPHA_CONFIG = {
   1: [{ gpuIndex: 0, compute: 4 }],
   2: [
     { gpuIndex: 1, compute: 2 },
@@ -23,8 +24,8 @@ const GPU_ALPHA_CONFIGMAP = {
     { gpuIndex: 6, compute: 1 },
   ],
 };
-
-const GPU_BETA_CONFIGMAP = {
+/** A100 ~ Current Model Config */
+export const MIG_GPU_BETA_CONFIG = {
   1: [{ gpuIndex: 0, compute: 7 }],
   2: [
     { gpuIndex: 1, compute: 4 },
@@ -134,8 +135,8 @@ const GPU_BETA_CONFIGMAP = {
     { gpuIndex: 13, compute: 1 },
   ],
 };
-
-const GPU_ALPHA_CONFIG: GpuConfigMap = {
+/** A30 Model */
+export const MIG_GPU_ALPHA_MODEL: GpuConfigMap = {
   A30: {
     configs: [
       { compute: 4, memory: 24 },
@@ -144,12 +145,8 @@ const GPU_ALPHA_CONFIG: GpuConfigMap = {
     ],
   },
 };
-
-/**
- * GPU 모델별 MIG 설정
- * 각 모델의 메모리 용량에 따른 MIG 인스턴스 설정
- */
-const GPU_BETA_CONFIGS: GpuConfigMap = {
+/** A100 ~ Current Model Model */
+export const MIG_GPU_BETA_MODEL: GpuConfigMap = {
   "A100-40GB": {
     configs: [
       { compute: 7, memory: 40 },
@@ -214,8 +211,8 @@ const GPU_BETA_CONFIGS: GpuConfigMap = {
     ],
   },
 };
-
-const MIG_INFO_DEMO = {
+/** Current MIG Setting Info Demo */
+export const MIG_INFO_DEMO = {
   nodeName: "worker-1",
   // gpuProduct: "A30",
   // gpuProduct: "A100-40GB",
@@ -241,16 +238,3 @@ const MIG_INFO_DEMO = {
   status: "SUCCESS",
   migKey: "custom",
 };
-
-const nodeMigConstants = {
-  // MIG 정보 데모
-  migInfoDemo: MIG_INFO_DEMO,
-  // GPU 설정
-  gpuAlphaConfigs: GPU_ALPHA_CONFIG,
-  gpuBetaConfigs: GPU_BETA_CONFIGS,
-  // GPU 설정 매핑
-  gpuAlphaConfigMap: GPU_ALPHA_CONFIGMAP,
-  gpuBetaConfigMap: GPU_BETA_CONFIGMAP,
-};
-
-export default nodeMigConstants;

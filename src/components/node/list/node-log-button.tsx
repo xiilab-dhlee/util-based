@@ -43,4 +43,3 @@ export function NodeLogButton({ nodeName }: NodeLogButtonProps) {
     </Button>
   );
 }
-

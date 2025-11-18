@@ -7,7 +7,7 @@ import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-not
  * 모니터링 알림 생성/수정
  */
 export const useUpsertMonitoringNotification = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpsertMonitoringNotificationPayload,
   unknown
@@ -24,4 +24,3 @@ export const useUpsertMonitoringNotification = (): UseMutationResult<
     },
   });
 };
-

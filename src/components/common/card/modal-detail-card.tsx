@@ -19,7 +19,6 @@ export function ModalDetailCard({ records }: ModalDetailCardProps) {
   );
 }
 
-
 const Container = styled.div`
   border-radius: 2px;
   border: 1px solid #e9e9e9;

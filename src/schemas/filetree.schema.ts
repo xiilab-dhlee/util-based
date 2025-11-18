@@ -9,7 +9,7 @@ const baseFileTreeSchema: z.ZodType<{
   fileExtension: string | null;
   fileSize?: string;
   fileCount?: number;
-  children: any[];
+  children: FileTreeType[];
 }> = z.lazy(() =>
   z.object({
     /** 파일/디렉토리 고유 ID */

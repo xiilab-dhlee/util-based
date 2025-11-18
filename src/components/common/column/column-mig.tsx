@@ -34,7 +34,6 @@ export function ColumnMig({ migProfiles }: ColumnMigProps) {
   );
 }
 
-
 const ProfileWrapper = styled.div`
   display: flex;
   justify-content: center;

@@ -22,6 +22,7 @@ import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetNodeMigInfo } from "@/hooks/node/use-get-mig-info";
 import { useUpdateMig } from "@/hooks/node/use-update-mig";
+import type { NodeListType } from "@/schemas/node.schema";
 import type { MigInfo } from "@/types/node/node.model";
 import type { MigGpu, UpdateMigPayload } from "@/types/node/node.type";
 import { MigUtil } from "@/utils/node/mig.util";
@@ -175,66 +176,69 @@ export function UpdateMigModal() {
    * 4. 첫 번째 GPU의 설정을 기본값으로 설정
    * 5. 모달 열기
    */
-  useSubscribe<any>(NODE_EVENTS.sendUpdateMig, async ({ nodeName }) => {
-    // 노드 이름 설정
-    setNodeName(nodeName);
-    // 일괄 적용의 기본 값을 Y로 설정
-    setApplyOnce("Y");
-    // 개수 설정을 기본값으로 설정
-    setSelectedMigCount("DISABLED");
-    // ConfigId 설정을 기본값으로 설정
-    setSelectedMigConfigId(-1);
+  useSubscribe(
+    NODE_EVENTS.sendUpdateMig,
+    async ({ nodeName }: NodeListType) => {
+      // 노드 이름 설정
+      setNodeName(nodeName);
+      // 일괄 적용의 기본 값을 Y로 설정
+      setApplyOnce("Y");
+      // 개수 설정을 기본값으로 설정
+      setSelectedMigCount("DISABLED");
+      // ConfigId 설정을 기본값으로 설정
+      setSelectedMigConfigId(-1);
 
-    try {
-      // MIG 설정 정보 조회
+      try {
+        // MIG 설정 정보 조회
 
-      const { migInfos, gpuProduct, migKey } = await execute({ nodeName });
+        const { migInfos, gpuProduct, migKey } = await execute({ nodeName });
 
-      console.log(migInfos);
+        console.log(migInfos);
 
-      // MIG 정보를 GPU 목록으로 변환
-      // migInfos의 각 항목에서 gpuIndexs 배열을 평면화하여 개별 GPU 항목 생성
-      const migGpus = migInfos
-        .flatMap((migInfo: MigInfo) =>
-          migInfo.gpuIndexs.map((gpuIndex: number) => ({
-            gpuIndex,
-            migEnable: migInfo.migEnable,
-            configId: migInfo.configId || -1,
-          })),
-        )
-        .sort((a: MigGpu, b: MigGpu) => a.gpuIndex - b.gpuIndex); // GPU 인덱스 순으로 정렬
+        // MIG 정보를 GPU 목록으로 변환
+        // migInfos의 각 항목에서 gpuIndexs 배열을 평면화하여 개별 GPU 항목 생성
+        const migGpus = migInfos
+          .flatMap((migInfo: MigInfo) =>
+            migInfo.gpuIndexs.map((gpuIndex: number) => ({
+              gpuIndex,
+              migEnable: migInfo.migEnable,
+              configId: migInfo.configId || -1,
+            })),
+          )
+          .sort((a: MigGpu, b: MigGpu) => a.gpuIndex - b.gpuIndex); // GPU 인덱스 순으로 정렬
 
-      // MIG 키 설정
-      setMigKey(migKey);
-      // GPU 목록 설정
-      setMigGpus(migGpus);
-      // GPU 제품 설정
-      setMigGpuProduct(gpuProduct);
+        // MIG 키 설정
+        setMigKey(migKey);
+        // GPU 목록 설정
+        setMigGpus(migGpus);
+        // GPU 제품 설정
+        setMigGpuProduct(gpuProduct);
 
-      // GPU 목록이 있는 경우
-      if (migGpus.length > 0) {
-        // GPU 목록 첫 번째 인덱스 선택
-        setSelectedMigGpuIndex(migGpus[0].gpuIndex);
+        // GPU 목록이 있는 경우
+        if (migGpus.length > 0) {
+          // GPU 목록 첫 번째 인덱스 선택
+          setSelectedMigGpuIndex(migGpus[0].gpuIndex);
 
-        // 첫 번째 GPU가 MIG 활성화된 경우
-        if (migGpus[0].migEnable) {
-          // GPU 제품을 기반으로 MigUtil 인스턴스 생성하여 인스턴스 개수 계산
-          const util = new MigUtil(gpuProduct);
-          const count = util.getInstanceCount(migGpus[0].configId);
-          // 개수 셀렉트 설정 (count가 0이면 "DISABLED")
-          setSelectedMigCount(count === 0 ? "DISABLED" : count.toString());
-          // config id 설정
-          setSelectedMigConfigId(migGpus[0].configId);
+          // 첫 번째 GPU가 MIG 활성화된 경우
+          if (migGpus[0].migEnable) {
+            // GPU 제품을 기반으로 MigUtil 인스턴스 생성하여 인스턴스 개수 계산
+            const util = new MigUtil(gpuProduct);
+            const count = util.getInstanceCount(migGpus[0].configId);
+            // 개수 셀렉트 설정 (count가 0이면 "DISABLED")
+            setSelectedMigCount(count === 0 ? "DISABLED" : count.toString());
+            // config id 설정
+            setSelectedMigConfigId(migGpus[0].configId);
+          }
         }
-      }
 
-      // 모달 열기
-      onOpen();
-    } catch (error) {
-      console.error(error);
-      toast.error("MIG 설정 정보 조회 중 오류가 발생했습니다.");
-    }
-  });
+        // 모달 열기
+        onOpen();
+      } catch (error) {
+        console.error(error);
+        toast.error("MIG 설정 정보 조회 중 오류가 발생했습니다.");
+      }
+    },
+  );
 
   return (
     <Modal

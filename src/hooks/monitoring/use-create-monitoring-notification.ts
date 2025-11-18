@@ -7,7 +7,7 @@ import type { CreateMonitoringNotificationPayload } from "@/types/monitoring-not
  * 모니터링 알림 생성
  */
 export const useCreateMonitoringNotification = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateMonitoringNotificationPayload,
   unknown
@@ -20,4 +20,3 @@ export const useCreateMonitoringNotification = (): UseMutationResult<
     },
   });
 };
-

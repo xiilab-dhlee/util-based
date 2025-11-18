@@ -27,7 +27,9 @@ export function NotificationRow({
   className,
   ...restProps
 }: NotificationRowProps) {
-  const [selectedNotification, setSelectedNotification] = useAtom(notificationSelectedAtom);
+  const [selectedNotification, setSelectedNotification] = useAtom(
+    notificationSelectedAtom,
+  );
 
   const isActive = selectedNotification === rowData?.id;
 
@@ -49,4 +51,3 @@ export function NotificationRow({
     </tr>
   );
 }
-

@@ -1,10 +1,9 @@
 "use client";
 
 import { Breadcrumb } from "antd";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
-import { useCustomSearchParams } from "@/hooks/common/use-custom-search-params";
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 import { MyIcon } from "./icon";
 
@@ -14,7 +13,7 @@ interface MyBreadcrumbProps {
 
 export function MyBreadcrumb({ items }: MyBreadcrumbProps) {
   const params = useParams();
-  const searchParams = useCustomSearchParams();
+  const searchParams = useSearchParams();
 
   const mapToItems = items.map((item) => {
     const result = {

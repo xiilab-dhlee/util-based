@@ -11,11 +11,10 @@ import { useServices } from "@/providers/service-provider";
 export const useGetNodeMigInfo = () => {
   const { nodeService } = useServices();
 
-  return useLazyQuery<{ nodeName: string }, any>({
+  return useLazyQuery<{ nodeName: string }>({
     queryFn: async ({ nodeName }) => {
       const response = await nodeService.getMigInfo(nodeName);
       return response.data;
     },
   });
 };
-

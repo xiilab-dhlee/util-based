@@ -1,13 +1,13 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
 import { useServices } from "@/providers/service-provider";
-import type { CreateCredentialPayload } from "@/types/credential/credential.interface";
+import type { CreateCredentialPayload } from "@/types/credential/credential.type";
 
 /**
  * 크레덴셜 생성
  */
 export const useCreateCredential = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateCredentialPayload,
   unknown
@@ -15,10 +15,9 @@ export const useCreateCredential = (): UseMutationResult<
   const { credentialService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: CreateCredentialPayload): Promise<any> => {
+    mutationFn: (payload: CreateCredentialPayload) => {
       return credentialService.createCredential(payload);
     },
     onSuccess: () => {},
   });
 };
-

@@ -3,8 +3,8 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-import registrySecurityConstants from "@/constants/security/registry-security.constant";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
+import { vulnerabilityListMock } from "@/mocks/vulnerability.mock";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
@@ -42,28 +42,14 @@ export function SecurityAside() {
               { dataIndex: "medium", title: "Medium" },
               { dataIndex: "low", title: "Low" },
             ])}
-            data={Array.from({
-              length: registrySecurityConstants.scanResultPageSize,
-            }).map((_, index) => ({
-              id: index + 1,
-              imageTag: "Dev Snapshot-1 : v1.2",
-              status: "완료",
-              total: 11,
-              critical: 1,
-              high: 2,
-              medium: 3,
-              low: 5,
-              creatorName: "John Doe",
-              playtime: "11분 18초",
-              creatorDateTime: new Date().toISOString(),
-            }))}
+            data={vulnerabilityListMock}
             activePadding
           />
         </ListWrapper>
         <ListPageFooter
           total={100}
           page={1}
-          pageSize={registrySecurityConstants.scanResultPageSize}
+          pageSize={14}
           onChange={() => {}}
           isLoading={false}
         />

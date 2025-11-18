@@ -48,10 +48,13 @@ export function CreateVolumeFolderModal() {
     };
   };
 
-  useSubscribe(VOLUME_EVENTS.sendCreateVolumeFolder, (eventData: any) => {
-    setFilePath(eventData.filePath);
-    onOpen();
-  });
+  useSubscribe(
+    VOLUME_EVENTS.sendCreateVolumeFolder,
+    (eventData: { filePath: string }) => {
+      setFilePath(eventData.filePath);
+      onOpen();
+    },
+  );
 
   return (
     <Modal

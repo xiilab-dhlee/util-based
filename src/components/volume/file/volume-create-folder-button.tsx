@@ -46,7 +46,6 @@ export function VolumeCreateFolderButton() {
   );
 }
 
-
 // 드롭다운 메뉴 아이템용 스타일된 버튼 컴포넌트
 const StyledButton = styled.button`
   ${myDropdownButtonStyle}

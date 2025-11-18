@@ -7,7 +7,7 @@ import type { UpdateMpsPayload } from "@/types/node/node.type";
  * MPS 설정 수정
  */
 export const useUpdateMps = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpdateMpsPayload,
   unknown

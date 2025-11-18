@@ -21,4 +21,3 @@ export function UpdateMigTooltipTitle() {
     </Typography.Text>
   );
 }
-

@@ -1,6 +1,6 @@
 import type { GetStoragesPayload } from "@/types/storage/storage.interface";
 
-const storageKeys = {
+export const storageKeys = {
   default: ["storage"],
   list: (payload: GetStoragesPayload) => [
     ...storageKeys.default,
@@ -9,5 +9,3 @@ const storageKeys = {
   ],
   listAll: () => [...storageKeys.default, "list", "all"],
 };
-
-export default storageKeys;

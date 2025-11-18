@@ -65,7 +65,6 @@ export function MyDropdown({
   );
 }
 
-
 // 커스텀 드롭다운 스타일 컴포넌트
 const CustomDropdownMenu = styled.div`
   .ant-dropdown-menu {

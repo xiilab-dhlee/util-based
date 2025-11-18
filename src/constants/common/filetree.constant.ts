@@ -8,7 +8,7 @@
 /**
  * 파일 확장자별 타입 정의
  */
-const FILE_EXTENSIONS = {
+export const FILE_EXTENSIONS = {
   images: ["jpg", "jpeg", "png", "gif", "svg", "webp"],
   documents: ["pdf", "doc", "docx", "txt", "md"],
   data: ["csv", "json", "xml", "yaml", "yml"],
@@ -18,12 +18,12 @@ const FILE_EXTENSIONS = {
   configs: ["yaml", "yml", "json", "toml", "ini"],
   logs: ["log", "txt"],
   archives: ["zip", "tar", "gz", "rar"],
-} as const;
+};
 
 /**
  * 파일 크기 범위 정의
  */
-const FILE_SIZE_RANGES = {
+export const FILE_SIZE_RANGES = {
   small: { min: 1, max: 100, unit: "KB" }, // 1KB - 100KB
   medium: { min: 100, max: 1024, unit: "KB" }, // 100KB - 1MB
   large: { min: 1, max: 10, unit: "MB" }, // 1MB - 10MB
@@ -84,7 +84,7 @@ const FILE_SIZE_RANGES = {
  * ├── docker-compose.yml
  * └── .gitignore
  */
-const ML_PROJECT_TEMPLATE = {
+export const ML_PROJECT_TEMPLATE = {
   datasets: {
     train: {
       images: [
@@ -141,29 +141,10 @@ const ML_PROJECT_TEMPLATE = {
   ],
 } as const;
 
-const GROUP_PROJECT_TEMPLATE = {
+export const GROUP_PROJECT_TEMPLATE = {
   "그룹 미지정 계정": {
     "서비스 개발": {
       "AI Model 팀": ["정동주", "김수현", "김민지", "손지원"],
     },
   },
 } as const;
-
-/**
- * 파일 트리 공통 상수
- */
-const filetreeConstants = {
-  /** 파일 확장자별 타입 정의 */
-  fileExtensions: FILE_EXTENSIONS,
-
-  /** 파일 크기 범위 정의 */
-  fileSizeRanges: FILE_SIZE_RANGES,
-
-  /** ML 프로젝트 디렉토리 구조 템플릿 */
-  mlProjectTemplate: ML_PROJECT_TEMPLATE,
-
-  /** 그룹 프로젝트 디렉토리 구조 템플릿 */
-  groupProjectTemplate: GROUP_PROJECT_TEMPLATE,
-};
-
-export default filetreeConstants;

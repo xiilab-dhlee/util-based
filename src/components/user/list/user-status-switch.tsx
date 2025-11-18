@@ -39,4 +39,3 @@ export function UserStatusSwitch() {
 
   return <Switch checked={checked} onChange={handleChange} />;
 }
-

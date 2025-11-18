@@ -62,7 +62,7 @@ export class AxiosService {
   private async getCachedSession(): Promise<CustomSession | null> {
     // 캐시가 유효하면 캐시된 세션 반환
     if (this.isCacheValid()) {
-      return this.sessionCache!.session;
+      return this.sessionCache?.session ?? null;
     }
 
     // 캐시가 없거나 만료되었으면 새로 조회
@@ -110,11 +110,11 @@ export class AxiosService {
     // 요청 인터셉터 설정
     this.requestInterceptorId = this.axios.interceptors.request.use(
       async (config) => {
-        if (!config.headers["Authorization"] && this.isAuth) {
+        if (!config.headers.Authorization && this.isAuth) {
           const session = await this.getCachedSession();
 
           if (session?.accessToken) {
-            config.headers["Authorization"] = `Bearer ${session.accessToken}`;
+            config.headers.Authorization = `Bearer ${session.accessToken}`;
           }
         }
         return config;
@@ -145,8 +145,7 @@ export class AxiosService {
           try {
             const refreshedSession = await this.getCachedSession();
             if (refreshedSession?.accessToken) {
-              originalRequest.headers["Authorization"] =
-                `Bearer ${refreshedSession.accessToken}`;
+              originalRequest.headers.Authorization = `Bearer ${refreshedSession.accessToken}`;
               return this.axios(originalRequest);
             }
           } catch (refreshError) {

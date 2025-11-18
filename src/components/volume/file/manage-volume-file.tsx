@@ -11,9 +11,9 @@ import { MyDropdown } from "@/components/common/dropdown";
 import { RootCustomFileNode } from "@/components/common/tree/custom-file-node";
 import { CustomFileTree } from "@/components/common/tree/custom-file-tree";
 import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
-import securityConstants from "@/constants/security/security.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetVolumeFiles } from "@/hooks/volume/use-get-volume-files";
+import { vulnerabilityListMock } from "@/mocks/vulnerability.mock";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
@@ -87,10 +87,7 @@ export function ManageVolumeFile() {
    * 데모 데이터를 사용하여 취약점 정보를 표시
    */
   const handleShowVulnerability = () => {
-    publish(
-      COMMON_EVENTS.sendVulnerability,
-      securityConstants.vulnerabilityDemo,
-    );
+    publish(COMMON_EVENTS.sendVulnerability, vulnerabilityListMock);
   };
 
   /**

@@ -135,56 +135,56 @@ export const memberEditDataAtom = atom<Member | null>(null);
 /**
  * 알림 설정 모달 열기 액션 atom
  */
-export const openNotificationSettingModalAtom = atom(null, (get, set) => {
+export const openNotificationSettingModalAtom = atom(null, (_, set) => {
   set(notificationSettingModalOpenAtom, true);
 });
 
 /**
  * 알림 설정 모달 닫기 액션 atom
  */
-export const closeNotificationSettingModalAtom = atom(null, (get, set) => {
+export const closeNotificationSettingModalAtom = atom(null, (_, set) => {
   set(notificationSettingModalOpenAtom, false);
 });
 
 /**
  * 리소스 설정 모달 열기 액션 atom
  */
-export const openResourceSettingModalAtom = atom(null, (get, set) => {
+export const openResourceSettingModalAtom = atom(null, (_, set) => {
   set(resourceSettingModalOpenAtom, true);
 });
 
 /**
  * 리소스 설정 모달 닫기 액션 atom
  */
-export const closeResourceSettingModalAtom = atom(null, (get, set) => {
+export const closeResourceSettingModalAtom = atom(null, (_, set) => {
   set(resourceSettingModalOpenAtom, false);
 });
 
 /**
  * 멤버 추가 모달 열기 액션 atom
  */
-export const openMemberAddModalAtom = atom(null, (get, set) => {
+export const openMemberAddModalAtom = atom(null, (_, set) => {
   set(memberAddModalOpenAtom, true);
 });
 
 /**
  * 멤버 추가 모달 닫기 액션 atom
  */
-export const closeMemberAddModalAtom = atom(null, (get, set) => {
+export const closeMemberAddModalAtom = atom(null, (_, set) => {
   set(memberAddModalOpenAtom, false);
 });
 
 /**
  * 크레덴셜 추가 모달 열기 액션 atom
  */
-export const openCredentialAddModalAtom = atom(null, (get, set) => {
+export const openCredentialAddModalAtom = atom(null, (_, set) => {
   set(credentialAddModalOpenAtom, true);
 });
 
 /**
  * 크레덴셜 추가 모달 닫기 액션 atom
  */
-export const closeCredentialAddModalAtom = atom(null, (get, set) => {
+export const closeCredentialAddModalAtom = atom(null, (_, set) => {
   set(credentialAddModalOpenAtom, false);
 });
 
@@ -193,7 +193,7 @@ export const closeCredentialAddModalAtom = atom(null, (get, set) => {
  */
 export const openMemberDeleteModalAtom = atom(
   null,
-  (get, set, member: Member) => {
+  (_, set, member: Member) => {
     set(memberDeleteDataAtom, member);
     set(memberDeleteModalOpenAtom, true);
   },
@@ -202,7 +202,7 @@ export const openMemberDeleteModalAtom = atom(
 /**
  * 멤버 삭제 모달 닫기 액션 atom
  */
-export const closeMemberDeleteModalAtom = atom(null, (get, set) => {
+export const closeMemberDeleteModalAtom = atom(null, (_, set) => {
   set(memberDeleteModalOpenAtom, false);
   set(memberDeleteDataAtom, null);
 });
@@ -212,7 +212,7 @@ export const closeMemberDeleteModalAtom = atom(null, (get, set) => {
  */
 export const openMemberDetailModalAtom = atom(
   null,
-  (get, set, member: Member) => {
+  (_, set, member: Member) => {
     set(memberDetailDataAtom, member);
     set(memberDetailModalOpenAtom, true);
   },
@@ -221,7 +221,7 @@ export const openMemberDetailModalAtom = atom(
 /**
  * 멤버 상세 모달 닫기 액션 atom
  */
-export const closeMemberDetailModalAtom = atom(null, (get, set) => {
+export const closeMemberDetailModalAtom = atom(null, (_, set) => {
   set(memberDetailModalOpenAtom, false);
   set(memberDetailDataAtom, null);
 });
@@ -229,18 +229,15 @@ export const closeMemberDetailModalAtom = atom(null, (get, set) => {
 /**
  * 멤버 정보 수정 모달 열기 액션 atom
  */
-export const openMemberEditModalAtom = atom(
-  null,
-  (get, set, member: Member) => {
-    set(memberEditDataAtom, member);
-    set(memberEditModalOpenAtom, true);
-  },
-);
+export const openMemberEditModalAtom = atom(null, (_, set, member: Member) => {
+  set(memberEditDataAtom, member);
+  set(memberEditModalOpenAtom, true);
+});
 
 /**
  * 멤버 정보 수정 모달 닫기 액션 atom
  */
-export const closeMemberEditModalAtom = atom(null, (get, set) => {
+export const closeMemberEditModalAtom = atom(null, (_, set) => {
   set(memberEditModalOpenAtom, false);
   set(memberEditDataAtom, null);
 });
@@ -270,7 +267,7 @@ export const requestReasonDataAtom = atom<ResourceRequest | null>(null);
  */
 export const openRejectionReasonModalAtom = atom(
   null,
-  (get, set, resourceRequest: ResourceRequest) => {
+  (_, set, resourceRequest: ResourceRequest) => {
     set(rejectionReasonDataAtom, resourceRequest);
     set(rejectionReasonModalOpenAtom, true);
   },
@@ -279,7 +276,7 @@ export const openRejectionReasonModalAtom = atom(
 /**
  * 반려 사유 모달 닫기 액션 atom
  */
-export const closeRejectionReasonModalAtom = atom(null, (get, set) => {
+export const closeRejectionReasonModalAtom = atom(null, (_, set) => {
   set(rejectionReasonModalOpenAtom, false);
   set(rejectionReasonDataAtom, null);
 });
@@ -289,7 +286,7 @@ export const closeRejectionReasonModalAtom = atom(null, (get, set) => {
  */
 export const openRequestReasonModalAtom = atom(
   null,
-  (get, set, resourceRequest: ResourceRequest) => {
+  (_, set, resourceRequest: ResourceRequest) => {
     set(requestReasonDataAtom, resourceRequest);
     set(requestReasonModalOpenAtom, true);
   },
@@ -298,7 +295,7 @@ export const openRequestReasonModalAtom = atom(
 /**
  * 요청 사유 모달 닫기 액션 atom
  */
-export const closeRequestReasonModalAtom = atom(null, (get, set) => {
+export const closeRequestReasonModalAtom = atom(null, (_, set) => {
   set(requestReasonModalOpenAtom, false);
   set(requestReasonDataAtom, null);
 });

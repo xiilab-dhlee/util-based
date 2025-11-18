@@ -7,7 +7,7 @@ import type { UpdateNodeSchedulingPayload } from "@/types/node/node.type";
  * 노드 스케쥴링 설정
  */
 export const useUpdateNodeSchedule = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpdateNodeSchedulingPayload,
   unknown

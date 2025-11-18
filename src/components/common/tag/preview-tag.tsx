@@ -35,4 +35,3 @@ export function PreviewTag({ labels, height }: PreviewTagProps) {
     </>
   );
 }
-

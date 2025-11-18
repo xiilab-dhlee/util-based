@@ -9,6 +9,7 @@
   },
   // 다른 linter 비활성화 (충돌 방지)
   "eslint.enable": false,
+  "prettier.enable": false,
   // TypeScript의 기본 검사는 유지하되, Biome가 linting 담당
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"

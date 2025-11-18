@@ -7,7 +7,7 @@ import type { CreateBmcPayload } from "@/types/node/redfish.interface";
  * BMC 등록
  */
 export const useCreateBmc = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateBmcPayload,
   unknown
@@ -20,4 +20,3 @@ export const useCreateBmc = (): UseMutationResult<
     },
   });
 };
-

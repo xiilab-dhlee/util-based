@@ -44,3 +44,4 @@ export const workspaceMemberListSchema = baseWorkspaceMemberSchema.pick({
  * 워크스페이스 멤버 목록 타입
  */
 export type WorkspaceMemberListType = z.infer<typeof workspaceMemberListSchema>;
+export type WorkspaceMemberIdType = WorkspaceMemberListType["id"];

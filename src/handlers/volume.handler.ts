@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
 
-import filetreeConstants from "@/constants/common/filetree.constant";
+import { ML_PROJECT_TEMPLATE } from "@/constants/common/filetree.constant";
 import { volumeDetailMock, volumeListMock } from "@/mocks/volume.mock";
 import { generateCustomTree } from "@/utils/common/filetree-generator.util";
 
@@ -22,9 +22,7 @@ export const volumeHandlers = [
   // 볼륨 파일 목록 조회
   http.get("/core-api/v1/core/volume/:id/files/list", () => {
     return HttpResponse.json({
-      content: generateCustomTree(
-        filetreeConstants.mlProjectTemplate,
-      ),
+      content: generateCustomTree(ML_PROJECT_TEMPLATE),
       directoryCnt: 10,
       total: 100,
     });

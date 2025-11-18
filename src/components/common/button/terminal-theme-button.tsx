@@ -7,17 +7,14 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { terminalThemeAtom } from "@/atoms/common/terminal.atom";
-import terminalConstants from "@/constants/common/terminal.constant";
+import { TERMINAL_THEME_LIST } from "@/constants/common/terminal.constant";
 import { useLocalStorage } from "@/hooks/common/use-local-storage";
 import { toolButtonStyle } from "@/styles/mixins/button";
 import { createTermBgClasses } from "@/styles/mixins/terminal";
 
 export function TerminalThemeButton() {
   const [terminalTheme, setTerminalTheme] = useAtom(terminalThemeAtom);
-  const [, setThemeType] = useLocalStorage(
-    "terminalTheme",
-    terminalConstants.defaultTheme,
-  );
+  const [, setThemeType] = useLocalStorage("terminalTheme", "MaterialDark");
 
   // 테마 변경 핸들러
   const handleClickThemeOption = (theme: string) => {
@@ -31,7 +28,7 @@ export function TerminalThemeButton() {
     <Container>
       <Title>배경 색상 선택</Title>
       <OptionList>
-        {Object.keys(terminalConstants.themes).map((v) => (
+        {Object.keys(TERMINAL_THEME_LIST).map((v) => (
           <Option
             key={v}
             onClick={() => handleClickThemeOption(v)}
@@ -111,4 +108,3 @@ const Option = styled.div`
 
   ${createTermBgClasses()}
 `;
-

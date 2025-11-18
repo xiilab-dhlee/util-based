@@ -69,7 +69,6 @@ export function WorkloadLogBody() {
   );
 }
 
-
 const Container = styled.div<{ theme?: string }>`
   position: relative;
   flex: 1;

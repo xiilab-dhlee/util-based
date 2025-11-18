@@ -31,7 +31,6 @@ export const ActiveOutsideClick: FC<Props> = ({ onClick, children }) => {
   return <Container ref={ref}>{children}</Container>;
 };
 
-
 const Container = styled.div`
   width: 100%;
   height: 100%;

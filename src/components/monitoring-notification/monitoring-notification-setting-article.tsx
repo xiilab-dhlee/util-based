@@ -6,7 +6,7 @@ import { Typography } from "xiilab-ui";
 
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/constants/monitoring/monitoring-notification.constant";
-import { useGetMonitoringNotificationSettings } from "@/hooks/monitoring/use-get-monitoring-notification-settings";
+import { useGetMonitoringNotifications } from "@/hooks/monitoring/use-get-monitoring-notifications";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 import { createMonitoringNotificationColumn } from "../common/column/create-monitoring-notification-column";
@@ -14,9 +14,10 @@ import { createMonitoringNotificationColumn } from "../common/column/create-moni
 export function MonitoringNotificationSettingArticle() {
   const [page, setPage] = useState(1);
 
-  const { data } = useGetMonitoringNotificationSettings({
+  const { data } = useGetMonitoringNotifications({
     page,
     size: MONITORING_NOTIFICATION_PAGE_SIZE,
+    searchText: "",
   });
 
   return (

@@ -7,7 +7,7 @@ import type { UpdateBmcPayload } from "@/types/node/redfish.interface";
  * BMC 수정
  */
 export const useUpdateBmc = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpdateBmcPayload,
   unknown
@@ -20,4 +20,3 @@ export const useUpdateBmc = (): UseMutationResult<
     },
   });
 };
-

@@ -11,8 +11,11 @@ import {
 } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
-import { useUpsertMonitoringNotification } from "@/hooks/monitoring/use-upsert-notification";
-import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
+import { useUpsertMonitoringNotification } from "@/hooks/monitoring/use-upsert-monitoring-notification";
+import type {
+  MonitoringNotificationListType,
+  MonitoringNotificationSettingType,
+} from "@/schemas/monitoring-notification.schema";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-notification/monitoring-notification.type";
 import { FormLabel } from "../common/form/form-label";
@@ -78,7 +81,7 @@ export function ManageMonitoringNotificationModal() {
       isEmail,
       isSystem,
       settings,
-    }: UpsertMonitoringNotificationPayload) => {
+    }: MonitoringNotificationListType) => {
       if (id) {
         setId(id);
       } else {

@@ -1,12 +1,7 @@
 "use client";
 
-import ReportFilter from "./report-filter";
+import { ReportFilter } from "./report-filter";
 
 export function SystemReportMain() {
-  return (
-    <>
-      <ReportFilter />
-    </>
-  );
+  return <ReportFilter />;
 }
-

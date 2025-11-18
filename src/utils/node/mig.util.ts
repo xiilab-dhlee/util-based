@@ -1,5 +1,10 @@
 import type { MySelectOption } from "@/components/common/select";
-import nodeMigConstants from "@/constants/node/node-mig.constant";
+import {
+  MIG_GPU_ALPHA_CONFIG,
+  MIG_GPU_ALPHA_MODEL,
+  MIG_GPU_BETA_CONFIG,
+  MIG_GPU_BETA_MODEL,
+} from "@/constants/node/mig.constant";
 import type { GpuModelConfig } from "@/types/node/node.type";
 
 /**
@@ -13,9 +18,9 @@ export class MigUtil {
 
   constructor(private readonly gpuProduct: string) {
     if (this.gpuProduct === "A30") {
-      this.configMappings = nodeMigConstants.gpuAlphaConfigMap;
+      this.configMappings = MIG_GPU_ALPHA_CONFIG;
     } else {
-      this.configMappings = nodeMigConstants.gpuBetaConfigMap;
+      this.configMappings = MIG_GPU_BETA_CONFIG;
     }
   }
 
@@ -170,9 +175,9 @@ export class MigUtil {
   private getMemoryConfig() {
     let gpuConfig: GpuModelConfig;
     if (this.gpuProduct === "A30") {
-      gpuConfig = nodeMigConstants.gpuAlphaConfigs[this.gpuProduct];
+      gpuConfig = MIG_GPU_ALPHA_MODEL[this.gpuProduct];
     } else {
-      gpuConfig = nodeMigConstants.gpuBetaConfigs[this.gpuProduct];
+      gpuConfig = MIG_GPU_BETA_MODEL[this.gpuProduct];
     }
 
     return gpuConfig.configs.reduce(

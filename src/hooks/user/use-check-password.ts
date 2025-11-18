@@ -7,7 +7,7 @@ import type { CheckPasswordPayload } from "@/types/user/user.type";
  * 비밀번호 재확인
  */
 export const useCheckPassword = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CheckPasswordPayload,
   unknown
@@ -15,10 +15,9 @@ export const useCheckPassword = (): UseMutationResult<
   const { userService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: CheckPasswordPayload): Promise<any> => {
+    mutationFn: (payload: CheckPasswordPayload) => {
       return userService.checkPassword(payload);
     },
     onSuccess: () => {},
   });
 };
-

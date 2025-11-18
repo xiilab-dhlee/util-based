@@ -35,7 +35,6 @@ export function ResourceProgress({
   );
 }
 
-
 const Container = styled.div<{
   $height: number;
   $borderRadius: number;

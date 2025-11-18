@@ -18,8 +18,8 @@ export class BasicAuthAxiosService {
 
     _axios.interceptors.request.use(
       (config) => {
-        if (!config.headers["Authorization"]) {
-          config.headers["Authorization"] = `Basic ${encodedCredentials}`;
+        if (!config.headers.Authorization) {
+          config.headers.Authorization = `Basic ${encodedCredentials}`;
         }
 
         return config;

@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import { notificationSelectedAtom } from "@/atoms/notification/notification-list.atom";
-import { withSafeProps } from "@/components/common/hoc/with-safe-props";
 import { MyIcon } from "@/components/common/icon";
 import type { NotificationListType } from "@/schemas/notification.schema";
 
@@ -20,7 +19,7 @@ interface NotificationCardProps extends NotificationListType {
  * 알림 정보를 카드 형태로 표시하며, 클릭 시 상세 페이지로 이동합니다.
  * 알림 타입과 우선순위 정보를 포함한 알림의 주요 정보를 시각적으로 표시합니다.
  */
-export function NotificationCardComponent({
+export function NotificationCard({
   id,
   title,
   type,
@@ -39,13 +38,17 @@ export function NotificationCardComponent({
 
   // 알림 타입에 따른 아이콘 반환
   const getNotificationIcon = () => {
-    const iconMap = {
-      INFO: "Information",
-      WARNING: "Warning",
-      ERROR: "Error",
-      SUCCESS: "Success",
-    };
-    return <MyIcon name={iconMap[type]} />;
+    let icon = "";
+    if (type === "INFO") {
+      icon = "Information";
+    } else if (type === "WARNING") {
+      icon = "Warning";
+    } else if (type === "ERROR") {
+      icon = "Error";
+    } else if (type === "SUCCESS") {
+      icon = "Success";
+    }
+    return <MyIcon name={icon} />;
   };
 
   return (
@@ -87,19 +90,6 @@ export function NotificationCardComponent({
     </Card>
   );
 }
-
-/**
- * NotificationCard 컴포넌트
- *
- * withSafeProps HOC로 감싸진 알림 카드 컴포넌트입니다.
- * props의 안전성을 보장하고 에러 경계를 제공합니다.
- *
- * @param props - Notification 타입의 props
- * @returns 안전성이 보장된 알림 카드 컴포넌트
- */
-const NotificationCard = (props: NotificationCardProps) => {
-  return withSafeProps(NotificationCardComponent)(props);
-};
 
 // ===== Styled Components =====
 

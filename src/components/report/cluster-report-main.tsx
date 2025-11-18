@@ -44,7 +44,6 @@ export function ClusterReportMain() {
   );
 }
 
-
 const Body = styled.div`
   flex: 1;
   display: flex;

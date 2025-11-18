@@ -1,4 +1,3 @@
-import storageListConstants from "@/constants/storage/storage-list.constant";
 import { AxiosService } from "@/services/common/axios";
 import type { GetStoragesPayload } from "@/types/storage/storage.interface";
 import { payloadToParams } from "@/utils/common/service.util";
@@ -10,7 +9,6 @@ export class StorageService extends AxiosService {
   public async getList(payload: GetStoragesPayload) {
     const params = payloadToParams(payload);
 
-    return { storages: storageListConstants.listDemo, total: 100, params };
+    return this.getAxios().get(`${this.BASE_URL}`, { params });
   }
 }
-

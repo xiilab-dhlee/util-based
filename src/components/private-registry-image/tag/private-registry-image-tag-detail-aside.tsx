@@ -31,11 +31,7 @@ export function PrivateRegistryImageTagDetailAside() {
         title="검증 진행중인 목록"
         titleExtra={`총 ${data?.totalSize}개`}
       >
-        {/* <TagBody>
-          {data?.content?.map((item) => (
-            <PrivateRegistryImageTagCard key={item.id} {...item} />
-          ))}
-        </TagBody> */}
+        <TagBody></TagBody>
       </AsideFillCard>
     </DetailPageAside>
   );

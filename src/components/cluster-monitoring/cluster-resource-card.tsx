@@ -26,7 +26,6 @@ export function ClusterResourceCard({
   );
 }
 
-
 const Container = styled.div`
   border: 1px solid #d1d5dc;
   display: flex;

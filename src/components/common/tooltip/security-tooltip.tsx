@@ -47,7 +47,6 @@ export function SecurityTooltip({
   );
 }
 
-
 const SecurityWrapper = styled.div`
   display: flex;
   justify-content: center;

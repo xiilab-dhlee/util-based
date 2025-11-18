@@ -58,7 +58,7 @@ export function QueryProvider({ children }: PropsWithChildren) {
           },
         }),
         mutationCache: new MutationCache({
-          onError: (error, variables, context, mutation) => {
+          onError: (error, _variables, _context, mutation) => {
             // 🎯 전역 뮤테이션 에러 처리
             const queryKey = mutation.options.mutationKey || ["unknown"];
 

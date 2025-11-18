@@ -3,7 +3,10 @@
 import { useAtomValue } from "jotai";
 
 import { migGpuProductAtom } from "@/atoms/node/node-list.atom";
-import nodeMigConstants from "@/constants/node/node-mig.constant";
+import {
+  MIG_GPU_ALPHA_MODEL,
+  MIG_GPU_BETA_MODEL,
+} from "@/constants/node/mig.constant";
 import { GenerateDisplayConfigAlpha } from "./generate-display-config-alpha";
 import { GenerateDisplayConfigBeta } from "./generate-display-config-beta";
 
@@ -38,14 +41,14 @@ export function SelectDisplayConfig() {
 
     // A30 GPU는 특별한 처리가 필요한 Alpha 컴포넌트 사용
     if (gpuProduct === "A30") {
-      const gpuConfig = nodeMigConstants.gpuAlphaConfigs[gpuProduct];
+      const gpuConfig = MIG_GPU_ALPHA_MODEL[gpuProduct];
       if (gpuConfig) {
         return <GenerateDisplayConfigAlpha config={gpuConfig} />;
       }
     }
 
     // 다른 GPU 제품들은 Beta 설정을 사용
-    const gpuConfig = nodeMigConstants.gpuBetaConfigs[gpuProduct];
+    const gpuConfig = MIG_GPU_BETA_MODEL[gpuProduct];
     if (gpuConfig) {
       return <GenerateDisplayConfigBeta config={gpuConfig} />;
     }

@@ -20,4 +20,3 @@ export function ClusterResourceListFilter() {
     </MySearchFilter>
   );
 }
-

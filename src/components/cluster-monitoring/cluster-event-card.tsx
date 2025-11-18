@@ -33,7 +33,6 @@ export function ClusterEventCard() {
   );
 }
 
-
 const Container = styled.div`
   height: 94px;
   border-radius: 4px;

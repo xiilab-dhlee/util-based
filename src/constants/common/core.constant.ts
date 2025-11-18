@@ -1,7 +1,4 @@
-import type {
-  CoreBreadcrumbItem,
-  CoreThemeOption,
-} from "@/types/common/core.model";
+import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 /** 목록 페이지 크기 */
 export const LIST_PAGE_SIZE = 20;
 /** 카드 페이지 크기 */
@@ -32,36 +29,3 @@ export const ADMIN_ROOT_BREADCRUMB_ITEM: CoreBreadcrumbItem = {
   icon: "Monitoring01",
   href: "/admin/monitoring",
 };
-/** 기본 테마 옵션 */
-export const THEME_OPTIONS: CoreThemeOption[] = [
-  {
-    key: "theme-primary",
-    name: "기본 테마 1",
-    previewClass: "theme-primary",
-  },
-  {
-    key: "theme-secondary",
-    name: "기본 테마 2",
-    previewClass: "theme-secondary",
-  },
-  {
-    key: "theme-tertiary",
-    name: "기본 테마 3",
-    previewClass: "theme-tertiary",
-  },
-  {
-    key: "theme-quaternary",
-    name: "기본 테마 4",
-    previewClass: "theme-quaternary",
-  },
-  {
-    key: "theme-quinary",
-    name: "기본 테마 5",
-    previewClass: "theme-quinary",
-  },
-  {
-    key: "theme-senary",
-    name: "기본 테마 6",
-    previewClass: "theme-senary",
-  },
-];

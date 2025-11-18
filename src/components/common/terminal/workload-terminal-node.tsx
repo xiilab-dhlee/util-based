@@ -11,7 +11,7 @@ import { Arthur } from "xterm-theme";
 
 import { terminalThemeAtom } from "@/atoms/common/terminal.atom";
 import { MyIcon } from "@/components/common/icon";
-import terminalConstants from "@/constants/common/terminal.constant";
+import { TERMINAL_THEME_LIST } from "@/constants/common/terminal.constant";
 import {
   createTermBgClasses,
   createTermFgClasses,
@@ -254,7 +254,7 @@ export function WorkloadTerminalNode({
           }
         } else if (type === "ERROR") {
           // 에러 발생 시 메시지 표시
-          term.current?.write(c.cyan("에러가 발생했습니다.") + "\r\n");
+          term.current?.write(`${c.cyan("에러가 발생했습니다.")}\r\n`);
         }
       };
 
@@ -276,7 +276,7 @@ export function WorkloadTerminalNode({
    */
   useEffect(() => {
     if (term.current && resultTheme) {
-      term.current.options.theme = terminalConstants.themes[resultTheme];
+      term.current.options.theme = TERMINAL_THEME_LIST[resultTheme];
     }
   }, [resultTheme]);
 
@@ -374,9 +374,9 @@ export function WorkloadTerminalNode({
         {/* 터미널 삭제 버튼 (단독 터미널이 아닌 경우에만 표시) */}
         <div>
           {!isSingle && (
-            <span role="button" onClick={(evt) => onDelete?.(evt, x, y)}>
+            <button type="button" onClick={(evt) => onDelete?.(evt, x, y)}>
               <MyIcon name="Close" color="var(--icon-fill)" />
-            </span>
+            </button>
           )}
         </div>
       </Header>

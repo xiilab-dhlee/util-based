@@ -1,6 +1,6 @@
 import type { GetNotificationsPayload } from "@/types/notification/notification.type";
 
-const notificationKeys = {
+export const notificationKeys = {
   default: ["notification"],
   list: (payload: GetNotificationsPayload) => [
     ...notificationKeys.default,
@@ -9,6 +9,3 @@ const notificationKeys = {
   ],
   detail: (id: string) => [...notificationKeys.default, "detail", id],
 };
-
-export default notificationKeys;
-

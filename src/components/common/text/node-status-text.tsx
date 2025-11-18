@@ -13,4 +13,3 @@ export function NodeStatusText({ status, text }: NodeStatusTextProps) {
 
   return <Label variant={variant as LabelColorVariant}>{text}</Label>;
 }
-

@@ -5,14 +5,18 @@ import { useServices } from "@/providers/service-provider";
 /**
  * 사용자 삭제
  */
-export const useDeleteUser = (): UseMutationResult<any, Error, string[], unknown> => {
+export const useDeleteUser = (): UseMutationResult<
+  unknown,
+  Error,
+  string[],
+  unknown
+> => {
   const { userService } = useServices();
 
   return useMutation({
-    mutationFn: (users: string[]): Promise<any> => {
+    mutationFn: (users: string[]) => {
       return userService.deleteUser(users);
     },
     onSuccess: () => {},
   });
 };
-

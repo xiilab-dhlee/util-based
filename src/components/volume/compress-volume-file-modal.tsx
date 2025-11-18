@@ -37,10 +37,13 @@ export function CompressVolumeFileModal() {
     });
   };
 
-  useSubscribe(VOLUME_EVENTS.sendCompressVolumeFile, (eventData: any) => {
-    setFilePaths(eventData.filePaths);
-    onOpen();
-  });
+  useSubscribe(
+    VOLUME_EVENTS.sendCompressVolumeFile,
+    (eventData: { filePaths: string[] }) => {
+      setFilePaths(eventData.filePaths);
+      onOpen();
+    },
+  );
 
   return (
     <InfoModal

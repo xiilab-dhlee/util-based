@@ -1,14 +1,15 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 
-import storageKeys from "@/constants/storage/storage.key";
+import { storageKeys } from "@/constants/storage/storage.key";
 import { useServices } from "@/providers/service-provider";
-import type { Storage } from "@/types/storage/storage.model";
+import type { StorageListType } from "@/schemas/storage.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 
 /**
  * 스토리지 전체 목록 조회
  */
 export const useGetAllStorages = (): UseQueryResult<
-  { storages: Storage[]; total: number },
+  CoreListResponse<StorageListType>,
   Error
 > => {
   const { storageService } = useServices();
@@ -16,12 +17,11 @@ export const useGetAllStorages = (): UseQueryResult<
   return useQuery({
     queryKey: storageKeys.listAll(),
     queryFn: async () => {
-      const { storages, total } = await storageService.getList({
+      const response = await storageService.getList({
         page: 1,
         size: 100,
       });
-      return { storages, total };
+      return response.data;
     },
   });
 };
-

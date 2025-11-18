@@ -11,7 +11,10 @@ import {
 import Split from "split.js";
 import styled from "styled-components";
 
-import terminalConstants from "@/constants/common/terminal.constant";
+import {
+  TERMINAL_MAX_HCNT,
+  TERMINAL_MAX_VCNT,
+} from "@/constants/common/terminal.constant";
 import type {
   TerminalEventProps,
   TerminalPaneState,
@@ -93,9 +96,9 @@ export function WorkloadTerminalPane({
    * 드래그 시작 시 호출되는 핸들러
    * 드래그 상태를 true로 설정
    */
-  const handleDragStart = () => {
+  const handleDragStart = useCallback(() => {
     isDragRef.current = true;
-  };
+  }, []);
 
   /**
    * 드래그 종료 시 호출되는 핸들러
@@ -150,7 +153,14 @@ export function WorkloadTerminalPane({
         onDragEnd: handleDragEnd, // 드래그 종료 핸들러
       });
     }
-  }, [terminals.length, panes.length, x, handleDragEnd, terminals]);
+  }, [
+    terminals.length,
+    // panes.length,
+    x,
+    handleDragStart,
+    handleDragEnd,
+    terminals,
+  ]);
 
   return (
     <Container
@@ -176,12 +186,11 @@ export function WorkloadTerminalPane({
             // 수평 분할 버튼 표시 여부 (마지막 터미널이고 최대 개수에 도달하지 않았을 때)
             isShowAddHorizon={
               terminals.length - 1 === y &&
-              terminalConstants.maxHcount !== terminals.length
+              TERMINAL_MAX_HCNT !== terminals.length
             }
             // 수직 분할 버튼 표시 여부 (마지막 pane이고 최대 개수에 도달하지 않았을 때)
             isShowAddVertical={
-              panes.length - 1 === x &&
-              terminalConstants.maxVcount !== panes.length
+              panes.length - 1 === x && TERMINAL_MAX_VCNT !== panes.length
             }
             workspaceId={workspaceId}
             workloadId={workloadId}

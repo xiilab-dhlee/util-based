@@ -12,4 +12,3 @@ export const workloadEnvColumn: ResponsiveColumnType[] = [
     align: "left",
   },
 ];
-

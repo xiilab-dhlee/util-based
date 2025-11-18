@@ -25,7 +25,7 @@ export const updateWorkspaceModalDataAtom =
  */
 export const openUpdateWorkspaceModalWithDataAtom = atom(
   null,
-  (get, set, data: UpdateWorkspaceModalData) => {
+  (_, set, data: UpdateWorkspaceModalData) => {
     set(updateWorkspaceModalDataAtom, data);
     set(openUpdateWorkspaceModalAtom, true);
   },
@@ -34,7 +34,7 @@ export const openUpdateWorkspaceModalWithDataAtom = atom(
 /**
  * 워크스페이스 수정 모달을 닫고 데이터를 초기화하는 액션 atom
  */
-export const closeUpdateWorkspaceModalAtom = atom(null, (get, set) => {
+export const closeUpdateWorkspaceModalAtom = atom(null, (_, set) => {
   set(openUpdateWorkspaceModalAtom, false);
   set(updateWorkspaceModalDataAtom, null);
 });
@@ -63,7 +63,7 @@ export const deleteSingleWorkspaceModalDataAtom =
  */
 export const openDeleteSingleWorkspaceModalWithDataAtom = atom(
   null,
-  (get, set, data: DeleteSingleWorkspaceModalData) => {
+  (_, set, data: DeleteSingleWorkspaceModalData) => {
     set(deleteSingleWorkspaceModalDataAtom, data);
     set(openDeleteSingleWorkspaceModalAtom, true);
   },
@@ -72,7 +72,7 @@ export const openDeleteSingleWorkspaceModalWithDataAtom = atom(
 /**
  * 워크스페이스 삭제 모달을 닫고 데이터를 초기화하는 액션 atom
  */
-export const closeDeleteSingleWorkspaceModalAtom = atom(null, (get, set) => {
+export const closeDeleteSingleWorkspaceModalAtom = atom(null, (_, set) => {
   set(openDeleteSingleWorkspaceModalAtom, false);
   set(deleteSingleWorkspaceModalDataAtom, null);
 });

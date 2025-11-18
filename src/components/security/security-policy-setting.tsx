@@ -30,8 +30,8 @@ export function SecurityPolicySetting({
         <Switch checked={checked} onChange={handleChange} />
       </Header>
       <Body>
-        {descriptions.map(({ variant, content }, i) => (
-          <Typography.Text variant={variant} color="#484848" key={i}>
+        {descriptions.map(({ variant, content }) => (
+          <Typography.Text variant={variant} color="#484848" key={content}>
             {content}
           </Typography.Text>
         ))}
@@ -39,7 +39,6 @@ export function SecurityPolicySetting({
     </Container>
   );
 }
-
 
 const Container = styled.div`
   flex: 1;

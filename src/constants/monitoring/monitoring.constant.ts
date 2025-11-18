@@ -1,6 +1,4 @@
-import type { CoreResourceType } from "@/types/common/core.interface";
-
-const QUICK_MENUS = [
+export const MONITORING_QUICK_MENUS = [
   {
     title: "시스템 모니터링",
     titleEng: "System Monitoring",
@@ -23,41 +21,3 @@ const QUICK_MENUS = [
     href: "/admin/monitoring-notification",
   },
 ];
-
-const RESOURCES = [
-  {
-    label: "GPU" as CoreResourceType,
-    unit: "개",
-    total: 100,
-    usage: 45,
-    request: 35,
-  },
-  {
-    label: "CPU" as CoreResourceType,
-    unit: "Core",
-    total: 100,
-    usage: 45,
-    request: 35,
-  },
-  {
-    label: "MEM" as CoreResourceType,
-    unit: "GB",
-    total: 100,
-    usage: 45,
-    request: 35,
-  },
-  {
-    label: "DISK" as CoreResourceType,
-    unit: "TB",
-    total: 100,
-    usage: 45,
-    request: 35,
-  },
-];
-
-const monitoringConstants = {
-  quickMenus: QUICK_MENUS,
-  resources: RESOURCES,
-};
-
-export default monitoringConstants;

@@ -1,17 +1,19 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import notificationKeys from "@/constants/notification/notification.key";
+import { notificationKeys } from "@/constants/notification/notification.key";
 import { useServices } from "@/providers/service-provider";
+import type { NotificationListType } from "@/schemas/notification.schema";
+import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetNotificationsPayload } from "@/types/notification/notification.type";
 
 /**
  * 알림 목록 조회
- * 에러 처리는 전역 QueryClient에서 자동으로 처리됩니다.
+ *
  */
 export const useGetNotifications = (
   payload: GetNotificationsPayload,
-): UseQueryResult<any, Error> => {
+): UseQueryResult<CoreListResponse<NotificationListType>, Error> => {
   const { notificationService } = useServices();
 
   return useQuery({
@@ -22,4 +24,3 @@ export const useGetNotifications = (
     },
   });
 };
-

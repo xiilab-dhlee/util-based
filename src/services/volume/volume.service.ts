@@ -1,4 +1,4 @@
-import type { VolumeListType } from "@/schemas/volume.schema";
+import type { VolumeIdType } from "@/schemas/volume.schema";
 import { AxiosService } from "@/services/common/axios";
 import type {
   CompressVolumeFilePayload,
@@ -47,7 +47,7 @@ export class VolumeService extends AxiosService {
   }
 
   /** 볼륨 삭제 */
-  public deleteVolume(volumes: Pick<VolumeListType, "uid">[]) {
+  public deleteVolume(volumes: VolumeIdType[]) {
     return Promise.all(
       volumes.map((volume) =>
         this.getAxios().delete(`${this.BASE_URL}/${volume}`),

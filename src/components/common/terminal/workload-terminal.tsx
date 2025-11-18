@@ -8,7 +8,10 @@ import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 
 import { terminalThemeAtom } from "@/atoms/common/terminal.atom";
-import terminalConstants from "@/constants/common/terminal.constant";
+import {
+  TERMINAL_MAX_HCNT,
+  TERMINAL_MAX_VCNT,
+} from "@/constants/common/terminal.constant";
 import { createTermBgClasses } from "@/styles/mixins/terminal";
 import type { TerminalPaneState } from "@/types/common/terminal.interface";
 import { EmptyTerminal } from "./empty-terminal";
@@ -68,7 +71,7 @@ export function WorkloadTerminal({
     evt.stopPropagation();
 
     // 최대 수직 분할 수 제한 확인
-    if (panes.length >= terminalConstants.maxVcount) {
+    if (panes.length >= TERMINAL_MAX_VCNT) {
       return;
     }
 
@@ -97,7 +100,7 @@ export function WorkloadTerminal({
     evt.stopPropagation();
 
     // 최대 수평 분할 수 제한 확인
-    if (panes[focusPosX]?.[2]?.length >= terminalConstants.maxHcount) {
+    if (panes[focusPosX]?.[2]?.length >= TERMINAL_MAX_HCNT) {
       return;
     }
 

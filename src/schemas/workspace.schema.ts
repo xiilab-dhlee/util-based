@@ -63,6 +63,7 @@ export const workspaceDetailSchema = baseWorkspaceSchema;
  * 워크스페이스 목록 타입
  */
 export type WorkspaceListType = z.infer<typeof workspaceListSchema>;
+export type WorkspaceIdType = WorkspaceListType["id"];
 
 /**
  * 워크스페이스 상세 타입

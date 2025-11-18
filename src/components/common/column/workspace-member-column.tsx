@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { type ResponsiveColumnType, Tag } from "xiilab-ui";
+import { type ResponsiveColumnType, Tag, type TagProps } from "xiilab-ui";
 
 import { UpdateWorkspaceMemberButton } from "@/components/workspace/member/update-workspace-member-button";
 import { WorkspaceMemberAllCheck } from "@/components/workspace/member/workspace-member-all-check";
@@ -36,7 +36,10 @@ export const workspaceMemberColumn: ResponsiveColumnType[] = [
       }
       return (
         <ColumnAlignCenterWrap>
-          <Tag variant={variant as any} onClick={() => alert("라벨 Action!!")}>
+          <Tag
+            variant={variant as TagProps["variant"]}
+            onClick={() => alert("라벨 Action!!")}
+          >
             {role}
           </Tag>
         </ColumnAlignCenterWrap>
@@ -100,4 +103,3 @@ export const workspaceMemberColumn: ResponsiveColumnType[] = [
     },
   },
 ];
-

@@ -8,7 +8,7 @@ import type { CreateWorkspacePayload } from "@/types/workspace/workspace.interfa
  * 워크스페이스 생성
  */
 export const useCreateWorkspace = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateWorkspacePayload,
   unknown
@@ -16,10 +16,9 @@ export const useCreateWorkspace = (): UseMutationResult<
   const { workspaceService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: CreateWorkspacePayload): Promise<any> => {
+    mutationFn: (payload: CreateWorkspacePayload) => {
       return workspaceService.updateWorkspace(payload);
     },
     onSuccess: () => {},
   });
 };
-

@@ -33,26 +33,26 @@ export function formatFileSize(
   bytes: number,
   precision: number = 2,
 ): FileSizeInfo {
-    if (bytes === 0) {
-      return {
-        value: 0,
-        unit: "B",
-        formatted: "0 B",
-      };
-    }
-
-    const k = 1024;
-    const sizes: FileSizeUnit[] = ["B", "KB", "MB", "GB", "TB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    // 최대 TB 단위까지만 지원
-    const unitIndex = Math.min(i, sizes.length - 1);
-    const unit = sizes[unitIndex];
-    const value = bytes / k ** unitIndex;
-
+  if (bytes === 0) {
     return {
-      value,
-      unit,
-      formatted: `${value.toFixed(precision)} ${unit}`,
+      value: 0,
+      unit: "B",
+      formatted: "0 B",
     };
+  }
+
+  const k = 1024;
+  const sizes: FileSizeUnit[] = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  // 최대 TB 단위까지만 지원
+  const unitIndex = Math.min(i, sizes.length - 1);
+  const unit = sizes[unitIndex];
+  const value = bytes / k ** unitIndex;
+
+  return {
+    value,
+    unit,
+    formatted: `${value.toFixed(precision)} ${unit}`,
+  };
 }

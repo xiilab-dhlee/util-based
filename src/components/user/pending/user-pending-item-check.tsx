@@ -53,4 +53,3 @@ export function UserPendingItemCheck({ user }: UserPendingItemCheckProps) {
     </ColumnAlignCenterWrap>
   );
 }
-

@@ -11,17 +11,18 @@ import {
   openSelectVolumeModalAtom,
 } from "@/atoms/volume/volume-list.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { StorageSelect } from "@/components/common/select/storage-select";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish } from "@/hooks/common/use-pub-sub";
+import { useSelect } from "@/hooks/common/use-select";
 import { useUploadFile } from "@/hooks/common/use-upload-file";
 import { useCreateVolume } from "@/hooks/volume/use-create-volume";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
 import { formatFileSize } from "@/utils/common/file.util";
-import { AstragoIcon } from "../common/icon/astrago-icon";
+import { MyIcon } from "../common/icon";
+import { MySelect } from "../common/select";
 
 /**
  * AstraGo 볼륨 생성 모달 컴포넌트
@@ -50,6 +51,8 @@ export function CreateAstragoVolumeModal() {
   const [storageId, setStorageId] = useState<string | null>(null);
   // 폼 초기화 훅 사용
   const { clearForm, getFormKey } = useClearForm();
+
+  const storage = useSelect(null, []);
 
   // 파일 업로드 Hook 사용 (최대 5MB, 초기 파일 포함)
   const { files, handleUpload, handleFileRemove, totalSize, clearFiles } =
@@ -130,11 +133,7 @@ export function CreateAstragoVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={
-        <IconWrapper>
-          <AstragoIcon />
-        </IconWrapper>
-      }
+      icon={<MyIcon name="astrago" color="#fff" size={18} />}
       open={open}
       closable
       title="AstraGo Storage"
@@ -154,7 +153,11 @@ export function CreateAstragoVolumeModal() {
         <FormRow>
           <FormItem>
             <FormLabel>스토리지 목록</FormLabel>
-            <StorageSelect value={storageId} setValue={setStorageId} />
+            <MySelect
+              {...storage}
+              width="100%"
+              placeholder="스토리지를 선택해 주세요."
+            />
           </FormItem>
           <FormItem>
             <FormLabel htmlFor="astragoVolumeName">볼륨 이름</FormLabel>
@@ -204,20 +207,6 @@ export function CreateAstragoVolumeModal() {
     </Modal>
   );
 }
-
-/**
- * 모달 아이콘 래퍼 스타일
- *
- * AstraGo 아이콘의 색상을 흰색으로 설정하고 크기를 조정합니다.
- */
-const IconWrapper = styled.span`
-  --icon-fill: #fff;
-
-  & svg {
-    width: 14px;
-    height: 14px;
-  }
-`;
 
 /**
  * 파일 총 크기 표시 스타일

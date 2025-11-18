@@ -26,4 +26,3 @@ export const workloadPortColumn: ResponsiveColumnType[] = [
     cellPadding: "0 12px",
   },
 ];
-

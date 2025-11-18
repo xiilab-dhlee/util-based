@@ -1,9 +1,9 @@
 import { css } from "styled-components";
 
-import terminalConstants from "@/constants/common/terminal.constant";
+import { TERMINAL_THEME_LIST } from "@/constants/common/terminal.constant";
 
 export const createTermBgClasses = (customSelector = "") => css`
-  ${Object.entries(terminalConstants.themes).map(
+  ${Object.entries(TERMINAL_THEME_LIST).map(
     ([key, value]) => `
       &.${key}${customSelector ? `${customSelector}` : ""} {
         background-color: ${value.background};
@@ -14,7 +14,7 @@ export const createTermBgClasses = (customSelector = "") => css`
 `;
 
 export const createTermFgClasses = (customSelector = "") => css`
-  ${Object.entries(terminalConstants.themes).map(
+  ${Object.entries(TERMINAL_THEME_LIST).map(
     ([key, value]) => `
       &.${key}${customSelector ? `${customSelector}` : ""} {
         background-color: ${value.foreground};

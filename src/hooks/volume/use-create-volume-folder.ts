@@ -7,7 +7,7 @@ import type { CreateVolumeFolderPayload } from "@/types/volume/volume.type";
  * 볼륨 폴더 추가
  */
 export const useCreateVolumeFolder = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateVolumeFolderPayload,
   unknown
@@ -15,10 +15,9 @@ export const useCreateVolumeFolder = (): UseMutationResult<
   const { volumeService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: CreateVolumeFolderPayload): Promise<any> => {
+    mutationFn: (payload: CreateVolumeFolderPayload) => {
       return volumeService.createVolumeFolder(payload);
     },
     onSuccess: () => {},
   });
 };
-

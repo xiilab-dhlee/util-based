@@ -9,7 +9,7 @@ import type { GetSourcecodesPayload } from "@/types/sourcecode/sourcecode.type";
 
 /**
  * 소스코드 목록 조회
- * 에러 처리는 전역 QueryClient에서 자동으로 처리됩니다.
+ *
  */
 export const useGetSourcecodes = (
   payload: GetSourcecodesPayload,

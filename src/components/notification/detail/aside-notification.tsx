@@ -46,7 +46,6 @@ export function AsideNotification() {
   );
 }
 
-
 const ArticleKey = styled.div`
   flex: 1;
   text-align: left;
@@ -54,4 +53,3 @@ const ArticleKey = styled.div`
   font-size: 12px;
   line-height: 14px;
 `;
-

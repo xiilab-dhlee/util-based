@@ -7,7 +7,7 @@ import type { UpdateUserPayload } from "@/types/user/user.type";
  * 사용자 정보 수정
  */
 export const useUpdateUser = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpdateUserPayload,
   unknown
@@ -15,10 +15,9 @@ export const useUpdateUser = (): UseMutationResult<
   const { userService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: UpdateUserPayload): Promise<any> => {
+    mutationFn: (payload: UpdateUserPayload) => {
       return userService.updateUser(payload);
     },
     onSuccess: () => {},
   });
 };
-

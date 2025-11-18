@@ -7,7 +7,7 @@ import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
-import credentialListConstants from "@/constants/credential/credential-list.constant";
+import { CREDENTIAL_TYPE_OPTIONS } from "@/constants/credential/credential-list.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSelect } from "@/hooks/common/use-select";
 import { useCreateCredential } from "@/hooks/credential/use-create-credential";
@@ -15,7 +15,7 @@ import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type {
   CreateCredentialPayload,
   CredentialType,
-} from "@/types/credential/credential.interface";
+} from "@/types/credential/credential.type";
 
 /**
  * 크레덴셜 생성 모달 컴포넌트
@@ -29,11 +29,7 @@ export function CreateCredentialModal() {
   const { open, onClose } = useGlobalModal(openCreateCredentialModalAtom);
 
   // 크레덴셜 타입 선택을 위한 useSelect 훅
-  const type = useSelect<CredentialType>(
-    "GIT",
-    credentialListConstants.type,
-    true,
-  );
+  const type = useSelect<CredentialType>("GIT", CREDENTIAL_TYPE_OPTIONS, true);
 
   const createCredential = useCreateCredential();
 

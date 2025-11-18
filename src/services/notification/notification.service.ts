@@ -19,4 +19,3 @@ export class NotificationService extends AxiosService {
     return this.getAxios().get(`${this.BASE_URL}/${id}`);
   }
 }
-

@@ -14,7 +14,7 @@ export default defineConfig({
   testDir, // BDD 설정에서 생성된 testDir 사용
 
   /* 병렬 실행 설정 */
-  fullyParallel: false,
+  fullyParallel: true,
 
   /* CI 환경에서만 실패 시 재시도 */
   retries: process.env.CI ? 2 : 0,
@@ -24,8 +24,8 @@ export default defineConfig({
 
   /* 리포터 설정 */
   reporter: [
-    // ["html", { outputFolder: "tests/reports/playwright-html" }],
-    // ["json", { outputFile: "tests/reports/playwright-json/results.json" }],
+    ["html", { outputFolder: "tests/reports/playwright-html" }],
+    ["json", { outputFile: "tests/reports/playwright-json/results.json" }],
     ["list"],
   ],
 

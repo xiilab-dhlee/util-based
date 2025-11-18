@@ -15,4 +15,3 @@ export function ListDeleteButton({ onClick }: ListDeleteButtonProps) {
     </Button>
   );
 }
-

@@ -45,4 +45,3 @@ export const useToggle = (initialValue: boolean = false) => {
 
   return [value, toggle] as const;
 };
-

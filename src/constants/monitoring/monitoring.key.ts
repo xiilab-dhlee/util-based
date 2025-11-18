@@ -3,7 +3,7 @@ import type {
   GetMonitoringNotificationsPayload,
 } from "@/types/monitoring-notification/monitoring-notification.type";
 
-const monitoringKeys = {
+export const monitoringKeys = {
   default: ["monitoring"],
   notificationSettingList: (
     payload: GetMonitoringNotificationSettingsPayload,
@@ -23,5 +23,3 @@ const monitoringKeys = {
     ...Object.values(payload),
   ],
 };
-
-export default monitoringKeys;

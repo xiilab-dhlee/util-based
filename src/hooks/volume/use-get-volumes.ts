@@ -9,7 +9,7 @@ import type { GetVolumesPayload } from "@/types/volume/volume.type";
 
 /**
  * 볼륨 목록 조회
- * 에러 처리는 전역 QueryClient에서 자동으로 처리됩니다.
+ *
  */
 export const useGetVolumes = (
   payload: GetVolumesPayload,

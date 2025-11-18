@@ -104,4 +104,3 @@ export const createSecurityColumn = (
 
   return applyColumnConfigs(columnList, config);
 };
-

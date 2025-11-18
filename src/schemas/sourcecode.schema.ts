@@ -48,6 +48,7 @@ export const sourcecodeDetailSchema = baseSourcecodeSchema;
 // 타입 추출
 type Sourcecode = z.infer<typeof baseSourcecodeSchema>;
 export type SourcecodeListType = z.infer<typeof sourcecodeListSchema>;
+export type SourcecodeIdType = SourcecodeListType["id"];
 export type SourcecodeDetailType = z.infer<typeof sourcecodeDetailSchema>;
 export type SourcecodeParameterType = Sourcecode["parameters"][number];
 export type SourcecodeCodeType = Sourcecode["codeType"];

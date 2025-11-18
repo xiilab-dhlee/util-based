@@ -2,24 +2,23 @@ import type { UseMutationResult } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
 import { useServices } from "@/providers/service-provider";
-import type { VolumeListType } from "@/schemas/volume.schema";
+import type { VolumeIdType } from "@/schemas/volume.schema";
 
 /**
  * 볼륨 삭제
  */
 export const useDeleteVolume = (): UseMutationResult<
-  any,
+  unknown,
   Error,
-  Pick<VolumeListType, "uid">[],
+  VolumeIdType[],
   unknown
 > => {
   const { volumeService } = useServices();
 
   return useMutation({
-    mutationFn: (volumes: Pick<VolumeListType, "uid">[]): Promise<any> => {
+    mutationFn: (volumes: VolumeIdType[]) => {
       return volumeService.deleteVolume(volumes);
     },
     onSuccess: () => {},
   });
 };
-

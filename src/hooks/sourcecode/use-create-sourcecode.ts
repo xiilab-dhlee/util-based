@@ -7,7 +7,7 @@ import type { CreateSourcecodePayload } from "@/types/sourcecode/sourcecode.type
  * 소스코드 생성
  */
 export const useCreateSourcecode = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateSourcecodePayload,
   unknown
@@ -15,10 +15,9 @@ export const useCreateSourcecode = (): UseMutationResult<
   const { sourcecodeService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: CreateSourcecodePayload): Promise<any> => {
+    mutationFn: (payload: CreateSourcecodePayload) => {
       return sourcecodeService.createSourcecode(payload);
     },
     onSuccess: () => {},
   });
 };
-

@@ -53,4 +53,3 @@ export function UserItemCheck({ user }: UserItemCheckProps) {
     </ColumnAlignCenterWrap>
   );
 }
-

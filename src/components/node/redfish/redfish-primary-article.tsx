@@ -46,7 +46,6 @@ export function RedfishPrimaryArticle({
   );
 }
 
-
 // ===== Styled Components =====
 
 /** 헤더 컨테이너 - 노드 이름과 설명을 표시 */

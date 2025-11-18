@@ -3,7 +3,6 @@
 import { useSetAtom } from "jotai";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
 import { Input, Modal } from "xiilab-ui";
 
 import {
@@ -18,7 +17,7 @@ import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useCreateVolume } from "@/hooks/volume/use-create-volume";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
-import { StorageIcon } from "../common/icon/storage-icon";
+import { MyIcon } from "../common/icon";
 
 export function CreateOnPremVolumeModal() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -103,11 +102,7 @@ export function CreateOnPremVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={
-        <IconWrapper>
-          <StorageIcon />
-        </IconWrapper>
-      }
+      icon={<MyIcon name="storage" color="#fff" size={18} />}
       open={open}
       // closable
       title="On-premise Storage"
@@ -170,12 +165,3 @@ export function CreateOnPremVolumeModal() {
     </Modal>
   );
 }
-
-const IconWrapper = styled.span`
-  --icon-fill: #fff;
-
-  & svg {
-    width: 14px;
-    height: 14px;
-  }
-`;

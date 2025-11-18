@@ -17,7 +17,7 @@ export const useRefreshToken = ({
 
     const watchAndUpdateIfExpire = () => {
       if (session) {
-        const nowTime = Math.floor(new Date().getTime() / 1000);
+        const nowTime = Math.floor(Date.now() / 1000);
         const timeRemaining = Number(session?.expires) - nowTime; // unix timestamp
 
         if (timeRemaining <= 0) update();

@@ -1,6 +1,6 @@
-import type { ColumnsType } from "antd/es/table";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
-export const nodeAllocatedResourcesColumn: ColumnsType<any> = [
+export const nodeAllocatedResourcesColumn: ResponsiveColumnType[] = [
   {
     title: "Resource",
     dataIndex: "resourceName",
@@ -17,4 +17,3 @@ export const nodeAllocatedResourcesColumn: ColumnsType<any> = [
     align: "left",
   },
 ];
-

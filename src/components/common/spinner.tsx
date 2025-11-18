@@ -9,7 +9,6 @@ export function MySpinner() {
   );
 }
 
-
 const Container = styled.div`
   position: absolute;
   top: 50%;

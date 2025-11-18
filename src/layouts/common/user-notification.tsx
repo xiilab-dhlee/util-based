@@ -282,4 +282,3 @@ const ItemTime = styled.time`
     color: #969a9f;
   }
 `;
-

@@ -63,4 +63,3 @@ export function NodeScheduleSwitch({
 
   return <Switch checked={checked} onChange={handleChange} />;
 }
-

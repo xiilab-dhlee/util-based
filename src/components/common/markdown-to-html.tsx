@@ -15,7 +15,7 @@ export function MarkdownToHtml({ markdown }: MarkdownToHtmlProps) {
     <StyledMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
-        code({ className, children }: any) {
+        code({ className, children }) {
           const match = /language-(\w+)/.exec(className || "");
           return match ? (
             // 코드 (```)
@@ -42,7 +42,6 @@ export function MarkdownToHtml({ markdown }: MarkdownToHtmlProps) {
     </StyledMarkdown>
   );
 }
-
 
 const StyledMarkdown = styled(ReactMarkdown)`
   font-size: 12px;

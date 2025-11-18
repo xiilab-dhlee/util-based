@@ -4,6 +4,7 @@ import classNames from "classnames";
 import type { ComponentType, PropsWithChildren, ReactNode } from "react";
 import { createElement } from "react";
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
 
 import { MyIcon } from "@/components/common/icon";
 import type { FileTreeType } from "@/schemas/filetree.schema";
@@ -114,7 +115,7 @@ export function CustomFileNode({
       const shouldHideFirstIndent = idx === 0 && isSingleRoot;
 
       return (
-        <Indent key={`a-${idx}`}>
+        <Indent key={uuidv4()}>
           {!shouldHideFirstIndent && hasNext ? <IndentBridge /> : null}
         </Indent>
       );
@@ -186,9 +187,7 @@ export function CustomFileNode({
 
     return [
       ...ancestorIndents,
-      <Indent key={`c-${ancestorsHasNext.length}`}>
-        {currentLevelChildren}
-      </Indent>,
+      <Indent key={uuidv4()}>{currentLevelChildren}</Indent>,
     ];
   };
 

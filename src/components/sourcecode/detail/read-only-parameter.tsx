@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
 
 import type { SourcecodeParameterType } from "@/schemas/sourcecode.schema";
 
@@ -53,8 +54,8 @@ export function ReadOnlyParameter({ parameters }: ReadOnlyParameterProps) {
         <BodyRow>
           {/* 왼쪽 컬럼: 파라미터 키들을 세로로 나열 */}
           <KeyColumn>
-            {keys.map((key, index) => (
-              <Value key={`key-${index}`} className="truncate" title={key}>
+            {keys.map((key) => (
+              <Value key={key} className="truncate" title={key}>
                 {key}
               </Value>
             ))}
@@ -62,8 +63,8 @@ export function ReadOnlyParameter({ parameters }: ReadOnlyParameterProps) {
 
           {/* 오른쪽 컬럼: 파라미터 값들을 세로로 나열 */}
           <ValueColumn>
-            {values.map((value, index) => (
-              <Value key={`value-${index}`} className="truncate" title={value}>
+            {values.map((value) => (
+              <Value key={uuidv4()} className="truncate" title={value}>
                 {value}
               </Value>
             ))}
@@ -73,7 +74,6 @@ export function ReadOnlyParameter({ parameters }: ReadOnlyParameterProps) {
     </Container>
   );
 }
-
 
 // ===== Styled Components =====
 

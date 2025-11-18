@@ -1,4 +1,4 @@
-import type { SourcecodeListType } from "@/schemas/sourcecode.schema";
+import type { SourcecodeIdType } from "@/schemas/sourcecode.schema";
 import { AxiosService } from "@/services/common/axios";
 import type {
   CreateSourcecodePayload,
@@ -35,7 +35,7 @@ export class SourcecodeService extends AxiosService {
   }
 
   /** 소스코드 삭제 */
-  public deleteSourcecode(sourcecodes: Pick<SourcecodeListType, "id">[]) {
+  public deleteSourcecode(sourcecodes: SourcecodeIdType[]) {
     return Promise.all(
       sourcecodes.map((sourcecode) =>
         this.getAxios().delete(`${this.BASE_URL}/${sourcecode}`),

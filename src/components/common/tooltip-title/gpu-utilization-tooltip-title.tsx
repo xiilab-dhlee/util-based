@@ -16,4 +16,3 @@ export function GpuUtilizationTooltipTitle() {
     </Typography.Text>
   );
 }
-

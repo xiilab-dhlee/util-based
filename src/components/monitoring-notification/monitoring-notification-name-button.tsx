@@ -1,6 +1,5 @@
-﻿
+﻿import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
-import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 
 interface MonitoringNotificationNameButtonProps {
   id: string;
@@ -18,9 +17,8 @@ export function MonitoringNotificationNameButton({
   };
 
   return (
-    <span role="button" onClick={handleClick}>
+    <button type="button" onClick={handleClick}>
       {name}
-    </span>
+    </button>
   );
 }
-

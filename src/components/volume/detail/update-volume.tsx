@@ -95,9 +95,7 @@ export function UpdateVolume() {
    */
   const handleDelete = () => {
     // 삭제 모달 열기 - PubSub 이벤트 발행
-    publish(VOLUME_EVENTS.sendDeleteVolume, [
-      { uid: selectedVolume || "" },
-    ]);
+    publish(VOLUME_EVENTS.sendDeleteVolume, [{ uid: selectedVolume || "" }]);
   };
 
   /**

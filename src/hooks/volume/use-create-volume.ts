@@ -7,7 +7,7 @@ import type { CreateVolumePayload } from "@/types/volume/volume.type";
  * 볼륨 생성
  */
 export const useCreateVolume = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CreateVolumePayload,
   unknown
@@ -15,10 +15,9 @@ export const useCreateVolume = (): UseMutationResult<
   const { volumeService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: CreateVolumePayload): Promise<any> => {
+    mutationFn: (payload: CreateVolumePayload) => {
       return volumeService.createVolume(payload);
     },
     onSuccess: () => {},
   });
 };
-

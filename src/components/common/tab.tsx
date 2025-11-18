@@ -1,12 +1,11 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 import { TabsSeparated } from "xiilab-ui";
 
 import { MyIcon } from "@/components/common/icon";
-import { useCustomSearchParams } from "@/hooks/common/use-custom-search-params";
 
 /**
  * 탭 아이템의 아이콘을 Icon 컴포넌트로 매핑하는 함수
@@ -54,7 +53,7 @@ interface StateTabProps {
 export function RouteTab({ items }: RouteTabProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useCustomSearchParams();
+  const searchParams = useSearchParams();
 
   // 탭 아이템의 아이콘을 Icon 컴포넌트로 변환
   const mappedTabs = mapIconToComponent(items);

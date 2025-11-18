@@ -8,7 +8,7 @@ import type { UpdateWorkspaceMemberPayload } from "@/types/workspace/workspace.i
  * 워크스페이스 멤버 수정
  */
 export const useUpdateWorkspaceMember = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpdateWorkspaceMemberPayload
 > => {
@@ -20,4 +20,3 @@ export const useUpdateWorkspaceMember = (): UseMutationResult<
     },
   });
 };
-

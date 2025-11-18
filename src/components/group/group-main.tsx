@@ -194,7 +194,6 @@ export function GroupMain() {
   );
 }
 
-
 const Container = styled.div`
   padding: 24px 28px;
   height: 100%;

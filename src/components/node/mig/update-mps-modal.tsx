@@ -12,6 +12,7 @@ import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetNodeMpsInfo } from "@/hooks/node/use-get-mps-info";
 import { useUpdateMps } from "@/hooks/node/use-update-mps";
+import type { NodeListType } from "@/schemas/node.schema";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import type { UpdateMpsPayload } from "@/types/node/node.type";
 import { formatFileSize } from "@/utils/common/file.util";
@@ -39,8 +40,6 @@ export function UpdateMpsModal() {
   // 노드 MPS 정보 조회
   const { data } = useGetNodeMpsInfo(nodeName);
 
-  console.log(data);
-
   // MPS 복제본 개수 상태 (기본값: 2)
   const [mpsReplicas, setMpsReplicas] = useState(2);
 
@@ -65,20 +64,20 @@ export function UpdateMpsModal() {
   const createPayload = (): UpdateMpsPayload | null => {
     return {
       nodeName,
-      mpsCapable: !data.mpsCapable,
+      mpsCapable: !data?.mpsCapable,
       mpsReplicas,
     };
   };
 
   // MPS 업데이트 이벤트 구독
-  useSubscribe<any>(NODE_EVENTS.sendUpdateMps, ({ nodeName }) => {
+  useSubscribe(NODE_EVENTS.sendUpdateMps, ({ nodeName }: NodeListType) => {
     setNodeName(nodeName);
     onOpen();
   });
 
   // 분할된 GPU 메모리 크기 계산 (현재 설정값 기준)
   const currentMem = formatFileSize(
-    (data?.totalMemory || 0) / (data?.mpsCount || 2),
+    (data?.totalMemory || 0) / (data?.mpsReplicas || 2),
     2,
   );
 

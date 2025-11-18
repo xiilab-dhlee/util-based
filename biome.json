@@ -7,8 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": [".features-gen/**"],
-    "includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!dist",
+      "!build",
+      "!.vscode/settings.json"
+    ]
   },
   "formatter": {
     "enabled": true,

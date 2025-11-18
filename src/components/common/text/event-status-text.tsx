@@ -20,7 +20,6 @@ export function EventStatusText({ status }: EventStatusTextProps) {
   return <Container className={classNames(color)}>{text}</Container>;
 }
 
-
 const Container = styled.span`
   ${statusTextStyle()}
 

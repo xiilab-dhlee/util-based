@@ -44,7 +44,6 @@ export function WorkloadEventCard({
   );
 }
 
-
 const Body = styled.div`
   display: flex;
   flex-direction: column;

@@ -6,7 +6,7 @@ import { ClusterResourceInfoTooltipTitle } from "@/components/common/tooltip-tit
 import { DashboardQuickMenu } from "@/components/dashboard/dashboard-quick-menu";
 import { MonitoringClusterResource } from "@/components/monitoring/monitoring-cluster-resource";
 import { MonitoringIntroCard } from "@/components/monitoring/monitoring-intro-card";
-import monitoringConstants from "@/constants/monitoring/monitoring.constant";
+import { MONITORING_QUICK_MENUS } from "@/constants/monitoring/monitoring.constant";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 
 export function MonitoringMainSection() {
@@ -15,7 +15,7 @@ export function MonitoringMainSection() {
       <Left>
         <MonitoringIntroCard />
         <QuickMenus>
-          {monitoringConstants.quickMenus.map((menu) => (
+          {MONITORING_QUICK_MENUS.map((menu) => (
             <DashboardQuickMenu key={menu.title} {...menu} />
           ))}
         </QuickMenus>

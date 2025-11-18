@@ -17,4 +17,3 @@ export function WorkspaceRequestResourceStatusText({
 
   return <Label variant={color as LabelColorVariant}>{text}</Label>;
 }
-

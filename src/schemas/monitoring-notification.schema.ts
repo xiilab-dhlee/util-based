@@ -16,6 +16,10 @@ const baseMonitoringNotificationSchema = z.object({
   creatorDateTime: z.string().datetime(),
   /** 알림 설명 */
   description: z.string().nullable(),
+  /** 이메일 수신 여부 */
+  isEmail: z.boolean(),
+  /** 시스템 알림 여부 */
+  isSystem: z.boolean(),
   /** 알림 설정 */
   settings: z.array(
     z.object({
@@ -39,6 +43,9 @@ export const monitoringNotificationListSchema =
     name: true,
     channel: true,
     creatorDateTime: true,
+    isEmail: true,
+    isSystem: true,
+    settings: true,
   });
 
 export const monitoringNotificationDetailSchema =

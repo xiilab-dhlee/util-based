@@ -8,7 +8,7 @@ import { openViewMonitoringNotificationModalAtom } from "@/atoms/monitoring-noti
 import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
-import { useGetMonitoringNotificationSetting } from "@/hooks/monitoring/use-get-monitoring-notification-setting";
+import { useGetMonitoringNotification } from "@/hooks/monitoring/use-get-monitoring-notification";
 import { ModalDetailCard } from "../common/card/modal-detail-card";
 import { MyIcon } from "../common/icon";
 import { ReadOnlyMonitoringNotificationSetting } from "./read-only-monitoring-notification-setting";
@@ -23,7 +23,7 @@ export function ViewMonitoringNotificationModal() {
 
   const [id, setId] = useState("");
 
-  const { data } = useGetMonitoringNotificationSetting(id);
+  const { data } = useGetMonitoringNotification(id);
 
   const handleSubmit = () => {
     publish(MONITORING_EVENTS.sendUpsertNotification, data);

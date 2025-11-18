@@ -7,7 +7,7 @@ import type { UpdateVolumePayload } from "@/types/volume/volume.type";
  * 볼륨 수정
  */
 export const useUpdateVolume = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpdateVolumePayload,
   unknown
@@ -15,10 +15,9 @@ export const useUpdateVolume = (): UseMutationResult<
   const { volumeService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: UpdateVolumePayload): Promise<any> => {
+    mutationFn: (payload: UpdateVolumePayload) => {
       return volumeService.updateVolume(payload);
     },
     onSuccess: () => {},
   });
 };
-

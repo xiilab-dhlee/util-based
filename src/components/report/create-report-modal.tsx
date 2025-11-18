@@ -11,7 +11,10 @@ import { openCreateReportModalAtom } from "@/atoms/report/report.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
-import reportConstants from "@/constants/report/report.constant";
+import {
+  REPORT_DATE_TYPE_OPTIONS,
+  REPORT_TYPE_OPTIONS,
+} from "@/constants/report/report.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSelect } from "@/hooks/common/use-select";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
@@ -21,9 +24,9 @@ export function CreateReportModal() {
 
   const { open, onClose } = useGlobalModal(openCreateReportModalAtom);
 
-  const dateType = useSelect<string>("", reportConstants.dateType, true);
+  const dateType = useSelect<string>("", REPORT_DATE_TYPE_OPTIONS, true);
 
-  const reportType = useSelect<string>("", reportConstants.reportType, true);
+  const reportType = useSelect<string>("", REPORT_TYPE_OPTIONS, true);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -51,7 +54,7 @@ export function CreateReportModal() {
     onClose();
 
     router.push(
-      `/admin/report?reportType=${dateType.value + "_" + reportType.value}&endDate=${format(endDate, "yyyy-MM-dd")}`,
+      `/admin/report?reportType=${dateType.value}_${reportType.value}&endDate=${format(endDate, "yyyy-MM-dd")}`,
     );
   };
 

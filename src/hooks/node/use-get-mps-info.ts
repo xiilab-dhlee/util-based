@@ -7,7 +7,7 @@ import type { MpsInfoType } from "@/schemas/mps.schema";
 
 /**
  * 노드 MPS 설정 조회
- * 에러 처리는 전역 QueryClient에서 자동으로 처리됩니다.
+ *
  */
 export const useGetNodeMpsInfo = (
   nodeName: string,

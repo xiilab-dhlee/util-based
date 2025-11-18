@@ -1,6 +1,6 @@
-import type { GetCredentialsPayload } from "@/types/credential/credential.interface";
+import type { GetCredentialsPayload } from "@/types/credential/credential.type";
 
-const credentialKeys = {
+export const credentialKeys = {
   default: ["credential"],
   list: (payload: GetCredentialsPayload) => [
     ...credentialKeys.default,
@@ -8,5 +8,3 @@ const credentialKeys = {
     ...Object.values(payload),
   ],
 };
-
-export default credentialKeys;

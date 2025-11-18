@@ -27,7 +27,6 @@ export function SecurityLevelText({
   );
 }
 
-
 const Container = styled.span`
   ${statusTextStyle()}
 

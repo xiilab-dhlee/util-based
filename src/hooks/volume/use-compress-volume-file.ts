@@ -7,7 +7,7 @@ import type { CompressVolumeFilePayload } from "@/types/volume/volume.type";
  * 볼륨 파일 압축
  */
 export const useCompressVolumeFile = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   CompressVolumeFilePayload,
   unknown
@@ -15,10 +15,9 @@ export const useCompressVolumeFile = (): UseMutationResult<
   const { volumeService } = useServices();
 
   return useMutation({
-    mutationFn: (payload: CompressVolumeFilePayload): Promise<any> => {
+    mutationFn: (payload: CompressVolumeFilePayload) => {
       return volumeService.compressVolumeFile(payload);
     },
     onSuccess: () => {},
   });
 };
-

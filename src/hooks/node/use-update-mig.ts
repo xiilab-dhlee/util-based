@@ -7,7 +7,7 @@ import type { UpdateMigPayload } from "@/types/node/node.type";
  * MIG 설정 수정
  */
 export const useUpdateMig = (): UseMutationResult<
-  any,
+  unknown,
   Error,
   UpdateMigPayload,
   unknown

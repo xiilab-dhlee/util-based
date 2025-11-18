@@ -31,4 +31,3 @@ export const notificationListColumn: ResponsiveColumnType[] = [
     },
   },
 ];
-

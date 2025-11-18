@@ -1,6 +1,5 @@
 "use client";
 
-import clusterMonitoringConstants from "@/constants/monitoring/cluster-monitoring.constant";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";
 
 export function ClusterEventListFooter() {
@@ -8,10 +7,9 @@ export function ClusterEventListFooter() {
     <ListPageFooter
       total={100}
       page={1}
-      pageSize={clusterMonitoringConstants.eventPageSize}
+      pageSize={12}
       onChange={() => {}}
       isLoading={false}
     />
   );
 }
-

@@ -1,16 +1,19 @@
 import { faker } from "@faker-js/faker";
 
-import filetreeConstants from "@/constants/common/filetree.constant";
+import {
+  FILE_EXTENSIONS,
+  FILE_SIZE_RANGES,
+} from "@/constants/common/filetree.constant";
 import type { FileTreeType } from "@/schemas/filetree.schema";
 
-type FileSizeCategory = keyof typeof filetreeConstants.fileSizeRanges;
+type FileSizeCategory = keyof typeof FILE_SIZE_RANGES;
 type FileTemplate = Record<string, unknown>;
 
 /**
  * 파일 크기 생성
  */
 function generateFileSize(category: FileSizeCategory): string {
-  const range = filetreeConstants.fileSizeRanges[category];
+  const range = FILE_SIZE_RANGES[category];
   const size = faker.number.int({ min: range.min, max: range.max });
   return `${size}${range.unit}`;
 }
@@ -19,12 +22,10 @@ function generateFileSize(category: FileSizeCategory): string {
  * 파일 확장자에 따른 파일 크기 범위 결정
  */
 function getFileSizeCategory(extension: string): FileSizeCategory {
-  const { fileExtensions } = filetreeConstants;
-
-  if (fileExtensions.images.includes(extension)) return "medium";
-  if (fileExtensions.models.includes(extension)) return "xlarge";
-  if (fileExtensions.notebooks.includes(extension)) return "large";
-  if (fileExtensions.logs.includes(extension)) return "medium";
+  if (FILE_EXTENSIONS.images.includes(extension)) return "medium";
+  if (FILE_EXTENSIONS.models.includes(extension)) return "xlarge";
+  if (FILE_EXTENSIONS.notebooks.includes(extension)) return "large";
+  if (FILE_EXTENSIONS.logs.includes(extension)) return "medium";
   return "small";
 }
 
@@ -160,9 +161,9 @@ export function generateRandomTree(
       tree.push(generateDirectory("", name.split(".")[0] || name, children));
     } else {
       const extension = faker.helpers.arrayElement([
-        ...filetreeConstants.fileExtensions.code,
-        ...filetreeConstants.fileExtensions.data,
-        ...filetreeConstants.fileExtensions.documents,
+        ...FILE_EXTENSIONS.code,
+        ...FILE_EXTENSIONS.data,
+        ...FILE_EXTENSIONS.documents,
       ]);
       tree.push(generateFile("", name, extension));
     }

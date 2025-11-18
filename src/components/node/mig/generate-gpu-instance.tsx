@@ -79,7 +79,7 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
                           {child.children.map((grandChild) => (
                             <Col
                               key={grandChild.name}
-                              span={24 / child.children!.length}
+                              span={24 / (child.children?.length ?? 1)}
                             >
                               {renderNodeElement(grandChild)}
                             </Col>

@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
 
-import nodeMigConstants from "@/constants/node/node-mig.constant";
+import { MIG_INFO_DEMO } from "@/constants/node/mig.constant";
 import { mpsInfoMock } from "@/mocks/mps.mock";
 import {
   nodeDetailMock,
@@ -32,7 +32,7 @@ export const nodeHandlers = [
 
   // MIG 설정 조회
   http.get("/core-api/v1/core/nodes/:nodeName/mig", () => {
-    return HttpResponse.json(nodeMigConstants.migInfoDemo);
+    return HttpResponse.json(MIG_INFO_DEMO);
   }),
 
   // MIG 설정 업데이트

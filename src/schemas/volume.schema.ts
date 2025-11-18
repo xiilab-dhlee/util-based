@@ -45,5 +45,6 @@ export const volumeDetailSchema = baseVolumeSchema;
 // 타입 추출
 type Volume = z.infer<typeof baseVolumeSchema>;
 export type VolumeListType = z.infer<typeof volumeListSchema>;
+export type VolumeIdType = VolumeListType["uid"];
 export type VolumeDetailType = z.infer<typeof volumeDetailSchema>;
 export type VolumeStorageType = Volume["storageType"];
