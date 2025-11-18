@@ -1,18 +1,19 @@
 "use client";
 
+import dynamicImport from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 import styled from "styled-components";
 
-import { WorkloadTerminal } from "@/components/common/terminal/workload-terminal";
+// WorkloadTerminal을 동적 import (SSR 비활성화)
+const WorkloadTerminal = dynamicImport(
+  () =>
+    import("@/components/common/terminal/workload-terminal").then(
+      (mod) => mod.WorkloadTerminal,
+    ),
+  { ssr: false },
+);
 
-/**
- * 터미널 페이지
- *
- * App Router에서 클라이언트 컴포넌트로 구현된 터미널 페이지입니다.
- * 기존 Pages Router와 동일한 WorkloadTerminal 컴포넌트를 사용합니다.
- */
-function TerminalPageContent() {
+export default function TerminalPage() {
   const searchParams = useSearchParams();
 
   const workspaceId = searchParams?.get("workspaceId") || "";
@@ -27,14 +28,6 @@ function TerminalPageContent() {
         workloadType={workloadType}
       />
     </Container>
-  );
-}
-
-export default function TerminalPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <TerminalPageContent />
-    </Suspense>
   );
 }
 

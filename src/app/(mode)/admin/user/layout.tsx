@@ -1,3 +1,5 @@
+"use client";
+
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import type { TabsSeparatedItem } from "xiilab-ui";

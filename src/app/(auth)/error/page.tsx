@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * 인증 에러 페이지
@@ -206,9 +206,5 @@ function AuthErrorPageContent() {
 }
 
 export default function AuthErrorPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AuthErrorPageContent />
-    </Suspense>
-  );
+  return <AuthErrorPageContent />;
 }

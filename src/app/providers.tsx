@@ -1,6 +1,7 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
+import { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
 
 import { MSWProvider } from "@/providers/msw-provider";
@@ -16,7 +17,7 @@ export function Providers({ children }: PropsWithChildren) {
         <StoreProvider>
           <ServiceProvider>
             <ThemeProvider>
-              {children}
+              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
               <ToastContainer />
             </ThemeProvider>
           </ServiceProvider>
