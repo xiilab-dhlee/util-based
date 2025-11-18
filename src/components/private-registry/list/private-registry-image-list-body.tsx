@@ -6,7 +6,7 @@ import styled from "styled-components";
 import {
   privateRegistryImagePageAtom,
   privateRegistrySelectedItemAtom,
-} from "@/atoms/private-registry/private-registry.atom";
+} from "@/atoms/private-registry.atom";
 import { useGetAdminPrivateRegistryImages } from "@/hooks/private-registry-image/use-get-admin-private-registry-images";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 import { PrivateRegistryImageCard } from "./private-registry-image-card";

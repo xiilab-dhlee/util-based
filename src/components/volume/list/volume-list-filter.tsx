@@ -9,7 +9,7 @@ import {
   volumePageAtom,
   volumeSearchTextAtom,
   volumeSelectedAtom,
-} from "@/atoms/volume/volume-list.atom";
+} from "@/atoms/volume.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";

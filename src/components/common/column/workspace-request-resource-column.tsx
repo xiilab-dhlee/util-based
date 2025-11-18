@@ -1,12 +1,12 @@
 import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import { ViewApproveResourceButton } from "@/components/workspace/request-resource/view-approve-resource-button";
-import { ViewRejectResourceButton } from "@/components/workspace/request-resource/view-reject-resource-button";
+import { ViewApproveResourceButton } from "@/components/request-resource/view-approve-resource-button";
+import { ViewRejectResourceButton } from "@/components/request-resource/view-reject-resource-button";
 import type {
-  WorkspaceRequestResourceListType,
-  WorkspaceRequestResourceMigGpuType,
-} from "@/schemas/workspace-request-resource.schema";
+  RequestResourceListType,
+  RequestResourceMigGpuType,
+} from "@/schemas/request-resource.schema";
 import type { WorkspaceRequestResourceStatus } from "@/types/workspace/workspace.interface";
 import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
 import { ViewRejectReasonButton } from "../button/view-reject-reason-button";
@@ -14,7 +14,7 @@ import { ViewRequestReasonButton } from "../button/view-request-reason-button";
 import { WorkspaceRequestResourceStatusText } from "../text/workspace-request-resource-status-text";
 import { ColumnMig } from "./column-mig";
 
-export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
+export const requestResourceColumn: ResponsiveColumnType[] = [
   {
     title: "워크스페이스 이름",
     dataIndex: "workspaceName",
@@ -34,7 +34,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     dataIndex: "migGpu",
     align: "center",
     width: 150,
-    render: (migGpu: WorkspaceRequestResourceMigGpuType) => {
+    render: (migGpu: RequestResourceMigGpuType) => {
       return <ColumnMig migProfiles={migGpu} />;
     },
   },
@@ -109,7 +109,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     dataIndex: "id",
     align: "center",
     width: 50,
-    render: (_: number, record: WorkspaceRequestResourceListType) => {
+    render: (_: number, record: RequestResourceListType) => {
       return <ViewRejectResourceButton resource={record} />;
     },
   },
@@ -118,7 +118,7 @@ export const workspaceRequestResourceColumn: ResponsiveColumnType[] = [
     dataIndex: "id",
     align: "center",
     width: 50,
-    render: (_: number, record: WorkspaceRequestResourceListType) => {
+    render: (_: number, record: RequestResourceListType) => {
       return <ViewApproveResourceButton resource={record} />;
     },
   },

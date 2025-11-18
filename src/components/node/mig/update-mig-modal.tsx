@@ -1,7 +1,7 @@
 ﻿"use client";
 
+import { groupBy } from "es-toolkit";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { groupBy, map } from "lodash";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
@@ -14,7 +14,7 @@ import {
   selectedMigConfigIdAtom,
   selectedMigCountAtom,
   selectedMigGpuIndexAtom,
-} from "@/atoms/node/node-list.atom";
+} from "@/atoms/node.atom";
 import { MyIcon } from "@/components/common/icon";
 import { GuideTooltip } from "@/components/common/tooltip/guide-tooltip";
 import { NODE_EVENTS } from "@/constants/common/pubsub.constant";
@@ -23,8 +23,7 @@ import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetNodeMigInfo } from "@/hooks/node/use-get-mig-info";
 import { useUpdateMig } from "@/hooks/node/use-update-mig";
 import type { NodeListType } from "@/schemas/node.schema";
-import type { MigInfo } from "@/types/node/node.model";
-import type { MigGpu, UpdateMigPayload } from "@/types/node/node.type";
+import type { MigGpu, MigInfo, UpdateMigPayload } from "@/types/node/node.type";
 import { MigUtil } from "@/utils/node/mig.util";
 import { ApplyOnceTooltipTitle } from "../../common/tooltip-title/apply-once-tooltip-title";
 import { UpdateMigTooltipTitle } from "../../common/tooltip-title/update-mig-tooltip-title";
@@ -124,24 +123,26 @@ export function UpdateMigModal() {
     });
 
     // 그룹화된 데이터를 MigInfo 배열로 변환
-    const migInfos: MigInfo[] = map(groupByConfigId, (group) => {
-      const configId = group[0].configId;
+    const migInfos: MigInfo[] = Object.entries(groupByConfigId).map(
+      ([, group]) => {
+        const configId = group[0].configId;
 
-      // configId로부터 profile 생성 (GPU 제품 정보 필요)
-      let profile = {};
-      if (configId > 0 && migGpuProduct) {
-        const util = new MigUtil(migGpuProduct);
-        // configId와 GPU 제품을 기반으로 profile 생성
-        profile = util.createProfile(configId);
-      }
+        // configId로부터 profile 생성 (GPU 제품 정보 필요)
+        let profile = {};
+        if (configId > 0 && migGpuProduct) {
+          const util = new MigUtil(migGpuProduct);
+          // configId와 GPU 제품을 기반으로 profile 생성
+          profile = util.createProfile(configId);
+        }
 
-      return {
-        gpuIndexs: group.map((item) => item.gpuIndex), // 해당 configId를 사용하는 GPU 인덱스들
-        migEnable: group[0].migEnable, // MIG 활성화 상태
-        profile, // GPU 인스턴스별 메모리 설정 정보
-        configId: configId === -1 ? undefined : configId, // configId (-1인 경우 undefined)
-      };
-    });
+        return {
+          gpuIndexs: group.map((item) => item.gpuIndex), // 해당 configId를 사용하는 GPU 인덱스들
+          migEnable: group[0].migEnable, // MIG 활성화 상태
+          profile, // GPU 인스턴스별 메모리 설정 정보
+          configId: configId === -1 ? undefined : configId, // configId (-1인 경우 undefined)
+        };
+      },
+    );
 
     return {
       nodeName, // 대상 노드 이름
@@ -192,8 +193,6 @@ export function UpdateMigModal() {
         // MIG 설정 정보 조회
 
         const { migInfos, gpuProduct, migKey } = await execute({ nodeName });
-
-        console.log(migInfos);
 
         // MIG 정보를 GPU 목록으로 변환
         // migInfos의 각 항목에서 gpuIndexs 배열을 평면화하여 개별 GPU 항목 생성

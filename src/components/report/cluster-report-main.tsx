@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import { subTitleStyle } from "@/styles/mixins/text";
-import ReportFilter from "./report-filter";
+import { ReportFilter } from "./report-filter";
 
 export function ClusterReportMain() {
   return (

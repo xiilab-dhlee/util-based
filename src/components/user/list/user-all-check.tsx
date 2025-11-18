@@ -8,7 +8,7 @@ import {
   userCheckedListAtom,
   userPageAtom,
   userSearchTextAtom,
-} from "@/atoms/user/user-list.atom";
+} from "@/atoms/user.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetUsers } from "@/hooks/user/use-get-users";
 import type { UserListType } from "@/schemas/user.schema";

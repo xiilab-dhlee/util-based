@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { nodePageAtom } from "@/atoms/node/node-list.atom";
+import { nodePageAtom } from "@/atoms/node.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNodes } from "@/hooks/node/use-get-nodes";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";

@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai";
 
-import { migGpuProductAtom } from "@/atoms/node/node-list.atom";
+import { migGpuProductAtom } from "@/atoms/node.atom";
 import {
   MIG_GPU_ALPHA_MODEL,
   MIG_GPU_BETA_MODEL,

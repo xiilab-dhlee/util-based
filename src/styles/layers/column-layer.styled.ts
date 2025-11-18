@@ -95,5 +95,5 @@ export const ColumnTruncateText = styled.span<{ width: number }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: ${({ width }) => width}px;
+  max-width: ${({ width }) => width}px;
 `;

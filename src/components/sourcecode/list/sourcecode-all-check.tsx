@@ -8,7 +8,7 @@ import {
   sourcecodeCheckedListAtom,
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
-} from "@/atoms/sourcecode/sourcecode-list.atom";
+} from "@/atoms/sourcecode.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetSourcecodes } from "@/hooks/sourcecode/use-get-sourcecodes";
 import type { SourcecodeListType } from "@/schemas/sourcecode.schema";

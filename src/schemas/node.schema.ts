@@ -142,32 +142,32 @@ export const nodeResourcesSchema = z.object({
   /** 요청 */
   requests: z.object({
     /** CPU */
-    cpu: z.number(),
+    cpu: z.number().min(1).max(100),
     /** 메모리 */
-    memory: z.number(),
+    memory: z.number().min(1).max(100),
     /** GPU */
-    gpu: z.number(),
+    gpu: z.number().min(1).max(100),
     /** CPU 사용률 (%) */
-    cpuPercent: z.number(),
+    cpuPercent: z.number().min(1).max(100),
     /** 메모리 사용률 (%) */
-    memoryPercent: z.number(),
+    memoryPercent: z.number().min(1).max(100),
     /** GPU 사용률 (%) */
-    gpuPercent: z.number(),
+    gpuPercent: z.number().min(1).max(100),
   }),
   /** 제한 */
   limits: z.object({
     /** CPU */
-    cpu: z.number(),
+    cpu: z.number().min(1).max(100),
     /** 메모리 */
-    memory: z.number(),
+    memory: z.number().min(1).max(100),
     /** GPU */
-    gpu: z.number(),
+    gpu: z.number().min(1).max(100),
     /** CPU 사용률 (%) */
-    cpuPercent: z.number(),
+    cpuPercent: z.number().min(1).max(100),
     /** 메모리 사용률 (%) */
-    memoryPercent: z.number(),
+    memoryPercent: z.number().min(1).max(100),
     /** GPU 사용률 (%) */
-    gpuPercent: z.number(),
+    gpuPercent: z.number().min(1).max(100),
   }),
 });
 

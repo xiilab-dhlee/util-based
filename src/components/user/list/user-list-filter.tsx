@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai";
 
-import { userPageAtom, userSearchTextAtom } from "@/atoms/user/user-list.atom";
+import { userPageAtom, userSearchTextAtom } from "@/atoms/user.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";

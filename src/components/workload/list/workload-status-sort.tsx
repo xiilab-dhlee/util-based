@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { workloadStatusAtom } from "@/atoms/workload/workload-list.atom";
+import { workloadStatusAtom } from "@/atoms/workload.atom";
 import { MySelect } from "@/components/common/select";
 import { WORKLOAD_STATUS_OPTIONS } from "@/constants/workload/workload.constant";
 

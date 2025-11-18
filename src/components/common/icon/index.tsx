@@ -14,7 +14,7 @@ import { CirclePlusIcon } from "./circle-plus-icon";
 
 interface MyIconProps extends IconProps {}
 
-export function MyIcon({ name, ...props }: MyIconProps) {
+export function MyIcon({ name, color, width, height, ...props }: MyIconProps) {
   if (name === "pytorch") {
     return <PytorchIcon />;
   } else if (name === "jupyter") {
@@ -26,9 +26,9 @@ export function MyIcon({ name, ...props }: MyIconProps) {
   } else if (name === "custom") {
     return <BuiltinIcon />;
   } else if (name === "astrago") {
-    return <AstragoIcon />;
-  } else if (name === "local") {
-    return <StorageIcon />;
+    return <AstragoIcon fill={color} width={width} height={height} />;
+  } else if (name === "storage") {
+    return <StorageIcon fill={color} width={width} height={height} />;
   } else if (name === "guide") {
     return <GuideIcon />;
   } else if (name === "mig") {
@@ -41,5 +41,7 @@ export function MyIcon({ name, ...props }: MyIconProps) {
     return <CirclePlusIcon />;
   }
 
-  return <Icon name={name} {...props} />;
+  return (
+    <Icon name={name} color={color} width={width} height={height} {...props} />
+  );
 }

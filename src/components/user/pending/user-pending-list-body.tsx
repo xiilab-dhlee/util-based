@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import {
   userPendingPageAtom,
   userPendingSearchTextAtom,
-} from "@/atoms/user/user-pending-list.atom";
+} from "@/atoms/user.atom";
 import { userPendingListColumn } from "@/components/common/column/user-pending-list-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";

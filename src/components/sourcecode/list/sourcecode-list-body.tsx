@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import {
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
-} from "@/atoms/sourcecode/sourcecode-list.atom";
+} from "@/atoms/sourcecode.atom";
 import { createSourcecodeColumn } from "@/components/common/column/create-sourcecode-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";

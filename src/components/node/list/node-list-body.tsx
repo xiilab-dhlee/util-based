@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai";
 
-import { nodePageAtom } from "@/atoms/node/node-list.atom";
+import { nodePageAtom } from "@/atoms/node.atom";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { nodeListColumn } from "@/components/node/list/node-list-column";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";

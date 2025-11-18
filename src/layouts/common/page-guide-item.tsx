@@ -3,12 +3,12 @@
 import styled from "styled-components";
 
 import { MyIcon } from "@/components/common/icon";
-import type { CoreGuideItem } from "@/types/common/core.model";
+import type { CoreGuide } from "@/types/common/core.model";
 
 /**
  * 페이지 가이드 아이템 컴포넌트의 props 인터페이스
  */
-interface PageGuideItemProps extends CoreGuideItem {}
+interface PageGuideItemProps extends CoreGuide {}
 
 /**
  * 페이지 가이드 아이템 컴포넌트

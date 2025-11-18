@@ -4,7 +4,7 @@ import {
   workspaceListSchema,
 } from "@/schemas/workspace.schema";
 import { workspaceMemberListSchema } from "@/schemas/workspace-member.schema";
-import { workspaceRequestResourceListSchema } from "@/schemas/workspace-request-resource.schema";
+import { requestResourceListSchema } from "@/schemas/request-resource.schema";
 import { makeMock } from "@/utils/common/mock.util";
 
 /**
@@ -33,7 +33,7 @@ export const workspaceMemberListMock = Array.from(
 export const workspaceRequestResourceListMock = Array.from(
   { length: LIST_PAGE_SIZE },
   () => {
-    const mock = makeMock(workspaceRequestResourceListSchema);
+    const mock = makeMock(requestResourceListSchema);
     // migGpu 필드를 올바른 형태로 설정
     return {
       ...mock,

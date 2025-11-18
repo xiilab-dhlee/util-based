@@ -1,4 +1,4 @@
-import { openYamlLogModalAtom } from "@/atoms/monitoring/cluster-monitoring.atom";
+import { openYamlLogModalAtom } from "@/atoms/monitoring.atom";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { ColumnIconWrap } from "@/styles/layers/column-layer.styled";
 import { MyIcon } from "../common/icon";

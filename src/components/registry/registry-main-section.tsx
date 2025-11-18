@@ -2,7 +2,7 @@ import { useAtomValue } from "jotai";
 import Image from "next/image";
 import styled from "styled-components";
 
-import { userWaitingRequestImageListSearchTextAtom } from "@/atoms/registry/registry.atom";
+import { userWaitingRequestImageListSearchTextAtom } from "@/atoms/registry.atom";
 import { REGISTRY_QUICK_MENUS } from "@/constants/registry/registry.constant";
 import { useGetWaitingRequestImages } from "@/hooks/request-image/use-get-waiting-request-images";
 import { MySearchFilter } from "@/layouts/common/search-filter";
@@ -102,7 +102,7 @@ const Container = styled.section`
  * 고정 너비(634px)를 가지며 세로 방향으로 배치됩니다.
  */
 const Left = styled.div`
-  width: 634px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -116,7 +116,7 @@ const Left = styled.div`
  * flex: 1을 사용하여 남은 공간을 모두 차지하며 세로 방향으로 배치됩니다.
  */
 const Right = styled.div`
-  flex: 1;
+  width: 862px;
   display: flex;
   flex-direction: column;
   overflow: hidden;

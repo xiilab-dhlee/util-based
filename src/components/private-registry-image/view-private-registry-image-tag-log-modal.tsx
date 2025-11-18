@@ -1,6 +1,6 @@
 import { InfoModal } from "xiilab-ui";
 
-import { openPrivateRegistryImageTagLogModalAtom } from "@/atoms/private-registry-image/private-registry-image.atom";
+import { openPrivateRegistryImageTagLogModalAtom } from "@/atoms/private-registry-image.atom";
 import { MyIcon } from "@/components/common/icon";
 import { WorkloadLogBody } from "@/components/workload/log/workload-log-body";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";

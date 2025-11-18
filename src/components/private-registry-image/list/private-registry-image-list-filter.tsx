@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import {
   privateRegistryImagePageAtom,
   privateRegistryImageSearchTextAtom,
-} from "@/atoms/private-registry-image/private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";

@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Modal } from "xiilab-ui";
 
-import { openUpdateUserModalAtom } from "@/atoms/user/user-list.atom";
+import { openUpdateUserModalAtom } from "@/atoms/user.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";

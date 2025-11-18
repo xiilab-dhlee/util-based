@@ -3,7 +3,7 @@
 import { useSetAtom } from "jotai";
 import styled from "styled-components";
 
-import { workloadFileSelectedKeyAtom } from "@/atoms/workload/workload-file.atom";
+import { workloadFileSelectedKeyAtom } from "@/atoms/workload.atom";
 import { MyIcon } from "@/components/common/icon";
 import type { FileTreeType } from "@/schemas/filetree.schema";
 import { WorkloadFileCheckbox } from "./workload-file-checkbox";

@@ -1,6 +1,6 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { isEmpty } from "lodash";
+import { isEmpty } from "es-toolkit/compat";
 
 import { redfishKeys } from "@/constants/node/redfish.key";
 import { useServices } from "@/providers/service-provider";

@@ -3,6 +3,7 @@
  * 모든 도메인별 핸들러를 하나로 통합하여 export
  */
 
+import { credentialHandlers } from "./credential.handler";
 import { groupHandlers } from "./group.handler";
 import { hubHandlers } from "./hub.handler";
 import { monitoringHandlers } from "./monitoring.handler";
@@ -36,4 +37,5 @@ export const combinedHandlers = [
   ...monitoringHandlers,
   ...privateRegistryHandlers,
   ...privateRegistryImageHandlers,
+  ...credentialHandlers,
 ];

@@ -7,11 +7,11 @@ import { Button } from "xiilab-ui";
 import { MySelect } from "@/components/common/select";
 import { useSelect } from "@/hooks/common/use-select";
 import { useGetCredentials } from "@/hooks/credential/use-get-credentials";
+import type { CredentialListType } from "@/schemas/credential.schema";
 import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
-import type { Credential } from "@/types/credential/credential.model";
 
 interface ManageCredentialProps {
-  defaultCredential?: Credential;
+  defaultCredential?: CredentialListType;
 }
 
 /**
@@ -33,7 +33,7 @@ export function ManageCredential({ defaultCredential }: ManageCredentialProps) {
   // 크레덴셜 목록을 MySelect 컴포넌트에서 사용할 수 있는 형태로 매핑
   // value: 크레덴셜 ID (문자열), label: 크레덴셜 이름
   const mappedCredentials =
-    data?.credentials?.map((credential) => ({
+    data?.content?.map((credential) => ({
       value: credential.id.toString(),
       label: credential.name,
     })) || [];

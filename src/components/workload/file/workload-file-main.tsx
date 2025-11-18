@@ -8,7 +8,7 @@ import styled from "styled-components";
 import {
   workloadFileSelectedNodeInfoAtom,
   workloadFileTreeDataAtom,
-} from "@/atoms/workload/workload-file.atom";
+} from "@/atoms/workload.atom";
 import { CustomFileTree } from "@/components/common/tree/custom-file-tree";
 import { useGetWorkloadFiles } from "@/hooks/workload/use-get-workload-files";
 import type { FileTreeType } from "@/schemas/filetree.schema";

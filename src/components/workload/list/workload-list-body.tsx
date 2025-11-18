@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import {
   workloadPageAtom,
   workloadSearchTextAtom,
-} from "@/atoms/workload/workload-list.atom";
+} from "@/atoms/workload.atom";
 import { createWorkloadColumn } from "@/components/common/column/create-workload-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import { openDeleteGroupModalAtom } from "@/atoms/group/group.atom";
+import { openDeleteGroupModalAtom } from "@/atoms/group.atom";
 import { GROUP_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";

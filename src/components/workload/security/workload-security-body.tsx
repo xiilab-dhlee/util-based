@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai";
 
-import { workloadSecurityPageAtom } from "@/atoms/workload/workload-security.atom";
+import { workloadSecurityPageAtom } from "@/atoms/workload.atom";
 import { createVulnerabilityColumn } from "@/components/common/column/create-vulnerability-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";

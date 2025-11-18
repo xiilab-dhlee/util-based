@@ -5,7 +5,7 @@ import { useAtom, useAtomValue } from "jotai";
 import {
   requestImagePageAtom,
   requestImageSearchTextAtom,
-} from "@/atoms/request-image/request-image-list.atom";
+} from "@/atoms/request-image.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetRequestImages } from "@/hooks/request-image/use-get-request-images";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";

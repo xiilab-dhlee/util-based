@@ -22,7 +22,7 @@ export function PrivateRegistryImageTagCard({
   medium,
   low,
   creatorDate,
-  creator,
+  creatorName,
   lastCheckedAt,
 }: PrivateRegistryImageTagCardProps) {
   const handleClickMore = () => {
@@ -47,7 +47,7 @@ export function PrivateRegistryImageTagCard({
             <InfoGroup>
               <InfoRow>
                 <Label>생성자 :</Label>
-                <Value>{creator}</Value>
+                <Value>{creatorName}</Value>
               </InfoRow>
               <InfoRow>
                 <Label>생성일 :</Label>

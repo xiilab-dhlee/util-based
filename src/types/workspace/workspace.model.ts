@@ -1,5 +1,5 @@
-// 워크스페이스 리소스 요청
-export type WorkspaceRequestResource = {
+// 리소스 요청
+export type RequestResource = {
   // 리소스 요청 아이디
   id: number;
   // 워크스페이스 이름

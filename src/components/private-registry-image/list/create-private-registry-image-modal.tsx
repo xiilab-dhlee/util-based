@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Input, Modal, Tag } from "xiilab-ui";
 
-import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image/private-registry-image.atom";
+import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
 import { useClearForm } from "@/hooks/common/use-clear-form";

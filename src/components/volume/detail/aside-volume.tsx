@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { useState } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
+import { volumeSelectedAtom } from "@/atoms/volume.atom";
 import { MyIcon } from "@/components/common/icon";
 import { StateTab } from "@/components/common/tab";
 import { useGetVolume } from "@/hooks/volume/use-get-volume";
@@ -82,7 +82,7 @@ export function AsideVolume() {
     <AsideDetailContainer>
       <AsideDetailHeader>
         <AsideDetailHeaderTitle>
-          <MyIcon name={data?.storageType.toLowerCase()} />
+          <MyIcon name={data?.storageType?.toLowerCase() || ""} />
           <span>{data?.name}</span>
         </AsideDetailHeaderTitle>
       </AsideDetailHeader>

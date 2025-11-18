@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 
-import { sourcecodeTypeAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
+import { sourcecodeTypeAtom } from "@/atoms/sourcecode.atom";
 import { MySelect } from "@/components/common/select";
 import { SOURCECODE_TYPE_OPTIONS } from "@/constants/sourcecode/sourcecode.constant";
 

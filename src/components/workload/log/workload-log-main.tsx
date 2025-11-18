@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 
-import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload/workload-detail.atom";
+import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload.atom";
 import { TerminalThemeButton } from "@/components/common/button/terminal-theme-button";
 import { MyIcon } from "@/components/common/icon";
 import { ViewWorkloadMonitoringModal } from "@/components/workload/detail/view-workload-monitoring-modal";

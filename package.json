@@ -43,6 +43,7 @@
     "axios": "^1.13.1",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
+    "es-toolkit": "^1.42.0",
     "jotai": "^2.12.5",
     "lodash": "^4.17.21",
     "next": "16.0.1",

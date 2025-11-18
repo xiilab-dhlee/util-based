@@ -1,8 +1,18 @@
-import type { CorePaginate, CoreSearchText } from "../common/api.interface";
+import type {
+  CorePaginate,
+  CorePayload,
+  CoreSearchText,
+} from "../common/api.interface";
 
-export interface GetUsersPayload extends CorePaginate, CoreSearchText {}
+export interface GetUsersPayload
+  extends CorePayload,
+    CorePaginate,
+    CoreSearchText {}
 
-export interface GetPendingUsersPayload extends CorePaginate, CoreSearchText {}
+export interface GetPendingUsersPayload
+  extends CorePayload,
+    CorePaginate,
+    CoreSearchText {}
 
 export interface CheckPasswordPayload {
   username: string;

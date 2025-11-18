@@ -1,13 +1,8 @@
-import type {
-  GetMonitoringNotificationSettingsPayload,
-  GetMonitoringNotificationsPayload,
-} from "@/types/monitoring-notification/monitoring-notification.type";
+import type { GetMonitoringNotificationsPayload } from "@/types/monitoring-notification/monitoring-notification.type";
 
 export const monitoringKeys = {
   default: ["monitoring"],
-  notificationSettingList: (
-    payload: GetMonitoringNotificationSettingsPayload,
-  ) => [
+  notificationSettingList: (payload: GetMonitoringNotificationsPayload) => [
     ...monitoringKeys.default,
     "notificationSettingList",
     ...Object.values(payload),

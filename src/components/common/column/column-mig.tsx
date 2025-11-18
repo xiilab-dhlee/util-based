@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { Tag } from "xiilab-ui";
 
-import type { WorkspaceRequestResourceMigGpuType } from "@/schemas/workspace-request-resource.schema";
+import type { RequestResourceMigGpuType } from "@/schemas/request-resource.schema";
 import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
 
 interface ColumnMigProps {
-  migProfiles: WorkspaceRequestResourceMigGpuType;
+  migProfiles: RequestResourceMigGpuType;
 }
 
 /**

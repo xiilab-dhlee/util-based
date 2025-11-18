@@ -1,13 +1,12 @@
 "use client";
 
 import { format } from "date-fns";
-import { isDate } from "lodash";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { DateRange, Modal } from "xiilab-ui";
 
-import { openCreateReportModalAtom } from "@/atoms/report/report.atom";
+import { openCreateReportModalAtom } from "@/atoms/report.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
 import { MySelect } from "@/components/common/select";
@@ -46,7 +45,7 @@ export function CreateReportModal() {
       return;
     }
 
-    if (!isDate(startDate) || !isDate(endDate)) {
+    if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
       toast.error("날짜를 선택해 주세요.");
       return;
     }

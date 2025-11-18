@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
-import { hubSelectedAtom } from "@/atoms/hub/hub-list.atom";
+import { hubSelectedAtom } from "@/atoms/hub.atom";
 import { MarkdownToHtml } from "@/components/common/markdown-to-html";
 import { useGetHub } from "@/hooks/hub/use-get-hub";
 import {

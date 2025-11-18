@@ -1,9 +1,6 @@
 import { useSetAtom } from "jotai";
 
-import {
-  migGpusAtom,
-  selectedMigConfigIdAtom,
-} from "@/atoms/node/node-list.atom";
+import { migGpusAtom, selectedMigConfigIdAtom } from "@/atoms/node.atom";
 import { MigUtil } from "@/utils/node/mig.util";
 
 export const useMigHelper = () => {

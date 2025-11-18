@@ -3,14 +3,14 @@
 import { MyIcon } from "@/components/common/icon";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
-import type { WorkspaceRequestResourceListType } from "@/schemas/workspace-request-resource.schema";
+import type { RequestResourceListType } from "@/schemas/request-resource.schema";
 import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
 } from "@/styles/layers/column-layer.styled";
 
 interface ViewRejectReasonButtonProps {
-  resource: WorkspaceRequestResourceListType;
+  resource: RequestResourceListType;
 }
 
 export function ViewRejectResourceButton({

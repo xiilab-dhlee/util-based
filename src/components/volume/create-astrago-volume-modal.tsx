@@ -9,7 +9,7 @@ import { Input, Modal, Upload } from "xiilab-ui";
 import {
   openCreateAstragoVolumeModalAtom,
   openSelectVolumeModalAtom,
-} from "@/atoms/volume/volume-list.atom";
+} from "@/atoms/volume.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
@@ -133,7 +133,7 @@ export function CreateAstragoVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="astrago" color="#fff" size={18} />}
+      icon={<MyIcon name="astrago" color="#fff" width={16} height={16} />}
       open={open}
       closable
       title="AstraGo Storage"

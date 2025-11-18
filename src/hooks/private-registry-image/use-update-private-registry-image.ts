@@ -16,8 +16,7 @@ export const useUpdatePrivateRegistryImage = (): UseMutationResult<
   const { privateRegistryImageService } = useServices();
 
   return useMutation({
-    mutationFn: (payload) =>
-      privateRegistryImageService.updatePrivateRegistryImage(payload),
+    mutationFn: (payload) => privateRegistryImageService.updateImage(payload),
 
     onSuccess: () => {},
   });

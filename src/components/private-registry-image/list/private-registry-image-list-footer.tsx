@@ -7,7 +7,7 @@ import {
   privateRegistryImageCheckedListAtom,
   privateRegistryImagePageAtom,
   privateRegistryImageSearchTextAtom,
-} from "@/atoms/private-registry-image/private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";

@@ -4,10 +4,7 @@ import classNames from "classnames";
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import {
-  migGpuProductAtom,
-  selectedMigConfigIdAtom,
-} from "@/atoms/node/node-list.atom";
+import { migGpuProductAtom, selectedMigConfigIdAtom } from "@/atoms/node.atom";
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
 import type { GpuInstanceNode } from "@/types/node/node.type";
 

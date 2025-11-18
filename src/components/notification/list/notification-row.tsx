@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { useAtom } from "jotai";
 import type { HTMLAttributes, MouseEvent } from "react";
 
-import { notificationSelectedAtom } from "@/atoms/notification/notification-list.atom";
+import { notificationSelectedAtom } from "@/atoms/notification.atom";
 import type { NotificationListType } from "@/schemas/notification.schema";
 
 interface NotificationRowProps extends HTMLAttributes<HTMLTableRowElement> {

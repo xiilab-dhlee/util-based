@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { workspaceKeys } from "@/constants/workspace/workspace.key";
 import { useServices } from "@/providers/service-provider";
-import type { WorkspaceRequestResourceListType } from "@/schemas/workspace-request-resource.schema";
+import type { RequestResourceListType } from "@/schemas/request-resource.schema";
 import type { CoreListResponse } from "@/types/common/core.model";
 import type { GetWorkspaceRequestResourcesPayload } from "@/types/workspace/workspace.interface";
 
@@ -12,10 +12,7 @@ import type { GetWorkspaceRequestResourcesPayload } from "@/types/workspace/work
  */
 export const useGetWorkspaceRequestResources = (
   payload: GetWorkspaceRequestResourcesPayload,
-): UseQueryResult<
-  CoreListResponse<WorkspaceRequestResourceListType>,
-  Error
-> => {
+): UseQueryResult<CoreListResponse<RequestResourceListType>, Error> => {
   const { workspaceService } = useServices();
 
   return useQuery({

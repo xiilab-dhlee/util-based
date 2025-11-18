@@ -7,7 +7,7 @@ import {
   hubPageAtom,
   hubSearchTextAtom,
   hubSelectedAtom,
-} from "@/atoms/hub/hub-list.atom";
+} from "@/atoms/hub.atom";
 import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetHubs } from "@/hooks/hub/use-get-hubs";
 import { ListEmpty } from "@/layouts/list/list-empty";

@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useAtom } from "jotai";
 import styled from "styled-components";
 
-import { volumeFileSelectedNodeInfoAtom } from "@/atoms/volume/volume-file.atom";
+import { volumeFileSelectedNodeInfoAtom } from "@/atoms/volume.atom";
 import { MyIcon } from "@/components/common/icon";
 import {
   AsideDetailArticle,

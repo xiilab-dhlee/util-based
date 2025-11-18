@@ -5,8 +5,10 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
-import { volumeFileTreeDataAtom } from "@/atoms/volume/volume-file.atom";
-import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
+import {
+  volumeFileTreeDataAtom,
+  volumeSelectedAtom,
+} from "@/atoms/volume.atom";
 import { MyDropdown } from "@/components/common/dropdown";
 import { RootCustomFileNode } from "@/components/common/tree/custom-file-node";
 import { CustomFileTree } from "@/components/common/tree/custom-file-tree";

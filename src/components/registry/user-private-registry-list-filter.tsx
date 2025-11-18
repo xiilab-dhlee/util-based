@@ -1,6 +1,6 @@
 "use client";
 
-import { userPrivateRegistrySearchTextAtom } from "@/atoms/registry/registry.atom";
+import { userPrivateRegistrySearchTextAtom } from "@/atoms/registry.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { useSearch } from "@/hooks/common/use-search";
 import { MySearchFilter } from "@/layouts/common/search-filter";

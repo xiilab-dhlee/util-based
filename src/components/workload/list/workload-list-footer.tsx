@@ -5,7 +5,7 @@ import { useAtom, useAtomValue } from "jotai";
 import {
   workloadPageAtom,
   workloadSearchTextAtom,
-} from "@/atoms/workload/workload-list.atom";
+} from "@/atoms/workload.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkloadsByMode } from "@/hooks/workload/use-get-workloads-by-mode";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";

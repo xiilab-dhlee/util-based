@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import {
   privateRegistryPageAtom,
   privateRegistrySelectedItemAtom,
-} from "@/atoms/private-registry/private-registry.atom";
-import { sourcecodeSearchTextAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
+} from "@/atoms/private-registry.atom";
+import { sourcecodeSearchTextAtom } from "@/atoms/sourcecode.atom";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { privateRegistryListColumn } from "@/components/private-registry/list/private-registry-list-column";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";

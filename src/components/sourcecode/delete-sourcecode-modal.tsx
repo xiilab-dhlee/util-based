@@ -4,12 +4,12 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { openDeleteSourcecodeModalAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
+import { openDeleteSourcecodeModalAtom } from "@/atoms/sourcecode.atom";
 import { SOURCECODE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeleteSourcecode } from "@/hooks/sourcecode/use-delete-sourcecode";
-import type { SourcecodeListType } from "@/schemas/sourcecode.schema";
+import type { SourcecodeIdType } from "@/schemas/sourcecode.schema";
 
 /**
  * 소스코드 삭제 모달 컴포넌트
@@ -25,7 +25,7 @@ export function DeleteSourcecodeModal() {
 
   // 삭제할 소스코드 목록
   const [deleteSourcecodes, setDeleteSourcecodes] = useState<
-    Pick<SourcecodeListType, "id">[]
+    SourcecodeIdType[]
   >([]);
 
   const deleteSourcecode = useDeleteSourcecode();
@@ -57,7 +57,7 @@ export function DeleteSourcecodeModal() {
    */
   useSubscribe(
     SOURCECODE_EVENTS.sendDeleteSourcecode,
-    (sourcecodes: Pick<SourcecodeListType, "id">[]) => {
+    (sourcecodes: SourcecodeIdType[]) => {
       // 삭제할 소스코드 목록 설정
       setDeleteSourcecodes(sourcecodes);
       // 삭제 모달 열기

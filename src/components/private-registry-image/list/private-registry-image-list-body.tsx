@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import {
   privateRegistryImagePageAtom,
   privateRegistryImageSearchTextAtom,
-} from "@/atoms/private-registry-image/private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { createPrivateRegistryImageColumn } from "@/components/common/column/create-private-registry-image-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
@@ -41,9 +41,7 @@ export function PrivateRegistryImageListBody() {
           { dataIndex: "pullCount" },
           { dataIndex: "creator" },
           { dataIndex: "creatorDate" },
-          { dataIndex: "updatedAt" },
           { dataIndex: "description" },
-          { dataIndex: "status" },
         ])}
         data={data?.content || []}
         columnHeight={40}

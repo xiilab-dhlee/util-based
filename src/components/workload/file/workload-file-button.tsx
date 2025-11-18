@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { workloadFileSelectedKeyAtom } from "@/atoms/workload/workload-file.atom";
+import { workloadFileSelectedKeyAtom } from "@/atoms/workload.atom";
 import { FileTreeButton } from "@/components/common/button/file-tree-button";
 import type { CoreFileButton } from "@/types/common/core.model";
 

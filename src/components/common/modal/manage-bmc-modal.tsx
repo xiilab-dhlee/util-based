@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Input, Modal } from "xiilab-ui";
 
-import { openManageBmcModalAtom } from "@/atoms/node/node-detail.atom";
+import { openManageBmcModalAtom } from "@/atoms/node.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";

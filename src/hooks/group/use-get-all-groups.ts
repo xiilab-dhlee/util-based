@@ -3,14 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 
 import { groupKeys } from "@/constants/group/group.key";
 import { useServices } from "@/providers/service-provider";
-import type { GroupListType } from "@/schemas/group.schema";
-import type { CoreListResponse } from "@/types/common/core.model";
+import type { CoreFileListResponse } from "@/types/common/core.model";
 
 /**
  * 그룹 전체 목록 조회
  */
 export const useGetAllGroups = (): UseQueryResult<
-  CoreListResponse<GroupListType>,
+  CoreFileListResponse,
   Error
 > => {
   const { groupService } = useServices();

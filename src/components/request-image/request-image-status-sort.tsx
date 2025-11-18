@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { requestImageStatusAtom } from "@/atoms/request-image/request-image-list.atom";
+import { requestImageStatusAtom } from "@/atoms/request-image.atom";
 import { MySelect } from "@/components/common/select";
 import { REQUEST_IMAGE_STATUS_OPTIONS } from "@/constants/request-image/request-image.constant";
 

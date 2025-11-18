@@ -1,9 +1,9 @@
 import { format } from "date-fns";
 import { type ResponsiveColumnType, Tag, type TagProps } from "xiilab-ui";
 
-import { UpdateWorkspaceMemberButton } from "@/components/workspace/member/update-workspace-member-button";
-import { WorkspaceMemberAllCheck } from "@/components/workspace/member/workspace-member-all-check";
-import { WorkspaceMemberItemCheck } from "@/components/workspace/member/workspace-member-item-check";
+import { UpdateWorkspaceMemberButton } from "@/components/workspace-member/update-workspace-member-button";
+import { WorkspaceMemberAllCheck } from "@/components/workspace-member/workspace-member-all-check";
+import { WorkspaceMemberItemCheck } from "@/components/workspace-member/workspace-member-item-check";
 import type { WorkspaceMemberListType } from "@/schemas/workspace-member.schema";
 import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
 

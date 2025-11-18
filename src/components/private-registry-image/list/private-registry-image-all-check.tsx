@@ -8,7 +8,7 @@ import {
   privateRegistryImageCheckedListAtom,
   privateRegistryImagePageAtom,
   privateRegistryImageSearchTextAtom,
-} from "@/atoms/private-registry-image/private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPrivateRegistryImages } from "@/hooks/private-registry-image/use-get-private-registry-images";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";

@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Checkbox, Input, Modal, Typography } from "xiilab-ui";
 
-import { openManageMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
+import { openManageMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification.atom";
 import {
   MONITORING_EVENTS,
   USER_EVENTS,
@@ -83,7 +83,7 @@ export function ManageMonitoringNotificationModal() {
       settings,
     }: MonitoringNotificationListType) => {
       if (id) {
-        setId(id);
+        setId(Number(id));
       } else {
         setId(-1);
       }

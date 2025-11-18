@@ -1,4 +1,4 @@
-import { isEmpty } from "lodash";
+import { isEmpty } from "es-toolkit/compat";
 
 import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { CorePayload } from "@/types/common/api.interface";

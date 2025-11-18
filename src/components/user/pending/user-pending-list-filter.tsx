@@ -6,7 +6,7 @@ import { Button } from "xiilab-ui";
 import {
   userPendingPageAtom,
   userPendingSearchTextAtom,
-} from "@/atoms/user/user-pending-list.atom";
+} from "@/atoms/user.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useSearch } from "@/hooks/common/use-search";

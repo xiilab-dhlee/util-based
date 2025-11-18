@@ -1,11 +1,9 @@
 "use client";
 
-import { useSetAtom } from "jotai";
 import { useRef } from "react";
 import { Input, Modal, TextArea } from "xiilab-ui";
 
-import { openCreateGroupModalAtom } from "@/atoms/group/group.atom";
-import { memberAddModalOpenAtom } from "@/atoms/setting/setting-modal.atom";
+import { openCreateGroupModalAtom } from "@/atoms/group.atom";
 import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
@@ -20,7 +18,7 @@ export function CreateGroupModal() {
 
   // 모달 상태 관리
   const { open, onClose } = useGlobalModal(openCreateGroupModalAtom);
-  const setMemberAddModalOpen = useSetAtom(memberAddModalOpenAtom);
+  // const setMemberAddModalOpen = useSetAtom(memberAddModalOpenAtom);
 
   // 생성 Hook 사용
   // const createVolume = useCreateVolume();
@@ -50,7 +48,7 @@ export function CreateGroupModal() {
   };
 
   const handleAddMember = () => {
-    setMemberAddModalOpen(true);
+    // setMemberAddModalOpen(true);
   };
 
   const createPayload = (): CreateGroupPayload | null => {

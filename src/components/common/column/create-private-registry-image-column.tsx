@@ -5,10 +5,7 @@ import { PrivateRegistryImageItemCheck } from "@/components/private-registry-ima
 import { PrivateRegistryImageNameLink } from "@/components/private-registry-image/list/private-registry-image-name-link";
 import { CHECKBOX_COLUMN_WIDTH } from "@/constants/common/core.constant";
 import type { PrivateRegistryImageListType } from "@/schemas/private-registry-image.schema";
-import {
-  ColumnAlignCenterWrap,
-  ColumnTruncateText,
-} from "@/styles/layers/column-layer.styled";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 import { applyColumnConfigs } from "@/utils/common/column.util";
 
@@ -54,11 +51,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "description",
       title: "설명",
       align: "left",
-      render: (description) => {
-        return (
-          <ColumnTruncateText width={300}>{description}</ColumnTruncateText>
-        );
-      },
     },
     {
       dataIndex: "pullCount",

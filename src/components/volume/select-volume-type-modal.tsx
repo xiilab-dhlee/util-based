@@ -10,7 +10,7 @@ import {
   openCreateAstragoVolumeModalAtom,
   openCreateOnPremiseVolumeModalAtom,
   openSelectVolumeModalAtom,
-} from "@/atoms/volume/volume-list.atom";
+} from "@/atoms/volume.atom";
 import { MyIcon } from "@/components/common/icon";
 import { VolumeStorageCard } from "@/components/volume/list/volume-storage-card";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";

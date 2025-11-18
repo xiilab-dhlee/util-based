@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { openDeleteSourcecodeModalAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
+import { openDeleteSourcecodeModalAtom } from "@/atoms/sourcecode.atom";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";

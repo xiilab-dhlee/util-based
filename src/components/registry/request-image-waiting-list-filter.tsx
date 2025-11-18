@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai";
 
-import { userWaitingRequestImageListSearchTextAtom } from "@/atoms/registry/registry.atom";
+import { userWaitingRequestImageListSearchTextAtom } from "@/atoms/registry.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { useSearch } from "@/hooks/common/use-search";
 import { useGetWaitingRequestImages } from "@/hooks/request-image/use-get-waiting-request-images";

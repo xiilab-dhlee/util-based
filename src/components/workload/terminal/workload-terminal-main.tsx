@@ -4,7 +4,7 @@ import { useSetAtom } from "jotai";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
-import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload/workload-detail.atom";
+import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload.atom";
 import { TerminalThemeButton } from "@/components/common/button/terminal-theme-button";
 import { MonitoringDrawer } from "@/components/common/drawer/monitoring-drawer";
 import { MyIcon } from "@/components/common/icon";

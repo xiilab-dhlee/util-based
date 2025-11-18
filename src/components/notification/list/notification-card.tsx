@@ -5,7 +5,7 @@ import { useSetAtom } from "jotai";
 import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
-import { notificationSelectedAtom } from "@/atoms/notification/notification-list.atom";
+import { notificationSelectedAtom } from "@/atoms/notification.atom";
 import { MyIcon } from "@/components/common/icon";
 import type { NotificationListType } from "@/schemas/notification.schema";
 

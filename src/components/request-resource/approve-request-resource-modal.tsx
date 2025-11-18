@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import { openApproveResourceModalAtom } from "@/atoms/workspace/workspace-request-resource.atom";
+import { openApproveResourceModalAtom } from "@/atoms/request-resource.atom";
 import { MyIcon } from "@/components/common/icon";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
-import type { WorkspaceRequestResourceListType } from "@/schemas/workspace-request-resource.schema";
+import type { RequestResourceListType } from "@/schemas/request-resource.schema";
 import {
   UpdateResourceModalContainer,
   UpdateResourceModalIconDescription,
@@ -38,7 +38,7 @@ export function ApproveResourceModal() {
 
   const handleSubmit = () => {};
 
-  useSubscribe<WorkspaceRequestResourceListType>(
+  useSubscribe<RequestResourceListType>(
     WORKSPACE_EVENTS.sendApproveResource,
     (eventData) => {
       setWorkspaceName(eventData.workspaceName);

@@ -8,7 +8,7 @@ import {
   volumePageAtom,
   volumeSearchTextAtom,
   volumeSelectedAtom,
-} from "@/atoms/volume/volume-list.atom";
+} from "@/atoms/volume.atom";
 import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetVolumes } from "@/hooks/volume/use-get-volumes";
 import { ListEmpty } from "@/layouts/list/list-empty";

@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { sourcecodeCheckedListAtom } from "@/atoms/sourcecode/sourcecode-list.atom";
+import { sourcecodeCheckedListAtom } from "@/atoms/sourcecode.atom";
 import type { SourcecodeListType } from "@/schemas/sourcecode.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { InfoModal } from "xiilab-ui";
 
-import { openCompressVolumeFileModalAtom } from "@/atoms/volume/volume-list.atom";
+import { openCompressVolumeFileModalAtom } from "@/atoms/volume.atom";
 import { MyIcon } from "@/components/common/icon";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";

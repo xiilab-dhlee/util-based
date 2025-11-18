@@ -5,7 +5,7 @@ import Image from "next/image";
 import styled from "styled-components";
 import { Card, CardImageContainer, CardImagePlaceholder } from "xiilab-ui";
 
-import { hubSelectedAtom } from "@/atoms/hub/hub-list.atom";
+import { hubSelectedAtom } from "@/atoms/hub.atom";
 import type { HubListType } from "@/schemas/hub.schema";
 
 interface HubCardProps extends HubListType {}

@@ -4,7 +4,7 @@ import { Drawer } from "antd";
 import { useAtom } from "jotai";
 import styled from "styled-components";
 
-import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload/workload-detail.atom";
+import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload.atom";
 import { WorkloadMonitoringCard } from "@/components/workload/detail/workload-monitoring-card";
 import { DrawerCloseButton } from "../button/drawer-close-button";
 

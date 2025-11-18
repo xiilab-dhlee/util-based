@@ -210,7 +210,7 @@ export function UpdateSourcecode() {
                   width="100%"
                   name="defaultPath"
                   autoComplete="off"
-                  defaultValue={data?.defaultPath}
+                  defaultValue={data?.defaultPath || ""}
                 />
               </div>
             )}

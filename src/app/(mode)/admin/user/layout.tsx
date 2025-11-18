@@ -1,10 +1,8 @@
-"use client";
-
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { openCreateGroupModalAtom } from "@/atoms/group/group.atom";
+import { openCreateGroupModalAtom } from "@/atoms/group.atom";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { CreateGroupModal } from "@/components/group/create-group-modal";

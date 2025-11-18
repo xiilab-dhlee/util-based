@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import {
   adminPrivateRegistryImageTagPageAtom,
   adminPrivateRegistryImageTagSearchTextAtom,
-} from "@/atoms/private-registry-image/admin-private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { ADMIN_PRIVATE_REGISTRY_IMAGE_TAG_PAGE_SIZE } from "@/constants/private-registry-image/private-registry-image.constant";
 import { useSearch } from "@/hooks/common/use-search";

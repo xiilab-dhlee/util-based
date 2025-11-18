@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { workspaceCheckedListAtom } from "@/atoms/workspace/workspace-list.atom";
+import { workspaceCheckedListAtom } from "@/atoms/workspace.atom";
 import type { WorkspaceListType } from "@/schemas/workspace.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 

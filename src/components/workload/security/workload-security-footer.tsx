@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { workloadPageAtom } from "@/atoms/workload/workload-list.atom";
+import { workloadPageAtom } from "@/atoms/workload.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkloadVulnerabilities } from "@/hooks/workload/use-get-workload-vulnerabilities";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";

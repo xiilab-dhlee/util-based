@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { volumeFileSelectedKeyAtom } from "@/atoms/volume/volume-file.atom";
+import { volumeFileSelectedKeyAtom } from "@/atoms/volume.atom";
 import { FileTreeButton } from "@/components/common/button/file-tree-button";
 import type { CoreFileButton } from "@/types/common/core.model";
 

@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import { Button, Input } from "xiilab-ui";
 
-import { notificationSelectedAtom } from "@/atoms/notification/notification-list.atom";
+import { notificationSelectedAtom } from "@/atoms/notification.atom";
 import { useGetNotification } from "@/hooks/notification/use-get-notification";
 import {
   AsideDetailArticleBody,

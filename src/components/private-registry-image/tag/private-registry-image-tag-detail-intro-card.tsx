@@ -53,7 +53,7 @@ export function PrivateRegistryImageTagDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자</RowKey>
-              <RowValue>{data?.creator}</RowValue>
+              <RowValue>{data?.creatorName}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>

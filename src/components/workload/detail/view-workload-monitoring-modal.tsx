@@ -1,7 +1,8 @@
+import type { ApexOptions } from "apexcharts";
 import { useState } from "react";
 import { InfoModal } from "xiilab-ui";
 
-import { openViewWorkloadMonitoringModalAtom } from "@/atoms/workload/workload-detail.atom";
+import { openViewWorkloadMonitoringModalAtom } from "@/atoms/workload.atom";
 import { MonitoringChart } from "@/components/common/chart/monitoring-chart";
 import { MyIcon } from "@/components/common/icon";
 import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
@@ -15,7 +16,7 @@ type SyncWorkloadMonitoringPayload = {
   /** 모달 제목 */
   title: string;
   /** 차트에 표시할 데이터 시리즈 배열 */
-  series: unknown[];
+  series: ApexOptions["series"];
   /** 데이터 단위 (예: %, MB, GB 등) */
   unit: string;
   /** 차트 색상 배열 */
@@ -44,7 +45,7 @@ type SyncWorkloadMonitoringPayload = {
 export function ViewWorkloadMonitoringModal() {
   // 모달 내부 상태 관리
   const [title, setTitle] = useState("");
-  const [series, setSeries] = useState<unknown[]>([]);
+  const [series, setSeries] = useState<ApexOptions["series"]>([]);
   const [unit, setUnit] = useState("");
   const [colors, setColors] = useState<string[]>([]);
 
@@ -82,7 +83,7 @@ export function ViewWorkloadMonitoringModal() {
       centered
     >
       {/* 데이터가 있을 때만 차트를 렌더링하여 불필요한 렌더링 방지 */}
-      {series.length > 0 && (
+      {series && series.length > 0 && (
         <MonitoringChart
           // 제목으로 각 차트 데이터 구분
           key={title}

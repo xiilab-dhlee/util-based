@@ -34,9 +34,9 @@ export function UnconnectRedfish() {
    * IP 정보가 없는 경우 에러 토스트를 표시합니다.
    */
   const handleClickConnectRedfish = () => {
-    if (data?.node?.ip) {
+    if (data?.ip) {
       // BMC 생성 이벤트 발행 (노드 IP와 함께)
-      publish(REDFISH_EVENTS.sendCreateBmc, { nodeIp: data.node.ip });
+      publish(REDFISH_EVENTS.sendCreateBmc, { nodeIp: data.ip });
     } else {
       // IP 정보가 없는 경우 에러 메시지 표시
       toast.error("노드 IP 정보를 찾을 수 없습니다.");

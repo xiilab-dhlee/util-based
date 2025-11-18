@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { Modal, TextArea } from "xiilab-ui";
 
-import { openApproveRequestImageModalAtom } from "@/atoms/request-image/request-image-list.atom";
+import { openApproveRequestImageModalAtom } from "@/atoms/request-image.atom";
 import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";

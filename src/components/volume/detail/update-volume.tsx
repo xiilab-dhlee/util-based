@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Button, Input, Tag } from "xiilab-ui";
 
-import { volumeSelectedAtom } from "@/atoms/volume/volume-list.atom";
+import { volumeSelectedAtom } from "@/atoms/volume.atom";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
@@ -229,7 +229,7 @@ export function UpdateVolume() {
                   width="100%"
                   name="defaultPath"
                   autoComplete="off"
-                  defaultValue={data?.mountPath}
+                  defaultValue={data?.mountPath || ""}
                 />
               </div>
             )}

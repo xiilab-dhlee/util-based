@@ -24,17 +24,17 @@ export const PRIVATE_REGISTRY_IMAGE_GUIDES: CoreGuide[] = [
 export const PRIVATE_REGISTRY_IMAGE_GUIDE_IMAGES: CoreGuideImage[] = [
   {
     id: "1",
-    src: "/images/create-workload-guide1.png",
+    src: "/images/private-registry-guide1.png",
     alt: "워크로드 가이드 1",
   },
   {
     id: "2",
-    src: "/images/create-workload-guide2.png",
+    src: "/images/private-registry-guide2.png",
     alt: "워크로드 가이드 2",
   },
   {
     id: "3",
-    src: "/images/create-workload-guide3.png",
+    src: "/images/private-registry-guide3.png",
     alt: "워크로드 가이드 3",
   },
 ];

@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { groupSelectedKeyAtom } from "@/atoms/group/group.atom";
+import { groupSelectedKeyAtom } from "@/atoms/group.atom";
 import type { CoreFileButton } from "@/types/common/core.model";
 import { FileTreeButton } from "../common/button/file-tree-button";
 

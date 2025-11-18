@@ -8,7 +8,7 @@ import {
   userPendingCheckedListAtom,
   userPendingPageAtom,
   userPendingSearchTextAtom,
-} from "@/atoms/user/user-pending-list.atom";
+} from "@/atoms/user.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPendingUsers } from "@/hooks/user/use-get-pending-users";
 import type { UserListType } from "@/schemas/user.schema";

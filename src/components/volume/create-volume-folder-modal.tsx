@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Input, Modal } from "xiilab-ui";
 
-import { openCreateVolumeFolderModalAtom } from "@/atoms/volume/volume-list.atom";
+import { openCreateVolumeFolderModalAtom } from "@/atoms/volume.atom";
 import { MyIcon } from "@/components/common/icon";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";

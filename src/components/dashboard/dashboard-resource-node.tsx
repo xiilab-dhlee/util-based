@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
-import DashboardResourceProgress from "./dashboard-resource-progress";
+import { DashboardResourceProgress } from "./dashboard-resource-progress";
 
 interface DashboardResourceNodeProps {
   resourceType: CoreResourceType;

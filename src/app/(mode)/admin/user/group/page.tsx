@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 /**
  * 관리자 그룹 관리 메인 페이지
  */
-export default async function AdminUserGroupPage() {
+export default function AdminUserGroupPage() {
   return <GroupMain />;
 }

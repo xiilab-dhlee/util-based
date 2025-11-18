@@ -9,7 +9,7 @@ import {
   adminPrivateRegistryImageTagCheckedListAtom,
   adminPrivateRegistryImageTagPageAtom,
   adminPrivateRegistryImageTagSearchTextAtom,
-} from "@/atoms/private-registry-image/admin-private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetAdminPrivateRegistryImageTags } from "@/hooks/private-registry-image/use-get-admin-private-registry-image-tags";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";

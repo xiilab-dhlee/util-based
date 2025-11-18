@@ -6,7 +6,7 @@ import styled from "styled-components";
 import {
   workloadFileSelectedNodeInfoAtom,
   workloadFileTreeDataAtom,
-} from "@/atoms/workload/workload-file.atom";
+} from "@/atoms/workload.atom";
 import { DetailContentKey } from "@/styles/layers/detail-page-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { EmptyFile } from "./empty-file";

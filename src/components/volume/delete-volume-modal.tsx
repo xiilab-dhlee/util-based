@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import { openDeleteVolumeModalAtom } from "@/atoms/volume/volume-list.atom";
+import { openDeleteVolumeModalAtom } from "@/atoms/volume.atom";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useDeleteVolume } from "@/hooks/volume/use-delete-volume";
-import type { VolumeListType } from "@/schemas/volume.schema";
+import type { VolumeIdType } from "@/schemas/volume.schema";
 
 /**
  * 볼륨 삭제 모달 컴포넌트
@@ -20,9 +20,7 @@ export function DeleteVolumeModal() {
   const { open, onOpen, onClose } = useGlobalModal(openDeleteVolumeModalAtom);
 
   // 삭제할 볼륨 목록
-  const [deleteVolumes, setDeleteVolumes] = useState<
-    Pick<VolumeListType, "uid">[]
-  >([]);
+  const [deleteVolumes, setDeleteVolumes] = useState<VolumeIdType[]>([]);
 
   const deleteVolume = useDeleteVolume();
 
@@ -45,15 +43,12 @@ export function DeleteVolumeModal() {
   /**
    * 볼륨 삭제 모달 데이터 구독
    */
-  useSubscribe(
-    VOLUME_EVENTS.sendDeleteVolume,
-    (volumes: Pick<VolumeListType, "uid">[]) => {
-      // 삭제할 볼륨 목록 설정
-      setDeleteVolumes(volumes);
-      // 삭제 모달 열기
-      onOpen();
-    },
-  );
+  useSubscribe(VOLUME_EVENTS.sendDeleteVolume, (volumes: VolumeIdType[]) => {
+    // 삭제할 볼륨 목록 설정
+    setDeleteVolumes(volumes);
+    // 삭제 모달 열기
+    onOpen();
+  });
 
   return (
     <Modal

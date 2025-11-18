@@ -7,7 +7,7 @@ import {
   sourcecodeCheckedListAtom,
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
-} from "@/atoms/sourcecode/sourcecode-list.atom";
+} from "@/atoms/sourcecode.atom";
 import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { SOURCECODE_EVENTS } from "@/constants/common/pubsub.constant";

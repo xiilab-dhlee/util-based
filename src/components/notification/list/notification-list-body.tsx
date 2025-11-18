@@ -6,7 +6,7 @@ import {
   notificationEndDateAtom,
   notificationPageAtom,
   notificationStartDateAtom,
-} from "@/atoms/notification/notification-list.atom";
+} from "@/atoms/notification.atom";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { NotificationRow } from "@/components/notification/list/notification-row";
 import { notificationListColumn } from "@/components/notification/notification-list-column";

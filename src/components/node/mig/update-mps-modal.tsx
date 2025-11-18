@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Modal } from "xiilab-ui";
 
-import { openUpdateMpsModalAtom } from "@/atoms/node/node-list.atom";
+import { openUpdateMpsModalAtom } from "@/atoms/node.atom";
 import { MyIcon } from "@/components/common/icon";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
 import { NODE_EVENTS, USER_EVENTS } from "@/constants/common/pubsub.constant";

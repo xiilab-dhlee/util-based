@@ -4,7 +4,6 @@ import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import c from "ansi-colors";
 import { useAtomValue } from "jotai";
-import { isNumber } from "lodash";
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Arthur } from "xterm-theme";
@@ -95,7 +94,7 @@ export function WorkloadTerminalNode({
    * 터미널을 클릭했을 때 포커스를 설정하고 스크롤을 맨 아래로 이동
    */
   const handleClickTerminal = () => {
-    if (isNumber(x) && isNumber(y)) {
+    if (typeof x === "number" && typeof y === "number") {
       onFocus?.(x, y);
     }
     term.current?.focus();

@@ -1,6 +1,6 @@
 "use client";
 
-import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image/private-registry-image.atom";
+import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image.atom";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { PrivateRegistryImageListBody } from "@/components/private-registry-image/list/private-registry-image-list-body";
 import { PrivateRegistryImageListFilter } from "@/components/private-registry-image/list/private-registry-image-list-filter";
@@ -51,14 +51,14 @@ export function PrivateRegistryImageListMain() {
           <PageGuide
             titleEng="Create Container Image"
             title="컨테이너 이미지 생성"
-            icon="Plus"
+            icon="Image"
             description={[
               "이름, 태그, 레지스트리 타입 등 정보를 입력해",
               "내부 레지스트리 내 컨테이너 이미지를 생성하세요.",
               "컨테이너 이미지를 사용하면 복잡한 설치 과정 없이 누구나",
               "동일한 환경에서 쉽게 애플리케이션을 실행가능합니다.",
             ]}
-            backgroundImageName="workload-intro-background.png"
+            backgroundImageName="private-registry-intro-background.png"
             guides={PRIVATE_REGISTRY_IMAGE_GUIDES}
             buttonOptions={{
               enabled: true,

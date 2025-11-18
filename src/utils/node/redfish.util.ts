@@ -1,5 +1,3 @@
-import { has } from "lodash";
-
 const HEALTH_STATUS_MAP: Record<string, Record<string, string>> = {
   Warning: {
     color: "orange",
@@ -30,7 +28,7 @@ export function getHealthStatusInfo(status: string): Record<string, string> {
  * @returns 시스템 ID
  */
 export function getRedfishSystemId(system: Record<string, unknown>): string {
-  if (has(system, "@odata.id")) {
+  if ("@odata.id" in system) {
     const odataId = system["@odata.id"];
     if (typeof odataId === "string") {
       return odataId.split("/").pop() || "";

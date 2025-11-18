@@ -8,7 +8,7 @@ import {
   workspaceCheckedListAtom,
   workspacePageAtom,
   workspaceSearchTextAtom,
-} from "@/atoms/workspace/workspace-list.atom";
+} from "@/atoms/workspace.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";
 import type { WorkspaceListType } from "@/schemas/workspace.schema";

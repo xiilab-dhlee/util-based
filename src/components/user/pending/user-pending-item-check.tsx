@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { userPendingCheckedListAtom } from "@/atoms/user/user-pending-list.atom";
+import { userPendingCheckedListAtom } from "@/atoms/user.atom";
 import type { UserListType } from "@/schemas/user.schema";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import {
   adminPrivateRegistryImageTagSearchTextAtom,
   adminPrivateRegistryImageTagVulnerabilityPageAtom,
-} from "@/atoms/private-registry-image/admin-private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { createPrivateRegistryImageTagColumn } from "@/components/common/column/create-private-registry-image-tag-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { ADMIN_PRIVATE_REGISTRY_IMAGE_TAG_PAGE_SIZE } from "@/constants/private-registry-image/private-registry-image.constant";

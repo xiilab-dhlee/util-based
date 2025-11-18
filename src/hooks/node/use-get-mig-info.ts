@@ -1,5 +1,6 @@
 import { useLazyQuery } from "@/hooks/common/use-lazy-query";
 import { useServices } from "@/providers/service-provider";
+import type { NodeMigInfo } from "@/types/node/node.type";
 
 /**
  * 노드 MIG 설정 조회 (Lazy Query)
@@ -11,7 +12,7 @@ import { useServices } from "@/providers/service-provider";
 export const useGetNodeMigInfo = () => {
   const { nodeService } = useServices();
 
-  return useLazyQuery<{ nodeName: string }>({
+  return useLazyQuery<{ nodeName: string }, NodeMigInfo>({
     queryFn: async ({ nodeName }) => {
       const response = await nodeService.getMigInfo(nodeName);
       return response.data;

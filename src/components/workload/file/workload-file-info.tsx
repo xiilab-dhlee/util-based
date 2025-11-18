@@ -3,7 +3,7 @@ import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-import { workloadFileSelectedNodeInfoAtom } from "@/atoms/workload/workload-file.atom";
+import { workloadFileSelectedNodeInfoAtom } from "@/atoms/workload.atom";
 import { DetailContentKey } from "@/styles/layers/detail-page-layers.styled";
 
 /**

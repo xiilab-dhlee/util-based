@@ -1,13 +1,13 @@
-import type { NodeCondition } from "@/types/node/node.model";
+import type { NodeConditionType } from "@/schemas/node.schema";
 
 /**
  * 노드가 실행 중인지 확인
  * @param nodeCondition - 노드 조건 배열
  * @returns 실행 중 여부
  */
-export function isNodeRunning(nodeCondition: NodeCondition[]): boolean {
+export function isNodeRunning(nodeCondition: NodeConditionType[]): boolean {
   const readyCondition = nodeCondition.find(
-    (condition: NodeCondition) => condition.type === "Ready",
+    (condition: NodeConditionType) => condition.type === "Ready",
   );
 
   return readyCondition?.status === "True" || false;

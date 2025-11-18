@@ -8,7 +8,7 @@ import {
   hubPageAtom,
   hubSearchTextAtom,
   hubSelectedAtom,
-} from "@/atoms/hub/hub-list.atom";
+} from "@/atoms/hub.atom";
 // 향후 검색 기능 구현 시 사용될 컴포넌트
 import { SearchInput } from "@/components/common/input/search-input";
 import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";

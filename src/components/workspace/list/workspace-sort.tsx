@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { workspaceSortAtom } from "@/atoms/workspace/workspace-list.atom";
+import { workspaceSortAtom } from "@/atoms/workspace.atom";
 import { MySelect } from "@/components/common/select";
 import { WORKSPACE_SORT_OPTIONS } from "@/constants/workspace/workspace.constant";
 

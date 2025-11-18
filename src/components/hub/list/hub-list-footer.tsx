@@ -2,7 +2,7 @@
 
 import { useAtom, useAtomValue } from "jotai";
 
-import { hubPageAtom, hubSearchTextAtom } from "@/atoms/hub/hub-list.atom";
+import { hubPageAtom, hubSearchTextAtom } from "@/atoms/hub.atom";
 import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetHubs } from "@/hooks/hub/use-get-hubs";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";

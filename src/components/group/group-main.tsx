@@ -9,7 +9,7 @@ import { Button } from "xiilab-ui";
 import {
   groupTreeDataAtom,
   openCreateGroupModalAtom,
-} from "@/atoms/group/group.atom";
+} from "@/atoms/group.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { CustomFileTree } from "@/components/common/tree/custom-file-tree";
 import { DeleteGroupModal } from "@/components/group/delete-group-modal";

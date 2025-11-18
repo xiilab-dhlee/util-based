@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { openDeletePrivateRegistryImageTagModalAtom } from "@/atoms/private-registry-image/private-registry-image.atom";
+import { openDeletePrivateRegistryImageTagModalAtom } from "@/atoms/private-registry-image.atom";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";

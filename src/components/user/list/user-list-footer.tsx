@@ -7,7 +7,7 @@ import {
   userCheckedListAtom,
   userPageAtom,
   userSearchTextAtom,
-} from "@/atoms/user/user-list.atom";
+} from "@/atoms/user.atom";
 import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
@@ -59,7 +59,7 @@ export function UserListFooter() {
 
   return (
     <ListPageFooter
-      total={data?.total || 0}
+      total={data?.totalSize || 0}
       page={page}
       pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}

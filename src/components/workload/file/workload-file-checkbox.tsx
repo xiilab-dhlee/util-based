@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { workloadFileCheckedNodesAtom } from "@/atoms/workload/workload-file.atom";
+import { workloadFileCheckedNodesAtom } from "@/atoms/workload.atom";
 
 /**
  * WorkloadFileCheckbox 컴포넌트의 props 인터페이스

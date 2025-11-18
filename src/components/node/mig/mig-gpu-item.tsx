@@ -10,7 +10,7 @@ import {
   selectedMigConfigIdAtom,
   selectedMigCountAtom,
   selectedMigGpuIndexAtom,
-} from "@/atoms/node/node-list.atom";
+} from "@/atoms/node.atom";
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
 import type { MigGpu } from "@/types/node/node.type";
 

@@ -6,7 +6,7 @@ import {
   notificationEndDateAtom,
   notificationPageAtom,
   notificationStartDateAtom,
-} from "@/atoms/notification/notification-list.atom";
+} from "@/atoms/notification.atom";
 import { ListRangePicker } from "@/components/common/datepicker/list-range-picker";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetNotifications } from "@/hooks/notification/use-get-notifications";

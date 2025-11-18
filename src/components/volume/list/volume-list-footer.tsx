@@ -7,7 +7,7 @@ import {
   volumeCheckedListAtom,
   volumePageAtom,
   volumeSearchTextAtom,
-} from "@/atoms/volume/volume-list.atom";
+} from "@/atoms/volume.atom";
 import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { CARD_PAGE_SIZE } from "@/constants/common/core.constant";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";

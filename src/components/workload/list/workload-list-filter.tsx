@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import {
   workloadPageAtom,
   workloadSearchTextAtom,
-} from "@/atoms/workload/workload-list.atom";
+} from "@/atoms/workload.atom";
 import { SearchInput } from "@/components/common/input/search-input";
 import { WorkloadJobTypeSort } from "@/components/workload/list/workload-job-type-sort";
 import { WorkloadStatusSort } from "@/components/workload/list/workload-status-sort";

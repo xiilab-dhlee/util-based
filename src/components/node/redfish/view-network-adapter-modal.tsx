@@ -2,13 +2,14 @@
 import styled from "styled-components";
 import { InfoModal, type TabsSeparatedItem } from "xiilab-ui";
 
-import { openViewNetworkPortsModalAtom } from "@/atoms/node/node-detail.atom";
+import { openViewNetworkPortsModalAtom } from "@/atoms/node.atom";
 import { MyIcon } from "@/components/common/icon";
 import { StateTab } from "@/components/common/tab";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
+import type { NetworkAdapterInfoType } from "@/schemas/redfish.schema";
 import { NetworkPortRow } from "./network-port-row";
 import { redfishNetworkDeviceColumn } from "./redfish-network-device-column";
 import { redfishNetworkPortColumn } from "./redfish-network-port-column";
@@ -32,7 +33,7 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
  */
 export function ViewNetworkAdapterModal() {
   // 모달 내부 상태 관리
-  const [rowData, setRowData] = useState<unknown>(null);
+  const [rowData, setRowData] = useState<NetworkAdapterInfoType | null>(null);
   // 현재 선택된 탭 상태 관리
   const [selectedTab, setSelectedTab] = useState("port");
 
@@ -42,11 +43,14 @@ export function ViewNetworkAdapterModal() {
   );
 
   // 네트워크 어댑터 데이터 수신 및 모달 열기
-  useSubscribe(REDFISH_EVENTS.sendNetworkAdapter, (eventData) => {
-    setRowData(eventData);
-    // 모달 열기
-    onOpen();
-  });
+  useSubscribe(
+    REDFISH_EVENTS.sendNetworkAdapter,
+    (eventData: NetworkAdapterInfoType) => {
+      setRowData(eventData);
+      // 모달 열기
+      onOpen();
+    },
+  );
 
   return (
     <InfoModal

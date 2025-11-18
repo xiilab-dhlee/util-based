@@ -2,7 +2,7 @@
 
 import { Button } from "xiilab-ui";
 
-import { openCreateReportModalAtom } from "@/atoms/report/report.atom";
+import { openCreateReportModalAtom } from "@/atoms/report.atom";
 import { MyIcon } from "@/components/common/icon";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { SearchNoResult } from "@/layouts/common/search-no-result";

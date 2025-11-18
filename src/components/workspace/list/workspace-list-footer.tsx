@@ -7,7 +7,7 @@ import {
   workspaceCheckedListAtom,
   workspacePageAtom,
   workspaceSearchTextAtom,
-} from "@/atoms/workspace/workspace-list.atom";
+} from "@/atoms/workspace.atom";
 import { ListDeleteButton } from "@/components/common/button/list-delete-button";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";

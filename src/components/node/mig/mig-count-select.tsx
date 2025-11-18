@@ -6,7 +6,7 @@ import {
   migGpuProductAtom,
   selectedMigCountAtom,
   selectedMigGpuIndexAtom,
-} from "@/atoms/node/node-list.atom";
+} from "@/atoms/node.atom";
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
 import { MigUtil } from "@/utils/node/mig.util";
 import type { MySelectOption } from "../../common/select";

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import {
   privateRegistryImageTagPageAtom,
   privateRegistryImageTagSearchTextAtom,
-} from "@/atoms/private-registry-image/private-registry-image.atom";
+} from "@/atoms/private-registry-image.atom";
 import { createPrivateRegistryImageTagColumn } from "@/components/common/column/create-private-registry-image-tag-column";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";

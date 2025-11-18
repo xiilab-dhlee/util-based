@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Modal } from "xiilab-ui";
 
-import { openViewMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification/monitoring-notification.atom";
+import { openViewMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification.atom";
 import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";

@@ -3,7 +3,7 @@
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { volumeFileSelectedNodeInfoAtom } from "@/atoms/volume/volume-file.atom";
+import { volumeFileSelectedNodeInfoAtom } from "@/atoms/volume.atom";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";

@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { volumeFileCheckedNodesAtom } from "@/atoms/volume/volume-file.atom";
+import { volumeFileCheckedNodesAtom } from "@/atoms/volume.atom";
 
 /**
  * VolumeFileCheckbox 컴포넌트의 props 인터페이스

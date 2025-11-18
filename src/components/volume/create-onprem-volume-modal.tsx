@@ -8,7 +8,7 @@ import { Input, Modal } from "xiilab-ui";
 import {
   openCreateOnPremiseVolumeModalAtom,
   openSelectVolumeModalAtom,
-} from "@/atoms/volume/volume-list.atom";
+} from "@/atoms/volume.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
@@ -102,7 +102,7 @@ export function CreateOnPremVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="storage" color="#fff" size={18} />}
+      icon={<MyIcon name="storage" color="#fff" width={14} height={14} />}
       open={open}
       // closable
       title="On-premise Storage"

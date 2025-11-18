@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import { MyIcon } from "@/components/common/icon";
 import { gradientBackgroundButtonStyle } from "@/styles/mixins/button";
-import type { CoreGuideItem } from "@/types/common/core.model";
+import type { CoreGuide } from "@/types/common/core.model";
 import { PageGuideItem } from "./page-guide-item";
 
 /**
@@ -22,7 +22,7 @@ interface PageGuideProps {
   /** 이미지 이름 */
   backgroundImageName: string;
   /** 가이드 항목들 */
-  guides: CoreGuideItem[];
+  guides: CoreGuide[];
   /** 버튼 옵션 */
   buttonOptions?: {
     enabled: boolean;

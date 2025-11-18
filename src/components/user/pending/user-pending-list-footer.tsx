@@ -5,7 +5,7 @@ import { useAtom, useAtomValue } from "jotai";
 import {
   userPendingPageAtom,
   userPendingSearchTextAtom,
-} from "@/atoms/user/user-pending-list.atom";
+} from "@/atoms/user.atom";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
 import { useGetPendingUsers } from "@/hooks/user/use-get-pending-users";
 import { ListPageFooter } from "@/layouts/list/list-page-footer";

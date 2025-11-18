@@ -6,9 +6,9 @@ import type { ZodTypeAny } from "zod";
 // stringMap은 최우선순위로 처리되어 z.string().datetime() 같은 타입도 오버라이드 가능
 const stringMap: Record<string, () => string> = {
   // 날짜 관련
-  creatorDate: () => faker.date.past({ years: 10 }).toISOString(),
-  creatorDateTime: () => faker.date.past({ years: 10 }).toISOString(),
-  elapsedTime: () => faker.date.past({ years: 10 }).toISOString(),
+  creatorDate: () => faker.date.past({ years: 1 }).toISOString(),
+  creatorDateTime: () => faker.date.past({ years: 1 }).toISOString(),
+  elapsedTime: () => faker.date.past({ years: 1 }).toISOString(),
 
   // URL 및 네트워크
   url: () => faker.internet.url(),
@@ -30,7 +30,7 @@ const stringMap: Record<string, () => string> = {
   workspaceName: () => faker.internet.displayName(),
   // 라벨
   labels: () => faker.internet.displayName(),
-  creatorName: () => faker.internet.displayName(),
+  creatorName: () => faker.person.lastName(),
 
   // 이메일
   email: () => faker.internet.email(),
