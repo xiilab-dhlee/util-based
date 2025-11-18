@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   title: "Workspace Management",
 };
 
-export default async function AdminWorkloadDetailLayout({
+export default function AdminWorkloadDetailLayout({
   children,
 }: PropsWithChildren) {
   return (

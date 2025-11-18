@@ -19,7 +19,7 @@ export const metadata = {
  * 참고: 기본 인증 체크는 middleware.ts에서 처리되며,
  * 여기서는 역할별 대시보드 라우팅만 담당합니다.
  */
-export default async function HomePage() {
+export default function HomePage() {
   // const session = await getServerSession(authOptions);
 
   // middleware에서 인증 체크를 하므로 여기 도달하는 사용자는 이미 인증됨

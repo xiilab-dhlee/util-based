@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 /**
  * 관리자 계정 관리 메인 페이지
  */
-export default async function AdminUserPage() {
+export default function AdminUserPage() {
   return <UserListMain />;
 }

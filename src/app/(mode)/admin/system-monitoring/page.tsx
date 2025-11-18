@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   title: "System Monitoring",
 };
 
-export default async function AdminSystemMonitoringPage() {
+export default function AdminSystemMonitoringPage() {
   return <SystemMonitoringMain />;
 }
