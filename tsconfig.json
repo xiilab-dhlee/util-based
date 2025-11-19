@@ -24,7 +24,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["@playwright/test", "@cucumber/cucumber", "node"]
+    "types": ["@playwright/test", "node"]
   },
   "include": [
     "next-env.d.ts",

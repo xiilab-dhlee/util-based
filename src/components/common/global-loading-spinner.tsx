@@ -14,7 +14,7 @@ export function GlobalLoadingSpinner() {
   }
 
   return (
-    <LoadingWrapper>
+    <LoadingWrapper data-testid="api-loading-spinner">
       <MySpinner />
     </LoadingWrapper>
   );

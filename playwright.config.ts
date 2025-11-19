@@ -19,13 +19,17 @@ export default defineConfig({
   /* CI 환경에서만 실패 시 재시도 */
   retries: process.env.CI ? 2 : 0,
 
-  /* CI에서는 병렬 처리 비활성화 */
-  workers: process.env.CI ? 1 : undefined,
+  /* CI에서는 병렬 처리 비활성화, 로컬에서는 CPU 코어 수만큼 병렬 실행 */
+  workers: process.env.CI
+    ? 1
+    : process.env.WORKERS
+      ? parseInt(process.env.WORKERS)
+      : undefined,
 
   /* 리포터 설정 */
   reporter: [
-    ["html", { outputFolder: "tests/reports/playwright-html" }],
-    ["json", { outputFile: "tests/reports/playwright-json/results.json" }],
+    // ["html", { outputFolder: "tests/reports/playwright-html" }],
+    // ["json", { outputFile: "tests/reports/playwright-json/results.json" }],
     ["list"],
   ],
 
@@ -43,11 +47,11 @@ export default defineConfig({
     /* Base URL - 개발 서버 주소 */
     baseURL: process.env.BASE_URL || "http://localhost:3000",
 
-    /* 네비게이션 타임아웃 */
-    navigationTimeout: 30000,
+    /* 네비게이션 타임아웃 (최적화: 30초 → 20초) */
+    navigationTimeout: 20000,
 
-    /* 액션 타임아웃 */
-    actionTimeout: 15000,
+    /* 액션 타임아웃 (최적화: 15초 → 10초) */
+    actionTimeout: 10000,
   },
 
   /* 프로젝트별 설정 - 다양한 브라우저에서 테스트 */
@@ -93,5 +97,13 @@ export default defineConfig({
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+  },
+
+  /* 테스트 타임아웃 설정 (기본값: 30초) */
+  timeout: 30000,
+
+  /* 각 테스트의 expect 타임아웃 (기본값: 5초) */
+  expect: {
+    timeout: 10000,
   },
 });

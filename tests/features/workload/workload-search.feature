@@ -4,7 +4,7 @@ Feature: 워크로드 검색
   원하는 워크로드를 빠르게 찾고 싶다
 
   Background:
-    Given 사용자가 워크로드 목록 페이지에 있다
+    Given 사용자가 워크로드 목록 페이지에 있다 
 
   @smoke
   Scenario: 워크로드 목록 페이지 접근

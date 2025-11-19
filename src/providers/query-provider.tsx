@@ -21,13 +21,10 @@ export function QueryProvider({ children }: PropsWithChildren) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            retry: 3,
+            // retry: 3,
             staleTime: 3 * 60 * 1000, // 3분
             gcTime: 5 * 60 * 1000, // 5분
             refetchOnWindowFocus: false,
-          },
-          mutations: {
-            retry: 1,
           },
         },
         queryCache: new QueryCache({

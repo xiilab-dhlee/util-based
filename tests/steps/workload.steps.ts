@@ -11,6 +11,7 @@ const { Given, When, Then } = createBdd();
  * - 검색 폼: [data-testid="workload-list-search-form"]
  * - 검색 입력: input[name="search"]
  * - 테이블 컴포넌트: CustomizedTable
+ * - 로딩 레이어: [data-testid="api-loading-spinner"]
  */
 
 /**
@@ -20,11 +21,16 @@ Given("사용자가 워크로드 목록 페이지에 있다", async ({ page }) =
   // 워크로드 목록 페이지로 이동
   await page.goto("/standard/workload");
 
-  // 페이지가 로드될 때까지 대기
-  await page.waitForLoadState("networkidle");
+  // 페이지가 로드될 때까지 대기 (DOM이 준비되면 충분)
+  await page.waitForLoadState("domcontentloaded");
 
-  // 페이지 제목 또는 URL 확인
+  // URL 체크
   await expect(page).toHaveURL(/\/standard\/workload/);
+
+  // 로딩 스피너가 사라질 때까지 최대 10초간 대기
+  // 스피너가 없으면 즉시 통과, 있으면 사라질 때까지 대기
+  const loadingSpinner = page.locator('[data-testid="api-loading-spinner"]');
+  await loadingSpinner.waitFor({ state: "hidden", timeout: 10000 });
 });
 
 /**
@@ -67,7 +73,10 @@ Then("검색 입력창이 표시된다", async ({ page }) => {
   await expect(searchInput).toBeVisible();
 
   // placeholder 확인
-  await expect(searchInput).toHaveAttribute("placeholder", /검색어/i);
+  await expect(searchInput).toHaveAttribute(
+    "placeholder",
+    /검색어를 입력하세요./i,
+  );
 });
 
 /**
@@ -97,22 +106,13 @@ Then("사용자가 검색 폼을 제출한다", async ({ page }) => {
   const searchForm = page.locator('[data-testid="workload-list-search-form"]');
 
   // 검색 입력창에서 엔터키 누르기
-  const searchInput = page.locator('input[name="search"]');
+  const searchInput = searchForm.locator('input[name="search"]');
   await searchInput.press("Enter");
 
-  // 또는 폼 제출 버튼이 있으면 클릭
-  const submitButton = searchForm.locator(
-    "button[class*='ant-input-search-button']",
-  );
-  if ((await submitButton.count()) > 0) {
-    await submitButton.click();
-  }
-
-  // 검색 결과 로딩 대기
-  await page.waitForLoadState("networkidle");
-
-  // 짧은 대기 시간 추가 (API 응답 대기)
-  await page.waitForTimeout(500);
+  // 검색 결과가 로드될 때까지 대기 (테이블이 업데이트되거나 로딩 인디케이터가 사라질 때까지)
+  // networkidle 대신 특정 요소를 기다리는 것이 더 빠름
+  const table = page.locator(".ant-table, table").first();
+  await expect(table).toBeVisible({ timeout: 10000 });
 });
 
 /**
@@ -181,10 +181,7 @@ Then("검색 결과가 비어있을 수 있다", async ({ page }) => {
  * Then - 검색 실행 확인
  */
 Then("검색이 실행된다", async ({ page }) => {
-  // 검색이 실행되었는지 확인 (URL이나 네트워크 요청 확인)
-  await page.waitForLoadState("networkidle");
-
-  // 테이블이나 결과 영역이 표시되는지 확인
+  // 테이블이나 결과 영역이 표시되는지 확인 (networkidle 대신 직접 확인)
   const resultArea = page
     .locator('.ant-table, table, [class*="workload"]')
     .first();
@@ -235,8 +232,10 @@ Then("사용자가 첫 번째 워크로드 이름을 클릭한다", async ({ pag
   // 클릭
   await firstWorkloadLink.click();
 
-  // 페이지 이동 대기
-  await page.waitForLoadState("networkidle");
+  // 페이지 이동 대기 (URL 변경 확인이 더 빠름)
+  await expect(page).toHaveURL(/\/standard\/workload\/[^/]+/, {
+    timeout: 10000,
+  });
 });
 
 /**
@@ -245,11 +244,12 @@ Then("사용자가 첫 번째 워크로드 이름을 클릭한다", async ({ pag
 Then("워크로드 상세 페이지로 이동한다", async ({ page }) => {
   // URL이 워크로드 상세 페이지인지 확인
   // 패턴: /standard/workload/{workloadId}?workspaceId={workspaceId}
-  await expect(page).toHaveURL(/\/standard\/workload\/[^/]+/);
+  await expect(page).toHaveURL(/\/standard\/workload\/[^/]+/, {
+    timeout: 10000,
+  });
 
-  // 또는 페이지에 워크로드 상세 정보가 표시되는지 확인
-  // 페이지가 로드될 때까지 대기
-  await page.waitForLoadState("networkidle");
+  // 페이지가 로드될 때까지 대기 (DOM이 준비되면 충분)
+  await page.waitForLoadState("domcontentloaded");
 });
 
 /**
