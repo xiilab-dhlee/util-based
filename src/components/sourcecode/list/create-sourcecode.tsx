@@ -8,10 +8,11 @@ import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
 import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
+import { Dropdown } from "xiilab-ui";
+
 import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { CreateCredentialModal } from "@/components/common/modal/create-credential-modal";
 import { GuidePopover } from "@/components/common/popover/guide-popover";
-import { MySelect } from "@/components/common/select";
 import { useCreateSourcecode } from "@/hooks/sourcecode/use-create-sourcecode";
 import { AsideDetailForm } from "@/styles/layers/aside-detail-layers.styled";
 import {
@@ -229,9 +230,9 @@ export function CreateSourcecode() {
                 </SourcecodeFormFieldHeader>
                 <SourcecodeFormFieldControl>
                   {/* Git 프로토콜 선택 (현재 미구현) */}
-                  <MySelect
+                  <Dropdown
                     options={[]}
-                    setValue={() => {}}
+                    onChange={() => {}}
                     value={null}
                     width={100}
                     placeholder="선택"

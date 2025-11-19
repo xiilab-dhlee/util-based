@@ -4,11 +4,12 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Modal } from "xiilab-ui";
 
+import { Dropdown } from "xiilab-ui";
+
 import { openUpdateUserModalAtom } from "@/atoms/user.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/constants/workspace/workspace-member.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -28,7 +29,7 @@ export function UpdateUserModal() {
 
   const [user, setUser] = useState<UserListType | null>(null);
 
-  const role = useSelect("", WORKSPACE_MEMBER_ROLE_OPTIONS);
+  const role = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
 
   const handleSubmit = () => {
     const payload = createPayload();
@@ -104,10 +105,8 @@ export function UpdateUserModal() {
         <form style={{ width: "100%" }}>
           <FormItem>
             <FormLabel>권한</FormLabel>
-            <MySelect
-              options={role.options}
-              setValue={role.setValue}
-              value={role.value}
+            <Dropdown
+              {...role}
               width="100%"
               placeholder="권한을 선택해 주세요."
             />

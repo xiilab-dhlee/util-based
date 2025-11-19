@@ -1,9 +1,10 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
+
 import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
 export const MONITORING_NOTIFICATION_PAGE_SIZE = 10;
 
-export const MONITORING_NOTIFICATION_TYPE_OPTIONS: MySelectOption[] = [
+export const MONITORING_NOTIFICATION_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "GPU",
     value: "GPU",
@@ -22,7 +23,7 @@ export const MONITORING_NOTIFICATION_TYPE_OPTIONS: MySelectOption[] = [
   },
 ];
 
-export const MONITORING_NOTIFICATION_OPERATOR_OPTIONS: MySelectOption[] = [
+export const MONITORING_NOTIFICATION_OPERATOR_OPTIONS: DropdownOption[] = [
   {
     label: ">",
     value: ">",

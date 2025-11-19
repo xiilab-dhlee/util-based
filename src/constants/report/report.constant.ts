@@ -1,4 +1,5 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
+
 import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
 export const REPORT_GUIDE_IMAGES: CoreGuideImage[] = [
@@ -19,7 +20,7 @@ export const REPORT_GUIDE_IMAGES: CoreGuideImage[] = [
   },
 ];
 
-export const REPORT_DATE_TYPE_OPTIONS: MySelectOption[] = [
+export const REPORT_DATE_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "주간",
     value: "WEEKLY",
@@ -30,7 +31,7 @@ export const REPORT_DATE_TYPE_OPTIONS: MySelectOption[] = [
   },
 ];
 
-export const REPORT_TYPE_OPTIONS: MySelectOption[] = [
+export const REPORT_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "시스템 리포트",
     value: "SYSTEM",

@@ -1,9 +1,10 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { Dropdown } from "xiilab-ui";
 
 import { workloadStatusAtom } from "@/atoms/workload.atom";
-import { MySelect } from "@/components/common/select";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import { WORKLOAD_STATUS_OPTIONS } from "@/constants/workload/workload.constant";
 
 /**
@@ -17,17 +18,15 @@ export function WorkloadStatusSort() {
   const [status, setStatus] = useAtom(workloadStatusAtom);
 
   const handleChange = (value: string | null) => {
-    if (value) {
-      setStatus(value);
-    }
+    setStatus(value);
   };
 
   return (
-    <MySelect
-      options={WORKLOAD_STATUS_OPTIONS}
-      placeholder="상태"
-      setValue={handleChange}
+    <Dropdown
+      options={[ALL_OPTION, ...WORKLOAD_STATUS_OPTIONS]}
       value={status}
+      onChange={handleChange}
+      placeholder="상태"
       width={100}
       height={30}
     />

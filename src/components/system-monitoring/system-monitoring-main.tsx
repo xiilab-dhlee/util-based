@@ -1,11 +1,10 @@
 "use client";
 
 import styled from "styled-components";
-import { DateRange, Typography } from "xiilab-ui";
+import { DateRange, Dropdown, Typography } from "xiilab-ui";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import { SystemMonitoringCard } from "@/components/system-monitoring/system-monitoring-card";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -34,9 +33,9 @@ export function SystemMonitoringMain() {
           </Typography.Text>
           <ArticleHeaderRight>
             <SelectLabel>노드 목록</SelectLabel>
-            <MySelect
+            <Dropdown
               options={[]}
-              setValue={() => {}}
+              onChange={() => {}}
               value={null}
               width={160}
               height={30}
@@ -93,9 +92,9 @@ export function SystemMonitoringMain() {
         <ArticleHeader>
           <Typography.Text variant="title-2">그래프</Typography.Text>
           <ArticleHeaderRight>
-            <MySelect
+            <Dropdown
               options={[]}
-              setValue={() => {}}
+              onChange={() => {}}
               value={null}
               width={160}
               height={30}

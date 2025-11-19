@@ -1,7 +1,8 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
+
 import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
-export const NODE_SORT_OPTIONS: MySelectOption[] = [
+export const NODE_SORT_OPTIONS: DropdownOption[] = [
   { value: "CREATED_AT_DESC", label: "생성일순" },
   { value: "CPU_USAGE_DESC", label: "CPU 사용량순" },
   { value: "MEMORY_USAGE_DESC", label: "Memory 사용량순" },

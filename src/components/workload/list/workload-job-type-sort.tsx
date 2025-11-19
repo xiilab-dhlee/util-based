@@ -1,9 +1,10 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { Dropdown } from "xiilab-ui";
 
 import { workloadJobTypeAtom } from "@/atoms/workload.atom";
-import { MySelect } from "@/components/common/select";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import { WORKLOAD_JOB_OPTIONS } from "@/constants/workload/workload.constant";
 
 /**
@@ -18,16 +19,14 @@ export function WorkloadJobTypeSort() {
   const [jobtype, setJobtype] = useAtom(workloadJobTypeAtom);
 
   const handleChange = (value: string | null) => {
-    if (value) {
-      setJobtype(value);
-    }
+    setJobtype(value);
   };
 
   return (
-    <MySelect
-      options={WORKLOAD_JOB_OPTIONS}
+    <Dropdown
+      options={[ALL_OPTION, ...WORKLOAD_JOB_OPTIONS]}
       placeholder="워크로드 잡 타입"
-      setValue={handleChange}
+      onChange={handleChange}
       value={jobtype}
       width={150}
       height={30}

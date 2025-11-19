@@ -6,11 +6,14 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Input, Modal, Upload } from "xiilab-ui";
 
+import { Dropdown } from "xiilab-ui";
+
 import {
   openCreateAstragoVolumeModalAtom,
   openSelectVolumeModalAtom,
 } from "@/atoms/volume.atom";
 import { FormLabel } from "@/components/common/form/form-label";
+import { MyIcon } from "@/components/common/icon";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -21,8 +24,6 @@ import { useCreateVolume } from "@/hooks/volume/use-create-volume";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
 import { formatFileSize } from "@/utils/common/file.util";
-import { MyIcon } from "../common/icon";
-import { MySelect } from "../common/select";
 
 /**
  * AstraGo 볼륨 생성 모달 컴포넌트
@@ -153,7 +154,7 @@ export function CreateAstragoVolumeModal() {
         <FormRow>
           <FormItem>
             <FormLabel>스토리지 목록</FormLabel>
-            <MySelect
+            <Dropdown
               {...storage}
               width="100%"
               placeholder="스토리지를 선택해 주세요."

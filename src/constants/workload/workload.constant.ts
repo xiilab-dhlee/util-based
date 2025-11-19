@@ -1,7 +1,8 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
+
 import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
-export const WORKLOAD_JOB_OPTIONS: MySelectOption[] = [
+export const WORKLOAD_JOB_OPTIONS: DropdownOption[] = [
   {
     label: "Batch",
     value: "BATCH",
@@ -16,7 +17,7 @@ export const WORKLOAD_JOB_OPTIONS: MySelectOption[] = [
   },
 ];
 
-export const WORKLOAD_STATUS_OPTIONS: MySelectOption[] = [
+export const WORKLOAD_STATUS_OPTIONS: DropdownOption[] = [
   {
     label: "실행중",
     value: "RUNNING",

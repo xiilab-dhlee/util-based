@@ -1,4 +1,5 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
+
 import {
   MIG_GPU_ALPHA_CONFIG,
   MIG_GPU_ALPHA_MODEL,
@@ -105,7 +106,7 @@ export class MigUtil {
     });
 
     // 비활성화 옵션 추가
-    const options: MySelectOption[] = [
+    const options: DropdownOption[] = [
       {
         label: "비활성화",
         value: "DISABLED",

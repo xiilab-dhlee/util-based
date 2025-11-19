@@ -1,7 +1,8 @@
 import { useAtom } from "jotai";
+import { Dropdown } from "xiilab-ui";
 
 import { sourcecodeTypeAtom } from "@/atoms/sourcecode.atom";
-import { MySelect } from "@/components/common/select";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import { SOURCECODE_TYPE_OPTIONS } from "@/constants/sourcecode/sourcecode.constant";
 
 /**
@@ -21,20 +22,17 @@ export function SourcecodeTypeSort() {
    * @param value - 선택된 타입 값 (string | null)
    */
   const handleChange = (value: string | null) => {
-    if (value) {
-      setCodeType(value);
-    }
+    setCodeType(value);
   };
 
   return (
-    <MySelect
-      options={SOURCECODE_TYPE_OPTIONS}
+    <Dropdown
+      options={[ALL_OPTION, ...SOURCECODE_TYPE_OPTIONS]}
       placeholder="타입"
-      setValue={handleChange}
+      onChange={handleChange}
       value={codeType}
       width={120}
       height={30}
-      isAll
     />
   );
 }

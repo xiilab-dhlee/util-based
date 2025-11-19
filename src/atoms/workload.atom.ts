@@ -13,9 +13,9 @@ export const workloadPageAtom = atomWithReset<number>(1);
 /** 워크로드 검색어 */
 export const workloadSearchTextAtom = atom<string>("");
 /** 워크로드 잡타입 */
-export const workloadJobTypeAtom = atom<string>("");
+export const workloadJobTypeAtom = atom<string | null>(null);
 /** 워크로드 상태 */
-export const workloadStatusAtom = atom<string>("");
+export const workloadStatusAtom = atom<string | null>(null);
 /** 커밋 이미지 생성 모달 표시 여부 */
 export const openCreateCommitImageModalAtom = atom<boolean>(false);
 /** 워크로드 수정 모달 표시 여부 */

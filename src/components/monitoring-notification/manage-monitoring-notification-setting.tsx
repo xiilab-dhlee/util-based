@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Button, Input } from "xiilab-ui";
+import { Button, Dropdown, Input } from "xiilab-ui";
 
 import { CreateModelButton } from "@/components/common/button/create-model-button";
 import {
@@ -11,7 +11,6 @@ import {
 } from "@/constants/monitoring/monitoring-notification.constant";
 import type { MonitoringNotificationSettingType } from "@/schemas/monitoring-notification.schema";
 import { FormLabel } from "../common/form/form-label";
-import { MySelect } from "../common/select";
 
 interface ManageMonitoringNotificationSettingsProps {
   defaultSettings?: MonitoringNotificationSettingType[];
@@ -118,26 +117,26 @@ export function ManageMonitoringNotificationSetting({
           <Column key={setting.item}>
             {/* 항목 선택 필드 */}
             <Field>
-              <MySelect
+              <Dropdown
                 options={MONITORING_NOTIFICATION_TYPE_OPTIONS}
                 placeholder="항목 선택"
-                setValue={(value: string | null) =>
+                onChange={(value: string | null) =>
                   handleItemChange(index, value)
                 }
-                value={setting.item}
+                value={setting.item || null}
                 width="100%"
                 height={30}
               />
             </Field>
             {/* 연산자 선택 필드 */}
             <Field>
-              <MySelect
+              <Dropdown
                 options={MONITORING_NOTIFICATION_OPERATOR_OPTIONS}
                 placeholder="연산자 선택"
-                setValue={(value: string | null) =>
+                onChange={(value: string | null) =>
                   handleOperatorChange(index, value)
                 }
-                value={setting.operator}
+                value={setting.operator || null}
                 width="100%"
                 height={30}
               />

@@ -3,9 +3,9 @@
 import classNames from "classnames";
 import { useState } from "react";
 import styled from "styled-components";
+import { Dropdown } from "xiilab-ui";
 
 import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import { useSelect } from "@/hooks/common/use-select";
 import { ListEmpty } from "@/layouts/list/list-empty";
 
@@ -39,13 +39,13 @@ export function UserNotification() {
         <TabPanel>
           <Filter>
             <Total>알림 8개</Total>
-            <MySelect
-              options={options} // 워크로드 상태 옵션들
-              placeholder="선택" // 플레이스홀더 텍스트
-              setValue={setValue} // 값 변경 핸들러
-              value={value} // 현재 선택된 상태 값
-              width={120} // 선택기 너비
-              height={30} // 선택기 높이
+            <Dropdown
+              options={options}
+              placeholder="선택"
+              onChange={setValue}
+              value={value}
+              width={120}
+              height={30}
               theme="dark"
             />
           </Filter>

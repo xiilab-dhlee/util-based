@@ -1,12 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { Input, Modal, TextArea } from "xiilab-ui";
+import { Dropdown, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import { CREDENTIAL_TYPE_OPTIONS } from "@/constants/credential/credential-list.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSelect } from "@/hooks/common/use-select";
@@ -83,10 +82,8 @@ export function CreateCredentialModal() {
         <FormRow>
           <FormItem>
             <FormLabel>타입</FormLabel>
-            <MySelect
-              options={type.options}
-              setValue={type.setValue}
-              value={type.value}
+            <Dropdown
+              {...type}
               width="100%"
               placeholder="타입을 선택해 주세요."
             />

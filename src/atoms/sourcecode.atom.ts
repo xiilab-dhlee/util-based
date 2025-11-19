@@ -6,7 +6,7 @@ export const sourcecodePageAtom = atomWithReset<number>(1);
 /** 소스코드 검색어 */
 export const sourcecodeSearchTextAtom = atom<string>("");
 /** 소스코드 타입 */
-export const sourcecodeTypeAtom = atom<string>("");
+export const sourcecodeTypeAtom = atom<string | null>(null);
 /** 체크된 소스코드 목록 */
 export const sourcecodeCheckedListAtom = atomWithReset<Set<number>>(new Set());
 /** 소스코드 삭제 모달 표시 여부 */

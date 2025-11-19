@@ -1,6 +1,8 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
+import type { DropdownOption } from "xiilab-ui";
+import { Dropdown } from "xiilab-ui";
 
 import {
   migGpuProductAtom,
@@ -9,8 +11,6 @@ import {
 } from "@/atoms/node.atom";
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
 import { MigUtil } from "@/utils/node/mig.util";
-import type { MySelectOption } from "../../common/select";
-import { MySelect } from "../../common/select";
 
 /**
  * MIG 개수 선택 컴포넌트
@@ -40,15 +40,15 @@ export function MigCountSelect() {
    *
    * @param value - 선택된 MIG 개수 또는 "DISABLED" (문자열)
    */
-  const handleChangeSelect = (value: string | null) => {
-    // 선택된 개수를 상태에 저장 (null인 경우 빈 문자열로 처리)
-    setSelectedMigCount(value || "");
+  const handleChangeSelect = (value: string) => {
+    // 선택된 개수를 상태에 저장
+    setSelectedMigCount(value);
 
     // MIG 활성화/비활성화 처리
     if (value === "DISABLED") {
       // MIG 비활성화
       migHelper.initMig(selectedMigGpuIndex, false);
-    } else {
+    } else if (value) {
       // MIG 활성화
       migHelper.initMig(selectedMigGpuIndex, true);
     }
@@ -60,7 +60,7 @@ export function MigCountSelect() {
   }
 
   // GPU 제품 종류에 따라 적절한 개수 옵션 생성
-  let options: MySelectOption[] = [];
+  let options: DropdownOption[] = [];
   if (migGpuProduct) {
     // GPU 제품을 기반으로 MigUtil 인스턴스 생성
     const util = new MigUtil(migGpuProduct);
@@ -68,10 +68,10 @@ export function MigCountSelect() {
   }
 
   return (
-    <MySelect
+    <Dropdown
       options={options}
       placeholder="개수 선택"
-      setValue={handleChangeSelect}
+      onChange={handleChangeSelect}
       value={selectedMigCount}
       width={120}
       height={30}

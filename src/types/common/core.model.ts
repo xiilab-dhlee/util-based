@@ -76,7 +76,8 @@ export interface CoreGuideImage {
 }
 // 차트 데이터 형식
 export interface CoreChartSeries {
-  name?: string;
+  type: string;
+  name: string;
   data: Array<[number, number]>;
 }
 // 테스트 선택자 인터페이스

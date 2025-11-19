@@ -4,12 +4,11 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { DateRange, Modal } from "xiilab-ui";
+import { DateRange, Dropdown, Modal } from "xiilab-ui";
 
 import { openCreateReportModalAtom } from "@/atoms/report.atom";
 import { FormLabel } from "@/components/common/form/form-label";
 import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import {
   REPORT_DATE_TYPE_OPTIONS,
   REPORT_TYPE_OPTIONS,
@@ -23,9 +22,9 @@ export function CreateReportModal() {
 
   const { open, onClose } = useGlobalModal(openCreateReportModalAtom);
 
-  const dateType = useSelect<string>("", REPORT_DATE_TYPE_OPTIONS, true);
+  const dateType = useSelect<string>(null, REPORT_DATE_TYPE_OPTIONS, true);
 
-  const reportType = useSelect<string>("", REPORT_TYPE_OPTIONS, true);
+  const reportType = useSelect<string>(null, REPORT_TYPE_OPTIONS, true);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -36,11 +35,11 @@ export function CreateReportModal() {
   };
 
   const handleSubmit = () => {
-    if (dateType.value === "") {
+    if (!dateType.value) {
       toast.error("기간을 선택해 주세요.");
       return;
     }
-    if (reportType.value === "") {
+    if (!reportType.value) {
       toast.error("리포트 종류를 선택해 주세요.");
       return;
     }
@@ -79,20 +78,12 @@ export function CreateReportModal() {
       <FormRow>
         <FormItem style={{ width: "120px", flex: "none" }}>
           <FormLabel>리포트 종류</FormLabel>
-          <MySelect
-            options={dateType.options}
-            setValue={dateType.setValue}
-            value={dateType.value}
-            width="120px"
-            placeholder="기간"
-          />
+          <Dropdown {...dateType} width={120} placeholder="기간" />
         </FormItem>
         <FormItem style={{ width: "100%" }}>
           <FormLabel hidden></FormLabel>
-          <MySelect
-            options={reportType.options}
-            setValue={reportType.setValue}
-            value={reportType.value}
+          <Dropdown
+            {...reportType}
             width="100%"
             placeholder="리포트 종류를 선택해 주세요."
           />
