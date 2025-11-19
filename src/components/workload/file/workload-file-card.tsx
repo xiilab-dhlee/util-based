@@ -2,9 +2,9 @@
 
 import { useSetAtom } from "jotai";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import { workloadFileSelectedKeyAtom } from "@/atoms/workload.atom";
-import { MyIcon } from "@/components/common/icon";
 import type { FileTreeType } from "@/schemas/filetree.schema";
 import { WorkloadFileCheckbox } from "./workload-file-checkbox";
 
@@ -59,7 +59,7 @@ export function WorkloadFileCard({
         </CheckboxWraper>
       )}
       <Body>
-        <MyIcon
+        <Icon
           name={getFileIcon()}
           size={34}
           color={type === "directory" ? "#9DA6BC" : ""}

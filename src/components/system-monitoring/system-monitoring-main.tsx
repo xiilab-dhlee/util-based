@@ -1,10 +1,9 @@
 "use client";
 
 import styled from "styled-components";
-import { DateRange, Dropdown, Typography } from "xiilab-ui";
+import { DateRange, Dropdown, Icon, Typography } from "xiilab-ui";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import { MyIcon } from "@/components/common/icon";
 import { SystemMonitoringCard } from "@/components/system-monitoring/system-monitoring-card";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -45,7 +44,7 @@ export function SystemMonitoringMain() {
         <SummaryArticle>
           <SummaryArticleItem>
             <SummaryIconWrapper>
-              <MyIcon name="SingleNode" color="#000000" size={30} />
+              <Icon name="SingleNode" color="#000000" size={30} />
             </SummaryIconWrapper>
             <SummaryArticleBody>
               <SummaryArticleKey>a5000</SummaryArticleKey>
@@ -54,7 +53,7 @@ export function SystemMonitoringMain() {
           </SummaryArticleItem>
           <SummaryArticleItem>
             <SummaryIconWrapper>
-              <MyIcon name="Gpu" color="#A353FF" size={30} />
+              <Icon name="Gpu" color="#A353FF" size={30} />
             </SummaryIconWrapper>
             <SummaryArticleBody>
               <SummaryArticleKey>GPU</SummaryArticleKey>
@@ -63,7 +62,7 @@ export function SystemMonitoringMain() {
           </SummaryArticleItem>
           <SummaryArticleItem>
             <SummaryIconWrapper>
-              <MyIcon name="Cpu" color="#5792FF" size={30} />
+              <Icon name="Cpu" color="#5792FF" size={30} />
             </SummaryIconWrapper>
             <SummaryArticleBody>
               <SummaryArticleKey>CPU</SummaryArticleKey>
@@ -72,7 +71,7 @@ export function SystemMonitoringMain() {
           </SummaryArticleItem>
           <SummaryArticleItem>
             <SummaryIconWrapper>
-              <MyIcon name="Mem" color="#55D398" size={30} />
+              <Icon name="Mem" color="#55D398" size={30} />
             </SummaryIconWrapper>
             <SummaryArticleBody>
               <SummaryArticleKey>MEMORY</SummaryArticleKey>
@@ -81,7 +80,7 @@ export function SystemMonitoringMain() {
           </SummaryArticleItem>
           <SummaryArticleItem>
             <SummaryIconWrapper>
-              <MyIcon name="Play" color="#17CDE5" size={30} />
+              <Icon name="Play" color="#17CDE5" size={30} />
             </SummaryIconWrapper>
             <SummaryArticleBody>
               <SummaryArticleKey>DISK</SummaryArticleKey>
@@ -101,7 +100,7 @@ export function SystemMonitoringMain() {
             />
             <DateWrapper>
               <DateIconWrapper>
-                <MyIcon name="Play" color="#4042D5" size={20} />
+                <Icon name="Play" color="#4042D5" size={20} />
               </DateIconWrapper>
               <DateRange
                 height={30}

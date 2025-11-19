@@ -1,8 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-
-import { MyIcon } from "@/components/common/icon";
+import { Icon } from "xiilab-ui";
 
 /**
  * 모니터링 툴바 컴포넌트의 Props 인터페이스
@@ -38,7 +37,7 @@ export function MonitoringToolbar({
     <Container>
       {/* 왼쪽 영역: 일시정지/재생 버튼 */}
       <Left onClick={onTogglePause}>
-        <MyIcon
+        <Icon
           name={isPaused ? "Play" : "Pause"}
           color="var(--icon-fill)"
           size={24}

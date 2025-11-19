@@ -6,6 +6,7 @@ import type { TabsSeparatedItem } from "xiilab-ui";
 import {
   Button,
   Dropdown,
+  Icon,
   Input,
   Modal,
   TabsSeparated,
@@ -13,7 +14,6 @@ import {
 } from "xiilab-ui";
 
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import type { SourcecodeParameterType } from "@/schemas/sourcecode.schema";
 import type { CreateSourcecodePayload } from "@/types/sourcecode/sourcecode.type";
 
@@ -129,7 +129,7 @@ export function SourceCodeCreateModal({
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={580}
       open={isOpen}
       closable
@@ -289,7 +289,7 @@ export function SourceCodeCreateModal({
           <ParameterHeader>
             <FormLabel>파라미터</FormLabel>
             <AddParameterButton onClick={handleAddParameter}>
-              <MyIcon name="PlusCircle" size={16} color="#666666" />
+              <Icon name="PlusCircle" size={16} color="#666666" />
               <Typography.Text variant="body-2-4" color="#666666">
                 파라미터 추가
               </Typography.Text>

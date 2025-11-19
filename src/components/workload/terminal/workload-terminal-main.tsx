@@ -3,11 +3,11 @@
 import { useSetAtom } from "jotai";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload.atom";
 import { TerminalThemeButton } from "@/components/common/button/terminal-theme-button";
 import { MonitoringDrawer } from "@/components/common/drawer/monitoring-drawer";
-import { MyIcon } from "@/components/common/icon";
 import { WorkloadTerminal } from "@/components/common/terminal/workload-terminal";
 import { ViewWorkloadMonitoringModal } from "@/components/workload/detail/view-workload-monitoring-modal";
 import { useGetWorkloadByMode } from "@/hooks/workload/use-get-workload-by-mode";
@@ -55,13 +55,13 @@ export function WorkloadTerminalMain() {
         <DetailContentTitleTool>
           <div style={{ width: 90, height: 30 }}>
             <DetailContentButton onClick={handleToggleMonitoring}>
-              <MyIcon name="Monitoring01" color="var(--icon-fill)" />
+              <Icon name="Monitoring01" color="var(--icon-fill)" />
               모니터링
             </DetailContentButton>
           </div>
           <div style={{ width: 30, height: 30 }}>
             <DetailContentButton onClick={handleClickNewTerminal}>
-              <MyIcon name="Pip" color="var(--icon-fill)" size={16} />
+              <Icon name="Pip" color="var(--icon-fill)" size={16} />
             </DetailContentButton>
           </div>
           <div style={{ width: 30, height: 30 }}>

@@ -1,10 +1,10 @@
 import { useRouter } from "next/navigation";
+import { Icon } from "xiilab-ui";
 
 import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
 } from "../../../styles/layers/column-layer.styled";
-import { MyIcon } from "../icon";
 
 /**
  * 테이블 컬럼에서 사용되는 클릭 가능한 라우팅 아이콘 컴포넌트
@@ -42,7 +42,7 @@ export function ColumnRouteIcon({
   return (
     <ColumnAlignCenterWrap>
       <ColumnIconWrap onClick={handleClick} disabled={disabled}>
-        <MyIcon name={icon} color="var(--icon-fill)" size={iconSize} />
+        <Icon name={icon} color="var(--icon-fill)" size={iconSize} />
         <span className="sr-only">다음 페이지로 이동</span>
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>

@@ -2,8 +2,10 @@
 
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
+import { JupyterIcon } from "@/components/common/icon/jupyter-icon";
+import { PytorchIcon } from "@/components/common/icon/pytorch-icon";
 import { useGetWorkloadByMode } from "@/hooks/workload/use-get-workload-by-mode";
 import {
   DetailContentArticle,
@@ -35,7 +37,7 @@ export function WorkloadPrimaryArticle() {
         <DetailContentSubTitle>워크스페이스 적용</DetailContentSubTitle>
         <ColumnBody>
           <IconWraper>
-            <MyIcon name="Workspace01" color="var(--icon-fill)" size={18} />
+            <Icon name="Workspace01" color="var(--icon-fill)" size={18} />
           </IconWraper>
           <span>{workspaceName}</span>
         </ColumnBody>
@@ -44,7 +46,11 @@ export function WorkloadPrimaryArticle() {
         <DetailContentSubTitle>Job Type</DetailContentSubTitle>
         <ColumnBody>
           <IconWraper className="jobtype">
-            <MyIcon name={ideIcon} />
+            {ideIcon === "pytorch" ? (
+              <PytorchIcon />
+            ) : ideIcon === "jupyter" ? (
+              <JupyterIcon />
+            ) : null}
           </IconWraper>
           <JobTypeText>{label}</JobTypeText>
           <Description>{ideName}</Description>
@@ -54,7 +60,7 @@ export function WorkloadPrimaryArticle() {
         <DetailContentSubTitle>노드 타입</DetailContentSubTitle>
         <ColumnBody>
           <IconWraper>
-            <MyIcon name={nodeIcon} color="var(--icon-fill)" size={18} />
+            <Icon name={nodeIcon} color="var(--icon-fill)" size={18} />
           </IconWraper>
           <NodeTypeText>{nodeType} Node</NodeTypeText>
         </ColumnBody>

@@ -4,16 +4,14 @@ import { useSetAtom } from "jotai";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Input, Modal, Upload } from "xiilab-ui";
-
-import { Dropdown } from "xiilab-ui";
+import { Dropdown, Input, Modal, Upload } from "xiilab-ui";
 
 import {
   openCreateAstragoVolumeModalAtom,
   openSelectVolumeModalAtom,
 } from "@/atoms/volume.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -134,7 +132,7 @@ export function CreateAstragoVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="astrago" color="#fff" width={16} height={16} />}
+      icon={<AstragoIcon fill="#fff" width={16} height={16} />}
       open={open}
       closable
       title="AstraGo Storage"

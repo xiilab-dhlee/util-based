@@ -3,9 +3,9 @@
 import { format } from "date-fns";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import { CreateModelButton } from "@/components/common/button/create-model-button";
-import { MyIcon } from "@/components/common/icon";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import { workloadEnvColumn } from "@/components/workload/detail/workload-env-column";
@@ -55,7 +55,7 @@ export function WorkloadSecondaryArticle() {
           <Value>
             <ImageName>
               <IconWraper>
-                <MyIcon name={icon} color="var(--icon-fill)" size={18} />
+                <Icon name={icon} color="var(--icon-fill)" size={18} />
               </IconWraper>
               {label} Image
             </ImageName>

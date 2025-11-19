@@ -3,9 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
-import { TabsSeparated } from "xiilab-ui";
-
-import { MyIcon } from "@/components/common/icon";
+import { Icon, TabsSeparated } from "xiilab-ui";
 
 /**
  * 탭 아이템의 아이콘을 Icon 컴포넌트로 매핑하는 함수
@@ -21,7 +19,7 @@ const mapIconToComponent = (items: TabsSeparatedItem[]) => {
     if (item.icon && typeof item.icon === "string") {
       return {
         ...item,
-        icon: <MyIcon name={item.icon} />,
+        icon: <Icon name={item.icon} />,
       };
     }
     return item;

@@ -23,7 +23,7 @@ export default defineConfig({
   workers: process.env.CI
     ? 1
     : process.env.WORKERS
-      ? parseInt(process.env.WORKERS)
+      ? parseInt(process.env.WORKERS, 10)
       : undefined,
 
   /* 리포터 설정 */

@@ -2,10 +2,9 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import styled from "styled-components";
-import { Button } from "xiilab-ui";
+import { Button, Icon } from "xiilab-ui";
 
 import { openProfilePopoverAtom } from "@/atoms/common/modal.atom";
-import { MyIcon } from "@/components/common/icon";
 import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 import {
   ADMIN_ROOT_PATH,
@@ -59,7 +58,7 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
       <Header>
         <Title>프로필</Title>
         <CloseButton onClick={onClose}>
-          <MyIcon name="Close" color="#CAD1DB" />
+          <Icon name="Close" color="#CAD1DB" />
           <span className="sr-only">popover 닫기</span>
         </CloseButton>
       </Header>
@@ -74,7 +73,7 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
               <UserName>{userName}</UserName>
               <UserEmail>{email}</UserEmail>
               <UpdateButton onClick={handleClickEdit}>
-                <MyIcon name="Edit02" color="#fff" />
+                <Icon name="Edit02" color="#fff" />
                 <span className="sr-only">프로필 수정</span>
               </UpdateButton>
             </ProfileBody>

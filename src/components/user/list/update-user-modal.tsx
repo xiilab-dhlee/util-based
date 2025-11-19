@@ -2,14 +2,11 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Modal } from "xiilab-ui";
-
-import { Dropdown } from "xiilab-ui";
+import { Dropdown, Icon, Modal } from "xiilab-ui";
 
 import { openUpdateUserModalAtom } from "@/atoms/user.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/constants/workspace/workspace-member.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -56,7 +53,7 @@ export function UpdateUserModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Edit02" color="#fff" size={18} />}
+      icon={<Icon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

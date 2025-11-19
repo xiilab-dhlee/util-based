@@ -1,6 +1,7 @@
 "use client";
 
-import { MyIcon } from "@/components/common/icon";
+import { Icon } from "xiilab-ui";
+
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { WorkspaceMemberListType } from "@/schemas/workspace-member.schema";
@@ -23,7 +24,7 @@ export function UpdateWorkspaceMemberButton(
   return (
     <ColumnAlignCenterWrap>
       <ColumnIconWrap onClick={handleClick}>
-        <MyIcon name="Edit02" color="#000" size={16} />
+        <Icon name="Edit02" color="#000" size={16} />
         <span className="sr-only">계정 정보 수정</span>
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>

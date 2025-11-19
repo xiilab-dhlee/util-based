@@ -17,7 +17,7 @@ import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useCreateVolume } from "@/hooks/volume/use-create-volume";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
-import { MyIcon } from "../common/icon";
+import { StorageIcon } from "../common/icon/storage-icon";
 
 export function CreateOnPremVolumeModal() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -102,7 +102,7 @@ export function CreateOnPremVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="storage" color="#fff" width={14} height={14} />}
+      icon={<StorageIcon fill="#fff" width={14} height={14} />}
       open={open}
       // closable
       title="On-premise Storage"

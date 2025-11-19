@@ -40,12 +40,10 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
             titleEng="About Report"
             title="리포트 예약"
             icon="ReportReservationsolid"
-            description={
-              [
-                "발송 주기를 설정하여 리포트를 예약할 수 있습니다.",
-                "리포트 받는 사람을 설정하여 관리할 수 있습니다.",
-              ] as string[]
-            }
+            description={[
+              "발송 주기를 설정하여 리포트를 예약할 수 있습니다.",
+              "리포트 받는 사람을 설정하여 관리할 수 있습니다.",
+            ]}
             backgroundImageName="report-intro-background.png"
             guides={REPORT_GUIDES}
             buttonOptions={{

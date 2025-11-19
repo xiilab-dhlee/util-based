@@ -1,11 +1,10 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { Input, Modal } from "xiilab-ui";
+import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openManageBmcModalAtom } from "@/atoms/node.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -86,7 +85,7 @@ export function ManageBmcModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Port" color="#fff" size={18} />}
+      icon={<Icon name="Port" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

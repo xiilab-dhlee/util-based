@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Modal } from "xiilab-ui";
+import { Icon, Modal } from "xiilab-ui";
 
 import { openViewMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification.atom";
 import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
@@ -10,7 +10,6 @@ import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { usePublish, useSubscribe } from "@/hooks/common/use-pub-sub";
 import { useGetMonitoringNotification } from "@/hooks/monitoring/use-get-monitoring-notification";
 import { ModalDetailCard } from "../common/card/modal-detail-card";
-import { MyIcon } from "../common/icon";
 import { ReadOnlyMonitoringNotificationSetting } from "./read-only-monitoring-notification-setting";
 
 export function ViewMonitoringNotificationModal() {
@@ -41,7 +40,7 @@ export function ViewMonitoringNotificationModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Information" color="#fff" size={14} />}
+      icon={<Icon name="Information" color="#fff" size={14} />}
       modalWidth={580}
       open={open}
       closable

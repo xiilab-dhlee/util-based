@@ -2,9 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import styled from "styled-components";
-import { Tag } from "xiilab-ui";
+import { Icon, Tag } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { WorkloadStatusText } from "@/components/common/text/workload-status-text";
 import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
@@ -83,13 +82,13 @@ export function WorkloadIntroCard({
           {/* 워크로드 수정 버튼 */}
           {isStandard && (
             <IconWrapper onClick={handleModify}>
-              <MyIcon name="Edit02" color="var(--icon-fill)" size={24} />
+              <Icon name="Edit02" color="var(--icon-fill)" size={24} />
               <span className="sr-only">워크로드 설명, 라벨 수정</span>
             </IconWrapper>
           )}
           {/* 워크로드 전원 제어 버튼 */}
           <IconWrapper onClick={handleClickPower}>
-            <MyIcon name="Power" color="var(--icon-fill)" size={24} />
+            <Icon name="Power" color="var(--icon-fill)" size={24} />
             <span className="sr-only">워크로드 전원 On/Off</span>
           </IconWrapper>
         </ToolBox>
@@ -101,7 +100,7 @@ export function WorkloadIntroCard({
         <DetailIntroCardRow>
           <DetailIntroCardRowBody>
             <DetailIntroCardRowIconWrapper>
-              <MyIcon name="Info" color="var(--icon-fill)" size={24} />
+              <Icon name="Info" color="var(--icon-fill)" size={24} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               <WorkloadStatusTitle>워크로드 상태</WorkloadStatusTitle>
@@ -114,7 +113,7 @@ export function WorkloadIntroCard({
         <DetailIntroCardDescriptionRow>
           <DetailIntroCardDescriptionRowBody>
             <DetailIntroCardRowIconWrapper>
-              <MyIcon name="Description" color="var(--icon-fill)" size={22} />
+              <Icon name="Description" color="var(--icon-fill)" size={22} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>워크로드 설명</DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
@@ -127,7 +126,7 @@ export function WorkloadIntroCard({
         <DetailIntroCardRow>
           <DetailIntroCardRowBody>
             <DetailIntroCardRowIconWrapper>
-              <MyIcon name="Label" color="var(--icon-fill)" size={24} />
+              <Icon name="Label" color="var(--icon-fill)" size={24} />
             </DetailIntroCardRowIconWrapper>
             <LabelTitle>라벨</LabelTitle>
             {/* 라벨 태그 목록 (스크롤 가능) */}

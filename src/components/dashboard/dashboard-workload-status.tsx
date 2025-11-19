@@ -1,10 +1,9 @@
 import styled from "styled-components";
-import { Typography } from "xiilab-ui";
+import { Icon, Typography } from "xiilab-ui";
 
 import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { WorkloadStatusType } from "@/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/utils/workload/workload.util";
-import { MyIcon } from "../common/icon";
 
 interface DashboardWorkloadStatusProps {
   status: WorkloadStatusType;
@@ -36,7 +35,7 @@ export function DashboardWorkloadStatus({
       </DataLabel>
       <Boundary />
       <IconWrapper>
-        <MyIcon name={icon} color="var(--icon-fill)" size={18} />
+        <Icon name={icon} color="var(--icon-fill)" size={18} />
       </IconWrapper>
     </Container>
   );

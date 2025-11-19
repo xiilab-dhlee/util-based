@@ -6,10 +6,10 @@ import c from "ansi-colors";
 import { useAtomValue } from "jotai";
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 import { Arthur } from "xterm-theme";
 
 import { terminalThemeAtom } from "@/atoms/common/terminal.atom";
-import { MyIcon } from "@/components/common/icon";
 import { TERMINAL_THEME_LIST } from "@/constants/common/terminal.constant";
 import {
   createTermBgClasses,
@@ -359,13 +359,13 @@ export function WorkloadTerminalNode({
               onClick={onSplitHorizon}
               className="horizontally"
             >
-              <MyIcon name="SplitDown" color="var(--icon-fill)" />
+              <Icon name="SplitDown" color="var(--icon-fill)" />
             </HeaderButton>
           )}
           {/* 수직 분할 버튼 */}
           {isShowAddVertical && (
             <HeaderButton type="button" onClick={onSplitVertical}>
-              <MyIcon name="SplitRight" color="var(--icon-fill)" />
+              <Icon name="SplitRight" color="var(--icon-fill)" />
             </HeaderButton>
           )}
         </HeaderButtonWrapper>
@@ -374,7 +374,7 @@ export function WorkloadTerminalNode({
         <div>
           {!isSingle && (
             <button type="button" onClick={(evt) => onDelete?.(evt, x, y)}>
-              <MyIcon name="Close" color="var(--icon-fill)" />
+              <Icon name="Close" color="var(--icon-fill)" />
             </button>
           )}
         </div>

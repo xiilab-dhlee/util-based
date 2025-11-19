@@ -1,4 +1,5 @@
-import { MyIcon } from "@/components/common/icon";
+import { Icon } from "xiilab-ui";
+
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { UserListType } from "@/schemas/user.schema";
@@ -18,7 +19,7 @@ export function UpdateUserButton({ user }: UpdateUserButtonProps) {
 
   return (
     <ColumnIconWrap onClick={handleClick}>
-      <MyIcon name="Edit02" color="var(--icon-fill)" />
+      <Icon name="Edit02" color="var(--icon-fill)" />
     </ColumnIconWrap>
   );
 }

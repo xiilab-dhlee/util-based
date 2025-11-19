@@ -6,7 +6,8 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import { volumeSelectedAtom } from "@/atoms/volume.atom";
-import { MyIcon } from "@/components/common/icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
+import { StorageIcon } from "@/components/common/icon/storage-icon";
 import { PreviewTag } from "@/components/common/tag/preview-tag";
 import type { VolumeListType } from "@/schemas/volume.schema";
 
@@ -53,7 +54,13 @@ export function VolumeCard({
       title={name}
       showCheckBox
       // 스토리지 타입에 따라 아이콘 변경
-      icon={<MyIcon name={storageType.toLowerCase()} />}
+      icon={
+        storageType.toLowerCase() === "astrago" ? (
+          <AstragoIcon />
+        ) : storageType.toLowerCase() === "storage" ? (
+          <StorageIcon />
+        ) : null
+      }
       // 선택된 볼륨 카드 스타일
       style={{ borderColor: isSelected ? "#366BFF" : "" }}
     >

@@ -3,9 +3,9 @@
 import { Breadcrumb } from "antd";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-import { MyIcon } from "./icon";
 
 interface MyBreadcrumbProps {
   items: CoreBreadcrumbItem[];
@@ -22,7 +22,7 @@ export function MyBreadcrumb({ items }: MyBreadcrumbProps) {
         <TitleWrapper>
           {item.icon && (
             <TitleIconWrapper>
-              <MyIcon name={item.icon} size={16} color="var(--icon-fill)" />
+              <Icon name={item.icon} size={16} color="var(--icon-fill)" />
             </TitleIconWrapper>
           )}
           <span>{item.title}</span>
@@ -68,7 +68,7 @@ export function MyBreadcrumb({ items }: MyBreadcrumbProps) {
     <StyledBreadcrumb
       separator={
         <NextIconWrapper>
-          <MyIcon name="Front" size={12} color="var(--icon-fill)" />
+          <Icon name="Front" size={12} color="var(--icon-fill)" />
         </NextIconWrapper>
       }
       items={mapToItems}

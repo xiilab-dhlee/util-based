@@ -4,11 +4,10 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { DateRange, Dropdown, Modal } from "xiilab-ui";
+import { DateRange, Dropdown, Icon, Modal } from "xiilab-ui";
 
 import { openCreateReportModalAtom } from "@/atoms/report.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import {
   REPORT_DATE_TYPE_OPTIONS,
   REPORT_TYPE_OPTIONS,
@@ -59,7 +58,7 @@ export function CreateReportModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

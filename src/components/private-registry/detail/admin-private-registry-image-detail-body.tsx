@@ -3,9 +3,8 @@
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Button, Typography } from "xiilab-ui";
+import { Button, Icon, Typography } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetAdminPrivateRegistryImage } from "@/hooks/private-registry-image/use-get-admin-private-registry-image";
@@ -52,28 +51,28 @@ export function AdminPrivateRegistryImageDetailBody() {
         <Pane>
           <Record>
             <IconWrapper>
-              <MyIcon name="Workspace02" color="var(--icon-fill)" size={20} />
+              <Icon name="Workspace02" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>컨테이너 :</Key>
             <Value>{data?.name || "-"}</Value>
           </Record>
           <Record>
             <IconWrapper>
-              <MyIcon name="Workspace01" color="var(--icon-fill)" size={20} />
+              <Icon name="Workspace01" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>워크스페이스 :</Key>
             <Value>-</Value>
           </Record>
           <Record>
             <IconWrapper>
-              <MyIcon name="Person" color="var(--icon-fill)" size={16} />
+              <Icon name="Person" color="var(--icon-fill)" size={16} />
             </IconWrapper>
             <Key>생성자 :</Key>
             <Value>{data?.creatorName || "-"}</Value>
           </Record>
           <Record>
             <IconWrapper>
-              <MyIcon name="Calendar" color="var(--icon-fill)" size={20} />
+              <Icon name="Calendar" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>생성일 :</Key>
             <Value>
@@ -86,7 +85,7 @@ export function AdminPrivateRegistryImageDetailBody() {
         <Pane>
           <Record>
             <IconWrapper>
-              <MyIcon name="Description" color="var(--icon-fill)" size={20} />
+              <Icon name="Description" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>설명 :</Key>
           </Record>

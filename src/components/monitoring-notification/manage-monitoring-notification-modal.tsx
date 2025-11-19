@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Checkbox, Input, Modal, Typography } from "xiilab-ui";
+import { Checkbox, Icon, Input, Modal, Typography } from "xiilab-ui";
 
 import { openManageMonitoringNotificationModalAtom } from "@/atoms/monitoring-notification.atom";
 import {
@@ -19,7 +19,6 @@ import type {
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { UpsertMonitoringNotificationPayload } from "@/types/monitoring-notification/monitoring-notification.type";
 import { FormLabel } from "../common/form/form-label";
-import { MyIcon } from "../common/icon";
 import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
 
 export function ManageMonitoringNotificationModal() {
@@ -100,7 +99,7 @@ export function ManageMonitoringNotificationModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name={id ? "Edit01" : "Plus"} color="#fff" size={14} />}
+      icon={<Icon name={id ? "Edit01" : "Plus"} color="#fff" size={14} />}
       modalWidth={580}
       open={open}
       closable
@@ -131,7 +130,7 @@ export function ManageMonitoringNotificationModal() {
             <Channels>
               <ChannelItem>
                 <ChannelKey>
-                  <MyIcon name="MailFilled" size={22} />
+                  <Icon name="MailFilled" size={22} />
                   E-mail
                 </ChannelKey>
                 <Checkbox
@@ -142,7 +141,7 @@ export function ManageMonitoringNotificationModal() {
               </ChannelItem>
               <ChannelItem>
                 <ChannelKey>
-                  <MyIcon name="SystemFilled" size={22} />
+                  <Icon name="SystemFilled" size={22} />
                   System
                 </ChannelKey>
                 <Checkbox

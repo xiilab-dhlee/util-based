@@ -5,11 +5,9 @@ import Image from "next/image";
 import type { FormEvent } from "react";
 import { useRef } from "react";
 import styled from "styled-components";
-import { Button, Input } from "xiilab-ui";
+import { Button, Dropdown, Input } from "xiilab-ui";
 
 import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
-import { Dropdown } from "xiilab-ui";
-
 import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { CreateCredentialModal } from "@/components/common/modal/create-credential-modal";
 import { GuidePopover } from "@/components/common/popover/guide-popover";

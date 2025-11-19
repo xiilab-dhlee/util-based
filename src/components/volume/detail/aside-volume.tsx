@@ -5,7 +5,8 @@ import { useState } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
 import { volumeSelectedAtom } from "@/atoms/volume.atom";
-import { MyIcon } from "@/components/common/icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
+import { StorageIcon } from "@/components/common/icon/storage-icon";
 import { StateTab } from "@/components/common/tab";
 import { useGetVolume } from "@/hooks/volume/use-get-volume";
 import {
@@ -82,7 +83,11 @@ export function AsideVolume() {
     <AsideDetailContainer>
       <AsideDetailHeader>
         <AsideDetailHeaderTitle>
-          <MyIcon name={data?.storageType?.toLowerCase() || ""} />
+          {data?.storageType?.toLowerCase() === "astrago" ? (
+            <AstragoIcon />
+          ) : data?.storageType?.toLowerCase() === "storage" ? (
+            <StorageIcon />
+          ) : null}
           <span>{data?.name}</span>
         </AsideDetailHeaderTitle>
       </AsideDetailHeader>

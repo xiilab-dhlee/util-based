@@ -1,10 +1,10 @@
 "use client";
 
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/atoms/workload.atom";
 import { TerminalThemeButton } from "@/components/common/button/terminal-theme-button";
-import { MyIcon } from "@/components/common/icon";
 import { ViewWorkloadMonitoringModal } from "@/components/workload/detail/view-workload-monitoring-modal";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import {
@@ -30,7 +30,7 @@ export function WorkloadLogMain() {
         <DetailContentTitleTool>
           <div style={{ width: 90, height: 30 }}>
             <DetailContentButton onClick={handleToggleMonitoring}>
-              <MyIcon name="Monitoring01" color="var(--icon-fill)" />
+              <Icon name="Monitoring01" color="var(--icon-fill)" />
               모니터링
             </DetailContentButton>
           </div>

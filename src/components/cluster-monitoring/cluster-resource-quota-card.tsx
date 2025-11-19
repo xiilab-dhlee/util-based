@@ -2,10 +2,10 @@
 
 import classNames from "classnames";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
-import { MyIcon } from "../common/icon";
 import { ResourceProgress } from "../common/progress/resource-progress";
 
 interface ClusterResourceQuotaCardProps {
@@ -28,7 +28,7 @@ export function ClusterResourceQuotaCard({
       <Header>
         <HeaderLeft>
           <IconWrapper $color={color}>
-            <MyIcon name={icon} size={24} color={color} />
+            <Icon name={icon} size={24} color={color} />
           </IconWrapper>
           <Title>{resourceName}</Title>
         </HeaderLeft>

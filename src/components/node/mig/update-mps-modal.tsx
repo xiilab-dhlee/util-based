@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Modal } from "xiilab-ui";
+import { Icon, Modal } from "xiilab-ui";
 
 import { openUpdateMpsModalAtom } from "@/atoms/node.atom";
-import { MyIcon } from "@/components/common/icon";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
 import { NODE_EVENTS, USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -87,7 +86,7 @@ export function UpdateMpsModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Information" color="#fff" size={14} />}
+      icon={<Icon name="Information" color="#fff" size={14} />}
       modalWidth={370}
       open={open}
       closable

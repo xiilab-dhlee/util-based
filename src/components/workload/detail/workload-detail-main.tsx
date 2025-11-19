@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import {
   DetailContentButton,
   DetailContentHeader,
@@ -28,7 +28,7 @@ export function WorkloadDetailMain() {
           {isStandard && (
             <div style={{ width: 120, height: 30 }}>
               <DetailContentButton onClick={() => alert("준비 중입니다.")}>
-                <MyIcon name="Copy" color="var(--icon-fill)" />
+                <Icon name="Copy" color="var(--icon-fill)" />
                 워크로드 복제
               </DetailContentButton>
             </div>

@@ -3,8 +3,7 @@
 import classNames from "classnames";
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
-
-import { MyIcon } from "../icon";
+import { Icon } from "xiilab-ui";
 
 /**
  * WorkloadFileButton 컴포넌트의 props 인터페이스
@@ -36,7 +35,7 @@ export function FileTreeButton({
     >
       {icon?.visible && (
         <IconWrapper>
-          <MyIcon name={icon.name} color={icon.color} size={icon.size} />
+          <Icon name={icon.name} color={icon.color} size={icon.size} />
         </IconWrapper>
       )}
       {children}

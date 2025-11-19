@@ -14,6 +14,21 @@ import { CirclePlusIcon } from "./circle-plus-icon";
 
 interface MyIconProps extends IconProps {}
 
+/**
+ * @deprecated MyIcon은 deprecated되었습니다.
+ * - 특별한 아이콘 (pytorch, jupyter, astrago, storage, guide, mig, mps, customArrow, circlePlus 등)은 해당 아이콘 컴포넌트를 직접 사용하세요.
+ * - 일반 아이콘은 xiilab-ui의 Icon 컴포넌트를 직접 사용하세요.
+ *
+ * @example
+ * // 특별한 아이콘 사용
+ * import { AstragoIcon } from "@/components/common/icon/astrago-icon";
+ * <AstragoIcon fill={color} width={width} height={height} />
+ *
+ * @example
+ * // 일반 아이콘 사용
+ * import { Icon } from "xiilab-ui";
+ * <Icon name="Plus" color={color} size={size} />
+ */
 export function MyIcon({ name, color, width, height, ...props }: MyIconProps) {
   if (name === "pytorch") {
     return <PytorchIcon />;

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Modal, TextArea } from "xiilab-ui";
+import { Icon, Modal, TextArea } from "xiilab-ui";
 
 import { openRejectResourceModalAtom } from "@/atoms/request-resource.atom";
-import { MyIcon } from "@/components/common/icon";
 import { UpdateResourceProgress } from "@/components/common/progress/update-resource-progress";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -50,7 +49,7 @@ export function RejectResourceModal() {
   return (
     <Modal
       variant="delete"
-      icon={<MyIcon name="Close" color="#fff" size={18} />}
+      icon={<Icon name="Close" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable
@@ -72,7 +71,7 @@ export function RejectResourceModal() {
         <UpdateResourceModalWorkspace>
           <UpdateResourceModalWorkspaceLeft>
             <UpdateResourceModalIconWrapper>
-              <MyIcon name="Workspace01" color="var(--icon-fill)" size={16} />
+              <Icon name="Workspace01" color="var(--icon-fill)" size={16} />
             </UpdateResourceModalIconWrapper>
             <UpdateResourceModalIconDescription>
               워크스페이스

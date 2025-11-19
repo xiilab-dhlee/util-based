@@ -4,9 +4,7 @@ import type { InputNumberProps } from "antd";
 import { Slider } from "antd";
 import type { Dispatch, SetStateAction } from "react";
 import styled, { css } from "styled-components";
-import { InputNumber } from "xiilab-ui";
-
-import { MyIcon } from "@/components/common/icon";
+import { Icon, InputNumber } from "xiilab-ui";
 
 interface UpdateResourceProgressProps {
   min: number;
@@ -42,7 +40,7 @@ export function UpdateResourceProgress({
       <Body>
         {!disabled && (
           <IconWrapper onClick={handleMinus}>
-            <MyIcon name="Minus" color="#404040" size={16} />
+            <Icon name="Minus" color="#404040" size={16} />
           </IconWrapper>
         )}
         <SliderWrapper $disabled={disabled}>
@@ -64,7 +62,7 @@ export function UpdateResourceProgress({
         </SliderWrapper>
         {!disabled && (
           <IconWrapper onClick={handlePlus}>
-            <MyIcon name="Plus" color="#404040" size={16} />
+            <Icon name="Plus" color="#404040" size={16} />
           </IconWrapper>
         )}
       </Body>
