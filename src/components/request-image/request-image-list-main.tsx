@@ -1,11 +1,9 @@
 "use client";
 
+import { Icon } from "xiilab-ui";
+
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import {
-  REQUEST_IMAGE_GUIDE_IMAGES,
-  REQUEST_IMAGE_GUIDES,
-} from "@/constants/request-image/request-image.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -14,7 +12,11 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import type {
+  CoreBreadcrumbItem,
+  CoreGuide,
+  CoreGuideImage,
+} from "@/types/common/core.model";
 import { ViewRejectReasonModal } from "../common/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "../common/modal/view-request-reason-modal";
 import { ApproveRequestImageModal } from "./approve-request-image-modal";
@@ -30,6 +32,43 @@ const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
     href: "/admin/registry",
   },
   { title: "이미지 사용 요청 관리" },
+];
+
+const GUIDE_IMAGES: CoreGuideImage[] = [
+  {
+    id: "1",
+    src: "/images/request-image-guide1.png",
+    alt: "이미지 요청 가이드 1",
+  },
+  {
+    id: "2",
+    src: "/images/request-image-guide2.png",
+    alt: "이미지 요청 가이드 2",
+  },
+  {
+    id: "3",
+    src: "/images/request-image-guide3.png",
+    alt: "이미지 요청 가이드 3",
+  },
+];
+
+const GUIDES: CoreGuide[] = [
+  {
+    icon: <Icon name="PrivateRegistry" color="var(--icon-fill)" />,
+    title: "내부 레지스트리란?",
+    description: [
+      "조직 내부에서 사용하는 컨테이너 이미지를 저장하고 관리하는",
+      "전용 저장소입니다. 인터넷 연결 없이 사용하실 수 있습니다.",
+    ],
+  },
+  {
+    icon: <Icon name="Image" color="var(--icon-fill)" />,
+    title: "이미지 사용 요청 목록이란?",
+    description: [
+      "사용할 이미지의 요청 목록을 보는 목록으로 이미지 사용 요청의",
+      "승인, 반려와 승인 여부에 대해서 한눈에 확인할 수 있는 화면입니다.",
+    ],
+  },
 ];
 
 /**
@@ -66,13 +105,13 @@ export function RequestImageListMain() {
               "확인하여, 해당 요청을 승인하거나 반려할 수 있는 화면입니다.",
             ]}
             backgroundImageName="request-image-intro-background.png"
-            guides={REQUEST_IMAGE_GUIDES}
+            guides={GUIDES}
           />
 
           {/* 이미지 요청 가이드 이미지 카드 */}
           <PageImageGuide
             title="이미지 사용 요청 목록 가이드"
-            guideImages={REQUEST_IMAGE_GUIDE_IMAGES}
+            guideImages={GUIDE_IMAGES}
           />
         </ListPageAside>
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "xiilab-ui";
+
 import { openCreateWorkspaceModalAtom } from "@/atoms/common/modal.atom";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateWorkspaceModal } from "@/components/common/modal/create-workspace-modal";
@@ -8,10 +10,6 @@ import { WorkspaceListBody } from "@/components/workspace/list/workspace-list-bo
 import { WorkspaceListFilter } from "@/components/workspace/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/components/workspace/list/workspace-list-footer";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import {
-  WORKSPACE_GUIDE_IMAGES,
-  WORKSPACE_GUIDES,
-} from "@/constants/workspace/workspace.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -21,11 +19,44 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import type {
+  CoreBreadcrumbItem,
+  CoreGuide,
+  CoreGuideImage,
+} from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "워크스페이스 관리" },
+];
+
+const GUIDE_IMAGES: CoreGuideImage[] = [
+  {
+    id: "1",
+    src: "/images/create-workspace-guide1.png",
+    alt: "워크스페이스 가이드 1",
+  },
+  {
+    id: "2",
+    src: "/images/create-workspace-guide2.png",
+    alt: "워크스페이스 가이드 2",
+  },
+  {
+    id: "3",
+    src: "/images/create-workspace-guide3.png",
+    alt: "워크스페이스 가이드 3",
+  },
+];
+
+const GUIDES: CoreGuide[] = [
+  {
+    icon: <Icon name="Workspace01" color="var(--icon-fill)" />,
+    title: "워크스페이스란?",
+    description: [
+      "워크스페이스란 팀별로 함께 사용하는 작업공간입니다.",
+      "팀원이 생성한 워크로드 및 진행상황 확인이 가능합니다.",
+    ],
+  },
 ];
 
 export function WorkspaceListMain() {
@@ -58,7 +89,7 @@ export function WorkspaceListMain() {
               "있습니다. 생성된 워크스페이스를 확인하고 관리하세요.",
             ]}
             backgroundImageName="workload-intro-background.png"
-            guides={WORKSPACE_GUIDES}
+            guides={GUIDES}
             buttonOptions={{
               enabled: true,
               text: "워크스페이스 생성하기",
@@ -69,7 +100,7 @@ export function WorkspaceListMain() {
           {/* 워크스페이스 가이드 이미지 카드 */}
           <PageImageGuide
             title="워크스페이스 가이드"
-            guideImages={WORKSPACE_GUIDE_IMAGES}
+            guideImages={GUIDE_IMAGES}
           />
         </ListPageAside>
 

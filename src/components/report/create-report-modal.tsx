@@ -21,9 +21,13 @@ export function CreateReportModal() {
 
   const { open, onClose } = useGlobalModal(openCreateReportModalAtom);
 
-  const dateType = useSelect<string>(null, REPORT_DATE_TYPE_OPTIONS, true);
+  const dateTypeSelect = useSelect<string>(
+    null,
+    REPORT_DATE_TYPE_OPTIONS,
+    true,
+  );
 
-  const reportType = useSelect<string>(null, REPORT_TYPE_OPTIONS, true);
+  const reportTypeSelect = useSelect<string>(null, REPORT_TYPE_OPTIONS, true);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -34,11 +38,11 @@ export function CreateReportModal() {
   };
 
   const handleSubmit = () => {
-    if (!dateType.value) {
+    if (!dateTypeSelect.value) {
       toast.error("기간을 선택해 주세요.");
       return;
     }
-    if (!reportType.value) {
+    if (!reportTypeSelect.value) {
       toast.error("리포트 종류를 선택해 주세요.");
       return;
     }
@@ -51,7 +55,7 @@ export function CreateReportModal() {
     onClose();
 
     router.push(
-      `/admin/report?reportType=${dateType.value}_${reportType.value}&endDate=${format(endDate, "yyyy-MM-dd")}`,
+      `/admin/report?reportType=${dateTypeSelect.value}_${reportTypeSelect.value}&endDate=${format(endDate, "yyyy-MM-dd")}`,
     );
   };
 
@@ -77,12 +81,20 @@ export function CreateReportModal() {
       <FormRow>
         <FormItem style={{ width: "120px", flex: "none" }}>
           <FormLabel>리포트 종류</FormLabel>
-          <Dropdown {...dateType} width={120} placeholder="기간" />
+          <Dropdown
+            options={dateTypeSelect.options}
+            onChange={dateTypeSelect.onChange}
+            value={dateTypeSelect.value}
+            width={120}
+            placeholder="기간"
+          />
         </FormItem>
         <FormItem style={{ width: "100%" }}>
           <FormLabel hidden></FormLabel>
           <Dropdown
-            {...reportType}
+            options={reportTypeSelect.options}
+            onChange={reportTypeSelect.onChange}
+            value={reportTypeSelect.value}
             width="100%"
             placeholder="리포트 종류를 선택해 주세요."
           />

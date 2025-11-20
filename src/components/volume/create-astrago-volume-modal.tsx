@@ -51,7 +51,7 @@ export function CreateAstragoVolumeModal() {
   // 폼 초기화 훅 사용
   const { clearForm, getFormKey } = useClearForm();
 
-  const storage = useSelect(null, []);
+  const storageSelect = useSelect(null, []);
 
   // 파일 업로드 Hook 사용 (최대 5MB, 초기 파일 포함)
   const { files, handleUpload, handleFileRemove, totalSize, clearFiles } =
@@ -153,7 +153,9 @@ export function CreateAstragoVolumeModal() {
           <FormItem>
             <FormLabel>스토리지 목록</FormLabel>
             <Dropdown
-              {...storage}
+              options={storageSelect.options}
+              onChange={storageSelect.onChange}
+              value={storageSelect.value}
               width="100%"
               placeholder="스토리지를 선택해 주세요."
             />

@@ -26,7 +26,7 @@ export function UpdateUserModal() {
 
   const [user, setUser] = useState<UserListType | null>(null);
 
-  const role = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
+  const roleSelect = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
 
   const handleSubmit = () => {
     const payload = createPayload();
@@ -40,13 +40,13 @@ export function UpdateUserModal() {
 
   const createPayload = (): UpdateWorkspaceMemberPayload | null => {
     return {
-      role: role.value,
+      role: roleSelect.value,
     };
   };
 
   useSubscribe<UserListType>(USER_EVENTS.sendUpdateUser, async (eventData) => {
     setUser(eventData);
-    role.setValue(eventData.role);
+    roleSelect.setValue(eventData.role);
     onOpen();
   });
 
@@ -103,7 +103,9 @@ export function UpdateUserModal() {
           <FormItem>
             <FormLabel>권한</FormLabel>
             <Dropdown
-              {...role}
+              options={roleSelect.options}
+              onChange={roleSelect.onChange}
+              value={roleSelect.value}
               width="100%"
               placeholder="권한을 선택해 주세요."
             />

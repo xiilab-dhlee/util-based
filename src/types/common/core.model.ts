@@ -3,6 +3,7 @@
  *
  */
 
+import type { ReactNode } from "react";
 import type { MenuItem, ResponsiveColumnType } from "xiilab-ui";
 
 import type { FileTreeType } from "@/schemas/filetree.schema";
@@ -62,7 +63,7 @@ export interface CoreCreateColumnConfig extends Partial<ResponsiveColumnType> {}
 // 가이드 요소
 export interface CoreGuide {
   /** 아이콘 */
-  icon: string;
+  icon: ReactNode;
   /** 타이틀 */
   title: string;
   /** 설명 (문자열 배열) */

@@ -29,7 +29,7 @@ export function UpdateWorkspaceMemberModal() {
   const [workspaceMember, setWorkspaceMember] =
     useState<WorkspaceMemberListType | null>(null);
 
-  const role = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
+  const roleSelect = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
 
   const handleSubmit = () => {
     const payload = createPayload();
@@ -43,7 +43,7 @@ export function UpdateWorkspaceMemberModal() {
 
   const createPayload = (): UpdateWorkspaceMemberPayload | null => {
     return {
-      role: role.value,
+      role: roleSelect.value,
     };
   };
 
@@ -51,7 +51,7 @@ export function UpdateWorkspaceMemberModal() {
     WORKSPACE_EVENTS.sendUpdateWorkspaceMember,
     async (eventData) => {
       setWorkspaceMember(eventData);
-      role.setValue(eventData.role);
+      roleSelect.setValue(eventData.role);
       // 모달 열기
       onOpen();
     },
@@ -99,7 +99,9 @@ export function UpdateWorkspaceMemberModal() {
           <FormItem>
             <FormLabel>권한</FormLabel>
             <Dropdown
-              {...role}
+              options={roleSelect.options}
+              onChange={roleSelect.onChange}
+              value={roleSelect.value}
               width="100%"
               placeholder="권한을 선택해 주세요."
             />

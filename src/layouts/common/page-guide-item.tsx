@@ -1,7 +1,6 @@
 "use client";
 
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
 import type { CoreGuide } from "@/types/common/core.model";
 
@@ -21,9 +20,7 @@ export function PageGuideItem({
   return (
     <Container>
       <Title>
-        <TitleIconWrapper>
-          <Icon name={icon} color="var(--icon-fill)" />
-        </TitleIconWrapper>
+        <TitleIconWrapper>{icon}</TitleIconWrapper>
         <span>{title}</span>
       </Title>
       <Description>

@@ -58,7 +58,7 @@ export function NodeGpuDivisionButton({
 
   return (
     <MyDropdown
-      placement="bottomCenter"
+      placement="bottom"
       items={[
         <StyledButton key="mig" type="button" onClick={handleClickMig}>
           MIG

@@ -11,27 +11,28 @@ import { DashboardCategoryTitle } from "@/styles/layers/dashboard-layers.styled"
 
 export function DashboardResourceArticle() {
   // 선택된 자원
-  const { value, ...props } = useSelect<string>(
-    "GPU",
-    DASHBOARD_RESOURCE_OPTIONS,
-  );
+  const resourceSelect = useSelect<string>("GPU", DASHBOARD_RESOURCE_OPTIONS);
 
   // value가 null이 아니고 유효한 리소스 타입인지 확인
 
-  const seriesData = value ? DASHBOARD_SERIES_DEMO[value] : null;
+  const seriesData = resourceSelect.value
+    ? DASHBOARD_SERIES_DEMO[resourceSelect.value]
+    : null;
 
   return (
     <Container>
       {/* CPU 그래프 영역 */}
       <Graph>
         <GraphHeader>
-          <DashboardCategoryTitle>{value} 그래프</DashboardCategoryTitle>
+          <DashboardCategoryTitle>
+            {resourceSelect.value} 그래프
+          </DashboardCategoryTitle>
         </GraphHeader>
         <GraphBody>
           {/* 선택된 옵션이 변경될 때마다 컴포넌트를 리렌더링하기 위한 key 속성 추가 */}
           {seriesData && (
             <DashboardGraphChart
-              key={value}
+              key={resourceSelect.value}
               series={seriesData.series}
               unit={seriesData.unit}
             />
@@ -41,8 +42,9 @@ export function DashboardResourceArticle() {
       {/* 그래프 선택 영역 */}
       <GraphSelect>
         <Dropdown
-          {...props}
-          value={value}
+          options={resourceSelect.options}
+          onChange={resourceSelect.onChange}
+          value={resourceSelect.value}
           placeholder="선택"
           theme="dark"
           width="100%"

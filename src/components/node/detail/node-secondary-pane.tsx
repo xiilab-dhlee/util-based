@@ -52,16 +52,19 @@ export function NodeSecondaryPane() {
     if (data?.requests && data?.limits) {
       allocatedResources = [
         {
+          id: "cpu",
           resourceName: "CPU",
           requests: `${data.requests.cpu}m (${data.requests.cpuPercent}%)`,
           limits: `${data.limits.cpu}m (${data.limits.cpuPercent}%)`,
         },
         {
+          id: "memory",
           resourceName: "Memory",
           requests: `${data.requests.memory}Ki (${data.requests.memoryPercent}%)`,
           limits: `${data.limits.memory}m (${data.limits.memoryPercent}%)`,
         },
         {
+          id: "gpu",
           resourceName: "Nvidia.com/GPU",
           requests: `${data.requests.gpu} (${data.requests.gpuPercent}%)`,
           limits: `${data.limits.gpu} (${data.limits.gpuPercent}%)`,

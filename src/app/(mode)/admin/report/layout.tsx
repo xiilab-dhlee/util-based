@@ -1,14 +1,11 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
+import { Icon } from "xiilab-ui";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateReportModal } from "@/components/report/create-report-modal";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import {
-  REPORT_GUIDE_IMAGES,
-  REPORT_GUIDES,
-} from "@/constants/report/report.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -17,11 +14,52 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import type {
+  CoreBreadcrumbItem,
+  CoreGuide,
+  CoreGuideImage,
+} from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "리포트" },
+];
+
+const GUIDE_IMAGES: CoreGuideImage[] = [
+  {
+    id: "1",
+    src: "/images/report-guide1.png",
+    alt: "리포트 가이드 1",
+  },
+  {
+    id: "2",
+    src: "/images/report-guide2.png",
+    alt: "리포트 가이드 2",
+  },
+  {
+    id: "3",
+    src: "/images/report-guide3.png",
+    alt: "리포트 가이드 3",
+  },
+];
+
+const GUIDES: CoreGuide[] = [
+  {
+    icon: <Icon name="Reportsolid" color="var(--icon-fill)" />,
+    title: "리포트란?",
+    description: [
+      "자원 활용 현황, 통계 등의 정보를 모아 볼 수 있는 기능입니다.",
+      "기간을 설정하고 리포트 생성 후 PDF 다운로드 가능합니다.",
+    ],
+  },
+  {
+    icon: <Icon name="ReportReservationsolid" color="var(--icon-fill)" />,
+    title: "리포트 예약이란?",
+    description: [
+      "리포트 생성 주기와 받는 사람을 지정하여 리포트를 생성하는",
+      "기능입니다. 주기적으로 자원 효율 정도를 관리할 수 있습니다.",
+    ],
+  },
 ];
 
 export default function AdminReportLayout({ children }: PropsWithChildren) {
@@ -45,7 +83,7 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
               "리포트 받는 사람을 설정하여 관리할 수 있습니다.",
             ]}
             backgroundImageName="report-intro-background.png"
-            guides={REPORT_GUIDES}
+            guides={GUIDES}
             buttonOptions={{
               enabled: true,
               text: "리포트 예약 바로가기",
@@ -57,7 +95,7 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
           {/* 가이드 이미지 카드 */}
           <PageImageGuide
             title="리포트 설정 가이드"
-            guideImages={REPORT_GUIDE_IMAGES}
+            guideImages={GUIDE_IMAGES}
           />
         </ListPageAside>
 
