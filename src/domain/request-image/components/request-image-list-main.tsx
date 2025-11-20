@@ -70,10 +70,8 @@ export function RequestImageListMain() {
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
-        title="이미지 사용 요청 관리"
-        icon="Back"
+        pageKey="admin.request-image"
         description="About Manage Image usage request"
-        breadcrumbKey="admin.request-image"
       />
 
       {/* 이미지 요청 목록 페이지 메인 영역 */}

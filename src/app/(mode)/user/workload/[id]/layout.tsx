@@ -59,12 +59,9 @@ export default async function WorkloadDetailLayout({
     <>
       {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
       <PageHeader
-        title="워크로드 정보"
-        icon="Back"
+        pageKey="user.workload.detail"
+        pageParams={{ id }}
         description="Workload Information"
-        customPathname="/user/workload"
-        breadcrumbKey="user.workload.detail"
-        breadcrumbParams={{ id }}
       />
 
       {/* 상세 페이지 메인 콘텐츠 영역 */}

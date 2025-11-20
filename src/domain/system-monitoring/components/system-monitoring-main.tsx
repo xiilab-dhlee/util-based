@@ -3,7 +3,6 @@
 import styled from "styled-components";
 import { DateRange, Dropdown, Icon, Typography } from "xiilab-ui";
 
-import { MONITORING_MENU_ICON } from "@/domain/monitoring/constants/monitoring.constant";
 import { SystemMonitoringCard } from "@/domain/system-monitoring/components/system-monitoring-card";
 import { PageHeader } from "@/shared/layouts/common/page-header";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
@@ -12,10 +11,8 @@ export function SystemMonitoringMain() {
   return (
     <>
       <PageHeader
-        title="시스템 모니터링"
-        icon={MONITORING_MENU_ICON}
+        pageKey="admin.system-monitoring"
         description="System monitoring"
-        breadcrumbKey="admin.system-monitoring"
       />
       <Container>
         <ArticleHeader>

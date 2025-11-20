@@ -24,10 +24,8 @@ export default function VolumeLayout({ children }: PropsWithChildren) {
   return (
     <>
       <PageHeader
-        title="볼륨"
-        icon="Volume"
+        pageKey="user.volume"
         description="Volume"
-        breadcrumbKey="user.volume"
       />
       {/* 볼륨 목록 페이지 메인 영역 */}
       <ListPageMain>

@@ -9,7 +9,6 @@ import { ClusterEventListFooter } from "@/domain/cluster-monitoring/components/c
 import { ClusterMonitoringAside } from "@/domain/cluster-monitoring/components/cluster-monitoring-aside";
 import { ClusterResourceQuotaCard } from "@/domain/cluster-monitoring/components/cluster-resource-quota-card";
 import { ViewYamlLogModal } from "@/domain/cluster-monitoring/components/view-yaml-log-modal";
-import { MONITORING_MENU_ICON } from "@/domain/monitoring/constants/monitoring.constant";
 import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   ListPageAside,
@@ -22,10 +21,8 @@ export function ClusterMonitoringMain() {
   return (
     <>
       <PageHeader
-        title="클러스터 모니터링"
-        icon={MONITORING_MENU_ICON}
+        pageKey="admin.cluster-monitoring"
         description="Cluster Monitoring"
-        breadcrumbKey="admin.cluster-monitoring"
       />
       {/* 소스코드 목록 페이지 메인 영역 */}
       <ListPageMain>

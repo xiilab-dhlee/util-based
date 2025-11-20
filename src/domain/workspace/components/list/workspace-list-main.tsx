@@ -58,10 +58,8 @@ export function WorkspaceListMain() {
   return (
     <>
       <PageHeader
-        title="워크스페이스 관리"
-        icon="Workspace01"
+        pageKey="admin.workspace"
         description="Workspace Management"
-        breadcrumbKey="admin.workspace"
       />
 
       {/* 워크스페이스 목록 페이지 메인 영역 */}

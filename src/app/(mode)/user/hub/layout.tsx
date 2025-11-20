@@ -18,10 +18,8 @@ export default function HubLayout({ children }: PropsWithChildren) {
   return (
     <>
       <PageHeader
-        title="허브"
-        icon="Hub"
+        pageKey="user.hub"
         description="Hub"
-        breadcrumbKey="user.hub"
       />
       <ListPageMain>
         <ListPageBody>

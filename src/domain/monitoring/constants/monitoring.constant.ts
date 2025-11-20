@@ -1,6 +1,6 @@
-/** 모니터링 메뉴 아이콘 */
-export const MONITORING_MENU_ICON = "Monitoring02";
+import { PAGE_META } from "@/shared/constants/page-meta";
 
+export const MONITORING_MENU_ICON = PAGE_META["admin.monitoring"]?.iconName;
 export const MONITORING_QUICK_MENUS = [
   {
     title: "시스템 모니터링",

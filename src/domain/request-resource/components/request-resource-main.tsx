@@ -20,10 +20,8 @@ export function RequestResourceMain() {
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
-        title="리소스 신청 관리"
-        icon="Back"
+        pageKey="admin.workspace.request-resource"
         description="Resource Application"
-        breadcrumbKey="admin.workspace.request-resource"
       />
 
       {/* 목록 페이지 메인 영역 */}

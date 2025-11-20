@@ -20,10 +20,8 @@ export default function SourcecodeLayout({ children }: PropsWithChildren) {
   return (
     <>
       <PageHeader
-        title="소스코드"
-        icon="SourceCode"
+        pageKey="user.sourcecode"
         description="Source code"
-        breadcrumbKey="user.sourcecode"
       />
       {/* 소스코드 목록 페이지 메인 영역 */}
       <ListPageMain>

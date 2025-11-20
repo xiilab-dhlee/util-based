@@ -114,4 +114,9 @@ export const ROUTES = {
 
   // 설정 (정적)
   USER_SETTING: `${MODE.USER}/setting`,
+
+  // ============================================
+  // Auth Routes
+  // ============================================
+  AUTH_SIGNIN: "/signin",
 } as const;

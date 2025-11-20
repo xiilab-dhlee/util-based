@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
+
 /**
  * 인증 에러 페이지
  * NextAuth.js에서 발생하는 인증 오류를 처리합니다.
@@ -53,7 +55,7 @@ function AuthErrorPageContent() {
   };
 
   const handleRetry = () => {
-    router.push("/signin");
+    router.push(ROUTES.AUTH_SIGNIN);
   };
 
   const handleGoHome = () => {

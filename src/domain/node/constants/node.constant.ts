@@ -1,7 +1,9 @@
 import type { DropdownOption } from "xiilab-ui";
 
+import { PAGE_META } from "@/shared/constants/page-meta";
+
 /** 노드 메뉴 아이콘 */
-export const NODE_MENU_ICON = "SingleNode";
+export const NODE_MENU_ICON = PAGE_META["admin.node"]?.iconName;
 /** 노드 정렬 옵션 */
 export const NODE_SORT_OPTIONS: DropdownOption[] = [
   { value: "CREATED_AT_DESC", label: "생성일순" },

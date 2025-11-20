@@ -56,10 +56,8 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
-        title="리포트"
-        icon="Information"
+        pageKey="admin.report"
         description="Report"
-        breadcrumbKey="admin.report"
       />
 
       {/* 리포트 페이지 메인 영역 */}

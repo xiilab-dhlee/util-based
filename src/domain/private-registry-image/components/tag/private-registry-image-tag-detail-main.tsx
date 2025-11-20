@@ -21,12 +21,9 @@ export function PrivateRegistryImageTagDetailMain() {
   return (
     <>
       <PageHeader
-        title="태그 상세정보"
-        icon="Back"
+        pageKey="user.private-registry-image.tag"
+        pageParams={{ id: id as string }}
         description="Tag Information"
-        customPathname={`/user/private-registry-image/${id}`}
-        breadcrumbKey="user.private-registry-image.tag"
-        breadcrumbParams={{ id: id as string }}
       />
       <DetailPageBody>
         <PrivateRegistryImageTagDetailAside />

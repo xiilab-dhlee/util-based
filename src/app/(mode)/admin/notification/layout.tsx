@@ -20,10 +20,8 @@ export default function AdminNotificationLayout({
   return (
     <>
       <PageHeader
-        title="알림 관리"
-        icon="Alarm"
+        pageKey="admin.notification"
         description="Manage Notification"
-        breadcrumbKey="admin.notification"
       />
       {/* 알림 목록 페이지 메인 영역 */}
       <ListPageMain>
