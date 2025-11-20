@@ -3,9 +3,7 @@
 import type { PropsWithChildren } from "react";
 import { Icon } from "xiilab-ui";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateReportModal } from "@/components/report/create-report-modal";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -14,16 +12,7 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "리포트" },
-];
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -66,9 +55,12 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
-      <PageHeader title="리포트" icon="Information" description="Report">
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+      <PageHeader
+        title="리포트"
+        icon="Information"
+        description="Report"
+        breadcrumbKey="admin.report"
+      />
 
       {/* 리포트 페이지 메인 영역 */}
       <ListPageMain>

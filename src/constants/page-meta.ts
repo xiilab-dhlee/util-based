@@ -1,0 +1,334 @@
+/**
+ * 페이지 메타데이터 정의
+ * - ROUTES 상수를 참조하여 href 정의
+ * - 아이콘은 MyIcon에서 사용하는 아이콘 이름 문자열(iconName)로 정의
+ * - parent로 breadcrumb 계층 구조 표현
+ *
+ * 주의:
+ * - 이 파일은 순수 상수 정의만 포함하고 React/JSX에 의존하지 않습니다.
+ * - 실제 아이콘 렌더링은 사용처(레이아웃, Breadcrumb 헬퍼 등)에서
+ *   `iconName`을 사용해 `<MyIcon name={iconName} />` 형태로 수행해야 합니다.
+ */
+
+import { ROUTES } from "./routes.constant";
+
+/**
+ * PAGE_META 정의
+ * - 키: 페이지 키 (PageKey)
+ * - 값: 페이지 메타 정보 (title, iconName, href, parent)
+ */
+export const PAGE_META = {
+  // ============================================
+  // Admin Routes - Monitoring
+  // ============================================
+  "admin.monitoring": {
+    title: "모니터링",
+    iconName: "Monitoring01",
+    href: ROUTES.ADMIN_MONITORING,
+  },
+  "admin.cluster-monitoring": {
+    title: "클러스터 모니터링",
+    iconName: "ClusterMonitoring",
+    href: ROUTES.ADMIN_CLUSTER_MONITORING,
+  },
+  "admin.system-monitoring": {
+    title: "시스템 모니터링",
+    iconName: "SystemMonitoring",
+    href: ROUTES.ADMIN_SYSTEM_MONITORING,
+  },
+  "admin.monitoring-notification": {
+    title: "모니터링 알림",
+    iconName: "Notification",
+    href: ROUTES.ADMIN_MONITORING_NOTIFICATION,
+  },
+
+  // ============================================
+  // Admin Routes - Node Management
+  // ============================================
+  "admin.node": {
+    title: "노드 관리",
+    iconName: "SingleNode",
+    href: ROUTES.ADMIN_NODE,
+  },
+  "admin.node.detail": {
+    title: "노드 정보",
+    href: ROUTES.ADMIN_NODE_DETAIL,
+    parent: "admin.node",
+  },
+  "admin.node.log": {
+    title: "노드 로그",
+    href: ROUTES.ADMIN_NODE_LOG,
+    parent: "admin.node.detail",
+  },
+  "admin.node.redfish": {
+    title: "Redfish",
+    href: ROUTES.ADMIN_NODE_REDFISH,
+    parent: "admin.node.detail",
+  },
+
+  // ============================================
+  // Admin Routes - Workspace
+  // ============================================
+  "admin.workspace": {
+    title: "워크스페이스",
+    iconName: "Workspace01",
+    href: ROUTES.ADMIN_WORKSPACE,
+  },
+  "admin.workspace.detail": {
+    title: "워크스페이스 상세",
+    href: ROUTES.ADMIN_WORKSPACE_DETAIL,
+    parent: "admin.workspace",
+  },
+  "admin.workspace.member": {
+    title: "멤버 관리",
+    href: ROUTES.ADMIN_WORKSPACE_MEMBER,
+    parent: "admin.workspace.detail",
+  },
+  "admin.workspace.request-resource": {
+    title: "리소스 요청",
+    iconName: "Resource",
+    href: ROUTES.ADMIN_WORKSPACE_REQUEST_RESOURCE,
+    parent: "admin.workspace",
+  },
+  "admin.workspace.workload.detail": {
+    title: "워크로드 상세",
+    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL,
+    parent: "admin.workspace",
+  },
+  "admin.workspace.workload.log": {
+    title: "로그",
+    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_LOG,
+    parent: "admin.workspace.workload.detail",
+  },
+  "admin.workspace.workload.file": {
+    title: "파일",
+    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_FILE,
+    parent: "admin.workspace.workload.detail",
+  },
+  "admin.workspace.workload.monitoring": {
+    title: "모니터링",
+    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING,
+    parent: "admin.workspace.workload.detail",
+  },
+  "admin.workspace.workload.security": {
+    title: "보안",
+    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_SECURITY,
+    parent: "admin.workspace.workload.detail",
+  },
+  "admin.workspace.workload.terminal": {
+    title: "터미널",
+    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_TERMINAL,
+    parent: "admin.workspace.workload.detail",
+  },
+
+  // ============================================
+  // Admin Routes - Registry
+  // ============================================
+  "admin.registry": {
+    title: "레지스트리",
+    iconName: "Image",
+    href: ROUTES.ADMIN_REGISTRY,
+  },
+  "admin.private-registry": {
+    title: "Private 레지스트리",
+    iconName: "PrivateRegistry",
+    href: ROUTES.ADMIN_PRIVATE_REGISTRY,
+  },
+  "admin.private-registry.image": {
+    title: "이미지 상세",
+    href: ROUTES.ADMIN_PRIVATE_REGISTRY_IMAGE,
+    parent: "admin.private-registry",
+  },
+  "admin.request-image": {
+    title: "이미지 요청",
+    iconName: "ImageRequest",
+    href: ROUTES.ADMIN_REQUEST_IMAGE,
+  },
+
+  // ============================================
+  // Admin Routes - Others
+  // ============================================
+  "admin.report": {
+    title: "리포트",
+    iconName: "Image",
+    href: ROUTES.ADMIN_REPORT,
+  },
+  "admin.request-resource": {
+    title: "리소스 요청",
+    iconName: "ResourceRequest",
+    href: ROUTES.ADMIN_REQUEST_RESOURCE,
+  },
+  "admin.notification": {
+    title: "알림",
+    iconName: "Notification",
+    href: ROUTES.ADMIN_NOTIFICATION,
+  },
+
+  // ============================================
+  // Admin Routes - Settings
+  // ============================================
+  "admin.setting": {
+    title: "설정",
+    iconName: "Setting01",
+    href: ROUTES.ADMIN_SETTING,
+  },
+  "admin.user": {
+    title: "사용자 관리",
+    iconName: "User",
+    href: ROUTES.ADMIN_USER,
+  },
+  "admin.user.pending": {
+    title: "승인 대기",
+    href: ROUTES.ADMIN_USER_PENDING,
+    parent: "admin.user",
+  },
+  "admin.user.group": {
+    title: "그룹 관리",
+    href: ROUTES.ADMIN_USER_GROUP,
+    parent: "admin.user",
+  },
+
+  // ============================================
+  // Standard Routes - Dashboard
+  // ============================================
+  "standard.dashboard": {
+    title: "대시보드",
+    iconName: "Dashboard",
+    href: ROUTES.STANDARD_DASHBOARD,
+  },
+
+  // ============================================
+  // Standard Routes - Workload
+  // ============================================
+  "standard.workload": {
+    title: "워크로드",
+    iconName: "Workload",
+    href: ROUTES.STANDARD_WORKLOAD,
+  },
+  "standard.workload.detail": {
+    title: "워크로드 상세",
+    href: ROUTES.STANDARD_WORKLOAD_DETAIL,
+    parent: "standard.workload",
+  },
+  "standard.workload.log": {
+    title: "로그",
+    href: ROUTES.STANDARD_WORKLOAD_LOG,
+    parent: "standard.workload.detail",
+  },
+  "standard.workload.file": {
+    title: "파일",
+    href: ROUTES.STANDARD_WORKLOAD_FILE,
+    parent: "standard.workload.detail",
+  },
+  "standard.workload.monitoring": {
+    title: "모니터링",
+    href: ROUTES.STANDARD_WORKLOAD_MONITORING,
+    parent: "standard.workload.detail",
+  },
+  "standard.workload.security": {
+    title: "보안",
+    href: ROUTES.STANDARD_WORKLOAD_SECURITY,
+    parent: "standard.workload.detail",
+  },
+  "standard.workload.terminal": {
+    title: "터미널",
+    href: ROUTES.STANDARD_WORKLOAD_TERMINAL,
+    parent: "standard.workload.detail",
+  },
+
+  // ============================================
+  // Standard Routes - Registry
+  // ============================================
+  "standard.private-registry-image": {
+    title: "내부 레지스트리",
+    iconName: "Image",
+    href: ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE,
+  },
+  "standard.private-registry-image.detail": {
+    title: "컨테이너 이미지 상세정보",
+    href: ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_DETAIL,
+    parent: "standard.private-registry-image",
+  },
+  "standard.private-registry-image.tag": {
+    title: "태그 상세정보",
+    href: ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_TAG,
+    parent: "standard.private-registry-image.detail",
+  },
+
+  // ============================================
+  // Standard Routes - Sourcecode
+  // ============================================
+  "standard.sourcecode": {
+    title: "소스코드",
+    iconName: "SourceCode",
+    href: ROUTES.STANDARD_SOURCECODE,
+  },
+  "standard.sourcecode.detail": {
+    title: "소스코드 상세",
+    href: ROUTES.STANDARD_SOURCECODE_DETAIL,
+    parent: "standard.sourcecode",
+  },
+
+  // ============================================
+  // Standard Routes - Volume
+  // ============================================
+  "standard.volume": {
+    title: "볼륨",
+    iconName: "Volume",
+    href: ROUTES.STANDARD_VOLUME,
+  },
+
+  // ============================================
+  // Standard Routes - Hub
+  // ============================================
+  "standard.hub": {
+    title: "허브",
+    iconName: "Hub",
+    href: ROUTES.STANDARD_HUB,
+  },
+
+  // ============================================
+  // Standard Routes - Setting
+  // ============================================
+  "standard.setting": {
+    title: "설정",
+    iconName: "Setting01",
+    href: ROUTES.STANDARD_SETTING,
+  },
+
+  // ============================================
+  // Common Settings (no href, 레이아웃 내부 설정 페이지)
+  // ============================================
+  "setting.profile": {
+    title: "프로필 관리",
+    iconName: "Profile",
+  },
+  "setting.alert": {
+    title: "알림 설정",
+    iconName: "Alert",
+  },
+  "setting.member": {
+    title: "멤버 관리",
+    iconName: "Member",
+  },
+} as const;
+
+/**
+ * 페이지 키 타입 (자동 추론)
+ */
+export type PageKey = keyof typeof PAGE_META;
+
+/**
+ * Breadcrumb 아이템 메타 정보
+ * - PAGE_META의 value 타입을 기반으로 하는 레퍼런스 타입
+ */
+export interface BreadcrumbItemMeta {
+  /** 페이지 제목 */
+  title: string;
+  /** 페이지 아이콘 이름 (MyIcon에서 사용하는 아이콘 키) */
+  iconName?: string;
+  /** 페이지 경로 (정적) 또는 경로 생성 함수 (동적) */
+  href?: string | ((params: Record<string, string>) => string);
+  /** 부모 페이지 키 (breadcrumb 계층 구조) */
+  parent?: PageKey;
+}

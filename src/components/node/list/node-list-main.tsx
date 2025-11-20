@@ -1,9 +1,7 @@
 "use client";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { MigIcon } from "@/components/common/icon/mig-icon";
 import { MpsIcon } from "@/components/common/icon/mps-icon";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -12,21 +10,12 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 import { UpdateMigModal } from "../mig/update-mig-modal";
 import { UpdateMpsModal } from "../mig/update-mps-modal";
 import { NodeListBody } from "./node-list-body";
 import { NodeListFilter } from "./node-list-filter";
 import { NodeListFooter } from "./node-list-footer";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "노드 관리" },
-];
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -72,9 +61,8 @@ export function NodeListMain() {
         title="노드관리"
         icon="ComparativeExperiment"
         description="Node Management"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.node"
+      />
 
       {/* 노드 목록 페이지 메인 영역 */}
       <ListPageMain>

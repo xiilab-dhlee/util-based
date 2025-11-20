@@ -6,11 +6,8 @@ import type { TabsSeparatedItem } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
 import { openCreateGroupModalAtom } from "@/atoms/group.atom";
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { CreateGroupModal } from "@/components/group/create-group-modal";
-// import { MemberAddModal } from "@/components/setting/modal/member-add-modal";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -20,16 +17,7 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "계정 관리" },
-];
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -97,9 +85,12 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
-      <PageHeader title="계정 관리" icon="Person" description="Manage Account">
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+      <PageHeader
+        title="계정 관리"
+        icon="Person"
+        description="Manage Account"
+        breadcrumbKey="admin.user"
+      />
 
       {/* 사용자 목록 페이지 메인 영역 */}
       <ListPageMain>

@@ -9,8 +9,6 @@ import { ClusterEventListFooter } from "@/components/cluster-monitoring/cluster-
 import { ClusterMonitoringAside } from "@/components/cluster-monitoring/cluster-monitoring-aside";
 import { ClusterResourceQuotaCard } from "@/components/cluster-monitoring/cluster-resource-quota-card";
 import { ViewYamlLogModal } from "@/components/cluster-monitoring/view-yaml-log-modal";
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
@@ -18,12 +16,6 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "클러스터 모니터링" },
-];
 
 export function ClusterMonitoringMain() {
   return (
@@ -32,9 +24,8 @@ export function ClusterMonitoringMain() {
         title="클러스터 모니터링"
         icon="Monitoring01"
         description="Cluster Monitoring"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.cluster-monitoring"
+      />
       {/* 소스코드 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 소스코드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

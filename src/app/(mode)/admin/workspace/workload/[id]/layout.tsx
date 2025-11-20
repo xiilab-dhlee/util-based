@@ -2,25 +2,15 @@ import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { UpdateWorkloadModal } from "@/components/workload/detail/update-workload-modal";
 import { WorkloadDetailPageAside } from "@/components/workload/detail/workload-detail-page-aside";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   DetailContentSection,
   DetailPageBody,
   DetailPageContent,
 } from "@/styles/layers/detail-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "워크스페이스 관리", href: "/admin/workspace" },
-  { title: "워크스페이스 정보", href: "/admin/workspace/[workspaceId]" },
-  { title: "워크로드 정보" },
-];
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {
@@ -61,7 +51,10 @@ export const metadata: Metadata = {
 
 export default function AdminWorkloadDetailLayout({
   children,
-}: PropsWithChildren) {
+  params,
+}: PropsWithChildren<{ params: { id: string } }>) {
+  const { id } = params;
+
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
@@ -70,9 +63,9 @@ export default function AdminWorkloadDetailLayout({
         icon="Back"
         description="Workload Information"
         customPathname="/admin/workspace/{workspaceId}"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.workspace.workload.detail"
+        breadcrumbParams={{ id }}
+      />
 
       {/* 상세 페이지 메인 콘텐츠 영역 */}
       <DetailPageBody>

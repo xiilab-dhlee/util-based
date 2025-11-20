@@ -1,10 +1,11 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { PropsWithChildren } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+import { Breadcrumb, Icon } from "xiilab-ui";
 
+import { BreadcrumbItems } from "@/components/common/breadcrumb/breadcrumb-items";
+import type { PageKey } from "@/constants/page-meta";
 import { getBackPathname } from "@/utils/common/router.util";
 
 interface PageHeaderProps {
@@ -16,6 +17,10 @@ interface PageHeaderProps {
   description: string;
   // 기존 구조와 다른 라우팅 필요 시 정의
   customPathname?: string;
+  // breadcrumb에 사용할 페이지 메타 키 (없으면 breadcrumb 미표시)
+  breadcrumbKey?: PageKey;
+  // breadcrumb 경로 생성에 사용할 동적 파라미터
+  breadcrumbParams?: Record<string, string>;
 }
 
 /**
@@ -37,12 +42,17 @@ export function PageHeader({
   title,
   icon,
   description,
-  children,
   customPathname,
-}: PropsWithChildren<PageHeaderProps>) {
+  breadcrumbKey,
+  breadcrumbParams,
+}: PageHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const breadcrumbItems = breadcrumbKey
+    ? BreadcrumbItems(breadcrumbKey, breadcrumbParams)
+    : undefined;
 
   // 뒤로가기 버튼 클릭 시 목록 페이지로 이동
   const handleBack = () => {
@@ -71,7 +81,11 @@ export function PageHeader({
         <Title>{title}</Title>
         <Description>{description}</Description>
       </Left>
-      {children && <Right>{children}</Right>}
+      {breadcrumbItems && breadcrumbItems.length > 1 && (
+        <Right>
+          <Breadcrumb items={breadcrumbItems} />
+        </Right>
+      )}
     </Container>
   );
 }

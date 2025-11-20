@@ -8,16 +8,6 @@ import type { MenuItem, ResponsiveColumnType } from "xiilab-ui";
 
 import type { FileTreeType } from "@/schemas/filetree.schema";
 
-// 브레드크럼 아이템
-export interface CoreBreadcrumbItem {
-  // 타이틀
-  title: string;
-  // 타이틀 아이콘
-  icon?: string;
-  // 링크
-  href?: string;
-}
-
 // 네비게이션 메뉴
 export type CoreNavMenu = {
   // 타이틀

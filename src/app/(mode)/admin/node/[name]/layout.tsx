@@ -1,26 +1,18 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { RouteTab } from "@/components/common/tab";
 import { NodeDetailPageAside } from "@/components/node/detail/node-detail-page-aside";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
+import type { PageKey } from "@/constants/page-meta";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   DetailContentSection,
   DetailPageBody,
   DetailPageContent,
 } from "@/styles/layers/detail-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "노드 관리", href: "/admin/node" },
-  { title: "노드 정보" },
-];
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {
@@ -42,8 +34,17 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
 
 export default function AdminNodeDetailLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
+  const params = useParams();
+  const name = params.name as string;
 
   const lastSegment = pathname.split("/").filter(Boolean).pop();
+
+  const pageKey: PageKey =
+    lastSegment === "redfish"
+      ? "admin.node.redfish"
+      : lastSegment === "log"
+        ? "admin.node.log"
+        : "admin.node.detail";
 
   let title: string;
   let description: string;
@@ -66,9 +67,9 @@ export default function AdminNodeDetailLayout({ children }: PropsWithChildren) {
         icon="Back"
         description={description}
         customPathname="/admin/node"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey={pageKey}
+        breadcrumbParams={{ name }}
+      />
 
       {/* 상세 페이지 메인 콘텐츠 영역 */}
       <DetailPageBody>

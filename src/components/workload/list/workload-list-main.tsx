@@ -2,14 +2,12 @@
 
 import { Icon } from "xiilab-ui";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateAstragoVolumeModal } from "@/components/volume/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/components/volume/create-onprem-volume-modal";
 import { SelectVolumeTypeModal } from "@/components/volume/select-volume-type-modal";
 import { WorkloadListBody } from "@/components/workload/list/workload-list-body";
 import { WorkloadListFilter } from "@/components/workload/list/workload-list-filter";
 import { WorkloadListFooter } from "@/components/workload/list/workload-list-footer";
-import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -18,16 +16,7 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  STANDARD_ROOT_BREADCRUMB_ITEM,
-  { title: "워크로드" },
-];
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -71,9 +60,12 @@ export function WorkloadListMain() {
 
   return (
     <>
-      <PageHeader title="워크로드" icon="Workload" description="Workload">
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+      <PageHeader
+        title="워크로드"
+        icon="Workload"
+        description="Workload"
+        breadcrumbKey="standard.workload"
+      />
 
       {/* 워크로드 목록 페이지 메인 영역 */}
       <ListPageMain>

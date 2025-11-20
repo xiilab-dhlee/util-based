@@ -2,8 +2,6 @@
 
 import { Icon } from "xiilab-ui";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -12,11 +10,7 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 import { ViewRejectReasonModal } from "../common/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "../common/modal/view-request-reason-modal";
 import { ApproveRequestImageModal } from "./approve-request-image-modal";
@@ -24,15 +18,6 @@ import { RejectRequestImageModal } from "./reject-request-image-modal";
 import { RequestImageListBody } from "./request-image-list-body";
 import { RequestImageListFilter } from "./request-image-list-filter";
 import { RequestImageListFooter } from "./request-image-list-footer";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  {
-    title: "레지스트리",
-    href: "/admin/registry",
-  },
-  { title: "이미지 사용 요청 관리" },
-];
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -88,9 +73,8 @@ export function RequestImageListMain() {
         title="이미지 사용 요청 관리"
         icon="Back"
         description="About Manage Image usage request"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.request-image"
+      />
 
       {/* 이미지 요청 목록 페이지 메인 영역 */}
       <ListPageMain>

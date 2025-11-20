@@ -3,17 +3,9 @@
 import styled from "styled-components";
 import { DateRange, Dropdown, Icon, Typography } from "xiilab-ui";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { SystemMonitoringCard } from "@/components/system-monitoring/system-monitoring-card";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "시스템 모니터링" },
-];
 
 export function SystemMonitoringMain() {
   return (
@@ -22,9 +14,8 @@ export function SystemMonitoringMain() {
         title="시스템 모니터링"
         icon="Monitoring01"
         description="System monitoring"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.system-monitoring"
+      />
       <Container>
         <ArticleHeader>
           <Typography.Text variant="title-2">

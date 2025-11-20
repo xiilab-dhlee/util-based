@@ -3,13 +3,11 @@
 import { Icon } from "xiilab-ui";
 
 import { openCreateWorkspaceModalAtom } from "@/atoms/common/modal.atom";
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateWorkspaceModal } from "@/components/common/modal/create-workspace-modal";
 import { DeleteWorkspaceModal } from "@/components/workspace/delete-workspace-modal";
 import { WorkspaceListBody } from "@/components/workspace/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/components/workspace/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/components/workspace/list/workspace-list-footer";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -19,16 +17,7 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "워크스페이스 관리" },
-];
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -72,9 +61,8 @@ export function WorkspaceListMain() {
         title="워크스페이스 관리"
         icon="Workspace01"
         description="Workspace Management"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.workspace"
+      />
 
       {/* 워크스페이스 목록 페이지 메인 영역 */}
       <ListPageMain>
