@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { FileSecurityMain } from "@/components/security/file-security-main";
+import { FileSecurityMain } from "@/domain/security/components/file-security-main";
 
 export const metadata: Metadata = {
   title: "File Security",

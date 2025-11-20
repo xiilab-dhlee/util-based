@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { NotificationListMain } from "@/components/notification/list/notification-list-main";
+import { NotificationListMain } from "@/domain/notification/components/list/notification-list-main";
 
 /**
  * 관리자 알림 페이지 메타데이터

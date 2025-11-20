@@ -1,0 +1,55 @@
+language: "ko-KR"
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  changed_files_summary: false
+  sequence_diagrams: false
+  assess_linked_issues: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    ignore_title_keywords:
+      - "DO NOT REVIEW"
+  path_filters:
+    - "!node_modules/**"
+    - "!/.next/**"
+    - "!/out/**"
+    - "!/build/**"
+    - "!*.tsbuildinfo"
+    - "!playwright-report/**"
+    - "!reports/**"
+    - "!.pnpm-store/**"
+    - "!coverage/**"
+    - "!*.log"
+    - "!.DS_Store"
+    - "!public/mockServiceWorker.js"
+  path_instructions:
+    - path: "**"
+      instructions: |
+        - Next.js, React, TypeScript 최신 버전에 맞는 모범 사례를 기반으로 리뷰해주세요.
+        - TypeScript 타입 안전성을 강조하고, `any` 타입 사용을 지양해주세요.
+        - import 구문은 `@/` alias를 사용하고, 타입은 `import type`으로 분리해야 합니다.
+        - 각 리뷰 포인트별로 문제점과 대안, 장단점을 논리적으로 제시하고, 필요한 경우 예시 코드도 추가해주세요.
+  tools:
+    gitleaks:
+      enabled: true
+    semgrep:
+      enabled: true
+chat:
+  auto_reply: true
+
+knowledge_base:
+  web_search:
+    enabled: true
+  learnings:
+    scope: local
+  opt_out: false
+  code_guidelines:
+    enabled: true

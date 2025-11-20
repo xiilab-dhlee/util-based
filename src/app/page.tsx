@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import {
   ADMIN_ROOT_PATH,
   STANDARD_ROOT_PATH,
-} from "@/constants/common/core.constant";
+} from "@/shared/constants/core.constant";
 // import { getServerSession } from "next-auth";
 
 // import { authOptions } from "@/lib/auth";

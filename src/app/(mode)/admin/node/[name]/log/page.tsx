@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { NodeLogMain } from "@/components/node/log/node-log-main";
+import { NodeLogMain } from "@/domain/node/components/log/node-log-main";
 
 export const metadata: Metadata = {
   title: "Node Management",

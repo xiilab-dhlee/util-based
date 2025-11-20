@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ClusterMonitoringMain } from "@/components/cluster-monitoring/cluster-monitoring-main";
+import { ClusterMonitoringMain } from "@/domain/cluster-monitoring/components/cluster-monitoring-main";
 
 export const metadata: Metadata = {
   title: "Cluster Monitoring",

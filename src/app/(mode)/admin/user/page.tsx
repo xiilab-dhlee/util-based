@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { UserListMain } from "@/components/user/list/user-list-main";
+import { UserListMain } from "@/domain/user/components/list/user-list-main";
 
 export const metadata: Metadata = {
   title: "사용자 목록",

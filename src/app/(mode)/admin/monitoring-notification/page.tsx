@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { MonitoringNotificationMain } from "@/components/monitoring-notification/monitoring-notification-main";
+import { MonitoringNotificationMain } from "@/domain/monitoring-notification/components/monitoring-notification-main";
 
 export const metadata: Metadata = {
   title: "Monitoring Notification",

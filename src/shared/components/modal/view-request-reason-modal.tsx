@@ -1,0 +1,38 @@
+﻿"use client";
+
+import { useState } from "react";
+import { Icon, InfoModal } from "xiilab-ui";
+
+import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
+import { openViewRequestReasonModalAtom } from "@/shared/hooks/modal.atom";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { ModalDisplayReason } from "@/styles/layers/modal-layers.styled";
+
+export function ViewRequestReasonModal() {
+  const { open, onOpen, onClose } = useGlobalModal(
+    openViewRequestReasonModalAtom,
+  );
+
+  const [reason, setReason] = useState<string>("");
+
+  useSubscribe<string>(COMMON_EVENTS.sendRequestReason, (reason) => {
+    setReason(reason);
+    onOpen();
+  });
+
+  return (
+    <InfoModal
+      type="primary"
+      modalWidth={300}
+      icon={<Icon name="AllowRequest" color="#fff" size={18} />}
+      open={open}
+      closable
+      onClose={onClose}
+      title="신청 사유"
+      centered
+    >
+      <ModalDisplayReason>{reason}</ModalDisplayReason>
+    </InfoModal>
+  );
+}

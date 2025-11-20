@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { RequestResourceMain } from "@/components/request-resource/request-resource-main";
+import { RequestResourceMain } from "@/domain/request-resource/components/request-resource-main";
 
 export const metadata: Metadata = {
   title: "Workspace Management",

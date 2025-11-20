@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { GroupMain } from "@/components/group/group-main";
+import { GroupMain } from "@/domain/group/components/group-main";
 
 export const metadata: Metadata = {
   title: "그룹 관리",

@@ -1,4 +1,4 @@
-import { HubListMain } from "@/components/hub/list/hub-list-main";
+import { HubListMain } from "@/domain/hub/components/list/hub-list-main";
 
 export default function StandardHubPage() {
   return <HubListMain />;

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
-import { ViewVulnerabilityModal } from "@/components/common/modal/view-vulnerability-modal";
-import { CompressVolumeFileModal } from "@/components/volume/compress-volume-file-modal";
-import { CreateAstragoVolumeModal } from "@/components/volume/create-astrago-volume-modal";
-import { CreateOnPremVolumeModal } from "@/components/volume/create-onprem-volume-modal";
-import { CreateVolumeFolderModal } from "@/components/volume/create-volume-folder-modal";
-import { DeleteVolumeModal } from "@/components/volume/delete-volume-modal";
-import { VolumeListBody } from "@/components/volume/list/volume-list-body";
-import { VolumeListFilter } from "@/components/volume/list/volume-list-filter";
-import { VolumeListFooter } from "@/components/volume/list/volume-list-footer";
-import { SelectVolumeTypeModal } from "@/components/volume/select-volume-type-modal";
-import { PageHeader } from "@/layouts/common/page-header";
+import { CompressVolumeFileModal } from "@/domain/volume/components/compress-volume-file-modal";
+import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
+import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
+import { CreateVolumeFolderModal } from "@/domain/volume/components/create-volume-folder-modal";
+import { DeleteVolumeModal } from "@/domain/volume/components/delete-volume-modal";
+import { VolumeListBody } from "@/domain/volume/components/list/volume-list-body";
+import { VolumeListFilter } from "@/domain/volume/components/list/volume-list-filter";
+import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-footer";
+import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
+import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
+import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   ListPageBody,
   ListPageMain,

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SystemMonitoringMain } from "@/components/system-monitoring/system-monitoring-main";
+import { SystemMonitoringMain } from "@/domain/system-monitoring/components/system-monitoring-main";
 
 export const metadata: Metadata = {
   title: "System Monitoring",

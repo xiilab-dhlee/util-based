@@ -4,10 +4,10 @@ import { useParams, usePathname } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { RouteTab } from "@/components/common/tab";
-import { NodeDetailPageAside } from "@/components/node/detail/node-detail-page-aside";
-import type { PageKey } from "@/constants/page-meta";
-import { PageHeader } from "@/layouts/common/page-header";
+import { NodeDetailPageAside } from "@/domain/node/components/detail/node-detail-page-aside";
+import { RouteTab } from "@/shared/components/tab";
+import type { PageKey } from "@/shared/constants/page-meta";
+import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   DetailContentSection,
   DetailPageBody,

@@ -3,11 +3,11 @@
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
-import { GlobalLoadingSpinner } from "@/components/common/global-loading-spinner";
-import { CheckPasswordModal } from "@/components/common/modal/check-password-modal";
-import { CreateWorkspaceModal } from "@/components/common/modal/create-workspace-modal";
-import { UpdatePasswordModal } from "@/components/common/modal/update-password-modal";
-import { MyNavigation } from "@/layouts/common/navigation";
+import { GlobalLoadingSpinner } from "@/shared/components/global-loading-spinner";
+import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
+import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
+import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
+import { MyNavigation } from "@/shared/layouts/common/navigation";
 
 export default function ModeLayout({ children }: PropsWithChildren) {
   return (

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { PrivateRegistryImageTagDetailMain } from "@/components/private-registry-image/tag/private-registry-image-tag-detail-main";
+import { PrivateRegistryImageTagDetailMain } from "@/domain/private-registry-image/components/tag/private-registry-image-tag-detail-main";
 
 export const metadata: Metadata = {
   title: "Private Registry",

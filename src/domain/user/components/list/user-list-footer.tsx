@@ -1,0 +1,70 @@
+"use client";
+
+import { useAtom, useAtomValue } from "jotai";
+import { toast } from "react-toastify";
+
+import { useGetUsers } from "@/domain/user/hooks/use-get-users";
+import {
+  userCheckedListAtom,
+  userPageAtom,
+  userSearchTextAtom,
+} from "@/domain/user/state/user.atom";
+import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
+import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { USER_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
+
+/**
+ * 사용자 목록 페이지 하단 푸터 컴포넌트
+ *
+ * 사용자 목록 페이지에서 페이지 번호 및 검색어를 관리하고,
+ * 총 사용자 수를 표시하는 푸터 컴포넌트입니다.
+ *
+ * @returns 사용자 목록 페이지 하단 푸터 컴포넌트
+ */
+export function UserListFooter() {
+  const publish = usePublish();
+  // 페이지 번호
+  const [page, setPage] = useAtom(userPageAtom);
+  // 검색어
+  const searchText = useAtomValue(userSearchTextAtom);
+  // 체크된 사용자 목록
+  const selectedUsers = useAtomValue(userCheckedListAtom);
+
+  // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
+  const { data, isLoading } = useGetUsers({
+    page,
+    size: LIST_PAGE_SIZE,
+    searchText,
+  });
+
+  // 페이지 변경 핸들러
+  const handlePage = (page: number) => {
+    setPage(page);
+  };
+
+  /**
+   * 삭제 버튼 클릭 핸들러
+   */
+  const handleClickDelete = () => {
+    // 삭제할 사용자가 없으면 에러 메시지 표시
+    if (selectedUsers.size === 0) {
+      toast.error("삭제할 사용자를 선택해 주세요.");
+      return;
+    }
+    // 사용자 삭제 모달에 데이터 전달
+    publish(USER_EVENTS.sendDeleteUser, Array.from(selectedUsers));
+  };
+
+  return (
+    <ListPageFooter
+      total={data?.totalSize || 0}
+      page={page}
+      pageSize={LIST_PAGE_SIZE}
+      onChange={handlePage}
+      isLoading={isLoading}
+      rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
+    />
+  );
+}

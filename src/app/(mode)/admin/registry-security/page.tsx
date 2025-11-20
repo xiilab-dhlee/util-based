@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { RegistrySecurityMain } from "@/components/security/registry-security-main";
+import { RegistrySecurityMain } from "@/domain/security/components/registry-security-main";
 
 export const metadata: Metadata = {
   title: "Registry Security",

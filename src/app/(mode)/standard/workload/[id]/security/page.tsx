@@ -1,4 +1,4 @@
-import { WorkloadSecurityMain } from "@/components/workload/security/workload-security-main";
+import { WorkloadSecurityMain } from "@/domain/workload/components/security/workload-security-main";
 
 export default function StandardWorkloadSecurityPage() {
   return <WorkloadSecurityMain />;

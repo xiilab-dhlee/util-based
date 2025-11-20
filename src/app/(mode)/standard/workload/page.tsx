@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { WorkloadListMain } from "@/components/workload/list/workload-list-main";
+import { WorkloadListMain } from "@/domain/workload/components/list/workload-list-main";
 
 export const metadata: Metadata = {
   title: "Workload",

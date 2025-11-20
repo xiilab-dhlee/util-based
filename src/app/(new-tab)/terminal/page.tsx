@@ -7,7 +7,7 @@ import styled from "styled-components";
 // WorkloadTerminal을 동적 import (SSR 비활성화)
 const WorkloadTerminal = dynamicImport(
   () =>
-    import("@/components/common/terminal/workload-terminal").then(
+    import("@/shared/components/terminal/workload-terminal").then(
       (mod) => mod.WorkloadTerminal,
     ),
   { ssr: false },

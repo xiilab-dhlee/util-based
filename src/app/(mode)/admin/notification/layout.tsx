@@ -2,10 +2,10 @@
 
 import type { PropsWithChildren } from "react";
 
-import { NotificationListBody } from "@/components/notification/list/notification-list-body";
-import { NotificationListFilter } from "@/components/notification/list/notification-list-filter";
-import { NotificationListFooter } from "@/components/notification/list/notification-list-footer";
-import { PageHeader } from "@/layouts/common/page-header";
+import { NotificationListBody } from "@/domain/notification/components/list/notification-list-body";
+import { NotificationListFilter } from "@/domain/notification/components/list/notification-list-filter";
+import { NotificationListFooter } from "@/domain/notification/components/list/notification-list-footer";
+import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   ListPageBody,
   ListPageMain,

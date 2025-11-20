@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { RegistryMain } from "@/components/registry/registry-main";
+import { RegistryMain } from "@/domain/registry/components/registry-main";
 
 export const metadata: Metadata = {
   title: "Registry",

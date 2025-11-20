@@ -3,16 +3,16 @@
 import type { PropsWithChildren } from "react";
 import { Icon } from "xiilab-ui";
 
-import { CreateReportModal } from "@/components/report/create-report-modal";
-import { PageGuide } from "@/layouts/common/page-guide";
-import { PageHeader } from "@/layouts/common/page-header";
-import { PageImageGuide } from "@/layouts/common/page-image-guide";
+import { CreateReportModal } from "@/domain/report/components/create-report-modal";
+import { PageGuide } from "@/shared/layouts/common/page-guide";
+import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
+import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
-import { DeleteSourcecodeModal } from "@/components/sourcecode/delete-sourcecode-modal";
-import { SourcecodeListBody } from "@/components/sourcecode/list/sourcecode-list-body";
-import { SourcecodeListFilter } from "@/components/sourcecode/list/sourcecode-list-filter";
-import { SourcecodeListFooter } from "@/components/sourcecode/list/sourcecode-list-footer";
-import { PageHeader } from "@/layouts/common/page-header";
+import { DeleteSourcecodeModal } from "@/domain/sourcecode/components/delete-sourcecode-modal";
+import { SourcecodeListBody } from "@/domain/sourcecode/components/list/sourcecode-list-body";
+import { SourcecodeListFilter } from "@/domain/sourcecode/components/list/sourcecode-list-filter";
+import { SourcecodeListFooter } from "@/domain/sourcecode/components/list/sourcecode-list-footer";
+import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   ListPageAside,
   ListPageBody,

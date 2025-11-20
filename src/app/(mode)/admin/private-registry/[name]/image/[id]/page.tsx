@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { AdminPrivateRegistryImageDetailMain } from "@/components/private-registry/detail/admin-private-registry-image-detail-main";
+import { AdminPrivateRegistryImageDetailMain } from "@/domain/private-registry/components/detail/admin-private-registry-image-detail-main";
 
 export const metadata: Metadata = {
   title: "Private Registry",

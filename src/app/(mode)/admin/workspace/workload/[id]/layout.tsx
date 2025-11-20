@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { RouteTab } from "@/components/common/tab";
-import { UpdateWorkloadModal } from "@/components/workload/detail/update-workload-modal";
-import { WorkloadDetailPageAside } from "@/components/workload/detail/workload-detail-page-aside";
-import { PageHeader } from "@/layouts/common/page-header";
+import { UpdateWorkloadModal } from "@/domain/workload/components/detail/update-workload-modal";
+import { WorkloadDetailPageAside } from "@/domain/workload/components/detail/workload-detail-page-aside";
+import { RouteTab } from "@/shared/components/tab";
+import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   DetailContentSection,
   DetailPageBody,
@@ -49,11 +49,11 @@ export const metadata: Metadata = {
   title: "Workspace Management",
 };
 
-export default function AdminWorkloadDetailLayout({
+export default async function AdminWorkloadDetailLayout({
   children,
   params,
-}: PropsWithChildren<{ params: { id: string } }>) {
-  const { id } = params;
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const { id } = await params;
 
   return (
     <>

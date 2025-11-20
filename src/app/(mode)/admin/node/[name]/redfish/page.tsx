@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { NodeRedfishMain } from "@/components/node/redfish/node-redfish-main";
+import { NodeRedfishMain } from "@/domain/node/components/redfish/node-redfish-main";
 
 export const metadata: Metadata = {
   title: "Node Management",
