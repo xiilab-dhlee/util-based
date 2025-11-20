@@ -21,7 +21,7 @@ export function PrivateRegistryImageNameLink({
   const isAdmin = isAdminMode(pathname);
 
   // 내부 레지스트리 이미지 상세 페이지 링크
-  let href = `/standard/private-registry-image/${imageId}`;
+  let href = `/user/private-registry-image/${imageId}`;
   if (isAdmin) {
     href = `/admin/private-registry-image/${imageId}?projectId=${projectId}`;
   }

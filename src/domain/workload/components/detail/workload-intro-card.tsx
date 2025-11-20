@@ -45,7 +45,7 @@ export function WorkloadIntroCard({
   const publish = usePublish();
   const pathname = usePathname();
 
-  const isStandard = isUserMode(pathname);
+  const isUser = isUserMode(pathname);
 
   /**
    * 워크로드 수정 모달을 열기 위한 핸들러
@@ -80,7 +80,7 @@ export function WorkloadIntroCard({
         {/* 도구 버튼 영역 */}
         <ToolBox>
           {/* 워크로드 수정 버튼 */}
-          {isStandard && (
+          {isUser && (
             <IconWrapper onClick={handleModify}>
               <Icon name="Edit02" color="var(--icon-fill)" size={24} />
               <span className="sr-only">워크로드 설명, 라벨 수정</span>

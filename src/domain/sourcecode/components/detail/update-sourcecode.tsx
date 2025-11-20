@@ -72,7 +72,7 @@ export function UpdateSourcecode() {
    * 드로어 닫기 핸들러
    *
    * 현재 경로에서 [id] 부분을 제거하여 목록 페이지로 이동합니다.
-   * 예: /standard/sourcecode/[id] → /standard/sourcecode
+   * 예: /user/sourcecode/[id] → /user/sourcecode
    */
   const handleClose = () => {
     router.replace(getBackPathname(pathname));

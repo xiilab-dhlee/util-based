@@ -36,7 +36,7 @@ export function VolumeWorkloadCard({
   const { colorVariant } = getWorkloadStatusInfo(status);
 
   return (
-    <Container href={`/standard/workload/${id}?workspaceId=${workspaceId}`}>
+    <Container href={`/user/workload/${id}?workspaceId=${workspaceId}`}>
       {/* 왼쪽 영역: 워크로드 기본 정보 */}
       <Left className={colorVariant}>
         {/* 워크로드 이름 (긴 텍스트는 truncate 처리) */}

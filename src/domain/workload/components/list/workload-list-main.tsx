@@ -64,7 +64,7 @@ export function WorkloadListMain() {
         title="워크로드"
         icon="Workload"
         description="Workload"
-        breadcrumbKey="standard.workload"
+        breadcrumbKey="user.workload"
       />
 
       {/* 워크로드 목록 페이지 메인 영역 */}

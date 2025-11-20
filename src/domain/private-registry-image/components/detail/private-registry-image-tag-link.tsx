@@ -16,7 +16,7 @@ export function PrivateRegistryImageTagLink({
   const { id } = useParams();
 
   return (
-    <ColumnLink href={`/standard/private-registry-image/${id}/tag/${tagId}`}>
+    <ColumnLink href={`/user/private-registry-image/${id}/tag/${tagId}`}>
       {tagName}
     </ColumnLink>
   );

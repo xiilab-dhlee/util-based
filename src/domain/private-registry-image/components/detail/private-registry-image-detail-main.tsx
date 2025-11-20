@@ -24,7 +24,7 @@ export function PrivateRegistryImageDetailMain() {
         title="컨테이너 이미지 상세정보"
         icon="Back"
         description="Container Image Details"
-        breadcrumbKey="standard.private-registry-image.detail"
+        breadcrumbKey="user.private-registry-image.detail"
       />
 
       {/* 내부 레지스트리 이미지 상세 페이지 메인 영역 */}

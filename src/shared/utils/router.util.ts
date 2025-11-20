@@ -13,7 +13,7 @@ export function isAdminMode(pathname: string): boolean {
  * @returns 사용자 모드 여부
  */
 export function isUserMode(pathname: string): boolean {
-  return pathname.startsWith("/standard");
+  return pathname.startsWith("/user");
 }
 
 /**

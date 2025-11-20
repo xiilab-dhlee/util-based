@@ -20,7 +20,7 @@ export function WorkloadTerminalButton({
 
   const isAdmin = isAdminMode(pathname);
 
-  let href = `/standard/workload/${workloadId}/terminal?workspaceId=${workspaceId}`;
+  let href = `/user/workload/${workloadId}/terminal?workspaceId=${workspaceId}`;
   if (isAdmin) {
     href = `/admin/workspace/workload/${workloadId}/terminal?workspaceId=${workspaceId}`;
   }

@@ -24,8 +24,8 @@ export function PrivateRegistryImageTagDetailMain() {
         title="태그 상세정보"
         icon="Back"
         description="Tag Information"
-        customPathname={`/standard/private-registry-image/${id}`}
-        breadcrumbKey="standard.private-registry-image.tag"
+        customPathname={`/user/private-registry-image/${id}`}
+        breadcrumbKey="user.private-registry-image.tag"
         breadcrumbParams={{ id: id as string }}
       />
       <DetailPageBody>

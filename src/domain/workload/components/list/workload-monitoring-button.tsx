@@ -20,7 +20,7 @@ export function WorkloadMonitoringButton({
 
   const isAdmin = isAdminMode(pathname);
 
-  let href = `/standard/workload/${workloadId}/monitoring?workspaceId=${workspaceId}`;
+  let href = `/user/workload/${workloadId}/monitoring?workspaceId=${workspaceId}`;
   if (isAdmin) {
     href = `/admin/workspace/workload/${workloadId}/monitoring?workspaceId=${workspaceId}`;
   }

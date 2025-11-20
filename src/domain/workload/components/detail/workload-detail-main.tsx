@@ -17,7 +17,7 @@ import { WorkloadSecondaryArticle } from "./workload-secondary-article";
 export function WorkloadDetailMain() {
   const pathname = usePathname();
 
-  const isStandard = isUserMode(pathname);
+  const isUser = isUserMode(pathname);
 
   return (
     <>
@@ -25,7 +25,7 @@ export function WorkloadDetailMain() {
       <DetailContentHeader>
         <DetailContentTitle>워크로드 상세정보</DetailContentTitle>
         <DetailContentTitleTool>
-          {isStandard && (
+          {isUser && (
             <div style={{ width: 120, height: 30 }}>
               <DetailContentButton onClick={() => alert("준비 중입니다.")}>
                 <Icon name="Copy" color="var(--icon-fill)" />

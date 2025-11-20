@@ -11,7 +11,7 @@ import { useActiveMenu } from "@/shared/hooks/use-active-menu";
 import { Profile } from "@/shared/layouts/common/profile";
 import { isAdminMode } from "@/shared/utils/router.util";
 
-const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
+const USER_NAV_MENU: AstraGoNavMenu[] = [
   {
     title: "Entire",
     items: [
@@ -174,7 +174,7 @@ export function MyNavigation() {
   return (
     <AstraGoNav
       defaultActiveMenuKey={activeMenuKey}
-      menu={isAdmin ? ADMIN_NAV_MENU : STANDARD_NAV_MENU}
+      menu={isAdmin ? ADMIN_NAV_MENU : USER_NAV_MENU}
       logoImgSrc="/images/logo.png"
       onMenuClick={onMenuClick}
       header={
