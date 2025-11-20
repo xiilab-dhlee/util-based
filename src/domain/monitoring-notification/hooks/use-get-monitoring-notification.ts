@@ -1,7 +1,7 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import { monitoringKeys } from "@/domain/monitoring/constants/monitoring.key";
+import { monitoringKeys } from "@/domain/monitoring-notification/constants/monitoring-notification.key";
 import type { MonitoringNotificationDetailType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
 import { useServices } from "@/shared/providers/service-provider";
 

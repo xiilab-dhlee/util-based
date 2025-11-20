@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useGetMonitoringNotification } from "@/domain/monitoring/hooks/use-get-monitoring-notification";
+import { useGetMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notification";
 import { openViewMonitoringNotificationModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import { ModalDetailCard } from "@/shared/components/card/modal-detail-card";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";

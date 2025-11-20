@@ -212,7 +212,7 @@ export const PAGE_META = {
   // ============================================
   "user.monitoring": {
     title: "모니터링",
-    iconName: "Dashboard",
+    iconName: "Monitoring01",
     href: ROUTES.USER_MONITORING,
   },
 
