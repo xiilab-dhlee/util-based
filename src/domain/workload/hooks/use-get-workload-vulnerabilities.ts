@@ -1,7 +1,7 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import type { VulnerabilityListType } from "@/domain/vulnerability/schemas/vulnerability.schema";
+import type { VulnerabilityListType } from "@/domain/security/schemas/vulnerability.schema";
 import { workloadKeys } from "@/domain/workload/constants/workload.key";
 import type { GetWorkloadVulnerabilitiesPayload } from "@/domain/workload/types/workload.type";
 import { useServices } from "@/shared/providers/service-provider";
