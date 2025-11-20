@@ -81,7 +81,7 @@ export const ROUTES = {
   // User Routes
   // ============================================
 
-  USER_DASHBOARD: `${MODE.USER}/dashboard`,
+  USER_MONITORING: `${MODE.USER}/monitoring`,
 
   // 워크로드 (동적 함수)
   USER_WORKLOAD: `${MODE.USER}/workload`,

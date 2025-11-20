@@ -16,8 +16,8 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
     title: "Entire",
     items: [
       {
-        key: "dashboard",
-        label: "대시보드",
+        key: "monitoring",
+        label: "모니터링",
         icon: <Icon name="Dashboard" />,
       },
       {

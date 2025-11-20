@@ -208,12 +208,12 @@ export const PAGE_META = {
   },
 
   // ============================================
-  // User Routes - Dashboard
+  // User Routes - Monitoring
   // ============================================
-  "user.dashboard": {
-    title: "대시보드",
+  "user.monitoring": {
+    title: "모니터링",
     iconName: "Dashboard",
-    href: ROUTES.USER_DASHBOARD,
+    href: ROUTES.USER_MONITORING,
   },
 
   // ============================================
