@@ -1,29 +1,13 @@
 "use client";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { ViewRejectReasonModal } from "@/components/common/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/components/common/modal/view-request-reason-modal";
 import { ViewPrivateRegistryImageTagLogModal } from "@/components/private-registry-image/view-private-registry-image-tag-log-modal";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import { ListPageMain } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 import { DeleteAdminPrivateRegistryImageModal } from "../delete-admin-private-registry-image-modal";
 import { AdminPrivateRegistryImageDetailAside } from "./admin-private-registry-image-detail-aside";
 import { AdminPrivateRegistryImageDetailBody } from "./admin-private-registry-image-detail-body";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  {
-    title: "레지스트리",
-    href: "/admin/registry",
-  },
-  {
-    title: "내부 레지스트리",
-    href: "/admin/private-registry",
-  },
-  { title: "컨테이너 이미지 상세정보" },
-];
 
 export function AdminPrivateRegistryImageDetailMain() {
   return (
@@ -33,9 +17,8 @@ export function AdminPrivateRegistryImageDetailMain() {
         title="컨테이너 이미지 상세정보"
         icon="Back"
         description="container image details"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.private-registry.image"
+      />
       {/* 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 목록 페이지 - 왼쪽 영역 */}

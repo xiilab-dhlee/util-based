@@ -3,8 +3,6 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { MONITORING_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { PageGuide } from "@/layouts/common/page-guide";
@@ -15,20 +13,11 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 import { ManageMonitoringNotificationModal } from "./manage-monitoring-notification-modal";
 import { MonitoringNotificationListArticle } from "./monitoring-notification-list-article";
 import { MonitoringNotificationSettingArticle } from "./monitoring-notification-setting-article";
 import { ViewMonitoringNotificationModal } from "./view-monitoring-notification-modal";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "모니터링 알림" },
-];
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -86,9 +75,8 @@ export function MonitoringNotificationMain() {
         title="모니터링 알림"
         icon="Alarm"
         description="Monitoring Notifications"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.monitoring-notification"
+      />
 
       {/* 모니터링 알림 페이지 메인 영역 */}
       <ListPageMain>

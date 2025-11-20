@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { ViewVulnerabilityModal } from "@/components/common/modal/view-vulnerability-modal";
 import { CompressVolumeFileModal } from "@/components/volume/compress-volume-file-modal";
 import { CreateAstragoVolumeModal } from "@/components/volume/create-astrago-volume-modal";
@@ -12,18 +11,11 @@ import { VolumeListBody } from "@/components/volume/list/volume-list-body";
 import { VolumeListFilter } from "@/components/volume/list/volume-list-filter";
 import { VolumeListFooter } from "@/components/volume/list/volume-list-footer";
 import { SelectVolumeTypeModal } from "@/components/volume/select-volume-type-modal";
-import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  STANDARD_ROOT_BREADCRUMB_ITEM,
-  { title: "볼륨" },
-];
 
 export const metadata: Metadata = {
   title: "Volume",
@@ -31,9 +23,12 @@ export const metadata: Metadata = {
 export default function VolumeLayout({ children }: PropsWithChildren) {
   return (
     <>
-      <PageHeader title="볼륨" icon="Volume" description="Volume">
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+      <PageHeader
+        title="볼륨"
+        icon="Volume"
+        description="Volume"
+        breadcrumbKey="standard.volume"
+      />
       {/* 볼륨 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 볼륨 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

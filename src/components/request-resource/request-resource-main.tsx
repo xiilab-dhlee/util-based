@@ -1,14 +1,11 @@
 "use client";
 
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
-import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 import { ViewRejectReasonModal } from "../common/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "../common/modal/view-request-reason-modal";
 import { ApproveResourceModal } from "./approve-request-resource-modal";
@@ -18,12 +15,6 @@ import { RequestResourceFilter } from "./request-resource-filter";
 import { RequestResourceFooter } from "./request-resource-footer";
 import { ResourcePageAside } from "./resource-page-aside";
 
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  ADMIN_ROOT_BREADCRUMB_ITEM,
-  { title: "워크스페이스 관리", href: "/admin/workspace" },
-  { title: "리소스 신청 관리" },
-];
-
 export function RequestResourceMain() {
   return (
     <>
@@ -32,9 +23,8 @@ export function RequestResourceMain() {
         title="리소스 신청 관리"
         icon="Back"
         description="Resource Application"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="admin.workspace.request-resource"
+      />
 
       {/* 목록 페이지 메인 영역 */}
       <ListPageMain>

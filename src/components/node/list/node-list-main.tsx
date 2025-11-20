@@ -62,7 +62,9 @@ export function NodeListMain() {
         title="노드 관리"
         icon={NODE_MENU_ICON}
         description="Node Management"
+        breadcrumbKey="admin.node"
       />
+
       {/* 노드 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 노드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}

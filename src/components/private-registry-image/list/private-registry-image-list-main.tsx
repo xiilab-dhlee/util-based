@@ -3,11 +3,9 @@
 import { Icon } from "xiilab-ui";
 
 import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image.atom";
-import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { PrivateRegistryImageListBody } from "@/components/private-registry-image/list/private-registry-image-list-body";
 import { PrivateRegistryImageListFilter } from "@/components/private-registry-image/list/private-registry-image-list-filter";
 import { PrivateRegistryImageListFooter } from "@/components/private-registry-image/list/private-registry-image-list-footer";
-import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -17,18 +15,9 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type {
-  CoreBreadcrumbItem,
-  CoreGuide,
-  CoreGuideImage,
-} from "@/types/common/core.model";
+import type { CoreGuide, CoreGuideImage } from "@/types/common/core.model";
 import { DeletePrivateRegistryImageModal } from "../delete-private-registry-image-modal";
 import { CreatePrivateRegistryImageModal } from "./create-private-registry-image-modal";
-
-const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
-  STANDARD_ROOT_BREADCRUMB_ITEM,
-  { title: "내부 레지스트리" },
-];
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {
@@ -79,9 +68,8 @@ export function PrivateRegistryImageListMain() {
         title="내부 레지스트리"
         icon="Image"
         description="Private Registry"
-      >
-        <MyBreadcrumb items={BREADCRUMB_ITEMS} />
-      </PageHeader>
+        breadcrumbKey="standard.private-registry-image"
+      />
 
       {/* 내부 레지스트리 이미지 목록 페이지 메인 영역 */}
       <ListPageMain>
