@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useRef, useState } from "react";
-import { Modal, TextArea } from "xiilab-ui";
+import { Icon, Modal, TextArea } from "xiilab-ui";
 
 import { openApproveRequestImageModalAtom } from "@/atoms/request-image.atom";
 import { REQUEST_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
@@ -12,7 +12,6 @@ import { FormItem } from "@/styles/layers/form-layer.styled";
 import { ModalDescription } from "@/styles/layers/modal-layers.styled";
 import type { UpdateRequestImagePayload } from "@/types/request-image/request-image.type";
 import { FormLabel } from "../common/form/form-label";
-import { MyIcon } from "../common/icon";
 
 export function ApproveRequestImageModal() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -52,7 +51,7 @@ export function ApproveRequestImageModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="Edit02" color="#fff" size={18} />}
+      icon={<Icon name="Edit02" color="#fff" size={18} />}
       open={open}
       closable
       title="이미지 사용 승인"

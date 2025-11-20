@@ -2,10 +2,12 @@
 
 import classNames from "classnames";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
-import { MyIcon } from "../common/icon";
+import { MigIcon } from "../common/icon/mig-icon";
+import { MpsIcon } from "../common/icon/mps-icon";
 import { ResourceProgress } from "../common/progress/resource-progress";
 
 interface ClusterResourceQuotaCardProps {
@@ -23,13 +25,20 @@ export function ClusterResourceQuotaCard({
 }: ClusterResourceQuotaCardProps) {
   const { icon, color } = getResourceInfo(resourceName);
 
+  let iconComponent = null;
+  if (icon === "mig") {
+    iconComponent = <MigIcon />;
+  } else if (icon === "mps") {
+    iconComponent = <MpsIcon />;
+  } else {
+    iconComponent = <Icon name={icon} size={24} color={color} />;
+  }
+
   return (
     <Containter className={classNames({ divider: showDivider })}>
       <Header>
         <HeaderLeft>
-          <IconWrapper $color={color}>
-            <MyIcon name={icon} size={24} color={color} />
-          </IconWrapper>
+          <IconWrapper $color={color}>{iconComponent}</IconWrapper>
           <Title>{resourceName}</Title>
         </HeaderLeft>
         <HeaderRight>{(quota / total) * 100}%</HeaderRight>

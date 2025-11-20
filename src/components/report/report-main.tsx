@@ -3,8 +3,6 @@
 // import { isNull } from "lodash";
 // import { useSearchParams } from "next/navigation";
 
-// import ClusterReportMain from "./cluster-report-main";
-// import SystemReportMain from "./system-report-main";
 import { UnreadyReport } from "./unready-report";
 
 /**

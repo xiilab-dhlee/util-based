@@ -3,7 +3,7 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { Tag } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 import type { WorkloadVolumeType } from "@/schemas/workload.schema";
 import {
   LikeCompactCardBody,
@@ -28,7 +28,7 @@ export function WorkloadVolumeCard({
     <Container>
       <Header>
         <IconWrapper>
-          <MyIcon name="astrago" />
+          <AstragoIcon />
         </IconWrapper>
         <LikeCompactCardTitle className="truncate">
           {title}

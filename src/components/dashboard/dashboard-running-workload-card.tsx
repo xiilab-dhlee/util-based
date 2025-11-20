@@ -2,9 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
-import { Card } from "xiilab-ui";
+import { Card, Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import type { WorkloadListType } from "@/schemas/workload.schema";
 
 interface DashboardRunningWorkloadCardProps extends WorkloadListType {}
@@ -79,11 +78,11 @@ export function DashboardRunningWorkloadCard({
         {/* 카드 하단: 태그 및 액션 버튼 */}
         <Footer>
           <FooterItem>
-            <MyIcon name="PersonFilled" size={10} />
+            <Icon name="PersonFilled" size={10} />
             <span>홍길동</span>
           </FooterItem>
           <FooterItem>
-            <MyIcon name="SingleNode" size={10} />
+            <Icon name="SingleNode" size={10} />
             <span>worker-1</span>
           </FooterItem>
         </Footer>

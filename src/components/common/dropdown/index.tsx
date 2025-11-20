@@ -1,4 +1,4 @@
-import type { MenuProps } from "antd";
+import type { DropdownProps, MenuProps } from "antd";
 import { Dropdown } from "antd";
 import type { ReactNode } from "react";
 import styled from "styled-components";
@@ -9,13 +9,7 @@ interface MyDropdownProps {
   /** 드롭다운 트리거 요소 */
   children: ReactNode;
   /** 드롭다운 위치 */
-  placement?:
-    | "topLeft"
-    | "topCenter"
-    | "topRight"
-    | "bottomLeft"
-    | "bottomCenter"
-    | "bottomRight";
+  placement?: DropdownProps["placement"];
   /** 트리거 방식 */
   trigger?: ("click" | "hover" | "contextMenu")[];
   /** 드롭다운 컨테이너 스타일 */

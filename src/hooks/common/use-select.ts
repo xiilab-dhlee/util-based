@@ -1,18 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
-
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
 
 /**
- * MySelect 컴포넌트를 위한 커스텀 훅
+ * Dropdown 컴포넌트를 위한 커스텀 훅
  *
- * @param initialValue - 초기 선택값
+ * @param initialValue - 초기 선택값 (null 또는 string)
  * @param options - 선택 가능한 옵션들
  * @param required - 필수 선택 여부
  * @returns 선택 상태와 관련 함수들을 포함한 객체
  */
 export const useSelect = <T extends string = string>(
   initialValue: T | null = null,
-  options: MySelectOption[] = [],
+  options: DropdownOption[] = [],
   required: boolean = false,
 ) => {
   const [value, setValue] = useState<T | null>(initialValue);
@@ -21,6 +20,13 @@ export const useSelect = <T extends string = string>(
    * 선택된 값을 설정하는 함수
    */
   const handleSetValue = useCallback((newValue: string | null) => {
+    setValue(newValue as T);
+  }, []);
+
+  /**
+   * Dropdown의 onChange 핸들러
+   */
+  const onChange = useCallback((newValue: string | null) => {
     setValue(newValue as T);
   }, []);
 
@@ -53,7 +59,7 @@ export const useSelect = <T extends string = string>(
    */
   const isValid = useMemo(() => {
     if (required) {
-      return value !== null && value !== undefined && value !== "";
+      return value !== null && value !== undefined;
     }
     return true;
   }, [value, required]);
@@ -83,6 +89,7 @@ export const useSelect = <T extends string = string>(
 
     // 함수
     setValue: handleSetValue,
+    onChange,
     resetValue,
 
     // 유효성

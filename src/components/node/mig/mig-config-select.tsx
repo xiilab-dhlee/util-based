@@ -1,6 +1,8 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
+import type { DropdownOption } from "xiilab-ui";
+import { Dropdown } from "xiilab-ui";
 
 import {
   migGpuProductAtom,
@@ -10,8 +12,6 @@ import {
 } from "@/atoms/node.atom";
 import { useMigHelper } from "@/hooks/node/use-mig-helper";
 import { MigUtil } from "@/utils/node/mig.util";
-import type { MySelectOption } from "../../common/select";
-import { MySelect } from "../../common/select";
 
 /**
  * MIG 설정 선택 컴포넌트
@@ -60,7 +60,7 @@ export function MigConfigSelect() {
   }
 
   // GPU 제품 종류에 따라 적절한 설정 옵션 생성
-  let options: MySelectOption[] = [];
+  let options: DropdownOption[] = [];
   if (migGpuProduct) {
     // GPU 제품을 기반으로 MigUtil 인스턴스 생성
     const util = new MigUtil(migGpuProduct);
@@ -68,11 +68,11 @@ export function MigConfigSelect() {
   }
 
   return (
-    <MySelect
+    <Dropdown
       options={options}
       placeholder="Config 선택"
-      setValue={handleChangeSelect}
-      value={selectedMigConfigId === -1 ? "" : selectedMigConfigId.toString()}
+      onChange={handleChangeSelect}
+      value={selectedMigConfigId === -1 ? null : selectedMigConfigId.toString()}
       width={230}
       height={30}
     />

@@ -3,7 +3,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
-import { MyIcon } from "../icon";
+import { CirclePlusIcon } from "../icon/circle-plus-icon";
 
 interface CreateModelButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,7 +17,7 @@ interface CreateModelButtonProps
 export function CreateModelButton({ title, ...props }: CreateModelButtonProps) {
   return (
     <Container type="button" {...props}>
-      <MyIcon name="circlePlus" />
+      <CirclePlusIcon />
       {title}
     </Container>
   );

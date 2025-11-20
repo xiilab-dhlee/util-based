@@ -1,10 +1,10 @@
 "use client";
 
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import type { CoreSecurityLevel } from "@/types/common/core.interface";
 import { getSecurityLevelInfo } from "@/utils/common/security.util";
-import { MyIcon } from "../common/icon";
 
 interface RegistrySecurityResourceCardProps {
   level: CoreSecurityLevel;
@@ -19,7 +19,7 @@ export function RegistrySecurityLevelCard({
   return (
     <Container>
       <Left>
-        <MyIcon name={icon} color={iconColor} />
+        <Icon name={icon} color={iconColor} />
       </Left>
       <Right>
         <Label>{engText}</Label>

@@ -1,3 +1,5 @@
+import type { DropdownOption } from "xiilab-ui";
+
 import type { CoreBreadcrumbItem } from "@/types/common/core.model";
 /** 목록 페이지 크기 */
 export const LIST_PAGE_SIZE = 20;
@@ -12,10 +14,9 @@ export const STANDARD_ROOT_PATH = "/standard/dashboard";
 /** 관리자 모드 루트 경로 */
 export const ADMIN_ROOT_PATH = "/admin/monitoring";
 /** 전체 옵션 */
-export const ALL_OPTION = {
+export const ALL_OPTION: DropdownOption = {
   label: "전체",
   value: "ALL",
-  icon: "Entire",
 };
 /** 사용자 루트 브레드크럼 아이템 */
 export const STANDARD_ROOT_BREADCRUMB_ITEM: CoreBreadcrumbItem = {

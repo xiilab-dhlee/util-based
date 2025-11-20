@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import type { CoreSecurityLevel } from "@/types/common/core.interface";
 import { getSecurityLevelInfo } from "@/utils/common/security.util";
@@ -28,7 +28,7 @@ export function PrivateRegistryImageTagSecurityCard({
             draggable={false}
           />
           <IconWrapper>
-            <MyIcon name={icon} color="var(--icon-fill)" size={32} />
+            <Icon name={icon} color="var(--icon-fill)" size={32} />
           </IconWrapper>
         </Left>
         <Right>

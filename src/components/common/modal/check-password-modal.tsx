@@ -2,12 +2,11 @@
 
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import { Input, Modal } from "xiilab-ui";
+import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openCheckPasswordModalAtom } from "@/atoms/common/modal.atom";
 import { LoggedInUserCard } from "@/components/common/card/logged-in-user-card";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import { COMMON_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -68,7 +67,7 @@ export function CheckPasswordModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Lock" color="#fff" size={18} />}
+      icon={<Icon name="Lock" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

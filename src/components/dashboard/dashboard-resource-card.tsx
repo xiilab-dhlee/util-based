@@ -1,10 +1,9 @@
 import Image from "next/image";
 import styled from "styled-components";
-import { Typography } from "xiilab-ui";
+import { Icon, Typography } from "xiilab-ui";
 
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
-import { MyIcon } from "../common/icon";
 import { ResourceProgress } from "../common/progress/resource-progress";
 
 interface DashboardResourceCardProps {
@@ -31,7 +30,7 @@ export function DashboardResourceCard({
             draggable={false}
           />
           <IconWrapper className={resourceType}>
-            <MyIcon name={icon} color="var(--icon-fill)" size={32} />
+            <Icon name={icon} color="var(--icon-fill)" size={32} />
           </IconWrapper>
         </Left>
         <Right>

@@ -1,10 +1,9 @@
 import type { ApexOptions } from "apexcharts";
 import { useState } from "react";
-import { InfoModal } from "xiilab-ui";
+import { Icon, InfoModal } from "xiilab-ui";
 
 import { openViewWorkloadMonitoringModalAtom } from "@/atoms/workload.atom";
 import { MonitoringChart } from "@/components/common/chart/monitoring-chart";
-import { MyIcon } from "@/components/common/icon";
 import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -75,7 +74,7 @@ export function ViewWorkloadMonitoringModal() {
     <InfoModal
       modalWidth={800}
       title={title}
-      icon={<MyIcon name="Monitoring01" color="#fff" size={20} />}
+      icon={<Icon name="Monitoring01" color="#fff" size={20} />}
       open={open}
       closable
       onClose={onClose}

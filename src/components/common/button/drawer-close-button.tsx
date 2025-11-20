@@ -1,6 +1,5 @@
 import styled from "styled-components";
-
-import { MyIcon } from "../icon";
+import { Icon } from "xiilab-ui";
 
 /**
  * DrawerCloseButton 컴포넌트 Props 인터페이스
@@ -31,7 +30,7 @@ interface DrawerCloseButtonProps {
 export function DrawerCloseButton({ onClick }: DrawerCloseButtonProps) {
   return (
     <Container type="button" onClick={onClick}>
-      <MyIcon name="Close" color="#000" />
+      <Icon name="Close" color="#000" />
     </Container>
   );
 }

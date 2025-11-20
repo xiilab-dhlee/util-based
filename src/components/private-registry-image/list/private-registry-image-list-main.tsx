@@ -1,15 +1,13 @@
 "use client";
 
+import { Icon } from "xiilab-ui";
+
 import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image.atom";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { PrivateRegistryImageListBody } from "@/components/private-registry-image/list/private-registry-image-list-body";
 import { PrivateRegistryImageListFilter } from "@/components/private-registry-image/list/private-registry-image-list-filter";
 import { PrivateRegistryImageListFooter } from "@/components/private-registry-image/list/private-registry-image-list-footer";
 import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import {
-  PRIVATE_REGISTRY_IMAGE_GUIDE_IMAGES,
-  PRIVATE_REGISTRY_IMAGE_GUIDES,
-} from "@/constants/private-registry-image/private-registry-image.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -19,13 +17,54 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import type {
+  CoreBreadcrumbItem,
+  CoreGuide,
+  CoreGuideImage,
+} from "@/types/common/core.model";
 import { DeletePrivateRegistryImageModal } from "../delete-private-registry-image-modal";
 import { CreatePrivateRegistryImageModal } from "./create-private-registry-image-modal";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "내부 레지스트리" },
+];
+
+const GUIDE_IMAGES: CoreGuideImage[] = [
+  {
+    id: "1",
+    src: "/images/private-registry-guide1.png",
+    alt: "워크로드 가이드 1",
+  },
+  {
+    id: "2",
+    src: "/images/private-registry-guide2.png",
+    alt: "워크로드 가이드 2",
+  },
+  {
+    id: "3",
+    src: "/images/private-registry-guide3.png",
+    alt: "워크로드 가이드 3",
+  },
+];
+
+const GUIDES: CoreGuide[] = [
+  {
+    icon: <Icon name="Image" color="var(--icon-fill)" />,
+    title: "내부 레지스트리란?",
+    description: [
+      "조직 내부에서 사용하는 컨테이너 이미지를 저장하고 관리하는",
+      "전용 저장소입니다. 인터넷 연결 없이 사용하실 수 있습니다.",
+    ],
+  },
+  {
+    icon: <Icon name="Security" color="var(--icon-fill)" />,
+    title: "컨테이너 이미지란?",
+    description: [
+      "애플리케이션 실행에 필요한 프로그램, 라이브러리, 설정 파일 등을",
+      "하나로 묶은 실행 패키지입니다.",
+    ],
+  },
 ];
 
 export function PrivateRegistryImageListMain() {
@@ -59,7 +98,7 @@ export function PrivateRegistryImageListMain() {
               "동일한 환경에서 쉽게 애플리케이션을 실행가능합니다.",
             ]}
             backgroundImageName="private-registry-intro-background.png"
-            guides={PRIVATE_REGISTRY_IMAGE_GUIDES}
+            guides={GUIDES}
             buttonOptions={{
               enabled: true,
               text: "컨테이너 이미지 생성하기",
@@ -70,7 +109,7 @@ export function PrivateRegistryImageListMain() {
           {/* 내부 레지스트리 이미지 가이드 이미지 카드 */}
           <PageImageGuide
             title="내부 레지스트리 가이드"
-            guideImages={PRIVATE_REGISTRY_IMAGE_GUIDE_IMAGES}
+            guideImages={GUIDE_IMAGES}
           />
         </ListPageAside>
 

@@ -1,9 +1,10 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { Dropdown } from "xiilab-ui";
 
 import { requestImageStatusAtom } from "@/atoms/request-image.atom";
-import { MySelect } from "@/components/common/select";
+import { ALL_OPTION } from "@/constants/common/core.constant";
 import { REQUEST_IMAGE_STATUS_OPTIONS } from "@/constants/request-image/request-image.constant";
 
 /**
@@ -24,19 +25,17 @@ export function RequestImageStatusSort() {
    * @param value - 선택된 상태 값 (string | null)
    */
   const handleChange = (value: string | null) => {
-    if (value) {
-      setStatus(value);
-    }
+    setStatus(value);
   };
 
   return (
-    <MySelect
-      options={REQUEST_IMAGE_STATUS_OPTIONS} // 이미지 요청 상태 옵션들
-      placeholder="상태" // 플레이스홀더 텍스트
-      setValue={handleChange} // 값 변경 핸들러
-      value={status} // 현재 선택된 상태 값
-      width={100} // 선택기 너비
-      height={30} // 선택기 높이
+    <Dropdown
+      options={[ALL_OPTION, ...REQUEST_IMAGE_STATUS_OPTIONS]}
+      placeholder="상태"
+      onChange={handleChange}
+      value={status}
+      width={100}
+      height={30}
     />
   );
 }

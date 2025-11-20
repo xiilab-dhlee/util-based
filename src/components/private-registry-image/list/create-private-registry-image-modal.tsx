@@ -2,11 +2,10 @@
 
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import { Input, Modal, Tag } from "xiilab-ui";
+import { Icon, Input, Modal, Tag } from "xiilab-ui";
 
 import { openCreatePrivateRegistryImageModalAtom } from "@/atoms/private-registry-image.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { FormItem } from "@/styles/layers/form-layer.styled";
@@ -33,7 +32,7 @@ export function CreatePrivateRegistryImageModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={580}
       open={open}
       closable

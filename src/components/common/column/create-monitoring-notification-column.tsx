@@ -1,4 +1,5 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
 import { MonitoringNotificationNameButton } from "@/components/monitoring-notification/monitoring-notification-name-button";
 import { MonitoringNotificationSettingSwitch } from "@/components/monitoring-notification/monitoring-notification-setting-switch";
@@ -10,7 +11,6 @@ import {
 } from "@/styles/layers/column-layer.styled";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 import { applyColumnConfigs } from "@/utils/common/column.util";
-import { MyIcon } from "../icon";
 
 /**
  * 컬럼 정의 배열 생성 (dataIndex 한 번만 정의)
@@ -60,7 +60,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
         return (
           <ColumnAlignCenterWrap>
             <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-              <MyIcon name="Delete" color="var(--icon-fill)" size={16} />
+              <Icon name="Delete" color="var(--icon-fill)" size={16} />
             </ColumnIconWrap>
           </ColumnAlignCenterWrap>
         );

@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 
-import { MyIcon } from "@/components/common/icon";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 
 interface LoggedInUserCardProps {
   username: string;
@@ -19,7 +19,7 @@ export function LoggedInUserCard({ username, email }: LoggedInUserCardProps) {
   return (
     <Container>
       <Avatar>
-        <MyIcon name="astrago" />
+        <AstragoIcon />
       </Avatar>
       <Body>
         <Name>{username}</Name>

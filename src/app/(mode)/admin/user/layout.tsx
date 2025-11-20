@@ -3,6 +3,7 @@
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import type { TabsSeparatedItem } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
 import { openCreateGroupModalAtom } from "@/atoms/group.atom";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
@@ -10,7 +11,6 @@ import { RouteTab } from "@/components/common/tab";
 import { CreateGroupModal } from "@/components/group/create-group-modal";
 // import { MemberAddModal } from "@/components/setting/modal/member-add-modal";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import { USER_GUIDE_IMAGES, USER_GUIDES } from "@/constants/user/user.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
@@ -20,11 +20,52 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import type {
+  CoreBreadcrumbItem,
+  CoreGuide,
+  CoreGuideImage,
+} from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "계정 관리" },
+];
+
+const GUIDE_IMAGES: CoreGuideImage[] = [
+  {
+    id: "1",
+    src: "/images/user-guide1.png",
+    alt: "사용자 가이드 1",
+  },
+  {
+    id: "2",
+    src: "/images/user-guide2.png",
+    alt: "사용자 가이드 2",
+  },
+  {
+    id: "3",
+    src: "/images/user-guide3.png",
+    alt: "사용자 가이드 3",
+  },
+];
+
+const GUIDES: CoreGuide[] = [
+  {
+    icon: <Icon name="SystemFilled" color="var(--icon-fill)" />,
+    title: "그룹 관리란?",
+    description: [
+      "초기 가입 시 사용자가 선택한 그룹이 기본값으로 설정됩니다.",
+      "관리자는 사용자 그룹 설정을 변경하여 사용자를 관리할 수 있습니다.",
+    ],
+  },
+  {
+    icon: <Icon name="Delete" color="var(--icon-fill)" />,
+    title: "그룹 삭제란?",
+    description: [
+      "관리자는 생성된 그룹을 생성, 수정, 삭제하여 관리할 수 있습니다.",
+      "그룹 삭제시 포함된 사용자들은 '그룹 미지정 계정'으로 이동됩니다.",
+    ],
+  },
 ];
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
@@ -73,7 +114,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
               "추가하거나 제거하여 효율적으로 사용자 관리를 할 수 있습니다.",
             ]}
             backgroundImageName="user-intro-background.png"
-            guides={USER_GUIDES}
+            guides={GUIDES}
             buttonOptions={{
               enabled: true,
               text: "그룹 추가",
@@ -82,10 +123,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
           />
 
           {/* 사용자 가이드 이미지 카드 */}
-          <PageImageGuide
-            title="계정 관리 가이드"
-            guideImages={USER_GUIDE_IMAGES}
-          />
+          <PageImageGuide title="계정 관리 가이드" guideImages={GUIDE_IMAGES} />
         </ListPageAside>
 
         {/* 사용자 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

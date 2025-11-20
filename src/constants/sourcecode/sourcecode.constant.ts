@@ -1,7 +1,8 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
+
 import type { CoreGuideImage } from "@/types/common/core.model";
 
-export const SOURCECODE_TYPE_OPTIONS: MySelectOption[] = [
+export const SOURCECODE_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "GitHub",
     value: "GITHUB",

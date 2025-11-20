@@ -4,13 +4,14 @@ import { useSetAtom } from "jotai";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Input, Modal, Upload } from "xiilab-ui";
+import { Dropdown, Input, Modal, Upload } from "xiilab-ui";
 
 import {
   openCreateAstragoVolumeModalAtom,
   openSelectVolumeModalAtom,
 } from "@/atoms/volume.atom";
 import { FormLabel } from "@/components/common/form/form-label";
+import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -21,8 +22,6 @@ import { useCreateVolume } from "@/hooks/volume/use-create-volume";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 import type { CreateVolumePayload } from "@/types/volume/volume.type";
 import { formatFileSize } from "@/utils/common/file.util";
-import { MyIcon } from "../common/icon";
-import { MySelect } from "../common/select";
 
 /**
  * AstraGo 볼륨 생성 모달 컴포넌트
@@ -52,7 +51,7 @@ export function CreateAstragoVolumeModal() {
   // 폼 초기화 훅 사용
   const { clearForm, getFormKey } = useClearForm();
 
-  const storage = useSelect(null, []);
+  const storageSelect = useSelect(null, []);
 
   // 파일 업로드 Hook 사용 (최대 5MB, 초기 파일 포함)
   const { files, handleUpload, handleFileRemove, totalSize, clearFiles } =
@@ -133,7 +132,7 @@ export function CreateAstragoVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="astrago" color="#fff" width={16} height={16} />}
+      icon={<AstragoIcon fill="#fff" width={16} height={16} />}
       open={open}
       closable
       title="AstraGo Storage"
@@ -153,8 +152,10 @@ export function CreateAstragoVolumeModal() {
         <FormRow>
           <FormItem>
             <FormLabel>스토리지 목록</FormLabel>
-            <MySelect
-              {...storage}
+            <Dropdown
+              options={storageSelect.options}
+              onChange={storageSelect.onChange}
+              value={storageSelect.value}
               width="100%"
               placeholder="스토리지를 선택해 주세요."
             />

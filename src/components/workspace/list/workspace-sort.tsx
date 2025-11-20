@@ -1,9 +1,9 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { Dropdown } from "xiilab-ui";
 
 import { workspaceSortAtom } from "@/atoms/workspace.atom";
-import { MySelect } from "@/components/common/select";
 import { WORKSPACE_SORT_OPTIONS } from "@/constants/workspace/workspace.constant";
 
 /**
@@ -24,16 +24,14 @@ export function WorkspaceSort() {
    * @param value - 선택된 정렬 기준 값 (string | null)
    */
   const handleChange = (value: string | null) => {
-    if (value) {
-      setSortBy(value);
-    }
+    setSortBy(value);
   };
 
   return (
-    <MySelect
+    <Dropdown
       options={WORKSPACE_SORT_OPTIONS}
       placeholder="정렬"
-      setValue={handleChange}
+      onChange={handleChange}
       value={sortBy}
       width={160}
       height={30}

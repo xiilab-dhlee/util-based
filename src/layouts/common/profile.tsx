@@ -4,10 +4,10 @@ import { Popover } from "antd";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import { openProfilePopoverAtom } from "@/atoms/common/modal.atom";
 import { ActiveOutsideClick } from "@/components/common/active-outside-click";
-import { MyIcon } from "@/components/common/icon";
 import { AstragoIcon } from "@/components/common/icon/astrago-icon";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { ProfilePopover } from "../../components/common/popover/profile-popover";
@@ -74,7 +74,7 @@ export function Profile() {
       <Right>
         <ActiveOutsideClick onClick={handleCloseDropdown}>
           <OpenDropdownButton onClick={handleToggleDropdown}>
-            <MyIcon name="MoreVertical" color="#e8eaed" size={16} />
+            <Icon name="MoreVertical" color="#e8eaed" size={16} />
           </OpenDropdownButton>
           {showDropdown && (
             <Dropdown>

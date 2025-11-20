@@ -1,12 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { Input, Modal, TextArea } from "xiilab-ui";
+import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateGroupModalAtom } from "@/atoms/group.atom";
 import { CreateModelButton } from "@/components/common/button/create-model-button";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import { MyMultipleSelect } from "@/components/common/select/multiple";
 import { useClearForm } from "@/hooks/common/use-clear-form";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -75,7 +74,7 @@ export function CreateGroupModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

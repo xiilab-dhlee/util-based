@@ -1,9 +1,8 @@
-import { InfoModal } from "xiilab-ui";
+import { Icon, InfoModal } from "xiilab-ui";
 
 import { openYamlLogModalAtom } from "@/atoms/monitoring.atom";
 import { WorkloadLogBody } from "@/components/workload/log/workload-log-body";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
-import { MyIcon } from "../common/icon";
 
 export function ViewYamlLogModal() {
   // 모달 상태 관리
@@ -13,7 +12,7 @@ export function ViewYamlLogModal() {
     <InfoModal
       modalWidth={800}
       title="YAML"
-      icon={<MyIcon name="Terminal" color="#fff" size={20} />}
+      icon={<Icon name="Terminal" color="#fff" size={20} />}
       open={open}
       closable
       onClose={onClose}

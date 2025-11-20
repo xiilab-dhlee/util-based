@@ -3,8 +3,8 @@
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetPrivateRegistryImage } from "@/hooks/private-registry-image/use-get-private-registry-image";
@@ -37,7 +37,7 @@ export function PrivateRegistryImageDetailIntroCard() {
         <HeaderTitle>컨테이너 이미지 기본정보</HeaderTitle>
         <ToolBox>
           <IconWrapper onClick={handleDelete}>
-            <MyIcon name="Delete" color="var(--icon-fill)" size={24} />
+            <Icon name="Delete" color="var(--icon-fill)" size={24} />
             <span className="sr-only">내부 레지스트리 이미지 삭제</span>
           </IconWrapper>
         </ToolBox>
@@ -46,7 +46,7 @@ export function PrivateRegistryImageDetailIntroCard() {
         <Row>
           <DescriptionRowBody>
             <RowIconWrapper>
-              <MyIcon name="Workspace02" color="var(--icon-fill)" size={22} />
+              <Icon name="Workspace02" color="var(--icon-fill)" size={22} />
             </RowIconWrapper>
             <RowTitle>이름</RowTitle>
           </DescriptionRowBody>
@@ -55,7 +55,7 @@ export function PrivateRegistryImageDetailIntroCard() {
         <DescriptionRow>
           <DescriptionRowBody>
             <RowIconWrapper>
-              <MyIcon name="Description" color="var(--icon-fill)" size={22} />
+              <Icon name="Description" color="var(--icon-fill)" size={22} />
             </RowIconWrapper>
             <RowTitle>설명</RowTitle>
           </DescriptionRowBody>
@@ -64,7 +64,7 @@ export function PrivateRegistryImageDetailIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <MyIcon name="Info" color="var(--icon-fill)" size={24} />
+              <Icon name="Info" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>상태</RowKey>
@@ -75,7 +75,7 @@ export function PrivateRegistryImageDetailIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <MyIcon name="PersonFilled" color="var(--icon-fill)" size={24} />
+              <Icon name="PersonFilled" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자 :</RowKey>
@@ -86,7 +86,7 @@ export function PrivateRegistryImageDetailIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <MyIcon name="Calendar01" color="var(--icon-fill)" size={24} />
+              <Icon name="Calendar01" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성일 :</RowKey>

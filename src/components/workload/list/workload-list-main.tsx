@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "xiilab-ui";
+
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { CreateAstragoVolumeModal } from "@/components/volume/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/components/volume/create-onprem-volume-modal";
@@ -8,10 +10,6 @@ import { WorkloadListBody } from "@/components/workload/list/workload-list-body"
 import { WorkloadListFilter } from "@/components/workload/list/workload-list-filter";
 import { WorkloadListFooter } from "@/components/workload/list/workload-list-footer";
 import { STANDARD_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import {
-  WORKLOAD_GUIDE_IMAGES,
-  WORKLOAD_GUIDES,
-} from "@/constants/workload/workload.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -20,11 +18,52 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import type {
+  CoreBreadcrumbItem,
+  CoreGuide,
+  CoreGuideImage,
+} from "@/types/common/core.model";
 
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   STANDARD_ROOT_BREADCRUMB_ITEM,
   { title: "워크로드" },
+];
+
+const GUIDE_IMAGES: CoreGuideImage[] = [
+  {
+    id: "1",
+    src: "/images/create-workload-guide1.png",
+    alt: "워크로드 가이드 1",
+  },
+  {
+    id: "2",
+    src: "/images/create-workload-guide2.png",
+    alt: "워크로드 가이드 2",
+  },
+  {
+    id: "3",
+    src: "/images/create-workload-guide3.png",
+    alt: "워크로드 가이드 3",
+  },
+];
+
+const GUIDES: CoreGuide[] = [
+  {
+    icon: <Icon name="Workload" color="var(--icon-fill)" />,
+    title: "워크로드란?",
+    description: [
+      "워크로드란 워크스페이스에서 이뤄지는 잡(Job) 입니다.",
+      "입력한 정보를 바탕으로 학습이 진행되도록 합니다.",
+    ],
+  },
+  {
+    icon: <Icon name="Workspace01" color="var(--icon-fill)" />,
+    title: "워크스페이스란?",
+    description: [
+      "워크스페이스란 팀별로 함께 사용하는 작업공간입니다.",
+      "팀원이 생성한 워크로드 및 진행상황 확인이 가능합니다.",
+    ],
+  },
 ];
 
 export function WorkloadListMain() {
@@ -49,7 +88,7 @@ export function WorkloadListMain() {
               "워크로드를 생성해보세요.",
             ]}
             backgroundImageName="workload-intro-background.png"
-            guides={WORKLOAD_GUIDES}
+            guides={GUIDES}
             buttonOptions={{
               enabled: true,
               text: "워크로드 생성하기",
@@ -58,10 +97,7 @@ export function WorkloadListMain() {
           />
 
           {/* 워크로드 가이드 이미지 카드 */}
-          <PageImageGuide
-            title="워크로드 가이드"
-            guideImages={WORKLOAD_GUIDE_IMAGES}
-          />
+          <PageImageGuide title="워크로드 가이드" guideImages={GUIDE_IMAGES} />
         </ListPageAside>
 
         {/* 워크로드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

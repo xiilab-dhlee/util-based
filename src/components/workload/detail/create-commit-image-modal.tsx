@@ -2,11 +2,10 @@
 
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { Input, Modal } from "xiilab-ui";
+import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openCreateCommitImageModalAtom } from "@/atoms/workload.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -97,7 +96,7 @@ export function CreateCommitImageModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

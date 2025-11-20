@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Button } from "xiilab-ui";
+import { Button, Dropdown } from "xiilab-ui";
 
-import { MySelect } from "@/components/common/select";
 import { useSelect } from "@/hooks/common/use-select";
 import { useGetCredentials } from "@/hooks/credential/use-get-credentials";
 import type { CredentialListType } from "@/schemas/credential.schema";
@@ -30,7 +29,7 @@ export function ManageCredential({ defaultCredential }: ManageCredentialProps) {
   // 크레덴셜 목록 조회 (페이지당 100개)
   const { data } = useGetCredentials({ page: 1, size: 100 });
 
-  // 크레덴셜 목록을 MySelect 컴포넌트에서 사용할 수 있는 형태로 매핑
+  // 크레덴셜 목록을 Dropdown 컴포넌트에서 사용할 수 있는 형태로 매핑
   // value: 크레덴셜 ID (문자열), label: 크레덴셜 이름
   const mappedCredentials =
     data?.content?.map((credential) => ({
@@ -82,9 +81,9 @@ export function ManageCredential({ defaultCredential }: ManageCredentialProps) {
     <>
       {/* 크레덴셜 선택 드롭다운 */}
       <SourcecodeFormFieldControl>
-        <MySelect
+        <Dropdown
           options={options}
-          setValue={setValue}
+          onChange={setValue}
           value={value}
           width="100%"
           placeholder="크레덴셜 선택, Git 리포지토리를 추가하시려면 크레덴셜을 선택해 주세요."

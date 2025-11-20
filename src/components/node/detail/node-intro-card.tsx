@@ -2,9 +2,8 @@
 
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Label } from "xiilab-ui";
+import { Icon, Label } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { useGetNode } from "@/hooks/node/use-get-node";
 import {
   DetailIntroCardBody,
@@ -56,7 +55,7 @@ export function NodeIntroCard() {
         <DetailIntroCardRow>
           <DetailIntroCardDescriptionRowBody>
             <DetailIntroCardRowIconWrapper>
-              <MyIcon name="SingleNode" color="var(--icon-fill)" size={22} />
+              <Icon name="SingleNode" color="var(--icon-fill)" size={22} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               {name}
@@ -77,7 +76,7 @@ export function NodeIntroCard() {
         <DetailIntroCardDescriptionRow>
           <DetailIntroCardDescriptionRowBody>
             <DetailIntroCardRowIconWrapper>
-              <MyIcon name="Description" color="var(--icon-fill)" size={20} />
+              <Icon name="Description" color="var(--icon-fill)" size={20} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               노드 자원 상세정보 · 리소스 정보

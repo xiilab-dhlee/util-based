@@ -1,6 +1,6 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
 
-export const VOLUME_STORAGE_OPTIONS: MySelectOption[] = [
+export const VOLUME_STORAGE_OPTIONS: DropdownOption[] = [
   {
     label: "AstraGo Storage",
     value: "ASTRAGO",

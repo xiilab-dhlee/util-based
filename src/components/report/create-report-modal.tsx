@@ -4,12 +4,10 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { DateRange, Modal } from "xiilab-ui";
+import { DateRange, Dropdown, Icon, Modal } from "xiilab-ui";
 
 import { openCreateReportModalAtom } from "@/atoms/report.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import {
   REPORT_DATE_TYPE_OPTIONS,
   REPORT_TYPE_OPTIONS,
@@ -23,9 +21,13 @@ export function CreateReportModal() {
 
   const { open, onClose } = useGlobalModal(openCreateReportModalAtom);
 
-  const dateType = useSelect<string>("", REPORT_DATE_TYPE_OPTIONS, true);
+  const dateTypeSelect = useSelect<string>(
+    null,
+    REPORT_DATE_TYPE_OPTIONS,
+    true,
+  );
 
-  const reportType = useSelect<string>("", REPORT_TYPE_OPTIONS, true);
+  const reportTypeSelect = useSelect<string>(null, REPORT_TYPE_OPTIONS, true);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -36,11 +38,11 @@ export function CreateReportModal() {
   };
 
   const handleSubmit = () => {
-    if (dateType.value === "") {
+    if (!dateTypeSelect.value) {
       toast.error("기간을 선택해 주세요.");
       return;
     }
-    if (reportType.value === "") {
+    if (!reportTypeSelect.value) {
       toast.error("리포트 종류를 선택해 주세요.");
       return;
     }
@@ -53,14 +55,14 @@ export function CreateReportModal() {
     onClose();
 
     router.push(
-      `/admin/report?reportType=${dateType.value}_${reportType.value}&endDate=${format(endDate, "yyyy-MM-dd")}`,
+      `/admin/report?reportType=${dateTypeSelect.value}_${reportTypeSelect.value}&endDate=${format(endDate, "yyyy-MM-dd")}`,
     );
   };
 
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable
@@ -79,20 +81,20 @@ export function CreateReportModal() {
       <FormRow>
         <FormItem style={{ width: "120px", flex: "none" }}>
           <FormLabel>리포트 종류</FormLabel>
-          <MySelect
-            options={dateType.options}
-            setValue={dateType.setValue}
-            value={dateType.value}
-            width="120px"
+          <Dropdown
+            options={dateTypeSelect.options}
+            onChange={dateTypeSelect.onChange}
+            value={dateTypeSelect.value}
+            width={120}
             placeholder="기간"
           />
         </FormItem>
         <FormItem style={{ width: "100%" }}>
           <FormLabel hidden></FormLabel>
-          <MySelect
-            options={reportType.options}
-            setValue={reportType.setValue}
-            value={reportType.value}
+          <Dropdown
+            options={reportTypeSelect.options}
+            onChange={reportTypeSelect.onChange}
+            value={reportTypeSelect.value}
             width="100%"
             placeholder="리포트 종류를 선택해 주세요."
           />

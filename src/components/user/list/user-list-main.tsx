@@ -1,6 +1,5 @@
 "use client";
 
-// import { MemberDetailModal } from "@/components/setting/modal/member-detail-modal";
 import { ListPageBody } from "@/styles/layers/list-page-layers.styled";
 import { UpdateUserModal } from "./update-user-modal";
 import { UserListBody } from "./user-list-body";

@@ -1,8 +1,8 @@
 "use client";
 
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { ResourceProgress } from "@/components/common/progress/resource-progress";
 import type { CoreResourceType } from "@/types/common/core.interface";
 import { getResourceInfo } from "@/utils/common/resource.util";
@@ -29,7 +29,7 @@ export function ResourceCard({
     <Container>
       <Header>
         <IconWrapper>
-          <MyIcon name={icon} color="var(--icon-fill)" size={22} />
+          <Icon name={icon} color="var(--icon-fill)" size={22} />
         </IconWrapper>
         <Title>
           <ResourceType>{resourceType}</ResourceType>

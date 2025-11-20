@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Input, Modal, TextArea } from "xiilab-ui";
+import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openUpdateWorkloadModalAtom } from "@/atoms/workload.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
 import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -88,7 +87,7 @@ export function UpdateWorkloadModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Edit01" color="#fff" size={18} />}
+      icon={<Icon name="Edit01" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable

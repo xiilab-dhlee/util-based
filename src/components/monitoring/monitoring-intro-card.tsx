@@ -5,7 +5,7 @@ import { Typography } from "xiilab-ui";
 
 import { gradientBackgroundButtonStyle } from "@/styles/mixins/button";
 import { subTitleStyle } from "@/styles/mixins/text";
-import { MyIcon } from "../common/icon";
+import { AstragoIcon } from "../common/icon/astrago-icon";
 
 export function MonitoringIntroCard() {
   return (
@@ -16,7 +16,7 @@ export function MonitoringIntroCard() {
         </EngTitleWrapper>
         <TitleWrapper>
           <IconWrapper>
-            <MyIcon name="astrago" color="var(--icon-fill)" size={28} />
+            <AstragoIcon fill="var(--icon-fill)" width={28} height={28} />
           </IconWrapper>
           <Title>모니터링</Title>
         </TitleWrapper>

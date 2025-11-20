@@ -2,10 +2,9 @@
 
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { Input, Modal } from "xiilab-ui";
+import { Icon, Input, Modal } from "xiilab-ui";
 
 import { openCreateVolumeFolderModalAtom } from "@/atoms/volume.atom";
-import { MyIcon } from "@/components/common/icon";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -60,7 +59,7 @@ export function CreateVolumeFolderModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       open={open}
       closable
       title="폴더 추가"

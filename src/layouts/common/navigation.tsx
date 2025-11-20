@@ -2,9 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import styled from "styled-components";
-import { AstraGoNav, type AstraGoNavMenu } from "xiilab-ui";
+import { AstraGoNav, type AstraGoNavMenu, Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { WorkspaceSelect } from "@/components/common/select/workspace-select";
 import { useActiveMenu } from "@/hooks/common/use-active-menu";
 import { Profile } from "@/layouts/common/profile";
@@ -17,7 +16,7 @@ const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "dashboard",
         label: "대시보드",
-        icon: <MyIcon name="Dashboard" />,
+        icon: <Icon name="Dashboard" />,
       },
       {
         type: "divider",
@@ -30,7 +29,7 @@ const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "workload",
         label: "워크로드",
-        icon: <MyIcon name="Workload" />,
+        icon: <Icon name="Workload" />,
       },
       // {
       //   key: "compare",
@@ -40,7 +39,7 @@ const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "private-registry-image",
         label: "내부 레지스트리",
-        icon: <MyIcon name="Image" />,
+        icon: <Icon name="Image" />,
       },
       // {
       //   key: "public-registry",
@@ -50,12 +49,12 @@ const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "sourcecode",
         label: "소스코드",
-        icon: <MyIcon name="SourceCode" />,
+        icon: <Icon name="SourceCode" />,
       },
       {
         key: "volume",
         label: "볼륨",
-        icon: <MyIcon name="Volume" />,
+        icon: <Icon name="Volume" />,
       },
       // {
       //   key: "model",
@@ -70,7 +69,7 @@ const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "hub",
         label: "허브",
-        icon: <MyIcon name="Hub" />,
+        icon: <Icon name="Hub" />,
       },
     ],
   },
@@ -80,7 +79,7 @@ const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "setting",
         label: "설정",
-        icon: <MyIcon name="Setting01" />,
+        icon: <Icon name="Setting01" />,
       },
     ],
   },
@@ -93,7 +92,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "monitoring-root",
         label: "모니터링",
-        icon: <MyIcon name="Monitoring01" />,
+        icon: <Icon name="Monitoring01" />,
         children: [
           { key: "monitoring", label: "모니터링 메인" },
           { key: "system-monitoring", label: "시스템 모니터링" },
@@ -104,7 +103,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "node",
         label: "노드 관리",
-        icon: <MyIcon name="SingleNode" />,
+        icon: <Icon name="SingleNode" />,
       },
       // {
       //   key: "schedule",
@@ -114,7 +113,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "security-root",
         label: "보안 관리",
-        icon: <MyIcon name="SecurityCheck" />,
+        icon: <Icon name="SecurityCheck" />,
         children: [
           { key: "registry-security", label: "레지스트리 보안" },
           { key: "file-security", label: "파일 시스템 보안" },
@@ -123,7 +122,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "workspace-root",
         label: "워크스페이스 관리",
-        icon: <MyIcon name="Workspace01" />,
+        icon: <Icon name="Workspace01" />,
         children: [
           { key: "workspace", label: "워크스페이스" },
           { key: "request-resource", label: "리소스 신청 관리" },
@@ -132,7 +131,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "registry-root",
         label: "레지스트리",
-        icon: <MyIcon name="Image" />,
+        icon: <Icon name="Image" />,
         children: [
           { key: "registry", label: "레지스트리 메인" },
           { key: "request-image", label: "이미지 사용 요청 관리" },
@@ -143,7 +142,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "report",
         label: "리포트",
-        icon: <MyIcon name="Image" />,
+        icon: <Icon name="Image" />,
       },
     ],
   },
@@ -153,7 +152,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "setting-root",
         label: "설정",
-        icon: <MyIcon name="Setting01" />,
+        icon: <Icon name="Setting01" />,
         children: [
           { key: "user", label: "계정 관리" },
           { key: "notification", label: "알림 관리" },

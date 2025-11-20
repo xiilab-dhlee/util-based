@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
 import { UpdateUserButton } from "@/components/user/list/update-user-button";
 import { UserAllCheck } from "@/components/user/list/user-all-check";
@@ -13,7 +14,6 @@ import {
 } from "@/styles/layers/column-layer.styled";
 import type { CoreCreateColumnConfig } from "@/types/common/core.model";
 import { applyColumnConfigs } from "@/utils/common/column.util";
-import { MyIcon } from "../icon";
 
 /**
  * 컬럼 정의 배열 생성 (dataIndex 한 번만 정의)
@@ -90,7 +90,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
         return (
           <ColumnAlignCenterWrap>
             <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-              <MyIcon name="Notice" color="var(--icon-fill)" />
+              <Icon name="Notice" color="var(--icon-fill)" />
             </ColumnIconWrap>
           </ColumnAlignCenterWrap>
         );

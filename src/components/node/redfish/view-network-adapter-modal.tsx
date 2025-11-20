@@ -1,9 +1,8 @@
 ﻿import { useState } from "react";
 import styled from "styled-components";
-import { InfoModal, type TabsSeparatedItem } from "xiilab-ui";
+import { Icon, InfoModal, type TabsSeparatedItem } from "xiilab-ui";
 
 import { openViewNetworkPortsModalAtom } from "@/atoms/node.atom";
-import { MyIcon } from "@/components/common/icon";
 import { StateTab } from "@/components/common/tab";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
@@ -56,7 +55,7 @@ export function ViewNetworkAdapterModal() {
     <InfoModal
       modalWidth={800}
       title="Network Adapter"
-      icon={<MyIcon name="Folder" color="#fff" size={20} />}
+      icon={<Icon name="Folder" color="#fff" size={20} />}
       open={open}
       closable
       onClose={onClose}

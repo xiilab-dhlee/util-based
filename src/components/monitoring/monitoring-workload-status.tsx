@@ -1,6 +1,6 @@
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { ALL_OPTION } from "@/constants/common/core.constant";
 import type { WorkloadStatusType } from "@/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/utils/workload/workload.util";
@@ -24,15 +24,14 @@ export function MonitoringWorkloadStatus({
   total,
 }: DashboardWorkloadStatusProps) {
   // 상태에 따른 텍스트와 아이콘 정보 가져오기
-  const { label, icon } =
-    status === ALL_OPTION.value ? ALL_OPTION : getWorkloadStatusInfo(status);
+  const { label, icon } = getWorkloadStatusInfo(status);
 
   return (
     <Container>
       <Header>
         <Title>{label}</Title>
         <IconWrapper className={status}>
-          <MyIcon name={icon} color="var(--icon-fill)" size={18} />
+          <Icon name={icon} color="var(--icon-fill)" size={18} />
         </IconWrapper>
       </Header>
       <Body>

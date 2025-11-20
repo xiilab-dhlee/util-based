@@ -2,9 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
-import { Button } from "xiilab-ui";
+import { Button, Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { REDFISH_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetNode } from "@/hooks/node/use-get-node";
@@ -45,7 +44,7 @@ export function UnconnectRedfish() {
 
   return (
     <SearchNoResult
-      icon={<MyIcon name="Port" color="#878898" size={32} />}
+      icon={<Icon name="Port" color="#878898" size={32} />}
       title="연동된 Red fish가 없습니다."
       description="Red fish를 사용하기 위해 연동 설정을 해주세요."
     >

@@ -1,12 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { Input, Modal, TextArea } from "xiilab-ui";
+import { Dropdown, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateCredentialModalAtom } from "@/atoms/common/modal.atom";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import { CREDENTIAL_TYPE_OPTIONS } from "@/constants/credential/credential-list.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSelect } from "@/hooks/common/use-select";
@@ -29,7 +27,11 @@ export function CreateCredentialModal() {
   const { open, onClose } = useGlobalModal(openCreateCredentialModalAtom);
 
   // 크레덴셜 타입 선택을 위한 useSelect 훅
-  const type = useSelect<CredentialType>("GIT", CREDENTIAL_TYPE_OPTIONS, true);
+  const typeSelect = useSelect<CredentialType>(
+    "GIT",
+    CREDENTIAL_TYPE_OPTIONS,
+    true,
+  );
 
   const createCredential = useCreateCredential();
 
@@ -49,7 +51,7 @@ export function CreateCredentialModal() {
     const formData = new FormData(formRef.current);
 
     return {
-      type: type.value as CredentialType,
+      type: typeSelect.value as CredentialType,
       name: formData.get("credentialName") as string,
       description: formData.get("credentialDescription") as string,
       privateRegistryUrl: formData.get(
@@ -63,7 +65,7 @@ export function CreateCredentialModal() {
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Plus" color="#fff" size={18} />}
+      icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable
@@ -83,10 +85,10 @@ export function CreateCredentialModal() {
         <FormRow>
           <FormItem>
             <FormLabel>타입</FormLabel>
-            <MySelect
-              options={type.options}
-              setValue={type.setValue}
-              value={type.value}
+            <Dropdown
+              options={typeSelect.options}
+              onChange={typeSelect.onChange}
+              value={typeSelect.value}
               width="100%"
               placeholder="타입을 선택해 주세요."
             />
@@ -111,7 +113,7 @@ export function CreateCredentialModal() {
             placeholder="설명을 입력해 주세요."
           />
         </FormItem>
-        {type.value === "DOCKER" && (
+        {typeSelect.value === "DOCKER" && (
           <FormItem>
             <FormLabel htmlFor="credentialPrivateRegistryUrl">
               내부 레지스트리 URL

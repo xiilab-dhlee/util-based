@@ -1,7 +1,8 @@
 "use client";
 
+import { Icon } from "xiilab-ui";
+
 import { MonitoringChart } from "@/components/common/chart/monitoring-chart";
-import { MyIcon } from "@/components/common/icon";
 import { WORKLOAD_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import {
@@ -72,7 +73,7 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
         <LikeCompactCardTitle className="truncate">{text}</LikeCompactCardTitle>
         {/* 확대 버튼 - 클릭 시 상세 모니터링 모달 열기 */}
         <button type="button" onClick={handleClickIcon}>
-          <MyIcon name="Size02" color="var(--icon-fill)" size={16} />
+          <Icon name="Size02" color="var(--icon-fill)" size={16} />
           <span className="sr-only">모니터링 차트 확대</span>
         </button>
       </LikeCompactCardHeader>

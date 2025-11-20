@@ -3,10 +3,9 @@
 import { format } from "date-fns";
 import { useSetAtom } from "jotai";
 import styled from "styled-components";
-import { Card } from "xiilab-ui";
+import { Card, Icon } from "xiilab-ui";
 
 import { notificationSelectedAtom } from "@/atoms/notification.atom";
-import { MyIcon } from "@/components/common/icon";
 import type { NotificationListType } from "@/schemas/notification.schema";
 
 interface NotificationCardProps extends NotificationListType {
@@ -48,7 +47,7 @@ export function NotificationCard({
     } else if (type === "SUCCESS") {
       icon = "Success";
     }
-    return <MyIcon name={icon} />;
+    return <Icon name={icon} />;
   };
 
   return (

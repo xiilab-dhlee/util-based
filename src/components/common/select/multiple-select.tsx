@@ -3,9 +3,14 @@ import { Select } from "antd";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-interface MyMultipleSelectProps extends SelectProps {}
-
-export function MyMultipleSelect({ ...props }: MyMultipleSelectProps) {
+interface MultipleSelectProps extends SelectProps {}
+/**
+ * 다중 셀렉트 컴포넌트
+ *
+ * @param props - SelectProps
+ * @returns MultipleSelect
+ */
+export function MultipleSelect({ ...props }: MultipleSelectProps) {
   return (
     <StyledSelect
       mode="multiple"

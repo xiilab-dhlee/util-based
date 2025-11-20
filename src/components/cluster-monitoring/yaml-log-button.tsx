@@ -1,7 +1,8 @@
+import { Icon } from "xiilab-ui";
+
 import { openYamlLogModalAtom } from "@/atoms/monitoring.atom";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { ColumnIconWrap } from "@/styles/layers/column-layer.styled";
-import { MyIcon } from "../common/icon";
 
 export function YamlLogButton() {
   const { onOpen } = useGlobalModal(openYamlLogModalAtom);
@@ -12,7 +13,7 @@ export function YamlLogButton() {
 
   return (
     <ColumnIconWrap onClick={handleClick}>
-      <MyIcon name="Terminal" color="var(--icon-fill)" size={16} />
+      <Icon name="Terminal" color="var(--icon-fill)" size={16} />
     </ColumnIconWrap>
   );
 }

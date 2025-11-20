@@ -52,11 +52,7 @@ body {
   letter-spacing: -0.03rem;
   overflow: hidden;
 }
-
-[role="button"] {
-  cursor: pointer;
-}
-
+// button의 기본 스타일 초기화
 button {
   padding: 0;
   margin: 0;
@@ -64,8 +60,6 @@ button {
   font: inherit;
   color: inherit;
   cursor: pointer;
-  /* -webkit-appearance: none;
-  -moz-appearance: none; */
   border: none;
   background-color: transparent;
 }

@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
 import { CreateModelButton } from "@/components/common/button/create-model-button";
-import { MyIcon } from "@/components/common/icon";
+import { BuiltinIcon } from "@/components/common/icon/builtin-icon";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { SecurityLevelText } from "@/components/common/text/security-status-text";
 import { workloadEnvColumn } from "@/components/workload/detail/workload-env-column";
@@ -43,7 +43,7 @@ export function WorkloadSecondaryArticle() {
     publish(WORKLOAD_EVENTS.sendCommitImage, data);
   };
 
-  const { label, icon } = getWorkloadImageTypeInfo(data?.image.type);
+  const { label } = getWorkloadImageTypeInfo(data?.image.type);
 
   return (
     <Container>
@@ -55,7 +55,7 @@ export function WorkloadSecondaryArticle() {
           <Value>
             <ImageName>
               <IconWraper>
-                <MyIcon name={icon} color="var(--icon-fill)" size={18} />
+                <BuiltinIcon />
               </IconWraper>
               {label} Image
             </ImageName>

@@ -3,8 +3,8 @@
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { CustomizedTable } from "@/components/common/table/customized-table";
 import { redfishLogColumn } from "@/components/node/redfish/redfish-log-column";
 import { LIST_PAGE_SIZE } from "@/constants/common/core.constant";
@@ -108,14 +108,14 @@ export function ReadyLog() {
           onClick={handleBackClick}
           disabled={page === 1}
         >
-          <MyIcon name="Back" color="var(--icon-fill)" size={20} />
+          <Icon name="Back" color="var(--icon-fill)" size={20} />
         </IconWrapper>
         <IconWrapper
           type="button"
           onClick={handleFrontClick}
           disabled={!hasMoreData}
         >
-          <MyIcon name="Front" color="var(--icon-fill)" size={20} />
+          <Icon name="Front" color="var(--icon-fill)" size={20} />
         </IconWrapper>
       </Footer>
     </Article>

@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import type { ResponsiveColumnType } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { WorkloadStatusText } from "@/components/common/text/workload-status-text";
 import { WorkloadLogButton } from "@/components/workload/list/workload-log-button";
 import { WorkloadMonitoringButton } from "@/components/workload/list/workload-monitoring-button";
@@ -37,7 +37,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
                 active: isPinned,
               })}
             >
-              <MyIcon name="PinFilled" color="var(--icon-fill)" />
+              <Icon name="PinFilled" color="var(--icon-fill)" />
             </ColumnIconWrap>
           </ColumnAlignCenterWrap>
         );
@@ -135,7 +135,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
               onClick={() => alert("준비 중입니다.")}
               disabled={record.status === "RUNNING"}
             >
-              <MyIcon name="Port" color="var(--icon-fill)" size={20} />
+              <Icon name="Port" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>
           </ColumnAlignCenterWrap>
         );
@@ -168,7 +168,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
               onClick={() => alert("준비 중입니다.")}
               disabled={record.status === "RUNNING"}
             >
-              <MyIcon name="PowerBold" color="var(--icon-fill)" size={20} />
+              <Icon name="PowerBold" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>
           </ColumnAlignCenterWrap>
         );
@@ -186,7 +186,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
               onClick={() => alert("준비 중입니다.")}
               disabled={record.status === "COMPLETED"}
             >
-              <MyIcon name="Delete" color="var(--icon-fill)" size={20} />
+              <Icon name="Delete" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>
           </ColumnAlignCenterWrap>
         );

@@ -2,12 +2,12 @@ import type { CheckboxChangeEvent } from "antd";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Checkbox, Input } from "xiilab-ui";
+import { Checkbox, Icon, Input } from "xiilab-ui";
 
 import { openCreateWorkspaceModalAtom } from "@/atoms/common/modal.atom";
 import { ActiveOutsideClick } from "@/components/common/active-outside-click";
 import { CreateModelButton } from "@/components/common/button/create-model-button";
-import { MyIcon } from "@/components/common/icon";
+import { ArrowIcon } from "@/components/common/icon/arrow-icon";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useGetWorkspaces } from "@/hooks/workspace/use-get-workspaces";
 import type { WorkspaceListType } from "@/schemas/workspace.schema";
@@ -75,7 +75,7 @@ export function WorkspaceSelect() {
             <Placeholder>Select Workspace</Placeholder>
           )}
           <IconWrapper className={isOpen ? "open" : ""}>
-            <MyIcon name="customArrow" />
+            <ArrowIcon />
           </IconWrapper>
         </ActiveOption>
         {isOpen && (
@@ -100,7 +100,7 @@ export function WorkspaceSelect() {
                   >
                     <span>{workspace.name}</span>
                     <span>
-                      <MyIcon name="PinFilled" size={20} color="#fff" />
+                      <Icon name="PinFilled" size={20} color="#fff" />
                     </span>
                   </Option>
                 ))}

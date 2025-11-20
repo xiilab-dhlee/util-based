@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
 import { UserPendingAllCheck } from "@/components/user/pending/user-pending-all-check";
 import { UserPendingItemCheck } from "@/components/user/pending/user-pending-item-check";
@@ -8,7 +9,6 @@ import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
 } from "../../../styles/layers/column-layer.styled";
-import { MyIcon } from "../icon";
 
 export const userPendingListColumn: ResponsiveColumnType[] = [
   {
@@ -47,7 +47,7 @@ export const userPendingListColumn: ResponsiveColumnType[] = [
       return (
         <ColumnAlignCenterWrap>
           <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-            <MyIcon name="Close" color="var(--icon-fill)" />
+            <Icon name="Close" color="var(--icon-fill)" />
           </ColumnIconWrap>
         </ColumnAlignCenterWrap>
       );
@@ -62,7 +62,7 @@ export const userPendingListColumn: ResponsiveColumnType[] = [
       return (
         <ColumnAlignCenterWrap>
           <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-            <MyIcon name="Check" color="var(--icon-fill)" />
+            <Icon name="Check" color="var(--icon-fill)" />
           </ColumnIconWrap>
         </ColumnAlignCenterWrap>
       );

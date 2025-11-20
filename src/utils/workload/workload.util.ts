@@ -51,7 +51,7 @@ export const getWorkloadJobTypeInfo = (jobType?: WorkloadJobType) => {
  * 워크로드 상태 정보 조회
  * @param status - 워크로드 상태
  */
-export const getWorkloadStatusInfo = (status?: WorkloadStatusType) => {
+export const getWorkloadStatusInfo = (status?: WorkloadStatusType | "ALL") => {
   // 상태 표시 텍스트
   let label = "";
   // 상태 색상
@@ -75,6 +75,9 @@ export const getWorkloadStatusInfo = (status?: WorkloadStatusType) => {
     label = "에러";
     colorVariant = "red";
     icon = "Error";
+  } else if (status === "ALL") {
+    label = "전체";
+    icon = "Entire";
   }
 
   return { label, colorVariant, icon };

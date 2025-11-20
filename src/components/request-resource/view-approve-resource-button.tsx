@@ -1,6 +1,7 @@
 ﻿"use client";
 
-import { MyIcon } from "@/components/common/icon";
+import { Icon } from "xiilab-ui";
+
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import type { RequestResourceListType } from "@/schemas/request-resource.schema";
@@ -28,7 +29,7 @@ export function ViewApproveResourceButton({
         onClick={handleClickIcon}
         disabled={resource.status !== "WAITING"}
       >
-        <MyIcon name="Check" color="var(--icon-fill)" size={16} />
+        <Icon name="Check" color="var(--icon-fill)" size={16} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
   );

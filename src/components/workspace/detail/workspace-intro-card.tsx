@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "@/components/common/icon";
 import { WORKSPACE_EVENTS } from "@/constants/common/pubsub.constant";
 import { usePublish } from "@/hooks/common/use-pub-sub";
 import { useGetWorkspace } from "@/hooks/workspace/use-get-workspace";
@@ -36,7 +36,7 @@ export function WorkspaceIntroCard() {
         <HeaderTitle>워크스페이스 기본정보</HeaderTitle>
         <ToolBox>
           <IconWrapper onClick={handleDelete}>
-            <MyIcon name="Delete" color="var(--icon-fill)" size={24} />
+            <Icon name="Delete" color="var(--icon-fill)" size={24} />
             <span className="sr-only">워크스페이스 삭제</span>
           </IconWrapper>
         </ToolBox>
@@ -45,7 +45,7 @@ export function WorkspaceIntroCard() {
         <Row>
           <DescriptionRowBody>
             <RowIconWrapper>
-              <MyIcon name="Description" color="var(--icon-fill)" size={22} />
+              <Icon name="Description" color="var(--icon-fill)" size={22} />
             </RowIconWrapper>
             <RowTitle>이름</RowTitle>
           </DescriptionRowBody>
@@ -54,7 +54,7 @@ export function WorkspaceIntroCard() {
         <DescriptionRow>
           <DescriptionRowBody>
             <RowIconWrapper>
-              <MyIcon name="Description" color="var(--icon-fill)" size={22} />
+              <Icon name="Description" color="var(--icon-fill)" size={22} />
             </RowIconWrapper>
             <RowTitle>설명</RowTitle>
           </DescriptionRowBody>
@@ -63,7 +63,7 @@ export function WorkspaceIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <MyIcon name="PersonFilled" color="var(--icon-fill)" size={24} />
+              <Icon name="PersonFilled" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자 :</RowKey>
@@ -74,7 +74,7 @@ export function WorkspaceIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <MyIcon name="Calendar01" color="var(--icon-fill)" size={24} />
+              <Icon name="Calendar01" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성일 :</RowKey>
@@ -85,7 +85,7 @@ export function WorkspaceIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <MyIcon name="Gpu" color="var(--icon-fill)" size={24} />
+              <Icon name="Gpu" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>GPU :</RowKey>

@@ -3,8 +3,8 @@
 import classNames from "classnames";
 import { useState } from "react";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
-import { MyIcon } from "../icon";
 import { CompactCardKey, CompactCardValue } from "./compact-card-layer.styled";
 
 interface CompactCardCollapseKeyValueProps {
@@ -34,7 +34,7 @@ export function CompactCardCollapseRow({
           active: isOpen,
         })}
       >
-        <MyIcon name="Dropdown" size={20} color="#404040" />
+        <Icon name="Dropdown" size={20} color="#404040" />
         <span className="sr-only">
           {isOpen ? "메시지 접기" : "메시지 펼치기"}
         </span>

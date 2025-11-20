@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { InfoModal } from "xiilab-ui";
+import { Icon, InfoModal } from "xiilab-ui";
 
 import { openCompressVolumeFileModalAtom } from "@/atoms/volume.atom";
-import { MyIcon } from "@/components/common/icon";
 import { VOLUME_EVENTS } from "@/constants/common/pubsub.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
 import { useSubscribe } from "@/hooks/common/use-pub-sub";
@@ -49,7 +48,7 @@ export function CompressVolumeFileModal() {
     <InfoModal
       modalWidth={370}
       type="primary"
-      icon={<MyIcon name="Compress" color="#fff" size={18} />}
+      icon={<Icon name="Compress" color="#fff" size={18} />}
       open={open}
       closable
       title="파일 압축"

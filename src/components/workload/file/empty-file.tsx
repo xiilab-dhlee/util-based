@@ -1,7 +1,6 @@
 "use client";
 import styled from "styled-components";
-
-import { MyIcon } from "@/components/common/icon";
+import { Icon } from "xiilab-ui";
 
 /**
  * EmptyFile 컴포넌트
@@ -16,7 +15,7 @@ export function EmptyFile() {
     <Container>
       {/* 폴더 아이콘을 표시하는 래퍼 */}
       <IconWrapper>
-        <MyIcon name="Folder" size={48} />
+        <Icon name="Folder" size={48} />
       </IconWrapper>
       {/* 빈 상태 메시지 텍스트 */}
       <EmptyText>선택된 폴더에 파일이 없습니다</EmptyText>

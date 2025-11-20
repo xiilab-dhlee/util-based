@@ -1,6 +1,6 @@
-import type { MySelectOption } from "@/components/common/select";
+import type { DropdownOption } from "xiilab-ui";
 
-export const CREDENTIAL_TYPE_OPTIONS: MySelectOption[] = [
+export const CREDENTIAL_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "GitHub",
     value: "GIT",

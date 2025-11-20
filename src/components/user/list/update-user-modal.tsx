@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Modal } from "xiilab-ui";
+import { Dropdown, Icon, Modal } from "xiilab-ui";
 
 import { openUpdateUserModalAtom } from "@/atoms/user.atom";
 import { ModalDetailCard } from "@/components/common/card/modal-detail-card";
 import { FormLabel } from "@/components/common/form/form-label";
-import { MyIcon } from "@/components/common/icon";
-import { MySelect } from "@/components/common/select";
 import { USER_EVENTS } from "@/constants/common/pubsub.constant";
 import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/constants/workspace/workspace-member.constant";
 import { useGlobalModal } from "@/hooks/common/use-global-modal";
@@ -28,7 +26,7 @@ export function UpdateUserModal() {
 
   const [user, setUser] = useState<UserListType | null>(null);
 
-  const role = useSelect("", WORKSPACE_MEMBER_ROLE_OPTIONS);
+  const roleSelect = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
 
   const handleSubmit = () => {
     const payload = createPayload();
@@ -42,20 +40,20 @@ export function UpdateUserModal() {
 
   const createPayload = (): UpdateWorkspaceMemberPayload | null => {
     return {
-      role: role.value,
+      role: roleSelect.value,
     };
   };
 
   useSubscribe<UserListType>(USER_EVENTS.sendUpdateUser, async (eventData) => {
     setUser(eventData);
-    role.setValue(eventData.role);
+    roleSelect.setValue(eventData.role);
     onOpen();
   });
 
   return (
     <Modal
       type="primary"
-      icon={<MyIcon name="Edit02" color="#fff" size={18} />}
+      icon={<Icon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
       closable
@@ -104,10 +102,10 @@ export function UpdateUserModal() {
         <form style={{ width: "100%" }}>
           <FormItem>
             <FormLabel>권한</FormLabel>
-            <MySelect
-              options={role.options}
-              setValue={role.setValue}
-              value={role.value}
+            <Dropdown
+              options={roleSelect.options}
+              onChange={roleSelect.onChange}
+              value={roleSelect.value}
               width="100%"
               placeholder="권한을 선택해 주세요."
             />

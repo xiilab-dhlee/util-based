@@ -1,8 +1,9 @@
 "use client";
 
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
+import { MigIcon } from "@/components/common/icon/mig-icon";
+import { MpsIcon } from "@/components/common/icon/mps-icon";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
-import { NODE_GUIDE_IMAGES, NODE_GUIDES } from "@/constants/node/node.constant";
 import { PageGuide } from "@/layouts/common/page-guide";
 import { PageHeader } from "@/layouts/common/page-header";
 import { PageImageGuide } from "@/layouts/common/page-image-guide";
@@ -11,7 +12,11 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import type { CoreBreadcrumbItem } from "@/types/common/core.model";
+import type {
+  CoreBreadcrumbItem,
+  CoreGuide,
+  CoreGuideImage,
+} from "@/types/common/core.model";
 import { UpdateMigModal } from "../mig/update-mig-modal";
 import { UpdateMpsModal } from "../mig/update-mps-modal";
 import { NodeListBody } from "./node-list-body";
@@ -21,6 +26,43 @@ import { NodeListFooter } from "./node-list-footer";
 const BREADCRUMB_ITEMS: CoreBreadcrumbItem[] = [
   ADMIN_ROOT_BREADCRUMB_ITEM,
   { title: "노드 관리" },
+];
+
+const GUIDE_IMAGES: CoreGuideImage[] = [
+  {
+    id: "1",
+    src: "/images/node-guide1.png",
+    alt: "노드 가이드 1",
+  },
+  {
+    id: "2",
+    src: "/images/node-guide2.png",
+    alt: "노드 가이드 2",
+  },
+  {
+    id: "3",
+    src: "/images/node-guide3.png",
+    alt: "노드 가이드 3",
+  },
+];
+
+const GUIDES: CoreGuide[] = [
+  {
+    icon: <MpsIcon />,
+    title: "MPS",
+    description: [
+      "GPU를 MPS 방식으로 분할 설정하여,동일 GPU 자원을",
+      "다수 작업에서 효율적으로 활용하도록 구성합니다.",
+    ],
+  },
+  {
+    icon: <MigIcon />,
+    title: "MIG",
+    description: [
+      "GPU를 MIG방식으로 분할 설정하여, 하나의 GPU 자원을",
+      "여러 작업에 효율적으로 분배하고 병렬 처리가능",
+    ],
+  },
 ];
 
 export function NodeListMain() {
@@ -48,14 +90,11 @@ export function NodeListMain() {
               "여부 등을 종합적으로 확인하고 개별 노드의",
               "Activity 상세 확인 가능",
             ]}
-            guides={NODE_GUIDES}
+            guides={GUIDES}
           />
 
           {/* 노드 가이드 이미지 카드 */}
-          <PageImageGuide
-            title="노드 관리 가이드"
-            guideImages={NODE_GUIDE_IMAGES}
-          />
+          <PageImageGuide title="노드 관리 가이드" guideImages={GUIDE_IMAGES} />
         </ListPageAside>
         {/* 노드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
