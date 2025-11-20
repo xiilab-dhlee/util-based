@@ -7,7 +7,7 @@ import { Button, Dropdown, Input } from "xiilab-ui";
 import {
   MONITORING_NOTIFICATION_OPERATOR_OPTIONS,
   MONITORING_NOTIFICATION_TYPE_OPTIONS,
-} from "@/domain/monitoring/constants/monitoring-notification.constant";
+} from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import type { MonitoringNotificationSettingType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { FormLabel } from "@/shared/components/form/form-label";

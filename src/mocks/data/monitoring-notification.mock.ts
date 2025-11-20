@@ -1,4 +1,4 @@
-import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring/constants/monitoring-notification.constant";
+import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import {
   monitoringNotificationDetailSchema,
   monitoringNotificationListSchema,
