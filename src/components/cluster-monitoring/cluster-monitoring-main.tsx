@@ -11,6 +11,7 @@ import { ClusterResourceQuotaCard } from "@/components/cluster-monitoring/cluste
 import { ViewYamlLogModal } from "@/components/cluster-monitoring/view-yaml-log-modal";
 import { MyBreadcrumb } from "@/components/common/breadcrumb";
 import { ADMIN_ROOT_BREADCRUMB_ITEM } from "@/constants/common/core.constant";
+import { MONITORING_MENU_ICON } from "@/constants/monitoring/monitoring.constant";
 import { PageHeader } from "@/layouts/common/page-header";
 import {
   ListPageAside,
@@ -30,7 +31,7 @@ export function ClusterMonitoringMain() {
     <>
       <PageHeader
         title="클러스터 모니터링"
-        icon="Monitoring01"
+        icon={MONITORING_MENU_ICON}
         description="Cluster Monitoring"
       >
         <MyBreadcrumb items={BREADCRUMB_ITEMS} />

@@ -16,23 +16,21 @@ export function MonitoringIntroCard() {
         </EngTitleWrapper>
         <TitleWrapper>
           <IconWrapper>
-            <AstragoIcon fill="var(--icon-fill)" width={28} height={28} />
+            <AstragoIcon fill="var(--icon-fill)" />
           </IconWrapper>
           <Title>모니터링</Title>
         </TitleWrapper>
-        <Description variant="body-1-2" color="#A9A9A9">
-          <span>
-            AstraGo는 모니터링을 통해 수 많은 정보들을 확인하고 관리할 수
-            있습니다.
-          </span>
-          <br />
-          <span>
-            장비 상태, 네트워크 트래픽, 사용자 활동 등 주요 지표를 실시간으로
-            확인할 수 있습니다.
-          </span>
-          <br />
-          <span>데이터 기반의 효율적인 운영과 빠른 대응이 가능해집니다.</span>
-        </Description>
+        <Typography.Text variant="body-1-2" color="#A9A9A9">
+          AstraGo는 모니터링을 통해 수 많은 정보들을 확인하고 관리할 수
+          있습니다.
+        </Typography.Text>
+        <Typography.Text variant="body-1-2" color="#A9A9A9">
+          장비 상태, 네트워크 트래픽, 사용자 활동 등 주요 지표를 실시간으로
+          확인할 수 있습니다.
+        </Typography.Text>
+        <Typography.Text variant="body-1-2" color="#A9A9A9">
+          데이터 기반의 효율적인 운영과 빠른 대응이 가능해집니다.
+        </Typography.Text>
       </Header>
       <Body>
         <UpdateDate>
@@ -103,10 +101,6 @@ const IconWrapper = styled.div`
   border-radius: 2px;
 
   --icon-fill: #fff;
-`;
-
-const Description = styled(Typography.Text)`
-  line-height: 18px;
 `;
 
 const Body = styled.div`

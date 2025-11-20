@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { AstraGoNav, type AstraGoNavMenu, Icon } from "xiilab-ui";
 
 import { WorkspaceSelect } from "@/components/common/select/workspace-select";
+import { MONITORING_MENU_ICON } from "@/constants/monitoring/monitoring.constant";
+import { NODE_MENU_ICON } from "@/constants/node/node.constant";
 import { useActiveMenu } from "@/hooks/common/use-active-menu";
 import { Profile } from "@/layouts/common/profile";
 import { isAdminMode } from "@/utils/common/router.util";
@@ -92,7 +94,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "monitoring-root",
         label: "모니터링",
-        icon: <Icon name="Monitoring01" />,
+        icon: <Icon name={MONITORING_MENU_ICON} />,
         children: [
           { key: "monitoring", label: "모니터링 메인" },
           { key: "system-monitoring", label: "시스템 모니터링" },
@@ -103,7 +105,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "node",
         label: "노드 관리",
-        icon: <Icon name="SingleNode" />,
+        icon: <Icon name={NODE_MENU_ICON} />,
       },
       // {
       //   key: "schedule",
@@ -142,7 +144,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
       {
         key: "report",
         label: "리포트",
-        icon: <Icon name="Image" />,
+        icon: <Icon name="Information" />,
       },
     ],
   },
