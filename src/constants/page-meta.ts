@@ -52,18 +52,32 @@ export const PAGE_META = {
   },
   "admin.node.detail": {
     title: "노드 정보",
-    href: ROUTES.ADMIN_NODE_DETAIL,
+    href: ({ name }: { name: string }) => ROUTES.ADMIN_NODE_DETAIL(name),
     parent: "admin.node",
   },
   "admin.node.log": {
     title: "노드 로그",
-    href: ROUTES.ADMIN_NODE_LOG,
+    href: ({ name }: { name: string }) => ROUTES.ADMIN_NODE_LOG(name),
     parent: "admin.node.detail",
   },
   "admin.node.redfish": {
     title: "Redfish",
-    href: ROUTES.ADMIN_NODE_REDFISH,
+    href: ({ name }: { name: string }) => ROUTES.ADMIN_NODE_REDFISH(name),
     parent: "admin.node.detail",
+  },
+
+  // ============================================
+  // Admin Routes - Security
+  // ============================================
+  "admin.registry-security": {
+    title: "레지스트리 보안",
+    iconName: "SecurityCheck",
+    href: ROUTES.ADMIN_REGISTRY_SECURITY,
+  },
+  "admin.file-security": {
+    title: "파일 시스템 보안",
+    iconName: "SecurityCheck",
+    href: ROUTES.ADMIN_FILE_SECURITY,
   },
 
   // ============================================
@@ -76,12 +90,12 @@ export const PAGE_META = {
   },
   "admin.workspace.detail": {
     title: "워크스페이스 상세",
-    href: ROUTES.ADMIN_WORKSPACE_DETAIL,
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_DETAIL(id),
     parent: "admin.workspace",
   },
   "admin.workspace.member": {
     title: "멤버 관리",
-    href: ROUTES.ADMIN_WORKSPACE_MEMBER,
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_MEMBER(id),
     parent: "admin.workspace.detail",
   },
   "admin.workspace.request-resource": {
@@ -92,32 +106,36 @@ export const PAGE_META = {
   },
   "admin.workspace.workload.detail": {
     title: "워크로드 상세",
-    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL,
+    href: ({ id }: { id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(id),
     parent: "admin.workspace",
   },
   "admin.workspace.workload.log": {
     title: "로그",
-    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_LOG,
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_WORKLOAD_LOG(id),
     parent: "admin.workspace.workload.detail",
   },
   "admin.workspace.workload.file": {
     title: "파일",
-    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_FILE,
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_WORKLOAD_FILE(id),
     parent: "admin.workspace.workload.detail",
   },
   "admin.workspace.workload.monitoring": {
     title: "모니터링",
-    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING,
+    href: ({ id }: { id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING(id),
     parent: "admin.workspace.workload.detail",
   },
   "admin.workspace.workload.security": {
     title: "보안",
-    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_SECURITY,
+    href: ({ id }: { id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_SECURITY(id),
     parent: "admin.workspace.workload.detail",
   },
   "admin.workspace.workload.terminal": {
     title: "터미널",
-    href: ROUTES.ADMIN_WORKSPACE_WORKLOAD_TERMINAL,
+    href: ({ id }: { id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_TERMINAL(id),
     parent: "admin.workspace.workload.detail",
   },
 
@@ -136,7 +154,8 @@ export const PAGE_META = {
   },
   "admin.private-registry.image": {
     title: "이미지 상세",
-    href: ROUTES.ADMIN_PRIVATE_REGISTRY_IMAGE,
+    href: ({ name, id }: { name: string; id: string }) =>
+      ROUTES.ADMIN_PRIVATE_REGISTRY_IMAGE(name, id),
     parent: "admin.private-registry",
   },
   "admin.request-image": {
@@ -207,32 +226,32 @@ export const PAGE_META = {
   },
   "standard.workload.detail": {
     title: "워크로드 상세",
-    href: ROUTES.STANDARD_WORKLOAD_DETAIL,
+    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_DETAIL(id),
     parent: "standard.workload",
   },
   "standard.workload.log": {
     title: "로그",
-    href: ROUTES.STANDARD_WORKLOAD_LOG,
+    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_LOG(id),
     parent: "standard.workload.detail",
   },
   "standard.workload.file": {
     title: "파일",
-    href: ROUTES.STANDARD_WORKLOAD_FILE,
+    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_FILE(id),
     parent: "standard.workload.detail",
   },
   "standard.workload.monitoring": {
     title: "모니터링",
-    href: ROUTES.STANDARD_WORKLOAD_MONITORING,
+    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_MONITORING(id),
     parent: "standard.workload.detail",
   },
   "standard.workload.security": {
     title: "보안",
-    href: ROUTES.STANDARD_WORKLOAD_SECURITY,
+    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_SECURITY(id),
     parent: "standard.workload.detail",
   },
   "standard.workload.terminal": {
     title: "터미널",
-    href: ROUTES.STANDARD_WORKLOAD_TERMINAL,
+    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_TERMINAL(id),
     parent: "standard.workload.detail",
   },
 
@@ -246,12 +265,14 @@ export const PAGE_META = {
   },
   "standard.private-registry-image.detail": {
     title: "컨테이너 이미지 상세정보",
-    href: ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_DETAIL,
+    href: ({ id }: { id: string }) =>
+      ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_DETAIL(id),
     parent: "standard.private-registry-image",
   },
   "standard.private-registry-image.tag": {
     title: "태그 상세정보",
-    href: ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_TAG,
+    href: ({ id, tagId }: { id: string; tagId: string }) =>
+      ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_TAG(id, tagId),
     parent: "standard.private-registry-image.detail",
   },
 
@@ -265,7 +286,7 @@ export const PAGE_META = {
   },
   "standard.sourcecode.detail": {
     title: "소스코드 상세",
-    href: ROUTES.STANDARD_SOURCECODE_DETAIL,
+    href: ({ id }: { id: string }) => ROUTES.STANDARD_SOURCECODE_DETAIL(id),
     parent: "standard.sourcecode",
   },
 
