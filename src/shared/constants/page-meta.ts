@@ -122,13 +122,11 @@ export const PAGE_META = {
     title: "리소스 신청 관리",
     iconName: "Resource",
     href: ROUTES.ADMIN_REQUEST_RESOURCE,
-    parent: "admin.workspace",
   },
   "admin.workspace.request-history": {
     title: "리소스 신청 이력",
     iconName: "Resource",
     href: ROUTES.ADMIN_REQUEST_RESOURCE_HISTORY,
-    parent: "admin.workspace",
   },
   "admin.workspace.workload.detail": {
     title: "워크로드 상세",
