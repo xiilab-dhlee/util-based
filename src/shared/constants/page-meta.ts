@@ -67,6 +67,26 @@ export const PAGE_META = {
   },
 
   // ============================================
+  // Admin Routes - Account Management
+  // ============================================
+  "admin.account-management": {
+    title: "계정 관리",
+    iconName: "Person",
+    href: ROUTES.ADMIN_ACCOUNT_MANAGEMENT,
+  },
+
+  "admin.account-management.pending": {
+    title: "승인 대기",
+    href: ROUTES.ADMIN_ACCOUNT_MANAGEMENT_PENDING,
+    parent: "admin.account-management",
+  },
+  "admin.account-management.group": {
+    title: "그룹 관리",
+    href: ROUTES.ADMIN_ACCOUNT_MANAGEMENT_GROUP,
+    parent: "admin.account-management",
+  },
+
+  // ============================================
   // Admin Routes - Security
   // ============================================
   "admin.registry-security": {
@@ -84,7 +104,7 @@ export const PAGE_META = {
   // Admin Routes - Workspace
   // ============================================
   "admin.workspace": {
-    title: "워크스페이스",
+    title: "워크스페이스 관리",
     iconName: "Workspace01",
     href: ROUTES.ADMIN_WORKSPACE,
   },
@@ -99,9 +119,15 @@ export const PAGE_META = {
     parent: "admin.workspace.detail",
   },
   "admin.workspace.request-resource": {
-    title: "리소스 요청",
+    title: "리소스 신청 관리",
     iconName: "Resource",
-    href: ROUTES.ADMIN_WORKSPACE_REQUEST_RESOURCE,
+    href: ROUTES.ADMIN_REQUEST_RESOURCE,
+    parent: "admin.workspace",
+  },
+  "admin.workspace.request-history": {
+    title: "리소스 신청 이력",
+    iconName: "Resource",
+    href: ROUTES.ADMIN_REQUEST_RESOURCE_HISTORY,
     parent: "admin.workspace",
   },
   "admin.workspace.workload.detail": {
@@ -143,44 +169,63 @@ export const PAGE_META = {
   // Admin Routes - Registry
   // ============================================
   "admin.registry": {
-    title: "레지스트리",
+    title: "레지스트리 관리",
     iconName: "Image",
     href: ROUTES.ADMIN_REGISTRY,
   },
   "admin.private-registry": {
-    title: "Private 레지스트리",
+    title: "내부 레지스트리",
     iconName: "PrivateRegistry",
     href: ROUTES.ADMIN_PRIVATE_REGISTRY,
   },
   "admin.private-registry.image": {
-    title: "이미지 상세",
+    title: "컨테이너 이미지 상세정보",
     href: ({ name, id }: { name: string; id: string }) =>
       ROUTES.ADMIN_PRIVATE_REGISTRY_IMAGE(name, id),
     parent: "admin.private-registry",
   },
   "admin.request-image": {
-    title: "이미지 요청",
+    title: "이미지 사용 요청 관리",
     iconName: "ImageRequest",
     href: ROUTES.ADMIN_REQUEST_IMAGE,
   },
+  "admin.external-registry": {
+    title: "외부 레지스트리",
+    iconName: "PublicRegistry",
+    href: ROUTES.ADMIN_EXTERNAL_REGISTRY,
+  },
 
   // ============================================
-  // Admin Routes - Others
+  // Admin Routes - Sourcecode Management
+  // ============================================
+  "admin.sourcecode-management": {
+    title: "소스코드 관리",
+    iconName: "SourceCode",
+    href: ROUTES.ADMIN_SOURCECODE_MANAGEMENT,
+  },
+
+  // ============================================
+  // Admin Routes - Volume Management
+  // ============================================
+  "admin.volume-management": {
+    title: "볼륨 관리",
+    iconName: "Volume",
+    href: ROUTES.ADMIN_VOLUME_MANAGEMENT,
+  },
+
+  // ============================================
+  // Admin Routes - Report
   // ============================================
   "admin.report": {
     title: "리포트",
     iconName: "Image",
     href: ROUTES.ADMIN_REPORT,
   },
-  "admin.request-resource": {
-    title: "리소스 요청",
-    iconName: "ResourceRequest",
-    href: ROUTES.ADMIN_REQUEST_RESOURCE,
-  },
-  "admin.notification": {
-    title: "알림",
-    iconName: "Notification",
-    href: ROUTES.ADMIN_NOTIFICATION,
+
+  "admin.report-reservation": {
+    title: "리포트 예약",
+    iconName: "Image",
+    href: ROUTES.ADMIN_REPORT_RESERVATION,
   },
 
   // ============================================
@@ -191,20 +236,10 @@ export const PAGE_META = {
     iconName: "Setting01",
     href: ROUTES.ADMIN_SETTING,
   },
-  "admin.user": {
-    title: "사용자 관리",
-    iconName: "User",
-    href: ROUTES.ADMIN_USER,
-  },
-  "admin.user.pending": {
-    title: "승인 대기",
-    href: ROUTES.ADMIN_USER_PENDING,
-    parent: "admin.user",
-  },
-  "admin.user.group": {
-    title: "그룹 관리",
-    href: ROUTES.ADMIN_USER_GROUP,
-    parent: "admin.user",
+  "admin.notification": {
+    title: "알림 설정",
+    iconName: "Notification",
+    href: ROUTES.ADMIN_NOTIFICATION,
   },
 
   // ============================================

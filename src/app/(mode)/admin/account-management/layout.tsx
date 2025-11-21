@@ -86,7 +86,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
-        pageKey="admin.user"
+        pageKey="admin.account-management"
         description="Manage Account"
       />
 

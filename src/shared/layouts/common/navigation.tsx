@@ -113,6 +113,11 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         ],
       },
       {
+        key: "admin.account-management",
+        label: PAGE_META["admin.account-management"]?.title,
+        icon: <Icon name={PAGE_META["admin.account-management"]?.iconName} />,
+      },
+      {
         key: "admin.node",
         label: PAGE_META["admin.node"]?.title,
         icon: <Icon name={PAGE_META["admin.node"]?.iconName} />,
@@ -138,29 +143,27 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         ],
       },
       {
-        key: "workspace-root",
+        key: "admin.workspace",
         label: PAGE_META["admin.workspace"]?.title,
         icon: <Icon name={PAGE_META["admin.workspace"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
           {
-            key: "admin.workspace",
-            label: PAGE_META["admin.workspace"]?.title,
+            key: "admin.workspace.request-resource",
+            label: PAGE_META["admin.workspace.request-resource"]?.title,
           },
           {
-            key: "admin.request-resource",
-            label: PAGE_META["admin.request-resource"]?.title,
+            key: "admin.workspace.request-history",
+            label: PAGE_META["admin.workspace.request-history"]?.title,
           },
         ],
       },
       {
-        key: "registry-root",
+        key: "admin.registry",
         label: PAGE_META["admin.registry"]?.title,
         icon: <Icon name={PAGE_META["admin.registry"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
-          {
-            key: "admin.registry",
-            label: PAGE_META["admin.registry"]?.title,
-          },
           {
             key: "admin.request-image",
             label: PAGE_META["admin.request-image"]?.title,
@@ -169,25 +172,42 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
             key: "admin.private-registry",
             label: PAGE_META["admin.private-registry"]?.title,
           },
-          // { key: "registry-public", label: "외부 레지스트리" },
+          {
+            key: "admin.external-registry",
+            label: PAGE_META["admin.external-registry"]?.title,
+          },
         ],
+      },
+      {
+        key: "admin.sourcecode-management",
+        label: PAGE_META["admin.sourcecode-management"]?.title,
+        icon: (
+          <Icon name={PAGE_META["admin.sourcecode-management"]?.iconName} />
+        ),
+      },
+      {
+        key: "admin.volume-management",
+        label: PAGE_META["admin.volume-management"]?.title,
+        icon: <Icon name={PAGE_META["admin.volume-management"]?.iconName} />,
       },
       {
         key: "admin.report",
         label: PAGE_META["admin.report"]?.title,
         icon: <Icon name={PAGE_META["admin.report"]?.iconName} />,
+        navigateToSelfOnOpen: true,
+        children: [
+          {
+            key: "admin.report-reservation",
+            label: PAGE_META["admin.report-reservation"]?.title,
+          },
+        ],
       },
-    ],
-  },
-  {
-    title: "Setting",
-    items: [
       {
-        key: "setting-root",
+        key: "admin.setting",
         label: PAGE_META["admin.setting"]?.title,
         icon: <Icon name={PAGE_META["admin.setting"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
-          { key: "admin.user", label: PAGE_META["admin.user"]?.title },
           {
             key: "admin.notification",
             label: PAGE_META["admin.notification"]?.title,

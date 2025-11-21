@@ -32,8 +32,8 @@ export function PageHeader({
 
   // 1) 메타 정보 (title, iconName)를 PAGE_META에서 읽기
   const pageMeta = PAGE_META[pageKey] as PageItemMeta;
-  const title = pageMeta.title;
-  const iconName = pageMeta.iconName;
+  const title = pageMeta?.title;
+  const iconName = pageMeta?.iconName;
 
   // 2) breadcrumb 생성
   const breadcrumbItems = BreadcrumbItems(pageKey, pageParams);
