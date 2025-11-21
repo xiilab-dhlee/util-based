@@ -60,7 +60,7 @@
     "split.js": "^1.6.5",
     "styled-components": "^6.1.19",
     "uuid": "^11.1.0",
-    "xiilab-ui": "github:xiilab/xiilab-ui",
+    "xiilab-ui": "git+https://github.com/xiilab/xiilab-ui.git",
     "xterm-theme": "^1.1.0",
     "zod": "^3.25.76"
   },

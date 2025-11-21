@@ -96,6 +96,7 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         key: "admin.monitoring",
         label: PAGE_META["admin.monitoring"]?.title,
         icon: <Icon name={PAGE_META["admin.monitoring"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
           {
             key: "admin.system-monitoring",
