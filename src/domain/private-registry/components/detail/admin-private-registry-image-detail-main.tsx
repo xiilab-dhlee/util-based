@@ -1,9 +1,9 @@
 "use client";
 
 import { ViewPrivateRegistryImageTagLogModal } from "@/domain/private-registry-image/components/view-private-registry-image-tag-log-modal";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
-import { PageHeader } from "@/shared/layouts/common/page-header";
 import { ListPageMain } from "@/styles/layers/list-page-layers.styled";
 import { DeleteAdminPrivateRegistryImageModal } from "../delete-admin-private-registry-image-modal";
 import { AdminPrivateRegistryImageDetailAside } from "./admin-private-registry-image-detail-aside";

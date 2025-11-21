@@ -2,11 +2,11 @@
 
 import { Icon } from "xiilab-ui";
 
+import { PageGuide } from "@/shared/components/layouts/page-guide";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
-import { PageGuide } from "@/shared/layouts/common/page-guide";
-import { PageHeader } from "@/shared/layouts/common/page-header";
-import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

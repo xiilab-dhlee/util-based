@@ -6,7 +6,7 @@ import { Dropdown, Icon, Modal } from "xiilab-ui";
 
 import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/domain/workspace/constants/workspace-member.constant";
 import { useUpdateWorkspaceMember } from "@/domain/workspace/hooks/use-update-workspace-member";
-import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/workspace.interface";
+import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/workspace.type";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
 import { openUpdateWorkspaceMemberModalAtom } from "@/domain/workspace-member/state/workspace-member.atom";
 import { ModalDetailCard } from "@/shared/components/card/modal-detail-card";

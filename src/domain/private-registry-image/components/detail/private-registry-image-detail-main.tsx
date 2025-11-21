@@ -1,7 +1,7 @@
 "use client";
 
 import { PrivateRegistryImageDetailAside } from "@/domain/private-registry-image/components/detail/private-registry-image-detail-aside";
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,
   DetailPageBody,

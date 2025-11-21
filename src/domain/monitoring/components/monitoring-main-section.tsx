@@ -40,12 +40,12 @@ export function MonitoringMainSection() {
               resourceType="GPU"
             />
             <MonitoringClusterResource
-              series={70}
+              series={0}
               gradientToColors={["#CCB7FF", "#8B59FF"]}
               resourceType="MIG"
             />
             <MonitoringClusterResource
-              series={70}
+              series={0}
               gradientToColors={["#CCB7FF", "#8B59FF"]}
               resourceType="MPS"
             />

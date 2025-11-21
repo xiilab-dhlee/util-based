@@ -2,7 +2,7 @@ import type {
   GetWorkspaceMembersPayload,
   GetWorkspaceRequestResourcesPayload,
   GetWorkspacesPayload,
-} from "@/domain/workspace/types/workspace.interface";
+} from "@/domain/workspace/types/workspace.type";
 
 export const workspaceKeys = {
   default: ["workspace"],

@@ -8,9 +8,9 @@ import {
   userSearchTextAtom,
 } from "@/domain/user/state/user.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useSearch } from "@/shared/hooks/use-search";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 /**
  * 사용자 목록 페이지 상단 필터 컴포넌트

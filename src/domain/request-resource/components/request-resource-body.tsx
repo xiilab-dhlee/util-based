@@ -2,9 +2,9 @@
 
 import { useAtomValue } from "jotai";
 
+import { useGetWorkspaceRequestResources } from "@/domain/request-resource/hooks/use-get-request-resources";
 import { requestResourcePageAtom } from "@/domain/request-resource/state/request-resource.atom";
-import { useGetWorkspaceRequestResources } from "@/domain/workspace/hooks/use-get-workspace-request-resources";
-import { requestResourceColumn } from "@/shared/components/column/workspace-request-resource-column";
+import { createRequestResourceColumn } from "@/shared/components/column/create-request-resource-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
@@ -21,7 +21,7 @@ export function RequestResourceBody() {
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={requestResourceColumn}
+        columns={createRequestResourceColumn()}
         data={data?.content || []}
         activePadding
       />

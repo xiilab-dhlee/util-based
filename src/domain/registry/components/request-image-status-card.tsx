@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.interface";
+import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
 import { getRequestResourceStatusInfo } from "@/domain/workspace/utils/workspace.util";
 
 interface RequestImageStatusCardProps {

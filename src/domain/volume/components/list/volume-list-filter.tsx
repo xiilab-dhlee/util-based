@@ -12,10 +12,10 @@ import {
   volumeSelectedAtom,
 } from "@/domain/volume/state/volume.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSearch } from "@/shared/hooks/use-search";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 /**
  * 볼륨 목록 페이지 상단 필터 컴포넌트

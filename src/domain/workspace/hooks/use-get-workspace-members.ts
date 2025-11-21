@@ -2,7 +2,7 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
 import { workspaceKeys } from "@/domain/workspace/constants/workspace.key";
-import type { GetWorkspaceMembersPayload } from "@/domain/workspace/types/workspace.interface";
+import type { GetWorkspaceMembersPayload } from "@/domain/workspace/types/workspace.type";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";

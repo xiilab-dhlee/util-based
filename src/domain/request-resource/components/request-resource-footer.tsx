@@ -2,10 +2,10 @@
 
 import { useAtom } from "jotai";
 
+import { useGetWorkspaceRequestResources } from "@/domain/request-resource/hooks/use-get-request-resources";
 import { requestResourcePageAtom } from "@/domain/request-resource/state/request-resource.atom";
-import { useGetWorkspaceRequestResources } from "@/domain/workspace/hooks/use-get-workspace-request-resources";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 
 export function RequestResourceFooter() {
   // 페이지 번호

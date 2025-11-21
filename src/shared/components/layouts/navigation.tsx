@@ -8,8 +8,8 @@ import { MONITORING_MENU_ICON } from "@/domain/monitoring/constants/monitoring.c
 import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
 import { WorkspaceSelect } from "@/shared/components/select/workspace-select";
 import { useActiveMenu } from "@/shared/hooks/use-active-menu";
-import { Profile } from "@/shared/layouts/common/profile";
 import { isAdminMode } from "@/shared/utils/router.util";
+import { Profile } from "./profile";
 
 const STANDARD_NAV_MENU: AstraGoNavMenu[] = [
   {
@@ -163,8 +163,12 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
     ],
   },
 ];
-
-export function MyNavigation() {
+/**
+ * Navigation 컴포넌트
+ *
+ * @returns Navigation 컴포넌트
+ */
+export function Navigation() {
   const pathname = usePathname();
 
   const { activeMenuKey, onMenuClick } = useActiveMenu();

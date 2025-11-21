@@ -5,8 +5,8 @@ import { Typography } from "xiilab-ui";
 
 import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
 import { createSecurityColumn } from "@/shared/components/column/create-security-column";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 import type { CoreSecurityLevel } from "@/shared/types/core.interface";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";

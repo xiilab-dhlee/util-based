@@ -4,16 +4,16 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import { GlobalLoadingSpinner } from "@/shared/components/global-loading-spinner";
+import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
 import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
-import { MyNavigation } from "@/shared/layouts/common/navigation";
 
 export default function ModeLayout({ children }: PropsWithChildren) {
   return (
     <>
       <Container>
-        <MyNavigation />
+        <Navigation />
         <Page>
           <Main>{children}</Main>
         </Page>

@@ -8,7 +8,7 @@ import { useUpdateUser } from "@/domain/user/hooks/use-update-user";
 import type { UserListType } from "@/domain/user/schemas/user.schema";
 import { openUpdateUserModalAtom } from "@/domain/user/state/user.atom";
 import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/domain/workspace/constants/workspace-member.constant";
-import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/workspace.interface";
+import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/workspace.type";
 import { ModalDetailCard } from "@/shared/components/card/modal-detail-card";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { USER_EVENTS } from "@/shared/constants/pubsub.constant";

@@ -9,8 +9,8 @@ import {
   notificationStartDateAtom,
 } from "@/domain/notification/state/notification.atom";
 import { ListRangePicker } from "@/shared/components/datepicker/list-range-picker";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 /**
  * 알림 목록 페이지 상단 필터 컴포넌트

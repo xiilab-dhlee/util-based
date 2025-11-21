@@ -4,8 +4,8 @@ import { useAtom, useAtomValue } from "jotai";
 
 import { useGetHubs } from "@/domain/hub/hooks/use-get-hubs";
 import { hubPageAtom, hubSearchTextAtom } from "@/domain/hub/state/hub.atom";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 
 /**
  * 허브 목록 페이지 하단 푸터 컴포넌트

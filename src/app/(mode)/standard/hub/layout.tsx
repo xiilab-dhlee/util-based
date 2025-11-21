@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 import { HubListBody } from "@/domain/hub/components/list/hub-list-body";
 import { HubListFilter } from "@/domain/hub/components/list/hub-list-filter";
 import { HubListFooter } from "@/domain/hub/components/list/hub-list-footer";
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   ListPageBody,
   ListPageMain,

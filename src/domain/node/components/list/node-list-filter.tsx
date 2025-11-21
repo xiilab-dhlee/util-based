@@ -4,8 +4,8 @@ import { useAtomValue } from "jotai";
 
 import { useGetNodes } from "@/domain/node/hooks/use-get-nodes";
 import { nodePageAtom } from "@/domain/node/state/node.atom";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 /**
  * 노드 목록 페이지 상단 필터 컴포넌트

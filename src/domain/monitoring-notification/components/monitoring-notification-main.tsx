@@ -3,11 +3,11 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { PageGuide } from "@/shared/components/layouts/page-guide";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { PageGuide } from "@/shared/layouts/common/page-guide";
-import { PageHeader } from "@/shared/layouts/common/page-header";
-import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

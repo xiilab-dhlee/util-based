@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import { PrivateRegistryImageDetailIntroCard } from "@/domain/private-registry-image/components/detail/private-registry-image-detail-intro-card";
 import { useGetPrivateRegistryImageTags } from "@/domain/private-registry-image/hooks/use-get-private-registry-image-tags";
-import { AsideFillCard } from "@/shared/layouts/aside/aside-fill-card";
+import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { PrivateRegistryImageTagCard } from "./private-registry-image-tag-card";
 

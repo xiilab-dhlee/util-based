@@ -1,6 +1,6 @@
 "use client";
 
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 
 export function ClusterResourceListFooter() {
   return (

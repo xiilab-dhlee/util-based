@@ -10,10 +10,10 @@ import {
   workspaceMemberSearchTextAtom,
 } from "@/domain/workspace-member/state/workspace-member.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 // import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSearch } from "@/shared/hooks/use-search";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 export function WorkspaceMemberFilter() {
   const { onSubmit } = useSearch(workspaceMemberSearchTextAtom);

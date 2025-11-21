@@ -8,9 +8,9 @@ import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-
 import { WorkloadListBody } from "@/domain/workload/components/list/workload-list-body";
 import { WorkloadListFilter } from "@/domain/workload/components/list/workload-list-filter";
 import { WorkloadListFooter } from "@/domain/workload/components/list/workload-list-footer";
-import { PageGuide } from "@/shared/layouts/common/page-guide";
-import { PageHeader } from "@/shared/layouts/common/page-header";
-import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
+import { PageGuide } from "@/shared/components/layouts/page-guide";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

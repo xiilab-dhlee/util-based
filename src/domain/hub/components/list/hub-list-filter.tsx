@@ -12,9 +12,9 @@ import {
 } from "@/domain/hub/state/hub.atom";
 // 향후 검색 기능 구현 시 사용될 컴포넌트
 import { SearchInput } from "@/shared/components/input/search-input";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useSearch } from "@/shared/hooks/use-search";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 /**
  * HubListFilter 컴포넌트

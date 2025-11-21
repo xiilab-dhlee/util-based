@@ -10,8 +10,8 @@ import {
   adminPrivateRegistryImageTagSearchTextAtom,
 } from "@/domain/private-registry-image/state/private-registry-image.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { useSearch } from "@/shared/hooks/use-search";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 export function AdminPrivateRegistryImageTagListFilter() {
   const { id, name } = useParams();

@@ -10,10 +10,10 @@ import {
   workspaceSearchTextAtom,
 } from "@/domain/workspace/state/workspace.atom";
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 
 /**
  * 워크스페이스 목록 페이지 하단 푸터 컴포넌트

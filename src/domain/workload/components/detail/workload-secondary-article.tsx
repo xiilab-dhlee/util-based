@@ -54,9 +54,9 @@ export function WorkloadSecondaryArticle() {
           <LeftKey>이미지</LeftKey>
           <Value>
             <ImageName>
-              <IconWraper>
+              <IconWrapper>
                 <BuiltinIcon />
-              </IconWraper>
+              </IconWrapper>
               {label} Image
             </ImageName>
             <div>
@@ -221,7 +221,7 @@ const Pane = styled.div`
   overflow-x: hidden;
 `;
 
-const IconWraper = styled.div`
+const IconWrapper = styled.div`
   width: 13px;
   height: 18px;
   display: flex;

@@ -8,8 +8,8 @@ import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring/constants
 import { useGetMonitoringNotifications } from "@/domain/monitoring/hooks/use-get-monitoring-notifications";
 import { createMonitoringNotificationColumn } from "@/shared/components/column/create-monitoring-notification-column";
 import { SearchInput } from "@/shared/components/input/search-input";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 

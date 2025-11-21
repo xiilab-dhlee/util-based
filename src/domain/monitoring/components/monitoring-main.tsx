@@ -3,7 +3,7 @@
 import { MonitoringMainSection } from "@/domain/monitoring/components/monitoring-main-section";
 import { MonitoringSubSection } from "@/domain/monitoring/components/monitoring-sub-section";
 import { MONITORING_MENU_ICON } from "@/domain/monitoring/constants/monitoring.constant";
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 
 export function MonitoringMain() {
   return (

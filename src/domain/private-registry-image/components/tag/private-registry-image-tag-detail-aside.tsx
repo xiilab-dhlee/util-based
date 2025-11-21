@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import styled from "styled-components";
 
 import { useGetPrivateRegistryImageTags } from "@/domain/private-registry-image/hooks/use-get-private-registry-image-tags";
-import { AsideFillCard } from "@/shared/layouts/aside/aside-fill-card";
+import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { PrivateRegistryImageTagDetailIntroCard } from "./private-registry-image-tag-detail-intro-card";
 

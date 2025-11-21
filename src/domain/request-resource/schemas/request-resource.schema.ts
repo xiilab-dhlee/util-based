@@ -20,7 +20,7 @@ const baseRequestResourceSchema = z.object({
   /** 수정일 */
   modDate: z.string().datetime(),
   /** 생성일 */
-  regDate: z.string().datetime(),
+  creatorDateTime: z.string().datetime(),
   /** CPU 요청량 */
   cpuReq: z.number().int().min(1).max(100),
   /** GPU 요청량 */
@@ -44,7 +44,7 @@ export const requestResourceListSchema = baseRequestResourceSchema.pick({
   rejectReason: true,
   status: true,
   modDate: true,
-  regDate: true,
+  creatorDateTime: true,
   cpuReq: true,
   gpuReq: true,
   memReq: true,

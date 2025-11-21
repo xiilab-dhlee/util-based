@@ -32,11 +32,7 @@ export const commonColumns: ResponsiveColumnType[] = [
     align: "center",
     width: 140,
     render: (creatorDate: string) => {
-      return (
-        <ColumnAlignCenterWrap>
-          {format(creatorDate, "yyyy.MM.dd")}
-        </ColumnAlignCenterWrap>
-      );
+      return <span>{format(creatorDate, "yyyy.MM.dd")}</span>;
     },
   },
   {

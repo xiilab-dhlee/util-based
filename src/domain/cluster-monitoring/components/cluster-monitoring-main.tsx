@@ -10,7 +10,7 @@ import { ClusterMonitoringAside } from "@/domain/cluster-monitoring/components/c
 import { ClusterResourceQuotaCard } from "@/domain/cluster-monitoring/components/cluster-resource-quota-card";
 import { ViewYamlLogModal } from "@/domain/cluster-monitoring/components/view-yaml-log-modal";
 import { MONITORING_MENU_ICON } from "@/domain/monitoring/constants/monitoring.constant";
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   ListPageAside,
   ListPageBody,

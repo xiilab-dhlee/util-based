@@ -7,8 +7,8 @@ import {
   userPendingPageAtom,
   userPendingSearchTextAtom,
 } from "@/domain/user/state/user.atom";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 
 /**
  * 가입 승인 목록 페이지 하단 푸터 컴포넌트

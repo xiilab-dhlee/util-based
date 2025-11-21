@@ -4,8 +4,8 @@ import type { TabsSeparatedItem } from "xiilab-ui";
 
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
 import { WorkspaceDetailPageAside } from "@/domain/workspace/components/detail/workspace-detail-page-aside";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import { RouteTab } from "@/shared/components/tab";
-import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   DetailContentSection,
   DetailPageBody,

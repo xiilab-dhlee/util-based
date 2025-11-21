@@ -91,14 +91,4 @@ button {
   margin: -1px;
   overflow: hidden;
 }
-
-// xiilab-ui 버그 임시 조치
-// 1. 모달 내 팝업이 있는 경우 모달 영역을 벗어날 때 가려지는 현상
-.ant-modal-content {
-  overflow: visible !important;
-}
-// 2. 네비게이션 margin값 제거
-.ant-menu-title-content {
-  margin-inline-start: 0 !important;
-}
 `;

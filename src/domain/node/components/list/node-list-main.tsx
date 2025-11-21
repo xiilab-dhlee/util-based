@@ -3,9 +3,9 @@
 import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
 import { MigIcon } from "@/shared/components/icon/mig-icon";
 import { MpsIcon } from "@/shared/components/icon/mps-icon";
-import { PageGuide } from "@/shared/layouts/common/page-guide";
-import { PageHeader } from "@/shared/layouts/common/page-header";
-import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
+import { PageGuide } from "@/shared/components/layouts/page-guide";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

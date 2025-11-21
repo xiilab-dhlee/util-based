@@ -6,6 +6,8 @@ export const openViewVulnerabilityModalAtom = atom<boolean>(false);
 export const openCreateCredentialModalAtom = atom<boolean>(false);
 /** 워크스페이스 추가 모달 표시 여부 */
 export const openCreateWorkspaceModalAtom = atom<boolean>(false);
+/** 워크스페이스 수정 모달 표시 여부 */
+export const openUpdateWorkspaceModalAtom = atom<boolean>(false);
 /** 요청 사유 조회 모달 표시 여부 */
 export const openViewRequestReasonModalAtom = atom<boolean>(false);
 /** 반려 사유 조회 모달 표시 여부 */

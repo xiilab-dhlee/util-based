@@ -6,10 +6,10 @@ import { PrivateRegistryImageListBody } from "@/domain/private-registry-image/co
 import { PrivateRegistryImageListFilter } from "@/domain/private-registry-image/components/list/private-registry-image-list-filter";
 import { PrivateRegistryImageListFooter } from "@/domain/private-registry-image/components/list/private-registry-image-list-footer";
 import { openCreatePrivateRegistryImageModalAtom } from "@/domain/private-registry-image/state/private-registry-image.atom";
+import { PageGuide } from "@/shared/components/layouts/page-guide";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { PageGuide } from "@/shared/layouts/common/page-guide";
-import { PageHeader } from "@/shared/layouts/common/page-header";
-import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

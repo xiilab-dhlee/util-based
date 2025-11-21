@@ -5,7 +5,7 @@ import { DeleteSourcecodeModal } from "@/domain/sourcecode/components/delete-sou
 import { SourcecodeListBody } from "@/domain/sourcecode/components/list/sourcecode-list-body";
 import { SourcecodeListFilter } from "@/domain/sourcecode/components/list/sourcecode-list-filter";
 import { SourcecodeListFooter } from "@/domain/sourcecode/components/list/sourcecode-list-footer";
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   ListPageAside,
   ListPageBody,

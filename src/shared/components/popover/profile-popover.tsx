@@ -13,8 +13,8 @@ import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
 import { openProfilePopoverAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { UserNotification } from "@/shared/layouts/common/user-notification";
 import { isAdminMode } from "@/shared/utils/router.util";
+import { ProfileNotification } from "../layouts/profile-notification";
 
 interface ProfilePopoverProps {
   userName: string;
@@ -122,7 +122,7 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
           </Button>
         </User>
         {/* 알림 */}
-        <UserNotification />
+        <ProfileNotification />
       </Body>
     </Container>
   );
@@ -204,7 +204,7 @@ const User = styled.div`
 const Profile = styled.div`
   display: flex;
   justify-content: flex-start;
-  algin-items: center;
+  align-items: center;
   gap: 10px;
 `;
 

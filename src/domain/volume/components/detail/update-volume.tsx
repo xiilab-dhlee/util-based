@@ -11,10 +11,10 @@ import { useUpdateVolume } from "@/domain/volume/hooks/use-update-volume";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
 import type { UpdateVolumePayload } from "@/domain/volume/types/volume.type";
 import { workloadListMock } from "@/mocks/data/workload.mock";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,

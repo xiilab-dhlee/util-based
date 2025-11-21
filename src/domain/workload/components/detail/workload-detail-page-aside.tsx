@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
-import { AsideFillCard } from "@/shared/layouts/aside/aside-fill-card";
+import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { WorkloadEventCard } from "./workload-event-card";
 import { WorkloadIntroCard } from "./workload-intro-card";

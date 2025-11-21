@@ -5,7 +5,7 @@ import type { PropsWithChildren } from "react";
 import { NotificationListBody } from "@/domain/notification/components/list/notification-list-body";
 import { NotificationListFilter } from "@/domain/notification/components/list/notification-list-filter";
 import { NotificationListFooter } from "@/domain/notification/components/list/notification-list-footer";
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   ListPageBody,
   ListPageMain,

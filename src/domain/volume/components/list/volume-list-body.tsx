@@ -11,8 +11,8 @@ import {
   volumeSearchTextAtom,
   volumeSelectedAtom,
 } from "@/domain/volume/state/volume.atom";
+import { ListEmpty } from "@/shared/components/layouts/list-empty";
 import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListEmpty } from "@/shared/layouts/list/list-empty";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { VolumeCard } from "./volume-card";
 

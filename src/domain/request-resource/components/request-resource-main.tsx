@@ -1,8 +1,8 @@
 "use client";
 
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
-import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   ListPageAside,
   ListPageBody,

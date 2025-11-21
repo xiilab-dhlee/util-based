@@ -3,7 +3,7 @@
 import Image from "next/image";
 import styled from "styled-components";
 
-import { AsideFillCard } from "@/shared/layouts/aside/aside-fill-card";
+import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 
 /**
  * 가이드 이미지 타입

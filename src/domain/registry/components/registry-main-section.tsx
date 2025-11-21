@@ -7,8 +7,8 @@ import { REGISTRY_QUICK_MENUS } from "@/domain/registry/constants/registry.const
 import { userWaitingRequestImageListSearchTextAtom } from "@/domain/registry/state/registry.atom";
 import { useGetWaitingRequestImages } from "@/domain/request-image/hooks/use-get-waiting-request-images";
 import { createRequestImageColumn } from "@/shared/components/column/create-request-image-column";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import { RequestImageStatusCard } from "./request-image-status-card";
 import { UserRequestImageWaitingListFilter } from "./request-image-waiting-list-filter";

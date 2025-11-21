@@ -7,8 +7,8 @@ import {
   privateRegistryPageAtom,
   privateRegistrySearchTextAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 
 export function PrivateRegistryListFooter() {
   const [page, setPage] = useAtom(privateRegistryPageAtom);

@@ -2,8 +2,8 @@
 
 import { userPrivateRegistrySearchTextAtom } from "@/domain/registry/state/registry.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { useSearch } from "@/shared/hooks/use-search";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 
 export function UserPrivateRegistryListFilter() {
   const { onSubmit } = useSearch(userPrivateRegistrySearchTextAtom);

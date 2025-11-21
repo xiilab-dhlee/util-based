@@ -3,7 +3,7 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   ListPageAside,
   ListPageBody,

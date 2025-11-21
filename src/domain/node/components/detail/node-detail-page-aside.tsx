@@ -3,7 +3,7 @@
 import Image from "next/image";
 import styled from "styled-components";
 
-import { AsideFillCard } from "@/shared/layouts/aside/aside-fill-card";
+import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { ListSectionTitle } from "@/styles/layers/list-page-layers.styled";
 import { NodeIntroCard } from "./node-intro-card";

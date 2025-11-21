@@ -10,8 +10,8 @@ import { VolumeListBody } from "@/domain/volume/components/list/volume-list-body
 import { VolumeListFilter } from "@/domain/volume/components/list/volume-list-filter";
 import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-footer";
 import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
-import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   ListPageBody,
   ListPageMain,

@@ -4,8 +4,8 @@ import { useAtom } from "jotai";
 
 import { useGetNodes } from "@/domain/node/hooks/use-get-nodes";
 import { nodePageAtom } from "@/domain/node/state/node.atom";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 
 /**
  * 노드 목록 페이지 하단 푸터 컴포넌트

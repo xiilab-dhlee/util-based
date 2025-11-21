@@ -32,11 +32,12 @@ export function DashboardWorkloadStatus({
         <Typography.Text variant="subtitle-2-1" color="#fff">
           {Number(9999).toLocaleString()}건
         </Typography.Text>
+
+        <Boundary />
+        <IconWrapper>
+          <Icon name={icon} color="var(--icon-fill)" size={18} />
+        </IconWrapper>
       </DataLabel>
-      <Boundary />
-      <IconWrapper>
-        <Icon name={icon} color="var(--icon-fill)" size={18} />
-      </IconWrapper>
     </Container>
   );
 }
@@ -51,6 +52,7 @@ export function DashboardWorkloadStatus({
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   position: relative;
   overflow: hidden;
   height: 100%;
@@ -109,7 +111,7 @@ const Container = styled.div`
  */
 const Boundary = styled.div`
   position: absolute;
-  top: 50%;
+  top: -25px;
   width: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -125,9 +127,9 @@ const Boundary = styled.div`
  */
 const IconWrapper = styled.div`
   position: absolute;
-  top: 50%;
+  top: -37px;
   left: 50%;
-  transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, 0, 0);
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -174,13 +176,11 @@ const Legend = styled(Typography.Text)`
  * 중앙 정렬되어 표시되며, 하단 패딩을 통해 적절한 여백을 제공합니다.
  */
 const DataLabel = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 4px;
   padding-bottom: 14px;
+  position: relative;
 `;

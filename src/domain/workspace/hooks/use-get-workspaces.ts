@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { workspaceKeys } from "@/domain/workspace/constants/workspace.key";
 import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
-import type { GetWorkspacesPayload } from "@/domain/workspace/types/workspace.interface";
+import type { GetWorkspacesPayload } from "@/domain/workspace/types/workspace.type";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
 

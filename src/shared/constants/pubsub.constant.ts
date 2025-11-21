@@ -5,6 +5,8 @@
 
 // 워크스페이스 관련 이벤트
 export const WORKSPACE_EVENTS = {
+  // 워크스페이스 수정에 필요한 정보 전달 이벤트
+  sendUpdateWorkspace: "workspace:send-update-workspace",
   // 워크스페이스 삭제에 필요한 정보 전달 이벤트
   sendDeleteWorkspace: "workspace:send-delete-workspace",
   // 워크스페이스 멤버 계정 정보 수정에 필요한 정보 전달 이벤트
@@ -117,6 +119,12 @@ export const MONITORING_EVENTS = {
   // 모니터링 알림 설정 모달에 필요한 정보 전달 이벤트
   sendUpsertNotification: "monitoring:send-upsert-monitoring-notification",
   sendNotificationSetting: "monitoring:send-notification-setting",
+} as const;
+
+// 설정 관련 이벤트
+export const SETTING_EVENTS = {
+  // 알림설정 모달에 필요한 정보 전달 이벤트
+  sendUpdateNotificationSetting: "setting:send-update-notification-setting",
 } as const;
 
 // 공통 이벤트

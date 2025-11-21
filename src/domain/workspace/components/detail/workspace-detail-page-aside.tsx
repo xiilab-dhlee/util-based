@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 
-import { AsideFillCard } from "@/shared/layouts/aside/aside-fill-card";
+import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { WorkspaceIntroCard } from "./workspace-intro-card";
 import { WorkspaceResourceAllocCard } from "./workspace-resource-alloc-card";

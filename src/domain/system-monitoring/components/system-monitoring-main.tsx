@@ -5,7 +5,7 @@ import { DateRange, Dropdown, Icon, Typography } from "xiilab-ui";
 
 import { MONITORING_MENU_ICON } from "@/domain/monitoring/constants/monitoring.constant";
 import { SystemMonitoringCard } from "@/domain/system-monitoring/components/system-monitoring-card";
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 export function SystemMonitoringMain() {

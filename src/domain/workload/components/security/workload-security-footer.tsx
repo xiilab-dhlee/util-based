@@ -4,8 +4,8 @@ import { useAtom } from "jotai";
 
 import { useGetWorkloadVulnerabilities } from "@/domain/workload/hooks/use-get-workload-vulnerabilities";
 import { workloadPageAtom } from "@/domain/workload/state/workload.atom";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListPageFooter } from "@/shared/layouts/list/list-page-footer";
 
 /**
  * 워크로드 보안 취약점 페이지 하단 푸터 컴포넌트

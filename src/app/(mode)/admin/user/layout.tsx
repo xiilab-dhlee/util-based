@@ -7,11 +7,11 @@ import { Icon } from "xiilab-ui";
 
 import { CreateGroupModal } from "@/domain/group/components/create-group-modal";
 import { openCreateGroupModalAtom } from "@/domain/group/state/group.atom";
+import { PageGuide } from "@/shared/components/layouts/page-guide";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { RouteTab } from "@/shared/components/tab";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { PageGuide } from "@/shared/layouts/common/page-guide";
-import { PageHeader } from "@/shared/layouts/common/page-header";
-import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

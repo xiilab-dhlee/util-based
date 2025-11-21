@@ -1,17 +1,13 @@
 import styled from "styled-components";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
-import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
-  DashboardCategoryTitle,
   DashboardSectionDescription,
   DashboardSectionHeader,
   DashboardSectionTitle,
 } from "@/styles/layers/dashboard-layers.styled";
 import { DashboardResourceArticle } from "./dashboard-resource-article";
-import { DashboardResourceCard } from "./dashboard-resource-card";
 import { DashboardResourceRecoveryArticle } from "./dashboard-resource-recovery-article";
-import { DashboardWorkloadStatus } from "./dashboard-workload-status";
+import { DashboardWorkloadArticle } from "./dashboard-workload-article";
 
 export function DashboardMainSection() {
   return (
@@ -31,45 +27,7 @@ export function DashboardMainSection() {
         </LeftBody>
       </Left>
       <Right>
-        <RightItem>
-          <RightSectionHeader>
-            <DashboardCategoryTitle>워크로드 정보</DashboardCategoryTitle>
-            <DashboardSectionDescription>
-              생성한 워크로드 정보를 확인할 수 있습니다.
-            </DashboardSectionDescription>
-          </RightSectionHeader>
-          {/* 워크로드 정보 영역 */}
-          <WorkloadStatusWrapper>
-            {["ALL", "RUNNING", "COMPLETED", "PENDING", "FAILED"].map(
-              (status) => (
-                <DashboardWorkloadStatus
-                  key={status}
-                  status={status as WorkloadStatusType}
-                />
-              ),
-            )}
-          </WorkloadStatusWrapper>
-        </RightItem>
-        <RightItem>
-          <RightSectionHeader>
-            <DashboardCategoryTitle>사용 자원 정보</DashboardCategoryTitle>
-            <DashboardSectionDescription>
-              워크로드 생성시 사용중인 자원 정보를 확인할 수 있습니다.
-            </DashboardSectionDescription>
-          </RightSectionHeader>
-          <WorkloadResourceWrapper>
-            {["GPU", "CPU", "MEM"].map((v) => (
-              <DashboardResourceCard
-                key={v}
-                resourceType={v as CoreResourceType}
-                total={20}
-                count={10}
-              />
-            ))}
-          </WorkloadResourceWrapper>
-          {/* 사용 자원 정보 영역 */}
-          {/* <DashboardResourceUsingArticle /> */}
-        </RightItem>
+        <DashboardWorkloadArticle />
       </Right>
     </Container>
   );
@@ -100,17 +58,8 @@ const Left = styled.div`
 const Right = styled.article`
   min-width: 596px;
   height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   overflow: hidden;
   position: relative;
-  border-radius: 8px;
-  background-color: #171b26;
-  padding: 22px 20px;
-
-  --primary-border-color: #3a4561;
-  --secondary-border-color: #2a3041;
 `;
 
 const LeftHeader = styled(DashboardSectionHeader)`
@@ -123,29 +72,4 @@ const LeftBody = styled.div`
   justify-content: flex-start;
   align-items: center;
   position: relative;
-`;
-
-const RightItem = styled.div`
-  position: relative;
-`;
-
-const WorkloadStatusWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-
-  height: 124px;
-  border: 1px solid var(--primary-border-color);
-  border-top-width: 0;
-`;
-
-const RightSectionHeader = styled(DashboardSectionHeader)`
-  margin-bottom: 16px;
-`;
-
-const WorkloadResourceWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  flex: 1;
-  gap: 8px;
-  height: 104px;
 `;

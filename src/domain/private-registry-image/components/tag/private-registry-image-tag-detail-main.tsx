@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,
   DetailPageBody,

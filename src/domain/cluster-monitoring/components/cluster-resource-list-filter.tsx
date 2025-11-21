@@ -3,7 +3,7 @@
 import type { FormEvent } from "react";
 
 import { SearchInput } from "@/shared/components/input/search-input";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 
 export function ClusterResourceListFilter() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

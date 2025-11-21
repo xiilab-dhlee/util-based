@@ -8,9 +8,9 @@ import {
   requestImageSearchTextAtom,
 } from "@/domain/request-image/state/request-image.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
+import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useSearch } from "@/shared/hooks/use-search";
-import { MySearchFilter } from "@/shared/layouts/common/search-filter";
 import { RequestImageStatusSort } from "./request-image-status-sort";
 
 /**

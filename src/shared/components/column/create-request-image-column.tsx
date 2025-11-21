@@ -4,7 +4,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 import { ViewApproveRequestImageButton } from "@/domain/request-image/components/view-approve-request-image-button";
 import { ViewRejectRequestImageButton } from "@/domain/request-image/components/view-reject-request-image-button";
 import type { RequestImageListType } from "@/domain/request-image/schemas/request-image.schema";
-import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.interface";
+import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";

@@ -5,7 +5,7 @@ import type {
   UpdateWorkspaceMemberPayload,
   UpdateWorkspacePayload,
   UpdateWorkspaceRequestResourcePayload,
-} from "@/domain/workspace/types/workspace.interface";
+} from "@/domain/workspace/types/workspace.type";
 import { AxiosService } from "@/shared/api/axios";
 import { payloadToParams } from "@/shared/utils/service.util";
 

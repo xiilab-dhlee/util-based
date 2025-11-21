@@ -1,7 +1,7 @@
 import type { UseMutationResult } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
-import type { CreateWorkspacePayload } from "@/domain/workspace/types/workspace.interface";
+import type { CreateWorkspacePayload } from "@/domain/workspace/types/workspace.type";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**

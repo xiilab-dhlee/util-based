@@ -4,8 +4,8 @@ import type { TabsSeparatedItem } from "xiilab-ui";
 
 import { UpdateWorkloadModal } from "@/domain/workload/components/detail/update-workload-modal";
 import { WorkloadDetailPageAside } from "@/domain/workload/components/detail/workload-detail-page-aside";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import { RouteTab } from "@/shared/components/tab";
-import { PageHeader } from "@/shared/layouts/common/page-header";
 import {
   DetailContentSection,
   DetailPageBody,

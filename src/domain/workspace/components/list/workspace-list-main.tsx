@@ -6,12 +6,12 @@ import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-works
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/domain/workspace/components/list/workspace-list-footer";
+import { PageGuide } from "@/shared/components/layouts/page-guide";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
 import { openCreateWorkspaceModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { PageGuide } from "@/shared/layouts/common/page-guide";
-import { PageHeader } from "@/shared/layouts/common/page-header";
-import { PageImageGuide } from "@/shared/layouts/common/page-image-guide";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

@@ -36,22 +36,22 @@ export function WorkloadPrimaryArticle() {
       {/* <Column>
         <DetailContentSubTitle>워크스페이스 적용</DetailContentSubTitle>
         <ColumnBody>
-          <IconWraper>
+          <IconWrapper>
             <Icon name="Workspace01" color="var(--icon-fill)" size={18} />
-          </IconWraper>
+          </IconWrapper>
           <span>{workspaceName}</span>
         </ColumnBody>
       </Column> */}
       <Column>
         <DetailContentSubTitle>Job Type</DetailContentSubTitle>
         <ColumnBody>
-          <IconWraper className="jobtype">
+          <IconWrapper className="jobtype">
             {ideIcon === "pytorch" ? (
               <PytorchIcon />
             ) : ideIcon === "jupyter" ? (
               <JupyterIcon />
             ) : null}
-          </IconWraper>
+          </IconWrapper>
           <JobTypeText>{label}</JobTypeText>
           <Description>{ideName}</Description>
         </ColumnBody>
@@ -59,9 +59,9 @@ export function WorkloadPrimaryArticle() {
       <Column>
         <DetailContentSubTitle>노드 타입</DetailContentSubTitle>
         <ColumnBody>
-          <IconWraper>
+          <IconWrapper>
             <Icon name={nodeIcon} color="var(--icon-fill)" size={18} />
-          </IconWraper>
+          </IconWrapper>
           <NodeTypeText>{nodeType} Node</NodeTypeText>
         </ColumnBody>
       </Column>
@@ -100,7 +100,7 @@ const NodeTypeText = styled.span`
   text-transform: capitalize;
 `;
 
-const IconWraper = styled.div`
+const IconWrapper = styled.div`
   width: 18px;
   height: 18px;
   display: flex;
