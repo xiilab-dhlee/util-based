@@ -1,22 +1,25 @@
 import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
-import { DashboardGraphChart } from "@/domain/dashboard/components/dashboard-graph-chart";
+import { UserMonitoringGraphChart } from "@/domain/user-monitoring/components/user-monitoring-graph-chart";
 import {
-  DASHBOARD_RESOURCE_OPTIONS,
-  DASHBOARD_SERIES_DEMO,
-} from "@/domain/dashboard/constants/dashboard.constant";
+  USER_MONITORING_RESOURCE_OPTIONS,
+  USER_MONITORING_SERIES_DEMO,
+} from "@/domain/user-monitoring/constants/user-monitoring.constant";
 import { useSelect } from "@/shared/hooks/use-select";
-import { DashboardCategoryTitle } from "@/styles/layers/dashboard-layers.styled";
+import { UserMonitoringCategoryTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
-export function DashboardResourceArticle() {
+export function UserMonitoringResourceArticle() {
   // 선택된 자원
-  const resourceSelect = useSelect<string>("GPU", DASHBOARD_RESOURCE_OPTIONS);
+  const resourceSelect = useSelect<string>(
+    "GPU",
+    USER_MONITORING_RESOURCE_OPTIONS,
+  );
 
   // value가 null이 아니고 유효한 리소스 타입인지 확인
 
   const seriesData = resourceSelect.value
-    ? DASHBOARD_SERIES_DEMO[resourceSelect.value]
+    ? USER_MONITORING_SERIES_DEMO[resourceSelect.value]
     : null;
 
   return (
@@ -24,14 +27,14 @@ export function DashboardResourceArticle() {
       {/* CPU 그래프 영역 */}
       <Graph>
         <GraphHeader>
-          <DashboardCategoryTitle>
+          <UserMonitoringCategoryTitle>
             {resourceSelect.value} 그래프
-          </DashboardCategoryTitle>
+          </UserMonitoringCategoryTitle>
         </GraphHeader>
         <GraphBody>
           {/* 선택된 옵션이 변경될 때마다 컴포넌트를 리렌더링하기 위한 key 속성 추가 */}
           {seriesData && (
-            <DashboardGraphChart
+            <UserMonitoringGraphChart
               key={resourceSelect.value}
               series={seriesData.series}
               unit={seriesData.unit}

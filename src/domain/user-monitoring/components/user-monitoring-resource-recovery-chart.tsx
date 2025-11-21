@@ -8,7 +8,7 @@ const DynamicApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-interface DashboardResourceRecoveryChartProps {
+interface UserMonitoringResourceRecoveryChartProps {
   series: number; // 단위별 비율
 }
 
@@ -46,9 +46,9 @@ const CHART_OPTIONS: ApexOptions = {
   colors: ["#CCB7FF"],
 };
 
-export function DashboardResourceRecoveryChart({
+export function UserMonitoringResourceRecoveryChart({
   series,
-}: DashboardResourceRecoveryChartProps) {
+}: UserMonitoringResourceRecoveryChartProps) {
   // series만 동적으로 업데이트
   const chartSeries = useMemo(() => [series], [series]);
 

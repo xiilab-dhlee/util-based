@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { workloadListMock } from "@/mocks/data/workload.mock";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
-export function DashboardSubSection() {
+export function UserMonitoringSubSection() {
   return (
     <Container>
       <Pane>
@@ -114,6 +114,6 @@ const ArticleDescription = styled.div`
   font-size: 12px;
 `;
 
-const SectionTitle = styled(DashboardSectionTitle)`
+const SectionTitle = styled(UserMonitoringSectionTitle)`
   color: #070913;
 `;

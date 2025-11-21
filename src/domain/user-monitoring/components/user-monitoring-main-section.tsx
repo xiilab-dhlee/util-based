@@ -3,46 +3,50 @@ import styled from "styled-components";
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
-  DashboardCategoryTitle,
-  DashboardSectionDescription,
-  DashboardSectionHeader,
-  DashboardSectionTitle,
-} from "@/styles/layers/dashboard-layers.styled";
-import { DashboardResourceArticle } from "./dashboard-resource-article";
-import { DashboardResourceCard } from "./dashboard-resource-card";
-import { DashboardResourceRecoveryArticle } from "./dashboard-resource-recovery-article";
-import { DashboardWorkloadStatus } from "./dashboard-workload-status";
+  UserMonitoringCategoryTitle,
+  UserMonitoringSectionDescription,
+  UserMonitoringSectionHeader,
+  UserMonitoringSectionTitle,
+} from "@/styles/layers/user-monitoring-layers.styled";
+import { UserMonitoringResourceArticle } from "./user-monitoring-resource-article";
+import { UserMonitoringResourceCard } from "./user-monitoring-resource-card";
+import { UserMonitoringResourceRecoveryArticle } from "./user-monitoring-resource-recovery-article";
+import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status";
 
-export function DashboardMainSection() {
+export function UserMonitoringMainSection() {
   return (
     <Container>
       <Left>
         <LeftHeader>
-          <DashboardSectionTitle>워크스페이스 자원 정보</DashboardSectionTitle>
-          <DashboardSectionDescription>
+          <UserMonitoringSectionTitle>
+            워크스페이스 자원 정보
+          </UserMonitoringSectionTitle>
+          <UserMonitoringSectionDescription>
             해당 워크스페이스 자원 정보와 자원회수 정보를 확인할 수 있습니다.
-          </DashboardSectionDescription>
+          </UserMonitoringSectionDescription>
         </LeftHeader>
         <LeftBody>
           {/* 자원 정보 영역 */}
-          <DashboardResourceArticle />
+          <UserMonitoringResourceArticle />
           {/* 자원 회수 정보 영역 */}
-          <DashboardResourceRecoveryArticle />
+          <UserMonitoringResourceRecoveryArticle />
         </LeftBody>
       </Left>
       <Right>
         <RightItem>
           <RightSectionHeader>
-            <DashboardCategoryTitle>워크로드 정보</DashboardCategoryTitle>
-            <DashboardSectionDescription>
+            <UserMonitoringCategoryTitle>
+              워크로드 정보
+            </UserMonitoringCategoryTitle>
+            <UserMonitoringSectionDescription>
               생성한 워크로드 정보를 확인할 수 있습니다.
-            </DashboardSectionDescription>
+            </UserMonitoringSectionDescription>
           </RightSectionHeader>
           {/* 워크로드 정보 영역 */}
           <WorkloadStatusWrapper>
             {["ALL", "RUNNING", "COMPLETED", "PENDING", "FAILED"].map(
               (status) => (
-                <DashboardWorkloadStatus
+                <UserMonitoringWorkloadStatus
                   key={status}
                   status={status as WorkloadStatusType}
                 />
@@ -52,14 +56,16 @@ export function DashboardMainSection() {
         </RightItem>
         <RightItem>
           <RightSectionHeader>
-            <DashboardCategoryTitle>사용 자원 정보</DashboardCategoryTitle>
-            <DashboardSectionDescription>
+            <UserMonitoringCategoryTitle>
+              사용 자원 정보
+            </UserMonitoringCategoryTitle>
+            <UserMonitoringSectionDescription>
               워크로드 생성시 사용중인 자원 정보를 확인할 수 있습니다.
-            </DashboardSectionDescription>
+            </UserMonitoringSectionDescription>
           </RightSectionHeader>
           <WorkloadResourceWrapper>
             {["GPU", "CPU", "MEM"].map((v) => (
-              <DashboardResourceCard
+              <UserMonitoringResourceCard
                 key={v}
                 resourceType={v as CoreResourceType}
                 total={20}
@@ -68,7 +74,7 @@ export function DashboardMainSection() {
             ))}
           </WorkloadResourceWrapper>
           {/* 사용 자원 정보 영역 */}
-          {/* <DashboardResourceUsingArticle /> */}
+          {/* <UserMonitoringResourceUsingArticle /> */}
         </RightItem>
       </Right>
     </Container>
@@ -77,14 +83,14 @@ export function DashboardMainSection() {
 
 const Container = styled.section`
   border-radius: 10px;
-  height: var(--dashboard-main-section-height);
+  height: var(--user-monitoring-main-section-height);
   padding: 23px;
   padding-left: 0;
   display: flex;
   justify-content: space-between;
   gap: 20px;
   overflow: hidden;
-  margin-bottom: var(--dashboard-main-section-margin-bottom);
+  margin-bottom: var(--user-monitoring-main-section-margin-bottom);
   background-color: #070913;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
 `;
@@ -113,7 +119,7 @@ const Right = styled.article`
   --secondary-border-color: #2a3041;
 `;
 
-const LeftHeader = styled(DashboardSectionHeader)`
+const LeftHeader = styled(UserMonitoringSectionHeader)`
   padding-left: 25px;
 `;
 
@@ -138,7 +144,7 @@ const WorkloadStatusWrapper = styled.div`
   border-top-width: 0;
 `;
 
-const RightSectionHeader = styled(DashboardSectionHeader)`
+const RightSectionHeader = styled(UserMonitoringSectionHeader)`
   margin-bottom: 16px;
 `;
 

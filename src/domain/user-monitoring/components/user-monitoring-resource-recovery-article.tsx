@@ -3,10 +3,10 @@ import Image from "next/image";
 import { useState } from "react";
 import styled from "styled-components";
 
-import { DashboardCategoryTitle } from "@/styles/layers/dashboard-layers.styled";
-import { DashboardResourceRecoveryChart } from "./dashboard-resource-recovery-chart";
+import { UserMonitoringCategoryTitle } from "@/styles/layers/user-monitoring-layers.styled";
+import { UserMonitoringResourceRecoveryChart } from "./user-monitoring-resource-recovery-chart";
 
-export function DashboardResourceRecoveryArticle() {
+export function UserMonitoringResourceRecoveryArticle() {
   // 선택된 자원
   const [resource, setResource] = useState<string>("GPU");
 
@@ -16,9 +16,9 @@ export function DashboardResourceRecoveryArticle() {
 
   return (
     <Container>
-      <DashboardCategoryTitle>자원 회수 정보</DashboardCategoryTitle>
+      <UserMonitoringCategoryTitle>자원 회수 정보</UserMonitoringCategoryTitle>
       <ChartWrapper>
-        <DashboardResourceRecoveryChart series={70} />
+        <UserMonitoringResourceRecoveryChart series={70} />
       </ChartWrapper>
 
       <ResourceButtons>

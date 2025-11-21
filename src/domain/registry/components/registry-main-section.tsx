@@ -2,14 +2,14 @@ import { useAtomValue } from "jotai";
 import Image from "next/image";
 import styled from "styled-components";
 
-import { DashboardQuickMenu } from "@/domain/dashboard/components/dashboard-quick-menu";
 import { REGISTRY_QUICK_MENUS } from "@/domain/registry/constants/registry.constant";
 import { userWaitingRequestImageListSearchTextAtom } from "@/domain/registry/state/registry.atom";
 import { useGetWaitingRequestImages } from "@/domain/request-image/hooks/use-get-waiting-request-images";
+import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
 import { createRequestImageColumn } from "@/shared/components/column/create-request-image-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { MySearchFilter } from "@/shared/layouts/common/search-filter";
-import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
+import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 import { RequestImageStatusCard } from "./request-image-status-card";
 import { UserRequestImageWaitingListFilter } from "./request-image-waiting-list-filter";
 
@@ -32,7 +32,7 @@ export function RegistryMainSection() {
         </Thumbnail>
         <QuickMenus>
           {REGISTRY_QUICK_MENUS.map((menu) => (
-            <DashboardQuickMenu key={menu.title} height={120} {...menu} />
+            <UserMonitoringQuickMenu key={menu.title} height={120} {...menu} />
           ))}
         </QuickMenus>
       </Left>
@@ -81,13 +81,13 @@ export function RegistryMainSection() {
  */
 const Container = styled.section`
   border-radius: 10px;
-  height: var(--dashboard-main-section-height);
+  height: var(--user-monitoring-main-section-height);
   padding: 23px;
   display: flex;
   justify-content: space-between;
   gap: 20px;
   overflow: hidden;
-  margin-bottom: var(--dashboard-main-section-margin-bottom);
+  margin-bottom: var(--user-monitoring-main-section-margin-bottom);
   background-color: #070913;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
 
@@ -128,7 +128,7 @@ const Right = styled.div`
  * 각 섹션의 제목을 표시하는 헤더 영역입니다.
  * 좌측 패딩을 적용하여 시각적 정렬을 맞춥니다.
  */
-const SectionTitle = styled(DashboardSectionTitle)`
+const SectionTitle = styled(UserMonitoringSectionTitle)`
   margin-bottom: 20px;
 `;
 

@@ -11,7 +11,7 @@ const DynamicApexChart = dynamic(() => import("react-apexcharts"), {
 /**
  * 대시보드 방사형 차트 컴포넌트의 Props 인터페이스
  */
-interface DashboardRadialBarProps {
+interface UserMonitoringRadialBarProps {
   /** 차트에 표시할 데이터 값 (0-100 사이의 숫자) */
   series: number;
   /** 그라데이션 색상 배열 [시작색상, 끝색상] */
@@ -19,7 +19,7 @@ interface DashboardRadialBarProps {
 }
 
 /**
- * DashboardResourceClusterChart 컴포넌트
+ * UserMonitoringResourceClusterChart 컴포넌트
  *
  * 대시보드에서 사용되는 방사형(원형) 진행률 차트 컴포넌트입니다.
  * ApexCharts를 사용하여 구현되었으며, props가 변경될 때마다 자동으로 차트를 갱신합니다.
@@ -38,7 +38,7 @@ interface DashboardRadialBarProps {
  *
  * @example
  * ```tsx
- * <DashboardRadialBar
+ * <UserMonitoringRadialBar
  *   series={75}
  *   height={200}
  *   hollowSize="70%"
@@ -46,10 +46,10 @@ interface DashboardRadialBarProps {
  * />
  * ```
  */
-export function DashboardResourceClusterChart({
+export function UserMonitoringResourceClusterChart({
   series,
   gradientToColors,
-}: DashboardRadialBarProps) {
+}: UserMonitoringRadialBarProps) {
   // series를 동적으로 업데이트
   const chartSeries = useMemo(() => [series], [series]);
 

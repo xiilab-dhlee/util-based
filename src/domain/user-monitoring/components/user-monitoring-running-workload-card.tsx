@@ -6,7 +6,7 @@ import { Card, Icon } from "xiilab-ui";
 
 import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
 
-interface DashboardRunningWorkloadCardProps extends WorkloadListType {}
+interface UserMonitoringRunningWorkloadCardProps extends WorkloadListType {}
 
 /**
  * 대시보드 실행 중 워크로드 카드 컴포넌트의 실제 구현부
@@ -24,11 +24,11 @@ interface DashboardRunningWorkloadCardProps extends WorkloadListType {}
  * @param workloadName - 워크로드 이름
  * @returns 실행 중인 워크로드 정보를 담은 카드 컴포넌트
  */
-export function DashboardRunningWorkloadCard({
+export function UserMonitoringRunningWorkloadCard({
   id,
   workloadName,
   workspaceId,
-}: DashboardRunningWorkloadCardProps) {
+}: UserMonitoringRunningWorkloadCardProps) {
   const router = useRouter();
   // 카드 클릭 핸들러 - 워크로드 상세 페이지 이동 (현재 비활성화)
   const handleClickCard = () => {

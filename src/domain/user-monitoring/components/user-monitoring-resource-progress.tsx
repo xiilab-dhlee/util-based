@@ -1,21 +1,21 @@
 import styled from "styled-components";
 
-import type { CoreResourceType } from "@/shared/types/core.interface";
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
+import type { CoreResourceType } from "@/shared/types/core.interface";
 
-interface DashboardResourceProgressProps {
+interface UserMonitoringResourceProgressProps {
   resourceType: CoreResourceType;
   usagePercent: number;
   requestPercent?: number;
   right?: React.ReactNode;
 }
 
-export function DashboardResourceProgress({
+export function UserMonitoringResourceProgress({
   resourceType,
   usagePercent,
   requestPercent,
   right,
-}: DashboardResourceProgressProps) {
+}: UserMonitoringResourceProgressProps) {
   return (
     <Container>
       <ProgressLabel>

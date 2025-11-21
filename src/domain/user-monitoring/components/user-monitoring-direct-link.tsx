@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { ArrowIcon } from "@/shared/components/icon/arrow-icon";
 
-interface DashboardDirectLinkProps {
+interface UserMonitoringDirectLinkProps {
   className?: string;
 }
 /**
@@ -11,7 +11,9 @@ interface DashboardDirectLinkProps {
  * @param linkProps - 링크 속성
  * @returns 다이렉트 링크 컴포넌트
  */
-export function DashboardDirectLink({ className }: DashboardDirectLinkProps) {
+export function UserMonitoringDirectLink({
+  className,
+}: UserMonitoringDirectLinkProps) {
   return (
     <Container className={className}>
       <ArrowIcon />

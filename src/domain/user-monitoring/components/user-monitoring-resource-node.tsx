@@ -1,9 +1,9 @@
 import styled from "styled-components";
 
 import type { CoreResourceType } from "@/shared/types/core.interface";
-import { DashboardResourceProgress } from "./dashboard-resource-progress";
+import { UserMonitoringResourceProgress } from "./user-monitoring-resource-progress";
 
-interface DashboardResourceNodeProps {
+interface UserMonitoringResourceNodeProps {
   resourceType: CoreResourceType;
   unit: string;
   total: number;
@@ -11,19 +11,19 @@ interface DashboardResourceNodeProps {
   request: number;
 }
 
-export function DashboardResourceNode({
+export function UserMonitoringResourceNode({
   resourceType,
   unit,
   total,
   usage,
   request,
-}: DashboardResourceNodeProps) {
+}: UserMonitoringResourceNodeProps) {
   const usagePercent = (usage / total) * 100;
   const requestPercent = (request / total) * 100;
   return (
     <Container>
       <Body>
-        <DashboardResourceProgress
+        <UserMonitoringResourceProgress
           resourceType={resourceType}
           usagePercent={usagePercent}
           requestPercent={usagePercent + requestPercent}

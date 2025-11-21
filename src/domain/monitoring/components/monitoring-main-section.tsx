@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { Icon, Tooltip } from "xiilab-ui";
 
-import { DashboardQuickMenu } from "@/domain/dashboard/components/dashboard-quick-menu";
 import { MonitoringClusterResource } from "@/domain/monitoring/components/monitoring-cluster-resource";
 import { MonitoringIntroCard } from "@/domain/monitoring/components/monitoring-intro-card";
 import { MONITORING_QUICK_MENUS } from "@/domain/monitoring/constants/monitoring.constant";
+import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
 import { ClusterResourceInfoTooltipTitle } from "@/shared/components/tooltip-title/cluster-resource-info-tooltip-content";
-import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
+import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function MonitoringMainSection() {
   return (
@@ -15,13 +15,15 @@ export function MonitoringMainSection() {
         <MonitoringIntroCard />
         <QuickMenus>
           {MONITORING_QUICK_MENUS.map((menu) => (
-            <DashboardQuickMenu key={menu.title} {...menu} />
+            <UserMonitoringQuickMenu key={menu.title} {...menu} />
           ))}
         </QuickMenus>
       </Left>
       <Right>
         <RightHeader>
-          <DashboardSectionTitle>클러스터 자원 정보</DashboardSectionTitle>
+          <UserMonitoringSectionTitle>
+            클러스터 자원 정보
+          </UserMonitoringSectionTitle>
           <Tooltip
             title={<ClusterResourceInfoTooltipTitle />}
             theme="light"
@@ -79,13 +81,13 @@ export function MonitoringMainSection() {
 
 const Container = styled.section`
   border-radius: 10px;
-  height: var(--dashboard-main-section-height);
+  height: var(--user-monitoring-main-section-height);
   padding: 23px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   overflow: hidden;
-  margin-bottom: var(--dashboard-main-section-margin-bottom);
+  margin-bottom: var(--user-monitoring-main-section-margin-bottom);
   background-color: #070913;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
 

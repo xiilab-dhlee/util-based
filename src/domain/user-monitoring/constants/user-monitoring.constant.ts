@@ -2,7 +2,7 @@ import type { DropdownOption } from "xiilab-ui";
 
 import type { CoreChartSeries } from "@/shared/types/core.model";
 
-export const DASHBOARD_RESOURCE_OPTIONS: DropdownOption[] = [
+export const USER_MONITORING_RESOURCE_OPTIONS: DropdownOption[] = [
   {
     label: "GPU",
     value: "GPU",
@@ -17,7 +17,7 @@ export const DASHBOARD_RESOURCE_OPTIONS: DropdownOption[] = [
   },
 ];
 
-export const DASHBOARD_SERIES_DEMO: Record<
+export const USER_MONITORING_SERIES_DEMO: Record<
   string,
   {
     unit: string;

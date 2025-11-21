@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-export const DashboardSectionHeader = styled.div`
+export const UserMonitoringSectionHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
   position: relative;
 `;
 
-export const DashboardSectionTitle = styled.h2`
+export const UserMonitoringSectionTitle = styled.h2`
   position: relative;
   font-weight: 700;
   font-size: 16px;
@@ -35,7 +35,7 @@ export const DashboardSectionTitle = styled.h2`
   }
 `;
 
-export const DashboardSectionDescription = styled.p`
+export const UserMonitoringSectionDescription = styled.p`
   font-size: 12px;
   line-height: 14px;
   height: 14px;
@@ -43,7 +43,7 @@ export const DashboardSectionDescription = styled.p`
   color: #bdbdbd;
 `;
 
-export const DashboardCategoryTitle = styled(Typography.Text).attrs({
+export const UserMonitoringCategoryTitle = styled(Typography.Text).attrs({
   variant: "subtitle-2",
 })`
   color: #f5f5f5;

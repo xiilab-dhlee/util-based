@@ -9,7 +9,7 @@ const DynamicApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-interface DashboardGraphChartProps {
+interface UserMonitoringGraphChartProps {
   series: CoreChartSeries[];
   unit: string;
 }
@@ -109,10 +109,10 @@ const getChartOptions = (unit: string): ApexOptions => {
   };
 };
 
-export function DashboardGraphChart({
+export function UserMonitoringGraphChart({
   series,
   unit,
-}: DashboardGraphChartProps) {
+}: UserMonitoringGraphChartProps) {
   const [state] = useState({
     series,
     locales: [ko],

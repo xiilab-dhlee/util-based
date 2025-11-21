@@ -2,11 +2,11 @@ import classNames from "classnames";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-import { DashboardResourceClusterChart } from "@/domain/dashboard/components/dashboard-resource-cluster-chart";
+import { UserMonitoringResourceClusterChart } from "@/domain/user-monitoring/components/user-monitoring-resource-cluster-chart";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
-interface DashboardResourceClusterProps {
+interface UserMonitoringResourceClusterProps {
   series: number;
   gradientToColors: string[];
   resourceType: CoreResourceType;
@@ -16,13 +16,13 @@ export function MonitoringClusterResource({
   series,
   gradientToColors,
   resourceType,
-}: DashboardResourceClusterProps) {
+}: UserMonitoringResourceClusterProps) {
   const { unit } = getResourceInfo(resourceType);
   return (
     <Container className={classNames({ "gpu-only": resourceType === "GPU" })}>
       <Left>
         <ChartWrapper>
-          <DashboardResourceClusterChart
+          <UserMonitoringResourceClusterChart
             series={series}
             gradientToColors={gradientToColors}
           />

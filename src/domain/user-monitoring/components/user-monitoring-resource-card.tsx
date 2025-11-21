@@ -6,17 +6,17 @@ import { ResourceProgress } from "@/shared/components/progress/resource-progress
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
-interface DashboardResourceCardProps {
+interface UserMonitoringResourceCardProps {
   resourceType: CoreResourceType;
   total: number;
   count: number;
 }
 
-export function DashboardResourceCard({
+export function UserMonitoringResourceCard({
   resourceType,
   total,
   count,
-}: DashboardResourceCardProps) {
+}: UserMonitoringResourceCardProps) {
   const { text, unit, icon } = getResourceInfo(resourceType);
   return (
     <Container>

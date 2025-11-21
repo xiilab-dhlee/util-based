@@ -48,7 +48,7 @@ export function MonitoringIntroCard() {
 const Container = styled.div`
   width: 100%;
   height: 290px;
-  background-image: url("/images/dashboard-background.png");
+  background-image: url("/images/monitoring-background.png");
   background-size: 100% 100%;
   padding: 24px;
   display: flex;

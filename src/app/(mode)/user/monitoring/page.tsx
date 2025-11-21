@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { DashboardMain } from "@/domain/dashboard/components/dashboard-main";
+import { UserMonitoringMain } from "@/domain/user-monitoring/components/user-monitoring-main";
 
 export const metadata: Metadata = {
   title: "Monitoring",
 };
 
 export default function UserMonitoringPage() {
-  return <DashboardMain />;
+  return <UserMonitoringMain />;
 }

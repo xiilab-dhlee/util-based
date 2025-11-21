@@ -5,7 +5,7 @@ import { Icon } from "xiilab-ui";
 /**
  * 대시보드 빠른 메뉴 컴포넌트의 Props 인터페이스
  */
-interface DashboardQuickMenuProps {
+interface UserMonitoringQuickMenuProps {
   /** 이동할 페이지의 URL 경로 */
   href: string;
   /** 표시할 아이콘 이름 */
@@ -21,7 +21,7 @@ interface DashboardQuickMenuProps {
 }
 
 /**
- * DashboardQuickMenu 컴포넌트
+ * UserMonitoringQuickMenu 컴포넌트
  *
  * 대시보드에서 사용되는 빠른 메뉴 카드 컴포넌트입니다.
  * 사용자가 주요 기능에 빠르게 접근할 수 있도록 하는 네비게이션 카드로,
@@ -44,7 +44,7 @@ interface DashboardQuickMenuProps {
  *
  * @example
  * ```tsx
- * <DashboardQuickMenu
+ * <UserMonitoringQuickMenu
  *   href="/admin/workspace"
  *   icon="Box"
  *   iconSize={24}
@@ -54,14 +54,14 @@ interface DashboardQuickMenuProps {
  * />
  * ```
  */
-export function DashboardQuickMenu({
+export function UserMonitoringQuickMenu({
   href,
   icon,
   iconSize,
   title,
   titleEng,
   height = 100,
-}: DashboardQuickMenuProps) {
+}: UserMonitoringQuickMenuProps) {
   return (
     <Container href={href} $height={height}>
       {/* 메인 기능 아이콘 - 좌상단에 위치 */}
