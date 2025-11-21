@@ -343,7 +343,7 @@ export type PageKey = keyof typeof PAGE_META;
  * Breadcrumb 아이템 메타 정보
  * - PAGE_META의 value 타입을 기반으로 하는 레퍼런스 타입
  */
-export interface BreadcrumbItemMeta {
+export interface PageItemMeta {
   /** 페이지 제목 */
   title: string;
   /** 페이지 아이콘 이름 (MyIcon에서 사용하는 아이콘 키) */

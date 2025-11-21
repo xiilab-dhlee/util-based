@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import styled from "styled-components";
 import { AstraGoNav, type AstraGoNavMenu, Icon } from "xiilab-ui";
 
-
 import { WorkspaceSelect } from "@/shared/components/select/workspace-select";
 import { PAGE_META } from "@/shared/constants/page-meta";
 import { useActiveMenu } from "@/shared/hooks/use-active-menu";
@@ -16,7 +15,7 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
     title: "Entire",
     items: [
       {
-        key: "monitoring",
+        key: "user.monitoring",
         label: PAGE_META["user.monitoring"]?.title,
         icon: <Icon name={PAGE_META["user.monitoring"]?.iconName} />,
       },
@@ -29,7 +28,7 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
     title: "WORK",
     items: [
       {
-        key: "workload",
+        key: "user.workload",
         label: PAGE_META["user.workload"]?.title,
         icon: <Icon name={PAGE_META["user.workload"]?.iconName} />,
       },
@@ -39,7 +38,7 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "ComparativeExperiment",
       // },
       {
-        key: "private-registry-image",
+        key: "user.private-registry-image",
         label: PAGE_META["user.private-registry-image"]?.title,
         icon: (
           <Icon name={PAGE_META["user.private-registry-image"]?.iconName} />
@@ -51,12 +50,12 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "PublicRegistry",
       // },
       {
-        key: "sourcecode",
+        key: "user.sourcecode",
         label: PAGE_META["user.sourcecode"]?.title,
         icon: <Icon name={PAGE_META["user.sourcecode"]?.iconName} />,
       },
       {
-        key: "volume",
+        key: "user.volume",
         label: PAGE_META["user.volume"]?.title,
         icon: <Icon name={PAGE_META["user.volume"]?.iconName} />,
       },
@@ -71,7 +70,7 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "Service",
       // },
       {
-        key: "hub",
+        key: "user.hub",
         label: PAGE_META["user.hub"]?.title,
         icon: <Icon name={PAGE_META["user.hub"]?.iconName} />,
       },
@@ -81,7 +80,7 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
     title: "Setting",
     items: [
       {
-        key: "setting",
+        key: "user.setting",
         label: PAGE_META["user.setting"]?.title,
         icon: <Icon name={PAGE_META["user.setting"]?.iconName} />,
       },
@@ -94,27 +93,26 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
     title: "Menu",
     items: [
       {
-        key: "monitoring-root",
+        key: "admin.monitoring",
         label: PAGE_META["admin.monitoring"]?.title,
         icon: <Icon name={PAGE_META["admin.monitoring"]?.iconName} />,
         children: [
-          { key: "monitoring", label: PAGE_META["admin.monitoring"]?.title },
           {
-            key: "system-monitoring",
+            key: "admin.system-monitoring",
             label: PAGE_META["admin.system-monitoring"]?.title,
           },
           {
-            key: "cluster-monitoring",
+            key: "admin.cluster-monitoring",
             label: PAGE_META["admin.cluster-monitoring"]?.title,
           },
           {
-            key: "monitoring-notification",
+            key: "admin.monitoring-notification",
             label: PAGE_META["admin.monitoring-notification"]?.title,
           },
         ],
       },
       {
-        key: "node",
+        key: "admin.node",
         label: PAGE_META["admin.node"]?.title,
         icon: <Icon name={PAGE_META["admin.node"]?.iconName} />,
       },
@@ -129,11 +127,11 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         icon: <Icon name="SecurityCheck" />,
         children: [
           {
-            key: "registry-security",
+            key: "admin.registry-security",
             label: PAGE_META["admin.registry-security"]?.title,
           },
           {
-            key: "file-security",
+            key: "admin.file-security",
             label: PAGE_META["admin.file-security"]?.title,
           },
         ],
@@ -143,9 +141,12 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         label: PAGE_META["admin.workspace"]?.title,
         icon: <Icon name={PAGE_META["admin.workspace"]?.iconName} />,
         children: [
-          { key: "workspace", label: PAGE_META["admin.workspace"]?.title },
           {
-            key: "request-resource",
+            key: "admin.workspace",
+            label: PAGE_META["admin.workspace"]?.title,
+          },
+          {
+            key: "admin.request-resource",
             label: PAGE_META["admin.request-resource"]?.title,
           },
         ],
@@ -155,20 +156,23 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         label: PAGE_META["admin.registry"]?.title,
         icon: <Icon name={PAGE_META["admin.registry"]?.iconName} />,
         children: [
-          { key: "registry", label: PAGE_META["admin.registry"]?.title },
           {
-            key: "request-image",
+            key: "admin.registry",
+            label: PAGE_META["admin.registry"]?.title,
+          },
+          {
+            key: "admin.request-image",
             label: PAGE_META["admin.request-image"]?.title,
           },
           {
-            key: "private-registry",
+            key: "admin.private-registry",
             label: PAGE_META["admin.private-registry"]?.title,
           },
           // { key: "registry-public", label: "외부 레지스트리" },
         ],
       },
       {
-        key: "report",
+        key: "admin.report",
         label: PAGE_META["admin.report"]?.title,
         icon: <Icon name={PAGE_META["admin.report"]?.iconName} />,
       },
@@ -182,9 +186,9 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         label: PAGE_META["admin.setting"]?.title,
         icon: <Icon name={PAGE_META["admin.setting"]?.iconName} />,
         children: [
-          { key: "user", label: PAGE_META["admin.user"]?.title },
+          { key: "admin.user", label: PAGE_META["admin.user"]?.title },
           {
-            key: "notification",
+            key: "admin.notification",
             label: PAGE_META["admin.notification"]?.title,
           },
         ],
