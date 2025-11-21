@@ -4,9 +4,8 @@ import { usePathname } from "next/navigation";
 import styled from "styled-components";
 import { AstraGoNav, type AstraGoNavMenu, Icon } from "xiilab-ui";
 
-import { MONITORING_MENU_ICON } from "@/domain/monitoring/constants/monitoring.constant";
-import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
 import { WorkspaceSelect } from "@/shared/components/select/workspace-select";
+import { PAGE_META } from "@/shared/constants/page-meta";
 import { useActiveMenu } from "@/shared/hooks/use-active-menu";
 import { isAdminMode } from "@/shared/utils/router.util";
 import { Profile } from "./profile";
@@ -16,9 +15,9 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
     title: "Entire",
     items: [
       {
-        key: "dashboard",
-        label: "대시보드",
-        icon: <Icon name="Dashboard" />,
+        key: "user.monitoring",
+        label: PAGE_META["user.monitoring"]?.title,
+        icon: <Icon name={PAGE_META["user.monitoring"]?.iconName} />,
       },
       {
         type: "divider",
@@ -29,9 +28,9 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
     title: "WORK",
     items: [
       {
-        key: "workload",
-        label: "워크로드",
-        icon: <Icon name="Workload" />,
+        key: "user.workload",
+        label: PAGE_META["user.workload"]?.title,
+        icon: <Icon name={PAGE_META["user.workload"]?.iconName} />,
       },
       // {
       //   key: "compare",
@@ -39,9 +38,11 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "ComparativeExperiment",
       // },
       {
-        key: "private-registry-image",
-        label: "내부 레지스트리",
-        icon: <Icon name="Image" />,
+        key: "user.private-registry-image",
+        label: PAGE_META["user.private-registry-image"]?.title,
+        icon: (
+          <Icon name={PAGE_META["user.private-registry-image"]?.iconName} />
+        ),
       },
       // {
       //   key: "public-registry",
@@ -49,14 +50,14 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "PublicRegistry",
       // },
       {
-        key: "sourcecode",
-        label: "소스코드",
-        icon: <Icon name="SourceCode" />,
+        key: "user.sourcecode",
+        label: PAGE_META["user.sourcecode"]?.title,
+        icon: <Icon name={PAGE_META["user.sourcecode"]?.iconName} />,
       },
       {
-        key: "volume",
-        label: "볼륨",
-        icon: <Icon name="Volume" />,
+        key: "user.volume",
+        label: PAGE_META["user.volume"]?.title,
+        icon: <Icon name={PAGE_META["user.volume"]?.iconName} />,
       },
       // {
       //   key: "model",
@@ -69,9 +70,9 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "Service",
       // },
       {
-        key: "hub",
-        label: "허브",
-        icon: <Icon name="Hub" />,
+        key: "user.hub",
+        label: PAGE_META["user.hub"]?.title,
+        icon: <Icon name={PAGE_META["user.hub"]?.iconName} />,
       },
     ],
   },
@@ -79,9 +80,9 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
     title: "Setting",
     items: [
       {
-        key: "setting",
-        label: "설정",
-        icon: <Icon name="Setting01" />,
+        key: "user.setting",
+        label: PAGE_META["user.setting"]?.title,
+        icon: <Icon name={PAGE_META["user.setting"]?.iconName} />,
       },
     ],
   },
@@ -92,20 +93,34 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
     title: "Menu",
     items: [
       {
-        key: "monitoring-root",
-        label: "모니터링",
-        icon: <Icon name={MONITORING_MENU_ICON} />,
+        key: "admin.monitoring",
+        label: PAGE_META["admin.monitoring"]?.title,
+        icon: <Icon name={PAGE_META["admin.monitoring"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
-          { key: "monitoring", label: "모니터링 메인" },
-          { key: "system-monitoring", label: "시스템 모니터링" },
-          { key: "cluster-monitoring", label: "클러스터 모니터링" },
-          { key: "monitoring-notification", label: "모니터링 알림" },
+          {
+            key: "admin.system-monitoring",
+            label: PAGE_META["admin.system-monitoring"]?.title,
+          },
+          {
+            key: "admin.cluster-monitoring",
+            label: PAGE_META["admin.cluster-monitoring"]?.title,
+          },
+          {
+            key: "admin.monitoring-notification",
+            label: PAGE_META["admin.monitoring-notification"]?.title,
+          },
         ],
       },
       {
-        key: "node",
-        label: "노드 관리",
-        icon: <Icon name={NODE_MENU_ICON} />,
+        key: "admin.account-management",
+        label: PAGE_META["admin.account-management"]?.title,
+        icon: <Icon name={PAGE_META["admin.account-management"]?.iconName} />,
+      },
+      {
+        key: "admin.node",
+        label: PAGE_META["admin.node"]?.title,
+        icon: <Icon name={PAGE_META["admin.node"]?.iconName} />,
       },
       // {
       //   key: "schedule",
@@ -117,47 +132,86 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         label: "보안 관리",
         icon: <Icon name="SecurityCheck" />,
         children: [
-          { key: "registry-security", label: "레지스트리 보안" },
-          { key: "file-security", label: "파일 시스템 보안" },
+          {
+            key: "admin.registry-security",
+            label: PAGE_META["admin.registry-security"]?.title,
+          },
+          {
+            key: "admin.file-security",
+            label: PAGE_META["admin.file-security"]?.title,
+          },
         ],
       },
       {
-        key: "workspace-root",
-        label: "워크스페이스 관리",
-        icon: <Icon name="Workspace01" />,
+        key: "admin.workspace",
+        label: PAGE_META["admin.workspace"]?.title,
+        icon: <Icon name={PAGE_META["admin.workspace"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
-          { key: "workspace", label: "워크스페이스" },
-          { key: "request-resource", label: "리소스 신청 관리" },
+          {
+            key: "admin.workspace.request-resource",
+            label: PAGE_META["admin.workspace.request-resource"]?.title,
+          },
+          {
+            key: "admin.workspace.request-history",
+            label: PAGE_META["admin.workspace.request-history"]?.title,
+          },
         ],
       },
       {
-        key: "registry-root",
-        label: "레지스트리",
-        icon: <Icon name="Image" />,
+        key: "admin.registry",
+        label: PAGE_META["admin.registry"]?.title,
+        icon: <Icon name={PAGE_META["admin.registry"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
-          { key: "registry", label: "레지스트리 메인" },
-          { key: "request-image", label: "이미지 사용 요청 관리" },
-          { key: "private-registry", label: "내부 레지스트리" },
-          // { key: "registry-public", label: "외부 레지스트리" },
+          {
+            key: "admin.request-image",
+            label: PAGE_META["admin.request-image"]?.title,
+          },
+          {
+            key: "admin.private-registry",
+            label: PAGE_META["admin.private-registry"]?.title,
+          },
+          {
+            key: "admin.external-registry",
+            label: PAGE_META["admin.external-registry"]?.title,
+          },
         ],
       },
       {
-        key: "report",
-        label: "리포트",
-        icon: <Icon name="Information" />,
+        key: "admin.sourcecode-management",
+        label: PAGE_META["admin.sourcecode-management"]?.title,
+        icon: (
+          <Icon name={PAGE_META["admin.sourcecode-management"]?.iconName} />
+        ),
       },
-    ],
-  },
-  {
-    title: "Setting",
-    items: [
       {
-        key: "setting-root",
-        label: "설정",
-        icon: <Icon name="Setting01" />,
+        key: "admin.volume-management",
+        label: PAGE_META["admin.volume-management"]?.title,
+        icon: <Icon name={PAGE_META["admin.volume-management"]?.iconName} />,
+      },
+      {
+        key: "admin.report",
+        label: PAGE_META["admin.report"]?.title,
+        icon: <Icon name={PAGE_META["admin.report"]?.iconName} />,
+        navigateToSelfOnOpen: true,
         children: [
-          { key: "user", label: "계정 관리" },
-          { key: "notification", label: "알림 관리" },
+          {
+            key: "admin.report-reservation",
+            label: PAGE_META["admin.report-reservation"]?.title,
+          },
+        ],
+      },
+      {
+        key: "admin.setting",
+        label: PAGE_META["admin.setting"]?.title,
+        icon: <Icon name={PAGE_META["admin.setting"]?.iconName} />,
+        navigateToSelfOnOpen: true,
+        children: [
+          {
+            key: "admin.notification",
+            label: PAGE_META["admin.notification"]?.title,
+          },
         ],
       },
     ],

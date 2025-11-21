@@ -8,8 +8,8 @@ export const MyGlobalStyle = createGlobalStyle`
 }
 
 :root {
-  --dashboard-main-section-height: 448px;
-  --dashboard-main-section-margin-bottom: 20px;
+  --user-monitoring-main-section-height: 448px;
+  --user-monitoring-main-section-margin-bottom: 20px;
   --page-title-height: 70px;
   --page-margin-bottom: 50px;
   --navigation-width: 220px;

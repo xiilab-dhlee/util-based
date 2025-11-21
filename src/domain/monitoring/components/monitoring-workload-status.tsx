@@ -5,13 +5,13 @@ import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.sche
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
-interface DashboardWorkloadStatusProps {
+interface UserMonitoringWorkloadStatusProps {
   status: WorkloadStatusType;
   total: number;
 }
 
 /**
- * DashboardWorkloadStatus 컴포넌트
+ * UserMonitoringWorkloadStatus 컴포넌트
  *
  * 대시보드에서 워크로드 상태별 통계를 표시하는 컴포넌트입니다.
  * 각 상태별로 색상과 아이콘이 다르게 표시되며, 총 개수와 증감률을 보여줍니다.
@@ -22,7 +22,7 @@ interface DashboardWorkloadStatusProps {
 export function MonitoringWorkloadStatus({
   status,
   total,
-}: DashboardWorkloadStatusProps) {
+}: UserMonitoringWorkloadStatusProps) {
   // 상태에 따른 텍스트와 아이콘 정보 가져오기
   const { label, icon } = getWorkloadStatusInfo(status);
 

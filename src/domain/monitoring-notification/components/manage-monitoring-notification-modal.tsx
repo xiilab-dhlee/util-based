@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Checkbox, Icon, Input, Modal, Typography } from "xiilab-ui";
 
-import { useUpsertMonitoringNotification } from "@/domain/monitoring/hooks/use-upsert-monitoring-notification";
+import { useUpsertMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-upsert-monitoring-notification";
 import type {
   MonitoringNotificationListType,
   MonitoringNotificationSettingType,
@@ -13,8 +13,8 @@ import { openManageMonitoringNotificationModalAtom } from "@/domain/monitoring-n
 import type { UpsertMonitoringNotificationPayload } from "@/domain/monitoring-notification/types/monitoring-notification.type";
 import { FormLabel } from "@/shared/components/form/form-label";
 import {
+  ACCOUNT_EVENTS,
   MONITORING_EVENTS,
-  USER_EVENTS,
 } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -53,7 +53,7 @@ export function ManageMonitoringNotificationModal() {
     if (payload) {
       upsertNotification.mutate(payload, {
         onSuccess: () => {
-          publish(USER_EVENTS.sendUpdateUser, payload);
+          publish(ACCOUNT_EVENTS.sendUpdateAccount, payload);
           onClose();
         },
       });

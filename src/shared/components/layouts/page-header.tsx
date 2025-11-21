@@ -6,8 +6,8 @@ import { Breadcrumb, Icon } from "xiilab-ui";
 
 import { BreadcrumbItems } from "@/shared/components/breadcrumb/breadcrumb-items";
 import {
-  type BreadcrumbItemMeta,
   PAGE_META,
+  type PageItemMeta,
   type PageKey,
 } from "@/shared/constants/page-meta";
 import { getBackPathname } from "@/shared/utils/router.util";
@@ -31,9 +31,9 @@ export function PageHeader({
   const router = useRouter();
 
   // 1) 메타 정보 (title, iconName)를 PAGE_META에서 읽기
-  const pageMeta = PAGE_META[pageKey] as BreadcrumbItemMeta;
-  const title = pageMeta.title;
-  const iconName = pageMeta.iconName;
+  const pageMeta = PAGE_META[pageKey] as PageItemMeta;
+  const title = pageMeta?.title;
+  const iconName = pageMeta?.iconName;
 
   // 2) breadcrumb 생성
   const breadcrumbItems = BreadcrumbItems(pageKey, pageParams);

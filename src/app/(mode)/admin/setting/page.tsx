@@ -1,4 +1,9 @@
-// 관리자 설정 페이지
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Setting",
+};
+
 export default function AdminSettingPage() {
-  return null;
+  return <div>AdminSettingPage</div>;
 }

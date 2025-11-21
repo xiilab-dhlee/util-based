@@ -36,6 +36,11 @@ export const ROUTES = {
   ADMIN_NODE_LOG: (name: string) => `${MODE.ADMIN}/node/${name}/log`,
   ADMIN_NODE_REDFISH: (name: string) => `${MODE.ADMIN}/node/${name}/redfish`,
 
+  // 계정 관리 (정적)
+  ADMIN_ACCOUNT_MANAGEMENT: `${MODE.ADMIN}/account-management`,
+  ADMIN_ACCOUNT_MANAGEMENT_PENDING: `${MODE.ADMIN}/account-management/pending`,
+  ADMIN_ACCOUNT_MANAGEMENT_GROUP: `${MODE.ADMIN}/account-management/group`,
+
   // 보안 관리 (정적)
   ADMIN_REGISTRY_SECURITY: `${MODE.ADMIN}/registry-security`,
   ADMIN_FILE_SECURITY: `${MODE.ADMIN}/file-security`,
@@ -45,7 +50,6 @@ export const ROUTES = {
   ADMIN_WORKSPACE_DETAIL: (id: string) => `${MODE.ADMIN}/workspace/${id}`,
   ADMIN_WORKSPACE_MEMBER: (id: string) =>
     `${MODE.ADMIN}/workspace/${id}/member`,
-  ADMIN_WORKSPACE_REQUEST_RESOURCE: `${MODE.ADMIN}/workspace/request-resource`,
   ADMIN_WORKSPACE_WORKLOAD_DETAIL: (id: string) =>
     `${MODE.ADMIN}/workspace/workload/${id}`,
   ADMIN_WORKSPACE_WORKLOAD_LOG: (id: string) =>
@@ -59,29 +63,36 @@ export const ROUTES = {
   ADMIN_WORKSPACE_WORKLOAD_TERMINAL: (id: string) =>
     `${MODE.ADMIN}/workspace/workload/${id}/terminal`,
 
+  ADMIN_REQUEST_RESOURCE: `${MODE.ADMIN}/request-resource`,
+  ADMIN_REQUEST_RESOURCE_HISTORY: `${MODE.ADMIN}/request-history`,
+
   // 레지스트리 (동적 함수 - 복수 파라미터)
   ADMIN_REGISTRY: `${MODE.ADMIN}/registry`,
   ADMIN_PRIVATE_REGISTRY: `${MODE.ADMIN}/private-registry`,
   ADMIN_PRIVATE_REGISTRY_IMAGE: (name: string, id: string) =>
     `${MODE.ADMIN}/private-registry/${name}/image/${id}`,
+  ADMIN_EXTERNAL_REGISTRY: `${MODE.ADMIN}/external-registry`,
   ADMIN_REQUEST_IMAGE: `${MODE.ADMIN}/request-image`,
 
-  // 기타 (정적)
+  // 소스코드 관리 (정적)
+  ADMIN_SOURCECODE_MANAGEMENT: `${MODE.ADMIN}/sourcecode-management`,
+
+  // 볼륨 관리 (정적)
+  ADMIN_VOLUME_MANAGEMENT: `${MODE.ADMIN}/volume-management`,
+
+  // 리포트 관리 (정적)
   ADMIN_REPORT: `${MODE.ADMIN}/report`,
-  ADMIN_REQUEST_RESOURCE: `${MODE.ADMIN}/request-resource`,
-  ADMIN_NOTIFICATION: `${MODE.ADMIN}/notification`,
+  ADMIN_REPORT_RESERVATION: `${MODE.ADMIN}/report-reservation`,
 
   // 설정 (정적)
   ADMIN_SETTING: `${MODE.ADMIN}/setting`,
-  ADMIN_USER: `${MODE.ADMIN}/user`,
-  ADMIN_USER_PENDING: `${MODE.ADMIN}/user/pending`,
-  ADMIN_USER_GROUP: `${MODE.ADMIN}/user/group`,
+  ADMIN_NOTIFICATION: `${MODE.ADMIN}/notification`,
 
   // ============================================
   // User Routes
   // ============================================
 
-  USER_DASHBOARD: `${MODE.USER}/dashboard`,
+  USER_MONITORING: `${MODE.USER}/monitoring`,
 
   // 워크로드 (동적 함수)
   USER_WORKLOAD: `${MODE.USER}/workload`,

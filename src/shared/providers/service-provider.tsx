@@ -3,10 +3,11 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
+import { AccountService } from "@/domain/account-management/api/account.service";
 import { CredentialService } from "@/domain/credential/api/credential.service";
 import { GroupService } from "@/domain/group/api/group.service";
 import { HubService } from "@/domain/hub/api/hub.service";
-import { MonitoringService } from "@/domain/monitoring/api/monitoring.service";
+import { MonitoringService } from "@/domain/monitoring-notification/api/monitoring.service";
 import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
@@ -17,7 +18,6 @@ import { PrivateRegistryImageService } from "@/domain/private-registry-image/api
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
-import { UserService } from "@/domain/user/api/user.service";
 import { VolumeService } from "@/domain/volume/api/volume.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
@@ -32,7 +32,7 @@ interface ServiceContextType {
   volumeService: VolumeService;
   storageService: StorageService;
   hubService: HubService;
-  userService: UserService;
+  accountService: AccountService;
   groupService: GroupService;
   notificationService: NotificationService;
   monitoringService: MonitoringService;
@@ -71,7 +71,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     volumeService: new VolumeService(),
     storageService: new StorageService(),
     hubService: new HubService(),
-    userService: new UserService(),
+    accountService: new AccountService(),
     groupService: new GroupService(),
     notificationService: new NotificationService(),
     monitoringService: new MonitoringService(),

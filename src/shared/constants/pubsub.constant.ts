@@ -58,13 +58,13 @@ export const GROUP_EVENTS = {
 } as const;
 
 // 사용자 관련 이벤트
-export const USER_EVENTS = {
+export const ACCOUNT_EVENTS = {
   // 사용자 정보 수정에 필요한 정보 전달 이벤트
-  sendUpdateUser: "user:send-update-user",
+  sendUpdateAccount: "account:send-update-account",
   // 사용자 삭제에 필요한 정보 전달 이벤트
-  sendDeleteUser: "user:send-delete-user",
+  sendDeleteAccount: "account:send-delete-account",
   // 승인 대기 사용자 삭제에 필요한 정보 전달 이벤트
-  sendDeleteUserPending: "user:send-delete-user-pending",
+  sendDeleteAccountPending: "account:send-delete-account-pending",
 } as const;
 
 // 노드 관련 이벤트
