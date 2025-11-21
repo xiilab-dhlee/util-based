@@ -1,4 +1,4 @@
-import type { RedfishPowerType } from "@/domain/node/types/redfish.interface";
+import type { RedfishPowerType } from "@/domain/node/types/redfish.type";
 import { AxiosService } from "@/shared/api/axios";
 
 export class RedfishService extends AxiosService {

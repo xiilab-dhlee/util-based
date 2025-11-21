@@ -1,4 +1,4 @@
-import { mpsInfoSchema } from "@/domain/monitoring/schemas/mps.schema";
+import { mpsInfoSchema } from "@/domain/node/schemas/mps.schema";
 import { makeMock } from "@/shared/utils/mock.util";
 
 /**

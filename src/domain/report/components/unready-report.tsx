@@ -3,8 +3,8 @@
 import { Button, Icon } from "xiilab-ui";
 
 import { openCreateReportModalAtom } from "@/domain/report/state/report.atom";
+import { SearchNoResult } from "@/shared/components/layouts/search-no-result";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { SearchNoResult } from "@/shared/layouts/common/search-no-result";
 import {
   DetailContentHeader,
   DetailContentTitle,

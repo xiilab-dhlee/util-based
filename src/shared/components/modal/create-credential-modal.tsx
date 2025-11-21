@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Dropdown, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
-import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential-list.constant";
+import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential.constant";
 import { useCreateCredential } from "@/domain/credential/hooks/use-create-credential";
 import type {
   CreateCredentialPayload,

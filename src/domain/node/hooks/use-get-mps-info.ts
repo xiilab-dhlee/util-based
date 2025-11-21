@@ -1,8 +1,8 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import type { MpsInfoType } from "@/domain/monitoring/schemas/mps.schema";
 import { nodeKeys } from "@/domain/node/constants/node.key";
+import type { MpsInfoType } from "@/domain/node/schemas/mps.schema";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**

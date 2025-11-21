@@ -4,8 +4,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { DateRange, Typography } from "xiilab-ui";
 
-import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring/constants/monitoring-notification.constant";
 import { useGetMonitoringNotifications } from "@/domain/monitoring/hooks/use-get-monitoring-notifications";
+import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { createMonitoringNotificationColumn } from "@/shared/components/column/create-monitoring-notification-column";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";

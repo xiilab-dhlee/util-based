@@ -1,7 +1,7 @@
 import type {
   CreateBmcPayload,
   UpdateBmcPayload,
-} from "@/domain/node/types/redfish.interface";
+} from "@/domain/node/types/redfish.type";
 import { AxiosService } from "@/shared/api/axios";
 
 export class RedfishBmcService extends AxiosService {

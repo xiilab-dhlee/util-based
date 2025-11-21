@@ -5,9 +5,9 @@ import { toast } from "react-toastify";
 import { Button, Icon } from "xiilab-ui";
 
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
+import { SearchNoResult } from "@/shared/components/layouts/search-no-result";
 import { REDFISH_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { SearchNoResult } from "@/shared/layouts/common/search-no-result";
 
 /**
  * Redfish 미연동 상태를 표시하는 컴포넌트

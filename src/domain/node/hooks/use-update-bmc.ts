@@ -1,6 +1,6 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
-import type { UpdateBmcPayload } from "@/domain/node/types/redfish.interface";
+import type { UpdateBmcPayload } from "@/domain/node/types/redfish.type";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**

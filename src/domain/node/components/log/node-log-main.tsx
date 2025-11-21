@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 
+import { ManageBmcModal } from "@/domain/node/components/manage-bmc-modal";
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
-import { ManageBmcModal } from "@/shared/components/modal/manage-bmc-modal";
 import { NodeLogBody } from "./node-log-body";
 
 /**

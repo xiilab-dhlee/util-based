@@ -9,7 +9,7 @@ import { openManageBmcModalAtom } from "@/domain/node/state/node.atom";
 import type {
   CreateBmcPayload,
   UpdateBmcPayload,
-} from "@/domain/node/types/redfish.interface";
+} from "@/domain/node/types/redfish.type";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { REDFISH_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
