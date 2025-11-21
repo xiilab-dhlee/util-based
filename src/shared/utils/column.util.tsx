@@ -2,6 +2,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { commonColumns } from "@/shared/components/column";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
+import { ColumnTruncateText } from "@/styles/layers/column-layer.styled";
 
 /**
  * 컬럼 배열에 설정 적용
@@ -48,13 +49,33 @@ export function applyColumnConfigs(
       }
 
       // 오버라이드 적용
-      return {
+      const mergedColumn = {
         ...column,
-        ...(config.title !== undefined && { title: config.title }),
-        ...(config.width !== undefined && { width: config.width }),
-        ...(config.hidden !== undefined && { hidden: config.hidden }),
-        ...(config.align !== undefined && { align: config.align }),
+        ...config,
       };
+
+      // ellipsis가 true이고 width가 설정되어 있으면 render 함수를 래핑하여 ColumnTruncateText 적용
+      if (mergedColumn.ellipsis && mergedColumn.width) {
+        const originalRender = mergedColumn.render;
+        const width =
+          typeof mergedColumn.width === "number"
+            ? mergedColumn.width
+            : Number.parseInt(String(mergedColumn.width), 10);
+
+        if (!Number.isNaN(width)) {
+          // biome-ignore lint/suspicious/noExplicitAny: Generic handler
+          mergedColumn.render = (value: any, record: any, index: number) => {
+            const content = originalRender
+              ? originalRender(value, record, index)
+              : value;
+            return (
+              <ColumnTruncateText width={width}>{content}</ColumnTruncateText>
+            );
+          };
+        }
+      }
+
+      return mergedColumn;
     })
     .filter((column): column is ResponsiveColumnType => column !== null);
 }

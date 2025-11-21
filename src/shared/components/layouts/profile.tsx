@@ -39,37 +39,37 @@ export function Profile() {
   return (
     <Container>
       <Left>
-        <User>
-          <Popover
-            placement="right"
-            content={<ProfilePopover userName={userName} email={email} />}
-            trigger="click"
-            arrow={false}
-            open={open}
-            onOpenChange={handlePopoverOpenChange}
-            styles={{
-              root: {
-                left: "210px",
-                top: "calc(100% - 710px)",
-                zIndex: 10000,
-                borderRadius: 4,
-              },
-              body: {
-                padding: 0,
-              },
-            }}
-          >
+        <Popover
+          placement="right"
+          content={<ProfilePopover userName={userName} email={email} />}
+          trigger="click"
+          arrow={false}
+          open={open}
+          onOpenChange={handlePopoverOpenChange}
+          styles={{
+            root: {
+              left: "210px",
+              top: "calc(100% - 710px)",
+              zIndex: 10000,
+              borderRadius: 4,
+            },
+            body: {
+              padding: 0,
+            },
+          }}
+        >
+          <User>
             <Avatar>
               <IconWrapper>
                 <AstragoIcon />
               </IconWrapper>
             </Avatar>
-          </Popover>
-          <UserBody>
-            <UserName className="truncate">{userName}</UserName>
-            <UserEmail className="truncate">{email}</UserEmail>
-          </UserBody>
-        </User>
+            <UserBody>
+              <UserName className="truncate">{userName}</UserName>
+              <UserEmail className="truncate">{email}</UserEmail>
+            </UserBody>
+          </User>
+        </Popover>
       </Left>
       <Right>
         <ActiveOutsideClick onClick={handleCloseDropdown}>
@@ -98,6 +98,7 @@ const Container = styled.div`
   height: 50px;
   background-color: #171b26;
   border: 1px solid #2b3246;
+  overflow: hidden;
 `;
 
 const Left = styled.div`
@@ -107,7 +108,7 @@ const Left = styled.div`
   overflow: hidden;
 `;
 
-const User = styled.div`
+const User = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -119,7 +120,7 @@ const User = styled.div`
   overflow: hidden;
 `;
 
-const Avatar = styled.button`
+const Avatar = styled.div`
   position: relative;
 
   &:after {
@@ -168,6 +169,7 @@ const UserEmail = styled.span`
   height: 12px;
   font-weight: 200;
   color: #cfcfcf;
+  text-align: left;
 `;
 
 const UserName = styled.span`
@@ -176,6 +178,7 @@ const UserName = styled.span`
   height: 14px;
   font-weight: 400;
   color: #fff;
+  text-align: left;
 `;
 
 const Right = styled.div`

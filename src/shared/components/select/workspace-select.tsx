@@ -134,7 +134,7 @@ export function WorkspaceSelect() {
   );
 }
 
-const Container = styled.button`
+const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -146,7 +146,7 @@ const Container = styled.button`
   padding: 5px;
 `;
 
-const ActiveOption = styled.div`
+const ActiveOption = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;

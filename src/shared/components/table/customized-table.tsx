@@ -157,11 +157,6 @@ export function CustomizedTable<
     };
   }
 
-  // 클라이언트 사이드가 아닌 경우 로딩 상태 표시
-  // if (!isClient) {
-  //   return null;
-  // }
-
   return (
     <ConfigProvider theme={theme}>
       <StyledTable
@@ -341,17 +336,7 @@ export const StyledTable = styled(Table)<{
   activePadding: boolean;
 }>`
   width: 100%;
-  // ... 처리 (임시)
-  // & .ant-table-tbody > tr > td {
-  //   white-space: nowrap;
-  //   overflow: hidden;
-  //   text-overflow: ellipsis;
-  //   max-width: 150px;
-  // }
-  // 테이블 스크롤 설정
-  /* & .ant-table {
-    overflow: auto;
-  } */
+
   & .ant-table-body {
     overflow: auto !important;
 
@@ -362,10 +347,6 @@ export const StyledTable = styled(Table)<{
     display: flex;
     flex-direction: column;
   }
-  // 테이블 행 호버 시 배경색 변경 (임시)
-  // .ant-table-cell-row-hover {
-  //   background-color: #f3f3f7 !important;
-  // }
 
   ${({ $columnHeight, $headerHeight }) =>
     fitHeight($columnHeight, $headerHeight)}

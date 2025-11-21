@@ -29,24 +29,37 @@ export function SettingMemberListBody() {
       <CustomizedTable
         columns={createWorkspaceMemberColumn([
           {
+            key: "name",
             dataIndex: "name",
             title: "이름",
+            width: 50,
+            ellipsis: true,
           },
           {
             dataIndex: "email",
             title: "이메일",
+            width: 120,
+            ellipsis: true,
           },
           {
             dataIndex: "group",
             title: "그룹",
+            width: 90,
+            ellipsis: true,
           },
           {
             dataIndex: "role",
             title: "권한",
+            width: 100,
           },
           {
             dataIndex: "update",
             title: "권한 수정",
+            width: 60,
+          },
+          {
+            dataIndex: "delete",
+            title: "삭제",
           },
         ])}
         data={data?.content || []}

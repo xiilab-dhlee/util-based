@@ -36,7 +36,7 @@ export function WorkloadListBody() {
       <CustomizedTable
         columns={createWorkloadColumn([
           { dataIndex: "isPinned" },
-          { dataIndex: "workloadName" },
+          { dataIndex: "workloadName", width: 50, ellipsis: true },
           { dataIndex: "jobType" },
           { dataIndex: "creatorName" },
           { dataIndex: "elapsedTime" },

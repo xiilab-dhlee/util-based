@@ -13,10 +13,12 @@ export default function ModeLayout({ children }: PropsWithChildren) {
   return (
     <>
       <Container>
-        <Navigation />
-        <Page>
+        <Left>
+          <Navigation />
+        </Left>
+        <Right>
           <Main>{children}</Main>
-        </Page>
+        </Right>
       </Container>
       {/* 워크스페이스 생성 모달 */}
       <CreateWorkspaceModal />
@@ -34,11 +36,20 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   display: flex;
+  justify-content: flex-start;
+  align-items: center;
   overflow: hidden;
 `;
 
-const Page = styled.div`
+const Left = styled.div`
+  width: var(--navigation-width);
+  height: 100%;
+`;
+
+const Right = styled.div`
   flex: 1;
+  min-width: calc(1920px - var(--navigation-width));
+  height: 100%;
   padding: 0 40px;
   overflow-y: auto;
 `;

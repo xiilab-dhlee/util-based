@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import { DeleteWorkspaceMemberButton } from "@/domain/workspace-member/components/delete-workspace-member-button";
 import { UpdateWorkspaceMemberButton } from "@/domain/workspace-member/components/update-workspace-member-button";
 import { WorkspaceMemberAllCheck } from "@/domain/workspace-member/components/workspace-member-all-check";
 import { WorkspaceMemberItemCheck } from "@/domain/workspace-member/components/workspace-member-item-check";
@@ -89,6 +90,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 50,
       render: (_, workspaceMember: WorkspaceMemberListType) => {
         return <UpdateWorkspaceMemberButton {...workspaceMember} />;
+      },
+    },
+    {
+      title: "삭제",
+      dataIndex: "delete",
+      width: 50,
+      render: (_, workspaceMember: WorkspaceMemberListType) => {
+        return <DeleteWorkspaceMemberButton {...workspaceMember} />;
       },
     },
   ];

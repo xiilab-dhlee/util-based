@@ -12,6 +12,7 @@ export const MyGlobalStyle = createGlobalStyle`
   --dashboard-main-section-margin-bottom: 20px;
   --page-title-height: 70px;
   --page-margin-bottom: 50px;
+  --navigation-width: 220px;
   
   --gpu-usage-color: #8a5ef3;
   --gpu-request-color: #ded0ff;
