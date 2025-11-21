@@ -46,10 +46,10 @@ export function SettingMainSection() {
 }
 
 const Container = styled.section`
-  height: var(--dashboard-main-section-height);
+  height: var(--user-monitoring-main-section-height);
   display: flex;
   justify-content: space-between;
-  margin-bottom: var(--dashboard-main-section-margin-bottom);
+  margin-bottom: var(--user-monitoring-main-section-margin-bottom);
   gap: 16px;
   
 `;

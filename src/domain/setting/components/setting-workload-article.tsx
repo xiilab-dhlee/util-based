@@ -5,20 +5,22 @@ import { ResourceProgressCard } from "@/shared/components/card/resource-progress
 import { CountByWorkloadStatus } from "@/shared/components/layouts/count-by-workload-status";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
-  DashboardCategoryTitle,
-  DashboardSectionDescription,
-  DashboardSectionHeader,
-} from "@/styles/layers/dashboard-layers.styled";
+  UserMonitoringCategoryTitle,
+  UserMonitoringSectionDescription,
+  UserMonitoringSectionHeader,
+} from "@/styles/layers/user-monitoring-layers.styled";
 
 export function SettingWorkloadArticle() {
   return (
     <Container>
       <Workload>
         <RightSectionHeader>
-          <DashboardCategoryTitle>워크로드 정보</DashboardCategoryTitle>
-          <DashboardSectionDescription>
+          <UserMonitoringCategoryTitle>
+            워크로드 정보
+          </UserMonitoringCategoryTitle>
+          <UserMonitoringSectionDescription>
             생성한 워크로드 정보를 확인할 수 있습니다.
-          </DashboardSectionDescription>
+          </UserMonitoringSectionDescription>
         </RightSectionHeader>
         {/* 워크로드 정보 영역 */}
         <WorkloadStatusWrapper>
@@ -34,10 +36,12 @@ export function SettingWorkloadArticle() {
       </Workload>
       <Resource>
         <RightSectionHeader>
-          <DashboardCategoryTitle>사용 자원 정보</DashboardCategoryTitle>
-          <DashboardSectionDescription>
+          <UserMonitoringCategoryTitle>
+            사용 자원 정보
+          </UserMonitoringCategoryTitle>
+          <UserMonitoringSectionDescription>
             워크로드 생성시 사용중인 자원 정보를 확인할 수 있습니다.
-          </DashboardSectionDescription>
+          </UserMonitoringSectionDescription>
         </RightSectionHeader>
         <WorkloadResourceWrapper>
           {["GPU", "CPU", "MEM"].map((v) => (
@@ -94,7 +98,7 @@ const WorkloadStatusWrapper = styled.div`
   border-top-width: 0;
 `;
 
-const RightSectionHeader = styled(DashboardSectionHeader)`
+const RightSectionHeader = styled(UserMonitoringSectionHeader)`
   margin-bottom: 12px;
 `;
 

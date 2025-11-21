@@ -1,17 +1,13 @@
 import styled from "styled-components";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
-import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
-  UserMonitoringCategoryTitle,
   UserMonitoringSectionDescription,
   UserMonitoringSectionHeader,
   UserMonitoringSectionTitle,
 } from "@/styles/layers/user-monitoring-layers.styled";
 import { UserMonitoringResourceArticle } from "./user-monitoring-resource-article";
-import { UserMonitoringResourceCard } from "./user-monitoring-resource-card";
 import { UserMonitoringResourceRecoveryArticle } from "./user-monitoring-resource-recovery-article";
-import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status";
+import { UserMonitoringWorkloadArticle } from "./user-monitoring-workload-article";
 
 export function UserMonitoringMainSection() {
   return (
@@ -33,47 +29,7 @@ export function UserMonitoringMainSection() {
         </LeftBody>
       </Left>
       <Right>
-        <RightItem>
-          <RightSectionHeader>
-            <UserMonitoringCategoryTitle>
-              워크로드 정보
-            </UserMonitoringCategoryTitle>
-            <UserMonitoringSectionDescription>
-              생성한 워크로드 정보를 확인할 수 있습니다.
-            </UserMonitoringSectionDescription>
-          </RightSectionHeader>
-          {/* 워크로드 정보 영역 */}
-          <WorkloadStatusWrapper>
-            {["ALL", "RUNNING", "COMPLETED", "PENDING", "FAILED"].map(
-              (status) => (
-                <UserMonitoringWorkloadStatus
-                  key={status}
-                  status={status as WorkloadStatusType}
-                />
-              ),
-            )}
-          </WorkloadStatusWrapper>
-        </RightItem>
-        <RightItem>
-          <RightSectionHeader>
-            <UserMonitoringCategoryTitle>
-              사용 자원 정보
-            </UserMonitoringCategoryTitle>
-            <UserMonitoringSectionDescription>
-              워크로드 생성시 사용중인 자원 정보를 확인할 수 있습니다.
-            </UserMonitoringSectionDescription>
-          </RightSectionHeader>
-          <WorkloadResourceWrapper>
-            {["GPU", "CPU", "MEM"].map((v) => (
-              <UserMonitoringResourceCard
-                key={v}
-                resourceType={v as CoreResourceType}
-                total={20}
-                count={10}
-              />
-            ))}
-          </WorkloadResourceWrapper>
-        </RightItem>
+        <UserMonitoringWorkloadArticle />
       </Right>
     </Container>
   );
@@ -118,29 +74,4 @@ const LeftBody = styled.div`
   justify-content: flex-start;
   align-items: center;
   position: relative;
-`;
-
-const RightItem = styled.div`
-  position: relative;
-`;
-
-const WorkloadStatusWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-
-  height: 124px;
-  border: 1px solid var(--primary-border-color);
-  border-top-width: 0;
-`;
-
-const RightSectionHeader = styled(UserMonitoringSectionHeader)`
-  margin-bottom: 16px;
-`;
-
-const WorkloadResourceWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  flex: 1;
-  gap: 8px;
-  height: 104px;
 `;

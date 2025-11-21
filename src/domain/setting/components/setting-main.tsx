@@ -19,7 +19,7 @@ export function SettingMain() {
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
-      <PageHeader title="설정" icon="Setting01" description="Setting" />
+      <PageHeader pageKey="admin.setting" description="Setting" />
       <SettingMainSection />
       <SettingSubSection />
       {/* 워크스페이스 수정 모달 */}

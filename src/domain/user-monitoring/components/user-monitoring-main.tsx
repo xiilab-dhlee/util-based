@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader } from "@/shared/layouts/common/page-header";
+import { PageHeader } from "@/shared/components/layouts/page-header";
 import { UserMonitoringMainSection } from "./user-monitoring-main-section";
 import { UserMonitoringSubSection } from "./user-monitoring-sub-section";
 

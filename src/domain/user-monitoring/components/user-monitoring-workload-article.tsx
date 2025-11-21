@@ -10,7 +10,7 @@ import {
 import { UserMonitoringResourceCard } from "./user-monitoring-resource-card";
 import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status";
 
-export function DashboardWorkloadArticle() {
+export function UserMonitoringWorkloadArticle() {
   return (
     <Container>
       <Workload>
