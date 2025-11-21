@@ -1,44 +1,41 @@
 "use client";
 
+import { format } from "date-fns";
 import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
-import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
+import type { RequestImageListType } from "@/domain/request-image/schemas/request-image.schema";
 import { CompactCardCollapseRow } from "@/shared/components/card/compact-card-collapse-row";
 import {
   CompactCardKey,
   CompactCardKeyValueRow,
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
-import { EventStatusText } from "@/shared/components/text/event-status-text";
 
-interface WorkloadEventCardProps extends Omit<WorkloadEventType, "id"> {}
-// 이벤트 이력 카드 컴포넌트
-export function WorkloadEventCard({
-  name,
-  elapsedTime,
-  from,
-  message,
-  status,
-}: WorkloadEventCardProps) {
+interface PendingRequestImageCardProps extends RequestImageListType {}
+
+export function PendingRequestImageCard({
+  imageName,
+  requestReason,
+  creatorName,
+  creatorDate,
+}: PendingRequestImageCardProps) {
   return (
-    <StyledCard
-      contentVariant="compact"
-      actionElement={<EventStatusText status={status} />}
-      title={name}
-    >
+    <StyledCard contentVariant="compact" title={imageName}>
       <Body>
         <CompactCardKeyValueRow>
-          <Key>경과 시간</Key>
-          <CompactCardValue>{elapsedTime}</CompactCardValue>
+          <Key>요 청 자</Key>
+          <CompactCardValue>{creatorName}</CompactCardValue>
         </CompactCardKeyValueRow>
         <CompactCardKeyValueRow>
-          <Key>From</Key>
-          <CompactCardValue>{from}</CompactCardValue>
+          <Key>요청일시</Key>
+          <CompactCardValue>
+            {format(creatorDate, "yyyy.MM.dd HH:mm:ss")}
+          </CompactCardValue>
         </CompactCardKeyValueRow>
       </Body>
       <Footer>
-        <CompactCardCollapseRow title="메 세 지" description={message} />
+        <CompactCardCollapseRow title="요청사유" description={requestReason} />
       </Footer>
     </StyledCard>
   );
@@ -47,9 +44,9 @@ export function WorkloadEventCard({
 const StyledCard = styled(Card)`  
   & + & {
     margin-top: 8px;
+
   }
 `;
-
 const Body = styled.div`
   display: flex;
   flex-direction: column;

@@ -13,7 +13,7 @@ export const hideScrollbar = css`
 export const customScrollbar = (thumbColor = "#DDDDDD") => css`
   &::-webkit-scrollbar {
     background: transparent;
-    width: 8px;
+    width: 4px;
   }
   &::-webkit-scrollbar-thumb {
     background: ${thumbColor};

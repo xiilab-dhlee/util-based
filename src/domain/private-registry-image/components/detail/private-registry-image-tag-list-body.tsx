@@ -40,19 +40,20 @@ export function PrivateRegistryImageTagListBody() {
           { dataIndex: "checkbox" },
           { dataIndex: "tag" },
           { dataIndex: "imageSize" },
+          { dataIndex: "uploadStatus" },
           { dataIndex: "scanStatus" },
-          { dataIndex: "critical" },
-          { dataIndex: "high" },
-          { dataIndex: "medium" },
-          { dataIndex: "low" },
-          { dataIndex: "creator" },
+          { dataIndex: "securityResult" },
+          { dataIndex: "creatorName" },
           { dataIndex: "creatorDate" },
           { dataIndex: "lastCheckedAt" },
+          { dataIndex: "status" },
           { dataIndex: "available" },
-          { dataIndex: "detail" },
+          { dataIndex: "requestReason" },
+          { dataIndex: "rejectReason" },
         ])}
         activePadding
         data={data?.content || []}
+        columnHeight={38}
       />
     </ListWrapper>
   );

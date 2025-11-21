@@ -9,7 +9,7 @@ const basePrivateRegistryImageSchema = z.object({
   /** 이미지 이름 */
   name: z.string().min(1),
   /** 이미지 설명 */
-  description: z.string(),
+  description: z.string().nullable(),
   /** 태그 개수 */
   tagCnt: z.number().int().min(0),
   /** Pull(다운로드) 횟수 */
@@ -35,6 +35,7 @@ type PrivateRegistryImage = z.infer<typeof basePrivateRegistryImageSchema>;
 export type PrivateRegistryImageListType = z.infer<
   typeof privateRegistryImageListSchema
 >;
+export type PrivateRegistryImageIdType = PrivateRegistryImageListType["id"];
 export type PrivateRegistryImageDetailType = z.infer<
   typeof privateRegistryImageDetailSchema
 >;

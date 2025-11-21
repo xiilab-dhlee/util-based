@@ -47,6 +47,22 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "이미지 크기",
       dataIndex: "imageSize",
       align: "center",
+      render: (imageSize: number) => {
+        return <span>{imageSize}MB</span>;
+      },
+    },
+    {
+      title: "업로드 상태",
+      dataIndex: "uploadStatus",
+      align: "center",
+      width: 90,
+      render: () => {
+        return (
+          <ColumnAlignCenterWrap>
+            <Label variant="blue">완료</Label>
+          </ColumnAlignCenterWrap>
+        );
+      },
     },
     {
       title: "보안 검사 상태",
@@ -116,8 +132,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "status",
       align: "center",
       width: 90,
-      render: (status: string) => {
-        return <span>{status}</span>;
+      render: () => {
+        return <span>승인 필요</span>;
       },
     },
 

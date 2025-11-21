@@ -39,12 +39,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "태그 수",
       align: "center",
       width: 100,
-      render: (_, { tagCnt }: PrivateRegistryImageListType) => {
-        return (
-          <ColumnAlignCenterWrap>
-            <span>{tagCnt}</span>
-          </ColumnAlignCenterWrap>
-        );
+      render: () => {
+        return <span>v.1.2 / 8개</span>;
       },
     },
     {
@@ -58,11 +54,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 120,
       render: (_, { pullCnt }: PrivateRegistryImageListType) => {
-        return (
-          <ColumnAlignCenterWrap>
-            <span>{pullCnt}</span>
-          </ColumnAlignCenterWrap>
-        );
+        return <span>{pullCnt.toLocaleString()}번</span>;
       },
     },
     {

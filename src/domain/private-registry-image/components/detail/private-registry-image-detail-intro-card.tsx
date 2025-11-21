@@ -31,11 +31,19 @@ export function PrivateRegistryImageDetailIntroCard() {
     publish(PRIVATE_REGISTRY_IMAGE_EVENTS.sendDeleteImage, [Number(id)]);
   };
 
+  const handleUpdate = () => {
+    publish(PRIVATE_REGISTRY_IMAGE_EVENTS.sendUpdateImage, data);
+  };
+
   return (
     <Container>
       <Header>
         <HeaderTitle>컨테이너 이미지 기본정보</HeaderTitle>
         <ToolBox>
+          <IconWrapper onClick={handleUpdate}>
+            <Icon name="Edit02" color="var(--icon-fill)" size={24} />
+            <span className="sr-only">내부 레지스트리 이미지 수정</span>
+          </IconWrapper>
           <IconWrapper onClick={handleDelete}>
             <Icon name="Delete" color="var(--icon-fill)" size={24} />
             <span className="sr-only">내부 레지스트리 이미지 삭제</span>
@@ -64,11 +72,11 @@ export function PrivateRegistryImageDetailIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <Icon name="Info" color="var(--icon-fill)" size={24} />
+              <Icon name="Lock" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
-              <RowKey>상태</RowKey>
-              <RowValue>{data?.status}</RowValue>
+              <RowKey>공개 설정 :</RowKey>
+              <RowValue>공개</RowValue>
             </RowTitle>
           </RowBody>
         </Row>

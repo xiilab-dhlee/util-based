@@ -1,20 +1,15 @@
 "use client";
 
-import { format } from "date-fns";
 import { type Dispatch, type SetStateAction, useState } from "react";
 import styled from "styled-components";
-import { Card, Input } from "xiilab-ui";
+import { Input } from "xiilab-ui";
 
 import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
-import {
-  CompactCardKey,
-  CompactCardKeyValueRow,
-  CompactCardValue,
-} from "@/shared/components/card/compact-card-layer.styled";
+import { SearchWorkloadCard } from "./list/search-workload-card";
 
 interface SelectSearchedWorkloadProps {
-  checkedWorkloads: Set<string>;
-  setCheckedWorkloads: Dispatch<SetStateAction<Set<string>>>;
+  checkedWorkload: string | null;
+  setCheckedWorkload: Dispatch<SetStateAction<string | null>>;
 }
 /**
  * 검색된 워크로드 목록을 선택할 수 있는 컴포넌트
@@ -22,8 +17,8 @@ interface SelectSearchedWorkloadProps {
  * @param setCheckedWorkloads - 선택된 워크로드 목록을 설정하는 함수
  */
 export function SelectSearchedWorkload({
-  checkedWorkloads,
-  setCheckedWorkloads,
+  checkedWorkload,
+  setCheckedWorkload,
 }: SelectSearchedWorkloadProps) {
   const [searchText, setSearchText] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -33,15 +28,7 @@ export function SelectSearchedWorkload({
   });
 
   const handleCheckWorkload = (id: string) => {
-    setCheckedWorkloads((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
+    setCheckedWorkload(id);
   };
 
   const handleSearch = (value: string) => {
@@ -61,29 +48,12 @@ export function SelectSearchedWorkload({
       </Header>
       <Body>
         {data?.content?.map((workload) => (
-          <Card
+          <SearchWorkloadCard
             key={workload.id}
-            title={workload.workloadName}
-            height={138}
-            checked={checkedWorkloads.has(workload.id)}
-            onCheckboxChange={() => handleCheckWorkload(workload.id)}
-            showCheckBox
-          >
-            <CompactCardKeyValueRow>
-              <CompactCardKey>타입:</CompactCardKey>
-              <CompactCardValue>{workload.jobType}</CompactCardValue>
-            </CompactCardKeyValueRow>
-            <CompactCardKeyValueRow>
-              <CompactCardKey>상태:</CompactCardKey>
-              <CompactCardValue>{workload.status}</CompactCardValue>
-            </CompactCardKeyValueRow>
-            <CompactCardKeyValueRow>
-              <CompactCardKey>생성일:</CompactCardKey>
-              <CompactCardValue>
-                {format(workload.creatorDate, "yyyy.MM.dd")}
-              </CompactCardValue>
-            </CompactCardKeyValueRow>
-          </Card>
+            {...workload}
+            isChecked={checkedWorkload === workload.id}
+            onCheck={() => handleCheckWorkload(workload.id)}
+          />
         ))}
       </Body>
     </Container>

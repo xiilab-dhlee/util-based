@@ -7,6 +7,7 @@ import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-b
 import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
 import { WorkloadEventCard } from "./workload-event-card";
 import { WorkloadIntroCard } from "./workload-intro-card";
 
@@ -40,7 +41,8 @@ export function WorkloadDetailPageAside() {
 }
 
 const CardWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  max-height: 440px;
+  overflow-y: auto;
+
+  ${customScrollbar()}
 `;

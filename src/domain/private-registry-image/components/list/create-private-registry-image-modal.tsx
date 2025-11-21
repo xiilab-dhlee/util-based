@@ -2,14 +2,16 @@
 
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import { Icon, Input, Modal, Tag } from "xiilab-ui";
+import { Dropdown, Icon, Input, Modal, Tag, TextArea } from "xiilab-ui";
 
 import { openCreatePrivateRegistryImageModalAtom } from "@/domain/private-registry-image/state/private-registry-image.atom";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { FormItem } from "@/styles/layers/form-layer.styled";
-import { SelectSearchedWorkload } from "./select-searched-workload";
+import { useSelect } from "@/shared/hooks/use-select";
+import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
+import { PRIVATE_REGISTRY_IMAGE_STATUS_OPTIONS } from "../../constants/private-registry-image.constant";
+import { SelectSearchedWorkload } from "../select-searched-workload";
 
 export function CreatePrivateRegistryImageModal() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -20,9 +22,9 @@ export function CreatePrivateRegistryImageModal() {
     openCreatePrivateRegistryImageModalAtom,
   );
 
-  const [checkedWorkloads, setCheckedWorkloads] = useState<Set<string>>(
-    new Set(),
-  );
+  const [checkedWorkload, setCheckedWorkload] = useState<string | null>(null);
+
+  const status = useSelect(null, PRIVATE_REGISTRY_IMAGE_STATUS_OPTIONS);
 
   const handleSubmit = () => {
     clearForm();
@@ -40,7 +42,7 @@ export function CreatePrivateRegistryImageModal() {
       showCancelButton
       cancelText="취소"
       onCancel={onClose}
-      okText="생성"
+      okText="등록"
       onOk={handleSubmit}
       centered
       showHeaderBorder
@@ -61,21 +63,52 @@ export function CreatePrivateRegistryImageModal() {
             width="100%"
           />
         </FormItem>
+        <FormRow>
+          <FormItem>
+            <FormLabel
+              htmlFor="privateRegistryImageTag"
+              className="required"
+              rightChildren={
+                <RecentTag>
+                  <TagLabel>최근 생성 태그:</TagLabel>
+                  <Tag variant="gray" theme="light" style={{ height: 16 }}>
+                    v1.0
+                  </Tag>
+                </RecentTag>
+              }
+            >
+              태그
+            </FormLabel>
+
+            <Input
+              type="text"
+              id="privateRegistryImageTag"
+              name="privateRegistryImageTag"
+              placeholder="태그를 입력해 주세요. (문자, 숫자, 하이픈(-), 밑줄(_)만 사용 가능)"
+              width="100%"
+            />
+          </FormItem>{" "}
+          <FormItem>
+            <FormLabel
+              htmlFor="privateRegistryImageStatus"
+              className="required"
+            >
+              공개 설정
+            </FormLabel>
+            <Dropdown
+              options={status.options}
+              onChange={status.onChange}
+              value={status.value}
+              placeholder="선택"
+              theme="light"
+              width="100%"
+            />
+          </FormItem>
+        </FormRow>
         <FormItem>
-          <FormLabel htmlFor="privateRegistryImageTag" className="required">
-            태그
-          </FormLabel>
-          <RecentTag>
-            <TagLabel>최근 생성 태그:</TagLabel>
-            <Tag variant="gray" theme="light">
-              v1.0
-            </Tag>
-          </RecentTag>
-          <Input
-            type="text"
-            id="privateRegistryImageTag"
-            name="privateRegistryImageTag"
-            placeholder="태그를 입력해 주세요. (문자, 숫자, 하이픈(-), 밑줄(_)만 사용 가능)"
+          <FormLabel htmlFor="privateRegistryImageDescription">설명</FormLabel>
+          <TextArea
+            placeholder="컨테이너 이미지에 대한 설명을 입력해 주세요."
             width="100%"
           />
         </FormItem>
@@ -83,8 +116,8 @@ export function CreatePrivateRegistryImageModal() {
       <div>
         <FormLabel className="required">워크로드 선택</FormLabel>
         <SelectSearchedWorkload
-          checkedWorkloads={checkedWorkloads}
-          setCheckedWorkloads={setCheckedWorkloads}
+          checkedWorkload={checkedWorkload}
+          setCheckedWorkload={setCheckedWorkload}
         />
       </div>
     </Modal>

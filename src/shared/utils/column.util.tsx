@@ -69,7 +69,9 @@ export function applyColumnConfigs(
               ? originalRender(value, record, index)
               : value;
             return (
-              <ColumnTruncateText width={width}>{content}</ColumnTruncateText>
+              <ColumnTruncateText width={width}>
+                {content || "-"}
+              </ColumnTruncateText>
             );
           };
         }

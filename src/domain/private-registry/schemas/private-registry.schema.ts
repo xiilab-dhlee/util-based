@@ -21,3 +21,5 @@ export const privateRegistryListSchema = basePrivateRegistrySchema;
 
 // 타입 추출
 export type PrivateRegistryListType = z.infer<typeof privateRegistryListSchema>;
+
+export type PrivateRegistryIdType = PrivateRegistryListType["id"];

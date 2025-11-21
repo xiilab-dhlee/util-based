@@ -22,6 +22,8 @@ export const privateRegistryImageTagVulnerabilityPageAtom =
   atomWithReset<number>(1);
 /** 내부 레지스트리 이미지 생성 모달 표시 여부 */
 export const openCreatePrivateRegistryImageModalAtom = atom<boolean>(false);
+/** 내부 레지스트리 이미지 태그 생성 모달 표시 여부 */
+export const openCreatePrivateRegistryImageTagModalAtom = atom<boolean>(false);
 /** 내부 레지스트리 이미지 수정 모달 표시 여부 */
 export const openUpdatePrivateRegistryImageModalAtom = atom<boolean>(false);
 /** 내부 레지스트리 이미지 삭제 모달 표시 여부 */

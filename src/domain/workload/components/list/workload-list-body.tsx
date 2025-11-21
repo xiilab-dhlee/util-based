@@ -36,16 +36,16 @@ export function WorkloadListBody() {
       <CustomizedTable
         columns={createWorkloadColumn([
           { dataIndex: "isPinned" },
-          { dataIndex: "workloadName", width: 50, ellipsis: true },
-          { dataIndex: "jobType" },
-          { dataIndex: "creatorName" },
+          { dataIndex: "workloadName", width: 220, ellipsis: true },
+          { dataIndex: "jobType", width: 100 },
+          { dataIndex: "creatorName", width: 60, ellipsis: true },
           { dataIndex: "elapsedTime" },
           { dataIndex: "labels" },
-          { dataIndex: "status" },
+          { dataIndex: "status", width: 80 },
           { dataIndex: "log" },
-          { dataIndex: "terminal" },
+          { dataIndex: "terminal", width: 60 },
           { dataIndex: "port" },
-          { dataIndex: "monitoring" },
+          { dataIndex: "monitoring", width: 60 },
           { dataIndex: "power" },
           { dataIndex: "delete" },
         ])}

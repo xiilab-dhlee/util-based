@@ -36,12 +36,20 @@ export function PrivateRegistryImageListBody() {
       <CustomizedTable
         columns={createPrivateRegistryImageColumn([
           { dataIndex: "checkbox" },
-          { dataIndex: "imageName" },
-          { dataIndex: "tagCnt" },
-          { dataIndex: "pullCount" },
-          { dataIndex: "creator" },
-          { dataIndex: "creatorDate" },
-          { dataIndex: "description" },
+          {
+            dataIndex: "imageName",
+            title: "컨테이너 이미지 이름",
+          },
+          { dataIndex: "tagCnt", title: "최신 태그 / 개수", width: 150 },
+          { dataIndex: "pullCount", width: 150 },
+          { dataIndex: "creatorName", width: 150 },
+          { dataIndex: "creatorDate", width: 150 },
+          {
+            dataIndex: "description",
+            title: "설명",
+            width: 300,
+            ellipsis: true,
+          },
         ])}
         data={data?.content || []}
         columnHeight={40}
