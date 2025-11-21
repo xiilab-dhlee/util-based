@@ -1,0 +1,146 @@
+import styled from "styled-components";
+
+import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
+import type { CoreResourceType } from "@/shared/types/core.interface";
+import {
+  UserMonitoringCategoryTitle,
+  UserMonitoringSectionDescription,
+  UserMonitoringSectionHeader,
+  UserMonitoringSectionTitle,
+} from "@/styles/layers/user-monitoring-layers.styled";
+import { UserMonitoringResourceArticle } from "./user-monitoring-resource-article";
+import { UserMonitoringResourceCard } from "./user-monitoring-resource-card";
+import { UserMonitoringResourceRecoveryArticle } from "./user-monitoring-resource-recovery-article";
+import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status";
+
+export function UserMonitoringMainSection() {
+  return (
+    <Container>
+      <Left>
+        <LeftHeader>
+          <UserMonitoringSectionTitle>
+            워크스페이스 자원 정보
+          </UserMonitoringSectionTitle>
+          <UserMonitoringSectionDescription>
+            해당 워크스페이스 자원 정보와 자원회수 정보를 확인할 수 있습니다.
+          </UserMonitoringSectionDescription>
+        </LeftHeader>
+        <LeftBody>
+          {/* 자원 정보 영역 */}
+          <UserMonitoringResourceArticle />
+          {/* 자원 회수 정보 영역 */}
+          <UserMonitoringResourceRecoveryArticle />
+        </LeftBody>
+      </Left>
+      <Right>
+        <RightItem>
+          <RightSectionHeader>
+            <UserMonitoringCategoryTitle>
+              워크로드 정보
+            </UserMonitoringCategoryTitle>
+            <UserMonitoringSectionDescription>
+              생성한 워크로드 정보를 확인할 수 있습니다.
+            </UserMonitoringSectionDescription>
+          </RightSectionHeader>
+          {/* 워크로드 정보 영역 */}
+          <WorkloadStatusWrapper>
+            {["ALL", "RUNNING", "COMPLETED", "PENDING", "FAILED"].map(
+              (status) => (
+                <UserMonitoringWorkloadStatus
+                  key={status}
+                  status={status as WorkloadStatusType}
+                />
+              ),
+            )}
+          </WorkloadStatusWrapper>
+        </RightItem>
+        <RightItem>
+          <RightSectionHeader>
+            <UserMonitoringCategoryTitle>
+              사용 자원 정보
+            </UserMonitoringCategoryTitle>
+            <UserMonitoringSectionDescription>
+              워크로드 생성시 사용중인 자원 정보를 확인할 수 있습니다.
+            </UserMonitoringSectionDescription>
+          </RightSectionHeader>
+          <WorkloadResourceWrapper>
+            {["GPU", "CPU", "MEM"].map((v) => (
+              <UserMonitoringResourceCard
+                key={v}
+                resourceType={v as CoreResourceType}
+                total={20}
+                count={10}
+              />
+            ))}
+          </WorkloadResourceWrapper>
+        </RightItem>
+      </Right>
+    </Container>
+  );
+}
+
+const Container = styled.section`
+  border-radius: 10px;
+  height: var(--user-monitoring-main-section-height);
+  padding: 23px;
+  padding-left: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  overflow: hidden;
+  margin-bottom: var(--user-monitoring-main-section-margin-bottom);
+  background-color: #070913;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
+`;
+
+const Left = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+`;
+
+const Right = styled.article`
+  min-width: 596px;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+`;
+
+const LeftHeader = styled(UserMonitoringSectionHeader)`
+  padding-left: 25px;
+`;
+
+const LeftBody = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+`;
+
+const RightItem = styled.div`
+  position: relative;
+`;
+
+const WorkloadStatusWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+
+  height: 124px;
+  border: 1px solid var(--primary-border-color);
+  border-top-width: 0;
+`;
+
+const RightSectionHeader = styled(UserMonitoringSectionHeader)`
+  margin-bottom: 16px;
+`;
+
+const WorkloadResourceWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  flex: 1;
+  gap: 8px;
+  height: 104px;
+`;

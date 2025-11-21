@@ -8,8 +8,8 @@
 import type { BreadcrumbItemType as AntdBreadcrumbItemType } from "antd/es/breadcrumb/Breadcrumb";
 
 import {
-  type BreadcrumbItemMeta,
   PAGE_META,
+  type PageItemMeta,
   type PageKey,
 } from "@/shared/constants/page-meta";
 
@@ -68,7 +68,7 @@ export const getBreadcrumbItems = (
     }
     visited.add(currentKey);
 
-    const meta = PAGE_META[currentKey] as BreadcrumbItemMeta;
+    const meta = PAGE_META[currentKey] as PageItemMeta;
 
     if (!meta) {
       // 정의되지 않은 PageKey에 대한 방어

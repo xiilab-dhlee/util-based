@@ -30,7 +30,7 @@ interface SystemMonitoringCardProps {
 export function SystemMonitoringCard({ type }: SystemMonitoringCardProps) {
   /**
    * 데모 모니터링 데이터를 차트 시리즈로 변환
-   * ChartUtil.mapToChartData를 활용하여 DashboardNodeGpuLineChart와 동일한
+   * ChartUtil.mapToChartData를 활용하여 UserMonitoringNodeGpuLineChart와 동일한
    * 형태의 area 차트 데이터를 생성합니다.
    */
   const series = mapToChartData(undefined, "area");

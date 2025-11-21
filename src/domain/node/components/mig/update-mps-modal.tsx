@@ -14,7 +14,7 @@ import { NODE_EVENTS, USER_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatFileSize } from "@/shared/utils/file.util";
-import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
+import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 /**
  * MPS 설정 모달 컴포넌트
@@ -137,7 +137,7 @@ export function UpdateMpsModal() {
 }
 
 // 섹션 제목 스타일 (대시보드 섹션 제목 확장)
-const SectionTitle = styled(DashboardSectionTitle)`
+const SectionTitle = styled(UserMonitoringSectionTitle)`
   color: #000;
   margin-left: 7px;
   margin-bottom: 10px;

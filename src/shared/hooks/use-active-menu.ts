@@ -3,9 +3,16 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
+import {
+  PAGE_META,
+  type PageItemMeta,
+  type PageKey,
+} from "@/shared/constants/page-meta";
+
 /**
  * 현재 활성 메뉴 키와 메뉴 클릭 핸들러를 제공하는 훅
- * @returns {Object} activeMenuKey와 handleMenuClick 함수
+ * - activeMenuKey: 현재 URL에 가장 잘 매칭되는 PAGE_META key
+ * - onMenuClick: 전달받은 key(PageKey)에 대응하는 href로 이동
  */
 export const useActiveMenu = () => {
   const router = useRouter();
@@ -13,37 +20,39 @@ export const useActiveMenu = () => {
 
   // 현재 URL에서 activeMenuKey 추출 - useMemo로 메모이제이션
   const activeMenuKey = useMemo(() => {
-    const pathSegments = pathname.split("/").filter(Boolean);
+    const pageMetaEntries = Object.entries(PAGE_META) as [
+      PageKey,
+      PageItemMeta,
+    ][];
 
-    // URL이 /mode/key 형태인 경우 key를 반환
-    if (pathSegments.length >= 2) {
-      return pathSegments[1]; // 두 번째 세그먼트가 key
+    const entry = pageMetaEntries.find(([_pageKey, meta]) => {
+      const href = meta.href;
+      return typeof href === "string" && href === pathname;
+    });
+
+    if (!entry) {
+      return "";
     }
 
-    return "";
+    const [pageKey] = entry as [PageKey, unknown];
+    return pageKey;
   }, [pathname]);
 
-  // 메뉴 클릭 핸들러 - useCallback으로 메모이제이션
+  // 메뉴 클릭 핸들러 - key를 PAGE_META key로 간주하고 href로 이동
   const onMenuClick = useCallback(
     (key: string) => {
-      // 현재 경로에서 모드 추출
-      const pathSegments = pathname.split("/").filter(Boolean);
+      const pageKey = key as PageKey;
+      const meta = PAGE_META[pageKey] as PageItemMeta | undefined;
+      const href = meta?.href;
 
-      // 첫 번째 세그먼트가 모드 (user 또는 admin)
-      let currentMode = "user"; // 기본값
-
-      if (pathSegments.length > 0) {
-        const firstSegment = pathSegments[0];
-        if (firstSegment === "admin") {
-          currentMode = firstSegment;
-        }
+      // href가 문자열이 아닌 경우(동적 경로 함수 또는 없음)에는 네비게이션하지 않음
+      if (typeof href !== "string") {
+        return;
       }
 
-      // 새로운 경로 생성: /mode/key
-      const path = `/${currentMode}/${key}`;
-      router.push(path);
+      router.push(href);
     },
-    [router, pathname],
+    [router],
   );
 
   return {

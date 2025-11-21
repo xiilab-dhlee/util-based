@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import { DashboardRunningWorkloadCard } from "@/domain/dashboard/components/dashboard-running-workload-card";
 import { MonitoringWorkloadStatus } from "@/domain/monitoring/components/monitoring-workload-status";
+import { UserMonitoringRunningWorkloadCard } from "@/domain/user-monitoring/components/user-monitoring-running-workload-card";
 import { VolumeWorkloadCard } from "@/domain/volume/components/detail/volume-workload-card";
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { workloadListMock } from "@/mocks/data/workload.mock";
@@ -9,7 +9,7 @@ import { workspaceListMock } from "@/mocks/data/workspace.mock";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
+import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 import { statusTextStyle } from "@/styles/mixins/text";
 
@@ -96,7 +96,10 @@ export function MonitoringSubSection() {
           <ListArticleTitle>실행중 워크로드 목록</ListArticleTitle>
           <ListArticleBody>
             {workloadListMock.map((workload) => (
-              <DashboardRunningWorkloadCard key={workload.id} {...workload} />
+              <UserMonitoringRunningWorkloadCard
+                key={workload.id}
+                {...workload}
+              />
             ))}
           </ListArticleBody>
         </ListArticle>
@@ -177,7 +180,7 @@ const LeftBody = styled.div`
   overflow: hidden;
 `;
 
-const SectionTitle = styled(DashboardSectionTitle)`
+const SectionTitle = styled(UserMonitoringSectionTitle)`
   color: #070913;
 `;
 

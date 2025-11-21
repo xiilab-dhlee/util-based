@@ -6,7 +6,7 @@ import { createContext, useContext } from "react";
 import { CredentialService } from "@/domain/credential/api/credential.service";
 import { GroupService } from "@/domain/group/api/group.service";
 import { HubService } from "@/domain/hub/api/hub.service";
-import { MonitoringService } from "@/domain/monitoring/api/monitoring.service";
+import { MonitoringService } from "@/domain/monitoring-notification/api/monitoring.service";
 import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";

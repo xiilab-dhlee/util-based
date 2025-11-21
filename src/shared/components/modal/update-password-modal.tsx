@@ -13,8 +13,8 @@ import { COMMON_EVENTS, USER_EVENTS } from "@/shared/constants/pubsub.constant";
 import { openUpdatePasswordModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { DashboardSectionTitle } from "@/styles/layers/dashboard-layers.styled";
 import { FormItem } from "@/styles/layers/form-layer.styled";
+import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 /**
  * 비밀번호 수정 모달 컴포넌트
@@ -144,7 +144,7 @@ export function UpdatePasswordModal() {
   );
 }
 
-const SectionTitle = styled(DashboardSectionTitle)`
+const SectionTitle = styled(UserMonitoringSectionTitle)`
   color: #000;
   margin-left: 7px;
   margin-bottom: 10px;

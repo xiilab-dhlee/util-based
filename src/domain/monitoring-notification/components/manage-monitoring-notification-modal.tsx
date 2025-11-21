@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Checkbox, Icon, Input, Modal, Typography } from "xiilab-ui";
 
-import { useUpsertMonitoringNotification } from "@/domain/monitoring/hooks/use-upsert-monitoring-notification";
+import { useUpsertMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-upsert-monitoring-notification";
 import type {
   MonitoringNotificationListType,
   MonitoringNotificationSettingType,
