@@ -7,7 +7,7 @@ const { Given, When, Then } = createBdd();
  * 워크로드 검색 기능 Step Definitions
  *
  * 기반 정보:
- * - 라우트: /standard/workload
+ * - 라우트: /user/workload
  * - 검색 폼: [data-testid="workload-list-search-form"]
  * - 검색 입력: input[name="search"]
  * - 테이블 컴포넌트: CustomizedTable
@@ -19,13 +19,13 @@ const { Given, When, Then } = createBdd();
  */
 Given("사용자가 워크로드 목록 페이지에 있다", async ({ page }) => {
   // 워크로드 목록 페이지로 이동
-  await page.goto("/standard/workload");
+  await page.goto("/user/workload");
 
   // 페이지가 로드될 때까지 대기 (DOM이 준비되면 충분)
   await page.waitForLoadState("domcontentloaded");
 
   // URL 체크
-  await expect(page).toHaveURL(/\/standard\/workload/);
+  await expect(page).toHaveURL(/\/user\/workload/);
 
   // 로딩 스피너가 사라질 때까지 최대 10초간 대기
   // 스피너가 없으면 즉시 통과, 있으면 사라질 때까지 대기
@@ -233,7 +233,7 @@ Then("사용자가 첫 번째 워크로드 이름을 클릭한다", async ({ pag
   await firstWorkloadLink.click();
 
   // 페이지 이동 대기 (URL 변경 확인이 더 빠름)
-  await expect(page).toHaveURL(/\/standard\/workload\/[^/]+/, {
+  await expect(page).toHaveURL(/\/user\/workload\/[^/]+/, {
     timeout: 10000,
   });
 });
@@ -243,8 +243,8 @@ Then("사용자가 첫 번째 워크로드 이름을 클릭한다", async ({ pag
  */
 Then("워크로드 상세 페이지로 이동한다", async ({ page }) => {
   // URL이 워크로드 상세 페이지인지 확인
-  // 패턴: /standard/workload/{workloadId}?workspaceId={workspaceId}
-  await expect(page).toHaveURL(/\/standard\/workload\/[^/]+/, {
+  // 패턴: /user/workload/{workloadId}?workspaceId={workspaceId}
+  await expect(page).toHaveURL(/\/user\/workload\/[^/]+/, {
     timeout: 10000,
   });
 

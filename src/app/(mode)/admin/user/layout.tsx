@@ -86,10 +86,8 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
       <PageHeader
-        title="계정 관리"
-        icon="Person"
+        pageKey="admin.user"
         description="Manage Account"
-        breadcrumbKey="admin.user"
       />
 
       {/* 사용자 목록 페이지 메인 영역 */}

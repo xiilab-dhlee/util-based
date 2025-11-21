@@ -14,10 +14,8 @@ export function AdminPrivateRegistryImageDetailMain() {
     <>
       {/* 페이지 헤더 */}
       <PageHeader
-        title="컨테이너 이미지 상세정보"
-        icon="Back"
+        pageKey="admin.private-registry.image"
         description="container image details"
-        breadcrumbKey="admin.private-registry.image"
       />
       {/* 목록 페이지 메인 영역 */}
       <ListPageMain>

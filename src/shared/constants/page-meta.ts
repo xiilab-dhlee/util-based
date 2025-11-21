@@ -208,113 +208,113 @@ export const PAGE_META = {
   },
 
   // ============================================
-  // Standard Routes - Dashboard
+  // User Routes - Dashboard
   // ============================================
-  "standard.dashboard": {
+  "user.dashboard": {
     title: "대시보드",
     iconName: "Dashboard",
-    href: ROUTES.STANDARD_DASHBOARD,
+    href: ROUTES.USER_DASHBOARD,
   },
 
   // ============================================
-  // Standard Routes - Workload
+  // User Routes - Workload
   // ============================================
-  "standard.workload": {
+  "user.workload": {
     title: "워크로드",
     iconName: "Workload",
-    href: ROUTES.STANDARD_WORKLOAD,
+    href: ROUTES.USER_WORKLOAD,
   },
-  "standard.workload.detail": {
+  "user.workload.detail": {
     title: "워크로드 상세",
-    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_DETAIL(id),
-    parent: "standard.workload",
+    href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_DETAIL(id),
+    parent: "user.workload",
   },
-  "standard.workload.log": {
+  "user.workload.log": {
     title: "로그",
-    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_LOG(id),
-    parent: "standard.workload.detail",
+    href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_LOG(id),
+    parent: "user.workload.detail",
   },
-  "standard.workload.file": {
+  "user.workload.file": {
     title: "파일",
-    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_FILE(id),
-    parent: "standard.workload.detail",
+    href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_FILE(id),
+    parent: "user.workload.detail",
   },
-  "standard.workload.monitoring": {
+  "user.workload.monitoring": {
     title: "모니터링",
-    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_MONITORING(id),
-    parent: "standard.workload.detail",
+    href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_MONITORING(id),
+    parent: "user.workload.detail",
   },
-  "standard.workload.security": {
+  "user.workload.security": {
     title: "보안",
-    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_SECURITY(id),
-    parent: "standard.workload.detail",
+    href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_SECURITY(id),
+    parent: "user.workload.detail",
   },
-  "standard.workload.terminal": {
+  "user.workload.terminal": {
     title: "터미널",
-    href: ({ id }: { id: string }) => ROUTES.STANDARD_WORKLOAD_TERMINAL(id),
-    parent: "standard.workload.detail",
+    href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_TERMINAL(id),
+    parent: "user.workload.detail",
   },
 
   // ============================================
-  // Standard Routes - Registry
+  // User Routes - Registry
   // ============================================
-  "standard.private-registry-image": {
+  "user.private-registry-image": {
     title: "내부 레지스트리",
     iconName: "Image",
-    href: ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE,
+    href: ROUTES.USER_PRIVATE_REGISTRY_IMAGE,
   },
-  "standard.private-registry-image.detail": {
+  "user.private-registry-image.detail": {
     title: "컨테이너 이미지 상세정보",
     href: ({ id }: { id: string }) =>
-      ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_DETAIL(id),
-    parent: "standard.private-registry-image",
+      ROUTES.USER_PRIVATE_REGISTRY_IMAGE_DETAIL(id),
+    parent: "user.private-registry-image",
   },
-  "standard.private-registry-image.tag": {
+  "user.private-registry-image.tag": {
     title: "태그 상세정보",
     href: ({ id, tagId }: { id: string; tagId: string }) =>
-      ROUTES.STANDARD_PRIVATE_REGISTRY_IMAGE_TAG(id, tagId),
-    parent: "standard.private-registry-image.detail",
+      ROUTES.USER_PRIVATE_REGISTRY_IMAGE_TAG(id, tagId),
+    parent: "user.private-registry-image.detail",
   },
 
   // ============================================
-  // Standard Routes - Sourcecode
+  // User Routes - Sourcecode
   // ============================================
-  "standard.sourcecode": {
+  "user.sourcecode": {
     title: "소스코드",
     iconName: "SourceCode",
-    href: ROUTES.STANDARD_SOURCECODE,
+    href: ROUTES.USER_SOURCECODE,
   },
-  "standard.sourcecode.detail": {
+  "user.sourcecode.detail": {
     title: "소스코드 상세",
-    href: ({ id }: { id: string }) => ROUTES.STANDARD_SOURCECODE_DETAIL(id),
-    parent: "standard.sourcecode",
+    href: ({ id }: { id: string }) => ROUTES.USER_SOURCECODE_DETAIL(id),
+    parent: "user.sourcecode",
   },
 
   // ============================================
-  // Standard Routes - Volume
+  // User Routes - Volume
   // ============================================
-  "standard.volume": {
+  "user.volume": {
     title: "볼륨",
     iconName: "Volume",
-    href: ROUTES.STANDARD_VOLUME,
+    href: ROUTES.USER_VOLUME,
   },
 
   // ============================================
-  // Standard Routes - Hub
+  // User Routes - Hub
   // ============================================
-  "standard.hub": {
+  "user.hub": {
     title: "허브",
     iconName: "Hub",
-    href: ROUTES.STANDARD_HUB,
+    href: ROUTES.USER_HUB,
   },
 
   // ============================================
-  // Standard Routes - Setting
+  // User Routes - Setting
   // ============================================
-  "standard.setting": {
+  "user.setting": {
     title: "설정",
     iconName: "Setting01",
-    href: ROUTES.STANDARD_SETTING,
+    href: ROUTES.USER_SETTING,
   },
 
   // ============================================

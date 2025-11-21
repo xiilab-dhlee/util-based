@@ -61,10 +61,8 @@ export function WorkloadListMain() {
   return (
     <>
       <PageHeader
-        title="워크로드"
-        icon="Workload"
+        pageKey="user.workload"
         description="Workload"
-        breadcrumbKey="standard.workload"
       />
 
       {/* 워크로드 목록 페이지 메인 영역 */}

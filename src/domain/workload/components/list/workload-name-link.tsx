@@ -21,7 +21,7 @@ export function WorkloadNameLink({
   const isAdmin = isAdminMode(pathname);
 
   // 워크로드 상세 페이지 링크
-  let href = `/standard/workload/${workloadId}?workspaceId=${workspaceId}`;
+  let href = `/user/workload/${workloadId}?workspaceId=${workspaceId}`;
   if (isAdmin) {
     href = `/admin/workspace/workload/${workloadId}?workspaceId=${workspaceId}`;
   }

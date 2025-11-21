@@ -19,10 +19,8 @@ export function FileSecurityMain() {
   return (
     <>
       <PageHeader
-        title="파일 시스템 보안"
-        icon="SecurityCheck"
+        pageKey="admin.file-security"
         description="File System Security"
-        breadcrumbKey="admin.file-security"
       />
       {/* 소스코드 목록 페이지 메인 영역 */}
       <ListPageMain>

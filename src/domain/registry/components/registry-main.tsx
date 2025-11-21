@@ -8,10 +8,8 @@ export function RegistryMain() {
   return (
     <>
       <PageHeader
-        title="레지스트리"
-        icon="Image"
+        pageKey="admin.registry"
         description="Registry"
-        breadcrumbKey="admin.registry"
       />
       <RegistryMainSection />
       <RegistrySubSection />

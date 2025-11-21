@@ -1,87 +1,80 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Breadcrumb, Icon } from "xiilab-ui";
 
 import { BreadcrumbItems } from "@/shared/components/breadcrumb/breadcrumb-items";
-import type { PageKey } from "@/shared/constants/page-meta";
+import {
+  type BreadcrumbItemMeta,
+  PAGE_META,
+  type PageKey,
+} from "@/shared/constants/page-meta";
 import { getBackPathname } from "@/shared/utils/router.util";
 
 interface PageHeaderProps {
-  // 페이지 타이틀
-  title: string;
-  // 페이지 타이틀 아이콘 타입
-  icon: string;
-  // 페이지 설명
-  description: string;
-  // 기존 구조와 다른 라우팅 필요 시 정의
-  customPathname?: string;
-  // breadcrumb에 사용할 페이지 메타 키 (없으면 breadcrumb 미표시)
-  breadcrumbKey?: PageKey;
-  // breadcrumb 경로 생성에 사용할 동적 파라미터
-  breadcrumbParams?: Record<string, string>;
-}
-
-/**
- * customPathname의 쿼리 파라미터 플레이스홀더를 searchParams 값으로 대체
- * 예: /admin/workspace/{workspaceId} + searchParams.workspaceId=test → /admin/workspace/test
- */
-function replacePathParams(
-  path: string,
-  searchParams: URLSearchParams,
-): string {
-  return path.replace(/\{([^}]+)\}/g, (match, key) => {
-    const value = searchParams.get(key);
-    return value || match; // 값이 없으면 원본 {key} 유지
-  });
+  /** 이 페이지를 식별하는 메타 키 (title, icon, breadcrumb 모두 여기서 유도) */
+  pageKey: PageKey;
+  /** 동적 라우트/메타에 필요한 파라미터 (id, workspaceId 등) */
+  pageParams?: Record<string, string>;
+  /** 헤더에서만 사용할 부가 설명 텍스트 */
+  description?: string;
 }
 
 // 페이지 헤더 영역
 export function PageHeader({
-  title,
-  icon,
+  pageKey,
+  pageParams,
   description,
-  customPathname,
-  breadcrumbKey,
-  breadcrumbParams,
 }: PageHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const breadcrumbItems = breadcrumbKey
-    ? BreadcrumbItems(breadcrumbKey, breadcrumbParams)
-    : undefined;
+  // 1) 메타 정보 (title, iconName)를 PAGE_META에서 읽기
+  const pageMeta = PAGE_META[pageKey] as BreadcrumbItemMeta;
+  const title = pageMeta.title;
+  const iconName = pageMeta.iconName;
 
-  // 뒤로가기 버튼 클릭 시 목록 페이지로 이동
+  // 2) breadcrumb 생성
+  const breadcrumbItems = BreadcrumbItems(pageKey, pageParams);
+  const hasBreadcrumb = breadcrumbItems.length > 1;
+
+  // 3) breadcrumb 기반 back 대상 (마지막에서 두 번째 아이템)
+  const backHref =
+    hasBreadcrumb && breadcrumbItems[breadcrumbItems.length - 2]?.href
+      ? (breadcrumbItems[breadcrumbItems.length - 2].href as string)
+      : undefined;
+
+  // 4) 뒤로가기: breadcrumb > getBackPathname 순으로 fallback
   const handleBack = () => {
-    if (customPathname) {
-      // [workspaceId] 같은 동적 세그먼트를 searchParams 값으로 대체
-      const resolvedPath = replacePathParams(customPathname, searchParams);
-      router.replace(resolvedPath);
-    } else {
-      router.replace(getBackPathname(pathname));
+    if (backHref) {
+      router.replace(backHref);
+      return;
     }
+
+    router.replace(getBackPathname(pathname));
   };
+
   return (
     <Container>
       <Left>
-        {/* 페이지 depth가 2이상인 경우 */}
-        {icon === "Back" ? (
+        {/* breadcrumb가 2 depth 이상이면 Back 아이콘, 아니면 페이지 아이콘 */}
+        {hasBreadcrumb ? (
           <BackIconWrapper onClick={handleBack}>
             <Icon name="Back" color="var(--icon-fill)" size={24} />
             <span className="sr-only">뒤로가기</span>
           </BackIconWrapper>
         ) : (
-          <IconWrapper>
-            <Icon name={icon} color="var(--icon-fill)" size={16} />
-          </IconWrapper>
+          iconName && (
+            <IconWrapper>
+              <Icon name={iconName} color="var(--icon-fill)" size={16} />
+            </IconWrapper>
+          )
         )}
         <Title>{title}</Title>
-        <Description>{description}</Description>
+        {description && <Description>{description}</Description>}
       </Left>
-      {breadcrumbItems && breadcrumbItems.length > 1 && (
+      {hasBreadcrumb && (
         <Right>
           <Breadcrumb items={breadcrumbItems} />
         </Right>

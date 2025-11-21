@@ -19,10 +19,8 @@ export function RegistrySecurityMain() {
   return (
     <>
       <PageHeader
-        title="레지스트리 보안"
-        icon="SecurityCheck"
+        pageKey="admin.registry-security"
         description="Registry Security"
-        breadcrumbKey="admin.registry-security"
       />
       {/* 소스코드 목록 페이지 메인 영역 */}
       <ListPageMain>

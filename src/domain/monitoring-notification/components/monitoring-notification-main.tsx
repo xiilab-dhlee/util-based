@@ -72,10 +72,8 @@ export function MonitoringNotificationMain() {
   return (
     <>
       <PageHeader
-        title="모니터링 알림"
-        icon="Alarm"
+        pageKey="admin.monitoring-notification"
         description="Monitoring Notifications"
-        breadcrumbKey="admin.monitoring-notification"
       />
 
       {/* 모니터링 알림 페이지 메인 영역 */}

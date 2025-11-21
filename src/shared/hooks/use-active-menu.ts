@@ -29,8 +29,8 @@ export const useActiveMenu = () => {
       // 현재 경로에서 모드 추출
       const pathSegments = pathname.split("/").filter(Boolean);
 
-      // 첫 번째 세그먼트가 모드 (standard 또는 admin)
-      let currentMode = "standard"; // 기본값
+      // 첫 번째 세그먼트가 모드 (user 또는 admin)
+      let currentMode = "user"; // 기본값
 
       if (pathSegments.length > 0) {
         const firstSegment = pathSegments[0];

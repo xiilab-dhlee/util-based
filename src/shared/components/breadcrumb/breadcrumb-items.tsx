@@ -11,9 +11,18 @@ export const BreadcrumbItems = (
   const rawItems = getBreadcrumbItems(pageKey, params);
 
   return rawItems.map((item, index) => {
+    const isLastItem = index === rawItems.length - 1;
+
+    let baseItem = item;
+
+    if (isLastItem) {
+      const { href: _href, ...itemWithoutHref } = item;
+      baseItem = itemWithoutHref;
+    }
+
     if (index === 0 && item.iconName) {
       return {
-        ...item,
+        ...baseItem,
         title: (
           <BreadcrumbIconTitle>
             <Icon name={item.iconName} size={14} />
@@ -24,14 +33,14 @@ export const BreadcrumbItems = (
     }
 
     return {
-      ...item,
+      ...baseItem,
       title: item.title,
     };
   });
 };
 
 const BreadcrumbIconTitle = styled.span`
-  display:flex;
+  display: flex;
   align-items: center;
   column-gap: 2px;
 `;

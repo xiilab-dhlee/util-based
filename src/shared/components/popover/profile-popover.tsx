@@ -7,7 +7,7 @@ import { Button, Icon } from "xiilab-ui";
 import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import {
   ADMIN_ROOT_PATH,
-  STANDARD_ROOT_PATH,
+  USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
 import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
 import { openProfilePopoverAtom } from "@/shared/hooks/modal.atom";
@@ -37,7 +37,7 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
   const handleModeSwitch = () => {
     if (isAdmin) {
       // 관리자 모드에서 사용자 모드로 전환
-      router.replace(STANDARD_ROOT_PATH);
+      router.replace(USER_ROOT_PATH);
     } else {
       // 사용자 모드에서 관리자 모드로 전환
       router.replace(ADMIN_ROOT_PATH);

@@ -9,7 +9,7 @@ export const ICON_COLUMN_WIDTH = 40;
 /** 체크박스 컬럼 너비 */
 export const CHECKBOX_COLUMN_WIDTH = 40;
 /** 사용자 모드 루트 경로 */
-export const STANDARD_ROOT_PATH = "/standard/dashboard";
+export const USER_ROOT_PATH = "/user/dashboard";
 /** 관리자 모드 루트 경로 */
 export const ADMIN_ROOT_PATH = "/admin/monitoring";
 /** 전체 옵션 */

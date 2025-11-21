@@ -39,12 +39,9 @@ export default async function WorkspaceDetailLayout({
     <>
       {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
       <PageHeader
-        title="워크스페이스 정보"
-        icon="Back"
+        pageKey="admin.workspace.detail"
+        pageParams={{ id }}
         description="Workspace Information"
-        customPathname="/admin/workspace"
-        breadcrumbKey="admin.workspace.detail"
-        breadcrumbParams={{ id }}
       />
 
       {/* 상세 페이지 메인 콘텐츠 영역 */}

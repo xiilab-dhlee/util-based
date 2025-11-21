@@ -2,13 +2,13 @@
  * 애플리케이션 라우트 경로 상수
  * - 정적 경로: 문자열로 정의
  * - 동적 경로: 함수로 정의 (타입 안전한 파라미터 전달)
- * - 경로 이름에 ADMIN_, STANDARD_ prefix로 명확히 구분
+ * - 경로 이름에 ADMIN_, USER_ prefix로 명확히 구분
  */
 
 // 기본 모드 경로
 export const MODE = {
   ADMIN: "/admin",
-  STANDARD: "/standard",
+  USER: "/user",
 } as const;
 
 // 공통 액션
@@ -78,42 +78,45 @@ export const ROUTES = {
   ADMIN_USER_GROUP: `${MODE.ADMIN}/user/group`,
 
   // ============================================
-  // Standard Routes
+  // User Routes
   // ============================================
 
-  STANDARD_DASHBOARD: `${MODE.STANDARD}/dashboard`,
+  USER_DASHBOARD: `${MODE.USER}/dashboard`,
 
   // 워크로드 (동적 함수)
-  STANDARD_WORKLOAD: `${MODE.STANDARD}/workload`,
-  STANDARD_WORKLOAD_DETAIL: (id: string) => `${MODE.STANDARD}/workload/${id}`,
-  STANDARD_WORKLOAD_LOG: (id: string) => `${MODE.STANDARD}/workload/${id}/log`,
-  STANDARD_WORKLOAD_FILE: (id: string) =>
-    `${MODE.STANDARD}/workload/${id}/file`,
-  STANDARD_WORKLOAD_MONITORING: (id: string) =>
-    `${MODE.STANDARD}/workload/${id}/monitoring`,
-  STANDARD_WORKLOAD_SECURITY: (id: string) =>
-    `${MODE.STANDARD}/workload/${id}/security`,
-  STANDARD_WORKLOAD_TERMINAL: (id: string) =>
-    `${MODE.STANDARD}/workload/${id}/terminal`,
+  USER_WORKLOAD: `${MODE.USER}/workload`,
+  USER_WORKLOAD_DETAIL: (id: string) => `${MODE.USER}/workload/${id}`,
+  USER_WORKLOAD_LOG: (id: string) => `${MODE.USER}/workload/${id}/log`,
+  USER_WORKLOAD_FILE: (id: string) => `${MODE.USER}/workload/${id}/file`,
+  USER_WORKLOAD_MONITORING: (id: string) =>
+    `${MODE.USER}/workload/${id}/monitoring`,
+  USER_WORKLOAD_SECURITY: (id: string) =>
+    `${MODE.USER}/workload/${id}/security`,
+  USER_WORKLOAD_TERMINAL: (id: string) =>
+    `${MODE.USER}/workload/${id}/terminal`,
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
-  STANDARD_PRIVATE_REGISTRY_IMAGE: `${MODE.STANDARD}/private-registry-image`,
-  STANDARD_PRIVATE_REGISTRY_IMAGE_DETAIL: (id: string) =>
-    `${MODE.STANDARD}/private-registry-image/${id}`,
-  STANDARD_PRIVATE_REGISTRY_IMAGE_TAG: (id: string, tagId: string) =>
-    `${MODE.STANDARD}/private-registry-image/${id}/tag/${tagId}`,
+  USER_PRIVATE_REGISTRY_IMAGE: `${MODE.USER}/private-registry-image`,
+  USER_PRIVATE_REGISTRY_IMAGE_DETAIL: (id: string) =>
+    `${MODE.USER}/private-registry-image/${id}`,
+  USER_PRIVATE_REGISTRY_IMAGE_TAG: (id: string, tagId: string) =>
+    `${MODE.USER}/private-registry-image/${id}/tag/${tagId}`,
 
   // 소스코드 (동적 함수)
-  STANDARD_SOURCECODE: `${MODE.STANDARD}/sourcecode`,
-  STANDARD_SOURCECODE_DETAIL: (id: string) =>
-    `${MODE.STANDARD}/sourcecode/${id}`,
+  USER_SOURCECODE: `${MODE.USER}/sourcecode`,
+  USER_SOURCECODE_DETAIL: (id: string) => `${MODE.USER}/sourcecode/${id}`,
 
   // 볼륨 (정적)
-  STANDARD_VOLUME: `${MODE.STANDARD}/volume`,
+  USER_VOLUME: `${MODE.USER}/volume`,
 
   // 허브 (정적)
-  STANDARD_HUB: `${MODE.STANDARD}/hub`,
+  USER_HUB: `${MODE.USER}/hub`,
 
   // 설정 (정적)
-  STANDARD_SETTING: `${MODE.STANDARD}/setting`,
+  USER_SETTING: `${MODE.USER}/setting`,
+
+  // ============================================
+  // Auth Routes
+  // ============================================
+  AUTH_SIGNIN: "/signin",
 } as const;

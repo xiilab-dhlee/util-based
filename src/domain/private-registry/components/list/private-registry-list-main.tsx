@@ -15,10 +15,8 @@ export function PrivateRegistryListMain() {
     <>
       {/* 페이지 헤더 */}
       <PageHeader
-        title="내부 레지스트리"
-        icon="PrivateRegistry"
+        pageKey="admin.private-registry"
         description="Private Registry"
-        breadcrumbKey="admin.private-registry"
       />
       {/* 목록 페이지 메인 영역 */}
       <ListPageMain>

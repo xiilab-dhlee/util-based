@@ -65,10 +65,8 @@ export function PrivateRegistryImageListMain() {
   return (
     <>
       <PageHeader
-        title="내부 레지스트리"
-        icon="Image"
+        pageKey="user.private-registry-image"
         description="Private Registry"
-        breadcrumbKey="standard.private-registry-image"
       />
 
       {/* 내부 레지스트리 이미지 목록 페이지 메인 영역 */}

@@ -35,7 +35,7 @@ export function SourcecodeRow({
     evt.stopPropagation();
 
     if (rowData) {
-      router.push(`/standard/sourcecode/${rowData.id}`);
+      router.push(`/user/sourcecode/${rowData.id}`);
     }
   };
 

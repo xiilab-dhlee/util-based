@@ -59,10 +59,8 @@ export function NodeListMain() {
   return (
     <>
       <PageHeader
-        title="노드 관리"
-        icon={NODE_MENU_ICON}
+        pageKey="admin.node"
         description="Node Management"
-        breadcrumbKey="admin.node"
       />
 
       {/* 노드 목록 페이지 메인 영역 */}

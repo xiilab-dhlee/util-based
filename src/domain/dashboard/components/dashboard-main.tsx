@@ -8,8 +8,7 @@ export function DashboardMain() {
   return (
     <>
       <PageHeader
-        title="Main Dashboard"
-        icon="Dashboard"
+        pageKey="user.dashboard"
         description="필요한 정보를 한눈에 확인할 수 있는 메인 대시보드입니다."
       />
       <DashboardMainSection />

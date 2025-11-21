@@ -46,16 +46,12 @@ export default function AdminNodeDetailLayout({ children }: PropsWithChildren) {
         ? "admin.node.log"
         : "admin.node.detail";
 
-  let title: string;
   let description: string;
   if (lastSegment === "redfish") {
-    title = "하드웨어 장치 및 구성 정보";
     description = "Hardware device and configuration information";
   } else if (lastSegment === "log") {
-    title = "로그 알림";
     description = "Log Notification";
   } else {
-    title = "노드 자원 상세정보 · 리소스 정보";
     description = "Node resource details · Resource information";
   }
 
@@ -63,12 +59,9 @@ export default function AdminNodeDetailLayout({ children }: PropsWithChildren) {
     <>
       {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
       <PageHeader
-        title={title}
-        icon="Back"
+        pageKey={pageKey}
+        pageParams={{ name }}
         description={description}
-        customPathname="/admin/node"
-        breadcrumbKey={pageKey}
-        breadcrumbParams={{ name }}
       />
 
       {/* 상세 페이지 메인 콘텐츠 영역 */}
