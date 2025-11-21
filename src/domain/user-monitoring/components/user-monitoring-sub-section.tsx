@@ -19,7 +19,7 @@ export function UserMonitoringSubSection() {
         <ListWrapper>
           <CustomizedTable
             columns={createWorkloadColumn([
-              { dataIndex: "workloadName" },
+              { dataIndex: "workloadName", width: 150, ellipsis: true },
               { dataIndex: "jobType" },
               { dataIndex: "creatorName" },
               { dataIndex: "labels" },
@@ -49,8 +49,7 @@ export function UserMonitoringSubSection() {
         <ListWrapper>
           <CustomizedTable
             columns={createWorkloadColumn([
-              // { dataIndex: "workloadName", title: "이름" },
-              { dataIndex: "workloadName" },
+              { dataIndex: "workloadName", width: 150, ellipsis: true },
               { dataIndex: "jobType" },
               { dataIndex: "creatorName", title: "사용자" },
               { dataIndex: "labels", title: "라벨" },

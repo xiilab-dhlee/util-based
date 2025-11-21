@@ -23,10 +23,7 @@ export const metadata: Metadata = {
 export default function VolumeLayout({ children }: PropsWithChildren) {
   return (
     <>
-      <PageHeader
-        pageKey="user.volume"
-        description="Volume"
-      />
+      <PageHeader pageKey="user.volume" description="Volume" />
       {/* 볼륨 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 볼륨 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

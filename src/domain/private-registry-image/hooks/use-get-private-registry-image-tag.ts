@@ -1,9 +1,9 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
-import type { GetPrivateRegistryImageTagDetailPayload } from "@/domain/private-registry-image/types/private-registry-image.type";
 import { privateRegistryImageKeys } from "@/domain/private-registry-image/constants/private-registry-image.key";
 import type { PrivateRegistryImageTagDetailType } from "@/domain/private-registry-image/schemas/private-registry-image-tag.schema";
+import type { GetPrivateRegistryImageTagDetailPayload } from "@/domain/private-registry-image/types/private-registry-image.type";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**

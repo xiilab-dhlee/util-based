@@ -1,12 +1,12 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
 } from "@/shared/hooks/filetree.atom";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 
 /** 워크로드 페이지 번호 */
 export const workloadPageAtom = atomWithReset<number>(1);

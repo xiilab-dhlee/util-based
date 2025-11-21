@@ -3,8 +3,8 @@
 import { useAtom } from "jotai";
 import { Checkbox } from "xiilab-ui";
 
-import { privateRegistryImageTagCheckedListAtom } from "@/domain/private-registry-image/state/private-registry-image.atom";
 import type { PrivateRegistryImageTagListType } from "@/domain/private-registry-image/schemas/private-registry-image-tag.schema";
+import { privateRegistryImageTagCheckedListAtom } from "@/domain/private-registry-image/state/private-registry-image.atom";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 interface PrivateRegistryImageTagItemCheckProps {

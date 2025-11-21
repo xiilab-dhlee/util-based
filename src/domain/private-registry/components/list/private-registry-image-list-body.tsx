@@ -9,7 +9,7 @@ import {
 } from "@/domain/private-registry/state/private-registry.atom";
 import { useGetAdminPrivateRegistryImages } from "@/domain/private-registry-image/hooks/use-get-admin-private-registry-images";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
-import { PrivateRegistryImageCard } from "./private-registry-image-card";
+import { PrivateRegistryImageCard } from "../../../private-registry-image/components/private-registry-image-card";
 
 export function PrivateRegistryImageListBody() {
   const page = useAtomValue(privateRegistryImagePageAtom);

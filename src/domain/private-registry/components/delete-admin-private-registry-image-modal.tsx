@@ -2,9 +2,9 @@
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import type { DeleteAdminPrivateRegistryImagePayload } from "@/domain/private-registry-image/types/private-registry-image.type";
 import { useDeleteAdminPrivateRegistryImage } from "@/domain/private-registry-image/hooks/use-delete-admin-private-registry-image";
 import { openDeleteAdminRegistryImageModalAtom } from "@/domain/private-registry-image/state/private-registry-image.atom";
+import type { DeleteAdminPrivateRegistryImagePayload } from "@/domain/private-registry-image/types/private-registry-image.type";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";

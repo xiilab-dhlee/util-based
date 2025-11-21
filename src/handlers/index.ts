@@ -3,6 +3,7 @@
  * 모든 도메인별 핸들러를 하나로 통합하여 export
  */
 
+import { accountHandlers } from "../mocks/handlers/account.handler";
 import { credentialHandlers } from "../mocks/handlers/credential.handler";
 import { groupHandlers } from "../mocks/handlers/group.handler";
 import { hubHandlers } from "../mocks/handlers/hub.handler";
@@ -14,7 +15,6 @@ import { privateRegistryImageHandlers } from "../mocks/handlers/private-registry
 import { redfishHandlers } from "../mocks/handlers/redfish.handler";
 import { requestImageHandlers } from "../mocks/handlers/request-image.handler";
 import { sourcecodeHandlers } from "../mocks/handlers/sourcecode.handler";
-import { userHandlers } from "../mocks/handlers/user.handler";
 import { volumeHandlers } from "../mocks/handlers/volume.handler";
 import { workloadHandlers } from "../mocks/handlers/workload.handler";
 import { workspaceHandlers } from "../mocks/handlers/workspace.handler";
@@ -22,6 +22,7 @@ import { workspaceHandlers } from "../mocks/handlers/workspace.handler";
 /**
  * 기본 핸들러 (모든 도메인)
  */
+
 export const combinedHandlers = [
   ...workloadHandlers,
   ...sourcecodeHandlers,
@@ -31,7 +32,7 @@ export const combinedHandlers = [
   ...requestImageHandlers,
   ...nodeHandlers,
   ...redfishHandlers,
-  ...userHandlers,
+  ...accountHandlers,
   ...groupHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,

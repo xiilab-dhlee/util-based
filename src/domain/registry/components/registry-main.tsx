@@ -7,10 +7,7 @@ import { RegistrySubSection } from "./registry-sub-section";
 export function RegistryMain() {
   return (
     <>
-      <PageHeader
-        pageKey="admin.registry"
-        description="Registry"
-      />
+      <PageHeader pageKey="admin.registry" description="Registry" />
       <RegistryMainSection />
       <RegistrySubSection />
     </>

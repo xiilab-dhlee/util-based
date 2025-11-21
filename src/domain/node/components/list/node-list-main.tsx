@@ -58,10 +58,7 @@ const GUIDES: CoreGuide[] = [
 export function NodeListMain() {
   return (
     <>
-      <PageHeader
-        pageKey="admin.node"
-        description="Node Management"
-      />
+      <PageHeader pageKey="admin.node" description="Node Management" />
 
       {/* 노드 목록 페이지 메인 영역 */}
       <ListPageMain>

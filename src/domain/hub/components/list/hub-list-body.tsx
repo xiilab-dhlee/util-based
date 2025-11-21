@@ -10,8 +10,8 @@ import {
   hubSearchTextAtom,
   hubSelectedAtom,
 } from "@/domain/hub/state/hub.atom";
-import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { HubCard } from "./hub-card";
 

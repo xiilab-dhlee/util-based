@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+import { Icon, Label } from "xiilab-ui";
 
 import { useGetPrivateRegistryImageTag } from "@/domain/private-registry-image/hooks/use-get-private-registry-image-tag";
 import { PRIVATE_REGISTRY_IMAGE_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -49,10 +49,25 @@ export function PrivateRegistryImageTagDetailIntroCard() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <Icon name="PersonFilled" color="var(--icon-fill)" size={24} />
+              <Icon name="Info" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
-              <RowKey>생성자</RowKey>
+              <RowKey>보안 검사 상태 :</RowKey>
+              <RowValue>
+                <Label variant="blue" theme="dark">
+                  완료
+                </Label>
+              </RowValue>
+            </RowTitle>
+          </RowBody>
+        </Row>
+        <Row>
+          <RowBody>
+            <RowIconWrapper>
+              <Icon name="Person" color="var(--icon-fill)" size={24} />
+            </RowIconWrapper>
+            <RowTitle>
+              <RowKey>생성자 :</RowKey>
               <RowValue>{data?.creatorName}</RowValue>
             </RowTitle>
           </RowBody>

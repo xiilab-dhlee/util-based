@@ -19,10 +19,7 @@ export const metadata: Metadata = {
 export default function SourcecodeLayout({ children }: PropsWithChildren) {
   return (
     <>
-      <PageHeader
-        pageKey="user.sourcecode"
-        description="Source code"
-      />
+      <PageHeader pageKey="user.sourcecode" description="Source code" />
       {/* 소스코드 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 소스코드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

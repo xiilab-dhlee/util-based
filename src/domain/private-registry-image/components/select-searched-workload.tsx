@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Input } from "xiilab-ui";
 
 import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
-import { SearchWorkloadCard } from "./list/search-workload-card";
+import { WorkloadCard } from "../../workload/components/workload-card";
 
 interface SelectSearchedWorkloadProps {
   checkedWorkload: string | null;
@@ -48,7 +48,7 @@ export function SelectSearchedWorkload({
       </Header>
       <Body>
         {data?.content?.map((workload) => (
-          <SearchWorkloadCard
+          <WorkloadCard
             key={workload.id}
             {...workload}
             isChecked={checkedWorkload === workload.id}

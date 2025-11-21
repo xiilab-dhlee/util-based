@@ -4,8 +4,8 @@ import type { ComponentType, ReactNode } from "react";
 import { createElement, useCallback, useState } from "react";
 import styled from "styled-components";
 
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
 import { CustomFileNode, RootCustomFileNode } from "./custom-file-node";
 

@@ -60,10 +60,7 @@ export function WorkloadListMain() {
 
   return (
     <>
-      <PageHeader
-        pageKey="user.workload"
-        description="Workload"
-      />
+      <PageHeader pageKey="user.workload" description="Workload" />
 
       {/* 워크로드 목록 페이지 메인 영역 */}
       <ListPageMain>

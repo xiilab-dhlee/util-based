@@ -2,8 +2,8 @@
 import styled from "styled-components";
 import { Icon, InfoModal, type TabsSeparatedItem } from "xiilab-ui";
 
-import { openViewNetworkPortsModalAtom } from "@/domain/node/state/node.atom";
 import type { NetworkAdapterInfoType } from "@/domain/node/schemas/redfish.schema";
+import { openViewNetworkPortsModalAtom } from "@/domain/node/state/node.atom";
 import { StateTab } from "@/shared/components/tab";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { REDFISH_EVENTS } from "@/shared/constants/pubsub.constant";

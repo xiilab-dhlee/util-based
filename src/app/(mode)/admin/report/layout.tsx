@@ -55,10 +55,7 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
-      <PageHeader
-        pageKey="admin.report"
-        description="Report"
-      />
+      <PageHeader pageKey="admin.report" description="Report" />
 
       {/* 리포트 페이지 메인 영역 */}
       <ListPageMain>

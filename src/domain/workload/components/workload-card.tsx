@@ -12,19 +12,19 @@ import {
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
 
-interface SearchWorkloadCardProps extends WorkloadListType {
+interface WorkloadCardProps extends WorkloadListType {
   isChecked: boolean;
   onCheck: () => void;
 }
 
-export function SearchWorkloadCard({
+export function WorkloadCard({
   workloadName,
   creatorDate,
   jobType,
   status,
   isChecked,
   onCheck,
-}: SearchWorkloadCardProps) {
+}: WorkloadCardProps) {
   const { label } = getWorkloadStatusInfo(status);
   return (
     <Card

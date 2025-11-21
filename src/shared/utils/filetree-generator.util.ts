@@ -1,10 +1,10 @@
 import { faker } from "@faker-js/faker";
 
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   FILE_EXTENSIONS,
   FILE_SIZE_RANGES,
 } from "@/shared/constants/filetree.constant";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 
 type FileSizeCategory = keyof typeof FILE_SIZE_RANGES;
 type FileTemplate = Record<string, unknown>;

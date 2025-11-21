@@ -1,11 +1,12 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import styled from "styled-components";
 
-import { useGetPrivateRegistryImageTags } from "@/domain/private-registry-image/hooks/use-get-private-registry-image-tags";
+import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
+import { VulnerabilityCard } from "../../../security/vulnerability-card";
 import { PrivateRegistryImageTagDetailIntroCard } from "./private-registry-image-tag-detail-intro-card";
 
 /**
@@ -14,32 +15,32 @@ import { PrivateRegistryImageTagDetailIntroCard } from "./private-registry-image
  * 이미지 기본 정보 카드를 포함합니다.
  */
 export function PrivateRegistryImageTagDetailAside() {
-  const { id } = useParams();
-
-  const { data } = useGetPrivateRegistryImageTags({
-    page: 1,
-    size: 3,
-    searchText: "",
-    imageId: Number(id),
-  });
-
   return (
     <DetailPageAside>
       {/* 이미지 기본 정보 카드 */}
       <PrivateRegistryImageTagDetailIntroCard />
       <AsideFillCard
-        title="검증 진행중인 목록"
-        titleExtra={`총 ${data?.totalSize}개`}
+        title="취약점 Critical 목록"
+        titleExtra={`총 ${vulnerabilityListMock.length}개`}
       >
-        <TagBody></TagBody>
+        <GridBody>
+          {vulnerabilityListMock.map((vulnerability) => (
+            <VulnerabilityCard key={vulnerability.id} {...vulnerability} />
+          ))}
+        </GridBody>
       </AsideFillCard>
     </DetailPageAside>
   );
 }
 
-const TagBody = styled.div`
+const GridBody = styled.div`
   flex: 1;
-  max-height: 390px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  height: 380px;
   overflow-y: auto;
   width: 100%;
+
+  ${customScrollbar()}
 `;

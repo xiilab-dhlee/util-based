@@ -17,10 +17,7 @@ export const metadata: Metadata = {
 export default function HubLayout({ children }: PropsWithChildren) {
   return (
     <>
-      <PageHeader
-        pageKey="user.hub"
-        description="Hub"
-      />
+      <PageHeader pageKey="user.hub" description="Hub" />
       <ListPageMain>
         <ListPageBody>
           {/* 허브 목록 필터 */}
