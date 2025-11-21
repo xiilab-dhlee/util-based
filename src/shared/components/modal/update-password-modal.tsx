@@ -4,12 +4,15 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Icon, Input, Modal } from "xiilab-ui";
 
-import { useUpdateUser } from "@/domain/user/hooks/use-update-user";
-import type { UserListType } from "@/domain/user/schemas/user.schema";
-import type { UpdateUserPayload } from "@/domain/user/types/user.type";
+import { useUpdateAccount } from "@/domain/account-management/hooks/use-update-account";
+import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
+import type { UpdateAccountPayload } from "@/domain/account-management/types/account.type";
 import { LoggedInUserCard } from "@/shared/components/card/logged-in-user-card";
 import { FormLabel } from "@/shared/components/form/form-label";
-import { COMMON_EVENTS, USER_EVENTS } from "@/shared/constants/pubsub.constant";
+import {
+  ACCOUNT_EVENTS,
+  COMMON_EVENTS,
+} from "@/shared/constants/pubsub.constant";
 import { openUpdatePasswordModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -29,7 +32,7 @@ export function UpdatePasswordModal() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
 
-  const updateUser = useUpdateUser();
+  const updateAccount = useUpdateAccount();
 
   const handleSubmit = () => {
     const payload = createPayload();
@@ -37,16 +40,16 @@ export function UpdatePasswordModal() {
     // TODO: payload 검증 및 유효성 검사 추가 필요
     if (payload) {
       // TODO: validation 추가 필요
-      updateUser.mutate(payload, {
+      updateAccount.mutate(payload, {
         onSuccess: () => {
-          publish(USER_EVENTS.sendUpdateUser, payload);
+          publish(ACCOUNT_EVENTS.sendUpdateAccount, payload);
           onClose();
         },
       });
     }
   };
 
-  const createPayload = (): UpdateUserPayload | null => {
+  const createPayload = (): UpdateAccountPayload | null => {
     if (!formRef.current) return null;
     // 폼 데이터 수집
     const formData = new FormData(formRef.current);
@@ -57,7 +60,7 @@ export function UpdatePasswordModal() {
     };
   };
 
-  useSubscribe<Pick<UserListType, "name" | "email">>(
+  useSubscribe<Pick<AccountListType, "name" | "email">>(
     COMMON_EVENTS.sendUpdatePassword,
     ({ name, email }) => {
       setUsername(name);
@@ -83,7 +86,7 @@ export function UpdatePasswordModal() {
       centered
       showHeaderBorder
       okButtonProps={{
-        disabled: updateUser.isPending,
+        disabled: updateAccount.isPending,
       }}
     >
       <SectionTitle>회원 상세 정보</SectionTitle>

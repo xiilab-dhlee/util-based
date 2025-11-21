@@ -4,9 +4,9 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Icon, Input, Modal } from "xiilab-ui";
 
-import { useCheckPassword } from "@/domain/user/hooks/use-check-password";
-import type { UserListType } from "@/domain/user/schemas/user.schema";
-import type { CheckPasswordPayload } from "@/domain/user/types/user.type";
+import { useCheckPassword } from "@/domain/account-management/hooks/use-check-password";
+import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
+import type { CheckPasswordPayload } from "@/domain/account-management/types/account.type";
 import { LoggedInUserCard } from "@/shared/components/card/logged-in-user-card";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -49,12 +49,12 @@ export function CheckPasswordModal() {
     const formData = new FormData(formRef.current);
 
     return {
-      username: email,
+      accountname: email,
       password: formData.get("checkPassword") as string,
     };
   };
 
-  useSubscribe<Pick<UserListType, "name" | "email">>(
+  useSubscribe<Pick<AccountListType, "name" | "email">>(
     COMMON_EVENTS.sendCheckPassword,
     ({ name, email }) => {
       setUsername(name);
