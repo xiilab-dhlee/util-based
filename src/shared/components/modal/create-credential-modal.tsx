@@ -54,8 +54,8 @@ export function CreateCredentialModal() {
       type: typeSelect.value as CredentialType,
       name: formData.get("credentialName") as string,
       description: formData.get("credentialDescription") as string,
-      privateRegistryUrl: formData.get(
-        "credentialPrivateRegistryUrl",
+      internalregistryUrl: formData.get(
+        "credentialInternalRegistryUrl",
       ) as string,
       id: formData.get("credentialId") as string,
       pw: formData.get("credentialToken") as string,
@@ -115,13 +115,13 @@ export function CreateCredentialModal() {
         </FormItem>
         {typeSelect.value === "DOCKER" && (
           <FormItem>
-            <FormLabel htmlFor="credentialPrivateRegistryUrl">
+            <FormLabel htmlFor="credentialInternalRegistryUrl">
               내부 레지스트리 URL
             </FormLabel>
             <Input
               type="text"
-              id="credentialPrivateRegistryUrl"
-              name="credentialPrivateRegistryUrl"
+              id="credentialInternalRegistryUrl"
+              name="credentialInternalRegistryUrl"
               placeholder="https://index.docker.io/v1/"
             />
           </FormItem>

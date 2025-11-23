@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
-import { useGetPrivateRegistryImages } from "@/domain/private-registry-image/hooks/use-get-private-registry-images";
-import { createPrivateRegistryImageColumn } from "@/shared/components/column/create-private-registry-image-column";
+import { useGetInternalRegistryImages } from "@/domain/internal-registry-image/hooks/use-get-internal-registry-images";
+import { createInternalRegistryImageColumn } from "@/shared/components/column/create-internal-registry-image-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { UserPrivateRegistryListFilter } from "./user-private-registry-list-filter";
+import { UserInternalRegistryListFilter } from "./user-internal-registry-list-filter";
 
 export function RegistrySubSection() {
-  const { data } = useGetPrivateRegistryImages({
+  const { data } = useGetInternalRegistryImages({
     page: 1,
     size: 100,
     searchText: "",
@@ -15,10 +15,10 @@ export function RegistrySubSection() {
   return (
     <Container>
       <Pane>
-        <UserPrivateRegistryListFilter />
+        <UserInternalRegistryListFilter />
         <PaneBody>
           <CustomizedTable
-            columns={createPrivateRegistryImageColumn([
+            columns={createInternalRegistryImageColumn([
               {
                 dataIndex: "imageName",
               },
@@ -46,10 +46,10 @@ export function RegistrySubSection() {
         </PaneBody>
       </Pane>
       <Pane>
-        <UserPrivateRegistryListFilter />
+        <UserInternalRegistryListFilter />
         <PaneBody>
           <CustomizedTable
-            columns={createPrivateRegistryImageColumn([
+            columns={createInternalRegistryImageColumn([
               {
                 dataIndex: "imageName",
               },

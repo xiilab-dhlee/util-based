@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { PrivateRegistryImageListMain } from "@/domain/private-registry-image/components/list/private-registry-image-list-main";
+import { InternalRegistryImageListMain } from "@/domain/internal-registry-image/components/list/internal-registry-image-list-main";
 
 export const metadata: Metadata = {
-  title: "Private Registry",
+  title: "Internal Registry",
 };
 
-export default function UserPrivateRegistryImagePage() {
-  return <PrivateRegistryImageListMain />;
+export default function UserInternalRegistryImagePage() {
+  return <InternalRegistryImageListMain />;
 }
