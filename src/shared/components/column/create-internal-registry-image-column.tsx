@@ -53,7 +53,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "다운로드 횟수",
       align: "center",
       width: 120,
-      render: (_, { pullCnt }: PrivateRegistryImageListType) => {
+      render: (_, { pullCnt }: InternalRegistryImageListType) => {
         return <span>{pullCnt.toLocaleString()}번</span>;
       },
     },

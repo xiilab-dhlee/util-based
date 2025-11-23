@@ -4,8 +4,8 @@ import { type Dispatch, type SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { Input } from "xiilab-ui";
 
+import { WorkloadCard } from "@/domain/workload/components/workload-card";
 import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
-import { WorkloadCard } from "../../workload/components/workload-card";
 
 interface SelectSearchedWorkloadProps {
   checkedWorkload: string | null;

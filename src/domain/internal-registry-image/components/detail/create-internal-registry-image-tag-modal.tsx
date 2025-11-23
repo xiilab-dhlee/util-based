@@ -4,20 +4,20 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Icon, Input, Modal, Tag } from "xiilab-ui";
 
-import { openCreatePrivateRegistryImageTagModalAtom } from "@/domain/private-registry-image/state/private-registry-image.atom";
+import { openCreateInternalRegistryImageTagModalAtom } from "@/domain/internal-registry-image/state/internal-registry-image.atom";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 import { SelectSearchedWorkload } from "../select-searched-workload";
 
-export function CreatePrivateRegistryImageTagModal() {
+export function CreateInternalRegistryImageTagModal() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const { clearForm, getFormKey } = useClearForm();
 
   const { open, onClose } = useGlobalModal(
-    openCreatePrivateRegistryImageTagModalAtom,
+    openCreateInternalRegistryImageTagModalAtom,
   );
 
   const [checkedWorkload, setCheckedWorkload] = useState<string | null>(null);
@@ -49,7 +49,7 @@ export function CreatePrivateRegistryImageTagModal() {
       <form ref={formRef} key={getFormKey()}>
         <FormItem>
           <FormLabel
-            htmlFor="privateRegistryImageTag"
+            htmlFor="internalRegistryImageTag"
             className="required"
             rightChildren={
               <RecentTag>
@@ -65,8 +65,8 @@ export function CreatePrivateRegistryImageTagModal() {
 
           <Input
             type="text"
-            id="privateRegistryImageTag"
-            name="privateRegistryImageTag"
+            id="internalRegistryImageTag"
+            name="internalRegistryImageTag"
             placeholder="태그를 입력해 주세요. (문자, 숫자, 하이픈(-), 밑줄(_)만 사용 가능)"
             width="100%"
           />

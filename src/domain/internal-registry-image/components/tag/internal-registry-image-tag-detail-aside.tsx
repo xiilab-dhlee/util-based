@@ -14,7 +14,7 @@ import { InternalRegistryImageTagDetailIntroCard } from "./internal-registry-ima
  *
  * 이미지 기본 정보 카드를 포함합니다.
  */
-export function PrivateRegistryImageTagDetailAside() {
+export function InternalRegistryImageTagDetailAside() {
   return (
     <DetailPageAside>
       {/* 이미지 기본 정보 카드 */}

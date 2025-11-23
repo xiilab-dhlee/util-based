@@ -4,10 +4,10 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Dropdown, Icon, Input, Modal, Tag, TextArea } from "xiilab-ui";
 
+import { SelectSearchedWorkload } from "@/domain/internal-registry-image/components/list/select-searched-workload";
 import { INTERNAL_REGISTRY_IMAGE_STATUS_OPTIONS } from "@/domain/internal-registry-image/constants/internal-registry-image.constant";
 import { openCreateInternalRegistryImageModalAtom } from "@/domain/internal-registry-image/state/internal-registry-image.atom";
 import { FormLabel } from "@/shared/components/form/form-label";
-import { SelectSearchedWorkload } from "@/shared/components/select/select-searched-workload";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSelect } from "@/shared/hooks/use-select";
@@ -66,7 +66,7 @@ export function CreateInternalRegistryImageModal() {
         <FormRow>
           <FormItem>
             <FormLabel
-              htmlFor="privateRegistryImageTag"
+              htmlFor="internalRegistryImageTag"
               className="required"
               rightChildren={
                 <RecentTag>
@@ -82,15 +82,15 @@ export function CreateInternalRegistryImageModal() {
 
             <Input
               type="text"
-              id="privateRegistryImageTag"
-              name="privateRegistryImageTag"
+              id="internalRegistryImageTag"
+              name="internalRegistryImageTag"
               placeholder="태그를 입력해 주세요. (문자, 숫자, 하이픈(-), 밑줄(_)만 사용 가능)"
               width="100%"
             />
           </FormItem>{" "}
           <FormItem>
             <FormLabel
-              htmlFor="privateRegistryImageStatus"
+              htmlFor="internalRegistryImageStatus"
               className="required"
             >
               공개 설정

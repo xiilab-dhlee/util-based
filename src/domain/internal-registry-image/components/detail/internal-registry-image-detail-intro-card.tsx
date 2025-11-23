@@ -32,7 +32,7 @@ export function InternalRegistryImageDetailIntroCard() {
   };
 
   const handleUpdate = () => {
-    publish(PRIVATE_REGISTRY_IMAGE_EVENTS.sendUpdateImage, data);
+    publish(INTERNAL_REGISTRY_IMAGE_EVENTS.sendUpdateImage, data);
   };
 
   return (
