@@ -3,7 +3,6 @@
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
-import { GlobalLoadingSpinner } from "@/shared/components/global-loading-spinner";
 import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
 import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
@@ -26,8 +25,6 @@ export default function ModeLayout({ children }: PropsWithChildren) {
       <CheckPasswordModal />
       {/* 비밀번호 수정 모달 */}
       <UpdatePasswordModal />
-      {/* 로딩 스피너 */}
-      <GlobalLoadingSpinner />
     </>
   );
 }

@@ -15,6 +15,7 @@ import { notificationHandlers } from "@/mocks/handlers/notification.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
+import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
 import { volumeHandlers } from "@/mocks/handlers/volume.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 import { workspaceHandlers } from "@/mocks/handlers/workspace.handler";
@@ -35,6 +36,7 @@ export const combinedHandlers = [
   ...groupHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,
+  ...systemMonitoringHandlers,
   ...internalregistryHandlers,
   ...internalregistryImageHandlers,
   ...credentialHandlers,

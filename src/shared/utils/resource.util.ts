@@ -2,7 +2,7 @@ import type { CoreResourceType } from "@/shared/types/core.interface";
 
 const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
   GPU: {
-    text: "Gpu",
+    text: "GPU",
     unit: "개",
     icon: "Gpu",
     color: "#A353FF",
@@ -20,13 +20,13 @@ const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
     color: "#D77BFF",
   },
   CPU: {
-    text: "Cpu",
+    text: "CPU",
     unit: "Core",
     icon: "Cpu",
     color: "#376DFF",
   },
   MEM: {
-    text: "Mem",
+    text: "Memory",
     unit: "GB",
     icon: "Mem",
     color: "#55D398",
@@ -38,6 +38,15 @@ const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
     color: "#17CDE5",
   },
 } as const;
+
+type ByteUnit = "MB" | "GB" | "TB";
+
+const BYTES_IN_KB = 1024;
+const BYTES_IN_MB = BYTES_IN_KB * 1024;
+const BYTES_IN_GB = BYTES_IN_MB * 1024;
+const BYTES_IN_TB = BYTES_IN_GB * 1024;
+
+export type ReturnTypeOfGetResourceInfo = ReturnType<typeof getResourceInfo>;
 
 /**
  * 리소스 타입 정보 조회
@@ -84,4 +93,43 @@ export function getStatusClassName(resourcePercent: number): string {
     return "warning";
   }
   return "";
+}
+
+/**
+ * bytes 값을 1024 기준으로 지정한 단위로 변환하고,
+ * 변환된 숫자 값과 단위가 포함된 문자열을 함께 반환합니다.
+ *
+ * @example
+ * convertBytes(1048576, "MB") // { value: 1, label: "1 MB" }
+ * convertBytes(1073741824, "GB") // { value: 1, label: "1 GB" }
+ */
+export function convertBytes(
+  bytes: number,
+  unit: ByteUnit,
+  decimals = 1,
+): { value: number; label: string } {
+  if (!Number.isFinite(bytes) || bytes <= 0) {
+    return { value: 0, label: `0 ${unit}` };
+  }
+
+  const safeDecimals = decimals < 0 ? 0 : decimals;
+
+  let divider = BYTES_IN_MB;
+
+  if (unit === "GB") {
+    divider = BYTES_IN_GB;
+  } else if (unit === "TB") {
+    divider = BYTES_IN_TB;
+  }
+
+  const rawValue = bytes / divider;
+  const value =
+    safeDecimals === 0
+      ? Math.round(rawValue)
+      : Number(rawValue.toFixed(safeDecimals));
+
+  return {
+    value,
+    label: `${value} ${unit}`,
+  };
 }

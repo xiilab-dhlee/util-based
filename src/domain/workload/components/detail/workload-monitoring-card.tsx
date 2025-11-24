@@ -41,7 +41,7 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
    * 메트릭 타입에 따른 모니터링 정보 조회
    * Workload를 통해 type에 맞는 텍스트, 단위, 색상 정보를 가져옵니다.
    */
-  const { text, unit, color } = getMetricInfo(type);
+  const { text, unit, colors } = getMetricInfo(type);
 
   /**
    * 확대 아이콘 클릭 핸들러
@@ -62,7 +62,7 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
       title: text,
       series,
       unit,
-      colors: [color],
+      colors,
     });
   };
 
@@ -80,7 +80,7 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
       <LikeCompactCardBody>
         {/* 차트 데이터가 있을 경우에만 모니터링 차트 렌더링 */}
         {series.length > 0 && (
-          <MonitoringChart series={series} unit={unit} colors={[color]} />
+          <MonitoringChart series={series} unit={unit} colors={colors} />
         )}
       </LikeCompactCardBody>
     </LikeCompactCardContainer>
