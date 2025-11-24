@@ -17,6 +17,8 @@ reviews:
     drafts: false
     ignore_title_keywords:
       - "DO NOT REVIEW"
+    base_branches:
+      - ".*"
   path_filters:
     - "!node_modules/**"
     - "!/.next/**"
