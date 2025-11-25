@@ -1,4 +1,4 @@
-import { PAGE_META } from "@/shared/constants/page-meta";
+import { PAGE_META } from "@/shared/constants/page-meta.constant";
 
 export const MONITORING_MENU_ICON = PAGE_META["admin.monitoring"]?.iconName;
 export const MONITORING_QUICK_MENUS = [
@@ -10,11 +10,11 @@ export const MONITORING_QUICK_MENUS = [
     href: "/admin/system-monitoring",
   },
   {
-    title: "클러스터 모니터링",
-    titleEng: "Cluster Monitoring",
+    title: "쿠버네티스 모니터링",
+    titleEng: "Kubernetes Monitoring",
     icon: "CirclesExt",
     iconSize: 32,
-    href: "/admin/cluster-monitoring",
+    href: "/admin/kubernetes-monitoring",
   },
   {
     title: "모니터링 알림",

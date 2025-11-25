@@ -7,7 +7,7 @@ import type { TabsSeparatedItem } from "xiilab-ui";
 import { NodeDetailPageAside } from "@/domain/node/components/detail/node-detail-page-aside";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { RouteTab } from "@/shared/components/tab";
-import type { PageKey } from "@/shared/constants/page-meta";
+import type { PageKey } from "@/shared/constants/page-meta.constant";
 import {
   DetailContentSection,
   DetailPageBody,

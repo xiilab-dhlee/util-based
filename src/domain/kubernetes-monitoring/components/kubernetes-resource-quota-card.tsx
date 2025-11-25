@@ -10,19 +10,19 @@ import { ResourceProgress } from "@/shared/components/progress/resource-progress
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
-interface ClusterResourceQuotaCardProps {
+interface KubernetesResourceQuotaCardProps {
   resourceName: CoreResourceType;
   total: number;
   quota: number;
   showDivider?: boolean;
 }
 
-export function ClusterResourceQuotaCard({
+export function KubernetesResourceQuotaCard({
   resourceName,
   total,
   quota,
   showDivider = false,
-}: ClusterResourceQuotaCardProps) {
+}: KubernetesResourceQuotaCardProps) {
   const { icon, color } = getResourceInfo(resourceName);
 
   let iconComponent = null;

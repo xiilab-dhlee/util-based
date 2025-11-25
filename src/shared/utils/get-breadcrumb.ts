@@ -11,7 +11,7 @@ import {
   PAGE_META,
   type PageItemMeta,
   type PageKey,
-} from "@/shared/constants/page-meta";
+} from "@/shared/constants/page-meta.constant";
 
 /**
  * href 정의(정적 문자열 or 동적 함수)를 실제 경로 문자열로 변환

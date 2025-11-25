@@ -2,12 +2,12 @@
 
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 
-export function ClusterResourceListFooter() {
+export function KubernetesEventListFooter() {
   return (
     <ListPageFooter
       total={100}
       page={1}
-      pageSize={15}
+      pageSize={12}
       onChange={() => {}}
       isLoading={false}
     />

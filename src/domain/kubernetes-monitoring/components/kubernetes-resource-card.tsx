@@ -2,17 +2,21 @@
 
 import styled from "styled-components";
 
-interface ClusterResourceCardProps {
+interface KubernetesResourceCardProps {
   resourceName: string;
   count: number;
+  isActive?: boolean;
+  onClick?: () => void;
 }
 
-export function ClusterResourceCard({
+export function KubernetesResourceCard({
   resourceName,
   count,
-}: ClusterResourceCardProps) {
+  isActive = false,
+  onClick,
+}: KubernetesResourceCardProps) {
   return (
-    <Container>
+    <Container $active={isActive} onClick={onClick}>
       <Header>
         <Title>{resourceName}</Title>
       </Header>
@@ -26,13 +30,14 @@ export function ClusterResourceCard({
   );
 }
 
-const Container = styled.div`
-  border: 1px solid #d1d5dc;
+const Container = styled.div<{ $active?: boolean }>`
+  border: 1px solid ${({ $active }) => ($active ? "var(--color-blue-05)" : "#d1d5dc")};
   display: flex;
   flex-direction: column;
   border-radius: 4px;
   padding: 8px 10px;
   background-color: #fcfcfc;
+  cursor: pointer;
 `;
 
 const Header = styled.div`

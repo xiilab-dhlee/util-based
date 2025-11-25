@@ -26,10 +26,10 @@ export const PAGE_META = {
     iconName: "Monitoring01",
     href: ROUTES.ADMIN_MONITORING,
   },
-  "admin.cluster-monitoring": {
-    title: "클러스터 모니터링",
-    iconName: "ClusterMonitoring",
-    href: ROUTES.ADMIN_CLUSTER_MONITORING,
+  "admin.kubernetes-monitoring": {
+    title: "쿠버네티스 모니터링",
+    iconName: "KubernetesMonitoring",
+    href: ROUTES.ADMIN_KUBERNETES_MONITORING,
   },
   "admin.system-monitoring": {
     title: "시스템 모니터링",

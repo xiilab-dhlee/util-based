@@ -16,7 +16,9 @@ export default function ModeLayout({ children }: PropsWithChildren) {
           <Navigation />
         </Left>
         <Right>
-          <Main>{children}</Main>
+          <RightInner>
+            <Main>{children}</Main>
+          </RightInner>
         </Right>
       </Container>
       {/* 워크스페이스 생성 모달 */}
@@ -45,10 +47,15 @@ const Left = styled.div`
 
 const Right = styled.div`
   flex: 1;
-  min-width: calc(1920px - var(--navigation-width));
+  min-width: 0;
   height: 100%;
   padding: 0 40px;
   overflow-y: auto;
+  overflow-x: auto;
+`;
+
+const RightInner = styled.div`
+  min-width: calc(1920px - var(--navigation-width));
 `;
 
 const Main = styled.main`

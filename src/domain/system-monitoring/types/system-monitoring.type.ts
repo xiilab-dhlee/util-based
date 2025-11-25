@@ -1,6 +1,6 @@
 /**
  * 노드 요약 정보 API 응답
- * GET /api/v1/cluster/nodes/{nodeName}/system-resources/summary
+ * GET /api/v1/kubernetes/nodes/{nodeName}/system-resources/summary
  */
 export interface SystemResourcesSummaryResponse {
   nodeName: string;
@@ -24,7 +24,7 @@ export interface MetricDataPoint {
 
 /**
  * 리소스 메트릭 API 응답
- * GET /api/v1/cluster/nodes/{nodeName}/resources/metrics
+ * GET /api/v1/kubernetes/nodes/{nodeName}/resources/metrics
  */
 export interface ResourceMetricResponse {
   metricName: string;

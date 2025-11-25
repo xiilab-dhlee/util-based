@@ -1,7 +1,7 @@
 "use client";
 
 import { ConfigProvider } from "antd";
-import type { ComponentType, HTMLAttributes } from "react";
+import type { ComponentType, HTMLAttributes, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import {
   type ResponsiveColumnType,
@@ -54,6 +54,8 @@ interface CustomizedTableProps<
   >;
   /** 테이블 컬럼 행 클릭 핸들러 (기본값: undefined) */
   onRowClick?: (record: TRecord) => void;
+  /** 에러 상태 여부 - true 일 경우 에러 메시지를 표시합니다. */
+  isError?: boolean;
 }
 
 /**
@@ -118,6 +120,8 @@ export function CustomizedTable<
   onRowClick,
   pagination = false,
   darkMode = false,
+  isError = false,
+  ...tableProps
 }: CustomizedTableProps<TRecord>) {
   // Ant Design 테이블 테마 설정
   const theme = {
@@ -144,8 +148,14 @@ export function CustomizedTable<
   };
 
   // 테이블 지역화 설정 (한글 메시지)
+  let emptyText: ReactNode = "조회된 결과가 없습니다.";
+
+  if (isError) {
+    emptyText = "데이터를 불러올 수 없습니다.";
+  }
+
   const locale = {
-    emptyText: <>조회된 결과가 없습니다.</>,
+    emptyText,
   };
 
   let components: TableProps<TRecord>["components"];
@@ -157,9 +167,14 @@ export function CustomizedTable<
     };
   }
 
+  const forwardedTableProps = tableProps as unknown as TableProps<
+    Record<string, unknown>
+  >;
+
   return (
     <ConfigProvider theme={theme}>
       <StyledTable
+        {...forwardedTableProps}
         darkMode={darkMode}
         columns={columns as ResponsiveColumnType<Record<string, unknown>>[]}
         dataSource={data as Record<string, unknown>[]}

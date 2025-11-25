@@ -1,33 +1,57 @@
 "use client";
 
 import styled from "styled-components";
+import { Label } from "xiilab-ui";
 
-import { statusTextStyle } from "@/styles/mixins/text";
+import type { KubernetesEventType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
+import {
+  getKubernetesEventLabelProps,
+  getParseDateTime,
+} from "@/domain/kubernetes-monitoring/utils/kubernetes-event.util";
+import { KUBERNETES_MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 
-export function ClusterEventCard() {
+interface KubernetesEventCardProps {
+  event: KubernetesEventType;
+}
+
+/**
+ * 쿠버네티스 이벤트 카드 컴포넌트
+ *
+ * 클릭 시 PubSub을 통해 상세 모달을 열어줍니다.
+ */
+export function KubernetesEventCard({ event }: KubernetesEventCardProps) {
+  const publish = usePublish();
+
+  const { date, time } = getParseDateTime(event.dateTime);
+
+  const handleClick = () => {
+    publish(KUBERNETES_MONITORING_EVENTS.sendKubernetesEventDetail, event);
+  };
+
+  const { label, variant } = getKubernetesEventLabelProps(event.status);
+
   return (
-    <Container>
+    <Container onClick={handleClick}>
       <Header>
         <HeaderLeft>
-          <HeaderTitle className="truncate">네임스페이스01</HeaderTitle>
+          <HeaderTitle className="truncate">{event.namespace}</HeaderTitle>
           <HeaderDate>
-            <HeaderDateItem>24.12.26</HeaderDateItem>
-            <HeaderDateItem>13:31</HeaderDateItem>
+            <HeaderDateItem>{date}</HeaderDateItem>
+            <HeaderDateItem>{time}</HeaderDateItem>
           </HeaderDate>
         </HeaderLeft>
-        <HeaderStatus className="red">에러</HeaderStatus>
+        <Label variant={variant}>{label}</Label>
       </Header>
       <Body>
         <Key>오브젝트 :</Key>
-        <Value className="truncate">deployment/nginx-deployment</Value>
+        <Value className="truncate">{event.object}</Value>
         <Key>IP 주소 :</Key>
-        <Value>192.168.1.1</Value>
+        <Value>{event.ipAddress}</Value>
       </Body>
       <Footer>
-        <Key>메세지 :</Key>
-        <Message className="truncate">
-          Pod nginx-deployment-5d4d5678b7-abcde가 CrashLoopBackOff{" "}
-        </Message>
+        <Key>메시지 :</Key>
+        <Message className="truncate">{event.message}</Message>
       </Footer>
     </Container>
   );
@@ -42,6 +66,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--color-blue-05);
+  }
 `;
 
 const Header = styled.div`
@@ -85,19 +114,6 @@ const HeaderDateItem = styled.div`
     margin-left: 4px;
     padding-left: 4px;
   }
-`;
-
-const HeaderStatus = styled.div`
-  ${statusTextStyle(6)}
-
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 14px;
 `;
 
 const Body = styled.div`

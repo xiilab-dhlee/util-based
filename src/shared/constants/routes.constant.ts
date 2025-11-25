@@ -26,7 +26,7 @@ export const ROUTES = {
 
   // 모니터링 (정적)
   ADMIN_MONITORING: `${MODE.ADMIN}/monitoring`,
-  ADMIN_CLUSTER_MONITORING: `${MODE.ADMIN}/cluster-monitoring`,
+  ADMIN_KUBERNETES_MONITORING: `${MODE.ADMIN}/kubernetes-monitoring`,
   ADMIN_SYSTEM_MONITORING: `${MODE.ADMIN}/system-monitoring`,
   ADMIN_MONITORING_NOTIFICATION: `${MODE.ADMIN}/monitoring-notification`,
 

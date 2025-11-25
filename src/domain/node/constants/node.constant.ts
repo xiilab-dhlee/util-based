@@ -1,6 +1,6 @@
 import type { DropdownOption } from "xiilab-ui";
 
-import { PAGE_META } from "@/shared/constants/page-meta";
+import { PAGE_META } from "@/shared/constants/page-meta.constant";
 
 /** 노드 메뉴 아이콘 */
 export const NODE_MENU_ICON = PAGE_META["admin.node"]?.iconName;

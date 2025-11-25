@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { AstraGoNav, type AstraGoNavMenu, Icon } from "xiilab-ui";
 
 import { WorkspaceSelect } from "@/shared/components/select/workspace-select";
-import { PAGE_META } from "@/shared/constants/page-meta";
+import { PAGE_META } from "@/shared/constants/page-meta.constant";
 import { useActiveMenu } from "@/shared/hooks/use-active-menu";
 import { isAdminMode } from "@/shared/utils/router.util";
 import { Profile } from "./profile";
@@ -103,8 +103,8 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
             label: PAGE_META["admin.system-monitoring"]?.title,
           },
           {
-            key: "admin.cluster-monitoring",
-            label: PAGE_META["admin.cluster-monitoring"]?.title,
+            key: "admin.kubernetes-monitoring",
+            label: PAGE_META["admin.kubernetes-monitoring"]?.title,
           },
           {
             key: "admin.monitoring-notification",

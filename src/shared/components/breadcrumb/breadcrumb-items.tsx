@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { PageKey } from "@/shared/constants/page-meta";
+import type { PageKey } from "@/shared/constants/page-meta.constant";
 import { getBreadcrumbItems } from "@/shared/utils/get-breadcrumb";
 
 export const BreadcrumbItems = (
