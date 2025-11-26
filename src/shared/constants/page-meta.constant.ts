@@ -26,10 +26,10 @@ export const PAGE_META = {
     iconName: "Monitoring01",
     href: ROUTES.ADMIN_MONITORING,
   },
-  "admin.cluster-monitoring": {
-    title: "클러스터 모니터링",
-    iconName: "ClusterMonitoring",
-    href: ROUTES.ADMIN_CLUSTER_MONITORING,
+  "admin.kubernetes-monitoring": {
+    title: "쿠버네티스 모니터링",
+    iconName: "SystemMonitoring",
+    href: ROUTES.ADMIN_KUBERNETES_MONITORING,
   },
   "admin.system-monitoring": {
     title: "시스템 모니터링",
@@ -38,7 +38,7 @@ export const PAGE_META = {
   },
   "admin.monitoring-notification": {
     title: "모니터링 알림",
-    iconName: "Notification",
+    iconName: "Noti",
     href: ROUTES.ADMIN_MONITORING_NOTIFICATION,
   },
 
@@ -171,20 +171,20 @@ export const PAGE_META = {
     iconName: "Image",
     href: ROUTES.ADMIN_REGISTRY,
   },
-  "admin.private-registry": {
+  "admin.internal-registry": {
     title: "내부 레지스트리",
-    iconName: "PrivateRegistry",
-    href: ROUTES.ADMIN_PRIVATE_REGISTRY,
+    iconName: "Image",
+    href: ROUTES.ADMIN_INTERNAL_REGISTRY,
   },
-  "admin.private-registry.image": {
+  "admin.internal-registry.image": {
     title: "컨테이너 이미지 상세정보",
     href: ({ name, id }: { name: string; id: string }) =>
-      ROUTES.ADMIN_PRIVATE_REGISTRY_IMAGE(name, id),
-    parent: "admin.private-registry",
+      ROUTES.ADMIN_INTERNAL_REGISTRY_IMAGE(name, id),
+    parent: "admin.internal-registry",
   },
   "admin.request-image": {
     title: "이미지 사용 요청 관리",
-    iconName: "ImageRequest",
+    iconName: "Image",
     href: ROUTES.ADMIN_REQUEST_IMAGE,
   },
   "admin.external-registry": {
@@ -236,7 +236,7 @@ export const PAGE_META = {
   },
   "admin.notification": {
     title: "알림 설정",
-    iconName: "Notification",
+    iconName: "Noti",
     href: ROUTES.ADMIN_NOTIFICATION,
   },
 
@@ -291,22 +291,22 @@ export const PAGE_META = {
   // ============================================
   // User Routes - Registry
   // ============================================
-  "user.private-registry-image": {
+  "user.internal-registry-image": {
     title: "내부 레지스트리",
     iconName: "Image",
-    href: ROUTES.USER_PRIVATE_REGISTRY_IMAGE,
+    href: ROUTES.USER_INTERNAL_REGISTRY_IMAGE,
   },
-  "user.private-registry-image.detail": {
+  "user.internal-registry-image.detail": {
     title: "컨테이너 이미지 상세정보",
     href: ({ id }: { id: string }) =>
-      ROUTES.USER_PRIVATE_REGISTRY_IMAGE_DETAIL(id),
-    parent: "user.private-registry-image",
+      ROUTES.USER_INTERNAL_REGISTRY_IMAGE_DETAIL(id),
+    parent: "user.internal-registry-image",
   },
-  "user.private-registry-image.tag": {
+  "user.internal-registry-image.tag": {
     title: "태그 상세정보",
     href: ({ id, tagId }: { id: string; tagId: string }) =>
-      ROUTES.USER_PRIVATE_REGISTRY_IMAGE_TAG(id, tagId),
-    parent: "user.private-registry-image.detail",
+      ROUTES.USER_INTERNAL_REGISTRY_IMAGE_TAG(id, tagId),
+    parent: "user.internal-registry-image.detail",
   },
 
   // ============================================

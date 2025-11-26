@@ -7,21 +7,21 @@ import styled from "styled-components";
 import { nodeModeAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 import { ResourcePresetSelect } from "./resource-preset-select";
-import { SetMultinodeResource } from "./set-multinode-resource";
-import { SetSinglenodeResource } from "./set-singlenode-resource";
+// import { SetMultinodeResource } from "./set-multinode-resource";
+// import { SetSinglenodeResource } from "./set-singlenode-resource";
 
 export function CreateWorkloadResource() {
   const nodeMode = useAtomValue(nodeModeAtom);
-  const [preset, setPreset] = useState<string>("custom");
-  const nodeCount = 2;
-  const cpuCoreMax = 200;
-  const gpuCountMax = 5;
-  const memoryGbMax = 170;
-  const launcherCpuCoreMax = cpuCoreMax;
-  const launcherMemoryGbMax = memoryGbMax;
-  const workerCpuCoreMax = cpuCoreMax;
-  const workerGpuCountMax = gpuCountMax;
-  const workerMemoryGbMax = memoryGbMax;
+  const [preset, setPreset] = useState<string | null>(null);
+  // const nodeCount = 2;
+  // const cpuCoreMax = 200;
+  // const gpuCountMax = 5;
+  // const memoryGbMax = 170;
+  // const launcherCpuCoreMax = cpuCoreMax;
+  // const launcherMemoryGbMax = memoryGbMax;
+  // const workerCpuCoreMax = cpuCoreMax;
+  // const workerGpuCountMax = gpuCountMax;
+  // const workerMemoryGbMax = memoryGbMax;
 
   return (
     <Container>
@@ -39,7 +39,7 @@ export function CreateWorkloadResource() {
       </ResourcePresetDropdown>
 
       {/* Custom 프리셋 선택 시 슬라이더 표시 */}
-      {preset === "custom" &&
+      {/* {preset === "custom" &&
         (nodeMode === "multi" ? (
           <SetMultinodeResource
             nodeCount={nodeCount}
@@ -55,7 +55,7 @@ export function CreateWorkloadResource() {
             gpuCountMax={gpuCountMax}
             memoryGbMax={memoryGbMax}
           />
-        ))}
+        ))} */}
     </Container>
   );
 }
@@ -69,10 +69,10 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 `;
 
 // 자원 프리셋 드롭다운
 const ResourcePresetDropdown = styled.div`
-  margin-bottom: 16px;
+  /* margin-bottom: 16px; */
 `;

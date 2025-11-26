@@ -7,14 +7,14 @@ import { AccountService } from "@/domain/account-management/api/account.service"
 import { CredentialService } from "@/domain/credential/api/credential.service";
 import { GroupService } from "@/domain/group/api/group.service";
 import { HubService } from "@/domain/hub/api/hub.service";
+import { InternalRegistryService } from "@/domain/internal-registry/api/internal-registry.service";
+import { AdminInternalRegistryImageService } from "@/domain/internal-registry-image/api/admin-internal-registry-image.service";
+import { InternalRegistryImageService } from "@/domain/internal-registry-image/api/internal-registry-image.service";
 import { MonitoringService } from "@/domain/monitoring-notification/api/monitoring.service";
 import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { NotificationService } from "@/domain/notification/api/notification.service";
-import { PrivateRegistryService } from "@/domain/private-registry/api/private-registry.service";
-import { AdminPrivateRegistryImageService } from "@/domain/private-registry-image/api/admin-private-registry-image.service";
-import { PrivateRegistryImageService } from "@/domain/private-registry-image/api/private-registry-image.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
@@ -42,9 +42,9 @@ interface ServiceContextType {
   redfishBmcService: RedfishBmcService;
   redfishService: RedfishService;
   requestImageService: RequestImageService;
-  privateRegistryService: PrivateRegistryService;
-  privateRegistryImageService: PrivateRegistryImageService;
-  adminPrivateRegistryImageService: AdminPrivateRegistryImageService;
+  internalregistryService: InternalRegistryService;
+  internalregistryImageService: InternalRegistryImageService;
+  adminInternalRegistryImageService: AdminInternalRegistryImageService;
   gpuService: GpuService;
 }
 
@@ -82,9 +82,9 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     redfishBmcService: new RedfishBmcService(),
     redfishService: new RedfishService(),
     requestImageService: new RequestImageService(),
-    privateRegistryService: new PrivateRegistryService(),
-    privateRegistryImageService: new PrivateRegistryImageService(),
-    adminPrivateRegistryImageService: new AdminPrivateRegistryImageService(),
+    internalregistryService: new InternalRegistryService(),
+    internalregistryImageService: new InternalRegistryImageService(),
+    adminInternalRegistryImageService: new AdminInternalRegistryImageService(),
     gpuService: new GpuService(),
   };
 

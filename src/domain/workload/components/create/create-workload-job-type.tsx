@@ -50,5 +50,5 @@ const Header = styled.div`
 const Body = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 8px;
 `;

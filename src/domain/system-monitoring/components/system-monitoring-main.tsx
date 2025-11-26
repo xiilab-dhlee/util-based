@@ -1,13 +1,98 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import styled from "styled-components";
-import { DateRange, Dropdown, Icon, Typography } from "xiilab-ui";
+import { Dropdown, Typography } from "xiilab-ui";
 
-import { SystemMonitoringCard } from "@/domain/system-monitoring/components/system-monitoring-card";
+import { SystemMonitoringChartList } from "@/domain/system-monitoring/components/system-monitoring-chart-list";
+import { SystemMonitoringSummary } from "@/domain/system-monitoring/components/system-monitoring-summary";
+import { useGpuFilter } from "@/domain/system-monitoring/hooks/use-gpu-filter.hook";
+import { useNodeSummary } from "@/domain/system-monitoring/hooks/use-system-monitoring.hook";
+import { MOCK_NODE_OPTIONS } from "@/domain/system-monitoring/mocks/system-monitoring.mock";
+import {
+  buildResourceSummary,
+  normalizeMonitoringHistoryRange,
+} from "@/domain/system-monitoring/utils/system-monitoring.util";
+import { ChartDateRange } from "@/shared/components/chart-date-range";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import type { MonitoringDateMode } from "@/shared/types/monitoring.type";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 export function SystemMonitoringMain() {
+  // 노드 관련 State
+  const [selectedNode, setSelectedNode] = useState<string>(
+    MOCK_NODE_OPTIONS[0].value,
+  );
+
+  // 날짜 모드 및 범위 State
+  const [dateMode, setDateMode] = useState<MonitoringDateMode>("live");
+
+  const initialHistoryRange = useMemo(
+    () => ({
+      // 기본 history 기간: 7일
+      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      end: new Date(),
+    }),
+    [],
+  );
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>(
+    initialHistoryRange,
+  );
+
+  const handleChangeNode = (value: string | null) => {
+    if (!value) return;
+    setSelectedNode(value);
+  };
+
+  const handleChangeGpu = (value: string | null) => {
+    if (!value) return;
+    setSelectedGpu(value);
+  };
+
+  const handleToggleDateMode = () => {
+    setDateMode((prev) => (prev === "live" ? "history" : "live"));
+  };
+
+  const handleChangeDateRange = (
+    startDate: Date | null,
+    endDate: Date | null,
+  ) => {
+    if (!startDate || !endDate) return;
+    // live 모드에서는 수동 선택을 반영하지 않음
+    if (dateMode === "live") return;
+
+    const normalizedRange = normalizeMonitoringHistoryRange({
+      start: startDate,
+      end: endDate,
+    });
+
+    setDateRange(normalizedRange);
+  };
+
+  const handleChangeRangeFromChart = (range: { start: Date; end: Date }) => {
+    // LIVE 모드에서 차트 드래그 시 history 모드로 전환
+    setDateMode((prevMode) => {
+      if (prevMode === "live") {
+        return "history";
+      }
+      return prevMode;
+    });
+
+    const normalizedRange = normalizeMonitoringHistoryRange(range);
+    setDateRange(normalizedRange);
+  };
+
+  // React Query를 사용한 노드 요약 정보 조회
+  const { data: nodeSummaryData } = useNodeSummary(selectedNode);
+  const nodeSummary = nodeSummaryData?.data;
+
+  // 리소스 요약 정보 생성
+  const resourceSummary = buildResourceSummary(nodeSummary);
+
+  // GPU 필터 관리
+  const { selectedGpu, setSelectedGpu, gpuOptions, selectedGpuFilter } =
+    useGpuFilter(nodeSummary);
+
   return (
     <>
       <PageHeader
@@ -22,112 +107,53 @@ export function SystemMonitoringMain() {
           <ArticleHeaderRight>
             <SelectLabel>노드 목록</SelectLabel>
             <Dropdown
-              options={[]}
-              onChange={() => {}}
-              value={null}
+              options={MOCK_NODE_OPTIONS.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+              onChange={handleChangeNode}
+              value={selectedNode}
               width={160}
               height={30}
             />
           </ArticleHeaderRight>
         </ArticleHeader>
-        <SummaryArticle>
-          <SummaryArticleItem>
-            <SummaryIconWrapper>
-              <Icon name="SingleNode" color="#000000" size={30} />
-            </SummaryIconWrapper>
-            <SummaryArticleBody>
-              <SummaryArticleKey>a5000</SummaryArticleKey>
-              <SummaryArticleValue>10.61.3.138</SummaryArticleValue>
-            </SummaryArticleBody>
-          </SummaryArticleItem>
-          <SummaryArticleItem>
-            <SummaryIconWrapper>
-              <Icon name="Gpu" color="#A353FF" size={30} />
-            </SummaryIconWrapper>
-            <SummaryArticleBody>
-              <SummaryArticleKey>GPU</SummaryArticleKey>
-              <SummaryArticleValue>16개</SummaryArticleValue>
-            </SummaryArticleBody>
-          </SummaryArticleItem>
-          <SummaryArticleItem>
-            <SummaryIconWrapper>
-              <Icon name="Cpu" color="#5792FF" size={30} />
-            </SummaryIconWrapper>
-            <SummaryArticleBody>
-              <SummaryArticleKey>CPU</SummaryArticleKey>
-              <SummaryArticleValue>32.0 CORE</SummaryArticleValue>
-            </SummaryArticleBody>
-          </SummaryArticleItem>
-          <SummaryArticleItem>
-            <SummaryIconWrapper>
-              <Icon name="Mem" color="#55D398" size={30} />
-            </SummaryIconWrapper>
-            <SummaryArticleBody>
-              <SummaryArticleKey>MEMORY</SummaryArticleKey>
-              <SummaryArticleValue>62.8 GB</SummaryArticleValue>
-            </SummaryArticleBody>
-          </SummaryArticleItem>
-          <SummaryArticleItem>
-            <SummaryIconWrapper>
-              <Icon name="Play" color="#17CDE5" size={30} />
-            </SummaryIconWrapper>
-            <SummaryArticleBody>
-              <SummaryArticleKey>DISK</SummaryArticleKey>
-              <SummaryArticleValue>62.8 GB</SummaryArticleValue>
-            </SummaryArticleBody>
-          </SummaryArticleItem>
-        </SummaryArticle>
+        {/* 시스템 모니터링 정보 */}
+        <SystemMonitoringSummary
+          nodeSummary={nodeSummary}
+          selectedNode={selectedNode}
+          resourceSummary={resourceSummary}
+        />
         <ArticleHeader>
           <Typography.Text variant="title-2">그래프</Typography.Text>
           <ArticleHeaderRight>
             <Dropdown
-              options={[]}
-              onChange={() => {}}
-              value={null}
+              options={gpuOptions}
+              onChange={handleChangeGpu}
+              value={selectedGpu}
               width={160}
               height={30}
+              placeholder="GPU 선택"
             />
-            <DateWrapper>
-              <DateIconWrapper>
-                <Icon name="Play" color="#4042D5" size={20} />
-              </DateIconWrapper>
-              <DateRange
-                height={30}
-                width={250}
-                startDate={new Date()}
-                endDate={new Date()}
-                withTime
-                onChange={() => {}}
-                maxDate={new Date()}
-              />
-            </DateWrapper>
+            <ChartDateRange
+              mode={dateMode}
+              value={dateRange}
+              onToggleMode={handleToggleDateMode}
+              onChangeRange={handleChangeDateRange}
+              height={30}
+              width={250}
+              withTime
+              maxDate={new Date()}
+            />
           </ArticleHeaderRight>
         </ArticleHeader>
-        <ChartArticle>
-          <ChartSingleRow>
-            <SystemMonitoringCard type="gpu-utilization" />
-          </ChartSingleRow>
-          <ChartMultiRow>
-            <SystemMonitoringCard type="cpu-utilization" />
-            <SystemMonitoringCard type="memory-utilization" />
-          </ChartMultiRow>
-          <ChartMultiRow>
-            <SystemMonitoringCard type="cpu-usage" />
-            <SystemMonitoringCard type="memory-usage" />
-          </ChartMultiRow>
-          <ChartMultiRow>
-            <SystemMonitoringCard type="disk-utilization" />
-            <SystemMonitoringCard type="disk-usage" />
-          </ChartMultiRow>
-          <ChartMultiRow>
-            <SystemMonitoringCard type="gpu-memory" />
-            <SystemMonitoringCard type="memory-usage" />
-          </ChartMultiRow>
-          <ChartMultiRow>
-            <SystemMonitoringCard type="cpu-usage" />
-            <SystemMonitoringCard type="memory-usage" />
-          </ChartMultiRow>
-        </ChartArticle>
+        <SystemMonitoringChartList
+          nodeName={selectedNode}
+          dateRange={dateRange}
+          selectedGpu={selectedGpuFilter}
+          mode={dateMode}
+          onChangeRangeFromChart={handleChangeRangeFromChart}
+        />
       </Container>
     </>
   );
@@ -166,105 +192,4 @@ const SelectLabel = styled.div`
   font-size: 14px;
   line-height: 16px;
   color: #000;
-`;
-
-const SummaryArticle = styled.article`
-  padding: 22px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #f7f9fb;
-  margin-bottom: 10px;
-`;
-
-const SummaryArticleItem = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-
-  & + & {
-    border-left: 1px solid #e0e0e0;
-    padding-left: 20px;
-    margin-left: 20px;
-  }
-`;
-
-const SummaryIconWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #fafafa;
-  border-radius: 2px;
-  border: 1px solid #d1d5dc;
-`;
-
-const SummaryArticleBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  justify-content: center;
-`;
-
-const SummaryArticleKey = styled.div`
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 18px;
-  color: #000;
-`;
-
-const SummaryArticleValue = styled.div`
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  color: #6b6b6b;
-`;
-
-const DateWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #f2f7ff;
-
-  & input {
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
-  }
-`;
-
-const DateIconWrapper = styled.button`
-  display: flex;
-  width: 30px;
-  height: 30px;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #ced2d6;
-  border-right-width: 0;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
-`;
-
-const ChartSingleRow = styled.div`
-  height: 390px;
-  margin-bottom: 10px;
-`;
-
-const ChartMultiRow = styled.div`
-  height: 390px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  margin-bottom: 10px;
-`;
-
-const ChartArticle = styled.article`
-  height: 2370px;
-  margin-bottom: 24px;
 `;

@@ -8,11 +8,12 @@ import { credentialHandlers } from "./credential.handler";
 import { gpuHandlers } from "./gpu.handler";
 import { groupHandlers } from "./group.handler";
 import { hubHandlers } from "./hub.handler";
+import { internalregistryHandlers } from "./internal-registry.handler";
+import { internalregistryImageHandlers } from "./internal-registry-image.handler";
+import { kubernetesMonitoringHandlers } from "./kubernetes-monitoring.handler";
 import { monitoringHandlers } from "./monitoring.handler";
 import { nodeHandlers } from "./node.handler";
 import { notificationHandlers } from "./notification.handler";
-import { privateRegistryHandlers } from "./private-registry.handler";
-import { privateRegistryImageHandlers } from "./private-registry-image.handler";
 import { redfishHandlers } from "./redfish.handler";
 import { requestImageHandlers } from "./request-image.handler";
 import { sourcecodeHandlers } from "./sourcecode.handler";
@@ -37,8 +38,9 @@ export const combinedHandlers = [
   ...groupHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,
-  ...privateRegistryHandlers,
-  ...privateRegistryImageHandlers,
+  ...internalregistryHandlers,
+  ...internalregistryImageHandlers,
+  ...kubernetesMonitoringHandlers,
   ...credentialHandlers,
   ...gpuHandlers,
 ];

@@ -95,20 +95,22 @@ export const REQUEST_IMAGE_EVENTS = {
 } as const;
 
 // 내부 레지스트리 관련 이벤트
-export const PRIVATE_REGISTRY_EVENTS = {} as const;
+export const INTERNAL_REGISTRY_EVENTS = {} as const;
 
 // 내부 레지스트리 이미지 관련 이벤트
-export const PRIVATE_REGISTRY_IMAGE_EVENTS = {
+export const INTERNAL_REGISTRY_IMAGE_EVENTS = {
   // 내부 레지스트리 이미지 수정에 필요한 정보 전달 이벤트
-  sendUpdateImage: "private-registry-image:send-update-private-registry-image",
+  sendUpdateImage:
+    "internal-registry-image:send-update-internal-registry-image",
   // 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImage: "private-registry-image:send-delete-private-registry-image",
+  sendDeleteImage:
+    "internal-registry-image:send-delete-internal-registry-image",
   // 내부 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
   sendDeleteImageTag:
-    "private-registry-image:send-delete-private-registry-image-tag",
+    "internal-registry-image:send-delete-internal-registry-image-tag",
   // 관리자 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
   sendDeleteAdminRegistryImage:
-    "private-registry-image:send-delete-admin-private-registry-image",
+    "internal-registry-image:send-delete-admin-internal-registry-image",
 } as const;
 
 // 리포트 관련 이벤트
@@ -127,6 +129,13 @@ export const MONITORING_EVENTS = {
 export const SETTING_EVENTS = {
   // 알림설정 모달에 필요한 정보 전달 이벤트
   sendUpdateNotificationSetting: "setting:send-update-notification-setting",
+} as const;
+
+// 쿠버네티스 모니터링 관련 이벤트
+export const KUBERNETES_MONITORING_EVENTS = {
+  // 쿠버네티스 이벤트 상세 모달에 필요한 정보 전달 이벤트
+  sendKubernetesEventDetail:
+    "kubernetes-monitoring:send-kubernetes-event-detail",
 } as const;
 
 // 공통 이벤트

@@ -8,10 +8,10 @@ export const REGISTRY_QUICK_MENUS = [
   },
   {
     title: "내부 레지스트리",
-    titleEng: "Private Registry",
-    icon: "PrivateRegistry",
+    titleEng: "Internal Registry",
+    icon: "Image",
     iconSize: 32,
-    href: "/admin/private-registry",
+    href: "/admin/internal-registry",
   },
   // {
   //   title: "외부 레지스트리",

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { WORKLOAD_IMAGE_TYPES } from "../constants/workload.constant";
+
 // 워크로드 스키마
 const baseWorkloadSchema = z.object({
   /** 워크로드 아이디 */
@@ -29,7 +31,7 @@ const baseWorkloadSchema = z.object({
   /** 이미지 */
   image: z.object({
     /** 타입 */
-    type: z.enum(["BUILTIN", "HUB", "CUSTOM"]),
+    type: z.enum(WORKLOAD_IMAGE_TYPES),
     /** 이미지 이름 */
     name: z.string(),
   }),

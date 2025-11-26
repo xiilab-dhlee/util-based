@@ -38,10 +38,10 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "ComparativeExperiment",
       // },
       {
-        key: "user.private-registry-image",
-        label: PAGE_META["user.private-registry-image"]?.title,
+        key: "user.internal-registry-image",
+        label: PAGE_META["user.internal-registry-image"]?.title,
         icon: (
-          <Icon name={PAGE_META["user.private-registry-image"]?.iconName} />
+          <Icon name={PAGE_META["user.internal-registry-image"]?.iconName} />
         ),
       },
       // {
@@ -103,8 +103,8 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
             label: PAGE_META["admin.system-monitoring"]?.title,
           },
           {
-            key: "admin.cluster-monitoring",
-            label: PAGE_META["admin.cluster-monitoring"]?.title,
+            key: "admin.kubernetes-monitoring",
+            label: PAGE_META["admin.kubernetes-monitoring"]?.title,
           },
           {
             key: "admin.monitoring-notification",
@@ -169,8 +169,8 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
             label: PAGE_META["admin.request-image"]?.title,
           },
           {
-            key: "admin.private-registry",
-            label: PAGE_META["admin.private-registry"]?.title,
+            key: "admin.internal-registry",
+            label: PAGE_META["admin.internal-registry"]?.title,
           },
           {
             key: "admin.external-registry",

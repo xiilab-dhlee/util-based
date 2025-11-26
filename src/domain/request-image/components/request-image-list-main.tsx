@@ -39,7 +39,7 @@ const GUIDE_IMAGES: CoreGuideImage[] = [
 
 const GUIDES: CoreGuide[] = [
   {
-    icon: <Icon name="PrivateRegistry" color="var(--icon-fill)" />,
+    icon: <Icon name="Image" color="var(--icon-fill)" />,
     title: "내부 레지스트리란?",
     description: [
       "조직 내부에서 사용하는 컨테이너 이미지를 저장하고 관리하는",

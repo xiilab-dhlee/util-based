@@ -1,5 +1,3 @@
-import type { DropdownOption } from "xiilab-ui";
-
 /** 목록 페이지 크기 */
 export const LIST_PAGE_SIZE = 20;
 /** 카드 페이지 크기 */
@@ -13,7 +11,7 @@ export const USER_ROOT_PATH = "/user/monitoring";
 /** 관리자 모드 루트 경로 */
 export const ADMIN_ROOT_PATH = "/admin/monitoring";
 /** 전체 옵션 */
-export const ALL_OPTION: DropdownOption = {
+export const ALL_OPTION = {
   label: "전체",
   value: "ALL",
-};
+} as const;

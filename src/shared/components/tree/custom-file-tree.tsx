@@ -199,7 +199,7 @@ export function CustomFileTree({
   const renderRootNode = (): ReactNode => (
     <RootCustomFileNode>
       {createElement(fileButton, {
-        activeKey: ALL_OPTION.value as string,
+        activeKey: ALL_OPTION.value,
         fileName: "전체",
       })}
     </RootCustomFileNode>

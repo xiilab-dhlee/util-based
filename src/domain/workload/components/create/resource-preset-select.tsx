@@ -8,8 +8,8 @@ import type { CoreNodeMode } from "@/shared/types/core.interface";
 
 interface ResourcePresetSelectProps {
   nodeMode: CoreNodeMode;
-  preset: string;
-  setPreset: Dispatch<SetStateAction<string>>;
+  preset: string | null;
+  setPreset: Dispatch<SetStateAction<string | null>>;
 }
 
 export function ResourcePresetSelect({
@@ -23,10 +23,10 @@ export function ResourcePresetSelect({
       width="100%"
       height={30}
       placeholder="리소스 프리셋을 선택하세요"
-      value={preset}
+      value={preset ?? undefined}
       onChange={(value) => setPreset(value as string)}
     >
-      <CompoundDropdown.Option value="custom" display="사용자 설정 리소스 할당">
+      {/* <CompoundDropdown.Option value="custom" display="사용자 설정 리소스 할당">
         <ResourcePresetOptionContainer>
           <Typography.Text
             variant={preset === "custom" ? "body-2-2" : "body-2-4"}
@@ -35,7 +35,7 @@ export function ResourcePresetSelect({
             사용자 설정 리소스 할당
           </Typography.Text>
         </ResourcePresetOptionContainer>
-      </CompoundDropdown.Option>
+      </CompoundDropdown.Option> */}
 
       <CompoundDropdown.Option value="small" display="SMALL">
         {nodeMode === "multi" ? (

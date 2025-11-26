@@ -94,14 +94,17 @@ export const getWorkloadImageTypeInfo = (imageType?: WorkloadImageType) => {
   let icon = "";
 
   if (imageType === "BUILTIN") {
-    label = "Built-in";
-    icon = "builtin";
+    label = "빌트인 이미지";
+    icon = "BuiltInImage";
   } else if (imageType === "HUB") {
-    label = "Hub";
-    icon = "hub";
-  } else if (imageType === "CUSTOM") {
-    label = "Custom";
-    icon = "custom";
+    label = "허브";
+    icon = "Hub";
+  } else if (imageType === "INTERNAL_REGISTRY") {
+    label = "내부 레지스트리";
+    icon = "PrivateRegistry";
+  } else if (imageType === "EXTERNAL_REGISTRY") {
+    label = "외부 레지스트리";
+    icon = "PublicRegistry";
   }
 
   return { label, icon };

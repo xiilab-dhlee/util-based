@@ -1,16 +1,13 @@
 "use client";
 
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import styled from "styled-components";
 import type { StepItem } from "xiilab-ui";
 import { Button, Drawer, Step, Typography } from "xiilab-ui";
 
 import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/create-workload-first-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
-import {
-  resetWorkloadAtom,
-  stepAtom,
-} from "@/domain/workload/state/create-workload.atom";
+import { stepAtom } from "@/domain/workload/state/create-workload.atom";
 import type { CreateWorkloadPayload } from "@/domain/workload/types/workload.type";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";

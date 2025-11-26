@@ -3,15 +3,24 @@
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon, Typography } from "xiilab-ui";
+import { Icon, Tooltip } from "xiilab-ui";
 
-// import { CreateWorkloadImageTooltipTitle } from "@/shared/components/tooltip-title/create-workload-image-tooltip-title";
+import { WorkloadImageTooltipTitle } from "@/shared/components/tooltip-title/workload-image-tooltip-title";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
+import { WORKLOAD_IMAGE_TYPES } from "../../constants/workload.constant";
+import type { WorkloadImageType } from "../../schemas/workload.schema";
 import { jobTypeAtom } from "../../state/create-workload.atom";
+import { CreateWorkloadHubImageSelect } from "./create-workload-hub-image-select";
+import { CreateWorkloadImageButton } from "./create-workload-image-button";
+import { CreateWorkloadInternalRegistryImageSelect } from "./create-workload-internal-registry-image-select";
+import { CreateWorkloadInternalRegistryImageTagSelect } from "./create-workload-internal-registry-image-tag-select";
 
 export function CreateWorkloadImage() {
   const jobType = useAtomValue(jobTypeAtom);
-  const [selectedImageType, setSelectedImageType] = useState("hub");
+
+  const [imageType, setImageType] = useState<WorkloadImageType>(
+    WORKLOAD_IMAGE_TYPES[0],
+  );
 
   return (
     <Container>
@@ -19,70 +28,52 @@ export function CreateWorkloadImage() {
         <CreateWorkloadSectionTitle className="required">
           이미지
         </CreateWorkloadSectionTitle>
-        <Icon
-          name="Tooltip"
-          size={16}
-          color="#5F6368"
-          className="tooltip-icon"
-        />
+        <Tooltip maxWidth="540px" title={<WorkloadImageTooltipTitle />}>
+          <IconWrapper>
+            <Icon name="Tooltip" size={16} color="#5F6368" />
+          </IconWrapper>
+        </Tooltip>
       </Header>
-
+      <ImageButtonGroup>
+        <CreateWorkloadImageButton
+          type="HUB"
+          setType={setImageType}
+          isSelected={imageType === "HUB"}
+          disabled={jobType === "INTERACTIVE"}
+        />
+        <CreateWorkloadImageButton
+          type="BUILTIN"
+          setType={setImageType}
+          isSelected={imageType === "BUILTIN"}
+        />
+        <CreateWorkloadImageButton
+          type="INTERNAL_REGISTRY"
+          setType={setImageType}
+          isSelected={imageType === "INTERNAL_REGISTRY"}
+        />
+        <CreateWorkloadImageButton
+          type="EXTERNAL_REGISTRY"
+          setType={setImageType}
+          isSelected={imageType === "EXTERNAL_REGISTRY"}
+        />
+      </ImageButtonGroup>
       <ImageSelectionContainer>
-        <ImageButtonGroup>
-          {jobType !== "INTERACTIVE" && (
-            <ImageButton
-              type="button"
-              $active={selectedImageType === "hub"}
-              aria-pressed={selectedImageType === "hub"}
-              onClick={() => setSelectedImageType("hub")}
-            >
-              <Icon name="Hub" size={16} active={selectedImageType === "hub"} />
-              <Typography.Text
-                variant="body-2-1"
-                color={selectedImageType === "hub" ? "#154FED" : "#484848"}
-              >
-                허브
-              </Typography.Text>
-            </ImageButton>
-          )}
-          <ImageButton
-            type="button"
-            $active={selectedImageType === "builtin"}
-            aria-pressed={selectedImageType === "builtin"}
-            onClick={() => setSelectedImageType("builtin")}
-          >
-            <Icon
-              name="BuiltInImage"
-              size={16}
-              active={selectedImageType === "builtin"}
-            />
-            <Typography.Text
-              variant="body-2-1"
-              color={selectedImageType === "builtin" ? "#000000" : "#484848"}
-            >
-              빌트인 이미지
-            </Typography.Text>
-          </ImageButton>
-          <ImageButton
-            type="button"
-            $active={selectedImageType === "private"}
-            aria-pressed={selectedImageType === "private"}
-            onClick={() => setSelectedImageType("private")}
-          >
-            <Icon
-              name="PrivateRegistry"
-              size={16}
-              active={selectedImageType === "private"}
-            />
-            <Typography.Text
-              variant="body-2-1"
-              color={selectedImageType === "private" ? "#000000" : "#484848"}
-            >
-              내부 레지스트리
-            </Typography.Text>
-          </ImageButton>
-        </ImageButtonGroup>
-
+        {imageType === "HUB" && <CreateWorkloadHubImageSelect />}
+        {imageType === "BUILTIN" && <span>준비 중입니다.</span>}
+        {imageType === "INTERNAL_REGISTRY" && (
+          <>
+            <CreateWorkloadInternalRegistryImageSelect />
+            <CreateWorkloadInternalRegistryImageTagSelect />
+          </>
+        )}
+        {imageType === "EXTERNAL_REGISTRY" && <span>준비 중입니다.</span>}
+        {/* <Dropdown
+          options={imageOptions}
+          placeholder="이미지를 선택해 주세요."
+          value={imageId}
+          onChange={handleChangeImage}
+          width="100%"
+        /> */}
         {/* Interactive Job + Private Registry + 보안 OFF: 이미지 경로 입력 */}
         {/* 그 외 Private Registry: 이미지+태그 드롭다운 */}
         {/* 나머지 타입: 이미지 드롭다운만 */}
@@ -179,10 +170,19 @@ const Header = styled.div`
   margin-bottom: 6px;
 `;
 
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+`;
+
 const ImageSelectionContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
 `;
 
 const ImageButtonGroup = styled.div`
@@ -200,56 +200,6 @@ const ImageButtonGroup = styled.div`
 //     flex: 1;
 //   }
 // `;
-
-const ImageButton = styled.button<{ $active?: boolean }>`
-  /* Reset button defaults */
-  appearance: none;
-  background: none;
-  border: none;
-  font: inherit;
-  margin: 0;
-
-  /* Component styles */
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: ${(props) => (props.$active ? "3px" : "2px")};
-  border: 1px solid ${(props) => (props.$active ? "#3D3FDF" : "#B9BEC3")};
-  background-color: #fafafa;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  height: 34px;
-  flex: 1;
-  white-space: nowrap;
-
-  ${(props) =>
-    props.$active &&
-    `
-    &::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      border-radius: 4px;
-      z-index: -1;
-    }
-  `}
-
-  &:hover {
-    border-color: #3d3fdf;
-    background-color: rgba(54, 107, 255, 0.1);
-  }
-
-  &:focus-visible {
-    outline: 2px solid #3d3fdf;
-    outline-offset: 2px;
-  }
-`;
 
 // const PrivateImageSection = styled.div`
 //   display: flex;

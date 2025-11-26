@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 
-import { CreateWorkloadGpu } from "./create-workload-gpu";
+// import { CreateWorkloadGpu } from "./create-workload-gpu";
 import { CreateWorkloadImage } from "./create-workload-image";
 import { CreateWorkloadNode } from "./create-workload-node";
 import { CreateWorkloadResource } from "./create-workload-resource";
@@ -13,7 +13,7 @@ export function CreateWorkloadSecondStep() {
       {/* 1. 노드, 라벨 컨테이너 */}
       <CreateWorkloadNode />
       {/* 2. GPU 컨테이너 */}
-      <CreateWorkloadGpu />
+      {/* <CreateWorkloadGpu /> */}
       {/* 3. 자원 컨테이너 */}
       <CreateWorkloadResource />
       {/* 4. 이미지 컨테이너 */}

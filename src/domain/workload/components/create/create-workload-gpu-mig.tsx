@@ -103,9 +103,9 @@ const Total = styled(Typography.Text).attrs({
 `;
 
 const GpuBody = styled.div`
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
   margin-bottom: 8px;
 `;
 

@@ -1,5 +1,12 @@
 import type { DropdownOption } from "xiilab-ui";
 
+export const WORKLOAD_IMAGE_TYPES = [
+  "BUILTIN",
+  "HUB",
+  "INTERNAL_REGISTRY",
+  "EXTERNAL_REGISTRY",
+] as const;
+
 export const WORKLOAD_JOB_OPTIONS: DropdownOption[] = [
   {
     label: "Batch",
