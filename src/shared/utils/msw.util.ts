@@ -1,6 +1,6 @@
 import { setupServer } from "msw/node";
 
-import { combinedHandlers } from "@/handlers";
+import { combinedHandlers } from "@/mocks/handlers";
 
 /**
  * MSW 서버 설정

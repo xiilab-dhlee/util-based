@@ -12,7 +12,7 @@ import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourceco
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
 import { GuidePopover } from "@/shared/components/popover/guide-popover";
-import { openCreateCredentialModalAtom } from "@/shared/hooks/modal.atom";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
 import { AsideDetailForm } from "@/styles/layers/aside-detail-layers.styled";
 import {
   AsideListArticleDescription,

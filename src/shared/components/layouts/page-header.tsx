@@ -9,7 +9,7 @@ import {
   PAGE_META,
   type PageItemMeta,
   type PageKey,
-} from "@/shared/constants/page-meta";
+} from "@/shared/constants/page-meta.constant";
 import { getBackPathname } from "@/shared/utils/router.util";
 
 interface PageHeaderProps {

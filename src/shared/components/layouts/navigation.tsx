@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { AstraGoNav, type AstraGoNavMenu, Icon } from "xiilab-ui";
 
 import { WorkspaceSelect } from "@/shared/components/select/workspace-select";
-import { PAGE_META } from "@/shared/constants/page-meta";
+import { PAGE_META } from "@/shared/constants/page-meta.constant";
 import { useActiveMenu } from "@/shared/hooks/use-active-menu";
 import { isAdminMode } from "@/shared/utils/router.util";
 import { Profile } from "./profile";

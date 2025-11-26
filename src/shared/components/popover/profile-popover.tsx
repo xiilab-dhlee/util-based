@@ -10,9 +10,9 @@ import {
   USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
 import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
-import { openProfilePopoverAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
 import { isAdminMode } from "@/shared/utils/router.util";
 import { ProfileNotification } from "../layouts/profile-notification";
 

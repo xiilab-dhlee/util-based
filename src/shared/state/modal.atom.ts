@@ -18,3 +18,7 @@ export const openCheckPasswordModalAtom = atom<boolean>(false);
 export const openUpdatePasswordModalAtom = atom<boolean>(false);
 /** 프로필 팝오버 표시 여부 */
 export const openProfilePopoverAtom = atom<boolean>(false);
+/** 워크로드 생성 드로어 표시 여부 */
+export const openCreateWorkloadDrawerAtom = atom<boolean>(false);
+/** 워크로드 가져오기 모달 표시 여부 */
+export const openSelectWorkloadModalAtom = atom<boolean>(false);

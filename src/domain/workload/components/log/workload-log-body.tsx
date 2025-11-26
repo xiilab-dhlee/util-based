@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import styled from "styled-components";
 
 import { MonitoringDrawer } from "@/shared/components/drawer/monitoring-drawer";
-import { terminalThemeAtom } from "@/shared/hooks/terminal.atom";
+import { terminalThemeAtom } from "@/shared/state/terminal.atom";
 import { terminalDrawerStyle } from "@/styles/mixins/drawer";
 
 export function WorkloadLogBody() {

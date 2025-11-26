@@ -11,8 +11,8 @@ import {
   TERMINAL_MAX_HCNT,
   TERMINAL_MAX_VCNT,
 } from "@/shared/constants/terminal.constant";
-import { terminalThemeAtom } from "@/shared/hooks/terminal.atom";
-import type { TerminalPaneState } from "@/shared/types/terminal.interface";
+import { terminalThemeAtom } from "@/shared/state/terminal.atom";
+import type { TerminalPaneState } from "@/shared/types/terminal.type";
 import { createTermBgClasses } from "@/styles/mixins/terminal";
 import { EmptyTerminal } from "./empty-terminal";
 import { WorkloadTerminalPane } from "./workload-terminal-pane";

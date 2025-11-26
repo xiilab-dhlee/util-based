@@ -1,8 +1,17 @@
 import type { QueryKey } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-import { getAllErrorConfigs } from "@/constants/error";
-import type { ErrorConfig } from "@/shared/types/error";
+import type { ErrorConfig, ErrorConfigMap } from "@/shared/types/error.type";
+
+export const getAllErrorConfigs = (): ErrorConfigMap => {
+  return {
+    default: {
+      showToast: true,
+      errorMessage: "알 수 없는 오류가 발생했습니다.",
+      statusMessages: {},
+    },
+  };
+};
 
 /**
  * 쿼리 키를 문자열로 변환 (방어적 처리 포함)

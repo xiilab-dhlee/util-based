@@ -5,9 +5,9 @@ import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { FormLabel } from "@/shared/components/form/form-label";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
-import { openUpdateWorkspaceModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { openUpdateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 import { useUpdateWorkspace } from "../hooks/use-update-workspace";
 import type { WorkspaceDetailType } from "../schemas/workspace.schema";

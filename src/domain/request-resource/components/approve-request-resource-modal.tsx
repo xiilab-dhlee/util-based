@@ -5,7 +5,7 @@ import { Icon, Modal } from "xiilab-ui";
 
 import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
 import { openApproveResourceModalAtom } from "@/domain/request-resource/state/request-resource.atom";
-import { UpdateResourceProgress } from "@/shared/components/progress/update-resource-progress";
+import { ResourceSlider } from "@/shared/components/slider/resource-slider";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -91,7 +91,7 @@ export function ApproveResourceModal() {
               GPU
             </UpdateResourceModalResourceTitle>
           </UpdateResourceModalResourceHeader>
-          <UpdateResourceProgress
+          <ResourceSlider
             min={0}
             max={200}
             value={gpuReq}
@@ -105,7 +105,7 @@ export function ApproveResourceModal() {
               CPU
             </UpdateResourceModalResourceTitle>
           </UpdateResourceModalResourceHeader>
-          <UpdateResourceProgress
+          <ResourceSlider
             min={0}
             max={200}
             value={cpuReq}
@@ -119,7 +119,7 @@ export function ApproveResourceModal() {
               MEM
             </UpdateResourceModalResourceTitle>
           </UpdateResourceModalResourceHeader>
-          <UpdateResourceProgress
+          <ResourceSlider
             min={0}
             max={200}
             value={memReq}

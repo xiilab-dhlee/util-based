@@ -47,12 +47,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
     {
       title: "권한",
       dataIndex: "role",
-      align: "left",
+      align: "center",
     },
     {
       title: "가입일",
       dataIndex: "createdAt",
-      align: "left",
+      align: "center",
       render: (createdAt: string) => {
         return <span>{format(createdAt, "yyyy.MM.dd")}</span>;
       },

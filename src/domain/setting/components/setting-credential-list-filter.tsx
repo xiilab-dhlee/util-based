@@ -4,8 +4,8 @@ import { Button } from "xiilab-ui";
 
 import { useGetCredentials } from "@/domain/credential/hooks/use-get-credentials";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { openCreateCredentialModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
 
 export function SettingCredentialListFilter() {
   const { onOpen } = useGlobalModal(openCreateCredentialModalAtom);

@@ -124,6 +124,7 @@ export const workloadDetailSchema = baseWorkloadSchema;
 
 type Workload = z.infer<typeof baseWorkloadSchema>;
 export type WorkloadListType = z.infer<typeof workloadListSchema>;
+export type WorkloadIdType = Workload["id"];
 export type WorkloadDetailType = z.infer<typeof workloadDetailSchema>;
 export type WorkloadEnvType = Workload["envs"][number];
 export type WorkloadPortType = Workload["ports"][number];

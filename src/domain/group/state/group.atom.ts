@@ -3,11 +3,11 @@ import { atomWithReset } from "jotai/utils";
 import type { Key } from "react";
 
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
-} from "@/shared/hooks/filetree.atom";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+} from "@/shared/state/filetree.atom";
 
 /** 그룹 트리 데이터 */
 export const groupTreeDataAtom = atomWithReset<FileTreeType[]>([]);

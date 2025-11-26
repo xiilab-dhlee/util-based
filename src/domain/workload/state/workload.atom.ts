@@ -2,11 +2,12 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
-} from "@/shared/hooks/filetree.atom";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+} from "@/shared/state/filetree.atom";
+import type { WorkloadIdType } from "../schemas/workload.schema";
 
 /** 워크로드 페이지 번호 */
 export const workloadPageAtom = atomWithReset<number>(1);
@@ -28,6 +29,8 @@ export const openViewWorkloadMonitoringDrawerAtom = atom<boolean>(false);
 export const workloadFileTreeDataAtom = atomWithReset<FileTreeType[]>([]);
 /** 워크로드 보안 페이지 번호 */
 export const workloadSecurityPageAtom = atomWithReset<number>(1);
+/** 워크로드 선택 모달 - 선택한 워크로드 정보 */
+export const selectedWorkloadAtom = atom<WorkloadIdType | null>(null);
 
 /** 워크로드 파일 선택된 노드 키 */
 export const workloadFileSelectedKeyAtom = atomWithReset<React.Key>(

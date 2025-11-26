@@ -6,23 +6,25 @@ import type { Dispatch, SetStateAction } from "react";
 import styled, { css } from "styled-components";
 import { Icon, InputNumber } from "xiilab-ui";
 
-interface UpdateResourceProgressProps {
+interface ResourceSliderProps {
   min: number;
   max: number;
   value: number;
   setValue: Dispatch<SetStateAction<number>>;
   resourceColor: string;
   disabled?: boolean;
+  unit?: string;
 }
 
-export function UpdateResourceProgress({
+export function ResourceSlider({
   min,
   max,
   value,
   setValue,
   resourceColor,
   disabled = false,
-}: UpdateResourceProgressProps) {
+  unit = "개",
+}: ResourceSliderProps) {
   const onChange: InputNumberProps["onChange"] = (newValue) => {
     setValue(newValue as number);
   };
@@ -36,7 +38,7 @@ export function UpdateResourceProgress({
   };
 
   return (
-    <Container>
+    <Container $resourceColor={resourceColor}>
       <Body>
         {!disabled && (
           <IconWrapper onClick={handleMinus}>
@@ -53,6 +55,10 @@ export function UpdateResourceProgress({
               margin: "0",
               width: "100%",
             }}
+            railStyle={{
+              boxShadow:
+                "0px 1px 1px 0px #808E9724 inset, 0px 0px 4px 0px #FFFFFF40",
+            }}
             trackStyle={{
               background: resourceColor,
             }}
@@ -66,23 +72,37 @@ export function UpdateResourceProgress({
           </IconWrapper>
         )}
       </Body>
-      <InputNumber height="36px" value={value} readOnly />
+      <InputNumber
+        suffix={unit}
+        min={1}
+        max={max}
+        value={value}
+        onChange={onChange}
+        height="30px"
+        disabled={disabled}
+      />
     </Container>
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ $resourceColor: string }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 6px;
+  width: 100%;
+
+  & .ant-slider-handle::after {
+    box-shadow: 0 0 0 2px ${({ $resourceColor }) => $resourceColor} !important;
+
+  }
 `;
 
 const Body = styled.div`
   flex: 1;
-  padding: 9px 0;
-  border: 1px solid #eeeeee;
-  background-color: #fafafa;
+  padding: 6px 0;
+  border: 1px solid #D8D8D8;
+  background-color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -139,4 +159,5 @@ const Total = styled.div`
   text-align: center;
   color: #555555;
   margin-left: 6px;
+  width: 40px;
 `;

@@ -7,7 +7,7 @@ import {
   PAGE_META,
   type PageItemMeta,
   type PageKey,
-} from "@/shared/constants/page-meta";
+} from "@/shared/constants/page-meta.constant";
 
 /**
  * 현재 활성 메뉴 키와 메뉴 클릭 핸들러를 제공하는 훅

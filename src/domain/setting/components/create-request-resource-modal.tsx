@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal, TextArea } from "xiilab-ui";
 
-import { Slider } from "@/shared/components/slider/custom-slider";
+import { ResourceSlider } from "@/shared/components/slider/resource-slider";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateResourceRequestModalAtom } from "../state/setting.atom";
 
@@ -16,21 +16,7 @@ export function CreateResourceSettingModal() {
   const [memory, setMemory] = useState<number>(0);
   const [reason, setReason] = useState<string>("");
 
-  const handleGpuChange = (value: number) => {
-    setGpu(value);
-  };
-
-  const handleCpuChange = (value: number) => {
-    setCpu(value);
-  };
-
-  const handleMemoryChange = (value: number) => {
-    setMemory(value);
-  };
-
-  const handleReasonChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const handleReasonChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setReason(event.target.value);
   };
 
@@ -55,15 +41,12 @@ export function CreateResourceSettingModal() {
         <ResourceRow>
           <ResourceLabel>GPU</ResourceLabel>
           <SliderContainer>
-            <Slider
-              type="gpu"
-              value={gpu}
-              onChange={handleGpuChange}
+            <ResourceSlider
               min={0}
-              max={10}
-              step={1}
-              width={280}
-              aria-label="GPU 개수 설정"
+              max={200}
+              value={gpu}
+              setValue={setGpu}
+              resourceColor="#A353FF"
             />
           </SliderContainer>
         </ResourceRow>
@@ -72,15 +55,12 @@ export function CreateResourceSettingModal() {
         <ResourceRow>
           <ResourceLabel>CPU</ResourceLabel>
           <SliderContainer>
-            <Slider
-              type="cpu"
-              value={cpu}
-              onChange={handleCpuChange}
+            <ResourceSlider
               min={0}
-              max={500}
-              step={1}
-              width={280}
-              aria-label="CPU 코어 수 설정"
+              max={200}
+              value={cpu}
+              setValue={setCpu}
+              resourceColor="#376DFF"
             />
           </SliderContainer>
         </ResourceRow>
@@ -89,15 +69,12 @@ export function CreateResourceSettingModal() {
         <ResourceRow>
           <ResourceLabel>MEM</ResourceLabel>
           <SliderContainer>
-            <Slider
-              type="memory"
-              value={memory}
-              onChange={handleMemoryChange}
+            <ResourceSlider
               min={0}
               max={200}
-              step={1}
-              width={280}
-              aria-label="메모리 용량 설정"
+              value={memory}
+              setValue={setMemory}
+              resourceColor="#A353FF"
             />
           </SliderContainer>
         </ResourceRow>

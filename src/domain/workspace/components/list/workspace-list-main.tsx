@@ -10,8 +10,8 @@ import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
-import { openCreateWorkspaceModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,

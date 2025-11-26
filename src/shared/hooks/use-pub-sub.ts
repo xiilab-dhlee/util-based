@@ -2,10 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type {
-  EventHandler,
-  UsePubSubReturn,
-} from "@/shared/types/pubsub.interface";
+import type { EventHandler, UsePubSubReturn } from "@/shared/types/pubsub.type";
 import { pubsubUtil } from "@/shared/utils/pubsub.util";
 
 /**

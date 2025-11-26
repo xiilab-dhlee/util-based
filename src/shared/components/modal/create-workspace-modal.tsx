@@ -7,8 +7,8 @@ import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 import { useCreateWorkspace } from "@/domain/workspace/hooks/use-create-workspace";
 import type { CreateWorkspacePayload } from "@/domain/workspace/types/workspace.type";
 import { FormLabel } from "@/shared/components/form/form-label";
-import { openCreateWorkspaceModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 
 /**

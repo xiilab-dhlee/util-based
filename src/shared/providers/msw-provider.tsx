@@ -4,7 +4,7 @@ import { setupWorker } from "msw/browser";
 import type { PropsWithChildren } from "react";
 import { useEffect, useState } from "react";
 
-import { combinedHandlers } from "@/handlers";
+import { combinedHandlers } from "@/mocks/handlers";
 
 /**
  * MSW Provider

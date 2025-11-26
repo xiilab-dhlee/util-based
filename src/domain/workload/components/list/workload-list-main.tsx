@@ -2,15 +2,19 @@
 
 import { Icon } from "xiilab-ui";
 
-import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
-import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
-import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
+// import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
+// import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
+// import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
 import { WorkloadListBody } from "@/domain/workload/components/list/workload-list-body";
 import { WorkloadListFilter } from "@/domain/workload/components/list/workload-list-filter";
 import { WorkloadListFooter } from "@/domain/workload/components/list/workload-list-footer";
+import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
+import { SelectWorkloadModal } from "@/shared/components/modal/select-workload-modal";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,
@@ -56,7 +60,11 @@ const GUIDES: CoreGuide[] = [
 ];
 
 export function WorkloadListMain() {
-  const handleCreateWorkload = () => {};
+  const { onOpen } = useGlobalModal(openCreateWorkloadDrawerAtom);
+
+  const handleCreateWorkload = () => {
+    onOpen();
+  };
 
   return (
     <>
@@ -99,9 +107,13 @@ export function WorkloadListMain() {
       </ListPageMain>
 
       {/* 볼륨 생성 관련 모달들 - drawer보다 상단에 표시 */}
-      <SelectVolumeTypeModal />
+      {/* <SelectVolumeTypeModal />
       <CreateAstragoVolumeModal />
-      <CreateOnPremVolumeModal />
+      <CreateOnPremVolumeModal /> */}
+      {/* 워크로드 생성 드로어 */}
+      <CreateWorkloadDrawer />
+      {/* 워크로드 가져오기 모달 */}
+      <SelectWorkloadModal />
     </>
   );
 }

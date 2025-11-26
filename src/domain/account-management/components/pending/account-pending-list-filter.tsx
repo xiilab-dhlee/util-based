@@ -45,7 +45,7 @@ export function AccountPendingListFilter() {
         iconPosition="left"
         width={70}
         height={30}
-        onClick={() => {}}
+        onClick={() => alert("준비 중입니다.")}
       >
         반려
       </Button>
@@ -56,7 +56,7 @@ export function AccountPendingListFilter() {
         iconPosition="left"
         width={70}
         height={30}
-        onClick={() => {}}
+        onClick={() => alert("준비 중입니다.")}
       >
         승인
       </Button>

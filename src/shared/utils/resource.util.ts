@@ -2,7 +2,7 @@ import type { CoreResourceType } from "@/shared/types/core.interface";
 
 const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
   GPU: {
-    text: "Gpu",
+    text: "GPU",
     unit: "개",
     icon: "Gpu",
     color: "#A353FF",
@@ -20,13 +20,13 @@ const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
     color: "#D77BFF",
   },
   CPU: {
-    text: "Cpu",
+    text: "CPU",
     unit: "Core",
     icon: "Cpu",
     color: "#376DFF",
   },
   MEM: {
-    text: "Mem",
+    text: "Memory",
     unit: "GB",
     icon: "Mem",
     color: "#55D398",
