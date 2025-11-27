@@ -3,7 +3,7 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-import { CreateWorkloadCustomSourcecode } from "./create-workload-custom-sourcecode";
+import { CreateWorkloadSourcecode } from "./create-workload-sourcecode";
 
 export function CreateWorkloadThirdStep() {
   return (
@@ -17,8 +17,8 @@ export function CreateWorkloadThirdStep() {
             </Typography.Text>
           </FieldHeader>
         </Field>
-
-        <CreateWorkloadCustomSourcecode />
+        {/* 소스코드 추가 영역 */}
+        <CreateWorkloadSourcecode />
       </Section>
     </Container>
   );

@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from "react";
-import type { MenuItem, ResponsiveColumnType } from "xiilab-ui";
+import type { DropdownOption, MenuItem, ResponsiveColumnType } from "xiilab-ui";
 
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 
@@ -74,4 +74,8 @@ export interface CoreChartSeries {
 // 테스트 선택자 인터페이스
 export interface CoreTestSelector {
   testId?: string;
+}
+
+export interface CoreDropdownOption<T> extends DropdownOption {
+  origin: T;
 }

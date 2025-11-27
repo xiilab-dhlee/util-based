@@ -19,7 +19,7 @@ import {
   DetailContentKey,
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
-import { WorkloadSourcecodeCard } from "./workload-sourcecode-card";
+import { WorkloadSourcecodeCard } from "../../../sourcecode/components/workload-sourcecode-card";
 import { WorkloadVolumeCard } from "./workload-volume-card";
 
 /**

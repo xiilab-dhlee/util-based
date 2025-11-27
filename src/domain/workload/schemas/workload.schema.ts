@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import { WORKLOAD_IMAGE_TYPES } from "../constants/workload.constant";
 
 // 워크로드 스키마
@@ -62,15 +63,8 @@ const baseWorkloadSchema = z.object({
   ),
   /** 소스코드 */
   sourcecodes: z.array(
-    z.object({
-      /** 아이디 */
-      id: z.string(),
-      /** 제목 */
-      title: z.string(),
-      /** 경로 */
-      path: z.string(),
-      /** 타입 */
-      type: z.string(),
+    sourcecodeListSchema.extend({
+      branch: z.string(),
     }),
   ),
   /** 모델 */
