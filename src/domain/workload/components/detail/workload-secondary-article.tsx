@@ -20,7 +20,7 @@ import {
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
 import { WorkloadSourcecodeCard } from "../../../sourcecode/components/workload-sourcecode-card";
-import { WorkloadVolumeCard } from "./workload-volume-card";
+import { WorkloadVolumeCard } from "../../../volume/components/workload-volume-card";
 
 /**
  * 워크로드 추가 정보 아티클 컴포넌트

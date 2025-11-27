@@ -1,11 +1,21 @@
 "use client";
 
+import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
-import { Typography } from "xiilab-ui";
+import { Input, Typography } from "xiilab-ui";
 
+import {
+  imageTypeAtom,
+  workloadOutputPathAtom,
+} from "../../state/create-workload.atom";
+import { CreateWorkloadAutoSourcecode } from "./create-workload-auto-sourcecode";
 import { CreateWorkloadSourcecode } from "./create-workload-sourcecode";
+import { CreateWorkloadVolume } from "./create-workload-volume";
 
 export function CreateWorkloadThirdStep() {
+  const imageType = useAtomValue(imageTypeAtom);
+  const [outputPath, setOutputPath] = useAtom(workloadOutputPathAtom);
+
   return (
     <Container>
       <Section>
@@ -18,7 +28,23 @@ export function CreateWorkloadThirdStep() {
           </FieldHeader>
         </Field>
         {/* 소스코드 추가 영역 */}
-        <CreateWorkloadSourcecode />
+        {imageType === "HUB" && <CreateWorkloadAutoSourcecode />}
+        {imageType !== "HUB" && <CreateWorkloadSourcecode />}
+        {/* 볼륨 추가 영역 */}
+        <CreateWorkloadVolume />
+      </Section>
+      <Section>
+        <FieldHeader>
+          <Typography.Text variant="subtitle-2-1">Output 경로</Typography.Text>
+          <Typography.Text variant="body-2-4" color="#707070">
+            (선택사항)
+          </Typography.Text>
+        </FieldHeader>
+        <Input
+          placeholder="Output 경로를 입력해주세요."
+          value={outputPath || ""}
+          onChange={(e) => setOutputPath(e.target.value)}
+        />
       </Section>
     </Container>
   );

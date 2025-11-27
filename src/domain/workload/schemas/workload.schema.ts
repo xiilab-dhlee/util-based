@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
+import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
 import { WORKLOAD_IMAGE_TYPES } from "../constants/workload.constant";
 
 // 워크로드 스키마
@@ -67,23 +68,8 @@ const baseWorkloadSchema = z.object({
       branch: z.string(),
     }),
   ),
-  /** 모델 */
-  volumes: z.array(
-    z.object({
-      /** 아이디 */
-      id: z.string(),
-      /** 제목 */
-      title: z.string(),
-      /** 스토리지명 */
-      storage: z.string(),
-      /** 경로 */
-      path: z.string(),
-      /** 볼륨 크기 */
-      volumeSize: z.number(),
-      /** 라벨 */
-      labels: z.array(z.string()),
-    }),
-  ),
+  /** 볼륨 */
+  volumes: z.array(volumeListSchema),
   /** 이벤트 */
   events: z.array(
     z.object({

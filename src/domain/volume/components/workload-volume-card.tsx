@@ -1,38 +1,42 @@
 "use client";
 
+import type { PropsWithChildren } from "react";
 import styled from "styled-components";
-import { Card, Icon, Tag, type TagProps } from "xiilab-ui";
+import { Card, Icon } from "xiilab-ui";
 
-import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
+import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
+import { StorageIcon } from "@/shared/components/icon/storage-icon";
 import {
   LikeCompactCardKey,
   LikeCompactCardRecord,
   LikeCompactCardValue,
 } from "@/styles/layers/like-card-layers.styled";
-import { getSourcecodeTypeInfo } from "../utils/sourcecode.util";
+import { getVolumeStorageTypeInfo } from "../utils/volume.util";
 
-interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
+interface WorkloadVolumeCardProps extends WorkloadVolumeType {
   onDelete?: () => void;
 }
 
-/**
- * 소스 코드 카드 컴포넌트
- */
-export function WorkloadSourcecodeCard({
-  status,
+export function WorkloadVolumeCard({
   name,
+  storageType,
   path,
-  url,
-  type,
+  size,
   onDelete,
-}: WorkloadSourcecodeCardProps) {
-  const { text, tag } = getSourcecodeTypeInfo(type);
-
+}: PropsWithChildren<WorkloadVolumeCardProps>) {
+  const { text } = getVolumeStorageTypeInfo(storageType);
   return (
     <Card
       contentVariant="compact"
       title={name}
-      icon={status === "PRIVATE" ? <Icon name="Lock" /> : undefined}
+      icon={
+        storageType === "ASTRAGO" ? (
+          <AstragoIcon fill="#5b29c7" />
+        ) : (
+          <StorageIcon fill="#5b29c7" />
+        )
+      }
       actionElement={
         onDelete ? (
           <IconWrapper onClick={onDelete}>
@@ -43,9 +47,9 @@ export function WorkloadSourcecodeCard({
     >
       <Body>
         <LikeCompactCardRecord>
-          <LikeCompactCardKey>Git URL :</LikeCompactCardKey>
+          <LikeCompactCardKey>스토리지 :</LikeCompactCardKey>
           <LikeCompactCardValue className="truncate">
-            {url}
+            {text}
           </LikeCompactCardValue>
         </LikeCompactCardRecord>
         <LikeCompactCardRecord>
@@ -55,12 +59,8 @@ export function WorkloadSourcecodeCard({
           </LikeCompactCardValue>
         </LikeCompactCardRecord>
         <LikeCompactCardRecord>
-          <LikeCompactCardKey>타입 :</LikeCompactCardKey>
-          <LikeCompactCardValue>
-            <Tag variant={tag as TagProps["variant"]} style={{ height: 20 }}>
-              {text}
-            </Tag>
-          </LikeCompactCardValue>
+          <LikeCompactCardKey>볼륨 크기 :</LikeCompactCardKey>
+          <LikeCompactCardValue>{size} Bytes</LikeCompactCardValue>
         </LikeCompactCardRecord>
       </Body>
     </Card>

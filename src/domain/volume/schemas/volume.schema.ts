@@ -23,9 +23,11 @@ const baseVolumeSchema = z.object({
   /** 사용 여부 */
   used: z.boolean(),
   /** 볼륨 경로 */
-  mountPath: z.string().nullable(),
+  path: z.string().nullable(),
   /** 라벨 */
   labels: z.array(z.string()),
+  /** 볼륨 크기 */
+  size: z.number(),
 });
 
 // 볼륨 목록용 스키마
@@ -35,8 +37,9 @@ export const volumeListSchema = baseVolumeSchema.pick({
   creatorName: true,
   creatorDate: true,
   storageType: true,
-  mountPath: true,
+  path: true,
   labels: true,
+  size: true,
 });
 
 // 볼륨 상세용 스키마

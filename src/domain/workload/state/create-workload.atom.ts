@@ -4,6 +4,7 @@ import type {
   WorkloadImageType,
   WorkloadJobType,
   WorkloadSourcecodeType,
+  WorkloadVolumeType,
 } from "@/domain/workload/schemas/workload.schema";
 import type {
   GpuListType,
@@ -44,3 +45,5 @@ export const imageTagIdAtom = atom<string | null>(null);
 
 // step 2: Task
 export const workloadSourcecodesAtom = atom<WorkloadSourcecodeType[]>([]);
+export const workloadVolumesAtom = atom<WorkloadVolumeType[]>([]);
+export const workloadOutputPathAtom = atom<string | null>(null);

@@ -6,6 +6,9 @@ import type { StepItem } from "xiilab-ui";
 import { Button, Drawer, Step, Typography } from "xiilab-ui";
 
 import { CreateSourcecodeModal } from "@/domain/sourcecode/components/create-sourcecode-modal";
+import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
+import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
+import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
 import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/create-workload-first-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
 import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
@@ -160,8 +163,12 @@ export function CreateWorkloadDrawer() {
           </Body>
         </Container>
       </Drawer>
-      {/*  */}
+      {/* 소스코드 생성 모달 */}
       <CreateSourcecodeModal />
+      {/* 볼륨 생성 모달 */}
+      <SelectVolumeTypeModal />
+      <CreateAstragoVolumeModal />
+      <CreateOnPremVolumeModal />
     </>
   );
 }
