@@ -89,7 +89,7 @@ export function ManageBmcModal() {
       modalWidth={370}
       open={open}
       closable
-      title={`Red fish 연동 ${mode === "update" ? "계정 수정" : ""}`}
+      title={`Redfish 연동 ${mode === "update" ? "계정 수정" : ""}`}
       showCancelButton
       cancelText="취소"
       onCancel={onClose}

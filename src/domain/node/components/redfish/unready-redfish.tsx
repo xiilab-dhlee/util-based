@@ -14,7 +14,7 @@ export function UnreadyRedfish() {
   return (
     <>
       <RedfishPrimaryArticle
-        title="Red fish 연동"
+        title="Redfish 연동"
         description="하드웨어 장치 및 구성정보를 확인할 수 있습니다."
       />
       {/* 메인 콘텐츠 섹션: Redfish 미연동 상태 안내 */}
