@@ -4,9 +4,9 @@ import { useState } from "react";
 import styled from "styled-components";
 import { DateRange, Typography } from "xiilab-ui";
 
+import { createMonitoringNotificationHistoryColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-history-column";
 import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { useGetMonitoringNotifications } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notifications";
-import { createMonitoringNotificationColumn } from "@/shared/components/column/create-monitoring-notification-column";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
@@ -41,15 +41,15 @@ export function MonitoringNotificationListArticle() {
       </ArticleHeader>
       <ArticleBody>
         <CustomizedTable
-          columns={createMonitoringNotificationColumn([
+          columns={createMonitoringNotificationHistoryColumn([
+            {
+              dataIndex: "name",
+            },
             {
               dataIndex: "nodeName",
             },
             {
               dataIndex: "ip",
-            },
-            {
-              dataIndex: "name",
             },
             {
               dataIndex: "channel",

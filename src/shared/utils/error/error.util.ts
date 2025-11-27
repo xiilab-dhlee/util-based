@@ -1,8 +1,10 @@
 import type { QueryKey } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-import { getAllErrorConfigs } from "@/constants/error";
 import type { ErrorConfig } from "@/shared/types/error";
+import { getAllErrorConfigs } from "@/shared/utils/error/error";
+
+// 🎯 모든 도메인의 에러 설정은 `@/constants/error`에서 통합 관리합니다.
 
 /**
  * 쿼리 키를 문자열로 변환 (방어적 처리 포함)

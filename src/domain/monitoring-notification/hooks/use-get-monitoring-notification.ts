@@ -19,5 +19,6 @@ export const useGetMonitoringNotification = (
       const response = await monitoringService.getNotificationDetail(id);
       return response.data;
     },
+    enabled: Boolean(id),
   });
 };

@@ -118,9 +118,12 @@ export const INTERNAL_REGISTRY_IMAGE_EVENTS = {
 // } as const;
 // 모니터링 관련 이벤트
 export const MONITORING_EVENTS = {
-  // 모니터링 알림 설정 모달에 필요한 정보 전달 이벤트
-  sendUpsertNotification: "monitoring:send-upsert-monitoring-notification",
+  // 모니터링 알림 생성/수정 모달 열기 이벤트
+  openNotificationModal: "monitoring:open-notification-modal",
+  // 모니터링 알림 상세 보기 모달에 필요한 정보 전달 이벤트
   sendNotificationSetting: "monitoring:send-notification-setting",
+  // 모니터링 알림 내역 상세 모달에 필요한 정보 전달 이벤트
+  sendNotificationHistory: "monitoring:send-notification-history",
 } as const;
 
 // 설정 관련 이벤트

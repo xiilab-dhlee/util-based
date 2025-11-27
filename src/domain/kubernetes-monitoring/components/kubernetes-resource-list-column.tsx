@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { type ResponsiveColumnType, Tooltip, Typography } from "xiilab-ui";
 
-import { formatDateTimeSafely } from "@/shared/time.util";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import {
   ColumnAlignCenterWrap,
   ColumnTruncateText,

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
@@ -17,6 +17,7 @@ import {
 import { ManageMonitoringNotificationModal } from "./manage-monitoring-notification-modal";
 import { MonitoringNotificationListArticle } from "./monitoring-notification-list-article";
 import { MonitoringNotificationSettingArticle } from "./monitoring-notification-setting-article";
+import { ViewMonitoringNotificationHistoryModal } from "./view-monitoring-notification-history-modal";
 import { ViewMonitoringNotificationModal } from "./view-monitoring-notification-modal";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
@@ -51,7 +52,7 @@ const GUIDES: CoreGuide[] = [
     title: "알림 내역이란?",
     description: [
       "생성한 알림 설정을 통해 오는 알림 리스트를 보여주는 영역입니다.",
-      "이름, 주소, 이름, 채널, 발생일시 등을 전달합니다.",
+      "이름, 주소, 이름, 알림 유형, 발생일시 등을 전달합니다.",
     ],
   },
 ];
@@ -60,13 +61,7 @@ export function MonitoringNotificationMain() {
   const publish = usePublish();
 
   const handleCreateNotification = () => {
-    publish(MONITORING_EVENTS.sendUpsertNotification, {
-      id: -1,
-      name: "",
-      isEmail: false,
-      isSystem: false,
-      settings: [],
-    });
+    publish(MONITORING_EVENTS.openNotificationModal, { mode: "create" });
   };
 
   return (
@@ -114,6 +109,8 @@ export function MonitoringNotificationMain() {
       <ManageMonitoringNotificationModal />
       {/* 모니터링 알림 설정 상세 모달 */}
       <ViewMonitoringNotificationModal />
+      {/* 모니터링 알림 내역 상세 모달 */}
+      <ViewMonitoringNotificationHistoryModal />
     </>
   );
 }
