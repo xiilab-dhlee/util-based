@@ -8,6 +8,8 @@ const baseSourcecodeSchema = z.object({
   id: z.number().int().positive(),
   /** 소스코드 제목 */
   title: z.string().min(1).max(100),
+  /** 소스코드 상태 */
+  status: z.enum(["PUBLIC", "PRIVATE"]),
   /** 코드 타입 (GitHub, GitLab, Bitbucket) */
   codeType: z.enum(["GIT_HUB", "GIT_LAB", "BIT_BUCKET"]),
   /** 생성자 정보 */
@@ -52,3 +54,4 @@ export type SourcecodeIdType = SourcecodeListType["id"];
 export type SourcecodeDetailType = z.infer<typeof sourcecodeDetailSchema>;
 export type SourcecodeParameterType = Sourcecode["parameters"][number];
 export type SourcecodeCodeType = Sourcecode["codeType"];
+export type SourcecodeStatusType = Sourcecode["status"];

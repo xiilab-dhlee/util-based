@@ -45,8 +45,8 @@ export function UnconnectRedfish() {
   return (
     <SearchNoResult
       icon={<Icon name="Port" color="#878898" size={32} />}
-      title="연동된 Red fish가 없습니다."
-      description="Red fish를 사용하기 위해 연동 설정을 해주세요."
+      title="연동된 Redfish가 없습니다."
+      description="Redfish를 사용하기 위해 연동 설정을 해주세요."
     >
       <Button
         color="primary"
@@ -60,7 +60,7 @@ export function UnconnectRedfish() {
         onClick={handleClickConnectRedfish}
         style={{ marginTop: 20 }}
       >
-        Red fish 연동하기
+        Redfish 연동하기
       </Button>
     </SearchNoResult>
   );

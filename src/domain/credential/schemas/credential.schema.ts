@@ -39,4 +39,5 @@ export const credentialListSchema = baseCredentialSchema.pick({
  */
 type Credential = z.infer<typeof baseCredentialSchema>;
 export type CredentialListType = z.infer<typeof credentialListSchema>;
+export type CredentialIdType = Credential["id"];
 export type CredentialType = Credential["type"];

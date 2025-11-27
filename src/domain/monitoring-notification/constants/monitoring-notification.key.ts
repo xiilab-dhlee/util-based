@@ -1,7 +1,8 @@
 import type { GetMonitoringNotificationsPayload } from "@/domain/monitoring-notification/types/monitoring-notification.type";
 
 export const monitoringKeys = {
-  default: ["monitoring"],
+  default: ["monitoring-notification"],
+  // Query keys
   notificationSettingList: (payload: GetMonitoringNotificationsPayload) => [
     ...monitoringKeys.default,
     "notificationSettingList",
@@ -17,4 +18,8 @@ export const monitoringKeys = {
     "notificationList",
     ...Object.values(payload),
   ],
+  // Mutation keys
+  create: () => [...monitoringKeys.default, "create"],
+  update: () => [...monitoringKeys.default, "update"],
+  upsert: () => [...monitoringKeys.default, "upsert"],
 };

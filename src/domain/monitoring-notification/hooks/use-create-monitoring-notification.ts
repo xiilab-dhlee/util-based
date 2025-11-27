@@ -1,5 +1,6 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
+import { monitoringKeys } from "@/domain/monitoring-notification/constants/monitoring-notification.key";
 import type { CreateMonitoringNotificationPayload } from "@/domain/monitoring-notification/types/monitoring-notification.type";
 import { useServices } from "@/shared/providers/service-provider";
 
@@ -15,6 +16,7 @@ export const useCreateMonitoringNotification = (): UseMutationResult<
   const { monitoringService } = useServices();
 
   return useMutation({
+    mutationKey: monitoringKeys.create(),
     mutationFn: (payload: CreateMonitoringNotificationPayload) => {
       return monitoringService.createNotification(payload);
     },

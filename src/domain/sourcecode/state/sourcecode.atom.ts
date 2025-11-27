@@ -11,3 +11,5 @@ export const sourcecodeTypeAtom = atom<string | null>(null);
 export const sourcecodeCheckedListAtom = atomWithReset<Set<number>>(new Set());
 /** 소스코드 삭제 모달 표시 여부 */
 export const openDeleteSourcecodeModalAtom = atom<boolean>(false);
+/** 소스코드 생성 모달 표시 여부 */
+export const openCreateSourcecodeModalAtom = atom<boolean>(false);

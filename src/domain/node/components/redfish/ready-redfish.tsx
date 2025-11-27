@@ -82,7 +82,7 @@ export function ReadyRedfish() {
       {/* 페이지 헤더 */}
       <DetailContentHeader>
         <DetailContentTitle>
-          Red fish 연동
+          Redfish 연동
           <Typography.Text
             variant="body-1-2"
             as="span"

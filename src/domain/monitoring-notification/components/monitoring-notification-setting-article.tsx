@@ -4,9 +4,9 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { createMonitoringNotificationColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-column";
 import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { useGetMonitoringNotifications } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notifications";
-import { createMonitoringNotificationColumn } from "@/shared/components/column/create-monitoring-notification-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";

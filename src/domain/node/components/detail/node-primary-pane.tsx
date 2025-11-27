@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Button, Label } from "xiilab-ui";
+import { Label } from "xiilab-ui";
 
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
 import {
@@ -41,7 +41,8 @@ export function NodePrimaryPane() {
   const { data } = useGetNode(String(name));
 
   // Redfish 기능 활성화 여부 (현재 비활성화)
-  const isRedfish = false;
+  const isRedfish = true;
+  const powerStatus = "ON";
 
   return (
     <DetailContentPane>
@@ -56,25 +57,16 @@ export function NodePrimaryPane() {
             <DetailContentSubTitle>Server</DetailContentSubTitle>
             <KeyValueContainer>
               <ServerKey>Server Power Status</ServerKey>
-              <Label size="medium" theme="light" variant="blue">
-                전원 ON
-              </Label>
+              {powerStatus === "ON" ? (
+                <Label size="medium" theme="light" variant="blue">
+                  전원 ON
+                </Label>
+              ) : (
+                <Label size="medium" theme="light" variant="black">
+                  전원 OFF
+                </Label>
+              )}
             </KeyValueContainer>
-            <PowerButtonWrapper>
-              <Button
-                color="primary"
-                icon="PowerBold"
-                iconPosition="left"
-                iconSize={16}
-                size="medium"
-                variant="outlined"
-                height={32}
-                width="100%"
-                onClick={() => alert("미구현")}
-              >
-                전원 종료
-              </Button>
-            </PowerButtonWrapper>
           </>
         )}
 
@@ -248,22 +240,17 @@ const ServerKey = styled(DetailContentKey)`
 `;
 
 /**
- * 전원 버튼 래퍼 스타일
- * 서버 전원 종료 버튼을 감싸는 컨테이너의 스타일입니다.
- */
-const PowerButtonWrapper = styled.div`
-  margin-top: 6px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e0e0e0;
-`;
-
-/**
  * 키-값 컨테이너 스타일
  * 서버 전원 상태 정보를 표시하는 키-값 쌍의 컨테이너 스타일입니다.
  */
 const KeyValueContainer = styled.div`
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
   overflow-x: hidden;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  height: 42px;
+  padding: 0 14px;
+
 `;

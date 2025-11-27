@@ -1,100 +1,91 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Button, Dropdown, Input } from "xiilab-ui";
+import { Button, Dropdown, InputNumber } from "xiilab-ui";
 
 import {
+  EMPTY_NOTIFICATION_SETTING,
+  MONITORING_NOTIFICATION_DURATION_UNIT,
   MONITORING_NOTIFICATION_OPERATOR_OPTIONS,
+  MONITORING_NOTIFICATION_THRESHOLD_UNIT,
   MONITORING_NOTIFICATION_TYPE_OPTIONS,
 } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
-import type { MonitoringNotificationSettingType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
-import { CreateModelButton } from "@/shared/components/button/create-model-button";
-import { FormLabel } from "@/shared/components/form/form-label";
+import type { MonitoringNotificationSettingFormType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
 
-interface ManageMonitoringNotificationSettingsProps {
-  defaultSettings?: MonitoringNotificationSettingType[];
+/** 개별 설정 항목의 필드별 에러 타입 */
+interface SettingItemErrors {
+  item?: string;
+  operator?: string;
+  threshold?: string;
+  duration?: string;
 }
 
+interface ManageMonitoringNotificationSettingsProps {
+  settings?: MonitoringNotificationSettingFormType[];
+  onChange?: (nextSettings: MonitoringNotificationSettingFormType[]) => void;
+  /** 개별 설정 항목의 에러 배열 (Zod 검증 결과) */
+  errors?: SettingItemErrors[];
+  disabled?: boolean;
+}
+
+type ConditionRowStatus = "complete" | "empty" | "incomplete";
+
+const getConditionRowStatus = (
+  setting: MonitoringNotificationSettingFormType,
+): ConditionRowStatus => {
+  const fields = [
+    setting.item,
+    setting.operator,
+    setting.threshold,
+    setting.duration,
+  ];
+  const filledCount = fields.filter((f) => f && f.trim().length > 0).length;
+
+  if (filledCount === 4) return "complete";
+  if (filledCount === 0) return "empty";
+  return "incomplete";
+};
+
 export function ManageMonitoringNotificationSetting({
-  defaultSettings = [],
+  settings,
+  onChange,
+  errors,
+  disabled = false,
 }: ManageMonitoringNotificationSettingsProps) {
-  const [settings, setSettings] = useState<MonitoringNotificationSettingType[]>(
-    defaultSettings.length > 0
-      ? defaultSettings
-      : [{ item: "", operator: "", threshold: "", duration: "" }],
-  );
+  const safeSettings =
+    settings && settings.length > 0 ? settings : [EMPTY_NOTIFICATION_SETTING];
 
-  /**
-   * props로 전달된 parameters가 변경될 때 내부 상태 동기화
-   */
-  useEffect(() => {
-    if (defaultSettings.length > 0) {
-      setSettings(defaultSettings);
-    }
-  }, [defaultSettings]);
-
-  /**
-   * 새로운 파라미터 추가 핸들러
-   * 기존 파라미터 목록에 빈 키와 값을 가진 새로운 파라미터를 추가합니다.
-   */
-  const handleCreateSetting = () => {
-    const newParameter: MonitoringNotificationSettingType = {
-      item: "",
-      operator: "",
-      threshold: "",
-      duration: "",
-    };
-    setSettings((prev) => [...prev, newParameter]);
+  const updateSettings = (
+    updater: (
+      prev: MonitoringNotificationSettingFormType[],
+    ) => MonitoringNotificationSettingFormType[],
+  ) => {
+    const next = updater(safeSettings);
+    onChange?.(next);
   };
 
   const handleDeleteSetting = (index: number) => {
-    if (settings.length > 1) {
-      setSettings((prev) => prev.filter((_, i) => i !== index));
+    if (safeSettings.length > 1) {
+      updateSettings((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
-  const handleItemChange = (index: number, item: string | null) => {
-    setSettings((prev) => {
-      const newParameters = [...prev];
-      newParameters[index] = { ...newParameters[index], item: item || "" };
-      return newParameters;
-    });
-  };
+  // 필드 변경 핸들러
+  const handleFieldChange = (
+    index: number,
+    field: keyof MonitoringNotificationSettingFormType,
+    value: string | number | null,
+  ) => {
+    updateSettings((prev) => {
+      const newSettings = [...prev];
 
-  const handleOperatorChange = (index: number, operator: string | null) => {
-    setSettings((prev) => {
-      const newParameters = [...prev];
-      newParameters[index] = {
-        ...newParameters[index],
-        operator: operator || "",
-      };
-      return newParameters;
-    });
-  };
-
-  const handleThresholdChange = (index: number, threshold: string) => {
-    setSettings((prev) => {
-      const newParameters = [...prev];
-      newParameters[index] = { ...newParameters[index], threshold };
-      return newParameters;
-    });
-  };
-
-  const handleDurationChange = (index: number, duration: string) => {
-    setSettings((prev) => {
-      const newParameters = [...prev];
-      newParameters[index] = { ...newParameters[index], duration };
-      return newParameters;
+      const finalValue = value?.toString() ?? "";
+      newSettings[index] = { ...newSettings[index], [field]: finalValue };
+      return newSettings;
     });
   };
 
   return (
     <div>
-      <Header>
-        <FormLabel>알림 임계 조건 설정</FormLabel>
-        <CreateModelButton onClick={handleCreateSetting} title="설정 추가" />
-      </Header>
       <Body>
         {/* 컬럼 헤더 */}
         <Column>
@@ -110,66 +101,109 @@ export function ManageMonitoringNotificationSetting({
           <Field>
             <HeaderTitle>지속시간</HeaderTitle>
           </Field>
-          <Delete></Delete>
+          {!disabled && <Delete></Delete>}
         </Column>
-        {/* 파라미터 입력 필드들 */}
-        {settings.map((setting, index) => (
-          <Column key={setting.item}>
-            {/* 항목 선택 필드 */}
-            <Field>
-              <Dropdown
-                options={MONITORING_NOTIFICATION_TYPE_OPTIONS}
-                placeholder="항목 선택"
-                onChange={(value: string | null) =>
-                  handleItemChange(index, value)
-                }
-                value={setting.item || null}
-                width="100%"
-                height={30}
-              />
-            </Field>
-            {/* 연산자 선택 필드 */}
-            <Field>
-              <Dropdown
-                options={MONITORING_NOTIFICATION_OPERATOR_OPTIONS}
-                placeholder="연산자 선택"
-                onChange={(value: string | null) =>
-                  handleOperatorChange(index, value)
-                }
-                value={setting.operator || null}
-                width="100%"
-                height={30}
-              />
-            </Field>
-            {/* 임계값 입력 필드 */}
-            <Field>
-              <Input
-                width="100%"
-                value={setting.threshold}
-                onChange={(e) => handleThresholdChange(index, e.target.value)}
-                autoComplete="off"
-              />
-            </Field>
-            {/* 파라미터 값 입력 필드 */}
-            <Field>
-              <Input
-                width="100%"
-                value={setting.duration}
-                onChange={(e) => handleDurationChange(index, e.target.value)}
-                autoComplete="off"
-              />
-            </Field>
-            {/* 파라미터 삭제 버튼 */}
-            <Delete>
-              <Button
-                icon="Close"
-                iconSize={18}
-                onClick={() => handleDeleteSetting(index)}
-                disabled={settings.length === 1}
-              />
-            </Delete>
-          </Column>
-        ))}
+        <BodyRow>
+          {safeSettings.map((setting, index) => {
+            const status = getConditionRowStatus(setting);
+            const itemErrors = errors?.[index];
+
+            // 필드별 에러 상태 결정: Zod 에러 또는 incomplete 상태에서 빈 필드만 에러
+            const getFieldStatus = (
+              field: keyof SettingItemErrors,
+            ): "default" | "error" => {
+              // Zod 검증 에러가 있으면 에러 표시
+              if (itemErrors?.[field]) return "error";
+              // incomplete 상태에서 해당 필드가 비어있으면 에러 표시
+              if (status === "incomplete" && !setting[field]?.trim()) {
+                return "error";
+              }
+              return "default";
+            };
+
+            return (
+              <Column key={`${setting.item}-${index}`}>
+                <Field>
+                  <Dropdown
+                    status={getFieldStatus("item")}
+                    options={MONITORING_NOTIFICATION_TYPE_OPTIONS}
+                    placeholder="항목 선택"
+                    onChange={(value: string | null) =>
+                      handleFieldChange(index, "item", value)
+                    }
+                    value={setting.item || null}
+                    width="100%"
+                    height={30}
+                    disabled={disabled}
+                  />
+                </Field>
+                <Field>
+                  <Dropdown
+                    status={getFieldStatus("operator")}
+                    options={MONITORING_NOTIFICATION_OPERATOR_OPTIONS}
+                    placeholder="연산자 선택"
+                    onChange={(value: string | null) =>
+                      handleFieldChange(index, "operator", value)
+                    }
+                    value={setting.operator || null}
+                    width="100%"
+                    height={30}
+                    disabled={disabled}
+                  />
+                </Field>
+                <Field>
+                  <InputNumber
+                    status={getFieldStatus("threshold")}
+                    width="100%"
+                    height={30}
+                    min={1}
+                    max={100}
+                    suffix={MONITORING_NOTIFICATION_THRESHOLD_UNIT}
+                    value={
+                      setting.threshold === ""
+                        ? undefined
+                        : Number(setting.threshold)
+                    }
+                    onChange={(value) =>
+                      handleFieldChange(index, "threshold", value)
+                    }
+                    autoComplete="off"
+                    disabled={disabled}
+                  />
+                </Field>
+                <Field>
+                  <InputNumber
+                    status={getFieldStatus("duration")}
+                    width="100%"
+                    height={30}
+                    min={1}
+                    suffix={MONITORING_NOTIFICATION_DURATION_UNIT}
+                    value={
+                      setting.duration === ""
+                        ? undefined
+                        : Number(setting.duration)
+                    }
+                    onChange={(value) =>
+                      handleFieldChange(index, "duration", value)
+                    }
+                    autoComplete="off"
+                    disabled={disabled}
+                  />
+                </Field>
+                {!disabled && (
+                  <Delete>
+                    <Button
+                      icon="Close"
+                      iconSize={18}
+                      onClick={() => handleDeleteSetting(index)}
+                      disabled={safeSettings.length === 1}
+                    />
+                  </Delete>
+                )}
+              </Column>
+            );
+          })}
+        </BodyRow>
       </Body>
     </div>
   );
@@ -177,15 +211,7 @@ export function ManageMonitoringNotificationSetting({
 
 // ===== Styled Components =====
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-`;
-
-/**
- * 파라미터 입력 컨테이너
+/** 파라미터 입력 컨테이너
  * 테두리와 패딩을 가진 카드 형태의 레이아웃
  */
 const Body = styled.div`
@@ -197,6 +223,7 @@ const Body = styled.div`
   gap: 6px;
   position: relative;
   width: 100%;
+
 `;
 
 /**
@@ -216,7 +243,13 @@ const HeaderTitle = styled.div`
 const Column = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 4px;
+  border-radius: 4px;
+
+  & > :first-child {
+    flex: 1.5;    
+  }
+
 `;
 
 /**
@@ -224,8 +257,9 @@ const Column = styled.div`
  * flex: 1로 동일한 너비를 가지며 오버플로우를 처리
  */
 const Field = styled.div`
-  flex: 1;
+  flex:  1;
   overflow: hidden;
+
 `;
 
 /**
@@ -243,4 +277,12 @@ const Delete = styled.div`
     width: 30px !important;
     height: 30px !important;
   }
+`;
+
+const BodyRow = styled.div`
+  height: 138px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `;

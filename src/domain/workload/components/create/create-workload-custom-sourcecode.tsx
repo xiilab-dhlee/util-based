@@ -1,15 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import styled from "styled-components";
 import { Button, Dropdown, Icon, Input, Tooltip, Typography } from "xiilab-ui";
 
+import { openCreateSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcecode.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 import { CreateWorkloadSourcecodeSelect } from "./create-workload-sourcecode-select";
 
 export function CreateWorkloadCustomSourcecode() {
-  const handleSourceCodeCreate = () => {};
+  const [isSourceCodeListExpanded, setSourceCodeListExpanded] = useState(false);
+  const { onOpen } = useGlobalModal(openCreateSourcecodeModalAtom);
+  const handleSourceCodeCreate = () => {
+    onOpen();
+  };
 
   return (
     <Container>
@@ -110,7 +117,7 @@ export function CreateWorkloadCustomSourcecode() {
       {/* 소스코드 목록 박스 */}
       <Footer>
         <VolumeListHeader
-        // onClick={() => setSourceCodeListExpanded(!isSourceCodeListExpanded)}
+          onClick={() => setSourceCodeListExpanded(!isSourceCodeListExpanded)}
         >
           <Typography.Text variant="body-2-2" color="#484848">
             소스코드 목록
@@ -118,7 +125,7 @@ export function CreateWorkloadCustomSourcecode() {
           <VolumeListIcons>
             <Icon name="Dropdown" size={16} color="#5F6368" />
             <Icon
-              // name={isSourceCodeListExpanded ? "ChevronUp" : "ChevronDown"}
+              name={isSourceCodeListExpanded ? "ChevronUp" : "ChevronDown"}
               size={20}
               color="#5F6368"
             />

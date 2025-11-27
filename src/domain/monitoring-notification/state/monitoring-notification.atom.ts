@@ -9,3 +9,6 @@ export const monitoringNotificationSearchTextAtom = atom<string>("");
 export const openManageMonitoringNotificationModalAtom = atom<boolean>(false);
 /** 모니터링 알림 설정 상세 모달 표시 여부 */
 export const openViewMonitoringNotificationModalAtom = atom<boolean>(false);
+/** 모니터링 알림 내역 상세 모달 표시 여부 */
+export const openViewMonitoringNotificationHistoryModalAtom =
+  atom<boolean>(false);

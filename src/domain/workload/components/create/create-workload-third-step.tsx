@@ -12,7 +12,7 @@ export function CreateWorkloadThirdStep() {
         <Field>
           <FieldHeader>
             <Typography.Text variant="subtitle-2-1">Input</Typography.Text>
-            <Typography.Text variant="body-4-1" color="#707070">
+            <Typography.Text variant="body-2-4" color="#707070">
               (선택사항)
             </Typography.Text>
           </FieldHeader>

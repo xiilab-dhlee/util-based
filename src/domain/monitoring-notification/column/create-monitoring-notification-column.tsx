@@ -36,7 +36,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      title: "채널",
+      title: "알림 유형",
       dataIndex: "channel",
       align: "left",
       render: () => {

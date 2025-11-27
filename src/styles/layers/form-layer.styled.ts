@@ -37,4 +37,5 @@ export const FormRow = styled.div`
   flex-direction: row;
   gap: 10px;
   overflow: hidden;
+  width: 100%;
 `;

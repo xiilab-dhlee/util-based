@@ -2,6 +2,17 @@ import type { DropdownOption } from "xiilab-ui";
 
 import type { CoreGuideImage } from "@/shared/types/core.model";
 
+export const SOURCECODE_STATUS_OPTIONS: DropdownOption[] = [
+  {
+    label: "공개",
+    value: "PUBLIC",
+  },
+  {
+    label: "비공개",
+    value: "PRIVATE",
+  },
+];
+
 export const SOURCECODE_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "GitHub",

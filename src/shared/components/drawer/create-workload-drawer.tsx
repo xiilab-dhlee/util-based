@@ -5,6 +5,7 @@ import styled from "styled-components";
 import type { StepItem } from "xiilab-ui";
 import { Button, Drawer, Step, Typography } from "xiilab-ui";
 
+import { CreateSourcecodeModal } from "@/domain/sourcecode/components/create-sourcecode-modal";
 import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/create-workload-first-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
 import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
@@ -75,84 +76,93 @@ export function CreateWorkloadDrawer() {
   );
 
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      placement="right"
-      width={620}
-      title={
-        <Header>
-          <PurpleBar />
-          <Typography.Text variant="title-2">워크로드 생성</Typography.Text>
-        </Header>
-      }
-      footer={
-        <Footer>
-          {step === 0 && (
-            <CancelButton>
+    <>
+      <Drawer
+        open={open}
+        onClose={onClose}
+        placement="right"
+        width={620}
+        title={
+          <Header>
+            <PurpleBar />
+            <Typography.Text variant="title-2">워크로드 생성</Typography.Text>
+          </Header>
+        }
+        footer={
+          <Footer>
+            {step === 0 && (
+              <CancelButton>
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  onClick={onClose}
+                  width="100%"
+                >
+                  <Typography.Text variant="button-1">취소</Typography.Text>
+                </Button>
+              </CancelButton>
+            )}
+
+            {step > 0 && (
+              <CancelButton>
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  onClick={handlePrev}
+                  width="100%"
+                >
+                  <Typography.Text variant="button-1">
+                    이전 단계
+                  </Typography.Text>
+                </Button>
+              </CancelButton>
+            )}
+
+            <ActionButton>
               <Button
-                variant="outlined"
+                color="primary"
+                variant="gradient"
                 size="medium"
-                onClick={onClose}
+                onClick={handleNext}
+                iconPosition={isLastStep ? "left" : "right"}
+                icon={isLastStep ? "Plus" : "Front"}
+                iconSize={24}
                 width="100%"
               >
-                <Typography.Text variant="button-1">취소</Typography.Text>
+                <Typography.Text
+                  variant="body-1-1"
+                  color="var(--color-gray-13)"
+                >
+                  {isLastStep ? "워크로드 생성" : "다음 단계"}
+                </Typography.Text>
               </Button>
-            </CancelButton>
-          )}
-
-          {step > 0 && (
-            <CancelButton>
-              <Button
-                variant="outlined"
-                size="medium"
-                onClick={handlePrev}
-                width="100%"
-              >
-                <Typography.Text variant="button-1">이전 단계</Typography.Text>
-              </Button>
-            </CancelButton>
-          )}
-
-          <ActionButton>
-            <Button
-              color="primary"
-              variant="gradient"
-              size="medium"
-              onClick={handleNext}
-              iconPosition={isLastStep ? "left" : "right"}
-              icon={isLastStep ? "Plus" : "Front"}
-              iconSize={24}
-              width="100%"
-            >
-              <Typography.Text variant="body-1-1" color="var(--color-gray-13)">
-                {isLastStep ? "워크로드 생성" : "다음 단계"}
-              </Typography.Text>
-            </Button>
-          </ActionButton>
-        </Footer>
-      }
-      closable={true}
-      maskClosable={true} // 배경 클릭으로 닫기 활성화
-      styles={{
-        header: {
-          padding: "27px 24px 21px 24px",
-        },
-        body: {
-          padding: "0px 24px 0px 24px",
-        },
-      }}
-    >
-      <Container>
-        <StepWrapper>
-          <Step steps={STEP_ITEMS} currentStep={step} />
-        </StepWrapper>
-        <Body>
-          {/* 현재 단계에 맞는 폼 컴포넌트 렌더링 */}
-          {renderCurrentStepContent()}
-        </Body>
-      </Container>
-    </Drawer>
+            </ActionButton>
+          </Footer>
+        }
+        closable={true}
+        maskClosable={true} // 배경 클릭으로 닫기 활성화
+        styles={{
+          header: {
+            padding: "27px 24px 21px 24px",
+          },
+          body: {
+            padding: "0px 24px 0px 24px",
+          },
+        }}
+      >
+        <Container>
+          <StepWrapper>
+            <Step steps={STEP_ITEMS} currentStep={step} />
+          </StepWrapper>
+          <Body>
+            {/* 현재 단계에 맞는 폼 컴포넌트 렌더링 */}
+            {renderCurrentStepContent()}
+          </Body>
+        </Container>
+      </Drawer>
+      {/*  */}
+      <CreateSourcecodeModal />
+    </>
   );
 }
 
