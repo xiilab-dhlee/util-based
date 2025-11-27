@@ -29,6 +29,7 @@ const Container = styled.button`
   align-items: center;
   gap: 4px;
   font-size: 12px;
+  line-height: 12px;
   font-weight: 400;
   color: #666666;
 

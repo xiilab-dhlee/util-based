@@ -1,8 +1,8 @@
 import type { DropdownOption } from "xiilab-ui";
 
 export const WORKLOAD_IMAGE_TYPES = [
-  "BUILTIN",
   "HUB",
+  "BUILTIN",
   "INTERNAL_REGISTRY",
   "EXTERNAL_REGISTRY",
 ] as const;

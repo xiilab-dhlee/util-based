@@ -8,4 +8,5 @@ export const sourcecodeKeys = {
     ...Object.values(payload),
   ],
   detail: (id: number) => [...sourcecodeKeys.default, "detail", id],
+  allList: () => [...sourcecodeKeys.default, "allList"],
 };

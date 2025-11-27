@@ -40,3 +40,9 @@ export const workerMemoryGbAtom = atom(82);
 export const imageTypeAtom = atom<WorkloadImageType | null>(null);
 export const imageIdAtom = atom<string | null>(null);
 export const imageTagIdAtom = atom<string | null>(null);
+
+// step 2: Task
+export const inputSourcecodeIdAtom = atom<string | null>(null);
+export const inputBranchIdAtom = atom<string | null>(null);
+export const inputMountPathAtom = atom<string>("");
+export const inputCommandAtom = atom<string>("");

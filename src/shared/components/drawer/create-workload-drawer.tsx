@@ -7,6 +7,7 @@ import { Button, Drawer, Step, Typography } from "xiilab-ui";
 
 import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/create-workload-first-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
+import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
 import { stepAtom } from "@/domain/workload/state/create-workload.atom";
 import type { CreateWorkloadPayload } from "@/domain/workload/types/workload.type";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -58,7 +59,7 @@ export function CreateWorkloadDrawer() {
       case 1:
         return <CreateWorkloadSecondStep />;
       case 2:
-        return;
+        return <CreateWorkloadThirdStep />;
       case 3:
         return;
     }
