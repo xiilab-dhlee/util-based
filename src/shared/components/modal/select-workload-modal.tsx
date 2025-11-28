@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
-import styled from "styled-components";
+import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
 import { useGetWorkloadLazy } from "@/domain/workload/hooks/use-get-workload";
@@ -19,6 +19,7 @@ export function SelectWorkloadModal() {
 
   const { open, onClose } = useGlobalModal(openSelectWorkloadModalAtom);
   const [selectedWorkload, setSelectedWorkload] = useAtom(selectedWorkloadAtom);
+  const [page, setPage] = useState(1);
 
   const { execute } = useGetWorkloadLazy();
 
@@ -42,7 +43,7 @@ export function SelectWorkloadModal() {
       title="워크로드 정보 가져오기"
       open={open}
       onCancel={onClose}
-      modalWidth={580}
+      modalWidth={600}
       centered
       type="primary"
       icon={<Icon name="Copy" size={20} color="#FFF" />}
@@ -54,32 +55,29 @@ export function SelectWorkloadModal() {
       }}
       afterClose={() => setSelectedWorkload(null)}
     >
-      <Container>
-        <CustomizedTable
-          columns={createWorkloadColumn([
-            { dataIndex: "select" },
-            {
-              dataIndex: "workloadName",
-              title: "워크로드 이름",
-              width: 130,
-              ellipsis: true,
-            },
-            { dataIndex: "jobType", title: "잡 타입" },
-            { dataIndex: "creatorName" },
-            { dataIndex: "status" },
-            { dataIndex: "elapsedTime" },
-          ])}
-          data={workloadListMock}
-          pagination={false}
-          size="small"
-          columnHeight={40}
-        />
-      </Container>
+      <CustomizedTable
+        columns={createWorkloadColumn([
+          { dataIndex: "select" },
+          {
+            dataIndex: "workloadName",
+            title: "워크로드 이름",
+            width: 130,
+            ellipsis: true,
+          },
+          { dataIndex: "jobType", title: "잡 타입" },
+          { dataIndex: "creatorName" },
+          { dataIndex: "status" },
+          { dataIndex: "elapsedTime" },
+        ])}
+        data={workloadListMock}
+        pagination={{
+          current: page,
+          pageSize: 8,
+          total: 100,
+          onChange: (page) => setPage(page),
+        }}
+        columnHeight={40}
+      />
     </Modal>
   );
 }
-
-const Container = styled.div`
-  max-height: 352px;
-  overflow: hidden;
-`;

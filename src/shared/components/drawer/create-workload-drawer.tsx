@@ -10,6 +10,7 @@ import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astr
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
 import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
 import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/create-workload-first-step";
+import { CreateWorkloadFourthStep } from "@/domain/workload/components/create/create-workload-fourth-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
 import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
 import { stepAtom } from "@/domain/workload/state/create-workload.atom";
@@ -18,6 +19,7 @@ import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
+import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 const STEP_ITEMS: StepItem[] = [
   {
@@ -65,7 +67,7 @@ export function CreateWorkloadDrawer() {
       case 2:
         return <CreateWorkloadThirdStep />;
       case 3:
-        return;
+        return <CreateWorkloadFourthStep />;
     }
   };
 
@@ -207,13 +209,7 @@ const Body = styled.div`
   overflow-y: auto;
   padding-top: 20px;
 
-  /* 스크롤바 숨김 */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
+  ${hideScrollbar}
 `;
 
 const Footer = styled.div`

@@ -56,6 +56,8 @@ const baseWorkloadSchema = z.object({
       id: z.string(),
       /** 포트 번호 */
       port: z.string(),
+      /** 서비스 포트 번호 */
+      servicePort: z.string(),
       /** 포트 이름 */
       portName: z.string(),
       /** 포트 주소 */
