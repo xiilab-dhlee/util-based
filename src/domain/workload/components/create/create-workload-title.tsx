@@ -24,8 +24,8 @@ export function CreateWorkloadTitle() {
       <Form layout="vertical">
         <FormItem
           label="워크로드 이름"
-          validateStatus="error"
-          help="워크로드 이름을 입력하세요."
+          // validateStatus="error"
+          // help="워크로드 이름을 입력하세요."
         >
           <Input
             value={workloadName}

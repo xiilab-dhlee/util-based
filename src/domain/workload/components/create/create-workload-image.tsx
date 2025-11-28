@@ -1,15 +1,12 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-import { useState } from "react";
+import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Icon, Tooltip } from "xiilab-ui";
 
 import { WorkloadImageTooltipTitle } from "@/shared/components/tooltip-title/workload-image-tooltip-title";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import { WORKLOAD_IMAGE_TYPES } from "../../constants/workload.constant";
-import type { WorkloadImageType } from "../../schemas/workload.schema";
-import { jobTypeAtom } from "../../state/create-workload.atom";
+import { imageTypeAtom, jobTypeAtom } from "../../state/create-workload.atom";
 import { CreateWorkloadHubImageSelect } from "./create-workload-hub-image-select";
 import { CreateWorkloadImageButton } from "./create-workload-image-button";
 import { CreateWorkloadInternalRegistryImageSelect } from "./create-workload-internal-registry-image-select";
@@ -18,9 +15,7 @@ import { CreateWorkloadInternalRegistryImageTagSelect } from "./create-workload-
 export function CreateWorkloadImage() {
   const jobType = useAtomValue(jobTypeAtom);
 
-  const [imageType, setImageType] = useState<WorkloadImageType>(
-    WORKLOAD_IMAGE_TYPES[0],
-  );
+  const [imageType, setImageType] = useAtom(imageTypeAtom);
 
   return (
     <Container>

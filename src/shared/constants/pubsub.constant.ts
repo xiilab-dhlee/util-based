@@ -31,8 +31,8 @@ export const WORKLOAD_EVENTS = {
   sendCommitImage: "workload:send-commit-image",
   // 워크로드 모니터링에 필요한 정보 전달 이벤트
   sendWorkloadMonitoring: "workload:send-workload-monitoring",
-  // 워크로드 복제 시 필요한 정보 전달 이벤트
-  sendCloneWorkload: "workload:send-clone-workload",
+  // 워크로드 생성 시 필요한 정보 전달 이벤트
+  sendCreateWorkload: "workload:send-create-workload",
 } as const;
 
 // 소스코드 관련 이벤트

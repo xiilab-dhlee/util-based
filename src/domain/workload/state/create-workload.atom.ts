@@ -46,7 +46,7 @@ export const imageTagIdAtom = atom<string | null>(null);
 // step 3: Task
 export const workloadSourcecodesAtom = atom<WorkloadSourcecodeType[]>([]);
 export const workloadVolumesAtom = atom<WorkloadVolumeType[]>([]);
-export const workloadOutputPathAtom = atom<string | null>(null);
+export const workloadOutputPathAtom = atom<string>("");
 
 // step 4: Command
 export const execPathAtom = atom<string | null>(null);

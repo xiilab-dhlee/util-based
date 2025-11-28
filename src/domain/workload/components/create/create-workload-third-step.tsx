@@ -42,7 +42,7 @@ export function CreateWorkloadThirdStep() {
         </FieldHeader>
         <Input
           placeholder="Output 경로를 입력해주세요."
-          value={outputPath || ""}
+          value={outputPath}
           onChange={(e) => setOutputPath(e.target.value)}
         />
       </Section>

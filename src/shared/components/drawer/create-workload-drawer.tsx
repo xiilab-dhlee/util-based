@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import styled from "styled-components";
 import type { StepItem } from "xiilab-ui";
 import { Button, Drawer, Step, Typography } from "xiilab-ui";
@@ -13,13 +13,29 @@ import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/cre
 import { CreateWorkloadFourthStep } from "@/domain/workload/components/create/create-workload-fourth-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
 import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
-import { stepAtom } from "@/domain/workload/state/create-workload.atom";
-import type { CreateWorkloadPayload } from "@/domain/workload/types/workload.type";
+import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
+import {
+  envsAtom,
+  execCommandAtom,
+  execPathAtom,
+  imageIdAtom,
+  imageTypeAtom,
+  jobTypeAtom,
+  nodeModeAtom,
+  portsAtom,
+  stepAtom,
+  workloadDescriptionAtom,
+  workloadNameAtom,
+  workloadOutputPathAtom,
+  workloadSourcecodesAtom,
+  workloadVolumesAtom,
+} from "@/domain/workload/state/create-workload.atom";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
+import { SelectWorkloadModal } from "../modal/select-workload-modal";
 
 const STEP_ITEMS: StepItem[] = [
   {
@@ -46,6 +62,23 @@ export function CreateWorkloadDrawer() {
   );
 
   const [step, setStep] = useAtom(stepAtom);
+  // step 1
+  const setJobType = useSetAtom(jobTypeAtom);
+  const setWorkloadName = useSetAtom(workloadNameAtom);
+  const setWorkloadDescription = useSetAtom(workloadDescriptionAtom);
+  // step 2
+  const setNodeMode = useSetAtom(nodeModeAtom);
+  const setImageType = useSetAtom(imageTypeAtom);
+  const setImageId = useSetAtom(imageIdAtom);
+  // step 3
+  const setWorkloadSourcecodes = useSetAtom(workloadSourcecodesAtom);
+  const setWorkloadVolumes = useSetAtom(workloadVolumesAtom);
+  const setWorkloadOutputPath = useSetAtom(workloadOutputPathAtom);
+  // step 4
+  const setExecPath = useSetAtom(execPathAtom);
+  const setExecCommand = useSetAtom(execCommandAtom);
+  const setEnvs = useSetAtom(envsAtom);
+  const setPorts = useSetAtom(portsAtom);
 
   const isLastStep = step === STEP_ITEMS.length - 1;
 
@@ -72,9 +105,39 @@ export function CreateWorkloadDrawer() {
   };
 
   useSubscribe(
-    WORKLOAD_EVENTS.sendCloneWorkload,
-    (eventData: CreateWorkloadPayload) => {
-      console.log(eventData);
+    WORKLOAD_EVENTS.sendCreateWorkload,
+    (eventData: WorkloadDetailType) => {
+      // eventData가 없는 경우 워크로드 생성
+      // eventData가 있는 경우 워크로드 복제
+      // step 1
+      // 잡타입 설정
+      setJobType(eventData?.jobType || "BATCH");
+      // 워크로드 이름 설정
+      setWorkloadName(eventData?.workloadName || "");
+      // 워크로드 설명 설정
+      setWorkloadDescription(eventData?.description || "");
+      // step 2
+      // 노드 설정
+      setNodeMode("single");
+      // 리소스 프리셋(현재 X)
+      // 이미지 설정
+      setImageType(eventData?.image.type || "HUB");
+      setImageId(eventData?.image.name || null);
+      // step 3
+      // 소스코드
+      setWorkloadSourcecodes(eventData?.sourcecodes || []);
+      // 볼륨
+      setWorkloadVolumes(eventData?.volumes || []);
+      // output 경로(현재 X)
+      setWorkloadOutputPath("");
+      // step 4
+      // 실행 경로 (현재 X)
+      setExecPath("");
+      // 실행 명령어
+      setExecCommand("");
+      // 환경 변수
+      setEnvs(eventData?.envs || []);
+      setPorts(eventData?.ports || []);
       setStep(0);
       onOpen();
     },
@@ -171,6 +234,8 @@ export function CreateWorkloadDrawer() {
       <SelectVolumeTypeModal />
       <CreateAstragoVolumeModal />
       <CreateOnPremVolumeModal />
+      {/* 워크로드 가져오기 모달 */}
+      <SelectWorkloadModal />
     </>
   );
 }

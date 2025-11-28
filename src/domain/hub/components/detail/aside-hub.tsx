@@ -7,6 +7,8 @@ import { Button } from "xiilab-ui";
 import { useGetHub } from "@/domain/hub/hooks/use-get-hub";
 import { hubSelectedAtom } from "@/domain/hub/state/hub.atom";
 import { MarkdownToHtml } from "@/shared/components/markdown-to-html";
+import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
@@ -35,6 +37,7 @@ import {
  * @returns 허브 상세 정보를 표시하는 사이드바 JSX 요소
  */
 export function AsideHub() {
+  const publish = usePublish();
   // 현재 선택된 허브 정보를 Jotai atom에서 가져옴
   const selectedHub = useAtomValue(hubSelectedAtom);
 
@@ -47,7 +50,12 @@ export function AsideHub() {
    * 향후 허브 기반 워크로드 생성 모달 또는 페이지로 이동 예정
    */
   const handleCreateWorkload = () => {
-    alert("준비 중입니다.");
+    publish(WORKLOAD_EVENTS.sendCreateWorkload, {
+      image: {
+        type: "HUB",
+        id: data?.id,
+      },
+    });
   };
 
   return (

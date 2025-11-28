@@ -85,22 +85,23 @@ export function CreateWorkloadFourthStep() {
           )}
         </Field>
       </Section>
-      {/* <CreateWorkloadParameter /> */}
-      <Section>
-        <Field>
-          <FieldHeader>
-            <Typography.Text variant="subtitle-2-1">
-              시간 예측 파라미터
-            </Typography.Text>
-            <Typography.Text variant="body-2-4" color="#707070">
-              파라미터 값 입력 시, 워크로드의 종료 예상 시간을 확인할 수
-              있습니다.
-            </Typography.Text>
-          </FieldHeader>
-          {/* 시간 예측 파라미터 영역 */}
-          {imageType === "HUB" && <CreateWorkloadParameter />}
-        </Field>
-      </Section>
+      {imageType !== "HUB" && (
+        <Section>
+          <Field>
+            <FieldHeader>
+              <Typography.Text variant="subtitle-2-1">
+                시간 예측 파라미터
+              </Typography.Text>
+              <Typography.Text variant="body-2-4" color="#707070">
+                파라미터 값 입력 시, 워크로드의 종료 예상 시간을 확인할 수
+                있습니다.
+              </Typography.Text>
+            </FieldHeader>
+            {/* 시간 예측 파라미터 영역 */}
+            <CreateWorkloadParameter />
+          </Field>
+        </Section>
+      )}
     </Container>
   );
 }

@@ -2,7 +2,6 @@
 
 import classNames from "classnames";
 import { useSetAtom } from "jotai";
-import type { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
@@ -12,7 +11,7 @@ import { getWorkloadImageTypeInfo } from "../../utils/workload.util";
 
 interface CreateWorkloadImageButtonProps {
   type: WorkloadImageType;
-  setType: Dispatch<SetStateAction<WorkloadImageType>>;
+  setType: (type: WorkloadImageType) => void;
   isSelected: boolean;
   disabled?: boolean;
 }

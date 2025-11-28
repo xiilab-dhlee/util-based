@@ -33,7 +33,7 @@ export function SelectWorkloadModal() {
     });
 
     if (workloadDetail) {
-      publish(WORKLOAD_EVENTS.sendCloneWorkload, selectedWorkload);
+      publish(WORKLOAD_EVENTS.sendCreateWorkload, selectedWorkload);
       onClose();
     }
   };

@@ -32,6 +32,7 @@ const baseWorkloadSchema = z.object({
   creatorDate: z.string().datetime(),
   /** 이미지 */
   image: z.object({
+    id: z.string().uuid(),
     /** 타입 */
     type: z.enum(WORKLOAD_IMAGE_TYPES),
     /** 이미지 이름 */
