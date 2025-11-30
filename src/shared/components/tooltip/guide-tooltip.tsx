@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Icon, Tooltip, type TooltipProps } from "xiilab-ui";
 
-// import { GuideIcon } from "../icon/guide-icon";
+// import { GuideIcon } from "@/shared/components/icon/guide-icon";
 
 interface GuideTooltipProps extends TooltipProps {}
 

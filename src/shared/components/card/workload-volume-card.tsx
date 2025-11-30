@@ -12,7 +12,7 @@ import {
   LikeCompactCardRecord,
   LikeCompactCardValue,
 } from "@/styles/layers/like-card-layers.styled";
-import { getVolumeStorageTypeInfo } from "../../../domain/volume/utils/volume.util";
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 
 interface WorkloadVolumeCardProps extends WorkloadVolumeType {
   onDelete?: () => void;

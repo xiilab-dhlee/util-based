@@ -11,7 +11,7 @@ import type {
   GpuListType,
   GpuProfileListType,
 } from "@/shared/schemas/gpu.schema";
-import { gpuAtom, gpuProfileAtom } from "../../state/create-workload.atom";
+import { gpuAtom, gpuProfileAtom } from "@/domain/workload/state/create-workload.atom";
 import { GpuCard } from "./gpu-card";
 import { GpuProfileCard } from "./gpu-profile-card";
 

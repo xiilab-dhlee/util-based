@@ -5,12 +5,12 @@ import { useAtomValue } from "jotai";
 import { createWorkspaceMemberColumn } from "@/shared/components/column/create-workspace-member-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { SETTING_LIST_PAGE_SIZE } from "../constants/setting.constant";
-import { useGetSettingWorkspaceMembers } from "../hooks/use-get-setting-workspace-members";
+import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
+import { useGetSettingWorkspaceMembers } from "@/domain/setting/hooks/use-get-setting-workspace-members";
 import {
   settingMemberPageAtom,
   settingMemberSearchTextAtom,
-} from "../state/setting.atom";
+} from "@/domain/setting/state/setting.atom";
 
 export function SettingMemberListBody() {
   // 페이지 번호

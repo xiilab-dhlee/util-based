@@ -8,7 +8,7 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
-import { WorkloadMonitoringCard } from "../detail/workload-monitoring-card";
+import { WorkloadMonitoringCard } from "@/domain/workload/components/detail/workload-monitoring-card";
 import { MonitoringToolbar } from "./monitoring-toolbar";
 
 export function WorkloadMonitoringMain() {

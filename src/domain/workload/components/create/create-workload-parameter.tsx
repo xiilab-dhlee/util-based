@@ -11,7 +11,7 @@ import {
   modelParameterAtom,
   trainImageNumAtom,
   validationImageNumAtom,
-} from "../../state/create-workload.atom";
+} from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadParameter() {
   const [trainImageNum, setTrainImageNum] = useAtom(trainImageNumAtom);

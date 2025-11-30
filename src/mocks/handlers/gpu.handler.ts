@@ -4,7 +4,7 @@ import {
   gpuListMock,
   gpuNodeListMock,
   gpuProfileListMock,
-} from "../data/gpu.mock";
+} from "@/mocks/data/gpu.mock";
 
 /**
  * GPU API 핸들러

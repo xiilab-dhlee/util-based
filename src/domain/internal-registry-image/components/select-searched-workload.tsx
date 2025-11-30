@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Input } from "xiilab-ui";
 
 import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
-import { WorkloadCard } from "../../workload/components/workload-card";
+import { WorkloadCard } from "@/domain/workload/components/workload-card";
 
 interface SelectSearchedWorkloadProps {
   checkedWorkload: string | null;

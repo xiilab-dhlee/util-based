@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Button, Input, Typography } from "xiilab-ui";
 
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
-import { envsAtom } from "../../state/create-workload.atom";
+import { envsAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadEnv() {
   const [envs, setEnvs] = useAtom(envsAtom);

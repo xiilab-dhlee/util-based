@@ -1,7 +1,7 @@
 "use client";
 
 import { ListPageBody } from "@/styles/layers/list-page-layers.styled";
-import { DeleteAccountModal } from "../delete-account-modal";
+import { DeleteAccountModal } from "@/domain/account-management/components/delete-account-modal";
 import { AccountListBody } from "./account-list-body";
 import { AccountListFilter } from "./account-list-filter";
 import { AccountListFooter } from "./account-list-footer";

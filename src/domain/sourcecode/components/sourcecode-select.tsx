@@ -7,7 +7,7 @@ import { useGetSourcecodeOptions } from "@/domain/sourcecode/hooks/use-get-sourc
 import type {
   SourcecodeIdType,
   SourcecodeListType,
-} from "../schemas/sourcecode.schema";
+} from "@/domain/sourcecode/schemas/sourcecode.schema";
 
 interface SourcecodeSelectProps {
   value: SourcecodeListType | null;

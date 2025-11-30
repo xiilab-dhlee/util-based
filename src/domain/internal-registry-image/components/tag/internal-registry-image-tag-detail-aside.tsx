@@ -6,7 +6,7 @@ import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
-import { VulnerabilityCard } from "../../../security/vulnerability-card";
+import { VulnerabilityCard } from "@/domain/security/vulnerability-card";
 import { InternalRegistryImageTagDetailIntroCard } from "./internal-registry-image-tag-detail-intro-card";
 
 /**

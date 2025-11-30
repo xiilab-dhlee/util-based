@@ -5,9 +5,9 @@ import { useAtom } from "jotai";
 import { createRequestResourceColumn } from "@/shared/components/column/create-request-resource-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { SETTING_LIST_PAGE_SIZE } from "../constants/setting.constant";
-import { useGetSettingRequestResources } from "../hooks/use-get-setting-request-resources";
-import { settingRequestResourcePageAtom } from "../state/setting.atom";
+import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
+import { useGetSettingRequestResources } from "@/domain/setting/hooks/use-get-setting-request-resources";
+import { settingRequestResourcePageAtom } from "@/domain/setting/state/setting.atom";
 
 export function SettingRequestResourceListBody() {
   // 페이지 번호

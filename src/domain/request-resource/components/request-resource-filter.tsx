@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { requestResourcePageAtom } from "@/domain/request-resource/state/request-resource.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useGetRequestResources } from "../hooks/use-get-request-resources";
+import { useGetRequestResources } from "@/domain/request-resource/hooks/use-get-request-resources";
 
 export function RequestResourceFilter() {
   const page = useAtomValue(requestResourcePageAtom);

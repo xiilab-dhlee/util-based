@@ -12,8 +12,8 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openSelectWorkloadModalAtom } from "@/shared/state/modal.atom";
-import { createWorkloadColumn } from "../column/create-workload-column";
-import { CustomizedTable } from "../table/customized-table";
+import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
+import { CustomizedTable } from "@/shared/components/table/customized-table";
 
 export function SelectWorkloadModal() {
   const publish = usePublish();

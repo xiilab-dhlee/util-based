@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { requestResourcePageAtom } from "@/domain/request-resource/state/request-resource.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useGetRequestResources } from "../hooks/use-get-request-resources";
+import { useGetRequestResources } from "@/domain/request-resource/hooks/use-get-request-resources";
 
 export function RequestResourceFooter() {
   const [page, setPage] = useAtom(requestResourcePageAtom);

@@ -16,7 +16,7 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { DeleteInternalRegistryImageModal } from "../delete-internal-registry-image-modal";
+import { DeleteInternalRegistryImageModal } from "@/domain/internal-registry-image/components/delete-internal-registry-image-modal";
 import { CreateInternalRegistryImageModal } from "./create-internal-registry-image-modal";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [

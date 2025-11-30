@@ -8,7 +8,7 @@ import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-laye
 import {
   workloadDescriptionAtom,
   workloadNameAtom,
-} from "../../state/create-workload.atom";
+} from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadTitle() {
   const [workloadName, setWorkloadName] = useAtom(workloadNameAtom);

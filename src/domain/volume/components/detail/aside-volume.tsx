@@ -14,7 +14,7 @@ import {
   AsideDetailHeader,
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
-import { ManageVolumeFile } from "../file/manage-volume-file";
+import { ManageVolumeFile } from "@/domain/volume/components/file/manage-volume-file";
 import { UpdateVolume } from "./update-volume";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [

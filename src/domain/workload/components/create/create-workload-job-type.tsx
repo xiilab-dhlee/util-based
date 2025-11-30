@@ -4,8 +4,8 @@ import { useAtom } from "jotai";
 import styled from "styled-components";
 
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import type { WorkloadJobType } from "../../schemas/workload.schema";
-import { jobTypeAtom } from "../../state/create-workload.atom";
+import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+import { jobTypeAtom } from "@/domain/workload/state/create-workload.atom";
 import { JobTypeCard } from "./job-type-card";
 
 const JOB_TYPES: WorkloadJobType[] = ["BATCH", "INTERACTIVE"];

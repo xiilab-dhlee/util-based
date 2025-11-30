@@ -3,8 +3,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Dropdown } from "xiilab-ui";
 
-import { useGetVolumeOptions } from "../hooks/use-get-volume-options";
-import type { VolumeIdType, VolumeListType } from "../schemas/volume.schema";
+import { useGetVolumeOptions } from "@/domain/volume/hooks/use-get-volume-options";
+import type { VolumeIdType, VolumeListType } from "@/domain/volume/schemas/volume.schema";
 
 interface VolumeSelectProps {
   value: VolumeListType | null;

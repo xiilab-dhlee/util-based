@@ -12,7 +12,7 @@ import {
   execCommandAtom,
   execPathAtom,
   imageTypeAtom,
-} from "../../state/create-workload.atom";
+} from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadEnv } from "./create-workload-env";
 import { CreateWorkloadParameter } from "./create-workload-parameter";
 import { CreateWorkloadPort } from "./create-workload-port";

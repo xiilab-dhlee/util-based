@@ -30,11 +30,11 @@ import { hideScrollbar } from "@/styles/mixins/scrollbar";
 import {
   SOURCECODE_STATUS_OPTIONS,
   SOURCECODE_TYPE_OPTIONS,
-} from "../constants/sourcecode.constant";
-import { useCreateSourcecode } from "../hooks/use-create-sourcecode";
-import { openCreateSourcecodeModalAtom } from "../state/sourcecode.atom";
-import type { CreateSourcecodePayload } from "../types/sourcecode.type";
-import { ManageParameter } from "./manage-parameter";
+} from "@/domain/sourcecode/constants/sourcecode.constant";
+import { useCreateSourcecode } from "@/domain/sourcecode/hooks/use-create-sourcecode";
+import { openCreateSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcecode.atom";
+import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
+import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {

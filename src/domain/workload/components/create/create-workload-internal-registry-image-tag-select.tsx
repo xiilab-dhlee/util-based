@@ -5,7 +5,7 @@ import { Dropdown } from "xiilab-ui";
 
 import { useGetInternalRegistryImageTagOptions } from "@/domain/internal-registry-image/hooks/use-get-internal-registry-image-tag-options";
 import { useSelect } from "@/shared/hooks/use-select";
-import { imageIdAtom, imageTagIdAtom } from "../../state/create-workload.atom";
+import { imageIdAtom, imageTagIdAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadInternalRegistryImageTagSelect() {
   const imageId = useAtomValue(imageIdAtom);

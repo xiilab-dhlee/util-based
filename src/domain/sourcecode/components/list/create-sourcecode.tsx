@@ -30,8 +30,8 @@ import {
   SourcecodeFormTooltipDescription,
   SourcecodeFormTooltipTitle,
 } from "@/styles/layers/sourcecode-form-layers.styled";
-import { ManageCredential } from "../manage-credential";
-import { ManageParameter } from "../manage-parameter";
+import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
+import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 
 /**
  * 소스코드 생성 컴포넌트

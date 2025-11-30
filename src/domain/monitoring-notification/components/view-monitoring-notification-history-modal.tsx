@@ -11,7 +11,7 @@ import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
-import { createMonitoringNotificationHistoryColumn } from "../column/create-monitoring-notification-history-column";
+import { createMonitoringNotificationHistoryColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-history-column";
 
 // Mock 발송 이력 데이터
 const MOCK_SEND_HISTORY = [

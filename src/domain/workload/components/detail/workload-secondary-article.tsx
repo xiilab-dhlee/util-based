@@ -19,8 +19,8 @@ import {
   DetailContentKey,
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
-import { WorkloadVolumeCard } from "../../../../shared/components/card/workload-volume-card";
-import { WorkloadSourcecodeCard } from "../../../sourcecode/components/workload-sourcecode-card";
+import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
+import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
 
 /**
  * 워크로드 추가 정보 아티클 컴포넌트

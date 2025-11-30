@@ -3,8 +3,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Dropdown } from "xiilab-ui";
 
-import { useGetCredentialOptions } from "../hooks/use-get-credential-options";
-import type { CredentialIdType } from "../schemas/credential.schema";
+import { useGetCredentialOptions } from "@/domain/credential/hooks/use-get-credential-options";
+import type { CredentialIdType } from "@/domain/credential/schemas/credential.schema";
 
 interface CredentialSelectProps {
   value: CredentialIdType | null;

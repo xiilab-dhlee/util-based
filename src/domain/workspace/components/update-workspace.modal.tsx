@@ -9,9 +9,9 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openUpdateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
-import { useUpdateWorkspace } from "../hooks/use-update-workspace";
-import type { WorkspaceDetailType } from "../schemas/workspace.schema";
-import type { UpdateWorkspacePayload } from "../types/workspace.type";
+import { useUpdateWorkspace } from "@/domain/workspace/hooks/use-update-workspace";
+import type { WorkspaceDetailType } from "@/domain/workspace/schemas/workspace.schema";
+import type { UpdateWorkspacePayload } from "@/domain/workspace/types/workspace.type";
 
 /**
  * 워크스페이스 수정 모달 컴포넌트

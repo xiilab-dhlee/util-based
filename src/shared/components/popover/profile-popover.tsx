@@ -14,7 +14,7 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
 import { isAdminMode } from "@/shared/utils/router.util";
-import { ProfileNotification } from "../layouts/profile-notification";
+import { ProfileNotification } from "@/shared/components/layouts/profile-notification";
 
 interface ProfilePopoverProps {
   userName: string;

@@ -9,7 +9,7 @@ import {
   LikeCompactCardRecord,
   LikeCompactCardValue,
 } from "@/styles/layers/like-card-layers.styled";
-import { getSourcecodeTypeInfo } from "../utils/sourcecode.util";
+import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 
 interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
   onDelete?: () => void;

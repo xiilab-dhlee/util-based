@@ -9,7 +9,7 @@ import { FormLabel } from "@/shared/components/form/form-label";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { FormItem } from "@/styles/layers/form-layer.styled";
-import { SelectSearchedWorkload } from "../select-searched-workload";
+import { SelectSearchedWorkload } from "@/domain/internal-registry-image/components/select-searched-workload";
 
 export function CreateInternalRegistryImageTagModal() {
   const formRef = useRef<HTMLFormElement>(null);

@@ -12,12 +12,12 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { useSelect } from "@/shared/hooks/use-select";
 import { FormItem } from "@/styles/layers/form-layer.styled";
-import { INTERNAL_REGISTRY_IMAGE_STATUS_OPTIONS } from "../../constants/internal-registry-image.constant";
-import { useUpdateInternalRegistryImage } from "../../hooks/use-update-internal-registry-image";
+import { INTERNAL_REGISTRY_IMAGE_STATUS_OPTIONS } from "@/domain/internal-registry-image/constants/internal-registry-image.constant";
+import { useUpdateInternalRegistryImage } from "@/domain/internal-registry-image/hooks/use-update-internal-registry-image";
 import type {
   InternalRegistryImageIdType,
   InternalRegistryImageListType,
-} from "../../schemas/internal-registry-image.schema";
+} from "@/domain/internal-registry-image/schemas/internal-registry-image.schema";
 
 export function UpdateInternalRegistryImageModal() {
   const { open, onOpen, onClose } = useGlobalModal(

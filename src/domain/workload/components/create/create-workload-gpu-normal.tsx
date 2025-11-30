@@ -8,7 +8,7 @@ import { Icon, Typography } from "xiilab-ui";
 
 import { useGetGpuNodes } from "@/shared/hooks/use-get-gpu-nodes";
 import type { GpuListType, GpuNodeListType } from "@/shared/schemas/gpu.schema";
-import { gpuAtom, gpuNodeAtom } from "../../state/create-workload.atom";
+import { gpuAtom, gpuNodeAtom } from "@/domain/workload/state/create-workload.atom";
 import { GpuCard } from "./gpu-card";
 import { GpuNodeCard } from "./gpu-node-card";
 

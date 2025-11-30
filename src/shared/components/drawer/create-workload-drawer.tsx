@@ -35,7 +35,7 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
-import { SelectWorkloadModal } from "../modal/select-workload-modal";
+import { SelectWorkloadModal } from "@/shared/components/modal/select-workload-modal";
 
 const STEP_ITEMS: StepItem[] = [
   {

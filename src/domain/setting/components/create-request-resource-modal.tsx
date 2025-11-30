@@ -6,7 +6,7 @@ import { Icon, Modal, TextArea } from "xiilab-ui";
 
 import { ResourceSlider } from "@/shared/components/slider/resource-slider";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { openCreateResourceRequestModalAtom } from "../state/setting.atom";
+import { openCreateResourceRequestModalAtom } from "@/domain/setting/state/setting.atom";
 
 export function CreateResourceSettingModal() {
   const { open, onClose } = useGlobalModal(openCreateResourceRequestModalAtom);

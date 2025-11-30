@@ -5,7 +5,7 @@ import { Dropdown } from "xiilab-ui";
 
 import { useGetHubOptions } from "@/domain/hub/hooks/use-get-hub-options";
 import { useSelect } from "@/shared/hooks/use-select";
-import { imageIdAtom, imageTagIdAtom } from "../../state/create-workload.atom";
+import { imageIdAtom, imageTagIdAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadHubImageSelect() {
   const [imageId, setImageId] = useAtom(imageIdAtom);

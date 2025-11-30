@@ -9,7 +9,7 @@ import {
   DetailPageBody,
   DetailPageContent,
 } from "@/styles/layers/detail-page-layers.styled";
-import { DeleteInternalRegistryImageModal } from "../delete-internal-registry-image-modal";
+import { DeleteInternalRegistryImageModal } from "@/domain/internal-registry-image/components/delete-internal-registry-image-modal";
 import { CreateInternalRegistryImageTagModal } from "./create-internal-registry-image-tag-modal";
 import { DeleteInternalRegistryImageTagModal } from "./delete-internal-registry-image-tag-modal";
 import { InternalRegistryImageTagListBody } from "./internal-registry-image-tag-list-body";

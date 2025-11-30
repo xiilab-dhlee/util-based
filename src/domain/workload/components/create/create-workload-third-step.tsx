@@ -7,7 +7,7 @@ import { Input, Typography } from "xiilab-ui";
 import {
   imageTypeAtom,
   workloadOutputPathAtom,
-} from "../../state/create-workload.atom";
+} from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadAutoSourcecode } from "./create-workload-auto-sourcecode";
 import { CreateWorkloadSourcecode } from "./create-workload-sourcecode";
 import { CreateWorkloadVolume } from "./create-workload-volume";

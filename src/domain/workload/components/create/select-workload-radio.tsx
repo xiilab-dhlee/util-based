@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { Radio } from "xiilab-ui";
 
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
-import { selectedWorkloadAtom } from "../../state/workload.atom";
+import { selectedWorkloadAtom } from "@/domain/workload/state/workload.atom";
 
 interface SelectWorkloadRadioProps {
   workloadId: string;

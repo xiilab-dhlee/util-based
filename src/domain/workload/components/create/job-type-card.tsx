@@ -6,8 +6,8 @@ import { Box, Typography } from "xiilab-ui";
 
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
-import type { WorkloadJobType } from "../../schemas/workload.schema";
-import { getWorkloadJobTypeInfo } from "../../utils/workload.util";
+import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 
 const DESCRIPTION_MAP: Record<WorkloadJobType, string[]> = {
   BATCH: [

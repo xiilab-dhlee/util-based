@@ -28,8 +28,8 @@ import {
   AsideDetailHeader,
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
-import { ManageCredential } from "../manage-credential";
-import { ManageParameter } from "../manage-parameter";
+import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
+import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 import { ReadOnlyParameter } from "./read-only-parameter";
 
 /**

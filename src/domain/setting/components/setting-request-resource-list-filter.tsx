@@ -5,12 +5,12 @@ import { Button } from "xiilab-ui";
 
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { SETTING_LIST_PAGE_SIZE } from "../constants/setting.constant";
-import { useGetSettingRequestResources } from "../hooks/use-get-setting-request-resources";
+import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
+import { useGetSettingRequestResources } from "@/domain/setting/hooks/use-get-setting-request-resources";
 import {
   openCreateResourceRequestModalAtom,
   settingRequestResourcePageAtom,
-} from "../state/setting.atom";
+} from "@/domain/setting/state/setting.atom";
 
 export function SettingRequestResourceListFilter() {
   const { onOpen } = useGlobalModal(openCreateResourceRequestModalAtom);

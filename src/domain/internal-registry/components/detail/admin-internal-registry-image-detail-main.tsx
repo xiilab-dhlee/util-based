@@ -5,7 +5,7 @@ import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
 import { ListPageMain } from "@/styles/layers/list-page-layers.styled";
-import { DeleteAdminInternalRegistryImageModal } from "../delete-admin-internal-registry-image-modal";
+import { DeleteAdminInternalRegistryImageModal } from "@/domain/internal-registry/components/delete-admin-internal-registry-image-modal";
 import { AdminInternalRegistryImageDetailAside } from "./admin-internal-registry-image-detail-aside";
 import { AdminInternalRegistryImageDetailBody } from "./admin-internal-registry-image-detail-body";
 

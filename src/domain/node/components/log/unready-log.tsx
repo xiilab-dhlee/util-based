@@ -1,6 +1,6 @@
 "use client";
 
-import { UnconnectRedfish } from "../redfish/unconnect-redfish";
+import { UnconnectRedfish } from "@/domain/node/components/redfish/unconnect-redfish";
 
 /**
  * Redfish 미연동 상태의 로그 컴포넌트

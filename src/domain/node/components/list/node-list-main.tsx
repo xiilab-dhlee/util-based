@@ -12,8 +12,8 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { UpdateMigModal } from "../mig/update-mig-modal";
-import { UpdateMpsModal } from "../mig/update-mps-modal";
+import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
+import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
 import { NodeListBody } from "./node-list-body";
 import { NodeListFilter } from "./node-list-filter";
 import { NodeListFooter } from "./node-list-footer";

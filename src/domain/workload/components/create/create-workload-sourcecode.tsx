@@ -22,8 +22,8 @@ import { SourcecodeCommandTooltipTitle } from "@/shared/components/tooltip-title
 import { SourcecodeMountPathTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-mount-path-tooltip-title";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import type { WorkloadSourcecodeType } from "../../schemas/workload.schema";
-import { workloadSourcecodesAtom } from "../../state/create-workload.atom";
+import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
+import { workloadSourcecodesAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadSourcecode() {
   const [sourcecodes, setSourcecodes] = useAtom(workloadSourcecodesAtom);

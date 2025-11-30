@@ -3,7 +3,7 @@
 import styled from "styled-components";
 
 import { useGetNodeBmcInfo } from "@/domain/node/hooks/use-get-bmc-info";
-import { RedfishPrimaryArticle } from "../redfish/redfish-primary-article";
+import { RedfishPrimaryArticle } from "@/domain/node/components/redfish/redfish-primary-article";
 import { ReadyLog } from "./ready-log";
 import { UnreadyLog } from "./unready-log";
 

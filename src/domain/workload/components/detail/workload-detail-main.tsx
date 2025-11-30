@@ -13,7 +13,7 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
-import { useGetWorkloadByMode } from "../../hooks/use-get-workload-by-mode";
+import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { CreateCommitImageModal } from "./create-commit-image-modal";
 import { WorkloadPrimaryArticle } from "./workload-primary-article";
 import { WorkloadSecondaryArticle } from "./workload-secondary-article";
