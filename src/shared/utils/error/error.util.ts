@@ -1,17 +1,10 @@
 import type { QueryKey } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-import type { ErrorConfig, ErrorConfigMap } from "@/shared/types/error.type";
+import type { ErrorConfig } from "@/shared/types/error.type";
+import { getAllErrorConfigs } from "@/shared/utils/error/error";
 
-export const getAllErrorConfigs = (): ErrorConfigMap => {
-  return {
-    default: {
-      showToast: true,
-      errorMessage: "알 수 없는 오류가 발생했습니다.",
-      statusMessages: {},
-    },
-  };
-};
+// 🎯 모든 도메인의 에러 설정은 `@/constants/error`에서 통합 관리합니다.
 
 /**
  * 쿼리 키를 문자열로 변환 (방어적 처리 포함)

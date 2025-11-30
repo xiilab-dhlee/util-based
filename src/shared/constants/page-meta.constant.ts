@@ -81,7 +81,7 @@ export const PAGE_META = {
     parent: "admin.account-management",
   },
   "admin.account-management.group": {
-    title: "그룹 관리",
+    title: "계정 관리",
     href: ROUTES.ADMIN_ACCOUNT_MANAGEMENT_GROUP,
     parent: "admin.account-management",
   },

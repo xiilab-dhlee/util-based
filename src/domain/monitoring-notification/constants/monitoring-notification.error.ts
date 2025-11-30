@@ -1,4 +1,4 @@
-import type { ErrorConfig } from "@/shared/types/error";
+import type { ErrorConfig } from "@/shared/types/error.type";
 
 /**
  * 모니터링 알림 도메인 에러 설정

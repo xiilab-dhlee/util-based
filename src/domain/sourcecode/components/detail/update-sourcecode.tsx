@@ -66,7 +66,7 @@ export function UpdateSourcecode() {
   // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
   const [isReadOnly, setIsReadOnly] = useState(true);
 
-  const { text } = getSourcecodeTypeInfo(data?.codeType || "GIT_HUB");
+  const { text } = getSourcecodeTypeInfo(data?.type || "GIT_HUB");
 
   /**
    * 드로어 닫기 핸들러
@@ -182,7 +182,7 @@ export function UpdateSourcecode() {
             {/* 소스코드 이름 */}
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>소스코드 이름</AsideDetailArticleKey>
-              <AsideDetailArticleValue>{data?.title}</AsideDetailArticleValue>
+              <AsideDetailArticleValue>{data?.name}</AsideDetailArticleValue>
             </AsideDetailArticleColumn>
 
             {/* 소스코드 타입 */}
@@ -197,7 +197,7 @@ export function UpdateSourcecode() {
               {/* 읽기 전용 모드일 때만 표시 */}
               {isReadOnly && (
                 <AsideDetailArticleValue className="truncate">
-                  {data?.defaultPath}
+                  {data?.path}
                 </AsideDetailArticleValue>
               )}
             </AsideDetailArticleColumn>
@@ -210,7 +210,7 @@ export function UpdateSourcecode() {
                   width="100%"
                   name="defaultPath"
                   autoComplete="off"
-                  defaultValue={data?.defaultPath || ""}
+                  defaultValue={data?.path || ""}
                 />
               </div>
             )}

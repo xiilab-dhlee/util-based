@@ -197,7 +197,7 @@ export function WorkloadSecondaryArticle() {
           <RightKey>Volume</RightKey>
           <Value>
             {data?.volumes.map((v) => (
-              <WorkloadVolumeCard key={v.id} {...v} />
+              <WorkloadVolumeCard key={v.uid} {...v} />
             ))}
           </Value>
         </KeyValueContainer>

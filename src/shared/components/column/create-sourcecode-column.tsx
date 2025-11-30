@@ -5,8 +5,8 @@ import { Tag } from "xiilab-ui";
 import { SourcecodeAllCheck } from "@/domain/sourcecode/components/list/sourcecode-all-check";
 import { SourcecodeItemCheck } from "@/domain/sourcecode/components/list/sourcecode-item-check";
 import type {
-  SourcecodeCodeType,
   SourcecodeListType,
+  SourcecodeType,
 } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
@@ -47,7 +47,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "codeType",
       title: "타입",
       align: "center",
-      render: (codeType: SourcecodeCodeType) => {
+      render: (codeType: SourcecodeType) => {
         const { text } = getSourcecodeTypeInfo(codeType);
         return (
           <ColumnAlignCenterWrap>

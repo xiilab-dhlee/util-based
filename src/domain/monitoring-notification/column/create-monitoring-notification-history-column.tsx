@@ -7,7 +7,10 @@ import {
   MONITORING_NOTIFICATION_THRESHOLD_UNIT,
   MONITORING_NOTIFICATION_TYPE_LABEL_MAP,
 } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
-import type { MonitoringNotificationSettingResponseType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
+import type {
+  MonitoringNotificationListResponseType,
+  MonitoringNotificationSettingResponseType,
+} from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
@@ -33,7 +36,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
       render: (
         name: string,
-        record: MonitoringNotificationSettingResponseType,
+        record: MonitoringNotificationListResponseType,
       ) => {
         return (
           <MonitoringNotificationHistoryNameButton id={record.id} name={name} />
@@ -87,7 +90,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "설정",
       dataIndex: "setting",
       align: "center",
-      render: (_, record: MonitoringNotificationSettingResponseType) => {
+      render: (
+        _: unknown,
+        record: MonitoringNotificationSettingResponseType,
+      ) => {
         const operatorLabel =
           MONITORING_NOTIFICATION_OPERATOR_LABEL_MAP[
             record.operator as keyof typeof MONITORING_NOTIFICATION_OPERATOR_LABEL_MAP

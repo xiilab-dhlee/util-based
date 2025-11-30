@@ -16,4 +16,7 @@ export const accountKeys = {
     ...Object.values(payload),
   ],
   detail: (id: string) => [...accountKeys.default, "detail", id],
+  update: () => [...accountKeys.default, "update"],
+  delete: () => [...accountKeys.default, "delete"],
+  checkPassword: () => [...accountKeys.default, "checkPassword"],
 };

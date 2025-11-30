@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright-bdd:*)",
+      "Bash(tree:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(tee:*)",
+      "Bash(for domain in cluster-monitoring credential dashboard group hub monitoring monitoring-notification node notification private-registry private-registry-image registry report request-image request-resource security sourcecode storage system-monitoring user volume workload workspace workspace-member)",
+      "Bash(do mkdir -p domain/$domain/{api,components,hooks,state,constants,types,schemas,pages,utils})",
+      "Bash(done)",
+      "Bash(do echo \"Updating imports for $domain...\")",
+      "Bash(xargs:*)",
+      "Bash(for domain in /Users/xiilab/my-app/src/domain/*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

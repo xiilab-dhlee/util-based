@@ -1,5 +1,6 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
+import { accountKeys } from "@/domain/account-management/constants/account.key";
 import type { UpdateAccountPayload } from "@/domain/account-management/types/account.type";
 import { useServices } from "@/shared/providers/service-provider";
 
@@ -15,6 +16,7 @@ export const useUpdateAccount = (): UseMutationResult<
   const { accountService } = useServices();
 
   return useMutation({
+    mutationKey: accountKeys.update(),
     mutationFn: (payload: UpdateAccountPayload) => {
       return accountService.updateAccount(payload);
     },

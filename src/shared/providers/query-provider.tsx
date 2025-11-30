@@ -13,7 +13,7 @@ import {
   getErrorMessage,
   logErrorInfo,
   shouldShowToast,
-} from "@/shared/utils/error.util";
+} from "@/shared/utils/error/error.util";
 
 export function QueryProvider({ children }: PropsWithChildren) {
   const [queryClient] = useState(

@@ -2,7 +2,7 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
 import { monitoringKeys } from "@/domain/monitoring-notification/constants/monitoring-notification.key";
-import type { MonitoringNotificationDetailType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
+import type { MonitoringNotificationDetailResponseType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
@@ -10,7 +10,7 @@ import { useServices } from "@/shared/providers/service-provider";
  */
 export const useGetMonitoringNotification = (
   id: string,
-): UseQueryResult<MonitoringNotificationDetailType, Error> => {
+): UseQueryResult<MonitoringNotificationDetailResponseType, Error> => {
   const { monitoringService } = useServices();
 
   return useQuery({

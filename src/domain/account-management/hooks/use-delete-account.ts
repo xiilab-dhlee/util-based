@@ -1,5 +1,6 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
+import { accountKeys } from "@/domain/account-management/constants/account.key";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
@@ -14,6 +15,7 @@ export const useDeleteAccount = (): UseMutationResult<
   const { accountService } = useServices();
 
   return useMutation({
+    mutationKey: accountKeys.delete(),
     mutationFn: (accounts: string[]) => {
       return accountService.deleteAccount(accounts);
     },

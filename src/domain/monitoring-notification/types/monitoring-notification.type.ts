@@ -2,6 +2,7 @@ import type {
   MonitoringNotificationListResponseType,
   MonitoringNotificationRequestPayload,
 } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
+import type { MODAL_MODES, ModalMode } from "@/shared/constants/core.constant";
 import type {
   CorePaginate,
   CorePayload,
@@ -14,13 +15,16 @@ import type {
  * 모니터링 알림 모달 열기 이벤트 payload
  */
 export type OpenNotificationModalPayload =
-  | { mode: "create" }
-  | { mode: "edit"; data: MonitoringNotificationListResponseType };
+  | { mode: (typeof MODAL_MODES)["CREATE"] }
+  | {
+      mode: (typeof MODAL_MODES)["UPDATE"];
+      data: MonitoringNotificationListResponseType;
+    };
 
 /**
  * 모니터링 알림 모달 모드
  */
-export type NotificationModalMode = OpenNotificationModalPayload["mode"];
+export type NotificationModalMode = ModalMode;
 
 /**
  * 모니터링 알림 목록 조회 payload

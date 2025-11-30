@@ -1,9 +1,11 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import { useGetPendingAccounts } from "@/domain/account-management/hooks/use-get-pending-accounts";
 import {
+  accountPendingCheckedListAtom,
   accountPendingPageAtom,
   accountPendingSearchTextAtom,
 } from "@/domain/account-management/state/account.atom";
@@ -23,6 +25,8 @@ export function AccountPendingListFooter() {
   const [page, setPage] = useAtom(accountPendingPageAtom);
   // 검색어
   const searchText = useAtomValue(accountPendingSearchTextAtom);
+  // 체크박스 초기화
+  const resetCheckedList = useResetAtom(accountPendingCheckedListAtom);
 
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetPendingAccounts({
@@ -33,6 +37,7 @@ export function AccountPendingListFooter() {
 
   // 페이지 변경 핸들러
   const handlePage = (page: number) => {
+    resetCheckedList();
     setPage(page);
   };
 
