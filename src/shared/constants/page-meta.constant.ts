@@ -10,7 +10,7 @@
  *   `iconName`을 사용해 `<MyIcon name={iconName} />` 형태로 수행해야 합니다.
  */
 
-import { ROUTES } from "./routes.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 
 /**
  * PAGE_META 정의

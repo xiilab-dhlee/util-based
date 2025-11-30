@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreDropdownOption } from "@/shared/types/core.model";
-import { volumeKeys } from "../constants/volume.key";
-import type { VolumeListType } from "../schemas/volume.schema";
+import { volumeKeys } from "@/domain/volume/constants/volume.key";
+import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
 
 /**
  * 볼륨 옵션 목록 조회

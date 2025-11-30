@@ -1,4 +1,4 @@
-import type { VolumeStorageType } from "../schemas/volume.schema";
+import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 
 /**
  * 소스코드 타입 정보 조회

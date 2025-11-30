@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { subTitleStyle } from "../mixins/text";
+import { subTitleStyle } from "@/styles/mixins/text";
 
 export const AsideListArticleHeader = styled.div`
   display: flex;

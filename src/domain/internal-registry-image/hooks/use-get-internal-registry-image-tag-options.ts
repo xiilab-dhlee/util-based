@@ -1,10 +1,11 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
+import { isNil } from "es-toolkit";
 import type { DropdownOption } from "xiilab-ui";
 
 import { internalregistryImageKeys } from "@/domain/internal-registry-image/constants/internal-registry-image.key";
 import type { InternalRegistryImageIdType } from "@/domain/internal-registry-image/schemas/internal-registry-image.schema";
 import { useServices } from "@/shared/providers/service-provider";
-import type { InternalRegistryImageTagListType } from "../schemas/internal-registry-image-tag.schema";
+import type { InternalRegistryImageTagListType } from "@/domain/internal-registry-image/schemas/internal-registry-image-tag.schema";
 
 /**
  * 내부 레지스트리 이미지 태그 옵션 목록 조회
@@ -25,7 +26,7 @@ export const useGetInternalRegistryImageTagOptions = (
       });
       return response.data;
     },
-    enabled: !!imageId,
+    enabled: !isNil(imageId),
     select: (data) =>
       data.content.map((image: InternalRegistryImageTagListType) => ({
         label: image.tag,

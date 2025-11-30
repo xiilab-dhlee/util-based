@@ -5,7 +5,7 @@ import { workspaceKeys } from "@/domain/workspace/constants/workspace.key";
 import type { GetWorkspaceRequestResourcesPayload } from "@/domain/workspace/types/workspace.type";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
-import type { RequestResourceListType } from "../schemas/request-resource.schema";
+import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
 
 /**
  * 리소스 요청 목록 조회

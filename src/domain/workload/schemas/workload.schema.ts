@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
-import { WORKLOAD_IMAGE_TYPES } from "../constants/workload.constant";
+import { WORKLOAD_IMAGE_TYPES } from "@/domain/workload/constants/workload.constant";
 
 // 워크로드 스키마
 const baseWorkloadSchema = z.object({

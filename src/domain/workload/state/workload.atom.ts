@@ -7,7 +7,7 @@ import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
 } from "@/shared/state/filetree.atom";
-import type { WorkloadIdType } from "../schemas/workload.schema";
+import type { WorkloadIdType } from "@/domain/workload/schemas/workload.schema";
 
 /** 워크로드 페이지 번호 */
 export const workloadPageAtom = atomWithReset<number>(1);

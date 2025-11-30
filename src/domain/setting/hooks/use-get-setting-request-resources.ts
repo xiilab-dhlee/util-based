@@ -5,7 +5,7 @@ import type { RequestResourceListType } from "@/domain/request-resource/schemas/
 import type { GetWorkspaceRequestResourcesPayload } from "@/domain/workspace/types/workspace.type";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
-import { settingKeys } from "../constants/setting.key";
+import { settingKeys } from "@/domain/setting/constants/setting.key";
 
 /**
  * 설정 리소스 요청 목록 조회

@@ -2,7 +2,7 @@ import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
-import type { GpuProfileListType } from "../schemas/gpu.schema";
+import type { GpuProfileListType } from "@/shared/schemas/gpu.schema";
 
 /**
  * GPU 프로파일 목록 조회

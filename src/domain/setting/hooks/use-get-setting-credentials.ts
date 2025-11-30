@@ -5,7 +5,7 @@ import type { CredentialListType } from "@/domain/credential/schemas/credential.
 import type { GetCredentialsPayload } from "@/domain/credential/types/credential.type";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
-import { settingKeys } from "../constants/setting.key";
+import { settingKeys } from "@/domain/setting/constants/setting.key";
 
 /**
  * 설정 크레덴셜 목록 조회
