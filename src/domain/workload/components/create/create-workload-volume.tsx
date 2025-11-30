@@ -16,7 +16,7 @@ import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { VolumeMountPathTooltipTitle } from "@/shared/components/tooltip-title/volume-mount-path-tooltip-title";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import { WorkloadVolumeCard } from "../../../volume/components/workload-volume-card";
+import { WorkloadVolumeCard } from "../../../../shared/components/card/workload-volume-card";
 import type { WorkloadVolumeType } from "../../schemas/workload.schema";
 import { workloadVolumesAtom } from "../../state/create-workload.atom";
 
