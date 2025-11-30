@@ -15,12 +15,12 @@ const baseGpuNodeSchema = z.object({
   id: z.string().uuid(),
   /** 이름 */
   name: z.string().min(1).max(200),
-  cpuTotal: z.number().int().min(1).max(100),
-  cpuUsed: z.number().int().min(1).max(100),
-  memoryTotal: z.number().int().min(1).max(100),
-  memoryUsed: z.number().int().min(1).max(100),
-  gpuTotal: z.number().int().min(1).max(100),
-  gpuUsed: z.number().int().min(1).max(100),
+  cpuTotal: z.number().int().min(0).max(100),
+  cpuUsed: z.number().int().min(0).max(100),
+  memoryTotal: z.number().int().min(0).max(100),
+  memoryUsed: z.number().int().min(0).max(100),
+  gpuTotal: z.number().int().min(0).max(100),
+  gpuUsed: z.number().int().min(0).max(100),
 });
 
 // GPU 프로파일 스키마
@@ -28,9 +28,9 @@ const baseGpuProfileSchema = z.object({
   id: z.string().uuid(),
   /** 이름 */
   name: z.enum(["1g.5gb", "2g.10gb", "3g.15gb", "4g.20gb", "5g.25gb"]),
-  memory: z.number().int().min(1).max(100),
-  total: z.number().int().min(1).max(100),
-  used: z.number().int().min(1).max(100),
+  memory: z.number().int().min(0).max(100),
+  total: z.number().int().min(0).max(100),
+  used: z.number().int().min(0).max(100),
 });
 
 export const gpuListSchema = baseGpuSchema.pick({

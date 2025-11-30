@@ -10,7 +10,7 @@ export function CreateWorkloadFirstStep() {
   return (
     <Container>
       {/* 워크스페이스 및 기존 워크로드 정보 가져오기 */}
-      <CreateWorkloadInport workspaceName="workspace-test" />
+      <CreateWorkloadInport />
       {/* 잡 타입 선택 */}
       <CreateWorkloadJobType />
       {/* 워크로드 제목 및 설명 설정 */}

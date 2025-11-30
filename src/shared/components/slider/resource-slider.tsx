@@ -26,7 +26,9 @@ export function ResourceSlider({
   unit = "개",
 }: ResourceSliderProps) {
   const onChange: InputNumberProps["onChange"] = (newValue) => {
-    setValue(newValue as number);
+    if (typeof newValue !== "number") return;
+    const clamped = Math.min(Math.max(newValue, min), max);
+    setValue(clamped);
   };
 
   const handleMinus = () => {
@@ -41,13 +43,13 @@ export function ResourceSlider({
     <Container $resourceColor={resourceColor}>
       <Body>
         {!disabled && (
-          <IconWrapper onClick={handleMinus}>
+          <IconWrapper type="button" onClick={handleMinus}>
             <Icon name="Minus" color="#404040" size={16} />
           </IconWrapper>
         )}
         <SliderWrapper $disabled={disabled}>
           <Slider
-            min={2}
+            min={min}
             max={max}
             onChange={onChange}
             value={value}
@@ -74,7 +76,7 @@ export function ResourceSlider({
       </Body>
       <InputNumber
         suffix={unit}
-        min={1}
+        min={min}
         max={max}
         value={value}
         onChange={onChange}

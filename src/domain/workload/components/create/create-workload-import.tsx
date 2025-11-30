@@ -1,18 +1,15 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openSelectWorkloadModalAtom } from "@/shared/state/modal.atom";
 
-interface CreateWorkloadImportProps {
-  workspaceName: string;
-}
-
-export function CreateWorkloadInport({
-  workspaceName,
-}: CreateWorkloadImportProps) {
+export function CreateWorkloadInport() {
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const { onOpen } = useGlobalModal(openSelectWorkloadModalAtom);
 
   const handleClickRecentWorkload = () => {
@@ -27,7 +24,7 @@ export function CreateWorkloadInport({
     <Container>
       <Header>
         <HeaderTitle>워크스페이스</HeaderTitle>
-        <WorkspaceName>{workspaceName}</WorkspaceName>
+        <WorkspaceName>{selectedWorkspace?.name || "-"}</WorkspaceName>
       </Header>
       <Body>
         <BodyTitle>기존 워크로드 정보 가져오기</BodyTitle>

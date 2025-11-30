@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
@@ -10,6 +10,7 @@ import { workloadListMock } from "@/mocks/data/workload.mock";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openSelectWorkloadModalAtom } from "@/shared/state/modal.atom";
 import { createWorkloadColumn } from "../column/create-workload-column";
 import { CustomizedTable } from "../table/customized-table";
@@ -19,21 +20,22 @@ export function SelectWorkloadModal() {
 
   const { open, onClose } = useGlobalModal(openSelectWorkloadModalAtom);
   const [selectedWorkload, setSelectedWorkload] = useAtom(selectedWorkloadAtom);
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const [page, setPage] = useState(1);
 
   const { execute } = useGetWorkloadLazy();
 
   const handleOk = async () => {
     if (!selectedWorkload) return;
+    if (!selectedWorkspace) return;
 
     const workloadDetail = await execute({
       workloadId: selectedWorkload,
-      // 임시
-      workspaceId: "test",
+      workspaceId: selectedWorkspace.id,
     });
 
     if (workloadDetail) {
-      publish(WORKLOAD_EVENTS.sendCreateWorkload, selectedWorkload);
+      publish(WORKLOAD_EVENTS.sendCreateWorkload, workloadDetail);
       onClose();
     }
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import type { TabsSeparatedItem } from "xiilab-ui";
 import {
@@ -18,8 +18,8 @@ import { CreateCredentialForm } from "@/domain/credential/components/create-cred
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
 import type { CredentialIdType } from "@/domain/credential/schemas/credential.schema";
 import type {
-  SourcecodeCodeType,
   SourcecodeStatusType,
+  SourcecodeType,
 } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { StateTab } from "@/shared/components/tab";
@@ -31,7 +31,9 @@ import {
   SOURCECODE_STATUS_OPTIONS,
   SOURCECODE_TYPE_OPTIONS,
 } from "../constants/sourcecode.constant";
+import { useCreateSourcecode } from "../hooks/use-create-sourcecode";
 import { openCreateSourcecodeModalAtom } from "../state/sourcecode.atom";
+import type { CreateSourcecodePayload } from "../types/sourcecode.type";
 import { ManageParameter } from "./manage-parameter";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
@@ -48,7 +50,10 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
 ];
 
 export function CreateSourcecodeModal() {
+  const formRef = useRef(null);
   const { open, onClose } = useGlobalModal(openCreateSourcecodeModalAtom);
+
+  const createSourcecode = useCreateSourcecode();
   /**
    * 소스코드 이름
    */
@@ -67,7 +72,7 @@ export function CreateSourcecodeModal() {
   /**
    * 소스코드 Git 타입
    */
-  const gitType = useSelect<SourcecodeCodeType>(null, SOURCECODE_TYPE_OPTIONS);
+  const gitType = useSelect<SourcecodeType>(null, SOURCECODE_TYPE_OPTIONS);
 
   // 현재 선택된 탭 상태 관리
   const [credentialTab, setCredentialTab] = useState("select");
@@ -82,7 +87,49 @@ export function CreateSourcecodeModal() {
     alert("준비 중입니다.");
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    const payload = createPayload();
+
+    if (payload) {
+      // TODO: validation 추가 필요
+      createSourcecode.mutate(payload);
+    }
+  };
+
+  const createPayload = (): CreateSourcecodePayload | null => {
+    if (!formRef.current) return null;
+
+    const formData = new FormData(formRef.current);
+
+    // 파라미터 데이터 수집
+    // 파라미터는 동적으로 추가되므로 인덱스 기반으로 순차적으로 수집
+    const parameters: Array<{ key: string; value: string }> = [];
+    let index = 0;
+
+    while (true) {
+      const key = formData.get(`parameter-key-${index}`) as string;
+      const value = formData.get(`parameter-value-${index}`) as string;
+
+      if (!key && !value) break; // 더 이상 파라미터가 없으면 중단
+
+      if (key || value) {
+        // 키나 값 중 하나라도 있으면 추가 (빈 값도 허용)
+        parameters.push({ key: key || "", value: value || "" });
+      }
+
+      index++;
+    }
+
+    return {
+      name: name,
+      status: status.value,
+      gitUrl: gitUrl,
+      gitType: gitType.value,
+      mountPath: mountPath,
+      executeCommand: executeCommand,
+      parameters: parameters,
+    };
+  };
 
   return (
     <Modal
@@ -103,7 +150,7 @@ export function CreateSourcecodeModal() {
         disabled: !gitUrl || !mountPath || !executeCommand,
       }}
     >
-      <StyledForm layout="vertical">
+      <StyledForm layout="vertical" ref={formRef}>
         {/* 소스코드 이름 */}
         <StyledFormRow>
           <StyledFormItem label="소스코드 이름">

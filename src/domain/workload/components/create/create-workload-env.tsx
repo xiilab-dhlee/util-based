@@ -20,7 +20,7 @@ export function CreateWorkloadEnv() {
 
   const handleChangeEnv = (
     index: number,
-    field: "key" | "value",
+    field: "envKey" | "envValue",
     value: string,
   ) => {
     setEnvs((prev) =>
@@ -43,12 +43,14 @@ export function CreateWorkloadEnv() {
           <Row key={env.envKey}>
             <StyledInput
               value={env.envKey}
-              onChange={(e) => handleChangeEnv(index, "key", e.target.value)}
+              onChange={(e) => handleChangeEnv(index, "envKey", e.target.value)}
               placeholder="환경변수 키 입력"
             />
             <StyledInput
               value={env.envValue}
-              onChange={(e) => handleChangeEnv(index, "value", e.target.value)}
+              onChange={(e) =>
+                handleChangeEnv(index, "envValue", e.target.value)
+              }
               placeholder="환경변수 값 입력"
             />
             <Delete>
