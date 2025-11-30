@@ -11,14 +11,14 @@ import { Button, Icon, Input, Typography } from "xiilab-ui";
 import { VolumeSelect } from "@/domain/volume/components/volume-select";
 import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
 import { openSelectVolumeModalAtom } from "@/domain/volume/state/volume.atom";
+import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
+import { workloadVolumesAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
+import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { VolumeMountPathTooltipTitle } from "@/shared/components/tooltip-title/volume-mount-path-tooltip-title";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
-import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
-import { workloadVolumesAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadVolume() {
   const [volumes, setVolumes] = useAtom(workloadVolumesAtom);
@@ -116,7 +116,7 @@ export function CreateWorkloadVolume() {
             소스코드 목록
           </Typography.Text>
           <IconWrapper
-            className={classNames({ rotate: collapsed })}
+            className={classNames({ collapsed })}
             onClick={() => setCollapsed(!collapsed)}
           >
             <Icon name="Dropdown" size={16} color="#222223" />
