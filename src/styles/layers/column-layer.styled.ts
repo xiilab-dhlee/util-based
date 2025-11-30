@@ -97,3 +97,11 @@ export const ColumnTruncateText = styled.span<{ width: number }>`
   white-space: nowrap;
   max-width: ${({ width }) => width}px;
 `;
+
+export const ColumnTextButton = styled.button`
+  color: #17171f !important;
+  text-decoration: none;
+  &:hover{
+    opacity: 0.8;
+  }
+`;

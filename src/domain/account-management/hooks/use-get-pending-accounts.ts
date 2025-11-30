@@ -10,9 +10,11 @@ import type { CoreListResponse } from "@/shared/types/core.model";
 /**
  * 가입 승인 목록 조회
  */
-export const useGetPendingAccounts = (
+export const useGetPendingAccounts: (
   payload: GetPendingAccountsPayload,
-): UseQueryResult<CoreListResponse<AccountListType>, Error> => {
+) => UseQueryResult<CoreListResponse<AccountListType>, Error> = (
+  payload: GetPendingAccountsPayload,
+) => {
   const { accountService } = useServices();
 
   return useQuery({

@@ -53,8 +53,14 @@ export const VOLUME_EVENTS = {
 
 // 그룹 관련 이벤트
 export const GROUP_EVENTS = {
+  // 그룹 생성/수정 모달 열기 이벤트
+  openGroupModal: "group:open-group-modal",
   // 그룹 삭제에 필요한 정보 전달 이벤트
   sendDeleteGroup: "group:send-delete-group",
+  // 멤버 추가 모달 열기 이벤트
+  openMemberModal: "group:open-member-modal",
+  // 멤버 선택 확인 이벤트
+  confirmMemberSelection: "group:confirm-member-selection",
 } as const;
 
 // 사용자 관련 이벤트
@@ -65,6 +71,14 @@ export const ACCOUNT_EVENTS = {
   sendDeleteAccount: "account:send-delete-account",
   // 승인 대기 사용자 삭제에 필요한 정보 전달 이벤트
   sendDeleteAccountPending: "account:send-delete-account-pending",
+  // 사용자 상태 변경에 필요한 정보 전달 이벤트
+  sendUpdateAccountStatus: "account:send-update-account-status",
+  // 가입 승인에 필요한 정보 전달 이벤트
+  sendApproveAccountPending: "account:send-approve-account-pending",
+  // 가입 반려에 필요한 정보 전달 이벤트
+  sendRejectAccountPending: "account:send-reject-account-pending",
+  // 계정 상세 정보 보기에 필요한 정보 전달 이벤트
+  sendViewAccountDetail: "account:send-view-account-detail",
 } as const;
 
 // 노드 관련 이벤트

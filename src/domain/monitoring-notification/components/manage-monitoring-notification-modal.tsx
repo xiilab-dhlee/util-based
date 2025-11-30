@@ -22,6 +22,7 @@ import type {
   OpenNotificationModalPayload,
 } from "@/domain/monitoring-notification/types/monitoring-notification.type";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
+import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -41,9 +42,9 @@ export function ManageMonitoringNotificationModal() {
   );
 
   // 모달 모드 상태
-  const [mode, setMode] = useState<NotificationModalMode>("create");
+  const [mode, setMode] = useState<NotificationModalMode>(MODAL_MODES.CREATE);
   const [editId, setEditId] = useState<string | null>(null);
-  const isEditMode = mode === "edit";
+  const isEditMode = mode === MODAL_MODES.UPDATE;
 
   // 폼 훅 사용 (순수 폼 상태 + 검증만)
   const form = useMonitoringNotificationForm();
@@ -60,7 +61,7 @@ export function ManageMonitoringNotificationModal() {
     MONITORING_EVENTS.openNotificationModal,
     (payload: OpenNotificationModalPayload) => {
       setMode(payload.mode);
-      if (payload.mode === "edit") {
+      if (payload.mode === MODAL_MODES.UPDATE) {
         form.initializeForEdit(payload.data);
         setEditId(payload.data.id);
       } else {
@@ -74,7 +75,7 @@ export function ManageMonitoringNotificationModal() {
   // 모달 닫기 시 폼 및 mutation 리셋
   const handleClose = () => {
     form.reset();
-    setMode("create");
+    setMode(MODAL_MODES.CREATE);
     setEditId(null);
     createNotification.reset();
     updateNotification.reset();

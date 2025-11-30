@@ -140,11 +140,3 @@ export const ML_PROJECT_TEMPLATE = {
     ".gitignore",
   ],
 } as const;
-
-export const GROUP_PROJECT_TEMPLATE = {
-  "그룹 미지정 계정": {
-    "서비스 개발": {
-      "AI Model 팀": ["정동주", "김수현", "김민지", "손지원"],
-    },
-  },
-} as const;

@@ -1,14 +1,11 @@
 import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
-import { Icon } from "xiilab-ui";
 
 import { AccountPendingAllCheck } from "@/domain/account-management/components/pending/account-pending-all-check";
 import { AccountPendingItemCheck } from "@/domain/account-management/components/pending/account-pending-item-check";
+import { ApproveAccountPendingButton } from "@/domain/account-management/components/pending/approve-account-pending-button";
+import { RejectAccountPendingButton } from "@/domain/account-management/components/pending/reject-account-pending-button";
 import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
-import {
-  ColumnAlignCenterWrap,
-  ColumnIconWrap,
-} from "../../../styles/layers/column-layer.styled";
 
 export const accountPendingListColumn: ResponsiveColumnType[] = [
   {
@@ -43,14 +40,8 @@ export const accountPendingListColumn: ResponsiveColumnType[] = [
     dataIndex: "id",
     align: "center",
     width: 40,
-    render: () => {
-      return (
-        <ColumnAlignCenterWrap>
-          <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-            <Icon name="Close" color="var(--icon-fill)" />
-          </ColumnIconWrap>
-        </ColumnAlignCenterWrap>
-      );
+    render: (_, record: AccountListType) => {
+      return <RejectAccountPendingButton account={record} />;
     },
   },
   {
@@ -58,14 +49,8 @@ export const accountPendingListColumn: ResponsiveColumnType[] = [
     dataIndex: "id",
     align: "center",
     width: 40,
-    render: () => {
-      return (
-        <ColumnAlignCenterWrap>
-          <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-            <Icon name="Check" color="var(--icon-fill)" />
-          </ColumnIconWrap>
-        </ColumnAlignCenterWrap>
-      );
+    render: (_, record: AccountListType) => {
+      return <ApproveAccountPendingButton account={record} />;
     },
   },
 ];

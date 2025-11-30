@@ -3,7 +3,7 @@ import { Icon } from "xiilab-ui";
 
 import { MonitoringNotificationNameButton } from "@/domain/monitoring-notification/components/monitoring-notification-name-button";
 import { MonitoringNotificationSettingSwitch } from "@/domain/monitoring-notification/components/monitoring-notification-setting-switch";
-import type { MonitoringNotificationListType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
+import type { MonitoringNotificationListResponseType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
@@ -31,7 +31,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "알림 이름",
       dataIndex: "name",
       align: "left",
-      render: (name: string, record: MonitoringNotificationListType) => {
+      render: (
+        name: string,
+        record: MonitoringNotificationListResponseType,
+      ) => {
         return <MonitoringNotificationNameButton id={record.id} name={name} />;
       },
     },

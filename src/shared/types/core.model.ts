@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import type { MenuItem, ResponsiveColumnType } from "xiilab-ui";
 
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
 
 // 네비게이션 메뉴
 export type CoreNavMenu = {
@@ -46,6 +47,10 @@ export interface CoreListResponse<T> {
 export interface CoreFileListResponse extends CoreListResponse<FileTreeType> {
   directoryCnt: number;
 }
+
+// 그룹 트리 목록 응답 인터페이스
+export interface CoreGroupTreeListResponse
+  extends CoreListResponse<GroupTreeType> {}
 /**
  * 컬럼 설정 인터페이스 (제네릭)
  */

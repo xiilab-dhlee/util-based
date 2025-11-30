@@ -62,8 +62,10 @@ export function DeleteGroupModal() {
         loading: deleteGroup.isPending,
       }}
     >
-      <div>선택한 그룹을 삭제하시겠습니까?</div>
-      <div>삭제 시 해당 그룹은 복구되지 않습니다.</div>
+      <div>
+        그룹에서 삭제된 멤버는 '그룹 미지정 계정'으로 <br />
+        이동됩니다. 그룹을 삭제하시겠습니까?
+      </div>
     </Modal>
   );
 }

@@ -18,6 +18,7 @@ import type {
   MonitoringNotificationSettingResponseType,
 } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
 import { openViewMonitoringNotificationModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
+import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -61,7 +62,7 @@ export function ViewMonitoringNotificationModal() {
     }
 
     publish(MONITORING_EVENTS.openNotificationModal, {
-      mode: "edit",
+      mode: MODAL_MODES.UPDATE,
       data,
     });
     onClose();

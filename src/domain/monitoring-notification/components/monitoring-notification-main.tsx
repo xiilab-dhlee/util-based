@@ -6,6 +6,7 @@ import { Icon, Typography } from "xiilab-ui";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
+import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
@@ -61,7 +62,9 @@ export function MonitoringNotificationMain() {
   const publish = usePublish();
 
   const handleCreateNotification = () => {
-    publish(MONITORING_EVENTS.openNotificationModal, { mode: "create" });
+    publish(MONITORING_EVENTS.openNotificationModal, {
+      mode: MODAL_MODES.CREATE,
+    });
   };
 
   return (

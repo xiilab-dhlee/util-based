@@ -20,6 +20,8 @@ export const useActiveMenu = () => {
 
   // 현재 URL에서 activeMenuKey 추출 - useMemo로 메모이제이션
   const activeMenuKey = useMemo(() => {
+    const pathnameWithoutQuery = pathname.split("?")[0];
+
     const pageMetaEntries = Object.entries(PAGE_META) as [
       PageKey,
       PageItemMeta,
@@ -27,7 +29,22 @@ export const useActiveMenu = () => {
 
     const entry = pageMetaEntries.find(([_pageKey, meta]) => {
       const href = meta.href;
-      return typeof href === "string" && href === pathname;
+      if (typeof href !== "string") {
+        return false;
+      }
+
+      const hrefWithoutQuery = href.split("?")[0];
+
+      // prefix가 아니면 매칭하지 않음
+      if (!pathnameWithoutQuery.startsWith(hrefWithoutQuery)) {
+        return false;
+      }
+
+      // 세그먼트 경계 확인:
+      // - 정확히 같거나
+      // - 다음 문자가 "/" 인 경우만 매칭
+      const nextChar = pathnameWithoutQuery[hrefWithoutQuery.length];
+      return nextChar === undefined || nextChar === "/";
     });
 
     if (!entry) {

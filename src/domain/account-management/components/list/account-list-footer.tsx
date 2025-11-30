@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
-import { toast } from "react-toastify";
+import { useResetAtom } from "jotai/utils";
 
 import { useGetAccounts } from "@/domain/account-management/hooks/use-get-accounts";
 import {
@@ -31,6 +31,7 @@ export function AccountListFooter() {
   const searchText = useAtomValue(accountSearchTextAtom);
   // 체크된 사용자 목록
   const selectedAccounts = useAtomValue(accountCheckedListAtom);
+  const resetCheckedList = useResetAtom(accountCheckedListAtom);
 
   // ✅ 반응형: 데이터 변경 시 자동으로 업데이트
   const { data, isLoading } = useGetAccounts({
@@ -41,6 +42,7 @@ export function AccountListFooter() {
 
   // 페이지 변경 핸들러
   const handlePage = (page: number) => {
+    resetCheckedList();
     setPage(page);
   };
 
@@ -48,11 +50,6 @@ export function AccountListFooter() {
    * 삭제 버튼 클릭 핸들러
    */
   const handleClickDelete = () => {
-    // 삭제할 사용자가 없으면 에러 메시지 표시
-    if (selectedAccounts.size === 0) {
-      toast.error("삭제할 사용자를 선택해 주세요.");
-      return;
-    }
     // 사용자 삭제 모달에 데이터 전달
     publish(ACCOUNT_EVENTS.sendDeleteAccount, Array.from(selectedAccounts));
   };
@@ -64,7 +61,13 @@ export function AccountListFooter() {
       pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
-      rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
+      rightChildren={
+        <ListDeleteButton
+          onClick={handleClickDelete}
+          disabled={selectedAccounts.size === 0}
+          isLoading={isLoading}
+        />
+      }
     />
   );
 }

@@ -8,11 +8,14 @@ import { AccountStatusSwitch } from "@/domain/account-management/components/list
 import { UpdateAccountButton } from "@/domain/account-management/components/list/update-account-button";
 import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { pubsubUtil } from "@/shared/utils/pubsub.util";
 import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
+  ColumnTextButton,
 } from "@/styles/layers/column-layer.styled";
 
 /**
@@ -33,6 +36,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "이름",
       dataIndex: "name",
       align: "left",
+      render: (name: string, record: AccountListType) => {
+        const handleClick = () => {
+          pubsubUtil.publish(ACCOUNT_EVENTS.sendViewAccountDetail, record);
+        };
+        return <ColumnTextButton onClick={handleClick}>{name}</ColumnTextButton>;
+      },
     },
     {
       title: "이메일",
@@ -61,10 +70,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "상태",
       dataIndex: "status",
       align: "center",
-      render: () => {
+      render: (_, record: AccountListType) => {
         return (
           <ColumnAlignCenterWrap>
-            <AccountStatusSwitch />
+            <AccountStatusSwitch account={record} />
           </ColumnAlignCenterWrap>
         );
       },

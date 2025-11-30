@@ -70,3 +70,33 @@ export const formatDateTimeSafely = (
 
   return format(date, "yyyy-MM-dd HH:mm:ss");
 };
+
+/**
+ * 안전하게 날짜 값을 포맷팅하는 유틸 함수입니다.
+ * - 지원 타입: string(ISO), Date, null/undefined
+ * - 유효하지 않은 값이거나 파싱 실패 시 fallback 값을 반환합니다.
+ * @param value - 포맷팅할 날짜 값
+ * @param formatStr - 날짜 포맷 문자열 (기본값: "yyyy.MM.dd")
+ * @param fallback - 유효하지 않은 값일 때 반환할 문자열 (기본값: "-")
+ */
+export const formatDateSafely = (
+  value?: string | Date | null,
+  formatStr: string = "yyyy.MM.dd",
+  fallback: string = "-",
+): string => {
+  if (!value) {
+    return fallback;
+  }
+
+  try {
+    const date = typeof value === "string" ? parseISO(value) : value;
+
+    if (!isValid(date)) {
+      return fallback;
+    }
+
+    return format(date, formatStr);
+  } catch {
+    return fallback;
+  }
+};
