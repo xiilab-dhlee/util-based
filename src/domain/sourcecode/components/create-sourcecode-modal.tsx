@@ -128,6 +128,7 @@ export function CreateSourcecodeModal() {
       mountPath: mountPath,
       executeCommand: executeCommand,
       parameters: parameters,
+      credential,
     };
   };
 
@@ -146,9 +147,11 @@ export function CreateSourcecodeModal() {
       onOk={handleSubmit}
       centered
       showHeaderBorder
-      okButtonProps={{
-        disabled: !gitUrl || !mountPath || !executeCommand,
-      }}
+      okButtonProps={
+        {
+          // disabled: !gitUrl || !mountPath || !executeCommand,
+        }
+      }
     >
       <StyledForm layout="vertical" ref={formRef}>
         {/* 소스코드 이름 */}
