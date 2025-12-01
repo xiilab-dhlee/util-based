@@ -4,44 +4,6 @@
 
 ---
 
-## React Query (TanStack Query)
-
-### useQuery의 enabled 옵션 처리
-
-**협의일**: 2025-11-30
-
-**상황**: `useQuery` 사용 시 특정 파라미터(예: `imageId`)를 전달받고, 해당 값이 `null` 또는 `undefined`인 경우에만 쿼리를 비활성화(`enabled: false`)해야 하는 경우
-
-**협의 내용**: `es-toolkit`의 `isNil` 함수를 사용하여 `null` 또는 `undefined` 여부를 체크한다.
-
-**예시 코드**:
-
-```typescript
-import { useQuery } from "@tanstack/react-query";
-import { isNil } from "es-toolkit";
-
-export const useGetInternalRegistryImageTagOptions = (
-  imageId: InternalRegistryImageIdType,
-) => {
-  return useQuery({
-    queryKey: internalregistryImageKeys.allTagList(imageId),
-    queryFn: async () => {
-      // ...
-    },
-    enabled: !isNil(imageId), // id가 null 또는 undefined가 아닌 경우에만 쿼리 활성화
-  });
-};
-```
-
-**참고 파일**: [use-get-internal-registry-image-tag-options.ts](../src/domain/internal-registry-image/hooks/use-get-internal-registry-image-tag-options.ts)
-
-**이유**:
-- `isNil`은 `null`과 `undefined`만 체크하므로 `0`, `""`, `false` 등 falsy 값은 유효한 값으로 취급됨
-- `!imageId`를 사용하면 `0`이나 빈 문자열도 falsy로 처리되어 의도치 않게 쿼리가 비활성화될 수 있음
-- 명시적이고 읽기 쉬운 코드 작성 가능
-
----
-
 ## 컴포넌트 위치 관리
 
 ### 다중 도메인 사용 컴포넌트의 shared 이동
