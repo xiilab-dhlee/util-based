@@ -30,12 +30,12 @@ import {
   workloadSourcecodesAtom,
   workloadVolumesAtom,
 } from "@/domain/workload/state/create-workload.atom";
+import { SelectWorkloadModal } from "@/shared/components/modal/select-workload-modal";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
-import { SelectWorkloadModal } from "@/shared/components/modal/select-workload-modal";
 
 const STEP_ITEMS: StepItem[] = [
   {
@@ -121,8 +121,8 @@ export function CreateWorkloadDrawer() {
       setNodeMode("single");
       // 리소스 프리셋(현재 X)
       // 이미지 설정
-      setImageType(eventData?.image.type || "HUB");
-      setImageId(eventData?.image.name || null);
+      setImageType(eventData?.image?.type || "HUB");
+      setImageId(eventData?.image?.name || null);
       // step 3
       // 소스코드
       setWorkloadSourcecodes(eventData?.sourcecodes || []);

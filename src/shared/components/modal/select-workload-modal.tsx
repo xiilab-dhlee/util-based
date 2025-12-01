@@ -2,18 +2,19 @@
 
 import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Icon, Modal } from "xiilab-ui";
 
 import { useGetWorkloadLazy } from "@/domain/workload/hooks/use-get-workload";
 import { selectedWorkloadAtom } from "@/domain/workload/state/workload.atom";
 import { workloadListMock } from "@/mocks/data/workload.mock";
+import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
+import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openSelectWorkloadModalAtom } from "@/shared/state/modal.atom";
-import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
-import { CustomizedTable } from "@/shared/components/table/customized-table";
 
 export function SelectWorkloadModal() {
   const publish = usePublish();
@@ -29,15 +30,24 @@ export function SelectWorkloadModal() {
     if (!selectedWorkload) return;
     if (!selectedWorkspace) return;
 
-    const workloadDetail = await execute({
-      workloadId: selectedWorkload,
-      workspaceId: selectedWorkspace.id,
-    });
+    try {
+      const workloadDetail = await execute({
+        workloadId: selectedWorkload,
+        workspaceId: selectedWorkspace.id,
+      });
 
-    if (workloadDetail) {
-      publish(WORKLOAD_EVENTS.sendCreateWorkload, workloadDetail);
-      onClose();
+      if (workloadDetail) {
+        publish(WORKLOAD_EVENTS.sendCreateWorkload, workloadDetail);
+        onClose();
+      }
+    } catch {
+      toast.error("워크로드 정보를 가져오는 중에 오류가 발생했습니다.");
     }
+  };
+
+  const handleAfterClose = () => {
+    setSelectedWorkload(null);
+    setPage(1);
   };
 
   return (
@@ -55,7 +65,7 @@ export function SelectWorkloadModal() {
       okButtonProps={{
         disabled: !selectedWorkload,
       }}
-      afterClose={() => setSelectedWorkload(null)}
+      afterClose={handleAfterClose}
     >
       <CustomizedTable
         columns={createWorkloadColumn([
