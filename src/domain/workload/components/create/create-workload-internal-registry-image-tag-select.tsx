@@ -4,18 +4,22 @@ import { useAtom, useAtomValue } from "jotai";
 import { Dropdown } from "xiilab-ui";
 
 import { useGetInternalRegistryImageTagOptions } from "@/domain/internal-registry-image/hooks/use-get-internal-registry-image-tag-options";
+import {
+  imageIdAtom,
+  imageTagIdAtom,
+} from "@/domain/workload/state/create-workload.atom";
 import { useSelect } from "@/shared/hooks/use-select";
-import { imageIdAtom, imageTagIdAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadInternalRegistryImageTagSelect() {
   const imageId = useAtomValue(imageIdAtom);
   const [imageTagId, setImageTagId] = useAtom(imageTagIdAtom);
+
   /** 내부 레지스트리 이미지 태그 옵션 목록 조회 */
   const { data } = useGetInternalRegistryImageTagOptions(Number(imageId));
 
   const imageTag = useSelect(null, data || []);
 
-  const handleChangeImageTag = (value: string) => {
+  const handleChangeImageTag = (value: string | null) => {
     setImageTagId(value);
   };
 

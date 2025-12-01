@@ -4,8 +4,11 @@ import { useAtom, useSetAtom } from "jotai";
 import { Dropdown } from "xiilab-ui";
 
 import { useGetHubOptions } from "@/domain/hub/hooks/use-get-hub-options";
+import {
+  imageIdAtom,
+  imageTagIdAtom,
+} from "@/domain/workload/state/create-workload.atom";
 import { useSelect } from "@/shared/hooks/use-select";
-import { imageIdAtom, imageTagIdAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadHubImageSelect() {
   const [imageId, setImageId] = useAtom(imageIdAtom);
@@ -15,7 +18,7 @@ export function CreateWorkloadHubImageSelect() {
 
   const image = useSelect(null, data || []);
 
-  const handleChangeImage = (value: string) => {
+  const handleChangeImage = (value: string | null) => {
     setImageId(value);
     setImageTagId(null);
   };
