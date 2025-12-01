@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
 import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { StorageIcon } from "@/shared/components/icon/storage-icon";
@@ -12,7 +13,6 @@ import {
   LikeCompactCardRecord,
   LikeCompactCardValue,
 } from "@/styles/layers/like-card-layers.styled";
-import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 
 interface WorkloadVolumeCardProps extends WorkloadVolumeType {
   onDelete?: () => void;
