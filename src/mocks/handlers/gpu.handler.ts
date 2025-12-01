@@ -14,6 +14,7 @@ export const gpuHandlers = [
   http.get("/core-api/v1/core/gpu", () => {
     return HttpResponse.json({
       content: gpuListMock,
+      totalSize: gpuListMock.length,
     });
   }),
 
@@ -21,6 +22,7 @@ export const gpuHandlers = [
   http.get("/core-api/v1/core/gpu/nodes", () => {
     return HttpResponse.json({
       content: gpuNodeListMock,
+      totalSize: gpuNodeListMock.length,
     });
   }),
 
@@ -28,6 +30,7 @@ export const gpuHandlers = [
   http.get("/core-api/v1/core/gpu/profiles", () => {
     return HttpResponse.json({
       content: gpuProfileListMock,
+      totalSize: gpuProfileListMock.length,
     });
   }),
 ];
