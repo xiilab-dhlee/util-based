@@ -2,16 +2,17 @@
 
 import { useAtom } from "jotai";
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
 import { Button, Input, Typography } from "xiilab-ui";
 
-import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { envsAtom } from "@/domain/workload/state/create-workload.atom";
+import { CreateModelButton } from "@/shared/components/button/create-model-button";
 
 export function CreateWorkloadEnv() {
   const [envs, setEnvs] = useAtom(envsAtom);
 
   const handleCreate = () => {
-    setEnvs((prev) => [...prev, { envKey: "", envValue: "" }]);
+    setEnvs((prev) => [...prev, { id: uuidv4(), envKey: "", envValue: "" }]);
   };
 
   const handleDelete = (index: number) => {
@@ -40,7 +41,7 @@ export function CreateWorkloadEnv() {
       </Header>
       <Body>
         {envs.map((env, index) => (
-          <Row key={env.envKey}>
+          <Row key={env.id}>
             <StyledInput
               value={env.envKey}
               onChange={(e) => handleChangeEnv(index, "envKey", e.target.value)}
