@@ -17,7 +17,5 @@ export const useCreateWorkload = (): UseMutationResult<
 
   return useMutation({
     mutationFn: (payload) => workloadService.createWorkload(payload),
-
-    onSuccess: () => {},
   });
 };

@@ -18,7 +18,7 @@ import type {
 import { GpuCard } from "./gpu-card";
 import { GpuProfileCard } from "./gpu-profile-card";
 
-interface CreateWorkloadGpuNormalProps {
+interface CreateWorkloadGpuMigProps {
   gpus: GpuListType[];
   isSelected: boolean;
   onClickGpu: (gpu: GpuListType) => void;
@@ -28,7 +28,7 @@ export function CreateWorkloadGpuMig({
   gpus,
   isSelected,
   onClickGpu,
-}: CreateWorkloadGpuNormalProps) {
+}: CreateWorkloadGpuMigProps) {
   const [isOpen, setIsOpen] = useState(true);
   const gpu = useAtomValue(gpuAtom);
   const [gpuProfile, setGpuProfile] = useAtom(gpuProfileAtom);
