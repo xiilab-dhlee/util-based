@@ -32,6 +32,7 @@
       },
       "suspicious": {
         "noExplicitAny": "error",
+        "noArrayIndexKey": "off",
         "noConsole": {
           "options": {
             "allow": ["assert", "error", "info", "warn", "table"]

@@ -15,8 +15,8 @@ import {
 import { useCreateWorkspace } from "@/domain/workspace/hooks/use-create-workspace";
 import type { CreateWorkspacePayload } from "@/domain/workspace/types/workspace.type";
 import { FormLabel } from "@/shared/components/form/form-label";
-import { openCreateFirstWorkspaceModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateFirstWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 
 const DEMO_LIMIT_WORKSPACE = {
@@ -149,7 +149,7 @@ export function CreateFirstWorkspaceModal() {
                   </Typography.Text>
                   <ResourceValue>
                     <Typography.Text variant="body-2-3" color="#000">
-                      16
+                      {DEMO_LIMIT_WORKSPACE.memoryGb || 0}GB
                     </Typography.Text>
                   </ResourceValue>
                 </ResourceItem>
@@ -159,7 +159,7 @@ export function CreateFirstWorkspaceModal() {
                   </Typography.Text>
                   <ResourceValue>
                     <Typography.Text variant="body-2-3" color="#000">
-                      2개
+                      {DEMO_LIMIT_WORKSPACE.mpsReplica || 0}개
                     </Typography.Text>
                   </ResourceValue>
                 </ResourceItem>
@@ -180,10 +180,10 @@ export function CreateFirstWorkspaceModal() {
                   </Typography.Text>
                 </MigHeader>
                 <MigBody>
-                  {DEMO_LIMIT_WORKSPACE.MigProfile.map((profile) => (
-                    <MigProfileRow key={profile[0].name}>
+                  {DEMO_LIMIT_WORKSPACE.MigProfile.map((profile, index) => (
+                    <MigProfileRow key={`mig-profile-${index}`}>
                       {profile.map((item) => (
-                        <MigProfileItem key={item.name}>
+                        <MigProfileItem key={`${index}-${item.name}`}>
                           <Typography.Text variant="body-3-2" color="#000">
                             {item.name} {item.count}개
                           </Typography.Text>
@@ -222,6 +222,7 @@ export function CreateFirstWorkspaceModal() {
               width="100%"
               height={34}
               onClick={handleSubmit}
+              loading={createWorkspace.isPending}
             >
               생성
             </SubmitButton>
@@ -309,7 +310,6 @@ const IconWrapper = styled.div`
   width: 24px;
   height: 24px;
   border-radius: 4px;
-  background-color: #000;
   overflow: hidden;
   background-color: #5B29C7;
 `;
