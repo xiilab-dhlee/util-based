@@ -22,6 +22,7 @@ export function SelectWorkloadModal() {
   const { open, onClose } = useGlobalModal(openSelectWorkloadModalAtom);
   const [selectedWorkload, setSelectedWorkload] = useAtom(selectedWorkloadAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
 
   const { data } = useGetRecentWorkloads({
@@ -36,6 +37,7 @@ export function SelectWorkloadModal() {
     if (!selectedWorkload) return;
     if (!selectedWorkspace) return;
 
+    setIsLoading(true);
     try {
       const workloadDetail = await execute({
         workloadId: selectedWorkload,
@@ -48,6 +50,8 @@ export function SelectWorkloadModal() {
       }
     } catch {
       toast.error("워크로드 정보를 가져오는 중에 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,6 +74,7 @@ export function SelectWorkloadModal() {
       onOk={handleOk}
       okButtonProps={{
         disabled: !selectedWorkload,
+        loading: isLoading,
       }}
       afterClose={handleAfterClose}
     >
