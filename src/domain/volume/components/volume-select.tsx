@@ -18,6 +18,11 @@ export function VolumeSelect({ value, setValue }: VolumeSelectProps) {
   const { data } = useGetVolumeOptions();
 
   const handleChange = (next: VolumeIdType | null) => {
+    if (next === null) {
+      setValue(null);
+      return;
+    }
+
     const selectedOption = data?.find((v) => v.origin.uid === next);
 
     if (selectedOption) {
