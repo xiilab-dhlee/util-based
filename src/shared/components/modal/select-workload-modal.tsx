@@ -5,9 +5,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Icon, Modal } from "xiilab-ui";
 
+import { useGetRecentWorkloads } from "@/domain/workload/hooks/use-get-recent-workloads";
 import { useGetWorkloadLazy } from "@/domain/workload/hooks/use-get-workload";
 import { selectedWorkloadAtom } from "@/domain/workload/state/workload.atom";
-import { workloadListMock } from "@/mocks/data/workload.mock";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -23,6 +23,12 @@ export function SelectWorkloadModal() {
   const [selectedWorkload, setSelectedWorkload] = useAtom(selectedWorkloadAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const [page, setPage] = useState(1);
+
+  const { data } = useGetRecentWorkloads({
+    page: page,
+    size: 8,
+    searchText: "",
+  });
 
   const { execute } = useGetWorkloadLazy();
 
@@ -81,11 +87,11 @@ export function SelectWorkloadModal() {
           { dataIndex: "status" },
           { dataIndex: "elapsedTime" },
         ])}
-        data={workloadListMock}
+        data={data?.content || []}
         pagination={{
           current: page,
           pageSize: 8,
-          total: 100,
+          total: data?.totalSize || 0,
           onChange: (page) => setPage(page),
         }}
         columnHeight={40}

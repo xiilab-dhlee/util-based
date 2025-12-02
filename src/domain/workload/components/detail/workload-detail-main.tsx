@@ -3,6 +3,7 @@
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Icon } from "xiilab-ui";
 
+import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -13,7 +14,6 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
-import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { CreateCommitImageModal } from "./create-commit-image-modal";
 import { WorkloadPrimaryArticle } from "./workload-primary-article";
 import { WorkloadSecondaryArticle } from "./workload-secondary-article";

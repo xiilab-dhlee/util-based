@@ -8,7 +8,7 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openSelectWorkloadModalAtom } from "@/shared/state/modal.atom";
 
-export function CreateWorkloadInport() {
+export function CreateWorkloadImport() {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const { onOpen } = useGlobalModal(openSelectWorkloadModalAtom);
 

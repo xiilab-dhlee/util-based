@@ -1,3 +1,4 @@
+import type { InternalRegistryImageIdType } from "@/domain/internal-registry-image/schemas/internal-registry-image.schema";
 import type {
   GetAdminInternalRegistryImagePayload,
   GetAdminInternalRegistryImagesPayload,
@@ -6,7 +7,6 @@ import type {
   GetInternalRegistryImageTagsPayload,
   GetInternalRegistryImageVulnerabilityListPayload,
 } from "@/domain/internal-registry-image/types/internal-registry-image.type";
-import type { InternalRegistryImageIdType } from "@/domain/internal-registry-image/schemas/internal-registry-image.schema";
 
 export const internalregistryImageKeys = {
   default: ["internal-registry-image"],

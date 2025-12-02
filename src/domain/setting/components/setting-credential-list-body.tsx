@@ -1,9 +1,9 @@
 "use client";
 
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
-import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
 import { useGetSettingCredentials } from "@/domain/setting/hooks/use-get-setting-credentials";
+import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { SettingCredentialCard } from "./setting-credential-card";
 
 export function SettingCredentialListBody() {

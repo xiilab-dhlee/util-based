@@ -3,13 +3,13 @@
 import styled from "styled-components";
 import { Card, Icon, Tag, type TagProps } from "xiilab-ui";
 
+import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
 import {
   LikeCompactCardKey,
   LikeCompactCardRecord,
   LikeCompactCardValue,
 } from "@/styles/layers/like-card-layers.styled";
-import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 
 interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
   onDelete?: () => void;

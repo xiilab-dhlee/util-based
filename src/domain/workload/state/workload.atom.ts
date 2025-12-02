@@ -1,13 +1,13 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
+import type { WorkloadIdType } from "@/domain/workload/schemas/workload.schema";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
 } from "@/shared/state/filetree.atom";
-import type { WorkloadIdType } from "@/domain/workload/schemas/workload.schema";
 
 /** 워크로드 페이지 번호 */
 export const workloadPageAtom = atomWithReset<number>(1);

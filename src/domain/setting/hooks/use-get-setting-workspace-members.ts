@@ -1,11 +1,11 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
+import { settingKeys } from "@/domain/setting/constants/setting.key";
 import type { GetWorkspaceMembersPayload } from "@/domain/workspace/types/workspace.type";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
-import { settingKeys } from "@/domain/setting/constants/setting.key";
 
 /**
  * 설정 워크스페이스 멤버 목록 조회

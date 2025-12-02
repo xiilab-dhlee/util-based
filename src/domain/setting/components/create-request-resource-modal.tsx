@@ -4,9 +4,9 @@ import { type ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal, TextArea } from "xiilab-ui";
 
+import { openCreateResourceRequestModalAtom } from "@/domain/setting/state/setting.atom";
 import { ResourceSlider } from "@/shared/components/slider/resource-slider";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { openCreateResourceRequestModalAtom } from "@/domain/setting/state/setting.atom";
 
 export function CreateResourceSettingModal() {
   const { open, onClose } = useGlobalModal(openCreateResourceRequestModalAtom);

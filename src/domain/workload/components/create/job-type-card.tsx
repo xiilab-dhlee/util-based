@@ -4,10 +4,10 @@ import type { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 import { Box, Typography } from "xiilab-ui";
 
-import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
-import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
 import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
+import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
+import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
 
 const DESCRIPTION_MAP: Record<WorkloadJobType, string[]> = {
   BATCH: [

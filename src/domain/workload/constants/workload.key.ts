@@ -37,4 +37,9 @@ export const workloadKeys = {
     "vulnerabilityList",
     ...Object.values(payload),
   ],
+  recentList: (payload: GetWorkloadsPayload) => [
+    ...workloadKeys.default,
+    "recentList",
+    ...Object.values(payload),
+  ],
 };

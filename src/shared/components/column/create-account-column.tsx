@@ -40,7 +40,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
         const handleClick = () => {
           pubsubUtil.publish(ACCOUNT_EVENTS.sendViewAccountDetail, record);
         };
-        return <ColumnTextButton onClick={handleClick}>{name}</ColumnTextButton>;
+        return (
+          <ColumnTextButton onClick={handleClick}>{name}</ColumnTextButton>
+        );
       },
     },
     {

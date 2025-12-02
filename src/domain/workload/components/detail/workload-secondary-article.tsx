@@ -4,11 +4,13 @@ import { format } from "date-fns";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
+import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
 import { workloadEnvColumn } from "@/domain/workload/components/detail/workload-env-column";
 import { workloadPortColumn } from "@/domain/workload/components/detail/workload-port-column";
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
+import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
 import { BuiltinIcon } from "@/shared/components/icon/builtin-icon";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
@@ -19,8 +21,6 @@ import {
   DetailContentKey,
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
-import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
-import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
 
 /**
  * 워크로드 추가 정보 아티클 컴포넌트

@@ -4,11 +4,11 @@ import { useAtom } from "jotai";
 import styled from "styled-components";
 import { Form, Input, TextArea } from "xiilab-ui";
 
-import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 import {
   workloadDescriptionAtom,
   workloadNameAtom,
 } from "@/domain/workload/state/create-workload.atom";
+import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 
 export function CreateWorkloadTitle() {
   const [workloadName, setWorkloadName] = useAtom(workloadNameAtom);

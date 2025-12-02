@@ -5,14 +5,14 @@ import { ViewApproveRequestImageButton } from "@/domain/request-image/components
 import { ViewRejectRequestImageButton } from "@/domain/request-image/components/view-reject-request-image-button";
 import type { RequestImageListType } from "@/domain/request-image/schemas/request-image.schema";
 import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
-import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
-import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
-import { applyColumnConfigs } from "@/shared/utils/column.util";
-import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
 import { WorkspaceRequestResourceStatusText } from "@/shared/components/text/workspace-request-resource-status-text";
 import { SecurityTooltip } from "@/shared/components/tooltip/security-tooltip";
+import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
+import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [

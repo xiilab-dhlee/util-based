@@ -2,13 +2,13 @@
 import styled from "styled-components";
 
 import { ViewWorkloadMonitoringModal } from "@/domain/workload/components/detail/view-workload-monitoring-modal";
+import { WorkloadMonitoringCard } from "@/domain/workload/components/detail/workload-monitoring-card";
 import {
   DetailContentHeader,
   DetailContentSubTitle,
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
-import { WorkloadMonitoringCard } from "@/domain/workload/components/detail/workload-monitoring-card";
 import { MonitoringToolbar } from "./monitoring-toolbar";
 
 export function WorkloadMonitoringMain() {

@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Button, Icon } from "xiilab-ui";
 
 import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
+import { ProfileNotification } from "@/shared/components/layouts/profile-notification";
 import {
   ADMIN_ROOT_PATH,
   USER_ROOT_PATH,
@@ -14,7 +15,6 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
 import { isAdminMode } from "@/shared/utils/router.util";
-import { ProfileNotification } from "@/shared/components/layouts/profile-notification";
 
 interface ProfilePopoverProps {
   userName: string;

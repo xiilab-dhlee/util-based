@@ -1,5 +1,7 @@
 "use client";
 
+import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
+import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
 import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
 import { MigIcon } from "@/shared/components/icon/mig-icon";
 import { MpsIcon } from "@/shared/components/icon/mps-icon";
@@ -12,8 +14,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
-import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
 import { NodeListBody } from "./node-list-body";
 import { NodeListFilter } from "./node-list-filter";
 import { NodeListFooter } from "./node-list-footer";

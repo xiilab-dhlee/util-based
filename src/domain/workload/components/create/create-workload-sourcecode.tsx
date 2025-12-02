@@ -16,14 +16,14 @@ import type {
   SourcecodeListType,
 } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import { openCreateSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcecode.atom";
+import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
+import { workloadSourcecodesAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { SourcecodeCommandTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-command-tooltip-title";
 import { SourcecodeMountPathTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-mount-path-tooltip-title";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
-import { workloadSourcecodesAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadSourcecode() {
   const [sourcecodes, setSourcecodes] = useAtom(workloadSourcecodesAtom);

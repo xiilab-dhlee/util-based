@@ -1,6 +1,7 @@
 "use client";
 
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import type { StepItem } from "xiilab-ui";
 import { Button, Drawer, Step, Typography } from "xiilab-ui";
@@ -13,6 +14,7 @@ import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/cre
 import { CreateWorkloadFourthStep } from "@/domain/workload/components/create/create-workload-fourth-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
 import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
+import { useCreateWorkload } from "@/domain/workload/hooks/use-create-workload";
 import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
 import {
   envsAtom,
@@ -30,6 +32,7 @@ import {
   workloadSourcecodesAtom,
   workloadVolumesAtom,
 } from "@/domain/workload/state/create-workload.atom";
+import type { CreateWorkloadPayload } from "@/domain/workload/types/workload.type";
 import { SelectWorkloadModal } from "@/shared/components/modal/select-workload-modal";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -61,24 +64,32 @@ export function CreateWorkloadDrawer() {
     openCreateWorkloadDrawerAtom,
   );
 
+  const createWorkload = useCreateWorkload();
+
   const [step, setStep] = useAtom(stepAtom);
   // step 1
-  const setJobType = useSetAtom(jobTypeAtom);
-  const setWorkloadName = useSetAtom(workloadNameAtom);
-  const setWorkloadDescription = useSetAtom(workloadDescriptionAtom);
+  const [jobType, setJobType] = useAtom(jobTypeAtom);
+  const [workloadName, setWorkloadName] = useAtom(workloadNameAtom);
+  const [workloadDescription, setWorkloadDescription] = useAtom(
+    workloadDescriptionAtom,
+  );
   // step 2
-  const setNodeMode = useSetAtom(nodeModeAtom);
-  const setImageType = useSetAtom(imageTypeAtom);
-  const setImageId = useSetAtom(imageIdAtom);
+  const [nodeMode, setNodeMode] = useAtom(nodeModeAtom);
+  const [imageType, setImageType] = useAtom(imageTypeAtom);
+  const [imageId, setImageId] = useAtom(imageIdAtom);
   // step 3
-  const setWorkloadSourcecodes = useSetAtom(workloadSourcecodesAtom);
-  const setWorkloadVolumes = useSetAtom(workloadVolumesAtom);
-  const setWorkloadOutputPath = useSetAtom(workloadOutputPathAtom);
+  const [workloadSourcecodes, setWorkloadSourcecodes] = useAtom(
+    workloadSourcecodesAtom,
+  );
+  const [workloadVolumes, setWorkloadVolumes] = useAtom(workloadVolumesAtom);
+  const [workloadOutputPath, setWorkloadOutputPath] = useAtom(
+    workloadOutputPathAtom,
+  );
   // step 4
-  const setExecPath = useSetAtom(execPathAtom);
-  const setExecCommand = useSetAtom(execCommandAtom);
-  const setEnvs = useSetAtom(envsAtom);
-  const setPorts = useSetAtom(portsAtom);
+  const [execPath, setExecPath] = useAtom(execPathAtom);
+  const [execCommand, setExecCommand] = useAtom(execCommandAtom);
+  const [envs, setEnvs] = useAtom(envsAtom);
+  const [ports, setPorts] = useAtom(portsAtom);
 
   const isLastStep = step === STEP_ITEMS.length - 1;
 
@@ -88,6 +99,36 @@ export function CreateWorkloadDrawer() {
 
   const handlePrev = () => {
     setStep((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleSubmit = () => {
+    const payload = createPayload();
+
+    if (payload) {
+      createWorkload.mutate(payload, {
+        onSuccess: () => {
+          toast.success("워크로드 생성 성공");
+        },
+      });
+    }
+  };
+
+  const createPayload = (): CreateWorkloadPayload | null => {
+    return {
+      workloadName: workloadName,
+      workloadDescription: workloadDescription,
+      jobType: jobType,
+      nodeMode: nodeMode,
+      imageType: imageType || "",
+      imageId: imageId || 0,
+      sourcecodes: workloadSourcecodes,
+      workloadVolumes: workloadVolumes,
+      workloadOutputPath: workloadOutputPath,
+      execPath: execPath || "",
+      execCommand: execCommand || "",
+      envs: envs,
+      ports: ports,
+    };
   };
 
   // 현재 단계에 맞는 컴포넌트 렌더링
@@ -191,7 +232,7 @@ export function CreateWorkloadDrawer() {
                 color="primary"
                 variant="gradient"
                 size="medium"
-                onClick={handleNext}
+                onClick={isLastStep ? handleSubmit : handleNext}
                 iconPosition={isLastStep ? "left" : "right"}
                 icon={isLastStep ? "Plus" : "Front"}
                 iconSize={24}

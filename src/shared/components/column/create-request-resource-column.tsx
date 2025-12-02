@@ -8,12 +8,12 @@ import type {
   RequestResourceMigGpuType,
 } from "@/domain/request-resource/schemas/request-resource.schema";
 import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
-import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
-import { applyColumnConfigs } from "@/shared/utils/column.util";
-import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
 import { WorkspaceRequestResourceStatusText } from "@/shared/components/text/workspace-request-resource-status-text";
+import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
+import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { ColumnMig } from "./column-mig";
 
 const createColumnList = (): ResponsiveColumnType[] => {

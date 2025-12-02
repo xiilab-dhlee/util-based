@@ -6,7 +6,10 @@ import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
 import type { WorkloadImageType } from "@/domain/workload/schemas/workload.schema";
-import { imageIdAtom, imageTagIdAtom } from "@/domain/workload/state/create-workload.atom";
+import {
+  imageIdAtom,
+  imageTagIdAtom,
+} from "@/domain/workload/state/create-workload.atom";
 import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
 
 interface CreateWorkloadImageButtonProps {

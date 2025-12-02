@@ -4,9 +4,12 @@ import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Icon, Tooltip } from "xiilab-ui";
 
+import {
+  imageTypeAtom,
+  jobTypeAtom,
+} from "@/domain/workload/state/create-workload.atom";
 import { WorkloadImageTooltipTitle } from "@/shared/components/tooltip-title/workload-image-tooltip-title";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import { imageTypeAtom, jobTypeAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadHubImageSelect } from "./create-workload-hub-image-select";
 import { CreateWorkloadImageButton } from "./create-workload-image-button";
 import { CreateWorkloadInternalRegistryImageSelect } from "./create-workload-internal-registry-image-select";

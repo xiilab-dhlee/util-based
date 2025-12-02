@@ -4,8 +4,11 @@ import { useAtom, useSetAtom } from "jotai";
 import { Dropdown } from "xiilab-ui";
 
 import { useGetInternalRegistryImageOptions } from "@/domain/internal-registry-image/hooks/use-get-internal-registry-image-options";
+import {
+  imageIdAtom,
+  imageTagIdAtom,
+} from "@/domain/workload/state/create-workload.atom";
 import { useSelect } from "@/shared/hooks/use-select";
-import { imageIdAtom, imageTagIdAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadInternalRegistryImageSelect() {
   const [imageId, setImageId] = useAtom(imageIdAtom);
