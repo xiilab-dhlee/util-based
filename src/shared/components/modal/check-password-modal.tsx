@@ -10,9 +10,9 @@ import type { CheckPasswordPayload } from "@/domain/account-management/types/acc
 import { LoggedInUserCard } from "@/shared/components/card/logged-in-user-card";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
-import { openCheckPasswordModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { openCheckPasswordModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 
 /**

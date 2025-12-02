@@ -1,6 +1,6 @@
 import { css } from "styled-components";
 
-import { statusColorStyle } from "./color";
+import { statusColorStyle } from "@/styles/mixins/color";
 
 /**
  * 서브타이틀 스타일

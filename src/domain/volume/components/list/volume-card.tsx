@@ -27,7 +27,7 @@ export function VolumeCard({
   creatorName,
   creatorDate,
   storageType,
-  mountPath,
+  path,
   labels,
   isSelected,
 }: VolumeCardProps) {
@@ -95,7 +95,7 @@ export function VolumeCard({
             </CardValue>
             {/* 볼륨 경로 정보 */}
             <CardValue>
-              <CardPath>{mountPath || "-"}</CardPath>
+              <CardPath>{path || "-"}</CardPath>
             </CardValue>
           </CardRight>
         </Body>

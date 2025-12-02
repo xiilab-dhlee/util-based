@@ -10,9 +10,9 @@ import type {
   CredentialType,
 } from "@/domain/credential/types/credential.type";
 import { FormLabel } from "@/shared/components/form/form-label";
-import { openCreateCredentialModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSelect } from "@/shared/hooks/use-select";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 
 /**

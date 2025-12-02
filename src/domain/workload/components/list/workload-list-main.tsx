@@ -2,15 +2,15 @@
 
 import { Icon } from "xiilab-ui";
 
-import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
-import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
-import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
 import { WorkloadListBody } from "@/domain/workload/components/list/workload-list-body";
 import { WorkloadListFilter } from "@/domain/workload/components/list/workload-list-filter";
 import { WorkloadListFooter } from "@/domain/workload/components/list/workload-list-footer";
+import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
+import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,
@@ -56,7 +56,11 @@ const GUIDES: CoreGuide[] = [
 ];
 
 export function WorkloadListMain() {
-  const handleCreateWorkload = () => {};
+  const publish = usePublish();
+
+  const handleCreateWorkload = () => {
+    publish(WORKLOAD_EVENTS.sendCreateWorkload, null);
+  };
 
   return (
     <>
@@ -97,11 +101,8 @@ export function WorkloadListMain() {
           <WorkloadListFooter />
         </ListPageBody>
       </ListPageMain>
-
-      {/* 볼륨 생성 관련 모달들 - drawer보다 상단에 표시 */}
-      <SelectVolumeTypeModal />
-      <CreateAstragoVolumeModal />
-      <CreateOnPremVolumeModal />
+      {/* 워크로드 생성 드로어 */}
+      <CreateWorkloadDrawer />
     </>
   );
 }

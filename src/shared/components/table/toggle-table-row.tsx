@@ -8,7 +8,7 @@ import type {
 import { Children, cloneElement, isValidElement } from "react";
 import { Icon } from "xiilab-ui";
 
-import { ColumnIconWrap } from "../../../styles/layers/column-layer.styled";
+import { ColumnIconWrap } from "@/styles/layers/column-layer.styled";
 
 interface ToggleTableRowProps extends HTMLAttributes<HTMLTableRowElement> {
   toggle: boolean;

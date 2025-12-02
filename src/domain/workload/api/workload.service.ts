@@ -1,5 +1,6 @@
 import type {
   CreateCommitImagePayload,
+  CreateWorkloadPayload,
   GetWorkloadFilesPayload,
   GetWorkloadPayload,
   GetWorkloadsPayload,
@@ -46,6 +47,15 @@ export class WorkloadService extends AxiosService {
 
   /** 워크로드 커밋 이미지 생성 */
   public async createCommitImage(payload: CreateCommitImagePayload) {
+    const response = await this.getAxios().post(
+      "/core-api/v1/core/internal-registry-image",
+      payload,
+    );
+    return response.data;
+  }
+
+  /** 워크로드 생성 */
+  public async createWorkload(payload: CreateWorkloadPayload) {
     const response = await this.getAxios().post(this.BASE_URL, payload);
     return response.data;
   }

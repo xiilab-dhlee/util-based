@@ -6,6 +6,8 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
+import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
+import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 import { useGetSourcecode } from "@/domain/sourcecode/hooks/use-get-sourcecode";
 import { useUpdateSourcecode } from "@/domain/sourcecode/hooks/use-update-sourcecode";
 import type { UpdateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
@@ -28,8 +30,6 @@ import {
   AsideDetailHeader,
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
-import { ManageCredential } from "../manage-credential";
-import { ManageParameter } from "../manage-parameter";
 import { ReadOnlyParameter } from "./read-only-parameter";
 
 /**
@@ -66,7 +66,7 @@ export function UpdateSourcecode() {
   // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
   const [isReadOnly, setIsReadOnly] = useState(true);
 
-  const { text } = getSourcecodeTypeInfo(data?.codeType || "GIT_HUB");
+  const { text } = getSourcecodeTypeInfo(data?.type || "GIT_HUB");
 
   /**
    * 드로어 닫기 핸들러
@@ -134,7 +134,7 @@ export function UpdateSourcecode() {
     const formData = new FormData(formRef.current);
 
     // 기본 필드들 수집
-    const defaultPath = formData.get("defaultPath") as string;
+    const path = formData.get("path") as string;
 
     // 파라미터 데이터 수집
     // 파라미터는 동적으로 추가되므로 인덱스 기반으로 순차적으로 수집
@@ -156,7 +156,7 @@ export function UpdateSourcecode() {
     }
 
     return {
-      defaultPath,
+      path,
       // 키나 값이 모두 비어있는 파라미터는 필터링하여 제거
       parameters: parameters.filter((p) => p.key || p.value),
     };
@@ -182,7 +182,7 @@ export function UpdateSourcecode() {
             {/* 소스코드 이름 */}
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>소스코드 이름</AsideDetailArticleKey>
-              <AsideDetailArticleValue>{data?.title}</AsideDetailArticleValue>
+              <AsideDetailArticleValue>{data?.name}</AsideDetailArticleValue>
             </AsideDetailArticleColumn>
 
             {/* 소스코드 타입 */}
@@ -197,7 +197,7 @@ export function UpdateSourcecode() {
               {/* 읽기 전용 모드일 때만 표시 */}
               {isReadOnly && (
                 <AsideDetailArticleValue className="truncate">
-                  {data?.defaultPath}
+                  {data?.path}
                 </AsideDetailArticleValue>
               )}
             </AsideDetailArticleColumn>
@@ -208,9 +208,9 @@ export function UpdateSourcecode() {
                 <Input
                   placeholder="기본 마운트 경로를 입력해주세요."
                   width="100%"
-                  name="defaultPath"
+                  name="path"
                   autoComplete="off"
-                  defaultValue={data?.defaultPath || ""}
+                  defaultValue={data?.path || ""}
                 />
               </div>
             )}

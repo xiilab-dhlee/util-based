@@ -10,8 +10,8 @@ import {
   theme as themeX,
 } from "xiilab-ui";
 
+import { withRowData } from "@/shared/components/hoc/with-row-data";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
-import { withRowData } from "../hoc/with-row-data";
 
 /**
  * CustomizedTable 컴포넌트의 props 인터페이스

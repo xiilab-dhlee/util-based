@@ -2,14 +2,14 @@
 
 import { useParams } from "next/navigation";
 
+import { DeleteInternalRegistryImageTagModal } from "@/domain/internal-registry-image/components/detail/delete-internal-registry-image-tag-modal";
+import { ViewInternalRegistryImageTagLogModal } from "@/domain/internal-registry-image/components/view-internal-registry-image-tag-log-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,
   DetailPageBody,
   DetailPageContent,
 } from "@/styles/layers/detail-page-layers.styled";
-import { DeleteInternalRegistryImageTagModal } from "../detail/delete-internal-registry-image-tag-modal";
-import { ViewInternalRegistryImageTagLogModal } from "../view-internal-registry-image-tag-log-modal";
 import { InternalRegistryImageTagDetailAside } from "./internal-registry-image-tag-detail-aside";
 import { InternalRegistryImageTagVulnerabilityListBody } from "./internal-registry-image-tag-vulnerability-list-body";
 import { InternalRegistryImageTagVulnerabilityListFilter } from "./internal-registry-image-tag-vulnerability-list-filter";

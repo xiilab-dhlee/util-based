@@ -10,8 +10,8 @@ import { Icon } from "xiilab-ui";
 import { Arthur } from "xterm-theme";
 
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
-import { terminalThemeAtom } from "@/shared/hooks/terminal.atom";
-import type { TerminalEventProps } from "@/shared/types/terminal.interface";
+import { terminalThemeAtom } from "@/shared/state/terminal.atom";
+import type { TerminalEventProps } from "@/shared/types/terminal.type";
 import {
   createTermBgClasses,
   createTermFgClasses,

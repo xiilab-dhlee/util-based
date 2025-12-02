@@ -40,7 +40,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
         const handleClick = () => {
           pubsubUtil.publish(ACCOUNT_EVENTS.sendViewAccountDetail, record);
         };
-        return <ColumnTextButton onClick={handleClick}>{name}</ColumnTextButton>;
+        return (
+          <ColumnTextButton onClick={handleClick}>{name}</ColumnTextButton>
+        );
       },
     },
     {
@@ -56,12 +58,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
     {
       title: "권한",
       dataIndex: "role",
-      align: "left",
+      align: "center",
     },
     {
       title: "가입일",
       dataIndex: "createdAt",
-      align: "left",
+      align: "center",
       render: (createdAt: string) => {
         return <span>{format(createdAt, "yyyy.MM.dd")}</span>;
       },

@@ -59,10 +59,9 @@ export function MonitoringSubSection() {
           <LeftBody>
             <CustomizedTable
               columns={createWorkloadColumn([
-                { dataIndex: "workloadName" },
-                { dataIndex: "creatorName", title: "사용자" },
+                { dataIndex: "creatorName", title: "사용자", width: 100 },
                 { dataIndex: "labels" },
-                { dataIndex: "status" },
+                { dataIndex: "status", width: 80 },
                 { dataIndex: "elapsedTime" },
               ])}
               data={workloadListMock}

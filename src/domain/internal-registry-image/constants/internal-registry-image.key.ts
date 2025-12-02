@@ -1,3 +1,4 @@
+import type { InternalRegistryImageIdType } from "@/domain/internal-registry-image/schemas/internal-registry-image.schema";
 import type {
   GetAdminInternalRegistryImagePayload,
   GetAdminInternalRegistryImagesPayload,
@@ -15,8 +16,9 @@ export const internalregistryImageKeys = {
     "list",
     ...Object.values(payload),
   ],
+  allList: () => [...internalregistryImageKeys.default, "allList"],
   // 내부 레지스트리 내 이미지 상세
-  detail: (imageId: number) => [
+  detail: (imageId: InternalRegistryImageIdType) => [
     ...internalregistryImageKeys.default,
     "detail",
     imageId,
@@ -38,6 +40,11 @@ export const internalregistryImageKeys = {
     ...internalregistryImageKeys.default,
     "tagList",
     ...Object.values(payload),
+  ],
+  allTagList: (imageId: InternalRegistryImageIdType) => [
+    ...internalregistryImageKeys.default,
+    "allTagList",
+    imageId,
   ],
   // 내부 레지스트리 이미지 태그 상세
   tagDetail: (payload: GetInternalRegistryImageTagDetailPayload) => [

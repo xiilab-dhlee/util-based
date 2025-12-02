@@ -8,4 +8,5 @@ export const hubKeys = {
     ...Object.values(payload),
   ],
   detail: (id: number) => [...hubKeys.default, "detail", id],
+  allList: () => [...hubKeys.default, "allList"],
 };

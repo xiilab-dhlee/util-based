@@ -243,13 +243,18 @@ export function ManageGroupMemberModal() {
                       <SelectedItemContent>
                         <SelectedItemName>{account.name}</SelectedItemName>
                         {account.email && (
-                          <SelectedItemSubName>{account.email}</SelectedItemSubName>
+                          <SelectedItemSubName>
+                            {account.email}
+                          </SelectedItemSubName>
                         )}
                       </SelectedItemContent>
                       <Button
                         icon="Delete"
                         onClick={() =>
-                          handleRemoveMember(account.id, GROUP_TREE_NODE_TYPE.account)
+                          handleRemoveMember(
+                            account.id,
+                            GROUP_TREE_NODE_TYPE.account,
+                          )
                         }
                       />
                     </SelectedItem>
@@ -278,7 +283,12 @@ export function ManageGroupMemberModal() {
                         </SelectedItemContent>
                         <Button
                           icon="Delete"
-                          onClick={() => handleRemoveMember(group.id, GROUP_TREE_NODE_TYPE.group)}
+                          onClick={() =>
+                            handleRemoveMember(
+                              group.id,
+                              GROUP_TREE_NODE_TYPE.group,
+                            )
+                          }
                         />
                       </SelectedItem>
                     ))}

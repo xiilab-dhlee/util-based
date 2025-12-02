@@ -2,6 +2,7 @@
 
 import { Icon } from "xiilab-ui";
 
+import { DeleteInternalRegistryImageModal } from "@/domain/internal-registry-image/components/delete-internal-registry-image-modal";
 import { InternalRegistryImageListBody } from "@/domain/internal-registry-image/components/list/internal-registry-image-list-body";
 import { InternalRegistryImageListFilter } from "@/domain/internal-registry-image/components/list/internal-registry-image-list-filter";
 import { InternalRegistryImageListFooter } from "@/domain/internal-registry-image/components/list/internal-registry-image-list-footer";
@@ -16,7 +17,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { DeleteInternalRegistryImageModal } from "../delete-internal-registry-image-modal";
 import { CreateInternalRegistryImageModal } from "./create-internal-registry-image-modal";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
@@ -39,7 +39,7 @@ const GUIDE_IMAGES: CoreGuideImage[] = [
 
 const GUIDES: CoreGuide[] = [
   {
-    icon: <Icon name="InternalRegistry" color="var(--icon-fill)" />,
+    icon: <Icon name="Image" color="var(--icon-fill)" />,
     title: "내부 레지스트리란?",
     description: [
       "조직 내부에서 사용하는 컨테이너 이미지를 저장하고 관리하는",

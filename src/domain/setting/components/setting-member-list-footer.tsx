@@ -2,13 +2,13 @@
 
 import { useAtom, useAtomValue } from "jotai";
 
-import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
-import { SETTING_LIST_PAGE_SIZE } from "../constants/setting.constant";
-import { useGetSettingWorkspaceMembers } from "../hooks/use-get-setting-workspace-members";
+import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
+import { useGetSettingWorkspaceMembers } from "@/domain/setting/hooks/use-get-setting-workspace-members";
 import {
   settingMemberPageAtom,
   settingMemberSearchTextAtom,
-} from "../state/setting.atom";
+} from "@/domain/setting/state/setting.atom";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 
 export function SettingMemberListFooter() {
   // 페이지 번호

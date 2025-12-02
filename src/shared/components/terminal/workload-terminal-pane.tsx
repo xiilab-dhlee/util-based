@@ -17,7 +17,7 @@ import {
 import type {
   TerminalEventProps,
   TerminalPaneState,
-} from "@/shared/types/terminal.interface";
+} from "@/shared/types/terminal.type";
 import { WorkloadTerminalNode } from "./workload-terminal-node";
 
 // const WorkloadTerminalNode = dynamic(() => import("./workload-terminal-node"), {

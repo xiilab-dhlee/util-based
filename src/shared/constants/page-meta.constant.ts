@@ -10,7 +10,7 @@
  *   `iconName`을 사용해 `<MyIcon name={iconName} />` 형태로 수행해야 합니다.
  */
 
-import { ROUTES } from "./routes.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 
 /**
  * PAGE_META 정의
@@ -28,7 +28,7 @@ export const PAGE_META = {
   },
   "admin.kubernetes-monitoring": {
     title: "쿠버네티스 모니터링",
-    iconName: "KubernetesMonitoring",
+    iconName: "SystemMonitoring",
     href: ROUTES.ADMIN_KUBERNETES_MONITORING,
   },
   "admin.system-monitoring": {
@@ -38,7 +38,7 @@ export const PAGE_META = {
   },
   "admin.monitoring-notification": {
     title: "모니터링 알림",
-    iconName: "Notification",
+    iconName: "Noti",
     href: ROUTES.ADMIN_MONITORING_NOTIFICATION,
   },
 
@@ -173,7 +173,7 @@ export const PAGE_META = {
   },
   "admin.internal-registry": {
     title: "내부 레지스트리",
-    iconName: "InternalRegistry",
+    iconName: "Image",
     href: ROUTES.ADMIN_INTERNAL_REGISTRY,
   },
   "admin.internal-registry.image": {
@@ -184,7 +184,7 @@ export const PAGE_META = {
   },
   "admin.request-image": {
     title: "이미지 사용 요청 관리",
-    iconName: "ImageRequest",
+    iconName: "Image",
     href: ROUTES.ADMIN_REQUEST_IMAGE,
   },
   "admin.external-registry": {
@@ -236,7 +236,7 @@ export const PAGE_META = {
   },
   "admin.notification": {
     title: "알림 설정",
-    iconName: "Notification",
+    iconName: "Noti",
     href: ROUTES.ADMIN_NOTIFICATION,
   },
 

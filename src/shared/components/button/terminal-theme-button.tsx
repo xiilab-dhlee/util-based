@@ -7,8 +7,8 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
-import { terminalThemeAtom } from "@/shared/hooks/terminal.atom";
 import { useLocalStorage } from "@/shared/hooks/use-local-storage";
+import { terminalThemeAtom } from "@/shared/state/terminal.atom";
 import { toolButtonStyle } from "@/styles/mixins/button";
 import { createTermBgClasses } from "@/styles/mixins/terminal";
 

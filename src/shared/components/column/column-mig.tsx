@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Tag } from "xiilab-ui";
 
 import type { RequestResourceMigGpuType } from "@/domain/request-resource/schemas/request-resource.schema";
-import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 interface ColumnMigProps {
   migProfiles: RequestResourceMigGpuType;
