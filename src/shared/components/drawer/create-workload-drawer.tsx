@@ -1,0 +1,335 @@
+"use client";
+
+import { useAtom } from "jotai";
+import { toast } from "react-toastify";
+import styled from "styled-components";
+import type { StepItem } from "xiilab-ui";
+import { Button, Drawer, Step, Typography } from "xiilab-ui";
+
+import { CreateSourcecodeModal } from "@/domain/sourcecode/components/create-sourcecode-modal";
+import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
+import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
+import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
+import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/create-workload-first-step";
+import { CreateWorkloadFourthStep } from "@/domain/workload/components/create/create-workload-fourth-step";
+import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
+import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
+import { useCreateWorkload } from "@/domain/workload/hooks/use-create-workload";
+import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
+import {
+  envsAtom,
+  execCommandAtom,
+  execPathAtom,
+  imageIdAtom,
+  imageTypeAtom,
+  jobTypeAtom,
+  nodeModeAtom,
+  portsAtom,
+  stepAtom,
+  workloadDescriptionAtom,
+  workloadNameAtom,
+  workloadOutputPathAtom,
+  workloadSourcecodesAtom,
+  workloadVolumesAtom,
+} from "@/domain/workload/state/create-workload.atom";
+import type { CreateWorkloadPayload } from "@/domain/workload/types/workload.type";
+import { SelectWorkloadModal } from "@/shared/components/modal/select-workload-modal";
+import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
+import { hideScrollbar } from "@/styles/mixins/scrollbar";
+
+const STEP_ITEMS: StepItem[] = [
+  {
+    number: "01",
+    description: "Job Type & Meta Data",
+  },
+  {
+    number: "02",
+    description: "Resource",
+  },
+  {
+    number: "03",
+    description: "Task",
+  },
+  {
+    number: "04",
+    description: "Command",
+  },
+];
+
+export function CreateWorkloadDrawer() {
+  const { open, onOpen, onClose } = useGlobalModal(
+    openCreateWorkloadDrawerAtom,
+  );
+
+  const createWorkload = useCreateWorkload();
+
+  const [step, setStep] = useAtom(stepAtom);
+  // step 1
+  const [jobType, setJobType] = useAtom(jobTypeAtom);
+  const [workloadName, setWorkloadName] = useAtom(workloadNameAtom);
+  const [workloadDescription, setWorkloadDescription] = useAtom(
+    workloadDescriptionAtom,
+  );
+  // step 2
+  const [nodeMode, setNodeMode] = useAtom(nodeModeAtom);
+  const [imageType, setImageType] = useAtom(imageTypeAtom);
+  const [imageId, setImageId] = useAtom(imageIdAtom);
+  // step 3
+  const [workloadSourcecodes, setWorkloadSourcecodes] = useAtom(
+    workloadSourcecodesAtom,
+  );
+  const [workloadVolumes, setWorkloadVolumes] = useAtom(workloadVolumesAtom);
+  const [workloadOutputPath, setWorkloadOutputPath] = useAtom(
+    workloadOutputPathAtom,
+  );
+  // step 4
+  const [execPath, setExecPath] = useAtom(execPathAtom);
+  const [execCommand, setExecCommand] = useAtom(execCommandAtom);
+  const [envs, setEnvs] = useAtom(envsAtom);
+  const [ports, setPorts] = useAtom(portsAtom);
+
+  const isLastStep = step === STEP_ITEMS.length - 1;
+
+  const handleNext = () => {
+    setStep((prev) => Math.min(prev + 1, STEP_ITEMS.length - 1));
+  };
+
+  const handlePrev = () => {
+    setStep((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleSubmit = () => {
+    const payload = createPayload();
+
+    if (payload) {
+      createWorkload.mutate(payload, {
+        onSuccess: () => {
+          toast.success("워크로드 생성 성공");
+        },
+      });
+    }
+  };
+
+  const createPayload = (): CreateWorkloadPayload | null => {
+    return {
+      workloadName: workloadName,
+      workloadDescription: workloadDescription,
+      jobType: jobType,
+      nodeMode: nodeMode,
+      imageType: imageType || "",
+      imageId: imageId || 0,
+      sourcecodes: workloadSourcecodes,
+      workloadVolumes: workloadVolumes,
+      workloadOutputPath: workloadOutputPath,
+      execPath: execPath || "",
+      execCommand: execCommand || "",
+      envs: envs,
+      ports: ports,
+    };
+  };
+
+  // 현재 단계에 맞는 컴포넌트 렌더링
+  const renderCurrentStepContent = () => {
+    switch (step) {
+      case 0:
+        return <CreateWorkloadFirstStep />;
+      case 1:
+        return <CreateWorkloadSecondStep />;
+      case 2:
+        return <CreateWorkloadThirdStep />;
+      case 3:
+        return <CreateWorkloadFourthStep />;
+    }
+  };
+
+  useSubscribe(
+    WORKLOAD_EVENTS.sendCreateWorkload,
+    (eventData: WorkloadDetailType) => {
+      // eventData가 없는 경우 워크로드 생성
+      // eventData가 있는 경우 워크로드 복제
+      // step 1
+      // 잡타입 설정
+      setJobType(eventData?.jobType || "BATCH");
+      // 워크로드 이름 설정
+      setWorkloadName(eventData?.workloadName || "");
+      // 워크로드 설명 설정
+      setWorkloadDescription(eventData?.description || "");
+      // step 2
+      // 노드 설정
+      setNodeMode("single");
+      // 리소스 프리셋(현재 X)
+      // 이미지 설정
+      setImageType(eventData?.image?.type || "HUB");
+      setImageId(eventData?.image?.name || null);
+      // step 3
+      // 소스코드
+      setWorkloadSourcecodes(eventData?.sourcecodes || []);
+      // 볼륨
+      setWorkloadVolumes(eventData?.volumes || []);
+      // output 경로(현재 X)
+      setWorkloadOutputPath("");
+      // step 4
+      // 실행 경로 (현재 X)
+      setExecPath("");
+      // 실행 명령어
+      setExecCommand("");
+      // 환경 변수
+      setEnvs(eventData?.envs || []);
+      setPorts(eventData?.ports || []);
+      setStep(0);
+      onOpen();
+    },
+  );
+
+  return (
+    <>
+      <Drawer
+        open={open}
+        onClose={onClose}
+        placement="right"
+        width={620}
+        title={
+          <Header>
+            <PurpleBar />
+            <Typography.Text variant="title-2">워크로드 생성</Typography.Text>
+          </Header>
+        }
+        footer={
+          <Footer>
+            {step === 0 && (
+              <CancelButton>
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  onClick={onClose}
+                  width="100%"
+                >
+                  <Typography.Text variant="button-1">취소</Typography.Text>
+                </Button>
+              </CancelButton>
+            )}
+
+            {step > 0 && (
+              <CancelButton>
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  onClick={handlePrev}
+                  width="100%"
+                >
+                  <Typography.Text variant="button-1">
+                    이전 단계
+                  </Typography.Text>
+                </Button>
+              </CancelButton>
+            )}
+
+            <ActionButton>
+              <Button
+                color="primary"
+                variant="gradient"
+                size="medium"
+                onClick={isLastStep ? handleSubmit : handleNext}
+                iconPosition={isLastStep ? "left" : "right"}
+                icon={isLastStep ? "Plus" : "Front"}
+                iconSize={24}
+                width="100%"
+              >
+                <Typography.Text
+                  variant="body-1-1"
+                  color="var(--color-gray-13)"
+                >
+                  {isLastStep ? "워크로드 생성" : "다음 단계"}
+                </Typography.Text>
+              </Button>
+            </ActionButton>
+          </Footer>
+        }
+        closable={true}
+        maskClosable={true} // 배경 클릭으로 닫기 활성화
+        styles={{
+          header: {
+            padding: "27px 24px 21px 24px",
+          },
+          body: {
+            padding: "0px 24px 0px 24px",
+          },
+        }}
+      >
+        <Container>
+          <StepWrapper>
+            <Step steps={STEP_ITEMS} currentStep={step} />
+          </StepWrapper>
+          <Body>
+            {/* 현재 단계에 맞는 폼 컴포넌트 렌더링 */}
+            {renderCurrentStepContent()}
+          </Body>
+        </Container>
+      </Drawer>
+      {/* 소스코드 생성 모달 */}
+      <CreateSourcecodeModal />
+      {/* 볼륨 생성 모달 */}
+      <SelectVolumeTypeModal />
+      <CreateAstragoVolumeModal />
+      <CreateOnPremVolumeModal />
+      {/* 워크로드 가져오기 모달 */}
+      <SelectWorkloadModal />
+    </>
+  );
+}
+
+// 전체 컨테이너 래퍼
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const PurpleBar = styled.div`
+  width: 2px;
+  height: 16px;
+  flex-shrink: 0;
+  background: var(--color-purple-02);
+`;
+
+const StepWrapper = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: calc(100% + 12px);
+`;
+
+const Body = styled.div`
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  padding-top: 20px;
+
+  ${hideScrollbar}
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+`;
+
+const CancelButton = styled.div`
+  width: 20%;
+`;
+
+const ActionButton = styled.div`
+  width: 80%;
+`;

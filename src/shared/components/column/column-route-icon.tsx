@@ -4,7 +4,7 @@ import { Icon } from "xiilab-ui";
 import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
-} from "../../../styles/layers/column-layer.styled";
+} from "@/styles/layers/column-layer.styled";
 
 /**
  * 테이블 컬럼에서 사용되는 클릭 가능한 라우팅 아이콘 컴포넌트

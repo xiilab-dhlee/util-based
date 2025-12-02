@@ -16,4 +16,5 @@ export const volumeKeys = {
     "fileList",
     ...Object.values(payload),
   ],
+  allList: () => [...volumeKeys.default, "allList"],
 };

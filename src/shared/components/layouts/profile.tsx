@@ -9,8 +9,8 @@ import { Icon } from "xiilab-ui";
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
-import { openProfilePopoverAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
 
 export function Profile() {
   // 임시 사용자 정보

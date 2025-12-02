@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import { HubListBody } from "@/domain/hub/components/list/hub-list-body";
 import { HubListFilter } from "@/domain/hub/components/list/hub-list-filter";
 import { HubListFooter } from "@/domain/hub/components/list/hub-list-footer";
+import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   ListPageBody,
@@ -29,6 +30,8 @@ export default function HubLayout({ children }: PropsWithChildren) {
         </ListPageBody>
         {children}
       </ListPageMain>
+      {/* 워크로드 생성 드로어 */}
+      <CreateWorkloadDrawer />
     </>
   );
 }

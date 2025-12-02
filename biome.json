@@ -39,7 +39,8 @@
         }
       },
       "style": {
-        "noDefaultExport": "error"
+        "noDefaultExport": "error",
+        "useImportType": "error"
       },
       "a11y": {
         "useKeyWithMouseEvents": "off"

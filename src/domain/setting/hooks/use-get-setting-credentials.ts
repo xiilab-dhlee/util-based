@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
 import type { GetCredentialsPayload } from "@/domain/credential/types/credential.type";
+import { settingKeys } from "@/domain/setting/constants/setting.key";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
-import { settingKeys } from "../constants/setting.key";
 
 /**
  * 설정 크레덴셜 목록 조회

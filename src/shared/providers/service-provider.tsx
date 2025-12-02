@@ -22,6 +22,7 @@ import { VolumeService } from "@/domain/volume/api/volume.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
 import { WorkspaceService } from "@/domain/workspace/api/workspace.service";
+import { GpuService } from "@/shared/api/gpu.service";
 
 // 서비스 컨텍스트 타입 정의
 interface ServiceContextType {
@@ -44,6 +45,7 @@ interface ServiceContextType {
   internalregistryService: InternalRegistryService;
   internalregistryImageService: InternalRegistryImageService;
   adminInternalRegistryImageService: AdminInternalRegistryImageService;
+  gpuService: GpuService;
 }
 
 // 서비스 컨텍스트 생성
@@ -83,6 +85,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     internalregistryService: new InternalRegistryService(),
     internalregistryImageService: new InternalRegistryImageService(),
     adminInternalRegistryImageService: new AdminInternalRegistryImageService(),
+    gpuService: new GpuService(),
   };
 
   return (

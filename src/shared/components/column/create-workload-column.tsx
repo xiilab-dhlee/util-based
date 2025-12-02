@@ -2,6 +2,7 @@ import classNames from "classnames";
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
+import { SelectWorkloadRadio } from "@/domain/workload/components/create/select-workload-radio";
 import { WorkloadLogButton } from "@/domain/workload/components/list/workload-log-button";
 import { WorkloadMonitoringButton } from "@/domain/workload/components/list/workload-monitoring-button";
 import { WorkloadNameLink } from "@/domain/workload/components/list/workload-name-link";
@@ -42,6 +43,15 @@ const createColumnList = (): ResponsiveColumnType[] => {
           </ColumnAlignCenterWrap>
         );
       },
+    },
+    {
+      dataIndex: "select",
+      title: "선택",
+      width: 50,
+      align: "center",
+      render: (_, record: WorkloadListType) => (
+        <SelectWorkloadRadio workloadId={record.id} />
+      ),
     },
     {
       dataIndex: "workloadName",

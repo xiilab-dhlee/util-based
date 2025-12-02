@@ -217,7 +217,7 @@ export function UpdateVolume() {
               {/* 읽기 전용 모드일 때만 표시 */}
               {isReadOnly && (
                 <AsideDetailArticleValue className="truncate">
-                  {data?.mountPath || "-"}
+                  {data?.path || "-"}
                 </AsideDetailArticleValue>
               )}
             </AsideDetailArticleColumn>
@@ -229,7 +229,7 @@ export function UpdateVolume() {
                   width="100%"
                   name="defaultPath"
                   autoComplete="off"
-                  defaultValue={data?.mountPath || ""}
+                  defaultValue={data?.path || ""}
                 />
               </div>
             )}

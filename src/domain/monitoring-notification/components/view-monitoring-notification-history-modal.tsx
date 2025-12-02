@@ -4,6 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal, Typography } from "xiilab-ui";
 
+import { createMonitoringNotificationHistoryColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-history-column";
 import { useGetMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notification";
 import { openViewMonitoringNotificationHistoryModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
@@ -11,7 +12,6 @@ import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
-import { createMonitoringNotificationHistoryColumn } from "../column/create-monitoring-notification-history-column";
 
 // Mock 발송 이력 데이터
 const MOCK_SEND_HISTORY = [

@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Icon, InfoModal } from "xiilab-ui";
 
 import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
-import { openViewRejectReasonModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { openViewRejectReasonModalAtom } from "@/shared/state/modal.atom";
 import { ModalDisplayReason } from "@/styles/layers/modal-layers.styled";
 
 export function ViewRejectReasonModal() {

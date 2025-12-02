@@ -7,13 +7,13 @@ import { InternalRegistryImageTagAllCheck } from "@/domain/internal-registry-ima
 import { InternalRegistryImageTagItemCheck } from "@/domain/internal-registry-image/components/detail/internal-registry-image-tag-item-check";
 import { InternalRegistryImageTagLink } from "@/domain/internal-registry-image/components/detail/internal-registry-image-tag-link";
 import type { InternalRegistryImageTagListType } from "@/domain/internal-registry-image/schemas/internal-registry-image-tag.schema";
+import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
+import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
+import { SecurityTooltip } from "@/shared/components/tooltip/security-tooltip";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
-import { ViewRejectReasonButton } from "../button/view-reject-reason-button";
-import { ViewRequestReasonButton } from "../button/view-request-reason-button";
-import { SecurityTooltip } from "../tooltip/security-tooltip";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [

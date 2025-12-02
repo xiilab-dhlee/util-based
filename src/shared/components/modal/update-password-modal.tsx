@@ -13,9 +13,9 @@ import {
   ACCOUNT_EVENTS,
   COMMON_EVENTS,
 } from "@/shared/constants/pubsub.constant";
-import { openUpdatePasswordModalAtom } from "@/shared/hooks/modal.atom";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { openUpdatePasswordModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 

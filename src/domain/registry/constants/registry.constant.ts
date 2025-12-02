@@ -9,7 +9,7 @@ export const REGISTRY_QUICK_MENUS = [
   {
     title: "내부 레지스트리",
     titleEng: "Internal Registry",
-    icon: "InternalRegistry",
+    icon: "Image",
     iconSize: 32,
     href: "/admin/internal-registry",
   },

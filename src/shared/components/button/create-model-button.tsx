@@ -3,7 +3,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
-import { CirclePlusIcon } from "../icon/circle-plus-icon";
+import { CirclePlusIcon } from "@/shared/components/icon/circle-plus-icon";
 
 interface CreateModelButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -29,6 +29,7 @@ const Container = styled.button`
   align-items: center;
   gap: 4px;
   font-size: 12px;
+  line-height: 12px;
   font-weight: 400;
   color: #666666;
 

@@ -12,5 +12,5 @@ export interface CoreSearchText {
 }
 
 export interface CorePayload {
-  [key: string]: string | number | boolean | undefined; // 인덱스 시그니처 추가
+  [key: string]: string | number | boolean | undefined | Array<unknown>; // 인덱스 시그니처 추가
 }

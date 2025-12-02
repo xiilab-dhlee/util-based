@@ -5,7 +5,7 @@ import { UpdateWorkspaceMemberButton } from "@/domain/workspace-member/component
 import { WorkspaceMemberAllCheck } from "@/domain/workspace-member/components/workspace-member-all-check";
 import { WorkspaceMemberItemCheck } from "@/domain/workspace-member/components/workspace-member-item-check";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
-import { ColumnAlignCenterWrap } from "../../../styles/layers/column-layer.styled";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 const ICON_COLUMN_WIDTH = 40;
 

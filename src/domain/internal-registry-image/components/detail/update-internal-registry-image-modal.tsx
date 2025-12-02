@@ -4,6 +4,12 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Dropdown, Icon, Modal, TextArea } from "xiilab-ui";
 
+import { INTERNAL_REGISTRY_IMAGE_STATUS_OPTIONS } from "@/domain/internal-registry-image/constants/internal-registry-image.constant";
+import { useUpdateInternalRegistryImage } from "@/domain/internal-registry-image/hooks/use-update-internal-registry-image";
+import type {
+  InternalRegistryImageIdType,
+  InternalRegistryImageListType,
+} from "@/domain/internal-registry-image/schemas/internal-registry-image.schema";
 import { openUpdateInternalRegistryImageModalAtom } from "@/domain/internal-registry-image/state/internal-registry-image.atom";
 import type { UpdateInternalRegistryImagePayload } from "@/domain/internal-registry-image/types/internal-registry-image.type";
 import { FormLabel } from "@/shared/components/form/form-label";
@@ -12,12 +18,6 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { useSelect } from "@/shared/hooks/use-select";
 import { FormItem } from "@/styles/layers/form-layer.styled";
-import { INTERNAL_REGISTRY_IMAGE_STATUS_OPTIONS } from "../../constants/internal-registry-image.constant";
-import { useUpdateInternalRegistryImage } from "../../hooks/use-update-internal-registry-image";
-import type {
-  InternalRegistryImageIdType,
-  InternalRegistryImageListType,
-} from "../../schemas/internal-registry-image.schema";
 
 export function UpdateInternalRegistryImageModal() {
   const { open, onOpen, onClose } = useGlobalModal(

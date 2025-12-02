@@ -7,12 +7,14 @@ import { useRef } from "react";
 import styled from "styled-components";
 import { Button, Dropdown, Input } from "xiilab-ui";
 
+import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
+import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 import { useCreateSourcecode } from "@/domain/sourcecode/hooks/use-create-sourcecode";
 import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
 import { GuidePopover } from "@/shared/components/popover/guide-popover";
-import { openCreateCredentialModalAtom } from "@/shared/hooks/modal.atom";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
 import { AsideDetailForm } from "@/styles/layers/aside-detail-layers.styled";
 import {
   AsideListArticleDescription,
@@ -30,8 +32,6 @@ import {
   SourcecodeFormTooltipDescription,
   SourcecodeFormTooltipTitle,
 } from "@/styles/layers/sourcecode-form-layers.styled";
-import { ManageCredential } from "../manage-credential";
-import { ManageParameter } from "../manage-parameter";
 
 /**
  * 소스코드 생성 컴포넌트

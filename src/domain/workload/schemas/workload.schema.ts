@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
+import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
+import { WORKLOAD_IMAGE_TYPES } from "@/domain/workload/constants/workload.constant";
+
 // 워크로드 스키마
 const baseWorkloadSchema = z.object({
   /** 워크로드 아이디 */
@@ -28,8 +32,9 @@ const baseWorkloadSchema = z.object({
   creatorDate: z.string().datetime(),
   /** 이미지 */
   image: z.object({
+    id: z.string().uuid(),
     /** 타입 */
-    type: z.enum(["BUILTIN", "HUB", "CUSTOM"]),
+    type: z.enum(WORKLOAD_IMAGE_TYPES),
     /** 이미지 이름 */
     name: z.string(),
   }),
@@ -52,6 +57,8 @@ const baseWorkloadSchema = z.object({
       id: z.string(),
       /** 포트 번호 */
       port: z.string(),
+      /** 서비스 포트 번호 */
+      servicePort: z.string(),
       /** 포트 이름 */
       portName: z.string(),
       /** 포트 주소 */
@@ -60,34 +67,12 @@ const baseWorkloadSchema = z.object({
   ),
   /** 소스코드 */
   sourcecodes: z.array(
-    z.object({
-      /** 아이디 */
-      id: z.string(),
-      /** 제목 */
-      title: z.string(),
-      /** 경로 */
-      path: z.string(),
-      /** 타입 */
-      type: z.string(),
+    sourcecodeListSchema.extend({
+      branch: z.string(),
     }),
   ),
-  /** 모델 */
-  volumes: z.array(
-    z.object({
-      /** 아이디 */
-      id: z.string(),
-      /** 제목 */
-      title: z.string(),
-      /** 스토리지명 */
-      storage: z.string(),
-      /** 경로 */
-      path: z.string(),
-      /** 볼륨 크기 */
-      volumeSize: z.number(),
-      /** 라벨 */
-      labels: z.array(z.string()),
-    }),
-  ),
+  /** 볼륨 */
+  volumes: z.array(volumeListSchema),
   /** 이벤트 */
   events: z.array(
     z.object({
@@ -124,6 +109,7 @@ export const workloadDetailSchema = baseWorkloadSchema;
 
 type Workload = z.infer<typeof baseWorkloadSchema>;
 export type WorkloadListType = z.infer<typeof workloadListSchema>;
+export type WorkloadIdType = Workload["id"];
 export type WorkloadDetailType = z.infer<typeof workloadDetailSchema>;
 export type WorkloadEnvType = Workload["envs"][number];
 export type WorkloadPortType = Workload["ports"][number];

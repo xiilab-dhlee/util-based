@@ -1,7 +1,7 @@
 import type {
   TerminalActionData,
   TerminalActionType,
-} from "@/shared/types/terminal.interface";
+} from "@/shared/types/terminal.type";
 
 /**
  * 터미널 메시지 생성 유틸리티 함수

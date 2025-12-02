@@ -2,11 +2,11 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
-} from "@/shared/hooks/filetree.atom";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+} from "@/shared/state/filetree.atom";
 
 /** 볼륨 페이지 번호 */
 export const volumePageAtom = atomWithReset<number>(1);

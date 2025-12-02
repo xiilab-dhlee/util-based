@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { Tooltip, type TooltipProps } from "xiilab-ui";
+import { Icon, Tooltip, type TooltipProps } from "xiilab-ui";
 
-import { GuideIcon } from "../icon/guide-icon";
+// import { GuideIcon } from "@/shared/components/icon/guide-icon";
 
 interface GuideTooltipProps extends TooltipProps {}
 
@@ -9,14 +9,22 @@ export function GuideTooltip({ ...props }: GuideTooltipProps) {
   return (
     <Tooltip {...props} theme="light" placement="right">
       <IconWrapper className="tooltip-icon">
-        <GuideIcon width={14} height={14} />
+        <Icon name="Info" size={16} color="#5F6368" />
         <span className="sr-only">가이드</span>
       </IconWrapper>
     </Tooltip>
   );
 }
 
-/** 아이콘 래퍼 */
 const IconWrapper = styled.span`
-  --icon-fill: #cdd0d4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 2px);
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
 `;

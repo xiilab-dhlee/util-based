@@ -41,7 +41,6 @@ export function WorkloadDetailPageAside() {
 }
 
 const CardWrapper = styled.div`
-  max-height: 440px;
   overflow-y: auto;
 
   ${customScrollbar()}

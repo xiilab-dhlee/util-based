@@ -7,4 +7,5 @@ export const credentialKeys = {
     "list",
     ...Object.values(payload),
   ],
+  allList: () => [...credentialKeys.default, "allList"],
 };

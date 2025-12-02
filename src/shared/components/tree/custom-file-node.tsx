@@ -4,7 +4,6 @@ import classNames from "classnames";
 import type { ComponentType, PropsWithChildren, ReactNode } from "react";
 import { createElement } from "react";
 import styled from "styled-components";
-import { v4 as uuidv4 } from "uuid";
 import { Icon } from "xiilab-ui";
 
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
@@ -115,7 +114,7 @@ export function CustomFileNode({
       const shouldHideFirstIndent = idx === 0 && isSingleRoot;
 
       return (
-        <Indent key={uuidv4()}>
+        <Indent key={`ancestor-indent-${idx}-${hasNext}`}>
           {!shouldHideFirstIndent && hasNext ? <IndentBridge /> : null}
         </Indent>
       );
@@ -187,7 +186,9 @@ export function CustomFileNode({
 
     return [
       ...ancestorIndents,
-      <Indent key={uuidv4()}>{currentLevelChildren}</Indent>,
+      <Indent key={`current-level-indent-${depth}`}>
+        {currentLevelChildren}
+      </Indent>,
     ];
   };
 

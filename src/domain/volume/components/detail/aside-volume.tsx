@@ -4,6 +4,7 @@ import { useAtomValue } from "jotai";
 import { useState } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
+import { ManageVolumeFile } from "@/domain/volume/components/file/manage-volume-file";
 import { useGetVolume } from "@/domain/volume/hooks/use-get-volume";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
 import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
@@ -14,7 +15,6 @@ import {
   AsideDetailHeader,
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
-import { ManageVolumeFile } from "../file/manage-volume-file";
 import { UpdateVolume } from "./update-volume";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
