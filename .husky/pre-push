@@ -1,1 +1,18 @@
-pnpm build
+#!/usr/bin/env sh
+
+# Husky pre-push hook: Run type-check and lint before push
+
+
+echo "🔍 Running type-check..."
+pnpm exec tsc --noEmit || {
+  echo "❌ Type check failed. Please fix the errors and try again."
+  exit 1
+}
+
+echo "🔍 Running lint..."
+pnpm lint || {
+  echo "❌ Lint check failed. Please fix the errors and try again."
+  exit 1
+}
+
+echo "✅ All checks passed!"
