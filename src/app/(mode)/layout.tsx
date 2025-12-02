@@ -3,6 +3,7 @@
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
+import { CreateFirstWorkspaceModal } from "@/domain/workspace/components/create-first-workspace-modal";
 import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
 import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
@@ -22,6 +23,7 @@ export default function ModeLayout({ children }: PropsWithChildren) {
         </Right>
       </Container>
       {/* 워크스페이스 생성 모달 */}
+      <CreateFirstWorkspaceModal />
       <CreateWorkspaceModal />
       {/* 비밀번호 재확인 모달 */}
       <CheckPasswordModal />
