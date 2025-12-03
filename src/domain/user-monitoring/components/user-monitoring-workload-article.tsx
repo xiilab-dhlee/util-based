@@ -48,8 +48,8 @@ export function UserMonitoringWorkloadArticle() {
             <UserMonitoringResourceCard
               key={v}
               resourceType={v as CoreResourceType}
-              total={20}
-              count={10}
+              total={999}
+              count={777}
             />
           ))}
         </WorkloadResourceWrapper>

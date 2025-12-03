@@ -245,7 +245,7 @@ export const PAGE_META = {
   // ============================================
   "user.monitoring": {
     title: "모니터링",
-    iconName: "Monitoring01",
+    iconName: "Monitoring02",
     href: ROUTES.USER_MONITORING,
   },
 
