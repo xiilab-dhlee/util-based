@@ -55,7 +55,7 @@ const Right = styled.div`
 `;
 
 const RightInner = styled.div`
-  min-width: calc(1920px - var(--navigation-width));
+  min-width: calc(1920px - var(--navigation-width) - 80px);
 `;
 
 const Main = styled.main`
