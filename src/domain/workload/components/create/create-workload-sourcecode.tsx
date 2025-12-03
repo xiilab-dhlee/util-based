@@ -84,7 +84,7 @@ export function CreateWorkloadSourcecode() {
   return (
     <Container>
       <Header>
-        <CreateWorkloadSectionTitle>소스코드 추가</CreateWorkloadSectionTitle>
+        <CreateWorkloadSectionTitle>소스코드</CreateWorkloadSectionTitle>
         <CreateModelButton
           title="소스코드 생성"
           onClick={handleSourceCodeCreate}
@@ -168,7 +168,7 @@ export function CreateWorkloadSourcecode() {
       <Footer>
         <FooterHeader>
           <Typography.Text variant="body-2-2" color="#484848">
-            소스코드 목록
+            선택된 소스코드
           </Typography.Text>
           <IconWrapper
             className={classNames({ rotate: collapsed })}
@@ -190,7 +190,7 @@ export function CreateWorkloadSourcecode() {
             {sourcecodes.length === 0 && (
               <EmptyVolumeMessage>
                 <Typography.Text variant="body-2-4" color="#707070">
-                  추가된 소스코드가 없습니다.
+                  선택된 소스코드가 없습니다.
                 </Typography.Text>
               </EmptyVolumeMessage>
             )}
