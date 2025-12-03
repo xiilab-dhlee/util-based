@@ -2,8 +2,8 @@
 
 import styled from "styled-components";
 
-import { VulnerabilityCard } from "@/domain/security/vulnerability-card";
 import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
+import { VulnerabilityCard } from "@/shared/components/card/vulnerability-card";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 import { customScrollbar } from "@/styles/mixins/scrollbar";

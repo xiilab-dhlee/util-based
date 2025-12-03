@@ -100,3 +100,54 @@ export const formatDateSafely = (
     return fallback;
   }
 };
+
+/**
+ * 초 단위 duration 값을 사람이 읽기 좋은 한국어 문자열로 포맷팅합니다.
+ *
+ * - 0초 이하 또는 유효하지 않은 값: "0초"
+ * - 1시간 미만: "M분 S초" 또는 "S초"
+ * - 1시간 이상:
+ *   - 60분(=3600초) 정확히: "1시간"
+ *   - 61분(=3660초): "1시간 1분"
+ *   - 나머지 초가 있을 경우: "H시간 M분 S초" 패턴
+ *
+ * 예시:
+ * - 0        -> "0초"
+ * - 59       -> "59초"
+ * - 60       -> "1분"
+ * - 90       -> "1분 30초"
+ * - 3600     -> "1시간"
+ * - 3660     -> "1시간 1분"
+ * - 3661     -> "1시간 1분 1초"
+ */
+export function formatDurationFromSeconds(totalSeconds: number): string {
+  if (!Number.isFinite(totalSeconds) || totalSeconds <= 0) {
+    return "0초";
+  }
+
+  const safeSeconds = Math.floor(totalSeconds);
+
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const seconds = safeSeconds % 60;
+
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(`${hours}시간`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes}분`);
+  }
+
+  if (seconds > 0) {
+    parts.push(`${seconds}초`);
+  }
+
+  if (parts.length === 0) {
+    return "0초";
+  }
+
+  return parts.join(" ");
+}

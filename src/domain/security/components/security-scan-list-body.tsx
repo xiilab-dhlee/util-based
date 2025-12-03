@@ -1,9 +1,13 @@
 "use client";
 
-import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
+import { SecurityTotalColumnHeader } from "@/domain/security/components/security-total-column-header";
+import { securityScanListMock } from "@/mocks/data/security-scan.mock";
 import { createSecurityColumn } from "@/shared/components/column/create-security-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+import type { SecurityScanResultType } from "../schemas/security-scan.schema";
 
 export function SecurityScanListBody() {
   return (
@@ -12,16 +16,27 @@ export function SecurityScanListBody() {
         columns={createSecurityColumn([
           { dataIndex: "imageTag" },
           { dataIndex: "status" },
-          { dataIndex: "total" },
-          { dataIndex: "critical" },
-          { dataIndex: "high" },
-          { dataIndex: "medium" },
-          { dataIndex: "low" },
+          {
+            dataIndex: "total",
+            title: <SecurityTotalColumnHeader />,
+            render: (_: unknown, record: SecurityScanResultType) => {
+              return (
+                <ColumnAlignCenterWrap>
+                  <VulnerabilityTooltip
+                    critical={record.critical}
+                    high={record.high}
+                    medium={record.medium}
+                    low={record.low}
+                  />
+                </ColumnAlignCenterWrap>
+              );
+            },
+          },
           { dataIndex: "creatorName", title: "실행자" },
           { dataIndex: "playtime" },
           { dataIndex: "creatorDateTime", title: "검사일시" },
         ])}
-        data={vulnerabilityListMock}
+        data={securityScanListMock}
         activePadding
       />
     </ListWrapper>

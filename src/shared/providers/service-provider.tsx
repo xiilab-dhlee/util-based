@@ -16,6 +16,8 @@ import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { NotificationService } from "@/domain/notification/api/notification.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
+import { FileSecurityService } from "@/domain/security/api/file-security.service";
+import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
 import { VolumeService } from "@/domain/volume/api/volume.service";
@@ -46,6 +48,8 @@ interface ServiceContextType {
   internalregistryImageService: InternalRegistryImageService;
   adminInternalRegistryImageService: AdminInternalRegistryImageService;
   gpuService: GpuService;
+  registrySecurityService: RegistrySecurityService;
+  fileSecurityService: FileSecurityService;
 }
 
 // 서비스 컨텍스트 생성
@@ -86,6 +90,8 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     internalregistryImageService: new InternalRegistryImageService(),
     adminInternalRegistryImageService: new AdminInternalRegistryImageService(),
     gpuService: new GpuService(),
+    registrySecurityService: new RegistrySecurityService(),
+    fileSecurityService: new FileSecurityService(),
   };
 
   return (

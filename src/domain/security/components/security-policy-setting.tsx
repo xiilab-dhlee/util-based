@@ -19,8 +19,8 @@ export function SecurityPolicySetting({
 }: SecurityPolicySettingProps) {
   const [checked, setChecked] = useState(false);
 
-  const handleChange = (checked: boolean) => {
-    setChecked(checked);
+  const handleChange = (nextChecked: boolean) => {
+    setChecked(nextChecked);
   };
 
   return (

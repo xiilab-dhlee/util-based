@@ -12,14 +12,12 @@ import { getAllErrorConfigs } from "@/shared/utils/error/error";
  * [123, {id: 1}] -> '123.{"id":1}'
  * [null, undefined] -> 'null.undefined'
  */
-const getQueryKeyString = (queryKey: QueryKey): string => {
+const normalizeQueryKeySegments = (queryKey: QueryKey): string[] => {
   if (!Array.isArray(queryKey) || queryKey.length === 0) {
-    return "default";
+    return [];
   }
 
-  // 첫 두 요소만 사용하여 domain.action 패턴 생성
-  const normalizedKeys = queryKey
-    .slice(0, 2)
+  return queryKey
     .map((element) => {
       // null 명시적 처리
       if (element === null) {
@@ -50,19 +48,37 @@ const getQueryKeyString = (queryKey: QueryKey): string => {
     })
     .map((str) => str.replace(/\./g, "_")) // 점을 언더스코어로 대체
     .filter((str) => str.length > 0); // 빈 문자열 제거
+};
 
-  // 결과가 비어있으면 기본값 반환
-  const result = normalizedKeys.join(".");
-  return result.length > 0 ? result : "default";
+const getQueryKeyString = (queryKey: QueryKey): string => {
+  const normalizedKeys = normalizeQueryKeySegments(queryKey);
+  if (normalizedKeys.length === 0) {
+    return "default";
+  }
+  return normalizedKeys.join(".");
 };
 
 /**
  * 쿼리 키 기반으로 에러 설정 조회
  */
 export const getQueryErrorConfig = (queryKey: QueryKey): ErrorConfig => {
-  const keyString = getQueryKeyString(queryKey);
   const allErrorConfigs = getAllErrorConfigs();
-  return allErrorConfigs[keyString] || allErrorConfigs.default;
+
+  const segments = normalizeQueryKeySegments(queryKey);
+  if (segments.length === 0) {
+    return allErrorConfigs.default;
+  }
+
+  // 가장 구체적인 키부터 점점 상위(domain.action.action2...)로 폴백
+  for (let depth = segments.length; depth > 0; depth--) {
+    const key = segments.slice(0, depth).join(".");
+    const config = allErrorConfigs[key];
+    if (config) {
+      return config;
+    }
+  }
+
+  return allErrorConfigs.default;
 };
 
 /**

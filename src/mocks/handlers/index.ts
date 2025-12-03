@@ -3,6 +3,9 @@
  * 모든 도메인별 핸들러를 하나로 통합하여 export
  */
 
+import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
+import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+
 import { accountHandlers } from "./account.handler";
 import { credentialHandlers } from "./credential.handler";
 import { gpuHandlers } from "./gpu.handler";
@@ -43,4 +46,6 @@ export const combinedHandlers = [
   ...kubernetesMonitoringHandlers,
   ...credentialHandlers,
   ...gpuHandlers,
+  ...fileSecurityHandlers,
+  ...registrySecurityHandlers,
 ];

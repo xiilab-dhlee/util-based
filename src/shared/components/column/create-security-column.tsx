@@ -1,8 +1,11 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Label } from "xiilab-ui";
 
+import type { SecurityScanResultType } from "@/domain/security/schemas/security-scan.schema";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import {
   ColumnAlignCenterWrap,
   ColumnLink,
@@ -14,15 +17,21 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "imageTag",
       title: "이미지 : 태그",
       align: "left",
-      render: () => {
-        return <ColumnLink href="#">Dev Snapshot-1 : v1.2</ColumnLink>;
+      render: (_, record: SecurityScanResultType) => {
+        return (
+          <ColumnLink
+            href={ROUTES.ADMIN_REGISTRY_SECURITY_TAG(record.id, record.imageId)}
+          >
+            {record.imageName} : {record.imageTag}
+          </ColumnLink>
+        );
       },
     },
     {
       dataIndex: "status",
       title: "검사 상태",
       align: "center",
-      width: 70,
+      width: 100,
       render: () => {
         return (
           <ColumnAlignCenterWrap>
@@ -35,9 +44,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "total",
       title: "총 취약점 개수",
       align: "center",
-      width: 90,
-      render: () => {
-        return <span>11개</span>;
+      width: 120,
+      render: (_: unknown, record: SecurityScanResultType) => {
+        return record.critical + record.high + record.medium + record.low;
       },
     },
     {
@@ -45,8 +54,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "Critical",
       align: "center",
       width: 70,
-      render: () => {
-        return <span style={{ color: "var(--critical-text-color)" }}>11</span>;
+      render: (value: number) => {
+        return (
+          <span style={{ color: "var(--critical-text-color)" }}>{value}</span>
+        );
       },
     },
     {
@@ -54,8 +65,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "High",
       align: "center",
       width: 70,
-      render: () => {
-        return <span style={{ color: "var(--high-text-color)" }}>11</span>;
+      render: (value: number) => {
+        return <span style={{ color: "var(--high-text-color)" }}>{value}</span>;
       },
     },
     {
@@ -63,8 +74,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "Medium",
       align: "center",
       width: 70,
-      render: () => {
-        return <span style={{ color: "var(--medium-text-color)" }}>11</span>;
+      render: (value: number) => {
+        return (
+          <span style={{ color: "var(--medium-text-color)" }}>{value}</span>
+        );
       },
     },
     {
@@ -72,17 +85,26 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "Low",
       align: "center",
       width: 70,
-      render: () => {
-        return <span style={{ color: "var(--low-text-color)" }}>11</span>;
+      render: (value: number) => {
+        return <span style={{ color: "var(--low-text-color)" }}>{value}</span>;
       },
     },
     {
       dataIndex: "playtime",
       title: "검사 소요 시간",
-      width: 90,
+      width: 150,
       align: "center",
       render: () => {
         return <span>11분 18초</span>;
+      },
+    },
+    {
+      dataIndex: "creatorDateTime",
+      title: "검사일시",
+      align: "center",
+      width: 140,
+      render: (creatorDateTime: string) => {
+        return <span>{formatDateTimeSafely(creatorDateTime) ?? "-"}</span>;
       },
     },
     {

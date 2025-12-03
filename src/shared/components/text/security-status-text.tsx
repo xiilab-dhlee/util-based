@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import type { CoreSecurityLevel } from "@/shared/types/core.interface";
-import { getSecurityLevelInfo } from "@/shared/utils/security.util";
+import { getVulnerabilityLevelInfo } from "@/shared/utils/vulnerability.util";
 import { statusTextStyle } from "@/styles/mixins/text";
 
 interface SecurityStatusLevelProps {
@@ -18,7 +18,7 @@ export function SecurityLevelText({
   children,
   type = "text",
 }: PropsWithChildren<SecurityStatusLevelProps>) {
-  const { className, ...rest } = getSecurityLevelInfo(status);
+  const { className, ...rest } = getVulnerabilityLevelInfo(status);
   return (
     <Container className={classNames(className)}>
       {rest[type]}
