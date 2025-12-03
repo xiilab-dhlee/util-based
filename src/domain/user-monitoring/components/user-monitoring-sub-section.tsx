@@ -25,7 +25,7 @@ export function UserMonitoringSubSection() {
                 ellipsis: true,
                 sorter: true,
               },
-              { dataIndex: "jobType", width: "20%", sorter: true },
+              { dataIndex: "jobType", width: "20%" },
               { dataIndex: "creatorName", width: "20%" },
               // { dataIndex: "labels" },
               // { dataIndex: "status", width: "10%" },
@@ -66,7 +66,7 @@ export function UserMonitoringSubSection() {
                 sorter: true,
               },
               { dataIndex: "creatorName" },
-              { dataIndex: "status", sorter: true },
+              { dataIndex: "status" },
               { dataIndex: "elapsedTime" },
               { dataIndex: "jobType", title: "누적 경고 횟수" },
             ])}
