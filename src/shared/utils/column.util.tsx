@@ -64,7 +64,15 @@ export function applyColumnConfigs(
 
           return (
             <Tooltip title={value} getPopupContainer={() => document.body}>
-              <div>{content}</div>
+              <div
+                style={{
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {content}
+              </div>
             </Tooltip>
           );
         };
