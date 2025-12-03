@@ -26,7 +26,6 @@ export function MonitoringMainSection() {
           </UserMonitoringSectionTitle>
           <Tooltip
             title={<ClusterResourceInfoTooltipTitle />}
-            theme="light"
             placement="right"
           >
             <span className="tooltip-icon">

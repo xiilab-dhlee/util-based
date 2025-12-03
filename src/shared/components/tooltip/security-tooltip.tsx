@@ -18,7 +18,6 @@ export function SecurityTooltip({
   return (
     <Tooltip
       placement="bottom"
-      theme="light"
       maxWidth={380}
       title={
         <SecurityWrapper>

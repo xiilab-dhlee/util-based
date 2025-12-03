@@ -7,7 +7,7 @@ interface GuideTooltipProps extends TooltipProps {}
 
 export function GuideTooltip({ ...props }: GuideTooltipProps) {
   return (
-    <Tooltip {...props} theme="light" placement="right">
+    <Tooltip {...props} placement="right">
       <IconWrapper className="tooltip-icon">
         <Icon name="Info" size={16} color="#5F6368" />
         <span className="sr-only">가이드</span>
