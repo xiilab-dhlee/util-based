@@ -9,7 +9,7 @@ import {
   gpuCountAtom,
   memoryGbAtom,
 } from "@/domain/workload/state/create-workload.atom";
-import { ResourceSlider } from "@/shared/components/slider/resource-slider";
+import { Slider } from "@/shared/components/slider";
 
 interface SetSinglenodeResourceProps {
   cpuCoreMax: number;
@@ -35,13 +35,12 @@ export function SetSinglenodeResource({
           </Typography.Text>
         </SliderLabel>
         <SliderWrapper>
-          <ResourceSlider
+          <Slider
             min={1}
             max={gpuCountMax}
             value={gpuCount}
-            setValue={setGpuCount}
-            resourceColor="#A353FF"
-            unit="개"
+            onChange={setGpuCount}
+            type="GPU"
           />
         </SliderWrapper>
       </SliderRow>
@@ -53,13 +52,12 @@ export function SetSinglenodeResource({
           </Typography.Text>
         </SliderLabel>
         <SliderWrapper>
-          <ResourceSlider
+          <Slider
             min={1}
             max={cpuCoreMax}
             value={cpuCore}
-            setValue={setCpuCore}
-            resourceColor="#376DFF"
-            unit="Core"
+            onChange={setCpuCore}
+            type="CPU"
           />
         </SliderWrapper>
       </SliderRow>
@@ -72,13 +70,12 @@ export function SetSinglenodeResource({
           </Typography.Text>
         </SliderLabel>
         <SliderWrapper>
-          <ResourceSlider
+          <Slider
             min={1}
             max={memoryGbMax}
             value={memoryGb}
-            setValue={setMemoryGb}
-            resourceColor="#55D398"
-            unit="GB"
+            onChange={setMemoryGb}
+            type="MEM"
           />
         </SliderWrapper>
       </SliderRow>

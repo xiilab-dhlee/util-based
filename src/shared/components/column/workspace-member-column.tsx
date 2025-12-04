@@ -1,14 +1,13 @@
-import { format } from "date-fns";
-import { type ResponsiveColumnType, Tag, type TagProps } from "xiilab-ui";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
+import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace-member.constant";
 import { UpdateWorkspaceMemberButton } from "@/domain/workspace-member/components/update-workspace-member-button";
 import { WorkspaceMemberAllCheck } from "@/domain/workspace-member/components/workspace-member-all-check";
 import { WorkspaceMemberItemCheck } from "@/domain/workspace-member/components/workspace-member-item-check";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
+import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
-
-const ICON_COLUMN_WIDTH = 40;
-
 export const workspaceMemberColumn: ResponsiveColumnType[] = [
   {
     title: <WorkspaceMemberAllCheck />,
@@ -20,7 +19,7 @@ export const workspaceMemberColumn: ResponsiveColumnType[] = [
     },
   },
   {
-    title: "멤버 이름",
+    title: "이름",
     dataIndex: "name",
     align: "left",
   },
@@ -29,19 +28,10 @@ export const workspaceMemberColumn: ResponsiveColumnType[] = [
     dataIndex: "role",
     align: "center",
     width: 100,
-    render: (role: string) => {
-      let variant = "purple";
-      if (role === "Admin") {
-        variant = "red";
-      }
+    render: (role: WorkspaceMemberListType["role"]) => {
       return (
         <ColumnAlignCenterWrap>
-          <Tag
-            variant={variant as TagProps["variant"]}
-            onClick={() => alert("라벨 Action!!")}
-          >
-            {role}
-          </Tag>
+          {getWorkspaceMemberRoleLabel(role)}
         </ColumnAlignCenterWrap>
       );
     },
@@ -52,42 +42,18 @@ export const workspaceMemberColumn: ResponsiveColumnType[] = [
     align: "left",
   },
   {
-    title: "워크스페이스 보유",
-    dataIndex: "workspaceCount",
-    align: "center",
-    width: 100,
-    render: (workspaceCount: number) => {
-      return <ColumnAlignCenterWrap>{workspaceCount}개</ColumnAlignCenterWrap>;
-    },
-  },
-  {
-    title: "워크스페이스 생성 제한",
-    dataIndex: "limitWorkspaceCreate",
-    align: "center",
-    width: 120,
-    render: (limitWorkspaceCreate: number) => {
-      return (
-        <ColumnAlignCenterWrap>{limitWorkspaceCreate}개</ColumnAlignCenterWrap>
-      );
-    },
-  },
-  {
-    title: "멤버 추가 날짜",
+    title: "등록일",
     dataIndex: "creatorDate",
     align: "center",
     render: (creatorDate: string) => {
       return (
         <ColumnAlignCenterWrap>
-          {format(creatorDate, "yyyy.MM.dd")}
+          {formatDateSafely(creatorDate) ?? "-"}
         </ColumnAlignCenterWrap>
       );
     },
   },
-  {
-    title: "상태",
-    dataIndex: "status",
-    align: "center",
-  },
+
   {
     title: "그룹",
     dataIndex: "group",

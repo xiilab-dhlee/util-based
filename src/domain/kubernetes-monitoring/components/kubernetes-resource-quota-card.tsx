@@ -4,8 +4,6 @@ import classNames from "classnames";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { MigIcon } from "@/shared/components/icon/mig-icon";
-import { MpsIcon } from "@/shared/components/icon/mps-icon";
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
@@ -25,20 +23,13 @@ export function KubernetesResourceQuotaCard({
 }: KubernetesResourceQuotaCardProps) {
   const { icon, color } = getResourceInfo(resourceName);
 
-  let iconComponent = null;
-  if (icon === "mig") {
-    iconComponent = <MigIcon />;
-  } else if (icon === "mps") {
-    iconComponent = <MpsIcon />;
-  } else {
-    iconComponent = <Icon name={icon} size={24} color={color} />;
-  }
-
   return (
     <Containter className={classNames({ divider: showDivider })}>
       <Header>
         <HeaderLeft>
-          <IconWrapper $color={color}>{iconComponent}</IconWrapper>
+          <IconWrapper $color={color}>
+            {icon && <Icon name={icon} size={24} color={color} />}
+          </IconWrapper>
           <Title>{resourceName}</Title>
         </HeaderLeft>
         <HeaderRight>{(quota / total) * 100}%</HeaderRight>

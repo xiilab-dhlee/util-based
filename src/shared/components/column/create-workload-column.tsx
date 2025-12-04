@@ -1,8 +1,6 @@
-import classNames from "classnames";
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
-import { SelectWorkloadRadio } from "@/domain/workload/components/create/select-workload-radio";
 import { WorkloadLogButton } from "@/domain/workload/components/list/workload-log-button";
 import { WorkloadMonitoringButton } from "@/domain/workload/components/list/workload-monitoring-button";
 import { WorkloadNameLink } from "@/domain/workload/components/list/workload-name-link";
@@ -24,35 +22,6 @@ import {
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
-    {
-      dataIndex: "isPinned",
-      title: "고정",
-      align: "center",
-      width: ICON_COLUMN_WIDTH,
-      render: (isPinned: boolean) => {
-        return (
-          <ColumnAlignCenterWrap>
-            <ColumnIconWrap
-              onClick={() => alert("준비 중입니다.")}
-              className={classNames({
-                active: isPinned,
-              })}
-            >
-              <Icon name="PinFilled" color="var(--icon-fill)" />
-            </ColumnIconWrap>
-          </ColumnAlignCenterWrap>
-        );
-      },
-    },
-    {
-      dataIndex: "select",
-      title: "선택",
-      width: 50,
-      align: "center",
-      render: (_, record: WorkloadListType) => (
-        <SelectWorkloadRadio workloadId={record.id} />
-      ),
-    },
     {
       dataIndex: "workloadName",
       title: "워크로드 이름",

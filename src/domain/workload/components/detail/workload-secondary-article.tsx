@@ -74,7 +74,7 @@ export function WorkloadSecondaryArticle() {
           </Value>
         </KeyValueContainer>
         <KeyValueContainer className="split">
-          <LeftKey>보안 검증</LeftKey>
+          <LeftKey>보안 검사</LeftKey>
           <SecurityValue>
             <SecurityStatuses>
               <SecurityLevelText status="CRITICAL">

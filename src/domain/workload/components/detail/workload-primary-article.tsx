@@ -33,15 +33,6 @@ export function WorkloadPrimaryArticle() {
 
   return (
     <DetailContentArticle>
-      {/* <Column>
-        <DetailContentSubTitle>워크스페이스 적용</DetailContentSubTitle>
-        <ColumnBody>
-          <IconWrapper>
-            <Icon name="Workspace01" color="var(--icon-fill)" size={18} />
-          </IconWrapper>
-          <span>{workspaceName}</span>
-        </ColumnBody>
-      </Column> */}
       <Column>
         <DetailContentSubTitle>Job Type</DetailContentSubTitle>
         <ColumnBody>

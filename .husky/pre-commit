@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# Husky pre-commit hook: Format staged files with Biome
+
+pnpm exec lint-staged || {
+  echo "❌ Format failed. Please fix the errors and try again."
+  exit 1
+}

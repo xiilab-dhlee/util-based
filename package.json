@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome check --write",
-    "update:xiilab-ui": "pnpm update xiilab-ui",  
+    "update:xiilab-ui": "pnpm update xiilab-ui",
     "test": "cross-env MSW_ENABLE=true playwright test",
     "test:integration": "pnpm check-bddgen && cross-env MSW_ENABLE=false playwright test",
     "test:mock": "pnpm check-bddgen && cross-env MSW_ENABLE=true playwright test",
@@ -25,7 +25,8 @@
     "test:trace": "playwright show-trace",
     "test:codegen": "cross-env MSW_ENABLE=false playwright codegen http://localhost:3000",
     "bddgen": "npx playwright-bdd export",
-    "check-bddgen": "node scripts/check-bddgen-needed.js"
+    "check-bddgen": "node scripts/check-bddgen-needed.js",
+    "prepare": "husky"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.14.0",
@@ -76,9 +77,14 @@
     "babel-plugin-react-compiler": "1.0.0",
     "cross-env": "^10.1.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
+    "lint-staged": "^16.2.7",
     "msw": "^2.11.6",
     "playwright-bdd": "^8.4.1",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json}": [
+      "biome check --write"
+    ]
   }
 }

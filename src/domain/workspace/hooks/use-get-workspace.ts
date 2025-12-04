@@ -19,5 +19,6 @@ export const useGetWorkspace = (
       const response = await workspaceService.getDetail(id);
       return response.data;
     },
+    enabled: id !== "",
   });
 };

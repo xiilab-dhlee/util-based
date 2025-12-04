@@ -1,7 +1,6 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
-import { toast } from "react-toastify";
 
 import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
 import {
@@ -40,11 +39,6 @@ export function WorkspaceMemberFooter() {
    * 삭제 버튼 클릭 핸들러
    */
   const handleClickDelete = () => {
-    if (selectedWorkspaceMembers.size === 0) {
-      toast.error("삭제할 워크스페이스 멤버를 선택해 주세요.");
-      return;
-    }
-
     publish(
       WORKSPACE_EVENTS.sendDeleteWorkspaceMember,
       Array.from(selectedWorkspaceMembers),
@@ -58,7 +52,12 @@ export function WorkspaceMemberFooter() {
       pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
-      rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
+      rightChildren={
+        <ListDeleteButton
+          onClick={handleClickDelete}
+          disabled={selectedWorkspaceMembers.size === 0}
+        />
+      }
     />
   );
 }

@@ -58,8 +58,8 @@ export const ROUTES = {
   ADMIN_WORKSPACE_DETAIL: (id: string) => `${MODE.ADMIN}/workspace/${id}`,
   ADMIN_WORKSPACE_MEMBER: (id: string) =>
     `${MODE.ADMIN}/workspace/${id}/member`,
-  ADMIN_WORKSPACE_WORKLOAD_DETAIL: (id: string) =>
-    `${MODE.ADMIN}/workspace/workload/${id}`,
+  ADMIN_WORKSPACE_WORKLOAD_DETAIL: (workspaceId: string, id: string) =>
+    `${MODE.ADMIN}/workspace/workload/${id}?workspaceId=${workspaceId}`,
   ADMIN_WORKSPACE_WORKLOAD_LOG: (id: string) =>
     `${MODE.ADMIN}/workspace/workload/${id}/log`,
   ADMIN_WORKSPACE_WORKLOAD_FILE: (id: string) =>
@@ -72,7 +72,9 @@ export const ROUTES = {
     `${MODE.ADMIN}/workspace/workload/${id}/terminal`,
 
   ADMIN_REQUEST_RESOURCE: `${MODE.ADMIN}/request-resource`,
-  ADMIN_REQUEST_RESOURCE_HISTORY: `${MODE.ADMIN}/request-history`,
+  ADMIN_REVOKE_RESOURCE_HISTORY: `${MODE.ADMIN}/revoke-history`,
+  ADMIN_REVOKE_RESOURCE_HISTORY_DETAIL: (id: string) =>
+    `${MODE.ADMIN}/revoke-history/${id}`,
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
   ADMIN_REGISTRY: `${MODE.ADMIN}/registry`,

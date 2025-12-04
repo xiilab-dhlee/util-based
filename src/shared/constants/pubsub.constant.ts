@@ -21,6 +21,8 @@ export const WORKSPACE_EVENTS = {
   sendApproveResource: "workspace:send-approve-resource",
   // 워크스페이스 리소스 반려에 필요한 정보 전달 이벤트
   sendRejectResource: "workspace:send-reject-resource",
+  // 워크스페이스 리소스 할당량 수정 모달에 필요한 정보 전달 이벤트
+  sendUpdateResourceAllocation: "workspace:send-update-resource-allocation",
 } as const;
 
 // 워크로드 관련 이벤트
@@ -158,6 +160,8 @@ export const MONITORING_EVENTS = {
 export const SETTING_EVENTS = {
   // 알림설정 모달에 필요한 정보 전달 이벤트
   sendUpdateNotificationSetting: "setting:send-update-notification-setting",
+  // 워크스페이스 구성원 추가 모달에 필요한 정보 전달 이벤트
+  sendAddWorkspaceMember: "setting:send-add-workspace-member",
 } as const;
 
 // 쿠버네티스 모니터링 관련 이벤트
