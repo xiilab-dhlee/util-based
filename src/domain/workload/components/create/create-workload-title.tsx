@@ -17,13 +17,12 @@ export function CreateWorkloadTitle() {
   return (
     <Container>
       <Header>
-        <CreateWorkloadSectionTitle className="required">
-          워크로드 정보
-        </CreateWorkloadSectionTitle>
+        <CreateWorkloadSectionTitle>워크로드 정보</CreateWorkloadSectionTitle>
       </Header>
       <Form layout="vertical">
         <FormItem
           label="워크로드 이름"
+          required
           // validateStatus="error"
           // help="워크로드 이름을 입력하세요."
         >

@@ -27,11 +27,13 @@ export function CreateWorkloadThirdStep() {
             </Typography.Text>
           </FieldHeader>
         </Field>
-        {/* 소스코드 추가 영역 */}
-        {imageType === "HUB" && <CreateWorkloadAutoSourcecode />}
-        {imageType !== "HUB" && <CreateWorkloadSourcecode />}
-        {/* 볼륨 추가 영역 */}
-        <CreateWorkloadVolume />
+        <FieldBody>
+          {/* 소스코드 추가 영역 */}
+          {imageType === "HUB" && <CreateWorkloadAutoSourcecode />}
+          {imageType !== "HUB" && <CreateWorkloadSourcecode />}
+          {/* 볼륨 추가 영역 */}
+          <CreateWorkloadVolume />
+        </FieldBody>
       </Section>
       <Section>
         <FieldHeader>
@@ -75,4 +77,15 @@ const FieldHeader = styled.div`
   align-items: center;
   gap: 4px;
   margin-bottom: 16px;
+`;
+
+const FieldBody = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > div + div { 
+    border-top: 1px solid #E0E0E0;
+    margin-top: 20px;
+    padding-top: 20px;
+  }
 `;
