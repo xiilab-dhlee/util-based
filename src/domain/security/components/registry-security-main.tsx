@@ -1,21 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import {
+  SECURITY_USAGE_ENABLED,
+  type SecurityUsageStatus,
+} from "@/shared/constants/security.constant";
 import {
   ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
+import { RegistrySecurityLevelSettingModal } from "./registry-security-level-setting-modal";
 import { SecurityAside } from "./security-aside";
+import { SecurityLevelPolicySetting } from "./security-level-policy-setting";
 import { SecurityPolicySetting } from "./security-policy-setting";
 import { SecurityScanListBody } from "./security-scan-list-body";
 import { SecurityScanListFooter } from "./security-scan-list-footer";
 
 export function RegistrySecurityMain() {
+  const [openSecurityLevelModal, setOpenSecurityLevelModal] = useState(false);
+
+  const TEMP_USAGE_STATUS: SecurityUsageStatus = SECURITY_USAGE_ENABLED;
+
+  const levelDescription = createSecurityLevelDescription({
+    usageStatus: TEMP_USAGE_STATUS,
+    level: "low",
+    thresholdCount: 5,
+  });
+
   return (
     <>
       <PageHeader
@@ -58,8 +76,9 @@ export function RegistrySecurityMain() {
                 },
               ]}
             />
-            <SecurityPolicySetting
+            <SecurityLevelPolicySetting
               title="보안 레벨 설정"
+              usageStatus={TEMP_USAGE_STATUS}
               descriptions={[
                 {
                   variant: "body-4-1",
@@ -67,9 +86,10 @@ export function RegistrySecurityMain() {
                 },
                 {
                   variant: "body-4-2",
-                  content: "Critical 이상의 취약점 2개 이상 발견시 사용 불가",
+                  content: levelDescription,
                 },
               ]}
+              onClickSetting={() => setOpenSecurityLevelModal(true)}
             />
           </PolicySettings>
           <ScanHeader>
@@ -85,6 +105,10 @@ export function RegistrySecurityMain() {
           <SecurityAside />
         </ListPageAside>
       </ListPageMain>
+      <RegistrySecurityLevelSettingModal
+        open={openSecurityLevelModal}
+        onClose={() => setOpenSecurityLevelModal(false)}
+      />
     </>
   );
 }

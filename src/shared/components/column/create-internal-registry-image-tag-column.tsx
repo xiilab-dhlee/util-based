@@ -9,11 +9,11 @@ import { InternalRegistryImageTagLink } from "@/domain/internal-registry-image/c
 import type { InternalRegistryImageTagListType } from "@/domain/internal-registry-image/schemas/internal-registry-image-tag.schema";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
-import { SecurityTooltip } from "@/shared/components/tooltip/security-tooltip";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
+import { VulnerabilityTooltip } from "../tooltip/vulnerability-tooltip";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
@@ -85,7 +85,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       render: (_: number, record: InternalRegistryImageTagListType) => {
         return (
           <ColumnAlignCenterWrap>
-            <SecurityTooltip
+            <VulnerabilityTooltip
               critical={record.critical}
               high={record.high}
               medium={record.medium}

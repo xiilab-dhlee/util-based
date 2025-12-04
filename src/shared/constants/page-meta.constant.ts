@@ -94,10 +94,37 @@ export const PAGE_META = {
     iconName: "SecurityCheck",
     href: ROUTES.ADMIN_REGISTRY_SECURITY,
   },
+  "admin.registry-security.tag": {
+    title: "레지스트리 보안 태그",
+    href: ({ tagId, imageId }: { tagId: number; imageId: number }) =>
+      ROUTES.ADMIN_REGISTRY_SECURITY_TAG(tagId, imageId),
+    parent: "admin.registry-security",
+  },
   "admin.file-security": {
     title: "파일 시스템 보안",
     iconName: "SecurityCheck",
     href: ROUTES.ADMIN_FILE_SECURITY,
+  },
+  "admin.file-security.scan": {
+    title: "검사 상세",
+    href: ({ scanId, id }: { scanId?: string; id?: string }) =>
+      ROUTES.ADMIN_FILE_SECURITY_SCAN(Number(scanId ?? id)),
+    parent: "admin.file-security",
+  },
+  "admin.file-security.vulnerability": {
+    title: "취약점 상세",
+    href: ({
+      scanId,
+      vulnerabilityId,
+    }: {
+      scanId: string;
+      vulnerabilityId: string;
+    }) =>
+      ROUTES.ADMIN_FILE_SECURITY_VULNERABILITY(
+        Number(scanId),
+        Number(vulnerabilityId),
+      ),
+    parent: "admin.file-security.scan",
   },
 
   // ============================================

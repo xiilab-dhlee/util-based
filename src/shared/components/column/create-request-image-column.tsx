@@ -8,7 +8,7 @@ import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/wo
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
 import { WorkspaceRequestResourceStatusText } from "@/shared/components/text/workspace-request-resource-status-text";
-import { SecurityTooltip } from "@/shared/components/tooltip/security-tooltip";
+import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
@@ -41,7 +41,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       render: (_: unknown, record: RequestImageListType) => {
         return (
           <ColumnAlignCenterWrap>
-            <SecurityTooltip
+            <VulnerabilityTooltip
               critical={record.critical}
               high={record.high}
               medium={record.medium}

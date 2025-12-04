@@ -41,9 +41,17 @@ export const ROUTES = {
   ADMIN_ACCOUNT_MANAGEMENT_PENDING: `${MODE.ADMIN}/account-management/pending`,
   ADMIN_ACCOUNT_MANAGEMENT_GROUP: `${MODE.ADMIN}/account-management/group`,
 
-  // 보안 관리 (정적)
+  // 보안 관리 (동적 함수)
   ADMIN_REGISTRY_SECURITY: `${MODE.ADMIN}/registry-security`,
+  ADMIN_REGISTRY_SECURITY_TAG: (tagId: number, imageId: number) =>
+    `${MODE.ADMIN}/registry-security/${tagId}?imageId=${imageId}`,
   ADMIN_FILE_SECURITY: `${MODE.ADMIN}/file-security`,
+  ADMIN_FILE_SECURITY_SCAN: (scanId: number) =>
+    `${MODE.ADMIN}/file-security/${scanId}`,
+  ADMIN_FILE_SECURITY_VULNERABILITY: (
+    scanId: number,
+    vulnerabilityId: number,
+  ) => `${MODE.ADMIN}/file-security/${scanId}/vulnerability/${vulnerabilityId}`,
 
   // 워크스페이스 관리 (동적 함수)
   ADMIN_WORKSPACE: `${MODE.ADMIN}/workspace`,

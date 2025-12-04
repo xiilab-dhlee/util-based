@@ -1,4 +1,4 @@
-import { vulnerabilityListSchema } from "@/domain/security/schemas/vulnerability.schema";
+import { vulnerabilityListResponseSchema } from "@/domain/security/schemas/vulnerability.schema";
 import {
   workloadDetailSchema,
   workloadListSchema,
@@ -14,5 +14,5 @@ export const workloadDetailMock = makeMock(workloadDetailSchema);
 
 export const workloadVulnerabilityListMock = Array.from(
   { length: LIST_PAGE_SIZE },
-  () => makeMock(vulnerabilityListSchema),
+  () => makeMock(vulnerabilityListResponseSchema),
 );
