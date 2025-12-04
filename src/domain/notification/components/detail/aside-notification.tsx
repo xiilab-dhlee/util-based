@@ -2,54 +2,77 @@
 
 import styled from "styled-components";
 
-// import { useAtomValue } from "jotai";
-
-import {
-  AsideDetailArticle,
-  AsideDetailContainer,
-} from "@/styles/layers/aside-detail-layers.styled";
-// import { notificationSelectedAtom } from "@/atoms/notification/notification-list.atom";
-// import { useGetNotification } from "@/domain/notification/hooks/use-get-notification";
+import { NotificationSettingSection } from "@/domain/notification/components/detail/notification-setting-section";
+import { LicenseExpireAlertSetting } from "@/domain/notification/components/detail/settings/license-expire-alert-setting";
+import { MemberApprovalAlertSetting } from "@/domain/notification/components/detail/settings/member-approval-alert-setting";
+import { MemberSignupAlertSetting } from "@/domain/notification/components/detail/settings/member-signup-alert-setting";
+import { MigApplyAlertSetting } from "@/domain/notification/components/detail/settings/mig-apply-alert-setting";
+import { MigFailAlertSetting } from "@/domain/notification/components/detail/settings/mig-fail-alert-setting";
+import { NodeFailAlertSetting } from "@/domain/notification/components/detail/settings/node-fail-alert-setting";
+import { ResourceRecoveryAlertSetting } from "@/domain/notification/components/detail/settings/resource-recovery-alert-setting";
+import { ResourceWarningAlertSetting } from "@/domain/notification/components/detail/settings/resource-warning-alert-setting";
+import { VulnerableImageAlertSetting } from "@/domain/notification/components/detail/settings/vulnerable-image-alert-setting";
+import { WorkspaceCreateAlertSetting } from "@/domain/notification/components/detail/settings/workspace-create-alert-setting";
+import { WorkspaceResourceExceedAlertSetting } from "@/domain/notification/components/detail/settings/workspace-resource-exceed-alert-setting";
+import { WorkspaceResourceRequestAlertSetting } from "@/domain/notification/components/detail/settings/workspace-resource-request-alert-setting";
+import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 import {
   AsideListArticleHeader,
   AsideListArticleTitle,
 } from "@/styles/layers/aside-list-layers.styled";
 
-/**
- * AsideNotification 컴포넌트
- *
- * 알림 상세 정보를 사이드바에 탭 형태로 표시하는 컴포넌트입니다.
- * 알림의 기본 정보를 표시하며, 각 탭에 따라 적절한 하위 컴포넌트를 렌더링합니다.
- *
- * 주요 기능:
- * - 알림 기본 정보 헤더 표시 (아이콘 및 제목)
- * - 탭 기반 네비게이션 (기본 정보)
- * - 선택된 탭에 따른 동적 콘텐츠 렌더링
- * - 알림 정보 수정 컴포넌트 통합
- *
- * @returns 알림 상세 정보를 탭으로 구성한 사이드바 JSX 요소
- */
 export function AsideNotification() {
-  // const notificationSelected = useAtomValue(notificationSelectedAtom);
-
-  // const { data } = useGetNotification(notificationSelected || "");
-
   return (
     <AsideDetailContainer>
       <AsideListArticleHeader>
         <AsideListArticleTitle>알림 설정</AsideListArticleTitle>
       </AsideListArticleHeader>
-      <AsideDetailArticle>
-        <ArticleKey>라이선스</ArticleKey>
-      </AsideDetailArticle>
+
+      <SectionsWrapper>
+        {/* 라이선스 (상단) */}
+        <NotificationSettingSection title="라이선스">
+          <LicenseExpireAlertSetting />
+        </NotificationSettingSection>
+
+        {/* 회원 */}
+        <NotificationSettingSection title="회원">
+          <MemberSignupAlertSetting />
+          <MemberApprovalAlertSetting />
+        </NotificationSettingSection>
+
+        {/* 보안 */}
+        <NotificationSettingSection title="보안">
+          <VulnerableImageAlertSetting />
+        </NotificationSettingSection>
+
+        {/* 노드 */}
+        <NotificationSettingSection title="노드" grid>
+          <NodeFailAlertSetting />
+          <MigApplyAlertSetting />
+          <MigFailAlertSetting />
+        </NotificationSettingSection>
+
+        {/* 라이선스 (워크스페이스) */}
+        <NotificationSettingSection title="라이선스" grid>
+          <WorkspaceCreateAlertSetting />
+          <WorkspaceResourceExceedAlertSetting />
+          <WorkspaceResourceRequestAlertSetting />
+        </NotificationSettingSection>
+
+        {/* 워크로드 */}
+        <NotificationSettingSection title="워크로드">
+          <ResourceWarningAlertSetting />
+          <ResourceRecoveryAlertSetting />
+        </NotificationSettingSection>
+      </SectionsWrapper>
     </AsideDetailContainer>
   );
 }
 
-const ArticleKey = styled.div`
+const SectionsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
   flex: 1;
-  text-align: left;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 14px;
 `;
