@@ -9,7 +9,7 @@ import { useUpdateMps } from "@/domain/node/hooks/use-update-mps";
 import type { NodeListType } from "@/domain/node/schemas/node.schema";
 import { openUpdateMpsModalAtom } from "@/domain/node/state/node.atom";
 import type { UpdateMpsPayload } from "@/domain/node/types/node.type";
-import { ResourceSlider } from "@/shared/components/slider/resource-slider";
+import { Slider } from "@/shared/components/slider/custom-slider";
 import {
   ACCOUNT_EVENTS,
   NODE_EVENTS,
@@ -127,13 +127,14 @@ export function UpdateMpsModal() {
         </InfoItem>
       </Information>
       <SectionTitle>MPS 설정</SectionTitle>
-      <ResourceSlider
+      <Slider
+        width="100%"
         min={2}
-        // max={data?.mpsMaxReplicas || 0}
         max={10}
         value={mpsReplicas}
-        setValue={setMpsReplicas}
-        resourceColor="#376DFF"
+        onChange={setMpsReplicas}
+        type="MIG"
+        showInput
       />
     </Modal>
   );

@@ -150,15 +150,21 @@ export const PAGE_META = {
     iconName: "Resource",
     href: ROUTES.ADMIN_REQUEST_RESOURCE,
   },
-  "admin.workspace.request-history": {
-    title: "리소스 신청 이력",
+  "admin.workspace.revoke-history": {
+    title: "리소스 회수 이력",
     iconName: "Resource",
-    href: ROUTES.ADMIN_REQUEST_RESOURCE_HISTORY,
+    href: ROUTES.ADMIN_REVOKE_RESOURCE_HISTORY,
+  },
+  "admin.workspace.revoke-history.detail": {
+    title: "리소스 회수 상세",
+    href: ({ id }: { id: string }) =>
+      ROUTES.ADMIN_REVOKE_RESOURCE_HISTORY_DETAIL(id),
+    parent: "admin.workspace.revoke-history",
   },
   "admin.workspace.workload.detail": {
     title: "워크로드 상세",
-    href: ({ id }: { id: string }) =>
-      ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(id),
+    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(workspaceId, id),
     parent: "admin.workspace",
   },
   "admin.workspace.workload.log": {

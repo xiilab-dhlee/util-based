@@ -5,8 +5,6 @@ import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { BuiltinIcon } from "@/shared/components/icon/builtin-icon";
 import { GuideIcon } from "@/shared/components/icon/guide-icon";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
-import { MigIcon } from "@/shared/components/icon/mig-icon";
-import { MpsIcon } from "@/shared/components/icon/mps-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
 import { StorageIcon } from "@/shared/components/icon/storage-icon";
 import { ArrowIcon } from "./arrow-icon";
@@ -16,7 +14,7 @@ interface MyIconProps extends IconProps {}
 
 /**
  * @deprecated MyIcon은 deprecated되었습니다.
- * - 특별한 아이콘 (pytorch, jupyter, astrago, storage, guide, mig, mps, customArrow, circlePlus 등)은 해당 아이콘 컴포넌트를 직접 사용하세요.
+ * - 특별한 아이콘 (pytorch, jupyter, astrago, storage, guide, customArrow, circlePlus 등)은 해당 아이콘 컴포넌트를 직접 사용하세요.
  * - 일반 아이콘은 xiilab-ui의 Icon 컴포넌트를 직접 사용하세요.
  *
  * @example
@@ -46,10 +44,6 @@ export function MyIcon({ name, color, width, height, ...props }: MyIconProps) {
     return <StorageIcon fill={color} width={width} height={height} />;
   } else if (name === "guide") {
     return <GuideIcon />;
-  } else if (name === "mig") {
-    return <MigIcon />;
-  } else if (name === "mps") {
-    return <MpsIcon />;
   } else if (name === "customArrow") {
     return <ArrowIcon />;
   } else if (name === "circlePlus") {

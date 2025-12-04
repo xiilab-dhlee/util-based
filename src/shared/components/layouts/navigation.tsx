@@ -153,8 +153,8 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
             label: PAGE_META["admin.workspace.request-resource"]?.title,
           },
           {
-            key: "admin.workspace.request-history",
-            label: PAGE_META["admin.workspace.request-history"]?.title,
+            key: "admin.workspace.revoke-history",
+            label: PAGE_META["admin.workspace.revoke-history"]?.title,
           },
         ],
       },

@@ -18,6 +18,7 @@ import { NotificationService } from "@/domain/notification/api/notification.serv
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
+import { RevokeHistoryService } from "@/domain/revoke-history/api/revoke-history.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
 import { VolumeService } from "@/domain/volume/api/volume.service";
@@ -50,6 +51,7 @@ interface ServiceContextType {
   gpuService: GpuService;
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
+  revokeHistoryService: RevokeHistoryService;
 }
 
 // 서비스 컨텍스트 생성
@@ -92,6 +94,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     gpuService: new GpuService(),
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),
+    revokeHistoryService: new RevokeHistoryService(),
   };
 
   return (

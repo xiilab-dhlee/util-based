@@ -1,10 +1,10 @@
-import type { RequestResourceStatusType } from "@/domain/request-resource/schemas/request-resource.schema";
+import type { RequestResourceStatus } from "@/domain/request-resource/constants/request-resource.constant";
 
 /**
  * 워크스페이스 리소스 요청 상태와 텍스트, 색상을 한 번에 관리하는 매핑
  */
 const REQUEST_RESOURCE_STATUS_MAP: Record<
-  RequestResourceStatusType,
+  RequestResourceStatus,
   Record<string, string>
 > = {
   WAITING: {
@@ -33,7 +33,7 @@ const REQUEST_RESOURCE_STATUS_MAP: Record<
  * @returns 상태에 해당하는 텍스트, 색상, 아이콘 정보
  */
 export function getRequestResourceStatusInfo(
-  status: RequestResourceStatusType,
+  status: RequestResourceStatus,
 ): Record<string, string> {
   return REQUEST_RESOURCE_STATUS_MAP[status];
 }

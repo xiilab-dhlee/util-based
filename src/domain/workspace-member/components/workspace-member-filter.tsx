@@ -3,8 +3,9 @@
 import { useAtomValue } from "jotai";
 import { Button } from "xiilab-ui";
 
+import type { SelectedMember } from "@/domain/setting/components/add-workspace-member-modal";
+import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
 import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
-// import { memberAddModalOpenAtom } from "@/atoms/setting/setting-modal.atom";
 import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
@@ -12,41 +13,72 @@ import {
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-// import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { useSearch } from "@/shared/hooks/use-search";
+import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 
 export function WorkspaceMemberFilter() {
   const { onSubmit } = useSearch(workspaceMemberSearchTextAtom);
-  // const { onOpen } = useGlobalModal(memberAddModalOpenAtom);
+  const publish = usePublish();
   const page = useAtomValue(workspaceMemberPageAtom);
   const searchText = useAtomValue(workspaceMemberSearchTextAtom);
 
-  const { data } = useGetWorkspaceMembers({
+  const { data, isLoading, isError } = useGetWorkspaceMembers({
     page,
     size: LIST_PAGE_SIZE,
     searchText,
   });
 
+  /**
+   * 구성원 추가 버튼 클릭 핸들러
+   * PubSub을 통해 워크스페이스 구성원 추가 모달에 데이터를 전달합니다.
+   */
   const handleCreateMember = () => {
-    // onOpen();
+    if (!data || isLoading || isError) {
+      publish(SETTING_EVENTS.sendAddWorkspaceMember, {
+        selectedAccounts: [],
+        selectedGroups: [],
+      });
+      return;
+    }
+
+    const mappedAccounts: SelectedMember[] = (data.content ?? []).map(
+      (member) => ({
+        id: member.id,
+        name: member.name,
+        email: member.email,
+        type: GROUP_TREE_NODE_TYPE.account,
+      }),
+    );
+
+    publish(SETTING_EVENTS.sendAddWorkspaceMember, {
+      selectedAccounts: mappedAccounts,
+      selectedGroups: [],
+    });
   };
 
   return (
-    <MySearchFilter title="워크스페이스 멤버 목록" total={data?.totalSize}>
-      <form onSubmit={onSubmit}>
-        <SearchInput />
-      </form>
-      <Button
-        color="primary"
-        icon="Plus"
-        iconPosition="left"
-        variant="gradient"
-        width={100}
-        height={30}
-        onClick={handleCreateMember}
-      >
-        멤버 추가
-      </Button>
-    </MySearchFilter>
+    <>
+      <MySearchFilter title="워크스페이스 멤버 목록" total={data?.totalSize}>
+        <form onSubmit={onSubmit}>
+          <SearchInput />
+        </form>
+        <Button
+          color="primary"
+          icon="Plus"
+          iconPosition="left"
+          variant="gradient"
+          width={100}
+          height={30}
+          onClick={handleCreateMember}
+        >
+          구성원 추가
+        </Button>
+      </MySearchFilter>
+
+      {/* 워크스페이스 구성원 추가 모달 */}
+      <AddWorkspaceMemberModal />
+    </>
   );
 }

@@ -45,7 +45,7 @@ export function WorkspaceIntroCard() {
         <Row>
           <DescriptionRowBody>
             <RowIconWrapper>
-              <Icon name="Description" color="var(--icon-fill)" size={22} />
+              <Icon name="Workspace01" color="var(--icon-fill)" size={22} />
             </RowIconWrapper>
             <RowTitle>이름</RowTitle>
           </DescriptionRowBody>

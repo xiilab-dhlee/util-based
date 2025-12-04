@@ -70,3 +70,16 @@ export const UpdateResourceModalResourceTitle = styled.div`
   line-height: 16px;
   color: #000;
 `;
+
+export const UpdateResourceModalResourceWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+export const UpdateResourceModalLegendWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
