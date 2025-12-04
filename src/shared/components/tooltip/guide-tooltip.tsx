@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import { Icon, Tooltip, type TooltipProps } from "xiilab-ui";
 
-// import { GuideIcon } from "@/shared/components/icon/guide-icon";
-
 interface GuideTooltipProps extends TooltipProps {}
 
 export function GuideTooltip({ ...props }: GuideTooltipProps) {
@@ -20,11 +18,6 @@ const IconWrapper = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  position: absolute;
-  top: 50%;
-  left: calc(100% + 2px);
-  transform: translateY(-50%);
   width: 16px;
   height: 16px;
 `;

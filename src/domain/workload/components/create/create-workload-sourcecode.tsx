@@ -121,10 +121,8 @@ export function CreateWorkloadSourcecode() {
         <Row>
           <Pane>
             <Label>
-              <LabelTitle>
-                마운트 경로
-                <GuideTooltip title={<SourcecodeMountPathTooltipTitle />} />
-              </LabelTitle>
+              <LabelTitle>마운트 경로</LabelTitle>
+              <GuideTooltip title={<SourcecodeMountPathTooltipTitle />} />
             </Label>
             <Input
               placeholder="Mount path를 입력해 주세요."
@@ -135,10 +133,8 @@ export function CreateWorkloadSourcecode() {
 
           <Pane>
             <Label>
-              <LabelTitle>
-                실행 명령어
-                <GuideTooltip title={<SourcecodeCommandTooltipTitle />} />
-              </LabelTitle>
+              <LabelTitle>실행 명령어</LabelTitle>
+              <GuideTooltip title={<SourcecodeCommandTooltipTitle />} />
             </Label>
             <Input
               placeholder="실행 명령어를 입력해 주세요."
@@ -204,7 +200,6 @@ export function CreateWorkloadSourcecode() {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
 `;
 
 const Header = styled.div`

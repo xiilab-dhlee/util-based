@@ -81,10 +81,8 @@ export function CreateWorkloadVolume() {
           </Pane>
           <Pane>
             <Label>
-              <LabelTitle>
-                마운트 경로
-                <GuideTooltip title={<VolumeMountPathTooltipTitle />} />
-              </LabelTitle>
+              <LabelTitle>마운트 경로</LabelTitle>
+              <GuideTooltip title={<VolumeMountPathTooltipTitle />} />
             </Label>
             <Input
               placeholder="Mount path를 입력해 주세요."
@@ -149,7 +147,6 @@ export function CreateWorkloadVolume() {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
 `;
 
 const Header = styled.div`
