@@ -18,8 +18,7 @@ const baseWorkloadSchema = z.object({
   description: z.string().nullable(),
   /** 작업 유형 */
   jobType: z.enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"]),
-  /** 고정 여부 */
-  isPinned: z.boolean(),
+
   /** 사용자 이름 */
   creatorName: z.string(),
   /** 라벨 */
@@ -97,7 +96,6 @@ export const workloadListSchema = baseWorkloadSchema.pick({
   workspaceId: true,
   workloadName: true,
   jobType: true,
-  isPinned: true,
   creatorName: true,
   labels: true,
   status: true,

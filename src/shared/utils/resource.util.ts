@@ -1,6 +1,15 @@
 import type { CoreResourceType } from "@/shared/types/core.interface";
 
-const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
+export type ResourceIconName = "Gpu" | "Mig" | "Mps" | "Cpu" | "Mem" | "Disk";
+
+export type ResourceMeta = {
+  text: string;
+  unit: string;
+  color: string;
+  icon: ResourceIconName;
+};
+
+const RESOURCE_MAP: Record<CoreResourceType, ResourceMeta> = {
   GPU: {
     text: "GPU",
     unit: "개",
@@ -10,13 +19,13 @@ const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
   MIG: {
     text: "MIG",
     unit: "개",
-    icon: "mig",
+    icon: "Mig",
     color: "#D77BFF",
   },
   MPS: {
     text: "MPS",
     unit: "개",
-    icon: "mps",
+    icon: "Mps",
     color: "#D77BFF",
   },
   CPU: {
@@ -37,7 +46,7 @@ const RESOURCE_MAP: Record<CoreResourceType, Record<string, string>> = {
     icon: "Disk",
     color: "#17CDE5",
   },
-} as const;
+};
 
 type ByteUnit = "MB" | "GB" | "TB";
 
@@ -46,16 +55,14 @@ const BYTES_IN_MB = BYTES_IN_KB * 1024;
 const BYTES_IN_GB = BYTES_IN_MB * 1024;
 const BYTES_IN_TB = BYTES_IN_GB * 1024;
 
-export type ReturnTypeOfGetResourceInfo = ReturnType<typeof getResourceInfo>;
+export type ReturnTypeOfGetResourceInfo = ResourceMeta;
 
 /**
  * 리소스 타입 정보 조회
  * @param resourceType - 리소스 타입
  * @returns 리소스 정보 (텍스트, 단위, 아이콘, 색상)
  */
-export function getResourceInfo(
-  resourceType: CoreResourceType,
-): Record<string, string> {
+export function getResourceInfo(resourceType: CoreResourceType): ResourceMeta {
   return RESOURCE_MAP[resourceType];
 }
 

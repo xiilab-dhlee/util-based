@@ -13,6 +13,7 @@ import { RejectResourceModal } from "./reject-request-resource-modal";
 import { RequestResourceBody } from "./request-resource-body";
 import { RequestResourceFilter } from "./request-resource-filter";
 import { RequestResourceFooter } from "./request-resource-footer";
+import { RequestResourceIntroCard } from "./request-resource-intro-card";
 import { ResourcePageAside } from "./resource-page-aside";
 
 export function RequestResourceMain() {
@@ -28,6 +29,7 @@ export function RequestResourceMain() {
       <ListPageMain>
         {/* 워크스페이스 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
+          <RequestResourceIntroCard />
           <ResourcePageAside />
         </ListPageAside>
         {/* 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}

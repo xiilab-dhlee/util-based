@@ -11,20 +11,27 @@ import {
 
 interface ViewRejectReasonButtonProps {
   reason: string;
+  disabled?: boolean;
 }
 
 export function ViewRejectReasonButton({
   reason,
+  disabled = false,
 }: ViewRejectReasonButtonProps) {
   const publish = usePublish();
 
   const handleClickIcon = () => {
+    if (disabled) return;
     publish(COMMON_EVENTS.sendRejectReason, reason);
   };
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClickIcon} disabled={false}>
+      <ColumnIconWrap
+        type="button"
+        onClick={handleClickIcon}
+        disabled={disabled}
+      >
         <Icon name="Request" color="var(--icon-fill)" size={16} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>

@@ -5,6 +5,7 @@ import { Icon } from "xiilab-ui";
 
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
 import type { CoreResourceType } from "@/shared/types/core.interface";
+import { getPercent } from "@/shared/utils/calc.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 interface ResourceCardProps {
@@ -20,19 +21,21 @@ export function ResourceCard({
   request,
   limit,
 }: ResourceCardProps) {
-  const { icon, unit } = getResourceInfo(resourceType);
+  const { text, unit, icon } = getResourceInfo(resourceType);
 
-  const usagePercent = (usage / limit) * 100;
-  const requestPercent = (request / limit) * 100;
+  const usagePercent = getPercent(usage, limit, 0);
+  const requestPercent = getPercent(request, limit, 0);
 
   return (
     <Container>
       <Header>
-        <IconWrapper>
-          <Icon name={icon} color="var(--icon-fill)" size={22} />
+        <IconWrapper className={resourceType}>
+          {icon ? (
+            <Icon name={icon} color="var(--icon-fill)" size={22} />
+          ) : null}
         </IconWrapper>
         <Title>
-          <ResourceType>{resourceType}</ResourceType>
+          <ResourceType>{text}</ResourceType>
           <ResourceUnit>({unit})</ResourceUnit>
         </Title>
       </Header>
@@ -43,6 +46,7 @@ export function ResourceCard({
           requestPercent={requestPercent}
           height={6}
           borderRadius={4}
+          backgroundColor="#CED2D6"
         />
         <ProgressAssist>
           <ProgressCount className="min" $percent={0}>
@@ -77,11 +81,11 @@ export function ResourceCard({
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  background: #070913;
-  border: 1px solid #2a3041;
+  background: #F7F9FB;
+  border: 1px solid #D9D9D9;
   border-radius: 4px;
   overflow: hidden;
-  height: 130px;
+  height: 106px;
 `;
 
 const Header = styled.div`
@@ -102,11 +106,11 @@ const Body = styled.div`
 
 const Footer = styled.div`
   padding: 10px 0;
-  border-top: 1px solid #2a3041;
+  border-top: 1px solid rgba(150, 150, 150, 0.25);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 54px;
+  height: 36px;
 `;
 
 const Category = styled.div`
@@ -115,7 +119,7 @@ const Category = styled.div`
   font-size: 12px;
   text-align: center;
   line-height: 14px;
-  color: #cacaca;
+  color: #5F6368;
   margin-left: 10px;
 
   &::before {
@@ -160,14 +164,15 @@ const Category = styled.div`
 
 const RowFooterItem = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-direction: column;
+  justify-content: center;
+  flex-direction: row;
   height: 100%;
+  gap: 6px;
   flex: 1;
 
   & + & {
-    border-left: 1px solid #2a3041;
+    border-left: 1px solid rgba(150, 150, 150, 0.25);
   }
 `;
 
@@ -182,10 +187,10 @@ const ProgressCount = styled.span<{ $percent: number }>`
   font-weight: 400;
   font-size: 10px;
   line-height: 12px;
-  color: #bdbdbd;
+  color: var(--color-gray-03);
 
   &.min {
-    left: 0;
+    left: 0px;
   }
 
   &.request {
@@ -193,15 +198,15 @@ const ProgressCount = styled.span<{ $percent: number }>`
   }
 
   &.max {
-    right: 0;
+    right: 0px;
   }
 `;
 
 const Count = styled.span`
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 100%;
-  color: #f5f5f5;
+  color: var(--color-gray-02);
 `;
 
 const Title = styled.div`
@@ -214,35 +219,46 @@ const Title = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  font-family: Pretendard;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 14px;
-  color: #f5f5f5;
+
 `;
 
 const ResourceType = styled.span`
   font-weight: 700;
   font-size: 12px;
   line-height: 14px;
-  color: #f5f5f5;
+  color: #000;
 `;
 
 const ResourceUnit = styled.span`
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
-  color: #c6c9d0;
+  color: #000;
 `;
 
 const IconWrapper = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #343c50;
-  width: 24px;
-  height: 24px;
-  border-radius: 2px;
 
+  height: 24px;
+  width: 24px;
+  border-radius: 2px;
+  background-color: #f7f9fb;
+border: 1px solid #D9D9D9;
   --icon-fill: #e8eaed;
+
+  &.GPU,
+  &.MIG,
+  &.MPS {
+    --icon-fill: var(--gpu-usage-color);
+  }
+
+  &.CPU {
+    --icon-fill: var(--cpu-usage-color);
+  }
+
+  &.MEM {
+    --icon-fill: var(--mem-usage-color);
+  }
 `;

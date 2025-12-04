@@ -12,7 +12,7 @@ const baseWorkspaceMemberSchema = z.object({
   /** 그룹 */
   group: z.string().min(1).max(100),
   /** 권한 */
-  role: z.enum(["USER", "ADMIN"]),
+  role: z.enum(["OWNER", "PARTICIPANT"]),
   /** 이메일 */
   email: z.string().email(),
   /** 워크스페이스 보유 수 */

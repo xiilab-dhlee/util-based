@@ -46,6 +46,15 @@ const GUIDES: CoreGuide[] = [
       "팀원이 생성한 워크로드 및 진행상황 확인이 가능합니다.",
     ],
   },
+  {
+    icon: <Icon name="Resource" color="var(--icon-fill)" />,
+    title: "워크스페이스 목록이란?",
+    description: [
+      "워크스페이스 목록은 팀별 작업공간을 관리하는 페이지입니다.",
+      "각 워크스페이스의 자원 사용률과 생성자 · 생성일 정보를 한눈에",
+      "확인할 수 있습니다",
+    ],
+  },
 ];
 
 export function WorkspaceListMain() {

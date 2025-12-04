@@ -1,10 +1,10 @@
 "use client";
 
+import { Icon } from "xiilab-ui";
+
 import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
 import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
 import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
-import { MigIcon } from "@/shared/components/icon/mig-icon";
-import { MpsIcon } from "@/shared/components/icon/mps-icon";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
@@ -38,7 +38,7 @@ const GUIDE_IMAGES: CoreGuideImage[] = [
 
 const GUIDES: CoreGuide[] = [
   {
-    icon: <MpsIcon />,
+    icon: <Icon name="Mps" size={24} color="var(--icon-fill)" />,
     title: "MPS",
     description: [
       "GPU를 MPS 방식으로 분할 설정하여,동일 GPU 자원을",
@@ -46,7 +46,7 @@ const GUIDES: CoreGuide[] = [
     ],
   },
   {
-    icon: <MigIcon />,
+    icon: <Icon name="Mig" size={24} color="var(--icon-fill)" />,
     title: "MIG",
     description: [
       "GPU를 MIG방식으로 분할 설정하여, 하나의 GPU 자원을",

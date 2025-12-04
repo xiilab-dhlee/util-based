@@ -5,10 +5,11 @@ import { Icon, Modal, TextArea } from "xiilab-ui";
 
 import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
 import { openRejectResourceModalAtom } from "@/domain/request-resource/state/request-resource.atom";
-import { ResourceSlider } from "@/shared/components/slider/resource-slider";
+import { Slider } from "@/shared/components/slider/custom-slider";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { getResourceInfo } from "@/shared/utils/resource.util";
 import {
   UpdateResourceModalContainer,
   UpdateResourceModalIconDescription,
@@ -86,46 +87,49 @@ export function RejectResourceModal() {
         <UpdateResourceModalResource>
           <UpdateResourceModalResourceHeader>
             <UpdateResourceModalResourceTitle>
-              GPU
+              {getResourceInfo("GPU").text}
             </UpdateResourceModalResourceTitle>
           </UpdateResourceModalResourceHeader>
-          <ResourceSlider
+          <Slider
+            width="100%"
             min={0}
             max={200}
             value={gpuReq}
-            setValue={setGpuReq}
-            resourceColor="#A353FF"
-            disabled
+            type="GPU"
+            readMode
+            showInput
           />
         </UpdateResourceModalResource>
         <UpdateResourceModalResource>
           <UpdateResourceModalResourceHeader>
             <UpdateResourceModalResourceTitle>
-              CPU
+              {getResourceInfo("CPU").text}
             </UpdateResourceModalResourceTitle>
           </UpdateResourceModalResourceHeader>
-          <ResourceSlider
+          <Slider
+            width="100%"
             min={0}
             max={200}
             value={cpuReq}
-            setValue={setCpuReq}
-            resourceColor="#376DFF"
-            disabled
+            type="CPU"
+            readMode
+            showInput
           />
         </UpdateResourceModalResource>
         <UpdateResourceModalResource>
           <UpdateResourceModalResourceHeader>
             <UpdateResourceModalResourceTitle>
-              MEM
+              {getResourceInfo("MEM").text}
             </UpdateResourceModalResourceTitle>
           </UpdateResourceModalResourceHeader>
-          <ResourceSlider
+          <Slider
+            width="100%"
             min={0}
             max={200}
             value={memReq}
-            setValue={setMemReq}
-            resourceColor="#A353FF"
-            disabled
+            type="MEM"
+            readMode
+            showInput
           />
         </UpdateResourceModalResource>
         <UpdateResourceModalResource>

@@ -11,7 +11,7 @@ import {
   workerGpuCountAtom,
   workerMemoryGbAtom,
 } from "@/domain/workload/state/create-workload.atom";
-import { ResourceSlider } from "@/shared/components/slider/resource-slider";
+import { Slider } from "@/shared/components/slider";
 import { ResourceUsageBar } from "./resource-usage-bar";
 
 interface SetMultinodeResourceProps {
@@ -54,12 +54,13 @@ export function SetMultinodeResource({
             </Typography.Text>
           </ResourceLabel>
           <SliderWrapper>
-            <ResourceSlider
+            <Slider
               min={1}
               max={launcherCpuCoreMax}
               value={launcherCpuCore}
-              setValue={setLauncherCpuCore}
-              resourceColor="#376DFF"
+              onChange={(value: number) => setLauncherCpuCore(value)}
+              type="CPU"
+            width="100%"
             />
           </SliderWrapper>
         </ResourceSliderRow>
@@ -71,12 +72,13 @@ export function SetMultinodeResource({
             </Typography.Text>
           </ResourceLabel>
           <SliderWrapper>
-            <ResourceSlider
+            <Slider
               min={1}
               max={launcherMemoryGbMax}
               value={launcherMemoryGb}
-              setValue={setLauncherMemoryGb}
-              resourceColor="#55D398"
+              onChange={(value: number) => setLauncherMemoryGb(value)}
+              type="MEM"
+              width="100%"
             />
           </SliderWrapper>
         </ResourceSliderRow>
@@ -117,12 +119,13 @@ export function SetMultinodeResource({
             </Typography.Text>
           </ResourceLabel>
           <SliderWrapper>
-            <ResourceSlider
+            <Slider
               min={1}
               max={workerGpuCountMax}
               value={workerGpuCount}
-              setValue={setWorkerGpuCount}
-              resourceColor="#A353FF"
+              onChange={(value: number) => setWorkerGpuCount(value)}
+              type="GPU"
+              width="100%"
             />
           </SliderWrapper>
         </ResourceSliderRow>
@@ -134,12 +137,13 @@ export function SetMultinodeResource({
             </Typography.Text>
           </ResourceLabel>
           <SliderWrapper>
-            <ResourceSlider
+            <Slider
               min={1}
               max={workerCpuCoreMax}
               value={workerCpuCore}
-              setValue={setWorkerCpuCore}
-              resourceColor="#376DFF"
+              onChange={(value: number) => setWorkerCpuCore(value)}
+              type="CPU"
+              width="100%"
             />
           </SliderWrapper>
         </ResourceSliderRow>
@@ -151,12 +155,13 @@ export function SetMultinodeResource({
             </Typography.Text>
           </ResourceLabel>
           <SliderWrapper>
-            <ResourceSlider
+            <Slider
               min={1}
               max={workerMemoryGbMax}
               value={workerMemoryGb}
-              setValue={setWorkerMemoryGb}
-              resourceColor="#55D398"
+              onChange={(value: number) => setWorkerMemoryGb(value)}
+              type="MEM"
+              width="100%"
             />
           </SliderWrapper>
         </ResourceSliderRow>

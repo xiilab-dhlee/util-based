@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { Button, Icon, Modal } from "xiilab-ui";
 
@@ -22,10 +22,7 @@ import {
   type GroupTreeNodeType,
   type GroupTreeType,
 } from "@/shared/schemas/group-tree.schema";
-import {
-  countAccountsInGroup,
-  findNodeById,
-} from "@/shared/utils/group-tree.util";
+import { countAccountsInGroup } from "@/shared/utils/group-tree.util";
 
 /**
  * 그룹 멤버 추가 모달
@@ -35,6 +32,23 @@ import {
 export function ManageGroupMemberModal() {
   const { data } = useGetAllGroups();
   const treeData = data?.content ?? [];
+
+  const nodeById = useMemo(() => {
+    const map = new Map<string, GroupTreeType>();
+
+    const traverse = (nodes: GroupTreeType[]) => {
+      nodes.forEach((node) => {
+        map.set(node.id, node);
+        if (node.children?.length) {
+          traverse(node.children);
+        }
+      });
+    };
+
+    traverse(treeData);
+
+    return map;
+  }, [treeData]);
 
   // 모달 상태 관리 (Jotai)
   const { open, onOpen, onClose } = useGlobalModal(openMemberModalAtom);
@@ -137,54 +151,60 @@ export function ManageGroupMemberModal() {
    * 선택된 그룹의 멤버 수 가져오기
    */
   const getGroupMemberCount = (groupId: string): number => {
-    const node = findNodeById(treeData, groupId);
+    const node = nodeById.get(groupId);
     return node ? countAccountsInGroup(node) : 0;
   };
+
+  /**
+   * 그룹 버튼 컴포넌트
+   */
+  const MemberGroupButton = useCallback(
+    ({ id, name }: GroupTreeButtonProps) => {
+      const isActive = selectedGroups.some((item) => item.id === id);
+      const node = nodeById.get(id);
+
+      return (
+        <FileTreeButton
+          isActive={isActive}
+          onClick={() => node && handleSelectNode(node)}
+        >
+          {name}
+        </FileTreeButton>
+      );
+    },
+    [selectedGroups, nodeById, handleSelectNode],
+  );
+
+  /**
+   * 계정 버튼 컴포넌트
+   */
+  const MemberAccountButton = useCallback(
+    ({ id, name }: GroupTreeButtonProps) => {
+      const isActive = selectedAccounts.some((item) => item.id === id);
+      const node = nodeById.get(id);
+
+      return (
+        <FileTreeButton
+          isActive={isActive}
+          onClick={() => node && handleSelectNode(node)}
+          icon={{
+            visible: true,
+            name: "Person",
+            color: "#000",
+            size: 16,
+          }}
+        >
+          {name}
+        </FileTreeButton>
+      );
+    },
+    [selectedAccounts, nodeById, handleSelectNode],
+  );
 
   // 모달이 닫혀 있을 때는 실제로 렌더링하지 않아 트리 및 내부 UI를 언마운트
   if (!open) {
     return null;
   }
-
-  /**
-   * 그룹 버튼 컴포넌트
-   */
-  const MemberGroupButton = ({ id, name }: GroupTreeButtonProps) => {
-    const isActive = selectedGroups.some((item) => item.id === id);
-    const node = findNodeById(treeData, id);
-
-    return (
-      <FileTreeButton
-        isActive={isActive}
-        onClick={() => node && handleSelectNode(node)}
-      >
-        {name}
-      </FileTreeButton>
-    );
-  };
-
-  /**
-   * 계정 버튼 컴포넌트
-   */
-  const MemberAccountButton = ({ id, name }: GroupTreeButtonProps) => {
-    const isActive = selectedAccounts.some((item) => item.id === id);
-    const node = findNodeById(treeData, id);
-
-    return (
-      <FileTreeButton
-        isActive={isActive}
-        onClick={() => node && handleSelectNode(node)}
-        icon={{
-          visible: true,
-          name: "Person",
-          color: "#000",
-          size: 16,
-        }}
-      >
-        {name}
-      </FileTreeButton>
-    );
-  };
 
   return (
     <Modal

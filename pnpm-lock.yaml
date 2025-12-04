@@ -2345,8 +2345,13 @@ packages:
     resolution: {integrity: sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==}
     engines: {node: '>=18'}
 
+<<<<<<< HEAD
   xiilab-ui@git+https://github.com/xiilab/xiilab-ui.git#ab2edecf7572e5ec72f032bae5665e3f946249a2:
     resolution: {commit: ab2edecf7572e5ec72f032bae5665e3f946249a2, repo: https://github.com/xiilab/xiilab-ui.git, type: git}
+=======
+  xiilab-ui@git+https://github.com/xiilab/xiilab-ui.git#0f44c91b51e5d374809693fd8e15bbd266f2885d:
+    resolution: {commit: 0f44c91b51e5d374809693fd8e15bbd266f2885d, repo: https://github.com/xiilab/xiilab-ui.git, type: git}
+>>>>>>> upstream/main
     version: 0.1.0
     peerDependencies:
       antd: '>=4.0.0'
@@ -4946,7 +4951,11 @@ snapshots:
       string-width: 7.2.0
       strip-ansi: 7.1.2
 
+<<<<<<< HEAD
   xiilab-ui@git+https://github.com/xiilab/xiilab-ui.git#ab2edecf7572e5ec72f032bae5665e3f946249a2(antd@5.28.1(date-fns@4.1.0)(luxon@3.7.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(styled-components@6.1.19(react-dom@19.2.0(react@19.2.0))(react@19.2.0)):
+=======
+  xiilab-ui@git+https://github.com/xiilab/xiilab-ui.git#0f44c91b51e5d374809693fd8e15bbd266f2885d(antd@5.28.1(date-fns@4.1.0)(luxon@3.7.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(styled-components@6.1.19(react-dom@19.2.0(react@19.2.0))(react@19.2.0)):
+>>>>>>> upstream/main
     dependencies:
       '@ant-design/v5-patch-for-react-19': 1.0.3(antd@5.28.1(date-fns@4.1.0)(luxon@3.7.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@dnd-kit/core': 6.3.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)

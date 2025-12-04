@@ -5,11 +5,15 @@ import type { CorePayload } from "@/shared/types/api.interface";
 
 /**
  * payload 객체의 모든 키값을 URLSearchParams로 변환하는 유틸리티 함수
- * @param payload - 변환할 payload 객체
+ * @param payload - 변환할 payload 객체 (없으면 빈 Params 반환)
  * @returns URLSearchParams 객체
  */
-export function payloadToParams(payload: CorePayload): URLSearchParams {
+export function payloadToParams(payload?: CorePayload): URLSearchParams {
   const params = new URLSearchParams();
+
+  if (!payload) {
+    return params;
+  }
 
   Object.entries(payload).forEach(([key, value]) => {
     // ALL 값은 제외

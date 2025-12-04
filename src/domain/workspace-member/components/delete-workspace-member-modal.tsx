@@ -53,6 +53,7 @@ export function DeleteWorkspaceMemberModal() {
   useSubscribe(
     WORKSPACE_EVENTS.sendDeleteWorkspaceMember,
     (members: string[]) => {
+      if (members.length === 0) return;
       // 삭제할 워크스페이스 멤버 목록 설정
       setDeleteMembers(members);
       // 삭제 모달 열기
