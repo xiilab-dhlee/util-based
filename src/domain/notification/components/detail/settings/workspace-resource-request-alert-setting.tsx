@@ -4,13 +4,14 @@ import { useState } from "react";
 
 import { NotificationSettingCard } from "@/domain/notification/components/detail/notification-setting-card";
 import { NOTIFICATION_TYPE_LABEL } from "@/domain/notification/constants/notification.constant";
+import type { NotificationChannelState } from "@/domain/notification/type/notification-setting.type";
 
 /**
  * 워크스페이스 리소스 요청 알림 설정 컴포넌트
  * 자체적으로 상태 관리를 담당
  */
 export function WorkspaceResourceRequestAlertSetting() {
-  const [state, setState] = useState({
+  const [state, setState] = useState<NotificationChannelState>({
     systemChecked: true,
     emailChecked: false,
   });

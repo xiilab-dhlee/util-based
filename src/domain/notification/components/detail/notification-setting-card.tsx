@@ -5,11 +5,10 @@ import styled from "styled-components";
 import { Icon, Switch } from "xiilab-ui";
 
 import { NotificationConfirmModal } from "@/domain/notification/components/detail/notification-confirm-modal";
+import type { NotificationChannelState } from "@/domain/notification/type/notification-setting.type";
 
-export interface NotificationSettingCardProps {
+export interface NotificationSettingCardProps extends NotificationChannelState {
   label: string;
-  systemChecked: boolean;
-  emailChecked: boolean;
   onSystemChange: (checked: boolean) => void;
   onEmailChange: (checked: boolean) => void;
 }
