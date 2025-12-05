@@ -1,7 +1,9 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import styled from "styled-components";
 
+import { NotificationDetailMain } from "@/domain/notification/components/detail/notification-detail-main";
 import { NotificationSettingSection } from "@/domain/notification/components/detail/notification-setting-section";
 import { LicenseExpireAlertSetting } from "@/domain/notification/components/detail/settings/license-expire-alert-setting";
 import { MemberApprovalAlertSetting } from "@/domain/notification/components/detail/settings/member-approval-alert-setting";
@@ -22,6 +24,14 @@ import {
 } from "@/styles/layers/aside-list-layers.styled";
 
 export function AsideNotification() {
+  const params = useParams<{ id?: string }>();
+
+  // URL에 id가 있는 경우 상세 정보 표시
+  if (params.id) {
+    return <NotificationDetailMain />;
+  }
+
+  // 알림이 선택되지 않은 경우 알림 설정 표시
   return (
     <AsideDetailContainer>
       <AsideListArticleHeader>
@@ -52,8 +62,8 @@ export function AsideNotification() {
           <MigFailAlertSetting />
         </NotificationSettingSection>
 
-        {/* 라이선스 (워크스페이스) */}
-        <NotificationSettingSection title="라이선스" grid>
+        {/* 워크스페이스 */}
+        <NotificationSettingSection title="워크스페이스" grid>
           <WorkspaceCreateAlertSetting />
           <WorkspaceResourceExceedAlertSetting />
           <WorkspaceResourceRequestAlertSetting />

@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { NotificationSettingCard } from "@/domain/notification/components/detail/notification-setting-card";
+import { NOTIFICATION_TYPE_LABEL } from "@/domain/notification/constants/notification.constant";
 
 /**
  * 노드 장애 알림 설정 컴포넌트
@@ -16,7 +17,7 @@ export function NodeFailAlertSetting() {
 
   return (
     <NotificationSettingCard
-      label="노드 장애 알림"
+      label={NOTIFICATION_TYPE_LABEL.NODE_FAIL}
       systemChecked={state.systemChecked}
       emailChecked={state.emailChecked}
       onSystemChange={(checked) =>
