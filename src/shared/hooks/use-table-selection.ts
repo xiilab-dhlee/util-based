@@ -1,18 +1,22 @@
+import type { Key } from "react";
 import { useCallback, useMemo } from "react";
 import type { TableProps } from "xiilab-ui";
 
-interface UseTableSelectionReturn<T> {
-  selectedKeys: string[];
+interface UseTableSelectionReturn<T, K extends Key> {
+  selectedKeys: K[];
   hasSelection: boolean;
   clearSelection: () => void;
   rowSelection: TableProps<T>["rowSelection"];
 }
 
-export function useTableSelection<T>(
-  selectedSet: Set<string>,
-  setSelectedSet: (value: Set<string>) => void,
-): UseTableSelectionReturn<T> {
-  const selectedKeys = useMemo(() => Array.from(selectedSet), [selectedSet]);
+export function useTableSelection<T, K extends Key = string>(
+  selectedSet: Set<K>,
+  setSelectedSet: (value: Set<K>) => void,
+): UseTableSelectionReturn<T, K> {
+  const selectedKeys = useMemo<K[]>(
+    () => Array.from(selectedSet),
+    [selectedSet],
+  );
 
   const clearSelection = useCallback(() => {
     setSelectedSet(new Set());
@@ -22,7 +26,7 @@ export function useTableSelection<T>(
     () => ({
       selectedRowKeys: selectedKeys,
       onChange: (keys) => {
-        setSelectedSet(new Set(keys.map(String)));
+        setSelectedSet(new Set(keys as K[]));
       },
     }),
     [selectedKeys, setSelectedSet],
