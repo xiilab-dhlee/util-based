@@ -56,11 +56,9 @@ export const NOTIFICATION_TYPE_LABEL: Record<NotificationTypeValue, string> = {
  * 알림 유형 라벨 조회 함수
  */
 export const getNotificationTypeLabel = (
-  type: NotificationTypeValue | string,
+  type: NotificationTypeValue,
 ): string => {
-  return (
-    NOTIFICATION_TYPE_LABEL[type as NotificationTypeValue] || type.toString()
-  );
+  return NOTIFICATION_TYPE_LABEL[type];
 };
 
 /**
@@ -126,9 +124,6 @@ export const NOTIFICATION_TYPE_BY_CATEGORY: Record<
 /**
  * 알림 유형 드롭다운 옵션
  */
-export const NOTIFICATION_TYPE_OPTIONS = Object.entries(
-  NOTIFICATION_TYPE_LABEL,
-).map(([value, label]) => ({
-  value,
-  label,
-}));
+export const NOTIFICATION_TYPE_OPTIONS = (
+  Object.entries(NOTIFICATION_TYPE_LABEL) as [NotificationTypeValue, string][]
+).map(([value, label]) => ({ value, label }));

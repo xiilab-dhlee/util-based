@@ -9,7 +9,7 @@ import { formatElapsedTime } from "@/shared/utils/date.util";
 interface ProfileNotificationCardProps extends NotificationListType {}
 
 export function ProfileNotificationCard({
-  content,
+  contentTitle,
   createdDate,
 }: ProfileNotificationCardProps) {
   return (
@@ -18,7 +18,7 @@ export function ProfileNotificationCard({
         <Icon name="NotiFilled" color="#A4C8FF" size={14} />
       </IconWrapper>
       <ItemBody>
-        <ItemMessage>{content}</ItemMessage>
+        <ItemMessage>{contentTitle}</ItemMessage>
         <ItemTime>{formatElapsedTime(createdDate)}</ItemTime>
       </ItemBody>
     </Container>

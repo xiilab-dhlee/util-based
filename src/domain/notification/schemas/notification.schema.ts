@@ -35,7 +35,6 @@ export const notificationListSchema = baseNotificationSchema.pick({
   id: true,
   title: true,
   contentTitle: true,
-  content: true,
   type: true,
   createdDate: true,
   creatorName: true,
