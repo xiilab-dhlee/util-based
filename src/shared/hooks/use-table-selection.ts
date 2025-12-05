@@ -16,14 +16,14 @@ export function useTableSelection<T>(
   const selectedKeys = useMemo(() => Array.from(selectedSet), [selectedSet]);
 
   const clearSelection = useCallback(() => {
-    setSelectedSet(new Set());
+    setSelectedSet(new Set<Key>());
   }, [setSelectedSet]);
 
   const rowSelection = useMemo<TableProps<T>["rowSelection"]>(
     () => ({
       selectedRowKeys: selectedKeys,
-      onChange: (keys) => {
-        setSelectedSet(new Set(keys));
+      onChange: (keys: Key[]) => {
+        setSelectedSet(new Set<Key>(keys));
       },
     }),
     [selectedKeys, setSelectedSet],
