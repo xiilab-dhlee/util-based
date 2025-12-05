@@ -7,6 +7,9 @@ import type { DropdownOption } from "xiilab-ui";
  *
  * value 값은 API 스키마(대문자)와 일치하도록 관리하고,
  * label 은 UI 에서 노출되는 사람이 읽기 좋은 형태로 분리한다.
+ *
+ * 이 상수를 단일 소스 오브 트루스로 사용하고,
+ * 라벨 맵 및 드롭다운 옵션은 모두 여기에서 파생한다.
  */
 export const WORKSPACE_MEMBER_WORKSPACE_AUTHORITY = [
   { value: "OWNER", label: "Owner" },
@@ -19,10 +22,16 @@ export type WorkspaceMemberWorkspaceAuthority =
 /**
  * role value → 사람이 읽기 좋은 label 매핑
  */
-export const WORKSPACE_MEMBER_ROLE_LABEL_MAP = {
-  OWNER: "Owner",
-  PARTICIPANT: "Participant",
-} satisfies Record<WorkspaceMemberWorkspaceAuthority, string>;
+export const WORKSPACE_MEMBER_ROLE_LABEL_MAP: Record<
+  WorkspaceMemberWorkspaceAuthority,
+  string
+> = WORKSPACE_MEMBER_WORKSPACE_AUTHORITY.reduce(
+  (accumulator, { value, label }) => {
+    accumulator[value] = label;
+    return accumulator;
+  },
+  {} as Record<WorkspaceMemberWorkspaceAuthority, string>,
+);
 
 /**
  * role value 를 받아 label 로 변환
