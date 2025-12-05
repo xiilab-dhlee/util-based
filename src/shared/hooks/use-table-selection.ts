@@ -22,7 +22,7 @@ export function useTableSelection<T>(
     () => ({
       selectedRowKeys: selectedKeys,
       onChange: (keys) => {
-        setSelectedSet(new Set(keys as string[]));
+        setSelectedSet(new Set(keys.map(String)));
       },
     }),
     [selectedKeys, setSelectedSet],
