@@ -2,6 +2,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { NotificationAllCheck } from "@/domain/notification/components/list/notification-all-check";
 import { NotificationItemCheck } from "@/domain/notification/components/list/notification-item-check";
+import { getNotificationTypeLabel } from "@/domain/notification/constants/notification.constant";
 import type { NotificationListType } from "@/domain/notification/schemas/notification.schema";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
@@ -21,8 +22,8 @@ export const notificationListColumn: ResponsiveColumnType[] = [
     title: "알림 유형",
     dataIndex: "type",
     align: "left",
-    render: () => {
-      return <span>워크스페이스 생성</span>;
+    render: (_: unknown, record: NotificationListType) => {
+      return <span>{getNotificationTypeLabel(record.type) ?? "-"}</span>;
     },
   },
   {
@@ -35,7 +36,7 @@ export const notificationListColumn: ResponsiveColumnType[] = [
     dataIndex: "createdDate",
     align: "left",
     width: 180,
-    render: (createdDate: string) => {
+    render: (createdDate: NotificationListType["createdDate"]) => {
       return (
         <ColumnAlignCenterWrap>
           {formatDateTimeSafely(createdDate) ?? "-"}
