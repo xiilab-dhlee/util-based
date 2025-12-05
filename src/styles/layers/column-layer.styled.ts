@@ -76,6 +76,10 @@ export const ColumnIconWrap = styled.button`
 export const ColumnLink = styled(Link)`
   color: #17171f !important;
   text-decoration: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2px;
 `;
 // 강조 텍스트
 export const ColumnHighlightText = styled.span`

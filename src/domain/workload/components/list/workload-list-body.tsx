@@ -35,7 +35,12 @@ export function WorkloadListBody() {
     <ListWrapper>
       <CustomizedTable
         columns={createWorkloadColumn([
-          { dataIndex: "workloadName", width: 200, ellipsis: true },
+          {
+            dataIndex: "workloadName",
+            width: 200,
+            ellipsis: true,
+            sorter: true,
+          },
           { dataIndex: "jobType", width: 100 },
           { dataIndex: "creatorName", width: 60, ellipsis: true },
           { dataIndex: "elapsedTime" },
@@ -48,7 +53,7 @@ export function WorkloadListBody() {
           { dataIndex: "delete" },
         ])}
         data={data?.content || []}
-        columnHeight={40}
+        columnHeight={38}
         activePadding
       />
     </ListWrapper>
