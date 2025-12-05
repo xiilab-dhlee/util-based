@@ -147,5 +147,5 @@ const NotificationContentTitle = styled.p`
   color: #22272f;
   font-weight: 600;
   font-size: 14px;
-  line-height: 12px;
+  line-height: 16px;
 `;
