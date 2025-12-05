@@ -1,4 +1,4 @@
-import type { SliderMarkItem } from "./types";
+import type { SliderMarkItem } from "@/shared/components/slider/types";
 
 /**
  * 리소스 데이터에서 슬라이더 마크 배열 생성

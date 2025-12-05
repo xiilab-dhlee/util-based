@@ -1,23 +1,17 @@
 "use client";
 
-import { Typography } from "xiilab-ui";
+import { TooltipHighlightText } from "@/styles/mixins/text";
 
 export function UpdateMigTooltipTitle() {
   return (
-    <Typography.Text variant="body-4-2">
-      <Typography.Text variant="body-3-1" as="span" color="#FF3737">
+    <>
+      <TooltipHighlightText $colorVariant="red">
         MIG 비활성화시&nbsp;
-      </Typography.Text>
+      </TooltipHighlightText>
       더 이상 MIG 기능을 사용할 수 없습니다. <br />
       기능 설정 시&nbsp;
-      <Typography.Text variant="body-3-1" as="span" color="#2862FF">
-        MIG개수
-      </Typography.Text>
-      를{" "}
-      <Typography.Text variant="body-3-1" as="span" color="#2862FF">
-        선택
-      </Typography.Text>
-      해 주세요.
-    </Typography.Text>
+      <TooltipHighlightText>MIG개수</TooltipHighlightText>를{" "}
+      <TooltipHighlightText>선택</TooltipHighlightText>해 주세요.
+    </>
   );
 }

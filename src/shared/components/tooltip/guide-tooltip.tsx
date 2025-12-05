@@ -1,13 +1,38 @@
+"use client";
+import type { ReactNode } from "react";
 import styled from "styled-components";
-import { Icon, Tooltip, type TooltipProps } from "xiilab-ui";
+import { Icon, Tooltip, type TooltipProps, Typography } from "xiilab-ui";
 
-// import { GuideIcon } from "@/shared/components/icon/guide-icon";
+interface GuideTooltipProps extends Omit<TooltipProps, "title"> {
+  title: ReactNode;
+}
 
-interface GuideTooltipProps extends TooltipProps {}
+export function GuideTooltip({
+  title,
+  maxWidth,
+  styles,
+  ...props
+}: GuideTooltipProps) {
+  const mergedStyles =
+    maxWidth === undefined
+      ? styles
+      : {
+          ...styles,
+          root: {
+            ...(styles?.root ?? {}),
+            maxWidth,
+          },
+        };
 
-export function GuideTooltip({ ...props }: GuideTooltipProps) {
   return (
-    <Tooltip {...props} placement="right">
+    <Tooltip
+      theme="light"
+      placement="right"
+      {...props}
+      styles={mergedStyles}
+      title={<Typography.Text variant="body-3-3">{title}</Typography.Text>}
+      getPopupContainer={() => document.body}
+    >
       <IconWrapper className="tooltip-icon">
         <Icon name="Info" size={16} color="#5F6368" />
         <span className="sr-only">가이드</span>
@@ -20,11 +45,6 @@ const IconWrapper = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  position: absolute;
-  top: 50%;
-  left: calc(100% + 2px);
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 `;

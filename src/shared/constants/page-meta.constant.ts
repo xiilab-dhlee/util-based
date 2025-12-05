@@ -26,7 +26,7 @@ export const PAGE_META = {
   },
   "admin.kubernetes-monitoring": {
     title: "쿠버네티스 모니터링",
-    iconName: "SystemMonitoring",
+    iconName: "MonitoringKubernetes",
     href: ROUTES.ADMIN_KUBERNETES_MONITORING,
   },
   "admin.system-monitoring": {
@@ -36,7 +36,7 @@ export const PAGE_META = {
   },
   "admin.monitoring-notification": {
     title: "모니터링 알림",
-    iconName: "Noti",
+    iconName: "MonitoringAlarm",
     href: ROUTES.ADMIN_MONITORING_NOTIFICATION,
   },
 
@@ -150,7 +150,7 @@ export const PAGE_META = {
   },
   "admin.workspace.revoke-history": {
     title: "리소스 회수 이력",
-    iconName: "Resource",
+    iconName: "Description",
     href: ROUTES.ADMIN_REVOKE_RESOURCE_HISTORY,
   },
   "admin.workspace.revoke-history.detail": {
@@ -215,7 +215,7 @@ export const PAGE_META = {
   },
   "admin.request-image": {
     title: "이미지 사용 요청 관리",
-    iconName: "Image",
+    iconName: "ManagingImageUseRequest",
     href: ROUTES.ADMIN_REQUEST_IMAGE,
   },
   "admin.external-registry": {

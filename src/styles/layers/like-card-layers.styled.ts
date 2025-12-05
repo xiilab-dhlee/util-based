@@ -57,7 +57,6 @@ export const LikeCompactCardTitle = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 5px;
 `;
 
 /**
