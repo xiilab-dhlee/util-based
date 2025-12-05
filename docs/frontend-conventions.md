@@ -27,6 +27,48 @@
 - 공유 컴포넌트의 위치를 일관성 있게 관리
 - 컴포넌트의 특성에 따라 적절한 하위 폴더에 배치 (예: Card 기반 컴포넌트는 `shared/components/card/`)
 
+### 모달 컴포넌트 선언 위치
+
+**협의일**: 2025-12-05
+
+**상황**: 모달 컴포넌트의 선언 위치가 일관되지 않아 유지보수가 어려운 경우
+
+**협의 내용**: 모달 컴포넌트(`*-modal.tsx` 또는 `*Modal`)는 항상 페이지의 Entry-Point에 선언해야 한다.
+
+**규칙**:
+1. **일반 모달**: 주로 해당 페이지의 Main 컴포넌트 최상단에 선언한다.
+   - 예: `WorkloadListMain`에서 `CreateWorkloadModal` 선언
+2. **공통 UI 모달**: 여러 페이지 간 공통으로 보여지는 UI를 정의하는 Layout에 선언한다.
+   - 예: `WorkloadDetailLayout`
+3. **전역 공통 모달**: 모든 페이지에서 사용되는 공통 모달의 경우 최상위 Layout(`ModeLayout`)에 선언한다.
+
+**예시 코드**:
+
+```tsx
+// src/domain/workload/components/list/workload-list-main.tsx
+import { CreateWorkloadModal } from "./create-workload-modal";
+
+export const WorkloadListMain = () => {
+  // ... 로직 ...
+
+  return (
+    <>
+      <Container>
+         {/* ... 리스트 UI ... */}
+      </Container>
+      
+      {/* ✅ 모달은 컴포넌트 최상단(또는 최하단) Entry Point에 선언 */}
+      <CreateWorkloadModal />
+    </>
+  );
+};
+```
+
+**이유**:
+- 모달의 상태 관리와 가시성 제어를 명확한 위치에서 수행
+- 불필요한 렌더링 방지 및 구조 파악 용이
+- React Portal 등을 사용할 때 예측 가능한 동작 보장
+
 ---
 
 ## Import 경로 규칙
