@@ -6,6 +6,7 @@ import { NotificationListBody } from "@/domain/notification/components/list/noti
 import { NotificationListFilter } from "@/domain/notification/components/list/notification-list-filter";
 import { NotificationListFooter } from "@/domain/notification/components/list/notification-list-footer";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
   ListPageAside,
   ListPageBody,
@@ -35,7 +36,7 @@ export default function AdminNotificationLayout({
           {/* 알림 목록 페이지네이션 */}
           <NotificationListFooter />
         </ListPageBody>
-        <ListPageAside $width={620}>{children}</ListPageAside>
+        <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
       </ListPageMain>
     </>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { AsideVolume } from "@/domain/volume/components/detail/aside-volume";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import { ListPageAside } from "@/styles/layers/list-page-layers.styled";
 
 /**
@@ -13,7 +14,7 @@ import { ListPageAside } from "@/styles/layers/list-page-layers.styled";
  */
 export function VolumeListMain() {
   return (
-    <ListPageAside $width={620}>
+    <ListPageAside $width={ASIDE_WIDTH}>
       <AsideVolume />
     </ListPageAside>
   );

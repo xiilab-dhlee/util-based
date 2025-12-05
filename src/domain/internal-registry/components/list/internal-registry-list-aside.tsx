@@ -1,5 +1,6 @@
 "use client";
 
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
   AsideDetailContainer,
   AsideDetailHeader,
@@ -10,7 +11,7 @@ import { InternalRegistryImageListBody } from "./internal-registry-image-list-bo
 
 export function InternalRegistryListAside() {
   return (
-    <ListPageAside $width={620}>
+    <ListPageAside $width={ASIDE_WIDTH}>
       <AsideDetailContainer>
         <AsideDetailHeader>
           <AsideDetailHeaderTitle style={{ paddingTop: 9 }}>

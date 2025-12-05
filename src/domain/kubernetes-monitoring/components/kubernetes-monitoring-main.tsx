@@ -20,6 +20,7 @@ import { ViewKubernetesEventDetailModal } from "@/domain/kubernetes-monitoring/c
 import { ViewYamlLogModal } from "@/domain/kubernetes-monitoring/components/view-yaml-log-modal";
 import type { KubernetesEventType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
   ListPageAside,
   ListPageBody,
@@ -124,7 +125,7 @@ export function KubernetesMonitoringMain() {
           </EventBody>
         </ListPageBody>
         {/* 소스코드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
-        <ListPageAside $width={620}>
+        <ListPageAside $width={ASIDE_WIDTH}>
           <KubernetesMonitoringAside />
         </ListPageAside>
       </ListPageMain>

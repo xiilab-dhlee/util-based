@@ -6,6 +6,7 @@ import { SourcecodeListBody } from "@/domain/sourcecode/components/list/sourceco
 import { SourcecodeListFilter } from "@/domain/sourcecode/components/list/sourcecode-list-filter";
 import { SourcecodeListFooter } from "@/domain/sourcecode/components/list/sourcecode-list-footer";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
   ListPageAside,
   ListPageBody,
@@ -32,7 +33,7 @@ export default function SourcecodeLayout({ children }: PropsWithChildren) {
           <SourcecodeListFooter />
         </ListPageBody>
         {/* 소스코드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
-        <ListPageAside $width={620}>{children}</ListPageAside>
+        <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
       </ListPageMain>
       {/* 소스코드 삭제 모달 */}
       <DeleteSourcecodeModal />
