@@ -15,13 +15,13 @@ import {
 } from "xiilab-ui";
 
 import { useCreateWorkspace } from "@/domain/workspace/hooks/use-create-workspace";
-import type { CreateWorkspacePayload } from "@/domain/workspace/types/workspace.type";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { openCreateFirstWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import {
   type CreateWorkspaceType,
   createWorkspaceSchema,
-} from "../schemas/workspace.schema";
+} from "@/domain/workspace/schemas/workspace.schema";
+import type { CreateWorkspacePayload } from "@/domain/workspace/types/workspace.type";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateFirstWorkspaceModalAtom } from "@/shared/state/modal.atom";
 
 const DEMO_LIMIT_WORKSPACE = {
   gpuCount: 2,
@@ -76,7 +76,6 @@ export function CreateFirstWorkspaceModal() {
   /**
    * 폼 제출 처리 함수
    *
-   * 워크스페이스 수정 데이터를 서버로 전송하고 모달을 닫습니다.
    */
   const onSubmit = (data: CreateWorkspaceType) => {
     const payload: CreateWorkspacePayload = {
