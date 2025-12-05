@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
+
+import type { ResourceAllocationData } from "@/domain/workspace/components/detail/update-resource-allocation-modal";
+import { UpdateResourceAllocationModal } from "@/domain/workspace/components/detail/update-resource-allocation-modal";
+import { useGetWorkspace } from "@/domain/workspace/hooks/use-get-workspace";
+import { Slider } from "@/shared/components/slider";
+import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { getResourceInfo } from "@/shared/utils/resource.util";
 
 /**
  * 워크스페이스 리소스 할당량 카드 컴포넌트
@@ -12,11 +20,35 @@ import { Button } from "xiilab-ui";
  * MIG(Multi-Instance GPU) 설정도 포함합니다.
  */
 export function WorkspaceResourceAllocCard() {
-  // 편집 모드 상태 관리
-  const [isEditMode, setIsEditMode] = useState(false);
+  const { id } = useParams();
+  const publish = usePublish();
+  const { data: workspaceData } = useGetWorkspace(id as string);
 
+  const gpuValue = workspaceData?.gpu ?? 0;
+  const gpuLimit = workspaceData?.gpuQuota ?? 0;
+  const cpuValue = workspaceData?.cpu ?? 0;
+  const cpuLimit = workspaceData?.cpuQuota ?? 0;
+  const memValue = workspaceData?.mem ?? 0;
+  const memLimit = workspaceData?.memQuota ?? 0;
+
+  /**
+   * 수정 버튼 클릭 핸들러
+   * PubSub을 통해 리소스 할당량 수정 모달에 데이터를 전달합니다.
+   */
   const handleClickEdit = () => {
-    setIsEditMode((prev) => !prev);
+    if (!workspaceData) return;
+
+    const resourceData: ResourceAllocationData = {
+      gpuValue: workspaceData.gpu,
+      gpuLimit: workspaceData.gpuQuota,
+      cpuValue: workspaceData.cpu,
+      cpuLimit: workspaceData.cpuQuota,
+      memValue: workspaceData.mem,
+      memLimit: workspaceData.memQuota,
+      // TODO: MIG 리소스는 별도 API 또는 필드가 추가되면 매핑 처리
+      migResources: [],
+    };
+    publish(WORKSPACE_EVENTS.sendUpdateResourceAllocation, resourceData);
   };
 
   return (
@@ -43,46 +75,41 @@ export function WorkspaceResourceAllocCard() {
           <Resources>
             {/* GPU 리소스 할당량 */}
             <Resource>
-              <ResourceKey>GPU</ResourceKey>
-              <ResourceBody>
-                <ResourceProgressBar>
-                  <ResourceProgress className="gpu" />
-                </ResourceProgressBar>
-                <ResourceLimit>5</ResourceLimit>
-              </ResourceBody>
-              <ResourceValue
-                value={isEditMode ? "4" : "4개"}
-                readOnly={!isEditMode}
+              <ResourceKey>{getResourceInfo("GPU").text}</ResourceKey>
+              <Slider
+                min={0}
+                max={gpuLimit}
+                value={gpuValue}
+                type="GPU"
+                width="100%"
+                readMode
+                showInput={true}
               />
             </Resource>
-
             {/* CPU 리소스 할당량 */}
             <Resource>
-              <ResourceKey>CPU</ResourceKey>
-              <ResourceBody>
-                <ResourceProgressBar>
-                  <ResourceProgress className="cpu" />
-                </ResourceProgressBar>
-                <ResourceLimit>200</ResourceLimit>
-              </ResourceBody>
-              <ResourceValue
-                value={isEditMode ? "102" : "102Core"}
-                readOnly={!isEditMode}
+              <ResourceKey>{getResourceInfo("CPU").text}</ResourceKey>
+              <Slider
+                min={0}
+                max={cpuLimit}
+                value={cpuValue}
+                type="CPU"
+                width="100%"
+                readMode
+                showInput={true}
               />
             </Resource>
-
             {/* MEM 리소스 할당량 */}
             <Resource>
-              <ResourceKey>MEM</ResourceKey>
-              <ResourceBody>
-                <ResourceProgressBar>
-                  <ResourceProgress className="mem" />
-                </ResourceProgressBar>
-                <ResourceLimit>23</ResourceLimit>
-              </ResourceBody>
-              <ResourceValue
-                value={isEditMode ? "102" : "102GB"}
-                readOnly={!isEditMode}
+              <ResourceKey>{getResourceInfo("MEM").text}</ResourceKey>
+              <Slider
+                min={0}
+                max={memLimit}
+                value={memValue}
+                type="MEM"
+                width="100%"
+                readMode
+                showInput={true}
               />
             </Resource>
           </Resources>
@@ -92,44 +119,45 @@ export function WorkspaceResourceAllocCard() {
         <Body>
           <BodyHeader>
             <BodyHeaderTitle>
-              <span>GPU</span>
+              <span>{getResourceInfo("GPU").text}</span>
               <BodyHeaderTitleDivdier />
-              <span>MIG</span>
+              <span>{getResourceInfo("MIG").text}</span>
             </BodyHeaderTitle>
           </BodyHeader>
           <Resources>
             {/* 1g.12gb MIG 설정 */}
             <Resource>
               <ResourceKey>1g.12gb</ResourceKey>
-              <ResourceBody>
-                <ResourceProgressBar>
-                  <ResourceProgress className="mig" />
-                </ResourceProgressBar>
-                <ResourceLimit>5</ResourceLimit>
-              </ResourceBody>
-              <ResourceValue
-                value={isEditMode ? "4" : "4개"}
-                readOnly={!isEditMode}
+              <Slider
+                min={0}
+                max={5}
+                value={4}
+                type="MIG"
+                width="100%"
+                readMode
+                showInput={true}
               />
             </Resource>
 
             {/* 2g.24gb MIG 설정 */}
             <Resource>
               <ResourceKey>2g.24gb</ResourceKey>
-              <ResourceBody>
-                <ResourceProgressBar>
-                  <ResourceProgress className="mig" />
-                </ResourceProgressBar>
-                <ResourceLimit>200</ResourceLimit>
-              </ResourceBody>
-              <ResourceValue
-                value={isEditMode ? "4" : "4개"}
-                readOnly={!isEditMode}
+              <Slider
+                min={0}
+                max={5}
+                value={4}
+                type="MIG"
+                width="100%"
+                readMode
+                showInput={true}
               />
             </Resource>
           </Resources>
         </Body>
       </Container>
+
+      {/* 리소스 할당량 수정 모달 */}
+      <UpdateResourceAllocationModal />
     </>
   );
 }
@@ -241,68 +269,4 @@ const ResourceKey = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-`;
-
-const ResourceBody = styled.div`
-  width: 176px;
-  border-radius: 2px;
-  border: 1px solid var(--border-color);
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px;
-  gap: 10px;
-`;
-
-const ResourceValue = styled.input`
-  width: 60px;
-  border-radius: 2px;
-  border: 1px solid var(--border-color);
-  height: 100%;
-  padding: 0 6px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const ResourceLimit = styled.span`
-  font-weight: 400;
-  font-size: 11px;
-  color: #555555;
-  text-align: center;
-`;
-
-const ResourceProgressBar = styled.div`
-  flex: 1;
-  height: 6px;
-  border-radius: 4px;
-  background-color: #eaeaea;
-  box-shadow:
-    0px 1px 1px 0px #808e9724 inset,
-    0px 0px 4px 0px #ffffff40;
-  overflow: hidden;
-`;
-
-const ResourceProgress = styled.div`
-  width: 70%;
-  height: 100%;
-  background-color: var(--bg-color);
-  border-radius: 4px;
-
-  &.gpu {
-    --bg-color: #a353ff;
-  }
-
-  &.cpu {
-    --bg-color: #376dff;
-  }
-
-  &.mem {
-    --bg-color: #55d398;
-  }
-
-  &.mig {
-    --bg-color: #d646ec;
-  }
 `;

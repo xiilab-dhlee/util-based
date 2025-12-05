@@ -41,17 +41,25 @@ export const ROUTES = {
   ADMIN_ACCOUNT_MANAGEMENT_PENDING: `${MODE.ADMIN}/account-management/pending`,
   ADMIN_ACCOUNT_MANAGEMENT_GROUP: `${MODE.ADMIN}/account-management/group`,
 
-  // 보안 관리 (정적)
+  // 보안 관리 (동적 함수)
   ADMIN_REGISTRY_SECURITY: `${MODE.ADMIN}/registry-security`,
+  ADMIN_REGISTRY_SECURITY_TAG: (tagId: number, imageId: number) =>
+    `${MODE.ADMIN}/registry-security/${tagId}?imageId=${imageId}`,
   ADMIN_FILE_SECURITY: `${MODE.ADMIN}/file-security`,
+  ADMIN_FILE_SECURITY_SCAN: (scanId: number) =>
+    `${MODE.ADMIN}/file-security/${scanId}`,
+  ADMIN_FILE_SECURITY_VULNERABILITY: (
+    scanId: number,
+    vulnerabilityId: number,
+  ) => `${MODE.ADMIN}/file-security/${scanId}/vulnerability/${vulnerabilityId}`,
 
   // 워크스페이스 관리 (동적 함수)
   ADMIN_WORKSPACE: `${MODE.ADMIN}/workspace`,
   ADMIN_WORKSPACE_DETAIL: (id: string) => `${MODE.ADMIN}/workspace/${id}`,
   ADMIN_WORKSPACE_MEMBER: (id: string) =>
     `${MODE.ADMIN}/workspace/${id}/member`,
-  ADMIN_WORKSPACE_WORKLOAD_DETAIL: (id: string) =>
-    `${MODE.ADMIN}/workspace/workload/${id}`,
+  ADMIN_WORKSPACE_WORKLOAD_DETAIL: (workspaceId: string, id: string) =>
+    `${MODE.ADMIN}/workspace/workload/${id}?workspaceId=${workspaceId}`,
   ADMIN_WORKSPACE_WORKLOAD_LOG: (id: string) =>
     `${MODE.ADMIN}/workspace/workload/${id}/log`,
   ADMIN_WORKSPACE_WORKLOAD_FILE: (id: string) =>
@@ -64,7 +72,9 @@ export const ROUTES = {
     `${MODE.ADMIN}/workspace/workload/${id}/terminal`,
 
   ADMIN_REQUEST_RESOURCE: `${MODE.ADMIN}/request-resource`,
-  ADMIN_REQUEST_RESOURCE_HISTORY: `${MODE.ADMIN}/request-history`,
+  ADMIN_REVOKE_RESOURCE_HISTORY: `${MODE.ADMIN}/revoke-history`,
+  ADMIN_REVOKE_RESOURCE_HISTORY_DETAIL: (id: string) =>
+    `${MODE.ADMIN}/revoke-history/${id}`,
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
   ADMIN_REGISTRY: `${MODE.ADMIN}/registry`,

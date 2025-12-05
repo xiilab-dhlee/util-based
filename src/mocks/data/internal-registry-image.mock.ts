@@ -6,7 +6,7 @@ import {
   internalregistryImageTagDetailSchema,
   internalregistryImageTagListSchema,
 } from "@/domain/internal-registry-image/schemas/internal-registry-image-tag.schema";
-import { vulnerabilityListSchema } from "@/domain/security/schemas/vulnerability.schema";
+import { vulnerabilityListResponseSchema } from "@/domain/security/schemas/vulnerability.schema";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { makeMock } from "@/shared/utils/mock.util";
 
@@ -45,5 +45,5 @@ export const internalregistryImageTagDetailMock = makeMock(
  */
 export const internalregistryImageTagVulnerabilityListMock = Array.from(
   { length: LIST_PAGE_SIZE },
-  () => makeMock(vulnerabilityListSchema),
+  () => makeMock(vulnerabilityListResponseSchema),
 );

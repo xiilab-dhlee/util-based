@@ -30,7 +30,8 @@ export function applyColumnConfigs(
 
   // 컬럼을 맵으로 변환 (빠른 조회를 위해)
   const columnMap = new Map<string, ResponsiveColumnType>();
-  [...columns, ...commonColumns].forEach((column) => {
+  // commonColumns 먼저 등록 후, 도메인 전용 columns 로 오버라이드 되도록 순서 설정
+  [...commonColumns, ...columns].forEach((column) => {
     const dataIndex = column.dataIndex as string;
     if (dataIndex) {
       columnMap.set(dataIndex, column);

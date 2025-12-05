@@ -94,10 +94,37 @@ export const PAGE_META = {
     iconName: "SecurityCheck",
     href: ROUTES.ADMIN_REGISTRY_SECURITY,
   },
+  "admin.registry-security.tag": {
+    title: "레지스트리 보안 태그",
+    href: ({ tagId, imageId }: { tagId: number; imageId: number }) =>
+      ROUTES.ADMIN_REGISTRY_SECURITY_TAG(tagId, imageId),
+    parent: "admin.registry-security",
+  },
   "admin.file-security": {
     title: "파일 시스템 보안",
     iconName: "SecurityCheck",
     href: ROUTES.ADMIN_FILE_SECURITY,
+  },
+  "admin.file-security.scan": {
+    title: "검사 상세",
+    href: ({ scanId, id }: { scanId?: string; id?: string }) =>
+      ROUTES.ADMIN_FILE_SECURITY_SCAN(Number(scanId ?? id)),
+    parent: "admin.file-security",
+  },
+  "admin.file-security.vulnerability": {
+    title: "취약점 상세",
+    href: ({
+      scanId,
+      vulnerabilityId,
+    }: {
+      scanId: string;
+      vulnerabilityId: string;
+    }) =>
+      ROUTES.ADMIN_FILE_SECURITY_VULNERABILITY(
+        Number(scanId),
+        Number(vulnerabilityId),
+      ),
+    parent: "admin.file-security.scan",
   },
 
   // ============================================
@@ -123,15 +150,21 @@ export const PAGE_META = {
     iconName: "Resource",
     href: ROUTES.ADMIN_REQUEST_RESOURCE,
   },
-  "admin.workspace.request-history": {
-    title: "리소스 신청 이력",
+  "admin.workspace.revoke-history": {
+    title: "리소스 회수 이력",
     iconName: "Resource",
-    href: ROUTES.ADMIN_REQUEST_RESOURCE_HISTORY,
+    href: ROUTES.ADMIN_REVOKE_RESOURCE_HISTORY,
+  },
+  "admin.workspace.revoke-history.detail": {
+    title: "리소스 회수 상세",
+    href: ({ id }: { id: string }) =>
+      ROUTES.ADMIN_REVOKE_RESOURCE_HISTORY_DETAIL(id),
+    parent: "admin.workspace.revoke-history",
   },
   "admin.workspace.workload.detail": {
     title: "워크로드 상세",
-    href: ({ id }: { id: string }) =>
-      ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(id),
+    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(workspaceId, id),
     parent: "admin.workspace",
   },
   "admin.workspace.workload.log": {

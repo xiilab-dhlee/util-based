@@ -35,12 +35,10 @@ export function WorkloadListBody() {
     <ListWrapper>
       <CustomizedTable
         columns={createWorkloadColumn([
-          // { dataIndex: "isPinned" },
           { dataIndex: "workloadName", width: 200, ellipsis: true },
           { dataIndex: "jobType", width: 100 },
           { dataIndex: "creatorName", width: 60, ellipsis: true },
           { dataIndex: "elapsedTime" },
-          { dataIndex: "labels" },
           { dataIndex: "status", width: 80 },
           { dataIndex: "log" },
           { dataIndex: "terminal", width: 60 },

@@ -13,3 +13,5 @@ export const workspaceSortAtom = atom<string | null>(null);
 export const workspaceCheckedListAtom = atomWithReset<Set<WorkspaceIdType>>(
   new Set(),
 );
+/** 리소스 할당량 수정 모달 표시 여부 */
+export const openUpdateResourceAllocationModalAtom = atom<boolean>(false);

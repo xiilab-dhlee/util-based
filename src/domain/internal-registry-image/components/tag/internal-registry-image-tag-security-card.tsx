@@ -4,7 +4,7 @@ import { Icon } from "xiilab-ui";
 
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
 import type { CoreSecurityLevel } from "@/shared/types/core.interface";
-import { getSecurityLevelInfo } from "@/shared/utils/security.util";
+import { getVulnerabilityLevelInfo } from "@/shared/utils/vulnerability.util";
 
 interface InternalRegistryImageTagSecurityCardProps {
   level: CoreSecurityLevel;
@@ -15,7 +15,7 @@ export function InternalRegistryImageTagSecurityCard({
   level,
   count,
 }: InternalRegistryImageTagSecurityCardProps) {
-  const { icon } = getSecurityLevelInfo(level);
+  const { icon } = getVulnerabilityLevelInfo(level);
   return (
     <Container>
       <Body>

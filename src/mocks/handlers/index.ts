@@ -3,24 +3,27 @@
  * 모든 도메인별 핸들러를 하나로 통합하여 export
  */
 
-import { accountHandlers } from "./account.handler";
-import { credentialHandlers } from "./credential.handler";
-import { gpuHandlers } from "./gpu.handler";
-import { groupHandlers } from "./group.handler";
-import { hubHandlers } from "./hub.handler";
-import { internalregistryHandlers } from "./internal-registry.handler";
-import { internalregistryImageHandlers } from "./internal-registry-image.handler";
-import { kubernetesMonitoringHandlers } from "./kubernetes-monitoring.handler";
-import { monitoringHandlers } from "./monitoring.handler";
-import { nodeHandlers } from "./node.handler";
-import { notificationHandlers } from "./notification.handler";
-import { redfishHandlers } from "./redfish.handler";
-import { requestImageHandlers } from "./request-image.handler";
-import { sourcecodeHandlers } from "./sourcecode.handler";
-import { volumeHandlers } from "./volume.handler";
-import { workloadHandlers } from "./workload.handler";
-import { workspaceHandlers } from "./workspace.handler";
-
+import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
+import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+import { accountHandlers } from "@/mocks/handlers/account.handler";
+import { credentialHandlers } from "@/mocks/handlers/credential.handler";
+import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
+import { groupHandlers } from "@/mocks/handlers/group.handler";
+import { hubHandlers } from "@/mocks/handlers/hub.handler";
+import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
+import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
+import { kubernetesMonitoringHandlers } from "@/mocks/handlers/kubernetes-monitoring.handler";
+import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
+import { nodeHandlers } from "@/mocks/handlers/node.handler";
+import { notificationHandlers } from "@/mocks/handlers/notification.handler";
+import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
+import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
+import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
+import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
+import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
+import { volumeHandlers } from "@/mocks/handlers/volume.handler";
+import { workloadHandlers } from "@/mocks/handlers/workload.handler";
+import { workspaceHandlers } from "@/mocks/handlers/workspace.handler";
 /**
  * 기본 핸들러 (모든 도메인)
  */
@@ -43,4 +46,8 @@ export const combinedHandlers = [
   ...kubernetesMonitoringHandlers,
   ...credentialHandlers,
   ...gpuHandlers,
+  ...fileSecurityHandlers,
+  ...registrySecurityHandlers,
+  ...revokeHistoryHandlers,
+  ...systemMonitoringHandlers,
 ];

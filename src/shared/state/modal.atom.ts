@@ -24,3 +24,9 @@ export const openProfilePopoverAtom = atom<boolean>(false);
 export const openCreateWorkloadDrawerAtom = atom<boolean>(false);
 /** 워크로드 가져오기 모달 표시 여부 */
 export const openSelectWorkloadModalAtom = atom<boolean>(false);
+/** 파일 보안 취약점 상세 모달 표시 여부 */
+export const openViewFileSecurityVulnerabilityInfoModalAtom =
+  atom<boolean>(false);
+/** 레지스트리 보안 취약점 상세 모달 표시 여부 */
+export const openViewRegistrySecurityVulnerabilityInfoModalAtom =
+  atom<boolean>(false);

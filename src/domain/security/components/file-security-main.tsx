@@ -1,21 +1,61 @@
 "use client";
 
+import { useState } from "react";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import type { SecurityWeekDayKey } from "@/shared/constants/security.constant";
+import {
+  SECURITY_SCHEDULE_PERIOD_UNIT_WEEK,
+  SECURITY_USAGE_DISABLED,
+  SECURITY_USAGE_ENABLED,
+  type SecurityUsageStatus,
+} from "@/shared/constants/security.constant";
 import {
   ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
+import { createSecurityScheduleDescription } from "../utils/security-schedule.util";
+import { FileSecurityScanListBody } from "./file-security/file-security-scan-list-body";
+import { FileSecurityScanListFooter } from "./file-security/file-security-scan-list-footer";
+import { FileSecurityLevelSettingModal } from "./file-security-level-setting-modal";
+import { FileSecurityScheduleSettingModal } from "./file-security-schedule-setting-modal";
 import { SecurityAside } from "./security-aside";
-import { SecurityPolicySetting } from "./security-policy-setting";
-import { SecurityScanListBody } from "./security-scan-list-body";
-import { SecurityScanListFooter } from "./security-scan-list-footer";
+import { SecurityLevelPolicySetting } from "./security-level-policy-setting";
 
 export function FileSecurityMain() {
+  const [openSecurityLevelModal, setOpenSecurityLevelModal] = useState(false);
+  const [openSecurityScheduleModal, setOpenSecurityScheduleModal] =
+    useState(false);
+
+  const TEMP_USAGE_STATUS: SecurityUsageStatus = SECURITY_USAGE_ENABLED;
+
+  const levelDescription = createSecurityLevelDescription({
+    usageStatus: TEMP_USAGE_STATUS,
+    level: "critical",
+    thresholdCount: 5,
+  });
+
+  // TODO: 이후 실제 API 연동 시, 아래 mock 값들을 실제 설정 값으로 교체합니다.
+  const MOCK_PERIOD_VALUE = 1;
+  const MOCK_PERIOD_UNIT = SECURITY_SCHEDULE_PERIOD_UNIT_WEEK;
+  const MOCK_WEEK_DAYS: SecurityWeekDayKey[] = ["mon", "fri"];
+  const MOCK_START_DATETIME = new Date();
+  MOCK_START_DATETIME.setHours(18, 0, 0, 0);
+
+  const scheduleDescription = createSecurityScheduleDescription({
+    scheduleUsage: TEMP_USAGE_STATUS,
+    periodValue: MOCK_PERIOD_VALUE,
+    periodUnit: MOCK_PERIOD_UNIT,
+    weekDays: MOCK_WEEK_DAYS,
+    startDateTime: MOCK_START_DATETIME,
+    endDateUsage: SECURITY_USAGE_DISABLED,
+    endDateTime: null,
+  });
   return (
     <>
       <PageHeader
@@ -30,8 +70,9 @@ export function FileSecurityMain() {
             <Title>리소스 할당량</Title>
           </PolicyHeader>
           <PolicySettings>
-            <SecurityPolicySetting
+            <SecurityLevelPolicySetting
               title="보안 레벨 설정"
+              usageStatus={TEMP_USAGE_STATUS}
               descriptions={[
                 {
                   variant: "body-4-1",
@@ -39,12 +80,14 @@ export function FileSecurityMain() {
                 },
                 {
                   variant: "body-4-2",
-                  content: "Critical 이상의 취약점 2개 이상 발견시 사용 불가",
+                  content: levelDescription,
                 },
               ]}
+              onClickSetting={() => setOpenSecurityLevelModal(true)}
             />
-            <SecurityPolicySetting
+            <SecurityLevelPolicySetting
               title="보안 검사 일정"
+              usageStatus={TEMP_USAGE_STATUS}
               descriptions={[
                 {
                   variant: "body-4-1",
@@ -52,17 +95,18 @@ export function FileSecurityMain() {
                 },
                 {
                   variant: "body-4-2",
-                  content: "매주 금요일 18시 보안 검사 진행",
+                  content: scheduleDescription,
                 },
               ]}
+              onClickSetting={() => setOpenSecurityScheduleModal(true)}
             />
           </PolicySettings>
           <ScanHeader>
             <Title>취약점 검사 내역</Title>
           </ScanHeader>
           <ScanBody>
-            <SecurityScanListBody />
-            <SecurityScanListFooter />
+            <FileSecurityScanListBody />
+            <FileSecurityScanListFooter />
           </ScanBody>
         </ListPageBody>
         {/* 소스코드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
@@ -70,6 +114,14 @@ export function FileSecurityMain() {
           <SecurityAside />
         </ListPageAside>
       </ListPageMain>
+      <FileSecurityLevelSettingModal
+        open={openSecurityLevelModal}
+        onClose={() => setOpenSecurityLevelModal(false)}
+      />
+      <FileSecurityScheduleSettingModal
+        open={openSecurityScheduleModal}
+        onClose={() => setOpenSecurityScheduleModal(false)}
+      />
     </>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Dropdown, Icon, Modal } from "xiilab-ui";
+import { Dropdown, Form, FormItem, Icon, Modal } from "xiilab-ui";
 
 import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/domain/workspace/constants/workspace-member.constant";
 import { useUpdateWorkspaceMember } from "@/domain/workspace/hooks/use-update-workspace-member";
@@ -10,12 +10,10 @@ import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/work
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
 import { openUpdateWorkspaceMemberModalAtom } from "@/domain/workspace-member/state/workspace-member.atom";
 import { ModalDetailCard } from "@/shared/components/card/modal-detail-card";
-import { FormLabel } from "@/shared/components/form/form-label";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { useSelect } from "@/shared/hooks/use-select";
-import { FormItem } from "@/styles/layers/form-layer.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 
 export function UpdateWorkspaceMemberModal() {
@@ -30,8 +28,12 @@ export function UpdateWorkspaceMemberModal() {
     useState<WorkspaceMemberListType | null>(null);
 
   const roleSelect = useSelect(null, WORKSPACE_MEMBER_ROLE_OPTIONS);
+  const [roleError, setRoleError] = useState<string | null>(null);
+  const isSubmitting = updateWorkspaceMember.isPending;
 
   const handleSubmit = () => {
+    setRoleError(null);
+
     const payload = createPayload();
 
     // TODO: payload 검증 및 유효성 검사 추가 필요
@@ -73,11 +75,11 @@ export function UpdateWorkspaceMemberModal() {
       centered
       showHeaderBorder
       okButtonProps={{
-        disabled: updateWorkspaceMember.isPending, // MIG 업데이트 중일 때 확인 버튼 비활성화
+        disabled: isSubmitting,
       }}
     >
       <Container>
-        <Subject>계정 기본 정보</Subject>
+        <Subject>권한 수정</Subject>
         <ModalDetailCard
           records={[
             {
@@ -85,7 +87,7 @@ export function UpdateWorkspaceMemberModal() {
               value: workspaceMember?.name,
             },
             {
-              label: "아이디",
+              label: "이메일",
               value: workspaceMember?.email,
             },
             {
@@ -95,18 +97,19 @@ export function UpdateWorkspaceMemberModal() {
           ]}
         />
         <Subject style={{ marginTop: 16 }}>계정 수정 정보</Subject>
-        <form style={{ width: "100%" }}>
-          <FormItem>
-            <FormLabel>권한</FormLabel>
+        <Form layout="vertical">
+          <FormItem label="권한" required>
             <Dropdown
               options={roleSelect.options}
               onChange={roleSelect.onChange}
               value={roleSelect.value}
               width="100%"
               placeholder="권한을 선택해 주세요."
+              disabled={isSubmitting}
+              status={roleError ? "error" : undefined}
             />
           </FormItem>
-        </form>
+        </Form>
       </Container>
     </Modal>
   );

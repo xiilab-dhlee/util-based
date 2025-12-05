@@ -3,17 +3,20 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
+import { securityScanListMock } from "@/mocks/data/security-scan.mock";
 import { createSecurityColumn } from "@/shared/components/column/create-security-column";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL } from "@/shared/constants/vulnerability.constant";
 import type { CoreSecurityLevel } from "@/shared/types/core.interface";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 import { RegistrySecurityLevelCard } from "./security-level-card";
 
-const LEVELS: CoreSecurityLevel[] = ["CRITICAL", "HIGH", "MEDIUM", "LOW"];
+const LEVELS: CoreSecurityLevel[] = Object.values(
+  VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL,
+);
 
 export function SecurityAside() {
   return (
@@ -42,7 +45,7 @@ export function SecurityAside() {
               { dataIndex: "medium", title: "Medium" },
               { dataIndex: "low", title: "Low" },
             ])}
-            data={vulnerabilityListMock}
+            data={securityScanListMock}
             activePadding
           />
         </ListWrapper>

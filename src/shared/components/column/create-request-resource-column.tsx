@@ -1,8 +1,8 @@
-import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { ViewApproveResourceButton } from "@/domain/request-resource/components/view-approve-resource-button";
 import { ViewRejectResourceButton } from "@/domain/request-resource/components/view-reject-resource-button";
+import { REQUEST_RESOURCE_STATUS } from "@/domain/request-resource/constants/request-resource.constant";
 import type {
   RequestResourceListType,
   RequestResourceMigGpuType,
@@ -13,10 +13,18 @@ import { ViewRequestReasonButton } from "@/shared/components/button/view-request
 import { WorkspaceRequestResourceStatusText } from "@/shared/components/text/workspace-request-resource-status-text";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
+import { getResourceInfo } from "@/shared/utils/resource.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { ColumnMig } from "./column-mig";
 
 const createColumnList = (): ResponsiveColumnType[] => {
+  const gpuInfo = getResourceInfo("GPU");
+  const migInfo = getResourceInfo("MIG");
+  const mpsInfo = getResourceInfo("MPS");
+  const cpuInfo = getResourceInfo("CPU");
+  const memInfo = getResourceInfo("MEM");
+
   return [
     {
       title: "워크스페이스 이름",
@@ -24,16 +32,23 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
     },
     {
-      title: "GPU",
+      title: gpuInfo.text,
       dataIndex: "gpuReq",
       align: "center",
       width: 70,
-      render: (gpuReq: number) => {
-        return <ColumnAlignCenterWrap>{gpuReq || 0}개</ColumnAlignCenterWrap>;
+      render: (gpuReq: number | null | undefined) => {
+        const safeGpuReq = gpuReq ?? 0;
+
+        return (
+          <ColumnAlignCenterWrap>
+            {safeGpuReq}
+            {gpuInfo.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
-      title: "MIG",
+      title: migInfo.text,
       dataIndex: "migGpu",
       align: "center",
       width: 150,
@@ -42,21 +57,59 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      title: "CPU",
-      dataIndex: "cpuReq",
+      title: mpsInfo.text,
+      dataIndex: "mpsReq",
       align: "center",
       width: 70,
-      render: (cpuReq: number) => {
-        return <ColumnAlignCenterWrap>{cpuReq || 0}Core</ColumnAlignCenterWrap>;
+      render: (mpsReq: number | null | undefined) => {
+        const safeMpsReq = mpsReq ?? 0;
+
+        return (
+          <ColumnAlignCenterWrap>
+            {safeMpsReq}
+            {mpsInfo.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
-      title: "MEM",
+      title: cpuInfo.text,
+      dataIndex: "cpuReq",
+      align: "center",
+      width: 70,
+      render: (cpuReq: number | null | undefined) => {
+        const safeCpuReq = cpuReq ?? 0;
+
+        return (
+          <ColumnAlignCenterWrap>
+            {safeCpuReq}
+            {cpuInfo.unit}
+          </ColumnAlignCenterWrap>
+        );
+      },
+    },
+    {
+      title: memInfo.text,
       dataIndex: "memReq",
       align: "center",
       width: 70,
-      render: (memReq: string) => {
-        return <ColumnAlignCenterWrap>{memReq || 0}GB</ColumnAlignCenterWrap>;
+      render: (memReq: number | null | undefined) => {
+        const safeMemReq = memReq ?? 0;
+
+        return (
+          <ColumnAlignCenterWrap>
+            {safeMemReq}
+            {memInfo.unit}
+          </ColumnAlignCenterWrap>
+        );
+      },
+    },
+    {
+      title: "요청일시",
+      dataIndex: "creatorDateTime",
+      align: "center",
+      render: (creatorDateTime: string) => {
+        return <span>{formatDateTimeSafely(creatorDateTime) ?? "-"}</span>;
       },
     },
     {
@@ -64,16 +117,16 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "modDate",
       align: "center",
       render: (modDate: string) => {
-        return <span>{modDate ? format(modDate, "yyyy.MM.dd") : "-"}</span>;
+        return <span>{formatDateTimeSafely(modDate) ?? "-"}</span>;
       },
     },
     {
-      title: "신청자",
+      title: "요청자",
       dataIndex: "requester",
       align: "center",
     },
     {
-      title: "신청사유",
+      title: "요청사유",
       dataIndex: "requestReason",
       align: "center",
       width: 70,
@@ -95,8 +148,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "rejectReason",
       align: "center",
       width: 70,
-      render: (rejectReason: string) => {
-        return <ViewRejectReasonButton reason={rejectReason} />;
+      render: (rejectReason: string, record: RequestResourceListType) => {
+        const isRejected = record.status === REQUEST_RESOURCE_STATUS.REJECT;
+        return (
+          <ViewRejectReasonButton
+            reason={rejectReason}
+            disabled={!isRejected}
+          />
+        );
       },
     },
     {

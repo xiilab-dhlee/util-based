@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Icon, Modal, TextArea } from "xiilab-ui";
 
 import { openCreateResourceRequestModalAtom } from "@/domain/setting/state/setting.atom";
-import { ResourceSlider } from "@/shared/components/slider/resource-slider";
+import { Slider } from "@/shared/components/slider";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
 export function CreateResourceSettingModal() {
@@ -41,12 +41,13 @@ export function CreateResourceSettingModal() {
         <ResourceRow>
           <ResourceLabel>GPU</ResourceLabel>
           <SliderContainer>
-            <ResourceSlider
+            <Slider
               min={0}
               max={200}
               value={gpu}
-              setValue={setGpu}
-              resourceColor="#A353FF"
+              onChange={(value) => setGpu(value)}
+              type="GPU"
+              width="100%"
             />
           </SliderContainer>
         </ResourceRow>
@@ -55,12 +56,13 @@ export function CreateResourceSettingModal() {
         <ResourceRow>
           <ResourceLabel>CPU</ResourceLabel>
           <SliderContainer>
-            <ResourceSlider
+            <Slider
               min={0}
               max={200}
               value={cpu}
-              setValue={setCpu}
-              resourceColor="#376DFF"
+              onChange={(value) => setCpu(value)}
+              type="CPU"
+              width="100%"
             />
           </SliderContainer>
         </ResourceRow>
@@ -69,12 +71,13 @@ export function CreateResourceSettingModal() {
         <ResourceRow>
           <ResourceLabel>MEM</ResourceLabel>
           <SliderContainer>
-            <ResourceSlider
+            <Slider
               min={0}
               max={200}
               value={memory}
-              setValue={setMemory}
-              resourceColor="#A353FF"
+              onChange={(value) => setMemory(value)}
+              type="MEM"
+              width="100%"
             />
           </SliderContainer>
         </ResourceRow>

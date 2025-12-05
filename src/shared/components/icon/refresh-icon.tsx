@@ -1,0 +1,30 @@
+import type { SVGAttributes } from "react";
+
+interface RefreshIconProps extends SVGAttributes<SVGElement> {}
+
+export function RefreshIcon({
+  fill = "#484848",
+  width = 24,
+  height = 24,
+  ...rest
+}: RefreshIconProps) {
+  const { ["aria-hidden"]: ariaHiddenProp, ...restProps } = rest;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden={ariaHiddenProp}
+      {...restProps}
+    >
+      <title>새로고침 아이콘</title>
+      <path
+        d="M12 18C10.325 18 8.90625 17.4187 7.74375 16.2562C6.58125 15.0937 6 13.675 6 12C6 10.325 6.58125 8.90625 7.74375 7.74375C8.90625 6.58125 10.325 6 12 6C12.8625 6 13.6875 6.17825 14.475 6.53475C15.2625 6.89075 15.9375 7.4 16.5 8.0625V6H18V11.25H12.75V9.75H15.9C15.5 9.05 14.9532 8.5 14.2597 8.1C13.5657 7.7 12.8125 7.5 12 7.5C10.75 7.5 9.6875 7.9375 8.8125 8.8125C7.9375 9.6875 7.5 10.75 7.5 12C7.5 13.25 7.9375 14.3125 8.8125 15.1875C9.6875 16.0625 10.75 16.5 12 16.5C12.9625 16.5 13.8313 16.225 14.6063 15.675C15.3813 15.125 15.925 14.4 16.2375 13.5H17.8125C17.4625 14.825 16.75 15.9063 15.675 16.7438C14.6 17.5813 13.375 18 12 18Z"
+        fill={fill}
+      />
+    </svg>
+  );
+}

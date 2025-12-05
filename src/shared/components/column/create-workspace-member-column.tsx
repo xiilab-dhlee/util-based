@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace-member.constant";
 import { DeleteWorkspaceMemberButton } from "@/domain/workspace-member/components/delete-workspace-member-button";
 import { UpdateWorkspaceMemberButton } from "@/domain/workspace-member/components/update-workspace-member-button";
 import { WorkspaceMemberAllCheck } from "@/domain/workspace-member/components/workspace-member-all-check";
@@ -31,6 +32,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "권한",
       dataIndex: "role",
       align: "center",
+      render: (role: WorkspaceMemberListType["role"]) => {
+        return (
+          <ColumnAlignCenterWrap>
+            {getWorkspaceMemberRoleLabel(role)}
+          </ColumnAlignCenterWrap>
+        );
+      },
     },
     {
       title: "이메일",

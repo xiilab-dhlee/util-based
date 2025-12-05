@@ -11,7 +11,6 @@ import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useSearch } from "@/shared/hooks/use-search";
-import { WorkspaceSort } from "./workspace-sort";
 
 /**
  * 워크스페이스 목록 페이지 상단 필터 컴포넌트
@@ -35,7 +34,6 @@ export function WorkspaceListFilter() {
 
   return (
     <MySearchFilter title="워크스페이스 목록" total={data?.totalSize}>
-      <WorkspaceSort />
       <form onSubmit={onSubmit}>
         <SearchInput />
       </form>

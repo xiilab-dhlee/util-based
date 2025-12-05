@@ -45,7 +45,14 @@ export interface DeleteWorkspaceMemberPayload {
 
 export interface GetWorkspaceRequestResourcesPayload
   extends CorePayload,
-    CorePaginate {}
+    CorePaginate {
+  /** 시작일시 */
+  startDate?: string;
+  /** 종료일시 */
+  endDate?: string;
+  /** 승인 상태 */
+  status?: WorkspaceRequestResourceStatus;
+}
 
 export interface CreateWorkspaceRequestResourcePayload {
   [key: string]: unknown;

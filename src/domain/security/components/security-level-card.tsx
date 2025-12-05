@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import type { CoreSecurityLevel } from "@/shared/types/core.interface";
-import { getSecurityLevelInfo } from "@/shared/utils/security.util";
+import { getVulnerabilityLevelInfo } from "@/shared/utils/vulnerability.util";
 
 interface RegistrySecurityResourceCardProps {
   level: CoreSecurityLevel;
@@ -15,7 +15,7 @@ export function RegistrySecurityLevelCard({
   level,
   count,
 }: RegistrySecurityResourceCardProps) {
-  const { icon, iconColor, engText } = getSecurityLevelInfo(level);
+  const { icon, iconColor, engText } = getVulnerabilityLevelInfo(level);
   return (
     <Container>
       <Left>
