@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome check --write",
-    "xiilab-ui": "github:xiilab/xiilab-ui",
+    "update:xiilab-ui": "pnpm update xiilab-ui",
     "test": "cross-env MSW_ENABLE=true playwright test",
     "test:integration": "pnpm check-bddgen && cross-env MSW_ENABLE=false playwright test",
     "test:mock": "pnpm check-bddgen && cross-env MSW_ENABLE=true playwright test",

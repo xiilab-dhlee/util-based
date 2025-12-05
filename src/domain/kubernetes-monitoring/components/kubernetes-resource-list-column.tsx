@@ -25,7 +25,6 @@ export const kubernetesResourceListColumn: ResponsiveColumnType[] = [
     render: (namespace: string) => {
       return (
         <Tooltip
-          theme="light"
           placement="top"
           title={
             <NamespaceTooltipContainer>
