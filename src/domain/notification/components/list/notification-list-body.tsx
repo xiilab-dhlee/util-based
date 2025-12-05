@@ -2,8 +2,8 @@
 
 import { useAtomValue } from "jotai";
 
+import { notificationListColumn } from "@/domain/notification/components/create-notification-list-column";
 import { NotificationRow } from "@/domain/notification/components/list/notification-row";
-import { notificationListColumn } from "@/domain/notification/components/notification-list-column";
 import { useGetNotifications } from "@/domain/notification/hooks/use-get-notifications";
 import {
   notificationEndDateAtom,
@@ -27,7 +27,7 @@ export function NotificationListBody() {
   const startDate = useAtomValue(notificationStartDateAtom);
   const endDate = useAtomValue(notificationEndDateAtom);
 
-  const { data } = useGetNotifications({
+  const { data, isLoading, isError } = useGetNotifications({
     page,
     size: LIST_PAGE_SIZE,
     startDate,
@@ -42,6 +42,8 @@ export function NotificationListBody() {
         customRow={NotificationRow}
         activePadding
         columnHeight={32}
+        loading={isLoading}
+        isError={isError}
       />
     </ListWrapper>
   );

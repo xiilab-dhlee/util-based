@@ -1,13 +1,16 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import { useGetNotifications } from "@/domain/notification/hooks/use-get-notifications";
 import {
+  notificationCheckedListAtom,
   notificationEndDateAtom,
   notificationPageAtom,
   notificationStartDateAtom,
 } from "@/domain/notification/state/notification.atom";
+import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 
@@ -25,6 +28,9 @@ export function NotificationListFooter() {
   const [page, setPage] = useAtom(notificationPageAtom);
   const startDate = useAtomValue(notificationStartDateAtom);
   const endDate = useAtomValue(notificationEndDateAtom);
+  // 체크된 알림 목록
+  const selectedNotifications = useAtomValue(notificationCheckedListAtom);
+  const resetCheckedList = useResetAtom(notificationCheckedListAtom);
 
   // 알림 목록 데이터 조회 (React Query 훅 사용)
   const { data, isLoading } = useGetNotifications({
@@ -39,7 +45,15 @@ export function NotificationListFooter() {
    * @param page - 변경할 페이지 번호
    */
   const handlePage = (page: number) => {
+    resetCheckedList();
     setPage(page);
+  };
+
+  /**
+   * 삭제 버튼 클릭 핸들러
+   */
+  const handleClickDelete = () => {
+    // TODO: 삭제 모달 연결
   };
 
   return (
@@ -49,6 +63,12 @@ export function NotificationListFooter() {
       pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
+      rightChildren={
+        <ListDeleteButton
+          onClick={handleClickDelete}
+          disabled={selectedNotifications.size === 0}
+        />
+      }
     />
   );
 }
