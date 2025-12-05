@@ -60,7 +60,7 @@ export function SetMultinodeResource({
               value={launcherCpuCore}
               onChange={(value: number) => setLauncherCpuCore(value)}
               type="CPU"
-            width="100%"
+              width="100%"
             />
           </SliderWrapper>
         </ResourceSliderRow>

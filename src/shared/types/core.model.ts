@@ -62,7 +62,7 @@ export interface CoreGuide {
   /** 타이틀 */
   title: string;
   /** 설명 (문자열 배열) */
-  description: string[];
+  description: readonly string[];
 }
 // 가이드 이미지
 export interface CoreGuideImage {

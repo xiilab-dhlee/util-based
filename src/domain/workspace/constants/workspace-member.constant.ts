@@ -19,11 +19,10 @@ export type WorkspaceMemberWorkspaceAuthority =
 /**
  * role value → 사람이 읽기 좋은 label 매핑
  */
-export const WORKSPACE_MEMBER_ROLE_LABEL_MAP =
-  {
-    OWNER: "Owner",
-    PARTICIPANT: "Participant",
-  } satisfies Record<WorkspaceMemberWorkspaceAuthority, string>;
+export const WORKSPACE_MEMBER_ROLE_LABEL_MAP = {
+  OWNER: "Owner",
+  PARTICIPANT: "Participant",
+} satisfies Record<WorkspaceMemberWorkspaceAuthority, string>;
 
 /**
  * role value 를 받아 label 로 변환

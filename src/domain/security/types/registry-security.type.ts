@@ -24,4 +24,3 @@ export interface GetRegistrySecurityVulnerabilityInfoPayload {
   tagId: number;
   vulnerabilityId: string;
 }
-

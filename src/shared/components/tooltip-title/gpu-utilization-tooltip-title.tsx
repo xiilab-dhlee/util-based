@@ -1,18 +1,14 @@
 "use client";
 
-import { Typography } from "xiilab-ui";
+import { TooltipHighlightText } from "@/styles/mixins/text";
 
 export function GpuUtilizationTooltipTitle() {
   return (
-    <Typography.Text variant="body-4-2">
-      <Typography.Text variant="body-3-1" as="span" color="#2862FF">
-        MIG
-      </Typography.Text>
+    <>
+      <TooltipHighlightText>MIG</TooltipHighlightText>
       와&nbsp;
-      <Typography.Text variant="body-3-1" as="span" color="#2862FF">
-        MPS
-      </Typography.Text>
+      <TooltipHighlightText>MPS</TooltipHighlightText>
       &nbsp;적용시 집계에 반영되지 않습니다.
-    </Typography.Text>
+    </>
   );
 }

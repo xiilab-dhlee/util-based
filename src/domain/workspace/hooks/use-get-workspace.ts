@@ -1,5 +1,6 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
+
 import { workspaceKeys } from "@/domain/workspace/constants/workspace.key";
 import type { WorkspaceDetailType } from "@/domain/workspace/schemas/workspace.schema";
 import { useServices } from "@/shared/providers/service-provider";
@@ -18,6 +19,6 @@ export const useGetWorkspace = (
       const response = await workspaceService.getDetail(id);
       return response.data;
     },
-    enabled:  id !== "",
+    enabled: id !== "",
   });
 };

@@ -22,10 +22,7 @@ export function getPercent(
   }
 
   const rawPercent = (numerator / denominator) * 100;
-  const safeDecimals = Math.min(
-    Math.max(Math.floor(decimals || 0), 0),
-    100,
-  );
+  const safeDecimals = Math.min(Math.max(Math.floor(decimals || 0), 0), 100);
 
   const roundedPercent =
     safeDecimals === 0
@@ -36,5 +33,3 @@ export function getPercent(
 
   return clampedPercent;
 }
-
-

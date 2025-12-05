@@ -33,7 +33,7 @@ export function RevokeHistoryListBody() {
     <ListWrapper>
       <CustomizedTable<RevokeHistoryItemResponseType>
         columns={createRevokeHistoryColumn()}
-        data={data?.content|| []}
+        data={data?.content || []}
         columnHeight={40}
         activePadding
         isError={isError}

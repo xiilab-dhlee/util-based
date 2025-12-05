@@ -67,7 +67,7 @@ export function FileSecurityMain() {
         {/* 소스코드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           <PolicyHeader>
-            <Title>리소스 할당량</Title>
+            <Title>파일 시스템 보안 정책 설정</Title>
           </PolicyHeader>
           <PolicySettings>
             <SecurityLevelPolicySetting

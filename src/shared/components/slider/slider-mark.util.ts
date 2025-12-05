@@ -1,4 +1,4 @@
-import type { SliderMarkItem } from "./types";
+import type { SliderMarkItem } from "@/shared/components/slider/types";
 
 /**
  * 리소스 데이터에서 슬라이더 마크 배열 생성
@@ -7,9 +7,9 @@ import type { SliderMarkItem } from "./types";
  * @returns SliderMarkItem 배열 (기존 할당량, 요청량 순서)
  */
 export const createSliderMarks = (
-	current: number,
-	request: number,
+  current: number,
+  request: number,
 ): SliderMarkItem[] => [
-	{ value: current, label: current.toString() },
-	{ value: request, label: request.toString() },
+  { value: current, label: current.toString() },
+  { value: request, label: request.toString() },
 ];

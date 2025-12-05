@@ -398,7 +398,6 @@ const FieldTitle = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 5px;
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
