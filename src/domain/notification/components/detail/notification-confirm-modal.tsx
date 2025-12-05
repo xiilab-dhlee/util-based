@@ -34,7 +34,7 @@ export function NotificationConfirmModal({
       centered
     >
       <ConfirmMessage>
-        {title}을 {pendingValue ? "on" : "off"}으로 변경하시겠습니까?
+        {title}을(를) {pendingValue ? "on" : "off"}으로 변경하시겠습니까?
       </ConfirmMessage>
     </Modal>
   );

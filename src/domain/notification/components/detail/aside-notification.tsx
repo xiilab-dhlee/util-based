@@ -5,15 +5,21 @@ import styled from "styled-components";
 
 import { NotificationDetailMain } from "@/domain/notification/components/detail/notification-detail-main";
 import { NotificationSettingSection } from "@/domain/notification/components/detail/notification-setting-section";
+// 라이선스 설정
 import { LicenseExpireAlertSetting } from "@/domain/notification/components/detail/settings/license-expire-alert-setting";
+// 회원 설정
 import { MemberApprovalAlertSetting } from "@/domain/notification/components/detail/settings/member-approval-alert-setting";
 import { MemberSignupAlertSetting } from "@/domain/notification/components/detail/settings/member-signup-alert-setting";
+// 노드 설정
 import { MigApplyAlertSetting } from "@/domain/notification/components/detail/settings/mig-apply-alert-setting";
 import { MigFailAlertSetting } from "@/domain/notification/components/detail/settings/mig-fail-alert-setting";
 import { NodeFailAlertSetting } from "@/domain/notification/components/detail/settings/node-fail-alert-setting";
+// 워크로드 설정
 import { ResourceRecoveryAlertSetting } from "@/domain/notification/components/detail/settings/resource-recovery-alert-setting";
 import { ResourceWarningAlertSetting } from "@/domain/notification/components/detail/settings/resource-warning-alert-setting";
+// 보안 설정
 import { VulnerableImageAlertSetting } from "@/domain/notification/components/detail/settings/vulnerable-image-alert-setting";
+// 워크스페이스 설정
 import { WorkspaceCreateAlertSetting } from "@/domain/notification/components/detail/settings/workspace-create-alert-setting";
 import { WorkspaceResourceExceedAlertSetting } from "@/domain/notification/components/detail/settings/workspace-resource-exceed-alert-setting";
 import { WorkspaceResourceRequestAlertSetting } from "@/domain/notification/components/detail/settings/workspace-resource-request-alert-setting";

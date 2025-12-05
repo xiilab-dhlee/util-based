@@ -31,7 +31,7 @@ export function NotificationAllCheck() {
     endDate,
   });
 
-  const currentPageIds: string[] = useMemo(() => {
+  const currentPageIds = useMemo(() => {
     return data?.content?.map((v: NotificationListType) => v.id) || [];
   }, [data?.content]);
 
