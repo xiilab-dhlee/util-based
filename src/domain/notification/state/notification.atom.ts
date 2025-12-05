@@ -1,3 +1,4 @@
+import type { Key } from "react";
 import { format, startOfDay } from "date-fns";
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
@@ -19,9 +20,7 @@ export const notificationTypeAtom = atom<NotificationTypeValue | undefined>(
   undefined,
 );
 /** 체크된 알림 목록 */
-export const notificationCheckedListAtom = atomWithReset<Set<string>>(
-  new Set(),
-);
+export const notificationCheckedListAtom = atomWithReset<Set<Key>>(new Set());
 /** 선택된 알림 */
 export const notificationSelectedAtom = atom<string | null>(null);
 /** 알림 삭제 모달 표시 여부 */

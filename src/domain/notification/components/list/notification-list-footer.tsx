@@ -60,7 +60,7 @@ export function NotificationListFooter() {
    * 삭제 버튼 클릭 핸들러
    */
   const handleClickDelete = () => {
-    const ids = Array.from(selectedNotifications);
+    const ids = Array.from(selectedNotifications).map(String);
     publish(NOTIFICATION_EVENTS.sendDeleteNotification, ids);
   };
 
