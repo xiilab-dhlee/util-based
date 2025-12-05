@@ -20,5 +20,6 @@ export const revokeHistoryDetailStartDateAtom = atomWithReset<string>("");
 /** 리소스 회수 이력 상세 종료일 */
 export const revokeHistoryDetailEndDateAtom = atomWithReset<string>("");
 /** 리소스 회수 이력 상세 구분 (WARNING/REVOKED) */
-export const revokeHistoryDetailTypeAtom =
-  atomWithReset<RevokeHistoryDetailType | undefined>(undefined);
+export const revokeHistoryDetailTypeAtom = atomWithReset<
+  RevokeHistoryDetailType | undefined
+>(undefined);
