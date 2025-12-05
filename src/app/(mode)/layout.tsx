@@ -49,13 +49,13 @@ const Right = styled.div`
   flex: 1;
   min-width: 0;
   height: 100%;
-  padding: 0 40px;
+  padding: 0 var(--page-inner-padding);
   overflow-y: auto;
   overflow-x: auto;
 `;
 
 const RightInner = styled.div`
-  min-width: calc(1920px - var(--navigation-width) - 80px);
+  min-width: calc(1920px - var(--navigation-width) - var(--page-inner-padding) * 2);
 `;
 
 const Main = styled.main`

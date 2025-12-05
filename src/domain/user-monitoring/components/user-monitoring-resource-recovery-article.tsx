@@ -172,9 +172,7 @@ const ResourceButton = styled.button`
   align-items: center;
   width: 96px;
   height: 100%;
-  /* border-radius: 2px; */
   position: relative;
-  font-weight: 400;
   color: #D3D3D3;
 
   &::before {

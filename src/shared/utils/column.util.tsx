@@ -58,13 +58,13 @@ export function applyColumnConfigs(
       // ellipsis가 활성화된 경우 툴팁 추가
       if (mergedColumn.ellipsis) {
         const originalRender = mergedColumn.render;
-        mergedColumn.render = (value, record, index) => {
+        mergedColumn.render = (title, record, index) => {
           const content = originalRender
-            ? originalRender(value, record, index)
-            : value;
+            ? originalRender(title, record, index)
+            : title;
 
           return (
-            <Tooltip title={value} getPopupContainer={() => document.body}>
+            <Tooltip title={title} getPopupContainer={() => document.body}>
               <div
                 style={{
                   overflow: "hidden",

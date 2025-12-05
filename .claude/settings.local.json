@@ -38,7 +38,9 @@
       "Bash(src/domain/workload/components/create/create-workload-volume.tsx )",
       "Bash(src/domain/workload/components/detail/workload-secondary-article.tsx)",
       "Bash(git commit -m \"$(cat <<''EOF''\nrefactor(volume): WorkloadVolumeCard를 shared로 이동\n\n- src/domain/volume/components → src/shared/components/card 이동\n- 여러 도메인에서 사용되는 공유 컴포넌트 위치 정리\n- import 경로 업데이트\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: 프로젝트 전체 상대 경로를 @/ alias로 변환\n\n- domain/workload 컴포넌트 경로 변환\n- domain/setting 컴포넌트 경로 변환\n- domain/volume 컴포넌트 경로 변환\n- domain/node 컴포넌트 경로 변환\n- domain/credential 컴포넌트 경로 변환\n- domain/workspace 컴포넌트 경로 변환\n- domain/account-management 컴포넌트 경로 변환\n- domain/monitoring-notification 컴포넌트 경로 변환\n- shared/components 경로 변환\n- mocks/handlers 경로 변환\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: 프로젝트 전체 상대 경로를 @/ alias로 변환\n\n- domain/workload 컴포넌트 경로 변환\n- domain/setting 컴포넌트 경로 변환\n- domain/volume 컴포넌트 경로 변환\n- domain/node 컴포넌트 경로 변환\n- domain/credential 컴포넌트 경로 변환\n- domain/workspace 컴포넌트 경로 변환\n- domain/account-management 컴포넌트 경로 변환\n- domain/monitoring-notification 컴포넌트 경로 변환\n- shared/components 경로 변환\n- mocks/handlers 경로 변환\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(cat:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor(page-guide): PageGuide 컴포넌트에서 titleEng 속성 제거\n\n- PageGuide 컴포넌트의 titleEng props 및 관련 스타일 제거\n- 모든 사용처에서 titleEng 속성 제거\n  - 계정 관리, 리포트, 컨테이너 이미지, 모니터링 알림\n  - 노드 관리, 이미지 요청, 리소스 회수, 시스템 설정, 워크스페이스\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
