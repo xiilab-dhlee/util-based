@@ -7,8 +7,8 @@ import { Icon, Switch } from "xiilab-ui";
 import { NotificationConfirmModal } from "@/domain/notification/components/detail/notification-confirm-modal";
 import {
   NOTIFICATION_CHANNEL,
-  type NotificationChannel,
   type NotificationChannelState,
+  type NotificationConfirmState,
 } from "@/domain/notification/type/notification-setting.type";
 
 export interface NotificationSettingRowProps extends NotificationChannelState {
@@ -17,8 +17,6 @@ export interface NotificationSettingRowProps extends NotificationChannelState {
   onEmailChange: (checked: boolean) => void;
 }
 
-type ConfirmType = NotificationChannel | null;
-
 export function NotificationSettingRow({
   label,
   systemChecked,
@@ -26,30 +24,30 @@ export function NotificationSettingRow({
   onSystemChange,
   onEmailChange,
 }: NotificationSettingRowProps) {
-  const [confirmType, setConfirmType] = useState<ConfirmType>(null);
-  const [pendingValue, setPendingValue] = useState<boolean>(false);
+  const [confirmState, setConfirmState] =
+    useState<NotificationConfirmState>(null);
 
   const handleSystemClick = (checked: boolean) => {
-    setConfirmType(NOTIFICATION_CHANNEL.SYSTEM);
-    setPendingValue(checked);
+    setConfirmState({ channel: NOTIFICATION_CHANNEL.SYSTEM, value: checked });
   };
 
   const handleEmailClick = (checked: boolean) => {
-    setConfirmType(NOTIFICATION_CHANNEL.EMAIL);
-    setPendingValue(checked);
+    setConfirmState({ channel: NOTIFICATION_CHANNEL.EMAIL, value: checked });
   };
 
   const handleConfirm = () => {
-    if (confirmType === NOTIFICATION_CHANNEL.SYSTEM) {
-      onSystemChange(pendingValue);
-    } else if (confirmType === NOTIFICATION_CHANNEL.EMAIL) {
-      onEmailChange(pendingValue);
+    if (confirmState === null) return;
+
+    if (confirmState.channel === NOTIFICATION_CHANNEL.SYSTEM) {
+      onSystemChange(confirmState.value);
+    } else {
+      onEmailChange(confirmState.value);
     }
-    setConfirmType(null);
+    setConfirmState(null);
   };
 
   const handleCancel = () => {
-    setConfirmType(null);
+    setConfirmState(null);
   };
 
   return (
@@ -76,9 +74,9 @@ export function NotificationSettingRow({
       </RowContainer>
 
       <NotificationConfirmModal
-        open={confirmType !== null}
+        open={confirmState !== null}
         title={label}
-        pendingValue={pendingValue}
+        pendingValue={confirmState?.value ?? false}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />

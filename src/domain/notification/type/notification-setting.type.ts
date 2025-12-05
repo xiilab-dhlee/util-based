@@ -10,3 +10,8 @@ export type NotificationChannelState = {
   systemChecked: boolean;
   emailChecked: boolean;
 };
+
+export type NotificationConfirmState = {
+  channel: NotificationChannel;
+  value: boolean;
+} | null;
