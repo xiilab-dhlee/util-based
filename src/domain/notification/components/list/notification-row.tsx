@@ -28,9 +28,9 @@ export function NotificationRow({
   ...restProps
 }: NotificationRowProps) {
   const router = useRouter();
-  const params = useParams<{ id?: string }>();
+  const { id } = useParams<{ id?: string }>();
 
-  const isActive = params.id === String(rowData?.id);
+  const isActive = id === rowData?.id;
 
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
@@ -43,7 +43,7 @@ export function NotificationRow({
   return (
     <tr
       {...restProps}
-      className={classNames({ active: isActive }, className)}
+      className={classNames("pointer", { active: isActive }, className)}
       onClick={handleClickRow}
     >
       {children}
