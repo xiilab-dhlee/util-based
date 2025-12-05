@@ -7,7 +7,10 @@ import { Button } from "xiilab-ui";
 import { getNotificationTypeLabel } from "@/domain/notification/constants/notification.constant";
 import { useGetNotification } from "@/domain/notification/hooks/use-get-notification";
 import { DrawerCloseButton } from "@/shared/components/button/drawer-close-button";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { NOTIFICATION_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import {
   AsideDetailArticle,
@@ -35,7 +38,10 @@ export function NotificationDetailMain() {
   const params = useParams<{ id: string }>();
   const notificationId = params.id;
 
-  const { data, isLoading } = useGetNotification(notificationId);
+  const { data, isLoading, isError, refetch } =
+    useGetNotification(notificationId);
+
+  const publish = usePublish();
 
   /**
    * 드로어 닫기 핸들러
@@ -46,9 +52,13 @@ export function NotificationDetailMain() {
     router.replace(ROUTES.ADMIN_NOTIFICATION);
   };
 
+  /**
+   * 삭제 버튼 클릭 핸들러
+   *
+   * 삭제 확인 모달을 엽니다.
+   */
   const handleDelete = () => {
-    // TODO: 삭제 API 연동
-    console.log("Delete notification:", notificationId);
+    publish(NOTIFICATION_EVENTS.sendDeleteNotification, notificationId);
   };
 
   return (
@@ -61,49 +71,48 @@ export function NotificationDetailMain() {
 
       {/* 알림 상세 정보 아티클 */}
       <AsideDetailArticle>
-        <AsideDetailArticleBody>
-          <AsideDetailArticleItem>
-            <AsideDetailArticleHeader>
-              <AsideDetailArticleTitle>알림 상세</AsideDetailArticleTitle>
-            </AsideDetailArticleHeader>
+        {isError && <DataErrorState onRetry={refetch} />}
+        {!isError && (
+          <AsideDetailArticleBody>
+            <AsideDetailArticleItem>
+              <AsideDetailArticleHeader>
+                <AsideDetailArticleTitle>알림 상세</AsideDetailArticleTitle>
+              </AsideDetailArticleHeader>
 
-            {/* 알림 유형 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>알림 유형</AsideDetailArticleKey>
-              <AsideDetailArticleValue>
-                {getNotificationTypeLabel(data?.type ?? "-")}
-              </AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
-
-            {/* 발생 일시 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>발생 일시</AsideDetailArticleKey>
-              <AsideDetailArticleValue>
-                {formatDateTimeSafely(data?.createdDate) ?? "-"}
-              </AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
-
-            {/* 알림 내용 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>알림 내용</AsideDetailArticleKey>
-              <AsideDetailArticleValue>
-                <NotificationContentTitle>
-                  {data?.contentTitle ?? "-"}
-                </NotificationContentTitle>
-              </AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
-
-            {/* 상세 내용 */}
-            {data?.content && (
               <AsideDetailArticleColumn>
-                <AsideDetailArticleKey />
+                <AsideDetailArticleKey>알림 유형</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {data.content}
+                  {data?.type ? getNotificationTypeLabel(data.type) : "-"}
                 </AsideDetailArticleValue>
               </AsideDetailArticleColumn>
-            )}
-          </AsideDetailArticleItem>
-        </AsideDetailArticleBody>
+
+              <AsideDetailArticleColumn>
+                <AsideDetailArticleKey>발생 일시</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  {formatDateTimeSafely(data?.createdDate) ?? "-"}
+                </AsideDetailArticleValue>
+              </AsideDetailArticleColumn>
+
+              <AsideDetailArticleColumn>
+                <AsideDetailArticleKey>알림 내용</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  <NotificationContentTitle>
+                    {data?.contentTitle ?? "-"}
+                  </NotificationContentTitle>
+                </AsideDetailArticleValue>
+              </AsideDetailArticleColumn>
+
+              {data?.content && (
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey />
+                  <AsideDetailArticleValue>
+                    {data.content}
+                  </AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+              )}
+            </AsideDetailArticleItem>
+          </AsideDetailArticleBody>
+        )}
       </AsideDetailArticle>
 
       {/* 하단 버튼 영역 */}
