@@ -121,7 +121,7 @@ export function NotificationDetailMain() {
           <Button
             variant="outlined"
             onClick={handleDelete}
-            disabled={isLoading}
+            disabled={isLoading || isError}
             size="small"
           >
             삭제
