@@ -1,4 +1,5 @@
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
+import { getVariantStyles } from "xiilab-ui/dist/styles/typography";
 
 import { statusColorStyle } from "@/styles/mixins/color";
 
@@ -74,4 +75,18 @@ export const requiredTextStyle = css`
     font-weight: 700;
     padding-top: 4px;
   }
+`;
+
+/**
+ * 툴팁 내 강조 텍스트
+ * 색상은 기본 블루,
+ */
+interface TooltipHighlightTextProps {
+  $colorVariant?: "blue" | "red";
+}
+
+export const TooltipHighlightText = styled.span<TooltipHighlightTextProps>`
+  ${getVariantStyles("body-3-1")};
+  color: ${({ $colorVariant }) =>
+    $colorVariant === "red" ? "#FF3737" : "var(--color-blue-04)"};
 `;

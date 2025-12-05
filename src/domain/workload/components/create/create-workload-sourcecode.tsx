@@ -20,7 +20,6 @@ import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.
 import { workloadSourcecodesAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
-import { SourcecodeCommandTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-command-tooltip-title";
 import { SourcecodeMountPathTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-mount-path-tooltip-title";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
@@ -137,7 +136,7 @@ export function CreateWorkloadSourcecode() {
             <Label>
               <LabelTitle>
                 실행 명령어
-                <GuideTooltip title={<SourcecodeCommandTooltipTitle />} />
+                <GuideTooltip title="소스코드 실행을 위한 명령어를 입력합니다." />
               </LabelTitle>
             </Label>
             <Input
@@ -238,7 +237,8 @@ const LabelTitle = styled(Typography.Text).attrs({
   variant: "body-2-4",
   color: "#000000",
 })`
-  position: relative;
+    display: flex;
+    align-items: center;
 `;
 
 const Body = styled.div`

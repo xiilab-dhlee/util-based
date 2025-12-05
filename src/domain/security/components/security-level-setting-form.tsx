@@ -176,7 +176,6 @@ const RadioItem = styled.div`
 const LabelRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
 `;
 
 const CriteriaRow = styled.div`

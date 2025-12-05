@@ -183,8 +183,8 @@ const LabelTitle = styled(Typography.Text).attrs({
   variant: "body-2-4",
   color: "#000000",
 })`
-  position: relative;
-`;
+  display: flex;
+  align-items: center;`;
 
 const Body = styled.div`
   background-color: #fafafa;

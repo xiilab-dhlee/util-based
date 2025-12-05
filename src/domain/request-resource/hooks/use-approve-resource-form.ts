@@ -17,10 +17,14 @@ const INITIAL_FORM_STATE: ApproveResourceFormState = {
 
 // ===== 타입 =====
 
+type ApproveResourceFormErrors = Partial<
+  Record<keyof ApproveResourceFormState, string>
+>;
+
 interface UseApproveResourceFormReturn {
   // 상태
   formState: ApproveResourceFormState;
-  errors: Record<string, string | undefined>;
+  errors: ApproveResourceFormErrors;
 
   // 필드 변경
   setApproveValue: (type: CoreResourceType, value: number) => void;
@@ -45,7 +49,7 @@ interface UseApproveResourceFormReturn {
 export function useApproveResourceForm(): UseApproveResourceFormReturn {
   const [formState, setFormState] =
     useState<ApproveResourceFormState>(INITIAL_FORM_STATE);
-  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+  const [errors, setErrors] = useState<ApproveResourceFormErrors>({});
 
   // 승인값 변경 (CoreResourceType 사용)
   const setApproveValue = (type: CoreResourceType, value: number) => {
@@ -82,9 +86,15 @@ export function useApproveResourceForm(): UseApproveResourceFormReturn {
     const result = schema.safeParse(formState);
 
     if (!result.success) {
-      const newErrors = result.error.issues.reduce<Record<string, string>>(
+      const newErrors = result.error.issues.reduce<ApproveResourceFormErrors>(
         (acc, issue) => {
-          const key = issue.path[0] as string;
+          const pathKey = issue.path[0];
+
+          if (typeof pathKey !== "string" || !(pathKey in INITIAL_FORM_STATE)) {
+            return acc;
+          }
+
+          const key = pathKey as keyof ApproveResourceFormState;
           acc[key] = issue.message;
           return acc;
         },
