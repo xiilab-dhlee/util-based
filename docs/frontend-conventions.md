@@ -70,4 +70,85 @@ export { GroupDetailPanel } from "./group-detail-panel";
 
 ---
 
+## 폼 관리 및 유효성 검사 규칙
+
+### React Hook Form + Zod 사용
+
+**협의일**: 2025-12-05
+
+**상황**: 복잡한 폼 상태 관리 및 유효성 검사를 위해 일관된 패턴이 필요함
+
+**협의 내용**: 폼 관리에는 `react-hook-form`을, 유효성 검사에는 `zod`와 `@hookform/resolvers/zod`를 사용한다.
+
+**규칙**:
+1. **라이브러리**: `react-hook-form`, `zod`, `@hookform/resolvers` 사용
+2. **유효성 검사**: Zod 스키마를 정의하고 `zodResolver`를 통해 연결
+3. **UI 연동**: `xiilab-ui`와 같은 Controlled Component는 `Controller` 컴포넌트를 사용하여 제어
+4. **웹 접근성**: `FormItem`의 `htmlFor`와 입력 요소의 `id`는 문서 전체에서 유일한 값으로 설정하여 연결 (중복 방지)
+5. **에러 표시**: `FormItem`의 `validateStatus`와 `help` prop을 사용하여 에러 상태 및 메시지 표시
+
+**예시 코드**:
+
+```tsx
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormItem, Input } from "xiilab-ui";
+
+// 1. Zod 스키마 정의
+const formSchema = z.object({
+  name: z.string().min(1, "이름을 입력해 주세요."),
+});
+
+type FormType = z.infer<typeof formSchema>;
+
+export function MyFormModal() {
+  // 2. useForm 설정
+  const { control, handleSubmit, formState: { errors } } = useForm<FormType>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { name: "" },
+  });
+
+  const onSubmit = (data: FormType) => {
+    // 제출 로직
+  };
+
+  return (
+    <Form onFinish={handleSubmit(onSubmit)}>
+      {/* 3. Controller 사용 */}
+      <Controller
+        name="name"
+        control={control}
+        render={({ field }) => (
+          <FormItem
+            label="이름"
+            required
+            // 4. 웹 접근성 (유니크한 id 사용)
+            htmlFor="unique-form-name"
+            // 5. 에러 상태 및 메시지 표시
+            validateStatus={errors.name ? "error" : undefined}
+            help={errors.name?.message}
+          >
+            <Input 
+              {...field} 
+              id="unique-form-name" 
+              placeholder="이름 입력" 
+            />
+          </FormItem>
+        )}
+      />
+    </Form>
+  );
+}
+```
+
+**이유**:
+- 폼 상태 관리의 복잡성 감소 및 렌더링 최적화
+- 선언적인 유효성 검사 로직 (Zod)
+- UI 라이브러리와의 원활한 통합 (Controller)
+- 웹 접근성 준수 및 ID 충돌 방지
+- 일관된 에러 처리 UX 제공
+
+---
+
 <!-- 새로운 협의 사항은 위의 구분선 아래에 추가하세요 -->
