@@ -30,7 +30,7 @@ export function NotificationRow({
   const router = useRouter();
   const { id } = useParams<{ id?: string }>();
 
-  const isActive = id === rowData?.id;
+  const isActive = id === String(rowData?.id);
 
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();

@@ -9,6 +9,7 @@ import {
   notificationEndDateAtom,
   notificationPageAtom,
   notificationStartDateAtom,
+  notificationTypeAtom,
 } from "@/domain/notification/state/notification.atom";
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
@@ -30,6 +31,7 @@ export function NotificationListFooter() {
   const [page, setPage] = useAtom(notificationPageAtom);
   const startDate = useAtomValue(notificationStartDateAtom);
   const endDate = useAtomValue(notificationEndDateAtom);
+  const type = useAtomValue(notificationTypeAtom);
   // 체크된 알림 목록
   const selectedNotifications = useAtomValue(notificationCheckedListAtom);
   const resetCheckedList = useResetAtom(notificationCheckedListAtom);
@@ -40,6 +42,7 @@ export function NotificationListFooter() {
     size: LIST_PAGE_SIZE,
     startDate,
     endDate,
+    type,
   });
 
   const publish = usePublish();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
@@ -11,6 +11,7 @@ import {
   notificationEndDateAtom,
   notificationPageAtom,
   notificationStartDateAtom,
+  notificationTypeAtom,
 } from "@/domain/notification/state/notification.atom";
 import { ListRangePicker } from "@/shared/components/datepicker/list-range-picker";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
@@ -28,14 +29,21 @@ export function NotificationListFilter() {
   const page = useAtomValue(notificationPageAtom);
   const startDate = useAtomValue(notificationStartDateAtom);
   const endDate = useAtomValue(notificationEndDateAtom);
+  const [type, setType] = useAtom(notificationTypeAtom);
 
   const typeOptions = [ALL_OPTION, ...NOTIFICATION_TYPE_OPTIONS];
   const typeSelect = useSelect(null, typeOptions);
 
-  const type =
-    typeSelect.value === null || typeSelect.value === "ALL"
-      ? undefined
-      : (typeSelect.value as NotificationTypeValue);
+  const handleChangeType = (newValue: NotificationTypeValue | null) => {
+    typeSelect.onChange(newValue);
+
+    if (newValue === null) {
+      setType(undefined);
+      return;
+    }
+
+    setType(newValue);
+  };
 
   const { data } = useGetNotifications({
     page,
@@ -51,7 +59,7 @@ export function NotificationListFilter() {
         <Dropdown
           options={typeSelect.options}
           value={typeSelect.value}
-          onChange={typeSelect.onChange}
+          onChange={handleChangeType}
           placeholder="알림 유형"
           width={200}
         />

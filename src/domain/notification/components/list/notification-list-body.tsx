@@ -11,6 +11,7 @@ import {
   notificationEndDateAtom,
   notificationPageAtom,
   notificationStartDateAtom,
+  notificationTypeAtom,
 } from "@/domain/notification/state/notification.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
@@ -29,12 +30,13 @@ export function NotificationListBody() {
   const page = useAtomValue(notificationPageAtom);
   const startDate = useAtomValue(notificationStartDateAtom);
   const endDate = useAtomValue(notificationEndDateAtom);
-
+  const type = useAtomValue(notificationTypeAtom);
   const { data, isLoading, isError } = useGetNotifications({
     page,
     size: LIST_PAGE_SIZE,
     startDate,
     endDate,
+    type,
   });
 
   const [checkedList, setCheckedList] = useAtom(notificationCheckedListAtom);
@@ -45,9 +47,10 @@ export function NotificationListBody() {
 
   return (
     <ListWrapper>
-      <CustomizedTable
+      <CustomizedTable<NotificationListType>
         columns={notificationListColumn}
         data={data?.content || []}
+        rowKey="id"
         rowSelection={rowSelection}
         customRow={NotificationRow}
         activePadding
