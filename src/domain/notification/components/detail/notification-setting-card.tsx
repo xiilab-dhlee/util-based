@@ -5,7 +5,11 @@ import styled from "styled-components";
 import { Icon, Switch } from "xiilab-ui";
 
 import { NotificationConfirmModal } from "@/domain/notification/components/detail/notification-confirm-modal";
-import type { NotificationChannelState } from "@/domain/notification/type/notification-setting.type";
+import {
+  NOTIFICATION_CHANNEL,
+  type NotificationChannel,
+  type NotificationChannelState,
+} from "@/domain/notification/type/notification-setting.type";
 
 export interface NotificationSettingCardProps extends NotificationChannelState {
   label: string;
@@ -13,7 +17,7 @@ export interface NotificationSettingCardProps extends NotificationChannelState {
   onEmailChange: (checked: boolean) => void;
 }
 
-type ConfirmType = "system" | "email" | null;
+type ConfirmType = NotificationChannel | null;
 
 export function NotificationSettingCard({
   label,
@@ -26,19 +30,19 @@ export function NotificationSettingCard({
   const [pendingValue, setPendingValue] = useState<boolean>(false);
 
   const handleSystemClick = (checked: boolean) => {
-    setConfirmType("system");
+    setConfirmType(NOTIFICATION_CHANNEL.SYSTEM);
     setPendingValue(checked);
   };
 
   const handleEmailClick = (checked: boolean) => {
-    setConfirmType("email");
+    setConfirmType(NOTIFICATION_CHANNEL.EMAIL);
     setPendingValue(checked);
   };
 
   const handleConfirm = () => {
-    if (confirmType === "system") {
+    if (confirmType === NOTIFICATION_CHANNEL.SYSTEM) {
       onSystemChange(pendingValue);
-    } else if (confirmType === "email") {
+    } else if (confirmType === NOTIFICATION_CHANNEL.EMAIL) {
       onEmailChange(pendingValue);
     }
     setConfirmType(null);
