@@ -7,6 +7,7 @@ import { NotificationListFilter } from "@/domain/notification/components/list/no
 import { NotificationListFooter } from "@/domain/notification/components/list/notification-list-footer";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
+  ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
@@ -21,7 +22,7 @@ export default function AdminNotificationLayout({
     <>
       <PageHeader
         pageKey="admin.notification"
-        description="Manage Notification"
+        description="Notification Management"
       />
       {/* 알림 목록 페이지 메인 영역 */}
       <ListPageMain>
@@ -34,7 +35,7 @@ export default function AdminNotificationLayout({
           {/* 알림 목록 페이지네이션 */}
           <NotificationListFooter />
         </ListPageBody>
-        {children}
+        <ListPageAside $width={620}>{children}</ListPageAside>
       </ListPageMain>
     </>
   );
