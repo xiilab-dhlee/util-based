@@ -11,8 +11,6 @@ import { PageGuideItem } from "./page-guide-item";
  * 페이지 가이드 컴포넌트의 props 인터페이스
  */
 interface PageGuideProps {
-  /** 제목 영문 */
-  titleEng: string;
   /** 제목 */
   title: string;
   /** 아이콘 */
@@ -35,7 +33,6 @@ interface PageGuideProps {
  * 페이지 가이드 컴포넌트
  */
 export function PageGuide({
-  titleEng,
   title,
   icon,
   description,
@@ -47,7 +44,6 @@ export function PageGuide({
     <Container>
       <Header $imageName={backgroundImageName}>
         <HeaderContent>
-          <TitleEng>{titleEng}</TitleEng>
           <Title>
             <TitleIconWrapper>
               <Icon name={icon} color="var(--icon-fill)" />
@@ -106,13 +102,6 @@ const HeaderContent = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-`;
-
-const TitleEng = styled.div`
-  color: #d1d1d1;
-  font-weight: 500;
-  font-size: 12px;
-  margin-bottom: 24px;
 `;
 
 const Title = styled.div`

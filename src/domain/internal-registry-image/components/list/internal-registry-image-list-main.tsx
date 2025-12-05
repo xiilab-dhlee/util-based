@@ -74,7 +74,6 @@ export function InternalRegistryImageListMain() {
         {/* 내부 레지스트리 이미지 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="Create Container Image"
             title="컨테이너 이미지 생성"
             icon="Image"
             description={[

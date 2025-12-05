@@ -62,7 +62,6 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
         {/* 리포트 페이지 - 왼쪽 영역 (가이드 및 정보 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="About Report"
             title="리포트 예약"
             icon="ReportReservationsolid"
             description={[
