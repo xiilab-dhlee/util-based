@@ -2,7 +2,7 @@
 
 import { useResetAtom } from "jotai/utils";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Modal } from "xiilab-ui";
 
 import {
@@ -36,6 +36,24 @@ export function DeleteNotificationModal() {
   );
 
   /**
+   * 알림 삭제 요청 수신 핸들러
+   *
+   * 단일 ID (string) 또는 여러 ID (string[])를 배열로 정규화한 뒤
+   * 삭제 대상 ID 상태를 설정하고 모달을 연다.
+   */
+  const handleReceiveDeleteNotification = useCallback(
+    (notificationIds: string | string[]) => {
+      const ids = Array.isArray(notificationIds)
+        ? notificationIds
+        : [notificationIds];
+
+      setDeleteNotificationIds(ids);
+      onOpen();
+    },
+    [onOpen],
+  );
+
+  /**
    * 폼 제출 처리 함수
    *
    * 알림 삭제를 실행하고 모달을 닫습니다.
@@ -60,15 +78,7 @@ export function DeleteNotificationModal() {
    */
   useSubscribe(
     NOTIFICATION_EVENTS.sendDeleteNotification,
-    (notificationIds: string | string[]) => {
-      // 삭제할 알림 ID 목록 설정 (단일 ID도 배열로 변환)
-      const ids = Array.isArray(notificationIds)
-        ? notificationIds
-        : [notificationIds];
-      setDeleteNotificationIds(ids);
-      // 삭제 모달 열기
-      onOpen();
-    },
+    handleReceiveDeleteNotification,
   );
 
   return (
