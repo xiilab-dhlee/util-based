@@ -2,8 +2,6 @@ import type { AxiosInstance, AxiosResponse } from "axios";
 import axios from "axios";
 import type { Session } from "next-auth";
 
-// import { getSession } from "next-auth/react";
-
 // Extend NextAuth Session type to include custom properties
 interface CustomSession extends Session {
   accessToken?: string;
@@ -17,12 +15,11 @@ interface AxiosServiceConfig {
   isAuth?: boolean;
 }
 
-// 세션 캐시 인터페이스
-interface SessionCache {
-  session: CustomSession | null;
-  timestamp: number;
-  expiresAt: number;
-}
+/**
+ * 세션 제공자 타입
+ * 외부에서 세션을 주입받기 위한 콜백 함수
+ */
+type SessionProvider = () => CustomSession | null;
 
 export class AxiosService {
   private static instance: AxiosService;
@@ -31,10 +28,8 @@ export class AxiosService {
   private requestInterceptorId?: number;
   private responseInterceptorId?: number;
 
-  // 세션 캐시 관련 속성
-  private sessionCache: SessionCache | null = null;
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5분
-  private readonly CACHE_BUFFER = 30 * 1000; // 30초 버퍼
+  // 외부에서 주입받은 세션 제공자
+  private sessionProvider: SessionProvider | null = null;
 
   constructor(config: AxiosServiceConfig = {}) {
     this.axios = axios.create({
@@ -51,54 +46,33 @@ export class AxiosService {
     return AxiosService.instance;
   }
 
-  // 세션 캐시 관리 메서드
-  private isCacheValid(): boolean {
-    if (!this.sessionCache) return false;
-
-    const now = Date.now();
-    return now < this.sessionCache.expiresAt;
+  /**
+   * 세션 제공자를 설정합니다.
+   * AuthProvider에서 호출하여 세션을 동기적으로 제공합니다.
+   */
+  public setSessionProvider(provider: SessionProvider): void {
+    this.sessionProvider = provider;
   }
 
-  private async getCachedSession(): Promise<CustomSession | null> {
-    // 캐시가 유효하면 캐시된 세션 반환
-    if (this.isCacheValid()) {
-      return this.sessionCache?.session ?? null;
+  /**
+   * 세션 제공자를 제거합니다.
+   */
+  public clearSessionProvider(): void {
+    this.sessionProvider = null;
+  }
+
+  /**
+   * 현재 세션을 가져옵니다.
+   * 외부에서 주입된 세션 제공자를 통해 동기적으로 세션을 반환합니다.
+   */
+  private getSession(): CustomSession | null {
+    if (this.sessionProvider) {
+      return this.sessionProvider();
     }
-
-    // 캐시가 없거나 만료되었으면 새로 조회
-    try {
-      // const session = (await getSession()) as CustomSession | null;
-
-      // 세션 정보 캐시
-      this.sessionCache = {
-        session: {
-          accessToken: "test",
-          refresh_token: "test",
-          expires: "no expires",
-          user: {
-            id: "admin",
-            name: "관리자",
-            email: "admin@xiilab.com",
-          },
-          roles: ["ROLE_ADMIN"],
-        },
-        timestamp: Date.now(),
-        expiresAt: Date.now() + this.CACHE_DURATION - this.CACHE_BUFFER,
-      };
-
-      return this.sessionCache.session;
-    } catch (error) {
-      console.error("Failed to get session:", error);
-      return null;
-    }
+    return null;
   }
 
-  // 캐시 무효화 메서드 (외부에서 호출 가능)
-  public invalidateSessionCache(): void {
-    this.sessionCache = null;
-  }
-
-  private async setupInterceptors(): Promise<void> {
+  private setupInterceptors(): void {
     // 기존 인터셉터 제거
     if (this.requestInterceptorId !== undefined) {
       this.axios.interceptors.request.eject(this.requestInterceptorId);
@@ -109,9 +83,9 @@ export class AxiosService {
 
     // 요청 인터셉터 설정
     this.requestInterceptorId = this.axios.interceptors.request.use(
-      async (config) => {
+      (config) => {
         if (!config.headers.Authorization && this.isAuth) {
-          const session = await this.getCachedSession();
+          const session = this.getSession();
 
           if (session?.accessToken) {
             config.headers.Authorization = `Bearer ${session.accessToken}`;
@@ -128,29 +102,13 @@ export class AxiosService {
     // 응답 인터셉터 설정
     this.responseInterceptorId = this.axios.interceptors.response.use(
       (response: AxiosResponse) => response,
-      async (error: unknown) => {
+      (error: unknown) => {
         const { response } = error as { response?: { status: number } };
-        const originalRequest = (
-          error as {
-            config: { sent?: boolean; headers: Record<string, string> };
-          }
-        ).config;
 
-        if (response?.status === 401 && !originalRequest.sent && this.isAuth) {
-          originalRequest.sent = true;
-
-          // 401 에러 시 캐시 무효화하고 새 세션 조회
-          this.invalidateSessionCache();
-
-          try {
-            const refreshedSession = await this.getCachedSession();
-            if (refreshedSession?.accessToken) {
-              originalRequest.headers.Authorization = `Bearer ${refreshedSession.accessToken}`;
-              return this.axios(originalRequest);
-            }
-          } catch (refreshError) {
-            console.error("Token refresh failed:", refreshError);
-          }
+        if (response?.status === 401 && this.isAuth) {
+          // 401 에러 시 세션 만료로 처리
+          // 실제 토큰 갱신은 NextAuth의 SessionProvider가 처리
+          console.warn("Unauthorized request - session may be expired");
         }
         return Promise.reject(error);
       },
@@ -164,18 +122,5 @@ export class AxiosService {
 
   public getAxios(): AxiosInstance {
     return this.axios;
-  }
-
-  // 디버깅용 메서드
-  public getCacheInfo(): {
-    hasCache: boolean;
-    isValid: boolean;
-    expiresAt?: number;
-  } {
-    return {
-      hasCache: this.sessionCache !== null,
-      isValid: this.isCacheValid(),
-      expiresAt: this.sessionCache?.expiresAt,
-    };
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Popover } from "antd";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
@@ -13,9 +13,10 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
 
 export function Profile() {
-  // 임시 사용자 정보
-  const userName = "관리자";
-  const email = "admin@xiilab.com";
+  const { data: session } = useSession();
+
+  const userName = session?.user?.name ?? "";
+  const email = session?.user?.email ?? "";
 
   const [showDropdown, setShowDropdown] = useState(false);
   const { open, onToggle } = useGlobalModal(openProfilePopoverAtom);
