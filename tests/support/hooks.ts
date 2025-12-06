@@ -1,9 +1,15 @@
 import { createBdd } from "playwright-bdd";
 
+import { isAuthenticated, loginAs } from "./auth.helper";
+
 const { Before, After, BeforeAll, AfterAll } = createBdd();
 
 /**
  * Hooks - 테스트 실행 전후에 실행되는 공통 로직
+ *
+ * NextAuth CredentialsProvider를 통해 실제 로그인을 수행합니다.
+ * 개발 환경에서는 auth.config.ts의 CredentialsProvider가
+ * 테스트 사용자 인증을 처리합니다.
  */
 
 // 모든 테스트 시작 전 한 번만 실행
@@ -46,14 +52,37 @@ Before({ tags: "@smoke" }, async () => {
   console.log("🔥 Smoke 테스트 실행");
 });
 
-// 인증이 필요한 테스트를 위한 Hook
+/**
+ * 인증이 필요한 테스트를 위한 Hook
+ * NextAuth CredentialsProvider API를 호출하여 실제 세션 생성
+ */
 Before({ tags: "@authenticated" }, async ({ page }) => {
-  // 로그인 상태로 만들기
-  // 예: 토큰을 localStorage에 저장
-  await page.goto("/");
-  await page.evaluate(() => {
-    localStorage.setItem("auth_token", "test-token-12345");
-  });
+  // admin 사용자로 실제 로그인 수행
+  await loginAs(page.context(), "admin");
+
+  // 로그인 성공 확인
+  const authenticated = await isAuthenticated(page);
+  if (authenticated) {
+    console.log("🔐 로그인 완료 (admin)");
+  } else {
+    console.warn("⚠️ 로그인 실패 - 세션이 생성되지 않았습니다");
+  }
+});
+
+/**
+ * 일반 사용자로 인증이 필요한 테스트
+ */
+Before({ tags: "@authenticated-user" }, async ({ page }) => {
+  // user 사용자로 실제 로그인 수행
+  await loginAs(page.context(), "user");
+
+  // 로그인 성공 확인
+  const authenticated = await isAuthenticated(page);
+  if (authenticated) {
+    console.log("🔐 로그인 완료 (user)");
+  } else {
+    console.warn("⚠️ 로그인 실패 - 세션이 생성되지 않았습니다");
+  }
 });
 
 // 특정 태그의 테스트 스킵
