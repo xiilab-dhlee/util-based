@@ -6,10 +6,10 @@ import { UserMonitoringSubSection } from "./user-monitoring-sub-section";
 
 export function UserMonitoringMain() {
   return (
-    <>
+    <div data-testid="user-monitoring-page">
       <PageHeader pageKey="user.monitoring" />
       <UserMonitoringMainSection />
       <UserMonitoringSubSection />
-    </>
+    </div>
   );
 }

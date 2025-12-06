@@ -12,7 +12,7 @@ import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status"
 
 export function UserMonitoringWorkloadArticle() {
   return (
-    <Container>
+    <Container data-testid="user-monitoring-workload-info">
       <Workload>
         <RightSectionHeader>
           <UserMonitoringCategoryTitle>

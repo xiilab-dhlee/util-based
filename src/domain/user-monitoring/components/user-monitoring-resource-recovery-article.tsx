@@ -20,7 +20,7 @@ export function UserMonitoringResourceRecoveryArticle() {
   };
 
   return (
-    <Container>
+    <Container data-testid="user-monitoring-resource-recovery">
       <UserMonitoringCategoryTitle>
         리소스 회수 정보
       </UserMonitoringCategoryTitle>

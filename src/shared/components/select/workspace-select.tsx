@@ -68,7 +68,12 @@ export function WorkspaceSelect() {
             <>
               <Badge>Default</Badge>
               <ValueWrapper>
-                <Value className="truncate">{selectedWorkspace?.name}</Value>
+                <Value
+                  className="truncate"
+                  data-testid="workspace-select-value"
+                >
+                  {selectedWorkspace?.name}
+                </Value>
               </ValueWrapper>
             </>
           ) : (

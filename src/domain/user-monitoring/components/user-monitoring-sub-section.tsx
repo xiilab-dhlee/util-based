@@ -9,7 +9,7 @@ import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-laye
 export function UserMonitoringSubSection() {
   return (
     <Container>
-      <Left>
+      <Left data-testid="user-monitoring-running-workload-list">
         <ArticleTitle>
           <SectionTitle>실행중인 워크로드 목록</SectionTitle>
           {/* <ArticleDescription>
@@ -48,7 +48,7 @@ export function UserMonitoringSubSection() {
           />
         </ListWrapper>
       </Left>
-      <Right>
+      <Right data-testid="user-monitoring-recovery-workload-list">
         <ArticleTitle>
           <SectionTitle>리소스 회수 예정 워크로드 정보</SectionTitle>
           {/* <ArticleDescription>

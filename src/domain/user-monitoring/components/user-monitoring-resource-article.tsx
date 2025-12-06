@@ -22,7 +22,7 @@ export function UserMonitoringResourceArticle() {
     : null;
 
   return (
-    <Container>
+    <Container data-testid="user-monitoring-resource-graph">
       {/* CPU 그래프 영역 */}
       <Graph>
         <GraphHeader>
