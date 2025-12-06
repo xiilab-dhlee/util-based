@@ -22,5 +22,23 @@
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  // Cucumber 확장프로그램 설정
+  "cucumber.glue": [
+    "tests/steps/**/*.ts",
+    "tests/support/**/*.ts"
+  ],
+  "cucumber.features": [
+    "tests/features/**/*.feature"
+  ],
+  // Cucumber Autocomplete 설정 (한글 step 인식을 위해)
+  "cucumberautocomplete.steps": [
+    "tests/steps/**/*.ts",
+    "tests/support/**/*.ts"
+  ],
+  "cucumberautocomplete.syncfeatures": "tests/features/**/*.feature",
+  "cucumberautocomplete.strictGherkinCompletion": false,
+  "cucumberautocomplete.strictGherkinValidation": false,
+  "cucumberautocomplete.smartSnippets": true,
+  "cucumberautocomplete.stepsInvariants": true
 }
