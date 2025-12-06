@@ -77,7 +77,9 @@ export function WorkspaceSelect() {
               </ValueWrapper>
             </>
           ) : (
-            <Placeholder>Select Workspace</Placeholder>
+            <Placeholder data-testid="workspace-select-placeholder">
+              Select Workspace
+            </Placeholder>
           )}
           <IconWrapper className={isOpen ? "open" : ""}>
             <ArrowIcon />

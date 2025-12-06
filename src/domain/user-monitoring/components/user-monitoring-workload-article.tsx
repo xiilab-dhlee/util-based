@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
   UserMonitoringCategoryTitle,
@@ -12,8 +11,8 @@ import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status"
 
 export function UserMonitoringWorkloadArticle() {
   return (
-    <Container data-testid="user-monitoring-workload-info">
-      <Workload>
+    <Container>
+      <Workload data-testid="user-monitoring-workload-status">
         <RightSectionHeader>
           <UserMonitoringCategoryTitle>
             워크로드 정보
@@ -24,17 +23,14 @@ export function UserMonitoringWorkloadArticle() {
         </RightSectionHeader>
         {/* 워크로드 정보 영역 */}
         <WorkloadStatusWrapper>
-          {["ALL", "RUNNING", "COMPLETED", "PENDING", "FAILED"].map(
-            (status) => (
-              <UserMonitoringWorkloadStatus
-                key={status}
-                status={status as WorkloadStatusType}
-              />
-            ),
-          )}
+          <UserMonitoringWorkloadStatus status="ALL" count={8888} />
+          <UserMonitoringWorkloadStatus status="RUNNING" count={2222} />
+          <UserMonitoringWorkloadStatus status="COMPLETED" count={2222} />
+          <UserMonitoringWorkloadStatus status="PENDING" count={2222} />
+          <UserMonitoringWorkloadStatus status="FAILED" count={2222} />
         </WorkloadStatusWrapper>
       </Workload>
-      <Resource>
+      <Resource data-testid="user-monitoring-resource-usage">
         <RightSectionHeader>
           <UserMonitoringCategoryTitle>
             사용 자원 정보
