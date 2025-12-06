@@ -93,7 +93,7 @@ export default defineConfig({
 
   /* 테스트 실행 전 개발 서버 자동 시작 */
   webServer: {
-    command: "pnpm dev",
+    command: "pnpm dev:mock",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
