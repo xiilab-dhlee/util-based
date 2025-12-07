@@ -76,10 +76,10 @@ export function UpdateStorageModal() {
     >
       <ModalContent>
         <SectionGroup>
-          {/* 계정 기본 정보 섹션 */}
+          {/* 스토리지 기본 정보 섹션 */}
           <SectionHeader>
             <SectionIndicator />
-            <SectionTitle>계정 기본 정보</SectionTitle>
+            <SectionTitle>스토리지 기본 정보</SectionTitle>
           </SectionHeader>
 
           <ContentBox>
@@ -99,10 +99,10 @@ export function UpdateStorageModal() {
         </SectionGroup>
 
         <SectionGroup>
-          {/* 계정 수정 정보 섹션 */}
+          {/* 스토리지 수정 정보 섹션 */}
           <SectionHeader>
             <SectionIndicator />
-            <SectionTitle>계정 수정 정보</SectionTitle>
+            <SectionTitle>스토리지 수정 정보</SectionTitle>
           </SectionHeader>
 
           <Form layout="vertical">
