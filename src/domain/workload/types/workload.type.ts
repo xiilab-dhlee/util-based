@@ -32,4 +32,8 @@ export interface UpdateWorkloadPayload extends CorePayload {}
 
 export interface DeleteWorkloadPayload extends CorePayload {}
 
+export interface StopWorkloadPayload extends CorePayload {}
+
+export interface RestartWorkloadPayload extends CorePayload {}
+
 export interface CreateCommitImagePayload extends CorePayload {}

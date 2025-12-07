@@ -30,6 +30,12 @@ export const workloadDisabledStatusAtom = atom<string | null>(null);
 export const openCreateCommitImageModalAtom = atom<boolean>(false);
 /** 워크로드 수정 모달 표시 여부 */
 export const openUpdateWorkloadModalAtom = atom<boolean>(false);
+/** 워크로드 삭제 모달 표시 여부 */
+export const openDeleteWorkloadModalAtom = atom<boolean>(false);
+/** 워크로드 종료 모달 표시 여부 */
+export const openStopWorkloadModalAtom = atom<boolean>(false);
+/** 워크로드 재시작 모달 표시 여부 */
+export const openRestartWorkloadModalAtom = atom<boolean>(false);
 /** 워크로드 모니터링 모달 표시 여부 */
 export const openViewWorkloadMonitoringModalAtom = atom<boolean>(false);
 /** 워크로드 모니터링 드로어 표시 여부 */
