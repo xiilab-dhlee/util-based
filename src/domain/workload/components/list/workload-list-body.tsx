@@ -53,7 +53,7 @@ export function WorkloadListBody() {
           { dataIndex: "delete" },
         ])}
         data={data?.content || []}
-        columnHeight={38}
+        columnHeight={36}
         activePadding
       />
     </ListWrapper>

@@ -3,6 +3,7 @@
 import { WorkloadDisabledBody } from "@/domain/workload/components/list/workload-disabled-body";
 import { WorkloadDisabledFilter } from "@/domain/workload/components/list/workload-disabled-filter";
 import { WorkloadDisabledFooter } from "@/domain/workload/components/list/workload-disabled-footer";
+import { RestartWorkloadModal } from "../restart-workload-modal";
 
 /**
  * 비활성화 워크로드 목록 메인 컴포넌트
@@ -21,6 +22,8 @@ export function WorkloadDisabledMain() {
       <WorkloadDisabledBody />
       {/* 비활성화 워크로드 목록 페이지네이션 */}
       <WorkloadDisabledFooter />
+      {/* 워크로드 재시작 모달 */}
+      <RestartWorkloadModal />
     </>
   );
 }

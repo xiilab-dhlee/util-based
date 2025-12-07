@@ -41,14 +41,12 @@ export function WorkloadDisabledBody() {
           { dataIndex: "elapsedTime" },
           { dataIndex: "status", width: 80 },
           { dataIndex: "log" },
-          { dataIndex: "terminal", width: 60 },
-          { dataIndex: "port" },
           { dataIndex: "monitoring", width: 60 },
-          { dataIndex: "power" },
+          { dataIndex: "restart" },
           { dataIndex: "delete" },
         ])}
         data={data?.content || []}
-        columnHeight={40}
+        columnHeight={36}
         activePadding
       />
     </ListWrapper>

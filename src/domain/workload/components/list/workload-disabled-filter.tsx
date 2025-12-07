@@ -35,7 +35,7 @@ export function WorkloadDisabledFilter() {
   });
 
   return (
-    <MySearchFilter title="비활성화 워크로드 목록" total={data?.totalSize}>
+    <MySearchFilter title="워크로드 목록" total={data?.totalSize}>
       <WorkloadJobTypeSort />
       <WorkloadStatusSort />
       <form

@@ -80,6 +80,7 @@ export const ColumnLink = styled(Link)`
   justify-content: flex-start;
   align-items: center;
   gap: 2px;
+  position: relative;
 `;
 // 강조 텍스트
 export const ColumnHighlightText = styled.span`

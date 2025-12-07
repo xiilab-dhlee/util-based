@@ -4,6 +4,8 @@ import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
+import { DeleteWorkloadModal } from "@/domain/workload/components/delete-workload-modal";
+import { StopWorkloadModal } from "@/domain/workload/components/stop-workload-modal";
 import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
@@ -117,6 +119,10 @@ export default function UserWorkloadListLayout({
 
       {/* 워크로드 생성 드로어 */}
       <CreateWorkloadDrawer />
+      {/* 워크로드 삭제 모달 */}
+      <DeleteWorkloadModal />
+      {/* 워크로드 종료 모달 */}
+      <StopWorkloadModal />
     </>
   );
 }
