@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { z } from "zod";
 
-import { GOOGLE_SMTP_CONFIG } from "@/domain/system-setting/constants/smtp.constant";
+import { GOOGLE_SMTP_CONFIG } from "@/domain/system-setting/constants/system-setting.constant";
 import {
   type CreateSmtpRequestPayload,
   type SmtpFormErrors,
@@ -74,7 +74,9 @@ function formStateToPayload(formState: SmtpFormType): CreateSmtpRequestPayload {
 // ===== 훅 =====
 
 export function useSmtpForm(): UseSmtpFormReturn {
-  const [formState, setFormState] = useState<SmtpFormType>(createInitialFormState);
+  const [formState, setFormState] = useState<SmtpFormType>(
+    createInitialFormState,
+  );
   const [errors, setErrors] = useState<SmtpFormErrors>({});
 
   const setField = <Key extends keyof SmtpFormType>(
