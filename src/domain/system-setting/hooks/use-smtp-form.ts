@@ -38,7 +38,7 @@ function createInitialFormState(): SmtpFormType {
   };
 }
 
-function mapZodErrors(error: z.ZodError): SmtpFormErrors {
+function mapZodErrors(error: z.ZodError<SmtpFormType>): SmtpFormErrors {
   const errors: SmtpFormErrors = {};
 
   for (const issue of error.issues) {
@@ -84,9 +84,7 @@ export function useSmtpForm(): UseSmtpFormReturn {
     value: SmtpFormType[Key],
   ) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
-    if (field in errors) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
+    setErrors((prev) => (prev && field in prev ? { ...prev, [field]: undefined } : prev));
   };
 
   const setIsGoogle = (isGoogle: boolean) => {
