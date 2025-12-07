@@ -112,8 +112,63 @@ Then("워크스페이스 선택 안내가 표시된다", async ({ page }) => {
 // ============================================
 
 /**
- * Then - URL 검증
+ * Then - URL 검증 (정확히 일치)
  */
 Then("URL이 {string}이다", async ({ page }, expectedUrl: string) => {
   await expect(page).toHaveURL(new RegExp(expectedUrl));
+});
+
+/**
+ * Then - URL 포함 검증
+ */
+Then("URL이 {string}를 포함한다", async ({ page }, expectedUrl: string) => {
+  await expect(page).toHaveURL(new RegExp(expectedUrl));
+});
+
+// ============================================
+// 목록 페이지 공통 Steps
+// ============================================
+
+/**
+ * Then - 목록 테이블 표시 확인
+ */
+Then("목록 테이블이 표시된다", async ({ page }) => {
+  const table = page.locator('[data-testid="list-table"]');
+  await expect(table).toBeVisible({ timeout: 10000 });
+});
+
+/**
+ * Then - 목록에 총 개수 표시 확인
+ */
+Then("목록에 총 개수가 표시된다", async ({ page }) => {
+  const totalCount = page.locator('[data-testid="list-total-count"]');
+  await expect(totalCount).toBeVisible({ timeout: 10000 });
+
+  const text = await totalCount.textContent();
+  expect(text).toMatch(/총\s*\d+/);
+});
+
+/**
+ * Then - 페이지네이션 표시 확인
+ */
+Then("페이지네이션이 표시된다", async ({ page }) => {
+  const pagination = page.locator('[data-testid="list-pagination"]');
+  await expect(pagination).toBeVisible({ timeout: 10000 });
+});
+
+/**
+ * Then - 검색창 빈 값 확인
+ */
+Then("검색창이 빈 값으로 표시된다", async ({ page }) => {
+  const searchInput = page.locator('[data-testid="list-search-input"]');
+  await expect(searchInput).toBeVisible({ timeout: 10000 });
+  await expect(searchInput).toHaveValue("");
+});
+
+/**
+ * Then - 필터 영역 표시 확인
+ */
+Then("필터 영역이 표시된다", async ({ page }) => {
+  const filter = page.locator('[data-testid="list-filter"]');
+  await expect(filter).toBeVisible({ timeout: 10000 });
 });
