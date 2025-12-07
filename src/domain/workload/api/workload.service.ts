@@ -1,5 +1,6 @@
 import type {
   CreateCommitImagePayload,
+  CreateWorkloadFolderPayload,
   CreateWorkloadPayload,
   DeleteWorkloadPayload,
   GetWorkloadFilesPayload,
@@ -90,6 +91,15 @@ export class WorkloadService extends AxiosService {
   public async restartWorkload(payload: RestartWorkloadPayload) {
     const response = await this.getAxios().post(
       `${this.BASE_URL}/restart`,
+      payload,
+    );
+    return response.data;
+  }
+
+  /** 워크로드 폴더 추가 */
+  public async createWorkloadFolder(payload: CreateWorkloadFolderPayload) {
+    const response = await this.getAxios().post(
+      `${this.BASE_URL}/${payload.workloadId}/directory`,
       payload,
     );
     return response.data;

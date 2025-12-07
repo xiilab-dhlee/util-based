@@ -40,6 +40,8 @@ export const openRestartWorkloadModalAtom = atom<boolean>(false);
 export const openViewWorkloadMonitoringModalAtom = atom<boolean>(false);
 /** 워크로드 모니터링 드로어 표시 여부 */
 export const openViewWorkloadMonitoringDrawerAtom = atom<boolean>(false);
+/** 워크로드 폴더 추가 모달 표시 여부 */
+export const openCreateWorkloadFolderModalAtom = atom<boolean>(false);
 /** 워크로드 파일 트리 데이터 */
 export const workloadFileTreeDataAtom = atomWithReset<FileTreeType[]>([]);
 /** 워크로드 보안 페이지 번호 */
