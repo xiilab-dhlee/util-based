@@ -20,7 +20,9 @@ export type StorageUpdateFormState = z.infer<
 >;
 
 /** 제네릭 폼 에러 타입 */
-export type FormErrors<TState> = Partial<Record<keyof TState, string | undefined>>;
+export type FormErrors<TState> = Partial<
+  Record<keyof TState, string | undefined>
+>;
 
 export type StorageCreateFormErrors = FormErrors<StorageCreateFormState>;
 export type StorageUpdateFormErrors = FormErrors<StorageUpdateFormState>;
@@ -122,7 +124,12 @@ export function useStorageCreateForm(): UseStorageCreateFormReturn {
     const result = createStorageSettingRequestSchema.safeParse(formState);
 
     if (!result.success) {
-      setErrors(mapZodErrors<StorageCreateFormState>(result.error, createFormErrors<StorageCreateFormState>()));
+      setErrors(
+        mapZodErrors<StorageCreateFormState>(
+          result.error,
+          createFormErrors<StorageCreateFormState>(),
+        ),
+      );
       return null;
     }
 
@@ -173,7 +180,12 @@ export function useStorageUpdateForm(): UseStorageUpdateFormReturn {
     const result = updateStorageSettingRequestSchema.safeParse(formState);
 
     if (!result.success) {
-      setErrors(mapZodErrors<StorageUpdateFormState>(result.error, createFormErrors<StorageUpdateFormState>()));
+      setErrors(
+        mapZodErrors<StorageUpdateFormState>(
+          result.error,
+          createFormErrors<StorageUpdateFormState>(),
+        ),
+      );
       return null;
     }
 

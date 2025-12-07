@@ -84,7 +84,9 @@ export function useSmtpForm(): UseSmtpFormReturn {
     value: SmtpFormType[Key],
   ) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => (prev && field in prev ? { ...prev, [field]: undefined } : prev));
+    setErrors((prev) =>
+      prev && field in prev ? { ...prev, [field]: undefined } : prev,
+    );
   };
 
   const setIsGoogle = (isGoogle: boolean) => {
