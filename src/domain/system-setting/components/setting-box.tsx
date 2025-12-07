@@ -44,6 +44,7 @@ const Container = styled.div<{ $height?: number }>`
   display: flex;
   flex-direction: column;
   min-height: ${({ $height }) => ($height ? `${$height}px` : "100%")};
+  height: 100%
 `;
 
 const Header = styled.div`
