@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
 import { workloadEnvColumn } from "@/domain/workload/components/detail/workload-env-column";
@@ -11,7 +12,6 @@ import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-b
 import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
-import { BuiltinIcon } from "@/shared/components/icon/builtin-icon";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -55,7 +55,7 @@ export function WorkloadSecondaryArticle() {
           <Value>
             <ImageName>
               <IconWrapper>
-                <BuiltinIcon />
+                <Icon name="BuiltInImage" color="var(--icon-fill)" size={18} />
               </IconWrapper>
               {label} Image
             </ImageName>

@@ -335,6 +335,13 @@ const addColumnPadding = css`
   }
 `;
 
+/* ellipsis 컬럼이 td 너비를 초과하지 않도록 설정 */
+const ellipsisColumn = css`
+  & .ant-table-cell-ellipsis {
+    max-width: 0;
+  }
+`;
+
 /**
  * 스타일이 적용된 테이블 컴포넌트
  *
@@ -371,6 +378,7 @@ export const StyledTable = styled(Table)<{
   ${({ hideBorder }) => hideBorder && removeBorder}
   ${({ activePadding }) => activePadding && addColumnPadding}
   ${addColumnAlign}
+  ${ellipsisColumn}
   // 현재 다크모드 지원X
   ${selectRow(false)}
 `;

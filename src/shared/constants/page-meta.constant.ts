@@ -1,13 +1,11 @@
 /**
  * 페이지 메타데이터 정의
  * - ROUTES 상수를 참조하여 href 정의
- * - 아이콘은 MyIcon에서 사용하는 아이콘 이름 문자열(iconName)로 정의
  * - parent로 breadcrumb 계층 구조 표현
  *
  * 주의:
  * - 이 파일은 순수 상수 정의만 포함하고 React/JSX에 의존하지 않습니다.
  * - 실제 아이콘 렌더링은 사용처(레이아웃, Breadcrumb 헬퍼 등)에서
- *   `iconName`을 사용해 `<MyIcon name={iconName} />` 형태로 수행해야 합니다.
  */
 
 import { ROUTES } from "@/shared/constants/routes.constant";
@@ -283,7 +281,7 @@ export const PAGE_META = {
   // ============================================
   "user.monitoring": {
     title: "모니터링",
-    iconName: "Monitoring01",
+    iconName: "Monitoring02",
     href: ROUTES.USER_MONITORING,
   },
 
@@ -417,7 +415,7 @@ export type PageKey = keyof typeof PAGE_META;
 export interface PageItemMeta {
   /** 페이지 제목 */
   title: string;
-  /** 페이지 아이콘 이름 (MyIcon에서 사용하는 아이콘 키) */
+  /** 페이지 아이콘 이름 */
   iconName?: string;
   /** 페이지 경로 (정적) 또는 경로 생성 함수 (동적) */
   href?: string | ((params: Record<string, string>) => string);

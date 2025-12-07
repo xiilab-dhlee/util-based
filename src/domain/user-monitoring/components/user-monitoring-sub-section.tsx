@@ -9,24 +9,33 @@ import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-laye
 export function UserMonitoringSubSection() {
   return (
     <Container>
-      <Pane>
+      <Left>
         <ArticleTitle>
-          <SectionTitle>고정 워크로드 정보</SectionTitle>
-          <ArticleDescription>
+          <SectionTitle>실행중인 워크로드 목록</SectionTitle>
+          {/* <ArticleDescription>
             고정한 워크로드 정보를 확인할 수 있습니다.
-          </ArticleDescription>
+          </ArticleDescription> */}
         </ArticleTitle>
         <ListWrapper>
           <CustomizedTable
             columns={createWorkloadColumn([
-              { dataIndex: "workloadName", width: 150, ellipsis: true },
-              { dataIndex: "jobType" },
-              { dataIndex: "creatorName" },
-              { dataIndex: "labels" },
-              { dataIndex: "status" },
-              { dataIndex: "elapsedTime" },
+              {
+                dataIndex: "workloadName",
+                align: "left",
+                ellipsis: true,
+                sorter: true,
+              },
+              { dataIndex: "jobType", width: "20%" },
+              { dataIndex: "creatorName", width: "20%" },
+              // { dataIndex: "labels" },
+              // { dataIndex: "status", width: "10%" },
+              {
+                dataIndex: "elapsedTime",
+                width: "20%",
+                align: "center",
+              },
             ])}
-            columnHeight={38}
+            columnHeight={40}
             activePadding
             data={workloadListMock}
             pagination={{
@@ -34,29 +43,34 @@ export function UserMonitoringSubSection() {
                 alert("준비 중입니다.");
               },
               pageSize: 8,
-              total: 10,
+              total: workloadListMock.length,
             }}
           />
         </ListWrapper>
-      </Pane>
-      <Pane>
+      </Left>
+      <Right>
         <ArticleTitle>
-          <SectionTitle>자원회수 워크로드 정보</SectionTitle>
-          <ArticleDescription>
+          <SectionTitle>리소스 회수 예정 워크로드 정보</SectionTitle>
+          {/* <ArticleDescription>
             자원회수가 예정된 워크로드 정보를 확인할 수 있습니다.
-          </ArticleDescription>
+          </ArticleDescription> */}
         </ArticleTitle>
         <ListWrapper>
           <CustomizedTable
             columns={createWorkloadColumn([
-              { dataIndex: "workloadName", width: 150, ellipsis: true },
-              { dataIndex: "jobType" },
-              { dataIndex: "creatorName", title: "사용자" },
-              { dataIndex: "labels", title: "라벨" },
+              {
+                dataIndex: "workloadName",
+                title: "이름",
+                width: 130,
+                ellipsis: true,
+                sorter: true,
+              },
+              { dataIndex: "creatorName" },
               { dataIndex: "status" },
               { dataIndex: "elapsedTime" },
+              { dataIndex: "jobType", title: "누적 경고 횟수" },
             ])}
-            columnHeight={38}
+            columnHeight={40}
             activePadding
             data={workloadListMock}
             pagination={{
@@ -64,11 +78,12 @@ export function UserMonitoringSubSection() {
                 alert("준비 중입니다.");
               },
               pageSize: 8,
-              total: 10,
+              total: workloadListMock.length,
             }}
+            loading
           />
         </ListWrapper>
-      </Pane>
+      </Right>
     </Container>
   );
 }
@@ -81,7 +96,7 @@ const Container = styled.section`
   height: 492px;
 `;
 
-const Pane = styled.article`
+const Left = styled.article`
   flex: 1;
   height: 100%;
   padding: 23px;
@@ -93,10 +108,10 @@ const Pane = styled.article`
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
 `;
 
-// const Right = styled(Left)`
-//   flex: 0;
-//   flex-basis: 620px;
-// `;
+const Right = styled(Left)`
+  flex: 0;
+  flex-basis: 620px;
+`;
 
 const ArticleTitle = styled.div`
   display: flex;
@@ -108,10 +123,10 @@ const ArticleTitle = styled.div`
   margin-bottom: 20px;
 `;
 
-const ArticleDescription = styled.div`
-  font-weight: 400;
-  font-size: 12px;
-`;
+// const ArticleDescription = styled.div`
+//   font-weight: 400;
+//   font-size: 12px;
+// `;
 
 const SectionTitle = styled(UserMonitoringSectionTitle)`
   color: #070913;

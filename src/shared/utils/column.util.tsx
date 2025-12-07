@@ -1,8 +1,8 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
+import { Tooltip } from "xiilab-ui";
 
 import { commonColumns } from "@/shared/components/column";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
-import { ColumnTruncateText } from "@/styles/layers/column-layer.styled";
 
 /**
  * 컬럼 배열에 설정 적용
@@ -55,27 +55,28 @@ export function applyColumnConfigs(
         ...config,
       };
 
-      // ellipsis가 true이고 width가 설정되어 있으면 render 함수를 래핑하여 ColumnTruncateText 적용
-      if (mergedColumn.ellipsis && mergedColumn.width) {
+      // ellipsis가 활성화된 경우 툴팁 추가
+      if (mergedColumn.ellipsis) {
         const originalRender = mergedColumn.render;
-        const width =
-          typeof mergedColumn.width === "number"
-            ? mergedColumn.width
-            : Number.parseInt(String(mergedColumn.width), 10);
+        mergedColumn.render = (title, record, index) => {
+          const content = originalRender
+            ? originalRender(title, record, index)
+            : title;
 
-        if (!Number.isNaN(width)) {
-          // biome-ignore lint/suspicious/noExplicitAny: Generic handler
-          mergedColumn.render = (value: any, record: any, index: number) => {
-            const content = originalRender
-              ? originalRender(value, record, index)
-              : value;
-            return (
-              <ColumnTruncateText width={width}>
-                {content || "-"}
-              </ColumnTruncateText>
-            );
-          };
-        }
+          return (
+            <Tooltip title={title} getPopupContainer={() => document.body}>
+              <div
+                style={{
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {content}
+              </div>
+            </Tooltip>
+          );
+        };
       }
 
       return mergedColumn;

@@ -90,12 +90,12 @@ export const ColumnHighlightText = styled.span`
   }
 `;
 
-export const ColumnTruncateText = styled.span<{ width: number }>`
+export const ColumnTruncateText = styled.span<{ width: number | string }>`
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: ${({ width }) => width}px;
+  max-width: ${({ width }) => (typeof width === "number" ? `${width}px` : width)};
 `;
 
 export const ColumnTextButton = styled.button`

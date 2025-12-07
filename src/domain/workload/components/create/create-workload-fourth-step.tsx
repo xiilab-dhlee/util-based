@@ -14,7 +14,7 @@ import {
   imageTypeAtom,
 } from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadEnv } from "./create-workload-env";
-import { CreateWorkloadParameter } from "./create-workload-parameter";
+// import { CreateWorkloadParameter } from "./create-workload-parameter";
 import { CreateWorkloadPort } from "./create-workload-port";
 
 export function CreateWorkloadFourthStep() {
@@ -85,7 +85,7 @@ export function CreateWorkloadFourthStep() {
           )}
         </Field>
       </Section>
-      {imageType !== "HUB" && (
+      {/* {imageType !== "HUB" && (
         <Section>
           <Field>
             <FieldHeader>
@@ -97,11 +97,10 @@ export function CreateWorkloadFourthStep() {
                 있습니다.
               </Typography.Text>
             </FieldHeader>
-            {/* 시간 예측 파라미터 영역 */}
             <CreateWorkloadParameter />
           </Field>
         </Section>
-      )}
+      )} */}
     </Container>
   );
 }
