@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   title: "Workload",
 };
 
-export default function UserWorkloadPage() {
+export default function UserWorkloadActivePage() {
   return <WorkloadListMain />;
 }

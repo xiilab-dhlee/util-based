@@ -1,14 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import styled from "styled-components";
-import { Icon, Tag } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
 import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
+import { RefreshIcon } from "@/shared/components/icon/refresh-icon";
 import { WorkloadStatusText } from "@/shared/components/text/workload-status-text";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { isUserMode } from "@/shared/utils/router.util";
 import {
   DetailIntroCardBody,
   DetailIntroCardContainer,
@@ -22,7 +21,8 @@ import {
   DetailIntroCardRowTitle,
   DetailIntroCardTitle,
 } from "@/styles/layers/detail-page-intro-card.styled";
-import { customScrollbar } from "@/styles/mixins/scrollbar";
+
+// import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 /**
  * Props for WorkloadIntroCard component
@@ -38,14 +38,12 @@ export function WorkloadIntroCard({
   workloadName,
   status,
   description,
-  labels,
   workspaceId,
 }: WorkloadIntroCardProps) {
   // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
-  const pathname = usePathname();
 
-  const isUser = isUserMode(pathname);
+  const isCompleted = status === "COMPLETED";
 
   /**
    * 워크로드 수정 모달을 열기 위한 핸들러
@@ -60,13 +58,16 @@ export function WorkloadIntroCard({
     });
   };
 
-  /**
-   * 워크로드 전원 제어 핸들러
-   * 현재는 준비 중 메시지를 표시합니다.
-   * TODO: 실제 전원 제어 기능 구현 필요
-   */
-  const handleClickPower = () => {
-    alert("준비 중입니다.");
+  const handleStop = () => {
+    publish(WORKLOAD_EVENTS.sendStopWorkload, id);
+  };
+
+  const handleRestart = () => {
+    publish(WORKLOAD_EVENTS.sendRestartWorkload, id);
+  };
+
+  const handleDelete = () => {
+    publish(WORKLOAD_EVENTS.sendDeleteWorkload, id);
   };
 
   return (
@@ -80,16 +81,25 @@ export function WorkloadIntroCard({
         {/* 도구 버튼 영역 */}
         <ToolBox>
           {/* 워크로드 수정 버튼 */}
-          {isUser && (
-            <IconWrapper onClick={handleModify}>
-              <Icon name="Edit02" color="var(--icon-fill)" size={24} />
-              <span className="sr-only">워크로드 설명, 라벨 수정</span>
+          <IconWrapper onClick={handleModify}>
+            <Icon name="Edit02" color="var(--icon-fill)" size={24} />
+            <span className="sr-only">워크로드 설명, 라벨 수정</span>
+          </IconWrapper>
+          {/* 워크로드 전원 제어 버튼 */}
+          {isCompleted ? (
+            <IconWrapper onClick={handleRestart}>
+              <RefreshIcon width={20} height={20} fill="var(--icon-fill)" />
+              <span className="sr-only">워크로드 전원 On</span>
+            </IconWrapper>
+          ) : (
+            <IconWrapper onClick={handleStop}>
+              <Icon name="Power" color="var(--icon-fill)" size={24} />
+              <span className="sr-only">워크로드 전원 Off</span>
             </IconWrapper>
           )}
-          {/* 워크로드 전원 제어 버튼 */}
-          <IconWrapper onClick={handleClickPower}>
-            <Icon name="Power" color="var(--icon-fill)" size={24} />
-            <span className="sr-only">워크로드 전원 On/Off</span>
+          <IconWrapper onClick={handleDelete}>
+            <Icon name="Delete" color="var(--icon-fill)" size={24} />
+            <span className="sr-only">워크로드 삭제</span>
           </IconWrapper>
         </ToolBox>
       </DetailIntroCardHeader>
@@ -104,7 +114,9 @@ export function WorkloadIntroCard({
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               <WorkloadStatusTitle>워크로드 상태</WorkloadStatusTitle>
-              <WorkloadStatusText status={status} />
+              <WorkloadStatusWrapper className={status}>
+                <WorkloadStatusText status={status} />
+              </WorkloadStatusWrapper>
             </DetailIntroCardRowTitle>
           </DetailIntroCardRowBody>
         </DetailIntroCardRow>
@@ -122,14 +134,13 @@ export function WorkloadIntroCard({
         </DetailIntroCardDescriptionRow>
 
         {/* 워크로드 라벨 정보 행 */}
-        {/* TODO: 라벨 UI 정책 설정 필요 */}
-        <DetailIntroCardRow>
+        {/* TODO: 다음 버전에 기능 추가 */}
+        {/* <DetailIntroCardRow>
           <DetailIntroCardRowBody>
             <DetailIntroCardRowIconWrapper>
               <Icon name="Label" color="var(--icon-fill)" size={24} />
             </DetailIntroCardRowIconWrapper>
             <LabelTitle>라벨</LabelTitle>
-            {/* 라벨 태그 목록 (스크롤 가능) */}
             <Labels>
               {labels.map((label) => (
                 <Tag
@@ -143,7 +154,7 @@ export function WorkloadIntroCard({
               ))}
             </Labels>
           </DetailIntroCardRowBody>
-        </DetailIntroCardRow>
+        </DetailIntroCardRow> */}
       </DetailIntroCardBody>
     </DetailIntroCardContainer>
   );
@@ -157,9 +168,9 @@ export function WorkloadIntroCard({
  * 라벨 제목 영역
  * 라벨 섹션의 제목을 표시 (우측 여백 추가)
  */
-const LabelTitle = styled(DetailIntroCardRowTitle)`
-  margin-right: 20px;
-`;
+// const LabelTitle = styled(DetailIntroCardRowTitle)`
+//   margin-right: 20px;
+// `;
 
 /**
  * 워크로드 상태 제목
@@ -201,15 +212,21 @@ const IconWrapper = styled.button`
  * 라벨 태그 컨테이너
  * 라벨 태그들을 배치하고 스크롤 처리
  */
-const Labels = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-  max-height: 50px;
-  overflow-y: auto;
-  flex: 1;
+// const Labels = styled.div`
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   gap: 4px;
+//   flex-wrap: wrap;
+//   max-height: 50px;
+//   overflow-y: auto;
+//   flex: 1;
 
-  ${customScrollbar("#2A3041")}
+//   ${customScrollbar("#2A3041")}
+// `;
+
+const WorkloadStatusWrapper = styled.div`
+  &.COMPLETED p {
+    color: #868994 !important;
+  }
 `;

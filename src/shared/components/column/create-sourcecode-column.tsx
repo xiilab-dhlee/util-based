@@ -26,7 +26,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      dataIndex: "title",
+      dataIndex: "name",
       title: "소스코드 이름",
       align: "left",
     },
@@ -39,12 +39,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      dataIndex: "defaultPath",
+      dataIndex: "path",
       title: "마운트 경로",
       align: "left",
     },
     {
-      dataIndex: "codeType",
+      dataIndex: "type",
       title: "타입",
       align: "center",
       render: (codeType: SourcecodeType) => {

@@ -12,6 +12,7 @@ import { MySpinner } from "@/shared/components/spinner";
 interface MonitoringChartProps {
   series: ApexOptions["series"];
   height?: number;
+  width?: number | string;
   unit: string;
   colors?: string[];
   /** 로딩 상태 여부 (true면 스피너 표시) */
@@ -37,6 +38,7 @@ interface MonitoringChartProps {
 export function MonitoringChart({
   series,
   height,
+  width,
   unit,
   colors,
   isLoading,
@@ -127,12 +129,13 @@ export function MonitoringChart({
   const shouldShowEmpty = !isLoading && !isError && !hasSeries;
 
   return (
-    <ChartContainer $height={height}>
+    <ChartContainer $height={height} $width={width}>
       <DynamicApexChart
         options={options}
         series={initialSeriesRef.current ?? series}
         type={chartType}
-        height={height ? height : "100%"}
+        width={width || "100%"}
+        height={height || "100%"}
       />
 
       {isLoading && (
@@ -160,8 +163,16 @@ const DynamicApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-const ChartContainer = styled.div<{ $height?: number }>`
+const ChartContainer = styled.div<{
+  $height?: number;
+  $width?: number | string;
+}>`
   position: relative;
+  width: ${({ $width }) => {
+    if (typeof $width === "number") return `${$width}px`;
+    if (typeof $width === "string") return $width;
+    return "100%";
+  }};
   height: ${({ $height }) => ($height ? `${$height}px` : "100%")};
 `;
 

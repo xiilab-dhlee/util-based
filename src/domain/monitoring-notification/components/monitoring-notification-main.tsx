@@ -79,7 +79,6 @@ export function MonitoringNotificationMain() {
         {/* 모니터링 알림 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="Create Notification"
             title="알림 추가"
             icon="Plus"
             description={[

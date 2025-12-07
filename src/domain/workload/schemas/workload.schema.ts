@@ -101,6 +101,8 @@ export const workloadListSchema = baseWorkloadSchema.pick({
   status: true,
   elapsedTime: true,
   creatorDate: true,
+  ports: true,
+  image: true,
 });
 
 export const workloadDetailSchema = baseWorkloadSchema;

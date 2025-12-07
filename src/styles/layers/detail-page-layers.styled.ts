@@ -113,6 +113,7 @@ export const DetailContentSection = styled.section`
   display: flex;
   flex-direction: column;
   background-color: #fafafa;
+  max-height: 1200px;
 `;
 
 /**

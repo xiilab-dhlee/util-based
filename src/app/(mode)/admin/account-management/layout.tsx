@@ -91,7 +91,6 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
         {/* 계정 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="About Manage Accounts"
             title="계정 관리"
             icon="Group01"
             description={[

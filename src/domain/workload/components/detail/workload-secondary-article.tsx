@@ -43,7 +43,7 @@ export function WorkloadSecondaryArticle() {
     publish(WORKLOAD_EVENTS.sendCommitImage, data);
   };
 
-  const { label } = getWorkloadImageTypeInfo(data?.image.type);
+  const { label, icon } = getWorkloadImageTypeInfo(data?.image.type);
 
   return (
     <Container>
@@ -51,13 +51,13 @@ export function WorkloadSecondaryArticle() {
         {/* 이미지 영역 */}
         <DetailContentSubTitle>이미지</DetailContentSubTitle>
         <KeyValueContainer className="connect">
-          <LeftKey>이미지</LeftKey>
+          <ImageKey>이미지</ImageKey>
           <Value>
             <ImageName>
               <IconWrapper>
-                <Icon name="BuiltInImage" color="var(--icon-fill)" size={18} />
+                <Icon name={icon} color="var(--icon-fill)" size={18} />
               </IconWrapper>
-              {label} Image
+              {label}
             </ImageName>
             <div>
               <Code>{data?.image.name}</Code>
@@ -74,16 +74,19 @@ export function WorkloadSecondaryArticle() {
           </Value>
         </KeyValueContainer>
         <KeyValueContainer className="split">
-          <LeftKey>보안 검사</LeftKey>
+          <LeftKey>보안검사 결과</LeftKey>
           <SecurityValue>
             <SecurityStatuses>
-              <SecurityLevelText status="CRITICAL">
+              <SecurityLevelText type="engText" status="CRITICAL">
                 <SecurityCount>7,777개</SecurityCount>
               </SecurityLevelText>
-              <SecurityLevelText status="HIGH">
+              <SecurityLevelText type="engText" status="HIGH">
                 <SecurityCount>7,777개</SecurityCount>
               </SecurityLevelText>
-              <SecurityLevelText status="LOW">
+              <SecurityLevelText type="engText" status="MEDIUM">
+                <SecurityCount>7,777개</SecurityCount>
+              </SecurityLevelText>
+              <SecurityLevelText type="engText" status="LOW">
                 <SecurityCount>7,777개</SecurityCount>
               </SecurityLevelText>
             </SecurityStatuses>
@@ -184,7 +187,7 @@ export function WorkloadSecondaryArticle() {
             </Resources>
           </Value>
         </KeyValueContainer>
-        <DetailContentSubTitle>소스코드, Volume</DetailContentSubTitle>
+        <DetailContentSubTitle>소스코드, 볼륨</DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <RightKey>소스코드</RightKey>
           <Value>
@@ -194,7 +197,7 @@ export function WorkloadSecondaryArticle() {
           </Value>
         </KeyValueContainer>
         <KeyValueContainer>
-          <RightKey>Volume</RightKey>
+          <RightKey>볼륨</RightKey>
           <Value>
             {data?.volumes.map((v) => (
               <WorkloadVolumeCard key={v.uid} {...v} />
@@ -209,16 +212,20 @@ export function WorkloadSecondaryArticle() {
 const Container = styled(DetailContentArticle)`
   flex: 1;
   margin-top: 10px;
-
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
   & > div:first-child {
     border-right: 1px solid #e0e0e0;
   }
 `;
 
 const Pane = styled.div`
-  flex: 1;
   padding: 0px 17px;
-  overflow-x: hidden;
+  grid-column: span 1;
+  min-width: 0;
 `;
 
 const IconWrapper = styled.div`
@@ -270,6 +277,10 @@ const Text = styled.p`
 
 const LeftKey = styled(DetailContentKey)`
   width: 100px;
+`;
+
+const ImageKey = styled(LeftKey)`
+  padding-top: 3px;
 `;
 
 const RightKey = styled(DetailContentKey)`

@@ -3,7 +3,6 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { ViewWorkloadMonitoringModal } from "@/domain/workload/components/detail/view-workload-monitoring-modal";
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -13,10 +12,14 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
+import { AsideWorkloadMonitoring } from "../aside-workload-monitoring";
+import { ViewWorkloadMonitoringModal } from "../detail/view-workload-monitoring-modal";
 import { WorkloadLogBody } from "./workload-log-body";
 
 export function WorkloadLogMain() {
-  const { onToggle } = useGlobalModal(openViewWorkloadMonitoringDrawerAtom);
+  const { open, onToggle } = useGlobalModal(
+    openViewWorkloadMonitoringDrawerAtom,
+  );
 
   const handleToggleMonitoring = () => {
     onToggle();
@@ -24,7 +27,6 @@ export function WorkloadLogMain() {
 
   return (
     <>
-      {/* 로그 페이지 영역 */}
       <DetailContentHeader>
         <DetailContentTitle>로그</DetailContentTitle>
         <DetailContentTitleTool>
@@ -41,6 +43,7 @@ export function WorkloadLogMain() {
       </DetailContentHeader>
       <LogContent>
         <WorkloadLogBody />
+        {open && <AsideWorkloadMonitoring />}
       </LogContent>
       {/* 워크로드 모니터링 모달 */}
       <ViewWorkloadMonitoringModal />

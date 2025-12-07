@@ -76,7 +76,6 @@ export function WorkspaceListMain() {
         {/* 워크스페이스 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="Create Workspace"
             title="워크스페이스 관리"
             icon="Plus"
             description={[
