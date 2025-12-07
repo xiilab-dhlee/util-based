@@ -35,7 +35,15 @@ export function SourcecodeListBody() {
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={createSourcecodeColumn()}
+        columns={createSourcecodeColumn([
+          { dataIndex: "checkbox" },
+          { dataIndex: "name", width: "20%", ellipsis: true, sorter: true },
+          { dataIndex: "creatorName" },
+          { dataIndex: "path" },
+          { dataIndex: "type" },
+          { dataIndex: "cmd" },
+          { dataIndex: "creatorDate" },
+        ])}
         data={data?.content || []}
         customRow={SourcecodeRow}
       />
