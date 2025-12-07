@@ -3,13 +3,19 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { CreateStorageModal } from "@/domain/system-setting/components/create-storage-modal";
 import { CredentialListSetting } from "@/domain/system-setting/components/credential-list-setting";
+import { DeleteSmtpModal } from "@/domain/system-setting/components/delete-smtp-modal";
+import { DeleteStorageModal } from "@/domain/system-setting/components/delete-storage-modal";
 import { HpeOneviewSetting } from "@/domain/system-setting/components/hpe-oneview-setting";
 import { LicenseSetting } from "@/domain/system-setting/components/license-setting";
 import { ResourceRevokeSetting } from "@/domain/system-setting/components/resource-revoke-setting";
 import { SmtpAccountSetting } from "@/domain/system-setting/components/smtp-account-setting";
+import { SmtpModal } from "@/domain/system-setting/components/smtp-modal";
 import { StorageListSetting } from "@/domain/system-setting/components/storage-list-setting";
 import { SystemSettingAside } from "@/domain/system-setting/components/system-setting-aside";
+import { UpdateStorageModal } from "@/domain/system-setting/components/update-storage-modal";
+import { ViewStorageModal } from "@/domain/system-setting/components/view-storage-modal";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import type { CoreGuide } from "@/shared/types/core.model";
@@ -72,26 +78,31 @@ export function SystemSettingMain() {
             {/* 리소스 회수 기준 */}
             <ResourceRevokeSetting />
 
-            {/* 크레덴셜 목록 */}
-            <CredentialListSetting />
+            {/* 오른쪽 세로 그룹: SMTP(1) + 라이선스/HPE(1) */}
+            <SettingColumnGroup>
+              <SmtpAccountSetting />
+              <SettingRowGroup>
+                <LicenseSetting />
+                <HpeOneviewSetting />
+              </SettingRowGroup>
+            </SettingColumnGroup>
 
             {/* 스토리지 목록 */}
             <StorageListSetting />
 
-            {/* 오른쪽 세로 그룹 */}
-            <SettingColumnGroup>
-              {/* SMTP 계정 정보 */}
-              <SmtpAccountSetting />
-
-              {/* 라이선스 */}
-              <LicenseSetting />
-
-              {/* HPE One View 연동 */}
-              <HpeOneviewSetting />
-            </SettingColumnGroup>
+            {/* 크레덴셜 목록 */}
+            <CredentialListSetting />
           </SettingGridContainer>
         </ListPageBody>
       </ListPageMain>
+
+      {/* 모달 */}
+      <SmtpModal />
+      <DeleteSmtpModal />
+      <ViewStorageModal />
+      <UpdateStorageModal />
+      <DeleteStorageModal />
+      <CreateStorageModal />
     </>
   );
 }
@@ -110,11 +121,20 @@ const SettingGridContainer = styled.div`
 `;
 
 /**
- * 세로 그룹 컨테이너
+ * 세로 그룹 컨테이너 (SMTP:1, 라이선스+HPE:1)
  */
 const SettingColumnGroup = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 8px;
+`;
+
+/**
+ * 가로 그룹 컨테이너 (라이선스, HPE)
+ */
+const SettingRowGroup = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
 `;
 

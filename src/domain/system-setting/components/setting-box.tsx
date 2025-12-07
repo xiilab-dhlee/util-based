@@ -40,18 +40,17 @@ const Container = styled.div<{ $height?: number }>`
   background: #fcfcfc;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  padding: 20px;
+  padding: 14px 20px;
   display: flex;
   flex-direction: column;
-
-  ${({ $height }) => $height && `height: ${$height}px;`}
+  min-height: ${({ $height }) => ($height ? `${$height}px` : "100%")};
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 `;
 
 const TitleWrapper = styled.div`

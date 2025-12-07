@@ -17,12 +17,12 @@ export function LicenseSetting() {
   return (
     <SettingBox
       title="라이선스"
+      height={160}
       extra={
         <Button variant="outlined" size="small" onClick={handleRenew}>
           갱신하기
         </Button>
       }
-      height={138}
     >
       {/* TODO: 라이선스 콘텐츠 */}
     </SettingBox>
