@@ -5,7 +5,10 @@ import styled from "styled-components";
 import { Icon, Modal, Typography } from "xiilab-ui";
 
 import { useGetStorageDetail } from "@/domain/system-setting/hooks/use-get-storage-detail";
-import type { StorageSettingIdType } from "@/domain/system-setting/schemas/storage-setting.schema";
+import type {
+  StorageSettingDetailType,
+  StorageSettingIdType,
+} from "@/domain/system-setting/schemas/storage-setting.schema";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -30,9 +33,6 @@ export function ViewStorageModal() {
   const [id, setId] = useState<StorageSettingIdType | null>(null);
   const publish = usePublish();
 
-  // 스토리지 상세 데이터 조회
-  const { data, isLoading, isError, refetch } = useGetStorageDetail(id!);
-
   // PubSub 구독 - 스토리지 상세 모달 열기 이벤트
   useSubscribe<ViewStorageModalPayload>(
     SYSTEM_SETTING_EVENTS.openStorageDetailModal,
@@ -47,14 +47,44 @@ export function ViewStorageModal() {
     setId(null);
   };
 
-  const handleEdit = () => {
-    if (!data) return;
+  const handleEdit = (detail: StorageSettingDetailType) => {
     // 상세 모달 닫고 수정 모달 열기
     setOpen(false);
-    publish(SYSTEM_SETTING_EVENTS.openStorageEditModal, { data });
+    publish(SYSTEM_SETTING_EVENTS.openStorageEditModal, { data: detail });
   };
 
-  if (!open) return null;
+  if (!open || id === null) return null;
+
+  return (
+    <ViewStorageModalContent
+      id={id}
+      open={open}
+      onCancel={handleCancel}
+      onEdit={handleEdit}
+    />
+  );
+}
+
+interface ViewStorageModalContentProps {
+  id: StorageSettingIdType;
+  open: boolean;
+  onCancel: () => void;
+  onEdit: (detail: StorageSettingDetailType) => void;
+}
+
+function ViewStorageModalContent({
+  id,
+  open,
+  onCancel,
+  onEdit,
+}: ViewStorageModalContentProps) {
+  // 스토리지 상세 데이터 조회
+  const { data, isLoading, isError, refetch } = useGetStorageDetail(id);
+
+  const handleEdit = () => {
+    if (!data) return;
+    onEdit(data);
+  };
 
   return (
     <Modal
@@ -66,7 +96,7 @@ export function ViewStorageModal() {
       title="스토리지 상세"
       showCancelButton
       cancelText="취소"
-      onCancel={handleCancel}
+      onCancel={onCancel}
       okText="수정"
       onOk={handleEdit}
       okButtonProps={{ disabled: isLoading || isError || !data }}
