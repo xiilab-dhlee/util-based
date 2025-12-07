@@ -44,7 +44,7 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 `;
 
 const Body = styled.div`

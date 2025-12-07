@@ -3,9 +3,10 @@
 import classNames from "classnames";
 import { useAtom } from "jotai";
 import styled from "styled-components";
-import { Icon, Tooltip, Typography } from "xiilab-ui";
+import { Icon, Typography } from "xiilab-ui";
 
 import { nodeModeAtom } from "@/domain/workload/state/create-workload.atom";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { MultiNodeTooltipTitle } from "@/shared/components/tooltip-title/multi-node-tooltip-title";
 import { SingleNodeTooltipTitle } from "@/shared/components/tooltip-title/single-node-tooltip-title";
 
@@ -51,11 +52,7 @@ export function CreateWorkloadNodeButton({
         <Typography.Text variant={nodeMode === type ? "body-2-2" : "body-2-3"}>
           {buttonText}
         </Typography.Text>
-        <Tooltip title={tooltipTitle}>
-          <IconWrapper>
-            <Icon name="Tooltip" size={16} color="#5F6368" />
-          </IconWrapper>
-        </Tooltip>
+        <GuideTooltip title={tooltipTitle} />
       </ButtonContent>
     </Container>
   );
@@ -103,11 +100,4 @@ const ButtonContent = styled.div`
   justify-content: center;
   gap: 4px;
   position: relative;
-`;
-
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: help;
 `;
