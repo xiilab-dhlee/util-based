@@ -1,6 +1,7 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
+import { SelectWorkloadRadio } from "@/domain/workload/components/create/select-workload-radio";
 import { DeleteWorkloadButton } from "@/domain/workload/components/list/delete-workload-button";
 import { RestartWorkloadButton } from "@/domain/workload/components/list/restart-workload-button";
 import { StopWorkloadButton } from "@/domain/workload/components/list/stop-workload-button";
@@ -26,6 +27,15 @@ import {
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      dataIndex: "select",
+      title: "선택",
+      align: "center",
+      width: ICON_COLUMN_WIDTH,
+      render: (_, record: WorkloadListType) => {
+        return <SelectWorkloadRadio workloadId={record.id} />;
+      },
+    },
+    {
       dataIndex: "workloadName",
       title: "워크로드 이름",
       align: "left",
@@ -43,6 +53,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
             workloadName={workloadName}
             resourceRecoveryWarningCount={isRecovered ? 9999 : 0}
             isRevoked={isRevoked}
+            data-testid={`workload-name-${id}`}
           />
         );
       },
@@ -52,10 +63,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "잡 타입",
       align: "center",
       width: 100,
-      render: (jobType: WorkloadJobType) => {
+      render: (jobType: WorkloadJobType, { id }: WorkloadListType) => {
         return (
           <ColumnAlignCenterWrap>
-            <span style={{ textTransform: "capitalize" }}>
+            <span
+              style={{ textTransform: "capitalize" }}
+              data-testid={`workload-job-type-${id}`}
+            >
               {jobType.toLowerCase()}
             </span>
           </ColumnAlignCenterWrap>
@@ -67,8 +81,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "경과 시간",
       align: "center",
       width: 140,
-      render: (elapsedTime: string) => {
-        return <span>{formatElapsedTime(elapsedTime)}</span>;
+      render: (elapsedTime: string, { id }: WorkloadListType) => {
+        return (
+          <span data-testid={`workload-elapsed-time-${id}`}>
+            {formatElapsedTime(elapsedTime)}
+          </span>
+        );
       },
     },
     {
@@ -133,6 +151,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
             <ColumnIconWrap
               onClick={() => alert("준비 중입니다.")}
               disabled={!isActive}
+              data-testid="workload-connect-button"
             >
               <Icon name="Port" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>

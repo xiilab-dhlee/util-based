@@ -31,6 +31,7 @@ export function WorkloadMonitoringButton({
       iconSize={16}
       href={href}
       disabled={disabled}
+      data-testid="workload-monitoring-button"
     />
   );
 }

@@ -17,5 +17,12 @@ interface WorkloadStatusTextProps {
 export function WorkloadStatusText({ status }: WorkloadStatusTextProps) {
   const { label, colorVariant } = getWorkloadStatusInfo(status);
 
-  return <Label variant={colorVariant as LabelColorVariant}>{label}</Label>;
+  return (
+    <Label
+      variant={colorVariant as LabelColorVariant}
+      data-testid={`workload-status-${status.toLowerCase()}`}
+    >
+      {label}
+    </Label>
+  );
 }

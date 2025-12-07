@@ -32,7 +32,7 @@ export function WorkloadListBody() {
   });
 
   return (
-    <ListWrapper>
+    <ListWrapper data-testid="list-table">
       <CustomizedTable
         columns={createWorkloadColumn([
           {

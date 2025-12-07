@@ -28,12 +28,15 @@ export function MySearchFilter({
   showTotal = true,
 }: PropsWithChildren<MySearchFilterProps>) {
   return (
-    <Container>
+    <Container data-testid="list-filter">
       <Left>
         <Title className={classNames({ dark: darkMode })}>{title}</Title>
 
         {showTotal && (
-          <Total className={classNames({ dark: darkMode })}>
+          <Total
+            className={classNames({ dark: darkMode })}
+            data-testid="list-total-count"
+          >
             총 {total.toLocaleString()}
             {unit}
           </Total>

@@ -22,13 +22,15 @@ export function WorkloadStatusSort() {
   };
 
   return (
-    <Dropdown
-      options={[ALL_OPTION, ...WORKLOAD_STATUS_OPTIONS]}
-      value={status}
-      onChange={handleChange}
-      placeholder="상태"
-      width={100}
-      height={30}
-    />
+    <div data-testid="workload-filter-status">
+      <Dropdown
+        options={[ALL_OPTION, ...WORKLOAD_STATUS_OPTIONS]}
+        value={status}
+        onChange={handleChange}
+        placeholder="상태"
+        width={100}
+        height={30}
+      />
+    </div>
   );
 }

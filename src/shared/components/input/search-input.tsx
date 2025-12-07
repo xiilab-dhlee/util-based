@@ -40,6 +40,7 @@ export function SearchInput({
       width={width}
       height={30}
       darkMode={darkMode}
+      data-testid="list-search-input"
     />
   );
 }

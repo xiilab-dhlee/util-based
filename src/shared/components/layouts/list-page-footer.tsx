@@ -34,7 +34,7 @@ export function ListPageFooter({
   }
 
   return (
-    <Container>
+    <Container data-testid="list-pagination">
       <Left>
         <CurrentPage>{page}</CurrentPage>
         <TotalPage>&nbsp;of {Math.ceil(total / pageSize)}</TotalPage>

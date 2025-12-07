@@ -31,6 +31,7 @@ export function WorkloadTerminalButton({
       iconSize={22}
       href={href}
       disabled={disabled}
+      data-testid="workload-terminal-button"
     />
   );
 }

@@ -26,6 +26,12 @@ export function WorkloadLogButton({
   }
 
   return (
-    <ColumnRouteIcon icon="Log" iconSize={20} href={href} disabled={disabled} />
+    <ColumnRouteIcon
+      icon="Log"
+      iconSize={20}
+      href={href}
+      disabled={disabled}
+      data-testid="workload-log-button"
+    />
   );
 }

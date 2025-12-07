@@ -23,13 +23,15 @@ export function WorkloadJobTypeSort() {
   };
 
   return (
-    <Dropdown
-      options={[ALL_OPTION, ...WORKLOAD_JOB_OPTIONS]}
-      placeholder="워크로드 잡 타입"
-      onChange={handleChange}
-      value={jobtype}
-      width={150}
-      height={30}
-    />
+    <div data-testid="workload-filter-jobType">
+      <Dropdown
+        options={[ALL_OPTION, ...WORKLOAD_JOB_OPTIONS]}
+        placeholder="워크로드 잡 타입"
+        onChange={handleChange}
+        value={jobtype}
+        width={150}
+        height={30}
+      />
+    </div>
   );
 }

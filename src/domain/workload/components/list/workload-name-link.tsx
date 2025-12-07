@@ -16,6 +16,8 @@ interface WorkloadNameLinkProps {
   resourceRecoveryWarningCount?: number;
   // 회수된 상태인지 여부
   isRevoked?: boolean;
+  /** 테스트를 위한 data-testid 속성 */
+  "data-testid"?: string;
 }
 
 export function WorkloadNameLink({
@@ -24,6 +26,7 @@ export function WorkloadNameLink({
   workloadName,
   resourceRecoveryWarningCount = 0,
   isRevoked,
+  "data-testid": dataTestId,
 }: WorkloadNameLinkProps) {
   const pathname = usePathname();
 
@@ -38,7 +41,7 @@ export function WorkloadNameLink({
   const isWarningRecovery = resourceRecoveryWarningCount > 0;
 
   return (
-    <ColumnLink href={href}>
+    <ColumnLink href={href} data-testid={dataTestId}>
       {/* 리소스 회수 경고 아이콘 */}
       {isWarningRecovery && (
         <IconWrapper>

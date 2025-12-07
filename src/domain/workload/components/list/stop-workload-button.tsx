@@ -26,7 +26,11 @@ export function StopWorkloadButton({
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClick} disabled={disabled}>
+      <ColumnIconWrap
+        onClick={handleClick}
+        disabled={disabled}
+        data-testid="workload-stop-button"
+      >
         <Icon name="PowerBold" color="var(--icon-fill)" size={20} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
