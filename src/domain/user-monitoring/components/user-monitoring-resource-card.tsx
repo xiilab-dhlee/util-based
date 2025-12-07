@@ -36,7 +36,7 @@ export function UserMonitoringResourceCard({
         <Right>
           <RightHeader>
             <Typography.Text variant="subtitle-2" color="#C5C6C8">
-              {text} in use
+              {text}
             </Typography.Text>
           </RightHeader>
         </Right>
@@ -50,12 +50,11 @@ export function UserMonitoringResourceCard({
           backgroundColor="#292B32"
         />
         <Count>
-          <Typography.Text variant="body-1-3" color="#AEAEAE">
-            {count}
-            &nbsp;/
+          <Typography.Text variant="title-2" color="#F5F5F5">
+            {count.toLocaleString()}
           </Typography.Text>
-          <Typography.Text variant="subtitle-2-2" color="#F5F5F5">
-            {total}
+          <Typography.Text variant="body-1-3" color="#AEAEAE">
+            /&nbsp;{total.toLocaleString()}
             {unit}
           </Typography.Text>
         </Count>
@@ -147,13 +146,11 @@ const Right = styled.div`
 `;
 
 const RightHeader = styled.div`
-  text-align: right;
   width: 100%;
 
-  padding-right: 4px;
-  padding-bottom: 12px;
-  margin-bottom: 8px;
+  padding: 0 4px 12px 10px;
   border-bottom: 1px solid var(--secondary-border-color);
+  margin-bottom: 13px;
 `;
 
 const Count = styled.div`

@@ -17,7 +17,6 @@ export function UserMonitoringResourceArticle() {
   );
 
   // value가 null이 아니고 유효한 리소스 타입인지 확인
-
   const seriesData = resourceSelect.value
     ? USER_MONITORING_SERIES_DEMO[resourceSelect.value]
     : null;

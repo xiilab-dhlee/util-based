@@ -6,6 +6,7 @@ import { Typography } from "xiilab-ui";
 
 import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
   SECURITY_USAGE_ENABLED,
   type SecurityUsageStatus,
@@ -45,7 +46,7 @@ export function RegistrySecurityMain() {
         {/* 소스코드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           <PolicyHeader>
-            <Title>리소스 할당량</Title>
+            <Title>레지스트리 보안 정책 설정</Title>
           </PolicyHeader>
           <PolicySettings>
             <SecurityPolicySetting
@@ -101,7 +102,7 @@ export function RegistrySecurityMain() {
           </ScanBody>
         </ListPageBody>
         {/* 소스코드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
-        <ListPageAside $width={620}>
+        <ListPageAside $width={ASIDE_WIDTH}>
           <SecurityAside />
         </ListPageAside>
       </ListPageMain>

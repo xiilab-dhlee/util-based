@@ -66,7 +66,7 @@ export function CreateWorkloadVolume() {
   return (
     <Container>
       <Header>
-        <CreateWorkloadSectionTitle>볼륨 추가</CreateWorkloadSectionTitle>
+        <CreateWorkloadSectionTitle>볼륨</CreateWorkloadSectionTitle>
         <CreateModelButton title="볼륨 생성" onClick={handleCreateVolume} />
       </Header>
       {/* 소스코드 추가 영역 */}
@@ -111,7 +111,7 @@ export function CreateWorkloadVolume() {
       <Footer>
         <FooterHeader>
           <Typography.Text variant="body-2-2" color="#484848">
-            소스코드 목록
+            선택된 볼륨
           </Typography.Text>
           <IconWrapper
             className={classNames({ collapsed })}
@@ -133,7 +133,7 @@ export function CreateWorkloadVolume() {
             {volumes.length === 0 && (
               <EmptyVolumeMessage>
                 <Typography.Text variant="body-2-4" color="#707070">
-                  추가된 볼륨이 없습니다.
+                  선택된 볼륨이 없습니다.
                 </Typography.Text>
               </EmptyVolumeMessage>
             )}
@@ -180,8 +180,8 @@ const LabelTitle = styled(Typography.Text).attrs({
   variant: "body-2-4",
   color: "#000000",
 })`
-  position: relative;
-`;
+  display: flex;
+  align-items: center;`;
 
 const Body = styled.div`
   background-color: #fafafa;

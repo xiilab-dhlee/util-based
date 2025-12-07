@@ -15,16 +15,15 @@ export function UserMonitoringMainSection() {
       <Left>
         <LeftHeader>
           <UserMonitoringSectionTitle>
-            워크스페이스 자원 정보
+            워크스페이스 리소스 정보
           </UserMonitoringSectionTitle>
           <UserMonitoringSectionDescription>
-            해당 워크스페이스 자원 정보와 자원회수 정보를 확인할 수 있습니다.
+            해당 워크스페이스 리소스 정보와 리소스회수 정보를 확인할 수
+            있습니다.
           </UserMonitoringSectionDescription>
         </LeftHeader>
         <LeftBody>
-          {/* 자원 정보 영역 */}
           <UserMonitoringResourceArticle />
-          {/* 자원 회수 정보 영역 */}
           <UserMonitoringResourceRecoveryArticle />
         </LeftBody>
       </Left>
@@ -58,7 +57,7 @@ const Left = styled.div`
 `;
 
 const Right = styled.article`
-  min-width: 596px;
+  width: 596px;
   height: 400px;
   overflow: hidden;
   position: relative;

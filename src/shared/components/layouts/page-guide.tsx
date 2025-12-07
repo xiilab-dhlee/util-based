@@ -22,7 +22,7 @@ interface PageGuideProps {
   /** 이미지 이름 */
   backgroundImageName: string;
   /** 가이드 항목들 */
-  guides: CoreGuide[];
+  guides: readonly CoreGuide[];
   /** 버튼 옵션 */
   buttonOptions?: {
     enabled: boolean;

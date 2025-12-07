@@ -6,10 +6,7 @@ export function RefreshIcon({
   fill = "#484848",
   width = 24,
   height = 24,
-  ...rest
 }: RefreshIconProps) {
-  const { ["aria-hidden"]: ariaHiddenProp, ...restProps } = rest;
-
   return (
     <svg
       width={width}
@@ -17,8 +14,6 @@ export function RefreshIcon({
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-hidden={ariaHiddenProp}
-      {...restProps}
     >
       <title>새로고침 아이콘</title>
       <path

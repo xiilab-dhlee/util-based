@@ -3,36 +3,46 @@ import Image from "next/image";
 import { useState } from "react";
 import styled from "styled-components";
 
+import type { CoreResourceType } from "@/shared/types/core.interface";
+import { getResourceInfo } from "@/shared/utils/resource.util";
 import { UserMonitoringCategoryTitle } from "@/styles/layers/user-monitoring-layers.styled";
 import { UserMonitoringResourceRecoveryChart } from "./user-monitoring-resource-recovery-chart";
 
-export function UserMonitoringResourceRecoveryArticle() {
-  // 선택된 자원
-  const [resource, setResource] = useState<string>("GPU");
+const RESOURCE_TYPES: CoreResourceType[] = ["GPU", "CPU", "MEM"];
 
-  const handleClickResource = (resourceType: string) => {
+export function UserMonitoringResourceRecoveryArticle() {
+  const [resource, setResource] = useState<CoreResourceType>("GPU");
+
+  const { unit } = getResourceInfo(resource);
+
+  const handleClickResource = (resourceType: CoreResourceType) => {
     setResource(resourceType);
   };
 
   return (
     <Container>
-      <UserMonitoringCategoryTitle>자원 회수 정보</UserMonitoringCategoryTitle>
+      <UserMonitoringCategoryTitle>
+        리소스 회수 정보
+      </UserMonitoringCategoryTitle>
       <ChartWrapper>
         <UserMonitoringResourceRecoveryChart series={70} />
       </ChartWrapper>
 
       <ResourceButtons>
-        {["GPU", "CPU", "MEM"].map((v) => (
-          <ResourceButton
-            key={v}
-            className={classNames({
-              active: resource === v,
-            })}
-            onClick={() => handleClickResource(v)}
-          >
-            {v}
-          </ResourceButton>
-        ))}
+        {RESOURCE_TYPES.map((v) => {
+          const resourceInfo = getResourceInfo(v);
+          return (
+            <ResourceButton
+              key={v}
+              className={classNames({
+                active: resource === v,
+              })}
+              onClick={() => handleClickResource(v)}
+            >
+              {resourceInfo.text}
+            </ResourceButton>
+          );
+        })}
         {/* Radial Chart 받침대 */}
         <ChartStand>
           <Image
@@ -47,8 +57,8 @@ export function UserMonitoringResourceRecoveryArticle() {
         <ChartLabel>
           <ChartLabelBody>{resource}</ChartLabelBody>
           <ChartLabelFooter>
-            <Usage>7,777 /&nbsp;</Usage>
-            <Total>9,999 개</Total>
+            <Usage>777&nbsp;</Usage>
+            <Total>/ 999 {unit}</Total>
           </ChartLabelFooter>
         </ChartLabel>
       </ResourceButtons>
@@ -117,27 +127,28 @@ const ChartLabelBody = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  padding-bottom: 12px;
+  width: 110px;
+  border-bottom: 1px solid #5d6278;
 `;
 
 const ChartLabelFooter = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  border-top: 1px solid #5d6278;
-  margin-top: 12px;
   padding-top: 12px;
 `;
 
 const Total = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  color: #fff;
-`;
-
-const Usage = styled.span`
   font-size: 12px;
   font-weight: 400;
   color: #969696;
+`;
+
+const Usage = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
 `;
 
 const ResourceButtons = styled.div`
@@ -161,10 +172,8 @@ const ResourceButton = styled.button`
   align-items: center;
   width: 96px;
   height: 100%;
-  border-radius: 2px;
   position: relative;
-  font-weight: 400;
-  color: #fff;
+  color: #D3D3D3;
 
   &::before {
     position: absolute;
@@ -177,7 +186,7 @@ const ResourceButton = styled.button`
   }
 
   &.active {
-    color: #d9d9d9;
+    color: #fff;
     font-weight: 500;
   }
 

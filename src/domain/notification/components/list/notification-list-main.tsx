@@ -1,7 +1,6 @@
 "use client";
 
 import { AsideNotification } from "@/domain/notification/components/detail/aside-notification";
-import { ListPageAside } from "@/styles/layers/list-page-layers.styled";
 
 /**
  * 알림 상세 페이지의 메인 컴포넌트
@@ -12,9 +11,5 @@ import { ListPageAside } from "@/styles/layers/list-page-layers.styled";
  * @returns 알림 목록 페이지 JSX
  */
 export function NotificationListMain() {
-  return (
-    <ListPageAside $width={620}>
-      <AsideNotification />
-    </ListPageAside>
-  );
+  return <AsideNotification />;
 }

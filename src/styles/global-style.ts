@@ -12,8 +12,10 @@ export const MyGlobalStyle = createGlobalStyle`
   --user-monitoring-main-section-margin-bottom: 20px;
   --page-title-height: 70px;
   --page-margin-bottom: 50px;
+  /** 페이지 내부 패딩 */
+  --page-inner-padding: 40px;
   --navigation-width: 220px;
-  
+
   --gpu-usage-color: #8a5ef3;
   --gpu-request-color: #ded0ff;
   --gpu-icon-color: #F1BEFF;
@@ -92,4 +94,5 @@ button {
   margin: -1px;
   overflow: hidden;
 }
+
 `;
