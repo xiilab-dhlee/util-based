@@ -21,6 +21,8 @@ import { FileSecurityService } from "@/domain/security/api/file-security.service
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
+import { SmtpService } from "@/domain/system-setting/api/smtp.service";
+import { StorageSettingService } from "@/domain/system-setting/api/storage-setting.service";
 import { VolumeService } from "@/domain/volume/api/volume.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
@@ -52,6 +54,8 @@ interface ServiceContextType {
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
   revokeHistoryService: RevokeHistoryService;
+  smtpService: SmtpService;
+  storageSettingService: StorageSettingService;
 }
 
 // 서비스 컨텍스트 생성
@@ -95,6 +99,8 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),
     revokeHistoryService: new RevokeHistoryService(),
+    smtpService: new SmtpService(),
+    storageSettingService: new StorageSettingService(),
   };
 
   return (
