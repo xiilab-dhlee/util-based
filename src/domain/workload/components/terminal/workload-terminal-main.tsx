@@ -1,6 +1,5 @@
 "use client";
 
-import { useSetAtom } from "jotai";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
@@ -9,8 +8,8 @@ import { ViewWorkloadMonitoringModal } from "@/domain/workload/components/detail
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
-import { MonitoringDrawer } from "@/shared/components/drawer/monitoring-drawer";
 import { WorkloadTerminal } from "@/shared/components/terminal/workload-terminal";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   DetailContentButton,
   DetailContentHeader,
@@ -18,11 +17,14 @@ import {
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
 import { terminalDrawerStyle } from "@/styles/mixins/drawer";
+import { AsideWorkloadMonitoring } from "../aside-workload-monitoring";
 
 export function WorkloadTerminalMain() {
   const { id } = useParams();
   const searchParams = useSearchParams();
-  const setOpenDrawer = useSetAtom(openViewWorkloadMonitoringDrawerAtom);
+  const { open, onToggle } = useGlobalModal(
+    openViewWorkloadMonitoringDrawerAtom,
+  );
 
   const workspaceId = searchParams?.get("workspaceId") || "";
 
@@ -32,7 +34,7 @@ export function WorkloadTerminalMain() {
   });
 
   const handleToggleMonitoring = () => {
-    setOpenDrawer((prev) => !prev);
+    onToggle();
   };
 
   const handleClickNewTerminal = () => {
@@ -70,14 +72,15 @@ export function WorkloadTerminalMain() {
         </DetailContentTitleTool>
       </DetailContentHeader>
       <TerminalContent>
-        {/* 모니터링 드로어 */}
-        <MonitoringDrawer />
         {/* 워크로드 터미널 */}
-        <WorkloadTerminal
-          workspaceId={workspaceId as string}
-          workloadId={id as string}
-          workloadType={data?.jobType || ""}
-        />
+        <TerminalWrapper>
+          <WorkloadTerminal
+            workspaceId={workspaceId as string}
+            workloadId={id as string}
+            workloadType={data?.jobType || ""}
+          />
+        </TerminalWrapper>
+        {open && <AsideWorkloadMonitoring />}
       </TerminalContent>
       {/* 워크로드 모니터링 모달 */}
       <ViewWorkloadMonitoringModal />
@@ -93,8 +96,17 @@ const TerminalContent = styled.div`
   max-height: 800px;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 10px;
   border-radius: 4px;
 
   ${terminalDrawerStyle}
+`;
+
+const TerminalWrapper = styled.div`
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
 `;

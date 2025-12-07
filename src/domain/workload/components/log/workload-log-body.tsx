@@ -3,7 +3,6 @@
 import { useAtom } from "jotai";
 import styled from "styled-components";
 
-import { MonitoringDrawer } from "@/shared/components/drawer/monitoring-drawer";
 import { terminalThemeAtom } from "@/shared/state/terminal.atom";
 import { terminalDrawerStyle } from "@/styles/mixins/drawer";
 
@@ -12,8 +11,6 @@ export function WorkloadLogBody() {
 
   return (
     <Container theme={selectedTheme || "theme-primary"}>
-      {/* 모니터링 드로어 */}
-      <MonitoringDrawer />
       {/* 워크로드 로그 */}
       <LogViewer theme={selectedTheme || "theme-primary"}>
         <LogLine>
