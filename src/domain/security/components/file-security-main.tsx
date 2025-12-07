@@ -6,12 +6,13 @@ import { Typography } from "xiilab-ui";
 
 import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import type { SecurityWeekDayKey } from "@/shared/constants/security.constant";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
   SECURITY_SCHEDULE_PERIOD_UNIT_WEEK,
   SECURITY_USAGE_DISABLED,
   SECURITY_USAGE_ENABLED,
   type SecurityUsageStatus,
+  type SecurityWeekDayKey,
 } from "@/shared/constants/security.constant";
 import {
   ListPageAside,
@@ -110,7 +111,7 @@ export function FileSecurityMain() {
           </ScanBody>
         </ListPageBody>
         {/* 소스코드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
-        <ListPageAside $width={620}>
+        <ListPageAside $width={ASIDE_WIDTH}>
           <SecurityAside />
         </ListPageAside>
       </ListPageMain>

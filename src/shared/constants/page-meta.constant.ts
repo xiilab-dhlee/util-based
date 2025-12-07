@@ -270,6 +270,11 @@ export const PAGE_META = {
     iconName: "Noti",
     href: ROUTES.ADMIN_NOTIFICATION,
   },
+  "admin.notification.detail": {
+    title: "알림 상세",
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_NOTIFICATION_DETAIL(id),
+    parent: "admin.notification",
+  },
 
   // ============================================
   // User Routes - Monitoring

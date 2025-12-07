@@ -121,6 +121,7 @@ export function CustomizedTable<
   pagination = false,
   darkMode = false,
   isError = false,
+  rowKey = "id" as keyof TRecord,
   ...tableProps
 }: CustomizedTableProps<TRecord>) {
   // Ant Design 테이블 테마 설정
@@ -180,7 +181,7 @@ export function CustomizedTable<
         dataSource={data as Record<string, unknown>[]}
         scroll={{ x: "max-content", y: "100%" }}
         pagination={pagination}
-        rowKey="id"
+        rowKey={rowKey as TableProps<Record<string, unknown>>["rowKey"]}
         // locale은 테이블의 지역화된 텍스트를 설정하는 속성입니다.
         // 데이터가 없을 때 표시되는 메시지, 페이지네이션 텍스트, 필터 관련 텍스트 등을 커스터마이징할 수 있습니다.
         // 현재는 데이터가 없을 때 '조회된 결과가 없습니다.'라는 한글 메시지를 표시하도록 설정되어 있습니다.

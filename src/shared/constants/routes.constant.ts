@@ -97,6 +97,8 @@ export const ROUTES = {
   // 설정 (정적)
   ADMIN_SETTING: `${MODE.ADMIN}/setting`,
   ADMIN_NOTIFICATION: `${MODE.ADMIN}/notification`,
+  ADMIN_NOTIFICATION_DETAIL: (id: string | number) =>
+    `${MODE.ADMIN}/notification/${id}`,
 
   // ============================================
   // User Routes

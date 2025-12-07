@@ -1,17 +1,21 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
+import { notificationListColumn } from "@/domain/notification/components/create-notification-list-column";
 import { NotificationRow } from "@/domain/notification/components/list/notification-row";
-import { notificationListColumn } from "@/domain/notification/components/notification-list-column";
 import { useGetNotifications } from "@/domain/notification/hooks/use-get-notifications";
+import type { NotificationListType } from "@/domain/notification/schemas/notification.schema";
 import {
+  notificationCheckedListAtom,
   notificationEndDateAtom,
   notificationPageAtom,
   notificationStartDateAtom,
+  notificationTypeAtom,
 } from "@/domain/notification/state/notification.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { useTableSelection } from "@/shared/hooks/use-table-selection";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 /**
@@ -26,22 +30,33 @@ export function NotificationListBody() {
   const page = useAtomValue(notificationPageAtom);
   const startDate = useAtomValue(notificationStartDateAtom);
   const endDate = useAtomValue(notificationEndDateAtom);
-
-  const { data } = useGetNotifications({
+  const type = useAtomValue(notificationTypeAtom);
+  const { data, isLoading, isError } = useGetNotifications({
     page,
     size: LIST_PAGE_SIZE,
     startDate,
     endDate,
+    type,
   });
+
+  const [checkedList, setCheckedList] = useAtom(notificationCheckedListAtom);
+  const { rowSelection } = useTableSelection<NotificationListType>(
+    checkedList,
+    setCheckedList,
+  );
 
   return (
     <ListWrapper>
-      <CustomizedTable
+      <CustomizedTable<NotificationListType>
         columns={notificationListColumn}
         data={data?.content || []}
+        rowKey="id"
+        rowSelection={rowSelection}
         customRow={NotificationRow}
         activePadding
         columnHeight={32}
+        loading={isLoading}
+        isError={isError}
       />
     </ListWrapper>
   );
