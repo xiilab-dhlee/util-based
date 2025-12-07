@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
@@ -13,7 +14,9 @@ import {
 } from "@/domain/system-setting/constants/system-setting.constant";
 import { useGetStorageSettings } from "@/domain/system-setting/hooks/use-get-storage-settings";
 import type { StorageSettingIdType } from "@/domain/system-setting/schemas/storage-setting.schema";
-import { MyPagination } from "@/shared/components/paginate";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
@@ -25,7 +28,7 @@ export function StorageListSetting() {
   const [page, setPage] = useState(1);
   const publish = usePublish();
 
-  const { data, isLoading } = useGetStorageSettings({
+  const { data, isLoading, isError, refetch } = useGetStorageSettings({
     page,
     size: STORAGE_SETTING_PAGE_SIZE,
   });
@@ -53,9 +56,45 @@ export function StorageListSetting() {
     );
   };
 
-  const totalPages = Math.ceil(
-    (data?.totalSize || 0) / STORAGE_SETTING_PAGE_SIZE,
-  );
+  const items = data?.content ?? [];
+
+  const renderContent = (): ReactNode => {
+    if (isLoading) {
+      return (
+        <CardGrid>
+          {STORAGE_SETTING_SKELETON_KEYS.map((key) => (
+            <StorageSettingCard key={key} loading />
+          ))}
+        </CardGrid>
+      );
+    }
+
+    if (isError) {
+      return <FullSizeErrorState onRetry={refetch} />;
+    }
+
+    if (items.length === 0) {
+      return (
+        <EmptyState
+          title="스토리지 목록이 비어 있습니다."
+          content="추가 버튼을 눌러 새로운 스토리지를 등록해 주세요."
+        />
+      );
+    }
+
+    return (
+      <CardGrid>
+        {items.map((storage) => (
+          <StorageSettingCard
+            key={storage.id}
+            {...storage}
+            onClick={handleCardClick}
+            onDelete={handleDelete}
+          />
+        ))}
+      </CardGrid>
+    );
+  };
 
   return (
     <SettingBox
@@ -68,29 +107,15 @@ export function StorageListSetting() {
       }
     >
       <Container>
-        <CardGrid>
-          {isLoading
-            ? STORAGE_SETTING_SKELETON_KEYS.map((key) => (
-                <StorageSettingCard key={key} loading />
-              ))
-            : data?.content?.map((storage) => (
-                <StorageSettingCard
-                  key={storage.id}
-                  {...storage}
-                  onClick={handleCardClick}
-                  onDelete={handleDelete}
-                />
-              ))}
-        </CardGrid>
-        {!isLoading && totalPages > 0 && (
-          <PaginationWrapper>
-            <MyPagination
-              current={page}
-              total={data?.totalSize || 0}
-              pageSize={STORAGE_SETTING_PAGE_SIZE}
-              onChange={handlePageChange}
-            />
-          </PaginationWrapper>
+        {renderContent()}
+        {!isLoading && !isError && items.length > 0 && (
+          <ListPageFooter
+            total={data?.totalSize || 0}
+            page={page}
+            pageSize={STORAGE_SETTING_PAGE_SIZE}
+            onChange={handlePageChange}
+            isLoading={isLoading}
+          />
         )}
       </Container>
     </SettingBox>
@@ -102,6 +127,8 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  flex: 1;
+  width: 100%;
 `;
 
 const CardGrid = styled.div`
@@ -111,8 +138,6 @@ const CardGrid = styled.div`
   flex: 0;
 `;
 
-const PaginationWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 12px;
+const FullSizeErrorState = styled(DataErrorState)`
+  height: 100%;
 `;
