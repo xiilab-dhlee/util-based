@@ -19,6 +19,7 @@ import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { nodeHandlers } from "@/mocks/handlers/node.handler";
 import { notificationHandlers } from "@/mocks/handlers/notification.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
+import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
 import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
@@ -58,4 +59,5 @@ export const combinedHandlers = [
   ...hpeHandlers,
   ...licenseHandlers,
   ...smtpHandlers,
+  ...reportHandlers,
 ];
