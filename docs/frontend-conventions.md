@@ -27,6 +27,48 @@
 - 공유 컴포넌트의 위치를 일관성 있게 관리
 - 컴포넌트의 특성에 따라 적절한 하위 폴더에 배치 (예: Card 기반 컴포넌트는 `shared/components/card/`)
 
+### 모달 컴포넌트 선언 위치
+
+**협의일**: 2025-12-05
+
+**상황**: 모달 컴포넌트의 선언 위치가 일관되지 않아 유지보수가 어려운 경우
+
+**협의 내용**: 모달 컴포넌트(`*-modal.tsx` 또는 `*Modal`)는 항상 페이지의 Entry-Point에 선언해야 한다.
+
+**규칙**:
+1. **일반 모달**: 주로 해당 페이지의 Main 컴포넌트 최상단에 선언한다.
+   - 예: `WorkloadListMain`에서 `CreateWorkloadModal` 선언
+2. **공통 UI 모달**: 여러 페이지 간 공통으로 보여지는 UI를 정의하는 Layout에 선언한다.
+   - 예: `WorkloadDetailLayout`
+3. **전역 공통 모달**: 모든 페이지에서 사용되는 공통 모달의 경우 최상위 Layout(`ModeLayout`)에 선언한다.
+
+**예시 코드**:
+
+```tsx
+// src/domain/workload/components/list/workload-list-main.tsx
+import { CreateWorkloadModal } from "./create-workload-modal";
+
+export const WorkloadListMain = () => {
+  // ... 로직 ...
+
+  return (
+    <>
+      <Container>
+         {/* ... 리스트 UI ... */}
+      </Container>
+      
+      {/* ✅ 모달은 컴포넌트 최상단(또는 최하단) Entry Point에 선언 */}
+      <CreateWorkloadModal />
+    </>
+  );
+};
+```
+
+**이유**:
+- 모달의 상태 관리와 가시성 제어를 명확한 위치에서 수행
+- 불필요한 렌더링 방지 및 구조 파악 용이
+- React Portal 등을 사용할 때 예측 가능한 동작 보장
+
 ---
 
 ## Import 경로 규칙
@@ -67,6 +109,87 @@ export { GroupDetailPanel } from "./group-detail-panel";
 - 파일 이동 시 import 경로 수정 최소화
 - 코드 가독성 향상 및 파일 위치 파악 용이
 - 일관된 코드 스타일 유지
+
+---
+
+## 폼 관리 및 유효성 검사 규칙
+
+### React Hook Form + Zod 사용
+
+**협의일**: 2025-12-05
+
+**상황**: 복잡한 폼 상태 관리 및 유효성 검사를 위해 일관된 패턴이 필요함
+
+**협의 내용**: 폼 관리에는 `react-hook-form`을, 유효성 검사에는 `zod`와 `@hookform/resolvers/zod`를 사용한다.
+
+**규칙**:
+1. **라이브러리**: `react-hook-form`, `zod`, `@hookform/resolvers` 사용
+2. **유효성 검사**: Zod 스키마를 정의하고 `zodResolver`를 통해 연결
+3. **UI 연동**: `xiilab-ui`와 같은 Controlled Component는 `Controller` 컴포넌트를 사용하여 제어
+4. **웹 접근성**: `FormItem`의 `htmlFor`와 입력 요소의 `id`는 문서 전체에서 유일한 값으로 설정하여 연결 (중복 방지)
+5. **에러 표시**: `FormItem`의 `validateStatus`와 `help` prop을 사용하여 에러 상태 및 메시지 표시
+
+**예시 코드**:
+
+```tsx
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormItem, Input } from "xiilab-ui";
+
+// 1. Zod 스키마 정의
+const formSchema = z.object({
+  name: z.string().min(1, "이름을 입력해 주세요."),
+});
+
+type FormType = z.infer<typeof formSchema>;
+
+export function MyFormModal() {
+  // 2. useForm 설정
+  const { control, handleSubmit, formState: { errors } } = useForm<FormType>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { name: "" },
+  });
+
+  const onSubmit = (data: FormType) => {
+    // 제출 로직
+  };
+
+  return (
+    <Form onFinish={handleSubmit(onSubmit)}>
+      {/* 3. Controller 사용 */}
+      <Controller
+        name="name"
+        control={control}
+        render={({ field }) => (
+          <FormItem
+            label="이름"
+            required
+            // 4. 웹 접근성 (유니크한 id 사용)
+            htmlFor="unique-form-name"
+            // 5. 에러 상태 및 메시지 표시
+            validateStatus={errors.name ? "error" : undefined}
+            help={errors.name?.message}
+          >
+            <Input 
+              {...field} 
+              id="unique-form-name" 
+              placeholder="이름 입력" 
+            />
+          </FormItem>
+        )}
+      />
+    </Form>
+  );
+}
+```
+
+**이유**:
+- 폼 상태 관리의 복잡성 감소 및 렌더링 최적화
+- 선언적인 유효성 검사 로직 (Zod)
+- UI 라이브러리와의 원활한 통합 (Controller)
+- 웹 접근성 준수 및 ID 충돌 방지
+- 일관된 에러 처리 UX 제공
 
 ---
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
-import { UpdateWorkspaceModal } from "@/domain/workspace/components/update-workspace.modal";
+import { UpdateWorkspaceModal } from "@/domain/workspace/components/update-workspace-modal";
 import { DeleteWorkspaceMemberModal } from "@/domain/workspace-member/components/delete-workspace-member-modal";
 import { UpdateWorkspaceMemberModal } from "@/domain/workspace-member/components/update-workspace-member-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";

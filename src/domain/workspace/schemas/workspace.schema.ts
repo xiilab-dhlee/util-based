@@ -34,6 +34,13 @@ const baseWorkspaceSchema = z.object({
   /** MEM 쿼터 */
   memQuota: z.number().int().min(0).max(99),
 });
+/**
+ * 워크스페이스 생성 스키마
+ */
+export const createWorkspaceSchema = z.object({
+  name: z.string().min(1, "워크스페이스 이름을 입력해 주세요."),
+  description: z.string().min(1, "워크스페이스 설명을 입력해 주세요."),
+});
 
 /**
  * 워크스페이스 목록 스키마
@@ -69,3 +76,8 @@ export type WorkspaceIdType = WorkspaceListType["id"];
  * 워크스페이스 상세 타입
  */
 export type WorkspaceDetailType = z.infer<typeof workspaceDetailSchema>;
+
+/**
+ * 워크스페이스 생성 타입
+ */
+export type CreateWorkspaceType = z.infer<typeof createWorkspaceSchema>;
