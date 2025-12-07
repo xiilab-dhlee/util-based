@@ -11,9 +11,21 @@ export const smtpFormSchema = z.object({
   /** SMTP 노드 주소 */
   nodeAddress: z.string().min(1, "SMTP 노드 주소를 입력해 주세요."),
   /** 노드 포트 번호 */
-  nodePort: z.string().min(1, "포트 번호를 입력해 주세요."),
+  nodePort: z
+    .string()
+    .min(1, "포트 번호를 입력해 주세요.")
+    .refine(
+      (value) => {
+        if (!/^\d+$/.test(value)) return false;
+        const numericValue = Number(value);
+        return Number.isInteger(numericValue) && numericValue > 0;
+      },
+      {
+        message: "포트 번호는 1 이상의 정수여야 합니다.",
+      },
+    ),
   /** 계정 */
-  account: z.string().min(1, "계정을 입력해 주세요."),
+  account: z.string().email("올바른 이메일 형식을 입력해 주세요."),
   /** 비밀번호 */
   password: z.string().min(1, "비밀번호를 입력해 주세요."),
 });

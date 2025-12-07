@@ -182,6 +182,7 @@ export function SmtpModal() {
             </FormItem>
             <FormItem label="노드 포트 번호" required>
               <Input
+                type="number"
                 placeholder="포트 번호를 입력해 주세요."
                 value={formState.nodePort}
                 onChange={(e) => setField("nodePort", e.target.value)}

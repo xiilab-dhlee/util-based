@@ -19,19 +19,11 @@ export type StorageUpdateFormState = z.infer<
   typeof updateStorageSettingRequestSchema
 >;
 
-export interface StorageCreateFormErrors {
-  storageName?: string;
-  storageType?: string;
-  ip?: string;
-  path?: string;
-  [key: string]: string | undefined;
-}
+/** 제네릭 폼 에러 타입 */
+export type FormErrors<TState> = Partial<Record<keyof TState, string | undefined>>;
 
-export interface StorageUpdateFormErrors {
-  id?: string;
-  storageName?: string;
-  [key: string]: string | undefined;
-}
+export type StorageCreateFormErrors = FormErrors<StorageCreateFormState>;
+export type StorageUpdateFormErrors = FormErrors<StorageUpdateFormState>;
 
 interface UseStorageCreateFormReturn {
   formState: StorageCreateFormState;
@@ -74,17 +66,18 @@ function createInitialUpdateFormState(): StorageUpdateFormState {
   };
 }
 
-function mapZodErrors<TError extends Record<string, string | undefined>>(
+/** 제네릭 Zod 에러 매핑 함수 */
+function mapZodErrors<TState>(
   error: z.ZodError,
-  initial: TError,
-): TError {
-  const errors: TError = { ...initial };
+  initial: FormErrors<TState>,
+): FormErrors<TState> {
+  const errors: FormErrors<TState> = { ...initial };
 
   for (const issue of error.issues) {
     const fieldName = issue.path[0];
-    if (typeof fieldName === "string" && fieldName in errors) {
-      const key = fieldName as keyof TError;
-      errors[key] = issue.message as TError[keyof TError];
+    if (typeof fieldName === "string") {
+      const key = fieldName as keyof TState;
+      errors[key] = issue.message;
     }
   }
 
@@ -100,20 +93,9 @@ function detailToUpdateFormState(
   };
 }
 
-function createUpdateFormErrors(): StorageUpdateFormErrors {
-  return {
-    id: undefined,
-    storageName: undefined,
-  };
-}
-
-function createCreateFormErrors(): StorageCreateFormErrors {
-  return {
-    storageName: undefined,
-    storageType: undefined,
-    ip: undefined,
-    path: undefined,
-  };
+/** 제네릭 폼 에러 초기화 함수 */
+function createFormErrors<TState>(): FormErrors<TState> {
+  return {};
 }
 
 // ===== 훅: 생성 폼 =====
@@ -123,7 +105,7 @@ export function useStorageCreateForm(): UseStorageCreateFormReturn {
     createInitialCreateFormState,
   );
   const [errors, setErrors] = useState<StorageCreateFormErrors>(
-    createCreateFormErrors,
+    createFormErrors<StorageCreateFormState>,
   );
 
   const setField = <Key extends keyof StorageCreateFormState>(
@@ -140,17 +122,17 @@ export function useStorageCreateForm(): UseStorageCreateFormReturn {
     const result = createStorageSettingRequestSchema.safeParse(formState);
 
     if (!result.success) {
-      setErrors(mapZodErrors(result.error, createCreateFormErrors()));
+      setErrors(mapZodErrors<StorageCreateFormState>(result.error, createFormErrors<StorageCreateFormState>()));
       return null;
     }
 
-    setErrors(createCreateFormErrors());
+    setErrors(createFormErrors<StorageCreateFormState>());
     return result.data;
   };
 
   const reset = () => {
     setFormState(createInitialCreateFormState());
-    setErrors(createCreateFormErrors());
+    setErrors(createFormErrors<StorageCreateFormState>());
   };
 
   return {
@@ -169,7 +151,7 @@ export function useStorageUpdateForm(): UseStorageUpdateFormReturn {
     createInitialUpdateFormState,
   );
   const [errors, setErrors] = useState<StorageUpdateFormErrors>(
-    createUpdateFormErrors,
+    createFormErrors<StorageUpdateFormState>,
   );
 
   const setField = <Key extends keyof StorageUpdateFormState>(
@@ -184,24 +166,24 @@ export function useStorageUpdateForm(): UseStorageUpdateFormReturn {
 
   const initializeForEdit = (data: StorageSettingDetailType) => {
     setFormState(detailToUpdateFormState(data));
-    setErrors(createUpdateFormErrors());
+    setErrors(createFormErrors<StorageUpdateFormState>());
   };
 
   const validate = (): UpdateStorageSettingRequestPayload | null => {
     const result = updateStorageSettingRequestSchema.safeParse(formState);
 
     if (!result.success) {
-      setErrors(mapZodErrors(result.error, createUpdateFormErrors()));
+      setErrors(mapZodErrors<StorageUpdateFormState>(result.error, createFormErrors<StorageUpdateFormState>()));
       return null;
     }
 
-    setErrors(createUpdateFormErrors());
+    setErrors(createFormErrors<StorageUpdateFormState>());
     return result.data;
   };
 
   const reset = () => {
     setFormState(createInitialUpdateFormState());
-    setErrors(createUpdateFormErrors());
+    setErrors(createFormErrors<StorageUpdateFormState>());
   };
 
   return {
