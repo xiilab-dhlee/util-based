@@ -152,10 +152,10 @@ export const REGISTRY_SECURITY_EVENTS = {
 } as const;
 
 // 리포트 관련 이벤트
-// const REPORT_EVENTS = {
-//   // 리포트 생성에 필요한 정보 전달 이벤트
-//   sendCreateReport: "report:send-create-report",
-// } as const;
+export const REPORT_EVENTS = {
+  // 리포트 삭제에 필요한 정보 전달 이벤트
+  sendDeleteReport: "report:send-delete-report",
+} as const;
 // 모니터링 관련 이벤트
 export const MONITORING_EVENTS = {
   // 모니터링 알림 생성/수정 모달 열기 이벤트
