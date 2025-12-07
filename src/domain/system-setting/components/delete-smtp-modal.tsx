@@ -6,18 +6,19 @@ import { Modal } from "xiilab-ui";
 
 import { smtpKeys } from "@/domain/system-setting/constants/smtp.key";
 import { useDeleteSmtp } from "@/domain/system-setting/hooks/use-delete-smtp";
+import type { SmtpIdType } from "@/domain/system-setting/schemas/smtp.schema";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 // ===== 타입 =====
 
 export interface DeleteSmtpModalPayload {
-  id: number;
+  id: SmtpIdType;
 }
 
 export function DeleteSmtpModal() {
   const [open, setOpen] = useState(false);
-  const [smtpId, setSmtpId] = useState<number | null>(null);
+  const [smtpId, setSmtpId] = useState<SmtpIdType | null>(null);
 
   const queryClient = useQueryClient();
   const deleteSmtp = useDeleteSmtp();

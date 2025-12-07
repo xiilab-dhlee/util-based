@@ -6,13 +6,14 @@ import { Modal } from "xiilab-ui";
 
 import { storageSettingKeys } from "@/domain/system-setting/constants/storage-setting.key";
 import { useDeleteStorage } from "@/domain/system-setting/hooks/use-delete-storage";
+import type { StorageSettingIdType } from "@/domain/system-setting/schemas/storage-setting.schema";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 // ===== 타입 =====
 
 export interface DeleteStorageModalPayload {
-  id: number;
+  id: StorageSettingIdType;
 }
 
 /**
@@ -22,7 +23,7 @@ export interface DeleteStorageModalPayload {
  */
 export function DeleteStorageModal() {
   const [open, setOpen] = useState(false);
-  const [storageId, setStorageId] = useState<number | null>(null);
+  const [storageId, setStorageId] = useState<StorageSettingIdType | null>(null);
 
   const queryClient = useQueryClient();
   const deleteStorage = useDeleteStorage();

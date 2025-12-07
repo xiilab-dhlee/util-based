@@ -10,7 +10,10 @@ import { smtpKeys } from "@/domain/system-setting/constants/smtp.key";
 import { useCreateSmtp } from "@/domain/system-setting/hooks/use-create-smtp";
 import { useSmtpForm } from "@/domain/system-setting/hooks/use-smtp-form";
 import { useUpdateSmtp } from "@/domain/system-setting/hooks/use-update-smtp";
-import type { SmtpResponseType } from "@/domain/system-setting/schemas/smtp.schema";
+import type {
+  SmtpIdType,
+  SmtpResponseType,
+} from "@/domain/system-setting/schemas/smtp.schema";
 import { GoogleIcon } from "@/shared/components/icon/google-icon";
 import { MODAL_MODES, type ModalMode } from "@/shared/constants/core.constant";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -18,10 +21,9 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 // ===== 타입 =====
 
-export interface SmtpModalPayload {
-  mode: ModalMode;
-  data?: SmtpResponseType;
-}
+export type SmtpModalPayload =
+  | { mode: typeof MODAL_MODES.CREATE }
+  | { mode: typeof MODAL_MODES.UPDATE; data: SmtpResponseType };
 
 // ===== 컴포넌트 =====
 
@@ -35,7 +37,7 @@ export function SmtpModal() {
 
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<ModalMode>(MODAL_MODES.CREATE);
-  const [editId, setEditId] = useState<number | null>(null);
+  const [editId, setEditId] = useState<SmtpIdType | null>(null);
 
   const {
     formState,
@@ -193,6 +195,7 @@ export function SmtpModal() {
         {/* 계정 */}
         <FormItem label="계정" required>
           <Input
+            type="email"
             placeholder="계정을 입력해 주세요."
             value={formState.account}
             onChange={(e) => setField("account", e.target.value)}

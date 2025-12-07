@@ -59,6 +59,12 @@ export type SmtpFormType = z.infer<typeof smtpFormSchema>;
 /** SMTP 응답 타입 */
 export type SmtpResponseType = z.infer<typeof smtpResponseSchema>;
 
+/** SMTP ID 타입 */
+export type SmtpIdType = SmtpResponseType["id"];
+
+/** SMTP 응답 타입 별칭 (서비스 계층에서 사용) */
+export type SmtpResponse = SmtpResponseType;
+
 /** SMTP 생성 요청 페이로드 타입 */
 export type CreateSmtpRequestPayload = z.infer<typeof createSmtpRequestSchema>;
 

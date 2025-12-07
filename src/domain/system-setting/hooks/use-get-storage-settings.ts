@@ -20,7 +20,7 @@ export const useGetStorageSettings = (
   const { storageSettingService } = useServices();
 
   return useQuery({
-    queryKey: storageSettingKeys.list(payload.page),
+    queryKey: storageSettingKeys.list(payload.page, payload.size),
     queryFn: async () => {
       const response = await storageSettingService.getList(payload);
       return response.data;

@@ -1,5 +1,9 @@
 import { HttpResponse, http } from "msw";
 
+import {
+  type CreateSmtpRequestPayload,
+  createSmtpRequestSchema,
+} from "@/domain/system-setting/schemas/smtp.schema";
 import { smtpMock } from "@/mocks/data/smtp.mock";
 
 /**
@@ -13,7 +17,9 @@ export const smtpHandlers = [
 
   // SMTP 설정 생성
   http.post("/api/v1/smtp", async ({ request }) => {
-    const body = (await request.json()) as Record<string, unknown>;
+    const json = (await request.json()) as unknown;
+    const body: CreateSmtpRequestPayload = createSmtpRequestSchema.parse(json);
+
     return HttpResponse.json({
       id: 1,
       ...body,
@@ -22,7 +28,8 @@ export const smtpHandlers = [
 
   // SMTP 설정 수정
   http.patch("/api/v1/smtp", async ({ request }) => {
-    const body = await request.json();
+    const json = (await request.json()) as unknown;
+    const body: CreateSmtpRequestPayload = createSmtpRequestSchema.parse(json);
     return HttpResponse.json(body);
   }),
 

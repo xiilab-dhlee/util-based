@@ -34,6 +34,7 @@ export function SmtpAccountSetting() {
   };
 
   const handleEdit = () => {
+    if (!data) return;
     publish<SmtpModalPayload>(SYSTEM_SETTING_EVENTS.openSmtpModal, {
       mode: MODAL_MODES.UPDATE,
       data,

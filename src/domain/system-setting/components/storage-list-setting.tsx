@@ -12,10 +12,10 @@ import {
   STORAGE_SETTING_SKELETON_KEYS,
 } from "@/domain/system-setting/constants/system-setting.constant";
 import { useGetStorageSettings } from "@/domain/system-setting/hooks/use-get-storage-settings";
+import type { StorageSettingIdType } from "@/domain/system-setting/schemas/storage-setting.schema";
 import { MyPagination } from "@/shared/components/paginate";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { useServices } from "@/shared/providers/service-provider";
 
 /**
  * 스토리지 목록 설정 컴포넌트
@@ -23,7 +23,6 @@ import { useServices } from "@/shared/providers/service-provider";
  */
 export function StorageListSetting() {
   const [page, setPage] = useState(1);
-  const { storageSettingService } = useServices();
   const publish = usePublish();
 
   const { data, isLoading } = useGetStorageSettings({
@@ -39,18 +38,13 @@ export function StorageListSetting() {
     publish(SYSTEM_SETTING_EVENTS.openStorageCreateModal);
   };
 
-  const handleCardClick = async (id: number) => {
-    try {
-      const response = await storageSettingService.getDetail(id);
-      publish(SYSTEM_SETTING_EVENTS.openStorageDetailModal, {
-        data: response.data,
-      });
-    } catch {
-      alert("스토리지 상세 조회에 실패했습니다.");
-    }
+  const handleCardClick = (id: StorageSettingIdType) => {
+    publish(SYSTEM_SETTING_EVENTS.openStorageDetailModal, {
+      id,
+    });
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: StorageSettingIdType) => {
     publish<DeleteStorageModalPayload>(
       SYSTEM_SETTING_EVENTS.openStorageDeleteModal,
       {
@@ -79,7 +73,7 @@ export function StorageListSetting() {
             ? STORAGE_SETTING_SKELETON_KEYS.map((key) => (
                 <StorageSettingCard key={key} loading />
               ))
-            : data?.content.map((storage) => (
+            : data?.content?.map((storage) => (
                 <StorageSettingCard
                   key={storage.id}
                   {...storage}

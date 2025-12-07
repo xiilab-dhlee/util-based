@@ -9,19 +9,16 @@ export const storageSettingErrorConfig: Record<string, ErrorConfig> = {
     showToast: false,
     errorMessage: "스토리지 설정 목록을 불러올 수 없습니다.",
   },
-
   // 생성 - 토스트 표시
   "system-setting.storage.create": {
     showToast: true,
     errorMessage: "스토리지 설정 등록에 실패했습니다.",
   },
-
   // 수정 - 토스트 표시
   "system-setting.storage.update": {
     showToast: true,
     errorMessage: "스토리지 설정 수정에 실패했습니다.",
   },
-
   // 삭제 - 토스트 표시
   "system-setting.storage.delete": {
     showToast: true,

@@ -1,6 +1,7 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 
 import { smtpKeys } from "@/domain/system-setting/constants/smtp.key";
+import type { SmtpIdType } from "@/domain/system-setting/schemas/smtp.schema";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
@@ -9,14 +10,14 @@ import { useServices } from "@/shared/providers/service-provider";
 export const useDeleteSmtp = (): UseMutationResult<
   unknown,
   Error,
-  number,
+  SmtpIdType,
   unknown
 > => {
   const { smtpService } = useServices();
 
   return useMutation({
     mutationKey: smtpKeys.delete(),
-    mutationFn: (id: number) => {
+    mutationFn: (id: SmtpIdType) => {
       return smtpService.deleteSmtp(id);
     },
   });

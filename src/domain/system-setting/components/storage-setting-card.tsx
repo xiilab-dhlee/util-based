@@ -1,16 +1,19 @@
 "use client";
 
 import styled from "styled-components";
-import { Card, Icon, Typography } from "xiilab-ui";
+import { Button, Card, Typography } from "xiilab-ui";
 
-import type { StorageSettingListType } from "@/domain/system-setting/schemas/storage-setting.schema";
+import type {
+  StorageSettingIdType,
+  StorageSettingListType,
+} from "@/domain/system-setting/schemas/storage-setting.schema";
 import { formatDateSafely } from "@/shared/utils/date.util";
 
 interface StorageSettingCardProps extends Partial<StorageSettingListType> {
   /** 카드 클릭 핸들러 */
-  onClick?: (id: number) => void;
+  onClick?: (id: StorageSettingIdType) => void;
   /** 삭제 버튼 클릭 핸들러 */
-  onDelete?: (id: number) => void;
+  onDelete?: (id: StorageSettingIdType) => void;
   /** 로딩 상태 */
   loading?: boolean;
 }
@@ -43,11 +46,7 @@ export function StorageSettingCard({
     <Card
       title={storageName}
       actionElement={
-        !loading && (
-          <IconWrapper onClick={handleClickDelete}>
-            <Icon name="Delete" size={20} color="var(--icon-fill)" />
-          </IconWrapper>
-        )
+        !loading && <Button icon="Delete" onClick={handleClickDelete} />
       }
       height={102}
       showHeader={true}
@@ -65,7 +64,7 @@ export function StorageSettingCard({
         </InfoRow>
         <InfoRow>
           <Label>등록일</Label>
-          <Value>{formatDateSafely(creatorDate) ?? "-"}</Value>
+          <Value>{formatDateSafely(creatorDate)}</Value>
         </InfoRow>
       </Container>
     </Card>
@@ -79,24 +78,6 @@ const Container = styled.div`
   width: 100%;
   padding: 3px 4px;
   overflow: hidden;
-`;
-
-const IconWrapper = styled.button`
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-
-  --icon-fill: #404040;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 2px;
-  }
 `;
 
 const InfoRow = styled.div`

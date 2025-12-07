@@ -40,21 +40,18 @@ export const storageSettingDetailSchema = baseStorageSettingSchema.pick({
 
 // ===== Request 스키마 (프론트 → 서버) =====
 
-const { storageName, storageType, ip, path, id } =
-  baseStorageSettingSchema.shape;
-
 /** 스토리지 생성 요청 스키마 */
 export const createStorageSettingRequestSchema = z.object({
-  storageName: storageName.min(1, "스토리지 이름을 입력해 주세요."),
-  storageType: storageType.min(1, "스토리지 타입을 선택해 주세요."),
-  ip: ip.min(1, "IP 주소를 입력해 주세요."),
-  path: path.min(1, "스토리지 저장 PATH를 입력해 주세요."),
+  storageName: z.string().min(1, "스토리지 이름을 입력해 주세요.").max(100),
+  storageType: z.string().min(1, "스토리지 타입을 선택해 주세요."),
+  ip: z.string().min(1, "IP 주소를 입력해 주세요."),
+  path: z.string().min(1, "스토리지 저장 PATH를 입력해 주세요."),
 });
 
 /** 스토리지 수정 요청 스키마 (현재 UI 기준: 이름만 수정) */
 export const updateStorageSettingRequestSchema = z.object({
-  id,
-  storageName,
+  id: z.number().int().positive(),
+  storageName: z.string().min(1).max(100),
 });
 
 // ===== 타입 추출 =====
@@ -66,6 +63,15 @@ export type StorageSettingListType = z.infer<typeof storageSettingListSchema>;
 export type StorageSettingDetailType = z.infer<
   typeof storageSettingDetailSchema
 >;
+
+/** 스토리지 설정 목록 API 응답 타입 */
+export interface StorageSettingListResponse {
+  content: StorageSettingListType[];
+  totalSize: number;
+}
+
+/** 스토리지 설정 상세 API 응답 타입 */
+export type StorageSettingDetailResponse = StorageSettingDetailType;
 
 /** 스토리지 설정 ID 타입 */
 export type StorageSettingIdType = StorageSettingListType["id"];
