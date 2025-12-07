@@ -1,4 +1,5 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
+import { isNil } from "es-toolkit";
 
 import { storageSettingKeys } from "@/domain/system-setting/constants/storage-setting.key";
 import type {
@@ -21,6 +22,6 @@ export const useGetStorageDetail = (
       const response = await storageSettingService.getDetail(id);
       return response.data;
     },
-    enabled: !!id,
+    enabled: !isNil(id),
   });
 };
