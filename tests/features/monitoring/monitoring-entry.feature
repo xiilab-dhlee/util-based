@@ -11,16 +11,13 @@ Feature: 사용자 모니터링 페이지 진입
   @smoke
   Scenario: 모니터링 페이지 진입 및 기본 위젯 표시
     Then 모니터링 페이지가 표시된다
+    And URL이 "/user/monitoring"를 포함한다
     And CPU 그래프가 표시된다
     And 리소스 회수 정보가 표시된다
     And 워크로드 정보가 표시된다
     And 사용 자원 정보가 표시된다
     And 실행 중 워크로드 목록이 표시된다
     And 리소스 회수 예정 워크로드 목록이 표시된다
-
-  @smoke
-  Scenario: 모니터링 페이지 URL 검증
-    Then URL이 "/user/monitoring"이다
 
   @smoke
   Scenario: 워크로드 정보 상세 검증

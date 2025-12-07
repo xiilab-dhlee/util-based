@@ -1,6 +1,8 @@
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
+import { setupMonitoringPageMocks } from "../support/mocks";
+
 const { When, Then } = createBdd();
 
 /**
@@ -11,7 +13,7 @@ const { When, Then } = createBdd();
  * - 사용자는 로그인하지 않은 상태이다
  * - 워크스페이스가 선택되어 있다
  * - 워크스페이스가 선택되어 있지 않다
- * - URL이 {string}이다
+ * - URL이 {string}를 포함한다
  * - 로그인 페이지로 리다이렉트된다
  * - 워크스페이스 선택 안내가 표시된다
  *
@@ -33,11 +35,9 @@ const { When, Then } = createBdd();
  * When - 모니터링 페이지 진입
  */
 When("사용자가 모니터링 페이지로 진입한다", async ({ page }) => {
-  const currentUrl = page.url();
-  if (!currentUrl.includes("/user/monitoring")) {
-    await page.goto("/user/monitoring");
-    await page.waitForLoadState("domcontentloaded");
-  }
+  await setupMonitoringPageMocks(page);
+  await page.goto("/user/monitoring");
+  await page.waitForLoadState("networkidle");
 });
 
 /**
