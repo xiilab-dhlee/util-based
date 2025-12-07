@@ -52,12 +52,6 @@ export function WorkloadDetailMain() {
               </DetailContentButton>
             </div>
           )}
-
-          <div style={{ width: 80, height: 30 }}>
-            <DetailContentButton onClick={() => alert("준비 중입니다.")}>
-              삭제
-            </DetailContentButton>
-          </div>
         </DetailContentTitleTool>
       </DetailContentHeader>
       {/* 워크로드 상세 페이지 기본 정보 아티클 */}

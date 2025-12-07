@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
+import { DeleteWorkloadModal } from "@/domain/workload/components/delete-workload-modal";
 import { UpdateWorkloadModal } from "@/domain/workload/components/detail/update-workload-modal";
 import { WorkloadDetailPageAside } from "@/domain/workload/components/detail/workload-detail-page-aside";
+import { RestartWorkloadModal } from "@/domain/workload/components/restart-workload-modal";
+import { StopWorkloadModal } from "@/domain/workload/components/stop-workload-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { RouteTab } from "@/shared/components/tab";
 import {
@@ -31,7 +34,7 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
   {
     key: "monitoring",
     label: "모니터링",
-    icon: "Monitoring01",
+    icon: "Monitoring02",
   },
   {
     key: "file",
@@ -79,6 +82,12 @@ export default async function WorkloadDetailLayout({
       </DetailPageBody>
       {/* 워크로드 수정 모달 */}
       <UpdateWorkloadModal />
+      {/* 워크로드 삭제 모달 */}
+      <DeleteWorkloadModal />
+      {/* 워크로드 종료 모달 */}
+      <StopWorkloadModal />
+      {/* 워크로드 재시작 모달 */}
+      <RestartWorkloadModal />
     </>
   );
 }
