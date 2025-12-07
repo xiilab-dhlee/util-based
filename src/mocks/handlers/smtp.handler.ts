@@ -2,7 +2,9 @@ import { HttpResponse, http } from "msw";
 
 import {
   type CreateSmtpRequestPayload,
+  type UpdateSmtpRequestPayload,
   createSmtpRequestSchema,
+  updateSmtpRequestSchema,
 } from "@/domain/system-setting/schemas/smtp.schema";
 import { smtpMock } from "@/mocks/data/smtp.mock";
 
@@ -29,7 +31,7 @@ export const smtpHandlers = [
   // SMTP 설정 수정
   http.patch("/api/v1/smtp", async ({ request }) => {
     const json = (await request.json()) as unknown;
-    const body: CreateSmtpRequestPayload = createSmtpRequestSchema.parse(json);
+    const body: UpdateSmtpRequestPayload = updateSmtpRequestSchema.parse(json);
     return HttpResponse.json(body);
   }),
 
