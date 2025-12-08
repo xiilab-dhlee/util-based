@@ -178,6 +178,22 @@ export const SETTING_EVENTS = {
   sendAddWorkspaceMember: "setting:send-add-workspace-member",
 } as const;
 
+// 시스템 설정 관련 이벤트
+export const SYSTEM_SETTING_EVENTS = {
+  // SMTP 등록/수정 모달 열기 이벤트
+  openSmtpModal: "system-setting:open-smtp-modal",
+  // SMTP 삭제 모달 열기 이벤트
+  openSmtpDeleteModal: "system-setting:open-smtp-delete-modal",
+  // 스토리지 추가 모달 열기 이벤트
+  openStorageCreateModal: "system-setting:open-storage-create-modal",
+  // 스토리지 삭제 모달 열기 이벤트
+  openStorageDeleteModal: "system-setting:open-storage-delete-modal",
+  // 스토리지 상세 모달 열기 이벤트
+  openStorageDetailModal: "system-setting:open-storage-detail-modal",
+  // 스토리지 수정 모달 열기 이벤트
+  openStorageEditModal: "system-setting:open-storage-edit-modal",
+} as const;
+
 // 쿠버네티스 모니터링 관련 이벤트
 export const KUBERNETES_MONITORING_EVENTS = {
   // 쿠버네티스 이벤트 상세 모달에 필요한 정보 전달 이벤트

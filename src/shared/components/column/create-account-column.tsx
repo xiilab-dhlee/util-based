@@ -49,11 +49,22 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "이메일",
       dataIndex: "email",
       align: "left",
+      width: "20%",
+      ellipsis: true,
     },
     {
       title: "그룹",
-      dataIndex: "group",
+      dataIndex: "groupList",
       align: "left",
+      width: "25%",
+      ellipsis: true,
+      render: (_: unknown, record: AccountListType) => {
+        const groups = record.groupList ?? [];
+        if (groups.length === 0) return "-";
+
+        const names = groups.map((group) => group.name);
+        return names.join(", ");
+      },
     },
     {
       title: "권한",
@@ -125,7 +136,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * const columns = createAccountColumn([
  *   { dataIndex: 'name' },
  *   { dataIndex: 'email' },
- *   { dataIndex: 'group' },
+ *   { dataIndex: 'groupList' },
  *   { dataIndex: 'role' },
  * ]);
  *

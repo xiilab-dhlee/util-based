@@ -17,12 +17,12 @@ export function HpeOneviewSetting() {
   return (
     <SettingBox
       title="HPE One View 연동"
+      height={160}
       extra={
         <Button variant="outlined" size="small" onClick={handleEdit}>
           수정
         </Button>
       }
-      height={250}
     >
       {/* TODO: HPE One View 연동 콘텐츠 */}
     </SettingBox>

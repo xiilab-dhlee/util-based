@@ -3,7 +3,6 @@
 import { useAtomValue } from "jotai";
 import { Button } from "xiilab-ui";
 
-import type { SelectedMember } from "@/domain/setting/components/add-workspace-member-modal";
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
 import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
 import {
@@ -17,6 +16,7 @@ import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { useSearch } from "@/shared/hooks/use-search";
 import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
+import type { SelectedMember } from "@/shared/types/member-selection.type";
 
 export function WorkspaceMemberFilter() {
   const { onSubmit } = useSearch(workspaceMemberSearchTextAtom);
@@ -38,7 +38,6 @@ export function WorkspaceMemberFilter() {
     if (!data || isLoading || isError) {
       publish(SETTING_EVENTS.sendAddWorkspaceMember, {
         selectedAccounts: [],
-        selectedGroups: [],
       });
       return;
     }
@@ -54,7 +53,6 @@ export function WorkspaceMemberFilter() {
 
     publish(SETTING_EVENTS.sendAddWorkspaceMember, {
       selectedAccounts: mappedAccounts,
-      selectedGroups: [],
     });
   };
 
@@ -76,8 +74,6 @@ export function WorkspaceMemberFilter() {
           구성원 추가
         </Button>
       </MySearchFilter>
-
-      {/* 워크스페이스 구성원 추가 모달 */}
       <AddWorkspaceMemberModal />
     </>
   );

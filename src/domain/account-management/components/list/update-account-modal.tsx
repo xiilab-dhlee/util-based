@@ -99,7 +99,11 @@ export function UpdateAccountModal() {
           </DetailRow>
           <DetailRow>
             <DetailLabel>그룹</DetailLabel>
-            <DetailValue>{account?.group || "-"}</DetailValue>
+            <DetailValue>
+              {account?.groupList?.length
+                ? account.groupList.map((group) => group.name).join(", ")
+                : "-"}
+            </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>가입일</DetailLabel>

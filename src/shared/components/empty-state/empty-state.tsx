@@ -2,11 +2,11 @@
 
 import type { ReactNode } from "react";
 import styled from "styled-components";
-import { Typography } from "xiilab-ui";
+import { Icon, Typography } from "xiilab-ui";
 
 interface EmptyStateProps {
   /** 아이콘 컴포넌트 (ReactNode) */
-  icon: ReactNode;
+  icon?: ReactNode;
   /** 메인 제목 */
   title: string;
   /** 설명 내용 */
@@ -25,7 +25,9 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, content }: EmptyStateProps) {
   return (
     <Container>
-      <IconCircle>{icon}</IconCircle>
+      <IconCircle>
+        {icon ?? <Icon name="PriorityHigh" color="#878898" />}
+      </IconCircle>
       <Title>{title}</Title>
       <Content>{content}</Content>
     </Container>
