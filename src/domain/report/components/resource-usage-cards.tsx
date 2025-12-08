@@ -1,0 +1,131 @@
+import styled from "styled-components";
+import { Card } from "xiilab-ui";
+
+import { AVERAGE_USAGE_TEXT } from "@/domain/report/constants/report.constant";
+import type { ReportDetailResponse } from "@/domain/report/schemas/report-detail.schema";
+import { SemiCircleChart } from "@/shared/components/chart/semi-circle-chart";
+import { getResourceInfo } from "@/shared/utils/resource.util";
+
+interface ResourceUsageCardsProps {
+  resourceUsage: ReportDetailResponse["resourceUsage"];
+  reportDateType: ReportDetailResponse["reportDateType"];
+}
+
+export function ResourceUsageCards({
+  resourceUsage,
+  reportDateType,
+}: ResourceUsageCardsProps) {
+  const footerText = AVERAGE_USAGE_TEXT[reportDateType];
+
+  return (
+    <>
+      <CardTitle>
+        {resourceUsage.periodLabel} {resourceUsage.title}
+      </CardTitle>
+      <TotalResourceWrapper>
+        {resourceUsage.metrics.map((metric) => {
+          const { text, color } = getResourceInfo(metric.type);
+
+          return (
+            <Card
+              hoverable={false}
+              key={metric.type}
+              contentVariant="compact"
+              actionElement={
+                <Capacity>
+                  <Dot />
+                  전체: {metric.total}
+                  {metric.unit}
+                </Capacity>
+              }
+              title={text}
+              height={172}
+            >
+              <ChartContainer>
+                <SemiCircleChart
+                  series={metric.percentage}
+                  color={color}
+                  trackBackground="#C0C1C5"
+                />
+                <TextOverlay>
+                  <Percentage>{Math.round(metric.percentage)}%</Percentage>
+                  <Divider />
+                  <FooterText>{footerText}</FooterText>
+                </TextOverlay>
+              </ChartContainer>
+            </Card>
+          );
+        })}
+      </TotalResourceWrapper>
+    </>
+  );
+}
+
+const CardTitle = styled.h4`
+  font-size: 16px;
+  font-weight: 700;
+  margin-left: 5px;
+  margin-bottom: 14px;
+`;
+
+const TotalResourceWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+`;
+
+const ChartContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+const TextOverlay = styled.div`
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+`;
+
+const Percentage = styled.div`
+
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+`;
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #e3e9f1;
+  margin-bottom: 1px;
+`;
+
+const FooterText = styled.div`
+
+  font-size: 11px;
+  font-weight: 400;
+  color: #333333;
+
+`;
+
+const Capacity = styled.span`
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 400;
+`;
+
+const Dot = styled.span`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #C0C1C5;
+  margin-right: 6px;
+`;

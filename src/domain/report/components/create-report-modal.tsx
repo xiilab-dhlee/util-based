@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -54,9 +53,8 @@ export function CreateReportModal() {
 
     onClose();
 
-    router.push(
-      `/admin/report?reportType=${dateTypeSelect.value}_${reportTypeSelect.value}&endDate=${format(endDate, "yyyy-MM-dd")}`,
-    );
+    // TODO: 리포트 생성 API 호출 후 목록으로 이동
+    router.push("/admin/report");
   };
 
   return (

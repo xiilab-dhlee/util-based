@@ -13,4 +13,9 @@ export class ReportService extends AxiosService {
       params,
     });
   }
+
+  /** 상세 조회 */
+  public getDetail(reportId: string) {
+    return this.getAxios().get(`${this.BASE_URL}/${reportId}`);
+  }
 }
