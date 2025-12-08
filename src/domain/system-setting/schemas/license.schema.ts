@@ -48,9 +48,7 @@ export const renewLicenseRequestSchema = z.object({
 // TypeScript 타입 추론
 export type LicenseFormType = z.infer<typeof licenseFormSchema>;
 export type LicenseDetailType = z.infer<typeof licenseDetailSchema>;
-export type LicenseListResponseType = z.infer<
-  typeof licenseListResponseSchema
->;
+export type LicenseListResponseType = z.infer<typeof licenseListResponseSchema>;
 export type RenewLicenseRequestType = z.infer<typeof renewLicenseRequestSchema>;
 
 // 폼 에러 타입

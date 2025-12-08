@@ -2,8 +2,8 @@ import { HttpResponse, http } from "msw";
 
 import {
   type CreateSmtpRequestPayload,
-  type UpdateSmtpRequestPayload,
   createSmtpRequestSchema,
+  type UpdateSmtpRequestPayload,
   updateSmtpRequestSchema,
 } from "@/domain/system-setting/schemas/smtp.schema";
 import { smtpMock } from "@/mocks/data/smtp.mock";

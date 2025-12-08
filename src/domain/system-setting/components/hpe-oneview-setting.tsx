@@ -62,9 +62,7 @@ export function HpeOneviewSetting() {
         <>
           <AsideDetailArticleColumn>
             <AsideDetailArticleKey>ID</AsideDetailArticleKey>
-            <AsideDetailArticleValue>
-              {data?.id ?? "-"}
-            </AsideDetailArticleValue>
+            <AsideDetailArticleValue>{data?.id ?? "-"}</AsideDetailArticleValue>
           </AsideDetailArticleColumn>
 
           <AsideDetailArticleColumn>
