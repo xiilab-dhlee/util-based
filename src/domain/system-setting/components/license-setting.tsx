@@ -101,11 +101,11 @@ const EmptyWrapper = styled.div`
 const EmptyTitle = styled(Typography.Text).attrs({
   variant: "subtitle-2-1",
 })`
-  color: var(--Gray-Gray_03);
+  color: var(--color-gray-03);
 `;
 
 const EmptyDescription = styled(Typography.Text).attrs({
   variant: "body-2-4",
 })`
-  color: var(--Gray-Gray_05);
+  color: var(--color-gray-05);
 `;

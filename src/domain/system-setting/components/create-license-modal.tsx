@@ -160,7 +160,6 @@ const CountText = styled.span`
   margin-left: 8px;
   font-size: 14px;
   font-weight: 400;
-  color: var(--Gray-Gray_04);
 `;
 
 const StyledTable = styled(CustomizedTable)<LicenseDetailType>`
@@ -175,7 +174,7 @@ const FormItemWrapper = styled.div`
 const ErrorText = styled.span`
   ${errorTextStyle}
   position: absolute;
-  top: -18px;
+  top: -22px;
   right: 0;
   z-index: 10;
   pointer-events: none;
