@@ -8,7 +8,7 @@ import { type ApiMock, paginatedResponse } from "./types";
  */
 
 const testWorkloadListMock: ApiMock = {
-  pattern: "**/core-api/v1/core/workload",
+  pattern: "**/core-api/v1/core/workload/**",
   handler: (route) => {
     paginatedResponse(route, workloadListMock);
   },

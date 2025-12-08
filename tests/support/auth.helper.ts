@@ -59,6 +59,21 @@ export async function loginAs(
   }
 }
 
+// 인증 헬퍼 함수
+export async function authenticate(
+  page: Page,
+  userType: "admin" | "user",
+): Promise<void> {
+  await loginAs(page.context(), userType);
+
+  const authenticated = await isAuthenticated(page);
+  if (authenticated) {
+    console.log(`🔐 로그인 완료 (${userType})`);
+  } else {
+    throw new Error(`인증 실패: 세션이 생성되지 않았습니다 (${userType})`);
+  }
+}
+
 /**
  * 페이지에서 인증 쿠키 확인
  */

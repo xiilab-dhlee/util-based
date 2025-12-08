@@ -35,6 +35,18 @@ When("사용자가 워크로드 목록 페이지로 진입한다", async ({ page
 });
 
 /**
+ * When - 비활성화 워크로드 목록 페이지 진입
+ */
+When("사용자가 비활성화 워크로드 목록 페이지로 진입한다", async ({ page }) => {
+  // API 모킹 설정 (페이지 진입 전에 설정해야 함)
+  await setupWorkloadPageMocks(page);
+
+  // 페이지 진입
+  await page.goto("/user/workload/disabled");
+  await page.waitForLoadState("networkidle");
+});
+
+/**
  * Then - 워크로드 목록 페이지 표시 확인
  */
 Then("워크로드 목록 페이지가 표시된다", async ({ page }) => {
@@ -86,7 +98,32 @@ Then("종료 상태의 워크로드는 목록에 표시되지 않는다", async 
   const completedStatus = page.locator(
     '[data-testid="workload-status-completed"]',
   );
+
   await expect(completedStatus).toHaveCount(0);
+});
+
+/**
+ * Then - 종료 상태 워크로드 표시 확인 (비활성화 탭)
+ */
+Then("워크로드 목록에 종료 상태의 워크로드가 표시된다", async ({ page }) => {
+  const table = page.locator('[data-testid="list-table"]');
+  await expect(table).toBeVisible({ timeout: 10000 });
+
+  // 테이블 행이 최소 1개 이상인지 확인
+  const rows = table.locator(".ant-table-tbody tr.ant-table-row");
+  const count = await rows.count();
+  expect(count).toBeGreaterThan(0);
+});
+
+/**
+ * Then - 활성 상태 워크로드 미표시 확인 (비활성화 탭)
+ */
+Then("활성 상태의 워크로드는 목록에 표시되지 않는다", async ({ page }) => {
+  const runningStatus = page.locator('[data-testid="workload-status-running"]');
+  const pendingStatus = page.locator('[data-testid="workload-status-pending"]');
+
+  await expect(runningStatus).toHaveCount(0);
+  await expect(pendingStatus).toHaveCount(0);
 });
 
 // ============================================
@@ -177,34 +214,41 @@ Given("목록에 실행중인 워크로드가 있다", async ({ page }) => {
   await expect(runningWorkload).toBeVisible({ timeout: 10000 });
 });
 
+/**
+ * Then - 로그 버튼 활성화 확인
+ * 첫 번째 행의 로그 버튼이 활성화되어 있는지 확인
+ */
 Then("해당 워크로드의 로그 버튼이 활성화되어 있다", async ({ page }) => {
-  const runningRow = page
-    .locator('tr:has([data-testid^="workload-status-"]:has-text("실행중"))')
-    .first();
-  const logButton = runningRow.locator('[data-testid="workload-log-button"]');
+  const firstRow = page.locator(".ant-table-tbody tr.ant-table-row").first();
+  const logButton = firstRow.locator('[data-testid="workload-log-button"]');
   await expect(logButton).toBeEnabled();
 });
 
+/**
+ * Then - 웹터미널 버튼 활성화 확인
+ */
 Then("해당 워크로드의 웹터미널 버튼이 활성화되어 있다", async ({ page }) => {
-  const runningRow = page
-    .locator('tr:has([data-testid^="workload-status-"]:has-text("실행중"))')
-    .first();
-  const terminalButton = runningRow.locator(
+  const firstRow = page.locator(".ant-table-tbody tr.ant-table-row").first();
+  const terminalButton = firstRow.locator(
     '[data-testid="workload-terminal-button"]',
   );
   await expect(terminalButton).toBeEnabled();
 });
 
+/**
+ * Then - 모니터링 버튼 활성화 확인
+ */
 Then("해당 워크로드의 모니터링 버튼이 활성화되어 있다", async ({ page }) => {
-  const runningRow = page
-    .locator('tr:has([data-testid^="workload-status-"]:has-text("실행중"))')
-    .first();
-  const monitoringButton = runningRow.locator(
+  const firstRow = page.locator(".ant-table-tbody tr.ant-table-row").first();
+  const monitoringButton = firstRow.locator(
     '[data-testid="workload-monitoring-button"]',
   );
   await expect(monitoringButton).toBeEnabled();
 });
 
+/**
+ * Then - 모든 워크로드의 종료 버튼 활성화 확인
+ */
 Then("모든 워크로드의 종료 버튼이 활성화되어 있다", async ({ page }) => {
   const stopButtons = page.locator('[data-testid="workload-stop-button"]');
   const count = await stopButtons.count();
@@ -212,6 +256,42 @@ Then("모든 워크로드의 종료 버튼이 활성화되어 있다", async ({ 
   for (let i = 0; i < count; i++) {
     await expect(stopButtons.nth(i)).toBeEnabled();
   }
+});
+
+// ============================================
+// 비활성화 워크로드 액션 버튼 검증 Steps
+// ============================================
+
+/**
+ * Given - 종료된 워크로드 존재 확인
+ */
+Given("목록에 종료된 워크로드가 있다", async ({ page }) => {
+  const disabledWorkload = page
+    .locator('[data-testid^="workload-status-"]')
+    .first();
+  await expect(disabledWorkload).toBeVisible({ timeout: 10000 });
+});
+
+/**
+ * Then - 삭제 버튼 활성화 확인
+ */
+Then("해당 워크로드의 삭제 버튼이 활성화되어 있다", async ({ page }) => {
+  const firstRow = page.locator(".ant-table-tbody tr.ant-table-row").first();
+  const deleteButton = firstRow.locator(
+    '[data-testid="workload-delete-button"]',
+  );
+  await expect(deleteButton).toBeEnabled();
+});
+
+/**
+ * Then - 재시작 버튼 활성화 확인
+ */
+Then("해당 워크로드의 재시작 버튼이 활성화되어 있다", async ({ page }) => {
+  const firstRow = page.locator(".ant-table-tbody tr.ant-table-row").first();
+  const restartButton = firstRow.locator(
+    '[data-testid="workload-restart-button"]',
+  );
+  await expect(restartButton).toBeEnabled();
 });
 
 // ============================================
