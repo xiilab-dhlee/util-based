@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import { AVERAGE_USAGE_TEXT } from "@/domain/report/constants/report.constant";
-import type { ReportDetailResponse } from "@/domain/report/schemas/report-detail.schema";
+import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
 import { SemiCircleChart } from "@/shared/components/chart/semi-circle-chart";
 import { getPercent } from "@/shared/utils/calc.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
@@ -21,7 +21,7 @@ export function ResourceUsageCards({
   return (
     <TotalResourceWrapper>
       {resourceUsage.metrics.map((metric) => {
-        const { text, color } = getResourceInfo(metric.type);
+        const { text, color, unit } = getResourceInfo(metric.type);
         const percentage = getPercent(metric.used, metric.total);
 
         return (
@@ -33,7 +33,7 @@ export function ResourceUsageCards({
               <Capacity>
                 <Dot />
                 전체: {metric.total}
-                {metric.unit}
+                {unit}
               </Capacity>
             }
             title={text}

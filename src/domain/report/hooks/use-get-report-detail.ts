@@ -4,8 +4,8 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
 import { reportKeys } from "@/domain/report/constants/report.key";
-import type { ReportDetailResponse } from "@/domain/report/schemas/report-detail.schema";
-import { reportDetailResponseSchema } from "@/domain/report/schemas/report-detail.schema";
+import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
+import { reportDetailResponseSchema } from "@/domain/report/schemas/report.schema";
 import { useServices } from "@/shared/providers/service-provider";
 
 export const useGetReportDetail = (
