@@ -13,6 +13,7 @@ import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
 import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
 import { kubernetesMonitoringHandlers } from "@/mocks/handlers/kubernetes-monitoring.handler";
+import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { nodeHandlers } from "@/mocks/handlers/node.handler";
 import { notificationHandlers } from "@/mocks/handlers/notification.handler";
@@ -53,5 +54,6 @@ export const combinedHandlers = [
   ...revokeHistoryHandlers,
   ...storageSettingHandlers,
   ...systemMonitoringHandlers,
+  ...licenseHandlers,
   ...smtpHandlers,
 ];
