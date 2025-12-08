@@ -58,4 +58,5 @@ export const combinedHandlers = [
   ...hpeHandlers,
   ...licenseHandlers,
   ...smtpHandlers,
+  ...credentialHandlers,
 ];
