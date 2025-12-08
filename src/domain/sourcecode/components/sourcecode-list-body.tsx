@@ -1,11 +1,13 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import { useEffect } from "react";
 
 import { useGetSourcecodes } from "@/domain/sourcecode/hooks/use-get-sourcecodes";
 import {
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
+  sourcecodeSelectedAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
 import { createSourcecodeColumn } from "@/shared/components/column/create-sourcecode-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
@@ -23,8 +25,10 @@ import { SourcecodeRow } from "./sourcecode-row";
  */
 export function SourcecodeListBody() {
   const page = useAtomValue(sourcecodePageAtom);
-
   const searchText = useAtomValue(sourcecodeSearchTextAtom);
+  const [selectedSourcecode, setSelectedSourcecode] = useAtom(
+    sourcecodeSelectedAtom,
+  );
 
   const { data } = useGetSourcecodes({
     page,
@@ -32,16 +36,25 @@ export function SourcecodeListBody() {
     searchText,
   });
 
+  // 데이터 변경 시 첫 번째 소스코드 자동 선택
+  useEffect(() => {
+    const firstSourcecode = data?.content[0];
+    if (firstSourcecode && selectedSourcecode === null) {
+      setSelectedSourcecode(firstSourcecode.id);
+    }
+  }, [data, selectedSourcecode, setSelectedSourcecode]);
+
   return (
     <ListWrapper>
       <CustomizedTable
         columns={createSourcecodeColumn([
           { dataIndex: "checkbox" },
           { dataIndex: "name", width: "20%", ellipsis: true, sorter: true },
+          { dataIndex: "url", width: "15%", ellipsis: true },
           { dataIndex: "creatorName" },
-          { dataIndex: "path" },
+          { dataIndex: "status" },
           { dataIndex: "type" },
-          { dataIndex: "cmd" },
+          { dataIndex: "cmd", width: "15%", ellipsis: true },
           { dataIndex: "creatorDate" },
         ])}
         data={data?.content || []}

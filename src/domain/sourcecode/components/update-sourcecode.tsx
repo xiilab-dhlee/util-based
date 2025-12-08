@@ -1,21 +1,22 @@
 "use client";
 
 import { format } from "date-fns";
-import { useParams, usePathname, useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import { Button, Input } from "xiilab-ui";
+import { Button, Dropdown, Icon, Input } from "xiilab-ui";
 
 import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
 import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 import { useGetSourcecode } from "@/domain/sourcecode/hooks/use-get-sourcecode";
 import { useUpdateSourcecode } from "@/domain/sourcecode/hooks/use-update-sourcecode";
 import type { UpdateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
-import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
-import { DrawerCloseButton } from "@/shared/components/button/drawer-close-button";
+import {
+  getSourcecodeStatusInfo,
+  getSourcecodeTypeInfo,
+} from "@/domain/sourcecode/utils/sourcecode.util";
 import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { getBackPathname } from "@/shared/utils/router.util";
+import { useSelect } from "@/shared/hooks/use-select";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
@@ -30,7 +31,13 @@ import {
   AsideDetailHeader,
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
+import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
+import { SOURCECODE_STATUS_OPTIONS } from "../constants/sourcecode.constant";
 import { ReadOnlyParameter } from "./read-only-parameter";
+
+interface UpdateSourcecodeProps {
+  id: number;
+}
 
 /**
  * 소스코드 수정 컴포넌트
@@ -45,39 +52,28 @@ import { ReadOnlyParameter } from "./read-only-parameter";
  * - 소스코드 삭제 (PubSub을 통한 모달 열기)
  * - 읽기 전용/수정 모드 전환
  *
+ * @param id - 소스코드 ID
  * @returns 소스코드 수정 UI를 포함한 JSX 요소
  */
-export function UpdateSourcecode() {
-  const router = useRouter();
-  const { id } = useParams();
-  const pathname = usePathname();
-
+export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  // Next.js 라우터 인스턴스 - 현재 경로 및 쿼리 파라미터 접근
 
   // PubSub 퍼블리셔 - 이벤트 발행을 위한 훅
   const publish = usePublish();
 
-  const { data } = useGetSourcecode(Number(id));
+  const { data } = useGetSourcecode(id);
 
   // 소스코드 수정 뮤테이션 훅
   const updateSourcecode = useUpdateSourcecode();
 
   // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
   const [isReadOnly, setIsReadOnly] = useState(true);
+  const status = useSelect(data?.status || "PUBLIC", SOURCECODE_STATUS_OPTIONS);
 
   const { text } = getSourcecodeTypeInfo(data?.type || "GIT_HUB");
-
-  /**
-   * 드로어 닫기 핸들러
-   *
-   * 현재 경로에서 [id] 부분을 제거하여 목록 페이지로 이동합니다.
-   * 예: /user/sourcecode/[id] → /user/sourcecode
-   */
-  const handleClose = () => {
-    router.replace(getBackPathname(pathname));
-  };
-
+  const { text: statusText } = getSourcecodeStatusInfo(
+    data?.status || "PUBLIC",
+  );
   /**
    * 수정 모드 전환 핸들러
    *
@@ -167,7 +163,24 @@ export function UpdateSourcecode() {
       {/* 드로어 헤더 - 제목과 닫기 버튼 */}
       <AsideDetailHeader>
         <AsideDetailHeaderTitle>상세 정보</AsideDetailHeaderTitle>
-        <DrawerCloseButton onClick={handleClose} />
+        {isReadOnly && (
+          <Icons>
+            <IconWrapper
+              type="button"
+              className="icon-button"
+              onClick={handleModify}
+            >
+              <Icon name="Edit02" color="#000" />
+            </IconWrapper>
+            <IconWrapper
+              type="button"
+              className="icon-button"
+              onClick={handleDelete}
+            >
+              <Icon name="Delete" color="#000" />
+            </IconWrapper>
+          </Icons>
+        )}
       </AsideDetailHeader>
 
       {/* 첫 번째 아티클 - 소스코드 기본 정보 */}
@@ -182,13 +195,54 @@ export function UpdateSourcecode() {
             {/* 소스코드 이름 */}
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>소스코드 이름</AsideDetailArticleKey>
-              <AsideDetailArticleValue>{data?.name}</AsideDetailArticleValue>
+              {isReadOnly && (
+                <AsideDetailArticleValue>{data?.name}</AsideDetailArticleValue>
+              )}
             </AsideDetailArticleColumn>
+            {/* 수정 모드일 때만 마운트 경로 입력 필드 표시 */}
+            {!isReadOnly && (
+              <div style={{ marginTop: 8, marginBottom: 16 }}>
+                <Input
+                  placeholder="소스코드 이름을 입력해주세요."
+                  width="100%"
+                  name="name"
+                  autoComplete="off"
+                  defaultValue={data?.name || ""}
+                />
+              </div>
+            )}
+
+            {/* 공개 설정 */}
+            <AsideDetailArticleColumn>
+              <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
+              {isReadOnly && (
+                <AsideDetailArticleValue>{statusText}</AsideDetailArticleValue>
+              )}
+            </AsideDetailArticleColumn>
+            {!isReadOnly && (
+              <SourcecodeFormFieldControl
+                style={{ marginTop: 8, marginBottom: 16 }}
+              >
+                <Dropdown
+                  options={status.options}
+                  onChange={status.setValue}
+                  value={status.value}
+                  width="100%"
+                  placeholder="공개 설정을 선택해 주세요."
+                />
+              </SourcecodeFormFieldControl>
+            )}
 
             {/* 소스코드 타입 */}
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>타입</AsideDetailArticleKey>
               <AsideDetailArticleValue>{text}</AsideDetailArticleValue>
+            </AsideDetailArticleColumn>
+
+            {/* 소스코드 URL */}
+            <AsideDetailArticleColumn>
+              <AsideDetailArticleKey>Git URL</AsideDetailArticleKey>
+              <AsideDetailArticleValue>{data?.url}</AsideDetailArticleValue>
             </AsideDetailArticleColumn>
 
             {/* 마운트 경로 */}
@@ -197,7 +251,7 @@ export function UpdateSourcecode() {
               {/* 읽기 전용 모드일 때만 표시 */}
               {isReadOnly && (
                 <AsideDetailArticleValue className="truncate">
-                  {data?.path}
+                  {data?.path || "-"}
                 </AsideDetailArticleValue>
               )}
             </AsideDetailArticleColumn>
@@ -219,7 +273,7 @@ export function UpdateSourcecode() {
           {/* 생성자 정보 섹션 */}
           <AsideDetailArticleItem>
             <AsideDetailArticleHeader>
-              <AsideDetailArticleTitle>소스코드 정보</AsideDetailArticleTitle>
+              <AsideDetailArticleTitle>생성 정보</AsideDetailArticleTitle>
             </AsideDetailArticleHeader>
 
             {/* 생성자 */}
@@ -234,8 +288,7 @@ export function UpdateSourcecode() {
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
               <AsideDetailArticleValue>
-                {data?.creatorDate &&
-                  format(data?.creatorDate, "yyyy-MM-dd HH:mm:ss")}
+                {data?.creatorDate && format(data?.creatorDate, "yyyy.MM.dd")}
               </AsideDetailArticleValue>
             </AsideDetailArticleColumn>
           </AsideDetailArticleItem>
@@ -271,8 +324,21 @@ export function UpdateSourcecode() {
             {/* 실행 명령어 */}
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>실행 명령어</AsideDetailArticleKey>
-              <AsideDetailArticleValue>{data?.cmd}</AsideDetailArticleValue>
+              {isReadOnly && (
+                <AsideDetailArticleValue>{data?.cmd}</AsideDetailArticleValue>
+              )}
             </AsideDetailArticleColumn>
+            {!isReadOnly && (
+              <div style={{ marginTop: 8, marginBottom: 16 }}>
+                <Input
+                  placeholder="실행 명령어를 입력해주세요."
+                  width="100%"
+                  name="cmd"
+                  autoComplete="off"
+                  defaultValue={data?.cmd || ""}
+                />
+              </div>
+            )}
 
             {/* 파라미터 섹션 */}
             <AsideDetailArticleColumn>
@@ -293,36 +359,28 @@ export function UpdateSourcecode() {
         </AsideDetailArticleBody>
       </SecondaryArticle>
       {/* 하단 버튼 영역 */}
-      <AsideDetailFooter>
-        {/* 좌측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
-        <div style={{ width: 112 }}>
-          {isReadOnly ? (
-            // 읽기 전용 모드: 삭제 버튼
-            <Button width="100%" variant="outlined" onClick={handleDelete}>
-              삭제
-            </Button>
-          ) : (
-            // 수정 모드: 취소 버튼
-            <Button width="100%" variant="outlined" onClick={handleCancel}>
-              취소
-            </Button>
-          )}
-        </div>
+      {!isReadOnly && (
+        <AsideDetailFooter>
+          {/* 좌측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
+          <Button width={112} variant="outlined" onClick={handleCancel}>
+            취소
+          </Button>
 
-        {/* 우측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
-        <Button
-          color="primary"
-          icon={isReadOnly ? "Edit01" : "Check"}
-          iconPosition="left"
-          iconSize={20}
-          size="medium"
-          variant={isReadOnly ? "outlined" : "gradient"}
-          width="100%"
-          onClick={handleModify}
-        >
-          상세 정보 {isReadOnly ? "수정" : "저장"}
-        </Button>
-      </AsideDetailFooter>
+          {/* 우측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
+          <Button
+            color="primary"
+            icon="Check"
+            iconPosition="left"
+            iconSize={20}
+            size="medium"
+            variant="gradient"
+            width="100%"
+            onClick={handleModify}
+          >
+            상세 정보 저장
+          </Button>
+        </AsideDetailFooter>
+      )}
     </AsideDetailForm>
   );
 }
@@ -352,4 +410,21 @@ const ManageCredentialWrapper = styled.div`
   gap: 10px;
   margin-top: 8px;
   margin-bottom: 14px;
+`;
+
+const IconWrapper = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  border: 1px solid #e0e0e0;
+`;
+
+const Icons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
 `;
