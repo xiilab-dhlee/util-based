@@ -184,6 +184,8 @@ export const SYSTEM_SETTING_EVENTS = {
   openStorageDetailModal: "system-setting:open-storage-detail-modal",
   // 스토리지 수정 모달 열기 이벤트
   openStorageEditModal: "system-setting:open-storage-edit-modal",
+  // 라이선스 갱신 모달 열기 이벤트
+  openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
 } as const;
 
 // 쿠버네티스 모니터링 관련 이벤트

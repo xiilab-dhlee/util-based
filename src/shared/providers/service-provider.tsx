@@ -21,6 +21,7 @@ import { FileSecurityService } from "@/domain/security/api/file-security.service
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
+import { LicenseService } from "@/domain/system-setting/api/license.service";
 import { SmtpService } from "@/domain/system-setting/api/smtp.service";
 import { StorageSettingService } from "@/domain/system-setting/api/storage-setting.service";
 import { VolumeService } from "@/domain/volume/api/volume.service";
@@ -54,6 +55,7 @@ interface ServiceContextType {
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
   revokeHistoryService: RevokeHistoryService;
+  licenseService: LicenseService;
   smtpService: SmtpService;
   storageSettingService: StorageSettingService;
 }
@@ -99,6 +101,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),
     revokeHistoryService: new RevokeHistoryService(),
+    licenseService: new LicenseService(),
     smtpService: new SmtpService(),
     storageSettingService: new StorageSettingService(),
   };

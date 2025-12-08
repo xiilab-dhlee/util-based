@@ -76,6 +76,10 @@ export const requiredTextStyle = css`
     padding-top: 4px;
   }
 `;
+export const errorTextStyle = css`
+  color:#FF3737 ;
+  font-size: 12px;
+`;
 
 /**
  * 툴팁 내 강조 텍스트
