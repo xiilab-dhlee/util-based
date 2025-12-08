@@ -51,6 +51,7 @@
     "next-auth": "^4.24.11",
     "react": "19.2.0",
     "react-apexcharts": "^1.7.0",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.68.0",
     "react-markdown": "^9.0.1",
@@ -60,9 +61,9 @@
     "split.js": "^1.6.5",
     "styled-components": "^6.1.19",
     "uuid": "^11.1.0",
+    "xiilab-ui": "git+https://github.com/xiilab/xiilab-ui.git",
     "xterm-theme": "^1.1.0",
-    "zod": "^3.25.76",
-    "xiilab-ui": "git+https://github.com/xiilab/xiilab-ui.git"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
@@ -70,6 +71,7 @@
     "@types/lodash": "^4.17.20",
     "@types/node": "^20",
     "@types/react": "^19",
+    "@types/react-custom-scrollbars": "^4.0.13",
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
     "autoprefixer": "^10.4.21",
