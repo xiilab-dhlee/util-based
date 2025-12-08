@@ -32,7 +32,7 @@ export function WorkloadDisabledBody() {
   });
 
   return (
-    <ListWrapper>
+    <ListWrapper data-testid="list-table">
       <CustomizedTable
         columns={createWorkloadColumn([
           { dataIndex: "workloadName", width: 200, ellipsis: true },

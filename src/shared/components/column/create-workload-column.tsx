@@ -53,7 +53,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
             workloadName={workloadName}
             resourceRecoveryWarningCount={isRecovered ? 9999 : 0}
             isRevoked={isRevoked}
-            data-testid={`workload-name-${id}`}
           />
         );
       },

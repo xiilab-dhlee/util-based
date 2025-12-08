@@ -26,7 +26,11 @@ export function DeleteWorkloadButton({
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClick} disabled={disabled}>
+      <ColumnIconWrap
+        onClick={handleClick}
+        disabled={disabled}
+        data-testid="workload-delete-button"
+      >
         <Icon name="Delete" color="var(--icon-fill)" size={20} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>

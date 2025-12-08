@@ -25,7 +25,11 @@ export function RestartWorkloadButton({
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClick} disabled={disabled}>
+      <ColumnIconWrap
+        onClick={handleClick}
+        disabled={disabled}
+        data-testid="workload-restart-button"
+      >
         <RefreshIcon width={20} height={20} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
