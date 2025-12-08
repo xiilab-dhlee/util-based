@@ -1,7 +1,10 @@
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
-import { selector, USER_MONITORING_TEST_ID } from "../support/constants";
+import {
+  testId,
+  USER_MONITORING_SELECTOR,
+} from "@/shared/constants/selector.constant";
 import { setupMonitoringPageMocks } from "../support/mocks";
 
 const { When, Then } = createBdd();
@@ -46,9 +49,7 @@ When("사용자가 모니터링 페이지로 진입한다", async ({ page }) => 
  * PageHeader의 pageKey="user.monitoring" -> data-testid="user.monitoring"
  */
 Then("모니터링 페이지가 표시된다", async ({ page }) => {
-  const pageHeader = page.locator(
-    selector(USER_MONITORING_TEST_ID.PAGE_HEADER),
-  );
+  const pageHeader = page.locator(testId(USER_MONITORING_SELECTOR.PAGE_HEADER));
   await expect(pageHeader).toBeVisible({ timeout: 10000 });
 });
 
@@ -58,7 +59,7 @@ Then("모니터링 페이지가 표시된다", async ({ page }) => {
  */
 Then("CPU 그래프가 표시된다", async ({ page }) => {
   const resourceGraph = page.locator(
-    selector(USER_MONITORING_TEST_ID.RESOURCE_GRAPH),
+    testId(USER_MONITORING_SELECTOR.RESOURCE_GRAPH),
   );
   await expect(resourceGraph).toBeVisible({ timeout: 10000 });
 
@@ -73,7 +74,7 @@ Then("CPU 그래프가 표시된다", async ({ page }) => {
  */
 Then("리소스 회수 정보가 표시된다", async ({ page }) => {
   const resourceRecovery = page.locator(
-    selector(USER_MONITORING_TEST_ID.RESOURCE_RECOVERY),
+    testId(USER_MONITORING_SELECTOR.RESOURCE_RECOVERY),
   );
   await expect(resourceRecovery).toBeVisible({ timeout: 10000 });
 
@@ -87,7 +88,7 @@ Then("리소스 회수 정보가 표시된다", async ({ page }) => {
  */
 Then("워크로드 정보가 표시된다", async ({ page }) => {
   const workloadStatus = page.locator(
-    selector(USER_MONITORING_TEST_ID.WORKLOAD_STATUS),
+    testId(USER_MONITORING_SELECTOR.WORKLOAD_STATUS),
   );
   await expect(workloadStatus).toBeVisible({ timeout: 10000 });
 });
@@ -97,7 +98,7 @@ Then("워크로드 정보가 표시된다", async ({ page }) => {
  */
 Then("사용 자원 정보가 표시된다", async ({ page }) => {
   const resourceUsage = page.locator(
-    selector(USER_MONITORING_TEST_ID.RESOURCE_USAGE),
+    testId(USER_MONITORING_SELECTOR.RESOURCE_USAGE),
   );
   await expect(resourceUsage).toBeVisible({ timeout: 10000 });
 });
@@ -108,7 +109,7 @@ Then("사용 자원 정보가 표시된다", async ({ page }) => {
  */
 Then("실행 중 워크로드 목록이 표시된다", async ({ page }) => {
   const runningWorkloadList = page.locator(
-    selector(USER_MONITORING_TEST_ID.RUNNING_WORKLOAD_LIST),
+    testId(USER_MONITORING_SELECTOR.RUNNING_WORKLOAD_LIST),
   );
   await expect(runningWorkloadList).toBeVisible({ timeout: 10000 });
 
@@ -123,7 +124,7 @@ Then("실행 중 워크로드 목록이 표시된다", async ({ page }) => {
  */
 Then("리소스 회수 예정 워크로드 목록이 표시된다", async ({ page }) => {
   const recoveryWorkloadList = page.locator(
-    selector(USER_MONITORING_TEST_ID.RECOVERY_WORKLOAD_LIST),
+    testId(USER_MONITORING_SELECTOR.RECOVERY_WORKLOAD_LIST),
   );
   await expect(recoveryWorkloadList).toBeVisible({ timeout: 10000 });
 
@@ -145,7 +146,7 @@ const WORKLOAD_STATUSES = ["all", "running", "completed", "pending", "failed"];
 Then("워크로드 상태별 건수가 표시된다", async ({ page }) => {
   for (const status of WORKLOAD_STATUSES) {
     const countElement = page.locator(
-      selector(USER_MONITORING_TEST_ID.statusCount(status)),
+      testId(USER_MONITORING_SELECTOR.statusCount(status)),
     );
     await expect(countElement).toBeVisible({ timeout: 10000 });
 
@@ -162,7 +163,7 @@ Then("워크로드 상태별 건수가 표시된다", async ({ page }) => {
 Then("상태별 건수의 합이 전체 건수와 일치한다", async ({ page }) => {
   // 전체 건수 가져오기
   const allCountElement = page.locator(
-    selector(USER_MONITORING_TEST_ID.statusCount("all")),
+    testId(USER_MONITORING_SELECTOR.statusCount("all")),
   );
   const allText = await allCountElement.textContent();
   const allCount = Number.parseInt(allText?.replace(/[,건]/g, "") ?? "0", 10);
@@ -173,7 +174,7 @@ Then("상태별 건수의 합이 전체 건수와 일치한다", async ({ page }
 
   for (const status of individualStatuses) {
     const countElement = page.locator(
-      selector(USER_MONITORING_TEST_ID.statusCount(status)),
+      testId(USER_MONITORING_SELECTOR.statusCount(status)),
     );
     const text = await countElement.textContent();
     const count = Number.parseInt(text?.replace(/[,건]/g, "") ?? "0", 10);

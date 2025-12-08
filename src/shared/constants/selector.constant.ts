@@ -1,8 +1,8 @@
 /**
- * E2E 테스트용 data-testid 셀렉터 상수
+ * data-testid 셀렉터 상수
  *
- * data-testid-registry.md 문서와 동기화하여 관리합니다.
- * 새로운 셀렉터 추가 시 반드시 문서에도 등록하세요.
+ * E2E 테스트와 컴포넌트에서 공통으로 사용합니다.
+ * docs/data-testid-registry.md 문서와 동기화하여 관리합니다.
  *
  * 네이밍 컨벤션:
  * - {도메인}-{컴포넌트}-{역할}
@@ -13,7 +13,8 @@
 // 공통 (Shared)
 // ============================================
 
-export const SHARED_TEST_ID = {
+export const SELECTOR = {
+  // 목록 페이지 공통
   /** 목록 테이블 래퍼 */
   LIST_TABLE: "list-table",
   /** 총 개수 표시 */
@@ -24,13 +25,19 @@ export const SHARED_TEST_ID = {
   LIST_SEARCH_INPUT: "list-search-input",
   /** 필터 영역 */
   LIST_FILTER: "list-filter",
+
+  // 워크스페이스
+  /** 선택된 워크스페이스 값 */
+  WORKSPACE_SELECT_VALUE: "workspace-select-value",
+  /** 워크스페이스 미선택 placeholder */
+  WORKSPACE_SELECT_PLACEHOLDER: "workspace-select-placeholder",
 } as const;
 
 // ============================================
 // 워크로드 (Workload)
 // ============================================
 
-export const WORKLOAD_TEST_ID = {
+export const WORKLOAD_SELECTOR = {
   // 페이지 헤더
   /** 워크로드 목록 페이지 헤더 */
   PAGE_HEADER: "user.workload",
@@ -68,13 +75,17 @@ export const WORKLOAD_TEST_ID = {
   FILTER_JOB_TYPE: "workload-filter-jobType",
   /** 상태 필터 */
   FILTER_STATUS: "workload-filter-status",
+
+  // 검색 폼
+  /** 비활성화 워크로드 검색 폼 */
+  DISABLED_LIST_SEARCH_FORM: "workload-disabled-list-search-form",
 } as const;
 
 // ============================================
 // 사용자 모니터링 (User Monitoring)
 // ============================================
 
-export const USER_MONITORING_TEST_ID = {
+export const USER_MONITORING_SELECTOR = {
   // 페이지 헤더
   /** 모니터링 페이지 헤더 */
   PAGE_HEADER: "user.monitoring",
@@ -93,36 +104,26 @@ export const USER_MONITORING_TEST_ID = {
   /** 리소스 회수 예정 목록 */
   RECOVERY_WORKLOAD_LIST: "user-monitoring-recovery-workload-list",
 
-  // 워크로드 상태 카운트
+  // 워크로드 상태
+  /** 상태 컨테이너 - workload-status-{status} */
+  status: (status: string) => `workload-status-${status}`,
   /** 상태별 건수 - workload-status-{status}-count */
   statusCount: (status: string) => `workload-status-${status}-count`,
 } as const;
 
 // ============================================
-// 워크스페이스 (Workspace)
-// ============================================
-
-export const WORKSPACE_TEST_ID = {
-  /** 선택된 워크스페이스 값 */
-  SELECT_VALUE: "workspace-select-value",
-  /** 워크스페이스 미선택 placeholder */
-  SELECT_PLACEHOLDER: "workspace-select-placeholder",
-} as const;
-
-// ============================================
-// 셀렉터 헬퍼 함수
+// 테스트용 헬퍼 함수
 // ============================================
 
 /**
  * data-testid 속성 셀렉터 생성
- * @param testId - data-testid 값
+ * @param id - data-testid 값
  * @returns Playwright 셀렉터 문자열
  *
  * @example
- * selector(WORKLOAD_TEST_ID.LOG_BUTTON) // '[data-testid="workload-log-button"]'
- * selector(WORKLOAD_TEST_ID.name(123)) // '[data-testid="workload-name-123"]'
+ * testId(WORKLOAD_SELECTOR.LOG_BUTTON) // '[data-testid="workload-log-button"]'
  */
-export const selector = (testId: string): string => `[data-testid="${testId}"]`;
+export const testId = (id: string): string => `[data-testid="${id}"]`;
 
 /**
  * data-testid prefix 셀렉터 생성 (동적 ID용)
@@ -130,18 +131,7 @@ export const selector = (testId: string): string => `[data-testid="${testId}"]`;
  * @returns Playwright 셀렉터 문자열
  *
  * @example
- * selectorPrefix("workload-name-") // '[data-testid^="workload-name-"]'
+ * testIdPrefix("workload-name-") // '[data-testid^="workload-name-"]'
  */
-export const selectorPrefix = (prefix: string): string =>
+export const testIdPrefix = (prefix: string): string =>
   `[data-testid^="${prefix}"]`;
-
-// ============================================
-// 통합 내보내기
-// ============================================
-
-export const TEST_ID = {
-  shared: SHARED_TEST_ID,
-  workload: WORKLOAD_TEST_ID,
-  userMonitoring: USER_MONITORING_TEST_ID,
-  workspace: WORKSPACE_TEST_ID,
-} as const;
