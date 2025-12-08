@@ -8,4 +8,5 @@ export const credentialKeys = {
     ...Object.values(payload),
   ],
   allList: () => [...credentialKeys.default, "allList"],
+  detail: (id: number | null) => [...credentialKeys.default, "detail", id],
 };
