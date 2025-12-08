@@ -64,7 +64,7 @@ export function VolumeListFilter() {
         height={30}
         onClick={handleCreateVolume}
       >
-        볼륨 추가
+        볼륨 생성
       </Button>
     </MySearchFilter>
   );

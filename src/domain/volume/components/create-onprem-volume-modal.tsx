@@ -109,7 +109,7 @@ export function CreateOnPremVolumeModal() {
       showCancelButton
       cancelText="이전"
       onCancel={handleCancel}
-      okText="추가"
+      okText="생성"
       onOk={handleSubmit}
       centered
       okButtonProps={{

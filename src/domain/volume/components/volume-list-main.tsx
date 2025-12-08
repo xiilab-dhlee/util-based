@@ -1,47 +1,53 @@
-import type { Metadata } from "next";
-import type { PropsWithChildren } from "react";
+"use client";
 
+import { AsideVolume } from "@/domain/volume/components/aside-volume";
 import { CompressVolumeFileModal } from "@/domain/volume/components/compress-volume-file-modal";
 import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
 import { CreateVolumeFolderModal } from "@/domain/volume/components/create-volume-folder-modal";
 import { DeleteVolumeModal } from "@/domain/volume/components/delete-volume-modal";
-import { VolumeListBody } from "@/domain/volume/components/list/volume-list-body";
-import { VolumeListFilter } from "@/domain/volume/components/list/volume-list-filter";
-import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-footer";
 import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
+import { VolumeListBody } from "@/domain/volume/components/volume-list-body";
+import { VolumeListFilter } from "@/domain/volume/components/volume-list-filter";
+import { VolumeListFooter } from "@/domain/volume/components/volume-list-footer";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
+  ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 
-export const metadata: Metadata = {
-  title: "Volume",
-};
-export default function VolumeLayout({ children }: PropsWithChildren) {
+/**
+ * 볼륨 목록 페이지의 메인 컴포넌트
+ *
+ * 이 컴포넌트는 볼륨 목록을 표시하는 페이지의 주요 레이아웃을 담당합니다.
+ * 볼륨 생성 가이드, 필터링, 목록 표시, 페이지네이션, 상세 정보 등의 기능을 포함합니다.
+ *
+ * @returns 볼륨 목록 페이지 JSX
+ */
+export function VolumeListMain() {
   return (
     <>
       <PageHeader pageKey="user.volume" description="Volume" />
-      {/* 볼륨 목록 페이지 메인 영역 */}
       <ListPageMain>
-        {/* 볼륨 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
-          {/* 볼륨 목록 필터 */}
           <VolumeListFilter />
-          {/* 볼륨 목록 본문 */}
           <VolumeListBody />
-          {/* 볼륨 목록 페이지네이션 */}
           <VolumeListFooter />
         </ListPageBody>
-        {children}
+        <ListPageAside $width={ASIDE_WIDTH}>
+          <AsideVolume />
+        </ListPageAside>
       </ListPageMain>
-      {/* 소스코드 삭제 모달 */}
+      {/* 볼륨 삭제 모달 */}
       <DeleteVolumeModal />
       {/* 볼륨 생성 모달 */}
       <SelectVolumeTypeModal />
+      {/* AstraGo 볼륨 생성 모달 */}
       <CreateAstragoVolumeModal />
+      {/* 온프레미스 볼륨 생성 모달 */}
       <CreateOnPremVolumeModal />
       {/* 취약점 조회 모달 */}
       <ViewVulnerabilityModal />
