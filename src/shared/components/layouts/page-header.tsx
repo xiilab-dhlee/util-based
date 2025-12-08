@@ -25,7 +25,7 @@ interface PageHeaderProps {
 export function PageHeader({
   pageKey,
   pageParams,
-  description,
+  // description,
 }: PageHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -72,7 +72,7 @@ export function PageHeader({
           )
         )}
         <Title>{title}</Title>
-        {description && <Description>{description}</Description>}
+        {/* {description && <Description>{description}</Description>} */}
       </Left>
       {hasBreadcrumb && (
         <Right>
@@ -148,25 +148,25 @@ const Title = styled.h1`
   font-size: 18px;
 `;
 
-const Description = styled.div`
-  padding-left: 6px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #6f707c;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  font-size: 14px;
+// const Description = styled.div`
+//   padding-left: 6px;
+//   font-weight: 400;
+//   line-height: 1.5;
+//   color: #6f707c;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   position: relative;
+//   font-size: 14px;
 
-  &::before {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    height: 50%;
-    content: "";
-    width: 1px;
-    background-color: #ced3d8;
-  }
-`;
+//   &::before {
+//     position: absolute;
+//     top: 50%;
+//     left: 0;
+//     transform: translateY(-50%);
+//     height: 50%;
+//     content: "";
+//     width: 1px;
+//     background-color: #ced3d8;
+//   }
+// `;

@@ -20,7 +20,7 @@ const stringMap: Record<string, () => string> = {
   mountPath: () => faker.system.directoryPath(),
 
   // 명령어
-  cmd: () => faker.hacker.verb(),
+  cmd: () => faker.system.filePath(),
 
   // 이름
   name: () => faker.internet.displayName(),
