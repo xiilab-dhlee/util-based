@@ -188,6 +188,10 @@ export const SYSTEM_SETTING_EVENTS = {
   openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
   // HPE OneView 연동 모달 열기 이벤트
   openHpeConnectionModal: "system-setting:open-hpe-connection-modal",
+  // 크레덴셜 상세 모달 열기 이벤트
+  openCredentialDetailModal: "system-setting:open-credential-detail-modal",
+  // 크레덴셜 삭제 모달 열기 이벤트
+  openCredentialDeleteModal: "system-setting:open-credential-delete-modal",
 } as const;
 
 // 쿠버네티스 모니터링 관련 이벤트

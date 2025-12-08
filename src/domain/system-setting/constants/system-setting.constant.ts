@@ -7,6 +7,9 @@ export const STORAGE_SETTING_SKELETON_KEYS = Array.from(
   (_, i) => `skeleton-${i}`,
 );
 
+/** 크레덴셜 목록 페이지 사이즈 (10개씩) */
+export const CREDENTIAL_LIST_PAGE_SIZE = 10;
+
 /** 스토리지 타입 드롭다운 옵션 */
 export const STORAGE_TYPE_OPTIONS = [{ label: "NFS", value: "NFS" }];
 
