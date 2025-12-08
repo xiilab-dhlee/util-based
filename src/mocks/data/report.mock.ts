@@ -1,5 +1,13 @@
-import { reportListResponseSchema } from "@/domain/report/schemas/report.schema";
-import type { ReportDetailResponse } from "@/domain/report/schemas/report-detail.schema";
+import type {
+  ReportDetailResponse,
+  ResourceTrend,
+  ResourceUsageMetric,
+} from "@/domain/report/schemas/report.schema";
+import {
+  nodeResourceUtilizationSchema,
+  nodeWorkloadDistributionSchema,
+  reportListResponseSchema,
+} from "@/domain/report/schemas/report.schema";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { makeMock } from "@/shared/utils/mock.util";
 
@@ -11,132 +19,74 @@ export const reportListMock = Array.from({ length: LIST_PAGE_SIZE }, () =>
 );
 
 /**
+ * 리소스 타입별로 고유한 메트릭 생성
+ */
+const createResourceMetrics = (): ResourceUsageMetric[] => {
+  const types: Array<"GPU" | "CPU" | "MEM" | "DISK"> = [
+    "GPU",
+    "CPU",
+    "MEM",
+    "DISK",
+  ];
+  return types.map((type) => {
+    const total = Math.floor(Math.random() * 1000) + 100;
+    const used = Math.floor(Math.random() * total);
+    const percentage = Math.floor((used / total) * 100);
+    return { type, used, total, percentage };
+  });
+};
+
+/**
+ * 리소스 타입별로 고유한 추이 데이터 생성
+ */
+const createResourceTrends = (): ResourceTrend[] => {
+  const types: Array<"GPU" | "CPU" | "MEM" | "DISK"> = [
+    "GPU",
+    "CPU",
+    "MEM",
+    "DISK",
+  ];
+  return types.map((type) => {
+    // 7일치 데이터 생성 (오늘부터 6일 전까지)
+    const data = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - index)); // 6일 전부터 오늘까지
+      const total = Math.floor(Math.random() * 1000) + 100;
+      const requested = Math.floor(Math.random() * total);
+      const used = Math.floor(Math.random() * requested);
+      return {
+        timestamp: date.toISOString(),
+        total,
+        requested,
+        used,
+      };
+    });
+    return { type, data };
+  });
+};
+
+/**
  * 리포트 상세 Mock 데이터
  */
 export const mockReportDetail: ReportDetailResponse = {
-  id: "550e8400-e29b-41d4-a716-446655440000",
-  reportName: "7월 월간 클러스터 리포트",
-  reportDateType: "MONTHLY",
-  reportType: "CLUSTER",
-  startDate: "2025-07-01T00:00:00Z",
-  endDate: "2025-07-31T23:59:59Z",
+  id: crypto.randomUUID(),
+  reportName: `테스트 리포트 ${Math.floor(Math.random() * 100)}`,
+  reportDateType: Math.random() > 0.5 ? "WEEKLY" : "MONTHLY",
+  reportType: Math.random() > 0.5 ? "SYSTEM" : "CLUSTER",
+  startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  endDate: new Date().toISOString(),
   creator: "관리자",
-  createdAt: "2025-07-31T10:00:00Z",
+  createdAt: new Date().toISOString(),
   resourceUsage: {
-    periodLabel: "2025년 7월",
-    title: "클러스터 리소스 활용 정보",
-    metrics: [
-      { type: "GPU", used: 9, total: 12, percentage: 75, unit: "개" },
-      { type: "CPU", used: 180, total: 300, percentage: 60, unit: "Core" },
-      { type: "MEM", used: 17.85, total: 21, percentage: 85, unit: "GB" },
-      { type: "DISK", used: 9.45, total: 21, percentage: 45, unit: "TB" },
-    ],
+    periodLabel: "2025년 1월",
+    title: "클러스터 평균 리소스 활용률",
+    metrics: createResourceMetrics(),
   },
-  resourceTrends: [
-    {
-      type: "GPU",
-      data: [
-        {
-          timestamp: "2025-01-31T00:00:00Z",
-          total: 40,
-          requested: 28,
-          used: 10,
-        },
-        {
-          timestamp: "2025-02-01T00:00:00Z",
-          total: 40,
-          requested: 24,
-          used: 10,
-        },
-        {
-          timestamp: "2025-02-02T00:00:00Z",
-          total: 40,
-          requested: 22,
-          used: 5,
-        },
-        {
-          timestamp: "2025-02-03T00:00:00Z",
-          total: 40,
-          requested: 28,
-          used: 17,
-        },
-        {
-          timestamp: "2025-02-04T00:00:00Z",
-          total: 40,
-          requested: 22,
-          used: 17,
-        },
-      ],
-    },
-    {
-      type: "CPU",
-      data: [
-        {
-          timestamp: "2025-01-31T00:00:00Z",
-          total: 40,
-          requested: 28,
-          used: 10,
-        },
-        {
-          timestamp: "2025-02-01T00:00:00Z",
-          total: 40,
-          requested: 24,
-          used: 10,
-        },
-        {
-          timestamp: "2025-02-02T00:00:00Z",
-          total: 40,
-          requested: 22,
-          used: 5,
-        },
-        {
-          timestamp: "2025-02-03T00:00:00Z",
-          total: 40,
-          requested: 28,
-          used: 17,
-        },
-        {
-          timestamp: "2025-02-04T00:00:00Z",
-          total: 40,
-          requested: 22,
-          used: 17,
-        },
-      ],
-    },
-    {
-      type: "MEM",
-      data: [
-        {
-          timestamp: "2025-01-31T00:00:00Z",
-          total: 40,
-          requested: 28,
-          used: 10,
-        },
-        {
-          timestamp: "2025-02-01T00:00:00Z",
-          total: 40,
-          requested: 24,
-          used: 10,
-        },
-        {
-          timestamp: "2025-02-02T00:00:00Z",
-          total: 40,
-          requested: 22,
-          used: 5,
-        },
-        {
-          timestamp: "2025-02-03T00:00:00Z",
-          total: 40,
-          requested: 28,
-          used: 17,
-        },
-        {
-          timestamp: "2025-02-04T00:00:00Z",
-          total: 40,
-          requested: 22,
-          used: 17,
-        },
-      ],
-    },
-  ],
+  resourceTrends: createResourceTrends(),
+  nodeDistribution: Array.from({ length: 10 }, () =>
+    makeMock(nodeWorkloadDistributionSchema),
+  ),
+  nodeResourceUtilization: Array.from({ length: 10 }, () =>
+    makeMock(nodeResourceUtilizationSchema),
+  ),
 };
