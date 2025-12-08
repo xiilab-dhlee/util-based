@@ -8,6 +8,11 @@ import {
   isAuthenticated,
   loginAs,
 } from "../support/auth.helper";
+import {
+  SHARED_TEST_ID,
+  selector,
+  WORKSPACE_TEST_ID,
+} from "../support/constants";
 
 const { Given, Then } = createBdd();
 
@@ -79,7 +84,7 @@ Then("로그인 페이지로 리다이렉트된다", async ({ page }) => {
  */
 Given("워크스페이스가 선택되어 있다", async ({ page }) => {
   const workspaceSelectValue = page.locator(
-    '[data-testid="workspace-select-value"]',
+    selector(WORKSPACE_TEST_ID.SELECT_VALUE),
   );
 
   await expect(workspaceSelectValue).toBeVisible({ timeout: 10000 });
@@ -94,7 +99,7 @@ Given("워크스페이스가 선택되어 있다", async ({ page }) => {
  */
 Given("워크스페이스가 선택되어 있지 않다", async ({ page }) => {
   const placeholder = page.locator(
-    '[data-testid="workspace-select-placeholder"]',
+    selector(WORKSPACE_TEST_ID.SELECT_PLACEHOLDER),
   );
   await expect(placeholder).toBeVisible({ timeout: 10000 });
 });
@@ -133,7 +138,7 @@ Then("URL이 {string}를 포함한다", async ({ page }, expectedUrl: string) =>
  * Then - 목록 테이블 표시 확인
  */
 Then("목록 테이블이 표시된다", async ({ page }) => {
-  const table = page.locator('[data-testid="list-table"]');
+  const table = page.locator(selector(SHARED_TEST_ID.LIST_TABLE));
   await expect(table).toBeVisible({ timeout: 10000 });
 });
 
@@ -141,7 +146,7 @@ Then("목록 테이블이 표시된다", async ({ page }) => {
  * Then - 목록에 총 개수 표시 확인
  */
 Then("목록에 총 개수가 표시된다", async ({ page }) => {
-  const totalCount = page.locator('[data-testid="list-total-count"]');
+  const totalCount = page.locator(selector(SHARED_TEST_ID.LIST_TOTAL_COUNT));
   await expect(totalCount).toBeVisible({ timeout: 10000 });
 
   const text = await totalCount.textContent();
@@ -152,7 +157,7 @@ Then("목록에 총 개수가 표시된다", async ({ page }) => {
  * Then - 페이지네이션 표시 확인
  */
 Then("페이지네이션이 표시된다", async ({ page }) => {
-  const pagination = page.locator('[data-testid="list-pagination"]');
+  const pagination = page.locator(selector(SHARED_TEST_ID.LIST_PAGINATION));
   await expect(pagination).toBeVisible({ timeout: 10000 });
 });
 
@@ -160,7 +165,7 @@ Then("페이지네이션이 표시된다", async ({ page }) => {
  * Then - 검색창 빈 값 확인
  */
 Then("검색창이 빈 값으로 표시된다", async ({ page }) => {
-  const searchInput = page.locator('[data-testid="list-search-input"]');
+  const searchInput = page.locator(selector(SHARED_TEST_ID.LIST_SEARCH_INPUT));
   await expect(searchInput).toBeVisible({ timeout: 10000 });
   await expect(searchInput).toHaveValue("");
 });
@@ -169,6 +174,6 @@ Then("검색창이 빈 값으로 표시된다", async ({ page }) => {
  * Then - 필터 영역 표시 확인
  */
 Then("필터 영역이 표시된다", async ({ page }) => {
-  const filter = page.locator('[data-testid="list-filter"]');
+  const filter = page.locator(selector(SHARED_TEST_ID.LIST_FILTER));
   await expect(filter).toBeVisible({ timeout: 10000 });
 });
