@@ -20,7 +20,7 @@
     "test:uc": "bddgen && playwright test --grep",
     "test:report": "playwright show-report tests/reports/playwright-html",
     "test:trace": "playwright show-trace",
-    "test:codegen": " playwright codegen http://localhost:3000",
+    "test:codegen": "playwright codegen http://localhost:3000",
     "bddgen": "npx playwright-bdd test",
     "bddgen:export": "npx playwright-bdd export",
     "prepare": "husky"
