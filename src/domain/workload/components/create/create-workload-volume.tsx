@@ -87,7 +87,7 @@ export function CreateWorkloadVolume() {
               </LabelTitle>
             </Label>
             <Input
-              placeholder="Mount path를 입력해 주세요."
+              placeholder="Mount Path를 입력해 주세요."
               value={mountPath || ""}
               onChange={(e) => setMountPath(e.target.value)}
             />

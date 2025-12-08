@@ -102,7 +102,7 @@ export function CreateStorageModal() {
             status={errors.ip ? "error" : undefined}
           />
         </FormItem>
-        <FormItem label="스토리지 저장 PATH" required>
+        <FormItem label="스토리지 저장 Path" required>
           <Input
             placeholder="Path를 입력해 주세요. 예) /root/code/123"
             value={formState.path}

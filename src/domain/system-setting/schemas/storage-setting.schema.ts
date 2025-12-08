@@ -12,7 +12,7 @@ const baseStorageSettingSchema = z.object({
   storageType: z.string(),
   /** IP 주소 */
   ip: z.string(),
-  /** 스토리지 저장 PATH */
+  /** 스토리지 저장 Path */
   path: z.string(),
   /** 등록자 이름 */
   creatorName: z.string(),

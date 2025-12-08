@@ -134,7 +134,7 @@ function ViewStorageModalContent({
             <Value>{data.ip}</Value>
           </InfoRow>
           <InfoRow>
-            <Label>스토리지 저장 PATH</Label>
+            <Label>스토리지 저장 Path</Label>
             <Value>{data.path}</Value>
           </InfoRow>
         </ContentBox>
