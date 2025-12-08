@@ -13,8 +13,17 @@ const baseAccountResponseSchema = z.object({
   id: z.string().uuid(),
   /** 사용자 이름 */
   name: z.string().min(1).max(100),
-  /** 그룹 */
-  group: z.string().min(1).max(100),
+  /** 그룹 목록 (id + 이름 배열) */
+  groupList: z
+    .array(
+      z.object({
+        /** 그룹 ID */
+        id: z.string(),
+        /** 그룹 이름 */
+        name: z.string().min(1).max(100),
+      }),
+    )
+    .default([]),
   /** 권한 */
   role: z.enum(Object.values(ACCOUNT_ROLES) as [AccountRole, ...AccountRole[]]),
   /** 이메일 */
@@ -33,7 +42,7 @@ const baseAccountResponseSchema = z.object({
 export const accountListResponseSchema = baseAccountResponseSchema.pick({
   id: true,
   name: true,
-  group: true,
+  groupList: true,
   role: true,
   email: true,
   createdAt: true,

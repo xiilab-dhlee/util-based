@@ -10,7 +10,7 @@ interface DataErrorStateProps {
   /** 상세 에러 메시지 (옵션) */
   description?: string;
   /** 다시 시도 버튼 클릭 시 호출되는 콜백 */
-  onRetry: () => void;
+  onRetry?: () => void;
   /** 다시 시도 버튼 라벨 (기본: "다시 시도") */
   retryLabel?: string;
   /** 외부에서 추가 스타일을 주입할 때 사용하는 className */
@@ -49,14 +49,16 @@ export function DataErrorState({
             </Description>
           ) : null}
         </Message>
-        <Button
-          icon="Refresh"
-          variant="outlined"
-          size="small"
-          onClick={onRetry}
-        >
-          {retryLabel}
-        </Button>
+        {onRetry ? (
+          <Button
+            icon="Refresh"
+            variant="outlined"
+            size="small"
+            onClick={onRetry}
+          >
+            {retryLabel}
+          </Button>
+        ) : null}
       </Body>
     </Wrapper>
   );

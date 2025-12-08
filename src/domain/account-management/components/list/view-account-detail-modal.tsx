@@ -4,6 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal, Typography } from "xiilab-ui";
 
+import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account-role.constant";
 import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
 import { openViewAccountDetailModalAtom } from "@/domain/account-management/state/account.atom";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -65,15 +66,17 @@ export function ViewAccountDetailModal() {
           </DetailRow>
           <DetailRow>
             <DetailLabel>그룹</DetailLabel>
-            <DetailValue>{account?.group || "-"}</DetailValue>
+            <DetailValue>
+              {account?.groupList?.length
+                ? account.groupList.map((group) => group.name).join(", ")
+                : "-"}
+            </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>상태</DetailLabel>
             <DetailValue>
               {account?.isEnabled != null
-                ? account.isEnabled
-                  ? "활성화"
-                  : "비활성화"
+                ? getAccountStatusLabelFromBoolean(account.isEnabled)
                 : "-"}
             </DetailValue>
           </DetailRow>

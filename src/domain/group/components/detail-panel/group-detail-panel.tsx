@@ -1,35 +1,34 @@
 "use client";
 
+import { useMemo } from "react";
+import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
 import { useGetGroupDetail } from "@/domain/group/hooks/use-get-group-detail";
-import type { GroupListType } from "@/domain/group/schemas/group.schema";
+import { createOpenGroupModalUpdatePayload } from "@/domain/group/types/group.type";
 import {
-  createOpenGroupModalUpdatePayload,
-  type OpenGroupModalPayload,
-} from "@/domain/group/types/group.type";
+  createMemberColumn,
+  type MemberRow,
+} from "@/shared/components/column/create-member-column";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import {
-  formatDateSafely,
-  formatDateTimeSafely,
-} from "@/shared/utils/date.util";
-import {
-  Article,
-  ArticleBody,
-  ArticleKey,
-  ArticlePane,
-  ArticleRecord,
-  ArticleTitle,
-  ArticleValue,
-  PanelBody,
-  PanelContainer,
-  PanelFooter,
-  PanelHeader,
-  PanelTitle,
-  Tag,
-} from "./detail-panel.styled";
+  AsideDetailArticle,
+  AsideDetailArticleBody,
+  AsideDetailArticleColumn,
+  AsideDetailArticleHeader,
+  AsideDetailArticleItem,
+  AsideDetailArticleKey,
+  AsideDetailArticleTitle,
+  AsideDetailArticleValue,
+  AsideDetailFooter,
+  AsideDetailHeader,
+  AsideDetailHeaderTitle,
+} from "@/styles/layers/aside-detail-layers.styled";
 
 interface GroupDetailPanelProps {
   /** 선택된 그룹 노드 */
@@ -44,93 +43,154 @@ interface GroupDetailPanelProps {
  */
 export function GroupDetailPanel({ group }: GroupDetailPanelProps) {
   const publish = usePublish();
-  // 그룹 상세 정보 (그룹을 하나씩 호출할 때마다 조회)
-  const { data: groupDetail } = useGetGroupDetail(group.id);
+  // 그룹 상세 정보
+  const {
+    data: groupDetail,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetGroupDetail(group.id);
 
   const handleEditClick = () => {
-    // 상세 정보가 아직 로딩되지 않은 경우 모달을 열지 않습니다.
-    if (!groupDetail) {
-      return;
-    }
-
-    const groupForEdit: GroupListType = {
-      id: group.id,
-      name: groupDetail.groupName ?? group.name,
-      // 상세 응답의 Date 타입 createDateTime을 안전하게 문자열로 포맷팅합니다.
-      createdDate: formatDateTimeSafely(groupDetail.createDateTime) ?? "",
-      creatorName: groupDetail.creatorName ?? null,
-      description: groupDetail.description ?? null,
-    };
-
-    const payload: OpenGroupModalPayload =
-      createOpenGroupModalUpdatePayload(groupForEdit);
-
-    publish(GROUP_EVENTS.openGroupModal, payload);
+    publish(
+      GROUP_EVENTS.openGroupModal,
+      createOpenGroupModalUpdatePayload(group.id),
+    );
   };
+
+  // 멤버 테이블 데이터
+  const memberData: MemberRow[] = useMemo(
+    () =>
+      groupDetail?.users.map((user) => ({
+        id: user.accountId,
+        name: user.accountName,
+        email: user.email,
+      })) ?? [],
+    [groupDetail?.users],
+  );
 
   return (
     <PanelContainer>
-      <PanelHeader>
-        <PanelTitle>그룹 정보</PanelTitle>
-      </PanelHeader>
+      <AsideDetailHeader>
+        <AsideDetailHeaderTitle>그룹 정보</AsideDetailHeaderTitle>
+      </AsideDetailHeader>
 
       <PanelBody>
-        <Article>
-          <ArticleTitle>그룹 정보</ArticleTitle>
-          <ArticleBody>
-            <ArticlePane>
-              <ArticleRecord>
-                <ArticleKey>그룹 이름</ArticleKey>
-                <ArticleValue>
-                  {groupDetail?.groupName ?? group.name}
-                </ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>그룹 설명</ArticleKey>
-                <ArticleValue>{groupDetail?.description ?? "-"}</ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>생성자</ArticleKey>
-                <ArticleValue>{groupDetail?.creatorName ?? "-"}</ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>생성일</ArticleKey>
-                <ArticleValue>
-                  {formatDateSafely(groupDetail?.createDateTime)}
-                </ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>멤버</ArticleKey>
-                <ArticleValue>
-                  {groupDetail && groupDetail.users.length > 0
-                    ? groupDetail.users.map((user) => (
-                        <Tag key={user.accountId}>{user.accountName}</Tag>
-                      ))
-                    : "-"}
-                </ArticleValue>
-              </ArticleRecord>
-            </ArticlePane>
-          </ArticleBody>
-        </Article>
+        {isError ? (
+          <DataErrorState
+            title="그룹 정보를 불러올 수 없습니다."
+            onRetry={refetch}
+          />
+        ) : (
+          <AsideDetailArticle>
+            <AsideDetailArticleHeader>
+              <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
+            </AsideDetailArticleHeader>
+            <AsideDetailArticleBody>
+              <AsideDetailArticleItem>
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>그룹 이름</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>
+                    {groupDetail?.groupName ?? "-"}
+                  </AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>그룹 설명</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>
+                    {groupDetail?.description ?? "-"}
+                  </AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+              </AsideDetailArticleItem>
+              <AsideDetailArticleItem>
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>
+                    {groupDetail?.creatorName ?? "-"}
+                  </AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>
+                    {formatDateSafely(groupDetail?.createDateTime)}
+                  </AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+                <MemberColumn>
+                  <AsideDetailArticleKey>멤버</AsideDetailArticleKey>
+                  <MemberTableValue>
+                    <CustomizedTable<MemberRow>
+                      columns={createMemberColumn()}
+                      data={memberData}
+                      pagination={false}
+                      activePadding
+                      columnHeight={32}
+                      headerHeight={32}
+                      rowKey="id"
+                      loading={isLoading}
+                    />
+                  </MemberTableValue>
+                </MemberColumn>
+              </AsideDetailArticleItem>
+            </AsideDetailArticleBody>
+          </AsideDetailArticle>
+        )}
       </PanelBody>
-      <PanelFooter>
-        <Button
-          variant="outlined"
-          width={80}
-          height={34}
-          onClick={handleEditClick}
-        >
-          수정
-        </Button>
-        <Button
-          variant="outlined"
-          width={80}
-          height={34}
-          onClick={() => publish(GROUP_EVENTS.sendDeleteGroup, group.id)}
-        >
-          삭제
-        </Button>
-      </PanelFooter>
+      <AsideDetailFooter>
+        <div />
+        <ButtonGroup>
+          <Button
+            variant="outlined"
+            width={80}
+            height={34}
+            onClick={handleEditClick}
+            disabled={isLoading || isError}
+          >
+            수정
+          </Button>
+          <Button
+            variant="outlined"
+            width={80}
+            height={34}
+            onClick={() => publish(GROUP_EVENTS.sendDeleteGroup, group.id)}
+            disabled={isLoading || isError}
+          >
+            삭제
+          </Button>
+        </ButtonGroup>
+      </AsideDetailFooter>
     </PanelContainer>
   );
 }
+
+// ===== Local Styled Components =====
+
+const PanelContainer = styled.div`
+  flex: 1;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  --column-gutter-size: 20px;
+`;
+
+const PanelBody = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+`;
+
+const MemberColumn = styled(AsideDetailArticleColumn)`
+  align-items: flex-start;
+`;
+
+const MemberTableValue = styled(AsideDetailArticleValue)`
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+`;

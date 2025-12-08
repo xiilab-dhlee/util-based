@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { z } from "zod";
 
 import {
   type GroupFormType,
-  type GroupListResponseType,
   type GroupRequestPayload,
   groupRequestSchema,
 } from "@/domain/group/schemas/group.schema";
 import type { GroupFormErrors } from "@/domain/group/types/group.type";
+import type { MemberRow } from "@/shared/components/column/create-member-column";
+import type { GroupDetailResponseType } from "@/shared/schemas/group-tree.schema";
 
 // ===== 상수 =====
 
@@ -23,6 +24,8 @@ interface UseGroupFormReturn {
   // 상태
   formState: GroupFormType;
   errors: GroupFormErrors;
+  /** 멤버 테이블 표시용 데이터 (id, name, email) */
+  memberTableData: MemberRow[];
 
   // 필드 변경
   setField: <Key extends keyof GroupFormType>(
@@ -30,14 +33,15 @@ interface UseGroupFormReturn {
     value: GroupFormType[Key],
   ) => void;
 
-  // 멤버 배열 조작
-  setMembers: (members: string[]) => void;
+  // 멤버 관리 (테이블 데이터 + formState.members 동기화)
+  setMemberTableData: (members: MemberRow[]) => void;
+  removeMember: (id: string) => void;
 
   // 폼 제어
   /** 검증 후 성공 시 payload 반환, 실패 시 null 반환 */
   validate: () => GroupRequestPayload | null;
   reset: () => void;
-  initializeForEdit: (data: GroupListResponseType) => void;
+  initializeForEdit: (data: GroupDetailResponseType) => void;
   initializeForCreate: () => void;
 }
 
@@ -55,13 +59,13 @@ function mapZodErrors(zodError: z.ZodError): GroupFormErrors {
 }
 
 /**
- * 서버 응답 데이터를 폼 상태로 변환
+ * 그룹 상세 응답 데이터를 폼 상태로 변환
  */
-function responseToFormState(data: GroupListResponseType): GroupFormType {
+function detailToFormState(data: GroupDetailResponseType): GroupFormType {
   return {
-    name: data.name,
+    name: data.groupName,
     description: data.description ?? "",
-    members: [], // TODO: 서버에서 멤버 목록이 내려오면 매핑
+    members: data.users.map((user) => user.accountId),
   };
 }
 
@@ -89,15 +93,28 @@ export function useGroupForm(): UseGroupFormReturn {
     }
   };
 
-  // ===== 멤버 배열 조작 =====
+  // ===== 멤버 테이블 데이터 (표시용) =====
+  const [memberTableData, setMemberTableDataState] = useState<MemberRow[]>([]);
 
-  const setMembers = (members: string[]) => {
-    setFormState((prev) => ({ ...prev, members }));
-    // members 에러 클리어
-    if (errors.members) {
-      setErrors((prev) => ({ ...prev, members: undefined }));
-    }
-  };
+  /**
+   * 멤버 테이블 데이터 설정 (formState.members도 동기화)
+   */
+  const setMemberTableData = useCallback((members: MemberRow[]) => {
+    setMemberTableDataState(members);
+    setFormState((prev) => ({ ...prev, members: members.map((m) => m.id) }));
+    setErrors((prev) => ({ ...prev, members: undefined }));
+  }, []);
+
+  /**
+   * 멤버 삭제 (테이블 + formState 동기화)
+   */
+  const removeMember = useCallback((id: string) => {
+    setMemberTableDataState((prev) => prev.filter((m) => m.id !== id));
+    setFormState((prev) => ({
+      ...prev,
+      members: prev.members.filter((memberId) => memberId !== id),
+    }));
+  }, []);
 
   // ===== 폼 제어 =====
 
@@ -118,31 +135,42 @@ export function useGroupForm(): UseGroupFormReturn {
     return result.data;
   };
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setFormState(INITIAL_FORM_STATE);
+    setMemberTableDataState([]);
     setErrors({});
-  };
+  }, []);
 
-  const initializeForEdit = (data: GroupListResponseType) => {
-    setFormState(responseToFormState(data));
+  const initializeForEdit = useCallback((data: GroupDetailResponseType) => {
+    setFormState(detailToFormState(data));
+    // 멤버 테이블 데이터도 함께 초기화
+    const members: MemberRow[] = data.users.map((user) => ({
+      id: user.accountId,
+      name: user.accountName,
+      email: user.email,
+    }));
+    setMemberTableDataState(members);
     setErrors({});
-  };
+  }, []);
 
-  const initializeForCreate = () => {
+  const initializeForCreate = useCallback(() => {
     setFormState(INITIAL_FORM_STATE);
+    setMemberTableDataState([]);
     setErrors({});
-  };
+  }, []);
 
   return {
     // 상태
     formState,
     errors,
+    memberTableData,
 
     // 필드 변경
     setField,
 
-    // 멤버 배열 조작
-    setMembers,
+    // 멤버 관리
+    setMemberTableData,
+    removeMember,
 
     // 폼 제어
     validate,

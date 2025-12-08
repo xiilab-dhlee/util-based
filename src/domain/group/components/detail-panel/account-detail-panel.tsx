@@ -1,22 +1,26 @@
 "use client";
 
+import styled from "styled-components";
+import { Tag } from "xiilab-ui";
+
+import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account-role.constant";
 import { useGetAccountDetail } from "@/domain/account-management/hooks/use-get-account-detail";
 import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
-  Article,
-  ArticleBody,
-  ArticleKey,
-  ArticlePane,
-  ArticleRecord,
-  ArticleTitle,
-  ArticleValue,
-  PanelBody,
-  PanelContainer,
-  PanelHeader,
-  PanelTitle,
-  Tag,
-} from "./detail-panel.styled";
+  AsideDetailArticle,
+  AsideDetailArticleBody,
+  AsideDetailArticleColumn,
+  AsideDetailArticleHeader,
+  AsideDetailArticleItem,
+  AsideDetailArticleKey,
+  AsideDetailArticleRow,
+  AsideDetailArticleRowItem,
+  AsideDetailArticleTitle,
+  AsideDetailArticleValue,
+  AsideDetailHeader,
+  AsideDetailHeaderTitle,
+} from "@/styles/layers/aside-detail-layers.styled";
 
 interface AccountDetailPanelProps {
   /** 선택된 계정 노드 */
@@ -33,95 +37,147 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
   const { data: accountDetail } = useGetAccountDetail(account.id);
 
   const displayId = accountDetail?.email ?? "-";
-  const displayName = accountDetail?.name ?? account.name;
-  const displayRole = accountDetail?.role ?? "USER";
+  const displayName = accountDetail?.name ?? "-";
+  const displayRole = accountDetail?.role ?? "-";
   const displayStatus =
     typeof accountDetail?.isEnabled === "boolean"
-      ? accountDetail.isEnabled
-        ? "활성화"
-        : "비활성화"
+      ? getAccountStatusLabelFromBoolean(accountDetail.isEnabled)
       : "-";
-  const displayJoinedDate = formatDateSafely(accountDetail?.createdAt);
+  const displayJoinedDate = formatDateSafely(accountDetail?.createdAt) ?? "-";
+
+  // 상세 응답에서 제공되는 그룹 목록 (다중 그룹 지원)
+  const groups = accountDetail?.groupList ?? [];
 
   return (
     <PanelContainer>
-      <PanelHeader>
-        <PanelTitle>계정 정보</PanelTitle>
-      </PanelHeader>
+      <AsideDetailHeader>
+        <AsideDetailHeaderTitle>계정 정보</AsideDetailHeaderTitle>
+      </AsideDetailHeader>
 
       <PanelBody>
-        <Article>
-          <ArticleTitle>기본 정보</ArticleTitle>
-          <ArticleBody>
-            {/* 좌측 컬럼 */}
-            <ArticlePane>
-              <ArticleRecord>
-                <ArticleKey>아이디</ArticleKey>
-                <ArticleValue>{displayId}</ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>이름</ArticleKey>
-                <ArticleValue>{displayName}</ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>상태</ArticleKey>
-                <ArticleValue>{displayStatus}</ArticleValue>
-              </ArticleRecord>
-            </ArticlePane>
-            {/* 우측 컬럼 */}
-            <ArticlePane>
-              <ArticleRecord>
-                <ArticleKey>권한</ArticleKey>
-                <ArticleValue>{displayRole}</ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>가입일</ArticleKey>
-                <ArticleValue>{displayJoinedDate || "-"}</ArticleValue>
-              </ArticleRecord>
-            </ArticlePane>
-          </ArticleBody>
-        </Article>
+        <AsideDetailArticle>
+          <AsideDetailArticleHeader>
+            <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
+          </AsideDetailArticleHeader>
+          <AsideDetailArticleBody>
+            <AsideDetailArticleItem>
+              <AsideDetailArticleRow>
+                {/* 좌측 컬럼 */}
+                <AsideDetailArticleRowItem>
+                  <AsideDetailArticleColumn>
+                    <AsideDetailArticleKey>아이디</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {displayId}
+                    </AsideDetailArticleValue>
+                  </AsideDetailArticleColumn>
+                  <AsideDetailArticleColumn>
+                    <AsideDetailArticleKey>이름</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {displayName}
+                    </AsideDetailArticleValue>
+                  </AsideDetailArticleColumn>
+                  <AsideDetailArticleColumn>
+                    <AsideDetailArticleKey>상태</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {displayStatus}
+                    </AsideDetailArticleValue>
+                  </AsideDetailArticleColumn>
+                </AsideDetailArticleRowItem>
+                {/* 우측 컬럼 */}
+                <AsideDetailArticleRowItem>
+                  <AsideDetailArticleColumn>
+                    <AsideDetailArticleKey>권한</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {displayRole}
+                    </AsideDetailArticleValue>
+                  </AsideDetailArticleColumn>
+                  <AsideDetailArticleColumn>
+                    <AsideDetailArticleKey>가입일</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {displayJoinedDate}
+                    </AsideDetailArticleValue>
+                  </AsideDetailArticleColumn>
+                </AsideDetailArticleRowItem>
+              </AsideDetailArticleRow>
+            </AsideDetailArticleItem>
+          </AsideDetailArticleBody>
+        </AsideDetailArticle>
 
-        {/* 워크스페이스 / 그룹 정보 (Figma 기준 추가 카드) */}
-        <Article>
-          <ArticleTitle>워크스페이스</ArticleTitle>
-          <ArticleBody>
-            <ArticlePane>
-              <ArticleRecord>
-                <ArticleKey>보유 개수</ArticleKey>
-                <ArticleValue>
+        {/* 워크스페이스 / 그룹 정보 */}
+        <ArticleGap>
+          <AsideDetailArticleHeader>
+            <AsideDetailArticleTitle>워크스페이스</AsideDetailArticleTitle>
+          </AsideDetailArticleHeader>
+          <AsideDetailArticleBody>
+            <AsideDetailArticleItem>
+              <AsideDetailArticleColumn>
+                <AsideDetailArticleKey>보유 개수</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
                   {typeof accountDetail?.workspaceCount === "number"
                     ? `${accountDetail.workspaceCount}개`
                     : "-"}
-                </ArticleValue>
-              </ArticleRecord>
-              <ArticleRecord>
-                <ArticleKey>생성 제한 개수</ArticleKey>
-                <ArticleValue>
+                </AsideDetailArticleValue>
+              </AsideDetailArticleColumn>
+              <AsideDetailArticleColumn>
+                <AsideDetailArticleKey>생성 제한 개수</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
                   {typeof accountDetail?.workspaceLimitCount === "number"
                     ? `${accountDetail.workspaceLimitCount}개`
                     : "-"}
-                </ArticleValue>
-              </ArticleRecord>
-            </ArticlePane>
-          </ArticleBody>
-          <ArticleBody>
-            <ArticlePane>
-              <ArticleRecord>
-                <ArticleKey>그룹 목록</ArticleKey>
-                <ArticleValue>
-                  {/* TODO: 그룹이 다수인 구조로 변경되면 배열로 확장 필요 */}
-                  {accountDetail?.group ? (
-                    <Tag>{accountDetail.group}</Tag>
+                </AsideDetailArticleValue>
+              </AsideDetailArticleColumn>
+            </AsideDetailArticleItem>
+            <AsideDetailArticleItem>
+              <AsideDetailArticleColumn>
+                <AsideDetailArticleKey>그룹 목록</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  {groups.length > 0 ? (
+                    <TagList>
+                      {groups.map((group) => (
+                        <Tag key={group.id} variant="gray">
+                          {group.name}
+                        </Tag>
+                      ))}
+                    </TagList>
                   ) : (
                     "-"
                   )}
-                </ArticleValue>
-              </ArticleRecord>
-            </ArticlePane>
-          </ArticleBody>
-        </Article>
+                </AsideDetailArticleValue>
+              </AsideDetailArticleColumn>
+            </AsideDetailArticleItem>
+          </AsideDetailArticleBody>
+        </ArticleGap>
       </PanelBody>
     </PanelContainer>
   );
 }
+
+// ===== Local Styled Components =====
+
+export const PanelContainer = styled.div`
+  flex: 1;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  --column-gutter-size: 20px;
+`;
+
+const PanelBody = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+`;
+
+const ArticleGap = styled(AsideDetailArticle)`
+  margin-top: 10px;
+`;
+
+const TagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
