@@ -220,29 +220,32 @@ export function ResourceUsageTrendCharts({
             },
           },
         };
+        const cardTitle = `${text}(${unit}) - 리소스 사용량 추이`;
 
         return (
-          <Card key={trend.type} showHeader={false} hoverable={false}>
+          <Card
+            key={trend.type}
+            hoverable={false}
+            title={cardTitle}
+            contentVariant="compact"
+            actionElement={
+              <LegendContainer>
+                <LegendItem>
+                  <LegendDot $color={colors.total} />
+                  <LegendLabel>전체 용량</LegendLabel>
+                </LegendItem>
+                <LegendItem>
+                  <LegendDot $color={colors.requested} />
+                  <LegendLabel>할당량</LegendLabel>
+                </LegendItem>
+                <LegendItem>
+                  <LegendDot $color={colors.used} />
+                  <LegendLabel>사용량</LegendLabel>
+                </LegendItem>
+              </LegendContainer>
+            }
+          >
             <CardBody>
-              <CardHeader>
-                <ChartTitle>
-                  {text}({unit}) - 리소스 사용량 추이
-                </ChartTitle>
-                <LegendContainer>
-                  <LegendItem>
-                    <LegendDot $color={colors.total} />
-                    <LegendLabel>전체 용량</LegendLabel>
-                  </LegendItem>
-                  <LegendItem>
-                    <LegendDot $color={colors.requested} />
-                    <LegendLabel>할당량</LegendLabel>
-                  </LegendItem>
-                  <LegendItem>
-                    <LegendDot $color={colors.used} />
-                    <LegendLabel>사용량</LegendLabel>
-                  </LegendItem>
-                </LegendContainer>
-              </CardHeader>
               <MonitoringChart
                 series={series}
                 height={300}
@@ -264,27 +267,10 @@ const ChartsWrapper = styled.div`
   gap: 8px;
 `;
 
-const ChartTitle = styled.h5`
-  font-size: 14px;
-  font-weight: 600;
-  color: #333333;
-
-`;
-
 const CardBody = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 16px 12px;
-  gap: 7px;
-  background-color: #fcfcfc;
-`;
-
-const CardHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const LegendContainer = styled.div`

@@ -52,7 +52,7 @@ export function SemiCircleChart({
           startAngle: -90,
           endAngle: 90,
           hollow: {
-            size: "65%",
+            size: "75%",
           },
           track: {
             background: trackBackground,

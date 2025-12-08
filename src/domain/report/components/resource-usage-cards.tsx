@@ -31,7 +31,6 @@ export function ResourceUsageCards({
             contentVariant="compact"
             actionElement={
               <Capacity>
-                <Dot />
                 전체: {metric.total}
                 {unit}
               </Capacity>
@@ -43,7 +42,7 @@ export function ResourceUsageCards({
               <SemiCircleChart
                 series={percentage}
                 color={color}
-                trackBackground="#C0C1C5"
+                trackBackground="#EAEBF3"
               />
               <TextOverlay>
                 <Percentage>{percentage}%</Percentage>
@@ -74,7 +73,7 @@ const ChartContainer = styled.div`
 
 const TextOverlay = styled.div`
   position: absolute;
-  bottom: 5%;
+  bottom: 8%;
   left: 50%;
   transform: translate(-50%, 0%);
   display: flex;
@@ -110,12 +109,4 @@ const Capacity = styled.span`
   align-items: center;
   font-size: 12px;
   font-weight: 400;
-`;
-
-const Dot = styled.span`
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #C0C1C5;
-  margin-right: 6px;
 `;
