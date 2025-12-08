@@ -13,7 +13,6 @@ import {
   reportTypeAtom,
 } from "@/domain/report/state/report.atom";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { ListPageBody } from "@/styles/layers/list-page-layers.styled";
 
 /**
  * 리포트 목록 페이지의 메인 컴포넌트
@@ -32,14 +31,12 @@ export function ReportListMain() {
 
   return (
     <>
-      <ListPageBody>
-        {/* 리포트 목록 필터 */}
-        <ReportListFilter data={data} />
-        {/* 리포트 목록 본문 */}
-        <ReportListBody data={data} isLoading={isLoading} isError={isError} />
-        {/* 리포트 목록 페이지네이션 */}
-        {!isLoading && <ReportListFooter data={data} isLoading={isLoading} />}
-      </ListPageBody>
+      {/* 리포트 목록 필터 */}
+      <ReportListFilter data={data} />
+      {/* 리포트 목록 본문 */}
+      <ReportListBody data={data} isLoading={isLoading} isError={isError} />
+      {/* 리포트 목록 페이지네이션 */}
+      {!isLoading && <ReportListFooter data={data} isLoading={isLoading} />}
       {/* 삭제 모달 */}
       <DeleteReportModal />
     </>

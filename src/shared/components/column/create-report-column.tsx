@@ -1,6 +1,8 @@
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { ReportListType } from "@/domain/report/schemas/report.schema";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import {
@@ -12,7 +14,9 @@ import { ColumnTextButton } from "@/styles/layers/column-layer.styled";
 /**
  * 컬럼 정의 배열 생성
  */
-const createColumnList = (): ResponsiveColumnType[] => {
+const createColumnList = (
+  router: AppRouterInstance,
+): ResponsiveColumnType[] => {
   return [
     {
       title: "리포트 이름",
@@ -22,8 +26,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       ellipsis: true,
       render: (reportName: string, record: ReportListType) => {
         const handleClick = () => {
-          // TODO: 상세 페이지 이동 (추후 구현)
-          console.log("Report detail:", record.id);
+          router.push(ROUTES.ADMIN_REPORT_DETAIL(String(record.id)));
         };
         return (
           <ColumnTextButton onClick={handleClick}>
@@ -80,13 +83,15 @@ const createColumnList = (): ResponsiveColumnType[] => {
 /**
  * 리포트 목록 컬럼 생성
  *
+ * @param router Next.js router instance
  * @param config 컬럼 설정 (배열 형태)
  * @returns 컬럼 배열
  */
 export const createReportColumn = (
+  router: AppRouterInstance,
   config?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] => {
-  const columnList = createColumnList();
+  const columnList = createColumnList(router);
 
   return applyColumnConfigs(columnList, config);
 };

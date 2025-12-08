@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useRouter } from "next/navigation";
 
 import type { ReportListType } from "@/domain/report/schemas/report.schema";
 import { reportCheckedListAtom } from "@/domain/report/state/report.atom";
@@ -28,6 +29,7 @@ export function ReportListBody({
   isLoading,
   isError,
 }: ReportListBodyProps) {
+  const router = useRouter();
   const [checkedList, setCheckedList] = useAtom(reportCheckedListAtom);
   const { rowSelection } = useTableSelection<ReportListType>(
     checkedList,
@@ -37,7 +39,7 @@ export function ReportListBody({
   return (
     <ListWrapper data-error-state={isError}>
       <CustomizedTable<ReportListType>
-        columns={createReportColumn()}
+        columns={createReportColumn(router)}
         data={data?.content || []}
         rowKey="id"
         rowSelection={rowSelection}

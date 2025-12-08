@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import { Icon } from "xiilab-ui";
 
@@ -54,14 +55,23 @@ const GUIDES: CoreGuide[] = [
 ];
 
 export default function AdminReportLayout({ children }: PropsWithChildren) {
+  const params = useParams<{ id?: string }>();
   const { onOpen: onOpenCreateReportModal } = useGlobalModal(
     openCreateReportModalAtom,
   );
 
+  const isDetailPage = params?.id !== undefined;
+  const pageKey = isDetailPage ? "admin.report.detail" : "admin.report";
+  const pageParams = isDetailPage && params?.id ? { id: params.id } : undefined;
+
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
-      <PageHeader pageKey="admin.report" description="Report" />
+      <PageHeader
+        pageKey={pageKey}
+        pageParams={pageParams}
+        description="Report"
+      />
 
       {/* 리포트 페이지 메인 영역 */}
       <ListPageMain>

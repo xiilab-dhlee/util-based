@@ -246,14 +246,19 @@ export const PAGE_META = {
   // Admin Routes - Report
   // ============================================
   "admin.report": {
-    title: "리포트",
-    iconName: "Image",
+    title: "리포트 관리",
+    iconName: "Information",
     href: ROUTES.ADMIN_REPORT,
+  },
+  "admin.report.detail": {
+    title: "리포트 상세",
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_REPORT_DETAIL(id),
+    parent: "admin.report",
   },
 
   "admin.report-reservation": {
     title: "리포트 예약",
-    iconName: "Image",
+    iconName: "ReportReservation",
     href: ROUTES.ADMIN_REPORT_RESERVATION,
   },
 
