@@ -4,6 +4,7 @@ import { Card } from "xiilab-ui";
 import { AVERAGE_USAGE_TEXT } from "@/domain/report/constants/report.constant";
 import type { ReportDetailResponse } from "@/domain/report/schemas/report-detail.schema";
 import { SemiCircleChart } from "@/shared/components/chart/semi-circle-chart";
+import { getPercent } from "@/shared/utils/calc.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 interface ResourceUsageCardsProps {
@@ -18,55 +19,44 @@ export function ResourceUsageCards({
   const footerText = AVERAGE_USAGE_TEXT[reportDateType];
 
   return (
-    <>
-      <CardTitle>
-        {resourceUsage.periodLabel} {resourceUsage.title}
-      </CardTitle>
-      <TotalResourceWrapper>
-        {resourceUsage.metrics.map((metric) => {
-          const { text, color } = getResourceInfo(metric.type);
+    <TotalResourceWrapper>
+      {resourceUsage.metrics.map((metric) => {
+        const { text, color } = getResourceInfo(metric.type);
+        const percentage = getPercent(metric.used, metric.total);
 
-          return (
-            <Card
-              hoverable={false}
-              key={metric.type}
-              contentVariant="compact"
-              actionElement={
-                <Capacity>
-                  <Dot />
-                  전체: {metric.total}
-                  {metric.unit}
-                </Capacity>
-              }
-              title={text}
-              height={172}
-            >
-              <ChartContainer>
-                <SemiCircleChart
-                  series={metric.percentage}
-                  color={color}
-                  trackBackground="#C0C1C5"
-                />
-                <TextOverlay>
-                  <Percentage>{Math.round(metric.percentage)}%</Percentage>
-                  <Divider />
-                  <FooterText>{footerText}</FooterText>
-                </TextOverlay>
-              </ChartContainer>
-            </Card>
-          );
-        })}
-      </TotalResourceWrapper>
-    </>
+        return (
+          <Card
+            hoverable={false}
+            key={metric.type}
+            contentVariant="compact"
+            actionElement={
+              <Capacity>
+                <Dot />
+                전체: {metric.total}
+                {metric.unit}
+              </Capacity>
+            }
+            title={text}
+            height={172}
+          >
+            <ChartContainer>
+              <SemiCircleChart
+                series={percentage}
+                color={color}
+                trackBackground="#C0C1C5"
+              />
+              <TextOverlay>
+                <Percentage>{percentage}%</Percentage>
+                <Divider />
+                <FooterText>{footerText}</FooterText>
+              </TextOverlay>
+            </ChartContainer>
+          </Card>
+        );
+      })}
+    </TotalResourceWrapper>
   );
 }
-
-const CardTitle = styled.h4`
-  font-size: 16px;
-  font-weight: 700;
-  margin-left: 5px;
-  margin-bottom: 14px;
-`;
 
 const TotalResourceWrapper = styled.div`
   display: grid;

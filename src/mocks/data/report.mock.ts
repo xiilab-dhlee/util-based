@@ -32,4 +32,111 @@ export const mockReportDetail: ReportDetailResponse = {
       { type: "DISK", used: 9.45, total: 21, percentage: 45, unit: "TB" },
     ],
   },
+  resourceTrends: [
+    {
+      type: "GPU",
+      data: [
+        {
+          timestamp: "2025-01-31T00:00:00Z",
+          total: 40,
+          requested: 28,
+          used: 10,
+        },
+        {
+          timestamp: "2025-02-01T00:00:00Z",
+          total: 40,
+          requested: 24,
+          used: 10,
+        },
+        {
+          timestamp: "2025-02-02T00:00:00Z",
+          total: 40,
+          requested: 22,
+          used: 5,
+        },
+        {
+          timestamp: "2025-02-03T00:00:00Z",
+          total: 40,
+          requested: 28,
+          used: 17,
+        },
+        {
+          timestamp: "2025-02-04T00:00:00Z",
+          total: 40,
+          requested: 22,
+          used: 17,
+        },
+      ],
+    },
+    {
+      type: "CPU",
+      data: [
+        {
+          timestamp: "2025-01-31T00:00:00Z",
+          total: 40,
+          requested: 28,
+          used: 10,
+        },
+        {
+          timestamp: "2025-02-01T00:00:00Z",
+          total: 40,
+          requested: 24,
+          used: 10,
+        },
+        {
+          timestamp: "2025-02-02T00:00:00Z",
+          total: 40,
+          requested: 22,
+          used: 5,
+        },
+        {
+          timestamp: "2025-02-03T00:00:00Z",
+          total: 40,
+          requested: 28,
+          used: 17,
+        },
+        {
+          timestamp: "2025-02-04T00:00:00Z",
+          total: 40,
+          requested: 22,
+          used: 17,
+        },
+      ],
+    },
+    {
+      type: "MEM",
+      data: [
+        {
+          timestamp: "2025-01-31T00:00:00Z",
+          total: 40,
+          requested: 28,
+          used: 10,
+        },
+        {
+          timestamp: "2025-02-01T00:00:00Z",
+          total: 40,
+          requested: 24,
+          used: 10,
+        },
+        {
+          timestamp: "2025-02-02T00:00:00Z",
+          total: 40,
+          requested: 22,
+          used: 5,
+        },
+        {
+          timestamp: "2025-02-03T00:00:00Z",
+          total: 40,
+          requested: 28,
+          used: 17,
+        },
+        {
+          timestamp: "2025-02-04T00:00:00Z",
+          total: 40,
+          requested: 22,
+          used: 17,
+        },
+      ],
+    },
+  ],
 };

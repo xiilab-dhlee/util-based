@@ -5,11 +5,13 @@ import styled from "styled-components";
 
 import { ReportFilter } from "@/domain/report/components/report-filter";
 import { ResourceUsageCards } from "@/domain/report/components/resource-usage-cards";
+import { ResourceUsageTrendCharts } from "@/domain/report/components/resource-usage-trend-charts";
 import {
   REPORT_DATE_TYPE_TEXT,
   REPORT_TYPE_TEXT,
 } from "@/domain/report/constants/report.constant";
 import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
+import { subTitleStyle } from "@/styles/mixins/text";
 
 export function ClusterReportMain() {
   const params = useParams<{ id: string }>();
@@ -34,11 +36,23 @@ export function ClusterReportMain() {
         <ReportFilter />
       </Header>
       <Body>
-        <SubTitle>1. 자원 활용 리포트 사용 정보</SubTitle>
-        <ResourceUsageCards
-          resourceUsage={resourceUsage}
-          reportDateType={reportDateType}
-        />
+        <Section>
+          <SectionTitle>
+            1. {REPORT_DATE_TYPE_TEXT[reportDateType]} 리소스 활용 리포트 사용
+            정보
+          </SectionTitle>
+          <SubSection>
+            <SubTitle>{resourceUsage.title}</SubTitle>
+            <ResourceUsageCards
+              resourceUsage={resourceUsage}
+              reportDateType={reportDateType}
+            />
+          </SubSection>
+          <SubSection>
+            <SubTitle>리소스 사용량 추이</SubTitle>
+            <ResourceUsageTrendCharts resourceTrends={data.resourceTrends} />
+          </SubSection>
+        </Section>
       </Body>
     </>
   );
@@ -70,9 +84,27 @@ const Body = styled.div`
   flex-direction: column;
 `;
 
-const SubTitle = styled.h4`
+const SectionTitle = styled.h3`
   font-weight: 700;
   font-size: 15px;
   line-height: 16px;
   margin-bottom: 16px;
+`;
+
+const SubTitle = styled.h4`
+  ${subTitleStyle(5)}
+  font-size: 15px;
+  margin-bottom: 14px;
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const SubSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;

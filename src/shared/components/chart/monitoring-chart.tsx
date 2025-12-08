@@ -33,6 +33,11 @@ interface MonitoringChartProps {
    * - selection 이벤트에서 호출됩니다.
    */
   onSelectRange?: (range: { start: Date; end: Date }) => void;
+  /**
+   * 커스텀 ApexCharts 옵션
+   * - 기본 옵션에 병합되어 적용됩니다.
+   */
+  customOptions?: ApexOptions;
 }
 
 export function MonitoringChart({
@@ -47,6 +52,7 @@ export function MonitoringChart({
   chartType = "area",
   onChartReady,
   onSelectRange,
+  customOptions,
 }: MonitoringChartProps) {
   /**
    * ApexCharts 인스턴스를 보관하는 ref
@@ -90,8 +96,9 @@ export function MonitoringChart({
 
   /**
    * ApexOptions 생성
-   * - unit / colors / chartId / chartType / onSelectRange 등이 바뀔 때만 재생성합니다.
+   * - unit / colors / chartId / chartType / onSelectRange / customOptions 등이 바뀔 때만 재생성합니다.
    * - locales, defaultLocale는 여기서 함께 주입합니다.
+   * - customOptions는 기본 옵션 위에 병합됩니다.
    */
   const options = useMemo(
     () =>
@@ -104,10 +111,19 @@ export function MonitoringChart({
           onChartReady: handleChartMounted,
           onSelectRange,
         }),
+        ...customOptions,
         locales: [ko],
         defaultLocale: "ko",
       }) as ApexOptions,
-    [unit, colors, chartId, chartType, handleChartMounted, onSelectRange],
+    [
+      unit,
+      colors,
+      chartId,
+      chartType,
+      handleChartMounted,
+      onSelectRange,
+      customOptions,
+    ],
   );
 
   /**
