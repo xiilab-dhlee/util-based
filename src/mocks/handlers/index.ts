@@ -9,6 +9,7 @@ import { accountHandlers } from "@/mocks/handlers/account.handler";
 import { credentialHandlers } from "@/mocks/handlers/credential.handler";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { groupHandlers } from "@/mocks/handlers/group.handler";
+import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
 import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
@@ -54,6 +55,7 @@ export const combinedHandlers = [
   ...revokeHistoryHandlers,
   ...storageSettingHandlers,
   ...systemMonitoringHandlers,
+  ...hpeHandlers,
   ...licenseHandlers,
   ...smtpHandlers,
 ];

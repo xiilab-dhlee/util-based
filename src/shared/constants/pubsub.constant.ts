@@ -186,6 +186,8 @@ export const SYSTEM_SETTING_EVENTS = {
   openStorageEditModal: "system-setting:open-storage-edit-modal",
   // 라이선스 갱신 모달 열기 이벤트
   openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
+  // HPE OneView 연동 모달 열기 이벤트
+  openHpeConnectionModal: "system-setting:open-hpe-connection-modal",
 } as const;
 
 // 쿠버네티스 모니터링 관련 이벤트

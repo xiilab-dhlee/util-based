@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { CreateHpeModal } from "@/domain/system-setting/components/create-hpe-modal";
 import { CreateLicenseModal } from "@/domain/system-setting/components/create-license-modal";
 import { CreateStorageModal } from "@/domain/system-setting/components/create-storage-modal";
 import { CredentialListSetting } from "@/domain/system-setting/components/credential-list-setting";
@@ -101,6 +102,7 @@ export function SystemSettingMain() {
       <SmtpModal />
       <DeleteSmtpModal />
       <CreateLicenseModal />
+      <CreateHpeModal />
       <ViewStorageModal />
       <UpdateStorageModal />
       <DeleteStorageModal />

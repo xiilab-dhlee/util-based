@@ -3,6 +3,7 @@
 import { accountErrorConfig } from "@/domain/account-management/constants/account.error";
 import { monitoringNotificationErrorConfig } from "@/domain/monitoring-notification/constants/monitoring-notification.error";
 import { securityErrorConfig } from "@/domain/security/constants/security.error";
+import { hpeErrorConfig } from "@/domain/system-setting/constants/hpe.error";
 import { licenseErrorConfig } from "@/domain/system-setting/constants/license.error";
 import { smtpErrorConfig } from "@/domain/system-setting/constants/smtp.error";
 import { storageSettingErrorConfig } from "@/domain/system-setting/constants/storage-setting.error";
@@ -13,6 +14,7 @@ const errorConfigRegistry: Record<string, ErrorConfig> = {
   ...monitoringNotificationErrorConfig,
   ...accountErrorConfig,
   ...securityErrorConfig,
+  ...hpeErrorConfig,
   ...licenseErrorConfig,
   ...smtpErrorConfig,
   ...storageSettingErrorConfig,
