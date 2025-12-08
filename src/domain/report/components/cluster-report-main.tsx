@@ -3,6 +3,8 @@
 import { useParams } from "next/navigation";
 import styled from "styled-components";
 
+import { NodeResourceUtilization } from "@/domain/report/components/node-resource-utilization";
+import { NodeWorkloadDistribution } from "@/domain/report/components/node-workload-distribution";
 import { ReportFilter } from "@/domain/report/components/report-filter";
 import { ResourceUsageCards } from "@/domain/report/components/resource-usage-cards";
 import { ResourceUsageTrendCharts } from "@/domain/report/components/resource-usage-trend-charts";
@@ -38,8 +40,7 @@ export function ClusterReportMain() {
       <Body>
         <Section>
           <SectionTitle>
-            1. {REPORT_DATE_TYPE_TEXT[reportDateType]} 리소스 활용 리포트 사용
-            정보
+            1. {REPORT_DATE_TYPE_TEXT[reportDateType]} 리소스 활용 정보
           </SectionTitle>
           <SubSection>
             <SubTitle>{resourceUsage.title}</SubTitle>
@@ -52,6 +53,12 @@ export function ClusterReportMain() {
             <SubTitle>리소스 사용량 추이</SubTitle>
             <ResourceUsageTrendCharts resourceTrends={data.resourceTrends} />
           </SubSection>
+        </Section>
+        <Section>
+          <NodeWorkloadDistribution />
+        </Section>
+        <Section>
+          <NodeResourceUtilization />
         </Section>
       </Body>
     </>
@@ -82,13 +89,13 @@ const Body = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 16px;
 `;
 
 const SectionTitle = styled.h3`
   font-weight: 700;
   font-size: 15px;
   line-height: 16px;
-  margin-bottom: 16px;
 `;
 
 const SubTitle = styled.h4`
