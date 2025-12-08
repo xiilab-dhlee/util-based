@@ -4,6 +4,7 @@ import { Icon, Typography } from "xiilab-ui";
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface UserMonitoringWorkloadStatusProps {
   status: WorkloadStatusType | "ALL";
@@ -32,14 +33,16 @@ export function UserMonitoringWorkloadStatus({
     <Container
       key={status}
       className={status}
-      data-testid={`workload-status-${status.toLowerCase()}`}
+      data-testid={USER_MONITORING_SELECTOR.status(status.toLowerCase())}
     >
       <Legend variant="body-2-4">{label}</Legend>
       <DataLabel>
         <Typography.Text
           variant="subtitle-2-1"
           color="#fff"
-          data-testid={`workload-status-${status.toLowerCase()}-count`}
+          data-testid={USER_MONITORING_SELECTOR.statusCount(
+            status.toLowerCase(),
+          )}
         >
           {count.toLocaleString()}건
         </Typography.Text>

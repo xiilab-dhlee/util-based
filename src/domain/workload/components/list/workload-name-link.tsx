@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Icon, Tooltip } from "xiilab-ui";
 
 import { ChangeCircleIcon } from "@/shared/components/icon/change-circle-icon";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { isAdminMode } from "@/shared/utils/router.util";
 import { ColumnLink } from "@/styles/layers/column-layer.styled";
 import { ResourceRecoveryWarningTooltip } from "./resource-recovery-warning-tooltip";
@@ -67,7 +68,10 @@ export function WorkloadNameLink({
           <span className="sr-only">회수된 상태</span>
         </IconWrapper>
       )}
-      <Title className="truncate" data-testid={`workload-name-${workloadId}`}>
+      <Title
+        className="truncate"
+        data-testid={WORKLOAD_SELECTOR.name(workloadId)}
+      >
         {workloadName}
       </Title>
     </ColumnLink>

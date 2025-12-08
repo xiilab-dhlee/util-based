@@ -6,6 +6,7 @@ import { Dropdown } from "xiilab-ui";
 import { WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
 import { workloadStatusAtom } from "@/domain/workload/state/workload.atom";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
 /**
  * 워크로드 상태별 정렬 컴포넌트
@@ -22,7 +23,7 @@ export function WorkloadStatusSort() {
   };
 
   return (
-    <div data-testid="workload-filter-status">
+    <div data-testid={WORKLOAD_SELECTOR.FILTER_STATUS}>
       <Dropdown
         options={[ALL_OPTION, ...WORKLOAD_STATUS_OPTIONS]}
         value={status}

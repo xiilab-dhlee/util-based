@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import styled from "styled-components";
 
+import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 import { UserMonitoringCategoryTitle } from "@/styles/layers/user-monitoring-layers.styled";
@@ -20,7 +21,7 @@ export function UserMonitoringResourceRecoveryArticle() {
   };
 
   return (
-    <Container data-testid="user-monitoring-resource-recovery">
+    <Container data-testid={USER_MONITORING_SELECTOR.RESOURCE_RECOVERY}>
       <UserMonitoringCategoryTitle>
         리소스 회수 정보
       </UserMonitoringCategoryTitle>

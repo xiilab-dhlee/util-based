@@ -3,6 +3,7 @@
 import { Icon } from "xiilab-ui";
 
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   ColumnAlignCenterWrap,
@@ -29,7 +30,7 @@ export function DeleteWorkloadButton({
       <ColumnIconWrap
         onClick={handleClick}
         disabled={disabled}
-        data-testid="workload-delete-button"
+        data-testid={WORKLOAD_SELECTOR.DELETE_BUTTON}
       >
         <Icon name="Delete" color="var(--icon-fill)" size={20} />
       </ColumnIconWrap>

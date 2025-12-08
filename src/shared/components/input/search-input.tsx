@@ -3,6 +3,8 @@
 import type { InputProps } from "xiilab-ui";
 import { Input } from "xiilab-ui";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
+
 interface SearchInputProps {
   width?: InputProps["width"];
   placeholder?: string;
@@ -40,7 +42,7 @@ export function SearchInput({
       width={width}
       height={30}
       darkMode={darkMode}
-      data-testid="list-search-input"
+      data-testid={SELECTOR.LIST_SEARCH_INPUT}
     />
   );
 }

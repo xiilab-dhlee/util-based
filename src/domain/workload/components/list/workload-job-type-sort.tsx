@@ -6,6 +6,7 @@ import { Dropdown } from "xiilab-ui";
 import { WORKLOAD_JOB_OPTIONS } from "@/domain/workload/constants/workload.constant";
 import { workloadJobTypeAtom } from "@/domain/workload/state/workload.atom";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
 /**
  * 워크로드 목록 페이지 작업 유형 정렬 컴포넌트
@@ -23,7 +24,7 @@ export function WorkloadJobTypeSort() {
   };
 
   return (
-    <div data-testid="workload-filter-jobType">
+    <div data-testid={WORKLOAD_SELECTOR.FILTER_JOB_TYPE}>
       <Dropdown
         options={[ALL_OPTION, ...WORKLOAD_JOB_OPTIONS]}
         placeholder="워크로드 잡 타입"

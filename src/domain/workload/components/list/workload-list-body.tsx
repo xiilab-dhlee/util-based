@@ -10,6 +10,7 @@ import {
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 /**
@@ -32,7 +33,7 @@ export function WorkloadListBody() {
   });
 
   return (
-    <ListWrapper data-testid="list-table">
+    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
         columns={createWorkloadColumn([
           {
