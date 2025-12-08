@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { CreateLicenseModal } from "@/domain/system-setting/components/create-license-modal";
 import { CreateStorageModal } from "@/domain/system-setting/components/create-storage-modal";
 import { CredentialListSetting } from "@/domain/system-setting/components/credential-list-setting";
 import { DeleteSmtpModal } from "@/domain/system-setting/components/delete-smtp-modal";
@@ -99,6 +100,7 @@ export function SystemSettingMain() {
       {/* 모달 */}
       <SmtpModal />
       <DeleteSmtpModal />
+      <CreateLicenseModal />
       <ViewStorageModal />
       <UpdateStorageModal />
       <DeleteStorageModal />
