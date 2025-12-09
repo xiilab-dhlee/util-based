@@ -116,6 +116,24 @@ export const nodeGpuInfoSchema = z.object({
 });
 
 /**
+ * Job Type별 분포 스키마
+ */
+export const jobTypeDistributionSchema = z.object({
+  type: z.enum(["TRAIN", "INFERENCE", "DEPLOYMENT", "NOTEBOOK"]),
+  count: z.number(),
+  percentage: z.number(),
+});
+
+/**
+ * Job Type별 사용 시간 스키마
+ */
+export const jobTypeUsageTimeSchema = z.object({
+  type: z.enum(["TRAIN", "INFERENCE", "DEPLOYMENT", "NOTEBOOK"]),
+  time: z.string(), // "123h 45m"
+  percentage: z.number(),
+});
+
+/**
  * 리포트 상세 응답 스키마
  */
 export const reportDetailResponseSchema = z.object({
@@ -135,7 +153,9 @@ export const reportDetailResponseSchema = z.object({
   resourceTrends: z.array(resourceTrendSchema),
   nodeDistribution: z.array(nodeWorkloadDistributionSchema),
   nodeResourceUtilization: z.array(nodeResourceUtilizationSchema),
-  nodes: z.array(nodeGpuInfoSchema), // 신규 추가
+  nodes: z.array(nodeGpuInfoSchema),
+  jobTypeDistribution: z.array(jobTypeDistributionSchema),
+  jobTypeUsageTime: z.array(jobTypeUsageTimeSchema),
 });
 
 // ===== 타입 추출 =====
@@ -156,4 +176,6 @@ export type NodeResourceUtilization = z.infer<
 export type GpuTrendDataPoint = z.infer<typeof gpuTrendDataPointSchema>;
 export type GpuSeries = z.infer<typeof gpuSeriesSchema>;
 export type NodeGpuInfo = z.infer<typeof nodeGpuInfoSchema>;
+export type JobTypeDistribution = z.infer<typeof jobTypeDistributionSchema>;
+export type JobTypeUsageTime = z.infer<typeof jobTypeUsageTimeSchema>;
 export type ReportDetailResponse = z.infer<typeof reportDetailResponseSchema>;

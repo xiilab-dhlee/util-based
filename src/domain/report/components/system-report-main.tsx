@@ -9,6 +9,8 @@ import {
 } from "@/domain/report/constants/report.constant";
 import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import { subTitleStyle } from "@/styles/mixins/text";
+import { JobTypeDistribution } from "./job-type-distribution";
+import { JobTypeUsageTime } from "./job-type-usage-time";
 import { NodeGpuChart } from "./node-gpu-chart";
 import { NodeGpuUsageCard } from "./node-gpu-usage-card";
 import { ReportFilter } from "./report-filter";
@@ -26,7 +28,14 @@ export function SystemReportMain() {
     return <div>데이터를 불러올 수 없습니다.</div>;
   }
 
-  const { resourceUsage, reportDateType, reportType, nodes } = data;
+  const {
+    resourceUsage,
+    reportDateType,
+    reportType,
+    nodes,
+    jobTypeDistribution,
+    jobTypeUsageTime,
+  } = data;
   const reportTitle = `${REPORT_DATE_TYPE_TEXT[reportDateType]} ${REPORT_TYPE_TEXT[reportType]} 리포트`;
 
   return (
@@ -63,6 +72,18 @@ export function SystemReportMain() {
               />
             </SubSection>
           ))}
+        </Section>
+
+        {/* Section 2: 리소스 사용 정보 */}
+        <Section>
+          <SectionTitle>2. 리소스 사용 정보</SectionTitle>
+          <SubSection>
+            <SubTitle>Job Type별 비율</SubTitle>
+            <CardRow>
+              <JobTypeDistribution data={jobTypeDistribution} />
+              <JobTypeUsageTime data={jobTypeUsageTime} />
+            </CardRow>
+          </SubSection>
         </Section>
       </Body>
     </>
@@ -118,4 +139,14 @@ const SubSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+`;
+
+const CardRow = styled.div`
+  display: flex;
+  gap: 16px;
+  width: 100%;
+
+  > * {
+    flex: 1;
+  }
 `;

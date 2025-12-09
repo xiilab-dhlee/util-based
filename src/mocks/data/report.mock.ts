@@ -1,5 +1,7 @@
 import type {
   GpuSeries,
+  JobTypeDistribution,
+  JobTypeUsageTime,
   NodeGpuInfo,
   ReportDetailResponse,
   ResourceTrend,
@@ -11,6 +13,7 @@ import {
   reportListResponseSchema,
 } from "@/domain/report/schemas/report.schema";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import type { WorkloadJobType } from "@/shared/constants/workload.constant";
 import { makeMock } from "@/shared/utils/mock.util";
 
 /**
@@ -152,6 +155,54 @@ const createNodeGpuInfo = (
 };
 
 /**
+ * Job Type별 분포 데이터 생성
+ */
+const createJobTypeDistribution = (): JobTypeDistribution[] => {
+  const jobTypes: WorkloadJobType[] = [
+    "TRAIN",
+    "INFERENCE",
+    "DEPLOYMENT",
+    "NOTEBOOK",
+  ];
+
+  // 랜덤 count 생성
+  const counts = jobTypes.map(() => Math.floor(Math.random() * 50) + 10);
+  const total = counts.reduce((sum, count) => sum + count, 0);
+
+  return jobTypes.map((type, index) => ({
+    type,
+    count: counts[index],
+    percentage: Math.floor((counts[index] / total) * 100),
+  }));
+};
+
+/**
+ * Job Type별 사용 시간 데이터 생성
+ */
+const createJobTypeUsageTime = (): JobTypeUsageTime[] => {
+  const jobTypes: WorkloadJobType[] = [
+    "TRAIN",
+    "INFERENCE",
+    "DEPLOYMENT",
+    "NOTEBOOK",
+  ];
+
+  // 랜덤 시간 생성 (시간 단위)
+  const hours = jobTypes.map(() => Math.floor(Math.random() * 500) + 50);
+  const totalHours = hours.reduce((sum, hour) => sum + hour, 0);
+
+  return jobTypes.map((type, index) => {
+    const h = Math.floor(hours[index]);
+    const m = Math.floor((hours[index] - h) * 60);
+    return {
+      type,
+      time: `${h}h ${m}m`,
+      percentage: Math.floor((hours[index] / totalHours) * 100),
+    };
+  });
+};
+
+/**
  * ID로 리포트 상세 데이터를 생성
  */
 const createReportDetail = (
@@ -189,6 +240,8 @@ const createReportDetail = (
       makeMock(nodeResourceUtilizationSchema),
     ),
     nodes: createNodeGpuInfo(startDate, endDate),
+    jobTypeDistribution: createJobTypeDistribution(),
+    jobTypeUsageTime: createJobTypeUsageTime(),
   };
 };
 
