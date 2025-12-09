@@ -126,7 +126,7 @@ const SectionTitle = styled.h3`
 const SubTitle = styled.h4`
   ${subTitleStyle(5)}
   font-size: 15px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 `;
 
 const Section = styled.div`
@@ -143,7 +143,7 @@ const SubSection = styled.div`
 
 const CardRow = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 
   > * {

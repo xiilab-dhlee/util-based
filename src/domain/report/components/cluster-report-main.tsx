@@ -101,7 +101,7 @@ const SectionTitle = styled.h3`
 const SubTitle = styled.h4`
   ${subTitleStyle(5)}
   font-size: 15px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 `;
 
 const Section = styled.div`

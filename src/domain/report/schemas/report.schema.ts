@@ -119,7 +119,7 @@ export const nodeGpuInfoSchema = z.object({
  * Job Type별 분포 스키마
  */
 export const jobTypeDistributionSchema = z.object({
-  type: z.enum(["TRAIN", "INFERENCE", "DEPLOYMENT", "NOTEBOOK"]),
+  type: z.enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"]),
   count: z.number(),
   percentage: z.number(),
 });
@@ -128,7 +128,7 @@ export const jobTypeDistributionSchema = z.object({
  * Job Type별 사용 시간 스키마
  */
 export const jobTypeUsageTimeSchema = z.object({
-  type: z.enum(["TRAIN", "INFERENCE", "DEPLOYMENT", "NOTEBOOK"]),
+  type: z.enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"]),
   time: z.string(), // "123h 45m"
   percentage: z.number(),
 });

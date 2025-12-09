@@ -158,12 +158,7 @@ const createNodeGpuInfo = (
  * Job Type별 분포 데이터 생성
  */
 const createJobTypeDistribution = (): JobTypeDistribution[] => {
-  const jobTypes: WorkloadJobType[] = [
-    "TRAIN",
-    "INFERENCE",
-    "DEPLOYMENT",
-    "NOTEBOOK",
-  ];
+  const jobTypes: WorkloadJobType[] = ["BATCH", "INTERACTIVE", "DISTRIBUTED"];
 
   // 랜덤 count 생성
   const counts = jobTypes.map(() => Math.floor(Math.random() * 50) + 10);
@@ -180,12 +175,7 @@ const createJobTypeDistribution = (): JobTypeDistribution[] => {
  * Job Type별 사용 시간 데이터 생성
  */
 const createJobTypeUsageTime = (): JobTypeUsageTime[] => {
-  const jobTypes: WorkloadJobType[] = [
-    "TRAIN",
-    "INFERENCE",
-    "DEPLOYMENT",
-    "NOTEBOOK",
-  ];
+  const jobTypes: WorkloadJobType[] = ["BATCH", "INTERACTIVE", "DISTRIBUTED"];
 
   // 랜덤 시간 생성 (시간 단위)
   const hours = jobTypes.map(() => Math.floor(Math.random() * 500) + 50);
