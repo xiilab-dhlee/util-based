@@ -75,7 +75,7 @@ export function WorkloadSecondaryArticle() {
         </KeyValueContainer>
         <KeyValueContainer className="split">
           <LeftKey>보안검사 결과</LeftKey>
-          <SecurityValue>
+          <Value>
             <SecurityStatuses>
               <SecurityLevelText type="engText" status="CRITICAL">
                 <SecurityCount>7,777개</SecurityCount>
@@ -90,7 +90,7 @@ export function WorkloadSecondaryArticle() {
                 <SecurityCount>7,777개</SecurityCount>
               </SecurityLevelText>
             </SecurityStatuses>
-          </SecurityValue>
+          </Value>
         </KeyValueContainer>
         <DetailContentSubTitle>Output</DetailContentSubTitle>
         <KeyValueContainer className="split">
@@ -262,11 +262,6 @@ const Value = styled.div`
   flex-direction: column;
   gap: 4px;
   overflow: hidden;
-`;
-
-const SecurityValue = styled(Value)`
-  padding-top: 2px;
-  padding-left: 10px;
 `;
 
 const Text = styled.p`

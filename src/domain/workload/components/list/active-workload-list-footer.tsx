@@ -2,11 +2,11 @@
 
 import { useAtom } from "jotai";
 
-import { workloadPageAtom } from "@/domain/workload/state/workload.atom";
+import { activeWorkloadPageAtom } from "@/domain/workload/state/workload.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 
-interface WorkloadListFooterProps {
+interface ActiveWorkloadListFooterProps {
   /** 전체 워크로드 수 */
   total: number;
   /** 로딩 상태 */
@@ -14,18 +14,20 @@ interface WorkloadListFooterProps {
 }
 
 /**
- * 워크로드 목록 페이지네이션 컴포넌트 (관리자용)
+ * 활성화 워크로드 목록 페이지 하단 푸터 컴포넌트
  *
- * 워크스페이스 상세 페이지에서 워크로드 목록의 페이지를 관리합니다.
+ * 활성화 워크로드 목록 페이지에서 페이지 번호를 관리하고,
+ * 총 활성 워크로드 수를 표시하는 푸터 컴포넌트입니다.
  *
  * @param total - 전체 워크로드 수
  * @param loading - 로딩 상태
+ * @returns 활성화 워크로드 목록 페이지 하단 푸터 컴포넌트
  */
-export function WorkloadListFooter({
+export function ActiveWorkloadListFooter({
   total,
   loading,
-}: WorkloadListFooterProps) {
-  const [page, setPage] = useAtom(workloadPageAtom);
+}: ActiveWorkloadListFooterProps) {
+  const [page, setPage] = useAtom(activeWorkloadPageAtom);
 
   return (
     <ListPageFooter

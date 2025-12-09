@@ -5,10 +5,10 @@ import styled from "styled-components";
 import { Icon, Tooltip } from "xiilab-ui";
 
 import { ChangeCircleIcon } from "@/shared/components/icon/change-circle-icon";
+import { RevokeWarningTooltipTitle } from "@/shared/components/tooltip-title/revoke-warning-tooltip-title";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { isAdminMode } from "@/shared/utils/router.util";
 import { ColumnLink } from "@/styles/layers/column-layer.styled";
-import { ResourceRecoveryWarningTooltip } from "./resource-recovery-warning-tooltip";
 
 interface WorkloadNameLinkProps {
   workspaceId: string;
@@ -54,13 +54,16 @@ export function WorkloadNameLink({
       {hasWarning && (
         <IconWrapper>
           <Tooltip
-            title={
-              <ResourceRecoveryWarningTooltip count={revokeWarningCount} />
-            }
+            title={<RevokeWarningTooltipTitle count={revokeWarningCount} />}
             placement="bottom"
             getPopupContainer={() => document.body}
           >
-            <Icon name="Error" size={17} color="#5F6368" />
+            <Icon
+              name="Error"
+              size={17}
+              color="#5F6368"
+              style={{ paddingTop: 2.5 }}
+            />
             <span className="sr-only">리소스 회수 경고</span>
           </Tooltip>
         </IconWrapper>

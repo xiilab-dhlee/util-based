@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { WorkloadDisabledMain } from "@/domain/workload/components/list/workload-disabled-main";
+import { DisabledWorkloadListMain } from "@/domain/workload/components/list/disabled-workload-list-main";
 
 export const metadata: Metadata = {
   title: "Workload",
 };
 
 export default function UserWorkloadDisabledPage() {
-  return <WorkloadDisabledMain />;
+  return <DisabledWorkloadListMain />;
 }

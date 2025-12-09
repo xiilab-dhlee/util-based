@@ -2,11 +2,11 @@
 
 import { isNull } from "es-toolkit";
 import { useAtomValue } from "jotai";
+import { useParams } from "next/navigation";
 
 import { WorkloadListBody } from "@/domain/workload/components/list/workload-list-body";
 import { WorkloadListFilter } from "@/domain/workload/components/list/workload-list-filter";
 import { WorkloadListFooter } from "@/domain/workload/components/list/workload-list-footer";
-import { useGetActiveWorkloads } from "@/domain/workload/hooks/use-get-active-workloads";
 import {
   workloadJobTypeAtom,
   workloadPageAtom,
@@ -14,22 +14,24 @@ import {
   workloadStatusAtom,
 } from "@/domain/workload/state/workload.atom";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { useGetWorkloadsByMode } from "../../hooks/use-get-workloads-by-mode";
 
 /**
- * 활성화 워크로드 목록 메인 컴포넌트
+ * 워크로드 목록 메인 컴포넌트 (관리자용)
  *
- * 활성화 워크로드 목록 페이지의 메인 콘텐츠 영역을 표시합니다.
- * (필터, 테이블, 페이지네이션)
- *
- * @returns 활성화 워크로드 목록 메인 컴포넌트
+ * 워크스페이스 상세 페이지에서 워크로드 목록을 표시합니다.
+ * Main 컴포넌트에서 API를 호출하고, 하위 컴포넌트에 props로 데이터를 전달합니다.
  */
 export function WorkloadListMain() {
+  const { id } = useParams<{ id: string }>();
+
   const page = useAtomValue(workloadPageAtom);
   const searchText = useAtomValue(workloadSearchTextAtom);
   const jobType = useAtomValue(workloadJobTypeAtom);
   const status = useAtomValue(workloadStatusAtom);
 
-  const { data, isLoading } = useGetActiveWorkloads({
+  const { data, isLoading } = useGetWorkloadsByMode({
+    workspaceId: id,
     page,
     size: LIST_PAGE_SIZE,
     searchText,
