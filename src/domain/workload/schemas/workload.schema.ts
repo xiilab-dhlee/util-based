@@ -18,7 +18,6 @@ const baseWorkloadSchema = z.object({
   description: z.string().nullable(),
   /** 작업 유형 */
   jobType: z.enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"]),
-
   /** 사용자 이름 */
   creatorName: z.string(),
   /** 라벨 */
@@ -29,6 +28,10 @@ const baseWorkloadSchema = z.object({
   elapsedTime: z.string().datetime(),
   /** 생성일 */
   creatorDate: z.string().datetime(),
+  /** 회수 경고 회수 */
+  revokeWarningCount: z.number().min(0),
+  /** 회수 여부 */
+  isRevoked: z.boolean(),
   /** 이미지 */
   image: z.object({
     id: z.string().uuid(),
@@ -103,11 +106,28 @@ export const workloadListSchema = baseWorkloadSchema.pick({
   creatorDate: true,
   ports: true,
   image: true,
+  revokeWarningCount: true,
+  isRevoked: true,
 });
+
+export const activeWorkloadListSchema = workloadListSchema
+  .omit({ isRevoked: true })
+  .extend({
+    status: z.enum(["RUNNING", "PENDING", "FAILED"]),
+  });
+
+export const disabledWorkloadListSchema = workloadListSchema
+  .omit({ revokeWarningCount: true })
+  .extend({
+    status: z.literal("COMPLETED"),
+  });
 
 export const workloadDetailSchema = baseWorkloadSchema;
 
 type Workload = z.infer<typeof baseWorkloadSchema>;
+type ActiveWorkload = z.infer<typeof activeWorkloadListSchema>;
+type DisabledWorkload = z.infer<typeof disabledWorkloadListSchema>;
+
 export type WorkloadListType = z.infer<typeof workloadListSchema>;
 export type WorkloadIdType = Workload["id"];
 export type WorkloadDetailType = z.infer<typeof workloadDetailSchema>;
@@ -120,3 +140,11 @@ export type WorkloadStatusType = Workload["status"];
 export type WorkloadEventStatusType = WorkloadEventType["status"];
 export type WorkloadJobType = Workload["jobType"];
 export type WorkloadImageType = Workload["image"]["type"];
+
+export type ActiveWorkloadListType = z.infer<typeof activeWorkloadListSchema>;
+export type ActiveWorkloadStatusType = ActiveWorkload["status"];
+
+export type DisabledWorkloadListType = z.infer<
+  typeof disabledWorkloadListSchema
+>;
+export type DisabledWorkloadStatusType = DisabledWorkload["status"];

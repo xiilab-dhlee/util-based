@@ -20,6 +20,8 @@ const baseVolumeSchema = z.object({
   workspaceName: z.string().min(1).max(100),
   /** 스토리지 타입 */
   storageType: z.enum(["ASTRAGO", "LOCAL"]),
+  /** 상태 */
+  status: z.enum(["PUBLIC", "PRIVATE"]),
   /** 사용 여부 */
   used: z.boolean(),
   /** 볼륨 경로 */
@@ -37,6 +39,7 @@ export const volumeListSchema = baseVolumeSchema.pick({
   creatorName: true,
   creatorDate: true,
   storageType: true,
+  status: true,
   path: true,
   labels: true,
   size: true,
@@ -49,5 +52,6 @@ export const volumeDetailSchema = baseVolumeSchema;
 type Volume = z.infer<typeof baseVolumeSchema>;
 export type VolumeListType = z.infer<typeof volumeListSchema>;
 export type VolumeIdType = VolumeListType["uid"];
+export type VolumeStatusType = Volume["status"];
 export type VolumeDetailType = z.infer<typeof volumeDetailSchema>;
 export type VolumeStorageType = Volume["storageType"];

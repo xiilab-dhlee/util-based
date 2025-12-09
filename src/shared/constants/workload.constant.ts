@@ -1,3 +1,5 @@
+import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+
 /**
  * 워크로드 잡 타입 라벨 상수
  */
@@ -6,8 +8,6 @@ export const WORKLOAD_JOB_TYPE_LABEL_MAP = {
   INTERACTIVE: "Interactive",
   DISTRIBUTED: "Distributed",
 } as const;
-
-export type WorkloadJobType = keyof typeof WORKLOAD_JOB_TYPE_LABEL_MAP;
 
 /**
  * 잡 타입에 따른 라벨 반환 (워크로드 공용)

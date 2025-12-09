@@ -4,7 +4,7 @@ import { useSetAtom } from "jotai";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Dropdown, Input, Modal, Upload } from "xiilab-ui";
+import { Dropdown, Icon, Input, Modal, Upload } from "xiilab-ui";
 
 import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
 import {
@@ -13,7 +13,6 @@ import {
 } from "@/domain/volume/state/volume.atom";
 import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
 import { FormLabel } from "@/shared/components/form/form-label";
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -132,14 +131,14 @@ export function CreateAstragoVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<AstragoIcon fill="#fff" width={16} height={16} />}
+      icon={<Icon name="Astrago" color="#fff" size={16} />}
       open={open}
       closable
       title="AstraGo Storage"
       showCancelButton
       cancelText="이전"
       onCancel={handleCancel}
-      okText="추가"
+      okText="생성"
       onOk={handleSubmit}
       centered
       okButtonProps={{

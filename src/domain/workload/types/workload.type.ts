@@ -1,4 +1,8 @@
 import type {
+  WorkloadJobType,
+  WorkloadStatusType,
+} from "@/domain/workload/schemas/workload.schema";
+import type {
   CorePaginate,
   CorePayload,
   CoreSearchText,
@@ -9,7 +13,10 @@ export type WorkloadFileIndentPosition = "first" | "middle" | "last";
 export interface GetWorkloadsPayload
   extends CorePayload,
     Partial<CorePaginate>,
-    CoreSearchText {}
+    CoreSearchText {
+  jobType?: WorkloadJobType;
+  status?: WorkloadStatusType;
+}
 
 export interface GetWorkloadPayload extends CorePayload {
   workspaceId: string;

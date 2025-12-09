@@ -1,41 +1,35 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
-import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
-import {
-  workspacePageAtom,
-  workspaceSearchTextAtom,
-} from "@/domain/workspace/state/workspace.atom";
+import { workspaceSearchTextAtom } from "@/domain/workspace/state/workspace.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useSearch } from "@/shared/hooks/use-search";
+
+interface WorkspaceListFilterProps {
+  /** 전체 워크스페이스 수 */
+  total: number;
+  /** 로딩 상태 */
+  loading: boolean;
+}
 
 /**
  * 워크스페이스 목록 페이지 상단 필터 컴포넌트
  *
- * 워크스페이스 목록 페이지에서 검색어 및 상태를 필터링하는 기능을 제공합니다.
+ * 워크스페이스 목록 페이지에서 검색어를 필터링하는 기능을 제공합니다.
  *
- * @returns 워크스페이스 목록 페이지 상단 필터 컴포넌트
+ * @param total - 전체 워크스페이스 수
+ * @param loading - 로딩 상태
  */
-export function WorkspaceListFilter() {
+export function WorkspaceListFilter({
+  total,
+  loading,
+}: WorkspaceListFilterProps) {
   const { onSubmit } = useSearch(workspaceSearchTextAtom);
 
-  const page = useAtomValue(workspacePageAtom);
-
-  const searchText = useAtomValue(workspaceSearchTextAtom);
-
-  const { data } = useGetWorkspaces({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
-
   return (
-    <MySearchFilter title="워크스페이스 목록" total={data?.totalSize}>
+    <MySearchFilter title="워크스페이스 목록" total={total}>
       <form onSubmit={onSubmit}>
-        <SearchInput />
+        <SearchInput disabled={loading} />
       </form>
     </MySearchFilter>
   );

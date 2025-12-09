@@ -1,9 +1,8 @@
 "use client";
 
 import styled from "styled-components";
-import { Typography } from "xiilab-ui";
+import { Icon, Typography } from "xiilab-ui";
 
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { gradientBackgroundButtonStyle } from "@/styles/mixins/button";
 import { subTitleStyle } from "@/styles/mixins/text";
 
@@ -16,7 +15,7 @@ export function MonitoringIntroCard() {
         </EngTitleWrapper>
         <TitleWrapper>
           <IconWrapper>
-            <AstragoIcon fill="var(--icon-fill)" />
+            <Icon name="Astrago" color="#fff" size={18} />
           </IconWrapper>
           <Title>모니터링</Title>
         </TitleWrapper>

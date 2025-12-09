@@ -1,6 +1,6 @@
 import { createBdd } from "playwright-bdd";
 
-import { isAuthenticated, loginAs } from "./auth.helper";
+import { authenticate } from "./auth.helper";
 
 const { Before, After, BeforeAll, AfterAll } = createBdd();
 
@@ -94,32 +94,14 @@ Before({ tags: "@regression" }, async () => {
  * NextAuth CredentialsProvider API를 호출하여 실제 세션 생성
  */
 Before({ tags: "@authenticated" }, async ({ page }) => {
-  // admin 사용자로 실제 로그인 수행
-  await loginAs(page.context(), "admin");
-
-  // 로그인 성공 확인
-  const authenticated = await isAuthenticated(page);
-  if (authenticated) {
-    console.log("🔐 로그인 완료 (admin)");
-  } else {
-    console.warn("⚠️ 로그인 실패 - 세션이 생성되지 않았습니다");
-  }
+  await authenticate(page, "admin");
 });
 
 /**
  * 일반 사용자로 인증이 필요한 테스트
  */
 Before({ tags: "@authenticated-user" }, async ({ page }) => {
-  // user 사용자로 실제 로그인 수행
-  await loginAs(page.context(), "user");
-
-  // 로그인 성공 확인
-  const authenticated = await isAuthenticated(page);
-  if (authenticated) {
-    console.log("🔐 로그인 완료 (user)");
-  } else {
-    console.warn("⚠️ 로그인 실패 - 세션이 생성되지 않았습니다");
-  }
+  await authenticate(page, "user");
 });
 
 // 특정 태그의 테스트 스킵

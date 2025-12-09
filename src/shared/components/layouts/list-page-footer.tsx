@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import styled from "styled-components";
 
 import { MyPagination } from "@/shared/components/paginate";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface ListPageFooterProps {
   // 총 개수
@@ -37,7 +38,7 @@ export function ListPageFooter({
   }
 
   return (
-    <Container data-testid="list-pagination">
+    <Container data-testid={SELECTOR.LIST_PAGINATION}>
       <Left>{leftChildren}</Left>
       <Center>
         <MyPagination

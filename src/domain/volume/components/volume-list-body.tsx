@@ -1,0 +1,72 @@
+"use client";
+
+import { useAtom } from "jotai";
+import { useEffect } from "react";
+import styled from "styled-components";
+
+import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
+import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
+import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
+import { VolumeCard } from "./volume-card";
+
+interface VolumeListBodyProps {
+  /** 볼륨 목록 데이터 */
+  content: VolumeListType[];
+  /** 로딩 상태 */
+  loading: boolean;
+}
+
+/**
+ * 볼륨 목록 페이지 본문 컴포넌트
+ *
+ * 볼륨 목록 페이지에서 볼륨 목록을 표시하는 테이블을 제공합니다.
+ * 페이지네이션과 검색 기능을 지원하며, 볼륨 데이터를 테이블 형태로 렌더링합니다.
+ *
+ * @param content - 볼륨 목록 데이터
+ * @param loading - 로딩 상태
+ */
+export function VolumeListBody({ content, loading }: VolumeListBodyProps) {
+  // 선택된 볼륨 (Jotai atom에서 관리)
+  const [selectedVolume, setSelectedVolume] = useAtom(volumeSelectedAtom);
+
+  // 데이터 변경 시 첫 번째 볼륨 자동 선택
+  useEffect(() => {
+    const firstVolume = content[0];
+    if (firstVolume) {
+      setSelectedVolume(firstVolume.uid);
+    }
+  }, [content, setSelectedVolume]);
+
+  if (loading) {
+    return (
+      <ListWrapper>
+        <StyledGridList />
+      </ListWrapper>
+    );
+  }
+
+  return (
+    <ListWrapper>
+      <StyledGridList>
+        {content.length === 0 && (
+          <ListEmpty
+            title="볼륨이 없습니다."
+            message="볼륨을 생성하여 사용해보세요."
+          />
+        )}
+        {content.map((volume: VolumeListType) => (
+          <VolumeCard
+            key={volume.uid}
+            isSelected={volume.uid === selectedVolume}
+            {...volume}
+          />
+        ))}
+      </StyledGridList>
+    </ListWrapper>
+  );
+}
+
+const StyledGridList = styled(GridList)`
+  --icon-fill: #5b29c7;
+`;

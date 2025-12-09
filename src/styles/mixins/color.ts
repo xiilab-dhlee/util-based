@@ -5,32 +5,32 @@ import { css } from "styled-components";
  */
 export const statusColorStyle = css`
   &.red {
-    color: #e85a5a;
-    --status-dot-color: #ff0000;
-    --status-text-color: #e85a5a;
+    color: var(--red-main);
+    --status-dot-color: var(--red-main);
+    --status-text-color: var(--red-main);
   }
 
   &.green {
-    color: #00911d;
-    --status-dot-color: #52bc4a;
-    --status-text-color: #00911d;
+    color: var(--green-main);
+    --status-dot-color: var(--green-main);
+    --status-text-color: var(--green-main);
   }
 
   &.blue {
-    color: #366bff;
-    --status-dot-color: #2862ff;
-    --status-text-color: #366bff;
+    color: var(--blue-main);
+    --status-dot-color: var(--blue-main);
+    --status-text-color: var(--blue-main);
   }
 
   &.orange {
-    color: #ffa052;
-    --status-dot-color: #ffa052;
-    --status-text-color: #ffa052;
+    color: var(--orange-main);
+    --status-dot-color: var(--orange-main);
+    --status-text-color: var(--orange-main);
   }
 
   &.black {
-    color: #070913;
-    --status-dot-color: #7b7b7b;
-    --status-text-color: #070913;
+    color: var(--gray-main);
+    --status-dot-color: var(--gray-main);
+    --status-text-color: var(--gray-main);
   }
 `;

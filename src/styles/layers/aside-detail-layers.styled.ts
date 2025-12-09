@@ -10,6 +10,7 @@ const asideDetailContainerStyle = (isFloat?: boolean) => css`
   overflow: hidden;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
   background-color: #fafafa;
+  max-height: 788px;
   // 닫기 가능한 형태
   ${
     isFloat &&
@@ -52,6 +53,7 @@ export const AsideDetailHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 24px;
   margin-bottom: 20px;
 `;
 

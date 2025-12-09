@@ -55,9 +55,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 70,
       render: (value: number) => {
-        return (
-          <span style={{ color: "var(--critical-text-color)" }}>{value}</span>
-        );
+        return <span style={{ color: "var(--red-main)" }}>{value}</span>;
       },
     },
     {
@@ -66,7 +64,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 70,
       render: (value: number) => {
-        return <span style={{ color: "var(--high-text-color)" }}>{value}</span>;
+        return <span style={{ color: "var(--orange-main)" }}>{value}</span>;
       },
     },
     {
@@ -75,9 +73,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 70,
       render: (value: number) => {
-        return (
-          <span style={{ color: "var(--medium-text-color)" }}>{value}</span>
-        );
+        return <span style={{ color: "var(--blue-main)" }}>{value}</span>;
       },
     },
     {
@@ -86,7 +82,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 70,
       render: (value: number) => {
-        return <span style={{ color: "var(--low-text-color)" }}>{value}</span>;
+        return <span style={{ color: "var(--green-main)" }}>{value}</span>;
       },
     },
     {

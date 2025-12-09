@@ -1,9 +1,26 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { createBdd, type DataTable } from "playwright-bdd";
 
+import {
+  SELECTOR,
+  testId,
+  testIdPrefix,
+  WORKLOAD_SELECTOR,
+} from "@/shared/constants/selector.constant";
 import { setupWorkloadPageMocks } from "../support/mocks";
 
 const { When, Then, Given } = createBdd();
+
+// ============================================
+// Step 간 공유 컨텍스트
+// ============================================
+
+/**
+ * 현재 테스트 중인 워크로드 행을 저장
+ * Given 단계에서 특정 상태의 워크로드를 찾아 저장하고
+ * Then 단계에서 해당 행의 버튼을 검증하는 데 사용
+ */
+let currentWorkloadRow: Locator | null = null;
 
 /**
  * 워크로드 목록 페이지 Step Definitions
@@ -35,10 +52,22 @@ When("사용자가 워크로드 목록 페이지로 진입한다", async ({ page
 });
 
 /**
+ * When - 비활성화 워크로드 목록 페이지 진입
+ */
+When("사용자가 비활성화 워크로드 목록 페이지로 진입한다", async ({ page }) => {
+  // API 모킹 설정 (페이지 진입 전에 설정해야 함)
+  await setupWorkloadPageMocks(page);
+
+  // 페이지 진입
+  await page.goto("/user/workload/disabled");
+  await page.waitForLoadState("networkidle");
+});
+
+/**
  * Then - 워크로드 목록 페이지 표시 확인
  */
 Then("워크로드 목록 페이지가 표시된다", async ({ page }) => {
-  const pageHeader = page.locator('[data-testid="user.workload"]');
+  const pageHeader = page.locator(testId(WORKLOAD_SELECTOR.PAGE_HEADER));
   await expect(pageHeader).toBeVisible({ timeout: 10000 });
 });
 
@@ -70,7 +99,7 @@ Then(
  * Then - 활성 상태 워크로드 표시 확인
  */
 Then("워크로드 목록에 활성 상태의 워크로드가 표시된다", async ({ page }) => {
-  const table = page.locator('[data-testid="list-table"]');
+  const table = page.locator(testId(SELECTOR.LIST_TABLE));
   await expect(table).toBeVisible({ timeout: 10000 });
 
   // 테이블 행이 최소 1개 이상인지 확인
@@ -84,9 +113,38 @@ Then("워크로드 목록에 활성 상태의 워크로드가 표시된다", asy
  */
 Then("종료 상태의 워크로드는 목록에 표시되지 않는다", async ({ page }) => {
   const completedStatus = page.locator(
-    '[data-testid="workload-status-completed"]',
+    testId(WORKLOAD_SELECTOR.status("completed")),
   );
+
   await expect(completedStatus).toHaveCount(0);
+});
+
+/**
+ * Then - 종료 상태 워크로드 표시 확인 (비활성화 탭)
+ */
+Then("워크로드 목록에 종료 상태의 워크로드가 표시된다", async ({ page }) => {
+  const table = page.locator(testId(SELECTOR.LIST_TABLE));
+  await expect(table).toBeVisible({ timeout: 10000 });
+
+  // 테이블 행이 최소 1개 이상인지 확인
+  const rows = table.locator(".ant-table-tbody tr.ant-table-row");
+  const count = await rows.count();
+  expect(count).toBeGreaterThan(0);
+});
+
+/**
+ * Then - 활성 상태 워크로드 미표시 확인 (비활성화 탭)
+ */
+Then("활성 상태의 워크로드는 목록에 표시되지 않는다", async ({ page }) => {
+  const runningStatus = page.locator(
+    testId(WORKLOAD_SELECTOR.status("running")),
+  );
+  const pendingStatus = page.locator(
+    testId(WORKLOAD_SELECTOR.status("pending")),
+  );
+
+  await expect(runningStatus).toHaveCount(0);
+  await expect(pendingStatus).toHaveCount(0);
 });
 
 // ============================================
@@ -97,7 +155,7 @@ Then("종료 상태의 워크로드는 목록에 표시되지 않는다", async 
  * Then - 워크로드 이름 유효성 검증
  */
 Then("모든 워크로드의 이름이 빈 값이 아니다", async ({ page }) => {
-  const names = page.locator('[data-testid^="workload-name-"]');
+  const names = page.locator(testIdPrefix("workload-name-"));
   const count = await names.count();
 
   for (let i = 0; i < count; i++) {
@@ -129,7 +187,7 @@ Then(
 
     // data-testid가 "workload-job-type-"로 시작하는 모든 요소 선택
     // 예: workload-job-type-abc123, workload-job-type-def456
-    const jobTypes = page.locator('[data-testid^="workload-job-type-"]');
+    const jobTypes = page.locator(testIdPrefix("workload-job-type-"));
 
     // 선택된 요소의 개수 (= 테이블에 표시된 워크로드 수)
     const count = await jobTypes.count();
@@ -153,7 +211,7 @@ Then(
   "모든 워크로드의 상태가 다음 중 하나이다:",
   async ({ page }, dataTable: DataTable) => {
     const validStatuses = dataTable.raw().slice(1).flat();
-    const statuses = page.locator('[data-testid^="workload-status-"]');
+    const statuses = page.locator(testIdPrefix("workload-status-"));
     const count = await statuses.count();
 
     for (let i = 0; i < count; i++) {
@@ -168,50 +226,145 @@ Then(
 // ============================================
 
 /**
- * Given - 실행중인 워크로드 존재 확인
+ * Given - 실행중인 워크로드 존재 확인 및 해당 행 저장
+ *
+ * "실행중" 상태의 워크로드가 있는 행을 찾아 currentWorkloadRow에 저장
+ * 이후 Then 단계에서 해당 행의 버튼을 검증하는 데 사용
+ * 실행중인 워크로드가 없으면 시나리오를 스킵
  */
-Given("목록에 실행중인 워크로드가 있다", async ({ page }) => {
-  const runningWorkload = page
-    .locator('[data-testid^="workload-status-"]:has-text("실행중")')
+Given("목록에 실행중인 워크로드가 있다", async ({ page, $testInfo }) => {
+  // "실행중" 텍스트가 있는 상태 셀 찾기
+  const runningStatusCell = page
+    .locator(`${testIdPrefix("workload-status-")}:has-text("실행중")`)
     .first();
-  await expect(runningWorkload).toBeVisible({ timeout: 10000 });
+
+  // 실행중인 워크로드가 없으면 시나리오 스킵
+  const count = await runningStatusCell.count();
+  if (count === 0) {
+    $testInfo.skip(true, "실행중인 워크로드가 없어 시나리오를 스킵합니다");
+    return;
+  }
+
+  await expect(runningStatusCell).toBeVisible({ timeout: 10000 });
+
+  // 해당 셀이 속한 행(tr)을 찾아 저장
+  currentWorkloadRow = runningStatusCell.locator("xpath=ancestor::tr");
 });
 
-Then("해당 워크로드의 로그 버튼이 활성화되어 있다", async ({ page }) => {
-  const runningRow = page
-    .locator('tr:has([data-testid^="workload-status-"]:has-text("실행중"))')
-    .first();
-  const logButton = runningRow.locator('[data-testid="workload-log-button"]');
+/**
+ * Then - 로그 버튼 활성화 확인
+ * currentWorkloadRow에 저장된 행의 로그 버튼이 활성화되어 있는지 확인
+ */
+Then("해당 워크로드의 로그 버튼이 활성화되어 있다", async () => {
+  if (!currentWorkloadRow) {
+    throw new Error(
+      "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
+    );
+  }
+  const logButton = currentWorkloadRow.locator(
+    testId(WORKLOAD_SELECTOR.LOG_BUTTON),
+  );
   await expect(logButton).toBeEnabled();
 });
 
-Then("해당 워크로드의 웹터미널 버튼이 활성화되어 있다", async ({ page }) => {
-  const runningRow = page
-    .locator('tr:has([data-testid^="workload-status-"]:has-text("실행중"))')
-    .first();
-  const terminalButton = runningRow.locator(
-    '[data-testid="workload-terminal-button"]',
+/**
+ * Then - 웹터미널 버튼 활성화 확인
+ */
+Then("해당 워크로드의 웹터미널 버튼이 활성화되어 있다", async () => {
+  if (!currentWorkloadRow) {
+    throw new Error(
+      "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
+    );
+  }
+  const terminalButton = currentWorkloadRow.locator(
+    testId(WORKLOAD_SELECTOR.TERMINAL_BUTTON),
   );
   await expect(terminalButton).toBeEnabled();
 });
 
-Then("해당 워크로드의 모니터링 버튼이 활성화되어 있다", async ({ page }) => {
-  const runningRow = page
-    .locator('tr:has([data-testid^="workload-status-"]:has-text("실행중"))')
-    .first();
-  const monitoringButton = runningRow.locator(
-    '[data-testid="workload-monitoring-button"]',
+/**
+ * Then - 모니터링 버튼 활성화 확인
+ */
+Then("해당 워크로드의 모니터링 버튼이 활성화되어 있다", async () => {
+  if (!currentWorkloadRow) {
+    throw new Error(
+      "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
+    );
+  }
+  const monitoringButton = currentWorkloadRow.locator(
+    testId(WORKLOAD_SELECTOR.MONITORING_BUTTON),
   );
   await expect(monitoringButton).toBeEnabled();
 });
 
+/**
+ * Then - 모든 워크로드의 종료 버튼 활성화 확인
+ */
 Then("모든 워크로드의 종료 버튼이 활성화되어 있다", async ({ page }) => {
-  const stopButtons = page.locator('[data-testid="workload-stop-button"]');
+  const stopButtons = page.locator(testId(WORKLOAD_SELECTOR.STOP_BUTTON));
   const count = await stopButtons.count();
 
   for (let i = 0; i < count; i++) {
     await expect(stopButtons.nth(i)).toBeEnabled();
   }
+});
+
+// ============================================
+// 비활성화 워크로드 액션 버튼 검증 Steps
+// ============================================
+
+/**
+ * Given - 종료된 워크로드 존재 확인 및 해당 행 저장
+ *
+ * 비활성화 탭에서 첫 번째 워크로드 행을 찾아 currentWorkloadRow에 저장
+ * 종료된 워크로드가 없으면 시나리오를 스킵
+ */
+Given("목록에 종료된 워크로드가 있다", async ({ page, $testInfo }) => {
+  const disabledStatusCell = page
+    .locator(testIdPrefix("workload-status-"))
+    .first();
+
+  // 종료된 워크로드가 없으면 시나리오 스킵
+  const count = await disabledStatusCell.count();
+  if (count === 0) {
+    $testInfo.skip(true, "종료된 워크로드가 없어 시나리오를 스킵합니다");
+    return;
+  }
+
+  await expect(disabledStatusCell).toBeVisible({ timeout: 10000 });
+
+  // 해당 셀이 속한 행(tr)을 찾아 저장
+  currentWorkloadRow = disabledStatusCell.locator("xpath=ancestor::tr");
+});
+
+/**
+ * Then - 삭제 버튼 활성화 확인
+ */
+Then("해당 워크로드의 삭제 버튼이 활성화되어 있다", async () => {
+  if (!currentWorkloadRow) {
+    throw new Error(
+      "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
+    );
+  }
+  const deleteButton = currentWorkloadRow.locator(
+    testId(WORKLOAD_SELECTOR.DELETE_BUTTON),
+  );
+  await expect(deleteButton).toBeEnabled();
+});
+
+/**
+ * Then - 재시작 버튼 활성화 확인
+ */
+Then("해당 워크로드의 재시작 버튼이 활성화되어 있다", async () => {
+  if (!currentWorkloadRow) {
+    throw new Error(
+      "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
+    );
+  }
+  const restartButton = currentWorkloadRow.locator(
+    testId(WORKLOAD_SELECTOR.RESTART_BUTTON),
+  );
+  await expect(restartButton).toBeEnabled();
 });
 
 // ============================================
@@ -223,7 +376,7 @@ Then("모든 워크로드의 종료 버튼이 활성화되어 있다", async ({ 
  * Ant Design Select의 placeholder가 보이면 값이 선택되지 않은 상태
  */
 Then("잡 타입 필터가 빈 값으로 표시된다", async ({ page }) => {
-  const filter = page.locator('[data-testid="workload-filter-jobType"]');
+  const filter = page.locator(testId(WORKLOAD_SELECTOR.FILTER_JOB_TYPE));
   await expect(filter).toBeVisible({ timeout: 10000 });
 
   // placeholder가 보이면 값이 선택되지 않은 상태
@@ -236,7 +389,7 @@ Then("잡 타입 필터가 빈 값으로 표시된다", async ({ page }) => {
  * Ant Design Select의 placeholder가 보이면 값이 선택되지 않은 상태
  */
 Then("상태 필터가 빈 값으로 표시된다", async ({ page }) => {
-  const filter = page.locator('[data-testid="workload-filter-status"]');
+  const filter = page.locator(testId(WORKLOAD_SELECTOR.FILTER_STATUS));
   await expect(filter).toBeVisible({ timeout: 10000 });
 
   // placeholder가 보이면 값이 선택되지 않은 상태

@@ -5,6 +5,7 @@ import { Label } from "xiilab-ui";
 
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface WorkloadStatusTextProps {
   status: WorkloadStatusType;
@@ -20,7 +21,7 @@ export function WorkloadStatusText({ status }: WorkloadStatusTextProps) {
   return (
     <Label
       variant={colorVariant as LabelColorVariant}
-      data-testid={`workload-status-${status.toLowerCase()}`}
+      data-testid={WORKLOAD_SELECTOR.status(status.toLowerCase())}
     >
       {label}
     </Label>

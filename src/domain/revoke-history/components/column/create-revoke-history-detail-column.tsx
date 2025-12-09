@@ -3,11 +3,9 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 import { REVOKE_HISTORY_TYPE_LABEL_BY_VALUE } from "@/domain/revoke-history/constants/revoke-history.constant";
 import type { RevokeHistoryDetailItemType } from "@/domain/revoke-history/schemas/revoke-history.schema";
 import type { RevokeHistoryDetailType } from "@/domain/revoke-history/types/revoke-history.type";
+import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import { ROUTES } from "@/shared/constants/routes.constant";
-import {
-  getJobTypeLabel,
-  type WorkloadJobType,
-} from "@/shared/constants/workload.constant";
+import { getJobTypeLabel } from "@/shared/constants/workload.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
 import { ColumnLink } from "@/styles/layers/column-layer.styled";

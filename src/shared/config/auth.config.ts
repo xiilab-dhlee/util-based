@@ -1,7 +1,8 @@
 import type { NextAuthOptions, Session, User } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import KeycloakProvider from "next-auth/providers/keycloak";
+
+// import KeycloakProvider from "next-auth/providers/keycloak";
 
 import {
   DEFAULT_TEST_USER,
@@ -133,11 +134,11 @@ function createDevSession(session: Session, token: JWT): Session {
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    KeycloakProvider({
-      clientId: process.env.AUTH_CLIENT_ID ?? "",
-      clientSecret: process.env.AUTH_CLIENT_SECRET ?? "",
-      issuer: process.env.AUTH_ISSUER,
-    }),
+    // KeycloakProvider({
+    //   clientId: process.env.AUTH_CLIENT_ID ?? "",
+    //   clientSecret: process.env.AUTH_CLIENT_SECRET ?? "",
+    //   issuer: process.env.AUTH_ISSUER,
+    // }),
     CredentialsProvider({
       id: "credentials",
       name: "Test Credentials",
@@ -225,7 +226,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30일
   },
-
-  secret: process.env.NEXTAUTH_SECRET ?? "dev-secret-key-for-development",
+  secret: "dev",
+  // secret: process.env.NEXTAUTH_SECRET ?? "dev-secret-key-for-development",
   debug: isDevelopment,
 };

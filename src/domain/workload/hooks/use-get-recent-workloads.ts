@@ -13,6 +13,7 @@ import type { CoreListResponse } from "@/shared/types/core.model";
  */
 export const useGetRecentWorkloads = (
   payload: GetWorkloadsPayload,
+  enabled: boolean,
 ): UseQueryResult<CoreListResponse<WorkloadListType>, Error> => {
   const { workloadService } = useServices();
 
@@ -22,5 +23,6 @@ export const useGetRecentWorkloads = (
       const response = await workloadService.getList(payload);
       return response.data;
     },
+    enabled,
   });
 };

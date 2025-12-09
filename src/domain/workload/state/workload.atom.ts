@@ -1,7 +1,11 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
-import type { WorkloadIdType } from "@/domain/workload/schemas/workload.schema";
+import type {
+  WorkloadIdType,
+  WorkloadJobType,
+  WorkloadStatusType,
+} from "@/domain/workload/schemas/workload.schema";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
@@ -9,23 +13,44 @@ import {
   createSelectedNodeInfoAtom,
 } from "@/shared/state/filetree.atom";
 
+// ============================================
+// 일반 워크로드 목록 필터 (관리자용)
+// ============================================
+
 /** 워크로드 페이지 번호 */
 export const workloadPageAtom = atomWithReset<number>(1);
 /** 워크로드 검색어 */
 export const workloadSearchTextAtom = atom<string>("");
 /** 워크로드 잡타입 */
-export const workloadJobTypeAtom = atom<string | null>(null);
+export const workloadJobTypeAtom = atom<WorkloadJobType | null>(null);
 /** 워크로드 상태 */
-export const workloadStatusAtom = atom<string | null>(null);
+export const workloadStatusAtom = atom<WorkloadStatusType | null>(null);
+
+// ============================================
+// 활성화 워크로드 목록 필터
+// ============================================
+
+/** 활성화 워크로드 페이지 번호 */
+export const activeWorkloadPageAtom = atomWithReset<number>(1);
+/** 활성화 워크로드 검색어 */
+export const activeWorkloadSearchTextAtom = atom<string>("");
+/** 활성화 워크로드 잡타입 */
+export const activeWorkloadJobTypeAtom = atom<WorkloadJobType | null>(null);
+/** 활성화 워크로드 상태 */
+export const activeWorkloadStatusAtom = atom<WorkloadStatusType | null>(null);
+
+// ============================================
+// 비활성화 워크로드 목록 필터
+// ============================================
 
 /** 비활성화 워크로드 페이지 번호 */
-export const workloadDisabledPageAtom = atomWithReset<number>(1);
+export const disabledWorkloadPageAtom = atomWithReset<number>(1);
 /** 비활성화 워크로드 검색어 */
-export const workloadDisabledSearchTextAtom = atom<string>("");
+export const disabledWorkloadSearchTextAtom = atom<string>("");
 /** 비활성화 워크로드 잡타입 */
-export const workloadDisabledJobTypeAtom = atom<string | null>(null);
+export const disabledWorkloadJobTypeAtom = atom<WorkloadJobType | null>(null);
 /** 비활성화 워크로드 상태 */
-export const workloadDisabledStatusAtom = atom<string | null>(null);
+export const disabledWorkloadStatusAtom = atom<WorkloadStatusType | null>(null);
 /** 커밋 이미지 생성 모달 표시 여부 */
 export const openCreateCommitImageModalAtom = atom<boolean>(false);
 /** 워크로드 수정 모달 표시 여부 */

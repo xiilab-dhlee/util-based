@@ -3,7 +3,7 @@
 import { useSetAtom } from "jotai";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import { Input, Modal } from "xiilab-ui";
+import { Icon, Input, Modal } from "xiilab-ui";
 
 import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
 import {
@@ -12,7 +12,6 @@ import {
 } from "@/domain/volume/state/volume.atom";
 import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
 import { FormLabel } from "@/shared/components/form/form-label";
-import { StorageIcon } from "@/shared/components/icon/storage-icon";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -102,14 +101,14 @@ export function CreateOnPremVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<StorageIcon fill="#fff" width={14} height={14} />}
+      icon={<Icon name="OnPremiseStorage" color="#fff" size={14} />}
       open={open}
       // closable
       title="On-premise Storage"
       showCancelButton
       cancelText="이전"
       onCancel={handleCancel}
-      okText="추가"
+      okText="생성"
       onOk={handleSubmit}
       centered
       okButtonProps={{

@@ -1,14 +1,17 @@
-import { format } from "date-fns";
-import type { ResponsiveColumnType } from "xiilab-ui";
+import type { ResponsiveColumnType, TagProps } from "xiilab-ui";
 import { Tag } from "xiilab-ui";
 
-import { SourcecodeAllCheck } from "@/domain/sourcecode/components/list/sourcecode-all-check";
-import { SourcecodeItemCheck } from "@/domain/sourcecode/components/list/sourcecode-item-check";
+import { SourcecodeAllCheck } from "@/domain/sourcecode/components/sourcecode-all-check";
+import { SourcecodeItemCheck } from "@/domain/sourcecode/components/sourcecode-item-check";
 import type {
   SourcecodeListType,
+  SourcecodeStatusType,
   SourcecodeType,
 } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
+import {
+  getSourcecodeStatusInfo,
+  getSourcecodeTypeInfo,
+} from "@/domain/sourcecode/utils/sourcecode.util";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
@@ -31,11 +34,25 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
     },
     {
+      dataIndex: "url",
+      title: "Git URL",
+      align: "left",
+    },
+    {
       dataIndex: "creatorName",
       title: "생성자",
       align: "center",
       render: (creatorName: string) => {
         return <ColumnAlignCenterWrap>{creatorName}</ColumnAlignCenterWrap>;
+      },
+    },
+    {
+      dataIndex: "status",
+      title: "공개 설정",
+      align: "center",
+      render: (status: SourcecodeStatusType) => {
+        const { text } = getSourcecodeStatusInfo(status);
+        return <ColumnAlignCenterWrap>{text}</ColumnAlignCenterWrap>;
       },
     },
     {
@@ -47,11 +64,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "type",
       title: "타입",
       align: "center",
+      width: 100,
       render: (codeType: SourcecodeType) => {
-        const { text } = getSourcecodeTypeInfo(codeType);
+        const { text, tag } = getSourcecodeTypeInfo(codeType);
         return (
           <ColumnAlignCenterWrap>
-            <Tag variant="yellow" theme="light">
+            <Tag variant={tag as TagProps["variant"]} theme="light">
               {text}
             </Tag>
           </ColumnAlignCenterWrap>
@@ -62,18 +80,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "cmd",
       title: "실행 명령어",
       align: "left",
-    },
-    {
-      dataIndex: "creatorDate",
-      title: "생성일",
-      align: "center",
-      render: (creatorDate: string) => {
-        return (
-          <ColumnAlignCenterWrap>
-            {format(creatorDate, "yyyy-MM-dd HH:mm:ss")}
-          </ColumnAlignCenterWrap>
-        );
-      },
     },
   ];
 };

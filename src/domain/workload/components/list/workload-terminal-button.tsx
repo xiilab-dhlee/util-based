@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { ColumnRouteIcon } from "@/shared/components/column/column-route-icon";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { isAdminMode } from "@/shared/utils/router.util";
 
 interface WorkloadTerminalButtonProps {
@@ -31,7 +32,7 @@ export function WorkloadTerminalButton({
       iconSize={22}
       href={href}
       disabled={disabled}
-      data-testid="workload-terminal-button"
+      data-testid={WORKLOAD_SELECTOR.TERMINAL_BUTTON}
     />
   );
 }

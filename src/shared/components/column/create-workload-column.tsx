@@ -16,6 +16,7 @@ import type {
 } from "@/domain/workload/schemas/workload.schema";
 import { WorkloadStatusText } from "@/shared/components/text/workload-status-text";
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatElapsedTime } from "@/shared/utils/date.util";
@@ -41,19 +42,15 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
       render: (
         workloadName: string,
-        { workspaceId, id }: WorkloadListType,
-        index: number,
+        { workspaceId, id, revokeWarningCount, isRevoked }: WorkloadListType,
       ) => {
-        const isRecovered = index % 3 === 0;
-        const isRevoked = index % 3 === 1;
         return (
           <WorkloadNameLink
             workspaceId={workspaceId}
             workloadId={id}
             workloadName={workloadName}
-            resourceRecoveryWarningCount={isRecovered ? 9999 : 0}
+            revokeWarningCount={revokeWarningCount}
             isRevoked={isRevoked}
-            data-testid={`workload-name-${id}`}
           />
         );
       },
@@ -68,7 +65,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
           <ColumnAlignCenterWrap>
             <span
               style={{ textTransform: "capitalize" }}
-              data-testid={`workload-job-type-${id}`}
+              data-testid={WORKLOAD_SELECTOR.jobType(id)}
             >
               {jobType.toLowerCase()}
             </span>
@@ -83,7 +80,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 140,
       render: (elapsedTime: string, { id }: WorkloadListType) => {
         return (
-          <span data-testid={`workload-elapsed-time-${id}`}>
+          <span data-testid={WORKLOAD_SELECTOR.elapsedTime(id)}>
             {formatElapsedTime(elapsedTime)}
           </span>
         );
@@ -151,7 +148,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
             <ColumnIconWrap
               onClick={() => alert("준비 중입니다.")}
               disabled={!isActive}
-              data-testid="workload-connect-button"
+              data-testid={WORKLOAD_SELECTOR.CONNECT_BUTTON}
             >
               <Icon name="Port" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>
