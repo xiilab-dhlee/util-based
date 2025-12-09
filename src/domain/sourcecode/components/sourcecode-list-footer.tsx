@@ -3,17 +3,20 @@
 import { useAtom, useAtomValue } from "jotai";
 import { toast } from "react-toastify";
 
-import { useGetSourcecodes } from "@/domain/sourcecode/hooks/use-get-sourcecodes";
 import {
   sourcecodeCheckedListAtom,
   sourcecodePageAtom,
-  sourcecodeSearchTextAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+
+interface SourcecodeListFooterProps {
+  total: number;
+  loading: boolean;
+}
 
 /**
  * 소스코드 목록 페이지 하단 푸터 컴포넌트
@@ -22,23 +25,19 @@ import { usePublish } from "@/shared/hooks/use-pub-sub";
  * 현재 페이지 번호, 총 소스코드 수, 페이지 크기를 표시하고,
  * 페이지 변경 시 상태를 업데이트합니다.
  *
+ * @param total - 전체 소스코드 수
+ * @param loading - 로딩 상태
  * @returns 소스코드 목록 페이지 하단 푸터 컴포넌트
  */
-export function SourcecodeListFooter() {
+export function SourcecodeListFooter({
+  total,
+  loading,
+}: SourcecodeListFooterProps) {
   const publish = usePublish();
   // 현재 페이지 번호 (읽기/쓰기 가능한 Jotai atom)
   const [page, setPage] = useAtom(sourcecodePageAtom);
-  // 검색 텍스트 (읽기 전용 Jotai atom)
-  const searchText = useAtomValue(sourcecodeSearchTextAtom);
   // 체크된 소스코드 목록
   const selectedSourcecodes = useAtomValue(sourcecodeCheckedListAtom);
-
-  // 소스코드 목록 데이터 조회 (React Query 훅 사용)
-  const { data, isLoading } = useGetSourcecodes({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
 
   /**
    * 페이지 변경 핸들러
@@ -66,11 +65,11 @@ export function SourcecodeListFooter() {
 
   return (
     <ListPageFooter
-      total={data?.totalSize || 0}
+      total={total}
       page={page}
       pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
-      isLoading={isLoading}
+      isLoading={loading}
       rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
     />
   );

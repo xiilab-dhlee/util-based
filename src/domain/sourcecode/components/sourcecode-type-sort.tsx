@@ -5,15 +5,20 @@ import { SOURCECODE_TYPE_OPTIONS } from "@/domain/sourcecode/constants/sourcecod
 import { sourcecodeTypeAtom } from "@/domain/sourcecode/state/sourcecode.atom";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
+interface SourcecodeTypeSortProps {
+  disabled?: boolean;
+}
+
 /**
  * 소스코드 타입별 정렬 컴포넌트
  *
  * 소스코드 목록에서 타입(GitHub, GitLab, Bitbucket)을 선택하여
  * 해당 타입의 소스코드만 필터링할 수 있는 드롭다운 선택기를 제공합니다.
  *
+ * @param disabled - 비활성화 상태
  * @returns 소스코드 타입 선택 드롭다운 컴포넌트
  */
-export function SourcecodeTypeSort() {
+export function SourcecodeTypeSort({ disabled }: SourcecodeTypeSortProps) {
   const [codeType, setCodeType] = useAtom(sourcecodeTypeAtom);
 
   /**
@@ -33,6 +38,7 @@ export function SourcecodeTypeSort() {
       value={codeType}
       width={120}
       height={30}
+      disabled={disabled}
     />
   );
 }
