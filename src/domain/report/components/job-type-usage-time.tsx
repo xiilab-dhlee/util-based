@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { Typography } from "xiilab-ui";
+import { Card, Typography } from "xiilab-ui";
 
 import type { WorkloadJobType } from "@/shared/constants/workload.constant";
 import {
@@ -27,11 +27,13 @@ export function JobTypeUsageTime({ data }: JobTypeUsageTimeProps) {
   // 최소 너비 보장 (백분율) - 시간과 퍼센트를 표시하기 위한 최소 공간
   const MIN_WIDTH_PERCENT = 15;
 
-  // 각 세그먼트가 최소 너비를 가지도록 조정
   const segments = data.map((item) => {
-    const adjustedWidth = Math.max(item.percentage, MIN_WIDTH_PERCENT);
+    const naturalWidth = item.percentage;
+    const adjustedWidth = Math.max(naturalWidth, MIN_WIDTH_PERCENT);
+
     return {
       ...item,
+      naturalWidth,
       adjustedWidth,
       label: WORKLOAD_JOB_TYPE_LABEL_MAP[item.type],
       color: WORKLOAD_JOB_TYPE_COLOR_MAP[item.type],
@@ -39,9 +41,11 @@ export function JobTypeUsageTime({ data }: JobTypeUsageTimeProps) {
   });
 
   return (
-    <Container>
-      <Header>
-        <Title>Job Type별 사용 시간</Title>
+    <Card
+      hoverable={false}
+      contentVariant="compact"
+      title="Job Type별 사용 시간"
+      actionElement={
         <LegendGroup>
           {segments.map((segment) => (
             <LegendItem key={segment.type}>
@@ -50,56 +54,33 @@ export function JobTypeUsageTime({ data }: JobTypeUsageTimeProps) {
             </LegendItem>
           ))}
         </LegendGroup>
-      </Header>
-
+      }
+    >
       <ContentBox>
-        {segments.map((segment, index) => (
-          <SegmentInfo key={segment.type} $width={segment.adjustedWidth}>
-            <TimeText>{segment.time}</TimeText>
-            <PercentText>({segment.percentage}%)</PercentText>
-            {index > 0 && <VerticalDivider />}
-          </SegmentInfo>
-        ))}
+        <SegmentRow>
+          {segments.map((segment) => (
+            <SegmentInfo key={segment.type} $width={segment.naturalWidth}>
+              <TimeText>{segment.time}</TimeText>
+              <PercentText>({segment.percentage}%)</PercentText>
+            </SegmentInfo>
+          ))}
+        </SegmentRow>
 
         <ProgressBarContainer>
           {segments.map((segment, index) => (
             <ProgressSegment
               key={segment.type}
               $color={segment.color}
-              $width={segment.adjustedWidth}
+              $width={segment.naturalWidth}
               $isFirst={index === 0}
               $isLast={index === segments.length - 1}
             />
           ))}
         </ProgressBarContainer>
       </ContentBox>
-    </Container>
+    </Card>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background-color: #f7f9fb;
-  border: 1px solid #d1d5dc;
-  border-radius: 4px;
-  padding: 16px 12px 12px 12px;
-  box-shadow: 0px 4px 4px 0px rgba(171, 171, 171, 0.15),
-    inset 0px 4px 4px 0px rgba(255, 255, 255, 0.25);
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled(Typography.Text).attrs({
-  variant: "subtitle-2-1",
-})`
-  color: #191b26;
-`;
 
 const LegendGroup = styled.div`
   display: flex;
@@ -127,25 +108,32 @@ const LegendText = styled(Typography.Text).attrs({
 `;
 
 const ContentBox = styled.div`
-  position: relative;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
   background-color: #ffffff;
-  border: 1px solid #e9ebee;
   border-radius: 4px;
   padding: 12px;
-  gap: 0;
-  min-height: 82px;
+  gap: 8px;
+  width: 100%;
+`;
+
+const SegmentRow = styled.div`
+  display: flex;
+  width: 100%;
 `;
 
 const SegmentInfo = styled.div<{ $width: number }>`
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2px;
   flex-basis: ${({ $width }) => $width}%;
   flex-shrink: 0;
   padding-left: 10px;
+
+  &:not(:first-child) {
+    border-left: 1px solid #e5e5e5;
+  }
 `;
 
 const TimeText = styled(Typography.Text).attrs({
@@ -162,25 +150,13 @@ const PercentText = styled(Typography.Text).attrs({
   font-size: 11px;
 `;
 
-const VerticalDivider = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1px;
-  height: 52px;
-  background-color: #e5e5e5;
-`;
-
 const ProgressBarContainer = styled.div`
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  height: 6px;
   display: flex;
-  gap: 2px;
+  width: 100%;
+  height: 6px;
   border-radius: 3px;
   overflow: hidden;
+  background-color: #ffffff;
 `;
 
 const ProgressSegment = styled.div<{
@@ -189,14 +165,23 @@ const ProgressSegment = styled.div<{
   $isFirst: boolean;
   $isLast: boolean;
 }>`
-  height: 100%;
-  background-color: ${({ $color }) => $color};
+  position: relative;
   flex-basis: ${({ $width }) => $width}%;
   flex-shrink: 0;
-  border-radius: ${({ $isFirst, $isLast }) => {
-    if ($isFirst && $isLast) return "3px";
-    if ($isFirst) return "3px 0 0 3px";
-    if ($isLast) return "0 3px 3px 0";
-    return "0";
-  }};
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: ${({ $isFirst }) => ($isFirst ? 0 : 1)}px;
+    right: ${({ $isLast }) => ($isLast ? 0 : 1)}px;
+    background-color: ${({ $color }) => $color};
+    border-radius: ${({ $isFirst, $isLast }) => {
+      if ($isFirst && $isLast) return "3px";
+      if ($isFirst) return "3px 0 0 3px";
+      if ($isLast) return "0 3px 3px 0";
+      return "0";
+    }};
+  }
 `;
