@@ -1,21 +1,26 @@
 "use client";
 
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import type { FormEvent } from "react";
-import { Button } from "xiilab-ui";
+import styled from "styled-components";
+import { Button, Checkbox } from "xiilab-ui";
 
-import { useGetVolumes } from "@/domain/volume/hooks/use-get-volumes";
 import {
   openSelectVolumeModalAtom,
-  volumePageAtom,
   volumeSearchTextAtom,
   volumeSelectedAtom,
 } from "@/domain/volume/state/volume.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSearch } from "@/shared/hooks/use-search";
+
+interface VolumeListFilterProps {
+  /** 전체 볼륨 수 */
+  total: number;
+  /** 로딩 상태 */
+  loading: boolean;
+}
 
 /**
  * 볼륨 목록 페이지 상단 필터 컴포넌트
@@ -23,22 +28,13 @@ import { useSearch } from "@/shared/hooks/use-search";
  * 볼륨 목록 페이지에서 검색어와 볼륨 타입을 필터링하는 기능을 제공합니다.
  * 볼륨 이름 검색과 타입별 정렬을 통해 원하는 볼륨을 빠르게 찾을 수 있습니다.
  *
- * @returns 볼륨 목록 페이지 상단 필터 컴포넌트
+ * @param total - 전체 볼륨 수
+ * @param loading - 로딩 상태
  */
-export function VolumeListFilter() {
+export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
   const setSelectedVolume = useSetAtom(volumeSelectedAtom);
   const { onSubmit } = useSearch(volumeSearchTextAtom);
   const { onOpen } = useGlobalModal(openSelectVolumeModalAtom);
-
-  const page = useAtomValue(volumePageAtom);
-
-  const searchText = useAtomValue(volumeSearchTextAtom);
-
-  const { data } = useGetVolumes({
-    page,
-    size: CARD_PAGE_SIZE,
-    searchText,
-  });
 
   const handleCreateVolume = () => {
     onOpen();
@@ -51,21 +47,59 @@ export function VolumeListFilter() {
   };
 
   return (
-    <MySearchFilter title="볼륨 목록" total={data?.totalSize}>
-      <form onSubmit={handleSubmit}>
-        <SearchInput />
-      </form>
-      <Button
-        color="primary"
-        icon="Plus"
-        iconPosition="left"
-        variant="gradient"
-        width={100}
-        height={30}
-        onClick={handleCreateVolume}
-      >
-        볼륨 생성
-      </Button>
+    <MySearchFilter title="볼륨 목록" total={total}>
+      <Container>
+        <Left>
+          <Checkbox size="small">내가 생성한 볼륨 보기</Checkbox>
+        </Left>
+        <Right>
+          <form onSubmit={handleSubmit}>
+            <SearchInput
+              disabled={loading}
+              placeholder="볼륨 또는 생성자 이름 검색"
+            />
+          </form>
+          <Button
+            color="primary"
+            icon="Plus"
+            iconPosition="left"
+            variant="gradient"
+            width={100}
+            height={30}
+            onClick={handleCreateVolume}
+            disabled={loading}
+          >
+            볼륨 생성
+          </Button>
+        </Right>
+      </Container>
     </MySearchFilter>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+`;
+
+const Left = styled.div`
+  padding-left: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  & .ant-checkbox-label {
+    padding-left: 0;
+    margin-left: 4px !important;
+    line-height: 16px;
+  }
+`;
+
+const Right = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+`;

@@ -2,10 +2,9 @@
 
 import classNames from "classnames";
 import styled from "styled-components";
+import { Icon } from "xiilab-ui";
 
 import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
-import { StorageIcon } from "@/shared/components/icon/storage-icon";
 
 /**
  * 볼륨 스토리지 타입 선택을 위한 카드 컴포넌트
@@ -49,7 +48,7 @@ export function VolumeStorageCard({
   if (storageType === "ASTRAGO") {
     from = "Local";
     storageName = "AstraGo Storage";
-    icon = <AstragoIcon />;
+    icon = <Icon name="Astrago" color="#5b29c7" size={32} />;
     iconClassName = "astrago";
     description = (
       <>
@@ -62,7 +61,9 @@ export function VolumeStorageCard({
   else if (storageType === "LOCAL") {
     from = "External Data Source";
     storageName = "On-premise Storage";
-    icon = <StorageIcon />;
+    icon = (
+      <Icon name="OnPremiseStorage" color="rgba(0, 20, 197, 60%)" size={24} />
+    );
     iconClassName = "on-premise";
     description = (
       <>

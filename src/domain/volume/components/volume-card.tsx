@@ -1,15 +1,18 @@
 "use client";
 
-import { format } from "date-fns";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import styled from "styled-components";
-import { Card } from "xiilab-ui";
+import { Card, Icon } from "xiilab-ui";
 
 import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
-import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
-import { StorageIcon } from "@/shared/components/icon/storage-icon";
-import { PreviewTag } from "@/shared/components/tag/preview-tag";
+import {
+  volumeCheckedListAtom,
+  volumeSelectedAtom,
+} from "@/domain/volume/state/volume.atom";
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
+import { SecurityLevelText } from "@/shared/components/text/security-status-text";
+
+// import { PreviewTag } from "@/shared/components/tag/preview-tag";
 
 interface VolumeCardProps extends VolumeListType {
   isSelected: boolean;
@@ -25,42 +28,47 @@ export function VolumeCard({
   uid,
   name,
   creatorName,
-  creatorDate,
   storageType,
   path,
-  labels,
   isSelected,
 }: VolumeCardProps) {
   const setSelectedVolume = useSetAtom(volumeSelectedAtom);
+  const [checkedList, setCheckedList] = useAtom(volumeCheckedListAtom);
+
+  const { text, icon } = getVolumeStorageTypeInfo(storageType);
+  const isChecked = checkedList.has(uid);
+
   // 카드 클릭 핸들러 - 선택 볼륨 상태 변경
   const handleClickCard = () => {
     setSelectedVolume(uid);
   };
 
   /**
-   * 체크박스 클릭 핸들러 (현재 미구현)
+   * 체크박스 클릭 핸들러 - 체크 상태 토글
    */
-  const handleClickCheckbox = () => {
-    // TODO: 체크박스 선택 로직 구현 필요
+  const handleClickCheckbox = (checked: boolean) => {
+    setCheckedList((prev) => {
+      const next = new Set(prev);
+      if (checked) {
+        next.add(uid);
+      } else {
+        next.delete(uid);
+      }
+      return next;
+    });
   };
 
   return (
     <Card
       contentVariant="default"
-      height={156}
       onCheckboxChange={handleClickCheckbox}
       onClick={handleClickCard}
       // subtitle="Optional subtitle"
       title={name}
       showCheckBox
+      checked={isChecked}
       // 스토리지 타입에 따라 아이콘 변경
-      icon={
-        storageType.toLowerCase() === "astrago" ? (
-          <AstragoIcon />
-        ) : storageType.toLowerCase() === "storage" ? (
-          <StorageIcon />
-        ) : null
-      }
+      icon={<Icon name={icon} size={24} color="#5b29c7" />}
       // 선택된 볼륨 카드 스타일
       style={{ borderColor: isSelected ? "#366BFF" : "" }}
     >
@@ -69,40 +77,47 @@ export function VolumeCard({
         <Body>
           {/* 왼쪽: 정보 라벨 */}
           <CardLeft>
+            <CardKey>스토리지 타입</CardKey>
+            <MultiLineKey>취약점 결과</MultiLineKey>
+            <CardKey>Mount Path</CardKey>
             <CardKey>생성자</CardKey>
-            <CardKey>생성일</CardKey>
-            <CardKey>취약점</CardKey>
-            <CardKey>경 로</CardKey>
           </CardLeft>
           {/* 오른쪽: 정보 값 */}
           <CardRight>
-            <CardValue>{creatorName}</CardValue>
-            <CardValue>{format(creatorDate, "yyyy-MM-dd")}</CardValue>
-            {/* 보안 취약점 정보 */}
-            <CardValue>
-              <div>
-                <SecurityLabel className="critical">심각</SecurityLabel>
-                <SecurityUnit>7,777개</SecurityUnit>
-              </div>
-              <div>
-                <SecurityLabel className="high">높음</SecurityLabel>
-                <SecurityUnit>7,777개</SecurityUnit>
-              </div>
-              <div>
-                <SecurityLabel className="low">낮음</SecurityLabel>
-                <SecurityUnit>7,777개</SecurityUnit>
-              </div>
-            </CardValue>
+            <CardValue>{text}</CardValue>
+            <CardGrid>
+              <CardGridItem>
+                <SecurityLevelText type="engText" status="CRITICAL">
+                  <SecurityCount>77,777개</SecurityCount>
+                </SecurityLevelText>
+              </CardGridItem>
+              <CardGridItem>
+                <SecurityLevelText type="engText" status="HIGH">
+                  <SecurityCount>77,777개</SecurityCount>
+                </SecurityLevelText>
+              </CardGridItem>
+              <CardGridItem>
+                <SecurityLevelText type="engText" status="MEDIUM">
+                  <SecurityCount>77,777개</SecurityCount>
+                </SecurityLevelText>
+              </CardGridItem>
+              <CardGridItem>
+                <SecurityLevelText type="engText" status="LOW">
+                  <SecurityCount>77,777개</SecurityCount>
+                </SecurityLevelText>
+              </CardGridItem>
+            </CardGrid>
             {/* 볼륨 경로 정보 */}
             <CardValue>
-              <CardPath>{path || "-"}</CardPath>
+              <div className="truncate">{path || "-"}</div>
             </CardValue>
+            <CardValue>{creatorName}</CardValue>
           </CardRight>
         </Body>
         {/* 카드 하단: 태그 및 액션 버튼 */}
-        <Footer>
+        {/* <Footer>
           <PreviewTag labels={labels} height={20} />
-        </Footer>
+        </Footer> */}
       </Container>
     </Card>
   );
@@ -136,24 +151,24 @@ const Body = styled.div`
  * 카드 하단 스타일
  * 태그와 액션 버튼을 가로로 배치
  */
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 4px;
-  width: 100%;
-`;
+// const Footer = styled.div`
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   gap: 4px;
+//   width: 100%;
+// `;
 
 /**
  * 왼쪽 정보 라벨 영역 스타일
  * 오른쪽 경계선과 함께 세로 배치
  */
 const CardLeft = styled.div`
-  width: 36px;
+  width: 65px;
   border-right: 1px solid #e9ebee;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 `;
 
 /**
@@ -166,6 +181,16 @@ const CardKey = styled.div`
   line-height: 12px;
   color: #484848;
   word-spacing: 0.1px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const MultiLineKey = styled(CardKey)`
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 34px;
 `;
 
 /**
@@ -177,7 +202,7 @@ const CardRight = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   padding-left: 10px;
 `;
 
@@ -195,48 +220,28 @@ const CardValue = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 14px;
+  flex: 1;
 `;
 
-/**
- * 볼륨 경로 텍스트 스타일
- * 긴 경로를 말줄임표로 처리하고 회색 텍스트 사용
- */
-const CardPath = styled.span`
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 1;
-  color: #707070;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  display: inline-block;
-  width: 100%;
+const CardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
 `;
 
-/**
- * 보안 취약점 라벨 스타일
- * 심각도별 색상 구분 (심각: 빨강, 높음: 주황, 낮음: 초록)
- */
-const SecurityLabel = styled.span`
-  font-weight: 600;
-  font-size: 10px;
-  margin-right: 2px;
-
-  &.critical {
-    color: #e85a5a; /* 심각: 빨간색 */
-  }
-
-  &.low {
-    color: #00911d; /* 낮음: 초록색 */
-  }
-
-  &.high {
-    color: #ffa052; /* 높음: 주황색 */
-  }
+const CardGridItem = styled.div`
+  grid-column: span 1;
 `;
 
 /**
  * 보안 취약점 개수 단위 스타일
  * 기본 스타일만 정의 (추가 스타일링 필요시 확장)
  */
-const SecurityUnit = styled.span``;
+const SecurityCount = styled.span`
+  color: #000;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px; 
+  padding-left: 4px;
+`;

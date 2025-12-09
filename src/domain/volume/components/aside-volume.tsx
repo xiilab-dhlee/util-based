@@ -2,13 +2,12 @@
 
 import { useAtomValue } from "jotai";
 import { useState } from "react";
-import type { TabsSeparatedItem } from "xiilab-ui";
+import styled from "styled-components";
+import { Icon, type TabsSeparatedItem, Typography } from "xiilab-ui";
 
 import { ManageVolumeFile } from "@/domain/volume/components/file/manage-volume-file";
 import { useGetVolume } from "@/domain/volume/hooks/use-get-volume";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
-import { StorageIcon } from "@/shared/components/icon/storage-icon";
 import { StateTab } from "@/shared/components/tab";
 import {
   AsideDetailContainer,
@@ -27,11 +26,6 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
     key: "file",
     label: "파일 목록",
     icon: "Folder",
-  },
-  {
-    key: "security",
-    label: "보안 취약점 파일목록",
-    icon: "Security",
   },
 ];
 
@@ -82,14 +76,29 @@ export function AsideVolume() {
   return (
     <AsideDetailContainer>
       <AsideDetailHeader>
-        <AsideDetailHeaderTitle>
-          {data?.storageType?.toLowerCase() === "astrago" ? (
-            <AstragoIcon />
-          ) : data?.storageType?.toLowerCase() === "storage" ? (
-            <StorageIcon />
-          ) : null}
-          <span>{data?.name}</span>
-        </AsideDetailHeaderTitle>
+        <AsideDetailHeaderTitle>상세 정보</AsideDetailHeaderTitle>
+        {selectedTab === "" ? (
+          <Icons>
+            <IconWrapper
+              type="button"
+              className="icon-button"
+              // onClick={handleModify}
+            >
+              <Icon name="Edit02" color="#000" />
+            </IconWrapper>
+            <IconWrapper
+              type="button"
+              className="icon-button"
+              // onClick={handleDelete}
+            >
+              <Icon name="Delete" color="#000" />
+            </IconWrapper>
+          </Icons>
+        ) : (
+          <Typography.Text variant="body-1-3" color="#777">
+            {data?.name}
+          </Typography.Text>
+        )}
       </AsideDetailHeader>
       <div style={{ marginBottom: 10 }}>
         <StateTab
@@ -102,3 +111,19 @@ export function AsideVolume() {
     </AsideDetailContainer>
   );
 }
+const IconWrapper = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  border: 1px solid #e0e0e0;
+`;
+
+const Icons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+`;

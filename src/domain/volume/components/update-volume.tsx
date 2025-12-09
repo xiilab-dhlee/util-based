@@ -4,7 +4,11 @@ import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import { Button, Input, Tag } from "xiilab-ui";
+import {
+  Button,
+  Input,
+  //  Tag
+} from "xiilab-ui";
 
 import { useGetVolume } from "@/domain/volume/hooks/use-get-volume";
 import { useUpdateVolume } from "@/domain/volume/hooks/use-update-volume";
@@ -13,8 +17,8 @@ import type { UpdateVolumePayload } from "@/domain/volume/types/volume.type";
 import { workloadListMock } from "@/mocks/data/workload.mock";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
-import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+// import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
+// import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
@@ -29,6 +33,10 @@ import {
   AsideDetailArticleValue,
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
+import {
+  getVolumeStatusInfo,
+  getVolumeStorageTypeInfo,
+} from "../utils/volume.util";
 import { EmptyVolumeWorkload } from "./empty-volume-workload";
 import { VolumeWorkloadCard } from "./volume-workload-card";
 
@@ -60,13 +68,16 @@ export function UpdateVolume() {
   // Next.js 라우터 인스턴스 - 현재 경로 및 쿼리 파라미터 접근
 
   // PubSub 퍼블리셔 - 이벤트 발행을 위한 훅
-  const publish = usePublish();
+  // const publish = usePublish();
 
   // 수정 뮤테이션 훅
   const updateVolume = useUpdateVolume();
 
   // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
   const [isReadOnly, setIsReadOnly] = useState(true);
+
+  const { text } = getVolumeStorageTypeInfo(data?.storageType || "ASTRAGO");
+  const { text: statusText } = getVolumeStatusInfo(data?.status || "PUBLIC");
   /**
    * 수정 모드 전환 핸들러
    *
@@ -85,17 +96,6 @@ export function UpdateVolume() {
         updateVolume.mutate(payload);
       }
     }
-  };
-
-  /**
-   * 볼륨 삭제 핸들러
-   *
-   * PubSub을 통해 삭제 모달을 열도록 이벤트를 발행합니다.
-   * 현재 라우터의 쿼리에서 볼륨 ID를 가져와 삭제 대상으로 전달합니다.
-   */
-  const handleDelete = () => {
-    // 삭제 모달 열기 - PubSub 이벤트 발행
-    publish(VOLUME_EVENTS.sendDeleteVolume, [{ uid: selectedVolume || "" }]);
   };
 
   /**
@@ -144,28 +144,18 @@ export function UpdateVolume() {
             </AsideDetailArticleHeader>
             {isReadOnly && (
               <AsideDetailArticleColumn>
-                <AsideDetailArticleRow>
-                  <AsideDetailArticleRowItem>
-                    <AsideDetailArticleColumn>
-                      <AsideDetailArticleKey>볼륨 이름</AsideDetailArticleKey>
-                      <AsideDetailArticleValue className="truncate">
-                        {data?.name}
-                      </AsideDetailArticleValue>
-                    </AsideDetailArticleColumn>
-                  </AsideDetailArticleRowItem>
-                  <AsideDetailArticleRowItem>
-                    <AsideDetailArticleColumn>
-                      <AsideDetailArticleKey>
-                        스토리지 타입
-                      </AsideDetailArticleKey>
-                      <AsideDetailArticleValue className="truncate">
-                        <span style={{ textTransform: "capitalize" }}>
-                          {data?.storageType.toLowerCase()} Storage
-                        </span>
-                      </AsideDetailArticleValue>
-                    </AsideDetailArticleColumn>
-                  </AsideDetailArticleRowItem>
-                </AsideDetailArticleRow>
+                <AsideDetailArticleKey>볼륨 이름</AsideDetailArticleKey>
+                <AsideDetailArticleValue className="truncate">
+                  {data?.name}
+                </AsideDetailArticleValue>
+              </AsideDetailArticleColumn>
+            )}
+            {isReadOnly && (
+              <AsideDetailArticleColumn>
+                <AsideDetailArticleKey>스토리지 타입</AsideDetailArticleKey>
+                <AsideDetailArticleValue className="truncate">
+                  {text}
+                </AsideDetailArticleValue>
               </AsideDetailArticleColumn>
             )}
             {!isReadOnly && (
@@ -197,23 +187,32 @@ export function UpdateVolume() {
             )}
 
             <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>보안 검증</AsideDetailArticleKey>
+              <AsideDetailArticleKey>보안검사 결과</AsideDetailArticleKey>
               <AsideDetailArticleValue>
                 <SecurityStatuses>
-                  <SecurityLevelText status="CRITICAL">
+                  <SecurityLevelText type="engText" status="CRITICAL">
                     <SecurityCount>7,777개</SecurityCount>
                   </SecurityLevelText>
-                  <SecurityLevelText status="HIGH">
+                  <SecurityLevelText type="engText" status="HIGH">
                     <SecurityCount>7,777개</SecurityCount>
                   </SecurityLevelText>
-                  <SecurityLevelText status="LOW">
+                  <SecurityLevelText type="engText" status="MEDIUM">
+                    <SecurityCount>7,777개</SecurityCount>
+                  </SecurityLevelText>
+                  <SecurityLevelText type="engText" status="LOW">
                     <SecurityCount>7,777개</SecurityCount>
                   </SecurityLevelText>
                 </SecurityStatuses>
               </AsideDetailArticleValue>
             </AsideDetailArticleColumn>
+            {isReadOnly && (
+              <AsideDetailArticleColumn>
+                <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
+                <AsideDetailArticleValue>{statusText}</AsideDetailArticleValue>
+              </AsideDetailArticleColumn>
+            )}
             <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>마운트 경로</AsideDetailArticleKey>
+              <AsideDetailArticleKey>Mount Path</AsideDetailArticleKey>
               {/* 읽기 전용 모드일 때만 표시 */}
               {isReadOnly && (
                 <AsideDetailArticleValue className="truncate">
@@ -233,7 +232,8 @@ export function UpdateVolume() {
                 />
               </div>
             )}
-            <AsideDetailArticleColumn>
+            {/* TODO: 라벨 기능 추가 시 활성화 */}
+            {/* <AsideDetailArticleColumn>
               <AsideDetailArticleKey>라벨</AsideDetailArticleKey>
               <AsideDetailArticleValue>
                 <Tags>
@@ -244,7 +244,7 @@ export function UpdateVolume() {
                   ))}
                 </Tags>
               </AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
+            </AsideDetailArticleColumn> */}
           </AsideDetailArticleItem>
           {/* 생성자 정보 섹션 */}
           <AsideDetailArticleItem>
@@ -318,35 +318,28 @@ export function UpdateVolume() {
       </SecondaryArticle>
 
       {/* 하단 버튼 영역 */}
-      <AsideDetailFooter>
-        {/* 좌측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
-        <div style={{ width: 112 }}>
-          {isReadOnly ? (
-            // 읽기 전용 모드: 삭제 버튼
-            <Button width="100%" variant="outlined" onClick={handleDelete}>
-              삭제
-            </Button>
-          ) : (
-            // 수정 모드: 취소 버튼
-            <Button width="100%" variant="outlined" onClick={handleCancel}>
-              취소
-            </Button>
-          )}
-        </div>
-        {/* 우측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
-        <Button
-          color="primary"
-          icon={isReadOnly ? "Edit01" : "Check"}
-          iconPosition="left"
-          iconSize={20}
-          size="medium"
-          variant={isReadOnly ? "outlined" : "gradient"}
-          width="100%"
-          onClick={handleModify}
-        >
-          상세 정보 {isReadOnly ? "수정" : "저장"}
-        </Button>
-      </AsideDetailFooter>
+      {!isReadOnly && (
+        <AsideDetailFooter>
+          {/* 좌측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
+          <Button width={112} variant="outlined" onClick={handleCancel}>
+            취소
+          </Button>
+
+          {/* 우측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
+          <Button
+            color="primary"
+            icon="Check"
+            iconPosition="left"
+            iconSize={20}
+            size="medium"
+            variant="gradient"
+            width="100%"
+            onClick={handleModify}
+          >
+            상세 정보 저장
+          </Button>
+        </AsideDetailFooter>
+      )}
     </>
   );
 }
@@ -362,7 +355,6 @@ const SecurityStatuses = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 20px;
-  padding-left: 10px;
 `;
 
 const SecurityCount = styled.span`
@@ -372,12 +364,12 @@ const SecurityCount = styled.span`
   margin-left: 4px;
 `;
 
-const Tags = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 4px;
-`;
+// const Tags = styled.div`
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   gap: 4px;
+// `;
 
 const SecondaryArticleBody = styled.div`
   flex: 1;

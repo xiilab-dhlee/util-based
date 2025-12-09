@@ -3,17 +3,22 @@
 import { useAtom, useAtomValue } from "jotai";
 import { toast } from "react-toastify";
 
-import { useGetVolumes } from "@/domain/volume/hooks/use-get-volumes";
 import {
   volumeCheckedListAtom,
   volumePageAtom,
-  volumeSearchTextAtom,
 } from "@/domain/volume/state/volume.atom";
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+
+interface VolumeListFooterProps {
+  /** 전체 볼륨 수 */
+  total: number;
+  /** 로딩 상태 */
+  loading: boolean;
+}
 
 /**
  * 볼륨 목록 페이지 하단 푸터 컴포넌트
@@ -22,31 +27,15 @@ import { usePublish } from "@/shared/hooks/use-pub-sub";
  * 현재 페이지 번호, 총 볼륨 수, 페이지 크기를 표시하고,
  * 페이지 변경 시 상태를 업데이트합니다.
  *
- * @returns 볼륨 목록 페이지 하단 푸터 컴포넌트
+ * @param total - 전체 볼륨 수
+ * @param loading - 로딩 상태
  */
-export function VolumeListFooter() {
+export function VolumeListFooter({ total, loading }: VolumeListFooterProps) {
   const publish = usePublish();
   // 현재 페이지 번호 (읽기/쓰기 가능한 Jotai atom)
   const [page, setPage] = useAtom(volumePageAtom);
-  // 검색 텍스트 (읽기 전용 Jotai atom)
-  const searchText = useAtomValue(volumeSearchTextAtom);
   // 체크된 볼륨 목록
   const selectedVolumes = useAtomValue(volumeCheckedListAtom);
-
-  // 볼륨 목록 데이터 조회 (React Query 훅 사용)
-  const { data, isLoading } = useGetVolumes({
-    page,
-    size: CARD_PAGE_SIZE,
-    searchText,
-  });
-
-  /**
-   * 페이지 변경 핸들러
-   * @param page - 변경할 페이지 번호
-   */
-  const handlePage = (page: number) => {
-    setPage(page);
-  };
 
   /**
    * 삭제 버튼 클릭 핸들러
@@ -63,12 +52,12 @@ export function VolumeListFooter() {
 
   return (
     <ListPageFooter
-      total={data?.totalSize || 0}
+      total={total}
       page={page}
       pageSize={CARD_PAGE_SIZE}
-      onChange={handlePage}
+      onChange={setPage}
       rightChildren={<ListDeleteButton onClick={handleClickDelete} />}
-      isLoading={isLoading}
+      isLoading={loading}
     />
   );
 }

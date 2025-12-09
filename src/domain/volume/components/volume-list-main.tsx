@@ -1,5 +1,7 @@
 "use client";
 
+import { useAtomValue } from "jotai";
+
 import { AsideVolume } from "@/domain/volume/components/aside-volume";
 import { CompressVolumeFileModal } from "@/domain/volume/components/compress-volume-file-modal";
 import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
@@ -10,9 +12,14 @@ import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-
 import { VolumeListBody } from "@/domain/volume/components/volume-list-body";
 import { VolumeListFilter } from "@/domain/volume/components/volume-list-filter";
 import { VolumeListFooter } from "@/domain/volume/components/volume-list-footer";
+import { useGetVolumes } from "@/domain/volume/hooks/use-get-volumes";
+import {
+  volumePageAtom,
+  volumeSearchTextAtom,
+} from "@/domain/volume/state/volume.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
-import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
+import { ASIDE_WIDTH, CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
 import {
   ListPageAside,
   ListPageBody,
@@ -28,14 +35,25 @@ import {
  * @returns 볼륨 목록 페이지 JSX
  */
 export function VolumeListMain() {
+  // Atom 상태 읽기
+  const page = useAtomValue(volumePageAtom);
+  const searchText = useAtomValue(volumeSearchTextAtom);
+
+  // API 호출 (Main에서 한 번만 호출)
+  const { data, isLoading } = useGetVolumes({
+    page,
+    size: CARD_PAGE_SIZE,
+    searchText,
+  });
+
   return (
     <>
       <PageHeader pageKey="user.volume" description="Volume" />
       <ListPageMain>
         <ListPageBody>
-          <VolumeListFilter />
-          <VolumeListBody />
-          <VolumeListFooter />
+          <VolumeListFilter total={data?.totalSize || 0} loading={isLoading} />
+          <VolumeListBody content={data?.content || []} loading={isLoading} />
+          <VolumeListFooter total={data?.totalSize || 0} loading={isLoading} />
         </ListPageBody>
         <ListPageAside $width={ASIDE_WIDTH}>
           <AsideVolume />
