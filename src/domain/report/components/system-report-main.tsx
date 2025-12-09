@@ -1,7 +1,113 @@
 "use client";
 
+import { useParams } from "next/navigation";
+import styled from "styled-components";
+
+import {
+  REPORT_DATE_TYPE_TEXT,
+  REPORT_TYPE_TEXT,
+} from "@/domain/report/constants/report.constant";
+import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
+import { subTitleStyle } from "@/styles/mixins/text";
+import { NodeGpuChart } from "./node-gpu-chart";
+import { NodeGpuUsageCard } from "./node-gpu-usage-card";
 import { ReportFilter } from "./report-filter";
+import { SystemGpuUsageCard } from "./system-gpu-usage-card";
 
 export function SystemReportMain() {
-  return <ReportFilter />;
+  const params = useParams<{ id: string }>();
+  const { data, isLoading, isError } = useGetReportDetail(params.id);
+  console.log(data);
+  if (isLoading) {
+    return <LoadingWrapper>로딩 중...</LoadingWrapper>;
+  }
+
+  if (isError || !data) {
+    return <div>데이터를 불러올 수 없습니다.</div>;
+  }
+
+  const { resourceUsage, reportDateType, reportType } = data;
+  const reportTitle = `${REPORT_DATE_TYPE_TEXT[reportDateType]} ${REPORT_TYPE_TEXT[reportType]} 리포트`;
+
+  return (
+    <>
+      <Header>
+        <PageTitle>{reportTitle}</PageTitle>
+        <ReportFilter />
+      </Header>
+      <Body>
+        {/* Section 1: GPU 월 평균 사용률 */}
+        <Section>
+          <SectionTitle>
+            1. {resourceUsage.periodLabel} 리소스 사용현황
+          </SectionTitle>
+          <SubSection>
+            <SubTitle>GPU 월 평균 사용률</SubTitle>
+            <SystemGpuUsageCard resourceUsage={resourceUsage} />
+          </SubSection>
+
+          {/* Section 2: 노드별 GPU 사용률 */}
+          <SubSection>
+            <NodeGpuUsageCard
+              nodeName="Worker-1"
+              gpuModel="A100"
+              percentage={50}
+              chart={<NodeGpuChart nodeName="Worker-1" />}
+            />
+          </SubSection>
+        </Section>
+      </Body>
+    </>
+  );
 }
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 24px;
+`;
+
+const PageTitle = styled.h2`
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+`;
+
+const Body = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const SectionTitle = styled.h3`
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 16px;
+`;
+
+const SubTitle = styled.h4`
+  ${subTitleStyle(5)}
+  font-size: 15px;
+  margin-bottom: 14px;
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const SubSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;

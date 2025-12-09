@@ -12,11 +12,38 @@ import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { makeMock } from "@/shared/utils/mock.util";
 
 /**
- * 리포트 목록 Mock 데이터
+ * 고정된 UUID 목록 (테스트 시 일관성 유지)
  */
-export const reportListMock = Array.from({ length: LIST_PAGE_SIZE }, () =>
-  makeMock(reportListResponseSchema),
-);
+const FIXED_REPORT_IDS = [
+  "550e8400-e29b-41d4-a716-446655440000",
+  "550e8400-e29b-41d4-a716-446655440001",
+  "550e8400-e29b-41d4-a716-446655440002",
+  "550e8400-e29b-41d4-a716-446655440003",
+  "550e8400-e29b-41d4-a716-446655440004",
+  "550e8400-e29b-41d4-a716-446655440005",
+  "550e8400-e29b-41d4-a716-446655440006",
+  "550e8400-e29b-41d4-a716-446655440007",
+  "550e8400-e29b-41d4-a716-446655440008",
+  "550e8400-e29b-41d4-a716-446655440009",
+];
+
+/**
+ * 리포트 목록 Mock 데이터
+ * - 일관성을 위해 고정된 UUID와 reportType 사용
+ */
+export const reportListMock = Array.from({ length: LIST_PAGE_SIZE }, (_, i) => {
+  const reportType: "SYSTEM" | "CLUSTER" = i % 2 === 0 ? "SYSTEM" : "CLUSTER";
+  const reportDateType: "WEEKLY" | "MONTHLY" =
+    i % 3 === 0 ? "WEEKLY" : "MONTHLY";
+  const baseReport = makeMock(reportListResponseSchema);
+
+  return {
+    ...baseReport,
+    id: FIXED_REPORT_IDS[i] || `550e8400-e29b-41d4-a716-44665544${String(i).padStart(4, "0")}`,
+    reportType,
+    reportDateType,
+  };
+});
 
 /**
  * 리소스 타입별로 고유한 메트릭 생성
@@ -66,27 +93,59 @@ const createResourceTrends = (): ResourceTrend[] => {
 };
 
 /**
- * 리포트 상세 Mock 데이터
+ * ID로 리포트 상세 데이터를 생성
  */
-export const mockReportDetail: ReportDetailResponse = {
-  id: crypto.randomUUID(),
-  reportName: `테스트 리포트 ${Math.floor(Math.random() * 100)}`,
-  reportDateType: Math.random() > 0.5 ? "WEEKLY" : "MONTHLY",
-  reportType: Math.random() > 0.5 ? "SYSTEM" : "CLUSTER",
-  startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-  endDate: new Date().toISOString(),
-  creator: "관리자",
-  createdAt: new Date().toISOString(),
-  resourceUsage: {
-    periodLabel: "2025년 1월",
-    title: "클러스터 평균 리소스 활용률",
-    metrics: createResourceMetrics(),
-  },
-  resourceTrends: createResourceTrends(),
-  nodeDistribution: Array.from({ length: 10 }, () =>
-    makeMock(nodeWorkloadDistributionSchema),
+const createReportDetail = (
+  id: string,
+  reportType: "SYSTEM" | "CLUSTER",
+  reportDateType: "WEEKLY" | "MONTHLY",
+): ReportDetailResponse => {
+  return {
+    id,
+    reportName: `${reportType === "SYSTEM" ? "시스템" : "클러스터"} ${reportDateType === "WEEKLY" ? "주간" : "월간"} 리포트`,
+    reportDateType,
+    reportType,
+    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    endDate: new Date().toISOString(),
+    creator: "관리자",
+    createdAt: new Date().toISOString(),
+    resourceUsage: {
+      periodLabel: "2025년 1월",
+      title:
+        reportType === "SYSTEM"
+          ? "시스템 리소스 사용현황"
+          : "클러스터 평균 리소스 활용률",
+      metrics: createResourceMetrics(),
+    },
+    resourceTrends: createResourceTrends(),
+    nodeDistribution: Array.from({ length: 10 }, () =>
+      makeMock(nodeWorkloadDistributionSchema),
+    ),
+    nodeResourceUtilization: Array.from({ length: 10 }, () =>
+      makeMock(nodeResourceUtilizationSchema),
+    ),
+  };
+};
+
+/**
+ * 리포트 상세 Mock 데이터 맵
+ * - 목록의 ID와 일치하도록 생성
+ */
+export const mockReportDetailMap = new Map<string, ReportDetailResponse>(
+  reportListMock.map(
+    (report) =>
+      [
+        report.id,
+        createReportDetail(report.id, report.reportType, report.reportDateType),
+      ] as const,
   ),
-  nodeResourceUtilization: Array.from({ length: 10 }, () =>
-    makeMock(nodeResourceUtilizationSchema),
-  ),
+);
+
+/**
+ * ID로 리포트 상세 조회
+ */
+export const getMockReportDetail = (id: string): ReportDetailResponse => {
+  return (
+    mockReportDetailMap.get(id) || createReportDetail(id, "CLUSTER", "MONTHLY") // fallback
+  );
 };
