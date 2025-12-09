@@ -26,6 +26,24 @@ export class WorkloadService extends AxiosService {
     });
   }
 
+  /** 활성화 워크로드 목록 조회 */
+  public getActiveList(payload: GetWorkloadsPayload) {
+    const params = payloadToParams(payload);
+
+    return this.getAxios().get(`${this.BASE_URL}/active`, {
+      params,
+    });
+  }
+
+  /** 비활성화 워크로드 목록 조회 */
+  public getDisabledList(payload: GetWorkloadsPayload) {
+    const params = payloadToParams(payload);
+
+    return this.getAxios().get(`${this.BASE_URL}/disabled`, {
+      params,
+    });
+  }
+
   /** 상세 조회 */
   public getDetail(payload: GetWorkloadPayload) {
     return this.getAxios().get(`${this.BASE_URL}/${payload.workloadId}`);

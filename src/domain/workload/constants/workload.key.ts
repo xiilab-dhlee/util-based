@@ -12,9 +12,29 @@ export const workloadKeys = {
     "list",
     ...Object.values(payload),
   ],
+  activeList: (payload: GetWorkloadsPayload) => [
+    ...workloadKeys.default,
+    "activeList",
+    ...Object.values(payload),
+  ],
+  disabledList: (payload: GetWorkloadsPayload) => [
+    ...workloadKeys.default,
+    "disabledList",
+    ...Object.values(payload),
+  ],
   adminList: (payload: GetWorkloadsPayload) => [
     ...workloadKeys.default,
     "adminList",
+    ...Object.values(payload),
+  ],
+  adminActiveList: (payload: GetWorkloadsPayload) => [
+    ...workloadKeys.default,
+    "adminActiveList",
+    ...Object.values(payload),
+  ],
+  adminDisabledList: (payload: GetWorkloadsPayload) => [
+    ...workloadKeys.default,
+    "adminDisabledList",
     ...Object.values(payload),
   ],
   detail: (payload: GetWorkloadPayload) => [
