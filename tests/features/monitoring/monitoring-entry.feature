@@ -11,7 +11,8 @@ Feature: 사용자 모니터링 페이지 진입
   @smoke
   Scenario: 모니터링 페이지 진입 및 기본 위젯 표시
     Then 모니터링 페이지가 표시된다
-    And URL이 "/user/monitoring"를 포함한다
+    And URL이 "/user/monitoring"와 일치한다
+    And 네비게이션 메뉴 중 "모니터링" 메뉴가 활성화되어 있다
     And CPU 그래프가 표시된다
     And 리소스 회수 정보가 표시된다
     And 워크로드 정보가 표시된다
