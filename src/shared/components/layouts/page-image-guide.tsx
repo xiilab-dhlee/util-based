@@ -37,6 +37,7 @@ export function PageImageGuide({ title, guideImages }: PageImageGuideProps) {
             alt={guideImage.alt}
             width={360}
             height={118}
+            draggable={false}
           />
         </Item>
       ))}

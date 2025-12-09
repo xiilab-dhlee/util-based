@@ -3,6 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
 
 import { useGetRecentWorkloads } from "@/domain/workload/hooks/use-get-recent-workloads";
@@ -22,22 +23,23 @@ export function SelectWorkloadModal() {
   const { open, onClose } = useGlobalModal(openSelectWorkloadModalAtom);
   const [selectedWorkload, setSelectedWorkload] = useAtom(selectedWorkloadAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
 
-  const { data } = useGetRecentWorkloads({
-    page: page,
-    size: 8,
-    searchText: "",
-  });
+  const { data } = useGetRecentWorkloads(
+    {
+      page: page,
+      size: 8,
+      searchText: "",
+    },
+    open,
+  );
 
-  const { execute } = useGetWorkloadLazy();
+  const { execute, isLoading } = useGetWorkloadLazy();
 
   const handleOk = async () => {
     if (!selectedWorkload) return;
     if (!selectedWorkspace) return;
 
-    setIsLoading(true);
     try {
       const workloadDetail = await execute({
         workloadId: selectedWorkload,
@@ -50,8 +52,6 @@ export function SelectWorkloadModal() {
       }
     } catch {
       toast.error("워크로드 정보를 가져오는 중에 오류가 발생했습니다.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -78,29 +78,30 @@ export function SelectWorkloadModal() {
       }}
       afterClose={handleAfterClose}
     >
-      <CustomizedTable
-        columns={createWorkloadColumn([
-          { dataIndex: "select" },
-          {
-            dataIndex: "workloadName",
-            title: "워크로드 이름",
-            width: 130,
-            ellipsis: true,
-          },
-          { dataIndex: "jobType", title: "잡 타입" },
-          { dataIndex: "creatorName" },
-          { dataIndex: "status" },
-          { dataIndex: "elapsedTime" },
-        ])}
-        data={data?.content || []}
-        pagination={{
-          current: page,
-          pageSize: 8,
-          total: data?.totalSize || 0,
-          onChange: (page) => setPage(page),
-        }}
-        columnHeight={40}
-      />
+      <Container>
+        <CustomizedTable
+          columns={createWorkloadColumn([
+            { dataIndex: "select" },
+            {
+              dataIndex: "workloadName",
+              title: "워크로드 이름",
+              width: 130,
+              ellipsis: true,
+            },
+            { dataIndex: "jobType", title: "잡 타입" },
+            { dataIndex: "creatorName" },
+            { dataIndex: "status" },
+            { dataIndex: "elapsedTime" },
+          ])}
+          data={data?.content || []}
+          columnHeight={36}
+        />
+      </Container>
     </Modal>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  height: 400px;
+`;

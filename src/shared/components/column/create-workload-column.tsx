@@ -42,17 +42,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
       render: (
         workloadName: string,
-        { workspaceId, id }: WorkloadListType,
-        index: number,
+        { workspaceId, id, revokeWarningCount, isRevoked }: WorkloadListType,
       ) => {
-        const isRecovered = index % 3 === 0;
-        const isRevoked = index % 3 === 1;
         return (
           <WorkloadNameLink
             workspaceId={workspaceId}
             workloadId={id}
             workloadName={workloadName}
-            resourceRecoveryWarningCount={isRecovered ? 9999 : 0}
+            revokeWarningCount={revokeWarningCount}
             isRevoked={isRevoked}
           />
         );
