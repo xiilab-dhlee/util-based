@@ -100,14 +100,6 @@ Given("워크스페이스가 선택되어 있지 않다", async ({ page }) => {
   await expect(placeholder).toBeVisible({ timeout: 10000 });
 });
 
-/**
- * Then - 워크스페이스 선택 안내 표시 확인
- */
-Then("워크스페이스 선택 안내가 표시된다", async ({ page }) => {
-  const placeholder = page.locator("text=/워크스페이스|workspace/i").first();
-  await expect(placeholder).toBeVisible({ timeout: 10000 });
-});
-
 // ============================================
 // URL 관련 Steps
 // ============================================
@@ -164,12 +156,4 @@ Then("검색창이 빈 값으로 표시된다", async ({ page }) => {
   const searchInput = page.locator(testId(SELECTOR.LIST_SEARCH_INPUT));
   await expect(searchInput).toBeVisible({ timeout: 10000 });
   await expect(searchInput).toHaveValue("");
-});
-
-/**
- * Then - 필터 영역 표시 확인
- */
-Then("필터 영역이 표시된다", async ({ page }) => {
-  const filter = page.locator(testId(SELECTOR.LIST_FILTER));
-  await expect(filter).toBeVisible({ timeout: 10000 });
 });
