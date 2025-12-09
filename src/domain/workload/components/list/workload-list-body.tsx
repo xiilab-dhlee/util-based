@@ -1,37 +1,26 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
-import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
-import {
-  workloadPageAtom,
-  workloadSearchTextAtom,
-} from "@/domain/workload/state/workload.atom";
+import type { ActiveWorkloadListType } from "@/domain/workload/schemas/workload.schema";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+
+interface WorkloadListBodyProps {
+  content: ActiveWorkloadListType[];
+  loading: boolean;
+}
 
 /**
  * 워크로드 목록 페이지 본문 컴포넌트
  *
- * 워크로드 목록 페이지에서 워크로드 목록을 표시하는 테이블을 제공합니다.
+ * 워크로드 목록 페이지에서 활성 워크로드 목록을 표시하는 테이블을 제공합니다.
  *
+ * @param content - 워크로드 목록 데이터
+ * @param loading - 로딩 여부
  * @returns 워크로드 목록 페이지 본문 컴포넌트
  */
-export function WorkloadListBody() {
-  // 페이지 번호
-  const page = useAtomValue(workloadPageAtom);
-  // 검색어
-  const searchText = useAtomValue(workloadSearchTextAtom);
-
-  const { data } = useGetWorkloads({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
-
+export function WorkloadListBody({ content, loading }: WorkloadListBodyProps) {
   return (
     <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
@@ -53,9 +42,10 @@ export function WorkloadListBody() {
           { dataIndex: "power" },
           { dataIndex: "delete" },
         ])}
-        data={data?.content || []}
-        columnHeight={36}
+        data={content}
+        columnHeight={37}
         activePadding
+        loading={loading}
       />
     </ListWrapper>
   );

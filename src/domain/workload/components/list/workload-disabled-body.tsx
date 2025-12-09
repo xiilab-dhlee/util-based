@@ -1,37 +1,29 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
-import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
-import {
-  workloadDisabledPageAtom,
-  workloadDisabledSearchTextAtom,
-} from "@/domain/workload/state/workload.atom";
+import type { DisabledWorkloadListType } from "@/domain/workload/schemas/workload.schema";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+
+interface WorkloadDisabledBodyProps {
+  content: DisabledWorkloadListType[];
+  loading: boolean;
+}
 
 /**
  * 비활성화 워크로드 목록 페이지 본문 컴포넌트
  *
  * 비활성화 워크로드 목록 페이지에서 워크로드 목록을 표시하는 테이블을 제공합니다.
  *
+ * @param content - 워크로드 목록 데이터
+ * @param loading - 로딩 여부
  * @returns 비활성화 워크로드 목록 페이지 본문 컴포넌트
  */
-export function WorkloadDisabledBody() {
-  // 페이지 번호
-  const page = useAtomValue(workloadDisabledPageAtom);
-  // 검색어
-  const searchText = useAtomValue(workloadDisabledSearchTextAtom);
-
-  const { data } = useGetWorkloads({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
-
+export function WorkloadDisabledBody({
+  content,
+  loading,
+}: WorkloadDisabledBodyProps) {
   return (
     <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
@@ -46,9 +38,10 @@ export function WorkloadDisabledBody() {
           { dataIndex: "restart" },
           { dataIndex: "delete" },
         ])}
-        data={data?.content || []}
+        data={content}
         columnHeight={36}
         activePadding
+        loading={loading}
       />
     </ListWrapper>
   );

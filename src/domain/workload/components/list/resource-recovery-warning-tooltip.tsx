@@ -30,7 +30,6 @@ export function ResourceRecoveryWarningTooltip({
 }
 
 const Container = styled.div`
-  width: 100px;
   background-color: #fff;
   border-radius: 4px;
   display: flex;
@@ -49,4 +48,5 @@ const Body = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 4px;
 `;
