@@ -89,6 +89,33 @@ export const nodeResourceUtilizationSchema = z.object({
 });
 
 /**
+ * GPU 추이 데이터 포인트 스키마
+ */
+export const gpuTrendDataPointSchema = z.object({
+  x: z.string(), // ISO 날짜 문자열 (예: "2025-12-09T00:00:00.000Z")
+  y: z.number(), // 사용률 0-100
+});
+
+/**
+ * GPU 시리즈 데이터 스키마
+ */
+export const gpuSeriesSchema = z.object({
+  name: z.string(), // "A100-0"
+  data: z.array(gpuTrendDataPointSchema),
+});
+
+/**
+ * 노드 GPU 정보 스키마 (리포트용)
+ */
+export const nodeGpuInfoSchema = z.object({
+  nodeName: z.string(), // "Worker-1"
+  gpuModel: z.string(), // "A100"
+  gpuCount: z.number(), // 8
+  percentage: z.number(), // 평균 사용률 0-100
+  trendData: z.array(gpuSeriesSchema), // GPU별 사용률 추이
+});
+
+/**
  * 리포트 상세 응답 스키마
  */
 export const reportDetailResponseSchema = z.object({
@@ -108,6 +135,7 @@ export const reportDetailResponseSchema = z.object({
   resourceTrends: z.array(resourceTrendSchema),
   nodeDistribution: z.array(nodeWorkloadDistributionSchema),
   nodeResourceUtilization: z.array(nodeResourceUtilizationSchema),
+  nodes: z.array(nodeGpuInfoSchema), // 신규 추가
 });
 
 // ===== 타입 추출 =====
@@ -125,4 +153,7 @@ export type NodeWorkloadDistribution = z.infer<
 export type NodeResourceUtilization = z.infer<
   typeof nodeResourceUtilizationSchema
 >;
+export type GpuTrendDataPoint = z.infer<typeof gpuTrendDataPointSchema>;
+export type GpuSeries = z.infer<typeof gpuSeriesSchema>;
+export type NodeGpuInfo = z.infer<typeof nodeGpuInfoSchema>;
 export type ReportDetailResponse = z.infer<typeof reportDetailResponseSchema>;

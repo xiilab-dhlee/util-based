@@ -1,4 +1,6 @@
 import type {
+  GpuSeries,
+  NodeGpuInfo,
   ReportDetailResponse,
   ResourceTrend,
   ResourceUsageMetric,
@@ -39,7 +41,9 @@ export const reportListMock = Array.from({ length: LIST_PAGE_SIZE }, (_, i) => {
 
   return {
     ...baseReport,
-    id: FIXED_REPORT_IDS[i] || `550e8400-e29b-41d4-a716-44665544${String(i).padStart(4, "0")}`,
+    id:
+      FIXED_REPORT_IDS[i] ||
+      `550e8400-e29b-41d4-a716-44665544${String(i).padStart(4, "0")}`,
     reportType,
     reportDateType,
   };
@@ -93,6 +97,61 @@ const createResourceTrends = (): ResourceTrend[] => {
 };
 
 /**
+ * 고정된 노드 GPU 정보
+ */
+const MOCK_NODE_GPU_INFO = [
+  { nodeName: "Worker-1", gpuModel: "A100", gpuCount: 8 },
+  { nodeName: "Worker-2", gpuModel: "A100", gpuCount: 8 },
+  { nodeName: "Worker-3", gpuModel: "V100", gpuCount: 4 },
+];
+
+/**
+ * GPU별 추이 데이터 생성
+ * @param gpuCount GPU 개수
+ * @param startDate 시작 날짜
+ * @param endDate 종료 날짜
+ */
+const createGpuTrendData = (
+  gpuCount: number,
+  startDate: string,
+  endDate: string,
+): GpuSeries[] => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const dayCount = Math.ceil(
+    (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  return Array.from({ length: gpuCount }, (_, gpuIndex) => ({
+    name: `GPU-${gpuIndex}`,
+    data: Array.from({ length: dayCount + 1 }, (_, dayIndex) => {
+      const date = new Date(start);
+      date.setDate(start.getDate() + dayIndex);
+      return {
+        x: date.toISOString(), // ISO 날짜 문자열로 반환
+        y: Math.floor(Math.random() * 70) + 20, // 20-90% 랜덤
+      };
+    }),
+  }));
+};
+
+/**
+ * 노드 GPU 정보 생성
+ * @param startDate 시작 날짜
+ * @param endDate 종료 날짜
+ */
+const createNodeGpuInfo = (
+  startDate: string,
+  endDate: string,
+): NodeGpuInfo[] => {
+  return MOCK_NODE_GPU_INFO.map((node) => ({
+    ...node,
+    percentage: Math.floor(Math.random() * 70) + 20, // 20-90% 랜덤
+    trendData: createGpuTrendData(node.gpuCount, startDate, endDate),
+  }));
+};
+
+/**
  * ID로 리포트 상세 데이터를 생성
  */
 const createReportDetail = (
@@ -100,13 +159,18 @@ const createReportDetail = (
   reportType: "SYSTEM" | "CLUSTER",
   reportDateType: "WEEKLY" | "MONTHLY",
 ): ReportDetailResponse => {
+  const startDate = new Date(
+    Date.now() - 7 * 24 * 60 * 60 * 1000,
+  ).toISOString();
+  const endDate = new Date().toISOString();
+
   return {
     id,
     reportName: `${reportType === "SYSTEM" ? "시스템" : "클러스터"} ${reportDateType === "WEEKLY" ? "주간" : "월간"} 리포트`,
     reportDateType,
     reportType,
-    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    endDate: new Date().toISOString(),
+    startDate,
+    endDate,
     creator: "관리자",
     createdAt: new Date().toISOString(),
     resourceUsage: {
@@ -124,6 +188,7 @@ const createReportDetail = (
     nodeResourceUtilization: Array.from({ length: 10 }, () =>
       makeMock(nodeResourceUtilizationSchema),
     ),
+    nodes: createNodeGpuInfo(startDate, endDate),
   };
 };
 

@@ -26,7 +26,7 @@ export function SystemReportMain() {
     return <div>데이터를 불러올 수 없습니다.</div>;
   }
 
-  const { resourceUsage, reportDateType, reportType } = data;
+  const { resourceUsage, reportDateType, reportType, nodes } = data;
   const reportTitle = `${REPORT_DATE_TYPE_TEXT[reportDateType]} ${REPORT_TYPE_TEXT[reportType]} 리포트`;
 
   return (
@@ -46,15 +46,23 @@ export function SystemReportMain() {
             <SystemGpuUsageCard resourceUsage={resourceUsage} />
           </SubSection>
 
-          {/* Section 2: 노드별 GPU 사용률 */}
-          <SubSection>
-            <NodeGpuUsageCard
-              nodeName="Worker-1"
-              gpuModel="A100"
-              percentage={50}
-              chart={<NodeGpuChart nodeName="Worker-1" />}
-            />
-          </SubSection>
+          {/* Section 2: 노드별 GPU 사용률 - 데이터 기반 렌더링 */}
+          {nodes?.map((node, index) => (
+            <SubSection key={node.nodeName}>
+              <NodeGpuUsageCard
+                nodeName={node.nodeName}
+                gpuModel={node.gpuModel}
+                percentage={node.percentage}
+                colorIndex={index}
+                chart={
+                  <NodeGpuChart
+                    nodeName={node.nodeName}
+                    data={node.trendData}
+                  />
+                }
+              />
+            </SubSection>
+          ))}
         </Section>
       </Body>
     </>

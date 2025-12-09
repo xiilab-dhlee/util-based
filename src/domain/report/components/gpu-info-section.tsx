@@ -26,6 +26,9 @@ export function GpuInfoSection({
   color,
   percentage,
 }: GpuInfoSectionProps) {
+  // color가 없으면 기본 GPU 색상 사용
+  const dotColor = color || getResourceInfo("GPU").color;
+
   return (
     <InnerBox>
       <LeftSection>
@@ -47,7 +50,7 @@ export function GpuInfoSection({
       <RightSection>
         <TopArea>
           <LabelWithDot>
-            <BlueDot />
+            <BlueDot $color={dotColor} />
             <MetricLabel>{nodeName} GPU 평균 사용률</MetricLabel>
           </LabelWithDot>
           <UsageValue>
@@ -61,6 +64,7 @@ export function GpuInfoSection({
           height={6}
           borderRadius={3}
           backgroundColor="#e1e4e7"
+          customColor={dotColor}
         />
       </RightSection>
     </InnerBox>
@@ -127,11 +131,11 @@ const LabelWithDot = styled.div`
   gap: 6px;
 `;
 
-const BlueDot = styled.div`
+const BlueDot = styled.div<{ $color: string }>`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: ${getResourceInfo("GPU").color};
+  background-color: ${({ $color }) => $color};
 `;
 
 const UsageValue = styled.div`

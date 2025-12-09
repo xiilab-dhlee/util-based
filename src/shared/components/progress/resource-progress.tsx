@@ -11,6 +11,8 @@ export interface ResourceProgressProps {
   height?: number;
   borderRadius?: number;
   backgroundColor?: string;
+  // 커스텀 색상 (노드별 색상 지정용)
+  customColor?: string;
 }
 
 export function ResourceProgress({
@@ -20,6 +22,7 @@ export function ResourceProgress({
   height = 4,
   borderRadius = 1,
   backgroundColor = "#292b32",
+  customColor,
 }: ResourceProgressProps) {
   return (
     <Container
@@ -27,9 +30,17 @@ export function ResourceProgress({
       $borderRadius={borderRadius}
       $backgroundColor={backgroundColor}
     >
-      <UsageProgress className={resourceType} $percent={usagePercent} />
+      <UsageProgress
+        className={resourceType}
+        $percent={usagePercent}
+        $customColor={customColor}
+      />
       {requestPercent && (
-        <RequestProgress className={resourceType} $percent={requestPercent} />
+        <RequestProgress
+          className={resourceType}
+          $percent={requestPercent}
+          $customColor={customColor}
+        />
       )}
     </Container>
   );
@@ -47,7 +58,10 @@ const Container = styled.div<{
   background-color: ${({ $backgroundColor }) => $backgroundColor};
 `;
 
-const UsageProgress = styled.div<{ $percent: number }>`
+const UsageProgress = styled.div<{
+  $percent: number;
+  $customColor?: string;
+}>`
   position: absolute;
   top: 0;
   left: 0;
@@ -56,44 +70,54 @@ const UsageProgress = styled.div<{ $percent: number }>`
   z-index: 10;
   border-radius: 1px;
 
-  &.GPU,
-  &.MIG,
-  &.MPS {
-    background-color: var(--gpu-usage-color);
-  }
+  ${({ $customColor }) =>
+    $customColor
+      ? `background-color: ${$customColor};`
+      : `
+    &.GPU,
+    &.MIG,
+    &.MPS {
+      background-color: var(--gpu-usage-color);
+    }
 
-  &.CPU {
-    background-color: var(--cpu-usage-color);
-  }
+    &.CPU {
+      background-color: var(--cpu-usage-color);
+    }
 
-  &.MEM {
-    background-color: var(--mem-usage-color);
-  }
+    &.MEM {
+      background-color: var(--mem-usage-color);
+    }
 
-  &.DISK {
-    background-color: var(--disk-usage-color);
-  }
+    &.DISK {
+      background-color: var(--disk-usage-color);
+    }
+  `}
 `;
 
 const RequestProgress = styled(UsageProgress)`
   z-index: 9;
   border-radius: 1px;
 
-  &.GPU,
-  &.MIG,
-  &.MPS {
-    background-color: var(--gpu-request-color);
-  }
+  ${({ $customColor }) =>
+    $customColor
+      ? `background-color: ${$customColor}; opacity: 0.5;`
+      : `
+    &.GPU,
+    &.MIG,
+    &.MPS {
+      background-color: var(--gpu-request-color);
+    }
 
-  &.CPU {
-    background-color: var(--cpu-request-color);
-  }
+    &.CPU {
+      background-color: var(--cpu-request-color);
+    }
 
-  &.MEM {
-    background-color: var(--mem-request-color);
-  }
+    &.MEM {
+      background-color: var(--mem-request-color);
+    }
 
-  &.DISK {
-    background-color: var(--disk-request-color);
-  }
+    &.DISK {
+      background-color: var(--disk-request-color);
+    }
+  `}
 `;

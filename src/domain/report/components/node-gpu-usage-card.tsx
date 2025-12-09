@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 
+import { GPU_CHART_COLORS } from "@/domain/monitoring/utils/monitoring.util";
 import { CustomReportCard } from "@/shared/components/card/custom-report-card";
 import { GpuInfoSection } from "./gpu-info-section";
 
@@ -14,6 +15,8 @@ interface NodeGpuUsageCardProps {
   percentage: number;
   /** 차트 컴포넌트 */
   chart?: ReactNode;
+  /** 색상 인덱스 (노드별 색상 구분용) */
+  colorIndex?: number;
 }
 
 /**
@@ -25,7 +28,11 @@ export function NodeGpuUsageCard({
   gpuModel,
   percentage,
   chart,
+  colorIndex = 0,
 }: NodeGpuUsageCardProps) {
+  // colorIndex로 색상 선택 (배열 길이로 나눠 순환)
+  const nodeColor = GPU_CHART_COLORS[colorIndex % GPU_CHART_COLORS.length];
+
   const content = [
     {
       title: "노드별 GPU 사용률",
@@ -34,6 +41,7 @@ export function NodeGpuUsageCard({
           nodeName={nodeName}
           gpuModel={gpuModel}
           percentage={percentage}
+          color={nodeColor}
         />
       ),
     },
