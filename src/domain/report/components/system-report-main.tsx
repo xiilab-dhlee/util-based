@@ -15,6 +15,7 @@ import { NodeGpuChart } from "./node-gpu-chart";
 import { NodeGpuUsageCard } from "./node-gpu-usage-card";
 import { ReportFilter } from "./report-filter";
 import { SystemGpuUsageCard } from "./system-gpu-usage-card";
+import { WorkloadCreationChart } from "./workload-creation-chart";
 
 export function SystemReportMain() {
   const params = useParams<{ id: string }>();
@@ -35,6 +36,7 @@ export function SystemReportMain() {
     nodes,
     jobTypeDistribution,
     jobTypeUsageTime,
+    workloadCreation,
   } = data;
   const reportTitle = `${REPORT_DATE_TYPE_TEXT[reportDateType]} ${REPORT_TYPE_TEXT[reportType]} 리포트`;
 
@@ -83,6 +85,9 @@ export function SystemReportMain() {
               <JobTypeDistribution data={jobTypeDistribution} />
               <JobTypeUsageTime data={jobTypeUsageTime} />
             </CardRow>
+          </SubSection>
+          <SubSection>
+            <WorkloadCreationChart data={workloadCreation} />
           </SubSection>
         </Section>
       </Body>

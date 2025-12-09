@@ -6,6 +6,7 @@ import type {
   ReportDetailResponse,
   ResourceTrend,
   ResourceUsageMetric,
+  WorkloadCreationSeries,
 } from "@/domain/report/schemas/report.schema";
 import {
   nodeResourceUtilizationSchema,
@@ -186,10 +187,39 @@ const createJobTypeUsageTime = (): JobTypeUsageTime[] => {
     const m = Math.floor((hours[index] - h) * 60);
     return {
       type,
-      time: `${h}h ${m}m`,
+      time: `${h}시간 ${m}분`,
       percentage: Math.floor((hours[index] / totalHours) * 100),
     };
   });
+};
+
+/**
+ * 워크로드 생성 정보 데이터 생성
+ * @param startDate 시작 날짜
+ * @param endDate 종료 날짜
+ */
+const createWorkloadCreation = (
+  startDate: string,
+  endDate: string,
+): WorkloadCreationSeries[] => {
+  const jobTypes: WorkloadJobType[] = ["BATCH", "INTERACTIVE", "DISTRIBUTED"];
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const dayCount = Math.ceil(
+    (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  return jobTypes.map((type) => ({
+    type,
+    data: Array.from({ length: dayCount + 1 }, (_, dayIndex) => {
+      const date = new Date(start);
+      date.setDate(start.getDate() + dayIndex);
+      return {
+        x: date.toISOString(), // ISO 날짜 문자열
+        y: Math.floor(Math.random() * 60) + 20, // 20-80% 랜덤
+      };
+    }),
+  }));
 };
 
 /**
@@ -232,6 +262,7 @@ const createReportDetail = (
     nodes: createNodeGpuInfo(startDate, endDate),
     jobTypeDistribution: createJobTypeDistribution(),
     jobTypeUsageTime: createJobTypeUsageTime(),
+    workloadCreation: createWorkloadCreation(startDate, endDate),
   };
 };
 

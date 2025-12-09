@@ -134,6 +134,22 @@ export const jobTypeUsageTimeSchema = z.object({
 });
 
 /**
+ * 워크로드 생성 정보 데이터 포인트 스키마
+ */
+export const workloadCreationDataPointSchema = z.object({
+  x: z.string(), // ISO 날짜 문자열
+  y: z.number(), // 퍼센트 0-100
+});
+
+/**
+ * 워크로드 생성 정보 시리즈 스키마
+ */
+export const workloadCreationSeriesSchema = z.object({
+  type: z.enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"]),
+  data: z.array(workloadCreationDataPointSchema),
+});
+
+/**
  * 리포트 상세 응답 스키마
  */
 export const reportDetailResponseSchema = z.object({
@@ -156,6 +172,7 @@ export const reportDetailResponseSchema = z.object({
   nodes: z.array(nodeGpuInfoSchema),
   jobTypeDistribution: z.array(jobTypeDistributionSchema),
   jobTypeUsageTime: z.array(jobTypeUsageTimeSchema),
+  workloadCreation: z.array(workloadCreationSeriesSchema),
 });
 
 // ===== 타입 추출 =====
@@ -178,4 +195,10 @@ export type GpuSeries = z.infer<typeof gpuSeriesSchema>;
 export type NodeGpuInfo = z.infer<typeof nodeGpuInfoSchema>;
 export type JobTypeDistribution = z.infer<typeof jobTypeDistributionSchema>;
 export type JobTypeUsageTime = z.infer<typeof jobTypeUsageTimeSchema>;
+export type WorkloadCreationDataPoint = z.infer<
+  typeof workloadCreationDataPointSchema
+>;
+export type WorkloadCreationSeries = z.infer<
+  typeof workloadCreationSeriesSchema
+>;
 export type ReportDetailResponse = z.infer<typeof reportDetailResponseSchema>;
