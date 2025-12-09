@@ -5,6 +5,7 @@ import { Icon } from "xiilab-ui";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   DetailContentButton,
@@ -31,13 +32,18 @@ export function WorkloadLogMain() {
         <DetailContentTitle>로그</DetailContentTitle>
         <DetailContentTitleTool>
           <div style={{ width: 90, height: 30 }}>
-            <DetailContentButton onClick={handleToggleMonitoring}>
+            <DetailContentButton
+              onClick={handleToggleMonitoring}
+              data-testid={WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON}
+            >
               <Icon name="Monitoring01" color="var(--icon-fill)" />
               모니터링
             </DetailContentButton>
           </div>
           <div style={{ width: 30, height: 30 }}>
-            <TerminalThemeButton />
+            <TerminalThemeButton
+              data-testid={WORKLOAD_SELECTOR.LOG_THEME_BUTTON}
+            />
           </div>
         </DetailContentTitleTool>
       </DetailContentHeader>

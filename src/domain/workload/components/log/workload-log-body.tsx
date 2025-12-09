@@ -3,61 +3,73 @@
 import { useAtom } from "jotai";
 import styled from "styled-components";
 
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
+import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { terminalThemeAtom } from "@/shared/state/terminal.atom";
 import { terminalDrawerStyle } from "@/styles/mixins/drawer";
+import { createTermBgClasses } from "@/styles/mixins/terminal";
+
+const DEFAULT_THEME = "MaterialDark";
 
 export function WorkloadLogBody() {
   const [selectedTheme] = useAtom(terminalThemeAtom);
+  const currentTheme = selectedTheme || DEFAULT_THEME;
 
   return (
-    <Container theme={selectedTheme || "theme-primary"}>
+    <Container
+      className={currentTheme}
+      data-testid={WORKLOAD_SELECTOR.LOG_PAGE}
+    >
       {/* 워크로드 로그 */}
-      <LogViewer theme={selectedTheme || "theme-primary"}>
-        <LogLine>
-          <LogTimestamp theme={selectedTheme || "theme-primary"}>
+      <LogViewer
+        className={currentTheme}
+        data-testid={WORKLOAD_SELECTOR.LOG_VIEWER}
+      >
+        <LogLine data-testid={WORKLOAD_SELECTOR.LOG_LINE}>
+          <LogTimestamp className={currentTheme}>
             [2024-01-15 10:30:15]
           </LogTimestamp>
-          <LogMessage theme={selectedTheme || "theme-primary"}>
+          <LogMessage className={currentTheme}>
             INFO: 워크로드가 시작되었습니다.
           </LogMessage>
         </LogLine>
         <LogLine>
-          <LogTimestamp theme={selectedTheme || "theme-primary"}>
+          <LogTimestamp className={currentTheme}>
             [2024-01-15 10:30:16]
           </LogTimestamp>
-          <LogMessage theme={selectedTheme || "theme-primary"}>
+          <LogMessage className={currentTheme}>
             INFO: 컨테이너 초기화 중...
           </LogMessage>
         </LogLine>
         <LogLine>
-          <LogTimestamp theme={selectedTheme || "theme-primary"}>
+          <LogTimestamp className={currentTheme}>
             [2024-01-15 10:30:17]
           </LogTimestamp>
-          <LogMessage theme={selectedTheme || "theme-primary"}>
+          <LogMessage className={currentTheme}>
             INFO: 환경 변수 설정 완료
           </LogMessage>
         </LogLine>
         <LogLine>
-          <LogTimestamp theme={selectedTheme || "theme-primary"}>
+          <LogTimestamp className={currentTheme}>
             [2024-01-15 10:30:18]
           </LogTimestamp>
-          <LogMessage theme={selectedTheme || "theme-primary"}>
+          <LogMessage className={currentTheme}>
             INFO: 애플리케이션 시작
           </LogMessage>
         </LogLine>
         <LogLine>
-          <LogTimestamp theme={selectedTheme || "theme-primary"}>
+          <LogTimestamp className={currentTheme}>
             [2024-01-15 10:30:19]
           </LogTimestamp>
-          <LogMessage theme={selectedTheme || "theme-primary"}>
+          <LogMessage className={currentTheme}>
             WARN: 메모리 사용량이 높습니다 (85%)
           </LogMessage>
         </LogLine>
         <LogLine>
-          <LogTimestamp theme={selectedTheme || "theme-primary"}>
+          <LogTimestamp className={currentTheme}>
             [2024-01-15 10:30:20]
           </LogTimestamp>
-          <LogMessage theme={selectedTheme || "theme-primary"}>
+          <LogMessage className={currentTheme}>
             INFO: 요청 처리 중...
           </LogMessage>
         </LogLine>
@@ -66,7 +78,7 @@ export function WorkloadLogBody() {
   );
 }
 
-const Container = styled.div<{ theme?: string }>`
+const Container = styled.div`
   position: relative;
   flex: 1;
   height: 100%;
@@ -75,84 +87,31 @@ const Container = styled.div<{ theme?: string }>`
   border-radius: 4px;
   overflow: hidden;
 
-  /* 기본 테마 (theme-primary) */
-  background: #17171f;
+  /* 기본 테마 */
+  background: ${TERMINAL_THEME_LIST[DEFAULT_THEME].background};
 
   ${terminalDrawerStyle}
-
-  /* 테마별 스타일 */
-  ${({ theme }) => {
-    switch (theme) {
-      case "theme-secondary":
-        return `
-          background: #1e1e1e;
-        `;
-      case "theme-tertiary":
-        return `
-          background: #1f1d45;
-        `;
-      case "theme-quaternary":
-        return `
-          background: #fcf4dc;
-          border: 1px solid #d5d5d5;
-        `;
-      case "theme-quinary":
-        return `
-          background: #eaeaea;
-          border: 1px solid #d5d5d5;
-        `;
-      case "theme-senary":
-        return `
-          background: #f4f4f4;
-          border: 1px solid #d5d5d5;
-        `;
-      default:
-        return `
-          background: #17171f;
-        `;
-    }
-  }}
+  ${createTermBgClasses()}
 `;
 
-const LogViewer = styled.div<{ theme?: string }>`
+const LogViewer = styled.div`
   flex: 1;
   padding: 16px;
   overflow-y: auto;
   font-size: 13px;
   line-height: 1.5;
 
-  /* 기본 테마 (theme-primary) */
-  color: #ffffff;
+  /* 기본 테마 */
+  color: ${TERMINAL_THEME_LIST[DEFAULT_THEME].foreground};
 
-  /* 테마별 스타일 */
-  ${({ theme }) => {
-    switch (theme) {
-      case "theme-secondary":
-        return `
-          color: #ffffff;
-        `;
-      case "theme-tertiary":
-        return `
-          color: #ffffff;
-        `;
-      case "theme-quaternary":
-        return `
-          color: #17171f;
-        `;
-      case "theme-quinary":
-        return `
-          color: #17171f;
-        `;
-      case "theme-senary":
-        return `
-          color: #17171f;
-        `;
-      default:
-        return `
-          color: #ffffff;
-        `;
-    }
-  }}
+  /* 테마별 텍스트 색상 */
+  ${Object.entries(TERMINAL_THEME_LIST).map(
+    ([key, value]) => `
+      &.${key} {
+        color: ${value.foreground};
+      }
+    `,
+  )}
 `;
 
 const LogLine = styled.div`
@@ -162,77 +121,35 @@ const LogLine = styled.div`
   word-break: break-all;
 `;
 
-const LogTimestamp = styled.span<{ theme?: string }>`
+const LogTimestamp = styled.span`
   white-space: nowrap;
   flex-shrink: 0;
 
-  /* 기본 테마 (theme-primary) */
-  color: #888888;
+  /* 기본 테마 - foreground 색상의 50% 밝기 */
+  color: ${TERMINAL_THEME_LIST[DEFAULT_THEME].foreground}80;
 
-  /* 테마별 스타일 */
-  ${({ theme }) => {
-    switch (theme) {
-      case "theme-secondary":
-        return `
-          color: #888888;
-        `;
-      case "theme-tertiary":
-        return `
-          color: #888888;
-        `;
-      case "theme-quaternary":
-        return `
-          color: #666666;
-        `;
-      case "theme-quinary":
-        return `
-          color: #666666;
-        `;
-      case "theme-senary":
-        return `
-          color: #666666;
-        `;
-      default:
-        return `
-          color: #888888;
-        `;
-    }
-  }}
+  /* 테마별 타임스탬프 색상 (foreground의 50% 투명도) */
+  ${Object.entries(TERMINAL_THEME_LIST).map(
+    ([key, value]) => `
+      &.${key} {
+        color: ${value.foreground}80;
+      }
+    `,
+  )}
 `;
 
-const LogMessage = styled.span<{ theme?: string }>`
+const LogMessage = styled.span`
   flex: 1;
 
-  /* 기본 테마 (theme-primary) */
-  color: #ffffff;
+  /* 기본 테마 */
+  color: ${TERMINAL_THEME_LIST[DEFAULT_THEME].foreground};
 
-  /* 테마별 스타일 */
-  ${({ theme }) => {
-    switch (theme) {
-      case "theme-secondary":
-        return `
-          color: #ffffff;
-        `;
-      case "theme-tertiary":
-        return `
-          color: #ffffff;
-        `;
-      case "theme-quaternary":
-        return `
-          color: #17171f;
-        `;
-      case "theme-quinary":
-        return `
-          color: #17171f;
-        `;
-      case "theme-senary":
-        return `
-          color: #17171f;
-        `;
-      default:
-        return `
-          color: #ffffff;
-        `;
-    }
-  }}
+  /* 테마별 메시지 색상 */
+  ${Object.entries(TERMINAL_THEME_LIST).map(
+    ([key, value]) => `
+      &.${key} {
+        color: ${value.foreground};
+      }
+    `,
+  )}
 `;

@@ -9,6 +9,7 @@ import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-b
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
 import { WorkloadTerminal } from "@/shared/components/terminal/workload-terminal";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   DetailContentButton,
@@ -56,7 +57,10 @@ export function WorkloadTerminalMain() {
         <DetailContentTitle>웹터미널</DetailContentTitle>
         <DetailContentTitleTool>
           <div style={{ width: 90, height: 30 }}>
-            <DetailContentButton onClick={handleToggleMonitoring}>
+            <DetailContentButton
+              onClick={handleToggleMonitoring}
+              data-testid={WORKLOAD_SELECTOR.TERMINAL_MONITORING_BUTTON}
+            >
               <Icon name="Monitoring01" color="var(--icon-fill)" />
               모니터링
             </DetailContentButton>
@@ -67,7 +71,9 @@ export function WorkloadTerminalMain() {
             </DetailContentButton>
           </div>
           <div style={{ width: 30, height: 30 }}>
-            <TerminalThemeButton />
+            <TerminalThemeButton
+              data-testid={WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON}
+            />
           </div>
         </DetailContentTitleTool>
       </DetailContentHeader>

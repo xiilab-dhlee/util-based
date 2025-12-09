@@ -7,6 +7,7 @@ import type { MonitoringMetricType } from "@/domain/monitoring/types/monitoring.
 import { getMetricInfo } from "@/domain/monitoring/utils/monitoring.util";
 import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { mapToChartData } from "@/shared/utils/chart.util";
 import {
@@ -92,7 +93,7 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
   };
 
   return (
-    <LikeCompactCardContainer>
+    <LikeCompactCardContainer data-testid={WORKLOAD_SELECTOR.monitoringChart(type)}>
       <LikeCompactCardHeader>
         <LikeCompactCardTitle className="truncate">{text}</LikeCompactCardTitle>
         <IconButton type="button" onClick={handleClickIcon}>

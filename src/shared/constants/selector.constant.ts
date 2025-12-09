@@ -79,6 +79,34 @@ export const WORKLOAD_SELECTOR = {
   // 검색 폼
   /** 비활성화 워크로드 검색 폼 */
   DISABLED_LIST_SEARCH_FORM: "workload-disabled-list-search-form",
+
+  // 로그 페이지
+  /** 로그 페이지 컨테이너 */
+  LOG_PAGE: "workload-log-page",
+  /** 로그 뷰어 영역 */
+  LOG_VIEWER: "workload-log-viewer",
+  /** 로그 라인 */
+  LOG_LINE: "workload-log-line",
+  /** 모니터링 버튼 (로그 페이지 상단) */
+  LOG_MONITORING_BUTTON: "workload-log-monitoring-button",
+  /** 테마 변경 버튼 */
+  LOG_THEME_BUTTON: "workload-log-theme-button",
+
+  // 웹터미널 페이지
+  /** 웹터미널 페이지 컨테이너 */
+  TERMINAL_PAGE: "workload-terminal-page",
+  /** 웹터미널 영역 (xterm) */
+  TERMINAL_CONTAINER: "workload-terminal-container",
+  /** 모니터링 버튼 (웹터미널 페이지 상단) */
+  TERMINAL_MONITORING_BUTTON: "workload-terminal-monitoring-button",
+  /** 테마 변경 버튼 (웹터미널 페이지) */
+  TERMINAL_THEME_BUTTON: "workload-terminal-theme-button",
+
+  // 모니터링 페이지
+  /** 모니터링 컨텐츠 영역 */
+  MONITORING_CONTENT: "workload-monitoring-content",
+  /** 모니터링 차트 카드 (동적) - workload-monitoring-chart-{type} */
+  monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
 } as const;
 
 // ============================================
