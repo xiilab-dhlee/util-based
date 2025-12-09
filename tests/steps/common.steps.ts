@@ -118,6 +118,28 @@ Then("URL이 {string}를 포함한다", async ({ page }, expectedUrl: string) =>
   await expect(page).toHaveURL(new RegExp(expectedUrl));
 });
 
+/**
+ * Then - URL 일치 검증 (경로 끝 부분이 정확히 일치)
+ */
+Then("URL이 {string}와 일치한다", async ({ page }, expectedUrl: string) => {
+  await expect(page).toHaveURL(new RegExp(`${expectedUrl}$`));
+});
+
+/**
+ * Then - 네비게이션 메뉴 활성화 상태 확인
+ * Ant Design Menu의 선택된 메뉴 아이템 텍스트 검증
+ */
+Then(
+  "네비게이션 메뉴 중 {string} 메뉴가 활성화되어 있다",
+  async ({ page }, menuName: string) => {
+    const selectedMenu = page.locator(
+      ".ant-menu-item-selected .ant-menu-title-content",
+    );
+    await expect(selectedMenu).toBeVisible({ timeout: 10000 });
+    await expect(selectedMenu).toHaveText(menuName);
+  },
+);
+
 // ============================================
 // 목록 페이지 공통 Steps
 // ============================================
