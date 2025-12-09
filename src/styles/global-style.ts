@@ -31,10 +31,18 @@ export const MyGlobalStyle = createGlobalStyle`
   --disk-usage-color: #6ec6dc;
   --disk-request-color: #d0edff;
 
-  --critical-text-color: #ff3737;
-  --high-text-color: #ffa052;
-  --medium-text-color: #366bff;
-  --low-text-color: #09de5e;
+  // 여기에 추가
+  --red-main: var(--color-red-07);
+  --orange-main: var(--color-orange-07); 
+  --light-blue-main: var(--color-light-blue-05); 
+  --dark-blue-main: var(--color-dark-blue-01);
+  --green-main: var(--color-green-06); 
+  --dark-green-main: var(--color-dark-green-03); 
+  --light-green-main: var(--color-light-green-03);
+  --gray-main: var(--color-gray-06);
+  --blue-main: var(--color-blue-04);
+  --purple-main: var(--color-purple-04); 
+
 }
 
 @media (prefers-color-scheme: dark) {
