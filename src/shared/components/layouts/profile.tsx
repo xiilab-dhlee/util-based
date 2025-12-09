@@ -7,7 +7,6 @@ import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
@@ -62,7 +61,7 @@ export function Profile() {
           <User>
             <Avatar>
               <IconWrapper>
-                <AstragoIcon />
+                <Icon name="Astrago" color="#fff" size={18} />
               </IconWrapper>
             </Avatar>
             <UserBody>

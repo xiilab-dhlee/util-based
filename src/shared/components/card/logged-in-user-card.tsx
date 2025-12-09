@@ -1,8 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
+import { Icon } from "xiilab-ui";
 
 interface LoggedInUserCardProps {
   username: string;
@@ -19,7 +18,7 @@ export function LoggedInUserCard({ username, email }: LoggedInUserCardProps) {
   return (
     <Container>
       <Avatar>
-        <AstragoIcon />
+        <Icon name="Astrago" color="#5b29c7" size={18} />
       </Avatar>
       <Body>
         <Name>{username}</Name>

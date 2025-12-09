@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Button, Icon } from "xiilab-ui";
 
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { ProfileNotification } from "@/shared/components/layouts/profile-notification";
 import {
   ADMIN_ROOT_PATH,
@@ -67,7 +66,7 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
         <User>
           <Profile>
             <Avatar>
-              <AstragoIcon />
+              <Icon name="Astrago" color="#fff" size={24} />
             </Avatar>
             <ProfileBody>
               <UserName>{userName}</UserName>

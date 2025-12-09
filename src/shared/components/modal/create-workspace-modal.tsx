@@ -11,15 +11,9 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 
-/**
- * 크레덴셜 생성 모달 컴포넌트
- *
- * 새로운 크레덴셜을 생성할 수 있는 모달입니다.
- */
 export function CreateWorkspaceModal() {
   const formRef = useRef<HTMLFormElement>(null);
 
-  // useGlobalModal 훅을 사용하여 모달 상태 관리
   const { open, onClose } = useGlobalModal(openCreateWorkspaceModalAtom);
 
   const createWorkspace = useCreateWorkspace();
@@ -27,16 +21,14 @@ export function CreateWorkspaceModal() {
   const handleSubmit = () => {
     const payload = createPayload();
 
-    // TODO: payload 검증 및 유효성 검사 추가 필요
     if (payload) {
-      // TODO: validation 추가 필요
       createWorkspace.mutate(payload);
     }
   };
 
   const createPayload = (): CreateWorkspacePayload | null => {
     if (!formRef.current) return null;
-    // 폼 데이터 수집
+
     const formData = new FormData(formRef.current);
 
     return {

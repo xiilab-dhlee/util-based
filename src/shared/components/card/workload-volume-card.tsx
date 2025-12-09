@@ -6,8 +6,6 @@ import { Card, Icon } from "xiilab-ui";
 
 import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
-import { StorageIcon } from "@/shared/components/icon/storage-icon";
 import {
   LikeCompactCardKey,
   LikeCompactCardRecord,
@@ -25,18 +23,12 @@ export function WorkloadVolumeCard({
   size,
   onDelete,
 }: PropsWithChildren<WorkloadVolumeCardProps>) {
-  const { text } = getVolumeStorageTypeInfo(storageType);
+  const { text, icon } = getVolumeStorageTypeInfo(storageType);
   return (
     <Card
       contentVariant="compact"
       title={name}
-      icon={
-        storageType === "ASTRAGO" ? (
-          <AstragoIcon fill="#5b29c7" />
-        ) : (
-          <StorageIcon fill="#5b29c7" />
-        )
-      }
+      icon={<Icon name={icon} color="#5b29c7" size={18} />}
       actionElement={
         onDelete ? (
           <IconWrapper onClick={onDelete}>

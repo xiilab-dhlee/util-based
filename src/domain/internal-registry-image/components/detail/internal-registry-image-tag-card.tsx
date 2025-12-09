@@ -217,19 +217,19 @@ const VulnerabilityType = styled(Typography.Text).attrs({
   line-height: 12px;
   
   &.critical {
-    color: var(--critical-text-color);
+    color: var(--red-main);
   }
 
   &.high {
-    color: var(--high-text-color);
+    color: var(--orange-main);
   }
 
   &.medium {
-    color: var(--medium-text-color);
+    color: var(--blue-main);
   }
 
   &.low {
-    color: var(--low-text-color);
+    color: var(--green-main);
   }
 `;
 
