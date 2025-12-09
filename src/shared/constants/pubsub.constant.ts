@@ -192,6 +192,9 @@ export const SYSTEM_SETTING_EVENTS = {
   openCredentialDetailModal: "system-setting:open-credential-detail-modal",
   // 크레덴셜 삭제 모달 열기 이벤트
   openCredentialDeleteModal: "system-setting:open-credential-delete-modal",
+  // 워크스페이스 리소스 설정 모달 열기 이벤트
+  openWorkspaceResourceSettingModal:
+    "system-setting:open-workspace-resource-setting-modal",
 } as const;
 
 // 쿠버네티스 모니터링 관련 이벤트
