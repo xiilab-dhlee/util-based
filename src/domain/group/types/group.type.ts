@@ -1,6 +1,5 @@
-import type { GroupListType } from "@/domain/group/schemas/group.schema";
 import { MODAL_MODES, type ModalMode } from "@/shared/constants/core.constant";
-import type { GroupTreeNodeType } from "@/shared/schemas/group-tree.schema";
+import type { SelectedMember } from "@/shared/types/member-selection.type";
 
 /**
  * 그룹 생성 모달 payload
@@ -14,7 +13,7 @@ export type OpenGroupModalCreatePayload = {
  */
 export type OpenGroupModalUpdatePayload = {
   mode: (typeof MODAL_MODES)["UPDATE"];
-  data: GroupListType;
+  groupId: string;
 };
 
 /**
@@ -38,12 +37,12 @@ export const OPEN_GROUP_MODAL_CREATE_PAYLOAD: OpenGroupModalCreatePayload = {
 
 /**
  * 그룹 수정 모달 payload 생성 헬퍼
- * @param data - 수정할 그룹 데이터
+ * @param groupId - 수정할 그룹 ID
  */
 export function createOpenGroupModalUpdatePayload(
-  data: GroupListType,
+  groupId: string,
 ): OpenGroupModalUpdatePayload {
-  return { mode: MODAL_MODES.UPDATE, data };
+  return { mode: MODAL_MODES.UPDATE, groupId };
 }
 
 /**
@@ -56,25 +55,9 @@ export interface GroupFormErrors {
 }
 
 /**
- * 선택된 멤버 타입 (계정과 그룹 구분)
- */
-export interface SelectedMember {
-  /** 멤버 ID */
-  id: string;
-  /** 멤버 이름 */
-  name: string;
-  /** 이메일 (account인 경우에만) */
-  email?: string;
-  /** 멤버 타입 */
-  type: GroupTreeNodeType;
-}
-
-/**
  * 멤버 모달 열기 이벤트 payload
  */
 export interface OpenMemberModalPayload {
   /** 선택된 계정 목록 */
   selectedAccounts: SelectedMember[];
-  /** 선택된 그룹 목록 */
-  selectedGroups: SelectedMember[];
 }

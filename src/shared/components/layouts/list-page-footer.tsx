@@ -18,6 +18,8 @@ interface ListPageFooterProps {
   isLoading?: boolean;
   // 오른쪽 컴포넌트
   rightChildren?: ReactNode;
+  // 왼쪽 컴포넌트
+  leftChildren?: ReactNode;
 }
 // 목록 푸터 컴포넌트
 export function ListPageFooter({
@@ -27,6 +29,7 @@ export function ListPageFooter({
   onChange,
   isLoading,
   rightChildren,
+  leftChildren,
 }: ListPageFooterProps) {
   // 로딩 중일 때는 푸터를 렌더링하지 않음
   if (isLoading) {
@@ -35,10 +38,7 @@ export function ListPageFooter({
 
   return (
     <Container data-testid="list-pagination">
-      <Left>
-        <CurrentPage>{page}</CurrentPage>
-        <TotalPage>&nbsp;of {Math.ceil(total / pageSize)}</TotalPage>
-      </Left>
+      <Left>{leftChildren}</Left>
       <Center>
         <MyPagination
           current={page}
@@ -61,18 +61,7 @@ const Container = styled.div`
   margin-top: 12px;
 `;
 
-const Left = styled.div`
-  font-weight: 400;
-  font-size: 12px;
-`;
-
-const CurrentPage = styled.span`
-  color: #000;
-`;
-
-const TotalPage = styled.span`
-  color: #848484;
-`;
+const Left = styled.div``;
 
 const Center = styled.div``;
 

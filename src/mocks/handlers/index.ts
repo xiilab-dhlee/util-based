@@ -19,7 +19,9 @@ import { notificationHandlers } from "@/mocks/handlers/notification.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
+import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
+import { storageSettingHandlers } from "@/mocks/handlers/storage-setting.handler";
 import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
 import { volumeHandlers } from "@/mocks/handlers/volume.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
@@ -49,5 +51,7 @@ export const combinedHandlers = [
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,
   ...revokeHistoryHandlers,
+  ...storageSettingHandlers,
   ...systemMonitoringHandlers,
+  ...smtpHandlers,
 ];

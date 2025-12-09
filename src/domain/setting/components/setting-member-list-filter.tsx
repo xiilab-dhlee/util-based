@@ -33,7 +33,6 @@ export function SettingMemberListFilter() {
     // TODO: 현재 구성원 목록을 selectedAccounts로 전달 필요
     publish(SETTING_EVENTS.sendAddWorkspaceMember, {
       selectedAccounts: [],
-      selectedGroups: [],
     });
   };
 

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
+import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account-role.constant";
 import { openUpdateAccountStatusModalAtom } from "@/domain/account-management/state/account.atom";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -11,7 +13,6 @@ interface UpdateAccountStatusPayload {
   accountId: string;
   accountName: string;
   currentStatus: boolean;
-  nextStatus: boolean;
 }
 
 /**
@@ -34,15 +35,17 @@ export function UpdateAccountStatusModal() {
    */
   const handleOk = () => {
     if (!payload) {
-      toast.error("상태 변경 정보가 없습니다.");
       return;
     }
 
-    // TODO: 추후 실제 API 호출 추가
-    // updateAccountStatus.mutate({ accountId: payload.accountId, status: payload.nextStatus });
+    const nextStatus = !payload.currentStatus;
 
+    // TODO: 추후 실제 API 호출 추가
+    // updateAccountStatus.mutate({ accountId: payload.accountId, status: nextStatus });
+
+    const nextStatusLabel = getAccountStatusLabelFromBoolean(nextStatus);
     toast.success(
-      `${payload.accountName} 계정이 ${payload.nextStatus ? "활성화" : "비활성화"}되었습니다.`,
+      `${payload.accountName} 계정이 ${nextStatusLabel}되었습니다.`,
     );
     onClose();
   };
@@ -58,7 +61,27 @@ export function UpdateAccountStatusModal() {
     },
   );
 
-  const newStatus = payload?.currentStatus ? "비활성화" : "활성화";
+  if (!payload) {
+    return (
+      <Modal
+        variant="confirm"
+        modalWidth={300}
+        open={open}
+        onCancel={onClose}
+        onOk={handleOk}
+        title="계정 상태 변경"
+        centered
+        okButtonProps={{
+          disabled: true,
+        }}
+      >
+        <DataErrorState
+          title="계정 상태 정보를 불러 올 수 없습니다."
+          description="잠시 후 다시 시도해 주세요."
+        />
+      </Modal>
+    );
+  }
 
   return (
     <Modal
@@ -71,10 +94,12 @@ export function UpdateAccountStatusModal() {
       centered
     >
       <div>
-        {payload?.accountName} 계정을 {newStatus}하시겠습니까?
+        {payload.accountName} 계정을{" "}
+        {getAccountStatusLabelFromBoolean(!payload.currentStatus)}
+        하시겠습니까?
       </div>
       <div>
-        {payload?.currentStatus
+        {payload.currentStatus
           ? "비활성화 시 해당 계정은 로그인할 수 없습니다."
           : "활성화 시 해당 계정이 다시 사용 가능합니다."}
       </div>
