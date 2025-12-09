@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { useRef, useState } from "react";
+import { Scrollbars } from "react-custom-scrollbars";
 import styled from "styled-components";
 import { Button, Dropdown, Icon, Input } from "xiilab-ui";
 
@@ -183,181 +184,212 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
         )}
       </AsideDetailHeader>
 
-      {/* 첫 번째 아티클 - 소스코드 기본 정보 */}
-      <AsideDetailArticle>
-        <AsideDetailArticleBody>
-          {/* 소스코드 정보 섹션 */}
-          <AsideDetailArticleItem>
-            <AsideDetailArticleHeader>
-              <AsideDetailArticleTitle>소스코드 정보</AsideDetailArticleTitle>
-            </AsideDetailArticleHeader>
+      {/* 스크롤 영역 */}
+      <ScrollWrapper>
+        <Scrollbars
+          autoHide
+          autoHideTimeout={1000}
+          autoHideDuration={200}
+          renderThumbVertical={(props) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                backgroundColor: "#888",
+                borderRadius: "4px",
+              }}
+            />
+          )}
+        >
+          {/* 첫 번째 아티클 - 소스코드 기본 정보 */}
+          <AsideDetailArticle>
+            <AsideDetailArticleBody>
+              {/* 소스코드 정보 섹션 */}
+              <AsideDetailArticleItem>
+                <AsideDetailArticleHeader>
+                  <AsideDetailArticleTitle>
+                    소스코드 정보
+                  </AsideDetailArticleTitle>
+                </AsideDetailArticleHeader>
 
-            {/* 소스코드 이름 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>소스코드 이름</AsideDetailArticleKey>
-              {isReadOnly && (
-                <AsideDetailArticleValue>{data?.name}</AsideDetailArticleValue>
-              )}
-            </AsideDetailArticleColumn>
-            {/* 수정 모드일 때만 마운트 경로 입력 필드 표시 */}
-            {!isReadOnly && (
-              <div style={{ marginTop: 8, marginBottom: 16 }}>
-                <Input
-                  placeholder="소스코드 이름을 입력해주세요."
-                  width="100%"
-                  name="name"
-                  autoComplete="off"
-                  defaultValue={data?.name || ""}
-                />
-              </div>
-            )}
+                {/* 소스코드 이름 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>소스코드 이름</AsideDetailArticleKey>
+                  {isReadOnly && (
+                    <AsideDetailArticleValue>
+                      {data?.name}
+                    </AsideDetailArticleValue>
+                  )}
+                </AsideDetailArticleColumn>
+                {/* 수정 모드일 때만 마운트 경로 입력 필드 표시 */}
+                {!isReadOnly && (
+                  <div style={{ marginTop: 8, marginBottom: 16 }}>
+                    <Input
+                      placeholder="소스코드 이름을 입력해주세요."
+                      width="100%"
+                      name="name"
+                      autoComplete="off"
+                      defaultValue={data?.name || ""}
+                    />
+                  </div>
+                )}
 
-            {/* 공개 설정 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
-              {isReadOnly && (
-                <AsideDetailArticleValue>{statusText}</AsideDetailArticleValue>
-              )}
-            </AsideDetailArticleColumn>
-            {!isReadOnly && (
-              <SourcecodeFormFieldControl
-                style={{ marginTop: 8, marginBottom: 16 }}
-              >
-                <Dropdown
-                  options={status.options}
-                  onChange={status.setValue}
-                  value={status.value}
-                  width="100%"
-                  placeholder="공개 설정을 선택해 주세요."
-                />
-              </SourcecodeFormFieldControl>
-            )}
+                {/* 공개 설정 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
+                  {isReadOnly && (
+                    <AsideDetailArticleValue>
+                      {statusText}
+                    </AsideDetailArticleValue>
+                  )}
+                </AsideDetailArticleColumn>
+                {!isReadOnly && (
+                  <SourcecodeFormFieldControl
+                    style={{ marginTop: 8, marginBottom: 16 }}
+                  >
+                    <Dropdown
+                      options={status.options}
+                      onChange={status.setValue}
+                      value={status.value}
+                      width="100%"
+                      placeholder="공개 설정을 선택해 주세요."
+                    />
+                  </SourcecodeFormFieldControl>
+                )}
 
-            {/* 소스코드 타입 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>타입</AsideDetailArticleKey>
-              <AsideDetailArticleValue>{text}</AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
+                {/* 소스코드 타입 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>타입</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>{text}</AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
 
-            {/* 소스코드 URL */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>Git URL</AsideDetailArticleKey>
-              <AsideDetailArticleValue>{data?.url}</AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
+                {/* 소스코드 URL */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>Git URL</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>{data?.url}</AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
 
-            {/* 마운트 경로 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>마운트 경로</AsideDetailArticleKey>
-              {/* 읽기 전용 모드일 때만 표시 */}
-              {isReadOnly && (
-                <AsideDetailArticleValue className="truncate">
-                  {data?.path || "-"}
-                </AsideDetailArticleValue>
-              )}
-            </AsideDetailArticleColumn>
+                {/* 마운트 경로 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>마운트 경로</AsideDetailArticleKey>
+                  {/* 읽기 전용 모드일 때만 표시 */}
+                  {isReadOnly && (
+                    <AsideDetailArticleValue className="truncate">
+                      {data?.path || "-"}
+                    </AsideDetailArticleValue>
+                  )}
+                </AsideDetailArticleColumn>
 
-            {/* 수정 모드일 때만 마운트 경로 입력 필드 표시 */}
-            {!isReadOnly && (
-              <div style={{ marginTop: 8 }}>
-                <Input
-                  placeholder="기본 마운트 경로를 입력해주세요."
-                  width="100%"
-                  name="path"
-                  autoComplete="off"
-                  defaultValue={data?.path || ""}
-                />
-              </div>
-            )}
-          </AsideDetailArticleItem>
+                {/* 수정 모드일 때만 마운트 경로 입력 필드 표시 */}
+                {!isReadOnly && (
+                  <div style={{ marginTop: 8 }}>
+                    <Input
+                      placeholder="기본 마운트 경로를 입력해주세요."
+                      width="100%"
+                      name="path"
+                      autoComplete="off"
+                      defaultValue={data?.path || ""}
+                    />
+                  </div>
+                )}
+              </AsideDetailArticleItem>
 
-          {/* 생성자 정보 섹션 */}
-          <AsideDetailArticleItem>
-            <AsideDetailArticleHeader>
-              <AsideDetailArticleTitle>생성 정보</AsideDetailArticleTitle>
-            </AsideDetailArticleHeader>
+              {/* 생성자 정보 섹션 */}
+              <AsideDetailArticleItem>
+                <AsideDetailArticleHeader>
+                  <AsideDetailArticleTitle>생성 정보</AsideDetailArticleTitle>
+                </AsideDetailArticleHeader>
 
-            {/* 생성자 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
-              <AsideDetailArticleValue>
-                {data?.creatorName}
-              </AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
+                {/* 생성자 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>
+                    {data?.creatorName}
+                  </AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
 
-            {/* 생성일 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
-              <AsideDetailArticleValue>
-                {data?.creatorDate && format(data?.creatorDate, "yyyy.MM.dd")}
-              </AsideDetailArticleValue>
-            </AsideDetailArticleColumn>
-          </AsideDetailArticleItem>
-        </AsideDetailArticleBody>
-      </AsideDetailArticle>
+                {/* 생성일 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>
+                    {data?.creatorDate &&
+                      format(data?.creatorDate, "yyyy.MM.dd")}
+                  </AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+              </AsideDetailArticleItem>
+            </AsideDetailArticleBody>
+          </AsideDetailArticle>
 
-      {/* 두 번째 아티클 - 설정 내용 */}
-      <SecondaryArticle>
-        <AsideDetailArticleBody>
-          <AsideDetailArticleItem>
-            <AsideDetailArticleHeader>
-              <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
-            </AsideDetailArticleHeader>
+          {/* 두 번째 아티클 - 설정 내용 */}
+          <SecondaryArticle>
+            <AsideDetailArticleBody>
+              <AsideDetailArticleItem>
+                <AsideDetailArticleHeader>
+                  <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
+                </AsideDetailArticleHeader>
 
-            {/* 크레덴셜 정보 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>크레덴셜</AsideDetailArticleKey>
-              {/* 읽기 전용 모드일 때만 표시 */}
-              {isReadOnly && (
-                <AsideDetailArticleValue>
-                  {data?.credential?.name || "-"}
-                </AsideDetailArticleValue>
-              )}
-            </AsideDetailArticleColumn>
+                {/* 크레덴셜 정보 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>크레덴셜</AsideDetailArticleKey>
+                  {/* 읽기 전용 모드일 때만 표시 */}
+                  {isReadOnly && (
+                    <AsideDetailArticleValue>
+                      {data?.credential?.name || "-"}
+                    </AsideDetailArticleValue>
+                  )}
+                </AsideDetailArticleColumn>
 
-            {/* 수정 모드일 때만 크레덴셜 관리 컴포넌트 표시 */}
-            {!isReadOnly && (
-              <ManageCredentialWrapper>
-                <ManageCredential defaultCredential={data?.credential} />
-              </ManageCredentialWrapper>
-            )}
+                {/* 수정 모드일 때만 크레덴셜 관리 컴포넌트 표시 */}
+                {!isReadOnly && (
+                  <ManageCredentialWrapper>
+                    <ManageCredential defaultCredential={data?.credential} />
+                  </ManageCredentialWrapper>
+                )}
 
-            {/* 실행 명령어 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>실행 명령어</AsideDetailArticleKey>
-              {isReadOnly && (
-                <AsideDetailArticleValue>{data?.cmd}</AsideDetailArticleValue>
-              )}
-            </AsideDetailArticleColumn>
-            {!isReadOnly && (
-              <div style={{ marginTop: 8, marginBottom: 16 }}>
-                <Input
-                  placeholder="실행 명령어를 입력해주세요."
-                  width="100%"
-                  name="cmd"
-                  autoComplete="off"
-                  defaultValue={data?.cmd || ""}
-                />
-              </div>
-            )}
+                {/* 실행 명령어 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>실행 명령어</AsideDetailArticleKey>
+                  {isReadOnly && (
+                    <AsideDetailArticleValue>
+                      {data?.cmd}
+                    </AsideDetailArticleValue>
+                  )}
+                </AsideDetailArticleColumn>
+                {!isReadOnly && (
+                  <div style={{ marginTop: 8, marginBottom: 16 }}>
+                    <Input
+                      placeholder="실행 명령어를 입력해주세요."
+                      width="100%"
+                      name="cmd"
+                      autoComplete="off"
+                      defaultValue={data?.cmd || ""}
+                    />
+                  </div>
+                )}
 
-            {/* 파라미터 섹션 */}
-            <AsideDetailArticleColumn>
-              <AsideDetailArticleKey>파라미터</AsideDetailArticleKey>
-            </AsideDetailArticleColumn>
+                {/* 파라미터 섹션 */}
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>파라미터</AsideDetailArticleKey>
+                </AsideDetailArticleColumn>
 
-            {/* 파라미터 표시/관리 컴포넌트 */}
-            <div style={{ marginTop: 8 }}>
-              {isReadOnly ? (
-                // 읽기 전용 모드: 파라미터를 읽기 전용으로 표시
-                <ReadOnlyParameter parameters={data?.parameters || []} />
-              ) : (
-                // 수정 모드: 파라미터를 수정 가능한 형태로 표시
-                <ManageParameter defaultParameters={data?.parameters || []} />
-              )}
-            </div>
-          </AsideDetailArticleItem>
-        </AsideDetailArticleBody>
-      </SecondaryArticle>
+                {/* 파라미터 표시/관리 컴포넌트 */}
+                <div style={{ marginTop: 8 }}>
+                  {isReadOnly ? (
+                    // 읽기 전용 모드: 파라미터를 읽기 전용으로 표시
+                    <ReadOnlyParameter parameters={data?.parameters || []} />
+                  ) : (
+                    // 수정 모드: 파라미터를 수정 가능한 형태로 표시
+                    <ManageParameter
+                      defaultParameters={data?.parameters || []}
+                    />
+                  )}
+                </div>
+              </AsideDetailArticleItem>
+            </AsideDetailArticleBody>
+          </SecondaryArticle>
+        </Scrollbars>
+      </ScrollWrapper>
+
       {/* 하단 버튼 영역 */}
       {!isReadOnly && (
         <AsideDetailFooter>
@@ -386,16 +418,25 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
 }
 
 /**
+ * 스크롤 래퍼 스타일
+ *
+ * Scrollbars 컴포넌트를 감싸는 컨테이너입니다.
+ * flex: 1을 사용하여 남은 공간을 모두 차지하고, 스크롤 영역의 높이를 제어합니다.
+ */
+const ScrollWrapper = styled.div`
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+`;
+
+/**
  * 두 번째 아티클 스타일
  *
  * 첫 번째 아티클을 상속받아 설정 내용을 표시하는 섹션의 스타일을 정의합니다.
- * flex: 1을 사용하여 남은 공간을 모두 차지하고, 스크롤이 가능하도록 설정합니다.
  * 상단 여백을 통해 첫 번째 아티클과 구분합니다.
  */
 const SecondaryArticle = styled(AsideDetailArticle)`
-  flex: 1;
   margin-top: 10px;
-  overflow-y: auto;
 `;
 
 /**
