@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 import { SourcecodeRow } from "@/domain/sourcecode/components/sourcecode-row";
@@ -29,17 +29,14 @@ export function SourcecodeListBody({
   content,
   loading,
 }: SourcecodeListBodyProps) {
-  const [selectedSourcecode, setSelectedSourcecode] = useAtom(
-    sourcecodeSelectedAtom,
-  );
+  const setSelectedSourcecode = useSetAtom(sourcecodeSelectedAtom);
 
   // 데이터 변경 시 첫 번째 소스코드 자동 선택
   useEffect(() => {
-    const firstSourcecode = content[0];
-    if (firstSourcecode && selectedSourcecode === null) {
-      setSelectedSourcecode(firstSourcecode.id);
+    if (content.length > 0) {
+      setSelectedSourcecode(content[0].id);
     }
-  }, [content, selectedSourcecode, setSelectedSourcecode]);
+  }, [content, setSelectedSourcecode]);
 
   return (
     <ListWrapper>

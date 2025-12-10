@@ -7,6 +7,7 @@ import styled from "styled-components";
 import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
 import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { MySpinner } from "@/shared/components/spinner";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { VolumeCard } from "./volume-card";
 
@@ -27,28 +28,19 @@ interface VolumeListBodyProps {
  * @param loading - 로딩 상태
  */
 export function VolumeListBody({ content, loading }: VolumeListBodyProps) {
-  // 선택된 볼륨 (Jotai atom에서 관리)
   const [selectedVolume, setSelectedVolume] = useAtom(volumeSelectedAtom);
 
   // 데이터 변경 시 첫 번째 볼륨 자동 선택
   useEffect(() => {
-    const firstVolume = content[0];
-    if (firstVolume) {
-      setSelectedVolume(firstVolume.uid);
+    if (content.length > 0) {
+      setSelectedVolume(content[0].uid);
     }
   }, [content, setSelectedVolume]);
-
-  if (loading) {
-    return (
-      <ListWrapper>
-        <StyledGridList />
-      </ListWrapper>
-    );
-  }
 
   return (
     <ListWrapper>
       <StyledGridList>
+        {loading && <MySpinner />}
         {content.length === 0 && (
           <ListEmpty
             title="볼륨이 없습니다."
@@ -68,5 +60,7 @@ export function VolumeListBody({ content, loading }: VolumeListBodyProps) {
 }
 
 const StyledGridList = styled(GridList)`
+  position: relative;
+
   --icon-fill: #5b29c7;
 `;
