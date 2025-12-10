@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { ZodError } from "zod";
+import { ZodError } from "zod";
 
 import type {
   LicenseFormErrors,
@@ -59,11 +59,10 @@ export const useLicenseForm = (): UseLicenseFormReturn => {
       };
     } catch (error) {
       // Zod 검증 에러 처리
-      if (error instanceof Error && "errors" in error) {
-        const zodError = error as ZodError;
+      if (error instanceof ZodError) {
         const fieldErrors: LicenseFormErrors = {};
 
-        zodError.errors.forEach((err) => {
+        error.errors.forEach((err) => {
           const field = err.path[0] as keyof LicenseFormType;
           fieldErrors[field] = err.message;
         });

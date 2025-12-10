@@ -7,6 +7,7 @@ import {
   type WorkspaceResourceSettingFormType,
   workspaceResourceSettingFormSchema,
 } from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
+import { hasDuplicateMigProfile } from "@/shared/utils/mig-resource.util";
 
 // ===== 타입 =====
 
@@ -18,7 +19,7 @@ interface UseWorkspaceResourceSettingFormReturn {
     value: WorkspaceResourceSettingFormType[Key],
   ) => void;
   addMigResource: (migResource: MigResourceType) => boolean;
-  updateMigResource: (index: number, migResource: MigResourceType) => void;
+  updateMigResource: (index: number, migResource: MigResourceType) => boolean;
   removeMigResource: (index: number) => void;
   validate: () => boolean;
   reset: () => void;
@@ -66,14 +67,18 @@ function mapZodErrors(
  *
  * 폼 상태 관리, MIG 리소스 목록 관리, 검증 기능 제공
  */
-export function useWorkspaceResourceSettingForm(): UseWorkspaceResourceSettingFormReturn {
-  const [formState, setFormState] = useState<WorkspaceResourceSettingFormType>(
-    createInitialFormState,
-  );
+export function useWorkspaceResourceSettingForm(
+  initialValue?: WorkspaceResourceSettingFormType,
+): UseWorkspaceResourceSettingFormReturn {
+  const getInitialState = () =>
+    (initialValue as WorkspaceResourceSettingFormType | undefined) ??
+    createInitialFormState();
+
+  const [formState, setFormState] =
+    useState<WorkspaceResourceSettingFormType>(getInitialState);
   const [errors, setErrors] = useState<WorkspaceResourceSettingFormErrors>({});
-  const [initialState] = useState<WorkspaceResourceSettingFormType>(
-    createInitialFormState(),
-  );
+  const [initialState] =
+    useState<WorkspaceResourceSettingFormType>(getInitialState);
 
   /**
    * 개별 필드 값 설정
@@ -95,8 +100,9 @@ export function useWorkspaceResourceSettingForm(): UseWorkspaceResourceSettingFo
    */
   const addMigResource = (migResource: MigResourceType): boolean => {
     // 중복 프로필 확인
-    const isDuplicate = formState.migResources.some(
-      (resource) => resource.profile === migResource.profile,
+    const isDuplicate = hasDuplicateMigProfile(
+      formState.migResources ?? [],
+      migResource.profile,
     );
 
     if (isDuplicate) {
@@ -109,7 +115,7 @@ export function useWorkspaceResourceSettingForm(): UseWorkspaceResourceSettingFo
 
     setFormState((prev) => ({
       ...prev,
-      migResources: [...prev.migResources, migResource],
+      migResources: [...(prev.migResources ?? []), migResource],
     }));
 
     setErrors((prev) => ({
@@ -123,13 +129,45 @@ export function useWorkspaceResourceSettingForm(): UseWorkspaceResourceSettingFo
   /**
    * MIG 리소스 수정
    */
-  const updateMigResource = (index: number, migResource: MigResourceType) => {
-    setFormState((prev) => ({
+  const updateMigResource = (
+    index: number,
+    migResource: MigResourceType,
+  ): boolean => {
+    let hasDuplicate = false;
+
+    setFormState((prev) => {
+      hasDuplicate = hasDuplicateMigProfile(
+        prev.migResources ?? [],
+        migResource.profile,
+        index,
+      );
+
+      if (hasDuplicate) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        migResources: (prev.migResources ?? []).map((item, i) =>
+          i === index ? migResource : item,
+        ),
+      };
+    });
+
+    if (hasDuplicate) {
+      setErrors((prev) => ({
+        ...prev,
+        migResources: "이미 추가된 MIG 프로필입니다.",
+      }));
+      return false;
+    }
+
+    setErrors((prev) => ({
       ...prev,
-      migResources: prev.migResources.map((item, i) =>
-        i === index ? migResource : item,
-      ),
+      migResources: undefined,
     }));
+
+    return true;
   };
 
   /**
@@ -138,7 +176,7 @@ export function useWorkspaceResourceSettingForm(): UseWorkspaceResourceSettingFo
   const removeMigResource = (index: number) => {
     setFormState((prev) => ({
       ...prev,
-      migResources: prev.migResources.filter((_, i) => i !== index),
+      migResources: (prev.migResources ?? []).filter((_, i) => i !== index),
     }));
   };
 
@@ -162,7 +200,7 @@ export function useWorkspaceResourceSettingForm(): UseWorkspaceResourceSettingFo
    * 폼 초기화
    */
   const reset = () => {
-    setFormState(createInitialFormState());
+    setFormState(initialState);
     setErrors({});
   };
 

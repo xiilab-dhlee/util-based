@@ -18,7 +18,7 @@ export const useCreateStorageSetting = (): UseMutationResult<
   return useMutation({
     mutationKey: storageSettingKeys.create(),
     mutationFn: (payload: CreateStorageSettingRequestPayload) => {
-      return storageSettingService.create(payload);
+      return storageSettingService.create(payload).then((res) => res.data);
     },
   });
 };

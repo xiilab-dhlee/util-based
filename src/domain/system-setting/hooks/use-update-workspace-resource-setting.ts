@@ -21,6 +21,5 @@ export const useUpdateWorkspaceResourceSetting = (): UseMutationResult<
     mutationFn: (payload: WorkspaceResourceSettingRequestType) => {
       return service.updateWorkspaceResourceSetting(payload);
     },
-    onSuccess: () => {},
   });
 };
