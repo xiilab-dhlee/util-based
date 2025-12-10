@@ -191,13 +191,13 @@ const createJobTypeDistribution = (): JobTypeDistribution[] => {
 const createJobTypeUsageTime = (): JobTypeUsageTime[] => {
   const jobTypes: WorkloadJobType[] = ["BATCH", "INTERACTIVE", "DISTRIBUTED"];
 
-  // 랜덤 시간 생성 (시간 단위)
-  const hours = jobTypes.map(() => Math.floor(Math.random() * 500) + 50);
+  // 랜덤 시간 생성 (시간 단위, float로 생성하여 분 포함)
+  const hours = jobTypes.map(() => Math.random() * 500 + 50);
   const totalHours = hours.reduce((sum, hour) => sum + hour, 0);
 
   return jobTypes.map((type, index) => {
     const h = Math.floor(hours[index]);
-    const m = Math.floor((hours[index] - h) * 60);
+    const m = Math.floor((hours[index] % 1) * 60);
     return {
       type,
       time: `${h}시간 ${m}분`,
