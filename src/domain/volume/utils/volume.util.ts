@@ -32,12 +32,15 @@ export const getVolumeStorageTypeInfo = (storageType: VolumeStorageType) => {
 export const getVolumeStatusInfo = (type: VolumeStatusType) => {
   // 타입 표시 텍스트
   let text = "";
+  let icon = "";
 
   if (type === "PUBLIC") {
     text = "공개";
+    icon = "";
   } else if (type === "PRIVATE") {
     text = "비공개";
+    icon = "Lock";
   }
 
-  return { text };
+  return { text, icon };
 };

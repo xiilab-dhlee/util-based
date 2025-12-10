@@ -9,7 +9,10 @@ import {
   volumeCheckedListAtom,
   volumeSelectedAtom,
 } from "@/domain/volume/state/volume.atom";
-import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
+import {
+  getVolumeStatusInfo,
+  getVolumeStorageTypeInfo,
+} from "@/domain/volume/utils/volume.util";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
 
 // import { PreviewTag } from "@/shared/components/tag/preview-tag";
@@ -30,12 +33,14 @@ export function VolumeCard({
   creatorName,
   storageType,
   path,
+  status,
   isSelected,
 }: VolumeCardProps) {
   const setSelectedVolume = useSetAtom(volumeSelectedAtom);
   const [checkedList, setCheckedList] = useAtom(volumeCheckedListAtom);
 
-  const { text, icon } = getVolumeStorageTypeInfo(storageType);
+  const { text } = getVolumeStorageTypeInfo(storageType);
+  const { icon } = getVolumeStatusInfo(status);
   const isChecked = checkedList.has(uid);
 
   // 카드 클릭 핸들러 - 선택 볼륨 상태 변경
@@ -68,7 +73,7 @@ export function VolumeCard({
       showCheckBox
       checked={isChecked}
       // 스토리지 타입에 따라 아이콘 변경
-      icon={<Icon name={icon} size={24} color="#5b29c7" />}
+      icon={icon ? <Icon name={icon} size={24} color="#464B51" /> : null}
       // 선택된 볼륨 카드 스타일
       style={{ borderColor: isSelected ? "#366BFF" : "" }}
     >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { Icon } from "xiilab-ui";
 
 import { volumeFileSelectedKeyAtom } from "@/domain/volume/state/volume.atom";
 import { FileTreeButton } from "@/shared/components/button/file-tree-button";
@@ -46,6 +47,7 @@ export function VolumeFileButton({
       }}
     >
       {fileName}
+      <Icon name="Verification02" color="#1F5BFF" size={18} />
     </FileTreeButton>
   );
 }

@@ -41,7 +41,7 @@ export function VolumeCompressFileButton() {
       onClick={handleClick}
       disabled={checkedNodesInfo.length === 0}
     >
-      파일 압축
+      압축
     </StyledButton>
   );
 }

@@ -19,12 +19,13 @@ import {
 } from "@/domain/volume/state/volume.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
-import { ASIDE_WIDTH, CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
   ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
+import { DeleteVolumeFileModal } from "./file/delete-volume-file-modal";
 
 /**
  * 볼륨 목록 페이지의 메인 컴포넌트
@@ -42,7 +43,7 @@ export function VolumeListMain() {
   // API 호출 (Main에서 한 번만 호출)
   const { data, isLoading } = useGetVolumes({
     page,
-    size: CARD_PAGE_SIZE,
+    size: 9,
     searchText,
   });
 
@@ -73,6 +74,8 @@ export function VolumeListMain() {
       <CompressVolumeFileModal />
       {/* 볼륨 폴더 추가 모달 */}
       <CreateVolumeFolderModal />
+      {/* 볼륨 파일 삭제 모달 */}
+      <DeleteVolumeFileModal />
     </>
   );
 }
