@@ -1,34 +1,27 @@
 "use client";
 
+import { useState } from "react";
 import styled from "styled-components";
 
-import {
-  NodeGpuUsageCard,
-  SystemGpuUsageCard,
-} from "@/domain/report/components/cards";
-import {
-  JobTypeDistribution,
-  JobTypeUsageTime,
-  NodeGpuChart,
-  WorkloadCreationChart,
-} from "@/domain/report/components/charts";
-import { ReportFilter } from "@/domain/report/components/common";
 import {
   CpuUsageWarningTable,
   DiskUsageWarningTable,
   GpuTemperatureWarningTable,
+  JobTypeDistribution,
+  JobTypeUsageTime,
   MemoryUsageWarningTable,
+  NodeGpuChart,
+  NodeGpuUsageCard,
   NodeSystemInfoTable,
+  ReportFilter,
+  SystemGpuUsageCard,
   UserGpuUsageTable,
-} from "@/domain/report/components/tables";
+  WorkloadCreationChart,
+} from "@/domain/report/components";
 import {
   REPORT_DATE_TYPE_TEXT,
   REPORT_TYPE_TEXT,
 } from "@/domain/report/constants/report.constant";
-import {
-  type SystemReportSection,
-  useSectionToggles,
-} from "@/domain/report/hooks/use-section-toggles";
 import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
 import { subTitleStyle } from "@/styles/mixins/text";
 
@@ -36,19 +29,14 @@ interface SystemReportMainProps {
   report: ReportDetailResponse;
 }
 
-/** 시스템 리포트에서 토글이 필요한 섹션들 */
-const SYSTEM_REPORT_SECTIONS: SystemReportSection[] = [
-  "userGpu",
-  "nodeSystem",
-  "gpuTemp",
-  "cpuUsage",
-  "memoryUsage",
-  "diskUsage",
-];
-
 export function SystemReportMain({ report }: SystemReportMainProps) {
-  // 커스텀 훅으로 토글 상태 관리 통합
-  const { getToggleProps } = useSectionToggles(SYSTEM_REPORT_SECTIONS);
+  // 각 테이블의 showAll state 관리
+  const [userGpuShowAll, setUserGpuShowAll] = useState(false);
+  const [nodeSystemShowAll, setNodeSystemShowAll] = useState(false);
+  const [gpuTempShowAll, setGpuTempShowAll] = useState(false);
+  const [cpuUsageShowAll, setCpuUsageShowAll] = useState(false);
+  const [memoryUsageShowAll, setMemoryUsageShowAll] = useState(false);
+  const [diskUsageShowAll, setDiskUsageShowAll] = useState(false);
 
   const {
     resourceUsage,
@@ -84,7 +72,7 @@ export function SystemReportMain({ report }: SystemReportMainProps) {
             <SystemGpuUsageCard resourceUsage={resourceUsage} />
           </SubSection>
 
-          {/* SubSection : 노드별 GPU 사용률 - 데이터 기반 렌더링 */}
+          {/* Section 2: 노드별 GPU 사용률 - 데이터 기반 렌더링 */}
           {nodes?.map((node, index) => (
             <SubSection key={node.nodeName}>
               <NodeGpuUsageCard
@@ -121,8 +109,8 @@ export function SystemReportMain({ report }: SystemReportMainProps) {
               title={<SubTitle>사용자별 GPU 사용 비율</SubTitle>}
               data={userGpuUsage}
               showToggle={true}
-              showAll={getToggleProps("userGpu").showAll}
-              onToggleShowAll={getToggleProps("userGpu").onToggleShowAll}
+              showAll={userGpuShowAll}
+              onToggleShowAll={setUserGpuShowAll}
             />
           </SubSection>
         </Section>
@@ -133,8 +121,8 @@ export function SystemReportMain({ report }: SystemReportMainProps) {
             title={<SectionTitle>3. 노드 시스템 정보</SectionTitle>}
             data={nodeSystemInfo}
             showToggle={true}
-            showAll={getToggleProps("nodeSystem").showAll}
-            onToggleShowAll={getToggleProps("nodeSystem").onToggleShowAll}
+            showAll={nodeSystemShowAll}
+            onToggleShowAll={setNodeSystemShowAll}
           />
         </Section>
 
@@ -146,8 +134,8 @@ export function SystemReportMain({ report }: SystemReportMainProps) {
               title={<SubTitle>GPU 온도 90도 이상</SubTitle>}
               data={gpuTemperatureWarning}
               showToggle={true}
-              showAll={getToggleProps("gpuTemp").showAll}
-              onToggleShowAll={getToggleProps("gpuTemp").onToggleShowAll}
+              showAll={gpuTempShowAll}
+              onToggleShowAll={setGpuTempShowAll}
             />
           </SubSection>
           <SubSection>
@@ -155,8 +143,8 @@ export function SystemReportMain({ report }: SystemReportMainProps) {
               title={<SubTitle>CPU 사용률 90% 이상</SubTitle>}
               data={cpuUsageWarning}
               showToggle={true}
-              showAll={getToggleProps("cpuUsage").showAll}
-              onToggleShowAll={getToggleProps("cpuUsage").onToggleShowAll}
+              showAll={cpuUsageShowAll}
+              onToggleShowAll={setCpuUsageShowAll}
             />
           </SubSection>
           <SubSection>
@@ -164,8 +152,8 @@ export function SystemReportMain({ report }: SystemReportMainProps) {
               title={<SubTitle>Memory 사용률 90% 이상</SubTitle>}
               data={memoryUsageWarning}
               showToggle={true}
-              showAll={getToggleProps("memoryUsage").showAll}
-              onToggleShowAll={getToggleProps("memoryUsage").onToggleShowAll}
+              showAll={memoryUsageShowAll}
+              onToggleShowAll={setMemoryUsageShowAll}
             />
           </SubSection>
           <SubSection>
@@ -173,8 +161,8 @@ export function SystemReportMain({ report }: SystemReportMainProps) {
               title={<SubTitle>Disk 사용률 90% 이상</SubTitle>}
               data={diskUsageWarning}
               showToggle={true}
-              showAll={getToggleProps("diskUsage").showAll}
-              onToggleShowAll={getToggleProps("diskUsage").onToggleShowAll}
+              showAll={diskUsageShowAll}
+              onToggleShowAll={setDiskUsageShowAll}
             />
           </SubSection>
         </Section>

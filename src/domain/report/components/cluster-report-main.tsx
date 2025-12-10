@@ -1,22 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import styled from "styled-components";
 
-import { ResourceUsageCards } from "@/domain/report/components/cards";
-import { ResourceUsageTrendCharts } from "@/domain/report/components/charts";
-import { ReportFilter } from "@/domain/report/components/common";
 import {
   NodeResourceUtilization,
   NodeWorkloadDistribution,
-} from "@/domain/report/components/tables";
+  ReportFilter,
+  ResourceUsageCards,
+  ResourceUsageTrendCharts,
+} from "@/domain/report/components";
 import {
   REPORT_DATE_TYPE_TEXT,
   REPORT_TYPE_TEXT,
 } from "@/domain/report/constants/report.constant";
-import {
-  type ClusterReportSection,
-  useSectionToggles,
-} from "@/domain/report/hooks/use-section-toggles";
 import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
 import { subTitleStyle } from "@/styles/mixins/text";
 
@@ -24,15 +21,10 @@ interface ClusterReportMainProps {
   report: ReportDetailResponse;
 }
 
-/** 클러스터 리포트에서 토글이 필요한 섹션들 */
-const CLUSTER_REPORT_SECTIONS: ClusterReportSection[] = [
-  "nodeWorkload",
-  "nodeResource",
-];
-
 export function ClusterReportMain({ report }: ClusterReportMainProps) {
-  // 커스텀 훅으로 토글 상태 관리 통합
-  const { getToggleProps } = useSectionToggles(CLUSTER_REPORT_SECTIONS);
+  // 각 테이블의 showAll state 관리
+  const [nodeWorkloadShowAll, setNodeWorkloadShowAll] = useState(false);
+  const [nodeResourceShowAll, setNodeResourceShowAll] = useState(false);
 
   const {
     resourceUsage,
@@ -75,7 +67,8 @@ export function ClusterReportMain({ report }: ClusterReportMainProps) {
             }
             data={nodeDistribution}
             showToggle={true}
-            {...getToggleProps("nodeWorkload")}
+            showAll={nodeWorkloadShowAll}
+            onToggleShowAll={setNodeWorkloadShowAll}
           />
         </Section>
         <Section>
@@ -83,7 +76,8 @@ export function ClusterReportMain({ report }: ClusterReportMainProps) {
             title={<SectionTitle>3. 노드별 리소스 활용 정보</SectionTitle>}
             data={nodeResourceUtilization}
             showToggle={true}
-            {...getToggleProps("nodeResource")}
+            showAll={nodeResourceShowAll}
+            onToggleShowAll={setNodeResourceShowAll}
           />
         </Section>
       </Body>
