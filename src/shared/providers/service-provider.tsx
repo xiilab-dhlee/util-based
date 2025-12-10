@@ -25,6 +25,7 @@ import { HpeService } from "@/domain/system-setting/api/hpe.service";
 import { LicenseService } from "@/domain/system-setting/api/license.service";
 import { SmtpService } from "@/domain/system-setting/api/smtp.service";
 import { StorageSettingService } from "@/domain/system-setting/api/storage-setting.service";
+import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
 import { VolumeService } from "@/domain/volume/api/volume.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
@@ -60,6 +61,7 @@ interface ServiceContextType {
   licenseService: LicenseService;
   smtpService: SmtpService;
   storageSettingService: StorageSettingService;
+  workspaceResourceSettingService: WorkspaceResourceSettingService;
 }
 
 // 서비스 컨텍스트 생성
@@ -107,6 +109,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     licenseService: new LicenseService(),
     smtpService: new SmtpService(),
     storageSettingService: new StorageSettingService(),
+    workspaceResourceSettingService: new WorkspaceResourceSettingService(),
   };
 
   return (
