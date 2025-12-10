@@ -14,7 +14,7 @@ export const GPU_CHART_COLORS = [
   "#515E80", // 회색
   "#FF8080", // 빨강
   "#77B900", // 연두
-];
+] as const;
 
 /**
  * 메트릭 정보 인터페이스
@@ -26,7 +26,7 @@ export const GPU_CHART_COLORS = [
 interface MetricInfo {
   text: string;
   unit: string;
-  colors: string[];
+  colors: readonly string[];
   series?: string[];
 }
 
@@ -38,27 +38,27 @@ const METRIC_MAP: Record<MonitoringMetricType, MetricInfo> = {
   "gpu-utilization": {
     text: "GPU 사용률",
     unit: "%",
-    colors: GPU_CHART_COLORS,
+    colors: GPU_CHART_COLORS as readonly string[],
   },
   "gpu-memory": {
     text: "GPU 메모리",
     unit: "GB",
-    colors: GPU_CHART_COLORS,
+    colors: GPU_CHART_COLORS as readonly string[],
   },
   "gpu-temperature": {
     text: "GPU 온도",
     unit: "°C",
-    colors: GPU_CHART_COLORS,
+    colors: GPU_CHART_COLORS as readonly string[],
   },
   "gpu-fan-speed": {
     text: "팬 속도",
     unit: "%",
-    colors: GPU_CHART_COLORS,
+    colors: GPU_CHART_COLORS as readonly string[],
   },
   "gpu-power-usage": {
     text: "전력 사용량",
     unit: "W",
-    colors: GPU_CHART_COLORS,
+    colors: GPU_CHART_COLORS as readonly string[],
   },
 
   // CPU 메트릭 (대표색 #376DFF 첫 번째 고정)

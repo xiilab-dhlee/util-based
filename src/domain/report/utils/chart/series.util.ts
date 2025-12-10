@@ -5,6 +5,30 @@ import type { ApexOptions } from "apexcharts";
 
 import type { ChartDataSeries } from "@/shared/utils/chart.util";
 
+/**
+ * x 값을 타임스탬프 숫자로 변환합니다.
+ *
+ * @param x - 변환할 x 값 (문자열, 숫자, Date)
+ * @returns 타임스탬프 숫자
+ */
+function toTimestamp(x: string | number | Date): number {
+  if (typeof x === "string") return new Date(x).getTime();
+  if (typeof x === "number") return x;
+  return x.getTime();
+}
+
+/**
+ * x 값을 Date 객체로 변환합니다.
+ *
+ * @param x - 변환할 x 값 (문자열, 숫자, Date)
+ * @returns Date 객체
+ */
+function toDate(x: string | number | Date): Date {
+  if (typeof x === "string") return new Date(x);
+  if (x instanceof Date) return x;
+  return new Date(x);
+}
+
 /** 원본 데이터 포인트 타입 */
 export interface RawDataPoint {
   x: string | number | Date;
@@ -38,12 +62,7 @@ export function convertToApexSeries<T extends string>(
   return data.map((item) => ({
     name: labelMap && item.type ? labelMap[item.type] : (item.name ?? ""),
     data: item.data.map((point) => ({
-      x:
-        typeof point.x === "string"
-          ? new Date(point.x).getTime()
-          : typeof point.x === "number"
-            ? point.x
-            : point.x.getTime(),
+      x: toTimestamp(point.x),
       y: point.y,
     })),
   }));
@@ -73,12 +92,7 @@ export function convertToLegendSeries<T extends string>(
     type: chartType,
     name: labelMap && item.type ? labelMap[item.type] : (item.name ?? ""),
     data: item.data.map((point) => ({
-      x:
-        typeof point.x === "string"
-          ? new Date(point.x)
-          : point.x instanceof Date
-            ? point.x
-            : new Date(point.x),
+      x: toDate(point.x),
       y: point.y,
     })),
   }));

@@ -190,7 +190,7 @@ export interface SeriesWithData<
  */
 export function createMinMaxAnnotations<T extends TimeSeriesDataPoint>(
   seriesData: SeriesWithData<T>[],
-  colors: string[],
+  colors: readonly string[],
   options: MinMaxAnnotationOptions = {},
 ): ApexOptions["annotations"] {
   if (!seriesData || seriesData.length === 0) {
