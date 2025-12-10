@@ -8,6 +8,24 @@ import { hpeMockData } from "@/mocks/data/hpe.mock";
 
 const BASE_URL = "/api/v1/system-settings/hpe";
 
+const isValidIpv4 = (ip: string): boolean => {
+  const parts = ip.split(".");
+
+  if (parts.length !== 4) {
+    return false;
+  }
+
+  return parts.every((part) => {
+    if (!/^\d+$/.test(part)) {
+      return false;
+    }
+
+    const numericPart = Number(part);
+
+    return numericPart >= 0 && numericPart <= 255;
+  });
+};
+
 /**
  * HPE OneView 연동 상태 관리
  * PUT 요청 성공 시 업데이트되어 GET 요청에서 반환
@@ -48,9 +66,8 @@ export const hpeHandlers = [
       );
     }
 
-    // IP 형식 검증
-    const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
-    if (!ipRegex.test(body.serverIp)) {
+    // IP 형식 검증 (각 옥텟이 0~255 범위인지 확인)
+    if (!isValidIpv4(body.serverIp)) {
       return HttpResponse.json(
         {
           code: "HPE_UPDATE_FAILED",

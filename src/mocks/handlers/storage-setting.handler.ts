@@ -13,7 +13,7 @@ export const storageSettingHandlers = [
   http.get("/core-api/v1/core/setting/storage", () => {
     return HttpResponse.json({
       content: storageSettingListMock,
-      totalSize: 100,
+      totalSize: storageSettingListMock.length,
     });
   }),
 

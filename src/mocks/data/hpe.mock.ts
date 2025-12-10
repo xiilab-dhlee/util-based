@@ -9,4 +9,4 @@ export const hpeMockData = makeMock(hpeDetailSchema);
 /**
  * 연동되지 않은 상태 Mock 데이터
  */
-export const hpeEmptyMockData: null = null;
+export const hpeEmptyMockData = null;
