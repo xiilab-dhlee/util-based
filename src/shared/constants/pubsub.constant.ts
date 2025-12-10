@@ -55,6 +55,8 @@ export const SOURCECODE_EVENTS = {
 export const VOLUME_EVENTS = {
   // 볼륨 삭제에 필요한 정보 전달 이벤트
   sendDeleteVolume: "volume:send-delete-volume",
+  // 볼륨 파일 삭제에 필요한 정보 전달 이벤트
+  sendDeleteVolumeFile: "volume:send-delete-volume-file",
   // 볼륨 선택 모달 초기화 이벤트
   clearSelectVolumeModal: "volume:clear-select-volume-modal",
   // 볼륨 파일 압축에 필요한 정보 전달 이벤트

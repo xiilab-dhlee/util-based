@@ -6,15 +6,17 @@ import styled from "styled-components";
 import { Icon, type TabsSeparatedItem, Typography } from "xiilab-ui";
 
 import { ManageVolumeFile } from "@/domain/volume/components/file/manage-volume-file";
+import { UpdateVolume } from "@/domain/volume/components/update-volume";
 import { useGetVolume } from "@/domain/volume/hooks/use-get-volume";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
 import { StateTab } from "@/shared/components/tab";
+import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   AsideDetailContainer,
   AsideDetailHeader,
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
-import { UpdateVolume } from "./update-volume";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {
@@ -53,10 +55,22 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
 export function AsideVolume() {
   // 현재 선택된 탭 상태 관리
   const [selectedTab, setSelectedTab] = useState("");
+  // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
+  const [readOnly, setReadOnly] = useState(true);
 
   const volumeSelected = useAtomValue(volumeSelectedAtom);
 
   const { data } = useGetVolume(volumeSelected || "");
+
+  const publish = usePublish();
+
+  const handleEdit = () => {
+    setReadOnly((prev) => !prev);
+  };
+
+  const handleDelete = () => {
+    publish(VOLUME_EVENTS.sendDeleteVolume, [volumeSelected]);
+  };
 
   /**
    * 선택된 탭에 따라 적절한 콘텐츠를 렌더링하는 함수
@@ -66,10 +80,8 @@ export function AsideVolume() {
   const renderContent = () => {
     if (selectedTab === "file") {
       return <ManageVolumeFile />;
-    } else if (selectedTab === "security") {
-      return <ManageVolumeFile />;
     } else {
-      return <UpdateVolume />;
+      return <UpdateVolume readOnly={readOnly} setReadOnly={setReadOnly} />;
     }
   };
 
@@ -77,19 +89,21 @@ export function AsideVolume() {
     <AsideDetailContainer>
       <AsideDetailHeader>
         <AsideDetailHeaderTitle>상세 정보</AsideDetailHeaderTitle>
+        {/* 상세 정보 탭일 때만 수정, 삭제 버튼 표시 */}
+        {/* 파일 탭일 때는 탭 표시 */}
         {selectedTab === "" ? (
           <Icons>
             <IconWrapper
               type="button"
               className="icon-button"
-              // onClick={handleModify}
+              onClick={handleEdit}
             >
               <Icon name="Edit02" color="#000" />
             </IconWrapper>
             <IconWrapper
               type="button"
               className="icon-button"
-              // onClick={handleDelete}
+              onClick={handleDelete}
             >
               <Icon name="Delete" color="#000" />
             </IconWrapper>
@@ -100,7 +114,7 @@ export function AsideVolume() {
           </Typography.Text>
         )}
       </AsideDetailHeader>
-      <div style={{ marginBottom: 10 }}>
+      <div style={{ marginBottom: 16 }}>
         <StateTab
           items={TAB_ITEMS}
           selectedKey={selectedTab}

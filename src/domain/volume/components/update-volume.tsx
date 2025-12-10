@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import {
   Button,
+  Dropdown,
   Input,
   //  Tag
 } from "xiilab-ui";
@@ -17,6 +18,8 @@ import type { UpdateVolumePayload } from "@/domain/volume/types/volume.type";
 import { workloadListMock } from "@/mocks/data/workload.mock";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
+import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
+import { useSelect } from "@/shared/hooks/use-select";
 // import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 // import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
@@ -33,12 +36,19 @@ import {
   AsideDetailArticleValue,
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
+import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
 import {
   getVolumeStatusInfo,
   getVolumeStorageTypeInfo,
 } from "../utils/volume.util";
 import { EmptyVolumeWorkload } from "./empty-volume-workload";
 import { VolumeWorkloadCard } from "./volume-workload-card";
+
+interface UpdateVolumeProps {
+  readOnly: boolean;
+  setReadOnly: (readOnly: boolean) => void;
+}
 
 /**
  * 볼륨 수정 컴포넌트
@@ -57,13 +67,15 @@ import { VolumeWorkloadCard } from "./volume-workload-card";
  *
  * @returns 볼륨 수정 UI를 포함한 JSX 요소
  */
-export function UpdateVolume() {
+export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
   const selectedVolume = useAtomValue(volumeSelectedAtom);
 
   const { data } = useGetVolume(selectedVolume || "");
 
   const formRef = useRef<HTMLFormElement>(null);
   const [workloadPage, setWorkloadPage] = useState(1);
+
+  const status = useSelect(data?.status || "PUBLIC", VISIBILITY_STATUS_OPTIONS);
 
   // Next.js 라우터 인스턴스 - 현재 경로 및 쿼리 파라미터 접근
 
@@ -73,28 +85,21 @@ export function UpdateVolume() {
   // 수정 뮤테이션 훅
   const updateVolume = useUpdateVolume();
 
-  // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
-  const [isReadOnly, setIsReadOnly] = useState(true);
-
   const { text } = getVolumeStorageTypeInfo(data?.storageType || "ASTRAGO");
   const { text: statusText } = getVolumeStatusInfo(data?.status || "PUBLIC");
+
   /**
    * 수정 모드 전환 핸들러
    *
    * 읽기 전용 모드에서 수정 모드로 전환합니다.
    * 수정 모드에서는 입력 필드가 활성화되고 수정이 가능해집니다.
    */
-  const handleModify = () => {
-    if (isReadOnly) {
-      setIsReadOnly(false);
-    } else {
-      // TODO: 수정 로직 추가
-      const payload = createPayload();
+  const handleUpdate = () => {
+    const payload = createPayload();
 
-      if (payload) {
-        // TODO: validation 추가 필요
-        updateVolume.mutate(payload);
-      }
+    if (payload) {
+      // TODO: validation 추가 필요
+      updateVolume.mutate(payload);
     }
   };
 
@@ -105,7 +110,7 @@ export function UpdateVolume() {
    * 사용자가 수정을 취소하고 원래 상태로 복원할 때 사용됩니다.
    */
   const handleCancel = () => {
-    setIsReadOnly(true);
+    setReadOnly(true);
   };
 
   /**
@@ -142,7 +147,7 @@ export function UpdateVolume() {
             <AsideDetailArticleHeader>
               <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
             </AsideDetailArticleHeader>
-            {isReadOnly && (
+            {readOnly && (
               <AsideDetailArticleColumn>
                 <AsideDetailArticleKey>볼륨 이름</AsideDetailArticleKey>
                 <AsideDetailArticleValue className="truncate">
@@ -150,7 +155,7 @@ export function UpdateVolume() {
                 </AsideDetailArticleValue>
               </AsideDetailArticleColumn>
             )}
-            {isReadOnly && (
+            {readOnly && (
               <AsideDetailArticleColumn>
                 <AsideDetailArticleKey>스토리지 타입</AsideDetailArticleKey>
                 <AsideDetailArticleValue className="truncate">
@@ -158,13 +163,13 @@ export function UpdateVolume() {
                 </AsideDetailArticleValue>
               </AsideDetailArticleColumn>
             )}
-            {!isReadOnly && (
+            {!readOnly && (
               <>
                 <AsideDetailArticleColumn>
                   <AsideDetailArticleKey>볼륨 이름</AsideDetailArticleKey>
                   <AsideDetailArticleValue></AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
-                {!isReadOnly && (
+                {!readOnly && (
                   <div style={{ marginTop: 8, marginBottom: 14 }}>
                     <Input
                       placeholder="볼륨 이름을 입력해주세요."
@@ -178,9 +183,7 @@ export function UpdateVolume() {
                 <AsideDetailArticleColumn>
                   <AsideDetailArticleKey>스토리지 타입</AsideDetailArticleKey>
                   <AsideDetailArticleValue className="truncate">
-                    <span style={{ textTransform: "capitalize" }}>
-                      {data?.storageType.toLowerCase()} Storage
-                    </span>
+                    <span style={{ textTransform: "capitalize" }}>{text}</span>
                   </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
               </>
@@ -205,24 +208,37 @@ export function UpdateVolume() {
                 </SecurityStatuses>
               </AsideDetailArticleValue>
             </AsideDetailArticleColumn>
-            {isReadOnly && (
-              <AsideDetailArticleColumn>
-                <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
+            <AsideDetailArticleColumn>
+              <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
+              {readOnly && (
                 <AsideDetailArticleValue>{statusText}</AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
+              )}
+            </AsideDetailArticleColumn>
+            {!readOnly && (
+              <SourcecodeFormFieldControl
+                style={{ marginTop: 8, marginBottom: 16 }}
+              >
+                <Dropdown
+                  options={status.options}
+                  onChange={status.setValue}
+                  value={status.value}
+                  width="100%"
+                  placeholder="공개 설정을 선택해 주세요."
+                />
+              </SourcecodeFormFieldControl>
             )}
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>Mount Path</AsideDetailArticleKey>
               {/* 읽기 전용 모드일 때만 표시 */}
-              {isReadOnly && (
+              {readOnly && (
                 <AsideDetailArticleValue className="truncate">
                   {data?.path || "-"}
                 </AsideDetailArticleValue>
               )}
             </AsideDetailArticleColumn>
             {/* 수정 모드일 때만 마운트 경로 입력 필드 표시 */}
-            {!isReadOnly && (
-              <div style={{ marginTop: 8, marginBottom: 14 }}>
+            {!readOnly && (
+              <div style={{ marginTop: 8 }}>
                 <Input
                   placeholder="기본 마운트 경로를 입력해주세요."
                   width="100%"
@@ -292,34 +308,36 @@ export function UpdateVolume() {
           </AsideDetailArticleItem>
         </AsideDetailArticleBody>
       </AsideDetailArticleForm>
-      <SecondaryArticle>
-        <AsideDetailArticleHeader>
-          <AsideDetailArticleTitle>사용중인 워크로드</AsideDetailArticleTitle>
-        </AsideDetailArticleHeader>
-        <SecondaryArticleBody>
-          <WorkloadList>
-            {/* 임시로 1페이지에서 워크로드 카드 표시 */}
-            {workloadPage === 1 &&
-              workloadListMock
-                .slice(0, 8)
-                .map((workload) => (
-                  <VolumeWorkloadCard key={workload.id} {...workload} />
-                ))}
-            {/* 임시로 2페이지에서 빈 컴포넌트 표시 */}
-            {workloadPage === 2 && <EmptyVolumeWorkload />}
-          </WorkloadList>
-          <ListPageFooter
-            total={20}
-            page={workloadPage}
-            pageSize={10}
-            onChange={setWorkloadPage}
-          />
-        </SecondaryArticleBody>
-      </SecondaryArticle>
+      {readOnly && (
+        <SecondaryArticle>
+          <AsideDetailArticleHeader>
+            <AsideDetailArticleTitle>사용중인 워크로드</AsideDetailArticleTitle>
+          </AsideDetailArticleHeader>
+          <SecondaryArticleBody>
+            <WorkloadList>
+              {/* 임시로 1페이지에서 워크로드 카드 표시 */}
+              {workloadPage === 1 &&
+                workloadListMock
+                  .slice(0, 6)
+                  .map((workload) => (
+                    <VolumeWorkloadCard key={workload.id} {...workload} />
+                  ))}
+              {/* 임시로 2페이지에서 빈 컴포넌트 표시 */}
+              {workloadPage === 2 && <EmptyVolumeWorkload />}
+            </WorkloadList>
+            <ListPageFooter
+              total={20}
+              page={workloadPage}
+              pageSize={10}
+              onChange={setWorkloadPage}
+            />
+          </SecondaryArticleBody>
+        </SecondaryArticle>
+      )}
 
       {/* 하단 버튼 영역 */}
-      {!isReadOnly && (
-        <AsideDetailFooter>
+      {!readOnly && (
+        <Footer>
           {/* 좌측 버튼 - 읽기 전용/수정 모드에 따라 다르게 표시 */}
           <Button width={112} variant="outlined" onClick={handleCancel}>
             취소
@@ -334,18 +352,18 @@ export function UpdateVolume() {
             size="medium"
             variant="gradient"
             width="100%"
-            onClick={handleModify}
+            onClick={handleUpdate}
           >
             상세 정보 저장
           </Button>
-        </AsideDetailFooter>
+        </Footer>
       )}
     </>
   );
 }
 
 const SecondaryArticle = styled(AsideDetailArticle)`
-  flex: 1;
+  height: 258px;
   margin-top: 10px;
   overflow: hidden;
 `;
@@ -376,6 +394,7 @@ const SecondaryArticleBody = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
 `;
 
 const WorkloadList = styled.div`
@@ -383,4 +402,12 @@ const WorkloadList = styled.div`
   grid-template-columns: repeat(2, 1fr);
   width: 100%;
   gap: 12px;
+  overflow-y: auto;
+
+  ${customScrollbar()}
+`;
+
+const Footer = styled(AsideDetailFooter)`
+  align-items: flex-end;
+  flex: 1;
 `;
