@@ -1,13 +1,12 @@
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { createDiskUsageWarningColumn } from "@/domain/report/columns/create-disk-usage-warning-column";
 import { ReportDataTable } from "@/domain/report/components/tables/report-data-table";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import type { DiskUsageWarning } from "@/domain/report/schemas/report.schema";
 
 interface DiskUsageWarningTableProps {
   title: ReactNode;
+  data: DiskUsageWarning[];
   showToggle?: boolean;
   showAll?: boolean;
   onToggleShowAll?: (value: boolean) => void;
@@ -15,15 +14,11 @@ interface DiskUsageWarningTableProps {
 
 export function DiskUsageWarningTable({
   title,
+  data,
   showToggle,
   showAll,
   onToggleShowAll,
 }: DiskUsageWarningTableProps) {
-  const params = useParams<{ id: string }>();
-  const { data } = useGetReportDetail(params.id);
-
-  const diskUsageWarning = data?.diskUsageWarning || [];
-
   const columns = createDiskUsageWarningColumn<
     DiskUsageWarning & { no: number }
   >();
@@ -32,8 +27,8 @@ export function DiskUsageWarningTable({
     <ReportDataTable<DiskUsageWarning>
       title={title}
       columns={columns}
-      data={diskUsageWarning}
-      idField="gpuIndex"
+      data={data}
+      idField="nodeName"
       showToggle={showToggle}
       showAll={showAll}
       onToggleShowAll={onToggleShowAll}

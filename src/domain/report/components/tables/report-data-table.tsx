@@ -29,7 +29,6 @@ export function ReportDataTable<T extends Record<string, unknown>>({
     showToggle && !showAll ? data.slice(0, defaultLimit) : data;
   const displayData = dataToShow.map((item, index) => ({
     ...item,
-    id: `${String(item[idField])}-${index}`,
     no: index + 1,
   }));
 
@@ -61,6 +60,9 @@ export function ReportDataTable<T extends Record<string, unknown>>({
             <CustomizedTable<T & { no: number }>
               columns={columns}
               data={displayData}
+              rowKey={(record, index) =>
+                `${String(record[idField])}-${index ?? 0}`
+              }
               headerFontSize={11}
               bodyFontSize={12}
               columnHeight={40}

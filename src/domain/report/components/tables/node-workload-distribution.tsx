@@ -1,13 +1,12 @@
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { createNodeWorkloadDistributionColumn } from "@/domain/report/columns/create-node-workload-distribution-column";
 import { ReportDataTable } from "@/domain/report/components/tables/report-data-table";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import type { NodeWorkloadDistribution as NodeWorkloadDistributionType } from "@/domain/report/schemas/report.schema";
 
 interface NodeWorkloadDistributionProps {
   title: ReactNode;
+  data: NodeWorkloadDistributionType[];
   showToggle?: boolean;
   showAll?: boolean;
   onToggleShowAll?: (value: boolean) => void;
@@ -15,15 +14,11 @@ interface NodeWorkloadDistributionProps {
 
 export function NodeWorkloadDistribution({
   title,
+  data,
   showToggle,
   showAll,
   onToggleShowAll,
 }: NodeWorkloadDistributionProps) {
-  const params = useParams<{ id: string }>();
-  const { data } = useGetReportDetail(params.id);
-
-  const nodeDistribution = data?.nodeDistribution || [];
-
   const columns = createNodeWorkloadDistributionColumn<
     NodeWorkloadDistributionType & { no: number }
   >();
@@ -32,7 +27,7 @@ export function NodeWorkloadDistribution({
     <ReportDataTable<NodeWorkloadDistributionType>
       title={title}
       columns={columns}
-      data={nodeDistribution}
+      data={data}
       idField="nodeName"
       showToggle={showToggle}
       showAll={showAll}

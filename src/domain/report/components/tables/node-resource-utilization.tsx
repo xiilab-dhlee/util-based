@@ -1,13 +1,12 @@
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { createNodeResourceUtilizationColumn } from "@/domain/report/columns/create-node-resource-utilization-column";
 import { ReportDataTable } from "@/domain/report/components/tables/report-data-table";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import type { NodeResourceUtilization as NodeResourceUtilizationType } from "@/domain/report/schemas/report.schema";
 
 interface NodeResourceUtilizationProps {
   title: ReactNode;
+  data: NodeResourceUtilizationType[];
   showToggle?: boolean;
   showAll?: boolean;
   onToggleShowAll?: (value: boolean) => void;
@@ -15,15 +14,11 @@ interface NodeResourceUtilizationProps {
 
 export function NodeResourceUtilization({
   title,
+  data,
   showToggle,
   showAll,
   onToggleShowAll,
 }: NodeResourceUtilizationProps) {
-  const params = useParams<{ id: string }>();
-  const { data } = useGetReportDetail(params.id);
-
-  const nodeResourceUtilization = data?.nodeResourceUtilization || [];
-
   const columns = createNodeResourceUtilizationColumn<
     NodeResourceUtilizationType & { no: number }
   >();
@@ -32,7 +27,7 @@ export function NodeResourceUtilization({
     <ReportDataTable<NodeResourceUtilizationType>
       title={title}
       columns={columns}
-      data={nodeResourceUtilization}
+      data={data}
       idField="nodeName"
       showToggle={showToggle}
       showAll={showAll}

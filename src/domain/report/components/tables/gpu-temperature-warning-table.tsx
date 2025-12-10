@@ -1,13 +1,12 @@
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { createGpuTemperatureWarningColumn } from "@/domain/report/columns/create-gpu-temperature-warning-column";
 import { ReportDataTable } from "@/domain/report/components/tables/report-data-table";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import type { GpuTemperatureWarning } from "@/domain/report/schemas/report.schema";
 
 interface GpuTemperatureWarningTableProps {
   title: ReactNode;
+  data: GpuTemperatureWarning[];
   showToggle?: boolean;
   showAll?: boolean;
   onToggleShowAll?: (value: boolean) => void;
@@ -15,15 +14,11 @@ interface GpuTemperatureWarningTableProps {
 
 export function GpuTemperatureWarningTable({
   title,
+  data,
   showToggle,
   showAll,
   onToggleShowAll,
 }: GpuTemperatureWarningTableProps) {
-  const params = useParams<{ id: string }>();
-  const { data } = useGetReportDetail(params.id);
-
-  const gpuTemperatureWarning = data?.gpuTemperatureWarning || [];
-
   const columns = createGpuTemperatureWarningColumn<
     GpuTemperatureWarning & { no: number }
   >();
@@ -32,8 +27,8 @@ export function GpuTemperatureWarningTable({
     <ReportDataTable<GpuTemperatureWarning>
       title={title}
       columns={columns}
-      data={gpuTemperatureWarning}
-      idField="gpuIndex"
+      data={data}
+      idField="nodeName"
       showToggle={showToggle}
       showAll={showAll}
       onToggleShowAll={onToggleShowAll}

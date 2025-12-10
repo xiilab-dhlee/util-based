@@ -1,13 +1,12 @@
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { createUserGpuUsageColumn } from "@/domain/report/columns/create-user-gpu-usage-column";
 import { ReportDataTable } from "@/domain/report/components/tables/report-data-table";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import type { UserGpuUsage } from "@/domain/report/schemas/report.schema";
 
 interface UserGpuUsageTableProps {
   title: ReactNode;
+  data: UserGpuUsage[];
   showToggle?: boolean;
   showAll?: boolean;
   onToggleShowAll?: (value: boolean) => void;
@@ -15,22 +14,18 @@ interface UserGpuUsageTableProps {
 
 export function UserGpuUsageTable({
   title,
+  data,
   showToggle,
   showAll,
   onToggleShowAll,
 }: UserGpuUsageTableProps) {
-  const params = useParams<{ id: string }>();
-  const { data } = useGetReportDetail(params.id);
-
-  const userGpuUsage = data?.userGpuUsage || [];
-
   const columns = createUserGpuUsageColumn<UserGpuUsage & { no: number }>();
 
   return (
     <ReportDataTable<UserGpuUsage>
       title={title}
       columns={columns}
-      data={userGpuUsage}
+      data={data}
       idField="userEmail"
       showToggle={showToggle}
       showAll={showAll}

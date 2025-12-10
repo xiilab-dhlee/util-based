@@ -1,13 +1,12 @@
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { createCpuUsageWarningColumn } from "@/domain/report/columns/create-cpu-usage-warning-column";
 import { ReportDataTable } from "@/domain/report/components/tables/report-data-table";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import type { CpuUsageWarning } from "@/domain/report/schemas/report.schema";
 
 interface CpuUsageWarningTableProps {
   title: ReactNode;
+  data: CpuUsageWarning[];
   showToggle?: boolean;
   showAll?: boolean;
   onToggleShowAll?: (value: boolean) => void;
@@ -15,15 +14,11 @@ interface CpuUsageWarningTableProps {
 
 export function CpuUsageWarningTable({
   title,
+  data,
   showToggle,
   showAll,
   onToggleShowAll,
 }: CpuUsageWarningTableProps) {
-  const params = useParams<{ id: string }>();
-  const { data } = useGetReportDetail(params.id);
-
-  const cpuUsageWarning = data?.cpuUsageWarning || [];
-
   const columns = createCpuUsageWarningColumn<
     CpuUsageWarning & { no: number }
   >();
@@ -32,8 +27,8 @@ export function CpuUsageWarningTable({
     <ReportDataTable<CpuUsageWarning>
       title={title}
       columns={columns}
-      data={cpuUsageWarning}
-      idField="gpuIndex"
+      data={data}
+      idField="nodeName"
       showToggle={showToggle}
       showAll={showAll}
       onToggleShowAll={onToggleShowAll}

@@ -1,13 +1,12 @@
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { createMemoryUsageWarningColumn } from "@/domain/report/columns/create-memory-usage-warning-column";
 import { ReportDataTable } from "@/domain/report/components/tables/report-data-table";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import type { MemoryUsageWarning } from "@/domain/report/schemas/report.schema";
 
 interface MemoryUsageWarningTableProps {
   title: ReactNode;
+  data: MemoryUsageWarning[];
   showToggle?: boolean;
   showAll?: boolean;
   onToggleShowAll?: (value: boolean) => void;
@@ -15,15 +14,11 @@ interface MemoryUsageWarningTableProps {
 
 export function MemoryUsageWarningTable({
   title,
+  data,
   showToggle,
   showAll,
   onToggleShowAll,
 }: MemoryUsageWarningTableProps) {
-  const params = useParams<{ id: string }>();
-  const { data } = useGetReportDetail(params.id);
-
-  const memoryUsageWarning = data?.memoryUsageWarning || [];
-
   const columns = createMemoryUsageWarningColumn<
     MemoryUsageWarning & { no: number }
   >();
@@ -32,8 +27,8 @@ export function MemoryUsageWarningTable({
     <ReportDataTable<MemoryUsageWarning>
       title={title}
       columns={columns}
-      data={memoryUsageWarning}
-      idField="gpuIndex"
+      data={data}
+      idField="nodeName"
       showToggle={showToggle}
       showAll={showAll}
       onToggleShowAll={onToggleShowAll}
