@@ -2,41 +2,62 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
+import { findMinMax } from "@/domain/report/utils/chart/min-max.util";
 import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
+import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 interface ResourceUsageTrendChartsProps {
   resourceTrends: ReportDetailResponse["resourceTrends"];
 }
 
+// 리소스 색상 타입 정의
+type ResourceColorScheme = {
+  total: string;
+  requested: string;
+  used: string;
+};
+
 // CSS 변수에서 리소스별 색상 가져오기
 const getResourceColors = (
-  type: string,
+  type: CoreResourceType,
   baseColor: string,
-): { total: string; requested: string; used: string } => {
-  const colorMap: Record<
-    string,
-    { total: string; requested: string; used: string }
-  > = {
-    gpu: {
+): ResourceColorScheme => {
+  const colorMap: Record<CoreResourceType, ResourceColorScheme> = {
+    GPU: {
       total: baseColor,
       requested: "var(--gpu-request-color)",
       used: "var(--gpu-usage-color)",
     },
-    cpu: {
+    CPU: {
       total: baseColor,
       requested: "var(--cpu-request-color)",
       used: "var(--cpu-usage-color)",
     },
-    mem: {
+    MEM: {
       total: baseColor,
       requested: "var(--mem-request-color)",
       used: "var(--mem-usage-color)",
     },
+    DISK: {
+      total: baseColor,
+      requested: "var(--disk-request-color)",
+      used: "var(--disk-usage-color)",
+    },
+    MIG: {
+      total: baseColor,
+      requested: "var(--gpu-request-color)",
+      used: "var(--gpu-usage-color)",
+    },
+    MPS: {
+      total: baseColor,
+      requested: "var(--gpu-request-color)",
+      used: "var(--gpu-usage-color)",
+    },
   };
 
   return (
-    colorMap[type.toLowerCase()] || {
+    colorMap[type] || {
       total: baseColor,
       requested: "#5F84FF",
       used: baseColor,
@@ -85,29 +106,29 @@ export function ResourceUsageTrendCharts({
           color: string;
         }[];
 
-        // 각 시리즈별 최소/최대값의 dataPointIndex 찾기
-        const findMinMaxIndex = (values: number[]) => {
-          const min = Math.min(...values);
-          const max = Math.max(...values);
-          const minIndex = values.indexOf(min);
-          const maxIndex = values.indexOf(max);
-          return { minIndex, maxIndex };
-        };
-
         const seriesIndices = [
           {
             index: 0,
-            data: findMinMaxIndex(trend.data.map((d) => d.total)),
+            data: findMinMax(
+              trend.data.map((d) => d.total),
+              (v) => v,
+            ),
             color: colors.total,
           },
           {
             index: 1,
-            data: findMinMaxIndex(trend.data.map((d) => d.requested)),
+            data: findMinMax(
+              trend.data.map((d) => d.requested),
+              (v) => v,
+            ),
             color: colors.requested,
           },
           {
             index: 2,
-            data: findMinMaxIndex(trend.data.map((d) => d.used)),
+            data: findMinMax(
+              trend.data.map((d) => d.used),
+              (v) => v,
+            ),
             color: colors.used,
           },
         ];
