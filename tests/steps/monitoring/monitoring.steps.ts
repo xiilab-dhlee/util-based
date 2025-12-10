@@ -5,7 +5,7 @@ import {
   testId,
   USER_MONITORING_SELECTOR,
 } from "@/shared/constants/selector.constant";
-import { setupMonitoringPageMocks } from "../support/mocks";
+import { setupMonitoringPageMocks } from "../../support/mocks";
 
 const { When, Then } = createBdd();
 

@@ -12,18 +12,6 @@ import {
  */
 
 /**
- * 한글 상태명 → data-testid 상태값 매핑
- * Feature 파일의 상태 이름을 data-testid 값으로 변환
- */
-export const WORKLOAD_STATUS_MAP: Record<string, string> = {
-  실행중: "running",
-  대기중: "pending",
-  종료: "completed",
-  종료된: "completed",
-  에러: "failed",
-};
-
-/**
  * 버튼 이름과 셀렉터 매핑
  * Feature 파일의 버튼 이름을 data-testid로 변환
  */
@@ -77,4 +65,40 @@ export function assertWorkloadRow(workloadRow: Locator | null): Locator {
     );
   }
   return workloadRow;
+}
+
+/**
+ * data-testid에서 워크로드 상태값을 추출하는 헬퍼 함수
+ *
+ * @param locator - 상태 요소 Locator
+ * @param prefix - data-testid prefix (기본값: "workload-status-")
+ * @returns 추출된 상태값 (예: "running", "pending", "completed", "failed")
+ *
+ * @example
+ * // data-testid="workload-status-running" → "running"
+ * const status = await extractStatusFromTestId(statusElement);
+ */
+export async function extractStatusFromTestId(
+  locator: Locator,
+  prefix: string = "workload-status-",
+): Promise<string | null> {
+  const testIdValue = await locator.getAttribute("data-testid");
+  return testIdValue?.replace(prefix, "") ?? null;
+}
+
+/**
+ * 워크로드 상태가 유효한 값인지 검증하는 헬퍼 함수
+ *
+ * @param status - 검증할 상태값
+ * @param validStatuses - 허용된 상태값 목록
+ * @returns 유효 여부
+ *
+ * @example
+ * const isValid = isValidWorkloadStatus("running", ["running", "pending", "completed", "failed"]);
+ */
+export function isValidWorkloadStatus(
+  status: string | null,
+  validStatuses: string[],
+): boolean {
+  return status !== null && validStatuses.includes(status);
 }

@@ -208,11 +208,17 @@ Then("검색창이 빈 값으로 표시된다", async ({ page }) => {
  * Then - 탭 선택 상태 확인
  * tabs-nav 하위 활성화된 탭의 라벨 텍스트 검증
  */
-Then(
-  "상단 탭 영역에서 {string} 탭이 선택되어 있다",
-  async ({ page }, tabName: string) => {
-    const activeTab = page.locator(".tabs-nav .tab-item.active .tab-label");
-    await expect(activeTab).toBeVisible();
-    await expect(activeTab).toHaveText(tabName);
-  },
-);
+Then("{string} 탭이 선택되어 있다", async ({ page }, tabName: string) => {
+  const activeTab = page.locator(".tabs-nav .tab-item.active .tab-label");
+  await expect(activeTab).toBeVisible();
+  await expect(activeTab).toHaveText(tabName);
+});
+
+/**
+ * Then - 탭 활성화 상태 확인 (파라미터화)
+ */
+Then("{string} 탭이 비활성화되어 있다", async ({ page }, tabName: string) => {
+  const activeTab = page.locator(".tabs-nav .tab-item.disabled .tab-label");
+  await expect(activeTab).toBeVisible();
+  await expect(activeTab).toHaveText(tabName);
+});
