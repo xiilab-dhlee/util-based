@@ -26,9 +26,13 @@ const testDisabledWorkloadListMock: ApiMock = {
 };
 
 const testWorkloadDetailMock: ApiMock = {
-  pattern: "**/core-api/v1/core/workload/:id",
+  pattern: "**/core-api/v1/core/workload/*",
   handler: (route) => {
-    console.log(jsonResponse(route, workloadDetailMock));
+    const url = route.request().url();
+    // active, disabled는 무시 (다른 핸들러가 처리)
+    if (url.endsWith("/active") || url.endsWith("/disabled")) {
+      return route.continue();
+    }
     jsonResponse(route, workloadDetailMock);
   },
 };
