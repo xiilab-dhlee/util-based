@@ -16,67 +16,75 @@ export const createUserGpuUsageColumn = <
     {
       title: "NO.",
       dataIndex: "no",
-      key: "no",
       width: 60,
+      key: "no",
     },
     {
       title: "사용자 이름(이메일)",
       dataIndex: "userName",
-      key: "userName",
       width: 200,
-      render: (_, record: T) => `${record.userName}(${record.userEmail})`,
+      key: "userName",
+      render: (_, record: T) => {
+        const name = record.userName?.trim() || "";
+        const email = record.userEmail?.trim() || "";
+
+        if (!name && !email) return "-";
+        if (!name) return email;
+        if (!email) return name;
+        return `${name}(${email})`;
+      },
     },
     {
       title: `${WORKLOAD_JOB_TYPE_LABEL_MAP.BATCH} 생성 개수`,
       dataIndex: "batchCount",
-      key: "batchCount",
       width: 120,
+      key: "batchCount",
       render: (value: number) => `${value}개`,
     },
     {
       title: `${WORKLOAD_JOB_TYPE_LABEL_MAP.BATCH} 사용 시간`,
       dataIndex: "batchTime",
-      key: "batchTime",
       width: 120,
+      key: "batchTime",
     },
     {
       title: `${WORKLOAD_JOB_TYPE_LABEL_MAP.INTERACTIVE} 생성 개수`,
       dataIndex: "interactiveCount",
-      key: "interactiveCount",
       width: 140,
+      key: "interactiveCount",
       render: (value: number) => `${value}개`,
     },
     {
       title: `${WORKLOAD_JOB_TYPE_LABEL_MAP.INTERACTIVE} 사용 시간`,
       dataIndex: "interactiveTime",
-      key: "interactiveTime",
       width: 140,
+      key: "interactiveTime",
     },
     {
       title: `${WORKLOAD_JOB_TYPE_LABEL_MAP.DISTRIBUTED} 생성 개수`,
       dataIndex: "distributedCount",
-      key: "distributedCount",
       width: 140,
+      key: "distributedCount",
       render: (value: number) => `${value}개`,
     },
     {
       title: `${WORKLOAD_JOB_TYPE_LABEL_MAP.DISTRIBUTED} 사용 시간`,
       dataIndex: "distributedTime",
-      key: "distributedTime",
       width: 140,
+      key: "distributedTime",
     },
     {
       title: `${gpuInfo.text} 할당량`,
       dataIndex: "gpuAllocation",
-      key: "gpuAllocation",
       width: 120,
+      key: "gpuAllocation",
       render: (value: number) => `${value}${gpuInfo.unit}`,
     },
     {
       title: `${gpuInfo.text} 사용률`,
       dataIndex: "gpuUsagePercentage",
-      key: "gpuUsagePercentage",
       width: 120,
+      key: "gpuUsagePercentage",
       render: (value: number) => `${value}%`,
     },
   ];

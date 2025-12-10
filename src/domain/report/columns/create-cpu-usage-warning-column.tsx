@@ -1,6 +1,7 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { CpuUsageWarning } from "@/domain/report/schemas/report.schema";
+import { formatDateSafely } from "@/shared/utils/date.util";
 
 /**
  * CPU 사용률 경고 테이블 컬럼 생성
@@ -8,16 +9,6 @@ import type { CpuUsageWarning } from "@/domain/report/schemas/report.schema";
 export const createCpuUsageWarningColumn = <
   T extends CpuUsageWarning & { no: number },
 >(): ResponsiveColumnType<T>[] => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${year}.${month}.${day} ${hours}:${minutes}`;
-  };
-
   return [
     {
       title: "NO.",
@@ -42,7 +33,7 @@ export const createCpuUsageWarningColumn = <
       dataIndex: "date",
       key: "date",
       width: 160,
-      render: (value: string) => formatDate(value),
+      render: (value: string) => formatDateSafely(value, "yyyy.MM.dd HH:mm"),
     },
     {
       title: "CPU(%) 평균",

@@ -1,6 +1,7 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { NodeResourceUtilization } from "@/domain/report/schemas/report.schema";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 /**
@@ -14,8 +15,7 @@ export const createNodeResourceUtilizationColumn = <
   const memInfo = getResourceInfo("MEM");
 
   const formatMaxValue = (value: number, timestamp: string, unit: string) => {
-    const date = new Date(timestamp);
-    const formatted = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    const formatted = formatDateSafely(timestamp, "yyyy.MM.dd HH:mm");
     return `${value}${unit} (${formatted})`;
   };
 
@@ -23,78 +23,78 @@ export const createNodeResourceUtilizationColumn = <
     {
       title: "NO.",
       dataIndex: "no",
-      key: "no",
       width: 60,
+      key: "no",
     },
     {
       title: "노드 이름",
       dataIndex: "nodeName",
-      key: "nodeName",
       width: 120,
+      key: "nodeName",
     },
     {
       title: `${gpuInfo.text} 개수`,
       dataIndex: "gpuCount",
-      key: "gpuCount",
       width: 100,
+      key: "gpuCount",
       render: (value: number) => `${value}${gpuInfo.unit}`,
     },
     {
       title: `${cpuInfo.text} 코어`,
       dataIndex: "cpuCount",
-      key: "cpuCount",
       width: 100,
+      key: "cpuCount",
       render: (value: number) => `${value}${cpuInfo.unit}`,
     },
     {
       title: `${memInfo.text} 정보`,
       dataIndex: "memory",
-      key: "memory",
       width: 120,
+      key: "memory",
       render: (value: number) => `${value}${memInfo.unit}`,
     },
     {
       title: `${gpuInfo.text} 평균(%)`,
       dataIndex: "gpuAverage",
-      key: "gpuAverage",
       width: 120,
+      key: "gpuAverage",
       render: (value: number) => `${value}`,
     },
     {
       title: `${gpuInfo.text} 최대(%)`,
       dataIndex: "gpuMax",
-      key: "gpuMax",
       width: 200,
+      key: "gpuMax",
       render: (_value: number, record: T) =>
         formatMaxValue(record.gpuMax, record.gpuMaxTimestamp, ""),
     },
     {
       title: `${cpuInfo.text} 평균(%)`,
       dataIndex: "cpuAverage",
-      key: "cpuAverage",
       width: 120,
+      key: "cpuAverage",
       render: (value: number) => `${value}`,
     },
     {
       title: `${cpuInfo.text} 최대(%)`,
       dataIndex: "cpuMax",
-      key: "cpuMax",
       width: 200,
+      key: "cpuMax",
       render: (_value: number, record: T) =>
         formatMaxValue(record.cpuMax, record.cpuMaxTimestamp, ""),
     },
     {
       title: `${memInfo.text} 평균(%)`,
       dataIndex: "memoryAverage",
-      key: "memoryAverage",
       width: 120,
+      key: "memoryAverage",
       render: (value: number) => `${value}`,
     },
     {
       title: `${memInfo.text} 최대(%)`,
       dataIndex: "memoryMax",
-      key: "memoryMax",
       width: 200,
+      key: "memoryMax",
       render: (_value: number, record: T) =>
         formatMaxValue(record.memoryMax, record.memoryMaxTimestamp, ""),
     },
