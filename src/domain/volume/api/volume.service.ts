@@ -3,6 +3,7 @@ import type {
   CompressVolumeFilePayload,
   CreateVolumeFolderPayload,
   CreateVolumePayload,
+  DeleteVolumeFilePayload,
   GetVolumeFilesPayload,
   GetVolumesPayload,
   UpdateVolumePayload,
@@ -69,5 +70,12 @@ export class VolumeService extends AxiosService {
       `${this.BASE_URL}/${payload.id}/directory`,
       payload,
     );
+  }
+
+  /** 볼륨 파일 삭제 */
+  public deleteVolumeFile(payload: DeleteVolumeFilePayload) {
+    return this.getAxios().delete(`${this.BASE_URL}/${payload.id}/files`, {
+      data: { paths: payload.paths },
+    });
   }
 }
