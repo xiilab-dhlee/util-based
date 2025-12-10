@@ -4,8 +4,10 @@ import { Spin } from "antd";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
 
-import { ClusterReportMain } from "@/domain/report/components/cluster-report-main";
-import { SystemReportMain } from "@/domain/report/components/system-report-main";
+import {
+  ClusterReportMain,
+  SystemReportMain,
+} from "@/domain/report/components/main";
 import { REPORT_TYPE } from "@/domain/report/constants/report.constant";
 import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";

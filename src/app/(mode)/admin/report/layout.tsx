@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import { Icon } from "xiilab-ui";
 
-import { CreateReportModal } from "@/domain/report/components/create-report-modal";
+import { CreateReportModal } from "@/domain/report/components/modals";
 import { openCreateReportModalAtom } from "@/domain/report/state/report.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
