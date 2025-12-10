@@ -154,7 +154,7 @@ export const workloadCreationSeriesSchema = z.object({
  */
 export const userGpuUsageSchema = z.object({
   userName: z.string(), // 사용자 이름
-  userEmail: z.string(), // 사용자 이메일
+  userEmail: z.string().email(), // 사용자 이메일
   batchCount: z.number(), // Batch 생성 개수
   batchTime: z.string(), // Batch 사용 시간 (예: "123h 45m")
   interactiveCount: z.number(), // Interactive 생성 개수
@@ -170,7 +170,7 @@ export const userGpuUsageSchema = z.object({
  */
 export const nodeSystemInfoSchema = z.object({
   nodeName: z.string(), // 노드명
-  ipAddress: z.string(), // IP 주소
+  ipAddress: z.string().ip(), // IP 주소
   osInfo: z.string(), // OS 정보 (예: "Ubuntu 20.04")
   gpuInfo: z.string(), // GPU 정보 (예: "NVIDIA A100")
   gpuCount: z.number(), // GPU 개수

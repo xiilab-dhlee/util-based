@@ -5,7 +5,7 @@ export const reportKeys = {
   list: (payload: GetReportsPayload) => [
     ...reportKeys.default,
     "list",
-    ...Object.values(payload),
+    payload,
   ],
   detail: (reportId: string) => [...reportKeys.default, "detail", reportId],
 };
