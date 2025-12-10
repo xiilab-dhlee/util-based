@@ -15,11 +15,11 @@ import {
   SegmentRow,
   SegmentSecondaryText,
 } from "@/domain/report/styles";
-import type { WorkloadJobType } from "@/shared/constants/workload.constant";
 import {
   WORKLOAD_JOB_TYPE_COLOR_MAP,
   WORKLOAD_JOB_TYPE_LABEL_MAP,
-} from "@/shared/constants/workload.constant";
+} from "@/domain/workload/constants/workload.constant";
+import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 
 interface JobTypeData {
   type: WorkloadJobType;

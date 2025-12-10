@@ -1,7 +1,7 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { UserGpuUsage } from "@/domain/report/schemas/report.schema";
-import { WORKLOAD_JOB_TYPE_LABEL_MAP } from "@/shared/constants/workload.constant";
+import { WORKLOAD_JOB_TYPE_LABEL_MAP } from "@/domain/workload/constants/workload.constant";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 /**

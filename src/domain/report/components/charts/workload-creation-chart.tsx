@@ -12,12 +12,12 @@ import {
   convertToLegendSeries,
   createMinMaxAnnotations,
 } from "@/domain/report/utils/chart";
-import { ChartLegendToggle } from "@/shared/components/chart/chart-legend-toggle";
-import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
 import {
   WORKLOAD_JOB_TYPE_COLOR_MAP,
   WORKLOAD_JOB_TYPE_LABEL_MAP,
-} from "@/shared/constants/workload.constant";
+} from "@/domain/workload/constants/workload.constant";
+import { ChartLegendToggle } from "@/shared/components/chart/chart-legend-toggle";
+import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
 
 interface WorkloadCreationChartProps {
   data: WorkloadCreationSeries[];

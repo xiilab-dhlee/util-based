@@ -5,9 +5,9 @@ import { Icon } from "xiilab-ui";
 
 import { useGetRevokeCriteria } from "@/domain/revoke-history/hooks/use-get-revoke-criteria";
 import type { RevokeCriteriaItemType } from "@/domain/revoke-history/schemas/revoke-history.schema";
+import { getJobTypeLabel } from "@/domain/workload/constants/workload.constant";
 import { RefreshIcon } from "@/shared/components/icon/refresh-icon";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
-import { getJobTypeLabel } from "@/shared/constants/workload.constant";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 const GPU_INFO = getResourceInfo("GPU");
