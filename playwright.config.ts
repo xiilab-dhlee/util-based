@@ -28,9 +28,8 @@ export default defineConfig({
 
   /* 리포터 설정 */
   reporter: [
-    // ["html", { outputFolder: "tests/reports/playwright-html" }],
-    // ["json", { outputFile: "tests/reports/playwright-json/results.json" }],
     ["list"],
+    ["html", { outputFolder: "tests/reports/playwright-html", open: "never" }],
   ],
 
   /* 모든 테스트에 공통으로 적용되는 설정 */
