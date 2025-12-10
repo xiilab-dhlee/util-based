@@ -93,7 +93,9 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
   };
 
   return (
-    <LikeCompactCardContainer data-testid={WORKLOAD_SELECTOR.monitoringChart(type)}>
+    <LikeCompactCardContainer
+      data-testid={WORKLOAD_SELECTOR.monitoringChart(type)}
+    >
       <LikeCompactCardHeader>
         <LikeCompactCardTitle className="truncate">{text}</LikeCompactCardTitle>
         <IconButton type="button" onClick={handleClickIcon}>
