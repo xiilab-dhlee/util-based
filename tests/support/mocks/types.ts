@@ -32,3 +32,14 @@ export function paginatedResponse<T>(
     }),
   });
 }
+
+/**
+ * JSON 응답 헬퍼
+ */
+export function jsonResponse<T>(route: Route, content: T) {
+  route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify(content),
+  });
+}

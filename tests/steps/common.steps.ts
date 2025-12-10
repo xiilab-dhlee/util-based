@@ -113,16 +113,36 @@ Then("URL이 {string}이다", async ({ page }, expectedUrl: string) => {
 
 /**
  * Then - URL 포함 검증
+ *
+ * 동적 경로 패턴 지원:
+ * - [xxx] 형식의 모든 패턴을 동적 값으로 매칭
+ * - 예: /user/workload/[id] -> /user/workload/123
  */
 Then("URL이 {string}를 포함한다", async ({ page }, expectedUrl: string) => {
-  await expect(page).toHaveURL(new RegExp(expectedUrl));
+  // 동적 경로 패턴 [xxx]를 정규표현식으로 변환
+  const regexPattern = expectedUrl
+    .replace(/\[[\w]+\]/g, "[\\w-]+") // [xxx] -> 숫자, 문자, 하이픈 매칭
+    .replace(/\//g, "\\/") // 슬래시 이스케이프
+    .replace(/\?/g, "\\?"); // 물음표 이스케이프
+
+  await expect(page).toHaveURL(new RegExp(regexPattern));
 });
 
 /**
  * Then - URL 일치 검증 (경로 끝 부분이 정확히 일치)
+ *
+ * 동적 경로 패턴 지원:
+ * - [xxx] 형식의 모든 패턴을 동적 값으로 매칭
+ * - 예: /user/workload/[id] -> /user/workload/123
+ * - 예: /user/volume/[name] -> /user/volume/my-volume
  */
 Then("URL이 {string}와 일치한다", async ({ page }, expectedUrl: string) => {
-  await expect(page).toHaveURL(new RegExp(`${expectedUrl}$`));
+  // 동적 경로 패턴 [xxx]를 정규표현식으로 변환
+  const regexPattern = expectedUrl
+    .replace(/\[[\w]+\]/g, "[\\w-]+") // [xxx] -> 숫자, 문자, 하이픈 매칭
+    .replace(/\//g, "\\/"); // 슬래시 이스케이프
+
+  await expect(page).toHaveURL(new RegExp(`${regexPattern}(\\?.*)?$`));
 });
 
 /**
@@ -179,3 +199,20 @@ Then("검색창이 빈 값으로 표시된다", async ({ page }) => {
   await expect(searchInput).toBeVisible({ timeout: 10000 });
   await expect(searchInput).toHaveValue("");
 });
+
+// ============================================
+// 탭 관련 Steps
+// ============================================
+
+/**
+ * Then - 탭 선택 상태 확인
+ * tabs-nav 하위 활성화된 탭의 라벨 텍스트 검증
+ */
+Then(
+  "상단 탭 영역에서 {string} 탭이 선택되어 있다",
+  async ({ page }, tabName: string) => {
+    const activeTab = page.locator(".tabs-nav .tab-item.active .tab-label");
+    await expect(activeTab).toBeVisible();
+    await expect(activeTab).toHaveText(tabName);
+  },
+);

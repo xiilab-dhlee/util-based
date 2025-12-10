@@ -12,10 +12,22 @@ import {
  */
 
 /**
+ * 한글 상태명 → data-testid 상태값 매핑
+ * Feature 파일의 상태 이름을 data-testid 값으로 변환
+ */
+export const WORKLOAD_STATUS_MAP: Record<string, string> = {
+  실행중: "running",
+  대기중: "pending",
+  종료: "completed",
+  종료된: "completed",
+  에러: "failed",
+};
+
+/**
  * 버튼 이름과 셀렉터 매핑
  * Feature 파일의 버튼 이름을 data-testid로 변환
  */
-export const BUTTON_SELECTOR_MAP: Record<string, string> = {
+export const WORKLOAD_BUTTON_MAP: Record<string, string> = {
   로그: WORKLOAD_SELECTOR.LOG_BUTTON,
   웹터미널: WORKLOAD_SELECTOR.TERMINAL_BUTTON,
   모니터링: WORKLOAD_SELECTOR.MONITORING_BUTTON,
@@ -40,11 +52,11 @@ export function getWorkloadButton(
   workloadRow: Locator,
   buttonName: string,
 ): Locator {
-  const selector = BUTTON_SELECTOR_MAP[buttonName];
+  const selector = WORKLOAD_BUTTON_MAP[buttonName];
 
   if (!selector) {
     throw new Error(
-      `알 수 없는 버튼: ${buttonName}. 가능한 값: ${Object.keys(BUTTON_SELECTOR_MAP).join(", ")}`,
+      `알 수 없는 버튼: ${buttonName}. 가능한 값: ${Object.keys(WORKLOAD_BUTTON_MAP).join(", ")}`,
     );
   }
 

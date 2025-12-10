@@ -3,8 +3,9 @@ import type { Page } from "@playwright/test";
 import {
   activeWorkloadListMock,
   disabledWorkloadListMock,
+  workloadDetailMock,
 } from "../../../src/mocks/data/workload.mock";
-import { type ApiMock, paginatedResponse } from "./types";
+import { type ApiMock, jsonResponse, paginatedResponse } from "./types";
 
 /**
  * 워크로드 도메인 API 모킹
@@ -24,12 +25,21 @@ const testDisabledWorkloadListMock: ApiMock = {
   },
 };
 
+const testWorkloadDetailMock: ApiMock = {
+  pattern: "**/core-api/v1/core/workload/:id",
+  handler: (route) => {
+    console.log(jsonResponse(route, workloadDetailMock));
+    jsonResponse(route, workloadDetailMock);
+  },
+};
+
 /**
  * 워크로드 도메인의 모든 API Mock 목록
  */
 export const workloadMocks: ApiMock[] = [
   testActiveWorkloadListMock,
   testDisabledWorkloadListMock,
+  testWorkloadDetailMock,
 ];
 
 /**
