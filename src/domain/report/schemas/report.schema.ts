@@ -150,6 +150,81 @@ export const workloadCreationSeriesSchema = z.object({
 });
 
 /**
+ * 사용자별 GPU 사용 스키마
+ */
+export const userGpuUsageSchema = z.object({
+  userName: z.string(), // 사용자 이름
+  userEmail: z.string(), // 사용자 이메일
+  batchCount: z.number(), // Batch 생성 개수
+  batchTime: z.string(), // Batch 사용 시간 (예: "123h 45m")
+  interactiveCount: z.number(), // Interactive 생성 개수
+  interactiveTime: z.string(), // Interactive 사용 시간
+  distributedCount: z.number(), // Distributed 생성 개수
+  distributedTime: z.string(), // Distributed 사용 시간
+  gpuAllocation: z.number(), // GPU 할당량
+  gpuUsagePercentage: z.number(), // GPU 사용률 (0-100)
+});
+
+/**
+ * 노드 시스템 정보 스키마
+ */
+export const nodeSystemInfoSchema = z.object({
+  nodeName: z.string(), // 노드명
+  ipAddress: z.string(), // IP 주소
+  osInfo: z.string(), // OS 정보 (예: "Ubuntu 20.04")
+  gpuInfo: z.string(), // GPU 정보 (예: "NVIDIA A100")
+  gpuCount: z.number(), // GPU 개수
+  cpuInfo: z.string(), // CPU 정보 (예: "Intel Xeon Gold 6248R")
+  cpu: z.number(), // CPU 코어 수
+  memory: z.number(), // Memory (GB)
+  disk: z.number(), // Disk (GB)
+});
+
+/**
+ * GPU 온도 경고 스키마
+ */
+export const gpuTemperatureWarningSchema = z.object({
+  nodeName: z.string(), // 노드명
+  gpuIndex: z.number(), // GPU Index
+  date: z.string().datetime(), // 날짜
+  avgTemperature: z.number(), // GPU 평균 온도
+  maxTemperature: z.number(), // GPU 최대 온도
+});
+
+/**
+ * CPU 사용률 경고 스키마 (90% 이상)
+ */
+export const cpuUsageWarningSchema = z.object({
+  nodeName: z.string(), // 노드명
+  gpuIndex: z.number(), // GPU Index
+  date: z.string().datetime(), // 날짜
+  avgUsage: z.number(), // CPU(%) 평균
+  maxUsage: z.number(), // CPU(%) 최대
+});
+
+/**
+ * Memory 사용률 경고 스키마 (90% 이상)
+ */
+export const memoryUsageWarningSchema = z.object({
+  nodeName: z.string(), // 노드명
+  gpuIndex: z.number(), // GPU Index
+  date: z.string().datetime(), // 날짜
+  avgUsage: z.number(), // Memory(%) 평균
+  maxUsage: z.number(), // Memory(%) 최대
+});
+
+/**
+ * Disk 사용률 경고 스키마 (90% 이상)
+ */
+export const diskUsageWarningSchema = z.object({
+  nodeName: z.string(), // 노드명
+  gpuIndex: z.number(), // GPU Index
+  date: z.string().datetime(), // 날짜
+  avgUsage: z.number(), // Disk(%) 평균
+  maxUsage: z.number(), // Disk(%) 최대
+});
+
+/**
  * 리포트 상세 응답 스키마
  */
 export const reportDetailResponseSchema = z.object({
@@ -173,6 +248,12 @@ export const reportDetailResponseSchema = z.object({
   jobTypeDistribution: z.array(jobTypeDistributionSchema),
   jobTypeUsageTime: z.array(jobTypeUsageTimeSchema),
   workloadCreation: z.array(workloadCreationSeriesSchema),
+  userGpuUsage: z.array(userGpuUsageSchema).default([]),
+  nodeSystemInfo: z.array(nodeSystemInfoSchema).default([]),
+  gpuTemperatureWarning: z.array(gpuTemperatureWarningSchema).default([]),
+  cpuUsageWarning: z.array(cpuUsageWarningSchema).default([]),
+  memoryUsageWarning: z.array(memoryUsageWarningSchema).default([]),
+  diskUsageWarning: z.array(diskUsageWarningSchema).default([]),
 });
 
 // ===== 타입 추출 =====
@@ -201,4 +282,10 @@ export type WorkloadCreationDataPoint = z.infer<
 export type WorkloadCreationSeries = z.infer<
   typeof workloadCreationSeriesSchema
 >;
+export type UserGpuUsage = z.infer<typeof userGpuUsageSchema>;
+export type NodeSystemInfo = z.infer<typeof nodeSystemInfoSchema>;
+export type GpuTemperatureWarning = z.infer<typeof gpuTemperatureWarningSchema>;
+export type CpuUsageWarning = z.infer<typeof cpuUsageWarningSchema>;
+export type MemoryUsageWarning = z.infer<typeof memoryUsageWarningSchema>;
+export type DiskUsageWarning = z.infer<typeof diskUsageWarningSchema>;
 export type ReportDetailResponse = z.infer<typeof reportDetailResponseSchema>;

@@ -1,5 +1,21 @@
 import type { DropdownOption } from "xiilab-ui";
 
+/**
+ * 리포트 타입 상수
+ */
+export const REPORT_TYPE = {
+  SYSTEM: "SYSTEM",
+  CLUSTER: "CLUSTER",
+} as const;
+
+/**
+ * 리포트 날짜 타입 상수
+ */
+export const REPORT_DATE_TYPE = {
+  WEEKLY: "WEEKLY",
+  MONTHLY: "MONTHLY",
+} as const;
+
 export const REPORT_DATE_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "주간",
