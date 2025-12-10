@@ -21,6 +21,8 @@ import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { useSearch } from "@/shared/hooks/use-search";
 
+const CREDENTIAL_BOX_HEIGHT = 542;
+
 /**
  * 크레덴셜 목록 설정 컴포넌트
  * 검색, 테이블, 페이지네이션 포함
@@ -64,7 +66,7 @@ export function CredentialListSetting() {
 
   if (isError) {
     return (
-      <SettingBox title="크레덴셜 목록" height={630}>
+      <SettingBox title="크레덴셜 목록" height={CREDENTIAL_BOX_HEIGHT}>
         <DataErrorState onRetry={refetch} />
       </SettingBox>
     );
@@ -73,7 +75,7 @@ export function CredentialListSetting() {
   return (
     <SettingBox
       title="크레덴셜 목록"
-      height={542}
+      height={CREDENTIAL_BOX_HEIGHT}
       extra={
         <SearchWrapper>
           <form onSubmit={onSubmit}>
