@@ -1,11 +1,21 @@
+import {
+  REPORT_DATE_TYPE,
+  REPORT_TYPE,
+} from "@/domain/report/constants/report.constant";
 import type {
+  CpuUsageWarning,
+  DiskUsageWarning,
   GpuSeries,
+  GpuTemperatureWarning,
   JobTypeDistribution,
   JobTypeUsageTime,
+  MemoryUsageWarning,
   NodeGpuInfo,
+  NodeSystemInfo,
   ReportDetailResponse,
   ResourceTrend,
   ResourceUsageMetric,
+  UserGpuUsage,
   WorkloadCreationSeries,
 } from "@/domain/report/schemas/report.schema";
 import {
@@ -38,9 +48,12 @@ const FIXED_REPORT_IDS = [
  * - 일관성을 위해 고정된 UUID와 reportType 사용
  */
 export const reportListMock = Array.from({ length: LIST_PAGE_SIZE }, (_, i) => {
-  const reportType: "SYSTEM" | "CLUSTER" = i % 2 === 0 ? "SYSTEM" : "CLUSTER";
+  const reportType: "SYSTEM" | "CLUSTER" =
+    i % 2 === 0 ? REPORT_TYPE.SYSTEM : REPORT_TYPE.CLUSTER;
   const reportDateType: "WEEKLY" | "MONTHLY" =
-    i % 3 === 0 ? "WEEKLY" : "MONTHLY";
+    Math.floor(i / 2) % 2 === 0
+      ? REPORT_DATE_TYPE.WEEKLY
+      : REPORT_DATE_TYPE.MONTHLY;
   const baseReport = makeMock(reportListResponseSchema);
 
   return {
@@ -223,6 +236,247 @@ const createWorkloadCreation = (
 };
 
 /**
+ * 사용자별 GPU 사용 데이터 생성
+ */
+const createUserGpuUsage = (): UserGpuUsage[] => {
+  const users = [
+    { userName: "김철수", userEmail: "kim.cs@example.com" },
+    { userName: "이영희", userEmail: "lee.yh@example.com" },
+    { userName: "박민수", userEmail: "park.ms@example.com" },
+    { userName: "최지은", userEmail: "choi.je@example.com" },
+    { userName: "정다은", userEmail: "jung.de@example.com" },
+  ];
+
+  return users.map((user) => {
+    const batchCount = Math.floor(Math.random() * 50) + 10;
+    const interactiveCount = Math.floor(Math.random() * 30) + 5;
+    const distributedCount = Math.floor(Math.random() * 20) + 5;
+
+    const batchHours = Math.floor(Math.random() * 200) + 50;
+    const interactiveHours = Math.floor(Math.random() * 100) + 20;
+    const distributedHours = Math.floor(Math.random() * 150) + 30;
+
+    return {
+      userName: user.userName,
+      userEmail: user.userEmail,
+      batchCount,
+      batchTime: `${batchHours}시간 ${Math.floor(Math.random() * 60)}분`,
+      interactiveCount,
+      interactiveTime: `${interactiveHours}시간 ${Math.floor(Math.random() * 60)}분`,
+      distributedCount,
+      distributedTime: `${distributedHours}시간 ${Math.floor(Math.random() * 60)}분`,
+      gpuAllocation: Math.floor(Math.random() * 16) + 2, // 2-18 GPU
+      gpuUsagePercentage: Math.floor(Math.random() * 60) + 30, // 30-90%
+    };
+  });
+};
+
+/**
+ * 노드 시스템 정보 데이터 생성
+ */
+const createNodeSystemInfo = (): NodeSystemInfo[] => {
+  const nodes = [
+    {
+      nodeName: "Worker-1",
+      ipAddress: "192.168.1.101",
+      osInfo: "Ubuntu 20.04.6 LTS",
+      gpuInfo: "NVIDIA A100",
+      gpuCount: 8,
+      cpuInfo: "Intel Xeon Gold 6248R",
+      cpu: 96,
+      memory: 512,
+      disk: 2048,
+    },
+    {
+      nodeName: "Worker-2",
+      ipAddress: "192.168.1.102",
+      osInfo: "Ubuntu 20.04.6 LTS",
+      gpuInfo: "NVIDIA A100",
+      gpuCount: 8,
+      cpuInfo: "Intel Xeon Gold 6248R",
+      cpu: 96,
+      memory: 512,
+      disk: 2048,
+    },
+    {
+      nodeName: "Worker-3",
+      ipAddress: "192.168.1.103",
+      osInfo: "Ubuntu 22.04.3 LTS",
+      gpuInfo: "NVIDIA V100",
+      gpuCount: 4,
+      cpuInfo: "Intel Xeon Gold 6230",
+      cpu: 80,
+      memory: 384,
+      disk: 1536,
+    },
+    {
+      nodeName: "Worker-4",
+      ipAddress: "192.168.1.104",
+      osInfo: "Ubuntu 22.04.3 LTS",
+      gpuInfo: "NVIDIA A100",
+      gpuCount: 8,
+      cpuInfo: "AMD EPYC 7742",
+      cpu: 128,
+      memory: 1024,
+      disk: 4096,
+    },
+    {
+      nodeName: "Worker-5",
+      ipAddress: "192.168.1.105",
+      osInfo: "Ubuntu 20.04.6 LTS",
+      gpuInfo: "NVIDIA V100",
+      gpuCount: 4,
+      cpuInfo: "Intel Xeon Gold 6230",
+      cpu: 80,
+      memory: 384,
+      disk: 1536,
+    },
+  ];
+
+  return nodes;
+};
+
+/**
+ * GPU 온도 경고 데이터 생성 (90도 이상)
+ */
+const createGpuTemperatureWarning = (): GpuTemperatureWarning[] => {
+  const warnings: GpuTemperatureWarning[] = [];
+  const nodes = ["Worker-1", "Worker-2", "Worker-3", "Worker-4", "Worker-5"];
+  const gpuCounts = [8, 8, 4, 8, 4];
+
+  // 랜덤하게 일부 GPU에만 경고 생성 (90도 이상)
+  nodes.forEach((nodeName, nodeIndex) => {
+    const warningCount = Math.floor(Math.random() * 3); // 0-2개의 경고
+    for (let i = 0; i < warningCount; i++) {
+      const gpuIndex = Math.floor(Math.random() * gpuCounts[nodeIndex]);
+      const daysAgo = Math.floor(Math.random() * 7); // 최근 7일 이내
+      const date = new Date();
+      date.setDate(date.getDate() - daysAgo);
+      date.setHours(Math.floor(Math.random() * 24));
+      date.setMinutes(Math.floor(Math.random() * 60));
+
+      warnings.push({
+        nodeName,
+        gpuIndex,
+        date: date.toISOString(),
+        avgTemperature: Math.floor(Math.random() * 5) + 90, // 90-94도
+        maxTemperature: Math.floor(Math.random() * 8) + 95, // 95-102도
+      });
+    }
+  });
+
+  // 날짜 기준 내림차순 정렬 (최신순)
+  return warnings.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+};
+
+/**
+ * CPU 사용률 경고 데이터 생성 (90% 이상)
+ */
+const createCpuUsageWarning = (): CpuUsageWarning[] => {
+  const warnings: CpuUsageWarning[] = [];
+  const nodes = ["Worker-1", "Worker-2", "Worker-3", "Worker-4", "Worker-5"];
+  const gpuCounts = [8, 8, 4, 8, 4];
+
+  // 랜덤하게 일부 GPU에만 경고 생성 (90% 이상)
+  nodes.forEach((nodeName, nodeIndex) => {
+    const warningCount = Math.floor(Math.random() * 3); // 0-2개의 경고
+    for (let i = 0; i < warningCount; i++) {
+      const gpuIndex = Math.floor(Math.random() * gpuCounts[nodeIndex]);
+      const daysAgo = Math.floor(Math.random() * 7); // 최근 7일 이내
+      const date = new Date();
+      date.setDate(date.getDate() - daysAgo);
+      date.setHours(Math.floor(Math.random() * 24));
+      date.setMinutes(Math.floor(Math.random() * 60));
+
+      warnings.push({
+        nodeName,
+        gpuIndex,
+        date: date.toISOString(),
+        avgUsage: Math.floor(Math.random() * 5) + 90, // 90-94%
+        maxUsage: Math.floor(Math.random() * 8) + 95, // 95-102%
+      });
+    }
+  });
+
+  // 날짜 기준 내림차순 정렬 (최신순)
+  return warnings.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+};
+
+/**
+ * Memory 사용률 경고 데이터 생성 (90% 이상)
+ */
+const createMemoryUsageWarning = (): MemoryUsageWarning[] => {
+  const warnings: MemoryUsageWarning[] = [];
+  const nodes = ["Worker-1", "Worker-2", "Worker-3", "Worker-4", "Worker-5"];
+  const gpuCounts = [8, 8, 4, 8, 4];
+
+  // 랜덤하게 일부 GPU에만 경고 생성 (90% 이상)
+  nodes.forEach((nodeName, nodeIndex) => {
+    const warningCount = Math.floor(Math.random() * 3); // 0-2개의 경고
+    for (let i = 0; i < warningCount; i++) {
+      const gpuIndex = Math.floor(Math.random() * gpuCounts[nodeIndex]);
+      const daysAgo = Math.floor(Math.random() * 7); // 최근 7일 이내
+      const date = new Date();
+      date.setDate(date.getDate() - daysAgo);
+      date.setHours(Math.floor(Math.random() * 24));
+      date.setMinutes(Math.floor(Math.random() * 60));
+
+      warnings.push({
+        nodeName,
+        gpuIndex,
+        date: date.toISOString(),
+        avgUsage: Math.floor(Math.random() * 5) + 90, // 90-94%
+        maxUsage: Math.floor(Math.random() * 8) + 95, // 95-102%
+      });
+    }
+  });
+
+  // 날짜 기준 내림차순 정렬 (최신순)
+  return warnings.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+};
+
+/**
+ * Disk 사용률 경고 데이터 생성 (90% 이상)
+ */
+const createDiskUsageWarning = (): DiskUsageWarning[] => {
+  const warnings: DiskUsageWarning[] = [];
+  const nodes = ["Worker-1", "Worker-2", "Worker-3", "Worker-4", "Worker-5"];
+  const gpuCounts = [8, 8, 4, 8, 4];
+
+  // 랜덤하게 일부 GPU에만 경고 생성 (90% 이상)
+  nodes.forEach((nodeName, nodeIndex) => {
+    const warningCount = Math.floor(Math.random() * 3); // 0-2개의 경고
+    for (let i = 0; i < warningCount; i++) {
+      const gpuIndex = Math.floor(Math.random() * gpuCounts[nodeIndex]);
+      const daysAgo = Math.floor(Math.random() * 7); // 최근 7일 이내
+      const date = new Date();
+      date.setDate(date.getDate() - daysAgo);
+      date.setHours(Math.floor(Math.random() * 24));
+      date.setMinutes(Math.floor(Math.random() * 60));
+
+      warnings.push({
+        nodeName,
+        gpuIndex,
+        date: date.toISOString(),
+        avgUsage: Math.floor(Math.random() * 5) + 90, // 90-94%
+        maxUsage: Math.floor(Math.random() * 8) + 95, // 95-102%
+      });
+    }
+  });
+
+  // 날짜 기준 내림차순 정렬 (최신순)
+  return warnings.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+};
+
+/**
  * ID로 리포트 상세 데이터를 생성
  */
 const createReportDetail = (
@@ -237,7 +491,7 @@ const createReportDetail = (
 
   return {
     id,
-    reportName: `${reportType === "SYSTEM" ? "시스템" : "클러스터"} ${reportDateType === "WEEKLY" ? "주간" : "월간"} 리포트`,
+    reportName: `${reportType === REPORT_TYPE.SYSTEM ? "시스템" : "클러스터"} ${reportDateType === REPORT_DATE_TYPE.WEEKLY ? "주간" : "월간"} 리포트`,
     reportDateType,
     reportType,
     startDate,
@@ -247,7 +501,7 @@ const createReportDetail = (
     resourceUsage: {
       periodLabel: "2025년 1월",
       title:
-        reportType === "SYSTEM"
+        reportType === REPORT_TYPE.SYSTEM
           ? "시스템 리소스 사용현황"
           : "클러스터 평균 리소스 활용률",
       metrics: createResourceMetrics(),
@@ -263,6 +517,15 @@ const createReportDetail = (
     jobTypeDistribution: createJobTypeDistribution(),
     jobTypeUsageTime: createJobTypeUsageTime(),
     workloadCreation: createWorkloadCreation(startDate, endDate),
+    userGpuUsage: createUserGpuUsage(),
+    // SYSTEM 리포트에만 포함되는 데이터
+    nodeSystemInfo: reportType === "SYSTEM" ? createNodeSystemInfo() : [],
+    gpuTemperatureWarning:
+      reportType === "SYSTEM" ? createGpuTemperatureWarning() : [],
+    cpuUsageWarning: reportType === "SYSTEM" ? createCpuUsageWarning() : [],
+    memoryUsageWarning:
+      reportType === "SYSTEM" ? createMemoryUsageWarning() : [],
+    diskUsageWarning: reportType === "SYSTEM" ? createDiskUsageWarning() : [],
   };
 };
 
@@ -285,6 +548,7 @@ export const mockReportDetailMap = new Map<string, ReportDetailResponse>(
  */
 export const getMockReportDetail = (id: string): ReportDetailResponse => {
   return (
-    mockReportDetailMap.get(id) || createReportDetail(id, "CLUSTER", "MONTHLY") // fallback
+    mockReportDetailMap.get(id) ||
+    createReportDetail(id, REPORT_TYPE.CLUSTER, REPORT_DATE_TYPE.MONTHLY) // fallback
   );
 };
