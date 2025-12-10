@@ -12,7 +12,7 @@ export const licenseMock = makeMock(licenseListResponseSchema);
  */
 export const emptyLicenseMock = makeMock(
   licenseListResponseSchema.extend({
-    current: licenseListResponseSchema.shape.current.nullable().default(null),
+    current: licenseListResponseSchema.shape.current.default(null),
     history: licenseListResponseSchema.shape.history.default([]),
     totalCount: licenseListResponseSchema.shape.totalCount.default(0),
   }),

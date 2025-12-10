@@ -1,8 +1,9 @@
 import { HttpResponse, http } from "msw";
 
-import type {
-  HpeDetailType,
-  UpdateHpeRequestType,
+import {
+  type HpeDetailType,
+  type UpdateHpeRequestType,
+  updateHpeRequestSchema,
 } from "@/domain/system-setting/schemas/hpe.schema";
 import { hpeMockData } from "@/mocks/data/hpe.mock";
 
@@ -53,7 +54,21 @@ export const hpeHandlers = [
    * PUT /api/v1/system-settings/hpe
    */
   http.put(BASE_URL, async ({ request }) => {
-    const body = (await request.json()) as UpdateHpeRequestType;
+    const json = (await request.json()) as unknown;
+    const parseResult = updateHpeRequestSchema.safeParse(json);
+
+    if (!parseResult.success) {
+      return HttpResponse.json(
+        {
+          code: "HPE_UPDATE_FAILED",
+          message: "요청 본문 형식이 올바르지 않습니다.",
+          issues: parseResult.error.issues,
+        },
+        { status: 400 },
+      );
+    }
+
+    const body: UpdateHpeRequestType = parseResult.data;
 
     // 입력값 검증 시뮬레이션
     if (!body.id || !body.password || !body.serverIp) {
