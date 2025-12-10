@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useMemo } from "react";
 import styled from "styled-components";
 
@@ -27,7 +27,7 @@ import { useSearch } from "@/shared/hooks/use-search";
  */
 export function CredentialListSetting() {
   const [page, setPage] = useAtom(credentialPageAtom);
-  const search = useAtom(credentialSearchTextAtom)[0];
+  const search = useAtomValue(credentialSearchTextAtom);
   const { onSubmit } = useSearch(credentialSearchTextAtom);
   const publish = usePublish();
 
@@ -125,6 +125,5 @@ const SearchWrapper = styled.div`
 `;
 
 const TableWrapper = styled.div`
-
   height: 100%;
 `;

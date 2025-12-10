@@ -70,7 +70,7 @@ const createColumnList = (
       key: "actions",
       align: "center",
       width: "10%",
-      render: (record: CredentialListType) => (
+      render: (_: unknown, record: CredentialListType) => (
         <Button
           variant="text"
           size="small"

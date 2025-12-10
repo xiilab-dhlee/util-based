@@ -1,11 +1,9 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Modal } from "xiilab-ui";
 
-import { credentialKeys } from "@/domain/credential/constants/credential.key";
 import type { CredentialIdType } from "@/domain/credential/schemas/credential.schema";
 import { useDeleteCredential } from "@/domain/system-setting/hooks/use-delete-credential";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -28,7 +26,6 @@ export function DeleteCredentialModal() {
     null,
   );
 
-  const queryClient = useQueryClient();
   const deleteCredential = useDeleteCredential();
 
   // PubSub 구독 - 크레덴셜 삭제 모달 열기 이벤트
@@ -49,13 +46,7 @@ export function DeleteCredentialModal() {
     if (credentialId === null) return;
 
     deleteCredential.mutate(credentialId, {
-      onSuccess: () => {
-        // 크레덴셜 목록 데이터 갱신
-        queryClient.invalidateQueries({
-          queryKey: credentialKeys.default,
-        });
-        handleCancel();
-      },
+      onSuccess: handleCancel,
     });
   };
 
