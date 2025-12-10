@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useState } from "react";
 import styled from "styled-components";
 
 import { NodeResourceUtilization } from "@/domain/report/components/node-resource-utilization";
@@ -12,22 +12,19 @@ import {
   REPORT_DATE_TYPE_TEXT,
   REPORT_TYPE_TEXT,
 } from "@/domain/report/constants/report.constant";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
+import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
 import { subTitleStyle } from "@/styles/mixins/text";
 
-export function ClusterReportMain() {
-  const params = useParams<{ id: string }>();
-  const { data, isLoading, isError } = useGetReportDetail(params.id);
+interface ClusterReportMainProps {
+  report: ReportDetailResponse;
+}
 
-  if (isLoading) {
-    return <LoadingWrapper>로딩 중...</LoadingWrapper>;
-  }
+export function ClusterReportMain({ report }: ClusterReportMainProps) {
+  // 각 테이블의 showAll state 관리
+  const [nodeWorkloadShowAll, setNodeWorkloadShowAll] = useState(false);
+  const [nodeResourceShowAll, setNodeResourceShowAll] = useState(false);
 
-  if (isError || !data) {
-    return <div>데이터를 불러올 수 없습니다.</div>;
-  }
-
-  const { resourceUsage, reportDateType, reportType } = data;
+  const { resourceUsage, reportDateType, reportType, resourceTrends } = report;
 
   const reportTitle = `${REPORT_DATE_TYPE_TEXT[reportDateType]} ${REPORT_TYPE_TEXT[reportType]} 리포트`;
 
@@ -51,26 +48,31 @@ export function ClusterReportMain() {
           </SubSection>
           <SubSection>
             <SubTitle>리소스 사용량 추이</SubTitle>
-            <ResourceUsageTrendCharts resourceTrends={data.resourceTrends} />
+            <ResourceUsageTrendCharts resourceTrends={resourceTrends} />
           </SubSection>
         </Section>
         <Section>
-          <NodeWorkloadDistribution />
+          <NodeWorkloadDistribution
+            title={
+              <SectionTitle>2. 노드별 워크로드 작업 분배 정보</SectionTitle>
+            }
+            showToggle={true}
+            showAll={nodeWorkloadShowAll}
+            onToggleShowAll={setNodeWorkloadShowAll}
+          />
         </Section>
         <Section>
-          <NodeResourceUtilization />
+          <NodeResourceUtilization
+            title={<SectionTitle>3. 노드별 리소스 활용 정보</SectionTitle>}
+            showToggle={true}
+            showAll={nodeResourceShowAll}
+            onToggleShowAll={setNodeResourceShowAll}
+          />
         </Section>
       </Body>
     </>
   );
 }
-
-const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-`;
 
 const Header = styled.div`
   display: flex;
@@ -101,7 +103,6 @@ const SectionTitle = styled.h3`
 const SubTitle = styled.h4`
   ${subTitleStyle(5)}
   font-size: 15px;
-  margin-bottom: 8px;
 `;
 
 const Section = styled.div`

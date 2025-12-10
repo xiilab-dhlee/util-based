@@ -1,33 +1,40 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useState } from "react";
 import styled from "styled-components";
 
+import { CpuUsageWarningTable } from "@/domain/report/components/cpu-usage-warning-table";
+import { DiskUsageWarningTable } from "@/domain/report/components/disk-usage-warning-table";
+import { GpuTemperatureWarningTable } from "@/domain/report/components/gpu-temperature-warning-table";
+import { JobTypeDistribution } from "@/domain/report/components/job-type-distribution";
+import { JobTypeUsageTime } from "@/domain/report/components/job-type-usage-time";
+import { MemoryUsageWarningTable } from "@/domain/report/components/memory-usage-warning-table";
+import { NodeGpuChart } from "@/domain/report/components/node-gpu-chart";
+import { NodeGpuUsageCard } from "@/domain/report/components/node-gpu-usage-card";
+import { NodeSystemInfoTable } from "@/domain/report/components/node-system-info-table";
+import { ReportFilter } from "@/domain/report/components/report-filter";
+import { SystemGpuUsageCard } from "@/domain/report/components/system-gpu-usage-card";
+import { UserGpuUsageTable } from "@/domain/report/components/user-gpu-usage-table";
+import { WorkloadCreationChart } from "@/domain/report/components/workload-creation-chart";
 import {
   REPORT_DATE_TYPE_TEXT,
   REPORT_TYPE_TEXT,
 } from "@/domain/report/constants/report.constant";
-import { useGetReportDetail } from "@/domain/report/hooks/use-get-report-detail";
+import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
 import { subTitleStyle } from "@/styles/mixins/text";
-import { JobTypeDistribution } from "./job-type-distribution";
-import { JobTypeUsageTime } from "./job-type-usage-time";
-import { NodeGpuChart } from "./node-gpu-chart";
-import { NodeGpuUsageCard } from "./node-gpu-usage-card";
-import { ReportFilter } from "./report-filter";
-import { SystemGpuUsageCard } from "./system-gpu-usage-card";
-import { WorkloadCreationChart } from "./workload-creation-chart";
 
-export function SystemReportMain() {
-  const params = useParams<{ id: string }>();
-  const { data, isLoading, isError } = useGetReportDetail(params.id);
-  console.log(data);
-  if (isLoading) {
-    return <LoadingWrapper>로딩 중...</LoadingWrapper>;
-  }
+interface SystemReportMainProps {
+  report: ReportDetailResponse;
+}
 
-  if (isError || !data) {
-    return <div>데이터를 불러올 수 없습니다.</div>;
-  }
+export function SystemReportMain({ report }: SystemReportMainProps) {
+  // 각 테이블의 showAll state 관리
+  const [userGpuShowAll, setUserGpuShowAll] = useState(false);
+  const [nodeSystemShowAll, setNodeSystemShowAll] = useState(false);
+  const [gpuTempShowAll, setGpuTempShowAll] = useState(false);
+  const [cpuUsageShowAll, setCpuUsageShowAll] = useState(false);
+  const [memoryUsageShowAll, setMemoryUsageShowAll] = useState(false);
+  const [diskUsageShowAll, setDiskUsageShowAll] = useState(false);
 
   const {
     resourceUsage,
@@ -37,7 +44,7 @@ export function SystemReportMain() {
     jobTypeDistribution,
     jobTypeUsageTime,
     workloadCreation,
-  } = data;
+  } = report;
   const reportTitle = `${REPORT_DATE_TYPE_TEXT[reportDateType]} ${REPORT_TYPE_TEXT[reportType]} 리포트`;
 
   return (
@@ -89,18 +96,66 @@ export function SystemReportMain() {
           <SubSection>
             <WorkloadCreationChart data={workloadCreation} />
           </SubSection>
+          <SubSection>
+            <UserGpuUsageTable
+              title={<SubTitle>사용자별 GPU 사용 비율</SubTitle>}
+              showToggle={true}
+              showAll={userGpuShowAll}
+              onToggleShowAll={setUserGpuShowAll}
+            />
+          </SubSection>
+        </Section>
+
+        {/* Section 3: 노드 시스템 정보 */}
+        <Section>
+          <NodeSystemInfoTable
+            title={<SectionTitle>3. 노드 시스템 정보</SectionTitle>}
+            showToggle={true}
+            showAll={nodeSystemShowAll}
+            onToggleShowAll={setNodeSystemShowAll}
+          />
+        </Section>
+
+        {/* Section 4: 시스템 이상 경고 */}
+        <Section>
+          <SectionTitle>4. 시스템 이상 경고</SectionTitle>
+          <SubSection>
+            <GpuTemperatureWarningTable
+              title={<SubTitle>GPU 온도 90도 이상</SubTitle>}
+              showToggle={true}
+              showAll={gpuTempShowAll}
+              onToggleShowAll={setGpuTempShowAll}
+            />
+          </SubSection>
+          <SubSection>
+            <CpuUsageWarningTable
+              title={<SubTitle>CPU 사용률 90% 이상</SubTitle>}
+              showToggle={true}
+              showAll={cpuUsageShowAll}
+              onToggleShowAll={setCpuUsageShowAll}
+            />
+          </SubSection>
+          <SubSection>
+            <MemoryUsageWarningTable
+              title={<SubTitle>Memory 사용률 90% 이상</SubTitle>}
+              showToggle={true}
+              showAll={memoryUsageShowAll}
+              onToggleShowAll={setMemoryUsageShowAll}
+            />
+          </SubSection>
+          <SubSection>
+            <DiskUsageWarningTable
+              title={<SubTitle>Disk 사용률 90% 이상</SubTitle>}
+              showToggle={true}
+              showAll={diskUsageShowAll}
+              onToggleShowAll={setDiskUsageShowAll}
+            />
+          </SubSection>
         </Section>
       </Body>
     </>
   );
 }
-
-const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-`;
 
 const Header = styled.div`
   display: flex;
@@ -131,7 +186,6 @@ const SectionTitle = styled.h3`
 const SubTitle = styled.h4`
   ${subTitleStyle(5)}
   font-size: 15px;
-  margin-bottom: 8px;
 `;
 
 const Section = styled.div`
