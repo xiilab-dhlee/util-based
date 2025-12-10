@@ -1,84 +1,106 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styled from "styled-components";
+import { Button, Typography } from "xiilab-ui";
 
-/**
- * NotFound 컴포넌트 (App Router 버전)
- *
- * Next.js 15+ App Router에서 제공하는 특별한 파일로,
- * 존재하지 않는 경로에 접근했을 때 자동으로 렌더링되는 404 페이지입니다.
- *
- * 주요 기능:
- * - 사용자가 존재하지 않는 URL에 접근할 때 표시
- * - 홈페이지로 돌아갈 수 있는 링크 제공
- * - 사용자 친화적인 에러 메시지 표시
- *
- * Next.js App Router 규칙:
- * - 파일명이 'not-found.tsx'여야 함
- * - app 디렉토리 내 어디든 위치 가능 (현재는 루트 레벨)
- * - notFound() 함수 호출 시에도 이 컴포넌트가 렌더링됨
- *
- * 참고: Client Component이므로 metadata는 별도 layout.tsx에서 관리합니다.
- */
+import { CreateFirstWorkspaceModal } from "@/domain/workspace/components/create-first-workspace-modal";
+import { Navigation } from "@/shared/components/layouts/navigation";
+import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
+import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
+import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
 
 export default function NotFound() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.push("/");
+  };
   return (
-    <Container>
-      <Content>
-        {/* 404 에러 제목 */}
-        <Title>페이지를 찾을 수 없습니다</Title>
-        {/* 사용자에게 상황을 설명하는 메시지 */}
-        <Description>
-          요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.
-        </Description>
-        {/* 홈페이지로 돌아가는 링크 버튼 */}
-        <HomeLink href="/">홈으로 돌아가기</HomeLink>
-      </Content>
-    </Container>
+    <>
+      <Container>
+        <Left>
+          <Navigation />
+        </Left>
+        <Right>
+          <RightBody>
+            <Title>404</Title>
+            <Typography.Title
+              variant="headline-3-1"
+              color="#292B32"
+              style={{ marginBottom: 14 }}
+            >
+              앗! 페이지를 찾을 수 없어요 :(
+            </Typography.Title>
+            <Typography.Text
+              variant="subtitle-2-3"
+              color="#5F6368"
+              style={{ marginBottom: 40 }}
+            >
+              죄송합니다. 요청하신 페이지가 존재하지 않습니다.
+              <br />
+              메인에서 원하시는 정보를 찾아보세요.
+            </Typography.Text>
+            <Button
+              color="primary"
+              iconPosition="left"
+              variant="gradient"
+              width={340}
+              onClick={handleBack}
+            >
+              메인으로 돌아가기
+            </Button>
+          </RightBody>
+        </Right>
+      </Container>
+      {/* 워크스페이스 생성 모달 */}
+      <CreateFirstWorkspaceModal />
+      <CreateWorkspaceModal />
+      {/* 비밀번호 재확인 모달 */}
+      <CheckPasswordModal />
+      {/* 비밀번호 수정 모달 */}
+      <UpdatePasswordModal />
+    </>
   );
 }
 
 const Container = styled.div`
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
+`;
+
+const Left = styled.div`
+  width: var(--navigation-width);
+  height: 100%;
+`;
+
+const Right = styled.div`
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--page-inner-padding);
+  overflow: hidden;
+  background-color: #F3F3F3;
+`;
+
+const RightBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100vh;
-  padding: 0 40px;
-`;
-
-const Content = styled.div`
   text-align: center;
-  max-width: 400px;
 `;
 
-const Title = styled.h1`
-  font-size: 2.4rem;
-  font-weight: bold;
-  color: #070913;
-  margin-bottom: 1.6rem;
-`;
-
-const Description = styled.p`
-  font-size: 1.6rem;
-  color: #070913;
-  margin-bottom: 2.4rem;
-  line-height: 1.5;
-`;
-
-const HomeLink = styled(Link)`
-  display: inline-block;
-  padding: 1.2rem 2.4rem;
-  color: #ffffff;
-  border-radius: 0.8rem;
-  font-size: 1.6rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-  background-color: #5d6dff;
-
-  &:hover {
-    background-color: #7274ff;
-  }
+const Title = styled.div`
+  color: #534AD8;
+  line-height: 140px;
+  font-size: 150px;
+  font-weight: 250;
+  margin-bottom: 20px;
 `;

@@ -43,7 +43,7 @@ export const statusTextStyle = (dotSize = 6) => css`
   text-align: right;
   position: relative;
   line-height: 1;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
 
   &::before {

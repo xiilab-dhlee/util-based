@@ -163,7 +163,7 @@ export const PAGE_META = {
     title: "워크로드 상세",
     href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
       ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(workspaceId, id),
-    parent: "admin.workspace",
+    parent: "admin.workspace.detail",
   },
   "admin.workspace.workload.log": {
     title: "로그",

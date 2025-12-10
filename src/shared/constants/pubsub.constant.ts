@@ -29,12 +29,20 @@ export const WORKSPACE_EVENTS = {
 export const WORKLOAD_EVENTS = {
   // 워크로드 수정에 필요한 정보 전달 이벤트
   sendUpdateWorkload: "workload:send-update-workload",
+  // 워크로드 삭제에 필요한 정보 전달 이벤트
+  sendDeleteWorkload: "workload:send-delete-workload",
+  // 워크로드 종료에 필요한 정보 전달 이벤트
+  sendStopWorkload: "workload:send-stop-workload",
+  // 워크로드 재시작에 필요한 정보 전달 이벤트
+  sendRestartWorkload: "workload:send-restart-workload",
   // 커밋 이미지 생성에 필요한 정보 전달 이벤트
   sendCommitImage: "workload:send-commit-image",
   // 워크로드 모니터링에 필요한 정보 전달 이벤트
   sendWorkloadMonitoring: "workload:send-workload-monitoring",
   // 워크로드 생성 시 필요한 정보 전달 이벤트
   sendCreateWorkload: "workload:send-create-workload",
+  // 워크로드 폴더 추가에 필요한 정보 전달 이벤트
+  sendCreateWorkloadFolder: "workload:send-create-workload-folder",
 } as const;
 
 // 소스코드 관련 이벤트
@@ -47,6 +55,8 @@ export const SOURCECODE_EVENTS = {
 export const VOLUME_EVENTS = {
   // 볼륨 삭제에 필요한 정보 전달 이벤트
   sendDeleteVolume: "volume:send-delete-volume",
+  // 볼륨 파일 삭제에 필요한 정보 전달 이벤트
+  sendDeleteVolumeFile: "volume:send-delete-volume-file",
   // 볼륨 선택 모달 초기화 이벤트
   clearSelectVolumeModal: "volume:clear-select-volume-modal",
   // 볼륨 파일 압축에 필요한 정보 전달 이벤트

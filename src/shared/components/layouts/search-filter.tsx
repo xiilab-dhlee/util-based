@@ -4,6 +4,7 @@ import classNames from "classnames";
 import type { PropsWithChildren, ReactNode } from "react";
 import styled from "styled-components";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { ListSectionTitle } from "@/styles/layers/list-page-layers.styled";
 
 interface MySearchFilterProps {
@@ -28,12 +29,15 @@ export function MySearchFilter({
   showTotal = true,
 }: PropsWithChildren<MySearchFilterProps>) {
   return (
-    <Container>
+    <Container data-testid={SELECTOR.LIST_FILTER}>
       <Left>
         <Title className={classNames({ dark: darkMode })}>{title}</Title>
 
         {showTotal && (
-          <Total className={classNames({ dark: darkMode })}>
+          <Total
+            className={classNames({ dark: darkMode })}
+            data-testid={SELECTOR.LIST_TOTAL_COUNT}
+          >
             총 {total.toLocaleString()}
             {unit}
           </Total>

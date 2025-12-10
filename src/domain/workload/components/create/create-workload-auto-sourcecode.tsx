@@ -8,12 +8,10 @@ export function CreateWorkloadAutoSourcecode() {
     <Container>
       <Typography.Text variant="subtitle-2-1">소스코드</Typography.Text>
       <Body>
-        <Message>
-          <Typography.Text variant="body-2-4" color="#000000">
-            허브 이미지 선택 시, 해당 이미지 내에 소스코드가 사전 패키징되어
-            포함되어 있습니다.
-          </Typography.Text>
-        </Message>
+        <Typography.Text variant="body-2-4" color="#000000">
+          허브 이미지 선택 시, 해당 이미지 내에 소스코드가 사전 패키징되어
+          포함되어 있습니다.
+        </Typography.Text>
       </Body>
     </Container>
   );
@@ -26,12 +24,11 @@ const Container = styled.div`
 `;
 
 const Body = styled.div`
-  padding: 16px;
   background: #fcfcfc;
   border: 1px solid #c1c7ce;
   border-radius: 4px;
-`;
-
-const Message = styled.div`
-  padding: 0 48px 0 0;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

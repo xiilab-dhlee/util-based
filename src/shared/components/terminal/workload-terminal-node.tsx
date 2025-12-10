@@ -373,9 +373,9 @@ export function WorkloadTerminalNode({
         {/* 터미널 삭제 버튼 (단독 터미널이 아닌 경우에만 표시) */}
         <div>
           {!isSingle && (
-            <button type="button" onClick={(evt) => onDelete?.(evt, x, y)}>
+            <IconWrapper type="button" onClick={(evt) => onDelete?.(evt, x, y)}>
               <Icon name="Close" color="var(--icon-fill)" />
-            </button>
+            </IconWrapper>
           )}
         </div>
       </Header>
@@ -469,6 +469,15 @@ const HeaderButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const IconWrapper = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
 `;
 
 /**

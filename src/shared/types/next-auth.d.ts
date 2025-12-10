@@ -1,4 +1,4 @@
-import { JWT as originJWT } from "next-auth";
+import type { DefaultSession, DefaultJWT } from "next-auth";
 
 declare module "next-auth/providers/keycloak" {
   interface TOKEN {
@@ -18,7 +18,7 @@ declare module "next-auth" {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-  interface Session extends originSession {
+  interface Session extends DefaultSession {
     accessToken?: string;
     refresh_token?: string;
     error?: string;
@@ -36,21 +36,20 @@ declare module "next-auth" {
 }
 
 declare module "next-auth/jwt" {
-  interface JWT extends originJWT {
+  interface JWT extends DefaultJWT {
     access_token?: string;
     refresh_token?: string;
-    expires_at: number;
+    expires_at?: number;
     error?: string;
     accessTokenExpired?: number;
     refreshTokenExpired?: number;
+    roles?: string[];
 
     preferred_username?: string;
     name?: string;
     email?: string;
     sub?: string;
     id?: string;
-    access_token?: string;
-    refresh_token?: string;
     iat?: number;
     exp?: number;
     jti?: string;

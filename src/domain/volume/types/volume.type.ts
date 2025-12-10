@@ -28,3 +28,8 @@ export interface CompressVolumeFilePayload {
 export interface CreateVolumeFolderPayload {
   [key: string]: unknown;
 }
+
+export interface DeleteVolumeFilePayload {
+  id: string;
+  paths: string[];
+}

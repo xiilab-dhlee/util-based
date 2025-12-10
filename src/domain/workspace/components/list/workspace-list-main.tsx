@@ -1,15 +1,22 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import { Icon } from "xiilab-ui";
 
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/domain/workspace/components/list/workspace-list-footer";
+import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
+import {
+  workspacePageAtom,
+  workspaceSearchTextAtom,
+} from "@/domain/workspace/state/workspace.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
+import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
@@ -60,6 +67,17 @@ const GUIDES: CoreGuide[] = [
 export function WorkspaceListMain() {
   const { onOpen } = useGlobalModal(openCreateWorkspaceModalAtom);
 
+  // Atom 상태 읽기
+  const page = useAtomValue(workspacePageAtom);
+  const searchText = useAtomValue(workspaceSearchTextAtom);
+
+  // API 호출 (Main에서 한 번만 호출)
+  const { data, isLoading } = useGetWorkspaces({
+    page,
+    size: LIST_PAGE_SIZE,
+    searchText,
+  });
+
   const handleCreateWorkspace = () => {
     onOpen();
   };
@@ -76,7 +94,6 @@ export function WorkspaceListMain() {
         {/* 워크스페이스 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="Create Workspace"
             title="워크스페이스 관리"
             icon="Plus"
             description={[
@@ -102,12 +119,20 @@ export function WorkspaceListMain() {
         {/* 워크스페이스 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           {/* 워크스페이스 목록 필터 */}
-          <WorkspaceListFilter />
-
+          <WorkspaceListFilter
+            total={data?.totalSize || 0}
+            loading={isLoading}
+          />
           {/* 워크스페이스 목록 본문 */}
-          <WorkspaceListBody />
+          <WorkspaceListBody
+            content={data?.content || []}
+            loading={isLoading}
+          />
           {/* 워크스페이스 목록 페이지네이션 */}
-          <WorkspaceListFooter />
+          <WorkspaceListFooter
+            total={data?.totalSize || 0}
+            loading={isLoading}
+          />
         </ListPageBody>
       </ListPageMain>
       {/* 워크스페이스 삭제 모달 */}

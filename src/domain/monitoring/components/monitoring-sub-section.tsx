@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { MonitoringWorkloadStatus } from "@/domain/monitoring/components/monitoring-workload-status";
 import { UserMonitoringRunningWorkloadCard } from "@/domain/user-monitoring/components/user-monitoring-running-workload-card";
-import { VolumeWorkloadCard } from "@/domain/volume/components/detail/volume-workload-card";
+import { VolumeWorkloadCard } from "@/domain/volume/components/volume-workload-card";
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { workloadListMock } from "@/mocks/data/workload.mock";
 import { workspaceListMock } from "@/mocks/data/workspace.mock";

@@ -3,7 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
 import styled from "styled-components";
-import { Button } from "xiilab-ui";
+import { Button, Typography } from "xiilab-ui";
 
 import { useGetVolumeFiles } from "@/domain/volume/hooks/use-get-volume-files";
 import {
@@ -24,8 +24,10 @@ import {
 import { PreviewVolumeFile } from "./preview-volume-file";
 import { VolumeCompressFileButton } from "./volume-compress-file-button";
 import { VolumeCreateFolderButton } from "./volume-create-folder-button";
+import { VolumeDeleteFileButton } from "./volume-delete-file-button";
 import { VolumeFileButton } from "./volume-file-button";
 import { VolumeFileCheckbox } from "./volume-file-checkbox";
+import { VolumeUnzipFileButton } from "./volume-unzip-file-button";
 
 /**
  * ManageVolumeFile 컴포넌트
@@ -80,7 +82,7 @@ export function ManageVolumeFile() {
    * TODO: 실제 보안 검사 API 연동 필요
    */
   const handleScan = () => {
-    alert("검사하기 미구현");
+    alert("준비 중입니다.");
   };
 
   /**
@@ -98,16 +100,7 @@ export function ManageVolumeFile() {
    * TODO: 실제 파일 다운로드 API 연동 필요
    */
   const handleDownload = () => {
-    alert("다운로드 미구현");
-  };
-
-  /**
-   * 파일 업로드 핸들러
-   * 현재는 미구현 상태로 알림 메시지만 표시
-   * TODO: 실제 파일 업로드 API 연동 필요
-   */
-  const handleUpload = () => {
-    alert("업로드 미구현");
+    alert("준비 중입니다.");
   };
 
   // 파일 데이터 변경 시 트리 데이터 업데이트
@@ -122,14 +115,20 @@ export function ManageVolumeFile() {
     <>
       {/* 파일 목록 헤더 영역 */}
       <Header>
-        <RootCustomFileNode>
-          <HeaderTitle>파일 목록 전체</HeaderTitle>
-        </RootCustomFileNode>
+        <span>전체 취약점: 77,777개</span>
+        <span>최근 검사 종료 일시: 77,777개</span>
       </Header>
 
       {/* 메인 파일 트리 영역 */}
       <PrimaryArticle>
-        <AsideDetailArticleBody>
+        <PrimaryArticleHeader>
+          <RootCustomFileNode>
+            <Typography.Text variant="subtitle-2-1" color="#000">
+              파일 목록 전체
+            </Typography.Text>
+          </RootCustomFileNode>
+        </PrimaryArticleHeader>
+        <PrimaryArticleBody>
           {/* 커스텀 파일 트리 컴포넌트 */}
           {/* 체크박스와 액션 버튼이 포함된 파일 탐색기 */}
           <CustomFileTree
@@ -137,7 +136,7 @@ export function ManageVolumeFile() {
             fileCheckbox={VolumeFileCheckbox}
             fileButton={VolumeFileButton}
           />
-        </AsideDetailArticleBody>
+        </PrimaryArticleBody>
       </PrimaryArticle>
 
       {/* 파일 미리보기 영역 */}
@@ -150,8 +149,10 @@ export function ManageVolumeFile() {
         <div style={{ width: 112 }}>
           <MyDropdown
             items={[
-              <VolumeCompressFileButton key="compress" />,
               <VolumeCreateFolderButton key="create-folder" />,
+              <VolumeCompressFileButton key="compress" />,
+              <VolumeUnzipFileButton key="unzip" />,
+              <VolumeDeleteFileButton key="delete" />,
             ]}
           >
             <Button
@@ -168,6 +169,7 @@ export function ManageVolumeFile() {
           <Button
             color="primary"
             variant="gradient"
+            icon="Prosecutor"
             width={100}
             height={30}
             onClick={handleScan}
@@ -180,6 +182,7 @@ export function ManageVolumeFile() {
           <Button
             color="primary"
             variant="gradient"
+            icon="WeakPoint"
             width={100}
             height={30}
             onClick={handleShowVulnerability}
@@ -187,26 +190,27 @@ export function ManageVolumeFile() {
             취약점 확인
           </Button>
 
-          {/* 파일 업로드 버튼 */}
-          <Button
-            color="primary"
-            variant="gradient"
-            width={100}
-            height={30}
-            onClick={handleUpload}
-          >
-            파일 업로드
-          </Button>
-
           {/* 파일 다운로드 버튼 */}
           <Button
             color="primary"
             variant="gradient"
+            icon="Download"
             width={100}
             height={30}
             onClick={handleDownload}
           >
             다운로드
+          </Button>
+          {/* 파일 업로드 버튼 */}
+          <Button
+            color="primary"
+            variant="gradient"
+            icon="Upload"
+            width={100}
+            height={30}
+            onClick={handleDownload}
+          >
+            파일 업로드
           </Button>
         </FooterLeft>
       </AsideDetailFooter>
@@ -218,26 +222,14 @@ export function ManageVolumeFile() {
 // Styled Components
 // ============================================================================
 
-/**
- * 파일 목록 헤더 컨테이너
- * 파일 목록 전체 제목을 표시하는 영역
- */
 const Header = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  height: 34px;
-  padding-bottom: 10px;
-`;
-
-/**
- * 헤더 제목 텍스트
- * 파일 목록 전체를 나타내는 제목 스타일
- */
-const HeaderTitle = styled.div`
-  color: #000;
-  font-size: 14px;
-  font-weight: 600;
+  margin-bottom: 10px;
+  color: #828588;
+  font-size: 12px;
+  font-weight: 400;
 `;
 
 /**
@@ -249,8 +241,32 @@ const PrimaryArticle = styled(AsideDetailArticle)`
   flex: 1;
   margin-bottom: 10px;
   overflow: hidden;
-  padding: 9px;
+  padding: 14px 12px;
   overflow-y: auto;
+  border: 1px solid #D1D5DC;
+  background-color: #F7F8FA;
+`;
+
+/**
+ * 파일 목록 헤더 컨테이너
+ * 파일 목록 전체 제목을 표시하는 영역
+ */
+const PrimaryArticleHeader = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 34px;
+  padding-bottom: 10px;
+`;
+
+const PrimaryArticleBody = styled(AsideDetailArticleBody)`
+  flex: 1;
+  overflow: hidden;
+  padding: 9px 2px;
+  overflow-y: auto;
+  border: 1px solid #E9EBEE;
+  background-color: #fff;
+  border-radius: 4px;
 `;
 
 /**

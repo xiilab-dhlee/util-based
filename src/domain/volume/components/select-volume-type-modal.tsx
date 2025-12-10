@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
-import { VolumeStorageCard } from "@/domain/volume/components/list/volume-storage-card";
+import { VolumeStorageCard } from "@/domain/volume/components/volume-storage-card";
 import { VOLUME_STORAGE_OPTIONS } from "@/domain/volume/constants/volume.constant";
 import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 import {

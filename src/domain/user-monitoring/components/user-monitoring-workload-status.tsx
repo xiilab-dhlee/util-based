@@ -4,9 +4,11 @@ import { Icon, Typography } from "xiilab-ui";
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface UserMonitoringWorkloadStatusProps {
-  status: WorkloadStatusType;
+  status: WorkloadStatusType | "ALL";
+  count: number;
 }
 
 /**
@@ -16,21 +18,33 @@ interface UserMonitoringWorkloadStatusProps {
  * 각 상태별로 색상과 아이콘이 다르게 표시되며, 증감률과 총 개수를 보여줍니다.
  *
  * @param status - 워크로드 상태
+ * @param count - 워크로드 상태별 개수
  * @returns 워크로드 상태 통계 컴포넌트
  *
  */
 export function UserMonitoringWorkloadStatus({
   status,
+  count,
 }: UserMonitoringWorkloadStatusProps) {
   // 상태에 따른 텍스트와 아이콘 정보 가져오기
   const { label, icon } = getWorkloadStatusInfo(status);
 
   return (
-    <Container key={status} className={status}>
+    <Container
+      key={status}
+      className={status}
+      data-testid={USER_MONITORING_SELECTOR.status(status.toLowerCase())}
+    >
       <Legend variant="body-2-4">{label}</Legend>
       <DataLabel>
-        <Typography.Text variant="subtitle-2-1" color="#fff">
-          {Number(9999).toLocaleString()}건
+        <Typography.Text
+          variant="subtitle-2-1"
+          color="#fff"
+          data-testid={USER_MONITORING_SELECTOR.statusCount(
+            status.toLowerCase(),
+          )}
+        >
+          {count.toLocaleString()}건
         </Typography.Text>
 
         <Boundary />

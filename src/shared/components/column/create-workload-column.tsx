@@ -1,6 +1,10 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
+import { SelectWorkloadRadio } from "@/domain/workload/components/create/select-workload-radio";
+import { DeleteWorkloadButton } from "@/domain/workload/components/list/delete-workload-button";
+import { RestartWorkloadButton } from "@/domain/workload/components/list/restart-workload-button";
+import { StopWorkloadButton } from "@/domain/workload/components/list/stop-workload-button";
 import { WorkloadLogButton } from "@/domain/workload/components/list/workload-log-button";
 import { WorkloadMonitoringButton } from "@/domain/workload/components/list/workload-monitoring-button";
 import { WorkloadNameLink } from "@/domain/workload/components/list/workload-name-link";
@@ -12,6 +16,7 @@ import type {
 } from "@/domain/workload/schemas/workload.schema";
 import { WorkloadStatusText } from "@/shared/components/text/workload-status-text";
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatElapsedTime } from "@/shared/utils/date.util";
@@ -23,15 +28,29 @@ import {
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      dataIndex: "select",
+      title: "선택",
+      align: "center",
+      width: ICON_COLUMN_WIDTH,
+      render: (_, record: WorkloadListType) => {
+        return <SelectWorkloadRadio workloadId={record.id} />;
+      },
+    },
+    {
       dataIndex: "workloadName",
       title: "워크로드 이름",
       align: "left",
-      render: (workloadName: string, { workspaceId, id }: WorkloadListType) => {
+      render: (
+        workloadName: string,
+        { workspaceId, id, revokeWarningCount, isRevoked }: WorkloadListType,
+      ) => {
         return (
           <WorkloadNameLink
             workspaceId={workspaceId}
             workloadId={id}
             workloadName={workloadName}
+            revokeWarningCount={revokeWarningCount}
+            isRevoked={isRevoked}
           />
         );
       },
@@ -41,10 +60,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "잡 타입",
       align: "center",
       width: 100,
-      render: (jobType: WorkloadJobType) => {
+      render: (jobType: WorkloadJobType, { id }: WorkloadListType) => {
         return (
           <ColumnAlignCenterWrap>
-            <span style={{ textTransform: "capitalize" }}>
+            <span
+              style={{ textTransform: "capitalize" }}
+              data-testid={WORKLOAD_SELECTOR.jobType(id)}
+            >
               {jobType.toLowerCase()}
             </span>
           </ColumnAlignCenterWrap>
@@ -56,8 +78,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "경과 시간",
       align: "center",
       width: 140,
-      render: (elapsedTime: string) => {
-        return <span>{formatElapsedTime(elapsedTime)}</span>;
+      render: (elapsedTime: string, { id }: WorkloadListType) => {
+        return (
+          <span data-testid={WORKLOAD_SELECTOR.elapsedTime(id)}>
+            {formatElapsedTime(elapsedTime)}
+          </span>
+        );
       },
     },
     {
@@ -78,11 +104,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: ICON_COLUMN_WIDTH,
       render: (_, { workspaceId, id, status }: WorkloadListType) => {
+        // 로그는 실행 중 혹은 종료 상태에서만 접근 가능
+        const isActive = status === "RUNNING" || status === "COMPLETED";
         return (
           <WorkloadLogButton
             workspaceId={workspaceId}
             workloadId={id}
-            disabled={status !== "RUNNING"}
+            disabled={!isActive}
           />
         );
       },
@@ -93,11 +121,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: ICON_COLUMN_WIDTH,
       render: (_, { workspaceId, id, status }: WorkloadListType) => {
+        // 웹터미널은 실행 중 상태에서만 접근 가능
+        const isActive = status === "RUNNING";
         return (
           <WorkloadTerminalButton
             workspaceId={workspaceId}
             workloadId={id}
-            disabled={status !== "RUNNING"}
+            disabled={!isActive}
           />
         );
       },
@@ -108,11 +138,17 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: ICON_COLUMN_WIDTH,
       render: (_, record: WorkloadListType) => {
+        // 포트는 실행 중이면서 허브가 아니고 포트가 설정된 경우 활성화
+        const isActive =
+          record.status === "RUNNING" &&
+          record.ports.length > 0 &&
+          record.image.type !== "HUB";
         return (
           <ColumnAlignCenterWrap>
             <ColumnIconWrap
               onClick={() => alert("준비 중입니다.")}
-              disabled={record.status === "RUNNING"}
+              disabled={!isActive}
+              data-testid={WORKLOAD_SELECTOR.CONNECT_BUTTON}
             >
               <Icon name="Port" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>
@@ -126,11 +162,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: ICON_COLUMN_WIDTH,
       render: (_, { workspaceId, id, status }: WorkloadListType) => {
+        // 모니터링은 실행 중 및 종료 상태에서만 접근 가능
+        const isActive = status === "RUNNING" || status === "COMPLETED";
         return (
           <WorkloadMonitoringButton
             workspaceId={workspaceId}
             workloadId={id}
-            disabled={status !== "RUNNING"}
+            disabled={!isActive}
           />
         );
       },
@@ -141,15 +179,23 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: ICON_COLUMN_WIDTH,
       render: (_, record: WorkloadListType) => {
+        // 종료 버튼은 종료 상태가 아닐 때에만 활성화
+        const isActive = record.status !== "COMPLETED";
         return (
-          <ColumnAlignCenterWrap>
-            <ColumnIconWrap
-              onClick={() => alert("준비 중입니다.")}
-              disabled={record.status === "RUNNING"}
-            >
-              <Icon name="PowerBold" color="var(--icon-fill)" size={20} />
-            </ColumnIconWrap>
-          </ColumnAlignCenterWrap>
+          <StopWorkloadButton workloadId={record.id} disabled={!isActive} />
+        );
+      },
+    },
+    {
+      dataIndex: "restart",
+      title: "재시작",
+      align: "center",
+      width: ICON_COLUMN_WIDTH,
+      render: (_, record: WorkloadListType) => {
+        // 재시작 버튼은 종료 상태에만 활성화
+        const isActive = record.status === "COMPLETED";
+        return (
+          <RestartWorkloadButton workloadId={record.id} disabled={!isActive} />
         );
       },
     },
@@ -159,15 +205,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: ICON_COLUMN_WIDTH,
       render: (_, record: WorkloadListType) => {
+        // 삭제 버튼은 종료 상태에만 활성화
+        const isActive = record.status === "COMPLETED";
         return (
-          <ColumnAlignCenterWrap>
-            <ColumnIconWrap
-              onClick={() => alert("준비 중입니다.")}
-              disabled={record.status === "COMPLETED"}
-            >
-              <Icon name="Delete" color="var(--icon-fill)" size={20} />
-            </ColumnIconWrap>
-          </ColumnAlignCenterWrap>
+          <DeleteWorkloadButton workloadId={record.id} disabled={!isActive} />
         );
       },
     },

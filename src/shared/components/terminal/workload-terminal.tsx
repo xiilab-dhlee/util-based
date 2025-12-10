@@ -7,6 +7,7 @@ import Split from "split.js";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   TERMINAL_MAX_HCNT,
   TERMINAL_MAX_VCNT,
@@ -214,7 +215,10 @@ export function WorkloadTerminal({
   }, [panes, handleDragEnd]);
 
   return (
-    <Container className={`split ${resultTheme}`}>
+    <Container
+      className={`split ${resultTheme}`}
+      data-testid={WORKLOAD_SELECTOR.TERMINAL_CONTAINER}
+    >
       {isActive ? (
         panes.map(([paneId, size], x) => (
           <WorkloadTerminalPane

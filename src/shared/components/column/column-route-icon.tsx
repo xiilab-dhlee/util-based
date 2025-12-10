@@ -21,6 +21,8 @@ interface ColumnRouteIconProps {
   href: string;
   /** 아이콘 클릭 비활성화 여부 (기본값: false) */
   disabled?: boolean;
+  /** 테스트를 위한 data-testid 속성 */
+  "data-testid"?: string;
 }
 
 export function ColumnRouteIcon({
@@ -28,6 +30,7 @@ export function ColumnRouteIcon({
   iconSize = 16,
   href,
   disabled = false,
+  "data-testid": dataTestId,
 }: ColumnRouteIconProps) {
   const router = useRouter();
 
@@ -41,7 +44,11 @@ export function ColumnRouteIcon({
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClick} disabled={disabled}>
+      <ColumnIconWrap
+        onClick={handleClick}
+        disabled={disabled}
+        data-testid={dataTestId}
+      >
         <Icon name={icon} color="var(--icon-fill)" size={iconSize} />
         <span className="sr-only">다음 페이지로 이동</span>
       </ColumnIconWrap>

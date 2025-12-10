@@ -62,7 +62,6 @@ export function SystemSettingMain() {
         {/* 왼쪽 영역 - 가이드 + 사이드바 */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="About System Settings"
             title="기본 설정"
             icon="Setting01"
             description={[

@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { ColumnRouteIcon } from "@/shared/components/column/column-route-icon";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { isAdminMode } from "@/shared/utils/router.util";
 
 interface WorkloadLogButtonProps {
@@ -26,6 +27,12 @@ export function WorkloadLogButton({
   }
 
   return (
-    <ColumnRouteIcon icon="Log" iconSize={20} href={href} disabled={disabled} />
+    <ColumnRouteIcon
+      icon="Log"
+      iconSize={20}
+      href={href}
+      disabled={disabled}
+      data-testid={WORKLOAD_SELECTOR.LOG_BUTTON}
+    />
   );
 }

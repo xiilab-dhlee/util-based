@@ -74,7 +74,7 @@ export function ViewWorkloadMonitoringModal() {
     <InfoModal
       modalWidth={800}
       title={title}
-      icon={<Icon name="Monitoring01" color="#fff" size={20} />}
+      icon={<Icon name="Monitoring02" color="#fff" size={16} />}
       open={open}
       closable
       onClose={onClose}

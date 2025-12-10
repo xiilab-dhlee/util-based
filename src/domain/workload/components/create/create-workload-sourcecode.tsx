@@ -20,6 +20,7 @@ import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.
 import { workloadSourcecodesAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { SourcecodeCommandTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-command-tooltip-title";
 import { SourcecodeMountPathTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-mount-path-tooltip-title";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
@@ -120,10 +121,8 @@ export function CreateWorkloadSourcecode() {
         <Row>
           <Pane>
             <Label>
-              <LabelTitle>
-                마운트 경로
-                <GuideTooltip title={<SourcecodeMountPathTooltipTitle />} />
-              </LabelTitle>
+              <LabelTitle>마운트 경로</LabelTitle>
+              <GuideTooltip title={<SourcecodeMountPathTooltipTitle />} />
             </Label>
             <Input
               placeholder="Mount Path를 입력해 주세요."
@@ -134,10 +133,8 @@ export function CreateWorkloadSourcecode() {
 
           <Pane>
             <Label>
-              <LabelTitle>
-                실행 명령어
-                <GuideTooltip title="소스코드 실행을 위한 명령어를 입력합니다." />
-              </LabelTitle>
+              <LabelTitle>실행 명령어</LabelTitle>
+              <GuideTooltip title={<SourcecodeCommandTooltipTitle />} />
             </Label>
             <Input
               placeholder="실행 명령어를 입력해 주세요."
@@ -203,7 +200,6 @@ export function CreateWorkloadSourcecode() {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
 `;
 
 const Header = styled.div`

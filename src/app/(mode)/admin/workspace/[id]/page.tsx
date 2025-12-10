@@ -1,5 +1,5 @@
-import { WorkspaceDetailMain } from "@/domain/workspace/components/detail/workspace-detail-main";
+import { WorkloadListMain } from "@/domain/workload/components/list/workload-list-main";
 
 export default function AdminWorkspaceDetailPage() {
-  return <WorkspaceDetailMain />;
+  return <WorkloadListMain />;
 }

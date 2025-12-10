@@ -1,11 +1,13 @@
 "use client";
 
+import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import type { MonitoringMetricType } from "@/domain/monitoring/types/monitoring.type";
 import { getMetricInfo } from "@/domain/monitoring/utils/monitoring.util";
 import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { mapToChartData } from "@/shared/utils/chart.util";
 import {
@@ -23,6 +25,29 @@ interface WorkloadMonitoringCardProps {
   type: MonitoringMetricType;
 }
 
+// 데모 모니터링 데이터 생성
+const generateDemoData = () => {
+  const now = new Date();
+  const dataPoints = [];
+
+  // 최근 60개의 데이터 포인트 생성 (5분 간격, 총 5시간)
+  for (let i = 59; i >= 0; i--) {
+    const dateTime = new Date(now.getTime() - i * 5 * 60000); // 5분 간격
+    dataPoints.push({
+      dateTime: dateTime.toISOString(),
+      value: Math.floor(Math.random() * 30) + 40, // 40-70 사이의 랜덤 값
+    });
+  }
+
+  return [
+    {
+      modelName: "workload-1",
+      gpuIndex: 0,
+      valueDTOS: dataPoints,
+    },
+  ];
+};
+
 /**
  * 워크로드의 특정 메트릭(CPU, 메모리, GPU 등)을 실시간으로 모니터링하는 카드 컴포넌트
  */
@@ -35,7 +60,8 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
    * ChartUtil.mapToChartData를 활용하여 UserMonitoringNodeGpuLineChart와 동일한
    * 형태의 area 차트 데이터를 생성합니다.
    */
-  const series = mapToChartData(undefined, "area");
+  const demoData = generateDemoData();
+  const series = mapToChartData(demoData, "area");
 
   /**
    * 메트릭 타입에 따른 모니터링 정보 조회
@@ -67,22 +93,41 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
   };
 
   return (
-    <LikeCompactCardContainer>
+    <LikeCompactCardContainer
+      data-testid={WORKLOAD_SELECTOR.monitoringChart(type)}
+    >
       <LikeCompactCardHeader>
-        {/* 메트릭 이름 표시 - 텍스트가 길 경우 말줄임표 처리 */}
         <LikeCompactCardTitle className="truncate">{text}</LikeCompactCardTitle>
-        {/* 확대 버튼 - 클릭 시 상세 모니터링 모달 열기 */}
-        <button type="button" onClick={handleClickIcon}>
+        <IconButton type="button" onClick={handleClickIcon}>
           <Icon name="Size02" color="var(--icon-fill)" size={16} />
           <span className="sr-only">모니터링 차트 확대</span>
-        </button>
+        </IconButton>
       </LikeCompactCardHeader>
       <LikeCompactCardBody>
         {/* 차트 데이터가 있을 경우에만 모니터링 차트 렌더링 */}
         {series.length > 0 && (
-          <MonitoringChart series={series} unit={unit} colors={colors} />
+          <MonitoringChart
+            series={series}
+            height={290}
+            unit={unit}
+            colors={colors}
+          />
         )}
       </LikeCompactCardBody>
     </LikeCompactCardContainer>
   );
 }
+
+const IconButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+`;

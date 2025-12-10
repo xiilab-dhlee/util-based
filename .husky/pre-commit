@@ -2,6 +2,14 @@
 
 # Husky pre-commit hook: Format staged files with Biome
 
+# Windows에서는 lint-staged 건너뛰기 (CRLF/LF 이슈)
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*|Windows_NT)
+    echo "⚠️ Windows 환경: lint-staged 건너뜀"
+    exit 0
+    ;;
+esac
+
 pnpm exec lint-staged || {
   echo "❌ Format failed. Please fix the errors and try again."
   exit 1

@@ -74,7 +74,6 @@ export function RevokeHistoryListMain() {
       <ListPageMain>
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="Resource Revocation"
             title="리소스 회수 이력"
             icon="Resource"
             description={[

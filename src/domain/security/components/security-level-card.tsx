@@ -15,11 +15,11 @@ export function RegistrySecurityLevelCard({
   level,
   count,
 }: RegistrySecurityResourceCardProps) {
-  const { icon, iconColor, engText } = getVulnerabilityLevelInfo(level);
+  const { icon, color, engText } = getVulnerabilityLevelInfo(level);
   return (
     <Container>
       <Left>
-        <Icon name={icon} color={iconColor} />
+        <Icon name={icon} color={color} />
       </Left>
       <Right>
         <Label>{engText}</Label>

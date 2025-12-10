@@ -3,10 +3,13 @@
 import type { InputProps } from "xiilab-ui";
 import { Input } from "xiilab-ui";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
+
 interface SearchInputProps {
   width?: InputProps["width"];
   placeholder?: string;
   darkMode?: boolean;
+  disabled?: boolean;
 }
 
 // 검색 입력 컴포넌트
@@ -14,6 +17,7 @@ export function SearchInput({
   placeholder = "검색어를 입력하세요.",
   width = 220,
   darkMode = false,
+  disabled = false,
 }: SearchInputProps) {
   const handleSearch = () => {
     // 현재 SearchInput이 포함된 form 요소 찾기
@@ -40,6 +44,8 @@ export function SearchInput({
       width={width}
       height={30}
       darkMode={darkMode}
+      disabled={disabled}
+      data-testid={SELECTOR.LIST_SEARCH_INPUT}
     />
   );
 }

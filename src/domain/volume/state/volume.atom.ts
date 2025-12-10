@@ -24,6 +24,8 @@ export const openCreateOnPremiseVolumeModalAtom = atom<boolean>(false);
 export const openCreateAstragoVolumeModalAtom = atom<boolean>(false);
 /** 볼륨 삭제 모달 표시 여부 */
 export const openDeleteVolumeModalAtom = atom<boolean>(false);
+/** 볼륨 파일 삭제 모달 표시 여부 */
+export const openDeleteVolumeFileModalAtom = atom<boolean>(false);
 /** 볼륨 파일 폴더 생성 모달 표시 여부 */
 export const openCreateVolumeFolderModalAtom = atom<boolean>(false);
 /** 볼륨 파일 압축 모달 표시 여부 */

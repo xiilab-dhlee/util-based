@@ -1,21 +1,21 @@
 "use client";
 
 import { Popover } from "antd";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
-import { AstragoIcon } from "@/shared/components/icon/astrago-icon";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
 
 export function Profile() {
-  // 임시 사용자 정보
-  const userName = "관리자";
-  const email = "admin@xiilab.com";
+  const { data: session } = useSession();
+
+  const userName = session?.user?.name ?? "";
+  const email = session?.user?.email ?? "";
 
   const [showDropdown, setShowDropdown] = useState(false);
   const { open, onToggle } = useGlobalModal(openProfilePopoverAtom);
@@ -61,7 +61,7 @@ export function Profile() {
           <User>
             <Avatar>
               <IconWrapper>
-                <AstragoIcon />
+                <Icon name="Astrago" color="#fff" size={18} />
               </IconWrapper>
             </Avatar>
             <UserBody>
@@ -98,7 +98,6 @@ const Container = styled.div`
   height: 50px;
   background-color: #171b26;
   border: 1px solid #2b3246;
-  overflow: hidden;
 `;
 
 const Left = styled.div`

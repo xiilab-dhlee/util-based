@@ -3,7 +3,11 @@ import { defineBddConfig } from "playwright-bdd";
 
 const testDir = defineBddConfig({
   paths: ["tests/features/**/*.feature"], // feature 파일 위치
-  require: ["tests/support/**/*.ts", "tests/steps/**/*.ts"], // hooks와 step definitions 위치
+  require: [
+    "tests/fixtures.ts", // 커스텀 fixture (먼저 로드)
+    "tests/support/**/*.ts",
+    "tests/steps/**/*.ts",
+  ],
 });
 
 /**
@@ -20,11 +24,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
 
   /* CI에서는 병렬 처리 비활성화, 로컬에서는 CPU 코어 수만큼 병렬 실행 */
-  workers: process.env.CI
-    ? 1
-    : process.env.WORKERS
-      ? parseInt(process.env.WORKERS, 10)
-      : undefined,
+  workers: process.env.CI ? 1 : 2,
 
   /* 리포터 설정 */
   reporter: [
@@ -91,12 +91,12 @@ export default defineConfig({
     // },
   ],
 
-  /* 테스트 실행 전 개발 서버 자동 시작 */
+  /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
     command: "pnpm dev",
     url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
+    reuseExistingServer: true,
+    timeout: 30 * 1000,
   },
 
   /* 테스트 타임아웃 설정 (기본값: 30초) */

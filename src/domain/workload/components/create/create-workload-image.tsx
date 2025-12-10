@@ -2,12 +2,12 @@
 
 import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
-import { Icon, Tooltip } from "xiilab-ui";
 
 import {
   imageTypeAtom,
   jobTypeAtom,
 } from "@/domain/workload/state/create-workload.atom";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { WorkloadImageTooltipTitle } from "@/shared/components/tooltip-title/workload-image-tooltip-title";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 import { CreateWorkloadHubImageSelect } from "./create-workload-hub-image-select";
@@ -26,11 +26,12 @@ export function CreateWorkloadImage() {
         <CreateWorkloadSectionTitle className="required">
           이미지
         </CreateWorkloadSectionTitle>
-        <Tooltip maxWidth="540px" title={<WorkloadImageTooltipTitle />}>
+        <GuideTooltip title={<WorkloadImageTooltipTitle />} />
+        {/* <Tooltip maxWidth="540px" title={<WorkloadImageTooltipTitle />}>
           <IconWrapper>
             <Icon name="Tooltip" size={16} color="#5F6368" />
           </IconWrapper>
-        </Tooltip>
+        </Tooltip> */}
       </Header>
       <ImageButtonGroup>
         <CreateWorkloadImageButton
@@ -166,13 +167,6 @@ const Header = styled.div`
   align-items: center;
   gap: 10px;
   margin-bottom: 6px;
-`;
-
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: help;
 `;
 
 const ImageSelectionContainer = styled.div`

@@ -79,7 +79,6 @@ export function RequestImageListMain() {
         {/* 이미지 요청 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="About Manage Image usage request"
             title="이미지 사용 요청 관리"
             icon="Image"
             description={[

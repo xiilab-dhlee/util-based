@@ -48,5 +48,6 @@ export const useGetWorkloadByMode = (
   return useQuery({
     queryKey,
     queryFn,
+    enabled: Boolean(payload.workspaceId && payload.workloadId),
   });
 };

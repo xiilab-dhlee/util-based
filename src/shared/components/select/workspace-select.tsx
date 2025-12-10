@@ -9,6 +9,7 @@ import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.sch
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { ArrowIcon } from "@/shared/components/icon/arrow-icon";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
@@ -68,11 +69,18 @@ export function WorkspaceSelect() {
             <>
               <Badge>Default</Badge>
               <ValueWrapper>
-                <Value className="truncate">{selectedWorkspace?.name}</Value>
+                <Value
+                  className="truncate"
+                  data-testid={SELECTOR.WORKSPACE_SELECT_VALUE}
+                >
+                  {selectedWorkspace?.name}
+                </Value>
               </ValueWrapper>
             </>
           ) : (
-            <Placeholder>Select Workspace</Placeholder>
+            <Placeholder data-testid={SELECTOR.WORKSPACE_SELECT_PLACEHOLDER}>
+              Select Workspace
+            </Placeholder>
           )}
           <IconWrapper className={isOpen ? "open" : ""}>
             <ArrowIcon />

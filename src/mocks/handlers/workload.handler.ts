@@ -1,6 +1,8 @@
 import { HttpResponse, http } from "msw";
 
 import {
+  activeWorkloadListMock,
+  disabledWorkloadListMock,
   workloadDetailMock,
   workloadListMock,
   workloadVulnerabilityListMock,
@@ -13,21 +15,22 @@ import { generateCustomTree } from "@/shared/utils/filetree-generator.util";
  */
 export const workloadHandlers = [
   // 워크로드 목록 조회
-  http.get("/core-api/v1/core/workload", ({ request }) => {
-    const url = new URL(request.url);
-    const searchText = url.searchParams.get("searchText");
-
-    // 검색어가 있는 경우 필터링
-    let filteredContent = workloadListMock;
-    if (searchText) {
-      filteredContent = workloadListMock.filter((workload) =>
-        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase()),
-      );
-    }
-
+  http.get("/core-api/v1/core/workload", () => {
     return HttpResponse.json({
-      content: filteredContent,
-      totalSize: filteredContent.length,
+      content: workloadListMock,
+      totalSize: 100,
+    });
+  }),
+  http.get("/core-api/v1/core/workload/active", () => {
+    return HttpResponse.json({
+      content: activeWorkloadListMock,
+      totalSize: 100,
+    });
+  }),
+  http.get("/core-api/v1/core/workload/disabled", () => {
+    return HttpResponse.json({
+      content: disabledWorkloadListMock,
+      totalSize: 100,
     });
   }),
 

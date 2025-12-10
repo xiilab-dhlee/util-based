@@ -1,9 +1,10 @@
 "use client";
+
 import type { PropsWithChildren, ReactNode } from "react";
 import styled from "styled-components";
 
+import { ScrollShadowContainer } from "@/shared/components/layouts/scroll-shadow-container";
 import { ListSectionTitle } from "@/styles/layers/list-page-layers.styled";
-import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 interface AsideFillCardProps {
   // 제목 (옵셔널)
@@ -47,6 +48,7 @@ const Container = styled.div`
   overflow: hidden;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
   background-color: #fafafa;
+  max-height: 920px;
 `;
 
 const Header = styled.div`
@@ -66,10 +68,7 @@ const TitleExtra = styled.span`
   color: #000000;
 `;
 
-const Body = styled.div`
+const Body = styled(ScrollShadowContainer)`
   flex: 1;
   gap: 8px;
-  overflow-y: auto;
-
-  ${hideScrollbar}
 `;

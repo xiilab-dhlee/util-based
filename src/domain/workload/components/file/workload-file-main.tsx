@@ -11,6 +11,8 @@ import {
   workloadFileTreeDataAtom,
 } from "@/domain/workload/state/workload.atom";
 import { CustomFileTree } from "@/shared/components/tree/custom-file-tree";
+import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   DetailContentButton,
@@ -18,6 +20,7 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
+import { CreateWorkloadFolderModal } from "./create-workload-folder-modal";
 import { WorkloadFileButton } from "./workload-file-button";
 import { WorkloadFileCheckbox } from "./workload-file-checkbox";
 import { WorkloadFileListBody } from "./workload-file-list-body";
@@ -34,6 +37,7 @@ import { WorkloadFileListBody } from "./workload-file-list-body";
 export function WorkloadFileMain() {
   const { id } = useParams();
   const searchParams = useSearchParams();
+  const publish = usePublish();
 
   const workspaceId = searchParams?.get("workspaceId") || "";
 
@@ -82,6 +86,17 @@ export function WorkloadFileMain() {
     return `폴더 ${directoryCount}개, 파일 ${fileCount}개`;
   };
 
+  /**
+   * 폴더 추가 버튼 클릭 핸들러
+   */
+  const handleAddFolder = () => {
+    publish(WORKLOAD_EVENTS.sendCreateWorkloadFolder, {
+      workspaceId,
+      workloadId: String(id),
+      filePath: selectedNode?.path || "/",
+    });
+  };
+
   return (
     <>
       {/* 파일 페이지 영역 */}
@@ -91,7 +106,7 @@ export function WorkloadFileMain() {
         {/* 파일 관리 도구 버튼들 */}
         <DetailContentTitleTool>
           <div style={{ width: 80, height: 30 }}>
-            <DetailContentButton onClick={() => alert("폴더 추가 Action")}>
+            <DetailContentButton onClick={handleAddFolder}>
               폴더 추가
             </DetailContentButton>
           </div>
@@ -136,6 +151,9 @@ export function WorkloadFileMain() {
           <WorkloadFileListBody />
         </Right>
       </FileContent>
+
+      {/* 워크로드 폴더 추가 모달 */}
+      <CreateWorkloadFolderModal />
     </>
   );
 }

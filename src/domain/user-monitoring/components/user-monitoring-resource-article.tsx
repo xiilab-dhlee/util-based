@@ -6,6 +6,7 @@ import {
   USER_MONITORING_RESOURCE_OPTIONS,
   USER_MONITORING_SERIES_DEMO,
 } from "@/domain/user-monitoring/constants/user-monitoring.constant";
+import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSelect } from "@/shared/hooks/use-select";
 import { UserMonitoringCategoryTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
@@ -22,7 +23,7 @@ export function UserMonitoringResourceArticle() {
     : null;
 
   return (
-    <Container>
+    <Container data-testid={USER_MONITORING_SELECTOR.RESOURCE_GRAPH}>
       {/* CPU 그래프 영역 */}
       <Graph>
         <GraphHeader>

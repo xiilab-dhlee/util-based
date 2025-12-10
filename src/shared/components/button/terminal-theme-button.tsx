@@ -12,7 +12,13 @@ import { terminalThemeAtom } from "@/shared/state/terminal.atom";
 import { toolButtonStyle } from "@/styles/mixins/button";
 import { createTermBgClasses } from "@/styles/mixins/terminal";
 
-export function TerminalThemeButton() {
+interface TerminalThemeButtonProps {
+  "data-testid"?: string;
+}
+
+export function TerminalThemeButton({
+  "data-testid": dataTestId,
+}: TerminalThemeButtonProps) {
   const [terminalTheme, setTerminalTheme] = useAtom(terminalThemeAtom);
   const [, setThemeType] = useLocalStorage("terminalTheme", "MaterialDark");
 
@@ -47,7 +53,7 @@ export function TerminalThemeButton() {
       trigger="click"
       placement="bottomRight"
     >
-      <ThemeButton>
+      <ThemeButton data-testid={dataTestId}>
         <Image
           src="/images/color-picker.png"
           width={18}

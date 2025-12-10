@@ -1,41 +1,35 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
-import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
-import {
-  workloadPageAtom,
-  workloadSearchTextAtom,
-} from "@/domain/workload/state/workload.atom";
+import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
+interface WorkloadListBodyProps {
+  content: WorkloadListType[];
+  loading: boolean;
+}
+
 /**
- * 워크로드 목록 페이지 본문 컴포넌트
+ * 워크로드 목록 테이블 컴포넌트 (관리자용)
  *
- * 워크로드 목록 페이지에서 워크로드 목록을 표시하는 테이블을 제공합니다.
+ * 워크스페이스 상세 페이지에서 전체 워크로드 목록을 표시하는 테이블입니다.
  *
- * @returns 워크로드 목록 페이지 본문 컴포넌트
+ * @param content - 워크로드 목록 데이터
+ * @param loading - 로딩 여부
  */
-export function WorkloadListBody() {
-  // 페이지 번호
-  const page = useAtomValue(workloadPageAtom);
-  // 검색어
-  const searchText = useAtomValue(workloadSearchTextAtom);
-
-  const { data } = useGetWorkloads({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
-
+export function WorkloadListBody({ content, loading }: WorkloadListBodyProps) {
   return (
-    <ListWrapper>
+    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
         columns={createWorkloadColumn([
-          { dataIndex: "workloadName", width: 200, ellipsis: true },
+          {
+            dataIndex: "workloadName",
+            width: 200,
+            ellipsis: true,
+            sorter: true,
+          },
           { dataIndex: "jobType", width: 100 },
           { dataIndex: "creatorName", width: 60, ellipsis: true },
           { dataIndex: "elapsedTime" },
@@ -47,9 +41,10 @@ export function WorkloadListBody() {
           { dataIndex: "power" },
           { dataIndex: "delete" },
         ])}
-        data={data?.content || []}
-        columnHeight={40}
+        data={content}
+        columnHeight={37}
         activePadding
+        loading={loading}
       />
     </ListWrapper>
   );

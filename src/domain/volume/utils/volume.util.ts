@@ -1,4 +1,7 @@
-import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
+import type {
+  VolumeStatusType,
+  VolumeStorageType,
+} from "@/domain/volume/schemas/volume.schema";
 
 /**
  * 볼륨 스토리지 타입 정보 조회
@@ -8,12 +11,36 @@ import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 export const getVolumeStorageTypeInfo = (storageType: VolumeStorageType) => {
   // 타입 표시 텍스트
   let text = "";
+  let icon = "";
 
   if (storageType === "ASTRAGO") {
-    text = "AstraGo";
+    text = "AstraGo Storage";
+    icon = "Astrago";
   } else if (storageType === "LOCAL") {
     text = "On-premise Storage";
+    icon = "OnPremiseStorage";
   }
 
-  return { text };
+  return { text, icon };
+};
+
+/**
+ * 소스코드 타입 정보 조회
+ * @param type - 소스코드 타입
+ * @returns 타입 정보 (텍스트, 태그)
+ */
+export const getVolumeStatusInfo = (type: VolumeStatusType) => {
+  // 타입 표시 텍스트
+  let text = "";
+  let icon = "";
+
+  if (type === "PUBLIC") {
+    text = "공개";
+    icon = "";
+  } else if (type === "PRIVATE") {
+    text = "비공개";
+    icon = "Lock";
+  }
+
+  return { text, icon };
 };

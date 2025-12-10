@@ -17,21 +17,15 @@ export function CreateWorkloadTitle() {
   return (
     <Container>
       <Header>
-        <CreateWorkloadSectionTitle className="required">
-          워크로드 정보
-        </CreateWorkloadSectionTitle>
+        <CreateWorkloadSectionTitle>워크로드 정보</CreateWorkloadSectionTitle>
       </Header>
       <Form layout="vertical">
-        <FormItem
-          label="워크로드 이름"
-          // validateStatus="error"
-          // help="워크로드 이름을 입력하세요."
-        >
+        {/* TODO: Add form validation - track validation state and display errors */}
+        <FormItem label="워크로드 이름" required>
           <Input
             value={workloadName}
             onChange={(e) => setWorkloadName(e.target.value)}
             placeholder="워크로드 이름을 30자 이내로 입력해 주세요. (특수문자는 ( -, _ , -, / ) 만 사용 가능)"
-            // status={validation.errors.workloadName ? "error" : "default"}
             width="100%"
           />
         </FormItem>

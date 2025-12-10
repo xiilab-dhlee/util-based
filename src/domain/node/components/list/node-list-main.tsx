@@ -65,7 +65,6 @@ export function NodeListMain() {
         {/* 노드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            titleEng="About Node Management"
             title="노드 관리"
             icon={NODE_MENU_ICON}
             backgroundImageName="node-intro-background.png"
