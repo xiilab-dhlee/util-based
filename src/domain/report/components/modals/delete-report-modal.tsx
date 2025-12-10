@@ -59,6 +59,9 @@ export function DeleteReportModal() {
     // TODO: 삭제 API 연동
     console.log("Delete reports:", deleteReportIds);
 
+    // 삭제 성공 후 상태 클리어 (모달 닫기 전)
+    setDeleteReportIds([]);
+
     // 체크박스 초기화
     resetCheckedList();
     // 모달 닫기
