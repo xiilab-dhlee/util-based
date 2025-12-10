@@ -2,6 +2,7 @@
 
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
+import { isNil } from "es-toolkit";
 
 import { reportKeys } from "@/domain/report/constants/report.key";
 import type { ReportDetailResponse } from "@/domain/report/schemas/report.schema";
@@ -13,12 +14,12 @@ export const useGetReportDetail = (
 ): UseQueryResult<ReportDetailResponse, Error> => {
   const { reportService } = useServices();
 
-  return useQuery({
+  return useQuery<ReportDetailResponse, Error>({
     queryKey: reportKeys.detail(reportId),
     queryFn: async () => {
       const response = await reportService.getDetail(reportId);
       return reportDetailResponseSchema.parse(response.data);
     },
-    enabled: !!reportId,
+    enabled: !isNil(reportId) && reportId !== "",
   });
 };

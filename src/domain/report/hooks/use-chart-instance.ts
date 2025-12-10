@@ -1,5 +1,6 @@
 "use client";
 
+import type ApexCharts from "apexcharts";
 import { useCallback, useState } from "react";
 
 /**
