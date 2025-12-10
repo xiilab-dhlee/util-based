@@ -8,9 +8,9 @@ import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 import { TooltipHighlightText } from "@/styles/mixins/text";
-import type { CoreResourceType } from "@/shared/types/core.interface";
 
 /**
  * 시스템 설정 페이지 사이드바
@@ -52,7 +52,7 @@ export function SystemSettingAside() {
   // Helper 함수: 리소스 라벨 렌더링
   const renderResourceLabels = (
     resources: Array<{ type: CoreResourceType; value: number }>,
-    keyPrefix: string
+    keyPrefix: string,
   ) => {
     return (
       <ResourceLabelRow>
@@ -85,7 +85,7 @@ export function SystemSettingAside() {
   const renderMigSection = (
     isMigSupported: boolean,
     migProfiles: Array<{ profile: string; count: number }>,
-    keyPrefix: string
+    keyPrefix: string,
   ) => {
     return (
       <>
@@ -107,7 +107,9 @@ export function SystemSettingAside() {
             </MigLabelRow>
             <MigProfilesContainer>
               {migProfiles.map((mig, index) => (
-                <MigProfileItem key={`${keyPrefix}-mig-${mig.profile}-${index}`}>
+                <MigProfileItem
+                  key={`${keyPrefix}-mig-${mig.profile}-${index}`}
+                >
                   <MigProfile>{mig.profile}</MigProfile>
                   <MigCount>{mig.count}개</MigCount>
                 </MigProfileItem>

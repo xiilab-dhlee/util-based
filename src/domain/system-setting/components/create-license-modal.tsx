@@ -1,8 +1,16 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { type ChangeEvent, useCallback, useState } from "react";
 import styled from "styled-components";
-import { Button, Form, Icon, Input, Modal, Typography } from "xiilab-ui";
+import {
+  Button,
+  Form,
+  Icon,
+  Input,
+  Modal,
+  type ResponsiveColumnType,
+  Typography,
+} from "xiilab-ui";
 
 import { createLicenseColumn } from "@/domain/system-setting/components/create-license-column";
 import { useGetLicense } from "@/domain/system-setting/hooks/use-get-license";
@@ -48,13 +56,14 @@ export function CreateLicenseModal() {
   };
 
   const handleLicenseKeyChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       setField("licenseKey", e.target.value);
     },
     [setField],
   );
 
-  const columns = createLicenseColumn();
+  const columns: ResponsiveColumnType<LicenseDetailType>[] =
+    createLicenseColumn();
 
   return (
     <Modal
@@ -98,6 +107,7 @@ export function CreateLicenseModal() {
                 color="primary"
                 variant="outlined"
                 width="106px"
+                height="36px"
               >
                 등록하기
               </Button>
@@ -114,13 +124,15 @@ export function CreateLicenseModal() {
                 <CountText>총 {licenseData.totalCount}개</CountText>
               </Typography.Text>
             </HistoryHeader>
-            <StyledTable<LicenseDetailType>
-              columns={columns}
-              data={licenseData.history}
-              rowKey="id"
-              pagination={false}
-              activePadding
-            />
+            <HistoryTableWrapper>
+              <CustomizedTable<LicenseDetailType>
+                columns={columns}
+                data={licenseData.history}
+                rowKey="id"
+                pagination={false}
+                activePadding
+              />
+            </HistoryTableWrapper>
           </HistorySection>
         )}
       </ModalContent>
@@ -162,10 +174,10 @@ const CountText = styled.span`
   font-weight: 400;
 `;
 
-const StyledTable = styled(CustomizedTable)<LicenseDetailType>`
+const HistoryTableWrapper = styled.div`
   max-height: 300px;
   overflow-y: auto;
-` as typeof CustomizedTable;
+`;
 
 const FormItemWrapper = styled.div`
   position: relative;

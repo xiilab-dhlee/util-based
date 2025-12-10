@@ -31,9 +31,7 @@ export function CredentialRow({
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
 
-    if (rowData) {
-      publish(SYSTEM_SETTING_EVENTS.openCredentialDetailModal, rowData.id);
-    }
+    publish(SYSTEM_SETTING_EVENTS.openCredentialDetailModal, rowData.id);
   };
 
   return (

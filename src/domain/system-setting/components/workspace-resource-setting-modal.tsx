@@ -7,7 +7,6 @@ import { Form, FormItem, Icon, InputNumber, Modal } from "xiilab-ui";
 import { useUpdateWorkspaceResourceSetting } from "@/domain/system-setting/hooks/use-update-workspace-resource-setting";
 import { useWorkspaceResourceSettingForm } from "@/domain/system-setting/hooks/use-workspace-resource-setting-form";
 import {
-  type MigResourceType,
   type WorkspaceResourceSettingRequestType,
   workspaceResourceSettingFormSchema,
 } from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
@@ -59,9 +58,13 @@ export function WorkspaceResourceSettingModal() {
   /**
    * MIG 리소스 추가 핸들러
    */
-  const handleAddMigResource = (resource: MigResourceType) => {
-    addMigResource(resource);
-  };
+  <MigFormField
+    value={formState.migResources}
+    error={errors.migResources}
+    onAdd={addMigResource}
+    onUpdate={updateMigResource}
+    onRemove={removeMigResource}
+  />;
 
   /**
    * 폼 제출
@@ -101,9 +104,6 @@ export function WorkspaceResourceSettingModal() {
       onSuccess: () => {
         toast.success("워크스페이스 리소스 설정이 저장되었습니다.");
         handleCancel();
-      },
-      onError: (error) => {
-        toast.error(`저장 실패: ${error.message}`);
       },
     });
   };
@@ -223,4 +223,3 @@ export function WorkspaceResourceSettingModal() {
     </Modal>
   );
 }
-

@@ -105,7 +105,7 @@ export function CreateHpeModal() {
           <FormItemWrapper>
             {errors.serverIp && <ErrorText>{errors.serverIp}</ErrorText>}
             <Input
-              placeholder="10.2673.289"
+              placeholder="192.168.1.100"
               value={formState.serverIp}
               onChange={handleServerIpChange}
               disabled={updateMutation.isPending}
