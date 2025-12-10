@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import type { ZodError } from "zod";
 
 import type {
   HpeFormErrors,
@@ -24,37 +23,37 @@ export const useHpeForm = () => {
   /**
    * 개별 필드 값 설정
    */
-  const setField = useCallback((field: keyof HpeFormType, value: string) => {
-    setFormState((prev) => ({ ...prev, [field]: value }));
-    // 필드 변경 시 해당 필드 에러 제거
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
-  }, []);
+  const setField = useCallback(
+    <K extends keyof HpeFormType>(field: K, value: HpeFormType[K]) => {
+      setFormState((prev) => ({ ...prev, [field]: value }));
+      // 필드 변경 시 해당 필드 에러 제거
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    },
+    [],
+  );
 
   /**
    * 전체 폼 검증
    * @returns 검증 성공 시 요청 데이터, 실패 시 null
    */
   const validate = useCallback((): UpdateHpeRequestType | null => {
-    try {
-      const validatedData = hpeFormSchema.parse(formState);
-      setErrors({});
-      return {
-        id: validatedData.id,
-        password: validatedData.password,
-        serverIp: validatedData.serverIp,
-      };
-    } catch (error) {
-      if (error instanceof Error && "errors" in error) {
-        const zodError = error as ZodError;
-        const fieldErrors: HpeFormErrors = {};
-        zodError.errors.forEach((err) => {
-          const field = err.path[0] as keyof HpeFormType;
-          fieldErrors[field] = err.message;
-        });
-        setErrors(fieldErrors);
-      }
+    const result = hpeFormSchema.safeParse(formState);
+
+    if (!result.success) {
+      const fieldErrors: HpeFormErrors = {};
+
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof HpeFormType;
+        fieldErrors[field] = issue.message;
+      });
+
+      setErrors(fieldErrors);
       return null;
     }
+
+    setErrors({});
+    // 폼 스키마 파싱 결과 전체를 그대로 반환 (향후 필드 추가 시에도 보존)
+    return result.data as UpdateHpeRequestType;
   }, [formState]);
 
   /**

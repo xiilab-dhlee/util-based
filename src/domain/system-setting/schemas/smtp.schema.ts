@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+// ===== 상수 =====
+
+export const SMTP_PORT_MIN = 1;
+export const SMTP_PORT_MAX = 65535;
+
 // ===== 스키마 =====
 
 /**
@@ -20,12 +25,12 @@ export const smtpFormSchema = z.object({
         const numericValue = Number(value);
         return (
           Number.isInteger(numericValue) &&
-          numericValue >= 1 &&
-          numericValue <= 65535
+          numericValue >= SMTP_PORT_MIN &&
+          numericValue <= SMTP_PORT_MAX
         );
       },
       {
-        message: "포트 번호는 1에서 65535 사이의 정수여야 합니다.",
+        message: `포트 번호는 ${SMTP_PORT_MIN}에서 ${SMTP_PORT_MAX} 사이의 정수여야 합니다.`,
       },
     ),
   /** 계정 */
@@ -44,7 +49,11 @@ export const smtpResponseSchema = z.object({
   /** SMTP 노드 주소 */
   nodeAddress: z.string(),
   /** 노드 포트 번호 */
-  nodePort: z.number().int().positive(),
+  nodePort: z
+    .number()
+    .int()
+    .min(SMTP_PORT_MIN, `포트 번호는 ${SMTP_PORT_MIN} 이상이어야 합니다.`)
+    .max(SMTP_PORT_MAX, `포트 번호는 ${SMTP_PORT_MAX} 이하여야 합니다.`),
   /** 계정 */
   account: z.string().email(),
 });
@@ -58,8 +67,8 @@ export const createSmtpRequestSchema = z.object({
   nodePort: z
     .number()
     .int()
-    .min(1, "포트 번호는 1 이상이어야 합니다.")
-    .max(65535, "포트 번호는 65535 이하여야 합니다."),
+    .min(SMTP_PORT_MIN, `포트 번호는 ${SMTP_PORT_MIN} 이상이어야 합니다.`)
+    .max(SMTP_PORT_MAX, `포트 번호는 ${SMTP_PORT_MAX} 이하여야 합니다.`),
   account: z.string().email("올바른 이메일 형식을 입력해 주세요."),
   password: z.string().min(1),
 });

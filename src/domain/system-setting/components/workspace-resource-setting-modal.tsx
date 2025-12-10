@@ -6,10 +6,6 @@ import { Form, FormItem, Icon, InputNumber, Modal } from "xiilab-ui";
 
 import { useUpdateWorkspaceResourceSetting } from "@/domain/system-setting/hooks/use-update-workspace-resource-setting";
 import { useWorkspaceResourceSettingForm } from "@/domain/system-setting/hooks/use-workspace-resource-setting-form";
-import {
-  type WorkspaceResourceSettingRequestType,
-  workspaceResourceSettingFormSchema,
-} from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
 import { MigFormField } from "@/shared/components/form/mig-form-field";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -56,48 +52,11 @@ export function WorkspaceResourceSettingModal() {
   };
 
   /**
-   * MIG 리소스 추가 핸들러
-   */
-  <MigFormField
-    value={formState.migResources}
-    error={errors.migResources}
-    onAdd={addMigResource}
-    onUpdate={updateMigResource}
-    onRemove={removeMigResource}
-  />;
-
-  /**
    * 폼 제출
    */
   const handleSubmit = () => {
-    const isValid = validate();
-    if (!isValid) return;
-
-    // Zod 스키마로 폼 데이터 검증 및 변환
-    const validationResult =
-      workspaceResourceSettingFormSchema.safeParse(formState);
-    if (!validationResult.success) return;
-
-    // string을 number로 변환하여 API payload 생성 (optional 필드 처리)
-    const payload: WorkspaceResourceSettingRequestType = {
-      gpu: Number(formState.gpu),
-      cpu: Number(formState.cpu),
-      memory: Number(formState.memory),
-      workspaceCount: Number(formState.workspaceCount),
-      // MPS는 값이 있을 때만 추가
-      ...(formState.mps && formState.mps !== ""
-        ? { mps: Number(formState.mps) }
-        : {}),
-      // MIG 리소스는 있을 때만 추가
-      ...(formState.migResources.length > 0
-        ? {
-            migResources: formState.migResources.map((mig) => ({
-              profile: mig.profile,
-              count: Number(mig.count),
-            })),
-          }
-        : {}),
-    };
+    const payload = validate();
+    if (!payload) return;
 
     // Mutation 실행
     mutate(payload, {
@@ -154,9 +113,9 @@ export function WorkspaceResourceSettingModal() {
           status={errors.migResources ? "error" : undefined}
         >
           <MigFormField
-            value={formState.migResources}
+            value={formState.migResources ?? []}
             error={errors.migResources}
-            onAdd={handleAddMigResource}
+            onAdd={addMigResource}
             onUpdate={updateMigResource}
             onRemove={removeMigResource}
           />

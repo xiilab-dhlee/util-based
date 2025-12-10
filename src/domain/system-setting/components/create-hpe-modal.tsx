@@ -48,11 +48,16 @@ export function CreateHpeModal() {
 
   const handleSubmit = () => {
     const payload = validate();
-    if (payload) {
-      updateMutation.mutate(payload);
-      setOpen(false);
-      reset();
+    if (!payload) {
+      return;
     }
+
+    updateMutation.mutate(payload, {
+      onSuccess: () => {
+        setOpen(false);
+        reset();
+      },
+    });
   };
 
   const handleIdChange = useCallback(
@@ -166,4 +171,8 @@ const ErrorText = styled.span`
   right: 0;
   z-index: 10;
   pointer-events: none;
+  max-width: 255px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;

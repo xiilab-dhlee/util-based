@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { ZodError } from "zod";
 
 import type {
   LicenseFormErrors,
@@ -15,9 +14,13 @@ const INITIAL_FORM_STATE: LicenseFormType = {
 interface UseLicenseFormReturn {
   formState: LicenseFormType;
   errors: LicenseFormErrors;
-  setField: (field: keyof LicenseFormType, value: string) => void;
+  setField: <K extends keyof LicenseFormType>(
+    field: K,
+    value: LicenseFormType[K],
+  ) => void;
   validate: () => RenewLicenseRequestType | null;
   reset: () => void;
+  initializeForCreate: () => void;
 }
 
 /**
@@ -33,7 +36,7 @@ export const useLicenseForm = (): UseLicenseFormReturn => {
    * 필드 값 변경 및 해당 필드 에러 초기화
    */
   const setField = useCallback(
-    (field: keyof LicenseFormType, value: string) => {
+    <K extends keyof LicenseFormType>(field: K, value: LicenseFormType[K]) => {
       setFormState((prev) => ({ ...prev, [field]: value }));
       // 해당 필드 에러 초기화
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -46,31 +49,26 @@ export const useLicenseForm = (): UseLicenseFormReturn => {
    * @returns 검증 성공 시 payload, 실패 시 null
    */
   const validate = useCallback((): RenewLicenseRequestType | null => {
-    try {
-      // Zod 스키마로 검증
-      const validatedData = licenseFormSchema.parse(formState);
+    // Zod safeParse를 사용하여 예외 없이 검증
+    const result = licenseFormSchema.safeParse(formState);
 
-      // 검증 성공 시 에러 초기화
-      setErrors({});
+    if (!result.success) {
+      const fieldErrors: LicenseFormErrors = {};
 
-      // 요청 payload 반환
-      return {
-        licenseKey: validatedData.licenseKey,
-      };
-    } catch (error) {
-      // Zod 검증 에러 처리
-      if (error instanceof ZodError) {
-        const fieldErrors: LicenseFormErrors = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof LicenseFormType;
+        fieldErrors[field] = issue.message;
+      });
 
-        error.errors.forEach((err) => {
-          const field = err.path[0] as keyof LicenseFormType;
-          fieldErrors[field] = err.message;
-        });
-
-        setErrors(fieldErrors);
-      }
+      setErrors(fieldErrors);
       return null;
     }
+
+    // 검증 성공 시 에러 초기화
+    setErrors({});
+
+    // 폼 스키마 파싱 결과를 그대로 반환 (향후 필드 추가 시에도 보존)
+    return result.data as RenewLicenseRequestType;
   }, [formState]);
 
   /**
@@ -81,11 +79,20 @@ export const useLicenseForm = (): UseLicenseFormReturn => {
     setErrors({});
   }, []);
 
+  /**
+   * 생성용 초기화 - 기본 폼 상태로 리셋
+   */
+  const initializeForCreate = useCallback(() => {
+    setFormState(INITIAL_FORM_STATE);
+    setErrors({});
+  }, []);
+
   return {
     formState,
     errors,
     setField,
     validate,
     reset,
+    initializeForCreate,
   };
 };

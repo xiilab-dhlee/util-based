@@ -5,7 +5,9 @@ import {
   type MigResourceType,
   type WorkspaceResourceSettingFormErrors,
   type WorkspaceResourceSettingFormType,
+  type WorkspaceResourceSettingRequestType,
   workspaceResourceSettingFormSchema,
+  workspaceResourceSettingRequestSchema,
 } from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
 import { hasDuplicateMigProfile } from "@/shared/utils/mig-resource.util";
 
@@ -21,9 +23,13 @@ interface UseWorkspaceResourceSettingFormReturn {
   addMigResource: (migResource: MigResourceType) => boolean;
   updateMigResource: (index: number, migResource: MigResourceType) => boolean;
   removeMigResource: (index: number) => void;
-  validate: () => boolean;
+  /**
+   * 폼 검증
+   * - 성공 시 API Request payload를 반환
+   * - 실패 시 null 반환
+   */
+  validate: () => WorkspaceResourceSettingRequestType | null;
   reset: () => void;
-  hasUnsavedChanges: () => boolean;
 }
 
 // ===== 유틸 함수 =====
@@ -43,7 +49,7 @@ function createInitialFormState(): WorkspaceResourceSettingFormType {
 }
 
 /**
- * Zod 에러를 폼 에러로 변환
+ * Zod 에러를 폼 에러로 변환 (폼 스키마 기준)
  */
 function mapZodErrors(
   error: z.ZodError<WorkspaceResourceSettingFormType>,
@@ -51,7 +57,7 @@ function mapZodErrors(
   const errors: WorkspaceResourceSettingFormErrors = {};
 
   for (const issue of error.issues) {
-    const fieldName = issue.path[0] as keyof WorkspaceResourceSettingFormErrors;
+    const fieldName = issue.path[0] as keyof WorkspaceResourceSettingFormType;
     if (fieldName) {
       errors[fieldName] = issue.message;
     }
@@ -133,34 +139,27 @@ export function useWorkspaceResourceSettingForm(
     index: number,
     migResource: MigResourceType,
   ): boolean => {
-    let hasDuplicate = false;
+    const prevList = formState.migResources ?? [];
+    const isDuplicate = hasDuplicateMigProfile(
+      prevList,
+      migResource.profile,
+      index,
+    );
 
-    setFormState((prev) => {
-      hasDuplicate = hasDuplicateMigProfile(
-        prev.migResources ?? [],
-        migResource.profile,
-        index,
-      );
-
-      if (hasDuplicate) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        migResources: (prev.migResources ?? []).map((item, i) =>
-          i === index ? migResource : item,
-        ),
-      };
-    });
-
-    if (hasDuplicate) {
+    if (isDuplicate) {
       setErrors((prev) => ({
         ...prev,
         migResources: "이미 추가된 MIG 프로필입니다.",
       }));
       return false;
     }
+
+    setFormState((prev) => ({
+      ...prev,
+      migResources: (prev.migResources ?? []).map((item, i) =>
+        i === index ? migResource : item,
+      ),
+    }));
 
     setErrors((prev) => ({
       ...prev,
@@ -182,18 +181,51 @@ export function useWorkspaceResourceSettingForm(
 
   /**
    * 폼 검증
-   * @returns 검증 성공 여부
+   *
+   * 1차: 폼 스키마(workspaceResourceSettingFormSchema)로 기본 필드 검증
+   * 2차: Request 스키마(workspaceResourceSettingRequestSchema)로 타입 및 비즈니스 검증
+   *
+   * - 성공 시 변환된 Request payload 반환
+   * - 실패 시 null 반환
    */
-  const validate = (): boolean => {
-    const result = workspaceResourceSettingFormSchema.safeParse(formState);
+  const validate = (): WorkspaceResourceSettingRequestType | null => {
+    // 1차: 폼 스키마 검증 (필수값, 형식 등)
+    const formResult = workspaceResourceSettingFormSchema.safeParse(formState);
 
-    if (!result.success) {
-      setErrors(mapZodErrors(result.error));
-      return false;
+    if (!formResult.success) {
+      setErrors(mapZodErrors(formResult.error));
+      return null;
     }
 
+    // 2차: Request 스키마 검증 (숫자 타입, 제약 등)
+    const requestResult = workspaceResourceSettingRequestSchema.safeParse({
+      gpu: Number(formState.gpu),
+      cpu: Number(formState.cpu),
+      memory: Number(formState.memory),
+      workspaceCount: Number(formState.workspaceCount),
+      mps:
+        formState.mps && formState.mps !== ""
+          ? Number(formState.mps)
+          : undefined,
+      migResources:
+        formState.migResources && formState.migResources.length > 0
+          ? formState.migResources.map((mig) => ({
+              profile: mig.profile,
+              count: Number(mig.count),
+            }))
+          : undefined,
+    });
+
+    if (!requestResult.success) {
+      // Request 스키마 기준 에러는 현재 UI 필드 구조와 1:1 매핑이 어렵기 때문에
+      // 일단 전체 폼 에러로 취급하거나, 필요 시 향후 상세 매핑을 확장할 수 있습니다.
+      // 여기서는 공통 메시지만 노출하지 않고, 폼 스키마 단계에서 최대한 막는 것을 목표로 합니다.
+      return null;
+    }
+
+    // 모든 검증 통과 시 에러 초기화 및 payload 반환
     setErrors({});
-    return true;
+    return requestResult.data;
   };
 
   /**
@@ -202,13 +234,6 @@ export function useWorkspaceResourceSettingForm(
   const reset = () => {
     setFormState(initialState);
     setErrors({});
-  };
-
-  /**
-   * 저장되지 않은 변경사항 확인
-   */
-  const hasUnsavedChanges = (): boolean => {
-    return JSON.stringify(formState) !== JSON.stringify(initialState);
   };
 
   return {
@@ -220,6 +245,5 @@ export function useWorkspaceResourceSettingForm(
     removeMigResource,
     validate,
     reset,
-    hasUnsavedChanges,
   };
 }
