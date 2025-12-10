@@ -133,10 +133,10 @@ export const USER_MONITORING_SELECTOR = {
   RECOVERY_WORKLOAD_LIST: "user-monitoring-recovery-workload-list",
 
   // 워크로드 상태
-  /** 상태 컨테이너 - workload-status-{status} */
-  status: (status: string) => `workload-status-${status}`,
-  /** 상태별 건수 - workload-status-{status}-count */
-  statusCount: (status: string) => `workload-status-${status}-count`,
+  /** 상태 컨테이너 - monitoring-workload-status-{status} */
+  status: (status: string) => `monitoring-workload-status-${status}`,
+  /** 상태별 건수 - monitoring-workload-status-{status}-count */
+  statusCount: (status: string) => `monitoring-workload-status-${status}-count`,
 } as const;
 
 // ============================================
