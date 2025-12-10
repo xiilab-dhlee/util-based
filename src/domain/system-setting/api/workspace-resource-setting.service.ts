@@ -16,10 +16,11 @@ export class WorkspaceResourceSettingService extends AxiosService {
   async updateWorkspaceResourceSetting(
     payload: WorkspaceResourceSettingRequestType,
   ): Promise<WorkspaceResourceSettingResponseType> {
-    const response = await this.getAxios().put<WorkspaceResourceSettingResponseType>(
-      `${this.BASE_URL}/workspace-resources`,
-      payload,
-    );
+    const response =
+      await this.getAxios().put<WorkspaceResourceSettingResponseType>(
+        `${this.BASE_URL}/workspace-resources`,
+        payload,
+      );
     return response.data;
   }
 }

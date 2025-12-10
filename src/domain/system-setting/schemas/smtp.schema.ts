@@ -18,10 +18,14 @@ export const smtpFormSchema = z.object({
       (value) => {
         if (!/^\d+$/.test(value)) return false;
         const numericValue = Number(value);
-        return Number.isInteger(numericValue) && numericValue > 0;
+        return (
+          Number.isInteger(numericValue) &&
+          numericValue >= 1 &&
+          numericValue <= 65535
+        );
       },
       {
-        message: "포트 번호는 1 이상의 정수여야 합니다.",
+        message: "포트 번호는 1에서 65535 사이의 정수여야 합니다.",
       },
     ),
   /** 계정 */
@@ -51,7 +55,11 @@ export const smtpResponseSchema = z.object({
 export const createSmtpRequestSchema = z.object({
   isGoogle: z.boolean(),
   nodeAddress: z.string().min(1),
-  nodePort: z.number().int().positive(),
+  nodePort: z
+    .number()
+    .int()
+    .min(1, "포트 번호는 1 이상이어야 합니다.")
+    .max(65535, "포트 번호는 65535 이하여야 합니다."),
   account: z.string().email("올바른 이메일 형식을 입력해 주세요."),
   password: z.string().min(1),
 });

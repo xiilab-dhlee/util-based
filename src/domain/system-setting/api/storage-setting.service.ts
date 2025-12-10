@@ -8,13 +8,10 @@ import type {
   UpdateStorageSettingRequestPayload,
 } from "@/domain/system-setting/schemas/storage-setting.schema";
 import { AxiosService } from "@/shared/api/axios";
-import type { CorePayload } from "@/shared/types/api.interface";
+import type { CorePaginate, CorePayload } from "@/shared/types/api.interface";
 import { payloadToParams } from "@/shared/utils/service.util";
 
-interface GetStorageSettingsPayload extends CorePayload {
-  page: number;
-  size: number;
-}
+interface GetStorageSettingsPayload extends CorePayload, CorePaginate {}
 
 export class StorageSettingService extends AxiosService {
   private readonly BASE_URL = "/core-api/v1/core/setting/storage";

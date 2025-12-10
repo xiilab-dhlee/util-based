@@ -100,7 +100,7 @@ export const workspaceResourceSettingFormSchema = z.object({
       },
     ),
   /** MIG 리소스 목록 (선택사항) */
-  migResources: z.array(migResourceSchema),
+  migResources: z.array(migResourceSchema).optional(),
 });
 
 /**
@@ -112,12 +112,14 @@ export const workspaceResourceSettingRequestSchema = z.object({
   cpu: z.number().int().positive(),
   memory: z.number().int().positive(),
   workspaceCount: z.number().int().positive(),
-  migResources: z.array(
-    z.object({
-      profile: z.string(),
-      count: z.number().int().positive(),
-    }),
-  ).optional(),
+  migResources: z
+    .array(
+      z.object({
+        profile: z.string(),
+        count: z.number().int().positive(),
+      }),
+    )
+    .optional(),
 });
 
 /**
@@ -129,12 +131,14 @@ export const workspaceResourceSettingResponseSchema = z.object({
   cpu: z.number().int().positive(),
   memory: z.number().int().positive(),
   workspaceCount: z.number().int().positive(),
-  migResources: z.array(
-    z.object({
-      profile: z.string(),
-      count: z.number().int().positive(),
-    }),
-  ).optional(),
+  migResources: z
+    .array(
+      z.object({
+        profile: z.string(),
+        count: z.number().int().positive(),
+      }),
+    )
+    .optional(),
 });
 
 // ===== 타입 =====
