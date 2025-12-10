@@ -12,6 +12,7 @@ import {
 
 import type { MigResourceType } from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
 import { useMigForm } from "@/shared/hooks/use-mig-form";
+import { hasDuplicateMigProfile } from "@/shared/utils/mig-resource.util";
 
 // ===== 타입 =====
 
@@ -119,6 +120,15 @@ export function MigFormField({
   };
 
   /**
+   * 이미 사용 중인 MIG 프로필인지 여부
+   * @param profile - 확인할 MIG 프로필
+   * @param ignoreIndex - 자기 자신 인덱스(수정 행)는 무시
+   */
+  const isProfileUsed = (profile: string, ignoreIndex?: number): boolean => {
+    return hasDuplicateMigProfile(value, profile, ignoreIndex);
+  };
+
+  /**
    * MIG 리소스 추가 핸들러
    */
   const handleAdd = () => {
@@ -152,6 +162,7 @@ export function MigFormField({
               key={option.profile}
               value={option.profile}
               display={option.profile}
+              disabled={isProfileUsed(option.profile)}
             >
               {renderMigOption(option.profile, option.availableCount)}
             </CompoundDropdown.Option>
@@ -216,6 +227,7 @@ export function MigFormField({
                     key={option.profile}
                     value={option.profile}
                     display={option.profile}
+                    disabled={isProfileUsed(option.profile, index)}
                   >
                     {renderMigOption(option.profile, option.availableCount)}
                   </CompoundDropdown.Option>
@@ -273,7 +285,7 @@ const MigInputContainer = styled.div`
 const MigResourceRow = styled.div`
   display: flex;
   align-items: center;
-gap: 4px;
+  gap: 4px;
 
 `;
 

@@ -4,18 +4,12 @@ interface GoogleIconProps extends SVGAttributes<SVGElement> {
   size?: number;
 }
 
-export const GoogleIcon = ({
-  size = 16,
-  width,
-  height,
-  ...props
-}: GoogleIconProps) => (
+export const GoogleIcon = ({ size = 16 }: GoogleIconProps) => (
   <svg
-    width={width ?? size}
-    height={height ?? size}
+    width={size}
+    height={size}
     viewBox="0 0 48 48"
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
   >
     <title>Google 아이콘</title>
     <path
