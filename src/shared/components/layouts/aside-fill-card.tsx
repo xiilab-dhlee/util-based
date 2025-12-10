@@ -10,11 +10,14 @@ interface AsideFillCardProps {
   title?: string;
   // 제목 옆에 추가로 표시할 내용 (예: 개수)
   titleExtra?: ReactNode;
+  // 제목 옆 추가 영역에 부여할 클래스명 (스타일 확장용)
+  titleExtraClassName?: string;
 }
 // 페이지 내 aside 가변 영역 카드
 export function AsideFillCard({
   title,
   titleExtra,
+  titleExtraClassName,
   children,
 }: PropsWithChildren<AsideFillCardProps>) {
   return (
@@ -23,7 +26,11 @@ export function AsideFillCard({
       {title && (
         <Header>
           <Title>{title}</Title>
-          {titleExtra && <TitleExtra>{titleExtra}</TitleExtra>}
+          {titleExtra && (
+            <TitleExtra className={titleExtraClassName}>
+              {titleExtra}
+            </TitleExtra>
+          )}
         </Header>
       )}
       <Body>{children}</Body>
