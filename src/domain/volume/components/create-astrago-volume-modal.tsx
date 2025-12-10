@@ -1,6 +1,6 @@
 "use client";
 
-import { useSetAtom } from "jotai";
+// import { useSetAtom } from "jotai";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -9,10 +9,11 @@ import { Dropdown, Icon, Input, Modal, Upload } from "xiilab-ui";
 import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
 import {
   openCreateAstragoVolumeModalAtom,
-  openSelectVolumeModalAtom,
+  // openSelectVolumeModalAtom,
 } from "@/domain/volume/state/volume.atom";
 import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
 import { FormLabel } from "@/shared/components/form/form-label";
+import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -39,7 +40,7 @@ export function CreateAstragoVolumeModal() {
   const publish = usePublish();
 
   // 모달 상태 관리
-  const setOpenSelectVolumeModal = useSetAtom(openSelectVolumeModalAtom);
+  // const setOpenSelectVolumeModal = useSetAtom(openSelectVolumeModalAtom);
   const { open, onClose } = useGlobalModal(openCreateAstragoVolumeModalAtom);
 
   // 볼륨 생성 Hook 사용
@@ -51,6 +52,7 @@ export function CreateAstragoVolumeModal() {
   const { clearForm, getFormKey } = useClearForm();
 
   const storageSelect = useSelect(null, []);
+  const status = useSelect(null, VISIBILITY_STATUS_OPTIONS);
 
   // 파일 업로드 Hook 사용 (최대 5MB, 초기 파일 포함)
   const { files, handleUpload, handleFileRemove, totalSize, clearFiles } =
@@ -65,7 +67,7 @@ export function CreateAstragoVolumeModal() {
    */
   const handleCancel = () => {
     onClose();
-    setOpenSelectVolumeModal(true);
+    // setOpenSelectVolumeModal(true);
   };
 
   /**
@@ -136,7 +138,7 @@ export function CreateAstragoVolumeModal() {
       closable
       title="AstraGo Storage"
       showCancelButton
-      cancelText="이전"
+      // cancelText="이전"
       onCancel={handleCancel}
       okText="생성"
       onOk={handleSubmit}
@@ -170,10 +172,20 @@ export function CreateAstragoVolumeModal() {
             />
           </FormItem>
         </FormRow>
+        {/* 공개 설정 드롭다운 */}
+        <FormItem>
+          <FormLabel>공개 설정</FormLabel>
+          <Dropdown
+            options={status.options}
+            value={status.value}
+            onChange={status.onChange}
+            width="100%"
+          />
+        </FormItem>
 
         {/* 마운트 경로 입력 필드 */}
         <FormItem>
-          <FormLabel htmlFor="astragoVolumeMountPath">마운트 경로</FormLabel>
+          <FormLabel htmlFor="astragoVolumeMountPath">Mount Path</FormLabel>
           <Input
             type="text"
             id="astragoVolumeMountPath"

@@ -1,38 +1,34 @@
 "use client";
 
-import { useSetAtom } from "jotai";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import { Icon, Input, Modal } from "xiilab-ui";
+import { Dropdown, Icon, Input, Modal } from "xiilab-ui";
 
 import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
-import {
-  openCreateOnPremiseVolumeModalAtom,
-  openSelectVolumeModalAtom,
-} from "@/domain/volume/state/volume.atom";
+import { openCreateOnPremiseVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
 import { FormLabel } from "@/shared/components/form/form-label";
+import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { useSelect } from "@/shared/hooks/use-select";
 import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 
 export function CreateOnPremVolumeModal() {
   const formRef = useRef<HTMLFormElement>(null);
 
-  // pubsub 이벤트 발행을 위한 훅
   const publish = usePublish();
 
-  // 모달 상태 관리
-  const setOpenSelectVolumeModal = useSetAtom(openSelectVolumeModalAtom);
   const { open, onClose } = useGlobalModal(openCreateOnPremiseVolumeModalAtom);
 
-  // 볼륨 생성 Hook 사용
   const createVolume = useCreateVolume();
 
   // 폼 초기화 훅 사용
   const { clearForm, getFormKey } = useClearForm();
+
+  const status = useSelect(null, VISIBILITY_STATUS_OPTIONS);
 
   /**
    * 모달 취소 핸들러
@@ -41,7 +37,6 @@ export function CreateOnPremVolumeModal() {
    */
   const handleCancel = () => {
     onClose();
-    setOpenSelectVolumeModal(true);
   };
 
   /**
@@ -101,7 +96,7 @@ export function CreateOnPremVolumeModal() {
     <Modal
       modalWidth={370}
       type="primary"
-      icon={<Icon name="OnPremiseStorage" color="#fff" size={14} />}
+      icon={<Icon name="OnPremiseStorage" color="#fff" size={16} />}
       open={open}
       // closable
       title="On-premise Storage"
@@ -128,6 +123,16 @@ export function CreateOnPremVolumeModal() {
             />
           </FormItem>
         </FormRow>
+        {/* 공개 설정 드롭다운 */}
+        <FormItem>
+          <FormLabel>공개 설정</FormLabel>
+          <Dropdown
+            options={status.options}
+            value={status.value}
+            onChange={status.onChange}
+            width="100%"
+          />
+        </FormItem>
         {/* Server IP 입력 필드 */}
         <FormItem>
           <FormLabel htmlFor="onpremVolumeServerIp">Server IP</FormLabel>
@@ -150,7 +155,7 @@ export function CreateOnPremVolumeModal() {
           />
         </FormItem>
         <FormItem>
-          <FormLabel htmlFor="onpremVolumeMountPath">마운트 경로</FormLabel>
+          <FormLabel htmlFor="onpremVolumeMountPath">Mount Path</FormLabel>
           <Input
             type="text"
             id="onpremVolumeMountPath"
