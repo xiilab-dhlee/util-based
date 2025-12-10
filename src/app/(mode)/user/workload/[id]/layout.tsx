@@ -59,7 +59,6 @@ export default function WorkloadDetailLayout({ children }: PropsWithChildren) {
         key: "",
         label: "상세정보",
         icon: "Information",
-        "data-testid": WORKLOAD_SELECTOR.TAB_INFO,
         // 상세정보는 항상 활성화
       },
       {
@@ -67,28 +66,24 @@ export default function WorkloadDetailLayout({ children }: PropsWithChildren) {
         label: "로그",
         icon: "Log",
         disabled: !isRunningOrCompleted,
-        "data-testid": WORKLOAD_SELECTOR.TAB_LOG,
       },
       {
         key: "terminal",
         label: "웹터미널",
         icon: "Terminal",
         disabled: !isRunning,
-        "data-testid": WORKLOAD_SELECTOR.TAB_TERMINAL,
       },
       {
         key: "monitoring",
         label: "모니터링",
         icon: "Monitoring01",
         disabled: !isRunningOrCompleted,
-        "data-testid": WORKLOAD_SELECTOR.TAB_MONITORING,
       },
       {
         key: "file",
         label: "파일 목록",
         icon: "Folder",
         disabled: !isRunning,
-        "data-testid": WORKLOAD_SELECTOR.TAB_FILE,
       },
       // {
       //   key: "security",
@@ -113,12 +108,9 @@ export default function WorkloadDetailLayout({ children }: PropsWithChildren) {
         <WorkloadDetailPageAside />
 
         {/* 오른쪽 메인 콘텐츠 영역 */}
-        <DetailPageContent data-testid={WORKLOAD_SELECTOR.DETAIL_CONTENT}>
+        <DetailPageContent>
           {/* 상단 탭 네비게이션 */}
-          <RouteTab
-            items={tabItems}
-            data-testid={WORKLOAD_SELECTOR.DETAIL_TAB}
-          />
+          <RouteTab items={tabItems} />
           {/* 탭별 콘텐츠 영역 */}
           <DetailContentSection>{children}</DetailContentSection>
         </DetailPageContent>

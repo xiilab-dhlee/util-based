@@ -115,8 +115,6 @@ export const WORKLOAD_SELECTOR = {
   DETAIL_ASIDE: "workload-detail-aside",
   /** 워크로드 이름 (상세) */
   DETAIL_NAME: "workload-detail-name",
-  /** 워크로드 상태 (상세) */
-  DETAIL_STATUS: "workload-detail-status",
   /** 워크로드 설명 */
   DETAIL_DESCRIPTION: "workload-detail-description",
   /** 수정 버튼 (상세) */
@@ -143,24 +141,6 @@ export const WORKLOAD_SELECTOR = {
   EVENT_FROM: "workload-event-from",
   /** 이벤트 메시지 */
   EVENT_MESSAGE: "workload-event-message",
-
-  // 상세 페이지 - 탭
-  /** 상세 콘텐츠 영역 */
-  DETAIL_CONTENT: "workload-detail-content",
-  /** 탭 영역 */
-  DETAIL_TAB: "workload-detail-tab",
-  /** 상세정보 탭 */
-  TAB_INFO: "workload-tab-info",
-  /** 로그 탭 */
-  TAB_LOG: "workload-tab-log",
-  /** 웹터미널 탭 */
-  TAB_TERMINAL: "workload-tab-terminal",
-  /** 모니터링 탭 */
-  TAB_MONITORING: "workload-tab-monitoring",
-  /** 파일목록 탭 */
-  TAB_FILE: "workload-tab-file",
-  /** 보안취약점 탭 */
-  TAB_SECURITY: "workload-tab-security",
 
   // 상세 페이지 - 상세정보 탭 내용
   /** Job 정보 영역 */

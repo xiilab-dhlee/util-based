@@ -76,8 +76,13 @@ export function WorkloadIntroCard({
       {/* 헤더 영역: 워크로드 이름과 도구 버튼들 */}
       <DetailIntroCardHeader>
         {/* 워크로드 이름 표시 영역 */}
-        <DetailIntroCardTitle data-testid={WORKLOAD_SELECTOR.DETAIL_NAME}>
-          <span className="truncate">{workloadName}</span>
+        <DetailIntroCardTitle>
+          <span
+            className="truncate"
+            data-testid={WORKLOAD_SELECTOR.DETAIL_NAME}
+          >
+            {workloadName || "-"}
+          </span>
         </DetailIntroCardTitle>
         {/* 도구 버튼 영역 */}
         <ToolBox>
@@ -107,13 +112,15 @@ export function WorkloadIntroCard({
               <span className="sr-only">워크로드 전원 Off</span>
             </IconWrapper>
           )}
-          <IconWrapper
-            onClick={handleDelete}
-            data-testid={WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON}
-          >
-            <Icon name="Delete" color="var(--icon-fill)" size={24} />
-            <span className="sr-only">워크로드 삭제</span>
-          </IconWrapper>
+          {isCompleted && (
+            <IconWrapper
+              onClick={handleDelete}
+              data-testid={WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON}
+            >
+              <Icon name="Delete" color="var(--icon-fill)" size={24} />
+              <span className="sr-only">워크로드 삭제</span>
+            </IconWrapper>
+          )}
         </ToolBox>
       </DetailIntroCardHeader>
 
@@ -127,10 +134,7 @@ export function WorkloadIntroCard({
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               <WorkloadStatusTitle>워크로드 상태</WorkloadStatusTitle>
-              <WorkloadStatusWrapper
-                className={status}
-                data-testid={WORKLOAD_SELECTOR.DETAIL_STATUS}
-              >
+              <WorkloadStatusWrapper className={status}>
                 <WorkloadStatusText status={status} />
               </WorkloadStatusWrapper>
             </DetailIntroCardRowTitle>
@@ -149,7 +153,7 @@ export function WorkloadIntroCard({
           <DetailIntroCardDescription
             data-testid={WORKLOAD_SELECTOR.DETAIL_DESCRIPTION}
           >
-            {description}
+            {description || "-"}
           </DetailIntroCardDescription>
         </DetailIntroCardDescriptionRow>
 

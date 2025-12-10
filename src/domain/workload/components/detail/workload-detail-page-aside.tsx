@@ -30,11 +30,8 @@ export function WorkloadDetailPageAside() {
       {/* 워크로드 정보 */}
       {data && <WorkloadIntroCard {...data} />}
       {/* 이벤트 이력 */}
-      <AsideFillCard
-        title="이벤트 이력"
-        data-testid={WORKLOAD_SELECTOR.DETAIL_EVENT_SECTION}
-      >
-        <CardWrapper>
+      <AsideFillCard title="이벤트 이력">
+        <CardWrapper data-testid={WORKLOAD_SELECTOR.DETAIL_EVENT_SECTION}>
           {data?.events.map((item: WorkloadEventType, index: number) => (
             <WorkloadEventCard key={item.id} index={index} {...item} />
           ))}
