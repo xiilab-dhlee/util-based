@@ -2,10 +2,10 @@
 
 import { useAtomValue } from "jotai";
 
-import { DeleteReportModal } from "@/domain/report/components/delete-report-modal";
 import { ReportListBody } from "@/domain/report/components/list/report-list-body";
 import { ReportListFilter } from "@/domain/report/components/list/report-list-filter";
 import { ReportListFooter } from "@/domain/report/components/list/report-list-footer";
+import { DeleteReportModal } from "@/domain/report/components/modals/delete-report-modal";
 import { useGetReports } from "@/domain/report/hooks/use-get-reports";
 import {
   reportDateTypeAtom,
