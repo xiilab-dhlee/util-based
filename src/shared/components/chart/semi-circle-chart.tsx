@@ -34,8 +34,12 @@ export function SemiCircleChart({
   color,
   trackBackground = "#EAEBF3",
 }: SemiCircleChartProps) {
-  // series를 동적으로 업데이트
-  const chartSeries = useMemo(() => [series], [series]);
+  const normalized = useMemo(() => {
+    const value = Number.isFinite(series) ? series : 0;
+    return Math.min(100, Math.max(0, value));
+  }, [series]);
+
+  const chartSeries = useMemo(() => [normalized], [normalized]);
 
   // props가 변경될 때마다 차트 옵션을 갱신
   const chartOptions = useMemo(

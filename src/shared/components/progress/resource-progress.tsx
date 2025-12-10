@@ -1,6 +1,47 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import type { CoreResourceType } from "@/shared/types/core.interface";
+
+// 리소스 타입별 색상 매핑 헬퍼
+const usageColorStyles = css`
+  &.GPU,
+  &.MIG,
+  &.MPS {
+    background-color: var(--gpu-usage-color);
+  }
+
+  &.CPU {
+    background-color: var(--cpu-usage-color);
+  }
+
+  &.MEM {
+    background-color: var(--mem-usage-color);
+  }
+
+  &.DISK {
+    background-color: var(--disk-usage-color);
+  }
+`;
+
+const requestColorStyles = css`
+  &.GPU,
+  &.MIG,
+  &.MPS {
+    background-color: var(--gpu-request-color);
+  }
+
+  &.CPU {
+    background-color: var(--cpu-request-color);
+  }
+
+  &.MEM {
+    background-color: var(--mem-request-color);
+  }
+
+  &.DISK {
+    background-color: var(--disk-request-color);
+  }
+`;
 
 export interface ResourceProgressProps {
   resourceType: CoreResourceType;
@@ -35,7 +76,7 @@ export function ResourceProgress({
         $percent={usagePercent}
         $customColor={customColor}
       />
-      {requestPercent && (
+      {requestPercent != null && (
         <RequestProgress
           className={resourceType}
           $percent={requestPercent}
@@ -71,53 +112,16 @@ const UsageProgress = styled.div<{
   border-radius: 1px;
 
   ${({ $customColor }) =>
-    $customColor
-      ? `background-color: ${$customColor};`
-      : `
-    &.GPU,
-    &.MIG,
-    &.MPS {
-      background-color: var(--gpu-usage-color);
-    }
-
-    &.CPU {
-      background-color: var(--cpu-usage-color);
-    }
-
-    &.MEM {
-      background-color: var(--mem-usage-color);
-    }
-
-    &.DISK {
-      background-color: var(--disk-usage-color);
-    }
-  `}
+    $customColor ? `background-color: ${$customColor};` : usageColorStyles}
 `;
 
 const RequestProgress = styled(UsageProgress)`
   z-index: 9;
-  border-radius: 1px;
 
   ${({ $customColor }) =>
     $customColor
       ? `background-color: ${$customColor}; opacity: 0.5;`
-      : `
-    &.GPU,
-    &.MIG,
-    &.MPS {
-      background-color: var(--gpu-request-color);
-    }
+      : requestColorStyles}
 
-    &.CPU {
-      background-color: var(--cpu-request-color);
-    }
-
-    &.MEM {
-      background-color: var(--mem-request-color);
-    }
-
-    &.DISK {
-      background-color: var(--disk-request-color);
-    }
-  `}
+  opacity: 0.5;
 `;

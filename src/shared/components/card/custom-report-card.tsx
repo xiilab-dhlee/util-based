@@ -32,10 +32,10 @@ export function CustomReportCard({
       <CardContainer>
         <SectionsWrapper>
           {sections?.map((section, index) => (
-            <SectionItem key={index}>
+            <div key={index}>
               {section.title && <CardTitle>{section.title}</CardTitle>}
               <CardBody>{section.content}</CardBody>
-            </SectionItem>
+            </div>
           ))}
         </SectionsWrapper>
       </CardContainer>
@@ -73,8 +73,6 @@ const SectionsWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
 `;
-
-const SectionItem = styled.div``;
 
 const CardBody = styled.div`
   background-color: #ffffff;

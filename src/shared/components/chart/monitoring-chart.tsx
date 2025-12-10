@@ -2,6 +2,7 @@
 
 import type { ApexOptions } from "apexcharts";
 import ko from "apexcharts/dist/locales/ko.json";
+import { merge } from "es-toolkit/compat";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
@@ -98,33 +99,66 @@ export function MonitoringChart({
    * ApexOptions 생성
    * - unit / colors / chartId / chartType / onSelectRange / customOptions 등이 바뀔 때만 재생성합니다.
    * - locales, defaultLocale는 여기서 함께 주입합니다.
-   * - customOptions는 기본 옵션 위에 병합됩니다.
+   * - customOptions는 es-toolkit의 merge를 사용하여 깊은 병합됩니다.
+   * - 필수 필드(chart.id, chart.events.mounted, chart.events.selection, chart.events.zoomed)는 보호됩니다.
    */
-  const options = useMemo(
-    () =>
-      ({
-        ...buildMonitoringChartOptions({
-          unit,
-          colors,
-          chartId,
-          chartType,
-          onChartReady: handleChartMounted,
-          onSelectRange,
-        }),
-        ...customOptions,
-        locales: [ko],
-        defaultLocale: "ko",
-      }) as ApexOptions,
-    [
+  const options = useMemo(() => {
+    const baseOptions = buildMonitoringChartOptions({
       unit,
       colors,
       chartId,
       chartType,
-      handleChartMounted,
+      onChartReady: handleChartMounted,
       onSelectRange,
-      customOptions,
-    ],
-  );
+    });
+
+    // lodash.merge를 사용하여 깊은 병합 수행
+    const merged = customOptions
+      ? merge({}, baseOptions, customOptions)
+      : baseOptions;
+
+    // 필수 필드 보호: 컴포넌트 동작에 필수적인 필드들은 항상 기본값 유지
+    if (merged.chart) {
+      // chart.id는 항상 보호 (차트 인스턴스 식별에 필수)
+      merged.chart.id = baseOptions.chart?.id ?? merged.chart.id;
+
+      // chart.events의 필수 이벤트 보호
+      if (merged.chart.events && baseOptions.chart?.events) {
+        // mounted 이벤트는 항상 보호 (chartRef 저장 및 onChartReady 호출에 필수)
+        if (baseOptions.chart.events.mounted) {
+          merged.chart.events.mounted = baseOptions.chart.events.mounted;
+        }
+        // selection/zoomed 이벤트는 onSelectRange가 있을 때만 보호
+        if (onSelectRange) {
+          if (baseOptions.chart.events.selection) {
+            merged.chart.events.selection = baseOptions.chart.events.selection;
+          }
+          if (baseOptions.chart.events.zoomed) {
+            merged.chart.events.zoomed = baseOptions.chart.events.zoomed;
+          }
+        }
+      }
+    }
+
+    // selection 객체는 onSelectRange가 있을 때만 보호
+    if (onSelectRange && baseOptions.selection) {
+      merged.selection = baseOptions.selection;
+    }
+
+    // locales와 defaultLocale은 항상 주입
+    merged.locales = [ko];
+    merged.defaultLocale = "ko";
+
+    return merged as ApexOptions;
+  }, [
+    unit,
+    colors,
+    chartId,
+    chartType,
+    handleChartMounted,
+    onSelectRange,
+    customOptions,
+  ]);
 
   /**
    * series 변경 시 ApexCharts 인스턴스에만 데이터 반영

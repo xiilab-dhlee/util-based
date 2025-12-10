@@ -1,6 +1,10 @@
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import {
+  REPORT_DATE_TYPE_TEXT,
+  REPORT_TYPE_TEXT,
+} from "@/domain/report/constants/report.constant";
 import type { ReportListType } from "@/domain/report/schemas/report.schema";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
@@ -39,16 +43,16 @@ const createColumnList = (
       title: "리포트 타입",
       dataIndex: "reportDateType",
       align: "center",
-      render: (reportDateType: string) => {
-        return <span>{reportDateType === "WEEKLY" ? "주간" : "월간"}</span>;
+      render: (reportDateType: keyof typeof REPORT_DATE_TYPE_TEXT) => {
+        return <span>{REPORT_DATE_TYPE_TEXT[reportDateType] ?? "-"}</span>;
       },
     },
     {
       title: "리포트 종류",
       dataIndex: "reportType",
       align: "center",
-      render: (reportType: string) => {
-        return <span>{reportType === "SYSTEM" ? "시스템" : "클러스터"}</span>;
+      render: (reportType: keyof typeof REPORT_TYPE_TEXT) => {
+        return <span>{REPORT_TYPE_TEXT[reportType] ?? "-"}</span>;
       },
     },
     {
