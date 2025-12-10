@@ -121,7 +121,7 @@ const ContentWrapper = styled.div`
 const SearchWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  width: 266px;
+  width: 290px;
 `;
 
 const TableWrapper = styled.div`

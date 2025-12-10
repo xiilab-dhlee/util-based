@@ -83,9 +83,8 @@ export const useLicenseForm = (): UseLicenseFormReturn => {
    * 생성용 초기화 - 기본 폼 상태로 리셋
    */
   const initializeForCreate = useCallback(() => {
-    setFormState(INITIAL_FORM_STATE);
-    setErrors({});
-  }, []);
+    reset();
+  }, [reset]);
 
   return {
     formState,

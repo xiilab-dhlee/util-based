@@ -5,7 +5,10 @@ import type {
   HpeFormType,
   UpdateHpeRequestType,
 } from "@/domain/system-setting/schemas/hpe.schema";
-import { hpeFormSchema } from "@/domain/system-setting/schemas/hpe.schema";
+import {
+  hpeFormSchema,
+  updateHpeRequestSchema,
+} from "@/domain/system-setting/schemas/hpe.schema";
 
 /**
  * HPE 폼 상태 관리 훅
@@ -37,12 +40,12 @@ export const useHpeForm = () => {
    * @returns 검증 성공 시 요청 데이터, 실패 시 null
    */
   const validate = useCallback((): UpdateHpeRequestType | null => {
-    const result = hpeFormSchema.safeParse(formState);
+    const formResult = hpeFormSchema.safeParse(formState);
 
-    if (!result.success) {
+    if (!formResult.success) {
       const fieldErrors: HpeFormErrors = {};
 
-      result.error.issues.forEach((issue) => {
+      formResult.error.issues.forEach((issue) => {
         const field = issue.path[0] as keyof HpeFormType;
         fieldErrors[field] = issue.message;
       });
@@ -51,9 +54,14 @@ export const useHpeForm = () => {
       return null;
     }
 
+    const requestResult = updateHpeRequestSchema.safeParse(formResult.data);
+
+    if (!requestResult.success) {
+      return null;
+    }
+
     setErrors({});
-    // 폼 스키마 파싱 결과 전체를 그대로 반환 (향후 필드 추가 시에도 보존)
-    return result.data as UpdateHpeRequestType;
+    return requestResult.data;
   }, [formState]);
 
   /**
