@@ -15,6 +15,7 @@ import {
   CardUsageValue,
   CardVerticalDivider,
 } from "@/domain/report/styles";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
@@ -38,6 +39,16 @@ export function GpuInfoSection({
   color,
   percentage,
 }: GpuInfoSectionProps) {
+  // GPU 모델이나 노드명이 없으면 빈 상태 표시
+  if (!gpuModel || !nodeName || !percentage) {
+    return (
+      <EmptyState
+        title="GPU 정보 없음"
+        content="표시할 GPU 모델 또는 노드 정보가 없습니다."
+      />
+    );
+  }
+
   // color가 없으면 기본 GPU 색상 사용
   const dotColor = color || getResourceInfo("GPU").color;
 

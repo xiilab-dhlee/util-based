@@ -83,10 +83,8 @@ const TextOverlay = styled.div`
 `;
 
 const Percentage = styled.div`
-
   font-size: 26px;
   font-weight: 600;
-  line-height: 1.2;
 `;
 
 const Divider = styled.div`
@@ -97,11 +95,9 @@ const Divider = styled.div`
 `;
 
 const FooterText = styled.div`
-
   font-size: 11px;
   font-weight: 400;
   color: #333333;
-
 `;
 
 const Capacity = styled.span`

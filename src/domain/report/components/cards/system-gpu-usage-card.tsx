@@ -19,6 +19,7 @@ import {
   CardUsageValue,
   CardVerticalDivider,
 } from "@/domain/report/styles";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
@@ -30,7 +31,20 @@ export function SystemGpuUsageCard({ resourceUsage }: SystemGpuUsageCardProps) {
   // Filter for GPU metric only
   const gpuMetric = resourceUsage.metrics.find((m) => m.type === "GPU");
 
-  if (!gpuMetric) return null;
+  if (!gpuMetric) {
+    return (
+      <Card
+        hoverable={false}
+        contentVariant="compact"
+        title="GPU 월 평균 개수 및 사용률"
+      >
+        <EmptyState
+          title="GPU 데이터 없음"
+          content="표시할 GPU 사용률 데이터가 없습니다."
+        />
+      </Card>
+    );
+  }
 
   const gpuColor = getResourceInfo("GPU").color;
 
