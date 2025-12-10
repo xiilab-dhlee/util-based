@@ -7,7 +7,10 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 
-import { buildMonitoringChartOptions } from "@/shared/components/chart/monitoring-chart-options";
+import {
+  type ApexOptionsWithSelection,
+  buildMonitoringChartOptions,
+} from "@/shared/components/chart/monitoring-chart-options";
 import { MySpinner } from "@/shared/components/spinner";
 
 interface MonitoringChartProps {
@@ -15,7 +18,7 @@ interface MonitoringChartProps {
   height?: number;
   width?: number | string;
   unit: string;
-  colors?: string[];
+  colors?: string[] | readonly string[];
   /** 로딩 상태 여부 (true면 스피너 표시) */
   isLoading?: boolean;
   /** 에러 상태 여부 (true면 에러 상태로 간주) */
@@ -113,7 +116,7 @@ export function MonitoringChart({
     });
 
     // lodash.merge를 사용하여 깊은 병합 수행
-    const merged = customOptions
+    const merged: ApexOptionsWithSelection = customOptions
       ? merge({}, baseOptions, customOptions)
       : baseOptions;
 

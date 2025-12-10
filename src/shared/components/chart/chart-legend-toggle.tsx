@@ -10,7 +10,7 @@ interface ChartLegendToggleProps {
   /** 차트 시리즈 데이터 */
   series: ChartDataSeries[];
   /** 시리즈별 색상 배열 */
-  colors: string[];
+  colors: string[] | readonly string[];
   /**
    * 시리즈 토글 시 콜백 (선택사항)
    * - Legend는 내부 active 상태만 관리하고
