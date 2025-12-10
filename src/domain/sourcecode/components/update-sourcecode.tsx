@@ -15,6 +15,7 @@ import {
   getSourcecodeStatusInfo,
   getSourcecodeTypeInfo,
 } from "@/domain/sourcecode/utils/sourcecode.util";
+import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { useSelect } from "@/shared/hooks/use-select";
@@ -33,7 +34,6 @@ import {
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
 import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
-import { SOURCECODE_STATUS_OPTIONS } from "../constants/sourcecode.constant";
 import { ReadOnlyParameter } from "./read-only-parameter";
 
 interface UpdateSourcecodeProps {
@@ -69,7 +69,7 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
 
   // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
   const [isReadOnly, setIsReadOnly] = useState(true);
-  const status = useSelect(data?.status || "PUBLIC", SOURCECODE_STATUS_OPTIONS);
+  const status = useSelect(data?.status || "PUBLIC", VISIBILITY_STATUS_OPTIONS);
 
   const { text } = getSourcecodeTypeInfo(data?.type || "GIT_HUB");
   const { text: statusText } = getSourcecodeStatusInfo(

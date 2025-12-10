@@ -18,10 +18,7 @@ import { CreateCredentialForm } from "@/domain/credential/components/create-cred
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
 import type { CredentialIdType } from "@/domain/credential/schemas/credential.schema";
 import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
-import {
-  SOURCECODE_STATUS_OPTIONS,
-  SOURCECODE_TYPE_OPTIONS,
-} from "@/domain/sourcecode/constants/sourcecode.constant";
+import { SOURCECODE_TYPE_OPTIONS } from "@/domain/sourcecode/constants/sourcecode.constant";
 import { useCreateSourcecode } from "@/domain/sourcecode/hooks/use-create-sourcecode";
 import type {
   SourcecodeStatusType,
@@ -31,6 +28,7 @@ import { openCreateSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcec
 import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { StateTab } from "@/shared/components/tab";
+import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSelect } from "@/shared/hooks/use-select";
 import { FormRow } from "@/styles/layers/form-layer.styled";
@@ -63,7 +61,7 @@ export function CreateSourcecodeModal() {
    */
   const status = useSelect<SourcecodeStatusType>(
     null,
-    SOURCECODE_STATUS_OPTIONS,
+    VISIBILITY_STATUS_OPTIONS,
   );
   /**
    * 소스코드 Git URL

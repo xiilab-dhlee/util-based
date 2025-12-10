@@ -1,3 +1,5 @@
+import type { DropdownOption } from "xiilab-ui";
+
 /** 목록 페이지 크기 */
 export const LIST_PAGE_SIZE = 20;
 /** 카드 페이지 크기 */
@@ -35,3 +37,14 @@ export const ALL_OPTION = {
   label: "전체",
   value: "ALL",
 } as const;
+
+export const VISIBILITY_STATUS_OPTIONS: DropdownOption[] = [
+  {
+    label: "공개",
+    value: "PUBLIC",
+  },
+  {
+    label: "비공개",
+    value: "PRIVATE",
+  },
+];
