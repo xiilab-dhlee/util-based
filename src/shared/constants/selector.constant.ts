@@ -107,6 +107,88 @@ export const WORKLOAD_SELECTOR = {
   MONITORING_CONTENT: "workload-monitoring-content",
   /** 모니터링 차트 카드 (동적) - workload-monitoring-chart-{type} */
   monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
+
+  // 상세 페이지 - 좌측 요약 패널
+  /** 상세 페이지 컨테이너 */
+  DETAIL_PAGE: "workload-detail-page",
+  /** 좌측 요약 패널 */
+  DETAIL_ASIDE: "workload-detail-aside",
+  /** 워크로드 이름 (상세) */
+  DETAIL_NAME: "workload-detail-name",
+  /** 워크로드 상태 (상세) */
+  DETAIL_STATUS: "workload-detail-status",
+  /** 워크로드 설명 */
+  DETAIL_DESCRIPTION: "workload-detail-description",
+  /** 수정 버튼 (상세) */
+  DETAIL_EDIT_BUTTON: "workload-detail-edit-button",
+  /** 종료 버튼 (상세) */
+  DETAIL_STOP_BUTTON: "workload-detail-stop-button",
+  /** 재시작 버튼 (상세) */
+  DETAIL_RESTART_BUTTON: "workload-detail-restart-button",
+  /** 삭제 버튼 (상세) */
+  DETAIL_DELETE_BUTTON: "workload-detail-delete-button",
+
+  // 상세 페이지 - 이벤트 이력
+  /** 이벤트 이력 섹션 */
+  DETAIL_EVENT_SECTION: "workload-detail-event-section",
+  /** 이벤트 카드 prefix - workload-event-card-{index} */
+  eventCard: (index: number) => `workload-event-card-${index}`,
+  /** 이벤트 이름 */
+  EVENT_NAME: "workload-event-name",
+  /** 이벤트 상태 */
+  EVENT_STATUS: "workload-event-status",
+  /** 이벤트 경과 시간 */
+  EVENT_ELAPSED_TIME: "workload-event-elapsed-time",
+  /** 이벤트 From */
+  EVENT_FROM: "workload-event-from",
+  /** 이벤트 메시지 */
+  EVENT_MESSAGE: "workload-event-message",
+
+  // 상세 페이지 - 탭
+  /** 상세 콘텐츠 영역 */
+  DETAIL_CONTENT: "workload-detail-content",
+  /** 탭 영역 */
+  DETAIL_TAB: "workload-detail-tab",
+  /** 상세정보 탭 */
+  TAB_INFO: "workload-tab-info",
+  /** 로그 탭 */
+  TAB_LOG: "workload-tab-log",
+  /** 웹터미널 탭 */
+  TAB_TERMINAL: "workload-tab-terminal",
+  /** 모니터링 탭 */
+  TAB_MONITORING: "workload-tab-monitoring",
+  /** 파일목록 탭 */
+  TAB_FILE: "workload-tab-file",
+  /** 보안취약점 탭 */
+  TAB_SECURITY: "workload-tab-security",
+
+  // 상세 페이지 - 상세정보 탭 내용
+  /** Job 정보 영역 */
+  DETAIL_JOB_INFO: "workload-detail-job-info",
+  /** Job Type 영역 */
+  DETAIL_JOB_TYPE: "workload-detail-job-type",
+  /** 노드 타입 영역 */
+  DETAIL_NODE_TYPE: "workload-detail-node-type",
+  /** 이미지 섹션 */
+  DETAIL_IMAGE_SECTION: "workload-detail-image-section",
+  /** 이미지 이름 */
+  DETAIL_IMAGE_NAME: "workload-detail-image-name",
+  /** Commit Image 생성 버튼 */
+  DETAIL_COMMIT_IMAGE_BUTTON: "workload-detail-commit-image-button",
+  /** 리소스 섹션 */
+  DETAIL_RESOURCE_SECTION: "workload-detail-resource-section",
+  /** 선택한 GPU */
+  DETAIL_GPU_SELECTION: "workload-detail-gpu-selection",
+  /** GPU 리소스 값 */
+  DETAIL_RESOURCE_GPU: "workload-detail-resource-gpu",
+  /** CPU 리소스 값 */
+  DETAIL_RESOURCE_CPU: "workload-detail-resource-cpu",
+  /** Memory 리소스 값 */
+  DETAIL_RESOURCE_MEMORY: "workload-detail-resource-memory",
+  /** 생성자 정보 */
+  DETAIL_CREATOR: "workload-detail-creator",
+  /** 생성일 */
+  DETAIL_CREATED_DATE: "workload-detail-created-date",
 } as const;
 
 // ============================================

@@ -8,6 +8,7 @@ import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-b
 import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   DetailContentArticle,
   DetailContentSubTitle,
@@ -32,8 +33,8 @@ export function WorkloadPrimaryArticle() {
     getWorkloadJobTypeInfo(data?.jobType);
 
   return (
-    <DetailContentArticle>
-      <Column>
+    <DetailContentArticle data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_INFO}>
+      <Column data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_TYPE}>
         <DetailContentSubTitle>Job Type</DetailContentSubTitle>
         <ColumnBody>
           <IconWrapper className="jobtype">
@@ -47,7 +48,7 @@ export function WorkloadPrimaryArticle() {
           <Description>{ideName}</Description>
         </ColumnBody>
       </Column>
-      <Column>
+      <Column data-testid={WORKLOAD_SELECTOR.DETAIL_NODE_TYPE}>
         <DetailContentSubTitle>노드 타입</DetailContentSubTitle>
         <ColumnBody>
           <IconWrapper>

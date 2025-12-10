@@ -15,6 +15,7 @@ import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-car
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   DetailContentArticle,
@@ -49,7 +50,11 @@ export function WorkloadSecondaryArticle() {
     <Container>
       <Pane>
         {/* 이미지 영역 */}
-        <DetailContentSubTitle>이미지</DetailContentSubTitle>
+        <DetailContentSubTitle
+          data-testid={WORKLOAD_SELECTOR.DETAIL_IMAGE_SECTION}
+        >
+          이미지
+        </DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <ImageKey>이미지</ImageKey>
           <Value>
@@ -60,7 +65,9 @@ export function WorkloadSecondaryArticle() {
               {label}
             </ImageName>
             <div>
-              <Code>{data?.image.name}</Code>
+              <Code data-testid={WORKLOAD_SELECTOR.DETAIL_IMAGE_NAME}>
+                {data?.image.name}
+              </Code>
             </div>
           </Value>
         </KeyValueContainer>
@@ -70,6 +77,7 @@ export function WorkloadSecondaryArticle() {
             <CreateModelButton
               onClick={handleClickCommitImage}
               title="Commit Image 생성"
+              data-testid={WORKLOAD_SELECTOR.DETAIL_COMMIT_IMAGE_BUTTON}
             />
           </Value>
         </KeyValueContainer>
@@ -146,13 +154,15 @@ export function WorkloadSecondaryArticle() {
         <KeyValueContainer className="connect">
           <LeftKey>생성자</LeftKey>
           <Value>
-            <Text>{data?.creatorName}</Text>
+            <Text data-testid={WORKLOAD_SELECTOR.DETAIL_CREATOR}>
+              {data?.creatorName}
+            </Text>
           </Value>
         </KeyValueContainer>
         <KeyValueContainer className="connect">
           <LeftKey>생성일</LeftKey>
           <Value>
-            <Text>
+            <Text data-testid={WORKLOAD_SELECTOR.DETAIL_CREATED_DATE}>
               {data?.creatorDate
                 ? format(data?.creatorDate, "yyyy.MM.dd")
                 : "-"}
@@ -161,10 +171,14 @@ export function WorkloadSecondaryArticle() {
         </KeyValueContainer>
       </Pane>
       <Pane>
-        <DetailContentSubTitle>리소스</DetailContentSubTitle>
+        <DetailContentSubTitle
+          data-testid={WORKLOAD_SELECTOR.DETAIL_RESOURCE_SECTION}
+        >
+          리소스
+        </DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <RightKey>선택한 GPU</RightKey>
-          <Value>
+          <Value data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_SELECTION}>
             <Codes>
               <Code>MPS | Tesla-V100-PCIE-32GB-SHARED</Code>
               <Code>vs-code:torch2.0.1-tensorflow2.11.0-cuda11.7</Code>
@@ -175,13 +189,13 @@ export function WorkloadSecondaryArticle() {
           <RightKey>리소스</RightKey>
           <Value>
             <Resources>
-              <Resource>
+              <Resource data-testid={WORKLOAD_SELECTOR.DETAIL_RESOURCE_GPU}>
                 GPU<ResourceCount>7,777개</ResourceCount>
               </Resource>
-              <Resource>
+              <Resource data-testid={WORKLOAD_SELECTOR.DETAIL_RESOURCE_CPU}>
                 CPU<ResourceCount>7,777Core</ResourceCount>
               </Resource>
-              <Resource>
+              <Resource data-testid={WORKLOAD_SELECTOR.DETAIL_RESOURCE_MEMORY}>
                 MEM<ResourceCount>7,777GB</ResourceCount>
               </Resource>
             </Resources>
