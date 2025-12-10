@@ -98,7 +98,6 @@ const Container = styled.div`
   height: 50px;
   background-color: #171b26;
   border: 1px solid #2b3246;
-  overflow: hidden;
 `;
 
 const Left = styled.div`
