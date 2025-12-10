@@ -3,7 +3,11 @@ import { defineBddConfig } from "playwright-bdd";
 
 const testDir = defineBddConfig({
   paths: ["tests/features/**/*.feature"], // feature 파일 위치
-  require: ["tests/support/**/*.ts", "tests/steps/**/*.ts"], // hooks와 step definitions 위치
+  require: [
+    "tests/fixtures.ts", // 커스텀 fixture (먼저 로드)
+    "tests/support/**/*.ts",
+    "tests/steps/**/*.ts",
+  ],
 });
 
 /**

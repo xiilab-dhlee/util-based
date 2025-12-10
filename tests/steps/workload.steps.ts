@@ -1,4 +1,4 @@
-import { expect, type Locator } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { createBdd, type DataTable } from "playwright-bdd";
 
 import {
@@ -8,24 +8,20 @@ import {
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
+import { test } from "../fixtures";
 import { setupWorkloadPageMocks } from "../support/mocks";
 import {
   assertWorkloadRow,
   getWorkloadButton,
 } from "../support/workload.helper";
 
-const { When, Then, Given } = createBdd();
-
-// ============================================
-// Step 간 공유 컨텍스트
-// ============================================
-
 /**
- * 현재 테스트 중인 워크로드 행을 저장
- * Given 단계에서 특정 상태의 워크로드를 찾아 저장하고
- * Then 단계에서 해당 행의 버튼을 검증하는 데 사용
+ * 커스텀 fixture를 사용하는 createBdd
+ *
+ * test 객체를 전달하면 Step Definition에서
+ * workloadContext fixture에 접근할 수 있습니다.
  */
-let currentWorkloadRow: Locator | null = null;
+const { When, Then, Given } = createBdd(test);
 
 /**
  * 워크로드 목록 페이지 Step Definitions
@@ -233,53 +229,63 @@ Then(
 /**
  * Given - 실행중인 워크로드 존재 확인 및 해당 행 저장
  *
- * "실행중" 상태의 워크로드가 있는 행을 찾아 currentWorkloadRow에 저장
+ * "실행중" 상태의 워크로드가 있는 행을 찾아 workloadContext에 저장
  * 이후 Then 단계에서 해당 행의 버튼을 검증하는 데 사용
  * 실행중인 워크로드가 없으면 시나리오를 스킵
  */
-Given("목록에 실행중인 워크로드가 있다", async ({ page, $testInfo }) => {
-  // "실행중" 텍스트가 있는 상태 셀 찾기
-  const runningStatusCell = page
-    .locator(`${testIdPrefix("workload-status-")}:has-text("실행중")`)
-    .first();
+Given(
+  "목록에 실행중인 워크로드가 있다",
+  async ({ page, workloadContext, $testInfo }) => {
+    // "실행중" 텍스트가 있는 상태 셀 찾기
+    const runningStatusCell = page
+      .locator(`${testIdPrefix("workload-status-")}:has-text("실행중")`)
+      .first();
 
-  // 실행중인 워크로드가 없으면 시나리오 스킵
-  const count = await runningStatusCell.count();
-  if (count === 0) {
-    $testInfo.skip(true, "실행중인 워크로드가 없어 시나리오를 스킵합니다");
-    return;
-  }
+    // 실행중인 워크로드가 없으면 시나리오 스킵
+    const count = await runningStatusCell.count();
+    if (count === 0) {
+      $testInfo.skip(true, "실행중인 워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
 
-  await expect(runningStatusCell).toBeVisible({ timeout: 10000 });
+    await expect(runningStatusCell).toBeVisible({ timeout: 10000 });
 
-  // 해당 셀이 속한 행(tr)을 찾아 저장
-  currentWorkloadRow = runningStatusCell.locator("xpath=ancestor::tr");
-});
+    // 해당 셀이 속한 행(tr)을 찾아 workloadContext에 저장
+    workloadContext.setCurrentRow(
+      runningStatusCell.locator("xpath=ancestor::tr"),
+    );
+  },
+);
 
 /**
  * Given - 대기중인 워크로드 존재 확인 및 해당 행 저장
  *
- * "대기중" 상태의 워크로드가 있는 행을 찾아 currentWorkloadRow에 저장
+ * "대기중" 상태의 워크로드가 있는 행을 찾아 workloadContext에 저장
  * 대기중인 워크로드가 없으면 시나리오를 스킵
  */
-Given("목록에 대기중인 워크로드가 있다", async ({ page, $testInfo }) => {
-  // "대기중" 텍스트가 있는 상태 셀 찾기
-  const pendingStatusCell = page
-    .locator(`${testIdPrefix("workload-status-")}:has-text("대기중")`)
-    .first();
+Given(
+  "목록에 대기중인 워크로드가 있다",
+  async ({ page, workloadContext, $testInfo }) => {
+    // "대기중" 텍스트가 있는 상태 셀 찾기
+    const pendingStatusCell = page
+      .locator(`${testIdPrefix("workload-status-")}:has-text("대기중")`)
+      .first();
 
-  // 대기중인 워크로드가 없으면 시나리오 스킵
-  const count = await pendingStatusCell.count();
-  if (count === 0) {
-    $testInfo.skip(true, "대기중인 워크로드가 없어 시나리오를 스킵합니다");
-    return;
-  }
+    // 대기중인 워크로드가 없으면 시나리오 스킵
+    const count = await pendingStatusCell.count();
+    if (count === 0) {
+      $testInfo.skip(true, "대기중인 워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
 
-  await expect(pendingStatusCell).toBeVisible({ timeout: 10000 });
+    await expect(pendingStatusCell).toBeVisible({ timeout: 10000 });
 
-  // 해당 셀이 속한 행(tr)을 찾아 저장
-  currentWorkloadRow = pendingStatusCell.locator("xpath=ancestor::tr");
-});
+    // 해당 셀이 속한 행(tr)을 찾아 workloadContext에 저장
+    workloadContext.setCurrentRow(
+      pendingStatusCell.locator("xpath=ancestor::tr"),
+    );
+  },
+);
 
 /**
  * Then - 해당 워크로드의 {버튼} 버튼이 활성화되어 있다
@@ -291,8 +297,8 @@ Given("목록에 대기중인 워크로드가 있다", async ({ page, $testInfo 
  */
 Then(
   "해당 워크로드의 {word} 버튼이 활성화되어 있다",
-  async ({ page }, buttonName: string) => {
-    const workloadRow = assertWorkloadRow(currentWorkloadRow);
+  async ({ workloadContext }, buttonName: string) => {
+    const workloadRow = assertWorkloadRow(workloadContext.currentRow);
     const button = getWorkloadButton(workloadRow, buttonName);
     await expect(button).toBeEnabled();
   },
@@ -308,8 +314,8 @@ Then(
  */
 Then(
   "해당 워크로드의 {word} 버튼이 비활성화되어 있다",
-  async ({ page }, buttonName: string) => {
-    const workloadRow = assertWorkloadRow(currentWorkloadRow);
+  async ({ workloadContext }, buttonName: string) => {
+    const workloadRow = assertWorkloadRow(workloadContext.currentRow);
     const button = getWorkloadButton(workloadRow, buttonName);
     await expect(button).toBeDisabled();
   },
@@ -318,26 +324,31 @@ Then(
 /**
  * Given - 종료된 워크로드 존재 확인 및 해당 행 저장
  *
- * 비활성화 탭에서 첫 번째 워크로드 행을 찾아 currentWorkloadRow에 저장
+ * 비활성화 탭에서 첫 번째 워크로드 행을 찾아 workloadContext에 저장
  * 종료된 워크로드가 없으면 시나리오를 스킵
  */
-Given("목록에 종료된 워크로드가 있다", async ({ page, $testInfo }) => {
-  const disabledStatusCell = page
-    .locator(testIdPrefix("workload-status-"))
-    .first();
+Given(
+  "목록에 종료된 워크로드가 있다",
+  async ({ page, workloadContext, $testInfo }) => {
+    const disabledStatusCell = page
+      .locator(testIdPrefix("workload-status-"))
+      .first();
 
-  // 종료된 워크로드가 없으면 시나리오 스킵
-  const count = await disabledStatusCell.count();
-  if (count === 0) {
-    $testInfo.skip(true, "종료된 워크로드가 없어 시나리오를 스킵합니다");
-    return;
-  }
+    // 종료된 워크로드가 없으면 시나리오 스킵
+    const count = await disabledStatusCell.count();
+    if (count === 0) {
+      $testInfo.skip(true, "종료된 워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
 
-  await expect(disabledStatusCell).toBeVisible({ timeout: 10000 });
+    await expect(disabledStatusCell).toBeVisible({ timeout: 10000 });
 
-  // 해당 셀이 속한 행(tr)을 찾아 저장
-  currentWorkloadRow = disabledStatusCell.locator("xpath=ancestor::tr");
-});
+    // 해당 셀이 속한 행(tr)을 찾아 workloadContext에 저장
+    workloadContext.setCurrentRow(
+      disabledStatusCell.locator("xpath=ancestor::tr"),
+    );
+  },
+);
 
 // ============================================
 // 워크로드 필터 검증 Steps
@@ -375,20 +386,14 @@ Then("상태 필터가 빈 값으로 표시된다", async ({ page }) => {
 
 /**
  * When - 로그 버튼 클릭 및 로그 페이지 이동
- * currentWorkloadRow에 저장된 행의 로그 버튼을 클릭하고 로그 페이지로 이동 확인
+ * workloadContext에 저장된 행의 로그 버튼을 클릭하고 로그 페이지로 이동 확인
  * 워크로드 ID는 UUID 형식 (예: 1792b341-6a4a-44d2-bb82-a16b1142f9f2)
  */
 When(
   "해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다",
-  async ({ page }) => {
-    if (!currentWorkloadRow) {
-      throw new Error(
-        "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
-      );
-    }
-    const logButton = currentWorkloadRow.locator(
-      testId(WORKLOAD_SELECTOR.LOG_BUTTON),
-    );
+  async ({ page, workloadContext }) => {
+    const workloadRow = assertWorkloadRow(workloadContext.currentRow);
+    const logButton = workloadRow.locator(testId(WORKLOAD_SELECTOR.LOG_BUTTON));
     await logButton.click();
     await expect(page).toHaveURL(/\/user\/workload\/[\w-]+\/log/);
   },
@@ -472,18 +477,14 @@ Then("화면 우측 상단에 테마 변경 버튼이 표시된다", async ({ pa
 
 /**
  * When - 웹터미널 버튼 클릭 및 웹터미널 페이지 이동
- * currentWorkloadRow에 저장된 행의 웹터미널 버튼을 클릭하고 웹터미널 페이지로 이동 확인
+ * workloadContext에 저장된 행의 웹터미널 버튼을 클릭하고 웹터미널 페이지로 이동 확인
  * 워크로드 ID는 UUID 형식 (예: 1792b341-6a4a-44d2-bb82-a16b1142f9f2)
  */
 When(
   "해당 워크로드의 웹터미널 버튼을 클릭하여 웹터미널 페이지로 이동한다",
-  async ({ page }) => {
-    if (!currentWorkloadRow) {
-      throw new Error(
-        "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
-      );
-    }
-    const terminalButton = currentWorkloadRow.locator(
+  async ({ page, workloadContext }) => {
+    const workloadRow = assertWorkloadRow(workloadContext.currentRow);
+    const terminalButton = workloadRow.locator(
       testId(WORKLOAD_SELECTOR.TERMINAL_BUTTON),
     );
     await terminalButton.click();
@@ -529,18 +530,14 @@ Then("웹터미널 영역에 xterm 터미널이 표시된다", async ({ page }) 
 
 /**
  * When - 모니터링 버튼 클릭 및 모니터링 페이지 이동
- * currentWorkloadRow에 저장된 행의 모니터링 버튼을 클릭하고 모니터링 페이지로 이동 확인
+ * workloadContext에 저장된 행의 모니터링 버튼을 클릭하고 모니터링 페이지로 이동 확인
  * 워크로드 ID는 UUID 형식 (예: 1792b341-6a4a-44d2-bb82-a16b1142f9f2)
  */
 When(
   "해당 워크로드의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다",
-  async ({ page }) => {
-    if (!currentWorkloadRow) {
-      throw new Error(
-        "워크로드 행이 설정되지 않았습니다. Given 단계를 먼저 실행하세요.",
-      );
-    }
-    const monitoringButton = currentWorkloadRow.locator(
+  async ({ page, workloadContext }) => {
+    const workloadRow = assertWorkloadRow(workloadContext.currentRow);
+    const monitoringButton = workloadRow.locator(
       testId(WORKLOAD_SELECTOR.MONITORING_BUTTON),
     );
     await monitoringButton.click();
