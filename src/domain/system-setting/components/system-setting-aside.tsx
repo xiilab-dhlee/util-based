@@ -87,6 +87,8 @@ export function SystemSettingAside() {
     migProfiles: Array<{ profile: string; count: number }>,
     keyPrefix: string,
   ) => {
+    const migInfo = getResourceInfo("MIG");
+
     return (
       <>
         {isMigSupported ? (
@@ -94,13 +96,13 @@ export function SystemSettingAside() {
             <MigLabelRow>
               <LabelContainer>
                 <Label
-                  dotColor={getResourceInfo("MIG").color}
-                  textColor={getResourceInfo("MIG").color}
+                  dotColor={migInfo.color}
+                  textColor={migInfo.color}
                   size="large"
                   theme="light"
                 >
                   <Typography.Text variant="body-3-1" as="span">
-                    {getResourceInfo("MIG").text}
+                    {migInfo.text}
                   </Typography.Text>
                 </Label>
               </LabelContainer>
@@ -137,6 +139,7 @@ export function SystemSettingAside() {
       <WorkspaceResourceSettingModal />
       <AsideFillCard
         title="워크스페이스 생성 및 기본 리소스 설정"
+        titleExtraClassName="system-setting-aside__title-extra"
         titleExtra={
           <TitleExtraContainer>
             <GuideTooltip
@@ -216,8 +219,8 @@ export function SystemSettingAside() {
 const SystemSettingAsideCardWrapper = styled.div`
   width: 100%;
 
-  /* AsideFillCard 내부 Header의 TitleExtra(span)를 이 카드 안에서만 확장 */
-  > div > div:first-child > span:last-child {
+  /* AsideFillCard 내부 TitleExtra 영역 확장 - 구조가 아닌 명시적 클래스 기반 */
+  .system-setting-aside__title-extra {
     display: flex;
     flex: 1 1 auto;
   }

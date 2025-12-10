@@ -16,7 +16,7 @@ export const useGetLicense = (): UseQueryResult<
   const { licenseService } = useServices();
 
   return useQuery({
-    queryKey: licenseKeys.detail(),
+    queryKey: licenseKeys.list(),
     queryFn: async () => {
       const response = await licenseService.getLicense();
       return response.data;

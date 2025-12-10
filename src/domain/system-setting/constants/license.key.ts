@@ -4,6 +4,6 @@
  */
 export const licenseKeys = {
   default: ["license"],
-  detail: () => [...licenseKeys.default, "detail"],
+  list: () => [...licenseKeys.default, "list"],
   renew: () => [...licenseKeys.default, "renew"],
 } as const;

@@ -11,7 +11,7 @@ import { AxiosService } from "@/shared/api/axios";
 import type { CorePaginate, CorePayload } from "@/shared/types/api.interface";
 import { payloadToParams } from "@/shared/utils/service.util";
 
-interface GetStorageSettingsPayload extends CorePayload, CorePaginate {}
+export interface GetStorageSettingsPayload extends CorePayload, CorePaginate {}
 
 export class StorageSettingService extends AxiosService {
   private readonly BASE_URL = "/core-api/v1/core/setting/storage";
