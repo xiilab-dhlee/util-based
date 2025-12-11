@@ -29,16 +29,16 @@ interface JobTypeData {
 }
 
 interface JobTypeDistributionProps {
-  data: JobTypeData[];
+  data?: JobTypeData[];
 }
 
 /**
  * Job Type별 개수 분포 컴포넌트
  * 세그먼트 프로그레스 바로 각 Job Type 비율을 시각화
  */
-export function JobTypeDistribution({ data }: JobTypeDistributionProps) {
+export function JobTypeDistribution({ data = [] }: JobTypeDistributionProps) {
   // 데이터가 없을 때 빈 상태 표시
-  if (!data || data.length === 0) {
+  if (data.length === 0) {
     return (
       <Card hoverable={false} contentVariant="compact" title="Job Type별 개수">
         <EmptyState

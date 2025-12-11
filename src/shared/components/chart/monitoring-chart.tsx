@@ -150,12 +150,8 @@ export function MonitoringChart({
 
     // locales와 defaultLocale은 항상 주입
     // ApexCharts는 런타임에서 locales와 defaultLocale을 지원하지만 타입 정의에 없음
-    const mergedWithLocales = merged as unknown as {
-      locales?: unknown[];
-      defaultLocale?: string;
-    };
-    mergedWithLocales.locales = [ko];
-    mergedWithLocales.defaultLocale = "ko";
+    merged.locales = [ko];
+    merged.defaultLocale = "ko";
 
     return merged as ApexOptions;
   }, [

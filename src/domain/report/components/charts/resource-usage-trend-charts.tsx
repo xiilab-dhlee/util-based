@@ -273,6 +273,7 @@ export function ResourceUsageTrendCharts({
                 unit={unit}
                 chartType="line"
                 customOptions={customChartOptions}
+                chartId={`resource-trend-${trend.type}`}
               />
             </CardBody>
           </Card>

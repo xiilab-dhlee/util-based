@@ -14,6 +14,10 @@ export interface ApexOptionsWithSelection extends ApexOptions {
       opacity: number;
     };
   };
+  /** ApexCharts locale 설정 배열 (런타임에서 지원되지만 타입 정의에 없음) */
+  locales?: unknown[];
+  /** ApexCharts 기본 locale 설정 (런타임에서 지원되지만 타입 정의에 없음) */
+  defaultLocale?: string;
 }
 
 interface MonitoringChartOptionsParams {
