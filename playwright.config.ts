@@ -35,7 +35,7 @@ export default defineConfig({
   /* 모든 테스트에 공통으로 적용되는 설정 */
   use: {
     /* 실패 시 스크린샷 캡처 */
-    screenshot: "only-on-failure",
+    screenshot: "on",
 
     /* 실패 시 trace 기록 */
     trace: "retain-on-failure",

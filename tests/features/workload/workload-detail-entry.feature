@@ -1,19 +1,18 @@
-@TESTUC-9 @authenticated-user
+@authenticated-user
 Feature: 워크로드 상세 페이지 조회
   As a 사용자,
   I want to 워크로드 목록에서 워크로드를 클릭했을 때
   So that 해당 워크로드의 상세 정보 페이지로 이동하여 기본 정보, 이벤트 이력, 상세 정보를 확인할 수 있다
 
   Background:
-    When 사용자가 워크로드 목록 페이지로 진입한다
+    When 사용자가 워크로드 상세 페이지로 진입한다
     And 워크스페이스가 선택되어 있다
-    And 첫 번째 워크로드의 이름을 클릭하여 상세 페이지로 이동한다
 
   # ============================================
   # 상세 페이지 진입 및 기본 UI 검증
   # ============================================
 
-  @smoke
+  @smoke @TESTUC-9
   Scenario: 워크로드 상세 페이지 진입 시 기본 UI 표시
     Then 워크로드 상세 페이지가 표시된다
     And URL이 "/user/workload/[id]?workspaceId="를 포함한다
@@ -24,7 +23,7 @@ Feature: 워크로드 상세 페이지 조회
   # 워크로드 기본 정보 확인
   # ============================================
 
-  @smoke
+  @smoke @TESTUC-9
   Scenario: 기본 정보 표시
     Then 워크로드 이름이 표시된다
     And 워크로드 상태가 다음 중 하나로 표시된다:
@@ -35,51 +34,50 @@ Feature: 워크로드 상세 페이지 조회
       | failed    |
     And 워크로드 설명이 표시된다
     And 워크로드 수정 버튼이 표시된다
+    And Job Type 정보가 표시된다
+    And 노드 타입 정보가 표시된다
+    And 이미지 정보가 표시된다
+    And Commit Image 생성 버튼이 표시된다
+    And 보안검사 결과가 표시된다
+    And 실행 경로, 실행 명령어 정보가 표시된다
+    And 환경변수 정보가 표시된다
+    And 포트 정보가 표시된다
+    And 생성자가 표시된다
+    And 생성일이 yyyy.MM.dd 형식으로 표시된다
+    And 선택한 GPU 정보가 표시된다
+    And 리소스 정보가 표시된다
 
-  @regression
-  Scenario: 이벤트 이력 데이터 유효성 검증
-    Then 이벤트 이름이 빈 값이 아니다
-    And 이벤트 상태가 다음 중 하나이다:
+  @regression @TESTUC-9
+  Scenario: 워크로드 이벤트 이력 데이터 유효성 검증
+    Then 각 이벤트 이름이 표시된다
+    And 각 이벤트 상태가 다음 중 하나이다:
       | 상태     |
       | Normal   |
       | Warning  |
-    And 경과 시간이 표시된다
-    And From 값이 빈 값이 아니다
-    And 메시지 영역이 표시된다
+    And 각 이벤트 경과 시간이 yyyy.MM.dd HH:mm:ss 형식으로 표시된다
+    And 각 이벤트 From이 표시된다
+    And 각 이벤트 메시지가 표시된다
 
-  # ============================================
-  # 상세정보 탭 내용 확인 (오른쪽 메인 영역)
-  # ============================================
-
-  @smoke
-  Scenario: Job 정보 영역 확인
-    And Job Type 영역이 표시된다
-    And 노드 타입 영역이 표시된다
-
-  @smoke
-  Scenario: 상세정보 탭 - 이미지 영역 확인
-    Then 이미지 섹션이 표시된다
-    And 이미지 이름이 빈 값이 아니다
-    And 내부 레지스트리 영역에 Commit Image 생성 버튼이 표시된다
-
-  @smoke
-  Scenario: 상세정보 탭 - 리소스 영역 확인
-    Then 리소스 섹션이 표시된다
-    And 선택한 GPU 정보가 표시된다
-    And GPU 리소스 값이 표시된다
-    And CPU 리소스 값이 표시된다
-    And Memory 리소스 값이 표시된다
-
-  @regression
-  Scenario: 상세정보 탭 - 생성 정보 영역 확인
-    Then 생성자 정보가 표시된다
-    And 생성일이 날짜 형식으로 표시된다
+  @regression @TESTUC-9
+  Scenario: 워크로드 소스코드 데이터 유효성 검증
+    Then 각 소스코드 이름이 표시된다
+    And 각 소스코드 상태가 다음 중 하나이다:
+      | 상태     |
+      | public   |
+      | private  |
+    And 각 소스코드 경로가 표시된다
+    And 각 소스코드 Git URL이 표시된다
+    And 각 소스코드 타입이 다음 중 하나이다:
+      | 타입     |
+      | GitHub   |
+      | GitLab   |
+      | BitBucket|
 
   # ============================================
   # 상태별 동작 검증
   # ============================================
 
-  @regression
+  @regression @TESTUC-9
   Scenario: 워크로드 상태가 대기중일 때 UI 표시
     Given 워크로드 상태가 "대기중"이다
     Then 워크로드 종료 버튼이 표시된다
@@ -88,12 +86,12 @@ Feature: 워크로드 상세 페이지 조회
     And "모니터링" 탭이 비활성화되어 있다
     And "파일목록" 탭이 비활성화되어 있다
     
-  @regression
+  @regression @TESTUC-9
   Scenario: 워크로드 상태가 실행중일 때 UI 표시
     Given 워크로드 상태가 "실행중"이다
     Then 워크로드 종료 버튼이 표시된다
 
-  @regression
+  @regression @TESTUC-9
   Scenario: 워크로드 상태가 종료되었을 때 UI 표시
     Given 워크로드 상태가 "종료"이다
     Then 워크로드 재시작 버튼이 표시된다

@@ -7,18 +7,10 @@ import {
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
-import { extractStatusFromTestId } from "../../support/workload.helper";
+import { setupWorkloadPageMocks } from "../../support/mocks";
 
 /**
  * 워크로드 상세 페이지 Step Definitions
- *
- * 상세 페이지 관련 Step만 정의
- * - 페이지 진입
- * - 좌측 요약 패널 (기본 정보)
- * - 이벤트 이력
- * - 탭 관련
- * - 상세정보 탭 내용
- * - 상태별 검증
  */
 const { When, Then, Given } = createBdd(test);
 
@@ -26,19 +18,20 @@ const { When, Then, Given } = createBdd(test);
 // 상세 페이지 진입 Steps
 // ============================================
 
-/**
- * Then - 워크로드 상세 페이지 표시 확인
- */
+When(
+  "사용자가 워크로드 상세 페이지로 진입한다",
+  async ({ page, workloadId, workspaceId }) => {
+    await setupWorkloadPageMocks(page);
+    await page.goto(`/user/workload/${workloadId}?workspaceId=${workspaceId}`);
+    await page.waitForLoadState("networkidle");
+  },
+);
+
 Then("워크로드 상세 페이지가 표시된다", async ({ page }) => {
   const pageHeader = page.locator(testId(WORKLOAD_SELECTOR.PAGE_HEADER_DETAIL));
   await expect(pageHeader).toBeVisible();
 });
 
-/**
- * When - 첫 번째 워크로드 클릭하여 상세 페이지로 이동
- * 상태 무관하게 첫 번째 워크로드를 클릭
- * URL 검증은 별도의 Then step에서 수행
- */
 When(
   "첫 번째 워크로드의 이름을 클릭하여 상세 페이지로 이동한다",
   async ({ page }) => {
@@ -53,38 +46,25 @@ When(
 // 좌측 요약 패널 Steps (기본 정보)
 // ============================================
 
-/**
- * Then - 워크로드 이름이 표시된다
- * 빈 값일 경우 "-"로 표시되므로, "-"가 아니면 유효한 값
- */
-Then("워크로드 이름이 표시된다", async ({ page }) => {
+Then("워크로드 이름이 표시된다", async ({ page, assertLogger }) => {
   const name = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_NAME));
-  await expect(name).toBeVisible();
-  await expect(name).not.toHaveText("-");
+  await assertLogger.assertLocatorText("워크로드 이름", name);
 });
 
-/**
- * Then - 워크로드 상태가 다음 중 하나로 표시된다 (단일 검증)
- * data-testid에서 상태값을 추출하여 유효한 상태인지 검증
- */
 Then(
   "워크로드 상태가 다음 중 하나로 표시된다:",
-  async ({ page }, dataTable: DataTable) => {
+  async ({ page, assertLogger }, dataTable: DataTable) => {
     const validStatuses = dataTable.rows().map((row) => row[0]);
 
-    // 상세 페이지의 상태 요소 조회
     const statusElement = page.locator(testIdPrefix("workload-status-"));
     await expect(statusElement).toBeVisible();
 
-    // data-testid에서 상태값 추출 및 유효성 검증
-    const status = await extractStatusFromTestId(statusElement);
-    expect(validStatuses).toContain(status);
+    const testIdValue = await statusElement.getAttribute("data-testid");
+    const status = testIdValue?.replace("workload-status-", "") ?? "";
+    assertLogger.assertContains("워크로드 상태", status, validStatuses);
   },
 );
 
-/**
- * Then - 워크로드 설명이 표시된다
- */
 Then("워크로드 설명이 표시된다", async ({ page }) => {
   const description = page.locator(
     testId(WORKLOAD_SELECTOR.DETAIL_DESCRIPTION),
@@ -92,18 +72,9 @@ Then("워크로드 설명이 표시된다", async ({ page }) => {
   await expect(description).toBeVisible();
 });
 
-/**
- * Then - 워크로드 버튼 표시 확인 (파라미터화)
- * @example
- * Then 워크로드 수정 버튼이 표시된다
- * Then 워크로드 종료 버튼이 표시된다
- */
 Then(
   "워크로드 {word} 버튼이 표시된다",
   async ({ page }, buttonName: string) => {
-    /**
-     * 상세 페이지 버튼 이름 → 셀렉터 매핑
-     */
     const DETAIL_BUTTON_MAP: Record<string, string> = {
       수정: WORKLOAD_SELECTOR.DETAIL_EDIT_BUTTON,
       종료: WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON,
@@ -126,221 +97,351 @@ Then(
 // 이벤트 이력 Steps
 // ============================================
 
-/**
- * Then - 이벤트 이름 빈 값 아님 확인
- */
-Then("이벤트 이름이 빈 값이 아니다", async ({ page }) => {
-  const eventNames = page.locator(testId(WORKLOAD_SELECTOR.EVENT_NAME));
-  const count = await eventNames.count();
+Then("각 이벤트 이름이 표시된다", async ({ page, assertLogger }) => {
+  const eventCards = page.locator(testIdPrefix("workload-event-card-"));
+  const count = await eventCards.count();
 
   for (let i = 0; i < count; i++) {
-    const element = eventNames.nth(i);
-    const text = await element.textContent();
-    expect(text?.trim().length).toBeGreaterThan(0);
+    const h6Element = eventCards.nth(i).locator("h6");
+    await assertLogger.assertLocatorText(`이벤트[${i}] 이름`, h6Element);
   }
 });
 
-/**
- * Then - 이벤트 상태 유효성 검증
- */
 Then(
-  "이벤트 상태가 다음 중 하나이다:",
-  async ({ page }, dataTable: DataTable) => {
-    const validStatuses = dataTable.raw().slice(1).flat();
-    const eventStatuses = page.locator(testId(WORKLOAD_SELECTOR.EVENT_STATUS));
-    const count = await eventStatuses.count();
+  "각 이벤트 상태가 다음 중 하나이다:",
+  async ({ page, assertLogger }, dataTable: DataTable) => {
+    const validStatuses = dataTable
+      .raw()
+      .slice(1)
+      .flat()
+      .map((s) => s.toLowerCase());
+
+    const statusElements = page.locator(testIdPrefix("workload-event-status-"));
+    const count = await statusElements.count();
 
     for (let i = 0; i < count; i++) {
-      const element = eventStatuses.nth(i);
-      const text = await element.textContent();
-      expect(validStatuses).toContain(text?.trim());
+      const statusElement = statusElements.nth(i);
+      await expect(statusElement).toBeVisible();
+
+      const testIdValue = await statusElement.getAttribute("data-testid");
+      const status =
+        testIdValue?.replace("workload-event-status-", "").toLowerCase() ?? "";
+      assertLogger.assertContains(`이벤트[${i}] 상태`, status, validStatuses);
     }
   },
 );
 
-/**
- * Then - 경과 시간 표시 확인
- */
-Then("경과 시간이 표시된다", async ({ page }) => {
-  const elapsedTimes = page.locator(
-    testId(WORKLOAD_SELECTOR.EVENT_ELAPSED_TIME),
-  );
-  const count = await elapsedTimes.count();
-  expect(count).toBeGreaterThanOrEqual(1);
-});
+Then(
+  "각 이벤트 경과 시간이 yyyy.MM.dd HH:mm:ss 형식으로 표시된다",
+  async ({ page, assertLogger }) => {
+    const dateTimeRegex = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}$/;
 
-/**
- * Then - From 값 빈 값 아님 확인
- */
-Then("From 값이 빈 값이 아니다", async ({ page }) => {
-  const fromValues = page.locator(testId(WORKLOAD_SELECTOR.EVENT_FROM));
-  const count = await fromValues.count();
+    const elapsedTimeElements = page.locator(
+      testIdPrefix("workload-event-elapsed-time-"),
+    );
+    const count = await elapsedTimeElements.count();
+
+    for (let i = 0; i < count; i++) {
+      const elapsedTimeElement = elapsedTimeElements.nth(i);
+      await expect(elapsedTimeElement).toBeVisible();
+      const text = (await elapsedTimeElement.textContent())?.trim() ?? "";
+      assertLogger.assertMatch(`이벤트[${i}] 경과 시간`, text, dateTimeRegex);
+    }
+  },
+);
+
+Then("각 이벤트 From이 표시된다", async ({ page, assertLogger }) => {
+  const fromElements = page.locator(testIdPrefix("workload-event-from-"));
+  const count = await fromElements.count();
 
   for (let i = 0; i < count; i++) {
-    const element = fromValues.nth(i);
-    const text = await element.textContent();
-    expect(text?.trim().length).toBeGreaterThan(0);
+    const fromElement = fromElements.nth(i);
+    await assertLogger.assertLocatorText(`이벤트[${i}] From`, fromElement);
   }
 });
 
-/**
- * Then - 메시지 영역 표시 확인
- */
-Then("메시지 영역이 표시된다", async ({ page }) => {
-  const messages = page.locator(testId(WORKLOAD_SELECTOR.EVENT_MESSAGE));
-  const count = await messages.count();
-  expect(count).toBeGreaterThanOrEqual(1);
+Then("각 이벤트 메시지가 표시된다", async ({ page }) => {
+  const messageElements = page.locator(testIdPrefix("workload-event-message-"));
+  const count = await messageElements.count();
+
+  for (let i = 0; i < count; i++) {
+    await expect(messageElements.nth(i)).toBeVisible();
+  }
 });
+
+// ============================================
+// 소스코드 Steps
+// ============================================
+
+Then("각 소스코드 이름이 표시된다", async ({ page, assertLogger }) => {
+  const sourcecodeCards = page.locator(
+    testIdPrefix("workload-source-code-card-"),
+  );
+  const count = await sourcecodeCards.count();
+
+  for (let i = 0; i < count; i++) {
+    const h6Element = sourcecodeCards.nth(i).locator("h6");
+    await assertLogger.assertLocatorText(`소스코드[${i}] 이름`, h6Element);
+  }
+});
+
+Then(
+  "각 소스코드 상태가 다음 중 하나이다:",
+  async ({ page, assertLogger }, dataTable: DataTable) => {
+    const validStatuses = dataTable
+      .raw()
+      .slice(1)
+      .flat()
+      .map((s) => s.toLowerCase());
+
+    const statusElements = page.locator(
+      testIdPrefix("workload-source-code-status-"),
+    );
+    const count = await statusElements.count();
+
+    for (let i = 0; i < count; i++) {
+      const statusElement = statusElements.nth(i);
+      await expect(statusElement).toBeAttached();
+
+      const testIdValue = await statusElement.getAttribute("data-testid");
+      const status =
+        testIdValue
+          ?.replace("workload-source-code-status-", "")
+          .toLowerCase() ?? "";
+      assertLogger.assertContains(`소스코드[${i}] 상태`, status, validStatuses);
+    }
+  },
+);
+
+Then("각 소스코드 경로가 표시된다", async ({ page }) => {
+  const pathElements = page.locator(testIdPrefix("workload-source-code-path-"));
+  const count = await pathElements.count();
+
+  for (let i = 0; i < count; i++) {
+    await expect(pathElements.nth(i)).toBeVisible();
+  }
+});
+
+Then("각 소스코드 Git URL이 표시된다", async ({ page, assertLogger }) => {
+  const urlElements = page.locator(testIdPrefix("workload-source-code-url-"));
+  const count = await urlElements.count();
+
+  for (let i = 0; i < count; i++) {
+    const urlElement = urlElements.nth(i);
+    await assertLogger.assertLocatorText(`소스코드[${i}] Git URL`, urlElement);
+  }
+});
+
+Then(
+  "각 소스코드 타입이 다음 중 하나이다:",
+  async ({ page, assertLogger }, dataTable: DataTable) => {
+    const validTypes = dataTable
+      .raw()
+      .slice(1)
+      .flat()
+      .map((t) => t.toLowerCase());
+
+    const typeElements = page.locator(
+      testIdPrefix("workload-source-code-type-"),
+    );
+    const count = await typeElements.count();
+
+    for (let i = 0; i < count; i++) {
+      const typeElement = typeElements.nth(i);
+      await expect(typeElement).toBeVisible();
+
+      const testIdValue = await typeElement.getAttribute("data-testid");
+      const type =
+        testIdValue?.replace("workload-source-code-type-", "").toLowerCase() ??
+        "";
+      assertLogger.assertContains(`소스코드[${i}] 타입`, type, validTypes);
+    }
+  },
+);
 
 // ============================================
 // 상세정보 탭 내용 Steps
 // ============================================
 
-/**
- * Then - Job Type 영역 표시 확인
- */
-Then("Job Type 영역이 표시된다", async ({ page }) => {
-  const jobType = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_JOB_TYPE));
-  await expect(jobType).toBeVisible();
-});
-
-/**
- * Then - 노드 타입 영역 표시 확인
- */
-Then("노드 타입 영역이 표시된다", async ({ page }) => {
-  const nodeType = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_NODE_TYPE));
-  await expect(nodeType).toBeVisible();
-});
-
-/**
- * Then - 이미지 섹션 표시 확인
- */
-Then("이미지 섹션이 표시된다", async ({ page }) => {
-  const imageSection = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_IMAGE_SECTION),
+Then("Job Type 정보가 표시된다", async ({ page, assertLogger }) => {
+  const jobTypeName = page.locator(
+    testId(WORKLOAD_SELECTOR.DETAIL_JOB_TYPE_NAME),
   );
-  await expect(imageSection).toBeVisible();
+  await assertLogger.assertLocatorText("Job Type 이름", jobTypeName);
+
+  const jobTypeIde = page.locator(
+    testId(WORKLOAD_SELECTOR.DETAIL_JOB_TYPE_IDE),
+  );
+  await assertLogger.assertLocatorText("Job Type IDE", jobTypeIde);
 });
 
-/**
- * Then - 이미지 이름 빈 값 아님 확인
- */
-Then("이미지 이름이 빈 값이 아니다", async ({ page }) => {
+Then("노드 타입 정보가 표시된다", async ({ page, assertLogger }) => {
+  const nodeTypeName = page.locator(
+    testId(WORKLOAD_SELECTOR.DETAIL_NODE_TYPE_NAME),
+  );
+  await assertLogger.assertLocatorText("노드 타입", nodeTypeName);
+});
+
+Then("이미지 정보가 표시된다", async ({ page, assertLogger }) => {
+  const imageType = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_IMAGE_TYPE));
+  await assertLogger.assertLocatorText("이미지 타입", imageType);
+
   const imageName = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_IMAGE_NAME));
-  await expect(imageName).toBeVisible();
-  const text = await imageName.textContent();
-  expect(text?.trim().length).toBeGreaterThan(0);
+  await assertLogger.assertLocatorText("이미지 이름", imageName);
 });
 
-/**
- * Then - Commit Image 생성 버튼 표시 확인
- */
+Then("Commit Image 생성 버튼이 표시된다", async ({ page }) => {
+  const commitButton = page.locator(
+    testId(WORKLOAD_SELECTOR.DETAIL_COMMIT_IMAGE_BUTTON),
+  );
+  await expect(commitButton).toBeVisible();
+});
+
+Then("보안검사 결과가 표시된다", async ({ page, assertLogger }) => {
+  const securityLevels = [
+    {
+      selector: WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_CRITICAL,
+      name: "Critical",
+    },
+    { selector: WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_HIGH, name: "High" },
+    {
+      selector: WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_MEDIUM,
+      name: "Medium",
+    },
+    { selector: WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_LOW, name: "Low" },
+  ];
+
+  for (const { selector, name } of securityLevels) {
+    const element = page.locator(testId(selector));
+    await assertLogger.assertLocatorText(`보안검사 ${name}`, element);
+  }
+});
+
 Then(
-  "내부 레지스트리 영역에 Commit Image 생성 버튼이 표시된다",
-  async ({ page }) => {
-    const commitButton = page.locator(
-      testId(WORKLOAD_SELECTOR.DETAIL_COMMIT_IMAGE_BUTTON),
+  "실행 경로, 실행 명령어 정보가 표시된다",
+  async ({ page, assertLogger }) => {
+    const execPath = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_EXEC_PATH));
+    await assertLogger.assertLocatorText("실행 경로", execPath);
+
+    const execCommand = page.locator(
+      testId(WORKLOAD_SELECTOR.DETAIL_EXEC_COMMAND),
     );
-    await expect(commitButton).toBeVisible();
+    await assertLogger.assertLocatorText("실행 명령어", execCommand);
   },
 );
 
-/**
- * Then - 리소스 섹션 표시 확인
- */
-Then("리소스 섹션이 표시된다", async ({ page }) => {
-  const resourceSection = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_RESOURCE_SECTION),
-  );
-  await expect(resourceSection).toBeVisible();
+Then("환경변수 정보가 표시된다", async ({ page, assertLogger }) => {
+  const envKeys = page.locator(testIdPrefix("workload-env-key-"));
+  const keyCount = await envKeys.count();
+
+  for (let i = 0; i < keyCount; i++) {
+    await assertLogger.assertLocatorText(`환경변수[${i}] 키`, envKeys.nth(i));
+  }
+
+  const envValues = page.locator(testIdPrefix("workload-env-value-"));
+  const valueCount = await envValues.count();
+
+  for (let i = 0; i < valueCount; i++) {
+    await assertLogger.assertLocatorText(`환경변수[${i}] 값`, envValues.nth(i));
+  }
 });
 
-/**
- * Then - 선택한 GPU 정보 표시 확인
- */
-Then("선택한 GPU 정보가 표시된다", async ({ page }) => {
-  const gpuSelection = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_GPU_SELECTION),
-  );
-  await expect(gpuSelection).toBeVisible();
+Then("포트 정보가 표시된다", async ({ page, assertLogger }) => {
+  const portNames = page.locator(testIdPrefix("workload-port-name-"));
+  const nameCount = await portNames.count();
+
+  for (let i = 0; i < nameCount; i++) {
+    await assertLogger.assertLocatorText(`포트[${i}] 이름`, portNames.nth(i));
+  }
+
+  const ports = page.locator(testIdPrefix("workload-port-value-"));
+  const portCount = await ports.count();
+
+  for (let i = 0; i < portCount; i++) {
+    await assertLogger.assertLocatorText(`포트[${i}] 값`, ports.nth(i));
+  }
+
+  const servicePorts = page.locator(testIdPrefix("workload-service-port-"));
+  const servicePortCount = await servicePorts.count();
+
+  for (let i = 0; i < servicePortCount; i++) {
+    await assertLogger.assertLocatorText(
+      `서비스 포트[${i}]`,
+      servicePorts.nth(i),
+    );
+  }
+
+  const portUrls = page.locator(testIdPrefix("workload-port-url-"));
+  const urlCount = await portUrls.count();
+
+  for (let i = 0; i < urlCount; i++) {
+    await assertLogger.assertLocatorText(`포트[${i}] URL`, portUrls.nth(i));
+  }
 });
 
-/**
- * Then - 리소스 값 표시 확인 (GPU, CPU, Memory)
- */
-Then("GPU 리소스 값이 표시된다", async ({ page }) => {
-  const gpuResource = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_RESOURCE_GPU),
-  );
-  await expect(gpuResource).toBeVisible();
-});
-
-Then("CPU 리소스 값이 표시된다", async ({ page }) => {
-  const cpuResource = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_RESOURCE_CPU),
-  );
-  await expect(cpuResource).toBeVisible();
-});
-
-Then("Memory 리소스 값이 표시된다", async ({ page }) => {
-  const memoryResource = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_RESOURCE_MEMORY),
-  );
-  await expect(memoryResource).toBeVisible();
-});
-
-/**
- * Then - 생성자 정보 표시 확인
- */
-Then("생성자 정보가 표시된다", async ({ page }) => {
+Then("생성자가 표시된다", async ({ page, assertLogger }) => {
   const creator = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_CREATOR));
-  await expect(creator).toBeVisible();
+  await assertLogger.assertLocatorText("생성자", creator);
 });
 
-/**
- * Then - 생성일 날짜 형식 확인
- */
-Then("생성일이 날짜 형식으로 표시된다", async ({ page }) => {
-  const createdDate = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_CREATED_DATE),
-  );
-  await expect(createdDate).toBeVisible();
+Then(
+  "생성일이 yyyy.MM.dd 형식으로 표시된다",
+  async ({ page, assertLogger }) => {
+    const createdDate = page.locator(
+      testId(WORKLOAD_SELECTOR.DETAIL_CREATED_DATE),
+    );
+    await expect(createdDate).toBeVisible();
 
-  const text = await createdDate.textContent();
-  // yyyy.MM.dd 형식 검증
-  expect(text).toMatch(/\d{4}\.\d{2}\.\d{2}/);
+    const text = (await createdDate.textContent()) ?? "";
+    assertLogger.assertMatch("생성일", text, /\d{4}\.\d{2}\.\d{2}/);
+  },
+);
+
+Then("선택한 GPU 정보가 표시된다", async ({ page, assertLogger }) => {
+  const gpuType = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_GPU_TYPE));
+  await assertLogger.assertLocatorText("GPU 타입", gpuType);
+
+  const gpuName = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_GPU_NAME));
+  await assertLogger.assertLocatorText("GPU 이름", gpuName);
+
+  const gpuMemory = page.locator(
+    testId(WORKLOAD_SELECTOR.DETAIL_GPU_MEMORY_GB),
+  );
+  await assertLogger.assertLocatorText("GPU 메모리", gpuMemory);
+});
+
+Then("리소스 정보가 표시된다", async ({ page, assertLogger }) => {
+  const gpuCount = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_GPU_COUNT));
+  await assertLogger.assertLocatorText("GPU 개수", gpuCount);
+
+  const cpuCore = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_CPU_CORE));
+  await assertLogger.assertLocatorText("CPU 코어", cpuCore);
+
+  const memoryGb = page.locator(testId(WORKLOAD_SELECTOR.DETAIL_MEMORY_GB));
+  await assertLogger.assertLocatorText("메모리", memoryGb);
 });
 
 // ============================================
 // 상태별 검증 Steps
 // ============================================
 
-/**
- * Given - 워크로드 상태 확인 (상태별 시나리오용)
- * 현재 상세 페이지의 워크로드 상태가 지정된 상태인지 확인
- * data-testid에서 상태값을 추출하여 비교
- */
+const STATUS_MAP: Record<string, string> = {
+  실행중: "running",
+  대기중: "pending",
+  종료: "completed",
+  에러: "failed",
+};
+
 Given(
   "워크로드 상태가 {string}이다",
   async ({ page, $testInfo }, status: string) => {
-    /**
-     * 한글 상태명 → data-testid 상태값 매핑
-     */
-    const STATUS_MAP: Record<string, string> = {
-      실행중: "running",
-      대기중: "pending",
-      종료: "completed",
-      에러: "failed",
-    };
-
     const statusElement = page.locator(testIdPrefix("workload-status-"));
     await expect(statusElement).toBeVisible();
 
-    // data-testid에서 상태값 추출
-    const currentStatus = await extractStatusFromTestId(statusElement);
+    const testIdValue = await statusElement.getAttribute("data-testid");
+    const currentStatus = testIdValue?.replace("workload-status-", "");
     const expectedStatus = STATUS_MAP[status] ?? status;
 
-    // 현재 상태가 지정된 상태와 다르면 시나리오 스킵
     if (currentStatus !== expectedStatus) {
       $testInfo.skip(
         true,

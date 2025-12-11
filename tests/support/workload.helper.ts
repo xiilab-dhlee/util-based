@@ -68,25 +68,6 @@ export function assertWorkloadRow(workloadRow: Locator | null): Locator {
 }
 
 /**
- * data-testid에서 워크로드 상태값을 추출하는 헬퍼 함수
- *
- * @param locator - 상태 요소 Locator
- * @param prefix - data-testid prefix (기본값: "workload-status-")
- * @returns 추출된 상태값 (예: "running", "pending", "completed", "failed")
- *
- * @example
- * // data-testid="workload-status-running" → "running"
- * const status = await extractStatusFromTestId(statusElement);
- */
-export async function extractStatusFromTestId(
-  locator: Locator,
-  prefix: string = "workload-status-",
-): Promise<string | null> {
-  const testIdValue = await locator.getAttribute("data-testid");
-  return testIdValue?.replace(prefix, "") ?? null;
-}
-
-/**
  * 워크로드 상태가 유효한 값인지 검증하는 헬퍼 함수
  *
  * @param status - 검증할 상태값

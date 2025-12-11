@@ -1,75 +1,166 @@
-import type { Locator } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
-/**
- * 워크로드 테스트 컨텍스트
- *
- * 각 테스트(시나리오)마다 독립적인 상태를 관리하여
- * 테스트 간 상태 누출을 방지합니다.
- */
+import { testIdPrefix } from "@/shared/constants/selector.constant";
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+export type TestMode = "mock" | "integration";
+
+export const TEST_MODE: TestMode =
+  (process.env.TEST_MODE as TestMode) || "mock";
+
+export const MOCK_WORKLOAD_ID = "mock-workload-001";
+export const MOCK_WORKSPACE_ID = "1";
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export type AssertLogger = {
+  assertEqual: <T>(label: string, actual: T, expected: T) => void;
+  assertContains: <T>(label: string, actual: T, validValues: T[]) => void;
+  assertNotEmpty: (label: string, actual: string | null | undefined) => void;
+  assertMatch: (label: string, actual: string, pattern: RegExp) => void;
+  assertLocatorText: (label: string, locator: Locator) => Promise<void>;
+};
+
 export type WorkloadContext = {
   currentRow: Locator | null;
   setCurrentRow: (row: Locator | null) => void;
 };
 
-/**
- * 테스트 컨텍스트 타입 정의
- *
- * 새로운 도메인별 컨텍스트가 필요하면 여기에 추가합니다.
- * @example
- * type TestContextFixtures = {
- *   workloadContext: WorkloadContext;
- *   volumeContext: VolumeContext;  // 볼륨 도메인 추가 시
- * };
- */
 type TestContextFixtures = {
   workloadContext: WorkloadContext;
+  workloadId: string;
+  workspaceId: string;
+  testMode: TestMode;
+  goToWorkloadDetail: (page: Page) => Promise<void>;
+  assertLogger: AssertLogger;
 };
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+function logAssertion(
+  label: string,
+  actual: unknown,
+  expected: unknown,
+  passed: boolean,
+) {
+  const icon = passed ? "✓" : "✗";
+  console.log(
+    `  ${icon} ${label} (기대값: ${JSON.stringify(expected)}, 실제값: ${JSON.stringify(actual)})`,
+  );
+}
+
+function createAssertLogger(): AssertLogger {
+  return {
+    assertEqual: <T>(label: string, actual: T, expected: T) => {
+      logAssertion(label, actual, expected, actual === expected);
+      expect(actual).toBe(expected);
+    },
+
+    assertContains: <T>(label: string, actual: T, validValues: T[]) => {
+      logAssertion(
+        label,
+        actual,
+        `one of [${validValues.join(", ")}]`,
+        validValues.includes(actual),
+      );
+      expect(validValues).toContain(actual);
+    },
+
+    assertNotEmpty: (label: string, actual: string | null | undefined) => {
+      const trimmed = actual?.trim() ?? "";
+      logAssertion(label, actual, "non-empty string", trimmed.length > 0);
+      expect(trimmed.length).toBeGreaterThan(0);
+    },
+
+    assertMatch: (label: string, actual: string, pattern: RegExp) => {
+      logAssertion(label, actual, pattern.toString(), pattern.test(actual));
+      expect(actual).toMatch(pattern);
+    },
+
+    assertLocatorText: async (label: string, locator: Locator) => {
+      await expect(locator).toBeVisible();
+      const text = (await locator.textContent())?.trim() ?? "";
+      logAssertion(label, text, "non-empty string", text.length > 0);
+      expect(text.length).toBeGreaterThan(0);
+    },
+  };
+}
+
+async function getWorkloadIdFromList(page: Page): Promise<string> {
+  await page.goto("/user/workload");
+  await page.waitForLoadState("networkidle");
+
+  const firstWorkload = page.locator(testIdPrefix("workload-name-")).first();
+  const testId = await firstWorkload.getAttribute("data-testid");
+
+  if (!testId) {
+    throw new Error("워크로드를 찾을 수 없습니다. 목록이 비어있습니다.");
+  }
+
+  return testId.replace("workload-name-", "");
+}
+
+// ============================================================================
+// Test Fixtures
+// ============================================================================
 
 /**
  * 커스텀 Playwright Test 객체
  *
- * playwright-bdd의 createBdd()에서 이 test 객체를 사용하면
- * Step Definition에서 fixture에 접근할 수 있습니다.
- *
  * @example
- * // steps 파일에서
  * import { createBdd } from "playwright-bdd";
  * import { test } from "../fixtures";
  *
  * const { Given, When, Then } = createBdd(test);
- *
- * Given("목록에 실행중인 워크로드가 있다", async ({ workloadContext }) => {
- *   workloadContext.setCurrentRow(row);
- * });
  */
 export const test = base.extend<TestContextFixtures>({
-  /**
-   * 워크로드 컨텍스트 Fixture
-   *
-   * 각 테스트 실행 시:
-   * 1. 새로운 currentRow = null로 초기화
-   * 2. 테스트 실행 (use 호출)
-   * 3. 테스트 종료 후 자동 정리 (teardown)
-   */
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   workloadContext: async ({}, use) => {
-    // 각 테스트마다 새로운 상태로 시작
     let currentRow: Locator | null = null;
 
-    const context: WorkloadContext = {
+    await use({
       get currentRow() {
         return currentRow;
       },
       setCurrentRow: (row: Locator | null) => {
         currentRow = row;
       },
-    };
+    });
 
-    // 테스트에 컨텍스트 제공
-    await use(context);
-
-    // Teardown: 테스트 종료 후 자동 정리
     currentRow = null;
+  },
+
+  testMode: async ({}, use) => {
+    await use(TEST_MODE);
+  },
+
+  workspaceId: async ({}, use) => {
+    await use(MOCK_WORKSPACE_ID);
+  },
+
+  workloadId: async ({ page }, use) => {
+    if (TEST_MODE === "mock") {
+      await use(MOCK_WORKLOAD_ID);
+    } else {
+      await use(await getWorkloadIdFromList(page));
+    }
+  },
+
+  goToWorkloadDetail: async ({ workloadId }, use) => {
+    await use(async (targetPage: Page) => {
+      await targetPage.goto(`/user/workload/${workloadId}`);
+      await targetPage.waitForLoadState("networkidle");
+    });
+  },
+
+  assertLogger: async ({}, use) => {
+    await use(createAssertLogger());
   },
 });
