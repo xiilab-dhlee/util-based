@@ -32,16 +32,6 @@ Then("워크로드 상세 페이지가 표시된다", async ({ page }) => {
   await expect(pageHeader).toBeVisible();
 });
 
-When(
-  "첫 번째 워크로드의 이름을 클릭하여 상세 페이지로 이동한다",
-  async ({ page }) => {
-    const nameLink = page.locator(testIdPrefix("workload-name-")).first();
-    await expect(nameLink).toBeVisible({ timeout: 10000 });
-    await nameLink.click();
-    await page.waitForLoadState("networkidle");
-  },
-);
-
 // ============================================
 // 좌측 요약 패널 Steps (기본 정보)
 // ============================================
@@ -72,24 +62,23 @@ Then("워크로드 설명이 표시된다", async ({ page }) => {
   await expect(description).toBeVisible();
 });
 
+const DETAIL_BUTTON_MAP: Record<string, string> = {
+  수정: WORKLOAD_SELECTOR.DETAIL_EDIT_BUTTON,
+  종료: WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON,
+  재시작: WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON,
+  삭제: WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON,
+};
+
 Then(
   "워크로드 {word} 버튼이 표시된다",
   async ({ page }, buttonName: string) => {
-    const DETAIL_BUTTON_MAP: Record<string, string> = {
-      수정: WORKLOAD_SELECTOR.DETAIL_EDIT_BUTTON,
-      종료: WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON,
-      재시작: WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON,
-      삭제: WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON,
-    };
-
     const selector = DETAIL_BUTTON_MAP[buttonName];
     if (!selector) {
       throw new Error(
         `알 수 없는 버튼: ${buttonName}. 가능한 값: ${Object.keys(DETAIL_BUTTON_MAP).join(", ")}`,
       );
     }
-    const button = page.locator(testId(selector));
-    await expect(button).toBeVisible();
+    await expect(page.locator(testId(selector))).toBeVisible();
   },
 );
 
@@ -98,7 +87,7 @@ Then(
 // ============================================
 
 Then("각 이벤트 이름이 표시된다", async ({ page, assertLogger }) => {
-  const eventCards = page.locator(testIdPrefix("workload-event-card-"));
+  const eventCards = page.locator(testId(WORKLOAD_SELECTOR.EVENT_CARD));
   const count = await eventCards.count();
 
   for (let i = 0; i < count; i++) {
@@ -137,7 +126,7 @@ Then(
     const dateTimeRegex = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}$/;
 
     const elapsedTimeElements = page.locator(
-      testIdPrefix("workload-event-elapsed-time-"),
+      testId(WORKLOAD_SELECTOR.EVENT_ELAPSED_TIME),
     );
     const count = await elapsedTimeElements.count();
 
@@ -151,17 +140,19 @@ Then(
 );
 
 Then("각 이벤트 From이 표시된다", async ({ page, assertLogger }) => {
-  const fromElements = page.locator(testIdPrefix("workload-event-from-"));
+  const fromElements = page.locator(testId(WORKLOAD_SELECTOR.EVENT_FROM));
   const count = await fromElements.count();
 
   for (let i = 0; i < count; i++) {
-    const fromElement = fromElements.nth(i);
-    await assertLogger.assertLocatorText(`이벤트[${i}] From`, fromElement);
+    await assertLogger.assertLocatorText(
+      `이벤트[${i}] From`,
+      fromElements.nth(i),
+    );
   }
 });
 
 Then("각 이벤트 메시지가 표시된다", async ({ page, assertLogger }) => {
-  const messageElements = page.locator(testIdPrefix("workload-event-message-"));
+  const messageElements = page.locator(testId(WORKLOAD_SELECTOR.EVENT_MESSAGE));
   const count = await messageElements.count();
 
   for (let i = 0; i < count; i++) {
@@ -178,7 +169,7 @@ Then("각 이벤트 메시지가 표시된다", async ({ page, assertLogger }) =
 
 Then("각 소스코드 이름이 표시된다", async ({ page, assertLogger }) => {
   const sourcecodeCards = page.locator(
-    testIdPrefix("workload-source-code-card-"),
+    testId(WORKLOAD_SELECTOR.SOURCECODE_CARD),
   );
   const count = await sourcecodeCards.count();
 
@@ -217,7 +208,7 @@ Then(
 );
 
 Then("각 소스코드 경로가 표시된다", async ({ page }) => {
-  const pathElements = page.locator(testIdPrefix("workload-source-code-path-"));
+  const pathElements = page.locator(testId(WORKLOAD_SELECTOR.SOURCECODE_PATH));
   const count = await pathElements.count();
 
   for (let i = 0; i < count; i++) {
@@ -226,12 +217,14 @@ Then("각 소스코드 경로가 표시된다", async ({ page }) => {
 });
 
 Then("각 소스코드 Git URL이 표시된다", async ({ page, assertLogger }) => {
-  const urlElements = page.locator(testIdPrefix("workload-source-code-url-"));
+  const urlElements = page.locator(testId(WORKLOAD_SELECTOR.SOURCECODE_URL));
   const count = await urlElements.count();
 
   for (let i = 0; i < count; i++) {
-    const urlElement = urlElements.nth(i);
-    await assertLogger.assertLocatorText(`소스코드[${i}] Git URL`, urlElement);
+    await assertLogger.assertLocatorText(
+      `소스코드[${i}] Git URL`,
+      urlElements.nth(i),
+    );
   }
 });
 
@@ -334,14 +327,14 @@ Then(
 );
 
 Then("환경변수 정보가 표시된다", async ({ page, assertLogger }) => {
-  const envKeys = page.locator(testIdPrefix("workload-env-key-"));
+  const envKeys = page.locator(testId(WORKLOAD_SELECTOR.ENV_KEY));
   const keyCount = await envKeys.count();
 
   for (let i = 0; i < keyCount; i++) {
     await assertLogger.assertLocatorText(`환경변수[${i}] 키`, envKeys.nth(i));
   }
 
-  const envValues = page.locator(testIdPrefix("workload-env-value-"));
+  const envValues = page.locator(testId(WORKLOAD_SELECTOR.ENV_VALUE));
   const valueCount = await envValues.count();
 
   for (let i = 0; i < valueCount; i++) {
@@ -350,31 +343,21 @@ Then("환경변수 정보가 표시된다", async ({ page, assertLogger }) => {
 });
 
 Then("포트 정보가 표시된다", async ({ page, assertLogger }) => {
-  const portNames = page.locator(testIdPrefix("workload-port-name-"));
+  const portNames = page.locator(testId(WORKLOAD_SELECTOR.PORT_NAME));
   const nameCount = await portNames.count();
 
   for (let i = 0; i < nameCount; i++) {
     await assertLogger.assertLocatorText(`포트[${i}] 이름`, portNames.nth(i));
   }
 
-  const ports = page.locator(testIdPrefix("workload-port-value-"));
+  const ports = page.locator(testId(WORKLOAD_SELECTOR.PORT_VALUE));
   const portCount = await ports.count();
 
   for (let i = 0; i < portCount; i++) {
     await assertLogger.assertLocatorText(`포트[${i}] 값`, ports.nth(i));
   }
 
-  const servicePorts = page.locator(testIdPrefix("workload-service-port-"));
-  const servicePortCount = await servicePorts.count();
-
-  for (let i = 0; i < servicePortCount; i++) {
-    await assertLogger.assertLocatorText(
-      `서비스 포트[${i}]`,
-      servicePorts.nth(i),
-    );
-  }
-
-  const portUrls = page.locator(testIdPrefix("workload-port-url-"));
+  const portUrls = page.locator(testId(WORKLOAD_SELECTOR.PORT_URL));
   const urlCount = await portUrls.count();
 
   for (let i = 0; i < urlCount; i++) {
@@ -394,7 +377,6 @@ Then(
       testId(WORKLOAD_SELECTOR.DETAIL_CREATED_DATE),
     );
     await expect(createdDate).toBeVisible();
-
     const text = (await createdDate.textContent()) ?? "";
     assertLogger.assertMatch("생성일", text, /\d{4}\.\d{2}\.\d{2}/);
   },

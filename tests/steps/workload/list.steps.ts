@@ -45,7 +45,7 @@ Then("워크로드 목록 페이지가 표시된다", async ({ page }) => {
 // ============================================
 
 Then("각 워크로드의 이름이 빈 값이 아니다", async ({ page, assertLogger }) => {
-  const names = page.locator(testIdPrefix("workload-name-"));
+  const names = page.locator(testId(WORKLOAD_SELECTOR.NAME));
   const count = await names.count();
 
   for (let i = 0; i < count; i++) {
@@ -58,7 +58,7 @@ Then(
   "각 워크로드의 잡 타입이 다음 중 하나이다:",
   async ({ page, assertLogger }, dataTable: DataTable) => {
     const validTypes = dataTable.raw().slice(1).flat();
-    const jobTypes = page.locator(testIdPrefix("workload-job-type-"));
+    const jobTypes = page.locator(testId(WORKLOAD_SELECTOR.JOB_TYPE));
     const count = await jobTypes.count();
 
     for (let i = 0; i < count; i++) {
@@ -79,6 +79,27 @@ Then(
       const testIdValue = await statuses.nth(i).getAttribute("data-testid");
       const status = testIdValue?.replace("workload-status-", "") ?? "";
       assertLogger.assertContains(`워크로드[${i}] 상태`, status, validStatuses);
+    }
+  },
+);
+
+// formatElapsedTime 출력 패턴: "방금 전", "N분 전", "N시간 전", "N일 전", "N일 N시간 전", "N일 N분 전", "N일 N시간 N분 전"
+const ELAPSED_TIME_REGEX =
+  /^(방금 전|\d+분 전|\d+시간 전|\d+일 전|\d+일 \d+시간 전|\d+일 \d+분 전|\d+일 \d+시간 \d+분 전)$/;
+
+Then(
+  "각 워크로드의 경과 시간이 올바른 형식으로 표시된다",
+  async ({ page, assertLogger }) => {
+    const elapsedTimes = page.locator(testId(WORKLOAD_SELECTOR.ELAPSED_TIME));
+    const count = await elapsedTimes.count();
+
+    for (let i = 0; i < count; i++) {
+      const text = (await elapsedTimes.nth(i).textContent())?.trim() ?? "";
+      assertLogger.assertMatch(
+        `워크로드[${i}] 경과 시간`,
+        text,
+        ELAPSED_TIME_REGEX,
+      );
     }
   },
 );
@@ -189,29 +210,32 @@ Then("로그 영역에 하나 이상의 로그 라인이 존재한다", async ({
   expect(count).toBeGreaterThanOrEqual(1);
 });
 
+const PAGE_BUTTON_MAP: Record<string, { monitoring: string; theme: string }> = {
+  로그: {
+    monitoring: WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON,
+    theme: WORKLOAD_SELECTOR.LOG_THEME_BUTTON,
+  },
+  웹터미널: {
+    monitoring: WORKLOAD_SELECTOR.TERMINAL_MONITORING_BUTTON,
+    theme: WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON,
+  },
+};
+
 Then(
   /^(로그|웹터미널) 모니터링 버튼이 표시된다$/,
   async ({ page }, pageType: string) => {
-    const selector =
-      pageType === "로그"
-        ? WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON
-        : WORKLOAD_SELECTOR.TERMINAL_MONITORING_BUTTON;
-
-    const button = page.locator(testId(selector));
-    await expect(button).toBeVisible();
+    await expect(
+      page.locator(testId(PAGE_BUTTON_MAP[pageType].monitoring)),
+    ).toBeVisible();
   },
 );
 
 Then(
   /^(로그|웹터미널) 테마 변경 버튼이 표시된다$/,
   async ({ page }, pageType: string) => {
-    const selector =
-      pageType === "로그"
-        ? WORKLOAD_SELECTOR.LOG_THEME_BUTTON
-        : WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON;
-
-    const button = page.locator(testId(selector));
-    await expect(button).toBeVisible();
+    await expect(
+      page.locator(testId(PAGE_BUTTON_MAP[pageType].theme)),
+    ).toBeVisible();
   },
 );
 
@@ -247,14 +271,14 @@ Then("웹터미널에 xterm 터미널이 표시된다", async ({ page }) => {
 // 모니터링 조회 Steps
 // ============================================
 
-Then(/^워크로드 (.+) 차트가 표시된다$/, async ({ page }, chartType: string) => {
-  const CHART_MAP: Record<string, string> = {
-    "CPU 사용량": "cpu-usage",
-    "Memory 사용량": "memory-usage",
-    "GPU 사용률": "gpu-utilization",
-    "GPU 메모리": "gpu-memory",
-  };
+const CHART_MAP: Record<string, string> = {
+  "CPU 사용량": "cpu-usage",
+  "Memory 사용량": "memory-usage",
+  "GPU 사용률": "gpu-utilization",
+  "GPU 메모리": "gpu-memory",
+};
 
+Then(/^워크로드 (.+) 차트가 표시된다$/, async ({ page }, chartType: string) => {
   const chartId = CHART_MAP[chartType];
   const chartCard = page.locator(
     testId(WORKLOAD_SELECTOR.monitoringChart(chartId)),

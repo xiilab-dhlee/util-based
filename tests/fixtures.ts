@@ -1,7 +1,10 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
-import { testIdPrefix } from "@/shared/constants/selector.constant";
+import {
+  testId,
+  WORKLOAD_SELECTOR,
+} from "@/shared/constants/selector.constant";
 
 // ============================================================================
 // Constants
@@ -98,14 +101,21 @@ async function getWorkloadIdFromList(page: Page): Promise<string> {
   await page.goto("/user/workload");
   await page.waitForLoadState("networkidle");
 
-  const firstWorkload = page.locator(testIdPrefix("workload-name-")).first();
-  const testId = await firstWorkload.getAttribute("data-testid");
+  const firstWorkloadName = page
+    .locator(testId(WORKLOAD_SELECTOR.NAME))
+    .first();
+  // Title 요소의 부모 a 태그에서 href 추출
+  const href = await firstWorkloadName
+    .locator("xpath=ancestor::a")
+    .getAttribute("href");
 
-  if (!testId) {
+  if (!href) {
     throw new Error("워크로드를 찾을 수 없습니다. 목록이 비어있습니다.");
   }
 
-  return testId.replace("workload-name-", "");
+  // URL에서 워크로드 ID 추출: /user/workload/{id}?workspaceId=...
+  const match = href.match(/\/workload\/([^?]+)/);
+  return match?.[1] ?? "";
 }
 
 // ============================================================================

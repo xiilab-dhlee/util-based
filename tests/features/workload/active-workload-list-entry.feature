@@ -40,6 +40,7 @@ Feature: 워크로드 목록 페이지 진입
       | batch         |
       | interactive   |
       | distributed   |
+    And 각 워크로드의 경과 시간이 올바른 형식으로 표시된다
     And 각 워크로드의 상태가 다음 중 하나로 표시된다:
       | 상태    |
       | pending |
