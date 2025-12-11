@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
@@ -29,25 +30,21 @@ export function WorkloadEventCard({
     <CardWrapper data-testid={WORKLOAD_SELECTOR.eventCard(index)}>
       <StyledCard
         contentVariant="compact"
-        actionElement={
-          <span data-testid={WORKLOAD_SELECTOR.EVENT_STATUS}>
-            <EventStatusText status={status} />
-          </span>
-        }
+        actionElement={<EventStatusText status={status} />}
         title={name}
       >
         <Body>
           <CompactCardKeyValueRow>
             <Key>경과 시간</Key>
             <CompactCardValue
-              data-testid={WORKLOAD_SELECTOR.EVENT_ELAPSED_TIME}
+              data-testid={WORKLOAD_SELECTOR.eventElapsedTime(elapsedTime)}
             >
-              {elapsedTime}
+              {elapsedTime ? format(elapsedTime, "yyyy.MM.dd HH:mm:ss") : "-"}
             </CompactCardValue>
           </CompactCardKeyValueRow>
           <CompactCardKeyValueRow>
             <Key>From</Key>
-            <CompactCardValue data-testid={WORKLOAD_SELECTOR.EVENT_FROM}>
+            <CompactCardValue data-testid={WORKLOAD_SELECTOR.eventFrom(from)}>
               {from}
             </CompactCardValue>
           </CompactCardKeyValueRow>
@@ -56,7 +53,7 @@ export function WorkloadEventCard({
           <CompactCardCollapseRow
             title="메 세 지"
             description={message}
-            data-testid={WORKLOAD_SELECTOR.EVENT_MESSAGE}
+            data-testid={WORKLOAD_SELECTOR.eventMessage(message)}
           />
         </Footer>
       </StyledCard>

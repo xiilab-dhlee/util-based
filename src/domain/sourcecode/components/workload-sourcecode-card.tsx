@@ -5,6 +5,7 @@ import { Card, Icon, Tag, type TagProps } from "xiilab-ui";
 
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   LikeCompactCardKey,
   LikeCompactCardRecord,
@@ -12,6 +13,7 @@ import {
 } from "@/styles/layers/like-card-layers.styled";
 
 interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
+  index: number;
   onDelete?: () => void;
 }
 
@@ -19,6 +21,7 @@ interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
  * 소스 코드 카드 컴포넌트
  */
 export function WorkloadSourcecodeCard({
+  index,
   status,
   name,
   path,
@@ -29,43 +32,66 @@ export function WorkloadSourcecodeCard({
   const { text, tag } = getSourcecodeTypeInfo(type);
 
   return (
-    <Card
-      contentVariant="compact"
-      title={name}
-      icon={status === "PRIVATE" ? <Icon name="Lock" /> : undefined}
-      actionElement={
-        onDelete ? (
-          <IconWrapper onClick={onDelete}>
-            <Icon name="Close" size={16} color="#484848" />
-          </IconWrapper>
-        ) : undefined
-      }
-    >
-      <Body>
-        <LikeCompactCardRecord>
-          <LikeCompactCardKey>Git URL :</LikeCompactCardKey>
-          <LikeCompactCardValue className="truncate">
-            {url}
-          </LikeCompactCardValue>
-        </LikeCompactCardRecord>
-        <LikeCompactCardRecord>
-          <LikeCompactCardKey>경로 :</LikeCompactCardKey>
-          <LikeCompactCardValue className="truncate">
-            {path || "-"}
-          </LikeCompactCardValue>
-        </LikeCompactCardRecord>
-        <LikeCompactCardRecord>
-          <LikeCompactCardKey>타입 :</LikeCompactCardKey>
-          <LikeCompactCardValue>
-            <Tag variant={tag as TagProps["variant"]} style={{ height: 20 }}>
-              {text}
-            </Tag>
-          </LikeCompactCardValue>
-        </LikeCompactCardRecord>
-      </Body>
-    </Card>
+    <CardWrapper data-testid={WORKLOAD_SELECTOR.sourcecodeCard(index)}>
+      <Card
+        contentVariant="compact"
+        title={name}
+        icon={
+          <span
+            data-testid={WORKLOAD_SELECTOR.sourcecodeStatus(
+              status.toLowerCase(),
+            )}
+          >
+            {status === "PRIVATE" ? <Icon name="Lock" /> : null}
+          </span>
+        }
+        actionElement={
+          onDelete ? (
+            <IconWrapper onClick={onDelete}>
+              <Icon name="Close" size={16} color="#484848" />
+              <span className="sr-only">워크로드 소스코드 삭제</span>
+            </IconWrapper>
+          ) : undefined
+        }
+      >
+        <Body>
+          <LikeCompactCardRecord>
+            <LikeCompactCardKey>Git URL :</LikeCompactCardKey>
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.sourcecodeUrl(url)}
+            >
+              {url}
+            </LikeCompactCardValue>
+          </LikeCompactCardRecord>
+          <LikeCompactCardRecord>
+            <LikeCompactCardKey>경로 :</LikeCompactCardKey>
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.sourcecodePath(path)}
+            >
+              {path}
+            </LikeCompactCardValue>
+          </LikeCompactCardRecord>
+          <LikeCompactCardRecord>
+            <LikeCompactCardKey>타입 :</LikeCompactCardKey>
+            <LikeCompactCardValue>
+              <Tag
+                variant={tag as TagProps["variant"]}
+                style={{ height: 20 }}
+                data-testid={WORKLOAD_SELECTOR.sourcecodeType(text)}
+              >
+                {text}
+              </Tag>
+            </LikeCompactCardValue>
+          </LikeCompactCardRecord>
+        </Body>
+      </Card>
+    </CardWrapper>
   );
 }
+
+const CardWrapper = styled.div``;
 
 const Body = styled.div`
   display: flex;

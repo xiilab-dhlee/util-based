@@ -1,28 +1,34 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
+
 export const workloadPortColumn: ResponsiveColumnType[] = [
   {
-    key: "portName",
     title: "포트 이름",
     dataIndex: "portName",
     align: "left",
-    width: "auto",
-    cellPadding: "0 12px",
+    render: (portName: string) => {
+      return (
+        <span data-testid={WORKLOAD_SELECTOR.portName(portName)}>
+          {portName}
+        </span>
+      );
+    },
   },
   {
-    key: "port",
     title: "포트 번호",
     dataIndex: "port",
     align: "left",
-    width: "auto",
-    cellPadding: "0 12px",
+    render: (port: string) => {
+      return <span data-testid={WORKLOAD_SELECTOR.port(port)}>{port}</span>;
+    },
   },
   {
-    key: "url",
     title: "접속",
     dataIndex: "url",
     align: "left",
-    width: "auto",
-    cellPadding: "0 12px",
+    render: (url: string) => {
+      return <span data-testid={WORKLOAD_SELECTOR.portUrl(url)}>{url}</span>;
+    },
   },
 ];

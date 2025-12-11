@@ -93,8 +93,6 @@ export const WORKLOAD_SELECTOR = {
   LOG_THEME_BUTTON: "workload-log-theme-button",
 
   // 웹터미널 페이지
-  /** 웹터미널 페이지 컨테이너 */
-  TERMINAL_PAGE: "workload-terminal-page",
   /** 웹터미널 영역 (xterm) */
   TERMINAL_CONTAINER: "workload-terminal-container",
   /** 모니터링 버튼 (웹터미널 페이지 상단) */
@@ -109,10 +107,6 @@ export const WORKLOAD_SELECTOR = {
   monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
 
   // 상세 페이지 - 좌측 요약 패널
-  /** 상세 페이지 컨테이너 */
-  DETAIL_PAGE: "workload-detail-page",
-  /** 좌측 요약 패널 */
-  DETAIL_ASIDE: "workload-detail-aside",
   /** 워크로드 이름 (상세) */
   DETAIL_NAME: "workload-detail-name",
   /** 워크로드 설명 */
@@ -127,44 +121,73 @@ export const WORKLOAD_SELECTOR = {
   DETAIL_DELETE_BUTTON: "workload-detail-delete-button",
 
   // 상세 페이지 - 이벤트 이력
-  /** 이벤트 이력 섹션 */
-  DETAIL_EVENT_SECTION: "workload-detail-event-section",
   /** 이벤트 카드 prefix - workload-event-card-{index} */
   eventCard: (index: number) => `workload-event-card-${index}`,
-  /** 이벤트 이름 */
-  EVENT_NAME: "workload-event-name",
-  /** 이벤트 상태 */
-  EVENT_STATUS: "workload-event-status",
+  /** 이벤트 상태 - workload-event-status-{status} */
+  eventStatus: (status: string) => `workload-event-status-${status}`,
   /** 이벤트 경과 시간 */
-  EVENT_ELAPSED_TIME: "workload-event-elapsed-time",
+  eventElapsedTime: (elapsedTime: string) =>
+    `workload-event-elapsed-time-${elapsedTime}`,
   /** 이벤트 From */
-  EVENT_FROM: "workload-event-from",
+  eventFrom: (from: string) => `workload-event-from-${from}`,
   /** 이벤트 메시지 */
-  EVENT_MESSAGE: "workload-event-message",
+  eventMessage: (message: string) => `workload-event-message-${message}`,
+  // 상세 페이지 - 소스코드
+  /** 소스코드 카드 prefix - workload-source-code-card-{index} */
+  sourcecodeCard: (index: number) => `workload-source-code-card-${index}`,
+  /** 소스코드 상태 - workload-source-code-status-{status} */
+  sourcecodeStatus: (status: string) => `workload-source-code-status-${status}`,
+  /** 소스코드 기본 경로 */
+  sourcecodePath: (path: string) => `workload-source-code-path-${path}`,
+  /** 소스코드 타입 */
+  sourcecodeType: (type: string) => `workload-source-code-type-${type}`,
+  /** 소스코드 Git URL */
+  sourcecodeUrl: (url: string) => `workload-source-code-url-${url}`,
 
   // 상세 페이지 - 상세정보 탭 내용
-  /** Job 정보 영역 */
-  DETAIL_JOB_INFO: "workload-detail-job-info",
-  /** Job Type 영역 */
-  DETAIL_JOB_TYPE: "workload-detail-job-type",
-  /** 노드 타입 영역 */
-  DETAIL_NODE_TYPE: "workload-detail-node-type",
-  /** 이미지 섹션 */
-  DETAIL_IMAGE_SECTION: "workload-detail-image-section",
+  /** 잡 타입 명 */
+  DETAIL_JOB_TYPE_NAME: "workload-detail-job-type_name",
+  /** 잡 타입 IDE */
+  DETAIL_JOB_TYPE_IDE: "workload-detail-job-type-ide",
+  /** 노드 타입 명 */
+  DETAIL_NODE_TYPE_NAME: "workload-detail-node-type-name",
+  /** 이미지 타입 */
+  DETAIL_IMAGE_TYPE: "workload-detail-image-type",
   /** 이미지 이름 */
   DETAIL_IMAGE_NAME: "workload-detail-image-name",
   /** Commit Image 생성 버튼 */
   DETAIL_COMMIT_IMAGE_BUTTON: "workload-detail-commit-image-button",
-  /** 리소스 섹션 */
-  DETAIL_RESOURCE_SECTION: "workload-detail-resource-section",
+  /** 보안검사 결과 */
+  DETAIL_SECURITY_LEVEL_CRITICAL: "workload-detail-security-level-critical",
+  DETAIL_SECURITY_LEVEL_HIGH: "workload-detail-security-level-high",
+  DETAIL_SECURITY_LEVEL_MEDIUM: "workload-detail-security-level-medium",
+  DETAIL_SECURITY_LEVEL_LOW: "workload-detail-security-level-low",
+  /** 실행 경로 */
+  DETAIL_EXEC_PATH: "workload-detail-exec-path",
+  /** 실행 명령어 */
+  DETAIL_EXEC_COMMAND: "workload-detail-exec-command",
+  /** 환경변수 키 - workload-env-key-{key} */
+  envKey: (key: string) => `workload-env-key-${key}`,
+  /** 환경변수 값 - workload-env-value-{value} */
+  envValue: (value: string) => `workload-env-value-${value}`,
+  /** 포트 이름 */
+  portName: (name: string) => `workload-port-name-${name}`,
+  /** 포트 */
+  port: (number: string) => `workload-port-value-${number}`,
+  /** 서비스 포트 */
+  servicePort: (number: string) => `workload-service-port-${number}`,
+  /** 접속 */
+  portUrl: (url: string) => `workload-port-url-${url}`,
   /** 선택한 GPU */
-  DETAIL_GPU_SELECTION: "workload-detail-gpu-selection",
+  DETAIL_GPU_TYPE: "workload-detail-gpu-type",
+  DETAIL_GPU_NAME: "workload-detail-gpu-name",
+  DETAIL_GPU_MEMORY_GB: "workload-detail-gpu-memory-gb",
   /** GPU 리소스 값 */
-  DETAIL_RESOURCE_GPU: "workload-detail-resource-gpu",
+  DETAIL_GPU_COUNT: "workload-detail-gpu-count",
   /** CPU 리소스 값 */
-  DETAIL_RESOURCE_CPU: "workload-detail-resource-cpu",
+  DETAIL_CPU_CORE: "workload-detail-cpu-core",
   /** Memory 리소스 값 */
-  DETAIL_RESOURCE_MEMORY: "workload-detail-resource-memory",
+  DETAIL_MEMORY_GB: "workload-detail-memory-gb",
   /** 생성자 정보 */
   DETAIL_CREATOR: "workload-detail-creator",
   /** 생성일 */

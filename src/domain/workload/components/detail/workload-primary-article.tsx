@@ -33,8 +33,8 @@ export function WorkloadPrimaryArticle() {
     getWorkloadJobTypeInfo(data?.jobType);
 
   return (
-    <DetailContentArticle data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_INFO}>
-      <Column data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_TYPE}>
+    <DetailContentArticle>
+      <Column>
         <DetailContentSubTitle>Job Type</DetailContentSubTitle>
         <ColumnBody>
           <IconWrapper className="jobtype">
@@ -44,17 +44,23 @@ export function WorkloadPrimaryArticle() {
               <JupyterIcon />
             ) : null}
           </IconWrapper>
-          <JobTypeText>{label}</JobTypeText>
-          <Description>{ideName}</Description>
+          <JobTypeText data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_TYPE_NAME}>
+            {label}
+          </JobTypeText>
+          <Description data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_TYPE_IDE}>
+            {ideName}
+          </Description>
         </ColumnBody>
       </Column>
-      <Column data-testid={WORKLOAD_SELECTOR.DETAIL_NODE_TYPE}>
+      <Column>
         <DetailContentSubTitle>노드 타입</DetailContentSubTitle>
         <ColumnBody>
           <IconWrapper>
             <Icon name={nodeIcon} color="var(--icon-fill)" size={18} />
           </IconWrapper>
-          <NodeTypeText>{nodeType} Node</NodeTypeText>
+          <NodeTypeText data-testid={WORKLOAD_SELECTOR.DETAIL_NODE_TYPE_NAME}>
+            {nodeType} Node
+          </NodeTypeText>
         </ColumnBody>
       </Column>
     </DetailContentArticle>

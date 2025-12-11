@@ -6,9 +6,7 @@ import styled from "styled-components";
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
-import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
-import { customScrollbar } from "@/styles/mixins/scrollbar";
 import { WorkloadEventCard } from "./workload-event-card";
 import { WorkloadIntroCard } from "./workload-intro-card";
 
@@ -26,12 +24,12 @@ export function WorkloadDetailPageAside() {
   });
 
   return (
-    <DetailPageAside data-testid={WORKLOAD_SELECTOR.DETAIL_ASIDE}>
+    <DetailPageAside>
       {/* 워크로드 정보 */}
       {data && <WorkloadIntroCard {...data} />}
       {/* 이벤트 이력 */}
       <AsideFillCard title="이벤트 이력">
-        <CardWrapper data-testid={WORKLOAD_SELECTOR.DETAIL_EVENT_SECTION}>
+        <CardWrapper>
           {data?.events.map((item: WorkloadEventType, index: number) => (
             <WorkloadEventCard key={item.id} index={index} {...item} />
           ))}
@@ -43,6 +41,7 @@ export function WorkloadDetailPageAside() {
 
 const CardWrapper = styled.div`
   overflow-y: auto;
-
-  ${customScrollbar()}
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;

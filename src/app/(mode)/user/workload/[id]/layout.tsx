@@ -14,7 +14,6 @@ import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-b
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { RouteTab } from "@/shared/components/tab";
-import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   DetailContentSection,
   DetailPageBody,
@@ -103,7 +102,7 @@ export default function WorkloadDetailLayout({ children }: PropsWithChildren) {
       />
 
       {/* 상세 페이지 메인 콘텐츠 영역 */}
-      <DetailPageBody data-testid={WORKLOAD_SELECTOR.DETAIL_PAGE}>
+      <DetailPageBody>
         {/* 왼쪽 사이드바 영역 - 워크로드 요약 정보 */}
         <WorkloadDetailPageAside />
 
