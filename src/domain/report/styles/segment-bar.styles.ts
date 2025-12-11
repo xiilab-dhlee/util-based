@@ -32,7 +32,10 @@ export const SegmentInfo = styled.div<{ $width: number }>`
   flex-direction: column;
   gap: 2px;
   flex-basis: ${({ $width }) => $width}%;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  flex-grow: 0;
+  min-width: 0;
+  overflow: hidden;
   padding-left: 10px;
 
   &:not(:first-child) {
@@ -75,7 +78,9 @@ export const SegmentProgressBar = styled.div<{
 }>`
   position: relative;
   flex-basis: ${({ $width }) => $width}%;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  flex-grow: 0;
+  min-width: 0;
 
   &::after {
     content: "";

@@ -10,6 +10,9 @@ import {
 import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 
+// 최소 너비 보장 (백분율) - 시간과 퍼센트를 표시하기 위한 최소 공간
+const MIN_WIDTH_PERCENT = 5;
+
 interface JobTypeData {
   type: WorkloadJobType;
   time: string;
@@ -41,19 +44,27 @@ export function JobTypeUsageTime({ data }: JobTypeUsageTimeProps) {
     );
   }
 
-  // 최소 너비 보장 (백분율) - 시간과 퍼센트를 표시하기 위한 최소 공간
-  const MIN_WIDTH_PERCENT = 5;
+  // 먼저 rawWidths 계산 (최소 너비 보장)
+  const rawWidths = data.map((item) =>
+    Math.max(item.percentage, MIN_WIDTH_PERCENT),
+  );
 
-  const segments = data.map((item) => {
-    const naturalWidth = Math.max(item.percentage, MIN_WIDTH_PERCENT);
+  // rawWidths의 합 계산
+  const totalRawWidth = rawWidths.reduce((sum, width) => sum + width, 0);
 
-    return {
-      ...item,
-      naturalWidth,
-      label: WORKLOAD_JOB_TYPE_LABEL_MAP[item.type],
-      color: WORKLOAD_JOB_TYPE_COLOR_MAP[item.type],
-    };
-  });
+  // 합이 100을 초과하면 비례적으로 정규화
+  const normalizedWidths =
+    totalRawWidth > 100
+      ? rawWidths.map((width) => (width / totalRawWidth) * 100)
+      : rawWidths;
+
+  // 세그먼트 데이터 생성 (정규화된 너비 적용)
+  const segments = data.map((item, index) => ({
+    ...item,
+    naturalWidth: normalizedWidths[index],
+    label: WORKLOAD_JOB_TYPE_LABEL_MAP[item.type],
+    color: WORKLOAD_JOB_TYPE_COLOR_MAP[item.type],
+  }));
 
   return (
     <Card
@@ -143,7 +154,10 @@ const SegmentInfo = styled.div<{ $width: number }>`
   flex-direction: column;
   gap: 2px;
   flex-basis: ${({ $width }) => $width}%;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  flex-grow: 0;
+  min-width: 0;
+  overflow: hidden;
   padding-left: 10px;
 
   &:not(:first-child) {
@@ -182,7 +196,9 @@ const ProgressSegment = styled.div<{
 }>`
   position: relative;
   flex-basis: ${({ $width }) => $width}%;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  flex-grow: 0;
+  min-width: 0;
 
   &::after {
     content: "";

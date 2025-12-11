@@ -109,26 +109,17 @@ export function ResourceUsageTrendCharts({
         const seriesIndices = [
           {
             index: 0,
-            data: findMinMax(
-              trend.data.map((d) => d.total),
-              (v) => v,
-            ),
+            data: findMinMax(trend.data, (d) => d.total),
             color: colors.total,
           },
           {
             index: 1,
-            data: findMinMax(
-              trend.data.map((d) => d.requested),
-              (v) => v,
-            ),
+            data: findMinMax(trend.data, (d) => d.requested),
             color: colors.requested,
           },
           {
             index: 2,
-            data: findMinMax(
-              trend.data.map((d) => d.used),
-              (v) => v,
-            ),
+            data: findMinMax(trend.data, (d) => d.used),
             color: colors.used,
           },
         ];
@@ -158,10 +149,16 @@ export function ResourceUsageTrendCharts({
           },
           markers: {
             size: 0, // 기본 마커는 표시하지 않음
-            discrete: seriesIndices.flatMap(({ index, data, color }) => [
-              createDiscreteMarker(index, data.minIndex, color),
-              createDiscreteMarker(index, data.maxIndex, color),
-            ]),
+            discrete: seriesIndices.flatMap(({ index, data, color }) => {
+              const markers = [];
+              if (data.minIndex >= 0) {
+                markers.push(createDiscreteMarker(index, data.minIndex, color));
+              }
+              if (data.maxIndex >= 0 && data.maxIndex !== data.minIndex) {
+                markers.push(createDiscreteMarker(index, data.maxIndex, color));
+              }
+              return markers;
+            }),
           },
           dataLabels: {
             enabled: false, // 기본 dataLabels 비활성화

@@ -49,12 +49,35 @@ export function JobTypeDistribution({ data }: JobTypeDistributionProps) {
     );
   }
 
-  // 각 세그먼트의 라벨과 색상을 미리 계산
-  const segments = data.map((item) => ({
+  // 최소 너비 보장 (백분율) - 개수와 퍼센트를 표시하기 위한 최소 공간
+  const MIN_WIDTH_PERCENT = 5;
+
+  // 각 세그먼트의 최소 너비를 보장한 후 정규화하여 합이 100%를 넘지 않도록 함
+  const segmentsWithMinWidth = data.map((item) => ({
     ...item,
-    label: WORKLOAD_JOB_TYPE_LABEL_MAP[item.type],
-    color: WORKLOAD_JOB_TYPE_COLOR_MAP[item.type],
+    naturalWidth: Math.max(item.percentage, MIN_WIDTH_PERCENT),
   }));
+
+  const totalWidth = segmentsWithMinWidth.reduce(
+    (sum, segment) => sum + segment.naturalWidth,
+    0,
+  );
+
+  const segments = segmentsWithMinWidth.map((item) => {
+    // 너비 합이 100%를 초과하는 경우 정규화
+    const normalizedWidth =
+      totalWidth > 100
+        ? (item.naturalWidth / totalWidth) * 100
+        : item.naturalWidth;
+
+    return {
+      ...item,
+      originalPercentage: item.percentage,
+      displayWidth: normalizedWidth,
+      label: WORKLOAD_JOB_TYPE_LABEL_MAP[item.type],
+      color: WORKLOAD_JOB_TYPE_COLOR_MAP[item.type],
+    };
+  });
 
   return (
     <Card
@@ -75,10 +98,10 @@ export function JobTypeDistribution({ data }: JobTypeDistributionProps) {
       <SegmentContentBox>
         <SegmentRow>
           {segments.map((segment) => (
-            <SegmentInfo key={segment.type} $width={segment.percentage}>
+            <SegmentInfo key={segment.type} $width={segment.displayWidth}>
               <SegmentPrimaryText>{segment.count}개</SegmentPrimaryText>
               <SegmentSecondaryText>
-                ({segment.percentage}%)
+                ({segment.originalPercentage}%)
               </SegmentSecondaryText>
             </SegmentInfo>
           ))}
@@ -89,7 +112,7 @@ export function JobTypeDistribution({ data }: JobTypeDistributionProps) {
             <SegmentProgressBar
               key={segment.type}
               $color={segment.color}
-              $width={segment.percentage}
+              $width={segment.displayWidth}
               $isFirst={index === 0}
               $isLast={index === segments.length - 1}
             />

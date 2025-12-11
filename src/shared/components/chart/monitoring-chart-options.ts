@@ -14,8 +14,6 @@ export interface ApexOptionsWithSelection extends ApexOptions {
       opacity: number;
     };
   };
-  locales?: ApexLocale[];
-  defaultLocale?: string;
 }
 
 interface MonitoringChartOptionsParams {
