@@ -12,7 +12,9 @@ import type {
   MemoryUsageWarning,
   NodeGpuInfo,
   NodeSystemInfo,
+  ReportDateType,
   ReportDetailResponse,
+  ReportType,
   ResourceTrend,
   ResourceUsageMetric,
   UserGpuUsage,
@@ -48,9 +50,9 @@ const FIXED_REPORT_IDS = [
  * - 일관성을 위해 고정된 UUID와 reportType 사용
  */
 export const reportListMock = Array.from({ length: LIST_PAGE_SIZE }, (_, i) => {
-  const reportType: "SYSTEM" | "CLUSTER" =
+  const reportType: ReportType =
     i % 2 === 0 ? REPORT_TYPE.SYSTEM : REPORT_TYPE.CLUSTER;
-  const reportDateType: "WEEKLY" | "MONTHLY" =
+  const reportDateType: ReportDateType =
     Math.floor(i / 2) % 2 === 0
       ? REPORT_DATE_TYPE.WEEKLY
       : REPORT_DATE_TYPE.MONTHLY;
@@ -481,8 +483,8 @@ const createDiskUsageWarning = (): DiskUsageWarning[] => {
  */
 const createReportDetail = (
   id: string,
-  reportType: "SYSTEM" | "CLUSTER",
-  reportDateType: "WEEKLY" | "MONTHLY",
+  reportType: ReportType,
+  reportDateType: ReportDateType,
 ): ReportDetailResponse => {
   const startDate = new Date(
     Date.now() - 7 * 24 * 60 * 60 * 1000,
