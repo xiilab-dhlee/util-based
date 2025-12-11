@@ -160,12 +160,15 @@ Then("각 이벤트 From이 표시된다", async ({ page, assertLogger }) => {
   }
 });
 
-Then("각 이벤트 메시지가 표시된다", async ({ page }) => {
+Then("각 이벤트 메시지가 표시된다", async ({ page, assertLogger }) => {
   const messageElements = page.locator(testIdPrefix("workload-event-message-"));
   const count = await messageElements.count();
 
   for (let i = 0; i < count; i++) {
-    await expect(messageElements.nth(i)).toBeVisible();
+    await assertLogger.assertLocatorText(
+      `이벤트[${i}] 메시지`,
+      messageElements.nth(i),
+    );
   }
 });
 

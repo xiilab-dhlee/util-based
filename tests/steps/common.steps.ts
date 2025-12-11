@@ -3,13 +3,6 @@ import { createBdd } from "playwright-bdd";
 
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { test } from "../fixtures";
-import {
-  clearAuthCookies,
-  getSession,
-  hasAuthCookie,
-  isAuthenticated,
-  loginAs,
-} from "../support/auth.helper";
 
 const { Given, Then } = createBdd(test);
 
@@ -17,45 +10,11 @@ const { Given, Then } = createBdd(test);
  * 공통 Step Definitions
  *
  * 여러 도메인에서 공통으로 사용되는 Step 정의
- * - 인증 관련 (로그인/로그아웃 상태)
  * - 워크스페이스 관련
  * - URL 검증
+ * - 목록 페이지 공통
+ * - 탭 관련
  */
-
-// ============================================
-// 인증 관련 Steps
-// ============================================
-
-Given("사용자는 로그인 상태이다", async ({ page, assertLogger }) => {
-  await loginAs(page.context(), "user");
-
-  const hasCookie = await hasAuthCookie(page);
-  assertLogger.assertEqual("세션 쿠키 존재", hasCookie, true);
-
-  const authenticated = await isAuthenticated(page);
-  assertLogger.assertEqual("인증 상태", authenticated, true);
-
-  const session = await getSession(page);
-  assertLogger.assertEqual(
-    "사용자명",
-    session?.preferred_username ?? "",
-    "user",
-  );
-});
-
-Given("사용자는 로그인하지 않은 상태이다", async ({ page, assertLogger }) => {
-  await clearAuthCookies(page.context());
-
-  const hasCookie = await hasAuthCookie(page);
-  assertLogger.assertEqual("세션 쿠키 없음", hasCookie, false);
-
-  const authenticated = await isAuthenticated(page);
-  assertLogger.assertEqual("미인증 상태", authenticated, false);
-});
-
-Then("로그인 페이지로 리다이렉트된다", async ({ page }) => {
-  await expect(page).toHaveURL(/\/(login|signin|auth)/i, { timeout: 10000 });
-});
 
 // ============================================
 // 워크스페이스 관련 Steps
@@ -71,20 +30,9 @@ Given("워크스페이스가 선택되어 있다", async ({ page, assertLogger }
   assertLogger.assertNotEmpty("워크스페이스", workspaceText);
 });
 
-Given("워크스페이스가 선택되어 있지 않다", async ({ page }) => {
-  const placeholder = page.locator(
-    testId(SELECTOR.WORKSPACE_SELECT_PLACEHOLDER),
-  );
-  await expect(placeholder).toBeVisible({ timeout: 10000 });
-});
-
 // ============================================
 // URL 관련 Steps
 // ============================================
-
-Then("URL이 {string}이다", async ({ page }, expectedUrl: string) => {
-  await expect(page).toHaveURL(new RegExp(expectedUrl));
-});
 
 Then("URL이 {string}를 포함한다", async ({ page }, expectedUrl: string) => {
   const regexPattern = expectedUrl
@@ -153,7 +101,8 @@ Then("{string} 탭이 선택되어 있다", async ({ page }, tabName: string) =>
 });
 
 Then("{string} 탭이 비활성화되어 있다", async ({ page }, tabName: string) => {
-  const activeTab = page.locator(".tabs-nav .tab-item.disabled .tab-label");
-  await expect(activeTab).toBeVisible();
-  await expect(activeTab).toHaveText(tabName);
+  const disabledTab = page.locator(
+    `.tabs-nav .tab-item.disabled .tab-label:has-text("${tabName}")`,
+  );
+  await expect(disabledTab).toBeVisible({ timeout: 10000 });
 });
