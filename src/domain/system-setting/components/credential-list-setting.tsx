@@ -30,7 +30,7 @@ const CREDENTIAL_BOX_HEIGHT = 542;
 export function CredentialListSetting() {
   const [page, setPage] = useAtom(credentialPageAtom);
   const search = useAtomValue(credentialSearchTextAtom);
-  const { onSubmit } = useSearch(credentialSearchTextAtom);
+  const { onSubmit: baseOnSubmit } = useSearch(credentialSearchTextAtom);
   const publish = usePublish();
 
   const { data, isLoading, isError, refetch } = useGetSystemCredentials({
@@ -38,6 +38,11 @@ export function CredentialListSetting() {
     size: CREDENTIAL_LIST_PAGE_SIZE,
     searchText: search,
   });
+
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    setPage(0);
+    baseOnSubmit(event);
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -78,7 +83,7 @@ export function CredentialListSetting() {
       height={CREDENTIAL_BOX_HEIGHT}
       extra={
         <SearchWrapper>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSearchSubmit}>
             <SearchInput
               placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
               width="290px"

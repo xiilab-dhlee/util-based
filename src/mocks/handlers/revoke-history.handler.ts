@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
 
-import type { REVOKE_HISTORY_DETAIL_TYPE } from "@/domain/revoke-history/constants/revoke-history.constant";
+import type { REVOKE_HISTORY_DETAIL_TYPE } from "@/domain/revoke/constants/revoke-history.constant";
 import {
   REVOKE_CRITERIA_MOCK,
   REVOKE_HISTORY_DETAIL_ITEM_MOCK_DATA,
@@ -8,7 +8,7 @@ import {
   REVOKE_HISTORY_DETAIL_MOCK_DATA,
   REVOKE_HISTORY_MOCK_DATA,
   REVOKE_HISTORY_MOCK_TOTAL,
-} from "@/domain/revoke-history/mock/revoke-history.mock";
+} from "@/domain/revoke/mock/revoke-history.mock";
 
 /**
  * 리소스 회수 이력 API 핸들러

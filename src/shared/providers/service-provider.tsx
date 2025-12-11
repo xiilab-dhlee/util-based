@@ -17,7 +17,7 @@ import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { NotificationService } from "@/domain/notification/api/notification.service";
 import { ReportService } from "@/domain/report/api/report.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
-import { RevokeHistoryService } from "@/domain/revoke-history/api/revoke-history.service";
+import { RevokeHistoryService } from "@/domain/revoke/api/revoke-history.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
