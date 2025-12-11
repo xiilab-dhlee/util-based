@@ -42,16 +42,14 @@ export function JobTypeUsageTime({ data }: JobTypeUsageTimeProps) {
   }
 
   // 최소 너비 보장 (백분율) - 시간과 퍼센트를 표시하기 위한 최소 공간
-  const MIN_WIDTH_PERCENT = 15;
+  const MIN_WIDTH_PERCENT = 5;
 
   const segments = data.map((item) => {
-    const naturalWidth = item.percentage;
-    const adjustedWidth = Math.max(naturalWidth, MIN_WIDTH_PERCENT);
+    const naturalWidth = Math.max(item.percentage, MIN_WIDTH_PERCENT);
 
     return {
       ...item,
       naturalWidth,
-      adjustedWidth,
       label: WORKLOAD_JOB_TYPE_LABEL_MAP[item.type],
       color: WORKLOAD_JOB_TYPE_COLOR_MAP[item.type],
     };

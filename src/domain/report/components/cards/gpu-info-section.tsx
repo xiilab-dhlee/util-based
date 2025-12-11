@@ -40,7 +40,7 @@ export function GpuInfoSection({
   percentage,
 }: GpuInfoSectionProps) {
   // GPU 모델이나 노드명이 없으면 빈 상태 표시
-  if (!gpuModel || !nodeName || !percentage) {
+  if (!gpuModel || !nodeName || percentage === 0) {
     return (
       <EmptyState
         title="GPU 정보 없음"

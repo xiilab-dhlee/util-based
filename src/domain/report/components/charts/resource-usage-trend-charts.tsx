@@ -199,7 +199,10 @@ export function ResourceUsageTrendCharts({
               }
 
               // 최대값 annotation
-              if (seriesData[data.maxIndex]) {
+              if (
+                seriesData[data.maxIndex] &&
+                data.minIndex !== data.maxIndex
+              ) {
                 annotations.push({
                   x: seriesData[data.maxIndex].x,
                   y: seriesData[data.maxIndex].y,
