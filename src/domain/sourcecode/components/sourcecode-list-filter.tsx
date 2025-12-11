@@ -3,7 +3,7 @@
 import { useSetAtom } from "jotai";
 import type { FormEvent } from "react";
 import styled from "styled-components";
-import { Button, Checkbox } from "xiilab-ui";
+import { Button, Switch } from "xiilab-ui";
 
 import { SourcecodeTypeSort } from "@/domain/sourcecode/components/sourcecode-type-sort";
 import {
@@ -51,56 +51,32 @@ export function SourcecodeListFilter({
 
   return (
     <MySearchFilter title="소스코드 목록" total={total}>
-      <Container>
-        <Left>
-          <Checkbox size="small">내가 생성한 소스코드 보기</Checkbox>
-        </Left>
-        <Right>
-          <SourcecodeTypeSort disabled={loading} />
-          <form onSubmit={handleSubmit}>
-            <SearchInput disabled={loading} />
-          </form>
-          <Button
-            color="primary"
-            icon="Plus"
-            iconPosition="left"
-            variant="gradient"
-            width={120}
-            height={30}
-            onClick={handleCreateSourcecode}
-            disabled={loading}
-          >
-            소스코드 생성
-          </Button>
-        </Right>
-      </Container>
+      <SwitchLabel>내 항목만 보기</SwitchLabel>
+      <Switch checked={true} />
+      <SourcecodeTypeSort disabled={loading} />
+      <form onSubmit={handleSubmit}>
+        <SearchInput disabled={loading} />
+      </form>
+      <Button
+        color="primary"
+        icon="Plus"
+        iconPosition="left"
+        variant="gradient"
+        width={120}
+        height={30}
+        onClick={handleCreateSourcecode}
+        disabled={loading}
+      >
+        소스코드 생성
+      </Button>
     </MySearchFilter>
   );
 }
 
-const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex: 1;
-`;
-
-const Left = styled.div`
-  padding-left: 10px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-
-  & .ant-checkbox-label {
-    padding-left: 0;
-    margin-left: 4px !important;
-    line-height: 16px;
-  }
-`;
-
-const Right = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 6px;
+const SwitchLabel = styled.div`
+  padding-left: 0;
+  line-height: 16px;
+  font-weight: 400;
+  font-size: 12px;
+  color: #333;
 `;
