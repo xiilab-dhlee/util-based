@@ -5,6 +5,7 @@ import { Icon } from "xiilab-ui";
 
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
+import { MySpinner } from "@/shared/components/spinner";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { isUserMode } from "@/shared/utils/router.util";
@@ -27,7 +28,7 @@ export function WorkloadDetailMain() {
   const searchParams = useSearchParams();
 
   // hooks는 항상 최상위에서 호출
-  const { data } = useGetWorkloadByMode({
+  const { data, isLoading } = useGetWorkloadByMode({
     workspaceId: String(searchParams?.get("workspaceId")),
     workloadId: String(id),
   });
@@ -37,6 +38,10 @@ export function WorkloadDetailMain() {
   const handleClickCloneWorkload = () => {
     publish(WORKLOAD_EVENTS.sendCreateWorkload, data);
   };
+
+  if (isLoading) {
+    return <MySpinner />;
+  }
 
   return (
     <>
