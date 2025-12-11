@@ -34,6 +34,10 @@ export function ClusterReportMain({ report }: ClusterReportMainProps) {
   // 커스텀 훅으로 토글 상태 관리 통합
   const { getToggleProps } = useSectionToggles(CLUSTER_REPORT_SECTIONS);
 
+  // 각 섹션별 토글 props를 한 번만 호출하여 변수에 저장
+  const nodeWorkloadToggle = getToggleProps("nodeWorkload");
+  const nodeResourceToggle = getToggleProps("nodeResource");
+
   const {
     resourceUsage,
     reportDateType,
@@ -75,7 +79,7 @@ export function ClusterReportMain({ report }: ClusterReportMainProps) {
             }
             data={nodeDistribution}
             showToggle={true}
-            {...getToggleProps("nodeWorkload")}
+            {...nodeWorkloadToggle}
           />
         </Section>
         <Section>
@@ -83,7 +87,7 @@ export function ClusterReportMain({ report }: ClusterReportMainProps) {
             title={<SectionTitle>3. 노드별 리소스 활용 정보</SectionTitle>}
             data={nodeResourceUtilization}
             showToggle={true}
-            {...getToggleProps("nodeResource")}
+            {...nodeResourceToggle}
           />
         </Section>
       </Body>
