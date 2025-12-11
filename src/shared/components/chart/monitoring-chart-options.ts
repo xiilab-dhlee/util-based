@@ -14,7 +14,7 @@ export interface ApexOptionsWithSelection extends ApexOptions {
       opacity: number;
     };
   };
-  locales?: unknown[];
+  locales?: ApexLocale[];
   defaultLocale?: string;
 }
 

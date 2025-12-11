@@ -38,27 +38,27 @@ const METRIC_MAP: Record<MonitoringMetricType, MetricInfo> = {
   "gpu-utilization": {
     text: "GPU 사용률",
     unit: "%",
-    colors: GPU_CHART_COLORS as readonly string[],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-memory": {
     text: "GPU 메모리",
     unit: "GB",
-    colors: GPU_CHART_COLORS as readonly string[],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-temperature": {
     text: "GPU 온도",
     unit: "°C",
-    colors: GPU_CHART_COLORS as readonly string[],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-fan-speed": {
     text: "팬 속도",
     unit: "%",
-    colors: GPU_CHART_COLORS as readonly string[],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-power-usage": {
     text: "전력 사용량",
     unit: "W",
-    colors: GPU_CHART_COLORS as readonly string[],
+    colors: GPU_CHART_COLORS,
   },
 
   // CPU 메트릭 (대표색 #376DFF 첫 번째 고정)

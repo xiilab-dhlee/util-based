@@ -122,6 +122,4 @@ const RequestProgress = styled(UsageProgress)`
     $customColor
       ? `background-color: ${$customColor}; opacity: 0.5;`
       : requestColorStyles}
-
-  opacity: 0.5;
 `;
