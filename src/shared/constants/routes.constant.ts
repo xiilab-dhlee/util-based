@@ -90,8 +90,9 @@ export const ROUTES = {
   // 볼륨 관리 (정적)
   ADMIN_VOLUME_MANAGEMENT: `${MODE.ADMIN}/volume-management`,
 
-  // 리포트 관리 (정적)
+  // 리포트 관리 (동적 함수)
   ADMIN_REPORT: `${MODE.ADMIN}/report`,
+  ADMIN_REPORT_DETAIL: (id: string) => `${MODE.ADMIN}/report/${id}`,
   ADMIN_REPORT_RESERVATION: `${MODE.ADMIN}/report-reservation`,
 
   // 설정 (정적)

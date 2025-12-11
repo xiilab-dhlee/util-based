@@ -14,8 +14,18 @@ export class CredentialService extends AxiosService {
     return this.getAxios().get(`${this.BASE_URL}`, { params });
   }
 
+  /** 크레덴셜 상세 조회 */
+  public getDetail(id: number) {
+    return this.getAxios().get(`${this.BASE_URL}/${id}`);
+  }
+
   /** 크레덴셜 생성 */
   public createCredential(payload: CreateCredentialPayload) {
     return this.getAxios().post(this.BASE_URL, payload);
+  }
+
+  /** 크레덴셜 삭제 */
+  public deleteCredential(id: number) {
+    return this.getAxios().delete(`${this.BASE_URL}/${id}`);
   }
 }

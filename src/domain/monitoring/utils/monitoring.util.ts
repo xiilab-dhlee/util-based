@@ -1,6 +1,22 @@
 import type { MonitoringMetricType } from "@/domain/monitoring/types/monitoring.type";
 
 /**
+ * GPU 차트 및 노드별 구분에 사용되는 색상 팔레트
+ * - 첫 번째 색상(#A353FF)은 GPU 대표 색상
+ * - 노드별로 순환하며 사용
+ */
+export const GPU_CHART_COLORS = [
+  "#A353FF", // GPU 대표 색상 (보라)
+  "#5398FF", // 파랑
+  "#2DC598", // 초록
+  "#FFD129", // 노랑
+  "#FF8629", // 주황
+  "#515E80", // 회색
+  "#FF8080", // 빨강
+  "#77B900", // 연두
+] as const;
+
+/**
  * 메트릭 정보 인터페이스
  * - text: 차트/카드 제목 등 메트릭명
  * - unit: Y축/tooltip에 사용되는 단위
@@ -10,7 +26,7 @@ import type { MonitoringMetricType } from "@/domain/monitoring/types/monitoring.
 interface MetricInfo {
   text: string;
   unit: string;
-  colors: string[];
+  colors: readonly string[];
   series?: string[];
 }
 
@@ -18,76 +34,31 @@ interface MetricInfo {
  * 모니터링 메트릭 타입과 정보를 한 번에 관리하는 매핑
  */
 const METRIC_MAP: Record<MonitoringMetricType, MetricInfo> = {
-  // GPU 메트릭 (대표색 #A353FF 첫 번째 고정)
+  // GPU 메트릭 (GPU_CHART_COLORS 사용)
   "gpu-utilization": {
     text: "GPU 사용률",
     unit: "%",
-    colors: [
-      "#A353FF",
-      "#5398FF",
-      "#2DC598",
-      "#FFD129",
-      "#FF8629",
-      "#515E80",
-      "#FF8080",
-      "#77B900",
-    ],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-memory": {
     text: "GPU 메모리",
     unit: "GB",
-    colors: [
-      "#A353FF",
-      "#5398FF",
-      "#2DC598",
-      "#FFD129",
-      "#FF8629",
-      "#515E80",
-      "#FF8080",
-      "#77B900",
-    ],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-temperature": {
     text: "GPU 온도",
     unit: "°C",
-    colors: [
-      "#A353FF",
-      "#5398FF",
-      "#2DC598",
-      "#FFD129",
-      "#FF8629",
-      "#515E80",
-      "#FF8080",
-      "#77B900",
-    ],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-fan-speed": {
     text: "팬 속도",
     unit: "%",
-    colors: [
-      "#A353FF",
-      "#5398FF",
-      "#2DC598",
-      "#FFD129",
-      "#FF8629",
-      "#515E80",
-      "#FF8080",
-      "#77B900",
-    ],
+    colors: GPU_CHART_COLORS,
   },
   "gpu-power-usage": {
     text: "전력 사용량",
     unit: "W",
-    colors: [
-      "#A353FF",
-      "#5398FF",
-      "#2DC598",
-      "#FFD129",
-      "#FF8629",
-      "#515E80",
-      "#FF8080",
-      "#77B900",
-    ],
+    colors: GPU_CHART_COLORS,
   },
 
   // CPU 메트릭 (대표색 #376DFF 첫 번째 고정)

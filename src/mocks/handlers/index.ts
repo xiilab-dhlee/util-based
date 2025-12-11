@@ -9,14 +9,17 @@ import { accountHandlers } from "@/mocks/handlers/account.handler";
 import { credentialHandlers } from "@/mocks/handlers/credential.handler";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { groupHandlers } from "@/mocks/handlers/group.handler";
+import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
 import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
 import { kubernetesMonitoringHandlers } from "@/mocks/handlers/kubernetes-monitoring.handler";
+import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { nodeHandlers } from "@/mocks/handlers/node.handler";
 import { notificationHandlers } from "@/mocks/handlers/notification.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
+import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
 import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
@@ -53,5 +56,8 @@ export const combinedHandlers = [
   ...revokeHistoryHandlers,
   ...storageSettingHandlers,
   ...systemMonitoringHandlers,
+  ...hpeHandlers,
+  ...licenseHandlers,
   ...smtpHandlers,
+  ...reportHandlers,
 ];

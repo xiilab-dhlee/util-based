@@ -20,13 +20,13 @@ const RESOURCE_MAP: Record<CoreResourceType, ResourceMeta> = {
     text: "MIG",
     unit: "개",
     icon: "Mig",
-    color: "#D77BFF",
+    color: "#A353FF",
   },
   MPS: {
     text: "MPS",
     unit: "개",
     icon: "Mps",
-    color: "#D77BFF",
+    color: "#A353FF",
   },
   CPU: {
     text: "CPU",

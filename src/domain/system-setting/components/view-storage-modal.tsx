@@ -50,6 +50,7 @@ export function ViewStorageModal() {
   const handleEdit = (detail: StorageSettingDetailType) => {
     // 상세 모달 닫고 수정 모달 열기
     setOpen(false);
+    setId(null);
     publish(SYSTEM_SETTING_EVENTS.openStorageEditModal, { data: detail });
   };
 
@@ -103,15 +104,8 @@ function ViewStorageModalContent({
       cancelButtonProps={{ disabled: isLoading }}
       centered
       showHeaderBorder
+      loading={isLoading}
     >
-      {isLoading && (
-        <ContentBox>
-          <LoadingBox>
-            <LoadingText>로딩 중...</LoadingText>
-          </LoadingBox>
-        </ContentBox>
-      )}
-
       {isError && (
         <DataErrorState
           title="스토리지 정보를 불러올 수 없습니다."
@@ -134,7 +128,7 @@ function ViewStorageModalContent({
             <Value>{data.ip}</Value>
           </InfoRow>
           <InfoRow>
-            <Label>스토리지 저장 PATH</Label>
+            <Label>스토리지 저장 Path</Label>
             <Value>{data.path}</Value>
           </InfoRow>
         </ContentBox>
@@ -177,17 +171,4 @@ const Value = styled(Typography.Text).attrs({
   flex: 1;
   word-break: break-all;
   white-space: normal;
-`;
-
-const LoadingBox = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 0;
-`;
-
-const LoadingText = styled(Typography.Text).attrs({
-  variant: "body-2-2",
-})`
-  color: #666;
 `;

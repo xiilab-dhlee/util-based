@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import type { CoreListResponse } from "@/shared/types/core.model";
+
 // ===== Response 스키마 (서버 → 프론트) =====
 
 /** 스토리지 설정 기본 응답 스키마 */
@@ -12,7 +14,7 @@ const baseStorageSettingSchema = z.object({
   storageType: z.string(),
   /** IP 주소 */
   ip: z.string(),
-  /** 스토리지 저장 PATH */
+  /** 스토리지 저장 Path */
   path: z.string(),
   /** 등록자 이름 */
   creatorName: z.string(),
@@ -44,8 +46,24 @@ export const storageSettingDetailSchema = baseStorageSettingSchema.pick({
 export const createStorageSettingRequestSchema = z.object({
   storageName: z.string().min(1, "스토리지 이름을 입력해 주세요.").max(100),
   storageType: z.string().min(1, "스토리지 타입을 선택해 주세요."),
-  ip: z.string().min(1, "IP 주소를 입력해 주세요."),
-  path: z.string().min(1, "스토리지 저장 PATH를 입력해 주세요."),
+  ip: z
+    .string()
+    .min(1, "IP 주소를 입력해 주세요.")
+    .refine(
+      (value) => {
+        const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+        if (!ipv4Regex.test(value)) return false;
+        const octets = value.split(".").map(Number);
+        return octets.every((octet) => octet >= 0 && octet <= 255);
+      },
+      {
+        message: "올바른 IP 주소 형식을 입력해 주세요.",
+      },
+    ),
+  path: z
+    .string()
+    .min(1, "스토리지 저장 PATH를 입력해 주세요.")
+    .regex(/^\//, "경로는 /로 시작해야 합니다."),
 });
 
 /** 스토리지 수정 요청 스키마 (현재 UI 기준: 이름만 수정) */
@@ -65,10 +83,8 @@ export type StorageSettingDetailType = z.infer<
 >;
 
 /** 스토리지 설정 목록 API 응답 타입 */
-export interface StorageSettingListResponse {
-  content: StorageSettingListType[];
-  totalSize: number;
-}
+export type StorageSettingListResponse =
+  CoreListResponse<StorageSettingListType>;
 
 /** 스토리지 설정 상세 API 응답 타입 */
 export type StorageSettingDetailResponse = StorageSettingDetailType;

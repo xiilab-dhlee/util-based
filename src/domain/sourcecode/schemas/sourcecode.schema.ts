@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { credentialListSchema } from "@/domain/credential/schemas/credential.schema";
+import { credentialListResponseSchema } from "@/domain/credential/schemas/credential.schema";
 
 // 소스코드 전체 스키마
 const baseSourcecodeSchema = z.object({
@@ -32,7 +32,7 @@ const baseSourcecodeSchema = z.object({
     }),
   ),
   /** 크레덴셜 */
-  credential: credentialListSchema,
+  credential: credentialListResponseSchema,
 });
 
 // 소스코드 목록용 스키마 (전체와 동일)

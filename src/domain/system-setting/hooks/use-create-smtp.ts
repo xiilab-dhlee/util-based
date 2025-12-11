@@ -1,14 +1,18 @@
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
 
 import { smtpKeys } from "@/domain/system-setting/constants/smtp.key";
-import type { CreateSmtpRequestPayload } from "@/domain/system-setting/schemas/smtp.schema";
+import type {
+  CreateSmtpRequestPayload,
+  SmtpResponse,
+} from "@/domain/system-setting/schemas/smtp.schema";
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
  * SMTP 설정 생성
  */
 export const useCreateSmtp = (): UseMutationResult<
-  unknown,
+  AxiosResponse<SmtpResponse>,
   Error,
   CreateSmtpRequestPayload,
   unknown

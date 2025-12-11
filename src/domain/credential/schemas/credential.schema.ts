@@ -2,7 +2,6 @@ import { z } from "zod";
 
 /**
  * 크레덴셜 기본 스키마
- * API에서 사용되는 모든 필드를 정의
  */
 const baseCredentialSchema = z.object({
   /** 크레덴셜 ID */
@@ -19,12 +18,18 @@ const baseCredentialSchema = z.object({
   creatorId: z.string().uuid(),
   /** 생성일 */
   creatorDate: z.string().datetime(),
+  /** 사용자 아이디 */
+  userId: z.string().min(1).max(100),
+  /** 토큰 */
+  token: z.string().optional(),
+  /** Private Registry URL (선택적) */
+  registryUrl: z.string().url().optional(),
 });
 
 /**
- * 크레덴셜 목록 스키마
+ * 크레덴셜 목록 Response 스키마
  */
-export const credentialListSchema = baseCredentialSchema.pick({
+export const credentialListResponseSchema = baseCredentialSchema.pick({
   id: true,
   name: true,
   description: true,
@@ -35,9 +40,35 @@ export const credentialListSchema = baseCredentialSchema.pick({
 });
 
 /**
- * 크레덴셜 목록 타입
+ * 크레덴셜 상세 Response 스키마
+ * 보안상 토큰은 제외
+ */
+export const credentialDetailResponseSchema = baseCredentialSchema.omit({
+  token: true,
+});
+
+/**
+ * 크레덴셜 생성 Request 스키마
+ */
+export const credentialCreateRequestSchema = baseCredentialSchema.pick({
+  name: true,
+  description: true,
+  type: true,
+  userId: true,
+  token: true,
+  registryUrl: true,
+});
+
+/**
+ * 크레덴셜 타입
  */
 type Credential = z.infer<typeof baseCredentialSchema>;
-export type CredentialListType = z.infer<typeof credentialListSchema>;
+export type CredentialListType = z.infer<typeof credentialListResponseSchema>;
+export type CredentialDetailType = z.infer<
+  typeof credentialDetailResponseSchema
+>;
+export type CredentialCreateRequest = z.infer<
+  typeof credentialCreateRequestSchema
+>;
 export type CredentialIdType = Credential["id"];
 export type CredentialType = Credential["type"];

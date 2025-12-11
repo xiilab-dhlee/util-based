@@ -113,7 +113,7 @@ export function useSmtpForm(): UseSmtpFormReturn {
     }
 
     setErrors({});
-    return formStateToPayload(formState);
+    return formStateToPayload(result.data);
   };
 
   const reset = () => {

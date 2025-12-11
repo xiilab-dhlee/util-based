@@ -236,7 +236,7 @@ export function CreateSourcecodeModal() {
             <Input
               value={mountPath}
               onChange={(e) => setMountPath(e.target.value)}
-              placeholder="Mount path를 입력해 주세요. 예) /root/volume/123"
+              placeholder="Mount Path를 입력해 주세요. 예) /root/volume/123"
               width="100%"
             />
           </StyledFormItem>

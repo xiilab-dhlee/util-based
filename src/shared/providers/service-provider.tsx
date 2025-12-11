@@ -15,14 +15,18 @@ import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { NotificationService } from "@/domain/notification/api/notification.service";
+import { ReportService } from "@/domain/report/api/report.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
 import { RevokeHistoryService } from "@/domain/revoke-history/api/revoke-history.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
+import { HpeService } from "@/domain/system-setting/api/hpe.service";
+import { LicenseService } from "@/domain/system-setting/api/license.service";
 import { SmtpService } from "@/domain/system-setting/api/smtp.service";
 import { StorageSettingService } from "@/domain/system-setting/api/storage-setting.service";
+import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
 import { VolumeService } from "@/domain/volume/api/volume.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
@@ -47,6 +51,7 @@ interface ServiceContextType {
   redfishBmcService: RedfishBmcService;
   redfishService: RedfishService;
   requestImageService: RequestImageService;
+  reportService: ReportService;
   internalregistryService: InternalRegistryService;
   internalregistryImageService: InternalRegistryImageService;
   adminInternalRegistryImageService: AdminInternalRegistryImageService;
@@ -54,8 +59,11 @@ interface ServiceContextType {
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
   revokeHistoryService: RevokeHistoryService;
+  hpeService: HpeService;
+  licenseService: LicenseService;
   smtpService: SmtpService;
   storageSettingService: StorageSettingService;
+  workspaceResourceSettingService: WorkspaceResourceSettingService;
 }
 
 // 서비스 컨텍스트 생성
@@ -92,6 +100,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     redfishBmcService: new RedfishBmcService(),
     redfishService: new RedfishService(),
     requestImageService: new RequestImageService(),
+    reportService: new ReportService(),
     internalregistryService: new InternalRegistryService(),
     internalregistryImageService: new InternalRegistryImageService(),
     adminInternalRegistryImageService: new AdminInternalRegistryImageService(),
@@ -99,8 +108,11 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),
     revokeHistoryService: new RevokeHistoryService(),
+    hpeService: new HpeService(),
+    licenseService: new LicenseService(),
     smtpService: new SmtpService(),
     storageSettingService: new StorageSettingService(),
+    workspaceResourceSettingService: new WorkspaceResourceSettingService(),
   };
 
   return (

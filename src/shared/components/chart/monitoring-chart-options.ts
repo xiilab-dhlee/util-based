@@ -1,6 +1,6 @@
 import type { ApexOptions } from "apexcharts";
 
-interface ApexOptionsWithSelection extends ApexOptions {
+export interface ApexOptionsWithSelection extends ApexOptions {
   selection?: {
     enabled: boolean;
     type: "x";
@@ -14,11 +14,15 @@ interface ApexOptionsWithSelection extends ApexOptions {
       opacity: number;
     };
   };
+  /** ApexCharts locale 설정 배열 (런타임에서 지원되지만 타입 정의에 없음) */
+  locales?: unknown[];
+  /** ApexCharts 기본 locale 설정 (런타임에서 지원되지만 타입 정의에 없음) */
+  defaultLocale?: string;
 }
 
 interface MonitoringChartOptionsParams {
   unit: string;
-  colors?: string[];
+  colors?: string[] | readonly string[];
   chartId: string;
   chartType: "line" | "bar" | "area";
   onChartReady?: (chart: unknown) => void;
@@ -32,7 +36,7 @@ export function buildMonitoringChartOptions({
   chartType,
   onChartReady,
   onSelectRange,
-}: MonitoringChartOptionsParams): ApexOptions {
+}: MonitoringChartOptionsParams): ApexOptionsWithSelection {
   const shouldEnableSelection = typeof onSelectRange === "function";
 
   const buildRangeHandler =
@@ -121,7 +125,7 @@ export function buildMonitoringChartOptions({
         formatter: (value: number) => `${value}${unit}`,
       },
     },
-    colors,
+    colors: colors ? [...colors] : undefined,
     grid: {
       strokeDashArray: 2,
     },

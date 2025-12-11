@@ -1,12 +1,15 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import { Icon } from "xiilab-ui";
 
-import { CreateReportModal } from "@/domain/report/components/create-report-modal";
+import { CreateReportModal } from "@/domain/report/components/modals";
+import { openCreateReportModalAtom } from "@/domain/report/state/report.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   ListPageAside,
@@ -52,18 +55,31 @@ const GUIDES: CoreGuide[] = [
 ];
 
 export default function AdminReportLayout({ children }: PropsWithChildren) {
+  const params = useParams<{ id?: string }>();
+  const { onOpen: onOpenCreateReportModal } = useGlobalModal(
+    openCreateReportModalAtom,
+  );
+
+  const isDetailPage = params?.id !== undefined;
+  const pageKey = isDetailPage ? "admin.report.detail" : "admin.report";
+  const pageParams = isDetailPage && params?.id ? { id: params.id } : undefined;
+
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 */}
-      <PageHeader pageKey="admin.report" description="Report" />
+      <PageHeader
+        pageKey={pageKey}
+        pageParams={pageParams}
+        description="Report"
+      />
 
       {/* 리포트 페이지 메인 영역 */}
       <ListPageMain>
         {/* 리포트 페이지 - 왼쪽 영역 (가이드 및 정보 카드) */}
         <ListPageAside $width={400}>
           <PageGuide
-            title="리포트 예약"
-            icon="ReportReservationsolid"
+            title="리포트 생성"
+            icon="Information"
             description={[
               "발송 주기를 설정하여 리포트를 예약할 수 있습니다.",
               "리포트 받는 사람을 설정하여 관리할 수 있습니다.",
@@ -72,10 +88,8 @@ export default function AdminReportLayout({ children }: PropsWithChildren) {
             guides={GUIDES}
             buttonOptions={{
               enabled: true,
-              text: "리포트 예약 바로가기",
-              onClick: () => {
-                // router.push("/admin/report/reservation");
-              },
+              text: "리포트 생성하기",
+              onClick: onOpenCreateReportModal,
             }}
           />
           {/* 가이드 이미지 카드 */}
