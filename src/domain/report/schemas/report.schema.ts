@@ -289,3 +289,7 @@ export type CpuUsageWarning = z.infer<typeof cpuUsageWarningSchema>;
 export type MemoryUsageWarning = z.infer<typeof memoryUsageWarningSchema>;
 export type DiskUsageWarning = z.infer<typeof diskUsageWarningSchema>;
 export type ReportDetailResponse = z.infer<typeof reportDetailResponseSchema>;
+
+// 리포트 타입 추출
+export type ReportType = ReportDetailResponse["reportType"];
+export type ReportDateType = ReportDetailResponse["reportDateType"];
