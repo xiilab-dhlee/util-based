@@ -30,8 +30,8 @@ export function WorkloadDetailPageAside() {
       {/* 이벤트 이력 */}
       <AsideFillCard title="이벤트 이력">
         <CardWrapper>
-          {data?.events.map((item: WorkloadEventType, index: number) => (
-            <WorkloadEventCard key={item.id} index={index} {...item} />
+          {data?.events.map((item: WorkloadEventType) => (
+            <WorkloadEventCard key={item.id} {...item} />
           ))}
         </CardWrapper>
       </AsideFillCard>

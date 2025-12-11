@@ -13,7 +13,6 @@ import {
 } from "@/styles/layers/like-card-layers.styled";
 
 interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
-  index: number;
   onDelete?: () => void;
 }
 
@@ -21,7 +20,6 @@ interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
  * 소스 코드 카드 컴포넌트
  */
 export function WorkloadSourcecodeCard({
-  index,
   status,
   name,
   path,
@@ -32,7 +30,7 @@ export function WorkloadSourcecodeCard({
   const { text, tag } = getSourcecodeTypeInfo(type);
 
   return (
-    <CardWrapper data-testid={WORKLOAD_SELECTOR.sourcecodeCard(index)}>
+    <CardWrapper data-testid={WORKLOAD_SELECTOR.SOURCECODE_CARD}>
       <Card
         contentVariant="compact"
         title={name}
@@ -59,7 +57,7 @@ export function WorkloadSourcecodeCard({
             <LikeCompactCardKey>Git URL :</LikeCompactCardKey>
             <LikeCompactCardValue
               className="truncate"
-              data-testid={WORKLOAD_SELECTOR.sourcecodeUrl(url)}
+              data-testid={WORKLOAD_SELECTOR.SOURCECODE_URL}
             >
               {url}
             </LikeCompactCardValue>
@@ -68,7 +66,7 @@ export function WorkloadSourcecodeCard({
             <LikeCompactCardKey>경로 :</LikeCompactCardKey>
             <LikeCompactCardValue
               className="truncate"
-              data-testid={WORKLOAD_SELECTOR.sourcecodePath(path)}
+              data-testid={WORKLOAD_SELECTOR.SOURCECODE_PATH}
             >
               {path}
             </LikeCompactCardValue>

@@ -8,11 +8,7 @@ export const workloadPortColumn: ResponsiveColumnType[] = [
     dataIndex: "portName",
     align: "left",
     render: (portName: string) => {
-      return (
-        <span data-testid={WORKLOAD_SELECTOR.portName(portName)}>
-          {portName}
-        </span>
-      );
+      return <span data-testid={WORKLOAD_SELECTOR.PORT_NAME}>{portName}</span>;
     },
   },
   {
@@ -20,7 +16,7 @@ export const workloadPortColumn: ResponsiveColumnType[] = [
     dataIndex: "port",
     align: "left",
     render: (port: string) => {
-      return <span data-testid={WORKLOAD_SELECTOR.port(port)}>{port}</span>;
+      return <span data-testid={WORKLOAD_SELECTOR.PORT_VALUE}>{port}</span>;
     },
   },
   {
@@ -28,7 +24,7 @@ export const workloadPortColumn: ResponsiveColumnType[] = [
     dataIndex: "url",
     align: "left",
     render: (url: string) => {
-      return <span data-testid={WORKLOAD_SELECTOR.portUrl(url)}>{url}</span>;
+      return <span data-testid={WORKLOAD_SELECTOR.PORT_URL}>{url}</span>;
     },
   },
 ];

@@ -14,12 +14,10 @@ import {
 import { EventStatusText } from "@/shared/components/text/event-status-text";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
-interface WorkloadEventCardProps extends Omit<WorkloadEventType, "id"> {
-  index: number;
-}
+type WorkloadEventCardProps = Omit<WorkloadEventType, "id">;
+
 // 이벤트 이력 카드 컴포넌트
 export function WorkloadEventCard({
-  index,
   name,
   elapsedTime,
   from,
@@ -27,7 +25,7 @@ export function WorkloadEventCard({
   status,
 }: WorkloadEventCardProps) {
   return (
-    <CardWrapper data-testid={WORKLOAD_SELECTOR.eventCard(index)}>
+    <CardWrapper data-testid={WORKLOAD_SELECTOR.EVENT_CARD}>
       <StyledCard
         contentVariant="compact"
         actionElement={<EventStatusText status={status} />}
@@ -37,14 +35,14 @@ export function WorkloadEventCard({
           <CompactCardKeyValueRow>
             <Key>경과 시간</Key>
             <CompactCardValue
-              data-testid={WORKLOAD_SELECTOR.eventElapsedTime(elapsedTime)}
+              data-testid={WORKLOAD_SELECTOR.EVENT_ELAPSED_TIME}
             >
               {elapsedTime ? format(elapsedTime, "yyyy.MM.dd HH:mm:ss") : "-"}
             </CompactCardValue>
           </CompactCardKeyValueRow>
           <CompactCardKeyValueRow>
             <Key>From</Key>
-            <CompactCardValue data-testid={WORKLOAD_SELECTOR.eventFrom(from)}>
+            <CompactCardValue data-testid={WORKLOAD_SELECTOR.EVENT_FROM}>
               {from}
             </CompactCardValue>
           </CompactCardKeyValueRow>
@@ -53,7 +51,7 @@ export function WorkloadEventCard({
           <CompactCardCollapseRow
             title="메 세 지"
             description={message}
-            data-testid={WORKLOAD_SELECTOR.eventMessage(message)}
+            data-testid={WORKLOAD_SELECTOR.EVENT_MESSAGE}
           />
         </Footer>
       </StyledCard>

@@ -44,14 +44,14 @@ export const WORKLOAD_SELECTOR = {
   /** 워크로드 상세 페이지 헤더 */
   PAGE_HEADER_DETAIL: "user.workload.detail",
 
-  // 목록 테이블 데이터 (동적)
-  /** 워크로드 이름 링크 - workload-name-{id} */
-  name: (id: string | number) => `workload-name-${id}`,
-  /** 잡 타입 텍스트 - workload-job-type-{id} */
-  jobType: (id: string | number) => `workload-job-type-${id}`,
-  /** 경과 시간 - workload-elapsed-time-{id} */
-  elapsedTime: (id: string | number) => `workload-elapsed-time-${id}`,
-  /** 상태 라벨 - workload-status-{status} */
+  // 목록 테이블 데이터
+  /** 워크로드 이름 링크 */
+  NAME: "workload-name",
+  /** 잡 타입 텍스트 */
+  JOB_TYPE: "workload-job-type",
+  /** 경과 시간 */
+  ELAPSED_TIME: "workload-elapsed-time",
+  /** 상태 라벨 - workload-status-{status} (상태별 필터링용) */
   status: (status: string) => `workload-status-${status}`,
 
   // 액션 버튼
@@ -75,10 +75,6 @@ export const WORKLOAD_SELECTOR = {
   FILTER_JOB_TYPE: "workload-filter-jobType",
   /** 상태 필터 */
   FILTER_STATUS: "workload-filter-status",
-
-  // 검색 폼
-  /** 비활성화 워크로드 검색 폼 */
-  DISABLED_LIST_SEARCH_FORM: "workload-disabled-list-search-form",
 
   // 로그 페이지
   /** 로그 페이지 컨테이너 */
@@ -121,28 +117,28 @@ export const WORKLOAD_SELECTOR = {
   DETAIL_DELETE_BUTTON: "workload-detail-delete-button",
 
   // 상세 페이지 - 이벤트 이력
-  /** 이벤트 카드 prefix - workload-event-card-{index} */
-  eventCard: (index: number) => `workload-event-card-${index}`,
-  /** 이벤트 상태 - workload-event-status-{status} */
+  /** 이벤트 카드 */
+  EVENT_CARD: "workload-event-card",
+  /** 이벤트 상태 - workload-event-status-{status} (상태별 필터링용) */
   eventStatus: (status: string) => `workload-event-status-${status}`,
   /** 이벤트 경과 시간 */
-  eventElapsedTime: (elapsedTime: string) =>
-    `workload-event-elapsed-time-${elapsedTime}`,
+  EVENT_ELAPSED_TIME: "workload-event-elapsed-time",
   /** 이벤트 From */
-  eventFrom: (from: string) => `workload-event-from-${from}`,
+  EVENT_FROM: "workload-event-from",
   /** 이벤트 메시지 */
-  eventMessage: (message: string) => `workload-event-message-${message}`,
+  EVENT_MESSAGE: "workload-event-message",
+
   // 상세 페이지 - 소스코드
-  /** 소스코드 카드 prefix - workload-source-code-card-{index} */
-  sourcecodeCard: (index: number) => `workload-source-code-card-${index}`,
-  /** 소스코드 상태 - workload-source-code-status-{status} */
+  /** 소스코드 카드 */
+  SOURCECODE_CARD: "workload-source-code-card",
+  /** 소스코드 상태 - workload-source-code-status-{status} (상태별 필터링용) */
   sourcecodeStatus: (status: string) => `workload-source-code-status-${status}`,
   /** 소스코드 기본 경로 */
-  sourcecodePath: (path: string) => `workload-source-code-path-${path}`,
-  /** 소스코드 타입 */
+  SOURCECODE_PATH: "workload-source-code-path",
+  /** 소스코드 타입 - workload-source-code-type-{type} (타입별 필터링용) */
   sourcecodeType: (type: string) => `workload-source-code-type-${type}`,
   /** 소스코드 Git URL */
-  sourcecodeUrl: (url: string) => `workload-source-code-url-${url}`,
+  SOURCECODE_URL: "workload-source-code-url",
 
   // 상세 페이지 - 상세정보 탭 내용
   /** 잡 타입 명 */
@@ -166,18 +162,16 @@ export const WORKLOAD_SELECTOR = {
   DETAIL_EXEC_PATH: "workload-detail-exec-path",
   /** 실행 명령어 */
   DETAIL_EXEC_COMMAND: "workload-detail-exec-command",
-  /** 환경변수 키 - workload-env-key-{key} */
-  envKey: (key: string) => `workload-env-key-${key}`,
-  /** 환경변수 값 - workload-env-value-{value} */
-  envValue: (value: string) => `workload-env-value-${value}`,
+  /** 환경변수 키 */
+  ENV_KEY: "workload-env-key",
+  /** 환경변수 값 */
+  ENV_VALUE: "workload-env-value",
   /** 포트 이름 */
-  portName: (name: string) => `workload-port-name-${name}`,
-  /** 포트 */
-  port: (number: string) => `workload-port-value-${number}`,
-  /** 서비스 포트 */
-  servicePort: (number: string) => `workload-service-port-${number}`,
-  /** 접속 */
-  portUrl: (url: string) => `workload-port-url-${url}`,
+  PORT_NAME: "workload-port-name",
+  /** 포트 번호 */
+  PORT_VALUE: "workload-port-value",
+  /** 접속 URL */
+  PORT_URL: "workload-port-url",
   /** 선택한 GPU */
   DETAIL_GPU_TYPE: "workload-detail-gpu-type",
   DETAIL_GPU_NAME: "workload-detail-gpu-name",

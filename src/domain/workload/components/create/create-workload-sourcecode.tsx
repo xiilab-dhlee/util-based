@@ -176,10 +176,9 @@ export function CreateWorkloadSourcecode() {
 
         {!collapsed && (
           <SourceCodeCardsContainer>
-            {sourcecodes.map((sourcecode, index) => (
+            {sourcecodes.map((sourcecode) => (
               <WorkloadSourcecodeCard
                 key={sourcecode.id}
-                index={index}
                 {...sourcecode}
                 onDelete={() => handleDeleteSourcecode(sourcecode.id)}
               />

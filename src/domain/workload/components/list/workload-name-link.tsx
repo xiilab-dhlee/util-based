@@ -75,10 +75,7 @@ export function WorkloadNameLink({
           <span className="sr-only">리소스 회수된 상태</span>
         </IconWrapper>
       )}
-      <Title
-        className="truncate"
-        data-testid={WORKLOAD_SELECTOR.name(workloadId)}
-      >
+      <Title className="truncate" data-testid={WORKLOAD_SELECTOR.NAME}>
         {workloadName}
       </Title>
     </ColumnLink>

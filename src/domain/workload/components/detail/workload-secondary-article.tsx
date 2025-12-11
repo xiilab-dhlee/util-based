@@ -245,8 +245,8 @@ export function WorkloadSecondaryArticle() {
         <KeyValueContainer className="connect">
           <RightKey>소스코드</RightKey>
           <Value>
-            {data?.sourcecodes.map((v, index) => (
-              <WorkloadSourcecodeCard key={v.id} index={index} {...v} />
+            {data?.sourcecodes.map((v) => (
+              <WorkloadSourcecodeCard key={v.id} {...v} />
             ))}
           </Value>
         </KeyValueContainer>

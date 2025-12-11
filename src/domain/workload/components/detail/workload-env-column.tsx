@@ -8,9 +8,7 @@ export const workloadEnvColumn: ResponsiveColumnType[] = [
     dataIndex: "envKey",
     align: "left",
     render: (envKey: string) => {
-      return (
-        <span data-testid={WORKLOAD_SELECTOR.envKey(envKey)}>{envKey}</span>
-      );
+      return <span data-testid={WORKLOAD_SELECTOR.ENV_KEY}>{envKey}</span>;
     },
   },
 
@@ -19,11 +17,7 @@ export const workloadEnvColumn: ResponsiveColumnType[] = [
     dataIndex: "envValue",
     align: "left",
     render: (envValue: string) => {
-      return (
-        <span data-testid={WORKLOAD_SELECTOR.envValue(envValue)}>
-          {envValue}
-        </span>
-      );
+      return <span data-testid={WORKLOAD_SELECTOR.ENV_VALUE}>{envValue}</span>;
     },
   },
 ];
