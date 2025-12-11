@@ -52,7 +52,7 @@ Feature: 워크로드 목록 페이지 진입
 
   @TESTUC-34 @regression
   Scenario: 실행중 워크로드 액션 버튼 활성화 상태 검증
-    Given 목록에 실행중인 워크로드가 있다
+    Given 목록에 상태가 실행중인 워크로드가 있다
     Then 워크로드 행의 로그 버튼이 활성화되어 있다
     And 워크로드 행의 웹터미널 버튼이 활성화되어 있다
     And 워크로드 행의 모니터링 버튼이 활성화되어 있다
@@ -60,7 +60,7 @@ Feature: 워크로드 목록 페이지 진입
 
   @TESTUC-34 @regression
   Scenario: 대기중 워크로드 액션 버튼 활성화 상태 검증
-    Given 목록에 대기중인 워크로드가 있다
+    Given 목록에 상태가 대기중인 워크로드가 있다
     Then 워크로드 행의 로그 버튼이 비활성화되어 있다
     And 워크로드 행의 웹터미널 버튼이 비활성화되어 있다
     And 워크로드 행의 모니터링 버튼이 비활성화되어 있다
@@ -72,7 +72,7 @@ Feature: 워크로드 목록 페이지 진입
 
   @TESTUC-10 @regression
   Scenario: 활성화 워크로드 로그 조회
-    Given 목록에 실행중인 워크로드가 있다
+    Given 목록에 상태가 실행중인 워크로드가 있다
     And 워크로드 행의 로그 버튼이 활성화되어 있다
     When 워크로드 행의 로그 버튼을 클릭하여 로그 페이지로 이동한다
     Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
@@ -87,7 +87,7 @@ Feature: 워크로드 목록 페이지 진입
 
   @TESTUC-40 @regression
   Scenario: 활성화 워크로드 웹터미널 조회
-    Given 목록에 실행중인 워크로드가 있다
+    Given 목록에 상태가 실행중인 워크로드가 있다
     And 워크로드 행의 웹터미널 버튼이 활성화되어 있다
     When 워크로드 행의 웹터미널 버튼을 클릭하여 웹터미널 페이지로 이동한다
     Then URL이 "/user/workload/[id]/terminal?workspaceId="를 포함한다
@@ -102,7 +102,7 @@ Feature: 워크로드 목록 페이지 진입
 
   @TESTUC-56 @regression
   Scenario: 활성화 워크로드 모니터링 조회
-    Given 목록에 실행중인 워크로드가 있다
+    Given 목록에 상태가 실행중인 워크로드가 있다
     And 워크로드 행의 모니터링 버튼이 활성화되어 있다
     When 워크로드 행의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다
     Then URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다

@@ -95,7 +95,7 @@ const STATUS_MAP: Record<string, string> = {
 };
 
 Given(
-  /^목록에 (실행중|대기중|종료된?|에러)인? 워크로드가 있다$/,
+  /^목록에 상태가 (실행중|대기중|종료?|에러)인? 워크로드가 있다$/,
   async ({ page, workloadContext, $testInfo }, statusName: string) => {
     const statusValue = STATUS_MAP[statusName];
     const statusCell = page

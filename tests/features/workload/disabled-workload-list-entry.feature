@@ -50,7 +50,7 @@ Feature: 비활성화 워크로드 목록 페이지 진입
 
   @TESTUC-32 @regression
   Scenario: 비활성화 워크로드 액션 버튼 활성화 상태 검증
-    Given 목록에 종료된 워크로드가 있다
+    Given 목록에 상태가 종료인 워크로드가 있다
     Then 워크로드 행의 로그 버튼이 활성화되어 있다
     And 워크로드 행의 모니터링 버튼이 활성화되어 있다
     And 워크로드 행의 삭제 버튼이 활성화되어 있다
@@ -62,7 +62,7 @@ Feature: 비활성화 워크로드 목록 페이지 진입
 
   @TESTUC-36 @regression 
   Scenario: 비활성화 워크로드 로그 조회
-    Given 목록에 종료된 워크로드가 있다
+    Given 목록에 상태가 종료인 워크로드가 있다
     And 워크로드 행의 로그 버튼이 활성화되어 있다
     When 워크로드 행의 로그 버튼을 클릭하여 로그 페이지로 이동한다
     Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
@@ -77,7 +77,7 @@ Feature: 비활성화 워크로드 목록 페이지 진입
 
   @TESTUC-57 @regression 
   Scenario: 비활성화 워크로드 모니터링 조회
-    Given 목록에 종료된 워크로드가 있다
+    Given 목록에 상태가 종료인 워크로드가 있다
     And 워크로드 행의 모니터링 버튼이 활성화되어 있다
     When 워크로드 행의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다
     Then URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다
