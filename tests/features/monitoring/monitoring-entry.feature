@@ -1,11 +1,11 @@
-@TESTUC-5 @authenticated-user
 Feature: 사용자 모니터링 페이지 진입
   As a 사용자,
   I want to 메인(모니터링) 페이지에 진입하면
   So that 선택된 워크스페이스 기준으로 모니터링 화면을 바로 조회할 수 있다
 
   Background:
-    When 사용자가 모니터링 페이지로 진입한다
+    Given 사용자가 로그인되어 있다
+    And 모니터링 페이지에 있다
     And 워크스페이스가 선택되어 있다
 
   @smoke

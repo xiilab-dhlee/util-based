@@ -67,12 +67,7 @@ After(async ({ page, $testInfo }) => {
 // 인증 Hooks
 // ============================================
 
-Before({ tags: "@authenticated-user" }, async ({ page }) => {
-  // 1. 모든 API 모킹 설정 (페이지 이동 전에 먼저 설정)
-  await setupAllMocks(page);
-  // 2. 인증 수행
-  await authenticate(page, "user");
-});
+// 사용자 인증은 Given 스텝으로 처리 (common.steps.ts: "사용자가 로그인되어 있다")
 
 Before({ tags: "@authenticated-admin" }, async ({ page }) => {
   // 1. 모든 API 모킹 설정 (페이지 이동 전에 먼저 설정)

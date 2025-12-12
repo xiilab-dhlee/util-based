@@ -7,21 +7,15 @@ import {
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 
-const { When, Then } = createBdd(test);
+const { Then } = createBdd(test);
 
 /**
  * 사용자 모니터링 페이지 Step Definitions
  */
 
 // ============================================
-// 페이지 진입 Steps
+// 페이지 표시 확인 Steps
 // ============================================
-
-When("사용자가 모니터링 페이지로 진입한다", async ({ page }) => {
-  // 모킹은 인증 Hook에서 설정됨
-  await page.goto("/user/monitoring");
-  await page.waitForLoadState("networkidle");
-});
 
 Then("모니터링 페이지가 표시된다", async ({ page }) => {
   const pageHeader = page.locator(testId(USER_MONITORING_SELECTOR.PAGE_HEADER));

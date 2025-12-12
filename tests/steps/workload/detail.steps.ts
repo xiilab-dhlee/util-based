@@ -7,24 +7,16 @@ import {
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
+import { DETAIL_BUTTON_MAP, STATUS_MAP } from "../../support/workload.helper";
 
 /**
  * 워크로드 상세 페이지 Step Definitions
  */
-const { When, Then, Given } = createBdd(test);
+const { Then, Given } = createBdd(test);
 
 // ============================================
-// 상세 페이지 진입 Steps
+// 페이지 표시 확인 Steps
 // ============================================
-
-When(
-  "사용자가 워크로드 상세 페이지로 진입한다",
-  async ({ page, workloadId, workspaceId }) => {
-    // 모킹은 인증 Hook에서 설정됨
-    await page.goto(`/user/workload/${workloadId}?workspaceId=${workspaceId}`);
-    await page.waitForLoadState("networkidle");
-  },
-);
 
 Then("워크로드 상세 페이지가 표시된다", async ({ page }) => {
   const pageHeader = page.locator(testId(WORKLOAD_SELECTOR.PAGE_HEADER_DETAIL));
@@ -60,13 +52,6 @@ Then("워크로드 설명이 표시된다", async ({ page }) => {
   );
   await expect(description).toBeVisible();
 });
-
-const DETAIL_BUTTON_MAP: Record<string, string> = {
-  수정: WORKLOAD_SELECTOR.DETAIL_EDIT_BUTTON,
-  종료: WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON,
-  재시작: WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON,
-  삭제: WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON,
-};
 
 Then(
   "워크로드 {word} 버튼이 표시된다",
@@ -409,13 +394,6 @@ Then("리소스 정보가 표시된다", async ({ page, assertLogger }) => {
 // 상태별 검증 Steps
 // ============================================
 
-const STATUS_MAP: Record<string, string> = {
-  실행중: "running",
-  대기중: "pending",
-  종료: "completed",
-  에러: "failed",
-};
-
 Given(
   "워크로드 상태가 {string}이다",
   async ({ page, $testInfo }, status: string) => {
@@ -431,6 +409,37 @@ Given(
         true,
         `현재 워크로드 상태가 "${status}"이(가) 아니어서 시나리오를 스킵합니다 (현재: ${currentStatus})`,
       );
+    }
+  },
+);
+
+// 상태별 탭 활성화 규칙
+const TAB_STATE_BY_STATUS: Record<string, { disabled: string[] }> = {
+  대기중: {
+    disabled: ["로그", "웹터미널", "모니터링", "파일 목록"],
+  },
+  실행중: {
+    disabled: [],
+  },
+  종료: {
+    disabled: ["파일 목록"],
+  },
+};
+
+Then(
+  "{string} 상태의 탭 활성화 상태가 올바르다",
+  async ({ page, $testInfo }, status: string) => {
+    const tabRule = TAB_STATE_BY_STATUS[status];
+    if (!tabRule) {
+      return $testInfo.skip(true, `규칙이 없는 상태: ${status}`);
+    }
+
+    // 비활성화된 탭 검증
+    for (const tabName of tabRule.disabled) {
+      const disabledTab = page.locator(
+        `.tabs-nav .tab-item.disabled .tab-label:has-text("${tabName}")`,
+      );
+      await expect(disabledTab).toBeVisible({ timeout: 10000 });
     }
   },
 );

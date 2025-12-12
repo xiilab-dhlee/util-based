@@ -1,10 +1,5 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
-
-import {
-  testId,
-  WORKLOAD_SELECTOR,
-} from "@/shared/constants/selector.constant";
 
 // ============================================================================
 // Constants
@@ -30,17 +25,31 @@ export type AssertLogger = {
   assertLocatorText: (label: string, locator: Locator) => Promise<void>;
 };
 
-export type WorkloadContext = {
-  currentRow: Locator | null;
+/**
+ * 시나리오 간 상태 공유가 필요한 경우 사용하는 컨텍스트
+ * 주의: Step 파라미터로 전달 가능한 값은 context 대신 파라미터 사용 권장
+ */
+export type PageContext = {
+  /** 워크로드 목록: 현재 선택된 행 */
+  workloadList: {
+    currentRow: Locator | null;
+  };
+};
+
+export type PageContextActions = {
+  /** 워크로드 목록: 현재 선택된 행 설정 */
   setCurrentRow: (row: Locator | null) => void;
+  /** 현재 선택된 행 반환 (없으면 에러) */
+  assertCurrentRow: () => Locator;
+  /** 컨텍스트 초기화 */
+  reset: () => void;
 };
 
 type TestContextFixtures = {
-  workloadContext: WorkloadContext;
+  pageContext: PageContext & PageContextActions;
   workloadId: string;
   workspaceId: string;
   testMode: TestMode;
-  goToWorkloadDetail: (page: Page) => Promise<void>;
   assertLogger: AssertLogger;
 };
 
@@ -97,25 +106,12 @@ function createAssertLogger(): AssertLogger {
   };
 }
 
-async function getWorkloadIdFromList(page: Page): Promise<string> {
-  await page.goto("/user/workload");
-  await page.waitForLoadState("networkidle");
-
-  const firstWorkloadName = page
-    .locator(testId(WORKLOAD_SELECTOR.NAME))
-    .first();
-  // Title 요소의 부모 a 태그에서 href 추출
-  const href = await firstWorkloadName
-    .locator("xpath=ancestor::a")
-    .getAttribute("href");
-
-  if (!href) {
-    throw new Error("워크로드를 찾을 수 없습니다. 목록이 비어있습니다.");
-  }
-
-  // URL에서 워크로드 ID 추출: /user/workload/{id}?workspaceId=...
-  const match = href.match(/\/workload\/([^?]+)/);
-  return match?.[1] ?? "";
+function createInitialPageContext(): PageContext {
+  return {
+    workloadList: {
+      currentRow: null,
+    },
+  };
 }
 
 // ============================================================================
@@ -130,21 +126,37 @@ async function getWorkloadIdFromList(page: Page): Promise<string> {
  * import { test } from "../fixtures";
  *
  * const { Given, When, Then } = createBdd(test);
+ *
+ * // 워크로드 목록에서 현재 행 설정
+ * Given("목록에서 워크로드를 선택한다", async ({ pageContext }) => {
+ *   pageContext.setCurrentRow(row);
+ *   // 접근: pageContext.workloadList.currentRow
+ * });
  */
 export const test = base.extend<TestContextFixtures>({
-  workloadContext: async ({}, use) => {
-    let currentRow: Locator | null = null;
+  pageContext: async ({}, use) => {
+    const context = createInitialPageContext();
 
     await use({
-      get currentRow() {
-        return currentRow;
-      },
+      ...context,
       setCurrentRow: (row: Locator | null) => {
-        currentRow = row;
+        context.workloadList.currentRow = row;
+      },
+      assertCurrentRow: () => {
+        if (!context.workloadList.currentRow) {
+          throw new Error(
+            "현재 선택된 행이 없습니다. Given 단계에서 행을 먼저 선택하세요.",
+          );
+        }
+        return context.workloadList.currentRow;
+      },
+      reset: () => {
+        context.workloadList.currentRow = null;
       },
     });
 
-    currentRow = null;
+    // Teardown: 컨텍스트 초기화
+    context.workloadList.currentRow = null;
   },
 
   testMode: async ({}, use) => {
@@ -155,19 +167,10 @@ export const test = base.extend<TestContextFixtures>({
     await use(MOCK_WORKSPACE_ID);
   },
 
-  workloadId: async ({ page }, use) => {
+  workloadId: async ({}, use) => {
     if (TEST_MODE === "mock") {
       await use(MOCK_WORKLOAD_ID);
-    } else {
-      await use(await getWorkloadIdFromList(page));
     }
-  },
-
-  goToWorkloadDetail: async ({ workloadId }, use) => {
-    await use(async (targetPage: Page) => {
-      await targetPage.goto(`/user/workload/${workloadId}`);
-      await targetPage.waitForLoadState("networkidle");
-    });
   },
 
   assertLogger: async ({}, use) => {
