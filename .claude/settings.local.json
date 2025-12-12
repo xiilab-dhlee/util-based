@@ -89,7 +89,15 @@
       "Bash(src/shared/components/text/workload-status-text.tsx )",
       "Bash(src/domain/user-monitoring/components/user-monitoring-resource-article.tsx )",
       "Bash(src/domain/user-monitoring/components/user-monitoring-resource-recovery-article.tsx )",
-      "Bash(src/domain/user-monitoring/components/user-monitoring-workload-status.tsx)"
+      "Bash(src/domain/user-monitoring/components/user-monitoring-workload-status.tsx)",
+      "Bash(pnpm add:*)",
+      "Bash(powershell -Command \"Write-Host ''JAVA_HOME:'' ([System.Environment]::GetEnvironmentVariable(''JAVA_HOME'', ''User''))\")",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm test:allure:generate:*)",
+      "Bash(pnpm test:smoke:*)",
+      "Bash(curl -s http://localhost:3000/api/auth/csrf)",
+      "Bash(netstat:*)",
+      "Bash(findstr :3000)"
     ],
     "deny": [],
     "ask": []

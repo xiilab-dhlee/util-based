@@ -30,6 +30,27 @@ export default defineConfig({
   reporter: [
     ["list"],
     ["html", { outputFolder: "tests/reports/playwright-html", open: "never" }],
+    [
+      "allure-playwright",
+      {
+        outputFolder: "allure-results",
+        suiteTitle: true, // Feature 이름을 Suite로 표시
+        detail: true, // Step 상세 정보 포함
+        categories: [
+          // 실패 분류
+          {
+            name: "Timeout errors",
+            matchedStatuses: ["broken"],
+            messageRegex: ".*Timeout.*",
+          },
+          {
+            name: "Element not found",
+            matchedStatuses: ["broken"],
+            messageRegex: ".*locator.*",
+          },
+        ],
+      },
+    ],
   ],
 
   /* 모든 테스트에 공통으로 적용되는 설정 */

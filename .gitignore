@@ -21,6 +21,8 @@ playwright-report/
 trace.zip
 .features-gen/
 .bddgen-timestamp
+allure-results/
+allure-report/
 
 # next.js
 /.next/
