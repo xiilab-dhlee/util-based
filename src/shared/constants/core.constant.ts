@@ -51,3 +51,9 @@ export const VISIBILITY_STATUS_OPTIONS: DropdownOption[] = [
     value: "PRIVATE",
   },
 ];
+
+/** 노드 모드 옵션 */
+export const NODE_MODE_OPTIONS: DropdownOption[] = [
+  { label: "Single", value: "single" },
+  { label: "Multi", value: "multi" },
+];
