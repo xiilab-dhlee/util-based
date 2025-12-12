@@ -1,7 +1,6 @@
 "use client";
 
 import { DisabledWorkloadJobTypeSort } from "@/domain/workload/components/list/disabled-workload-job-type-sort";
-import { DisabledWorkloadStatusSort } from "@/domain/workload/components/list/disabled-workload-status-sort";
 import { disabledWorkloadSearchTextAtom } from "@/domain/workload/state/workload.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
@@ -30,7 +29,6 @@ export function DisabledWorkloadListFilter({
   return (
     <MySearchFilter title="워크로드 목록" total={total}>
       <DisabledWorkloadJobTypeSort disabled={isLoading} />
-      <DisabledWorkloadStatusSort disabled={isLoading} />
       <form
         onSubmit={onSubmit}
         data-testid="workload-disabled-list-search-form"
