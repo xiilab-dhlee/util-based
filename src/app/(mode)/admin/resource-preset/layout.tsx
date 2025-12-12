@@ -1,0 +1,105 @@
+"use client";
+
+import { useAtomValue } from "jotai";
+import { usePathname, useRouter } from "next/navigation";
+import { type PropsWithChildren, useEffect } from "react";
+
+import { ResourcePresetListBody } from "@/domain/resource-preset/components/list/resource-preset-list-body";
+import { ResourcePresetListFilter } from "@/domain/resource-preset/components/list/resource-preset-list-filter";
+import { ResourcePresetListFooter } from "@/domain/resource-preset/components/list/resource-preset-list-footer";
+import { useGetResourcePresets } from "@/domain/resource-preset/hooks/use-get-resource-presets";
+import {
+  resourcePresetJobTypeAtom,
+  resourcePresetNodeTypeAtom,
+  resourcePresetPageAtom,
+  resourcePresetSearchTextAtom,
+} from "@/domain/resource-preset/state/resource-preset.atom";
+import { PageHeader } from "@/shared/components/layouts/page-header";
+import { ASIDE_WIDTH, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import {
+  ListPageAside,
+  ListPageBody,
+  ListPageMain,
+} from "@/styles/layers/list-page-layers.styled";
+
+/**
+ * 자원 프리셋 관리 목록 페이지 레이아웃
+ */
+export default function AdminResourcePresetLayout({
+  children,
+}: PropsWithChildren) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // 필터 상태
+  const page = useAtomValue(resourcePresetPageAtom);
+  const search = useAtomValue(resourcePresetSearchTextAtom);
+  const jobType = useAtomValue(resourcePresetJobTypeAtom);
+  const nodeType = useAtomValue(resourcePresetNodeTypeAtom);
+
+  // 목록 조회
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useGetResourcePresets({
+    page,
+    size: LIST_PAGE_SIZE,
+    search: search || undefined,
+    jobType: jobType || undefined,
+    nodeType: nodeType || undefined,
+  });
+
+  const data = response?.content ?? [];
+  const total = response?.totalSize ?? 0;
+
+  /**
+   * 목록 페이지 진입 시 첫 번째 아이템 자동 선택
+   */
+  useEffect(() => {
+    const isListPage = pathname === ROUTES.ADMIN_RESOURCE_PRESET;
+    const hasData = data && data.length > 0;
+
+    if (isListPage && hasData) {
+      const firstItemId = data[0].id;
+      router.replace(ROUTES.ADMIN_RESOURCE_PRESET_DETAIL(firstItemId));
+    }
+  }, [pathname, data, router]);
+
+  /** 추가 버튼 클릭 핸들러 */
+  const handleClickAdd = () => {
+    // TODO: 추가 모달 또는 드로어 열기
+    console.log("추가 버튼 클릭");
+  };
+
+  return (
+    <>
+      <PageHeader
+        pageKey="admin.resource-preset"
+        description="Resource Preset Management"
+      />
+      {/* 자원 프리셋 목록 페이지 메인 영역 */}
+      <ListPageMain>
+        {/* 자원 프리셋 목록 페이지 - 왼쪽 영역 (필터, 목록, 페이지네이션) */}
+        <ListPageBody>
+          {/* 자원 프리셋 목록 필터 */}
+          <ResourcePresetListFilter
+            total={total}
+            isLoading={isLoading}
+            onClickAdd={handleClickAdd}
+          />
+          {/* 자원 프리셋 목록 본문 */}
+          <ResourcePresetListBody
+            data={data}
+            isLoading={isLoading}
+            isError={isError}
+          />
+          {/* 자원 프리셋 목록 페이지네이션 */}
+          <ResourcePresetListFooter total={total} isLoading={isLoading} />
+        </ListPageBody>
+        <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
+      </ListPageMain>
+    </>
+  );
+}
