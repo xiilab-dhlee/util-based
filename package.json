@@ -17,7 +17,7 @@
     "test:debug": "bddgen && playwright test --debug",
     "test:smoke": "bddgen && playwright test --grep @smoke",
     "test:regression": "bddgen && playwright test --grep @regression",
-    "test:uc": "bddgen && playwright test --grep",
+    "test:tag": "bddgen && playwright test --grep",
     "test:report": "playwright show-report tests/reports/playwright-html",
     "test:trace": "playwright show-trace",
     "test:codegen": "playwright codegen http://localhost:3000",
