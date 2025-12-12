@@ -1,5 +1,7 @@
 import { Pagination } from "xiilab-ui";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
+
 interface PaginatorProps {
   // 현재 페이지
   current: number;
@@ -12,5 +14,5 @@ interface PaginatorProps {
 }
 // 페이지네이션 컴포넌트
 export const MyPagination = (props: PaginatorProps) => {
-  return <Pagination {...props} />;
+  return <Pagination data-testid={SELECTOR.LIST_PAGINATION} {...props} />;
 };
