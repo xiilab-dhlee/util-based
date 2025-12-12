@@ -8,6 +8,7 @@ import {
   workloadDescriptionAtom,
   workloadNameAtom,
 } from "@/domain/workload/state/create-workload.atom";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 
 export function CreateWorkloadTitle() {
@@ -23,6 +24,7 @@ export function CreateWorkloadTitle() {
         {/* TODO: Add form validation - track validation state and display errors */}
         <FormItem label="워크로드 이름" required>
           <Input
+            data-testid={WORKLOAD_SELECTOR.CREATE_NAME}
             value={workloadName}
             onChange={(e) => setWorkloadName(e.target.value)}
             placeholder="워크로드 이름을 30자 이내로 입력해 주세요. (특수문자는 ( -, _ , -, / ) 만 사용 가능)"
@@ -32,6 +34,7 @@ export function CreateWorkloadTitle() {
 
         <FormItem label="워크로드 설명" className="description">
           <TextArea
+            data-testid={WORKLOAD_SELECTOR.CREATE_DESCRIPTION}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="워크로드 설명을 입력해 주세요."

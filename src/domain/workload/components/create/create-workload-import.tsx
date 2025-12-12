@@ -29,12 +29,18 @@ export function CreateWorkloadImport() {
       <Body>
         <BodyTitle>기존 워크로드 정보 가져오기</BodyTitle>
         <Buttons>
-          <Button onClick={handleClickRecentWorkload}>
+          <Button
+            data-testid="workload-create-recent-import-button"
+            onClick={handleClickRecentWorkload}
+          >
             <Typography.Text variant="button-1" color="var(--color-gray-01)">
               최근 워크로드 가져오기
             </Typography.Text>
           </Button>
-          <Button onClick={handleClickLoadWorkload}>
+          <Button
+            data-testid="workload-create-list-import-button"
+            onClick={handleClickLoadWorkload}
+          >
             <Typography.Text variant="button-1" color="var(--color-gray-01)">
               워크로드 목록에서 가져오기
             </Typography.Text>

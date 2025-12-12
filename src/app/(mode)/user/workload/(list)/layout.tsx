@@ -12,6 +12,7 @@ import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { RouteTab } from "@/shared/components/tab";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
@@ -101,6 +102,7 @@ export default function UserWorkloadListLayout({
               enabled: true,
               text: "워크로드 생성하기",
               onClick: handleCreateWorkload,
+              dataTestId: WORKLOAD_SELECTOR.CREATE_BUTTON,
             }}
           />
 
