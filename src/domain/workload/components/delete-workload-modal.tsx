@@ -39,14 +39,16 @@ export function DeleteWorkloadModal() {
       return;
     }
 
+    onClose();
+
     // 워크로드 삭제 실행
-    deleteWorkload.mutate(deleteWorkloadId, {
-      onSuccess: () => {
-        toast.success("워크로드 삭제 완료");
-        // 모달 닫기
-        onClose();
-      },
-    });
+    // deleteWorkload.mutate(deleteWorkloadId, {
+    //   onSuccess: () => {
+    //     toast.success("워크로드 삭제 완료");
+    //     // 모달 닫기
+    //     onClose();
+    //   },
+    // });
   };
 
   /**

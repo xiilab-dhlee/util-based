@@ -42,14 +42,16 @@ export function RestartWorkloadModal() {
       return;
     }
 
+    onClose();
+
     // 워크로드 재시작 실행
-    restartWorkload.mutate(restartWorkloadId, {
-      onSuccess: () => {
-        toast.success("워크로드 재시작 완료");
-        // 모달 닫기
-        onClose();
-      },
-    });
+    // restartWorkload.mutate(restartWorkloadId, {
+    //   onSuccess: () => {
+    //     toast.success("워크로드 재시작 완료");
+    //     // 모달 닫기
+    //     onClose();
+    //   },
+    // });
   };
 
   /**
