@@ -69,7 +69,7 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
   # ============================================
 
   @regression
-  Scenario Outline: 필터 조합으로 워크로드 필터링 (<search>, <jobType>)
+  Scenario Outline: 워크로드 필터링
     Given 목록에 워크로드가 있다
     When 필터 조건을 설정한다:
       | search   | jobType   | status |
