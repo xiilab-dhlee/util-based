@@ -31,6 +31,21 @@ export const SELECTOR = {
   WORKSPACE_SELECT_VALUE: "workspace-select-value",
   /** 워크스페이스 미선택 placeholder */
   WORKSPACE_SELECT_PLACEHOLDER: "workspace-select-placeholder",
+
+  // 모달 (Ant Design Modal 기반)
+  /** 모달 컨테이너 (visible) */
+  MODAL: ".ant-modal:visible",
+  /** 모달 확인 버튼 (footer의 마지막 버튼) */
+  MODAL_OK_BUTTON: ".ant-modal:visible .ant-modal-footer button:last-child",
+  /** 모달 취소 버튼 (footer의 첫 번째 버튼) */
+  MODAL_CANCEL_BUTTON:
+    ".ant-modal:visible .ant-modal-footer button:first-child",
+
+  // 드로어 (Ant Design Drawer 기반)
+  /** 드로어 컨테이너 (열린 상태) */
+  DRAWER: ".ant-drawer-open",
+  /** 드로어 닫기 버튼 */
+  DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
 } as const;
 
 // ============================================
@@ -186,6 +201,20 @@ export const WORKLOAD_SELECTOR = {
   DETAIL_CREATOR: "workload-detail-creator",
   /** 생성일 */
   DETAIL_CREATED_DATE: "workload-detail-created-date",
+
+  // 생성 드로어
+  /** 최근 워크로드 가져오기 버튼 */
+  CREATE_RECENT_IMPORT_BUTTON: "workload-create-recent-import-button",
+  /** 워크로드 목록에서 가져오기 버튼 */
+  CREATE_LIST_IMPORT_BUTTON: "workload-create-list-import-button",
+  /** 워크로드 Job Type */
+  CREATE_JOB_TYPE: "workload-create-job-type",
+  /** 워크로드 이름 입력창 */
+  CREATE_NAME: "workload-create-name",
+  /** 워크로드 설명 입력창 */
+  CREATE_DESCRIPTION: "workload-create-description",
+  /** 워크로드 생성하기 버튼 */
+  CREATE_BUTTON: "workload-create-button",
 } as const;
 
 // ============================================
