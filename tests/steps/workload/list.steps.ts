@@ -8,7 +8,6 @@ import {
 } from "@/shared/constants/selector.constant";
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { test } from "../../fixtures";
-import { setupWorkloadPageMocks } from "../../support/mocks";
 import {
   assertWorkloadRow,
   getWorkloadButton,
@@ -24,13 +23,13 @@ const { When, Then, Given } = createBdd(test);
 // ============================================
 
 When("사용자가 워크로드 목록 페이지로 진입한다", async ({ page }) => {
-  await setupWorkloadPageMocks(page);
+  // 모킹은 인증 Hook에서 설정됨
   await page.goto("/user/workload");
   await page.waitForLoadState("networkidle");
 });
 
 When("사용자가 비활성화 워크로드 목록 페이지로 진입한다", async ({ page }) => {
-  await setupWorkloadPageMocks(page);
+  // 모킹은 인증 Hook에서 설정됨
   await page.goto("/user/workload/disabled");
   await page.waitForLoadState("networkidle");
 });

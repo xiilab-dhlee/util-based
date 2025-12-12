@@ -6,7 +6,6 @@ import {
   USER_MONITORING_SELECTOR,
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
-import { setupMonitoringPageMocks } from "../../support/mocks";
 
 const { When, Then } = createBdd(test);
 
@@ -19,7 +18,7 @@ const { When, Then } = createBdd(test);
 // ============================================
 
 When("사용자가 모니터링 페이지로 진입한다", async ({ page }) => {
-  await setupMonitoringPageMocks(page);
+  // 모킹은 인증 Hook에서 설정됨
   await page.goto("/user/monitoring");
   await page.waitForLoadState("networkidle");
 });

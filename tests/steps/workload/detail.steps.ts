@@ -7,7 +7,6 @@ import {
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
-import { setupWorkloadPageMocks } from "../../support/mocks";
 
 /**
  * 워크로드 상세 페이지 Step Definitions
@@ -21,7 +20,7 @@ const { When, Then, Given } = createBdd(test);
 When(
   "사용자가 워크로드 상세 페이지로 진입한다",
   async ({ page, workloadId, workspaceId }) => {
-    await setupWorkloadPageMocks(page);
+    // 모킹은 인증 Hook에서 설정됨
     await page.goto(`/user/workload/${workloadId}?workspaceId=${workspaceId}`);
     await page.waitForLoadState("networkidle");
   },

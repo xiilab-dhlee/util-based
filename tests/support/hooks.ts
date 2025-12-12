@@ -2,6 +2,7 @@ import { createBdd } from "playwright-bdd";
 
 import { test } from "../fixtures";
 import { authenticate } from "./auth.helper";
+import { setupAllMocks } from "./mocks";
 
 const { Before, After, BeforeAll, AfterAll } = createBdd(test);
 
@@ -67,14 +68,22 @@ After(async ({ page, $testInfo }) => {
 // ============================================
 
 Before({ tags: "@authenticated-user" }, async ({ page }) => {
+  // 1. 모든 API 모킹 설정 (페이지 이동 전에 먼저 설정)
+  await setupAllMocks(page);
+  // 2. 인증 수행
   await authenticate(page, "user");
 });
 
 Before({ tags: "@authenticated-admin" }, async ({ page }) => {
+  // 1. 모든 API 모킹 설정 (페이지 이동 전에 먼저 설정)
+  await setupAllMocks(page);
+  // 2. 인증 수행
   await authenticate(page, "admin");
 });
 
 Before({ tags: "@unauthenticated" }, async ({ page }) => {
+  // 비인증 테스트도 모킹은 필요
+  await setupAllMocks(page);
   await page.context().clearCookies();
 });
 

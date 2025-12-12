@@ -14,13 +14,6 @@ import { generateCustomTree } from "@/shared/utils/filetree-generator.util";
  * 워크로드 API 핸들러
  */
 export const workloadHandlers = [
-  // 워크로드 목록 조회
-  http.get("/core-api/v1/core/workload", () => {
-    return HttpResponse.json({
-      content: workloadListMock,
-      totalSize: 100,
-    });
-  }),
   http.get("/core-api/v1/core/workload/active", () => {
     return HttpResponse.json({
       content: activeWorkloadListMock,
@@ -30,6 +23,13 @@ export const workloadHandlers = [
   http.get("/core-api/v1/core/workload/disabled", () => {
     return HttpResponse.json({
       content: disabledWorkloadListMock,
+      totalSize: 100,
+    });
+  }),
+  // 워크로드 목록 조회
+  http.get("/core-api/v1/core/workload", () => {
+    return HttpResponse.json({
+      content: workloadListMock,
       totalSize: 100,
     });
   }),
