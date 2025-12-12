@@ -2,6 +2,7 @@
 
 import { accountErrorConfig } from "@/domain/account-management/constants/account.error";
 import { monitoringNotificationErrorConfig } from "@/domain/monitoring-notification/constants/monitoring-notification.error";
+import { resourcePresetErrorConfig } from "@/domain/resource-preset/constants/resource-preset.error";
 import { securityErrorConfig } from "@/domain/security/constants/security.error";
 import { hpeErrorConfig } from "@/domain/system-setting/constants/hpe.error";
 import { licenseErrorConfig } from "@/domain/system-setting/constants/license.error";
@@ -13,6 +14,7 @@ import type { ErrorConfig } from "@/shared/types/error.type";
 const errorConfigRegistry: Record<string, ErrorConfig> = {
   ...monitoringNotificationErrorConfig,
   ...accountErrorConfig,
+  ...resourcePresetErrorConfig,
   ...securityErrorConfig,
   ...hpeErrorConfig,
   ...licenseErrorConfig,
