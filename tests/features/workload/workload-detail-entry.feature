@@ -1,3 +1,4 @@
+@workload-detail
 Feature: 워크로드 상세 페이지 조회
   As a 사용자,
   I want to 워크로드 목록에서 워크로드를 클릭했을 때

@@ -1,3 +1,4 @@
+@monitoring
 Feature: 사용자 모니터링 페이지 진입
   As a 사용자,
   I want to 메인(모니터링) 페이지에 진입하면
@@ -9,11 +10,14 @@ Feature: 사용자 모니터링 페이지 진입
     And 워크스페이스가 선택되어 있다
 
   @smoke
-  Scenario: 모니터링 페이지 진입 및 기본 위젯 표시
+  Scenario: 모니터링 페이지 진입 시 기본 UI 표시
     Then 모니터링 페이지가 표시된다
     And URL이 "/user/monitoring"와 일치한다
     And 네비게이션 메뉴 중 "모니터링" 메뉴가 활성화되어 있다
-    And CPU 그래프가 표시된다
+
+  @smoke
+  Scenario: 모니터링 페이지 위젯 표시
+    Then CPU 그래프가 표시된다
     And 리소스 회수 정보가 표시된다
     And 워크로드 정보가 표시된다
     And 사용 자원 정보가 표시된다

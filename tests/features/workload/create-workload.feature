@@ -1,3 +1,4 @@
+@workload-create
 Feature: 워크로드 생성
   As a 사용자,
   I want to 워크로드 생성 드로어를 열어 워크로드를 생성하면

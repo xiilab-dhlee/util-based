@@ -1,3 +1,4 @@
+@workload-detail @validation
 Feature: 워크로드 상세 페이지 데이터 유효성 검증
   As a 사용자,
   I want to 워크로드 상세 페이지의 데이터가 올바르게 표시되는지 확인하여
