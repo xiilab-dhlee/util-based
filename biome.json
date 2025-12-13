@@ -79,7 +79,12 @@
 
   "overrides": [
     {
-      "includes": ["src/app/**", "next.config.ts", "playwright.config.ts"],
+      "includes": [
+        "src/app/**",
+        "next.config.ts",
+        "playwright.config.ts",
+        "tests/global-setup.ts"
+      ],
       "linter": {
         "rules": {
           "style": {
