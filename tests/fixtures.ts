@@ -1,6 +1,13 @@
 import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
+import { DrawerComponent } from "./components/drawer.component";
+import { ModalComponent } from "./components/modal.component";
+import { TabsComponent } from "./components/tabs.component";
+import { MonitoringPage } from "./pages/monitoring.page";
+import { WorkloadDetailPage } from "./pages/workload-detail.page";
+import { WorkloadListPage } from "./pages/workload-list.page";
+
 // ============================================================================
 // Constants
 // ============================================================================
@@ -26,18 +33,17 @@ export type AssertLogger = {
 };
 
 /**
- * 시나리오 간 상태 공유가 필요한 경우 사용하는 컨텍스트
- * 주의: Step 파라미터로 전달 가능한 값은 context 대신 파라미터 사용 권장
+ * 목록 페이지 공통 컨텍스트
+ *
+ * 워크로드, 소스코드, 볼륨 등 모든 목록 페이지에서 재사용
+ * - currentRow: 현재 선택된 테이블 행
  */
-export type PageContext = {
-  /** 워크로드 목록: 현재 선택된 행 */
-  workloadList: {
-    currentRow: Locator | null;
-  };
+export type ListContext = {
+  currentRow: Locator | null;
 };
 
-export type PageContextActions = {
-  /** 워크로드 목록: 현재 선택된 행 설정 */
+export type ListContextActions = {
+  /** 현재 선택된 행 설정 */
   setCurrentRow: (row: Locator | null) => void;
   /** 현재 선택된 행 반환 (없으면 에러) */
   assertCurrentRow: () => Locator;
@@ -46,11 +52,22 @@ export type PageContextActions = {
 };
 
 type TestContextFixtures = {
-  pageContext: PageContext & PageContextActions;
+  // 목록 페이지 컨텍스트
+  listContext: ListContext & ListContextActions;
   workloadId: string;
   workspaceId: string;
   testMode: TestMode;
   assertLogger: AssertLogger;
+
+  // Page Objects (페이지별 그룹화)
+  workloadListPage: WorkloadListPage;
+  workloadDetailPage: WorkloadDetailPage;
+  monitoringPage: MonitoringPage;
+
+  // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
+  modal: ModalComponent;
+  drawer: DrawerComponent;
+  tabs: TabsComponent;
 };
 
 // ============================================================================
@@ -106,11 +123,9 @@ function createAssertLogger(): AssertLogger {
   };
 }
 
-function createInitialPageContext(): PageContext {
+function createInitialListContext(): ListContext {
   return {
-    workloadList: {
-      currentRow: null,
-    },
+    currentRow: null,
   };
 }
 
@@ -121,42 +136,55 @@ function createInitialPageContext(): PageContext {
 /**
  * 커스텀 Playwright Test 객체
  *
+ * Page Object Model 패턴을 사용하여 페이지별로 컴포넌트를 그룹화
+ *
  * @example
  * import { createBdd } from "playwright-bdd";
  * import { test } from "../fixtures";
  *
  * const { Given, When, Then } = createBdd(test);
  *
- * // 워크로드 목록에서 현재 행 설정
- * Given("목록에서 워크로드를 선택한다", async ({ pageContext }) => {
- *   pageContext.setCurrentRow(row);
- *   // 접근: pageContext.workloadList.currentRow
+ * // 워크로드 목록 페이지
+ * Then("테이블에 데이터가 표시된다", async ({ workloadListPage }) => {
+ *   const count = await workloadListPage.table.getRowCount();
+ *   expect(count).toBeGreaterThan(0);
+ * });
+ *
+ * // 워크로드 상세 페이지
+ * Then("이벤트 카드가 표시된다", async ({ workloadDetailPage }) => {
+ *   const count = await workloadDetailPage.eventCards.getCount();
+ *   expect(count).toBeGreaterThan(0);
+ * });
+ *
+ * // 모니터링 페이지
+ * Then("그래프가 표시된다", async ({ monitoringPage }) => {
+ *   await monitoringPage.resourceGraph.assertVisible();
  * });
  */
 export const test = base.extend<TestContextFixtures>({
-  pageContext: async ({}, use) => {
-    const context = createInitialPageContext();
+  listContext: async ({}, use) => {
+    const context = createInitialListContext();
 
     await use({
       ...context,
       setCurrentRow: (row: Locator | null) => {
-        context.workloadList.currentRow = row;
+        context.currentRow = row;
       },
       assertCurrentRow: () => {
-        if (!context.workloadList.currentRow) {
+        if (!context.currentRow) {
           throw new Error(
             "현재 선택된 행이 없습니다. Given 단계에서 행을 먼저 선택하세요.",
           );
         }
-        return context.workloadList.currentRow;
+        return context.currentRow;
       },
       reset: () => {
-        context.workloadList.currentRow = null;
+        context.currentRow = null;
       },
     });
 
     // Teardown: 컨텍스트 초기화
-    context.workloadList.currentRow = null;
+    context.currentRow = null;
   },
 
   testMode: async ({}, use) => {
@@ -175,5 +203,37 @@ export const test = base.extend<TestContextFixtures>({
 
   assertLogger: async ({}, use) => {
     await use(createAssertLogger());
+  },
+
+  // ============================================================================
+  // Page Objects (페이지별 그룹화)
+  // ============================================================================
+
+  workloadListPage: async ({ page }, use) => {
+    await use(new WorkloadListPage(page));
+  },
+
+  workloadDetailPage: async ({ page }, use) => {
+    await use(new WorkloadDetailPage(page));
+  },
+
+  monitoringPage: async ({ page }, use) => {
+    await use(new MonitoringPage(page));
+  },
+
+  // ============================================================================
+  // 공통 UI 컴포넌트 (페이지와 무관)
+  // ============================================================================
+
+  modal: async ({ page }, use) => {
+    await use(new ModalComponent(page));
+  },
+
+  drawer: async ({ page }, use) => {
+    await use(new DrawerComponent(page));
+  },
+
+  tabs: async ({ page }, use) => {
+    await use(new TabsComponent(page, ".tabs-nav"));
   },
 });
