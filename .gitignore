@@ -13,6 +13,7 @@
 # testing
 /coverage
 tests/reports/
+tests/.auth/
 test-results/
 playwright-report/
 .playwright/
