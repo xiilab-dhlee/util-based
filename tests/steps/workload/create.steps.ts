@@ -6,18 +6,18 @@ import {
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
-import { CREATE_BUTTON_MAP } from "../../support/workload.helper";
+import { WorkloadListPage } from "../../pages/workload-list.page";
 
 /**
  * 워크로드 생성 드로어 Step Definitions
  */
-const { Then } = createBdd(test);
+const { When, Then } = createBdd(test);
 
 // ============================================
 // 버튼 관련
 // ============================================
 
-Then("워크로드 생성하기 버튼을 클릭한다", async ({ page }) => {
+When("워크로드 생성하기 버튼을 클릭한다", async ({ page }) => {
   const button = page.locator(testId(WORKLOAD_SELECTOR.CREATE_BUTTON));
   await expect(button).toBeVisible({ timeout: 10000 });
   await button.click();
@@ -26,7 +26,7 @@ Then("워크로드 생성하기 버튼을 클릭한다", async ({ page }) => {
 Then(
   /^"(최근 워크로드 가져오기|워크로드 목록에서 가져오기)" 버튼이 표시된다$/,
   async ({ page }, buttonText: string) => {
-    const selector = CREATE_BUTTON_MAP[buttonText];
+    const selector = WorkloadListPage.CREATE_BUTTON[buttonText];
     await expect(page.locator(testId(selector))).toBeVisible({
       timeout: 10000,
     });

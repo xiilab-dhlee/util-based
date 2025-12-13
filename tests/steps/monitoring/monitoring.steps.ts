@@ -1,126 +1,80 @@
-import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
-import {
-  testId,
-  USER_MONITORING_SELECTOR,
-} from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
-
-const { Then } = createBdd(test);
+import { MonitoringPage } from "../../pages/monitoring.page";
 
 /**
  * 사용자 모니터링 페이지 Step Definitions
+ *
+ * Page Objects:
+ * - monitoringPage: 모니터링 페이지 (리소스 그래프, 워크로드 상태 등)
+ *   - resourceGraph: CPU 리소스 그래프
+ *   - resourceRecovery: 리소스 회수 정보 차트
+ *   - workloadStatusChart: 워크로드 상태 정보
+ *   - runningWorkloadList: 실행 중 워크로드 목록
+ *   - recoveryWorkloadList: 리소스 회수 예정 목록
  */
+const { Then } = createBdd(test);
 
 // ============================================
 // 페이지 표시 확인 Steps
 // ============================================
 
-Then("모니터링 페이지가 표시된다", async ({ page }) => {
-  const pageHeader = page.locator(testId(USER_MONITORING_SELECTOR.PAGE_HEADER));
-  await expect(pageHeader).toBeVisible({ timeout: 10000 });
+Then("모니터링 페이지가 표시된다", async ({ monitoringPage }) => {
+  await monitoringPage.assertPageVisible();
 });
 
 // ============================================
 // 리소스 그래프 Steps
 // ============================================
 
-Then("CPU 그래프가 표시된다", async ({ page }) => {
-  const resourceGraph = page.locator(
-    testId(USER_MONITORING_SELECTOR.RESOURCE_GRAPH),
-  );
-  await expect(resourceGraph).toBeVisible({ timeout: 10000 });
-
-  const chart = resourceGraph.locator(".apexcharts-canvas");
-  await expect(chart).toBeVisible({ timeout: 10000 });
+Then("CPU 그래프가 표시된다", async ({ monitoringPage }) => {
+  await monitoringPage.resourceGraph.assertVisible();
 });
 
-Then("리소스 회수 정보가 표시된다", async ({ page }) => {
-  const resourceRecovery = page.locator(
-    testId(USER_MONITORING_SELECTOR.RESOURCE_RECOVERY),
-  );
-  await expect(resourceRecovery).toBeVisible({ timeout: 10000 });
-
-  const chart = resourceRecovery.locator(".apexcharts-canvas");
-  await expect(chart).toBeVisible({ timeout: 10000 });
+Then("리소스 회수 정보가 표시된다", async ({ monitoringPage }) => {
+  await monitoringPage.resourceRecovery.assertVisible();
 });
 
 // ============================================
 // 워크로드 정보 Steps
 // ============================================
 
-Then("워크로드 정보가 표시된다", async ({ page }) => {
-  const workloadStatus = page.locator(
-    testId(USER_MONITORING_SELECTOR.WORKLOAD_STATUS),
-  );
-  await expect(workloadStatus).toBeVisible({ timeout: 10000 });
+Then("워크로드 정보가 표시된다", async ({ monitoringPage }) => {
+  await monitoringPage.workloadStatusChart.assertContainerVisible();
 });
 
-Then("사용 자원 정보가 표시된다", async ({ page }) => {
-  const resourceUsage = page.locator(
-    testId(USER_MONITORING_SELECTOR.RESOURCE_USAGE),
-  );
-  await expect(resourceUsage).toBeVisible({ timeout: 10000 });
+Then("사용 자원 정보가 표시된다", async ({ monitoringPage }) => {
+  await monitoringPage.assertResourceUsageVisible();
 });
 
-Then("실행 중 워크로드 목록이 표시된다", async ({ page }) => {
-  const runningWorkloadList = page.locator(
-    testId(USER_MONITORING_SELECTOR.RUNNING_WORKLOAD_LIST),
-  );
-  await expect(runningWorkloadList).toBeVisible({ timeout: 10000 });
-
-  const tableBody = runningWorkloadList.locator(".ant-table-tbody");
-  await expect(tableBody).toBeVisible({ timeout: 10000 });
+Then("실행 중 워크로드 목록이 표시된다", async ({ monitoringPage }) => {
+  await monitoringPage.runningWorkloadList.assertTableVisible();
 });
 
-Then("리소스 회수 예정 워크로드 목록이 표시된다", async ({ page }) => {
-  const recoveryWorkloadList = page.locator(
-    testId(USER_MONITORING_SELECTOR.RECOVERY_WORKLOAD_LIST),
-  );
-  await expect(recoveryWorkloadList).toBeVisible({ timeout: 10000 });
-
-  const tableBody = recoveryWorkloadList.locator(".ant-table-tbody");
-  await expect(tableBody).toBeVisible({ timeout: 10000 });
-});
+Then(
+  "리소스 회수 예정 워크로드 목록이 표시된다",
+  async ({ monitoringPage }) => {
+    await monitoringPage.recoveryWorkloadList.assertTableVisible();
+  },
+);
 
 // ============================================
 // 워크로드 상태 상세 검증 Steps
 // ============================================
 
-const WORKLOAD_STATUSES = ["all", "running", "completed", "pending", "failed"];
-
-Then("워크로드 상태별 건수가 표시된다", async ({ page, assertLogger }) => {
-  for (const status of WORKLOAD_STATUSES) {
-    const countElement = page.locator(
-      testId(USER_MONITORING_SELECTOR.statusCount(status)),
-    );
-    await expect(countElement).toBeVisible({ timeout: 10000 });
-
-    const text = (await countElement.textContent()) ?? "";
+Then("워크로드 상태별 건수가 표시된다", async ({ monitoringPage, assertLogger }) => {
+  for (const status of MonitoringPage.statuses) {
+    const text = await monitoringPage.getStatusCountText(status);
     assertLogger.assertMatch(`${status} 건수 형식`, text, /[\d,]+건/);
   }
 });
 
 Then(
   "상태별 건수의 합이 전체 건수와 일치한다",
-  async ({ page, assertLogger }) => {
-    const allCountElement = page.locator(
-      testId(USER_MONITORING_SELECTOR.statusCount("all")),
-    );
-    const allText = await allCountElement.textContent();
-    const allCount = Number.parseInt(allText?.replace(/[,건]/g, "") ?? "0", 10);
-
-    let sum = 0;
-    const individualStatuses = ["running", "completed", "pending", "failed"];
-
-    for (const status of individualStatuses) {
-      const countElement = page.locator(
-        testId(USER_MONITORING_SELECTOR.statusCount(status)),
-      );
-      const text = await countElement.textContent();
-      sum += Number.parseInt(text?.replace(/[,건]/g, "") ?? "0", 10);
-    }
+  async ({ monitoringPage, assertLogger }) => {
+    const allCount = await monitoringPage.getStatusCount("all");
+    const sum = await monitoringPage.getIndividualStatusSum();
 
     assertLogger.assertEqual("상태별 건수 합계", sum, allCount);
   },
