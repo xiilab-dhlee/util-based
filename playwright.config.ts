@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
@@ -10,6 +11,9 @@ const testDir = defineBddConfig({
   ],
 });
 
+// 인증 상태 파일 경로 (일반 사용자 기본)
+const USER_AUTH_STATE = path.join(__dirname, "tests/.auth/user.json");
+
 /**
  * Playwright 설정
  * @see https://playwright.dev/docs/test-configuration
@@ -17,14 +21,17 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir, // BDD 설정에서 생성된 testDir 사용
 
+  /* 전역 설정 - 테스트 시작 전 1회 실행 (인증 상태 저장) */
+  globalSetup: require.resolve("./tests/global-setup"),
+
   /* 병렬 실행 설정 */
   fullyParallel: true,
 
   /* CI 환경에서만 실패 시 재시도 */
   retries: process.env.CI ? 2 : 0,
 
-  /* CI에서는 병렬 처리 비활성화, 로컬에서는 CPU 코어 수만큼 병렬 실행 */
-  workers: process.env.CI ? 1 : 2,
+  /* CI에서는 병렬 처리 비활성화 */
+  workers: 2,
 
   /* 리포터 설정 */
   reporter: [
@@ -56,7 +63,7 @@ export default defineConfig({
   /* 모든 테스트에 공통으로 적용되는 설정 */
   use: {
     /* 실패 시 스크린샷 캡처 */
-    screenshot: "on",
+    screenshot: "only-on-failure",
 
     /* 실패 시 trace 기록 */
     trace: "retain-on-failure",
@@ -81,6 +88,8 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
+        // globalSetup에서 저장한 인증 상태 재사용
+        storageState: USER_AUTH_STATE,
       },
     },
 
@@ -119,11 +128,11 @@ export default defineConfig({
     timeout: 30 * 1000,
   },
 
-  /* 테스트 타임아웃 설정 (기본값: 30초) */
-  timeout: 30000,
+  /* 테스트 타임아웃 설정 */
+  timeout: 20000,
 
-  /* 각 테스트의 expect 타임아웃 (기본값: 5초) */
+  /* 각 테스트의 expect 타임아웃 */
   expect: {
-    timeout: 10000,
+    timeout: 5000,
   },
 });
