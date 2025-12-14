@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/** GPU Type 값 */
+export const GPU_TYPE_VALUES = ["NORMAL", "MIG", "MPS"] as const;
+
 // GPU 전체 스키마
 const baseGpuSchema = z.object({
   id: z.string().uuid(),
@@ -7,7 +10,7 @@ const baseGpuSchema = z.object({
   name: z.string().min(1).max(200),
   memory: z.number().int().min(1).max(100),
   isAvailable: z.boolean(),
-  type: z.enum(["NORMAL", "MPS", "MIG"]),
+  type: z.enum(GPU_TYPE_VALUES),
 });
 
 // GPU 사용 노드 스키마
@@ -15,6 +18,8 @@ const baseGpuNodeSchema = z.object({
   id: z.string().uuid(),
   /** 이름 */
   name: z.string().min(1).max(200),
+  /** 연결된 GPU ID */
+  gpuId: z.string().uuid(),
   cpuTotal: z.number().int().min(0).max(100),
   cpuUsed: z.number().int().min(0).max(100),
   memoryTotal: z.number().int().min(0).max(100),
@@ -44,6 +49,7 @@ export const gpuListSchema = baseGpuSchema.pick({
 export const gpuNodeListSchema = baseGpuNodeSchema.pick({
   id: true,
   name: true,
+  gpuId: true,
   cpuTotal: true,
   cpuUsed: true,
   memoryTotal: true,
