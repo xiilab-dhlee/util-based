@@ -75,7 +75,7 @@ export default function WorkloadDetailLayout({ children }: PropsWithChildren) {
       {
         key: "monitoring",
         label: "모니터링",
-        icon: "Monitoring01",
+        icon: "Monitoring02",
         disabled: !isRunningOrCompleted,
       },
       {

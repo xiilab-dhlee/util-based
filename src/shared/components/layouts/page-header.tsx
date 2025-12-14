@@ -87,7 +87,7 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px;
+  height: var(--page-title-height);
   flex-shrink: 0;
 `;
 
