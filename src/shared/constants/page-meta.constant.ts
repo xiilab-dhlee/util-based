@@ -198,12 +198,12 @@ export const PAGE_META = {
   // Admin Routes - Resource Preset
   // ============================================
   "admin.resource-preset": {
-    title: "자원 프리셋 관리",
+    title: "리소스 프리셋 관리",
     iconName: "Resource",
     href: ROUTES.ADMIN_RESOURCE_PRESET,
   },
   "admin.resource-preset.detail": {
-    title: "자원 프리셋 상세",
+    title: "리소스 프리셋 상세",
     href: ({ id }: { id: string }) => ROUTES.ADMIN_RESOURCE_PRESET_DETAIL(id),
     parent: "admin.resource-preset",
   },

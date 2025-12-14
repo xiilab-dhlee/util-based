@@ -15,7 +15,7 @@ interface ResourcePresetNodeInfoCardProps {
 }
 
 /**
- * 자원 프리셋 노드 정보 카드
+ * 리소스 프리셋 노드 정보 카드
  *
  * xiilab-ui Card compact를 사용하여 노드 정보를 표시합니다.
  */

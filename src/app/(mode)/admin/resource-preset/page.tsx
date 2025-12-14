@@ -7,7 +7,7 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 /**
- * 관리자 자원 프리셋 페이지
+ * 관리자 리소스 프리셋 페이지
  * 목록에서 선택되지 않은 상태의 기본 화면
  */
 export default function AdminResourcePresetPage() {
@@ -15,8 +15,8 @@ export default function AdminResourcePresetPage() {
     <AsideDetailContainer>
       <AsideDetailEmpty>
         <EmptyState
-          title="선택된 자원 프리셋이 없습니다"
-          content="좌측 목록에서 자원 프리셋을 선택해주세요."
+          title="선택된 리소스 프리셋이 없습니다"
+          content="좌측 목록에서 리소스 프리셋을 선택해주세요."
         />
       </AsideDetailEmpty>
     </AsideDetailContainer>

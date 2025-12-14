@@ -72,7 +72,7 @@ const Header = styled.div`
   margin-bottom: 8px;
 `;
 
-// 자원 프리셋 드롭다운
+// 리소스 프리셋 드롭다운
 const ResourcePresetDropdown = styled.div`
   /* margin-bottom: 16px; */
 `;

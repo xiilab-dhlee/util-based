@@ -76,7 +76,7 @@ export const ROUTES = {
   ADMIN_REVOKE_RESOURCE_HISTORY_DETAIL: (id: string) =>
     `${MODE.ADMIN}/revoke-history/${id}`,
 
-  // 자원 프리셋 관리 (동적 함수)
+  // 리소스 프리셋 관리 (동적 함수)
   ADMIN_RESOURCE_PRESET: `${MODE.ADMIN}/resource-preset`,
   ADMIN_RESOURCE_PRESET_DETAIL: (id: string) =>
     `${MODE.ADMIN}/resource-preset/${id}`,

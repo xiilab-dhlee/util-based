@@ -7,9 +7,9 @@ import type { ResourcePresetDetailResponseType } from "@/domain/resource-preset/
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
- * 자원 프리셋 상세 조회 훅
+ * 리소스 프리셋 상세 조회 훅
  *
- * @param id - 자원 프리셋 ID
+ * @param id - 리소스 프리셋 ID
  * @returns React Query 결과
  */
 export const useGetResourcePresetDetail = (

@@ -9,7 +9,7 @@ import {
 import { makeMock } from "@/shared/utils/mock.util";
 
 /**
- * 자원 프리셋 Mock 데이터
+ * 리소스 프리셋 Mock 데이터
  *
  * - Zod 스키마를 기반으로 생성합니다.
  */

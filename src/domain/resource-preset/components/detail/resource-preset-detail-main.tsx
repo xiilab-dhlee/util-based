@@ -40,9 +40,9 @@ const cpuInfo = getResourceInfo(CPU_RESOURCE_TYPE);
 const memInfo = getResourceInfo(MEM_RESOURCE_TYPE);
 
 /**
- * 자원 프리셋 상세 컴포넌트
+ * 리소스 프리셋 상세 컴포넌트
  *
- * URL params의 id를 통해 자원 프리셋의 상세 정보를 표시하는 컴포넌트입니다.
+ * URL params의 id를 통해 리소스 프리셋의 상세 정보를 표시하는 컴포넌트입니다.
  */
 export function ResourcePresetDetailMain() {
   const params = useParams<{ id: string }>();
@@ -72,13 +72,13 @@ export function ResourcePresetDetailMain() {
         <AsideDetailHeaderTitle>리소스 프리셋 상세</AsideDetailHeaderTitle>
       </AsideDetailHeader>
 
-      {/* 자원 프리셋 상세 정보 아티클 */}
+      {/* 리소스 프리셋 상세 정보 아티클 */}
       <AsideDetailArticle>
         {!data ? (
           <AsideDetailEmpty>
             <EmptyState
-              title="선택된 자원 프리셋이 없습니다"
-              content="좌측 목록에서 자원 프리셋을 선택해주세요."
+              title="선택된 리소스 프리셋이 없습니다"
+              content="좌측 목록에서 리소스 프리셋을 선택해주세요."
             />
           </AsideDetailEmpty>
         ) : (

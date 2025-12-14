@@ -12,7 +12,7 @@ import { useTableSelection } from "@/shared/hooks/use-table-selection";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface ResourcePresetListBodyProps {
-  /** 자원 프리셋 목록 데이터 */
+  /** 리소스 프리셋 목록 데이터 */
   data: ResourcePresetListType[];
   /** 로딩 상태 */
   isLoading: boolean;
@@ -21,9 +21,9 @@ interface ResourcePresetListBodyProps {
 }
 
 /**
- * 자원 프리셋 목록 페이지 본문 컴포넌트
+ * 리소스 프리셋 목록 페이지 본문 컴포넌트
  *
- * 자원 프리셋 목록을 테이블 형태로 표시합니다.
+ * 리소스 프리셋 목록을 테이블 형태로 표시합니다.
  * rowSelection을 지원하여 다중 선택이 가능합니다.
  */
 export function ResourcePresetListBody({

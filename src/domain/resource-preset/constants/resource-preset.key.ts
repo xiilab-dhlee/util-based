@@ -1,7 +1,7 @@
 import type { GetResourcePresetsPayload } from "@/domain/resource-preset/types/resource-preset.type";
 
 /**
- * 자원 프리셋 React Query 키
+ * 리소스 프리셋 React Query 키
  */
 export const resourcePresetKeys = {
   all: ["resource-preset"] as const,

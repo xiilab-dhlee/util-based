@@ -18,7 +18,7 @@ interface ResourcePresetListFooterProps {
 }
 
 /**
- * 자원 프리셋 목록 페이지 하단 푸터 컴포넌트
+ * 리소스 프리셋 목록 페이지 하단 푸터 컴포넌트
  *
  * 페이지네이션을 제공합니다.
  */

@@ -9,7 +9,7 @@ import type { CoreListResponse } from "@/shared/types/core.model";
 import { payloadToParams } from "@/shared/utils/service.util";
 
 /**
- * 자원 프리셋 서비스
+ * 리소스 프리셋 서비스
  */
 export class ResourcePresetService extends AxiosService {
   private readonly BASE_URL = "/core-api/v1/core/admin/resource-preset";

@@ -5,7 +5,7 @@ import type {
 import type { CoreListResponse } from "@/shared/types/core.model";
 
 /**
- * 자원 프리셋 목록 조회 페이로드
+ * 리소스 프리셋 목록 조회 페이로드
  */
 export interface GetResourcePresetsPayload {
   /** 페이지 번호 */
@@ -21,12 +21,12 @@ export interface GetResourcePresetsPayload {
 }
 
 /**
- * 자원 프리셋 목록 응답 타입
+ * 리소스 프리셋 목록 응답 타입
  */
 export type ResourcePresetsListResponse =
   CoreListResponse<ResourcePresetListResponseType>;
 
 /**
- * 자원 프리셋 상세 응답 타입
+ * 리소스 프리셋 상세 응답 타입
  */
 export type ResourcePresetDetailResponse = ResourcePresetDetailResponseType;

@@ -11,7 +11,7 @@ const cpuInfo = getResourceInfo("CPU");
 const memInfo = getResourceInfo("MEM");
 
 /**
- * 자원 프리셋 목록 테이블 컬럼 정의
+ * 리소스 프리셋 목록 테이블 컬럼 정의
  *
  * 선택(체크박스) 컬럼은 Ant Design Table의 rowSelection 기능을 사용하여 처리하고,
  * 이 컬럼 정의에서는 도메인 데이터 컬럼만 관리합니다.

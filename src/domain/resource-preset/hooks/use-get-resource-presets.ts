@@ -9,7 +9,7 @@ import type {
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
- * 자원 프리셋 목록 조회 훅
+ * 리소스 프리셋 목록 조회 훅
  *
  * @param payload - 조회 조건 (page, size, search, jobType, nodeType)
  * @returns React Query 결과

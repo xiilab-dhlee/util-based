@@ -31,7 +31,7 @@ interface ResourcePresetListFilterProps {
 }
 
 /**
- * 자원 프리셋 목록 페이지 상단 필터 컴포넌트
+ * 리소스 프리셋 목록 페이지 상단 필터 컴포넌트
  *
  * Job Type, Node Type 필터와 검색어 입력, 추가 버튼을 제공합니다.
  */
@@ -66,7 +66,7 @@ export function ResourcePresetListFilter({
   };
 
   return (
-    <MySearchFilter title="자원 프리셋 목록" total={total}>
+    <MySearchFilter title="리소스 프리셋 목록" total={total}>
       <FilterControls>
         <Dropdown
           options={jobTypeSelect.options}
@@ -88,7 +88,7 @@ export function ResourcePresetListFilter({
           <SearchInput
             width={240}
             disabled={isLoading}
-            placeholder="자원 프리셋 이름을 검색해 주세요."
+            placeholder="리소스 프리셋 이름을 검색해 주세요."
           />
         </form>
         <Button
@@ -101,7 +101,7 @@ export function ResourcePresetListFilter({
           onClick={onClickAdd}
           disabled={isLoading}
         >
-          자원 프리셋 추가
+          리소스 프리셋 추가
         </Button>
       </FilterControls>
     </MySearchFilter>
