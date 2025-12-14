@@ -31,7 +31,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
 
   /* CI에서는 병렬 처리 비활성화 */
-  workers: 2,
+  workers: 1,
 
   /* 리포터 설정 */
   reporter: [

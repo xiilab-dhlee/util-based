@@ -51,7 +51,9 @@ export class TabsComponent {
   async clickTab(tabName: string): Promise<void> {
     // :text-is()는 정확히 일치 (공백 정규화 포함)
     // "활성화"와 "비활성화" 구분을 위해 사용
-    const tab = this.tabsNav.locator(`.tab-item .tab-label:text-is("${tabName}")`);
+    const tab = this.tabsNav.locator(
+      `.tab-item .tab-label:text-is("${tabName}")`,
+    );
     await expect(tab).toBeVisible({ timeout: 10000 });
     await tab.click();
     await this.page.waitForLoadState("networkidle");

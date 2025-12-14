@@ -44,7 +44,10 @@ export abstract class ListPage extends BasePage {
   /** 목록 테이블 컴포넌트 */
   get table(): DataTableComponent {
     if (!this._table) {
-      this._table = new DataTableComponent(this.page, this.tableIdentifierTestId);
+      this._table = new DataTableComponent(
+        this.page,
+        this.tableIdentifierTestId,
+      );
     }
     return this._table;
   }
@@ -52,7 +55,10 @@ export abstract class ListPage extends BasePage {
   /** 페이지네이션 컴포넌트 */
   get pagination(): PaginationComponent {
     if (!this._pagination) {
-      this._pagination = new PaginationComponent(this.page, SELECTOR.LIST_PAGINATION);
+      this._pagination = new PaginationComponent(
+        this.page,
+        SELECTOR.LIST_PAGINATION,
+      );
     }
     return this._pagination;
   }
