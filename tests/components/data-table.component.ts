@@ -11,21 +11,39 @@ import { testId, testIdPrefix } from "@/shared/constants/selector.constant";
  * - 상태별 행 찾기 기능
  *
  * @example
+ * // 페이지 전체에서 테이블 조작
  * const table = new DataTableComponent(page, WORKLOAD_SELECTOR.NAME);
  * const count = await table.getRowCount();
- * const row = await table.findRowByStatus("running");
+ *
+ * @example
+ * // 모달 내 테이블 조작
+ * const modal = page.locator('.ant-modal:visible');
+ * const table = new DataTableComponent(modal, WORKLOAD_SELECTOR.NAME);
  */
 export class DataTableComponent {
+  private container: Page | Locator;
+
   constructor(
-    private page: Page,
+    pageOrContainer: Page | Locator,
     private columnTestId: string,
-  ) {}
+  ) {
+    this.container = pageOrContainer;
+  }
+
+  /**
+   * Page 객체 반환 (waitForLoadState 등에 사용)
+   */
+  private get page(): Page {
+    return "page" in this.container
+      ? (this.container as Locator).page()
+      : (this.container as Page);
+  }
 
   /**
    * 테이블 컬럼 요소들의 Locator
    */
   private get columns(): Locator {
-    return this.page.locator(testId(this.columnTestId));
+    return this.container.locator(testId(this.columnTestId));
   }
 
   /**
@@ -77,7 +95,7 @@ export class DataTableComponent {
     statusValue: string,
   ): Promise<Locator | null> {
     const statusSelector = testId(`${statusTestIdPrefix}${statusValue}`);
-    const statusCell = this.page.locator(statusSelector).first();
+    const statusCell = this.container.locator(statusSelector).first();
 
     const count = await statusCell.count();
     if (count === 0) {
@@ -115,7 +133,7 @@ export class DataTableComponent {
     columnTestId: string,
     callback: (text: string, index: number) => T,
   ): Promise<T[]> {
-    const cells = this.page.locator(testId(columnTestId));
+    const cells = this.container.locator(testId(columnTestId));
     const count = await cells.count();
     const results: T[] = [];
 
@@ -138,7 +156,7 @@ export class DataTableComponent {
     testIdPrefixStr: string,
     callback: (extractedValue: string, index: number) => T,
   ): Promise<T[]> {
-    const elements = this.page.locator(testIdPrefix(testIdPrefixStr));
+    const elements = this.container.locator(testIdPrefix(testIdPrefixStr));
     const count = await elements.count();
     const results: T[] = [];
 
@@ -157,7 +175,7 @@ export class DataTableComponent {
    * @param columnTestId - 컬럼의 data-testid
    */
   async getFirstCellText(columnTestId: string): Promise<string> {
-    const cell = this.page.locator(testId(columnTestId)).first();
+    const cell = this.container.locator(testId(columnTestId)).first();
     return ((await cell.textContent()) ?? "").trim();
   }
 
@@ -167,7 +185,7 @@ export class DataTableComponent {
    * @param columnTestId - 컬럼의 data-testid
    */
   async clickFirstCell(columnTestId: string): Promise<void> {
-    const cell = this.page.locator(testId(columnTestId)).first();
+    const cell = this.container.locator(testId(columnTestId)).first();
     await cell.click();
     await this.page.waitForLoadState("networkidle");
   }

@@ -34,6 +34,7 @@ export class WorkloadDetailPage extends BasePage {
     종료: WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON,
     재시작: WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON,
     삭제: WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON,
+    복제: WORKLOAD_SELECTOR.DETAIL_CLONE_BUTTON,
   };
 
   // ============================================
@@ -144,6 +145,41 @@ export class WorkloadDetailPage extends BasePage {
     return this.page.locator(
       testId(WORKLOAD_SELECTOR.DETAIL_COMMIT_IMAGE_BUTTON),
     );
+  }
+
+  // ============================================
+  // Locators - 수정 모달 관련
+  // ============================================
+
+  /** 수정 모달 이름 입력창 */
+  get updateNameInput(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.UPDATE_NAME_INPUT));
+  }
+
+  /** 수정 모달 설명 입력창 */
+  get updateDescriptionInput(): Locator {
+    return this.page.locator(
+      testId(WORKLOAD_SELECTOR.UPDATE_DESCRIPTION_INPUT),
+    );
+  }
+
+  /** 복제 버튼 */
+  get cloneButton(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.DETAIL_CLONE_BUTTON));
+  }
+
+  // ============================================
+  // Locators - Commit Image 모달 관련
+  // ============================================
+
+  /** Commit Image 이름 입력창 */
+  get commitImageNameInput(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.COMMIT_IMAGE_NAME_INPUT));
+  }
+
+  /** Commit Image 태그 입력창 */
+  get commitImageTagInput(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.COMMIT_IMAGE_TAG_INPUT));
   }
 
   // ============================================
@@ -320,5 +356,83 @@ export class WorkloadDetailPage extends BasePage {
     }
 
     return results;
+  }
+
+  // ============================================
+  // 버튼 클릭 액션 메서드
+  // ============================================
+
+  /**
+   * 수정 버튼 클릭
+   */
+  async clickEditButton(): Promise<void> {
+    const editButton = this.getButton(WORKLOAD_SELECTOR.DETAIL_EDIT_BUTTON);
+    await expect(editButton).toBeVisible();
+    await editButton.click();
+  }
+
+  /**
+   * 종료 버튼 클릭
+   */
+  async clickStopButton(): Promise<void> {
+    const stopButton = this.getButton(WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON);
+    await expect(stopButton).toBeVisible();
+    await stopButton.click();
+  }
+
+  /**
+   * 재시작 버튼 클릭
+   */
+  async clickRestartButton(): Promise<void> {
+    const restartButton = this.getButton(
+      WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON,
+    );
+    await expect(restartButton).toBeVisible();
+    await restartButton.click();
+  }
+
+  /**
+   * 삭제 버튼 클릭
+   */
+  async clickDeleteButton(): Promise<void> {
+    const deleteButton = this.getButton(WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON);
+    await expect(deleteButton).toBeVisible();
+    await deleteButton.click();
+  }
+
+  /**
+   * Commit Image 생성 버튼 클릭
+   */
+  async clickCommitImageButton(): Promise<void> {
+    await expect(this.commitImageButton).toBeVisible();
+    await this.commitImageButton.click();
+  }
+
+  /**
+   * 복제 버튼 클릭
+   */
+  async clickCloneButton(): Promise<void> {
+    await expect(this.cloneButton).toBeVisible();
+    await this.cloneButton.click();
+  }
+
+  // ============================================
+  // 수정 모달 관련 메서드
+  // ============================================
+
+  /**
+   * 수정 모달의 이름 입력값 반환
+   */
+  async getUpdateNameInputValue(): Promise<string> {
+    await expect(this.updateNameInput).toBeVisible();
+    return (await this.updateNameInput.inputValue()) ?? "";
+  }
+
+  /**
+   * 수정 모달의 설명 입력값 반환
+   */
+  async getUpdateDescriptionInputValue(): Promise<string> {
+    await expect(this.updateDescriptionInput).toBeVisible();
+    return (await this.updateDescriptionInput.inputValue()) ?? "";
   }
 }

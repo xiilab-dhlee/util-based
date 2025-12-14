@@ -94,4 +94,17 @@ export class TabsComponent {
     );
     await expect(disabledTab).toBeVisible({ timeout: 10000 });
   }
+
+  /**
+   * 탭이 활성화(클릭 가능)되어 있는지 검증
+   *
+   * @param tabName - 확인할 탭 이름
+   */
+  async assertTabEnabled(tabName: string): Promise<void> {
+    // disabled 클래스가 없는 탭 확인
+    const enabledTab = this.tabsNav.locator(
+      `.tab-item:not(.disabled) .tab-label:text("${tabName}")`,
+    );
+    await expect(enabledTab).toBeVisible({ timeout: 10000 });
+  }
 }

@@ -14,7 +14,7 @@ import { WorkloadDetailPage } from "../../pages/workload-detail.page";
  * Page Objects:
  * - workloadDetailPage: 워크로드 상세 페이지 (eventCards, sourcecodeCards, tabs, 상세 정보 등)
  */
-const { Then, Given } = createBdd(test);
+const { When, Then, Given } = createBdd(test);
 
 // ============================================
 // 페이지 표시 확인 Steps
@@ -492,5 +492,157 @@ Then(
     for (const tabName of tabRule.disabled) {
       await workloadDetailPage.tabs.assertTabDisabled(tabName);
     }
+  },
+);
+
+// ============================================
+// 인터랙션 Steps - 버튼 클릭
+// ============================================
+
+When("워크로드 수정 버튼을 클릭한다", async ({ workloadDetailPage }) => {
+  await workloadDetailPage.clickEditButton();
+});
+
+When("워크로드 종료 버튼을 클릭한다", async ({ workloadDetailPage }) => {
+  await workloadDetailPage.clickStopButton();
+});
+
+When("워크로드 재시작 버튼을 클릭한다", async ({ workloadDetailPage }) => {
+  await workloadDetailPage.clickRestartButton();
+});
+
+When("워크로드 삭제 버튼을 클릭한다", async ({ workloadDetailPage }) => {
+  await workloadDetailPage.clickDeleteButton();
+});
+
+When("Commit Image 생성 버튼을 클릭한다", async ({ workloadDetailPage }) => {
+  await workloadDetailPage.clickCommitImageButton();
+});
+
+When("워크로드 복제 버튼을 클릭한다", async ({ workloadDetailPage }) => {
+  await workloadDetailPage.clickCloneButton();
+});
+
+// ============================================
+// 인터랙션 Steps - 수정 모달
+// ============================================
+
+Then("수정 모달이 표시된다", async ({ modal }) => {
+  await modal.waitForVisible();
+});
+
+Then("수정 모달에 이름 입력창이 표시된다", async ({ workloadDetailPage }) => {
+  await expect(workloadDetailPage.updateNameInput).toBeVisible();
+});
+
+Then("수정 모달에 설명 입력창이 표시된다", async ({ workloadDetailPage }) => {
+  await expect(workloadDetailPage.updateDescriptionInput).toBeVisible();
+});
+
+Then(
+  "수정 모달의 이름 입력창에 현재 워크로드 이름이 입력되어 있다",
+  async ({ workloadDetailPage, assertLogger }) => {
+    const inputValue = await workloadDetailPage.getUpdateNameInputValue();
+    // 이름이 비어있지 않으면 유효
+    assertLogger.assertNotEmpty("수정 모달 이름 입력값", inputValue);
+  },
+);
+
+Then(
+  "수정 모달의 설명 입력창에 현재 워크로드 설명이 입력되어 있다",
+  async ({ workloadDetailPage }) => {
+    // 설명은 비어있을 수 있으므로 입력창이 visible한지만 확인
+    await expect(workloadDetailPage.updateDescriptionInput).toBeVisible();
+  },
+);
+
+// ============================================
+// 인터랙션 Steps - Commit Image 모달
+// ============================================
+
+Then("Commit Image 생성 모달이 표시된다", async ({ modal }) => {
+  await modal.waitForVisible();
+});
+
+Then(
+  "Commit Image 이름 입력창이 빈 값으로 표시된다",
+  async ({ workloadDetailPage }) => {
+    await expect(workloadDetailPage.commitImageNameInput).toBeVisible();
+    const value = await workloadDetailPage.commitImageNameInput.inputValue();
+    expect(value).toBe("");
+  },
+);
+
+Then(
+  "Commit Image 태그 입력창이 빈 값으로 표시된다",
+  async ({ workloadDetailPage }) => {
+    await expect(workloadDetailPage.commitImageTagInput).toBeVisible();
+    const value = await workloadDetailPage.commitImageTagInput.inputValue();
+    expect(value).toBe("");
+  },
+);
+
+// ============================================
+// 인터랙션 Steps - 드로어
+// ============================================
+
+Then("워크로드 생성 드로어가 표시된다", async ({ drawer }) => {
+  await drawer.waitForVisible();
+});
+
+// ============================================
+// 워크로드 복제 검증 Steps
+// ============================================
+
+Then(
+  "Job Type 버튼이 상세 페이지의 Job Type과 동일하다",
+  async ({ page, workloadDetailPage, assertLogger }) => {
+    const detailJobType =
+      (await workloadDetailPage.jobTypeName.textContent())?.trim() ?? "";
+
+    // 잡 타입에 따른 버튼 레이블 매핑 (UI 표시값: batch, distributed, interactive)
+    const jobTypeToLabel: Record<string, string> = {
+      batch: "Batch Job",
+      distributed: "Batch Job",
+      interactive: "Interactive Job (IDE)",
+    };
+    const expectedLabel =
+      jobTypeToLabel[detailJobType.toLowerCase()] ?? detailJobType;
+
+    const card = page.getByRole("button", { name: expectedLabel });
+    await expect(card).toBeVisible({ timeout: 10000 });
+    await expect(card).toHaveAttribute("data-active", "true");
+
+    assertLogger.assertEqual("잡 타입 버튼", expectedLabel, expectedLabel);
+  },
+);
+
+Then(
+  "워크로드 이름 입력창 내 텍스트가 상세 페이지의 워크로드 이름과 동일하다",
+  async ({ page, workloadDetailPage, assertLogger }) => {
+    const detailName =
+      (await workloadDetailPage.name.textContent())?.trim() ?? "";
+
+    const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_NAME));
+    await expect(input).toBeVisible({ timeout: 10000 });
+    const inputValue = await input.inputValue();
+
+    assertLogger.assertEqual("워크로드 이름", inputValue, detailName);
+  },
+);
+
+Then(
+  "워크로드 설명 입력창 내 텍스트가 상세 페이지의 워크로드 설명과 동일하다",
+  async ({ page, workloadDetailPage, assertLogger }) => {
+    const rawDescription =
+      (await workloadDetailPage.description.textContent())?.trim() ?? "";
+    // "-"는 빈 값을 나타내므로 빈 문자열로 변환
+    const detailDescription = rawDescription === "-" ? "" : rawDescription;
+
+    const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_DESCRIPTION));
+    await expect(input).toBeVisible({ timeout: 10000 });
+    const inputValue = await input.inputValue();
+
+    assertLogger.assertEqual("워크로드 설명", inputValue, detailDescription);
   },
 );

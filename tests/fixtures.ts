@@ -3,6 +3,7 @@ import { test as base } from "playwright-bdd";
 
 import { DrawerComponent } from "./components/drawer.component";
 import { ModalComponent } from "./components/modal.component";
+import { RadioComponent } from "./components/radio.component";
 import { TabsComponent } from "./components/tabs.component";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
@@ -51,9 +52,32 @@ export type ListContextActions = {
   reset: () => void;
 };
 
+/**
+ * 워크로드 정보 컨텍스트
+ *
+ * 워크로드 가져오기/복제 시 선택된 워크로드 정보를 저장
+ * - 모달에서 선택한 워크로드
+ * - 상세 페이지에서 복제할 워크로드
+ */
+export type WorkloadContext = {
+  name: string;
+  description: string;
+  jobType: string;
+};
+
+export type WorkloadContextActions = {
+  /** 워크로드 정보 설정 */
+  set: (data: Partial<WorkloadContext>) => void;
+  /** 워크로드 정보 반환 (없으면 에러) */
+  get: () => WorkloadContext;
+  /** 컨텍스트 초기화 */
+  reset: () => void;
+};
+
 type TestContextFixtures = {
-  // 목록 페이지 컨텍스트
+  // 컨텍스트
   listContext: ListContext & ListContextActions;
+  workloadContext: WorkloadContext & WorkloadContextActions;
   workloadId: string;
   workspaceId: string;
   testMode: TestMode;
@@ -68,6 +92,7 @@ type TestContextFixtures = {
   modal: ModalComponent;
   drawer: DrawerComponent;
   tabs: TabsComponent;
+  radio: RadioComponent;
 };
 
 // ============================================================================
@@ -129,6 +154,14 @@ function createInitialListContext(): ListContext {
   };
 }
 
+function createInitialWorkloadContext(): WorkloadContext {
+  return {
+    name: "",
+    description: "",
+    jobType: "",
+  };
+}
+
 // ============================================================================
 // Test Fixtures
 // ============================================================================
@@ -187,6 +220,35 @@ export const test = base.extend<TestContextFixtures>({
     context.currentRow = null;
   },
 
+  workloadContext: async ({}, use) => {
+    const context = createInitialWorkloadContext();
+
+    await use({
+      ...context,
+      set: (data: Partial<WorkloadContext>) => {
+        Object.assign(context, data);
+      },
+      get: () => {
+        if (!context.name && !context.jobType) {
+          throw new Error(
+            "워크로드 정보가 없습니다. 먼저 워크로드를 선택하세요.",
+          );
+        }
+        return context;
+      },
+      reset: () => {
+        context.name = "";
+        context.description = "";
+        context.jobType = "";
+      },
+    });
+
+    // Teardown: 컨텍스트 초기화
+    context.name = "";
+    context.description = "";
+    context.jobType = "";
+  },
+
   testMode: async ({}, use) => {
     await use(TEST_MODE);
   },
@@ -235,5 +297,9 @@ export const test = base.extend<TestContextFixtures>({
 
   tabs: async ({ page }, use) => {
     await use(new TabsComponent(page, ".tabs-nav"));
+  },
+
+  radio: async ({ page }, use) => {
+    await use(new RadioComponent(page));
   },
 });

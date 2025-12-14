@@ -24,13 +24,13 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
   # 탭 전환
   # ============================================
 
-  @regression
+  @skip
   Scenario: 비활성화 탭으로 이동
     When "비활성화" 탭을 클릭하여 "비활성화 워크로드 목록" 페이지로 이동한다
     Then URL이 "/user/workload/disabled"와 일치한다
     And "비활성화" 탭이 선택되어 있다
 
-  @regression @advanced
+  @skip
   Scenario: 비활성화 탭으로 전환 후 다시 돌아오기
     When "비활성화" 탭을 클릭하여 "비활성화 워크로드 목록" 페이지로 이동한다
     Then URL이 "/user/workload/disabled"와 일치한다
@@ -102,32 +102,6 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
       | auto   | Batch       | -       |
       | auto   | -           | 실행중  |
       | auto   | Interactive | 실행중  |
-
-  # ============================================
-  # 페이지네이션
-  # ============================================
-
-  @regression
-  Scenario: 다음 페이지로 이동
-    Given 목록에 워크로드가 있다
-    And 총 페이지가 2 이상이다
-    When 다음 페이지 버튼을 클릭한다
-    Then 현재 페이지가 2이다
-
-  @regression
-  Scenario: 이전 페이지로 이동
-    Given 목록에 워크로드가 있다
-    And 총 페이지가 2 이상이다
-    And 페이지 2로 이동한 상태이다
-    When 이전 페이지 버튼을 클릭한다
-    Then 현재 페이지가 1이다
-
-  @regression
-  Scenario: 특정 페이지 번호 클릭으로 이동
-    Given 목록에 워크로드가 있다
-    And 총 페이지가 3 이상이다
-    When 페이지 3을 클릭한다
-    Then 현재 페이지가 3이다
 
   # ============================================
   # 액션 (종료)

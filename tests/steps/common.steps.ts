@@ -136,58 +136,15 @@ Then("검색창이 빈 값으로 표시된다", async ({ workloadListPage }) => 
 });
 
 // ============================================
-// 페이지네이션 관련 Steps
-// ============================================
-
-Then(
-  /^현재 페이지가 (\d+)이다$/,
-  async ({ workloadListPage }, pageNum: number) => {
-    await workloadListPage.pagination.assertCurrentPage(pageNum);
-  },
-);
-
-Given(
-  /^페이지 (\d+)로 이동한 상태이다$/,
-  async ({ workloadListPage }, pageNum: string) => {
-    await workloadListPage.pagination.goToPage(Number.parseInt(pageNum, 10));
-  },
-);
-
-Given(
-  /^총 페이지가 (\d+) 이상이다$/,
-  async ({ workloadListPage, $testInfo }, minPages: string) => {
-    const count = await workloadListPage.pagination.getTotalPages();
-
-    if (count < Number.parseInt(minPages, 10)) {
-      $testInfo.skip(
-        true,
-        `총 페이지가 ${minPages} 미만이어서 시나리오를 스킵합니다`,
-      );
-    }
-  },
-);
-
-When("다음 페이지 버튼을 클릭한다", async ({ workloadListPage }) => {
-  await workloadListPage.pagination.goToNextPage();
-});
-
-When("이전 페이지 버튼을 클릭한다", async ({ workloadListPage }) => {
-  await workloadListPage.pagination.goToPreviousPage();
-});
-
-When(
-  /^페이지 (\d+)을 클릭한다$/,
-  async ({ workloadListPage }, pageNum: string) => {
-    await workloadListPage.pagination.goToPage(Number.parseInt(pageNum, 10));
-  },
-);
-
-// ============================================
 // 탭 관련 Steps
 // ============================================
 
 Then("{string} 탭이 선택되어 있다", async ({ tabs }, tabName: string) => {
   await tabs.assertActiveTab(tabName);
+});
+
+Then("{string} 탭이 활성화되어 있다", async ({ tabs }, tabName: string) => {
+  await tabs.assertTabEnabled(tabName);
 });
 
 Then("{string} 탭이 비활성화되어 있다", async ({ tabs }, tabName: string) => {

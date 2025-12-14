@@ -22,7 +22,16 @@ export const disabledWorkloadListMock = Array.from(
   () => makeMock(disabledWorkloadListSchema),
 );
 
-export const workloadDetailMock = makeMock(workloadDetailSchema);
+// 기본 상세 조회용 mock 데이터
+const baseDetailMock = makeMock(workloadDetailSchema);
+
+// workloadListMock의 첫 번째 워크로드 정보와 동기화된 상세 mock
+export const workloadDetailMock = {
+  ...baseDetailMock,
+  workloadName: workloadListMock[0].workloadName,
+  description: workloadListMock[0].description,
+  jobType: workloadListMock[0].jobType,
+};
 
 export const workloadVulnerabilityListMock = Array.from(
   { length: LIST_PAGE_SIZE },

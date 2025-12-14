@@ -2,7 +2,6 @@ import { expect, type Locator } from "@playwright/test";
 
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { DataTableComponent } from "../components/data-table.component";
-import { PaginationComponent } from "../components/pagination.component";
 import { BasePage } from "./base.page";
 
 /**
@@ -12,7 +11,6 @@ import { BasePage } from "./base.page";
  * - searchInput: 검색 입력창
  * - totalCount: 총 개수 표시
  * - listTable: 목록 테이블
- * - pagination: 페이지네이션
  *
  * SOLID - Liskov Substitution: BasePage를 대체 가능
  * SOLID - Single Responsibility: 목록 페이지 공통 동작만 담당
@@ -27,8 +25,6 @@ import { BasePage } from "./base.page";
 export abstract class ListPage extends BasePage {
   /** 목록 테이블 컴포넌트 (lazy initialization) */
   private _table: DataTableComponent | null = null;
-  /** 페이지네이션 컴포넌트 (lazy initialization) */
-  private _pagination: PaginationComponent | null = null;
 
   // ============================================
   // Abstract - 하위 클래스에서 구현 필수
@@ -50,17 +46,6 @@ export abstract class ListPage extends BasePage {
       );
     }
     return this._table;
-  }
-
-  /** 페이지네이션 컴포넌트 */
-  get pagination(): PaginationComponent {
-    if (!this._pagination) {
-      this._pagination = new PaginationComponent(
-        this.page,
-        SELECTOR.LIST_PAGINATION,
-      );
-    }
-    return this._pagination;
   }
 
   // ============================================

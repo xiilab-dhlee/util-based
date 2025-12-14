@@ -149,6 +149,8 @@ AfterStep({ tags: "@interaction" }, async ({ page, $testInfo, $step }) => {
   const isUiAction = UI_ACTION_PATTERN.test($step.title);
 
   if (isUiAction) {
+    await page.waitForTimeout(200);
+
     const screenshot = await page.screenshot();
     const stepTitle = $step.title.slice(0, 50);
 
