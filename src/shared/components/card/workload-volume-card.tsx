@@ -4,8 +4,12 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
-import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
+import {
+  getVolumeStatusInfo,
+  getVolumeStorageTypeInfo,
+} from "@/domain/volume/utils/volume.util";
 import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   LikeCompactCardKey,
   LikeCompactCardRecord,
@@ -21,43 +25,65 @@ export function WorkloadVolumeCard({
   storageType,
   path,
   size,
+  status,
   onDelete,
 }: PropsWithChildren<WorkloadVolumeCardProps>) {
-  const { text, icon } = getVolumeStorageTypeInfo(storageType);
+  const { text } = getVolumeStorageTypeInfo(storageType);
+  const { icon } = getVolumeStatusInfo(status);
   return (
-    <Card
-      contentVariant="compact"
-      title={name}
-      icon={<Icon name={icon} color="#5b29c7" size={18} />}
-      actionElement={
-        onDelete ? (
-          <IconWrapper onClick={onDelete}>
-            <Icon name="Close" size={16} color="#484848" />
-          </IconWrapper>
-        ) : undefined
-      }
-    >
-      <Body>
-        <LikeCompactCardRecord>
-          <LikeCompactCardKey>스토리지 :</LikeCompactCardKey>
-          <LikeCompactCardValue className="truncate">
-            {text}
-          </LikeCompactCardValue>
-        </LikeCompactCardRecord>
-        <LikeCompactCardRecord>
-          <LikeCompactCardKey>경로 :</LikeCompactCardKey>
-          <LikeCompactCardValue className="truncate">
-            {path || "-"}
-          </LikeCompactCardValue>
-        </LikeCompactCardRecord>
-        <LikeCompactCardRecord>
-          <LikeCompactCardKey>볼륨 크기 :</LikeCompactCardKey>
-          <LikeCompactCardValue>{size} Bytes</LikeCompactCardValue>
-        </LikeCompactCardRecord>
-      </Body>
-    </Card>
+    <CardWrapper data-testid={WORKLOAD_SELECTOR.VOLUME_CARD}>
+      <Card
+        contentVariant="compact"
+        title={name}
+        icon={
+          <span
+            data-testid={WORKLOAD_SELECTOR.volumeStatus(status.toLowerCase())}
+          >
+            <Icon name={icon} color="#464B51" size={18} />
+          </span>
+        }
+        actionElement={
+          onDelete ? (
+            <IconWrapper onClick={onDelete}>
+              <Icon name="Close" size={16} color="#484848" />
+            </IconWrapper>
+          ) : undefined
+        }
+      >
+        <Body>
+          <LikeCompactCardRecord>
+            <LikeCompactCardKey>스토리지 타입 :</LikeCompactCardKey>
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.volumeStorageType(
+                storageType.toLowerCase(),
+              )}
+            >
+              {text}
+            </LikeCompactCardValue>
+          </LikeCompactCardRecord>
+          <LikeCompactCardRecord>
+            <LikeCompactCardKey>경로 :</LikeCompactCardKey>
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.VOLUME_PATH}
+            >
+              {path || "-"}
+            </LikeCompactCardValue>
+          </LikeCompactCardRecord>
+          <LikeCompactCardRecord>
+            <LikeCompactCardKey>볼륨 크기 :</LikeCompactCardKey>
+            <LikeCompactCardValue data-testid={WORKLOAD_SELECTOR.VOLUME_SIZE}>
+              {size.toLocaleString()} Bytes
+            </LikeCompactCardValue>
+          </LikeCompactCardRecord>
+        </Body>
+      </Card>
+    </CardWrapper>
   );
 }
+
+const CardWrapper = styled.div``;
 
 const Body = styled.div`
   display: flex;

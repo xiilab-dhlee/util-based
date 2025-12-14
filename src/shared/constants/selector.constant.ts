@@ -155,6 +155,18 @@ export const WORKLOAD_SELECTOR = {
   /** 소스코드 Git URL */
   SOURCECODE_URL: "workload-source-code-url",
 
+  // 상세 페이지 - 볼륨
+  /** 볼륨 카드 */
+  VOLUME_CARD: "workload-volume-card",
+  /** 볼륨 상태 - workload-volume-status-{status} (상태별 필터링용) */
+  volumeStatus: (status: string) => `workload-volume-status-${status}`,
+  /** 볼륨 스토리지 타입 - workload-volume-storage-type-{type} */
+  volumeStorageType: (type: string) => `workload-volume-storage-type-${type}`,
+  /** 볼륨 경로 */
+  VOLUME_PATH: "workload-volume-path",
+  /** 볼륨 크기 */
+  VOLUME_SIZE: "workload-volume-size",
+
   // 상세 페이지 - 상세정보 탭 내용
   /** 잡 타입 명 */
   DETAIL_JOB_TYPE_NAME: "workload-detail-job-type_name",
