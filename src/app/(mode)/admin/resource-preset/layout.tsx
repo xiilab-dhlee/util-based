@@ -1,9 +1,10 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { usePathname, useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect } from "react";
 
+import { CreateResourcePresetDrawer } from "@/domain/resource-preset/components/create/create-resource-preset-drawer";
 import { ResourcePresetListBody } from "@/domain/resource-preset/components/list/resource-preset-list-body";
 import { ResourcePresetListFilter } from "@/domain/resource-preset/components/list/resource-preset-list-filter";
 import { ResourcePresetListFooter } from "@/domain/resource-preset/components/list/resource-preset-list-footer";
@@ -14,9 +15,11 @@ import {
   resourcePresetPageAtom,
   resourcePresetSearchTextAtom,
 } from "@/domain/resource-preset/state/resource-preset.atom";
+import { openDrawerWithInitAtom } from "@/domain/resource-preset/state/resource-preset-form.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { useGetGpus } from "@/shared/hooks/use-get-gpus";
 import {
   ListPageAside,
   ListPageBody,
@@ -24,7 +27,7 @@ import {
 } from "@/styles/layers/list-page-layers.styled";
 
 /**
- * 자원 프리셋 관리 목록 페이지 레이아웃
+ * 리소스 프리셋 관리 목록 페이지 레이아웃
  */
 export default function AdminResourcePresetLayout({
   children,
@@ -54,6 +57,12 @@ export default function AdminResourcePresetLayout({
   const data = response?.content ?? [];
   const total = response?.totalSize ?? 0;
 
+  // GPU 데이터 (Drawer 열 때 필요)
+  const { data: gpuData } = useGetGpus();
+
+  // Drawer 열기 액션
+  const openDrawerWithInit = useSetAtom(openDrawerWithInitAtom);
+
   /**
    * 목록 페이지 진입 시 첫 번째 아이템 자동 선택
    */
@@ -69,8 +78,7 @@ export default function AdminResourcePresetLayout({
 
   /** 추가 버튼 클릭 핸들러 */
   const handleClickAdd = () => {
-    // TODO: 추가 모달 또는 드로어 열기
-    console.log("추가 버튼 클릭");
+    openDrawerWithInit(gpuData?.content ?? []);
   };
 
   return (
@@ -79,27 +87,29 @@ export default function AdminResourcePresetLayout({
         pageKey="admin.resource-preset"
         description="Resource Preset Management"
       />
-      {/* 자원 프리셋 목록 페이지 메인 영역 */}
+      {/* 리소스 프리셋 목록 페이지 메인 영역 */}
       <ListPageMain>
-        {/* 자원 프리셋 목록 페이지 - 왼쪽 영역 (필터, 목록, 페이지네이션) */}
+        {/* 리소스 프리셋 목록 페이지 - 왼쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
-          {/* 자원 프리셋 목록 필터 */}
+          {/* 리소스 프리셋 목록 필터 */}
           <ResourcePresetListFilter
             total={total}
             isLoading={isLoading}
             onClickAdd={handleClickAdd}
           />
-          {/* 자원 프리셋 목록 본문 */}
+          {/* 리소스 프리셋 목록 본문 */}
           <ResourcePresetListBody
             data={data}
             isLoading={isLoading}
             isError={isError}
           />
-          {/* 자원 프리셋 목록 페이지네이션 */}
+          {/* 리소스 프리셋 목록 페이지네이션 */}
           <ResourcePresetListFooter total={total} isLoading={isLoading} />
         </ListPageBody>
         <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
       </ListPageMain>
+      {/* 리소스 프리셋 생성 드로어 */}
+      <CreateResourcePresetDrawer />
     </>
   );
 }
