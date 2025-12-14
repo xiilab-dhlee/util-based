@@ -156,6 +156,22 @@ export const REPORT_EVENTS = {
   // 리포트 삭제에 필요한 정보 전달 이벤트
   sendDeleteReport: "report:send-delete-report",
 } as const;
+
+// 리포트 예약 관련 이벤트
+export const RESERVATION_EVENTS = {
+  // 예약발송 활성화/비활성화 토글에 필요한 정보 전달 이벤트
+  sendToggleReservationSchedule: "reservation:send-toggle-reservation-schedule",
+  // 예약 삭제에 필요한 정보 전달 이벤트
+  sendDeleteReservation: "reservation:send-delete-reservation",
+  // 리포트 예약 멤버 추가 모달 열기 이벤트
+  openMemberModal: "reservation:open-member-modal",
+  // 리포트 예약 멤버 선택 확인 이벤트
+  confirmMemberSelection: "reservation:confirm-member-selection",
+  // 리포트 예약 상세 모달 열기 이벤트
+  openReservationDetailModal: "reservation:open-reservation-detail-modal",
+  // 리포트 예약 수정 모달 열기 이벤트
+  openReservationEditModal: "reservation:open-reservation-edit-modal",
+} as const;
 // 모니터링 관련 이벤트
 export const MONITORING_EVENTS = {
   // 모니터링 알림 생성/수정 모달 열기 이벤트

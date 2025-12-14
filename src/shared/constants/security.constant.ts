@@ -46,26 +46,8 @@ export const SECURITY_SCHEDULE_PERIOD_UNITS: SecuritySchedulePeriodUnitOption[] 
     { key: SECURITY_SCHEDULE_PERIOD_UNIT_MONTH, label: "개월" },
   ];
 
-export type SecurityWeekDayKey =
-  | "mon"
-  | "tue"
-  | "wed"
-  | "thu"
-  | "fri"
-  | "sat"
-  | "sun";
-
-interface SecurityWeekDayOption {
-  key: SecurityWeekDayKey;
-  label: string;
-}
-
-export const SECURITY_WEEK_DAYS: SecurityWeekDayOption[] = [
-  { key: "mon", label: "월" },
-  { key: "tue", label: "화" },
-  { key: "wed", label: "수" },
-  { key: "thu", label: "목" },
-  { key: "fri", label: "금" },
-  { key: "sat", label: "토" },
-  { key: "sun", label: "일" },
-];
+// 공통 요일 상수 re-export (기존 코드 호환)
+export {
+  WEEK_DAYS as SECURITY_WEEK_DAYS,
+  type WeekDayKey as SecurityWeekDayKey,
+} from "./date.constant";

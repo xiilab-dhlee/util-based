@@ -3,7 +3,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 
 import {
   REPORT_DATE_TYPE_TEXT,
-  REPORT_TYPE_TEXT,
+  REPORT_TYPE_LABEL,
 } from "@/domain/report/constants/report.constant";
 import type { ReportListType } from "@/domain/report/schemas/report.schema";
 import { ROUTES } from "@/shared/constants/routes.constant";
@@ -51,8 +51,8 @@ const createColumnList = (
       title: "리포트 종류",
       dataIndex: "reportType",
       align: "center",
-      render: (reportType: keyof typeof REPORT_TYPE_TEXT) => {
-        return <span>{REPORT_TYPE_TEXT[reportType] ?? "-"}</span>;
+      render: (reportType: keyof typeof REPORT_TYPE_LABEL) => {
+        return <span>{REPORT_TYPE_LABEL[reportType] ?? "-"}</span>;
       },
     },
     {

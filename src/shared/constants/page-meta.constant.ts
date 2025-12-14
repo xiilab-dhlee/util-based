@@ -261,6 +261,12 @@ export const PAGE_META = {
     iconName: "ReportReservation",
     href: ROUTES.ADMIN_REPORT_RESERVATION,
   },
+  "admin.report-reservation.dispatch-detail": {
+    title: "발송 내역 상세",
+    href: ({ id }: { id: string }) =>
+      ROUTES.ADMIN_REPORT_RESERVATION_DISPATCH_DETAIL(id),
+    parent: "admin.report-reservation",
+  },
 
   // ============================================
   // Admin Routes - Settings

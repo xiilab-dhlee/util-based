@@ -16,6 +16,7 @@ import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { NotificationService } from "@/domain/notification/api/notification.service";
 import { ReportService } from "@/domain/report/api/report.service";
+import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
 import { RevokeHistoryService } from "@/domain/revoke/api/revoke-history.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
@@ -52,6 +53,7 @@ interface ServiceContextType {
   redfishService: RedfishService;
   requestImageService: RequestImageService;
   reportService: ReportService;
+  reportReservationService: ReportReservationService;
   internalregistryService: InternalRegistryService;
   internalregistryImageService: InternalRegistryImageService;
   adminInternalRegistryImageService: AdminInternalRegistryImageService;
@@ -101,6 +103,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     redfishService: new RedfishService(),
     requestImageService: new RequestImageService(),
     reportService: new ReportService(),
+    reportReservationService: new ReportReservationService(),
     internalregistryService: new InternalRegistryService(),
     internalregistryImageService: new InternalRegistryImageService(),
     adminInternalRegistryImageService: new AdminInternalRegistryImageService(),
