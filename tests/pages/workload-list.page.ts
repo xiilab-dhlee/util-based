@@ -25,14 +25,6 @@ export class WorkloadListPage extends ListPage {
   // 도메인 상수 (Static)
   // ============================================
 
-  /** 한글 상태명 → testId용 영문 값 */
-  static readonly STATUS_MAP: Record<string, string> = {
-    실행중: "running",
-    대기중: "pending",
-    종료: "completed",
-    에러: "failed",
-  };
-
   /** 목록 페이지 행 버튼 셀렉터 */
   static readonly ROW_BUTTON: Record<string, string> = {
     로그: WORKLOAD_SELECTOR.LOG_BUTTON,
@@ -52,7 +44,10 @@ export class WorkloadListPage extends ListPage {
   };
 
   /** 로그/웹터미널 페이지 버튼 셀렉터 */
-  static readonly PAGE_BUTTON: Record<string, { monitoring: string; theme: string }> = {
+  static readonly PAGE_BUTTON: Record<
+    string,
+    { monitoring: string; theme: string }
+  > = {
     로그: {
       monitoring: WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON,
       theme: WORKLOAD_SELECTOR.LOG_THEME_BUTTON,

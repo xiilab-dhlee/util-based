@@ -28,14 +28,6 @@ export class WorkloadDetailPage extends BasePage {
   // 도메인 상수 (Static)
   // ============================================
 
-  /** 한글 상태명 → testId용 영문 값 */
-  static readonly STATUS_MAP: Record<string, string> = {
-    실행중: "running",
-    대기중: "pending",
-    종료: "completed",
-    에러: "failed",
-  };
-
   /** 상세 페이지 버튼 셀렉터 */
   static readonly BUTTON: Record<string, string> = {
     수정: WORKLOAD_SELECTOR.DETAIL_EDIT_BUTTON,
@@ -52,6 +44,8 @@ export class WorkloadDetailPage extends BasePage {
   readonly eventCards: CardListComponent;
   /** 소스코드 카드 목록 */
   readonly sourcecodeCards: CardListComponent;
+  /** 볼륨 카드 목록 */
+  readonly volumeCards: CardListComponent;
   /** 탭 컴포넌트 */
   readonly tabs: TabsComponent;
 
@@ -61,6 +55,10 @@ export class WorkloadDetailPage extends BasePage {
     this.sourcecodeCards = new CardListComponent(
       page,
       WORKLOAD_SELECTOR.SOURCECODE_CARD,
+    );
+    this.volumeCards = new CardListComponent(
+      page,
+      WORKLOAD_SELECTOR.VOLUME_CARD,
     );
     this.tabs = new TabsComponent(page, ".tabs-nav");
   }
