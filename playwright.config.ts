@@ -69,7 +69,7 @@ export default defineConfig({
     trace: "retain-on-failure",
 
     /* 비디오 녹화 설정 */
-    video: "retain-on-failure",
+    // video: "retain-on-failure",
 
     /* Base URL - 개발 서버 주소 */
     baseURL: process.env.BASE_URL || "http://localhost:3000",
