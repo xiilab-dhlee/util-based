@@ -2,8 +2,7 @@
 
 import { useSetAtom } from "jotai";
 import type { FormEvent } from "react";
-import styled from "styled-components";
-import { Button, Switch } from "xiilab-ui";
+import { Button } from "xiilab-ui";
 
 import { SourcecodeTypeSort } from "@/domain/sourcecode/components/sourcecode-type-sort";
 import {
@@ -13,6 +12,7 @@ import {
 } from "@/domain/sourcecode/state/sourcecode.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSearch } from "@/shared/hooks/use-search";
 
@@ -51,8 +51,7 @@ export function SourcecodeListFilter({
 
   return (
     <MySearchFilter title="소스코드 목록" total={total}>
-      <SwitchLabel>내 항목만 보기</SwitchLabel>
-      <Switch checked={true} />
+      <MyItemsOnlySwitch checked={true} />
       <SourcecodeTypeSort disabled={loading} />
       <form onSubmit={handleSubmit}>
         <SearchInput disabled={loading} />
@@ -72,11 +71,3 @@ export function SourcecodeListFilter({
     </MySearchFilter>
   );
 }
-
-const SwitchLabel = styled.div`
-  padding-left: 0;
-  line-height: 16px;
-  font-weight: 400;
-  font-size: 12px;
-  color: #333;
-`;
