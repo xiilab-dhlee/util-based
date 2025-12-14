@@ -36,7 +36,7 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario: 워크로드 로그 조회
-    Given 목록에 상태가 종료인 워크로드가 있다
+    Given 목록에 상태가 "completed"인 워크로드가 있다
     And 해당 워크로드의 로그 버튼이 활성화되어 있다
     When 해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다
     Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
@@ -47,7 +47,7 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario: 워크로드 모니터링 조회
-    Given 목록에 상태가 종료인 워크로드가 있다
+    Given 목록에 상태가 "completed"인 워크로드가 있다
     And 해당 워크로드의 모니터링 버튼이 활성화되어 있다
     When 해당 워크로드의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다
     Then URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다

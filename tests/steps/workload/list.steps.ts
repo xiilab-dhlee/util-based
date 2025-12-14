@@ -1,7 +1,10 @@
 import { expect } from "@playwright/test";
 import { createBdd, type DataTable } from "playwright-bdd";
 
-import { testId, WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
+import {
+  testId,
+  WORKLOAD_SELECTOR,
+} from "@/shared/constants/selector.constant";
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { test } from "../../fixtures";
 import { WorkloadListPage } from "../../pages/workload-list.page";
@@ -19,7 +22,7 @@ import type { FilterCondition } from "../../support/types";
  * 5. 상세 페이지 - 웹터미널
  * 6. 상세 페이지 - 모니터링
  *
- * 도메인 상수: WorkloadListPage.STATUS_MAP, ROW_BUTTON, CHART_ID, PAGE_BUTTON
+ * 도메인 상수: WorkloadListPage.ROW_BUTTON, CHART_ID, PAGE_BUTTON
  */
 const { When, Then, Given } = createBdd(test);
 
@@ -48,19 +51,15 @@ Given(
 );
 
 Given(
-  /^목록에 상태가 (실행중|대기중|종료?|에러)인? 워크로드가 있다$/,
-  async ({ workloadListPage, listContext, $testInfo }, statusName: string) => {
-    const statusValue = WorkloadListPage.STATUS_MAP[statusName];
+  "목록에 상태가 {string}인 워크로드가 있다",
+  async ({ workloadListPage, listContext, $testInfo }, status: string) => {
     const row = await workloadListPage.table.findRowByStatus(
       "workload-status-",
-      statusValue,
+      status,
     );
 
     if (!row) {
-      $testInfo.skip(
-        true,
-        `${statusName} 워크로드가 없어 시나리오를 스킵합니다`,
-      );
+      $testInfo.skip(true, `${status} 워크로드가 없어 시나리오를 스킵합니다`);
       return;
     }
 
@@ -237,7 +236,9 @@ Then(
   /^해당 워크로드의 (\S+) 버튼(?:이| 상태가) (활성화|비활성화)(?:이다|되어 있다)$/,
   async ({ listContext }, buttonName: string, state: string) => {
     const currentRow = listContext.assertCurrentRow();
-    const button = currentRow.locator(testId(WorkloadListPage.ROW_BUTTON[buttonName]));
+    const button = currentRow.locator(
+      testId(WorkloadListPage.ROW_BUTTON[buttonName]),
+    );
     if (state === "활성화") {
       await expect(button).toBeEnabled();
     } else {

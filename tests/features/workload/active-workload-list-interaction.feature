@@ -45,7 +45,7 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario: 워크로드 로그 조회
-    Given 목록에 상태가 실행중인 워크로드가 있다
+    Given 목록에 상태가 "running"인 워크로드가 있다
     And 해당 워크로드의 로그 버튼이 활성화되어 있다
     When 해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다
     Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
@@ -56,7 +56,7 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario: 워크로드 웹터미널 조회
-    Given 목록에 상태가 실행중인 워크로드가 있다
+    Given 목록에 상태가 "running"인 워크로드가 있다
     And 해당 워크로드의 웹터미널 버튼이 활성화되어 있다
     When 해당 워크로드의 웹터미널 버튼을 클릭하여 웹터미널 페이지로 이동한다
     Then URL이 "/user/workload/[id]/terminal?workspaceId="를 포함한다
@@ -67,7 +67,7 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario: 워크로드 모니터링 조회
-    Given 목록에 상태가 실행중인 워크로드가 있다
+    Given 목록에 상태가 "running"인 워크로드가 있다
     And 해당 워크로드의 모니터링 버튼이 활성화되어 있다
     When 해당 워크로드의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다
     Then URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다
@@ -91,17 +91,17 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
       | <search> | <jobType> | <status> |
 
     Examples:
-      | search | jobType     | status |
-      | -      | Batch       | -      |
-      | -      | Interactive | -      |
-      | -      | -           | 실행중 |
-      | -      | -           | 대기중 |
-      | -      | Batch       | 실행중 |
-      | -      | Interactive | 대기중 |
-      | auto   | -           | -      |
-      | auto   | Batch       | -      |
-      | auto   | -           | 실행중 |
-      | auto   | Interactive | 실행중 |
+      | search | jobType     | status  |
+      | -      | Batch       | -       |
+      | -      | Interactive | -       |
+      | -      | -           | 실행중  |
+      | -      | -           | 대기중  |
+      | -      | Batch       | 실행중  |
+      | -      | Interactive | 대기중  |
+      | auto   | -           | -       |
+      | auto   | Batch       | -       |
+      | auto   | -           | 실행중  |
+      | auto   | Interactive | 실행중  |
 
   # ============================================
   # 페이지네이션
@@ -135,7 +135,7 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario Outline: 워크로드 종료 <결과>
-    Given 목록에 상태가 실행중인 워크로드가 있다
+    Given 목록에 상태가 "running"인 워크로드가 있다
     And 해당 워크로드의 종료 버튼이 활성화되어 있다
     When 해당 워크로드의 종료 버튼을 클릭한다
     Then 확인 모달이 표시된다
