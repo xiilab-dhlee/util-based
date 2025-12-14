@@ -39,3 +39,35 @@ export const FormRow = styled.div`
   overflow: hidden;
   width: 100%;
 `;
+
+/**
+ * 폼 섹션 컨테이너 스타일
+ *
+ * 폼의 각 섹션을 감싸는 카드 형태의 컨테이너입니다.
+ * 생성/수정 폼에서 섹션을 구분하는 용도로 사용됩니다.
+ *
+ * 스타일 특징:
+ * - 밝은 회색 배경과 테두리로 구분
+ * - 둥근 모서리와 내부 패딩 제공
+ * - 세로 방향 레이아웃
+ */
+export const FormSectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #fcfcfc;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+`;
+
+/**
+ * 폼 섹션 헤더 스타일
+ *
+ * 섹션의 제목 영역을 감싸는 컨테이너입니다.
+ *
+ * 스타일 특징:
+ * - 하단 마진으로 본문과 구분
+ */
+export const FormSectionHeader = styled.div`
+  margin-bottom: 14px;
+`;
