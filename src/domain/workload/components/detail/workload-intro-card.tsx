@@ -101,7 +101,7 @@ export function WorkloadIntroCard({
               data-testid={WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON}
             >
               <RefreshIcon width={20} height={20} fill="var(--icon-fill)" />
-              <span className="sr-only">워크로드 전원 On</span>
+              <span className="sr-only">워크로드 재시작</span>
             </IconWrapper>
           ) : (
             <IconWrapper
@@ -109,7 +109,7 @@ export function WorkloadIntroCard({
               data-testid={WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON}
             >
               <Icon name="Power" color="var(--icon-fill)" size={24} />
-              <span className="sr-only">워크로드 전원 Off</span>
+              <span className="sr-only">워크로드 종료</span>
             </IconWrapper>
           )}
           {isCompleted && (

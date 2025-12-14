@@ -1,15 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
 import { Icon, Input, Modal } from "xiilab-ui";
 
-import { useCreateCommitImage } from "@/domain/workload/hooks/use-create-commit-image";
 import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
 import { openCreateCommitImageModalAtom } from "@/domain/workload/state/workload.atom";
 import type { CreateCommitImagePayload } from "@/domain/workload/types/workload.type";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { FormItem } from "@/styles/layers/form-layer.styled";
@@ -36,7 +35,7 @@ export function CreateCommitImageModal() {
   // 워크로드 타입
   const [workloadType, setWorkloadType] = useState("");
 
-  const createCommitImage = useCreateCommitImage();
+  // const createCommitImage = useCreateCommitImage();
 
   /**
    * 폼 제출 처리 함수
@@ -45,16 +44,18 @@ export function CreateCommitImageModal() {
    * 다른 컴포넌트에서 이 이벤트를 구독하여 실제 이미지 생성 작업을 처리합니다.
    */
   const handleSubmit = () => {
-    const payload = createPayload();
+    const _ = createPayload();
 
-    if (payload) {
-      createCommitImage.mutate(payload, {
-        onSuccess: () => {
-          toast.success("Commit Image 생성 성공");
-          onClose();
-        },
-      });
-    }
+    onClose();
+
+    // if (payload) {
+    //   createCommitImage.mutate(payload, {
+    //     onSuccess: () => {
+    //       toast.success("Commit Image 생성 성공");
+    //       onClose();
+    //     },
+    //   });
+    // }
   };
 
   /**
@@ -115,12 +116,13 @@ export function CreateCommitImageModal() {
       <form ref={formRef}>
         {/* 이미지 이름 입력 필드 */}
         <FormItem>
-          <FormLabel htmlFor="commitImageName">이름</FormLabel>
+          <FormLabel htmlFor="commitImageName">Commit Image 이름</FormLabel>
           <Input
             type="text"
             id="commitImageName"
             name="commitImageName"
-            placeholder="이름을 입력해 주세요."
+            data-testid={WORKLOAD_SELECTOR.COMMIT_IMAGE_NAME_INPUT}
+            placeholder="Commit Image 이름을 입력해 주세요."
             width="100%"
           />
         </FormItem>
@@ -131,6 +133,7 @@ export function CreateCommitImageModal() {
             type="text"
             id="commitImageTag"
             name="commitImageTag"
+            data-testid={WORKLOAD_SELECTOR.COMMIT_IMAGE_TAG_INPUT}
             placeholder="태그를 입력해 주세요. (문자, 숫자, 하이픈(-), 밑줄(_)만 사용 가능)"
             width="100%"
           />

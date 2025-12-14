@@ -130,6 +130,8 @@ export const WORKLOAD_SELECTOR = {
   DETAIL_RESTART_BUTTON: "workload-detail-restart-button",
   /** 삭제 버튼 (상세) */
   DETAIL_DELETE_BUTTON: "workload-detail-delete-button",
+  /** 복제 버튼 (상세) */
+  DETAIL_CLONE_BUTTON: "workload-detail-clone-button",
 
   // 상세 페이지 - 이벤트 이력
   /** 이벤트 카드 */
@@ -180,6 +182,13 @@ export const WORKLOAD_SELECTOR = {
   DETAIL_IMAGE_NAME: "workload-detail-image-name",
   /** Commit Image 생성 버튼 */
   DETAIL_COMMIT_IMAGE_BUTTON: "workload-detail-commit-image-button",
+
+  // Commit Image 생성 모달
+  /** Commit Image 이름 입력 */
+  COMMIT_IMAGE_NAME_INPUT: "workload-commit-image-name-input",
+  /** Commit Image 태그 입력 */
+  COMMIT_IMAGE_TAG_INPUT: "workload-commit-image-tag-input",
+
   /** 보안검사 결과 */
   DETAIL_SECURITY_LEVEL_CRITICAL: "workload-detail-security-level-critical",
   DETAIL_SECURITY_LEVEL_HIGH: "workload-detail-security-level-high",
@@ -227,6 +236,12 @@ export const WORKLOAD_SELECTOR = {
   CREATE_DESCRIPTION: "workload-create-description",
   /** 워크로드 생성하기 버튼 */
   CREATE_BUTTON: "workload-create-button",
+
+  // 수정 모달
+  /** 수정 모달 이름 입력 */
+  UPDATE_NAME_INPUT: "workload-update-name-input",
+  /** 수정 모달 설명 입력 */
+  UPDATE_DESCRIPTION_INPUT: "workload-update-description-input",
 } as const;
 
 // ============================================
