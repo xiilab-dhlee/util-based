@@ -3,7 +3,6 @@ import { createBdd } from "playwright-bdd";
 
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { test } from "../fixtures";
-import { authenticate, hasAuthCookie } from "../support/auth.helper";
 import { setupAllMocks } from "../support/mocks";
 
 /**
@@ -33,20 +32,14 @@ const { Given, When, Then } = createBdd(test);
 /**
  * 사용자 인증 Step
  *
- * globalSetup에서 저장된 storageState를 통해 인증 상태가 이미 로드되어 있습니다.
- * 이 Step에서는:
- * 1. API Mock 설정 (페이지 이동 전에 필수)
- * 2. 세션 유효성 검증 및 필요시 자동 갱신/재인증
+ * globalSetup에서 storageState로 인증 상태가 저장되어 있고,
+ * playwright.config.ts에서 자동으로 로드됩니다.
+ *
+ * 이 Step에서는 API Mock 설정만 수행합니다.
+ * 인증 쿠키는 Playwright가 자동으로 관리합니다.
  */
 Given("사용자가 로그인되어 있다", async ({ page }) => {
-  // 1. 모든 API 모킹 설정 (페이지 이동 전에 먼저 설정)
   await setupAllMocks(page);
-
-  // 2. storageState로 쿠키가 이미 로드됨 - API 호출 없이 쿠키 존재만 확인
-  const hasCookie = await hasAuthCookie(page);
-  if (!hasCookie) {
-    await authenticate(page, "user");
-  }
 });
 
 // ============================================
@@ -126,10 +119,13 @@ Then("목록 테이블이 표시된다", async ({ workloadListPage }) => {
   await workloadListPage.assertTableVisible();
 });
 
-Then("목록에 총 개수가 표시된다", async ({ workloadListPage, assertLogger }) => {
-  const text = await workloadListPage.getTotalCountText();
-  assertLogger.assertMatch("총 개수 형식", text, /총\s*\d+/);
-});
+Then(
+  "목록에 총 개수가 표시된다",
+  async ({ workloadListPage, assertLogger }) => {
+    const text = await workloadListPage.getTotalCountText();
+    assertLogger.assertMatch("총 개수 형식", text, /총\s*\d+/);
+  },
+);
 
 Then("페이지네이션이 표시된다", async ({ workloadListPage }) => {
   await workloadListPage.assertPaginationVisible();
@@ -190,19 +186,13 @@ When(
 // 탭 관련 Steps
 // ============================================
 
-Then(
-  "{string} 탭이 선택되어 있다",
-  async ({ tabs }, tabName: string) => {
-    await tabs.assertActiveTab(tabName);
-  },
-);
+Then("{string} 탭이 선택되어 있다", async ({ tabs }, tabName: string) => {
+  await tabs.assertActiveTab(tabName);
+});
 
-Then(
-  "{string} 탭이 비활성화되어 있다",
-  async ({ tabs }, tabName: string) => {
-    await tabs.assertTabDisabled(tabName);
-  },
-);
+Then("{string} 탭이 비활성화되어 있다", async ({ tabs }, tabName: string) => {
+  await tabs.assertTabDisabled(tabName);
+});
 
 When(
   "{string} 탭을 클릭하여 {string} 페이지로 이동한다",

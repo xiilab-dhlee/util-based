@@ -63,12 +63,15 @@ Then(
 // 워크로드 상태 상세 검증 Steps
 // ============================================
 
-Then("워크로드 상태별 건수가 표시된다", async ({ monitoringPage, assertLogger }) => {
-  for (const status of MonitoringPage.statuses) {
-    const text = await monitoringPage.getStatusCountText(status);
-    assertLogger.assertMatch(`${status} 건수 형식`, text, /[\d,]+건/);
-  }
-});
+Then(
+  "워크로드 상태별 건수가 표시된다",
+  async ({ monitoringPage, assertLogger }) => {
+    for (const status of MonitoringPage.statuses) {
+      const text = await monitoringPage.getStatusCountText(status);
+      assertLogger.assertMatch(`${status} 건수 형식`, text, /[\d,]+건/);
+    }
+  },
+);
 
 Then(
   "상태별 건수의 합이 전체 건수와 일치한다",

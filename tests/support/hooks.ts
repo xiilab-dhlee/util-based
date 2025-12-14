@@ -1,7 +1,6 @@
 import { createBdd } from "playwright-bdd";
 
 import { test } from "../fixtures";
-import { authenticate, hasAuthCookie } from "./auth.helper";
 import { setupAllMocks } from "./mocks";
 
 const { Before, After, BeforeAll, AfterAll, AfterStep } = createBdd(test);
@@ -68,19 +67,15 @@ After(async ({ page, $testInfo }) => {
 // ============================================
 
 // 사용자 인증은 Given 스텝으로 처리 (common.steps.ts: "사용자가 로그인되어 있다")
+// 인증 쿠키는 storageState로 Playwright가 자동 관리
 
 Before({ tags: "@authenticated-admin" }, async ({ page }) => {
-  // 1. 모든 API 모킹 설정 (페이지 이동 전에 먼저 설정)
+  // admin 전용 테스트 - Mock 설정만 수행
+  // TODO: admin storageState 사용 시 playwright.config.ts 프로젝트 분리 필요
   await setupAllMocks(page);
-  // 2. storageState로 쿠키가 이미 로드됨 - API 호출 없이 쿠키 존재만 확인
-  const hasCookie = await hasAuthCookie(page);
-  if (!hasCookie) {
-    await authenticate(page, "admin");
-  }
 });
 
 Before({ tags: "@unauthenticated" }, async ({ page }) => {
-  // 비인증 테스트도 모킹은 필요
   await setupAllMocks(page);
   await page.context().clearCookies();
 });
