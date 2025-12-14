@@ -1,6 +1,6 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { ResourcePresetListType } from "@/domain/resource-preset/schemas/resource-preset.schema";
+import type { ResourcePresetListResponseType } from "@/domain/resource-preset/schemas/resource-preset.schema";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
@@ -16,7 +16,7 @@ const memInfo = getResourceInfo("MEM");
  * 선택(체크박스) 컬럼은 Ant Design Table의 rowSelection 기능을 사용하여 처리하고,
  * 이 컬럼 정의에서는 도메인 데이터 컬럼만 관리합니다.
  */
-export const resourcePresetListColumn: ResponsiveColumnType<ResourcePresetListType>[] =
+export const resourcePresetListColumn: ResponsiveColumnType<ResourcePresetListResponseType>[] =
   [
     {
       title: "프리셋 이름",
@@ -25,7 +25,7 @@ export const resourcePresetListColumn: ResponsiveColumnType<ResourcePresetListTy
       sorter: true,
       width: "40%",
       ellipsis: true,
-      render: (name: string, record: ResourcePresetListType) => {
+      render: (name: string, record: ResourcePresetListResponseType) => {
         const href = ROUTES.ADMIN_RESOURCE_PRESET_DETAIL(record.id);
         return <ColumnLink href={href}>{name}</ColumnLink>;
       },
@@ -44,7 +44,7 @@ export const resourcePresetListColumn: ResponsiveColumnType<ResourcePresetListTy
       title: gpuInfo.text,
       dataIndex: "gpu",
       align: "left",
-      render: (gpu: ResourcePresetListType["gpu"]) => {
+      render: (gpu: ResourcePresetListResponseType["gpu"]) => {
         return `${gpu} ${gpuInfo.unit}`;
       },
     },
@@ -53,7 +53,7 @@ export const resourcePresetListColumn: ResponsiveColumnType<ResourcePresetListTy
       dataIndex: "cpu",
       align: "left",
 
-      render: (cpu: ResourcePresetListType["cpu"]) => {
+      render: (cpu: ResourcePresetListResponseType["cpu"]) => {
         return `${cpu} ${cpuInfo.unit}`;
       },
     },
@@ -62,7 +62,7 @@ export const resourcePresetListColumn: ResponsiveColumnType<ResourcePresetListTy
       dataIndex: "memory",
       align: "left",
 
-      render: (memory: ResourcePresetListType["memory"]) => {
+      render: (memory: ResourcePresetListResponseType["memory"]) => {
         return `${memory} ${memInfo.unit}`;
       },
     },
@@ -72,7 +72,7 @@ export const resourcePresetListColumn: ResponsiveColumnType<ResourcePresetListTy
       align: "left",
 
       sorter: true,
-      render: (createdAt: ResourcePresetListType["createdAt"]) => {
+      render: (createdAt: ResourcePresetListResponseType["createdAt"]) => {
         return formatDateSafely(createdAt) ?? "-";
       },
     },

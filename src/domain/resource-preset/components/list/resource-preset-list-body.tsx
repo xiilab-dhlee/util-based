@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
 import { resourcePresetListColumn } from "@/domain/resource-preset/columns/create-resource-preset-list-column";
-import type { ResourcePresetListType } from "@/domain/resource-preset/schemas/resource-preset.schema";
+import type { ResourcePresetListResponseType } from "@/domain/resource-preset/schemas/resource-preset.schema";
 import { resourcePresetCheckedListAtom } from "@/domain/resource-preset/state/resource-preset.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ROUTES } from "@/shared/constants/routes.constant";
@@ -13,7 +13,7 @@ import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface ResourcePresetListBodyProps {
   /** 리소스 프리셋 목록 데이터 */
-  data: ResourcePresetListType[];
+  data: ResourcePresetListResponseType[];
   /** 로딩 상태 */
   isLoading: boolean;
   /** 에러 상태 */
@@ -33,7 +33,7 @@ export function ResourcePresetListBody({
 }: ResourcePresetListBodyProps) {
   const router = useRouter();
   const [checkedList, setCheckedList] = useAtom(resourcePresetCheckedListAtom);
-  const { rowSelection } = useTableSelection<ResourcePresetListType>(
+  const { rowSelection } = useTableSelection<ResourcePresetListResponseType>(
     checkedList,
     setCheckedList,
   );
@@ -41,13 +41,13 @@ export function ResourcePresetListBody({
   /**
    * 행 클릭 시 상세 페이지로 이동
    */
-  const handleRowClick = (record: ResourcePresetListType) => {
+  const handleRowClick = (record: ResourcePresetListResponseType) => {
     router.push(ROUTES.ADMIN_RESOURCE_PRESET_DETAIL(record.id));
   };
 
   return (
     <ListWrapper>
-      <CustomizedTable<ResourcePresetListType>
+      <CustomizedTable<ResourcePresetListResponseType>
         columns={resourcePresetListColumn}
         data={data}
         rowKey="id"

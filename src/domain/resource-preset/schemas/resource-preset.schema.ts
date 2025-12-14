@@ -99,6 +99,30 @@ export const resourcePresetDetailResponseSchema =
 
 // ===== Form 스키마 (프론트 폼 상태) =====
 
+/** Single Node 리소스 */
+export interface SingleNodeResource {
+  /** GPU 개수 */
+  gpu: number;
+  /** CPU 개수 */
+  cpu: number;
+  /** Memory (GB) */
+  memory: number;
+}
+
+/** Multi Node 리소스 */
+export interface MultiNodeResource {
+  /** 분산 학습 타입 */
+  distributedType: string | null;
+  /** 노드 수 */
+  nodeCount: number;
+  /** Worker GPU 개수 */
+  workerGpu: number;
+  /** Worker CPU 개수 */
+  workerCpu: number;
+  /** Worker Memory (GB) */
+  workerMemory: number;
+}
+
 /** 리소스 프리셋 폼 상태 타입 (Zod 스키마 없이 타입만 정의) */
 export interface ResourcePresetFormType {
   /** 프리셋 이름 */
@@ -118,25 +142,11 @@ export interface ResourcePresetFormType {
   /** 선택된 MIG 프로필 (MIG용) */
   selectedProfile: GpuProfileListType | null;
 
-  // ===== Single Node 리소스 =====
-  /** GPU 개수 */
-  gpu: number;
-  /** CPU 개수 */
-  cpu: number;
-  /** Memory (GB) */
-  memory: number;
-
-  // ===== Multi Node 전용 필드 =====
-  /** 분산 학습 타입 */
-  distributedType: string | null;
-  /** 노드 수 */
-  nodeCount: number;
-  /** Worker GPU 개수 */
-  workerGpu: number;
-  /** Worker CPU 개수 */
-  workerCpu: number;
-  /** Worker Memory (GB) */
-  workerMemory: number;
+  // ===== 리소스 (객체로 통합) =====
+  /** Single Node 리소스 */
+  singleNodeResource: SingleNodeResource;
+  /** Multi Node 리소스 */
+  multiNodeResource: MultiNodeResource;
 }
 
 /** 폼 에러 타입 */
@@ -196,7 +206,3 @@ export type ResourcePresetRequestInput = z.input<
 export type ResourcePresetRequestPayload = z.output<
   typeof resourcePresetRequestSchema
 >;
-
-// 기존 호환용 타입 (deprecated - 추후 제거)
-export type ResourcePresetListType = ResourcePresetListResponseType;
-export type ResourcePresetIdType = ResourcePresetListResponseType["id"];
