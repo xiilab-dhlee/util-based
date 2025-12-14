@@ -2,6 +2,8 @@
 
 Playwright-BDD를 사용한 E2E 테스트 작성 규칙입니다.
 
+> 테스트 아키텍처 및 개발 원칙은 [test-architecture.md](./test-architecture.md)를 참조하세요.
+
 ---
 
 ## 파일 구조
@@ -232,5 +234,6 @@ pnpm test:report           # 리포트 확인
 
 ## 참고
 
+- [테스트 아키텍처](./test-architecture.md) - Page Object, Component, 개발 원칙
 - [Playwright-BDD](https://vitalets.github.io/playwright-bdd/)
 - [Gherkin Reference](https://cucumber.io/docs/gherkin/reference/)
