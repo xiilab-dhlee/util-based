@@ -31,7 +31,7 @@ export function WorkloadVolumeCard({
   const { text } = getVolumeStorageTypeInfo(storageType);
   const { icon } = getVolumeStatusInfo(status);
   return (
-    <CardWrapper data-testid={WORKLOAD_SELECTOR.VOLUME_CARD}>
+    <div data-testid={WORKLOAD_SELECTOR.VOLUME_CARD}>
       <Card
         contentVariant="compact"
         title={name}
@@ -39,7 +39,7 @@ export function WorkloadVolumeCard({
           <span
             data-testid={WORKLOAD_SELECTOR.volumeStatus(status.toLowerCase())}
           >
-            <Icon name={icon} color="#464B51" size={18} />
+            {icon && <Icon name={icon} color="#464B51" size={18} />}
           </span>
         }
         actionElement={
@@ -79,11 +79,9 @@ export function WorkloadVolumeCard({
           </LikeCompactCardRecord>
         </Body>
       </Card>
-    </CardWrapper>
+    </div>
   );
 }
-
-const CardWrapper = styled.div``;
 
 const Body = styled.div`
   display: flex;

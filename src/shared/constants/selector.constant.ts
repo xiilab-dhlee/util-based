@@ -171,7 +171,7 @@ export const WORKLOAD_SELECTOR = {
 
   // 상세 페이지 - 상세정보 탭 내용
   /** 잡 타입 명 */
-  DETAIL_JOB_TYPE_NAME: "workload-detail-job-type_name",
+  DETAIL_JOB_TYPE_NAME: "workload-detail-job-type-name",
   /** 잡 타입 IDE */
   DETAIL_JOB_TYPE_IDE: "workload-detail-job-type-ide",
   /** 노드 타입 명 */
