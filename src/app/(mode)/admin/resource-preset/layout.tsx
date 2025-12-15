@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { useParams, useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
@@ -11,6 +12,7 @@ import { ResourcePresetListFilter } from "@/domain/resource-preset/components/li
 import { ResourcePresetListFooter } from "@/domain/resource-preset/components/list/resource-preset-list-footer";
 import { useGetResourcePresets } from "@/domain/resource-preset/hooks/use-get-resource-presets";
 import {
+  resourcePresetCheckedListAtom,
   resourcePresetJobTypeAtom,
   resourcePresetNodeTypeAtom,
   resourcePresetPageAtom,
@@ -20,8 +22,6 @@ import { openDrawerWithInitAtom } from "@/domain/resource-preset/state/resource-
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
-import { useGetGpuNodes } from "@/shared/hooks/use-get-gpu-nodes";
-import { useGetGpus } from "@/shared/hooks/use-get-gpus";
 import {
   ListPageAside,
   ListPageBody,
@@ -44,6 +44,24 @@ export default function AdminResourcePresetLayout({
   const jobType = useAtomValue(resourcePresetJobTypeAtom);
   const nodeType = useAtomValue(resourcePresetNodeTypeAtom);
 
+  // 리셋 함수
+  const resetPage = useResetAtom(resourcePresetPageAtom);
+  const resetSearch = useResetAtom(resourcePresetSearchTextAtom);
+  const resetJobType = useResetAtom(resourcePresetJobTypeAtom);
+  const resetNodeType = useResetAtom(resourcePresetNodeTypeAtom);
+  const resetCheckedList = useResetAtom(resourcePresetCheckedListAtom);
+
+  // 페이지 이탈 시 필터 상태 초기화
+  useEffect(() => {
+    return () => {
+      resetPage();
+      resetSearch();
+      resetJobType();
+      resetNodeType();
+      resetCheckedList();
+    };
+  }, [resetPage, resetSearch, resetJobType, resetNodeType, resetCheckedList]);
+
   // 목록 조회
   const {
     data: response,
@@ -59,10 +77,6 @@ export default function AdminResourcePresetLayout({
 
   const data = response?.content ?? [];
   const total = response?.totalSize ?? 0;
-
-  // GPU 데이터 (Drawer 열 때 필요)
-  const { data: gpuData } = useGetGpus();
-  const { data: gpuNodeData } = useGetGpuNodes();
 
   // Drawer 열기 액션
   const openDrawerWithInit = useSetAtom(openDrawerWithInitAtom);
@@ -82,10 +96,7 @@ export default function AdminResourcePresetLayout({
 
   /** 추가 버튼 클릭 핸들러 */
   const handleClickAdd = () => {
-    openDrawerWithInit({
-      gpuList: gpuData?.content ?? [],
-      nodeList: gpuNodeData?.content ?? [],
-    });
+    openDrawerWithInit();
   };
 
   return (

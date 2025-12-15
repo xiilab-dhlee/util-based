@@ -1,5 +1,7 @@
 "use client";
 
+import { useAtomValue } from "jotai";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Form, FormItem, Icon } from "xiilab-ui";
 
@@ -10,6 +12,7 @@ import {
 } from "@/domain/resource-preset/constants/gpu-info.constant";
 import { useResourcePresetForm } from "@/domain/resource-preset/hooks/use-resource-preset-form";
 import type { ResourcePresetGpuType } from "@/domain/resource-preset/schemas/resource-preset.schema";
+import { INITIAL_SINGLE_NODE_RESOURCE } from "@/domain/resource-preset/state/resource-preset-form.atom";
 import {
   isMultiNodeEnabled,
   showGpuNodeDropdown,
@@ -32,6 +35,7 @@ import {
   FormSectionContainer,
   FormSectionHeader,
 } from "@/styles/layers/form-layer.styled";
+import { openCreateResourcePresetDrawerAtom } from "../../state/resource-preset-form.atom";
 import { MigProfileSelectDropdown } from "./dropdowns/mig-profile-select-dropdown";
 import { NodeSelectDropdown } from "./dropdowns/node-select-dropdown";
 
@@ -40,6 +44,12 @@ import { NodeSelectDropdown } from "./dropdowns/node-select-dropdown";
 ============================================================================= */
 
 export function CreateResourcePresetGpuInfo() {
+  // Drawer 열림 상태
+  const isDrawerOpen = useAtomValue(openCreateResourcePresetDrawerAtom);
+
+  // 초기화 완료 플래그 (Drawer가 열릴 때마다 리셋)
+  const hasInitialized = useRef(false);
+
   // Hook으로 폼 상태 및 메서드 가져오기
   const {
     form,
@@ -49,6 +59,7 @@ export function CreateResourcePresetGpuInfo() {
     setSelectedGpu,
     selectNode,
     selectProfile,
+    updateSingleNodeResource,
   } = useResourcePresetForm();
 
   // 폼 상태 추출
@@ -66,6 +77,62 @@ export function CreateResourcePresetGpuInfo() {
   const { data: gpuNodeData, isLoading: isLoadingNodes } = useGetGpuNodes();
   const { data: gpuProfileData, isLoading: isLoadingProfiles } =
     useGetGpuProfiles();
+
+  // Drawer가 열렸을 때 초기 GPU/Node 자동 선택
+  useEffect(() => {
+    // Drawer가 닫혀있으면 초기화 플래그 리셋
+    if (!isDrawerOpen) {
+      hasInitialized.current = false;
+      return;
+    }
+
+    // 이미 초기화했거나, 데이터가 없거나, 로딩 중이면 스킵
+    if (
+      hasInitialized.current ||
+      !gpuData?.content.length ||
+      !gpuNodeData?.content.length
+    ) {
+      return;
+    }
+
+    // 첫 번째 NORMAL GPU 찾기
+    const normalGpus = gpuData.content.filter((gpu) => gpu.type === "NORMAL");
+    const firstGpu = normalGpus[0];
+
+    if (!firstGpu) {
+      hasInitialized.current = true;
+      return;
+    }
+
+    // 해당 GPU의 첫 번째 노드 찾기
+    const matchedNode = gpuNodeData.content.find(
+      (node) => node.gpuId === firstGpu.id,
+    );
+
+    // GPU 선택
+    setSelectedGpu(firstGpu);
+
+    // 노드 선택 및 리소스 초기화
+    if (matchedNode) {
+      selectNode(matchedNode);
+      updateSingleNodeResource({
+        gpu: matchedNode.gpuTotal,
+        cpu: matchedNode.cpuTotal,
+        memory: matchedNode.memoryTotal,
+      });
+    } else {
+      updateSingleNodeResource(INITIAL_SINGLE_NODE_RESOURCE);
+    }
+
+    hasInitialized.current = true;
+  }, [
+    isDrawerOpen,
+    gpuData,
+    gpuNodeData,
+    setSelectedGpu,
+    selectNode,
+    updateSingleNodeResource,
+  ]);
 
   // GPU 타입별 필터링
   const gpusByType = {
