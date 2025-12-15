@@ -13,12 +13,24 @@
 /**
  * 상대 시간 문자열 형식
  *
+ * RELATIVE_TIME_PATTERN과 일치하는 정확한 타입 정의
+ *
  * @example "방금 전"
  * @example "5분 전"
  * @example "3시간 전"
+ * @example "2일 전"
+ * @example "2일 3시간 전"
+ * @example "2일 30분 전"
  * @example "2일 3시간 30분 전"
  */
-export type RelativeTimeString = `${string}전` | "방금 전";
+export type RelativeTimeString =
+  | "방금 전"
+  | `${number}분 전`
+  | `${number}시간 전`
+  | `${number}일 전`
+  | `${number}일 ${number}시간 전`
+  | `${number}일 ${number}분 전`
+  | `${number}일 ${number}시간 ${number}분 전`;
 
 /**
  * 날짜/시간 문자열 형식 (yyyy.MM.dd HH:mm:ss)
