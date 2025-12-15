@@ -44,6 +44,24 @@ export function ResourcePresetListFilter({
   const resetPage = useResetAtom(resourcePresetPageAtom);
 
   /**
+   * Job Type 변경 핸들러
+   * 필터 변경 시 페이지를 1로 초기화
+   */
+  const handleChangeJobType = (value: typeof jobType) => {
+    resetPage();
+    setJobType(value);
+  };
+
+  /**
+   * Node Type 변경 핸들러
+   * 필터 변경 시 페이지를 1로 초기화
+   */
+  const handleChangeNodeType = (value: typeof nodeType) => {
+    resetPage();
+    setNodeType(value);
+  };
+
+  /**
    * 검색 핸들러
    * 검색 시 페이지를 초기화하고 검색을 실행
    */
@@ -62,7 +80,7 @@ export function ResourcePresetListFilter({
         <Dropdown
           options={jobTypeOptions}
           value={jobType ?? null}
-          onChange={(newValue) => setJobType(newValue ?? undefined)}
+          onChange={(newValue) => handleChangeJobType(newValue ?? undefined)}
           placeholder="Job Type"
           width={140}
           disabled={isLoading}
@@ -70,7 +88,7 @@ export function ResourcePresetListFilter({
         <Dropdown
           options={nodeTypeOptions}
           value={nodeType ?? null}
-          onChange={(newValue) => setNodeType(newValue ?? undefined)}
+          onChange={(newValue) => handleChangeNodeType(newValue ?? undefined)}
           placeholder="노드 Type"
           width={140}
           disabled={isLoading}
