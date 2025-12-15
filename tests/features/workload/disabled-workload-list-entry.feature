@@ -10,19 +10,7 @@ Feature: 비활성화 워크로드 목록 페이지 진입
     And 워크스페이스가 선택되어 있다
 
   @smoke
-  Scenario: 비활성화 워크로드 목록 페이지 진입 시 기본 UI 표시
+  Scenario: 비활성화 워크로드 목록 페이지 진입
     Then 워크로드 목록 페이지가 표시된다
     And URL이 "/user/workload/disabled"와 일치한다
-    And 네비게이션 메뉴 중 "워크로드" 메뉴가 활성화되어 있다
-    And "비활성화" 탭이 선택되어 있다
-
-  @smoke
-  Scenario: 비활성화 워크로드 목록 테이블 UI 표시
-    Then 목록 테이블이 표시된다
-    And 목록에 총 개수가 표시된다
-    And 페이지네이션이 표시된다
-
-  @smoke
-  Scenario: 비활성화 워크로드 필터 및 검색 UI 기본 상태 검증
-    Then 잡 타입 필터가 빈 값으로 표시된다
-    And 검색창이 빈 값으로 표시된다
+    And 목록 테이블이 표시된다

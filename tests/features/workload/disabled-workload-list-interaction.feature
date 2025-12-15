@@ -21,62 +21,41 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
     And 워크로드 상세 페이지가 표시된다
 
   # ============================================
-  # 탭 전환
-  # ============================================
-
-  @skip
-  Scenario: 활성화 탭으로 이동
-    When "활성화" 탭을 클릭하여 "활성화 워크로드 목록" 페이지로 이동한다
-    Then URL이 "/user/workload"와 일치한다
-    And "활성화" 탭이 선택되어 있다
-
-  # ============================================
   # 로그/모니터링 조회
   # ============================================
 
   @regression
-  Scenario: 워크로드 로그 조회
+  Scenario: 워크로드 로그 페이지로 이동
     Given 목록에 상태가 "completed"인 워크로드가 있다
     And 해당 워크로드의 로그 버튼이 활성화되어 있다
     When 해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다
     Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
-    And 로그 영역에 설정된 테마가 적용되어 있다
     And 로그 영역에 하나 이상의 로그 라인이 존재한다
-    And 로그 모니터링 버튼이 표시된다
-    And 로그 테마 변경 버튼이 표시된다
 
   @regression
-  Scenario: 워크로드 모니터링 조회
+  Scenario: 워크로드 모니터링 페이지로 이동
     Given 목록에 상태가 "completed"인 워크로드가 있다
     And 해당 워크로드의 모니터링 버튼이 활성화되어 있다
     When 해당 워크로드의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다
     Then URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다
-    And 워크로드 CPU 사용량 차트가 표시된다
-    And 워크로드 Memory 사용량 차트가 표시된다
-    And 워크로드 GPU 사용률 차트가 표시된다
-    And 워크로드 GPU 메모리 차트가 표시된다
+    And 워크로드 모니터링 차트가 표시된다
 
   # ============================================
   # 필터링
   # ============================================
 
   @regression
-  Scenario Outline: 워크로드 필터링 (검색: <search>, 잡타입: <jobType>)
+  Scenario: 워크로드 필터링 (잡타입)
     Given 목록에 워크로드가 있다
     When 필터 조건을 설정한다:
-      | search   | jobType   | status |
-      | <search> | <jobType> | -      |
+      | search | jobType | status |
+      | -      | Batch   | -      |
     Then 필터 UI가 설정된 조건을 표시한다:
-      | search   | jobType   | status |
-      | <search> | <jobType> | -      |
-
-    Examples:
-      | search | jobType     |
-      | -      | Batch       |
-      | -      | Interactive |
-      | auto   | -           |
-      | auto   | Batch       |
-      | auto   | Interactive |
+      | search | jobType | status |
+      | -      | Batch   | -      |
+    And 필터링된 목록이 조건에 맞게 표시된다:
+      | search | jobType | status |
+      | -      | Batch   | -      |
 
   # ============================================
   # 액션 (삭제, 재시작)

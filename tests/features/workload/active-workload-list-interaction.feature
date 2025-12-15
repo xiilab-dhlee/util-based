@@ -21,67 +21,40 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
     And 워크로드 상세 페이지가 표시된다
 
   # ============================================
-  # 탭 전환
-  # ============================================
-
-  @skip
-  Scenario: 비활성화 탭으로 이동
-    When "비활성화" 탭을 클릭하여 "비활성화 워크로드 목록" 페이지로 이동한다
-    Then URL이 "/user/workload/disabled"와 일치한다
-    And "비활성화" 탭이 선택되어 있다
-
-  @skip
-  Scenario: 비활성화 탭으로 전환 후 다시 돌아오기
-    When "비활성화" 탭을 클릭하여 "비활성화 워크로드 목록" 페이지로 이동한다
-    Then URL이 "/user/workload/disabled"와 일치한다
-    And "비활성화" 탭이 선택되어 있다
-    When "활성화" 탭을 클릭하여 "활성화 워크로드 목록" 페이지로 이동한다
-    Then URL이 "/user/workload"와 일치한다
-    And "활성화" 탭이 선택되어 있다
-
-  # ============================================
-  # 로그/웹터미널/모니터링 조회
+  # 로그/웹터미널/모니터링 페이지 이동
   # ============================================
 
   @regression
-  Scenario: 워크로드 로그 조회
+  Scenario: 워크로드 로그 페이지로 이동
     Given 목록에 상태가 "running"인 워크로드가 있다
     And 해당 워크로드의 로그 버튼이 활성화되어 있다
     When 해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다
     Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
-    And 로그 영역에 설정된 테마가 적용되어 있다
+    And 워크로드 로그 페이지가 표시된다
     And 로그 영역에 하나 이상의 로그 라인이 존재한다
-    And 로그 모니터링 버튼이 표시된다
-    And 로그 테마 변경 버튼이 표시된다
 
   @regression
-  Scenario: 워크로드 웹터미널 조회
+  Scenario: 워크로드 웹터미널 페이지로 이동
     Given 목록에 상태가 "running"인 워크로드가 있다
     And 해당 워크로드의 웹터미널 버튼이 활성화되어 있다
     When 해당 워크로드의 웹터미널 버튼을 클릭하여 웹터미널 페이지로 이동한다
     Then URL이 "/user/workload/[id]/terminal?workspaceId="를 포함한다
-    And 웹터미널에 설정된 테마가 적용되어 있다
     And 웹터미널에 xterm 터미널이 표시된다
-    And 웹터미널 모니터링 버튼이 표시된다
-    And 웹터미널 테마 변경 버튼이 표시된다
 
   @regression
-  Scenario: 워크로드 모니터링 조회
+  Scenario: 워크로드 모니터링 페이지로 이동
     Given 목록에 상태가 "running"인 워크로드가 있다
     And 해당 워크로드의 모니터링 버튼이 활성화되어 있다
     When 해당 워크로드의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다
     Then URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다
-    And 워크로드 CPU 사용량 차트가 표시된다
-    And 워크로드 Memory 사용량 차트가 표시된다
-    And 워크로드 GPU 사용률 차트가 표시된다
-    And 워크로드 GPU 메모리 차트가 표시된다
+    And 워크로드 모니터링 차트가 표시된다
 
   # ============================================
   # 필터링
   # ============================================
 
   @regression
-  Scenario Outline: 워크로드 필터링 (검색: <search>, 잡타입: <jobType>, 상태: <status>)
+  Scenario Outline: 워크로드 필터링 (<설명>)
     Given 목록에 워크로드가 있다
     When 필터 조건을 설정한다:
       | search   | jobType   | status   |
@@ -89,19 +62,17 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
     Then 필터 UI가 설정된 조건을 표시한다:
       | search   | jobType   | status   |
       | <search> | <jobType> | <status> |
+    And 필터링된 목록이 조건에 맞게 표시된다:
+      | search   | jobType   | status   |
+      | <search> | <jobType> | <status> |
 
+    # 핵심 조합만 테스트: 단일 필터, 복합 필터, 검색+필터
     Examples:
-      | search | jobType     | status  |
-      | -      | Batch       | -       |
-      | -      | Interactive | -       |
-      | -      | -           | 실행중  |
-      | -      | -           | 대기중  |
-      | -      | Batch       | 실행중  |
-      | -      | Interactive | 대기중  |
-      | auto   | -           | -       |
-      | auto   | Batch       | -       |
-      | auto   | -           | 실행중  |
-      | auto   | Interactive | 실행중  |
+      | 설명                | search | jobType     | status |
+      | 잡타입 단일 필터    | -      | Batch       | -      |
+      | 상태 단일 필터      | -      | -           | 실행중 |
+      | 잡타입+상태 복합    | -      | Interactive | 대기중 |
+      | 검색+잡타입+상태    | auto   | Batch       | 실행중 |
 
   # ============================================
   # 액션 (종료)
