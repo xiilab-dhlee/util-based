@@ -5,14 +5,17 @@ import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Button, Dropdown } from "xiilab-ui";
 
+import { RESOURCE_PRESET_JOB_OPTIONS } from "@/domain/resource-preset/constants/resource-preset.constant";
+import type {
+  ResourcePresetJobType,
+  ResourcePresetNodeType,
+} from "@/domain/resource-preset/schemas/resource-preset.schema";
 import {
   resourcePresetJobTypeAtom,
   resourcePresetNodeTypeAtom,
   resourcePresetPageAtom,
   resourcePresetSearchTextAtom,
 } from "@/domain/resource-preset/state/resource-preset.atom";
-import { WORKLOAD_JOB_OPTIONS } from "@/domain/workload/constants/workload.constant";
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import {
@@ -20,7 +23,6 @@ import {
   NODE_MODE_OPTIONS,
 } from "@/shared/constants/core.constant";
 import { useSelect } from "@/shared/hooks/use-select";
-import type { CoreNodeMode } from "@/shared/types/core.interface";
 
 interface ResourcePresetListFilterProps {
   /** 전체 개수 */
@@ -56,7 +58,7 @@ export function ResourcePresetListFilter({
   };
 
   // Job Type 드롭다운
-  const jobTypeOptions = [ALL_OPTION, ...WORKLOAD_JOB_OPTIONS];
+  const jobTypeOptions = [ALL_OPTION, ...RESOURCE_PRESET_JOB_OPTIONS];
   const jobTypeSelect = useSelect(jobType ?? null, jobTypeOptions);
 
   // Node Type 드롭다운
@@ -64,13 +66,13 @@ export function ResourcePresetListFilter({
   const nodeTypeSelect = useSelect(nodeType ?? null, nodeTypeOptions);
 
   /** Job Type 변경 핸들러 */
-  const handleChangeJobType = (newValue: WorkloadJobType | null) => {
+  const handleChangeJobType = (newValue: ResourcePresetJobType | null) => {
     jobTypeSelect.onChange(newValue);
     setJobType(newValue ?? undefined);
   };
 
   /** Node Type 변경 핸들러 */
-  const handleChangeNodeType = (newValue: CoreNodeMode | null) => {
+  const handleChangeNodeType = (newValue: ResourcePresetNodeType | null) => {
     nodeTypeSelect.onChange(newValue);
     setNodeType(newValue ?? undefined);
   };

@@ -1,6 +1,19 @@
+import type { ResourcePresetJobType } from "@/domain/resource-preset/schemas/resource-preset.schema";
+
 /* =============================================================================
    리소스 프리셋 상수
 ============================================================================= */
+
+/**
+ * 리소스 프리셋 Job Type 옵션 (BATCH, INTERACTIVE만 지원)
+ */
+export const RESOURCE_PRESET_JOB_OPTIONS: {
+  value: ResourcePresetJobType;
+  label: string;
+}[] = [
+  { value: "BATCH", label: "Batch" },
+  { value: "INTERACTIVE", label: "Interactive" },
+];
 
 /**
  * 분산 학습 타입 옵션
