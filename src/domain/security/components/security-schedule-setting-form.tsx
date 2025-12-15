@@ -233,10 +233,6 @@ const RadioItem = styled.div`
   align-items: center;
   justify-content: center;
   padding: 8px 12px;
-
-  & + & {
-    border-left: 1px solid #e1e4e7;
-  }
 `;
 
 const LabelRow = styled.div`
@@ -267,7 +263,7 @@ const RequiredMark = styled.span`
 const WeekDaysRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
 `;
 
 const WeekDayItem = styled.div`

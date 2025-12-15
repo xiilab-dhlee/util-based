@@ -1,10 +1,14 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
 import { REQUEST_IMAGE_STATUS_OPTIONS } from "@/domain/request-image/constants/request-image.constant";
-import { requestImageStatusAtom } from "@/domain/request-image/state/request-image.atom";
+import {
+  requestImagePageAtom,
+  requestImageStatusAtom,
+} from "@/domain/request-image/state/request-image.atom";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
 /**
@@ -18,13 +22,16 @@ import { ALL_OPTION } from "@/shared/constants/core.constant";
 export function RequestImageStatusSort() {
   // Jotai atom을 사용하여 이미지 요청 상태 관리
   const [status, setStatus] = useAtom(requestImageStatusAtom);
+  const resetPage = useResetAtom(requestImagePageAtom);
 
   /**
    * 상태 선택 변경 핸들러
+   * 상태 변경 시 페이지를 초기화
    *
    * @param value - 선택된 상태 값 (string | null)
    */
   const handleChange = (value: string | null) => {
+    resetPage();
     setStatus(value);
   };
 

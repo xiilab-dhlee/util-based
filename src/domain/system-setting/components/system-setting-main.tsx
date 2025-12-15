@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { ResourceRevokeCriteriaModal } from "@/domain/revoke/components/edit/resource-revoke-criteria-modal";
 import { CreateHpeModal } from "@/domain/system-setting/components/create-hpe-modal";
 import { CreateLicenseModal } from "@/domain/system-setting/components/create-license-modal";
 import { CreateStorageModal } from "@/domain/system-setting/components/create-storage-modal";
@@ -100,6 +101,7 @@ export function SystemSettingMain() {
       </ListPageMain>
 
       {/* 모달 */}
+      <ResourceRevokeCriteriaModal />
       <SmtpModal />
       <DeleteSmtpModal />
       <CreateLicenseModal />

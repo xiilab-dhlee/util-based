@@ -1,11 +1,12 @@
 "use client";
 
 import { useSetAtom } from "jotai";
-import type { FormEvent } from "react";
+import { useResetAtom } from "jotai/utils";
 import { Button } from "xiilab-ui";
 
 import {
   openSelectVolumeModalAtom,
+  volumePageAtom,
   volumeSearchTextAtom,
   volumeSelectedAtom,
 } from "@/domain/volume/state/volume.atom";
@@ -13,7 +14,6 @@ import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSearch } from "@/shared/hooks/use-search";
 
 interface VolumeListFilterProps {
   /** 전체 볼륨 수 */
@@ -33,28 +33,32 @@ interface VolumeListFilterProps {
  */
 export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
   const setSelectedVolume = useSetAtom(volumeSelectedAtom);
-  const { onSubmit } = useSearch(volumeSearchTextAtom);
+  const setSearchText = useSetAtom(volumeSearchTextAtom);
+  const resetPage = useResetAtom(volumePageAtom);
   const { onOpen } = useGlobalModal(openSelectVolumeModalAtom);
 
   const handleCreateVolume = () => {
     onOpen();
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    // 검색 시 선택된 볼륨 초기화
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지와 선택된 볼륨을 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
     setSelectedVolume(null);
-    onSubmit(e);
+    setSearchText(value);
   };
 
   return (
     <MySearchFilter title="볼륨 목록" total={total}>
       <MyItemsOnlySwitch checked={true} />
-      <form onSubmit={handleSubmit}>
-        <SearchInput
-          disabled={loading}
-          placeholder="볼륨 또는 생성자 이름 검색"
-        />
-      </form>
+      <SearchInput
+        disabled={loading}
+        placeholder="볼륨 또는 생성자 이름 검색"
+        onSearch={handleSearch}
+      />
       <Button
         color="primary"
         icon="Plus"

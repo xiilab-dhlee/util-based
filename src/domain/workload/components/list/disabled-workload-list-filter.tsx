@@ -1,10 +1,15 @@
 "use client";
 
+import { useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
+
 import { DisabledWorkloadJobTypeSort } from "@/domain/workload/components/list/disabled-workload-job-type-sort";
-import { disabledWorkloadSearchTextAtom } from "@/domain/workload/state/workload.atom";
+import {
+  disabledWorkloadPageAtom,
+  disabledWorkloadSearchTextAtom,
+} from "@/domain/workload/state/workload.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { useSearch } from "@/shared/hooks/use-search";
 
 interface DisabledWorkloadListFilterProps {
   total: number;
@@ -24,17 +29,22 @@ export function DisabledWorkloadListFilter({
   total,
   isLoading,
 }: DisabledWorkloadListFilterProps) {
-  const { onSubmit } = useSearch(disabledWorkloadSearchTextAtom);
+  const setSearchText = useSetAtom(disabledWorkloadSearchTextAtom);
+  const resetPage = useResetAtom(disabledWorkloadPageAtom);
+
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
+    setSearchText(value);
+  };
 
   return (
     <MySearchFilter title="워크로드 목록" total={total}>
       <DisabledWorkloadJobTypeSort disabled={isLoading} />
-      <form
-        onSubmit={onSubmit}
-        data-testid="workload-disabled-list-search-form"
-      >
-        <SearchInput disabled={isLoading} />
-      </form>
+      <SearchInput disabled={isLoading} onSearch={handleSearch} />
     </MySearchFilter>
   );
 }

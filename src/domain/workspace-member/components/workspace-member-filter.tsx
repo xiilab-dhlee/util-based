@@ -1,6 +1,7 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { Button } from "xiilab-ui";
 
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
@@ -14,12 +15,12 @@ import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { useSearch } from "@/shared/hooks/use-search";
 import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 import type { SelectedMember } from "@/shared/types/member-selection.type";
 
 export function WorkspaceMemberFilter() {
-  const { onSubmit } = useSearch(workspaceMemberSearchTextAtom);
+  const setSearchText = useSetAtom(workspaceMemberSearchTextAtom);
+  const resetPage = useResetAtom(workspaceMemberPageAtom);
   const publish = usePublish();
   const page = useAtomValue(workspaceMemberPageAtom);
   const searchText = useAtomValue(workspaceMemberSearchTextAtom);
@@ -29,6 +30,15 @@ export function WorkspaceMemberFilter() {
     size: LIST_PAGE_SIZE,
     searchText,
   });
+
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
+    setSearchText(value);
+  };
 
   /**
    * 구성원 추가 버튼 클릭 핸들러
@@ -59,9 +69,7 @@ export function WorkspaceMemberFilter() {
   return (
     <>
       <MySearchFilter title="워크스페이스 멤버 목록" total={data?.totalSize}>
-        <form onSubmit={onSubmit}>
-          <SearchInput />
-        </form>
+        <SearchInput onSearch={handleSearch} />
         <Button
           color="primary"
           icon="Plus"

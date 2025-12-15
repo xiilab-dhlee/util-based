@@ -13,7 +13,7 @@ import {
   disabledWorkloadSearchTextAtom,
   disabledWorkloadStatusAtom,
 } from "@/domain/workload/state/workload.atom";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { RestartWorkloadModal } from "../restart-workload-modal";
 
 /**
@@ -35,7 +35,7 @@ export function DisabledWorkloadListMain() {
     size: LIST_PAGE_SIZE,
     searchText,
     jobType: isNull(jobType) ? undefined : jobType,
-    status: isNull(status) ? undefined : status,
+    status: isNull(status) || status === ALL_OPTION.value ? undefined : status,
   });
 
   return (

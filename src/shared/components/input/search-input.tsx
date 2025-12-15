@@ -10,29 +10,25 @@ interface SearchInputProps {
   placeholder?: string;
   darkMode?: boolean;
   disabled?: boolean;
+  /** 검색 실행 시 호출되는 콜백 (검색어 값을 직접 전달받음) */
+  onSearch?: (value: string) => void;
 }
 
-// 검색 입력 컴포넌트
+/**
+ * 검색 입력 컴포넌트
+ *
+ * antd Input.Search 기반으로, onSearch 콜백에 검색어 값을 직접 전달합니다.
+ * Enter 키 입력 또는 검색 버튼 클릭 시 onSearch가 호출됩니다.
+ */
 export function SearchInput({
   placeholder = "검색어를 입력하세요.",
   width = 220,
   darkMode = false,
   disabled = false,
+  onSearch,
 }: SearchInputProps) {
-  const handleSearch = () => {
-    // 현재 SearchInput이 포함된 form 요소 찾기
-    const searchInput = document.querySelector('input[name="search"]');
-    if (searchInput) {
-      const formElement = searchInput.closest("form");
-      if (formElement) {
-        // form submit 이벤트 발생
-        const submitEvent = new Event("submit", {
-          bubbles: true,
-          cancelable: true,
-        });
-        formElement.dispatchEvent(submitEvent);
-      }
-    }
+  const handleSearch = (value: string) => {
+    onSearch?.(value.trim());
   };
 
   return (

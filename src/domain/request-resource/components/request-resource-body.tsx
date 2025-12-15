@@ -1,28 +1,29 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
-import { useGetRequestResources } from "@/domain/request-resource/hooks/use-get-request-resources";
-import { requestResourcePageAtom } from "@/domain/request-resource/state/request-resource.atom";
+import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
 import { createRequestResourceColumn } from "@/shared/components/column/create-request-resource-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
-export function RequestResourceBody() {
-  const page = useAtomValue(requestResourcePageAtom);
+interface RequestResourceBodyProps {
+  data: RequestResourceListType[];
+  isLoading: boolean;
+  isError: boolean;
+}
 
-  const { data } = useGetRequestResources({
-    page,
-    size: LIST_PAGE_SIZE,
-  });
-
+export function RequestResourceBody({
+  data,
+  isLoading,
+  isError,
+}: RequestResourceBodyProps) {
   return (
     <ListWrapper>
       <CustomizedTable
         columns={createRequestResourceColumn()}
-        data={data?.content || []}
+        data={data}
         activePadding
+        loading={isLoading}
+        isError={isError}
       />
     </ListWrapper>
   );

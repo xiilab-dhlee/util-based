@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
 import styled from "styled-components";
 
@@ -19,7 +19,6 @@ import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { useSearch } from "@/shared/hooks/use-search";
 
 const CREDENTIAL_BOX_HEIGHT = 542;
 
@@ -29,15 +28,24 @@ const CREDENTIAL_BOX_HEIGHT = 542;
  */
 export function CredentialListSetting() {
   const [page, setPage] = useAtom(credentialPageAtom);
-  const search = useAtomValue(credentialSearchTextAtom);
-  const { onSubmit } = useSearch(credentialSearchTextAtom);
+  const searchText = useAtomValue(credentialSearchTextAtom);
+  const setSearchText = useSetAtom(credentialSearchTextAtom);
   const publish = usePublish();
 
   const { data, isLoading, isError, refetch } = useGetSystemCredentials({
     page,
     size: CREDENTIAL_LIST_PAGE_SIZE,
-    searchText: search,
+    searchText,
   });
+
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 0으로 리셋하고 검색어를 저장
+   */
+  const handleSearch = (value: string) => {
+    setPage(0);
+    setSearchText(value);
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -78,12 +86,11 @@ export function CredentialListSetting() {
       height={CREDENTIAL_BOX_HEIGHT}
       extra={
         <SearchWrapper>
-          <form onSubmit={onSubmit}>
-            <SearchInput
-              placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
-              width="290px"
-            />
-          </form>
+          <SearchInput
+            placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
+            width="290px"
+            onSearch={handleSearch}
+          />
         </SearchWrapper>
       }
     >

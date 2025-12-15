@@ -94,6 +94,8 @@ export const ROUTES = {
   ADMIN_REPORT: `${MODE.ADMIN}/report`,
   ADMIN_REPORT_DETAIL: (id: string) => `${MODE.ADMIN}/report/${id}`,
   ADMIN_REPORT_RESERVATION: `${MODE.ADMIN}/report-reservation`,
+  ADMIN_REPORT_RESERVATION_DISPATCH_DETAIL: (id: string | number) =>
+    `${MODE.ADMIN}/report-reservation/${id}`,
 
   // 설정 (정적)
   ADMIN_SETTING: `${MODE.ADMIN}/setting`,

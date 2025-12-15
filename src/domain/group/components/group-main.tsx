@@ -1,7 +1,6 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
-import type { FormEvent } from "react";
 import { useEffect } from "react";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
@@ -54,9 +53,9 @@ export function GroupMain() {
   // 그룹 목록 조회 훅
   const { data } = useGetAllGroups();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    alert("searched");
+  const handleSearch = (value: string) => {
+    // TODO: 그룹 검색 기능 구현
+    alert(`searched: ${value}`);
   };
 
   const handleCreateGroup = () => {
@@ -123,12 +122,13 @@ export function GroupMain() {
             <ContentHeader>
               <ContentTitle>그룹 목록</ContentTitle>
             </ContentHeader>
-            <SearchForm onSubmit={handleSubmit}>
+            <SearchWrapper>
               <SearchInput
                 width="100%"
                 placeholder="그룹 이름을 검색해 주세요."
+                onSearch={handleSearch}
               />
-            </SearchForm>
+            </SearchWrapper>
 
             {/* 그룹 트리 컴포넌트 */}
             <GroupTree
@@ -188,7 +188,7 @@ const ContentTitle = styled.div`
   color: #000;
 `;
 
-const SearchForm = styled.form`
+const SearchWrapper = styled.div`
   margin-bottom: 16px;
 `;
 

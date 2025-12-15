@@ -38,7 +38,8 @@ const createColumnList = (
       dataIndex: "name",
       key: "name",
       align: "left",
-      width: "40%",
+      width: "20%",
+      ellipsis: true,
     },
     {
       title: "이메일",

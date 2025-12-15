@@ -47,7 +47,15 @@ export const REPORT_DATE_TYPE_TEXT = {
 } as const;
 
 /**
- * 리포트 타입 텍스트
+ * 리포트 타입
+ */
+export const REPORT_TYPE_LABEL = {
+  SYSTEM: "시스템",
+  CLUSTER: "클러스터",
+} as const;
+
+/**
+ * 리포트 타입 텍스트 (긴 버전 - 제목, 헤더 등)
  */
 export const REPORT_TYPE_TEXT = {
   SYSTEM: "시스템",

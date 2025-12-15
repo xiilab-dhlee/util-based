@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Button } from "xiilab-ui";
 
 import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
@@ -10,13 +10,11 @@ import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { useSearch } from "@/shared/hooks/use-search";
 import { AddWorkspaceMemberModal } from "./add-workspace-member-modal";
 
 export function SettingMemberListFilter() {
-  const { onSubmit } = useSearch(settingMemberSearchTextAtom);
+  const setSearchText = useSetAtom(settingMemberSearchTextAtom);
   const publish = usePublish();
-
   const searchText = useAtomValue(settingMemberSearchTextAtom);
 
   const { data } = useGetSettingWorkspaceMembers({
@@ -39,9 +37,7 @@ export function SettingMemberListFilter() {
   return (
     <>
       <MySearchFilter title="구성원 관리" total={data?.totalSize || 0}>
-        <form onSubmit={onSubmit}>
-          <SearchInput />
-        </form>
+        <SearchInput onSearch={setSearchText} />
         <Button
           color="primary"
           icon="Plus"

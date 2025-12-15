@@ -62,7 +62,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       dataIndex: "status",
-      title: "승인여부",
+      title: "승인 여부",
       align: "center",
       width: 80,
       render: (status: WorkspaceRequestResourceStatus) => {

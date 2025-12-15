@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useParams } from "next/navigation";
 
 import { ADMIN_INTERNAL_REGISTRY_IMAGE_TAG_PAGE_SIZE } from "@/domain/internal-registry-image/constants/internal-registry-image.constant";
@@ -11,11 +11,10 @@ import {
 } from "@/domain/internal-registry-image/state/internal-registry-image.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { useSearch } from "@/shared/hooks/use-search";
 
 export function AdminInternalRegistryImageTagListFilter() {
   const { id, name } = useParams();
-  const { onSubmit } = useSearch(adminInternalRegistryImageTagSearchTextAtom);
+  const setSearchText = useSetAtom(adminInternalRegistryImageTagSearchTextAtom);
 
   const page = useAtomValue(adminInternalRegistryImageTagPageAtom);
   const searchText = useAtomValue(adminInternalRegistryImageTagSearchTextAtom);
@@ -29,9 +28,7 @@ export function AdminInternalRegistryImageTagListFilter() {
 
   return (
     <MySearchFilter title="태그 목록" total={data?.totalSize || 0}>
-      <form onSubmit={onSubmit}>
-        <SearchInput />
-      </form>
+      <SearchInput onSearch={setSearchText} />
     </MySearchFilter>
   );
 }

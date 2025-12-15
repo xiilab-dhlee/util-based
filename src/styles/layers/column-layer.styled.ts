@@ -106,7 +106,20 @@ export const ColumnTruncateText = styled.span<{ width: number | string }>`
 export const ColumnTextButton = styled.button`
   color: #17171f !important;
   text-decoration: none;
-  &:hover{
+  &:hover {
     opacity: 0.8;
+  }
+`;
+
+// 전송 상태 텍스트
+export const ColumnStatus = styled.span`
+  font-weight: 500;
+
+  &.success {
+    color: var(--blue-main);
+  }
+
+  &.failure {
+    color: var(--red-main);
   }
 `;

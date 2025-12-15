@@ -4,8 +4,8 @@ import { atomWithReset } from "jotai/utils";
 import type {
   WorkloadIdType,
   WorkloadJobType,
-  WorkloadStatusType,
 } from "@/domain/workload/schemas/workload.schema";
+import type { FilterStatusValue } from "@/domain/workload/types/workload.type";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
@@ -24,7 +24,7 @@ export const workloadSearchTextAtom = atom<string>("");
 /** 워크로드 잡타입 */
 export const workloadJobTypeAtom = atom<WorkloadJobType | null>(null);
 /** 워크로드 상태 */
-export const workloadStatusAtom = atom<WorkloadStatusType | null>(null);
+export const workloadStatusAtom = atom<FilterStatusValue | null>(null);
 
 // ============================================
 // 활성화 워크로드 목록 필터
@@ -37,7 +37,7 @@ export const activeWorkloadSearchTextAtom = atom<string>("");
 /** 활성화 워크로드 잡타입 */
 export const activeWorkloadJobTypeAtom = atom<WorkloadJobType | null>(null);
 /** 활성화 워크로드 상태 */
-export const activeWorkloadStatusAtom = atom<WorkloadStatusType | null>(null);
+export const activeWorkloadStatusAtom = atom<FilterStatusValue | null>(null);
 
 // ============================================
 // 비활성화 워크로드 목록 필터
@@ -50,7 +50,7 @@ export const disabledWorkloadSearchTextAtom = atom<string>("");
 /** 비활성화 워크로드 잡타입 */
 export const disabledWorkloadJobTypeAtom = atom<WorkloadJobType | null>(null);
 /** 비활성화 워크로드 상태 */
-export const disabledWorkloadStatusAtom = atom<WorkloadStatusType | null>(null);
+export const disabledWorkloadStatusAtom = atom<FilterStatusValue | null>(null);
 /** 커밋 이미지 생성 모달 표시 여부 */
 export const openCreateCommitImageModalAtom = atom<boolean>(false);
 /** 워크로드 수정 모달 표시 여부 */

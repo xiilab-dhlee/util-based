@@ -1,8 +1,12 @@
 import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
 import { SOURCECODE_TYPE_OPTIONS } from "@/domain/sourcecode/constants/sourcecode.constant";
-import { sourcecodeTypeAtom } from "@/domain/sourcecode/state/sourcecode.atom";
+import {
+  sourcecodePageAtom,
+  sourcecodeTypeAtom,
+} from "@/domain/sourcecode/state/sourcecode.atom";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
 interface SourcecodeTypeSortProps {
@@ -20,13 +24,16 @@ interface SourcecodeTypeSortProps {
  */
 export function SourcecodeTypeSort({ disabled }: SourcecodeTypeSortProps) {
   const [codeType, setCodeType] = useAtom(sourcecodeTypeAtom);
+  const resetPage = useResetAtom(sourcecodePageAtom);
 
   /**
    * 타입 선택 변경 핸들러
+   * 타입 변경 시 페이지를 초기화
    *
    * @param value - 선택된 타입 값 (string | null)
    */
   const handleChange = (value: string | null) => {
+    resetPage();
     setCodeType(value);
   };
 

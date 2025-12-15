@@ -1,56 +1,42 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
 import { REQUEST_RESOURCE_STATUS_OPTIONS } from "@/domain/request-resource/constants/request-resource.constant";
-import { useGetRequestResources } from "@/domain/request-resource/hooks/use-get-request-resources";
 import {
-  requestResourceEndDateAtom,
-  requestResourcePageAtom,
-  requestResourceStartDateAtom,
+  requestResourceKeywordAtom,
+  requestResourceStatusAtom,
 } from "@/domain/request-resource/state/request-resource.atom";
-import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
-import { ListRangePicker } from "@/shared/components/datepicker/list-range-picker";
+import type { RequestResourceStatusFilter as StatusFilterType } from "@/domain/request-resource/type/request-resource.type";
+import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useSelect } from "@/shared/hooks/use-select";
+import { ALL_OPTION } from "@/shared/constants/core.constant";
 
-export function RequestResourceFilter() {
-  const page = useAtomValue(requestResourcePageAtom);
-  const startDate = useAtomValue(requestResourceStartDateAtom);
-  const endDate = useAtomValue(requestResourceEndDateAtom);
+interface RequestResourceFilterProps {
+  total?: number;
+}
 
+export function RequestResourceFilter({ total }: RequestResourceFilterProps) {
+  const [status, setStatus] = useAtom(requestResourceStatusAtom);
+  const setKeyword = useSetAtom(requestResourceKeywordAtom);
   const statusOptions = [ALL_OPTION, ...REQUEST_RESOURCE_STATUS_OPTIONS];
-  const statusSelect = useSelect(null, statusOptions);
-
-  const status =
-    statusSelect.value === null || statusSelect.value === "ALL"
-      ? undefined
-      : (statusSelect.value as WorkspaceRequestResourceStatus);
-
-  const { data } = useGetRequestResources({
-    page,
-    size: LIST_PAGE_SIZE,
-    startDate,
-    endDate,
-    status,
-  });
 
   return (
-    <MySearchFilter title="리소스 신청 목록" total={data?.totalSize}>
+    <MySearchFilter title="리소스 신청 목록" total={total}>
       <FilterControls>
-        <ListRangePicker
-          startDateAtom={requestResourceStartDateAtom}
-          endDateAtom={requestResourceEndDateAtom}
-        />
         <Dropdown
-          options={statusSelect.options}
-          value={statusSelect.value}
-          onChange={statusSelect.onChange}
-          placeholder="승인여부"
+          options={statusOptions}
+          value={status}
+          onChange={(value) => setStatus(value as StatusFilterType)}
+          placeholder="승인 여부"
           width={120}
+        />
+        <SearchInput
+          placeholder="워크스페이스 이름 또는 요청자 이름 검색"
+          width={270}
+          onSearch={setKeyword}
         />
       </FilterControls>
     </MySearchFilter>

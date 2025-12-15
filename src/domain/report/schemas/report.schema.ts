@@ -1,5 +1,99 @@
 import { z } from "zod";
 
+import {
+  PERIOD_UNIT_VALUES,
+  REPORT_RESERVATION_PERIOD_UNIT_DAY,
+  REPORT_RESERVATION_PERIOD_UNIT_WEEK,
+  REPORT_RESERVATION_USAGE_ENABLED,
+  USAGE_STATUS_VALUES,
+} from "@/domain/report-reservation/constants/report-reservation.constant";
+import { WEEK_DAY_KEYS } from "@/shared/constants/date.constant";
+
+// ===== Request 스키마 (프론트 → 서버) =====
+
+/**
+ * 리포트 예약 수신자 스키마
+ */
+export const reportReservationRecipientSchema = z.object({
+  /** 수신자 ID */
+  id: z.string(),
+  /** 수신자 이름 */
+  name: z.string(),
+  /** 수신자 이메일 */
+  email: z.string().email(),
+});
+
+/**
+ * 리포트 예약 생성 요청 스키마
+ */
+export const createReportReservationRequestSchema = z
+  .object({
+    /** 리포트 이름 */
+    name: z.string().min(1, "리포트 이름을 입력해 주세요."),
+    /** 설명 */
+    description: z.string().default(""),
+    /** 리포트 종류 (SYSTEM | CLUSTER) */
+    reportType: z.enum(["SYSTEM", "CLUSTER"], {
+      required_error: "리포트 종류를 선택해 주세요.",
+    }),
+    /** 발송 시작일시 */
+    startDateTime: z.string().datetime({
+      message: "시작일시를 선택해 주세요.",
+    }),
+    /** 발송 주기 값 */
+    periodValue: z.number().int().min(1, "발송 주기를 입력해 주세요."),
+    /** 발송 주기 단위 (day | week | month) */
+    periodUnit: z.enum(PERIOD_UNIT_VALUES),
+    /** 발송 요일 (주 단위 시 필수) */
+    weekDays: z.array(z.enum(WEEK_DAY_KEYS)),
+    /** 종료 날짜 사용 여부 */
+    endDateUsage: z.enum(USAGE_STATUS_VALUES),
+    /** 종료 날짜 */
+    endDateTime: z.string().datetime().optional().nullable(),
+    /** 수신자 목록 */
+    recipients: z
+      .array(reportReservationRecipientSchema)
+      .min(1, "수신자를 한 명 이상 추가해 주세요."),
+  })
+  // 주 단위일 때 요일 필수
+  .refine(
+    (value) =>
+      value.periodUnit !== REPORT_RESERVATION_PERIOD_UNIT_WEEK ||
+      value.weekDays.length > 0,
+    {
+      path: ["weekDays"],
+      message: "발송 요일을 한 개 이상 선택해 주세요.",
+    },
+  )
+  // 일 단위일 때 1~31 제한
+  .refine(
+    (value) =>
+      value.periodUnit !== REPORT_RESERVATION_PERIOD_UNIT_DAY ||
+      (typeof value.periodValue === "number" && value.periodValue <= 31),
+    {
+      path: ["periodValue"],
+      message: "일 단위 주기는 1일부터 31일 사이로 설정할 수 있습니다.",
+    },
+  )
+  // 종료 날짜 사용 시 날짜 필수
+  .refine(
+    (value) =>
+      value.endDateUsage !== REPORT_RESERVATION_USAGE_ENABLED ||
+      value.endDateTime,
+    {
+      path: ["endDateTime"],
+      message: "종료 날짜를 선택해 주세요.",
+    },
+  );
+
+// Request 타입 추출
+export type ReportReservationRecipient = z.infer<
+  typeof reportReservationRecipientSchema
+>;
+export type CreateReportReservationRequest = z.infer<
+  typeof createReportReservationRequestSchema
+>;
+
 // ===== Response 스키마 (서버 → 프론트) =====
 
 /** 리포트 기본 응답 스키마 */

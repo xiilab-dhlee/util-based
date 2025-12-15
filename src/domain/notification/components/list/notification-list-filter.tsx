@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
@@ -27,14 +28,20 @@ import { useSelect } from "@/shared/hooks/use-select";
  */
 export function NotificationListFilter() {
   const page = useAtomValue(notificationPageAtom);
-  const startDate = useAtomValue(notificationStartDateAtom);
-  const endDate = useAtomValue(notificationEndDateAtom);
+  const [startDate, setStartDate] = useAtom(notificationStartDateAtom);
+  const [endDate, setEndDate] = useAtom(notificationEndDateAtom);
   const [type, setType] = useAtom(notificationTypeAtom);
+  const resetPage = useResetAtom(notificationPageAtom);
 
   const typeOptions = [ALL_OPTION, ...NOTIFICATION_TYPE_OPTIONS];
   const typeSelect = useSelect(null, typeOptions);
 
+  /**
+   * 알림 유형 변경 핸들러
+   * 알림 유형 변경 시 페이지를 초기화
+   */
   const handleChangeType = (newValue: NotificationTypeValue | null) => {
+    resetPage();
     typeSelect.onChange(newValue);
 
     if (newValue === null) {
@@ -43,6 +50,16 @@ export function NotificationListFilter() {
     }
 
     setType(newValue);
+  };
+
+  /**
+   * 날짜 범위 변경 핸들러
+   * 날짜 변경 시 페이지를 초기화
+   */
+  const handleDateChange = (start: string, end: string) => {
+    resetPage();
+    setStartDate(start);
+    setEndDate(end);
   };
 
   const { data } = useGetNotifications({
@@ -64,8 +81,9 @@ export function NotificationListFilter() {
           width={200}
         />
         <ListRangePicker
-          startDateAtom={notificationStartDateAtom}
-          endDateAtom={notificationEndDateAtom}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={handleDateChange}
         />
       </FilterControls>
     </MySearchFilter>

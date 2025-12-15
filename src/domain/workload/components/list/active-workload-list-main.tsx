@@ -13,7 +13,7 @@ import {
   activeWorkloadSearchTextAtom,
   activeWorkloadStatusAtom,
 } from "@/domain/workload/state/workload.atom";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 
 /**
  * 활성화 워크로드 목록 메인 컴포넌트
@@ -34,7 +34,7 @@ export function ActiveWorkloadListMain() {
     size: LIST_PAGE_SIZE,
     searchText,
     jobType: isNull(jobType) ? undefined : jobType,
-    status: isNull(status) ? undefined : status,
+    status: isNull(status) || status === ALL_OPTION.value ? undefined : status,
   });
 
   return (

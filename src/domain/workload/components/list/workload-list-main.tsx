@@ -13,7 +13,7 @@ import {
   workloadSearchTextAtom,
   workloadStatusAtom,
 } from "@/domain/workload/state/workload.atom";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useGetWorkloadsByMode } from "../../hooks/use-get-workloads-by-mode";
 
 /**
@@ -36,7 +36,7 @@ export function WorkloadListMain() {
     size: LIST_PAGE_SIZE,
     searchText,
     jobType: isNull(jobType) ? undefined : jobType,
-    status: isNull(status) ? undefined : status,
+    status: isNull(status) || status === ALL_OPTION.value ? undefined : status,
   });
 
   return (

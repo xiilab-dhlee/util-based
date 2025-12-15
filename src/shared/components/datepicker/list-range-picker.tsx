@@ -1,16 +1,16 @@
 "use client";
 
 import { format, parse } from "date-fns";
-import type { PrimitiveAtom } from "jotai";
-import { useAtom } from "jotai";
 import styled from "styled-components";
 import { DateRange } from "xiilab-ui";
 
 interface ListRangePickerProps {
-  /** 시작 날짜 atom */
-  startDateAtom: PrimitiveAtom<string>;
-  /** 종료 날짜 atom */
-  endDateAtom: PrimitiveAtom<string>;
+  /** 시작 날짜 값 */
+  startDate: string;
+  /** 종료 날짜 값 */
+  endDate: string;
+  /** 날짜 변경 시 호출되는 콜백 함수 */
+  onChange: (startDate: string, endDate: string) => void;
   /** 시작 날짜 라벨 */
   startLabel?: string;
   /** 종료 날짜 라벨 */
@@ -33,17 +33,19 @@ interface ListRangePickerProps {
  * @returns DateRange 컴포넌트
  */
 export function ListRangePicker({
-  startDateAtom,
-  endDateAtom,
+  startDate,
+  endDate,
+  onChange,
   startLabel = "시작일시",
   endLabel = "종료일시",
   placeholder = "기간을 선택해 주세요.",
   width = "250px",
   height = "30px",
 }: ListRangePickerProps) {
-  const [startDate, setStartDate] = useAtom(startDateAtom);
-  const [endDate, setEndDate] = useAtom(endDateAtom);
-
+  /**
+   * 날짜 범위 변경 핸들러
+   * 날짜를 포맷팅하여 onChange 콜백으로 전달
+   */
   const handleChangeDate = (start: Date | null, end: Date | null) => {
     const now = new Date();
 
@@ -55,12 +57,10 @@ export function ListRangePicker({
       end = now;
     }
 
-    if (start) {
-      setStartDate(format(start, "yyyy-MM-dd HH:mm:ss"));
-    }
-    if (end) {
-      setEndDate(format(end, "yyyy-MM-dd HH:mm:ss"));
-    }
+    // 날짜 변경 이벤트 전달
+    const formattedStart = start ? format(start, "yyyy-MM-dd HH:mm:ss") : "";
+    const formattedEnd = end ? format(end, "yyyy-MM-dd HH:mm:ss") : "";
+    onChange(formattedStart, formattedEnd);
   };
 
   // 문자열을 Date 객체로 변환

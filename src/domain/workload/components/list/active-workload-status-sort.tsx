@@ -1,10 +1,15 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
 import { WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
-import { activeWorkloadStatusAtom } from "@/domain/workload/state/workload.atom";
+import {
+  activeWorkloadPageAtom,
+  activeWorkloadStatusAtom,
+} from "@/domain/workload/state/workload.atom";
+import type { FilterStatusValue } from "@/domain/workload/types/workload.type";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
@@ -24,6 +29,16 @@ export function ActiveWorkloadStatusSort({
   disabled,
 }: ActiveWorkloadStatusSortProps) {
   const [status, setStatus] = useAtom(activeWorkloadStatusAtom);
+  const resetPage = useResetAtom(activeWorkloadPageAtom);
+
+  /**
+   * 상태 변경 핸들러
+   * 상태 변경 시 페이지를 초기화
+   */
+  const handleChange = (value: FilterStatusValue | null) => {
+    resetPage();
+    setStatus(value);
+  };
 
   return (
     <div data-testid={WORKLOAD_SELECTOR.FILTER_STATUS}>
@@ -35,7 +50,7 @@ export function ActiveWorkloadStatusSort({
           ),
         ]}
         value={status}
-        onChange={setStatus}
+        onChange={handleChange}
         placeholder="상태"
         width={100}
         height={30}

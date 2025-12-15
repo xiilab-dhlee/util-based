@@ -2,9 +2,9 @@
 
 import { useParams } from "next/navigation";
 
-import { RevokeHistoryDetailMain } from "@/domain/revoke-history/components/detail/revoke-history-detail-main";
-import { RevokeHistoryDetailPageAside } from "@/domain/revoke-history/components/detail/revoke-history-detail-page-aside";
-import { useGetRevokeHistoryDetail } from "@/domain/revoke-history/hooks/use-get-revoke-history-detail";
+import { RevokeHistoryDetailMain } from "@/domain/revoke/components/detail/revoke-history-detail-main";
+import { RevokeHistoryDetailPageAside } from "@/domain/revoke/components/detail/revoke-history-detail-page-aside";
+import { useGetRevokeHistoryDetail } from "@/domain/revoke/hooks/use-get-revoke-history-detail";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,
