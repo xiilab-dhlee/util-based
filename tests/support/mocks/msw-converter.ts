@@ -185,10 +185,18 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
 
         if (response) {
           const body = await response.text();
+
+          // 모든 응답 헤더를 Record<string, string> 형태로 변환
+          const headers: Record<string, string> = {};
+          response.headers.forEach((value, key) => {
+            headers[key] = value;
+          });
+
           return route.fulfill({
             status: response.status,
             contentType:
               response.headers.get("content-type") ?? "application/json",
+            headers,
             body,
           });
         }
@@ -197,7 +205,13 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
       // 매칭되는 핸들러가 없으면 실제 요청으로 전달
       return route.continue();
     } catch (error) {
-      console.warn("[MSW Converter] Error:", error);
+      const request = route.request();
+      const method = request.method();
+      const pathname = new URL(request.url()).pathname;
+      console.warn(
+        `[MSW Converter] Error handling ${method} ${pathname}:`,
+        error,
+      );
       return route.continue();
     }
   };
