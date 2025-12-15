@@ -78,7 +78,7 @@ export function ResourcePresetListFilter({
         <Dropdown
           options={jobTypeOptions}
           value={jobType ?? null}
-          onChange={(newValue) => handleChangeJobType(newValue ?? undefined)}
+          onChange={handleChangeJobType}
           placeholder="Job Type"
           width={140}
           disabled={isLoading}
@@ -86,7 +86,7 @@ export function ResourcePresetListFilter({
         <Dropdown
           options={nodeTypeOptions}
           value={nodeType ?? null}
-          onChange={(newValue) => handleChangeNodeType(newValue ?? undefined)}
+          onChange={handleChangeNodeType}
           placeholder="노드 Type"
           width={140}
           disabled={isLoading}
