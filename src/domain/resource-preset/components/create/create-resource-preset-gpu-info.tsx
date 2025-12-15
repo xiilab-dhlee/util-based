@@ -22,7 +22,10 @@ import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { useGetGpuNodes } from "@/shared/hooks/use-get-gpu-nodes";
 import { useGetGpuProfiles } from "@/shared/hooks/use-get-gpu-profiles";
 import { useGetGpus } from "@/shared/hooks/use-get-gpus";
-import type { GpuListType } from "@/shared/schemas/gpu.schema";
+import type {
+  GpuListType,
+  GpuProfileListType,
+} from "@/shared/schemas/gpu.schema";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 import {
@@ -97,8 +100,8 @@ export function CreateResourcePresetGpuInfo() {
   };
 
   // MIG 프로필 선택 핸들러
-  const handleSelectProfile = (value: string | number) => {
-    const profile = migProfiles.find((p) => p.id === String(value));
+  const handleSelectProfile = (value: GpuProfileListType["id"]) => {
+    const profile = migProfiles.find((p) => p.id === value);
     selectProfile(profile ?? null);
   };
 

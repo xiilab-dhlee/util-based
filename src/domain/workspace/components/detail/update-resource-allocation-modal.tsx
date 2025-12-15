@@ -13,6 +13,15 @@ import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 /**
+ * 리소스 할당에서 지원하는 리소스 타입
+ * - GPU_MEMORY, DISK는 할당 대상이 아님
+ */
+type AllocationResourceType = Extract<
+  CoreResourceType,
+  "GPU" | "CPU" | "MEM" | "MIG" | "MPS"
+>;
+
+/**
  * 리소스 할당량 데이터 타입
  */
 export interface ResourceAllocationData {
@@ -120,7 +129,7 @@ export function UpdateResourceAllocationModal() {
     value,
     migName,
   }: {
-    type: CoreResourceType;
+    type: AllocationResourceType;
     value: number;
     migName?: string;
   }) => {

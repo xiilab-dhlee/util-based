@@ -6,7 +6,7 @@ import { NodeDropdownOption } from "./node-dropdown-option";
 interface NodeSelectDropdownProps {
   nodes: GpuNodeListType[];
   value: string | undefined;
-  onChange: (value: string | number) => void;
+  onChange: (value: string) => void;
   error?: boolean;
   loading?: boolean;
 }

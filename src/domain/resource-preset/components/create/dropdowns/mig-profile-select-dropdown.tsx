@@ -5,8 +5,8 @@ import { MigProfileDropdownOption } from "./mig-profile-dropdown-option";
 
 interface MigProfileSelectDropdownProps {
   profiles: GpuProfileListType[];
-  value: string | undefined;
-  onChange: (value: string | number) => void;
+  value: GpuProfileListType["id"] | undefined;
+  onChange: (value: GpuProfileListType["id"]) => void;
   error?: boolean;
   loading?: boolean;
 }
@@ -25,7 +25,7 @@ export function MigProfileSelectDropdown({
       height={40}
       placeholder="MIG 선택해 주세요."
       value={value}
-      onChange={onChange}
+      onChange={(value) => onChange(value as GpuProfileListType["id"])}
       status={error ? "error" : undefined}
       loading={loading}
     >

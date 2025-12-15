@@ -179,8 +179,11 @@ export const resourcePresetRequestSchema = z.object({
   gpuType: z.enum(GPU_TYPE_VALUES),
   /** GPU ID */
   gpuId: z.number(),
-  /** GPU 사용 노드 이름 */
-  nodeName: z.string().min(1, "GPU 사용 노드를 선택해 주세요."),
+  /** GPU 사용 노드 이름 (빈 문자열은 undefined로 처리) */
+  nodeName: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z.string().min(1, "GPU 사용 노드를 선택해 주세요.").optional(),
+  ),
   /** GPU 개수 */
   gpu: z.number().min(0),
   /** CPU 개수 */

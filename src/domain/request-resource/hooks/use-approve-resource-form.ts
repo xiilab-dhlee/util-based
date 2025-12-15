@@ -7,6 +7,14 @@ import {
 } from "@/domain/request-resource/schemas/request-resource.schema";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 
+// ===== 타입 =====
+
+/**
+ * 리소스 승인에서 지원하는 리소스 타입
+ * - GPU_MEMORY, MPS, DISK, MIG는 승인 대상이 아님
+ */
+type ApproveResourceType = Extract<CoreResourceType, "GPU" | "CPU" | "MEM">;
+
 // ===== 상수 =====
 
 const INITIAL_FORM_STATE: ApproveResourceFormState = {
@@ -27,7 +35,7 @@ interface UseApproveResourceFormReturn {
   errors: ApproveResourceFormErrors;
 
   // 필드 변경
-  setApproveValue: (type: CoreResourceType, value: number) => void;
+  setApproveValue: (type: ApproveResourceType, value: number) => void;
 
   // 폼 제어
   initialize: (gpuReq: number, cpuReq: number, memReq: number) => void;
