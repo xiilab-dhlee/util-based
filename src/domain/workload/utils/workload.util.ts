@@ -1,8 +1,8 @@
 import type {
   WorkloadImageType,
   WorkloadJobType,
-  WorkloadStatusType,
 } from "@/domain/workload/schemas/workload.schema";
+import type { FilterStatusValue } from "@/domain/workload/types/workload.type";
 
 /**
  * 워크로드 잡 타입 정보 조회
@@ -49,9 +49,9 @@ export const getWorkloadJobTypeInfo = (jobType?: WorkloadJobType) => {
 
 /**
  * 워크로드 상태 정보 조회
- * @param status - 워크로드 상태
+ * @param status - 워크로드 상태 (필터 상태 값 포함)
  */
-export const getWorkloadStatusInfo = (status?: WorkloadStatusType | "ALL") => {
+export const getWorkloadStatusInfo = (status?: FilterStatusValue) => {
   // 상태 표시 텍스트
   let label = "";
   // 상태 색상

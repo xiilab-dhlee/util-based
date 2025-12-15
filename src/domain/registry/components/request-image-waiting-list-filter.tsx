@@ -1,17 +1,16 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 
 import { userWaitingRequestImageListSearchTextAtom } from "@/domain/registry/state/registry.atom";
 import { useGetWaitingRequestImages } from "@/domain/request-image/hooks/use-get-waiting-request-images";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { useSearch } from "@/shared/hooks/use-search";
 
 export function UserRequestImageWaitingListFilter() {
-  const { onSubmit } = useSearch(userWaitingRequestImageListSearchTextAtom);
-
-  const searchText = useAtomValue(userWaitingRequestImageListSearchTextAtom);
+  const [searchText, setSearchText] = useAtom(
+    userWaitingRequestImageListSearchTextAtom,
+  );
 
   const { data } = useGetWaitingRequestImages({
     searchText,
@@ -23,9 +22,11 @@ export function UserRequestImageWaitingListFilter() {
       darkMode
       total={data?.totalSize}
     >
-      <form onSubmit={onSubmit}>
-        <SearchInput darkMode placeholder="이미지, 이름, 태그를 검색" />
-      </form>
+      <SearchInput
+        darkMode
+        placeholder="이미지, 이름, 태그를 검색"
+        onSearch={setSearchText}
+      />
     </MySearchFilter>
   );
 }

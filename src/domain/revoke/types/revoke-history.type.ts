@@ -3,6 +3,7 @@ import type {
   RevokeHistoryDetailItemType,
   RevokeHistoryDetailResponseType,
 } from "@/domain/revoke/schemas/revoke-history.schema";
+import type { AllOptionValue } from "@/shared/constants/core.constant";
 import type { CorePaginate, CorePayload } from "@/shared/types/api.interface";
 import type { CoreListResponse } from "@/shared/types/core.model";
 
@@ -22,6 +23,11 @@ export interface GetRevokeHistoriesPayload extends CorePayload, CorePaginate {
 export type RevokeHistoryDetailType =
   (typeof REVOKE_HISTORY_DETAIL_TYPE)[keyof typeof REVOKE_HISTORY_DETAIL_TYPE];
 
+/** 필터에서 사용되는 회수 이력 상세 타입 값 (전체 옵션 포함) */
+export type FilterRevokeHistoryDetailType =
+  | RevokeHistoryDetailType
+  | AllOptionValue;
+
 /**
  * 리소스 회수 상세 목록 조회 Payload
  */
@@ -32,8 +38,8 @@ export interface GetRevokeHistoryDetailPayload
   startDate?: string;
   /** 종료일 */
   endDate?: string;
-  /** 구분 (WARNING/REVOKED) */
-  type?: RevokeHistoryDetailType;
+  /** 구분 (WARNING/REVOKED/ALL) */
+  type?: FilterRevokeHistoryDetailType;
 }
 
 /**

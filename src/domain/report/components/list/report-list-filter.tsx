@@ -1,16 +1,22 @@
 "use client";
 
 import { useAtom, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { Button, Dropdown } from "xiilab-ui";
 
 import {
   REPORT_DATE_TYPE_OPTIONS,
   REPORT_TYPE_OPTIONS,
 } from "@/domain/report/constants/report.constant";
-import type { ReportListType } from "@/domain/report/schemas/report.schema";
+import type {
+  ReportDateType,
+  ReportListType,
+  ReportType,
+} from "@/domain/report/schemas/report.schema";
 import {
   openCreateReportModalAtom,
   reportDateTypeAtom,
+  reportPageAtom,
   reportTypeAtom,
 } from "@/domain/report/state/report.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
@@ -32,12 +38,23 @@ export function ReportListFilter({ data }: ReportListFilterProps) {
   const [reportDateType, setReportDateType] = useAtom(reportDateTypeAtom);
   const [reportType, setReportType] = useAtom(reportTypeAtom);
   const setOpenCreateModal = useSetAtom(openCreateReportModalAtom);
+  const resetPage = useResetAtom(reportPageAtom);
 
-  const handleDateTypeChange = (value: string | null) => {
+  /**
+   * 리포트 타입 변경 핸들러
+   * 리포트 타입 변경 시 페이지를 초기화
+   */
+  const handleDateTypeChange = (value: ReportDateType | null) => {
+    resetPage();
     setReportDateType(value ?? undefined);
   };
 
-  const handleTypeChange = (value: string | null) => {
+  /**
+   * 리포트 종류 변경 핸들러
+   * 리포트 종류 변경 시 페이지를 초기화
+   */
+  const handleTypeChange = (value: ReportType | null) => {
+    resetPage();
     setReportType(value ?? undefined);
   };
 

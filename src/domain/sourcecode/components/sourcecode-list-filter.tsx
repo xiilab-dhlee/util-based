@@ -1,20 +1,20 @@
 "use client";
 
 import { useSetAtom } from "jotai";
-import type { FormEvent } from "react";
+import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Button, Checkbox } from "xiilab-ui";
 
 import { SourcecodeTypeSort } from "@/domain/sourcecode/components/sourcecode-type-sort";
 import {
   openCreateSourcecodeModalAtom,
+  sourcecodePageAtom,
   sourcecodeSearchTextAtom,
   sourcecodeSelectedAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSearch } from "@/shared/hooks/use-search";
 
 interface SourcecodeListFilterProps {
   total: number;
@@ -36,17 +36,22 @@ export function SourcecodeListFilter({
   loading,
 }: SourcecodeListFilterProps) {
   const setSelectedSourcecode = useSetAtom(sourcecodeSelectedAtom);
-  const { onSubmit } = useSearch(sourcecodeSearchTextAtom);
+  const setSearchText = useSetAtom(sourcecodeSearchTextAtom);
+  const resetPage = useResetAtom(sourcecodePageAtom);
   const { onOpen } = useGlobalModal(openCreateSourcecodeModalAtom);
 
   const handleCreateSourcecode = () => {
     onOpen();
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    // 검색 시 선택된 소스코드 초기화
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지와 선택된 소스코드를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
     setSelectedSourcecode(null);
-    onSubmit(e);
+    setSearchText(value);
   };
 
   return (
@@ -57,9 +62,7 @@ export function SourcecodeListFilter({
         </Left>
         <Right>
           <SourcecodeTypeSort disabled={loading} />
-          <form onSubmit={handleSubmit}>
-            <SearchInput disabled={loading} />
-          </form>
+          <SearchInput disabled={loading} onSearch={handleSearch} />
           <Button
             color="primary"
             icon="Plus"

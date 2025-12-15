@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Button } from "xiilab-ui";
 
 import { useGetPendingAccounts } from "@/domain/account-management/hooks/use-get-pending-accounts";
@@ -15,7 +15,6 @@ import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { useSearch } from "@/shared/hooks/use-search";
 
 interface CheckedAccounts {
   ids: AccountListType["id"][];
@@ -30,9 +29,7 @@ interface CheckedAccounts {
  * @returns 사용자 목록 페이지 상단 필터 컴포넌트
  */
 export function AccountPendingListFilter() {
-  // 공통 검색 훅 사용
-  const { onSubmit } = useSearch(accountPendingSearchTextAtom);
-
+  const setSearchText = useSetAtom(accountPendingSearchTextAtom);
   const page = useAtomValue(accountPendingPageAtom);
   const searchText = useAtomValue(accountPendingSearchTextAtom);
   const checkedList = useAtomValue(accountPendingCheckedListAtom);
@@ -90,9 +87,7 @@ export function AccountPendingListFilter() {
 
   return (
     <MySearchFilter title="가입 승인 목록" total={data?.totalSize}>
-      <form onSubmit={onSubmit}>
-        <SearchInput />
-      </form>
+      <SearchInput onSearch={setSearchText} />
       <Button
         color="primary"
         variant="gradient"

@@ -1,6 +1,7 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import { useGetRevokeHistories } from "@/domain/revoke/hooks/use-get-revoke-histories";
 import {
@@ -19,8 +20,19 @@ import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
  */
 export function RevokeHistoryListFilter() {
   const page = useAtomValue(revokeHistoryPageAtom);
-  const startDate = useAtomValue(revokeHistoryStartDateAtom);
-  const endDate = useAtomValue(revokeHistoryEndDateAtom);
+  const [startDate, setStartDate] = useAtom(revokeHistoryStartDateAtom);
+  const [endDate, setEndDate] = useAtom(revokeHistoryEndDateAtom);
+  const resetPage = useResetAtom(revokeHistoryPageAtom);
+
+  /**
+   * 날짜 범위 변경 핸들러
+   * 날짜 변경 시 페이지를 초기화
+   */
+  const handleDateChange = (start: string, end: string) => {
+    resetPage();
+    setStartDate(start);
+    setEndDate(end);
+  };
 
   const { data } = useGetRevokeHistories({
     page,
@@ -35,8 +47,9 @@ export function RevokeHistoryListFilter() {
       total={data?.totalSize}
     >
       <ListRangePicker
-        startDateAtom={revokeHistoryStartDateAtom}
-        endDateAtom={revokeHistoryEndDateAtom}
+        startDate={startDate}
+        endDate={endDate}
+        onChange={handleDateChange}
       />
     </MySearchFilter>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import { useGetRequestImages } from "@/domain/request-image/hooks/use-get-request-images";
 import {
@@ -10,7 +11,6 @@ import {
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useSearch } from "@/shared/hooks/use-search";
 import { RequestImageStatusSort } from "./request-image-status-sort";
 
 /**
@@ -21,27 +21,30 @@ import { RequestImageStatusSort } from "./request-image-status-sort";
  * @returns 이미지 요청 목록 페이지 상단 필터 컴포넌트
  */
 export function RequestImageListFilter() {
-  // 공통 검색 훅 사용
-  const { onSubmit } = useSearch(requestImageSearchTextAtom);
-
-  // 페이지 번호
+  const setSearchText = useSetAtom(requestImageSearchTextAtom);
+  const resetPage = useResetAtom(requestImagePageAtom);
   const page = useAtomValue(requestImagePageAtom);
-  // 검색어
   const searchText = useAtomValue(requestImageSearchTextAtom);
 
-  // 이미지 요청 목록 데이터 조회
   const { data } = useGetRequestImages({
     page,
     size: LIST_PAGE_SIZE,
     searchText,
   });
 
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
+    setSearchText(value);
+  };
+
   return (
     <MySearchFilter title="이미지 사용 요청 목록" total={data?.totalSize}>
       <RequestImageStatusSort />
-      <form onSubmit={onSubmit}>
-        <SearchInput />
-      </form>
+      <SearchInput onSearch={handleSearch} />
     </MySearchFilter>
   );
 }

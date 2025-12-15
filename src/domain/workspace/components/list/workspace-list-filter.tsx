@@ -1,9 +1,14 @@
 "use client";
 
-import { workspaceSearchTextAtom } from "@/domain/workspace/state/workspace.atom";
+import { useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
+
+import {
+  workspacePageAtom,
+  workspaceSearchTextAtom,
+} from "@/domain/workspace/state/workspace.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { useSearch } from "@/shared/hooks/use-search";
 
 interface WorkspaceListFilterProps {
   /** 전체 워크스페이스 수 */
@@ -24,13 +29,21 @@ export function WorkspaceListFilter({
   total,
   loading,
 }: WorkspaceListFilterProps) {
-  const { onSubmit } = useSearch(workspaceSearchTextAtom);
+  const setSearchText = useSetAtom(workspaceSearchTextAtom);
+  const resetPage = useResetAtom(workspacePageAtom);
+
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
+    setSearchText(value);
+  };
 
   return (
     <MySearchFilter title="워크스페이스 목록" total={total}>
-      <form onSubmit={onSubmit}>
-        <SearchInput disabled={loading} />
-      </form>
+      <SearchInput disabled={loading} onSearch={handleSearch} />
     </MySearchFilter>
   );
 }

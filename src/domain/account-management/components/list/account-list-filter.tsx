@@ -1,6 +1,7 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import { useGetAccounts } from "@/domain/account-management/hooks/use-get-accounts";
 import {
@@ -10,7 +11,6 @@ import {
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useSearch } from "@/shared/hooks/use-search";
 
 /**
  * 사용자 목록 페이지 상단 필터 컴포넌트
@@ -20,9 +20,8 @@ import { useSearch } from "@/shared/hooks/use-search";
  * @returns 사용자 목록 페이지 상단 필터 컴포넌트
  */
 export function AccountListFilter() {
-  // 공통 검색 훅 사용
-  const { onSubmit } = useSearch(accountSearchTextAtom);
-
+  const setSearchText = useSetAtom(accountSearchTextAtom);
+  const resetPage = useResetAtom(accountPageAtom);
   const page = useAtomValue(accountPageAtom);
   const searchText = useAtomValue(accountSearchTextAtom);
 
@@ -32,11 +31,18 @@ export function AccountListFilter() {
     searchText,
   });
 
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
+    setSearchText(value);
+  };
+
   return (
     <MySearchFilter title="사용자 목록" total={data?.totalSize}>
-      <form onSubmit={onSubmit}>
-        <SearchInput />
-      </form>
+      <SearchInput onSearch={handleSearch} />
     </MySearchFilter>
   );
 }

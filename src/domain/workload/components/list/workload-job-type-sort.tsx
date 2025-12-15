@@ -1,10 +1,15 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
 import { WORKLOAD_JOB_OPTIONS } from "@/domain/workload/constants/workload.constant";
-import { workloadJobTypeAtom } from "@/domain/workload/state/workload.atom";
+import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+import {
+  workloadJobTypeAtom,
+  workloadPageAtom,
+} from "@/domain/workload/state/workload.atom";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
@@ -23,13 +28,23 @@ interface WorkloadJobTypeSortProps {
  */
 export function WorkloadJobTypeSort({ disabled }: WorkloadJobTypeSortProps) {
   const [jobType, setJobType] = useAtom(workloadJobTypeAtom);
+  const resetPage = useResetAtom(workloadPageAtom);
+
+  /**
+   * 작업 유형 변경 핸들러
+   * 작업 유형 변경 시 페이지를 초기화
+   */
+  const handleChange = (value: WorkloadJobType | null) => {
+    resetPage();
+    setJobType(value);
+  };
 
   return (
     <div data-testid={WORKLOAD_SELECTOR.FILTER_JOB_TYPE}>
       <Dropdown
         options={[ALL_OPTION, ...WORKLOAD_JOB_OPTIONS]}
         placeholder="워크로드 잡 타입"
-        onChange={setJobType}
+        onChange={handleChange}
         value={jobType}
         width={150}
         height={30}

@@ -38,6 +38,9 @@ export const ALL_OPTION = {
   value: "ALL",
 } as const;
 
+/** ALL_OPTION.value 타입 */
+export type AllOptionValue = typeof ALL_OPTION.value;
+
 export const VISIBILITY_STATUS_OPTIONS: DropdownOption[] = [
   {
     label: "공개",

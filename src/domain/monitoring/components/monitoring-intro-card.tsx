@@ -10,9 +10,6 @@ export function MonitoringIntroCard() {
   return (
     <Container>
       <Header>
-        <EngTitleWrapper>
-          <EngTitle>About AstraGo Monitoring</EngTitle>
-        </EngTitleWrapper>
         <TitleWrapper>
           <IconWrapper>
             <Icon name="Astrago" color="#fff" size={18} />
@@ -57,21 +54,6 @@ const Container = styled.div`
 const Header = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const EngTitleWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const EngTitle = styled.span`
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  color: #d1d1d1;
-  width: 100%;
 `;
 
 const TitleWrapper = styled.div`

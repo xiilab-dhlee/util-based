@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
 import type { RevokeCriteriaItemType } from "@/domain/revoke/schemas/revoke-history.schema";
-import type { RevokeHistoryDetailType } from "@/domain/revoke/types/revoke-history.type";
+import type { FilterRevokeHistoryDetailType } from "@/domain/revoke/types/revoke-history.type";
 
 // ===== 모달 atom =====
 
@@ -31,7 +31,7 @@ export const revokeHistoryDetailPageAtom = atomWithReset<number>(1);
 export const revokeHistoryDetailStartDateAtom = atomWithReset<string>("");
 /** 리소스 회수 이력 상세 종료일 */
 export const revokeHistoryDetailEndDateAtom = atomWithReset<string>("");
-/** 리소스 회수 이력 상세 구분 (WARNING/REVOKED) */
+/** 리소스 회수 이력 상세 구분 (WARNING/REVOKED/ALL) */
 export const revokeHistoryDetailTypeAtom = atomWithReset<
-  RevokeHistoryDetailType | undefined
+  FilterRevokeHistoryDetailType | undefined
 >(undefined);

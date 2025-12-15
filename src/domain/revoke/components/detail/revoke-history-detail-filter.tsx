@@ -1,6 +1,7 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
@@ -12,7 +13,7 @@ import {
   revokeHistoryDetailStartDateAtom,
   revokeHistoryDetailTypeAtom,
 } from "@/domain/revoke/state/revoke-history.atom";
-import type { RevokeHistoryDetailType } from "@/domain/revoke/types/revoke-history.type";
+import type { FilterRevokeHistoryDetailType } from "@/domain/revoke/types/revoke-history.type";
 import { ListRangePicker } from "@/shared/components/datepicker/list-range-picker";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
@@ -29,10 +30,11 @@ interface RevokeHistoryDetailFilterProps {
 export function RevokeHistoryDetailFilter({
   id,
 }: RevokeHistoryDetailFilterProps) {
+  const [page] = useAtom(revokeHistoryDetailPageAtom);
+  const [startDate, setStartDate] = useAtom(revokeHistoryDetailStartDateAtom);
+  const [endDate, setEndDate] = useAtom(revokeHistoryDetailEndDateAtom);
   const [typeValue, setTypeValue] = useAtom(revokeHistoryDetailTypeAtom);
-  const page = useAtomValue(revokeHistoryDetailPageAtom);
-  const startDate = useAtomValue(revokeHistoryDetailStartDateAtom);
-  const endDate = useAtomValue(revokeHistoryDetailEndDateAtom);
+  const resetPage = useResetAtom(revokeHistoryDetailPageAtom);
 
   const { data } = useGetRevokeHistoryDetail(id, {
     page,
@@ -46,21 +48,32 @@ export function RevokeHistoryDetailFilter({
 
   const typeOptions = [ALL_OPTION, ...REVOKE_HISTORY_TYPE_OPTIONS];
 
-  const handleTypeChange = (value: string | null) => {
-    if (value === ALL_OPTION.value || value === null) {
-      setTypeValue(undefined);
-      return;
-    }
+  /**
+   * 구분(경고/회수) 변경 핸들러
+   * 구분 변경 시 페이지를 초기화
+   */
+  const handleTypeChange = (value: FilterRevokeHistoryDetailType) => {
+    resetPage();
+    setTypeValue(value);
+  };
 
-    setTypeValue(value as RevokeHistoryDetailType);
+  /**
+   * 날짜 범위 변경 핸들러
+   * 날짜 변경 시 페이지를 초기화
+   */
+  const handleDateChange = (start: string, end: string) => {
+    resetPage();
+    setStartDate(start);
+    setEndDate(end);
   };
 
   return (
     <MySearchFilter title="경고 및 회수 목록" total={total}>
       <FilterControls>
         <ListRangePicker
-          startDateAtom={revokeHistoryDetailStartDateAtom}
-          endDateAtom={revokeHistoryDetailEndDateAtom}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={handleDateChange}
         />
         <Dropdown
           options={typeOptions}

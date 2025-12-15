@@ -1,6 +1,7 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import { useGetInternalRegistryImages } from "@/domain/internal-registry-image/hooks/use-get-internal-registry-images";
 import {
@@ -10,7 +11,6 @@ import {
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useSearch } from "@/shared/hooks/use-search";
 
 /**
  * 내부 레지스트리 이미지 목록 페이지 상단 필터 컴포넌트
@@ -20,10 +20,9 @@ import { useSearch } from "@/shared/hooks/use-search";
  * @returns 내부 레지스트리 이미지 목록 페이지 상단 필터 컴포넌트
  */
 export function InternalRegistryImageListFilter() {
-  const { onSubmit } = useSearch(internalregistryImageSearchTextAtom);
-
+  const setSearchText = useSetAtom(internalregistryImageSearchTextAtom);
+  const resetPage = useResetAtom(internalregistryImagePageAtom);
   const page = useAtomValue(internalregistryImagePageAtom);
-
   const searchText = useAtomValue(internalregistryImageSearchTextAtom);
 
   const { data } = useGetInternalRegistryImages({
@@ -32,11 +31,18 @@ export function InternalRegistryImageListFilter() {
     searchText,
   });
 
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
+    setSearchText(value);
+  };
+
   return (
     <MySearchFilter title="컨테이너 이미지 목록" total={data?.totalSize}>
-      <form onSubmit={onSubmit}>
-        <SearchInput />
-      </form>
+      <SearchInput onSearch={handleSearch} />
     </MySearchFilter>
   );
 }

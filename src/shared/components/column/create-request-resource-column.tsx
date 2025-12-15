@@ -135,7 +135,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      title: "승인여부",
+      title: "승인 여부",
       dataIndex: "status",
       align: "center",
       width: 70,

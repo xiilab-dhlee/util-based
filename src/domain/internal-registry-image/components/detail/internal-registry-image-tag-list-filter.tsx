@@ -1,5 +1,6 @@
 "use client";
 
+import { useSetAtom } from "jotai";
 import { Button } from "xiilab-ui";
 
 import {
@@ -9,7 +10,6 @@ import {
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSearch } from "@/shared/hooks/use-search";
 
 /**
  * 내부 레지스트리 이미지 태그 목록 필터 컴포넌트
@@ -20,8 +20,7 @@ export function InternalRegistryImageTagListFilter() {
   const { onOpen } = useGlobalModal(
     openCreateInternalRegistryImageTagModalAtom,
   );
-
-  const { onSubmit } = useSearch(internalregistryImageTagSearchTextAtom);
+  const setSearchText = useSetAtom(internalregistryImageTagSearchTextAtom);
 
   const handleCreateTag = () => {
     onOpen();
@@ -37,9 +36,7 @@ export function InternalRegistryImageTagListFilter() {
 
   return (
     <MySearchFilter title="태그 목록" total={0}>
-      <form onSubmit={onSubmit}>
-        <SearchInput />
-      </form>
+      <SearchInput onSearch={setSearchText} />
       <Button
         color="primary"
         icon="Request"
