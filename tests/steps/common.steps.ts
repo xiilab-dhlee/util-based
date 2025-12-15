@@ -100,17 +100,6 @@ Then("URL이 {string}와 일치한다", async ({ page }, expectedUrl: string) =>
   await expect(page).toHaveURL(new RegExp(`${regexPattern}(\\?.*)?$`));
 });
 
-Then(
-  "네비게이션 메뉴 중 {string} 메뉴가 활성화되어 있다",
-  async ({ page }, menuName: string) => {
-    const selectedMenu = page.locator(
-      ".ant-menu-item-selected .ant-menu-title-content",
-    );
-    await expect(selectedMenu).toBeVisible({ timeout: 10000 });
-    await expect(selectedMenu).toHaveText(menuName);
-  },
-);
-
 // ============================================
 // 목록 페이지 공통 Steps
 // ============================================
@@ -119,29 +108,9 @@ Then("목록 테이블이 표시된다", async ({ workloadListPage }) => {
   await workloadListPage.assertTableVisible();
 });
 
-Then(
-  "목록에 총 개수가 표시된다",
-  async ({ workloadListPage, assertLogger }) => {
-    const text = await workloadListPage.getTotalCountText();
-    assertLogger.assertMatch("총 개수 형식", text, /총\s*\d+/);
-  },
-);
-
-Then("페이지네이션이 표시된다", async ({ workloadListPage }) => {
-  await workloadListPage.assertPaginationVisible();
-});
-
-Then("검색창이 빈 값으로 표시된다", async ({ workloadListPage }) => {
-  await workloadListPage.assertSearchInputEmpty();
-});
-
 // ============================================
 // 탭 관련 Steps
 // ============================================
-
-Then("{string} 탭이 선택되어 있다", async ({ tabs }, tabName: string) => {
-  await tabs.assertActiveTab(tabName);
-});
 
 Then("{string} 탭이 활성화되어 있다", async ({ tabs }, tabName: string) => {
   await tabs.assertTabEnabled(tabName);
@@ -150,13 +119,6 @@ Then("{string} 탭이 활성화되어 있다", async ({ tabs }, tabName: string)
 Then("{string} 탭이 비활성화되어 있다", async ({ tabs }, tabName: string) => {
   await tabs.assertTabDisabled(tabName);
 });
-
-When(
-  "{string} 탭을 클릭하여 {string} 페이지로 이동한다",
-  async ({ tabs }, tabName: string, _pageName: string) => {
-    await tabs.clickTab(tabName);
-  },
-);
 
 // ============================================
 // 모달 관련 Steps
