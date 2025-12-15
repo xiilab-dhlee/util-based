@@ -1,12 +1,14 @@
 "use client";
 
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Button, Dropdown } from "xiilab-ui";
 
 import {
   resourcePresetJobTypeAtom,
   resourcePresetNodeTypeAtom,
+  resourcePresetPageAtom,
   resourcePresetSearchTextAtom,
 } from "@/domain/resource-preset/state/resource-preset.atom";
 import { WORKLOAD_JOB_OPTIONS } from "@/domain/workload/constants/workload.constant";
@@ -17,7 +19,6 @@ import {
   ALL_OPTION,
   NODE_MODE_OPTIONS,
 } from "@/shared/constants/core.constant";
-import { useSearch } from "@/shared/hooks/use-search";
 import { useSelect } from "@/shared/hooks/use-select";
 import type { CoreNodeMode } from "@/shared/types/core.interface";
 
@@ -42,8 +43,17 @@ export function ResourcePresetListFilter({
 }: ResourcePresetListFilterProps) {
   const [jobType, setJobType] = useAtom(resourcePresetJobTypeAtom);
   const [nodeType, setNodeType] = useAtom(resourcePresetNodeTypeAtom);
+  const setSearchText = useSetAtom(resourcePresetSearchTextAtom);
+  const resetPage = useResetAtom(resourcePresetPageAtom);
 
-  const { onSubmit } = useSearch(resourcePresetSearchTextAtom);
+  /**
+   * 검색 핸들러
+   * 검색 시 페이지를 초기화하고 검색을 실행
+   */
+  const handleSearch = (value: string) => {
+    resetPage();
+    setSearchText(value);
+  };
 
   // Job Type 드롭다운
   const jobTypeOptions = [ALL_OPTION, ...WORKLOAD_JOB_OPTIONS];
@@ -84,13 +94,12 @@ export function ResourcePresetListFilter({
           width={140}
           disabled={isLoading}
         />
-        <form onSubmit={onSubmit}>
-          <SearchInput
-            width={250}
-            disabled={isLoading}
-            placeholder="리소스 프리셋 이름을 검색해 주세요."
-          />
-        </form>
+        <SearchInput
+          width={250}
+          disabled={isLoading}
+          placeholder="리소스 프리셋 이름을 검색해 주세요."
+          onSearch={handleSearch}
+        />
         <Button
           color="primary"
           icon="Plus"
