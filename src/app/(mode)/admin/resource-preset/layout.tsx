@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect } from "react";
 
 import { CreateResourcePresetDrawer } from "@/domain/resource-preset/components/create/create-resource-preset-drawer";
+import { DeleteResourcePresetModal } from "@/domain/resource-preset/components/delete-resource-preset-modal";
 import { ResourcePresetListBody } from "@/domain/resource-preset/components/list/resource-preset-list-body";
 import { ResourcePresetListFilter } from "@/domain/resource-preset/components/list/resource-preset-list-filter";
 import { ResourcePresetListFooter } from "@/domain/resource-preset/components/list/resource-preset-list-footer";
@@ -19,6 +20,7 @@ import { openDrawerWithInitAtom } from "@/domain/resource-preset/state/resource-
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { useGetGpuNodes } from "@/shared/hooks/use-get-gpu-nodes";
 import { useGetGpus } from "@/shared/hooks/use-get-gpus";
 import {
   ListPageAside,
@@ -59,6 +61,7 @@ export default function AdminResourcePresetLayout({
 
   // GPU 데이터 (Drawer 열 때 필요)
   const { data: gpuData } = useGetGpus();
+  const { data: gpuNodeData } = useGetGpuNodes();
 
   // Drawer 열기 액션
   const openDrawerWithInit = useSetAtom(openDrawerWithInitAtom);
@@ -78,7 +81,10 @@ export default function AdminResourcePresetLayout({
 
   /** 추가 버튼 클릭 핸들러 */
   const handleClickAdd = () => {
-    openDrawerWithInit(gpuData?.content ?? []);
+    openDrawerWithInit({
+      gpuList: gpuData?.content ?? [],
+      nodeList: gpuNodeData?.content ?? [],
+    });
   };
 
   return (
@@ -110,6 +116,8 @@ export default function AdminResourcePresetLayout({
       </ListPageMain>
       {/* 리소스 프리셋 생성 드로어 */}
       <CreateResourcePresetDrawer />
+      {/* 리소스 프리셋 삭제 모달 */}
+      <DeleteResourcePresetModal />
     </>
   );
 }
