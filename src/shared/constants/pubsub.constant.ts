@@ -230,6 +230,12 @@ export const KUBERNETES_MONITORING_EVENTS = {
     "kubernetes-monitoring:send-kubernetes-event-detail",
 } as const;
 
+// 리소스 프리셋 관련 이벤트
+export const RESOURCE_PRESET_EVENTS = {
+  // 리소스 프리셋 삭제에 필요한 정보 전달 이벤트
+  sendDeleteResourcePreset: "resource-preset:send-delete-resource-preset",
+} as const;
+
 // 공통 이벤트
 export const COMMON_EVENTS = {
   // 공통 취약점 모달에 필요한 정보 전달 이벤트
