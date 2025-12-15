@@ -305,7 +305,7 @@ export const test = base.extend<TestContextFixtures>({
     await use(new TabsComponent(page, ".tabs-nav"));
   },
 
-  radio: async ({ page }, use) => {
-    await use(new RadioComponent(page));
+  radio: async ({}, use) => {
+    await use(new RadioComponent());
   },
 });
