@@ -11,15 +11,15 @@ import {
   DropdownOptionContent,
 } from "./dropdown-option.styled";
 
+const GPU_INFO = getResourceInfo("GPU");
+const CPU_INFO = getResourceInfo("CPU");
+const MEM_INFO = getResourceInfo("MEM");
+
 interface NodeDropdownOptionProps {
   node: GpuNodeListType;
 }
 
 export function NodeDropdownOption({ node }: NodeDropdownOptionProps) {
-  const gpuInfo = getResourceInfo("GPU");
-  const cpuInfo = getResourceInfo("CPU");
-  const memInfo = getResourceInfo("MEM");
-
   return (
     <DropdownOptionContent>
       <Typography.Text variant="body-2-4" color="#000" data-interactive-text>
@@ -27,26 +27,26 @@ export function NodeDropdownOption({ node }: NodeDropdownOptionProps) {
       </Typography.Text>
       <DropdownInfoBox>
         <DropdownInfoItem>
-          <DropdownInfoLabel>{gpuInfo.text}</DropdownInfoLabel>
+          <DropdownInfoLabel>{GPU_INFO.text}</DropdownInfoLabel>
           <DropdownInfoValue>
             {node.gpuTotal}
-            {gpuInfo.unit}
+            {GPU_INFO.unit}
           </DropdownInfoValue>
         </DropdownInfoItem>
         <DropdownInfoDivider />
         <DropdownInfoItem>
-          <DropdownInfoLabel>{cpuInfo.text}</DropdownInfoLabel>
+          <DropdownInfoLabel>{CPU_INFO.text}</DropdownInfoLabel>
           <DropdownInfoValue>
             {node.cpuTotal}
-            {cpuInfo.unit}
+            {CPU_INFO.unit}
           </DropdownInfoValue>
         </DropdownInfoItem>
         <DropdownInfoDivider />
         <DropdownInfoItem>
-          <DropdownInfoLabel>{memInfo.text}</DropdownInfoLabel>
+          <DropdownInfoLabel>{MEM_INFO.text}</DropdownInfoLabel>
           <DropdownInfoValue>
             {node.memoryTotal}
-            {memInfo.unit}
+            {MEM_INFO.unit}
           </DropdownInfoValue>
         </DropdownInfoItem>
       </DropdownInfoBox>

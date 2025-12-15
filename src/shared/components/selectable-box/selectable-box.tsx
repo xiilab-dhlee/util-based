@@ -7,7 +7,7 @@ import { Box } from "xiilab-ui";
    타입 정의
 ============================================================================= */
 
-interface SelectableBoxProps {
+export interface SelectableBoxProps {
   /** 아이콘 (선택) */
   icon?: React.ReactNode;
   /** 제목 */

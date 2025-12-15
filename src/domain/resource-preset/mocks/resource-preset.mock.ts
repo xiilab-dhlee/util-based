@@ -44,9 +44,7 @@ const createNodesMock = (
 /** 상세 정보를 포함한 전체 Mock 데이터 */
 export const RESOURCE_PRESET_DETAIL_MOCK_DATA: ResourcePresetDetailResponseType[] =
   Array.from({ length: RESOURCE_PRESET_MOCK_LIST_LENGTH }, (_, index) => {
-    const base = makeMock(
-      resourcePresetDetailResponseSchema,
-    ) as ResourcePresetDetailResponseType;
+    const base = makeMock(resourcePresetDetailResponseSchema);
 
     const nodeType =
       resourcePresetNodeTypeValues[index % resourcePresetNodeTypeValues.length];

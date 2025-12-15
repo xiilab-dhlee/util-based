@@ -1,1 +1,4 @@
-export { SelectableBox, SelectableBoxMeta } from "./selectable-box";
+export {
+  SelectableBox,
+  SelectableBoxMeta,
+} from "@/shared/components/selectable-box/selectable-box";

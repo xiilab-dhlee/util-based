@@ -4,10 +4,7 @@ import styled from "styled-components";
 import { Button, Tag } from "xiilab-ui";
 
 import { ResourcePresetNodeInfoCard } from "@/domain/resource-preset/components/detail/resource-preset-node-info-card";
-import {
-  type ResourcePresetDetailResponseType,
-  resourcePresetGpuTypeValues,
-} from "@/domain/resource-preset/schemas/resource-preset.schema";
+import type { ResourcePresetDetailResponseType } from "@/domain/resource-preset/schemas/resource-preset.schema";
 import { WORKLOAD_JOB_TYPE_LABEL_MAP } from "@/domain/workload/constants/workload.constant";
 import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { Slider } from "@/shared/components/slider/custom-slider";
@@ -33,6 +30,9 @@ const GPU_RESOURCE_TYPE = "GPU" as const;
 const GPU_MEMORY_RESOURCE_TYPE = "GPU_MEMORY" as const;
 const CPU_RESOURCE_TYPE = "CPU" as const;
 const MEM_RESOURCE_TYPE = "MEM" as const;
+
+/** Tag를 표시해야 하는 GPU 타입 (MIG, MPS) */
+const GPU_TYPES_WITH_TAG: ReadonlySet<string> = new Set(["MIG", "MPS"]);
 
 const gpuInfo = getResourceInfo(GPU_RESOURCE_TYPE);
 const gpuMemoryInfo = getResourceInfo(GPU_MEMORY_RESOURCE_TYPE);
@@ -122,8 +122,7 @@ export function ResourcePresetDetailView({
                 <AsideDetailArticleColumn>
                   <ResourcePresetKey>GPU 이름</ResourcePresetKey>
                   <GpuNameValue>
-                    {(data.gpuType === resourcePresetGpuTypeValues[1] ||
-                      data.gpuType === resourcePresetGpuTypeValues[2]) && (
+                    {GPU_TYPES_WITH_TAG.has(data.gpuType) && (
                       <Tag variant="gray">{data.gpuType}</Tag>
                     )}
                     {data.gpuName}

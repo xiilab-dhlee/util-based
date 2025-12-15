@@ -49,8 +49,6 @@ const CardBody = styled.div`
   align-items: flex-start;
   width: 100%;
   gap: 10px;
-
-
 `;
 
 const ResourceItem = styled.span`

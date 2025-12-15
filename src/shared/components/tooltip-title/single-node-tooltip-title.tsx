@@ -1,12 +1,12 @@
 "use client";
 
-import { ColumnHighlightText } from "@/styles/layers/column-layer.styled";
+import { TooltipHighlightText } from "@/styles/mixins/text";
 
 export function SingleNodeTooltipTitle() {
   return (
     <>
       프로젝트가&nbsp;
-      <ColumnHighlightText>단일 노드</ColumnHighlightText>
+      <TooltipHighlightText>단일 노드</TooltipHighlightText>
       에서 실행.
     </>
   );

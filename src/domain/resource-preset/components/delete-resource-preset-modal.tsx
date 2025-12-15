@@ -32,6 +32,16 @@ export function DeleteResourcePresetModal() {
   const deleteResourcePreset = useDeleteResourcePreset();
 
   /**
+   * 모달 닫기 처리 함수
+   *
+   * 모달을 닫고 deletePresetId 상태를 초기화합니다.
+   */
+  const handleClose = () => {
+    onClose();
+    setDeletePresetId(null);
+  };
+
+  /**
    * 폼 제출 처리 함수
    *
    * 리소스 프리셋 삭제를 실행하고 목록 페이지로 이동합니다.
@@ -46,8 +56,8 @@ export function DeleteResourcePresetModal() {
     deleteResourcePreset.mutate(deletePresetId, {
       onSuccess: () => {
         toast.success("리소스 프리셋이 삭제되었습니다.");
-        // 모달 닫기
-        onClose();
+        // 모달 닫기 및 상태 초기화
+        handleClose();
         // 목록 페이지로 이동
         router.push(ROUTES.ADMIN_RESOURCE_PRESET);
       },
@@ -75,7 +85,7 @@ export function DeleteResourcePresetModal() {
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={onClose}
+      onCancel={handleClose}
       onOk={handleOk}
       title="리소스 프리셋 삭제"
       centered
