@@ -1,7 +1,8 @@
 import { vulnerabilityListResponseSchema } from "@/domain/security/schemas/vulnerability.schema";
 import {
+  type ActiveWorkloadListType,
   activeWorkloadListSchema,
-  disabledWorkloadListSchema,
+  type WorkloadListType,
   workloadDetailSchema,
   workloadListSchema,
 } from "@/domain/workload/schemas/workload.schema";
@@ -17,23 +18,40 @@ export const activeWorkloadListMock = Array.from(
   () => makeMock(activeWorkloadListSchema),
 );
 
-export const disabledWorkloadListMock = Array.from(
-  { length: LIST_PAGE_SIZE },
-  () => makeMock(disabledWorkloadListSchema),
-);
-
-// 기본 상세 조회용 mock 데이터
-const baseDetailMock = makeMock(workloadDetailSchema);
-
-// workloadListMock의 첫 번째 워크로드 정보와 동기화된 상세 mock
-export const workloadDetailMock = {
-  ...baseDetailMock,
-  workloadName: workloadListMock[0].workloadName,
-  description: workloadListMock[0].description,
-  jobType: workloadListMock[0].jobType,
-};
+export const workloadDetailMock = makeMock(workloadDetailSchema);
 
 export const workloadVulnerabilityListMock = Array.from(
   { length: LIST_PAGE_SIZE },
   () => makeMock(vulnerabilityListResponseSchema),
 );
+
+/**
+ * 동적 mock 데이터 생성 팩토리 함수
+ * 매 호출마다 새로운 데이터를 생성하며, override를 통해 특정 필드 값을 고정할 수 있음
+ * override.size로 생성할 개수를 지정할 수 있음 (기본값: LIST_PAGE_SIZE)
+ * override.searchText가 전달되면 workloadName에 해당 텍스트가 포함됨
+ */
+export function createActiveWorkloadListMock(
+  override?: Partial<ActiveWorkloadListType> & {
+    size?: number;
+    searchText?: string;
+  },
+): ActiveWorkloadListType[] {
+  const { size = LIST_PAGE_SIZE, searchText, ...restOverride } = override ?? {};
+  return Array.from({ length: size }, (_, index) => {
+    const baseOverride = { ...restOverride };
+    if (searchText) {
+      baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
+    }
+    return makeMock(activeWorkloadListSchema, baseOverride);
+  });
+}
+
+export function createWorkloadListMock(
+  override?: Partial<WorkloadListType> & { size?: number },
+): WorkloadListType[] {
+  const { size = LIST_PAGE_SIZE, ...restOverride } = override ?? {};
+  return Array.from({ length: size }, () =>
+    makeMock(workloadListSchema, restOverride),
+  );
+}
