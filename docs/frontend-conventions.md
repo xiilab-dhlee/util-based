@@ -219,7 +219,7 @@ export function MyFormModal() {
 
 **컴포넌트 구조**:
 
-```
+```text
 src/domain/{domain}/
 ├── components/
 │   └── list/
