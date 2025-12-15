@@ -22,7 +22,7 @@ export function MigProfileSelectDropdown({
     <CompoundDropdown
       theme="light"
       width="100%"
-      height={40}
+      height={30}
       placeholder="MIG 선택해 주세요."
       value={value}
       onChange={(value) => onChange(value as GpuProfileListType["id"])}

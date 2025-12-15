@@ -22,7 +22,7 @@ export function NodeSelectDropdown({
     <CompoundDropdown
       theme="light"
       width="100%"
-      height={40}
+      height={30}
       placeholder="GPU 사용 노드를 선택해 주세요."
       value={value}
       onChange={onChange}

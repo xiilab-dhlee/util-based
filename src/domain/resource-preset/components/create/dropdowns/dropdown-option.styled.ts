@@ -6,6 +6,7 @@ export const DropdownOptionContent = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  height: 100%;
   padding: 0;
 `;
 
@@ -14,7 +15,8 @@ export const DropdownInfoBox = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 10px;
+  height: 22px;
+  padding: 0px 10px;
   background-color: #fafafa;
   border: 1px solid #c1c7ce;
   border-radius: 2px;
