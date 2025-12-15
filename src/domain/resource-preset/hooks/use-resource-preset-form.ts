@@ -57,12 +57,15 @@ export function useResourcePresetForm() {
     ) => {
       setForm((prev) => ({ ...prev, [field]: value }));
 
-      // 해당 필드 에러 클리어
-      if (field in errors) {
-        setErrors((prev) => ({ ...prev, [field]: undefined }));
-      }
+      // 해당 필드 에러 클리어 (함수형 업데이트로 errors 의존성 제거)
+      setErrors((prev) => {
+        if (field in prev) {
+          return { ...prev, [field]: undefined };
+        }
+        return prev;
+      });
     },
-    [setForm, setErrors, errors],
+    [setForm, setErrors],
   );
 
   /* ========== Cascade 업데이트 (복잡한 로직) ========== */
@@ -191,25 +194,27 @@ export function useResourcePresetForm() {
    */
   const selectNode = useCallback(
     (node: GpuNodeListType | null) => {
-      const fixedGpu = getFixedGpuCount(form.gpuType);
-      const gpuValue = fixedGpu ?? node?.gpuTotal ?? 0;
+      setForm((prev) => {
+        const fixedGpu = getFixedGpuCount(prev.gpuType);
+        const gpuValue = fixedGpu ?? node?.gpuTotal ?? 0;
 
-      setForm((prev) => ({
-        ...prev,
-        selectedNode: node,
-        singleNodeResource: {
-          gpu: gpuValue,
-          cpu: node?.cpuTotal ?? 0,
-          memory: node?.memoryTotal ?? 0,
-        },
-      }));
+        return {
+          ...prev,
+          selectedNode: node,
+          singleNodeResource: {
+            gpu: gpuValue,
+            cpu: node?.cpuTotal ?? 0,
+            memory: node?.memoryTotal ?? 0,
+          },
+        };
+      });
 
       setErrors((prev) => ({
         ...prev,
         selectedNode: undefined,
       }));
     },
-    [form.gpuType, setForm, setErrors],
+    [setForm, setErrors],
   );
 
   /**
@@ -276,13 +281,27 @@ export function useResourcePresetForm() {
    * - 실패 시 에러 설정 및 null 반환
    */
   const validate = useCallback((): ResourcePresetRequestPayload | null => {
+    // GPU ID 안전한 변환 (string → number)
+    const parseGpuId = (id: string | number | undefined | null): number => {
+      if (id == null) return 0;
+
+      // 이미 number면 그대로 사용
+      if (typeof id === "number") {
+        return Number.isNaN(id) ? 0 : id;
+      }
+
+      // string이면 parseInt 시도
+      const parsed = parseInt(id, 10);
+      return Number.isNaN(parsed) ? 0 : parsed;
+    };
+
     const dataToValidate = {
       name: form.name,
       description: form.description || null,
       jobType: form.jobType,
       nodeType: form.nodeType,
       gpuType: form.gpuType,
-      gpuId: form.selectedGpu?.id ? Number(form.selectedGpu.id) : 0,
+      gpuId: parseGpuId(form.selectedGpu?.id),
       nodeName: form.selectedNode?.name ?? "",
       gpu: form.singleNodeResource.gpu,
       cpu: form.singleNodeResource.cpu,
@@ -316,17 +335,21 @@ export function useResourcePresetForm() {
    */
   const initWithGpuList = useCallback(
     (gpuList: GpuListType[]) => {
-      const gpusByType = gpuList.filter((gpu) => gpu.type === form.gpuType);
-      const firstGpu = gpusByType[0] ?? null;
+      setForm((prev) => {
+        const gpusByType = gpuList.filter((gpu) => gpu.type === prev.gpuType);
+        const firstGpu = gpusByType[0] ?? null;
 
-      if (firstGpu) {
-        setForm((prev) => ({
-          ...prev,
-          selectedGpu: firstGpu,
-        }));
-      }
+        if (firstGpu) {
+          return {
+            ...prev,
+            selectedGpu: firstGpu,
+          };
+        }
+
+        return prev;
+      });
     },
-    [form.gpuType, setForm],
+    [setForm],
   );
 
   /**

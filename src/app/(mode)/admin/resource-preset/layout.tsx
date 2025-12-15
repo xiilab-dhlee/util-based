@@ -1,8 +1,8 @@
 "use client";
 
 import { useAtomValue, useSetAtom } from "jotai";
-import { usePathname, useRouter } from "next/navigation";
-import { type PropsWithChildren, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { CreateResourcePresetDrawer } from "@/domain/resource-preset/components/create/create-resource-preset-drawer";
 import { DeleteResourcePresetModal } from "@/domain/resource-preset/components/delete-resource-preset-modal";
@@ -35,7 +35,8 @@ export default function AdminResourcePresetLayout({
   children,
 }: PropsWithChildren) {
   const router = useRouter();
-  const pathname = usePathname();
+  const params = useParams<{ id?: string }>();
+  const hasRedirected = useRef(false);
 
   // 필터 상태
   const page = useAtomValue(resourcePresetPageAtom);
@@ -66,18 +67,18 @@ export default function AdminResourcePresetLayout({
   // Drawer 열기 액션
   const openDrawerWithInit = useSetAtom(openDrawerWithInitAtom);
 
+  // 첫 번째 프리셋 ID 추출 (리다이렉트용)
+  const firstPresetId = data[0]?.id;
+
   /**
-   * 목록 페이지 진입 시 첫 번째 아이템 자동 선택
+   * URL에 id가 없고 데이터가 있으면 첫 번째 프리셋으로 리다이렉트
    */
   useEffect(() => {
-    const isListPage = pathname === ROUTES.ADMIN_RESOURCE_PRESET;
-    const hasData = data && data.length > 0;
-
-    if (isListPage && hasData) {
-      const firstItemId = data[0].id;
-      router.replace(ROUTES.ADMIN_RESOURCE_PRESET_DETAIL(firstItemId));
+    if (!params.id && !isLoading && firstPresetId && !hasRedirected.current) {
+      hasRedirected.current = true;
+      router.replace(ROUTES.ADMIN_RESOURCE_PRESET_DETAIL(firstPresetId));
     }
-  }, [pathname, data, router]);
+  }, [params.id, isLoading, firstPresetId, router]);
 
   /** 추가 버튼 클릭 핸들러 */
   const handleClickAdd = () => {
