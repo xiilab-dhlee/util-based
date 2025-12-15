@@ -1,13 +1,11 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useRouter } from "next/navigation";
 
 import { resourcePresetListColumn } from "@/domain/resource-preset/columns/create-resource-preset-list-column";
 import type { ResourcePresetListResponseType } from "@/domain/resource-preset/schemas/resource-preset.schema";
 import { resourcePresetCheckedListAtom } from "@/domain/resource-preset/state/resource-preset.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { ROUTES } from "@/shared/constants/routes.constant";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -31,19 +29,11 @@ export function ResourcePresetListBody({
   isLoading,
   isError,
 }: ResourcePresetListBodyProps) {
-  const router = useRouter();
   const [checkedList, setCheckedList] = useAtom(resourcePresetCheckedListAtom);
   const { rowSelection } = useTableSelection<ResourcePresetListResponseType>(
     checkedList,
     setCheckedList,
   );
-
-  /**
-   * 행 클릭 시 상세 페이지로 이동
-   */
-  const handleRowClick = (record: ResourcePresetListResponseType) => {
-    router.push(ROUTES.ADMIN_RESOURCE_PRESET_DETAIL(record.id));
-  };
 
   return (
     <ListWrapper>
@@ -56,7 +46,6 @@ export function ResourcePresetListBody({
         columnHeight={32}
         loading={isLoading}
         isError={isError}
-        onRowClick={handleRowClick}
       />
     </ListWrapper>
   );

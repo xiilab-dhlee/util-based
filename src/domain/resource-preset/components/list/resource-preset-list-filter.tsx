@@ -86,7 +86,7 @@ export function ResourcePresetListFilter({
         />
         <form onSubmit={onSubmit}>
           <SearchInput
-            width={240}
+            width={250}
             disabled={isLoading}
             placeholder="리소스 프리셋 이름을 검색해 주세요."
           />

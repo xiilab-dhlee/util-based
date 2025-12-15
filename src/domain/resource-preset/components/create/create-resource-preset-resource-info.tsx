@@ -56,7 +56,9 @@ export function CreateResourcePresetResourceInfo() {
   return (
     <FormSectionContainer>
       <FormSectionHeader>
-        <CreateWorkloadSectionTitle>리소스 정보</CreateWorkloadSectionTitle>
+        <CreateWorkloadSectionTitle className="required">
+          리소스 정보
+        </CreateWorkloadSectionTitle>
       </FormSectionHeader>
 
       {/* Single Node 리소스 UI */}
