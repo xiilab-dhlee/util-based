@@ -161,21 +161,14 @@ const JOB_TYPE_TO_LABEL: Record<string, string> = {
 
 Then(
   "선택된 Job Type 버튼이 상세 페이지의 Job Type과 동일하다",
-  async ({ page, workloadDetailPage, assertLogger }) => {
+  async ({ page, workloadDetailPage }) => {
     const detailJobType =
       (await workloadDetailPage.jobTypeName.textContent())?.trim() ?? "";
     const expectedLabel = JOB_TYPE_TO_LABEL[detailJobType] ?? detailJobType;
 
     const card = page.getByRole("button", { name: expectedLabel });
     await expect(card).toBeVisible({ timeout: 10000 });
-
-    const isActive =
-      (await card.getAttribute("data-active")) === "true"
-        ? "active"
-        : "inactive";
     await expect(card).toHaveAttribute("data-active", "true");
-
-    assertLogger.assertEqual("잡 타입 버튼 상태", isActive, "active");
   },
 );
 

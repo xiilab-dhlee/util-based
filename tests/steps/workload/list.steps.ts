@@ -81,11 +81,17 @@ Given(
 When(
   "필터 조건을 설정한다:",
   async ({ workloadListPage }, dataTable: DataTable) => {
-    const { search, jobType, status } =
-      dataTable.hashes()[0] as unknown as FilterCondition;
+    const rows = dataTable.hashes();
+    if (rows.length === 0) {
+      throw new Error(
+        "필터 조건 DataTable이 비어있습니다. 최소 1개의 행이 필요합니다.",
+      );
+    }
+
+    const { search, jobType, status } = rows[0] as unknown as FilterCondition;
 
     // 검색어 설정 (auto: 첫 번째 워크로드 이름 사용)
-    if (search !== "-") {
+    if (search === "auto") {
       await workloadListPage.searchByFirstWorkloadName();
     }
 
@@ -105,8 +111,14 @@ When(
 Then(
   "필터 UI가 설정된 조건을 표시한다:",
   async ({ workloadListPage }, dataTable: DataTable) => {
-    const { search, jobType, status } =
-      dataTable.hashes()[0] as unknown as FilterCondition;
+    const rows = dataTable.hashes();
+    if (rows.length === 0) {
+      throw new Error(
+        "필터 조건 DataTable이 비어있습니다. 최소 1개의 행이 필요합니다.",
+      );
+    }
+
+    const { search, jobType, status } = rows[0] as unknown as FilterCondition;
 
     // 잡타입 필터 UI 검증
     if (jobType !== "-") {
@@ -118,8 +130,8 @@ Then(
       await workloadListPage.statusFilter.assertContainsText(status);
     }
 
-    // 검색어 UI 검증 (값이 입력되어 있는지만 확인)
-    if (search !== "-") {
+    // 검색어 UI 검증 (auto인 경우 값이 입력되어 있는지 확인)
+    if (search === "auto") {
       const value = await workloadListPage.getSearchInputValue();
       expect(value.length).toBeGreaterThan(0);
     }
@@ -143,8 +155,14 @@ const STATUS_LABEL_TO_API: Record<string, string> = {
 Then(
   "필터링된 목록이 조건에 맞게 표시된다:",
   async ({ workloadListPage, assertLogger }, dataTable: DataTable) => {
-    const { search, jobType, status } =
-      dataTable.hashes()[0] as unknown as FilterCondition;
+    const rows = dataTable.hashes();
+    if (rows.length === 0) {
+      throw new Error(
+        "필터 조건 DataTable이 비어있습니다. 최소 1개의 행이 필요합니다.",
+      );
+    }
+
+    const { search, jobType, status } = rows[0] as unknown as FilterCondition;
 
     const rowCount = await workloadListPage.table.getRowCount();
 
@@ -183,7 +201,7 @@ Then(
     }
 
     // 검색어 검증 (auto인 경우 검색창의 값을 기준으로 검증)
-    if (search !== "-") {
+    if (search === "auto") {
       const searchText = await workloadListPage.getSearchInputValue();
       await workloadListPage.table.forEachCell(
         WORKLOAD_SELECTOR.NAME,

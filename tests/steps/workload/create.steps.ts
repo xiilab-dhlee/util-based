@@ -128,7 +128,7 @@ When(
 
     workloadContext.set({
       name: workloadName,
-      jobType: jobType.toLowerCase(),
+      jobType: jobType.trim().toLowerCase(),
     });
 
     // 라디오버튼 클릭
@@ -207,7 +207,6 @@ Then(
       (await card.getAttribute("data-active")) === "true"
         ? "active"
         : "inactive";
-    await expect(card).toHaveAttribute("data-active", "true");
 
     assertLogger.assertEqual("잡 타입 버튼 상태", isActive, "active");
   },
