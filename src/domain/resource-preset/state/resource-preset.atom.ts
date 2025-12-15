@@ -14,12 +14,12 @@ export const resourcePresetPageAtom = atomWithReset<number>(1);
 export const resourcePresetSearchTextAtom = atomWithReset<string>("");
 
 /** 리소스 프리셋 Job Type 필터 */
-export const resourcePresetJobTypeAtom = atom<
+export const resourcePresetJobTypeAtom = atomWithReset<
   ResourcePresetJobType | undefined
 >(undefined);
 
 /** 리소스 프리셋 Node Type 필터 */
-export const resourcePresetNodeTypeAtom = atom<
+export const resourcePresetNodeTypeAtom = atomWithReset<
   ResourcePresetNodeType | undefined
 >(undefined);
 

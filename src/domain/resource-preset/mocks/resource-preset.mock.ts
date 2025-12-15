@@ -1,6 +1,7 @@
 import {
   type ResourcePresetDetailResponseType,
   type ResourcePresetListResponseType,
+  type ResourcePresetNodeType,
   resourcePresetDetailResponseSchema,
   resourcePresetGpuTypeValues,
   resourcePresetJobTypeValues,
@@ -29,7 +30,7 @@ const NODE_NAMES = ["worker-1", "worker-2", "worker-3", "gpu-node-1"];
  * 노드 정보 목록 생성
  */
 const createNodesMock = (
-  nodeType: "single" | "multi",
+  nodeType: ResourcePresetNodeType,
   index: number,
 ): ResourcePresetDetailResponseType["nodes"] => {
   const nodeCount = nodeType === "single" ? 1 : (index % 3) + 2;

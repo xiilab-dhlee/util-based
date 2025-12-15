@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import styled from "styled-components";
 import { Box } from "xiilab-ui";
 
@@ -9,11 +10,11 @@ import { Box } from "xiilab-ui";
 
 export interface SelectableBoxProps {
   /** 아이콘 (선택) */
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   /** 제목 */
   title: string;
   /** 메타 정보 (부가 정보, 툴팁 등) */
-  meta?: React.ReactNode;
+  meta?: ReactNode;
   /** 선택 여부 */
   isSelected: boolean;
   /** 비활성화 여부 */

@@ -6,10 +6,6 @@ import styled from "styled-components";
 import { Button, Dropdown } from "xiilab-ui";
 
 import { RESOURCE_PRESET_JOB_OPTIONS } from "@/domain/resource-preset/constants/resource-preset.constant";
-import type {
-  ResourcePresetJobType,
-  ResourcePresetNodeType,
-} from "@/domain/resource-preset/schemas/resource-preset.schema";
 import {
   resourcePresetJobTypeAtom,
   resourcePresetNodeTypeAtom,
@@ -22,7 +18,6 @@ import {
   ALL_OPTION,
   NODE_MODE_OPTIONS,
 } from "@/shared/constants/core.constant";
-import { useSelect } from "@/shared/hooks/use-select";
 
 interface ResourcePresetListFilterProps {
   /** 전체 개수 */
@@ -57,41 +52,25 @@ export function ResourcePresetListFilter({
     setSearchText(value);
   };
 
-  // Job Type 드롭다운
+  // 드롭다운 옵션
   const jobTypeOptions = [ALL_OPTION, ...RESOURCE_PRESET_JOB_OPTIONS];
-  const jobTypeSelect = useSelect(jobType ?? null, jobTypeOptions);
-
-  // Node Type 드롭다운
   const nodeTypeOptions = [ALL_OPTION, ...NODE_MODE_OPTIONS];
-  const nodeTypeSelect = useSelect(nodeType ?? null, nodeTypeOptions);
-
-  /** Job Type 변경 핸들러 */
-  const handleChangeJobType = (newValue: ResourcePresetJobType | null) => {
-    jobTypeSelect.onChange(newValue);
-    setJobType(newValue ?? undefined);
-  };
-
-  /** Node Type 변경 핸들러 */
-  const handleChangeNodeType = (newValue: ResourcePresetNodeType | null) => {
-    nodeTypeSelect.onChange(newValue);
-    setNodeType(newValue ?? undefined);
-  };
 
   return (
     <MySearchFilter title="리소스 프리셋 목록" total={total}>
       <FilterControls>
         <Dropdown
-          options={jobTypeSelect.options}
-          value={jobTypeSelect.value}
-          onChange={handleChangeJobType}
+          options={jobTypeOptions}
+          value={jobType ?? null}
+          onChange={(newValue) => setJobType(newValue ?? undefined)}
           placeholder="Job Type"
           width={140}
           disabled={isLoading}
         />
         <Dropdown
-          options={nodeTypeSelect.options}
-          value={nodeTypeSelect.value}
-          onChange={handleChangeNodeType}
+          options={nodeTypeOptions}
+          value={nodeType ?? null}
+          onChange={(newValue) => setNodeType(newValue ?? undefined)}
           placeholder="노드 Type"
           width={140}
           disabled={isLoading}
