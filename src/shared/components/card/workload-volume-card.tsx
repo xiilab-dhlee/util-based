@@ -44,8 +44,13 @@ export function WorkloadVolumeCard({
         }
         actionElement={
           onDelete ? (
-            <IconWrapper onClick={onDelete}>
+            <IconWrapper
+              type="button"
+              className="icon-button"
+              onClick={onDelete}
+            >
               <Icon name="Close" size={16} color="#484848" />
+              <span className="sr-only">설정된 워크로드 볼륨 삭제</span>
             </IconWrapper>
           ) : undefined
         }
