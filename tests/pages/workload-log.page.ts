@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 
 import {
   testId,
@@ -19,10 +19,6 @@ import { BasePage } from "./base.page";
  * await logPage.assertLogLinesExist();
  */
 export class WorkloadLogPage extends BasePage {
-  constructor(page: Page) {
-    super(page);
-  }
-
   // ============================================
   // Abstract 구현
   // ============================================

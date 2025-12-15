@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 
 /**
  * Ant Design Radio Component Object (험블 객체)
@@ -18,8 +18,6 @@ export class RadioComponent {
   private static readonly RADIO_WRAPPER = ".ant-radio-wrapper";
   /** Ant Design Radio input 셀렉터 (상태 확인용) */
   private static readonly RADIO_INPUT = ".ant-radio-input";
-
-  constructor(private page: Page) {}
 
   /**
    * 컨테이너 내 모든 라디오 버튼 Locator (클릭용)
