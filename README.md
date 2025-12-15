@@ -60,4 +60,5 @@ pnpm test:allure:generate
 
 # 생성된 Allure 리포트 열기
 pnpm test:allure:open
+
 ```
