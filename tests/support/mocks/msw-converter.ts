@@ -134,10 +134,45 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
       const match = findMatchingHandler(handlerInfos, method, pathname);
 
       if (match) {
-        // MSW Request 생성
+        // MSW Request 생성 (body 포함)
+        const requestMethod = request.method();
+        const requestHeaders = request.headers();
+
+        // HTTP 메서드가 body를 지원하는지 확인
+        const methodSupportsBody = ["POST", "PUT", "PATCH", "DELETE"].includes(
+          requestMethod,
+        );
+
+        let requestBody: string | Buffer | undefined;
+        if (methodSupportsBody) {
+          // Playwright request에서 body 읽기
+          const postData = request.postData();
+          if (postData !== null) {
+            requestBody = postData;
+          } else {
+            // postData()가 null이면 binary data일 수 있음
+            const buffer = request.postDataBuffer();
+            if (buffer !== null) {
+              requestBody = buffer;
+            }
+          }
+        }
+
+        // Content-Type이 없고 body가 있으면 기본값 설정
+        const headers = new Headers(requestHeaders);
+        if (requestBody && !headers.get("content-type")) {
+          headers.set(
+            "content-type",
+            typeof requestBody === "string"
+              ? "text/plain"
+              : "application/octet-stream",
+          );
+        }
+
         const mswRequest = new Request(request.url(), {
-          method: request.method(),
-          headers: request.headers(),
+          method: requestMethod,
+          headers,
+          body: requestBody,
         });
 
         // 핸들러 실행
@@ -169,10 +204,15 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
 
 /**
  * MSW 핸들러 배열을 Playwright Route로 설정
+ *
+ * @param page - Playwright Page 객체
+ * @param handlers - MSW HttpHandler 배열
+ * @param patterns - 가로챌 API 요청 패턴 배열 (기본값: core-api, monitor-api)
  */
 export async function setupMswHandlers(
   page: Page,
   handlers: HttpHandler[],
+  patterns: string[] = ["**/core-api/**", "**/monitor-api/**"],
 ): Promise<void> {
   // 핸들러 정보 추출
   const handlerInfos = handlers
@@ -182,8 +222,9 @@ export async function setupMswHandlers(
   const routeHandler = createRouteHandler(handlerInfos);
 
   // API 요청 패턴들을 가로채서 MSW로 처리
-  await page.route("**/core-api/**", routeHandler);
-  await page.route("**/monitor-api/**", routeHandler);
+  for (const pattern of patterns) {
+    await page.route(pattern, routeHandler);
+  }
 }
 
 /**

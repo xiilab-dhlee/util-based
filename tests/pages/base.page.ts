@@ -1,5 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
+import { testId } from "@/shared/constants/selector.constant";
+
 /**
  * 모든 페이지의 기본 클래스
  *
@@ -36,7 +38,7 @@ export abstract class BasePage {
 
   /** 페이지 헤더 */
   get pageHeader(): Locator {
-    return this.page.locator(`[data-testid="${this.pageHeaderTestId}"]`);
+    return this.page.locator(testId(this.pageHeaderTestId));
   }
 
   // ============================================

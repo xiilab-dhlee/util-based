@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 
-import { combinedHandlers } from "../../../src/mocks/handlers";
+import { combinedHandlers } from "@/mocks/handlers";
 import { setupMswHandlers } from "./msw-converter";
 
 /** 이미 모킹 설정된 페이지 추적 (WeakSet으로 메모리 누수 방지) */

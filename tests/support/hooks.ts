@@ -21,15 +21,12 @@ AfterAll(async () => {
 // 시나리오 Hooks
 // ============================================
 
-let scenarioStartTime: number;
-
 Before(async ({ $testInfo }) => {
-  scenarioStartTime = Date.now();
   console.log(`\n📝 ${$testInfo.title}`);
 });
 
 After(async ({ page, $testInfo }) => {
-  const duration = Date.now() - scenarioStartTime;
+  const duration = $testInfo.duration;
 
   if ($testInfo.status === "skipped") {
     // 스킵된 경우 사유 출력
@@ -100,10 +97,14 @@ Before({ tags: "@slow" }, async ({ $testInfo }) => {
 // 스킵 Hooks
 // ============================================
 
-Before({ tags: "@skip" }, async () => "skipped");
+Before({ tags: "@skip" }, async ({ $testInfo }) => {
+  $testInfo.skip();
+});
 
-Before({ tags: "@skip-ci" }, async () => {
-  if (process.env.CI) return "skipped";
+Before({ tags: "@skip-ci" }, async ({ $testInfo }) => {
+  if (process.env.CI) {
+    $testInfo.skip();
+  }
 });
 
 // ============================================
