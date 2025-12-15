@@ -6,6 +6,7 @@ import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 
 /**
  * ellipsis가 활성화된 컬럼에 툴팁 렌더러 적용
+ * 툴팁에는 원본 데이터(title)를 표시하고, 컨텐츠에는 렌더링된 컴포넌트를 표시
  */
 function applyEllipsisTooltip(
   column: ResponsiveColumnType,
@@ -22,8 +23,11 @@ function applyEllipsisTooltip(
         ? originalRender(title, record, index)
         : title;
 
+      // 툴팁에는 원본 데이터(title)를 표시
+      const tooltipTitle = title;
+
       return (
-        <Tooltip title={content} getPopupContainer={() => document.body}>
+        <Tooltip title={tooltipTitle} getPopupContainer={() => document.body}>
           <div className="truncate">{content}</div>
         </Tooltip>
       );

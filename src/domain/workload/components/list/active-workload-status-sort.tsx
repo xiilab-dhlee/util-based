@@ -28,7 +28,12 @@ export function ActiveWorkloadStatusSort({
   return (
     <div data-testid={WORKLOAD_SELECTOR.FILTER_STATUS}>
       <Dropdown
-        options={[ALL_OPTION, ...WORKLOAD_STATUS_OPTIONS]}
+        options={[
+          ALL_OPTION,
+          ...WORKLOAD_STATUS_OPTIONS.filter(
+            (option) => option.value !== "COMPLETED",
+          ),
+        ]}
         value={status}
         onChange={setStatus}
         placeholder="상태"
