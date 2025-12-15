@@ -14,6 +14,9 @@ const testDir = defineBddConfig({
 // 인증 상태 파일 경로 (일반 사용자 기본)
 const USER_AUTH_STATE = path.join(__dirname, "tests/.auth/user.json");
 
+// CI 환경 여부
+const isCI = !!process.env.CI;
+
 /**
  * Playwright 설정
  * @see https://playwright.dev/docs/test-configuration
@@ -28,10 +31,10 @@ export default defineConfig({
   fullyParallel: true,
 
   /* CI 환경에서만 실패 시 재시도 */
-  retries: process.env.CI ? 2 : 0,
+  retries: isCI ? 2 : 0,
 
-  /* CI에서는 병렬 처리 비활성화 */
-  workers: 1,
+  /* Worker 설정: CI는 CPU 코어의 50%, 로컬은 1 */
+  workers: isCI ? "50%" : 1,
 
   /* 리포터 설정 */
   reporter: [
@@ -122,10 +125,12 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    command: "pnpm dev",
+    // CI: 프로덕션 빌드 후 실행, 로컬: 개발 서버
+    command: isCI ? "pnpm build && pnpm start" : "pnpm dev",
     url: "http://localhost:3000",
-    reuseExistingServer: true,
-    timeout: 30 * 1000,
+    reuseExistingServer: !isCI,
+    // CI 빌드 시간 고려하여 타임아웃 증가
+    timeout: isCI ? 120 * 1000 : 30 * 1000,
   },
 
   /* 테스트 타임아웃 설정 */
