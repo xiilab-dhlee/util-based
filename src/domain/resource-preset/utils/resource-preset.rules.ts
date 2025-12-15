@@ -19,12 +19,19 @@ export const isMultiNodeEnabled = (jobType: ResourcePresetJobType): boolean =>
   jobType !== "INTERACTIVE";
 
 /**
+ * Single Node 여부 체크 (내부 헬퍼)
+ * - 다른 UI 표시 함수들의 기반이 되는 기본 조건
+ */
+const isSingleNode = (nodeType: ResourcePresetNodeType): boolean =>
+  nodeType === "single";
+
+/**
  * GPU 사용 노드 드롭다운 표시 여부
  * - Single Node에서만 GPU 노드 선택 드롭다운 표시
  */
 export const showGpuNodeDropdown = (
   nodeType: ResourcePresetNodeType,
-): boolean => nodeType === "single";
+): boolean => isSingleNode(nodeType);
 
 /**
  * GPU 개수 고정 여부
@@ -52,7 +59,8 @@ export const showDistributedSection = (
 /**
  * 싱글노드 리소스 섹션 표시 여부
  * - Single Node에서만 기본 리소스 슬라이더 표시
+ * - showGpuNodeDropdown과 동일한 조건이지만 의미론적으로 다른 용도
  */
 export const showSingleNodeResource = (
   nodeType: ResourcePresetNodeType,
-): boolean => nodeType === "single";
+): boolean => isSingleNode(nodeType);
