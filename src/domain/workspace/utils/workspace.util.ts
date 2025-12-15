@@ -8,22 +8,25 @@ const REQUEST_RESOURCE_STATUS_MAP: Record<
   Record<string, string>
 > = {
   WAITING: {
-    text: "승인",
-    color: "blue",
-    icon: "Verification02",
-    iconColor: "#86B6FF",
-  },
-  APPROVE: {
-    text: "반려",
-    color: "red",
-    icon: "Error",
-    iconColor: "#ff8080",
-  },
-  REJECT: {
     text: "대기",
     color: "green",
     icon: "Waiting",
     iconColor: "rgba(104, 198, 75, 0.9)",
+    boxShadowColor: "#5EB3465C",
+  },
+  APPROVE: {
+    text: "승인",
+    color: "blue",
+    icon: "Verification02",
+    iconColor: "#86B6FF",
+    boxShadowColor: "#86B6FF4D",
+  },
+  REJECT: {
+    text: "반려",
+    color: "red",
+    icon: "Error",
+    iconColor: "#ff8080",
+    boxShadowColor: "#FF80805C",
   },
 } as const;
 

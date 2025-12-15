@@ -21,10 +21,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      dataIndex: "imageName",
+      dataIndex: "name",
       title: "이미지 이름",
       align: "left",
-      render: (_, { id, projectId, name }: InternalRegistryImageListType) => {
+      render: (name, { id, projectId }: InternalRegistryImageListType) => {
         return (
           <InternalRegistryImageNameLink
             imageId={id}

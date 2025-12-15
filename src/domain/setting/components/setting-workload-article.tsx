@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
+import { UserMonitoringResourceCard } from "@/domain/user-monitoring/components/user-monitoring-resource-card";
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
-import { ResourceProgressCard } from "@/shared/components/card/resource-progress-card";
 import { CountByWorkloadStatus } from "@/shared/components/layouts/count-by-workload-status";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
@@ -45,7 +45,7 @@ export function SettingWorkloadArticle() {
         </RightSectionHeader>
         <WorkloadResourceWrapper>
           {["GPU", "CPU", "MEM"].map((v) => (
-            <ResourceProgressCard
+            <UserMonitoringResourceCard
               key={v}
               resourceType={v as CoreResourceType}
               total={20}

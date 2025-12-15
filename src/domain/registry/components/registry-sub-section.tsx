@@ -20,7 +20,9 @@ export function RegistrySubSection() {
           <CustomizedTable
             columns={createInternalRegistryImageColumn([
               {
-                dataIndex: "imageName",
+                dataIndex: "name",
+                width: "30%",
+                ellipsis: true,
               },
               {
                 dataIndex: "tagCnt",
@@ -51,7 +53,9 @@ export function RegistrySubSection() {
           <CustomizedTable
             columns={createInternalRegistryImageColumn([
               {
-                dataIndex: "imageName",
+                dataIndex: "name",
+                width: "30%",
+                ellipsis: true,
               },
               {
                 dataIndex: "tagCnt",

@@ -11,9 +11,9 @@ const baseInternalRegistryImageSchema = z.object({
   /** 이미지 설명 */
   description: z.string().nullable(),
   /** 태그 개수 */
-  tagCnt: z.number().int().min(0),
+  tagCnt: z.number().int().min(0).max(99999),
   /** Pull(다운로드) 횟수 */
-  pullCnt: z.number().int().min(0),
+  pullCnt: z.number().int().min(0).max(99999),
   /** 생성 일시 */
   creatorDate: z.string().datetime(),
   /** 생성자 */

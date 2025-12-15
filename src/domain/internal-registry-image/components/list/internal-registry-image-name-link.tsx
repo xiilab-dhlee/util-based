@@ -26,5 +26,9 @@ export function InternalRegistryImageNameLink({
     href = `/admin/internal-registry-image/${imageId}?projectId=${projectId}`;
   }
 
-  return <ColumnLink href={href}>{imageName}</ColumnLink>;
+  return (
+    <ColumnLink href={href}>
+      <span className="truncate">{imageName}</span>
+    </ColumnLink>
+  );
 }

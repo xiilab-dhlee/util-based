@@ -56,7 +56,7 @@ export function RegistryMainSection() {
             <WaitRequestImageBody>
               <CustomizedTable
                 columns={createRequestImageColumn([
-                  { dataIndex: "imageName" },
+                  { dataIndex: "imageName", width: "30%", ellipsis: true },
                   { dataIndex: "imageTag" },
                   { dataIndex: "security" },
                   { dataIndex: "creatorName" },

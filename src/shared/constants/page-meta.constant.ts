@@ -204,7 +204,7 @@ export const PAGE_META = {
   },
   "admin.internal-registry": {
     title: "내부 레지스트리",
-    iconName: "Image",
+    iconName: "PrivateRegistry",
     href: ROUTES.ADMIN_INTERNAL_REGISTRY,
   },
   "admin.internal-registry.image": {
