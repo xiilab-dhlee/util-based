@@ -8,6 +8,7 @@ import { TabsComponent } from "./components/tabs.component";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
 import { WorkloadListPage } from "./pages/workload-list.page";
+import { WorkloadLogPage } from "./pages/workload-log.page";
 
 // ============================================================================
 // Constants
@@ -86,6 +87,7 @@ type TestContextFixtures = {
   // Page Objects (페이지별 그룹화)
   workloadListPage: WorkloadListPage;
   workloadDetailPage: WorkloadDetailPage;
+  workloadLogPage: WorkloadLogPage;
   monitoringPage: MonitoringPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
@@ -277,6 +279,10 @@ export const test = base.extend<TestContextFixtures>({
 
   workloadDetailPage: async ({ page }, use) => {
     await use(new WorkloadDetailPage(page));
+  },
+
+  workloadLogPage: async ({ page }, use) => {
+    await use(new WorkloadLogPage(page));
   },
 
   monitoringPage: async ({ page }, use) => {

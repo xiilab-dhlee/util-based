@@ -1,0 +1,162 @@
+import { expect, type Locator, type Page } from "@playwright/test";
+
+import {
+  testId,
+  WORKLOAD_SELECTOR,
+} from "@/shared/constants/selector.constant";
+import { BasePage } from "./base.page";
+
+/**
+ * 워크로드 로그 페이지 Page Object
+ *
+ * BasePage를 상속하여 워크로드 로그 페이지 전용 기능 제공:
+ * - 로그 뷰어, 로그 라인
+ * - 모니터링 버튼, 테마 변경 버튼
+ *
+ * @example
+ * const logPage = new WorkloadLogPage(page);
+ * await logPage.gotoLog("workload-123", "workspace-456");
+ * await logPage.assertLogLinesExist();
+ */
+export class WorkloadLogPage extends BasePage {
+  constructor(page: Page) {
+    super(page);
+  }
+
+  // ============================================
+  // Abstract 구현
+  // ============================================
+
+  protected get pageHeaderTestId(): string {
+    return WORKLOAD_SELECTOR.LOG_PAGE;
+  }
+
+  protected get basePath(): string {
+    return "/user/workload";
+  }
+
+  // ============================================
+  // Navigation
+  // ============================================
+
+  /**
+   * 워크로드 로그 페이지로 이동
+   * @param workloadId - 워크로드 ID
+   * @param workspaceId - 워크스페이스 ID (optional)
+   */
+  async gotoLog(workloadId: string, workspaceId?: string): Promise<void> {
+    const path = workspaceId
+      ? `/${workloadId}/log?workspaceId=${workspaceId}`
+      : `/${workloadId}/log`;
+    await this.goto(path);
+  }
+
+  // ============================================
+  // Locators - 로그 영역
+  // ============================================
+
+  /** 로그 페이지 컨테이너 */
+  get logPage(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_PAGE));
+  }
+
+  /** 로그 뷰어 */
+  get logViewer(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_VIEWER));
+  }
+
+  /** 로그 라인 (모든 라인) */
+  get logLines(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_LINE));
+  }
+
+  // ============================================
+  // Locators - 버튼
+  // ============================================
+
+  /** 모니터링 버튼 */
+  get monitoringButton(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON));
+  }
+
+  /** 테마 변경 버튼 */
+  get themeButton(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_THEME_BUTTON));
+  }
+
+  // ============================================
+  // Assertions
+  // ============================================
+
+  /**
+   * 로그 라인이 하나 이상 존재하는지 확인
+   */
+  async assertLogLinesExist(): Promise<void> {
+    await expect(this.logLines.first()).toBeVisible({ timeout: 10000 });
+    const count = await this.logLines.count();
+    expect(count).toBeGreaterThan(0);
+  }
+
+  /**
+   * 로그 영역에 테마가 적용되었는지 확인
+   * (className으로 테마가 적용됨)
+   */
+  async assertThemeApplied(): Promise<void> {
+    await expect(this.logViewer).toBeVisible({ timeout: 10000 });
+    const className = await this.logViewer.getAttribute("class");
+    expect(className).toBeTruthy();
+  }
+
+  /**
+   * 모니터링 버튼이 표시되는지 확인
+   */
+  async assertMonitoringButtonVisible(): Promise<void> {
+    await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
+  }
+
+  /**
+   * 테마 변경 버튼이 표시되는지 확인
+   */
+  async assertThemeButtonVisible(): Promise<void> {
+    await expect(this.themeButton).toBeVisible({ timeout: 10000 });
+  }
+
+  // ============================================
+  // Actions
+  // ============================================
+
+  /**
+   * 모니터링 버튼 클릭
+   */
+  async clickMonitoringButton(): Promise<void> {
+    await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
+    await this.monitoringButton.click();
+  }
+
+  /**
+   * 테마 변경 버튼 클릭
+   */
+  async clickThemeButton(): Promise<void> {
+    await expect(this.themeButton).toBeVisible({ timeout: 10000 });
+    await this.themeButton.click();
+  }
+
+  // ============================================
+  // Getters
+  // ============================================
+
+  /**
+   * 로그 라인 개수 반환
+   */
+  async getLogLineCount(): Promise<number> {
+    return await this.logLines.count();
+  }
+
+  /**
+   * 현재 적용된 테마 클래스명 반환
+   */
+  async getCurrentTheme(): Promise<string> {
+    const className = await this.logViewer.getAttribute("class");
+    return className ?? "";
+  }
+}
