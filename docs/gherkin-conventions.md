@@ -61,18 +61,18 @@ Background와 다른 전제 조건이 필요한 시나리오는 별도 파일로
 
 ### Feature 레벨 태그
 
-모든 Feature 파일은 다음 태그를 포함해야 합니다:
+Feature 파일의 첫 줄에 도메인 태그를 추가합니다:
 
 ```gherkin
-@TESTUC-5 @authenticated-user
-Feature: 사용자 모니터링 페이지 진입
+@workload-detail @interaction
+Feature: 워크로드 상세 페이지 인터랙션
 ```
 
-| 태그 | 용도 | 필수 |
+| 태그 | 용도 | 예시 |
 |------|------|------|
-| `@TESTUC-{N}` | 유스케이스 ID | O |
-| `@authenticated` | 관리자(admin) 로그인 | 택1 |
-| `@authenticated-user` | 일반 사용자(user) 로그인 | 택1 |
+| `@{도메인}` | 도메인 분류 | `@workload`, `@monitoring` |
+| `@{도메인}-{기능}` | 세부 기능 분류 | `@workload-detail`, `@workload-create` |
+| `@interaction` | UI 인터랙션 테스트 (스크린샷 캡처) | - |
 
 ### Scenario 레벨 태그
 
