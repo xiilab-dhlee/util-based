@@ -143,7 +143,7 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
           requestMethod,
         );
 
-        let requestBody: string | Buffer | undefined;
+        let requestBody: BodyInit | null | undefined;
         if (methodSupportsBody) {
           // Playwright request에서 body 읽기
           const postData = request.postData();
@@ -153,7 +153,8 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
             // postData()가 null이면 binary data일 수 있음
             const buffer = request.postDataBuffer();
             if (buffer !== null) {
-              requestBody = buffer;
+              // Buffer를 Uint8Array로 변환 (BodyInit 호환)
+              requestBody = new Uint8Array(buffer) as BodyInit;
             }
           }
         }
