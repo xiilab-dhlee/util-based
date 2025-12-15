@@ -33,9 +33,9 @@ export const useUpdateResourcePreset = (): UseMutationResult<
       return response.data;
     },
     onSuccess: (_, { id }) => {
-      // 목록 캐시 무효화
+      // 모든 리스트 캐시 무효화 (payload 변형 포함)
       queryClient.invalidateQueries({
-        queryKey: resourcePresetKeys.list(),
+        queryKey: [...resourcePresetKeys.all, "list"],
       });
       // 상세 캐시 무효화
       queryClient.invalidateQueries({

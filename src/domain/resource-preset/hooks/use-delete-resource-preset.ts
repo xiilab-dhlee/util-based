@@ -21,10 +21,14 @@ export const useDeleteResourcePreset = (): UseMutationResult<
     mutationFn: async (id: string) => {
       await resourcePresetService.delete(id);
     },
-    onSuccess: () => {
-      // 목록 캐시 무효화
+    onSuccess: (_data, variables) => {
+      // 모든 리스트 캐시 무효화 (payload 변형 포함)
       queryClient.invalidateQueries({
-        queryKey: resourcePresetKeys.list(),
+        queryKey: [...resourcePresetKeys.all, "list"],
+      });
+      // 삭제된 아이템의 detail 캐시 무효화
+      queryClient.invalidateQueries({
+        queryKey: resourcePresetKeys.detail(variables),
       });
     },
   });
