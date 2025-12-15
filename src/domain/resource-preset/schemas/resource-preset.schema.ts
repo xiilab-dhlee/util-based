@@ -1,10 +1,6 @@
 import { z } from "zod";
 
 import {
-  JOB_TYPE_VALUES,
-  type WorkloadJobType,
-} from "@/domain/workload/schemas/workload.schema";
-import {
   NODE_MODE_VALUES,
   type NodeModeType,
 } from "@/shared/constants/core.constant";
@@ -15,16 +11,23 @@ import type {
 } from "@/shared/schemas/gpu.schema";
 import { GPU_TYPE_VALUES, type GpuType } from "@/shared/schemas/gpu.schema";
 
-// ===== 공통 상수/타입 (re-export) =====
+// ===== 공통 상수/타입 =====
 
-/** Job Type 값 */
-export { JOB_TYPE_VALUES as resourcePresetJobTypeValues };
+/** 리소스 프리셋 Job Type 값 (BATCH, INTERACTIVE만 지원) */
+export const RESOURCE_PRESET_JOB_TYPE_VALUES = [
+  "BATCH",
+  "INTERACTIVE",
+] as const;
+
+/** Job Type 값 (호환성을 위한 별칭) */
+export { RESOURCE_PRESET_JOB_TYPE_VALUES as resourcePresetJobTypeValues };
 /** Node Type 값 */
 export { NODE_MODE_VALUES as resourcePresetNodeTypeValues };
 /** GPU Type 값 */
 export { GPU_TYPE_VALUES as resourcePresetGpuTypeValues };
 
-export type ResourcePresetJobType = WorkloadJobType;
+export type ResourcePresetJobType =
+  (typeof RESOURCE_PRESET_JOB_TYPE_VALUES)[number];
 export type ResourcePresetNodeType = NodeModeType;
 export type ResourcePresetGpuType = GpuType;
 
@@ -51,7 +54,7 @@ const baseResourcePresetResponseSchema = z.object({
   /** 설명 */
   description: z.string().nullable(),
   /** Job Type */
-  jobType: z.enum(JOB_TYPE_VALUES),
+  jobType: z.enum(RESOURCE_PRESET_JOB_TYPE_VALUES),
   /** Node Type */
   nodeType: z.enum(NODE_MODE_VALUES),
   /** GPU Type (NORMAL, MIG, MPS) */
@@ -169,7 +172,7 @@ export const resourcePresetRequestSchema = z.object({
   /** 설명 (선택) */
   description: z.string().nullable().optional(),
   /** Job Type */
-  jobType: z.enum(JOB_TYPE_VALUES),
+  jobType: z.enum(RESOURCE_PRESET_JOB_TYPE_VALUES),
   /** Node Type */
   nodeType: z.enum(NODE_MODE_VALUES),
   /** GPU Type (NORMAL, MIG, MPS) */

@@ -23,3 +23,6 @@ export const resourcePresetNodeTypeAtom = atom<CoreNodeMode | undefined>(
 
 /** 체크된 리소스 프리셋 목록 */
 export const resourcePresetCheckedListAtom = atomWithReset<Set<Key>>(new Set());
+
+/** 리소스 프리셋 삭제 모달 열기 상태 */
+export const openDeleteResourcePresetModalAtom = atom<boolean>(false);

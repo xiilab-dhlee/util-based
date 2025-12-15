@@ -2,12 +2,13 @@ import type {
   ResourcePresetDetailResponseType,
   ResourcePresetListResponseType,
 } from "@/domain/resource-preset/schemas/resource-preset.schema";
+import type { CorePayload } from "@/shared/types/api.interface";
 import type { CoreListResponse } from "@/shared/types/core.model";
 
 /**
  * 리소스 프리셋 목록 조회 페이로드
  */
-export interface GetResourcePresetsPayload {
+export interface GetResourcePresetsPayload extends CorePayload {
   /** 페이지 번호 */
   page?: number;
   /** 페이지 크기 */
