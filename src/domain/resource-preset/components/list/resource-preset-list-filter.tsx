@@ -45,7 +45,6 @@ export function ResourcePresetListFilter({
 
   /**
    * Job Type 변경 핸들러
-   * 필터 변경 시 페이지를 1로 초기화
    */
   const handleChangeJobType = (value: typeof jobType) => {
     resetPage();
@@ -54,7 +53,6 @@ export function ResourcePresetListFilter({
 
   /**
    * Node Type 변경 핸들러
-   * 필터 변경 시 페이지를 1로 초기화
    */
   const handleChangeNodeType = (value: typeof nodeType) => {
     resetPage();
