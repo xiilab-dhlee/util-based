@@ -43,21 +43,6 @@ export class WorkloadListPage extends ListPage {
     "GPU 메모리": "gpu-memory",
   };
 
-  /** 로그/웹터미널 페이지 버튼 셀렉터 */
-  static readonly PAGE_BUTTON: Record<
-    string,
-    { monitoring: string; theme: string }
-  > = {
-    로그: {
-      monitoring: WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON,
-      theme: WORKLOAD_SELECTOR.LOG_THEME_BUTTON,
-    },
-    웹터미널: {
-      monitoring: WORKLOAD_SELECTOR.TERMINAL_MONITORING_BUTTON,
-      theme: WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON,
-    },
-  };
-
   /** 생성 드로어 버튼 셀렉터 */
   static readonly CREATE_BUTTON: Record<string, string> = {
     "최근 워크로드 가져오기": WORKLOAD_SELECTOR.CREATE_RECENT_IMPORT_BUTTON,
