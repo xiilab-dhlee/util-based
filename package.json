@@ -11,6 +11,7 @@
     "format": "biome check --write",
     "update:xiilab-ui": "pnpm update xiilab-ui",
     "test": "pnpm test:allure:history && bddgen && playwright test",
+    "test:tag": "pnpm test:allure:history && bddgen && playwright test --grep",
     "test:build": "pnpm build && pnpm test",
     "test:ui": "pnpm test:allure:history && bddgen && playwright test --ui",
     "test:headed": "pnpm test:allure:history && bddgen && playwright test --headed",
