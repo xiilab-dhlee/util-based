@@ -25,40 +25,6 @@ When("워크로드 생성하기 버튼을 클릭한다", async ({ page }) => {
   await button.click();
 });
 
-/**
- * @deprecated 아카이브된 시나리오에서만 사용됨
- * - 단순 UI 존재 여부 검증은 E2E 테스트로 적합하지 않음
- */
-Then(
-  /^"(최근 워크로드 가져오기|워크로드 목록에서 가져오기)" 버튼이 표시된다$/,
-  async ({ page }, buttonText: string) => {
-    const selector = WorkloadListPage.CREATE_BUTTON[buttonText];
-    await expect(page.locator(testId(selector))).toBeVisible({
-      timeout: 10000,
-    });
-  },
-);
-
-/**
- * @deprecated 아카이브된 시나리오에서만 사용됨
- * - 단순 UI 초기 상태 검증은 E2E 테스트로 적합하지 않음
- */
-Then(
-  /^"(Batch Job|Interactive Job)" 버튼이 선택되어 있다$/,
-  async ({ page }, buttonText: string) => {
-    const labelMap: Record<string, string> = {
-      "Batch Job": "Batch Job",
-      "Interactive Job": "Interactive Job (IDE)",
-    };
-    const label = labelMap[buttonText];
-
-    // JobTypeCard의 data-active 속성으로 선택 상태 확인
-    const card = page.getByRole("button", { name: label });
-    await expect(card).toBeVisible({ timeout: 10000 });
-    await expect(card).toHaveAttribute("data-active", "true");
-  },
-);
-
 // ============================================
 // 입력창 관련
 // ============================================
@@ -80,16 +46,6 @@ Then("잡 타입이 선택되어 있다", async ({ page }) => {
   // data-active="true"인 JobTypeCard 버튼이 존재하는지 확인
   const activeJobType = page.locator('[data-active="true"]');
   await expect(activeJobType).toBeVisible({ timeout: 10000 });
-});
-
-/**
- * @deprecated 아카이브된 시나리오에서만 사용됨
- * - 단순 UI 초기 상태 검증은 E2E 테스트로 적합하지 않음
- */
-Then("워크로드 설명 입력창이 빈 값으로 표시된다", async ({ page }) => {
-  const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_DESCRIPTION));
-  await expect(input).toBeVisible({ timeout: 10000 });
-  await expect(input).toHaveValue("");
 });
 
 // ============================================
@@ -163,77 +119,3 @@ Then("모달이 닫힌다", async ({ page }) => {
   const modal = page.locator(SELECTOR.MODAL);
   await expect(modal).not.toBeVisible({ timeout: 10000 });
 });
-
-// ============================================
-// 워크로드 정보 검증 (공통)
-// ============================================
-
-/**
- * @deprecated 아카이브된 시나리오에서만 사용됨
- * - 워크로드 가져오기 세부 검증은 아카이브됨
- */
-Then(
-  "워크로드 이름 입력창에 저장된 워크로드 이름이 표시된다",
-  async ({ page, workloadContext, assertLogger }) => {
-    const { name } = workloadContext.get();
-
-    const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_NAME));
-    await expect(input).toBeVisible({ timeout: 10000 });
-    const inputValue = await input.inputValue();
-
-    assertLogger.assertEqual("워크로드 이름 입력값", inputValue, name);
-  },
-);
-
-/**
- * @deprecated 아카이브된 시나리오에서만 사용됨
- * - 워크로드 가져오기 세부 검증은 아카이브됨
- */
-Then(
-  "워크로드 설명 입력창에 저장된 워크로드 설명이 표시된다",
-  async ({ page, workloadContext, assertLogger }) => {
-    const { description } = workloadContext.get();
-
-    const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_DESCRIPTION));
-    await expect(input).toBeVisible({ timeout: 10000 });
-    const inputValue = await input.inputValue();
-
-    assertLogger.assertEqual("워크로드 설명 입력값", inputValue, description);
-  },
-);
-
-/**
- * Job Type 텍스트를 드로어 버튼 레이블로 변환
- *
- * 테이블의 Job Type 텍스트(소문자)를 드로어에서 선택된 버튼 레이블로 변환합니다.
- * DISTRIBUTED는 드로어에 별도 버튼이 없어 "Batch Job"으로 매핑됩니다.
- *
- * @deprecated 아카이브된 시나리오에서만 사용됨
- */
-const JOB_TYPE_TO_LABEL: Record<string, string> = {
-  batch: "Batch Job",
-  distributed: "Batch Job", // 드로어에 별도 버튼 없음
-  interactive: "Interactive Job (IDE)",
-};
-
-/**
- * @deprecated 아카이브된 시나리오에서만 사용됨
- * - 워크로드 가져오기 세부 검증은 아카이브됨
- */
-Then(
-  "잡 타입이 저장된 워크로드와 동일하다",
-  async ({ page, workloadContext, assertLogger }) => {
-    const { jobType } = workloadContext.get();
-    const expectedLabel = JOB_TYPE_TO_LABEL[jobType] ?? jobType;
-
-    const card = page.getByRole("button", { name: expectedLabel });
-    await expect(card).toBeVisible({ timeout: 10000 });
-
-    const isActive =
-      (await card.getAttribute("data-active")) === "true"
-        ? "active"
-        : "inactive";
-
-    assertLogger.assertEqual("잡 타입 버튼 상태", isActive, "active");
-  },
-);
