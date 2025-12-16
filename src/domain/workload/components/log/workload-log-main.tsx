@@ -1,49 +1,31 @@
 "use client";
 
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
 
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
-import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
-  DetailContentButton,
   DetailContentHeader,
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
 import { AsideWorkloadMonitoring } from "../aside-workload-monitoring";
 import { ViewWorkloadMonitoringModal } from "../detail/view-workload-monitoring-modal";
+import { WorkloadMonitoringButton } from "../workload-monitoring-button";
 import { WorkloadLogBody } from "./workload-log-body";
 
 export function WorkloadLogMain() {
-  const { open, onToggle } = useGlobalModal(
-    openViewWorkloadMonitoringDrawerAtom,
-  );
-
-  const handleToggleMonitoring = () => {
-    onToggle();
-  };
+  const { open } = useGlobalModal(openViewWorkloadMonitoringDrawerAtom);
 
   return (
     <>
       <DetailContentHeader>
         <DetailContentTitle>로그</DetailContentTitle>
         <DetailContentTitleTool>
-          <div style={{ width: 90, height: 30 }}>
-            <DetailContentButton
-              onClick={handleToggleMonitoring}
-              data-testid={WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON}
-            >
-              <Icon name="Monitoring01" color="var(--icon-fill)" />
-              모니터링
-            </DetailContentButton>
-          </div>
+          <WorkloadMonitoringButton />
           <div style={{ width: 30, height: 30 }}>
-            <TerminalThemeButton
-              data-testid={WORKLOAD_SELECTOR.LOG_THEME_BUTTON}
-            />
+            <TerminalThemeButton />
           </div>
         </DetailContentTitleTool>
       </DetailContentHeader>

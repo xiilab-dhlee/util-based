@@ -50,14 +50,9 @@ export const SELECTOR = {
   // 테마 선택 (로그/웹터미널 공통)
   /** 테마 팝오버 컨테이너 */
   THEME_POPOVER: "theme-popover",
+  THEME_BUTTON: "theme-button",
   /** 테마 옵션 (동적) - theme-option-{themeName} */
   themeOption: (themeName: string) => `theme-option-${themeName}`,
-
-  // 토스트 메시지 (react-toastify)
-  /** 토스트 컨테이너 */
-  TOAST_CONTAINER: "toast-container",
-  /** 토스트 메시지 (컨테이너 내 토스트 요소) */
-  TOAST_MESSAGE: "[data-testid='toast-container'] .Toastify__toast",
 } as const;
 
 // ============================================
@@ -104,22 +99,27 @@ export const WORKLOAD_SELECTOR = {
   LOG_VIEWER: "workload-log-viewer",
   /** 로그 라인 */
   LOG_LINE: "workload-log-line",
-  /** 모니터링 버튼 (로그 페이지 상단) */
-  LOG_MONITORING_BUTTON: "workload-log-monitoring-button",
+  /** 모니터링 버튼 */
+  DETAIL_MONITORING_BUTTON: "workload-detail-monitoring-button",
   /** 테마 변경 버튼 */
-  LOG_THEME_BUTTON: "workload-log-theme-button",
-
+  DETAIL_THEME_BUTTON: "workload-detail-theme-button",
   // 웹터미널 페이지
   /** 웹터미널 영역 (xterm) */
   TERMINAL_CONTAINER: "workload-terminal-container",
-  /** 모니터링 버튼 (웹터미널 페이지 상단) */
-  TERMINAL_MONITORING_BUTTON: "workload-terminal-monitoring-button",
-  /** 테마 변경 버튼 (웹터미널 페이지) */
-  TERMINAL_THEME_BUTTON: "workload-terminal-theme-button",
+  /** 웹터미널 패널 (개별 터미널 노드) */
+  TERMINAL_NODE: "workload-terminal-node",
+  /** 웹터미널 수평 분할 버튼 */
+  TERMINAL_SPLIT_HORIZONTAL_BUTTON: "workload-terminal-split-horizontal-button",
+  /** 웹터미널 수직 분할 버튼 */
+  TERMINAL_SPLIT_VERTICAL_BUTTON: "workload-terminal-split-vertical-button",
 
-  // 모니터링 페이지
-  /** 모니터링 차트 카드 (동적) - workload-monitoring-chart-{type} */
-  monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
+  // 모니터링 사이드 패널 (로그/웹터미널 공통)
+  /** 모니터링 사이드 패널 컨테이너 */
+  ASIDE_MONITORING: "workload-aside-monitoring",
+  /** 모니터링 차트 카드 */
+  MONITORING_CHART: "workload-monitoring-chart",
+  /** 모니터링 차트 확대 버튼 */
+  MONITORING_CHART_EXPAND_BUTTON: "workload-monitoring-chart-expand-button",
 
   // 상세 페이지 - 좌측 요약 패널
   /** 워크로드 이름 (상세) */

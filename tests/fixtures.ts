@@ -6,11 +6,11 @@ import { ModalComponent } from "./components/modal.component";
 import { RadioComponent } from "./components/radio.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
-import { ToastComponent } from "./components/toast.component";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
 import { WorkloadListPage } from "./pages/workload-list.page";
 import { WorkloadLogPage } from "./pages/workload-log.page";
+import { WorkloadMonitoringPage } from "./pages/workload-monitoring.page";
 import { WorkloadTerminalPage } from "./pages/workload-terminal.page";
 
 // ============================================================================
@@ -91,6 +91,7 @@ type TestContextFixtures = {
   workloadListPage: WorkloadListPage;
   workloadDetailPage: WorkloadDetailPage;
   workloadLogPage: WorkloadLogPage;
+  workloadMonitoringPage: WorkloadMonitoringPage;
   workloadTerminalPage: WorkloadTerminalPage;
   monitoringPage: MonitoringPage;
 
@@ -100,7 +101,6 @@ type TestContextFixtures = {
   tabs: TabsComponent;
   radio: RadioComponent;
   themePopover: ThemePopoverComponent;
-  toast: ToastComponent;
 };
 
 // ============================================================================
@@ -291,6 +291,10 @@ export const test = base.extend<TestContextFixtures>({
     await use(new WorkloadLogPage(page));
   },
 
+  workloadMonitoringPage: async ({ page }, use) => {
+    await use(new WorkloadMonitoringPage(page));
+  },
+
   workloadTerminalPage: async ({ page }, use) => {
     await use(new WorkloadTerminalPage(page));
   },
@@ -321,9 +325,5 @@ export const test = base.extend<TestContextFixtures>({
 
   themePopover: async ({ page }, use) => {
     await use(new ThemePopoverComponent(page));
-  },
-
-  toast: async ({ page }, use) => {
-    await use(new ToastComponent(page));
   },
 });

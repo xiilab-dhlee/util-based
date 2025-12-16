@@ -5,6 +5,7 @@ import { Icon } from "xiilab-ui";
 
 import { WorkloadMonitoringCard } from "@/domain/workload/components/detail/workload-monitoring-card";
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
 export function AsideWorkloadMonitoring() {
@@ -15,7 +16,7 @@ export function AsideWorkloadMonitoring() {
   };
 
   return (
-    <Container>
+    <Container data-testid={WORKLOAD_SELECTOR.ASIDE_MONITORING}>
       <Header>
         <Title>모니터링</Title>
         <IconWrapper type="button" onClick={handleCloseMonitoring}>

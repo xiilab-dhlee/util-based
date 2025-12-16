@@ -298,21 +298,9 @@ Then("웹터미널에 xterm 터미널이 표시된다", async ({ page }) => {
 // 7. 상세 페이지 - 모니터링
 // ============================================
 
-Then("워크로드 모니터링 차트가 표시된다", async ({ page }) => {
-  const chartTypes = [
-    "cpu-usage",
-    "memory-usage",
-    "gpu-utilization",
-    "gpu-memory",
-  ];
-
-  for (const chartId of chartTypes) {
-    const chartCard = page.locator(
-      testId(WORKLOAD_SELECTOR.monitoringChart(chartId)),
-    );
-    await expect(chartCard).toBeVisible({ timeout: 10000 });
-
-    const apexChart = chartCard.locator(".apexcharts-canvas");
-    await expect(apexChart).toBeVisible({ timeout: 10000 });
-  }
-});
+Then(
+  "워크로드 모니터링 차트가 표시된다",
+  async ({ workloadMonitoringPage }) => {
+    await workloadMonitoringPage.assertMonitoringChartVisible();
+  },
+);
