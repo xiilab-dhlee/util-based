@@ -16,10 +16,7 @@ export function WorkloadLogBody() {
   const currentTheme = selectedTheme || DEFAULT_THEME;
 
   return (
-    <Container
-      className={currentTheme}
-      data-testid={WORKLOAD_SELECTOR.LOG_PAGE}
-    >
+    <Container className={currentTheme}>
       {/* 워크로드 로그 */}
       <LogViewer
         className={currentTheme}

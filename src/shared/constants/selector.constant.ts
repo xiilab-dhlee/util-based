@@ -46,6 +46,18 @@ export const SELECTOR = {
   DRAWER: ".ant-drawer-open",
   /** 드로어 닫기 버튼 */
   DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
+
+  // 테마 선택 (로그/웹터미널 공통)
+  /** 테마 팝오버 컨테이너 */
+  THEME_POPOVER: "theme-popover",
+  /** 테마 옵션 (동적) - theme-option-{themeName} */
+  themeOption: (themeName: string) => `theme-option-${themeName}`,
+
+  // 토스트 메시지 (react-toastify)
+  /** 토스트 컨테이너 */
+  TOAST_CONTAINER: "toast-container",
+  /** 토스트 메시지 (컨테이너 내 토스트 요소) */
+  TOAST_MESSAGE: "[data-testid='toast-container'] .Toastify__toast",
 } as const;
 
 // ============================================
@@ -92,8 +104,6 @@ export const WORKLOAD_SELECTOR = {
   FILTER_STATUS: "workload-filter-status",
 
   // 로그 페이지
-  /** 로그 페이지 컨테이너 */
-  LOG_PAGE: "workload-log-page",
   /** 로그 뷰어 영역 */
   LOG_VIEWER: "workload-log-viewer",
   /** 로그 라인 */
