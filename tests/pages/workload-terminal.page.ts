@@ -63,13 +63,8 @@ export class WorkloadTerminalPage extends BasePage {
   /** 모니터링 버튼 */
   get monitoringButton(): Locator {
     return this.page.locator(
-      testId(WORKLOAD_SELECTOR.TERMINAL_MONITORING_BUTTON),
+      testId(WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON),
     );
-  }
-
-  /** 테마 변경 버튼 */
-  get themeButton(): Locator {
-    return this.page.locator(testId(WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON));
   }
 
   // ============================================
@@ -90,13 +85,6 @@ export class WorkloadTerminalPage extends BasePage {
     await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
   }
 
-  /**
-   * 테마 변경 버튼이 표시되는지 확인
-   */
-  async assertThemeButtonVisible(): Promise<void> {
-    await expect(this.themeButton).toBeVisible({ timeout: 10000 });
-  }
-
   // ============================================
   // Actions
   // ============================================
@@ -107,13 +95,5 @@ export class WorkloadTerminalPage extends BasePage {
   async clickMonitoringButton(): Promise<void> {
     await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
     await this.monitoringButton.click();
-  }
-
-  /**
-   * 테마 변경 버튼 클릭
-   */
-  async clickThemeButton(): Promise<void> {
-    await expect(this.themeButton).toBeVisible({ timeout: 10000 });
-    await this.themeButton.click();
   }
 }

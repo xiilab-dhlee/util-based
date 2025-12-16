@@ -67,12 +67,9 @@ export class WorkloadLogPage extends BasePage {
 
   /** 모니터링 버튼 */
   get monitoringButton(): Locator {
-    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON));
-  }
-
-  /** 테마 변경 버튼 */
-  get themeButton(): Locator {
-    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_THEME_BUTTON));
+    return this.page.locator(
+      testId(WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON),
+    );
   }
 
   // ============================================
@@ -89,27 +86,10 @@ export class WorkloadLogPage extends BasePage {
   }
 
   /**
-   * 로그 영역에 테마가 적용되었는지 확인
-   * (className으로 테마가 적용됨)
-   */
-  async assertThemeApplied(): Promise<void> {
-    await expect(this.logViewer).toBeVisible({ timeout: 10000 });
-    const className = await this.logViewer.getAttribute("class");
-    expect(className).toBeTruthy();
-  }
-
-  /**
    * 모니터링 버튼이 표시되는지 확인
    */
   async assertMonitoringButtonVisible(): Promise<void> {
     await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
-  }
-
-  /**
-   * 테마 변경 버튼이 표시되는지 확인
-   */
-  async assertThemeButtonVisible(): Promise<void> {
-    await expect(this.themeButton).toBeVisible({ timeout: 10000 });
   }
 
   // ============================================
@@ -124,14 +104,6 @@ export class WorkloadLogPage extends BasePage {
     await this.monitoringButton.click();
   }
 
-  /**
-   * 테마 변경 버튼 클릭
-   */
-  async clickThemeButton(): Promise<void> {
-    await expect(this.themeButton).toBeVisible({ timeout: 10000 });
-    await this.themeButton.click();
-  }
-
   // ============================================
   // Getters
   // ============================================
@@ -141,13 +113,5 @@ export class WorkloadLogPage extends BasePage {
    */
   async getLogLineCount(): Promise<number> {
     return await this.logLines.count();
-  }
-
-  /**
-   * 현재 적용된 테마 클래스명 반환
-   */
-  async getCurrentTheme(): Promise<string> {
-    const className = await this.logViewer.getAttribute("class");
-    return className ?? "";
   }
 }

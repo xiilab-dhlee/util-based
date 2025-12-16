@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 import { Arthur } from "xterm-theme";
 
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { terminalThemeAtom } from "@/shared/state/terminal.atom";
 import type { TerminalEventProps } from "@/shared/types/terminal.type";
@@ -345,6 +346,7 @@ export function WorkloadTerminalNode({
       ref={containerRef}
       onClick={handleClickTerminal}
       id={`pane${x}-term${y}`}
+      data-testid={WORKLOAD_SELECTOR.TERMINAL_NODE}
     >
       {/* 포커스되지 않은 터미널에 마스크 오버레이 표시 */}
       {!isFocus && <Mask />}
@@ -358,13 +360,18 @@ export function WorkloadTerminalNode({
               type="button"
               onClick={onSplitHorizon}
               className="horizontally"
+              data-testid={WORKLOAD_SELECTOR.TERMINAL_SPLIT_HORIZONTAL_BUTTON}
             >
               <Icon name="SplitDown" color="var(--icon-fill)" />
             </HeaderButton>
           )}
           {/* 수직 분할 버튼 */}
           {isShowAddVertical && (
-            <HeaderButton type="button" onClick={onSplitVertical}>
+            <HeaderButton
+              type="button"
+              onClick={onSplitVertical}
+              data-testid={WORKLOAD_SELECTOR.TERMINAL_SPLIT_VERTICAL_BUTTON}
+            >
               <Icon name="SplitRight" color="var(--icon-fill)" />
             </HeaderButton>
           )}

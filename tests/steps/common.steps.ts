@@ -190,3 +190,21 @@ Then(/^현재 Step이 (\d+)이다$/, async ({ page }, stepNum: number) => {
   );
   await expect(activeStep).toBeVisible({ timeout: 10000 });
 });
+
+// ============================================
+// 테마 변경 Steps
+// ============================================
+
+When("테마 변경 버튼을 클릭한다", async ({ page }) => {
+  const button = page.locator(testId(SELECTOR.THEME_BUTTON));
+  await expect(button).toBeVisible({ timeout: 10000 });
+  await button.click();
+});
+
+Then("배경 색상 선택 팝오버가 표시된다", async ({ themePopover }) => {
+  await themePopover.waitForVisible();
+});
+
+When("다른 테마 색상을 선택한다", async ({ themePopover }) => {
+  await themePopover.selectDifferentTheme();
+});

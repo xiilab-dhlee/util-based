@@ -6,19 +6,14 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { useLocalStorage } from "@/shared/hooks/use-local-storage";
 import { terminalThemeAtom } from "@/shared/state/terminal.atom";
 import { toolButtonStyle } from "@/styles/mixins/button";
 import { createTermBgClasses } from "@/styles/mixins/terminal";
 
-interface TerminalThemeButtonProps {
-  "data-testid"?: string;
-}
-
-export function TerminalThemeButton({
-  "data-testid": dataTestId,
-}: TerminalThemeButtonProps) {
+export function TerminalThemeButton() {
   const [terminalTheme, setTerminalTheme] = useAtom(terminalThemeAtom);
   const [, setThemeType] = useLocalStorage("terminalTheme", "MaterialDark");
 
@@ -54,7 +49,7 @@ export function TerminalThemeButton({
       trigger="click"
       placement="bottomRight"
     >
-      <ThemeButton data-testid={dataTestId}>
+      <ThemeButton data-testid={SELECTOR.THEME_BUTTON}>
         <Image
           src="/images/color-picker.png"
           width={18}
