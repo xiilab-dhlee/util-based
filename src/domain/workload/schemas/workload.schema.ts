@@ -4,6 +4,9 @@ import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.sch
 import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
 import { WORKLOAD_IMAGE_TYPES } from "@/domain/workload/constants/workload.constant";
 
+/** Job Type 값 */
+export const JOB_TYPE_VALUES = ["BATCH", "INTERACTIVE", "DISTRIBUTED"] as const;
+
 // 워크로드 스키마
 const baseWorkloadSchema = z.object({
   /** 워크로드 아이디 */
@@ -17,7 +20,7 @@ const baseWorkloadSchema = z.object({
   /** 워크로드 설명 */
   description: z.string().nullable(),
   /** 작업 유형 */
-  jobType: z.enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"]),
+  jobType: z.enum(JOB_TYPE_VALUES),
   /** 사용자 이름 */
   creatorName: z.string(),
   /** 라벨 */

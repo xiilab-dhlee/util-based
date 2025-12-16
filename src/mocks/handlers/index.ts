@@ -3,6 +3,7 @@
  * 모든 도메인별 핸들러를 하나로 통합하여 export
  */
 
+import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
 import { accountHandlers } from "@/mocks/handlers/account.handler";
@@ -62,4 +63,5 @@ export const combinedHandlers = [
   ...smtpHandlers,
   ...reportHandlers,
   ...reportReservationHandlers,
+  ...resourcePresetHandlers,
 ];

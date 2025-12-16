@@ -18,6 +18,7 @@ import { NotificationService } from "@/domain/notification/api/notification.serv
 import { ReportService } from "@/domain/report/api/report.service";
 import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
+import { ResourcePresetService } from "@/domain/resource-preset/api/resource-preset.service";
 import { RevokeHistoryService } from "@/domain/revoke/api/revoke-history.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
@@ -60,6 +61,7 @@ interface ServiceContextType {
   gpuService: GpuService;
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
+  resourcePresetService: ResourcePresetService;
   revokeHistoryService: RevokeHistoryService;
   hpeService: HpeService;
   licenseService: LicenseService;
@@ -110,6 +112,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     gpuService: new GpuService(),
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),
+    resourcePresetService: new ResourcePresetService(),
     revokeHistoryService: new RevokeHistoryService(),
     hpeService: new HpeService(),
     licenseService: new LicenseService(),

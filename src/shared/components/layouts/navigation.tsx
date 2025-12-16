@@ -159,6 +159,11 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         ],
       },
       {
+        key: "admin.resource-preset",
+        label: PAGE_META["admin.resource-preset"]?.title,
+        icon: <Icon name={PAGE_META["admin.resource-preset"]?.iconName} />,
+      },
+      {
         key: "admin.registry",
         label: PAGE_META["admin.registry"]?.title,
         icon: <Icon name={PAGE_META["admin.registry"]?.iconName} />,

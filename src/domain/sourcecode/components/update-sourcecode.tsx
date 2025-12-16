@@ -2,7 +2,6 @@
 
 import { format } from "date-fns";
 import { useRef, useState } from "react";
-import { Scrollbars } from "react-custom-scrollbars";
 import styled from "styled-components";
 import { Button, Dropdown, Input } from "xiilab-ui";
 
@@ -15,6 +14,7 @@ import {
   getSourcecodeStatusInfo,
   getSourcecodeTypeInfo,
 } from "@/domain/sourcecode/utils/sourcecode.util";
+import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -32,6 +32,7 @@ import {
   AsideDetailForm,
   AsideDetailHeader,
   AsideDetailHeaderTitle,
+  AsideDetailScrollWrapper,
 } from "@/styles/layers/aside-detail-layers.styled";
 import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
 import { ReadOnlyParameter } from "./read-only-parameter";
@@ -186,22 +187,8 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
       </AsideDetailHeader>
 
       {/* 스크롤 영역 */}
-      <ScrollWrapper>
-        <Scrollbars
-          autoHide
-          autoHideTimeout={1000}
-          autoHideDuration={200}
-          renderThumbVertical={(props) => (
-            <div
-              {...props}
-              style={{
-                ...props.style,
-                backgroundColor: "#888",
-                borderRadius: "4px",
-              }}
-            />
-          )}
-        >
+      <AsideDetailScrollWrapper>
+        <CustomScrollbars>
           {/* 첫 번째 아티클 - 소스코드 기본 정보 */}
           <AsideDetailArticle>
             <AsideDetailArticleBody>
@@ -388,8 +375,8 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
               </AsideDetailArticleItem>
             </AsideDetailArticleBody>
           </SecondaryArticle>
-        </Scrollbars>
-      </ScrollWrapper>
+        </CustomScrollbars>
+      </AsideDetailScrollWrapper>
 
       {/* 하단 버튼 영역 */}
       {!isReadOnly && (
@@ -417,18 +404,6 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
     </AsideDetailForm>
   );
 }
-
-/**
- * 스크롤 래퍼 스타일
- *
- * Scrollbars 컴포넌트를 감싸는 컨테이너입니다.
- * flex: 1을 사용하여 남은 공간을 모두 차지하고, 스크롤 영역의 높이를 제어합니다.
- */
-const ScrollWrapper = styled.div`
-  flex: 1;
-  overflow: hidden;
-  min-height: 0;
-`;
 
 /**
  * 두 번째 아티클 스타일
