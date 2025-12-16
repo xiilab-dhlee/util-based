@@ -6,6 +6,8 @@ import type {
   ReportDateType,
   ReportType,
 } from "@/domain/report/schemas/report.schema";
+import type { ReservationDetailType } from "@/domain/report-reservation/schemas/report-reservation.schema";
+import type { ModalMode } from "@/shared/constants/core.constant";
 
 /** 리포트 생성 모달 표시 여부 */
 export const openCreateReportModalAtom = atom<boolean>(false);

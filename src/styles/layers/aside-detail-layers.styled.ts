@@ -1,5 +1,7 @@
 import styled, { css } from "styled-components";
 
+import { customScrollbar } from "@/styles/mixins/scrollbar";
+
 const asideDetailContainerStyle = (isFloat?: boolean) => css`
   flex: 1;
   height: 100%;
@@ -160,4 +162,28 @@ export const AsideDetailArticleValue = styled.div`
   font-size: 14px;
   overflow: hidden;
   word-wrap: break-word;
+`;
+
+/**
+ * 스크롤 가능한 컨텐츠 영역
+ * 부모 요소의 남은 공간을 채우며 스크롤 가능
+ */
+export const AsideDetailScrollableContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  ${customScrollbar()}
+`;
+
+/**
+ * 스크롤 래퍼
+ * Scrollbars 컴포넌트를 감싸는 컨테이너
+ * flex: 1을 사용하여 남은 공간을 모두 차지하고, 스크롤 영역의 높이를 제어
+ */
+export const AsideDetailScrollWrapper = styled.div`
+  flex: 1;
+  min-height: 0;
 `;

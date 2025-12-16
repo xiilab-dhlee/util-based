@@ -10,6 +10,13 @@ export type CoreFileIndentPosition = "first" | "middle" | "last";
 // 파일 압축 타입
 export type CoreFileCompressionType = "ZIP" | "TAR";
 // 리소스
-export type CoreResourceType = "GPU" | "MIG" | "MPS" | "CPU" | "MEM" | "DISK";
+export type CoreResourceType =
+  | "GPU"
+  | "GPU_MEMORY"
+  | "MIG"
+  | "MPS"
+  | "CPU"
+  | "MEM"
+  | "DISK";
 // 노드 모드 타입
 export type CoreNodeMode = "single" | "multi";

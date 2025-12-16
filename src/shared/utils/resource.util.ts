@@ -16,6 +16,12 @@ const RESOURCE_MAP: Record<CoreResourceType, ResourceMeta> = {
     icon: "Gpu",
     color: "#A353FF",
   },
+  GPU_MEMORY: {
+    text: "GPU Memory",
+    unit: "GB",
+    icon: "Gpu",
+    color: "#A353FF",
+  },
   MIG: {
     text: "MIG",
     unit: "개",

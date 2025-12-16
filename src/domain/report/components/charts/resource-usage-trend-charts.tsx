@@ -29,6 +29,11 @@ const getResourceColors = (
       requested: "var(--gpu-request-color)",
       used: "var(--gpu-usage-color)",
     },
+    GPU_MEMORY: {
+      total: baseColor,
+      requested: "var(--gpu-request-color)",
+      used: "var(--gpu-usage-color)",
+    },
     CPU: {
       total: baseColor,
       requested: "var(--cpu-request-color)",
