@@ -34,7 +34,7 @@ export function WorkloadSourcecodeCard({
       <Card
         contentVariant="compact"
         title={name}
-        icon={<span>{status === "PRIVATE" ? <Icon name="Lock" /> : null}</span>}
+        icon={status === "PRIVATE" ? <Icon name="Lock" /> : null}
         actionElement={
           onDelete ? (
             <IconWrapper onClick={onDelete}>
