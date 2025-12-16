@@ -76,9 +76,7 @@ export const WORKLOAD_SELECTOR = {
   NAME: "workload-name",
   /** 잡 타입 텍스트 */
   JOB_TYPE: "workload-job-type",
-  /** 경과 시간 */
-  ELAPSED_TIME: "workload-elapsed-time",
-  /** 상태 라벨 - workload-status-{status} (상태별 필터링용) */
+  /** 워크로드 상태 (동적) - workload-status-{status} */
   status: (status: string) => `workload-status-${status}`,
 
   // 액션 버튼
@@ -88,8 +86,6 @@ export const WORKLOAD_SELECTOR = {
   TERMINAL_BUTTON: "workload-terminal-button",
   /** 모니터링 버튼 */
   MONITORING_BUTTON: "workload-monitoring-button",
-  /** 연결(포트) 버튼 */
-  CONNECT_BUTTON: "workload-connect-button",
   /** 종료 버튼 */
   STOP_BUTTON: "workload-stop-button",
   /** 삭제 버튼 */
@@ -122,8 +118,6 @@ export const WORKLOAD_SELECTOR = {
   TERMINAL_THEME_BUTTON: "workload-terminal-theme-button",
 
   // 모니터링 페이지
-  /** 모니터링 컨텐츠 영역 */
-  MONITORING_CONTENT: "workload-monitoring-content",
   /** 모니터링 차트 카드 (동적) - workload-monitoring-chart-{type} */
   monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
 
@@ -146,38 +140,14 @@ export const WORKLOAD_SELECTOR = {
   // 상세 페이지 - 이벤트 이력
   /** 이벤트 카드 */
   EVENT_CARD: "workload-event-card",
-  /** 이벤트 상태 - workload-event-status-{status} (상태별 필터링용) */
-  eventStatus: (status: string) => `workload-event-status-${status}`,
-  /** 이벤트 경과 시간 */
-  EVENT_ELAPSED_TIME: "workload-event-elapsed-time",
-  /** 이벤트 From */
-  EVENT_FROM: "workload-event-from",
-  /** 이벤트 메시지 */
-  EVENT_MESSAGE: "workload-event-message",
 
   // 상세 페이지 - 소스코드
   /** 소스코드 카드 */
   SOURCECODE_CARD: "workload-source-code-card",
-  /** 소스코드 상태 - workload-source-code-status-{status} (상태별 필터링용) */
-  sourcecodeStatus: (status: string) => `workload-source-code-status-${status}`,
-  /** 소스코드 기본 경로 */
-  SOURCECODE_PATH: "workload-source-code-path",
-  /** 소스코드 타입 - workload-source-code-type-{type} (타입별 필터링용) */
-  sourcecodeType: (type: string) => `workload-source-code-type-${type}`,
-  /** 소스코드 Git URL */
-  SOURCECODE_URL: "workload-source-code-url",
 
   // 상세 페이지 - 볼륨
   /** 볼륨 카드 */
   VOLUME_CARD: "workload-volume-card",
-  /** 볼륨 상태 - workload-volume-status-{status} (상태별 필터링용) */
-  volumeStatus: (status: string) => `workload-volume-status-${status}`,
-  /** 볼륨 스토리지 타입 - workload-volume-storage-type-{type} */
-  volumeStorageType: (type: string) => `workload-volume-storage-type-${type}`,
-  /** 볼륨 경로 */
-  VOLUME_PATH: "workload-volume-path",
-  /** 볼륨 크기 */
-  VOLUME_SIZE: "workload-volume-size",
 
   // 상세 페이지 - 상세정보 탭 내용
   /** 잡 타입 명 */
@@ -238,8 +208,6 @@ export const WORKLOAD_SELECTOR = {
   CREATE_RECENT_IMPORT_BUTTON: "workload-create-recent-import-button",
   /** 워크로드 목록에서 가져오기 버튼 */
   CREATE_LIST_IMPORT_BUTTON: "workload-create-list-import-button",
-  /** 워크로드 Job Type */
-  CREATE_JOB_TYPE: "workload-create-job-type",
   /** 워크로드 이름 입력창 */
   CREATE_NAME: "workload-create-name",
   /** 워크로드 설명 입력창 */

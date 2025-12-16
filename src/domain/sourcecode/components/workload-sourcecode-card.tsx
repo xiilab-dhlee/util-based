@@ -34,15 +34,7 @@ export function WorkloadSourcecodeCard({
       <Card
         contentVariant="compact"
         title={name}
-        icon={
-          <span
-            data-testid={WORKLOAD_SELECTOR.sourcecodeStatus(
-              status.toLowerCase(),
-            )}
-          >
-            {status === "PRIVATE" ? <Icon name="Lock" /> : null}
-          </span>
-        }
+        icon={<span>{status === "PRIVATE" ? <Icon name="Lock" /> : null}</span>}
         actionElement={
           onDelete ? (
             <IconWrapper onClick={onDelete}>
@@ -55,30 +47,20 @@ export function WorkloadSourcecodeCard({
         <Body>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>Git URL :</LikeCompactCardKey>
-            <LikeCompactCardValue
-              className="truncate"
-              data-testid={WORKLOAD_SELECTOR.SOURCECODE_URL}
-            >
+            <LikeCompactCardValue className="truncate">
               {url}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>경로 :</LikeCompactCardKey>
-            <LikeCompactCardValue
-              className="truncate"
-              data-testid={WORKLOAD_SELECTOR.SOURCECODE_PATH}
-            >
+            <LikeCompactCardValue className="truncate">
               {path}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>타입 :</LikeCompactCardKey>
             <LikeCompactCardValue>
-              <Tag
-                variant={tag as TagProps["variant"]}
-                style={{ height: 20 }}
-                data-testid={WORKLOAD_SELECTOR.sourcecodeType(text)}
-              >
+              <Tag variant={tag as TagProps["variant"]} style={{ height: 20 }}>
                 {text}
               </Tag>
             </LikeCompactCardValue>

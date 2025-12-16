@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import { ViewWorkloadMonitoringModal } from "@/domain/workload/components/detail/view-workload-monitoring-modal";
 import { WorkloadMonitoringCard } from "@/domain/workload/components/detail/workload-monitoring-card";
-import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   DetailContentHeader,
   DetailContentSubTitle,
@@ -23,7 +22,7 @@ export function WorkloadMonitoringMain() {
         </DetailContentTitleTool>
       </DetailContentHeader>
       {/* 워크로드 모니터링 내용 */}
-      <MonitoringContent data-testid={WORKLOAD_SELECTOR.MONITORING_CONTENT}>
+      <MonitoringContent>
         <MonitoringArticle>
           <MonitoringSubTitle>Launcher</MonitoringSubTitle>
           <ChartGridWrap>

@@ -36,11 +36,7 @@ export function WorkloadVolumeCard({
         contentVariant="compact"
         title={name}
         icon={
-          <span
-            data-testid={WORKLOAD_SELECTOR.volumeStatus(status.toLowerCase())}
-          >
-            {icon && <Icon name={icon} color="#464B51" size={18} />}
-          </span>
+          <span>{icon && <Icon name={icon} color="#464B51" size={18} />}</span>
         }
         actionElement={
           onDelete ? (
@@ -58,27 +54,19 @@ export function WorkloadVolumeCard({
         <Body>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>스토리지 타입 :</LikeCompactCardKey>
-            <LikeCompactCardValue
-              className="truncate"
-              data-testid={WORKLOAD_SELECTOR.volumeStorageType(
-                storageType.toLowerCase(),
-              )}
-            >
+            <LikeCompactCardValue className="truncate">
               {text}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>경로 :</LikeCompactCardKey>
-            <LikeCompactCardValue
-              className="truncate"
-              data-testid={WORKLOAD_SELECTOR.VOLUME_PATH}
-            >
+            <LikeCompactCardValue className="truncate">
               {path || "-"}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>볼륨 크기 :</LikeCompactCardKey>
-            <LikeCompactCardValue data-testid={WORKLOAD_SELECTOR.VOLUME_SIZE}>
+            <LikeCompactCardValue>
               {size.toLocaleString()} Bytes
             </LikeCompactCardValue>
           </LikeCompactCardRecord>

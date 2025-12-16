@@ -3,8 +3,6 @@
 import styled from "styled-components";
 import { Label } from "xiilab-ui";
 
-import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
-
 // status와 텍스트, color를 한 번에 관리
 const statusMap = {
   warning: { text: "Warning", variant: "red" },
@@ -24,7 +22,7 @@ export function EventStatusText({ status }: EventStatusTextProps) {
   const { text, variant } = statusMap[status];
 
   return (
-    <Container data-testid={WORKLOAD_SELECTOR.eventStatus(status)}>
+    <Container>
       <Label variant={variant}>{text}</Label>
     </Container>
   );

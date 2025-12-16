@@ -79,11 +79,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 140,
       render: (elapsedTime: string) => {
-        return (
-          <span data-testid={WORKLOAD_SELECTOR.ELAPSED_TIME}>
-            {formatElapsedTime(elapsedTime)}
-          </span>
-        );
+        return <span>{formatElapsedTime(elapsedTime)}</span>;
       },
     },
     {
@@ -148,7 +144,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
             <ColumnIconWrap
               onClick={() => alert("준비 중입니다.")}
               disabled={!isActive}
-              data-testid={WORKLOAD_SELECTOR.CONNECT_BUTTON}
             >
               <Icon name="Port" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>

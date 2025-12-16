@@ -8,7 +8,6 @@ import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema"
 import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
-import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
 const DESCRIPTION_MAP: Record<WorkloadJobType, string[]> = {
   BATCH: [
@@ -46,7 +45,6 @@ export function JobTypeCard({ type, value, setValue }: JobTypeCardProps) {
       onClick={() => setValue(type)}
       width="100%"
       height="100px"
-      data-testid={WORKLOAD_SELECTOR.CREATE_JOB_TYPE}
       data-active={type === value}
     >
       <Container>
