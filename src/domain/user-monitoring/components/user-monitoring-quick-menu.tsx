@@ -14,8 +14,8 @@ interface UserMonitoringQuickMenuProps {
   iconSize: number;
   /** 메뉴의 제목 (한글) */
   title: string;
-  /** 메뉴의 부제목 (영문) */
-  titleEng: string;
+  /** 메뉴의 설명 */
+  description: string;
   /** 컴포넌트의 높이 (픽셀 단위, 기본값: 100) */
   height?: number;
 }
@@ -25,7 +25,7 @@ interface UserMonitoringQuickMenuProps {
  *
  * 대시보드에서 사용되는 빠른 메뉴 카드 컴포넌트입니다.
  * 사용자가 주요 기능에 빠르게 접근할 수 있도록 하는 네비게이션 카드로,
- * 아이콘, 제목, 부제목을 포함한 클릭 가능한 링크 형태로 구성됩니다.
+ * 아이콘, 제목, 설명을 포함한 클릭 가능한 링크 형태로 구성됩니다.
  *
  * 주요 기능:
  * - 클릭 가능한 링크 형태의 메뉴 카드
@@ -38,7 +38,7 @@ interface UserMonitoringQuickMenuProps {
  * @param icon - 표시할 아이콘 이름 (xiilab-ui Icon 컴포넌트에서 지원하는 아이콘)
  * @param iconSize - 아이콘의 크기 (픽셀 단위)
  * @param title - 메뉴의 제목 (한글)
- * @param titleEng - 메뉴의 부제목 (영문)
+ * @param description - 메뉴의 설명
  * @param height - 컴포넌트의 높이 (픽셀 단위, 기본값: 100)
  * @returns 빠른 메뉴 카드 컴포넌트
  *
@@ -49,7 +49,7 @@ interface UserMonitoringQuickMenuProps {
  *   icon="Box"
  *   iconSize={24}
  *   title="워크스페이스 관리"
- *   titleEng="Workspace Management"
+ *   description="워크스페이스를 관리하세요."
  *   height={120}
  * />
  * ```
@@ -59,7 +59,7 @@ export function UserMonitoringQuickMenu({
   icon,
   iconSize,
   title,
-  titleEng,
+  description,
   height = 100,
 }: UserMonitoringQuickMenuProps) {
   return (
@@ -78,7 +78,7 @@ export function UserMonitoringQuickMenu({
       {/* 텍스트 영역 - 하단에 위치 */}
       <Body>
         <Title>{title}</Title>
-        <SubTitle>{titleEng}</SubTitle>
+        <SubTitle>{description}</SubTitle>
       </Body>
     </Container>
   );
@@ -168,9 +168,9 @@ const Title = styled.span`
 `;
 
 /**
- * 메뉴 부제목 스타일
+ * 메뉴 설명 스타일
  *
- * 영문 부제목을 표시하는 스타일입니다.
+ * 메뉴 설명을 표시하는 스타일입니다.
  * 일반 폰트와 작은 크기로 보조 정보를 제공합니다.
  */
 const SubTitle = styled.span`

@@ -60,9 +60,7 @@ export function WorkloadSourcecodeCard({
           <LikeCompactCardRecord>
             <LikeCompactCardKey>타입 :</LikeCompactCardKey>
             <LikeCompactCardValue>
-              <Tag variant={tag as TagProps["variant"]} style={{ height: 20 }}>
-                {text}
-              </Tag>
+              <StyledTag variant={tag as TagProps["variant"]}>{text}</StyledTag>
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
         </Body>
@@ -89,4 +87,8 @@ const IconWrapper = styled.button`
   background: #FAFAFA;
   border-radius: 2px;
   border: 1px solid #CED2D6;
+`;
+
+const StyledTag = styled(Tag)`
+  height: 20px;
 `;
