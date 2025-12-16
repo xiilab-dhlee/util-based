@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
@@ -11,8 +12,10 @@ import {
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
 import { EventStatusText } from "@/shared/components/text/event-status-text";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
-interface WorkloadEventCardProps extends Omit<WorkloadEventType, "id"> {}
+type WorkloadEventCardProps = Omit<WorkloadEventType, "id">;
+
 // 이벤트 이력 카드 컴포넌트
 export function WorkloadEventCard({
   name,
@@ -22,27 +25,41 @@ export function WorkloadEventCard({
   status,
 }: WorkloadEventCardProps) {
   return (
-    <StyledCard
-      contentVariant="compact"
-      actionElement={<EventStatusText status={status} />}
-      title={name}
-    >
-      <Body>
-        <CompactCardKeyValueRow>
-          <Key>경과 시간</Key>
-          <CompactCardValue>{elapsedTime}</CompactCardValue>
-        </CompactCardKeyValueRow>
-        <CompactCardKeyValueRow>
-          <Key>From</Key>
-          <CompactCardValue>{from}</CompactCardValue>
-        </CompactCardKeyValueRow>
-      </Body>
-      <Footer>
-        <CompactCardCollapseRow title="메 세 지" description={message} />
-      </Footer>
-    </StyledCard>
+    <CardWrapper data-testid={WORKLOAD_SELECTOR.EVENT_CARD}>
+      <StyledCard
+        contentVariant="compact"
+        actionElement={<EventStatusText status={status} />}
+        title={name}
+      >
+        <Body>
+          <CompactCardKeyValueRow>
+            <Key>경과 시간</Key>
+            <CompactCardValue
+              data-testid={WORKLOAD_SELECTOR.EVENT_ELAPSED_TIME}
+            >
+              {elapsedTime ? format(elapsedTime, "yyyy.MM.dd HH:mm:ss") : "-"}
+            </CompactCardValue>
+          </CompactCardKeyValueRow>
+          <CompactCardKeyValueRow>
+            <Key>From</Key>
+            <CompactCardValue data-testid={WORKLOAD_SELECTOR.EVENT_FROM}>
+              {from}
+            </CompactCardValue>
+          </CompactCardKeyValueRow>
+        </Body>
+        <Footer>
+          <CompactCardCollapseRow
+            title="메 세 지"
+            description={message}
+            data-testid={WORKLOAD_SELECTOR.EVENT_MESSAGE}
+          />
+        </Footer>
+      </StyledCard>
+    </CardWrapper>
   );
 }
+
+const CardWrapper = styled.div``;
 
 const StyledCard = styled(Card)`  
   & + & {

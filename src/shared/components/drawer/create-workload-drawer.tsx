@@ -152,7 +152,16 @@ export function CreateWorkloadDrawer() {
       // eventData가 있는 경우 워크로드 복제
       // step 1
       // 잡타입 설정
-      setJobType(eventData?.jobType || "BATCH");
+      if (eventData?.jobType) {
+        // 분산 잡 타입인 경우 배치 잡 타입으로 설정
+        if (eventData?.jobType === "DISTRIBUTED") {
+          setJobType("BATCH");
+        } else {
+          setJobType(eventData.jobType);
+        }
+      } else {
+        setJobType("BATCH");
+      }
       // 워크로드 이름 설정
       setWorkloadName(eventData?.workloadName || "");
       // 워크로드 설명 설정

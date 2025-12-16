@@ -1,35 +1,43 @@
 import { HttpResponse, http } from "msw";
 
+import type {
+  ActiveWorkloadListType,
+  WorkloadListType,
+} from "@/domain/workload/schemas/workload.schema";
 import {
-  activeWorkloadListMock,
-  disabledWorkloadListMock,
+  createActiveWorkloadListMock,
+  createWorkloadListMock,
   workloadDetailMock,
-  workloadListMock,
   workloadVulnerabilityListMock,
 } from "@/mocks/data/workload.mock";
 import { ML_PROJECT_TEMPLATE } from "@/shared/constants/filetree.constant";
 import { generateCustomTree } from "@/shared/utils/filetree-generator.util";
+import { paramsToOverride } from "@/shared/utils/service.util";
 
 /**
  * 워크로드 API 핸들러
  */
 export const workloadHandlers = [
+  http.get("/core-api/v1/core/workload/active", ({ request }) => {
+    const url = new URL(request.url);
+
+    const override = paramsToOverride<ActiveWorkloadListType>(url.searchParams);
+    const content = createActiveWorkloadListMock(override);
+
+    return HttpResponse.json({
+      content,
+      totalSize: 100,
+    });
+  }),
   // 워크로드 목록 조회
-  http.get("/core-api/v1/core/workload", () => {
+  http.get("/core-api/v1/core/workload", ({ request }) => {
+    const url = new URL(request.url);
+
+    const override = paramsToOverride<WorkloadListType>(url.searchParams);
+    const content = createWorkloadListMock(override);
+
     return HttpResponse.json({
-      content: workloadListMock,
-      totalSize: 100,
-    });
-  }),
-  http.get("/core-api/v1/core/workload/active", () => {
-    return HttpResponse.json({
-      content: activeWorkloadListMock,
-      totalSize: 100,
-    });
-  }),
-  http.get("/core-api/v1/core/workload/disabled", () => {
-    return HttpResponse.json({
-      content: disabledWorkloadListMock,
+      content,
       totalSize: 100,
     });
   }),
@@ -59,19 +67,13 @@ export const workloadHandlers = [
   // 관리자 워크로드 목록 조회
   http.get("/core-api/v1/core/admin/workload", ({ request }) => {
     const url = new URL(request.url);
-    const searchText = url.searchParams.get("searchText");
 
-    // 검색어가 있는 경우 필터링
-    let filteredContent = workloadListMock;
-    if (searchText) {
-      filteredContent = workloadListMock.filter((workload) =>
-        workload.workloadName?.toLowerCase().includes(searchText.toLowerCase()),
-      );
-    }
+    const override = paramsToOverride<WorkloadListType>(url.searchParams);
+    const content = createWorkloadListMock(override);
 
     return HttpResponse.json({
-      content: filteredContent,
-      totalSize: filteredContent.length,
+      content,
+      totalSize: 100,
     });
   }),
 

@@ -5,6 +5,37 @@ import { commonColumns } from "@/shared/components/column";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 
 /**
+ * ellipsis가 활성화된 컬럼에 툴팁 렌더러 적용
+ * 툴팁에는 원본 데이터(title)를 표시하고, 컨텐츠에는 렌더링된 컴포넌트를 표시
+ */
+function applyEllipsisTooltip(
+  column: ResponsiveColumnType,
+): ResponsiveColumnType {
+  if (!column.ellipsis) {
+    return column;
+  }
+
+  const originalRender = column.render;
+  return {
+    ...column,
+    render: (title, record, index) => {
+      const content = originalRender
+        ? originalRender(title, record, index)
+        : title;
+
+      // 툴팁에는 원본 데이터(title)를 표시
+      const tooltipTitle = title;
+
+      return (
+        <Tooltip title={tooltipTitle} getPopupContainer={() => document.body}>
+          <div className="truncate">{content}</div>
+        </Tooltip>
+      );
+    },
+  };
+}
+
+/**
  * 컬럼 배열에 설정 적용
  * 배열 순서대로 컬럼을 필터링하고 오버라이드 적용
  *
@@ -24,8 +55,9 @@ export function applyColumnConfigs(
   columns: ResponsiveColumnType[],
   configs?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] {
+  // configs가 없으면 원본 columns에 ellipsis 툴팁만 적용
   if (!configs || configs.length === 0) {
-    return columns;
+    return columns.map(applyEllipsisTooltip);
   }
 
   // 컬럼을 맵으로 변환 (빠른 조회를 위해)
@@ -49,37 +81,13 @@ export function applyColumnConfigs(
         return null;
       }
 
-      // 오버라이드 적용
+      // 오버라이드 적용 후 ellipsis 툴팁 적용
       const mergedColumn = {
         ...column,
         ...config,
       };
 
-      // ellipsis가 활성화된 경우 툴팁 추가
-      if (mergedColumn.ellipsis) {
-        const originalRender = mergedColumn.render;
-        mergedColumn.render = (title, record, index) => {
-          const content = originalRender
-            ? originalRender(title, record, index)
-            : title;
-
-          return (
-            <Tooltip title={title} getPopupContainer={() => document.body}>
-              <div
-                style={{
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {content}
-              </div>
-            </Tooltip>
-          );
-        };
-      }
-
-      return mergedColumn;
+      return applyEllipsisTooltip(mergedColumn);
     })
     .filter((column): column is ResponsiveColumnType => column !== null);
 }

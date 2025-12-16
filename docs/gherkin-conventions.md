@@ -2,6 +2,8 @@
 
 Playwright-BDD를 사용한 E2E 테스트 작성 규칙입니다.
 
+> 테스트 아키텍처 및 개발 원칙은 [test-architecture.md](./test-architecture.md)를 참조하세요.
+
 ---
 
 ## 파일 구조
@@ -59,18 +61,18 @@ Background와 다른 전제 조건이 필요한 시나리오는 별도 파일로
 
 ### Feature 레벨 태그
 
-모든 Feature 파일은 다음 태그를 포함해야 합니다:
+Feature 파일의 첫 줄에 도메인 태그를 추가합니다:
 
 ```gherkin
-@TESTUC-5 @authenticated-user
-Feature: 사용자 모니터링 페이지 진입
+@workload-detail @interaction
+Feature: 워크로드 상세 페이지 인터랙션
 ```
 
-| 태그 | 용도 | 필수 |
+| 태그 | 용도 | 예시 |
 |------|------|------|
-| `@TESTUC-{N}` | 유스케이스 ID | O |
-| `@authenticated` | 관리자(admin) 로그인 | 택1 |
-| `@authenticated-user` | 일반 사용자(user) 로그인 | 택1 |
+| `@{도메인}` | 도메인 분류 | `@workload`, `@monitoring` |
+| `@{도메인}-{기능}` | 세부 기능 분류 | `@workload-detail`, `@workload-create` |
+| `@interaction` | UI 인터랙션 테스트 (스크린샷 캡처) | - |
 
 ### Scenario 레벨 태그
 
@@ -232,5 +234,6 @@ pnpm test:report           # 리포트 확인
 
 ## 참고
 
+- [테스트 아키텍처](./test-architecture.md) - Page Object, Component, 개발 원칙
 - [Playwright-BDD](https://vitalets.github.io/playwright-bdd/)
 - [Gherkin Reference](https://cucumber.io/docs/gherkin/reference/)

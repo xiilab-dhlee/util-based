@@ -1,27 +1,37 @@
 "use client";
-import classNames from "classnames";
-import styled from "styled-components";
 
-import { statusTextStyle } from "@/styles/mixins/text";
+import styled from "styled-components";
+import { Label } from "xiilab-ui";
+
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
 // status와 텍스트, color를 한 번에 관리
 const statusMap = {
-  warning: { text: "Warning", color: "red" },
-  normal: { text: "Normal", color: "green" },
+  warning: { text: "Warning", variant: "red" },
+  normal: { text: "Normal", variant: "green" },
 } as const;
 
 interface EventStatusTextProps {
-  // 상태
   status: "warning" | "normal";
 }
-// 이벤트 이력 상태 텍스트
+
+/**
+ * 이벤트 이력 상태 텍스트
+ * @param status - 이벤트 상태 (warning | normal)
+ * @returns 이벤트 상태 라벨
+ */
 export function EventStatusText({ status }: EventStatusTextProps) {
-  const { text, color } = statusMap[status] || { text: status, color: "gray" };
-  return <Container className={classNames(color)}>{text}</Container>;
+  const { text, variant } = statusMap[status];
+
+  return (
+    <Container data-testid={WORKLOAD_SELECTOR.eventStatus(status)}>
+      <Label variant={variant}>{text}</Label>
+    </Container>
+  );
 }
 
 const Container = styled.span`
-  ${statusTextStyle()}
-
-  font-weight: 400;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;

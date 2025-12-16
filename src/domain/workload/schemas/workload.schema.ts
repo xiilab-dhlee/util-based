@@ -74,10 +74,28 @@ const baseWorkloadSchema = z.object({
   sourcecodes: z.array(
     sourcecodeListSchema.extend({
       branch: z.string(),
+      path: z.string(),
     }),
   ),
   /** 볼륨 */
   volumes: z.array(volumeListSchema),
+  /** 실행 경로 */
+  execPath: z.string().nullable(),
+  /** 실행 명령어 */
+  execCommand: z.string().nullable(),
+  /** 보안검사 결과 */
+  scanResult: z
+    .object({
+      /** 치명적(Critical) 취약점 수 */
+      critical: z.number().int().min(0).max(9999),
+      /** 높은(High) 취약점 수 */
+      high: z.number().int().min(0).max(9999),
+      /** 중간(Medium) 취약점 수 */
+      medium: z.number().int().min(0).max(9999),
+      /** 낮은(Low) 취약점 수 */
+      low: z.number().int().min(0).max(9999),
+    })
+    .nullable(),
   /** 이벤트 */
   events: z.array(
     z.object({
@@ -95,6 +113,15 @@ const baseWorkloadSchema = z.object({
       status: z.enum(["warning", "normal"]),
     }),
   ),
+  /** GPU */
+  gpuType: z.enum(["NORMAL", "MIG", "MPS"]),
+  gpuName: z.literal("Tesla-V100-PCIE-32GB-SHARED"),
+  gpuMemoryGb: z.number().min(0).max(100),
+  gpuCount: z.number().min(0).max(100),
+  /** CPU */
+  cpuCore: z.number().min(0).max(100),
+  /** Memory */
+  memoryGb: z.number().min(0).max(100),
 });
 
 export const workloadListSchema = baseWorkloadSchema.pick({

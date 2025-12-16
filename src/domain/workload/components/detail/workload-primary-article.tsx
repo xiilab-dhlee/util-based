@@ -8,6 +8,7 @@ import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-b
 import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   DetailContentArticle,
   DetailContentSubTitle,
@@ -43,8 +44,12 @@ export function WorkloadPrimaryArticle() {
               <JupyterIcon />
             ) : null}
           </IconWrapper>
-          <JobTypeText>{label}</JobTypeText>
-          <Description>{ideName}</Description>
+          <JobTypeText data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_TYPE_NAME}>
+            {label}
+          </JobTypeText>
+          <Description data-testid={WORKLOAD_SELECTOR.DETAIL_JOB_TYPE_IDE}>
+            {ideName}
+          </Description>
         </ColumnBody>
       </Column>
       <Column>
@@ -53,7 +58,9 @@ export function WorkloadPrimaryArticle() {
           <IconWrapper>
             <Icon name={nodeIcon} color="var(--icon-fill)" size={18} />
           </IconWrapper>
-          <NodeTypeText>{nodeType} Node</NodeTypeText>
+          <NodeTypeText data-testid={WORKLOAD_SELECTOR.DETAIL_NODE_TYPE_NAME}>
+            {nodeType} Node
+          </NodeTypeText>
         </ColumnBody>
       </Column>
     </DetailContentArticle>

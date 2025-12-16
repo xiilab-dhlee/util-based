@@ -26,6 +26,7 @@ interface PageGuideProps {
     enabled: boolean;
     text: string;
     onClick: () => void;
+    dataTestId?: string;
   };
 }
 
@@ -59,7 +60,11 @@ export function PageGuide({
             ))}
           </Description>
           {buttonOptions?.enabled && (
-            <ActionButton onClick={buttonOptions.onClick}>
+            <ActionButton
+              type="button"
+              onClick={buttonOptions.onClick}
+              data-testid={buttonOptions.dataTestId ?? undefined}
+            >
               {buttonOptions.text}
             </ActionButton>
           )}

@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import { Icon, Input, Modal, TextArea } from "xiilab-ui";
 
-import { useUpdateWorkload } from "@/domain/workload/hooks/use-update-workload";
+// import { useUpdateWorkload } from "@/domain/workload/hooks/use-update-workload";
 import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
 import { openUpdateWorkloadModalAtom } from "@/domain/workload/state/workload.atom";
 import type { UpdateWorkloadPayload } from "@/domain/workload/types/workload.type";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { FormItem } from "@/styles/layers/form-layer.styled";
@@ -35,7 +36,7 @@ export function UpdateWorkloadModal() {
   // 워크로드 설명
   const [description, setDescription] = useState("");
 
-  const updateWorkload = useUpdateWorkload();
+  // const updateWorkload = useUpdateWorkload();
 
   /**
    * 폼 제출 처리 함수
@@ -44,16 +45,18 @@ export function UpdateWorkloadModal() {
    * 다른 컴포넌트에서 이 이벤트를 구독하여 실제 API 호출 등을 처리합니다.
    */
   const handleSubmit = () => {
-    const payload = createPayload();
+    const _ = createPayload();
 
-    if (payload) {
-      updateWorkload.mutate(payload, {
-        onSuccess: () => {
-          toast.success("워크로드 수정 성공");
-          onClose();
-        },
-      });
-    }
+    onClose();
+
+    // if (payload) {
+    //   updateWorkload.mutate(payload, {
+    //     onSuccess: () => {
+    //       toast.success("워크로드 수정 성공");
+    //       onClose();
+    //     },
+    //   });
+    // }
   };
 
   /**
@@ -110,6 +113,7 @@ export function UpdateWorkloadModal() {
           <Input
             type="text"
             id="updateWorkloadName"
+            data-testid={WORKLOAD_SELECTOR.UPDATE_NAME_INPUT}
             placeholder="이름을 입력해 주세요."
             value={workloadName}
             onChange={(e) => setWorkloadName(e.target.value)}
@@ -122,6 +126,7 @@ export function UpdateWorkloadModal() {
           <FormLabel htmlFor="updateWorkloadDescription">설명</FormLabel>
           <TextArea
             id="updateWorkloadDescription"
+            data-testid={WORKLOAD_SELECTOR.UPDATE_DESCRIPTION_INPUT}
             placeholder="설명을 입력해 주세요."
             value={description}
             onChange={(e) => setDescription(e.target.value)}

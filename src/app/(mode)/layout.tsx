@@ -52,6 +52,7 @@ const Right = styled.div`
   min-width: 0;
   height: 100%;
   padding: 0 var(--page-inner-padding);
+  padding-bottom: var(--page-margin-bottom);
   overflow-y: auto;
   overflow-x: auto;
 `;
@@ -64,5 +65,5 @@ const Main = styled.main`
   display: flex;
   flex-direction: column;
   position: relative;
-  margin-bottom: var(--page-margin-bottom);
+  /* margin-bottom: var(--page-margin-bottom); */
 `;

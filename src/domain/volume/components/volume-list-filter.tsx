@@ -2,8 +2,7 @@
 
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
-import styled from "styled-components";
-import { Button, Checkbox } from "xiilab-ui";
+import { Button } from "xiilab-ui";
 
 import {
   openSelectVolumeModalAtom,
@@ -13,6 +12,7 @@ import {
 } from "@/domain/volume/state/volume.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
 interface VolumeListFilterProps {
@@ -53,57 +53,24 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
 
   return (
     <MySearchFilter title="볼륨 목록" total={total}>
-      <Container>
-        <Left>
-          <Checkbox size="small">내가 생성한 볼륨 보기</Checkbox>
-        </Left>
-        <Right>
-          <SearchInput
-            disabled={loading}
-            placeholder="볼륨 또는 생성자 이름 검색"
-            onSearch={handleSearch}
-          />
-          <Button
-            color="primary"
-            icon="Plus"
-            iconPosition="left"
-            variant="gradient"
-            width={100}
-            height={30}
-            onClick={handleCreateVolume}
-            disabled={loading}
-          >
-            볼륨 생성
-          </Button>
-        </Right>
-      </Container>
+      <MyItemsOnlySwitch checked={true} />
+      <SearchInput
+        disabled={loading}
+        placeholder="볼륨 또는 생성자 이름 검색"
+        onSearch={handleSearch}
+      />
+      <Button
+        color="primary"
+        icon="Plus"
+        iconPosition="left"
+        variant="gradient"
+        width={100}
+        height={30}
+        onClick={handleCreateVolume}
+        disabled={loading}
+      >
+        볼륨 생성
+      </Button>
     </MySearchFilter>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex: 1;
-`;
-
-const Left = styled.div`
-  padding-left: 10px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-
-  & .ant-checkbox-label {
-    padding-left: 0;
-    margin-left: 4px !important;
-    line-height: 16px;
-  }
-`;
-
-const Right = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 6px;
-`;

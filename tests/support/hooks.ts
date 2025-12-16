@@ -1,108 +1,159 @@
 import { createBdd } from "playwright-bdd";
 
-import { authenticate } from "./auth.helper";
+import { test } from "../fixtures";
+import { setupAllMocks } from "./mocks";
 
-const { Before, After, BeforeAll, AfterAll } = createBdd();
+const { Before, After, BeforeAll, AfterAll, AfterStep } = createBdd(test);
 
-/**
- * Hooks - 테스트 실행 전후에 실행되는 공통 로직
- *
- * NextAuth CredentialsProvider를 통해 실제 로그인을 수행합니다.
- * 개발 환경에서는 auth.config.ts의 CredentialsProvider가
- * 테스트 사용자 인증을 처리합니다.
- */
+// ============================================
+// 전역 설정
+// ============================================
 
-// 모든 테스트 시작 전 한 번만 실행
 BeforeAll(async () => {
-  // console.log("🚀 테스트 스위트 시작");
+  console.log("🚀 테스트 스위트 시작");
 });
 
-// 모든 테스트 종료 후 한 번만 실행
 AfterAll(async () => {
-  // console.log("✅ 테스트 스위트 완료");
+  console.log("✅ 테스트 스위트 완료");
 });
 
-// 각 시나리오 실행 전
+// ============================================
+// 시나리오 Hooks
+// ============================================
+
 Before(async ({ $testInfo }) => {
-  console.log(`\n📝 시나리오 시작: ${$testInfo.title}`);
+  console.log(`\n📝 ${$testInfo.title}`);
 });
 
-// 각 시나리오 실행 후
 After(async ({ page, $testInfo }) => {
-  // 테스트 실패 시 추가 디버깅 정보 수집
-  if ($testInfo.status !== $testInfo.expectedStatus) {
-    console.log(`❌ 시나리오 실패: ${$testInfo.title}`);
+  const duration = $testInfo.duration;
 
-    // 현재 URL 로깅
-    if (page) {
-      console.log(`Current URL: ${page.url()}`);
-
-      // 콘솔 로그 수집
-      page.on("console", (msg) => {
-        console.log(`Browser Console: ${msg.text()}`);
-      });
-    }
+  if ($testInfo.status === "skipped") {
+    // 스킵된 경우 사유 출력
+    const skipReason =
+      $testInfo.annotations.find((a) => a.type === "skip")?.description ??
+      "사유 없음";
+    console.log(`⏭️ (${duration}ms) - ${skipReason}`);
+  } else if ($testInfo.status === $testInfo.expectedStatus) {
+    console.log(`✅ (${duration}ms)`);
   } else {
-    console.log(`✅ 시나리오 성공: ${$testInfo.title}`);
+    // 실패한 경우 상세 에러 정보 출력
+    console.log(`❌ (${duration}ms)`);
+    if (page) {
+      console.log(`   URL: ${page.url()}`);
+    }
+
+    // 에러 메시지 출력
+    if ($testInfo.error) {
+      const errorMessage = $testInfo.error.message?.split("\n")[0] ?? "Unknown";
+      console.log(`   에러: ${errorMessage}`);
+
+      // 실패한 Step 정보가 있으면 출력
+      if ($testInfo.error.stack) {
+        const stepMatch = $testInfo.error.stack.match(/at .*steps.*\.ts:(\d+)/);
+        if (stepMatch) {
+          console.log(`   위치: steps line ${stepMatch[1]}`);
+        }
+      }
+    }
   }
 });
 
 // ============================================
-// 테스트 분류별 Hook
+// 인증 Hooks
+// ============================================
+
+// 사용자 인증은 Given 스텝으로 처리 (common.steps.ts: "사용자가 로그인되어 있다")
+// 인증 쿠키는 storageState로 Playwright가 자동 관리
+
+Before({ tags: "@authenticated-admin" }, async ({ page }) => {
+  // admin 전용 테스트 - Mock 설정만 수행
+  // TODO: admin storageState 사용 시 playwright.config.ts 프로젝트 분리 필요
+  await setupAllMocks(page);
+});
+
+Before({ tags: "@unauthenticated" }, async ({ page }) => {
+  await setupAllMocks(page);
+  await page.context().clearCookies();
+});
+
+// ============================================
+// 테스트 분류 Hooks
+// ============================================
+
+Before({ tags: "@smoke" }, async () => {
+  console.log("   🔥 [Smoke]");
+});
+
+Before({ tags: "@regression" }, async () => {
+  console.log("   🔄 [Regression]");
+});
+
+Before({ tags: "@slow" }, async ({ $testInfo }) => {
+  $testInfo.setTimeout(60000);
+});
+
+// ============================================
+// 스킵 Hooks
+// ============================================
+
+Before({ tags: "@skip" }, async ({ $testInfo }) => {
+  $testInfo.skip();
+});
+
+Before({ tags: "@skip-ci" }, async ({ $testInfo }) => {
+  if (process.env.CI) {
+    $testInfo.skip();
+  }
+});
+
+// ============================================
+// 스크린샷 Hooks
 // ============================================
 
 /**
- * 스모크 테스트 (Smoke Test)
+ * UI 행동 패턴 정규식
  *
- * 시스템의 핵심 기능이 정상 동작하는지 빠르게 검증
- * - 페이지 로딩 여부
- * - 기본 UI 요소 표시 여부
- * - 필수 기능의 동작 여부
+ * 스크린샷을 캡처할 사용자 행동 패턴:
+ * - 행동 동사 + 종결어미 (-한다, -했다, -이다)
  *
- * 배포 직후 "시스템이 살아있는가?"를 확인하는 용도
- * 실패 시 시스템 자체에 심각한 문제가 있음을 의미
+ * 캡처 대상:
+ * - "클릭한다", "입력한다", "설정한다" (능동적 행동)
+ * - "클릭하여", "이동하여", "선택하여" (연결 동작)
+ * - "표시된다" (페이지 이동 결과 확인)
+ *
+ * 제외 대상:
+ * - "선택되어 있다" (상태 확인, UI 행동 아님)
+ * - "설정된" (과거 분사, 상태 확인)
+ */
+const UI_ACTION_PATTERN = /(클릭|입력|설정)한다|(클릭|이동|선택)하여|표시된다$/;
+
+/**
+ * UI 행동 스텝 실행 후 스크린샷 캡처
+ *
+ * @interaction 태그가 있는 시나리오에서 UI 행동(클릭, 이동, 입력 등) 후
+ * 자동으로 스크린샷을 찍어 리포트에 첨부합니다.
+ *
+ * When 키워드뿐 아니라 Given/And에서도 실제 UI 행동이면 캡처합니다.
  *
  * @example
- * @smoke
- * Scenario: 워크로드 목록 페이지 진입 시 기본 UI 표시
+ * // Feature 파일
+ * @interaction
+ * Scenario: 페이지네이션 테스트
+ *   When 이전 페이지 버튼을 클릭한다  <- 스크린샷 캡처 (클릭)
  */
-Before({ tags: "@smoke" }, async () => {
-  console.log("🔥 Smoke 테스트 실행");
-});
+AfterStep({ tags: "@interaction" }, async ({ page, $testInfo, $step }) => {
+  const isUiAction = UI_ACTION_PATTERN.test($step.title);
 
-/**
- * 회귀 테스트 (Regression Test)
- *
- * 기존 기능이 새로운 변경사항에 의해 영향받지 않았는지 검증
- * - 데이터 유효성 검증
- * - 복잡한 비즈니스 로직 검증
- * - 다양한 상태/조건 조합 테스트
- *
- * 코드 변경 후 기존 기능의 정상 동작을 확인하는 용도
- * 실패 시 특정 기능에 회귀(regression) 버그가 발생했음을 의미
- *
- * @example
- * @regression
- * Scenario: 워크로드 데이터 유효성 검증
- */
-Before({ tags: "@regression" }, async () => {
-  console.log("🔄 Regression 테스트 실행");
-});
+  if (isUiAction) {
+    await page.waitForTimeout(200);
 
-/**
- * 인증이 필요한 테스트를 위한 Hook
- * NextAuth CredentialsProvider API를 호출하여 실제 세션 생성
- */
-Before({ tags: "@authenticated" }, async ({ page }) => {
-  await authenticate(page, "admin");
-});
+    const screenshot = await page.screenshot();
+    const stepTitle = $step.title.slice(0, 50);
 
-/**
- * 일반 사용자로 인증이 필요한 테스트
- */
-Before({ tags: "@authenticated-user" }, async ({ page }) => {
-  await authenticate(page, "user");
+    await $testInfo.attach(`[Action] ${stepTitle}`, {
+      body: screenshot,
+      contentType: "image/png",
+    });
+  }
 });
-
-// 특정 태그의 테스트 스킵
-Before({ tags: "@skip" }, async () => "skipped");

@@ -4,7 +4,6 @@ import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 
 import { DisabledWorkloadJobTypeSort } from "@/domain/workload/components/list/disabled-workload-job-type-sort";
-import { DisabledWorkloadStatusSort } from "@/domain/workload/components/list/disabled-workload-status-sort";
 import {
   disabledWorkloadPageAtom,
   disabledWorkloadSearchTextAtom,
@@ -45,7 +44,6 @@ export function DisabledWorkloadListFilter({
   return (
     <MySearchFilter title="워크로드 목록" total={total}>
       <DisabledWorkloadJobTypeSort disabled={isLoading} />
-      <DisabledWorkloadStatusSort disabled={isLoading} />
       <SearchInput disabled={isLoading} onSearch={handleSearch} />
     </MySearchFilter>
   );

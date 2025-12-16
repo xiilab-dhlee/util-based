@@ -60,12 +60,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "잡 타입",
       align: "center",
       width: 100,
-      render: (jobType: WorkloadJobType, { id }: WorkloadListType) => {
+      render: (jobType: WorkloadJobType) => {
         return (
           <ColumnAlignCenterWrap>
             <span
               style={{ textTransform: "capitalize" }}
-              data-testid={WORKLOAD_SELECTOR.jobType(id)}
+              data-testid={WORKLOAD_SELECTOR.JOB_TYPE}
             >
               {jobType.toLowerCase()}
             </span>
@@ -78,9 +78,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "경과 시간",
       align: "center",
       width: 140,
-      render: (elapsedTime: string, { id }: WorkloadListType) => {
+      render: (elapsedTime: string) => {
         return (
-          <span data-testid={WORKLOAD_SELECTOR.elapsedTime(id)}>
+          <span data-testid={WORKLOAD_SELECTOR.ELAPSED_TIME}>
             {formatElapsedTime(elapsedTime)}
           </span>
         );

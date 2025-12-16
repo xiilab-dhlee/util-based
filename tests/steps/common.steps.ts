@@ -2,180 +2,191 @@ import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
-import {
-  clearAuthCookies,
-  getSession,
-  hasAuthCookie,
-  isAuthenticated,
-  loginAs,
-} from "../support/auth.helper";
-
-const { Given, Then } = createBdd();
+import { test } from "../fixtures";
+import { setupAllMocks } from "../support/mocks";
 
 /**
  * 공통 Step Definitions
  *
  * 여러 도메인에서 공통으로 사용되는 Step 정의
- * - 인증 관련 (로그인/로그아웃 상태)
+ * - 인증 관련
  * - 워크스페이스 관련
  * - URL 검증
+ * - 목록 페이지 공통
+ * - 탭 관련
+ *
+ * Page Objects:
+ * - workloadListPage: 워크로드 목록 페이지
+ * - workloadDetailPage: 워크로드 상세 페이지
+ * - monitoringPage: 모니터링 페이지
+ * - modal: 모달 조작
+ * - drawer: 드로어 조작
  */
+
+const { Given, When, Then } = createBdd(test);
 
 // ============================================
 // 인증 관련 Steps
 // ============================================
 
 /**
- * Given - 로그인 상태 확인 (일반 사용자)
- * NextAuth CredentialsProvider를 통해 실제 로그인 수행
- * 일반 사용자로 로그인하여 /user/* 경로에 접근 가능
+ * 사용자 인증 Step
+ *
+ * globalSetup에서 storageState로 인증 상태가 저장되어 있고,
+ * playwright.config.ts에서 자동으로 로드됩니다.
+ *
+ * 이 Step에서는 API Mock 설정만 수행합니다.
+ * 인증 쿠키는 Playwright가 자동으로 관리합니다.
  */
-Given("사용자는 로그인 상태이다", async ({ page }) => {
-  // NextAuth API를 통해 실제 로그인 수행 (user 사용자)
-  await loginAs(page.context(), "user");
-
-  // 세션 쿠키가 설정되었는지 확인
-  const hasCookie = await hasAuthCookie(page);
-  expect(hasCookie).toBeTruthy();
-
-  // 세션 API를 통해 인증 상태 검증
-  const authenticated = await isAuthenticated(page);
-  expect(authenticated).toBeTruthy();
-
-  // 세션 사용자 정보 확인
-  const session = await getSession(page);
-  expect(session).not.toBeNull();
-  expect(session?.preferred_username).toBe("user");
+Given("사용자가 로그인되어 있다", async ({ page }) => {
+  await setupAllMocks(page);
 });
 
-/**
- * Given - 로그인하지 않은 상태
- */
-Given("사용자는 로그인하지 않은 상태이다", async ({ page }) => {
-  // 모든 인증 쿠키 제거
-  await clearAuthCookies(page.context());
+// ============================================
+// 페이지 위치 관련 Steps
+// ============================================
 
-  // 세션 쿠키가 없는지 확인
-  const hasCookie = await hasAuthCookie(page);
-  expect(hasCookie).toBeFalsy();
-
-  // 세션 API로 인증 상태 확인
-  const authenticated = await isAuthenticated(page);
-  expect(authenticated).toBeFalsy();
+Given("모니터링 페이지에 있다", async ({ monitoringPage }) => {
+  await monitoringPage.goto();
 });
 
-/**
- * Then - 로그인 페이지 리다이렉트 확인
- */
-Then("로그인 페이지로 리다이렉트된다", async ({ page }) => {
-  await expect(page).toHaveURL(/\/(login|signin|auth)/i, { timeout: 10000 });
+Given("활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
+  await workloadListPage.goto();
 });
+
+Given("비활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
+  await workloadListPage.gotoDisabled();
+});
+
+Given(
+  "워크로드 상세 페이지에 있다",
+  async ({ workloadDetailPage, workloadId, workspaceId }) => {
+    await workloadDetailPage.gotoWorkload(workloadId, workspaceId);
+  },
+);
 
 // ============================================
 // 워크스페이스 관련 Steps
 // ============================================
 
-/**
- * Given/And - 워크스페이스 선택 상태 확인
- */
-Given("워크스페이스가 선택되어 있다", async ({ page }) => {
+Given("워크스페이스가 선택되어 있다", async ({ page, assertLogger }) => {
   const workspaceSelectValue = page.locator(
     testId(SELECTOR.WORKSPACE_SELECT_VALUE),
   );
-
   await expect(workspaceSelectValue).toBeVisible({ timeout: 10000 });
 
   const workspaceText = await workspaceSelectValue.textContent();
-  expect(workspaceText).toBeTruthy();
-  expect(workspaceText?.trim().length).toBeGreaterThan(0);
-});
-
-/**
- * And - 워크스페이스 미선택 상태 확인
- */
-Given("워크스페이스가 선택되어 있지 않다", async ({ page }) => {
-  const placeholder = page.locator(
-    testId(SELECTOR.WORKSPACE_SELECT_PLACEHOLDER),
-  );
-  await expect(placeholder).toBeVisible({ timeout: 10000 });
+  assertLogger.assertNotEmpty("워크스페이스", workspaceText);
 });
 
 // ============================================
 // URL 관련 Steps
 // ============================================
 
-/**
- * Then - URL 검증 (정확히 일치)
- */
-Then("URL이 {string}이다", async ({ page }, expectedUrl: string) => {
-  await expect(page).toHaveURL(new RegExp(expectedUrl));
-});
-
-/**
- * Then - URL 포함 검증
- */
 Then("URL이 {string}를 포함한다", async ({ page }, expectedUrl: string) => {
-  await expect(page).toHaveURL(new RegExp(expectedUrl));
+  const regexPattern = expectedUrl
+    .replace(/\[[\w]+\]/g, "[\\w-]+")
+    .replace(/\//g, "\\/")
+    .replace(/\?/g, "\\?");
+
+  await expect(page).toHaveURL(new RegExp(regexPattern));
 });
 
-/**
- * Then - URL 일치 검증 (경로 끝 부분이 정확히 일치)
- */
 Then("URL이 {string}와 일치한다", async ({ page }, expectedUrl: string) => {
-  await expect(page).toHaveURL(new RegExp(`${expectedUrl}$`));
-});
+  const regexPattern = expectedUrl
+    .replace(/\[[\w]+\]/g, "[\\w-]+")
+    .replace(/\//g, "\\/");
 
-/**
- * Then - 네비게이션 메뉴 활성화 상태 확인
- * Ant Design Menu의 선택된 메뉴 아이템 텍스트 검증
- */
-Then(
-  "네비게이션 메뉴 중 {string} 메뉴가 활성화되어 있다",
-  async ({ page }, menuName: string) => {
-    const selectedMenu = page.locator(
-      ".ant-menu-item-selected .ant-menu-title-content",
-    );
-    await expect(selectedMenu).toBeVisible({ timeout: 10000 });
-    await expect(selectedMenu).toHaveText(menuName);
-  },
-);
+  await expect(page).toHaveURL(new RegExp(`${regexPattern}(\\?.*)?$`));
+});
 
 // ============================================
 // 목록 페이지 공통 Steps
 // ============================================
 
-/**
- * Then - 목록 테이블 표시 확인
- */
-Then("목록 테이블이 표시된다", async ({ page }) => {
-  const table = page.locator(testId(SELECTOR.LIST_TABLE));
-  await expect(table).toBeVisible({ timeout: 10000 });
+Then("목록 테이블이 표시된다", async ({ workloadListPage }) => {
+  await workloadListPage.assertTableVisible();
 });
 
-/**
- * Then - 목록에 총 개수 표시 확인
- */
-Then("목록에 총 개수가 표시된다", async ({ page }) => {
-  const totalCount = page.locator(testId(SELECTOR.LIST_TOTAL_COUNT));
-  await expect(totalCount).toBeVisible({ timeout: 10000 });
+// ============================================
+// 탭 관련 Steps
+// ============================================
 
-  const text = await totalCount.textContent();
-  expect(text).toMatch(/총\s*\d+/);
+Then("{string} 탭이 활성화되어 있다", async ({ tabs }, tabName: string) => {
+  await tabs.assertTabEnabled(tabName);
 });
 
-/**
- * Then - 페이지네이션 표시 확인
- */
-Then("페이지네이션이 표시된다", async ({ page }) => {
-  const pagination = page.locator(testId(SELECTOR.LIST_PAGINATION));
-  await expect(pagination).toBeVisible({ timeout: 10000 });
+Then("{string} 탭이 비활성화되어 있다", async ({ tabs }, tabName: string) => {
+  await tabs.assertTabDisabled(tabName);
 });
 
-/**
- * Then - 검색창 빈 값 확인
- */
-Then("검색창이 빈 값으로 표시된다", async ({ page }) => {
-  const searchInput = page.locator(testId(SELECTOR.LIST_SEARCH_INPUT));
-  await expect(searchInput).toBeVisible({ timeout: 10000 });
-  await expect(searchInput).toHaveValue("");
+// ============================================
+// 모달 관련 Steps
+// ============================================
+
+Then("확인 모달이 표시된다", async ({ modal }) => {
+  await modal.waitForVisible();
+});
+
+Then("확인 모달이 닫힌다", async ({ modal }) => {
+  await modal.waitForHidden();
+});
+
+When("확인 모달의 확인 버튼을 클릭한다", async ({ modal }) => {
+  await modal.clickOk();
+});
+
+When("확인 모달의 취소 버튼을 클릭한다", async ({ modal }) => {
+  await modal.clickCancel();
+});
+
+// ============================================
+// 드로어 관련 Steps
+// ============================================
+
+Then("{string} 드로어가 표시된다", async ({ drawer }, drawerTitle: string) => {
+  await drawer.waitForVisible();
+  await drawer.assertTitle(drawerTitle);
+});
+
+Then("드로어가 닫힌다", async ({ drawer }) => {
+  await drawer.waitForHidden();
+});
+
+When(
+  /^드로어의 "(취소|이전 단계)" 버튼을 클릭한다$/,
+  async ({ drawer }, buttonText: string) => {
+    await drawer.clickButton(buttonText);
+  },
+);
+
+// ============================================
+// Step 진행 상태 (공통)
+// ============================================
+
+/** Step 번호와 조상 클래스 매핑 */
+const STEP_CLASS_MAP: Record<number, string> = {
+  1: "first-step",
+  2: "middle-step",
+  3: "middle-step",
+  4: "last-step",
+};
+
+/** Step 번호와 텍스트 매핑 */
+const STEP_TEXT_MAP: Record<number, string> = {
+  1: "01",
+  2: "02",
+  3: "03",
+  4: "04",
+};
+
+Then(/^현재 Step이 (\d+)이다$/, async ({ page }, stepNum: number) => {
+  const stepClass = STEP_CLASS_MAP[stepNum];
+  const stepText = STEP_TEXT_MAP[stepNum];
+
+  // 조상에 active와 step-class가 공존하고, step-title에 해당 텍스트가 있는지 확인
+  const activeStep = page.locator(
+    `.${stepClass}.active .step-title:text("${stepText}")`,
+  );
+  await expect(activeStep).toBeVisible({ timeout: 10000 });
 });

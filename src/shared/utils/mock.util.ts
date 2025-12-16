@@ -1,6 +1,6 @@
 import { generateMock } from "@anatine/zod-mock";
 import { faker } from "@faker-js/faker";
-import type { ZodTypeAny } from "zod";
+import type { ZodTypeAny, z } from "zod";
 
 // stringMap: z.string() 타입의 특정 키에 대한 mock 데이터 생성 함수
 // stringMap은 최우선순위로 처리되어 z.string().datetime() 같은 타입도 오버라이드 가능
@@ -46,10 +46,17 @@ const stringMap: Record<string, () => string> = {
 };
 
 // zod schema 기반으로 mock 데이터 생성
-export function makeMock<T extends ZodTypeAny>(schema: T) {
+export function makeMock<T extends ZodTypeAny>(
+  schema: T,
+  override?: Partial<z.infer<T>>,
+): z.infer<T> {
   const mock = generateMock(schema, {
     stringMap,
   });
+
+  if (override) {
+    return { ...mock, ...override };
+  }
 
   return mock;
 }

@@ -7,6 +7,7 @@ import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.sche
 import { RefreshIcon } from "@/shared/components/icon/refresh-icon";
 import { WorkloadStatusText } from "@/shared/components/text/workload-status-text";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   DetailIntroCardBody,
@@ -76,31 +77,50 @@ export function WorkloadIntroCard({
       <DetailIntroCardHeader>
         {/* 워크로드 이름 표시 영역 */}
         <DetailIntroCardTitle>
-          <span className="truncate">{workloadName}</span>
+          <span
+            className="truncate"
+            data-testid={WORKLOAD_SELECTOR.DETAIL_NAME}
+          >
+            {workloadName || "-"}
+          </span>
         </DetailIntroCardTitle>
         {/* 도구 버튼 영역 */}
         <ToolBox>
           {/* 워크로드 수정 버튼 */}
-          <IconWrapper onClick={handleModify}>
+          <IconWrapper
+            onClick={handleModify}
+            data-testid={WORKLOAD_SELECTOR.DETAIL_EDIT_BUTTON}
+          >
             <Icon name="Edit02" color="var(--icon-fill)" size={24} />
             <span className="sr-only">워크로드 설명, 라벨 수정</span>
           </IconWrapper>
           {/* 워크로드 전원 제어 버튼 */}
           {isCompleted ? (
-            <IconWrapper onClick={handleRestart}>
+            <IconWrapper
+              onClick={handleRestart}
+              data-testid={WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON}
+            >
               <RefreshIcon width={20} height={20} fill="var(--icon-fill)" />
-              <span className="sr-only">워크로드 전원 On</span>
+              <span className="sr-only">워크로드 재시작</span>
             </IconWrapper>
           ) : (
-            <IconWrapper onClick={handleStop}>
+            <IconWrapper
+              onClick={handleStop}
+              data-testid={WORKLOAD_SELECTOR.DETAIL_STOP_BUTTON}
+            >
               <Icon name="Power" color="var(--icon-fill)" size={24} />
-              <span className="sr-only">워크로드 전원 Off</span>
+              <span className="sr-only">워크로드 종료</span>
             </IconWrapper>
           )}
-          <IconWrapper onClick={handleDelete}>
-            <Icon name="Delete" color="var(--icon-fill)" size={24} />
-            <span className="sr-only">워크로드 삭제</span>
-          </IconWrapper>
+          {isCompleted && (
+            <IconWrapper
+              onClick={handleDelete}
+              data-testid={WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON}
+            >
+              <Icon name="Delete" color="var(--icon-fill)" size={24} />
+              <span className="sr-only">워크로드 삭제</span>
+            </IconWrapper>
+          )}
         </ToolBox>
       </DetailIntroCardHeader>
 
@@ -130,7 +150,11 @@ export function WorkloadIntroCard({
             <DetailIntroCardRowTitle>워크로드 설명</DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
           {/* 워크로드 설명 텍스트 (스크롤 가능) */}
-          <DetailIntroCardDescription>{description}</DetailIntroCardDescription>
+          <DetailIntroCardDescription
+            data-testid={WORKLOAD_SELECTOR.DETAIL_DESCRIPTION}
+          >
+            {description || "-"}
+          </DetailIntroCardDescription>
         </DetailIntroCardDescriptionRow>
 
         {/* 워크로드 라벨 정보 행 */}

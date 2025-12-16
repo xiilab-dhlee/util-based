@@ -31,6 +31,21 @@ export const SELECTOR = {
   WORKSPACE_SELECT_VALUE: "workspace-select-value",
   /** 워크스페이스 미선택 placeholder */
   WORKSPACE_SELECT_PLACEHOLDER: "workspace-select-placeholder",
+
+  // 모달 (Ant Design Modal 기반)
+  /** 모달 컨테이너 (visible) */
+  MODAL: ".ant-modal:visible",
+  /** 모달 확인 버튼 (footer의 마지막 버튼) */
+  MODAL_OK_BUTTON: ".ant-modal:visible .ant-modal-footer button:last-child",
+  /** 모달 취소 버튼 (footer의 첫 번째 버튼) */
+  MODAL_CANCEL_BUTTON:
+    ".ant-modal:visible .ant-modal-footer button:first-child",
+
+  // 드로어 (Ant Design Drawer 기반)
+  /** 드로어 컨테이너 (열린 상태) */
+  DRAWER: ".ant-drawer-open",
+  /** 드로어 닫기 버튼 */
+  DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
 } as const;
 
 // ============================================
@@ -44,14 +59,14 @@ export const WORKLOAD_SELECTOR = {
   /** 워크로드 상세 페이지 헤더 */
   PAGE_HEADER_DETAIL: "user.workload.detail",
 
-  // 목록 테이블 데이터 (동적)
-  /** 워크로드 이름 링크 - workload-name-{id} */
-  name: (id: string | number) => `workload-name-${id}`,
-  /** 잡 타입 텍스트 - workload-job-type-{id} */
-  jobType: (id: string | number) => `workload-job-type-${id}`,
-  /** 경과 시간 - workload-elapsed-time-{id} */
-  elapsedTime: (id: string | number) => `workload-elapsed-time-${id}`,
-  /** 상태 라벨 - workload-status-{status} */
+  // 목록 테이블 데이터
+  /** 워크로드 이름 링크 */
+  NAME: "workload-name",
+  /** 잡 타입 텍스트 */
+  JOB_TYPE: "workload-job-type",
+  /** 경과 시간 */
+  ELAPSED_TIME: "workload-elapsed-time",
+  /** 상태 라벨 - workload-status-{status} (상태별 필터링용) */
   status: (status: string) => `workload-status-${status}`,
 
   // 액션 버튼
@@ -76,10 +91,6 @@ export const WORKLOAD_SELECTOR = {
   /** 상태 필터 */
   FILTER_STATUS: "workload-filter-status",
 
-  // 검색 폼
-  /** 비활성화 워크로드 검색 폼 */
-  DISABLED_LIST_SEARCH_FORM: "workload-disabled-list-search-form",
-
   // 로그 페이지
   /** 로그 페이지 컨테이너 */
   LOG_PAGE: "workload-log-page",
@@ -93,8 +104,6 @@ export const WORKLOAD_SELECTOR = {
   LOG_THEME_BUTTON: "workload-log-theme-button",
 
   // 웹터미널 페이지
-  /** 웹터미널 페이지 컨테이너 */
-  TERMINAL_PAGE: "workload-terminal-page",
   /** 웹터미널 영역 (xterm) */
   TERMINAL_CONTAINER: "workload-terminal-container",
   /** 모니터링 버튼 (웹터미널 페이지 상단) */
@@ -107,6 +116,132 @@ export const WORKLOAD_SELECTOR = {
   MONITORING_CONTENT: "workload-monitoring-content",
   /** 모니터링 차트 카드 (동적) - workload-monitoring-chart-{type} */
   monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
+
+  // 상세 페이지 - 좌측 요약 패널
+  /** 워크로드 이름 (상세) */
+  DETAIL_NAME: "workload-detail-name",
+  /** 워크로드 설명 */
+  DETAIL_DESCRIPTION: "workload-detail-description",
+  /** 수정 버튼 (상세) */
+  DETAIL_EDIT_BUTTON: "workload-detail-edit-button",
+  /** 종료 버튼 (상세) */
+  DETAIL_STOP_BUTTON: "workload-detail-stop-button",
+  /** 재시작 버튼 (상세) */
+  DETAIL_RESTART_BUTTON: "workload-detail-restart-button",
+  /** 삭제 버튼 (상세) */
+  DETAIL_DELETE_BUTTON: "workload-detail-delete-button",
+  /** 복제 버튼 (상세) */
+  DETAIL_CLONE_BUTTON: "workload-detail-clone-button",
+
+  // 상세 페이지 - 이벤트 이력
+  /** 이벤트 카드 */
+  EVENT_CARD: "workload-event-card",
+  /** 이벤트 상태 - workload-event-status-{status} (상태별 필터링용) */
+  eventStatus: (status: string) => `workload-event-status-${status}`,
+  /** 이벤트 경과 시간 */
+  EVENT_ELAPSED_TIME: "workload-event-elapsed-time",
+  /** 이벤트 From */
+  EVENT_FROM: "workload-event-from",
+  /** 이벤트 메시지 */
+  EVENT_MESSAGE: "workload-event-message",
+
+  // 상세 페이지 - 소스코드
+  /** 소스코드 카드 */
+  SOURCECODE_CARD: "workload-source-code-card",
+  /** 소스코드 상태 - workload-source-code-status-{status} (상태별 필터링용) */
+  sourcecodeStatus: (status: string) => `workload-source-code-status-${status}`,
+  /** 소스코드 기본 경로 */
+  SOURCECODE_PATH: "workload-source-code-path",
+  /** 소스코드 타입 - workload-source-code-type-{type} (타입별 필터링용) */
+  sourcecodeType: (type: string) => `workload-source-code-type-${type}`,
+  /** 소스코드 Git URL */
+  SOURCECODE_URL: "workload-source-code-url",
+
+  // 상세 페이지 - 볼륨
+  /** 볼륨 카드 */
+  VOLUME_CARD: "workload-volume-card",
+  /** 볼륨 상태 - workload-volume-status-{status} (상태별 필터링용) */
+  volumeStatus: (status: string) => `workload-volume-status-${status}`,
+  /** 볼륨 스토리지 타입 - workload-volume-storage-type-{type} */
+  volumeStorageType: (type: string) => `workload-volume-storage-type-${type}`,
+  /** 볼륨 경로 */
+  VOLUME_PATH: "workload-volume-path",
+  /** 볼륨 크기 */
+  VOLUME_SIZE: "workload-volume-size",
+
+  // 상세 페이지 - 상세정보 탭 내용
+  /** 잡 타입 명 */
+  DETAIL_JOB_TYPE_NAME: "workload-detail-job-type-name",
+  /** 잡 타입 IDE */
+  DETAIL_JOB_TYPE_IDE: "workload-detail-job-type-ide",
+  /** 노드 타입 명 */
+  DETAIL_NODE_TYPE_NAME: "workload-detail-node-type-name",
+  /** 이미지 타입 */
+  DETAIL_IMAGE_TYPE: "workload-detail-image-type",
+  /** 이미지 이름 */
+  DETAIL_IMAGE_NAME: "workload-detail-image-name",
+  /** Commit Image 생성 버튼 */
+  DETAIL_COMMIT_IMAGE_BUTTON: "workload-detail-commit-image-button",
+
+  // Commit Image 생성 모달
+  /** Commit Image 이름 입력 */
+  COMMIT_IMAGE_NAME_INPUT: "workload-commit-image-name-input",
+  /** Commit Image 태그 입력 */
+  COMMIT_IMAGE_TAG_INPUT: "workload-commit-image-tag-input",
+
+  /** 보안검사 결과 */
+  DETAIL_SECURITY_LEVEL_CRITICAL: "workload-detail-security-level-critical",
+  DETAIL_SECURITY_LEVEL_HIGH: "workload-detail-security-level-high",
+  DETAIL_SECURITY_LEVEL_MEDIUM: "workload-detail-security-level-medium",
+  DETAIL_SECURITY_LEVEL_LOW: "workload-detail-security-level-low",
+  /** 실행 경로 */
+  DETAIL_EXEC_PATH: "workload-detail-exec-path",
+  /** 실행 명령어 */
+  DETAIL_EXEC_COMMAND: "workload-detail-exec-command",
+  /** 환경변수 키 */
+  ENV_KEY: "workload-env-key",
+  /** 환경변수 값 */
+  ENV_VALUE: "workload-env-value",
+  /** 포트 이름 */
+  PORT_NAME: "workload-port-name",
+  /** 포트 번호 */
+  PORT_VALUE: "workload-port-value",
+  /** 접속 URL */
+  PORT_URL: "workload-port-url",
+  /** 선택한 GPU */
+  DETAIL_GPU_TYPE: "workload-detail-gpu-type",
+  DETAIL_GPU_NAME: "workload-detail-gpu-name",
+  DETAIL_GPU_MEMORY_GB: "workload-detail-gpu-memory-gb",
+  /** GPU 리소스 값 */
+  DETAIL_GPU_COUNT: "workload-detail-gpu-count",
+  /** CPU 리소스 값 */
+  DETAIL_CPU_CORE: "workload-detail-cpu-core",
+  /** Memory 리소스 값 */
+  DETAIL_MEMORY_GB: "workload-detail-memory-gb",
+  /** 생성자 정보 */
+  DETAIL_CREATOR: "workload-detail-creator",
+  /** 생성일 */
+  DETAIL_CREATED_DATE: "workload-detail-created-date",
+
+  // 생성 드로어
+  /** 최근 워크로드 가져오기 버튼 */
+  CREATE_RECENT_IMPORT_BUTTON: "workload-create-recent-import-button",
+  /** 워크로드 목록에서 가져오기 버튼 */
+  CREATE_LIST_IMPORT_BUTTON: "workload-create-list-import-button",
+  /** 워크로드 Job Type */
+  CREATE_JOB_TYPE: "workload-create-job-type",
+  /** 워크로드 이름 입력창 */
+  CREATE_NAME: "workload-create-name",
+  /** 워크로드 설명 입력창 */
+  CREATE_DESCRIPTION: "workload-create-description",
+  /** 워크로드 생성하기 버튼 */
+  CREATE_BUTTON: "workload-create-button",
+
+  // 수정 모달
+  /** 수정 모달 이름 입력 */
+  UPDATE_NAME_INPUT: "workload-update-name-input",
+  /** 수정 모달 설명 입력 */
+  UPDATE_DESCRIPTION_INPUT: "workload-update-description-input",
 } as const;
 
 // ============================================

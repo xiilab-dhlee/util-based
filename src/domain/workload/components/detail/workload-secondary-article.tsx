@@ -15,6 +15,7 @@ import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-car
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   DetailContentArticle,
@@ -53,14 +54,16 @@ export function WorkloadSecondaryArticle() {
         <KeyValueContainer className="connect">
           <ImageKey>이미지</ImageKey>
           <Value>
-            <ImageName>
+            <ImageName data-testid={WORKLOAD_SELECTOR.DETAIL_IMAGE_TYPE}>
               <IconWrapper>
                 <Icon name={icon} color="var(--icon-fill)" size={18} />
               </IconWrapper>
               {label}
             </ImageName>
             <div>
-              <Code>{data?.image.name}</Code>
+              <Code data-testid={WORKLOAD_SELECTOR.DETAIL_IMAGE_NAME}>
+                {data?.image.name}
+              </Code>
             </div>
           </Value>
         </KeyValueContainer>
@@ -70,6 +73,7 @@ export function WorkloadSecondaryArticle() {
             <CreateModelButton
               onClick={handleClickCommitImage}
               title="Commit Image 생성"
+              data-testid={WORKLOAD_SELECTOR.DETAIL_COMMIT_IMAGE_BUTTON}
             />
           </Value>
         </KeyValueContainer>
@@ -78,21 +82,37 @@ export function WorkloadSecondaryArticle() {
           <Value>
             <SecurityStatuses>
               <SecurityLevelText type="engText" status="CRITICAL">
-                <SecurityCount>7,777개</SecurityCount>
+                <SecurityCount
+                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_CRITICAL}
+                >
+                  {data?.scanResult?.critical?.toLocaleString() || "-"}개
+                </SecurityCount>
               </SecurityLevelText>
               <SecurityLevelText type="engText" status="HIGH">
-                <SecurityCount>7,777개</SecurityCount>
+                <SecurityCount
+                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_HIGH}
+                >
+                  {data?.scanResult?.high?.toLocaleString() || "-"}개
+                </SecurityCount>
               </SecurityLevelText>
               <SecurityLevelText type="engText" status="MEDIUM">
-                <SecurityCount>7,777개</SecurityCount>
+                <SecurityCount
+                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_MEDIUM}
+                >
+                  {data?.scanResult?.medium?.toLocaleString() || "-"}개
+                </SecurityCount>
               </SecurityLevelText>
               <SecurityLevelText type="engText" status="LOW">
-                <SecurityCount>7,777개</SecurityCount>
+                <SecurityCount
+                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_LOW}
+                >
+                  {data?.scanResult?.low?.toLocaleString() || "-"}개
+                </SecurityCount>
               </SecurityLevelText>
             </SecurityStatuses>
           </Value>
         </KeyValueContainer>
-        <DetailContentSubTitle>Output</DetailContentSubTitle>
+        {/* <DetailContentSubTitle>Output</DetailContentSubTitle>
         <KeyValueContainer className="split">
           <LeftKey>Output 경로</LeftKey>
           <Value>
@@ -102,21 +122,21 @@ export function WorkloadSecondaryArticle() {
               --epoch=120 --learning_rate=0.01
             </Text>
           </Value>
-        </KeyValueContainer>
+        </KeyValueContainer> */}
         <DetailContentSubTitle>실행 경로, 실행 명령어</DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <LeftKey>실행 경로</LeftKey>
           <Value>
-            <Text>python train.py -</Text>
+            <Text data-testid={WORKLOAD_SELECTOR.DETAIL_EXEC_PATH}>
+              {data?.execPath || "-"}
+            </Text>
           </Value>
         </KeyValueContainer>
         <KeyValueContainer className="split">
           <LeftKey>실행 명령어</LeftKey>
           <Value>
-            <Text>
-              python train.py --save_model_dir=/input/ASTRAGO
-              --data_dir=/tmp/test/data.yaml --image_size=640 --batch=16
-              --epoch=120 --learning_rate=0.01
+            <Text data-testid={WORKLOAD_SELECTOR.DETAIL_EXEC_COMMAND}>
+              {data?.execCommand || "-"}
             </Text>
           </Value>
         </KeyValueContainer>
@@ -146,13 +166,15 @@ export function WorkloadSecondaryArticle() {
         <KeyValueContainer className="connect">
           <LeftKey>생성자</LeftKey>
           <Value>
-            <Text>{data?.creatorName}</Text>
+            <Text data-testid={WORKLOAD_SELECTOR.DETAIL_CREATOR}>
+              {data?.creatorName || "-"}
+            </Text>
           </Value>
         </KeyValueContainer>
         <KeyValueContainer className="connect">
           <LeftKey>생성일</LeftKey>
           <Value>
-            <Text>
+            <Text data-testid={WORKLOAD_SELECTOR.DETAIL_CREATED_DATE}>
               {data?.creatorDate
                 ? format(data?.creatorDate, "yyyy.MM.dd")
                 : "-"}
@@ -166,8 +188,22 @@ export function WorkloadSecondaryArticle() {
           <RightKey>선택한 GPU</RightKey>
           <Value>
             <Codes>
-              <Code>MPS | Tesla-V100-PCIE-32GB-SHARED</Code>
-              <Code>vs-code:torch2.0.1-tensorflow2.11.0-cuda11.7</Code>
+              <Code>
+                <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_TYPE}>
+                  {data?.gpuType || ""}
+                </span>
+                &nbsp;|&nbsp;
+                <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_NAME}>
+                  {data?.gpuName || ""}
+                </span>
+              </Code>
+              <Code>
+                GPU-MEM |&nbsp;
+                <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_MEMORY_GB}>
+                  {data?.gpuMemoryGb ?? ""}
+                </span>
+                GB
+              </Code>
             </Codes>
           </Value>
         </KeyValueContainer>
@@ -176,13 +212,31 @@ export function WorkloadSecondaryArticle() {
           <Value>
             <Resources>
               <Resource>
-                GPU<ResourceCount>7,777개</ResourceCount>
+                GPU
+                <ResourceCount>
+                  <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_COUNT}>
+                    {data?.gpuCount ?? ""}
+                  </span>
+                  개
+                </ResourceCount>
               </Resource>
               <Resource>
-                CPU<ResourceCount>7,777Core</ResourceCount>
+                CPU
+                <ResourceCount>
+                  <span data-testid={WORKLOAD_SELECTOR.DETAIL_CPU_CORE}>
+                    {data?.cpuCore ?? ""}
+                  </span>
+                  Core
+                </ResourceCount>
               </Resource>
               <Resource>
-                MEM<ResourceCount>7,777GB</ResourceCount>
+                MEM
+                <ResourceCount>
+                  <span data-testid={WORKLOAD_SELECTOR.DETAIL_MEMORY_GB}>
+                    {data?.memoryGb ?? ""}
+                  </span>
+                  GB
+                </ResourceCount>
               </Resource>
             </Resources>
           </Value>

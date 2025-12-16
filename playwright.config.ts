@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
@@ -10,6 +11,12 @@ const testDir = defineBddConfig({
   ],
 });
 
+// 인증 상태 파일 경로 (일반 사용자 기본)
+const USER_AUTH_STATE = path.join(__dirname, "tests/.auth/user.json");
+
+// CI 환경 여부
+const isCI = !!process.env.CI;
+
 /**
  * Playwright 설정
  * @see https://playwright.dev/docs/test-configuration
@@ -17,20 +24,43 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir, // BDD 설정에서 생성된 testDir 사용
 
+  /* 전역 설정 - 테스트 시작 전 1회 실행 (인증 상태 저장) */
+  globalSetup: require.resolve("./tests/global-setup"),
+
   /* 병렬 실행 설정 */
   fullyParallel: true,
 
   /* CI 환경에서만 실패 시 재시도 */
-  retries: process.env.CI ? 2 : 0,
+  retries: isCI ? 2 : 0,
 
-  /* CI에서는 병렬 처리 비활성화, 로컬에서는 CPU 코어 수만큼 병렬 실행 */
-  workers: process.env.CI ? 1 : 2,
+  /* Worker 설정: CI는 CPU 코어의 50%, 로컬은 1 */
+  workers: isCI ? "50%" : 1,
 
   /* 리포터 설정 */
   reporter: [
-    // ["html", { outputFolder: "tests/reports/playwright-html" }],
-    // ["json", { outputFile: "tests/reports/playwright-json/results.json" }],
     ["list"],
+    ["html", { outputFolder: "tests/reports/playwright-html", open: "never" }],
+    [
+      "allure-playwright",
+      {
+        outputFolder: "allure-results",
+        suiteTitle: true, // Feature 이름을 Suite로 표시
+        detail: true, // Step 상세 정보 포함
+        categories: [
+          // 실패 분류
+          {
+            name: "Timeout errors",
+            matchedStatuses: ["broken"],
+            messageRegex: ".*Timeout.*",
+          },
+          {
+            name: "Element not found",
+            matchedStatuses: ["broken"],
+            messageRegex: ".*locator.*",
+          },
+        ],
+      },
+    ],
   ],
 
   /* 모든 테스트에 공통으로 적용되는 설정 */
@@ -42,7 +72,7 @@ export default defineConfig({
     trace: "retain-on-failure",
 
     /* 비디오 녹화 설정 */
-    video: "retain-on-failure",
+    // video: "retain-on-failure",
 
     /* Base URL - 개발 서버 주소 */
     baseURL: process.env.BASE_URL || "http://localhost:3000",
@@ -61,6 +91,8 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
+        // globalSetup에서 저장한 인증 상태 재사용
+        storageState: USER_AUTH_STATE,
       },
     },
 
@@ -93,17 +125,19 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    command: "pnpm dev",
+    // CI: 프로덕션 빌드 후 실행, 로컬: 개발 서버
+    command: isCI ? "pnpm build && pnpm start" : "pnpm dev",
     url: "http://localhost:3000",
-    reuseExistingServer: true,
-    timeout: 30 * 1000,
+    reuseExistingServer: !isCI,
+    // CI 빌드 시간 고려하여 타임아웃 증가
+    timeout: isCI ? 120 * 1000 : 30 * 1000,
   },
 
-  /* 테스트 타임아웃 설정 (기본값: 30초) */
-  timeout: 30000,
+  /* 테스트 타임아웃 설정 */
+  timeout: 20000,
 
-  /* 각 테스트의 expect 타임아웃 (기본값: 5초) */
+  /* 각 테스트의 expect 타임아웃 */
   expect: {
-    timeout: 10000,
+    timeout: 5000,
   },
 });

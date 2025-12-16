@@ -2,8 +2,7 @@
 
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
-import styled from "styled-components";
-import { Button, Checkbox } from "xiilab-ui";
+import { Button } from "xiilab-ui";
 
 import { SourcecodeTypeSort } from "@/domain/sourcecode/components/sourcecode-type-sort";
 import {
@@ -14,6 +13,7 @@ import {
 } from "@/domain/sourcecode/state/sourcecode.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
 interface SourcecodeListFilterProps {
@@ -56,54 +56,21 @@ export function SourcecodeListFilter({
 
   return (
     <MySearchFilter title="소스코드 목록" total={total}>
-      <Container>
-        <Left>
-          <Checkbox size="small">내가 생성한 소스코드 보기</Checkbox>
-        </Left>
-        <Right>
-          <SourcecodeTypeSort disabled={loading} />
-          <SearchInput disabled={loading} onSearch={handleSearch} />
-          <Button
-            color="primary"
-            icon="Plus"
-            iconPosition="left"
-            variant="gradient"
-            width={120}
-            height={30}
-            onClick={handleCreateSourcecode}
-            disabled={loading}
-          >
-            소스코드 생성
-          </Button>
-        </Right>
-      </Container>
+      <MyItemsOnlySwitch checked={true} />
+      <SourcecodeTypeSort disabled={loading} />
+      <SearchInput disabled={loading} onSearch={handleSearch} />
+      <Button
+        color="primary"
+        icon="Plus"
+        iconPosition="left"
+        variant="gradient"
+        width={120}
+        height={30}
+        onClick={handleCreateSourcecode}
+        disabled={loading}
+      >
+        소스코드 생성
+      </Button>
     </MySearchFilter>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex: 1;
-`;
-
-const Left = styled.div`
-  padding-left: 10px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-
-  & .ant-checkbox-label {
-    padding-left: 0;
-    margin-left: 4px !important;
-    line-height: 16px;
-  }
-`;
-
-const Right = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 6px;
-`;

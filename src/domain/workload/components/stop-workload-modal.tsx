@@ -40,14 +40,16 @@ export function StopWorkloadModal() {
       return;
     }
 
+    onClose();
+
     // 워크로드 종료 실행
-    stopWorkload.mutate(stopWorkloadId, {
-      onSuccess: () => {
-        toast.success("워크로드 종료 완료");
-        // 모달 닫기
-        onClose();
-      },
-    });
+    // stopWorkload.mutate(stopWorkloadId, {
+    //   onSuccess: () => {
+    //     toast.success("워크로드 종료 완료");
+    //     // 모달 닫기
+    //     onClose();
+    //   },
+    // });
   };
 
   /**

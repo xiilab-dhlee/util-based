@@ -61,7 +61,6 @@ const Header = styled.div`
 const Title = styled(ListSectionTitle)``;
 
 const TitleExtra = styled.span`
-  font-family: Pretendard;
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
@@ -70,5 +69,4 @@ const TitleExtra = styled.span`
 
 const Body = styled(ScrollShadowContainer)`
   flex: 1;
-  gap: 8px;
 `;

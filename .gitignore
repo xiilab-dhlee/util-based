@@ -13,6 +13,7 @@
 # testing
 /coverage
 tests/reports/
+tests/.auth/
 test-results/
 playwright-report/
 .playwright/
@@ -21,6 +22,8 @@ playwright-report/
 trace.zip
 .features-gen/
 .bddgen-timestamp
+allure-results/
+allure-report/
 
 # next.js
 /.next/

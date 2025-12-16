@@ -14,7 +14,7 @@ export default function NotFound() {
   const router = useRouter();
 
   const handleBack = () => {
-    router.push("/");
+    router.replace("/");
   };
   return (
     <>

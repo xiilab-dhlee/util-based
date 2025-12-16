@@ -318,7 +318,7 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
               {/* 임시로 1페이지에서 워크로드 카드 표시 */}
               {workloadPage === 1 &&
                 workloadListMock
-                  .slice(0, 6)
+                  .slice(0, 8)
                   .map((workload) => (
                     <VolumeWorkloadCard key={workload.id} {...workload} />
                   ))}
@@ -363,7 +363,7 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
 }
 
 const SecondaryArticle = styled(AsideDetailArticle)`
-  height: 258px;
+  flex: 1;
   margin-top: 10px;
   overflow: hidden;
 `;
