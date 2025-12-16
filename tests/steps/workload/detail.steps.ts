@@ -5,6 +5,7 @@ import {
   testId,
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
+import { ThemePopoverComponent } from "../../components/theme-popover.component";
 import { test } from "../../fixtures";
 
 /**
@@ -29,6 +30,13 @@ Then("워크로드 상세 페이지가 표시된다", async ({ workloadDetailPag
 Then("워크로드 로그 페이지가 표시된다", async ({ workloadLogPage }) => {
   await workloadLogPage.assertPageVisible();
 });
+
+Then(
+  "워크로드 웹터미널 페이지가 표시된다",
+  async ({ workloadTerminalPage }) => {
+    await workloadTerminalPage.assertPageVisible();
+  },
+);
 
 // ============================================
 // 상태별 검증 Steps
@@ -201,3 +209,83 @@ Then(
     assertLogger.assertEqual("워크로드 설명", inputValue, detailDescription);
   },
 );
+
+// ============================================
+// 테마 변경 Steps (로그/웹터미널 공통)
+// ============================================
+
+/** 현재 페이지 URL에 따른 테마 버튼 셀렉터 반환 */
+const getThemeButtonSelector = (url: string): string => {
+  if (url.includes("/log")) {
+    return WORKLOAD_SELECTOR.LOG_THEME_BUTTON;
+  }
+  return WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON;
+};
+
+/** 현재 페이지 URL에 따른 테마 적용 영역 셀렉터 반환 */
+const getThemeTargetSelector = (url: string): string => {
+  if (url.includes("/log")) {
+    return WORKLOAD_SELECTOR.LOG_VIEWER;
+  }
+  return WORKLOAD_SELECTOR.TERMINAL_CONTAINER;
+};
+
+When("테마 변경 버튼을 클릭한다", async ({ page }) => {
+  const url = page.url();
+  const selector = getThemeButtonSelector(url);
+  const button = page.locator(testId(selector));
+  await expect(button).toBeVisible({ timeout: 10000 });
+  await button.click();
+});
+
+Then("배경 색상 선택 팝오버가 표시된다", async ({ themePopover }) => {
+  await themePopover.waitForVisible();
+});
+
+When("다른 테마 색상을 선택한다", async ({ page, themePopover }) => {
+  const url = page.url();
+  const targetSelector = getThemeTargetSelector(url);
+  const targetElement = page.locator(testId(targetSelector));
+
+  // 현재 테마 클래스 확인
+  const currentClass = (await targetElement.getAttribute("class")) ?? "";
+  const currentTheme = ThemePopoverComponent.THEME_NAMES.find((theme) =>
+    currentClass.includes(theme),
+  );
+
+  // 현재 테마와 다른 테마 선택
+  await themePopover.selectDifferentTheme(currentTheme);
+});
+
+Then(
+  "{string} 토스트 메시지가 표시된다",
+  async ({ toast }, expectedMessage: string) => {
+    await toast.assertMessage(expectedMessage);
+  },
+);
+
+Then("로그 영역에 선택한 테마가 적용된다", async ({ page }) => {
+  const logViewer = page.locator(testId(WORKLOAD_SELECTOR.LOG_VIEWER));
+  await expect(logViewer).toBeVisible({ timeout: 5000 });
+
+  // 테마 클래스가 적용되었는지 확인
+  const className = (await logViewer.getAttribute("class")) ?? "";
+  const hasTheme = ThemePopoverComponent.THEME_NAMES.some((theme) =>
+    className.includes(theme),
+  );
+  expect(hasTheme).toBe(true);
+});
+
+Then("웹터미널 영역에 선택한 테마가 적용된다", async ({ page }) => {
+  const terminalContainer = page.locator(
+    testId(WORKLOAD_SELECTOR.TERMINAL_CONTAINER),
+  );
+  await expect(terminalContainer).toBeVisible({ timeout: 5000 });
+
+  // 테마 클래스가 적용되었는지 확인
+  const className = (await terminalContainer.getAttribute("class")) ?? "";
+  const hasTheme = ThemePopoverComponent.THEME_NAMES.some((theme) =>
+    className.includes(theme),
+  );
+  expect(hasTheme).toBe(true);
+});

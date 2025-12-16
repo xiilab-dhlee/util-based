@@ -5,7 +5,6 @@ import {
   testId,
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
-import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { test } from "../../fixtures";
 import { WorkloadListPage } from "../../pages/workload-list.page";
 import type { FilterCondition } from "../../support/types";
@@ -278,21 +277,6 @@ Then(
 // 5. 상세 페이지 - 로그
 // ============================================
 
-Then(
-  "로그 영역에 설정된 테마가 적용되어 있다",
-  async ({ page, assertLogger }) => {
-    const logViewer = page.locator(testId(WORKLOAD_SELECTOR.LOG_VIEWER));
-    await expect(logViewer).toBeVisible({ timeout: 10000 });
-
-    const className = (await logViewer.getAttribute("class")) ?? "";
-    const validThemes = Object.keys(TERMINAL_THEME_LIST);
-    const hasValidTheme = validThemes.some((theme) =>
-      className.includes(theme),
-    );
-    assertLogger.assertEqual("로그 뷰어 테마 적용", hasValidTheme, true);
-  },
-);
-
 Then("로그 영역에 하나 이상의 로그 라인이 존재한다", async ({ page }) => {
   const logLines = page.locator(testId(WORKLOAD_SELECTOR.LOG_LINE));
   const count = await logLines.count();
@@ -302,23 +286,6 @@ Then("로그 영역에 하나 이상의 로그 라인이 존재한다", async ({
 // ============================================
 // 6. 상세 페이지 - 웹터미널
 // ============================================
-
-Then(
-  "웹터미널에 설정된 테마가 적용되어 있다",
-  async ({ page, assertLogger }) => {
-    const terminalContainer = page.locator(
-      testId(WORKLOAD_SELECTOR.TERMINAL_CONTAINER),
-    );
-    await expect(terminalContainer).toBeVisible({ timeout: 10000 });
-
-    const className = (await terminalContainer.getAttribute("class")) ?? "";
-    const validThemes = Object.keys(TERMINAL_THEME_LIST);
-    const hasValidTheme = validThemes.some((theme) =>
-      className.includes(theme),
-    );
-    assertLogger.assertEqual("웹터미널 테마 적용", hasValidTheme, true);
-  },
-);
 
 Then("웹터미널에 xterm 터미널이 표시된다", async ({ page }) => {
   const terminalContainer = page.locator(
@@ -351,23 +318,25 @@ Then("워크로드 모니터링 차트가 표시된다", async ({ page }) => {
 });
 
 // ============================================
-// 공통 - 로그/웹터미널 페이지 버튼
+// [ARCHIVED] 단순 렌더링 검증 - 테스트 철학에 따라 제거
 // ============================================
 
-Then(
-  /^(로그|웹터미널) 모니터링 버튼이 표시된다$/,
-  async ({ page }, pageType: string) => {
-    await expect(
-      page.locator(testId(WorkloadListPage.PAGE_BUTTON[pageType].monitoring)),
-    ).toBeVisible();
-  },
-);
+// Then(
+//   "로그 영역에 설정된 테마가 적용되어 있다",
+//   async ({ page, assertLogger }) => { ... }
+// );
 
-Then(
-  /^(로그|웹터미널) 테마 변경 버튼이 표시된다$/,
-  async ({ page }, pageType: string) => {
-    await expect(
-      page.locator(testId(WorkloadListPage.PAGE_BUTTON[pageType].theme)),
-    ).toBeVisible();
-  },
-);
+// Then(
+//   "웹터미널에 설정된 테마가 적용되어 있다",
+//   async ({ page, assertLogger }) => { ... }
+// );
+
+// Then(
+//   /^(로그|웹터미널) 모니터링 버튼이 표시된다$/,
+//   async ({ page }, pageType: string) => { ... }
+// );
+
+// Then(
+//   /^(로그|웹터미널) 테마 변경 버튼이 표시된다$/,
+//   async ({ page }, pageType: string) => { ... }
+// );

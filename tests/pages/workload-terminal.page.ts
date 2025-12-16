@@ -7,18 +7,18 @@ import {
 import { BasePage } from "./base.page";
 
 /**
- * 워크로드 로그 페이지 Page Object
+ * 워크로드 웹터미널 페이지 Page Object
  *
- * BasePage를 상속하여 워크로드 로그 페이지 전용 기능 제공:
- * - 로그 뷰어, 로그 라인
+ * BasePage를 상속하여 워크로드 웹터미널 페이지 전용 기능 제공:
+ * - xterm 터미널 컨테이너
  * - 모니터링 버튼, 테마 변경 버튼
  *
  * @example
- * const logPage = new WorkloadLogPage(page);
- * await logPage.gotoLog("workload-123", "workspace-456");
- * await logPage.assertLogLinesExist();
+ * const terminalPage = new WorkloadTerminalPage(page);
+ * await terminalPage.gotoTerminal("workload-123", "workspace-456");
+ * await terminalPage.assertTerminalVisible();
  */
-export class WorkloadLogPage extends BasePage {
+export class WorkloadTerminalPage extends BasePage {
   // ============================================
   // Abstract 구현
   // ============================================
@@ -36,29 +36,24 @@ export class WorkloadLogPage extends BasePage {
   // ============================================
 
   /**
-   * 워크로드 로그 페이지로 이동
+   * 워크로드 웹터미널 페이지로 이동
    * @param workloadId - 워크로드 ID
    * @param workspaceId - 워크스페이스 ID (optional)
    */
-  async gotoLog(workloadId: string, workspaceId?: string): Promise<void> {
+  async gotoTerminal(workloadId: string, workspaceId?: string): Promise<void> {
     const path = workspaceId
-      ? `/${workloadId}/log?workspaceId=${workspaceId}`
-      : `/${workloadId}/log`;
+      ? `/${workloadId}/terminal?workspaceId=${workspaceId}`
+      : `/${workloadId}/terminal`;
     await this.goto(path);
   }
 
   // ============================================
-  // Locators - 로그 영역
+  // Locators - 터미널 영역
   // ============================================
 
-  /** 로그 뷰어 */
-  get logViewer(): Locator {
-    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_VIEWER));
-  }
-
-  /** 로그 라인 (모든 라인) */
-  get logLines(): Locator {
-    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_LINE));
+  /** xterm 터미널 컨테이너 */
+  get terminalContainer(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.TERMINAL_CONTAINER));
   }
 
   // ============================================
@@ -67,12 +62,14 @@ export class WorkloadLogPage extends BasePage {
 
   /** 모니터링 버튼 */
   get monitoringButton(): Locator {
-    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_MONITORING_BUTTON));
+    return this.page.locator(
+      testId(WORKLOAD_SELECTOR.TERMINAL_MONITORING_BUTTON),
+    );
   }
 
   /** 테마 변경 버튼 */
   get themeButton(): Locator {
-    return this.page.locator(testId(WORKLOAD_SELECTOR.LOG_THEME_BUTTON));
+    return this.page.locator(testId(WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON));
   }
 
   // ============================================
@@ -80,22 +77,10 @@ export class WorkloadLogPage extends BasePage {
   // ============================================
 
   /**
-   * 로그 라인이 하나 이상 존재하는지 확인
+   * xterm 터미널이 표시되는지 확인
    */
-  async assertLogLinesExist(): Promise<void> {
-    await expect(this.logLines.first()).toBeVisible({ timeout: 10000 });
-    const count = await this.logLines.count();
-    expect(count).toBeGreaterThan(0);
-  }
-
-  /**
-   * 로그 영역에 테마가 적용되었는지 확인
-   * (className으로 테마가 적용됨)
-   */
-  async assertThemeApplied(): Promise<void> {
-    await expect(this.logViewer).toBeVisible({ timeout: 10000 });
-    const className = await this.logViewer.getAttribute("class");
-    expect(className).toBeTruthy();
+  async assertTerminalVisible(): Promise<void> {
+    await expect(this.terminalContainer).toBeVisible({ timeout: 10000 });
   }
 
   /**
@@ -130,24 +115,5 @@ export class WorkloadLogPage extends BasePage {
   async clickThemeButton(): Promise<void> {
     await expect(this.themeButton).toBeVisible({ timeout: 10000 });
     await this.themeButton.click();
-  }
-
-  // ============================================
-  // Getters
-  // ============================================
-
-  /**
-   * 로그 라인 개수 반환
-   */
-  async getLogLineCount(): Promise<number> {
-    return await this.logLines.count();
-  }
-
-  /**
-   * 현재 적용된 테마 클래스명 반환
-   */
-  async getCurrentTheme(): Promise<string> {
-    const className = await this.logViewer.getAttribute("class");
-    return className ?? "";
   }
 }

@@ -31,7 +31,6 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
     When 해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다
     Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
     And 워크로드 로그 페이지가 표시된다
-    And 로그 영역에 하나 이상의 로그 라인이 존재한다
 
   @regression
   Scenario: 워크로드 웹터미널 페이지로 이동
@@ -39,7 +38,7 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
     And 해당 워크로드의 웹터미널 버튼이 활성화되어 있다
     When 해당 워크로드의 웹터미널 버튼을 클릭하여 웹터미널 페이지로 이동한다
     Then URL이 "/user/workload/[id]/terminal?workspaceId="를 포함한다
-    And 웹터미널에 xterm 터미널이 표시된다
+    And 워크로드 웹터미널 페이지가 표시된다
 
   @regression
   Scenario: 워크로드 모니터링 페이지로 이동

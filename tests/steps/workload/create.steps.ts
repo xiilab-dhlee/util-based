@@ -25,6 +25,10 @@ When("워크로드 생성하기 버튼을 클릭한다", async ({ page }) => {
   await button.click();
 });
 
+/**
+ * @deprecated 아카이브된 시나리오에서만 사용됨
+ * - 단순 UI 존재 여부 검증은 E2E 테스트로 적합하지 않음
+ */
 Then(
   /^"(최근 워크로드 가져오기|워크로드 목록에서 가져오기)" 버튼이 표시된다$/,
   async ({ page }, buttonText: string) => {
@@ -35,6 +39,10 @@ Then(
   },
 );
 
+/**
+ * @deprecated 아카이브된 시나리오에서만 사용됨
+ * - 단순 UI 초기 상태 검증은 E2E 테스트로 적합하지 않음
+ */
 Then(
   /^"(Batch Job|Interactive Job)" 버튼이 선택되어 있다$/,
   async ({ page }, buttonText: string) => {
@@ -74,6 +82,10 @@ Then("잡 타입이 선택되어 있다", async ({ page }) => {
   await expect(activeJobType).toBeVisible({ timeout: 10000 });
 });
 
+/**
+ * @deprecated 아카이브된 시나리오에서만 사용됨
+ * - 단순 UI 초기 상태 검증은 E2E 테스트로 적합하지 않음
+ */
 Then("워크로드 설명 입력창이 빈 값으로 표시된다", async ({ page }) => {
   const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_DESCRIPTION));
   await expect(input).toBeVisible({ timeout: 10000 });
@@ -156,6 +168,10 @@ Then("모달이 닫힌다", async ({ page }) => {
 // 워크로드 정보 검증 (공통)
 // ============================================
 
+/**
+ * @deprecated 아카이브된 시나리오에서만 사용됨
+ * - 워크로드 가져오기 세부 검증은 아카이브됨
+ */
 Then(
   "워크로드 이름 입력창에 저장된 워크로드 이름이 표시된다",
   async ({ page, workloadContext, assertLogger }) => {
@@ -169,6 +185,10 @@ Then(
   },
 );
 
+/**
+ * @deprecated 아카이브된 시나리오에서만 사용됨
+ * - 워크로드 가져오기 세부 검증은 아카이브됨
+ */
 Then(
   "워크로드 설명 입력창에 저장된 워크로드 설명이 표시된다",
   async ({ page, workloadContext, assertLogger }) => {
@@ -187,6 +207,8 @@ Then(
  *
  * 테이블의 Job Type 텍스트(소문자)를 드로어에서 선택된 버튼 레이블로 변환합니다.
  * DISTRIBUTED는 드로어에 별도 버튼이 없어 "Batch Job"으로 매핑됩니다.
+ *
+ * @deprecated 아카이브된 시나리오에서만 사용됨
  */
 const JOB_TYPE_TO_LABEL: Record<string, string> = {
   batch: "Batch Job",
@@ -194,6 +216,10 @@ const JOB_TYPE_TO_LABEL: Record<string, string> = {
   interactive: "Interactive Job (IDE)",
 };
 
+/**
+ * @deprecated 아카이브된 시나리오에서만 사용됨
+ * - 워크로드 가져오기 세부 검증은 아카이브됨
+ */
 Then(
   "잡 타입이 저장된 워크로드와 동일하다",
   async ({ page, workloadContext, assertLogger }) => {

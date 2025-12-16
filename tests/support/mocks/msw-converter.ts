@@ -184,18 +184,36 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
         );
 
         if (response) {
-          const body = await response.text();
-
           // 모든 응답 헤더를 Record<string, string> 형태로 변환
           const headers: Record<string, string> = {};
           response.headers.forEach((value, key) => {
             headers[key] = value;
           });
 
+          const contentType = response.headers.get("content-type");
+
+          // Content-Type에 따라 텍스트 또는 바이너리로 처리
+          const isTextResponse =
+            !contentType ||
+            contentType.startsWith("text/") ||
+            contentType.includes("json") ||
+            contentType.includes("javascript") ||
+            contentType.includes("xml");
+
+          if (isTextResponse) {
+            const body = await response.text();
+            return route.fulfill({
+              status: response.status,
+              headers,
+              body,
+            });
+          }
+
+          // 바이너리 응답 처리
+          const arrayBuffer = await response.arrayBuffer();
+          const body = Buffer.from(arrayBuffer);
           return route.fulfill({
             status: response.status,
-            contentType:
-              response.headers.get("content-type") ?? "application/json",
             headers,
             body,
           });

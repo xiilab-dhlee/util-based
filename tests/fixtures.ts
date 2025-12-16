@@ -5,10 +5,13 @@ import { DrawerComponent } from "./components/drawer.component";
 import { ModalComponent } from "./components/modal.component";
 import { RadioComponent } from "./components/radio.component";
 import { TabsComponent } from "./components/tabs.component";
+import { ThemePopoverComponent } from "./components/theme-popover.component";
+import { ToastComponent } from "./components/toast.component";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
 import { WorkloadListPage } from "./pages/workload-list.page";
 import { WorkloadLogPage } from "./pages/workload-log.page";
+import { WorkloadTerminalPage } from "./pages/workload-terminal.page";
 
 // ============================================================================
 // Constants
@@ -88,6 +91,7 @@ type TestContextFixtures = {
   workloadListPage: WorkloadListPage;
   workloadDetailPage: WorkloadDetailPage;
   workloadLogPage: WorkloadLogPage;
+  workloadTerminalPage: WorkloadTerminalPage;
   monitoringPage: MonitoringPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
@@ -95,6 +99,8 @@ type TestContextFixtures = {
   drawer: DrawerComponent;
   tabs: TabsComponent;
   radio: RadioComponent;
+  themePopover: ThemePopoverComponent;
+  toast: ToastComponent;
 };
 
 // ============================================================================
@@ -285,6 +291,10 @@ export const test = base.extend<TestContextFixtures>({
     await use(new WorkloadLogPage(page));
   },
 
+  workloadTerminalPage: async ({ page }, use) => {
+    await use(new WorkloadTerminalPage(page));
+  },
+
   monitoringPage: async ({ page }, use) => {
     await use(new MonitoringPage(page));
   },
@@ -307,5 +317,13 @@ export const test = base.extend<TestContextFixtures>({
 
   radio: async ({}, use) => {
     await use(new RadioComponent());
+  },
+
+  themePopover: async ({ page }, use) => {
+    await use(new ThemePopoverComponent(page));
+  },
+
+  toast: async ({ page }, use) => {
+    await use(new ToastComponent(page));
   },
 });
