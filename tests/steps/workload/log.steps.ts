@@ -6,7 +6,6 @@ import {
   testId,
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
-import { ThemePopoverComponent } from "../../components/theme-popover.component";
 import { test } from "../../fixtures";
 
 /**
@@ -25,38 +24,42 @@ const { When, Then } = createBdd(test);
 // 상세 페이지 - 로그
 // ============================================
 
-Then("로그 영역에 하나 이상의 로그 라인이 존재한다", async ({ page }) => {
-  const logLines = page.locator(testId(WORKLOAD_SELECTOR.LOG_LINE));
-  const count = await logLines.count();
-  expect(count).toBeGreaterThanOrEqual(1);
-});
+Then(
+  "로그 영역에 하나 이상의 로그 라인이 존재한다",
+  async ({ workloadLogPage }) => {
+    const count = await workloadLogPage.getLogLineCount();
+    expect(count).toBeGreaterThanOrEqual(1);
+  },
+);
 
 // ============================================
 // 테마 변경 결과 확인 Steps
 // ============================================
 
-Then("로그 영역에 선택한 테마가 표시된다", async ({ page }) => {
-  const logViewer = page.locator(testId(WORKLOAD_SELECTOR.LOG_VIEWER));
-  await expect(logViewer).toBeVisible({ timeout: 5000 });
+Then(
+  "로그 영역에 선택한 테마가 표시된다",
+  async ({ workloadLogPage, themeContext }) => {
+    const logViewer = workloadLogPage.logViewer;
+    await expect(logViewer).toBeVisible({ timeout: 5000 });
 
-  // 테마 클래스가 적용되었는지 확인
-  const className = (await logViewer.getAttribute("class")) ?? "";
-  const hasTheme = ThemePopoverComponent.THEME_NAMES.some((theme) =>
-    className.includes(theme),
-  );
-  expect(hasTheme).toBe(true);
-});
+    // 선택된 테마를 context에서 가져옴
+    const selectedTheme = themeContext.assertSelectedTheme();
+
+    // 선택한 테마 클래스가 정확히 적용되었는지 확인
+    const className = (await logViewer.getAttribute("class")) ?? "";
+    expect(
+      className.includes(selectedTheme),
+      `Expected log viewer to have theme class "${selectedTheme}", but got: ${className}`,
+    ).toBe(true);
+  },
+);
 
 // ============================================
 // 모니터링 사이드 패널 Steps
 // ============================================
 
-When("모니터링 버튼을 클릭한다", async ({ page }) => {
-  const button = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON),
-  );
-  await expect(button).toBeVisible({ timeout: 10000 });
-  await button.click();
+When("모니터링 버튼을 클릭한다", async ({ workloadLogPage }) => {
+  await workloadLogPage.clickMonitoringButton();
 });
 
 Then("모니터링 사이드 패널이 표시된다", async ({ page }) => {

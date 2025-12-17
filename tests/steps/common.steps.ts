@@ -209,6 +209,7 @@ When("테마 변경 버튼을 클릭한다", async ({ page }) => {
   await button.click();
 });
 
-When("다른 테마 색상을 선택한다", async ({ themePopover }) => {
-  await themePopover.selectDifferentTheme();
+When("다른 테마 색상을 선택한다", async ({ themePopover, themeContext }) => {
+  const selectedTheme = await themePopover.selectDifferentTheme();
+  themeContext.setSelectedTheme(selectedTheme);
 });

@@ -1,6 +1,5 @@
 import { createBdd } from "playwright-bdd";
 
-import { ThemePopoverComponent } from "../../components/theme-popover.component";
 import { test } from "../../fixtures";
 
 /**
@@ -20,10 +19,12 @@ const { When, Then } = createBdd(test);
 
 Then(
   "웹터미널 영역에 선택한 테마가 표시된다",
-  async ({ workloadTerminalPage }) => {
-    await workloadTerminalPage.assertThemeApplied(
-      ThemePopoverComponent.THEME_NAMES,
-    );
+  async ({ workloadTerminalPage, themeContext }) => {
+    // 선택된 테마를 context에서 가져옴
+    const selectedTheme = themeContext.assertSelectedTheme();
+
+    // 선택한 테마 클래스가 정확히 적용되었는지 확인
+    await workloadTerminalPage.assertThemeApplied([selectedTheme]);
   },
 );
 
