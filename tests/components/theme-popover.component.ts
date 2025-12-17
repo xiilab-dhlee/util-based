@@ -92,7 +92,6 @@ export class ThemePopoverComponent {
 
     if (await selectedOption.isVisible()) {
       const testIdAttr = await selectedOption.getAttribute("data-testid");
-      // data-testid="theme-option-{themeName}" 형식에서 테마 이름 추출
       currentTheme = testIdAttr?.replace("theme-option-", "");
     }
 

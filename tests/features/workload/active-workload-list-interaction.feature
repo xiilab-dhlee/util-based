@@ -6,55 +6,47 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
 
   Background:
     Given 사용자가 로그인되어 있다
-    And 활성화 워크로드 목록 페이지에 있다
-    And 워크스페이스가 선택되어 있다
+    When 활성화 워크로드 목록 페이지로 이동한다
 
   # ============================================
   # 네비게이션
   # ============================================
 
   @regression
-  Scenario: 워크로드 이름 클릭 시 상세 페이지로 이동
-    Given 목록에 워크로드가 있다
-    When 첫 번째 워크로드의 이름을 클릭하여 상세 페이지로 이동한다
-    Then URL이 "/user/workload/[id]?workspaceId="를 포함한다
-    And 워크로드 상세 페이지가 표시된다
+  Scenario: 워크로드 상세 페이지로 이동
+    When 첫 번째 워크로드의 이름을 클릭한다
+    Then 워크로드 상세 페이지가 표시된다
+    And URL이 "/user/workload/[id]?workspaceId="를 포함한다
+    
 
   # ============================================
   # 로그/웹터미널/모니터링 페이지 이동
   # ============================================
 
   @regression
-  Scenario: 워크로드 로그 페이지로 이동
-    Given 목록에 상태가 "running"인 워크로드가 있다
-    And 해당 워크로드의 로그 버튼이 활성화되어 있다
-    When 해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다
-    Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
-    And 워크로드 로그 페이지가 표시된다
+  Scenario: 워크로드 로그 페이지 이동
+    When running 상태인 워크로드의 로그 버튼을 클릭한다
+    Then 워크로드 로그 페이지가 표시된다
+    And URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
 
   @regression
-  Scenario: 워크로드 웹터미널 페이지로 이동
-    Given 목록에 상태가 "running"인 워크로드가 있다
-    And 해당 워크로드의 웹터미널 버튼이 활성화되어 있다
-    When 해당 워크로드의 웹터미널 버튼을 클릭하여 웹터미널 페이지로 이동한다
-    Then URL이 "/user/workload/[id]/terminal?workspaceId="를 포함한다
-    And 워크로드 웹터미널 페이지가 표시된다
+  Scenario: 워크로드 웹터미널 페이지 이동
+    When running 상태인 워크로드의 웹터미널 버튼을 클릭한다
+    Then 워크로드 웹터미널 페이지가 표시된다
+    And URL이 "/user/workload/[id]/terminal?workspaceId="를 포함한다
 
   @regression
-  Scenario: 워크로드 모니터링 페이지로 이동
-    Given 목록에 상태가 "running"인 워크로드가 있다
-    And 해당 워크로드의 모니터링 버튼이 활성화되어 있다
-    When 해당 워크로드의 모니터링 버튼을 클릭하여 모니터링 페이지로 이동한다
-    Then URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다
-    And 워크로드 모니터링 페이지가 표시된다
+  Scenario: 워크로드 모니터링 페이지 이동
+    When running 상태인 워크로드의 모니터링 버튼을 클릭한다
+    Then 워크로드 모니터링 페이지가 표시된다
+    And URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다
 
   # ============================================
   # 필터링
   # ============================================
 
   @regression
-  Scenario Outline: 워크로드 필터링 (<설명>)
-    Given 목록에 워크로드가 있다
+  Scenario Outline: 워크로드 탐색 <설명>
     When 필터 조건을 설정한다:
       | search   | jobType   | status   |
       | <search> | <jobType> | <status> |
@@ -79,11 +71,8 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario Outline: 워크로드 종료 <결과>
-    Given 목록에 상태가 "running"인 워크로드가 있다
-    And 해당 워크로드의 종료 버튼이 활성화되어 있다
-    When 해당 워크로드의 종료 버튼을 클릭한다
-    Then 확인 모달이 표시된다
-    When 확인 모달의 <버튼> 버튼을 클릭한다
+    When running 상태인 워크로드의 종료 버튼을 클릭한다
+    And 확인 모달의 <버튼> 버튼을 클릭한다
     Then 확인 모달이 닫힌다
 
     Examples:

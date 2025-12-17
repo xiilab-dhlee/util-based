@@ -50,16 +50,24 @@ Given("모니터링 페이지에 있다", async ({ monitoringPage }) => {
   await monitoringPage.goto();
 });
 
+// 활성화 워크로드 목록 페이지 진입
+When("활성화 워크로드 목록 페이지로 이동한다", async ({ workloadListPage }) => {
+  await workloadListPage.goto();
+});
+
 Given("활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
   await workloadListPage.goto();
 });
 
-Given("비활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
-  await workloadListPage.gotoDisabled();
-});
-
 Given(
-  "워크로드 상세 페이지에 있다",
+  "비활성화 워크로드 목록 페이지로 이동한다",
+  async ({ workloadListPage }) => {
+    await workloadListPage.gotoDisabled();
+  },
+);
+
+When(
+  "워크로드 상세 페이지로 이동한다",
   async ({ workloadDetailPage, workloadId, workspaceId }) => {
     await workloadDetailPage.gotoWorkload(workloadId, workspaceId);
   },
@@ -199,10 +207,6 @@ When("테마 변경 버튼을 클릭한다", async ({ page }) => {
   const button = page.locator(testId(SELECTOR.THEME_BUTTON));
   await expect(button).toBeVisible({ timeout: 10000 });
   await button.click();
-});
-
-Then("배경 색상 선택 팝오버가 표시된다", async ({ themePopover }) => {
-  await themePopover.waitForVisible();
 });
 
 When("다른 테마 색상을 선택한다", async ({ themePopover }) => {

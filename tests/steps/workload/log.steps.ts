@@ -19,7 +19,17 @@ import { test } from "../../fixtures";
  *
  * NOTE: 테마 변경 관련 step은 common.steps.ts에서 공통 관리
  */
-const { When, Then, Given } = createBdd(test);
+const { When, Then } = createBdd(test);
+
+// ============================================
+// 상세 페이지 - 로그
+// ============================================
+
+Then("로그 영역에 하나 이상의 로그 라인이 존재한다", async ({ page }) => {
+  const logLines = page.locator(testId(WORKLOAD_SELECTOR.LOG_LINE));
+  const count = await logLines.count();
+  expect(count).toBeGreaterThanOrEqual(1);
+});
 
 // ============================================
 // 테마 변경 결과 확인 Steps
@@ -50,16 +60,6 @@ When("모니터링 버튼을 클릭한다", async ({ page }) => {
 });
 
 Then("모니터링 사이드 패널이 표시된다", async ({ page }) => {
-  const panel = page.locator(testId(WORKLOAD_SELECTOR.ASIDE_MONITORING));
-  await expect(panel).toBeVisible({ timeout: 5000 });
-});
-
-Given("모니터링 버튼을 클릭하여 모니터링 패널을 연다", async ({ page }) => {
-  const button = page.locator(
-    testId(WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON),
-  );
-  await expect(button).toBeVisible({ timeout: 10000 });
-  await button.click();
   const panel = page.locator(testId(WORKLOAD_SELECTOR.ASIDE_MONITORING));
   await expect(panel).toBeVisible({ timeout: 5000 });
 });

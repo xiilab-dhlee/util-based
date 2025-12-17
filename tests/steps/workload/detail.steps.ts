@@ -16,7 +16,7 @@ import { test } from "../../fixtures";
  * NOTE: 데이터 유효성 검증/UI 표시 검증 Step은
  *       tests/archives/steps/detail-validation.steps.ts로 이동됨
  */
-const { When, Then, Given } = createBdd(test);
+const { When, Then } = createBdd(test);
 
 // ============================================
 // 페이지 표시 확인 Steps
@@ -48,8 +48,8 @@ Then(
 // 상태별 검증 Steps
 // ============================================
 
-Given(
-  "워크로드 상태가 {string}이다",
+When(
+  "워크로드 상태가 {string}인 것을 확인한다.",
   async ({ workloadDetailPage, $testInfo }, status: string) => {
     const currentStatus = await workloadDetailPage.getStatusValue();
 
@@ -70,21 +70,73 @@ When("워크로드 수정 버튼을 클릭한다", async ({ workloadDetailPage }
   await workloadDetailPage.clickEditButton();
 });
 
-When("워크로드 종료 버튼을 클릭한다", async ({ workloadDetailPage }) => {
-  await workloadDetailPage.clickStopButton();
-});
+When(
+  "워크로드 종료 버튼을 클릭한다",
+  async ({ workloadDetailPage, $testInfo }) => {
+    const currentStatus = await workloadDetailPage.getStatusValue();
 
-When("워크로드 재시작 버튼을 클릭한다", async ({ workloadDetailPage }) => {
-  await workloadDetailPage.clickRestartButton();
-});
+    if (currentStatus !== "running") {
+      $testInfo.skip(
+        true,
+        `워크로드가 실행 중이 아니어서 시나리오를 스킵합니다 (현재 상태: ${currentStatus})`,
+      );
+      return;
+    }
 
-When("워크로드 삭제 버튼을 클릭한다", async ({ workloadDetailPage }) => {
-  await workloadDetailPage.clickDeleteButton();
-});
+    await workloadDetailPage.clickStopButton();
+  },
+);
 
-When("Commit Image 생성 버튼을 클릭한다", async ({ workloadDetailPage }) => {
-  await workloadDetailPage.clickCommitImageButton();
-});
+When(
+  "워크로드 재시작 버튼을 클릭한다",
+  async ({ workloadDetailPage, $testInfo }) => {
+    const currentStatus = await workloadDetailPage.getStatusValue();
+
+    if (currentStatus !== "completed") {
+      $testInfo.skip(
+        true,
+        `워크로드가 완료 상태가 아니어서 시나리오를 스킵합니다 (현재 상태: ${currentStatus})`,
+      );
+      return;
+    }
+
+    await workloadDetailPage.clickRestartButton();
+  },
+);
+
+When(
+  "워크로드 삭제 버튼을 클릭한다",
+  async ({ workloadDetailPage, $testInfo }) => {
+    const currentStatus = await workloadDetailPage.getStatusValue();
+
+    if (currentStatus !== "completed") {
+      $testInfo.skip(
+        true,
+        `워크로드가 완료 상태가 아니어서 시나리오를 스킵합니다 (현재 상태: ${currentStatus})`,
+      );
+      return;
+    }
+
+    await workloadDetailPage.clickDeleteButton();
+  },
+);
+
+When(
+  "Commit Image 생성 버튼을 클릭한다",
+  async ({ workloadDetailPage, $testInfo }) => {
+    const currentStatus = await workloadDetailPage.getStatusValue();
+
+    if (currentStatus !== "running") {
+      $testInfo.skip(
+        true,
+        `워크로드가 실행 중이 아니어서 시나리오를 스킵합니다 (현재 상태: ${currentStatus})`,
+      );
+      return;
+    }
+
+    await workloadDetailPage.clickCommitImageButton();
+  },
+);
 
 When("워크로드 복제 버튼을 클릭한다", async ({ workloadDetailPage }) => {
   await workloadDetailPage.clickCloneButton();
@@ -120,32 +172,6 @@ Then(
   async ({ workloadDetailPage }) => {
     // 설명은 비어있을 수 있으므로 입력창이 visible한지만 확인
     await expect(workloadDetailPage.updateDescriptionInput).toBeVisible();
-  },
-);
-
-// ============================================
-// 인터랙션 Steps - Commit Image 모달
-// ============================================
-
-Then("Commit Image 생성 모달이 표시된다", async ({ modal }) => {
-  await modal.waitForVisible();
-});
-
-Then(
-  "Commit Image 이름 입력창이 빈 값으로 표시된다",
-  async ({ workloadDetailPage }) => {
-    await expect(workloadDetailPage.commitImageNameInput).toBeVisible();
-    const value = await workloadDetailPage.commitImageNameInput.inputValue();
-    expect(value).toBe("");
-  },
-);
-
-Then(
-  "Commit Image 태그 입력창이 빈 값으로 표시된다",
-  async ({ workloadDetailPage }) => {
-    await expect(workloadDetailPage.commitImageTagInput).toBeVisible();
-    const value = await workloadDetailPage.commitImageTagInput.inputValue();
-    expect(value).toBe("");
   },
 );
 

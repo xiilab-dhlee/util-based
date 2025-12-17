@@ -56,6 +56,11 @@ export class WorkloadTerminalPage extends BasePage {
     return this.page.locator(testId(WORKLOAD_SELECTOR.TERMINAL_CONTAINER));
   }
 
+  /** 터미널 패널 (분할된 각 터미널) */
+  get terminalPanels(): Locator {
+    return this.page.locator(testId(WORKLOAD_SELECTOR.TERMINAL_NODE));
+  }
+
   // ============================================
   // Locators - 버튼
   // ============================================
@@ -65,6 +70,20 @@ export class WorkloadTerminalPage extends BasePage {
     return this.page.locator(
       testId(WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON),
     );
+  }
+
+  /** 수직 분할 버튼 */
+  get splitVerticalButton(): Locator {
+    return this.page
+      .locator(testId(WORKLOAD_SELECTOR.TERMINAL_SPLIT_VERTICAL_BUTTON))
+      .first();
+  }
+
+  /** 수평 분할 버튼 */
+  get splitHorizontalButton(): Locator {
+    return this.page
+      .locator(testId(WORKLOAD_SELECTOR.TERMINAL_SPLIT_HORIZONTAL_BUTTON))
+      .first();
   }
 
   // ============================================
@@ -85,6 +104,28 @@ export class WorkloadTerminalPage extends BasePage {
     await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
   }
 
+  /**
+   * 터미널 패널 개수 확인
+   * @param expectedCount - 예상되는 패널 개수
+   */
+  async assertTerminalPanelCount(expectedCount: number): Promise<void> {
+    await expect(this.terminalPanels.first()).toBeVisible({ timeout: 10000 });
+    await expect(this.terminalPanels).toHaveCount(expectedCount);
+  }
+
+  /**
+   * 테마가 적용되었는지 확인
+   * 터미널 컨테이너에 테마 관련 클래스가 있는지 검증
+   * @param themeNames - 유효한 테마 이름 배열
+   */
+  async assertThemeApplied(themeNames: string[]): Promise<void> {
+    await expect(this.terminalContainer).toBeVisible({ timeout: 5000 });
+    const className =
+      (await this.terminalContainer.getAttribute("class")) ?? "";
+    const hasTheme = themeNames.some((theme) => className.includes(theme));
+    expect(hasTheme).toBe(true);
+  }
+
   // ============================================
   // Actions
   // ============================================
@@ -95,5 +136,21 @@ export class WorkloadTerminalPage extends BasePage {
   async clickMonitoringButton(): Promise<void> {
     await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
     await this.monitoringButton.click();
+  }
+
+  /**
+   * 수직 분할 버튼 클릭
+   */
+  async clickSplitVertical(): Promise<void> {
+    await expect(this.splitVerticalButton).toBeVisible({ timeout: 5000 });
+    await this.splitVerticalButton.click();
+  }
+
+  /**
+   * 수평 분할 버튼 클릭
+   */
+  async clickSplitHorizontal(): Promise<void> {
+    await expect(this.splitHorizontalButton).toBeVisible({ timeout: 5000 });
+    await this.splitHorizontalButton.click();
   }
 }

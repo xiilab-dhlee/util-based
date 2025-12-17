@@ -7,10 +7,7 @@ Feature: 워크로드 로그 페이지 조회
   Background:
     Given 사용자가 로그인되어 있다
     And 활성화 워크로드 목록 페이지에 있다
-    And 워크스페이스가 선택되어 있다
-    And 목록에 상태가 "running"인 워크로드가 있다
-    And 해당 워크로드의 로그 버튼이 활성화되어 있다
-    When 해당 워크로드의 로그 버튼을 클릭하여 로그 페이지로 이동한다
+    When running 상태인 워크로드의 로그 버튼을 클릭한다
 
   # ============================================
   # 로그 페이지 조회
@@ -18,6 +15,6 @@ Feature: 워크로드 로그 페이지 조회
 
   @smoke
   Scenario: 워크로드 로그 페이지 조회
-    Then URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
-    And 워크로드 로그 페이지가 표시된다
+    Then 워크로드 로그 페이지가 표시된다
+    And URL이 "/user/workload/[id]/log?workspaceId="를 포함한다
     And 로그 영역에 하나 이상의 로그 라인이 존재한다

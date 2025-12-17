@@ -24,7 +24,7 @@ import type { FilterCondition } from "../../support/types";
  *
  * NOTE: 데이터 유효성 검증 Step은 tests/archives/steps/data-validation.steps.ts로 이동됨
  */
-const { When, Then, Given } = createBdd(test);
+const { When, Then } = createBdd(test);
 
 // ============================================
 // 2. 목록 페이지 - 공통
@@ -34,24 +34,8 @@ Then("워크로드 목록 페이지가 표시된다", async ({ workloadListPage 
   await workloadListPage.assertPageVisible();
 });
 
-Given(
-  "목록에 워크로드가 있다",
-  async ({ workloadListPage, listContext, $testInfo }) => {
-    const count = await workloadListPage.table.getRowCount();
-
-    if (count === 0) {
-      $testInfo.skip(true, "워크로드가 없어 시나리오를 스킵합니다");
-      return;
-    }
-
-    // 첫 번째 워크로드 행 선택
-    const firstRow = await workloadListPage.table.getFirstRow();
-    listContext.setCurrentRow(firstRow);
-  },
-);
-
-Given(
-  "목록에 상태가 {string}인 워크로드가 있다",
+When(
+  "목록에 상태가 {string}인 워크로드를 바라본다",
   async ({ workloadListPage, listContext, $testInfo }, status: string) => {
     const row = await workloadListPage.table.findRowByStatus(
       "workload-status-",
@@ -224,29 +208,45 @@ Then(
 // ============================================
 
 When(
-  "첫 번째 워크로드의 이름을 클릭하여 상세 페이지로 이동한다",
-  async ({ workloadListPage }) => {
+  "첫 번째 워크로드의 이름을 클릭한다",
+  async ({ workloadListPage, $testInfo }) => {
+    const count = await workloadListPage.table.getRowCount();
+    if (count === 0) {
+      $testInfo.skip(true, "워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
     await workloadListPage.table.clickFirstCell(WORKLOAD_SELECTOR.NAME);
   },
 );
 
 When(
-  /^해당 워크로드의 (로그|웹터미널|모니터링) 버튼을 클릭하여 \1 페이지로 이동한다$/,
-  async ({ workloadListPage, listContext }, pageType: string) => {
-    const currentRow = listContext.assertCurrentRow();
-    await workloadListPage.table.clickRowButton(
-      currentRow,
-      WorkloadListPage.ROW_BUTTON[pageType],
+  /^running 상태인 워크로드의 (로그|웹터미널|모니터링|종료) 버튼을 클릭한다$/,
+  async ({ workloadListPage, $testInfo }, pageType: string) => {
+    const row = await workloadListPage.table.findRowByStatus(
+      "workload-status-",
+      "running",
     );
+    if (!row) {
+      $testInfo.skip(true, "running 워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
+
+    const buttonSelector = WorkloadListPage.ROW_BUTTON[pageType];
+    await workloadListPage.table.clickRowButton(row, buttonSelector);
   },
 );
 
 When(
-  /^해당 워크로드의 (종료|삭제|재시작) 버튼을 클릭한다$/,
-  async ({ workloadListPage, listContext }, buttonName: string) => {
-    const currentRow = listContext.assertCurrentRow();
+  /^첫 번째 워크로드의 (삭제|재시작) 버튼을 클릭한다$/,
+  async ({ workloadListPage, $testInfo }, buttonName: string) => {
+    const count = await workloadListPage.table.getRowCount();
+    if (count === 0) {
+      $testInfo.skip(true, "워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
+    const firstRow = await workloadListPage.table.getRow(0);
     await workloadListPage.table.clickRowButton(
-      currentRow,
+      firstRow,
       WorkloadListPage.ROW_BUTTON[buttonName],
     );
   },
@@ -274,28 +274,7 @@ Then(
 );
 
 // ============================================
-// 5. 상세 페이지 - 로그
-// ============================================
-
-Then("로그 영역에 하나 이상의 로그 라인이 존재한다", async ({ page }) => {
-  const logLines = page.locator(testId(WORKLOAD_SELECTOR.LOG_LINE));
-  const count = await logLines.count();
-  expect(count).toBeGreaterThanOrEqual(1);
-});
-
-// ============================================
-// 6. 상세 페이지 - 웹터미널
-// ============================================
-
-Then("웹터미널에 xterm 터미널이 표시된다", async ({ page }) => {
-  const terminalContainer = page.locator(
-    testId(WORKLOAD_SELECTOR.TERMINAL_CONTAINER),
-  );
-  await expect(terminalContainer).toBeVisible({ timeout: 10000 });
-});
-
-// ============================================
-// 7. 상세 페이지 - 모니터링
+// 6. 상세 페이지 - 모니터링
 // ============================================
 
 Then(

@@ -6,11 +6,10 @@ Feature: 활성화 워크로드 목록 페이지 진입
 
   Background:
     Given 사용자가 로그인되어 있다
-    And 활성화 워크로드 목록 페이지에 있다
-    And 워크스페이스가 선택되어 있다
+    When 활성화 워크로드 목록 페이지로 이동한다
 
   @smoke
-  Scenario: 활성화 워크로드 목록 페이지 진입
+  Scenario: 활성화 워크로드 목록 페이지 조회
     Then 워크로드 목록 페이지가 표시된다
     And URL이 "/user/workload"와 일치한다
     And 목록 테이블이 표시된다
