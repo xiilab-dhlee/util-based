@@ -9,10 +9,6 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 export function WorkloadMonitoringButton() {
   const { onToggle } = useGlobalModal(openViewWorkloadMonitoringDrawerAtom);
 
-  const handleToggle = () => {
-    onToggle();
-  };
-
   return (
     <Button
       type="button"
@@ -20,7 +16,7 @@ export function WorkloadMonitoringButton() {
       variant="outlined"
       width={90}
       height={30}
-      onClick={handleToggle}
+      onClick={onToggle}
       icon="Monitoring02"
       iconColor="var(--icon-fill)"
       data-testid={WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON}

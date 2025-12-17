@@ -2,10 +2,12 @@ import { HttpResponse, http } from "msw";
 
 import type {
   ActiveWorkloadListType,
+  DisabledWorkloadListType,
   WorkloadListType,
 } from "@/domain/workload/schemas/workload.schema";
 import {
   createActiveWorkloadListMock,
+  createDisabledWorkloadListMock,
   createWorkloadListMock,
   workloadDetailMock,
   workloadVulnerabilityListMock,
@@ -23,6 +25,19 @@ export const workloadHandlers = [
 
     const override = paramsToOverride<ActiveWorkloadListType>(url.searchParams);
     const content = createActiveWorkloadListMock(override);
+
+    return HttpResponse.json({
+      content,
+      totalSize: 100,
+    });
+  }),
+  http.get("/core-api/v1/core/workload/disabled", ({ request }) => {
+    const url = new URL(request.url);
+
+    const override = paramsToOverride<DisabledWorkloadListType>(
+      url.searchParams,
+    );
+    const content = createDisabledWorkloadListMock(override);
 
     return HttpResponse.json({
       content,

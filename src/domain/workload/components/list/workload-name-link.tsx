@@ -1,13 +1,10 @@
 "use client";
 
-import { useAtomValue } from "jotai";
 import { usePathname } from "next/navigation";
 import styled from "styled-components";
 import { Icon, Tooltip } from "xiilab-ui";
 
-import { activeWorkloadSearchTextAtom } from "@/domain/workload/state/workload.atom";
 import { ChangeCircleIcon } from "@/shared/components/icon/change-circle-icon";
-import { HighlightedText } from "@/shared/components/text/highlighted-text";
 import { RevokeWarningTooltipTitle } from "@/shared/components/tooltip-title/revoke-warning-tooltip-title";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { isAdminMode } from "@/shared/utils/router.util";
@@ -40,7 +37,6 @@ export function WorkloadNameLink({
   isRevoked,
 }: WorkloadNameLinkProps) {
   const pathname = usePathname();
-  const searchText = useAtomValue(activeWorkloadSearchTextAtom);
 
   const isAdmin = isAdminMode(pathname);
 
@@ -80,7 +76,7 @@ export function WorkloadNameLink({
         </IconWrapper>
       )}
       <Title className="truncate" data-testid={WORKLOAD_SELECTOR.NAME}>
-        <HighlightedText text={workloadName} highlight={searchText} />
+        {workloadName}
       </Title>
     </ColumnLink>
   );

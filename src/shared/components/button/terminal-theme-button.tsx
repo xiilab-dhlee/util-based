@@ -26,13 +26,13 @@ export function TerminalThemeButton() {
 
   // 테마 팝업 내용
   const themePopupContent = (
-    <Container data-testid="theme-popover">
+    <Container data-testid={SELECTOR.THEME_POPOVER}>
       <Title>배경 색상 선택</Title>
       <OptionList>
         {Object.keys(TERMINAL_THEME_LIST).map((v) => (
           <Option
             key={v}
-            data-testid={`theme-option-${v}`}
+            data-testid={SELECTOR.themeOption(v)}
             onClick={() => handleClickThemeOption(v)}
             className={classNames(v, {
               selected: terminalTheme === v,

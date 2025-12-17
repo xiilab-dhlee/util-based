@@ -2,6 +2,8 @@ import { vulnerabilityListResponseSchema } from "@/domain/security/schemas/vulne
 import {
   type ActiveWorkloadListType,
   activeWorkloadListSchema,
+  type DisabledWorkloadListType,
+  disabledWorkloadListSchema,
   type WorkloadListType,
   workloadDetailSchema,
   workloadListSchema,
@@ -44,6 +46,22 @@ export function createActiveWorkloadListMock(
       baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
     }
     return makeMock(activeWorkloadListSchema, baseOverride);
+  });
+}
+
+export function createDisabledWorkloadListMock(
+  override?: Partial<DisabledWorkloadListType> & {
+    size?: number;
+    searchText?: string;
+  },
+): DisabledWorkloadListType[] {
+  const { size = LIST_PAGE_SIZE, searchText, ...restOverride } = override ?? {};
+  return Array.from({ length: size }, (_, index) => {
+    const baseOverride = { ...restOverride };
+    if (searchText) {
+      baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
+    }
+    return makeMock(disabledWorkloadListSchema, baseOverride);
   });
 }
 

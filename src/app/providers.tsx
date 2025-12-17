@@ -20,7 +20,7 @@ export function Providers({ children }: PropsWithChildren) {
             <ServiceProvider>
               <ThemeProvider>
                 <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-                <ToastContainer data-testid="toast-container" />
+                <ToastContainer />
               </ThemeProvider>
             </ServiceProvider>
           </StoreProvider>

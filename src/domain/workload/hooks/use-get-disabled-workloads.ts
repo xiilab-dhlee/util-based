@@ -19,10 +19,7 @@ export const useGetDisabledWorkloads = (
   return useQuery({
     queryKey: workloadKeys.disabledList(payload),
     queryFn: async () => {
-      const response = await workloadService.getList({
-        ...payload,
-        status: "COMPLETED",
-      });
+      const response = await workloadService.getDisabledList(payload);
       return response.data;
     },
   });
