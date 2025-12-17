@@ -78,10 +78,30 @@ export type WorkloadContextActions = {
   reset: () => void;
 };
 
+/**
+ * ThemeContext: 테마 선택 관련 테스트 컨텍스트
+ *
+ * 용도:
+ * - 선택된 테마 이름 저장 및 검증
+ */
+export type ThemeContext = {
+  selectedTheme: string | null;
+};
+
+export type ThemeContextActions = {
+  /** 선택된 테마 설정 */
+  setSelectedTheme: (theme: string) => void;
+  /** 선택된 테마 반환 (없으면 에러) */
+  assertSelectedTheme: () => string;
+  /** 컨텍스트 초기화 */
+  reset: () => void;
+};
+
 type TestContextFixtures = {
   // 컨텍스트
   listContext: ListContext & ListContextActions;
   workloadContext: WorkloadContext & WorkloadContextActions;
+  themeContext: ThemeContext & ThemeContextActions;
   workloadId: string;
   workspaceId: string;
   testMode: TestMode;
@@ -170,6 +190,12 @@ function createInitialWorkloadContext(): WorkloadContext {
   };
 }
 
+function createInitialThemeContext(): ThemeContext {
+  return {
+    selectedTheme: null,
+  };
+}
+
 // ============================================================================
 // Test Fixtures
 // ============================================================================
@@ -255,6 +281,31 @@ export const test = base.extend<TestContextFixtures>({
     context.name = "";
     context.description = "";
     context.jobType = "";
+  },
+
+  themeContext: async ({}, use) => {
+    const context = createInitialThemeContext();
+
+    await use({
+      ...context,
+      setSelectedTheme: (theme: string) => {
+        context.selectedTheme = theme;
+      },
+      assertSelectedTheme: () => {
+        if (!context.selectedTheme) {
+          throw new Error(
+            "테마 컨텍스트가 초기화되지 않았습니다. 테마를 먼저 선택하세요.",
+          );
+        }
+        return context.selectedTheme;
+      },
+      reset: () => {
+        context.selectedTheme = null;
+      },
+    });
+
+    // Teardown: 컨텍스트 초기화
+    context.selectedTheme = null;
   },
 
   testMode: async ({}, use) => {

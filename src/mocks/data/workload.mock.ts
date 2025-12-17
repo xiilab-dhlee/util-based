@@ -28,6 +28,29 @@ export const workloadVulnerabilityListMock = Array.from(
 );
 
 /**
+ * 제네릭 워크로드 목록 mock 생성 팩토리 함수
+ * @param schema - Zod schema for the workload type
+ * @param override - Partial override object with optional size and searchText
+ * @returns Array of mocked workload data
+ */
+function createGenericWorkloadListMock<T extends { workloadName: string }>(
+  schema: Parameters<typeof makeMock>[0],
+  override?: Partial<T> & {
+    size?: number;
+    searchText?: string;
+  },
+): T[] {
+  const { size = LIST_PAGE_SIZE, searchText, ...restOverride } = override ?? {};
+  return Array.from({ length: size }, (_, index) => {
+    const baseOverride = { ...restOverride };
+    if (searchText) {
+      baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
+    }
+    return makeMock(schema, baseOverride) as T;
+  });
+}
+
+/**
  * 동적 mock 데이터 생성 팩토리 함수
  * 매 호출마다 새로운 데이터를 생성하며, override를 통해 특정 필드 값을 고정할 수 있음
  * override.size로 생성할 개수를 지정할 수 있음 (기본값: LIST_PAGE_SIZE)
@@ -39,14 +62,10 @@ export function createActiveWorkloadListMock(
     searchText?: string;
   },
 ): ActiveWorkloadListType[] {
-  const { size = LIST_PAGE_SIZE, searchText, ...restOverride } = override ?? {};
-  return Array.from({ length: size }, (_, index) => {
-    const baseOverride = { ...restOverride };
-    if (searchText) {
-      baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
-    }
-    return makeMock(activeWorkloadListSchema, baseOverride);
-  });
+  return createGenericWorkloadListMock<ActiveWorkloadListType>(
+    activeWorkloadListSchema,
+    override,
+  );
 }
 
 export function createDisabledWorkloadListMock(
@@ -55,14 +74,10 @@ export function createDisabledWorkloadListMock(
     searchText?: string;
   },
 ): DisabledWorkloadListType[] {
-  const { size = LIST_PAGE_SIZE, searchText, ...restOverride } = override ?? {};
-  return Array.from({ length: size }, (_, index) => {
-    const baseOverride = { ...restOverride };
-    if (searchText) {
-      baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
-    }
-    return makeMock(disabledWorkloadListSchema, baseOverride);
-  });
+  return createGenericWorkloadListMock<DisabledWorkloadListType>(
+    disabledWorkloadListSchema,
+    override,
+  );
 }
 
 export function createWorkloadListMock(
