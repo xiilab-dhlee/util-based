@@ -3,6 +3,7 @@ import { createBdd } from "playwright-bdd";
 
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { test } from "../fixtures";
+import { WorkloadListPage } from "../pages/workload-list.page";
 import { setupAllMocks } from "../support/mocks";
 
 /**
@@ -50,26 +51,35 @@ Given("모니터링 페이지에 있다", async ({ monitoringPage }) => {
   await monitoringPage.goto();
 });
 
-// 활성화 워크로드 목록 페이지 진입
-When("활성화 워크로드 목록 페이지로 이동한다", async ({ workloadListPage }) => {
-  await workloadListPage.goto();
-});
-
 Given("활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
   await workloadListPage.goto();
 });
 
+Given("비활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
+  await workloadListPage.gotoDisabled();
+});
+
 Given(
-  "비활성화 워크로드 목록 페이지로 이동한다",
-  async ({ workloadListPage }) => {
-    await workloadListPage.gotoDisabled();
+  "워크로드 상세 페이지에 있다",
+  async ({ workloadDetailPage, workloadId, workspaceId }) => {
+    await workloadDetailPage.gotoWorkload(workloadId, workspaceId);
   },
 );
 
-When(
-  "워크로드 상세 페이지로 이동한다",
-  async ({ workloadDetailPage, workloadId, workspaceId }) => {
-    await workloadDetailPage.gotoWorkload(workloadId, workspaceId);
+Given(
+  /^running 상태인 워크로드의 (로그|웹터미널|모니터링) 버튼을 클릭하여 (로그|웹터미널|모니터링) 페이지로 이동한 상태다$/,
+  async ({ workloadListPage, $testInfo }, pageType: string) => {
+    const row = await workloadListPage.table.findRowByStatus(
+      "workload-status-",
+      "running",
+    );
+    if (!row) {
+      $testInfo.skip(true, "running 워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
+
+    const buttonSelector = WorkloadListPage.ROW_BUTTON[pageType];
+    await workloadListPage.table.clickRowButton(row, buttonSelector);
   },
 );
 

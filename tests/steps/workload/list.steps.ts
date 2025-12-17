@@ -24,7 +24,28 @@ import type { FilterCondition } from "../../support/types";
  *
  * NOTE: 데이터 유효성 검증 Step은 tests/archives/steps/data-validation.steps.ts로 이동됨
  */
-const { When, Then } = createBdd(test);
+const { Given, When, Then } = createBdd(test);
+
+// ============================================
+// 1. 목록 페이지 - 네비게이션 & 액션
+// ============================================
+
+Given(
+  /^running 상태인 워크로드의 (로그|웹터미널|모니터링|종료) 버튼을 클릭하여 (로그|웹터미널|모니터링|종료) 페이지로 이동한다$/,
+  async ({ workloadListPage, $testInfo }, pageType: string) => {
+    const row = await workloadListPage.table.findRowByStatus(
+      "workload-status-",
+      "running",
+    );
+    if (!row) {
+      $testInfo.skip(true, "running 워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
+
+    const buttonSelector = WorkloadListPage.ROW_BUTTON[pageType];
+    await workloadListPage.table.clickRowButton(row, buttonSelector);
+  },
+);
 
 // ============================================
 // 2. 목록 페이지 - 공통
@@ -206,6 +227,13 @@ Then(
 // ============================================
 // 4. 목록 페이지 - 네비게이션 & 액션
 // ============================================
+
+When(
+  "워크로드 상세 페이지로 이동한다",
+  async ({ workloadDetailPage, workloadId, workspaceId }) => {
+    await workloadDetailPage.gotoWorkload(workloadId, workspaceId);
+  },
+);
 
 When(
   "첫 번째 워크로드의 이름을 클릭한다",
