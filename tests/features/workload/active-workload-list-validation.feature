@@ -6,7 +6,7 @@ Feature: 활성화 워크로드 목록 검증
 
   Background:
     Given 사용자가 로그인되어 있다
-    When 활성화 워크로드 목록 페이지로 이동한다
+    And 활성화 워크로드 목록 페이지에 있다
 
   @regression
   Scenario Outline: 워크로드 제어 버튼 상태 검증 (<상태명>)
