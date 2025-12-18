@@ -13,15 +13,12 @@ import { setupAllMocks } from "../support/mocks";
  * - 인증 관련
  * - 워크스페이스 관련
  * - URL 검증
- * - 목록 페이지 공통
  * - 탭 관련
+ * - 모달/드로어 관련
+ * - 테마 변경
  *
- * Page Objects:
- * - workloadListPage: 워크로드 목록 페이지
- * - workloadDetailPage: 워크로드 상세 페이지
- * - monitoringPage: 모니터링 페이지
- * - modal: 모달 조작
- * - drawer: 드로어 조작
+ * NOTE: 목록 페이지 관련 Step은 각 도메인별 steps 파일에서 관리
+ * - 워크로드: tests/steps/workload/list.steps.ts
  */
 
 const { Given, When, Then } = createBdd(test);
@@ -67,14 +64,51 @@ Given(
 );
 
 Given(
-  /^running 상태인 워크로드의 (로그|웹터미널|모니터링) 버튼을 클릭하여 (로그|웹터미널|모니터링) 페이지로 이동한 상태다$/,
-  async ({ workloadListPage, $testInfo }, pageType: string) => {
+  /^(running|completed) 상태인 워크로드의 (로그|웹터미널|모니터링) 버튼을 클릭하여 (로그|웹터미널|모니터링) 페이지로 이동한 상태다$/,
+  async (
+    { workloadListPage, $testInfo },
+    status: string,
+    _buttonType: string,
+    pageType: string,
+  ) => {
     const row = await workloadListPage.table.findRowByStatus(
+      "workload-status-",
+      status,
+    );
+    if (!row) {
+      $testInfo.skip(true, `${status} 워크로드가 없어 시나리오를 스킵합니다`);
+      return;
+    }
+
+    const buttonSelector = WorkloadListPage.ROW_BUTTON[pageType];
+    await workloadListPage.table.clickRowButton(row, buttonSelector);
+  },
+);
+
+Given(
+  /^(running 또는 completed) 상태인 워크로드의 (로그|웹터미널|모니터링) 버튼을 클릭하여 (로그|웹터미널|모니터링) 페이지로 이동한 상태다$/,
+  async (
+    { workloadListPage, $testInfo },
+    _statusText: string,
+    _buttonType: string,
+    pageType: string,
+  ) => {
+    // running 먼저 시도, 없으면 completed 시도
+    let row = await workloadListPage.table.findRowByStatus(
       "workload-status-",
       "running",
     );
     if (!row) {
-      $testInfo.skip(true, "running 워크로드가 없어 시나리오를 스킵합니다");
+      row = await workloadListPage.table.findRowByStatus(
+        "workload-status-",
+        "completed",
+      );
+    }
+    if (!row) {
+      $testInfo.skip(
+        true,
+        "running 또는 completed 워크로드가 없어 시나리오를 스킵합니다",
+      );
       return;
     }
 
@@ -116,14 +150,6 @@ Then("URL이 {string}와 일치한다", async ({ page }, expectedUrl: string) =>
     .replace(/\//g, "\\/");
 
   await expect(page).toHaveURL(new RegExp(`${regexPattern}(\\?.*)?$`));
-});
-
-// ============================================
-// 목록 페이지 공통 Steps
-// ============================================
-
-Then("목록 테이블이 표시된다", async ({ workloadListPage }) => {
-  await workloadListPage.assertTableVisible();
 });
 
 // ============================================
@@ -223,3 +249,25 @@ When("다른 테마 색상을 선택한다", async ({ themePopover, themeContext
   const selectedTheme = await themePopover.selectDifferentTheme();
   themeContext.setSelectedTheme(selectedTheme);
 });
+
+// ============================================
+// 네비게이션 메뉴 관련 Steps
+// ============================================
+
+/**
+ * 네비게이션 메뉴 활성화 상태 검증
+ *
+ * 제거 사유:
+ * - 네비게이션 메뉴 활성화 = CSS 스타일링 이슈
+ * - 페이지 진입 + URL 검증으로 충분
+ */
+Then(
+  "네비게이션 메뉴 중 {string} 메뉴가 활성화되어 있다",
+  async ({ page }, menuName: string) => {
+    const selectedMenu = page.locator(
+      ".ant-menu-item-selected .ant-menu-title-content",
+    );
+    await expect(selectedMenu).toBeVisible({ timeout: 10000 });
+    await expect(selectedMenu).toHaveText(menuName);
+  },
+);

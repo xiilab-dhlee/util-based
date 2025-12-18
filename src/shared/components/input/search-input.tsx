@@ -12,6 +12,7 @@ interface SearchInputProps {
   disabled?: boolean;
   /** 검색 실행 시 호출되는 콜백 (검색어 값을 직접 전달받음) */
   onSearch?: (value: string) => void;
+  testIdPage?: string;
 }
 
 /**
@@ -26,6 +27,7 @@ export function SearchInput({
   darkMode = false,
   disabled = false,
   onSearch,
+  testIdPage,
 }: SearchInputProps) {
   const handleSearch = (value: string) => {
     onSearch?.(value.trim());
@@ -41,7 +43,9 @@ export function SearchInput({
       height={30}
       darkMode={darkMode}
       disabled={disabled}
-      data-testid={SELECTOR.LIST_SEARCH_INPUT}
+      data-testid={
+        testIdPage ? SELECTOR.listSearchInput(testIdPage) : undefined
+      }
     />
   );
 }

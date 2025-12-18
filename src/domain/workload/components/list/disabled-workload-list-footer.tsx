@@ -36,6 +36,7 @@ export function DisabledWorkloadListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={setPage}
       isLoading={isLoading}
+      testIdPage="workload"
     />
   );
 }

@@ -7,6 +7,7 @@ import {
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 import { WorkloadListPage } from "../../pages/workload-list.page";
+import { RELATIVE_TIME_PATTERN } from "../../support/patterns";
 import type { FilterCondition } from "../../support/types";
 
 /**
@@ -53,6 +54,34 @@ Given(
 
 Then("워크로드 목록 페이지가 표시된다", async ({ workloadListPage }) => {
   await workloadListPage.assertPageVisible();
+});
+
+Then("워크로드 목록 테이블이 표시된다", async ({ workloadListPage }) => {
+  await workloadListPage.assertTableVisible();
+});
+
+Then(
+  "워크로드 목록에 총 개수가 표시된다",
+  async ({ workloadListPage, assertLogger }) => {
+    const totalCountText = await workloadListPage.getTotalCountText();
+    assertLogger.assertNotEmpty("총 개수", totalCountText);
+  },
+);
+
+Then("워크로드 목록 페이지네이션이 표시된다", async ({ workloadListPage }) => {
+  await workloadListPage.assertPaginationVisible();
+});
+
+Then("잡 타입 필터가 빈 값으로 표시된다", async ({ workloadListPage }) => {
+  await workloadListPage.jobTypeFilter.assertEmpty();
+});
+
+Then("상태 필터가 빈 값으로 표시된다", async ({ workloadListPage }) => {
+  await workloadListPage.statusFilter.assertEmpty();
+});
+
+Then("검색창이 빈 값으로 표시된다", async ({ workloadListPage }) => {
+  await workloadListPage.assertSearchInputEmpty();
 });
 
 When(
@@ -306,8 +335,119 @@ Then(
 // ============================================
 
 Then(
-  "워크로드 모니터링 차트가 표시된다",
-  async ({ workloadMonitoringPage }) => {
-    await workloadMonitoringPage.assertMonitoringChartVisible();
+  "CPU 사용량 차트가 표시된다",
+  async ({ workloadMonitoringPage, assertLogger }) => {
+    await workloadMonitoringPage.assertCpuUsageChartVisible(assertLogger);
+  },
+);
+
+Then(
+  "메모리 사용량 차트가 표시된다",
+  async ({ workloadMonitoringPage, assertLogger }) => {
+    await workloadMonitoringPage.assertMemoryUsageChartVisible(assertLogger);
+  },
+);
+
+Then(
+  "GPU 활용률 차트가 표시된다",
+  async ({ workloadMonitoringPage, assertLogger }) => {
+    await workloadMonitoringPage.assertGpuUtilizationChartVisible(assertLogger);
+  },
+);
+
+Then(
+  "GPU 메모리 차트가 표시된다",
+  async ({ workloadMonitoringPage, assertLogger }) => {
+    await workloadMonitoringPage.assertGpuMemoryChartVisible(assertLogger);
+  },
+);
+
+/**
+ * 각 워크로드의 이름이 빈 값이 아닌지 검증
+ */
+Then(
+  "각 워크로드의 이름이 빈 값이 아니다",
+  async ({ workloadListPage, assertLogger }) => {
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.NAME,
+      (text, i) => {
+        assertLogger.assertNotEmpty(`워크로드[${i}] 이름`, text);
+      },
+    );
+  },
+);
+
+/**
+ * 각 워크로드의 생성자가 빈 값이 아닌지 검증
+ */
+Then(
+  "각 워크로드의 생성자가 빈 값이 아니다",
+  async ({ workloadListPage, assertLogger }) => {
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.CREATOR_NAME,
+      (text, i) => {
+        assertLogger.assertNotEmpty(`워크로드[${i}] 생성자`, text);
+      },
+    );
+  },
+);
+
+/**
+ * 각 워크로드의 잡 타입이 유효한 값 중 하나인지 검증
+ */
+Then(
+  "각 워크로드의 잡 타입이 다음 중 하나이다:",
+  async ({ workloadListPage, assertLogger }, dataTable: DataTable) => {
+    const validTypes = dataTable.raw().slice(1).flat();
+
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.JOB_TYPE,
+      (text, i) => {
+        assertLogger.assertContains(`워크로드[${i}] 잡 타입`, text, validTypes);
+      },
+    );
+  },
+);
+
+/**
+ * 각 워크로드의 상태가 유효한 값 중 하나인지 검증
+ */
+Then(
+  "각 워크로드의 상태가 다음 중 하나로 표시된다:",
+  async ({ workloadListPage, assertLogger }, dataTable: DataTable) => {
+    const validStatuses = dataTable.rows().map((row) => row[0]);
+
+    await workloadListPage.table.forEachByPrefix(
+      "workload-status-",
+      (status, i) => {
+        assertLogger.assertContains(
+          `워크로드[${i}] 상태`,
+          status,
+          validStatuses,
+        );
+      },
+    );
+  },
+);
+
+/**
+ * 각 워크로드의 경과 시간이 올바른 형식으로 표시되는지 검증
+ *
+ * 권장: 이 검증은 Unit 테스트로 대체
+ * - formatElapsedTime() 함수의 입출력 테스트로 충분
+ */
+Then(
+  "각 워크로드의 경과 시간이 올바른 형식으로 표시된다",
+  async ({ workloadListPage, assertLogger }) => {
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.ELAPSED_TIME,
+      (text, i) => {
+        assertLogger.assertMatch(
+          `워크로드[${i}] 경과 시간`,
+          text,
+          RELATIVE_TIME_PATTERN,
+        );
+      },
+    );
   },
 );

@@ -14,17 +14,17 @@
 // ============================================
 
 export const SELECTOR = {
-  // 목록 페이지 공통
-  /** 목록 테이블 래퍼 */
-  LIST_TABLE: "list-table",
-  /** 총 개수 표시 */
-  LIST_TOTAL_COUNT: "list-total-count",
-  /** 페이지네이션 */
-  LIST_PAGINATION: "list-pagination",
-  /** 검색 입력창 */
-  LIST_SEARCH_INPUT: "list-search-input",
-  /** 필터 영역 */
-  LIST_FILTER: "list-filter",
+  // 목록 페이지 공통 (동적 함수)
+  /** 목록 테이블 래퍼 - {page}-list-table */
+  listTable: (page: string) => `${page}-list-table`,
+  /** 총 개수 표시 - {page}-list-total-count */
+  listTotalCount: (page: string) => `${page}-list-total-count`,
+  /** 페이지네이션 - {page}-list-pagination */
+  listPagination: (page: string) => `${page}-list-pagination`,
+  /** 검색 입력창 - {page}-list-search-input */
+  listSearchInput: (page: string) => `${page}-list-search-input`,
+  /** 필터 영역 - {page}-list-filter */
+  listFilter: (page: string) => `${page}-list-filter`,
 
   // 워크스페이스
   /** 선택된 워크스페이스 값 */
@@ -73,7 +73,10 @@ export const WORKLOAD_SELECTOR = {
   JOB_TYPE: "workload-job-type",
   /** 워크로드 상태 (동적) - workload-status-{status} */
   status: (status: string) => `workload-status-${status}`,
-
+  /** 경과 시간 */
+  ELAPSED_TIME: "workload-elapsed-time",
+  /** 생성자 이름 */
+  CREATOR_NAME: "workload-creator-name",
   // 액션 버튼
   /** 로그 버튼 */
   LOG_BUTTON: "workload-log-button",
@@ -116,8 +119,12 @@ export const WORKLOAD_SELECTOR = {
   // 모니터링 사이드 패널 (로그/웹터미널 공통)
   /** 모니터링 사이드 패널 컨테이너 */
   ASIDE_MONITORING: "workload-aside-monitoring",
-  /** 모니터링 차트 카드 */
+  /** 모니터링 차트 카드 (공통) */
   MONITORING_CHART: "workload-monitoring-chart",
+  /** 모니터링 차트 카드 (동적) - workload-monitoring-chart-{type} */
+  monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
+  /** 모니터링 차트 타이틀 */
+  MONITORING_CHART_TITLE: "workload-monitoring-chart-title",
   /** 모니터링 차트 확대 버튼 */
   MONITORING_CHART_EXPAND_BUTTON: "workload-monitoring-chart-expand-button",
 

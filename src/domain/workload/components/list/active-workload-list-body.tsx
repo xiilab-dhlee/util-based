@@ -25,7 +25,7 @@ export function ActiveWorkloadListBody({
   loading,
 }: ActiveWorkloadListBodyProps) {
   return (
-    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
+    <ListWrapper data-testid={SELECTOR.listTable("workload")}>
       <CustomizedTable
         columns={createWorkloadColumn([
           {

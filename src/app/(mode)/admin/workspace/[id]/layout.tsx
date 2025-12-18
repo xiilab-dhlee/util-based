@@ -15,8 +15,13 @@ import {
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {
     key: "",
-    label: "워크로드 목록",
-    icon: "Workload",
+    label: "활성화 워크로드 목록",
+    icon: "Verification02",
+  },
+  {
+    key: "disabled",
+    label: "비활성화 워크로드 목록",
+    icon: "Close",
   },
   {
     key: "member",

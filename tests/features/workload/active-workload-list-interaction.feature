@@ -57,13 +57,32 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
       | search   | jobType   | status   |
       | <search> | <jobType> | <status> |
 
-    # 핵심 조합만 테스트: 단일 필터, 복합 필터, 검색+필터
+    # 모든 필터 조합 테스트
+    # search: - (미설정), auto (자동검색)
+    # jobType: - (미설정), Batch, Interactive
+    # status: - (미설정), 실행중, 대기중
     Examples:
-      | 설명                | search | jobType     | status |
-      | 잡타입 단일 필터    | -      | Batch       | -      |
-      | 상태 단일 필터      | -      | -           | 실행중 |
-      | 잡타입+상태 복합    | -      | Interactive | 대기중 |
-      | 검색+잡타입+상태    | auto   | Batch       | 실행중 |
+      | 설명                          | search | jobType     | status |
+      # 검색 없음 (9개)
+      | 필터 없음                     | -      | -           | -      |
+      | 잡타입=Batch                  | -      | Batch       | -      |
+      | 잡타입=Interactive            | -      | Interactive | -      |
+      | 상태=실행중                   | -      | -           | 실행중 |
+      | 상태=대기중                   | -      | -           | 대기중 |
+      | Batch+실행중                  | -      | Batch       | 실행중 |
+      | Batch+대기중                  | -      | Batch       | 대기중 |
+      | Interactive+실행중            | -      | Interactive | 실행중 |
+      | Interactive+대기중            | -      | Interactive | 대기중 |
+      # 검색 있음 (9개)
+      | 검색만                        | auto   | -           | -      |
+      | 검색+Batch                    | auto   | Batch       | -      |
+      | 검색+Interactive              | auto   | Interactive | -      |
+      | 검색+실행중                   | auto   | -           | 실행중 |
+      | 검색+대기중                   | auto   | -           | 대기중 |
+      | 검색+Batch+실행중             | auto   | Batch       | 실행중 |
+      | 검색+Batch+대기중             | auto   | Batch       | 대기중 |
+      | 검색+Interactive+실행중       | auto   | Interactive | 실행중 |
+      | 검색+Interactive+대기중       | auto   | Interactive | 대기중 |
 
   # ============================================
   # 액션 (종료)

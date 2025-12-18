@@ -89,6 +89,10 @@ export class WorkloadListPage extends ListPage {
     return WORKLOAD_SELECTOR.NAME;
   }
 
+  protected get testIdPage(): string {
+    return "workload";
+  }
+
   // ============================================
   // Navigation (확장)
   // ============================================

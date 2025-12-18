@@ -24,12 +24,19 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
       | search   | jobType   | status |
       | <search> | <jobType> | -      |
 
-    # 핵심 조합만 테스트: 단일 필터, 검색+필터 (상태 필터 없음)
+    # 모든 필터 조합 테스트 (상태 필터 없음)
+    # search: - (미설정), auto (자동검색)
+    # jobType: - (미설정), Batch, Interactive
     Examples:
-      | 설명             | search | jobType     |
-      | 잡타입 단일 필터 | -      | Batch       |
-      | 검색             | auto   | -           |
-      | 검색+잡타입      | auto   | Interactive |
+      | 설명                 | search | jobType     |
+      # 검색 없음 (3개)
+      | 필터 없음            | -      | -           |
+      | 잡타입=Batch         | -      | Batch       |
+      | 잡타입=Interactive   | -      | Interactive |
+      # 검색 있음 (3개)
+      | 검색만               | auto   | -           |
+      | 검색+Batch           | auto   | Batch       |
+      | 검색+Interactive     | auto   | Interactive |
 
   # ============================================
   # 액션 (삭제, 재시작)

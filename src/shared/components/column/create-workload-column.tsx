@@ -74,12 +74,31 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      dataIndex: "creatorName",
+      title: "생성자",
+      align: "center",
+      width: 100,
+      render: (creatorName: string) => {
+        return (
+          <ColumnAlignCenterWrap>
+            <span data-testid={WORKLOAD_SELECTOR.CREATOR_NAME}>
+              {creatorName}
+            </span>
+          </ColumnAlignCenterWrap>
+        );
+      },
+    },
+    {
       dataIndex: "elapsedTime",
       title: "경과 시간",
       align: "center",
       width: 140,
       render: (elapsedTime: string) => {
-        return <span>{formatElapsedTime(elapsedTime)}</span>;
+        return (
+          <span data-testid={WORKLOAD_SELECTOR.ELAPSED_TIME}>
+            {formatElapsedTime(elapsedTime)}
+          </span>
+        );
       },
     },
     {

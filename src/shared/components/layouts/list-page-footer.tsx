@@ -20,6 +20,8 @@ interface ListPageFooterProps {
   rightChildren?: ReactNode;
   // 왼쪽 컴포넌트
   leftChildren?: ReactNode;
+  // 테스트용 페이지 식별자 (예: "workload", "sourcecode")
+  testIdPage?: string;
 }
 // 목록 푸터 컴포넌트
 export function ListPageFooter({
@@ -30,6 +32,7 @@ export function ListPageFooter({
   isLoading,
   rightChildren,
   leftChildren,
+  testIdPage,
 }: ListPageFooterProps) {
   // 로딩 중일 때는 푸터를 렌더링하지 않음
   if (isLoading) {
@@ -45,6 +48,7 @@ export function ListPageFooter({
           total={total}
           pageSize={pageSize}
           onChange={onChange}
+          testIdPage={testIdPage}
         />
       </Center>
       <Right>{rightChildren}</Right>

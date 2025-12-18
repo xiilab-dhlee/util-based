@@ -33,6 +33,9 @@ export abstract class ListPage extends BasePage {
   /** 테이블 행 식별자 testId (하위 클래스에서 정의) */
   protected abstract get tableIdentifierTestId(): string;
 
+  /** 테스트용 페이지 식별자 (예: "workload", "sourcecode") */
+  protected abstract get testIdPage(): string;
+
   // ============================================
   // Lazy Initialized Components
   // ============================================
@@ -54,17 +57,17 @@ export abstract class ListPage extends BasePage {
 
   /** 검색 입력창 */
   get searchInput(): Locator {
-    return this.page.locator(testId(SELECTOR.LIST_SEARCH_INPUT));
+    return this.page.locator(testId(SELECTOR.listSearchInput(this.testIdPage)));
   }
 
   /** 총 개수 표시 영역 */
   get totalCount(): Locator {
-    return this.page.locator(testId(SELECTOR.LIST_TOTAL_COUNT));
+    return this.page.locator(testId(SELECTOR.listTotalCount(this.testIdPage)));
   }
 
   /** 목록 테이블 */
   get listTable(): Locator {
-    return this.page.locator(testId(SELECTOR.LIST_TABLE));
+    return this.page.locator(testId(SELECTOR.listTable(this.testIdPage)));
   }
 
   // ============================================
@@ -85,7 +88,7 @@ export abstract class ListPage extends BasePage {
    */
   async assertPaginationVisible(timeout = 10000): Promise<void> {
     await expect(
-      this.page.locator(testId(SELECTOR.LIST_PAGINATION)),
+      this.page.locator(testId(SELECTOR.listPagination(this.testIdPage))),
     ).toBeVisible({ timeout });
   }
 

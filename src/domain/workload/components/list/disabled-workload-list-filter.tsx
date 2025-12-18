@@ -42,9 +42,13 @@ export function DisabledWorkloadListFilter({
   };
 
   return (
-    <MySearchFilter title="워크로드 목록" total={total}>
+    <MySearchFilter title="워크로드 목록" total={total} testIdPage="workload">
       <DisabledWorkloadJobTypeSort disabled={isLoading} />
-      <SearchInput disabled={isLoading} onSearch={handleSearch} />
+      <SearchInput
+        disabled={isLoading}
+        onSearch={handleSearch}
+        testIdPage="workload"
+      />
     </MySearchFilter>
   );
 }

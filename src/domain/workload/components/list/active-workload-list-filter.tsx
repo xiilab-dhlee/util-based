@@ -43,10 +43,14 @@ export function ActiveWorkloadListFilter({
   };
 
   return (
-    <MySearchFilter title="워크로드 목록" total={total}>
+    <MySearchFilter title="워크로드 목록" total={total} testIdPage="workload">
       <ActiveWorkloadJobTypeSort disabled={loading} />
       <ActiveWorkloadStatusSort disabled={loading} />
-      <SearchInput disabled={loading} onSearch={handleSearch} />
+      <SearchInput
+        disabled={loading}
+        onSearch={handleSearch}
+        testIdPage="workload"
+      />
     </MySearchFilter>
   );
 }

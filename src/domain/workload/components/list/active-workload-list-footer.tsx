@@ -36,6 +36,7 @@ export function ActiveWorkloadListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={setPage}
       isLoading={loading}
+      testIdPage="workload"
     />
   );
 }

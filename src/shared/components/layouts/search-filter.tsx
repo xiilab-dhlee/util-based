@@ -18,6 +18,8 @@ interface MySearchFilterProps {
   darkMode?: boolean;
   // 총 개수 표시 여부
   showTotal?: boolean;
+  // 테스트용 페이지 식별자 (예: "workload", "sourcecode")
+  testIdPage?: string;
 }
 // 검색 필터 컴포넌트
 export function MySearchFilter({
@@ -27,16 +29,21 @@ export function MySearchFilter({
   children,
   darkMode = false,
   showTotal = true,
+  testIdPage,
 }: PropsWithChildren<MySearchFilterProps>) {
   return (
-    <Container data-testid={SELECTOR.LIST_FILTER}>
+    <Container
+      data-testid={testIdPage ? SELECTOR.listFilter(testIdPage) : undefined}
+    >
       <Left>
         <Title className={classNames({ dark: darkMode })}>{title}</Title>
 
         {showTotal && (
           <Total
             className={classNames({ dark: darkMode })}
-            data-testid={SELECTOR.LIST_TOTAL_COUNT}
+            data-testid={
+              testIdPage ? SELECTOR.listTotalCount(testIdPage) : undefined
+            }
           >
             총 {total.toLocaleString()}
             {unit}
