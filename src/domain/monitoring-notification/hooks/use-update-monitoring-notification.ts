@@ -13,12 +13,12 @@ export const useUpdateMonitoringNotification = (): UseMutationResult<
   UpdateMonitoringNotificationPayload,
   unknown
 > => {
-  const { monitoringService } = useServices();
+  const { monitoringNotificationService } = useServices();
 
   return useMutation({
     mutationKey: monitoringKeys.update(),
     mutationFn: (payload: UpdateMonitoringNotificationPayload) => {
-      return monitoringService.updateNotification(payload);
+      return monitoringNotificationService.updateNotification(payload);
     },
   });
 };

@@ -6,12 +6,14 @@ import { Icon, Tooltip, type TooltipProps, Typography } from "xiilab-ui";
 
 interface GuideTooltipProps extends Omit<TooltipProps, "title"> {
   title: ReactNode;
+  iconSize?: number;
 }
 
 export function GuideTooltip({
   title,
   maxWidth,
   styles,
+  iconSize = 16,
   ...props
 }: GuideTooltipProps) {
   const mergedStyles =
@@ -35,7 +37,7 @@ export function GuideTooltip({
       getPopupContainer={() => document.body}
     >
       <IconWrapper className="tooltip-icon">
-        <Icon name="Info" size={16} color="#5F6368" />
+        <Icon name="Info" size={iconSize} color="#5F6368" />
         <span className="sr-only">가이드</span>
       </IconWrapper>
     </Tooltip>
@@ -46,6 +48,5 @@ const IconWrapper = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  padding: 6px;
 `;

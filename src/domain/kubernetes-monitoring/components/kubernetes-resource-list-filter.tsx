@@ -14,7 +14,11 @@ import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { useSelect } from "@/shared/hooks/use-select";
 
-export function KubernetesResourceListFilter() {
+export function KubernetesResourceListFilter({
+  totalSize,
+}: {
+  totalSize: number;
+}) {
   const [status, setStatus] = useAtom(kubernetesResourceStatusAtom);
   const setKeyword = useSetAtom(kubernetesResourceKeywordAtom);
   const statusOptions = [
@@ -29,7 +33,7 @@ export function KubernetesResourceListFilter() {
   };
 
   return (
-    <MySearchFilter title="리소스 리스트" showTotal={false}>
+    <MySearchFilter title="리소스 리스트" total={totalSize}>
       <FilterControls>
         <Dropdown
           options={statusSelect.options}

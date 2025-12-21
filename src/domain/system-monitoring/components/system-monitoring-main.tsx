@@ -15,6 +15,7 @@ import {
 } from "@/domain/system-monitoring/utils/system-monitoring.util";
 import { ChartDateRange } from "@/shared/components/chart-date-range";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import { MultiSelectWithAll } from "@/shared/components/select";
 import type { MonitoringDateMode } from "@/shared/types/monitoring.type";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
@@ -42,11 +43,6 @@ export function SystemMonitoringMain() {
   const handleChangeNode = (value: string | null) => {
     if (!value) return;
     setSelectedNode(value);
-  };
-
-  const handleChangeGpu = (value: string | null) => {
-    if (!value) return;
-    setSelectedGpu(value);
   };
 
   const handleToggleDateMode = () => {
@@ -90,7 +86,7 @@ export function SystemMonitoringMain() {
   const resourceSummary = buildResourceSummary(nodeSummary);
 
   // GPU 필터 관리
-  const { selectedGpu, setSelectedGpu, gpuOptions, selectedGpuFilter } =
+  const { selectedGpus, setSelectedGpus, gpuOptions, selectedGpuFilter } =
     useGpuFilter(nodeSummary);
 
   return (
@@ -127,13 +123,14 @@ export function SystemMonitoringMain() {
         <ArticleHeader>
           <Typography.Text variant="title-2">그래프</Typography.Text>
           <ArticleHeaderRight>
-            <Dropdown
+            <MultiSelectWithAll
               options={gpuOptions}
-              onChange={handleChangeGpu}
-              value={selectedGpu}
-              width={160}
+              value={selectedGpus}
+              onChange={setSelectedGpus}
+              width={200}
               height={30}
               placeholder="GPU 선택"
+              allLabel="전체"
             />
             <ChartDateRange
               mode={dateMode}
@@ -141,9 +138,8 @@ export function SystemMonitoringMain() {
               onToggleMode={handleToggleDateMode}
               onChangeRange={handleChangeDateRange}
               height={30}
-              width={250}
+              width={260}
               withTime
-              maxDate={new Date()}
             />
           </ArticleHeaderRight>
         </ArticleHeader>

@@ -8,6 +8,7 @@ import type { DropdownOption, MenuItem, ResponsiveColumnType } from "xiilab-ui";
 
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
+import type { SortDirection } from "@/shared/types/api.interface";
 
 // 네비게이션 메뉴
 export type CoreNavMenu = {
@@ -83,4 +84,10 @@ export interface CoreTestSelector {
 
 export interface CoreDropdownOption<T> extends DropdownOption {
   origin: T;
+}
+
+/** 테이블 정렬 상태 공통 타입 */
+export interface TableSortState {
+  sortBy: string;
+  sortDirection: SortDirection;
 }

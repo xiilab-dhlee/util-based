@@ -26,7 +26,16 @@
       "Bash(pnpm test:allure:history:*)",
       "Bash(pnpm test:trace:*)",
       "Bash(pnpm bddgen:*)",
-      "Bash(npx playwright-bdd:*)"
+      "Bash(npx playwright-bdd:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(npx pnpm --version)",
+      "Bash(source:*)",
+      "Bash(nvm current:*)",
+      "Bash(pnpm --version:*)",
+      "Bash(find:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(npx pnpm format:*)"
     ],
     "deny": [
       "Bash(pnpm add:*)",

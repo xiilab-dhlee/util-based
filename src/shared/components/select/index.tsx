@@ -3,6 +3,12 @@ import { CompoundDropdown } from "xiilab-ui";
 
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
+export { MultiSelectWithAll } from "./multi-select-with-all";
+export type {
+  MultiSelectOption,
+  MultiSelectWithAllProps,
+} from "./multi-select-with-all.types";
+
 export type MySelectOption = {
   label: string;
   value: string;

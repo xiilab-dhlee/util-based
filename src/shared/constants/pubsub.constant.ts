@@ -180,6 +180,8 @@ export const MONITORING_EVENTS = {
   sendNotificationSetting: "monitoring:send-notification-setting",
   // 모니터링 알림 내역 상세 모달에 필요한 정보 전달 이벤트
   sendNotificationHistory: "monitoring:send-notification-history",
+  // 사용자 워크스페이스 정보 모달에 필요한 정보 전달 이벤트
+  sendUserWorkspace: "monitoring:send-user-workspace",
 } as const;
 
 // 알림 관련 이벤트

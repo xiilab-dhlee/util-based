@@ -132,7 +132,6 @@ export function AsideDispatchDetail() {
                   }}
                   activePadding
                   rowKey="email"
-                  showTotal={false}
                   loading={isLoading}
                   isError={isError}
                 />

@@ -1,7 +1,7 @@
-import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { PreviewTag } from "@/shared/components/tag/preview-tag";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import {
   ColumnAlignCenterWrap,
   ColumnLabelWrap,
@@ -32,7 +32,7 @@ export const commonColumns: ResponsiveColumnType[] = [
     align: "center",
     width: 140,
     render: (creatorDate: string) => {
-      return <span>{format(creatorDate, "yyyy.MM.dd")}</span>;
+      return <span>{formatDateSafely(creatorDate)}</span>;
     },
   },
   {
@@ -41,7 +41,7 @@ export const commonColumns: ResponsiveColumnType[] = [
     align: "left",
     width: 140,
     render: (creatorDateTime: string) => {
-      return <span>{format(creatorDateTime, "yyyy.MM.dd")}</span>;
+      return <span>{formatDateSafely(creatorDateTime)}</span>;
     },
   },
   {
@@ -52,7 +52,7 @@ export const commonColumns: ResponsiveColumnType[] = [
     render: (updatedAt: string) => {
       return (
         <ColumnAlignCenterWrap>
-          {format(updatedAt, "yyyy.MM.dd")}
+          {formatDateSafely(updatedAt)}
         </ColumnAlignCenterWrap>
       );
     },

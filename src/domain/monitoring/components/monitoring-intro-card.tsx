@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { PAGE_META } from "@/shared/constants/page-meta.constant";
 import { gradientBackgroundButtonStyle } from "@/styles/mixins/button";
 import { subTitleStyle } from "@/styles/mixins/text";
 
@@ -12,7 +13,11 @@ export function MonitoringIntroCard() {
       <Header>
         <TitleWrapper>
           <IconWrapper>
-            <Icon name="Astrago" color="#fff" size={18} />
+            <Icon
+              name={PAGE_META["admin.monitoring"]?.iconName}
+              color="#fff"
+              size={18}
+            />
           </IconWrapper>
           <Title>모니터링</Title>
         </TitleWrapper>

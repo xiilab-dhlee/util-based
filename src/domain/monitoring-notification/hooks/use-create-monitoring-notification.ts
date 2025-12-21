@@ -13,12 +13,12 @@ export const useCreateMonitoringNotification = (): UseMutationResult<
   CreateMonitoringNotificationPayload,
   unknown
 > => {
-  const { monitoringService } = useServices();
+  const { monitoringNotificationService } = useServices();
 
   return useMutation({
     mutationKey: monitoringKeys.create(),
     mutationFn: (payload: CreateMonitoringNotificationPayload) => {
-      return monitoringService.createNotification(payload);
+      return monitoringNotificationService.createNotification(payload);
     },
   });
 };

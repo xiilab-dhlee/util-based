@@ -8,11 +8,11 @@ export const UserMonitoringSectionHeader = styled.div`
   position: relative;
 `;
 
-export const UserMonitoringSectionTitle = styled.h2`
+export const UserMonitoringSectionTitle = styled(Typography.Text).attrs({
+  variant: "title-2",
+})`
   position: relative;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1;
+
   color: #fff;
 
   &:not(.no-line)::before {

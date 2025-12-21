@@ -4,36 +4,62 @@ import { Typography } from "xiilab-ui";
 
 import { UserMonitoringResourceClusterChart } from "@/domain/user-monitoring/components/user-monitoring-resource-cluster-chart";
 import type { CoreResourceType } from "@/shared/types/core.interface";
+import { getPercent } from "@/shared/utils/calc.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
+/** 클러스터 리소스 데이터 타입 */
+export interface ClusterResourceData {
+  total?: number;
+  requested?: number;
+  used?: number;
+}
+
+/**
+ * 값이 없으면 '-'를 반환하고, 있으면 숫자를 반환합니다.
+ */
+function formatValue(value?: number): string {
+  return value !== undefined && value !== null ? String(value) : "-";
+}
+
+/**
+ * 값이 존재하는지 확인합니다.
+ */
+function hasValue(value?: number): boolean {
+  return value !== undefined && value !== null;
+}
+
 interface UserMonitoringResourceClusterProps {
-  series: number;
   gradientToColors: string[];
   resourceType: CoreResourceType;
+  data: ClusterResourceData;
 }
 
 export function MonitoringClusterResource({
-  series,
   gradientToColors,
   resourceType,
+  data,
 }: UserMonitoringResourceClusterProps) {
-  const { unit } = getResourceInfo(resourceType);
+  const { unit, text } = getResourceInfo(resourceType);
+
+  const hasPercentData = hasValue(data.total);
+  const percent = getPercent(data.used ?? 0, data.total ?? 0);
+
   return (
     <Container className={classNames({ "gpu-only": resourceType === "GPU" })}>
       <Left>
         <ChartWrapper>
           <UserMonitoringResourceClusterChart
-            series={series}
+            series={percent}
             gradientToColors={gradientToColors}
           />
         </ChartWrapper>
 
         <ChartLabel>
           <ChartLabelItem>
-            <ChartTitle>{resourceType}</ChartTitle>
+            <ChartTitle>{text}</ChartTitle>
           </ChartLabelItem>
           <ChartLabelItem>
-            <ChartPercent>{series}%</ChartPercent>
+            <ChartPercent>{hasPercentData ? `${percent}%` : "-"}</ChartPercent>
           </ChartLabelItem>
         </ChartLabel>
       </Left>
@@ -43,23 +69,23 @@ export function MonitoringClusterResource({
             전체
           </Typography.Text>
           <Value>
-            <TotalCount>999</TotalCount>
-            <TotalUnit>{unit}</TotalUnit>
+            <TotalCount>{formatValue(data.total)}</TotalCount>
+            {hasValue(data.total) && <TotalUnit>{unit}</TotalUnit>}
           </Value>
         </RightHeader>
         <RightBody>
           <Record>
             <Key>요청</Key>
             <Value>
-              <Count>666</Count>
-              <CountUnit>{unit}</CountUnit>
+              <Count>{formatValue(data.requested)}</Count>
+              {hasValue(data.requested) && <CountUnit>{unit}</CountUnit>}
             </Value>
           </Record>
           <Record>
             <Key>사용</Key>
             <Value>
-              <Count>333</Count>
-              <CountUnit>{unit}</CountUnit>
+              <Count>{formatValue(data.used)}</Count>
+              {hasValue(data.used) && <CountUnit>{unit}</CountUnit>}
             </Value>
           </Record>
         </RightBody>
