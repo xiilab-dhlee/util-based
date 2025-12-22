@@ -61,7 +61,7 @@ export class WorkloadDetailPage extends BasePage {
       page,
       WORKLOAD_SELECTOR.VOLUME_CARD,
     );
-    this.tabs = new TabsComponent(page, ".tabs-nav");
+    this.tabs = new TabsComponent(page);
   }
 
   // ============================================

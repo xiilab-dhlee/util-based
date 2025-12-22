@@ -70,7 +70,7 @@ export class WorkloadListPage extends ListPage {
       page,
       WORKLOAD_SELECTOR.FILTER_STATUS,
     );
-    this.tabs = new TabsComponent(page, ".tabs-nav");
+    this.tabs = new TabsComponent(page);
   }
 
   // ============================================
@@ -114,5 +114,12 @@ export class WorkloadListPage extends ListPage {
   async searchByFirstWorkloadName(): Promise<void> {
     const name = await this.table.getFirstCellText(WORKLOAD_SELECTOR.NAME);
     await this.search(name);
+  }
+
+  /**
+   * 지정된 텍스트로 검색 (경계값 테스트용)
+   */
+  async searchByText(text: string): Promise<void> {
+    await this.search(text);
   }
 }

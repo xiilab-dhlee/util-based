@@ -2,6 +2,7 @@ import { expect, type Locator } from "@playwright/test";
 
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { DataTableComponent } from "../components/data-table.component";
+import { SwitchComponent } from "../components/switch.component";
 import { BasePage } from "./base.page";
 
 /**
@@ -25,6 +26,8 @@ import { BasePage } from "./base.page";
 export abstract class ListPage extends BasePage {
   /** 목록 테이블 컴포넌트 (lazy initialization) */
   private _table: DataTableComponent | null = null;
+  /** 내 항목만 보기 스위치 컴포넌트 (lazy initialization) */
+  private _myItemsOnlySwitch: SwitchComponent | null = null;
 
   // ============================================
   // Abstract - 하위 클래스에서 구현 필수
@@ -49,6 +52,17 @@ export abstract class ListPage extends BasePage {
       );
     }
     return this._table;
+  }
+
+  /** 내 항목만 보기 스위치 컴포넌트 */
+  get myItemsOnlySwitch(): SwitchComponent {
+    if (!this._myItemsOnlySwitch) {
+      this._myItemsOnlySwitch = new SwitchComponent(
+        this.page,
+        SELECTOR.MY_ITEMS_ONLY_SWITCH,
+      );
+    }
+    return this._myItemsOnlySwitch;
   }
 
   // ============================================
