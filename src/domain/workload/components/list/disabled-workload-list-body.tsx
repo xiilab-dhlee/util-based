@@ -1,13 +1,13 @@
 "use client";
 
-import type { DisabledWorkloadListType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface DisabledWorkloadListBodyProps {
-  content: DisabledWorkloadListType[];
+  content: WorkloadListType[];
   loading: boolean;
 }
 

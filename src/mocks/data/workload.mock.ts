@@ -1,7 +1,7 @@
+import { WORKLOAD_STATUS } from "@/domain/workload/constants/workload.constant";
 import {
-  type ActiveWorkloadListType,
-  activeWorkloadListSchema,
   type WorkloadListType,
+  type WorkloadStatusType,
   workloadDetailSchema,
   workloadListSchema,
 } from "@/domain/workload/schemas/workload.schema";
@@ -15,67 +15,71 @@ export const workloadListMock = Array.from({ length: LIST_PAGE_SIZE }, () =>
 export const workloadDetailMock = makeMock(workloadDetailSchema);
 
 /**
- * 제네릭 워크로드 목록 mock 생성 팩토리 함수
- * @param schema - Zod schema for the workload type
- * @param override - Partial override object with optional size and searchText
- * @returns Array of mocked workload data
+ * 랜덤 상태 선택 헬퍼 함수
+ * @param excludeStatuses - 제외할 상태 목록
+ * @returns 랜덤 선택된 상태
  */
-function createGenericWorkloadListMock<T extends { workloadName: string }>(
-  schema: Parameters<typeof makeMock>[0],
-  override?: Partial<T> & {
-    size?: number;
-    searchText?: string;
-  },
-): T[] {
-  const { size = LIST_PAGE_SIZE, searchText, ...restOverride } = override ?? {};
-  return Array.from({ length: size }, (_, index) => {
-    const baseOverride = { ...restOverride };
-    if (searchText) {
-      baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
-    }
-
-    return makeMock(schema, baseOverride) as T;
-  });
-}
-
-/**
- * 동적 mock 데이터 생성 팩토리 함수
- * 매 호출마다 새로운 데이터를 생성하며, override를 통해 특정 필드 값을 고정할 수 있음
- * override.size로 생성할 개수를 지정할 수 있음 (기본값: LIST_PAGE_SIZE)
- * override.searchText가 전달되면 workloadName에 해당 텍스트가 포함됨
- */
-export function createActiveWorkloadListMock(
-  override?: Partial<ActiveWorkloadListType> & {
-    size?: number;
-    searchText?: string;
-  },
-): ActiveWorkloadListType[] {
-  return createGenericWorkloadListMock<ActiveWorkloadListType>(
-    activeWorkloadListSchema,
-    override,
+function getRandomStatus(
+  excludeStatuses: WorkloadStatusType[] = [],
+): WorkloadStatusType {
+  const availableStatuses = WORKLOAD_STATUS.filter(
+    (status) => !excludeStatuses.includes(status),
   );
+  return availableStatuses[
+    Math.floor(Math.random() * availableStatuses.length)
+  ];
 }
+
+/** 워크로드 mock 생성 옵션 타입 */
+type WorkloadMockOptions = Partial<WorkloadListType> & {
+  size?: number;
+  searchText?: string;
+  /** 상태 선택 시 제외할 상태 목록 (status 미지정 시에만 적용) */
+  excludeStatuses?: WorkloadStatusType[];
+};
 
 /**
  * 워크로드 목록 mock 생성 함수
+ * - status가 전달되지 않으면 RUNNING, PENDING, COMPLETED 중 랜덤 선택
+ * - excludeStatuses로 특정 상태 제외 가능 (활성화 목록에서 COMPLETED 제외 등)
  * - status가 "COMPLETED"일 경우 revokeWarningCount를 0으로 자동 설정
  * - searchText가 전달되면 workloadName에 해당 텍스트가 포함됨
  */
 export function createWorkloadListMock(
-  override?: Partial<WorkloadListType> & {
-    size?: number;
-    searchText?: string;
-  },
+  override?: WorkloadMockOptions,
 ): WorkloadListType[] {
-  // status=COMPLETED일 때 revokeWarningCount 기본값 0 설정
-  // 사용자가 명시적으로 전달한 override는 우선 적용
-  const enhancedOverride = {
-    ...(override?.status === "COMPLETED" && { revokeWarningCount: 0 }),
-    ...override,
-  };
+  const {
+    size = LIST_PAGE_SIZE,
+    searchText,
+    excludeStatuses = [],
+    ...restOverride
+  } = override ?? {};
 
-  return createGenericWorkloadListMock<WorkloadListType>(
-    workloadListSchema,
-    enhancedOverride,
-  );
+  return Array.from({ length: size }, (_, index) => {
+    // status가 전달되지 않으면 랜덤 선택 (excludeStatuses 적용)
+    const status = restOverride.status ?? getRandomStatus(excludeStatuses);
+
+    // isRevoked 결정: COMPLETED일 때만 확률적으로 true, 그 외는 항상 false
+    const isRevoked = status === "COMPLETED" ? Math.random() < 0.3 : false;
+
+    // revokeWarningCount 결정:
+    // - COMPLETED: 항상 0 (비활성화 목록에서는 회수 경고 없음)
+    // - 그 외: 확률적으로 0 (30% 확률)
+    const revokeWarningCount =
+      status === "COMPLETED" ? 0 : Math.random() < 0.3 ? 0 : undefined;
+
+    const baseOverride: Partial<WorkloadListType> = {
+      ...restOverride,
+      status,
+      isRevoked,
+      ...(revokeWarningCount !== undefined && { revokeWarningCount }),
+    };
+
+    // searchText가 있으면 workloadName에 포함
+    if (searchText) {
+      baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
+    }
+
+    return makeMock(workloadListSchema, baseOverride);
+  });
 }

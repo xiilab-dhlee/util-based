@@ -2,6 +2,19 @@ import type { DropdownOption } from "xiilab-ui";
 
 import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 
+export const WORKLOAD_JOB_TYPES = [
+  "BATCH",
+  "INTERACTIVE",
+  "DISTRIBUTED",
+] as const;
+
+export const WORKLOAD_STATUS = [
+  "RUNNING",
+  "PENDING",
+  "COMPLETED",
+  "FAILED",
+] as const;
+
 export const WORKLOAD_IMAGE_TYPES = [
   "HUB",
   "BUILTIN",
