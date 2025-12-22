@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 import { testId, testIdPrefix } from "@/shared/constants/selector.constant";
 
@@ -188,5 +188,18 @@ export class DataTableComponent {
     const cell = this.container.locator(testId(columnTestId)).first();
     await cell.click();
     await this.page.waitForLoadState("networkidle");
+  }
+
+  /**
+   * 테이블 로딩이 완료될 때까지 대기
+   *
+   * 통합테스트 환경에서 API 응답 대기를 위해:
+   * - 스피너(.ant-spin)가 사라질 때까지 대기
+   *
+   * @param timeout - 대기 시간 (기본 10초)
+   */
+  async waitForLoaded(timeout = 10000): Promise<void> {
+    const spinner = this.container.locator(".ant-spin");
+    await expect(spinner).toBeHidden({ timeout });
   }
 }

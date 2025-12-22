@@ -89,11 +89,20 @@ export abstract class ListPage extends BasePage {
   // ============================================
 
   /**
-   * 목록 테이블이 표시되었는지 확인
+   * 목록 테이블이 로드 완료되었는지 확인
+   *
+   * 통합테스트 환경에서 API 로딩 완료를 보장하기 위해:
+   * 1. 테이블 컨테이너가 visible인지 확인
+   * 2. 스피너가 사라질 때까지 대기 (로딩 완료)
+   *
    * @param timeout - 대기 시간 (기본 10초)
    */
   async assertTableVisible(timeout = 10000): Promise<void> {
     await expect(this.listTable).toBeVisible({ timeout });
+
+    // 로딩 완료 대기: 스피너 소멸
+    const spinner = this.listTable.locator(".ant-spin");
+    await expect(spinner).toBeHidden({ timeout });
   }
 
   /**
@@ -113,6 +122,25 @@ export abstract class ListPage extends BasePage {
   async assertSearchInputEmpty(timeout = 10000): Promise<void> {
     await expect(this.searchInput).toBeVisible({ timeout });
     await expect(this.searchInput).toHaveValue("");
+  }
+
+  /**
+   * 테이블 빈 상태 메시지 검증
+   *
+   * Ant Design Table의 empty placeholder 텍스트를 확인합니다.
+   * - 빈 데이터: "조회된 결과가 없습니다."
+   * - API 에러: "데이터를 불러올 수 없습니다."
+   *
+   * @param expectedMessage - 기대하는 메시지
+   * @param timeout - 대기 시간 (기본 10초)
+   */
+  async assertEmptyMessage(
+    expectedMessage: string,
+    timeout = 10000,
+  ): Promise<void> {
+    const emptyPlaceholder = this.listTable.locator(".ant-table-placeholder");
+    await expect(emptyPlaceholder).toBeVisible({ timeout });
+    await expect(emptyPlaceholder).toContainText(expectedMessage);
   }
 
   /**
