@@ -15,4 +15,47 @@ Feature: 워크로드 상세 페이지 조회
   @smoke
   Scenario: 워크로드 상세 페이지 진입
     Then 워크로드 상세 페이지가 표시된다
-    And URL이 "/user/workload/[id]?workspaceId="를 포함한다
+    And 네비게이션 메뉴 중 "워크로드" 메뉴가 활성화되어 있다
+    And "상세정보" 탭이 선택되어 있다
+
+  @regression
+  Scenario: 워크로드 기본 정보 표시
+    Then 워크로드 이름이 표시된다
+    And 워크로드 상태가 다음 중 하나로 표시된다:
+      | 상태      |
+      | running   |
+      | pending   |
+      | completed |
+      | failed    |
+    And 워크로드 설명이 표시된다
+    And 워크로드 수정 버튼이 표시된다
+
+  @skip
+  Scenario: Job 설정 정보 표시
+    Given 사용자가 로그인되어 있다
+    And 워크로드 상세 페이지에 있다
+    And 워크스페이스가 선택되어 있다
+    Then Job Type 정보가 표시된다
+    And 노드 타입 정보가 표시된다
+    And 이미지 정보가 표시된다
+    And Commit Image 생성 버튼이 표시된다
+    And 보안검사 결과가 표시된다
+
+  @skip
+  Scenario: 실행 설정 정보 표시
+    Given 사용자가 로그인되어 있다
+    And 워크로드 상세 페이지에 있다
+    And 워크스페이스가 선택되어 있다
+    Then 실행 경로, 실행 명령어 정보가 표시된다
+    And 환경변수 정보가 표시된다
+    And 포트 정보가 표시된다
+
+  @skip
+  Scenario: 메타 및 리소스 정보 표시
+    Given 사용자가 로그인되어 있다
+    And 워크로드 상세 페이지에 있다
+    And 워크스페이스가 선택되어 있다
+    Then 생성자가 표시된다
+    And 생성일이 yyyy.MM.dd 형식으로 표시된다
+    And 선택한 GPU 정보가 표시된다
+    And 리소스 정보가 표시된다

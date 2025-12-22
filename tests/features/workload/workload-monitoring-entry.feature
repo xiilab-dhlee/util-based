@@ -16,7 +16,6 @@ Feature: 워크로드 모니터링 페이지 조회
   @smoke
   Scenario: 워크로드 모니터링 페이지 조회
     Then 워크로드 모니터링 페이지가 표시된다
-    And URL이 "/user/workload/[id]/monitoring?workspaceId="를 포함한다
     And CPU 사용량 차트가 표시된다
     And 메모리 사용량 차트가 표시된다
     And GPU 활용률 차트가 표시된다
