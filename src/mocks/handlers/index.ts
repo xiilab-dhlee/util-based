@@ -1,7 +1,13 @@
 /**
  * MSW 핸들러 통합
  * 모든 도메인별 핸들러를 하나로 통합하여 export
+ *
+ * Lazy Mock 모드:
+ * - MOCK_DELAY 환경변수 설정 시 모든 API 응답에 지연 적용
+ * - 예: MOCK_DELAY=5000 pnpm dev
  */
+
+import { delay, type HttpHandler } from "msw";
 
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
@@ -31,11 +37,61 @@ import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.han
 import { volumeHandlers } from "@/mocks/handlers/volume.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 import { workspaceHandlers } from "@/mocks/handlers/workspace.handler";
-/**
- * 기본 핸들러 (모든 도메인)
- */
 
-export const combinedHandlers = [
+// ============================================
+// Lazy Mock 지연 래퍼
+// ============================================
+
+/**
+ * 환경변수에서 Mock 지연 시간 읽기
+ */
+function getMockDelay(): number {
+  return parseInt(process.env.MOCK_DELAY ?? "0", 10);
+}
+
+/**
+ * MSW 핸들러에 전역 지연을 적용하는 래퍼
+ *
+ * MOCK_DELAY 환경변수가 설정되면 모든 핸들러의 응답에 지연을 추가합니다.
+ * 지연이 0이면 원본 핸들러를 그대로 반환합니다.
+ */
+function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
+  const delayMs = getMockDelay();
+
+  if (delayMs <= 0) {
+    return handlers;
+  }
+
+  console.log(`🐢 MSW Lazy Mock: 모든 API에 ${delayMs}ms 지연 적용`);
+
+  return handlers.map((handler) => {
+    type ResolverFn = (info: unknown) => unknown;
+    type HandlerWithResolver = { resolver?: ResolverFn };
+
+    const handlerWithResolver = handler as unknown as HandlerWithResolver;
+    const originalResolver = handlerWithResolver.resolver;
+
+    if (typeof originalResolver !== "function") {
+      return handler;
+    }
+
+    handlerWithResolver.resolver = async (info: unknown) => {
+      await delay(delayMs);
+      return originalResolver(info);
+    };
+
+    return handler;
+  });
+}
+
+// ============================================
+// 핸들러 통합
+// ============================================
+
+/**
+ * 원본 핸들러 (지연 미적용)
+ */
+const rawHandlers = [
   ...workloadHandlers,
   ...sourcecodeHandlers,
   ...volumeHandlers,
@@ -65,3 +121,11 @@ export const combinedHandlers = [
   ...reportReservationHandlers,
   ...resourcePresetHandlers,
 ];
+
+/**
+ * 모든 핸들러 (전역 지연 적용)
+ *
+ * MOCK_DELAY 환경변수가 설정되면 모든 API 응답에 지연 적용
+ * 예: MOCK_DELAY=5000 pnpm dev
+ */
+export const combinedHandlers = wrapHandlersWithDelay(rawHandlers);

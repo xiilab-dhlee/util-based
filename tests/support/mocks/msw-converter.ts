@@ -120,9 +120,19 @@ async function executeHandler(
 }
 
 /**
- * API 요청을 처리하는 라우트 핸들러 생성
+ * 지정된 시간만큼 대기
  */
-function createRouteHandler(handlerInfos: HandlerInfo[]) {
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * API 요청을 처리하는 라우트 핸들러 생성
+ *
+ * @param handlerInfos - MSW 핸들러 정보 배열
+ * @param delayMs - 응답 지연 시간 (ms), 0이면 지연 없음
+ */
+function createRouteHandler(handlerInfos: HandlerInfo[], delayMs = 0) {
   return async (route: Route) => {
     try {
       const request = route.request();
@@ -134,6 +144,11 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
       const match = findMatchingHandler(handlerInfos, method, pathname);
 
       if (match) {
+        // Lazy Mock: 지연 시간이 설정된 경우 대기
+        if (delayMs > 0) {
+          await delay(delayMs);
+        }
+
         // MSW Request 생성 (body 포함)
         const requestMethod = request.method();
         const requestHeaders = request.headers();
@@ -236,23 +251,45 @@ function createRouteHandler(handlerInfos: HandlerInfo[]) {
 }
 
 /**
+ * MSW 핸들러 설정 옵션
+ */
+export type SetupMswHandlersOptions = {
+  /** 가로챌 API 요청 패턴 배열 (기본값: core-api, monitor-api) */
+  patterns?: string[];
+  /** 응답 지연 시간 (ms), 0이면 지연 없음 (기본값: 0) */
+  delay?: number;
+};
+
+/**
  * MSW 핸들러 배열을 Playwright Route로 설정
  *
  * @param page - Playwright Page 객체
  * @param handlers - MSW HttpHandler 배열
- * @param patterns - 가로챌 API 요청 패턴 배열 (기본값: core-api, monitor-api)
+ * @param options - 설정 옵션 (patterns, delay)
+ *
+ * @example
+ * // 기본 사용
+ * await setupMswHandlers(page, handlers);
+ *
+ * // 5초 지연 (Lazy Mock 모드)
+ * await setupMswHandlers(page, handlers, { delay: 5000 });
  */
 export async function setupMswHandlers(
   page: Page,
   handlers: HttpHandler[],
-  patterns: string[] = ["**/core-api/**", "**/monitor-api/**"],
+  options: SetupMswHandlersOptions = {},
 ): Promise<void> {
+  const {
+    patterns = ["**/core-api/**", "**/monitor-api/**"],
+    delay: delayMs = 0,
+  } = options;
+
   // 핸들러 정보 추출
   const handlerInfos = handlers
     .map(extractHandlerInfo)
     .filter((info): info is HandlerInfo => info !== null);
 
-  const routeHandler = createRouteHandler(handlerInfos);
+  const routeHandler = createRouteHandler(handlerInfos, delayMs);
 
   // API 요청 패턴들을 가로채서 MSW로 처리
   for (const pattern of patterns) {
