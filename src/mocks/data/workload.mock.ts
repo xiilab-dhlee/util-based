@@ -1,9 +1,6 @@
-import { vulnerabilityListResponseSchema } from "@/domain/security/schemas/vulnerability.schema";
 import {
   type ActiveWorkloadListType,
   activeWorkloadListSchema,
-  type DisabledWorkloadListType,
-  disabledWorkloadListSchema,
   type WorkloadListType,
   workloadDetailSchema,
   workloadListSchema,
@@ -15,17 +12,7 @@ export const workloadListMock = Array.from({ length: LIST_PAGE_SIZE }, () =>
   makeMock(workloadListSchema),
 );
 
-export const activeWorkloadListMock = Array.from(
-  { length: LIST_PAGE_SIZE },
-  () => makeMock(activeWorkloadListSchema),
-);
-
 export const workloadDetailMock = makeMock(workloadDetailSchema);
-
-export const workloadVulnerabilityListMock = Array.from(
-  { length: LIST_PAGE_SIZE },
-  () => makeMock(vulnerabilityListResponseSchema),
-);
 
 /**
  * 제네릭 워크로드 목록 mock 생성 팩토리 함수
@@ -46,6 +33,7 @@ function createGenericWorkloadListMock<T extends { workloadName: string }>(
     if (searchText) {
       baseOverride.workloadName = `${searchText}-workload-${index + 1}`;
     }
+
     return makeMock(schema, baseOverride) as T;
   });
 }
@@ -68,23 +56,26 @@ export function createActiveWorkloadListMock(
   );
 }
 
-export function createDisabledWorkloadListMock(
-  override?: Partial<DisabledWorkloadListType> & {
+/**
+ * 워크로드 목록 mock 생성 함수
+ * - status가 "COMPLETED"일 경우 revokeWarningCount를 0으로 자동 설정
+ * - searchText가 전달되면 workloadName에 해당 텍스트가 포함됨
+ */
+export function createWorkloadListMock(
+  override?: Partial<WorkloadListType> & {
     size?: number;
     searchText?: string;
   },
-): DisabledWorkloadListType[] {
-  return createGenericWorkloadListMock<DisabledWorkloadListType>(
-    disabledWorkloadListSchema,
-    override,
-  );
-}
-
-export function createWorkloadListMock(
-  override?: Partial<WorkloadListType> & { size?: number },
 ): WorkloadListType[] {
-  const { size = LIST_PAGE_SIZE, ...restOverride } = override ?? {};
-  return Array.from({ length: size }, () =>
-    makeMock(workloadListSchema, restOverride),
+  // status=COMPLETED일 때 revokeWarningCount 기본값 0 설정
+  // 사용자가 명시적으로 전달한 override는 우선 적용
+  const enhancedOverride = {
+    ...(override?.status === "COMPLETED" && { revokeWarningCount: 0 }),
+    ...override,
+  };
+
+  return createGenericWorkloadListMock<WorkloadListType>(
+    workloadListSchema,
+    enhancedOverride,
   );
 }

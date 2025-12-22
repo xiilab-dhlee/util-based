@@ -11,6 +11,7 @@ import {
 } from "@/domain/workload/state/workload.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 
 interface ActiveWorkloadListFilterProps {
   total: number;
@@ -44,6 +45,7 @@ export function ActiveWorkloadListFilter({
 
   return (
     <MySearchFilter title="워크로드 목록" total={total} testIdPage="workload">
+      <MyItemsOnlySwitch checked={false} />
       <ActiveWorkloadJobTypeSort disabled={loading} />
       <ActiveWorkloadStatusSort disabled={loading} />
       <SearchInput

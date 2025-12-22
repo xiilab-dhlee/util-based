@@ -3,6 +3,8 @@
 import styled from "styled-components";
 import { Switch } from "xiilab-ui";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
+
 interface MyItemsOnlySwitchProps {
   /** 스위치 체크 상태 */
   checked: boolean;
@@ -31,7 +33,12 @@ export function MyItemsOnlySwitch({
   return (
     <Container>
       <SwitchLabel>내 항목만 보기</SwitchLabel>
-      <Switch checked={checked} onChange={onChange} disabled={disabled} />
+      <Switch
+        checked={checked}
+        onChange={onChange}
+        disabled={disabled}
+        data-testid={SELECTOR.MY_ITEMS_ONLY_SWITCH}
+      />
     </Container>
   );
 }

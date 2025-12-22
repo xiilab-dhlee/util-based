@@ -2,15 +2,12 @@ import { HttpResponse, http } from "msw";
 
 import type {
   ActiveWorkloadListType,
-  DisabledWorkloadListType,
   WorkloadListType,
 } from "@/domain/workload/schemas/workload.schema";
 import {
   createActiveWorkloadListMock,
-  createDisabledWorkloadListMock,
   createWorkloadListMock,
   workloadDetailMock,
-  workloadVulnerabilityListMock,
 } from "@/mocks/data/workload.mock";
 import { ML_PROJECT_TEMPLATE } from "@/shared/constants/filetree.constant";
 import { generateCustomTree } from "@/shared/utils/filetree-generator.util";
@@ -34,10 +31,11 @@ export const workloadHandlers = [
   http.get("/core-api/v1/core/workload/disabled", ({ request }) => {
     const url = new URL(request.url);
 
-    const override = paramsToOverride<DisabledWorkloadListType>(
-      url.searchParams,
-    );
-    const content = createDisabledWorkloadListMock(override);
+    const override = paramsToOverride<WorkloadListType>(url.searchParams);
+    const content = createWorkloadListMock({
+      ...override,
+      status: "COMPLETED",
+    });
 
     return HttpResponse.json({
       content,
@@ -53,14 +51,6 @@ export const workloadHandlers = [
 
     return HttpResponse.json({
       content,
-      totalSize: 100,
-    });
-  }),
-
-  // 워크로드 보안 취약점 목록 조회 (동적 파라미터 경로보다 먼저 배치)
-  http.get("/core-api/v1/core/workload/vulnerabilities", () => {
-    return HttpResponse.json({
-      content: workloadVulnerabilityListMock,
       totalSize: 100,
     });
   }),

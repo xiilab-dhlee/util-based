@@ -1,12 +1,18 @@
 "use client";
 
 import { ConfigProvider } from "antd";
-import type { ComponentType, HTMLAttributes, ReactNode } from "react";
+import {
+  type ComponentType,
+  type HTMLAttributes,
+  type ReactNode,
+  useState,
+} from "react";
 import styled, { css } from "styled-components";
 import {
   type ResponsiveColumnType,
   Table,
   type TableProps,
+  Tooltip,
   theme as themeX,
 } from "xiilab-ui";
 
@@ -124,6 +130,38 @@ export function CustomizedTable<
   rowKey = "id" as keyof TRecord,
   ...tableProps
 }: CustomizedTableProps<TRecord>) {
+  // 단일 Tooltip 상태 (이벤트 위임 패턴)
+  const [tooltipState, setTooltipState] = useState<{
+    visible: boolean;
+    content: string;
+    x: number;
+    y: number;
+  }>({ visible: false, content: "", x: 0, y: 0 });
+
+  // 마우스 진입 시 data-tooltip 속성 확인 후 Tooltip 표시
+  const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
+    const tooltipElement = target.closest("[data-tooltip]") as HTMLElement;
+
+    if (tooltipElement) {
+      const content = tooltipElement.dataset.tooltip;
+      if (content) {
+        const rect = tooltipElement.getBoundingClientRect();
+        setTooltipState({
+          visible: true,
+          content,
+          x: rect.left + rect.width / 2,
+          y: rect.top,
+        });
+      }
+    }
+  };
+
+  // 마우스 이탈 시 Tooltip 숨김
+  const handleMouseLeave = () => {
+    setTooltipState((prev) => ({ ...prev, visible: false }));
+  };
+
   // Ant Design 테이블 테마 설정
   const theme = {
     components: {
@@ -174,6 +212,23 @@ export function CustomizedTable<
 
   return (
     <ConfigProvider theme={theme}>
+      {/* 단일 Tooltip - 이벤트 위임으로 동적 제어 */}
+      <Tooltip
+        title={tooltipState.content}
+        open={tooltipState.visible}
+        placement="top"
+        getPopupContainer={() => document.body}
+      >
+        <TooltipAnchor
+          style={{
+            position: "fixed",
+            left: tooltipState.x,
+            top: tooltipState.y,
+            pointerEvents: "none",
+          }}
+        />
+      </Tooltip>
+
       <StyledTable
         {...forwardedTableProps}
         darkMode={darkMode}
@@ -182,9 +237,6 @@ export function CustomizedTable<
         scroll={{ x: "max-content", y: "100%" }}
         pagination={pagination}
         rowKey={rowKey as TableProps<Record<string, unknown>>["rowKey"]}
-        // locale은 테이블의 지역화된 텍스트를 설정하는 속성입니다.
-        // 데이터가 없을 때 표시되는 메시지, 페이지네이션 텍스트, 필터 관련 텍스트 등을 커스터마이징할 수 있습니다.
-        // 현재는 데이터가 없을 때 '조회된 결과가 없습니다.'라는 한글 메시지를 표시하도록 설정되어 있습니다.
         locale={locale}
         $columnHeight={columnHeight}
         $headerHeight={headerHeight}
@@ -196,16 +248,24 @@ export function CustomizedTable<
         onRow={(record: Record<string, unknown>) => {
           const typedRecord = record as TRecord;
           return {
-            "data-row": typedRecord, // row 데이터를 props로 전달!
+            "data-row": typedRecord,
             onClick: () => {
               onRowClick?.(typedRecord);
             },
+            onMouseOver: handleMouseEnter,
+            onMouseOut: handleMouseLeave,
           };
         }}
       />
     </ConfigProvider>
   );
 }
+
+/** Tooltip 앵커 - 위치 지정용 투명 요소 */
+const TooltipAnchor = styled.div`
+  width: 1px;
+  height: 1px;
+`;
 
 const selectRow = ($darkMode: boolean) => css`
   .ant-table-tbody > tr:not(.ant-table-placeholder).active > td {

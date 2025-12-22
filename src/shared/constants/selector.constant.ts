@@ -25,6 +25,8 @@ export const SELECTOR = {
   listSearchInput: (page: string) => `${page}-list-search-input`,
   /** 필터 영역 - {page}-list-filter */
   listFilter: (page: string) => `${page}-list-filter`,
+  /** 내 항목만 보기 스위치 (고정) - 페이지당 하나만 존재 */
+  MY_ITEMS_ONLY_SWITCH: "my-items-only-switch",
 
   // 워크스페이스
   /** 선택된 워크스페이스 값 */
@@ -147,14 +149,38 @@ export const WORKLOAD_SELECTOR = {
   // 상세 페이지 - 이벤트 이력
   /** 이벤트 카드 */
   EVENT_CARD: "workload-event-card",
+  /** 이벤트 상태 - workload-event-status-{status} (상태별 필터링용) */
+  eventStatus: (status: string) => `workload-event-status-${status}`,
+  /** 이벤트 경과 시간 */
+  EVENT_ELAPSED_TIME: "workload-event-elapsed-time",
+  /** 이벤트 From */
+  EVENT_FROM: "workload-event-from",
+  /** 이벤트 메시지 */
+  EVENT_MESSAGE: "workload-event-message",
 
   // 상세 페이지 - 소스코드
   /** 소스코드 카드 */
   SOURCECODE_CARD: "workload-source-code-card",
+  /** 소스코드 상태 - workload-source-code-status-{status} (상태별 필터링용) */
+  sourcecodeStatus: (status: string) => `workload-source-code-status-${status}`,
+  /** 소스코드 기본 경로 */
+  SOURCECODE_PATH: "workload-source-code-path",
+  /** 소스코드 타입 - workload-source-code-type-{type} (타입별 필터링용) */
+  sourcecodeType: (type: string) => `workload-source-code-type-${type}`,
+  /** 소스코드 Git URL */
+  SOURCECODE_URL: "workload-source-code-url",
 
   // 상세 페이지 - 볼륨
   /** 볼륨 카드 */
   VOLUME_CARD: "workload-volume-card",
+  /** 볼륨 상태 - workload-volume-status-{status} (상태별 필터링용) */
+  volumeStatus: (status: string) => `workload-volume-status-${status}`,
+  /** 볼륨 스토리지 타입 - workload-volume-storage-type-{type} */
+  volumeStorageType: (type: string) => `workload-volume-storage-type-${type}`,
+  /** 볼륨 경로 */
+  VOLUME_PATH: "workload-volume-path",
+  /** 볼륨 크기 */
+  VOLUME_SIZE: "workload-volume-size",
 
   // 상세 페이지 - 상세정보 탭 내용
   /** 잡 타입 명 */

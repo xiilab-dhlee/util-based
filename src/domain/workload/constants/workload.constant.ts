@@ -48,7 +48,7 @@ export const WORKLOAD_STATUS_OPTIONS: DropdownOption[] = [
   },
   {
     label: "에러",
-    value: "ERROR",
+    value: "FAILED",
   },
   {
     label: "종료",
