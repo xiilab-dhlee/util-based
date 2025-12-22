@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:mock": "cross-env MSW_ENABLE=true next dev",
+    "dev:mock:lazy": "cross-env MSW_ENABLE=true MOCK_DELAY=5000 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "biome check",

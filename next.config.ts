@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   // 환경변수를 클라이언트에 노출 (짧은 이름으로 매핑)
   env: {
     MSW_ENABLE: process.env.MSW_ENABLE,
+    MOCK_DELAY: process.env.MOCK_DELAY,
   },
   // API 프록시 설정
   rewrites: async () => {
