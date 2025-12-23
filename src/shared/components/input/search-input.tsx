@@ -3,8 +3,6 @@
 import type { InputProps } from "xiilab-ui";
 import { Input } from "xiilab-ui";
 
-import { SELECTOR } from "@/shared/constants/selector.constant";
-
 interface SearchInputProps {
   width?: InputProps["width"];
   placeholder?: string;
@@ -12,7 +10,8 @@ interface SearchInputProps {
   disabled?: boolean;
   /** 검색 실행 시 호출되는 콜백 (검색어 값을 직접 전달받음) */
   onSearch?: (value: string) => void;
-  testIdPage?: string;
+  /** data-testid 값 (외부에서 지정) */
+  testId?: string;
 }
 
 /**
@@ -27,7 +26,7 @@ export function SearchInput({
   darkMode = false,
   disabled = false,
   onSearch,
-  testIdPage,
+  testId,
 }: SearchInputProps) {
   const handleSearch = (value: string) => {
     onSearch?.(value.trim());
@@ -43,9 +42,7 @@ export function SearchInput({
       height={30}
       darkMode={darkMode}
       disabled={disabled}
-      data-testid={
-        testIdPage ? SELECTOR.listSearchInput(testIdPage) : undefined
-      }
+      data-testid={testId}
     />
   );
 }

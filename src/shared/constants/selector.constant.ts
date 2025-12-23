@@ -14,18 +14,18 @@
 // ============================================
 
 export const SELECTOR = {
-  // 목록 페이지 공통 (동적 함수)
-  /** 목록 테이블 래퍼 - {page}-list-table */
-  listTable: (page: string) => `${page}-list-table`,
-  /** 총 개수 표시 - {page}-list-total-count */
-  listTotalCount: (page: string) => `${page}-list-total-count`,
-  /** 페이지네이션 - {page}-list-pagination */
-  listPagination: (page: string) => `${page}-list-pagination`,
-  /** 검색 입력창 - {page}-list-search-input */
-  listSearchInput: (page: string) => `${page}-list-search-input`,
-  /** 필터 영역 - {page}-list-filter */
-  listFilter: (page: string) => `${page}-list-filter`,
-  /** 내 항목만 보기 스위치 (고정) - 페이지당 하나만 존재 */
+  // 목록 페이지 공통 (고정 상수)
+  /** 목록 테이블 래퍼 */
+  LIST_TABLE: "list-table",
+  /** 총 개수 표시 */
+  LIST_TOTAL_COUNT: "list-total-count",
+  /** 페이지네이션 */
+  LIST_PAGINATION: "list-pagination",
+  /** 검색 입력창 */
+  LIST_SEARCH_INPUT: "list-search-input",
+  /** 필터 영역 */
+  LIST_FILTER: "list-filter",
+  /** 내 항목만 보기 스위치 */
   MY_ITEMS_ONLY_SWITCH: "my-items-only-switch",
 
   // 워크스페이스
