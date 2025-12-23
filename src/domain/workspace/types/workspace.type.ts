@@ -2,6 +2,7 @@ import type {
   CorePaginate,
   CorePayload,
   CoreSearchText,
+  CoreSort,
 } from "@/shared/types/api.interface";
 
 // 워크스페이스 리소스 요청 상태 타입
@@ -10,7 +11,8 @@ export type WorkspaceRequestResourceStatus = "WAITING" | "APPROVE" | "REJECT";
 export interface GetWorkspacesPayload
   extends CorePayload,
     CorePaginate,
-    CoreSearchText {
+    CoreSearchText,
+    CoreSort {
   isMyWorkspace?: boolean;
 }
 

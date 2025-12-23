@@ -9,17 +9,17 @@ export const workspaceKeys = {
   list: (payload: GetWorkspacesPayload) => [
     ...workspaceKeys.default,
     "list",
-    ...Object.values(payload),
+    payload,
   ],
   detail: (id: string) => [...workspaceKeys.default, "detail", id],
   memberList: (payload: GetWorkspaceMembersPayload) => [
     ...workspaceKeys.default,
     "memberList",
-    ...Object.values(payload),
+    payload,
   ],
   requestResourceList: (payload: GetWorkspaceRequestResourcesPayload) => [
     ...workspaceKeys.default,
     "requestResourceList",
-    ...Object.values(payload),
+    payload,
   ],
 };

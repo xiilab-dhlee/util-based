@@ -11,12 +11,13 @@ import { useServices } from "@/shared/providers/service-provider";
 export const useGetMonitoringNotification = (
   id: string,
 ): UseQueryResult<MonitoringNotificationDetailResponseType, Error> => {
-  const { monitoringService } = useServices();
+  const { monitoringNotificationService } = useServices();
 
   return useQuery({
     queryKey: monitoringKeys.notificationSettingDetail(id),
     queryFn: async () => {
-      const response = await monitoringService.getNotificationDetail(id);
+      const response =
+        await monitoringNotificationService.getNotificationDetail(id);
       return response.data;
     },
     enabled: Boolean(id),

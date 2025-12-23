@@ -16,12 +16,13 @@ export const useGetMonitoringNotifications = (
   CoreListResponse<MonitoringNotificationListResponseType>,
   Error
 > => {
-  const { monitoringService } = useServices();
+  const { monitoringNotificationService } = useServices();
 
   return useQuery({
     queryKey: monitoringKeys.notificationList(payload),
     queryFn: async () => {
-      const response = await monitoringService.getNotificationList(payload);
+      const response =
+        await monitoringNotificationService.getNotificationList(payload);
       return response.data;
     },
   });

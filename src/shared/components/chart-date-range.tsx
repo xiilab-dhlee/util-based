@@ -26,7 +26,6 @@ interface ChartDateRangeProps {
   height?: number;
   width?: number;
   withTime?: boolean;
-  maxDate?: Date;
 }
 
 /**
@@ -43,7 +42,6 @@ export function ChartDateRange({
   height = 30,
   width = 250,
   withTime = true,
-  maxDate,
 }: ChartDateRangeProps) {
   const isLiveMode = mode === "live";
   const [liveNow, setLiveNow] = useState<Date>(() => new Date());
@@ -61,7 +59,6 @@ export function ChartDateRange({
   }, [isLiveMode]);
 
   const now = new Date();
-  const effectiveMaxDate = maxDate ?? now;
 
   if (isLiveMode) {
     const displayDate = liveNow;
@@ -92,7 +89,7 @@ export function ChartDateRange({
         endDate={value.end}
         withTime={withTime}
         onChange={onChangeRange}
-        maxDate={effectiveMaxDate}
+        maxDate={now}
       />
     </HistoryContainer>
   );

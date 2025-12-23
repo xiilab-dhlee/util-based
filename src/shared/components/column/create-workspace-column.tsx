@@ -1,21 +1,22 @@
-import classNames from "classnames";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { WorkspaceAllCheck } from "@/domain/workspace/components/list/workspace-all-check";
 import { WorkspaceItemCheck } from "@/domain/workspace/components/list/workspace-item-check";
 import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
-import {
-  getAllStatusClassName,
-  getStatusClassName,
-} from "@/shared/utils/resource.util";
+import { formatDateSafely } from "@/shared/utils/date.util";
+import { getResourceInfo } from "@/shared/utils/resource.util";
 import {
   ColumnAlignCenterWrap,
-  ColumnHighlightText,
   ColumnLink,
 } from "@/styles/layers/column-layer.styled";
+
+const GPU_INFO = getResourceInfo("GPU");
+const CPU_INFO = getResourceInfo("CPU");
+const MEM_INFO = getResourceInfo("MEM");
 
 /**
  * 컬럼 정의 배열 생성 (dataIndex 한 번만 정의)
@@ -36,16 +37,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "워크스페이스 이름",
       align: "left",
       render: (workspaceName: string, record: WorkspaceListType) => {
-        const status = getAllStatusClassName(
-          record.gpu,
-          record.cpu,
-          record.mem,
-        );
         return (
-          <ColumnLink href={`/admin/workspace/${record.id}`}>
-            <ColumnHighlightText className={classNames({ [status]: status })}>
-              {workspaceName}
-            </ColumnHighlightText>
+          <ColumnLink
+            href={ROUTES.ADMIN_WORKSPACE_DETAIL(record.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {workspaceName}
           </ColumnLink>
         );
       },
@@ -56,14 +54,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 30,
       render: (gpu: number) => {
-        const status = getStatusClassName(gpu);
-        return (
-          <ColumnAlignCenterWrap>
-            <ColumnHighlightText className={classNames({ [status]: status })}>
-              {gpu}%
-            </ColumnHighlightText>
-          </ColumnAlignCenterWrap>
-        );
+        return <ColumnAlignCenterWrap>{gpu}%</ColumnAlignCenterWrap>;
       },
     },
     {
@@ -72,16 +63,26 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 70,
       render: (gpuUsage: number) => {
-        return <ColumnAlignCenterWrap>{gpuUsage}개</ColumnAlignCenterWrap>;
+        return (
+          <ColumnAlignCenterWrap>
+            {gpuUsage}
+            {GPU_INFO.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
       dataIndex: "gpuQuota",
       title: "할당량",
-      align: "left",
+      align: "center",
       width: 100,
       render: (gpuQuota: number) => {
-        return <span>{gpuQuota}개</span>;
+        return (
+          <ColumnAlignCenterWrap>
+            {gpuQuota}
+            {GPU_INFO.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
@@ -90,14 +91,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 30,
       render: (cpu: number) => {
-        const status = getStatusClassName(cpu);
-        return (
-          <ColumnAlignCenterWrap>
-            <ColumnHighlightText className={classNames({ [status]: status })}>
-              {cpu}%
-            </ColumnHighlightText>
-          </ColumnAlignCenterWrap>
-        );
+        return <ColumnAlignCenterWrap>{cpu}%</ColumnAlignCenterWrap>;
       },
     },
     {
@@ -106,32 +100,35 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 70,
       render: (cpuUsage: number) => {
-        return <ColumnAlignCenterWrap>{cpuUsage}개</ColumnAlignCenterWrap>;
+        return (
+          <ColumnAlignCenterWrap>
+            {cpuUsage}
+            {CPU_INFO.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
       dataIndex: "cpuQuota",
       title: "할당량",
-      align: "left",
+      align: "center",
       width: 100,
       render: (cpuQuota: number) => {
-        return <span>{cpuQuota}개</span>;
+        return (
+          <ColumnAlignCenterWrap>
+            {cpuQuota}
+            {CPU_INFO.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
       dataIndex: "mem",
-      title: "MEM",
+      title: "Memory",
       align: "center",
       width: 30,
       render: (mem: number) => {
-        const status = getStatusClassName(mem);
-        return (
-          <ColumnAlignCenterWrap>
-            <ColumnHighlightText className={classNames({ [status]: status })}>
-              {mem}%
-            </ColumnHighlightText>
-          </ColumnAlignCenterWrap>
-        );
+        return <ColumnAlignCenterWrap>{mem}%</ColumnAlignCenterWrap>;
       },
     },
     {
@@ -140,16 +137,26 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       width: 70,
       render: (memUsage: number) => {
-        return <ColumnAlignCenterWrap>{memUsage}개</ColumnAlignCenterWrap>;
+        return (
+          <ColumnAlignCenterWrap>
+            {memUsage}
+            {MEM_INFO.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
       dataIndex: "memQuota",
       title: "할당량",
-      align: "left",
+      align: "center",
       width: 50,
       render: (memQuota: number) => {
-        return <span>{memQuota}개</span>;
+        return (
+          <ColumnAlignCenterWrap>
+            {memQuota}
+            {MEM_INFO.unit}
+          </ColumnAlignCenterWrap>
+        );
       },
     },
     {
@@ -174,6 +181,23 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "center",
       render: () => {
         return <span>7,777</span>;
+      },
+    },
+    {
+      title: "생성자",
+      dataIndex: "creatorName",
+      align: "left",
+      ellipsis: true,
+      render: (creatorName: string) => {
+        return <span>{creatorName}</span>;
+      },
+    },
+    {
+      title: "생성일",
+      dataIndex: "creatorDate",
+      align: "left",
+      render: (creatorDate: string) => {
+        return <span>{formatDateSafely(creatorDate)}</span>;
       },
     },
   ];

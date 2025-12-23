@@ -73,27 +73,6 @@ export function getResourceInfo(resourceType: CoreResourceType): ResourceMeta {
 }
 
 /**
- * 모든 리소스 상태에 따른 클래스명 조회
- * @param gpu - GPU 사용률
- * @param cpu - CPU 사용률
- * @param mem - 메모리 사용률
- * @returns 상태 클래스명 ("overflow" | "warning" | "")
- */
-export function getAllStatusClassName(
-  gpu: number,
-  cpu: number,
-  mem: number,
-): string {
-  if (gpu >= 90 || cpu >= 90 || mem >= 90) {
-    return "overflow";
-  }
-  if (gpu >= 60 || cpu >= 60 || mem >= 60) {
-    return "warning";
-  }
-  return "";
-}
-
-/**
  * 리소스 사용률에 따른 클래스명 조회
  * @param resourcePercent - 리소스 사용률
  * @returns 상태 클래스명 ("overflow" | "warning" | "")

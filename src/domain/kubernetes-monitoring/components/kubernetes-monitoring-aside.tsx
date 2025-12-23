@@ -72,7 +72,7 @@ export function KubernetesMonitoringAside() {
         ))}
       </Bridge>
       <Body>
-        <KubernetesResourceListFilter />
+        <KubernetesResourceListFilter totalSize={totalSize} />
         <KubernetesResourceListBody
           items={data?.data.content ?? []}
           isLoading={isLoading}

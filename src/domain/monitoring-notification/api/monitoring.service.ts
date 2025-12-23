@@ -6,7 +6,7 @@ import type {
 import { AxiosService } from "@/shared/api/axios";
 import { payloadToParams } from "@/shared/utils/service.util";
 
-export class MonitoringService extends AxiosService {
+export class MonitoringNotificationService extends AxiosService {
   private readonly BASE_URL = "/monitor-api/v1/core/monitor";
 
   /** 모니터링 알림 목록 조회 */

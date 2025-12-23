@@ -16,22 +16,21 @@ export const MyGlobalStyle = createGlobalStyle`
   --page-inner-padding: 40px;
   --navigation-width: 220px;
 
-  --gpu-usage-color: #8a5ef3;
-  --gpu-request-color: #ded0ff;
+  --gpu-usage-color: #8B59FF;
+  --gpu-request-color: #CCB7FF;
   --gpu-icon-color: #F1BEFF;
 
-  --cpu-usage-color: #7095FF;
-  --cpu-request-color: #ced3ff;
+  --cpu-usage-color: #6459FF;
+  --cpu-request-color: #B7CAFF;
   --cpu-icon-color: #92D2FF;
 
-  --mem-usage-color: #5FB8AE;
-  --mem-request-color: #d0ffe9;
+  --mem-usage-color: #007D43;
+  --mem-request-color: #6ADFC7;
   --mem-icon-color: #9EF6DC;
 
-  --disk-usage-color: #6ec6dc;
-  --disk-request-color: #d0edff;
+  --disk-usage-color: #1FB2ED;
+  --disk-request-color: #C7EAFF;
 
-  // 여기에 추가
   --red-main: var(--color-red-07);
   --orange-main: var(--color-orange-07); 
   --light-blue-main: var(--color-light-blue-05); 

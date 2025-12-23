@@ -1,3 +1,5 @@
+import type { CorePaginate, CorePayload } from "@/shared/types/api.interface";
+
 export type MonitoringMetricType =
   /** GPU 사용률 % */
   | "gpu-utilization"
@@ -29,3 +31,8 @@ export type MonitoringMetricType =
   | "disk-utilization"
   /** 디스크 읽기/쓰기 */
   | "disk-rw";
+
+/**
+ * 사용자별 리소스 점유율 조회 payload
+ */
+export interface GetUserResourcesPayload extends CorePayload, CorePaginate {}

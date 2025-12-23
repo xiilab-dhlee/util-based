@@ -85,12 +85,12 @@ export const ColumnLink = styled(Link)`
 // 강조 텍스트
 export const ColumnHighlightText = styled.span`
   &.overflow {
-    color: #da2b42;
+    color: var(--red-main);
     font-weight: 600;
   }
 
   &.warning {
-    color: #e87b0e;
+    color: var(--orange-main);
     font-weight: 600;
   }
 `;

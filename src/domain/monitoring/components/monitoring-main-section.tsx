@@ -1,10 +1,13 @@
 import styled from "styled-components";
-import { Icon, Tooltip } from "xiilab-ui";
 
 import { MonitoringClusterResource } from "@/domain/monitoring/components/monitoring-cluster-resource";
 import { MonitoringIntroCard } from "@/domain/monitoring/components/monitoring-intro-card";
-import { MONITORING_QUICK_MENUS } from "@/domain/monitoring/constants/monitoring.constant";
+import {
+  CLUSTER_RESOURCE_DUMMY_DATA,
+  MONITORING_QUICK_MENUS,
+} from "@/domain/monitoring/constants/monitoring.constant";
 import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { ClusterResourceInfoTooltipTitle } from "@/shared/components/tooltip-title/cluster-resource-info-tooltip-content";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
@@ -22,54 +25,69 @@ export function MonitoringMainSection() {
       <Right>
         <RightHeader>
           <UserMonitoringSectionTitle>
-            클러스터 자원 정보
+            클러스터 리소스 정보
           </UserMonitoringSectionTitle>
-          <Tooltip
+          <GuideTooltip
             title={<ClusterResourceInfoTooltipTitle />}
+            iconSize={12}
             placement="right"
-          >
-            <span className="tooltip-icon">
-              <Icon name="Tooltip" size={20} />
-            </span>
-          </Tooltip>
+          />
         </RightHeader>
         <RightBody>
           <ResourceRow>
             <MonitoringClusterResource
-              series={70}
-              gradientToColors={["#CCB7FF", "#8B59FF"]}
+              gradientToColors={[
+                "var(--gpu-usage-color)",
+                "var(--gpu-request-color)",
+              ]}
               resourceType="GPU"
+              data={CLUSTER_RESOURCE_DUMMY_DATA.GPU}
             />
             <MonitoringClusterResource
-              series={0}
-              gradientToColors={["#CCB7FF", "#8B59FF"]}
+              gradientToColors={[
+                "var(--gpu-usage-color)",
+                "var(--gpu-request-color)",
+              ]}
               resourceType="MIG"
+              data={CLUSTER_RESOURCE_DUMMY_DATA.MIG}
             />
             <MonitoringClusterResource
-              series={0}
-              gradientToColors={["#CCB7FF", "#8B59FF"]}
+              gradientToColors={[
+                "var(--gpu-usage-color)",
+                "var(--gpu-request-color)",
+              ]}
               resourceType="MPS"
+              data={CLUSTER_RESOURCE_DUMMY_DATA.MPS}
             />
           </ResourceRow>
           <ResourceColumn>
             <MonitoringClusterResource
-              series={70}
-              gradientToColors={["#B7CAFF", "#6459FF"]}
+              gradientToColors={[
+                "var(--cpu-usage-color)",
+                "var(--cpu-request-color)",
+              ]}
               resourceType="CPU"
+              data={CLUSTER_RESOURCE_DUMMY_DATA.CPU}
             />
           </ResourceColumn>
           <ResourceColumn>
             <MonitoringClusterResource
-              series={70}
-              gradientToColors={["#6ADFC7", "#007D43"]}
+              gradientToColors={[
+                "var(--mem-usage-color)",
+                "var(--mem-request-color)",
+              ]}
               resourceType="MEM"
+              data={CLUSTER_RESOURCE_DUMMY_DATA.MEM}
             />
           </ResourceColumn>
           <ResourceColumn>
             <MonitoringClusterResource
-              series={70}
-              gradientToColors={["#C7EAFF", "#1FB2ED"]}
+              gradientToColors={[
+                "var(--disk-usage-color)",
+                "var(--disk-request-color)",
+              ]}
               resourceType="DISK"
+              data={CLUSTER_RESOURCE_DUMMY_DATA.DISK}
             />
           </ResourceColumn>
         </RightBody>
