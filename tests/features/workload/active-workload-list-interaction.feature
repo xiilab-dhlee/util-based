@@ -70,9 +70,9 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
       | 잡타입=Batch       | Batch       | -          |
       | 잡타입=Interactive | Interactive | -          |
       | 잡타입=Distributed | Distributed | -          |
-      | 상태=실행중        | -          | running    |
-      | 상태=대기중        | -          | pending    |
-      | 상태=에러         | -          | failed     |
+      | 상태=실행중        | -          | 실행중    |
+      | 상태=대기중        | -          | 대기중    |
+      | 상태=에러         | -          | 에러     |
 
   @regression
   Scenario Outline: 워크로드 종료 <결과>

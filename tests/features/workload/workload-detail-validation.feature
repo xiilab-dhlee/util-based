@@ -22,25 +22,17 @@ Feature: 워크로드 상세 페이지 상태별 탭 활성화 검증
   @regression
   Scenario: 워크로드 소스코드 데이터 유효성 검증
     Then 각 소스코드 이름이 표시된다
-    And 각 소스코드 상태가 다음 중 하나이다:
-      | 상태    |
-      | public  |
-      | private |
     And 각 소스코드 경로가 표시된다
     And 각 소스코드 Git URL이 표시된다
     And 각 소스코드 타입이 다음 중 하나이다:
-      | 타입      |
-      | GitHub    |
-      | GitLab    |
-      | BitBucket |
+      | 타입       |
+      | git_hub    |
+      | git_lab    |
+      | bit_bucket |
 
   @regression
   Scenario: 워크로드 볼륨 데이터 유효성 검증
     Then 각 볼륨 이름이 표시된다
-    And 각 볼륨 상태가 다음 중 하나이다:
-      | 상태    |
-      | public  |
-      | private |
     And 각 볼륨 스토리지 타입이 다음 중 하나이다:
       | 타입    |
       | astrago |

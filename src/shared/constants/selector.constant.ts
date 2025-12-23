@@ -161,8 +161,6 @@ export const WORKLOAD_SELECTOR = {
   // 상세 페이지 - 소스코드
   /** 소스코드 카드 */
   SOURCECODE_CARD: "workload-source-code-card",
-  /** 소스코드 상태 - workload-source-code-status-{status} (상태별 필터링용) */
-  sourcecodeStatus: (status: string) => `workload-source-code-status-${status}`,
   /** 소스코드 기본 경로 */
   SOURCECODE_PATH: "workload-source-code-path",
   /** 소스코드 타입 - workload-source-code-type-{type} (타입별 필터링용) */

@@ -1,3 +1,5 @@
+import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
+import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
 import { WORKLOAD_STATUS } from "@/domain/workload/constants/workload.constant";
 import {
   type WorkloadListType,
@@ -12,7 +14,22 @@ export const workloadListMock = Array.from({ length: LIST_PAGE_SIZE }, () =>
   makeMock(workloadListSchema),
 );
 
-export const workloadDetailMock = makeMock(workloadDetailSchema);
+/**
+ * 워크로드 상세 Mock 데이터
+ *
+ * sourcecodes와 volumes에 최소 1개 이상의 데이터를 포함하여
+ * E2E 테스트에서 카드 검증이 가능하도록 함
+ */
+export const workloadDetailMock = makeMock(workloadDetailSchema, {
+  sourcecodes: [
+    {
+      ...makeMock(sourcecodeListSchema),
+      branch: "main",
+      path: "/workspace/project",
+    },
+  ],
+  volumes: [makeMock(volumeListSchema)],
+});
 
 /**
  * 랜덤 상태 선택 헬퍼 함수

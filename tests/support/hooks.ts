@@ -1,9 +1,20 @@
+import { allure } from "allure-playwright";
 import { createBdd } from "playwright-bdd";
 
 import { test } from "../fixtures";
 import { setupAllMocks } from "./mocks";
 
 const { Before, After, BeforeAll, AfterAll, AfterStep } = createBdd(test);
+
+// ============================================
+// 성능 분석 설정
+// ============================================
+
+/** 느린 테스트 기준 (평균 대비 배율) - 2배 이상이면 느린 테스트 */
+const SLOW_TEST_RATIO = 2;
+
+/** 테스트별 실행 시간 저장 (세션 내) */
+const testDurations: Map<string, number> = new Map();
 
 // ============================================
 // 전역 설정
@@ -15,6 +26,26 @@ BeforeAll(async () => {
 
 AfterAll(async () => {
   console.log("✅ 테스트 스위트 완료");
+
+  // 성능 통계 출력
+  if (testDurations.size > 0) {
+    const durations = Array.from(testDurations.values());
+    const average = durations.reduce((a, b) => a + b, 0) / durations.length;
+    const threshold = average * SLOW_TEST_RATIO;
+
+    const slowTests = Array.from(testDurations.entries())
+      .filter(([, duration]) => duration >= threshold)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10);
+
+    if (slowTests.length > 0) {
+      console.log(`\n🐢 느린 테스트 (>${Math.round(threshold)}ms):`);
+      for (const [name, duration] of slowTests) {
+        const ratio = (duration / average).toFixed(1);
+        console.log(`   - ${name}: ${duration}ms (${ratio}x avg)`);
+      }
+    }
+  }
 });
 
 // ============================================
@@ -27,6 +58,30 @@ Before(async ({ $testInfo }) => {
 
 After(async ({ page, $testInfo }) => {
   const duration = $testInfo.duration;
+  const testName = $testInfo.title;
+
+  // 성능 데이터 수집 (스킵되지 않은 테스트만)
+  if ($testInfo.status !== "skipped" && duration > 0) {
+    testDurations.set(testName, duration);
+
+    // Allure에 시간 라벨 추가
+    allure.label("duration_ms", String(duration));
+
+    // 현재까지 평균 계산하여 느린 테스트 라벨링
+    const currentDurations = Array.from(testDurations.values());
+    if (currentDurations.length >= 3) {
+      const average =
+        currentDurations.reduce((a, b) => a + b, 0) / currentDurations.length;
+      const threshold = average * SLOW_TEST_RATIO;
+
+      if (duration >= threshold) {
+        const ratio = (duration / average).toFixed(1);
+        allure.label("slow_test", "true");
+        allure.label("slow_ratio", ratio);
+        allure.parameter("Performance", `🐢 Slow (${ratio}x average)`);
+      }
+    }
+  }
 
   if ($testInfo.status === "skipped") {
     // 스킵된 경우 사유 출력

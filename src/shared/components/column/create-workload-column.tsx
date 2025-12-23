@@ -57,7 +57,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       dataIndex: "jobType",
-      title: "잡 타입",
+      title: "Job Type",
       align: "center",
       width: 100,
       render: (jobType: WorkloadJobType) => {

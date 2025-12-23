@@ -5,6 +5,19 @@ import { test } from "../../fixtures";
 import type { FilterCondition } from "../../support/types";
 
 /**
+ * 한글 상태명 → 영문 상태값 매핑
+ *
+ * Feature 파일에서 사용하는 한글 상태명을
+ * data-testid에서 추출되는 영문 상태값과 매핑
+ */
+const STATUS_KOREAN_TO_ENGLISH: Record<string, string> = {
+  실행중: "running",
+  대기중: "pending",
+  에러: "failed",
+  종료: "completed",
+};
+
+/**
  * 워크로드 필터 Step Definitions
  *
  * 필터링 관련 Step 정의:
@@ -137,12 +150,18 @@ Then(
       );
     }
 
-    // 상태 검증
+    // 상태 검증 (한글 상태명을 영문으로 변환하여 비교)
     if (status !== "-") {
+      const expectedStatus = STATUS_KOREAN_TO_ENGLISH[status] ?? status;
+
       await workloadListPage.table.forEachByPrefix(
         "workload-status-",
         (statusValue, i) => {
-          assertLogger.assertEqual(`워크로드[${i}] 상태`, statusValue, status);
+          assertLogger.assertEqual(
+            `워크로드[${i}] 상태`,
+            statusValue,
+            expectedStatus,
+          );
         },
       );
     }
