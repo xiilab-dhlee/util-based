@@ -21,6 +21,7 @@ export function QueryProvider({ children }: PropsWithChildren) {
       new QueryClient({
         defaultOptions: {
           queries: {
+            // retry: 3,
             retry: false,
             staleTime: 3 * 60 * 1000, // 3분
             gcTime: 5 * 60 * 1000, // 5분
