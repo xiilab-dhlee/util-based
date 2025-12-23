@@ -34,17 +34,25 @@ export function WorkloadEventCard({
         <Body>
           <CompactCardKeyValueRow>
             <Key>경과 시간</Key>
-            <CompactCardValue>
+            <CompactCardValue
+              data-testid={WORKLOAD_SELECTOR.EVENT_ELAPSED_TIME}
+            >
               {elapsedTime ? format(elapsedTime, "yyyy.MM.dd HH:mm:ss") : "-"}
             </CompactCardValue>
           </CompactCardKeyValueRow>
           <CompactCardKeyValueRow>
             <Key>From</Key>
-            <CompactCardValue>{from}</CompactCardValue>
+            <CompactCardValue data-testid={WORKLOAD_SELECTOR.EVENT_FROM}>
+              {from}
+            </CompactCardValue>
           </CompactCardKeyValueRow>
         </Body>
         <Footer>
-          <CompactCardCollapseRow title="메 세 지" description={message} />
+          <CompactCardCollapseRow
+            title="메 세 지"
+            description={message}
+            testId={WORKLOAD_SELECTOR.EVENT_MESSAGE}
+          />
         </Footer>
       </StyledCard>
     </CardWrapper>

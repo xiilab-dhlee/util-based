@@ -52,19 +52,30 @@ export function WorkloadVolumeCard({
         <Body>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>스토리지 타입 :</LikeCompactCardKey>
-            <LikeCompactCardValue className="truncate">
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.volumeStorageType(
+                storageType.toLowerCase(),
+              )}
+            >
               {text}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>경로 :</LikeCompactCardKey>
-            <LikeCompactCardValue className="truncate">
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.VOLUME_PATH}
+            >
               {path || "-"}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>볼륨 크기 :</LikeCompactCardKey>
-            <LikeCompactCardValue className="truncate">
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.VOLUME_SIZE}
+            >
               {size.toLocaleString()} Bytes
             </LikeCompactCardValue>
           </LikeCompactCardRecord>

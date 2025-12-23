@@ -47,19 +47,27 @@ export function WorkloadSourcecodeCard({
         <Body>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>Git URL :</LikeCompactCardKey>
-            <LikeCompactCardValue className="truncate">
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.SOURCECODE_URL}
+            >
               {url}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>경로 :</LikeCompactCardKey>
-            <LikeCompactCardValue className="truncate">
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.SOURCECODE_PATH}
+            >
               {path}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>타입 :</LikeCompactCardKey>
-            <LikeCompactCardValue>
+            <LikeCompactCardValue
+              data-testid={WORKLOAD_SELECTOR.sourcecodeType(type)}
+            >
               <StyledTag variant={tag as TagProps["variant"]}>{text}</StyledTag>
             </LikeCompactCardValue>
           </LikeCompactCardRecord>

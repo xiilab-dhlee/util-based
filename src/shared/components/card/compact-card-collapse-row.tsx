@@ -10,13 +10,13 @@ import { CompactCardKey, CompactCardValue } from "./compact-card-layer.styled";
 interface CompactCardCollapseKeyValueProps {
   title: string;
   description: string;
-  "data-testid"?: string;
+  testId?: string;
 }
 
 export function CompactCardCollapseRow({
   title,
   description,
-  "data-testid": dataTestId,
+  testId,
 }: CompactCardCollapseKeyValueProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,7 +24,7 @@ export function CompactCardCollapseRow({
     <Container
       type="button"
       onClick={() => setIsOpen(!isOpen)}
-      data-testid={dataTestId}
+      data-testid={testId}
     >
       <Key>{title}</Key>
       <Description
