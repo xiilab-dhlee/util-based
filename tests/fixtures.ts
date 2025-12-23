@@ -3,6 +3,7 @@ import { test as base } from "playwright-bdd";
 
 import { DrawerComponent } from "./components/drawer.component";
 import { ModalComponent } from "./components/modal.component";
+import { NavigationComponent } from "./components/navigation.component";
 import { RadioComponent } from "./components/radio.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
@@ -121,6 +122,7 @@ type TestContextFixtures = {
   tabs: TabsComponent;
   radio: RadioComponent;
   themePopover: ThemePopoverComponent;
+  navigation: NavigationComponent;
 };
 
 // ============================================================================
@@ -376,5 +378,9 @@ export const test = base.extend<TestContextFixtures>({
 
   themePopover: async ({ page }, use) => {
     await use(new ThemePopoverComponent(page));
+  },
+
+  navigation: async ({ page }, use) => {
+    await use(new NavigationComponent(page));
   },
 });

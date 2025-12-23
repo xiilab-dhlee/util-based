@@ -67,14 +67,6 @@ When(
   },
 );
 
-Then("{string} 모달이 표시된다", async ({ page }, modalTitle: string) => {
-  const modal = page.locator(SELECTOR.MODAL);
-  await expect(modal).toBeVisible({ timeout: 10000 });
-
-  const title = modal.locator(".ant-modal-title");
-  await expect(title).toHaveText(modalTitle);
-});
-
 Then("모달에 워크로드 목록 테이블이 표시된다", async ({ page }) => {
   const modal = page.locator(SELECTOR.MODAL);
   const table = modal.locator(".ant-table-tbody");
@@ -109,18 +101,3 @@ When(
     await radio.selectInRow(firstRow);
   },
 );
-
-When(
-  "모달의 {string} 버튼을 클릭한다",
-  async ({ page }, buttonText: string) => {
-    const modal = page.locator(SELECTOR.MODAL);
-    const button = modal.getByRole("button", { name: buttonText });
-    await expect(button).toBeEnabled({ timeout: 10000 });
-    await button.click();
-  },
-);
-
-Then("모달이 닫힌다", async ({ page }) => {
-  const modal = page.locator(SELECTOR.MODAL);
-  await expect(modal).not.toBeVisible({ timeout: 10000 });
-});

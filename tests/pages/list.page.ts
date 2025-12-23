@@ -1,5 +1,6 @@
 import { expect, type Locator } from "@playwright/test";
 
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { DataTableComponent } from "../components/data-table.component";
 import { SwitchComponent } from "../components/switch.component";
@@ -36,9 +37,6 @@ export abstract class ListPage extends BasePage {
   /** 테이블 행 식별자 testId (하위 클래스에서 정의) */
   protected abstract get tableIdentifierTestId(): string;
 
-  /** 테스트용 페이지 식별자 (예: "workload", "sourcecode") */
-  protected abstract get testIdPage(): string;
-
   // ============================================
   // Lazy Initialized Components
   // ============================================
@@ -71,17 +69,17 @@ export abstract class ListPage extends BasePage {
 
   /** 검색 입력창 */
   get searchInput(): Locator {
-    return this.page.locator(testId(SELECTOR.listSearchInput(this.testIdPage)));
+    return this.page.locator(testId(SELECTOR.LIST_SEARCH_INPUT));
   }
 
   /** 총 개수 표시 영역 */
   get totalCount(): Locator {
-    return this.page.locator(testId(SELECTOR.listTotalCount(this.testIdPage)));
+    return this.page.locator(testId(SELECTOR.LIST_TOTAL_COUNT));
   }
 
   /** 목록 테이블 */
   get listTable(): Locator {
-    return this.page.locator(testId(SELECTOR.listTable(this.testIdPage)));
+    return this.page.locator(testId(SELECTOR.LIST_TABLE));
   }
 
   // ============================================
@@ -111,7 +109,7 @@ export abstract class ListPage extends BasePage {
    */
   async assertPaginationVisible(timeout = 10000): Promise<void> {
     await expect(
-      this.page.locator(testId(SELECTOR.listPagination(this.testIdPage))),
+      this.page.locator(testId(SELECTOR.LIST_PAGINATION)),
     ).toBeVisible({ timeout });
   }
 
@@ -141,6 +139,24 @@ export abstract class ListPage extends BasePage {
     const emptyPlaceholder = this.listTable.locator(".ant-table-placeholder");
     await expect(emptyPlaceholder).toBeVisible({ timeout });
     await expect(emptyPlaceholder).toContainText(expectedMessage);
+  }
+
+  /**
+   * 테이블에 API 에러 메시지가 표시되는지 확인
+   *
+   * CustomizedTable의 isError 상태일 때 표시되는 메시지를 검증합니다.
+   */
+  async assertTableErrorMessage(): Promise<void> {
+    await this.assertEmptyMessage(TABLE_MESSAGE.ERROR);
+  }
+
+  /**
+   * 테이블에 빈 목록 메시지가 표시되는지 확인
+   *
+   * 데이터가 비어있을 때 표시되는 메시지를 검증합니다.
+   */
+  async assertTableEmptyMessage(): Promise<void> {
+    await this.assertEmptyMessage(TABLE_MESSAGE.EMPTY);
   }
 
   /**

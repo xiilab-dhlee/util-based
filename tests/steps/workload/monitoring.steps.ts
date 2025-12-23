@@ -19,6 +19,13 @@ Given("워크로드 모니터링 페이지에 있다", async ({ workloadMonitori
   await workloadMonitoringPage.goto();
 });
 
+Then(
+  "워크로드 모니터링 페이지가 표시된다",
+  async ({ workloadMonitoringPage }) => {
+    await workloadMonitoringPage.assertPageVisible();
+  },
+);
+
 // ============================================
 // 2. 차트 검증
 // ============================================

@@ -13,6 +13,13 @@ import { test } from "../../fixtures";
  */
 const { When, Then } = createBdd(test);
 
+Then(
+  "워크로드 웹터미널 페이지가 표시된다",
+  async ({ workloadTerminalPage }) => {
+    await workloadTerminalPage.assertPageVisible();
+  },
+);
+
 // ============================================
 // 1. 테마 변경 결과 확인
 // ============================================

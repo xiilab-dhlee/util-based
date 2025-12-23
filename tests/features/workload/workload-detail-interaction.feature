@@ -13,19 +13,22 @@ Feature: 워크로드 상세 페이지 인터랙션
   # ============================================
 
   @regression
-  Scenario: 수정 버튼 클릭 시 현재 워크로드 정보가 채워진 수정 모달 표시
+  Scenario: 수정 버튼 클릭
     When 워크로드 수정 버튼을 클릭한다
-    Then 수정 모달이 표시된다
-    And 수정 모달에 이름 입력창이 표시된다
-    And 수정 모달에 설명 입력창이 표시된다
-    And 수정 모달의 이름 입력창에 현재 워크로드 이름이 입력되어 있다
-    And 수정 모달의 설명 입력창에 현재 워크로드 설명이 입력되어 있다
+    Then "워크로드 수정" 모달이 표시된다
+    And 워크로드 수정:이름 입력창에 기존 값이 표시된다
+    And 워크로드 수정:설명 입력창에 기존 값이 표시된다
+
+  @regression
+  Scenario: Commit Image 생성 버튼 클릭
+    When Commit Image 생성 버튼을 클릭한다
+    Then "Commit Image 생성" 모달이 표시된다
 
   @regression
   Scenario Outline: 수정 모달 <결과>
     When 워크로드 수정 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    And "워크로드 수정" 모달의 <버튼> 버튼을 클릭한다
+    Then "워크로드 수정" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |
@@ -39,8 +42,8 @@ Feature: 워크로드 상세 페이지 인터랙션
   @regression
   Scenario Outline: 워크로드 종료 <결과> (상세 페이지)
     When 워크로드 종료 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    And "워크로드 종료" 모달의 <버튼> 버튼을 클릭한다
+    Then "워크로드 종료" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |
@@ -54,8 +57,8 @@ Feature: 워크로드 상세 페이지 인터랙션
   @regression
   Scenario Outline: 워크로드 재시작 <결과> (상세 페이지)
     When 워크로드 재시작 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    And "워크로드 재시작" 모달의 <버튼> 버튼을 클릭한다
+    Then "워크로드 재시작" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |
@@ -69,8 +72,8 @@ Feature: 워크로드 상세 페이지 인터랙션
   @regression
   Scenario Outline: 워크로드 삭제 <결과> (상세 페이지)
     When 워크로드 삭제 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    And "워크로드 삭제" 모달의 <버튼> 버튼을 클릭한다
+    Then "워크로드 삭제" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |
@@ -84,8 +87,8 @@ Feature: 워크로드 상세 페이지 인터랙션
   @regression
   Scenario Outline: Commit Image 생성 <결과>
     When Commit Image 생성 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    And "Commit Image 생성" 모달의 <버튼> 버튼을 클릭한다
+    Then "Commit Image 생성" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |
@@ -101,5 +104,5 @@ Feature: 워크로드 상세 페이지 인터랙션
     When 워크로드 복제 버튼을 클릭한다
     Then 워크로드 생성 드로어가 표시된다
     And 선택된 Job Type 버튼이 상세 페이지의 Job Type과 동일하다
-    And 워크로드 이름 입력창 내 텍스트가 상세 페이지의 워크로드 이름과 동일하다
-    And 워크로드 설명 입력창 내 텍스트가 상세 페이지의 워크로드 설명과 동일하다
+    And 워크로드 복제:이름 입력창에 기존 값이 표시된다
+    And 워크로드 복제:설명 입력창에 기존 값이 표시된다

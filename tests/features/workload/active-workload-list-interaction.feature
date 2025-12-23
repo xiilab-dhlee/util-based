@@ -15,23 +15,23 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario: 워크로드 로그 페이지 이동
-    When running 상태인 워크로드의 로그 버튼을 클릭한다
+    When 실행중 또는 종료된 워크로드의 로그 버튼을 클릭한다
     Then 워크로드 로그 페이지가 표시된다
 
   @regression
   Scenario: 워크로드 웹터미널 페이지 이동
-    When running 상태인 워크로드의 웹터미널 버튼을 클릭한다
+    When 실행중인 워크로드의 웹터미널 버튼을 클릭한다
     Then 워크로드 웹터미널 페이지가 표시된다
 
   @regression
   Scenario: 워크로드 모니터링 페이지 이동
-    When running 상태인 워크로드의 모니터링 버튼을 클릭한다
+    When 실행중 또는 종료된 워크로드의 모니터링 버튼을 클릭한다
     Then 워크로드 모니터링 페이지가 표시된다
 
   @regression
   Scenario Outline: 활성화 워크로드 검색 - <설명>
-    When 검색창에 "<검색어>"를 입력한다
-    Then 검색 결과가 "<예상결과>" 조건을 만족한다
+    When 목록 페이지의 검색창에 "<검색어>"를 입력한다
+    Then 워크로드 검색 결과가 "<예상결과>" 조건을 만족한다
 
     # 경계값 테스트 케이스
     # - 빈값: 전체 목록 표시
@@ -56,44 +56,29 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
   @regression
   Scenario Outline: 워크로드 잡타입 필터링 <설명>
     When 워크로드 필터를 설정한다:
-      | jobType   |
-      | <jobType> |
+      | jobType   | status   |
+      | <jobType> | <status> |
     Then 워크로드 필터가 설정된 조건을 표시한다:
-      | jobType   |
-      | <jobType> |
+      | jobType   | status   |
+      | <jobType> | <status> |
     And 필터링된 워크로드 목록이 조건에 맞게 표시된다:
-      | jobType   |
-      | <jobType> |
+      | jobType   | status   |
+      | <jobType> | <status> |
 
     Examples:
-      | 설명               | jobType     |
-      | 잡타입=Batch       | Batch       |
-      | 잡타입=Interactive | Interactive |
-      | 잡타입=Distributed | Distributed |
-
-  @regression
-  Scenario Outline: 워크로드 상태 필터링 <설명>
-    When 워크로드 필터를 설정한다:
-      | status   |
-      | <status> |
-    Then 워크로드 필터가 설정된 조건을 표시한다:
-      | status   |
-      | <status> |
-    And 필터링된 워크로드 목록이 조건에 맞게 표시된다:
-      | status   |
-      | <status> |
-
-    Examples:
-      | 설명              | status |
-      | 상태=실행중        | running |
-      | 상태=대기중        | pending |
-      | 상태=에러         | failed |
+      | 설명               | jobType     | status     |
+      | 잡타입=Batch       | Batch       | -          |
+      | 잡타입=Interactive | Interactive | -          |
+      | 잡타입=Distributed | Distributed | -          |
+      | 상태=실행중        | -          | running    |
+      | 상태=대기중        | -          | pending    |
+      | 상태=에러         | -          | failed     |
 
   @regression
   Scenario Outline: 워크로드 종료 <결과>
-    When running 상태인 워크로드의 종료 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    When 첫 번째 워크로드의 종료 버튼을 클릭한다
+    And "워크로드 종료" 모달의 <버튼> 버튼을 클릭한다
+    Then "워크로드 종료" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |

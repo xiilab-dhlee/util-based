@@ -142,18 +142,21 @@ const UI_ACTION_PATTERN = /(클릭|입력|설정)한다|(클릭|이동|선택)�
  * Scenario: 페이지네이션 테스트
  *   When 이전 페이지 버튼을 클릭한다  <- 스크린샷 캡처 (클릭)
  */
-AfterStep({ tags: "@interaction" }, async ({ page, $testInfo, $step }) => {
-  const isUiAction = UI_ACTION_PATTERN.test($step.title);
+AfterStep(
+  { tags: "@interaction or @edge-case" },
+  async ({ page, $testInfo, $step }) => {
+    const isUiAction = UI_ACTION_PATTERN.test($step.title);
 
-  if (isUiAction) {
-    await page.waitForTimeout(200);
+    if (isUiAction) {
+      await page.waitForTimeout(200);
 
-    const screenshot = await page.screenshot();
-    const stepTitle = $step.title.slice(0, 50);
+      const screenshot = await page.screenshot();
+      const stepTitle = $step.title.slice(0, 50);
 
-    await $testInfo.attach(`[Action] ${stepTitle}`, {
-      body: screenshot,
-      contentType: "image/png",
-    });
-  }
-});
+      await $testInfo.attach(`[Action] ${stepTitle}`, {
+        body: screenshot,
+        contentType: "image/png",
+      });
+    }
+  },
+);

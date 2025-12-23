@@ -10,18 +10,18 @@ import { test } from "../../fixtures";
 
 const { When, Then } = createBdd(test);
 
-Then("확인 모달이 표시된다", async ({ modal }) => {
+Then("{string} 모달이 표시된다", async ({ modal }) => {
   await modal.waitForVisible();
 });
 
-Then("확인 모달이 닫힌다", async ({ modal }) => {
+Then("{string} 모달이 닫힌다", async ({ modal }) => {
   await modal.waitForHidden();
 });
 
-When("확인 모달의 확인 버튼을 클릭한다", async ({ modal }) => {
+When("{string} 모달의 확인 버튼을 클릭한다", async ({ modal }) => {
   await modal.clickOk();
 });
 
-When("확인 모달의 취소 버튼을 클릭한다", async ({ modal }) => {
+When("{string} 모달의 취소 버튼을 클릭한다", async ({ modal }) => {
   await modal.clickCancel();
 });

@@ -2,7 +2,6 @@ import type { Page } from "@playwright/test";
 
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { FilterDropdownComponent } from "../components/filter-dropdown.component";
-import { TabsComponent } from "../components/tabs.component";
 import { ListPage } from "./list.page";
 
 /**
@@ -11,7 +10,6 @@ import { ListPage } from "./list.page";
  * ListPage를 상속하여 워크로드 목록 페이지 전용 기능 제공:
  * - jobTypeFilter: Job Type 필터 드롭다운
  * - statusFilter: 상태 필터 드롭다운
- * - searchByFirstWorkloadName(): 첫 번째 워크로드 이름으로 검색
  *
  * 상속 계층: BasePage > ListPage > WorkloadListPage
  *
@@ -57,8 +55,6 @@ export class WorkloadListPage extends ListPage {
   readonly jobTypeFilter: FilterDropdownComponent;
   /** 상태 필터 드롭다운 */
   readonly statusFilter: FilterDropdownComponent;
-  /** 탭 컴포넌트 (활성화/비활성화) */
-  readonly tabs: TabsComponent;
 
   constructor(page: Page) {
     super(page);
@@ -70,7 +66,6 @@ export class WorkloadListPage extends ListPage {
       page,
       WORKLOAD_SELECTOR.FILTER_STATUS,
     );
-    this.tabs = new TabsComponent(page);
   }
 
   // ============================================
@@ -89,10 +84,6 @@ export class WorkloadListPage extends ListPage {
     return WORKLOAD_SELECTOR.NAME;
   }
 
-  protected get testIdPage(): string {
-    return "workload";
-  }
-
   // ============================================
   // Navigation (확장)
   // ============================================
@@ -107,14 +98,6 @@ export class WorkloadListPage extends ListPage {
   // ============================================
   // Actions (확장)
   // ============================================
-
-  /**
-   * 첫 번째 워크로드 이름으로 검색
-   */
-  async searchByFirstWorkloadName(): Promise<void> {
-    const name = await this.table.getFirstCellText(WORKLOAD_SELECTOR.NAME);
-    await this.search(name);
-  }
 
   /**
    * 지정된 텍스트로 검색 (경계값 테스트용)

@@ -68,14 +68,4 @@ export class DrawerComponent {
   async assertTitle(expectedTitle: string): Promise<void> {
     await expect(this.title).toContainText(expectedTitle);
   }
-
-  /**
-   * 드로어 내 버튼 클릭
-   *
-   * @param buttonText - 버튼 텍스트 (예: "취소", "이전 단계")
-   */
-  async clickButton(buttonText: string): Promise<void> {
-    const button = this.drawer.getByRole("button", { name: buttonText });
-    await button.click();
-  }
 }

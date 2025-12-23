@@ -36,6 +36,13 @@ Given(
   },
 );
 
+When(
+  "워크로드 상세 페이지로 이동한다",
+  async ({ workloadDetailPage, workloadId, workspaceId }) => {
+    await workloadDetailPage.gotoWorkload(workloadId, workspaceId);
+  },
+);
+
 // ============================================
 // 2. 페이지 표시 검증
 // ============================================
@@ -44,30 +51,12 @@ Then("워크로드 상세 페이지가 표시된다", async ({ workloadDetailPag
   await workloadDetailPage.assertPageVisible();
 });
 
-Then("워크로드 로그 페이지가 표시된다", async ({ workloadLogPage }) => {
-  await workloadLogPage.assertPageVisible();
-});
-
-Then(
-  "워크로드 모니터링 페이지가 표시된다",
-  async ({ workloadMonitoringPage }) => {
-    await workloadMonitoringPage.assertPageVisible();
-  },
-);
-
-Then(
-  "워크로드 웹터미널 페이지가 표시된다",
-  async ({ workloadTerminalPage }) => {
-    await workloadTerminalPage.assertPageVisible();
-  },
-);
-
 // ============================================
 // 3. 상태별 검증
 // ============================================
 
 When(
-  "워크로드 상태가 {string}인 것을 확인한다.",
+  "워크로드 상태가 {string}인 것을 확인한다",
   async ({ workloadDetailPage, $testInfo }, status: string) => {
     const currentStatus = await workloadDetailPage.getStatusValue();
 
@@ -164,32 +153,31 @@ When("워크로드 복제 버튼을 클릭한다", async ({ workloadDetailPage }
 // 5. 수정 모달
 // ============================================
 
-Then("수정 모달이 표시된다", async ({ modal }) => {
-  await modal.waitForVisible();
-});
-
-Then("수정 모달에 이름 입력창이 표시된다", async ({ workloadDetailPage }) => {
-  await expect(workloadDetailPage.updateNameInput).toBeVisible();
-});
-
-Then("수정 모달에 설명 입력창이 표시된다", async ({ workloadDetailPage }) => {
-  await expect(workloadDetailPage.updateDescriptionInput).toBeVisible();
-});
-
 Then(
-  "수정 모달의 이름 입력창에 현재 워크로드 이름이 입력되어 있다",
+  "워크로드 수정:이름 입력창에 기존 값이 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
     const inputValue = await workloadDetailPage.getUpdateNameInputValue();
-    // 이름이 비어있지 않으면 유효
-    assertLogger.assertNotEmpty("수정 모달 이름 입력값", inputValue);
+    const currentName = (await workloadDetailPage.name.textContent()) ?? "-";
+    assertLogger.assertEqual(
+      "워크로드 수정 모달 내 워크로드 이름 입력값",
+      inputValue,
+      currentName,
+    );
   },
 );
 
 Then(
-  "수정 모달의 설명 입력창에 현재 워크로드 설명이 입력되어 있다",
-  async ({ workloadDetailPage }) => {
-    // 설명은 비어있을 수 있으므로 입력창이 visible한지만 확인
-    await expect(workloadDetailPage.updateDescriptionInput).toBeVisible();
+  "워크로드 수정:설명 입력창에 기존 값이 표시된다",
+  async ({ workloadDetailPage, assertLogger }) => {
+    const inputValue =
+      await workloadDetailPage.getUpdateDescriptionInputValue();
+    const currentDesc =
+      (await workloadDetailPage.description.textContent()) ?? "-";
+    assertLogger.assertEqual(
+      "워크로드 수정 모달 내 워크로드 설명 입력값",
+      inputValue,
+      currentDesc,
+    );
   },
 );
 
@@ -231,7 +219,7 @@ Then(
 );
 
 Then(
-  "워크로드 이름 입력창 내 텍스트가 상세 페이지의 워크로드 이름과 동일하다",
+  "워크로드 복제:이름 입력창에 기존 값이 표시된다",
   async ({ page, workloadDetailPage, assertLogger }) => {
     const detailName =
       (await workloadDetailPage.name.textContent())?.trim() ?? "";
@@ -240,12 +228,16 @@ Then(
     await expect(input).toBeVisible({ timeout: 10000 });
     const inputValue = await input.inputValue();
 
-    assertLogger.assertEqual("워크로드 이름", inputValue, detailName);
+    assertLogger.assertEqual(
+      "워크로드 복제 모달 내 워크로드 이름 입력값",
+      inputValue,
+      detailName,
+    );
   },
 );
 
 Then(
-  "워크로드 설명 입력창 내 텍스트가 상세 페이지의 워크로드 설명과 동일하다",
+  "워크로드 복제:설명 입력창에 기존 값이 표시된다",
   async ({ page, workloadDetailPage, assertLogger }) => {
     const rawDescription =
       (await workloadDetailPage.description.textContent())?.trim() ?? "";
@@ -256,7 +248,11 @@ Then(
     await expect(input).toBeVisible({ timeout: 10000 });
     const inputValue = await input.inputValue();
 
-    assertLogger.assertEqual("워크로드 설명", inputValue, detailDescription);
+    assertLogger.assertEqual(
+      "워크로드 복제 모달 내 워크로드 설명 입력값",
+      inputValue,
+      detailDescription,
+    );
   },
 );
 

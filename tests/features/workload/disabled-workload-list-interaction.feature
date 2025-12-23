@@ -37,8 +37,8 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
 
   @regression
   Scenario Outline: 비활성화 워크로드 검색 - <설명>
-    When 검색창에 "<검색어>"를 입력한다
-    Then 검색 결과가 "<예상결과>" 조건을 만족한다
+    When 목록 페이지의 검색창에 "<검색어>"를 입력한다
+    Then 워크로드 검색 결과가 "<예상결과>" 조건을 만족한다
 
     # 경계값 테스트 케이스
     # - 빈값: 전체 목록 표시
@@ -63,22 +63,22 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
   @regression
   Scenario Outline: 워크로드 잡타입 필터링 <설명>
     When 워크로드 필터를 설정한다:
-      | jobType   |
-      | <jobType> |
+      | jobType   | status   |
+      | <jobType> | <status> |
     Then 워크로드 필터가 설정된 조건을 표시한다:
-      | jobType   |
-      | <jobType> |
+      | jobType   | status   |
+      | <jobType> | <status> |
     And 필터링된 워크로드 목록이 조건에 맞게 표시된다:
-      | jobType   |
-      | <jobType> |
+      | jobType   | status   |
+      | <jobType> | <status> |
 
     # 필터 조합 테스트
     # jobType: - Batch, Interactive, Distributed
     Examples:
-      | 설명               | jobType     |
-      | 잡타입=Batch       | Batch       |
-      | 잡타입=Interactive | Interactive |
-      | 잡타입=Distributed | Distributed |
+      | 설명               | jobType     | status     |
+      | 잡타입=Batch       | Batch       | -          |
+      | 잡타입=Interactive | Interactive | -          |
+      | 잡타입=Distributed | Distributed | -          |
 
   # ============================================
   # 액션 (삭제, 재시작)
@@ -87,8 +87,8 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
   @regression
   Scenario Outline: 워크로드 삭제 <결과>
     When 첫 번째 워크로드의 삭제 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    And "워크로드 삭제" 모달의 <버튼> 버튼을 클릭한다
+    Then "워크로드 삭제" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |
@@ -98,8 +98,8 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
   @regression
   Scenario Outline: 워크로드 재시작 <결과>
     When 첫 번째 워크로드의 재시작 버튼을 클릭한다
-    And 확인 모달의 <버튼> 버튼을 클릭한다
-    Then 확인 모달이 닫힌다
+    And "워크로드 재시작" 모달의 <버튼> 버튼을 클릭한다
+    Then "워크로드 재시작" 모달이 닫힌다
 
     Examples:
       | 결과 | 버튼 |

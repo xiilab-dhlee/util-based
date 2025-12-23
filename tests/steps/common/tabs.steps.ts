@@ -8,7 +8,11 @@ import { test } from "../../fixtures";
  * 탭 네비게이션 관련 Step 정의
  */
 
-const { Then } = createBdd(test);
+const { Then, When } = createBdd(test);
+
+When("{string} 탭을 클릭한다", async ({ tabs }, tabName: string) => {
+  await tabs.clickTab(tabName);
+});
 
 Then("{string} 탭이 선택되어 있다", async ({ tabs }, tabName: string) => {
   await tabs.assertActiveTab(tabName);
