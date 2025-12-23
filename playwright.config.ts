@@ -34,7 +34,7 @@ export default defineConfig({
   retries: isCI ? 2 : 0,
 
   /* Worker 설정: CI는 CPU 코어의 50%, 로컬은 1 */
-  workers: isCI ? "50%" : 1,
+  workers: isCI ? "50%" : 2,
 
   /* 리포터 설정 */
   reporter: [

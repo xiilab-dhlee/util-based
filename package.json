@@ -27,6 +27,7 @@
     "test:allure:history": "node scripts/copy-allure-history.mjs",
     "test:trace": "playwright show-trace",
     "test:codegen": "playwright codegen http://localhost:3000",
+    "test:lazy": "cross-env MOCK_DELAY=3000 pnpm test",
     "bddgen": "npx playwright-bdd test",
     "bddgen:export": "npx playwright-bdd export",
     "prepare": "husky"
