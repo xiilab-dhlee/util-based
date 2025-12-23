@@ -5,12 +5,15 @@ import { useAtom } from "jotai";
 import { disabledWorkloadPageAtom } from "@/domain/workload/state/workload.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface DisabledWorkloadListFooterProps {
   /** 전체 워크로드 수 */
   total: number;
   /** 로딩 상태 */
   isLoading: boolean;
+  /** 에러 상태 */
+  isError?: boolean;
 }
 
 /**
@@ -26,6 +29,7 @@ interface DisabledWorkloadListFooterProps {
 export function DisabledWorkloadListFooter({
   total,
   isLoading,
+  isError,
 }: DisabledWorkloadListFooterProps) {
   const [page, setPage] = useAtom(disabledWorkloadPageAtom);
 
@@ -36,7 +40,8 @@ export function DisabledWorkloadListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={setPage}
       isLoading={isLoading}
-      testIdPage="workload"
+      isError={isError}
+      paginationTestId={SELECTOR.LIST_PAGINATION}
     />
   );
 }

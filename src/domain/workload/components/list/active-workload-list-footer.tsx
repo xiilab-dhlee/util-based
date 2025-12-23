@@ -5,12 +5,15 @@ import { useAtom } from "jotai";
 import { activeWorkloadPageAtom } from "@/domain/workload/state/workload.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface ActiveWorkloadListFooterProps {
   /** 전체 워크로드 수 */
   total: number;
   /** 로딩 상태 */
   loading: boolean;
+  /** 에러 상태 */
+  isError?: boolean;
 }
 
 /**
@@ -26,6 +29,7 @@ interface ActiveWorkloadListFooterProps {
 export function ActiveWorkloadListFooter({
   total,
   loading,
+  isError,
 }: ActiveWorkloadListFooterProps) {
   const [page, setPage] = useAtom(activeWorkloadPageAtom);
 
@@ -36,7 +40,8 @@ export function ActiveWorkloadListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={setPage}
       isLoading={loading}
-      testIdPage="workload"
+      isError={isError}
+      paginationTestId={SELECTOR.LIST_PAGINATION}
     />
   );
 }

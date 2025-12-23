@@ -28,7 +28,7 @@ export function DisabledWorkloadListMain() {
   const searchText = useAtomValue(disabledWorkloadSearchTextAtom);
   const jobType = useAtomValue(disabledWorkloadJobTypeAtom);
 
-  const { data, isLoading } = useGetDisabledWorkloads({
+  const { data, isLoading, isError } = useGetDisabledWorkloads({
     page,
     size: LIST_PAGE_SIZE,
     searchText,
@@ -47,11 +47,13 @@ export function DisabledWorkloadListMain() {
       <DisabledWorkloadListBody
         content={data?.content || []}
         loading={isLoading}
+        isError={isError}
       />
       {/* 비활성화 워크로드 목록 페이지네이션 */}
       <DisabledWorkloadListFooter
         total={data?.totalSize || 0}
         isLoading={isLoading}
+        isError={isError}
       />
       {/* 워크로드 재시작 모달 */}
       <RestartWorkloadModal />

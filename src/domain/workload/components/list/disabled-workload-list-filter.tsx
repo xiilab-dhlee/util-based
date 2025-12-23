@@ -10,6 +10,7 @@ import {
 } from "@/domain/workload/state/workload.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface DisabledWorkloadListFilterProps {
   total: number;
@@ -42,12 +43,16 @@ export function DisabledWorkloadListFilter({
   };
 
   return (
-    <MySearchFilter title="워크로드 목록" total={total} testIdPage="workload">
+    <MySearchFilter
+      title="워크로드 목록"
+      total={total}
+      totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
+    >
       <DisabledWorkloadJobTypeSort disabled={isLoading} />
       <SearchInput
         disabled={isLoading}
         onSearch={handleSearch}
-        testIdPage="workload"
+        testId={SELECTOR.LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

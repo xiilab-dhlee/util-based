@@ -9,6 +9,7 @@ import type { WorkloadListType } from "../../schemas/workload.schema";
 interface ActiveWorkloadListBodyProps {
   content: WorkloadListType[];
   loading: boolean;
+  isError?: boolean;
 }
 
 /**
@@ -18,14 +19,16 @@ interface ActiveWorkloadListBodyProps {
  *
  * @param content - 워크로드 목록 데이터
  * @param loading - 로딩 여부
+ * @param isError - 에러 상태 여부
  * @returns 활성화 워크로드 목록 페이지 본문 컴포넌트
  */
 export function ActiveWorkloadListBody({
   content,
   loading,
+  isError = false,
 }: ActiveWorkloadListBodyProps) {
   return (
-    <ListWrapper data-testid={SELECTOR.listTable("workload")}>
+    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
         columns={createWorkloadColumn([
           {
@@ -49,6 +52,7 @@ export function ActiveWorkloadListBody({
         columnHeight={37}
         activePadding
         loading={loading}
+        isError={isError}
       />
     </ListWrapper>
   );

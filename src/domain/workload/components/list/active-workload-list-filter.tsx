@@ -12,6 +12,7 @@ import {
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface ActiveWorkloadListFilterProps {
   total: number;
@@ -44,14 +45,18 @@ export function ActiveWorkloadListFilter({
   };
 
   return (
-    <MySearchFilter title="워크로드 목록" total={total} testIdPage="workload">
+    <MySearchFilter
+      title="워크로드 목록"
+      total={total}
+      totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
+    >
       <MyItemsOnlySwitch checked={false} />
       <ActiveWorkloadJobTypeSort disabled={loading} />
       <ActiveWorkloadStatusSort disabled={loading} />
       <SearchInput
         disabled={loading}
         onSearch={handleSearch}
-        testIdPage="workload"
+        testId={SELECTOR.LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

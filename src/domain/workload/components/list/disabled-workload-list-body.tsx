@@ -9,6 +9,7 @@ import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 interface DisabledWorkloadListBodyProps {
   content: WorkloadListType[];
   loading: boolean;
+  isError?: boolean;
 }
 
 /**
@@ -18,14 +19,16 @@ interface DisabledWorkloadListBodyProps {
  *
  * @param content - 워크로드 목록 데이터
  * @param loading - 로딩 여부
+ * @param isError - 에러 상태 여부
  * @returns 비활성화 워크로드 목록 페이지 본문 컴포넌트
  */
 export function DisabledWorkloadListBody({
   content,
   loading,
+  isError = false,
 }: DisabledWorkloadListBodyProps) {
   return (
-    <ListWrapper data-testid={SELECTOR.listTable("workload")}>
+    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
         columns={createWorkloadColumn([
           { dataIndex: "workloadName", width: 200, ellipsis: true },
@@ -42,6 +45,7 @@ export function DisabledWorkloadListBody({
         columnHeight={36}
         activePadding
         loading={loading}
+        isError={isError}
       />
     </ListWrapper>
   );

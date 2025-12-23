@@ -17,6 +17,7 @@ import {
 } from "xiilab-ui";
 
 import { withRowData } from "@/shared/components/hoc/with-row-data";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 /**
@@ -187,10 +188,10 @@ export function CustomizedTable<
   };
 
   // 테이블 지역화 설정 (한글 메시지)
-  let emptyText: ReactNode = "조회된 결과가 없습니다.";
+  let emptyText: ReactNode = TABLE_MESSAGE.EMPTY;
 
   if (isError) {
-    emptyText = "데이터를 불러올 수 없습니다.";
+    emptyText = TABLE_MESSAGE.ERROR;
   }
 
   const locale = {
