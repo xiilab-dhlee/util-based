@@ -202,4 +202,46 @@ export class DataTableComponent {
     const spinner = this.container.locator(".ant-spin");
     await expect(spinner).toBeHidden({ timeout });
   }
+
+  // ============================================
+  // 테이블 상태 검증
+  // ============================================
+
+  /**
+   * 테이블 컨테이너가 표시되는지 확인
+   *
+   * @param tableTestId - 테이블 컨테이너의 data-testid
+   * @param timeout - 대기 시간 (기본 10초)
+   */
+  async assertTableVisible(
+    tableTestId: string,
+    timeout = 10000,
+  ): Promise<void> {
+    const table = this.container.locator(testId(tableTestId));
+    await expect(table).toBeVisible({ timeout });
+
+    // 로딩 완료 대기: 스피너 소멸
+    const spinner = table.locator(".ant-spin");
+    await expect(spinner).toBeHidden({ timeout });
+  }
+
+  /**
+   * 테이블 빈 상태 메시지 검증
+   *
+   * Ant Design Table의 empty placeholder 텍스트를 확인합니다.
+   *
+   * @param tableTestId - 테이블 컨테이너의 data-testid
+   * @param expectedMessage - 기대하는 메시지
+   * @param timeout - 대기 시간 (기본 10초)
+   */
+  async assertEmptyMessage(
+    tableTestId: string,
+    expectedMessage: string,
+    timeout = 10000,
+  ): Promise<void> {
+    const table = this.container.locator(testId(tableTestId));
+    const emptyPlaceholder = table.locator(".ant-table-placeholder");
+    await expect(emptyPlaceholder).toBeVisible({ timeout });
+    await expect(emptyPlaceholder).toContainText(expectedMessage);
+  }
 }

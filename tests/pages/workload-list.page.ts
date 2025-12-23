@@ -33,14 +33,6 @@ export class WorkloadListPage extends ListPage {
     재시작: WORKLOAD_SELECTOR.RESTART_BUTTON,
   };
 
-  /** 모니터링 차트 ID */
-  static readonly CHART_ID: Record<string, string> = {
-    "CPU 사용량": "cpu-usage",
-    "Memory 사용량": "memory-usage",
-    "GPU 사용률": "gpu-utilization",
-    "GPU 메모리": "gpu-memory",
-  };
-
   /** 생성 드로어 버튼 셀렉터 */
   static readonly CREATE_BUTTON: Record<string, string> = {
     "최근 워크로드 가져오기": WORKLOAD_SELECTOR.CREATE_RECENT_IMPORT_BUTTON,
@@ -93,16 +85,5 @@ export class WorkloadListPage extends ListPage {
    */
   async gotoDisabled(): Promise<void> {
     await this.goto("/disabled");
-  }
-
-  // ============================================
-  // Actions (확장)
-  // ============================================
-
-  /**
-   * 지정된 텍스트로 검색 (경계값 테스트용)
-   */
-  async searchByText(text: string): Promise<void> {
-    await this.search(text);
   }
 }

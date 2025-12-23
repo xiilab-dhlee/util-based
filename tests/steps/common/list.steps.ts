@@ -1,4 +1,3 @@
-import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
@@ -15,7 +14,11 @@ import { test } from "../../fixtures";
  * - 검색 입력 검증
  * - 빈 목록/에러 메시지 검증
  *
- * 공통 셀렉터: SELECTOR.LIST_TOTAL_COUNT, LIST_PAGINATION, LIST_SEARCH_INPUT
+ * 험블 객체 사용:
+ * - listTable: DataTableComponent fixture (테이블 관련 검증)
+ * - myItemsSwitch: SwitchComponent fixture (스위치 관련 검증)
+ * - listSearchInput: SearchInputComponent fixture (검색 관련)
+ * - listPagination: PaginationComponent fixture (페이지네이션 관련)
  */
 const { When, Then } = createBdd(test);
 
@@ -27,14 +30,11 @@ const { When, Then } = createBdd(test);
  * 목록 페이지의 테이블이 표시되는지 검증
  * - 테이블 컨테이너가 visible인지 확인
  * - 로딩 스피너가 사라질 때까지 대기 (로딩 완료)
+ *
+ * listTable fixture (DataTableComponent) 사용
  */
-Then("목록 페이지의 테이블이 표시된다", async ({ page }) => {
-  const listTable = page.getByTestId(SELECTOR.LIST_TABLE);
-  await expect(listTable).toBeVisible({ timeout: 10000 });
-
-  // 로딩 완료 대기: 스피너 소멸
-  const spinner = listTable.locator(".ant-spin");
-  await expect(spinner).toBeHidden({ timeout: 10000 });
+Then("목록 페이지의 테이블이 표시된다", async ({ listTable }) => {
+  await listTable.assertTableVisible(SELECTOR.LIST_TABLE);
 });
 
 // ============================================
@@ -70,10 +70,11 @@ Then(
 
 /**
  * 목록 페이지의 페이지네이션이 표시되는지 검증
+ *
+ * listPagination fixture (PaginationComponent) 사용
  */
-Then("목록 페이지의 페이지네이션이 표시된다", async ({ page }) => {
-  const pagination = page.getByTestId(SELECTOR.LIST_PAGINATION);
-  await expect(pagination).toBeVisible();
+Then("목록 페이지의 페이지네이션이 표시된다", async ({ listPagination }) => {
+  await listPagination.assertVisible();
 });
 
 // ============================================
@@ -82,22 +83,25 @@ Then("목록 페이지의 페이지네이션이 표시된다", async ({ page }) 
 
 /**
  * 목록 페이지의 검색창이 빈 값으로 표시되는지 검증
+ *
+ * listSearchInput fixture (SearchInputComponent) 사용
  */
-Then("목록 페이지의 검색창이 빈 값으로 표시된다", async ({ page }) => {
-  const searchInput = page.getByTestId(SELECTOR.LIST_SEARCH_INPUT);
-  await expect(searchInput).toBeVisible();
-  await expect(searchInput).toHaveValue("");
-});
+Then(
+  "목록 페이지의 검색창이 빈 값으로 표시된다",
+  async ({ listSearchInput }) => {
+    await listSearchInput.assertEmpty();
+  },
+);
 
 /**
  * 목록 페이지의 검색창에 검색어 입력
+ *
+ * listSearchInput fixture (SearchInputComponent) 사용
  */
 When(
   "목록 페이지의 검색창에 {string}를 입력한다",
-  async ({ page }, searchText: string) => {
-    const searchInput = page.getByTestId(SELECTOR.LIST_SEARCH_INPUT);
-    await searchInput.fill(searchText);
-    await searchInput.press("Enter");
+  async ({ listSearchInput }, searchText: string) => {
+    await listSearchInput.search(searchText);
   },
 );
 
@@ -109,17 +113,16 @@ When(
  * 목록 페이지의 "내 항목만 보기" 스위치 상태 검증
  * - 선택됨: 스위치가 체크 상태
  * - 선택되지 않음: 스위치가 체크 해제 상태
+ *
+ * myItemsSwitch fixture (SwitchComponent) 사용
  */
 Then(
   /^목록 페이지의 내 항목만 보기가 (선택되어 있다|선택되어 있지 않다)$/,
-  async ({ page }, state: string) => {
-    const myItemsSwitch = page.getByTestId(SELECTOR.MY_ITEMS_ONLY_SWITCH);
-    await expect(myItemsSwitch).toBeVisible({ timeout: 10000 });
-
+  async ({ myItemsSwitch }, state: string) => {
     if (state === "선택되어 있다") {
-      await expect(myItemsSwitch).toBeChecked({ timeout: 10000 });
+      await myItemsSwitch.assertChecked();
     } else {
-      await expect(myItemsSwitch).not.toBeChecked({ timeout: 10000 });
+      await myItemsSwitch.assertUnchecked();
     }
   },
 );
@@ -132,15 +135,13 @@ Then(
  * 목록 페이지의 테이블에 빈 목록/에러 메시지가 표시되는지 검증
  * - EMPTY: "조회된 결과가 없습니다."
  * - ERROR: "데이터를 불러올 수 없습니다."
+ *
+ * listTable fixture (DataTableComponent) 사용
  */
 Then(
   /^목록 페이지의 테이블에 (EMPTY|ERROR) 메시지가 표시된다$/,
-  async ({ page }, messageType: keyof typeof TABLE_MESSAGE) => {
-    const listTable = page.getByTestId(SELECTOR.LIST_TABLE);
-    const emptyPlaceholder = listTable.locator(".ant-table-placeholder");
-    await expect(emptyPlaceholder).toBeVisible({ timeout: 10000 });
-
+  async ({ listTable }, messageType: keyof typeof TABLE_MESSAGE) => {
     const expectedMessage = TABLE_MESSAGE[messageType];
-    await expect(emptyPlaceholder).toContainText(expectedMessage);
+    await listTable.assertEmptyMessage(SELECTOR.LIST_TABLE, expectedMessage);
   },
 );

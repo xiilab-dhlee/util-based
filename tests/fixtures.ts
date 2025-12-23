@@ -1,10 +1,15 @@
 import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
+import { DataTableComponent } from "./components/data-table.component";
 import { DrawerComponent } from "./components/drawer.component";
 import { ModalComponent } from "./components/modal.component";
 import { NavigationComponent } from "./components/navigation.component";
+import { PaginationComponent } from "./components/pagination.component";
 import { RadioComponent } from "./components/radio.component";
+import { SearchInputComponent } from "./components/search-input.component";
+import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
 import { MonitoringPage } from "./pages/monitoring.page";
@@ -123,6 +128,16 @@ type TestContextFixtures = {
   radio: RadioComponent;
   themePopover: ThemePopoverComponent;
   navigation: NavigationComponent;
+
+  // 목록 페이지 공통 컴포넌트
+  /** 목록 테이블 험블 객체 */
+  listTable: DataTableComponent;
+  /** 내 항목만 보기 스위치 험블 객체 */
+  myItemsSwitch: SwitchComponent;
+  /** 검색 입력창 험블 객체 */
+  listSearchInput: SearchInputComponent;
+  /** 페이지네이션 험블 객체 */
+  listPagination: PaginationComponent;
 };
 
 // ============================================================================
@@ -382,5 +397,25 @@ export const test = base.extend<TestContextFixtures>({
 
   navigation: async ({ page }, use) => {
     await use(new NavigationComponent(page));
+  },
+
+  // ============================================================================
+  // 목록 페이지 공통 컴포넌트
+  // ============================================================================
+
+  listTable: async ({ page }, use) => {
+    await use(new DataTableComponent(page, SELECTOR.LIST_TABLE));
+  },
+
+  myItemsSwitch: async ({ page }, use) => {
+    await use(new SwitchComponent(page, SELECTOR.MY_ITEMS_ONLY_SWITCH));
+  },
+
+  listSearchInput: async ({ page }, use) => {
+    await use(new SearchInputComponent(page, SELECTOR.LIST_SEARCH_INPUT));
+  },
+
+  listPagination: async ({ page }, use) => {
+    await use(new PaginationComponent(page, SELECTOR.LIST_PAGINATION));
   },
 });
