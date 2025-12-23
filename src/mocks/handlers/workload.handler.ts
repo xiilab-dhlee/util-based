@@ -5,6 +5,7 @@ import {
   createWorkloadListMock,
   workloadDetailMock,
 } from "@/mocks/data/workload.mock";
+import { WORKLOAD_ENDPOINTS } from "@/shared/constants/endpoint.constant";
 import { ML_PROJECT_TEMPLATE } from "@/shared/constants/filetree.constant";
 import { generateCustomTree } from "@/shared/utils/filetree-generator.util";
 import { paramsToOverride } from "@/shared/utils/service.util";
@@ -14,7 +15,7 @@ import { paramsToOverride } from "@/shared/utils/service.util";
  */
 export const workloadHandlers = [
   // 활성화 워크로드 목록 (COMPLETED 제외)
-  http.get("/core-api/v1/core/workload/active", ({ request }) => {
+  http.get(WORKLOAD_ENDPOINTS.active, ({ request }) => {
     const url = new URL(request.url);
 
     const override = paramsToOverride<WorkloadListType>(url.searchParams);
@@ -29,7 +30,7 @@ export const workloadHandlers = [
     });
   }),
   // 워크로드 목록 조회
-  http.get("/core-api/v1/core/workload", ({ request }) => {
+  http.get(WORKLOAD_ENDPOINTS.base, ({ request }) => {
     const url = new URL(request.url);
 
     const override = paramsToOverride<WorkloadListType>(url.searchParams);
