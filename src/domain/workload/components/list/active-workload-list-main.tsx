@@ -54,7 +54,6 @@ export function ActiveWorkloadListMain() {
       <ActiveWorkloadListFooter
         total={data?.totalSize || 0}
         loading={isLoading}
-        isError={isError}
       />
     </>
   );

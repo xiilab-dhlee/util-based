@@ -12,8 +12,6 @@ interface ActiveWorkloadListFooterProps {
   total: number;
   /** 로딩 상태 */
   loading: boolean;
-  /** 에러 상태 */
-  isError?: boolean;
 }
 
 /**
@@ -29,7 +27,6 @@ interface ActiveWorkloadListFooterProps {
 export function ActiveWorkloadListFooter({
   total,
   loading,
-  isError,
 }: ActiveWorkloadListFooterProps) {
   const [page, setPage] = useAtom(activeWorkloadPageAtom);
 
@@ -40,7 +37,6 @@ export function ActiveWorkloadListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={setPage}
       isLoading={loading}
-      isError={isError}
       paginationTestId={SELECTOR.LIST_PAGINATION}
     />
   );

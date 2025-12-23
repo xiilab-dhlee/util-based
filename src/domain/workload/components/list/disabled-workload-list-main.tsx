@@ -53,7 +53,6 @@ export function DisabledWorkloadListMain() {
       <DisabledWorkloadListFooter
         total={data?.totalSize || 0}
         isLoading={isLoading}
-        isError={isError}
       />
       {/* 워크로드 재시작 모달 */}
       <RestartWorkloadModal />

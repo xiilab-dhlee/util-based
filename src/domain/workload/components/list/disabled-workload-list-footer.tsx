@@ -12,8 +12,6 @@ interface DisabledWorkloadListFooterProps {
   total: number;
   /** 로딩 상태 */
   isLoading: boolean;
-  /** 에러 상태 */
-  isError?: boolean;
 }
 
 /**
@@ -29,7 +27,6 @@ interface DisabledWorkloadListFooterProps {
 export function DisabledWorkloadListFooter({
   total,
   isLoading,
-  isError,
 }: DisabledWorkloadListFooterProps) {
   const [page, setPage] = useAtom(disabledWorkloadPageAtom);
 
@@ -40,7 +37,6 @@ export function DisabledWorkloadListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={setPage}
       isLoading={isLoading}
-      isError={isError}
       paginationTestId={SELECTOR.LIST_PAGINATION}
     />
   );

@@ -16,8 +16,6 @@ interface ListPageFooterProps {
   onChange: (page: number) => void;
   // 로딩 여부
   isLoading?: boolean;
-  // 에러 여부
-  isError?: boolean;
   // 오른쪽 컴포넌트
   rightChildren?: ReactNode;
   // 왼쪽 컴포넌트
@@ -32,13 +30,12 @@ export function ListPageFooter({
   pageSize,
   onChange,
   isLoading,
-  isError,
   rightChildren,
   leftChildren,
   paginationTestId,
 }: ListPageFooterProps) {
   // 로딩 중이거나 에러일 때는 푸터를 렌더링하지 않음
-  if (isLoading || isError) {
+  if (isLoading) {
     return null;
   }
 
