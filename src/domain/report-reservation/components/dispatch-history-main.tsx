@@ -30,7 +30,7 @@ export function DispatchHistoryMain() {
 
   return (
     <Container>
-      <MySearchFilter title="발송 내역" total={data?.totalSize || 0} />
+      <MySearchFilter title="발송 내역" total={data?.totalSize} />
       <DispatchHistoryListBody
         data={data?.content || []}
         isLoading={isLoading}

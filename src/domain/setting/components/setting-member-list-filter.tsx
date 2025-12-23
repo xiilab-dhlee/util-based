@@ -36,7 +36,7 @@ export function SettingMemberListFilter() {
 
   return (
     <>
-      <MySearchFilter title="구성원 관리" total={data?.totalSize || 0}>
+      <MySearchFilter title="구성원 관리" total={data?.totalSize}>
         <SearchInput onSearch={setSearchText} />
         <Button
           color="primary"
