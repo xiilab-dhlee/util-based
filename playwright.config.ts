@@ -125,12 +125,10 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    // CI: 프로덕션 빌드 후 실행, 로컬: 개발 서버
-    command: isCI ? "pnpm build && pnpm start" : "pnpm dev",
+    command: "pnpm start",
     url: "http://localhost:3000",
-    reuseExistingServer: !isCI,
-    // CI 빌드 시간 고려하여 타임아웃 증가
-    timeout: isCI ? 120 * 1000 : 30 * 1000,
+    reuseExistingServer: false,
+    timeout: 30 * 1000,
   },
 
   /* 테스트 타임아웃 설정 */
