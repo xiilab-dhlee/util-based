@@ -31,9 +31,9 @@ function SessionSync({ children }: PropsWithChildren) {
   // 개발 환경 자동 로그인
   useEffect(() => {
     // 개발 환경에서만 동작
-    if (process.env.NODE_ENV !== "development") {
-      return;
-    }
+    // if (process.env.NODE_ENV !== "development") {
+    //   return;
+    // }
 
     // 로딩 중이면 대기
     if (status === "loading") {

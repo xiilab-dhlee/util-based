@@ -9,73 +9,6 @@ import {
   TEST_USERS,
 } from "@/shared/constants/auth.constant";
 
-const isDevelopment = process.env.NODE_ENV === "development";
-
-// ============================================================================
-// JWT 파싱 유틸리티
-// ============================================================================
-
-interface JWTPayload {
-  realm_access?: { roles?: string[] };
-  preferred_username?: string;
-}
-
-function parseJWT(accessToken: string): JWTPayload | null {
-  try {
-    return JSON.parse(
-      Buffer.from(accessToken.split(".")[1], "base64").toString(),
-    );
-  } catch {
-    return null;
-  }
-}
-
-function getRolesFromToken(accessToken: string): string[] {
-  return parseJWT(accessToken)?.realm_access?.roles ?? [];
-}
-
-function getUsernameFromToken(accessToken: string): string {
-  return parseJWT(accessToken)?.preferred_username ?? "";
-}
-
-// ============================================================================
-// Keycloak 토큰 갱신
-// ============================================================================
-
-async function refreshAccessToken(token: JWT): Promise<JWT> {
-  try {
-    const response = await fetch(
-      `${process.env.AUTH_ISSUER}/protocol/openid-connect/token`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          client_id: process.env.AUTH_CLIENT_ID ?? "",
-          client_secret: process.env.AUTH_CLIENT_SECRET ?? "",
-          grant_type: "refresh_token",
-          refresh_token: token.refresh_token ?? "",
-        }),
-      },
-    );
-
-    const refreshedTokens = await response.json();
-
-    if (!response.ok) {
-      throw new Error("Token refresh failed");
-    }
-
-    return {
-      ...token,
-      access_token: refreshedTokens.access_token,
-      refresh_token: refreshedTokens.refresh_token ?? token.refresh_token,
-      expires_at: Math.floor(Date.now() / 1000 + refreshedTokens.expires_in),
-    };
-  } catch (error) {
-    console.error("Token refresh error:", error);
-    return { ...token, error: "RefreshAccessTokenError" };
-  }
-}
-
 // ============================================================================
 // 개발 환경 헬퍼
 // ============================================================================
@@ -147,8 +80,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!isDevelopment) return null;
-
         // 자동 로그인 (credentials 없음)
         if (!credentials?.username && !credentials?.password) {
           return getDevUserFromCredentials();
@@ -166,54 +97,12 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user, account }): Promise<JWT> {
-      // 개발 환경
-      if (isDevelopment) {
-        return user || !token.access_token
-          ? createDevToken(token, user)
-          : token;
-      }
-
-      // 프로덕션: 최초 로그인
-      if (account && user) {
-        const accessToken = account.access_token ?? "";
-        return {
-          ...token,
-          access_token: accessToken,
-          refresh_token: account.refresh_token,
-          expires_at: account.expires_at ?? 0,
-          id: user.id,
-          name: user.name ?? undefined,
-          email: user.email ?? undefined,
-          preferred_username: getUsernameFromToken(accessToken),
-          roles: getRolesFromToken(accessToken),
-        };
-      }
-
-      // 프로덕션: 토큰 유효성 검사 및 갱신
-      const isTokenValid = Date.now() < (token.expires_at ?? 0) * 1000;
-      return isTokenValid ? token : refreshAccessToken(token);
+    async jwt({ token, user }): Promise<JWT> {
+      return user || !token.access_token ? createDevToken(token, user) : token;
     },
 
     async session({ session, token }): Promise<Session> {
-      if (isDevelopment) {
-        return createDevSession(session, token);
-      }
-
-      return {
-        ...session,
-        accessToken: token.access_token,
-        refresh_token: token.refresh_token,
-        user: {
-          ...session.user,
-          id: token.id,
-          name: token.name,
-          email: token.email,
-          preferred_username: token.preferred_username,
-        },
-        roles: (token.roles as string[]) ?? [],
-        error: token.error,
-      };
+      return createDevSession(session, token);
     },
   },
 
@@ -228,5 +117,5 @@ export const authOptions: NextAuthOptions = {
   },
   secret: "dev",
   // secret: process.env.NEXTAUTH_SECRET ?? "dev-secret-key-for-development",
-  debug: isDevelopment,
+  debug: false,
 };
