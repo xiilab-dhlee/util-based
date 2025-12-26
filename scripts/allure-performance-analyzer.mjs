@@ -40,6 +40,26 @@ const CONFIG = {
 // ============================================================================
 
 /**
+ * 문자열을 Java Properties 형식의 유니코드 이스케이프로 변환
+ * ASCII 범위(0x00-0x7F)를 벗어나는 문자를 \uXXXX 형식으로 변환
+ *
+ * @param {string} str - 변환할 문자열
+ * @returns {string} 유니코드 이스케이프된 문자열
+ */
+function escapeUnicode(str) {
+  return str
+    .split("")
+    .map((char) => {
+      const code = char.charCodeAt(0);
+      if (code > 0x7f) {
+        return `\\u${code.toString(16).padStart(4, "0")}`;
+      }
+      return char;
+    })
+    .join("");
+}
+
+/**
  * 밀리초를 읽기 쉬운 형식으로 변환
  */
 function formatDuration(ms) {
@@ -285,17 +305,19 @@ function calculateOverallStats(currentResults) {
  * Allure environment.properties 생성
  */
 function generateEnvironmentInfo(stats, regressions, slowTests) {
+  // 한글+영문 병기 형태로 환경 정보 생성
+  // Java Properties 형식은 ISO-8859-1 인코딩을 사용하므로 유니코드 이스케이프 필요
   const envContent = [
-    `Total_Tests=${stats.totalTests}`,
-    `Passed_Tests=${stats.passedTests}`,
-    `Failed_Tests=${stats.failedTests}`,
-    `Total_Duration=${stats.totalDurationFormatted}`,
-    `Average_Duration=${stats.averageDurationFormatted}`,
-    `Regression_Count=${regressions.length}`,
-    `Slow_Tests_Count=${slowTests.slowTests.length}`,
-    `Regression_Threshold=${CONFIG.regressionThreshold * 100}%`,
-    `Slow_Test_Threshold=${slowTests.stats.thresholdFormatted || "N/A"}`,
-    `Analysis_Timestamp=${new Date().toISOString()}`,
+    escapeUnicode(`전체테스트(Total) ${stats.totalTests}`),
+    escapeUnicode(`성공테스트(Passed) ${stats.passedTests}`),
+    escapeUnicode(`실패테스트(Failed) ${stats.failedTests}`),
+    escapeUnicode(`전체소요시간(Total_Duration) ${stats.totalDurationFormatted}`),
+    escapeUnicode(`평균소요시간(Average_Duration) ${stats.averageDurationFormatted}`),
+    escapeUnicode(`성능회귀수(Regressions) ${regressions.length}`),
+    escapeUnicode(`느린테스트수(Slow) ${slowTests.slowTests.length}`),
+    escapeUnicode(`성능회귀임계값(Regression_Threshold) ${CONFIG.regressionThreshold * 100}%`),
+    escapeUnicode(`느린테스트임계값(Slow_Threshold) ${slowTests.stats.thresholdFormatted || "N/A"}`),
+    escapeUnicode(`분석시각(Analyzed) ${new Date().toISOString()}`),
   ].join("\n");
 
   writeFileSync(join(CONFIG.allureResultsDir, "environment.properties"), envContent);
