@@ -42,9 +42,13 @@ function getRandomStatus(
   const availableStatuses = WORKLOAD_STATUS.filter(
     (status) => !excludeStatuses.includes(status),
   );
+
+  if (availableStatuses.length === 0) {
+    return WORKLOAD_STATUS[0]; // 기본값 반환
+  }
   return availableStatuses[
     Math.floor(Math.random() * availableStatuses.length)
-  ];
+  ] as WorkloadStatusType;
 }
 
 /** 워크로드 mock 생성 옵션 타입 */
