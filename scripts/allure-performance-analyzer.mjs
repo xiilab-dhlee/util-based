@@ -491,8 +491,7 @@ function printReport(stats, trends, regressions, slowTests) {
   console.log(`  Total Duration:  ${stats.totalDurationFormatted}`);
   console.log(`  Average:         ${stats.averageDurationFormatted}`);
   console.log(`  Min/Max:         ${stats.minDurationFormatted} / ${stats.maxDurationFormatted}`);
-  console.log(`  Pass Rate:       ${Math.round((stats.passedTests / stats.totalTests) * 100)}%`);
-
+  console.log(`  Pass Rate:       ${stats.totalTests > 0 ? Math.round((stats.passedTests / stats.totalTests) * 100) : 0}%`);
   // 성능 회귀 (E)
   console.log("\n⚠️  Performance Regressions (≥20% slower)");
   console.log("-".repeat(40));
