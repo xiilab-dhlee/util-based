@@ -199,7 +199,10 @@ function findSlowTests(currentResults) {
 
   const average = durations.reduce((a, b) => a + b, 0) / durations.length;
   const sorted = [...durations].sort((a, b) => a - b);
-  const median = sorted[Math.floor(sorted.length / 2)];
+  const mid = Math.floor(sorted.length / 2);
+  const median = sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid];
 
   // 상대값 기준: 평균의 2배 이상을 "느린 테스트"로 분류
   const threshold = average * 2;
