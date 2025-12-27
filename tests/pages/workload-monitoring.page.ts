@@ -145,15 +145,7 @@ export class WorkloadMonitoringPage extends BasePage {
    * 모니터링 차트 타이틀 목록 반환
    */
   async getMonitoringChartTitles(): Promise<string[]> {
-    const titles: string[] = [];
-    const count = await this.monitoringChartTitles.count();
-
-    for (let i = 0; i < count; i++) {
-      const text =
-        (await this.monitoringChartTitles.nth(i).textContent())?.trim() ?? "";
-      titles.push(text);
-    }
-
-    return titles;
+    const titles = await this.monitoringChartTitles.allTextContents();
+    return titles.map((text) => text.trim());
   }
 }

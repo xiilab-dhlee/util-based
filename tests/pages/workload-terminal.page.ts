@@ -123,7 +123,10 @@ export class WorkloadTerminalPage extends BasePage {
     const className =
       (await this.terminalContainer.getAttribute("class")) ?? "";
     const hasTheme = themeNames.some((theme) => className.includes(theme));
-    expect(hasTheme).toBe(true);
+    expect(
+      hasTheme,
+      `테마가 적용되지 않음. 현재 클래스: "${className}", 기대 테마: [${themeNames.join(", ")}]`,
+    ).toBe(true);
   }
 
   // ============================================
