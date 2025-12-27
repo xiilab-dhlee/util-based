@@ -20,7 +20,8 @@ export type SetupAllMocksOptions = Pick<SetupMswHandlersOptions, "delay">;
  * @returns MOCK_DELAY 환경변수 값 (ms), 없으면 0
  */
 function getMockDelayFromEnv(): number {
-  return parseInt(process.env.MOCK_DELAY ?? "0", 10);
+  const delay = parseInt(process.env.MOCK_DELAY ?? "0", 10);
+  return Number.isNaN(delay) ? 0 : delay;
 }
 
 /**
