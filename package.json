@@ -94,5 +94,6 @@
     "*.{js,jsx,ts,tsx,json}": [
       "biome check --write"
     ]
-  }
+  },
+  "packageManager": "pnpm@9.15.3"
 }

@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Docker standalone 빌드 모드 활성화 (이미지 크기 최소화)
+  output: "standalone",
   // React 컴파일러 활성화
   reactCompiler: true,
   // styled-components 활성화
