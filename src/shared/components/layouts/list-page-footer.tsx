@@ -34,7 +34,6 @@ export function ListPageFooter({
   leftChildren,
   paginationTestId,
 }: ListPageFooterProps) {
-  // 로딩 중이거나 에러일 때는 푸터를 렌더링하지 않음
   if (isLoading) {
     return null;
   }
