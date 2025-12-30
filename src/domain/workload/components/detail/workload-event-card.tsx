@@ -51,7 +51,7 @@ export function WorkloadEventCard({
           <CompactCardCollapseRow
             title="메 세 지"
             description={message}
-            data-testid={WORKLOAD_SELECTOR.EVENT_MESSAGE}
+            testId={WORKLOAD_SELECTOR.EVENT_MESSAGE}
           />
         </Footer>
       </StyledCard>

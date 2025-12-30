@@ -105,14 +105,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      title: "요청일시",
-      dataIndex: "creatorDateTime",
-      align: "center",
-      render: (creatorDateTime: string) => {
-        return <span>{formatDateTimeSafely(creatorDateTime) ?? "-"}</span>;
-      },
-    },
-    {
       title: "확정일시",
       dataIndex: "modDate",
       align: "center",

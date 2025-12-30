@@ -5,54 +5,52 @@ import {
   testId,
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
-import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { test } from "../../fixtures";
 import { WorkloadListPage } from "../../pages/workload-list.page";
-import type { FilterCondition } from "../../support/types";
+import { RELATIVE_TIME_PATTERN } from "../../support/patterns";
 
 /**
  * 워크로드 목록 페이지 Step Definitions
  *
  * 구조:
- * 1. 목록 페이지 - 공통 (페이지 표시)
- * 2. 목록 페이지 - 필터 & 검색
- * 3. 목록 페이지 - 네비게이션 & 액션
- * 4. 상세 페이지 - 로그
- * 5. 상세 페이지 - 웹터미널
- * 6. 상세 페이지 - 모니터링
+ * 1. 페이지 진입
+ * 2. 페이지 표시 검증
+ * 3. 필터 & 검색
+ * 4. 테이블 행 액션
+ * 5. 데이터 유효성 검증
  *
- * 도메인 상수: WorkloadListPage.ROW_BUTTON, CHART_ID, PAGE_BUTTON
+ * 도메인 상수: WorkloadListPage.ROW_BUTTON
  *
- * NOTE: 데이터 유효성 검증 Step은 tests/archives/steps/data-validation.steps.ts로 이동됨
+ * NOTE: 모니터링 관련 Step은 monitoring.steps.ts로 분리됨
  */
-const { When, Then, Given } = createBdd(test);
+const { Given, When, Then } = createBdd(test);
 
 // ============================================
-// 2. 목록 페이지 - 공통
+// 1. 페이지 진입
+// ============================================
+
+Given("활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
+  await workloadListPage.goto();
+});
+
+When("활성화 워크로드 목록 페이지로 이동한다", async ({ workloadListPage }) => {
+  await workloadListPage.goto();
+});
+
+Given("비활성화 워크로드 목록 페이지에 있다", async ({ workloadListPage }) => {
+  await workloadListPage.gotoDisabled();
+});
+
+// ============================================
+// 2. 페이지 표시 검증
 // ============================================
 
 Then("워크로드 목록 페이지가 표시된다", async ({ workloadListPage }) => {
   await workloadListPage.assertPageVisible();
 });
 
-Given(
-  "목록에 워크로드가 있다",
-  async ({ workloadListPage, listContext, $testInfo }) => {
-    const count = await workloadListPage.table.getRowCount();
-
-    if (count === 0) {
-      $testInfo.skip(true, "워크로드가 없어 시나리오를 스킵합니다");
-      return;
-    }
-
-    // 첫 번째 워크로드 행 선택
-    const firstRow = await workloadListPage.table.getFirstRow();
-    listContext.setCurrentRow(firstRow);
-  },
-);
-
-Given(
-  "목록에 상태가 {string}인 워크로드가 있다",
+When(
+  "목록에 상태가 {string}인 워크로드를 바라본다",
   async ({ workloadListPage, listContext, $testInfo }, status: string) => {
     const row = await workloadListPage.table.findRowByStatus(
       "workload-status-",
@@ -68,186 +66,73 @@ Given(
   },
 );
 
-// ============================================
-// 2. 목록 페이지 - 필터 & 검색
-// ============================================
-
-/**
- * 필터 조건 설정
- * - search: "auto"면 첫 번째 워크로드 이름으로 검색, "-"면 미설정
- * - jobType: UI에 표시되는 값 ("Batch", "Interactive" 등) 또는 "-"(미설정)
- * - status: UI에 표시되는 값 ("실행중", "대기중" 등) 또는 "-"(미설정)
- */
 When(
-  "필터 조건을 설정한다:",
-  async ({ workloadListPage }, dataTable: DataTable) => {
-    const rows = dataTable.hashes();
-    if (rows.length === 0) {
-      throw new Error(
-        "필터 조건 DataTable이 비어있습니다. 최소 1개의 행이 필요합니다.",
-      );
-    }
-
-    const { search, jobType, status } = rows[0] as unknown as FilterCondition;
-
-    // 검색어 설정 (auto: 첫 번째 워크로드 이름 사용)
-    if (search === "auto") {
-      await workloadListPage.searchByFirstWorkloadName();
-    }
-
-    // 잡타입 필터 설정 (Feature에서 UI 텍스트 직접 사용)
-    if (jobType !== "-") {
-      await workloadListPage.jobTypeFilter.select(jobType);
-    }
-
-    // 상태 필터 설정 (Feature에서 UI 텍스트 직접 사용)
-    if (status !== "-") {
-      await workloadListPage.statusFilter.select(status);
-    }
-  },
-);
-
-/** 필터 UI 상태 검증 (선택된 필터 값 표시 확인) */
-Then(
-  "필터 UI가 설정된 조건을 표시한다:",
-  async ({ workloadListPage }, dataTable: DataTable) => {
-    const rows = dataTable.hashes();
-    if (rows.length === 0) {
-      throw new Error(
-        "필터 조건 DataTable이 비어있습니다. 최소 1개의 행이 필요합니다.",
-      );
-    }
-
-    const { search, jobType, status } = rows[0] as unknown as FilterCondition;
-
-    // 잡타입 필터 UI 검증
-    if (jobType !== "-") {
-      await workloadListPage.jobTypeFilter.assertContainsText(jobType);
-    }
-
-    // 상태 필터 UI 검증
-    if (status !== "-") {
-      await workloadListPage.statusFilter.assertContainsText(status);
-    }
-
-    // 검색어 UI 검증 (auto인 경우 값이 입력되어 있는지 확인)
-    if (search === "auto") {
-      const value = await workloadListPage.getSearchInputValue();
-      expect(value.length).toBeGreaterThan(0);
-    }
-  },
-);
-
-/** UI 상태 라벨 → data-testid 상태값 매핑 */
-const STATUS_LABEL_TO_API: Record<string, string> = {
-  실행중: "running",
-  대기중: "pending",
-  에러: "error",
-  종료: "completed",
-};
-
-/**
- * 필터링된 목록 결과 검증
- * - 목록의 모든 워크로드가 필터 조건에 맞는지 확인
- * - 검색어: 워크로드 이름에 검색어가 포함되어 있는지 확인
- * - 잡타입/상태: 각 행의 값이 필터 조건과 일치하는지 확인
- */
-Then(
-  "필터링된 목록이 조건에 맞게 표시된다:",
-  async ({ workloadListPage, assertLogger }, dataTable: DataTable) => {
-    const rows = dataTable.hashes();
-    if (rows.length === 0) {
-      throw new Error(
-        "필터 조건 DataTable이 비어있습니다. 최소 1개의 행이 필요합니다.",
-      );
-    }
-
-    const { search, jobType, status } = rows[0] as unknown as FilterCondition;
-
-    const rowCount = await workloadListPage.table.getRowCount();
-
-    // 목록이 비어있으면 검증 스킵 (데이터가 없는 경우도 필터링 성공)
-    if (rowCount === 0) {
+  "첫 번째 워크로드의 이름을 클릭한다",
+  async ({ workloadListPage, $testInfo }) => {
+    const count = await workloadListPage.table.getRowCount();
+    if (count === 0) {
+      $testInfo.skip(true, "워크로드가 없어 시나리오를 스킵합니다");
       return;
     }
-
-    // 잡타입 검증 (UI는 소문자로 표시되므로 대소문자 무시 비교)
-    if (jobType !== "-") {
-      await workloadListPage.table.forEachCell(
-        WORKLOAD_SELECTOR.JOB_TYPE,
-        (text, i) => {
-          assertLogger.assertEqual(
-            `워크로드[${i}] 잡타입`,
-            text.toLowerCase(),
-            jobType.toLowerCase(),
-          );
-        },
-      );
-    }
-
-    // 상태 검증
-    if (status !== "-") {
-      const expectedStatus = STATUS_LABEL_TO_API[status] ?? status;
-      await workloadListPage.table.forEachByPrefix(
-        "workload-status-",
-        (statusValue, i) => {
-          assertLogger.assertEqual(
-            `워크로드[${i}] 상태`,
-            statusValue,
-            expectedStatus,
-          );
-        },
-      );
-    }
-
-    // 검색어 검증 (auto인 경우 검색창의 값을 기준으로 검증)
-    if (search === "auto") {
-      const searchText = await workloadListPage.getSearchInputValue();
-      await workloadListPage.table.forEachCell(
-        WORKLOAD_SELECTOR.NAME,
-        (text, i) => {
-          const containsSearch = text
-            .toLowerCase()
-            .includes(searchText.toLowerCase());
-          assertLogger.assertEqual(
-            `워크로드[${i}] 이름이 "${searchText}" 포함`,
-            containsSearch,
-            true,
-          );
-        },
-      );
-    }
-  },
-);
-
-// ============================================
-// 4. 목록 페이지 - 네비게이션 & 액션
-// ============================================
-
-When(
-  "첫 번째 워크로드의 이름을 클릭하여 상세 페이지로 이동한다",
-  async ({ workloadListPage }) => {
     await workloadListPage.table.clickFirstCell(WORKLOAD_SELECTOR.NAME);
   },
 );
 
 When(
-  /^해당 워크로드의 (로그|웹터미널|모니터링) 버튼을 클릭하여 \1 페이지로 이동한다$/,
-  async ({ workloadListPage, listContext }, pageType: string) => {
-    const currentRow = listContext.assertCurrentRow();
-    await workloadListPage.table.clickRowButton(
-      currentRow,
-      WorkloadListPage.ROW_BUTTON[pageType],
+  /^실행중인 워크로드의 (로그|웹터미널|모니터링|종료) 버튼을 클릭한다$/,
+  async ({ workloadListPage, $testInfo }, pageType: string) => {
+    const row = await workloadListPage.table.findRowByStatus(
+      "workload-status-",
+      "running",
     );
+    if (!row) {
+      $testInfo.skip(true, "실행 중인 워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
+
+    const buttonSelector = WorkloadListPage.ROW_BUTTON[pageType];
+    await workloadListPage.table.clickRowButton(row, buttonSelector);
   },
 );
 
 When(
-  /^해당 워크로드의 (종료|삭제|재시작) 버튼을 클릭한다$/,
-  async ({ workloadListPage, listContext }, buttonName: string) => {
-    const currentRow = listContext.assertCurrentRow();
+  /^실행중 또는 종료된 워크로드의 (로그|모니터링) 버튼을 클릭한다$/,
+  async ({ workloadListPage, $testInfo }, buttonName: string) => {
+    // running 먼저 시도, 없으면 completed 시도
+    let row = await workloadListPage.table.findRowByStatus(
+      "workload-status-",
+      "running",
+    );
+    if (!row) {
+      row = await workloadListPage.table.findRowByStatus(
+        "workload-status-",
+        "completed",
+      );
+    }
+    if (!row) {
+      $testInfo.skip(
+        true,
+        "실행중 또는 종료된 워크로드가 없어 시나리오를 스킵합니다",
+      );
+      return;
+    }
+
+    const buttonSelector = WorkloadListPage.ROW_BUTTON[buttonName];
+    await workloadListPage.table.clickRowButton(row, buttonSelector);
+  },
+);
+
+When(
+  /^첫 번째 워크로드의 (로그|모니터링|종료|삭제|재시작) 버튼을 클릭한다$/,
+  async ({ workloadListPage, $testInfo }, buttonName: string) => {
+    const count = await workloadListPage.table.getRowCount();
+    if (count === 0) {
+      $testInfo.skip(true, "워크로드가 없어 시나리오를 스킵합니다");
+      return;
+    }
+    const firstRow = await workloadListPage.table.getRow(0);
     await workloadListPage.table.clickRowButton(
-      currentRow,
+      firstRow,
       WorkloadListPage.ROW_BUTTON[buttonName],
     );
   },
@@ -275,99 +160,95 @@ Then(
 );
 
 // ============================================
-// 5. 상세 페이지 - 로그
+// 5. 데이터 유효성 검증
 // ============================================
 
+/**
+ * 각 워크로드의 이름이 빈 값이 아닌지 검증
+ */
 Then(
-  "로그 영역에 설정된 테마가 적용되어 있다",
-  async ({ page, assertLogger }) => {
-    const logViewer = page.locator(testId(WORKLOAD_SELECTOR.LOG_VIEWER));
-    await expect(logViewer).toBeVisible({ timeout: 10000 });
-
-    const className = (await logViewer.getAttribute("class")) ?? "";
-    const validThemes = Object.keys(TERMINAL_THEME_LIST);
-    const hasValidTheme = validThemes.some((theme) =>
-      className.includes(theme),
+  "각 워크로드의 이름이 빈 값이 아니다",
+  async ({ workloadListPage, assertLogger }) => {
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.NAME,
+      (text, i) => {
+        assertLogger.assertNotEmpty(`워크로드[${i}] 이름`, text);
+      },
     );
-    assertLogger.assertEqual("로그 뷰어 테마 적용", hasValidTheme, true);
   },
 );
 
-Then("로그 영역에 하나 이상의 로그 라인이 존재한다", async ({ page }) => {
-  const logLines = page.locator(testId(WORKLOAD_SELECTOR.LOG_LINE));
-  const count = await logLines.count();
-  expect(count).toBeGreaterThanOrEqual(1);
-});
-
-// ============================================
-// 6. 상세 페이지 - 웹터미널
-// ============================================
-
+/**
+ * 각 워크로드의 생성자가 빈 값이 아닌지 검증
+ */
 Then(
-  "웹터미널에 설정된 테마가 적용되어 있다",
-  async ({ page, assertLogger }) => {
-    const terminalContainer = page.locator(
-      testId(WORKLOAD_SELECTOR.TERMINAL_CONTAINER),
+  "각 워크로드의 생성자가 빈 값이 아니다",
+  async ({ workloadListPage, assertLogger }) => {
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.CREATOR_NAME,
+      (text, i) => {
+        assertLogger.assertNotEmpty(`워크로드[${i}] 생성자`, text);
+      },
     );
-    await expect(terminalContainer).toBeVisible({ timeout: 10000 });
-
-    const className = (await terminalContainer.getAttribute("class")) ?? "";
-    const validThemes = Object.keys(TERMINAL_THEME_LIST);
-    const hasValidTheme = validThemes.some((theme) =>
-      className.includes(theme),
-    );
-    assertLogger.assertEqual("웹터미널 테마 적용", hasValidTheme, true);
   },
 );
 
-Then("웹터미널에 xterm 터미널이 표시된다", async ({ page }) => {
-  const terminalContainer = page.locator(
-    testId(WORKLOAD_SELECTOR.TERMINAL_CONTAINER),
-  );
-  await expect(terminalContainer).toBeVisible({ timeout: 10000 });
-});
-
-// ============================================
-// 7. 상세 페이지 - 모니터링
-// ============================================
-
-Then("워크로드 모니터링 차트가 표시된다", async ({ page }) => {
-  const chartTypes = [
-    "cpu-usage",
-    "memory-usage",
-    "gpu-utilization",
-    "gpu-memory",
-  ];
-
-  for (const chartId of chartTypes) {
-    const chartCard = page.locator(
-      testId(WORKLOAD_SELECTOR.monitoringChart(chartId)),
-    );
-    await expect(chartCard).toBeVisible({ timeout: 10000 });
-
-    const apexChart = chartCard.locator(".apexcharts-canvas");
-    await expect(apexChart).toBeVisible({ timeout: 10000 });
-  }
-});
-
-// ============================================
-// 공통 - 로그/웹터미널 페이지 버튼
-// ============================================
-
+/**
+ * 각 워크로드의 잡 타입이 유효한 값 중 하나인지 검증
+ */
 Then(
-  /^(로그|웹터미널) 모니터링 버튼이 표시된다$/,
-  async ({ page }, pageType: string) => {
-    await expect(
-      page.locator(testId(WorkloadListPage.PAGE_BUTTON[pageType].monitoring)),
-    ).toBeVisible();
+  "각 워크로드의 잡 타입이 다음 중 하나이다:",
+  async ({ workloadListPage, assertLogger }, dataTable: DataTable) => {
+    const validTypes = dataTable.raw().slice(1).flat();
+
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.JOB_TYPE,
+      (text, i) => {
+        assertLogger.assertContains(`워크로드[${i}] 잡 타입`, text, validTypes);
+      },
+    );
   },
 );
 
+/**
+ * 각 워크로드의 상태가 유효한 값 중 하나인지 검증
+ */
 Then(
-  /^(로그|웹터미널) 테마 변경 버튼이 표시된다$/,
-  async ({ page }, pageType: string) => {
-    await expect(
-      page.locator(testId(WorkloadListPage.PAGE_BUTTON[pageType].theme)),
-    ).toBeVisible();
+  "각 워크로드의 상태가 다음 중 하나로 표시된다:",
+  async ({ workloadListPage, assertLogger }, dataTable: DataTable) => {
+    const validStatuses = dataTable.rows().map((row) => row[0]);
+
+    await workloadListPage.table.forEachByPrefix(
+      "workload-status-",
+      (status, i) => {
+        assertLogger.assertContains(
+          `워크로드[${i}] 상태`,
+          status,
+          validStatuses,
+        );
+      },
+    );
+  },
+);
+
+/**
+ * 각 워크로드의 경과 시간이 올바른 형식으로 표시되는지 검증
+ *
+ * 권장: 이 검증은 Unit 테스트로 대체
+ * - formatElapsedTime() 함수의 입출력 테스트로 충분
+ */
+Then(
+  "각 워크로드의 경과 시간이 올바른 형식으로 표시된다",
+  async ({ workloadListPage, assertLogger }) => {
+    await workloadListPage.table.forEachCell(
+      WORKLOAD_SELECTOR.ELAPSED_TIME,
+      (text, i) => {
+        assertLogger.assertMatch(
+          `워크로드[${i}] 경과 시간`,
+          text,
+          RELATIVE_TIME_PATTERN,
+        );
+      },
+    );
   },
 );

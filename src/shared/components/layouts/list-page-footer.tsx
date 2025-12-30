@@ -20,6 +20,8 @@ interface ListPageFooterProps {
   rightChildren?: ReactNode;
   // 왼쪽 컴포넌트
   leftChildren?: ReactNode;
+  // 페이지네이션 data-testid (외부에서 지정)
+  paginationTestId?: string;
 }
 // 목록 푸터 컴포넌트
 export function ListPageFooter({
@@ -30,8 +32,8 @@ export function ListPageFooter({
   isLoading,
   rightChildren,
   leftChildren,
+  paginationTestId,
 }: ListPageFooterProps) {
-  // 로딩 중일 때는 푸터를 렌더링하지 않음
   if (isLoading) {
     return null;
   }
@@ -45,6 +47,7 @@ export function ListPageFooter({
           total={total}
           pageSize={pageSize}
           onChange={onChange}
+          testId={paginationTestId}
         />
       </Center>
       <Right>{rightChildren}</Right>

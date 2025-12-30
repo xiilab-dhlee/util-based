@@ -27,7 +27,7 @@ export function AdminInternalRegistryImageTagListFilter() {
   });
 
   return (
-    <MySearchFilter title="태그 목록" total={data?.totalSize || 0}>
+    <MySearchFilter title="태그 목록" total={data?.totalSize}>
       <SearchInput onSearch={setSearchText} />
     </MySearchFilter>
   );

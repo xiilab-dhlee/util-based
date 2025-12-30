@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import { Button, Dropdown, Icon, Input } from "xiilab-ui";
+import { Button, Dropdown, Input } from "xiilab-ui";
 
 import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
 import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
@@ -167,20 +167,20 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
         <AsideDetailHeaderTitle>상세 정보</AsideDetailHeaderTitle>
         {isReadOnly && (
           <Icons>
-            <IconWrapper
+            <Button
               type="button"
-              className="icon-button"
               onClick={handleModify}
-            >
-              <Icon name="Edit02" color="#000" />
-            </IconWrapper>
-            <IconWrapper
+              icon="Edit02"
+              iconSize={20}
+              aria-label="소스코드 수정"
+            />
+            <Button
               type="button"
-              className="icon-button"
               onClick={handleDelete}
-            >
-              <Icon name="Delete" color="#000" />
-            </IconWrapper>
+              icon="Delete"
+              iconSize={20}
+              aria-label="소스코드 삭제"
+            />
           </Icons>
         )}
       </AsideDetailHeader>
@@ -426,16 +426,6 @@ const ManageCredentialWrapper = styled.div`
   gap: 10px;
   margin-top: 8px;
   margin-bottom: 14px;
-`;
-
-const IconWrapper = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 2px;
-  border: 1px solid #e0e0e0;
 `;
 
 const Icons = styled.div`

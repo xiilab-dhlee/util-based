@@ -29,7 +29,7 @@ export function ActiveWorkloadListMain() {
   const jobType = useAtomValue(activeWorkloadJobTypeAtom);
   const status = useAtomValue(activeWorkloadStatusAtom);
 
-  const { data, isLoading } = useGetActiveWorkloads({
+  const { data, isLoading, isError } = useGetActiveWorkloads({
     page,
     size: LIST_PAGE_SIZE,
     searchText,
@@ -48,6 +48,7 @@ export function ActiveWorkloadListMain() {
       <ActiveWorkloadListBody
         content={data?.content || []}
         loading={isLoading}
+        isError={isError}
       />
       {/* 워크로드 목록 페이지네이션 */}
       <ActiveWorkloadListFooter

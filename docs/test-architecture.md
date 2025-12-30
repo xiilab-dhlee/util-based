@@ -98,7 +98,6 @@ export class WorkloadListPage extends ListPage {
   protected get basePath(): string { return "/user/workload"; }
 
   // 4. 도메인 액션 (확장)
-  async searchByFirstWorkloadName(): Promise<void> { ... }
   async gotoDisabled(): Promise<void> { ... }
 }
 ```

@@ -62,3 +62,11 @@ export const NODE_MODE_OPTIONS: DropdownOption[] = [
   { label: "Single", value: "single" },
   { label: "Multi", value: "multi" },
 ];
+
+/** 테이블 메시지 상수 */
+export const TABLE_MESSAGE = {
+  /** API 에러 시 표시되는 메시지 */
+  ERROR: "데이터를 불러올 수 없습니다.",
+  /** 빈 목록일 때 표시되는 메시지 */
+  EMPTY: "조회된 결과가 없습니다.",
+} as const;

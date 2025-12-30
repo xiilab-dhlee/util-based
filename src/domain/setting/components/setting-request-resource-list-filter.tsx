@@ -27,7 +27,7 @@ export function SettingRequestResourceListFilter() {
   };
 
   return (
-    <MySearchFilter title="리소스 요청 목록" total={data?.totalSize || 0}>
+    <MySearchFilter title="리소스 요청 목록" total={data?.totalSize}>
       <Button
         color="primary"
         icon="RequestResource"

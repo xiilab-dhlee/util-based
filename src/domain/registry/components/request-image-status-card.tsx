@@ -13,17 +13,18 @@ export function RequestImageStatusCard({
   status,
   count,
 }: RequestImageStatusCardProps) {
-  const { text, icon, iconColor } = getRequestResourceStatusInfo(status);
+  const { text, icon, iconColor, boxShadowColor } =
+    getRequestResourceStatusInfo(status);
   return (
     <Container>
       <Left>
-        <IconWrapper $borderColor={iconColor}>
-          <Icon name={icon} size={24} color={iconColor} />
+        <IconWrapper $borderColor={iconColor} $boxShadowColor={boxShadowColor}>
+          <Icon name={icon} size={28} color={iconColor} />
         </IconWrapper>
       </Left>
       <Right>
         <RightHeader>{text}</RightHeader>
-        <RightBody>{count}개</RightBody>
+        <RightBody>{count.toLocaleString()}개</RightBody>
       </Right>
     </Container>
   );
@@ -53,7 +54,10 @@ const Left = styled.div`
   padding: 13px;
 `;
 
-const IconWrapper = styled.div<{ $borderColor: string }>`
+const IconWrapper = styled.div<{
+  $borderColor: string;
+  $boxShadowColor: string;
+}>`
   height: 100%;
   width: auto;
   aspect-ratio: 1 / 1;
@@ -63,6 +67,7 @@ const IconWrapper = styled.div<{ $borderColor: string }>`
   border: 1px solid ${({ $borderColor }) => $borderColor};
   background-color: #070913;
   border-radius: 2px;
+  box-shadow: 0px 2px 12px 0px ${({ $boxShadowColor }) => $boxShadowColor};
 `;
 
 const Right = styled.div`
@@ -79,6 +84,7 @@ const RightHeader = styled.div`
   color: #c5c6c8;
   padding-bottom: 6px;
   border-bottom: 1px solid #2a3041;
+  letter-spacing: 5px;
 `;
 
 const RightBody = styled.div`

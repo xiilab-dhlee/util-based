@@ -2,10 +2,11 @@ import { z } from "zod";
 
 import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
-import { WORKLOAD_IMAGE_TYPES } from "@/domain/workload/constants/workload.constant";
-
-/** Job Type 값 */
-export const JOB_TYPE_VALUES = ["BATCH", "INTERACTIVE", "DISTRIBUTED"] as const;
+import {
+  WORKLOAD_IMAGE_TYPES,
+  WORKLOAD_JOB_TYPES,
+  WORKLOAD_STATUS,
+} from "@/domain/workload/constants/workload.constant";
 
 // 워크로드 스키마
 const baseWorkloadSchema = z.object({
@@ -20,13 +21,13 @@ const baseWorkloadSchema = z.object({
   /** 워크로드 설명 */
   description: z.string().nullable(),
   /** 작업 유형 */
-  jobType: z.enum(JOB_TYPE_VALUES),
+  jobType: z.enum(WORKLOAD_JOB_TYPES),
   /** 사용자 이름 */
   creatorName: z.string(),
   /** 라벨 */
   labels: z.array(z.string()),
   /** 상태 */
-  status: z.enum(["RUNNING", "PENDING", "COMPLETED", "FAILED"]),
+  status: z.enum(WORKLOAD_STATUS),
   /** 경과 시간 */
   elapsedTime: z.string().datetime(),
   /** 생성일 */
@@ -143,24 +144,9 @@ export const workloadListSchema = baseWorkloadSchema.pick({
   nodeName: true,
 });
 
-export const activeWorkloadListSchema = workloadListSchema
-  .omit({ isRevoked: true })
-  .extend({
-    status: z.enum(["RUNNING", "PENDING", "FAILED"]),
-  });
-
-export const disabledWorkloadListSchema = workloadListSchema
-  .omit({ revokeWarningCount: true })
-  .extend({
-    status: z.literal("COMPLETED"),
-  });
-
 export const workloadDetailSchema = baseWorkloadSchema;
 
 type Workload = z.infer<typeof baseWorkloadSchema>;
-type ActiveWorkload = z.infer<typeof activeWorkloadListSchema>;
-type DisabledWorkload = z.infer<typeof disabledWorkloadListSchema>;
-
 export type WorkloadListType = z.infer<typeof workloadListSchema>;
 export type WorkloadIdType = Workload["id"];
 export type WorkloadDetailType = z.infer<typeof workloadDetailSchema>;
@@ -173,11 +159,3 @@ export type WorkloadStatusType = Workload["status"];
 export type WorkloadEventStatusType = WorkloadEventType["status"];
 export type WorkloadJobType = Workload["jobType"];
 export type WorkloadImageType = Workload["image"]["type"];
-
-export type ActiveWorkloadListType = z.infer<typeof activeWorkloadListSchema>;
-export type ActiveWorkloadStatusType = ActiveWorkload["status"];
-
-export type DisabledWorkloadListType = z.infer<
-  typeof disabledWorkloadListSchema
->;
-export type DisabledWorkloadStatusType = DisabledWorkload["status"];

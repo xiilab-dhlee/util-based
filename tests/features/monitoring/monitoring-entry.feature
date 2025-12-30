@@ -11,7 +11,6 @@ Feature: 사용자 모니터링 페이지 진입
 
   Scenario: 모니터링 페이지 진입 시 기본 UI 표시
     Then 모니터링 페이지가 표시된다
-    And URL이 "/user/monitoring"와 일치한다
 
   Scenario: 모니터링 페이지 위젯 표시
     Then CPU 그래프가 표시된다

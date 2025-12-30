@@ -2,7 +2,7 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
 import { workloadKeys } from "@/domain/workload/constants/workload.key";
-import type { ActiveWorkloadListType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
 import type { GetWorkloadsPayload } from "@/domain/workload/types/workload.type";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
@@ -13,7 +13,7 @@ import type { CoreListResponse } from "@/shared/types/core.model";
  */
 export const useGetActiveWorkloads = (
   payload: GetWorkloadsPayload,
-): UseQueryResult<CoreListResponse<ActiveWorkloadListType>, Error> => {
+): UseQueryResult<CoreListResponse<WorkloadListType>, Error> => {
   const { workloadService } = useServices();
 
   return useQuery({

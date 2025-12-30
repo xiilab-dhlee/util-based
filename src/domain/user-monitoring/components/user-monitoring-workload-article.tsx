@@ -1,18 +1,19 @@
 import styled from "styled-components";
 
+import { ResourceUsageCard } from "@/shared/components/card/resource-usage-card";
+import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
   UserMonitoringCategoryTitle,
   UserMonitoringSectionDescription,
   UserMonitoringSectionHeader,
 } from "@/styles/layers/user-monitoring-layers.styled";
-import { UserMonitoringResourceCard } from "./user-monitoring-resource-card";
 import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status";
 
 export function UserMonitoringWorkloadArticle() {
   return (
     <Container>
-      <Workload data-testid="user-monitoring-workload-status">
+      <Workload data-testid={USER_MONITORING_SELECTOR.WORKLOAD_STATUS}>
         <RightSectionHeader>
           <UserMonitoringCategoryTitle>
             워크로드 정보
@@ -30,7 +31,7 @@ export function UserMonitoringWorkloadArticle() {
           <UserMonitoringWorkloadStatus status="FAILED" count={2222} />
         </WorkloadStatusWrapper>
       </Workload>
-      <Resource data-testid="user-monitoring-resource-usage">
+      <Resource data-testid={USER_MONITORING_SELECTOR.RESOURCE_USAGE}>
         <RightSectionHeader>
           <UserMonitoringCategoryTitle>
             사용 자원 정보
@@ -41,7 +42,7 @@ export function UserMonitoringWorkloadArticle() {
         </RightSectionHeader>
         <WorkloadResourceWrapper>
           {["GPU", "CPU", "MEM"].map((v) => (
-            <UserMonitoringResourceCard
+            <ResourceUsageCard
               key={v}
               resourceType={v as CoreResourceType}
               total={999}

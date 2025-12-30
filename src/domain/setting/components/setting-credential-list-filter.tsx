@@ -20,7 +20,7 @@ export function SettingCredentialListFilter() {
   };
 
   return (
-    <MySearchFilter title="크레덴셜 목록" total={data?.totalSize || 0}>
+    <MySearchFilter title="크레덴셜 목록" total={data?.totalSize}>
       <Button
         color="primary"
         icon="Plus"

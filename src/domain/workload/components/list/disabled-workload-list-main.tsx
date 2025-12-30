@@ -11,9 +11,8 @@ import {
   disabledWorkloadJobTypeAtom,
   disabledWorkloadPageAtom,
   disabledWorkloadSearchTextAtom,
-  disabledWorkloadStatusAtom,
 } from "@/domain/workload/state/workload.atom";
-import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { RestartWorkloadModal } from "../restart-workload-modal";
 
 /**
@@ -28,14 +27,13 @@ export function DisabledWorkloadListMain() {
   const page = useAtomValue(disabledWorkloadPageAtom);
   const searchText = useAtomValue(disabledWorkloadSearchTextAtom);
   const jobType = useAtomValue(disabledWorkloadJobTypeAtom);
-  const status = useAtomValue(disabledWorkloadStatusAtom);
 
-  const { data, isLoading } = useGetDisabledWorkloads({
+  const { data, isLoading, isError } = useGetDisabledWorkloads({
     page,
     size: LIST_PAGE_SIZE,
     searchText,
     jobType: isNull(jobType) ? undefined : jobType,
-    status: isNull(status) || status === ALL_OPTION.value ? undefined : status,
+    status: "COMPLETED",
   });
 
   return (
@@ -49,6 +47,7 @@ export function DisabledWorkloadListMain() {
       <DisabledWorkloadListBody
         content={data?.content || []}
         loading={isLoading}
+        isError={isError}
       />
       {/* 비활성화 워크로드 목록 페이지네이션 */}
       <DisabledWorkloadListFooter

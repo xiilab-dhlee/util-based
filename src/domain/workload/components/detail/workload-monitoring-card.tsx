@@ -97,8 +97,17 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
       data-testid={WORKLOAD_SELECTOR.monitoringChart(type)}
     >
       <LikeCompactCardHeader>
-        <LikeCompactCardTitle className="truncate">{text}</LikeCompactCardTitle>
-        <IconButton type="button" onClick={handleClickIcon}>
+        <LikeCompactCardTitle
+          className="truncate"
+          data-testid={WORKLOAD_SELECTOR.MONITORING_CHART_TITLE}
+        >
+          {text}
+        </LikeCompactCardTitle>
+        <IconButton
+          type="button"
+          onClick={handleClickIcon}
+          data-testid={WORKLOAD_SELECTOR.MONITORING_CHART_EXPAND_BUTTON}
+        >
           <Icon name="Size02" color="var(--icon-fill)" size={16} />
           <span className="sr-only">모니터링 차트 확대</span>
         </IconButton>

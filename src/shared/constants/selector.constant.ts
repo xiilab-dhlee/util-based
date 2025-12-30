@@ -14,7 +14,7 @@
 // ============================================
 
 export const SELECTOR = {
-  // 목록 페이지 공통
+  // 목록 페이지 공통 (고정 상수)
   /** 목록 테이블 래퍼 */
   LIST_TABLE: "list-table",
   /** 총 개수 표시 */
@@ -25,6 +25,8 @@ export const SELECTOR = {
   LIST_SEARCH_INPUT: "list-search-input",
   /** 필터 영역 */
   LIST_FILTER: "list-filter",
+  /** 내 항목만 보기 스위치 */
+  MY_ITEMS_ONLY_SWITCH: "my-items-only-switch",
 
   // 워크스페이스
   /** 선택된 워크스페이스 값 */
@@ -46,6 +48,13 @@ export const SELECTOR = {
   DRAWER: ".ant-drawer-open",
   /** 드로어 닫기 버튼 */
   DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
+
+  // 테마 선택 (로그/웹터미널 공통)
+  /** 테마 팝오버 컨테이너 */
+  THEME_POPOVER: "theme-popover",
+  THEME_BUTTON: "theme-button",
+  /** 테마 옵션 (동적) - theme-option-{themeName} */
+  themeOption: (themeName: string) => `theme-option-${themeName}`,
 } as const;
 
 // ============================================
@@ -64,11 +73,12 @@ export const WORKLOAD_SELECTOR = {
   NAME: "workload-name",
   /** 잡 타입 텍스트 */
   JOB_TYPE: "workload-job-type",
+  /** 워크로드 상태 (동적) - workload-status-{status} */
+  status: (status: string) => `workload-status-${status}`,
   /** 경과 시간 */
   ELAPSED_TIME: "workload-elapsed-time",
-  /** 상태 라벨 - workload-status-{status} (상태별 필터링용) */
-  status: (status: string) => `workload-status-${status}`,
-
+  /** 생성자 이름 */
+  CREATOR_NAME: "workload-creator-name",
   // 액션 버튼
   /** 로그 버튼 */
   LOG_BUTTON: "workload-log-button",
@@ -76,8 +86,6 @@ export const WORKLOAD_SELECTOR = {
   TERMINAL_BUTTON: "workload-terminal-button",
   /** 모니터링 버튼 */
   MONITORING_BUTTON: "workload-monitoring-button",
-  /** 연결(포트) 버튼 */
-  CONNECT_BUTTON: "workload-connect-button",
   /** 종료 버튼 */
   STOP_BUTTON: "workload-stop-button",
   /** 삭제 버튼 */
@@ -92,30 +100,35 @@ export const WORKLOAD_SELECTOR = {
   FILTER_STATUS: "workload-filter-status",
 
   // 로그 페이지
-  /** 로그 페이지 컨테이너 */
-  LOG_PAGE: "workload-log-page",
   /** 로그 뷰어 영역 */
   LOG_VIEWER: "workload-log-viewer",
   /** 로그 라인 */
   LOG_LINE: "workload-log-line",
-  /** 모니터링 버튼 (로그 페이지 상단) */
-  LOG_MONITORING_BUTTON: "workload-log-monitoring-button",
+  /** 모니터링 버튼 */
+  DETAIL_MONITORING_BUTTON: "workload-detail-monitoring-button",
   /** 테마 변경 버튼 */
-  LOG_THEME_BUTTON: "workload-log-theme-button",
-
+  DETAIL_THEME_BUTTON: "workload-detail-theme-button",
   // 웹터미널 페이지
   /** 웹터미널 영역 (xterm) */
   TERMINAL_CONTAINER: "workload-terminal-container",
-  /** 모니터링 버튼 (웹터미널 페이지 상단) */
-  TERMINAL_MONITORING_BUTTON: "workload-terminal-monitoring-button",
-  /** 테마 변경 버튼 (웹터미널 페이지) */
-  TERMINAL_THEME_BUTTON: "workload-terminal-theme-button",
+  /** 웹터미널 패널 (개별 터미널 노드) */
+  TERMINAL_NODE: "workload-terminal-node",
+  /** 웹터미널 수평 분할 버튼 */
+  TERMINAL_SPLIT_HORIZONTAL_BUTTON: "workload-terminal-split-horizontal-button",
+  /** 웹터미널 수직 분할 버튼 */
+  TERMINAL_SPLIT_VERTICAL_BUTTON: "workload-terminal-split-vertical-button",
 
-  // 모니터링 페이지
-  /** 모니터링 컨텐츠 영역 */
-  MONITORING_CONTENT: "workload-monitoring-content",
+  // 모니터링 사이드 패널 (로그/웹터미널 공통)
+  /** 모니터링 사이드 패널 컨테이너 */
+  ASIDE_MONITORING: "workload-aside-monitoring",
+  /** 모니터링 차트 카드 (공통) */
+  MONITORING_CHART: "workload-monitoring-chart",
   /** 모니터링 차트 카드 (동적) - workload-monitoring-chart-{type} */
   monitoringChart: (type: string) => `workload-monitoring-chart-${type}`,
+  /** 모니터링 차트 타이틀 */
+  MONITORING_CHART_TITLE: "workload-monitoring-chart-title",
+  /** 모니터링 차트 확대 버튼 */
+  MONITORING_CHART_EXPAND_BUTTON: "workload-monitoring-chart-expand-button",
 
   // 상세 페이지 - 좌측 요약 패널
   /** 워크로드 이름 (상세) */
@@ -148,8 +161,6 @@ export const WORKLOAD_SELECTOR = {
   // 상세 페이지 - 소스코드
   /** 소스코드 카드 */
   SOURCECODE_CARD: "workload-source-code-card",
-  /** 소스코드 상태 - workload-source-code-status-{status} (상태별 필터링용) */
-  sourcecodeStatus: (status: string) => `workload-source-code-status-${status}`,
   /** 소스코드 기본 경로 */
   SOURCECODE_PATH: "workload-source-code-path",
   /** 소스코드 타입 - workload-source-code-type-{type} (타입별 필터링용) */
@@ -228,8 +239,6 @@ export const WORKLOAD_SELECTOR = {
   CREATE_RECENT_IMPORT_BUTTON: "workload-create-recent-import-button",
   /** 워크로드 목록에서 가져오기 버튼 */
   CREATE_LIST_IMPORT_BUTTON: "workload-create-list-import-button",
-  /** 워크로드 Job Type */
-  CREATE_JOB_TYPE: "workload-create-job-type",
   /** 워크로드 이름 입력창 */
   CREATE_NAME: "workload-create-name",
   /** 워크로드 설명 입력창 */

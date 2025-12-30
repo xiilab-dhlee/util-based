@@ -9,7 +9,6 @@ import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-b
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
 import { WorkloadTerminal } from "@/shared/components/terminal/workload-terminal";
-import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   DetailContentButton,
@@ -19,13 +18,12 @@ import {
 } from "@/styles/layers/detail-page-layers.styled";
 import { terminalDrawerStyle } from "@/styles/mixins/drawer";
 import { AsideWorkloadMonitoring } from "../aside-workload-monitoring";
+import { WorkloadMonitoringButton } from "../workload-monitoring-button";
 
 export function WorkloadTerminalMain() {
   const { id } = useParams();
   const searchParams = useSearchParams();
-  const { open, onToggle } = useGlobalModal(
-    openViewWorkloadMonitoringDrawerAtom,
-  );
+  const { open } = useGlobalModal(openViewWorkloadMonitoringDrawerAtom);
 
   const workspaceId = searchParams?.get("workspaceId") || "";
 
@@ -33,10 +31,6 @@ export function WorkloadTerminalMain() {
     workspaceId,
     workloadId: id as string,
   });
-
-  const handleToggleMonitoring = () => {
-    onToggle();
-  };
 
   const handleClickNewTerminal = () => {
     const width = 600;
@@ -56,24 +50,14 @@ export function WorkloadTerminalMain() {
       <DetailContentHeader>
         <DetailContentTitle>웹터미널</DetailContentTitle>
         <DetailContentTitleTool>
-          <div style={{ width: 90, height: 30 }}>
-            <DetailContentButton
-              onClick={handleToggleMonitoring}
-              data-testid={WORKLOAD_SELECTOR.TERMINAL_MONITORING_BUTTON}
-            >
-              <Icon name="Monitoring01" color="var(--icon-fill)" />
-              모니터링
-            </DetailContentButton>
-          </div>
+          <WorkloadMonitoringButton />
           <div style={{ width: 30, height: 30 }}>
             <DetailContentButton onClick={handleClickNewTerminal}>
               <Icon name="Pip" color="var(--icon-fill)" size={16} />
             </DetailContentButton>
           </div>
           <div style={{ width: 30, height: 30 }}>
-            <TerminalThemeButton
-              data-testid={WORKLOAD_SELECTOR.TERMINAL_THEME_BUTTON}
-            />
+            <TerminalThemeButton />
           </div>
         </DetailContentTitleTool>
       </DetailContentHeader>

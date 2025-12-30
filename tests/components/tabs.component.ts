@@ -1,5 +1,8 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
+/** 기본 탭 네비게이션 셀렉터 */
+const DEFAULT_TABS_SELECTOR = ".tabs-nav";
+
 /**
  * Custom Tabs Component Object (험블 객체)
  *
@@ -9,14 +12,14 @@ import { expect, type Locator, type Page } from "@playwright/test";
  * - 비활성화 탭 확인
  *
  * @example
- * const tabs = new TabsComponent(page, ".tabs-nav");
+ * const tabs = new TabsComponent(page);
  * await tabs.assertActiveTab("상세정보");
  * await tabs.clickTab("로그");
  */
 export class TabsComponent {
   constructor(
     private page: Page,
-    private tabsSelector: string,
+    private tabsSelector: string = DEFAULT_TABS_SELECTOR,
   ) {}
 
   /**

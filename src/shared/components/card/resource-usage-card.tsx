@@ -6,17 +6,21 @@ import { ResourceProgress } from "@/shared/components/progress/resource-progress
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
-interface UserMonitoringResourceCardProps {
+interface ResourceUsageCardProps {
   resourceType: CoreResourceType;
   total: number;
   count: number;
 }
 
-export function UserMonitoringResourceCard({
+/**
+ * 리소스(GPU, CPU, MEM) 사용량을 표시하는 범용 카드 컴포넌트
+ * 여러 도메인(user-monitoring, setting 등)에서 재사용됩니다.
+ */
+export function ResourceUsageCard({
   resourceType,
   total,
   count,
-}: UserMonitoringResourceCardProps) {
+}: ResourceUsageCardProps) {
   const { text, unit, icon } = getResourceInfo(resourceType);
   return (
     <Container>

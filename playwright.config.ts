@@ -34,7 +34,7 @@ export default defineConfig({
   retries: isCI ? 2 : 0,
 
   /* Worker 설정: CI는 CPU 코어의 50%, 로컬은 1 */
-  workers: isCI ? "50%" : 1,
+  workers: isCI ? "50%" : 2,
 
   /* 리포터 설정 */
   reporter: [
@@ -125,12 +125,10 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    // CI: 프로덕션 빌드 후 실행, 로컬: 개발 서버
-    command: isCI ? "pnpm build && pnpm start" : "pnpm dev",
+    command: "pnpm start",
     url: "http://localhost:3000",
     reuseExistingServer: !isCI,
-    // CI 빌드 시간 고려하여 타임아웃 증가
-    timeout: isCI ? 120 * 1000 : 30 * 1000,
+    timeout: 30 * 1000,
   },
 
   /* 테스트 타임아웃 설정 */

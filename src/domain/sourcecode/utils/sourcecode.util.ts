@@ -1,3 +1,5 @@
+import type { TagProps } from "xiilab-ui";
+
 import type {
   SourcecodeStatusType,
   SourcecodeType,
@@ -12,7 +14,7 @@ export const getSourcecodeTypeInfo = (type: SourcecodeType) => {
   // 타입 표시 텍스트
   let text = "";
   // 태그 색상
-  let tag = "";
+  let tag: TagProps["variant"] = "yellow";
 
   if (type === "GIT_HUB") {
     text = "GitHub";

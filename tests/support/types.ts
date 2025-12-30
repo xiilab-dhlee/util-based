@@ -9,15 +9,13 @@
  *
  * DataTable에서 파싱한 필터 조건 구조
  * - "-" 값은 "설정하지 않음"을 의미
- * - "auto" 값은 자동으로 첫 번째 항목 사용
  *
  * @example
- * // Feature 파일
- * | search | jobType | status |
- * | auto   | Batch   | -      |
+ * // Feature 파일 (필터만)
+ * | jobType | status |
+ * | Batch   | -      |
  */
 export interface FilterCondition {
-  search: string;
   jobType: string;
   status: string;
 }

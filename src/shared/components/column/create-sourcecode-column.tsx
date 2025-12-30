@@ -1,4 +1,4 @@
-import type { ResponsiveColumnType, TagProps } from "xiilab-ui";
+import type { ResponsiveColumnType } from "xiilab-ui";
 import { Tag } from "xiilab-ui";
 
 import { SourcecodeAllCheck } from "@/domain/sourcecode/components/sourcecode-all-check";
@@ -69,7 +69,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
         const { text, tag } = getSourcecodeTypeInfo(codeType);
         return (
           <ColumnAlignCenterWrap>
-            <Tag variant={tag as TagProps["variant"]} theme="light">
+            <Tag variant={tag} theme="light">
               {text}
             </Tag>
           </ColumnAlignCenterWrap>

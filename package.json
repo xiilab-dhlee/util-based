@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:mock": "cross-env MSW_ENABLE=true next dev",
+    "dev:mock:lazy": "cross-env MSW_ENABLE=true MOCK_DELAY=5000 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
@@ -12,19 +13,23 @@
     "update:xiilab-ui": "pnpm update xiilab-ui",
     "test": "pnpm test:allure:history && bddgen && playwright test",
     "test:build": "pnpm build && pnpm test",
-    "test:ui": "pnpm test:allure:history && bddgen && playwright test --ui",
+    "test:ui": "bddgen && playwright test --ui",
     "test:headed": "pnpm test:allure:history && bddgen && playwright test --headed",
     "test:debug": "pnpm test:allure:history && bddgen && playwright test --debug",
     "test:smoke": "pnpm test:allure:history && bddgen && playwright test --grep @smoke",
     "test:regression": "pnpm test:allure:history && bddgen && playwright test --grep @regression",
+    "test:integration": "pnpm test:allure:history && bddgen && playwright test --grep @integration",
     "test:grep": "pnpm test:allure:history && bddgen && playwright test --grep",
     "test:report": "playwright show-report tests/reports/playwright-html",
-    "test:allure": "allure generate allure-results -o allure-report --clean && allure open allure-report",
-    "test:allure:generate": "allure generate allure-results -o allure-report --clean",
+    "test:allure": "pnpm test:allure:analyze && allure generate allure-results -o allure-report --clean && pnpm test:allure:widgets && allure open allure-report",
+    "test:allure:generate": "pnpm test:allure:analyze && allure generate allure-results -o allure-report --clean && pnpm test:allure:widgets",
+    "test:allure:widgets": "node scripts/copy-allure-widgets.mjs",
     "test:allure:open": "allure open allure-report",
     "test:allure:history": "node scripts/copy-allure-history.mjs",
+    "test:allure:analyze": "node scripts/allure-performance-analyzer.mjs",
     "test:trace": "playwright show-trace",
     "test:codegen": "playwright codegen http://localhost:3000",
+    "test:lazy": "cross-env MOCK_DELAY=3000 pnpm test",
     "bddgen": "npx playwright-bdd test",
     "bddgen:export": "npx playwright-bdd export",
     "prepare": "husky"
@@ -82,7 +87,6 @@
     "allure-commandline": "^2.36.0",
     "allure-playwright": "^3.4.3",
     "autoprefixer": "^10.4.21",
-    "babel-plugin-react-compiler": "1.0.0",
     "cross-env": "^10.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
@@ -94,6 +98,9 @@
     "*.{js,jsx,ts,tsx,json}": [
       "biome check --write"
     ]
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "packageManager": "pnpm@9.15.3"
 }

@@ -35,13 +35,7 @@ export function WorkloadVolumeCard({
       <Card
         contentVariant="compact"
         title={name}
-        icon={
-          <span
-            data-testid={WORKLOAD_SELECTOR.volumeStatus(status.toLowerCase())}
-          >
-            {icon && <Icon name={icon} color="#464B51" size={18} />}
-          </span>
-        }
+        icon={icon ? <Icon name={icon} color="#464B51" size={18} /> : null}
         actionElement={
           onDelete ? (
             <IconWrapper
@@ -78,7 +72,10 @@ export function WorkloadVolumeCard({
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>볼륨 크기 :</LikeCompactCardKey>
-            <LikeCompactCardValue data-testid={WORKLOAD_SELECTOR.VOLUME_SIZE}>
+            <LikeCompactCardValue
+              className="truncate"
+              data-testid={WORKLOAD_SELECTOR.VOLUME_SIZE}
+            >
               {size.toLocaleString()} Bytes
             </LikeCompactCardValue>
           </LikeCompactCardRecord>

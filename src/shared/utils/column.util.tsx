@@ -1,12 +1,13 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
-import { Tooltip } from "xiilab-ui";
 
 import { commonColumns } from "@/shared/components/column";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 
 /**
- * ellipsis가 활성화된 컬럼에 툴팁 렌더러 적용
- * 툴팁에는 원본 데이터(title)를 표시하고, 컨텐츠에는 렌더링된 컴포넌트를 표시
+ * ellipsis가 활성화된 컬럼에 data-tooltip 속성 적용
+ *
+ * 기존: 각 셀마다 Tooltip 컴포넌트 렌더링 (N개 DOM 요소)
+ * 변경: data-tooltip 속성만 설정, CustomizedTable에서 단일 Tooltip으로 처리 (1개 DOM 요소)
  */
 function applyEllipsisTooltip(
   column: ResponsiveColumnType,
@@ -23,13 +24,11 @@ function applyEllipsisTooltip(
         ? originalRender(title, record, index)
         : title;
 
-      // 툴팁에는 원본 데이터(title)를 표시
-      const tooltipTitle = title;
-
+      // data-tooltip 속성으로 원본 데이터 전달 (CustomizedTable에서 처리)
       return (
-        <Tooltip title={tooltipTitle} getPopupContainer={() => document.body}>
-          <div className="truncate">{content}</div>
-        </Tooltip>
+        <div className="truncate" data-tooltip={title}>
+          {content}
+        </div>
       );
     },
   };

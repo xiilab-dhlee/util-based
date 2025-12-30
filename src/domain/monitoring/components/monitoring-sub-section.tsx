@@ -12,12 +12,12 @@ import {
 import { useGetUserResources } from "@/domain/monitoring/hooks/use-get-user-resources";
 import type { UserResourceSchemaType } from "@/domain/monitoring/schemas/user-resource.schema";
 import type {
-  ActiveWorkloadListType,
+  WorkloadListType,
   WorkloadStatusType,
 } from "@/domain/workload/schemas/workload.schema";
 import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
 import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
-import { activeWorkloadListMock } from "@/mocks/data/workload.mock";
+import { workloadListMock } from "@/mocks/data/workload.mock";
 import { createUserResourceColumn } from "@/shared/components/column/create-user-resource-column";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
@@ -97,9 +97,7 @@ export function MonitoringSubSection() {
 
   /** 활성화 워크로드 테이블 정렬 변경 핸들러 */
   const handleActiveWorkloadSortChange = (
-    sorter:
-      | SorterResult<ActiveWorkloadListType>
-      | SorterResult<ActiveWorkloadListType>[],
+    sorter: SorterResult<WorkloadListType> | SorterResult<WorkloadListType>[],
   ) => {
     const parsed = parseSorter(sorter);
     if (parsed) {
@@ -241,9 +239,9 @@ export function MonitoringSubSection() {
             <ArticleDescription>총 24개</ArticleDescription>
           </ArticleTitle>
           <ListArticleBody>
-            <CustomizedTable<ActiveWorkloadListType>
+            <CustomizedTable<WorkloadListType>
               columns={activeWorkloadColumns}
-              data={activeWorkloadListMock}
+              data={workloadListMock}
               activePadding
               onChange={(_pagination, _filters, sorter) => {
                 handleActiveWorkloadSortChange(sorter);
@@ -251,7 +249,7 @@ export function MonitoringSubSection() {
               pagination={{
                 current: activeWorkloadPage,
                 pageSize: ACTIVE_WORKLOAD_PAGE_SIZE,
-                total: activeWorkloadListMock.length, // TODO: API 연동 시 실제 total로 교체
+                total: workloadListMock.length, // TODO: API 연동 시 실제 total로 교체
                 onChange: setActiveWorkloadPage,
               }}
             />

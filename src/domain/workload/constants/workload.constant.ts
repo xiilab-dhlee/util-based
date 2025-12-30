@@ -2,6 +2,19 @@ import type { DropdownOption } from "xiilab-ui";
 
 import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 
+export const WORKLOAD_JOB_TYPES = [
+  "BATCH",
+  "INTERACTIVE",
+  "DISTRIBUTED",
+] as const;
+
+export const WORKLOAD_STATUS = [
+  "RUNNING",
+  "PENDING",
+  "COMPLETED",
+  "FAILED",
+] as const;
+
 export const WORKLOAD_IMAGE_TYPES = [
   "HUB",
   "BUILTIN",
@@ -48,7 +61,7 @@ export const WORKLOAD_STATUS_OPTIONS: DropdownOption[] = [
   },
   {
     label: "에러",
-    value: "ERROR",
+    value: "FAILED",
   },
   {
     label: "종료",

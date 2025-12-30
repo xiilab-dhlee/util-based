@@ -49,8 +49,6 @@ export const disabledWorkloadPageAtom = atomWithReset<number>(1);
 export const disabledWorkloadSearchTextAtom = atom<string>("");
 /** 비활성화 워크로드 잡타입 */
 export const disabledWorkloadJobTypeAtom = atom<WorkloadJobType | null>(null);
-/** 비활성화 워크로드 상태 */
-export const disabledWorkloadStatusAtom = atom<FilterStatusValue | null>(null);
 /** 커밋 이미지 생성 모달 표시 여부 */
 export const openCreateCommitImageModalAtom = atom<boolean>(false);
 /** 워크로드 수정 모달 표시 여부 */

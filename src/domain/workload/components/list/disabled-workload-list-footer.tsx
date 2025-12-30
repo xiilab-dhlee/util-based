@@ -5,6 +5,7 @@ import { useAtom } from "jotai";
 import { disabledWorkloadPageAtom } from "@/domain/workload/state/workload.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface DisabledWorkloadListFooterProps {
   /** 전체 워크로드 수 */
@@ -36,6 +37,7 @@ export function DisabledWorkloadListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={setPage}
       isLoading={isLoading}
+      paginationTestId={SELECTOR.LIST_PAGINATION}
     />
   );
 }

@@ -65,7 +65,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       dataIndex: "jobType",
-      title: "잡 타입",
+      title: "Job Type",
       align: "center",
       width: 100,
       render: (jobType: WorkloadJobType) => {
@@ -76,6 +76,21 @@ const createColumnList = (): ResponsiveColumnType[] => {
               data-testid={WORKLOAD_SELECTOR.JOB_TYPE}
             >
               {jobType.toLowerCase()}
+            </span>
+          </ColumnAlignCenterWrap>
+        );
+      },
+    },
+    {
+      dataIndex: "creatorName",
+      title: "생성자",
+      align: "center",
+      width: 100,
+      render: (creatorName: string) => {
+        return (
+          <ColumnAlignCenterWrap>
+            <span data-testid={WORKLOAD_SELECTOR.CREATOR_NAME}>
+              {creatorName}
             </span>
           </ColumnAlignCenterWrap>
         );
@@ -156,7 +171,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
             <ColumnIconWrap
               onClick={() => alert("준비 중입니다.")}
               disabled={!isActive}
-              data-testid={WORKLOAD_SELECTOR.CONNECT_BUTTON}
             >
               <Icon name="Port" color="var(--icon-fill)" size={20} />
             </ColumnIconWrap>

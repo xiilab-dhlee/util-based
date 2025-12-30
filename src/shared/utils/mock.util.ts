@@ -24,6 +24,7 @@ const stringMap: Record<string, () => string> = {
 
   // 이름
   name: () => faker.internet.displayName(),
+  userName: () => faker.internet.username(),
   group: () => faker.company.name(),
   title: () => faker.internet.displayName(),
   workloadName: () => faker.commerce.productDescription(),

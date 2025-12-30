@@ -4,13 +4,12 @@ import classNames from "classnames";
 import type { PropsWithChildren, ReactNode } from "react";
 import styled from "styled-components";
 
-import { SELECTOR } from "@/shared/constants/selector.constant";
 import { ListSectionTitle } from "@/styles/layers/list-page-layers.styled";
 
 interface MySearchFilterProps {
   // 제목
   title: string | ReactNode;
-  // 총 개수
+  // 총 개수 (undefined일 경우 "-" 표시)
   total?: number;
   // 단위
   unit?: string;
@@ -18,6 +17,8 @@ interface MySearchFilterProps {
   darkMode?: boolean;
   // 총 개수 표시 여부
   showTotal?: boolean;
+  // 총 개수 data-testid (외부에서 지정)
+  totalCountTestId?: string;
 }
 // 검색 필터 컴포넌트
 export function MySearchFilter({
@@ -27,18 +28,17 @@ export function MySearchFilter({
   children,
   darkMode = false,
   showTotal = true,
+  totalCountTestId,
 }: PropsWithChildren<MySearchFilterProps>) {
   return (
-    <Container data-testid={SELECTOR.LIST_FILTER}>
+    <Container>
       <Left>
         <Title className={classNames({ dark: darkMode })}>{title}</Title>
 
         {showTotal && (
-          <Total
-            className={classNames({ dark: darkMode })}
-            data-testid={SELECTOR.LIST_TOTAL_COUNT}
-          >
-            총 {total.toLocaleString()}
+          <Total className={classNames({ dark: darkMode })}>
+            총&nbsp;
+            <span data-testid={totalCountTestId}>{total.toLocaleString()}</span>
             {unit}
           </Total>
         )}

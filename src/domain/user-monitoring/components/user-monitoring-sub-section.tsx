@@ -3,13 +3,14 @@ import styled from "styled-components";
 import { workloadListMock } from "@/mocks/data/workload.mock";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function UserMonitoringSubSection() {
   return (
     <Container>
-      <Left data-testid="user-monitoring-running-workload-list">
+      <Left data-testid={USER_MONITORING_SELECTOR.RUNNING_WORKLOAD_LIST}>
         <ArticleTitle>
           <SectionTitle>실행중인 워크로드 목록</SectionTitle>
           {/* <ArticleDescription>
@@ -48,7 +49,7 @@ export function UserMonitoringSubSection() {
           />
         </ListWrapper>
       </Left>
-      <Right data-testid="user-monitoring-recovery-workload-list">
+      <Right data-testid={USER_MONITORING_SELECTOR.RECOVERY_WORKLOAD_LIST}>
         <ArticleTitle>
           <SectionTitle>리소스 회수 예정 워크로드 정보</SectionTitle>
           {/* <ArticleDescription>

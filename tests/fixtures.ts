@@ -1,14 +1,23 @@
 import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
+import { DataTableComponent } from "./components/data-table.component";
 import { DrawerComponent } from "./components/drawer.component";
 import { ModalComponent } from "./components/modal.component";
+import { NavigationComponent } from "./components/navigation.component";
+import { PaginationComponent } from "./components/pagination.component";
 import { RadioComponent } from "./components/radio.component";
+import { SearchInputComponent } from "./components/search-input.component";
+import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
+import { ThemePopoverComponent } from "./components/theme-popover.component";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
 import { WorkloadListPage } from "./pages/workload-list.page";
 import { WorkloadLogPage } from "./pages/workload-log.page";
+import { WorkloadMonitoringPage } from "./pages/workload-monitoring.page";
+import { WorkloadTerminalPage } from "./pages/workload-terminal.page";
 
 // ============================================================================
 // Constants
@@ -75,10 +84,30 @@ export type WorkloadContextActions = {
   reset: () => void;
 };
 
+/**
+ * ThemeContext: 테마 선택 관련 테스트 컨텍스트
+ *
+ * 용도:
+ * - 선택된 테마 이름 저장 및 검증
+ */
+export type ThemeContext = {
+  selectedTheme: string | null;
+};
+
+export type ThemeContextActions = {
+  /** 선택된 테마 설정 */
+  setSelectedTheme: (theme: string) => void;
+  /** 선택된 테마 반환 (없으면 에러) */
+  assertSelectedTheme: () => string;
+  /** 컨텍스트 초기화 */
+  reset: () => void;
+};
+
 type TestContextFixtures = {
   // 컨텍스트
   listContext: ListContext & ListContextActions;
   workloadContext: WorkloadContext & WorkloadContextActions;
+  themeContext: ThemeContext & ThemeContextActions;
   workloadId: string;
   workspaceId: string;
   testMode: TestMode;
@@ -88,6 +117,8 @@ type TestContextFixtures = {
   workloadListPage: WorkloadListPage;
   workloadDetailPage: WorkloadDetailPage;
   workloadLogPage: WorkloadLogPage;
+  workloadMonitoringPage: WorkloadMonitoringPage;
+  workloadTerminalPage: WorkloadTerminalPage;
   monitoringPage: MonitoringPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
@@ -95,6 +126,18 @@ type TestContextFixtures = {
   drawer: DrawerComponent;
   tabs: TabsComponent;
   radio: RadioComponent;
+  themePopover: ThemePopoverComponent;
+  navigation: NavigationComponent;
+
+  // 목록 페이지 공통 컴포넌트
+  /** 목록 테이블 험블 객체 */
+  listTable: DataTableComponent;
+  /** 내 항목만 보기 스위치 험블 객체 */
+  myItemsSwitch: SwitchComponent;
+  /** 검색 입력창 험블 객체 */
+  listSearchInput: SearchInputComponent;
+  /** 페이지네이션 험블 객체 */
+  listPagination: PaginationComponent;
 };
 
 // ============================================================================
@@ -161,6 +204,12 @@ function createInitialWorkloadContext(): WorkloadContext {
     name: "",
     description: "",
     jobType: "",
+  };
+}
+
+function createInitialThemeContext(): ThemeContext {
+  return {
+    selectedTheme: null,
   };
 }
 
@@ -251,6 +300,31 @@ export const test = base.extend<TestContextFixtures>({
     context.jobType = "";
   },
 
+  themeContext: async ({}, use) => {
+    const context = createInitialThemeContext();
+
+    await use({
+      ...context,
+      setSelectedTheme: (theme: string) => {
+        context.selectedTheme = theme;
+      },
+      assertSelectedTheme: () => {
+        if (!context.selectedTheme) {
+          throw new Error(
+            "테마 컨텍스트가 초기화되지 않았습니다. 테마를 먼저 선택하세요.",
+          );
+        }
+        return context.selectedTheme;
+      },
+      reset: () => {
+        context.selectedTheme = null;
+      },
+    });
+
+    // Teardown: 컨텍스트 초기화
+    context.selectedTheme = null;
+  },
+
   testMode: async ({}, use) => {
     await use(TEST_MODE);
   },
@@ -285,6 +359,14 @@ export const test = base.extend<TestContextFixtures>({
     await use(new WorkloadLogPage(page));
   },
 
+  workloadMonitoringPage: async ({ page }, use) => {
+    await use(new WorkloadMonitoringPage(page));
+  },
+
+  workloadTerminalPage: async ({ page }, use) => {
+    await use(new WorkloadTerminalPage(page));
+  },
+
   monitoringPage: async ({ page }, use) => {
     await use(new MonitoringPage(page));
   },
@@ -302,10 +384,38 @@ export const test = base.extend<TestContextFixtures>({
   },
 
   tabs: async ({ page }, use) => {
-    await use(new TabsComponent(page, ".tabs-nav"));
+    await use(new TabsComponent(page));
   },
 
   radio: async ({}, use) => {
     await use(new RadioComponent());
+  },
+
+  themePopover: async ({ page }, use) => {
+    await use(new ThemePopoverComponent(page));
+  },
+
+  navigation: async ({ page }, use) => {
+    await use(new NavigationComponent(page));
+  },
+
+  // ============================================================================
+  // 목록 페이지 공통 컴포넌트
+  // ============================================================================
+
+  listTable: async ({ page }, use) => {
+    await use(new DataTableComponent(page, SELECTOR.LIST_TABLE));
+  },
+
+  myItemsSwitch: async ({ page }, use) => {
+    await use(new SwitchComponent(page, SELECTOR.MY_ITEMS_ONLY_SWITCH));
+  },
+
+  listSearchInput: async ({ page }, use) => {
+    await use(new SearchInputComponent(page, SELECTOR.LIST_SEARCH_INPUT));
+  },
+
+  listPagination: async ({ page }, use) => {
+    await use(new PaginationComponent(page, SELECTOR.LIST_PAGINATION));
   },
 });

@@ -97,7 +97,7 @@ export function UpdateWorkspaceMemberModal() {
           ]}
         />
         <Subject style={{ marginTop: 16 }}>계정 수정 정보</Subject>
-        <Form layout="vertical">
+        <StyledForm layout="vertical">
           <FormItem label="권한" required>
             <Dropdown
               options={roleSelect.options}
@@ -109,7 +109,7 @@ export function UpdateWorkspaceMemberModal() {
               status={roleError ? "error" : undefined}
             />
           </FormItem>
-        </Form>
+        </StyledForm>
       </Container>
     </Modal>
   );
@@ -131,5 +131,9 @@ const Subject = styled.div`
   color: #000;
   margin-left: 8px;
   margin-bottom: 5px;
+  width: 100%;
+`;
+
+const StyledForm = styled(Form)`
   width: 100%;
 `;

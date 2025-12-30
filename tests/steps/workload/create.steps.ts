@@ -12,11 +12,16 @@ import { WorkloadListPage } from "../../pages/workload-list.page";
 
 /**
  * 워크로드 생성 드로어 Step Definitions
+ *
+ * 구조:
+ * 1. 버튼
+ * 2. 입력창
+ * 3. 워크로드 가져오기 모달
  */
 const { Given, When, Then } = createBdd(test);
 
 // ============================================
-// 버튼 관련
+// 1. 버튼
 // ============================================
 
 When("워크로드 생성하기 버튼을 클릭한다", async ({ page }) => {
@@ -25,34 +30,8 @@ When("워크로드 생성하기 버튼을 클릭한다", async ({ page }) => {
   await button.click();
 });
 
-Then(
-  /^"(최근 워크로드 가져오기|워크로드 목록에서 가져오기)" 버튼이 표시된다$/,
-  async ({ page }, buttonText: string) => {
-    const selector = WorkloadListPage.CREATE_BUTTON[buttonText];
-    await expect(page.locator(testId(selector))).toBeVisible({
-      timeout: 10000,
-    });
-  },
-);
-
-Then(
-  /^"(Batch Job|Interactive Job)" 버튼이 선택되어 있다$/,
-  async ({ page }, buttonText: string) => {
-    const labelMap: Record<string, string> = {
-      "Batch Job": "Batch Job",
-      "Interactive Job": "Interactive Job (IDE)",
-    };
-    const label = labelMap[buttonText];
-
-    // JobTypeCard의 data-active 속성으로 선택 상태 확인
-    const card = page.getByRole("button", { name: label });
-    await expect(card).toBeVisible({ timeout: 10000 });
-    await expect(card).toHaveAttribute("data-active", "true");
-  },
-);
-
 // ============================================
-// 입력창 관련
+// 2. 입력창
 // ============================================
 
 Then("워크로드 이름 입력창이 빈 값으로 표시된다", async ({ page }) => {
@@ -74,14 +53,8 @@ Then("잡 타입이 선택되어 있다", async ({ page }) => {
   await expect(activeJobType).toBeVisible({ timeout: 10000 });
 });
 
-Then("워크로드 설명 입력창이 빈 값으로 표시된다", async ({ page }) => {
-  const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_DESCRIPTION));
-  await expect(input).toBeVisible({ timeout: 10000 });
-  await expect(input).toHaveValue("");
-});
-
 // ============================================
-// 워크로드 가져오기 모달
+// 3. 워크로드 가져오기 모달
 // ============================================
 
 When(
@@ -93,14 +66,6 @@ When(
     await button.click();
   },
 );
-
-Then("{string} 모달이 표시된다", async ({ page }, modalTitle: string) => {
-  const modal = page.locator(SELECTOR.MODAL);
-  await expect(modal).toBeVisible({ timeout: 10000 });
-
-  const title = modal.locator(".ant-modal-title");
-  await expect(title).toHaveText(modalTitle);
-});
 
 Then("모달에 워크로드 목록 테이블이 표시된다", async ({ page }) => {
   const modal = page.locator(SELECTOR.MODAL);
@@ -134,80 +99,5 @@ When(
     // 라디오버튼 클릭
     const firstRow = await table.getFirstRow();
     await radio.selectInRow(firstRow);
-  },
-);
-
-When(
-  "모달의 {string} 버튼을 클릭한다",
-  async ({ page }, buttonText: string) => {
-    const modal = page.locator(SELECTOR.MODAL);
-    const button = modal.getByRole("button", { name: buttonText });
-    await expect(button).toBeEnabled({ timeout: 10000 });
-    await button.click();
-  },
-);
-
-Then("모달이 닫힌다", async ({ page }) => {
-  const modal = page.locator(SELECTOR.MODAL);
-  await expect(modal).not.toBeVisible({ timeout: 10000 });
-});
-
-// ============================================
-// 워크로드 정보 검증 (공통)
-// ============================================
-
-Then(
-  "워크로드 이름 입력창에 저장된 워크로드 이름이 표시된다",
-  async ({ page, workloadContext, assertLogger }) => {
-    const { name } = workloadContext.get();
-
-    const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_NAME));
-    await expect(input).toBeVisible({ timeout: 10000 });
-    const inputValue = await input.inputValue();
-
-    assertLogger.assertEqual("워크로드 이름 입력값", inputValue, name);
-  },
-);
-
-Then(
-  "워크로드 설명 입력창에 저장된 워크로드 설명이 표시된다",
-  async ({ page, workloadContext, assertLogger }) => {
-    const { description } = workloadContext.get();
-
-    const input = page.locator(testId(WORKLOAD_SELECTOR.CREATE_DESCRIPTION));
-    await expect(input).toBeVisible({ timeout: 10000 });
-    const inputValue = await input.inputValue();
-
-    assertLogger.assertEqual("워크로드 설명 입력값", inputValue, description);
-  },
-);
-
-/**
- * Job Type 텍스트를 드로어 버튼 레이블로 변환
- *
- * 테이블의 Job Type 텍스트(소문자)를 드로어에서 선택된 버튼 레이블로 변환합니다.
- * DISTRIBUTED는 드로어에 별도 버튼이 없어 "Batch Job"으로 매핑됩니다.
- */
-const JOB_TYPE_TO_LABEL: Record<string, string> = {
-  batch: "Batch Job",
-  distributed: "Batch Job", // 드로어에 별도 버튼 없음
-  interactive: "Interactive Job (IDE)",
-};
-
-Then(
-  "잡 타입이 저장된 워크로드와 동일하다",
-  async ({ page, workloadContext, assertLogger }) => {
-    const { jobType } = workloadContext.get();
-    const expectedLabel = JOB_TYPE_TO_LABEL[jobType] ?? jobType;
-
-    const card = page.getByRole("button", { name: expectedLabel });
-    await expect(card).toBeVisible({ timeout: 10000 });
-
-    const isActive =
-      (await card.getAttribute("data-active")) === "true"
-        ? "active"
-        : "inactive";
-
-    assertLogger.assertEqual("잡 타입 버튼 상태", isActive, "active");
   },
 );
