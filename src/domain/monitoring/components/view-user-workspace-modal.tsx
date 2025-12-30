@@ -1,93 +1,131 @@
 "use client";
 
-import type { SorterResult } from "antd/es/table/interface";
+import { isNil } from "es-toolkit";
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon, InfoModal } from "xiilab-ui";
+import { Icon, InfoModal, Tag } from "xiilab-ui";
 
 import { USER_WORKSPACE_MODAL_PAGE_SIZE } from "@/domain/monitoring/constants/monitoring.constant";
 import type { UserResourceSchemaType } from "@/domain/monitoring/schemas/user-resource.schema";
-import { openUserWorkspaceModalAtom } from "@/domain/monitoring/state/monitoring.atom";
-import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import type { TableSortState } from "@/shared/types/core.model";
-import { getSortOrder, parseSorter } from "@/shared/utils/sort.util";
+import { useStateModal } from "@/shared/hooks/use-state-modal";
+import type { CoreResourceType } from "@/shared/types/core.interface";
+import { formatNumber } from "@/shared/utils/format.util";
+import { getResourceInfo } from "@/shared/utils/resource.util";
+import { getTableRowNumber } from "@/shared/utils/table.util";
+import { ColumnLink } from "@/styles/layers/column-layer.styled";
 
 // TODO: API 연동 시 실제 타입으로 교체
-interface UserWorkspaceType {
+type GpuType = "normal" | "mig" | "mps";
+
+interface UserWorkloadType {
   id: string;
-  name: string;
-  gpuQuota: number;
-  running: number;
-  pending: number;
-  error: number;
+  workspaceId: string;
+  workloadName: string;
+  workspaceName: string;
+  nodeName: string;
+  gpuType: GpuType;
+  gpuModel?: string;
+  gpuCount?: number;
   [key: string]: unknown;
 }
 
-const DEFAULT_WORKSPACE_SORT: TableSortState = {
-  sortBy: "name",
-  sortDirection: "ASC",
-};
-
-const USER_WORKSPACE_MOCK: UserWorkspaceType[] = [
+const USER_WORKLOAD_MOCK: UserWorkloadType[] = [
   {
     id: "1",
-    name: "Test_suhyun",
-    gpuQuota: 5,
-    running: 1,
-    pending: 1,
-    error: 1,
+    workspaceId: "ws-1",
+    workloadName: "workload-1",
+    workspaceName: "workspace-1",
+    nodeName: "node-1",
+    gpuType: "normal",
+    gpuModel: undefined,
+    gpuCount: undefined,
   },
   {
     id: "2",
-    name: "Test_suhyun",
-    gpuQuota: 5,
-    running: 3,
-    pending: 3,
-    error: 3,
+    workspaceId: "ws-2",
+    workloadName: "workload-2",
+    workspaceName: "workspace-2",
+    nodeName: "node-2",
+    gpuType: "mig",
+    gpuModel: undefined,
+    gpuCount: undefined,
   },
   {
     id: "3",
-    name: "Test_suhyun",
-    gpuQuota: 5,
-    running: 3,
-    pending: 3,
-    error: 3,
+    workspaceId: "ws-3",
+    workloadName: "workload-3",
+    workspaceName: "workspace-3",
+    nodeName: "node-3",
+    gpuType: "mps",
+    gpuModel: undefined,
+    gpuCount: undefined,
   },
   {
     id: "4",
-    name: "Test_suhyun",
-    gpuQuota: 5,
-    running: 3,
-    pending: 3,
-    error: 3,
+    workspaceId: "ws-4",
+    workloadName: "workload-4",
+    workspaceName: "workspace-4",
+    nodeName: "node-4",
+    gpuType: "normal",
+    gpuModel: undefined,
+    gpuCount: undefined,
   },
   {
     id: "5",
-    name: "Test_suhyun",
-    gpuQuota: 5,
-    running: 56,
-    pending: 56,
-    error: 56,
+    workspaceId: "ws-5",
+    workloadName: "workload-5",
+    workspaceName: "workspace-5",
+    nodeName: "node-5",
+    gpuType: "mig",
+    gpuModel: undefined,
+    gpuCount: undefined,
   },
   {
     id: "6",
-    name: "Test_suhyun",
-    gpuQuota: 5,
-    running: 4,
-    pending: 4,
-    error: 4,
+    workspaceId: "ws-6",
+    workloadName: "workload-6",
+    workspaceName: "workspace-6",
+    nodeName: "node-6",
+    gpuType: "mps",
+    gpuModel: undefined,
+    gpuCount: undefined,
   },
 ];
 
-export function ViewUserWorkspaceModal() {
-  const { open, onOpen, onClose } = useGlobalModal(openUserWorkspaceModalAtom);
-  const [workspaceSort, setWorkspaceSort] = useState<TableSortState>(
-    DEFAULT_WORKSPACE_SORT,
+/** 값이 있으면 단위를 붙여 반환, 없으면 "-" 반환 */
+const withUnit = (value: number | null | undefined, type: CoreResourceType) =>
+  value != null ? `${formatNumber(value)}${getResourceInfo(type).unit}` : "-";
+
+/**
+ * GPU 컬럼 렌더링 함수
+ * - Normal: gpuModel이 있으면 표시, 없으면 "-"
+ * - MIG/MPS: 태그 + 구분선 + gpuModel(또는 "-")
+ */
+const renderGpuColumn = (record: UserWorkloadType) => {
+  const { gpuType, gpuModel } = record;
+  const displayValue = gpuModel || "-";
+
+  if (gpuType === "normal") {
+    return <span>{displayValue}</span>;
+  }
+
+  const tagLabel = gpuType.toUpperCase();
+
+  return (
+    <GpuColumnWrapper>
+      <Tag variant="gray">{tagLabel}</Tag>
+      <GpuDivider />
+      <span>{displayValue}</span>
+    </GpuColumnWrapper>
   );
+};
+
+export function ViewUserWorkspaceModal() {
+  const { open, onOpen, onClose } = useStateModal();
   const [page, setPage] = useState(1);
   const [userData, setUserData] = useState<UserResourceSchemaType | null>(null);
 
@@ -96,34 +134,62 @@ export function ViewUserWorkspaceModal() {
     onOpen();
   });
 
-  const workspaces = USER_WORKSPACE_MOCK;
+  const workloads = USER_WORKLOAD_MOCK;
 
-  const handleSortChange = (
-    sorter: SorterResult<UserWorkspaceType> | SorterResult<UserWorkspaceType>[],
-  ) => {
-    const parsed = parseSorter(sorter);
-    if (parsed) {
-      setWorkspaceSort({
-        sortBy: parsed.field,
-        sortDirection: parsed.direction,
-      });
-      setPage(1);
-    }
-  };
-
-  const columns = createWorkspaceColumn([
+  const columns = [
     {
-      dataIndex: "name",
-      title: "워크스페이스 이름",
-      width: "25%",
-      sorter: true,
-      sortOrder: getSortOrder(workspaceSort, "name"),
+      dataIndex: "no",
+      title: "No.",
+      align: "center" as const,
+      width: "8%",
+      render: (_: unknown, __: unknown, index: number) => {
+        const rowNumber = getTableRowNumber(
+          page,
+          USER_WORKSPACE_MODAL_PAGE_SIZE,
+          index,
+        );
+        return <span>{rowNumber}</span>;
+      },
     },
-    { dataIndex: "gpuQuota", title: "할당된 GPU 개수", width: "20%" },
-    { dataIndex: "running", width: "18%" },
-    { dataIndex: "pending", width: "18%" },
-    { dataIndex: "error", width: "19%" },
-  ]);
+    {
+      dataIndex: "workloadName",
+      title: "워크로드 이름",
+      align: "left" as const,
+      width: "22%",
+      ellipsis: true,
+      render: (_: unknown, record: UserWorkloadType) => (
+        <ColumnLink
+          href={ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(
+            record.workspaceId,
+            record.id,
+          )}
+        >
+          {record.workloadName}
+        </ColumnLink>
+      ),
+    },
+    {
+      dataIndex: "workspaceName",
+      title: "워크스페이스 이름",
+      align: "left" as const,
+      width: "22%",
+      ellipsis: true,
+    },
+    {
+      dataIndex: "nodeName",
+      title: "노드 이름",
+      align: "left" as const,
+      width: "20%",
+      ellipsis: true,
+    },
+    {
+      dataIndex: "gpu",
+      title: "GPU",
+      align: "center" as const,
+      width: "28%",
+      render: (_: unknown, record: UserWorkloadType) => renderGpuColumn(record),
+    },
+  ];
 
   const hasMigOrMps = !!(userData?.mig || userData?.mps);
 
@@ -135,7 +201,7 @@ export function ViewUserWorkspaceModal() {
       open={open}
       closable
       onClose={onClose}
-      title="워크 스페이스 정보"
+      title="워크스페이스 정보"
       centered
     >
       <ModalContent>
@@ -161,32 +227,40 @@ export function ViewUserWorkspaceModal() {
           <ResourceSection>
             <ResourceLeft>
               <ResourceRow>
-                <ResourceLabel>GPU</ResourceLabel>
-                <ResourceValue>{userData?.gpu ?? 0}개</ResourceValue>
+                <ResourceLabel>{getResourceInfo("GPU").text}</ResourceLabel>
+                <ResourceValue>{withUnit(userData?.gpu, "GPU")}</ResourceValue>
               </ResourceRow>
               <ResourceRow>
-                <ResourceLabel>CPU</ResourceLabel>
-                <ResourceValue>{userData?.cpu ?? 0}Core</ResourceValue>
+                <ResourceLabel>{getResourceInfo("CPU").text}</ResourceLabel>
+                <ResourceValue>{withUnit(userData?.cpu, "CPU")}</ResourceValue>
               </ResourceRow>
               <ResourceRow>
-                <ResourceLabel>Memory</ResourceLabel>
-                <ResourceValue>{userData?.mem ?? 0}GB</ResourceValue>
+                <ResourceLabel>{getResourceInfo("MEM").text}</ResourceLabel>
+                <ResourceValue>{withUnit(userData?.mem, "MEM")}</ResourceValue>
               </ResourceRow>
             </ResourceLeft>
             {hasMigOrMps && (
               <>
                 <ResourceDivider />
                 <ResourceRight>
-                  {userData?.mig !== null && userData?.mig !== undefined && (
+                  {!isNil(userData?.mig) && (
                     <ResourceRow>
-                      <ResourceLabel>MIG</ResourceLabel>
-                      <ResourceValue>{userData.mig}개</ResourceValue>
+                      <ResourceLabel>
+                        {getResourceInfo("MIG").text}
+                      </ResourceLabel>
+                      <ResourceValue>
+                        {withUnit(userData.mig, "MIG")}
+                      </ResourceValue>
                     </ResourceRow>
                   )}
-                  {userData?.mps !== null && userData?.mps !== undefined && (
+                  {!isNil(userData?.mps) && (
                     <ResourceRow>
-                      <ResourceLabel>MPS</ResourceLabel>
-                      <ResourceValue>{userData.mps}개</ResourceValue>
+                      <ResourceLabel>
+                        {getResourceInfo("MPS").text}
+                      </ResourceLabel>
+                      <ResourceValue>
+                        {withUnit(userData.mps, "MPS")}
+                      </ResourceValue>
                     </ResourceRow>
                   )}
                 </ResourceRight>
@@ -198,17 +272,14 @@ export function ViewUserWorkspaceModal() {
         {/* 워크로드 목록 */}
         <WorkloadSection>
           <WorkloadTitle>워크로드 목록</WorkloadTitle>
-          <CustomizedTable<UserWorkspaceType>
+          <CustomizedTable<UserWorkloadType>
             columns={columns}
-            data={workspaces}
+            data={workloads}
             activePadding
-            onChange={(_pagination, _filters, sorter) => {
-              handleSortChange(sorter);
-            }}
             pagination={{
               current: page,
               pageSize: USER_WORKSPACE_MODAL_PAGE_SIZE,
-              total: workspaces.length,
+              total: workloads.length,
               onChange: setPage,
             }}
           />
@@ -238,10 +309,8 @@ const InfoResourceBox = styled.div`
 
 const SectionTitle = styled.h3`
   margin: 0;
-  font-family: Pretendard, sans-serif;
   font-weight: 600;
   font-size: 14px;
-  line-height: 1.14;
   color: #000000;
 `;
 
@@ -259,19 +328,15 @@ const InfoRow = styled.div`
 `;
 
 const InfoLabel = styled.span`
-  font-family: Pretendard, sans-serif;
   font-weight: 600;
   font-size: 12px;
-  line-height: 1.19;
   color: #484848;
   min-width: 50px;
 `;
 
 const InfoValue = styled.span`
-  font-family: Pretendard, sans-serif;
   font-weight: 400;
   font-size: 14px;
-  line-height: 1.14;
   color: #000000;
 `;
 
@@ -298,12 +363,11 @@ const ResourceRight = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 215px;
+  min-width: 215px;
 `;
 
 const ResourceDivider = styled.div`
   width: 1px;
-  height: 68px;
   background-color: #e9e9e9;
 `;
 
@@ -314,7 +378,6 @@ const ResourceRow = styled.div`
 `;
 
 const ResourceLabel = styled.span`
-  font-family: Pretendard, sans-serif;
   font-weight: 600;
   font-size: 12px;
   line-height: 1.19;
@@ -323,10 +386,9 @@ const ResourceLabel = styled.span`
 `;
 
 const ResourceValue = styled.span`
-  font-family: Pretendard, sans-serif;
   font-weight: 400;
   font-size: 14px;
-  line-height: 1.14;
+
   color: #000000;
 `;
 
@@ -339,9 +401,21 @@ const WorkloadSection = styled.div`
 
 const WorkloadTitle = styled.h3`
   margin: 0;
-  font-family: Pretendard, sans-serif;
   font-weight: 600;
   font-size: 12px;
-  line-height: 1.19;
+
   color: #000000;
+`;
+
+const GpuColumnWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
+
+const GpuDivider = styled.div`
+  width: 1px;
+  height: 12px;
+  background-color: #acacac;
 `;

@@ -39,7 +39,7 @@ export function ViewKubernetesEventDetailModal() {
     <InfoModal
       modalWidth={370}
       title="쿠버네티스 이벤트 내역 상세 정보"
-      icon={<Icon name="OnPremiseStorage" color="#fff" size={20} />}
+      icon={<Icon name="Description" color="#fff" size={20} />}
       open={open}
       closable
       onClose={onClose}
@@ -102,7 +102,7 @@ const FieldLabel = styled(Typography.Text).attrs({
   variant: "body-2-2",
 })`
   width: 90px;
-
+  color: #484848;
 `;
 
 const Value = styled(Typography.Text).attrs({

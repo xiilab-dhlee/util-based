@@ -1,7 +1,23 @@
-import { isEmpty } from "es-toolkit/compat";
-
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { CorePayload } from "@/shared/types/api.interface";
+
+/**
+ * 값이 유효한지 확인하는 헬퍼 함수
+ * - undefined, null, 빈 문자열, ALL 값, NaN은 제외
+ * - primitive 타입(string, number, boolean)과 비어있지 않은 배열만 허용
+ * - 숫자 0은 유효한 값으로 처리
+ */
+function isValidValue(value: unknown): boolean {
+  if (value == null || value === ALL_OPTION.value || value === "") return false;
+
+  if (Array.isArray(value)) return value.length > 0;
+
+  const valueType = typeof value;
+  if (valueType === "string" || valueType === "boolean") return true;
+  if (valueType === "number") return !Number.isNaN(value);
+
+  return false;
+}
 
 /**
  * payload 객체의 모든 키값을 URLSearchParams로 변환하는 유틸리티 함수
@@ -16,9 +32,11 @@ export function payloadToParams(payload?: CorePayload): URLSearchParams {
   }
 
   Object.entries(payload).forEach(([key, value]) => {
-    // ALL 값은 제외
-    if (!isEmpty(value) && value !== ALL_OPTION.value) {
-      params.append(key, String(value));
+    if (isValidValue(value)) {
+      const stringValue = Array.isArray(value)
+        ? value.join(",")
+        : String(value);
+      params.append(key, stringValue);
     }
   });
 

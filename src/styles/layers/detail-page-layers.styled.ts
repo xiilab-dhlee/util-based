@@ -107,7 +107,7 @@ export const DetailContentTitleTool = styled.div`
  * 상세 페이지 내용을 감싸는 섹션
  */
 export const DetailContentSection = styled.section`
-  padding: 18px 24px;
+  padding: 18px 24px 20px 24px;
   height: 100%;
   overflow: hidden;
   display: flex;

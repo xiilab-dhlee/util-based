@@ -1,15 +1,13 @@
 "use client";
 
 import styled from "styled-components";
-import { Label } from "xiilab-ui";
+import { Card, Label } from "xiilab-ui";
 
 import type { KubernetesEventType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
-import {
-  getKubernetesEventLabelProps,
-  getParseDateTime,
-} from "@/domain/kubernetes-monitoring/utils/kubernetes-event.util";
+import { getKubernetesEventLabelProps } from "@/domain/kubernetes-monitoring/utils/kubernetes-event.util";
 import { KUBERNETES_MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
 
 interface KubernetesEventCardProps {
   event: KubernetesEventType;
@@ -23,8 +21,6 @@ interface KubernetesEventCardProps {
 export function KubernetesEventCard({ event }: KubernetesEventCardProps) {
   const publish = usePublish();
 
-  const { date, time } = getParseDateTime(event.dateTime);
-
   const handleClick = () => {
     publish(KUBERNETES_MONITORING_EVENTS.sendKubernetesEventDetail, event);
   };
@@ -32,42 +28,42 @@ export function KubernetesEventCard({ event }: KubernetesEventCardProps) {
   const { label, variant } = getKubernetesEventLabelProps(event.status);
 
   return (
-    <Container onClick={handleClick}>
-      <Header>
-        <HeaderLeft>
-          <HeaderTitle className="truncate">{event.namespace}</HeaderTitle>
-          <HeaderDate>
-            <HeaderDateItem>{date}</HeaderDateItem>
-            <HeaderDateItem>{time}</HeaderDateItem>
-          </HeaderDate>
-        </HeaderLeft>
-        <Label variant={variant}>{label}</Label>
-      </Header>
-      <Body>
-        <Key>오브젝트 :</Key>
-        <Value className="truncate">{event.object}</Value>
-        <Key>IP 주소 :</Key>
-        <Value>{event.ipAddress}</Value>
-      </Body>
-      <Footer>
-        <Key>메시지 :</Key>
-        <Message className="truncate">{event.message}</Message>
-      </Footer>
-    </Container>
+    <Card showHeader={false} onClick={handleClick}>
+      <Container>
+        <Header>
+          <HeaderLeft>
+            <HeaderTitle className="truncate">{event.namespace}</HeaderTitle>
+            <HeaderDate>
+              <HeaderDateItem>
+                {formatDateTimeSafely(event.dateTime)}
+              </HeaderDateItem>
+            </HeaderDate>
+          </HeaderLeft>
+          <Label variant={variant}>{label}</Label>
+        </Header>
+        <Body>
+          <Key>오브젝트 :</Key>
+          <Value className="truncate">{event.object}</Value>
+          <Key>IP 주소 :</Key>
+          <Value>{event.ipAddress}</Value>
+        </Body>
+        <Footer>
+          <Key>메시지 :</Key>
+          <Message className="truncate">{event.message}</Message>
+        </Footer>
+      </Container>
+    </Card>
   );
 }
 
 const Container = styled.div`
-  height: 94px;
-  border-radius: 4px;
-  border: 1px solid #c1c7ce;
-  background-color: #fafafa;
-  padding: 17px 12px 10px 12px;
+
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  cursor: pointer;
-
+  width: 100%;
+  height: 94px;
+  padding: 17px 12px 10px 12px;
   &:hover {
     border-color: var(--color-blue-05);
   }

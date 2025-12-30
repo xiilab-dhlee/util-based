@@ -1,53 +1,77 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useEffect } from "react";
+import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
 import {
-  kubernetesResourceKeywordAtom,
   kubernetesResourcePageAtom,
+  kubernetesResourceSearchTextAtom,
   kubernetesResourceStatusAtom,
   kubernetesSelectedResourceNameAtom,
 } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
+import { KubernetesResourceCard } from "@/domain/kubernetes-monitoring/components/kubernetes-resource-card";
 import {
-  KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+  DaemonsetsSection,
+  DeploymentsSection,
+  NamespacesSection,
+  NodesSection,
+  PersistentVolumesSection,
+  PodsSection,
+  ServicesSection,
+  StatefulsetsSection,
+} from "@/domain/kubernetes-monitoring/components/kubernetes-resource-sections";
+import {
   KUBERNETES_RESOURCE_NAMES,
+  type KubernetesResourceName,
 } from "@/domain/kubernetes-monitoring/constants/kubernetes-monitoring.constant";
-import { useKubernetesResourceList } from "@/domain/kubernetes-monitoring/hooks/use-kubernetes-resource-list.hook";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
-import { KubernetesResourceCard } from "./kubernetes-resource-card";
-import { KubernetesResourceListBody } from "./kubernetes-resource-list-body";
-import { KubernetesResourceListFilter } from "./kubernetes-resource-list-filter";
-import { KubernetesResourceListFooter } from "./kubernetes-resource-list-footer";
+
+/**
+ * 선택된 리소스에 해당하는 섹션 컴포넌트 렌더링
+ */
+function renderResourceSection(resourceName: KubernetesResourceName) {
+  switch (resourceName) {
+    case "Nodes":
+      return <NodesSection />;
+    case "Service":
+      return <ServicesSection />;
+    case "Daemonsets":
+      return <DaemonsetsSection />;
+    case "PersistentVolume":
+      return <PersistentVolumesSection />;
+    case "Namespaces":
+      return <NamespacesSection />;
+    case "Deployments":
+      return <DeploymentsSection />;
+    case "Statefulsets":
+      return <StatefulsetsSection />;
+    case "Pods":
+      return <PodsSection />;
+    default:
+      return <PodsSection />;
+  }
+}
 
 export function KubernetesMonitoringAside() {
   const [selectedResourceName, setSelectedResourceName] = useAtom(
     kubernetesSelectedResourceNameAtom,
   );
-  const [pageNo, setPageNo] = useAtom(kubernetesResourcePageAtom);
-  const [keyword] = useAtom(kubernetesResourceKeywordAtom);
-  const [status] = useAtom(kubernetesResourceStatusAtom);
 
-  const { data, isLoading, isError } = useKubernetesResourceList({
-    resourceName: selectedResourceName,
-    pageNo,
-    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-    keyword,
-    status,
-  });
+  const resetPage = useResetAtom(kubernetesResourcePageAtom);
+  const resetSearchText = useResetAtom(kubernetesResourceSearchTextAtom);
+  const resetStatus = useResetAtom(kubernetesResourceStatusAtom);
 
-  const totalSize = data?.data.totalSize ?? 0;
-  const currentPage = data?.data.currentPage ?? pageNo;
-
-  // biome-ignore lint: keyword 변경 시 페이지를 1로 리셋하기 위한 의도적인 의존성
-  useEffect(() => {
-    setPageNo(1);
-  }, [keyword]);
-
-  const handleChangePage = (page: number) => {
-    setPageNo(page);
+  /**
+   * 리소스 변경 핸들러
+   * 리소스 변경 시 페이지, 필터, 검색어를 모두 초기화
+   */
+  const handleResourceChange = (resourceName: KubernetesResourceName) => {
+    setSelectedResourceName(resourceName);
+    resetPage();
+    resetStatus();
+    resetSearchText();
   };
 
   return (
@@ -64,27 +88,12 @@ export function KubernetesMonitoringAside() {
             resourceName={resourceName}
             count={999}
             isActive={resourceName === selectedResourceName}
-            onClick={() => {
-              setSelectedResourceName(resourceName);
-              setPageNo(1);
-            }}
+            onClick={() => handleResourceChange(resourceName)}
           />
         ))}
       </Bridge>
-      <Body>
-        <KubernetesResourceListFilter totalSize={totalSize} />
-        <KubernetesResourceListBody
-          items={data?.data.content ?? []}
-          isLoading={isLoading}
-          isError={isError}
-        />
-        <KubernetesResourceListFooter
-          total={totalSize}
-          page={currentPage}
-          pageSize={KUBERNETES_RESOURCE_LIST_PAGE_SIZE}
-          onChange={handleChangePage}
-          isLoading={isLoading}
-        />
+      <Body key={selectedResourceName}>
+        {renderResourceSection(selectedResourceName)}
       </Body>
     </AsideDetailContainer>
   );
@@ -99,7 +108,7 @@ const Header = styled.div`
 
 const Bridge = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   margin-bottom: 10px;
 `;

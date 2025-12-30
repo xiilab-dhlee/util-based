@@ -6,13 +6,42 @@ import { Icon } from "xiilab-ui";
 
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
 import type { CoreResourceType } from "@/shared/types/core.interface";
+import { getPercent } from "@/shared/utils/calc.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 interface KubernetesResourceQuotaCardProps {
   resourceName: CoreResourceType;
-  total: number;
-  quota: number;
+  total?: number | null;
+  quota?: number | null;
   showDivider?: boolean;
+}
+
+/**
+ * 값을 단위와 함께 포맷팅합니다.
+ * 데이터가 없으면 "-"를 반환합니다.
+ */
+function formatValueWithUnit(
+  value: number | null | undefined,
+  unit: string,
+): string {
+  if (value == null) {
+    return "-";
+  }
+  return `${value} ${unit}`;
+}
+
+/**
+ * 퍼센트를 포맷팅합니다.
+ * 데이터가 없으면 "-"를 반환합니다.
+ */
+function formatPercent(
+  quota: number | null | undefined,
+  total: number | null | undefined,
+): string {
+  if (quota == null || total == null) {
+    return "-";
+  }
+  return `${getPercent(quota, total)}%`;
 }
 
 export function KubernetesResourceQuotaCard({
@@ -21,7 +50,10 @@ export function KubernetesResourceQuotaCard({
   quota,
   showDivider = false,
 }: KubernetesResourceQuotaCardProps) {
-  const { icon, color } = getResourceInfo(resourceName);
+  const { icon, color, unit, text } = getResourceInfo(resourceName);
+
+  const hasValidData = total != null && quota != null;
+  const usagePercent = hasValidData ? getPercent(quota, total) : 0;
 
   return (
     <Containter className={classNames({ divider: showDivider })}>
@@ -30,26 +62,26 @@ export function KubernetesResourceQuotaCard({
           <IconWrapper $color={color}>
             {icon && <Icon name={icon} size={24} color={color} />}
           </IconWrapper>
-          <Title>{resourceName}</Title>
+          <Title>{text}</Title>
         </HeaderLeft>
-        <HeaderRight>{(quota / total) * 100}%</HeaderRight>
+        <HeaderRight>{formatPercent(quota, total)}</HeaderRight>
       </Header>
       <Body>
         <ResourceProgress
           resourceType={resourceName}
-          usagePercent={(quota / total) * 100}
+          usagePercent={usagePercent}
           height={4}
           borderRadius={1}
           backgroundColor="#D1D5DC"
         />
         <Records>
           <Record>
-            <RecordKey>총량</RecordKey>
-            <RecordValue>{total}</RecordValue>
+            <RecordKey>전체</RecordKey>
+            <RecordValue>{formatValueWithUnit(total, unit)}</RecordValue>
           </Record>
           <Record>
-            <RecordKey>할당량</RecordKey>
-            <RecordValue>{quota}</RecordValue>
+            <RecordKey>사용</RecordKey>
+            <RecordValue>{formatValueWithUnit(quota, unit)}</RecordValue>
           </Record>
         </Records>
       </Body>

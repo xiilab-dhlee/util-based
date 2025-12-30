@@ -1,10 +1,12 @@
-import { isNil } from "es-toolkit";
+import styled from "styled-components";
 import type { ResponsiveColumnType } from "xiilab-ui";
+import { Tooltip } from "xiilab-ui";
 
 import type { UserResourceSchemaType } from "@/domain/monitoring/schemas/user-resource.schema";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatNumber } from "@/shared/utils/format.util";
 import { pubsubUtil } from "@/shared/utils/pubsub.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 import {
@@ -27,32 +29,28 @@ const MEM_INFO = getResourceInfo("MEM");
  */
 const formatUserName = (record: UserResourceSchemaType): string => {
   const { userName, email } = record;
-  const hasUserName = !!userName;
-  const hasEmail = !!email;
 
-  if (hasUserName && hasEmail) {
+  if (userName && email) {
     return `${userName}(${email})`;
   }
-  if (hasUserName) {
+  if (userName) {
     return userName;
   }
-  if (hasEmail) {
+  if (email) {
     return email;
   }
   return "-";
 };
 
 /**
- * 리소스 값 포맷팅 (값이 없으면 "-" 반환)
+ * 리소스 값 포맷팅 (값이 없으면 "-" 반환, 천 단위 콤마 적용)
  */
 const formatResourceValue = (
   value: number | null | undefined,
   unit: string,
 ) => {
-  if (isNil(value)) {
-    return "-";
-  }
-  return `${value}${unit}`;
+  const formatted = formatNumber(value);
+  return formatted === "-" ? formatted : `${formatted}${unit}`;
 };
 
 /**
@@ -65,7 +63,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "사용자",
       align: "left",
       sorter: true,
-      ellipsis: true,
       defaultSortOrder: "ascend",
       render: (_: unknown, record: UserResourceSchemaType) => {
         const displayText = formatUserName(record);
@@ -75,9 +72,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
         };
 
         return (
-          <ColumnTextButton onClick={handleClick}>
-            {displayText}
-          </ColumnTextButton>
+          <Tooltip title={displayText} maxWidth="100%">
+            <EllipsisButton onClick={handleClick}>{displayText}</EllipsisButton>
+          </Tooltip>
         );
       },
     },
@@ -171,3 +168,11 @@ export const createUserResourceColumn = (
 
   return applyColumnConfigs(columnList, config);
 };
+const EllipsisButton = styled(ColumnTextButton)`
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+`;
