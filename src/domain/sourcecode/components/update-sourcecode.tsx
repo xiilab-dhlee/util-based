@@ -179,7 +179,6 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
               onClick={handleDelete}
               icon="Delete"
               iconSize={20}
-              variant="outlined"
               aria-label="소스코드 삭제"
             />
           </Icons>

@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { Card, Icon, Tag, type TagProps } from "xiilab-ui";
+import { Card, Icon, Tag } from "xiilab-ui";
 
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
@@ -34,7 +34,7 @@ export function WorkloadSourcecodeCard({
       <Card
         contentVariant="compact"
         title={name}
-        icon={status === "PRIVATE" ? <Icon name="Lock" /> : null}
+        icon={status === "PRIVATE" ? <Icon name="Lock" /> : undefined}
         actionElement={
           onDelete ? (
             <IconWrapper onClick={onDelete}>
@@ -68,7 +68,7 @@ export function WorkloadSourcecodeCard({
             <LikeCompactCardValue
               data-testid={WORKLOAD_SELECTOR.sourcecodeType(type)}
             >
-              <StyledTag variant={tag as TagProps["variant"]}>{text}</StyledTag>
+              <Tag variant={tag}>{text}</Tag>
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
         </Body>
@@ -95,8 +95,4 @@ const IconWrapper = styled.button`
   background: #FAFAFA;
   border-radius: 2px;
   border: 1px solid #CED2D6;
-`;
-
-const StyledTag = styled(Tag)`
-  height: 20px;
 `;
