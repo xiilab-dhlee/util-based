@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { Icon, Typography } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
@@ -14,6 +14,7 @@ import {
   ListPageAside,
   ListPageBody,
   ListPageMain,
+  ListSectionTitle,
 } from "@/styles/layers/list-page-layers.styled";
 import { ManageMonitoringNotificationModal } from "./manage-monitoring-notification-modal";
 import { MonitoringNotificationListArticle } from "./monitoring-notification-list-article";
@@ -101,7 +102,7 @@ export function MonitoringNotificationMain() {
         {/* 모니터링 알림 페이지 - 오른쪽 영역 (필터, 본문, 페이지네이션) */}
         <ListPageBody>
           <SectionHeader>
-            <Typography.Text variant="title-2">모니터링 알림</Typography.Text>
+            <NotificationSectionTitle>모니터링 알림</NotificationSectionTitle>
           </SectionHeader>
           <MonitoringNotificationSettingArticle />
           <MonitoringNotificationListArticle />
@@ -122,4 +123,8 @@ const SectionHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+`;
+
+const NotificationSectionTitle = styled(ListSectionTitle)`
+  margin-top: 8px;
 `;

@@ -11,7 +11,7 @@ export interface CoreSearchText {
   searchText: string;
 }
 
-// 정렬 타입 (Spring Boot 표준)
+// 정렬 타입
 export type SortDirection = "ASC" | "DESC";
 
 export interface CoreSort {

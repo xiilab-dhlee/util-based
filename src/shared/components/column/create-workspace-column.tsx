@@ -8,6 +8,7 @@ import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
+import { formatNumber } from "@/shared/utils/format.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 import {
   ColumnAlignCenterWrap,
@@ -38,11 +39,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
       render: (workspaceName: string, record: WorkspaceListType) => {
         return (
-          <ColumnLink
-            href={ROUTES.ADMIN_WORKSPACE_DETAIL(record.id)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <ColumnLink href={ROUTES.ADMIN_WORKSPACE_DETAIL(record.id)}>
             {workspaceName}
           </ColumnLink>
         );
@@ -163,24 +160,30 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "실행중",
       dataIndex: "running",
       align: "center",
-      render: () => {
-        return <span>7,777</span>;
+      render: (running: number) => {
+        return (
+          <ColumnAlignCenterWrap>{formatNumber(running)}</ColumnAlignCenterWrap>
+        );
       },
     },
     {
       title: "대기중",
       dataIndex: "pending",
       align: "center",
-      render: () => {
-        return <span>7,777</span>;
+      render: (pending: number) => {
+        return (
+          <ColumnAlignCenterWrap>{formatNumber(pending)}</ColumnAlignCenterWrap>
+        );
       },
     },
     {
       title: "에러",
       dataIndex: "error",
       align: "center",
-      render: () => {
-        return <span>7,777</span>;
+      render: (error: number) => {
+        return (
+          <ColumnAlignCenterWrap>{formatNumber(error)}</ColumnAlignCenterWrap>
+        );
       },
     },
     {

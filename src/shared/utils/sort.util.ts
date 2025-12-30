@@ -40,11 +40,6 @@ export const getSortOrder = (
 ): AntdSortOrder | null =>
   sortState.sortBy === field ? toSortOrder(sortState.sortDirection) : null;
 
-/**
- * Ant Design Table sorter를 파싱하여 API 요청용 정렬 정보 반환
- * @param sorter - Ant Design Table onChange의 sorter 파라미터
- * @returns 유효한 정렬이면 { field, direction }, 아니면 null
- */
 export const parseSorter = <T>(
   sorter: SorterResult<T> | SorterResult<T>[],
 ): ParsedSortResult | null => {

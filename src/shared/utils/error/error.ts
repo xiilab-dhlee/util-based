@@ -24,7 +24,7 @@ const errorConfigRegistry: Record<string, ErrorConfig> = {
 
 // 기본 에러 설정
 const defaultErrorConfig: ErrorConfig = {
-  showToast: true,
+  showToast: false,
   errorMessage: "요청 처리 중 오류가 발생했습니다.",
   statusMessages: {
     401: "로그인이 필요합니다.",

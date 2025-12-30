@@ -56,6 +56,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      dataIndex: "nodeName",
+      title: "노드 이름",
+      align: "left",
+      render: (nodeName: string | null) => {
+        return <span>{nodeName ?? "-"}</span>;
+      },
+    },
+    {
       dataIndex: "jobType",
       title: "Job Type",
       align: "center",

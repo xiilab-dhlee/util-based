@@ -123,6 +123,8 @@ const baseWorkloadSchema = z.object({
   cpuCore: z.number().min(0).max(100),
   /** Memory */
   memoryGb: z.number().min(0).max(100),
+  /** 노드 이름 */
+  nodeName: z.string().nullable(),
 });
 
 export const workloadListSchema = baseWorkloadSchema.pick({
@@ -139,6 +141,7 @@ export const workloadListSchema = baseWorkloadSchema.pick({
   image: true,
   revokeWarningCount: true,
   isRevoked: true,
+  nodeName: true,
 });
 
 export const workloadDetailSchema = baseWorkloadSchema;

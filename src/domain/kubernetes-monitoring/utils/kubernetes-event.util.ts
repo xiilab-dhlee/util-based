@@ -1,4 +1,3 @@
-import { format, isValid, parseISO } from "date-fns";
 import type { LabelColorVariant } from "xiilab-ui/dist/components/Label/types";
 
 import {
@@ -32,29 +31,4 @@ export function getKubernetesEventLabelProps(status: string): {
     label: KUBERNETES_EVENT_STATUS_LABEL[typedStatus] ?? status,
     variant: KUBERNETES_EVENT_STATUS_LABEL_VARIANT_MAP[typedStatus] ?? "blue",
   };
-}
-
-/**
- * dateTime 문자열을 카드 표시용 날짜/시간으로 파싱
- * @param dateTime - ISO 형식 문자열 (예: "2024-12-26T13:31:00")
- * @returns { date: "24.12.26", time: "13:31" }
- */
-export function getParseDateTime(dateTime: string): {
-  date: string;
-  time: string;
-} {
-  try {
-    const dateObj = parseISO(dateTime);
-
-    if (!isValid(dateObj)) {
-      return { date: "-", time: "-" };
-    }
-
-    const date = format(dateObj, "yy.MM.dd");
-    const time = format(dateObj, "HH:mm");
-
-    return { date, time };
-  } catch {
-    return { date: "-", time: "-" };
-  }
 }

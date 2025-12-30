@@ -138,14 +138,15 @@ export function MonitoringSubSection() {
     {
       dataIndex: "userName",
       width: "20%",
+      align: "left",
       sorter: true,
       sortOrder: getSortOrder(userResourceSort, "userName"),
     },
-    { dataIndex: "gpu", width: "16%" },
-    { dataIndex: "mig", width: "16%" },
-    { dataIndex: "mps", width: "16%" },
-    { dataIndex: "cpu", width: "16%" },
-    { dataIndex: "mem", width: "16%" },
+    { dataIndex: "gpu", width: "16%", align: "center" },
+    { dataIndex: "mig", width: "16%", align: "center" },
+    { dataIndex: "mps", width: "16%", align: "center" },
+    { dataIndex: "cpu", width: "16%", align: "center" },
+    { dataIndex: "mem", width: "16%", align: "center" },
   ]);
 
   const activeWorkloadColumns = createWorkloadColumn([
@@ -157,14 +158,18 @@ export function MonitoringSubSection() {
       sortOrder: getSortOrder(activeWorkloadSort, "workloadName"),
     },
     {
+      dataIndex: "nodeName",
+      width: "21%",
+      ellipsis: true,
+    },
+    {
       dataIndex: "jobType",
-      width: "20%",
+      width: "17%",
       sorter: true,
       sortOrder: getSortOrder(activeWorkloadSort, "jobType"),
     },
-    { dataIndex: "creatorName", width: "15%", ellipsis: true },
-    { dataIndex: "elapsedTime", width: "20%" },
-    { dataIndex: "status", width: "15%" },
+    { dataIndex: "status", width: "12%" },
+    { dataIndex: "creatorName", width: "20%", ellipsis: true },
   ]);
 
   return (

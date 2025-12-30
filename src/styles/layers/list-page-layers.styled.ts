@@ -1,6 +1,7 @@
 "use client";
 
 import styled from "styled-components";
+import { Typography } from "xiilab-ui";
 
 /**
  * 목록 페이지 왼쪽 사이드바 컨테이너
@@ -28,7 +29,7 @@ export const ListPageBody = styled.div`
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
-  padding: 16px 24px;
+  padding: 16px 24px 20px 24px;
   background-color: #fafafa;
 `;
 
@@ -75,9 +76,6 @@ export const GridList = styled.div`
   grid-auto-rows: min-content;
 `;
 
-export const ListSectionTitle = styled.h3`
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1;
-  color: #000;
-`;
+export const ListSectionTitle = styled(Typography.Text).attrs({
+  variant: "title-2",
+})``;

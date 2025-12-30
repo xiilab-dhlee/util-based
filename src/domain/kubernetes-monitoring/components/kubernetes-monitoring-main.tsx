@@ -3,11 +3,10 @@
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 import styled from "styled-components";
-import { Typography } from "xiilab-ui";
 
 import {
-  kubernetesResourceKeywordAtom,
   kubernetesResourcePageAtom,
+  kubernetesResourceSearchTextAtom,
   kubernetesResourceStatusAtom,
   kubernetesSelectedResourceNameAtom,
 } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
@@ -25,12 +24,12 @@ import {
   ListPageAside,
   ListPageBody,
   ListPageMain,
+  ListSectionTitle,
 } from "@/styles/layers/list-page-layers.styled";
-import { subTitleStyle } from "@/styles/mixins/text";
 
 export function KubernetesMonitoringMain() {
   const resetPage = useResetAtom(kubernetesResourcePageAtom);
-  const resetKeyword = useResetAtom(kubernetesResourceKeywordAtom);
+  const resetSearchText = useResetAtom(kubernetesResourceSearchTextAtom);
   const resetStatus = useResetAtom(kubernetesResourceStatusAtom);
   const resetSelectedResourceName = useResetAtom(
     kubernetesSelectedResourceNameAtom,
@@ -39,11 +38,11 @@ export function KubernetesMonitoringMain() {
   useEffect(() => {
     return () => {
       resetPage();
-      resetKeyword();
+      resetSearchText();
       resetStatus();
       resetSelectedResourceName();
     };
-  }, [resetKeyword, resetPage, resetSelectedResourceName, resetStatus]);
+  }, [resetSearchText, resetPage, resetSelectedResourceName, resetStatus]);
 
   // TODO: API 연동 후 실제 데이터로 교체
   const mockEvents: KubernetesEventType[] = Array.from({ length: 12 }).map(
@@ -69,9 +68,7 @@ export function KubernetesMonitoringMain() {
       <ListPageMain>
         {/* 소스코드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
-          <QuotaHeader>
-            <Typography.Text variant="title-2">리소스 할당량</Typography.Text>
-          </QuotaHeader>
+          <QuotaSectionTitle>리소스 할당량</QuotaSectionTitle>
           <QuotaBody>
             <QuotaPane>
               <KubernetesResourceQuotaCard
@@ -109,18 +106,13 @@ export function KubernetesMonitoringMain() {
               />
             </QuotaPane>
           </QuotaBody>
-          <EventHeader>
-            <EventTitle variant="title-2">
-              전체 쿠버네티스 이벤트 내역
-            </EventTitle>
-          </EventHeader>
+          <ListSectionTitle>전체 쿠버네티스 이벤트 내역</ListSectionTitle>
           <EventBody>
             <EventGridWrapper>
               {mockEvents.map((event) => (
                 <KubernetesEventCard key={event.eventId} event={event} />
               ))}
             </EventGridWrapper>
-
             <KubernetesEventListFooter />
           </EventBody>
         </ListPageBody>
@@ -144,14 +136,7 @@ const QuotaBody = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-bottom: 20px;
-`;
-
-const QuotaHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  margin: 20px 0;
 `;
 
 const QuotaPane = styled.div`
@@ -165,19 +150,6 @@ const QuotaPane = styled.div`
   border-radius: 4px;
 `;
 
-const EventHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-`;
-
-const EventTitle = styled(Typography.Text)`
-  ${subTitleStyle(5)}
-
-  margin-left: 5px;
-`;
-
 const EventBody = styled.div`
   flex: 1;
   overflow: hidden;
@@ -188,6 +160,7 @@ const EventBody = styled.div`
   border: 1px solid #e0e0e0;
   background-color: #fcfcfc;
   padding: 20px;
+  margin-top: 14px;
 `;
 
 const EventGridWrapper = styled.div`
@@ -197,4 +170,8 @@ const EventGridWrapper = styled.div`
   gap: 8px;
   border-radius: 4px;
   background-color: #fcfcfc;
+`;
+
+const QuotaSectionTitle = styled(ListSectionTitle)`
+  margin-top: 8px;
 `;

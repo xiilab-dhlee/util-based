@@ -9,10 +9,12 @@ import {
 export const kubernetesResourcePageAtom = atomWithReset<number>(1);
 
 /** 쿠버네티스 리소스 리스트 검색어 */
-export const kubernetesResourceKeywordAtom = atomWithReset<string>("");
+export const kubernetesResourceSearchTextAtom = atomWithReset<string>("");
 
 /** 쿠버네티스 리소스 상태 필터 */
-export const kubernetesResourceStatusAtom = atomWithReset<string | null>(null);
+export const kubernetesResourceStatusAtom = atomWithReset<string | undefined>(
+  undefined,
+);
 
 /** 선택된 리소스 이름 (Nodes, Pods 등) */
 export const kubernetesSelectedResourceNameAtom =
