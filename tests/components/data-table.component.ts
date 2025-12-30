@@ -10,19 +10,52 @@ import { testId, testIdPrefix } from "@/shared/constants/selector.constant";
  * - 행 선택 및 버튼 클릭 캡슐화
  * - 상태별 행 찾기 기능
  *
+ * ## ID 용도 구분
+ *
+ * ### columnTestId (constructor 파라미터)
+ * - **용도**: 테이블 내 개별 셀/컬럼을 찾기 위한 data-testid
+ * - **할당 위치**: 각 행의 특정 컬럼 요소 (td, span 등)
+ * - **특징**: 여러 행에 걸쳐 반복됨 (각 행마다 동일한 ID)
+ * - **예시**: "workload-name", "workload-job-type", "user-email"
+ *
+ * ### tableTestId (메서드 파라미터)
+ * - **용도**: 테이블 컨테이너 자체를 찾기 위한 data-testid
+ * - **할당 위치**: 테이블 래퍼나 리스트 컨테이너 요소
+ * - **특징**: 페이지/컨테이너당 하나만 존재
+ * - **예시**: "list-table", SELECTOR.LIST_TABLE
+ *
  * @example
- * // 페이지 전체에서 테이블 조작
- * const table = new DataTableComponent(page, WORKLOAD_SELECTOR.NAME);
- * const count = await table.getRowCount();
+ * // 워크로드 목록 테이블 조작
+ * const table = new DataTableComponent(
+ *   page,
+ *   WORKLOAD_SELECTOR.NAME // columnTestId: 각 행의 이름 셀을 찾기 위한 ID
+ * );
+ * const count = await table.getRowCount(); // 행 개수 조회
+ *
+ * // 테이블 가시성 검증
+ * await table.assertTableVisible(
+ *   SELECTOR.LIST_TABLE // tableTestId: 테이블 컨테이너를 찾기 위한 ID
+ * );
  *
  * @example
  * // 모달 내 테이블 조작
  * const modal = page.locator('.ant-modal:visible');
- * const table = new DataTableComponent(modal, WORKLOAD_SELECTOR.NAME);
+ * const table = new DataTableComponent(
+ *   modal,
+ *   "member-name" // columnTestId: 멤버 이름 컬럼
+ * );
  */
 export class DataTableComponent {
   private container: Page | Locator;
 
+  /**
+   * 데이터 테이블 컴포넌트 생성
+   *
+   * @param pageOrContainer - 테이블을 포함하는 Page 또는 Locator (모달, 섹션 등)
+   * @param columnTestId - 행 순회/조회에 사용할 기준 컬럼의 data-testid
+   *                       예: "workload-name", "user-email"
+   *                       이 ID는 각 행의 특정 셀에 할당되어 있어야 함
+   */
   constructor(
     pageOrContainer: Page | Locator,
     private columnTestId: string,
@@ -208,10 +241,23 @@ export class DataTableComponent {
   // ============================================
 
   /**
-   * 테이블 컨테이너가 표시되는지 확인
+   * 테이블 컨테이너가 표시되는지 확인하고 로딩 완료를 대기
    *
-   * @param tableTestId - 테이블 컨테이너의 data-testid
+   * 테이블 래퍼 요소의 가시성을 확인한 후, 내부 스피너가 사라질 때까지 대기합니다.
+   *
+   * @param tableTestId - 테이블 컨테이너 요소의 data-testid
+   *                      (constructor의 columnTestId와 다름: 이것은 컨테이너 자체의 ID)
+   *                      예: SELECTOR.LIST_TABLE ("list-table")
    * @param timeout - 대기 시간 (기본 10초)
+   *
+   * @example
+   * // 워크로드 목록 테이블 검증
+   * const table = new DataTableComponent(page, WORKLOAD_SELECTOR.NAME);
+   * await table.assertTableVisible(SELECTOR.LIST_TABLE);
+   *
+   * @example
+   * // 커스텀 테이블 컨테이너 검증
+   * await table.assertTableVisible("member-list-table");
    */
   async assertTableVisible(
     tableTestId: string,
@@ -220,19 +266,34 @@ export class DataTableComponent {
     const table = this.container.locator(testId(tableTestId));
     await expect(table).toBeVisible({ timeout });
 
-    // 로딩 완료 대기: 스피너 소멸
-    const spinner = table.locator(".ant-spin");
-    await expect(spinner).toBeHidden({ timeout });
+    // 로딩 완료 대기
+    await this.waitForLoaded(timeout);
   }
 
   /**
    * 테이블 빈 상태 메시지 검증
    *
    * Ant Design Table의 empty placeholder 텍스트를 확인합니다.
+   * 테이블 컨테이너 내부의 빈 상태 메시지를 찾아 검증합니다.
    *
-   * @param tableTestId - 테이블 컨테이너의 data-testid
-   * @param expectedMessage - 기대하는 메시지
+   * @param tableTestId - 테이블 컨테이너 요소의 data-testid
+   *                      (constructor의 columnTestId와 다름: 이것은 컨테이너 자체의 ID)
+   *                      예: SELECTOR.LIST_TABLE ("list-table")
+   * @param expectedMessage - 기대하는 빈 상태 메시지 (부분 매칭)
+   *                          예: "데이터 없음", "검색 결과가 없습니다"
    * @param timeout - 대기 시간 (기본 10초)
+   *
+   * @example
+   * // 검색 결과 없음 메시지 검증
+   * const table = new DataTableComponent(page, WORKLOAD_SELECTOR.NAME);
+   * await table.assertEmptyMessage(
+   *   SELECTOR.LIST_TABLE,
+   *   "검색 결과가 없습니다"
+   * );
+   *
+   * @example
+   * // 빈 목록 메시지 검증
+   * await table.assertEmptyMessage("user-list-table", "데이터 없음");
    */
   async assertEmptyMessage(
     tableTestId: string,
