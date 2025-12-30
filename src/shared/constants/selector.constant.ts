@@ -284,6 +284,32 @@ export const USER_MONITORING_SELECTOR = {
 } as const;
 
 // ============================================
+// 인증 (Auth)
+// ============================================
+
+export const AUTH_SELECTOR = {
+  // 회원가입 페이지
+  /** 회원가입 페이지 헤더 */
+  SIGNUP_HEADER: "signup-header",
+  /** 이메일 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  SIGNUP_EMAIL_FIELD: "signup-email-field",
+  /** 비밀번호 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  SIGNUP_PASSWORD_FIELD: "signup-password-field",
+  /** 비밀번호 확인 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  SIGNUP_CONFIRM_PASSWORD_FIELD: "signup-confirm-password-field",
+  /** 이름 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  SIGNUP_FIRST_NAME_FIELD: "signup-first-name-field",
+  /** 성 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  SIGNUP_LAST_NAME_FIELD: "signup-last-name-field",
+  /** 그룹 드롭다운 */
+  SIGNUP_GROUP_NAME: "signup-group-name",
+  /** 회원가입 버튼 */
+  SIGNUP_SUBMIT_BUTTON: "signup-submit-button",
+  /** 로그인 링크 */
+  SIGNUP_LOGIN_LINK: "signup-login-link",
+} as const;
+
+// ============================================
 // 테스트용 헬퍼 함수
 // ============================================
 
