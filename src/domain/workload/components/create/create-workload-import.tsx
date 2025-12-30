@@ -4,6 +4,7 @@ import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openSelectWorkloadModalAtom } from "@/shared/state/modal.atom";
@@ -30,7 +31,7 @@ export function CreateWorkloadImport() {
         <BodyTitle>기존 워크로드 정보 가져오기</BodyTitle>
         <Buttons>
           <Button
-            data-testid="workload-create-recent-import-button"
+            data-testid={WORKLOAD_SELECTOR.CREATE_RECENT_IMPORT_BUTTON}
             onClick={handleClickRecentWorkload}
           >
             <Typography.Text variant="button-1" color="var(--color-gray-01)">
@@ -38,7 +39,7 @@ export function CreateWorkloadImport() {
             </Typography.Text>
           </Button>
           <Button
-            data-testid="workload-create-list-import-button"
+            data-testid={WORKLOAD_SELECTOR.CREATE_LIST_IMPORT_BUTTON}
             onClick={handleClickLoadWorkload}
           >
             <Typography.Text variant="button-1" color="var(--color-gray-01)">
