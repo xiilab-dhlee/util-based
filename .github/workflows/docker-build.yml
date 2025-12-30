@@ -67,4 +67,3 @@ jobs:
         with:
           command: cves
           image: ${{ steps.meta.outputs.tags }}
-

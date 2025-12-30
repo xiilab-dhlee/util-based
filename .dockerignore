@@ -17,3 +17,7 @@ coverage
 .cache
 dist
 build
+tests
+allure-results
+allure-report
+playwright-report
