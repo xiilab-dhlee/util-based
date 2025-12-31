@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 
-import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
+import { AUTH_SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { ButtonComponent } from "../components/button.component";
 import { DropdownComponent } from "../components/dropdown.component";
 import { FormItemComponent } from "../components/form-item.component";
@@ -65,6 +65,8 @@ export class SignupPage extends BasePage {
 
   /** 회원가입 버튼 컴포넌트 */
   readonly submitButton: ButtonComponent;
+  /** 로그인 페이지로 이동 버튼 (회원가입 성공 후) */
+  readonly goToLoginButton: ButtonComponent;
 
   // ============================================
   // Instance Properties - Link 험블 객체
@@ -76,6 +78,19 @@ export class SignupPage extends BasePage {
   // ============================================
   // Private - Field Mapping (DRY 원칙)
   // ============================================
+
+  /**
+   * 필드명 → Input 컴포넌트 매핑
+   */
+  private get inputFieldMap(): Record<string, InputComponent> {
+    return {
+      Email: this.emailInput,
+      Password: this.passwordInput,
+      "Confirm Password": this.confirmPasswordInput,
+      "First Name": this.firstNameInput,
+      "Last Name": this.lastNameInput,
+    };
+  }
 
   /**
    * 필드명 → FormItem 컴포넌트 매핑 (에러 검증용, Group Name 제외)
@@ -190,6 +205,10 @@ export class SignupPage extends BasePage {
       page,
       AUTH_SELECTOR.SIGNUP_SUBMIT_BUTTON,
     );
+    this.goToLoginButton = new ButtonComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_GO_TO_LOGIN_BUTTON,
+    );
 
     // Link 컴포넌트 초기화
     this.loginLink = new LinkComponent(page, AUTH_SELECTOR.SIGNUP_LOGIN_LINK);
@@ -270,19 +289,13 @@ export class SignupPage extends BasePage {
    * @param value - 입력할 값
    */
   async fillField(fieldName: string, value: string): Promise<void> {
-    const fieldMap: Record<string, () => Promise<void>> = {
-      Email: () => this.fillEmail(value),
-      Password: () => this.fillPassword(value),
-      "Confirm Password": () => this.fillConfirmPassword(value),
-      "First Name": () => this.fillFirstName(value),
-      "Last Name": () => this.fillLastName(value),
-    };
-
-    const fillAction = fieldMap[fieldName];
-    if (!fillAction) {
-      throw new Error(`Unknown field name: ${fieldName}`);
+    const input = this.inputFieldMap[fieldName];
+    if (!input) {
+      throw new Error(
+        `Unknown field name: ${fieldName}. Valid fields: ${Object.keys(this.inputFieldMap).join(", ")}`,
+      );
     }
-    await fillAction();
+    await input.fill(value);
   }
 
   /**
@@ -309,19 +322,21 @@ export class SignupPage extends BasePage {
   }
 
   /**
-   * 로그인 페이지로 이동 버튼 클릭 (회원가입 성공 후 표시)
-   */
-  async clickGoToLogin(): Promise<void> {
-    await this.page
-      .getByRole("button", { name: "로그인 페이지로 이동" })
-      .click();
-  }
-
-  /**
    * 로그인 링크 클릭
    */
   async clickLoginLink(): Promise<void> {
     await this.loginLink.click();
+  }
+
+  // ============================================
+  // Actions - 회원가입 성공 후
+  // ============================================
+
+  /**
+   * 로그인 페이지로 이동 버튼 클릭 (회원가입 성공 후)
+   */
+  async clickGoToLogin(): Promise<void> {
+    await this.goToLoginButton.click();
   }
 
   // ============================================
@@ -362,20 +377,24 @@ export class SignupPage extends BasePage {
     await this.submitButton.assertDisabled();
   }
 
+  // ============================================
+  // Assertions - 회원가입 성공
+  // ============================================
+
   /**
-   * 로그인 페이지로 이동 버튼이 표시되는지 확인 (회원가입 성공 후)
+   * 회원가입 성공 UI가 표시되는지 확인
    */
-  async assertGoToLoginButtonVisible(): Promise<void> {
+  async assertSignupSuccess(): Promise<void> {
     await expect(
-      this.page.getByRole("button", { name: "로그인 페이지로 이동" }),
+      this.page.locator(testId(AUTH_SELECTOR.SIGNUP_SUCCESS_CONTAINER)),
     ).toBeVisible();
   }
 
   /**
-   * 회원가입 성공 확인 (complete-signup 페이지로 이동)
+   * 로그인 페이지로 이동 버튼이 표시되는지 확인 (회원가입 성공 후)
    */
-  async assertSignupSuccess(): Promise<void> {
-    await expect(this.page).toHaveURL(/\/complete-signup/);
+  async assertGoToLoginButtonVisible(): Promise<void> {
+    await this.goToLoginButton.assertVisible();
   }
 
   // ============================================

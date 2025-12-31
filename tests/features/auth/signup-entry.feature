@@ -1,4 +1,4 @@
-@auth
+@signup
 Feature: 회원가입 페이지 진입
   As a 비로그인 사용자,
   I want to 회원가입 페이지에 진입하면

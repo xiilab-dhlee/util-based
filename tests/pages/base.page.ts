@@ -81,6 +81,7 @@ export abstract class BasePage {
    * this.generateRandomText(10) // "aB3xKp9mZq"
    */
   protected generateRandomText(length: number): string {
+    if (length <= 0) return "";
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789가나다라마바사아자차카타파하";
     let result = "";

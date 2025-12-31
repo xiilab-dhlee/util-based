@@ -1,4 +1,4 @@
-@auth @validation
+@signup @validation
 Feature: 회원가입 유효성 검증
   As a 비로그인 사용자,
   I want to 회원가입 폼에서 유효하지 않은 값을 입력하면

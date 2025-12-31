@@ -1,4 +1,4 @@
-@auth @interaction
+@signup @interaction
 Feature: 회원가입 인터랙션
   As a 비로그인 사용자,
   I want to 회원가입 폼에서 입력값을 제출하면
@@ -14,12 +14,12 @@ Feature: 회원가입 인터랙션
   @regression
   Scenario: First Name 필드는 25자까지만 입력 가능하다
     When First Name 필드에 26자를 입력하려고 시도한다
-    Then First Name 필드에는 25자까지만 입력되어 있다
+    Then First Name 필드에는 25자까지만 표시된다
 
   @regression
   Scenario: Last Name 필드는 25자까지만 입력 가능하다
     When Last Name 필드에 26자를 입력하려고 시도한다
-    Then Last Name 필드에는 25자까지만 입력되어 있다
+    Then Last Name 필드에는 25자까지만 표시된다
 
   # ============================================
   # 회원가입 성공 케이스

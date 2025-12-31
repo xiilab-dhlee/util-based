@@ -180,11 +180,11 @@ When("Last Name 필드에 26자를 입력하려고 시도한다", async ({ signu
   await signupPage.typeLastNameWithLength(26);
 });
 
-Then("First Name 필드에는 25자까지만 입력되어 있다", async ({ signupPage }) => {
+Then("First Name 필드에는 25자까지만 표시된다", async ({ signupPage }) => {
   await signupPage.assertFirstNameLength(25);
 });
 
-Then("Last Name 필드에는 25자까지만 입력되어 있다", async ({ signupPage }) => {
+Then("Last Name 필드에는 25자까지만 표시된다", async ({ signupPage }) => {
   await signupPage.assertLastNameLength(25);
 });
 
