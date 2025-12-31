@@ -21,6 +21,10 @@ Given("회원가입 페이지에 진입한다", async ({ signupPage }) => {
   await signupPage.goto();
 });
 
+Then("회원가입 페이지가 표시된다", async ({ signupPage }) => {
+  await signupPage.assertPageVisible();
+});
+
 // ============================================
 // Given - 필수값 미입력 시나리오
 // ============================================
@@ -73,13 +77,6 @@ When(
 );
 
 When(
-  "Confirm Password 필드에 {string}를 입력한다",
-  async ({ signupPage }, value: string) => {
-    await signupPage.fillConfirmPassword(value);
-  },
-);
-
-When(
   "First Name 필드에 {string}을 입력한다",
   async ({ signupPage }, value: string) => {
     await signupPage.fillFirstName(value);
@@ -97,16 +94,9 @@ When(
 // When - 버튼 클릭
 // ============================================
 
-When(
-  /^"(회원가입|로그인 페이지로 이동)" 버튼을 클릭한다$/,
-  async ({ signupPage }, buttonName: string) => {
-    if (buttonName === "회원가입") {
-      await signupPage.clickSubmit();
-    } else if (buttonName === "로그인 페이지로 이동") {
-      await signupPage.clickGoToLogin();
-    }
-  },
-);
+When("회원가입 버튼을 클릭한다", async ({ signupPage }) => {
+  await signupPage.clickSubmit();
+});
 
 // ============================================
 // Then - 에러 메시지 검증
@@ -147,6 +137,13 @@ Then(
   },
 );
 
+Then(
+  "Password 필드에 에러 메시지가 표시되지 않는다",
+  async ({ signupPage }) => {
+    await signupPage.assertFieldNoError("Password");
+  },
+);
+
 // ============================================
 // Then - 페이지 상태 검증
 // ============================================
@@ -163,10 +160,44 @@ Then("회원가입이 성공적으로 처리된다", async ({ signupPage }) => {
   await signupPage.assertSignupSuccess();
 });
 
-Then("{string} 버튼이 표시된다", async ({ signupPage }, buttonName: string) => {
-  if (buttonName === "로그인 페이지로 이동") {
-    await signupPage.assertGoToLoginButtonVisible();
-  } else {
-    throw new Error(`Unknown button for visibility check: ${buttonName}`);
-  }
+Then("회원가입 버튼이 표시된다", async ({ signupPage }) => {
+  await signupPage.assertSubmitButtonVisible();
+});
+
+Then("로그인 페이지로 이동 버튼이 표시된다", async ({ signupPage }) => {
+  await signupPage.assertGoToLoginButtonVisible();
+});
+
+// ============================================
+// maxLength 회귀 방지 검증
+// ============================================
+
+When("First Name 필드에 26자를 입력하려고 시도한다", async ({ signupPage }) => {
+  await signupPage.typeFirstNameWithLength(26);
+});
+
+When("Last Name 필드에 26자를 입력하려고 시도한다", async ({ signupPage }) => {
+  await signupPage.typeLastNameWithLength(26);
+});
+
+Then("First Name 필드에는 25자까지만 입력되어 있다", async ({ signupPage }) => {
+  await signupPage.assertFirstNameLength(25);
+});
+
+Then("Last Name 필드에는 25자까지만 입력되어 있다", async ({ signupPage }) => {
+  await signupPage.assertLastNameLength(25);
+});
+
+// ============================================
+// UI 렌더링 검증
+// ============================================
+
+Then("다음 필드가 표시된다", async ({ signupPage }, dataTable) => {
+  const fields = dataTable.hashes() as Array<{ field: string }>;
+  const fieldNames = fields.map((row) => row.field);
+  await signupPage.assertFieldsVisible(fieldNames);
+});
+
+Then("로그인하기 링크가 표시된다", async ({ signupPage }) => {
+  await signupPage.assertLoginLinkVisible();
 });
