@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
 import { LoginBackgroundIcon } from "@/shared/components/icon/login-background";
+import { LEGAL_INFO } from "@/shared/constants/legal.constant";
 
 /**
  * 사용자 인증 관련 페이지 공통 레이아웃
@@ -16,11 +18,24 @@ export default function UserAuthLayout({ children }: PropsWithChildren) {
       <Left>
         <LeftBody>{children}</LeftBody>
         <LeftFooter>
+          <FooterLinks>
+            {LEGAL_INFO.FOOTER_LINKS.map((link, index) => (
+              <span key={link.label}>
+                <StyledLink href={link.href}>
+                  <Typography.Text variant="body-4-2" color="#828588">
+                    {link.label}
+                  </Typography.Text>
+                </StyledLink>
+                {index < LEGAL_INFO.FOOTER_LINKS.length - 1 && (
+                  <Typography.Text variant="body-4-2" color="#828588">
+                    ｜
+                  </Typography.Text>
+                )}
+              </span>
+            ))}
+          </FooterLinks>
           <Typography.Text variant="body-4-2" color="#828588">
-            도움말｜개인정보처리방침｜이용약관
-          </Typography.Text>
-          <Typography.Text variant="body-4-2" color="#828588">
-            (주)씨이랩｜대표이사 : 채정환, 윤세혁｜사업자등록번호 : 119-86-31534
+            {LEGAL_INFO.COMPANY_INFO}
           </Typography.Text>
         </LeftFooter>
       </Left>
@@ -38,6 +53,7 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
   background-color: #fff;
+  overflow: hidden;
 `;
 
 const Left = styled.div`
@@ -64,9 +80,28 @@ const LeftFooter = styled.div`
   gap: 8px;
 `;
 
+const FooterLinks = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  span {
+    display: flex;
+    align-items: center;
+  }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const Right = styled.div`
   position: relative;
-  width: 100%;
   height: 100%;
+  flex: 1;
   min-width: 1300px;
 `;
