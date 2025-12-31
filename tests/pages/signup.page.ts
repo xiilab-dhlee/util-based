@@ -1,6 +1,11 @@
-import { expect, type Locator } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
-import { AUTH_SELECTOR, testId } from "@/shared/constants/selector.constant";
+import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
+import { ButtonComponent } from "../components/button.component";
+import { DropdownComponent } from "../components/dropdown.component";
+import { FormItemComponent } from "../components/form-item.component";
+import { InputComponent } from "../components/input.component";
+import { LinkComponent } from "../components/link.component";
 import { BasePage } from "./base.page";
 
 /**
@@ -15,6 +20,126 @@ import { BasePage } from "./base.page";
  * await signupPage.assertFieldError("email", "이메일을 입력해 주세요.");
  */
 export class SignupPage extends BasePage {
+  // ============================================
+  // Instance Properties - FormItem 험블 객체
+  // ============================================
+
+  /** Email FormItem 컴포넌트 */
+  readonly emailField: FormItemComponent;
+  /** Password FormItem 컴포넌트 */
+  readonly passwordField: FormItemComponent;
+  /** Confirm Password FormItem 컴포넌트 */
+  readonly confirmPasswordField: FormItemComponent;
+  /** First Name FormItem 컴포넌트 */
+  readonly firstNameField: FormItemComponent;
+  /** Last Name FormItem 컴포넌트 */
+  readonly lastNameField: FormItemComponent;
+  /** Group Name FormItem 컴포넌트 */
+  readonly groupNameField: FormItemComponent;
+
+  // ============================================
+  // Instance Properties - Input 험블 객체
+  // ============================================
+
+  /** Email 입력 컴포넌트 */
+  readonly emailInput: InputComponent;
+  /** Password 입력 컴포넌트 */
+  readonly passwordInput: InputComponent;
+  /** Confirm Password 입력 컴포넌트 */
+  readonly confirmPasswordInput: InputComponent;
+  /** First Name 입력 컴포넌트 */
+  readonly firstNameInput: InputComponent;
+  /** Last Name 입력 컴포넌트 */
+  readonly lastNameInput: InputComponent;
+
+  // ============================================
+  // Instance Properties - Dropdown 험블 객체
+  // ============================================
+
+  /** Group Name 드롭다운 컴포넌트 */
+  readonly groupNameDropdown: DropdownComponent;
+
+  // ============================================
+  // Instance Properties - Button 험블 객체
+  // ============================================
+
+  /** 회원가입 버튼 컴포넌트 */
+  readonly submitButton: ButtonComponent;
+
+  // ============================================
+  // Instance Properties - Link 험블 객체
+  // ============================================
+
+  /** 로그인 링크 컴포넌트 */
+  readonly loginLink: LinkComponent;
+
+  constructor(page: Page) {
+    super(page);
+
+    // FormItem 컴포넌트 초기화
+    this.emailField = new FormItemComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_EMAIL_FIELD,
+    );
+    this.passwordField = new FormItemComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_PASSWORD_FIELD,
+    );
+    this.confirmPasswordField = new FormItemComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_CONFIRM_PASSWORD_FIELD,
+    );
+    this.firstNameField = new FormItemComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_FIRST_NAME_FIELD,
+    );
+    this.lastNameField = new FormItemComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_LAST_NAME_FIELD,
+    );
+    this.groupNameField = new FormItemComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_GROUP_NAME_FIELD,
+    );
+
+    // Input 컴포넌트 초기화
+    this.emailInput = new InputComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_EMAIL_INPUT,
+    );
+    this.passwordInput = new InputComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_PASSWORD_INPUT,
+    );
+    this.confirmPasswordInput = new InputComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_CONFIRM_PASSWORD_INPUT,
+    );
+    this.firstNameInput = new InputComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_FIRST_NAME_INPUT,
+    );
+    this.lastNameInput = new InputComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_LAST_NAME_INPUT,
+    );
+
+    // Dropdown 컴포넌트 초기화
+    this.groupNameDropdown = new DropdownComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_GROUP_NAME_FIELD,
+    );
+
+    // Button 컴포넌트 초기화
+    this.submitButton = new ButtonComponent(
+      page,
+      AUTH_SELECTOR.SIGNUP_SUBMIT_BUTTON,
+    );
+
+    // Link 컴포넌트 초기화
+    this.loginLink = new LinkComponent(page, AUTH_SELECTOR.SIGNUP_LOGIN_LINK);
+  }
+
   // ============================================
   // Abstract 구현
   // ============================================
@@ -38,82 +163,6 @@ export class SignupPage extends BasePage {
   async goto(): Promise<void> {
     await this.page.goto(this.basePath);
     await this.pageHeader.waitFor({ state: "visible" });
-  }
-
-  // ============================================
-  // Locators - Form Fields (FormItem 기반)
-  // ============================================
-
-  /** Email FormItem */
-  get emailField(): Locator {
-    return this.page.locator(testId(AUTH_SELECTOR.SIGNUP_EMAIL_FIELD));
-  }
-
-  /** Email 입력 필드 (FormItem 내부 input) */
-  get emailInput(): Locator {
-    return this.emailField.locator("input");
-  }
-
-  /** Password FormItem */
-  get passwordField(): Locator {
-    return this.page.locator(testId(AUTH_SELECTOR.SIGNUP_PASSWORD_FIELD));
-  }
-
-  /** Password 입력 필드 (FormItem 내부 input) */
-  get passwordInput(): Locator {
-    return this.passwordField.locator("input");
-  }
-
-  /** Confirm Password FormItem */
-  get confirmPasswordField(): Locator {
-    return this.page.locator(
-      testId(AUTH_SELECTOR.SIGNUP_CONFIRM_PASSWORD_FIELD),
-    );
-  }
-
-  /** Confirm Password 입력 필드 (FormItem 내부 input) */
-  get confirmPasswordInput(): Locator {
-    return this.confirmPasswordField.locator("input");
-  }
-
-  /** First Name FormItem */
-  get firstNameField(): Locator {
-    return this.page.locator(testId(AUTH_SELECTOR.SIGNUP_FIRST_NAME_FIELD));
-  }
-
-  /** First Name 입력 필드 (FormItem 내부 input) */
-  get firstNameInput(): Locator {
-    return this.firstNameField.locator("input");
-  }
-
-  /** Last Name FormItem */
-  get lastNameField(): Locator {
-    return this.page.locator(testId(AUTH_SELECTOR.SIGNUP_LAST_NAME_FIELD));
-  }
-
-  /** Last Name 입력 필드 (FormItem 내부 input) */
-  get lastNameInput(): Locator {
-    return this.lastNameField.locator("input");
-  }
-
-  /** Group Name 드롭다운 */
-  get groupNameDropdown(): Locator {
-    return this.page.locator(testId(AUTH_SELECTOR.SIGNUP_GROUP_NAME));
-  }
-
-  /** 회원가입 버튼 */
-  get submitButton(): Locator {
-    return this.page.locator(testId(AUTH_SELECTOR.SIGNUP_SUBMIT_BUTTON));
-  }
-
-  /** 로그인 페이지로 이동 버튼 (회원가입 성공 후) */
-  get goToLoginButton(): Locator {
-    return this.page.getByRole("button", { name: "로그인 페이지로 이동" });
-  }
-
-  /** 로그인 링크 */
-  get loginLink(): Locator {
-    return this.page.locator(testId(AUTH_SELECTOR.SIGNUP_LOGIN_LINK));
   }
 
   // ============================================
@@ -205,10 +254,19 @@ export class SignupPage extends BasePage {
   }
 
   /**
-   * 로그인 페이지로 이동 버튼 클릭
+   * 로그인 페이지로 이동 버튼 클릭 (회원가입 성공 후 표시)
    */
   async clickGoToLogin(): Promise<void> {
-    await this.goToLoginButton.click();
+    await this.page
+      .getByRole("button", { name: "로그인 페이지로 이동" })
+      .click();
+  }
+
+  /**
+   * 로그인 링크 클릭
+   */
+  async clickLoginLink(): Promise<void> {
+    await this.loginLink.click();
   }
 
   // ============================================
@@ -231,7 +289,7 @@ export class SignupPage extends BasePage {
     fieldName: string,
     expectedMessage: string,
   ): Promise<void> {
-    const fieldLocatorMap: Record<string, Locator> = {
+    const fieldMap: Record<string, FormItemComponent> = {
       Email: this.emailField,
       Password: this.passwordField,
       "Confirm Password": this.confirmPasswordField,
@@ -239,28 +297,49 @@ export class SignupPage extends BasePage {
       "Last Name": this.lastNameField,
     };
 
-    const fieldLocator = fieldLocatorMap[fieldName];
-    if (!fieldLocator) {
+    const field = fieldMap[fieldName];
+    if (!field) {
       throw new Error(`Unknown field name: ${fieldName}`);
     }
 
-    // FormItem 내에서 에러 메시지 검증
-    const errorLocator = fieldLocator.getByText(expectedMessage);
-    await expect(errorLocator).toBeVisible();
+    await field.assertErrorMessage(expectedMessage);
+  }
+
+  /**
+   * 특정 필드에 에러 메시지가 없는지 확인
+   * @param fieldName - 필드명 (Email, Password, Confirm Password, First Name, Last Name)
+   */
+  async assertFieldNoError(fieldName: string): Promise<void> {
+    const fieldMap: Record<string, FormItemComponent> = {
+      Email: this.emailField,
+      Password: this.passwordField,
+      "Confirm Password": this.confirmPasswordField,
+      "First Name": this.firstNameField,
+      "Last Name": this.lastNameField,
+    };
+
+    const field = fieldMap[fieldName];
+    if (!field) {
+      throw new Error(`Unknown field name: ${fieldName}`);
+    }
+
+    await field.assertNoError();
   }
 
   /**
    * 회원가입 버튼이 비활성화 상태인지 확인
    */
   async assertSubmitButtonDisabled(): Promise<void> {
-    await expect(this.submitButton).toBeDisabled();
+    await this.submitButton.assertDisabled();
   }
 
   /**
-   * 로그인 페이지로 이동 버튼이 표시되는지 확인
+   * 로그인 페이지로 이동 버튼이 표시되는지 확인 (회원가입 성공 후)
    */
   async assertGoToLoginButtonVisible(): Promise<void> {
-    await expect(this.goToLoginButton).toBeVisible();
+    await expect(
+      this.page.getByRole("button", { name: "로그인 페이지로 이동" }),
+    ).toBeVisible();
   }
 
   /**
@@ -268,5 +347,95 @@ export class SignupPage extends BasePage {
    */
   async assertSignupSuccess(): Promise<void> {
     await expect(this.page).toHaveURL(/\/complete-signup/);
+  }
+
+  // ============================================
+  // Actions & Assertions - maxLength 검증
+  // ============================================
+
+  /**
+   * First Name 필드에 지정된 길이의 문자열 입력 시도
+   * @param length - 입력 시도할 문자열 길이
+   */
+  async typeFirstNameWithLength(length: number): Promise<void> {
+    const text = "가".repeat(length);
+    await this.firstNameInput.fill(text);
+  }
+
+  /**
+   * Last Name 필드에 지정된 길이의 문자열 입력 시도
+   * @param length - 입력 시도할 문자열 길이
+   */
+  async typeLastNameWithLength(length: number): Promise<void> {
+    const text = "가".repeat(length);
+    await this.lastNameInput.fill(text);
+  }
+
+  /**
+   * First Name 필드의 입력값 길이 검증
+   * @param expectedLength - 기대하는 문자열 길이
+   */
+  async assertFirstNameLength(expectedLength: number): Promise<void> {
+    const value = await this.firstNameInput.getValue();
+    expect(value.length).toBe(expectedLength);
+  }
+
+  /**
+   * Last Name 필드의 입력값 길이 검증
+   * @param expectedLength - 기대하는 문자열 길이
+   */
+  async assertLastNameLength(expectedLength: number): Promise<void> {
+    const value = await this.lastNameInput.getValue();
+    expect(value.length).toBe(expectedLength);
+  }
+
+  // ============================================
+  // Assertions - UI 렌더링 검증
+  // ============================================
+
+  /**
+   * 특정 필드가 표시되는지 확인
+   * @param fieldName - 필드명 (Email, Password, Confirm Password, First Name, Last Name, Group Name)
+   */
+  async assertFieldVisible(fieldName: string): Promise<void> {
+    const fieldMap: Record<string, FormItemComponent> = {
+      Email: this.emailField,
+      Password: this.passwordField,
+      "Confirm Password": this.confirmPasswordField,
+      "First Name": this.firstNameField,
+      "Last Name": this.lastNameField,
+      "Group Name": this.groupNameField,
+    };
+
+    const field = fieldMap[fieldName];
+    if (!field) {
+      throw new Error(`Unknown field name: ${fieldName}`);
+    }
+
+    await field.assertVisible();
+  }
+
+  /**
+   * 여러 필드가 표시되는지 확인
+   * @param fieldNames - 필드명 배열
+   */
+  async assertFieldsVisible(fieldNames: string[]): Promise<void> {
+    for (const fieldName of fieldNames) {
+      await this.assertFieldVisible(fieldName);
+    }
+  }
+
+  /**
+   * 회원가입 버튼이 표시되는지 확인
+   */
+  async assertSubmitButtonVisible(): Promise<void> {
+    await this.submitButton.assertVisible();
+  }
+
+  /**
+   * 로그인 링크가 표시되는지 확인
+   */
+  async assertLoginLinkVisible(): Promise<void> {
+    await this.loginLink.assertVisible();
   }
 }
