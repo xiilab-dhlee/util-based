@@ -322,6 +322,12 @@ export const AUTH_SELECTOR = {
   SIGNUP_SUBMIT_BUTTON: "signup-submit-button",
   /** 로그인 링크 */
   SIGNUP_LOGIN_LINK: "signup-login-link",
+
+  // 회원가입 성공 UI (signup 페이지 내)
+  /** 회원가입 성공 컨테이너 */
+  SIGNUP_SUCCESS_CONTAINER: "signup-success-container",
+  /** 로그인 페이지로 이동 버튼 (회원가입 성공 후) */
+  SIGNUP_GO_TO_LOGIN_BUTTON: "signup-go-to-login-button",
 } as const;
 
 // ============================================
