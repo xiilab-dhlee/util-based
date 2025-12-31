@@ -19,7 +19,7 @@ export function CompleteSignup() {
       <SuccessHeader data-testid={AUTH_SELECTOR.SIGNUP_HEADER}>
         <Image
           src="/images/success-background.png"
-          alt="confirm-signup"
+          alt="회원가입 완료"
           width={264}
           height={230}
         />

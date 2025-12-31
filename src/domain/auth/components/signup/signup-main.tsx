@@ -261,7 +261,10 @@ export function SignupMain() {
         <Typography.Text variant="body-2-4" color="#333">
           계정이 있으신가요?
         </Typography.Text>
-        <StyledLink href="/login" data-testid={AUTH_SELECTOR.SIGNUP_LOGIN_LINK}>
+        <StyledLink
+          href="/signin"
+          data-testid={AUTH_SELECTOR.SIGNUP_LOGIN_LINK}
+        >
           <Typography.Text variant="body-2-3" color="#544AD8">
             로그인하기
           </Typography.Text>
