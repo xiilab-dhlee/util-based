@@ -73,6 +73,61 @@ export class SignupPage extends BasePage {
   /** 로그인 링크 컴포넌트 */
   readonly loginLink: LinkComponent;
 
+  // ============================================
+  // Private - Field Mapping (DRY 원칙)
+  // ============================================
+
+  /**
+   * 필드명 → FormItem 컴포넌트 매핑 (에러 검증용, Group Name 제외)
+   */
+  private get formFieldMap(): Record<string, FormItemComponent> {
+    return {
+      Email: this.emailField,
+      Password: this.passwordField,
+      "Confirm Password": this.confirmPasswordField,
+      "First Name": this.firstNameField,
+      "Last Name": this.lastNameField,
+    };
+  }
+
+  /**
+   * 필드명 → FormItem 컴포넌트 매핑 (렌더링 검증용, Group Name 포함)
+   */
+  private get allFieldMap(): Record<string, FormItemComponent> {
+    return {
+      ...this.formFieldMap,
+      "Group Name": this.groupNameField,
+    };
+  }
+
+  /**
+   * 필드명으로 FormItem 컴포넌트 조회 (에러 검증용)
+   * @throws Error - 유효하지 않은 필드명
+   */
+  private getFormField(fieldName: string): FormItemComponent {
+    const field = this.formFieldMap[fieldName];
+    if (!field) {
+      throw new Error(
+        `Unknown field name: ${fieldName}. Valid fields: ${Object.keys(this.formFieldMap).join(", ")}`,
+      );
+    }
+    return field;
+  }
+
+  /**
+   * 필드명으로 FormItem 컴포넌트 조회 (렌더링 검증용)
+   * @throws Error - 유효하지 않은 필드명
+   */
+  private getField(fieldName: string): FormItemComponent {
+    const field = this.allFieldMap[fieldName];
+    if (!field) {
+      throw new Error(
+        `Unknown field name: ${fieldName}. Valid fields: ${Object.keys(this.allFieldMap).join(", ")}`,
+      );
+    }
+    return field;
+  }
+
   constructor(page: Page) {
     super(page);
 
@@ -289,20 +344,7 @@ export class SignupPage extends BasePage {
     fieldName: string,
     expectedMessage: string,
   ): Promise<void> {
-    const fieldMap: Record<string, FormItemComponent> = {
-      Email: this.emailField,
-      Password: this.passwordField,
-      "Confirm Password": this.confirmPasswordField,
-      "First Name": this.firstNameField,
-      "Last Name": this.lastNameField,
-    };
-
-    const field = fieldMap[fieldName];
-    if (!field) {
-      throw new Error(`Unknown field name: ${fieldName}`);
-    }
-
-    await field.assertErrorMessage(expectedMessage);
+    await this.getFormField(fieldName).assertErrorMessage(expectedMessage);
   }
 
   /**
@@ -310,20 +352,7 @@ export class SignupPage extends BasePage {
    * @param fieldName - 필드명 (Email, Password, Confirm Password, First Name, Last Name)
    */
   async assertFieldNoError(fieldName: string): Promise<void> {
-    const fieldMap: Record<string, FormItemComponent> = {
-      Email: this.emailField,
-      Password: this.passwordField,
-      "Confirm Password": this.confirmPasswordField,
-      "First Name": this.firstNameField,
-      "Last Name": this.lastNameField,
-    };
-
-    const field = fieldMap[fieldName];
-    if (!field) {
-      throw new Error(`Unknown field name: ${fieldName}`);
-    }
-
-    await field.assertNoError();
+    await this.getFormField(fieldName).assertNoError();
   }
 
   /**
@@ -398,21 +427,7 @@ export class SignupPage extends BasePage {
    * @param fieldName - 필드명 (Email, Password, Confirm Password, First Name, Last Name, Group Name)
    */
   async assertFieldVisible(fieldName: string): Promise<void> {
-    const fieldMap: Record<string, FormItemComponent> = {
-      Email: this.emailField,
-      Password: this.passwordField,
-      "Confirm Password": this.confirmPasswordField,
-      "First Name": this.firstNameField,
-      "Last Name": this.lastNameField,
-      "Group Name": this.groupNameField,
-    };
-
-    const field = fieldMap[fieldName];
-    if (!field) {
-      throw new Error(`Unknown field name: ${fieldName}`);
-    }
-
-    await field.assertVisible();
+    await this.getField(fieldName).assertVisible();
   }
 
   /**
