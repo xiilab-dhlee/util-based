@@ -34,7 +34,7 @@ export function CompleteSignupMain() {
       </Body>
       <Footer>
         <Button
-          type="submit"
+          type="button"
           color="primary"
           variant="gradient"
           width="100%"

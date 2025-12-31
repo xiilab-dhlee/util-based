@@ -89,6 +89,7 @@ export function SignupMain() {
                 width="100%"
                 height={36}
                 autoComplete="off"
+                data-testid={AUTH_SELECTOR.SIGNUP_EMAIL_INPUT}
                 prefix={
                   <Icon name="LoginEmail" color="var(--icon-fill)" size={20} />
                 }
@@ -116,6 +117,7 @@ export function SignupMain() {
                 width="100%"
                 height={36}
                 autoComplete="new-password"
+                data-testid={AUTH_SELECTOR.SIGNUP_PASSWORD_INPUT}
                 prefix={<Icon name="Lock" color="var(--icon-fill)" size={20} />}
               />
             </FormItem>
@@ -141,6 +143,7 @@ export function SignupMain() {
                 width="100%"
                 height={36}
                 autoComplete="new-password"
+                data-testid={AUTH_SELECTOR.SIGNUP_CONFIRM_PASSWORD_INPUT}
                 prefix={<Icon name="Lock" color="var(--icon-fill)" size={20} />}
               />
             </FormItem>
@@ -168,6 +171,7 @@ export function SignupMain() {
                   height={36}
                   maxLength={25}
                   autoComplete="off"
+                  data-testid={AUTH_SELECTOR.SIGNUP_FIRST_NAME_INPUT}
                   prefix={
                     <Icon name="Name" color="var(--icon-fill)" size={20} />
                   }
@@ -196,6 +200,7 @@ export function SignupMain() {
                   height={36}
                   maxLength={25}
                   autoComplete="off"
+                  data-testid={AUTH_SELECTOR.SIGNUP_LAST_NAME_INPUT}
                   prefix={
                     <Icon name="Name" color="var(--icon-fill)" size={20} />
                   }
@@ -213,6 +218,7 @@ export function SignupMain() {
               validateStatus={errors.groupName ? "error" : undefined}
               htmlFor="signup-group-name"
               help={errors.groupName?.message}
+              data-testid={AUTH_SELECTOR.SIGNUP_GROUP_NAME_FIELD}
             >
               <Dropdown
                 options={[

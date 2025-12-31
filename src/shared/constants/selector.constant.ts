@@ -291,18 +291,33 @@ export const AUTH_SELECTOR = {
   // 회원가입 페이지
   /** 회원가입 페이지 헤더 */
   SIGNUP_HEADER: "signup-header",
-  /** 이메일 필드 (FormItem - 입력 + 에러 메시지 포함) */
+
+  // FormItem (라벨 + 입력 + 에러 메시지 컨테이너)
+  /** 이메일 필드 (FormItem) */
   SIGNUP_EMAIL_FIELD: "signup-email-field",
-  /** 비밀번호 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  /** 비밀번호 필드 (FormItem) */
   SIGNUP_PASSWORD_FIELD: "signup-password-field",
-  /** 비밀번호 확인 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  /** 비밀번호 확인 필드 (FormItem) */
   SIGNUP_CONFIRM_PASSWORD_FIELD: "signup-confirm-password-field",
-  /** 이름 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  /** 이름 필드 (FormItem) */
   SIGNUP_FIRST_NAME_FIELD: "signup-first-name-field",
-  /** 성 필드 (FormItem - 입력 + 에러 메시지 포함) */
+  /** 성 필드 (FormItem) */
   SIGNUP_LAST_NAME_FIELD: "signup-last-name-field",
-  /** 그룹 드롭다운 */
-  SIGNUP_GROUP_NAME: "signup-group-name",
+  /** 그룹명 필드 (FormItem) */
+  SIGNUP_GROUP_NAME_FIELD: "signup-group-name-field",
+
+  // Input (실제 입력창)
+  /** 이메일 입력창 */
+  SIGNUP_EMAIL_INPUT: "signup-email-input",
+  /** 비밀번호 입력창 */
+  SIGNUP_PASSWORD_INPUT: "signup-password-input",
+  /** 비밀번호 확인 입력창 */
+  SIGNUP_CONFIRM_PASSWORD_INPUT: "signup-confirm-password-input",
+  /** 이름 입력창 */
+  SIGNUP_FIRST_NAME_INPUT: "signup-first-name-input",
+  /** 성 입력창 */
+  SIGNUP_LAST_NAME_INPUT: "signup-last-name-input",
+
   /** 회원가입 버튼 */
   SIGNUP_SUBMIT_BUTTON: "signup-submit-button",
   /** 로그인 링크 */
