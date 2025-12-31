@@ -387,8 +387,7 @@ export class SignupPage extends BasePage {
    * @param length - 입력 시도할 문자열 길이
    */
   async typeFirstNameWithLength(length: number): Promise<void> {
-    const text = "가".repeat(length);
-    await this.firstNameInput.fill(text);
+    await this.firstNameInput.fill(this.generateRandomText(length));
   }
 
   /**
@@ -396,8 +395,7 @@ export class SignupPage extends BasePage {
    * @param length - 입력 시도할 문자열 길이
    */
   async typeLastNameWithLength(length: number): Promise<void> {
-    const text = "가".repeat(length);
-    await this.lastNameInput.fill(text);
+    await this.lastNameInput.fill(this.generateRandomText(length));
   }
 
   /**

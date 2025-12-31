@@ -24,7 +24,7 @@ export class FormItemComponent {
   /**
    * FormItem 요소 Locator
    */
-  get locator(): Locator {
+  private get locator(): Locator {
     return this.page.locator(testId(this.formItemTestId));
   }
 

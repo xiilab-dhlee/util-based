@@ -65,4 +65,28 @@ export abstract class BasePage {
   async assertPageVisible(timeout = 10000): Promise<void> {
     await expect(this.pageHeader).toBeVisible({ timeout });
   }
+
+  // ============================================
+  // Utilities
+  // ============================================
+
+  /**
+   * 지정된 길이의 랜덤 테스트용 문자열 생성
+   * maxLength 검증 등에 활용
+   *
+   * @param length - 생성할 문자열 길이
+   * @returns 지정된 길이의 랜덤 문자열
+   *
+   * @example
+   * this.generateRandomText(10) // "aB3xKp9mZq"
+   */
+  protected generateRandomText(length: number): string {
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789가나다라마바사아자차카타파하";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
 }
