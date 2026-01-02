@@ -3,6 +3,8 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { customScrollbar } from "../mixins/scrollbar";
+
 /**
  * 목록 페이지 왼쪽 사이드바 컨테이너
  * 너비를 설정할 수 있는 세로 방향 레이아웃
@@ -54,6 +56,8 @@ export const ListWrapper = styled.div`
   flex: 1;
   overflow: hidden;
   position: relative;
+
+  ${customScrollbar()}
 `;
 /**
  * 목록 그리드 컨테이너
@@ -66,6 +70,7 @@ export const GridList = styled.div`
   overflow-y: auto;
   height: 100%;
   width: 100%;
+  position: relative;
 
   /* CSS Grid를 사용한 고정 컬럼 조정 */
   /* auto-fill: 요소 개수와 상관없이 컨테이너 너비에 맞춰 컬럼 개수 결정 */
