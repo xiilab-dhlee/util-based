@@ -80,7 +80,6 @@ const Right = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 18px;
   position: relative;
   padding: 23px;
   border-radius: 10px;

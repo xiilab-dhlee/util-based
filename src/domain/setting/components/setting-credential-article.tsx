@@ -2,27 +2,28 @@
 
 import { useState } from "react";
 
-import { useGetSettingWorkspaceMembers } from "@/domain/setting/hooks/use-get-setting-workspace-members";
+import { useGetSettingCredentials } from "@/domain/setting/hooks/use-get-setting-credentials";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
-import { SettingMemberListBody } from "./setting-member-list-body";
-import { SettingMemberListFilter } from "./setting-member-list-filter";
+import { SettingCredentialListBody } from "./setting-credential-list-body";
+import { SettingCredentialListFilter } from "./setting-credential-list-filter";
 
 const PAGE_SIZE = 10;
 
 /**
- * 설정 멤버 Article 컴포넌트
+ * 설정 크리덴셜 Article 컴포넌트
  *
- * 워크스페이스 구성원 목록 영역의 독립적인 콘텐츠 단위입니다.
- * (필터, 테이블 목록, 페이지네이션)
+ * 크리덴셜 목록 영역의 독립적인 콘텐츠 단위입니다.
+ * (필터, 카드 목록, 페이지네이션)
  *
  * 조회 파라미터는 useState로 로컬 관리합니다.
  */
-export function SettingMemberArticle() {
+export function SettingCredentialArticle() {
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isError } = useGetSettingWorkspaceMembers({
+  const { data, isLoading, isError } = useGetSettingCredentials({
     page,
-    size: 8,
+    size: PAGE_SIZE,
+    searchText: "",
   });
 
   const handlePageChange = (newPage: number) => {
@@ -31,11 +32,11 @@ export function SettingMemberArticle() {
 
   return (
     <>
-      <SettingMemberListFilter
+      <SettingCredentialListFilter
         total={data?.totalSize || 0}
         loading={isLoading}
       />
-      <SettingMemberListBody
+      <SettingCredentialListBody
         content={data?.content || []}
         loading={isLoading}
         isError={isError}

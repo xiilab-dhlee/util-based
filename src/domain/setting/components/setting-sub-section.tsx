@@ -1,20 +1,22 @@
 import styled from "styled-components";
 
-import { SettingCredentialListBody } from "./setting-credential-list-body";
-import { SettingCredentialListFilter } from "./setting-credential-list-filter";
-import { SettingRequestResourceListBody } from "./setting-request-resource-list-body";
-import { SettingRequestResourceListFilter } from "./setting-request-resource-list-filter";
+import { SettingCredentialArticle } from "./setting-credential-article";
+import { SettingRequestResourceArticle } from "./setting-request-resource-article";
 
+/**
+ * 설정 하위 섹션 컴포넌트
+ *
+ * 리소스 요청 목록과 크리덴셜 목록을 나란히 표시합니다.
+ * Section 내에 독립적인 Article들로 구성됩니다.
+ */
 export function SettingSubSection() {
   return (
     <Container>
       <Left>
-        <SettingRequestResourceListFilter />
-        <SettingRequestResourceListBody />
+        <SettingRequestResourceArticle />
       </Left>
       <Right>
-        <SettingCredentialListFilter />
-        <SettingCredentialListBody />
+        <SettingCredentialArticle />
       </Right>
     </Container>
   );
@@ -33,7 +35,6 @@ const Left = styled.article`
   flex-basis: 964px;
   height: 100%;
   padding: 23px;
-  padding-bottom: 0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;

@@ -41,7 +41,7 @@ export function SettingWorkspaceDetail() {
         <Row>
           <DescriptionRowBody>
             <RowIconWrapper>
-              <Icon name="Description" color="var(--icon-fill)" size={22} />
+              <Icon name="Workspace01" color="var(--icon-fill)" size={18} />
             </RowIconWrapper>
             <RowTitle>워크스페이스 이름</RowTitle>
           </DescriptionRowBody>
@@ -50,7 +50,7 @@ export function SettingWorkspaceDetail() {
         <DescriptionRow>
           <DescriptionRowBody>
             <RowIconWrapper>
-              <Icon name="Description" color="var(--icon-fill)" size={22} />
+              <Icon name="Description" color="var(--icon-fill)" size={18} />
             </RowIconWrapper>
             <RowTitle>워크스페이스 설명</RowTitle>
           </DescriptionRowBody>
@@ -59,7 +59,7 @@ export function SettingWorkspaceDetail() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <Icon name="PersonFilled" color="var(--icon-fill)" size={24} />
+              <Icon name="Person" color="var(--icon-fill)" size={18} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자 :</RowKey>
@@ -70,7 +70,7 @@ export function SettingWorkspaceDetail() {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <Icon name="Calendar01" color="var(--icon-fill)" size={24} />
+              <Icon name="Calendar01" color="var(--icon-fill)" size={18} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성일 :</RowKey>

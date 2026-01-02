@@ -2,27 +2,28 @@
 
 import { useState } from "react";
 
-import { useGetSettingWorkspaceMembers } from "@/domain/setting/hooks/use-get-setting-workspace-members";
+import { useGetSettingRequestResources } from "@/domain/setting/hooks/use-get-setting-request-resources";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
-import { SettingMemberListBody } from "./setting-member-list-body";
-import { SettingMemberListFilter } from "./setting-member-list-filter";
+import { SettingRequestResourceListBody } from "./setting-request-resource-list-body";
+import { SettingRequestResourceListFilter } from "./setting-request-resource-list-filter";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 9;
 
 /**
- * 설정 멤버 Article 컴포넌트
+ * 설정 리소스 요청 Article 컴포넌트
  *
- * 워크스페이스 구성원 목록 영역의 독립적인 콘텐츠 단위입니다.
- * (필터, 테이블 목록, 페이지네이션)
+ * 리소스 요청 목록 영역의 독립적인 콘텐츠 단위입니다.
+ * (필터, 테이블, 페이지네이션)
  *
  * 조회 파라미터는 useState로 로컬 관리합니다.
  */
-export function SettingMemberArticle() {
+export function SettingRequestResourceArticle() {
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isError } = useGetSettingWorkspaceMembers({
+  const { data, isLoading, isError } = useGetSettingRequestResources({
     page,
-    size: 8,
+    size: PAGE_SIZE,
+    searchText: "",
   });
 
   const handlePageChange = (newPage: number) => {
@@ -31,11 +32,11 @@ export function SettingMemberArticle() {
 
   return (
     <>
-      <SettingMemberListFilter
+      <SettingRequestResourceListFilter
         total={data?.totalSize || 0}
         loading={isLoading}
       />
-      <SettingMemberListBody
+      <SettingRequestResourceListBody
         content={data?.content || []}
         loading={isLoading}
         isError={isError}

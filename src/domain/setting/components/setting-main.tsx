@@ -1,5 +1,6 @@
 "use client";
 
+import { DeleteRequestResourceModal } from "@/domain/request-resource/components/delete-request-resource-modal";
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
 import { UpdateWorkspaceModal } from "@/domain/workspace/components/update-workspace-modal";
 import { DeleteWorkspaceMemberModal } from "@/domain/workspace-member/components/delete-workspace-member-modal";
@@ -8,6 +9,7 @@ import { PageHeader } from "@/shared/components/layouts/page-header";
 import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
+import { AddWorkspaceMemberModal } from "./add-workspace-member-modal";
 import { CreateResourceSettingModal } from "./create-request-resource-modal";
 import { SettingMainSection } from "./setting-main-section";
 import { SettingSubSection } from "./setting-sub-section";
@@ -40,8 +42,12 @@ export function SettingMain() {
       <CreateResourceSettingModal />
       {/* 알림설정 모달 */}
       <UpdateNotificationSettingModal />
-      {/* 크레덴셜 추가 모달 */}
+      {/* 크리덴셜 추가 모달 */}
       <CreateCredentialModal />
+      {/* 리소스 요청 취소 모달 */}
+      <DeleteRequestResourceModal />
+      {/* 워크스페이스 구성원 추가 모달 */}
+      <AddWorkspaceMemberModal />
     </>
   );
 }

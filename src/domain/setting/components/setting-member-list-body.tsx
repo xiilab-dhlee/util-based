@@ -1,29 +1,29 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
-import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
-import { useGetSettingWorkspaceMembers } from "@/domain/setting/hooks/use-get-setting-workspace-members";
-import {
-  settingMemberPageAtom,
-  settingMemberSearchTextAtom,
-} from "@/domain/setting/state/setting.atom";
+import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
 import { createWorkspaceMemberColumn } from "@/shared/components/column/create-workspace-member-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
-export function SettingMemberListBody() {
-  // 페이지 번호
-  const page = useAtomValue(settingMemberPageAtom);
-  // 검색어
-  const searchText = useAtomValue(settingMemberSearchTextAtom);
+interface SettingMemberListBodyProps {
+  /** 구성원 목록 데이터 */
+  content: WorkspaceMemberListType[];
+  /** 로딩 상태 */
+  loading: boolean;
+  /** 에러 상태 */
+  isError: boolean;
+}
 
-  const { data } = useGetSettingWorkspaceMembers({
-    page,
-    size: SETTING_LIST_PAGE_SIZE,
-    searchText,
-  });
-
+/**
+ * 설정 멤버 목록 본문 컴포넌트
+ *
+ * 구성원 목록의 테이블을 표시합니다.
+ */
+export function SettingMemberListBody({
+  content,
+  loading,
+  isError,
+}: SettingMemberListBodyProps) {
   return (
     <ListWrapper>
       <CustomizedTable
@@ -32,20 +32,13 @@ export function SettingMemberListBody() {
             key: "name",
             dataIndex: "name",
             title: "이름",
-            width: 50,
-            ellipsis: true,
+            width: "auto",
+            sorter: true,
           },
           {
             dataIndex: "email",
             title: "이메일",
-            width: 120,
-            ellipsis: true,
-          },
-          {
-            dataIndex: "group",
-            title: "그룹",
-            width: 90,
-            ellipsis: true,
+            width: "auto",
           },
           {
             dataIndex: "role",
@@ -55,15 +48,19 @@ export function SettingMemberListBody() {
           {
             dataIndex: "update",
             title: "권한 수정",
-            width: 60,
+            width: 70,
           },
           {
             dataIndex: "delete",
             title: "삭제",
+            width: 50,
           },
         ])}
-        data={data?.content || []}
+        data={content}
         activePadding
+        isError={isError}
+        loading={loading}
+        columnHeight={36}
       />
     </ListWrapper>
   );

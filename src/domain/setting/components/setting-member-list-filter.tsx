@@ -1,27 +1,29 @@
 "use client";
 
-import { useAtomValue, useSetAtom } from "jotai";
 import { Button } from "xiilab-ui";
 
-import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
-import { useGetSettingWorkspaceMembers } from "@/domain/setting/hooks/use-get-setting-workspace-members";
-import { settingMemberSearchTextAtom } from "@/domain/setting/state/setting.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { AddWorkspaceMemberModal } from "./add-workspace-member-modal";
 
-export function SettingMemberListFilter() {
-  const setSearchText = useSetAtom(settingMemberSearchTextAtom);
+interface SettingMemberListFilterProps {
+  /** 전체 구성원 수 */
+  total: number;
+  /** 로딩 상태 */
+  loading: boolean;
+}
+
+/**
+ * 설정 멤버 목록 필터 컴포넌트
+ *
+ * 구성원 목록의 상단 필터 영역을 표시합니다.
+ * (제목, 총 개수, 검색, 추가 버튼)
+ */
+export function SettingMemberListFilter({
+  total,
+  loading,
+}: SettingMemberListFilterProps) {
   const publish = usePublish();
-  const searchText = useAtomValue(settingMemberSearchTextAtom);
-
-  const { data } = useGetSettingWorkspaceMembers({
-    page: 1,
-    size: SETTING_LIST_PAGE_SIZE,
-    searchText: searchText,
-  });
 
   /**
    * 구성원 추가 버튼 클릭 핸들러
@@ -35,24 +37,19 @@ export function SettingMemberListFilter() {
   };
 
   return (
-    <>
-      <MySearchFilter title="구성원 관리" total={data?.totalSize}>
-        <SearchInput onSearch={setSearchText} />
-        <Button
-          color="primary"
-          icon="Plus"
-          iconPosition="left"
-          variant="gradient"
-          width={110}
-          height={30}
-          onClick={handleAddMember}
-        >
-          구성원 추가
-        </Button>
-      </MySearchFilter>
-
-      {/* 워크스페이스 구성원 추가 모달 */}
-      <AddWorkspaceMemberModal />
-    </>
+    <MySearchFilter title="구성원 관리" total={total}>
+      <Button
+        color="primary"
+        icon="Plus"
+        iconPosition="left"
+        variant="gradient"
+        width={110}
+        height={30}
+        onClick={handleAddMember}
+        disabled={loading}
+      >
+        구성원 추가
+      </Button>
+    </MySearchFilter>
   );
 }
