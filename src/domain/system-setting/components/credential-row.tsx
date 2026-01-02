@@ -14,11 +14,11 @@ interface CredentialRowProps extends HTMLAttributes<HTMLTableRowElement> {
 /**
  * CredentialRow 컴포넌트
  *
- * 크레덴셜 목록 테이블의 행 컴포넌트입니다.
- * 행을 클릭하면 크레덴셜 상세 모달이 열립니다.
+ * 크리덴셜 목록 테이블의 행 컴포넌트입니다.
+ * 행을 클릭하면 크리덴셜 상세 모달이 열립니다.
  *
- * @param rowData - 크레덴셜 목록 데이터
- * @returns 크레덴셜 테이블 행 컴포넌트
+ * @param rowData - 크리덴셜 목록 데이터
+ * @returns 크리덴셜 테이블 행 컴포넌트
  */
 export function CredentialRow({
   children,

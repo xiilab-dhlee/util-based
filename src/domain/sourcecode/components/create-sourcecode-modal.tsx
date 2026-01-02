@@ -37,12 +37,12 @@ import { hideScrollbar } from "@/styles/mixins/scrollbar";
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {
     key: "select",
-    label: "크레덴셜 선택",
+    label: "크리덴셜 선택",
     icon: "Verification02",
   },
   {
     key: "create",
-    label: "크레덴셜 추가",
+    label: "크리덴셜 추가",
     icon: "PlusSquare",
   },
 ];
@@ -78,7 +78,7 @@ export function CreateSourcecodeModal() {
   const [mountPath, setMountPath] = useState("");
   const [executeCommand, setExecuteCommand] = useState("");
 
-  // 크레덴셜 관련
+  // 크리덴셜 관련
   const [credentialEnabled, setCredentialEnabled] = useState(false);
 
   const handleValidateUrl = () => {
@@ -190,16 +190,16 @@ export function CreateSourcecodeModal() {
             />
           </StyledFormItem>
         </StyledFormRow>
-        {/* 크레덴셜 */}
+        {/* 크리덴셜 */}
         <CredentialRow>
           <CredentialLabel>
-            <FormLabel>크레덴셜</FormLabel>
+            <FormLabel>크리덴셜</FormLabel>
             <Switch
               checked={credentialEnabled}
               onChange={() => setCredentialEnabled(!credentialEnabled)}
             />
           </CredentialLabel>
-          {/* 크레덴셜 ON일 때 탭 표시 */}
+          {/* 크리덴셜 ON일 때 탭 표시 */}
           {credentialEnabled && (
             <CredentialBody>
               <StateTab

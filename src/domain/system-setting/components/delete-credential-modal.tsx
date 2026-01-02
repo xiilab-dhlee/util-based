@@ -16,9 +16,9 @@ export interface DeleteCredentialModalPayload {
 }
 
 /**
- * 크레덴셜 삭제 모달
+ * 크리덴셜 삭제 모달
  *
- * PubSub 패턴을 사용하여 모달을 열고 크레덴셜 ID를 전달받습니다.
+ * PubSub 패턴을 사용하여 모달을 열고 크리덴셜 ID를 전달받습니다.
  */
 export function DeleteCredentialModal() {
   const [open, setOpen] = useState(false);
@@ -28,7 +28,7 @@ export function DeleteCredentialModal() {
 
   const deleteCredential = useDeleteCredential();
 
-  // PubSub 구독 - 크레덴셜 삭제 모달 열기 이벤트
+  // PubSub 구독 - 크리덴셜 삭제 모달 열기 이벤트
   useSubscribe<DeleteCredentialModalPayload>(
     SYSTEM_SETTING_EVENTS.openCredentialDeleteModal,
     useCallback((payload) => {
@@ -59,7 +59,7 @@ export function DeleteCredentialModal() {
       open={open}
       onCancel={handleCancel}
       onOk={handleDelete}
-      title="크레덴셜 삭제"
+      title="크리덴셜 삭제"
       centered
       okButtonProps={{
         loading: deleteCredential.isPending,
@@ -67,7 +67,7 @@ export function DeleteCredentialModal() {
     >
       <MessageContainer>
         <Message>
-          선택된 크레덴셜을 삭제하시겠습니까? <br /> 크레덴셜 삭제 시 복구되지
+          선택된 크리덴셜을 삭제하시겠습니까? <br /> 크리덴셜 삭제 시 복구되지
           않습니다.
         </Message>
       </MessageContainer>

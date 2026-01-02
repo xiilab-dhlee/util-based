@@ -8,7 +8,7 @@ import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
 
 /**
- * 설정 크레덴셜 목록 조회
+ * 설정 크리덴셜 목록 조회
  */
 export const useGetSettingCredentials = (
   payload: GetCredentialsPayload,

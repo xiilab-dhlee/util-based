@@ -31,7 +31,7 @@ const baseSourcecodeSchema = z.object({
       value: z.string().min(1),
     }),
   ),
-  /** 크레덴셜 */
+  /** 크리덴셜 */
   credential: credentialListResponseSchema,
 });
 

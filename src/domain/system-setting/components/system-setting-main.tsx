@@ -94,7 +94,7 @@ export function SystemSettingMain() {
             {/* 스토리지 목록 */}
             <StorageListSetting />
 
-            {/* 크레덴셜 목록 */}
+            {/* 크리덴셜 목록 */}
             <CredentialListSetting />
           </SettingGridContainer>
         </ListPageBody>

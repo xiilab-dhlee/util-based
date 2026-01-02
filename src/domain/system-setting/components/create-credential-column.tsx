@@ -14,14 +14,14 @@ interface CreateCredentialColumnOptions {
 }
 
 /**
- * 크레덴셜 목록 컬럼 정의
+ * 크리덴셜 목록 컬럼 정의
  */
 const createColumnList = (
   options?: CreateCredentialColumnOptions,
 ): ResponsiveColumnType<CredentialListType>[] => {
   const columns: ResponsiveColumnType<CredentialListType>[] = [
     {
-      title: "크레덴셜 이름",
+      title: "크리덴셜 이름",
       dataIndex: "name",
       key: "name",
       align: "left",
@@ -86,7 +86,7 @@ const createColumnList = (
 };
 
 /**
- * 크레덴셜 목록 컬럼 생성 함수
+ * 크리덴셜 목록 컬럼 생성 함수
  * @param config 컬럼 설정 배열
  * @param options 삭제 핸들러 및 로딩 상태
  * @returns 컬럼 정의 배열

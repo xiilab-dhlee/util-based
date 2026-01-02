@@ -6,8 +6,8 @@ import type { CredentialDetailType } from "@/domain/credential/schemas/credentia
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
- * 크레덴셜 상세 조회 훅
- * @param id 크레덴셜 ID
+ * 크리덴셜 상세 조회 훅
+ * @param id 크리덴셜 ID
  */
 export const useGetCredentialDetail = (
   id: number | null,

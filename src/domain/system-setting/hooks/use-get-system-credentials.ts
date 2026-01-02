@@ -7,7 +7,7 @@ import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
 
 /**
- * 시스템 설정용 크레덴셜 목록 조회 훅
+ * 시스템 설정용 크리덴셜 목록 조회 훅
  * 검색 지원
  */
 export const useGetSystemCredentials = (

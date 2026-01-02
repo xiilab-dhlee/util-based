@@ -11,28 +11,28 @@ import { FormRow } from "@/styles/layers/form-layer.styled";
 
 export function CreateCredentialForm() {
   /**
-   * 크레덴셜 타입 선택
+   * 크리덴셜 타입 선택
    */
   const credentialType = useSelect(null, CREDENTIAL_TYPE_OPTIONS);
   /**
-   * 크레덴셜 이름
+   * 크리덴셜 이름
    */
   const [credentialName, setCredentialName] = useState("");
   /**
-   * 크레덴셜 설명
+   * 크리덴셜 설명
    */
   const [credentialDescription, setCredentialDescription] = useState("");
   /**
-   * 크레덴셜 아이디
+   * 크리덴셜 아이디
    */
   const [credentialId, setCredentialId] = useState("");
   /**
-   * 크레덴셜 토큰
+   * 크리덴셜 토큰
    */
   const [credentialToken, setCredentialToken] = useState("");
 
   const handleCreateCredential = () => {
-    toast.success("크레덴셜 생성 완료");
+    toast.success("크리덴셜 생성 완료");
   };
 
   return (
@@ -93,7 +93,7 @@ export function CreateCredentialForm() {
         iconSize={20}
         onClick={handleCreateCredential}
       >
-        크레덴셜 저장
+        크리덴셜 저장
       </Button>
     </Container>
   );

@@ -6,7 +6,7 @@ import type { CredentialListType } from "@/domain/credential/schemas/credential.
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
- * 크레덴셜 옵션 목록 조회
+ * 크리덴셜 옵션 목록 조회
  */
 export const useGetCredentialOptions = (): UseQueryResult<
   DropdownOption[],

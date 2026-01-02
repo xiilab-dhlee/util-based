@@ -4,7 +4,7 @@ import type { CreateCredentialPayload } from "@/domain/credential/types/credenti
 import { useServices } from "@/shared/providers/service-provider";
 
 /**
- * 크레덴셜 생성
+ * 크리덴셜 생성
  */
 export const useCreateCredential = (): UseMutationResult<
   unknown,

@@ -16,7 +16,7 @@ export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
 
   return (
     <Dropdown
-      placeholder="크레덴셜을 선택해 주세요."
+      placeholder="크리덴셜을 선택해 주세요."
       options={data || []}
       value={value}
       onChange={(value) => setValue(value)}

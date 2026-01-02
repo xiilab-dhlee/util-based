@@ -20,7 +20,7 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 /**
- * 크레덴셜 상세 모달
+ * 크리덴셜 상세 모달
  */
 export function ViewCredentialDetailModal() {
   const [open, setOpen] = useState(false);
@@ -47,7 +47,7 @@ export function ViewCredentialDetailModal() {
   if (isError) {
     return (
       <InfoModal
-        title="크레덴셜 상세"
+        title="크리덴셜 상세"
         type="primary"
         open={open}
         onClose={handleClose}
@@ -63,7 +63,7 @@ export function ViewCredentialDetailModal() {
 
   return (
     <InfoModal
-      title="크레덴셜 상세"
+      title="크리덴셜 상세"
       type="primary"
       open={open}
       onClose={handleClose}

@@ -23,7 +23,7 @@ import { usePublish } from "@/shared/hooks/use-pub-sub";
 const CREDENTIAL_BOX_HEIGHT = 542;
 
 /**
- * 크레덴셜 목록 설정 컴포넌트
+ * 크리덴셜 목록 설정 컴포넌트
  * 검색, 테이블, 페이지네이션 포함
  */
 export function CredentialListSetting() {
@@ -74,7 +74,7 @@ export function CredentialListSetting() {
 
   if (isError) {
     return (
-      <SettingBox title="크레덴셜 목록" height={CREDENTIAL_BOX_HEIGHT}>
+      <SettingBox title="크리덴셜 목록" height={CREDENTIAL_BOX_HEIGHT}>
         <DataErrorState onRetry={refetch} />
       </SettingBox>
     );
@@ -82,12 +82,12 @@ export function CredentialListSetting() {
 
   return (
     <SettingBox
-      title="크레덴셜 목록"
+      title="크리덴셜 목록"
       height={CREDENTIAL_BOX_HEIGHT}
       extra={
         <SearchWrapper>
           <SearchInput
-            placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
+            placeholder="크리덴셜 이름 또는 생성자를 검색해 주세요."
             width="290px"
             onSearch={handleSearch}
           />

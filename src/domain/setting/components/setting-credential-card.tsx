@@ -44,7 +44,7 @@ export function SettingCredentialCard({
             <span>{creatorName}</span>
           </FooterItem>
           <FooterItem>
-            <Icon name="Calendar" size={16} color="#404040" />
+            <Icon name="Calendar01" size={16} color="#404040" />
             <span>{format(creatorDate, "yyyy.MM.dd")}</span>
           </FooterItem>
         </Footer>

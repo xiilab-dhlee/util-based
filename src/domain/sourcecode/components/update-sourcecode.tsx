@@ -50,7 +50,7 @@ interface UpdateSourcecodeProps {
  * 주요 기능:
  * - 소스코드 상세 정보 조회 (읽기 전용)
  * - 소스코드 정보 수정 (수정 모드)
- * - 크레덴셜 관리 및 파라미터 설정
+ * - 크리덴셜 관리 및 파라미터 설정
  * - 소스코드 삭제 (PubSub을 통한 모달 열기)
  * - 읽기 전용/수정 모드 전환
  *
@@ -315,9 +315,9 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
                   <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
                 </AsideDetailArticleHeader>
 
-                {/* 크레덴셜 정보 */}
+                {/* 크리덴셜 정보 */}
                 <AsideDetailArticleColumn>
-                  <AsideDetailArticleKey>크레덴셜</AsideDetailArticleKey>
+                  <AsideDetailArticleKey>크리덴셜</AsideDetailArticleKey>
                   {/* 읽기 전용 모드일 때만 표시 */}
                   {isReadOnly && (
                     <AsideDetailArticleValue>
@@ -326,7 +326,7 @@ export function UpdateSourcecode({ id }: UpdateSourcecodeProps) {
                   )}
                 </AsideDetailArticleColumn>
 
-                {/* 수정 모드일 때만 크레덴셜 관리 컴포넌트 표시 */}
+                {/* 수정 모드일 때만 크리덴셜 관리 컴포넌트 표시 */}
                 {!isReadOnly && (
                   <ManageCredentialWrapper>
                     <ManageCredential defaultCredential={data?.credential} />
@@ -415,9 +415,9 @@ const SecondaryArticle = styled(AsideDetailArticle)`
 `;
 
 /**
- * 크레덴셜 관리 래퍼 스타일
+ * 크리덴셜 관리 래퍼 스타일
  *
- * 수정 모드에서 크레덴셜 관리 컴포넌트를 감싸는 컨테이너의 스타일을 정의합니다.
+ * 수정 모드에서 크리덴셜 관리 컴포넌트를 감싸는 컨테이너의 스타일을 정의합니다.
  * 상하 여백과 간격을 설정하여 적절한 레이아웃을 제공합니다.
  */
 const ManageCredentialWrapper = styled.div`

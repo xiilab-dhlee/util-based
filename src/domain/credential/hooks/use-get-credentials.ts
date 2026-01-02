@@ -7,7 +7,7 @@ import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
 
 /**
- * 크레덴셜 목록 조회
+ * 크리덴셜 목록 조회
  */
 export const useGetCredentials = (
   payload: GetCredentialsPayload,
