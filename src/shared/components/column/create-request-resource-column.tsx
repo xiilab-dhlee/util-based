@@ -1,5 +1,6 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import { DeleteRequestResourceButton } from "@/domain/request-resource/components/delete-request-resource-button";
 import { ViewApproveResourceButton } from "@/domain/request-resource/components/view-approve-resource-button";
 import { ViewRejectResourceButton } from "@/domain/request-resource/components/view-reject-resource-button";
 import { REQUEST_RESOURCE_STATUS } from "@/domain/request-resource/constants/request-resource.constant";
@@ -54,6 +55,20 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 150,
       render: (migGpu: RequestResourceMigGpuType) => {
         return <ColumnMig migProfiles={migGpu} />;
+      },
+    },
+    {
+      title: migInfo.text,
+      dataIndex: "migCount",
+      align: "center",
+      width: 150,
+      render: (_, record: RequestResourceListType) => {
+        return (
+          <span>
+            {record.migGpu.length}
+            {migInfo.unit}
+          </span>
+        );
       },
     },
     {
@@ -166,6 +181,15 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 50,
       render: (_: number, record: RequestResourceListType) => {
         return <ViewApproveResourceButton resource={record} />;
+      },
+    },
+    {
+      title: "요청취소",
+      dataIndex: "delete",
+      align: "center",
+      width: 50,
+      render: (_: number, record: RequestResourceListType) => {
+        return <DeleteRequestResourceButton resource={record} />;
       },
     },
   ];

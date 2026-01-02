@@ -1,5 +1,8 @@
 import type { RequestResourceStatusType } from "../schemas/request-resource.schema";
 
+/** 리소스 요청 쿼리 키 */
+export const REQUEST_RESOURCE_QUERY_KEY = "request-resource";
+
 /** 리소스 요청 상태 타입 (re-export for convenience) */
 export type RequestResourceStatus = RequestResourceStatusType;
 

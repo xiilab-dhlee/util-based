@@ -41,7 +41,9 @@ export const commonColumns: ResponsiveColumnType[] = [
     align: "left",
     width: 140,
     render: (creatorDateTime: string) => {
-      return <span>{formatDateSafely(creatorDateTime)}</span>;
+      return (
+        <span>{formatDateSafely(creatorDateTime, "yyyy.MM.dd HH:mm:ss")}</span>
+      );
     },
   },
   {
