@@ -8,7 +8,7 @@ export interface CorePaginate {
 
 // 검색 텍스트 타입
 export interface CoreSearchText {
-  searchText: string;
+  searchText?: string;
 }
 
 // 정렬 타입

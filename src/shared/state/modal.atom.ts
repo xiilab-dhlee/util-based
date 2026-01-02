@@ -2,7 +2,7 @@ import { atom } from "jotai";
 
 /** 취약점 확인 모달 표시 여부 */
 export const openViewVulnerabilityModalAtom = atom<boolean>(false);
-/** 크레덴셜 추가 모달 표시 여부 */
+/** 크리덴셜 추가 모달 표시 여부 */
 export const openCreateCredentialModalAtom = atom<boolean>(false);
 /** 워크스페이스 추가 모달 표시 여부 */
 export const openCreateWorkspaceModalAtom = atom<boolean>(false);

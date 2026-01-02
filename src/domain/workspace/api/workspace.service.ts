@@ -72,4 +72,11 @@ export class WorkspaceService extends AxiosService {
       payload,
     );
   }
+
+  /** 워크스페이스 리소스 요청 취소(삭제) */
+  public deleteRequestResource(resourceId: number) {
+    return this.getAxios().delete(
+      `${this.BASE_URL}/admin/resource/${resourceId}`,
+    );
+  }
 }

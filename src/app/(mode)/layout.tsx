@@ -8,6 +8,7 @@ import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
 import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 export default function ModeLayout({ children }: PropsWithChildren) {
   return (
@@ -55,6 +56,8 @@ const Right = styled.div`
   padding-bottom: var(--page-margin-bottom);
   overflow-y: auto;
   overflow-x: auto;
+
+  ${customScrollbar()}
 `;
 
 const RightInner = styled.div`
