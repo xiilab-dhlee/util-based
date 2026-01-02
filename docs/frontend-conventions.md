@@ -388,4 +388,133 @@ export function WorkloadListFooter({ total, loading }: WorkloadListFooterProps) 
 
 ---
 
+## MSW Handler 작성 규칙
+
+### 엔드포인트 상수 사용
+
+**협의일**: 2025-01-02
+
+**상황**: MSW 핸들러에서 API 엔드포인트를 직접 문자열로 작성하면 유지보수가 어렵고, 실제 API 경로와 불일치할 위험이 있음
+
+**협의 내용**: MSW 핸들러에서 API 엔드포인트를 사용할 때는 반드시 `endpoint.constant.ts`에 정의된 상수를 사용한다.
+
+**규칙**:
+1. **엔드포인트 상수 정의**: `src/shared/constants/endpoint.constant.ts`에 도메인별 엔드포인트 상수를 정의
+2. **핸들러에서 상수 사용**: MSW 핸들러에서 문자열 대신 상수를 import하여 사용
+3. **Mock 팩토리 함수 사용**: 목록 조회 시 `paramsToOverride` 유틸리티와 `create*Mock` 팩토리 함수 조합
+4. **파라미터 경로**: 상세/삭제 등 ID가 필요한 경로는 템플릿 리터럴로 `${ENDPOINT.base}/:id` 형태 사용
+
+**엔드포인트 상수 정의 예시**:
+
+```typescript
+// src/shared/constants/endpoint.constant.ts
+
+// 워크로드 관련 엔드포인트
+const WORKLOAD_BASE = "/core-api/v1/core/workload";
+
+export const WORKLOAD_ENDPOINTS = {
+  base: WORKLOAD_BASE,
+  active: `${WORKLOAD_BASE}/active`,
+} as const;
+
+// 크리덴셜 관련 엔드포인트
+const CREDENTIAL_BASE = "/core-api/v1/core/credential";
+
+export const CREDENTIAL_ENDPOINTS = {
+  base: CREDENTIAL_BASE,
+} as const;
+```
+
+**MSW 핸들러 예시**:
+
+```typescript
+// ❌ Bad - 문자열 직접 사용
+const BASE_URL = "/core-api/v1/core/credential";
+
+export const credentialHandlers = [
+  http.get(BASE_URL, ({ request }) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get("search") || "";
+    // 수동 파라미터 파싱...
+  }),
+  http.get(`${BASE_URL}/:id`, ({ params }) => {
+    // ...
+  }),
+];
+```
+
+```typescript
+// ✅ Good - 엔드포인트 상수 + paramsToOverride 사용
+import { CREDENTIAL_ENDPOINTS } from "@/shared/constants/endpoint.constant";
+import { paramsToOverride } from "@/shared/utils/service.util";
+import { createCredentialListMock } from "@/mocks/data/credential.mock";
+
+export const credentialHandlers = [
+  // 목록 조회
+  http.get(CREDENTIAL_ENDPOINTS.base, ({ request }) => {
+    const url = new URL(request.url);
+    const override = paramsToOverride<CredentialListType>(url.searchParams);
+    const content = createCredentialListMock(override);
+
+    return HttpResponse.json({
+      content,
+      totalSize: 100,
+    });
+  }),
+
+  // 상세 조회 (파라미터 경로)
+  http.get(`${CREDENTIAL_ENDPOINTS.base}/:id`, ({ params }) => {
+    // ...
+  }),
+
+  // 삭제
+  http.delete(`${CREDENTIAL_ENDPOINTS.base}/:id`, ({ params }) => {
+    // ...
+  }),
+];
+```
+
+**핸들러 등록 순서**:
+
+MSW는 첫 번째로 매칭되는 핸들러를 사용하므로, 구체적인 경로가 먼저 오도록 배치해야 합니다.
+
+```typescript
+// src/mocks/handlers/index.ts
+const rawHandlers = [
+  ...workloadHandlers,
+  ...workspaceMemberHandlers,  // /workspace/member (더 구체적)
+  ...workspaceHandlers,        // /workspace/:id (덜 구체적)
+  ...credentialHandlers,
+  // ...
+];
+```
+
+**파일 구조**:
+
+```text
+src/
+├── shared/constants/
+│   └── endpoint.constant.ts    # 엔드포인트 상수 정의
+├── mocks/
+│   ├── data/
+│   │   └── credential.mock.ts  # Mock 팩토리 함수
+│   └── handlers/
+│       ├── credential.handler.ts
+│       └── index.ts            # 핸들러 등록 (순서 주의)
+```
+
+**이유**:
+- **일관성**: 실제 서비스 코드와 MSW 핸들러가 동일한 엔드포인트 상수를 참조하여 불일치 방지
+- **유지보수**: API 경로 변경 시 상수만 수정하면 관련 코드가 모두 반영됨
+- **타입 안전성**: `paramsToOverride<T>`로 타입 추론 가능
+- **코드 재사용**: Mock 팩토리 함수와 `paramsToOverride`의 조합으로 보일러플레이트 감소
+
+**참고 파일**:
+- [endpoint.constant.ts](../src/shared/constants/endpoint.constant.ts)
+- [workload.handler.ts](../src/mocks/handlers/workload.handler.ts)
+- [credential.handler.ts](../src/mocks/handlers/credential.handler.ts)
+- [workspace-member.handler.ts](../src/mocks/handlers/workspace-member.handler.ts)
+
+---
+
 <!-- 새로운 협의 사항은 위의 구분선 아래에 추가하세요 -->
