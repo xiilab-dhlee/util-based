@@ -1,65 +1,78 @@
 "use client";
 
-import { useRef } from "react";
-import { Dropdown, Icon, Input, Modal, TextArea } from "xiilab-ui";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import styled from "styled-components";
+import {
+  Dropdown,
+  Form,
+  FormItem,
+  Icon,
+  Input,
+  Modal,
+  TextArea,
+} from "xiilab-ui";
 
 import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential.constant";
 import { useCreateCredential } from "@/domain/credential/hooks/use-create-credential";
-import type {
-  CreateCredentialPayload,
-  CredentialType,
-} from "@/domain/credential/types/credential.type";
-import { FormLabel } from "@/shared/components/form/form-label";
+import {
+  type CreateCredentialFormType,
+  createCredentialFormSchema,
+} from "@/domain/credential/schemas/credential.schema";
+import type { CredentialType } from "@/domain/credential/types/credential.type";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSelect } from "@/shared/hooks/use-select";
 import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
-import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
 
 /**
- * 크레덴셜 생성 모달 컴포넌트
+ * 크리덴셜 생성 모달 컴포넌트
  *
- * 새로운 크레덴셜을 생성할 수 있는 모달입니다.
+ * react-hook-form과 zod를 사용한 유효성 검증을 제공합니다.
+ *
+ * 유효성 검증 규칙:
+ * - 타입: 필수 (GIT 또는 DOCKER)
+ * - 이름: 필수, 최대 100자
+ * - 설명: 선택, 최대 500자
+ * - 내부 레지스트리 URL: DOCKER 타입일 때만 표시, URL 형식
+ * - 아이디: 필수
+ * - 토큰: 필수
  */
 export function CreateCredentialModal() {
-  const formRef = useRef<HTMLFormElement>(null);
-
-  // useGlobalModal 훅을 사용하여 모달 상태 관리
   const { open, onClose } = useGlobalModal(openCreateCredentialModalAtom);
-
-  // 크레덴셜 타입 선택을 위한 useSelect 훅
-  const typeSelect = useSelect<CredentialType>(
-    "GIT",
-    CREDENTIAL_TYPE_OPTIONS,
-    true,
-  );
-
   const createCredential = useCreateCredential();
 
-  const handleSubmit = () => {
-    const payload = createPayload();
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<CreateCredentialFormType>({
+    resolver: zodResolver(createCredentialFormSchema),
+    defaultValues: {
+      type: "GIT",
+      name: "",
+      description: "",
+      internalRegistryUrl: "",
+      userId: "",
+      token: "",
+    },
+  });
 
-    // TODO: payload 검증 및 유효성 검사 추가 필요
-    if (payload) {
-      // TODO: validation 추가 필요
-      createCredential.mutate(payload);
-    }
+  const selectedType = watch("type");
+
+  const onSubmit = (data: CreateCredentialFormType) => {
+    createCredential.mutate({
+      type: data.type as CredentialType,
+      name: data.name,
+      description: data.description || "",
+      internalregistryUrl: data.internalRegistryUrl || "",
+      id: data.userId,
+      pw: data.token,
+    });
   };
 
-  const createPayload = (): CreateCredentialPayload | null => {
-    if (!formRef.current) return null;
-    // 폼 데이터 수집
-    const formData = new FormData(formRef.current);
-
-    return {
-      type: typeSelect.value as CredentialType,
-      name: formData.get("credentialName") as string,
-      description: formData.get("credentialDescription") as string,
-      internalregistryUrl: formData.get(
-        "credentialInternalRegistryUrl",
-      ) as string,
-      id: formData.get("credentialId") as string,
-      pw: formData.get("credentialToken") as string,
-    };
+  const handleClose = () => {
+    onClose();
   };
 
   return (
@@ -69,85 +82,166 @@ export function CreateCredentialModal() {
       modalWidth={370}
       open={open}
       closable
-      title="크레덴셜 추가"
+      title="크리덴셜 추가"
       showCancelButton
       cancelText="취소"
-      onCancel={onClose}
+      onCancel={handleClose}
       okText="추가"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
       okButtonProps={{
-        disabled: false,
+        disabled: createCredential.isPending,
       }}
+      afterClose={reset}
     >
-      <form ref={formRef}>
-        <FormRow>
-          <FormItem>
-            <FormLabel>타입</FormLabel>
-            <Dropdown
-              options={typeSelect.options}
-              onChange={typeSelect.onChange}
-              value={typeSelect.value}
-              width="100%"
-              placeholder="타입을 선택해 주세요."
-            />
-          </FormItem>
-          <FormItem>
-            <FormLabel htmlFor="credentialName">이름</FormLabel>
-            <Input
-              type="text"
-              id="credentialName"
-              name="credentialName"
-              placeholder="이름을 입력해 주세요."
-              width="100%"
-            />
-          </FormItem>
-        </FormRow>
-        {/* 설명 입력 필드 */}
-        <FormItem>
-          <FormLabel htmlFor="credentialDescription">설명</FormLabel>
-          <TextArea
-            id="credentialDescription"
-            name="credentialDescription"
-            placeholder="설명을 입력해 주세요."
+      <StyledForm>
+        <NameRow>
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => (
+              <FormItem
+                label="타입"
+                required
+                validateStatus={errors.type ? "error" : undefined}
+                help={errors.type?.message}
+              >
+                <Dropdown
+                  options={CREDENTIAL_TYPE_OPTIONS}
+                  onChange={(value) => field.onChange(value)}
+                  value={field.value}
+                  width="100%"
+                  placeholder="타입을 선택해 주세요."
+                  status={errors.type ? "error" : undefined}
+                />
+              </FormItem>
+            )}
           />
-        </FormItem>
-        {typeSelect.value === "DOCKER" && (
-          <FormItem>
-            <FormLabel htmlFor="credentialInternalRegistryUrl">
-              내부 레지스트리 URL
-            </FormLabel>
-            <Input
-              type="text"
-              id="credentialInternalRegistryUrl"
-              name="credentialInternalRegistryUrl"
-              placeholder="https://index.docker.io/v1/"
-            />
-          </FormItem>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <FormItem
+                label="이름"
+                required
+                validateStatus={errors.name ? "error" : undefined}
+                htmlFor="credentialName"
+                help={errors.name?.message}
+              >
+                <Input
+                  {...field}
+                  type="text"
+                  id="credentialName"
+                  placeholder="이름을 입력해 주세요."
+                  width="100%"
+                  autoComplete="off"
+                />
+              </FormItem>
+            )}
+          />
+        </NameRow>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="설명"
+              validateStatus={errors.description ? "error" : undefined}
+              htmlFor="credentialDescription"
+              help={errors.description?.message}
+            >
+              <TextArea
+                {...field}
+                id="credentialDescription"
+                placeholder="설명을 입력해 주세요."
+              />
+            </FormItem>
+          )}
+        />
+        {selectedType === "DOCKER" && (
+          <Controller
+            name="internalRegistryUrl"
+            control={control}
+            render={({ field }) => (
+              <FormItem
+                label="내부 레지스트리 URL"
+                validateStatus={
+                  errors.internalRegistryUrl ? "error" : undefined
+                }
+                htmlFor="credentialInternalRegistryUrl"
+                help={errors.internalRegistryUrl?.message}
+              >
+                <Input
+                  {...field}
+                  type="text"
+                  id="credentialInternalRegistryUrl"
+                  placeholder="https://index.docker.io/v1/"
+                  width="100%"
+                />
+              </FormItem>
+            )}
+          />
         )}
-
-        <FormItem>
-          <FormLabel htmlFor="credentialId">아이디</FormLabel>
-          <Input
-            type="text"
-            id="credentialId"
-            name="credentialId"
-            placeholder="아이디를 입력해 주세요."
-            width="100%"
-          />
-        </FormItem>
-        <FormItem>
-          <FormLabel htmlFor="credentialToken">토큰</FormLabel>
-          <Input
-            type="text"
-            id="credentialToken"
-            name="credentialToken"
-            placeholder="토큰을 입력해 주세요."
-            width="100%"
-          />
-        </FormItem>
-      </form>
+        <Controller
+          name="userId"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="아이디"
+              required
+              validateStatus={errors.userId ? "error" : undefined}
+              htmlFor="credentialId"
+              help={errors.userId?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="credentialId"
+                placeholder="아이디를 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="token"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="토큰"
+              required
+              validateStatus={errors.token ? "error" : undefined}
+              htmlFor="credentialToken"
+              help={errors.token?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="credentialToken"
+                placeholder="토큰을 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+              />
+            </FormItem>
+          )}
+        />
+      </StyledForm>
     </Modal>
   );
 }
+
+const StyledForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  --icon-fill: #969a9f;
+`;
+
+const NameRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+`;
