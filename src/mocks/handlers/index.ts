@@ -29,6 +29,7 @@ import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
+import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
 import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
@@ -37,6 +38,7 @@ import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.han
 import { volumeHandlers } from "@/mocks/handlers/volume.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 import { workspaceHandlers } from "@/mocks/handlers/workspace.handler";
+import { workspaceMemberHandlers } from "@/mocks/handlers/workspace-member.handler";
 
 // ============================================
 // Lazy Mock 지연 래퍼
@@ -96,7 +98,9 @@ const rawHandlers = [
   ...sourcecodeHandlers,
   ...volumeHandlers,
   ...hubHandlers,
+  ...workspaceMemberHandlers,
   ...workspaceHandlers,
+  ...requestResourceHandlers,
   ...requestImageHandlers,
   ...nodeHandlers,
   ...redfishHandlers,
