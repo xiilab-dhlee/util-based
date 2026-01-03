@@ -1,5 +1,7 @@
 import type { DropdownOption } from "xiilab-ui";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
+
 /** 목록 페이지 크기 */
 export const LIST_PAGE_SIZE = 20;
 /** 카드 페이지 크기 */
@@ -11,9 +13,9 @@ export const CHECKBOX_COLUMN_WIDTH = 40;
 /** Aside 너비 */
 export const ASIDE_WIDTH = 620;
 /** 사용자 모드 루트 경로 */
-export const USER_ROOT_PATH = "/user/monitoring";
+export const USER_ROOT_PATH = ROUTES.USER_MONITORING;
 /** 관리자 모드 루트 경로 */
-export const ADMIN_ROOT_PATH = "/admin/monitoring";
+export const ADMIN_ROOT_PATH = ROUTES.ADMIN_MONITORING;
 
 /** 계정 권한 상수 */
 export const ACCOUNT_ROLES = {

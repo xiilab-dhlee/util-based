@@ -11,14 +11,6 @@ export interface CoreSearchText {
   searchText: string;
 }
 
-// 정렬 타입
-export type SortDirection = "ASC" | "DESC";
-
-export interface CoreSort {
-  sortBy?: string;
-  sortDirection?: SortDirection;
-}
-
 export interface CorePayload {
   [key: string]: string | number | boolean | undefined | Array<unknown>; // 인덱스 시그니처 추가
 }

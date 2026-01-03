@@ -1,10 +1,13 @@
 import type { SorterResult } from "antd/es/table/interface";
 
-import type { SortDirection } from "@/shared/types/api.interface";
-import type { TableSortState } from "@/shared/types/core.model";
+import type {
+  AntdTableSortOrder,
+  AntdTableSortState,
+} from "@/shared/types/core.model";
 
-/** Ant Design sortOrder 타입 */
-export type AntdSortOrder = "ascend" | "descend";
+type SortDirection = "ASC" | "DESC";
+
+export type BackendOrder = SortDirection;
 
 /** parseSorter 반환 타입 */
 export interface ParsedSortResult {
@@ -14,41 +17,47 @@ export interface ParsedSortResult {
 
 /**
  * Ant Design sortOrder를 API SortDirection으로 변환
- * @param order - Ant Design 정렬 순서 ("ascend" | "descend")
- * @returns API 정렬 방향 ("ASC" | "DESC")
  */
-export const toSortDirection = (order: AntdSortOrder): SortDirection =>
+export const toSortDirection = (order: AntdTableSortOrder): SortDirection =>
   order === "ascend" ? "ASC" : "DESC";
 
 /**
  * API SortDirection을 Ant Design sortOrder로 변환
- * @param direction - API 정렬 방향 ("ASC" | "DESC")
- * @returns Ant Design 정렬 순서 ("ascend" | "descend")
  */
-export const toSortOrder = (direction: SortDirection): AntdSortOrder =>
+export const toSortOrder = (direction: SortDirection): AntdTableSortOrder =>
   direction === "ASC" ? "ascend" : "descend";
 
-/**
- * 현재 정렬 상태에 따라 컬럼의 sortOrder 반환
- * @param sortState - 현재 정렬 상태 (sortBy, sortDirection)
- * @param field - 컬럼의 dataIndex
- * @returns 해당 컬럼이 정렬 중이면 sortOrder, 아니면 null
- */
-export const getSortOrder = (
-  sortState: TableSortState,
-  field: string,
-): AntdSortOrder | null =>
-  sortState.sortBy === field ? toSortOrder(sortState.sortDirection) : null;
+export function toBackendOrder(order: AntdTableSortOrder): BackendOrder {
+  return order === "ascend" ? "ASC" : "DESC";
+}
 
-export const parseSorter = <T>(
-  sorter: SorterResult<T> | SorterResult<T>[],
-): ParsedSortResult | null => {
-  const single = Array.isArray(sorter) ? sorter[0] : sorter;
-
-  if (!single.field || !single.order) return null;
+export function buildSortRequest<TField extends string, TSortEnum>(args: {
+  state: AntdTableSortState<TField>;
+  fieldMap: Record<TField, TSortEnum>;
+}): { sort: TSortEnum; order: BackendOrder } | null {
+  if (!args.state.field || !args.state.order) return null;
 
   return {
-    field: String(single.field),
-    direction: toSortDirection(single.order),
+    sort: args.fieldMap[args.state.field],
+    order: toBackendOrder(args.state.order),
+  };
+}
+
+export const getColumnSortOrder = <TField extends string>(
+  sortState: AntdTableSortState<TField>,
+  field: TField,
+): AntdTableSortOrder | undefined => {
+  if (sortState.field !== field) return undefined;
+  return sortState.order ?? undefined;
+};
+
+export const parseSorterToAntdState = <T>(
+  sorter: SorterResult<T> | SorterResult<T>[],
+): AntdTableSortState => {
+  const single = Array.isArray(sorter) ? sorter[0] : sorter;
+
+  return {
+    field: single.field ? String(single.field) : null,
+    order: (single.order ?? null) as AntdTableSortOrder | null,
   };
 };

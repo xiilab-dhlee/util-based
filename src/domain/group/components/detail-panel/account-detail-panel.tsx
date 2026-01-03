@@ -3,8 +3,8 @@
 import styled from "styled-components";
 import { Tag } from "xiilab-ui";
 
-import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account-role.constant";
-import { useGetAccountDetail } from "@/domain/account-management/hooks/use-get-account-detail";
+import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
+import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
 import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
@@ -37,16 +37,16 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
   const { data: accountDetail } = useGetAccountDetail(account.id);
 
   const displayId = accountDetail?.email ?? "-";
-  const displayName = accountDetail?.name ?? "-";
-  const displayRole = accountDetail?.role ?? "-";
+  const displayName = accountDetail?.accountName ?? "-";
+  const displayRole = accountDetail?.accountRole ?? "-";
   const displayStatus =
     typeof accountDetail?.isEnabled === "boolean"
       ? getAccountStatusLabelFromBoolean(accountDetail.isEnabled)
       : "-";
   const displayJoinedDate = formatDateSafely(accountDetail?.createdAt) ?? "-";
 
-  // 상세 응답에서 제공되는 그룹 목록 (다중 그룹 지원)
-  const groups = accountDetail?.groupList ?? [];
+  // 상세 응답에서 제공되는 그룹 이름 목록 (문자열 배열)
+  const groupNames = accountDetail?.groupName ?? [];
 
   return (
     <PanelContainer>
@@ -131,11 +131,11 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
               <AsideDetailArticleColumn>
                 <AsideDetailArticleKey>그룹 목록</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {groups.length > 0 ? (
+                  {groupNames.length > 0 ? (
                     <TagList>
-                      {groups.map((group) => (
-                        <Tag key={group.id} variant="gray">
-                          {group.name}
+                      {groupNames.map((groupName, index) => (
+                        <Tag key={index} variant="gray">
+                          {groupName}
                         </Tag>
                       ))}
                     </TagList>

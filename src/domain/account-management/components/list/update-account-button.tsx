@@ -1,20 +1,19 @@
 import { Icon } from "xiilab-ui";
 
-import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
+import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { ColumnIconWrap } from "@/styles/layers/column-layer.styled";
 
 interface UpdateAccountButtonProps {
-  /** 대상 노드의 이름 */
-  account: AccountListType;
+  account: AccountItemResponse;
 }
 
 export function UpdateAccountButton({ account }: UpdateAccountButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(ACCOUNT_EVENTS.sendUpdateAccount, account);
+    publish(ACCOUNT_EVENTS.sendUpdateAccount, account.accountId);
   };
 
   return (

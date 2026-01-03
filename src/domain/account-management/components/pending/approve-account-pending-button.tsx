@@ -2,7 +2,7 @@
 
 import { Icon } from "xiilab-ui";
 
-import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
+import type { SignupRequestItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
@@ -12,7 +12,7 @@ import {
 
 interface ApproveAccountPendingButtonProps {
   /** 사용자 데이터 */
-  account: AccountListType;
+  account: SignupRequestItemResponse;
 }
 
 /**
@@ -31,8 +31,7 @@ export function ApproveAccountPendingButton({
    */
   const handleClick = () => {
     publish(ACCOUNT_EVENTS.sendApproveAccountPending, {
-      accountIds: [account.id],
-      accountNames: [account.name],
+      accountIds: [account.accountId],
     });
   };
 

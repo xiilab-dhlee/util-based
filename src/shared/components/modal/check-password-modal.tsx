@@ -4,8 +4,6 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Icon, Input, Modal } from "xiilab-ui";
 
-import { useCheckPassword } from "@/domain/account-management/hooks/use-check-password";
-import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
 import type { CheckPasswordPayload } from "@/domain/account-management/types/account.type";
 import { LoggedInUserCard } from "@/shared/components/card/logged-in-user-card";
 import { FormLabel } from "@/shared/components/form/form-label";
@@ -14,6 +12,11 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openCheckPasswordModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
+
+interface CheckPasswordEventPayload {
+  name: string;
+  email: string;
+}
 
 /**
  * 비밀번호 재확인 모달 컴포넌트
@@ -30,17 +33,16 @@ export function CheckPasswordModal() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
 
-  const checkPassword = useCheckPassword();
-
   const handleSubmit = () => {
     const payload = createPayload();
 
+    // NOTE: 추후 실제 비밀번호 검증 mutation으로 연결 필요
+    // - 현재 이 모달은 UI만 존재하며, 실제 비밀번호 검증 API 호출은 임시로 비활성화합니다.
     // TODO: payload 검증 및 유효성 검사 추가 필요
-    if (payload) {
-      // TODO: validation 추가 필요
-      // checkUser.mutate(payload);
-      onClose();
-    }
+    if (!payload) return;
+
+    // UX 상 현재는 “확인” 시 닫히도록 처리(실제 연결 시 onSuccess에서 닫는 흐름으로 변경)
+    onClose();
   };
 
   const createPayload = (): CheckPasswordPayload | null => {
@@ -54,7 +56,7 @@ export function CheckPasswordModal() {
     };
   };
 
-  useSubscribe<Pick<AccountListType, "name" | "email">>(
+  useSubscribe<CheckPasswordEventPayload>(
     COMMON_EVENTS.sendCheckPassword,
     ({ name, email }) => {
       setUsername(name);
@@ -79,9 +81,6 @@ export function CheckPasswordModal() {
       onOk={handleSubmit}
       centered
       showHeaderBorder
-      okButtonProps={{
-        disabled: checkPassword.isPending,
-      }}
     >
       <Guide>회원 정보 보호를 위해 비밀번호를 다시 한번 입력해 주세요.</Guide>
       <LoggedInUserCard username={username} email={email} />

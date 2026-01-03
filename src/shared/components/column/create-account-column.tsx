@@ -1,47 +1,43 @@
-import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
-import { AccountAllCheck } from "@/domain/account-management/components/list/account-all-check";
-import { AccountItemCheck } from "@/domain/account-management/components/list/account-item-check";
+import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { AccountStatusSwitch } from "@/domain/account-management/components/list/account-status-switch";
 import { UpdateAccountButton } from "@/domain/account-management/components/list/update-account-button";
-import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
-import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import type { AccountSortState } from "@/domain/account-management/constants/account.constant";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { pubsubUtil } from "@/shared/utils/pubsub.util";
+import { getColumnSortOrder } from "@/shared/utils/sort.util";
 import {
   ColumnAlignCenterWrap,
   ColumnIconWrap,
   ColumnTextButton,
 } from "@/styles/layers/column-layer.styled";
 
-/**
- * 컬럼 정의 배열 생성 (dataIndex 한 번만 정의)
- */
-const createColumnList = (): ResponsiveColumnType[] => {
+const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
   return [
     {
-      title: <AccountAllCheck />,
-      dataIndex: "checkbox",
-      align: "center",
-      width: ICON_COLUMN_WIDTH,
-      render: (_, record: AccountListType) => {
-        return <AccountItemCheck account={record} />;
-      },
-    },
-    {
       title: "이름",
-      dataIndex: "name",
+      dataIndex: "accountName",
       align: "left",
-      render: (name: string, record: AccountListType) => {
+      width: "15%",
+      ellipsis: true,
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "accountName"),
+      render: (accountName: string, record: AccountItemResponse) => {
         const handleClick = () => {
-          pubsubUtil.publish(ACCOUNT_EVENTS.sendViewAccountDetail, record);
+          pubsubUtil.publish(
+            ACCOUNT_EVENTS.sendViewAccountDetail,
+            record.accountId,
+          );
         };
         return (
-          <ColumnTextButton onClick={handleClick}>{name}</ColumnTextButton>
+          <ColumnTextButton onClick={handleClick}>
+            {accountName}
+          </ColumnTextButton>
         );
       },
     },
@@ -54,36 +50,38 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "그룹",
-      dataIndex: "groupList",
+      dataIndex: "groupName",
       align: "left",
       width: "25%",
       ellipsis: true,
-      render: (_: unknown, record: AccountListType) => {
-        const groups = record.groupList ?? [];
-        if (groups.length === 0) return "-";
-
-        const names = groups.map((group) => group.name);
-        return names.join(", ");
+      render: (groupName: string[]) => {
+        if (!groupName || groupName.length === 0) return "-";
+        return groupName.join(", ");
       },
     },
     {
       title: "권한",
-      dataIndex: "role",
+      dataIndex: "accountRole",
       align: "center",
+      width: "10%",
     },
     {
       title: "가입일",
       dataIndex: "createdAt",
-      align: "center",
+      align: "left",
+      width: "12%",
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "createdAt"),
       render: (createdAt: string) => {
-        return <span>{format(createdAt, "yyyy.MM.dd")}</span>;
+        return <span>{formatDateSafely(createdAt)}</span>;
       },
     },
     {
       title: "상태",
-      dataIndex: "status",
+      dataIndex: "isEnabled",
       align: "center",
-      render: (_, record: AccountListType) => {
+      width: "8%",
+      render: (_, record: AccountItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
             <AccountStatusSwitch account={record} />
@@ -95,7 +93,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "수정",
       dataIndex: "update",
       align: "center",
-      render: (_, account: AccountListType) => {
+      width: "5%",
+      render: (_, account: AccountItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
             <UpdateAccountButton account={account} />
@@ -107,7 +106,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "PW 초기화",
       dataIndex: "resetPassword",
       align: "center",
-      width: 60,
+      width: "5%",
       render: () => {
         return (
           <ColumnAlignCenterWrap>
@@ -121,30 +120,11 @@ const createColumnList = (): ResponsiveColumnType[] => {
   ];
 };
 
-/**
- * 사용자 목록 컬럼 생성
- *
- * @param config 컬럼 설정 (배열 형태)
- * @returns 컬럼 배열
- *
- * @example
- * // 1. 모든 컬럼 표시
- * const columns = createAccountColumn();
- *
- * @example
- * // 2. 배열 형태 - 순서 변경 가능
- * const columns = createAccountColumn([
- *   { dataIndex: 'name' },
- *   { dataIndex: 'email' },
- *   { dataIndex: 'groupList' },
- *   { dataIndex: 'role' },
- * ]);
- *
- */
 export const createAccountColumn = (
+  sort: AccountSortState,
   config?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] => {
-  const columnList = createColumnList();
+  const columnList = createColumnList(sort);
 
   return applyColumnConfigs(columnList, config);
 };

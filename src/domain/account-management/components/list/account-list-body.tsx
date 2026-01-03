@@ -1,42 +1,63 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
+import type { TableProps } from "xiilab-ui";
 
-import { useGetAccounts } from "@/domain/account-management/hooks/use-get-accounts";
+import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { AccountSortField } from "@/domain/account-management/constants/account.constant";
 import {
-  accountPageAtom,
-  accountSearchTextAtom,
+  accountCheckedListAtom,
+  accountSortAtom,
 } from "@/domain/account-management/state/account.atom";
 import { createAccountColumn } from "@/shared/components/column/create-account-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { useTableSelection } from "@/shared/hooks/use-table-selection";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
-/**
- * 사용자 목록 페이지 본문 컴포넌트
- *
- * 사용자 목록 페이지에서 사용자 목록을 표시하는 테이블을 제공합니다.
- *
- * @returns 사용자 목록 페이지 본문 컴포넌트
- */
-export function AccountListBody() {
-  // 페이지 번호
-  const page = useAtomValue(accountPageAtom);
-  // 검색어
-  const searchText = useAtomValue(accountSearchTextAtom);
+interface AccountListBodyProps {
+  data: AccountItemResponse[];
+  isLoading: boolean;
+  isError: boolean;
+}
 
-  const { data } = useGetAccounts({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
+export function AccountListBody({
+  data,
+  isLoading,
+  isError,
+}: AccountListBodyProps) {
+  const [checkedList, setCheckedList] = useAtom(accountCheckedListAtom);
+  const [sort, setSort] = useAtom(accountSortAtom);
+  const { rowSelection } = useTableSelection<AccountItemResponse>(
+    checkedList,
+    setCheckedList,
+  );
+
+  const handleChange: TableProps<AccountItemResponse>["onChange"] = (
+    _,
+    __,
+    sorter,
+  ) => {
+    const parsed = parseSorterToAntdState(sorter);
+    if (!parsed.field || !parsed.order) return;
+
+    setSort({
+      field: parsed.field as AccountSortField,
+      order: parsed.order,
+    });
+  };
 
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={createAccountColumn()}
-        data={data?.content || []}
+        columns={createAccountColumn(sort)}
+        data={data}
         columnHeight={38}
+        loading={isLoading}
+        isError={isError}
+        rowKey="accountId"
+        rowSelection={rowSelection}
+        onChange={handleChange}
       />
     </ListWrapper>
   );

@@ -1,6 +1,5 @@
 // 🎯 모든 도메인의 에러 설정을 중앙에서 통합 관리
 
-import { accountErrorConfig } from "@/domain/account-management/constants/account.error";
 import { monitoringNotificationErrorConfig } from "@/domain/monitoring-notification/constants/monitoring-notification.error";
 import { resourcePresetErrorConfig } from "@/domain/resource-preset/constants/resource-preset.error";
 import { securityErrorConfig } from "@/domain/security/constants/security.error";
@@ -13,7 +12,6 @@ import type { ErrorConfig } from "@/shared/types/error.type";
 // 🚀 전역 에러 설정 레지스트리 (도메인 설정 병합)
 const errorConfigRegistry: Record<string, ErrorConfig> = {
   ...monitoringNotificationErrorConfig,
-  ...accountErrorConfig,
   ...resourcePresetErrorConfig,
   ...securityErrorConfig,
   ...hpeErrorConfig,

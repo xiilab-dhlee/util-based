@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account-role.constant";
+import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
+import { useUpdateAccountEnabledAction } from "@/domain/account-management/hooks/account-actions";
 import { openUpdateAccountStatusModalAtom } from "@/domain/account-management/state/account.atom";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -15,11 +15,6 @@ interface UpdateAccountStatusPayload {
   currentStatus: boolean;
 }
 
-/**
- * 사용자 상태 변경 확인 모달 컴포넌트
- *
- * 사용자의 활성화/비활성화 상태를 변경하기 전에 확인을 요청하는 모달입니다.
- */
 export function UpdateAccountStatusModal() {
   const { open, onOpen, onClose } = useGlobalModal(
     openUpdateAccountStatusModalAtom,
@@ -29,30 +24,29 @@ export function UpdateAccountStatusModal() {
     null,
   );
 
-  /**
-   * 확인 버튼 클릭 핸들러
-   * 상태 변경을 실행하고 모달을 닫습니다.
-   */
+  const updateAccountEnabledMutation = useUpdateAccountEnabledAction();
+  const isPending = updateAccountEnabledMutation.isPending;
+
   const handleOk = () => {
-    if (!payload) {
+    if (!payload || isPending) {
       return;
     }
 
     const nextStatus = !payload.currentStatus;
 
-    // TODO: 추후 실제 API 호출 추가
-    // updateAccountStatus.mutate({ accountId: payload.accountId, status: nextStatus });
-
-    const nextStatusLabel = getAccountStatusLabelFromBoolean(nextStatus);
-    toast.success(
-      `${payload.accountName} 계정이 ${nextStatusLabel}되었습니다.`,
+    updateAccountEnabledMutation.mutate(
+      {
+        accountId: payload.accountId,
+        data: { isEnabled: nextStatus },
+      },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+      },
     );
-    onClose();
   };
 
-  /**
-   * 사용자 상태 변경 모달 데이터 구독
-   */
   useSubscribe(
     ACCOUNT_EVENTS.sendUpdateAccountStatus,
     (data: UpdateAccountStatusPayload) => {
@@ -71,9 +65,13 @@ export function UpdateAccountStatusModal() {
         onOk={handleOk}
         title="계정 상태 변경"
         centered
+        closable={!isPending}
+        maskClosable={!isPending}
+        keyboard={!isPending}
         okButtonProps={{
           disabled: true,
         }}
+        cancelButtonProps={{ disabled: isPending }}
       >
         <DataErrorState
           title="계정 상태 정보를 불러 올 수 없습니다."
@@ -92,10 +90,14 @@ export function UpdateAccountStatusModal() {
       onOk={handleOk}
       title="계정 상태 변경"
       centered
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <div>
-        {payload.accountName} 계정을{" "}
-        {getAccountStatusLabelFromBoolean(!payload.currentStatus)}
+        해당 계정을 {getAccountStatusLabelFromBoolean(!payload.currentStatus)}
         하시겠습니까?
       </div>
       <div>

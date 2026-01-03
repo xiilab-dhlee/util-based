@@ -1,43 +1,63 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
+import type { TableProps } from "xiilab-ui";
 
-import { useGetPendingAccounts } from "@/domain/account-management/hooks/use-get-pending-accounts";
+import type { SignupRequestItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { SignupRequestSortField } from "@/domain/account-management/constants/account.constant";
 import {
-  accountPendingPageAtom,
-  accountPendingSearchTextAtom,
+  accountPendingCheckedListAtom,
+  accountPendingSortAtom,
 } from "@/domain/account-management/state/account.atom";
-import { accountPendingListColumn } from "@/shared/components/column/account-pending-list-column";
+import { createAccountPendingColumn } from "@/shared/components/column/create-account-pending-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { useTableSelection } from "@/shared/hooks/use-table-selection";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
-/**
- * 가입 승인 목록 페이지 본문 컴포넌트
- *
- * 가입 승인 목록 페이지에서 가입 승인 목록을 표시하는 테이블을 제공합니다.
- *
- * @returns 가입 승인 목록 페이지 본문 컴포넌트
- */
-export function AccountPendingListBody() {
-  // 페이지 번호
-  const page = useAtomValue(accountPendingPageAtom);
-  // 검색어
-  const searchText = useAtomValue(accountPendingSearchTextAtom);
+interface AccountPendingListBodyProps {
+  data: SignupRequestItemResponse[];
+  isLoading: boolean;
+  isError: boolean;
+}
 
-  const { data } = useGetPendingAccounts({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
+export function AccountPendingListBody({
+  data,
+  isLoading,
+  isError,
+}: AccountPendingListBodyProps) {
+  const [checkedList, setCheckedList] = useAtom(accountPendingCheckedListAtom);
+  const [sort, setSort] = useAtom(accountPendingSortAtom);
+  const { rowSelection } = useTableSelection<SignupRequestItemResponse>(
+    checkedList,
+    setCheckedList,
+  );
+
+  const handleChange: TableProps<SignupRequestItemResponse>["onChange"] = (
+    _,
+    __,
+    sorter,
+  ) => {
+    const parsed = parseSorterToAntdState(sorter);
+    if (!parsed.field || !parsed.order) return;
+
+    setSort({
+      field: parsed.field as SignupRequestSortField,
+      order: parsed.order,
+    });
+  };
 
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={accountPendingListColumn}
-        data={data?.content || []}
-        activePadding
+        columns={createAccountPendingColumn(sort)}
+        data={data}
         columnHeight={38}
+        loading={isLoading}
+        isError={isError}
+        rowKey="accountId"
+        rowSelection={rowSelection}
+        onChange={handleChange}
       />
     </ListWrapper>
   );

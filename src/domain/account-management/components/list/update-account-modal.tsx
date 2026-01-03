@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   Dropdown,
@@ -12,14 +12,15 @@ import {
   Typography,
 } from "xiilab-ui";
 
+import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
+import type { AccountUpdateRequestAccountRole } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   ACCOUNT_ROLE_OPTIONS,
   ACCOUNT_STATUS_OPTIONS,
-} from "@/domain/account-management/constants/account-role.constant";
+} from "@/domain/account-management/constants/account.constant";
+import { useUpdateAccountAction } from "@/domain/account-management/hooks/account-actions";
 import { useAccountForm } from "@/domain/account-management/hooks/use-account-form";
-import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
 import { openUpdateAccountModalAtom } from "@/domain/account-management/state/account.atom";
-import type { AccountRole } from "@/shared/constants/core.constant";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -31,42 +32,67 @@ import { subTitleStyle } from "@/styles/mixins/text";
  */
 export function UpdateAccountModal() {
   const { open, onOpen, onClose } = useGlobalModal(openUpdateAccountModalAtom);
-  const [account, setAccount] = useState<AccountListType | null>(null);
+  const [accountId, setAccountId] = useState<string>("");
 
   // 폼 훅 사용
   const { formState, errors, setField, validate, reset, initializeForEdit } =
     useAccountForm();
 
-  useSubscribe<AccountListType>(
-    ACCOUNT_EVENTS.sendUpdateAccount,
-    async (eventData) => {
-      setAccount(eventData);
-      // 폼 초기화
-      initializeForEdit({
-        role: eventData.role,
-        isEnabled: eventData.isEnabled,
-        workspaceLimitCount: eventData.workspaceLimitCount,
-      });
-      onOpen();
-    },
-  );
+  const updateAccountMutation = useUpdateAccountAction();
+  const isPending = updateAccountMutation.isPending;
+
+  const { data: accountDetail, isFetching: isFetchingAccountDetail } =
+    useGetAccountDetail(accountId, {
+      query: {
+        enabled: open && Boolean(accountId),
+      },
+    });
+
+  useSubscribe<string>(ACCOUNT_EVENTS.sendUpdateAccount, (nextAccountId) => {
+    setAccountId(nextAccountId);
+    onOpen();
+  });
 
   const handleClose = () => {
+    if (isPending) return;
     onClose();
     reset();
+    setAccountId("");
   };
 
   const handleSubmit = () => {
+    if (!accountDetail) return;
+
     const payload = validate();
     if (!payload) return;
 
-    // TODO: API 연동 후 구현
-    console.log({
-      accountId: account?.id,
-      ...payload,
-    });
-    handleClose();
+    updateAccountMutation.mutate(
+      {
+        accountId: accountDetail.accountId,
+        data: payload,
+      },
+      {
+        onSuccess: () => {
+          handleClose();
+        },
+      },
+    );
   };
+
+  // 상세 조회 결과가 들어오면 폼을 최신 값으로 초기화
+  useEffect(() => {
+    if (!open) return;
+    if (!accountId) return;
+    if (!accountDetail) return;
+    if (accountDetail.accountId !== accountId) return;
+
+    initializeForEdit({
+      accountRole: accountDetail.accountRole as AccountUpdateRequestAccountRole,
+      isEnabled: accountDetail.isEnabled,
+      workspaceLimitCount: accountDetail.workspaceLimitCount,
+      isValid: true,
+    });
+  }, [open, accountId, accountDetail, initializeForEdit]);
 
   return (
     <Modal
@@ -74,7 +100,7 @@ export function UpdateAccountModal() {
       icon={<Icon name="Edit02" color="#fff" size={20} />}
       modalWidth={370}
       open={open}
-      closable
+      closable={!isPending}
       title="계정 상세 정보 수정"
       showCancelButton
       cancelText="취소"
@@ -83,6 +109,13 @@ export function UpdateAccountModal() {
       onOk={handleSubmit}
       centered
       showHeaderBorder
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      cancelButtonProps={{ disabled: isPending }}
+      okButtonProps={{
+        loading: isPending,
+        disabled: isPending || isFetchingAccountDetail || !accountDetail,
+      }}
     >
       <Container>
         {/* 계정 기본 정보 */}
@@ -91,23 +124,25 @@ export function UpdateAccountModal() {
           <SectionTitle>상세 정보</SectionTitle>
           <DetailRow>
             <DetailLabel>이름</DetailLabel>
-            <DetailValue>{account?.name || "-"}</DetailValue>
+            <DetailValue>{accountDetail?.accountName || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>아이디</DetailLabel>
-            <DetailValue>{account?.email || "-"}</DetailValue>
+            <DetailValue>{accountDetail?.email || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>그룹</DetailLabel>
             <DetailValue>
-              {account?.groupList?.length
-                ? account.groupList.map((group) => group.name).join(", ")
+              {accountDetail?.groupName?.length
+                ? accountDetail.groupName.join(", ")
                 : "-"}
             </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>가입일</DetailLabel>
-            <DetailValue>{formatDateSafely(account?.createdAt)}</DetailValue>
+            <DetailValue>
+              {formatDateSafely(accountDetail?.createdAt)}
+            </DetailValue>
           </DetailRow>
 
           <Divider />
@@ -115,7 +150,7 @@ export function UpdateAccountModal() {
           <SectionTitle>워크스페이스 정보</SectionTitle>
           <DetailRow>
             <DetailLabel>보유 개수</DetailLabel>
-            <DetailValue>{account?.workspaceCount ?? 0}개</DetailValue>
+            <DetailValue>{accountDetail?.workspaceCount ?? 0}개</DetailValue>
           </DetailRow>
         </DetailCard>
 
@@ -129,11 +164,17 @@ export function UpdateAccountModal() {
               <FormItem label="권한" required>
                 <Dropdown
                   options={ACCOUNT_ROLE_OPTIONS}
-                  value={formState.role}
-                  onChange={(value) => setField("role", value as AccountRole)}
+                  value={formState.accountRole}
+                  onChange={(value) =>
+                    setField(
+                      "accountRole",
+                      value as AccountUpdateRequestAccountRole,
+                    )
+                  }
                   placeholder="권한 선택해 주세요."
                   width="100%"
-                  status={errors.role ? "error" : undefined}
+                  status={errors.accountRole ? "error" : undefined}
+                  disabled={isPending}
                 />
               </FormItem>
             </HalfFormItem>
@@ -146,6 +187,7 @@ export function UpdateAccountModal() {
                   placeholder="상태 선택"
                   width="100%"
                   status={errors.isEnabled ? "error" : undefined}
+                  disabled={isPending}
                 />
               </FormItem>
             </HalfFormItem>
@@ -162,6 +204,7 @@ export function UpdateAccountModal() {
               suffix="개"
               width="100%"
               status={errors.workspaceLimitCount ? "error" : undefined}
+              disabled={isPending}
             />
           </FormItem>
         </Form>
@@ -204,7 +247,6 @@ const SectionTitle = styled.div`
 
 const DetailRow = styled.div`
   display: flex;
-  align-items: center;
 `;
 
 const DetailLabel = styled(Typography.Text).attrs({
