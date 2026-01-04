@@ -3,6 +3,7 @@
 import { Button } from "xiilab-ui";
 
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { SETTING_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
 
@@ -40,6 +41,7 @@ export function SettingCredentialListFilter({
         height={30}
         onClick={handleCreateCredential}
         disabled={loading}
+        data-testid={SETTING_SELECTOR.CREDENTIAL_ADD_BUTTON}
       >
         크리덴셜 추가
       </Button>

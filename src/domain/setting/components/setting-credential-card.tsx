@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Card, Icon, Tag, type TagProps } from "xiilab-ui";
 
 import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
+import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface SettingCredentialCardProps extends CredentialListType {}
 
@@ -34,7 +35,9 @@ export function SettingCredentialCard({
         <Header>
           <Title>
             <StyledTag variant={variant}>{type.toLowerCase()}</StyledTag>
-            <CredentialName>{name}</CredentialName>
+            <CredentialName data-testid={CREDENTIAL_SELECTOR.CARD_NAME}>
+              {name}
+            </CredentialName>
           </Title>
           <Description>{description}</Description>
         </Header>

@@ -18,7 +18,7 @@ export const settingKeys = {
   ],
   credentialList: (payload: GetCredentialsPayload) => [
     ...settingKeys.default,
-    "credentialList",
+    "credential",
     ...Object.values(payload),
   ],
 };
