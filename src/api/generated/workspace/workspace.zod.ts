@@ -71,7 +71,7 @@ export const updateWorkspaceResponse = zod
         description: zod.string().optional().describe("워크스페이스 설명"),
         isPinned: zod.boolean().describe("Pin으로 고정된 워크스페이스 여부"),
         isDefault: zod.boolean().describe("default 워크스페이스 여부"),
-        createdAt: zod.string().datetime({}).describe("생성 일시"),
+        createdAt: zod.string().datetime({}).describe("생성 일시 (UTC)"),
       })
       .strict()
       .optional()
@@ -113,83 +113,19 @@ export const setDefaultWorkspaceResponse = zod
   .strict();
 
 /**
- * 특정 멤버의 워크스페이스 내 권한을 조회합니다. 워크스페이스 접근 권한이 필요합니다.
- * @summary 멤버 권한 조회
- */
-export const getWorkspaceMemberRoleParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-  accountId: zod.string().describe("계정 ID"),
-});
-
-export const getWorkspaceMemberRoleResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    data: zod
-      .object({
-        memberRole: zod
-          .enum(["OWNER", "PARTICIPANT"])
-          .describe("워크스페이스 구성원 역할"),
-      })
-      .strict()
-      .optional()
-      .describe("워크스페이스 구성원 권한 응답"),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 특정 구성원의 워크스페이스 내 권한을 수정합니다. OWNER 또는 ADMIN 권한이 필요합니다.
- * @summary 워크스페이스 구성원 권한 수정
- */
-export const updateMemberRoleParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-  accountId: zod.string().describe("계정 ID"),
-});
-
-export const updateMemberRoleBody = zod
-  .object({
-    memberRole: zod.enum(["OWNER", "PARTICIPANT"]).describe("멤버 역할"),
-  })
-  .strict()
-  .describe("워크스페이스 멤버 역할 수정 요청");
-
-export const updateMemberRoleResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    data: zod
-      .object({
-        memberRole: zod
-          .enum(["OWNER", "PARTICIPANT"])
-          .describe("워크스페이스 구성원 역할"),
-      })
-      .strict()
-      .optional()
-      .describe("워크스페이스 구성원 권한 응답"),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. default 워크스페이스, pin된 워크스페이스, 기타 워크스페이스명 가나다순으로 정렬됩니다.
  * @summary 워크스페이스 목록 조회
  */
-export const getAllWorkspacesQueryWorkspaceListRequestPageNoMin = 0;
+export const getAllWorkspacesQueryPageNoMin = 0;
 
 export const getAllWorkspacesQueryParams = zod.object({
-  workspaceListRequest: zod.object({
-    pageNo: zod
-      .number()
-      .min(getAllWorkspacesQueryWorkspaceListRequestPageNoMin)
-      .describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod.number().min(1).describe("페이지 크기"),
-    isMyWorkspace: zod
-      .boolean()
-      .optional()
-      .describe("내 워크스페이스만 조회 여부"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllWorkspacesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod.number().min(1).optional().describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
 });
 
 export const getAllWorkspacesResponse = zod
@@ -214,7 +150,7 @@ export const getAllWorkspacesResponse = zod
                 .boolean()
                 .describe("Pin으로 고정된 워크스페이스 여부"),
               isDefault: zod.boolean().describe("default 워크스페이스 여부"),
-              createdAt: zod.string().datetime({}).describe("생성 일시"),
+              createdAt: zod.string().datetime({}).describe("생성 일시 (UTC)"),
             })
             .strict()
             .describe("워크스페이스 응답"),
@@ -321,23 +257,27 @@ export const getResourceRequestsParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getResourceRequestsQueryPageableRequestPageSizeMax = 100;
+export const getResourceRequestsQueryPageNoMin = 0;
+
+export const getResourceRequestsQueryPageSizeMax = 100;
 
 export const getResourceRequestsQueryParams = zod.object({
-  pageableRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getResourceRequestsQueryPageableRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
-  resourceRequestSortRequest: zod.object({
-    sort: zod
-      .enum(["REQUESTED_AT", "WORKSPACE_NAME", "APPROVAL_STATUS"])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getResourceRequestsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getResourceRequestsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  sort: zod
+    .enum(["REQUESTED_AT", "WORKSPACE_NAME", "APPROVAL_STATUS"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional(),
 });
 
 export const getResourceRequestsResponse = zod
@@ -357,12 +297,15 @@ export const getResourceRequestsResponse = zod
               approvalStatus: zod
                 .enum(["WAITING", "APPROVED", "REJECTED"])
                 .describe("승인 상태(enum): APPROVED, REJECTED, WAITING"),
-              requestedAt: zod.string().datetime({}).describe("요청 일시"),
+              requestedAt: zod
+                .string()
+                .datetime({})
+                .describe("요청 일시 (UTC)"),
               approvedAt: zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("승인/반려 일시"),
+                .describe("승인/반려 일시 (UTC)"),
               creatorId: zod.string().describe("요청자 계정 ID"),
               creatorName: zod.string().describe("요청자 이름"),
               resource: zod
@@ -521,272 +464,6 @@ export const createResourceRequestBody = zod
   .describe("워크스페이스 리소스 추가 요청 생성");
 
 /**
- * 워크스페이스 구성원 목록을 페이징하여 조회합니다. 이름 또는 이메일로 검색할 수 있습니다.
- * @summary 워크스페이스 구성원 목록 조회
- */
-export const getWorkspaceMembersParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-});
-
-export const getWorkspaceMembersQueryPageSearchRequestPageSizeMax = 100;
-
-export const getWorkspaceMembersQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getWorkspaceMembersQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-});
-
-export const getWorkspaceMembersResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    data: zod
-      .object({
-        totalSize: zod.number(),
-        totalPageNum: zod.number(),
-        currentPageNo: zod.number(),
-        content: zod.array(
-          zod
-            .object({
-              accountId: zod.string().describe("계정 ID"),
-              accountName: zod.string().describe("계정 이름"),
-              email: zod.string().describe("이메일"),
-              memberRole: zod
-                .enum(["OWNER", "PARTICIPANT"])
-                .describe("구성원 역할(ENUM: OWNER, PARTICIPANT)"),
-              groupName: zod.array(zod.string()).describe("소속 그룹명 목록"),
-            })
-            .strict()
-            .describe("워크스페이스 구성원 응답"),
-        ),
-      })
-      .strict()
-      .optional(),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 워크스페이스에 새로운 구성원을 추가합니다. OWNER 또는 ADMIN 권한이 필요합니다.
- * @summary 워크스페이스 구성원 추가
- */
-export const addWorkspaceMembersParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-});
-
-export const addWorkspaceMembersBody = zod
-  .object({
-    accountId: zod
-      .array(zod.string())
-      .min(1)
-      .describe("추가할 멤버 계정 ID 목록"),
-  })
-  .strict()
-  .describe("워크스페이스 멤버 추가 요청");
-
-/**
- * 워크스페이스에서 구성원을 삭제합니다. OWNER 또는 ADMIN 권한이 필요합니다.
- * @summary 워크스페이스 구성원 삭제
- */
-export const deleteWorkspaceMembersParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-});
-
-export const deleteWorkspaceMembersBody = zod
-  .object({
-    accountId: zod.array(zod.string()).describe("삭제할 멤버 계정 ID 목록"),
-  })
-  .strict()
-  .describe("워크스페이스 멤버 삭제 요청");
-
-/**
- * 현재 사용자가 워크스페이스에서 탈퇴합니다. 마지막 1명 남은 OWNER는 탈퇴할 수 없습니다.
- * @summary 워크스페이스 탈퇴
- */
-export const leaveWorkspaceParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-});
-
-/**
- * 
-            특정 워크로드의 Pod별, GPU별 메트릭 시계열 데이터를 조회합니다. 
-            분산학습 워크로드(TensorFlow, PyTorch)의 launcher/worker 구분을 지원합니다. 
-            워크스페이스 접근 권한이 필요합니다.
-        
- * @summary 워크로드 상세 모니터링 조회
- */
-export const getWorkloadResourceMetricsTimeseriesParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-  workloadResourceName: zod.string().describe("워크로드 리소스명"),
-});
-
-export const getWorkloadResourceMetricsTimeseriesQueryRequestStartDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getWorkloadResourceMetricsTimeseriesQueryRequestEndDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-
-export const getWorkloadResourceMetricsTimeseriesQueryParams = zod.object({
-  request: zod.object({
-    metricName: zod
-      .enum([
-        "GPU_REQUESTED_TOTAL_COUNT",
-        "CPU_REQUESTED_TOTAL_CORE",
-        "MEM_REQUESTED_TOTAL_BYTE",
-        "GPU_UTILIZATION",
-        "GPU_MEM_UTILIZATION",
-        "CPU_UTILIZATION",
-        "MEM_UTILIZATION",
-      ])
-      .describe(
-        "메트릭 종류 (GPU_UTILIZATION, GPU_MEM_UTILIZATION, CPU_UTILIZATION, MEM_UTILIZATION)",
-      ),
-    startDateTime: zod
-      .string()
-      .regex(
-        getWorkloadResourceMetricsTimeseriesQueryRequestStartDateTimeRegExp,
-      )
-      .optional()
-      .describe(
-        "조회 시작 시간 (yyyy-MM-dd HH:mm:ss 형식, KST 기준, 기본값: 현재 시간 - 1일)",
-      ),
-    endDateTime: zod
-      .string()
-      .regex(getWorkloadResourceMetricsTimeseriesQueryRequestEndDateTimeRegExp)
-      .optional()
-      .describe(
-        "조회 종료 시간 (yyyy-MM-dd HH:mm:ss 형식, KST 기준, 기본값: 현재 시간)",
-      ),
-  }),
-});
-
-export const getWorkloadResourceMetricsTimeseriesResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    data: zod
-      .array(
-        zod
-          .object({
-            dateTime: zod
-              .string()
-              .describe("측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
-            data: zod
-              .array(
-                zod
-                  .object({
-                    podName: zod.string().describe("Pod 이름"),
-                    podRole: zod
-                      .string()
-                      .optional()
-                      .describe(
-                        "Pod 역할 (launcher, worker, chief, master, ps 등) - 추출 불가 시 null",
-                      ),
-                    gpuIndex: zod
-                      .string()
-                      .optional()
-                      .describe("GPU 인덱스 (GPU 메트릭만, CPU/MEM은 null)"),
-                    modelName: zod
-                      .string()
-                      .optional()
-                      .describe("GPU 모델명 (GPU 메트릭만, CPU/MEM은 null)"),
-                    value: zod.string().describe("메트릭 값"),
-                  })
-                  .strict()
-                  .describe("워크로드 메트릭 데이터"),
-              )
-              .describe("해당 시간대의 모든 Pod/GPU 메트릭 데이터"),
-          })
-          .strict()
-          .describe("워크로드 메트릭 시계열 응답 (시간별 그룹화)"),
-      )
-      .optional(),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 
-            워크스페이스의 시간대별 리소스 사용량 메트릭(GPU, CPU, Memory)을 조회합니다.
-            시간대별로 그룹화된 데이터를 반환하며, 워크스페이스 접근 권한이 필요합니다.
-            
- * @summary 워크스페이스 시간별 리소스 사용량 조회
- */
-export const getResourceMetricsTimeseriesParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-});
-
-export const getResourceMetricsTimeseriesQueryRequestStartDateRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getResourceMetricsTimeseriesQueryRequestEndDateRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-
-export const getResourceMetricsTimeseriesQueryParams = zod.object({
-  request: zod.object({
-    metricsName: zod
-      .enum([
-        "GPU_REQUESTED_TOTAL_COUNT",
-        "CPU_REQUESTED_TOTAL_CORE",
-        "MEM_REQUESTED_TOTAL_BYTE",
-      ])
-      .describe("메트릭 종류"),
-    startDate: zod
-      .string()
-      .regex(getResourceMetricsTimeseriesQueryRequestStartDateRegExp)
-      .optional()
-      .describe(
-        "조회 시작 시간 (KST 기준, ISO 8601 또는 'yyyy-MM-dd HH:mm:ss' 형식, 미입력 시 현재 시간 - 1일)",
-      ),
-    endDate: zod
-      .string()
-      .regex(getResourceMetricsTimeseriesQueryRequestEndDateRegExp)
-      .optional()
-      .describe(
-        "조회 종료 시간 (KST 기준, ISO 8601 또는 'yyyy-MM-dd HH:mm:ss' 형식, 미입력 시 현재 시간)",
-      ),
-  }),
-});
-
-export const getResourceMetricsTimeseriesResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    data: zod
-      .array(
-        zod
-          .object({
-            dateTime: zod
-              .string()
-              .describe("측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
-            data: zod
-              .array(
-                zod
-                  .object({
-                    value: zod.string().describe("사용량 값"),
-                    modelName: zod
-                      .string()
-                      .optional()
-                      .describe("모델명 (GPU의 경우만, CPU/MEM은 null)"),
-                  })
-                  .strict()
-                  .describe("모델별 메트릭 데이터"),
-              )
-              .describe("해당 시간대의 모델별 메트릭 데이터 목록"),
-          })
-          .strict()
-          .describe("시간대별 그룹화된 리소스 메트릭 응답"),
-      )
-      .optional(),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
  * 워크스페이스 상세 정보를 조회합니다. 존재하지 않는 경우 null을 반환합니다.
  * @summary 워크스페이스 상세 조회
  */
@@ -802,7 +479,7 @@ export const getWorkspaceDetailResponse = zod
         workspaceName: zod.string().describe("워크스페이스 이름"),
         description: zod.string().optional().describe("워크스페이스 설명"),
         creatorName: zod.string().describe("생성자 이름"),
-        createdAt: zod.string().datetime({}).describe("생성 일시"),
+        createdAt: zod.string().datetime({}).describe("생성 일시 (UTC)"),
       })
       .strict()
       .optional()

@@ -416,7 +416,11 @@ export const getAllWorkspaces1QueryParams = zod.object({
     sort: zod
       .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
       .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    order: zod
+      .enum(["ASC", "DESC"])
+      .describe(
+        "정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용",
+      ),
   }),
 });
 
@@ -551,7 +555,7 @@ export const getAllWorkspaces1Response = zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("생성 일시"),
+                .describe("생성 일시 (UTC)"),
             })
             .strict()
             .describe("관리자 워크스페이스 목록 조회 응답"),
@@ -588,7 +592,11 @@ export const getWorkspaceMembers1QueryParams = zod.object({
     sort: zod
       .enum(["ACCOUNT_NAME", "MEMBER_ROLE", "CREATED_AT"])
       .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    order: zod
+      .enum(["ASC", "DESC"])
+      .describe(
+        "정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용",
+      ),
   }),
 });
 
@@ -611,7 +619,7 @@ export const getWorkspaceMembers1Response = zod
               memberRole: zod
                 .string()
                 .describe("구성원 역할 (OWNER, MANAGER, PARTICIPANT)"),
-              createdAt: zod.string().datetime({}).describe("추가 일시"),
+              createdAt: zod.string().datetime({}).describe("추가 일시 (UTC)"),
               groupName: zod.array(zod.string()).describe("소속 그룹명 목록"),
             })
             .strict()
@@ -714,7 +722,11 @@ export const getWorkspaceDetail1Response = zod
           .describe("관리자 워크스페이스 상세 리소스 응답"),
         creatorId: zod.string().describe("생성자 계정 ID"),
         creatorName: zod.string().describe("생성자 이름"),
-        createdAt: zod.string().datetime({}).optional().describe("생성 일시"),
+        createdAt: zod
+          .string()
+          .datetime({})
+          .optional()
+          .describe("생성 일시 (UTC)"),
       })
       .strict()
       .optional()
@@ -744,7 +756,11 @@ export const getResourceRequests1QueryParams = zod.object({
     sort: zod
       .enum(["REQUESTED_AT", "WORKSPACE_NAME", "APPROVAL_STATUS"])
       .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    order: zod
+      .enum(["ASC", "DESC"])
+      .describe(
+        "정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용",
+      ),
   }),
   filterRequest: zod.object({
     approvalStatus: zod
@@ -773,12 +789,15 @@ export const getResourceRequests1Response = zod
               approvalStatus: zod
                 .enum(["WAITING", "APPROVED", "REJECTED"])
                 .describe("승인 상태 (APPROVED, REJECTED, WAITING)"),
-              requestedAt: zod.string().datetime({}).describe("요청 일시"),
+              requestedAt: zod
+                .string()
+                .datetime({})
+                .describe("요청 일시 (UTC)"),
               approvedAt: zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("승인/반려 일시"),
+                .describe("승인/반려 일시 (UTC)"),
               creatorId: zod.string().describe("요청자 계정 ID"),
               creatorName: zod.string().describe("요청자 이름"),
               resource: zod

@@ -80,7 +80,7 @@ export const getProfileResponse = zod
           .describe("계정 고유 ID (Keycloak User ID, UUID 형식)"),
         email: zod.string().describe("이메일 주소"),
         accountRole: zod
-          .string()
+          .enum(["SUPER_ADMIN", "ADMIN", "USER"])
           .describe("계정 역할. 가능한 값: SUPER_ADMIN, ADMIN, USER"),
         groupName: zod
           .array(zod.string())
@@ -383,43 +383,40 @@ export const getNotificationsParams = zod.object({
   accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
 });
 
-export const getNotificationsQueryPageableRequestPageSizeMax = 100;
+export const getNotificationsQueryPageNoMin = 0;
+
+export const getNotificationsQueryPageSizeMax = 100;
 
 export const getNotificationsQueryParams = zod.object({
-  pageableRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getNotificationsQueryPageableRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
-  filterRequest: zod.object({
-    isRead: zod
-      .boolean()
-      .optional()
-      .describe(
-        "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
-      ),
-    notificationType: zod
-      .enum([
-        "LICENSE",
-        "ACCOUNT",
-        "VULNERABILITY",
-        "NODE",
-        "WORKSPACE",
-        "WORKLOAD",
-        "MONITORING",
-      ])
-      .optional()
-      .describe(
-        "알림 타입 필터. 가능한 값: WORKSPACE_INVITE, WORKSPACE_ROLE_CHANGE, SIGNUP_REQUEST 등. null: 전체",
-      ),
-    notificationRole: zod
-      .enum(["SUPER_ADMIN", "ADMIN", "USER", "ALL"])
-      .optional()
-      .describe("알림 대상 역할 필터. 가능한 값: USER, ADMIN. null: 전체"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getNotificationsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getNotificationsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  notificationType: zod
+    .enum([
+      "LICENSE",
+      "ACCOUNT",
+      "VULNERABILITY",
+      "NODE",
+      "WORKSPACE",
+      "WORKLOAD",
+      "MONITORING",
+    ])
+    .optional()
+    .describe(
+      "알림 타입 필터. 가능한 값: WORKSPACE_INVITE, WORKSPACE_ROLE_CHANGE, SIGNUP_REQUEST 등. null: 전체",
+    ),
+  notificationRole: zod
+    .enum(["SUPER_ADMIN", "ADMIN", "USER", "ALL"])
+    .optional()
+    .describe("알림 대상 역할 필터. 가능한 값: USER, ADMIN. null: 전체"),
 });
 
 export const getNotificationsResponse = zod
