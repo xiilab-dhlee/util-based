@@ -1,6 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
 import { testId } from "@/shared/constants/selector.constant";
+import { generateRandomText } from "../support/test-helpers";
 
 /**
  * 모든 페이지의 기본 클래스
@@ -81,13 +82,6 @@ export abstract class BasePage {
    * this.generateRandomText(10) // "aB3xKp9mZq"
    */
   protected generateRandomText(length: number): string {
-    if (length <= 0) return "";
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789가나다라마바사아자차카타파하";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
+    return generateRandomText(length);
   }
 }

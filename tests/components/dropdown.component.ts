@@ -57,14 +57,23 @@ export class DropdownComponent {
 
   /**
    * 현재 선택된 값 반환
+   * xiilab-ui Dropdown과 Ant Design Select 모두 지원
    *
    * @returns 선택된 값, 없으면 null
    */
   async getSelectedValue(): Promise<string | null> {
-    const selectedItem = this.dropdown.locator(".ant-select-selection-item");
+    // xiilab-ui Dropdown: combobox 다음의 sibling generic 요소에 선택된 값 표시
+    const xiilabSelectedItem = this.dropdown.locator("[role='combobox'] + *");
 
-    if (await selectedItem.isVisible()) {
-      return await selectedItem.textContent();
+    if (await xiilabSelectedItem.isVisible()) {
+      return await xiilabSelectedItem.textContent();
+    }
+
+    // Ant Design Select: .ant-select-selection-item
+    const antSelectedItem = this.dropdown.locator(".ant-select-selection-item");
+
+    if (await antSelectedItem.isVisible()) {
+      return await antSelectedItem.textContent();
     }
 
     return null;
