@@ -92,10 +92,10 @@ function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
  * 원본 핸들러 (지연 미적용)
  */
 const rawHandlers = [
+  ...hubHandlers,
   ...workloadHandlers,
   ...sourcecodeHandlers,
   ...volumeHandlers,
-  ...hubHandlers,
   ...workspaceHandlers,
   ...requestImageHandlers,
   ...nodeHandlers,
