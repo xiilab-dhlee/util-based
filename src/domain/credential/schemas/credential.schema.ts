@@ -29,7 +29,7 @@ const baseCredentialSchema = z.object({
 /**
  * 크리덴셜 목록 Response 스키마
  */
-export const credentialListResponseSchema = baseCredentialSchema.pick({
+export const credentialListSchema = baseCredentialSchema.pick({
   id: true,
   name: true,
   description: true,
@@ -43,27 +43,9 @@ export const credentialListResponseSchema = baseCredentialSchema.pick({
  * 크리덴셜 상세 Response 스키마
  * 보안상 토큰은 제외
  */
-export const credentialDetailResponseSchema = baseCredentialSchema.omit({
+export const credentialDetailSchema = baseCredentialSchema.omit({
   token: true,
 });
-
-/**
- * 크리덴셜 생성 Request 스키마
- */
-export const credentialCreateRequestSchema = baseCredentialSchema.pick({
-  name: true,
-  description: true,
-  type: true,
-  userId: true,
-  token: true,
-  registryUrl: true,
-});
-
-/**
- * 크리덴셜 이름 정규식
- * - 한글, 영문, 숫자, -, _, . 만 허용
- */
-const credentialNameRegex = /^[가-힣a-zA-Z0-9\-_.]+$/;
 
 /**
  * 크리덴셜 폼 스키마 (react-hook-form 유효성 검증용)
@@ -87,7 +69,7 @@ export const createCredentialFormSchema = z
       .min(4, "이름은 4자 이상 입력해 주세요.")
       .max(50, "이름은 50자 이내로 입력해 주세요.")
       .regex(
-        credentialNameRegex,
+        /^[가-힣a-zA-Z0-9\-_.]+$/,
         "한글, 영문, 숫자, -, _, .만 사용할 수 있습니다.",
       )
       .refine(
@@ -99,7 +81,7 @@ export const createCredentialFormSchema = z
       .max(500, "설명은 500자 이내로 입력해 주세요.")
       .optional()
       .or(z.literal("")),
-    internalRegistryUrl: z
+    registryUrl: z
       .string()
       .url("올바른 URL 형식을 입력해 주세요.")
       .optional()
@@ -117,13 +99,14 @@ export const createCredentialFormSchema = z
     (data) => {
       // DOCKER 타입일 때 internalRegistryUrl 필수
       if (data.type === "DOCKER") {
-        return data.internalRegistryUrl && data.internalRegistryUrl.length > 0;
+        return data.registryUrl && data.registryUrl.length > 0;
       }
+
       return true;
     },
     {
       message: "Private Registry URL을 입력해 주세요.",
-      path: ["internalRegistryUrl"],
+      path: ["registryUrl"],
     },
   );
 
@@ -138,12 +121,7 @@ export type CreateCredentialFormType = z.infer<
  * 크리덴셜 타입
  */
 type Credential = z.infer<typeof baseCredentialSchema>;
-export type CredentialListType = z.infer<typeof credentialListResponseSchema>;
-export type CredentialDetailType = z.infer<
-  typeof credentialDetailResponseSchema
->;
-export type CredentialCreateRequest = z.infer<
-  typeof credentialCreateRequestSchema
->;
+export type CredentialListType = z.infer<typeof credentialListSchema>;
+export type CredentialDetailType = z.infer<typeof credentialDetailSchema>;
 export type CredentialIdType = Credential["id"];
 export type CredentialType = Credential["type"];

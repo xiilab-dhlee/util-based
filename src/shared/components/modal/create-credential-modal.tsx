@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import {
   Dropdown,
@@ -19,7 +20,7 @@ import {
   type CreateCredentialFormType,
   createCredentialFormSchema,
 } from "@/domain/credential/schemas/credential.schema";
-import type { CredentialType } from "@/domain/credential/types/credential.type";
+import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
 
@@ -52,7 +53,7 @@ export function CreateCredentialModal() {
       type: "GIT",
       name: "",
       description: "",
-      internalRegistryUrl: "",
+      registryUrl: "",
       userId: "",
       token: "",
     },
@@ -61,13 +62,11 @@ export function CreateCredentialModal() {
   const selectedType = watch("type");
 
   const onSubmit = (data: CreateCredentialFormType) => {
-    createCredential.mutate({
-      type: data.type as CredentialType,
-      name: data.name,
-      description: data.description || "",
-      internalregistryUrl: data.internalRegistryUrl || "",
-      id: data.userId,
-      pw: data.token,
+    createCredential.mutate(data, {
+      onSuccess: () => {
+        toast.success("크리덴셜 생성 성공");
+        handleClose();
+      },
     });
   };
 
@@ -94,6 +93,7 @@ export function CreateCredentialModal() {
         disabled: createCredential.isPending,
       }}
       afterClose={reset}
+      data-testid={CREDENTIAL_SELECTOR.CREATE_MODAL}
     >
       <StyledForm>
         <NameRow>
@@ -106,6 +106,7 @@ export function CreateCredentialModal() {
                 required
                 validateStatus={errors.type ? "error" : undefined}
                 help={errors.type?.message}
+                data-testid={CREDENTIAL_SELECTOR.TYPE_FIELD}
               >
                 <Dropdown
                   options={CREDENTIAL_TYPE_OPTIONS}
@@ -128,6 +129,7 @@ export function CreateCredentialModal() {
                 validateStatus={errors.name ? "error" : undefined}
                 htmlFor="credentialName"
                 help={errors.name?.message}
+                data-testid={CREDENTIAL_SELECTOR.NAME_FIELD}
               >
                 <Input
                   {...field}
@@ -136,6 +138,7 @@ export function CreateCredentialModal() {
                   placeholder="이름을 입력해 주세요."
                   width="100%"
                   autoComplete="off"
+                  data-testid={CREDENTIAL_SELECTOR.NAME_INPUT}
                 />
               </FormItem>
             )}
@@ -150,27 +153,28 @@ export function CreateCredentialModal() {
               validateStatus={errors.description ? "error" : undefined}
               htmlFor="credentialDescription"
               help={errors.description?.message}
+              data-testid={CREDENTIAL_SELECTOR.DESCRIPTION_FIELD}
             >
               <TextArea
                 {...field}
                 id="credentialDescription"
                 placeholder="설명을 입력해 주세요."
+                data-testid={CREDENTIAL_SELECTOR.DESCRIPTION_INPUT}
               />
             </FormItem>
           )}
         />
         {selectedType === "DOCKER" && (
           <Controller
-            name="internalRegistryUrl"
+            name="registryUrl"
             control={control}
             render={({ field }) => (
               <FormItem
-                label="내부 레지스트리 URL"
-                validateStatus={
-                  errors.internalRegistryUrl ? "error" : undefined
-                }
+                label="Private Registry URL"
+                validateStatus={errors.registryUrl ? "error" : undefined}
                 htmlFor="credentialInternalRegistryUrl"
-                help={errors.internalRegistryUrl?.message}
+                help={errors.registryUrl?.message}
+                data-testid={CREDENTIAL_SELECTOR.REGISTRY_URL_FIELD}
               >
                 <Input
                   {...field}
@@ -178,6 +182,7 @@ export function CreateCredentialModal() {
                   id="credentialInternalRegistryUrl"
                   placeholder="https://index.docker.io/v1/"
                   width="100%"
+                  data-testid={CREDENTIAL_SELECTOR.REGISTRY_URL_INPUT}
                 />
               </FormItem>
             )}
@@ -193,6 +198,7 @@ export function CreateCredentialModal() {
               validateStatus={errors.userId ? "error" : undefined}
               htmlFor="credentialId"
               help={errors.userId?.message}
+              data-testid={CREDENTIAL_SELECTOR.USER_ID_FIELD}
             >
               <Input
                 {...field}
@@ -201,6 +207,7 @@ export function CreateCredentialModal() {
                 placeholder="아이디를 입력해 주세요."
                 width="100%"
                 autoComplete="off"
+                data-testid={CREDENTIAL_SELECTOR.USER_ID_INPUT}
               />
             </FormItem>
           )}
@@ -215,6 +222,7 @@ export function CreateCredentialModal() {
               validateStatus={errors.token ? "error" : undefined}
               htmlFor="credentialToken"
               help={errors.token?.message}
+              data-testid={CREDENTIAL_SELECTOR.TOKEN_FIELD}
             >
               <Input
                 {...field}
@@ -223,6 +231,7 @@ export function CreateCredentialModal() {
                 placeholder="토큰을 입력해 주세요."
                 width="100%"
                 autoComplete="off"
+                data-testid={CREDENTIAL_SELECTOR.TOKEN_INPUT}
               />
             </FormItem>
           )}

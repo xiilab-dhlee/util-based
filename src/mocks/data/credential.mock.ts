@@ -1,6 +1,7 @@
 import {
   type CredentialListType,
-  credentialListResponseSchema,
+  credentialDetailSchema,
+  credentialListSchema,
 } from "@/domain/credential/schemas/credential.schema";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { makeMock } from "@/shared/utils/mock.util";
@@ -30,6 +31,8 @@ export function createCredentialListMock(
       baseOverride.name = `${searchText}-credential-${index + 1}`;
     }
 
-    return makeMock(credentialListResponseSchema, baseOverride);
+    return makeMock(credentialListSchema, baseOverride);
   });
 }
+
+export const credentialDetailMock = makeMock(credentialDetailSchema);
