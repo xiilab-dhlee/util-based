@@ -1,12 +1,12 @@
 "use client";
 
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 
 import {
   hubPageAtom,
+  hubSearchKeywordAtom,
   hubSearchTextAtom,
-  hubSelectedAtom,
 } from "@/domain/hub/state/hub.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
@@ -23,23 +23,28 @@ interface HubListFilterProps {
  * 허브 검색 기능과 목록 표시를 위한 헤더 역할을 수행합니다.
  */
 export function HubListFilter({ total, loading }: HubListFilterProps) {
-  const setSelectedHub = useSetAtom(hubSelectedAtom);
+  const [searchKeyword, setSearchKeyword] = useAtom(hubSearchKeywordAtom);
   const setSearchText = useSetAtom(hubSearchTextAtom);
   const resetPage = useResetAtom(hubPageAtom);
 
   /**
    * 검색 핸들러
-   * 검색 시 페이지와 선택된 허브를 초기화하고 검색을 실행
+   * 검색 시 페이지를 초기화하고 목록 페이지로 이동
+   * (목록 페이지에서 자동으로 첫 번째 허브로 리다이렉트됨)
    */
   const handleSearch = (value: string) => {
     resetPage();
-    setSelectedHub(-1);
     setSearchText(value);
   };
 
   return (
     <MySearchFilter title="허브 목록" total={total}>
-      <SearchInput disabled={loading} onSearch={handleSearch} />
+      <SearchInput
+        disabled={loading}
+        onSearch={handleSearch}
+        value={searchKeyword}
+        onChange={setSearchKeyword}
+      />
     </MySearchFilter>
   );
 }

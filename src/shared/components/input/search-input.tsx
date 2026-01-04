@@ -12,6 +12,8 @@ interface SearchInputProps {
   onSearch?: (value: string) => void;
   /** data-testid 값 (외부에서 지정) */
   testId?: string;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
 /**
@@ -27,9 +29,15 @@ export function SearchInput({
   disabled = false,
   onSearch,
   testId,
+  value,
+  onChange,
 }: SearchInputProps) {
   const handleSearch = (value: string) => {
     onSearch?.(value.trim());
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value);
   };
 
   return (
@@ -37,12 +45,14 @@ export function SearchInput({
       name="search"
       placeholder={placeholder}
       onSearch={handleSearch}
+      onChange={handleChange}
       autoComplete="off"
       width={width}
       height={30}
       darkMode={darkMode}
       disabled={disabled}
       data-testid={testId}
+      value={value}
     />
   );
 }
