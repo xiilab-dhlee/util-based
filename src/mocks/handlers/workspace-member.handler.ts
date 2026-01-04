@@ -17,7 +17,6 @@ export const workspaceMemberHandlers = [
       url.searchParams,
     );
     const content = createWorkspaceMemberListMock(override);
-    console.log("atach");
 
     return HttpResponse.json({
       content,
