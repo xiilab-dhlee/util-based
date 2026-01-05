@@ -50,7 +50,7 @@ export function HubListBody({
       <ListWrapper>
         <ListEmpty
           title="허브가 없습니다."
-          message="허브을 생성하여 사용해보세요."
+          message="허브를 생성하여 사용해보세요."
         />
       </ListWrapper>
     );

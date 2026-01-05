@@ -57,7 +57,7 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
 
   return (
     <>
-      <PageHeader pageKey="user.hub" description="Hub" />
+      <PageHeader pageKey="user.hub" />
       <ListPageMain>
         <ListPageBody>
           <HubListFilter total={totalSize} loading={isLoading} />
