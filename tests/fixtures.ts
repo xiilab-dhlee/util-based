@@ -1,7 +1,8 @@
 import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
-import { SELECTOR } from "@/shared/constants/selector.constant";
+import { HUB_SELECTOR, SELECTOR } from "@/shared/constants/selector.constant";
+import { CardGridComponent } from "./components/card-grid.component";
 import { DataTableComponent } from "./components/data-table.component";
 import { DrawerComponent } from "./components/drawer.component";
 import { ModalComponent } from "./components/modal.component";
@@ -12,6 +13,7 @@ import { SearchInputComponent } from "./components/search-input.component";
 import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
+import { HubPage } from "./pages/hub.page";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { SignupPage } from "./pages/signup.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
@@ -122,6 +124,7 @@ type TestContextFixtures = {
   workloadMonitoringPage: WorkloadMonitoringPage;
   workloadTerminalPage: WorkloadTerminalPage;
   monitoringPage: MonitoringPage;
+  hubPage: HubPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
   modal: ModalComponent;
@@ -134,6 +137,8 @@ type TestContextFixtures = {
   // 목록 페이지 공통 컴포넌트
   /** 목록 테이블 험블 객체 */
   listTable: DataTableComponent;
+  /** 목록 카드 그리드 험블 객체 (허브 등 카드형 목록) */
+  listGrid: CardGridComponent;
   /** 내 항목만 보기 스위치 험블 객체 */
   myItemsSwitch: SwitchComponent;
   /** 검색 입력창 험블 객체 */
@@ -377,6 +382,10 @@ export const test = base.extend<TestContextFixtures>({
     await use(new MonitoringPage(page));
   },
 
+  hubPage: async ({ page }, use) => {
+    await use(new HubPage(page));
+  },
+
   // ============================================================================
   // 공통 UI 컴포넌트 (페이지와 무관)
   // ============================================================================
@@ -411,6 +420,10 @@ export const test = base.extend<TestContextFixtures>({
 
   listTable: async ({ page }, use) => {
     await use(new DataTableComponent(page, SELECTOR.LIST_TABLE));
+  },
+
+  listGrid: async ({ page }, use) => {
+    await use(new CardGridComponent(page, HUB_SELECTOR.CARD));
   },
 
   myItemsSwitch: async ({ page }, use) => {
