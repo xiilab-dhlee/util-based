@@ -232,13 +232,13 @@ Scenario Outline: Password 정책 미충족 - <case>
   When Password 필드에 "<password>"을 입력한다
   And Confirm Password 필드에 "<password>"을 입력한다
   And 회원가입 버튼을 클릭한다
-  Then Password 필드에 "에러 메시지" 에러 메시지가 표시된다
+  Then Password 필드에 "<expectedError>" 에러 메시지가 표시된다
 
   Examples:
-    | case               | password          |
-    | 영문만 사용        | aaaaaaaa          |
-    | 숫자만 사용        | 12345678          |
-    | 특수문자만 사용    | !@#$%^&*          |
+    | case               | password          | expectedError                                          |
+    | 영문만 사용        | aaaaaaaa          | Password must contain at least one number              |
+    | 숫자만 사용        | 12345678          | Password must contain at least one letter              |
+    | 특수문자만 사용    | !@#$%^&*          | Password must contain at least one letter and number   |
 ```
 
 **장점:**
