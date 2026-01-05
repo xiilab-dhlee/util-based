@@ -58,7 +58,7 @@ export function HubCard({
         )}
       </CardImageContainer>
 
-      {/* 허브 설명 텍스트 (최대 3줄, 초과 시 줄임표 처리) */}
+      {/* 허브 설명 텍스트 (최대 2줄, 초과 시 줄임표 처리) */}
       <Description>{description}</Description>
     </Card>
   );
