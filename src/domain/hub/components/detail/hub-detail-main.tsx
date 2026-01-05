@@ -7,6 +7,7 @@ import { Button } from "xiilab-ui";
 import { ViewHubReadme } from "@/domain/hub/components/detail/view-hub-readme";
 import { ListEmpty } from "@/shared/components/layouts/list-empty";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
+import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   AsideDetailContainer,
@@ -46,7 +47,7 @@ export function HubDetailMain() {
     <Container>
       <Header>
         <AsideDetailHeaderTitle>
-          <span>{hubName}</span>
+          <span data-testid={HUB_SELECTOR.DETAIL_NAME}>{hubName}</span>
         </AsideDetailHeaderTitle>
         <Button
           color="primary"
@@ -57,6 +58,7 @@ export function HubDetailMain() {
           width={120}
           height={30}
           onClick={handleCreateWorkload}
+          data-testid={HUB_SELECTOR.CREATE_WORKLOAD_BUTTON}
         >
           워크로드 생성
         </Button>

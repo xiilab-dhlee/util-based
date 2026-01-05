@@ -6,6 +6,7 @@ import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocument
 import { HubCard } from "@/domain/hub/components/hub-card";
 import { HUB_PAGE_SIZE } from "@/domain/hub/constants/hub.constant";
 import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface HubListBodyProps {
@@ -58,7 +59,7 @@ export function HubListBody({
 
   return (
     <ListWrapper>
-      <GridList>
+      <GridList data-testid={SELECTOR.LIST_CARD_GRID}>
         {content.map((hub) => (
           <HubCard key={hub.hubId} {...hub} />
         ))}

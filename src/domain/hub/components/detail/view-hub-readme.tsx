@@ -6,6 +6,7 @@ import { useFindHubDetail } from "@/api/generated/hub/hub";
 import { ListEmpty } from "@/shared/components/layouts/list-empty";
 import { MarkdownToHtml } from "@/shared/components/markdown-to-html";
 import { MySpinner } from "@/shared/components/spinner";
+import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
@@ -34,7 +35,7 @@ export function ViewHubReadme({ hubId }: ViewHubReadmeProps) {
   }
 
   return (
-    <Container>
+    <Container data-testid={HUB_SELECTOR.DETAIL_README}>
       <AsideDetailArticleBody>
         <MarkdownToHtml markdown={data || ""} />
       </AsideDetailArticleBody>

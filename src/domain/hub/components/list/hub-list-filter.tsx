@@ -10,6 +10,7 @@ import {
 } from "@/domain/hub/state/hub.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface HubListFilterProps {
   total: number;
@@ -33,6 +34,7 @@ export function HubListFilter({ total, loading }: HubListFilterProps) {
         onSearch={handleSearch}
         value={searchKeyword}
         onChange={setSearchKeyword}
+        testId={SELECTOR.LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

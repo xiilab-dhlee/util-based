@@ -7,6 +7,7 @@ import { Card, CardImageContainer } from "xiilab-ui";
 
 import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface HubCardProps extends FindHubsResponse {}
 
@@ -42,33 +43,37 @@ export function HubCard({
   };
 
   return (
-    <Card
-      hoverable
-      onClick={handleClick}
-      title={hubName}
-      subtitle={modelType}
-      style={{ borderColor: isSelected ? "#366BFF" : "" }}
-    >
-      {/* 허브 썸네일 이미지 영역 */}
-      <CardImageContainer>
-        {thumbnail && (
-          <ImageWrapper>
-            <Image
-              src={thumbnail}
-              alt="Hub Thumbnail"
-              fill
-              style={{ objectFit: "cover" }}
-            />
-          </ImageWrapper>
-        )}
-      </CardImageContainer>
+    <CardWrapper data-testid={HUB_SELECTOR.CARD} aria-selected={isSelected}>
+      <Card
+        hoverable
+        onClick={handleClick}
+        title={hubName}
+        subtitle={modelType}
+        style={{ borderColor: isSelected ? "#366BFF" : "" }}
+      >
+        {/* 허브 썸네일 이미지 영역 */}
+        <CardImageContainer>
+          {thumbnail && (
+            <ImageWrapper>
+              <Image
+                src={thumbnail}
+                alt="Hub Thumbnail"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+            </ImageWrapper>
+          )}
+        </CardImageContainer>
 
-      {/* 허브 설명 텍스트 (최대 2줄, 초과 시 줄임표 처리) */}
-      <Description>{description}</Description>
-    </Card>
+        {/* 허브 설명 텍스트 (최대 2줄, 초과 시 줄임표 처리) */}
+        <Description>{description}</Description>
+      </Card>
+    </CardWrapper>
   );
 }
 
+const CardWrapper = styled.div``;
+
 /**
  * 허브 설명 텍스트를 위한 스타일드 컴포넌트
  * - 여러 줄 텍스트 줄임표 처리 (최대 3줄)
@@ -79,7 +84,7 @@ export function HubCard({
  * - 여러 줄 텍스트 줄임표 처리 (최대 3줄)
  * - 텍스트가 3줄을 초과하면 자동으로 줄임표(...) 표시
  */
-const Description = styled.p`
+const Description = styled.div`
   flex: 1;
   font-weight: 400;
   width: 100%;
