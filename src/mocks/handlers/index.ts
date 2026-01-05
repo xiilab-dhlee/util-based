@@ -9,10 +9,10 @@
 
 import { delay, type HttpHandler } from "msw";
 
+import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
-import { accountHandlers } from "@/mocks/handlers/account.handler";
 import { credentialHandlers } from "@/mocks/handlers/credential.handler";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { groupHandlers } from "@/mocks/handlers/group.handler";
@@ -104,7 +104,7 @@ const rawHandlers = [
   ...requestImageHandlers,
   ...nodeHandlers,
   ...redfishHandlers,
-  ...accountHandlers,
+  ...accountManagementHandlers,
   ...groupHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,

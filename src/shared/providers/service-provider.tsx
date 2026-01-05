@@ -3,7 +3,6 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { AccountService } from "@/domain/account-management/api/account.service";
 import { CredentialService } from "@/domain/credential/api/credential.service";
 import { GroupService } from "@/domain/group/api/group.service";
 import { HubService } from "@/domain/hub/api/hub.service";
@@ -45,7 +44,6 @@ interface ServiceContextType {
   volumeService: VolumeService;
   storageService: StorageService;
   hubService: HubService;
-  accountService: AccountService;
   groupService: GroupService;
   notificationService: NotificationService;
   userResourceService: UserResourceService;
@@ -97,7 +95,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     volumeService: new VolumeService(),
     storageService: new StorageService(),
     hubService: new HubService(),
-    accountService: new AccountService(),
     groupService: new GroupService(),
     notificationService: new NotificationService(),
     userResourceService: new UserResourceService(),

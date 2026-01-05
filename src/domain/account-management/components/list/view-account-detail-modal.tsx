@@ -4,89 +4,100 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal, Typography } from "xiilab-ui";
 
-import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account-role.constant";
-import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
+import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
+import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
 import { openViewAccountDetailModalAtom } from "@/domain/account-management/state/account.atom";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
 
-/**
- * 계정 상세 정보 모달 컴포넌트
- */
 export function ViewAccountDetailModal() {
   const { open, onOpen, onClose } = useGlobalModal(
     openViewAccountDetailModalAtom,
   );
-  const [account, setAccount] = useState<AccountListType | null>(null);
+  const [accountId, setAccountId] = useState<string>("");
   const publish = usePublish();
 
-  useSubscribe<AccountListType>(
+  const { data: accountDetail, isFetching: isFetchingAccountDetail } =
+    useGetAccountDetail(accountId, {
+      query: {
+        enabled: open && !!accountId,
+      },
+    });
+
+  useSubscribe<string>(
     ACCOUNT_EVENTS.sendViewAccountDetail,
-    async (eventData) => {
-      setAccount(eventData);
+    (nextAccountId) => {
+      setAccountId(nextAccountId);
       onOpen();
     },
   );
 
+  const handleClose = () => {
+    onClose();
+    setAccountId("");
+  };
+
   const handleUpdate = () => {
-    if (account) {
-      onClose();
-      publish(ACCOUNT_EVENTS.sendUpdateAccount, account);
-    }
+    if (!accountId || isFetchingAccountDetail) return;
+    handleClose();
+    publish(ACCOUNT_EVENTS.sendUpdateAccount, accountId);
   };
 
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Edit02" color="#fff" size={20} />}
+      icon={<Icon name="Description" color="#fff" size={20} />}
       modalWidth={370}
       open={open}
       closable
       title="계정 상세 정보"
       showCancelButton
       cancelText="취소"
-      onCancel={onClose}
+      onCancel={handleClose}
       okText="수정"
       onOk={handleUpdate}
       centered
       showHeaderBorder
+      okButtonProps={{ disabled: isFetchingAccountDetail || !accountDetail }}
     >
       <Container>
         <DetailCard>
           <SectionTitle>상세 정보</SectionTitle>
           <DetailRow>
             <DetailLabel>이름</DetailLabel>
-            <DetailValue>{account?.name || "-"}</DetailValue>
+            <DetailValue>{accountDetail?.accountName || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>아이디</DetailLabel>
-            <DetailValue>{account?.email || "-"}</DetailValue>
+            <DetailValue>{accountDetail?.email || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>그룹</DetailLabel>
             <DetailValue>
-              {account?.groupList?.length
-                ? account.groupList.map((group) => group.name).join(", ")
+              {accountDetail?.groupName?.length
+                ? accountDetail.groupName.join(", ")
                 : "-"}
             </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>상태</DetailLabel>
             <DetailValue>
-              {account?.isEnabled != null
-                ? getAccountStatusLabelFromBoolean(account.isEnabled)
+              {accountDetail?.isEnabled != null
+                ? getAccountStatusLabelFromBoolean(accountDetail.isEnabled)
                 : "-"}
             </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>권한</DetailLabel>
-            <DetailValue>{account?.role || "-"}</DetailValue>
+            <DetailValue>{accountDetail?.accountRole || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>가입일</DetailLabel>
-            <DetailValue>{formatDateSafely(account?.createdAt)}</DetailValue>
+            <DetailValue>
+              {formatDateSafely(accountDetail?.createdAt)}
+            </DetailValue>
           </DetailRow>
 
           <Divider />
@@ -94,11 +105,13 @@ export function ViewAccountDetailModal() {
           <SectionTitle>워크스페이스 정보</SectionTitle>
           <DetailRow>
             <DetailLabel>보유 개수</DetailLabel>
-            <DetailValue>{account?.workspaceCount ?? 0}개</DetailValue>
+            <DetailValue>{accountDetail?.workspaceCount ?? 0}개</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>생성 제한 개수</DetailLabel>
-            <DetailValue>{account?.workspaceLimitCount ?? 0}개</DetailValue>
+            <DetailValue>
+              {accountDetail?.workspaceLimitCount ?? 0}개
+            </DetailValue>
           </DetailRow>
         </DetailCard>
       </Container>
@@ -134,7 +147,6 @@ const SectionTitle = styled.div`
 
 const DetailRow = styled.div`
   display: flex;
-  align-items: center;
 `;
 
 const DetailLabel = styled(Typography.Text).attrs({

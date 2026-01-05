@@ -58,7 +58,7 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
   {
     key: "",
     label: "계정 목록",
-    icon: "Workload",
+    icon: "Person",
   },
   {
     key: "pending",
@@ -92,7 +92,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
         <ListPageAside $width={400}>
           <PageGuide
             title="계정 관리"
-            icon="Group01"
+            icon="Person"
             description={[
               "회원가입을 요청한 계정들을 승인하거나, 등록된 계정을",
               "관리할 수 있습니다.",

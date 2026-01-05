@@ -10,12 +10,9 @@ import type { NodeListType } from "@/domain/node/schemas/node.schema";
 import { openUpdateMpsModalAtom } from "@/domain/node/state/node.atom";
 import type { UpdateMpsPayload } from "@/domain/node/types/node.type";
 import { Slider } from "@/shared/components/slider/custom-slider";
-import {
-  ACCOUNT_EVENTS,
-  NODE_EVENTS,
-} from "@/shared/constants/pubsub.constant";
+import { NODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatFileSize } from "@/shared/utils/file.util";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
@@ -31,8 +28,6 @@ import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-laye
  * - MPS 활성화/비활성화 토글 기능
  */
 export function UpdateMpsModal() {
-  const publish = usePublish();
-
   // useGlobalModal 훅을 사용하여 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(openUpdateMpsModalAtom);
 
@@ -55,7 +50,6 @@ export function UpdateMpsModal() {
     if (payload) {
       updateMps.mutate(payload, {
         onSuccess: () => {
-          publish(ACCOUNT_EVENTS.sendUpdateAccount, payload);
           onClose();
         },
       });

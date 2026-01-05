@@ -68,5 +68,4 @@ const Main = styled.main`
   display: flex;
   flex-direction: column;
   position: relative;
-  /* margin-bottom: var(--page-margin-bottom); */
 `;

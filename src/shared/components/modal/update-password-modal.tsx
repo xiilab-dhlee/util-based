@@ -4,26 +4,29 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Icon, Input, Modal } from "xiilab-ui";
 
-import { useUpdateAccount } from "@/domain/account-management/hooks/use-update-account";
-import type { AccountListType } from "@/domain/account-management/schemas/account.schema";
-import type { UpdateAccountPayload } from "@/domain/account-management/types/account.type";
 import { LoggedInUserCard } from "@/shared/components/card/logged-in-user-card";
 import { FormLabel } from "@/shared/components/form/form-label";
-import {
-  ACCOUNT_EVENTS,
-  COMMON_EVENTS,
-} from "@/shared/constants/pubsub.constant";
+import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openUpdatePasswordModalAtom } from "@/shared/state/modal.atom";
 import { FormItem } from "@/styles/layers/form-layer.styled";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
+
+interface UpdatePasswordEventPayload {
+  name: string;
+  email: string;
+}
+
+interface UpdatePasswordPayload {
+  username: string;
+  password: string;
+}
 
 /**
  * 비밀번호 수정 모달 컴포넌트
  */
 export function UpdatePasswordModal() {
-  const publish = usePublish();
   const formRef = useRef<HTMLFormElement>(null);
 
   // useGlobalModal 훅을 사용하여 모달 상태 관리
@@ -32,24 +35,20 @@ export function UpdatePasswordModal() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
 
-  const updateAccount = useUpdateAccount();
-
   const handleSubmit = () => {
     const payload = createPayload();
 
+    // NOTE: 추후 실제 비밀번호 변경 mutation으로 연결 필요
+    // - 현재 이 모달은 UI만 존재하며, 실제 비밀번호 변경 API 호출은 임시로 비활성화합니다.
+    // - 후보: Orval 생성 `useResetPassword`(또는 프로필/계정 수정 API)로 연결
     // TODO: payload 검증 및 유효성 검사 추가 필요
-    if (payload) {
-      // TODO: validation 추가 필요
-      updateAccount.mutate(payload, {
-        onSuccess: () => {
-          publish(ACCOUNT_EVENTS.sendUpdateAccount, payload);
-          onClose();
-        },
-      });
-    }
+    if (!payload) return;
+
+    // UX 상 현재는 “확인” 시 닫히도록 처리(실제 연결 시 onSuccess에서 닫는 흐름으로 변경)
+    onClose();
   };
 
-  const createPayload = (): UpdateAccountPayload | null => {
+  const createPayload = (): UpdatePasswordPayload | null => {
     if (!formRef.current) return null;
     // 폼 데이터 수집
     const formData = new FormData(formRef.current);
@@ -60,7 +59,7 @@ export function UpdatePasswordModal() {
     };
   };
 
-  useSubscribe<Pick<AccountListType, "name" | "email">>(
+  useSubscribe<UpdatePasswordEventPayload>(
     COMMON_EVENTS.sendUpdatePassword,
     ({ name, email }) => {
       setUsername(name);
@@ -85,9 +84,6 @@ export function UpdatePasswordModal() {
       onOk={handleSubmit}
       centered
       showHeaderBorder
-      okButtonProps={{
-        disabled: updateAccount.isPending,
-      }}
     >
       <SectionTitle>회원 상세 정보</SectionTitle>
       <LoggedInUserCard username={username} email={email} />

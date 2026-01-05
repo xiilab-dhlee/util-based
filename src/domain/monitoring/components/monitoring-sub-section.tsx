@@ -23,9 +23,44 @@ import { createWorkloadColumn } from "@/shared/components/column/create-workload
 import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import type { TableSortState } from "@/shared/types/core.model";
-import { getSortOrder, parseSorter } from "@/shared/utils/sort.util";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
+
+/**
+ * 임시 정렬 타입/유틸 (monitoring 모듈 내부에서만 사용)
+ * - 공용 정렬 유틸/타입 의존 제거 목적
+ * - 추후 정렬 정책 확정 시 공용 유틸로 재정리 가능
+ */
+type SortDirection = "ASC" | "DESC";
+type AntdTableSortOrder = "ascend" | "descend";
+
+type TableSortState = {
+  sortBy: string;
+  sortDirection: SortDirection;
+};
+
+const toSortDirection = (order: AntdTableSortOrder): SortDirection =>
+  order === "ascend" ? "ASC" : "DESC";
+
+const toSortOrder = (direction: SortDirection): AntdTableSortOrder =>
+  direction === "ASC" ? "ascend" : "descend";
+
+const getSortOrder = (
+  sortState: TableSortState,
+  field: string,
+): AntdTableSortOrder | null =>
+  sortState.sortBy === field ? toSortOrder(sortState.sortDirection) : null;
+
+function parseSorter<T>(
+  sorter: SorterResult<T> | SorterResult<T>[],
+): { field: string; direction: SortDirection } | null {
+  const single = Array.isArray(sorter) ? sorter[0] : sorter;
+  if (!single.field || !single.order) return null;
+
+  return {
+    field: String(single.field),
+    direction: toSortDirection(single.order as AntdTableSortOrder),
+  };
+}
 
 export function MonitoringSubSection() {
   const [workspaceSort, setWorkspaceSort] = useState<TableSortState>(

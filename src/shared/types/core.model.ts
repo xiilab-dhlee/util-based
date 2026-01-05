@@ -8,7 +8,6 @@ import type { DropdownOption, MenuItem, ResponsiveColumnType } from "xiilab-ui";
 
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
-import type { SortDirection } from "@/shared/types/api.interface";
 
 // 네비게이션 메뉴
 export type CoreNavMenu = {
@@ -86,8 +85,18 @@ export interface CoreDropdownOption<T> extends DropdownOption {
   origin: T;
 }
 
-/** 테이블 정렬 상태 공통 타입 */
+/**
+ * 테이블 정렬 상태 (백엔드 형식, 필수)
+ * @deprecated monitoring 모듈에서 사용 중. 향후 AntdTableSortState로 마이그레이션 예정
+ */
 export interface TableSortState {
   sortBy: string;
-  sortDirection: SortDirection;
+  sortDirection: "ASC" | "DESC";
+}
+
+export type AntdTableSortOrder = "ascend" | "descend";
+
+export interface AntdTableSortState<TField extends string = string> {
+  field: TField | null;
+  order: AntdTableSortOrder | null;
 }

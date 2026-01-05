@@ -1,5 +1,4 @@
 import { ALL_OPTION } from "@/shared/constants/core.constant";
-import type { CorePayload } from "@/shared/types/api.interface";
 
 /**
  * 값이 유효한지 확인하는 헬퍼 함수
@@ -24,7 +23,9 @@ function isValidValue(value: unknown): boolean {
  * @param payload - 변환할 payload 객체 (없으면 빈 Params 반환)
  * @returns URLSearchParams 객체
  */
-export function payloadToParams(payload?: CorePayload): URLSearchParams {
+export function payloadToParams(
+  payload?: Record<string, unknown> | object,
+): URLSearchParams {
   const params = new URLSearchParams();
 
   if (!payload) {

@@ -1,25 +1,6 @@
-import { type UseMutationResult, useMutation } from "@tanstack/react-query";
-
-import { accountKeys } from "@/domain/account-management/constants/account.key";
-import type { CheckPasswordPayload } from "@/domain/account-management/types/account.type";
-import { useServices } from "@/shared/providers/service-provider";
-
 /**
  * 비밀번호 재확인
  */
-export const useCheckPassword = (): UseMutationResult<
-  unknown,
-  Error,
-  CheckPasswordPayload,
-  unknown
-> => {
-  const { accountService } = useServices();
-
-  return useMutation({
-    mutationKey: accountKeys.checkPassword(),
-    mutationFn: (payload: CheckPasswordPayload) => {
-      return accountService.checkPassword(payload);
-    },
-    onSuccess: () => {},
-  });
+export const useCheckPassword = () => {
+  return undefined;
 };

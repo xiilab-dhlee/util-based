@@ -77,41 +77,20 @@ export const useSubscribe = <T = unknown>(
   eventName: string,
   handler: EventHandler<T>,
 ) => {
-  const subscriptionsRef = useRef<Map<string, string>>(new Map());
+  const handlerRef = useRef(handler);
+  handlerRef.current = handler;
 
-  // 컴포넌트 언마운트 시 구독 해제
   useEffect(() => {
-    const subscriptions = subscriptionsRef.current;
-
-    return () => {
-      const subscriptionId = subscriptions.get(eventName);
-      if (subscriptionId) {
-        pubsubUtil.unsubscribe(eventName, subscriptionId);
-        subscriptions.delete(eventName);
-      }
+    const wrapper = (data: T) => {
+      handlerRef.current(data);
     };
-  }, [eventName]);
 
-  // 이벤트 구독
-  useEffect(() => {
-    const subscriptions = subscriptionsRef.current;
+    const subscriptionId = pubsubUtil.subscribe(eventName, wrapper);
 
-    // 기존 구독이 있다면 해제
-    const existingSubscriptionId = subscriptions.get(eventName);
-    if (existingSubscriptionId) {
-      pubsubUtil.unsubscribe(eventName, existingSubscriptionId);
-    }
-
-    // 새로운 구독 생성
-    const subscriptionId = pubsubUtil.subscribe(eventName, handler);
-    subscriptions.set(eventName, subscriptionId);
-
-    // 클린업 함수
     return () => {
       pubsubUtil.unsubscribe(eventName, subscriptionId);
-      subscriptions.delete(eventName);
     };
-  }, [eventName, handler]); // handler를 의존성에 추가하여 핸들러 변경 시 재구독
+  }, [eventName]);
 };
 
 /**

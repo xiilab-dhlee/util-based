@@ -101,7 +101,9 @@ export class AxiosService {
 
     // 응답 인터셉터 설정
     this.responseInterceptorId = this.axios.interceptors.response.use(
-      (response: AxiosResponse) => response,
+      (response: AxiosResponse) => {
+        return response;
+      },
       (error: unknown) => {
         const { response } = error as { response?: { status: number } };
 
