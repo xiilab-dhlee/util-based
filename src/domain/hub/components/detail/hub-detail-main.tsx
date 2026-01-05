@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
 import { ViewHubReadme } from "@/domain/hub/components/detail/view-hub-readme";
+import { ListEmpty } from "@/shared/components/layouts/list-empty";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
@@ -14,9 +15,9 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 export function HubDetailMain() {
+  const publish = usePublish();
   const params = useParams<{ id: string }>();
   const hubId = Number(params.id);
-  const publish = usePublish();
 
   const handleCreateWorkload = () => {
     publish(WORKLOAD_EVENTS.sendCreateWorkload, {
@@ -26,6 +27,18 @@ export function HubDetailMain() {
       },
     });
   };
+
+  // 유효하지 않은 Hub ID 체크
+  if (!params.id || Number.isNaN(hubId)) {
+    return (
+      <Container>
+        <ListEmpty
+          title="유효하지 않은 Hub ID입니다."
+          message="허브 목록에서 허브를 선택해 주세요."
+        />
+      </Container>
+    );
+  }
 
   return (
     <Container>
