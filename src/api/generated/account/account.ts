@@ -1152,7 +1152,7 @@ export function useGetNotificationSets<
  */
 export const getNotifications = (
   accountId: string,
-  params: GetNotificationsParams,
+  params?: GetNotificationsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseNotificationItemResponse>({
@@ -1178,7 +1178,7 @@ export const getGetNotificationsQueryOptions = <
   TError = unknown,
 >(
   accountId: string,
-  params: GetNotificationsParams,
+  params?: GetNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1220,7 +1220,7 @@ export function useGetNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params: GetNotificationsParams,
+  params: undefined | GetNotificationsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1247,7 +1247,7 @@ export function useGetNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params: GetNotificationsParams,
+  params?: GetNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1274,7 +1274,7 @@ export function useGetNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params: GetNotificationsParams,
+  params?: GetNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1297,7 +1297,7 @@ export function useGetNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params: GetNotificationsParams,
+  params?: GetNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

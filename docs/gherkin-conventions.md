@@ -11,12 +11,16 @@ Playwright-BDD를 사용한 E2E 테스트 작성 규칙입니다.
 ```
 tests/
 ├── features/              # Feature 파일
-│   ├── {도메인}/
-│   │   ├── {기능}.feature           # 정상 케이스
-│   │   └── {기능}-advanced.feature  # 예외 케이스
+│   └── {도메인}/
+│       ├── {기능}-entry.feature        # 페이지 진입/렌더링 검증
+│       ├── {기능}-validation.feature   # 유효성 검증 시나리오
+│       └── {기능}-interaction.feature  # 인터랙션/성공 케이스
 ├── steps/                 # Step 정의
 │   ├── common.steps.ts    # 공통 Step
-│   └── {도메인}.steps.ts  # 도메인별 Step
+│   └── {도메인}/
+│       └── {기능}.steps.ts  # 기능별 Step
+├── pages/                 # Page Objects
+├── components/            # 험블 객체 (재사용 컴포넌트)
 └── support/               # 헬퍼
     └── auth.helper.ts
 ```
@@ -48,12 +52,18 @@ Background:
 
 ### 파일 분리 기준
 
-Background와 다른 전제 조건이 필요한 시나리오는 별도 파일로 분리합니다.
+테스트 목적에 따라 Feature 파일을 분리합니다:
 
-| 파일 | 용도 |
-|------|------|
-| `{기능}.feature` | 정상 케이스 (Background 포함) |
-| `{기능}-advanced.feature` | 예외 케이스 (Background 없음) |
+| 파일 | 용도 | 예시 |
+|------|------|------|
+| `{기능}-entry.feature` | 페이지 진입, UI 렌더링 검증 | 필드 표시, 버튼 표시 |
+| `{기능}-validation.feature` | 유효성 검증, 에러 메시지 | 필수값 검증, 형식 검증 |
+| `{기능}-interaction.feature` | 인터랙션, 성공 케이스 | 폼 제출, maxLength 검증 |
+
+**분리 기준:**
+- **entry**: "화면이 올바르게 표시되는가?" (렌더링 검증)
+- **validation**: "잘못된 입력을 어떻게 처리하는가?" (에러 케이스)
+- **interaction**: "정상 동작이 올바르게 수행되는가?" (성공 케이스)
 
 ---
 
@@ -80,9 +90,8 @@ Feature: 워크로드 상세 페이지 인터랙션
 |------|------|------|
 | `@smoke` | 핵심 기능 검증 | 페이지 로딩, 기본 UI 표시 확인 |
 | `@regression` | 회귀 테스트 | 데이터 유효성, 비즈니스 로직 검증 |
-| `@integration` | 통합/경계값 테스트 | 경계값, 특수문자, 다양한 입력 조합 |
+| `@edge-case` | 예외/경계 케이스 | API 오류, 빈 목록, 경계값 테스트 |
 | `@skip` | 테스트 스킵 | 미구현/비활성화 |
-| `@advanced` | 예외 케이스 | 엣지 케이스 테스트 |
 
 **@smoke vs @regression 판단 기준:**
 
@@ -103,7 +112,6 @@ Feature: 워크로드 상세 페이지 인터랙션
 | Step | 용도 |
 |------|------|
 | `Given 사용자는 로그인 상태이다` | 일반 사용자(user)로 로그인 |
-| `Given 사용자는 로그인하지 않은 상태이다` | 로그아웃 상태 설정 |
 | `Then 로그인 페이지로 리다이렉트된다` | 로그인 리다이렉트 확인 |
 
 ### 워크스페이스
@@ -208,6 +216,35 @@ await expect(chart).toBeVisible({ timeout: 10000 });
 const placeholder = filter.locator(".ant-select-selection-placeholder");
 await expect(placeholder).toBeVisible();
 ```
+
+### Scenario Outline 활용
+
+동일한 검증 로직에 여러 입력값을 테스트할 때 `Scenario Outline`과 `Examples`를 사용합니다:
+
+```gherkin
+@regression
+Scenario Outline: Password 정책 미충족 - <case>
+  Given Password를 제외한 필수값이 유효하게 입력되어 있다
+    | field      | value            |
+    | Email      | user1@xiilab.com |
+    | First Name | 길동             |
+    | Last Name  | 홍               |
+  When Password 필드에 "<password>"을 입력한다
+  And Confirm Password 필드에 "<password>"을 입력한다
+  And 회원가입 버튼을 클릭한다
+  Then Password 필드에 "에러 메시지" 에러 메시지가 표시된다
+
+  Examples:
+    | case               | password          |
+    | 영문만 사용        | aaaaaaaa          |
+    | 숫자만 사용        | 12345678          |
+    | 특수문자만 사용    | !@#$%^&*          |
+```
+
+**장점:**
+- 중복 시나리오 제거
+- 테스트 케이스 가시성 향상
+- 새 케이스 추가 용이
 
 ---
 

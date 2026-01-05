@@ -42,8 +42,8 @@ importers:
         specifier: 0.0.3-dev
         version: 0.0.3-dev
       '@xiilab/astrago-openapi-spec':
-        specifier: 0.0.6-dev
-        version: 0.0.6-dev
+        specifier: 0.0.7-dev
+        version: 0.0.7-dev
       '@xterm/addon-fit':
         specifier: ^0.10.0
         version: 0.10.0(@xterm/xterm@5.5.0)
@@ -1272,8 +1272,8 @@ packages:
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
 
-  '@xiilab/astrago-openapi-spec@0.0.6-dev':
-    resolution: {integrity: sha512-CGoVBlq9gLTB+fX4iFWTXOGKxarQkdKmHMuzI1Q81nVOpORunqXE+A91fae44mTIVlkyYO+C4QzHfNpbuPpK6Q==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi-spec/0.0.6-dev/33d97fd7b2847e993a6e6076294e510611403c00}
+  '@xiilab/astrago-openapi-spec@0.0.7-dev':
+    resolution: {integrity: sha512-RL7oC6gaRuFRaQRDnDOR+8RpiTdHERVcr2yj78bYdKnrI39trefgp7LZYTTsKXaPQUSOV6+HyTcGhj6XniPdNA==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi-spec/0.0.7-dev/68eef962b153ac05a26d996107a3ff56355da11a}
 
   '@xiilab/astrago-openapi@0.0.3-dev':
     resolution: {integrity: sha512-jP/j+75186DoKou5lFW4xuFG+JkO+zqjOa3a3MKkaQt0ZxifEdKZ3ApPJuXE1Ct6KGgjo9Rk60ZgMurYrmHrRg==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi/0.0.3-dev/fb2026d967de0b6c32ef09523892986fe63dc556}
@@ -4813,7 +4813,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@xiilab/astrago-openapi-spec@0.0.6-dev': {}
+  '@xiilab/astrago-openapi-spec@0.0.7-dev': {}
 
   '@xiilab/astrago-openapi@0.0.3-dev':
     dependencies:

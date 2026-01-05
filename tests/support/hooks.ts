@@ -206,9 +206,14 @@ AfterStep(
       await page.waitForTimeout(200);
 
       const screenshot = await page.screenshot();
-      const stepTitle = $step.title.slice(0, 50);
+      // 파일명 안전하게 처리: 특수문자 제거, 길이 제한
+      const safeTitle = $step.title
+        .slice(0, 40)
+        .replace(/["""'']/g, "")
+        .replace(/[^a-zA-Z0-9가-힣\s]/g, "_");
+      const timestamp = Date.now();
 
-      await $testInfo.attach(`[Action] ${stepTitle}`, {
+      await $testInfo.attach(`${safeTitle}_${timestamp}.png`, {
         body: screenshot,
         contentType: "image/png",
       });

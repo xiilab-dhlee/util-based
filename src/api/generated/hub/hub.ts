@@ -53,7 +53,7 @@ import type {
  * 모델 타입별 HUB 목록을 페이징하여 조회합니다. keyword 검색은 hubName을 기준으로 합니다. 썸네일 로드 실패 시 thumbnail 필드는 null로 반환됩니다.
  * @summary HUB 목록 조회
  */
-export const findHubs = (params: FindHubsParams, signal?: AbortSignal) => {
+export const findHubs = (params?: FindHubsParams, signal?: AbortSignal) => {
   return customInstance<BaseResponsePageResponseFindHubsResponse>({
     url: `/api/v1/hubs`,
     method: "GET",
@@ -70,7 +70,7 @@ export const getFindHubsQueryOptions = <
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params: FindHubsParams,
+  params?: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -101,7 +101,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params: FindHubsParams,
+  params: undefined | FindHubsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -123,7 +123,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params: FindHubsParams,
+  params?: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -145,7 +145,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params: FindHubsParams,
+  params?: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -163,7 +163,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params: FindHubsParams,
+  params?: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>

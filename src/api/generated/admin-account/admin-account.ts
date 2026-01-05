@@ -666,7 +666,7 @@ export const useDeleteAccount = <TError = unknown, TContext = unknown>(
  * @summary 계정 목록 조회
  */
 export const getAllAccounts = (
-  params: GetAllAccountsParams,
+  params?: GetAllAccountsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAccountItemResponse>({
@@ -685,7 +685,7 @@ export const getGetAllAccountsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllAccounts>>,
   TError = unknown,
 >(
-  params: GetAllAccountsParams,
+  params?: GetAllAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllAccounts>>, TError, TData>
@@ -716,7 +716,7 @@ export function useGetAllAccounts<
   TData = Awaited<ReturnType<typeof getAllAccounts>>,
   TError = unknown,
 >(
-  params: GetAllAccountsParams,
+  params: undefined | GetAllAccountsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllAccounts>>, TError, TData>
@@ -738,7 +738,7 @@ export function useGetAllAccounts<
   TData = Awaited<ReturnType<typeof getAllAccounts>>,
   TError = unknown,
 >(
-  params: GetAllAccountsParams,
+  params?: GetAllAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllAccounts>>, TError, TData>
@@ -760,7 +760,7 @@ export function useGetAllAccounts<
   TData = Awaited<ReturnType<typeof getAllAccounts>>,
   TError = unknown,
 >(
-  params: GetAllAccountsParams,
+  params?: GetAllAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllAccounts>>, TError, TData>
@@ -778,7 +778,7 @@ export function useGetAllAccounts<
   TData = Awaited<ReturnType<typeof getAllAccounts>>,
   TError = unknown,
 >(
-  params: GetAllAccountsParams,
+  params?: GetAllAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllAccounts>>, TError, TData>
@@ -1133,7 +1133,7 @@ export function useGetAccountDetail<
  * @summary 가입 승인 대기 목록 조회
  */
 export const getSignupRequests = (
-  params: GetSignupRequestsParams,
+  params?: GetSignupRequestsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseSignupRequestItemResponse>({
@@ -1157,7 +1157,7 @@ export const getGetSignupRequestsQueryOptions = <
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params: GetSignupRequestsParams,
+  params?: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1193,7 +1193,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params: GetSignupRequestsParams,
+  params: undefined | GetSignupRequestsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1219,7 +1219,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params: GetSignupRequestsParams,
+  params?: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1245,7 +1245,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params: GetSignupRequestsParams,
+  params?: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1267,7 +1267,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params: GetSignupRequestsParams,
+  params?: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

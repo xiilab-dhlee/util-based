@@ -13,6 +13,7 @@ import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
 import { MonitoringPage } from "./pages/monitoring.page";
+import { SignupPage } from "./pages/signup.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
 import { WorkloadListPage } from "./pages/workload-list.page";
 import { WorkloadLogPage } from "./pages/workload-log.page";
@@ -114,6 +115,7 @@ type TestContextFixtures = {
   assertLogger: AssertLogger;
 
   // Page Objects (페이지별 그룹화)
+  signupPage: SignupPage;
   workloadListPage: WorkloadListPage;
   workloadDetailPage: WorkloadDetailPage;
   workloadLogPage: WorkloadLogPage;
@@ -346,6 +348,10 @@ export const test = base.extend<TestContextFixtures>({
   // ============================================================================
   // Page Objects (페이지별 그룹화)
   // ============================================================================
+
+  signupPage: async ({ page }, use) => {
+    await use(new SignupPage(page));
+  },
 
   workloadListPage: async ({ page }, use) => {
     await use(new WorkloadListPage(page));

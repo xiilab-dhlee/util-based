@@ -33,18 +33,23 @@ import * as zod from "zod";
  * 시스템 전체 크리덴셜 목록을 조회합니다. 페이징과 검색을 지원합니다. ADMIN/SUPER_ADMIN만 접근 가능합니다.
  * @summary 전체 크리덴셜 목록 조회 (Admin)
  */
-export const getAllCredentialsQueryPageSearchRequestPageSizeMax = 100;
+export const getAllCredentialsQueryPageNoMin = 0;
+
+export const getAllCredentialsQueryPageSizeMax = 100;
 
 export const getAllCredentialsQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getAllCredentialsQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllCredentialsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAllCredentialsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
 });
 
 export const getAllCredentialsResponse = zod

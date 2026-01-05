@@ -46,28 +46,17 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  AddWorkspaceMembersRequest,
   BaseResponseDefaultResourceResponse,
-  BaseResponseInteger,
-  BaseResponseListTimeGroupedResourceMetricsResponse,
-  BaseResponseListWorkloadMetricsTimeseriesResponse,
-  BaseResponseMemberRoleResponse,
   BaseResponsePageResponseResourceRequestListResponse,
-  BaseResponsePageResponseWorkspaceMemberResponse,
   BaseResponsePageResponseWorkspaceResponse,
   BaseResponseResourceRequestResponse,
   BaseResponseUnit,
   BaseResponseWorkspaceDetailResponse,
   BaseResponseWorkspaceResponse,
   DefaultWorkspaceRequest,
-  DeleteWorkspaceMembersRequest,
   GetAllWorkspacesParams,
-  GetResourceMetricsTimeseriesParams,
   GetResourceRequestsParams,
-  GetWorkloadResourceMetricsTimeseriesParams,
-  GetWorkspaceMembersParams,
   ResourceRequestCreateRequest,
-  UpdateMemberRoleRequest,
   WorkspaceCreateRequest,
   WorkspaceUpdateRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -314,274 +303,11 @@ export const useSetDefaultWorkspace = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 특정 멤버의 워크스페이스 내 권한을 조회합니다. 워크스페이스 접근 권한이 필요합니다.
- * @summary 멤버 권한 조회
- */
-export const getWorkspaceMemberRole = (
-  workspaceId: number,
-  accountId: string,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponseMemberRoleResponse>({
-    url: `/api/v1/workspaces/${workspaceId}/accounts/${accountId}/member-roles`,
-    method: "GET",
-    signal,
-  });
-};
-
-export const getGetWorkspaceMemberRoleQueryKey = (
-  workspaceId?: number,
-  accountId?: string,
-) => {
-  return [
-    `/api/v1/workspaces/${workspaceId}/accounts/${accountId}/member-roles`,
-  ] as const;
-};
-
-export const getGetWorkspaceMemberRoleQueryOptions = <
-  TData = Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  accountId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ??
-    getGetWorkspaceMemberRoleQueryKey(workspaceId, accountId);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getWorkspaceMemberRole>>
-  > = ({ signal }) => getWorkspaceMemberRole(workspaceId, accountId, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!(workspaceId && accountId),
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetWorkspaceMemberRoleQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getWorkspaceMemberRole>>
->;
-export type GetWorkspaceMemberRoleQueryError = unknown;
-
-export function useGetWorkspaceMemberRole<
-  TData = Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  accountId: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkspaceMemberRole>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetWorkspaceMemberRole<
-  TData = Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  accountId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkspaceMemberRole>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetWorkspaceMemberRole<
-  TData = Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  accountId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 멤버 권한 조회
- */
-
-export function useGetWorkspaceMemberRole<
-  TData = Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  accountId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMemberRole>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetWorkspaceMemberRoleQueryOptions(
-    workspaceId,
-    accountId,
-    options,
-  );
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * 특정 구성원의 워크스페이스 내 권한을 수정합니다. OWNER 또는 ADMIN 권한이 필요합니다.
- * @summary 워크스페이스 구성원 권한 수정
- */
-export const updateMemberRole = (
-  workspaceId: number,
-  accountId: string,
-  updateMemberRoleRequest: UpdateMemberRoleRequest,
-) => {
-  return customInstance<BaseResponseMemberRoleResponse>({
-    url: `/api/v1/workspaces/${workspaceId}/accounts/${accountId}/member-roles`,
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    data: updateMemberRoleRequest,
-  });
-};
-
-export const getUpdateMemberRoleMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateMemberRole>>,
-    TError,
-    { workspaceId: number; accountId: string; data: UpdateMemberRoleRequest },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof updateMemberRole>>,
-  TError,
-  { workspaceId: number; accountId: string; data: UpdateMemberRoleRequest },
-  TContext
-> => {
-  const mutationKey = ["updateMemberRole"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateMemberRole>>,
-    { workspaceId: number; accountId: string; data: UpdateMemberRoleRequest }
-  > = (props) => {
-    const { workspaceId, accountId, data } = props ?? {};
-
-    return updateMemberRole(workspaceId, accountId, data);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type UpdateMemberRoleMutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateMemberRole>>
->;
-export type UpdateMemberRoleMutationBody = UpdateMemberRoleRequest;
-export type UpdateMemberRoleMutationError = unknown;
-
-/**
- * @summary 워크스페이스 구성원 권한 수정
- */
-export const useUpdateMemberRole = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateMemberRole>>,
-      TError,
-      { workspaceId: number; accountId: string; data: UpdateMemberRoleRequest },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof updateMemberRole>>,
-  TError,
-  { workspaceId: number; accountId: string; data: UpdateMemberRoleRequest },
-  TContext
-> => {
-  const mutationOptions = getUpdateMemberRoleMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-/**
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. default 워크스페이스, pin된 워크스페이스, 기타 워크스페이스명 가나다순으로 정렬됩니다.
  * @summary 워크스페이스 목록 조회
  */
 export const getAllWorkspaces = (
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseWorkspaceResponse>({
@@ -602,7 +328,7 @@ export const getGetAllWorkspacesQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -638,7 +364,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params: undefined | GetAllWorkspacesParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -664,7 +390,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -690,7 +416,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -712,7 +438,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -827,7 +553,7 @@ export const useCreateWorkspace = <TError = unknown, TContext = unknown>(
  */
 export const getResourceRequests = (
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseResourceRequestListResponse>({
@@ -853,7 +579,7 @@ export const getGetResourceRequestsQueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -896,7 +622,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params: undefined | GetResourceRequestsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -923,7 +649,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -950,7 +676,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -973,7 +699,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1087,823 +813,6 @@ export const useCreateResourceRequest = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
-/**
- * 워크스페이스 구성원 목록을 페이징하여 조회합니다. 이름 또는 이메일로 검색할 수 있습니다.
- * @summary 워크스페이스 구성원 목록 조회
- */
-export const getWorkspaceMembers = (
-  workspaceId: number,
-  params: GetWorkspaceMembersParams,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponsePageResponseWorkspaceMemberResponse>({
-    url: `/api/v1/workspaces/${workspaceId}/members`,
-    method: "GET",
-    params,
-    signal,
-  });
-};
-
-export const getGetWorkspaceMembersQueryKey = (
-  workspaceId?: number,
-  params?: GetWorkspaceMembersParams,
-) => {
-  return [
-    `/api/v1/workspaces/${workspaceId}/members`,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getGetWorkspaceMembersQueryOptions = <
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetWorkspaceMembersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ??
-    getGetWorkspaceMembersQueryKey(workspaceId, params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getWorkspaceMembers>>
-  > = ({ signal }) => getWorkspaceMembers(workspaceId, params, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!workspaceId,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getWorkspaceMembers>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetWorkspaceMembersQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getWorkspaceMembers>>
->;
-export type GetWorkspaceMembersQueryError = unknown;
-
-export function useGetWorkspaceMembers<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetWorkspaceMembersParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceMembers>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkspaceMembers>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetWorkspaceMembers<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetWorkspaceMembersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceMembers>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkspaceMembers>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetWorkspaceMembers<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetWorkspaceMembersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 워크스페이스 구성원 목록 조회
- */
-
-export function useGetWorkspaceMembers<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetWorkspaceMembersParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetWorkspaceMembersQueryOptions(
-    workspaceId,
-    params,
-    options,
-  );
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * 워크스페이스에 새로운 구성원을 추가합니다. OWNER 또는 ADMIN 권한이 필요합니다.
- * @summary 워크스페이스 구성원 추가
- */
-export const addWorkspaceMembers = (
-  workspaceId: number,
-  addWorkspaceMembersRequest: AddWorkspaceMembersRequest,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponseInteger>({
-    url: `/api/v1/workspaces/${workspaceId}/members`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    data: addWorkspaceMembersRequest,
-    signal,
-  });
-};
-
-export const getAddWorkspaceMembersMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addWorkspaceMembers>>,
-    TError,
-    { workspaceId: number; data: AddWorkspaceMembersRequest },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof addWorkspaceMembers>>,
-  TError,
-  { workspaceId: number; data: AddWorkspaceMembersRequest },
-  TContext
-> => {
-  const mutationKey = ["addWorkspaceMembers"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addWorkspaceMembers>>,
-    { workspaceId: number; data: AddWorkspaceMembersRequest }
-  > = (props) => {
-    const { workspaceId, data } = props ?? {};
-
-    return addWorkspaceMembers(workspaceId, data);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AddWorkspaceMembersMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addWorkspaceMembers>>
->;
-export type AddWorkspaceMembersMutationBody = AddWorkspaceMembersRequest;
-export type AddWorkspaceMembersMutationError = unknown;
-
-/**
- * @summary 워크스페이스 구성원 추가
- */
-export const useAddWorkspaceMembers = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addWorkspaceMembers>>,
-      TError,
-      { workspaceId: number; data: AddWorkspaceMembersRequest },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof addWorkspaceMembers>>,
-  TError,
-  { workspaceId: number; data: AddWorkspaceMembersRequest },
-  TContext
-> => {
-  const mutationOptions = getAddWorkspaceMembersMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-/**
- * 워크스페이스에서 구성원을 삭제합니다. OWNER 또는 ADMIN 권한이 필요합니다.
- * @summary 워크스페이스 구성원 삭제
- */
-export const deleteWorkspaceMembers = (
-  workspaceId: number,
-  deleteWorkspaceMembersRequest: DeleteWorkspaceMembersRequest,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({
-    url: `/api/v1/workspaces/${workspaceId}/members/delete`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    data: deleteWorkspaceMembersRequest,
-    signal,
-  });
-};
-
-export const getDeleteWorkspaceMembersMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteWorkspaceMembers>>,
-    TError,
-    { workspaceId: number; data: DeleteWorkspaceMembersRequest },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteWorkspaceMembers>>,
-  TError,
-  { workspaceId: number; data: DeleteWorkspaceMembersRequest },
-  TContext
-> => {
-  const mutationKey = ["deleteWorkspaceMembers"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteWorkspaceMembers>>,
-    { workspaceId: number; data: DeleteWorkspaceMembersRequest }
-  > = (props) => {
-    const { workspaceId, data } = props ?? {};
-
-    return deleteWorkspaceMembers(workspaceId, data);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteWorkspaceMembersMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteWorkspaceMembers>>
->;
-export type DeleteWorkspaceMembersMutationBody = DeleteWorkspaceMembersRequest;
-export type DeleteWorkspaceMembersMutationError = unknown;
-
-/**
- * @summary 워크스페이스 구성원 삭제
- */
-export const useDeleteWorkspaceMembers = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteWorkspaceMembers>>,
-      TError,
-      { workspaceId: number; data: DeleteWorkspaceMembersRequest },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteWorkspaceMembers>>,
-  TError,
-  { workspaceId: number; data: DeleteWorkspaceMembersRequest },
-  TContext
-> => {
-  const mutationOptions = getDeleteWorkspaceMembersMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-/**
- * 현재 사용자가 워크스페이스에서 탈퇴합니다. 마지막 1명 남은 OWNER는 탈퇴할 수 없습니다.
- * @summary 워크스페이스 탈퇴
- */
-export const leaveWorkspace = (workspaceId: number, signal?: AbortSignal) => {
-  return customInstance<void>({
-    url: `/api/v1/workspaces/${workspaceId}/leave`,
-    method: "POST",
-    signal,
-  });
-};
-
-export const getLeaveWorkspaceMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof leaveWorkspace>>,
-    TError,
-    { workspaceId: number },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof leaveWorkspace>>,
-  TError,
-  { workspaceId: number },
-  TContext
-> => {
-  const mutationKey = ["leaveWorkspace"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof leaveWorkspace>>,
-    { workspaceId: number }
-  > = (props) => {
-    const { workspaceId } = props ?? {};
-
-    return leaveWorkspace(workspaceId);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type LeaveWorkspaceMutationResult = NonNullable<
-  Awaited<ReturnType<typeof leaveWorkspace>>
->;
-
-export type LeaveWorkspaceMutationError = unknown;
-
-/**
- * @summary 워크스페이스 탈퇴
- */
-export const useLeaveWorkspace = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof leaveWorkspace>>,
-      TError,
-      { workspaceId: number },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof leaveWorkspace>>,
-  TError,
-  { workspaceId: number },
-  TContext
-> => {
-  const mutationOptions = getLeaveWorkspaceMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-/**
- * 
-            특정 워크로드의 Pod별, GPU별 메트릭 시계열 데이터를 조회합니다. 
-            분산학습 워크로드(TensorFlow, PyTorch)의 launcher/worker 구분을 지원합니다. 
-            워크스페이스 접근 권한이 필요합니다.
-        
- * @summary 워크로드 상세 모니터링 조회
- */
-export const getWorkloadResourceMetricsTimeseries = (
-  workspaceId: number,
-  workloadResourceName: string,
-  params: GetWorkloadResourceMetricsTimeseriesParams,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponseListWorkloadMetricsTimeseriesResponse>({
-    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/resources/metrics/timeseries`,
-    method: "GET",
-    params,
-    signal,
-  });
-};
-
-export const getGetWorkloadResourceMetricsTimeseriesQueryKey = (
-  workspaceId?: number,
-  workloadResourceName?: string,
-  params?: GetWorkloadResourceMetricsTimeseriesParams,
-) => {
-  return [
-    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/resources/metrics/timeseries`,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getGetWorkloadResourceMetricsTimeseriesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params: GetWorkloadResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ??
-    getGetWorkloadResourceMetricsTimeseriesQueryKey(
-      workspaceId,
-      workloadResourceName,
-      params,
-    );
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>
-  > = ({ signal }) =>
-    getWorkloadResourceMetricsTimeseries(
-      workspaceId,
-      workloadResourceName,
-      params,
-      signal,
-    );
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!(workspaceId && workloadResourceName),
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetWorkloadResourceMetricsTimeseriesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>
->;
-export type GetWorkloadResourceMetricsTimeseriesQueryError = unknown;
-
-export function useGetWorkloadResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params: GetWorkloadResourceMetricsTimeseriesParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetWorkloadResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params: GetWorkloadResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetWorkloadResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params: GetWorkloadResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 워크로드 상세 모니터링 조회
- */
-
-export function useGetWorkloadResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params: GetWorkloadResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkloadResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetWorkloadResourceMetricsTimeseriesQueryOptions(
-    workspaceId,
-    workloadResourceName,
-    params,
-    options,
-  );
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * 
-            워크스페이스의 시간대별 리소스 사용량 메트릭(GPU, CPU, Memory)을 조회합니다.
-            시간대별로 그룹화된 데이터를 반환하며, 워크스페이스 접근 권한이 필요합니다.
-            
- * @summary 워크스페이스 시간별 리소스 사용량 조회
- */
-export const getResourceMetricsTimeseries = (
-  workspaceId: number,
-  params: GetResourceMetricsTimeseriesParams,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponseListTimeGroupedResourceMetricsResponse>({
-    url: `/api/v1/workspaces/${workspaceId}/workloads/resources/metrics/timeseries`,
-    method: "GET",
-    params,
-    signal,
-  });
-};
-
-export const getGetResourceMetricsTimeseriesQueryKey = (
-  workspaceId?: number,
-  params?: GetResourceMetricsTimeseriesParams,
-) => {
-  return [
-    `/api/v1/workspaces/${workspaceId}/workloads/resources/metrics/timeseries`,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getGetResourceMetricsTimeseriesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ??
-    getGetResourceMetricsTimeseriesQueryKey(workspaceId, params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getResourceMetricsTimeseries>>
-  > = ({ signal }) => getResourceMetricsTimeseries(workspaceId, params, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!workspaceId,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetResourceMetricsTimeseriesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getResourceMetricsTimeseries>>
->;
-export type GetResourceMetricsTimeseriesQueryError = unknown;
-
-export function useGetResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetResourceMetricsTimeseriesParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-          TError,
-          Awaited<ReturnType<typeof getResourceMetricsTimeseries>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-          TError,
-          Awaited<ReturnType<typeof getResourceMetricsTimeseries>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 워크스페이스 시간별 리소스 사용량 조회
- */
-
-export function useGetResourceMetricsTimeseries<
-  TData = Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  params: GetResourceMetricsTimeseriesParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceMetricsTimeseries>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetResourceMetricsTimeseriesQueryOptions(
-    workspaceId,
-    params,
-    options,
-  );
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
 /**
  * 워크스페이스 상세 정보를 조회합니다. 존재하지 않는 경우 null을 반환합니다.
  * @summary 워크스페이스 상세 조회

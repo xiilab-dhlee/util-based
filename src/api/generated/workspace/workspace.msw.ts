@@ -33,12 +33,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import type {
   BaseResponseDefaultResourceResponse,
-  BaseResponseInteger,
-  BaseResponseListTimeGroupedResourceMetricsResponse,
-  BaseResponseListWorkloadMetricsTimeseriesResponse,
-  BaseResponseMemberRoleResponse,
   BaseResponsePageResponseResourceRequestListResponse,
-  BaseResponsePageResponseWorkspaceMemberResponse,
   BaseResponsePageResponseWorkspaceResponse,
   BaseResponseResourceRequestResponse,
   BaseResponseUnit,
@@ -68,30 +63,6 @@ export const getSetDefaultWorkspaceResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getGetWorkspaceMemberRoleResponseMock = (
-  overrideResponse: Partial<BaseResponseMemberRoleResponse> = {},
-): BaseResponseMemberRoleResponse => ({
-  status: "SUCCESS",
-  data: {
-    memberRole: faker.helpers.arrayElement(["OWNER", "PARTICIPANT"] as const),
-  },
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getUpdateMemberRoleResponseMock = (
-  overrideResponse: Partial<BaseResponseMemberRoleResponse> = {},
-): BaseResponseMemberRoleResponse => ({
-  status: "SUCCESS",
-  data: {
-    memberRole: faker.helpers.arrayElement(["OWNER", "PARTICIPANT"] as const),
-  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -255,90 +226,6 @@ export const getCreateResourceRequestResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetWorkspaceMembersResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseWorkspaceMemberResponse> = {},
-): BaseResponsePageResponseWorkspaceMemberResponse => ({
-  status: "SUCCESS",
-  data: {
-    totalSize: faker.number.int({ min: undefined, max: undefined }),
-    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
-    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
-    content: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      memberRole: faker.helpers.arrayElement(["OWNER", "PARTICIPANT"] as const),
-      groupName: Array.from(
-        { length: faker.number.int({ min: 1, max: 10 }) },
-        (_, i) => i + 1,
-      ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
-    })),
-  },
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getAddWorkspaceMembersResponseMock = (
-  overrideResponse: Partial<BaseResponseInteger> = {},
-): BaseResponseInteger => ({
-  status: "SUCCESS",
-  data: faker.number.int({ min: undefined, max: undefined }),
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getGetWorkloadResourceMetricsTimeseriesResponseMock = (
-  overrideResponse: Partial<BaseResponseListWorkloadMetricsTimeseriesResponse> = {},
-): BaseResponseListWorkloadMetricsTimeseriesResponse => ({
-  status: "SUCCESS",
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    data: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      podName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      podRole: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      value: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-  })),
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getGetResourceMetricsTimeseriesResponseMock = (
-  overrideResponse: Partial<BaseResponseListTimeGroupedResourceMetricsResponse> = {},
-): BaseResponseListTimeGroupedResourceMetricsResponse => ({
-  status: "SUCCESS",
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    data: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      value: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-  })),
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
 export const getGetWorkspaceDetailResponseMock = (
   overrideResponse: Partial<BaseResponseWorkspaceDetailResponse> = {},
 ): BaseResponseWorkspaceDetailResponse => ({
@@ -455,66 +342,6 @@ export const getSetDefaultWorkspaceMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getSetDefaultWorkspaceResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getGetWorkspaceMemberRoleMockHandler = (
-  overrideResponse?:
-    | BaseResponseMemberRoleResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponseMemberRoleResponse>
-        | BaseResponseMemberRoleResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/workspaces/:workspaceId/accounts/:accountId/member-roles",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetWorkspaceMemberRoleResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getUpdateMemberRoleMockHandler = (
-  overrideResponse?:
-    | BaseResponseMemberRoleResponse
-    | ((
-        info: Parameters<Parameters<typeof http.put>[1]>[0],
-      ) =>
-        | Promise<BaseResponseMemberRoleResponse>
-        | BaseResponseMemberRoleResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.put(
-    "*/api/v1/workspaces/:workspaceId/accounts/:accountId/member-roles",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getUpdateMemberRoleResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -643,166 +470,6 @@ export const getCreateResourceRequestMockHandler = (
   );
 };
 
-export const getGetWorkspaceMembersMockHandler = (
-  overrideResponse?:
-    | BaseResponsePageResponseWorkspaceMemberResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponsePageResponseWorkspaceMemberResponse>
-        | BaseResponsePageResponseWorkspaceMemberResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/workspaces/:workspaceId/members",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetWorkspaceMembersResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getAddWorkspaceMembersMockHandler = (
-  overrideResponse?:
-    | BaseResponseInteger
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<BaseResponseInteger> | BaseResponseInteger),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    "*/api/v1/workspaces/:workspaceId/members",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getAddWorkspaceMembersResponseMock(),
-        ),
-        { status: 201, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getDeleteWorkspaceMembersMockHandler = (
-  overrideResponse?:
-    | void
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<void> | void),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    "*/api/v1/workspaces/:workspaceId/members/delete",
-    async (info) => {
-      await delay(1000);
-      if (typeof overrideResponse === "function") {
-        await overrideResponse(info);
-      }
-      return new HttpResponse(null, { status: 204 });
-    },
-    options,
-  );
-};
-
-export const getLeaveWorkspaceMockHandler = (
-  overrideResponse?:
-    | void
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<void> | void),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    "*/api/v1/workspaces/:workspaceId/leave",
-    async (info) => {
-      await delay(1000);
-      if (typeof overrideResponse === "function") {
-        await overrideResponse(info);
-      }
-      return new HttpResponse(null, { status: 204 });
-    },
-    options,
-  );
-};
-
-export const getGetWorkloadResourceMetricsTimeseriesMockHandler = (
-  overrideResponse?:
-    | BaseResponseListWorkloadMetricsTimeseriesResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponseListWorkloadMetricsTimeseriesResponse>
-        | BaseResponseListWorkloadMetricsTimeseriesResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/resources/metrics/timeseries",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetWorkloadResourceMetricsTimeseriesResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getGetResourceMetricsTimeseriesMockHandler = (
-  overrideResponse?:
-    | BaseResponseListTimeGroupedResourceMetricsResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponseListTimeGroupedResourceMetricsResponse>
-        | BaseResponseListTimeGroupedResourceMetricsResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/workspaces/:workspaceId/workloads/resources/metrics/timeseries",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetResourceMetricsTimeseriesResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
 export const getGetWorkspaceDetailMockHandler = (
   overrideResponse?:
     | BaseResponseWorkspaceDetailResponse
@@ -887,18 +554,10 @@ export const getWorkspaceMock = () => [
   getUpdateWorkspaceMockHandler(),
   getDeleteWorkspaceMockHandler(),
   getSetDefaultWorkspaceMockHandler(),
-  getGetWorkspaceMemberRoleMockHandler(),
-  getUpdateMemberRoleMockHandler(),
   getGetAllWorkspacesMockHandler(),
   getCreateWorkspaceMockHandler(),
   getGetResourceRequestsMockHandler(),
   getCreateResourceRequestMockHandler(),
-  getGetWorkspaceMembersMockHandler(),
-  getAddWorkspaceMembersMockHandler(),
-  getDeleteWorkspaceMembersMockHandler(),
-  getLeaveWorkspaceMockHandler(),
-  getGetWorkloadResourceMetricsTimeseriesMockHandler(),
-  getGetResourceMetricsTimeseriesMockHandler(),
   getGetWorkspaceDetailMockHandler(),
   getGetDefaultResourceMockHandler(),
   getCancelResourceRequestMockHandler(),

@@ -56,7 +56,11 @@ export const getGetProfileResponseMock = (
     accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    accountRole: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    accountRole: faker.helpers.arrayElement([
+      "SUPER_ADMIN",
+      "ADMIN",
+      "USER",
+    ] as const),
     groupName: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,

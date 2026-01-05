@@ -60,7 +60,7 @@ import type {
  */
 export const getCredentials = (
   accountId: string,
-  params: GetCredentialsParams,
+  params?: GetCredentialsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseCredentialListItemResponse>({
@@ -86,7 +86,7 @@ export const getGetCredentialsQueryOptions = <
   TError = unknown,
 >(
   accountId: string,
-  params: GetCredentialsParams,
+  params?: GetCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getCredentials>>, TError, TData>
@@ -124,7 +124,7 @@ export function useGetCredentials<
   TError = unknown,
 >(
   accountId: string,
-  params: GetCredentialsParams,
+  params: undefined | GetCredentialsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getCredentials>>, TError, TData>
@@ -147,7 +147,7 @@ export function useGetCredentials<
   TError = unknown,
 >(
   accountId: string,
-  params: GetCredentialsParams,
+  params?: GetCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getCredentials>>, TError, TData>
@@ -170,7 +170,7 @@ export function useGetCredentials<
   TError = unknown,
 >(
   accountId: string,
-  params: GetCredentialsParams,
+  params?: GetCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getCredentials>>, TError, TData>
@@ -189,7 +189,7 @@ export function useGetCredentials<
   TError = unknown,
 >(
   accountId: string,
-  params: GetCredentialsParams,
+  params?: GetCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getCredentials>>, TError, TData>
