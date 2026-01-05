@@ -39,7 +39,7 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
 
   const { data, isLoading, isError } = useFindHubs({
     findHubsRequest: {
-      pageNo: page,
+      pageNo: page - 1,
       pageSize: PAGE_SIZE,
       keyword: searchText || undefined,
     },
@@ -51,7 +51,9 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
 
   // 목록 페이지에서만 첫 번째 허브로 자동 리다이렉트
   useEffect(() => {
-    if (isHubListPage || content[0]) {
+    if (content.length === 0) return;
+
+    if (isHubListPage && content[0]) {
       router.push(ROUTES.USER_HUB_DETAIL(content[0].hubId));
     }
   }, [isHubListPage, content, router]);

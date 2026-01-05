@@ -72,8 +72,8 @@ export const hubHandlers = [
         baseMock.data?.content?.[index % (baseMock.data.content.length || 1)];
       return {
         hubId: pageNo * pageSize + index + 1,
-        hubName: keyword.trim()
-          ? `${keyword}-${index + 1}`
+        hubName: keyword
+          ? `${keyword}-${pageNo * pageSize + index + 1}`
           : baseHub?.hubName || `Hub-${index + 1}`,
         modelType: baseHub?.modelType || "LLM",
         description:
