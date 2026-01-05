@@ -61,7 +61,7 @@ export const hubHandlers = [
     // pageSize에 맞는 content 생성
     const content = Array.from({ length: pageSize }, (_, index) => {
       return {
-        hubId: pageNo * pageSize + index + 1,
+        hubId: Math.floor(Math.random() * 1000000) + pageNo * pageSize + index,
         hubName: `${keyword ? keyword : "HUB"}-${pageNo * pageSize + index + 1}`,
         modelType: "Object Detection",
         description:
