@@ -1,14 +1,10 @@
 "use client";
 
-import { Icon } from "xiilab-ui";
+import { Button } from "xiilab-ui";
 
 import type { SignupRequestItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import {
-  ColumnAlignCenterWrap,
-  ColumnIconWrap,
-} from "@/styles/layers/column-layer.styled";
 
 interface RejectAccountPendingButtonProps {
   /** 사용자 데이터 */
@@ -35,11 +31,5 @@ export function RejectAccountPendingButton({
     });
   };
 
-  return (
-    <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClick}>
-        <Icon name="Close" color="var(--icon-fill)" />
-      </ColumnIconWrap>
-    </ColumnAlignCenterWrap>
-  );
+  return <Button icon="Close" onClick={handleClick} aria-label="가입 반려" />;
 }

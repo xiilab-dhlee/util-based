@@ -4,16 +4,16 @@ import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocum
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
-interface UpdateAccountButtonProps {
+interface ResetPasswordButtonProps {
   account: AccountItemResponse;
 }
 
-export function UpdateAccountButton({ account }: UpdateAccountButtonProps) {
+export function ResetPasswordButton({ account }: ResetPasswordButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(ACCOUNT_EVENTS.sendUpdateAccount, account.accountId);
+    publish(ACCOUNT_EVENTS.sendResetPassword, account);
   };
 
-  return <Button icon="Edit02" onClick={handleClick} />;
+  return <Button icon="Refresh" onClick={handleClick} />;
 }

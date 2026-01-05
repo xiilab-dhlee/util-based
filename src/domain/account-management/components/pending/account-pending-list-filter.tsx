@@ -1,11 +1,13 @@
 "use client";
 
 import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { Button } from "xiilab-ui";
 
 import type { SignupRequestItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   accountPendingCheckedListAtom,
+  accountPendingPageAtom,
   accountPendingSearchTextAtom,
 } from "@/domain/account-management/state/account.atom";
 import { SearchInput } from "@/shared/components/input/search-input";
@@ -31,6 +33,8 @@ export function AccountPendingListFilter({
 }: AccountPendingListFilterProps) {
   const setSearchText = useSetAtom(accountPendingSearchTextAtom);
   const checkedList = useAtomValue(accountPendingCheckedListAtom);
+  const resetPage = useResetAtom(accountPendingPageAtom);
+  const resetCheckedList = useResetAtom(accountPendingCheckedListAtom);
   const publish = usePublish();
 
   const hasChecked = checkedList.size > 0;
@@ -68,9 +72,15 @@ export function AccountPendingListFilter({
     });
   };
 
+  const handleSearch = (value: string) => {
+    resetCheckedList();
+    resetPage();
+    setSearchText(value);
+  };
+
   return (
     <MySearchFilter title="가입 승인 목록" total={totalSize}>
-      <SearchInput onSearch={setSearchText} />
+      <SearchInput onSearch={handleSearch} />
       <Button
         color="primary"
         variant="gradient"

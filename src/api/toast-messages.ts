@@ -32,7 +32,6 @@ export const MUTATION_MESSAGES: Partial<
     error: "가입 반려에 실패했습니다.",
   },
   [MUTATION_KEYS.resetPasswordByAdmin]: {
-    success: "비밀번호가 재설정되었습니다.",
     error: "비밀번호 재설정에 실패했습니다.",
   },
 };

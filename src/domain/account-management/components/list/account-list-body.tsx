@@ -55,6 +55,8 @@ export function AccountListBody({
         columnHeight={38}
         loading={isLoading}
         isError={isError}
+        tableLayout="fixed"
+        scroll={{ x: "100%", y: "100%" }}
         rowKey="accountId"
         rowSelection={rowSelection}
         onChange={handleChange}

@@ -1,6 +1,8 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import {
   Dropdown,
@@ -11,32 +13,45 @@ import {
   Modal,
   Typography,
 } from "xiilab-ui";
+import type { z } from "zod";
 
 import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
-import type { AccountUpdateRequestAccountRole } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { updateAccountBody } from "@/api/generated/admin-account/admin-account.zod";
 import {
   ACCOUNT_ROLE_OPTIONS,
   ACCOUNT_STATUS_OPTIONS,
+  getAccountStatusKeyFromBoolean,
 } from "@/domain/account-management/constants/account.constant";
 import { useUpdateAccountAction } from "@/domain/account-management/hooks/account-actions";
-import { useAccountForm } from "@/domain/account-management/hooks/use-account-form";
 import { openUpdateAccountModalAtom } from "@/domain/account-management/state/account.atom";
+import { updateAccountErrorMap } from "@/domain/account-management/utils/update-account-form.util";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import { subTitleStyle } from "@/styles/mixins/text";
 
-/**
+type AccountUpdateFormType = z.infer<typeof updateAccountBody>;
+
+/*
  * 계정 수정 모달 컴포넌트
  */
 export function UpdateAccountModal() {
   const { open, onOpen, onClose } = useGlobalModal(openUpdateAccountModalAtom);
   const [accountId, setAccountId] = useState<string>("");
 
-  // 폼 훅 사용
-  const { formState, errors, setField, validate, reset, initializeForEdit } =
-    useAccountForm();
+  const {
+    control,
+    handleSubmit,
+    reset: resetForm,
+    formState: { errors },
+  } = useForm<AccountUpdateFormType>({
+    resolver: zodResolver(updateAccountBody, {
+      path: [],
+      async: false,
+      errorMap: updateAccountErrorMap,
+    }),
+  });
 
   const updateAccountMutation = useUpdateAccountAction();
   const isPending = updateAccountMutation.isPending;
@@ -53,23 +68,30 @@ export function UpdateAccountModal() {
     onOpen();
   });
 
+  const handleStatusChange = (onChange: (value: boolean) => void) => {
+    return (value: string | boolean) => {
+      onChange(String(value) === "true");
+    };
+  };
+
   const handleClose = () => {
     if (isPending) return;
     onClose();
-    reset();
+    resetForm({
+      accountRole: undefined,
+      isEnabled: undefined,
+      workspaceLimitCount: 1,
+    });
     setAccountId("");
   };
 
-  const handleSubmit = () => {
+  const onSubmit = (data: AccountUpdateFormType) => {
     if (!accountDetail) return;
-
-    const payload = validate();
-    if (!payload) return;
 
     updateAccountMutation.mutate(
       {
         accountId: accountDetail.accountId,
-        data: payload,
+        data,
       },
       {
         onSuccess: () => {
@@ -79,20 +101,16 @@ export function UpdateAccountModal() {
     );
   };
 
-  // 상세 조회 결과가 들어오면 폼을 최신 값으로 초기화
+  // accountDetail 로드 시 폼 초기화
   useEffect(() => {
-    if (!open) return;
-    if (!accountId) return;
-    if (!accountDetail) return;
-    if (accountDetail.accountId !== accountId) return;
-
-    initializeForEdit({
-      accountRole: accountDetail.accountRole as AccountUpdateRequestAccountRole,
-      isEnabled: accountDetail.isEnabled,
-      workspaceLimitCount: accountDetail.workspaceLimitCount,
-      isValid: true,
-    });
-  }, [open, accountId, accountDetail, initializeForEdit]);
+    if (accountDetail) {
+      resetForm({
+        accountRole: accountDetail.accountRole,
+        isEnabled: accountDetail.isEnabled,
+        workspaceLimitCount: accountDetail.workspaceLimitCount ?? 1,
+      });
+    }
+  }, [accountDetail, resetForm]);
 
   return (
     <Modal
@@ -106,7 +124,7 @@ export function UpdateAccountModal() {
       cancelText="취소"
       onCancel={handleClose}
       okText="저장"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
       maskClosable={!isPending}
@@ -119,97 +137,128 @@ export function UpdateAccountModal() {
     >
       <Container>
         {/* 계정 기본 정보 */}
-        <SubTitle>계정 기본 정보</SubTitle>
-        <DetailCard>
-          <SectionTitle>상세 정보</SectionTitle>
-          <DetailRow>
-            <DetailLabel>이름</DetailLabel>
-            <DetailValue>{accountDetail?.accountName || "-"}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>아이디</DetailLabel>
-            <DetailValue>{accountDetail?.email || "-"}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>그룹</DetailLabel>
-            <DetailValue>
-              {accountDetail?.groupName?.length
-                ? accountDetail.groupName.join(", ")
-                : "-"}
-            </DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel>가입일</DetailLabel>
-            <DetailValue>
-              {formatDateSafely(accountDetail?.createdAt)}
-            </DetailValue>
-          </DetailRow>
-
-          <Divider />
-
-          <SectionTitle>워크스페이스 정보</SectionTitle>
-          <DetailRow>
-            <DetailLabel>보유 개수</DetailLabel>
-            <DetailValue>{accountDetail?.workspaceCount ?? 0}개</DetailValue>
-          </DetailRow>
-        </DetailCard>
+        <section>
+          <SubTitle>계정 기본 정보</SubTitle>
+          <DetailCard>
+            <SectionTitle>상세 정보</SectionTitle>
+            <InfoRow label="이름" value={accountDetail?.accountName} />
+            <InfoRow label="아이디" value={accountDetail?.email} />
+            <InfoRow
+              label="그룹"
+              value={
+                accountDetail?.groupName?.length
+                  ? accountDetail.groupName.join(", ")
+                  : undefined
+              }
+            />
+            <InfoRow
+              label="가입일"
+              value={formatDateSafely(accountDetail?.createdAt)}
+            />
+            <Divider />
+            <SectionTitle>워크스페이스 정보</SectionTitle>
+            <InfoRow
+              label="보유 개수"
+              value={`${accountDetail?.workspaceCount ?? 0}개`}
+            />
+          </DetailCard>
+        </section>
 
         {/* 계정 수정 정보 */}
-        <SubTitle>계정 수정 정보</SubTitle>
+        <section>
+          <SubTitle>계정 수정 정보</SubTitle>
 
-        <Form layout="vertical">
-          {/* 권한, 상태 가로 배치 */}
-          <FormRowHorizontal>
-            <HalfFormItem>
-              <FormItem label="권한" required>
-                <Dropdown
-                  options={ACCOUNT_ROLE_OPTIONS}
-                  value={formState.accountRole}
-                  onChange={(value) =>
-                    setField(
-                      "accountRole",
-                      value as AccountUpdateRequestAccountRole,
-                    )
+          <Form layout="vertical">
+            {/* 권한, 상태 가로 배치 */}
+            <FormRowHorizontal>
+              <HalfFormItem>
+                <Controller
+                  name="accountRole"
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem
+                      label="권한"
+                      required
+                      help={errors.accountRole?.message}
+                      validateStatus={errors.accountRole ? "error" : undefined}
+                    >
+                      <Dropdown
+                        options={ACCOUNT_ROLE_OPTIONS}
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="권한 선택해 주세요."
+                        width="100%"
+                        status={errors.accountRole ? "error" : undefined}
+                        disabled={isPending}
+                      />
+                    </FormItem>
+                  )}
+                />
+              </HalfFormItem>
+              <HalfFormItem>
+                <Controller
+                  name="isEnabled"
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem
+                      label="상태"
+                      required
+                      help={errors.isEnabled?.message}
+                      validateStatus={errors.isEnabled ? "error" : undefined}
+                    >
+                      <Dropdown
+                        options={ACCOUNT_STATUS_OPTIONS}
+                        value={getAccountStatusKeyFromBoolean(field.value)}
+                        onChange={handleStatusChange(field.onChange)}
+                        placeholder="상태 선택"
+                        width="100%"
+                        status={errors.isEnabled ? "error" : undefined}
+                        disabled={isPending}
+                      />
+                    </FormItem>
+                  )}
+                />
+              </HalfFormItem>
+            </FormRowHorizontal>
+
+            {/* 워크스페이스 생성 제한 개수 */}
+            <Controller
+              name="workspaceLimitCount"
+              control={control}
+              render={({ field }) => (
+                <LastFormItem
+                  label="워크스페이스 생성 제한 개수"
+                  required
+                  help={errors.workspaceLimitCount?.message}
+                  validateStatus={
+                    errors.workspaceLimitCount ? "error" : undefined
                   }
-                  placeholder="권한 선택해 주세요."
-                  width="100%"
-                  status={errors.accountRole ? "error" : undefined}
-                  disabled={isPending}
-                />
-              </FormItem>
-            </HalfFormItem>
-            <HalfFormItem>
-              <FormItem label="상태" required>
-                <Dropdown
-                  options={ACCOUNT_STATUS_OPTIONS}
-                  value={String(formState.isEnabled)}
-                  onChange={(value) => setField("isEnabled", value === "true")}
-                  placeholder="상태 선택"
-                  width="100%"
-                  status={errors.isEnabled ? "error" : undefined}
-                  disabled={isPending}
-                />
-              </FormItem>
-            </HalfFormItem>
-          </FormRowHorizontal>
-
-          {/* 워크스페이스 생성 제한 개수 */}
-          <FormItem label="워크스페이스 생성 제한 개수" required>
-            <InputNumber
-              value={formState.workspaceLimitCount}
-              onChange={(value) =>
-                setField("workspaceLimitCount", value as number)
-              }
-              min={1}
-              suffix="개"
-              width="100%"
-              status={errors.workspaceLimitCount ? "error" : undefined}
-              disabled={isPending}
+                >
+                  <InputNumber
+                    value={field.value}
+                    onChange={field.onChange}
+                    min={1}
+                    suffix="개"
+                    width="100%"
+                    status={errors.workspaceLimitCount ? "error" : undefined}
+                    disabled={isPending}
+                  />
+                </LastFormItem>
+              )}
             />
-          </FormItem>
-        </Form>
+          </Form>
+        </section>
       </Container>
     </Modal>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value?: string | number }) {
+  return (
+    <DetailRow>
+      <DetailLabel>{label}</DetailLabel>
+      <DetailValue>{value || "-"}</DetailValue>
+    </DetailRow>
   );
 }
 
@@ -223,6 +272,7 @@ const Container = styled.div`
 const SubTitle = styled.div`
   ${subTitleStyle(6)}
   margin-left: 6px;
+  margin-bottom: 8px;
 
 
 `;
@@ -277,4 +327,10 @@ const FormRowHorizontal = styled.div`
 
 const HalfFormItem = styled.div`
   flex: 1;
+`;
+
+const LastFormItem = styled(FormItem)`
+  && {
+    margin-bottom: 0;
+  }
 `;

@@ -48,7 +48,7 @@ export function ViewAccountDetailModal() {
   return (
     <Modal
       type="primary"
-      icon={<Icon name="Edit02" color="#fff" size={20} />}
+      icon={<Icon name="Description" color="#fff" size={20} />}
       modalWidth={370}
       open={open}
       closable

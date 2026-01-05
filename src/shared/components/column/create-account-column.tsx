@@ -1,8 +1,10 @@
-import type { ResponsiveColumnType } from "xiilab-ui";
-import { Icon } from "xiilab-ui";
+import styled from "styled-components";
+import type { ResponsiveColumnType, TagGroupItem } from "xiilab-ui";
+import { TagGroup } from "xiilab-ui";
 
 import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { AccountStatusSwitch } from "@/domain/account-management/components/list/account-status-switch";
+import { ResetPasswordButton } from "@/domain/account-management/components/list/reset-password-button";
 import { UpdateAccountButton } from "@/domain/account-management/components/list/update-account-button";
 import type { AccountSortState } from "@/domain/account-management/constants/account.constant";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -13,9 +15,18 @@ import { pubsubUtil } from "@/shared/utils/pubsub.util";
 import { getColumnSortOrder } from "@/shared/utils/sort.util";
 import {
   ColumnAlignCenterWrap,
-  ColumnIconWrap,
   ColumnTextButton,
 } from "@/styles/layers/column-layer.styled";
+
+const createGroupTagItems = (groupNames: string[]): TagGroupItem[] => {
+  return groupNames.map((groupName, index) => ({
+    key: `${groupName}-${index}`,
+    label: groupName,
+    tagProps: {
+      variant: "gray" as const,
+    },
+  }));
+};
 
 const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
   return [
@@ -23,7 +34,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       title: "이름",
       dataIndex: "accountName",
       align: "left",
-      width: "15%",
+      width: "16%",
       ellipsis: true,
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "accountName"),
@@ -45,31 +56,34 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       title: "이메일",
       dataIndex: "email",
       align: "left",
-      width: "20%",
+      width: "22%",
       ellipsis: true,
     },
     {
       title: "그룹",
       dataIndex: "groupName",
       align: "left",
-      width: "25%",
-      ellipsis: true,
+      width: "26%",
       render: (groupName: string[]) => {
         if (!groupName || groupName.length === 0) return "-";
-        return groupName.join(", ");
+        return (
+          <ColumnNoWrapOverflow>
+            <TagGroup items={createGroupTagItems(groupName)} maxWidth="100%" />
+          </ColumnNoWrapOverflow>
+        );
       },
     },
     {
       title: "권한",
       dataIndex: "accountRole",
       align: "center",
-      width: "10%",
+      width: "12%",
     },
     {
       title: "가입일",
       dataIndex: "createdAt",
       align: "left",
-      width: "12%",
+      width: "6%",
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "createdAt"),
       render: (createdAt: string) => {
@@ -107,12 +121,10 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       dataIndex: "resetPassword",
       align: "center",
       width: "5%",
-      render: () => {
+      render: (_, account: AccountItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-              <Icon name="Notice" color="var(--icon-fill)" />
-            </ColumnIconWrap>
+            <ResetPasswordButton account={account} />
           </ColumnAlignCenterWrap>
         );
       },
@@ -128,3 +140,10 @@ export const createAccountColumn = (
 
   return applyColumnConfigs(columnList, config);
 };
+
+const ColumnNoWrapOverflow = styled.div`
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+`;
