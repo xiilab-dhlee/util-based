@@ -1,15 +1,18 @@
 "use client";
 
+import { Card } from "xiilab-ui";
+
 import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { HubCard } from "@/domain/hub/components/list/hub-card";
 import { ListEmpty } from "@/shared/components/layouts/list-empty";
-import { MySpinner } from "@/shared/components/spinner";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface HubListBodyProps {
   content: FindHubsResponse[];
   loading: boolean;
   isError?: boolean;
+  /** 로딩 시 표시할 스켈레톤 카드 개수 */
+  pageSize?: number;
 }
 
 /**
@@ -21,17 +24,23 @@ interface HubListBodyProps {
  * @param content - 허브 목록 데이터
  * @param loading - 로딩 여부
  * @param isError - 에러 상태 여부
+ * @param pageSize - 로딩 시 표시할 스켈레톤 카드 개수
  */
 export function HubListBody({
   content,
   loading,
   isError = false,
+  pageSize = 12,
 }: HubListBodyProps) {
-  // 1. 로딩 상태
+  // 1. 로딩 상태 - 스켈레톤 카드 표시
   if (loading) {
     return (
       <ListWrapper>
-        <MySpinner />
+        <GridList>
+          {Array.from({ length: pageSize }).map((_, index) => (
+            <Card key={`skeleton-${index}`} loading style={{ height: 150 }} />
+          ))}
+        </GridList>
       </ListWrapper>
     );
   }
