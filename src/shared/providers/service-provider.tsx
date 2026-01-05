@@ -5,7 +5,7 @@ import { createContext, useContext } from "react";
 
 import { CredentialService } from "@/domain/credential/api/credential.service";
 import { GroupService } from "@/domain/group/api/group.service";
-import { HubService } from "@/domain/hub/api/hub.service";
+// import { HubService } from "@/domain/hub/api/hub.service";
 import { InternalRegistryService } from "@/domain/internal-registry/api/internal-registry.service";
 import { AdminInternalRegistryImageService } from "@/domain/internal-registry-image/api/admin-internal-registry-image.service";
 import { InternalRegistryImageService } from "@/domain/internal-registry-image/api/internal-registry-image.service";
@@ -43,7 +43,7 @@ interface ServiceContextType {
   credentialService: CredentialService;
   volumeService: VolumeService;
   storageService: StorageService;
-  hubService: HubService;
+  // hubService: HubService;
   groupService: GroupService;
   notificationService: NotificationService;
   userResourceService: UserResourceService;
@@ -94,7 +94,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     credentialService: new CredentialService(),
     volumeService: new VolumeService(),
     storageService: new StorageService(),
-    hubService: new HubService(),
+    // hubService: new HubService(),
     groupService: new GroupService(),
     notificationService: new NotificationService(),
     userResourceService: new UserResourceService(),

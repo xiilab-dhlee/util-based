@@ -1,9 +1,10 @@
 "use client";
 
 import { useAtom, useSetAtom } from "jotai";
+import { useMemo } from "react";
 import { Dropdown } from "xiilab-ui";
 
-import { useGetHubOptions } from "@/domain/hub/hooks/use-get-hub-options";
+import { useFindHubSummaries } from "@/api/generated/hub/hub";
 import {
   imageIdAtom,
   imageTagIdAtom,
@@ -14,9 +15,18 @@ export function CreateWorkloadHubImageSelect() {
   const [imageId, setImageId] = useAtom(imageIdAtom);
   const setImageTagId = useSetAtom(imageTagIdAtom);
   /** 허브 이미지 옵션 목록 조회 */
-  const { data } = useGetHubOptions();
+  const { data } = useFindHubSummaries({ workloadJobType: "BATCH" });
 
-  const image = useSelect(null, data || []);
+  const options = useMemo(() => {
+    return (
+      data?.map((item) => ({
+        label: item.hubName,
+        value: item.hubId,
+      })) || []
+    );
+  }, [data]);
+
+  const image = useSelect(null, options);
 
   const handleChangeImage = (value: string | null) => {
     setImageId(value);
