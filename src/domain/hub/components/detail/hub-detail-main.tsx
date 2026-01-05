@@ -13,12 +13,6 @@ import {
   AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
 
-/**
- * Hub 상세 페이지의 Aside 컨텐츠
- *
- * URL params에서 hubId를 읽고 useFindHubSummaries로 hubName을 조회합니다.
- * /user/hub/[id] 페이지에서 children으로 렌더링됩니다.
- */
 export function HubDetailMain() {
   const params = useParams<{ id: string }>();
   const hubId = Number(params.id);

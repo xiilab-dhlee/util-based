@@ -42,11 +42,6 @@ export function ViewHubReadme({ hubId }: ViewHubReadmeProps) {
   );
 }
 
-/**
- * 스크롤 가능한 콘텐츠 영역을 위한 스타일드 컴포넌트
- * - flex: 1: 남은 공간을 모두 차지
- * - overflow-y: auto: 세로 스크롤 활성화 (콘텐츠가 길 때)
- */
 const Container = styled(AsideDetailArticle)`
   flex: 1;
   overflow-y: auto;
