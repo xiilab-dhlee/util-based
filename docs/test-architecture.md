@@ -83,14 +83,14 @@ export class WorkloadListPage extends ListPage {
     대기중: "pending",
   };
 
-  // 2. 컴포넌트 인스턴스
-  readonly jobTypeFilter: FilterDropdownComponent;
-  readonly statusFilter: FilterDropdownComponent;
+  // 2. 험블 객체 인스턴스 (readonly)
+  readonly jobTypeFilter: DropdownComponent;
+  readonly statusFilter: DropdownComponent;
 
   constructor(page: Page) {
     super(page);
-    this.jobTypeFilter = new FilterDropdownComponent(page, SELECTOR);
-    this.statusFilter = new FilterDropdownComponent(page, SELECTOR);
+    this.jobTypeFilter = new DropdownComponent(page, SELECTOR.JOB_TYPE);
+    this.statusFilter = new DropdownComponent(page, SELECTOR.STATUS);
   }
 
   // 3. Abstract 구현 (필수)
@@ -114,41 +114,109 @@ export class WorkloadListPage extends ListPage {
 
 ---
 
-## Component Object
+## Component Object (험블 객체 패턴)
 
-재사용 가능한 UI 컴포넌트를 캡슐화합니다.
+험블 객체(Humble Object) 패턴을 적용하여 재사용 가능한 UI 컴포넌트를 캡슐화합니다.
+
+### 험블 객체란?
+
+험블 객체는 테스트하기 어려운 외부 의존성(DOM, 브라우저 API)을 캡슐화하여 테스트 가능한 인터페이스를 제공합니다.
 
 ```typescript
-// tests/components/data-table.component.ts
-export class DataTableComponent {
+// tests/components/button.component.ts
+export class ButtonComponent {
   constructor(
     private page: Page,
-    private columnTestId: string,
+    private buttonTestId: string,
   ) {}
 
   // Locator는 private getter로 캡슐화
-  private get columns(): Locator {
-    return this.page.locator(testId(this.columnTestId));
+  private get locator(): Locator {
+    return this.page.locator(testId(this.buttonTestId));
   }
 
-  // 퍼블릭 메서드는 행동 중심
-  async getRowCount(): Promise<number> { ... }
-  async getRow(rowIndex: number): Promise<Locator> { ... }
-  async clickRowButton(row: Locator, buttonTestId: string): Promise<void> { ... }
-  async findRowByStatus(prefix: string, value: string): Promise<Locator | null> { ... }
+  // Actions
+  async click(): Promise<void> { await this.locator.click(); }
+  async hover(): Promise<void> { await this.locator.hover(); }
+
+  // Getters
+  async getText(): Promise<string | null> { return await this.locator.textContent(); }
+  async isEnabled(): Promise<boolean> { return await this.locator.isEnabled(); }
+
+  // Assertions
+  async assertVisible(timeout = 10000): Promise<void> {
+    await expect(this.locator).toBeVisible({ timeout });
+  }
+  async assertDisabled(): Promise<void> {
+    await expect(this.locator).toBeDisabled();
+  }
+}
+```
+
+### Page Object에서 험블 객체 사용
+
+```typescript
+// tests/pages/signup.page.ts
+export class SignupPage extends BasePage {
+  // 험블 객체를 인스턴스 속성으로 선언
+  readonly emailField: FormItemComponent;
+  readonly emailInput: InputComponent;
+  readonly submitButton: ButtonComponent;
+  readonly loginLink: LinkComponent;
+
+  constructor(page: Page) {
+    super(page);
+    this.emailField = new FormItemComponent(page, AUTH_SELECTOR.SIGNUP_EMAIL_FIELD);
+    this.emailInput = new InputComponent(page, AUTH_SELECTOR.SIGNUP_EMAIL_INPUT);
+    this.submitButton = new ButtonComponent(page, AUTH_SELECTOR.SIGNUP_SUBMIT_BUTTON);
+    this.loginLink = new LinkComponent(page, AUTH_SELECTOR.SIGNUP_LOGIN_LINK);
+  }
+
+  // 도메인 액션은 험블 객체를 조합하여 구현
+  async fillEmail(value: string): Promise<void> {
+    await this.emailInput.fill(value);
+  }
+
+  async assertFieldError(fieldName: string, message: string): Promise<void> {
+    const fieldMap: Record<string, FormItemComponent> = {
+      Email: this.emailField,
+      // ...
+    };
+    await fieldMap[fieldName].assertErrorMessage(message);
+  }
 }
 ```
 
 ### 주요 Component 목록
 
-| Component | 용도 |
-|-----------|------|
-| `DataTableComponent` | 테이블 행 조작, 셀 텍스트 조회 |
-| `PaginationComponent` | 페이지네이션 조작 |
-| `FilterDropdownComponent` | 드롭다운 필터 선택 |
-| `ModalComponent` | 모달 확인/취소 |
-| `DrawerComponent` | 드로어 조작 |
-| `TabsComponent` | 탭 전환 |
+| Component | 용도 | 주요 메서드 |
+|-----------|------|-------------|
+| `ButtonComponent` | 버튼 클릭, 상태 검증 | `click()`, `assertDisabled()`, `assertLoading()` |
+| `InputComponent` | 입력 필드 조작 | `fill()`, `getValue()`, `assertValue()` |
+| `FormItemComponent` | 폼 필드 컨테이너 (라벨+입력+에러) | `assertErrorMessage()`, `assertNoError()` |
+| `DropdownComponent` | Ant Design Select 조작 | `select()`, `getSelectedValue()`, `assertEmpty()` |
+| `LinkComponent` | 링크 클릭, href 검증 | `click()`, `assertHref()`, `assertExternalLink()` |
+| `DataTableComponent` | 테이블 행 조작, 셀 텍스트 조회 | `getRowCount()`, `getRow()`, `clickRowButton()` |
+| `PaginationComponent` | 페이지네이션 조작 | `goToPage()`, `assertCurrentPage()` |
+| `ModalComponent` | 모달 확인/취소 | `confirm()`, `cancel()`, `assertVisible()` |
+| `DrawerComponent` | 드로어 조작 | `close()`, `assertVisible()` |
+| `TabsComponent` | 탭 전환 | `selectTab()`, `assertActiveTab()` |
+
+### FormItem vs Input 분리
+
+Ant Design의 Form 구조에 맞춰 FormItem(컨테이너)과 Input(실제 입력)을 분리합니다:
+
+```
+FormItem (data-testid="signup-email-field")
+├── Label
+├── Input (data-testid="signup-email-input")
+└── Error Message
+```
+
+| 컴포넌트 | 역할 | 검증 대상 |
+|----------|------|----------|
+| `FormItemComponent` | 라벨, 에러 메시지 포함 컨테이너 | 에러 메시지 표시 여부 |
+| `InputComponent` | 실제 입력 필드 | 입력값, maxLength |
 
 ---
 
@@ -253,11 +321,19 @@ Then("목록이 표시된다", async ({ page }) => {
 
 | 대상 | 규칙 | 예시 |
 |------|------|------|
-| Feature 파일 | `{기능}-{동작}.feature` | `active-workload-list-entry.feature` |
-| Page Object | `{Domain}Page` | `WorkloadListPage` |
-| Component | `{Name}Component` | `DataTableComponent` |
-| Step 파일 | `{feature}.steps.ts` | `list.steps.ts` |
+| Feature 파일 | `{기능}-{목적}.feature` | `signup-entry.feature`, `signup-validation.feature` |
+| Page Object | `{Domain}Page` | `SignupPage`, `WorkloadListPage` |
+| Component | `{Name}Component` | `ButtonComponent`, `InputComponent` |
+| Step 파일 | `{feature}.steps.ts` | `signup.steps.ts` |
 | Static 상수 | `UPPER_SNAKE_CASE` | `STATUS_MAP` |
+
+### Feature 파일 분리 패턴
+
+| 접미사 | 목적 | 내용 |
+|--------|------|------|
+| `-entry` | 페이지 진입/렌더링 | UI 요소 표시 검증 |
+| `-validation` | 유효성 검증 | 에러 메시지, 형식 검증 |
+| `-interaction` | 인터랙션/성공 | 폼 제출, 버튼 동작 |
 
 ### 중복 제거 기준
 
@@ -324,9 +400,40 @@ page.locator('[data-testid="workload-name"]');
 
 ---
 
+## data-testid 설계 전략
+
+### FormItem과 Input 분리
+
+폼 필드는 컨테이너(FormItem)와 입력 요소(Input)를 별도로 식별합니다:
+
+```typescript
+// selector.constant.ts
+export const AUTH_SELECTOR = {
+  // FormItem (라벨 + 입력 + 에러 메시지 컨테이너)
+  SIGNUP_EMAIL_FIELD: "signup-email-field",
+
+  // Input (실제 입력창)
+  SIGNUP_EMAIL_INPUT: "signup-email-input",
+};
+```
+
+```tsx
+// 컴포넌트에 적용
+<FormItem data-testid={AUTH_SELECTOR.SIGNUP_EMAIL_FIELD}>
+  <Input data-testid={AUTH_SELECTOR.SIGNUP_EMAIL_INPUT} />
+</FormItem>
+```
+
+**분리 이유:**
+- FormItem: 에러 메시지 검증 (`assertErrorMessage()`)
+- Input: 입력값 검증 (`fill()`, `getValue()`, `assertValue()`)
+
+---
+
 ## 참고 자료
 
 - Kent Beck - "Tidy First?: A Personal Exercise in Empirical Software Design"
 - Kent Beck - "Test-Driven Development: By Example"
+- Gerard Meszaros - "xUnit Test Patterns" (Humble Object 패턴)
 - [Gherkin 컨벤션](./gherkin-conventions.md)
 - [Playwright-BDD](https://vitalets.github.io/playwright-bdd/)

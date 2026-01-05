@@ -1,9 +1,10 @@
-import { expect, type Locator } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 import {
   testId,
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
+import { ButtonComponent } from "../components/button.component";
 import { BasePage } from "./base.page";
 
 /**
@@ -19,6 +20,21 @@ import { BasePage } from "./base.page";
  * await terminalPage.assertTerminalVisible();
  */
 export class WorkloadTerminalPage extends BasePage {
+  // ============================================
+  // Instance Properties - Button 험블 객체
+  // ============================================
+
+  /** 모니터링 버튼 컴포넌트 (xiilab-ui Button) */
+  readonly monitoringButton: ButtonComponent;
+
+  constructor(page: Page) {
+    super(page);
+    this.monitoringButton = new ButtonComponent(
+      page,
+      WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON,
+    );
+  }
+
   // ============================================
   // Abstract 구현
   // ============================================
@@ -62,15 +78,8 @@ export class WorkloadTerminalPage extends BasePage {
   }
 
   // ============================================
-  // Locators - 버튼
+  // Locators - 버튼 (styled.button - 험블 객체 미적용)
   // ============================================
-
-  /** 모니터링 버튼 */
-  get monitoringButton(): Locator {
-    return this.page.locator(
-      testId(WORKLOAD_SELECTOR.DETAIL_MONITORING_BUTTON),
-    );
-  }
 
   /** 수직 분할 버튼 */
   get splitVerticalButton(): Locator {
@@ -101,7 +110,7 @@ export class WorkloadTerminalPage extends BasePage {
    * 모니터링 버튼이 표시되는지 확인
    */
   async assertMonitoringButtonVisible(): Promise<void> {
-    await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
+    await this.monitoringButton.assertVisible();
   }
 
   /**
@@ -137,7 +146,6 @@ export class WorkloadTerminalPage extends BasePage {
    * 모니터링 버튼 클릭
    */
   async clickMonitoringButton(): Promise<void> {
-    await expect(this.monitoringButton).toBeVisible({ timeout: 10000 });
     await this.monitoringButton.click();
   }
 

@@ -284,6 +284,53 @@ export const USER_MONITORING_SELECTOR = {
 } as const;
 
 // ============================================
+// 인증 (Auth)
+// ============================================
+
+export const AUTH_SELECTOR = {
+  // 회원가입 페이지
+  /** 회원가입 페이지 헤더 */
+  SIGNUP_HEADER: "signup-header",
+
+  // FormItem (라벨 + 입력 + 에러 메시지 컨테이너)
+  /** 이메일 필드 (FormItem) */
+  SIGNUP_EMAIL_FIELD: "signup-email-field",
+  /** 비밀번호 필드 (FormItem) */
+  SIGNUP_PASSWORD_FIELD: "signup-password-field",
+  /** 비밀번호 확인 필드 (FormItem) */
+  SIGNUP_CONFIRM_PASSWORD_FIELD: "signup-confirm-password-field",
+  /** 이름 필드 (FormItem) */
+  SIGNUP_FIRST_NAME_FIELD: "signup-first-name-field",
+  /** 성 필드 (FormItem) */
+  SIGNUP_LAST_NAME_FIELD: "signup-last-name-field",
+  /** 그룹명 필드 (FormItem) */
+  SIGNUP_GROUP_NAME_FIELD: "signup-group-name-field",
+
+  // Input (실제 입력창)
+  /** 이메일 입력창 */
+  SIGNUP_EMAIL_INPUT: "signup-email-input",
+  /** 비밀번호 입력창 */
+  SIGNUP_PASSWORD_INPUT: "signup-password-input",
+  /** 비밀번호 확인 입력창 */
+  SIGNUP_CONFIRM_PASSWORD_INPUT: "signup-confirm-password-input",
+  /** 이름 입력창 */
+  SIGNUP_FIRST_NAME_INPUT: "signup-first-name-input",
+  /** 성 입력창 */
+  SIGNUP_LAST_NAME_INPUT: "signup-last-name-input",
+
+  /** 회원가입 버튼 */
+  SIGNUP_SUBMIT_BUTTON: "signup-submit-button",
+  /** 로그인 링크 */
+  SIGNUP_LOGIN_LINK: "signup-login-link",
+
+  // 회원가입 성공 UI (signup 페이지 내)
+  /** 회원가입 성공 컨테이너 */
+  SIGNUP_SUCCESS_CONTAINER: "signup-success-container",
+  /** 로그인 페이지로 이동 버튼 (회원가입 성공 후) */
+  SIGNUP_GO_TO_LOGIN_BUTTON: "signup-go-to-login-button",
+} as const;
+
+// ============================================
 // 테스트용 헬퍼 함수
 // ============================================
 

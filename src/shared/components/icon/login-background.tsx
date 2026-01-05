@@ -5,10 +5,6 @@ export const LoginBackgroundIcon = () => (
     src="/assets/login-background.svg"
     alt="login background"
     fill
-    style={{
-      objectFit: "cover",
-      objectPosition: "center",
-    }}
     draggable={false}
   />
 );

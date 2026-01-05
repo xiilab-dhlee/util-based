@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
-import { FilterDropdownComponent } from "../components/filter-dropdown.component";
+import { DropdownComponent } from "../components/dropdown.component";
 import { ListPage } from "./list.page";
 
 /**
@@ -44,17 +44,17 @@ export class WorkloadListPage extends ListPage {
   // ============================================
 
   /** Job Type 필터 드롭다운 */
-  readonly jobTypeFilter: FilterDropdownComponent;
+  readonly jobTypeFilter: DropdownComponent;
   /** 상태 필터 드롭다운 */
-  readonly statusFilter: FilterDropdownComponent;
+  readonly statusFilter: DropdownComponent;
 
   constructor(page: Page) {
     super(page);
-    this.jobTypeFilter = new FilterDropdownComponent(
+    this.jobTypeFilter = new DropdownComponent(
       page,
       WORKLOAD_SELECTOR.FILTER_JOB_TYPE,
     );
-    this.statusFilter = new FilterDropdownComponent(
+    this.statusFilter = new DropdownComponent(
       page,
       WORKLOAD_SELECTOR.FILTER_STATUS,
     );
