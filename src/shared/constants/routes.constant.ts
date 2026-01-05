@@ -142,7 +142,10 @@ export const ROUTES = {
 
   // 허브 (동적 함수)
   USER_HUB: `${MODE.USER}/hub`,
-  USER_HUB_DETAIL: (id: number | string) => `${MODE.USER}/hub/${id}`,
+  USER_HUB_DETAIL: (id: number | string, name?: string) =>
+    name
+      ? `${MODE.USER}/hub/${id}?name=${encodeURIComponent(name)}`
+      : `${MODE.USER}/hub/${id}`,
 
   // 설정 (정적)
   USER_SETTING: `${MODE.USER}/setting`,

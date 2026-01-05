@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
@@ -17,7 +17,9 @@ import {
 export function HubDetailMain() {
   const publish = usePublish();
   const params = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const hubId = Number(params.id);
+  const hubName = searchParams.get("name") || "";
 
   const handleCreateWorkload = () => {
     publish(WORKLOAD_EVENTS.sendCreateWorkload, {
@@ -44,7 +46,7 @@ export function HubDetailMain() {
     <Container>
       <Header>
         <AsideDetailHeaderTitle>
-          <span>TODO: Hub 이름 연동 필요</span>
+          <span>{hubName}</span>
         </AsideDetailHeaderTitle>
         <Button
           color="primary"

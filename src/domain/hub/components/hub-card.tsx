@@ -38,7 +38,7 @@ export function HubCard({
    * 해당 허브 상세 페이지로 이동
    */
   const handleClick = () => {
-    router.push(ROUTES.USER_HUB_DETAIL(hubId));
+    router.push(ROUTES.USER_HUB_DETAIL(hubId, hubName));
   };
 
   return (
