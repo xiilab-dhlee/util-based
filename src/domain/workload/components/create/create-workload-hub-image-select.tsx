@@ -21,7 +21,7 @@ export function CreateWorkloadHubImageSelect() {
     return (
       data?.map((item) => ({
         label: item.hubName,
-        value: item.hubId,
+        value: String(item.hubId),
       })) || []
     );
   }, [data]);

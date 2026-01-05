@@ -1,7 +1,6 @@
 import {
   getFindHubDetailMockHandler,
   getFindHubSummariesMockHandler,
-  getFindHubSummariesResponseMock,
   getFindHubsMockHandler,
   getFindHubsResponseMock,
 } from "@/api/generated/hub/hub.msw";
@@ -57,14 +56,13 @@ export const hubHandlers = [
     const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = parseInt(url.searchParams.get("pageSize") || "12", 10);
 
-    // orval mock에서 기본 응답 생성
-    const baseMock = getFindHubsResponseMock();
+    const { status, message, timestamp } = getFindHubsResponseMock();
 
     // pageSize에 맞는 content 생성
     const content = Array.from({ length: pageSize }, (_, index) => {
       return {
         hubId: pageNo * pageSize + index + 1,
-        hubName: `${keyword}-${pageNo * pageSize + index + 1}`,
+        hubName: `${keyword ? keyword : "HUB"}-${pageNo * pageSize + index + 1}`,
         modelType: "Object Detection",
         description:
           "YOLO(You Only Look Once)는 Object detection 모델 중 하나로, 높은 속도와 정확도를 가집니다.".repeat(
@@ -78,7 +76,9 @@ export const hubHandlers = [
     const totalSize = pageSize * 3;
 
     return {
-      ...baseMock,
+      status,
+      message,
+      timestamp,
       data: {
         totalSize,
         totalPageNum: Math.ceil(totalSize / pageSize),
@@ -92,5 +92,5 @@ export const hubHandlers = [
   getFindHubDetailMockHandler(() => HUB_README_MOCK),
 
   // 허브 요약 목록 조회
-  getFindHubSummariesMockHandler(() => getFindHubSummariesResponseMock()),
+  getFindHubSummariesMockHandler(),
 ];
