@@ -53,29 +53,19 @@ export const hubHandlers = [
   getFindHubsMockHandler(async (info) => {
     // URL에서 query params 추출
     const url = new URL(info.request.url);
-    const keyword = url.searchParams.get("findHubsRequest[keyword]") || "";
-    const pageNo = parseInt(
-      url.searchParams.get("findHubsRequest[pageNo]") || "0",
-      10,
-    );
-    const pageSize = parseInt(
-      url.searchParams.get("findHubsRequest[pageSize]") || "12",
-      10,
-    );
+    const keyword = url.searchParams.get("keyword") || "";
+    const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
+    const pageSize = parseInt(url.searchParams.get("pageSize") || "12", 10);
 
     // orval mock에서 기본 응답 생성
     const baseMock = getFindHubsResponseMock();
 
     // pageSize에 맞는 content 생성
     const content = Array.from({ length: pageSize }, (_, index) => {
-      const baseHub =
-        baseMock.data?.content?.[index % (baseMock.data.content.length || 1)];
       return {
         hubId: pageNo * pageSize + index + 1,
-        hubName: keyword
-          ? `${keyword}-${pageNo * pageSize + index + 1}`
-          : baseHub?.hubName || `Hub-${index + 1}`,
-        modelType: baseHub?.modelType || "LLM",
+        hubName: `${keyword}-${pageNo * pageSize + index + 1}`,
+        modelType: "Object Detection",
         description:
           "YOLO(You Only Look Once)는 Object detection 모델 중 하나로, 높은 속도와 정확도를 가집니다.".repeat(
             3,

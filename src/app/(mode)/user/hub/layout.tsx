@@ -7,6 +7,7 @@ import { type PropsWithChildren, useEffect } from "react";
 import { useFindHubs } from "@/api/generated/hub/hub";
 import { HubListBody } from "@/domain/hub/components/list/hub-list-body";
 import { HubListFilter } from "@/domain/hub/components/list/hub-list-filter";
+import { HUB_PAGE_SIZE } from "@/domain/hub/constants/hub.constant";
 import { hubPageAtom, hubSearchTextAtom } from "@/domain/hub/state/hub.atom";
 import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
@@ -18,8 +19,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-
-const PAGE_SIZE = 12;
 
 /**
  * Hub 페이지 공통 레이아웃
@@ -38,11 +37,9 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
   const isHubListPage = pathname === ROUTES.USER_HUB;
 
   const { data, isLoading, isError } = useFindHubs({
-    findHubsRequest: {
-      pageNo: page - 1,
-      pageSize: PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
+    pageNo: page - 1,
+    pageSize: HUB_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   // orval 응답에서 데이터 추출 (customInstance가 BaseResponse.data를 자동 언랩)
@@ -72,7 +69,7 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
           <ListPageFooter
             total={totalSize}
             page={page}
-            pageSize={PAGE_SIZE}
+            pageSize={HUB_PAGE_SIZE}
             onChange={setPage}
             isLoading={isLoading}
           />
