@@ -125,10 +125,10 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    command: "pnpm start",
+    command: "pnpm dev",
     url: "http://localhost:3000",
-    reuseExistingServer: !isCI,
-    timeout: 30 * 1000,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
 
   /* 테스트 타임아웃 설정 */
