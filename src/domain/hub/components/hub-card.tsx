@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import styled from "styled-components";
-import { Card, CardImageContainer, CardImagePlaceholder } from "xiilab-ui";
+import { Card, CardImageContainer } from "xiilab-ui";
 
 import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ROUTES } from "@/shared/constants/routes.constant";
@@ -29,7 +29,8 @@ export function HubCard({
   const params = useParams<{ id?: string }>();
 
   // URL 파라미터에서 현재 선택된 허브 ID 확인
-  const selectedHubId = params.id ? Number(params.id) : -1;
+  const parsedId = params.id ? Number(params.id) : Number.NaN;
+  const selectedHubId = Number.isNaN(parsedId) ? -1 : parsedId;
   const isSelected = selectedHubId === hubId;
 
   /**
@@ -50,10 +51,14 @@ export function HubCard({
     >
       {/* 허브 썸네일 이미지 영역 */}
       <CardImageContainer>
-        <CardImagePlaceholder>이미지 없음</CardImagePlaceholder>
         {thumbnail && (
           <ImageWrapper>
-            <Image src={thumbnail} alt="Hub Thumbnail" layout="fill" />
+            <Image
+              src={thumbnail}
+              alt="Hub Thumbnail"
+              fill
+              style={{ objectFit: "cover" }}
+            />
           </ImageWrapper>
         )}
       </CardImageContainer>
@@ -104,4 +109,6 @@ const ImageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  width: 100%;
 `;
