@@ -35,6 +35,28 @@ export function CreateCredentialForm() {
     toast.success("크레덴셜 생성 완료");
   };
 
+  const handleCredentialNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setCredentialName(e.target.value);
+  };
+
+  const handleCredentialDescriptionChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setCredentialDescription(e.target.value);
+  };
+
+  const handleCredentialIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCredentialId(e.target.value);
+  };
+
+  const handleCredentialTokenChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setCredentialToken(e.target.value);
+  };
+
   return (
     <Container>
       <StyledFormRow>
@@ -49,7 +71,7 @@ export function CreateCredentialForm() {
         <StyledFormItem label="이름">
           <Input
             value={credentialName}
-            onChange={(e) => setCredentialName(e.target.value)}
+            onChange={handleCredentialNameChange}
             placeholder="이름을 입력해 주세요."
             width="100%"
           />
@@ -59,7 +81,7 @@ export function CreateCredentialForm() {
         <StyledFormItem label="설명">
           <Input
             value={credentialDescription}
-            onChange={(e) => setCredentialDescription(e.target.value)}
+            onChange={handleCredentialDescriptionChange}
             placeholder="설명을 입력해 주세요."
             width="100%"
           />
@@ -69,7 +91,7 @@ export function CreateCredentialForm() {
         <StyledFormItem label="아이디">
           <Input
             value={credentialId}
-            onChange={(e) => setCredentialId(e.target.value)}
+            onChange={handleCredentialIdChange}
             placeholder="아이디를 입력해 주세요."
             width="100%"
           />
@@ -77,7 +99,7 @@ export function CreateCredentialForm() {
         <StyledFormItem label="토큰">
           <Input
             value={credentialToken}
-            onChange={(e) => setCredentialToken(e.target.value)}
+            onChange={handleCredentialTokenChange}
             placeholder="토큰을 입력해 주세요."
             width="100%"
           />

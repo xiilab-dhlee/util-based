@@ -65,13 +65,6 @@ export function SourceCodeEditModal({
     currentData.executeCommand,
   );
 
-  // currentData가 변경될 때마다 상태 업데이트
-  useEffect(() => {
-    setBranch(currentData.branch);
-    setMountPath(currentData.mountPath);
-    setExecuteCommand(currentData.executeCommand);
-  }, [currentData]);
-
   const handleSave = () => {
     if (branch && mountPath.trim() && executeCommand.trim()) {
       onSave({
@@ -90,6 +83,23 @@ export function SourceCodeEditModal({
     setExecuteCommand(currentData.executeCommand);
     onClose();
   };
+
+  const handleMountPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMountPath(e.target.value);
+  };
+
+  const handleExecuteCommandChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setExecuteCommand(e.target.value);
+  };
+
+  // currentData가 변경될 때마다 상태 업데이트
+  useEffect(() => {
+    setBranch(currentData.branch);
+    setMountPath(currentData.mountPath);
+    setExecuteCommand(currentData.executeCommand);
+  }, [currentData]);
 
   return (
     <Modal
@@ -145,7 +155,7 @@ export function SourceCodeEditModal({
           <Input
             id="mountPath"
             value={mountPath}
-            onChange={(e) => setMountPath(e.target.value)}
+            onChange={handleMountPathChange}
             placeholder="Mount Path를 입력해 주세요."
             width="100%"
           />
@@ -170,7 +180,7 @@ export function SourceCodeEditModal({
           <Input
             id="executeCommand"
             value={executeCommand}
-            onChange={(e) => setExecuteCommand(e.target.value)}
+            onChange={handleExecuteCommandChange}
             placeholder="실행 명령어를 입력해 주세요."
             width="100%"
           />

@@ -74,6 +74,12 @@ export function UpdateInternalRegistryImageModal() {
     },
   );
 
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setDescription(e.target.value);
+  };
+
   return (
     <Modal
       type="primary"
@@ -115,7 +121,7 @@ export function UpdateInternalRegistryImageModal() {
             id="updateInternalRegistryImageDescription"
             placeholder="컨테이너 이미지에 대한 설명을 입력해 주세요."
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={handleDescriptionChange}
           />
         </FormItem>
       </form>
