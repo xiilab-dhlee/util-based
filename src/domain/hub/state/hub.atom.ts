@@ -3,7 +3,7 @@ import { atomWithReset } from "jotai/utils";
 
 /** 허브 페이지 번호 */
 export const hubPageAtom = atomWithReset<number>(1);
-/** 허브 검색어 */
+/** 허브 검색어 (검색 실행 시 사용되는 제출된 검색어) */
 export const hubSearchTextAtom = atom<string>("");
-/** 허브 검색 키워드 */
+/** 허브 검색 키워드 (검색 입력 필드의 실시간 값) */
 export const hubSearchKeywordAtom = atom<string>("");
