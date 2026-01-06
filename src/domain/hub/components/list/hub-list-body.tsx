@@ -4,7 +4,10 @@ import { Card } from "xiilab-ui";
 
 import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { HubCard } from "@/domain/hub/components/hub-card";
-import { HUB_PAGE_SIZE } from "@/domain/hub/constants/hub.constant";
+import {
+  HUB_CARD_HEIGHT,
+  HUB_PAGE_SIZE,
+} from "@/domain/hub/constants/hub.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { SELECTOR } from "@/shared/constants/selector.constant";
@@ -27,7 +30,11 @@ export function HubListBody({
       <ListWrapper>
         <GridList>
           {Array.from({ length: HUB_PAGE_SIZE }).map((_, index) => (
-            <Card key={`skeleton-${index}`} loading style={{ height: 151 }} />
+            <Card
+              key={`skeleton-${index}`}
+              loading
+              style={{ height: HUB_CARD_HEIGHT }}
+            />
           ))}
         </GridList>
       </ListWrapper>
