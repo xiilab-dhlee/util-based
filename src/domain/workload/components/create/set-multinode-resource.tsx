@@ -37,6 +37,26 @@ export function SetMultinodeResource({
   const [workerGpuCount, setWorkerGpuCount] = useAtom(workerGpuCountAtom);
   const [workerMemoryGb, setWorkerMemoryGb] = useAtom(workerMemoryGbAtom);
 
+  const handleLauncherCpuChange = (value: number) => {
+    setLauncherCpuCore(value);
+  };
+
+  const handleLauncherMemoryChange = (value: number) => {
+    setLauncherMemoryGb(value);
+  };
+
+  const handleWorkerGpuChange = (value: number) => {
+    setWorkerGpuCount(value);
+  };
+
+  const handleWorkerCpuChange = (value: number) => {
+    setWorkerCpuCore(value);
+  };
+
+  const handleWorkerMemoryChange = (value: number) => {
+    setWorkerMemoryGb(value);
+  };
+
   return (
     <>
       <DistributedLearningContainer>
@@ -58,7 +78,7 @@ export function SetMultinodeResource({
               min={1}
               max={launcherCpuCoreMax}
               value={launcherCpuCore}
-              onChange={(value: number) => setLauncherCpuCore(value)}
+              onChange={handleLauncherCpuChange}
               type="CPU"
               width="100%"
             />
@@ -76,7 +96,7 @@ export function SetMultinodeResource({
               min={1}
               max={launcherMemoryGbMax}
               value={launcherMemoryGb}
-              onChange={(value: number) => setLauncherMemoryGb(value)}
+              onChange={handleLauncherMemoryChange}
               type="MEM"
               width="100%"
             />
@@ -123,7 +143,7 @@ export function SetMultinodeResource({
               min={1}
               max={workerGpuCountMax}
               value={workerGpuCount}
-              onChange={(value: number) => setWorkerGpuCount(value)}
+              onChange={handleWorkerGpuChange}
               type="GPU"
               width="100%"
             />
@@ -141,7 +161,7 @@ export function SetMultinodeResource({
               min={1}
               max={workerCpuCoreMax}
               value={workerCpuCore}
-              onChange={(value: number) => setWorkerCpuCore(value)}
+              onChange={handleWorkerCpuChange}
               type="CPU"
               width="100%"
             />
@@ -159,7 +179,7 @@ export function SetMultinodeResource({
               min={1}
               max={workerMemoryGbMax}
               value={workerMemoryGb}
-              onChange={(value: number) => setWorkerMemoryGb(value)}
+              onChange={handleWorkerMemoryChange}
               type="MEM"
               width="100%"
             />

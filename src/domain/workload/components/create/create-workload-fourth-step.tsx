@@ -26,6 +26,10 @@ export function CreateWorkloadFourthStep() {
     setExecPath(e.target.value);
   };
 
+  const handleExecCommandChange = (value: string) => {
+    setExecCommand(value);
+  };
+
   return (
     <Container>
       <Section>
@@ -56,7 +60,7 @@ export function CreateWorkloadFourthStep() {
                 height="136px"
                 theme={oneDark}
                 extensions={[python(), javascript()]}
-                onChange={(value) => setExecCommand(value)}
+                onChange={handleExecCommandChange}
                 placeholder="실행 명령어를 입력해 주세요."
                 basicSetup={{
                   lineNumbers: false,
