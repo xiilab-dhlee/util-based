@@ -7,7 +7,7 @@ import { Card, CardImageContainer } from "xiilab-ui";
 
 import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ROUTES } from "@/shared/constants/routes.constant";
-import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
+import { HUB_SELECTOR, SELECTOR } from "@/shared/constants/selector.constant";
 
 interface HubCardProps extends FindHubsResponse {}
 
@@ -43,7 +43,11 @@ export function HubCard({
   };
 
   return (
-    <CardWrapper data-testid={HUB_SELECTOR.CARD} aria-selected={isSelected}>
+    <CardWrapper
+      data-testid={SELECTOR.LIST_CARD}
+      data-hub-id={hubId}
+      aria-selected={isSelected}
+    >
       <Card
         hoverable
         onClick={handleClick}
@@ -53,7 +57,7 @@ export function HubCard({
       >
         <CardImageContainer>
           {thumbnail && (
-            <ImageWrapper>
+            <ImageWrapper data-testid={HUB_SELECTOR.THUMBNAIL}>
               <Image
                 src={thumbnail}
                 alt="Hub Thumbnail"
@@ -63,7 +67,9 @@ export function HubCard({
             </ImageWrapper>
           )}
         </CardImageContainer>
-        <Description>{description}</Description>
+        <Description data-testid={HUB_SELECTOR.DESCRIPTION}>
+          {description}
+        </Description>
       </Card>
     </CardWrapper>
   );
