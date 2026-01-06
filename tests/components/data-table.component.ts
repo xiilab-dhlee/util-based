@@ -64,12 +64,28 @@ export class DataTableComponent {
   }
 
   /**
+   * Locator 타입인지 확인하는 타입 가드
+   * Page와 Locator를 구분하여 안전한 타입 추론 제공
+   */
+  private isLocator(obj: Page | Locator): obj is Locator {
+    return "page" in obj && typeof obj.page === "function";
+  }
+
+  /**
    * Page 객체 반환 (waitForLoadState 등에 사용)
    */
   private get page(): Page {
-    return "page" in this.container
-      ? (this.container as Locator).page()
-      : (this.container as Page);
+    return this.isLocator(this.container)
+      ? this.container.page()
+      : this.container;
+  }
+
+  /**
+   * Locator의 텍스트 내용을 안전하게 추출
+   * null 처리 및 trim을 중앙화하여 중복 제거
+   */
+  private async getTextContent(locator: Locator): Promise<string> {
+    return ((await locator.textContent()) ?? "").trim();
   }
 
   /**
@@ -95,7 +111,7 @@ export class DataTableComponent {
   async getCellText(rowIndex: number, columnTestId: string): Promise<string> {
     const row = await this.getRow(rowIndex);
     const cell = row.locator(testId(columnTestId));
-    return ((await cell.textContent()) ?? "").trim();
+    return this.getTextContent(cell);
   }
 
   /**
@@ -171,7 +187,7 @@ export class DataTableComponent {
     const results: T[] = [];
 
     for (let i = 0; i < count; i++) {
-      const text = ((await cells.nth(i).textContent()) ?? "").trim();
+      const text = await this.getTextContent(cells.nth(i));
       results.push(callback(text, i));
     }
 
@@ -209,7 +225,7 @@ export class DataTableComponent {
    */
   async getFirstCellText(columnTestId: string): Promise<string> {
     const cell = this.container.locator(testId(columnTestId)).first();
-    return ((await cell.textContent()) ?? "").trim();
+    return this.getTextContent(cell);
   }
 
   /**

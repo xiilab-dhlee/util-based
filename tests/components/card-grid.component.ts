@@ -61,12 +61,28 @@ export class CardGridComponent {
   }
 
   /**
+   * Locator 타입인지 확인하는 타입 가드
+   * Page와 Locator를 구분하여 안전한 타입 추론 제공
+   */
+  private isLocator(obj: Page | Locator): obj is Locator {
+    return "page" in obj && typeof obj.page === "function";
+  }
+
+  /**
    * Page 객체 반환 (waitForLoadState 등에 사용)
    */
   private get page(): Page {
-    return "page" in this.container
-      ? (this.container as Locator).page()
-      : (this.container as Page);
+    return this.isLocator(this.container)
+      ? this.container.page()
+      : this.container;
+  }
+
+  /**
+   * Locator의 텍스트 내용을 안전하게 추출
+   * null 처리 및 trim을 중앙화하여 중복 제거
+   */
+  private async getTextContent(locator: Locator): Promise<string> {
+    return ((await locator.textContent()) ?? "").trim();
   }
 
   /**
@@ -122,7 +138,7 @@ export class CardGridComponent {
   ): Promise<string> {
     const card = this.getCard(cardIndex);
     const element = card.locator(testId(elementTestId));
-    return ((await element.textContent()) ?? "").trim();
+    return this.getTextContent(element);
   }
 
   /**
@@ -143,7 +159,7 @@ export class CardGridComponent {
   async getCardTitle(cardIndex: number): Promise<string> {
     const card = this.getCard(cardIndex);
     const titleElement = card.locator("h6");
-    return ((await titleElement.textContent()) ?? "").trim();
+    return this.getTextContent(titleElement);
   }
 
   /**
@@ -155,7 +171,7 @@ export class CardGridComponent {
   async getCardDescription(cardIndex: number): Promise<string> {
     const card = this.getCard(cardIndex);
     const descElement = card.locator("p").first();
-    return ((await descElement.textContent()) ?? "").trim();
+    return this.getTextContent(descElement);
   }
 
   // ============================================
@@ -243,7 +259,7 @@ export class CardGridComponent {
     const results: T[] = [];
 
     for (let i = 0; i < count; i++) {
-      const text = ((await elements.nth(i).textContent()) ?? "").trim();
+      const text = await this.getTextContent(elements.nth(i));
       results.push(callback(text, i));
     }
 
