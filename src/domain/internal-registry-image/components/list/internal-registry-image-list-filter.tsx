@@ -2,13 +2,13 @@
 
 import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { Input } from "xiilab-ui";
 
 import { useGetInternalRegistryImages } from "@/domain/internal-registry-image/hooks/use-get-internal-registry-images";
 import {
   internalregistryImagePageAtom,
   internalregistryImageSearchTextAtom,
 } from "@/domain/internal-registry-image/state/internal-registry-image.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 
@@ -42,7 +42,14 @@ export function InternalRegistryImageListFilter() {
 
   return (
     <MySearchFilter title="컨테이너 이미지 목록" total={data?.totalSize}>
-      <SearchInput onSearch={handleSearch} />
+      <Input.Search
+        name="search"
+        placeholder="검색어를 입력하세요."
+        onSearch={(value) => handleSearch(value.trim())}
+        autoComplete="off"
+        width={220}
+        height={30}
+      />
     </MySearchFilter>
   );
 }

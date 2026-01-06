@@ -2,7 +2,7 @@
 
 import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
-import { Button } from "xiilab-ui";
+import { Button, Input } from "xiilab-ui";
 
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
 import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
@@ -10,7 +10,6 @@ import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
 } from "@/domain/workspace-member/state/workspace-member.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -69,7 +68,14 @@ export function WorkspaceMemberFilter() {
   return (
     <>
       <MySearchFilter title="워크스페이스 멤버 목록" total={data?.totalSize}>
-        <SearchInput onSearch={handleSearch} />
+        <Input.Search
+          name="search"
+          placeholder="검색어를 입력하세요."
+          onSearch={(value) => handleSearch(value.trim())}
+          autoComplete="off"
+          width={220}
+          height={30}
+        />
         <Button
           color="primary"
           icon="Plus"

@@ -2,7 +2,7 @@
 
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
-import { Button } from "xiilab-ui";
+import { Button, Input } from "xiilab-ui";
 
 import { SourcecodeTypeSort } from "@/domain/sourcecode/components/sourcecode-type-sort";
 import {
@@ -11,7 +11,6 @@ import {
   sourcecodeSearchTextAtom,
   sourcecodeSelectedAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -58,7 +57,15 @@ export function SourcecodeListFilter({
     <MySearchFilter title="소스코드 목록" total={total}>
       <MyItemsOnlySwitch checked={true} />
       <SourcecodeTypeSort disabled={loading} />
-      <SearchInput disabled={loading} onSearch={handleSearch} />
+      <Input.Search
+        name="search"
+        placeholder="검색어를 입력하세요."
+        onSearch={(value) => handleSearch(value.trim())}
+        autoComplete="off"
+        width={220}
+        height={30}
+        disabled={loading}
+      />
       <Button
         color="primary"
         icon="Plus"

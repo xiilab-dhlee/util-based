@@ -2,12 +2,12 @@
 
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { Input } from "xiilab-ui";
 
 import {
   accountPageAtom,
   accountSearchTextAtom,
 } from "@/domain/account-management/state/account.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 
 interface AccountListFilterProps {
@@ -25,7 +25,14 @@ export function AccountListFilter({ totalSize }: AccountListFilterProps) {
 
   return (
     <MySearchFilter title="사용자 목록" total={totalSize}>
-      <SearchInput onSearch={handleSearch} />
+      <Input.Search
+        name="search"
+        placeholder="검색어를 입력하세요."
+        onSearch={(value) => handleSearch(value.trim())}
+        autoComplete="off"
+        width={220}
+        height={30}
+      />
     </MySearchFilter>
   );
 }

@@ -2,13 +2,13 @@
 
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { Input } from "xiilab-ui";
 
 import {
   hubPageAtom,
   hubSearchKeywordAtom,
   hubSearchTextAtom,
 } from "@/domain/hub/state/hub.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 
@@ -24,17 +24,22 @@ export function HubListFilter({ total, loading }: HubListFilterProps) {
 
   const handleSearch = (value: string) => {
     resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   return (
     <MySearchFilter title="허브 목록" total={total}>
-      <SearchInput
-        disabled={loading}
+      <Input.Search
+        name="search"
+        placeholder="허브 이름을 검색해 주세요."
         onSearch={handleSearch}
+        onChange={(e) => setSearchKeyword(e.target.value)}
+        autoComplete="off"
+        width={220}
+        height={30}
+        disabled={loading}
         value={searchKeyword}
-        onChange={setSearchKeyword}
-        testId={SELECTOR.LIST_SEARCH_INPUT}
+        data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

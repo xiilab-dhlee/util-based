@@ -3,7 +3,7 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
-import { Button, Dropdown } from "xiilab-ui";
+import { Button, Dropdown, Input } from "xiilab-ui";
 
 import { RESOURCE_PRESET_JOB_OPTIONS } from "@/domain/resource-preset/constants/resource-preset.constant";
 import {
@@ -12,7 +12,6 @@ import {
   resourcePresetPageAtom,
   resourcePresetSearchTextAtom,
 } from "@/domain/resource-preset/state/resource-preset.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import {
   ALL_OPTION,
@@ -65,7 +64,7 @@ export function ResourcePresetListFilter({
    */
   const handleSearch = (value: string) => {
     resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   // 드롭다운 옵션
@@ -91,11 +90,14 @@ export function ResourcePresetListFilter({
           width={140}
           disabled={isLoading}
         />
-        <SearchInput
-          width={250}
-          disabled={isLoading}
+        <Input.Search
+          name="search"
           placeholder="리소스 프리셋 이름을 검색해 주세요."
           onSearch={handleSearch}
+          autoComplete="off"
+          width={250}
+          height={30}
+          disabled={isLoading}
         />
         <Button
           color="primary"

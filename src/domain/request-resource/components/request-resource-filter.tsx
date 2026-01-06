@@ -2,7 +2,7 @@
 
 import { useAtom, useSetAtom } from "jotai";
 import styled from "styled-components";
-import { Dropdown } from "xiilab-ui";
+import { Dropdown, Input } from "xiilab-ui";
 
 import { REQUEST_RESOURCE_STATUS_OPTIONS } from "@/domain/request-resource/constants/request-resource.constant";
 import {
@@ -10,7 +10,6 @@ import {
   requestResourceStatusAtom,
 } from "@/domain/request-resource/state/request-resource.atom";
 import type { RequestResourceStatusFilter as StatusFilterType } from "@/domain/request-resource/type/request-resource.type";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
@@ -33,10 +32,13 @@ export function RequestResourceFilter({ total }: RequestResourceFilterProps) {
           placeholder="승인 여부"
           width={120}
         />
-        <SearchInput
+        <Input.Search
+          name="search"
           placeholder="워크스페이스 이름 또는 요청자 이름 검색"
+          onSearch={(value) => setKeyword(value.trim())}
+          autoComplete="off"
           width={270}
-          onSearch={setKeyword}
+          height={30}
         />
       </FilterControls>
     </MySearchFilter>

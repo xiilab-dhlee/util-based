@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { DateRange, Typography } from "xiilab-ui";
+import { DateRange, Input, Typography } from "xiilab-ui";
 
 import { createMonitoringNotificationHistoryColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-history-column";
 import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { useGetMonitoringNotifications } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notifications";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
@@ -36,7 +35,13 @@ export function MonitoringNotificationListArticle() {
             onChange={() => {}}
             maxDate={new Date()}
           />
-          <SearchInput />
+          <Input.Search
+            name="search"
+            placeholder="검색어를 입력하세요."
+            autoComplete="off"
+            width={220}
+            height={30}
+          />
         </ArticleHeaderRight>
       </ArticleHeader>
       <ArticleBody>

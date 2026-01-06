@@ -1,9 +1,9 @@
 "use client";
 
 import { useSetAtom } from "jotai";
+import { Input } from "xiilab-ui";
 
 import { userWaitingRequestImageListSearchTextAtom } from "@/domain/registry/state/registry.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 
 export function UserRequestImageWaitingListFilter() {
@@ -15,10 +15,14 @@ export function UserRequestImageWaitingListFilter() {
       darkMode
       showTotal={false}
     >
-      <SearchInput
-        darkMode
+      <Input.Search
+        name="search"
         placeholder="이미지, 이름, 태그를 검색"
-        onSearch={setSearchText}
+        onSearch={(value) => setSearchText(value.trim())}
+        autoComplete="off"
+        width={220}
+        height={30}
+        darkMode
       />
     </MySearchFilter>
   );
