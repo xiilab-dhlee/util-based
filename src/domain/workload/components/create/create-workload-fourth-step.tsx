@@ -22,6 +22,10 @@ export function CreateWorkloadFourthStep() {
   const [execPath, setExecPath] = useAtom(execPathAtom);
   const [execCommand, setExecCommand] = useAtom(execCommandAtom);
 
+  const handleExecPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setExecPath(e.target.value);
+  };
+
   return (
     <Container>
       <Section>
@@ -39,7 +43,7 @@ export function CreateWorkloadFourthStep() {
             <Input
               placeholder="실행 경로를 입력해 주세요."
               value={execPath || ""}
-              onChange={(e) => setExecPath(e.target.value)}
+              onChange={handleExecPathChange}
             />
           </FieldItem>
           <FieldItem>

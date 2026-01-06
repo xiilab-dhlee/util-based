@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { isNull } from "es-toolkit";
 import { isEmpty } from "es-toolkit/compat";
 import { useAtom } from "jotai";
+import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -73,6 +74,23 @@ export function CreateWorkloadSourcecode() {
   const handleDeleteSourcecode = (id: SourcecodeIdType) => {
     setSourcecodes(sourcecodes.filter((sourcecode) => sourcecode.id !== id));
   };
+
+  const handleBranchChange = (value: string | number | null) => {
+    setBranch(typeof value === "string" ? value : null);
+  };
+
+  const handleMountPathChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMountPath(e.target.value);
+  };
+
+  const handleCmdChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setCmd(e.target.value);
+  };
+
+  const handleToggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+
   // 소스코드 선택 시 마운트경로 및 명령어 정보 가져오기
   useEffect(() => {
     if (sourcecode) {
@@ -80,7 +98,6 @@ export function CreateWorkloadSourcecode() {
       setCmd(sourcecode.cmd || "");
     }
   }, [sourcecode]);
-
   return (
     <Container>
       <Header>
@@ -111,7 +128,7 @@ export function CreateWorkloadSourcecode() {
                 { label: "develop", value: "develop" },
               ]}
               value={branch}
-              onChange={(value) => setBranch(value)}
+              onChange={handleBranchChange}
               width="100%"
             />
           </Pane>
@@ -127,7 +144,7 @@ export function CreateWorkloadSourcecode() {
             <Input
               placeholder="Mount Path를 입력해 주세요."
               value={mountPath || ""}
-              onChange={(e) => setMountPath(e.target.value)}
+              onChange={handleMountPathChange}
             />
           </Pane>
 
@@ -139,7 +156,7 @@ export function CreateWorkloadSourcecode() {
             <Input
               placeholder="실행 명령어를 입력해 주세요."
               value={cmd || ""}
-              onChange={(e) => setCmd(e.target.value)}
+              onChange={handleCmdChange}
             />
           </Pane>
         </Row>
@@ -168,7 +185,7 @@ export function CreateWorkloadSourcecode() {
           </Typography.Text>
           <IconWrapper
             className={classNames({ rotate: collapsed })}
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={handleToggleCollapsed}
           >
             <Icon name="Dropdown" size={16} color="#222223" />
           </IconWrapper>
