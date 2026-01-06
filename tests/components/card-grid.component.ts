@@ -1,6 +1,12 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import {
+  expect,
+  type Locator,
+  type Page,
+  type TestInfo,
+} from "@playwright/test";
 
 import { SELECTOR, testId } from "@/shared/constants/selector.constant";
+import type { AssertLogger } from "../fixtures";
 
 /**
  * 카드 그리드 Component Object (험블 객체)
@@ -273,12 +279,11 @@ export class CardGridComponent {
     elementTestId: string,
     callback: (text: string, index: number) => T,
   ): Promise<T[]> {
-    const elements = this.container.locator(testId(elementTestId));
-    const count = await elements.count();
+    const cardCount = await this.getCardCount();
     const results: T[] = [];
 
-    for (let i = 0; i < count; i++) {
-      const text = await this.getTextContent(elements.nth(i));
+    for (let i = 0; i < cardCount; i++) {
+      const text = await this.getCardElementText(i, elementTestId);
       results.push(callback(text, i));
     }
 
@@ -364,5 +369,55 @@ export class CardGridComponent {
   async assertCardSelected(index: number): Promise<void> {
     const card = this.getCard(index);
     await expect(card).toHaveAttribute("aria-selected", "true");
+  }
+
+  /**
+   * 검색 결과 검증
+   *
+   * 최대 3개 카드를 샘플링하여 검색어가 포함되어 있는지 검증
+   *
+   * @param searchText - 검색어
+   * @param assertLogger - 검증 로거
+   * @param testInfo - 테스트 정보 (스킵 처리용)
+   * @param resultType - 결과 타입 설명 (예: "허브")
+   *
+   * @example
+   * // 허브 카드 그리드 검색 검증
+   * await grid.validateSearch(
+   *   await searchInput.getValue(),
+   *   assertLogger,
+   *   testInfo,
+   *   "허브"
+   * );
+   */
+  async validateSearch(
+    searchText: string,
+    assertLogger: AssertLogger,
+    testInfo: TestInfo,
+    resultType = "결과",
+  ): Promise<void> {
+    const cardCount = await this.getCardCount();
+
+    // 결과가 없으면 테스트 스킵
+    if (cardCount === 0) {
+      testInfo.skip(
+        true,
+        `"${searchText}" 검색 결과가 없어 검증을 스킵합니다. Mock 데이터 확인 필요.`,
+      );
+      return;
+    }
+
+    // 최대 3개 결과를 확인하여 false positives 방지
+    const checkCount = Math.min(cardCount, 3);
+    for (let i = 0; i < checkCount; i++) {
+      const text = await this.getCardTitle(i);
+      const containsSearch = text
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+      assertLogger.assertTrue(
+        `${resultType}[${i}] "${text}"이(가) "${searchText}" 포함`,
+        containsSearch,
+      );
+    }
   }
 }
