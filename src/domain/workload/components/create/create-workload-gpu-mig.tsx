@@ -39,6 +39,10 @@ export function CreateWorkloadGpuMig({
     setGpuProfile(profile);
   };
 
+  const handleToggleOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <Container>
       <Header>
@@ -70,7 +74,7 @@ export function CreateWorkloadGpuMig({
             </GpuProfileHeaderLeft>
             <IconWrapper
               className={classNames({ active: isOpen })}
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={handleToggleOpen}
             >
               <Icon name="Dropdown" color="var(--icon-fill)" size={14} />
             </IconWrapper>
