@@ -58,6 +58,17 @@ export class HubPage extends BasePage {
   // ============================================
 
   /**
+   * 허브 페이지로 이동 후 첫 번째 허브로 리다이렉트 완료까지 대기
+   *
+   * 허브 페이지 진입 시 자동으로 첫 번째 허브 상세 페이지로 리다이렉트됨
+   * /user/hub → /user/hub/[id]
+   */
+  async gotoAndWaitForRedirect(): Promise<void> {
+    await this.goto();
+    await this.page.waitForURL(/\/user\/hub\/\d+/);
+  }
+
+  /**
    * 특정 허브 상세 페이지로 이동
    * @param hubId - 허브 ID
    * @param hubName - 허브 이름 (optional)

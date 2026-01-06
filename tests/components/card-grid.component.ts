@@ -142,6 +142,25 @@ export class CardGridComponent {
   }
 
   /**
+   * 특정 인덱스의 카드에서 지정된 요소 내부의 자식 요소 속성 반환
+   *
+   * @param cardIndex - 카드 인덱스 (0-based)
+   * @param elementTestId - 카드 내 요소의 data-testid
+   * @param childSelector - 자식 요소 셀렉터 (예: "img", "a")
+   * @param attribute - 가져올 속성명 (예: "src", "href")
+   */
+  async getCardElementAttribute(
+    cardIndex: number,
+    elementTestId: string,
+    childSelector: string,
+    attribute: string,
+  ): Promise<string> {
+    const card = this.getCard(cardIndex);
+    const element = card.locator(testId(elementTestId)).locator(childSelector);
+    return (await element.getAttribute(attribute)) ?? "";
+  }
+
+  /**
    * 첫 번째 카드의 특정 요소 텍스트 반환
    *
    * @param elementTestId - 카드 내 요소의 data-testid
@@ -304,5 +323,46 @@ export class CardGridComponent {
   async assertMinCardCount(minCount: number): Promise<void> {
     const count = await this.getCardCount();
     expect(count).toBeGreaterThanOrEqual(minCount);
+  }
+
+  /**
+   * 특정 인덱스의 카드에서 지정된 요소가 표시되는지 확인
+   *
+   * @param cardIndex - 카드 인덱스 (0-based)
+   * @param elementTestId - 카드 내 요소의 data-testid
+   */
+  async assertCardElementVisible(
+    cardIndex: number,
+    elementTestId: string,
+  ): Promise<void> {
+    const card = this.getCard(cardIndex);
+    const element = card.locator(testId(elementTestId));
+    await expect(element).toBeVisible();
+  }
+
+  /**
+   * 특정 인덱스의 카드에서 지정된 요소가 존재하는지 확인 (표시 여부 무관)
+   *
+   * @param cardIndex - 카드 인덱스 (0-based)
+   * @param elementTestId - 카드 내 요소의 data-testid
+   * @returns 요소 존재 여부
+   */
+  async hasCardElement(
+    cardIndex: number,
+    elementTestId: string,
+  ): Promise<boolean> {
+    const card = this.getCard(cardIndex);
+    const element = card.locator(testId(elementTestId));
+    return (await element.count()) > 0;
+  }
+
+  /**
+   * 특정 인덱스의 카드가 선택된 상태인지 확인
+   *
+   * @param index - 카드 인덱스 (0-based)
+   */
+  async assertCardSelected(index: number): Promise<void> {
+    const card = this.getCard(index);
+    await expect(card).toHaveAttribute("aria-selected", "true");
   }
 }
