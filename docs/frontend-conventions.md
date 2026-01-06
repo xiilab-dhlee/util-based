@@ -388,4 +388,126 @@ export function WorkloadListFooter({ total, loading }: WorkloadListFooterProps) 
 
 ---
 
+## JSX 코딩 규칙
+
+### 인라인 함수 사용 금지
+
+**협의일**: 2025-01-06
+
+**상황**: JSX 내에서 인라인 함수(화살표 함수, 익명 함수)를 직접 정의하여 이벤트 핸들러나 콜백으로 전달하는 경우
+
+**협의 내용**: JSX 내에서 인라인 함수를 직접 정의하여 사용하는 것을 금지한다. 모든 함수는 컴포넌트 본문에서 미리 정의하거나 `useCallback`으로 메모이제이션하여 사용한다.
+
+**규칙**:
+1. **이벤트 핸들러**: 컴포넌트 본문에서 함수를 정의한 후 참조로 전달
+2. **콜백 함수**: 필요시 `useCallback`으로 메모이제이션
+3. **단순 값 전달**: 인라인 함수 대신 별도 핸들러 함수 정의
+
+**예시 코드**:
+
+```tsx
+// ❌ Bad - JSX 내 인라인 함수 사용
+export function MyComponent() {
+  const [count, setCount] = useState(0);
+  const [items, setItems] = useState<string[]>([]);
+
+  return (
+    <div>
+      {/* ❌ 인라인 화살표 함수 */}
+      <button onClick={() => setCount(count + 1)}>증가</button>
+
+      {/* ❌ 인라인 함수로 값 전달 */}
+      <button onClick={() => handleDelete(item.id)}>삭제</button>
+
+      {/* ❌ 인라인 함수로 조건부 로직 */}
+      <input onChange={(e) => {
+        if (e.target.value.length > 10) {
+          setError("너무 깁니다");
+        }
+        setValue(e.target.value);
+      }} />
+
+      {/* ❌ map 내부 인라인 함수 */}
+      {items.map((item) => (
+        <Item key={item} onRemove={() => removeItem(item)} />
+      ))}
+    </div>
+  );
+}
+
+// ✅ Good - 함수를 미리 정의하여 참조로 전달
+export function MyComponent() {
+  const [count, setCount] = useState(0);
+  const [items, setItems] = useState<string[]>([]);
+
+  // 이벤트 핸들러 정의
+  const handleIncrement = () => {
+    setCount(count + 1);
+  };
+
+  // ID를 받는 핸들러는 useCallback 사용
+  const handleDelete = useCallback((id: string) => {
+    // 삭제 로직
+  }, []);
+
+  // 복잡한 로직은 별도 함수로 분리
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > 10) {
+      setError("너무 깁니다");
+    }
+    setValue(e.target.value);
+  };
+
+  // map 내부에서 사용할 핸들러
+  const handleRemoveItem = useCallback((item: string) => {
+    setItems((prev) => prev.filter((i) => i !== item));
+  }, []);
+
+  return (
+    <div>
+      <button onClick={handleIncrement}>증가</button>
+      <button onClick={handleDelete}>삭제</button>
+      <input onChange={handleInputChange} />
+      {items.map((item) => (
+        <ItemWithHandler
+          key={item}
+          item={item}
+          onRemove={handleRemoveItem}
+        />
+      ))}
+    </div>
+  );
+}
+
+// 자식 컴포넌트에서 핸들러 호출
+function ItemWithHandler({
+  item,
+  onRemove
+}: {
+  item: string;
+  onRemove: (item: string) => void;
+}) {
+  const handleClick = () => {
+    onRemove(item);
+  };
+
+  return <button onClick={handleClick}>Remove {item}</button>;
+}
+```
+
+**예외 사항**:
+- 테스트 코드에서는 간결성을 위해 인라인 함수 사용 허용
+- 일회성 프로토타입 코드에서는 허용 (단, 프로덕션 전 리팩토링 필요)
+
+**이유**:
+- **성능 최적화**: 매 렌더링마다 새로운 함수가 생성되어 불필요한 리렌더링 유발 방지
+- **코드 가독성**: 핸들러 로직이 JSX와 분리되어 컴포넌트 구조 파악 용이
+- **테스트 용이성**: 명명된 함수는 단위 테스트 작성이 쉬움
+- **디버깅 편의**: 스택 트레이스에서 함수명이 표시되어 디버깅 용이
+- **메모이제이션 활용**: `React.memo`, `useCallback`과 함께 사용하여 최적화 가능
+
+**참고**: `useCallback`의 과도한 사용은 오히려 성능에 악영향을 줄 수 있으므로, 실제로 메모이제이션이 필요한 경우(자식 컴포넌트에 props로 전달, 의존성 배열에 포함 등)에만 사용한다.
+
+---
+
 <!-- 새로운 협의 사항은 위의 구분선 아래에 추가하세요 -->
