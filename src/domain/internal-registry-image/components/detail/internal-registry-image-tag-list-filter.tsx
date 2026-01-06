@@ -33,12 +33,16 @@ export function InternalRegistryImageTagListFilter() {
     alert("준비 중입니다.");
   };
 
+  const handleSearch = (value: string) => {
+    setSearchText(value.trim());
+  };
+
   return (
     <MySearchFilter title="태그 목록" total={0}>
       <Input.Search
         name="search"
         placeholder="검색어를 입력하세요."
-        onSearch={(value) => setSearchText(value.trim())}
+        onSearch={handleSearch}
         autoComplete="off"
         width={220}
         height={30}

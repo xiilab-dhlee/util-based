@@ -22,6 +22,10 @@ export function RequestResourceFilter({ total }: RequestResourceFilterProps) {
   const setKeyword = useSetAtom(requestResourceKeywordAtom);
   const statusOptions = [ALL_OPTION, ...REQUEST_RESOURCE_STATUS_OPTIONS];
 
+  const handleSearch = (value: string) => {
+    setKeyword(value.trim());
+  };
+
   return (
     <MySearchFilter title="리소스 신청 목록" total={total}>
       <FilterControls>
@@ -35,7 +39,7 @@ export function RequestResourceFilter({ total }: RequestResourceFilterProps) {
         <Input.Search
           name="search"
           placeholder="워크스페이스 이름 또는 요청자 이름 검색"
-          onSearch={(value) => setKeyword(value.trim())}
+          onSearch={handleSearch}
           autoComplete="off"
           width={270}
           height={30}
