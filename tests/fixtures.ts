@@ -1,7 +1,7 @@
 import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
-import { HUB_SELECTOR, SELECTOR } from "@/shared/constants/selector.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { CardGridComponent } from "./components/card-grid.component";
 import { DataTableComponent } from "./components/data-table.component";
 import { DrawerComponent } from "./components/drawer.component";
@@ -44,6 +44,7 @@ export type AssertLogger = {
   assertNotEmpty: (label: string, actual: string | null | undefined) => void;
   assertMatch: (label: string, actual: string, pattern: RegExp) => void;
   assertLocatorText: (label: string, locator: Locator) => Promise<void>;
+  assertTrue: (label: string, condition: boolean) => void;
 };
 
 /**
@@ -189,6 +190,11 @@ function createAssertLogger(): AssertLogger {
     assertMatch: (label: string, actual: string, pattern: RegExp) => {
       logAssertion(label, actual, pattern.toString(), pattern.test(actual));
       expect(actual).toMatch(pattern);
+    },
+
+    assertTrue: (label: string, condition: boolean) => {
+      logAssertion(label, condition, true, condition);
+      expect(condition).toBe(true);
     },
 
     assertLocatorText: async (label: string, locator: Locator) => {
@@ -423,7 +429,7 @@ export const test = base.extend<TestContextFixtures>({
   },
 
   listGrid: async ({ page }, use) => {
-    await use(new CardGridComponent(page, HUB_SELECTOR.CARD));
+    await use(new CardGridComponent(page, SELECTOR.LIST_CARD));
   },
 
   myItemsSwitch: async ({ page }, use) => {
