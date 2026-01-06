@@ -1,0 +1,280 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - chore/ci-setup  # 테스트용 브랜치
+    tags:
+      - "v*"
+      - "dev*"
+
+env:
+  NODE_VERSION: "20"
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ===========================================
+  # 공통: 환경 변수 설정
+  # ===========================================
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.env.outputs.ENV }}
+      version: ${{ steps.env.outputs.VERSION }}
+      tag_version: ${{ steps.env.outputs.TAG_VERSION }}
+      start_time: ${{ steps.start_time.outputs.START_TIME }}
+
+    steps:
+      - name: Record workflow start time
+        id: start_time
+        run: |
+          echo "START_TIME=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      - name: Determine version and environment
+        id: env
+        run: |
+          # 태그인지 브랜치인지 확인
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            # 태그 push
+            TAG=${GITHUB_REF#refs/tags/}
+            if [[ "$TAG" == dev* ]]; then
+              ENV_NAME="dev"
+              VERSION=${TAG#dev}
+              TAG_VERSION="dev$VERSION"
+            else
+              ENV_NAME="prod"
+              VERSION=${TAG#v}
+              TAG_VERSION="v$VERSION"
+            fi
+          else
+            # 브랜치 push (테스트용)
+            ENV_NAME="test"
+            VERSION="$(date +%Y%m%d-%H%M%S)"
+            TAG_VERSION="test-$VERSION"
+          fi
+
+          echo "ENV=$ENV_NAME" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "TAG_VERSION=$TAG_VERSION" >> $GITHUB_OUTPUT
+          echo "📋 Environment: $ENV_NAME, Version: $TAG_VERSION"
+
+  # ===========================================
+  # Job 1: Docker 이미지 빌드 및 푸시
+  # ===========================================
+  docker:
+    needs: setup
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        run: corepack enable && corepack prepare pnpm@9.15.3 --activate
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Configure git for private repos
+        run: |
+          git config --global url."https://${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Build Next.js
+        run: pnpm run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ needs.setup.outputs.tag_version }}
+            type=raw,value=${{ needs.setup.outputs.env }}-latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          secrets: |
+            github_token=${{ secrets.GH_TOKEN }}
+
+  # ===========================================
+  # Job 2: 릴리스 결과 요약 및 알림
+  # ===========================================
+  notify:
+    needs: [setup, docker]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Calculate workflow duration
+        id: duration
+        uses: RockyIsHere/actions-calculate-log-time@v0.2.4
+        with:
+          start_time: ${{ needs.setup.outputs.start_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine CI status
+        id: status
+        run: |
+          if [[ "${{ needs.docker.result }}" == "success" ]]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "color=good" >> $GITHUB_OUTPUT
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "status_text=성공" >> $GITHUB_OUTPUT
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "color=danger" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "status_text=실패" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate CI/CD Summary
+        run: |
+          {
+            echo "## 🚀 Frontend CI Summary"
+            echo ""
+            echo "### 환경: \`${{ needs.setup.outputs.env }}\`"
+            echo "### 버전: \`${{ needs.setup.outputs.tag_version }}\`"
+            echo "### 총 소요 시간: \`${{ steps.duration.outputs.duration }}\`"
+            echo ""
+            echo "| Job | 상태 |"
+            echo "|-----|------|"
+            echo "| 🐳 Docker Image | ${{ needs.docker.result == 'success' && '✅ 성공' || needs.docker.result == 'failure' && '❌ 실패' || '⏭️ 스킵' }} |"
+            echo ""
+
+            if [[ "${{ steps.status.outputs.success }}" == "true" ]]; then
+              echo "### ✅ 이미지 빌드 완료"
+              echo ""
+              echo "Docker 이미지가 GitHub Packages에 성공적으로 푸시되었습니다."
+              echo ""
+              echo "**이미지 Pull 명령어:**"
+              echo "\`\`\`bash"
+              echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.setup.outputs.tag_version }}"
+              echo "\`\`\`"
+              echo ""
+              echo "**GitHub Packages 확인:**"
+              echo "- [\`https://github.com/${{ github.repository }}/pkgs/container/${{ github.event.repository.name }}\`](https://github.com/${{ github.repository }}/pkgs/container/${{ github.event.repository.name }})"
+            else
+              echo "### ⚠️ 이미지 빌드 실패"
+              echo ""
+              echo "Docker 이미지 빌드 중 오류가 발생했습니다."
+              echo ""
+              echo "> **주의**: 문제를 해결한 후 다시 태그를 푸시하세요."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "Frontend CI ${{ steps.status.outputs.status_text }} (env=${{ needs.setup.outputs.env }}, version=${{ needs.setup.outputs.tag_version }}, duration=${{ steps.duration.outputs.duration }})",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ steps.status.outputs.emoji }} Frontend CI ${{ steps.status.outputs.status_text }}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment:*\n`${{ needs.setup.outputs.env }}`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Version:*\n`${{ needs.setup.outputs.tag_version }}`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Duration:*\n`${{ steps.duration.outputs.duration }}`"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Docker 이미지 빌드 및 푸시:*\n${{ needs.docker.result == 'success' && '✅ 성공' || '❌ 실패' }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Registry:*\n`ghcr.io/${{ github.repository }}:${{ needs.setup.outputs.tag_version }}`"
+                    }
+                  ]
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|워크플로우 확인> | 트리거: ${{ github.actor }}"
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: Fail if any job failed
+        if: needs.docker.result == 'failure'
+        run: |
+          echo "❌ CI failed: docker=${{ needs.docker.result }}"
+          exit 1
