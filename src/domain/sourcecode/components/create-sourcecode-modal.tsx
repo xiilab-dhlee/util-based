@@ -81,6 +81,10 @@ export function CreateSourcecodeModal() {
   // 크레덴셜 관련
   const [credentialEnabled, setCredentialEnabled] = useState(false);
 
+  const handleCredentialToggle = () => {
+    setCredentialEnabled(!credentialEnabled);
+  };
+
   const handleValidateUrl = () => {
     alert("준비 중입니다.");
   };
@@ -214,7 +218,7 @@ export function CreateSourcecodeModal() {
             <FormLabel>크레덴셜</FormLabel>
             <Switch
               checked={credentialEnabled}
-              onChange={() => setCredentialEnabled(!credentialEnabled)}
+              onChange={handleCredentialToggle}
             />
           </CredentialLabel>
           {/* 크레덴셜 ON일 때 탭 표시 */}

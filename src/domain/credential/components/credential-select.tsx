@@ -14,12 +14,16 @@ interface CredentialSelectProps {
 export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
   const { data } = useGetCredentialOptions();
 
+  const handleCredentialChange = (value: string | number) => {
+    setValue(value as CredentialIdType);
+  };
+
   return (
     <Dropdown
       placeholder="크레덴셜을 선택해 주세요."
       options={data || []}
       value={value}
-      onChange={(value) => setValue(value)}
+      onChange={handleCredentialChange}
       width="100%"
     />
   );

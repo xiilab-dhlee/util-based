@@ -84,6 +84,10 @@ export function SourceCodeEditModal({
     onClose();
   };
 
+  const handleBranchChange = (value: string) => {
+    setBranch(value);
+  };
+
   const handleMountPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMountPath(e.target.value);
   };
@@ -143,7 +147,7 @@ export function SourceCodeEditModal({
             id="branch"
             options={branchOptions}
             value={branch}
-            onChange={(value) => setBranch(value)}
+            onChange={handleBranchChange}
             placeholder="Branch를 선택해 주세요."
             width="100%"
           />
