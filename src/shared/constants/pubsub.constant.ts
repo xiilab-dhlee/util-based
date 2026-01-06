@@ -93,6 +93,10 @@ export const ACCOUNT_EVENTS = {
   sendRejectAccountPending: "account:send-reject-account-pending",
   // 계정 상세 정보 보기에 필요한 정보 전달 이벤트
   sendViewAccountDetail: "account:send-view-account-detail",
+  // 비밀번호 초기화에 필요한 정보 전달 이벤트
+  sendResetPassword: "account:send-reset-password",
+  // 비밀번호 초기화 결과 표시 이벤트
+  showResetPasswordResult: "account:show-reset-password-result",
 } as const;
 
 // 노드 관련 이벤트

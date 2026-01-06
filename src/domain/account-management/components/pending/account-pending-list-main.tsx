@@ -1,9 +1,10 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import { useEffect } from "react";
 
 import { useGetSignupRequests } from "@/api/generated/admin-account/admin-account";
-import type { SignupRequestSortRequest } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { AccountPendingListBody } from "@/domain/account-management/components/pending/account-pending-list-body";
 import { AccountPendingListFilter } from "@/domain/account-management/components/pending/account-pending-list-filter";
 import { AccountPendingListFooter } from "@/domain/account-management/components/pending/account-pending-list-footer";
@@ -11,6 +12,7 @@ import { ApproveAccountPendingModal } from "@/domain/account-management/componen
 import { RejectAccountPendingModal } from "@/domain/account-management/components/pending/reject-account-pending-modal";
 import { SIGNUP_REQUEST_SORT_FIELD_MAP } from "@/domain/account-management/constants/account.constant";
 import {
+  accountPendingCheckedListAtom,
   accountPendingPageAtom,
   accountPendingSearchTextAtom,
   accountPendingSortAtom,
@@ -20,23 +22,32 @@ import { buildSortRequest } from "@/shared/utils/sort.util";
 import { ListPageBody } from "@/styles/layers/list-page-layers.styled";
 
 export function AccountPendingListMain() {
+  const resetPage = useResetAtom(accountPendingPageAtom);
+  const setSearchText = useSetAtom(accountPendingSearchTextAtom);
+  const setSort = useSetAtom(accountPendingSortAtom);
+  const resetCheckedList = useResetAtom(accountPendingCheckedListAtom);
+
   const page = useAtomValue(accountPendingPageAtom);
   const searchText = useAtomValue(accountPendingSearchTextAtom);
   const sort = useAtomValue(accountPendingSortAtom);
-
-  const sortRequest: SignupRequestSortRequest | null = buildSortRequest({
+  const sortRequest = buildSortRequest({
     state: { field: sort.field, order: sort.order },
     fieldMap: SIGNUP_REQUEST_SORT_FIELD_MAP,
   });
 
   const { data, isLoading, isError } = useGetSignupRequests({
-    pageSearchRequest: {
-      pageNo: page,
-      pageSize: LIST_PAGE_SIZE,
-      keyword: searchText,
-    },
+    pageNo: page,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: searchText,
     ...(sortRequest ? { sortRequest } : {}),
   });
+
+  useEffect(() => {
+    resetPage();
+    setSearchText("");
+    setSort({ field: "createdAt", order: "descend" });
+    resetCheckedList();
+  }, [resetPage, setSearchText, setSort, resetCheckedList]);
 
   return (
     <>

@@ -1,24 +1,22 @@
 import type { DropdownOption } from "xiilab-ui";
 
 import type {
-  AccountSortRequestSort,
-  SignupRequestSortRequestSort,
+  GetAllAccountsSort,
+  GetSignupRequestsSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import {
-  ACCOUNT_ROLES,
-  type AccountRole,
-} from "@/shared/constants/core.constant";
+import { AccountUpdateRequestAccountRole as API_ACCOUNT_ROLE_VALUES } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { ACCOUNT_ROLES } from "@/shared/constants/core.constant";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 export const ACCOUNT_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, AccountSortRequestSort>;
+} as const satisfies Record<string, GetAllAccountsSort>;
 
 export const SIGNUP_REQUEST_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, SignupRequestSortRequestSort>;
+} as const satisfies Record<string, GetSignupRequestsSort>;
 
 /** 계정 정렬 필드 타입  */
 export type AccountSortField = keyof typeof ACCOUNT_SORT_FIELD_MAP;
@@ -32,20 +30,15 @@ export type AccountSortState = AntdTableSortState<AccountSortField>;
 /** 가입 신청 정렬 상태 타입 */
 export type SignupRequestSortState = AntdTableSortState<SignupRequestSortField>;
 
-/** 계정 권한 라벨 매핑 */
-export const ACCOUNT_ROLE_LABEL: Record<AccountRole, string> = {
-  [ACCOUNT_ROLES.SUPER_ADMIN]: "SUPER-ADMIN",
-  [ACCOUNT_ROLES.ADMIN]: "ADMIN",
-  [ACCOUNT_ROLES.USER]: "USER",
-};
-
 /** 계정 권한 드롭다운 옵션 */
-export const ACCOUNT_ROLE_OPTIONS: DropdownOption[] = Object.entries(
-  ACCOUNT_ROLE_LABEL,
-).map(([value, label]) => ({
-  value,
-  label,
-}));
+export const ACCOUNT_ROLE_OPTIONS: DropdownOption[] = [
+  {
+    value: API_ACCOUNT_ROLE_VALUES.SUPER_ADMIN,
+    label: ACCOUNT_ROLES.SUPER_ADMIN,
+  },
+  { value: API_ACCOUNT_ROLE_VALUES.ADMIN, label: ACCOUNT_ROLES.ADMIN },
+  { value: API_ACCOUNT_ROLE_VALUES.USER, label: ACCOUNT_ROLES.USER },
+];
 
 /** 계정 상태 옵션 */
 export const ACCOUNT_STATUS_OPTIONS: DropdownOption[] = [
@@ -61,11 +54,16 @@ export const ACCOUNT_STATUS_LABEL_BY_BOOLEAN = {
 
 type AccountStatusKey = keyof typeof ACCOUNT_STATUS_LABEL_BY_BOOLEAN;
 
-/** boolean 값을 상태 라벨 키("true" | "false")로 변환 */
 export const getAccountStatusKeyFromBoolean = (
-  value: boolean,
-): AccountStatusKey => (value ? "true" : "false");
+  value: boolean | undefined,
+): AccountStatusKey | undefined => {
+  if (value === undefined) return undefined;
+  return value ? "true" : "false";
+};
 
-/** boolean 값을 상태 라벨("활성화" | "비활성화")로 변환 */
-export const getAccountStatusLabelFromBoolean = (value: boolean): string =>
-  ACCOUNT_STATUS_LABEL_BY_BOOLEAN[getAccountStatusKeyFromBoolean(value)];
+export const getAccountStatusLabelFromBoolean = (
+  value: boolean | undefined,
+): string | undefined => {
+  if (value === undefined) return undefined;
+  return ACCOUNT_STATUS_LABEL_BY_BOOLEAN[value ? "true" : "false"];
+};

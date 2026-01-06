@@ -28,3 +28,5 @@ export const openUpdateAccountStatusModalAtom = atom<boolean>(false);
 export const openApproveAccountPendingModalAtom = atom<boolean>(false);
 export const openRejectAccountPendingModalAtom = atom<boolean>(false);
 export const openViewAccountDetailModalAtom = atom<boolean>(false);
+export const openResetPasswordConfirmModalAtom = atom<boolean>(false);
+export const openResetPasswordResultModalAtom = atom<boolean>(false);

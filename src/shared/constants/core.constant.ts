@@ -19,12 +19,10 @@ export const ADMIN_ROOT_PATH = ROUTES.ADMIN_MONITORING;
 
 /** 계정 권한 상수 */
 export const ACCOUNT_ROLES = {
-  SUPER_ADMIN: "SUPER_ADMIN",
+  SUPER_ADMIN: "SUPER ADMIN",
   ADMIN: "ADMIN",
   USER: "USER",
 } as const;
-/** 계정 권한 타입 */
-export type AccountRole = (typeof ACCOUNT_ROLES)[keyof typeof ACCOUNT_ROLES];
 
 /** 공통 모달 모드 상수 */
 export const MODAL_MODES = {

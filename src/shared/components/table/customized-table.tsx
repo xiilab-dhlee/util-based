@@ -211,6 +211,8 @@ export function CustomizedTable<
     Record<string, unknown>
   >;
 
+  const resolvedScroll = tableProps.scroll ?? { x: "max-content", y: "100%" };
+
   return (
     <ConfigProvider theme={theme}>
       {/* 단일 Tooltip - 이벤트 위임으로 동적 제어 */}
@@ -235,7 +237,7 @@ export function CustomizedTable<
         darkMode={darkMode}
         columns={columns as ResponsiveColumnType<Record<string, unknown>>[]}
         dataSource={data as Record<string, unknown>[]}
-        scroll={{ x: "max-content", y: "100%" }}
+        scroll={resolvedScroll}
         pagination={pagination}
         rowKey={rowKey as TableProps<Record<string, unknown>>["rowKey"]}
         locale={locale}
