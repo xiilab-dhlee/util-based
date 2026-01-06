@@ -1,5 +1,6 @@
 import { expect, type Locator } from "@playwright/test";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { HUB_SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { BasePage } from "./base.page";
 
@@ -31,7 +32,7 @@ export class HubPage extends BasePage {
   }
 
   protected get basePath(): string {
-    return "/user/hub";
+    return ROUTES.USER_HUB;
   }
 
   // ============================================
@@ -65,7 +66,7 @@ export class HubPage extends BasePage {
    */
   async gotoAndWaitForRedirect(): Promise<void> {
     await this.goto();
-    await this.page.waitForURL(/\/user\/hub\/\d+/);
+    await this.page.waitForURL(new RegExp(`${ROUTES.USER_HUB}/\\d+`));
   }
 
   /**
@@ -74,10 +75,9 @@ export class HubPage extends BasePage {
    * @param hubName - 허브 이름 (optional)
    */
   async gotoDetail(hubId: number | string, hubName?: string): Promise<void> {
-    const path = hubName
-      ? `/${hubId}?name=${encodeURIComponent(hubName)}`
-      : `/${hubId}`;
-    await this.goto(path);
+    const fullPath = ROUTES.USER_HUB_DETAIL(hubId, hubName);
+    await this.page.goto(fullPath);
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**

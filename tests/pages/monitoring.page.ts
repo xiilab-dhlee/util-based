@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
 import {
   testId,
   USER_MONITORING_SELECTOR,
@@ -76,7 +77,7 @@ export class MonitoringPage extends BasePage {
   }
 
   protected get basePath(): string {
-    return "/user/monitoring";
+    return ROUTES.USER_MONITORING;
   }
 
   // ============================================
