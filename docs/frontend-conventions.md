@@ -69,6 +69,150 @@ export const WorkloadListMain = () => {
 - 불필요한 렌더링 방지 및 구조 파악 용이
 - React Portal 등을 사용할 때 예측 가능한 동작 보장
 
+### 모달 상태 관리 방식
+
+**협의일**: 2025-01-06
+
+**상황**: 모달 컴포넌트의 상태 관리 방식이 일관되지 않아 유지보수가 어려운 경우
+
+**협의 내용**: 모든 모달 컴포넌트는 `useGlobalModal` 훅과 Jotai atom을 사용하여 상태를 관리하며, props로 `open`, `onClose`를 받지 않는다.
+
+**규칙**:
+
+1. **모달 atom 위치**
+   - **전역 공통 모달**: `src/shared/state/modal.atom.ts`
+   - **도메인 전용 모달**: 해당 도메인의 state 파일 (예: `src/domain/security/state/security.atom.ts`)
+
+2. **모달 컴포넌트 구조**
+   - 모달 컴포넌트는 props를 받지 않고 내부에서 `useGlobalModal` 훅으로 `open`, `onClose` 관리
+   - 부모 컴포넌트는 `onOpen` 핸들러만 사용하여 모달 열기
+
+3. **네이밍 규칙**
+   - atom 이름: `open[모달이름]Atom` (예: `openCreateCredentialModalAtom`)
+   - 컴포넌트 이름: `[기능][대상]Modal` (예: `CreateCredentialModal`)
+
+**예시 코드**:
+
+```tsx
+// ✅ Good - 표준 모달 패턴
+
+// 1. atom 정의 (도메인 전용이면 domain/[domain]/state/에 위치)
+// src/shared/state/modal.atom.ts
+import { atom } from "jotai";
+
+export const openCreateCredentialModalAtom = atom<boolean>(false);
+
+// 2. 모달 컴포넌트 - props 없이 내부에서 useGlobalModal 사용
+// src/shared/components/modal/create-credential-modal.tsx
+"use client";
+
+import { useRef } from "react";
+import { Icon, Modal } from "xiilab-ui";
+
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+
+// ✅ props 없이 정의
+export function CreateCredentialModal() {
+  const formRef = useRef<HTMLFormElement>(null);
+  
+  // ✅ 컴포넌트 내부에서 useGlobalModal로 상태 관리
+  const { open, onClose } = useGlobalModal(openCreateCredentialModalAtom);
+
+  const handleSubmit = () => {
+    // 제출 로직
+    onClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      onOk={handleSubmit}
+      title="크레덴셜 추가"
+    >
+      <form ref={formRef}>
+        {/* 폼 내용 */}
+      </form>
+    </Modal>
+  );
+}
+
+// 3. 부모 컴포넌트 - onOpen만 사용
+// src/domain/credential/components/credential-list-main.tsx
+"use client";
+
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
+
+export function CredentialListMain() {
+  // ✅ 부모에서는 onOpen만 사용
+  const { onOpen } = useGlobalModal(openCreateCredentialModalAtom);
+
+  return (
+    <>
+      <div>
+        <Button onClick={onOpen}>크레덴셜 추가</Button>
+        {/* 리스트 UI */}
+      </div>
+      
+      {/* ✅ props 없이 모달 선언 */}
+      <CreateCredentialModal />
+    </>
+  );
+}
+```
+
+```tsx
+// ❌ Bad - props로 상태 전달 (안티패턴)
+
+// 잘못된 예시 1: props로 open, onClose 받음
+export function CreateCredentialModal({ open, onClose }: ModalProps) {
+  return (
+    <Modal open={open} onCancel={onClose}>
+      {/* ... */}
+    </Modal>
+  );
+}
+
+// 잘못된 예시 2: useState로 로컬 상태 관리
+export function CredentialListMain() {
+  const [open, setOpen] = useState(false);
+  
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>추가</Button>
+      <CreateCredentialModal open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+```
+
+**도메인별 atom 예시**:
+
+```tsx
+// src/domain/security/state/security.atom.ts
+import { atom } from "jotai";
+
+/** 보안 레벨 설정 모달 표시 여부 */
+export const openSecurityLevelSettingModalAtom = atom<boolean>(false);
+
+/** 보안 스케줄 설정 모달 표시 여부 */
+export const openSecurityScheduleSettingModalAtom = atom<boolean>(false);
+```
+
+**이유**:
+- **일관성**: 프로젝트 전체에서 동일한 모달 관리 패턴 사용
+- **간결성**: props drilling 없이 atom으로 상태 공유
+- **타입 안정성**: props 인터페이스 불필요, 컴파일 타임 오류 감소
+- **테스트 용이성**: atom만 mock하면 되어 테스트 작성 간편
+- **확장성**: PubSub 패턴과 결합하여 복잡한 모달 흐름 구현 가능
+
+**예외 사항**:
+- 컴포넌트 라이브러리(storybook 등)에서 재사용되는 순수 UI 컴포넌트는 props 사용 가능
+- 하지만 실제 프로덕션 코드에서는 항상 `useGlobalModal` 패턴 사용
+
 ---
 
 ## Import 경로 규칙
