@@ -144,8 +144,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
           secrets: |
             github_token=${{ secrets.GH_TOKEN }}
+          provenance: false
 
   # ===========================================
   # Job 2: 릴리스 결과 요약 및 알림
