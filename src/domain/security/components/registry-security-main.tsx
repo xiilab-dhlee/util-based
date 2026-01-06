@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { openRegistrySecurityLevelSettingModalAtom } from "@/domain/security/state/registry-security.atom";
 import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
@@ -11,6 +11,7 @@ import {
   SECURITY_USAGE_ENABLED,
   type SecurityUsageStatus,
 } from "@/shared/constants/security.constant";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   ListPageAside,
   ListPageBody,
@@ -25,7 +26,9 @@ import { SecurityScanListBody } from "./security-scan-list-body";
 import { SecurityScanListFooter } from "./security-scan-list-footer";
 
 export function RegistrySecurityMain() {
-  const [openSecurityLevelModal, setOpenSecurityLevelModal] = useState(false);
+  const { onOpen: openSecurityLevelModal } = useGlobalModal(
+    openRegistrySecurityLevelSettingModalAtom,
+  );
 
   const TEMP_USAGE_STATUS: SecurityUsageStatus = SECURITY_USAGE_ENABLED;
 
@@ -90,7 +93,7 @@ export function RegistrySecurityMain() {
                   content: levelDescription,
                 },
               ]}
-              onClickSetting={() => setOpenSecurityLevelModal(true)}
+              onClickSetting={openSecurityLevelModal}
             />
           </PolicySettings>
           <ScanHeader>
@@ -106,10 +109,7 @@ export function RegistrySecurityMain() {
           <SecurityAside />
         </ListPageAside>
       </ListPageMain>
-      <RegistrySecurityLevelSettingModal
-        open={openSecurityLevelModal}
-        onClose={() => setOpenSecurityLevelModal(false)}
-      />
+      <RegistrySecurityLevelSettingModal />
     </>
   );
 }

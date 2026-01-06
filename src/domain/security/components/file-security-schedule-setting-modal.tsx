@@ -10,16 +10,13 @@ import {
 } from "@/domain/security/components/security-schedule-setting-form";
 import type { SecurityScheduleSettingFormValue } from "@/domain/security/hooks/use-security-schedule-setting-form";
 import { useUpdateFileSecuritySchedule } from "@/domain/security/hooks/use-update-file-security-schedule";
+import { openFileSecurityScheduleSettingModalAtom } from "@/domain/security/state/file-security.atom";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
-interface FileSecurityScheduleSettingModalProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-export function FileSecurityScheduleSettingModal({
-  open,
-  onClose,
-}: FileSecurityScheduleSettingModalProps) {
+export function FileSecurityScheduleSettingModal() {
+  const { open, onClose } = useGlobalModal(
+    openFileSecurityScheduleSettingModalAtom,
+  );
   const formRef = useRef<SecurityScheduleSettingFormHandle | null>(null);
   const updateScheduleMutation = useUpdateFileSecuritySchedule();
 
