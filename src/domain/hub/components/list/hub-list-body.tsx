@@ -5,7 +5,8 @@ import { Card } from "xiilab-ui";
 import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { HubCard } from "@/domain/hub/components/hub-card";
 import { HUB_PAGE_SIZE } from "@/domain/hub/constants/hub.constant";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -37,10 +38,7 @@ export function HubListBody({
   if (isError) {
     return (
       <ListWrapper>
-        <ListEmpty
-          title="오류가 발생했습니다."
-          message="잠시 후 다시 시도해 주세요."
-        />
+        <DataErrorState />
       </ListWrapper>
     );
   }
@@ -49,10 +47,7 @@ export function HubListBody({
   if (content.length === 0) {
     return (
       <ListWrapper>
-        <ListEmpty
-          title="허브가 없습니다."
-          message="허브를 생성하여 사용해보세요."
-        />
+        <EmptyState />
       </ListWrapper>
     );
   }

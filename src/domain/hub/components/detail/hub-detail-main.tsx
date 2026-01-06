@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
 import { ViewHubReadme } from "@/domain/hub/components/detail/view-hub-readme";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -35,10 +35,7 @@ export function HubDetailMain() {
   if (!params.id || Number.isNaN(hubId)) {
     return (
       <Container>
-        <ListEmpty
-          title="유효하지 않은 Hub ID입니다."
-          message="허브 목록에서 허브를 선택해 주세요."
-        />
+        <EmptyState title="유효하지 않은 Hub ID입니다." />
       </Container>
     );
   }

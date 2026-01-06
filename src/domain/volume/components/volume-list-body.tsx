@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { VolumeCard } from "./volume-card";
@@ -41,12 +41,7 @@ export function VolumeListBody({ content, loading }: VolumeListBodyProps) {
     <ListWrapper>
       <StyledGridList>
         {loading && <MySpinner />}
-        {content.length === 0 && (
-          <ListEmpty
-            title="볼륨이 없습니다."
-            message="볼륨을 생성하여 사용해보세요."
-          />
-        )}
+        {content.length === 0 && <EmptyState />}
         {content.map((volume: VolumeListType) => (
           <VolumeCard
             key={volume.uid}

@@ -3,7 +3,7 @@
 import styled from "styled-components";
 
 import { useFindHubDetail } from "@/api/generated/hub/hub";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MarkdownToHtml } from "@/shared/components/markdown-to-html";
 import { MySpinner } from "@/shared/components/spinner";
 import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
@@ -20,16 +20,17 @@ export function ViewHubReadme({ hubId }: ViewHubReadmeProps) {
   const { data, isLoading, isError } = useFindHubDetail(hubId);
 
   if (isLoading) {
-    return <MySpinner />;
+    return (
+      <Container>
+        <MySpinner />
+      </Container>
+    );
   }
 
   if (isError) {
     return (
       <Container>
-        <ListEmpty
-          title="조회 중 오류가 발생했습니다."
-          message="잠시 후 다시 시도해 주세요."
-        />
+        <EmptyState />
       </Container>
     );
   }

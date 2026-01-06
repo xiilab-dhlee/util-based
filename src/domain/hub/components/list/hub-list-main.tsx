@@ -9,7 +9,7 @@ import {
   hubSearchKeywordAtom,
   hubSearchTextAtom,
 } from "@/domain/hub/state/hub.atom";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 
 export function HubListMain() {
@@ -26,10 +26,7 @@ export function HubListMain() {
 
   return (
     <AsideDetailContainer>
-      <ListEmpty
-        title="허브가 선택되지 않았습니다."
-        message="먼저 허브를 선택해 주세요."
-      />
+      <EmptyState title="허브를 선택해 주세요." />
     </AsideDetailContainer>
   );
 }

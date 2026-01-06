@@ -6,9 +6,9 @@ import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
 import { useGetNotifications } from "@/domain/notification/hooks/use-get-notifications";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { ProfileNotificationCard } from "@/shared/components/layouts/profile-notification-card";
 import { useSelect } from "@/shared/hooks/use-select";
-import { ListEmpty } from "./list-empty";
-import { ProfileNotificationCard } from "./profile-notification-card";
 
 export function ProfileNotification() {
   const [tab, setTab] = useState("all");
@@ -61,7 +61,7 @@ export function ProfileNotification() {
                 <ProfileNotificationCard key={item.id} {...item} />
               ))}
             {tab === "unread" && (
-              <ListEmpty title="알림이 존재하지 않습니다." theme="dark" />
+              <EmptyState title="알림이 존재하지 않습니다." />
             )}
           </TabPanelBody>
         </TabPanel>

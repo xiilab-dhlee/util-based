@@ -4,13 +4,15 @@ import type { ReactNode } from "react";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
+
 interface EmptyStateProps {
   /** 아이콘 컴포넌트 (ReactNode) */
   icon?: ReactNode;
   /** 메인 제목 */
-  title: string;
+  title?: string;
   /** 설명 내용 */
-  content: string;
+  content?: string;
 }
 
 /**
@@ -22,14 +24,18 @@ interface EmptyStateProps {
  * - 일관된 간격과 스타일링
  * - 유연한 아이콘 지원 (XiilabUI, 커스텀 SVG, 다른 라이브러리 등)
  */
-export function EmptyState({ icon, title, content }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title = TABLE_MESSAGE.EMPTY,
+  content,
+}: EmptyStateProps) {
   return (
     <Container>
       <IconCircle>
         {icon ?? <Icon name="PriorityHigh" color="#878898" />}
       </IconCircle>
       <Title>{title}</Title>
-      <Content>{content}</Content>
+      {content && <Content>{content}</Content>}
     </Container>
   );
 }
