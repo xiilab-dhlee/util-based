@@ -41,11 +41,13 @@ Feature: 비활성화 워크로드 목록 페이지 인터랙션
     Then 워크로드 검색 결과 검색어가 포함된 데이터만 표시된다
 
     Examples:
-      | 설명           | 검색어     |
-      | 일반 검색어    | auto       |
-      | 한글 검색      | 테스트     |
-      | 대문자 검색    | AUTO       |
-      | 소문자 검색    | auto       |
+      | 설명            | 검색어           |
+      | 일반 검색어     | auto             |
+      | 한글 검색       | 테스트           |
+      | 대문자 검색     | AUTO             |
+      | 하이픈 포함     | test-workload    |
+      | 언더스코어 포함 | test_workload_01 |
+      | 숫자만          | 12345            |
 
   @regression
   Scenario Outline: 워크로드 잡타입 필터링 <설명>
