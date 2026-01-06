@@ -65,11 +65,14 @@ Then("두 번째 허브 카드가 선택된 상태이다", async ({ listGrid }) 
 });
 
 Given(
-  "허브 목록에 2개 이상의 데이터가 있다",
-  async ({ listGrid, $testInfo }) => {
+  "허브 목록에 {int}개 이상의 데이터가 있다",
+  async ({ listGrid, $testInfo }, minCount: number) => {
     const count = await listGrid.getCardCount();
-    if (count < 2) {
-      $testInfo.skip(true, "허브 카드가 2개 미만이어서 시나리오를 스킵합니다");
+    if (count < minCount) {
+      $testInfo.skip(
+        true,
+        `허브 카드가 ${minCount}개 미만이어서 시나리오를 스킵합니다`,
+      );
       return;
     }
   },

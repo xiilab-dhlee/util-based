@@ -8,7 +8,7 @@ Feature: 허브 페이지 인터랙션
     Given 사용자가 로그인되어 있다
     And 허브 페이지에 있다
 
-  @regression 
+  @regression
   Scenario: 다른 허브 카드 클릭 시 상세 정보 변경
     Given 허브 목록에 2개 이상의 데이터가 있다
     When 두 번째 허브 카드를 클릭한다
