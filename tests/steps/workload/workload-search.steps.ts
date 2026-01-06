@@ -24,31 +24,37 @@ const { Then } = createBdd(test);
 /**
  * 검색어가 포함된 데이터만 표시되는지 검증
  * - 첫 번째 결과가 검색어를 포함하는지 확인 (샘플 검증)
+ * - 검색 결과가 없으면 테스트 스킵 (검증 불가 상태 명시)
  *
  * NOTE: E2E 테스트는 기능 동작 확인이 목적이므로 첫 번째 결과만 검증
  * 전체 결과 정확성은 백엔드/API 테스트 영역
  */
 Then(
   "워크로드 검색 결과 검색어가 포함된 데이터만 표시된다",
-  async ({ workloadListPage, listSearchInput, assertLogger }) => {
+  async ({ workloadListPage, listSearchInput, assertLogger, $testInfo }) => {
     // 테이블이 표시될 때까지 대기
     await workloadListPage.table.assertTableVisible(SELECTOR.LIST_TABLE);
     const rowCount = await workloadListPage.table.getRowCount();
+    const searchText = await listSearchInput.getValue();
 
-    if (rowCount > 0) {
-      const searchText = await listSearchInput.getValue();
-      const firstRowName = await workloadListPage.table.getCellText(
-        0,
-        WORKLOAD_SELECTOR.NAME,
-      );
-      const containsSearch = firstRowName
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-      assertLogger.assertEqual(
-        `첫 번째 결과가 "${searchText}" 포함`,
-        containsSearch,
+    if (rowCount === 0) {
+      $testInfo.skip(
         true,
+        `"${searchText}" 검색 결과가 없어 검증을 스킵합니다. Mock 데이터 확인 필요.`,
       );
+      return;
     }
+
+    const firstRowName = await workloadListPage.table.getCellText(
+      0,
+      WORKLOAD_SELECTOR.NAME,
+    );
+    const containsSearch = firstRowName
+      .toLowerCase()
+      .includes(searchText.toLowerCase());
+    assertLogger.assertTrue(
+      `첫 번째 결과 "${firstRowName}"이(가) "${searchText}" 포함`,
+      containsSearch,
+    );
   },
 );
