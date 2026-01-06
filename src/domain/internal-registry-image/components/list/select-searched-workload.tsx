@@ -35,13 +35,19 @@ export function SelectSearchedWorkload({
     setSearchText(value);
   };
 
+  const handleSearchKeywordChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setSearchKeyword(e.target.value);
+  };
+
   return (
     <Container>
       <Header>
         <Input.Search
           value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          onSearch={(value) => handleSearch(value)}
+          onChange={handleSearchKeywordChange}
+          onSearch={handleSearch}
           placeholder="워크로드 이름을 입력해 주세요."
           width="100%"
         />

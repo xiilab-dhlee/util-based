@@ -54,7 +54,7 @@ export function GroupMain() {
 
   const handleSearch = (value: string) => {
     // TODO: 그룹 검색 기능 구현
-    alert(`searched: ${value}`);
+    alert(`searched: ${value.trim()}`);
   };
 
   const handleCreateGroup = () => {
@@ -125,7 +125,7 @@ export function GroupMain() {
               <Input.Search
                 name="search"
                 placeholder="그룹 이름을 검색해 주세요."
-                onSearch={(value) => handleSearch(value.trim())}
+                onSearch={handleSearch}
                 autoComplete="off"
                 width="100%"
                 height={30}
