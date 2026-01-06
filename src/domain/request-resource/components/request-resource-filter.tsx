@@ -26,13 +26,17 @@ export function RequestResourceFilter({ total }: RequestResourceFilterProps) {
     setKeyword(value.trim());
   };
 
+  const handleStatusChange = (value: string) => {
+    setStatus(value as StatusFilterType);
+  };
+
   return (
     <MySearchFilter title="리소스 신청 목록" total={total}>
       <FilterControls>
         <Dropdown
           options={statusOptions}
           value={status}
-          onChange={(value) => setStatus(value as StatusFilterType)}
+          onChange={handleStatusChange}
           placeholder="승인 여부"
           width={120}
         />
