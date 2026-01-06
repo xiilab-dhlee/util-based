@@ -11,10 +11,10 @@ WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@9.15.3 --activate
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 RUN --mount=type=secret,id=github_token \
-    GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
+    export GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
     git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
     pnpm install --frozen-lockfile
 
