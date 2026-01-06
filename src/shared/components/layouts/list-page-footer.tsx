@@ -29,15 +29,10 @@ export function ListPageFooter({
   page,
   pageSize,
   onChange,
-  isLoading,
   rightChildren,
   leftChildren,
   paginationTestId,
 }: ListPageFooterProps) {
-  if (isLoading) {
-    return null;
-  }
-
   return (
     <Container>
       <Left>{leftChildren}</Left>

@@ -26,7 +26,7 @@ export function HubListBody({
       <ListWrapper>
         <GridList>
           {Array.from({ length: HUB_PAGE_SIZE }).map((_, index) => (
-            <Card key={`skeleton-${index}`} loading style={{ height: 150 }} />
+            <Card key={`skeleton-${index}`} loading style={{ height: 151 }} />
           ))}
         </GridList>
       </ListWrapper>

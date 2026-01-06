@@ -49,7 +49,7 @@ export function HubCard({
         onClick={handleClick}
         title={hubName}
         subtitle={modelType}
-        style={{ borderColor: isSelected ? "#366BFF" : "" }}
+        selected={isSelected}
       >
         {/* 허브 썸네일 이미지 영역 */}
         <CardImageContainer>
@@ -85,12 +85,12 @@ const CardWrapper = styled.div``;
  * - 텍스트가 3줄을 초과하면 자동으로 줄임표(...) 표시
  */
 const Description = styled.div`
-  flex: 1;
   font-weight: 400;
   width: 100%;
   font-size: 10px;
   line-height: 12px;
   margin-top: 8px;
+  letter-spacing: 0;
   color: #000;
 
   /* 여러 줄 텍스트 줄임표 처리 */
