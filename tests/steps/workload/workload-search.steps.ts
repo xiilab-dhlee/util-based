@@ -30,13 +30,13 @@ const { Then } = createBdd(test);
  */
 Then(
   "워크로드 검색 결과 검색어가 포함된 데이터만 표시된다",
-  async ({ workloadListPage, assertLogger }) => {
+  async ({ workloadListPage, listSearchInput, assertLogger }) => {
     // 테이블이 표시될 때까지 대기
     await workloadListPage.table.assertTableVisible(SELECTOR.LIST_TABLE);
     const rowCount = await workloadListPage.table.getRowCount();
 
     if (rowCount > 0) {
-      const searchText = await workloadListPage.getSearchInputValue();
+      const searchText = await listSearchInput.getValue();
       const firstRowName = await workloadListPage.table.getCellText(
         0,
         WORKLOAD_SELECTOR.NAME,
