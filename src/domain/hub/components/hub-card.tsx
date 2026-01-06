@@ -51,7 +51,6 @@ export function HubCard({
         subtitle={modelType}
         selected={isSelected}
       >
-        {/* 허브 썸네일 이미지 영역 */}
         <CardImageContainer>
           {thumbnail && (
             <ImageWrapper>
@@ -64,8 +63,6 @@ export function HubCard({
             </ImageWrapper>
           )}
         </CardImageContainer>
-
-        {/* 허브 설명 텍스트 (최대 2줄, 초과 시 줄임표 처리) */}
         <Description>{description}</Description>
       </Card>
     </CardWrapper>
@@ -74,16 +71,6 @@ export function HubCard({
 
 const CardWrapper = styled.div``;
 
-/**
- * 허브 설명 텍스트를 위한 스타일드 컴포넌트
- * - 여러 줄 텍스트 줄임표 처리 (최대 3줄)
- * - 텍스트가 3줄을 초과하면 자동으로 줄임표(...) 표시
- */
-/**
- * 허브 설명 텍스트를 위한 스타일드 컴포넌트
- * - 여러 줄 텍스트 줄임표 처리 (최대 3줄)
- * - 텍스트가 3줄을 초과하면 자동으로 줄임표(...) 표시
- */
 const Description = styled.div`
   font-weight: 400;
   width: 100%;
@@ -95,17 +82,12 @@ const Description = styled.div`
 
   /* 여러 줄 텍스트 줄임표 처리 */
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* 최대 3줄까지만 표시 */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-/**
- * 허브 썸네일 이미지를 감싸는 래퍼 컴포넌트
- * - 이미지 크기 고정 및 오버플로우 처리
- * - 이미지가 없을 경우 플레이스홀더 배경 표시
- */
 const ImageWrapper = styled.div`
   height: 66px;
   overflow: hidden;

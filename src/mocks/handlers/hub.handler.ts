@@ -89,7 +89,7 @@ export const hubHandlers = [
   }),
 
   // 허브 상세 조회 (README 반환)
-  getFindHubDetailMockHandler(() => HUB_README_MOCK),
+  getFindHubDetailMockHandler(HUB_README_MOCK),
 
   // 허브 요약 목록 조회
   getFindHubSummariesMockHandler(),
