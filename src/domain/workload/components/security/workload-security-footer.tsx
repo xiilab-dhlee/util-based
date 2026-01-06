@@ -19,12 +19,16 @@ export function WorkloadSecurityFooter() {
     size: LIST_PAGE_SIZE,
   });
 
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
   return (
     <ListPageFooter
       total={data?.totalSize || 0}
       page={page}
       pageSize={LIST_PAGE_SIZE}
-      onChange={(page) => setPage(page)}
+      onChange={handlePageChange}
       isLoading={isLoading}
     />
   );
