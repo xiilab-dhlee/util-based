@@ -213,6 +213,179 @@ export const openSecurityScheduleSettingModalAtom = atom<boolean>(false);
 - 컴포넌트 라이브러리(storybook 등)에서 재사용되는 순수 UI 컴포넌트는 props 사용 가능
 - 하지만 실제 프로덕션 코드에서는 항상 `useGlobalModal` 패턴 사용
 
+### 모달 데이터 전달 방식
+
+**협의일**: 2025-01-06
+
+**상황**: 모달 열림/닫힘 상태 외에 추가 데이터가 필요한 경우 (예: 삭제할 항목 ID, 수정할 데이터 등)
+
+**협의 내용**: 모달에 필요한 데이터는 props가 아닌 `useSubscribe` + PubSub 패턴을 사용하여 전달한다.
+
+**규칙**:
+
+1. **모달 상태 관리**: `useGlobalModal`로 열림/닫힘 상태만 관리
+2. **데이터 전달**: `useSubscribe`로 PubSub 이벤트를 구독하여 데이터 수신
+3. **데이터 저장**: 모달 내부에서 `useState`로 받은 데이터 저장
+4. **모달 열기**: 데이터 수신 시 `onOpen()` 호출
+
+**표준 패턴**:
+
+```tsx
+// ✅ Good - PubSub 패턴으로 데이터 전달
+
+// 1. PubSub 이벤트 정의
+// src/shared/constants/pubsub.constant.ts
+export const ACCOUNT_EVENTS = {
+  sendResetPassword: "account.sendResetPassword",
+  showResetPasswordResult: "account.showResetPasswordResult",
+} as const;
+
+// 2. 모달 atom 정의
+// src/domain/account-management/state/account.atom.ts
+import { atom } from "jotai";
+
+export const openResetPasswordConfirmModalAtom = atom<boolean>(false);
+
+// 3. 모달 컴포넌트 - useSubscribe로 데이터 수신
+// src/domain/account-management/components/list/confirm-reset-password-modal.tsx
+"use client";
+
+import { useState } from "react";
+import { Modal } from "xiilab-ui";
+
+import type { AccountItemResponse } from "@/api/generated/schemas";
+import { openResetPasswordConfirmModalAtom } from "@/domain/account-management/state/account.atom";
+import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+
+export function ConfirmResetPasswordModal() {
+  // ✅ 모달 상태 관리
+  const { open, onOpen, onClose } = useGlobalModal(
+    openResetPasswordConfirmModalAtom,
+  );
+  
+  // ✅ 필요한 데이터를 로컬 상태로 관리
+  const [account, setAccount] = useState<AccountItemResponse | null>(null);
+
+  const handleConfirm = () => {
+    if (!account) return;
+    // account 데이터를 사용한 비즈니스 로직
+    console.log("Reset password for:", account.accountId);
+    onClose();
+  };
+
+  // ✅ PubSub으로 데이터 수신 및 모달 열기
+  useSubscribe(
+    ACCOUNT_EVENTS.sendResetPassword,
+    (accountData: AccountItemResponse) => {
+      setAccount(accountData);  // 데이터 저장
+      onOpen();                  // 모달 열기
+    },
+  );
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      onOk={handleConfirm}
+      title="패스워드 초기화"
+    >
+      패스워드는 랜덤으로 생성됩니다. <br />
+      사용자 패스워드를 초기화 하겠습니까?
+    </Modal>
+  );
+}
+
+// 4. 부모 컴포넌트 - PubSub으로 데이터 전달
+// src/domain/account-management/components/list/account-list-main.tsx
+"use client";
+
+import { Button } from "xiilab-ui";
+
+import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { pubsubUtil } from "@/shared/utils/pubsub.util";
+import { ConfirmResetPasswordModal } from "./confirm-reset-password-modal";
+
+export function AccountListMain() {
+  const handleResetPassword = (account: AccountItemResponse) => {
+    // ✅ PubSub으로 데이터 전달 (모달이 자동으로 열림)
+    pubsubUtil.publish(ACCOUNT_EVENTS.sendResetPassword, account);
+  };
+
+  return (
+    <>
+      <div>
+        <Button onClick={() => handleResetPassword(accountData)}>
+          패스워드 초기화
+        </Button>
+        {/* 리스트 UI */}
+      </div>
+      
+      {/* ✅ props 없이 모달 선언 */}
+      <ConfirmResetPasswordModal />
+    </>
+  );
+}
+```
+
+```tsx
+// ❌ Bad - props로 데이터 전달 (안티패턴)
+
+// 잘못된 예시: props로 데이터 전달
+interface ConfirmResetPasswordModalProps {
+  open: boolean;
+  onClose: () => void;
+  account: AccountItemResponse;  // ❌ props로 데이터 받음
+}
+
+export function ConfirmResetPasswordModal({ 
+  open, 
+  onClose, 
+  account 
+}: ConfirmResetPasswordModalProps) {
+  return (
+    <Modal open={open} onCancel={onClose}>
+      {/* ... */}
+    </Modal>
+  );
+}
+
+// 부모에서 상태 관리
+export function AccountListMain() {
+  const [open, setOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  
+  const handleResetPassword = (account) => {
+    setSelectedAccount(account);  // ❌
+    setOpen(true);                // ❌
+  };
+  
+  return (
+    <>
+      <Button onClick={() => handleResetPassword(account)}>초기화</Button>
+      <ConfirmResetPasswordModal 
+        open={open} 
+        onClose={() => setOpen(false)}
+        account={selectedAccount}  // ❌ props로 전달
+      />
+    </>
+  );
+}
+```
+
+**모범 사례**:
+- `ConfirmResetPasswordModal` - PubSub으로 계정 데이터 수신 후 패스워드 초기화
+- `DeleteWorkloadModal` - PubSub으로 워크로드 ID 수신 후 삭제
+- `ViewVulnerabilityModal` - PubSub으로 취약점 목록 수신 후 표시
+
+**이유**:
+- **단일 책임**: 모달은 자신의 상태와 데이터 관리에만 집중
+- **결합도 감소**: 부모 컴포넌트와 모달 간 직접적인 의존성 제거
+- **재사용성**: 어디서든 PubSub 이벤트만 발행하면 모달 사용 가능
+- **테스트 용이성**: PubSub 이벤트만 mock하면 모달 테스트 가능
+- **일관성**: 모든 모달이 동일한 패턴으로 데이터 수신
+
 ---
 
 ## Import 경로 규칙
