@@ -30,6 +30,8 @@ COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
+RUN rm -f .npmrc
+
 RUN NODE_OPTIONS=--max_old_space_size=3072 pnpm build
 
 # =============================================================================
