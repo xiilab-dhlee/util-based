@@ -10,6 +10,7 @@ import {
   accountSearchTextAtom,
 } from "@/domain/account-management/state/account.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface AccountListFilterProps {
   totalSize?: number;
@@ -27,7 +28,11 @@ export function AccountListFilter({ totalSize }: AccountListFilterProps) {
   };
 
   return (
-    <MySearchFilter title="사용자 목록" total={totalSize}>
+    <MySearchFilter
+      title="사용자 목록"
+      total={totalSize}
+      totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
+    >
       <Input.Search
         name="search"
         placeholder="검색어를 입력하세요."
@@ -35,6 +40,7 @@ export function AccountListFilter({ totalSize }: AccountListFilterProps) {
         autoComplete="off"
         width={220}
         height={30}
+        data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

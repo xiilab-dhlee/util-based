@@ -365,6 +365,38 @@ export const HUB_SELECTOR = {
 } as const;
 
 // ============================================
+// 계정 관리 (Account Management)
+// ============================================
+
+export const ACCOUNT_SELECTOR = {
+  // 페이지 헤더
+  /** 계정 관리 페이지 헤더 */
+  PAGE_HEADER: "admin.account-management",
+
+  // 테이블 컬럼 셀렉터
+  /** 계정 이름 */
+  NAME: "account-name",
+  /** 계정 이메일 */
+  EMAIL: "account-email",
+  /** 계정 그룹 */
+  GROUP: "account-group",
+  /** 계정 권한 */
+  ROLE: "account-role",
+  /** 가입일 */
+  CREATED_AT: "account-created-at",
+  /** 계정 상태 (Switch) */
+  STATUS: "account-status",
+
+  // 액션 버튼
+  /** 수정 버튼 */
+  UPDATE_BUTTON: "account-update-button",
+  /** 비밀번호 초기화 버튼 */
+  RESET_PASSWORD_BUTTON: "account-reset-password-button",
+  /** 삭제 버튼 */
+  DELETE_BUTTON: "account-delete-button",
+} as const;
+
+// ============================================
 // 테스트용 헬퍼 함수
 // ============================================
 
