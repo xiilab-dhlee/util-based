@@ -1,7 +1,9 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 import { ROUTES } from "@/shared/constants/routes.constant";
-import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
+import { ACCOUNT_SELECTOR, testId } from "@/shared/constants/selector.constant";
+import { DropdownComponent } from "../components/dropdown.component";
+import { FormItemComponent } from "../components/form-item.component";
 import { ListPage } from "./list.page";
 
 /**
@@ -64,5 +66,100 @@ export class AccountManagementPage extends ListPage {
    */
   async gotoGroup(): Promise<void> {
     await this.goto("/group");
+  }
+
+  // ============================================
+  // 수정 모달 - 폼 필드 컴포넌트
+  // ============================================
+
+  /** 수정 모달 - 권한 필드 */
+  get updateRoleField(): FormItemComponent {
+    return new FormItemComponent(this.page, ACCOUNT_SELECTOR.UPDATE_ROLE_FIELD);
+  }
+
+  /** 수정 모달 - 상태 필드 */
+  get updateStatusField(): FormItemComponent {
+    return new FormItemComponent(
+      this.page,
+      ACCOUNT_SELECTOR.UPDATE_STATUS_FIELD,
+    );
+  }
+
+  /** 수정 모달 - 워크스페이스 생성 제한 개수 필드 */
+  get updateWorkspaceLimitField(): FormItemComponent {
+    return new FormItemComponent(
+      this.page,
+      ACCOUNT_SELECTOR.UPDATE_WORKSPACE_LIMIT_FIELD,
+    );
+  }
+
+  /** 수정 모달 - 권한 드롭다운 */
+  get updateRoleDropdown(): DropdownComponent {
+    return new DropdownComponent(this.page, ACCOUNT_SELECTOR.UPDATE_ROLE_FIELD);
+  }
+
+  /** 수정 모달 - 상태 드롭다운 */
+  get updateStatusDropdown(): DropdownComponent {
+    return new DropdownComponent(
+      this.page,
+      ACCOUNT_SELECTOR.UPDATE_STATUS_FIELD,
+    );
+  }
+
+  // ============================================
+  // 수정 모달 - 폼 필드 검증
+  // ============================================
+
+  /**
+   * 수정 모달의 권한 드롭다운에 선택된 값이 유효한 옵션 목록에 포함되는지 검증
+   *
+   * @param validOptions - 유효한 옵션 목록
+   */
+  async assertUpdateRoleDropdownValueIsOneOf(
+    validOptions: string[],
+  ): Promise<void> {
+    await this.updateRoleDropdown.assertSelectedValueIsOneOf(validOptions);
+  }
+
+  /**
+   * 수정 모달의 상태 드롭다운에 선택된 값이 유효한 옵션 목록에 포함되는지 검증
+   *
+   * @param validOptions - 유효한 옵션 목록
+   */
+  async assertUpdateStatusDropdownValueIsOneOf(
+    validOptions: string[],
+  ): Promise<void> {
+    await this.updateStatusDropdown.assertSelectedValueIsOneOf(validOptions);
+  }
+
+  /**
+   * 수정 모달의 워크스페이스 생성 제한 개수 입력창에 숫자가 입력되어 있는지 검증
+   */
+  async assertUpdateWorkspaceLimitFieldHasValidValue(): Promise<void> {
+    await this.updateWorkspaceLimitField.assertVisible();
+    const formItem = this.page.locator(
+      testId(ACCOUNT_SELECTOR.UPDATE_WORKSPACE_LIMIT_FIELD),
+    );
+    const input = formItem.locator("input");
+    await expect(input).toBeVisible();
+    const value = await input.inputValue();
+    expect(value).toMatch(/^\d+$/);
+    expect(Number(value)).toBeGreaterThanOrEqual(1);
+  }
+
+  // ============================================
+  // 패스워드 초기화 결과 모달 검증
+  // ============================================
+
+  /**
+   * 패스워드 초기화 결과 모달의 새 패스워드가 비어있지 않은지 검증
+   */
+  async assertResetPasswordResultNotEmpty(): Promise<void> {
+    const passwordElement = this.page.locator(
+      testId(ACCOUNT_SELECTOR.RESET_PASSWORD_RESULT),
+    );
+    await expect(passwordElement).toBeVisible();
+    const password = await passwordElement.textContent();
+    expect(password?.trim()).not.toBe("");
   }
 }
