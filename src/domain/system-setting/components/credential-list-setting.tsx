@@ -3,6 +3,7 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
 import styled from "styled-components";
+import { Input } from "xiilab-ui";
 
 import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
 import { createCredentialColumn } from "@/domain/system-setting/components/create-credential-column";
@@ -14,7 +15,6 @@ import {
   credentialSearchTextAtom,
 } from "@/domain/system-setting/state/credential.atom";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -44,7 +44,7 @@ export function CredentialListSetting() {
    */
   const handleSearch = (value: string) => {
     setPage(0);
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   const handlePageChange = (newPage: number) => {
@@ -86,10 +86,13 @@ export function CredentialListSetting() {
       height={CREDENTIAL_BOX_HEIGHT}
       extra={
         <SearchWrapper>
-          <SearchInput
+          <Input.Search
+            name="search"
             placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
-            width="290px"
             onSearch={handleSearch}
+            autoComplete="off"
+            width="290px"
+            height={30}
           />
         </SearchWrapper>
       }

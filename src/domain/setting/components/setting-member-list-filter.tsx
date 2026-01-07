@@ -1,12 +1,11 @@
 "use client";
 
 import { useAtomValue, useSetAtom } from "jotai";
-import { Button } from "xiilab-ui";
+import { Button, Input } from "xiilab-ui";
 
 import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
 import { useGetSettingWorkspaceMembers } from "@/domain/setting/hooks/use-get-setting-workspace-members";
 import { settingMemberSearchTextAtom } from "@/domain/setting/state/setting.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -34,10 +33,21 @@ export function SettingMemberListFilter() {
     });
   };
 
+  const handleSearch = (value: string) => {
+    setSearchText(value.trim());
+  };
+
   return (
     <>
       <MySearchFilter title="구성원 관리" total={data?.totalSize}>
-        <SearchInput onSearch={setSearchText} />
+        <Input.Search
+          name="search"
+          placeholder="검색어를 입력하세요."
+          onSearch={handleSearch}
+          autoComplete="off"
+          width={220}
+          height={30}
+        />
         <Button
           color="primary"
           icon="Plus"

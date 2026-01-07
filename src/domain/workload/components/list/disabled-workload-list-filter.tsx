@@ -2,13 +2,13 @@
 
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { Input } from "xiilab-ui";
 
 import { DisabledWorkloadJobTypeSort } from "@/domain/workload/components/list/disabled-workload-job-type-sort";
 import {
   disabledWorkloadPageAtom,
   disabledWorkloadSearchTextAtom,
 } from "@/domain/workload/state/workload.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { SELECTOR } from "@/shared/constants/selector.constant";
@@ -40,7 +40,7 @@ export function DisabledWorkloadListFilter({
    */
   const handleSearch = (value: string) => {
     resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   return (
@@ -51,10 +51,15 @@ export function DisabledWorkloadListFilter({
     >
       <MyItemsOnlySwitch checked={false} />
       <DisabledWorkloadJobTypeSort disabled={isLoading} />
-      <SearchInput
-        disabled={isLoading}
+      <Input.Search
+        name="search"
+        placeholder="검색어를 입력하세요."
         onSearch={handleSearch}
-        testId={SELECTOR.LIST_SEARCH_INPUT}
+        autoComplete="off"
+        width={220}
+        height={30}
+        disabled={isLoading}
+        data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

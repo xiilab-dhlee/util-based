@@ -61,7 +61,7 @@ export function HubListBody({
 
   return (
     <ListWrapper>
-      <GridList data-testid={SELECTOR.LIST_CARD_GRID}>
+      <GridList data-testid={SELECTOR.LIST_CARD_GRID} role="listbox">
         {content.map((hub) => (
           <HubCard key={hub.hubId} {...hub} />
         ))}

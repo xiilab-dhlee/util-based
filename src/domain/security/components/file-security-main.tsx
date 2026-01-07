@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import {
+  openFileSecurityLevelSettingModalAtom,
+  openFileSecurityScheduleSettingModalAtom,
+} from "@/domain/security/state/file-security.atom";
 import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
@@ -14,6 +17,7 @@ import {
   type SecurityUsageStatus,
   type SecurityWeekDayKey,
 } from "@/shared/constants/security.constant";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   ListPageAside,
   ListPageBody,
@@ -29,9 +33,12 @@ import { SecurityAside } from "./security-aside";
 import { SecurityLevelPolicySetting } from "./security-level-policy-setting";
 
 export function FileSecurityMain() {
-  const [openSecurityLevelModal, setOpenSecurityLevelModal] = useState(false);
-  const [openSecurityScheduleModal, setOpenSecurityScheduleModal] =
-    useState(false);
+  const { onOpen: openSecurityLevelModal } = useGlobalModal(
+    openFileSecurityLevelSettingModalAtom,
+  );
+  const { onOpen: openSecurityScheduleModal } = useGlobalModal(
+    openFileSecurityScheduleSettingModalAtom,
+  );
 
   const TEMP_USAGE_STATUS: SecurityUsageStatus = SECURITY_USAGE_ENABLED;
 
@@ -57,6 +64,7 @@ export function FileSecurityMain() {
     endDateUsage: SECURITY_USAGE_DISABLED,
     endDateTime: null,
   });
+
   return (
     <>
       <PageHeader
@@ -84,7 +92,7 @@ export function FileSecurityMain() {
                   content: levelDescription,
                 },
               ]}
-              onClickSetting={() => setOpenSecurityLevelModal(true)}
+              onClickSetting={openSecurityLevelModal}
             />
             <SecurityLevelPolicySetting
               title="보안 검사 일정"
@@ -99,7 +107,7 @@ export function FileSecurityMain() {
                   content: scheduleDescription,
                 },
               ]}
-              onClickSetting={() => setOpenSecurityScheduleModal(true)}
+              onClickSetting={openSecurityScheduleModal}
             />
           </PolicySettings>
           <ScanHeader>
@@ -115,14 +123,8 @@ export function FileSecurityMain() {
           <SecurityAside />
         </ListPageAside>
       </ListPageMain>
-      <FileSecurityLevelSettingModal
-        open={openSecurityLevelModal}
-        onClose={() => setOpenSecurityLevelModal(false)}
-      />
-      <FileSecurityScheduleSettingModal
-        open={openSecurityScheduleModal}
-        onClose={() => setOpenSecurityScheduleModal(false)}
-      />
+      <FileSecurityLevelSettingModal />
+      <FileSecurityScheduleSettingModal />
     </>
   );
 }

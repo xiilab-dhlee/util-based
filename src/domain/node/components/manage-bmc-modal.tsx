@@ -82,6 +82,18 @@ export function ManageBmcModal() {
     onOpen();
   });
 
+  const handleBmcIpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBmcIp(e.target.value);
+  };
+
+  const handleBmcUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBmcUserName(e.target.value);
+  };
+
+  const handleBmcPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBmcPassword(e.target.value);
+  };
+
   return (
     <Modal
       type="primary"
@@ -112,7 +124,7 @@ export function ManageBmcModal() {
             placeholder="BMC IP를 입력해 주세요."
             width="100%"
             value={bmcIp}
-            onChange={(e) => setBmcIp(e.target.value)}
+            onChange={handleBmcIpChange}
           />
         </FormItem>
         <FormItem>
@@ -125,7 +137,7 @@ export function ManageBmcModal() {
             placeholder="ID를 입력해 주세요."
             width="100%"
             value={bmcUserName}
-            onChange={(e) => setBmcUserName(e.target.value)}
+            onChange={handleBmcUserNameChange}
           />
         </FormItem>
         <FormItem className="last">
@@ -138,7 +150,7 @@ export function ManageBmcModal() {
             placeholder="Password를 입력해 주세요."
             width="100%"
             value={bmcPassword}
-            onChange={(e) => setBmcPassword(e.target.value)}
+            onChange={handleBmcPasswordChange}
           />
         </FormItem>
       </form>

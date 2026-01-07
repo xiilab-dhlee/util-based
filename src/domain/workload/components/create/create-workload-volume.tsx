@@ -3,6 +3,7 @@
 import classNames from "classnames";
 import { isEmpty } from "es-toolkit/compat";
 import { useAtom } from "jotai";
+import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -56,6 +57,15 @@ export function CreateWorkloadVolume() {
   const handleDeleteVolume = (uid: string) => {
     setVolumes(volumes.filter((volume) => volume.uid !== uid));
   };
+
+  const handleMountPathChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMountPath(e.target.value);
+  };
+
+  const handleToggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+
   // 볼륨 선택 시 마운트경로 정보 가져오기
   useEffect(() => {
     if (volume) {
@@ -87,7 +97,7 @@ export function CreateWorkloadVolume() {
             <Input
               placeholder="Mount Path를 입력해 주세요."
               value={mountPath || ""}
-              onChange={(e) => setMountPath(e.target.value)}
+              onChange={handleMountPathChange}
             />
           </Pane>
         </Row>
@@ -115,7 +125,7 @@ export function CreateWorkloadVolume() {
           </Typography.Text>
           <IconWrapper
             className={classNames({ collapsed })}
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={handleToggleCollapsed}
           >
             <Icon name="Dropdown" size={16} color="#222223" />
           </IconWrapper>

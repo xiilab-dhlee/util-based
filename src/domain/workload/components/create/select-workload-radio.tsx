@@ -13,11 +13,15 @@ interface SelectWorkloadRadioProps {
 export function SelectWorkloadRadio({ workloadId }: SelectWorkloadRadioProps) {
   const [selectedWorkload, setSelectedWorkload] = useAtom(selectedWorkloadAtom);
 
+  const handleRadioChange = () => {
+    setSelectedWorkload(workloadId);
+  };
+
   return (
     <ColumnAlignCenterWrap>
       <Radio
         checked={selectedWorkload === workloadId}
-        onChange={() => setSelectedWorkload(workloadId)}
+        onChange={handleRadioChange}
       />
     </ColumnAlignCenterWrap>
   );

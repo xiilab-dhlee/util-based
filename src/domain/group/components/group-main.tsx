@@ -3,7 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
 import styled from "styled-components";
-import { Button } from "xiilab-ui";
+import { Button, Input } from "xiilab-ui";
 
 import { AccountButton } from "@/domain/group/components/account-button";
 import { DeleteGroupModal } from "@/domain/group/components/delete-group-modal";
@@ -19,7 +19,6 @@ import {
   groupTreeDataAtom,
 } from "@/domain/group/state/group.atom";
 import { OPEN_GROUP_MODAL_CREATE_PAYLOAD } from "@/domain/group/types/group.type";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { GroupTree } from "@/shared/components/tree/group-tree";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -55,7 +54,7 @@ export function GroupMain() {
 
   const handleSearch = (value: string) => {
     // TODO: 그룹 검색 기능 구현
-    alert(`searched: ${value}`);
+    alert(`searched: ${value.trim()}`);
   };
 
   const handleCreateGroup = () => {
@@ -123,10 +122,13 @@ export function GroupMain() {
               <ContentTitle>그룹 목록</ContentTitle>
             </ContentHeader>
             <SearchWrapper>
-              <SearchInput
-                width="100%"
+              <Input.Search
+                name="search"
                 placeholder="그룹 이름을 검색해 주세요."
                 onSearch={handleSearch}
+                autoComplete="off"
+                width="100%"
+                height={30}
               />
             </SearchWrapper>
 

@@ -2,12 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { Button, Icon, Modal } from "xiilab-ui";
+import { Button, Icon, Input, Modal } from "xiilab-ui";
 
 import { useGetAllGroups } from "@/domain/group/hooks/use-get-all-groups";
 import { FileTreeButton } from "@/shared/components/button/file-tree-button";
 import type { MemberRow } from "@/shared/components/column/create-member-column";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { GroupTree } from "@/shared/components/tree/group-tree";
 import type { GroupTreeButtonProps } from "@/shared/components/tree/group-tree-node";
 import {
@@ -185,9 +184,12 @@ export function MemberSelectionModal({
           <LeftColumn>
             <SectionHeader>그룹 목록</SectionHeader>
             <SearchRow>
-              <SearchInput
-                width="100%"
+              <Input.Search
+                name="search"
                 placeholder="계정 이름 또는 그룹 이름을 입력해 주세요."
+                autoComplete="off"
+                width="100%"
+                height={30}
               />
             </SearchRow>
             <TreeContainer>

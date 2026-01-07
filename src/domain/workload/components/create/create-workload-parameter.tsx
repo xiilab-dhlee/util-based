@@ -25,6 +25,36 @@ export function CreateWorkloadParameter() {
 
   const estimatedTime = "3시간 57분";
 
+  const handleTrainImageNumChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setTrainImageNum(e.target.value);
+  };
+
+  const handleValidationImageNumChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setValidationImageNum(e.target.value);
+  };
+
+  const handleImageSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageSize(e.target.value);
+  };
+
+  const handleBatchSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBatchSize(e.target.value);
+  };
+
+  const handleModelParameterChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setModelParameter(e.target.value);
+  };
+
+  const handleEpochChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEpoch(e.target.value);
+  };
+
   return (
     <>
       <ParameterGrid>
@@ -37,7 +67,7 @@ export function CreateWorkloadParameter() {
           </ParameterLabel>
           <ParameterInput
             value={trainImageNum || ""}
-            onChange={(e) => setTrainImageNum(e.target.value)}
+            onChange={handleTrainImageNumChange}
           />
         </ParameterItem>
 
@@ -50,7 +80,7 @@ export function CreateWorkloadParameter() {
           </ParameterLabel>
           <ParameterInput
             value={validationImageNum || ""}
-            onChange={(e) => setValidationImageNum(e.target.value)}
+            onChange={handleValidationImageNumChange}
           />
         </ParameterItem>
 
@@ -63,7 +93,7 @@ export function CreateWorkloadParameter() {
           </ParameterLabel>
           <ParameterInput
             value={imageSize || ""}
-            onChange={(e) => setImageSize(e.target.value)}
+            onChange={handleImageSizeChange}
           />
         </ParameterItem>
 
@@ -76,7 +106,7 @@ export function CreateWorkloadParameter() {
           </ParameterLabel>
           <ParameterInput
             value={batchSize || ""}
-            onChange={(e) => setBatchSize(e.target.value)}
+            onChange={handleBatchSizeChange}
           />
         </ParameterItem>
 
@@ -89,7 +119,7 @@ export function CreateWorkloadParameter() {
           </ParameterLabel>
           <ParameterInput
             value={modelParameter || ""}
-            onChange={(e) => setModelParameter(e.target.value)}
+            onChange={handleModelParameterChange}
           />
         </ParameterItem>
 
@@ -100,10 +130,7 @@ export function CreateWorkloadParameter() {
               epoch
             </Typography.Text>
           </ParameterLabel>
-          <ParameterInput
-            value={epoch || ""}
-            onChange={(e) => setEpoch(e.target.value)}
-          />
+          <ParameterInput value={epoch || ""} onChange={handleEpochChange} />
         </ParameterItem>
       </ParameterGrid>
 

@@ -6,20 +6,17 @@ import { Icon, Modal } from "xiilab-ui";
 
 import type { SecurityLevelSettingFormValue } from "@/domain/security/hooks/use-security-level-setting-form";
 import { useUpdateFileSecurityLevel } from "@/domain/security/hooks/use-update-file-security-level";
+import { openFileSecurityLevelSettingModalAtom } from "@/domain/security/state/file-security.atom";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   SecurityLevelSettingForm,
   type SecurityLevelSettingFormHandle,
 } from "./security-level-setting-form";
 
-interface FileSecurityLevelSettingModalProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-export function FileSecurityLevelSettingModal({
-  open,
-  onClose,
-}: FileSecurityLevelSettingModalProps) {
+export function FileSecurityLevelSettingModal() {
+  const { open, onClose } = useGlobalModal(
+    openFileSecurityLevelSettingModalAtom,
+  );
   const formRef = useRef<SecurityLevelSettingFormHandle | null>(null);
   const updateSecurityLevelMutation = useUpdateFileSecurityLevel();
 

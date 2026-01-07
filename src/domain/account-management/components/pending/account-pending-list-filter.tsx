@@ -2,7 +2,7 @@
 
 import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
-import { Button } from "xiilab-ui";
+import { Button, Input } from "xiilab-ui";
 
 import type { SignupRequestItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -10,7 +10,6 @@ import {
   accountPendingPageAtom,
   accountPendingSearchTextAtom,
 } from "@/domain/account-management/state/account.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -75,12 +74,19 @@ export function AccountPendingListFilter({
   const handleSearch = (value: string) => {
     resetCheckedList();
     resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   return (
     <MySearchFilter title="가입 승인 목록" total={totalSize}>
-      <SearchInput onSearch={handleSearch} />
+      <Input.Search
+        name="search"
+        placeholder="검색어를 입력하세요."
+        onSearch={handleSearch}
+        autoComplete="off"
+        width={220}
+        height={30}
+      />
       <Button
         color="primary"
         variant="gradient"
