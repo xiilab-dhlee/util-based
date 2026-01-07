@@ -47,7 +47,7 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
   const handleSearch = (value: string) => {
     resetPage();
     setSelectedVolume(null);
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   return (
@@ -56,7 +56,7 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
       <Input.Search
         name="search"
         placeholder="볼륨 또는 생성자 이름 검색"
-        onSearch={(value) => handleSearch(value.trim())}
+        onSearch={handleSearch}
         autoComplete="off"
         width={220}
         height={30}

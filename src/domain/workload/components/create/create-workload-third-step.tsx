@@ -16,6 +16,10 @@ export function CreateWorkloadThirdStep() {
   const imageType = useAtomValue(imageTypeAtom);
   const [outputPath, setOutputPath] = useAtom(workloadOutputPathAtom);
 
+  const handleOutputPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOutputPath(e.target.value);
+  };
+
   return (
     <Container>
       <Section>
@@ -45,7 +49,7 @@ export function CreateWorkloadThirdStep() {
         <Input
           placeholder="Output 경로를 입력해주세요."
           value={outputPath}
-          onChange={(e) => setOutputPath(e.target.value)}
+          onChange={handleOutputPathChange}
         />
       </Section>
     </Container>

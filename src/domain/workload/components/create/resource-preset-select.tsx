@@ -17,6 +17,10 @@ export function ResourcePresetSelect({
   preset,
   setPreset,
 }: ResourcePresetSelectProps) {
+  const handlePresetChange = (value: string | number) => {
+    setPreset(value as string);
+  };
+
   return (
     <CompoundDropdown
       theme="light"
@@ -24,7 +28,7 @@ export function ResourcePresetSelect({
       height={30}
       placeholder="리소스 프리셋을 선택하세요"
       value={preset ?? undefined}
-      onChange={(value) => setPreset(value as string)}
+      onChange={handlePresetChange}
     >
       {/* <CompoundDropdown.Option value="custom" display="사용자 설정 리소스 할당">
         <ResourcePresetOptionContainer>

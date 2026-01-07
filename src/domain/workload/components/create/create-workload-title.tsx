@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
+import type { ChangeEvent } from "react";
 import styled from "styled-components";
 import { Form, Input, TextArea } from "xiilab-ui";
 
@@ -15,6 +16,14 @@ export function CreateWorkloadTitle() {
   const [workloadName, setWorkloadName] = useAtom(workloadNameAtom);
   const [description, setDescription] = useAtom(workloadDescriptionAtom);
 
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setWorkloadName(e.target.value);
+  };
+
+  const handleDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+  };
+
   return (
     <Container>
       <Header>
@@ -26,7 +35,7 @@ export function CreateWorkloadTitle() {
           <Input
             data-testid={WORKLOAD_SELECTOR.CREATE_NAME}
             value={workloadName}
-            onChange={(e) => setWorkloadName(e.target.value)}
+            onChange={handleNameChange}
             placeholder="워크로드 이름을 30자 이내로 입력해 주세요. (특수문자는 ( -, _ , -, / ) 만 사용 가능)"
             width="100%"
           />
@@ -36,7 +45,7 @@ export function CreateWorkloadTitle() {
           <TextArea
             data-testid={WORKLOAD_SELECTOR.CREATE_DESCRIPTION}
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={handleDescriptionChange}
             placeholder="워크로드 설명을 입력해 주세요."
             width="100%"
             height="100px"

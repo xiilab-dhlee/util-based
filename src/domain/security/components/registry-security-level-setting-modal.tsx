@@ -6,20 +6,17 @@ import { Icon, Modal } from "xiilab-ui";
 
 import type { SecurityLevelSettingFormValue } from "@/domain/security/hooks/use-security-level-setting-form";
 import { useUpdateRegistrySecurityLevel } from "@/domain/security/hooks/use-update-registry-security-level";
+import { openRegistrySecurityLevelSettingModalAtom } from "@/domain/security/state/registry-security.atom";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import {
   SecurityLevelSettingForm,
   type SecurityLevelSettingFormHandle,
 } from "./security-level-setting-form";
 
-interface RegistrySecurityLevelSettingModalProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-export function RegistrySecurityLevelSettingModal({
-  open,
-  onClose,
-}: RegistrySecurityLevelSettingModalProps) {
+export function RegistrySecurityLevelSettingModal() {
+  const { open, onClose } = useGlobalModal(
+    openRegistrySecurityLevelSettingModalAtom,
+  );
   const formRef = useRef<SecurityLevelSettingFormHandle | null>(null);
   const updateSecurityLevelMutation = useUpdateRegistrySecurityLevel();
 

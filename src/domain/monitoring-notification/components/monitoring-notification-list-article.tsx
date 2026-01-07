@@ -21,6 +21,10 @@ export function MonitoringNotificationListArticle() {
     searchText: "",
   });
 
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
   return (
     <Container>
       <ArticleHeader>
@@ -71,7 +75,7 @@ export function MonitoringNotificationListArticle() {
           total={100}
           page={page}
           pageSize={MONITORING_NOTIFICATION_PAGE_SIZE}
-          onChange={(page: number) => setPage(page)}
+          onChange={handlePageChange}
         />
       </ArticleBody>
     </Container>

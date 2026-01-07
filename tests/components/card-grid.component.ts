@@ -265,6 +265,7 @@ export class CardGridComponent {
 
   /**
    * 모든 카드의 특정 요소 텍스트에 대해 콜백 실행
+   * 각 카드 범위 내에서만 요소를 검색하여 카드 외부 요소와의 충돌 방지
    *
    * @param elementTestId - 카드 내 요소의 data-testid
    * @param callback - 각 요소에서 실행할 콜백 (text, index)
@@ -279,15 +280,12 @@ export class CardGridComponent {
     elementTestId: string,
     callback: (text: string, index: number) => T,
   ): Promise<T[]> {
-    const cardCount = await this.getCardCount();
-    const results: T[] = [];
-
-    for (let i = 0; i < cardCount; i++) {
-      const text = await this.getCardElementText(i, elementTestId);
-      results.push(callback(text, i));
-    }
-
-    return results;
+    return await this.forEachCard(async (index) => {
+      const card = this.getCard(index);
+      const element = card.locator(testId(elementTestId));
+      const text = await this.getTextContent(element);
+      return callback(text, index);
+    });
   }
 
   // ============================================
@@ -368,7 +366,7 @@ export class CardGridComponent {
    */
   async assertCardSelected(index: number): Promise<void> {
     const card = this.getCard(index);
-    await expect(card).toHaveAttribute("aria-selected", "true");
+    await expect(card).toHaveAttribute("data-selected", "true");
   }
 
   /**

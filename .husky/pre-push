@@ -2,7 +2,6 @@
 
 # Husky pre-push hook: Run type-check and lint before push
 
-exit 0
 # Windows에서는 검사 건너뛰기 (CRLF/LF 이슈)
 case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*|Windows_NT)

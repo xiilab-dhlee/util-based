@@ -58,7 +58,7 @@ export function SetMultinodeResource({
               min={1}
               max={launcherCpuCoreMax}
               value={launcherCpuCore}
-              onChange={(value: number) => setLauncherCpuCore(value)}
+              onChange={setLauncherCpuCore}
               type="CPU"
               width="100%"
             />
@@ -76,7 +76,7 @@ export function SetMultinodeResource({
               min={1}
               max={launcherMemoryGbMax}
               value={launcherMemoryGb}
-              onChange={(value: number) => setLauncherMemoryGb(value)}
+              onChange={setLauncherMemoryGb}
               type="MEM"
               width="100%"
             />
@@ -123,7 +123,7 @@ export function SetMultinodeResource({
               min={1}
               max={workerGpuCountMax}
               value={workerGpuCount}
-              onChange={(value: number) => setWorkerGpuCount(value)}
+              onChange={setWorkerGpuCount}
               type="GPU"
               width="100%"
             />
@@ -141,7 +141,7 @@ export function SetMultinodeResource({
               min={1}
               max={workerCpuCoreMax}
               value={workerCpuCore}
-              onChange={(value: number) => setWorkerCpuCore(value)}
+              onChange={setWorkerCpuCore}
               type="CPU"
               width="100%"
             />
@@ -159,7 +159,7 @@ export function SetMultinodeResource({
               min={1}
               max={workerMemoryGbMax}
               value={workerMemoryGb}
-              onChange={(value: number) => setWorkerMemoryGb(value)}
+              onChange={setWorkerMemoryGb}
               type="MEM"
               width="100%"
             />

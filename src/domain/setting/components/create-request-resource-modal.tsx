@@ -20,6 +20,18 @@ export function CreateResourceSettingModal() {
     setReason(event.target.value);
   };
 
+  const handleGpuChange = (value: number) => {
+    setGpu(value);
+  };
+
+  const handleCpuChange = (value: number) => {
+    setCpu(value);
+  };
+
+  const handleMemoryChange = (value: number) => {
+    setMemory(value);
+  };
+
   const handleSubmit = () => {};
 
   return (
@@ -45,7 +57,7 @@ export function CreateResourceSettingModal() {
               min={0}
               max={200}
               value={gpu}
-              onChange={(value) => setGpu(value)}
+              onChange={handleGpuChange}
               type="GPU"
               width="100%"
             />
@@ -60,7 +72,7 @@ export function CreateResourceSettingModal() {
               min={0}
               max={200}
               value={cpu}
-              onChange={(value) => setCpu(value)}
+              onChange={handleCpuChange}
               type="CPU"
               width="100%"
             />
@@ -75,7 +87,7 @@ export function CreateResourceSettingModal() {
               min={0}
               max={200}
               value={memory}
-              onChange={(value) => setMemory(value)}
+              onChange={handleMemoryChange}
               type="MEM"
               width="100%"
             />

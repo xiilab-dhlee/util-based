@@ -69,6 +69,323 @@ export const WorkloadListMain = () => {
 - 불필요한 렌더링 방지 및 구조 파악 용이
 - React Portal 등을 사용할 때 예측 가능한 동작 보장
 
+### 모달 상태 관리 방식
+
+**협의일**: 2025-01-06
+
+**상황**: 모달 컴포넌트의 상태 관리 방식이 일관되지 않아 유지보수가 어려운 경우
+
+**협의 내용**: 모든 모달 컴포넌트는 `useGlobalModal` 훅과 Jotai atom을 사용하여 상태를 관리하며, props로 `open`, `onClose`를 받지 않는다.
+
+**규칙**:
+
+1. **모달 atom 위치**
+   - **전역 공통 모달**: `src/shared/state/modal.atom.ts`
+   - **도메인 전용 모달**: 해당 도메인의 state 파일 (예: `src/domain/security/state/security.atom.ts`)
+
+2. **모달 컴포넌트 구조**
+   - 모달 컴포넌트는 props를 받지 않고 내부에서 `useGlobalModal` 훅으로 `open`, `onClose` 관리
+   - 부모 컴포넌트는 `onOpen` 핸들러만 사용하여 모달 열기
+
+3. **네이밍 규칙**
+   - atom 이름: `open[모달이름]Atom` (예: `openCreateCredentialModalAtom`)
+   - 컴포넌트 이름: `[기능][대상]Modal` (예: `CreateCredentialModal`)
+
+**예시 코드**:
+
+```tsx
+// ✅ Good - 표준 모달 패턴
+
+// 1. atom 정의 (도메인 전용이면 domain/[domain]/state/에 위치)
+// src/shared/state/modal.atom.ts
+import { atom } from "jotai";
+
+export const openCreateCredentialModalAtom = atom<boolean>(false);
+
+// 2. 모달 컴포넌트 - props 없이 내부에서 useGlobalModal 사용
+// src/shared/components/modal/create-credential-modal.tsx
+"use client";
+
+import { useRef } from "react";
+import { Icon, Modal } from "xiilab-ui";
+
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+
+// ✅ props 없이 정의
+export function CreateCredentialModal() {
+  const formRef = useRef<HTMLFormElement>(null);
+  
+  // ✅ 컴포넌트 내부에서 useGlobalModal로 상태 관리
+  const { open, onClose } = useGlobalModal(openCreateCredentialModalAtom);
+
+  const handleSubmit = () => {
+    // 제출 로직
+    onClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      onOk={handleSubmit}
+      title="크레덴셜 추가"
+    >
+      <form ref={formRef}>
+        {/* 폼 내용 */}
+      </form>
+    </Modal>
+  );
+}
+
+// 3. 부모 컴포넌트 - onOpen만 사용
+// src/domain/credential/components/credential-list-main.tsx
+"use client";
+
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
+
+export function CredentialListMain() {
+  // ✅ 부모에서는 onOpen만 사용
+  const { onOpen } = useGlobalModal(openCreateCredentialModalAtom);
+
+  return (
+    <>
+      <div>
+        <Button onClick={onOpen}>크레덴셜 추가</Button>
+        {/* 리스트 UI */}
+      </div>
+      
+      {/* ✅ props 없이 모달 선언 */}
+      <CreateCredentialModal />
+    </>
+  );
+}
+```
+
+```tsx
+// ❌ Bad - props로 상태 전달 (안티패턴)
+
+// 잘못된 예시 1: props로 open, onClose 받음
+export function CreateCredentialModal({ open, onClose }: ModalProps) {
+  return (
+    <Modal open={open} onCancel={onClose}>
+      {/* ... */}
+    </Modal>
+  );
+}
+
+// 잘못된 예시 2: useState로 로컬 상태 관리
+export function CredentialListMain() {
+  const [open, setOpen] = useState(false);
+  
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>추가</Button>
+      <CreateCredentialModal open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+```
+
+**도메인별 atom 예시**:
+
+```tsx
+// src/domain/security/state/security.atom.ts
+import { atom } from "jotai";
+
+/** 보안 레벨 설정 모달 표시 여부 */
+export const openSecurityLevelSettingModalAtom = atom<boolean>(false);
+
+/** 보안 스케줄 설정 모달 표시 여부 */
+export const openSecurityScheduleSettingModalAtom = atom<boolean>(false);
+```
+
+**이유**:
+- **일관성**: 프로젝트 전체에서 동일한 모달 관리 패턴 사용
+- **간결성**: props drilling 없이 atom으로 상태 공유
+- **타입 안정성**: props 인터페이스 불필요, 컴파일 타임 오류 감소
+- **테스트 용이성**: atom만 mock하면 되어 테스트 작성 간편
+- **확장성**: PubSub 패턴과 결합하여 복잡한 모달 흐름 구현 가능
+
+**예외 사항**:
+- 컴포넌트 라이브러리(storybook 등)에서 재사용되는 순수 UI 컴포넌트는 props 사용 가능
+- 하지만 실제 프로덕션 코드에서는 항상 `useGlobalModal` 패턴 사용
+
+### 모달 데이터 전달 방식
+
+**협의일**: 2025-01-06
+
+**상황**: 모달 열림/닫힘 상태 외에 추가 데이터가 필요한 경우 (예: 삭제할 항목 ID, 수정할 데이터 등)
+
+**협의 내용**: 모달에 필요한 데이터는 props가 아닌 `useSubscribe` + PubSub 패턴을 사용하여 전달한다.
+
+**규칙**:
+
+1. **모달 상태 관리**: `useGlobalModal`로 열림/닫힘 상태만 관리
+2. **데이터 전달**: `useSubscribe`로 PubSub 이벤트를 구독하여 데이터 수신
+3. **데이터 저장**: 모달 내부에서 `useState`로 받은 데이터 저장
+4. **모달 열기**: 데이터 수신 시 `onOpen()` 호출
+
+**표준 패턴**:
+
+```tsx
+// ✅ Good - PubSub 패턴으로 데이터 전달
+
+// 1. PubSub 이벤트 정의
+// src/shared/constants/pubsub.constant.ts
+export const ACCOUNT_EVENTS = {
+  sendResetPassword: "account.sendResetPassword",
+  showResetPasswordResult: "account.showResetPasswordResult",
+} as const;
+
+// 2. 모달 atom 정의
+// src/domain/account-management/state/account.atom.ts
+import { atom } from "jotai";
+
+export const openResetPasswordConfirmModalAtom = atom<boolean>(false);
+
+// 3. 모달 컴포넌트 - useSubscribe로 데이터 수신
+// src/domain/account-management/components/list/confirm-reset-password-modal.tsx
+"use client";
+
+import { useState } from "react";
+import { Modal } from "xiilab-ui";
+
+import type { AccountItemResponse } from "@/api/generated/schemas";
+import { openResetPasswordConfirmModalAtom } from "@/domain/account-management/state/account.atom";
+import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+
+export function ConfirmResetPasswordModal() {
+  // ✅ 모달 상태 관리
+  const { open, onOpen, onClose } = useGlobalModal(
+    openResetPasswordConfirmModalAtom,
+  );
+  
+  // ✅ 필요한 데이터를 로컬 상태로 관리
+  const [account, setAccount] = useState<AccountItemResponse | null>(null);
+
+  const handleConfirm = () => {
+    if (!account) return;
+    // account 데이터를 사용한 비즈니스 로직
+    console.log("Reset password for:", account.accountId);
+    onClose();
+  };
+
+  // ✅ PubSub으로 데이터 수신 및 모달 열기
+  useSubscribe(
+    ACCOUNT_EVENTS.sendResetPassword,
+    (accountData: AccountItemResponse) => {
+      setAccount(accountData);  // 데이터 저장
+      onOpen();                  // 모달 열기
+    },
+  );
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      onOk={handleConfirm}
+      title="패스워드 초기화"
+    >
+      패스워드는 랜덤으로 생성됩니다. <br />
+      사용자 패스워드를 초기화 하겠습니까?
+    </Modal>
+  );
+}
+
+// 4. 부모 컴포넌트 - PubSub으로 데이터 전달
+// src/domain/account-management/components/list/account-list-main.tsx
+"use client";
+
+import { Button } from "xiilab-ui";
+
+import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { pubsubUtil } from "@/shared/utils/pubsub.util";
+import { ConfirmResetPasswordModal } from "./confirm-reset-password-modal";
+
+export function AccountListMain() {
+  const handleResetPassword = (account: AccountItemResponse) => {
+    // ✅ PubSub으로 데이터 전달 (모달이 자동으로 열림)
+    pubsubUtil.publish(ACCOUNT_EVENTS.sendResetPassword, account);
+  };
+
+  return (
+    <>
+      <div>
+        <Button onClick={() => handleResetPassword(accountData)}>
+          패스워드 초기화
+        </Button>
+        {/* 리스트 UI */}
+      </div>
+      
+      {/* ✅ props 없이 모달 선언 */}
+      <ConfirmResetPasswordModal />
+    </>
+  );
+}
+```
+
+```tsx
+// ❌ Bad - props로 데이터 전달 (안티패턴)
+
+// 잘못된 예시: props로 데이터 전달
+interface ConfirmResetPasswordModalProps {
+  open: boolean;
+  onClose: () => void;
+  account: AccountItemResponse;  // ❌ props로 데이터 받음
+}
+
+export function ConfirmResetPasswordModal({ 
+  open, 
+  onClose, 
+  account 
+}: ConfirmResetPasswordModalProps) {
+  return (
+    <Modal open={open} onCancel={onClose}>
+      {/* ... */}
+    </Modal>
+  );
+}
+
+// 부모에서 상태 관리
+export function AccountListMain() {
+  const [open, setOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  
+  const handleResetPassword = (account) => {
+    setSelectedAccount(account);  // ❌
+    setOpen(true);                // ❌
+  };
+  
+  return (
+    <>
+      <Button onClick={() => handleResetPassword(account)}>초기화</Button>
+      <ConfirmResetPasswordModal 
+        open={open} 
+        onClose={() => setOpen(false)}
+        account={selectedAccount}  // ❌ props로 전달
+      />
+    </>
+  );
+}
+```
+
+**모범 사례**:
+- `ConfirmResetPasswordModal` - PubSub으로 계정 데이터 수신 후 패스워드 초기화
+- `DeleteWorkloadModal` - PubSub으로 워크로드 ID 수신 후 삭제
+- `ViewVulnerabilityModal` - PubSub으로 취약점 목록 수신 후 표시
+
+**이유**:
+- **단일 책임**: 모달은 자신의 상태와 데이터 관리에만 집중
+- **결합도 감소**: 부모 컴포넌트와 모달 간 직접적인 의존성 제거
+- **재사용성**: 어디서든 PubSub 이벤트만 발행하면 모달 사용 가능
+- **테스트 용이성**: PubSub 이벤트만 mock하면 모달 테스트 가능
+- **일관성**: 모든 모달이 동일한 패턴으로 데이터 수신
+
 ---
 
 ## Import 경로 규칙
@@ -385,6 +702,128 @@ export function WorkloadListFooter({ total, loading }: WorkloadListFooterProps) 
 - [workload-list-filter.tsx](../src/domain/workload/components/list/workload-list-filter.tsx)
 - [workload-list-body.tsx](../src/domain/workload/components/list/workload-list-body.tsx)
 - [workload-list-footer.tsx](../src/domain/workload/components/list/workload-list-footer.tsx)
+
+---
+
+## JSX 코딩 규칙
+
+### 인라인 함수 사용 금지
+
+**협의일**: 2025-01-06
+
+**상황**: JSX 내에서 인라인 함수(화살표 함수, 익명 함수)를 직접 정의하여 이벤트 핸들러나 콜백으로 전달하는 경우
+
+**협의 내용**: JSX 내에서 인라인 함수를 직접 정의하여 사용하는 것을 금지한다. 모든 함수는 컴포넌트 본문에서 미리 정의하거나 `useCallback`으로 메모이제이션하여 사용한다.
+
+**규칙**:
+1. **이벤트 핸들러**: 컴포넌트 본문에서 함수를 정의한 후 참조로 전달
+2. **콜백 함수**: 필요시 `useCallback`으로 메모이제이션
+3. **단순 값 전달**: 인라인 함수 대신 별도 핸들러 함수 정의
+
+**예시 코드**:
+
+```tsx
+// ❌ Bad - JSX 내 인라인 함수 사용
+export function MyComponent() {
+  const [count, setCount] = useState(0);
+  const [items, setItems] = useState<string[]>([]);
+
+  return (
+    <div>
+      {/* ❌ 인라인 화살표 함수 */}
+      <button onClick={() => setCount(count + 1)}>증가</button>
+
+      {/* ❌ 인라인 함수로 값 전달 */}
+      <button onClick={() => handleDelete(item.id)}>삭제</button>
+
+      {/* ❌ 인라인 함수로 조건부 로직 */}
+      <input onChange={(e) => {
+        if (e.target.value.length > 10) {
+          setError("너무 깁니다");
+        }
+        setValue(e.target.value);
+      }} />
+
+      {/* ❌ map 내부 인라인 함수 */}
+      {items.map((item) => (
+        <Item key={item} onRemove={() => removeItem(item)} />
+      ))}
+    </div>
+  );
+}
+
+// ✅ Good - 함수를 미리 정의하여 참조로 전달
+export function MyComponent() {
+  const [count, setCount] = useState(0);
+  const [items, setItems] = useState<string[]>([]);
+
+  // 이벤트 핸들러 정의
+  const handleIncrement = () => {
+    setCount(count + 1);
+  };
+
+  // ID를 받는 핸들러는 useCallback 사용
+  const handleDelete = useCallback((id: string) => {
+    // 삭제 로직
+  }, []);
+
+  // 복잡한 로직은 별도 함수로 분리
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > 10) {
+      setError("너무 깁니다");
+    }
+    setValue(e.target.value);
+  };
+
+  // map 내부에서 사용할 핸들러
+  const handleRemoveItem = useCallback((item: string) => {
+    setItems((prev) => prev.filter((i) => i !== item));
+  }, []);
+
+  return (
+    <div>
+      <button onClick={handleIncrement}>증가</button>
+      <button onClick={handleDelete}>삭제</button>
+      <input onChange={handleInputChange} />
+      {items.map((item) => (
+        <ItemWithHandler
+          key={item}
+          item={item}
+          onRemove={handleRemoveItem}
+        />
+      ))}
+    </div>
+  );
+}
+
+// 자식 컴포넌트에서 핸들러 호출
+function ItemWithHandler({
+  item,
+  onRemove
+}: {
+  item: string;
+  onRemove: (item: string) => void;
+}) {
+  const handleClick = () => {
+    onRemove(item);
+  };
+
+  return <button onClick={handleClick}>Remove {item}</button>;
+}
+```
+
+**예외 사항**:
+- 테스트 코드에서는 간결성을 위해 인라인 함수 사용 허용
+- 일회성 프로토타입 코드에서는 허용 (단, 프로덕션 전 리팩토링 필요)
+
+**이유**:
+- **성능 최적화**: 매 렌더링마다 새로운 함수가 생성되어 불필요한 리렌더링 유발 방지
+- **코드 가독성**: 핸들러 로직이 JSX와 분리되어 컴포넌트 구조 파악 용이
+- **테스트 용이성**: 명명된 함수는 단위 테스트 작성이 쉬움
+- **디버깅 편의**: 스택 트레이스에서 함수명이 표시되어 디버깅 용이
+- **메모이제이션 활용**: `React.memo`, `useCallback`과 함께 사용하여 최적화 가능
+
+**참고**: `useCallback`의 과도한 사용은 오히려 성능에 악영향을 줄 수 있으므로, 실제로 메모이제이션이 필요한 경우(자식 컴포넌트에 props로 전달, 의존성 배열에 포함 등)에만 사용한다.
 
 ---
 

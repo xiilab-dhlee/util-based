@@ -27,13 +27,19 @@ export function HubListFilter({ total, loading }: HubListFilterProps) {
     setSearchText(value.trim());
   };
 
+  const handleSearchKeywordChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setSearchKeyword(e.target.value);
+  };
+
   return (
     <MySearchFilter title="허브 목록" total={total}>
       <Input.Search
         name="search"
         placeholder="허브 이름을 검색해 주세요."
         onSearch={handleSearch}
-        onChange={(e) => setSearchKeyword(e.target.value)}
+        onChange={handleSearchKeywordChange}
         autoComplete="off"
         width={220}
         height={30}

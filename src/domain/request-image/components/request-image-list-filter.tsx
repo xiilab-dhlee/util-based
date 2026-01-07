@@ -38,7 +38,7 @@ export function RequestImageListFilter() {
    */
   const handleSearch = (value: string) => {
     resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   return (
@@ -47,7 +47,7 @@ export function RequestImageListFilter() {
       <Input.Search
         name="search"
         placeholder="검색어를 입력하세요."
-        onSearch={(value) => handleSearch(value.trim())}
+        onSearch={handleSearch}
         autoComplete="off"
         width={220}
         height={30}

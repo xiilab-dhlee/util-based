@@ -66,6 +66,16 @@ export function UpdateWorkspaceModal() {
     },
   );
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setDescription(e.target.value);
+  };
+
   return (
     <Modal
       type="primary"
@@ -95,7 +105,7 @@ export function UpdateWorkspaceModal() {
             id="updateWorkspaceName"
             placeholder="워크스페이스 이름을 입력해 주세요."
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             width="100%"
           />
         </FormItem>
@@ -109,7 +119,7 @@ export function UpdateWorkspaceModal() {
             id="updateWorkspaceDescription"
             placeholder="Infra Core 모델에서 활용할 WorkSpace입니다. yolov5, yolov8 Detect model을 활용한 연구를 진행합니다. AI Model 학습을 위한 워크스페이스입니다."
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={handleDescriptionChange}
             rows={4}
           />
         </FormItem>

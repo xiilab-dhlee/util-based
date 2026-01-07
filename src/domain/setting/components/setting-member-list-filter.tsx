@@ -33,13 +33,17 @@ export function SettingMemberListFilter() {
     });
   };
 
+  const handleSearch = (value: string) => {
+    setSearchText(value.trim());
+  };
+
   return (
     <>
       <MySearchFilter title="구성원 관리" total={data?.totalSize}>
         <Input.Search
           name="search"
           placeholder="검색어를 입력하세요."
-          onSearch={(value) => setSearchText(value.trim())}
+          onSearch={handleSearch}
           autoComplete="off"
           width={220}
           height={30}
