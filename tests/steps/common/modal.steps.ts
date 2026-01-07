@@ -10,8 +10,8 @@ import { test } from "../../fixtures";
 
 const { When, Then } = createBdd(test);
 
-Then("{string} 모달이 표시된다", async ({ modal }) => {
-  await modal.waitForVisible();
+Then("{string} 모달이 표시된다", async ({ modal }, title: string) => {
+  await modal.waitForVisibleWithTitle(title);
 });
 
 Then("{string} 모달이 닫힌다", async ({ modal }) => {

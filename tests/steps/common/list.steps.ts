@@ -39,6 +39,25 @@ Then("목록 페이지의 테이블이 표시된다", async ({ listTable }) => {
   await listTable.assertTableVisible(SELECTOR.LIST_TABLE);
 });
 
+/**
+ * 목록 페이지의 테이블에 최소 n개의 데이터가 있는지 검증
+ * - 행 개수가 minCount 미만이면 테스트 스킵
+ *
+ * listTable fixture (DataTableComponent) 사용
+ */
+Given(
+  "목록 페이지의 테이블 내 {int}개 이상의 데이터가 있다",
+  async ({ listTable, $testInfo }, minCount: number) => {
+    const count = await listTable.getRowCount();
+    if (count < minCount) {
+      $testInfo.skip(
+        true,
+        `테이블 행이 ${minCount}개 미만이어서 시나리오를 스킵합니다`,
+      );
+    }
+  },
+);
+
 // ============================================
 // 카드 그리드 표시 검증
 // ============================================
