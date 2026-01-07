@@ -1,33 +1,69 @@
 "use client";
 
-import { HubCard } from "@/domain/hub/components/list/hub-card";
-import type { HubListType } from "@/domain/hub/schemas/hub.schema";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { Card } from "xiilab-ui";
+
+import type { FindHubsResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { HubCard } from "@/domain/hub/components/hub-card";
+import {
+  HUB_CARD_HEIGHT,
+  HUB_PAGE_SIZE,
+} from "@/domain/hub/constants/hub.constant";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface HubListBodyProps {
-  content: HubListType[];
+  content: FindHubsResponse[];
   loading: boolean;
+  isError?: boolean;
 }
 
-/**
- * HubListBody 컴포넌트
- *
- * 허브 목록 페이지의 본문 컴포넌트입니다.
- * 허브 데이터를 그리드 형태로 표시합니다.
- */
-export function HubListBody({ content, loading }: HubListBodyProps) {
+export function HubListBody({
+  content,
+  loading,
+  isError = false,
+}: HubListBodyProps) {
+  // 1. 로딩 상태 - 스켈레톤 카드 표시
+  if (loading) {
+    return (
+      <ListWrapper>
+        <GridList>
+          {Array.from({ length: HUB_PAGE_SIZE }).map((_, index) => (
+            <Card
+              key={`skeleton-${index}`}
+              loading
+              style={{ height: HUB_CARD_HEIGHT }}
+            />
+          ))}
+        </GridList>
+      </ListWrapper>
+    );
+  }
+
+  // 2. 에러 상태
+  if (isError) {
+    return (
+      <ListWrapper>
+        <DataErrorState />
+      </ListWrapper>
+    );
+  }
+
+  // 3. 빈 목록 상태
+  if (content.length === 0) {
+    return (
+      <ListWrapper>
+        <EmptyState />
+      </ListWrapper>
+    );
+  }
+
   return (
     <ListWrapper>
-      <GridList>
-        {content.length === 0 && !loading && (
-          <ListEmpty
-            title="허브가 없습니다."
-            message="허브을 생성하여 사용해보세요."
-          />
-        )}
-        {content.map((hub: HubListType) => (
-          <HubCard key={hub.id} {...hub} />
+      <GridList data-testid={SELECTOR.LIST_CARD_GRID}>
+        {content.map((hub) => (
+          <HubCard key={hub.hubId} {...hub} />
         ))}
       </GridList>
     </ListWrapper>

@@ -9,6 +9,7 @@ import { test } from "../../fixtures";
  *
  * 모든 도메인의 목록 페이지에서 재사용 가능한 Step 정의
  * - 테이블 표시 검증
+ * - 카드 그리드 표시 검증
  * - 총 개수 표시 검증
  * - 페이지네이션 검증
  * - 검색 입력 검증
@@ -16,11 +17,12 @@ import { test } from "../../fixtures";
  *
  * 험블 객체 사용:
  * - listTable: DataTableComponent fixture (테이블 관련 검증)
+ * - listGrid: CardGridComponent fixture (카드 그리드 관련 검증)
  * - myItemsSwitch: SwitchComponent fixture (스위치 관련 검증)
  * - listSearchInput: SearchInputComponent fixture (검색 관련)
  * - listPagination: PaginationComponent fixture (페이지네이션 관련)
  */
-const { When, Then } = createBdd(test);
+const { Given, When, Then } = createBdd(test);
 
 // ============================================
 // 테이블 표시 검증
@@ -36,6 +38,39 @@ const { When, Then } = createBdd(test);
 Then("목록 페이지의 테이블이 표시된다", async ({ listTable }) => {
   await listTable.assertTableVisible(SELECTOR.LIST_TABLE);
 });
+
+// ============================================
+// 카드 그리드 표시 검증
+// ============================================
+
+/**
+ * 목록 페이지의 카드 그리드가 표시되는지 검증
+ * - 그리드 컨테이너가 visible인지 확인
+ *
+ * listGrid fixture (CardGridComponent) 사용
+ */
+Then("목록 페이지의 그리드가 표시된다", async ({ listGrid }) => {
+  await listGrid.assertGridVisible();
+});
+
+/**
+ * 목록 페이지의 그리드에 최소 n개의 데이터가 있는지 검증
+ * - 카드 개수가 minCount 미만이면 테스트 스킵
+ *
+ * listGrid fixture (CardGridComponent) 사용
+ */
+Given(
+  "목록 페이지의 그리드 내 {int}개 이상의 데이터가 있다",
+  async ({ listGrid, $testInfo }, minCount: number) => {
+    const count = await listGrid.getCardCount();
+    if (count < minCount) {
+      $testInfo.skip(
+        true,
+        `카드가 ${minCount}개 미만이어서 시나리오를 스킵합니다`,
+      );
+    }
+  },
+);
 
 // ============================================
 // 총 개수 표시

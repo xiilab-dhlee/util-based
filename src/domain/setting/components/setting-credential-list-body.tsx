@@ -2,26 +2,46 @@
 
 import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
 import { useGetSettingCredentials } from "@/domain/setting/hooks/use-get-setting-credentials";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { MySpinner } from "@/shared/components/spinner";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { SettingCredentialCard } from "./setting-credential-card";
 
 export function SettingCredentialListBody() {
-  const { data } = useGetSettingCredentials({
+  const { data, isLoading, isError } = useGetSettingCredentials({
     page: 1,
     size: SETTING_LIST_PAGE_SIZE,
     searchText: "",
   });
 
+  if (isLoading) {
+    return (
+      <ListWrapper>
+        <MySpinner />
+      </ListWrapper>
+    );
+  }
+
+  if (isError) {
+    return (
+      <ListWrapper>
+        <DataErrorState />
+      </ListWrapper>
+    );
+  }
+
+  if (data?.content.length === 0) {
+    return (
+      <ListWrapper>
+        <EmptyState />
+      </ListWrapper>
+    );
+  }
+
   return (
     <ListWrapper>
       <GridList>
-        {data?.content.length === 0 && (
-          <ListEmpty
-            title="허브가 없습니다."
-            message="허브을 생성하여 사용해보세요."
-          />
-        )}
         {data?.content.map((credential) => (
           <SettingCredentialCard key={credential.id} {...credential} />
         ))}

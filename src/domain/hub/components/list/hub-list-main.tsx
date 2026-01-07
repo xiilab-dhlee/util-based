@@ -1,67 +1,32 @@
 "use client";
 
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
-import { AsideHub } from "@/domain/hub/components/detail/aside-hub";
-import { HubListBody } from "@/domain/hub/components/list/hub-list-body";
-import { HubListFilter } from "@/domain/hub/components/list/hub-list-filter";
-import { HubListFooter } from "@/domain/hub/components/list/hub-list-footer";
-import { useGetHubs } from "@/domain/hub/hooks/use-get-hubs";
 import {
   hubPageAtom,
+  hubSearchKeywordAtom,
   hubSearchTextAtom,
-  hubSelectedAtom,
 } from "@/domain/hub/state/hub.atom";
-import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
-import { PageHeader } from "@/shared/components/layouts/page-header";
-import { ASIDE_WIDTH, CARD_PAGE_SIZE } from "@/shared/constants/core.constant";
-import {
-  ListPageAside,
-  ListPageBody,
-  ListPageMain,
-} from "@/styles/layers/list-page-layers.styled";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 
 export function HubListMain() {
-  // 1. 전역 상태에서 필터 값 읽기
-  const page = useAtomValue(hubPageAtom);
-  const searchText = useAtomValue(hubSearchTextAtom);
-  const setSelectedHub = useSetAtom(hubSelectedAtom);
+  const resetPage = useResetAtom(hubPageAtom);
+  const setSearchText = useSetAtom(hubSearchTextAtom);
+  const setSearchKeyword = useSetAtom(hubSearchKeywordAtom);
 
-  // 2. Main에서 API 호출
-  const { data, isLoading } = useGetHubs({
-    page,
-    size: CARD_PAGE_SIZE,
-    searchText,
-  });
-
-  // 데이터 변경 시 첫 번째 허브 자동 선택
+  // 페이지 최초 진입 시 페이지 번호와 검색어 초기화
   useEffect(() => {
-    const firstHub = data?.content[0];
-    if (firstHub) {
-      setSelectedHub(firstHub.id);
-    }
-  }, [data, setSelectedHub]);
+    resetPage();
+    setSearchText("");
+    setSearchKeyword("");
+  }, [resetPage, setSearchText, setSearchKeyword]);
 
-  // 3. 하위 컴포넌트에 props 전달
   return (
-    <>
-      <PageHeader pageKey="user.hub" description="Hub" />
-      <ListPageMain>
-        <ListPageBody>
-          {/* 허브 목록 필터 */}
-          <HubListFilter total={data?.totalSize || 0} loading={isLoading} />
-          {/* 허브 목록 본문 */}
-          <HubListBody content={data?.content || []} loading={isLoading} />
-          {/* 허브 목록 페이지네이션 */}
-          <HubListFooter total={data?.totalSize || 0} loading={isLoading} />
-        </ListPageBody>
-        <ListPageAside $width={ASIDE_WIDTH}>
-          <AsideHub />
-        </ListPageAside>
-      </ListPageMain>
-      {/* 워크로드 생성 드로어 */}
-      <CreateWorkloadDrawer />
-    </>
+    <AsideDetailContainer>
+      <EmptyState title="허브를 선택해 주세요." />
+    </AsideDetailContainer>
   );
 }

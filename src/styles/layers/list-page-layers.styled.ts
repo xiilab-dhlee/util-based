@@ -54,6 +54,9 @@ export const ListWrapper = styled.div`
   flex: 1;
   overflow: hidden;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 /**
  * 목록 그리드 컨테이너

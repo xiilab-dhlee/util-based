@@ -17,6 +17,10 @@ export const SELECTOR = {
   // 목록 페이지 공통 (고정 상수)
   /** 목록 테이블 래퍼 */
   LIST_TABLE: "list-table",
+  /** 카드 그리드 목록 (허브 등 카드형 목록) */
+  LIST_CARD_GRID: "list-card-grid",
+  /** 목록 카드 (카드형 목록의 개별 카드) */
+  LIST_CARD: "list-card",
   /** 총 개수 표시 */
   LIST_TOTAL_COUNT: "list-total-count",
   /** 페이지네이션 */
@@ -328,6 +332,36 @@ export const AUTH_SELECTOR = {
   SIGNUP_SUCCESS_CONTAINER: "signup-success-container",
   /** 로그인 페이지로 이동 버튼 (회원가입 성공 후) */
   SIGNUP_GO_TO_LOGIN_BUTTON: "signup-go-to-login-button",
+} as const;
+
+// ============================================
+// 허브 (Hub)
+// ============================================
+
+export const HUB_SELECTOR = {
+  // 페이지 헤더
+  /** 허브 목록 페이지 헤더 */
+  PAGE_HEADER: "user.hub",
+
+  // 목록 카드
+  /** 허브 카드 */
+  CARD: "hub-card",
+  /** 허브 이름 */
+  NAME: "hub-name",
+  /** 허브 모델 타입 */
+  MODEL_TYPE: "hub-model-type",
+  /** 허브 설명 */
+  DESCRIPTION: "hub-description",
+  /** 허브 썸네일 이미지 */
+  THUMBNAIL: "hub-thumbnail",
+
+  // 상세 페이지
+  /** 허브 상세 헤더 이름 */
+  DETAIL_NAME: "hub-detail-name",
+  /** 허브 README 콘텐츠 */
+  DETAIL_README: "hub-detail-readme",
+  /** 워크로드 생성 버튼 */
+  CREATE_WORKLOAD_BUTTON: "hub-create-workload-button",
 } as const;
 
 // ============================================

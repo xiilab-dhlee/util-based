@@ -140,8 +140,12 @@ export const ROUTES = {
   // 볼륨 (정적)
   USER_VOLUME: `${MODE.USER}/volume`,
 
-  // 허브 (정적)
+  // 허브 (동적 함수)
   USER_HUB: `${MODE.USER}/hub`,
+  USER_HUB_DETAIL: (id: number | string, name?: string) =>
+    name
+      ? `${MODE.USER}/hub/${id}?name=${encodeURIComponent(name)}`
+      : `${MODE.USER}/hub/${id}`,
 
   // 설정 (정적)
   USER_SETTING: `${MODE.USER}/setting`,

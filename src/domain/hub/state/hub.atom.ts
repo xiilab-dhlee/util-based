@@ -5,5 +5,5 @@ import { atomWithReset } from "jotai/utils";
 export const hubPageAtom = atomWithReset<number>(1);
 /** 허브 검색어 */
 export const hubSearchTextAtom = atom<string>("");
-/** 선택된 허브 ID */
-export const hubSelectedAtom = atom<number>(-1);
+/** 허브 검색 키워드 */
+export const hubSearchKeywordAtom = atom<string>("");
