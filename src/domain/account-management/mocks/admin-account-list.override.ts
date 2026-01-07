@@ -10,8 +10,9 @@ import type {
 
 /**
  * 정렬 가능한 accountName 생성
- * ASC: A-user-1, A-user-2, ... Z-user-26
- * DESC: Z-user-1, Z-user-2, ... A-user-26
+ * 정렬 시 순서가 올바르게 유지되도록 숫자 패딩 사용
+ * ASC: aaa-user-001, aab-user-002, ... (사전순 오름차순)
+ * DESC: zzz-user-001, zzy-user-002, ... (사전순 내림차순)
  */
 function generateAccountName(
   index: number,
@@ -24,10 +25,12 @@ function generateAccountName(
   }
 
   if (sort === "ACCOUNT_NAME") {
-    // 알파벳 문자로 정렬 가능한 이름 생성
-    const charCode = order === "ASC" ? 65 + (index % 26) : 90 - (index % 26); // A-Z or Z-A
-    const prefix = String.fromCharCode(charCode);
-    return `${prefix}-user-${index + 1}`;
+    // 3자리 숫자로 패딩하여 정렬 순서 보장
+    const paddedIndex = String(index + 1).padStart(3, "0");
+    // ASC: 001, 002, 003... / DESC: 999, 998, 997...
+    const sortableNum =
+      order === "ASC" ? paddedIndex : String(999 - index).padStart(3, "0");
+    return `user-${sortableNum}`;
   }
 
   return `user-${index + 1}`;
