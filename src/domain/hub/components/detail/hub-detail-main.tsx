@@ -34,15 +34,15 @@ export function HubDetailMain() {
   // 유효하지 않은 Hub ID 체크
   if (!params.id || Number.isNaN(hubId)) {
     return (
-      <Container>
+      <AsideDetailContainer>
         <EmptyState title="유효하지 않은 Hub ID입니다." />
-      </Container>
+      </AsideDetailContainer>
     );
   }
 
   return (
-    <Container>
-      <Header>
+    <AsideDetailContainer>
+      <StyledAsideDetailHeader>
         <AsideDetailHeaderTitle>
           <span data-testid={HUB_SELECTOR.DETAIL_NAME}>{hubName}</span>
         </AsideDetailHeaderTitle>
@@ -59,17 +59,14 @@ export function HubDetailMain() {
         >
           워크로드 생성
         </Button>
-      </Header>
+      </StyledAsideDetailHeader>
       {/* 허브 README 콘텐츠 영역: 스크롤 가능한 마크다운 렌더링 */}
       <ViewHubReadme hubId={hubId} />
-    </Container>
+    </AsideDetailContainer>
   );
 }
 
-const Container = styled(AsideDetailContainer)`
-`;
-
-const Header = styled(AsideDetailHeader)`
+const StyledAsideDetailHeader = styled(AsideDetailHeader)`
   height: 30px;
   margin-bottom: 14px;
 `;
