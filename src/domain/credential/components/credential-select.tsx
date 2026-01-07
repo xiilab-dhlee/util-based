@@ -15,7 +15,9 @@ export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
   const { data } = useGetCredentialOptions();
 
   const handleCredentialChange = (value: string | number) => {
-    setValue(value as CredentialIdType);
+    if (typeof value === "number") {
+      setValue(value);
+    }
   };
 
   return (
