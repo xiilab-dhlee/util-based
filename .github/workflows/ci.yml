@@ -67,6 +67,25 @@ jobs:
       packages: write
 
     steps:
+      - name: Check GH_TOKEN secret
+        run: |
+          if [ -z "${{ secrets.GH_TOKEN }}" ]; then
+            echo "❌ ERROR: GH_TOKEN secret is not set!"
+            echo ""
+            echo "The Docker build requires a GH_TOKEN repository secret to install private dependencies."
+            echo ""
+            echo "To fix this:"
+            echo "1. Go to: https://github.com/${{ github.repository }}/settings/secrets/actions"
+            echo "2. Create a new repository secret named 'GH_TOKEN'"
+            echo "3. Set the value to a GitHub Personal Access Token with the following scopes:"
+            echo "   - repo (for private repository access)"
+            echo "   - read:packages (for private package access)"
+            echo ""
+            echo "For more information, see the README.md 'CI/CD 설정' section."
+            exit 1
+          fi
+          echo "✅ GH_TOKEN secret is configured"
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
