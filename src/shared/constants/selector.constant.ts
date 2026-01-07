@@ -14,8 +14,17 @@
 // ============================================
 
 export const SELECTOR = {
+  // Ant Design 테이블 공통
+  ANT_SPINNER: ".ant-spin",
+  ANT_EMPTY_PLACEHOLDER: ".ant-table-placeholder",
+  ANT_COLUMN_HEADER: "thead th",
+
+  // 커스텀 정렬 아이콘 (xiilab-ui)
+  SORT_ARROW_UP: ".sort-arrow-up",
+  SORT_ARROW_DOWN: ".sort-arrow-down",
+  SORT_ACTIVE: ".active",
+
   // 목록 페이지 공통 (고정 상수)
-  /** 목록 테이블 래퍼 */
   LIST_TABLE: "list-table",
   /** 카드 그리드 목록 (허브 등 카드형 목록) */
   LIST_CARD_GRID: "list-card-grid",
@@ -41,6 +50,8 @@ export const SELECTOR = {
   // 모달 (Ant Design Modal 기반)
   /** 모달 컨테이너 (visible) */
   MODAL: ".ant-modal:visible",
+  /** 모달 제목 */
+  MODAL_TITLE: ".ant-modal:visible .ant-modal-title",
   /** 모달 확인 버튼 (footer의 마지막 버튼) */
   MODAL_OK_BUTTON: ".ant-modal:visible .ant-modal-footer button:last-child",
   /** 모달 취소 버튼 (footer의 첫 번째 버튼) */
@@ -394,6 +405,48 @@ export const ACCOUNT_SELECTOR = {
   RESET_PASSWORD_BUTTON: "account-reset-password-button",
   /** 삭제 버튼 */
   DELETE_BUTTON: "account-delete-button",
+
+  // 상세 모달
+  /** 상세 - 이름 */
+  DETAIL_NAME: "account-detail-name",
+  /** 상세 - 아이디 */
+  DETAIL_EMAIL: "account-detail-email",
+  /** 상세 - 그룹 */
+  DETAIL_GROUP: "account-detail-group",
+  /** 상세 - 상태 */
+  DETAIL_STATUS: "account-detail-status",
+  /** 상세 - 권한 */
+  DETAIL_ROLE: "account-detail-role",
+  /** 상세 - 가입일 */
+  DETAIL_CREATED_AT: "account-detail-created-at",
+  /** 상세 - 워크스페이스 보유 개수 */
+  DETAIL_WORKSPACE_COUNT: "account-detail-workspace-count",
+  /** 상세 - 워크스페이스 생성 제한 개수 */
+  DETAIL_WORKSPACE_LIMIT: "account-detail-workspace-limit",
+
+  // 수정 모달 - 조회 정보
+  /** 수정 - 이름 */
+  UPDATE_NAME: "account-update-name",
+  /** 수정 - 아이디 */
+  UPDATE_EMAIL: "account-update-email",
+  /** 수정 - 그룹 */
+  UPDATE_GROUP: "account-update-group",
+  /** 수정 - 가입일 */
+  UPDATE_CREATED_AT: "account-update-created-at",
+  /** 수정 - 워크스페이스 보유 개수 */
+  UPDATE_WORKSPACE_COUNT: "account-update-workspace-count",
+
+  // 수정 모달 - 폼 필드
+  /** 수정 - 권한 필드 */
+  UPDATE_ROLE_FIELD: "account-update-role-field",
+  /** 수정 - 상태 필드 */
+  UPDATE_STATUS_FIELD: "account-update-status-field",
+  /** 수정 - 워크스페이스 생성 제한 개수 필드 */
+  UPDATE_WORKSPACE_LIMIT_FIELD: "account-update-workspace-limit-field",
+
+  // 패스워드 초기화 결과 모달
+  /** 패스워드 초기화 결과 - 새 패스워드 */
+  RESET_PASSWORD_RESULT: "account-reset-password-result",
 } as const;
 
 // ============================================
