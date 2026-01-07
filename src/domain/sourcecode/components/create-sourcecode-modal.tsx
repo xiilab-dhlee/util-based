@@ -82,10 +82,10 @@ export function CreateSourcecodeModal() {
   const [credentialEnabled, setCredentialEnabled] = useState(false);
 
   const handleCredentialToggle = () => {
-    setCredentialEnabled(!credentialEnabled);
+    setCredentialEnabled((prev) => !prev);
   };
 
-  const handleValidateUrl = () => {
+  const handleValidateUrl = (_: React.MouseEvent<HTMLButtonElement>) => {
     alert("준비 중입니다.");
   };
 

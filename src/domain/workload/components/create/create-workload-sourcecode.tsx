@@ -88,7 +88,7 @@ export function CreateWorkloadSourcecode() {
   };
 
   const handleToggleCollapsed = () => {
-    setCollapsed(!collapsed);
+    setCollapsed((prev) => !prev);
   };
 
   // 소스코드 선택 시 마운트경로 및 명령어 정보 가져오기
