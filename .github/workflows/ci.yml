@@ -2,14 +2,11 @@ name: Frontend CI
 
 on:
   push:
-    branches:
-      - chore/ci-setup  # 테스트용 브랜치
     tags:
       - "v*"
       - "dev*"
 
 env:
-  # NODE_VERSION: "20"
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -73,50 +70,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # NOTE: Docker 멀티스테이지 빌드에서 이미 빌드가 수행되므로 중복 방지를 위해 주석 처리
-      # 필요시 (빌드 검증 등) 주석 해제하여 사용 가능
-      # - name: Setup Node
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: ${{ env.NODE_VERSION }}
-
-      # - name: Setup pnpm
-      #   run: corepack enable && corepack prepare pnpm@9.15.3 --activate
-
-      # - name: Get pnpm store directory
-      #   id: pnpm-cache
-      #   run: |
-      #     echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      # - name: Setup pnpm cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-      #     key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pnpm-store-
-
-      # - name: Restore Next.js cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       .next/cache
-      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-
-      # - name: Configure git for private repos
-      #   run: |
-      #     git config --global url."https://${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
-
-      # - name: Install dependencies
-      #   run: pnpm install --frozen-lockfile
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      # - name: Build Next.js
-      #   run: pnpm run build
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -146,11 +99,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
-          # build-args: |
-          #   BUILDKIT_INLINE_CACHE=1
           secrets: |
             github_token=${{ secrets.GH_TOKEN }}
-          # provenance: false
 
   # ===========================================
   # Job 2: 릴리스 결과 요약 및 알림
