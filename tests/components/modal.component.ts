@@ -47,6 +47,13 @@ export class ModalComponent {
   }
 
   /**
+   * 모달 제목 Locator
+   */
+  private get title(): Locator {
+    return this.page.locator(SELECTOR.MODAL_TITLE);
+  }
+
+  /**
    * 모달 표시 여부 확인
    *
    * @returns 모달이 표시되어 있으면 true
@@ -61,11 +68,25 @@ export class ModalComponent {
    * @param timeout - 대기 시간 (기본 10초)
    */
   async waitForVisible(timeout = 10000): Promise<void> {
-    // 모달 컨테이너가 visible 상태인지 확인
     await expect(this.modal).toBeVisible({ timeout });
-
-    // 모달 콘텐츠가 완전히 렌더링될 때까지 대기 (애니메이션 완료)
     await expect(this.content).toBeVisible({ timeout });
+  }
+
+  /**
+   * 특정 제목의 모달이 표시될 때까지 대기
+   * 모달이 표시된 후 네트워크 요청 완료까지 대기
+   *
+   * @param expectedTitle - 기대하는 모달 제목
+   * @param timeout - 대기 시간 (기본 10초)
+   */
+  async waitForVisibleWithTitle(
+    expectedTitle: string,
+    timeout = 10000,
+  ): Promise<void> {
+    await this.waitForVisible(timeout);
+    await expect(this.title).toHaveText(expectedTitle, { timeout });
+    // 모달 관련 네트워크 요청 완료 대기
+    await this.page.waitForLoadState("networkidle", { timeout });
   }
 
   /**

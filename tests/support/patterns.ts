@@ -88,3 +88,16 @@ export const DATETIME_PATTERN: RegExp =
  * - "2025.12.31"
  */
 export const DATE_PATTERN: RegExp = /^\d{4}\.\d{2}\.\d{2}$/;
+
+/**
+ * 개수 표시 패턴 (n개, 천단위 콤마 지원)
+ *
+ * 매칭 예시:
+ * - "0개"
+ * - "5개"
+ * - "100개"
+ * - "1,000개"
+ * - "10,000개"
+ * - "1,234,567개"
+ */
+export const COUNT_PATTERN: RegExp = /^\d{1,3}(,\d{3})*개$/;

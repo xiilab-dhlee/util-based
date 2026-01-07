@@ -71,6 +71,17 @@ export class DropdownComponent {
   }
 
   /**
+   * 선택된 값이 유효한 옵션 목록에 포함되는지 검증
+   *
+   * @param validOptions - 유효한 옵션 목록
+   */
+  async assertSelectedValueIsOneOf(validOptions: string[]): Promise<void> {
+    await this.assertVisible();
+    const selectedValue = await this.getSelectedValue();
+    expect(validOptions).toContain(selectedValue?.trim());
+  }
+
+  /**
    * 필터가 특정 텍스트를 포함하는지 확인
    *
    * @param text - 확인할 텍스트
