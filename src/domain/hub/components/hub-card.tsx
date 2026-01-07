@@ -39,18 +39,21 @@ export function HubCard({
    * 해당 허브 상세 페이지로 이동
    */
   const handleClick = () => {
+    if (isSelected) return;
+
     router.push(ROUTES.USER_HUB_DETAIL(hubId, hubName));
   };
 
   return (
     <CardWrapper
+      type="button"
       data-testid={SELECTOR.LIST_CARD}
       data-hub-id={hubId}
-      aria-selected={isSelected}
+      data-selected={isSelected}
+      onClick={handleClick}
     >
       <Card
         hoverable
-        onClick={handleClick}
         title={hubName}
         subtitle={modelType}
         selected={isSelected}
@@ -62,12 +65,13 @@ export function HubCard({
                 src={thumbnail}
                 alt="Hub Thumbnail"
                 fill
+                unoptimized
                 style={{ objectFit: "cover" }}
               />
             </ImageWrapper>
           )}
         </CardImageContainer>
-        <Description data-testid={HUB_SELECTOR.DESCRIPTION}>
+        <Description data-testid={HUB_SELECTOR.DESCRIPTION} title={description}>
           {description}
         </Description>
       </Card>
@@ -75,7 +79,9 @@ export function HubCard({
   );
 }
 
-const CardWrapper = styled.div``;
+const CardWrapper = styled.button`
+  text-align: unset;
+`;
 
 const Description = styled.div`
   font-weight: 400;

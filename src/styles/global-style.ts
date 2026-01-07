@@ -66,12 +66,20 @@ body {
 button {
   padding: 0;
   margin: 0;
-  outline: none;
   font: inherit;
   color: inherit;
   cursor: pointer;
   border: none;
   background-color: transparent;
+
+  /* 마우스 클릭 시에는 outline 제거 */
+  outline: none;
+  
+  /* 키보드 탭 포커스 시에만 outline 표시 */
+  &:focus-visible {
+    outline: 1px solid var(--color-blue-04);
+    outline-offset: 0px;
+  }
 }
 
 .antialiased {
