@@ -364,7 +364,6 @@ export class DataTableComponent {
         true,
         `"${searchText}" 검색 결과가 없어 검증을 스킵합니다. Mock 데이터 확인 필요.`,
       );
-      return;
     }
 
     // 최대 3개 결과를 확인하여 false positives 방지

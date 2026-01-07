@@ -36,14 +36,21 @@ function extractHandlerInfo(handler: HttpHandler): HandlerInfo | null {
 /**
  * URL 경로가 MSW 패턴과 매칭되는지 확인
  *
- * MSW 패턴: /core-api/v1/core/workload/:id
- * URL: /core-api/v1/core/workload/123
+ * MSW 패턴 예시:
+ * - /core-api/v1/core/workload/:id → URL: /core-api/v1/core/workload/123
+ * - *\/api/v1/hubs → URL: /api/v1/hubs (앞의 * 와일드카드 처리)
  */
 function matchPath(
   pattern: string,
   pathname: string,
 ): { matched: boolean; params: Record<string, string> } {
-  const patternParts = pattern.split("/");
+  // MSW의 * 와일드카드 처리: 패턴 앞의 * 제거
+  // 예: */api/v1/hubs → /api/v1/hubs
+  const normalizedPattern = pattern.startsWith("*")
+    ? pattern.slice(1)
+    : pattern;
+
+  const patternParts = normalizedPattern.split("/");
   const pathParts = pathname.split("/");
 
   if (patternParts.length !== pathParts.length) {
@@ -280,7 +287,7 @@ export async function setupMswHandlers(
   options: SetupMswHandlersOptions = {},
 ): Promise<void> {
   const {
-    patterns = ["**/core-api/**", "**/monitor-api/**"],
+    patterns = ["**/core-api/**", "**/monitor-api/**", "**/api/**"],
     delay: delayMs = 0,
   } = options;
 

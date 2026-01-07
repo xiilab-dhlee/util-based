@@ -11,8 +11,9 @@ const testDir = defineBddConfig({
   ],
 });
 
-// 인증 상태 파일 경로 (일반 사용자 기본)
+// 인증 상태 파일 경로
 const USER_AUTH_STATE = path.join(__dirname, "tests/.auth/user.json");
+const ADMIN_AUTH_STATE = path.join(__dirname, "tests/.auth/admin.json");
 
 // CI 환경 여부
 const isCI = !!process.env.CI;
@@ -84,16 +85,29 @@ export default defineConfig({
     actionTimeout: 10000,
   },
 
-  /* 프로젝트별 설정 - 다양한 브라우저에서 테스트 */
+  /* 프로젝트별 설정 - 사용자 권한별 분리 */
   projects: [
     {
-      name: "chromium",
+      name: "user",
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
-        // globalSetup에서 저장한 인증 상태 재사용
+        // 일반 사용자 인증 상태
         storageState: USER_AUTH_STATE,
       },
+      // @admin-only 태그가 붙은 테스트 제외
+      grepInvert: /@admin-only/,
+    },
+    {
+      name: "admin",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1920, height: 1080 },
+        // 관리자 인증 상태
+        storageState: ADMIN_AUTH_STATE,
+      },
+      // @admin-only 태그가 붙은 테스트만 실행
+      grep: /@admin-only/,
     },
 
     // {
@@ -125,7 +139,7 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    command: "pnpm dev:mock",
+    command: "pnpm dev",
     url: "http://localhost:3000",
     reuseExistingServer: !isCI,
     timeout: 30 * 1000,

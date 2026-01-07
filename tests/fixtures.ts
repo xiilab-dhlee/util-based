@@ -13,6 +13,7 @@ import { SearchInputComponent } from "./components/search-input.component";
 import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
+import { AccountManagementPage } from "./pages/account-management.page";
 import { HubPage } from "./pages/hub.page";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { SignupPage } from "./pages/signup.page";
@@ -126,6 +127,7 @@ type TestContextFixtures = {
   workloadTerminalPage: WorkloadTerminalPage;
   monitoringPage: MonitoringPage;
   hubPage: HubPage;
+  accountManagementPage: AccountManagementPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
   modal: ModalComponent;
@@ -390,6 +392,10 @@ export const test = base.extend<TestContextFixtures>({
 
   hubPage: async ({ page }, use) => {
     await use(new HubPage(page));
+  },
+
+  accountManagementPage: async ({ page }, use) => {
+    await use(new AccountManagementPage(page));
   },
 
   // ============================================================================

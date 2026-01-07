@@ -115,20 +115,28 @@ After(async ({ page, $testInfo }) => {
 });
 
 // ============================================
-// 인증 Hooks
+// Mock 설정 Hooks
 // ============================================
 
-// 사용자 인증은 Given 스텝으로 처리 (common.steps.ts: "사용자가 로그인되어 있다")
-// 인증 쿠키는 storageState로 Playwright가 자동 관리
-
-Before({ tags: "@authenticated-admin" }, async ({ page }) => {
-  // admin 전용 테스트 - Mock 설정만 수행
-  // TODO: admin storageState 사용 시 playwright.config.ts 프로젝트 분리 필요
+/**
+ * 모든 테스트 전에 API Mock 설정
+ *
+ * - 인증 쿠키는 storageState로 Playwright가 자동 관리
+ * - Mock은 테스트 시작 전 자동으로 설정됨
+ * - edge-case 테스트는 Given Step에서 특정 엔드포인트를 override
+ *
+ * Playwright route 우선순위:
+ * - 나중에 등록된 route가 먼저 실행됨
+ * - edge-case Given Step의 override가 setupAllMocks보다 우선
+ */
+Before(async ({ page }) => {
   await setupAllMocks(page);
 });
 
+/**
+ * 비인증 테스트 - 쿠키 제거
+ */
 Before({ tags: "@unauthenticated" }, async ({ page }) => {
-  await setupAllMocks(page);
   await page.context().clearCookies();
 });
 
