@@ -19,7 +19,12 @@ type CompareType = "string" | "date";
 
 /** 한국어 날짜 형식(yyyy.MM.dd) 파싱 */
 const parseKoreanDate = (dateStr: string): number => {
-  return new Date(dateStr.replace(/\./g, "-")).getTime();
+  const timestamp = new Date(dateStr.replace(/\./g, "-")).getTime();
+  if (Number.isNaN(timestamp)) {
+    throw new Error(`Invalid date format: "${dateStr}". Expected yyyy.MM.dd`);
+  }
+
+  return timestamp;
 };
 
 /**

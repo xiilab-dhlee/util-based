@@ -78,7 +78,11 @@ export class DropdownComponent {
   async assertSelectedValueIsOneOf(validOptions: string[]): Promise<void> {
     await this.assertVisible();
     const selectedValue = await this.getSelectedValue();
-    expect(validOptions).toContain(selectedValue?.trim());
+    expect(selectedValue, "드롭다운 값이 선택되지 않았습니다").not.toBeNull();
+    expect(
+      validOptions,
+      `선택된 값 "${selectedValue?.trim()}"이(가) 유효한 옵션 목록에 없습니다: ${validOptions.join(", ")}`,
+    ).toContain(selectedValue?.trim());
   }
 
   /**
