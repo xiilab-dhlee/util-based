@@ -40,7 +40,7 @@ export function AccountListMain() {
     fieldMap: ACCOUNT_SORT_FIELD_MAP,
   });
   const { data, isLoading, isError } = useGetAllAccounts({
-    pageNo: page,
+    pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: searchText,
     ...(sortRequest ? { sortRequest } : {}),

@@ -113,13 +113,13 @@ export function ViewAccountDetailModal() {
           <DetailRow>
             <DetailLabel>보유 개수</DetailLabel>
             <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT}>
-              {accountDetail?.workspaceCount.toLocaleString() ?? 0}개
+              {(accountDetail?.workspaceCount ?? 0).toLocaleString()}개
             </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>생성 제한 개수</DetailLabel>
             <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_LIMIT}>
-              {accountDetail?.workspaceLimitCount.toLocaleString() ?? 0}개
+              {(accountDetail?.workspaceLimitCount ?? 0).toLocaleString()}개
             </DetailValue>
           </DetailRow>
         </DetailCard>

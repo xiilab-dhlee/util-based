@@ -170,7 +170,7 @@ export function UpdateAccountModal() {
             <SectionTitle>워크스페이스 정보</SectionTitle>
             <InfoRow
               label="보유 개수"
-              value={`${accountDetail?.workspaceCount.toLocaleString() ?? 0}개`}
+              value={`${(accountDetail?.workspaceCount ?? 0).toLocaleString()}개`}
               testId={ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT}
             />
           </DetailCard>
