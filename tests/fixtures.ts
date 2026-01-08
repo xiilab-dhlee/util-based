@@ -2,6 +2,7 @@ import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
 import { SELECTOR } from "@/shared/constants/selector.constant";
+import { ButtonComponent } from "./components/button.component";
 import { CardGridComponent } from "./components/card-grid.component";
 import { DataTableComponent } from "./components/data-table.component";
 import { DrawerComponent } from "./components/drawer.component";
@@ -148,6 +149,8 @@ type TestContextFixtures = {
   listSearchInput: SearchInputComponent;
   /** 페이지네이션 험블 객체 */
   listPagination: PaginationComponent;
+  /** 목록 삭제 버튼 험블 객체 */
+  listDeleteButton: ButtonComponent;
 };
 
 // ============================================================================
@@ -448,5 +451,9 @@ export const test = base.extend<TestContextFixtures>({
 
   listPagination: async ({ page }, use) => {
     await use(new PaginationComponent(page, SELECTOR.LIST_PAGINATION));
+  },
+
+  listDeleteButton: async ({ page }, use) => {
+    await use(new ButtonComponent(page, SELECTOR.LIST_DELETE_BUTTON));
   },
 });
