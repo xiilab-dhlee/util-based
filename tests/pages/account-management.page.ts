@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { ACCOUNT_SELECTOR, testId } from "@/shared/constants/selector.constant";
@@ -29,10 +29,6 @@ export class AccountManagementPage extends ListPage {
     수정: ACCOUNT_SELECTOR.UPDATE_BUTTON,
     "PW 초기화": ACCOUNT_SELECTOR.RESET_PASSWORD_BUTTON,
   };
-
-  constructor(page: Page) {
-    super(page);
-  }
 
   // ============================================
   // Abstract 구현
