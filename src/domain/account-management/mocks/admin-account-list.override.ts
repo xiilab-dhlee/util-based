@@ -89,7 +89,7 @@ export const adminAccountListOverrideHandlers = [
           email: `account-${globalIndex + 1}@xiilab.com`,
           createdAt: generateCreatedAt(globalIndex, sort, order),
           accountRole: (["ADMIN", "USER", "SUPER_ADMIN"] as const)[index % 3],
-          workspaceCount: Math.floor(Math.random() * 10),
+          workspaceCount: (globalIndex % 10) + 1,
           workspaceLimitCount: 10,
           isEnabled: index % 3 !== 0,
           groupName: [
