@@ -327,4 +327,86 @@ export class DataTableComponent {
     const comparison = current.localeCompare(next, "ko");
     return isAscending ? comparison <= 0 : comparison >= 0;
   }
+
+  // ============================================
+  // 체크박스 기능 (Ant Design Table rowSelection)
+  // ============================================
+
+  /** 헤더 체크박스 (전체 선택) */
+  private get headerCheckbox(): Locator {
+    return this.container.locator(SELECTOR.ANT_HEADER_CHECKBOX);
+  }
+
+  /** 특정 행의 체크박스 */
+  private getRowCheckbox(rowIndex: number): Locator {
+    // Ant Design 테이블의 데이터 행만 선택 (placeholder 제외)
+    return this.container
+      .locator(SELECTOR.ANT_TABLE_ROW)
+      .nth(rowIndex)
+      .locator(
+        `${SELECTOR.ANT_SELECTION_COLUMN} ${SELECTOR.ANT_CHECKBOX_INPUT}`,
+      );
+  }
+
+  /** 헤더 체크박스 클릭 (전체 선택/해제) */
+  async clickHeaderCheckbox(): Promise<void> {
+    await this.headerCheckbox.click();
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  /** 특정 행 체크박스 클릭 */
+  async clickRowCheckbox(rowIndex: number): Promise<void> {
+    await this.getRowCheckbox(rowIndex).click();
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  /** 헤더 체크박스 선택 상태 확인 */
+  async isHeaderCheckboxChecked(): Promise<boolean> {
+    return await this.headerCheckbox.isChecked();
+  }
+
+  /** 특정 행 체크박스 선택 상태 확인 */
+  async isRowCheckboxChecked(rowIndex: number): Promise<boolean> {
+    return await this.getRowCheckbox(rowIndex).isChecked();
+  }
+
+  /** 테이블의 체크박스가 있는 행 개수 반환 */
+  private async getRowCheckboxCount(): Promise<number> {
+    const rowCheckboxes = this.container.locator(
+      `${SELECTOR.ANT_TABLE_ROW} ${SELECTOR.ANT_SELECTION_COLUMN} ${SELECTOR.ANT_CHECKBOX_INPUT}`,
+    );
+    return await rowCheckboxes.count();
+  }
+
+  /** 선택된 행의 개수 반환 */
+  async getCheckedRowCount(): Promise<number> {
+    const checkedCheckboxes = this.container.locator(
+      `${SELECTOR.ANT_TABLE_ROW} ${SELECTOR.ANT_SELECTION_COLUMN} ${SELECTOR.ANT_CHECKBOX_CHECKED}`,
+    );
+    return await checkedCheckboxes.count();
+  }
+
+  /** 모든 행의 체크박스가 선택되어 있는지 확인 */
+  async areAllRowsChecked(): Promise<boolean> {
+    const [totalCheckboxes, checkedCount] = await Promise.all([
+      this.getRowCheckboxCount(),
+      this.getCheckedRowCount(),
+    ]);
+    return totalCheckboxes > 0 && totalCheckboxes === checkedCount;
+  }
+
+  /** 모든 행의 체크박스가 해제되어 있는지 확인 */
+  async areAllRowsUnchecked(): Promise<boolean> {
+    return (await this.getCheckedRowCount()) === 0;
+  }
+
+  /** 모든 체크박스 선택 상태 검증 */
+  async assertAllRowsChecked(): Promise<void> {
+    expect(await this.areAllRowsChecked()).toBe(true);
+  }
+
+  /** 모든 체크박스 해제 상태 검증 */
+  async assertAllRowsUnchecked(): Promise<void> {
+    expect(await this.areAllRowsUnchecked()).toBe(true);
+  }
 }

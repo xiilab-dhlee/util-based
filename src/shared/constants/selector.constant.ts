@@ -24,8 +24,22 @@ export const SELECTOR = {
   SORT_ARROW_DOWN: ".sort-arrow-down",
   SORT_ACTIVE: ".active",
 
+  // Ant Design 테이블 체크박스 (rowSelection)
+  /** 데이터 행 (placeholder 제외) */
+  ANT_TABLE_ROW: "tbody tr.ant-table-row",
+  /** 체크박스 컬럼 */
+  ANT_SELECTION_COLUMN: ".ant-table-selection-column",
+  /** 체크박스 input */
+  ANT_CHECKBOX_INPUT: ".ant-checkbox-input",
+  /** 헤더 체크박스 (전체 선택) */
+  ANT_HEADER_CHECKBOX: "thead .ant-table-selection-column .ant-checkbox-input",
+  /** 체크된 체크박스 */
+  ANT_CHECKBOX_CHECKED: ".ant-checkbox-input:checked",
+
   // 목록 페이지 공통 (고정 상수)
   LIST_TABLE: "list-table",
+  /** 목록 삭제 버튼 */
+  LIST_DELETE_BUTTON: "list-delete-button",
   /** 카드 그리드 목록 (허브 등 카드형 목록) */
   LIST_CARD_GRID: "list-card-grid",
   /** 목록 카드 (카드형 목록의 개별 카드) */
