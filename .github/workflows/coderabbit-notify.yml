@@ -1,0 +1,19 @@
+name: CodeRabbit Review Notification
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  notify-dm:
+    # CodeRabbit 봇이 리뷰를 완료했을 때만 실행
+    if: github.event.review.user.login == 'coderabbitai'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 슬랙 DM 보내기
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'U07T373S6RF' 
+          slack-message: "🐰 CodeRabbit이 리뷰를 완료했습니다!\n<${{ github.event.review.html_url }}|리뷰 확인하러 가기>"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
