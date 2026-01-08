@@ -5,8 +5,7 @@ Feature: 허브 페이지 데이터 검증
   So that 정확한 허브 정보를 기반으로 워크로드를 생성할 수 있다
 
   Background:
-    Given 사용자가 로그인되어 있다
-    And 허브 페이지에 있다
+    Given 허브 페이지에 있다
 
   @regression
   Scenario: 허브 카드 데이터 유효성 검증

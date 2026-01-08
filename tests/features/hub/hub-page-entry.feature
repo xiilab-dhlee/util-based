@@ -4,9 +4,6 @@ Feature: 허브 페이지 진입
   I want to 허브 페이지에 진입하면
   So that 허브 목록과 선택된 허브의 상세 정보를 동시에 확인할 수 있다
 
-  Background:
-    Given 사용자가 로그인되어 있다
-
   @smoke
   Scenario: 허브 페이지 조회
     Given 허브 페이지에 있다

@@ -5,8 +5,7 @@ Feature: 허브 페이지 인터랙션
   So that 원하는 허브를 선택하고 워크로드를 생성할 수 있다
 
   Background:
-    Given 사용자가 로그인되어 있다
-    And 허브 페이지에 있다
+    Given 허브 페이지에 있다
 
   @regression
   Scenario: 다른 허브 카드 클릭 시 상세 정보 변경
