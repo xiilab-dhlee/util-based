@@ -5,8 +5,7 @@ Feature: 계정 관리 목록 검증
   So that 계정 정보를 정확하게 파악할 수 있다
 
   Background:
-    Given 관리자가 로그인되어 있다
-    And 계정 관리 목록 페이지에 있다
+    Given 계정 관리 목록 페이지에 있다
 
   @regression
   Scenario: 계정 목록 데이터 유효성 검증
