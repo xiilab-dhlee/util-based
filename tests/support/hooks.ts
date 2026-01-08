@@ -129,8 +129,10 @@ After(async ({ page, $testInfo }) => {
  * - 나중에 등록된 route가 먼저 실행됨
  * - edge-case Given Step의 override가 setupAllMocks보다 우선
  */
-Before(async ({ page }) => {
-  await setupAllMocks(page);
+Before(async ({ page, testMode }) => {
+  if (testMode === "mock") {
+    await setupAllMocks(page);
+  }
 });
 
 /**
@@ -189,7 +191,8 @@ Before({ tags: "@skip-ci" }, async ({ $testInfo }) => {
  * - "선택되어 있다" (상태 확인, UI 행동 아님)
  * - "설정된" (과거 분사, 상태 확인)
  */
-const UI_ACTION_PATTERN = /(클릭|입력|설정)한다|(클릭|이동|선택)하여|표시된다$/;
+const UI_ACTION_PATTERN =
+  /(클릭|입력|설정)한다|(클릭|이동|선택)하여|표시된다|사라진다$/;
 
 /**
  * UI 행동 스텝 실행 후 스크린샷 캡처
