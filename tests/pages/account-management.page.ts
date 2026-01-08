@@ -72,19 +72,6 @@ export class AccountManagementPage extends ListPage {
   // 수정 모달 - 폼 필드 컴포넌트
   // ============================================
 
-  /** 수정 모달 - 권한 필드 */
-  get updateRoleField(): FormItemComponent {
-    return new FormItemComponent(this.page, ACCOUNT_SELECTOR.UPDATE_ROLE_FIELD);
-  }
-
-  /** 수정 모달 - 상태 필드 */
-  get updateStatusField(): FormItemComponent {
-    return new FormItemComponent(
-      this.page,
-      ACCOUNT_SELECTOR.UPDATE_STATUS_FIELD,
-    );
-  }
-
   /** 수정 모달 - 워크스페이스 생성 제한 개수 필드 */
   get updateWorkspaceLimitField(): FormItemComponent {
     return new FormItemComponent(
