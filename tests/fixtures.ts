@@ -15,6 +15,7 @@ import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
 import { AccountManagementPage } from "./pages/account-management.page";
+import { AccountPendingPage } from "./pages/account-pending.page";
 import { HubPage } from "./pages/hub.page";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { SignupPage } from "./pages/signup.page";
@@ -129,6 +130,7 @@ type TestContextFixtures = {
   monitoringPage: MonitoringPage;
   hubPage: HubPage;
   accountManagementPage: AccountManagementPage;
+  accountPendingPage: AccountPendingPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
   modal: ModalComponent;
@@ -399,6 +401,10 @@ export const test = base.extend<TestContextFixtures>({
 
   accountManagementPage: async ({ page }, use) => {
     await use(new AccountManagementPage(page));
+  },
+
+  accountPendingPage: async ({ page }, use) => {
+    await use(new AccountPendingPage(page));
   },
 
   // ============================================================================
