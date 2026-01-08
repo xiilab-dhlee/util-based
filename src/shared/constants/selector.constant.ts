@@ -464,6 +464,32 @@ export const ACCOUNT_SELECTOR = {
 } as const;
 
 // ============================================
+// 가입 승인 목록 (Account Pending)
+// ============================================
+
+export const ACCOUNT_PENDING_SELECTOR = {
+  // 테이블 컬럼 셀렉터
+  /** 이름 */
+  NAME: "account-pending-name",
+  /** 이메일 */
+  EMAIL: "account-pending-email",
+  /** 가입일 */
+  CREATED_AT: "account-pending-created-at",
+
+  // 행 액션 버튼
+  /** 반려 버튼 (행) */
+  REJECT_BUTTON: "account-pending-reject-button",
+  /** 승인 버튼 (행) */
+  APPROVE_BUTTON: "account-pending-approve-button",
+
+  // 필터 영역 버튼 (멀티 선택용)
+  /** 반려 버튼 (필터) */
+  FILTER_REJECT_BUTTON: "account-pending-filter-reject-button",
+  /** 승인 버튼 (필터) */
+  FILTER_APPROVE_BUTTON: "account-pending-filter-approve-button",
+} as const;
+
+// ============================================
 // 테스트용 헬퍼 함수
 // ============================================
 
