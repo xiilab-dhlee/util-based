@@ -44,7 +44,7 @@ export const getGetWorkloadResourceMetricsTimeseriesResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
     data: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
@@ -69,7 +69,7 @@ export const getGetResourceMetricsTimeseriesResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
     data: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,

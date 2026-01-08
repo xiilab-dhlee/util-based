@@ -5,9 +5,9 @@ import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
 import { CreateFirstWorkspaceModal } from "@/domain/workspace/components/create-first-workspace-modal";
+import { CreateWorkspaceModal } from "@/domain/workspace/components/create-workspace-modal";
 import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
-import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
 
 export default function NotFound() {
@@ -25,22 +25,14 @@ export default function NotFound() {
         <Right>
           <RightBody>
             <Title>404</Title>
-            <Typography.Title
-              variant="headline-3-1"
-              color="#292B32"
-              style={{ marginBottom: 14 }}
-            >
+            <NotFoundHeadline variant="headline-3-1" color="#292B32">
               앗! 페이지를 찾을 수 없어요 :(
-            </Typography.Title>
-            <Typography.Text
-              variant="subtitle-2-3"
-              color="#5F6368"
-              style={{ marginBottom: 40 }}
-            >
+            </NotFoundHeadline>
+            <NotFoundDescription variant="subtitle-2-3" color="#5F6368">
               죄송합니다. 요청하신 페이지가 존재하지 않습니다.
               <br />
               메인에서 원하시는 정보를 찾아보세요.
-            </Typography.Text>
+            </NotFoundDescription>
             <Button
               color="primary"
               iconPosition="left"
@@ -95,6 +87,14 @@ const RightBody = styled.div`
   width: 100%;
   height: 100vh;
   text-align: center;
+`;
+
+const NotFoundHeadline = styled(Typography.Title)`
+  margin-bottom: 14px;
+`;
+
+const NotFoundDescription = styled(Typography.Text)`
+  margin-bottom: 40px;
 `;
 
 const Title = styled.div`

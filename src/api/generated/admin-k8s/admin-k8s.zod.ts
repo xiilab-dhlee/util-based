@@ -816,7 +816,6 @@ export const getAllNamespaceEventsQueryPageNoMin = 0;
 export const getAllNamespaceEventsQueryPageSizeMax = 100;
 
 export const getAllNamespaceEventsQueryNamespaceDefault = "default";
-
 export const getAllNamespaceEventsQueryNamespaceRegExp =
   /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
@@ -835,7 +834,6 @@ export const getAllNamespaceEventsQueryParams = zod.object({
   keyword: zod.string().optional().describe("검색 키워드"),
   namespace: zod
     .string()
-    .min(1)
     .regex(getAllNamespaceEventsQueryNamespaceRegExp)
     .describe("네임스페이스 이름"),
 });

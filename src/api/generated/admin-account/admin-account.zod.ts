@@ -54,7 +54,6 @@ export const updateAccountBody = zod
       .min(1)
       .optional()
       .describe("워크스페이스 제한 개수. 1 이상의 값이어야 합니다."),
-    isValid: zod.boolean(),
   })
   .strict()
   .describe(
@@ -420,10 +419,16 @@ export const getAdminNotificationSetsResponse = zod
               .boolean()
               .describe("이메일 알림 수신 활성화 여부"),
             notificationType: zod
-              .string()
-              .describe(
-                "알림 타입. 가능한 값: WORKSPACE_INVITE, WORKSPACE_ROLE_CHANGE, SIGNUP_REQUEST 등",
-              ),
+              .enum([
+                "LICENSE",
+                "ACCOUNT",
+                "VULNERABILITY",
+                "NODE",
+                "WORKSPACE",
+                "WORKLOAD",
+                "MONITORING",
+              ])
+              .describe("알림 타입"),
           })
           .strict()
           .describe("관리자 알림 설정 조회 응답"),

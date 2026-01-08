@@ -58,6 +58,8 @@ export const ROUTES = {
   ADMIN_WORKSPACE_DETAIL: (id: string) => `${MODE.ADMIN}/workspace/${id}`,
   ADMIN_WORKSPACE_MEMBER: (id: string) =>
     `${MODE.ADMIN}/workspace/${id}/member`,
+  ADMIN_WORKSPACE_DISABLED: (id: string) =>
+    `${MODE.ADMIN}/workspace/${id}/disabled`,
   ADMIN_WORKSPACE_WORKLOAD_DETAIL: (workspaceId: string, id: string) =>
     `${MODE.ADMIN}/workspace/workload/${id}?workspaceId=${workspaceId}`,
   ADMIN_WORKSPACE_WORKLOAD_LOG: (id: string) =>
@@ -116,6 +118,7 @@ export const ROUTES = {
 
   // 워크로드 (동적 함수)
   USER_WORKLOAD: `${MODE.USER}/workload`,
+  USER_WORKLOAD_DISABLED: `${MODE.USER}/workload/disabled`,
   USER_WORKLOAD_DETAIL: (id: string) => `${MODE.USER}/workload/${id}`,
   USER_WORKLOAD_LOG: (id: string) => `${MODE.USER}/workload/${id}/log`,
   USER_WORKLOAD_FILE: (id: string) => `${MODE.USER}/workload/${id}/file`,
@@ -154,4 +157,9 @@ export const ROUTES = {
   // Auth Routes
   // ============================================
   AUTH_SIGNIN: "/signin",
+
+  // ============================================
+  // Error Routes
+  // ============================================
+  WORKSPACE_ERROR: "/workspace-error",
 } as const;

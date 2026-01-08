@@ -4,12 +4,15 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import { CreateFirstWorkspaceModal } from "@/domain/workspace/components/create-first-workspace-modal";
+import { CreateWorkspaceModal } from "@/domain/workspace/components/create-workspace-modal";
 import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
-import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
+import { useWorkspaceValidator } from "@/shared/hooks/use-workspace-validator";
 
 export default function ModeLayout({ children }: PropsWithChildren) {
+  useWorkspaceValidator();
+
   return (
     <>
       <Container>

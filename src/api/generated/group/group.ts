@@ -45,7 +45,11 @@ import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponseGroupChildrenResponse,
   BaseResponseGroupDetailResponse,
+  BaseResponseGroupSearchResponse,
   BaseResponseListGroupSummaryResponse,
+  BaseResponsePageResponseGroupMemberResponse,
+  GetUngroupedAccountsParams,
+  SearchParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -338,6 +342,302 @@ export function useGetGroupDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetGroupDetailQueryOptions(groupId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 어떤 그룹에도 소속되지 않은 승인된 사용자 목록을 페이징하여 조회합니다.
+ * @summary 그룹 미소속 사용자 목록 조회
+ */
+export const getUngroupedAccounts = (
+  params?: GetUngroupedAccountsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseGroupMemberResponse>({
+    url: `/api/v1/groups/ungrouped`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetUngroupedAccountsQueryKey = (
+  params?: GetUngroupedAccountsParams,
+) => {
+  return [`/api/v1/groups/ungrouped`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetUngroupedAccountsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
+  TError = unknown,
+>(
+  params?: GetUngroupedAccountsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUngroupedAccounts>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetUngroupedAccountsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getUngroupedAccounts>>
+  > = ({ signal }) => getUngroupedAccounts(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUngroupedAccounts>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUngroupedAccountsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getUngroupedAccounts>>
+>;
+export type GetUngroupedAccountsQueryError = unknown;
+
+export function useGetUngroupedAccounts<
+  TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
+  TError = unknown,
+>(
+  params: undefined | GetUngroupedAccountsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUngroupedAccounts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUngroupedAccounts>>,
+          TError,
+          Awaited<ReturnType<typeof getUngroupedAccounts>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUngroupedAccounts<
+  TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
+  TError = unknown,
+>(
+  params?: GetUngroupedAccountsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUngroupedAccounts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUngroupedAccounts>>,
+          TError,
+          Awaited<ReturnType<typeof getUngroupedAccounts>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUngroupedAccounts<
+  TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
+  TError = unknown,
+>(
+  params?: GetUngroupedAccountsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUngroupedAccounts>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 그룹 미소속 사용자 목록 조회
+ */
+
+export function useGetUngroupedAccounts<
+  TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
+  TError = unknown,
+>(
+  params?: GetUngroupedAccountsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUngroupedAccounts>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetUngroupedAccountsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 키워드로 그룹명과 계정명을 동시에 검색합니다. 그룹은 트리 구조로, 계정은 소속 그룹명과 함께 반환됩니다.
+ * @summary 그룹 및 계정 통합 검색
+ */
+export const search = (params: SearchParams, signal?: AbortSignal) => {
+  return customInstance<BaseResponseGroupSearchResponse>({
+    url: `/api/v1/groups/search`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getSearchQueryKey = (params?: SearchParams) => {
+  return [`/api/v1/groups/search`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchQueryOptions = <
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getSearchQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof search>>> = ({
+    signal,
+  }) => search(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof search>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type SearchQueryResult = NonNullable<Awaited<ReturnType<typeof search>>>;
+export type SearchQueryError = unknown;
+
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof search>>,
+          TError,
+          Awaited<ReturnType<typeof search>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof search>>,
+          TError,
+          Awaited<ReturnType<typeof search>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 그룹 및 계정 통합 검색
+ */
+
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getSearchQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

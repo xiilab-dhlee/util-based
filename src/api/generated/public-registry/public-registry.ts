@@ -46,10 +46,16 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponsePageResponseImageTagListResponse,
+  BaseResponsePageResponsePullPushJobResponse,
   BaseResponsePageResponseRegistryListResponse,
+  BaseResponseRegistryDetailResponse,
   BaseResponseUnit,
   CreateExternalImageRequest,
+  GetPublicImageDetailParams,
+  GetPublicImageTagListParams,
   GetPublicRegistryListParams,
+  GetPullPushJobsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -64,7 +70,7 @@ export const getPublicRegistryList = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseRegistryListResponse>({
-    url: `/api/v1/registries/public`,
+    url: `/api/v1/registries/public/images`,
     method: "GET",
     params,
     signal,
@@ -74,7 +80,10 @@ export const getPublicRegistryList = (
 export const getGetPublicRegistryListQueryKey = (
   params?: GetPublicRegistryListParams,
 ) => {
-  return [`/api/v1/registries/public`, ...(params ? [params] : [])] as const;
+  return [
+    `/api/v1/registries/public/images`,
+    ...(params ? [params] : []),
+  ] as const;
 };
 
 export const getGetPublicRegistryListQueryOptions = <
@@ -226,7 +235,7 @@ export const createExternalImage = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/registries/public`,
+    url: `/api/v1/registries/public/images`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: createExternalImageRequest,
@@ -300,3 +309,503 @@ export const useCreateExternalImage = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 
+            공용 레지스트리 이미지 업로드 작업 목록을 페이징하여 조회합니다.
+            내가 등록한 작업만 필터링하거나 특정 이미지의 작업만 조회할 수 있습니다.
+        
+ * @summary 공용 이미지 Pull/Push 작업 목록 조회
+ */
+export const getPullPushJobs = (
+  params: GetPullPushJobsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponsePullPushJobResponse>({
+    url: `/api/v1/registries/public/images/pull-push-jobs`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetPullPushJobsQueryKey = (params?: GetPullPushJobsParams) => {
+  return [
+    `/api/v1/registries/public/images/pull-push-jobs`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPullPushJobsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPullPushJobs>>,
+  TError = unknown,
+>(
+  params: GetPullPushJobsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPullPushJobs>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPullPushJobsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPullPushJobs>>> = ({
+    signal,
+  }) => getPullPushJobs(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPullPushJobs>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPullPushJobsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPullPushJobs>>
+>;
+export type GetPullPushJobsQueryError = unknown;
+
+export function useGetPullPushJobs<
+  TData = Awaited<ReturnType<typeof getPullPushJobs>>,
+  TError = unknown,
+>(
+  params: GetPullPushJobsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPullPushJobs>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPullPushJobs>>,
+          TError,
+          Awaited<ReturnType<typeof getPullPushJobs>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPullPushJobs<
+  TData = Awaited<ReturnType<typeof getPullPushJobs>>,
+  TError = unknown,
+>(
+  params: GetPullPushJobsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPullPushJobs>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPullPushJobs>>,
+          TError,
+          Awaited<ReturnType<typeof getPullPushJobs>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPullPushJobs<
+  TData = Awaited<ReturnType<typeof getPullPushJobs>>,
+  TError = unknown,
+>(
+  params: GetPullPushJobsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPullPushJobs>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 공용 이미지 Pull/Push 작업 목록 조회
+ */
+
+export function useGetPullPushJobs<
+  TData = Awaited<ReturnType<typeof getPullPushJobs>>,
+  TError = unknown,
+>(
+  params: GetPullPushJobsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPullPushJobs>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPullPushJobsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            공용 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
+            키워드, 스캔 상태로 필터링이 가능합니다.
+        
+ * @summary 공용 이미지 태그 목록 조회
+ */
+export const getPublicImageTagList = (
+  params: GetPublicImageTagListParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseImageTagListResponse>({
+    url: `/api/v1/registries/public/images/image-tags`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetPublicImageTagListQueryKey = (
+  params?: GetPublicImageTagListParams,
+) => {
+  return [
+    `/api/v1/registries/public/images/image-tags`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPublicImageTagListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicImageTagList>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPublicImageTagListQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicImageTagList>>
+  > = ({ signal }) => getPublicImageTagList(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicImageTagList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPublicImageTagListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicImageTagList>>
+>;
+export type GetPublicImageTagListQueryError = unknown;
+
+export function useGetPublicImageTagList<
+  TData = Awaited<ReturnType<typeof getPublicImageTagList>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageTagList>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageTagList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageTagList<
+  TData = Awaited<ReturnType<typeof getPublicImageTagList>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageTagList>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageTagList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageTagList<
+  TData = Awaited<ReturnType<typeof getPublicImageTagList>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 공용 이미지 태그 목록 조회
+ */
+
+export function useGetPublicImageTagList<
+  TData = Awaited<ReturnType<typeof getPublicImageTagList>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPublicImageTagListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            공용 레지스트리의 이미지 상세 정보를 조회합니다.
+            존재하지 않는 경우 null을 반환합니다.
+        
+ * @summary 공용 이미지 상세 조회
+ */
+export const getPublicImageDetail = (
+  params: GetPublicImageDetailParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseRegistryDetailResponse>({
+    url: `/api/v1/registries/public/images/detail`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetPublicImageDetailQueryKey = (
+  params?: GetPublicImageDetailParams,
+) => {
+  return [
+    `/api/v1/registries/public/images/detail`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPublicImageDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicImageDetail>>,
+  TError = unknown,
+>(
+  params: GetPublicImageDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPublicImageDetailQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicImageDetail>>
+  > = ({ signal }) => getPublicImageDetail(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicImageDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPublicImageDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicImageDetail>>
+>;
+export type GetPublicImageDetailQueryError = unknown;
+
+export function useGetPublicImageDetail<
+  TData = Awaited<ReturnType<typeof getPublicImageDetail>>,
+  TError = unknown,
+>(
+  params: GetPublicImageDetailParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageDetail<
+  TData = Awaited<ReturnType<typeof getPublicImageDetail>>,
+  TError = unknown,
+>(
+  params: GetPublicImageDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageDetail<
+  TData = Awaited<ReturnType<typeof getPublicImageDetail>>,
+  TError = unknown,
+>(
+  params: GetPublicImageDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 공용 이미지 상세 조회
+ */
+
+export function useGetPublicImageDetail<
+  TData = Awaited<ReturnType<typeof getPublicImageDetail>>,
+  TError = unknown,
+>(
+  params: GetPublicImageDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPublicImageDetailQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}

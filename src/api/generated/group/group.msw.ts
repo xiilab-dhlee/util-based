@@ -34,7 +34,9 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponseGroupChildrenResponse,
   BaseResponseGroupDetailResponse,
+  BaseResponseGroupSearchResponse,
   BaseResponseListGroupSummaryResponse,
+  BaseResponsePageResponseGroupMemberResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getGetGroupChildrenResponseMock = (
@@ -80,6 +82,67 @@ export const getGetGroupDetailResponseMock = (
       accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetUngroupedAccountsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseGroupMemberResponse> = {},
+): BaseResponsePageResponseGroupMemberResponse => ({
+  status: "SUCCESS",
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getSearchResponseMock = (
+  overrideResponse: Partial<BaseResponseGroupSearchResponse> = {},
+): BaseResponseGroupSearchResponse => ({
+  status: "SUCCESS",
+  data: {
+    group: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      groupId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      groupName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      children: [],
+      member: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+    })),
+    account: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      groups: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -163,6 +226,66 @@ export const getGetGroupDetailMockHandler = (
   );
 };
 
+export const getGetUngroupedAccountsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseGroupMemberResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseGroupMemberResponse>
+        | BaseResponsePageResponseGroupMemberResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/groups/ungrouped",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetUngroupedAccountsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getSearchMockHandler = (
+  overrideResponse?:
+    | BaseResponseGroupSearchResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseGroupSearchResponse>
+        | BaseResponseGroupSearchResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/groups/search",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getSearchResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetRootGroupsMockHandler = (
   overrideResponse?:
     | BaseResponseListGroupSummaryResponse
@@ -195,5 +318,7 @@ export const getGetRootGroupsMockHandler = (
 export const getGroupMock = () => [
   getGetGroupChildrenMockHandler(),
   getGetGroupDetailMockHandler(),
+  getGetUngroupedAccountsMockHandler(),
+  getSearchMockHandler(),
   getGetRootGroupsMockHandler(),
 ];

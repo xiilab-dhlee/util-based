@@ -32,9 +32,22 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseDeleteImagesResponse,
+  BaseResponsePageResponseImageTagListResponse,
+  BaseResponsePageResponsePullPushJobResponse,
   BaseResponsePageResponseRegistryListResponse,
+  BaseResponseRegistryDetailResponse,
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
+
+export const getUpdateImageResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getGetPrivateRegistryListResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseRegistryListResponse> = {},
@@ -49,7 +62,8 @@ export const getGetPrivateRegistryListResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       imageId: faker.number.int({ min: undefined, max: undefined }),
-      imageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       latestImageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       description: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageTagCount: faker.number.int({ min: undefined, max: undefined }),
@@ -79,6 +93,146 @@ export const getCreateExternalImage1ResponseMock = (
   ...overrideResponse,
 });
 
+export const getDeleteImagesResponseMock = (
+  overrideResponse: Partial<BaseResponseDeleteImagesResponse> = {},
+): BaseResponseDeleteImagesResponse => ({
+  status: "SUCCESS",
+  data: {
+    totalRequested: faker.number.int({ min: undefined, max: undefined }),
+    successCount: faker.number.int({ min: undefined, max: undefined }),
+    failureCount: faker.number.int({ min: undefined, max: undefined }),
+    failures: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetPullPushJobs1ResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponsePullPushJobResponse> = {},
+): BaseResponsePageResponsePullPushJobResponse => ({
+  status: "SUCCESS",
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      imageId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagId: faker.number.int({ min: undefined, max: undefined }),
+      sourceImage: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetPrivateImageTagListResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseImageTagListResponse> = {},
+): BaseResponsePageResponseImageTagListResponse => ({
+  status: "SUCCESS",
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      harborTagId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageTagSizeByte: faker.number.int({ min: undefined, max: undefined }),
+      scanStatus: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      vulnerability: {
+        criticalCount: faker.number.int({ min: undefined, max: undefined }),
+        highCount: faker.number.int({ min: undefined, max: undefined }),
+        mediumCount: faker.number.int({ min: undefined, max: undefined }),
+        lowCount: faker.number.int({ min: undefined, max: undefined }),
+      },
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      approvalStatus: faker.helpers.arrayElement([
+        "AVAILABLE",
+        "APPROVAL_REQUIRED",
+        "APPROVED",
+        "REJECTED",
+        "APPROVAL_WAITING",
+        "REQUEST_BLOCKED",
+      ] as const),
+      latestVulnerabilityScanDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      requestReason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      decisionReason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      deciderId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      deciderName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetPrivateImageDetailResponseMock = (
+  overrideResponse: Partial<BaseResponseRegistryDetailResponse> = {},
+): BaseResponseRegistryDetailResponse => ({
+  status: "SUCCESS",
+  data: {
+    imageId: faker.number.int({ min: undefined, max: undefined }),
+    imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    imageType: faker.helpers.arrayElement([
+      "PRIVATE",
+      "PUBLIC",
+      "BUILT_IN",
+      "HUB",
+    ] as const),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getUpdateImageMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/registries/private/images/:imageId",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateImageResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetPrivateRegistryListMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseRegistryListResponse
@@ -90,7 +244,7 @@ export const getGetPrivateRegistryListMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/registries/private",
+    "*/api/v1/registries/private/images",
     async (info) => {
       await delay(1000);
 
@@ -118,7 +272,7 @@ export const getCreateExternalImage1MockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    "*/api/v1/registries/private",
+    "*/api/v1/registries/private/images",
     async (info) => {
       await delay(1000);
 
@@ -136,7 +290,132 @@ export const getCreateExternalImage1MockHandler = (
     options,
   );
 };
+
+export const getDeleteImagesMockHandler = (
+  overrideResponse?:
+    | BaseResponseDeleteImagesResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<BaseResponseDeleteImagesResponse>
+        | BaseResponseDeleteImagesResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/registries/private/delete",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getDeleteImagesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetPullPushJobs1MockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponsePullPushJobResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponsePullPushJobResponse>
+        | BaseResponsePageResponsePullPushJobResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/registries/private/images/pull-push-jobs",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPullPushJobs1ResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetPrivateImageTagListMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseImageTagListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseImageTagListResponse>
+        | BaseResponsePageResponseImageTagListResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/registries/private/images/image-tags",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPrivateImageTagListResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetPrivateImageDetailMockHandler = (
+  overrideResponse?:
+    | BaseResponseRegistryDetailResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseRegistryDetailResponse>
+        | BaseResponseRegistryDetailResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/registries/private/images/detail",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPrivateImageDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getPrivateRegistryMock = () => [
+  getUpdateImageMockHandler(),
   getGetPrivateRegistryListMockHandler(),
   getCreateExternalImage1MockHandler(),
+  getDeleteImagesMockHandler(),
+  getGetPullPushJobs1MockHandler(),
+  getGetPrivateImageTagListMockHandler(),
+  getGetPrivateImageDetailMockHandler(),
 ];

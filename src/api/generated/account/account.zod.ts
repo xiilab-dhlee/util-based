@@ -153,7 +153,6 @@ export const updateProfileBody = zod
       .describe(
         "새 비밀번호 (선택적). null인 경우(=초기 admin) 비밀번호를 변경하지 않습니다. 규칙: 8~16자, 영문(대소문자), 숫자, 특수문자(!@#$%^&()) 조합",
       ),
-    isValid: zod.boolean(),
   })
   .strict()
   .describe(
@@ -189,7 +188,6 @@ export const markNotificationAsReadResponse = zod
  * 인증 코드를 검증하고 새 비밀번호로 변경합니다. 보안상 유효하지 않은 이메일, 잘못된 코드, 만료된 코드 모두 동일한 에러를 반환합니다. 성공 시 인증 코드는 자동으로 삭제됩니다.
  * @summary 비밀번호 재설정
  */
-
 export const resetPasswordBodyCodeRegExp = /^[0-9]{6}$/;
 export const resetPasswordBodyPasswordMin = 8;
 export const resetPasswordBodyPasswordMax = 16;
@@ -199,10 +197,9 @@ export const resetPasswordBodyPasswordRegExp =
 
 export const resetPasswordBody = zod
   .object({
-    email: zod.string().email().min(1).describe("이메일 주소"),
+    email: zod.string().email().describe("이메일 주소"),
     code: zod
       .string()
-      .min(1)
       .regex(resetPasswordBodyCodeRegExp)
       .describe("인증 코드 (6자리 숫자)"),
     password: zod
@@ -247,7 +244,6 @@ export const unpinWorkspaceParams = zod.object({
  * 새로운 사용자 계정을 생성합니다. 가입 승인 모드가 활성화된 경우 관리자 승인 후 로그인이 가능합니다.
  * @summary 회원가입
  */
-
 export const signupBodyPasswordMin = 8;
 export const signupBodyPasswordMax = 16;
 
@@ -259,7 +255,7 @@ export const signupBodyLastNameMax = 25;
 
 export const signupBody = zod
   .object({
-    email: zod.string().email().min(1).describe("이메일 주소"),
+    email: zod.string().email().describe("이메일 주소"),
     password: zod
       .string()
       .min(signupBodyPasswordMin)
@@ -295,10 +291,9 @@ export const signupBody = zod
  * 사용자의 이메일로 인증 코드를 발송합니다. Rate limiting이 적용되어 1분 이내 재요청을 방지합니다. 재발송 시에도 동일한 API를 사용하며, 기존 코드는 새 코드로 자동 교체됩니다.
  * @summary 비밀번호 재설정 인증코드 발송
  */
-
 export const requestPasswordResetBody = zod
   .object({
-    email: zod.string().email().min(1).describe("이메일 주소"),
+    email: zod.string().email().describe("이메일 주소"),
   })
   .strict()
   .describe("비밀번호 재설정 인증코드 발송 요청");
@@ -307,13 +302,12 @@ export const requestPasswordResetBody = zod
  * 사용자가 입력한 인증 코드가 유효한지 검증합니다. 클라이언트에서 코드 입력 후 즉시 피드백을 제공하기 위해 사용됩니다. 실제 비밀번호 변경은 /password/reset API에서 수행됩니다.
  * @summary 비밀번호 재설정 인증코드 검증
  */
-
 export const verifyPasswordResetCodeBodyCodeMin = 6;
 export const verifyPasswordResetCodeBodyCodeMax = 6;
 
 export const verifyPasswordResetCodeBody = zod
   .object({
-    email: zod.string().email().min(1).describe("이메일 주소"),
+    email: zod.string().email().describe("이메일 주소"),
     code: zod
       .string()
       .min(verifyPasswordResetCodeBodyCodeMin)
@@ -358,13 +352,19 @@ export const getNotificationSetsResponse = zod
               .boolean()
               .describe("이메일 알림 수신 활성화 여부"),
             notificationType: zod
-              .string()
-              .describe(
-                "알림 타입. 가능한 값: WORKSPACE_INVITE, WORKSPACE_ROLE_CHANGE, SIGNUP_REQUEST 등",
-              ),
+              .enum([
+                "LICENSE",
+                "ACCOUNT",
+                "VULNERABILITY",
+                "NODE",
+                "WORKSPACE",
+                "WORKLOAD",
+                "MONITORING",
+              ])
+              .describe("알림 타입"),
             notificationRole: zod
-              .string()
-              .describe("알림 대상 역할. 가능한 값: USER, ADMIN"),
+              .enum(["SUPER_ADMIN", "ADMIN", "USER", "ALL"])
+              .describe("알림 대상 역할"),
           })
           .strict()
           .describe("알림 설정 조회 응답 (사용자용)"),
@@ -399,6 +399,12 @@ export const getNotificationsQueryParams = zod.object({
     .max(getNotificationsQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
+  hasRead: zod
+    .boolean()
+    .optional()
+    .describe(
+      "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
+    ),
   notificationType: zod
     .enum([
       "LICENSE",
@@ -433,10 +439,16 @@ export const getNotificationsResponse = zod
               notificationId: zod.number().describe("알림 고유 ID"),
               notificationContent: zod.string().describe("알림 본문 메시지"),
               notificationType: zod
-                .string()
-                .describe(
-                  "알림 타입. 가능한 값: WORKSPACE_INVITE, WORKSPACE_ROLE_CHANGE, SIGNUP_REQUEST 등",
-                ),
+                .enum([
+                  "LICENSE",
+                  "ACCOUNT",
+                  "VULNERABILITY",
+                  "NODE",
+                  "WORKSPACE",
+                  "WORKLOAD",
+                  "MONITORING",
+                ])
+                .describe("알림 타입"),
               createDateTime: zod
                 .string()
                 .datetime({})
