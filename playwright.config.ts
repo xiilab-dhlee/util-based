@@ -139,7 +139,7 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    command: "pnpm dev",
+    command: "cross-env TEST_AUTH_ENABLE=true pnpm dev",
     url: "http://localhost:3000",
     reuseExistingServer: !isCI,
     timeout: 30 * 1000,
