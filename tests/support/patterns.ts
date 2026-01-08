@@ -100,4 +100,4 @@ export const DATE_PATTERN: RegExp = /^\d{4}\.\d{2}\.\d{2}$/;
  * - "10,000개"
  * - "1,234,567개"
  */
-export const COUNT_PATTERN: RegExp = /^\d{1,3}(,\d{3})*개$/;
+export const COUNT_PATTERN: RegExp = /^([1-9]\d{0,2}|0)(,\d{3})*개$/;
