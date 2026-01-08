@@ -72,7 +72,10 @@ export const getPublicRegistryListResponse = zod
           zod
             .object({
               imageId: zod.number().describe("이미지 ID"),
-              imageName: zod.string().describe("이미지 표시 이름"),
+              imageDisplayName: zod
+                .string()
+                .describe("목록에 표시되는 이미지 이름"),
+              harborImageName: zod.string().describe("Harbor 이미지 경로"),
               latestImageTagName: zod
                 .string()
                 .optional()
@@ -148,3 +151,206 @@ export const createExternalImageBody = zod
   })
   .strict()
   .describe("외부 이미지 등록 요청");
+
+/**
+ * 
+            공용 레지스트리 이미지 업로드 작업 목록을 페이징하여 조회합니다.
+            내가 등록한 작업만 필터링하거나 특정 이미지의 작업만 조회할 수 있습니다.
+        
+ * @summary 공용 이미지 Pull/Push 작업 목록 조회
+ */
+export const getPullPushJobsQueryPageRequestPageSizeMax = 100;
+
+export const getPullPushJobsQueryParams = zod.object({
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPullPushJobsQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    isMine: zod.boolean().describe("내가 등록한 작업만 조회"),
+    imageId: zod.number().optional().describe("특정 이미지의 작업만 조회"),
+  }),
+});
+
+export const getPullPushJobsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              imageId: zod.number().describe("이미지 ID"),
+              imageTagId: zod.number().describe("이미지 태그 ID"),
+              sourceImage: zod.string().describe("소스 이미지 경로"),
+              status: zod.string().describe("작업 상태"),
+              createdAt: zod
+                .string()
+                .datetime({})
+                .optional()
+                .describe("생성일시"),
+            })
+            .strict()
+            .describe("Pull/Push 작업 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            공용 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
+            키워드, 스캔 상태로 필터링이 가능합니다.
+        
+ * @summary 공용 이미지 태그 목록 조회
+ */
+export const getPublicImageTagListQueryPageRequestPageSizeMax = 100;
+
+export const getPublicImageTagListQueryParams = zod.object({
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPublicImageTagListQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+    sort: zod
+      .enum([
+        "CREATED_AT",
+        "UPDATED_AT",
+        "IMAGE_TAG_SIZE_BYTE",
+        "TOTAL_VULNERABILITY_COUNT",
+        "APPROVAL_STATUS",
+        "LATEST_SCAN_DATETIME",
+      ])
+      .describe("정렬 필드"),
+    order: zod
+      .enum(["ASC", "DESC"])
+      .describe(
+        "정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용",
+      ),
+    scanStatus: zod
+      .enum(["SCANNED", "NOT_SCANNED"])
+      .optional()
+      .describe("스캔 상태 필터"),
+  }),
+});
+
+export const getPublicImageTagListResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              harborTagId: zod
+                .number()
+                .describe("Harbor 태그 ID (Source of Truth)"),
+              imageTagName: zod.string().describe("이미지 태그 이름"),
+              imageTagSizeByte: zod
+                .number()
+                .describe("이미지 태그 크기 (바이트)"),
+              scanStatus: zod.string().describe("스캔 상태"),
+              vulnerability: zod
+                .object({
+                  criticalCount: zod.number().describe("치명적 취약점 수"),
+                  highCount: zod.number().describe("높음 취약점 수"),
+                  mediumCount: zod.number().describe("중간 취약점 수"),
+                  lowCount: zod.number().describe("낮음 취약점 수"),
+                })
+                .strict()
+                .describe("취약점 정보"),
+              creatorId: zod.string().describe("생성자 ID"),
+              creatorName: zod.string().optional().describe("생성자 이름"),
+              createDateTime: zod
+                .string()
+                .datetime({})
+                .optional()
+                .describe("생성일시"),
+              approvalStatus: zod
+                .enum([
+                  "AVAILABLE",
+                  "APPROVAL_REQUIRED",
+                  "APPROVED",
+                  "REJECTED",
+                  "APPROVAL_WAITING",
+                  "REQUEST_BLOCKED",
+                ])
+                .optional()
+                .describe("승인 상태"),
+              latestVulnerabilityScanDateTime: zod
+                .string()
+                .datetime({})
+                .optional()
+                .describe("최근 취약점 스캔 일시"),
+              requestReason: zod.string().optional().describe("사용 요청 사유"),
+              decisionReason: zod.string().optional().describe("결정 사유"),
+              deciderId: zod.string().optional().describe("결정자 ID"),
+              deciderName: zod.string().optional().describe("결정자 이름"),
+            })
+            .strict()
+            .describe("이미지 태그 목록 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            공용 레지스트리의 이미지 상세 정보를 조회합니다.
+            존재하지 않는 경우 null을 반환합니다.
+        
+ * @summary 공용 이미지 상세 조회
+ */
+export const getPublicImageDetailQueryParams = zod.object({
+  request: zod.object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+  }),
+});
+
+export const getPublicImageDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    data: zod
+      .object({
+        imageId: zod.number().describe("이미지 ID"),
+        imageDisplayName: zod.string().describe("이미지 표시 이름"),
+        description: zod.string().optional().describe("이미지 설명"),
+        creatorName: zod.string().optional().describe("생성자 이름"),
+        creatorId: zod.string().describe("생성자 ID"),
+        createdAt: zod.string().datetime({}).optional().describe("생성일시"),
+        imageType: zod
+          .enum(["PRIVATE", "PUBLIC", "BUILT_IN", "HUB"])
+          .describe("이미지 타입"),
+      })
+      .strict()
+      .optional()
+      .describe("레지스트리 이미지 상세 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();

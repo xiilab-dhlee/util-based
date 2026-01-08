@@ -121,7 +121,7 @@ export const findHubDetailResponse = zod.string();
 export const findHubSummariesQueryParams = zod.object({
   workloadJobType: zod
     .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-    .describe("워크로드 작업 타입 (ENUM: BATCH, INTERACTIVE, INFERENCE, LLM)"),
+    .describe("워크로드 작업 타입 (ENUM: BATCH, INTERACTIVE, DISTRIBUTED)"),
 });
 
 export const findHubSummariesResponse = zod

@@ -634,7 +634,12 @@ export const getWorkspaceMembers1Response = zod
   .strict();
 
 /**
- * 특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+ * 
+            특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+
+            **응답 규칙:**
+            - 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+        
  * @summary 관리자용 워크스페이스 상세 조회
  */
 export const getWorkspaceDetail1Params = zod.object({
@@ -875,7 +880,13 @@ export const getResourceRequests1Response = zod
   .strict();
 
 /**
- * 리소스 요청의 상세 정보를 조회합니다. 현재 할당량, 요청량, 클러스터 전체 용량을 비교하여 확인할 수 있습니다.
+ * 
+            리소스 요청의 상세 정보를 조회합니다. 현재 할당량, 요청량, 클러스터 전체 용량을 비교하여 확인할 수 있습니다.
+
+            **응답 규칙:**
+            - 리소스 요청이 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+            - 연관된 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+        
  * @summary 리소스 요청 상세 조회
  */
 export const getResourceRequestDetailParams = zod.object({

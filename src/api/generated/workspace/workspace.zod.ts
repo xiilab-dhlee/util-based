@@ -125,6 +125,10 @@ export const getAllWorkspacesQueryParams = zod.object({
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod.number().min(1).optional().describe("페이지 크기"),
+  hasMyWorkspace: zod
+    .boolean()
+    .optional()
+    .describe("내 워크스페이스만 조회 여부"),
   keyword: zod.string().optional().describe("검색 키워드"),
 });
 
