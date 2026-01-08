@@ -22,16 +22,8 @@ const nextConfig: NextConfig = {
         destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
       },
       {
-        source: "/batch-api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_BATCH_API_URL}/api/:path*`,
-      },
-      {
         source: "/monitor-api/:path*",
         destination: `${process.env.NEXT_PUBLIC_MONITOR_API_URL}/api/:path*`,
-      },
-      {
-        source: "/predict-api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_PREDICTION_API_URL}/:path*`,
       },
     ];
 
