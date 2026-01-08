@@ -111,10 +111,13 @@ When(
 );
 
 Then("목록 페이지의 모든 체크박스가 선택된다", async ({ listTable }) => {
+  await listTable.waitForLoaded();
   await listTable.assertAllRowsChecked();
 });
 
 Then("목록 페이지의 모든 체크박스가 해제된다", async ({ listTable }) => {
+  // 페이지 이동 후 테이블 로딩 완료 대기 (로딩 중 체크박스 0개로 false positive 방지)
+  await listTable.waitForLoaded();
   await listTable.assertAllRowsUnchecked();
 });
 
