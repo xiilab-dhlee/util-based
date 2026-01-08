@@ -3,6 +3,7 @@
 import { useAtomValue } from "jotai";
 import { Icon } from "xiilab-ui";
 
+import { CreateWorkspaceModal } from "@/domain/workspace/components/create-workspace-modal";
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
@@ -15,7 +16,6 @@ import {
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
-import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";

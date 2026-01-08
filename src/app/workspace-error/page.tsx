@@ -1,8 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import styled from "styled-components";
-import { Button, Typography } from "xiilab-ui";
+import { Typography } from "xiilab-ui";
 
 import { CreateFirstWorkspaceModal } from "@/domain/workspace/components/create-first-workspace-modal";
 import { CreateWorkspaceModal } from "@/domain/workspace/components/create-workspace-modal";
@@ -10,12 +9,7 @@ import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
 
-export default function NotFound() {
-  const router = useRouter();
-
-  const handleBack = () => {
-    router.replace("/");
-  };
+export default function WorkspaceError() {
   return (
     <>
       <Container>
@@ -24,33 +18,21 @@ export default function NotFound() {
         </Left>
         <Right>
           <RightBody>
-            <Title>404</Title>
-            <NotFoundHeadline variant="headline-3-1" color="#292B32">
-              앗! 페이지를 찾을 수 없어요 :(
-            </NotFoundHeadline>
-            <NotFoundDescription variant="subtitle-2-3" color="#5F6368">
-              죄송합니다. 요청하신 페이지가 존재하지 않습니다.
+            <Title>503</Title>
+            <WorkspaceErrorHeadline variant="headline-3-1" color="#292B32">
+              워크스페이스를 불러올 수 없습니다
+            </WorkspaceErrorHeadline>
+            <WorkspaceErrorDescription variant="subtitle-2-3" color="#5F6368">
+              워크스페이스 목록을 불러오는데 실패했습니다.
               <br />
-              메인에서 원하시는 정보를 찾아보세요.
-            </NotFoundDescription>
-            <Button
-              color="primary"
-              iconPosition="left"
-              variant="gradient"
-              width={340}
-              onClick={handleBack}
-            >
-              메인으로 돌아가기
-            </Button>
+              잠시 후 다시 시도해주세요.
+            </WorkspaceErrorDescription>
           </RightBody>
         </Right>
       </Container>
-      {/* 워크스페이스 생성 모달 */}
       <CreateFirstWorkspaceModal />
       <CreateWorkspaceModal />
-      {/* 비밀번호 재확인 모달 */}
       <CheckPasswordModal />
-      {/* 비밀번호 수정 모달 */}
       <UpdatePasswordModal />
     </>
   );
@@ -76,7 +58,7 @@ const Right = styled.div`
   height: 100%;
   padding: 0 var(--page-inner-padding);
   overflow: hidden;
-  background-color: #F3F3F3;
+  background-color: #f3f3f3;
 `;
 
 const RightBody = styled.div`
@@ -89,16 +71,16 @@ const RightBody = styled.div`
   text-align: center;
 `;
 
-const NotFoundHeadline = styled(Typography.Title)`
+const WorkspaceErrorHeadline = styled(Typography.Title)`
   margin-bottom: 14px;
 `;
 
-const NotFoundDescription = styled(Typography.Text)`
+const WorkspaceErrorDescription = styled(Typography.Text)`
   margin-bottom: 40px;
 `;
 
 const Title = styled.div`
-  color: #534AD8;
+  color: #534ad8;
   line-height: 140px;
   font-size: 150px;
   font-weight: 250;

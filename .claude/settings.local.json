@@ -35,7 +35,10 @@
       "Bash(pnpm --version:*)",
       "Bash(find:*)",
       "Bash(pnpm typecheck:*)",
-      "Bash(npx pnpm format:*)"
+      "Bash(npx pnpm format:*)",
+      "Skill(commit)",
+      "Skill(commit:*)",
+      "Bash(cat:*)"
     ],
     "deny": [
       "Bash(pnpm add:*)",

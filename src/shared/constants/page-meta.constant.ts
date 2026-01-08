@@ -143,6 +143,11 @@ export const PAGE_META = {
     href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_MEMBER(id),
     parent: "admin.workspace.detail",
   },
+  "admin.workspace.disabled": {
+    title: "비활성 워크스페이스",
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_DISABLED(id),
+    parent: "admin.workspace.detail",
+  },
   "admin.workspace.request-resource": {
     title: "리소스 신청 관리",
     iconName: "Resource",
@@ -318,6 +323,11 @@ export const PAGE_META = {
     iconName: "Workload",
     href: ROUTES.USER_WORKLOAD,
   },
+  "user.workload.disabled": {
+    title: "비활성 워크로드",
+    href: ROUTES.USER_WORKLOAD_DISABLED,
+    parent: "user.workload",
+  },
   "user.workload.detail": {
     title: "워크로드 상세",
     href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_DETAIL(id),
@@ -412,19 +422,11 @@ export const PAGE_META = {
   },
 
   // ============================================
-  // Common Settings (no href, 레이아웃 내부 설정 페이지)
+  // Error Routes
   // ============================================
-  "setting.profile": {
-    title: "프로필 관리",
-    iconName: "Profile",
-  },
-  "setting.alert": {
-    title: "알림 설정",
-    iconName: "Alert",
-  },
-  "setting.member": {
-    title: "멤버 관리",
-    iconName: "Member",
+  "workspace-error": {
+    title: "워크스페이스 오류",
+    href: ROUTES.WORKSPACE_ERROR,
   },
 } as const;
 

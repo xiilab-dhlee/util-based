@@ -23,7 +23,7 @@ export interface GetWorkloadsPayload
 }
 
 export interface GetWorkloadPayload extends CorePayload {
-  workspaceId: string;
+  workspaceId: number;
   workloadId: string;
 }
 

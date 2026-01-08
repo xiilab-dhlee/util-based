@@ -7,6 +7,7 @@ import {
   isValid,
   parseISO,
 } from "date-fns";
+import { isString } from "es-toolkit/predicate";
 
 /**
  * 주어진 날짜 문자열로부터 현재 시간까지의 경과 시간을 한국어로 반환
@@ -65,7 +66,7 @@ export const formatDateTimeSafely = (
     return fallback;
   }
 
-  const date = typeof value === "string" ? parseISO(value) : value;
+  const date = isString(value) ? parseISO(value) : value;
 
   if (!isValid(date)) {
     return fallback;
@@ -91,7 +92,7 @@ export const formatDateSafely = (
     return fallback;
   }
 
-  const date = typeof value === "string" ? parseISO(value) : value;
+  const date = isString(value) ? parseISO(value) : value;
 
   if (!isValid(date)) {
     return fallback;

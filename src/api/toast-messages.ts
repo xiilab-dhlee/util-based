@@ -9,7 +9,7 @@ export const MUTATION_MESSAGES: Partial<
   Record<MutationKey, { success?: string; error?: string }>
 > = {
   // ============================================
-  // Account Management
+  // Account Management (Admin)
   // ============================================
   [MUTATION_KEYS.updateAccount]: {
     success: "계정 정보가 수정되었습니다.",
@@ -33,5 +33,25 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.resetPasswordByAdmin]: {
     error: "비밀번호 재설정에 실패했습니다.",
+  },
+
+  // ============================================
+  // Account (User)
+  // ============================================
+  [MUTATION_KEYS.pinWorkspace]: {
+    success: "워크스페이스가 고정되었습니다.",
+    error: "워크스페이스 고정에 실패했습니다.",
+  },
+  [MUTATION_KEYS.unpinWorkspace]: {
+    success: "워크스페이스 고정이 해제되었습니다.",
+    error: "워크스페이스 고정 해제에 실패했습니다.",
+  },
+
+  // ============================================
+  // Workspace
+  // ============================================
+  [MUTATION_KEYS.createWorkspace]: {
+    success: "워크스페이스가 생성되었습니다.",
+    error: "워크스페이스 생성에 실패했습니다.",
   },
 };

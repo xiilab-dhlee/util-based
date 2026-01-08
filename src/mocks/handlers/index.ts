@@ -13,6 +13,7 @@ import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { credentialHandlers } from "@/mocks/handlers/credential.handler";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { groupHandlers } from "@/mocks/handlers/group.handler";
@@ -36,7 +37,6 @@ import { storageSettingHandlers } from "@/mocks/handlers/storage-setting.handler
 import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
 import { volumeHandlers } from "@/mocks/handlers/volume.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
-import { workspaceHandlers } from "@/mocks/handlers/workspace.handler";
 
 // ============================================
 // Lazy Mock 지연 래퍼

@@ -43,7 +43,7 @@ export function SelectWorkloadModal() {
     try {
       const workloadDetail = await execute({
         workloadId: selectedWorkload,
-        workspaceId: selectedWorkspace.id,
+        workspaceId: selectedWorkspace.workspaceId,
       });
 
       if (workloadDetail) {

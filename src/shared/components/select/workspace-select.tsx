@@ -1,14 +1,20 @@
 import type { CheckboxChangeEvent } from "antd";
-import classNames from "classnames";
 import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import styled from "styled-components";
-import { Checkbox, Icon, Input } from "xiilab-ui";
+import { Checkbox, Input } from "xiilab-ui";
 
-import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
-import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
+import {
+  usePinWorkspace,
+  useUnpinWorkspace,
+} from "@/api/generated/account/account";
+import type { WorkspaceResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { ArrowIcon } from "@/shared/components/icon/arrow-icon";
+import { useWorkspaceSelect } from "@/shared/components/select/workspace-select/use-workspace-select";
+import { WorkspaceSelectOption } from "@/shared/components/select/workspace-select/workspace-select-option";
+import { MySpinner } from "@/shared/components/spinner";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
@@ -16,129 +22,192 @@ import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 export function WorkspaceSelect() {
   const [isOpen, setIsOpen] = useState(false);
-
   const { onOpen } = useGlobalModal(openCreateWorkspaceModalAtom);
-  // 선택된 워크스페이스
-  const [selectedWorkspace, setSelectedWorkspace] =
-    useState<WorkspaceListType | null>(null);
-  // 나의 워크스페이스 체크 여부
-  const [isMyWorkspaceChecked, setIsMyWorkspaceChecked] = useState(false);
 
-  const { data } = useGetWorkspaces({
-    page: 1,
-    size: 100,
-    isMyWorkspace: isMyWorkspaceChecked,
-    searchText: "",
+  const [isMyWorkspaceChecked, setIsMyWorkspaceChecked] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const {
+    selectedWorkspace,
+    workspaces,
+    isLoading,
+    handleSelectWorkspace,
+    refetchWorkspaces,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useWorkspaceSelect(searchKeyword);
+
+  const { ref: sentinelRef, inView } = useInView({
+    threshold: 0,
+    rootMargin: "150px",
   });
 
-  const handleToggle = () => {
-    setIsOpen((prev) => !prev);
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage && isOpen) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, isOpen, fetchNextPage]);
+
+  // TODO: useAuth 구현 후 실제 accountId로 교체
+  const TEMP_ACCOUNT_ID = "temp-account-id";
+
+  const { mutate: pinWorkspace } = usePinWorkspace();
+  const { mutate: unpinWorkspace } = useUnpinWorkspace();
+
+  const handleDropdownToggle = () => {
+    setIsOpen((prev) => {
+      if (!prev) {
+        setInputValue("");
+        setSearchKeyword("");
+      }
+      return !prev;
+    });
   };
 
-  const handleClickOption = (workspace: WorkspaceListType) => {
-    setSelectedWorkspace(workspace);
-    setIsOpen(false);
+  const handleClickOption = async (workspace: WorkspaceResponse) => {
+    handleClose();
+    await handleSelectWorkspace(workspace);
   };
 
   const handleClose = () => {
     setIsOpen(false);
+    setInputValue("");
+    setSearchKeyword("");
   };
 
-  const handleSearch = () => {};
+  const handleSearch = (value: string) => {
+    setSearchKeyword(value);
+  };
 
   const handleCreateWorkspace = () => {
-    setIsOpen(false);
+    handleClose();
     onOpen();
   };
 
   const handleChangeMyWorkspace = (e: CheckboxChangeEvent) => {
     setIsMyWorkspaceChecked(e.target.checked);
+    // TODO: 백엔드 필터 API 지원 시 구현
   };
 
-  useEffect(() => {
-    if (data?.content) {
-      setSelectedWorkspace(data.content[0]);
+  const handlePinClick = (
+    e: React.MouseEvent,
+    workspace: WorkspaceResponse,
+  ) => {
+    e.stopPropagation();
+
+    if (workspace.isPinned) {
+      unpinWorkspace(
+        { accountId: TEMP_ACCOUNT_ID, workspaceId: workspace.workspaceId },
+        {
+          onSuccess: () => {
+            refetchWorkspaces();
+          },
+        },
+      );
+    } else {
+      pinWorkspace(
+        { accountId: TEMP_ACCOUNT_ID, workspaceId: workspace.workspaceId },
+        {
+          onSuccess: () => {
+            refetchWorkspaces();
+          },
+        },
+      );
     }
-  }, [data]);
+  };
 
   return (
-    <ActiveOutsideClick onClick={handleClose}>
-      <Container>
-        <ActiveOption onClick={handleToggle}>
-          {selectedWorkspace ? (
-            <>
-              <Badge>Default</Badge>
+    <>
+      {isLoading && (
+        <LoadingOverlay>
+          <MySpinner />
+        </LoadingOverlay>
+      )}
+      <ActiveOutsideClick onClick={handleClose}>
+        <Container>
+          <ActiveOption onClick={handleDropdownToggle}>
+            {selectedWorkspace ? (
               <ValueWrapper>
+                {selectedWorkspace.isDefault && <Badge>Default</Badge>}
                 <Value
                   className="truncate"
                   data-testid={SELECTOR.WORKSPACE_SELECT_VALUE}
                 >
-                  {selectedWorkspace?.name}
+                  {selectedWorkspace.workspaceName}
                 </Value>
               </ValueWrapper>
-            </>
-          ) : (
-            <Placeholder data-testid={SELECTOR.WORKSPACE_SELECT_PLACEHOLDER}>
-              Select Workspace
-            </Placeholder>
+            ) : (
+              <Placeholder data-testid={SELECTOR.WORKSPACE_SELECT_PLACEHOLDER}>
+                Select Workspace
+              </Placeholder>
+            )}
+            <IconWrapper className={isOpen ? "open" : ""}>
+              <ArrowIcon />
+            </IconWrapper>
+          </ActiveOption>
+          {isOpen && (
+            <Overlay>
+              <OverlayBody>
+                <Input.Search
+                  placeholder="워크스페이스 검색"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onSearch={handleSearch}
+                  autoComplete="off"
+                  width={188}
+                  height={30}
+                  darkMode={true}
+                />
+                <Menu>
+                  {searchKeyword && workspaces.length === 0 ? (
+                    <EmptyMessage>조회된 결과가 없습니다.</EmptyMessage>
+                  ) : (
+                    <>
+                      {workspaces.map((workspace: WorkspaceResponse) => (
+                        <WorkspaceSelectOption
+                          key={workspace.workspaceId}
+                          workspace={workspace}
+                          isSelected={
+                            selectedWorkspace?.workspaceId ===
+                            workspace.workspaceId
+                          }
+                          onSelect={handleClickOption}
+                          onPinToggle={handlePinClick}
+                        />
+                      ))}
+                      {hasNextPage && <SentinelDiv ref={sentinelRef} />}
+                    </>
+                  )}
+                </Menu>
+              </OverlayBody>
+              <Footer>
+                <FooterLeft>
+                  <Checkbox
+                    id="my-workspace"
+                    size="small"
+                    darkMode
+                    checked={isMyWorkspaceChecked}
+                    onChange={handleChangeMyWorkspace}
+                  />
+                  <CheckboxLabel htmlFor="my-workspace">
+                    나의 워크스페이스
+                  </CheckboxLabel>
+                </FooterLeft>
+                <div>
+                  <CreateModelButton
+                    className="dark"
+                    onClick={handleCreateWorkspace}
+                    title="생성"
+                  />
+                </div>
+              </Footer>
+            </Overlay>
           )}
-          <IconWrapper className={isOpen ? "open" : ""}>
-            <ArrowIcon />
-          </IconWrapper>
-        </ActiveOption>
-        {isOpen && (
-          <Overlay>
-            <OverlayBody>
-              <Input.Search
-                placeholder="워크스페이스 검색"
-                onSearch={handleSearch}
-                autoComplete="off"
-                width={188}
-                height={32}
-                darkMode={true}
-              />
-              <Menu>
-                {data?.content?.map((workspace: WorkspaceListType) => (
-                  <Option
-                    key={workspace.id}
-                    className={classNames({
-                      active: selectedWorkspace?.id === workspace.id,
-                    })}
-                    onClick={() => handleClickOption(workspace)}
-                  >
-                    <span>{workspace.name}</span>
-                    <span>
-                      <Icon name="PinFilled" size={20} color="#fff" />
-                    </span>
-                  </Option>
-                ))}
-              </Menu>
-            </OverlayBody>
-            <Footer>
-              <FooterLeft>
-                <Checkbox
-                  id="my-workspace"
-                  size="small"
-                  darkMode
-                  checked={isMyWorkspaceChecked}
-                  onChange={handleChangeMyWorkspace}
-                />
-                <CheckboxLabel htmlFor="my-workspace">
-                  나의 워크스페이스
-                </CheckboxLabel>
-              </FooterLeft>
-              <div>
-                <CreateModelButton
-                  className="dark"
-                  onClick={handleCreateWorkspace}
-                  title="생성"
-                />
-              </div>
-            </Footer>
-          </Overlay>
-        )}
-      </Container>
-    </ActiveOutsideClick>
+        </Container>
+      </ActiveOutsideClick>
+    </>
   );
 }
 
@@ -150,8 +219,8 @@ const Container = styled.div`
   height: 100%;
   position: relative;
   border-radius: 2px;
-  outline: 1px solid #373a4c;
-  padding: 5px;
+  border: 1px solid #3A3C4A;
+  padding: 6px;
 `;
 
 const ActiveOption = styled.button`
@@ -160,7 +229,7 @@ const ActiveOption = styled.button`
   align-items: center;
   width: 100%;
   height: 100%;
-  gap: 7px;
+  gap: 4px;
 `;
 
 const ValueWrapper = styled.div`
@@ -169,7 +238,7 @@ const ValueWrapper = styled.div`
   align-items: center;
   flex: 1;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 10px;
   color: #f5f5f5;
   overflow: hidden;
 `;
@@ -182,13 +251,12 @@ const Placeholder = styled(Value)`
 
 const Overlay = styled.div`
   position: absolute;
-  top: calc(100% + 5px);
-  left: 0;
+  top: calc(100% + 4px);
   width: 100%;
   max-height: 296px;
-  background-color: #000;
-  outline: 1px solid #373a4c;
-  border-radius: 2px;
+  background-color: #171B26;
+  border: 1px solid #515E80B2;
+  border-radius: 4px;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -196,10 +264,9 @@ const Overlay = styled.div`
 
 const OverlayBody = styled.div`
   padding: 6px;
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 `;
 
 const Menu = styled.div`
@@ -209,40 +276,6 @@ const Menu = styled.div`
   ${customScrollbar("#515E80")}
 `;
 
-const Option = styled.div`
-  width: 100%;
-  height: 100%;
-  color: #f5f5f5;
-  height: 30px;
-  display: flex;
-  justify-content: space-between;
-  gap: 7px;
-  align-items: center;
-  padding: 7px;
-  padding-right: 0;
-  font-weight: 400;
-  border-radius: 2px;
-
-  &:hover,
-  &.active {
-    background-color: #544ad8;
-    font-weight: 600;
-  }
-`;
-
-const Badge = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  padding: 4px 7px;
-  background-color: #1c325e;
-  border-radius: 2px;
-  font-weight: 500;
-  font-size: 1.1rem;
-  color: #f5f5f5;
-`;
-
 const IconWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -250,7 +283,7 @@ const IconWrapper = styled.div`
   width: 100%;
   height: 100%;
   border-radius: 2px;
-  border: 1px solid #3f496e;
+  border: 1px solid #515E8080;
   width: 18px;
   height: 18px;
   background-color: #2d3041;
@@ -268,7 +301,7 @@ const Footer = styled.div`
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #242b3c;
-  padding: 8px;
+  padding: 0 8px;
 `;
 
 const FooterLeft = styled.div`
@@ -279,9 +312,40 @@ const FooterLeft = styled.div`
 `;
 
 const CheckboxLabel = styled.label`
-  font-weight: 400;
   font-size: 11px;
-  line-height: 13px;
-
   color: #c6c6c7;
+`;
+
+const EmptyMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #808080;
+  font-size: 12px;
+`;
+
+const LoadingOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+`;
+
+const Badge = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 4px 7px;
+  background-color: #1c325e;
+  border-radius: 2px;
+  font-weight: 500;
+  color: #f5f5f5;
+  margin-right: 4px;
+`;
+
+const SentinelDiv = styled.div`
+  height: 1px;
+  width: 100%;
 `;
