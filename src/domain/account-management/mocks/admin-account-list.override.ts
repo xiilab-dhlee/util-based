@@ -103,9 +103,10 @@ export const adminAccountListOverrideHandlers = [
           workspaceCount: (globalIndex % 10) + 1,
           workspaceLimitCount: 10,
           isEnabled: index % 3 !== 0,
-          groupName: [
-            ...Array.from({ length: groupCount }, (_, i) => `그룹-${i + 1}`),
-          ],
+          groupName: Array.from(
+            { length: groupCount },
+            (_, i) => `그룹-${i + 1}`,
+          ),
         };
       },
     );
