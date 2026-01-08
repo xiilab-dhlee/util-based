@@ -5,8 +5,7 @@ Feature: 워크로드 상세 페이지 상태별 탭 활성화 검증
   So that 현재 상태에서 사용 가능한 기능을 명확히 알 수 있다
 
   Background:
-    Given 사용자가 로그인되어 있다
-    And 워크로드 상세 페이지에 있다
+    Given 워크로드 상세 페이지에 있다
 
   @regression
   Scenario: 워크로드 이벤트 이력 데이터 유효성 검증

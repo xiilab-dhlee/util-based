@@ -5,8 +5,7 @@ Feature: 워크로드 상세 페이지 인터랙션
   So that 워크로드를 수정, 종료, 재시작, 삭제, 복제할 수 있다
 
   Background:
-    Given 사용자가 로그인되어 있다
-    And 워크로드 상세 페이지에 있다
+    Given 워크로드 상세 페이지에 있다
 
   # ============================================
   # 수정 버튼 인터랙션
@@ -28,7 +27,7 @@ Feature: 워크로드 상세 페이지 인터랙션
   Scenario Outline: 수정 모달 <결과>
     When 워크로드 수정 버튼을 클릭한다
     And "워크로드 수정" 모달의 <버튼> 버튼을 클릭한다
-    Then "워크로드 수정" 모달이 닫힌다
+    Then "워크로드 수정" 모달이 사라진다
 
     Examples:
       | 결과 | 버튼 |
@@ -43,7 +42,7 @@ Feature: 워크로드 상세 페이지 인터랙션
   Scenario Outline: 워크로드 종료 <결과> (상세 페이지)
     When 워크로드 종료 버튼을 클릭한다
     And "워크로드 종료" 모달의 <버튼> 버튼을 클릭한다
-    Then "워크로드 종료" 모달이 닫힌다
+    Then "워크로드 종료" 모달이 사라진다
 
     Examples:
       | 결과 | 버튼 |
@@ -58,7 +57,7 @@ Feature: 워크로드 상세 페이지 인터랙션
   Scenario Outline: 워크로드 재시작 <결과> (상세 페이지)
     When 워크로드 재시작 버튼을 클릭한다
     And "워크로드 재시작" 모달의 <버튼> 버튼을 클릭한다
-    Then "워크로드 재시작" 모달이 닫힌다
+    Then "워크로드 재시작" 모달이 사라진다
 
     Examples:
       | 결과 | 버튼 |
@@ -73,7 +72,7 @@ Feature: 워크로드 상세 페이지 인터랙션
   Scenario Outline: 워크로드 삭제 <결과> (상세 페이지)
     When 워크로드 삭제 버튼을 클릭한다
     And "워크로드 삭제" 모달의 <버튼> 버튼을 클릭한다
-    Then "워크로드 삭제" 모달이 닫힌다
+    Then "워크로드 삭제" 모달이 사라진다
 
     Examples:
       | 결과 | 버튼 |
@@ -88,7 +87,7 @@ Feature: 워크로드 상세 페이지 인터랙션
   Scenario Outline: Commit Image 생성 <결과>
     When Commit Image 생성 버튼을 클릭한다
     And "Commit Image 생성" 모달의 <버튼> 버튼을 클릭한다
-    Then "Commit Image 생성" 모달이 닫힌다
+    Then "Commit Image 생성" 모달이 사라진다
 
     Examples:
       | 결과 | 버튼 |

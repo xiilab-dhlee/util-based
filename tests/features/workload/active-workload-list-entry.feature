@@ -4,9 +4,6 @@ Feature: 활성화 워크로드 목록 페이지 진입
   I want to 활성화 워크로드 목록 페이지에 진입하면
   So that 실행 중인 워크로드 목록을 조회할 수 있다
 
-  Background:
-    Given 사용자가 로그인되어 있다
-
   @smoke
   Scenario: 활성화 워크로드 목록 페이지 조회
     Given 활성화 워크로드 목록 페이지에 있다

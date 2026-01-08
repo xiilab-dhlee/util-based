@@ -5,8 +5,7 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
   So that 원하는 워크로드를 찾고 조회할 수 있다
 
   Background:
-    Given 사용자가 로그인되어 있다
-    And 활성화 워크로드 목록 페이지에 있다
+    Given 활성화 워크로드 목록 페이지에 있다
 
   @regression
   Scenario: 워크로드 상세 페이지로 이동
@@ -67,7 +66,7 @@ Feature: 활성화 워크로드 목록 페이지 인터랙션
   Scenario Outline: 워크로드 종료 <결과>
     When 첫 번째 워크로드의 종료 버튼을 클릭한다
     And "워크로드 종료" 모달의 <버튼> 버튼을 클릭한다
-    Then "워크로드 종료" 모달이 닫힌다
+    Then "워크로드 종료" 모달이 사라진다
 
     Examples:
       | 결과 | 버튼 |
