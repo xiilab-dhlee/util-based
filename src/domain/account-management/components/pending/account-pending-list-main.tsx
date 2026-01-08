@@ -36,7 +36,7 @@ export function AccountPendingListMain() {
   });
 
   const { data, isLoading, isError } = useGetSignupRequests({
-    pageNo: page,
+    pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: searchText,
     ...(sortRequest ? { sortRequest } : {}),

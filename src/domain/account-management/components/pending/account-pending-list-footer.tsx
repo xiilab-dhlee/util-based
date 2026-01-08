@@ -9,6 +9,7 @@ import {
 } from "@/domain/account-management/state/account.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface AccountPendingListFooterProps {
   totalSize: number;
@@ -34,6 +35,7 @@ export function AccountPendingListFooter({
       pageSize={LIST_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
+      paginationTestId={SELECTOR.LIST_PAGINATION}
     />
   );
 }

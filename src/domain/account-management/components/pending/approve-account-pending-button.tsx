@@ -4,6 +4,7 @@ import { Button } from "xiilab-ui";
 
 import type { SignupRequestItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ACCOUNT_PENDING_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface ApproveAccountPendingButtonProps {
@@ -31,5 +32,12 @@ export function ApproveAccountPendingButton({
     });
   };
 
-  return <Button icon="Check" onClick={handleClick} aria-label="가입 승인" />;
+  return (
+    <Button
+      icon="Check"
+      onClick={handleClick}
+      aria-label="가입 승인"
+      data-testid={ACCOUNT_PENDING_SELECTOR.APPROVE_BUTTON}
+    />
+  );
 }
