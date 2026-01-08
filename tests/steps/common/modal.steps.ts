@@ -14,7 +14,7 @@ Then("{string} 모달이 표시된다", async ({ modal }, title: string) => {
   await modal.waitForVisibleWithTitle(title);
 });
 
-Then("{string} 모달이 닫힌다", async ({ modal }) => {
+Then("{string} 모달이 사라진다", async ({ modal }) => {
   await modal.waitForHidden();
 });
 

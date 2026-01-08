@@ -47,26 +47,13 @@ Then("계정 관리 목록 페이지가 표시된다", async ({ accountManagemen
 // 3. 테이블 행 액션
 // ============================================
 
-When(
-  "첫 번째 계정의 이름을 클릭한다",
-  async ({ accountManagementPage, $testInfo }) => {
-    const count = await accountManagementPage.table.getRowCount();
-    if (count === 0) {
-      $testInfo.skip(true, "계정이 없어 시나리오를 스킵합니다");
-      return;
-    }
-    await accountManagementPage.table.clickFirstCell(ACCOUNT_SELECTOR.NAME);
-  },
-);
+When("첫 번째 계정의 이름을 클릭한다", async ({ accountManagementPage }) => {
+  await accountManagementPage.table.clickFirstCell(ACCOUNT_SELECTOR.NAME);
+});
 
 When(
   /^첫 번째 계정의 (수정|PW 초기화) 버튼을 클릭한다$/,
-  async ({ accountManagementPage, $testInfo }, buttonName: string) => {
-    const count = await accountManagementPage.table.getRowCount();
-    if (count === 0) {
-      $testInfo.skip(true, "계정이 없어 시나리오를 스킵합니다");
-      return;
-    }
+  async ({ accountManagementPage }, buttonName: string) => {
     const firstRow = await accountManagementPage.table.getRow(0);
     await accountManagementPage.table.clickRowButton(
       firstRow,
@@ -75,9 +62,15 @@ When(
   },
 );
 
-/**
- * 버튼 활성화 상태 검증
- */
+When(
+  "첫 번째 계정의 상태 스위치를 클릭한다",
+  async ({ accountManagementPage }) => {
+    const firstRow = await accountManagementPage.table.getRow(0);
+    const statusSwitch = firstRow.locator(testId(ACCOUNT_SELECTOR.STATUS));
+    await statusSwitch.click();
+  },
+);
+
 Then(
   /^해당 계정의 (\S+) 버튼(?:이| 상태가) (활성화|비활성화)(?:이다|되어 있다)$/,
   async ({ listContext }, buttonName: string, state: string) => {
@@ -97,9 +90,6 @@ Then(
 // 4. 데이터 유효성 검증
 // ============================================
 
-/**
- * 각 계정의 이름이 빈 값이 아닌지 검증
- */
 Then(
   "각 계정의 이름이 빈 값이 아니다",
   async ({ accountManagementPage, assertLogger }) => {
@@ -112,9 +102,6 @@ Then(
   },
 );
 
-/**
- * 각 계정의 이메일이 빈 값이 아닌지 검증
- */
 Then(
   "각 계정의 이메일이 빈 값이 아니다",
   async ({ accountManagementPage, assertLogger }) => {
@@ -127,9 +114,6 @@ Then(
   },
 );
 
-/**
- * 각 계정의 권한이 빈 값이 아닌지 검증
- */
 Then(
   "각 계정의 권한이 빈 값이 아니다",
   async ({ accountManagementPage, assertLogger }) => {
@@ -142,9 +126,6 @@ Then(
   },
 );
 
-/**
- * 각 계정의 가입일이 올바른 형식으로 표시되는지 검증
- */
 Then(
   "각 계정의 가입일이 올바른 형식으로 표시된다",
   async ({ accountManagementPage, assertLogger }) => {
@@ -157,9 +138,6 @@ Then(
   },
 );
 
-/**
- * 각 계정의 권한이 유효한 값 중 하나인지 검증
- */
 Then(
   "각 계정의 권한이 다음 중 하나이다:",
   async ({ accountManagementPage, assertLogger }, dataTable: DataTable) => {
@@ -178,9 +156,6 @@ Then(
 // 5. 검색 결과 검증
 // ============================================
 
-/**
- * 계정 검색 결과 검증
- */
 Then(
   "계정 검색 결과 검색어가 포함된 데이터만 표시된다",
   async ({
@@ -207,17 +182,12 @@ Then(
 // 6. 정렬 기능
 // ============================================
 
-/**
- * 한글 정렬 기준 → 셀 selector 매핑
- */
+/** 한글 정렬 기준 → 셀 selector 매핑 */
 const SORT_CELL_MAP: Record<string, string> = {
   이름: ACCOUNT_SELECTOR.NAME,
   가입일: ACCOUNT_SELECTOR.CREATED_AT,
 };
 
-/**
- * 계정 목록 정렬 설정
- */
 When(
   "계정 목록을 {string} 기준 {string}으로 정렬한다",
   async (
@@ -225,16 +195,10 @@ When(
     field: string,
     order: "오름차순" | "내림차순",
   ) => {
-    // 컬럼 헤더 클릭으로 정렬 (한글 컬럼명 그대로 사용)
     await accountManagementPage.table.sortByColumn(field, order);
   },
 );
 
-/**
- * 계정 목록 정렬 결과 검증
- * Note: UI 상태 검증은 커스텀 정렬 아이콘의 복잡한 상태 관리로 인해
- *       데이터 정렬 순서 검증에 집중합니다.
- */
 Then(
   "계정 목록이 {string} 기준 {string}으로 정렬되어 표시된다",
   async (
@@ -265,55 +229,73 @@ Then(
 // 7. 계정 상세 모달 검증
 // ============================================
 
-/** 상세 모달 - 기본값이 "-"인 필드 (API 조회 성공 시 실제 값으로 표시) */
-const DETAIL_TEXT_FIELDS: Record<string, string> = {
-  이름: ACCOUNT_SELECTOR.DETAIL_NAME,
-  이메일: ACCOUNT_SELECTOR.DETAIL_EMAIL,
-  그룹: ACCOUNT_SELECTOR.DETAIL_GROUP,
-  상태: ACCOUNT_SELECTOR.DETAIL_STATUS,
-  권한: ACCOUNT_SELECTOR.DETAIL_ROLE,
-  가입일: ACCOUNT_SELECTOR.DETAIL_CREATED_AT,
+/** 모달 필드 설정 타입 */
+type ModalFieldConfig = {
+  textFields: Record<string, string>;
+  countFields: Record<string, string>;
+  modalName: string;
 };
 
-/** 수정 모달 - 기본값이 "-"인 필드 */
-const UPDATE_TEXT_FIELDS: Record<string, string> = {
-  이름: ACCOUNT_SELECTOR.UPDATE_NAME,
-  이메일: ACCOUNT_SELECTOR.UPDATE_EMAIL,
-  그룹: ACCOUNT_SELECTOR.UPDATE_GROUP,
-  가입일: ACCOUNT_SELECTOR.UPDATE_CREATED_AT,
+/** 상세 모달 필드 설정 */
+const DETAIL_MODAL_CONFIG: ModalFieldConfig = {
+  textFields: {
+    이름: ACCOUNT_SELECTOR.DETAIL_NAME,
+    이메일: ACCOUNT_SELECTOR.DETAIL_EMAIL,
+    그룹: ACCOUNT_SELECTOR.DETAIL_GROUP,
+    상태: ACCOUNT_SELECTOR.DETAIL_STATUS,
+    권한: ACCOUNT_SELECTOR.DETAIL_ROLE,
+    가입일: ACCOUNT_SELECTOR.DETAIL_CREATED_AT,
+  },
+  countFields: {
+    "워크스페이스 보유 개수": ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT,
+    "워크스페이스 생성 제한 개수": ACCOUNT_SELECTOR.DETAIL_WORKSPACE_LIMIT,
+  },
+  modalName: "상세",
 };
 
-/** 상세 모달 - 기본값이 "0개"인 필드 (n개 형식 검증) */
-const DETAIL_COUNT_FIELDS: Record<string, string> = {
-  "워크스페이스 보유 개수": ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT,
-  "워크스페이스 생성 제한 개수": ACCOUNT_SELECTOR.DETAIL_WORKSPACE_LIMIT,
+/** 수정 모달 필드 설정 */
+const UPDATE_MODAL_CONFIG: ModalFieldConfig = {
+  textFields: {
+    이름: ACCOUNT_SELECTOR.UPDATE_NAME,
+    이메일: ACCOUNT_SELECTOR.UPDATE_EMAIL,
+    그룹: ACCOUNT_SELECTOR.UPDATE_GROUP,
+    가입일: ACCOUNT_SELECTOR.UPDATE_CREATED_AT,
+  },
+  countFields: {
+    "워크스페이스 보유 개수": ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT,
+  },
+  modalName: "수정",
 };
 
-/** 수정 모달 - 개수 필드 (n개 형식) */
-const UPDATE_COUNT_FIELDS: Record<string, string> = {
-  "워크스페이스 보유 개수": ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT,
+/** 모달 필드 검증 헬퍼 (DRY) */
+const assertModalFieldVisible = async (
+  page: import("@playwright/test").Page,
+  fieldName: string,
+  config: ModalFieldConfig,
+) => {
+  const textSelector = config.textFields[fieldName];
+  const countSelector = config.countFields[fieldName];
+
+  if (textSelector) {
+    // 텍스트 필드: 값이 표시되어야 함 (빈 값 아님)
+    // Note: "-"는 값이 없는 경우 유효한 값 (예: 그룹이 없는 계정)
+    const element = page.locator(testId(textSelector));
+    await expect(element).toBeVisible();
+    await expect(element).not.toBeEmpty();
+  } else if (countSelector) {
+    // 개수 필드: n개 형식으로 표시되어야 함
+    const element = page.locator(testId(countSelector));
+    await expect(element).toBeVisible();
+    await expect(element).toHaveText(COUNT_PATTERN);
+  } else {
+    throw new Error(`알 수 없는 ${config.modalName} 모달 필드: ${fieldName}`);
+  }
 };
 
 Then(
   /^계정 상세 모달에 (.+)(?:이|가) 표시된다$/,
   async ({ page }, fieldName: string) => {
-    const textSelector = DETAIL_TEXT_FIELDS[fieldName];
-    const countSelector = DETAIL_COUNT_FIELDS[fieldName];
-
-    if (textSelector) {
-      // 텍스트 필드: 값이 표시되어야 함 (빈 값 아님)
-      // Note: "-"는 값이 없는 경우 유효한 값 (예: 그룹이 없는 계정)
-      const element = page.locator(testId(textSelector));
-      await expect(element).toBeVisible();
-      await expect(element).not.toBeEmpty();
-    } else if (countSelector) {
-      // 개수 필드: n개 형식으로 표시되어야 함
-      const element = page.locator(testId(countSelector));
-      await expect(element).toBeVisible();
-      await expect(element).toHaveText(COUNT_PATTERN);
-    } else {
-      throw new Error(`알 수 없는 상세 필드: ${fieldName}`);
-    }
+    await assertModalFieldVisible(page, fieldName, DETAIL_MODAL_CONFIG);
   },
 );
 
@@ -324,20 +306,7 @@ Then(
 Then(
   /^계정 수정 모달에 (.+)(?:이|가) 표시된다$/,
   async ({ page }, fieldName: string) => {
-    const textSelector = UPDATE_TEXT_FIELDS[fieldName];
-    const countSelector = UPDATE_COUNT_FIELDS[fieldName];
-
-    if (textSelector) {
-      const element = page.locator(testId(textSelector));
-      await expect(element).toBeVisible();
-      await expect(element).not.toBeEmpty();
-    } else if (countSelector) {
-      const element = page.locator(testId(countSelector));
-      await expect(element).toBeVisible();
-      await expect(element).toHaveText(COUNT_PATTERN);
-    } else {
-      throw new Error(`알 수 없는 수정 모달 필드: ${fieldName}`);
-    }
+    await assertModalFieldVisible(page, fieldName, UPDATE_MODAL_CONFIG);
   },
 );
 
@@ -345,9 +314,6 @@ Then(
 // 9. 계정 수정 모달 - 폼 필드 검증
 // ============================================
 
-/**
- * 수정 모달의 권한 드롭다운에 선택된 값이 유효한지 검증
- */
 Then(
   "계정 수정 모달의 권한 드롭다운에 선택된 값이 다음 중 하나이다:",
   async ({ accountManagementPage }, dataTable: DataTable) => {
@@ -358,9 +324,6 @@ Then(
   },
 );
 
-/**
- * 수정 모달의 상태 드롭다운에 선택된 값이 유효한지 검증
- */
 Then(
   "계정 수정 모달의 상태 드롭다운에 선택된 값이 다음 중 하나이다:",
   async ({ accountManagementPage }, dataTable: DataTable) => {
@@ -371,9 +334,6 @@ Then(
   },
 );
 
-/**
- * 수정 모달의 워크스페이스 생성 제한 개수 입력창에 숫자가 입력되어 있는지 검증
- */
 Then(
   "계정 수정 모달의 워크스페이스 생성 제한 개수 입력창에 숫자가 입력되어 있다",
   async ({ accountManagementPage }) => {
@@ -385,12 +345,20 @@ Then(
 // 10. 패스워드 초기화 결과 모달 검증
 // ============================================
 
-/**
- * 패스워드 초기화 결과 모달의 새 패스워드가 비어있지 않은지 검증
- */
 Then(
   "패스워드 초기화 결과 모달에 새 패스워드가 표시된다",
   async ({ accountManagementPage }) => {
     await accountManagementPage.assertResetPasswordResultNotEmpty();
+  },
+);
+
+// ============================================
+// 11. 체크박스 및 삭제 기능
+// ============================================
+
+When(
+  "첫 번째 계정의 체크박스를 클릭한다",
+  async ({ accountManagementPage }) => {
+    await accountManagementPage.table.clickRowCheckbox(0);
   },
 );
