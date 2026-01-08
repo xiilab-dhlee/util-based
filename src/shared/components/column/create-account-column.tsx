@@ -86,11 +86,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       align: "center",
       width: "12%",
       render: (accountRole: string) => {
-        return (
-          <ColumnAlignCenterWrap>
-            <span data-testid={ACCOUNT_SELECTOR.ROLE}>{accountRole}</span>
-          </ColumnAlignCenterWrap>
-        );
+        return <span data-testid={ACCOUNT_SELECTOR.ROLE}>{accountRole}</span>;
       },
     },
     {
