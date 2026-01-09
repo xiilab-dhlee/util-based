@@ -3,19 +3,14 @@ import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
-import {
-  DEFAULT_TEST_USER,
-  TEST_USERS,
-} from "@/shared/constants/auth.constant";
-
 // ============================================================================
 // 환경 설정
 // ============================================================================
 
 /**
  * 테스트/모킹 환경 여부
- * - TEST_AUTH_ENABLE=true: KeycloakProvider 사용 (테스트/모킹)
- * - TEST_AUTH_ENABLE=false 또는 미설정: CredentialsProvider 사용 (기본값)
+ * - TEST_AUTH_ENABLE=true: CredentialsProvider 사용 (테스트/모킹)
+ * - TEST_AUTH_ENABLE=false 또는 미설정: KeycloakProvider 사용 (기본값)
  */
 const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 
@@ -31,34 +26,164 @@ interface DevUser {
   roles: string[];
 }
 
-function getDevUserFromCredentials(user?: User | DevUser): DevUser {
-  const devUser = user as DevUser | undefined;
-  return {
-    id: devUser?.id ?? DEFAULT_TEST_USER.id,
-    name: devUser?.name ?? DEFAULT_TEST_USER.name,
-    email: devUser?.email ?? DEFAULT_TEST_USER.email,
-    preferred_username:
-      devUser?.preferred_username ?? DEFAULT_TEST_USER.preferred_username,
-    roles: devUser?.roles ?? DEFAULT_TEST_USER.roles,
-  };
+interface KeycloakPasswordGrantResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  refresh_expires_in: number;
 }
 
-function createTestToken(token: JWT, user?: User): JWT {
-  const devUser = getDevUserFromCredentials(user);
-  return {
-    ...token,
-    ...devUser,
-    access_token: process.env.TEST_ACCESS_TOKEN ?? "dev-test-access-token",
-    refresh_token: process.env.TEST_REFRESH_TOKEN ?? "dev-test-refresh-token",
-    expires_at: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+interface DecodedKeycloakToken {
+  sub: string;
+  name?: string;
+  email?: string;
+  preferred_username?: string;
+  realm_access?: { roles: string[] };
+}
+
+/**
+ * JWT access_token에서 사용자 정보를 파싱합니다.
+ */
+function parseUserFromAccessToken(accessToken: string): DevUser | null {
+  try {
+    const payload: DecodedKeycloakToken = JSON.parse(
+      Buffer.from(accessToken.split(".")[1], "base64").toString(),
+    );
+    return {
+      id: payload.sub,
+      name: payload.name ?? payload.preferred_username ?? "Unknown",
+      email: payload.email ?? "",
+      preferred_username: payload.preferred_username ?? payload.email ?? "",
+      roles: payload.realm_access?.roles ?? [],
+    };
+  } catch (error) {
+    console.error("Failed to parse access token:", error);
+    return null;
+  }
+}
+
+/**
+ * Backend API를 통해 Keycloak 토큰을 발급받습니다.
+ */
+async function fetchKeycloakTokenWithPassword(): Promise<KeycloakPasswordGrantResponse | null> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const username = process.env.AUTH_USERNAME;
+  const password = process.env.AUTH_PASSWORD;
+  const clientSecret = process.env.AUTH_CLIENT_SECRET;
+
+  if (!apiUrl || !username || !password || !clientSecret) {
+    console.warn("Missing test auth environment variables");
+    return null;
+  }
+
+  const tokenUrl = `${apiUrl}/api/v1/auth/tokens`;
+  const requestBody = {
+    userName: username,
+    password: password,
+    clientSecret: clientSecret,
   };
+
+  try {
+    const response = await fetch(tokenUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Failed to fetch auth token:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
+      return null;
+    }
+
+    const responseData = await response.json();
+
+    // Backend API 응답에서 토큰 데이터 추출 (BaseResponse 형식 처리)
+    const tokenData = responseData.data ?? responseData;
+
+    // Backend API는 camelCase로 응답하므로 snake_case로 변환
+    return {
+      access_token: tokenData.accessToken ?? tokenData.access_token,
+      refresh_token: tokenData.refreshToken ?? tokenData.refresh_token,
+      expires_in: tokenData.expiresIn ?? tokenData.expires_in,
+      refresh_expires_in:
+        tokenData.refreshExpiresIn ??
+        tokenData.refresh_expires_in ??
+        tokenData.expiresIn ??
+        tokenData.expires_in,
+    };
+  } catch (error) {
+    console.error("Error fetching auth token:", error);
+    return null;
+  }
+}
+
+// 토큰 캐시 (서버 재시작 전까지 유지)
+let cachedTestToken: {
+  access_token: string;
+  refresh_token: string;
+  expires_at: number;
+  user: DevUser;
+} | null = null;
+
+async function createTestToken(token: JWT): Promise<JWT> {
+  // 캐시된 토큰이 있고 아직 유효하면 재사용
+  if (
+    cachedTestToken &&
+    Date.now() < cachedTestToken.expires_at * 1000 - 60000
+  ) {
+    return {
+      ...token,
+      ...cachedTestToken.user,
+      access_token: cachedTestToken.access_token,
+      refresh_token: cachedTestToken.refresh_token,
+      expires_at: cachedTestToken.expires_at,
+    };
+  }
+
+  // Keycloak에서 새 토큰 발급
+  const keycloakToken = await fetchKeycloakTokenWithPassword();
+
+  if (keycloakToken) {
+    const expires_at = Math.floor(Date.now() / 1000) + keycloakToken.expires_in;
+    // 토큰에서 실제 사용자 정보 파싱
+    const parsedUser = parseUserFromAccessToken(keycloakToken.access_token);
+
+    if (!parsedUser) {
+      throw new Error("Failed to parse user from Keycloak token");
+    }
+
+    cachedTestToken = {
+      access_token: keycloakToken.access_token,
+      refresh_token: keycloakToken.refresh_token,
+      expires_at,
+      user: parsedUser,
+    };
+
+    return {
+      ...token,
+      ...parsedUser,
+      access_token: keycloakToken.access_token,
+      refresh_token: keycloakToken.refresh_token,
+      expires_at,
+    };
+  }
+
+  // 토큰 발급 실패 시 에러 (fallback 제거)
+  throw new Error(
+    "Failed to fetch Keycloak token. Check AUTH_* environment variables.",
+  );
 }
 
 function createTestSession(session: Session, token: JWT): Session {
   return {
     ...session,
-    accessToken: (token.access_token as string) ?? "dev-test-access-token",
-    refresh_token: (token.refresh_token as string) ?? "dev-test-refresh-token",
+    accessToken: token.access_token as string,
+    refresh_token: token.refresh_token as string,
     user: {
       ...session.user,
       id: token.id,
@@ -66,7 +191,7 @@ function createTestSession(session: Session, token: JWT): Session {
       email: token.email,
       preferred_username: token.preferred_username,
     },
-    roles: (token.roles as string[]) ?? DEFAULT_TEST_USER.roles,
+    roles: (token.roles as string[]) ?? [],
     error: token.error,
   };
 }
@@ -176,19 +301,25 @@ const testProviders = [
       username: { label: "Username", type: "text" },
       password: { label: "Password", type: "password" },
     },
-    async authorize(credentials) {
-      // 자동 로그인 (credentials 없음)
-      if (!credentials?.username && !credentials?.password) {
-        return getDevUserFromCredentials();
+    async authorize() {
+      // Keycloak에서 실제 토큰을 발급받아 사용자 정보 추출
+      const keycloakToken = await fetchKeycloakTokenWithPassword();
+
+      if (!keycloakToken) {
+        console.error(
+          "Failed to fetch Keycloak token. Check AUTH_* environment variables.",
+        );
+        return null;
       }
 
-      // 테스트 계정 로그인 (username === password)
-      const testUser = TEST_USERS[credentials.username];
-      if (testUser && credentials.password === credentials.username) {
-        return getDevUserFromCredentials(testUser);
+      const user = parseUserFromAccessToken(keycloakToken.access_token);
+
+      if (!user) {
+        console.error("Failed to parse user from Keycloak token");
+        return null;
       }
 
-      return null;
+      return user;
     },
   }),
 ];
@@ -207,7 +338,11 @@ const keycloakProviders = [
 
 const testCallbacks: NextAuthOptions["callbacks"] = {
   async jwt({ token, user }): Promise<JWT> {
-    return user || !token.access_token ? createTestToken(token, user) : token;
+    // 최초 로그인 또는 토큰이 없는 경우 Keycloak에서 토큰 발급
+    if (user || !token.access_token) {
+      return await createTestToken(token);
+    }
+    return token;
   },
 
   async session({ session, token }): Promise<Session> {

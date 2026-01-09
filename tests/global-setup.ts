@@ -2,25 +2,21 @@ import fs from "node:fs";
 import path from "node:path";
 import { chromium, type FullConfig } from "@playwright/test";
 
-import { TEST_USERS } from "../src/shared/constants/auth.constant";
-
 /**
  * Global Setup for Playwright Tests
  *
  * 테스트 실행 전 1회만 실행되어 인증 상태를 저장합니다.
  * 저장된 storageState는 모든 테스트에서 재사용되어 인증 시간을 절약합니다.
  *
- * 지원하는 사용자 타입:
- * - user: 일반 사용자 (tests/.auth/user.json)
- * - admin: 관리자 (tests/.auth/admin.json)
+ * 인증은 CredentialsProvider를 통해 Keycloak password grant로 처리됩니다.
+ * (AUTH_USERNAME, AUTH_PASSWORD 환경변수 사용)
  */
 
 const AUTH_DIR = path.join(__dirname, ".auth");
 const DEFAULT_BASE_URL = "http://localhost:3000";
 
-// 사용자 타입별 storageState 파일 경로
+// storageState 파일 경로
 export const STORAGE_STATE_PATHS = {
-  user: path.join(AUTH_DIR, "user.json"),
   admin: path.join(AUTH_DIR, "admin.json"),
 } as const;
 
@@ -43,18 +39,15 @@ async function getCSRFToken(
 }
 
 /**
- * 특정 사용자로 인증하고 storageState 저장
+ * 인증하고 storageState 저장
+ *
+ * Keycloak password grant를 사용하므로 username/password가 필요 없습니다.
+ * 서버에서 AUTH_USERNAME, AUTH_PASSWORD 환경변수를 사용하여 자동으로 인증합니다.
  */
 async function authenticateAndSave(
   baseURL: string,
-  userType: keyof typeof TEST_USERS,
   storagePath: string,
 ): Promise<void> {
-  const user = TEST_USERS[userType];
-  if (!user) {
-    throw new Error(`Unknown user type: ${userType}`);
-  }
-
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -63,13 +56,11 @@ async function authenticateAndSave(
     // CSRF 토큰 획득
     const csrfToken = await getCSRFToken(baseURL, page.request);
 
-    // NextAuth Credentials 로그인
+    // NextAuth Credentials 로그인 (credentials 없이 호출 - 서버에서 Keycloak으로 자동 인증)
     const response = await page.request.post(
       `${baseURL}/api/auth/callback/credentials`,
       {
         form: {
-          username: user.preferred_username,
-          password: user.preferred_username,
           csrfToken,
           json: "true",
         },
@@ -77,9 +68,7 @@ async function authenticateAndSave(
     );
 
     if (!response.ok()) {
-      throw new Error(
-        `Authentication failed for ${userType}: ${response.status()}`,
-      );
+      throw new Error(`Authentication failed: ${response.status()}`);
     }
 
     // 세션 검증
@@ -89,13 +78,15 @@ async function authenticateAndSave(
     const session = await sessionResponse.json();
 
     if (!session?.user) {
-      throw new Error(`Session not created for ${userType}`);
+      throw new Error("Session not created");
     }
 
     // storageState 저장 (쿠키, localStorage 등)
     await context.storageState({ path: storagePath });
 
-    console.log(`  ✅ ${userType} 인증 완료 → ${path.basename(storagePath)}`);
+    console.log(
+      `  ✅ 인증 완료 (${session.user.email}) → ${path.basename(storagePath)}`,
+    );
   } finally {
     await browser.close();
   }
@@ -120,11 +111,8 @@ async function globalSetup(config: FullConfig): Promise<void> {
   }
 
   try {
-    // 일반 사용자 인증
-    await authenticateAndSave(baseURL, "user", STORAGE_STATE_PATHS.user);
-
-    // 관리자 인증
-    await authenticateAndSave(baseURL, "admin", STORAGE_STATE_PATHS.admin);
+    // Keycloak 인증 (AUTH_USERNAME/AUTH_PASSWORD 환경변수 사용)
+    await authenticateAndSave(baseURL, STORAGE_STATE_PATHS.admin);
 
     console.log("✅ 인증 상태 초기화 완료\n");
   } catch (error) {

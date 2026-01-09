@@ -25,6 +25,10 @@ const nextConfig: NextConfig = {
         source: "/monitor-api/:path*",
         destination: `${process.env.NEXT_PUBLIC_MONITOR_API_URL}/api/:path*`,
       },
+      {
+        source: "/api/v1/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/v1/:path*`,
+      },
     ];
 
     return rewriteRules;
