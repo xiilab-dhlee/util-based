@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
 import {
-  SELECTOR,
+  ANT_SELECTOR,
   testId,
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
@@ -68,13 +68,13 @@ When(
 );
 
 Then("모달에 워크로드 목록 테이블이 표시된다", async ({ page }) => {
-  const modal = page.locator(SELECTOR.MODAL);
+  const modal = page.locator(ANT_SELECTOR.MODAL);
   const table = modal.locator(".ant-table-tbody");
   await expect(table).toBeVisible({ timeout: 10000 });
 });
 
 Given("모달 목록에 워크로드가 있다", async ({ page }) => {
-  const modal = page.locator(SELECTOR.MODAL);
+  const modal = page.locator(ANT_SELECTOR.MODAL);
   const rows = modal.locator(".ant-table-tbody tr.ant-table-row");
   await expect(rows.first()).toBeVisible({ timeout: 10000 });
 });
@@ -82,7 +82,7 @@ Given("모달 목록에 워크로드가 있다", async ({ page }) => {
 When(
   "첫 번째 워크로드의 라디오버튼을 클릭한다",
   async ({ page, radio, workloadContext }) => {
-    const modal = page.locator(SELECTOR.MODAL);
+    const modal = page.locator(ANT_SELECTOR.MODAL);
 
     // 모달 내 테이블에서 DataTableComponent 사용
     const table = new DataTableComponent(modal, WORKLOAD_SELECTOR.NAME);

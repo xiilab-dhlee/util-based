@@ -10,79 +10,93 @@
  */
 
 // ============================================
-// 공통 (Shared)
+// Ant Design 셀렉터 (CSS 클래스 기반)
+// ============================================
+
+export const ANT_SELECTOR = {
+  // 공통
+  SPINNER: ".ant-spin",
+
+  // 테이블
+  TABLE_EMPTY: ".ant-table-placeholder",
+  TABLE_HEADER: "thead th",
+  TABLE_ROW: "tbody tr.ant-table-row",
+
+  // 테이블 체크박스
+  SELECTION_COLUMN: ".ant-table-selection-column",
+  CHECKBOX_INPUT: ".ant-checkbox-input",
+  CHECKBOX_CHECKED: ".ant-checkbox-input:checked",
+  HEADER_CHECKBOX: "thead .ant-table-selection-column .ant-checkbox-input",
+  ROW_CHECKBOX:
+    "tbody tr.ant-table-row .ant-table-selection-column .ant-checkbox-input",
+  ROW_CHECKBOX_CHECKED:
+    "tbody tr.ant-table-row .ant-table-selection-column .ant-checkbox-input:checked",
+
+  // Select 드롭다운
+  SELECT_DROPDOWN: ".ant-select-dropdown:visible",
+  SELECT_OPTION: ".ant-select-item-option-content",
+  SELECT_VISIBLE_OPTION:
+    ".ant-select-dropdown:visible .ant-select-item-option-content",
+  SELECT_PLACEHOLDER: ".ant-select-selection-placeholder",
+  SELECT_SELECTED_ITEM: ".ant-select-selection-item",
+
+  // 모달
+  MODAL: ".ant-modal:visible",
+  MODAL_CONTENT: ".ant-modal-content",
+  MODAL_TITLE: ".ant-modal:visible .ant-modal-title",
+  MODAL_OK_BUTTON: ".ant-modal:visible .ant-modal-footer button:last-child",
+  MODAL_CANCEL_BUTTON:
+    ".ant-modal:visible .ant-modal-footer button:first-child",
+
+  // 드로어
+  DRAWER: ".ant-drawer-open",
+  DRAWER_TITLE: ".ant-drawer-title",
+  DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
+
+  // 버튼
+  BTN_LOADING: "ant-btn-loading",
+
+  // 페이지네이션
+  PAGINATION_PREV: ".ant-pagination-prev",
+  PAGINATION_NEXT: ".ant-pagination-next",
+  PAGINATION_ITEM: ".ant-pagination-item",
+  PAGINATION_ITEM_ACTIVE: ".ant-pagination-item-active",
+  PAGINATION_DISABLED: "ant-pagination-disabled",
+  paginationItem: (page: number) => `.ant-pagination-item-${page}`,
+
+  // 메뉴
+  MENU_ITEM_SELECTED: ".ant-menu-item-selected .ant-menu-title-content",
+  MENU_TITLE_CONTENT: ".ant-menu-title-content",
+} as const;
+
+// ============================================
+// 공통 셀렉터 (data-testid 기반)
 // ============================================
 
 export const SELECTOR = {
-  // Ant Design 테이블 공통
-  ANT_SPINNER: ".ant-spin",
-  ANT_EMPTY_PLACEHOLDER: ".ant-table-placeholder",
-  ANT_COLUMN_HEADER: "thead th",
-
   // 커스텀 정렬 아이콘 (xiilab-ui)
   SORT_ARROW_UP: ".sort-arrow-up",
   SORT_ARROW_DOWN: ".sort-arrow-down",
   SORT_ACTIVE: ".active",
 
-  // Ant Design 테이블 체크박스 (rowSelection)
-  /** 데이터 행 (placeholder 제외) */
-  ANT_TABLE_ROW: "tbody tr.ant-table-row",
-  /** 체크박스 컬럼 */
-  ANT_SELECTION_COLUMN: ".ant-table-selection-column",
-  /** 체크박스 input */
-  ANT_CHECKBOX_INPUT: ".ant-checkbox-input",
-  /** 헤더 체크박스 (전체 선택) */
-  ANT_HEADER_CHECKBOX: "thead .ant-table-selection-column .ant-checkbox-input",
-  /** 체크된 체크박스 */
-  ANT_CHECKBOX_CHECKED: ".ant-checkbox-input:checked",
-
-  // 목록 페이지 공통 (고정 상수)
+  // 목록 페이지 공통
   LIST_TABLE: "list-table",
-  /** 목록 삭제 버튼 */
   LIST_DELETE_BUTTON: "list-delete-button",
-  /** 카드 그리드 목록 (허브 등 카드형 목록) */
   LIST_CARD_GRID: "list-card-grid",
-  /** 목록 카드 (카드형 목록의 개별 카드) */
   LIST_CARD: "list-card",
-  /** 총 개수 표시 */
   LIST_TOTAL_COUNT: "list-total-count",
-  /** 페이지네이션 */
   LIST_PAGINATION: "list-pagination",
-  /** 검색 입력창 */
   LIST_SEARCH_INPUT: "list-search-input",
-  /** 필터 영역 */
   LIST_FILTER: "list-filter",
-  /** 내 항목만 보기 스위치 */
   MY_ITEMS_ONLY_SWITCH: "my-items-only-switch",
 
   // 워크스페이스
-  /** 선택된 워크스페이스 값 */
   WORKSPACE_SELECT_VALUE: "workspace-select-value",
-  /** 워크스페이스 미선택 placeholder */
   WORKSPACE_SELECT_PLACEHOLDER: "workspace-select-placeholder",
 
-  // 모달 (Ant Design Modal 기반)
-  /** 모달 컨테이너 (visible) */
-  MODAL: ".ant-modal:visible",
-  /** 모달 제목 */
-  MODAL_TITLE: ".ant-modal:visible .ant-modal-title",
-  /** 모달 확인 버튼 (footer의 마지막 버튼) */
-  MODAL_OK_BUTTON: ".ant-modal:visible .ant-modal-footer button:last-child",
-  /** 모달 취소 버튼 (footer의 첫 번째 버튼) */
-  MODAL_CANCEL_BUTTON:
-    ".ant-modal:visible .ant-modal-footer button:first-child",
-
-  // 드로어 (Ant Design Drawer 기반)
-  /** 드로어 컨테이너 (열린 상태) */
-  DRAWER: ".ant-drawer-open",
-  /** 드로어 닫기 버튼 */
-  DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
-
-  // 테마 선택 (로그/웹터미널 공통)
-  /** 테마 팝오버 컨테이너 */
+  // 테마 선택
   THEME_POPOVER: "theme-popover",
   THEME_BUTTON: "theme-button",
-  /** 테마 옵션 (동적) - theme-option-{themeName} */
   themeOption: (themeName: string) => `theme-option-${themeName}`,
 } as const;
 

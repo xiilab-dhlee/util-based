@@ -2,17 +2,23 @@ import {
   getGetAllAccountsMockHandler,
   getGetAllAccountsResponseMock,
 } from "@/api/generated/admin-account/admin-account.msw";
-import type {
-  AccountItemResponse,
-  GetAllAccountsOrder,
-  GetAllAccountsSort,
+import {
+  type AccountItemResponse,
+  AccountUpdateRequestAccountRole,
+  type GetAllAccountsOrder,
+  type GetAllAccountsSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
+/** API 스키마에서 정의된 권한 값 배열 */
+const ACCOUNT_ROLES = Object.values(AccountUpdateRequestAccountRole);
 
 /**
  * 정렬 가능한 accountName 생성
  * 정렬 시 순서가 올바르게 유지되도록 숫자 패딩 사용
  * ASC: user-001, user-002, ... (오름차순)
  * DESC: user-999, user-998, ... (내림차순)
+ *
+ * keyword가 있는 경우에도 sort/order를 적용하여 정렬 순서 보장
  */
 function generateAccountName(
   index: number,
@@ -20,22 +26,19 @@ function generateAccountName(
   sort: GetAllAccountsSort,
   order: GetAllAccountsOrder,
 ): string {
-  if (keyword) {
-    return `${keyword}-${index + 1}`;
-  }
+  const prefix = keyword || "user";
 
   if (sort === "ACCOUNT_NAME") {
     // 3자리 숫자로 패딩하여 정렬 순서 보장
     const paddedIndex = String((index % 1000) + 1).padStart(3, "0");
     // ASC: 001, 002, 003... / DESC: 999, 998, 997...
-    // wrap을 사용하여 index >= 1000에서도 음수 방지
     const sortableValue = 999 - (index % 1000);
     const sortableNum =
       order === "ASC" ? paddedIndex : String(sortableValue).padStart(3, "0");
-    return `user-${sortableNum}`;
+    return `${prefix}-${sortableNum}`;
   }
 
-  return `user-${index + 1}`;
+  return `${prefix}-${index + 1}`;
 }
 
 /**
@@ -57,11 +60,13 @@ function generateCreatedAt(
   const dayInMs = 24 * 60 * 60 * 1000;
 
   if (sort === "CREATED_AT") {
+    // index를 [0, 29] 범위로 클램프하여 미래 날짜 방지
+    const safeIndex = Math.min(Math.max(index, 0), 29);
     // 정렬 순서에 맞게 날짜 생성
     const offset =
       order === "ASC"
-        ? (30 - index) * dayInMs // ASC: 오래된 것부터 (30일 전 → 현재)
-        : index * dayInMs; // DESC: 최신 것부터 (현재 → 과거)
+        ? (30 - safeIndex) * dayInMs // ASC: 오래된 것부터 (30일 전 → 현재)
+        : safeIndex * dayInMs; // DESC: 최신 것부터 (현재 → 과거)
     return new Date(baseTimestamp - offset).toISOString();
   }
 
@@ -99,7 +104,7 @@ export const adminAccountListOverrideHandlers = [
           accountName: generateAccountName(globalIndex, keyword, sort, order),
           email: `account-${globalIndex + 1}@xiilab.com`,
           createdAt: generateCreatedAt(globalIndex, sort, order, baseTimestamp),
-          accountRole: (["ADMIN", "USER", "SUPER_ADMIN"] as const)[index % 3],
+          accountRole: ACCOUNT_ROLES[index % ACCOUNT_ROLES.length],
           workspaceCount: (globalIndex % 10) + 1,
           workspaceLimitCount: 10,
           isEnabled: index % 3 !== 0,
