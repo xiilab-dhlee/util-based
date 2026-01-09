@@ -6,30 +6,21 @@ import {
   type QueryKey,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import type { AxiosError } from "axios";
 import { type PropsWithChildren, useState } from "react";
 import { toast } from "react-toastify";
 
-import type { MutationKey } from "@/api/generated/mutation-keys";
+import { isMutationKey } from "@/api/generated/mutation-keys";
 import { MUTATION_MESSAGES } from "@/api/toast-messages";
-import {
-  getErrorMessage,
-  logErrorInfo,
-  shouldShowToast,
-} from "@/shared/utils/error/error.util";
+import { getBackendErrorMessage } from "@/shared/utils/error/error.util";
 
 const handleQueryError = (
   error: unknown,
   query: { queryKey: QueryKey; meta?: { showToastOnError?: boolean } },
 ) => {
-  const { queryKey, meta } = query;
+  const { meta } = query;
 
-  logErrorInfo(queryKey, error as AxiosError);
-
-  const showToast = meta?.showToastOnError ?? shouldShowToast(queryKey);
-
-  if (showToast) {
-    const errorMessage = getErrorMessage(queryKey, error as AxiosError);
+  if (meta?.showToastOnError === true) {
+    const errorMessage = getBackendErrorMessage(error);
     toast.error(errorMessage);
   }
 };
@@ -42,7 +33,9 @@ const handleMutationSuccess = (mutation: {
 
   if (!mutationKey?.length) return;
 
-  const key = mutationKey[0] as MutationKey;
+  const key = mutationKey[0];
+  if (!isMutationKey(key)) return;
+
   const messages = MUTATION_MESSAGES[key];
 
   if (messages?.success && mutation.meta?.showToastOnSuccess !== false) {
@@ -57,16 +50,8 @@ const handleMutationError = (
     meta?: { showToastOnError?: boolean };
   },
 ) => {
-  const mutationKey = mutation.options.mutationKey || ["unknown"];
-
-  logErrorInfo(mutationKey, error as AxiosError);
-
-  const key = mutationKey[0] as MutationKey;
-  const messages = MUTATION_MESSAGES[key];
-
   if (mutation.meta?.showToastOnError !== false) {
-    const errorMessage =
-      messages?.error || getErrorMessage(mutationKey, error as AxiosError);
+    const errorMessage = getBackendErrorMessage(error);
     toast.error(errorMessage);
   }
 };

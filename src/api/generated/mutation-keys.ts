@@ -1,3 +1,5 @@
+import { isString } from "es-toolkit";
+
 /**
  * Mutation Keys Registry
  *
@@ -86,3 +88,9 @@ export const MUTATION_KEYS = {
 } as const;
 
 export type MutationKey = (typeof MUTATION_KEYS)[keyof typeof MUTATION_KEYS];
+
+const MUTATION_KEY_VALUES = new Set<string>(Object.values(MUTATION_KEYS));
+
+export function isMutationKey(value: unknown): value is MutationKey {
+  return isString(value) && MUTATION_KEY_VALUES.has(value);
+}

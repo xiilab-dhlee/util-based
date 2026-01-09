@@ -23,12 +23,12 @@ export interface GetWorkloadsPayload
 }
 
 export interface GetWorkloadPayload extends CorePayload {
-  workspaceId: number;
+  workspaceId: number | string;
   workloadId: string;
 }
 
 export interface GetWorkloadFilesPayload extends CorePayload {
-  workspaceId: string;
+  workspaceId: number | string;
   workloadId: string;
   path: string;
 }
@@ -50,7 +50,7 @@ export interface RestartWorkloadPayload extends CorePayload {}
 export interface CreateCommitImagePayload extends CorePayload {}
 
 export interface CreateWorkloadFolderPayload {
-  workspaceId: string;
+  workspaceId: number | string;
   workloadId: string;
   path: string;
   folderName: string;
