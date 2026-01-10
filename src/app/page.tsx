@@ -13,16 +13,12 @@ export const metadata = {
 
 /**
  * 홈페이지 - 권한에 따른 리다이렉트
- * 인증된 사용자는 권한에 따라 admin 또는 user 영역으로 이동
  *
- * 참고: 기본 인증 체크는 middleware.ts에서 처리되며,
+ * 인증 체크는 proxy.ts에서 처리되므로,
  * 여기서는 역할별 대시보드 라우팅만 담당합니다.
  */
 export default async function HomePage() {
-  // NextAuth 세션 가져오기 (서버 컴포넌트)
   const session = await getServerSession(authOptions);
-
-  // 세션에서 역할 정보 추출
   const userRoles = (session as { roles?: string[] })?.roles ?? [];
 
   // 관리자는 관리자 대시보드로
