@@ -19,7 +19,7 @@ export function WorkloadDetailPageAside() {
   const searchParams = useSearchParams();
 
   const { data } = useGetWorkloadByMode({
-    workspaceId: searchParams?.get("workspaceId") || "",
+    workspaceId: Number(searchParams?.get("workspaceId")),
     workloadId: params?.id as string,
   });
 
