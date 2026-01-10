@@ -1,4 +1,3 @@
-import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
@@ -11,10 +10,6 @@ const testDir = defineBddConfig({
   ],
 });
 
-// 인증 상태 파일 경로
-const USER_AUTH_STATE = path.join(__dirname, "tests/.auth/user.json");
-const ADMIN_AUTH_STATE = path.join(__dirname, "tests/.auth/admin.json");
-
 // CI 환경 여부
 const isCI = !!process.env.CI;
 
@@ -25,7 +20,7 @@ const isCI = !!process.env.CI;
 export default defineConfig({
   testDir, // BDD 설정에서 생성된 testDir 사용
 
-  /* 전역 설정 - 테스트 시작 전 1회 실행 (인증 상태 저장) */
+  /* 전역 설정 - 테스트 시작 전 1회 실행 (테스트 데이터 초기화 등) */
   globalSetup: require.resolve("./tests/global-setup"),
 
   /* 병렬 실행 설정 */
@@ -85,31 +80,15 @@ export default defineConfig({
     actionTimeout: 10000,
   },
 
-  /* 프로젝트별 설정 - 사용자 권한별 분리 */
+  /* 프로젝트별 설정 */
   projects: [
     {
-      name: "user",
+      name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
-        // 일반 사용자 인증 상태
-        storageState: USER_AUTH_STATE,
       },
-      // @admin-only 태그가 붙은 테스트 제외
-      grepInvert: /@admin-only/,
     },
-    {
-      name: "admin",
-      use: {
-        ...devices["Desktop Chrome"],
-        viewport: { width: 1920, height: 1080 },
-        // 관리자 인증 상태
-        storageState: ADMIN_AUTH_STATE,
-      },
-      // @admin-only 태그가 붙은 테스트만 실행
-      grep: /@admin-only/,
-    },
-
     // {
     //   name: 'firefox',
     //   use: {
@@ -117,23 +96,12 @@ export default defineConfig({
     //     viewport: { width: 1920, height: 1080 }
     //   },
     // },
-
     // {
     //   name: 'webkit',
     //   use: {
     //     ...devices['Desktop Safari'],
     //     viewport: { width: 1920, height: 1080 }
     //   },
-    // },
-
-    /* 모바일 뷰포트 테스트 */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
     // },
   ],
 
