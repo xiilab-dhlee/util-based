@@ -13,6 +13,9 @@ const testDir = defineBddConfig({
 // CI 환경 여부
 const isCI = !!process.env.CI;
 
+// 테스트 모드: mock (기본) | integration (실제 API)
+const isIntegration = process.env.TEST_MODE === "integration";
+
 /**
  * Playwright 설정
  * @see https://playwright.dev/docs/test-configuration
@@ -107,10 +110,12 @@ export default defineConfig({
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    command: "pnpm dev:test",
+    // integration 모드: 빌드된 앱 실행 (pnpm start)
+    // mock 모드: 개발 서버 실행 (pnpm dev:test)
+    command: isIntegration ? "pnpm start" : "pnpm dev:test",
     url: "http://localhost:3000",
     reuseExistingServer: !isCI,
-    timeout: 30 * 1000,
+    timeout: isIntegration ? 60 * 1000 : 30 * 1000, // integration 모드는 빌드 후 시작이므로 타임아웃 증가
   },
 
   /* 테스트 타임아웃 설정 */

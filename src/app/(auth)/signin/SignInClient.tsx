@@ -9,7 +9,7 @@ import { useEffect } from "react";
  * 테스트 환경에서는 auth-provider.tsx가 자동 로그인을 처리하므로
  * 이 컴포넌트는 아무것도 하지 않습니다.
  */
-const useTestAuth = process.env.NEXT_PUBLIC_TEST_AUTH_ENABLE === "true";
+const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 
 /** 자동 Keycloak 로그인을 스킵하는 경로 */
 const EXCLUDED_PATHS = ["/license-main", "/createadmin"] as const;

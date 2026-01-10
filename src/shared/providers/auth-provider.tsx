@@ -7,7 +7,7 @@ import { type PropsWithChildren, useEffect, useRef } from "react";
 import { AxiosService } from "@/shared/api/axios";
 
 const isDev = process.env.NODE_ENV === "development";
-const useTestAuth = process.env.NEXT_PUBLIC_TEST_AUTH_ENABLE === "true";
+const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 
 /**
  * 세션 동기화 컴포넌트
@@ -92,7 +92,7 @@ function SessionSync({ children }: PropsWithChildren) {
  * 클라이언트 컴포넌트에서 useSession 훅을 사용할 수 있도록 합니다.
  * 세션 정보는 자동으로 /api/auth/session 엔드포인트에서 가져옵니다.
  *
- * 테스트 환경(NEXT_PUBLIC_TEST_AUTH_ENABLE=true)에서는 세션이 없을 때
+ * 테스트 환경(TEST_AUTH_ENABLE=true)에서는 세션이 없을 때
  * 자동으로 CredentialsProvider를 통해 로그인합니다.
  * AxiosService에 세션을 주입하여 API 요청 시 자동으로 토큰이 포함됩니다.
  */
