@@ -52,7 +52,7 @@ export const RESOURCE_PRESET_DETAIL_MOCK_DATA: ResourcePresetDetailResponseType[
 
     return {
       ...base,
-      id: crypto.randomUUID(),
+      id: String(1000 + index),
       name: `프리셋 ${index + 1}`,
       description:
         index % 3 === 0
