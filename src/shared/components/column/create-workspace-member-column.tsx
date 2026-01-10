@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace-member.constant";
+import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace.constant";
 import { DeleteWorkspaceMemberButton } from "@/domain/workspace-member/components/delete-workspace-member-button";
 import { UpdateWorkspaceMemberButton } from "@/domain/workspace-member/components/update-workspace-member-button";
 import { WorkspaceMemberAllCheck } from "@/domain/workspace-member/components/workspace-member-all-check";

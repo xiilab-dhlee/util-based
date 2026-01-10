@@ -1,6 +1,9 @@
 "use client";
 
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
+import { LeaveWorkspaceModal } from "@/domain/workspace/components/leave-workspace-modal";
+import { OwnerTransferRequiredModal } from "@/domain/workspace/components/owner-transfer-required-modal";
+import { SetDefaultWorkspaceModal } from "@/domain/workspace/components/set-default-workspace-modal";
 import { UpdateWorkspaceModal } from "@/domain/workspace/components/update-workspace-modal";
 import { DeleteWorkspaceMemberModal } from "@/domain/workspace-member/components/delete-workspace-member-modal";
 import { UpdateWorkspaceMemberModal } from "@/domain/workspace-member/components/update-workspace-member-modal";
@@ -28,6 +31,12 @@ export function SettingMain() {
       <UpdateWorkspaceModal />
       {/* 워크스페이스 삭제 모달 */}
       <DeleteWorkspaceModal />
+      {/* 워크스페이스 나가기 모달 */}
+      <LeaveWorkspaceModal />
+      {/* 기본 워크스페이스 설정/해제 모달 */}
+      <SetDefaultWorkspaceModal />
+      {/* 워크스페이스 나가기 권한 이전 필요 모달 */}
+      <OwnerTransferRequiredModal />
       {/* 워크스페이스 멤버 삭제 모달 */}
       <DeleteWorkspaceMemberModal />
       {/* 워크스페이스 멤버 수정 모달 */}

@@ -9,6 +9,10 @@ export const WORKSPACE_EVENTS = {
   sendUpdateWorkspace: "workspace:send-update-workspace",
   // 워크스페이스 삭제에 필요한 정보 전달 이벤트
   sendDeleteWorkspace: "workspace:send-delete-workspace",
+  // 워크스페이스 나가기에 필요한 정보 전달 이벤트
+  sendLeaveWorkspace: "workspace:send-leave-workspace",
+  // 기본 워크스페이스 설정 모달에 필요한 정보 전달 이벤트
+  sendSetDefaultWorkspace: "workspace:send-set-default-workspace",
   // 워크스페이스 멤버 계정 정보 수정에 필요한 정보 전달 이벤트
   sendUpdateWorkspaceMember: "workspace:send-update-workspace-member",
   // 워크스페이스 멤버 삭제에 필요한 정보 전달 이벤트

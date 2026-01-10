@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-import { createWorkspaceBody } from "@/api/generated/workspace/workspace.zod";
+import { updateWorkspaceBody } from "@/api/generated/workspace/workspace.zod";
 import { CREATE_WORKSPACE_ERROR_MESSAGES } from "@/domain/workspace/constants/create-workspace-form-error-message";
 import { WORKSPACE_NAME_PATTERN } from "@/domain/workspace/constants/workspace-validation.constant";
 
-export const createWorkspaceBodyExtended = createWorkspaceBody.extend({
+export const updateWorkspaceBodyExtended = updateWorkspaceBody.extend({
   workspaceName: z
     .string({
       required_error: CREATE_WORKSPACE_ERROR_MESSAGES.workspaceName.required,
@@ -27,7 +27,3 @@ export const createWorkspaceBodyExtended = createWorkspaceBody.extend({
     })
     .optional(),
 });
-
-export type CreateWorkspaceFormType = z.infer<
-  typeof createWorkspaceBodyExtended
->;

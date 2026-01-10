@@ -1,0 +1,6 @@
+export const WORKSPACE_ERROR_CODES = {
+  CANNOT_LEAVE_AS_ONLY_OWNER: "WORKSPACE_CANNOT_LEAVE_AS_ONLY_OWNER",
+} as const;
+
+export type WorkspaceErrorCode =
+  (typeof WORKSPACE_ERROR_CODES)[keyof typeof WORKSPACE_ERROR_CODES];

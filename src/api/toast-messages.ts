@@ -46,4 +46,13 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.createWorkspace]: {
     success: "워크스페이스가 생성되었습니다.",
   },
+  [MUTATION_KEYS.updateWorkspace]: {
+    success: "워크스페이스가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteWorkspace]: {
+    success: "워크스페이스가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.leaveWorkspace]: {
+    success: "워크스페이스를 나갔습니다.",
+  },
 };

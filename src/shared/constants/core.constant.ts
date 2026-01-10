@@ -24,6 +24,16 @@ export const ACCOUNT_ROLES = {
   USER: "USER",
 } as const;
 
+/** 워크스페이스 멤버 역할 상수  */
+export const WORKSPACE_MEMBER_ROLES = {
+  OWNER: "OWNER",
+  PARTICIPANT: "PARTICIPANT",
+} as const;
+
+/** 워크스페이스 멤버 역할 타입 */
+export type WorkspaceMemberRole =
+  (typeof WORKSPACE_MEMBER_ROLES)[keyof typeof WORKSPACE_MEMBER_ROLES];
+
 /** 공통 모달 모드 상수 */
 export const MODAL_MODES = {
   CREATE: "create",

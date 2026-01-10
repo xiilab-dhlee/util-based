@@ -1,79 +1,156 @@
 "use client";
 
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { Modal } from "xiilab-ui";
+import { useRef, useState } from "react";
+import styled from "styled-components";
+import { FormItem, Input, Modal } from "xiilab-ui";
 
-import { openDeleteSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcecode.atom";
-import { useDeleteWorkspace } from "@/domain/workspace/hooks/use-delete-workspace";
+import { useDeleteWorkspaceAction } from "@/domain/workspace/hooks/workspace-actions";
+import { openDeleteWorkspaceModalAtom } from "@/domain/workspace/state/workspace.atom";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
-/**
- * 워크스페이스 삭제 모달 컴포넌트
- *
- * 선택한 워크스페이스를 삭제할 수 있는 모달입니다.
- * 삭제 완료 시 pubsub 이벤트를 발행하여 다른 컴포넌트에서 처리할 수 있습니다.
- */
 export function DeleteWorkspaceModal() {
-  // useGlobalModal 훅을 사용하여 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(
-    openDeleteSourcecodeModalAtom,
+    openDeleteWorkspaceModalAtom,
   );
 
-  // 삭제할 워크스페이스 목록
-  const [deleteWorkspaces, setDeleteWorkspaces] = useState<string[]>([]);
+  const workspaceIdRef = useRef<number | null>(null);
+  const workspaceNameRef = useRef<string>("");
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const deleteWorkspace = useDeleteWorkspace();
+  const deleteWorkspaceMutation = useDeleteWorkspaceAction();
+  const isPending = deleteWorkspaceMutation.isPending;
 
-  /**
-   * 폼 제출 처리 함수
-   *
-   * 워크스페이스 삭제를 실행하고 모달을 닫습니다.
-   * 삭제 성공 시 관련 컴포넌트에서 데이터가 자동으로 갱신됩니다.
-   */
+  const handleClose = () => {
+    if (isPending) return;
+    onClose();
+    workspaceIdRef.current = null;
+    workspaceNameRef.current = "";
+    setWorkspaceName("");
+    setInputValue("");
+    setErrorMessage("");
+  };
+
   const handleOk = () => {
-    if (deleteWorkspaces.length === 0) {
-      toast.error("삭제할 워크스페이스를 선택해 주세요.");
+    if (isPending) return;
+    if (workspaceIdRef.current === null) return;
+
+    // 워크스페이스 이름이 일치하지 않으면 에러 메시지 표시
+    if (inputValue !== workspaceNameRef.current) {
+      setErrorMessage(
+        "워크스페이스를 잘못 입력하셨습니다. 다시 입력해 주세요.",
+      );
       return;
     }
 
-    // 워크스페이스 삭제 실행
-    deleteWorkspace.mutate(deleteWorkspaces, {
-      onSuccess: () => {
-        toast.success("워크스페이스 삭제 완료");
-        // 모달 닫기
-        onClose();
+    deleteWorkspaceMutation.mutate(
+      { workspaceId: workspaceIdRef.current },
+      {
+        onSuccess: () => {
+          handleClose();
+        },
       },
-    });
+    );
   };
 
-  /**
-   * 워크스페이스 삭제 모달 데이터 구독
-   */
-  useSubscribe(WORKSPACE_EVENTS.sendDeleteWorkspace, (workspaces: string[]) => {
-    // 삭제할 워크스페이스 목록 설정
-    setDeleteWorkspaces(workspaces);
-    // 삭제 모달 열기
-    onOpen();
-  });
+  useSubscribe(
+    WORKSPACE_EVENTS.sendDeleteWorkspace,
+    (data: { workspaceId: number; workspaceName: string }) => {
+      workspaceIdRef.current = data.workspaceId;
+      workspaceNameRef.current = data.workspaceName;
+      setWorkspaceName(data.workspaceName);
+      setInputValue("");
+      setErrorMessage("");
+      onOpen();
+    },
+  );
 
   return (
     <Modal
       variant="delete"
-      modalWidth={300}
+      modalWidth={310}
       open={open}
-      onCancel={onClose}
+      closable={!isPending}
+      onCancel={handleClose}
       onOk={handleOk}
       title="워크스페이스 삭제"
       centered
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      cancelButtonProps={{ disabled: isPending }}
       okButtonProps={{
-        loading: deleteWorkspace.isPending,
+        disabled: isPending,
+        loading: isPending,
       }}
     >
-      <div>선택한 워크스페이스를 삭제하시겠습니까?</div>
-      <div>삭제 시 해당 워크스페이스는 복구되지 않습니다.</div>
+      <ContentContainer>
+        <DescriptionWrapper>
+          <Description>
+            한번 삭제한 워크스페이스는 복구 할 수 없습니다.
+            <br />
+            삭제하시려면 워크스페이스 이름을 입력해 주세요.
+          </Description>
+        </DescriptionWrapper>
+        <WorkspaceNameDisplay>
+          내 워크스페이스 : {workspaceName}
+        </WorkspaceNameDisplay>
+        <StyledFormItem
+          validateStatus={errorMessage !== "" ? "error" : undefined}
+          help={errorMessage || undefined}
+        >
+          <Input
+            placeholder="워크스페이스의 이름을 입력해 주세요."
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              setErrorMessage("");
+            }}
+            disabled={isPending}
+          />
+        </StyledFormItem>
+      </ContentContainer>
     </Modal>
   );
 }
+
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const DescriptionWrapper = styled.div`
+  margin-bottom: 16px;
+`;
+
+const Description = styled.div`
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+`;
+
+const StyledFormItem = styled(FormItem)`
+  margin-top: 4px;
+  margin-bottom: 0;
+`;
+
+const WorkspaceNameDisplay = styled.div`
+  position: relative;
+  font-size: 11px;
+  color: #333;
+  padding-left: 12px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #454f62;
+  }
+`;

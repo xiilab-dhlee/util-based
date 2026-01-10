@@ -3,6 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import { toast } from "react-toastify";
 
+import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
 import {
   workspaceCheckedListAtom,
   workspacePageAtom,
@@ -18,6 +19,8 @@ interface WorkspaceListFooterProps {
   total: number;
   /** 로딩 상태 */
   loading: boolean;
+  /** 워크스페이스 목록 데이터 */
+  workspaces: WorkspaceListType[];
 }
 
 /**
@@ -28,10 +31,12 @@ interface WorkspaceListFooterProps {
  *
  * @param total - 전체 워크스페이스 수
  * @param loading - 로딩 상태
+ * @param workspaces - 워크스페이스 목록 데이터
  */
 export function WorkspaceListFooter({
   total,
   loading,
+  workspaces,
 }: WorkspaceListFooterProps) {
   const publish = usePublish();
   const [page, setPage] = useAtom(workspacePageAtom);
@@ -39,13 +44,31 @@ export function WorkspaceListFooter({
 
   /**
    * 삭제 버튼 클릭 핸들러
+   * 단일 워크스페이스 삭제만 지원 (이름 확인 필요)
    */
   const handleClickDelete = () => {
     if (checkedList.size === 0) {
       toast.error("삭제할 워크스페이스를 선택해 주세요.");
       return;
     }
-    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, Array.from(checkedList));
+
+    if (checkedList.size > 1) {
+      toast.error("한 번에 하나의 워크스페이스만 삭제할 수 있습니다.");
+      return;
+    }
+
+    const workspaceId = Array.from(checkedList)[0];
+    const workspace = workspaces.find((ws) => ws.id === workspaceId);
+
+    if (!workspace) {
+      toast.error("워크스페이스 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, {
+      workspaceId: workspace.id,
+      workspaceName: workspace.name,
+    });
   };
 
   return (

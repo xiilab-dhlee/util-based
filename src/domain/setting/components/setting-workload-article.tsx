@@ -37,7 +37,7 @@ export function SettingWorkloadArticle() {
       <Resource>
         <RightSectionHeader>
           <UserMonitoringCategoryTitle>
-            사용 자원 정보
+            사용 리소스 정보
           </UserMonitoringCategoryTitle>
           <UserMonitoringSectionDescription>
             워크로드 생성시 사용중인 자원 정보를 확인할 수 있습니다.
@@ -79,7 +79,7 @@ const Workload = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 `;
 
 const Resource = styled.div`

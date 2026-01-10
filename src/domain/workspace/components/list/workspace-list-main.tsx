@@ -132,6 +132,7 @@ export function WorkspaceListMain() {
           <WorkspaceListFooter
             total={data?.totalSize || 0}
             loading={isLoading}
+            workspaces={data?.content || []}
           />
         </ListPageBody>
       </ListPageMain>

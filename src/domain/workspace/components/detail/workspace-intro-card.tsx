@@ -27,7 +27,11 @@ export function WorkspaceIntroCard() {
    * Pub/Sub 시스템을 통해 워크스페이스 삭제 이벤트를 발행합니다.
    */
   const handleDelete = () => {
-    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, [id]);
+    if (!data?.id || !data?.name) return;
+    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, {
+      workspaceId: data.id,
+      workspaceName: data.name,
+    });
   };
 
   return (
