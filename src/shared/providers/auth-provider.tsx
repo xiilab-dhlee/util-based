@@ -6,15 +6,20 @@ import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
 
+const isDev = process.env.NODE_ENV === "development";
+const useTestAuth = process.env.NEXT_PUBLIC_TEST_AUTH_ENABLE === "true";
+
 /**
  * 세션 동기화 컴포넌트
  *
- * - 개발 환경에서 세션이 없을 때 자동 로그인
+ * - 토큰 갱신 실패 시 NextAuth를 통해 재로그인
+ * - 테스트 환경(TEST_AUTH_ENABLE=true)에서 세션이 없을 때 자동 로그인
  * - AxiosService에 세션 제공자 주입
  */
 function SessionSync({ children }: PropsWithChildren) {
   const { data: session, status } = useSession();
   const hasAutoLoggedIn = useRef(false);
+  const hasHandledError = useRef(false);
 
   // AxiosService에 세션 제공자 주입
   useEffect(() => {
@@ -28,12 +33,33 @@ function SessionSync({ children }: PropsWithChildren) {
     };
   }, [session]);
 
-  // 개발 환경 자동 로그인
+  // 토큰 갱신 실패 시 NextAuth를 통해 재로그인
   useEffect(() => {
-    // 개발 환경에서만 동작
-    // if (process.env.NODE_ENV !== "development") {
-    //   return;
-    // }
+    if (hasHandledError.current) return;
+
+    // 세션에 에러가 있으면 (토큰 갱신 실패)
+    if (session?.error === "RefreshAccessTokenError") {
+      hasHandledError.current = true;
+
+      if (isDev) {
+        console.debug("[AuthProvider] ❌ 토큰 갱신 실패 감지 - 재로그인 필요");
+      }
+
+      // 환경에 맞는 프로바이더로 재로그인
+      if (useTestAuth) {
+        signIn("credentials", { redirect: false });
+      } else {
+        signIn("keycloak");
+      }
+    }
+  }, [session?.error]);
+
+  // 테스트 환경 자동 로그인 (CredentialsProvider 사용 시에만)
+  useEffect(() => {
+    // 테스트 환경이 아니면 자동 로그인 비활성화
+    if (!useTestAuth) {
+      return;
+    }
 
     // 로딩 중이면 대기
     if (status === "loading") {
@@ -48,6 +74,9 @@ function SessionSync({ children }: PropsWithChildren) {
     // 세션이 없으면 자동 로그인
     if (status === "unauthenticated") {
       hasAutoLoggedIn.current = true;
+      if (isDev) {
+        console.debug("[AuthProvider] 🔑 테스트 환경 자동 로그인 시도");
+      }
       signIn("credentials", {
         redirect: false,
       });
@@ -63,7 +92,8 @@ function SessionSync({ children }: PropsWithChildren) {
  * 클라이언트 컴포넌트에서 useSession 훅을 사용할 수 있도록 합니다.
  * 세션 정보는 자동으로 /api/auth/session 엔드포인트에서 가져옵니다.
  *
- * 개발 환경에서는 세션이 없을 때 자동으로 테스트 계정으로 로그인합니다.
+ * 테스트 환경(NEXT_PUBLIC_TEST_AUTH_ENABLE=true)에서는 세션이 없을 때
+ * 자동으로 CredentialsProvider를 통해 로그인합니다.
  * AxiosService에 세션을 주입하여 API 요청 시 자동으로 토큰이 포함됩니다.
  */
 export function AuthProvider({ children }: PropsWithChildren) {

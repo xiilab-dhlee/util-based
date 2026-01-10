@@ -1,24 +1,14 @@
+import axios from "axios";
 import type { Account, NextAuthOptions, Session, User } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
 // ============================================================================
-// 환경 설정
+// 타입 정의
 // ============================================================================
 
-/**
- * 테스트/모킹 환경 여부
- * - TEST_AUTH_ENABLE=true: CredentialsProvider 사용 (테스트/모킹)
- * - TEST_AUTH_ENABLE=false 또는 미설정: KeycloakProvider 사용 (기본값)
- */
-const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
-
-// ============================================================================
-// 테스트 환경 헬퍼 (CredentialsProvider)
-// ============================================================================
-
-interface DevUser {
+interface AuthUser {
   id: string;
   name: string;
   email: string;
@@ -26,14 +16,14 @@ interface DevUser {
   roles: string[];
 }
 
-interface KeycloakPasswordGrantResponse {
+interface KeycloakTokenResponse {
   access_token: string;
   refresh_token: string;
   expires_in: number;
   refresh_expires_in: number;
 }
 
-interface DecodedKeycloakToken {
+interface DecodedJwtPayload {
   sub: string;
   name?: string;
   email?: string;
@@ -41,14 +31,61 @@ interface DecodedKeycloakToken {
   realm_access?: { roles: string[] };
 }
 
-/**
- * JWT access_token에서 사용자 정보를 파싱합니다.
- */
-function parseUserFromAccessToken(accessToken: string): DevUser | null {
+interface CachedToken {
+  access_token: string;
+  refresh_token: string;
+  expires_at: number;
+  user: AuthUser;
+}
+
+// ============================================================================
+// 환경 설정
+// ============================================================================
+
+/** 테스트 환경 여부 (CredentialsProvider vs KeycloakProvider) */
+const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
+
+/** 개발 환경 여부 */
+const isDev = process.env.NODE_ENV === "development";
+
+/** 토큰 만료 전 갱신 버퍼 (초) */
+const TOKEN_EXPIRY_BUFFER_SECONDS = 30;
+
+// ============================================================================
+// 유틸리티 함수
+// ============================================================================
+
+/** 개발 환경 전용 디버깅 로그 */
+function authDebug(message: string, data?: Record<string, unknown>): void {
+  if (!isDev) return;
+  const dataStr = data ? ` ${JSON.stringify(data)}` : "";
+  console.debug(`[Auth]${dataStr} ${message}`);
+}
+
+/** URL-safe Base64 디코딩 */
+function decodeBase64Safely(base64String: string): string {
+  let normalized = base64String.replace(/-/g, "+").replace(/_/g, "/");
+  while (normalized.length % 4) normalized += "=";
+  return Buffer.from(normalized, "base64").toString("utf8");
+}
+
+/** Unix timestamp를 한국어 날짜 문자열로 변환 */
+function formatExpiresAt(expiresAt: number | undefined): string {
+  return expiresAt ? new Date(expiresAt * 1000).toLocaleString("ko-KR") : "N/A";
+}
+
+// ============================================================================
+// JWT 파싱
+// ============================================================================
+
+/** JWT access_token에서 사용자 정보 추출 */
+function parseUserFromToken(accessToken: string): AuthUser | null {
   try {
-    const payload: DecodedKeycloakToken = JSON.parse(
-      Buffer.from(accessToken.split(".")[1], "base64").toString(),
-    );
+    const parts = accessToken.split(".");
+    if (parts.length < 2) return null;
+
+    const payload: DecodedJwtPayload = JSON.parse(decodeBase64Safely(parts[1]));
+
     return {
       id: payload.sub,
       name: payload.name ?? payload.preferred_username ?? "Unknown",
@@ -57,84 +94,111 @@ function parseUserFromAccessToken(accessToken: string): DevUser | null {
       roles: payload.realm_access?.roles ?? [],
     };
   } catch (error) {
-    console.error("Failed to parse access token:", error);
+    console.error("[Auth] JWT 파싱 실패:", error);
     return null;
   }
 }
 
-/**
- * Backend API를 통해 Keycloak 토큰을 발급받습니다.
- */
-async function fetchKeycloakTokenWithPassword(): Promise<KeycloakPasswordGrantResponse | null> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const username = process.env.AUTH_USERNAME;
-  const password = process.env.AUTH_PASSWORD;
-  const clientSecret = process.env.AUTH_CLIENT_SECRET;
+/** JWT access_token에서 역할(roles) 추출 */
+function parseRolesFromToken(accessToken: string | undefined): string[] {
+  if (!accessToken) return [];
+  try {
+    const parts = accessToken.split(".");
+    if (parts.length < 2) return [];
+    const payload = JSON.parse(decodeBase64Safely(parts[1]));
+    return payload.realm_access?.roles ?? [];
+  } catch {
+    return [];
+  }
+}
 
-  if (!apiUrl || !username || !password || !clientSecret) {
-    console.warn("Missing test auth environment variables");
+// ============================================================================
+// 세션 생성 (공통)
+// ============================================================================
+
+/** JWT 토큰으로부터 세션 객체 생성 */
+function createSession(session: Session, token: JWT): Session {
+  return {
+    ...session,
+    accessToken: token.access_token as string,
+    refresh_token: token.refresh_token as string,
+    user: {
+      ...session.user,
+      id: token.id,
+      name: token.name,
+      email: token.email,
+      preferred_username: token.preferred_username,
+    },
+    roles: (token.roles as string[]) ?? [],
+    error: token.error,
+  };
+}
+
+// ============================================================================
+// 테스트 환경 토큰 관리
+// ============================================================================
+
+/** 테스트 토큰 캐시 */
+let cachedTestToken: CachedToken | null = null;
+
+/** Backend API를 통해 테스트용 토큰 발급 (Password Grant) */
+async function fetchTestToken(): Promise<KeycloakTokenResponse | null> {
+  const {
+    NEXT_PUBLIC_API_URL,
+    AUTH_USERNAME,
+    AUTH_PASSWORD,
+    AUTH_CLIENT_SECRET,
+  } = process.env;
+
+  if (
+    !NEXT_PUBLIC_API_URL ||
+    !AUTH_USERNAME ||
+    !AUTH_PASSWORD ||
+    !AUTH_CLIENT_SECRET
+  ) {
+    console.warn("[Auth] 테스트 인증 환경변수 누락");
     return null;
   }
 
-  const tokenUrl = `${apiUrl}/api/v1/auth/tokens`;
-  const requestBody = {
-    userName: username,
-    password: password,
-    clientSecret: clientSecret,
-  };
-
   try {
-    const response = await fetch(tokenUrl, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/v1/auth/tokens`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        userName: AUTH_USERNAME,
+        password: AUTH_PASSWORD,
+        clientSecret: AUTH_CLIENT_SECRET,
+      }),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ Failed to fetch auth token:", {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
-      });
+      console.error("[Auth] 테스트 토큰 발급 실패:", response.status);
       return null;
     }
 
     const responseData = await response.json();
+    const data = responseData.data ?? responseData;
 
-    // Backend API 응답에서 토큰 데이터 추출 (BaseResponse 형식 처리)
-    const tokenData = responseData.data ?? responseData;
-
-    // Backend API는 camelCase로 응답하므로 snake_case로 변환
     return {
-      access_token: tokenData.accessToken ?? tokenData.access_token,
-      refresh_token: tokenData.refreshToken ?? tokenData.refresh_token,
-      expires_in: tokenData.expiresIn ?? tokenData.expires_in,
+      access_token: data.accessToken ?? data.access_token,
+      refresh_token: data.refreshToken ?? data.refresh_token,
+      expires_in: data.expiresIn ?? data.expires_in,
       refresh_expires_in:
-        tokenData.refreshExpiresIn ??
-        tokenData.refresh_expires_in ??
-        tokenData.expiresIn ??
-        tokenData.expires_in,
+        data.refreshExpiresIn ?? data.refresh_expires_in ?? data.expiresIn,
     };
   } catch (error) {
-    console.error("Error fetching auth token:", error);
+    console.error("[Auth] 테스트 토큰 발급 오류:", error);
     return null;
   }
 }
 
-// 토큰 캐시 (서버 재시작 전까지 유지)
-let cachedTestToken: {
-  access_token: string;
-  refresh_token: string;
-  expires_at: number;
-  user: DevUser;
-} | null = null;
-
-async function createTestToken(token: JWT): Promise<JWT> {
-  // 캐시된 토큰이 있고 아직 유효하면 재사용
+/** 테스트 환경용 JWT 토큰 생성 */
+async function createTestJwt(token: JWT): Promise<JWT> {
+  // 캐시된 토큰이 유효하면 재사용
+  const bufferMs = TOKEN_EXPIRY_BUFFER_SECONDS * 1000;
   if (
     cachedTestToken &&
-    Date.now() < cachedTestToken.expires_at * 1000 - 60000
+    Date.now() < cachedTestToken.expires_at * 1000 - bufferMs
   ) {
     return {
       ...token,
@@ -145,118 +209,81 @@ async function createTestToken(token: JWT): Promise<JWT> {
     };
   }
 
-  // Keycloak에서 새 토큰 발급
-  const keycloakToken = await fetchKeycloakTokenWithPassword();
-
-  if (keycloakToken) {
-    const expires_at = Math.floor(Date.now() / 1000) + keycloakToken.expires_in;
-    // 토큰에서 실제 사용자 정보 파싱
-    const parsedUser = parseUserFromAccessToken(keycloakToken.access_token);
-
-    if (!parsedUser) {
-      throw new Error("Failed to parse user from Keycloak token");
-    }
-
-    cachedTestToken = {
-      access_token: keycloakToken.access_token,
-      refresh_token: keycloakToken.refresh_token,
-      expires_at,
-      user: parsedUser,
-    };
-
-    return {
-      ...token,
-      ...parsedUser,
-      access_token: keycloakToken.access_token,
-      refresh_token: keycloakToken.refresh_token,
-      expires_at,
-    };
+  // 새 토큰 발급
+  const keycloakToken = await fetchTestToken();
+  if (!keycloakToken) {
+    throw new Error("[Auth] 테스트 토큰 발급 실패");
   }
 
-  // 토큰 발급 실패 시 에러 (fallback 제거)
-  throw new Error(
-    "Failed to fetch Keycloak token. Check AUTH_* environment variables.",
+  const user = parseUserFromToken(keycloakToken.access_token);
+  if (!user) {
+    throw new Error("[Auth] 토큰에서 사용자 정보 파싱 실패");
+  }
+
+  const expires_at = Math.floor(Date.now() / 1000) + keycloakToken.expires_in;
+  authDebug(
+    `🎫 [테스트] 토큰 발급: ${user.name} (만료: ${formatExpiresAt(expires_at)})`,
   );
-}
 
-function createTestSession(session: Session, token: JWT): Session {
-  return {
-    ...session,
-    accessToken: token.access_token as string,
-    refresh_token: token.refresh_token as string,
-    user: {
-      ...session.user,
-      id: token.id,
-      name: token.name,
-      email: token.email,
-      preferred_username: token.preferred_username,
-    },
-    roles: (token.roles as string[]) ?? [],
-    error: token.error,
+  cachedTestToken = {
+    access_token: keycloakToken.access_token,
+    refresh_token: keycloakToken.refresh_token,
+    expires_at,
+    user,
   };
+
+  return { ...token, ...user, ...cachedTestToken };
 }
 
 // ============================================================================
-// Keycloak 환경 헬퍼
+// Keycloak 토큰 관리
 // ============================================================================
 
-interface KeycloakTokenResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  refresh_expires_in: number;
-}
-
+/** Keycloak 토큰 갱신 */
 async function refreshKeycloakToken(token: JWT): Promise<JWT> {
+  const { AUTH_ISSUER, AUTH_CLIENT_ID, AUTH_CLIENT_SECRET } = process.env;
+
   try {
     const response = await fetch(
-      `${process.env.AUTH_ISSUER}/protocol/openid-connect/token`,
+      `${AUTH_ISSUER}/protocol/openid-connect/token`,
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          client_id: process.env.AUTH_CLIENT_ID ?? "",
-          client_secret: process.env.AUTH_CLIENT_SECRET ?? "",
+          client_id: AUTH_CLIENT_ID ?? "",
+          client_secret: AUTH_CLIENT_SECRET ?? "",
           grant_type: "refresh_token",
           refresh_token: token.refresh_token as string,
         }),
       },
     );
 
-    const refreshedTokens: KeycloakTokenResponse = await response.json();
+    const data: KeycloakTokenResponse = await response.json();
+    if (!response.ok) throw data;
 
-    if (!response.ok) {
-      throw refreshedTokens;
-    }
+    const newExpiresAt = Math.floor(Date.now() / 1000) + data.expires_in;
+    authDebug(`✅ 토큰 갱신 완료 (만료: ${formatExpiresAt(newExpiresAt)})`);
 
     return {
       ...token,
-      access_token: refreshedTokens.access_token,
-      refresh_token: refreshedTokens.refresh_token ?? token.refresh_token,
-      expires_at: Math.floor(Date.now() / 1000) + refreshedTokens.expires_in,
+      access_token: data.access_token,
+      refresh_token: data.refresh_token ?? token.refresh_token,
+      expires_at: newExpiresAt,
     };
   } catch (error) {
-    console.error("Error refreshing access token:", error);
-    return {
-      ...token,
-      error: "RefreshAccessTokenError",
-    };
+    console.error("[Auth] 토큰 갱신 실패:", error);
+    return { ...token, error: "RefreshAccessTokenError" };
   }
 }
 
-function createKeycloakToken(token: JWT, user: User, account: Account): JWT {
-  let roles: string[] = [];
-  try {
-    const accessToken = account.access_token;
-    if (accessToken) {
-      const payload = JSON.parse(
-        Buffer.from(accessToken.split(".")[1], "base64").toString(),
-      );
-      roles = payload.realm_access?.roles ?? [];
-    }
-  } catch {
-    console.warn("Failed to parse Keycloak token for roles");
-  }
+/** Keycloak 초기 로그인 시 JWT 토큰 생성 */
+function createKeycloakJwt(token: JWT, user: User, account: Account): JWT {
+  const roles = parseRolesFromToken(account.access_token);
+  const expiresAt = account.expires_at;
+
+  authDebug(
+    `🎫 토큰 발급: ${user.name ?? user.email} [${roles.join(", ")}] (만료: ${formatExpiresAt(expiresAt)})`,
+  );
 
   return {
     ...token,
@@ -264,125 +291,156 @@ function createKeycloakToken(token: JWT, user: User, account: Account): JWT {
     name: user.name ?? undefined,
     email: user.email ?? undefined,
     preferred_username:
-      (user as DevUser).preferred_username ?? user.email ?? undefined,
+      (user as AuthUser).preferred_username ?? user.email ?? undefined,
     roles,
     access_token: account.access_token,
     refresh_token: account.refresh_token,
-    expires_at: account.expires_at,
+    expires_at: expiresAt,
   };
 }
 
-function createKeycloakSession(session: Session, token: JWT): Session {
-  return {
-    ...session,
-    accessToken: token.access_token as string,
-    refresh_token: token.refresh_token as string,
-    user: {
-      ...session.user,
-      id: token.id,
-      name: token.name,
-      email: token.email,
-      preferred_username: token.preferred_username,
-    },
-    roles: (token.roles as string[]) ?? [],
-    error: token.error,
-  };
+/** Keycloak 로그아웃 처리 */
+async function handleKeycloakLogout(token: JWT): Promise<void> {
+  const { AUTH_ISSUER, AUTH_CLIENT_ID, AUTH_CLIENT_SECRET } = process.env;
+
+  if (!AUTH_ISSUER || !AUTH_CLIENT_ID || !AUTH_CLIENT_SECRET) {
+    console.error("[Auth] 로그아웃 실패: 환경변수 누락");
+    return;
+  }
+
+  if (!token.access_token) {
+    console.error("[Auth] 로그아웃 실패: access_token 없음");
+    return;
+  }
+
+  try {
+    const body = new URLSearchParams({
+      client_id: AUTH_CLIENT_ID,
+      client_secret: AUTH_CLIENT_SECRET,
+      refresh_token: token.refresh_token as string,
+    });
+
+    await axios.post(`${AUTH_ISSUER}/protocol/openid-connect/logout`, body, {
+      headers: {
+        Authorization: `Bearer ${token.access_token}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    authDebug("✅ Keycloak 세션 종료 완료");
+  } catch (error) {
+    console.error("[Auth] Keycloak 로그아웃 실패:", error);
+  }
 }
 
 // ============================================================================
 // Provider 설정
 // ============================================================================
 
-const testProviders = [
-  CredentialsProvider({
-    id: "credentials",
-    name: "Test Credentials",
-    credentials: {
-      username: { label: "Username", type: "text" },
-      password: { label: "Password", type: "password" },
-    },
-    async authorize() {
-      // Keycloak에서 실제 토큰을 발급받아 사용자 정보 추출
-      const keycloakToken = await fetchKeycloakTokenWithPassword();
+const testProvider = CredentialsProvider({
+  id: "credentials",
+  name: "Test Credentials",
+  credentials: {
+    username: { label: "Username", type: "text" },
+    password: { label: "Password", type: "password" },
+  },
+  async authorize() {
+    const token = await fetchTestToken();
+    if (!token) return null;
+    return parseUserFromToken(token.access_token);
+  },
+});
 
-      if (!keycloakToken) {
-        console.error(
-          "Failed to fetch Keycloak token. Check AUTH_* environment variables.",
-        );
-        return null;
-      }
-
-      const user = parseUserFromAccessToken(keycloakToken.access_token);
-
-      if (!user) {
-        console.error("Failed to parse user from Keycloak token");
-        return null;
-      }
-
-      return user;
-    },
-  }),
-];
-
-const keycloakProviders = [
-  KeycloakProvider({
-    clientId: process.env.AUTH_CLIENT_ID ?? "",
-    clientSecret: process.env.AUTH_CLIENT_SECRET ?? "",
-    issuer: process.env.AUTH_ISSUER,
-  }),
-];
+const keycloakProvider = KeycloakProvider({
+  clientId: process.env.AUTH_CLIENT_ID ?? "",
+  clientSecret: process.env.AUTH_CLIENT_SECRET ?? "",
+  issuer: process.env.AUTH_ISSUER ?? "",
+  httpOptions: { timeout: 40000 },
+});
 
 // ============================================================================
 // Callbacks 설정
 // ============================================================================
 
 const testCallbacks: NextAuthOptions["callbacks"] = {
-  async jwt({ token, user }): Promise<JWT> {
-    // 최초 로그인 또는 토큰이 없는 경우 Keycloak에서 토큰 발급
+  async signIn({ user }) {
+    authDebug(`🔑 [테스트] 로그인: ${user?.email ?? user?.id}`);
+    return true;
+  },
+
+  async jwt({ token, user }) {
     if (user || !token.access_token) {
-      return await createTestToken(token);
+      return createTestJwt(token);
     }
     return token;
   },
 
-  async session({ session, token }): Promise<Session> {
-    return createTestSession(session, token);
+  async session({ session, token }) {
+    return createSession(session, token);
   },
 };
 
 const keycloakCallbacks: NextAuthOptions["callbacks"] = {
-  async jwt({ token, user, account }): Promise<JWT> {
-    // 최초 로그인 시 Keycloak 토큰 정보 저장
+  async signIn({ user, account }) {
+    authDebug(`🔑 로그인: ${user?.email ?? user?.id} (${account?.provider})`);
+    return true;
+  },
+
+  async redirect({ url, baseUrl }) {
+    if (url.startsWith("/")) return `${baseUrl}${url}`;
+    if (new URL(url).origin === baseUrl) return url;
+    return baseUrl;
+  },
+
+  async jwt({ token, user, account }) {
+    // 최초 로그인
     if (account && user) {
-      return createKeycloakToken(token, user, account);
+      return createKeycloakJwt(token, user, account);
     }
 
-    // 토큰 만료 전이면 기존 토큰 반환
+    // 토큰 유효성 검사
     const expiresAt = token.expires_at as number;
-    if (Date.now() < expiresAt * 1000) {
-      return token;
-    }
+    const isValid =
+      Date.now() < (expiresAt - TOKEN_EXPIRY_BUFFER_SECONDS) * 1000;
 
-    // 토큰 만료 시 갱신
+    if (isValid) return token;
+
+    // 토큰 갱신
+    authDebug("⏰ 토큰 만료 → 갱신 시도");
     return refreshKeycloakToken(token);
   },
 
-  async session({ session, token }): Promise<Session> {
-    return createKeycloakSession(session, token);
+  async session({ session, token }) {
+    if (token.error === "RefreshAccessTokenError") {
+      authDebug("❌ 토큰 갱신 실패 → 재로그인 필요");
+    }
+    return createSession(session, token);
   },
 };
 
 // ============================================================================
-// NextAuth 설정
+// NextAuth 설정 (Export)
 // ============================================================================
 
 export const authOptions: NextAuthOptions = {
-  providers: useTestAuth ? testProviders : keycloakProviders,
+  providers: useTestAuth ? [testProvider] : [keycloakProvider],
   callbacks: useTestAuth ? testCallbacks : keycloakCallbacks,
 
   pages: {
     signIn: "/signin",
     error: "/error",
+  },
+
+  events: {
+    async signIn({ user, isNewUser }) {
+      authDebug(
+        `✅ ${isNewUser ? "신규 가입" : "로그인"} 완료: ${user?.email ?? user?.id}`,
+      );
+    },
+    async signOut({ token }) {
+      authDebug(`🚪 로그아웃: ${token?.name ?? token?.id}`);
+      await handleKeycloakLogout(token);
+    },
   },
 
   session: {
@@ -393,3 +451,22 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET ?? "dev-secret-key-for-development",
   debug: false,
 };
+
+// ============================================================================
+// 개발 환경 초기화 로그
+// ============================================================================
+
+if (isDev) {
+  const providerName = useTestAuth
+    ? "CredentialsProvider (테스트)"
+    : "KeycloakProvider (프로덕션)";
+  console.debug(`[Auth] 🔧 프로바이더: ${providerName}`);
+
+  if (!useTestAuth) {
+    console.debug("[Auth] 📋 환경변수:", {
+      AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID ? "✅" : "❌",
+      AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET ? "✅" : "❌",
+      AUTH_ISSUER: process.env.AUTH_ISSUER ? "✅" : "❌",
+    });
+  }
+}
