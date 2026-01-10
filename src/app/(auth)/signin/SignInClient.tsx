@@ -1,9 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import type { BuiltInProviderType } from "next-auth/providers/index";
-import type { ClientSafeProvider, LiteralUnion } from "next-auth/react";
-import { signIn } from "next-auth/react";
+import { getProviders, signIn } from "next-auth/react";
 import { useEffect } from "react";
 
 /**
@@ -16,20 +14,13 @@ const useTestAuth = process.env.NEXT_PUBLIC_TEST_AUTH_ENABLE === "true";
 /** 자동 Keycloak 로그인을 스킵하는 경로 */
 const EXCLUDED_PATHS = ["/license-main", "/createadmin"] as const;
 
-interface SignInClientProps {
-  providers:
-    | Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>
-    | null
-    | undefined;
-}
-
 /**
  * 로그인 페이지 클라이언트 컴포넌트 (Keycloak 환경 전용)
  *
  * - Keycloak 프로바이더가 있으면 자동으로 Keycloak 로그인 시작
  * - 테스트 환경에서는 아무것도 하지 않음 (auth-provider.tsx가 처리)
  */
-export default function SignInClient({ providers }: SignInClientProps) {
+export default function SignInClient() {
   const pathname = usePathname();
 
   useEffect(() => {
@@ -40,11 +31,13 @@ export default function SignInClient({ providers }: SignInClientProps) {
     if (EXCLUDED_PATHS.includes(pathname as (typeof EXCLUDED_PATHS)[number]))
       return;
 
-    // Keycloak 프로바이더가 있으면 자동으로 로그인 시작
-    if (providers?.keycloak) {
-      signIn("keycloak");
-    }
-  }, [providers, pathname]);
+    // 클라이언트에서 providers를 가져와서 Keycloak 로그인 시작
+    getProviders().then((providers) => {
+      if (providers?.keycloak) {
+        signIn("keycloak");
+      }
+    });
+  }, [pathname]);
 
   return null;
 }
