@@ -1,7 +1,6 @@
-import type { AxiosInstance, AxiosResponse } from "axios";
+import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type { Session } from "next-auth";
-import { signOut } from "next-auth/react";
 
 interface AxiosServiceConfig {
   isAuth?: boolean;
@@ -14,21 +13,20 @@ interface AxiosServiceConfig {
  */
 type SessionProvider = () => Session | null;
 
-/** 테스트 환경 여부 */
-const isTestAuth = process.env.TEST_AUTH_ENABLE === "true";
-
+/**
+ * Axios 서비스
+ *
+ * - 세션 기반 인증 토큰 자동 주입
+ * - 401 등 인증 에러는 auth-provider에서 처리 (NextAuth 세션 에러 감지)
+ */
 export class AxiosService {
   private static instance: AxiosService;
   private axios: AxiosInstance;
   private isAuth: boolean;
   private requestInterceptorId?: number;
-  private responseInterceptorId?: number;
 
   // 외부에서 주입받은 세션 제공자
   private sessionProvider: SessionProvider | null = null;
-
-  // 401 리다이렉트 중복 방지 플래그
-  private static isRedirecting = false;
 
   constructor(config: AxiosServiceConfig = {}) {
     this.axios = axios.create({
@@ -76,11 +74,8 @@ export class AxiosService {
     if (this.requestInterceptorId !== undefined) {
       this.axios.interceptors.request.eject(this.requestInterceptorId);
     }
-    if (this.responseInterceptorId !== undefined) {
-      this.axios.interceptors.response.eject(this.responseInterceptorId);
-    }
 
-    // 요청 인터셉터 설정
+    // 요청 인터셉터: 인증 토큰 자동 주입
     this.requestInterceptorId = this.axios.interceptors.request.use(
       (config) => {
         if (!config.headers.Authorization && this.isAuth) {
@@ -92,45 +87,7 @@ export class AxiosService {
         }
         return config;
       },
-      (error) => {
-        console.log("Request interceptor error:", error);
-        return Promise.reject(error);
-      },
-    );
-
-    // 응답 인터셉터 설정
-    this.responseInterceptorId = this.axios.interceptors.response.use(
-      (response: AxiosResponse) => {
-        return response;
-      },
-      (error: unknown) => {
-        const { response } = error as { response?: { status: number } };
-
-        if (response?.status === 401 && this.isAuth) {
-          // 테스트 환경에서는 리다이렉트 스킵 (auth-provider에서 처리)
-          if (isTestAuth) {
-            return Promise.reject(error);
-          }
-
-          // 중복 리다이렉트 방지
-          if (AxiosService.isRedirecting) {
-            return Promise.reject(error);
-          }
-
-          // 클라이언트 사이드에서만 리다이렉트 실행
-          if (typeof window !== "undefined") {
-            AxiosService.isRedirecting = true;
-            console.warn("Unauthorized request - signing out");
-
-            // NextAuth signOut 사용 (React 상태 유지, 세션 정리)
-            const callbackUrl = window.location.pathname;
-            void signOut({
-              callbackUrl: `/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`,
-            });
-          }
-        }
-        return Promise.reject(error);
-      },
+      (error) => Promise.reject(error),
     );
   }
 
