@@ -87,7 +87,7 @@ export const resourcePresetHandlers = [
       (await request.json()) as Partial<ResourcePresetDetailResponseType>;
 
     const newPreset: ResourcePresetDetailResponseType = {
-      id: crypto.randomUUID(),
+      id: String(Date.now()),
       name: body.name ?? "",
       description: body.description ?? null,
       jobType: body.jobType ?? "BATCH",

@@ -33,7 +33,7 @@ export default function WorkloadDetailLayout({ children }: PropsWithChildren) {
 
   // 워크로드 상세 정보 조회
   const { data: workload } = useGetWorkloadByMode({
-    workspaceId,
+    workspaceId: Number(workspaceId),
     workloadId,
   });
 

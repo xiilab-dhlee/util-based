@@ -87,6 +87,7 @@ export function UpdateAccountStatusModal() {
       modalWidth={300}
       open={open}
       onCancel={onClose}
+      showCancelButton
       onOk={handleOk}
       title="계정 상태 변경"
       centered

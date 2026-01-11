@@ -121,35 +121,21 @@ When("허브에서 워크로드 생성 버튼을 클릭한다", async ({ hubPage
 
 /**
  * 검색어가 포함된 데이터만 표시되는지 검증
- * - 첫 번째 결과가 검색어를 포함하는지 확인 (샘플 검증)
- * - 검색 결과가 없으면 테스트 스킵 (검증 불가 상태 명시)
  *
- * NOTE: E2E 테스트는 기능 동작 확인이 목적이므로 첫 번째 결과만 검증
- * 전체 결과 정확성은 백엔드/API 테스트 영역
+ * CardGridComponent의 validateSearch 메서드 사용
  */
 Then(
   "허브 검색 결과 검색어가 포함된 데이터만 표시된다",
   async ({ listGrid, listSearchInput, assertLogger, $testInfo }) => {
     // 스켈레톤이 사라지고 카드가 표시될 때까지 대기
     await listGrid.assertCardsVisible();
-    const cardCount = await listGrid.getCardCount();
-    const searchText = await listSearchInput.getValue();
 
-    if (cardCount === 0) {
-      $testInfo.skip(
-        true,
-        `"${searchText}" 검색 결과가 없어 검증을 스킵합니다. Mock 데이터 확인 필요.`,
-      );
-      return;
-    }
-
-    const firstCardTitle = await listGrid.getCardTitle(0);
-    const containsSearch = firstCardTitle
-      .toLowerCase()
-      .includes(searchText.toLowerCase());
-    assertLogger.assertTrue(
-      `첫 번째 결과 "${firstCardTitle}"이(가) "${searchText}" 포함`,
-      containsSearch,
+    // 검색 결과 검증
+    await listGrid.validateSearch(
+      await listSearchInput.getValue(),
+      assertLogger,
+      $testInfo,
+      "허브",
     );
   },
 );

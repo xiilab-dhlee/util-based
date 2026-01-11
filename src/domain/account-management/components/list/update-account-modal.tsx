@@ -26,6 +26,7 @@ import { useUpdateAccountAction } from "@/domain/account-management/hooks/accoun
 import { openUpdateAccountModalAtom } from "@/domain/account-management/state/account.atom";
 import { updateAccountErrorMap } from "@/domain/account-management/utils/update-account-form.util";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
@@ -141,8 +142,16 @@ export function UpdateAccountModal() {
           <SubTitle>계정 기본 정보</SubTitle>
           <DetailCard>
             <SectionTitle>상세 정보</SectionTitle>
-            <InfoRow label="이름" value={accountDetail?.accountName} />
-            <InfoRow label="아이디" value={accountDetail?.email} />
+            <InfoRow
+              label="이름"
+              value={accountDetail?.accountName}
+              testId={ACCOUNT_SELECTOR.UPDATE_NAME}
+            />
+            <InfoRow
+              label="이메일"
+              value={accountDetail?.email}
+              testId={ACCOUNT_SELECTOR.UPDATE_EMAIL}
+            />
             <InfoRow
               label="그룹"
               value={
@@ -150,16 +159,19 @@ export function UpdateAccountModal() {
                   ? accountDetail.groupName.join(", ")
                   : undefined
               }
+              testId={ACCOUNT_SELECTOR.UPDATE_GROUP}
             />
             <InfoRow
               label="가입일"
               value={formatDateSafely(accountDetail?.createdAt)}
+              testId={ACCOUNT_SELECTOR.UPDATE_CREATED_AT}
             />
             <Divider />
             <SectionTitle>워크스페이스 정보</SectionTitle>
             <InfoRow
               label="보유 개수"
-              value={`${accountDetail?.workspaceCount ?? 0}개`}
+              value={`${(accountDetail?.workspaceCount ?? 0).toLocaleString()}개`}
+              testId={ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT}
             />
           </DetailCard>
         </section>
@@ -181,6 +193,7 @@ export function UpdateAccountModal() {
                       required
                       help={errors.accountRole?.message}
                       validateStatus={errors.accountRole ? "error" : undefined}
+                      data-testid={ACCOUNT_SELECTOR.UPDATE_ROLE_FIELD}
                     >
                       <Dropdown
                         options={ACCOUNT_ROLE_OPTIONS}
@@ -205,6 +218,7 @@ export function UpdateAccountModal() {
                       required
                       help={errors.isEnabled?.message}
                       validateStatus={errors.isEnabled ? "error" : undefined}
+                      data-testid={ACCOUNT_SELECTOR.UPDATE_STATUS_FIELD}
                     >
                       <Dropdown
                         options={ACCOUNT_STATUS_OPTIONS}
@@ -233,6 +247,7 @@ export function UpdateAccountModal() {
                   validateStatus={
                     errors.workspaceLimitCount ? "error" : undefined
                   }
+                  data-testid={ACCOUNT_SELECTOR.UPDATE_WORKSPACE_LIMIT_FIELD}
                 >
                   <InputNumber
                     value={field.value}
@@ -253,11 +268,19 @@ export function UpdateAccountModal() {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value?: string | number }) {
+function InfoRow({
+  label,
+  value,
+  testId,
+}: {
+  label: string;
+  value?: string | number;
+  testId?: string;
+}) {
   return (
     <DetailRow>
       <DetailLabel>{label}</DetailLabel>
-      <DetailValue>{value || "-"}</DetailValue>
+      <DetailValue data-testid={testId}>{value || "-"}</DetailValue>
     </DetailRow>
   );
 }

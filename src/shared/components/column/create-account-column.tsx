@@ -8,6 +8,7 @@ import { ResetPasswordButton } from "@/domain/account-management/components/list
 import { UpdateAccountButton } from "@/domain/account-management/components/list/update-account-button";
 import type { AccountSortState } from "@/domain/account-management/constants/account.constant";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
@@ -46,7 +47,10 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
           );
         };
         return (
-          <ColumnTextButton onClick={handleClick}>
+          <ColumnTextButton
+            onClick={handleClick}
+            data-testid={ACCOUNT_SELECTOR.NAME}
+          >
             {accountName}
           </ColumnTextButton>
         );
@@ -58,6 +62,9 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       align: "left",
       width: "22%",
       ellipsis: true,
+      render: (email: string) => {
+        return <span data-testid={ACCOUNT_SELECTOR.EMAIL}>{email}</span>;
+      },
     },
     {
       title: "그룹",
@@ -67,7 +74,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       render: (groupName: string[]) => {
         if (!groupName || groupName.length === 0) return "-";
         return (
-          <ColumnNoWrapOverflow>
+          <ColumnNoWrapOverflow data-testid={ACCOUNT_SELECTOR.GROUP}>
             <TagGroup items={createGroupTagItems(groupName)} maxWidth="100%" />
           </ColumnNoWrapOverflow>
         );
@@ -78,6 +85,9 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       dataIndex: "accountRole",
       align: "center",
       width: "12%",
+      render: (accountRole: string) => {
+        return <span data-testid={ACCOUNT_SELECTOR.ROLE}>{accountRole}</span>;
+      },
     },
     {
       title: "가입일",
@@ -87,7 +97,11 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "createdAt"),
       render: (createdAt: string) => {
-        return <span>{formatDateSafely(createdAt)}</span>;
+        return (
+          <span data-testid={ACCOUNT_SELECTOR.CREATED_AT}>
+            {formatDateSafely(createdAt)}
+          </span>
+        );
       },
     },
     {

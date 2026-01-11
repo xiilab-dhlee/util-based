@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
 import {
-  SELECTOR,
+  ANT_SELECTOR,
   testId,
   WORKLOAD_SELECTOR,
 } from "@/shared/constants/selector.constant";
@@ -132,6 +132,6 @@ When("차트 확대 버튼을 클릭한다", async ({ page }) => {
 });
 
 Then("차트 확대 모달이 표시된다", async ({ page }) => {
-  const modal = page.locator(SELECTOR.MODAL);
+  const modal = page.locator(ANT_SELECTOR.MODAL);
   await expect(modal).toBeVisible({ timeout: 5000 });
 });

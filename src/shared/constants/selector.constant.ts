@@ -10,54 +10,95 @@
  */
 
 // ============================================
-// 공통 (Shared)
+// Ant Design 셀렉터 (CSS 클래스 기반)
 // ============================================
 
-export const SELECTOR = {
-  // 목록 페이지 공통 (고정 상수)
-  /** 목록 테이블 래퍼 */
-  LIST_TABLE: "list-table",
-  /** 카드 그리드 목록 (허브 등 카드형 목록) */
-  LIST_CARD_GRID: "list-card-grid",
-  /** 목록 카드 (카드형 목록의 개별 카드) */
-  LIST_CARD: "list-card",
-  /** 총 개수 표시 */
-  LIST_TOTAL_COUNT: "list-total-count",
-  /** 페이지네이션 */
-  LIST_PAGINATION: "list-pagination",
-  /** 검색 입력창 */
-  LIST_SEARCH_INPUT: "list-search-input",
-  /** 필터 영역 */
-  LIST_FILTER: "list-filter",
-  /** 내 항목만 보기 스위치 */
-  MY_ITEMS_ONLY_SWITCH: "my-items-only-switch",
+export const ANT_SELECTOR = {
+  // 공통
+  SPINNER: ".ant-spin",
 
-  // 워크스페이스
-  /** 선택된 워크스페이스 값 */
-  WORKSPACE_SELECT_VALUE: "workspace-select-value",
-  /** 워크스페이스 미선택 placeholder */
-  WORKSPACE_SELECT_PLACEHOLDER: "workspace-select-placeholder",
+  // 테이블
+  TABLE_EMPTY: ".ant-table-placeholder",
+  TABLE_HEADER: "thead th",
+  TABLE_ROW: "tbody tr.ant-table-row",
 
-  // 모달 (Ant Design Modal 기반)
-  /** 모달 컨테이너 (visible) */
+  // 테이블 체크박스
+  SELECTION_COLUMN: ".ant-table-selection-column",
+  CHECKBOX_INPUT: ".ant-checkbox-input",
+  CHECKBOX_CHECKED: ".ant-checkbox-input:checked",
+  HEADER_CHECKBOX: "thead .ant-table-selection-column .ant-checkbox-input",
+  ROW_CHECKBOX:
+    "tbody tr.ant-table-row .ant-table-selection-column .ant-checkbox-input",
+  ROW_CHECKBOX_CHECKED:
+    "tbody tr.ant-table-row .ant-table-selection-column .ant-checkbox-input:checked",
+
+  // Select 드롭다운
+  SELECT_DROPDOWN: ".ant-select-dropdown:visible",
+  SELECT_OPTION: ".ant-select-item-option-content",
+  SELECT_VISIBLE_OPTION:
+    ".ant-select-dropdown:visible .ant-select-item-option-content",
+  SELECT_PLACEHOLDER: ".ant-select-selection-placeholder",
+  SELECT_SELECTED_ITEM: ".ant-select-selection-item",
+
+  // 모달
   MODAL: ".ant-modal:visible",
-  /** 모달 확인 버튼 (footer의 마지막 버튼) */
+  MODAL_CONTENT: ".ant-modal-content",
+  MODAL_TITLE: ".ant-modal:visible .ant-modal-title",
   MODAL_OK_BUTTON: ".ant-modal:visible .ant-modal-footer button:last-child",
-  /** 모달 취소 버튼 (footer의 첫 번째 버튼) */
   MODAL_CANCEL_BUTTON:
     ".ant-modal:visible .ant-modal-footer button:first-child",
 
-  // 드로어 (Ant Design Drawer 기반)
-  /** 드로어 컨테이너 (열린 상태) */
+  // 드로어
   DRAWER: ".ant-drawer-open",
-  /** 드로어 닫기 버튼 */
+  DRAWER_TITLE: ".ant-drawer-title",
   DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
 
-  // 테마 선택 (로그/웹터미널 공통)
-  /** 테마 팝오버 컨테이너 */
+  // 버튼
+  /** 로딩 상태 클래스명 (classList 검사용, '.' 없음) */
+  BTN_LOADING: "ant-btn-loading",
+
+  // 페이지네이션 (CSS 선택자)
+  PAGINATION_PREV: ".ant-pagination-prev",
+  PAGINATION_NEXT: ".ant-pagination-next",
+  PAGINATION_ITEM: ".ant-pagination-item",
+  PAGINATION_ITEM_ACTIVE: ".ant-pagination-item-active",
+  /** 비활성 상태 클래스명 (classList 검사용, '.' 없음) */
+  PAGINATION_DISABLED: "ant-pagination-disabled",
+  paginationItem: (page: number) => `.ant-pagination-item-${page}`,
+
+  // 메뉴
+  MENU_ITEM_SELECTED: ".ant-menu-item-selected .ant-menu-title-content",
+  MENU_TITLE_CONTENT: ".ant-menu-title-content",
+} as const;
+
+// ============================================
+// 공통 셀렉터 (data-testid 기반)
+// ============================================
+
+export const SELECTOR = {
+  // 커스텀 정렬 아이콘 (xiilab-ui)
+  SORT_ARROW_UP: ".sort-arrow-up",
+  SORT_ARROW_DOWN: ".sort-arrow-down",
+  SORT_ACTIVE: ".active",
+
+  // 목록 페이지 공통
+  LIST_TABLE: "list-table",
+  LIST_DELETE_BUTTON: "list-delete-button",
+  LIST_CARD_GRID: "list-card-grid",
+  LIST_CARD: "list-card",
+  LIST_TOTAL_COUNT: "list-total-count",
+  LIST_PAGINATION: "list-pagination",
+  LIST_SEARCH_INPUT: "list-search-input",
+  LIST_FILTER: "list-filter",
+  MY_ITEMS_ONLY_SWITCH: "my-items-only-switch",
+
+  // 워크스페이스
+  WORKSPACE_SELECT_VALUE: "workspace-select-value",
+  WORKSPACE_SELECT_PLACEHOLDER: "workspace-select-placeholder",
+
+  // 테마 선택
   THEME_POPOVER: "theme-popover",
   THEME_BUTTON: "theme-button",
-  /** 테마 옵션 (동적) - theme-option-{themeName} */
   themeOption: (themeName: string) => `theme-option-${themeName}`,
 } as const;
 
@@ -362,6 +403,106 @@ export const HUB_SELECTOR = {
   DETAIL_README: "hub-detail-readme",
   /** 워크로드 생성 버튼 */
   CREATE_WORKLOAD_BUTTON: "hub-create-workload-button",
+} as const;
+
+// ============================================
+// 계정 관리 (Account Management)
+// ============================================
+
+export const ACCOUNT_SELECTOR = {
+  // 페이지 헤더
+  /** 계정 관리 페이지 헤더 */
+  PAGE_HEADER: "admin.account-management",
+
+  // 테이블 컬럼 셀렉터
+  /** 계정 이름 */
+  NAME: "account-name",
+  /** 계정 이메일 */
+  EMAIL: "account-email",
+  /** 계정 그룹 */
+  GROUP: "account-group",
+  /** 계정 권한 */
+  ROLE: "account-role",
+  /** 가입일 */
+  CREATED_AT: "account-created-at",
+  /** 계정 상태 (Switch) */
+  STATUS: "account-status",
+
+  // 액션 버튼
+  /** 수정 버튼 */
+  UPDATE_BUTTON: "account-update-button",
+  /** 비밀번호 초기화 버튼 */
+  RESET_PASSWORD_BUTTON: "account-reset-password-button",
+  /** 삭제 버튼 */
+  DELETE_BUTTON: "account-delete-button",
+
+  // 상세 모달
+  /** 상세 - 이름 */
+  DETAIL_NAME: "account-detail-name",
+  /** 상세 - 아이디 */
+  DETAIL_EMAIL: "account-detail-email",
+  /** 상세 - 그룹 */
+  DETAIL_GROUP: "account-detail-group",
+  /** 상세 - 상태 */
+  DETAIL_STATUS: "account-detail-status",
+  /** 상세 - 권한 */
+  DETAIL_ROLE: "account-detail-role",
+  /** 상세 - 가입일 */
+  DETAIL_CREATED_AT: "account-detail-created-at",
+  /** 상세 - 워크스페이스 보유 개수 */
+  DETAIL_WORKSPACE_COUNT: "account-detail-workspace-count",
+  /** 상세 - 워크스페이스 생성 제한 개수 */
+  DETAIL_WORKSPACE_LIMIT: "account-detail-workspace-limit",
+
+  // 수정 모달 - 조회 정보
+  /** 수정 - 이름 */
+  UPDATE_NAME: "account-update-name",
+  /** 수정 - 아이디 */
+  UPDATE_EMAIL: "account-update-email",
+  /** 수정 - 그룹 */
+  UPDATE_GROUP: "account-update-group",
+  /** 수정 - 가입일 */
+  UPDATE_CREATED_AT: "account-update-created-at",
+  /** 수정 - 워크스페이스 보유 개수 */
+  UPDATE_WORKSPACE_COUNT: "account-update-workspace-count",
+
+  // 수정 모달 - 폼 필드
+  /** 수정 - 권한 필드 */
+  UPDATE_ROLE_FIELD: "account-update-role-field",
+  /** 수정 - 상태 필드 */
+  UPDATE_STATUS_FIELD: "account-update-status-field",
+  /** 수정 - 워크스페이스 생성 제한 개수 필드 */
+  UPDATE_WORKSPACE_LIMIT_FIELD: "account-update-workspace-limit-field",
+
+  // 패스워드 초기화 결과 모달
+  /** 패스워드 초기화 결과 - 새 패스워드 */
+  RESET_PASSWORD_RESULT: "account-reset-password-result",
+} as const;
+
+// ============================================
+// 가입 승인 목록 (Account Pending)
+// ============================================
+
+export const ACCOUNT_PENDING_SELECTOR = {
+  // 테이블 컬럼 셀렉터
+  /** 이름 */
+  NAME: "account-pending-name",
+  /** 이메일 */
+  EMAIL: "account-pending-email",
+  /** 가입일 */
+  CREATED_AT: "account-pending-created-at",
+
+  // 행 액션 버튼
+  /** 반려 버튼 (행) */
+  REJECT_BUTTON: "account-pending-reject-button",
+  /** 승인 버튼 (행) */
+  APPROVE_BUTTON: "account-pending-approve-button",
+
+  // 필터 영역 버튼 (멀티 선택용)
+  /** 반려 버튼 (필터) */
+  FILTER_REJECT_BUTTON: "account-pending-filter-reject-button",
+  /** 승인 버튼 (필터) */
+  FILTER_APPROVE_BUTTON: "account-pending-filter-approve-button",
 } as const;
 
 // ============================================

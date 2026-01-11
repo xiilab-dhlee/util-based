@@ -1,15 +1,6 @@
-import type { AxiosInstance, AxiosResponse } from "axios";
+import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type { Session } from "next-auth";
-
-// Extend NextAuth Session type to include custom properties
-interface CustomSession extends Session {
-  accessToken?: string;
-  refresh_token?: string;
-  error?: string;
-  expires: string;
-  roles?: string[];
-}
 
 interface AxiosServiceConfig {
   isAuth?: boolean;
@@ -18,15 +9,21 @@ interface AxiosServiceConfig {
 /**
  * 세션 제공자 타입
  * 외부에서 세션을 주입받기 위한 콜백 함수
+ * Session 타입은 src/shared/types/next-auth.d.ts에서 확장됨
  */
-type SessionProvider = () => CustomSession | null;
+type SessionProvider = () => Session | null;
 
+/**
+ * Axios 서비스
+ *
+ * - 세션 기반 인증 토큰 자동 주입
+ * - 401 등 인증 에러는 auth-provider에서 처리 (NextAuth 세션 에러 감지)
+ */
 export class AxiosService {
   private static instance: AxiosService;
   private axios: AxiosInstance;
   private isAuth: boolean;
   private requestInterceptorId?: number;
-  private responseInterceptorId?: number;
 
   // 외부에서 주입받은 세션 제공자
   private sessionProvider: SessionProvider | null = null;
@@ -65,7 +62,7 @@ export class AxiosService {
    * 현재 세션을 가져옵니다.
    * 외부에서 주입된 세션 제공자를 통해 동기적으로 세션을 반환합니다.
    */
-  private getSession(): CustomSession | null {
+  private getSession(): Session | null {
     if (this.sessionProvider) {
       return this.sessionProvider();
     }
@@ -77,11 +74,8 @@ export class AxiosService {
     if (this.requestInterceptorId !== undefined) {
       this.axios.interceptors.request.eject(this.requestInterceptorId);
     }
-    if (this.responseInterceptorId !== undefined) {
-      this.axios.interceptors.response.eject(this.responseInterceptorId);
-    }
 
-    // 요청 인터셉터 설정
+    // 요청 인터셉터: 인증 토큰 자동 주입
     this.requestInterceptorId = this.axios.interceptors.request.use(
       (config) => {
         if (!config.headers.Authorization && this.isAuth) {
@@ -93,27 +87,7 @@ export class AxiosService {
         }
         return config;
       },
-      (error) => {
-        console.log("Request interceptor error:", error);
-        return Promise.reject(error);
-      },
-    );
-
-    // 응답 인터셉터 설정
-    this.responseInterceptorId = this.axios.interceptors.response.use(
-      (response: AxiosResponse) => {
-        return response;
-      },
-      (error: unknown) => {
-        const { response } = error as { response?: { status: number } };
-
-        if (response?.status === 401 && this.isAuth) {
-          // 401 에러 시 세션 만료로 처리
-          // 실제 토큰 갱신은 NextAuth의 SessionProvider가 처리
-          console.warn("Unauthorized request - session may be expired");
-        }
-        return Promise.reject(error);
-      },
+      (error) => Promise.reject(error),
     );
   }
 

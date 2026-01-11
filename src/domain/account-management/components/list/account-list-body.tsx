@@ -11,6 +11,7 @@ import {
 } from "@/domain/account-management/state/account.atom";
 import { createAccountColumn } from "@/shared/components/column/create-account-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
 import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
@@ -48,7 +49,7 @@ export function AccountListBody({
   };
 
   return (
-    <ListWrapper>
+    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
         columns={createAccountColumn(sort)}
         data={data}

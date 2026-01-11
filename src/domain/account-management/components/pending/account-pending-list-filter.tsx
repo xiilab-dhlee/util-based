@@ -12,6 +12,10 @@ import {
 } from "@/domain/account-management/state/account.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import {
+  ACCOUNT_PENDING_SELECTOR,
+  SELECTOR,
+} from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface CheckedAccounts {
@@ -78,7 +82,11 @@ export function AccountPendingListFilter({
   };
 
   return (
-    <MySearchFilter title="가입 승인 목록" total={totalSize}>
+    <MySearchFilter
+      title="가입 승인 목록"
+      total={totalSize}
+      totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
+    >
       <Input.Search
         name="search"
         placeholder="검색어를 입력하세요."
@@ -86,6 +94,7 @@ export function AccountPendingListFilter({
         autoComplete="off"
         width={220}
         height={30}
+        data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
       <Button
         color="primary"
@@ -96,6 +105,7 @@ export function AccountPendingListFilter({
         height={30}
         onClick={handleReject}
         disabled={!hasChecked || isLoading}
+        data-testid={ACCOUNT_PENDING_SELECTOR.FILTER_REJECT_BUTTON}
       >
         반려
       </Button>
@@ -108,6 +118,7 @@ export function AccountPendingListFilter({
         height={30}
         onClick={handleApprove}
         disabled={!hasChecked || isLoading}
+        data-testid={ACCOUNT_PENDING_SELECTOR.FILTER_APPROVE_BUTTON}
       >
         승인
       </Button>

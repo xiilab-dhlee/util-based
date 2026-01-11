@@ -1,5 +1,7 @@
 import { Button } from "xiilab-ui";
 
+import { SELECTOR } from "@/shared/constants/selector.constant";
+
 interface ListDeleteButtonProps {
   /** 클릭 이벤트 핸들러 */
   onClick: () => void;
@@ -23,6 +25,7 @@ export function ListDeleteButton({
       onClick={onClick}
       disabled={disabled}
       loading={isLoading}
+      data-testid={SELECTOR.LIST_DELETE_BUTTON}
     >
       삭제
     </Button>

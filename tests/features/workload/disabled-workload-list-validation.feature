@@ -5,8 +5,7 @@ Feature: 비활성화 워크로드 목록 검증
   So that 비활성화 워크로드 데이터 검증을 할 수 있다
 
   Background:
-    Given 사용자가 로그인되어 있다
-    And 비활성화 워크로드 목록 페이지에 있다
+    Given 비활성화 워크로드 목록 페이지에 있다
 
   @regression
   Scenario: 비활성화 워크로드 목록 데이터 유효성 검증

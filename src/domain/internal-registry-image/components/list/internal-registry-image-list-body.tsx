@@ -37,7 +37,7 @@ export function InternalRegistryImageListBody() {
         columns={createInternalRegistryImageColumn([
           { dataIndex: "checkbox" },
           {
-            dataIndex: "imageName",
+            dataIndex: "name",
             title: "컨테이너 이미지 이름",
           },
           { dataIndex: "tagCnt", title: "최신 태그 / 개수", width: 150 },

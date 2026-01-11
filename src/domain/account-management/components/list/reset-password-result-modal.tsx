@@ -8,6 +8,7 @@ import { Icon, InfoModal } from "xiilab-ui";
 import { openResetPasswordResultModalAtom } from "@/domain/account-management/state/account.atom";
 import { RefreshIcon } from "@/shared/components/icon/refresh-icon";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -89,7 +90,9 @@ export function ResetPasswordResultModal() {
         </DescriptionText>
 
         <PasswordBox>
-          <PasswordText>{result?.newPassword}</PasswordText>
+          <PasswordText data-testid={ACCOUNT_SELECTOR.RESET_PASSWORD_RESULT}>
+            {result?.newPassword}
+          </PasswordText>
           <CopyIconButton onClick={handleCopyPassword}>
             <Icon name="Copy" size={20} color="var(--color-gray-04)" />
           </CopyIconButton>

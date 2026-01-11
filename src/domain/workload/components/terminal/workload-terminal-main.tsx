@@ -28,7 +28,7 @@ export function WorkloadTerminalMain() {
   const workspaceId = searchParams?.get("workspaceId") || "";
 
   const { data } = useGetWorkloadByMode({
-    workspaceId,
+    workspaceId: Number(workspaceId),
     workloadId: id as string,
   });
 

@@ -1,3 +1,6 @@
+import { expect } from "@playwright/test";
+
+import { SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { DataTableComponent } from "../components/data-table.component";
 import { BasePage } from "./base.page";
 
@@ -43,5 +46,29 @@ export abstract class ListPage extends BasePage {
       );
     }
     return this._table;
+  }
+
+  // ============================================
+  // 삭제 버튼 (공통)
+  // ============================================
+
+  /** 삭제 버튼 Locator */
+  get deleteButton() {
+    return this.page.locator(testId(SELECTOR.LIST_DELETE_BUTTON));
+  }
+
+  /** 삭제 버튼 클릭 */
+  async clickDeleteButton(): Promise<void> {
+    await this.deleteButton.click();
+  }
+
+  /** 삭제 버튼 활성화 상태 검증 */
+  async assertDeleteButtonEnabled(): Promise<void> {
+    await expect(this.deleteButton).toBeEnabled();
+  }
+
+  /** 삭제 버튼 비활성화 상태 검증 */
+  async assertDeleteButtonDisabled(): Promise<void> {
+    await expect(this.deleteButton).toBeDisabled();
   }
 }

@@ -1,4 +1,3 @@
-import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
@@ -11,11 +10,11 @@ const testDir = defineBddConfig({
   ],
 });
 
-// 인증 상태 파일 경로 (일반 사용자 기본)
-const USER_AUTH_STATE = path.join(__dirname, "tests/.auth/user.json");
-
 // CI 환경 여부
 const isCI = !!process.env.CI;
+
+// 테스트 모드: mock (기본) | integration (실제 API)
+const isIntegration = process.env.TEST_MODE === "integration";
 
 /**
  * Playwright 설정
@@ -24,7 +23,7 @@ const isCI = !!process.env.CI;
 export default defineConfig({
   testDir, // BDD 설정에서 생성된 testDir 사용
 
-  /* 전역 설정 - 테스트 시작 전 1회 실행 (인증 상태 저장) */
+  /* 전역 설정 - 테스트 시작 전 1회 실행 (테스트 데이터 초기화 등) */
   globalSetup: require.resolve("./tests/global-setup"),
 
   /* 병렬 실행 설정 */
@@ -84,18 +83,15 @@ export default defineConfig({
     actionTimeout: 10000,
   },
 
-  /* 프로젝트별 설정 - 다양한 브라우저에서 테스트 */
+  /* 프로젝트별 설정 */
   projects: [
     {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
-        // globalSetup에서 저장한 인증 상태 재사용
-        storageState: USER_AUTH_STATE,
       },
     },
-
     // {
     //   name: 'firefox',
     //   use: {
@@ -103,7 +99,6 @@ export default defineConfig({
     //     viewport: { width: 1920, height: 1080 }
     //   },
     // },
-
     // {
     //   name: 'webkit',
     //   use: {
@@ -111,24 +106,16 @@ export default defineConfig({
     //     viewport: { width: 1920, height: 1080 }
     //   },
     // },
-
-    /* 모바일 뷰포트 테스트 */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
   ],
 
   /* 테스트 실행 전 서버 자동 시작 */
   webServer: {
-    command: "pnpm dev:mock",
+    // integration 모드: 빌드된 앱 실행 (pnpm start)
+    // mock 모드: 개발 서버 실행 (pnpm dev:test)
+    command: isIntegration ? "pnpm start" : "pnpm dev:test",
     url: "http://localhost:3000",
     reuseExistingServer: !isCI,
-    timeout: 30 * 1000,
+    timeout: isIntegration ? 60 * 1000 : 30 * 1000, // integration 모드는 빌드 후 시작이므로 타임아웃 증가
   },
 
   /* 테스트 타임아웃 설정 */

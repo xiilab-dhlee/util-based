@@ -5,8 +5,7 @@ Feature: 활성화 워크로드 목록 검증
   So that 현재 상태에서 사용 가능한 기능을 명확히 알 수 있다
 
   Background:
-    Given 사용자가 로그인되어 있다
-    And 활성화 워크로드 목록 페이지에 있다
+    Given 활성화 워크로드 목록 페이지에 있다
 
   @regression
   Scenario: 활성화 워크로드 목록 데이터 유효성 검증

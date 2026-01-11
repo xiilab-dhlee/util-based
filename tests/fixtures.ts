@@ -2,6 +2,7 @@ import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
 import { SELECTOR } from "@/shared/constants/selector.constant";
+import { ButtonComponent } from "./components/button.component";
 import { CardGridComponent } from "./components/card-grid.component";
 import { DataTableComponent } from "./components/data-table.component";
 import { DrawerComponent } from "./components/drawer.component";
@@ -13,6 +14,8 @@ import { SearchInputComponent } from "./components/search-input.component";
 import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
+import { AccountManagementPage } from "./pages/account-management.page";
+import { AccountPendingPage } from "./pages/account-pending.page";
 import { HubPage } from "./pages/hub.page";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { SignupPage } from "./pages/signup.page";
@@ -126,6 +129,8 @@ type TestContextFixtures = {
   workloadTerminalPage: WorkloadTerminalPage;
   monitoringPage: MonitoringPage;
   hubPage: HubPage;
+  accountManagementPage: AccountManagementPage;
+  accountPendingPage: AccountPendingPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
   modal: ModalComponent;
@@ -146,6 +151,8 @@ type TestContextFixtures = {
   listSearchInput: SearchInputComponent;
   /** 페이지네이션 험블 객체 */
   listPagination: PaginationComponent;
+  /** 목록 삭제 버튼 험블 객체 */
+  listDeleteButton: ButtonComponent;
 };
 
 // ============================================================================
@@ -392,6 +399,14 @@ export const test = base.extend<TestContextFixtures>({
     await use(new HubPage(page));
   },
 
+  accountManagementPage: async ({ page }, use) => {
+    await use(new AccountManagementPage(page));
+  },
+
+  accountPendingPage: async ({ page }, use) => {
+    await use(new AccountPendingPage(page));
+  },
+
   // ============================================================================
   // 공통 UI 컴포넌트 (페이지와 무관)
   // ============================================================================
@@ -442,5 +457,9 @@ export const test = base.extend<TestContextFixtures>({
 
   listPagination: async ({ page }, use) => {
     await use(new PaginationComponent(page, SELECTOR.LIST_PAGINATION));
+  },
+
+  listDeleteButton: async ({ page }, use) => {
+    await use(new ButtonComponent(page, SELECTOR.LIST_DELETE_BUTTON));
   },
 });

@@ -1,7 +1,6 @@
 "use client";
 
 import { useAtom, useSetAtom } from "jotai";
-import { useMemo } from "react";
 import { Dropdown } from "xiilab-ui";
 
 import { useFindHubSummaries } from "@/api/generated/hub/hub";
@@ -16,14 +15,11 @@ export function CreateWorkloadHubImageSelect() {
   /** 허브 이미지 옵션 목록 조회 */
   const { data, isLoading } = useFindHubSummaries({ workloadJobType: "BATCH" });
 
-  const options = useMemo(() => {
-    return (
-      data?.map((item) => ({
-        label: item.hubName,
-        value: String(item.hubId),
-      })) || []
-    );
-  }, [data]);
+  const options =
+    data?.map((item) => ({
+      label: item.hubName,
+      value: String(item.hubId),
+    })) || [];
 
   const handleChangeImage = (value: string | null) => {
     setImageId(value);

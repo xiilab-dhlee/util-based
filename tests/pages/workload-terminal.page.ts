@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
 import {
   testId,
   WORKLOAD_SELECTOR,
@@ -44,7 +45,7 @@ export class WorkloadTerminalPage extends BasePage {
   }
 
   protected get basePath(): string {
-    return "/user/workload";
+    return ROUTES.USER_WORKLOAD;
   }
 
   // ============================================
@@ -57,10 +58,11 @@ export class WorkloadTerminalPage extends BasePage {
    * @param workspaceId - 워크스페이스 ID (optional)
    */
   async gotoTerminal(workloadId: string, workspaceId?: string): Promise<void> {
-    const path = workspaceId
-      ? `/${workloadId}/terminal?workspaceId=${workspaceId}`
-      : `/${workloadId}/terminal`;
-    await this.goto(path);
+    const fullPath = workspaceId
+      ? `${ROUTES.USER_WORKLOAD_TERMINAL(workloadId)}?workspaceId=${workspaceId}`
+      : ROUTES.USER_WORKLOAD_TERMINAL(workloadId);
+    await this.page.goto(fullPath);
+    await this.page.waitForLoadState("networkidle");
   }
 
   // ============================================

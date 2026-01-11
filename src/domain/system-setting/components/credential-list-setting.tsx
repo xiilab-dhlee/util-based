@@ -91,7 +91,7 @@ export function CredentialListSetting() {
             placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
             onSearch={handleSearch}
             autoComplete="off"
-            width="290px"
+            width={290}
             height={30}
           />
         </SearchWrapper>

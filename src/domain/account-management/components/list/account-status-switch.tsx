@@ -2,6 +2,7 @@ import { Switch } from "xiilab-ui";
 
 import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface AccountStatusSwitchProps {
@@ -19,5 +20,11 @@ export function AccountStatusSwitch({ account }: AccountStatusSwitchProps) {
     });
   };
 
-  return <Switch checked={account.isEnabled} onChange={handleChange} />;
+  return (
+    <Switch
+      checked={account.isEnabled}
+      onChange={handleChange}
+      data-testid={ACCOUNT_SELECTOR.STATUS}
+    />
+  );
 }
