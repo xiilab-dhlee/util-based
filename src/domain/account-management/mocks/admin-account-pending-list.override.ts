@@ -7,6 +7,10 @@ import type {
   GetSignupRequestsSort,
   SignupRequestItemResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  DAY_IN_MS,
+  MOCK_BASE_TIMESTAMP,
+} from "@/shared/constants/date.constant";
 
 /**
  * 정렬 가능한 accountName 생성
@@ -39,20 +43,18 @@ function generateCreatedAt(
   index: number,
   sort: GetSignupRequestsSort,
   order: GetSignupRequestsOrder,
-  baseTimestamp: number = Date.now(),
+  baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  const dayInMs = 24 * 60 * 60 * 1000;
-
   if (sort === "CREATED_AT") {
     const offset =
       order === "ASC"
-        ? (30 - index) * dayInMs // ASC: 오래된 것부터
-        : index * dayInMs; // DESC: 최신 것부터
+        ? (30 - index) * DAY_IN_MS // ASC: 오래된 것부터
+        : index * DAY_IN_MS; // DESC: 최신 것부터
     return new Date(baseTimestamp - offset).toISOString();
   }
 
   // 기본: 최신순
-  return new Date(baseTimestamp - index * dayInMs).toISOString();
+  return new Date(baseTimestamp - index * DAY_IN_MS).toISOString();
 }
 
 export const adminAccountPendingListOverrideHandlers = [
@@ -68,8 +70,6 @@ export const adminAccountPendingListOverrideHandlers = [
 
     const { status, message, timestamp } = getGetSignupRequestsResponseMock();
 
-    const baseTimestamp = Date.now();
-
     const content: SignupRequestItemResponse[] = Array.from(
       { length: pageSize },
       (_, index) => {
@@ -79,7 +79,7 @@ export const adminAccountPendingListOverrideHandlers = [
           accountId: `pending-account-${globalIndex + 1}`,
           accountName: generateAccountName(globalIndex, keyword, sort, order),
           email: `pending-${globalIndex + 1}@xiilab.com`,
-          createdAt: generateCreatedAt(globalIndex, sort, order, baseTimestamp),
+          createdAt: generateCreatedAt(globalIndex, sort, order),
         };
       },
     );

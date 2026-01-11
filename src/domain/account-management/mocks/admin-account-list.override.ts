@@ -8,6 +8,10 @@ import {
   type GetAllAccountsOrder,
   type GetAllAccountsSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  DAY_IN_MS,
+  MOCK_BASE_TIMESTAMP,
+} from "@/shared/constants/date.constant";
 
 /** API 스키마에서 정의된 권한 값 배열 */
 const ACCOUNT_ROLES = Object.values(AccountUpdateRequestAccountRole);
@@ -49,29 +53,27 @@ function generateAccountName(
  * @param index - 데이터 인덱스
  * @param sort - 정렬 기준
  * @param order - 정렬 순서
- * @param baseTimestamp - 기준 시간 (테스트용, 기본값: Date.now())
+ * @param baseTimestamp - 기준 시간 (기본값: MOCK_BASE_TIMESTAMP)
  */
 function generateCreatedAt(
   index: number,
   sort: GetAllAccountsSort,
   order: GetAllAccountsOrder,
-  baseTimestamp: number = Date.now(),
+  baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  const dayInMs = 24 * 60 * 60 * 1000;
-
   if (sort === "CREATED_AT") {
     // index를 [0, 29] 범위로 클램프하여 미래 날짜 방지
     const safeIndex = Math.min(Math.max(index, 0), 29);
     // 정렬 순서에 맞게 날짜 생성
     const offset =
       order === "ASC"
-        ? (30 - safeIndex) * dayInMs // ASC: 오래된 것부터 (30일 전 → 현재)
-        : safeIndex * dayInMs; // DESC: 최신 것부터 (현재 → 과거)
+        ? (30 - safeIndex) * DAY_IN_MS // ASC: 오래된 것부터 (30일 전 → 현재)
+        : safeIndex * DAY_IN_MS; // DESC: 최신 것부터 (현재 → 과거)
     return new Date(baseTimestamp - offset).toISOString();
   }
 
   // 기본: 최신순
-  return new Date(baseTimestamp - index * dayInMs).toISOString();
+  return new Date(baseTimestamp - index * DAY_IN_MS).toISOString();
 }
 
 export const adminAccountListOverrideHandlers = [
@@ -89,9 +91,6 @@ export const adminAccountListOverrideHandlers = [
 
     const { status, message, timestamp } = getGetAllAccountsResponseMock();
 
-    // 요청 내에서 일관된 날짜 생성을 위해 고정된 timestamp 사용
-    const baseTimestamp = Date.now();
-
     // pageSize에 맞는 content 생성
     const content: AccountItemResponse[] = Array.from(
       { length: pageSize },
@@ -103,7 +102,7 @@ export const adminAccountListOverrideHandlers = [
           accountId: `account-${globalIndex + 1}`,
           accountName: generateAccountName(globalIndex, keyword, sort, order),
           email: `account-${globalIndex + 1}@xiilab.com`,
-          createdAt: generateCreatedAt(globalIndex, sort, order, baseTimestamp),
+          createdAt: generateCreatedAt(globalIndex, sort, order),
           accountRole: ACCOUNT_ROLES[index % ACCOUNT_ROLES.length],
           workspaceCount: (globalIndex % 10) + 1,
           workspaceLimitCount: 10,

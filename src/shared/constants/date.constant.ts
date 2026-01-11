@@ -44,3 +44,15 @@ export const WEEK_DAY_LABEL_MAP: Record<WeekDayKey, string> = WEEK_DAYS.reduce(
   },
   {} as Record<WeekDayKey, string>,
 );
+
+/** 하루를 밀리초로 환산한 값 */
+export const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Mock 데이터의 기준 timestamp (2024-01-15 00:00:00 UTC)
+ *
+ * 테스트의 결정성(determinism)을 보장하기 위해 Date.now() 대신 사용합니다.
+ */
+export const MOCK_BASE_TIMESTAMP = new Date(
+  "2024-01-15T00:00:00.000Z",
+).getTime();
