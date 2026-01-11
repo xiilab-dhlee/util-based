@@ -42,11 +42,25 @@ function debugLog(message: string, data?: Record<string, unknown>): void {
   console.debug(`[Proxy]${dataStr} ${message}`);
 }
 
+/** 정적 파일 확장자 패턴 (1~6자의 영문/숫자 확장자) */
+const STATIC_FILE_EXTENSION_REGEX = /\.[A-Za-z0-9]{1,6}$/;
+
+/**
+ * 경로의 마지막 세그먼트가 파일 확장자를 가지는지 확인
+ * - /favicon.ico → true
+ * - /api/v1.0/resource → false (v1.0은 중간 세그먼트)
+ * - /user/john.doe → false (확장자가 아닌 사용자명)
+ */
+function hasFileExtension(path: string): boolean {
+  const lastSegment = path.split("/").pop() || "";
+  return STATIC_FILE_EXTENSION_REGEX.test(lastSegment);
+}
+
 /** 프록시 처리를 건너뛸 경로인지 확인 (정적 파일, API 등) */
 function shouldSkip(path: string): boolean {
   return (
     SKIP_PREFIXES.some((prefix) => path.startsWith(prefix)) ||
-    path.includes(".") // 파일 확장자가 있는 경로 (favicon.ico 등)
+    hasFileExtension(path)
   );
 }
 
@@ -139,15 +153,14 @@ export async function proxy(request: NextRequest) {
   if (token) {
     const roles = extractRoles(token);
 
-    // /admin 경로: ROLE_ADMIN 필요
-    if (path.startsWith("/admin") && !hasRole(roles, "ROLE_ADMIN")) {
+    // /admin 경로: ADMIN 필요
+    if (path.startsWith("/admin") && !hasRole(roles, "ADMIN")) {
       return NextResponse.redirect(new URL("/user", request.url));
     }
 
-    // /user 경로: ROLE_ADMIN 또는 ROLE_USER 필요
+    // /user 경로: ADMIN 또는 USER 필요
     if (path.startsWith("/user")) {
-      const hasUserAccess =
-        hasRole(roles, "ROLE_ADMIN") || hasRole(roles, "ROLE_USER");
+      const hasUserAccess = hasRole(roles, "ADMIN") || hasRole(roles, "USER");
 
       if (!hasUserAccess) {
         debugLog("🔒 권한 없음 → /signin 리다이렉트", { from: path, roles });
