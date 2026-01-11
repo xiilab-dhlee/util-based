@@ -466,7 +466,10 @@ export const authOptions: NextAuthOptions = {
     },
     async signOut({ token }) {
       authDebug(`🚪 로그아웃: ${token?.name ?? token?.id}`);
-      await handleKeycloakLogout(token);
+      // 테스트 모드에서는 Keycloak 로그아웃 불필요
+      if (!useTestAuth) {
+        await handleKeycloakLogout(token);
+      }
     },
   },
 

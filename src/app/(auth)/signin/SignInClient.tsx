@@ -21,7 +21,7 @@ export default function SignInClient() {
       try {
         const providers = await getProviders();
         if (providers?.keycloak) {
-          signIn("keycloak");
+          void signIn("keycloak"); // fire-and-forget: 리다이렉트 발생
         }
       } catch (error) {
         console.error("Failed to get auth providers:", error);

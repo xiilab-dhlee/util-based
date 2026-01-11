@@ -66,7 +66,7 @@ function useTokenRefreshErrorHandler(session: Session | null) {
       authDebug("❌ 토큰 갱신 실패 → 재로그인 시도");
 
       const provider = useTestAuth ? "credentials" : "keycloak";
-      signIn(provider, { redirect: !useTestAuth });
+      void signIn(provider, { redirect: !useTestAuth });
     }
   }, [session]);
 }
@@ -88,7 +88,7 @@ function useTestAutoLogin(
     if (status === "unauthenticated") {
       hasAutoLoggedIn.current = true;
       authDebug("🔑 테스트 환경 자동 로그인 시도");
-      signIn("credentials", { redirect: false });
+      void signIn("credentials", { redirect: false });
     }
   }, [status]);
 }
