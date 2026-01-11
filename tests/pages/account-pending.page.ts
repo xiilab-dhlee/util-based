@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 
 import { ROUTES } from "@/shared/constants/routes.constant";
 import {
@@ -50,14 +50,14 @@ export class AccountPendingPage extends ListPage {
   // ============================================
 
   /** 반려 버튼 (필터 영역) */
-  get filterRejectButton() {
+  get filterRejectButton(): Locator {
     return this.page.locator(
       testId(ACCOUNT_PENDING_SELECTOR.FILTER_REJECT_BUTTON),
     );
   }
 
   /** 승인 버튼 (필터 영역) */
-  get filterApproveButton() {
+  get filterApproveButton(): Locator {
     return this.page.locator(
       testId(ACCOUNT_PENDING_SELECTOR.FILTER_APPROVE_BUTTON),
     );

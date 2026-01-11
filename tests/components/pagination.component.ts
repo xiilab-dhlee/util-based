@@ -84,18 +84,16 @@ export class PaginationComponent {
 
   /** 이전 페이지 버튼이 비활성화 상태인지 검증 */
   async assertPrevDisabled(timeout = 10000): Promise<void> {
-    await expect(this.prevButton).toHaveClass(
-      new RegExp(ANT_SELECTOR.PAGINATION_DISABLED),
-      { timeout },
-    );
+    await expect(this.prevButton).toHaveClass(/ant-pagination-disabled/, {
+      timeout,
+    });
   }
 
   /** 다음 페이지 버튼이 비활성화 상태인지 검증 */
   async assertNextDisabled(timeout = 10000): Promise<void> {
-    await expect(this.nextButton).toHaveClass(
-      new RegExp(ANT_SELECTOR.PAGINATION_DISABLED),
-      { timeout },
-    );
+    await expect(this.nextButton).toHaveClass(/ant-pagination-disabled/, {
+      timeout,
+    });
   }
 
   /** 특정 페이지 아이템이 존재하는지 검증 */

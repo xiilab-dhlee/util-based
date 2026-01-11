@@ -55,14 +55,16 @@ export class AccountManagementPage extends ListPage {
    * 승인 대기 계정 목록 페이지로 이동
    */
   async gotoPending(): Promise<void> {
-    await this.goto("/pending");
+    await this.page.goto(ROUTES.ADMIN_ACCOUNT_MANAGEMENT_PENDING);
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
    * 그룹 관리 페이지로 이동
    */
   async gotoGroup(): Promise<void> {
-    await this.goto("/group");
+    await this.page.goto(ROUTES.ADMIN_ACCOUNT_MANAGEMENT_GROUP);
+    await this.page.waitForLoadState("networkidle");
   }
 
   // ============================================
@@ -190,12 +192,10 @@ export class AccountManagementPage extends ListPage {
    */
   async assertUpdateWorkspaceLimitFieldHasValidValue(): Promise<void> {
     await this.updateWorkspaceLimitField.assertVisible();
-    const formItem = this.page.locator(
-      testId(ACCOUNT_SELECTOR.UPDATE_WORKSPACE_LIMIT_FIELD),
-    );
-    const input = formItem.locator("input");
-    await expect(input).toBeVisible();
-    const value = await input.inputValue();
+    await expect(
+      this.updateWorkspaceLimitField.getInputLocator(),
+    ).toBeVisible();
+    const value = await this.updateWorkspaceLimitField.getInputValue();
     expect(value).toMatch(/^\d+$/);
     expect(Number(value)).toBeGreaterThanOrEqual(1);
   }

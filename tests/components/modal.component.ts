@@ -44,7 +44,6 @@ export class ModalComponent {
   ): Promise<void> {
     await this.waitForVisible(timeout);
     await expect(this.title).toHaveText(expectedTitle, { timeout });
-    await this.page.waitForLoadState("networkidle", { timeout });
   }
 
   /** 모달이 닫힐 때까지 대기 */

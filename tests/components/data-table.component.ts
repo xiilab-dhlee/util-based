@@ -18,6 +18,10 @@ type SortState = "asc" | "desc" | "none";
 type SortOrder = "오름차순" | "내림차순";
 type CompareType = "string" | "date";
 
+/** 정규식 메타 문자 이스케이프 */
+const escapeRegExp = (str: string): string =>
+  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /** 화면 표시용 날짜 파싱 (yyyy.MM.dd 또는 yyyy.MM.dd HH:mm:ss) */
 const parseDisplayDate = (dateStr: string): number => {
   const isDateOnly = DATE_PATTERN.test(dateStr);
@@ -45,9 +49,10 @@ export class DataTableComponent {
   ) {}
 
   private get page(): Page {
-    return "page" in this.container && typeof this.container.page === "function"
-      ? this.container.page()
-      : (this.container as Page);
+    if ("page" in this.container) {
+      return (this.container as Locator).page();
+    }
+    return this.container as Page;
   }
 
   private get columns(): Locator {
@@ -63,9 +68,10 @@ export class DataTableComponent {
   }
 
   private getColumnHeader(columnTitle: string): Locator {
+    const escapedTitle = escapeRegExp(columnTitle);
     return this.container
       .locator(ANT_SELECTOR.TABLE_HEADER)
-      .filter({ hasText: new RegExp(`^${columnTitle}$`) })
+      .filter({ hasText: new RegExp(`^${escapedTitle}$`) })
       .first();
   }
 

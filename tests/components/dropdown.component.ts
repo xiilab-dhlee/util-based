@@ -2,6 +2,10 @@ import { expect, type Locator, type Page } from "@playwright/test";
 
 import { ANT_SELECTOR, testId } from "@/shared/constants/selector.constant";
 
+/** 정규식 메타 문자 이스케이프 */
+const escapeRegExp = (str: string): string =>
+  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /** Ant Design Select 드롭다운 컴포넌트 */
 export class DropdownComponent {
   constructor(
@@ -38,8 +42,11 @@ export class DropdownComponent {
   /** 드롭다운에서 옵션 선택 */
   async select(option: string): Promise<void> {
     await this.wrapper.click();
+    const escapedOption = escapeRegExp(option);
     await this.page
-      .locator(ANT_SELECTOR.SELECT_VISIBLE_OPTION, { hasText: option })
+      .locator(ANT_SELECTOR.SELECT_VISIBLE_OPTION, {
+        hasText: new RegExp(`^${escapedOption}$`),
+      })
       .click();
     await this.page.waitForLoadState("networkidle");
   }

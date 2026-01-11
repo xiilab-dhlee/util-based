@@ -54,13 +54,15 @@ export const ANT_SELECTOR = {
   DRAWER_CLOSE_BUTTON: ".ant-drawer-open .ant-drawer-close",
 
   // 버튼
+  /** 로딩 상태 클래스명 (classList 검사용, '.' 없음) */
   BTN_LOADING: "ant-btn-loading",
 
-  // 페이지네이션
+  // 페이지네이션 (CSS 선택자)
   PAGINATION_PREV: ".ant-pagination-prev",
   PAGINATION_NEXT: ".ant-pagination-next",
   PAGINATION_ITEM: ".ant-pagination-item",
   PAGINATION_ITEM_ACTIVE: ".ant-pagination-item-active",
+  /** 비활성 상태 클래스명 (classList 검사용, '.' 없음) */
   PAGINATION_DISABLED: "ant-pagination-disabled",
   paginationItem: (page: number) => `.ant-pagination-item-${page}`,
 
