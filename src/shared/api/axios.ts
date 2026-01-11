@@ -108,9 +108,13 @@ export class AxiosService {
         const { response } = error as { response?: { status: number } };
 
         if (response?.status === 401 && this.isAuth) {
-          // 401 에러 시 세션 만료로 처리
-          // 실제 토큰 갱신은 NextAuth의 SessionProvider가 처리
-          console.warn("Unauthorized request - session may be expired");
+          console.warn("Unauthorized request - redirecting to signin");
+
+          // 클라이언트 사이드에서만 리다이렉트 실행
+          if (typeof window !== "undefined") {
+            const returnUrl = encodeURIComponent(window.location.pathname);
+            window.location.href = `/signin?callbackUrl=${returnUrl}`;
+          }
         }
         return Promise.reject(error);
       },
