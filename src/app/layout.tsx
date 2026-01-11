@@ -1,3 +1,4 @@
+import "@ant-design/v5-patch-for-react-19";
 import "@xterm/xterm/css/xterm.css";
 import "react-toastify/dist/ReactToastify.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
@@ -18,7 +19,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="ko">
-      <body className="antialiased" suppressHydrationWarning>
+      <body className="antialiased">
         <AntdRegistry>
           <Providers>{children}</Providers>
         </AntdRegistry>
