@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
 
+import { MySpinner } from "@/shared/components/spinner";
 import { AuthProvider } from "@/shared/providers/auth-provider";
 import { MSWProvider } from "@/shared/providers/msw-provider";
 import { QueryProvider } from "@/shared/providers/query-provider";
@@ -19,7 +20,7 @@ export function Providers({ children }: PropsWithChildren) {
           <StoreProvider>
             <ServiceProvider>
               <ThemeProvider>
-                <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+                <Suspense fallback={<MySpinner />}>{children}</Suspense>
                 <ToastContainer />
               </ThemeProvider>
             </ServiceProvider>
