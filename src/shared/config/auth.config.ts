@@ -1,4 +1,3 @@
-import axios from "axios";
 import type { Account, NextAuthOptions, Session, User } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -51,6 +50,26 @@ const isDev = process.env.NODE_ENV === "development";
 /** 토큰 만료 전 갱신 버퍼 (초) */
 const TOKEN_EXPIRY_BUFFER_SECONDS = 30;
 
+/** 프로덕션 환경 여부 */
+const isProduction = process.env.NODE_ENV === "production";
+
+/**
+ * NextAuth 시크릿 키
+ * - 프로덕션: NEXTAUTH_SECRET 필수 (없으면 에러)
+ * - 개발: fallback 허용
+ */
+function getAuthSecret(): string {
+  const secret = process.env.NEXTAUTH_SECRET;
+
+  if (!secret && isProduction) {
+    throw new Error(
+      "[Auth] NEXTAUTH_SECRET 환경변수가 프로덕션 환경에서 필수입니다.",
+    );
+  }
+
+  return secret ?? "dev-secret-key-for-development";
+}
+
 // ============================================================================
 // 유틸리티 함수
 // ============================================================================
@@ -78,38 +97,38 @@ function formatExpiresAt(expiresAt: number | undefined): string {
 // JWT 파싱
 // ============================================================================
 
-/** JWT access_token에서 사용자 정보 추출 */
-function parseUserFromToken(accessToken: string): AuthUser | null {
+/** JWT access_token에서 페이로드 추출 */
+function parseJwtPayload(accessToken: string): DecodedJwtPayload | null {
   try {
     const parts = accessToken.split(".");
     if (parts.length < 2) return null;
-
-    const payload: DecodedJwtPayload = JSON.parse(decodeBase64Safely(parts[1]));
-
-    return {
-      id: payload.sub,
-      name: payload.name ?? payload.preferred_username ?? "Unknown",
-      email: payload.email ?? "",
-      preferred_username: payload.preferred_username ?? payload.email ?? "",
-      roles: payload.realm_access?.roles ?? [],
-    };
-  } catch (error) {
-    console.error("[Auth] JWT 파싱 실패:", error);
+    return JSON.parse(decodeBase64Safely(parts[1]));
+  } catch {
     return null;
   }
+}
+
+/** JWT access_token에서 사용자 정보 추출 */
+function parseUserFromToken(accessToken: string): AuthUser | null {
+  const payload = parseJwtPayload(accessToken);
+  if (!payload) {
+    console.error("[Auth] JWT 파싱 실패");
+    return null;
+  }
+
+  return {
+    id: payload.sub,
+    name: payload.name ?? payload.preferred_username ?? "Unknown",
+    email: payload.email ?? "",
+    preferred_username: payload.preferred_username ?? payload.email ?? "",
+    roles: payload.realm_access?.roles ?? [],
+  };
 }
 
 /** JWT access_token에서 역할(roles) 추출 */
 function parseRolesFromToken(accessToken: string | undefined): string[] {
   if (!accessToken) return [];
-  try {
-    const parts = accessToken.split(".");
-    if (parts.length < 2) return [];
-    const payload = JSON.parse(decodeBase64Safely(parts[1]));
-    return payload.realm_access?.roles ?? [];
-  } catch {
-    return [];
-  }
+  return parseJwtPayload(accessToken)?.realm_access?.roles ?? [];
 }
 
 // ============================================================================
@@ -138,7 +157,7 @@ function createSession(session: Session, token: JWT): Session {
 // 테스트 환경 토큰 관리
 // ============================================================================
 
-/** 테스트 토큰 캐시 */
+// 토큰 캐시 (서버 재시작 전까지 유지)
 let cachedTestToken: CachedToken | null = null;
 
 /** Backend API를 통해 테스트용 토큰 발급 (Password Grant) */
@@ -314,18 +333,26 @@ async function handleKeycloakLogout(token: JWT): Promise<void> {
   }
 
   try {
-    const body = new URLSearchParams({
-      client_id: AUTH_CLIENT_ID,
-      client_secret: AUTH_CLIENT_SECRET,
-      refresh_token: token.refresh_token as string,
-    });
-
-    await axios.post(`${AUTH_ISSUER}/protocol/openid-connect/logout`, body, {
-      headers: {
-        Authorization: `Bearer ${token.access_token}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+    const response = await fetch(
+      `${AUTH_ISSUER}/protocol/openid-connect/logout`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token.access_token}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          client_id: AUTH_CLIENT_ID,
+          client_secret: AUTH_CLIENT_SECRET,
+          refresh_token: token.refresh_token as string,
+        }),
       },
-    });
+    );
+
+    if (!response.ok) {
+      console.error("[Auth] Keycloak 로그아웃 실패:", response.status);
+      return;
+    }
 
     authDebug("✅ Keycloak 세션 종료 완료");
   } catch (error) {
@@ -445,10 +472,10 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30일
+    maxAge: 7 * 24 * 60 * 60, // 7일
   },
 
-  secret: process.env.NEXTAUTH_SECRET ?? "dev-secret-key-for-development",
+  secret: getAuthSecret(),
   debug: false,
 };
 
