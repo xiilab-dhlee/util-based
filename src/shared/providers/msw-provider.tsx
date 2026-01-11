@@ -12,13 +12,22 @@ import { combinedHandlers } from "@/mocks/handlers";
  *
  * 동작 조건:
  * - MSW_ENABLE 환경변수가 "true"일 때만 활성화
+ *
+ * 빌드 타임에 환경 변수가 결정되므로 서버/클라이언트 모두 동일한 값을 가짐
+ * - pnpm dev:mock (MSW_ENABLE=true): 로딩 화면 표시 후 MSW 초기화
+ * - pnpm start (MSW_ENABLE=undefined): 바로 children 렌더링
  */
+
+// 빌드 타임에 결정되는 값 (서버/클라이언트 동일)
+const isMswEnabled = process.env.MSW_ENABLE === "true";
+
 export function MSWProvider({ children }: PropsWithChildren) {
-  const [isReady, setIsReady] = useState(process.env.MSW_ENABLE !== "true");
+  // MSW 비활성화 시 바로 준비 상태 (로딩 화면 없음)
+  const [isReady, setIsReady] = useState(!isMswEnabled);
 
   useEffect(() => {
-    // MSW가 비활성화되어 있으면 즉시 준비 상태로 설정
-    if (process.env.MSW_ENABLE !== "true") {
+    // MSW가 비활성화되어 있으면 아무것도 하지 않음
+    if (!isMswEnabled) {
       return;
     }
 
@@ -52,8 +61,8 @@ export function MSWProvider({ children }: PropsWithChildren) {
     initMSW();
   }, []);
 
-  // MSW가 활성화되어 있고 아직 준비되지 않았으면 로딩 화면 표시
-  if (process.env.MSW_ENABLE === "true" && !isReady) {
+  // MSW 활성화 상태에서 아직 준비되지 않았으면 로딩 화면 표시
+  if (!isReady) {
     return (
       <div
         style={{
