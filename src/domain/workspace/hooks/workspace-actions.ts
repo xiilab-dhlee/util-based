@@ -10,7 +10,12 @@ import {
   useSetDefaultWorkspace,
   useUpdateWorkspace,
 } from "@/api/generated/workspace/workspace";
-import { useLeaveWorkspace } from "@/api/generated/workspace-member/workspace-member";
+import {
+  getGetWorkspaceMembersQueryKey,
+  useDeleteWorkspaceMembers,
+  useLeaveWorkspace,
+  useUpdateMemberRole,
+} from "@/api/generated/workspace-member/workspace-member";
 import { WORKSPACE_ERROR_CODES } from "@/domain/workspace/constants/workspace-error-code.constant";
 import { useWorkspaceSwitch } from "@/domain/workspace/hooks/use-workspace-switch";
 import {
@@ -165,6 +170,44 @@ export function useSetDefaultWorkspaceAction(
           queryKey: getGetWorkspaceDetailQueryKey(variables.workspaceId),
         });
 
+        options?.mutation?.onSuccess?.(data, variables, ...rest);
+      },
+    },
+  });
+}
+
+export function useDeleteWorkspaceMembersAction(
+  options?: Parameters<typeof useDeleteWorkspaceMembers>[0],
+) {
+  const queryClient = useQueryClient();
+
+  return useDeleteWorkspaceMembers({
+    ...options,
+    mutation: {
+      ...options?.mutation,
+      onSuccess: (data, variables, ...rest) => {
+        queryClient.invalidateQueries({
+          queryKey: getGetWorkspaceMembersQueryKey(variables.workspaceId),
+        });
+        options?.mutation?.onSuccess?.(data, variables, ...rest);
+      },
+    },
+  });
+}
+
+export function useUpdateMemberRoleAction(
+  options?: Parameters<typeof useUpdateMemberRole>[0],
+) {
+  const queryClient = useQueryClient();
+
+  return useUpdateMemberRole({
+    ...options,
+    mutation: {
+      ...options?.mutation,
+      onSuccess: (data, variables, ...rest) => {
+        queryClient.invalidateQueries({
+          queryKey: getGetWorkspaceMembersQueryKey(variables.workspaceId),
+        });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
     },

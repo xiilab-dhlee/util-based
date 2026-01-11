@@ -55,4 +55,10 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.leaveWorkspace]: {
     success: "워크스페이스를 나갔습니다.",
   },
+  [MUTATION_KEYS.updateMemberRole]: {
+    success: "권한이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteWorkspaceMembers]: {
+    success: "구성원이 삭제되었습니다.",
+  },
 };

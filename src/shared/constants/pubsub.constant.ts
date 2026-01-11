@@ -204,6 +204,10 @@ export const SETTING_EVENTS = {
   sendUpdateNotificationSetting: "setting:send-update-notification-setting",
   // 워크스페이스 구성원 추가 모달에 필요한 정보 전달 이벤트
   sendAddWorkspaceMember: "setting:send-add-workspace-member",
+  // 워크스페이스 구성원 권한 수정 모달에 필요한 정보 전달 이벤트
+  sendUpdateWorkspaceMemberRole: "setting:send-update-workspace-member-role",
+  // 워크스페이스 구성원 삭제 모달에 필요한 정보 전달 이벤트
+  sendDeleteWorkspaceMember: "setting:send-delete-workspace-member",
 } as const;
 
 // 시스템 설정 관련 이벤트

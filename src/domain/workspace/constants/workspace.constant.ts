@@ -15,9 +15,20 @@ export const WORKSPACE_PAGE_SIZE = 10;
  * - value: API 요청/응답과 동일한 key
  * - label: UI 표시용
  */
+export const WORKSPACE_MEMBER_ROLE_LABELS = {
+  [WORKSPACE_MEMBER_ROLES.OWNER]: "Owner",
+  [WORKSPACE_MEMBER_ROLES.PARTICIPANT]: "Participant",
+} as const satisfies Record<WorkspaceMemberRole, string>;
+
 export const WORKSPACE_MEMBER_ROLE_OPTIONS = [
-  { value: WORKSPACE_MEMBER_ROLES.OWNER, label: "Owner" },
-  { value: WORKSPACE_MEMBER_ROLES.PARTICIPANT, label: "Participant" },
+  {
+    value: WORKSPACE_MEMBER_ROLES.OWNER,
+    label: WORKSPACE_MEMBER_ROLE_LABELS[WORKSPACE_MEMBER_ROLES.OWNER],
+  },
+  {
+    value: WORKSPACE_MEMBER_ROLES.PARTICIPANT,
+    label: WORKSPACE_MEMBER_ROLE_LABELS[WORKSPACE_MEMBER_ROLES.PARTICIPANT],
+  },
 ] as const satisfies readonly DropdownOption[];
 
 export type { WorkspaceMemberRole };
@@ -37,11 +48,9 @@ export const normalizeWorkspaceMemberRole = (
 
 export const getWorkspaceMemberRoleLabel = (value?: string | null): string => {
   const role = normalizeWorkspaceMemberRole(value);
-  return (
-    WORKSPACE_MEMBER_ROLE_OPTIONS.find((option) => option.value === role)
-      ?.label ?? role
-  );
+  return WORKSPACE_MEMBER_ROLE_LABELS[role] ?? role;
 };
 
-export const isWorkspaceOwnerRole = (role?: string | null): boolean =>
-  normalizeWorkspaceMemberRole(role) === WORKSPACE_MEMBER_ROLES.OWNER;
+export const isWorkspaceOwnerRole = (role?: string | null): boolean => {
+  return normalizeWorkspaceMemberRole(role) === WORKSPACE_MEMBER_ROLES.OWNER;
+};
