@@ -362,6 +362,11 @@ export const PAGE_META = {
   // ============================================
   // User Routes - Registry
   // ============================================
+  "user.private-registry": {
+    title: "개인 레지스트리",
+    iconName: "PrivateRegistry",
+    href: ROUTES.USER_PRIVATE_REGISTRY_IMAGE,
+  },
   "user.internal-registry-image": {
     title: "내부 레지스트리",
     iconName: "Image",

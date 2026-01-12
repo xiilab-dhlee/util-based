@@ -38,6 +38,11 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       //   icon: "ComparativeExperiment",
       // },
       {
+        key: "user.private-registry",
+        label: PAGE_META["user.private-registry"]?.title,
+        icon: <Icon name={PAGE_META["user.private-registry"]?.iconName} />,
+      },
+      {
         key: "user.internal-registry-image",
         label: PAGE_META["user.internal-registry-image"]?.title,
         icon: (

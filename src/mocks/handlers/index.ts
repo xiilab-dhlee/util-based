@@ -11,6 +11,7 @@ import { delay, type HttpHandler } from "msw";
 
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
+import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
@@ -108,6 +109,7 @@ const rawHandlers = [
   ...monitoringHandlers,
   ...internalregistryHandlers,
   ...internalregistryImageHandlers,
+  ...privateRegistryHandlers,
   ...kubernetesMonitoringHandlers,
   ...credentialHandlers,
   ...gpuHandlers,
