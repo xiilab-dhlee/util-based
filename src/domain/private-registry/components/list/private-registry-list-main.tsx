@@ -4,18 +4,16 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
-import {
-  RegistryImageFilterRequestOrder,
-  RegistryImageFilterRequestSort,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useGetPrivateRegistryList } from "@/api/generated/private-registry/private-registry";
+import { CreatePrivateRegistryModal } from "@/domain/private-registry/components/create-private-registry-modal";
+import { DeletePrivateRegistryModal } from "@/domain/private-registry/components/delete-private-registry-modal";
 import {
   privateregistryCheckedListAtom,
   privateregistryPageAtom,
   privateregistrySearchTextAtom,
+  privateregistrySortAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import {
   ListPageBody,
   ListPageMain,
@@ -32,17 +30,18 @@ export function PrivateRegistryListMain() {
 
   const page = useAtomValue(privateregistryPageAtom);
   const searchText = useAtomValue(privateregistrySearchTextAtom);
+  const sort = useAtomValue(privateregistrySortAtom);
 
   const { data, isLoading, isError } = useGetPrivateRegistryList({
     pageRequest: {
       pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
+      pageSize: 20,
       keyword: searchText,
     },
     workspaceFilter: {},
     filterRequest: {
-      sort: RegistryImageFilterRequestSort.CREATED_AT,
-      order: RegistryImageFilterRequestOrder.DESC,
+      sort: sort.field,
+      order: sort.order,
       isMine: false,
     },
   });
@@ -62,7 +61,10 @@ export function PrivateRegistryListMain() {
         {/* 목록 페이지 - 왼쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           {/* 목록 필터 */}
-          <PrivateRegistryListFilter totalSize={data?.totalSize} />
+          <PrivateRegistryListFilter
+            totalSize={data?.totalSize}
+            loading={isLoading}
+          />
           {/* 목록 본문 */}
           <PrivateRegistryListBody
             data={data?.content || []}
@@ -78,6 +80,10 @@ export function PrivateRegistryListMain() {
         {/* 목록 페이지 - 오른쪽 영역 */}
         <PrivateRegistryListAside />
       </ListPageMain>
+      {/* 프라이빗 레지스트리 이미지 생성 모달 */}
+      <CreatePrivateRegistryModal />
+      {/* 프라이빗 레지스트리 이미지 삭제 모달 */}
+      <DeletePrivateRegistryModal />
     </>
   );
 }

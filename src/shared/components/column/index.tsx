@@ -27,7 +27,7 @@ export const commonColumns: ResponsiveColumnType[] = [
     align: "center",
   },
   {
-    dataIndex: "creatorDate",
+    dataIndex: "createdAt",
     title: "생성일",
     align: "center",
     width: 140,
