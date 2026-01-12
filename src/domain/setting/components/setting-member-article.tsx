@@ -33,7 +33,7 @@ export function SettingMemberArticle() {
   const resetSearchText = useResetAtom(settingMemberSearchTextAtom);
   const resetPage = useResetAtom(settingMemberPageAtom);
 
-  const workspaceId = selectedWorkspace?.workspaceId ?? null;
+  const workspaceId = selectedWorkspace?.workspaceId;
   const [inputValue, setInputValue] = useState(searchText);
 
   const { data, isLoading, isError } = useGetWorkspaceMembers(

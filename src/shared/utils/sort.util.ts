@@ -51,13 +51,24 @@ export const getColumnSortOrder = <TField extends string>(
   return sortState.order ?? undefined;
 };
 
-export const parseSorterToAntdState = <T>(
+function isValidSortField<TField extends string>(
+  rawField: string | null,
+  allowedFields: readonly TField[] | undefined,
+): rawField is TField {
+  if (rawField === null) return false;
+  if (!allowedFields) return true;
+  return allowedFields.some((field) => field === rawField);
+}
+
+export const parseSorterToAntdState = <T, TField extends string = string>(
   sorter: SorterResult<T> | SorterResult<T>[],
-): AntdTableSortState => {
+  allowedFields?: readonly TField[],
+): AntdTableSortState<TField> => {
   const single = Array.isArray(sorter) ? sorter[0] : sorter;
+  const rawField = single.field ? String(single.field) : null;
 
   return {
-    field: single.field ? String(single.field) : null,
+    field: isValidSortField(rawField, allowedFields) ? rawField : null,
     order: (single.order ?? null) as AntdTableSortOrder | null,
   };
 };

@@ -2,15 +2,15 @@ import { useAtom, useSetAtom } from "jotai";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-import { useGetWorkspaceDetail } from "@/api/generated/workspace/workspace";
 import { useInfiniteWorkspaces } from "@/domain/workspace/hooks/use-infinite-workspaces";
 import { useWorkspaceSwitch } from "@/domain/workspace/hooks/use-workspace-switch";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openCreateFirstWorkspaceModalAtom } from "@/shared/state/modal.atom";
+import { isAdminMode } from "@/shared/utils/router.util";
 import { getStoredWorkspaceId } from "@/shared/utils/storage/workspace-session-storage.util";
 import { selectInitialWorkspace } from "@/shared/utils/workspace.util";
 
-export function useWorkspaceValidator() {
+export function useWorkspaceInitializer() {
   const pathname = usePathname();
   const [selectedWorkspace] = useAtom(selectedWorkspaceAtom);
   const { handleSelectWorkspace } = useWorkspaceSwitch();
@@ -19,40 +19,36 @@ export function useWorkspaceValidator() {
     openCreateFirstWorkspaceModalAtom,
   );
 
-  const workspaceId = selectedWorkspace?.workspaceId;
-
-  const { error, refetch } = useGetWorkspaceDetail(workspaceId ?? 0, {
-    query: {
-      enabled: Boolean(workspaceId),
-      refetchInterval: 60000,
-      refetchOnWindowFocus: (query) => !query.state.error,
-      retry: 1,
-    },
-  });
+  const isAdmin = isAdminMode(pathname);
 
   useEffect(() => {
-    if (!pathname) return;
-    if (workspaceId) {
-      refetch();
-    }
-  }, [pathname, refetch, workspaceId]);
-
-  useEffect(() => {
-    if (!error) return;
+    if (isAdmin) return;
     if (isLoading) return;
+
+    if (selectedWorkspace) {
+      const isValid = workspaces.some(
+        (ws) => ws.workspaceId === selectedWorkspace.workspaceId,
+      );
+      if (isValid) return;
+    }
 
     if (!workspaces.length) {
       setOpenCreateFirstWorkspaceModal(true);
       return;
     }
 
-    const fallback = selectInitialWorkspace(workspaces, getStoredWorkspaceId());
-    handleSelectWorkspace(fallback);
+    const workspace = selectInitialWorkspace(
+      workspaces,
+      getStoredWorkspaceId(),
+    );
+
+    handleSelectWorkspace(workspace);
   }, [
-    error,
+    isAdmin,
     isLoading,
     workspaces,
-    setOpenCreateFirstWorkspaceModal,
+    selectedWorkspace,
     handleSelectWorkspace,
+    setOpenCreateFirstWorkspaceModal,
   ]);
 }

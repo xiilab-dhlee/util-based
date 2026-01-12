@@ -1,12 +1,10 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import type { MigProfileResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ViewApproveResourceButton } from "@/domain/request-resource/components/view-approve-resource-button";
 import { ViewRejectResourceButton } from "@/domain/request-resource/components/view-reject-resource-button";
 import { REQUEST_RESOURCE_STATUS } from "@/domain/request-resource/constants/request-resource.constant";
-import type {
-  RequestResourceListType,
-  RequestResourceMigGpuType,
-} from "@/domain/request-resource/schemas/request-resource.schema";
+import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
 import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
@@ -52,7 +50,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "migGpu",
       align: "center",
       width: 150,
-      render: (migGpu: RequestResourceMigGpuType) => {
+      render: (migGpu: MigProfileResponse[]) => {
         return <ColumnMig migProfiles={migGpu} />;
       },
     },

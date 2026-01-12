@@ -18,6 +18,12 @@ export const SIGNUP_REQUEST_SORT_FIELD_MAP = {
   createdAt: "CREATED_AT",
 } as const satisfies Record<string, GetSignupRequestsSort>;
 
+/** 계정 정렬 필드 배열 */
+export const ACCOUNT_SORT_FIELDS = ["accountName", "createdAt"] as const;
+
+/** 가입 신청 정렬 필드 배열 */
+export const SIGNUP_REQUEST_SORT_FIELDS = ["accountName", "createdAt"] as const;
+
 /** 계정 정렬 필드 타입  */
 export type AccountSortField = keyof typeof ACCOUNT_SORT_FIELD_MAP;
 

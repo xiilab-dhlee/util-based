@@ -4,7 +4,9 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import {
   getGetAllWorkspacesQueryKey,
+  getGetResourceRequestsQueryKey,
   getGetWorkspaceDetailQueryKey,
+  useCancelResourceRequest,
   useCreateWorkspace,
   useDeleteWorkspace,
   useSetDefaultWorkspace,
@@ -207,6 +209,25 @@ export function useUpdateMemberRoleAction(
       onSuccess: (data, variables, ...rest) => {
         queryClient.invalidateQueries({
           queryKey: getGetWorkspaceMembersQueryKey(variables.workspaceId),
+        });
+        options?.mutation?.onSuccess?.(data, variables, ...rest);
+      },
+    },
+  });
+}
+
+export function useCancelResourceRequestAction(
+  options?: Parameters<typeof useCancelResourceRequest>[0],
+) {
+  const queryClient = useQueryClient();
+
+  return useCancelResourceRequest({
+    ...options,
+    mutation: {
+      ...options?.mutation,
+      onSuccess: (data, variables, ...rest) => {
+        queryClient.invalidateQueries({
+          queryKey: getGetResourceRequestsQueryKey(variables.workspaceId),
         });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },

@@ -1,5 +1,10 @@
 "use client";
 
+import { CancelResourceRequestModal } from "@/domain/setting/components/cancel-resource-request-modal";
+import { CreateResourceSettingModal } from "@/domain/setting/components/create-request-resource-modal";
+import { SettingMainSection } from "@/domain/setting/components/setting-main-section";
+import { SettingSubSection } from "@/domain/setting/components/setting-sub-section";
+import { UpdateNotificationSettingModal } from "@/domain/setting/components/update-notification-setting-modal";
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
 import { LeaveWorkspaceModal } from "@/domain/workspace/components/leave-workspace-modal";
 import { OwnerTransferRequiredModal } from "@/domain/workspace/components/owner-transfer-required-modal";
@@ -11,10 +16,6 @@ import { PageHeader } from "@/shared/components/layouts/page-header";
 import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
-import { CreateResourceSettingModal } from "./create-request-resource-modal";
-import { SettingMainSection } from "./setting-main-section";
-import { SettingSubSection } from "./setting-sub-section";
-import { UpdateNotificationSettingModal } from "./update-notification-setting-modal";
 
 /**
  * 설정 페이지 메인 컴포넌트
@@ -47,6 +48,8 @@ export function SettingMain() {
       <ViewRequestReasonModal />
       {/* 리소스 요청 모달 */}
       <CreateResourceSettingModal />
+      {/* 리소스 요청 취소 모달 */}
+      <CancelResourceRequestModal />
       {/* 알림설정 모달 */}
       <UpdateNotificationSettingModal />
       {/* 크레덴셜 추가 모달 */}

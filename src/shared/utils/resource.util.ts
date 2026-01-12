@@ -98,7 +98,7 @@ export function getStatusClassName(resourcePercent: number): string {
 export function convertBytes(
   bytes: number,
   unit: ByteUnit,
-  decimals = 1,
+  decimals = 2,
 ): { value: number; label: string } {
   if (!Number.isFinite(bytes) || bytes <= 0) {
     return { value: 0, label: `0 ${unit}` };
