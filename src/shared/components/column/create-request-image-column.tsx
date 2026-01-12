@@ -17,23 +17,27 @@ import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      key: "imageName",
       dataIndex: "imageName",
       title: "이미지 이름",
       align: "left",
     },
     {
+      key: "workspaceName",
       dataIndex: "workspaceName",
       title: "워크스페이스",
       align: "left",
       width: 180,
     },
     {
+      key: "imageTag",
       dataIndex: "imageTag",
       title: "태그",
       align: "center",
       width: 100,
     },
     {
+      key: "security",
       dataIndex: "security",
       title: "보안 검사 결과",
       align: "center",
@@ -52,6 +56,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "requestReason",
       dataIndex: "requestReason",
       title: "요청 사유",
       align: "center",
@@ -61,6 +66,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "status",
       dataIndex: "status",
       title: "승인 여부",
       align: "center",
@@ -70,6 +76,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "rejectReason",
       dataIndex: "rejectReason",
       title: "승인/반려 사유",
       align: "center",
@@ -79,12 +86,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "creatorName",
       dataIndex: "creatorName",
       title: "요청자명",
       align: "center",
       width: 70,
     },
     {
+      key: "creatorDate",
       dataIndex: "creatorDate",
       title: "요청날짜",
       align: "center",
@@ -98,6 +107,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "reject",
       dataIndex: "reject",
       title: "반려",
       align: "center",
@@ -107,6 +117,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "approve",
       dataIndex: "approve",
       title: "승인",
       align: "center",
@@ -131,9 +142,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * @example
  * // 2. 배열 형태 - 순서 변경 가능
  * const columns = createRequestImageColumn([
- *   { dataIndex: 'imageName' },
- *   { dataIndex: 'imageTag', width: 150 },
- *   { dataIndex: 'status', title: '상태' },
+ *   { key: 'imageName' },
+ *   { key: 'imageTag', width: 150 },
+ *   { key: 'status', title: '상태' },
  * ]);
  */
 export const createRequestImageColumn = (

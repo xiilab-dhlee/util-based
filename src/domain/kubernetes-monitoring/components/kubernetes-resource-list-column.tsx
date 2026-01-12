@@ -15,6 +15,7 @@ import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 const createActionColumns = (): ResponsiveColumnType[] => [
   {
     title: "Describe",
+    key: "describe",
     dataIndex: "describe",
     align: "center",
     width: "5%",
@@ -26,6 +27,7 @@ const createActionColumns = (): ResponsiveColumnType[] => [
   },
   {
     title: "YAML",
+    key: "yaml",
     dataIndex: "yaml",
     align: "center",
     width: "5%",
@@ -41,6 +43,7 @@ const createActionColumns = (): ResponsiveColumnType[] => [
 const createNodesColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -48,18 +51,21 @@ const createNodesColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Role",
+    key: "role",
     dataIndex: "role",
     align: "center",
     width: "12%",
   },
   {
     title: "GPU",
+    key: "gpu",
     dataIndex: "gpu",
     align: "center",
     width: "12%",
   },
   {
     title: "Status",
+    key: "status",
     dataIndex: "status",
     align: "center",
     width: "12%",
@@ -72,6 +78,7 @@ const createNodesColumnList = (): ResponsiveColumnType[] => [
 const createServiceColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -79,6 +86,7 @@ const createServiceColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Namespace",
+    key: "namespace",
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
@@ -86,6 +94,7 @@ const createServiceColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Type",
+    key: "type",
     dataIndex: "type",
     align: "center",
     width: "12%",
@@ -93,6 +102,7 @@ const createServiceColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Ports",
+    key: "ports",
     dataIndex: "ports",
     align: "center",
     width: "15%",
@@ -104,6 +114,7 @@ const createServiceColumnList = (): ResponsiveColumnType[] => [
 const createDaemonsetsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -111,6 +122,7 @@ const createDaemonsetsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Namespace",
+    key: "namespace",
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
@@ -118,6 +130,7 @@ const createDaemonsetsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Pods",
+    key: "pods",
     dataIndex: "pods",
     align: "center",
     width: "12%",
@@ -129,6 +142,7 @@ const createDaemonsetsColumnList = (): ResponsiveColumnType[] => [
 const createPersistentVolumeColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -136,12 +150,14 @@ const createPersistentVolumeColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "StorageClass",
+    key: "storageClass",
     dataIndex: "storageClass",
     align: "center",
     width: "25%",
   },
   {
     title: "Status",
+    key: "status",
     dataIndex: "status",
     align: "center",
     width: "15%",
@@ -155,6 +171,7 @@ const createPersistentVolumeColumnList = (): ResponsiveColumnType[] => [
 const createNamespacesColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -162,12 +179,14 @@ const createNamespacesColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Age",
+    key: "age",
     dataIndex: "age",
     align: "left",
     width: "20%",
   },
   {
     title: "Status",
+    key: "status",
     dataIndex: "status",
     align: "center",
     width: "15%",
@@ -180,6 +199,7 @@ const createNamespacesColumnList = (): ResponsiveColumnType[] => [
 const createDeploymentsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -187,6 +207,7 @@ const createDeploymentsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Namespace",
+    key: "namespace",
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
@@ -194,12 +215,14 @@ const createDeploymentsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Pods",
+    key: "pods",
     dataIndex: "pods",
     align: "center",
     width: "12%",
   },
   {
     title: "Conditions",
+    key: "conditions",
     dataIndex: "conditions",
     align: "center",
     width: "15%",
@@ -211,6 +234,7 @@ const createDeploymentsColumnList = (): ResponsiveColumnType[] => [
 const createStatefulsetsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -218,6 +242,7 @@ const createStatefulsetsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Namespace",
+    key: "namespace",
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
@@ -225,6 +250,7 @@ const createStatefulsetsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Pods",
+    key: "pods",
     dataIndex: "pods",
     align: "center",
     width: "12%",
@@ -236,6 +262,7 @@ const createStatefulsetsColumnList = (): ResponsiveColumnType[] => [
 const createPodsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -243,6 +270,7 @@ const createPodsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Namespace",
+    key: "namespace",
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
@@ -250,6 +278,7 @@ const createPodsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Node",
+    key: "node",
     dataIndex: "node",
     align: "left",
     ellipsis: true,
@@ -257,6 +286,7 @@ const createPodsColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Status",
+    key: "status",
     dataIndex: "status",
     align: "center",
     width: "12%",
@@ -269,6 +299,7 @@ const createPodsColumnList = (): ResponsiveColumnType[] => [
 const createDefaultColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
+    key: "resourceName",
     dataIndex: "resourceName",
     align: "left",
     ellipsis: true,
@@ -276,6 +307,7 @@ const createDefaultColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Namespace",
+    key: "namespace",
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
@@ -283,12 +315,14 @@ const createDefaultColumnList = (): ResponsiveColumnType[] => [
   },
   {
     title: "Status",
+    key: "status",
     dataIndex: "status",
     align: "center",
     width: "15%",
   },
   {
     title: "Created",
+    key: "createDateTime",
     dataIndex: "createDateTime",
     align: "left",
     width: "12%",

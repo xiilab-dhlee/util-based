@@ -28,6 +28,7 @@ import {
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      key: "select",
       dataIndex: "select",
       title: "선택",
       align: "center",
@@ -37,6 +38,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "workloadName",
       dataIndex: "workloadName",
       title: "워크로드 이름",
       align: "left",
@@ -56,6 +58,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "nodeName",
       dataIndex: "nodeName",
       title: "노드 이름",
       align: "left",
@@ -64,6 +67,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "jobType",
       dataIndex: "jobType",
       title: "Job Type",
       align: "center",
@@ -82,6 +86,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "creatorName",
       dataIndex: "creatorName",
       title: "생성자",
       align: "center",
@@ -97,6 +102,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "elapsedTime",
       dataIndex: "elapsedTime",
       title: "경과 시간",
       align: "center",
@@ -110,6 +116,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "status",
       dataIndex: "status",
       title: "상태",
       align: "center",
@@ -122,6 +129,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "log",
       dataIndex: "log",
       title: "로그",
       align: "center",
@@ -139,6 +147,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "terminal",
       dataIndex: "terminal",
       title: "웹터미널",
       align: "center",
@@ -156,6 +165,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "port",
       dataIndex: "port",
       title: "포트",
       align: "center",
@@ -179,6 +189,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "monitoring",
       dataIndex: "monitoring",
       title: "모니터링",
       align: "center",
@@ -196,6 +207,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "power",
       dataIndex: "power",
       title: "종료",
       align: "center",
@@ -209,6 +221,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "restart",
       dataIndex: "restart",
       title: "재시작",
       align: "center",
@@ -222,6 +235,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "delete",
       dataIndex: "delete",
       title: "삭제",
       align: "center",
@@ -250,9 +264,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * @example
  * // 2. 배열 형태 - 순서 변경 가능
  * const columns = createWorkloadListColumn(false, [
- *   { dataIndex: 'status' },
- *   { dataIndex: 'workloadName', title: '이름' },
- *   { dataIndex: 'jobType', width: 100 },
+ *   { key: 'status' },
+ *   { key: 'workloadName', title: '이름' },
+ *   { key: 'jobType', width: 100 },
  * ]);
  */
 export const createWorkloadColumn = (

@@ -31,7 +31,7 @@ type ColumnKey =
 
 const toColumnConfigs = (
   keys: readonly ColumnKey[],
-): CoreCreateColumnConfig[] => keys.map((dataIndex) => ({ dataIndex }));
+): CoreCreateColumnConfig[] => keys.map((key) => ({ key }));
 
 export function SettingMemberListBody({
   members,

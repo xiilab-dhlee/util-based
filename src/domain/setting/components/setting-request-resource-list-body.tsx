@@ -29,7 +29,11 @@ interface SettingRequestResourceListBodyProps {
 const MANAGEABLE_COLUMN_KEYS = [
   "creatorName",
   "requestedAt",
-  "resource",
+  "gpu",
+  "mps",
+  "mig",
+  "cpu",
+  "memory",
   "approvalStatus",
   "approvedAt",
   "rejectReason",
@@ -47,7 +51,7 @@ type ColumnKey =
 
 const toColumnConfigs = (
   keys: readonly ColumnKey[],
-): CoreCreateColumnConfig[] => keys.map((dataIndex) => ({ dataIndex }));
+): CoreCreateColumnConfig[] => keys.map((key) => ({ key }));
 
 const ALLOWED_SORT_FIELDS = Object.values(SETTING_REQUEST_RESOURCE_SORT_FIELDS);
 

@@ -13,8 +13,8 @@ const createColumnList = (): ResponsiveColumnType<LicenseDetailType>[] => {
   return [
     {
       title: "등록일시",
-      dataIndex: "registrationDate",
       key: "registrationDate",
+      dataIndex: "registrationDate",
       align: "left",
       width: "40%",
       render: (date: string) => {
@@ -23,8 +23,8 @@ const createColumnList = (): ResponsiveColumnType<LicenseDetailType>[] => {
     },
     {
       title: "만료기간",
-      dataIndex: "expirationDate",
       key: "expirationDate",
+      dataIndex: "expirationDate",
       align: "left",
       width: "30%",
       render: (date: string) => {
@@ -33,8 +33,8 @@ const createColumnList = (): ResponsiveColumnType<LicenseDetailType>[] => {
     },
     {
       title: "GPU 개수",
-      dataIndex: "gpuCount",
       key: "gpuCount",
+      dataIndex: "gpuCount",
       align: "left",
       width: "30%",
       render: (count: number) => {

@@ -16,6 +16,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       title: <WorkspaceMemberAllCheck />,
+      key: "id",
       dataIndex: "id",
       align: "center",
       width: ICON_COLUMN_WIDTH,
@@ -25,11 +26,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "멤버 이름",
+      key: "name",
       dataIndex: "name",
       align: "left",
     },
     {
       title: "권한",
+      key: "role",
       dataIndex: "role",
       align: "center",
       render: (role: WorkspaceMemberListType["role"]) => {
@@ -42,11 +45,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "이메일",
+      key: "email",
       dataIndex: "email",
       align: "left",
     },
     {
       title: "워크스페이스 보유",
+      key: "workspaceCount",
       dataIndex: "workspaceCount",
       align: "center",
       width: 100,
@@ -58,6 +63,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "워크스페이스 생성 제한",
+      key: "limitWorkspaceCreate",
       dataIndex: "limitWorkspaceCreate",
       align: "center",
       width: 120,
@@ -71,6 +77,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "멤버 추가 날짜",
+      key: "creatorDate",
       dataIndex: "creatorDate",
       align: "center",
       render: (creatorDate: string) => {
@@ -83,16 +90,19 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "상태",
+      key: "status",
       dataIndex: "status",
       align: "center",
     },
     {
       title: "그룹",
+      key: "group",
       dataIndex: "group",
       align: "left",
     },
     {
       title: "수정",
+      key: "update",
       dataIndex: "update",
       align: "center",
       width: 50,
@@ -102,6 +112,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "삭제",
+      key: "delete",
       dataIndex: "delete",
       width: 50,
       render: (_, workspaceMember: WorkspaceMemberListType) => {

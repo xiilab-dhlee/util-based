@@ -19,24 +19,24 @@ const createColumnList = (): ResponsiveColumnType<Recipient>[] => {
   return [
     {
       title: "이름",
-      dataIndex: "name",
       key: "name",
+      dataIndex: "name",
       align: "left",
       width: "25%",
       ellipsis: true,
     },
     {
       title: "이메일",
-      dataIndex: "email",
       key: "email",
+      dataIndex: "email",
       align: "left",
       ellipsis: true,
       width: "50%",
     },
     {
       title: "결과",
-      dataIndex: "result",
       key: "result",
+      dataIndex: "result",
       align: "center",
       width: "25%",
       render: (result: Recipient["result"]) => {

@@ -13,6 +13,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       title: <InternalRegistryImageAllCheck />,
+      key: "checkbox",
       dataIndex: "checkbox",
       align: "center",
       width: CHECKBOX_COLUMN_WIDTH,
@@ -21,6 +22,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "name",
       dataIndex: "name",
       title: "이미지 이름",
       align: "left",
@@ -35,6 +37,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "tagCnt",
       dataIndex: "tagCnt",
       title: "태그 수",
       align: "center",
@@ -44,11 +47,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "description",
       dataIndex: "description",
       title: "설명",
       align: "left",
     },
     {
+      key: "pullCount",
       dataIndex: "pullCount",
       title: "다운로드 횟수",
       align: "center",
@@ -58,6 +63,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "status",
       dataIndex: "status",
       title: "업로드 상태",
       align: "center",
@@ -68,20 +74,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
   ];
 };
 
-/**
- * 내부 레지스트리 이미지 관련 테이블 컬럼 생성
- *
- * @param config 컬럼 설정 (배열 형태)
- * @returns 컬럼 배열
- *
- * @example
- * // 배열 형태 - 순서 변경 가능
- * const columns = createInternalRegistryImageColumn([
- *   { dataIndex: 'imageName' },
- *   { dataIndex: 'registryName' },
- *   { dataIndex: 'tags' },
- * ]);
- */
 export const createInternalRegistryImageColumn = (
   config?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] => {

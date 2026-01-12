@@ -64,7 +64,6 @@ const createColumnList = ({
     },
     {
       key: "gpu",
-      dataIndex: "resource",
       title: gpuInfo.text,
       align: "center",
       width: "6%",
@@ -79,7 +78,6 @@ const createColumnList = ({
     },
     {
       key: "mig",
-      dataIndex: "resource",
       title: (
         <ColumnAlignCenterWrap>
           {migInfo.text}
@@ -126,7 +124,6 @@ const createColumnList = ({
     },
     {
       key: "mps",
-      dataIndex: "resource",
       title: mpsInfo.text,
       align: "center",
       width: "6%",
@@ -141,7 +138,6 @@ const createColumnList = ({
     },
     {
       key: "cpu",
-      dataIndex: "resource",
       title: cpuInfo.text,
       align: "center",
       width: "5%",
@@ -156,7 +152,6 @@ const createColumnList = ({
     },
     {
       key: "memory",
-      dataIndex: "resource",
       title: memInfo.text,
       align: "center",
       width: "7%",
@@ -236,7 +231,6 @@ const createColumnList = ({
     {
       key: "cancel",
       title: "요청 취소",
-      dataIndex: "cancel",
       align: "center",
       width: "5%",
       render: (_, record) => {

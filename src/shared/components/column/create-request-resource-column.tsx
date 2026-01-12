@@ -26,11 +26,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       title: "워크스페이스 이름",
+      key: "workspaceName",
       dataIndex: "workspaceName",
       align: "left",
     },
     {
       title: gpuInfo.text,
+      key: "gpuReq",
       dataIndex: "gpuReq",
       align: "center",
       width: 70,
@@ -47,6 +49,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: migInfo.text,
+      key: "migGpu",
       dataIndex: "migGpu",
       align: "center",
       width: 150,
@@ -56,6 +59,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: mpsInfo.text,
+      key: "mpsReq",
       dataIndex: "mpsReq",
       align: "center",
       width: 70,
@@ -72,6 +76,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: cpuInfo.text,
+      key: "cpuReq",
       dataIndex: "cpuReq",
       align: "center",
       width: 70,
@@ -88,6 +93,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: memInfo.text,
+      key: "memReq",
       dataIndex: "memReq",
       align: "center",
       width: 70,
@@ -104,6 +110,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "확정일시",
+      key: "modDate",
       dataIndex: "modDate",
       align: "center",
       render: (modDate: string) => {
@@ -112,11 +119,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "요청자",
+      key: "requester",
       dataIndex: "requester",
       align: "center",
     },
     {
       title: "요청사유",
+      key: "requestReason",
       dataIndex: "requestReason",
       align: "center",
       width: 70,
@@ -126,6 +135,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "승인 여부",
+      key: "status",
       dataIndex: "status",
       align: "center",
       width: 70,
@@ -135,6 +145,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "반려사유",
+      key: "rejectReason",
       dataIndex: "rejectReason",
       align: "center",
       width: 70,
@@ -150,6 +161,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "반려",
+      key: "reject",
       dataIndex: "reject",
       align: "center",
       width: 50,
@@ -159,6 +171,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "승인",
+      key: "approve",
       dataIndex: "approve",
       align: "center",
       width: 50,

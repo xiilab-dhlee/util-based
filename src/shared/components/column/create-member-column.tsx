@@ -35,16 +35,16 @@ const createColumnList = (
   const columns: ResponsiveColumnType[] = [
     {
       title: "이름",
-      dataIndex: "name",
       key: "name",
+      dataIndex: "name",
       align: "left",
       width: "20%",
       ellipsis: true,
     },
     {
       title: "이메일",
-      dataIndex: "email",
       key: "email",
+      dataIndex: "email",
       align: "left",
       ellipsis: true,
       width: "45%",
@@ -54,7 +54,6 @@ const createColumnList = (
   if (onRemove) {
     columns.push({
       title: "삭제",
-      dataIndex: "actions",
       key: "actions",
       align: "center",
       width: "15%",

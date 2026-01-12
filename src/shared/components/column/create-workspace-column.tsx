@@ -26,6 +26,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       title: <WorkspaceAllCheck />,
+      key: "checkbox",
       dataIndex: "checkbox",
       align: "center",
       width: ICON_COLUMN_WIDTH,
@@ -34,6 +35,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "name",
       dataIndex: "name",
       title: "워크스페이스 이름",
       align: "left",
@@ -46,6 +48,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "gpu",
       dataIndex: "gpu",
       title: "GPU",
       align: "center",
@@ -55,6 +58,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "gpuUsage",
       dataIndex: "gpuUsage",
       title: "사용량",
       align: "center",
@@ -69,6 +73,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "gpuQuota",
       dataIndex: "gpuQuota",
       title: "할당량",
       align: "center",
@@ -83,6 +88,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "cpu",
       dataIndex: "cpu",
       title: "CPU",
       align: "center",
@@ -92,6 +98,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "cpuUsage",
       dataIndex: "cpuUsage",
       title: "사용량",
       align: "center",
@@ -106,6 +113,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "cpuQuota",
       dataIndex: "cpuQuota",
       title: "할당량",
       align: "center",
@@ -120,6 +128,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "mem",
       dataIndex: "mem",
       title: "Memory",
       align: "center",
@@ -129,6 +138,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "memUsage",
       dataIndex: "memUsage",
       title: "사용량",
       align: "center",
@@ -143,6 +153,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "memQuota",
       dataIndex: "memQuota",
       title: "할당량",
       align: "center",
@@ -158,6 +169,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "실행중",
+      key: "running",
       dataIndex: "running",
       align: "center",
       render: (running: number) => {
@@ -168,6 +180,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "대기중",
+      key: "pending",
       dataIndex: "pending",
       align: "center",
       render: (pending: number) => {
@@ -178,6 +191,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "에러",
+      key: "error",
       dataIndex: "error",
       align: "center",
       render: (error: number) => {
@@ -188,6 +202,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "생성자",
+      key: "creatorName",
       dataIndex: "creatorName",
       align: "left",
       ellipsis: true,
@@ -197,6 +212,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "생성일",
+      key: "creatorDate",
       dataIndex: "creatorDate",
       align: "left",
       render: (creatorDate: string) => {
@@ -206,27 +222,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
   ];
 };
 
-/**
- * 워크스페이스 목록 컬럼 생성
- *
- * @param showCheckbox 체크박스 표시 여부
- * @param config 컬럼 설정 (배열 형태)
- * @returns 컬럼 배열
- *
- * @example
- * // 1. 모든 컬럼 표시 (체크박스 포함)
- * const columns = createWorkspaceListColumn(true);
- *
- * @example
- * // 2. 배열 형태 - 순서 변경 가능
- * const columns = createWorkspaceListColumn(false, [
- *   { dataIndex: 'workspaceName' },
- *   { dataIndex: 'gpu' },
- *   { dataIndex: 'cpu' },
- *   { dataIndex: 'mem' },
- * ]);
- *
- */
 export const createWorkspaceColumn = (
   config?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] => {

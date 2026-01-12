@@ -24,6 +24,7 @@ const createColumnList = (
   return [
     {
       title: "리포트 이름",
+      key: "reportName",
       dataIndex: "reportName",
       align: "left",
       width: "30%",
@@ -41,6 +42,7 @@ const createColumnList = (
     },
     {
       title: "리포트 타입",
+      key: "reportDateType",
       dataIndex: "reportDateType",
       align: "center",
       render: (reportDateType: keyof typeof REPORT_DATE_TYPE_TEXT) => {
@@ -49,6 +51,7 @@ const createColumnList = (
     },
     {
       title: "리포트 종류",
+      key: "reportType",
       dataIndex: "reportType",
       align: "center",
       render: (reportType: keyof typeof REPORT_TYPE_LABEL) => {
@@ -57,6 +60,7 @@ const createColumnList = (
     },
     {
       title: "기간",
+      key: "period",
       dataIndex: "period",
       align: "center",
       render: (_, record: ReportListType) => {
@@ -70,11 +74,13 @@ const createColumnList = (
     },
     {
       title: "생성자",
+      key: "creator",
       dataIndex: "creator",
       align: "center",
     },
     {
       title: "생성 일시",
+      key: "createdAt",
       dataIndex: "createdAt",
       align: "center",
       render: (createdAt: string) => {
