@@ -1,58 +1,54 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { useParams } from "next/navigation";
 
-import { ADMIN_PRIVATE_REGISTRY_IMAGE_TAG_PAGE_SIZE } from "@/domain/private-registry-image/constants/private-registry-image.constant";
-import { useGetAdminPrivateRegistryImageTags } from "@/domain/private-registry-image/hooks/use-get-admin-private-registry-image-tags";
+import { useGetPrivateImageTagList } from "@/api/generated/private-registry/private-registry";
 import {
-  adminPrivateRegistryImageTagSearchTextAtom,
-  adminPrivateRegistryImageTagVulnerabilityPageAtom,
-} from "@/domain/private-registry-image/state/private-registry-image.atom";
-import { createPrivateRegistryImageTagColumn } from "@/shared/components/column/create-private-registry-image-tag-column";
+  privateregistryImageTagPageAtom,
+  privateregistryImageTagSearchTextAtom,
+} from "@/domain/private-registry/state/private-registry.atom";
+import { createPrivateRegistryTagColumn } from "@/shared/components/column/create-private-registry-tag-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
+/**
+ * 프라이빗 레지스트리 이미지 태그 목록 페이지 본문 컴포넌트
+ *
+ * 프라이빗 레지스트리 이미지 태그 목록을 표시하는 테이블을 제공합니다.
+ *
+ * @returns 프라이빗 레지스트리 이미지 태그 목록 페이지 본문 컴포넌트
+ */
 export function PrivateRegistryTagListBody() {
-  const { id, name } = useParams();
-  const [page, setPage] = useAtom(
-    adminPrivateRegistryImageTagVulnerabilityPageAtom,
-  );
-  const searchText = useAtomValue(adminPrivateRegistryImageTagSearchTextAtom);
+  const { id } = useParams();
 
-  const { data } = useGetAdminPrivateRegistryImageTags({
-    page,
-    size: ADMIN_PRIVATE_REGISTRY_IMAGE_TAG_PAGE_SIZE,
-    searchText,
-    registryName: String(name),
-    imageId: Number(id),
+  const page = useAtomValue(privateregistryImageTagPageAtom);
+  const searchText = useAtomValue(privateregistryImageTagSearchTextAtom);
+
+  const { data } = useGetPrivateImageTagList({
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: searchText,
+    harborImageName: decodeURIComponent(id as string),
   });
 
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={createPrivateRegistryImageTagColumn([
-          // { dataIndex: "admin-checkbox" },
-          { dataIndex: "tag" },
-          { dataIndex: "imageSize" },
+        columns={createPrivateRegistryTagColumn([
+          { dataIndex: "checkbox" },
+          { dataIndex: "imageTagName" },
+          { dataIndex: "imageTagSizeByte" },
+          { dataIndex: "uploadStatus" },
           { dataIndex: "scanStatus" },
-          { dataIndex: "securityResult" },
+          { dataIndex: "vulnerability" },
           { dataIndex: "creatorName" },
-          { dataIndex: "creatorDate" },
-          { dataIndex: "lastCheckedAt" },
-          { dataIndex: "available" },
-          { dataIndex: "rejectReason" },
-          { dataIndex: "requestReason" },
+          { dataIndex: "createdAt" },
         ])}
         activePadding
         data={data?.content || []}
-        pagination={{
-          onChange: (nextPage: number) => {
-            setPage(nextPage);
-          },
-          pageSize: ADMIN_PRIVATE_REGISTRY_IMAGE_TAG_PAGE_SIZE,
-          total: data?.totalSize,
-        }}
+        columnHeight={38}
       />
     </ListWrapper>
   );

@@ -5,47 +5,59 @@ import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { Checkbox } from "xiilab-ui";
 
-import { useGetAdminPrivateRegistryImageTags } from "@/domain/private-registry-image/hooks/use-get-admin-private-registry-image-tags";
+import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetPrivateImageTagList } from "@/api/generated/private-registry/private-registry";
 import {
-  adminPrivateRegistryImageTagCheckedListAtom,
-  adminPrivateRegistryImageTagPageAtom,
-  adminPrivateRegistryImageTagSearchTextAtom,
-} from "@/domain/private-registry-image/state/private-registry-image.atom";
+  privateregistryImageTagCheckedListAtom,
+  privateregistryImageTagPageAtom,
+  privateregistryImageTagSearchTextAtom,
+} from "@/domain/private-registry/state/private-registry.atom";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
+/**
+ * 프라이빗 레지스트리 이미지 태그 목록 전체 선택 체크박스 컴포넌트
+ *
+ * 현재 페이지의 모든 태그를 선택/해제할 수 있는 체크박스를 제공합니다.
+ * 체크된 상태는 privateregistryImageTagCheckedListAtom으로 관리됩니다.
+ *
+ * @returns 전체 선택 체크박스 컴포넌트
+ */
 export function PrivateRegistryTagAllCheck() {
-  const { id, name } = useParams();
+  const { id } = useParams();
   const [checkedList, setCheckedList] = useAtom(
-    adminPrivateRegistryImageTagCheckedListAtom,
+    privateregistryImageTagCheckedListAtom,
   );
-  const page = useAtomValue(adminPrivateRegistryImageTagPageAtom);
-  const searchText = useAtomValue(adminPrivateRegistryImageTagSearchTextAtom);
+  const page = useAtomValue(privateregistryImageTagPageAtom);
+  const searchText = useAtomValue(privateregistryImageTagSearchTextAtom);
 
-  const { data } = useGetAdminPrivateRegistryImageTags({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-    registryName: String(name),
-    imageId: Number(id),
+  // 현재 페이지의 태그 목록 조회
+  const { data } = useGetPrivateImageTagList({
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: searchText,
+    harborImageName: decodeURIComponent(id as string),
   });
 
-  // 현재 페이지의 소스코드 ID 목록
+  // 현재 페이지의 태그 ID 목록
   const currentPageIds = useMemo(() => {
-    return data?.content?.map((item) => item.id) || [];
+    const content = data?.content || [];
+    return content
+      .map((item: ImageTagListResponse) => item.imageTagId)
+      .filter((tagId): tagId is number => tagId !== undefined);
   }, [data?.content]);
 
-  // 현재 페이지의 모든 소스코드가 선택되었는지 확인
+  // 현재 페이지의 모든 태그가 선택되었는지 확인
   const isAllChecked = useMemo(() => {
     if (currentPageIds.length === 0) return false;
-    return currentPageIds.every((id) => checkedList.has(id));
+    return currentPageIds.every((tagId: number) => checkedList.has(tagId));
   }, [currentPageIds, checkedList]);
 
-  // 현재 페이지의 일부 소스코드가 선택되었는지 확인 (indeterminate 상태)
+  // 현재 페이지의 일부 태그가 선택되었는지 확인 (indeterminate 상태)
   const isIndeterminate = useMemo(() => {
     if (currentPageIds.length === 0) return false;
-    const checkedCount = currentPageIds.filter((id) =>
-      checkedList.has(id),
+    const checkedCount = currentPageIds.filter((tagId: number) =>
+      checkedList.has(tagId),
     ).length;
     return checkedCount > 0 && checkedCount < currentPageIds.length;
   }, [currentPageIds, checkedList]);
@@ -57,14 +69,14 @@ export function PrivateRegistryTagAllCheck() {
       const next = new Set(prev);
 
       if (checked) {
-        // 현재 페이지의 모든 소스코드 선택
-        currentPageIds.forEach((id) => {
-          next.add(id);
+        // 현재 페이지의 모든 태그 선택
+        currentPageIds.forEach((tagId: number) => {
+          next.add(tagId);
         });
       } else {
-        // 현재 페이지의 모든 소스코드 선택 해제
-        currentPageIds.forEach((id) => {
-          next.delete(id);
+        // 현재 페이지의 모든 태그 선택 해제
+        currentPageIds.forEach((tagId: number) => {
+          next.delete(tagId);
         });
       }
 
