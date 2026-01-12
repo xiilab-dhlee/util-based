@@ -618,7 +618,7 @@ export const getWorkspaceMembers1Response = zod
               email: zod.string().describe("이메일"),
               memberRole: zod
                 .string()
-                .describe("구성원 역할 (OWNER, MANAGER, PARTICIPANT)"),
+                .describe("구성원 역할 (OWNER, PARTICIPANT)"),
               createdAt: zod.string().datetime({}).describe("추가 일시 (UTC)"),
               groupName: zod.array(zod.string()).describe("소속 그룹명 목록"),
             })

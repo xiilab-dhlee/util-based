@@ -319,7 +319,7 @@ export const useUpdateMemberRole = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 워크스페이스 구성원 목록을 페이징하여 조회합니다. 이름 또는 이메일로 검색할 수 있습니다.
+ * 워크스페이스 구성원 목록을 페이징하여 조회합니다. 이름 또는 이메일로 검색할 수 있습니다. 이름 기준으로 정렬 가능합니다.
  * @summary 워크스페이스 구성원 목록 조회
  */
 export const getWorkspaceMembers = (

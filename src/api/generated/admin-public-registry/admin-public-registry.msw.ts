@@ -31,19 +31,7 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type {
-  BaseResponseDeleteImagesResponse,
-  BaseResponseUnit,
-} from "../astragoBackendAPIDocumentation.schemas";
-
-export const getUpdateImage1ResponseMock = (
-  overrideResponse: Partial<BaseResponseUnit> = {},
-): BaseResponseUnit => ({
-  status: "SUCCESS",
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
+import type { BaseResponseDeleteImagesResponse } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getDeleteImages1ResponseMock = (
   overrideResponse: Partial<BaseResponseDeleteImagesResponse> = {},
@@ -64,34 +52,6 @@ export const getDeleteImages1ResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
-
-export const getUpdateImage1MockHandler = (
-  overrideResponse?:
-    | BaseResponseUnit
-    | ((
-        info: Parameters<Parameters<typeof http.put>[1]>[0],
-      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
-  options?: RequestHandlerOptions,
-) => {
-  return http.put(
-    "*/api/v1/admin/registries/public/images/:imageId",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getUpdateImage1ResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
 
 export const getDeleteImages1MockHandler = (
   overrideResponse?:
@@ -122,7 +82,4 @@ export const getDeleteImages1MockHandler = (
     options,
   );
 };
-export const getAdminPublicRegistryMock = () => [
-  getUpdateImage1MockHandler(),
-  getDeleteImages1MockHandler(),
-];
+export const getAdminPublicRegistryMock = () => [getDeleteImages1MockHandler()];

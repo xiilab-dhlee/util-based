@@ -39,97 +39,13 @@ import { useMutation } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponseDeleteImagesResponse,
-  BaseResponseUnit,
   DeleteImagesRequest,
-  UpdateImageRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
- * 공용 레지스트리의 이미지 정보(설명)를 수정합니다. 관리자만 수정할 수 있습니다.
- * @summary 공용 이미지 수정
- */
-export const updateImage1 = (
-  imageId: number,
-  updateImageRequest: UpdateImageRequest,
-) => {
-  return customInstance<BaseResponseUnit>({
-    url: `/api/v1/admin/registries/public/images/${imageId}`,
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    data: updateImageRequest,
-  });
-};
-
-export const getUpdateImage1MutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateImage1>>,
-    TError,
-    { imageId: number; data: UpdateImageRequest },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof updateImage1>>,
-  TError,
-  { imageId: number; data: UpdateImageRequest },
-  TContext
-> => {
-  const mutationKey = ["updateImage1"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateImage1>>,
-    { imageId: number; data: UpdateImageRequest }
-  > = (props) => {
-    const { imageId, data } = props ?? {};
-
-    return updateImage1(imageId, data);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type UpdateImage1MutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateImage1>>
->;
-export type UpdateImage1MutationBody = UpdateImageRequest;
-export type UpdateImage1MutationError = unknown;
-
-/**
- * @summary 공용 이미지 수정
- */
-export const useUpdateImage1 = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateImage1>>,
-      TError,
-      { imageId: number; data: UpdateImageRequest },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof updateImage1>>,
-  TError,
-  { imageId: number; data: UpdateImageRequest },
-  TContext
-> => {
-  const mutationOptions = getUpdateImage1MutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-/**
  * 
             공용 레지스트리의 이미지를 삭제합니다.
-            - Harbor Repository와 로컬 메타데이터(이미지, 태그)를 함께 삭제합니다.
+            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
             - 관리자만 삭제할 수 있습니다.
             - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
         

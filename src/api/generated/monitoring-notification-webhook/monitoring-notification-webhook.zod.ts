@@ -66,14 +66,12 @@ export const receiveAlertBody = zod
               value: zod.string().optional(),
               summary: zod.string().optional(),
               description: zod.string().optional(),
-              observedValue: zod.number().optional(),
             })
             .strict(),
           startsAt: zod.string().optional(),
           endsAt: zod.string().optional(),
           generatorURL: zod.string().optional(),
           fingerprint: zod.string().optional(),
-          isFiring: zod.boolean(),
         })
         .strict(),
     ),

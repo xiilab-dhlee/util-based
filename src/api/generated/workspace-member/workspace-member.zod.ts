@@ -89,7 +89,7 @@ export const updateMemberRoleResponse = zod
   .strict();
 
 /**
- * 워크스페이스 구성원 목록을 페이징하여 조회합니다. 이름 또는 이메일로 검색할 수 있습니다.
+ * 워크스페이스 구성원 목록을 페이징하여 조회합니다. 이름 또는 이메일로 검색할 수 있습니다. 이름 기준으로 정렬 가능합니다.
  * @summary 워크스페이스 구성원 목록 조회
  */
 export const getWorkspaceMembersParams = zod.object({
@@ -113,6 +113,7 @@ export const getWorkspaceMembersQueryParams = zod.object({
     .optional()
     .describe("페이지 크기"),
   keyword: zod.string().optional().describe("검색 키워드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서 (이름 기준)"),
 });
 
 export const getWorkspaceMembersResponse = zod

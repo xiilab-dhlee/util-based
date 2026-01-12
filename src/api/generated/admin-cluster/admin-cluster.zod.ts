@@ -31,6 +31,251 @@ import * as zod from "zod";
 
 /**
  * 
+            관리자가 특정 노드의 스케줄링 on/off 설정을 변경합니다.
+
+            **동작 방식:**
+            - enabled=true: 노드에 파드 스케줄링 허용 (uncordon)
+            - enabled=false: 노드에 파드 스케줄링 차단 (cordon)
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 노드 스케줄링 설정 변경
+ */
+export const updateNodeSchedulingParams = zod.object({
+  nodeName: zod.string().describe("노드 이름"),
+});
+
+export const updateNodeSchedulingBody = zod
+  .object({
+    enabled: zod.boolean().describe("스케줄링 활성화 여부"),
+  })
+  .strict()
+  .describe("노드 스케줄링 설정 요청");
+
+export const updateNodeSchedulingResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            노드의 MIG(Multi-Instance GPU) 설정을 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **gpuProduct**: GPU 모델명
+            - **migInfo**: MIG 설정 정보 (MIG 비활성화 시 null)
+              - **gpuIndex**: GPU 인덱스 목록
+              - **configId**: MIG Config ID
+
+            **데이터 소스:**
+            - ConfigMap에서 조회 (설정 의도를 반환)
+            - 실제 GPU 상태와 다를 수 있음
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary MIG 설정 조회
+ */
+export const getMigConfigurationParams = zod.object({
+  nodeName: zod.string().describe("노드 이름"),
+});
+
+export const getMigConfigurationResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    data: zod
+      .object({
+        nodeName: zod.string().describe("노드 이름"),
+        gpuProduct: zod
+          .string()
+          .optional()
+          .describe("GPU 모델 (라벨이 설정되지 않은 경우 null)"),
+        migInfo: zod
+          .array(
+            zod
+              .object({
+                gpuIndex: zod.array(zod.number()).describe("GPU 인덱스 목록"),
+                configId: zod.number().describe("MIG Config ID"),
+              })
+              .strict()
+              .describe("MIG 설정 상세"),
+          )
+          .optional()
+          .describe("MIG 설정 정보 (MIG 비활성화 시 null)"),
+      })
+      .strict()
+      .optional()
+      .describe("MIG 설정 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            노드에 MIG(Multi-Instance GPU) 설정을 적용합니다.
+
+            **동작 방식:**
+            - 요청에 포함된 GPU: MIG 활성화
+            - 요청에 포함되지 않은 GPU: MIG 자동 비활성화
+            - 빈 배열(migConfigs: []): 전체 GPU MIG 비활성화
+
+            **동작 순서:**
+            1. GPU 사용 가능 여부 확인 (워크로드에서 GPU 사용 중이면 409 반환)
+            2. ConfigMap 업데이트 (custom-mig-parted-config)
+            3. 노드 라벨 설정 (nvidia.com/mig.config, mig_capable)
+            4. nvidia-mig-manager Pod 재시작 (ConfigMap 강제 재로드)
+            5. nvidia-mig-manager가 MIG 설정 자동 적용
+            
+            **응답:**
+            - 200 OK: MIG 설정 요청 성공 (자동 적용 시작)
+            - 404 Not Found: 노드를 찾을 수 없음
+            - 409 Conflict: GPU를 사용 중인 워크로드 존재
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary MIG 설정 적용
+ */
+export const applyMigConfigurationParams = zod.object({
+  nodeName: zod.string().describe("노드 이름"),
+});
+
+export const applyMigConfigurationBody = zod
+  .object({
+    migConfigs: zod
+      .array(
+        zod
+          .object({
+            gpuIndex: zod
+              .array(zod.number())
+              .min(1)
+              .describe("GPU 인덱스 목록"),
+            configId: zod.number().describe("MIG 프로파일 Config ID (1-19)"),
+          })
+          .strict()
+          .describe("MIG 설정 항목"),
+      )
+      .describe("MIG 설정 목록 (빈 배열 전송 시 전체 GPU MIG 비활성화)"),
+  })
+  .strict()
+  .describe("MIG 설정 요청");
+
+export const applyMigConfigurationResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            관리자가 클러스터 노드 목록을 페이징 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **nodeIp**: 노드 IP 주소
+            - **gpuType**: GPU 모델명 (MIG 환경에서는 nvidia.com/gpu.product 라벨에서 조회)
+            - **gpuCount**: GPU 개수 (MIG 환경에서는 nvidia.com/gpu.count 라벨에서 조회)
+            - **gpuUtilizationPercent**: GPU 활용률 (%) - Prometheus 조회, MIG에서 미지원 시 null
+            - **cpuUtilizationPercent**: CPU 활용률 (%) - Prometheus 조회
+            - **memoryUtilizationPercent**: 메모리 활용률 (%) - Prometheus 조회
+            - **diskUtilizationPercent**: 디스크 활용률 (%) - Prometheus 조회
+            - **createdAt**: 노드 생성 시각
+            - **isScheduling**: 스케줄링 가능 여부 (cordon 상태 확인)
+            - **isMigEnabled**: MIG 활성화 여부 (nvidia.com/mig.capable 라벨에서 조회)
+
+            **정렬:**
+            - 현재 nodeName 필드만 정렬 지원
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 목록 조회
+ */
+export const getClusterNodesQueryPageNoMin = 0;
+
+export const getClusterNodesQueryPageSizeMax = 100;
+
+export const getClusterNodesQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getClusterNodesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getClusterNodesQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  sort: zod.enum(["NODE_NAME"]).optional().describe("정렬 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+});
+
+export const getClusterNodesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              nodeName: zod.string().describe("노드 이름"),
+              nodeIp: zod.string().describe("노드 IP"),
+              gpuType: zod.string().optional().describe("GPU 타입"),
+              gpuCount: zod.number().describe("GPU 개수"),
+              gpuUtilizationPercent: zod
+                .number()
+                .optional()
+                .describe("GPU 활용률 (%)"),
+              cpuUtilizationPercent: zod
+                .number()
+                .optional()
+                .describe("CPU 활용률 (%)"),
+              memoryUtilizationPercent: zod
+                .number()
+                .optional()
+                .describe("메모리 활용률 (%)"),
+              diskUtilizationPercent: zod
+                .number()
+                .optional()
+                .describe("디스크 활용률 (%)"),
+              createdAt: zod
+                .string()
+                .datetime({})
+                .optional()
+                .describe("노드 생성 시각"),
+              isScheduling: zod
+                .boolean()
+                .describe("스케줄링 가능 여부 (cordon 상태)"),
+              isMigEnabled: zod.boolean().describe("MIG 활성화 여부"),
+              migConfigState: zod
+                .enum(["NOT_SUPPORTED", "NONE", "PENDING", "FAILED", "READY"])
+                .describe("MIG 설정 상태"),
+            })
+            .strict()
+            .describe("클러스터 노드 정보 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             관리자가 특정 노드의 시스템 리소스 정보를 조회합니다.
 
             **응답 데이터 구성:**
@@ -291,6 +536,137 @@ export const getNodeGpuMetricsResponse = zod
           .describe("노드 GPU 메트릭 응답"),
       )
       .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            관리자가 특정 노드의 상세 정보를 조회합니다.
+            kubectl describe node와 동일한 수준의 상세 정보를 제공합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **nodeIp**: 노드 IP 주소 (InternalIP)
+            - **hostName**: 호스트 이름
+            - **role**: 노드 역할 (master, worker 등)
+            - **createdAt**: 노드 생성 시각 (KST 기준)
+            - **nodeCondition**: 노드 상태 조건 목록 (MemoryPressure, DiskPressure 등)
+            - **nodeSystemInfo**: 노드 시스템 정보 (아키텍처, 커널, kubelet 버전 등)
+            - **gpuInfo**: GPU 정보 목록 (nvidia.com/gpu.* 라벨 기반)
+            - **capacity**: 노드 총 리소스 용량 (Kubernetes Quantity 원본 형식)
+            - **allocatable**: 노드 할당 가능 리소스 (Kubernetes Quantity 원본 형식)
+            - **allocatedResource**: 할당된 리소스 목록 (requests/limits 집계, Allocatable 대비 백분율)
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 상세 조회
+ */
+export const getNodeDetailParams = zod.object({
+  nodeName: zod.string().describe("노드 이름"),
+});
+
+export const getNodeDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    data: zod
+      .object({
+        nodeName: zod.string().describe("노드 이름"),
+        nodeIp: zod.string().describe("노드 IP 주소"),
+        hostName: zod.string().describe("호스트 이름"),
+        role: zod.string().describe("노드 역할"),
+        createdAt: zod.string().optional().describe("노드 생성 시각"),
+        nodeCondition: zod
+          .array(
+            zod
+              .object({
+                lastHeartbeatTime: zod
+                  .string()
+                  .optional()
+                  .describe("마지막 하트비트 시각"),
+                lastTransitionTime: zod
+                  .string()
+                  .optional()
+                  .describe("마지막 상태 변경 시각"),
+                message: zod.string().optional().describe("상태 메시지"),
+                reason: zod.string().optional().describe("상태 이유"),
+                status: zod.string().describe("상태"),
+                conditionName: zod.string().describe("조건 이름"),
+              })
+              .strict()
+              .describe("노드 상태 조건"),
+          )
+          .describe("노드 상태 조건 목록"),
+        nodeSystemInfo: zod
+          .object({
+            architecture: zod.string().describe("CPU 아키텍처"),
+            bootID: zod.string().describe("부트 ID"),
+            containerRuntimeVersion: zod
+              .string()
+              .describe("컨테이너 런타임 버전"),
+            kernelVersion: zod.string().describe("커널 버전"),
+            kubeProxyVersion: zod.string().describe("kube-proxy 버전"),
+            kubeletVersion: zod.string().describe("kubelet 버전"),
+            machineID: zod.string().describe("머신 ID"),
+            operatingSystem: zod.string().describe("운영체제"),
+            osImage: zod.string().describe("OS 이미지"),
+            systemUUID: zod.string().describe("시스템 UUID"),
+          })
+          .strict()
+          .describe("노드 시스템 정보"),
+        gpuInfo: zod
+          .array(
+            zod
+              .object({
+                gpuType: zod.string().describe("GPU 타입"),
+                gpuCount: zod.string().describe("GPU 개수"),
+                gpuMemoryMb: zod
+                  .string()
+                  .optional()
+                  .describe("GPU 메모리 (MB)"),
+                gpuDriverVersion: zod
+                  .string()
+                  .optional()
+                  .describe("GPU 드라이버 버전"),
+              })
+              .strict()
+              .describe("GPU 정보"),
+          )
+          .describe("GPU 정보 목록"),
+        capacity: zod
+          .record(zod.string(), zod.string())
+          .describe("노드 Capacity (총 리소스 용량)"),
+        allocatable: zod
+          .record(zod.string(), zod.string())
+          .describe("노드 Allocatable (할당 가능 리소스)"),
+        allocatedResource: zod
+          .array(
+            zod
+              .object({
+                resourceName: zod.string().describe("리소스 이름"),
+                request: zod
+                  .number()
+                  .describe("요청량 (CPU: cores, Memory: bytes)"),
+                requestPercent: zod
+                  .number()
+                  .describe("요청량 백분율 (Allocatable 대비)"),
+                limit: zod
+                  .number()
+                  .describe("제한량 (CPU: cores, Memory: bytes)"),
+                limitPercent: zod
+                  .number()
+                  .describe("제한량 백분율 (Allocatable 대비)"),
+              })
+              .strict()
+              .describe("할당된 리소스"),
+          )
+          .describe("할당된 리소스 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("클러스터 노드 상세 정보 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
