@@ -30,7 +30,9 @@
 import * as zod from "zod";
 
 /**
- * 모델 타입별 HUB 목록을 페이징하여 조회합니다. keyword 검색은 hubName을 기준으로 합니다. 썸네일 로드 실패 시 thumbnail 필드는 null로 반환됩니다.
+ * 
+            모델 타입별 HUB 목록을 페이징하여 조회합니다. keyword 검색은 hubName을 기준으로 합니다. 썸네일 로드 실패 시 thumbnail 필드는 null로 반환됩니다.
+        
  * @summary HUB 목록 조회
  */
 export const findHubsQueryPageNoMin = 0;

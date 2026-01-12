@@ -30,32 +30,9 @@
 import * as zod from "zod";
 
 /**
- * 공용 레지스트리의 이미지 정보(설명)를 수정합니다. 관리자만 수정할 수 있습니다.
- * @summary 공용 이미지 수정
- */
-export const updateImage1Params = zod.object({
-  imageId: zod.number().describe("이미지 ID"),
-});
-
-export const updateImage1Body = zod
-  .object({
-    description: zod.string().optional().describe("이미지 설명"),
-  })
-  .strict()
-  .describe("이미지 수정 요청");
-
-export const updateImage1Response = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
  * 
             공용 레지스트리의 이미지를 삭제합니다.
-            - Harbor Repository와 로컬 메타데이터(이미지, 태그)를 함께 삭제합니다.
+            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
             - 관리자만 삭제할 수 있습니다.
             - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
         

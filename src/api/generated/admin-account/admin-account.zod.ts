@@ -69,7 +69,9 @@ export const updateAccountResponse = zod
   .strict();
 
 /**
- * 관리자의 특정 알림 설정(전역 설정)을 수정합니다. ADMIN 역할 알림만 수정 가능하며, 워크스페이스별 설정이 아닌 전역 설정입니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            관리자의 특정 알림 설정(전역 설정)을 수정합니다. ADMIN 역할 알림만 수정 가능하며, 워크스페이스별 설정이 아닌 전역 설정입니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
  * @summary 관리자 알림 설정 수정
  */
 export const updateAdminNotificationSetParams = zod.object({
@@ -394,7 +396,9 @@ export const getAllAccountsResponse = zod
   .strict();
 
 /**
- * 관리자의 전역 알림 설정 목록을 조회합니다. ADMIN 역할 알림만 조회되며, 워크스페이스별 설정이 아닌 전역 설정입니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            관리자의 전역 알림 설정 목록을 조회합니다. ADMIN 역할 알림만 조회되며, 워크스페이스별 설정이 아닌 전역 설정입니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
  * @summary 관리자 알림 설정 조회
  */
 export const getAdminNotificationSetsParams = zod.object({

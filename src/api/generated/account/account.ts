@@ -477,7 +477,9 @@ export const useMarkNotificationAsRead = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 인증 코드를 검증하고 새 비밀번호로 변경합니다. 보안상 유효하지 않은 이메일, 잘못된 코드, 만료된 코드 모두 동일한 에러를 반환합니다. 성공 시 인증 코드는 자동으로 삭제됩니다.
+ * 
+            인증 코드를 검증하고 새 비밀번호로 변경합니다. 보안상 유효하지 않은 이메일, 잘못된 코드, 만료된 코드 모두 동일한 에러를 반환합니다. 성공 시 인증 코드는 자동으로 삭제됩니다.",
+        
  * @summary 비밀번호 재설정
  */
 export const resetPassword = (
@@ -797,7 +799,9 @@ export const useSignup = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 사용자의 이메일로 인증 코드를 발송합니다. Rate limiting이 적용되어 1분 이내 재요청을 방지합니다. 재발송 시에도 동일한 API를 사용하며, 기존 코드는 새 코드로 자동 교체됩니다.
+ * 
+            사용자의 이메일로 인증 코드를 발송합니다. Rate limiting이 적용되어 1분 이내 재요청을 방지합니다. 재발송 시에도 동일한 API를 사용하며, 기존 코드는 새 코드로 자동 교체됩니다.
+        
  * @summary 비밀번호 재설정 인증코드 발송
  */
 export const requestPasswordReset = (
@@ -880,7 +884,9 @@ export const useRequestPasswordReset = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 사용자가 입력한 인증 코드가 유효한지 검증합니다. 클라이언트에서 코드 입력 후 즉시 피드백을 제공하기 위해 사용됩니다. 실제 비밀번호 변경은 /password/reset API에서 수행됩니다.
+ * 
+            사용자가 입력한 인증 코드가 유효한지 검증합니다. 클라이언트에서 코드 입력 후 즉시 피드백을 제공하기 위해 사용됩니다. 실제 비밀번호 변경은 /password/reset API에서 수행됩니다.
+        
  * @summary 비밀번호 재설정 인증코드 검증
  */
 export const verifyPasswordResetCode = (

@@ -32,24 +32,586 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
   BaseResponseClusterResourceSummaryResponse,
   BaseResponseListNodeGpuMetricResponse,
   BaseResponseListNodeSystemMetricResponse,
+  BaseResponseMigConfigurationResponse,
+  BaseResponsePageResponseClusterNodeListResponse,
+  BaseResponseUnit,
+  GetClusterNodesParams,
   GetNodeGpuMetricsParams,
   GetNodeSystemMetricsParams,
+  MigConfigurationRequest,
+  NodeSchedulingRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
+
+/**
+ * 
+            관리자가 특정 노드의 스케줄링 on/off 설정을 변경합니다.
+
+            **동작 방식:**
+            - enabled=true: 노드에 파드 스케줄링 허용 (uncordon)
+            - enabled=false: 노드에 파드 스케줄링 차단 (cordon)
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 노드 스케줄링 설정 변경
+ */
+export const updateNodeScheduling = (
+  nodeName: string,
+  nodeSchedulingRequest: NodeSchedulingRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/cluster/nodes/${nodeName}/scheduling`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: nodeSchedulingRequest,
+  });
+};
+
+export const getUpdateNodeSchedulingMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateNodeScheduling>>,
+    TError,
+    { nodeName: string; data: NodeSchedulingRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateNodeScheduling>>,
+  TError,
+  { nodeName: string; data: NodeSchedulingRequest },
+  TContext
+> => {
+  const mutationKey = ["updateNodeScheduling"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateNodeScheduling>>,
+    { nodeName: string; data: NodeSchedulingRequest }
+  > = (props) => {
+    const { nodeName, data } = props ?? {};
+
+    return updateNodeScheduling(nodeName, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateNodeSchedulingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateNodeScheduling>>
+>;
+export type UpdateNodeSchedulingMutationBody = NodeSchedulingRequest;
+export type UpdateNodeSchedulingMutationError = unknown;
+
+/**
+ * @summary 노드 스케줄링 설정 변경
+ */
+export const useUpdateNodeScheduling = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateNodeScheduling>>,
+      TError,
+      { nodeName: string; data: NodeSchedulingRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateNodeScheduling>>,
+  TError,
+  { nodeName: string; data: NodeSchedulingRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateNodeSchedulingMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            노드의 MIG(Multi-Instance GPU) 설정을 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **gpuProduct**: GPU 모델명
+            - **migInfo**: MIG 설정 정보 (MIG 비활성화 시 null)
+              - **gpuIndex**: GPU 인덱스 목록
+              - **configId**: MIG Config ID
+
+            **데이터 소스:**
+            - ConfigMap에서 조회 (설정 의도를 반환)
+            - 실제 GPU 상태와 다를 수 있음
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary MIG 설정 조회
+ */
+export const getMigConfiguration = (nodeName: string, signal?: AbortSignal) => {
+  return customInstance<BaseResponseMigConfigurationResponse>({
+    url: `/api/v1/cluster/nodes/${nodeName}/mig`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetMigConfigurationQueryKey = (nodeName?: string) => {
+  return [`/api/v1/cluster/nodes/${nodeName}/mig`] as const;
+};
+
+export const getGetMigConfigurationQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMigConfiguration>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigConfiguration>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMigConfigurationQueryKey(nodeName);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMigConfiguration>>
+  > = ({ signal }) => getMigConfiguration(nodeName, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!nodeName,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMigConfiguration>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMigConfigurationQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMigConfiguration>>
+>;
+export type GetMigConfigurationQueryError = unknown;
+
+export function useGetMigConfiguration<
+  TData = Awaited<ReturnType<typeof getMigConfiguration>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigConfiguration>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMigConfiguration>>,
+          TError,
+          Awaited<ReturnType<typeof getMigConfiguration>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMigConfiguration<
+  TData = Awaited<ReturnType<typeof getMigConfiguration>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigConfiguration>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMigConfiguration>>,
+          TError,
+          Awaited<ReturnType<typeof getMigConfiguration>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMigConfiguration<
+  TData = Awaited<ReturnType<typeof getMigConfiguration>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigConfiguration>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary MIG 설정 조회
+ */
+
+export function useGetMigConfiguration<
+  TData = Awaited<ReturnType<typeof getMigConfiguration>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigConfiguration>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMigConfigurationQueryOptions(nodeName, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            노드에 MIG(Multi-Instance GPU) 설정을 적용합니다.
+
+            **동작 방식:**
+            - 요청에 포함된 GPU: MIG 활성화
+            - 요청에 포함되지 않은 GPU: MIG 자동 비활성화
+            - 빈 배열(migConfigs: []): 전체 GPU MIG 비활성화
+
+            **동작 순서:**
+            1. GPU 사용 가능 여부 확인 (워크로드에서 GPU 사용 중이면 409 반환)
+            2. ConfigMap 업데이트 (custom-mig-parted-config)
+            3. 노드 라벨 설정 (nvidia.com/mig.config, mig_capable)
+            4. nvidia-mig-manager Pod 재시작 (ConfigMap 강제 재로드)
+            5. nvidia-mig-manager가 MIG 설정 자동 적용
+            
+            **응답:**
+            - 200 OK: MIG 설정 요청 성공 (자동 적용 시작)
+            - 404 Not Found: 노드를 찾을 수 없음
+            - 409 Conflict: GPU를 사용 중인 워크로드 존재
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary MIG 설정 적용
+ */
+export const applyMigConfiguration = (
+  nodeName: string,
+  migConfigurationRequest: MigConfigurationRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/cluster/nodes/${nodeName}/mig`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: migConfigurationRequest,
+  });
+};
+
+export const getApplyMigConfigurationMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof applyMigConfiguration>>,
+    TError,
+    { nodeName: string; data: MigConfigurationRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof applyMigConfiguration>>,
+  TError,
+  { nodeName: string; data: MigConfigurationRequest },
+  TContext
+> => {
+  const mutationKey = ["applyMigConfiguration"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof applyMigConfiguration>>,
+    { nodeName: string; data: MigConfigurationRequest }
+  > = (props) => {
+    const { nodeName, data } = props ?? {};
+
+    return applyMigConfiguration(nodeName, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ApplyMigConfigurationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof applyMigConfiguration>>
+>;
+export type ApplyMigConfigurationMutationBody = MigConfigurationRequest;
+export type ApplyMigConfigurationMutationError = unknown;
+
+/**
+ * @summary MIG 설정 적용
+ */
+export const useApplyMigConfiguration = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof applyMigConfiguration>>,
+      TError,
+      { nodeName: string; data: MigConfigurationRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof applyMigConfiguration>>,
+  TError,
+  { nodeName: string; data: MigConfigurationRequest },
+  TContext
+> => {
+  const mutationOptions = getApplyMigConfigurationMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            관리자가 클러스터 노드 목록을 페이징 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **nodeIp**: 노드 IP 주소
+            - **gpuType**: GPU 모델명 (MIG 환경에서는 nvidia.com/gpu.product 라벨에서 조회)
+            - **gpuCount**: GPU 개수 (MIG 환경에서는 nvidia.com/gpu.count 라벨에서 조회)
+            - **gpuUtilizationPercent**: GPU 활용률 (%) - Prometheus 조회, MIG에서 미지원 시 null
+            - **cpuUtilizationPercent**: CPU 활용률 (%) - Prometheus 조회
+            - **memoryUtilizationPercent**: 메모리 활용률 (%) - Prometheus 조회
+            - **diskUtilizationPercent**: 디스크 활용률 (%) - Prometheus 조회
+            - **createdAt**: 노드 생성 시각
+            - **isScheduling**: 스케줄링 가능 여부 (cordon 상태 확인)
+            - **isMigEnabled**: MIG 활성화 여부 (nvidia.com/mig.capable 라벨에서 조회)
+
+            **정렬:**
+            - 현재 nodeName 필드만 정렬 지원
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 목록 조회
+ */
+export const getClusterNodes = (
+  params?: GetClusterNodesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseClusterNodeListResponse>({
+    url: `/api/v1/cluster/nodes`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetClusterNodesQueryKey = (params?: GetClusterNodesParams) => {
+  return [`/api/v1/cluster/nodes`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetClusterNodesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getClusterNodes>>,
+  TError = unknown,
+>(
+  params?: GetClusterNodesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodes>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetClusterNodesQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getClusterNodes>>> = ({
+    signal,
+  }) => getClusterNodes(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getClusterNodes>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetClusterNodesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getClusterNodes>>
+>;
+export type GetClusterNodesQueryError = unknown;
+
+export function useGetClusterNodes<
+  TData = Awaited<ReturnType<typeof getClusterNodes>>,
+  TError = unknown,
+>(
+  params: undefined | GetClusterNodesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodes>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterNodes>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterNodes>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterNodes<
+  TData = Awaited<ReturnType<typeof getClusterNodes>>,
+  TError = unknown,
+>(
+  params?: GetClusterNodesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodes>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterNodes>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterNodes>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterNodes<
+  TData = Awaited<ReturnType<typeof getClusterNodes>>,
+  TError = unknown,
+>(
+  params?: GetClusterNodesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodes>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 클러스터 노드 목록 조회
+ */
+
+export function useGetClusterNodes<
+  TData = Awaited<ReturnType<typeof getClusterNodes>>,
+  TError = unknown,
+>(
+  params?: GetClusterNodesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodes>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetClusterNodesQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
 
 /**
  * 
@@ -625,6 +1187,165 @@ export function useGetNodeGpuMetrics<
     params,
     options,
   );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            관리자가 특정 노드의 상세 정보를 조회합니다.
+            kubectl describe node와 동일한 수준의 상세 정보를 제공합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **nodeIp**: 노드 IP 주소 (InternalIP)
+            - **hostName**: 호스트 이름
+            - **role**: 노드 역할 (master, worker 등)
+            - **createdAt**: 노드 생성 시각 (KST 기준)
+            - **nodeCondition**: 노드 상태 조건 목록 (MemoryPressure, DiskPressure 등)
+            - **nodeSystemInfo**: 노드 시스템 정보 (아키텍처, 커널, kubelet 버전 등)
+            - **gpuInfo**: GPU 정보 목록 (nvidia.com/gpu.* 라벨 기반)
+            - **capacity**: 노드 총 리소스 용량 (Kubernetes Quantity 원본 형식)
+            - **allocatable**: 노드 할당 가능 리소스 (Kubernetes Quantity 원본 형식)
+            - **allocatedResource**: 할당된 리소스 목록 (requests/limits 집계, Allocatable 대비 백분율)
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 상세 조회
+ */
+export const getNodeDetail = (nodeName: string, signal?: AbortSignal) => {
+  return customInstance<BaseResponseClusterNodeDetailResponse>({
+    url: `/api/v1/cluster/nodes/${nodeName}/detail`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetNodeDetailQueryKey = (nodeName?: string) => {
+  return [`/api/v1/cluster/nodes/${nodeName}/detail`] as const;
+};
+
+export const getGetNodeDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getNodeDetail>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeDetail>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetNodeDetailQueryKey(nodeName);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getNodeDetail>>> = ({
+    signal,
+  }) => getNodeDetail(nodeName, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!nodeName,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getNodeDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNodeDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getNodeDetail>>
+>;
+export type GetNodeDetailQueryError = unknown;
+
+export function useGetNodeDetail<
+  TData = Awaited<ReturnType<typeof getNodeDetail>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeDetail>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNodeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getNodeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNodeDetail<
+  TData = Awaited<ReturnType<typeof getNodeDetail>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeDetail>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNodeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getNodeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNodeDetail<
+  TData = Awaited<ReturnType<typeof getNodeDetail>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeDetail>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 클러스터 노드 상세 조회
+ */
+
+export function useGetNodeDetail<
+  TData = Awaited<ReturnType<typeof getNodeDetail>>,
+  TError = unknown,
+>(
+  nodeName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeDetail>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetNodeDetailQueryOptions(nodeName, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
