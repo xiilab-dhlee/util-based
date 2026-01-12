@@ -46,7 +46,6 @@ export function ActiveWorkloadListBody({
           { dataIndex: "port" },
           { dataIndex: "monitoring", width: 60 },
           { dataIndex: "power" },
-          { dataIndex: "delete" },
         ])}
         data={content}
         columnHeight={37}
