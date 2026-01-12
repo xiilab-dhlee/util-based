@@ -3,39 +3,32 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
-import { Button, Input } from "xiilab-ui";
+import { Input } from "xiilab-ui";
 
 import {
-  openCreatePrivateRegistryModalAtom,
-  privateregistryCheckedListAtom,
-  privateregistryPageAtom,
-  privateregistrySearchKeywordAtom,
-  privateregistrySearchTextAtom,
+  pullPushJobPageAtom,
+  pullPushJobSearchKeywordAtom,
+  pullPushJobSearchTextAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
-interface PrivateRegistryListFilterProps {
+interface PrivateRegistryJobListFilterProps {
   totalSize?: number;
   loading: boolean;
 }
 
-export function PrivateRegistryListFilter({
+export function PrivateRegistryJobListFilter({
   totalSize,
   loading,
-}: PrivateRegistryListFilterProps) {
+}: PrivateRegistryJobListFilterProps) {
   const [searchKeyword, setSearchKeyword] = useAtom(
-    privateregistrySearchKeywordAtom,
+    pullPushJobSearchKeywordAtom,
   );
-  const setSearchText = useSetAtom(privateregistrySearchTextAtom);
-  const resetPage = useResetAtom(privateregistryPageAtom);
-  const resetCheckedList = useResetAtom(privateregistryCheckedListAtom);
-
-  const { onOpen } = useGlobalModal(openCreatePrivateRegistryModalAtom);
+  const setSearchText = useSetAtom(pullPushJobSearchTextAtom);
+  const resetPage = useResetAtom(pullPushJobPageAtom);
 
   const handleSearch = (value: string) => {
-    resetCheckedList();
     resetPage();
     setSearchText(value.trim());
   };
@@ -46,18 +39,20 @@ export function PrivateRegistryListFilter({
     setSearchKeyword(e.target.value);
   };
 
-  const handleCreatePrivateRegistryImage = () => {
-    onOpen();
-  };
-
   return (
     <MySearchFilter
       title={
         <TooltipWrapper>
-          컨테이너 이미지 목록
+          등록 중인 이미지 목록
           <GuideTooltip
             iconSize={18}
-            title="등록 완료된 이미지의 목록입니다."
+            title={
+              <>
+                <span>Pull 또는 Push가 진행 중인 Job 목록입니다.</span>
+                <br />
+                <span>Job은 성공/실패 상관없이 24시간 뒤에 삭제됩니다.</span>
+              </>
+            }
           />
         </TooltipWrapper>
       }
@@ -74,18 +69,6 @@ export function PrivateRegistryListFilter({
         disabled={loading}
         value={searchKeyword}
       />
-      <Button
-        color="primary"
-        icon="Plus"
-        iconPosition="left"
-        variant="gradient"
-        width={158}
-        height={30}
-        onClick={handleCreatePrivateRegistryImage}
-        disabled={loading}
-      >
-        컨테이너 이미지 추가
-      </Button>
     </MySearchFilter>
   );
 }

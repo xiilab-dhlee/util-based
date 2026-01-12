@@ -54,6 +54,8 @@ export function DeletePrivateRegistryModal() {
           });
           // 모달 닫기
           onClose();
+          // 성공 메시지 표시
+          toast.success("개인 레지스트리 이미지 삭제 완료");
         },
       },
     );

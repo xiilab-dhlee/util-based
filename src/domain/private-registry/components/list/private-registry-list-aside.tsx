@@ -1,25 +1,47 @@
 "use client";
 
-import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
+import { useAtomValue } from "jotai";
+import styled from "styled-components";
+
+import { useGetPullPushJobs1 } from "@/api/generated/private-registry/private-registry";
 import {
-  AsideDetailContainer,
-  AsideDetailHeader,
-  AsideDetailHeaderTitle,
-} from "@/styles/layers/aside-detail-layers.styled";
-import { ListPageAside } from "@/styles/layers/list-page-layers.styled";
-// import { PrivateRegistryImageListBody } from "./private-registry-image-list-body";
+  pullPushJobPageAtom,
+  pullPushJobSearchTextAtom,
+} from "@/domain/private-registry/state/private-registry.atom";
+import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
+import { PrivateRegistryJobListBody } from "./private-registry-job-list-body";
+import { PrivateRegistryJobListFilter } from "./private-registry-job-list-filter";
+import { PrivateRegistryJobListFooter } from "./private-registry-job-list-footer";
 
 export function PrivateRegistryListAside() {
+  const page = useAtomValue(pullPushJobPageAtom);
+  const searchText = useAtomValue(pullPushJobSearchTextAtom);
+
+  const { data, isLoading, isError } = useGetPullPushJobs1({
+    keyword: searchText,
+    pageNo: page - 1,
+    pageSize: 5,
+  });
+
   return (
-    <ListPageAside $width={ASIDE_WIDTH}>
-      <AsideDetailContainer>
-        <AsideDetailHeader>
-          <AsideDetailHeaderTitle style={{ paddingTop: 9 }}>
-            컨테이너 이미지 정보
-          </AsideDetailHeaderTitle>
-        </AsideDetailHeader>
-        {/* <PrivateRegistryImageListBody /> */}
-      </AsideDetailContainer>
-    </ListPageAside>
+    <StyledAsideDetailContainer>
+      <PrivateRegistryJobListFilter
+        totalSize={data?.totalSize}
+        loading={isLoading}
+      />
+      <PrivateRegistryJobListBody
+        data={data?.content ?? []}
+        isLoading={isLoading}
+        isError={isError}
+      />
+      <PrivateRegistryJobListFooter
+        totalSize={data?.totalSize || 0}
+        isLoading={isLoading}
+      />
+    </StyledAsideDetailContainer>
   );
 }
+
+const StyledAsideDetailContainer = styled(AsideDetailContainer)`
+  padding: 16px 24px;
+`;

@@ -12,7 +12,7 @@ import {
 } from "@/domain/private-registry-image/state/private-registry-image.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 
-export function AdminPrivateRegistryImageTagListFilter() {
+export function PrivateRegistryTagListFilter() {
   const { id, name } = useParams();
   const setSearchText = useSetAtom(adminPrivateRegistryImageTagSearchTextAtom);
 

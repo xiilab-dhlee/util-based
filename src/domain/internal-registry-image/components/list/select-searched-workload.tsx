@@ -6,6 +6,7 @@ import { Input } from "xiilab-ui";
 
 import { WorkloadCard } from "@/domain/workload/components/workload-card";
 import { useGetWorkloads } from "@/domain/workload/hooks/use-get-workloads";
+import { ScrollShadowContainer } from "@/shared/components/layouts/scroll-shadow-container";
 
 interface SelectSearchedWorkloadProps {
   checkedWorkload: string | null;
@@ -52,16 +53,21 @@ export function SelectSearchedWorkload({
           width="100%"
         />
       </Header>
-      <Body>
-        {data?.content?.map((workload) => (
-          <WorkloadCard
-            key={workload.id}
-            {...workload}
-            isChecked={checkedWorkload === workload.id}
-            onCheck={() => handleCheckWorkload(workload.id)}
-          />
-        ))}
-      </Body>
+      <ScrollShadowContainer
+        shadowColor="rgba(0, 0, 0, 0.15)"
+        shadowHeight={20}
+      >
+        <Body>
+          {data?.content?.map((workload) => (
+            <WorkloadCard
+              key={workload.id}
+              {...workload}
+              isChecked={checkedWorkload === workload.id}
+              onCheck={() => handleCheckWorkload(workload.id)}
+            />
+          ))}
+        </Body>
+      </ScrollShadowContainer>
     </Container>
   );
 }
@@ -84,8 +90,6 @@ const Header = styled.div`
 `;
 
 const Body = styled.div`
-  flex: 1;
-  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;

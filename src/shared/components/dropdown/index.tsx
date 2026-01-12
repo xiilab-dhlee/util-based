@@ -45,19 +45,30 @@ export function MyDropdown({
     key: index.toString(),
   }));
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
-    <Dropdown
-      menu={{ items: menuItems }}
-      trigger={trigger}
-      placement={placement}
-      popupRender={(menu) => (
-        <CustomDropdownMenu style={containerStyle}>{menu}</CustomDropdownMenu>
-      )}
-    >
-      {children}
-    </Dropdown>
+    <DropdownWrapper onClick={handleClick}>
+      <Dropdown
+        menu={{ items: menuItems }}
+        trigger={trigger}
+        placement={placement}
+        popupRender={(menu) => (
+          <CustomDropdownMenu style={containerStyle}>{menu}</CustomDropdownMenu>
+        )}
+      >
+        {children}
+      </Dropdown>
+    </DropdownWrapper>
   );
 }
+
+// 이벤트 전파 차단을 위한 wrapper
+const DropdownWrapper = styled.div`
+  display: inline-block;
+`;
 
 // 커스텀 드롭다운 스타일 컴포넌트
 const CustomDropdownMenu = styled.div`

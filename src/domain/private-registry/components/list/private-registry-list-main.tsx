@@ -8,13 +8,20 @@ import { useGetPrivateRegistryList } from "@/api/generated/private-registry/priv
 import { CreatePrivateRegistryModal } from "@/domain/private-registry/components/create-private-registry-modal";
 import { DeletePrivateRegistryModal } from "@/domain/private-registry/components/delete-private-registry-modal";
 import {
+  PRIVATE_REGISTRY_PAGE_SIZE,
+  PRIVATE_REGISTRY_SORT_FIELD_MAP,
+} from "@/domain/private-registry/constants/private-registry.constant";
+import {
   privateregistryCheckedListAtom,
   privateregistryPageAtom,
   privateregistrySearchTextAtom,
   privateregistrySortAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 import {
+  ListPageAside,
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
@@ -26,31 +33,32 @@ import { PrivateRegistryListFooter } from "./private-registry-list-footer";
 export function PrivateRegistryListMain() {
   const resetPage = useResetAtom(privateregistryPageAtom);
   const setSearchText = useSetAtom(privateregistrySearchTextAtom);
+  const setSort = useSetAtom(privateregistrySortAtom);
   const resetCheckedList = useResetAtom(privateregistryCheckedListAtom);
 
   const page = useAtomValue(privateregistryPageAtom);
   const searchText = useAtomValue(privateregistrySearchTextAtom);
   const sort = useAtomValue(privateregistrySortAtom);
 
+  const sortRequest = buildSortRequest({
+    state: { field: sort.field, order: sort.order },
+    fieldMap: PRIVATE_REGISTRY_SORT_FIELD_MAP,
+  });
   const { data, isLoading, isError } = useGetPrivateRegistryList({
-    pageRequest: {
-      pageNo: page - 1,
-      pageSize: 20,
-      keyword: searchText,
-    },
-    workspaceFilter: {},
-    filterRequest: {
-      sort: sort.field,
-      order: sort.order,
-      isMine: false,
-    },
+    pageNo: page - 1,
+    pageSize: PRIVATE_REGISTRY_PAGE_SIZE,
+    keyword: searchText,
+    ...(sortRequest
+      ? { sort: sortRequest.sort, order: sortRequest.order }
+      : {}),
   });
 
   useEffect(() => {
     resetPage();
     setSearchText("");
+    setSort({ field: "createdAt", order: "descend" });
     resetCheckedList();
-  }, [resetPage, setSearchText, resetCheckedList]);
+  }, [resetPage, setSearchText, setSort, resetCheckedList]);
 
   return (
     <>
@@ -78,7 +86,9 @@ export function PrivateRegistryListMain() {
           />
         </ListPageBody>
         {/* 목록 페이지 - 오른쪽 영역 */}
-        <PrivateRegistryListAside />
+        <ListPageAside $width={ASIDE_WIDTH}>
+          <PrivateRegistryListAside />
+        </ListPageAside>
       </ListPageMain>
       {/* 프라이빗 레지스트리 이미지 생성 모달 */}
       <CreatePrivateRegistryModal />

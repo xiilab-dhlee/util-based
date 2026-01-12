@@ -1,8 +1,10 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { RegistryListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { ColumnLink } from "@/styles/layers/column-layer.styled";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
@@ -10,8 +12,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "imageDisplayName",
       title: "이미지 이름",
       align: "left",
-      render: (imageDisplayName: string) => {
-        return <span>{imageDisplayName}</span>;
+      render: (imageDisplayName: string, record: RegistryListResponse) => {
+        return (
+          <ColumnLink
+            href={ROUTES.USER_PRIVATE_REGISTRY_DETAIL(record.imageId ?? 0)}
+          >
+            {imageDisplayName || "-"}
+          </ColumnLink>
+        );
       },
     },
     {
@@ -20,16 +28,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 100,
       align: "center",
       render: () => {
-        return <span>구분?</span>;
-      },
-    },
-    {
-      dataIndex: "imageTagCount",
-      title: "태그 수",
-      width: 100,
-      align: "center",
-      render: (imageTagCount: number) => {
-        return <span>{imageTagCount}</span>;
+        return <span>Snapshot</span>;
       },
     },
     {
@@ -48,7 +47,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       dataIndex: "downloadCount",
-      title: "다운로드 수",
+      title: "다운로드 횟수",
       width: 100,
       align: "center",
       render: (downloadCount: number) => {

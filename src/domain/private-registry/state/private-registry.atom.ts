@@ -2,10 +2,6 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 import type { Key } from "react";
 
-import {
-  RegistryImageFilterRequestOrder,
-  RegistryImageFilterRequestSort,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { PrivateRegistrySortState } from "@/domain/private-registry/constants/private-registry.constant";
 
 /** 프라이빗 레지스트리 페이지 번호 */
@@ -16,8 +12,8 @@ export const privateregistrySearchKeywordAtom = atom<string>("");
 export const privateregistrySearchTextAtom = atomWithReset<string>("");
 /** 프라이빗 레지스트리 정렬 상태 */
 export const privateregistrySortAtom = atom<PrivateRegistrySortState>({
-  field: RegistryImageFilterRequestSort.CREATED_AT,
-  order: RegistryImageFilterRequestOrder.DESC,
+  field: "createdAt",
+  order: "descend",
 });
 /** 선택된 프라이빗 레지스트리 Harbor 이미지 경로 */
 export const privateregistrySelectedItemAtom = atom<string>("");
@@ -31,3 +27,9 @@ export const privateregistryCheckedListAtom = atomWithReset<Set<Key>>(
 export const openCreatePrivateRegistryModalAtom = atom<boolean>(false);
 /** 프라이빗 레지스트리 이미지 삭제 모달 열림 상태 */
 export const openDeletePrivateRegistryModalAtom = atom<boolean>(false);
+/** Pull/Push Job 페이지 번호 */
+export const pullPushJobPageAtom = atomWithReset<number>(1);
+/** Pull/Push Job 검색 키워드 (입력 중) */
+export const pullPushJobSearchKeywordAtom = atom<string>("");
+/** Pull/Push Job 검색어 (검색 실행) */
+export const pullPushJobSearchTextAtom = atomWithReset<string>("");

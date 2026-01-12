@@ -12,10 +12,10 @@ import {
   ListPageBody,
   ListSectionTitle,
 } from "@/styles/layers/list-page-layers.styled";
-import { AdminPrivateRegistryImageTagListBody } from "./admin-private-registry-image-tag-list-body";
-import { AdminPrivateRegistryImageTagListFilter } from "./admin-private-registry-image-tag-list-filter";
+import { PrivateRegistryTagListBody } from "./private-registry-tag-list-body";
+import { PrivateRegistryTagListFilter } from "./private-registry-tag-list-filter";
 
-export function AdminPrivateRegistryImageDetailBody() {
+export function PrivateRegistryDetailBody() {
   const { id, name } = useParams();
   const publish = usePublish();
 
@@ -94,8 +94,8 @@ export function AdminPrivateRegistryImageDetailBody() {
           </DescriptionRecord>
         </Pane>
       </Body>
-      <AdminPrivateRegistryImageTagListFilter />
-      <AdminPrivateRegistryImageTagListBody />
+      <PrivateRegistryTagListFilter />
+      <PrivateRegistryTagListBody />
     </Container>
   );
 }

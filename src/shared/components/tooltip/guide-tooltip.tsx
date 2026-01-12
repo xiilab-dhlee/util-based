@@ -48,5 +48,4 @@ const IconWrapper = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6px;
 `;

@@ -7,14 +7,14 @@ import type { PrivateRegistryImageTagListType } from "@/domain/private-registry-
 import { adminPrivateRegistryImageTagCheckedListAtom } from "@/domain/private-registry-image/state/private-registry-image.atom";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
-interface AdminPrivateRegistryImageTagItemCheckProps {
+interface PrivateRegistryTagItemCheckProps {
   /** 소스코드 데이터 */
   tag: PrivateRegistryImageTagListType;
 }
 
-export function AdminPrivateRegistryImageTagItemCheck({
+export function PrivateRegistryTagItemCheck({
   tag,
-}: AdminPrivateRegistryImageTagItemCheckProps) {
+}: PrivateRegistryTagItemCheckProps) {
   const [checkedList, setCheckedList] = useAtom(
     adminPrivateRegistryImageTagCheckedListAtom,
   );

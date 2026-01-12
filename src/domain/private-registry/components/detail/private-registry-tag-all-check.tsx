@@ -14,7 +14,7 @@ import {
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
-export function AdminPrivateRegistryImageTagAllCheck() {
+export function PrivateRegistryTagAllCheck() {
   const { id, name } = useParams();
   const [checkedList, setCheckedList] = useAtom(
     adminPrivateRegistryImageTagCheckedListAtom,

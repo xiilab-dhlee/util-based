@@ -13,7 +13,7 @@ import { createPrivateRegistryImageTagColumn } from "@/shared/components/column/
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
-export function AdminPrivateRegistryImageTagListBody() {
+export function PrivateRegistryTagListBody() {
   const { id, name } = useParams();
   const [page, setPage] = useAtom(
     adminPrivateRegistryImageTagVulnerabilityPageAtom,

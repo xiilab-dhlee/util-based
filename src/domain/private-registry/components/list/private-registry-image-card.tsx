@@ -1,48 +1,68 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import styled from "styled-components";
-import { Card } from "xiilab-ui";
+import { Button, Card } from "xiilab-ui";
 
-import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { PullPushJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   CompactCardKey,
   CompactCardKeyValueRow,
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
-import { formatFileSize } from "@/shared/utils/file.util";
+import { MyDropdown } from "@/shared/components/dropdown";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
+import { PrivateRegistryLogButton } from "./private-registry-log-button";
 
-type PrivateRegistryImageCardProps = ImageTagListResponse;
+type PrivateRegistryImageCardProps = PullPushJobResponse;
 
 export function PrivateRegistryImageCard({
+  imageId,
+  imageName,
   imageTagName,
-  imageTagSizeByte,
-  scanStatus,
-  vulnerability,
-  uploadedAt,
+  status,
+  createdAt,
 }: PrivateRegistryImageCardProps) {
+  const router = useRouter();
+  const title = `${imageName || "-"}:${imageTagName || "-"}`;
+
+  const handleClick = () => {
+    router.push(ROUTES.USER_PRIVATE_REGISTRY_DETAIL(imageId));
+  };
+
   return (
-    <Card contentVariant="compact" title={imageTagName} height={224}>
+    <Card
+      contentVariant="compact"
+      title={title}
+      height={112}
+      onClick={handleClick}
+      actionElement={
+        <MyDropdown
+          placement="bottomRight"
+          items={[<PrivateRegistryLogButton key="log" />]}
+        >
+          <Button width="100%" variant="outlined" icon="MoreHorizonal" />
+        </MyDropdown>
+      }
+    >
       <Body>
-        <Row>
-          <Key>태그 크기</Key>
-          <Value>{formatFileSize(imageTagSizeByte).formatted}</Value>
-        </Row>
-        <Row>
-          <Key>스캔 상태</Key>
-          <Value>{scanStatus}</Value>
-        </Row>
-        <Row>
-          <Key>업로드일시</Key>
-          <Value>{uploadedAt ?? "-"}</Value>
-        </Row>
-        <Row>
-          <Key>취약점</Key>
-          <Value>
-            {vulnerability
-              ? `C:${vulnerability.criticalCount} H:${vulnerability.highCount} M:${vulnerability.mediumCount} L:${vulnerability.lowCount}`
-              : "-"}
-          </Value>
-        </Row>
+        <Pane>
+          <Row>
+            <Key>구분</Key>
+            <Value>Snapshot</Value>
+          </Row>
+          <Row>
+            <Key>상태</Key>
+            <Value>{status}</Value>
+          </Row>
+        </Pane>
+        <Pane>
+          <Row>
+            <Key>생성일시</Key>
+            <Value>{formatDateTimeSafely(createdAt)}</Value>
+          </Row>
+        </Pane>
       </Body>
     </Card>
   );
@@ -50,12 +70,20 @@ export function PrivateRegistryImageCard({
 
 const Body = styled.div`
   display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid #e9ebee;
-  padding-bottom: 13px;
-  margin-bottom: 13px;
+  flex-direction: row;
   width: 100%;
-  gap: 8px;
+`;
+
+const Pane = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  & + & {
+    border-left: 1px solid #E1E4E7;
+    padding-left: 12px;
+  }
 `;
 
 const Row = styled(CompactCardKeyValueRow)`
@@ -78,4 +106,5 @@ const Key = styled(CompactCardKey)`
 
 const Value = styled(CompactCardValue)`
   line-height: 14px;
+  text-indent: 16px;
 `;

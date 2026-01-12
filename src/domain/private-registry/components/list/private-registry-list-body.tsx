@@ -3,11 +3,8 @@
 import { useAtom } from "jotai";
 import type { TableProps } from "xiilab-ui";
 
-import {
-  RegistryImageFilterRequestOrder,
-  RegistryImageFilterRequestSort,
-  type RegistryListResponse,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { RegistryListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { PrivateRegistrySortField } from "@/domain/private-registry/constants/private-registry.constant";
 import {
   privateregistryCheckedListAtom,
   privateregistrySortAtom,
@@ -15,7 +12,10 @@ import {
 import { createPrivateRegistryColumn } from "@/shared/components/column/create-private-registry-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
-import { parseSorterToAntdState } from "@/shared/utils/sort.util";
+import {
+  getColumnSortOrder,
+  parseSorterToAntdState,
+} from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface PrivateRegistryListBodyProps {
@@ -44,31 +44,10 @@ export function PrivateRegistryListBody({
     const parsed = parseSorterToAntdState(sorter);
     if (!parsed.field || !parsed.order) return;
 
-    // Antd의 order 값을 API의 Order 타입으로 변환
-    const apiOrder =
-      parsed.order === "ascend"
-        ? RegistryImageFilterRequestOrder.ASC
-        : RegistryImageFilterRequestOrder.DESC;
-
-    // dataIndex를 API의 Sort 타입으로 변환
-    const apiSort =
-      parsed.field === "imageDisplayName"
-        ? RegistryImageFilterRequestSort.IMAGE_NAME
-        : RegistryImageFilterRequestSort.CREATED_AT;
-
     setSort({
-      field: apiSort,
-      order: apiOrder,
+      field: parsed.field as PrivateRegistrySortField,
+      order: parsed.order,
     });
-  };
-
-  // API의 order 값을 Antd의 order 값으로 변환
-  const getAntdOrder = (
-    apiOrder: RegistryImageFilterRequestOrder,
-  ): "ascend" | "descend" => {
-    return apiOrder === RegistryImageFilterRequestOrder.ASC
-      ? "ascend"
-      : "descend";
   };
 
   return (
@@ -79,10 +58,7 @@ export function PrivateRegistryListBody({
             dataIndex: "imageDisplayName",
             title: "컨테이너 이미지 이름",
             sorter: true,
-            sortOrder:
-              sort.field === RegistryImageFilterRequestSort.IMAGE_NAME
-                ? getAntdOrder(sort.order)
-                : null,
+            sortOrder: getColumnSortOrder(sort, "imageDisplayName"),
             width: "20%",
           },
           { dataIndex: "imageType", width: "20%" },
@@ -91,10 +67,7 @@ export function PrivateRegistryListBody({
           {
             dataIndex: "createdAt",
             sorter: true,
-            sortOrder:
-              sort.field === RegistryImageFilterRequestSort.CREATED_AT
-                ? getAntdOrder(sort.order)
-                : null,
+            sortOrder: getColumnSortOrder(sort, "createdAt"),
             width: "20%",
           },
         ])}

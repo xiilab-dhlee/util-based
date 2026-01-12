@@ -1,7 +1,7 @@
-import type {
-  RegistryImageFilterRequestOrder,
-  RegistryImageFilterRequestSort,
-  RegistryListResponse,
+import {
+  GetPrivateRegistryListOrder,
+  GetPrivateRegistryListSort,
+  type RegistryListResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateRegistryListMockHandler,
@@ -18,8 +18,8 @@ import {
 function generateImageDisplayName(
   index: number,
   keyword: string,
-  sort: RegistryImageFilterRequestSort,
-  order: RegistryImageFilterRequestOrder,
+  sort: string,
+  order: string,
 ): string {
   const prefix = keyword || "private-image";
 
@@ -39,8 +39,8 @@ function generateImageDisplayName(
  */
 function generateCreatedAt(
   index: number,
-  sort: RegistryImageFilterRequestSort,
-  order: RegistryImageFilterRequestOrder,
+  sort: string,
+  order: string,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
   if (sort === "CREATED_AT") {
@@ -56,19 +56,13 @@ function generateCreatedAt(
 export const privateRegistryListOverrideHandlers = [
   getGetPrivateRegistryListMockHandler(async (info) => {
     const url = new URL(info.request.url);
-    const keyword = url.searchParams.get("pageRequest[keyword]") || "";
-    const pageNo = parseInt(
-      url.searchParams.get("pageRequest[pageNo]") || "0",
-      10,
-    );
-    const pageSize = parseInt(
-      url.searchParams.get("pageRequest[pageSize]") || "10",
-      10,
-    );
-    const sort = (url.searchParams.get("filterRequest[sort]") ||
-      "CREATED_AT") as RegistryImageFilterRequestSort;
-    const order = (url.searchParams.get("filterRequest[order]") ||
-      "DESC") as RegistryImageFilterRequestOrder;
+    const keyword = url.searchParams.get("keyword") || "";
+    const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
+    const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
+    const sort =
+      url.searchParams.get("sort") || GetPrivateRegistryListSort.CREATED_AT;
+    const order =
+      url.searchParams.get("order") || GetPrivateRegistryListOrder.DESC;
 
     const { status, message, timestamp } =
       getGetPrivateRegistryListResponseMock();
@@ -88,13 +82,13 @@ export const privateRegistryListOverrideHandlers = [
           ),
           harborImageName: `harbor.example.com/private/image-${globalIndex + 1}`,
           latestImageTagName: `v1.${globalIndex}.0`,
-          description: `프라이빗 이미지 ${globalIndex + 1} 설명`,
           imageTagCount: (globalIndex % 10) + 1,
           downloadCount: globalIndex * 10,
           creatorName: `사용자-${(globalIndex % 5) + 1}`,
           creatorId: `user-${(globalIndex % 5) + 1}`,
           createdAt: generateCreatedAt(globalIndex, sort, order),
           imageType: "PRIVATE",
+          hasMetadata: true,
         };
       },
     );
