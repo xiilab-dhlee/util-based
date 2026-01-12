@@ -33,3 +33,16 @@ export const pullPushJobPageAtom = atomWithReset<number>(1);
 export const pullPushJobSearchKeywordAtom = atom<string>("");
 /** Pull/Push Job 검색어 (검색 실행) */
 export const pullPushJobSearchTextAtom = atomWithReset<string>("");
+
+// ============================================================================
+// 프라이빗 레지스트리 이미지 태그 상세 관련 상태
+// ============================================================================
+
+/** 프라이빗 레지스트리 이미지 태그 페이지 번호 */
+export const privateregistryImageTagPageAtom = atomWithReset<number>(1);
+/** 프라이빗 레지스트리 이미지 태그 검색어 */
+export const privateregistryImageTagSearchTextAtom = atom<string>("");
+/** 체크된 프라이빗 레지스트리 이미지 태그 목록 */
+export const privateregistryImageTagCheckedListAtom = atomWithReset<
+  Set<number>
+>(new Set());
