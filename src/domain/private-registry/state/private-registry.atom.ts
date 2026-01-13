@@ -59,3 +59,5 @@ export const privateregistryImageTagCheckedListAtom = atomWithReset<Set<Key>>(
 );
 /** 프라이빗 레지스트리 이미지 태그 삭제 모달 열림 상태 */
 export const openDeletePrivateRegistryTagModalAtom = atom<boolean>(false);
+/** 프라이빗 레지스트리 이미지 태그 생성 모달 열림 상태 */
+export const openCreatePrivateRegistryTagModalAtom = atom<boolean>(false);

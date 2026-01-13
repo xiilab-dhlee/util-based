@@ -30,6 +30,9 @@ export type PrivateRegistrySortState =
 
 export const PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP = {
   createdAt: "CREATED_AT",
+  imageTagSizeByte: "IMAGE_TAG_SIZE_BYTE",
+  vulnerability: "TOTAL_VULNERABILITY_COUNT",
+  latestVulnerabilityScanDateTime: "LATEST_SCAN_DATETIME",
 } as const satisfies Record<string, GetPrivateImageTagListSort>;
 
 /** 프라이빗 레지스트리 이미지 태그 정렬 필드 타입 */

@@ -138,6 +138,8 @@ export const PRIVATE_REGISTRY_EVENTS = {
   sendType: "private-registry:send-type",
   // 프라이빗 레지스트리 구분 선택 모달 초기화 이벤트
   clearSelectDivisionModal: "private-registry:clear-select-division-modal",
+  // 프라이빗 레지스트리 이미지 태그 생성에 필요한 정보 전달 이벤트
+  sendCreateTagData: "private-registry:send-create-tag-data",
 } as const;
 
 // 내부 레지스트리 이미지 관련 이벤트
