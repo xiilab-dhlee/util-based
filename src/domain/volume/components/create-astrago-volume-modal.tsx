@@ -1,23 +1,20 @@
 "use client";
 
-// import { useSetAtom } from "jotai";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Dropdown, Icon, Input, Modal, Upload } from "xiilab-ui";
 
 import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
-import {
-  openCreateAstragoVolumeModalAtom,
-  // openSelectVolumeModalAtom,
-} from "@/domain/volume/state/volume.atom";
+import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
+import { openCreateAstragoVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { useSelect } from "@/shared/hooks/use-select";
 import { useUploadFile } from "@/shared/hooks/use-upload-file";
 import { formatFileSize } from "@/shared/utils/file.util";
@@ -40,8 +37,9 @@ export function CreateAstragoVolumeModal() {
   const publish = usePublish();
 
   // 모달 상태 관리
-  // const setOpenSelectVolumeModal = useSetAtom(openSelectVolumeModalAtom);
-  const { open, onClose } = useGlobalModal(openCreateAstragoVolumeModalAtom);
+  const { open, onOpen, onClose } = useGlobalModal(
+    openCreateAstragoVolumeModalAtom,
+  );
 
   // 볼륨 생성 Hook 사용
   const createVolume = useCreateVolume();
@@ -128,6 +126,15 @@ export function CreateAstragoVolumeModal() {
     // 파일 초기화
     clearFiles();
   };
+
+  useSubscribe(
+    VOLUME_EVENTS.sendStorageType,
+    (eventData: VolumeStorageType) => {
+      if (eventData === "ASTRAGO") {
+        onOpen();
+      }
+    },
+  );
 
   return (
     <Modal

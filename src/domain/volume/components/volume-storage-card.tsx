@@ -12,10 +12,7 @@ import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 interface VolumeStorageCardProps {
   /** 선택할 스토리지 타입 (ASTRAGO 또는 LOCAL) */
   storageType: VolumeStorageType;
-  /** 스토리지 타입 선택 시 호출되는 콜백 함수 */
   onClick: (storageType: VolumeStorageType) => void;
-  /** 선택 여부 */
-  isSelected: boolean;
 }
 
 // =============================================================================
@@ -63,7 +60,6 @@ const STORAGE_CARD_DATA: Record<
 export function VolumeStorageCard({
   storageType,
   onClick,
-  isSelected,
 }: VolumeStorageCardProps) {
   const cardData = STORAGE_CARD_DATA[storageType];
 
@@ -79,7 +75,6 @@ export function VolumeStorageCard({
       icon={cardData.icon}
       description={cardData.description}
       onClick={(type) => onClick(type as VolumeStorageType)}
-      isSelected={isSelected}
     />
   );
 }

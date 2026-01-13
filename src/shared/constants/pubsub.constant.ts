@@ -67,6 +67,8 @@ export const VOLUME_EVENTS = {
   sendCompressVolumeFile: "volume:send-compress-volume-file",
   // 볼륨 폴더 추가에 필요한 정보 전달 이벤트
   sendCreateVolumeFolder: "volume:send-create-volume-folder",
+  // 볼륨 스토리지 타입 선택에 필요한 정보 전달 이벤트
+  sendStorageType: "volume:send-storage-type",
 } as const;
 
 // 그룹 관련 이벤트
