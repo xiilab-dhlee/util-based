@@ -48,6 +48,7 @@ export const getGroupChildrenResponse = zod
               .object({
                 groupId: zod.string().describe("그룹 ID (Keycloak Group ID)"),
                 groupName: zod.string().describe("그룹 이름"),
+                memberCount: zod.number().describe("그룹원 수"),
               })
               .strict()
               .describe("그룹 요약 정보 응답"),
@@ -187,26 +188,12 @@ export const searchResponse = zod
               .object({
                 groupId: zod.string().describe("그룹 ID (Keycloak Group ID)"),
                 groupName: zod.string().describe("그룹 이름"),
-                children: zod.array(zod.unknown()).describe("하위 그룹 목록"),
-                member: zod
-                  .array(
-                    zod
-                      .object({
-                        accountId: zod
-                          .string()
-                          .describe("계정 ID (Keycloak User ID)"),
-                        accountName: zod.string().describe("계정 이름"),
-                        email: zod.string().optional().describe("계정 이메일"),
-                      })
-                      .strict()
-                      .describe("그룹 멤버 정보 응답"),
-                  )
-                  .describe("그룹 멤버 목록"),
+                memberCount: zod.number().describe("그룹원 수"),
               })
               .strict()
-              .describe("그룹 트리 노드"),
+              .describe("그룹 요약 정보 응답"),
           )
-          .describe("검색된 그룹 트리 목록 (일치하는 그룹을 포함하는 트리)"),
+          .describe("검색된 그룹 목록"),
         account: zod
           .array(
             zod
@@ -214,7 +201,7 @@ export const searchResponse = zod
                 accountId: zod.string().describe("계정 ID (Keycloak User ID)"),
                 accountName: zod.string().describe("계정 이름"),
                 email: zod.string().optional().describe("계정 이메일"),
-                groups: zod.array(zod.string()).describe("소속 그룹명 목록"),
+                group: zod.array(zod.string()).describe("소속 그룹명 목록"),
               })
               .strict()
               .describe("계정 정보 (소속 그룹명 포함)"),
@@ -242,6 +229,7 @@ export const getRootGroupsResponse = zod
           .object({
             groupId: zod.string().describe("그룹 ID (Keycloak Group ID)"),
             groupName: zod.string().describe("그룹 이름"),
+            memberCount: zod.number().describe("그룹원 수"),
           })
           .strict()
           .describe("그룹 요약 정보 응답"),

@@ -32,9 +32,29 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-  BaseResponsePageResponseStorageListResponse,
+  BaseResponsePageResponseStorageResponse,
+  BaseResponseStorageResponse,
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
+
+export const getGetStorageDetailResponseMock = (
+  overrideResponse: Partial<BaseResponseStorageResponse> = {},
+): BaseResponseStorageResponse => ({
+  status: "SUCCESS",
+  data: {
+    storageId: faker.number.int({ min: undefined, max: undefined }),
+    storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    storageChannel: faker.helpers.arrayElement(["NFS"] as const),
+    storageIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    storageSavePath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getUpdateStorageResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
@@ -46,8 +66,8 @@ export const getUpdateStorageResponseMock = (
 });
 
 export const getGetStoragesResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseStorageListResponse> = {},
-): BaseResponsePageResponseStorageListResponse => ({
+  overrideResponse: Partial<BaseResponsePageResponseStorageResponse> = {},
+): BaseResponsePageResponseStorageResponse => ({
   status: "SUCCESS",
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
@@ -80,6 +100,34 @@ export const getRegisterStorageResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getGetStorageDetailMockHandler = (
+  overrideResponse?:
+    | BaseResponseStorageResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<BaseResponseStorageResponse> | BaseResponseStorageResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/storages/:storageId",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetStorageDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 
 export const getUpdateStorageMockHandler = (
   overrideResponse?:
@@ -132,12 +180,12 @@ export const getDeleteStorageMockHandler = (
 
 export const getGetStoragesMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseStorageListResponse
+    | BaseResponsePageResponseStorageResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseStorageListResponse>
-        | BaseResponsePageResponseStorageListResponse),
+        | Promise<BaseResponsePageResponseStorageResponse>
+        | BaseResponsePageResponseStorageResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
@@ -188,6 +236,7 @@ export const getRegisterStorageMockHandler = (
   );
 };
 export const getAdminStorageMock = () => [
+  getGetStorageDetailMockHandler(),
   getUpdateStorageMockHandler(),
   getDeleteStorageMockHandler(),
   getGetStoragesMockHandler(),

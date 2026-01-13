@@ -307,7 +307,7 @@ export const useApproveResourceRequest = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 워크스페이스 정책을 조회합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 확인할 수 있습니다.
+ * 워크스페이스 정책을 조회합니다. 기본 리소스 할당량과 한 계정당 워크스페이스 생성 제한 수를 확인할 수 있습니다.
  * @summary 관리자용 워크스페이스 정책 조회
  */
 export const getPolicySet = (signal?: AbortSignal) => {

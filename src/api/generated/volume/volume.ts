@@ -48,11 +48,187 @@ import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseVolumeDetailResponse,
   CreateAstragoVolumeRequest,
   CreateOnPremiseVolumeRequest,
   GetVolumeListParams,
+  UpdateVolumeRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+/**
+ * 
+        볼륨 정보를 수정합니다.
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 수정 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+
+        **수정 가능 필드:**
+        - volumeName: 볼륨 이름
+        - mountPath: 마운트 경로
+        - isPublic: 공개 여부
+        
+ * @summary 볼륨 수정
+ */
+export const updateVolume = (
+  volumeId: number,
+  updateVolumeRequest: UpdateVolumeRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/volumes/${volumeId}`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: updateVolumeRequest,
+  });
+};
+
+export const getUpdateVolumeMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateVolume>>,
+    TError,
+    { volumeId: number; data: UpdateVolumeRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateVolume>>,
+  TError,
+  { volumeId: number; data: UpdateVolumeRequest },
+  TContext
+> => {
+  const mutationKey = ["updateVolume"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateVolume>>,
+    { volumeId: number; data: UpdateVolumeRequest }
+  > = (props) => {
+    const { volumeId, data } = props ?? {};
+
+    return updateVolume(volumeId, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateVolumeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateVolume>>
+>;
+export type UpdateVolumeMutationBody = UpdateVolumeRequest;
+export type UpdateVolumeMutationError = unknown;
+
+/**
+ * @summary 볼륨 수정
+ */
+export const useUpdateVolume = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateVolume>>,
+      TError,
+      { volumeId: number; data: UpdateVolumeRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateVolume>>,
+  TError,
+  { volumeId: number; data: UpdateVolumeRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateVolumeMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+        볼륨을 삭제합니다 (soft delete).
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+
+        **볼륨 타입별 처리:**
+        - ASTRAGO: DB만 soft delete
+        - ON_PREMISE: K8s 리소스 삭제 후 DB soft delete
+        
+ * @summary 볼륨 삭제
+ */
+export const deleteVolume = (volumeId: number) => {
+  return customInstance<void>({
+    url: `/api/v1/volumes/${volumeId}`,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteVolumeMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteVolume>>,
+    TError,
+    { volumeId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteVolume>>,
+  TError,
+  { volumeId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteVolume"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteVolume>>,
+    { volumeId: number }
+  > = (props) => {
+    const { volumeId } = props ?? {};
+
+    return deleteVolume(volumeId);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteVolumeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteVolume>>
+>;
+
+export type DeleteVolumeMutationError = unknown;
+
+/**
+ * @summary 볼륨 삭제
+ */
+export const useDeleteVolume = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteVolume>>,
+      TError,
+      { volumeId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteVolume>>,
+  TError,
+  { volumeId: number },
+  TContext
+> => {
+  const mutationOptions = getDeleteVolumeMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 /**
  * 외부 NFS 서버를 참조하는 ON_PREMISE 타입 볼륨을 등록합니다.
  * @summary ON_PREMISE 볼륨 등록
@@ -223,16 +399,7 @@ export const useRegisterAstragoVolume = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 
-        볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
-        **접근 권한:**
-        - 공개 볼륨(isPublic=true): 모든 사용자 조회 가능
-        - 비공개 볼륨(isPublic=false): 생성자 본인만 조회 가능
-        
-        **필터 조건:**
-        - isMine=true: 본인이 생성한 비공개 볼륨만 조회
-        - isMine=false: 공개 볼륨 + 본인의 비공개 볼륨 조회
-        
+ * 볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
  * @summary 볼륨 목록 조회
  */
 export const getVolumeList = (
@@ -359,6 +526,179 @@ export function useGetVolumeList<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetVolumeListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+        볼륨 상세 정보를 조회합니다.
+        볼륨이 없거나 접근 권한이 없으면 data: null을 반환합니다.
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 볼륨 조회 가능
+        - 종속 버전 (workspaceId != null):
+          - 공개 볼륨: 해당 워크스페이스 멤버만 조회 가능
+          - 비공개 볼륨: 본인(생성자)만 조회 가능
+        - 비종속 버전 (workspaceId == null):
+          - 공개 볼륨: 모든 사용자 조회 가능
+          - 비공개 볼륨: 본인(생성자)만 조회 가능
+        
+ * @summary 볼륨 상세 조회
+ */
+export const getVolumeDetail = (volumeId: number, signal?: AbortSignal) => {
+  return customInstance<BaseResponseVolumeDetailResponse>({
+    url: `/api/v1/volumes/${volumeId}/detail`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetVolumeDetailQueryKey = (volumeId?: number) => {
+  return [`/api/v1/volumes/${volumeId}/detail`] as const;
+};
+
+export const getGetVolumeDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetVolumeDetailQueryKey(volumeId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVolumeDetail>>> = ({
+    signal,
+  }) => getVolumeDetail(volumeId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!volumeId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVolumeDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVolumeDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVolumeDetail>>
+>;
+export type GetVolumeDetailQueryError = unknown;
+
+export function useGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof getVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVolumeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getVolumeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof getVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVolumeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getVolumeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof getVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 볼륨 상세 조회
+ */
+
+export function useGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof getVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetVolumeDetailQueryOptions(volumeId, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

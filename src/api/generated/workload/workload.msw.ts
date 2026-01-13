@@ -31,34 +31,27 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponseSmtpSetResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponseUnit } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetSmtpSetResponseMock = (
-  overrideResponse: Partial<BaseResponseSmtpSetResponse> = {},
-): BaseResponseSmtpSetResponse => ({
+export const getCreateWorkloadResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
   status: "SUCCESS",
-  data: {
-    smtpSetId: faker.number.int({ min: undefined, max: undefined }),
-    host: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    hostPort: faker.number.int({ min: undefined, max: undefined }),
-    email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
 
-export const getGetSmtpSetMockHandler = (
+export const getCreateWorkloadMockHandler = (
   overrideResponse?:
-    | BaseResponseSmtpSetResponse
+    | BaseResponseUnit
     | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<BaseResponseSmtpSetResponse> | BaseResponseSmtpSetResponse),
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
   options?: RequestHandlerOptions,
 ) => {
-  return http.get(
-    "*/api/v1/smtp-sets",
+  return http.post(
+    "*/api/v1/workspaces/:workspaceId/workloads",
     async (info) => {
       await delay(1000);
 
@@ -68,12 +61,12 @@ export const getGetSmtpSetMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetSmtpSetResponseMock(),
+            : getCreateWorkloadResponseMock(),
         ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
+        { status: 201, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
   );
 };
-export const getSmtpSettingsMock = () => [getGetSmtpSetMockHandler()];
+export const getWorkloadMock = () => [getCreateWorkloadMockHandler()];

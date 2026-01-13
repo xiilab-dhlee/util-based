@@ -95,6 +95,15 @@ export const getCreateExternalImage1ResponseMock = (
   ...overrideResponse,
 });
 
+export const getRestartPullPushJob1ResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetPrivateImageTagListResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseImageTagListResponse> = {},
 ): BaseResponsePageResponseImageTagListResponse => ({
@@ -351,6 +360,34 @@ export const getCreateExternalImage1MockHandler = (
   );
 };
 
+export const getRestartPullPushJob1MockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/registries/private/images/pull-push-jobs/:imageTagId/restart",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getRestartPullPushJob1ResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetPrivateImageTagListMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseImageTagListResponse
@@ -558,10 +595,32 @@ export const getGetPrivateImageDetailMockHandler = (
     options,
   );
 };
+
+export const getDeletePullPushJob1MockHandler = (
+  overrideResponse?:
+    | void
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.delete(
+    "*/api/v1/registries/private/images/pull-push-jobs/:imageTagId",
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
+    },
+    options,
+  );
+};
 export const getPrivateRegistryMock = () => [
   getUpdateImageTag1MockHandler(),
   getGetPrivateRegistryListMockHandler(),
   getCreateExternalImage1MockHandler(),
+  getRestartPullPushJob1MockHandler(),
   getGetPrivateImageTagListMockHandler(),
   getAddImageTag1MockHandler(),
   getDeleteImageTags1MockHandler(),
@@ -569,4 +628,5 @@ export const getPrivateRegistryMock = () => [
   getGetPrivateImageTagDetailMockHandler(),
   getGetPullPushJobs1MockHandler(),
   getGetPrivateImageDetailMockHandler(),
+  getDeletePullPushJob1MockHandler(),
 ];

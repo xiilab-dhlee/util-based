@@ -73,11 +73,11 @@ export const getAllCredentialsResponse = zod
               credentialName: zod.string().describe("크리덴셜 이름"),
               description: zod.string().optional().describe("크리덴셜 설명"),
               createDateTime: zod.string().datetime({}).describe("생성일시"),
-              creatorName: zod.string().optional().describe("생성자 이름"),
+              creatorName: zod.string().describe("생성자 이름"),
               creatorId: zod.string().describe("생성자 ID"),
             })
             .strict()
-            .describe("크리덴셜 목록 조회 응답 항목"),
+            .describe("관리자용 크리덴셜 목록 조회 응답 항목"),
         ),
       })
       .strict()

@@ -30,6 +30,71 @@
 import * as zod from "zod";
 
 /**
+ * 
+        볼륨 정보를 수정합니다.
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 수정 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+
+        **수정 가능 필드:**
+        - volumeName: 볼륨 이름
+        - mountPath: 마운트 경로
+        - isPublic: 공개 여부
+        
+ * @summary 볼륨 수정
+ */
+export const updateVolumeParams = zod.object({
+  volumeId: zod.number().describe("수정할 볼륨 ID"),
+});
+
+export const updateVolumeBodyVolumeNameMin = 0;
+export const updateVolumeBodyVolumeNameMax = 50;
+
+export const updateVolumeBodyMountPathMin = 0;
+export const updateVolumeBodyMountPathMax = 1000;
+
+export const updateVolumeBodyMountPathRegExp = /^\/.*/;
+
+export const updateVolumeBody = zod
+  .object({
+    volumeName: zod
+      .string()
+      .min(updateVolumeBodyVolumeNameMin)
+      .max(updateVolumeBodyVolumeNameMax)
+      .describe("볼륨 이름"),
+    mountPath: zod
+      .string()
+      .min(updateVolumeBodyMountPathMin)
+      .max(updateVolumeBodyMountPathMax)
+      .regex(updateVolumeBodyMountPathRegExp)
+      .describe("마운트 경로 (절대경로)"),
+    isPublic: zod.boolean().describe("공개 여부"),
+  })
+  .strict()
+  .describe("볼륨 수정 요청");
+
+export const updateVolumeResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        볼륨을 삭제합니다 (soft delete).
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+
+        **볼륨 타입별 처리:**
+        - ASTRAGO: DB만 soft delete
+        - ON_PREMISE: K8s 리소스 삭제 후 DB soft delete
+        
+ * @summary 볼륨 삭제
+ */
+export const deleteVolumeParams = zod.object({
+  volumeId: zod.number().describe("삭제할 볼륨 ID"),
+});
+
+/**
  * 외부 NFS 서버를 참조하는 ON_PREMISE 타입 볼륨을 등록합니다.
  * @summary ON_PREMISE 볼륨 등록
  */
@@ -120,16 +185,7 @@ export const registerAstragoVolumeBody = zod
   .describe("ASTRAGO 볼륨 생성 요청");
 
 /**
- * 
-        볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
-        **접근 권한:**
-        - 공개 볼륨(isPublic=true): 모든 사용자 조회 가능
-        - 비공개 볼륨(isPublic=false): 생성자 본인만 조회 가능
-        
-        **필터 조건:**
-        - isMine=true: 본인이 생성한 비공개 볼륨만 조회
-        - isMine=false: 공개 볼륨 + 본인의 비공개 볼륨 조회
-        
+ * 볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
  * @summary 볼륨 목록 조회
  */
 export const getVolumeListQueryPageNoMin = 0;
@@ -190,6 +246,62 @@ export const getVolumeListResponse = zod
       })
       .strict()
       .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        볼륨 상세 정보를 조회합니다.
+        볼륨이 없거나 접근 권한이 없으면 data: null을 반환합니다.
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 볼륨 조회 가능
+        - 종속 버전 (workspaceId != null):
+          - 공개 볼륨: 해당 워크스페이스 멤버만 조회 가능
+          - 비공개 볼륨: 본인(생성자)만 조회 가능
+        - 비종속 버전 (workspaceId == null):
+          - 공개 볼륨: 모든 사용자 조회 가능
+          - 비공개 볼륨: 본인(생성자)만 조회 가능
+        
+ * @summary 볼륨 상세 조회
+ */
+export const getVolumeDetailParams = zod.object({
+  volumeId: zod.number().describe("조회할 볼륨 ID"),
+});
+
+export const getVolumeDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    data: zod
+      .object({
+        volumeId: zod.number().describe("볼륨 ID"),
+        volumeName: zod.string().describe("볼륨 이름"),
+        volumeType: zod.enum(["ASTRAGO", "ON_PREMISE"]).describe("볼륨 타입"),
+        serverIp: zod
+          .string()
+          .optional()
+          .describe("NFS 서버 IP (ON_PREMISE 타입만 해당)"),
+        volumePath: zod.string().describe("볼륨 경로"),
+        mountPath: zod.string().describe("마운트 경로"),
+        storageId: zod
+          .number()
+          .optional()
+          .describe("스토리지 ID (ASTRAGO 타입만 해당)"),
+        storageName: zod
+          .string()
+          .optional()
+          .describe("스토리지 이름 (ASTRAGO 타입만 해당)"),
+        fileSizeByte: zod.number().describe("파일 크기 (바이트)"),
+        creatorId: zod.string().describe("생성자 ID"),
+        creatorName: zod.string().describe("생성자 이름"),
+        createdAt: zod.string().datetime({}).describe("생성 일시"),
+        isPublic: zod.boolean().describe("공개 여부"),
+      })
+      .strict()
+      .optional()
+      .describe("볼륨 상세 조회 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

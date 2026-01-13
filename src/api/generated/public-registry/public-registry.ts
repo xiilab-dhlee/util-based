@@ -405,6 +405,92 @@ export const useCreateExternalImage = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
+            실패한 Pull/Push 작업을 재시작합니다.
+            - 기존 Job을 삭제하고 새로운 Job을 생성합니다.
+            - 본인이 생성한 이미지 태그만 재시작할 수 있습니다.
+            - 관리자는 모든 작업을 재시작할 수 있습니다.
+        
+ * @summary 공용 이미지 Pull/Push 작업 재시작
+ */
+export const restartPullPushJob = (
+  imageTagId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/registries/public/images/pull-push-jobs/${imageTagId}/restart`,
+    method: "POST",
+    signal,
+  });
+};
+
+export const getRestartPullPushJobMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof restartPullPushJob>>,
+    TError,
+    { imageTagId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof restartPullPushJob>>,
+  TError,
+  { imageTagId: number },
+  TContext
+> => {
+  const mutationKey = ["restartPullPushJob"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof restartPullPushJob>>,
+    { imageTagId: number }
+  > = (props) => {
+    const { imageTagId } = props ?? {};
+
+    return restartPullPushJob(imageTagId);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RestartPullPushJobMutationResult = NonNullable<
+  Awaited<ReturnType<typeof restartPullPushJob>>
+>;
+
+export type RestartPullPushJobMutationError = unknown;
+
+/**
+ * @summary 공용 이미지 Pull/Push 작업 재시작
+ */
+export const useRestartPullPushJob = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof restartPullPushJob>>,
+      TError,
+      { imageTagId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof restartPullPushJob>>,
+  TError,
+  { imageTagId: number },
+  TContext
+> => {
+  const mutationOptions = getRestartPullPushJobMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
             공용 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
             키워드, 스캔 상태로 필터링이 가능합니다.
         
@@ -1424,3 +1510,87 @@ export function useGetPublicImageDetail<
 
   return query;
 }
+
+/**
+ * 
+            Pull/Push 작업을 삭제합니다.
+            - 본인이 생성한 이미지 태그만 삭제할 수 있습니다.
+            - 관리자는 모든 작업을 삭제할 수 있습니다.
+            - COMPLETED 상태인 경우 Job만 삭제되고 ImageTag는 유지됩니다.
+            - 그 외 상태(IN_PROGRESS, FAILED, NOT_FOUND)인 경우 Job과 ImageTag 모두 삭제됩니다.
+        
+ * @summary 공용 이미지 Pull/Push 작업 삭제
+ */
+export const deletePullPushJob = (imageTagId: number) => {
+  return customInstance<void>({
+    url: `/api/v1/registries/public/images/pull-push-jobs/${imageTagId}`,
+    method: "DELETE",
+  });
+};
+
+export const getDeletePullPushJobMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePullPushJob>>,
+    TError,
+    { imageTagId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deletePullPushJob>>,
+  TError,
+  { imageTagId: number },
+  TContext
+> => {
+  const mutationKey = ["deletePullPushJob"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deletePullPushJob>>,
+    { imageTagId: number }
+  > = (props) => {
+    const { imageTagId } = props ?? {};
+
+    return deletePullPushJob(imageTagId);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeletePullPushJobMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePullPushJob>>
+>;
+
+export type DeletePullPushJobMutationError = unknown;
+
+/**
+ * @summary 공용 이미지 Pull/Push 작업 삭제
+ */
+export const useDeletePullPushJob = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deletePullPushJob>>,
+      TError,
+      { imageTagId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deletePullPushJob>>,
+  TError,
+  { imageTagId: number },
+  TContext
+> => {
+  const mutationOptions = getDeletePullPushJobMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};

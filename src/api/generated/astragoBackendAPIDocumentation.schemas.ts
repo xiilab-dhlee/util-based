@@ -164,6 +164,27 @@ export interface MemberRoleResponse {
 }
 
 /**
+ * 볼륨 수정 요청
+ */
+export interface UpdateVolumeRequest {
+  /**
+   * 볼륨 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  volumeName: string;
+  /**
+   * 마운트 경로 (절대경로)
+   * @minLength 0
+   * @maxLength 1000
+   * @pattern ^/.*
+   */
+  mountPath: string;
+  /** 공개 여부 */
+  isPublic: boolean;
+}
+
+/**
  * 이미지 태그 수정 요청
  */
 export interface UpdateImageTagRequest {
@@ -720,6 +741,271 @@ export interface WorkspaceCreateRequest {
 }
 
 /**
+ * 분산 학습 설정 (DISTRIBUTED 워크로드용)
+ */
+export interface DistributedRequest {
+  /** 분산 노드(Pod) 수 */
+  numNodes: number;
+}
+
+/**
+ * 환경 변수
+ */
+export interface EnvRequest {
+  /**
+   * 환경 변수 키
+   * @minLength 0
+   * @maxLength 253
+   * @pattern ^[a-zA-Z_][a-zA-Z0-9_]*$
+   */
+  key: string;
+  /**
+   * 환경 변수 값
+   * @minLength 0
+   * @maxLength 32768
+   */
+  value: string;
+}
+
+/**
+ * 포트 정보
+ */
+export interface PortRequest {
+  /**
+   * 포트 이름 (RFC6335/K8s IANA_SVC_NAME: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 연속 하이픈 불가)
+   * @minLength 1
+   * @maxLength 15
+   */
+  portName: string;
+  /**
+   * 포트 번호 (1-65535)
+   * @maximum 65535
+   */
+  portNumber: number;
+  /**
+   * 서비스 포트 번호 (미지정 시 포트 번호와 동일, 1-65535)
+   * @maximum 65535
+   */
+  servicePortNum?: number;
+}
+
+/**
+ * 소스코드 정보
+ */
+export interface SourceCodeRequest {
+  /** 소스코드 ID */
+  sourceCodeId: number;
+  /**
+   * 마운트 경로
+   * @minLength 1
+   */
+  mountPath: string;
+  /** 브랜치명 */
+  sourceCodeBranch?: string;
+}
+
+/**
+ * 볼륨 정보
+ */
+export interface VolumeRequest {
+  /** 볼륨 ID */
+  volumeId: number;
+  /**
+   * 마운트 경로
+   * @minLength 1
+   */
+  mountPath: string;
+}
+
+/**
+ * CPU 리소스 정보
+ */
+export interface WorkloadCpuRequest {
+  /** 요청 CPU 코어 수 */
+  requestCore: number;
+}
+
+/**
+ * 워크로드 잡 타입
+ */
+export type WorkloadCreateRequestWorkloadJobType =
+  (typeof WorkloadCreateRequestWorkloadJobType)[keyof typeof WorkloadCreateRequestWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadCreateRequestWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 노드 타입
+ */
+export type WorkloadCreateRequestNodeType =
+  (typeof WorkloadCreateRequestNodeType)[keyof typeof WorkloadCreateRequestNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadCreateRequestNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
+export type WorkloadCreateRequestParameterItem = { [key: string]: unknown };
+
+/**
+ * 워크로드 생성 요청
+ */
+export interface WorkloadCreateRequest {
+  /**
+   * 워크로드 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  workloadName: string;
+  /**
+   * 워크로드 설명
+   * @minLength 0
+   * @maxLength 2000
+   */
+  description?: string;
+  /** 라벨 목록 */
+  label?: string[];
+  /** 워크로드 잡 타입 */
+  workloadJobType: WorkloadCreateRequestWorkloadJobType;
+  /** 노드 타입 */
+  nodeType: WorkloadCreateRequestNodeType;
+  /**
+   * 노드 이름 (특정 노드에 스케줄링)
+   * @minLength 0
+   * @maxLength 255
+   */
+  nodeName?: string;
+  /** 리소스 프리셋 ID */
+  resourcePresetId: number;
+  /**
+   * Harbor 이미지 이름
+   * @minLength 0
+   * @maxLength 255
+   */
+  harborImageName: string;
+  /**
+   * 이미지 태그 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  imageTagName: string;
+  /**
+   * 아웃풋 디렉토리
+   * @minLength 0
+   * @maxLength 1000
+   */
+  outputDirectory?: string;
+  /**
+   * 실행 디렉토리
+   * @minLength 0
+   * @maxLength 1000
+   */
+  executionDirectory?: string;
+  /**
+   * 실행 명령어
+   * @minLength 0
+   * @maxLength 1000
+   */
+  executionCmd?: string;
+  /** 환경 변수 목록 */
+  env?: EnvRequest[];
+  /** 포트 목록 */
+  port?: PortRequest[];
+  /** 리소스 정보 (모든 워크로드 타입 공통, DISTRIBUTED는 distributed 필드 필수) */
+  resource?: WorkloadResourceRequest;
+  /** 소스코드 정보 */
+  sourceCode?: SourceCodeRequest;
+  /** 볼륨 목록 */
+  volume?: VolumeRequest[];
+  /** 파라미터 목록 */
+  parameter?: WorkloadCreateRequestParameterItem[];
+}
+
+/**
+ * GPU 상세 정보
+ */
+export interface WorkloadGpuDetailRequest {
+  /** 일반 GPU 정보 */
+  normal?: WorkloadNormalGpuRequest;
+  /** MIG 프로파일 목록 */
+  mig?: WorkloadMigProfileRequest[];
+}
+
+/**
+ * GPU 타입 (NORMAL: 일반 GPU)
+ */
+export type WorkloadGpuRequestGpuType =
+  (typeof WorkloadGpuRequestGpuType)[keyof typeof WorkloadGpuRequestGpuType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadGpuRequestGpuType = {
+  NORMAL: "NORMAL",
+  MIG: "MIG",
+} as const;
+
+/**
+ * GPU 리소스 정보
+ */
+export interface WorkloadGpuRequest {
+  /** GPU 이름 (NodeSelector용) */
+  gpuName?: string;
+  /** GPU 타입 (NORMAL: 일반 GPU) */
+  gpuType?: WorkloadGpuRequestGpuType;
+  /** GPU 메모리 (byte) */
+  gpuMemoryByte?: number;
+  /** GPU 상세 정보 (gpuType에 따라 normal 또는 mig 설정) */
+  detail?: WorkloadGpuDetailRequest;
+}
+
+/**
+ * 메모리 리소스 정보
+ */
+export interface WorkloadMemoryRequest {
+  /** 요청 메모리 byte 수 */
+  requestByte: number;
+}
+
+/**
+ * MIG 프로파일 정보
+ */
+export interface WorkloadMigProfileRequest {
+  /**
+   * MIG 프로파일 이름
+   * @minLength 1
+   */
+  profile: string;
+  /** 요청 수량 */
+  requestCount: number;
+}
+
+/**
+ * 일반 GPU 정보
+ */
+export interface WorkloadNormalGpuRequest {
+  /** 요청 GPU 수량 */
+  requestCount: number;
+}
+
+/**
+ * 워크로드 리소스 정보
+ */
+export interface WorkloadResourceRequest {
+  /** GPU 리소스 정보 */
+  gpu?: WorkloadGpuRequest;
+  /** CPU 리소스 정보 */
+  cpu: WorkloadCpuRequest;
+  /** 메모리 리소스 정보 */
+  memory: WorkloadMemoryRequest;
+  /** 분산 학습 설정 (DISTRIBUTED 워크로드용) */
+  distributed?: DistributedRequest;
+}
+
+/**
  * 워크스페이스 리소스 추가 요청 생성
  */
 export interface ResourceRequestCreateRequest {
@@ -959,69 +1245,6 @@ export interface CreateAstragoVolumeRequest {
   storageId: number;
   /** 워크스페이스 ID (격리 모드 시 필수) */
   workspaceId?: number;
-}
-
-/**
- * SMTP 계정 등록 요청
- */
-export interface SmtpSetRequest {
-  /**
-   * SMTP 서버 호스트 주소
-   * @minLength 0
-   * @maxLength 50
-   */
-  host: string;
-  /**
-   * SMTP 서버 포트 번호
-   * @minimum 1
-   * @maximum 65535
-   */
-  hostPort: number;
-  /**
-   * SMTP 계정 이메일 주소
-   * @minLength 0
-   * @maxLength 200
-   */
-  email: string;
-  /**
-   * SMTP 계정 비밀번호 또는 앱 비밀번호
-   * @minLength 0
-   * @maxLength 255
-   */
-  password: string;
-}
-
-export type BaseResponseSmtpSetResponseStatus =
-  (typeof BaseResponseSmtpSetResponseStatus)[keyof typeof BaseResponseSmtpSetResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseSmtpSetResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseSmtpSetResponse {
-  status: BaseResponseSmtpSetResponseStatus;
-  data?: SmtpSetResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * SMTP 계정 응답
- */
-export interface SmtpSetResponse {
-  /** SMTP 설정 고유 ID */
-  smtpSetId: number;
-  /** SMTP 서버 호스트 주소 */
-  host: string;
-  /** SMTP 서버 포트 번호 */
-  hostPort: number;
-  /** SMTP 계정 이메일 주소 */
-  email: string;
-  /** SMTP 설정을 등록한 계정 ID */
-  creatorId: string;
 }
 
 /**
@@ -1373,6 +1596,69 @@ export interface StorageCreateRequest {
    * @pattern ^/.*
    */
   storageSavePath: string;
+}
+
+/**
+ * SMTP 계정 등록 요청
+ */
+export interface SmtpSetRequest {
+  /**
+   * SMTP 서버 호스트 주소
+   * @minLength 0
+   * @maxLength 50
+   */
+  host: string;
+  /**
+   * SMTP 서버 포트 번호
+   * @minimum 1
+   * @maximum 65535
+   */
+  hostPort: number;
+  /**
+   * SMTP 계정 이메일 주소
+   * @minLength 0
+   * @maxLength 200
+   */
+  email: string;
+  /**
+   * SMTP 계정 비밀번호 또는 앱 비밀번호
+   * @minLength 0
+   * @maxLength 255
+   */
+  password: string;
+}
+
+export type BaseResponseSmtpSetResponseStatus =
+  (typeof BaseResponseSmtpSetResponseStatus)[keyof typeof BaseResponseSmtpSetResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseSmtpSetResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseSmtpSetResponse {
+  status: BaseResponseSmtpSetResponseStatus;
+  data?: SmtpSetResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * SMTP 계정 응답
+ */
+export interface SmtpSetResponse {
+  /** SMTP 설정 고유 ID */
+  smtpSetId: number;
+  /** SMTP 서버 호스트 주소 */
+  host: string;
+  /** SMTP 서버 포트 번호 */
+  hostPort: number;
+  /** SMTP 계정 이메일 주소 */
+  email: string;
+  /** SMTP 설정을 등록한 계정 ID */
+  creatorId: string;
 }
 
 /**
@@ -2090,6 +2376,67 @@ export interface VolumeListResponse {
   mountPath: string;
   /** 파일 크기 (바이트) */
   fileSizeByte: number;
+  /** 공개 여부 */
+  isPublic: boolean;
+}
+
+export type BaseResponseVolumeDetailResponseStatus =
+  (typeof BaseResponseVolumeDetailResponseStatus)[keyof typeof BaseResponseVolumeDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseVolumeDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseVolumeDetailResponse {
+  status: BaseResponseVolumeDetailResponseStatus;
+  data?: VolumeDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 볼륨 타입
+ */
+export type VolumeDetailResponseVolumeType =
+  (typeof VolumeDetailResponseVolumeType)[keyof typeof VolumeDetailResponseVolumeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VolumeDetailResponseVolumeType = {
+  ASTRAGO: "ASTRAGO",
+  ON_PREMISE: "ON_PREMISE",
+} as const;
+
+/**
+ * 볼륨 상세 조회 응답
+ */
+export interface VolumeDetailResponse {
+  /** 볼륨 ID */
+  volumeId: number;
+  /** 볼륨 이름 */
+  volumeName: string;
+  /** 볼륨 타입 */
+  volumeType: VolumeDetailResponseVolumeType;
+  /** NFS 서버 IP (ON_PREMISE 타입만 해당) */
+  serverIp?: string;
+  /** 볼륨 경로 */
+  volumePath: string;
+  /** 마운트 경로 */
+  mountPath: string;
+  /** 스토리지 ID (ASTRAGO 타입만 해당) */
+  storageId?: number;
+  /** 스토리지 이름 (ASTRAGO 타입만 해당) */
+  storageName?: string;
+  /** 파일 크기 (바이트) */
+  fileSizeByte: number;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 생성 일시 */
+  createdAt: string;
   /** 공개 여부 */
   isPublic: boolean;
 }
@@ -3396,6 +3743,8 @@ export interface GroupSummaryResponse {
   groupId: string;
   /** 그룹 이름 */
   groupName: string;
+  /** 그룹원 수 */
+  memberCount: number;
 }
 
 export type BaseResponseGroupDetailResponseStatus =
@@ -3468,7 +3817,7 @@ export interface AccountWithGroupsResponse {
   /** 계정 이메일 */
   email?: string;
   /** 소속 그룹명 목록 */
-  groups: string[];
+  group: string[];
 }
 
 export type BaseResponseGroupSearchResponseStatus =
@@ -3492,24 +3841,10 @@ export interface BaseResponseGroupSearchResponse {
  * 그룹 및 계정 통합 검색 응답
  */
 export interface GroupSearchResponse {
-  /** 검색된 그룹 트리 목록 (일치하는 그룹을 포함하는 트리) */
-  group: GroupTreeNodeResponse[];
+  /** 검색된 그룹 목록 */
+  group: GroupSummaryResponse[];
   /** 검색된 계정 목록 (소속 그룹명 포함) */
   account: AccountWithGroupsResponse[];
-}
-
-/**
- * 그룹 트리 노드
- */
-export interface GroupTreeNodeResponse {
-  /** 그룹 ID (Keycloak Group ID) */
-  groupId: string;
-  /** 그룹 이름 */
-  groupName: string;
-  /** 하위 그룹 목록 */
-  children: GroupTreeNodeResponse[];
-  /** 그룹 멤버 목록 */
-  member: GroupMemberResponse[];
 }
 
 export type BaseResponseListGroupSummaryResponseStatus =
@@ -4759,51 +5094,51 @@ export interface ResourceComparisonResponse {
   memory: MemoryComparisonResponse;
 }
 
-export type BaseResponsePageResponseStorageListResponseStatus =
-  (typeof BaseResponsePageResponseStorageListResponseStatus)[keyof typeof BaseResponsePageResponseStorageListResponseStatus];
+export type BaseResponsePageResponseStorageResponseStatus =
+  (typeof BaseResponsePageResponseStorageResponseStatus)[keyof typeof BaseResponsePageResponseStorageResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseStorageListResponseStatus = {
+export const BaseResponsePageResponseStorageResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponsePageResponseStorageListResponse {
-  status: BaseResponsePageResponseStorageListResponseStatus;
-  data?: PageResponseStorageListResponse;
+export interface BaseResponsePageResponseStorageResponse {
+  status: BaseResponsePageResponseStorageResponseStatus;
+  data?: PageResponseStorageResponse;
   message?: string;
   timestamp: number;
 }
 
-export interface PageResponseStorageListResponse {
+export interface PageResponseStorageResponse {
   totalSize: number;
   totalPageNum: number;
   currentPageNo: number;
-  content: StorageListResponse[];
+  content: StorageResponse[];
 }
 
 /**
  * 스토리지 채널
  */
-export type StorageListResponseStorageChannel =
-  (typeof StorageListResponseStorageChannel)[keyof typeof StorageListResponseStorageChannel];
+export type StorageResponseStorageChannel =
+  (typeof StorageResponseStorageChannel)[keyof typeof StorageResponseStorageChannel];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StorageListResponseStorageChannel = {
+export const StorageResponseStorageChannel = {
   NFS: "NFS",
 } as const;
 
 /**
  * 스토리지 목록 응답
  */
-export interface StorageListResponse {
+export interface StorageResponse {
   /** 스토리지 고유 ID */
   storageId: number;
   /** 스토리지 이름 */
   storageName: string;
   /** 스토리지 채널 */
-  storageChannel: StorageListResponseStorageChannel;
+  storageChannel: StorageResponseStorageChannel;
   /** 스토리지 서버 IP 주소 */
   storageIp: string;
   /** 스토리지 저장 경로 */
@@ -4814,6 +5149,23 @@ export interface StorageListResponse {
   creatorId: string;
   /** 생성자 이름 */
   creatorName: string;
+}
+
+export type BaseResponseStorageResponseStatus =
+  (typeof BaseResponseStorageResponseStatus)[keyof typeof BaseResponseStorageResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseStorageResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseStorageResponse {
+  status: BaseResponseStorageResponseStatus;
+  data?: StorageResponse;
+  message?: string;
+  timestamp: number;
 }
 
 /**
@@ -4982,31 +5334,14 @@ export interface SignupRequestItemResponse {
   createdAt?: string;
 }
 
-export type BaseResponsePageResponseCredentialListItemResponseStatus =
-  (typeof BaseResponsePageResponseCredentialListItemResponseStatus)[keyof typeof BaseResponsePageResponseCredentialListItemResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseCredentialListItemResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseCredentialListItemResponse {
-  status: BaseResponsePageResponseCredentialListItemResponseStatus;
-  data?: PageResponseCredentialListItemResponse;
-  message?: string;
-  timestamp: number;
-}
-
 /**
  * 크리덴셜 채널
  */
-export type CredentialListItemResponseCredentialChannel =
-  (typeof CredentialListItemResponseCredentialChannel)[keyof typeof CredentialListItemResponseCredentialChannel];
+export type AdminCredentialListItemResponseCredentialChannel =
+  (typeof AdminCredentialListItemResponseCredentialChannel)[keyof typeof AdminCredentialListItemResponseCredentialChannel];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CredentialListItemResponseCredentialChannel = {
+export const AdminCredentialListItemResponseCredentialChannel = {
   GIT: "GIT",
   DOCKER: "DOCKER",
 } as const;
@@ -5014,25 +5349,25 @@ export const CredentialListItemResponseCredentialChannel = {
 /**
  * 크리덴셜 타입
  */
-export type CredentialListItemResponseCredentialType =
-  (typeof CredentialListItemResponseCredentialType)[keyof typeof CredentialListItemResponseCredentialType];
+export type AdminCredentialListItemResponseCredentialType =
+  (typeof AdminCredentialListItemResponseCredentialType)[keyof typeof AdminCredentialListItemResponseCredentialType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CredentialListItemResponseCredentialType = {
+export const AdminCredentialListItemResponseCredentialType = {
   IMAGE: "IMAGE",
   SOURCE_CODE: "SOURCE_CODE",
 } as const;
 
 /**
- * 크리덴셜 목록 조회 응답 항목
+ * 관리자용 크리덴셜 목록 조회 응답 항목
  */
-export interface CredentialListItemResponse {
+export interface AdminCredentialListItemResponse {
   /** 크리덴셜 ID */
   credentialId: number;
   /** 크리덴셜 채널 */
-  credentialChannel: CredentialListItemResponseCredentialChannel;
+  credentialChannel: AdminCredentialListItemResponseCredentialChannel;
   /** 크리덴셜 타입 */
-  credentialType: CredentialListItemResponseCredentialType;
+  credentialType: AdminCredentialListItemResponseCredentialType;
   /** 크리덴셜 이름 */
   credentialName: string;
   /** 크리덴셜 설명 */
@@ -5040,16 +5375,33 @@ export interface CredentialListItemResponse {
   /** 생성일시 */
   createDateTime: string;
   /** 생성자 이름 */
-  creatorName?: string;
+  creatorName: string;
   /** 생성자 ID */
   creatorId: string;
 }
 
-export interface PageResponseCredentialListItemResponse {
+export type BaseResponsePageResponseAdminCredentialListItemResponseStatus =
+  (typeof BaseResponsePageResponseAdminCredentialListItemResponseStatus)[keyof typeof BaseResponsePageResponseAdminCredentialListItemResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseAdminCredentialListItemResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseAdminCredentialListItemResponse {
+  status: BaseResponsePageResponseAdminCredentialListItemResponseStatus;
+  data?: PageResponseAdminCredentialListItemResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseAdminCredentialListItemResponse {
   totalSize: number;
   totalPageNum: number;
   currentPageNo: number;
-  content: CredentialListItemResponse[];
+  content: AdminCredentialListItemResponse[];
 }
 
 export type BaseResponseListNotificationSetResponseStatus =
@@ -5227,6 +5579,76 @@ export interface PageResponseNotificationItemResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: NotificationItemResponse[];
+}
+
+export type BaseResponsePageResponseCredentialListItemResponseStatus =
+  (typeof BaseResponsePageResponseCredentialListItemResponseStatus)[keyof typeof BaseResponsePageResponseCredentialListItemResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseCredentialListItemResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseCredentialListItemResponse {
+  status: BaseResponsePageResponseCredentialListItemResponseStatus;
+  data?: PageResponseCredentialListItemResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 크리덴셜 채널
+ */
+export type CredentialListItemResponseCredentialChannel =
+  (typeof CredentialListItemResponseCredentialChannel)[keyof typeof CredentialListItemResponseCredentialChannel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CredentialListItemResponseCredentialChannel = {
+  GIT: "GIT",
+  DOCKER: "DOCKER",
+} as const;
+
+/**
+ * 크리덴셜 타입
+ */
+export type CredentialListItemResponseCredentialType =
+  (typeof CredentialListItemResponseCredentialType)[keyof typeof CredentialListItemResponseCredentialType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CredentialListItemResponseCredentialType = {
+  IMAGE: "IMAGE",
+  SOURCE_CODE: "SOURCE_CODE",
+} as const;
+
+/**
+ * 크리덴셜 목록 조회 응답 항목
+ */
+export interface CredentialListItemResponse {
+  /** 크리덴셜 ID */
+  credentialId: number;
+  /** 크리덴셜 채널 */
+  credentialChannel: CredentialListItemResponseCredentialChannel;
+  /** 크리덴셜 타입 */
+  credentialType: CredentialListItemResponseCredentialType;
+  /** 크리덴셜 이름 */
+  credentialName: string;
+  /** 크리덴셜 설명 */
+  description?: string;
+  /** 생성일시 */
+  createDateTime: string;
+  /** 생성자 이름 */
+  creatorName?: string;
+  /** 생성자 ID */
+  creatorId: string;
+}
+
+export interface PageResponseCredentialListItemResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: CredentialListItemResponse[];
 }
 
 export type BaseResponseCredentialDetailResponseStatus =

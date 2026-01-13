@@ -194,6 +194,27 @@ export const createExternalImage1Body = zod
 
 /**
  * 
+            실패한 Pull/Push 작업을 재시작합니다.
+            - 기존 Job을 삭제하고 새로운 Job을 생성합니다.
+            - 본인이 생성한 이미지 태그만 재시작할 수 있습니다.
+            - 관리자는 모든 작업을 재시작할 수 있습니다.
+        
+ * @summary 개인 이미지 Pull/Push 작업 재시작
+ */
+export const restartPullPushJob1Params = zod.object({
+  imageTagId: zod.number().describe("이미지 태그 ID"),
+});
+
+export const restartPullPushJob1Response = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             개인 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
             본인 소유의 이미지만 조회할 수 있습니다.
             키워드, 스캔 상태로 필터링이 가능합니다.
@@ -607,3 +628,17 @@ export const getPrivateImageDetailResponse = zod
     timestamp: zod.number(),
   })
   .strict();
+
+/**
+ * 
+            Pull/Push 작업을 삭제합니다.
+            - 본인이 생성한 이미지 태그만 삭제할 수 있습니다.
+            - 관리자는 모든 작업을 삭제할 수 있습니다.
+            - COMPLETED 상태인 경우 Job만 삭제되고 ImageTag는 유지됩니다.
+            - 그 외 상태(IN_PROGRESS, FAILED, NOT_FOUND)인 경우 Job과 ImageTag 모두 삭제됩니다.
+        
+ * @summary 개인 이미지 Pull/Push 작업 삭제
+ */
+export const deletePullPushJob1Params = zod.object({
+  imageTagId: zod.number().describe("이미지 태그 ID"),
+});

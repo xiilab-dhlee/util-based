@@ -31,11 +31,11 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseCredentialListItemResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponsePageResponseAdminCredentialListItemResponse } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getGetAllCredentialsResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseCredentialListItemResponse> = {},
-): BaseResponsePageResponseCredentialListItemResponse => ({
+  overrideResponse: Partial<BaseResponsePageResponseAdminCredentialListItemResponse> = {},
+): BaseResponsePageResponseAdminCredentialListItemResponse => ({
   status: "SUCCESS",
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
@@ -65,12 +65,12 @@ export const getGetAllCredentialsResponseMock = (
 
 export const getGetAllCredentialsMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseCredentialListItemResponse
+    | BaseResponsePageResponseAdminCredentialListItemResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseCredentialListItemResponse>
-        | BaseResponsePageResponseCredentialListItemResponse),
+        | Promise<BaseResponsePageResponseAdminCredentialListItemResponse>
+        | BaseResponsePageResponseAdminCredentialListItemResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(

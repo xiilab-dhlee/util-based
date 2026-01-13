@@ -34,7 +34,17 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseVolumeDetailResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
+
+export const getUpdateVolumeResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getRegisterOnPremiseVolumeResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
@@ -84,6 +94,79 @@ export const getGetVolumeListResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getGetVolumeDetailResponseMock = (
+  overrideResponse: Partial<BaseResponseVolumeDetailResponse> = {},
+): BaseResponseVolumeDetailResponse => ({
+  status: "SUCCESS",
+  data: {
+    volumeId: faker.number.int({ min: undefined, max: undefined }),
+    volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    volumeType: faker.helpers.arrayElement(["ASTRAGO", "ON_PREMISE"] as const),
+    serverIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    volumePath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    storageId: faker.number.int({ min: undefined, max: undefined }),
+    storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    fileSizeByte: faker.number.int({ min: undefined, max: undefined }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    isPublic: faker.datatype.boolean(),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getUpdateVolumeMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/volumes/:volumeId",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateVolumeResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getDeleteVolumeMockHandler = (
+  overrideResponse?:
+    | void
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.delete(
+    "*/api/v1/volumes/:volumeId",
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
+    },
+    options,
+  );
+};
 
 export const getRegisterOnPremiseVolumeMockHandler = (
   overrideResponse?:
@@ -170,8 +253,41 @@ export const getGetVolumeListMockHandler = (
     options,
   );
 };
+
+export const getGetVolumeDetailMockHandler = (
+  overrideResponse?:
+    | BaseResponseVolumeDetailResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseVolumeDetailResponse>
+        | BaseResponseVolumeDetailResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/volumes/:volumeId/detail",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetVolumeDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getVolumeMock = () => [
+  getUpdateVolumeMockHandler(),
+  getDeleteVolumeMockHandler(),
   getRegisterOnPremiseVolumeMockHandler(),
   getRegisterAstragoVolumeMockHandler(),
   getGetVolumeListMockHandler(),
+  getGetVolumeDetailMockHandler(),
 ];
