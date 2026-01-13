@@ -8,5 +8,10 @@ export const credentialKeys = {
     ...Object.values(payload),
   ],
   allList: () => [...credentialKeys.default, "allList"],
+  options: (searchText: string) => [
+    ...credentialKeys.default,
+    "options",
+    searchText,
+  ],
   detail: (id: number | null) => [...credentialKeys.default, "detail", id],
 };

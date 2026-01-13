@@ -11,18 +11,18 @@ import { delay, type HttpHandler } from "msw";
 
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
+import { credentialHandlers } from "@/domain/credential/mocks";
 import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
-import { credentialHandlers } from "@/mocks/handlers/credential.handler";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { groupHandlers } from "@/mocks/handlers/group.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
-import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
-import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
+// import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
+// import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
 import { kubernetesMonitoringHandlers } from "@/mocks/handlers/kubernetes-monitoring.handler";
 import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
@@ -104,14 +104,14 @@ const rawHandlers = [
   ...nodeHandlers,
   ...redfishHandlers,
   ...accountManagementHandlers,
+  ...credentialHandlers,
   ...groupHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,
-  ...internalregistryHandlers,
-  ...internalregistryImageHandlers,
+  // ...internalregistryHandlers,
+  // ...internalregistryImageHandlers,
   ...privateRegistryHandlers,
   ...kubernetesMonitoringHandlers,
-  ...credentialHandlers,
   ...gpuHandlers,
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,
