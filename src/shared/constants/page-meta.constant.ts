@@ -369,7 +369,8 @@ export const PAGE_META = {
   },
   "user.private-registry.detail": {
     title: "컨테이너 이미지 상세정보",
-    href: ({ id }: { id: number }) => ROUTES.USER_PRIVATE_REGISTRY_DETAIL(id),
+    href: ({ name }: { name: string }) =>
+      ROUTES.USER_PRIVATE_REGISTRY_DETAIL(name),
     parent: "user.private-registry",
   },
   "user.internal-registry-image": {

@@ -15,7 +15,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
       render: (imageDisplayName: string, record: RegistryListResponse) => {
         return (
           <ColumnLink
-            href={ROUTES.USER_PRIVATE_REGISTRY_DETAIL(record.imageId ?? 0)}
+            href={ROUTES.USER_PRIVATE_REGISTRY_DETAIL(
+              encodeURIComponent(record.harborImageName),
+            )}
           >
             {imageDisplayName || "-"}
           </ColumnLink>
