@@ -449,6 +449,34 @@ const keycloakCallbacks: NextAuthOptions["callbacks"] = {
 // NextAuth 설정 (Export)
 // ============================================================================
 
+/**
+ * HTTPS 환경 여부 (NEXTAUTH_URL 기반 자동 감지)
+ * - HTTPS: secure 쿠키 사용, __Secure- 접두사
+ * - HTTP: 일반 쿠키 사용
+ */
+const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith("https://");
+
+/**
+ * 쿠키 도메인 추출
+ * - NEXTAUTH_URL에서 호스트명만 추출
+ * - localhost는 도메인 설정 생략 (브라우저 기본값 사용)
+ */
+function getCookieDomain(): string | undefined {
+  const url = process.env.NEXTAUTH_URL;
+  if (!url) return undefined;
+
+  try {
+    const hostname = new URL(url).hostname;
+    // localhost는 도메인 설정 생략
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return undefined;
+    }
+    return hostname;
+  } catch {
+    return undefined;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: useTestAuth ? [testProvider] : [keycloakProvider],
   callbacks: useTestAuth ? testCallbacks : keycloakCallbacks,
@@ -478,19 +506,71 @@ export const authOptions: NextAuthOptions = {
     maxAge: 7 * 24 * 60 * 60, // 7일
   },
 
+  // 쿠키 설정 (HTTPS 대비 + 도메인 명시)
+  cookies: {
+    sessionToken: {
+      name: useSecureCookies
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+        domain: getCookieDomain(),
+      },
+    },
+    callbackUrl: {
+      name: useSecureCookies
+        ? "__Secure-next-auth.callback-url"
+        : "next-auth.callback-url",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+        domain: getCookieDomain(),
+      },
+    },
+    csrfToken: {
+      name: useSecureCookies
+        ? "__Host-next-auth.csrf-token"
+        : "next-auth.csrf-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+  },
+
   secret: getAuthSecret(),
   debug: false,
 };
 
 // ============================================================================
-// 개발 환경 초기화 로그
+// 환경변수 검증 및 초기화 로그
 // ============================================================================
 
+// NEXTAUTH_URL 검증 (프로덕션 필수)
+if (isProduction && !process.env.NEXTAUTH_URL) {
+  console.warn(
+    "[Auth] ⚠️ NEXTAUTH_URL 환경변수가 설정되지 않았습니다. 쿠키 도메인이 올바르게 설정되지 않을 수 있습니다.",
+  );
+}
+
+// 개발 환경 초기화 로그
 if (isDev) {
   const providerName = useTestAuth
     ? "CredentialsProvider (테스트)"
     : "KeycloakProvider (프로덕션)";
   console.debug(`[Auth] 🔧 프로바이더: ${providerName}`);
+  console.debug(`[Auth] 🍪 쿠키 설정:`, {
+    secure: useSecureCookies ? "✅ HTTPS" : "❌ HTTP",
+    domain: getCookieDomain() ?? "(기본값)",
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "(미설정)",
+  });
 
   if (!useTestAuth) {
     console.debug("[Auth] 📋 환경변수:", {
