@@ -2,7 +2,10 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 import type { Key } from "react";
 
-import type { PrivateRegistrySortState } from "@/domain/private-registry/constants/private-registry.constant";
+import type {
+  PrivateRegistrySortState,
+  PrivateRegistryTagSortState,
+} from "@/domain/private-registry/constants/private-registry.constant";
 
 /** 프라이빗 레지스트리 페이지 번호 */
 export const privateregistryPageAtom = atomWithReset<number>(1);
@@ -23,6 +26,8 @@ export const privateregistryImagePageAtom = atomWithReset<number>(1);
 export const privateregistryCheckedListAtom = atomWithReset<Set<Key>>(
   new Set(),
 );
+/** 프라이빗 레지스트리 구분 선택 모달 열림 상태 */
+export const openSelectPrivateRegistryTypeModalAtom = atom<boolean>(false);
 /** 프라이빗 레지스트리 이미지 생성 모달 열림 상태 */
 export const openCreatePrivateRegistryModalAtom = atom<boolean>(false);
 /** 프라이빗 레지스트리 이미지 삭제 모달 열림 상태 */
@@ -41,8 +46,16 @@ export const pullPushJobSearchTextAtom = atomWithReset<string>("");
 /** 프라이빗 레지스트리 이미지 태그 페이지 번호 */
 export const privateregistryImageTagPageAtom = atomWithReset<number>(1);
 /** 프라이빗 레지스트리 이미지 태그 검색어 */
-export const privateregistryImageTagSearchTextAtom = atom<string>("");
+export const privateregistryImageTagSearchTextAtom = atomWithReset<string>("");
+/** 프라이빗 레지스트리 이미지 태그 정렬 상태 */
+export const privateregistryImageTagSortAtom =
+  atom<PrivateRegistryTagSortState>({
+    field: "createdAt",
+    order: "descend",
+  });
 /** 체크된 프라이빗 레지스트리 이미지 태그 목록 */
-export const privateregistryImageTagCheckedListAtom = atomWithReset<
-  Set<number>
->(new Set());
+export const privateregistryImageTagCheckedListAtom = atomWithReset<Set<Key>>(
+  new Set(),
+);
+/** 프라이빗 레지스트리 이미지 태그 삭제 모달 열림 상태 */
+export const openDeletePrivateRegistryTagModalAtom = atom<boolean>(false);

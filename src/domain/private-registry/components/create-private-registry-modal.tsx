@@ -3,55 +3,52 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import styled from "styled-components";
-import { Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
+import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
 import {
   getGetPrivateRegistryListQueryKey,
   useCreateExternalImage1,
 } from "@/api/generated/private-registry/private-registry";
+import { CredentialSelect } from "@/domain/credential/components/credential-select";
 import { SelectSearchedWorkload } from "@/domain/internal-registry-image/components/list/select-searched-workload";
+import {
+  type PrivateRegistryType,
+  REGISTRY_CHANNEL_OPTIONS,
+} from "@/domain/private-registry/constants/private-registry.constant";
 import {
   type CreatePrivateRegistryFormType,
   createPrivateRegistrySchema,
 } from "@/domain/private-registry/schemas/create-private-registry.schema";
 import { openCreatePrivateRegistryModalAtom } from "@/domain/private-registry/state/private-registry.atom";
+import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { FormRow } from "@/styles/layers/form-layer.styled";
 
-/**
- * 프라이빗 레지스트리 이미지 생성 모달
- *
- * 유효성 검증 규칙:
- * - 컨테이너 이미지 이름: 필수
- * - 태그: 필수, 문자/숫자/하이픈(-)/밑줄(_)만 허용
- *
- * 워크로드 선택은 폼 외부에서 별도로 관리됩니다.
- */
 export function CreatePrivateRegistryModal() {
-  const { open, onClose } = useGlobalModal(openCreatePrivateRegistryModalAtom);
+  const { open, onOpen, onClose } = useGlobalModal(
+    openCreatePrivateRegistryModalAtom,
+  );
   const queryClient = useQueryClient();
-
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-
-  const [checkedWorkload, setCheckedWorkload] = useState<string | null>(null);
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors, isValid },
   } = useForm<CreatePrivateRegistryFormType>({
     resolver: zodResolver(createPrivateRegistrySchema),
     mode: "onChange",
-    defaultValues: {
-      imageName: "",
-      tag: "",
-    },
   });
+
+  // 폼에서 type 감시 (UI 분기용)
+  const formType = watch("type");
 
   const { mutate: createImage, isPending } = useCreateExternalImage1();
 
@@ -61,24 +58,15 @@ export function CreatePrivateRegistryModal() {
       return;
     }
 
-    if (!checkedWorkload) {
-      toast.error("워크로드를 선택해 주세요.");
-      return;
-    }
-
-    if (isPending) {
-      toast.error("요청 중입니다.");
-      return;
-    }
-
     createImage(
       {
         data: {
           imageName: data.imageName,
           imageTagName: data.tag,
-          registryChannel: "DOCKER", // TODO: registryChannel 선택 UI 추가 필요 시 수정
-          // workloadId: checkedWorkload,
-          workspaceId: selectedWorkspace?.workspaceId ?? -1,
+          registryChannel: data.registryChannel,
+          ...(data.type === "SNAPSHOT" &&
+            data.workloadId && { workloadId: data.workloadId }),
+          workspaceId: selectedWorkspace.workspaceId,
         },
       },
       {
@@ -87,7 +75,7 @@ export function CreatePrivateRegistryModal() {
           queryClient.invalidateQueries({
             queryKey: getGetPrivateRegistryListQueryKey(),
           });
-          handleClose();
+          onClose();
         },
         onError: () => {
           toast.error("개인 레지스트리 이미지 생성에 실패했습니다.");
@@ -96,11 +84,22 @@ export function CreatePrivateRegistryModal() {
     );
   };
 
-  const handleClose = () => {
-    reset();
-    setCheckedWorkload(null);
-    onClose();
-  };
+  // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
+  useSubscribe(
+    PRIVATE_REGISTRY_EVENTS.sendType,
+    (type: PrivateRegistryType) => {
+      // 폼 초기화 후 type 설정
+      reset({
+        type,
+        imageName: "",
+        tag: "",
+        registryChannel: undefined,
+        credentialId: undefined,
+        ...(type === "SNAPSHOT" && { workloadId: "" }),
+      });
+      onOpen();
+    },
+  );
 
   return (
     <Modal
@@ -114,21 +113,20 @@ export function CreatePrivateRegistryModal() {
       title="컨테이너 이미지 생성"
       showCancelButton
       cancelText="취소"
-      onCancel={handleClose}
+      onCancel={onClose}
       okText="생성"
       onOk={handleSubmit(onSubmit)}
-      afterClose={handleClose}
       centered
       showHeaderBorder
       okButtonProps={{
-        disabled: !isValid || !checkedWorkload || isPending,
+        disabled: !isValid || isPending,
         loading: isPending,
       }}
       cancelButtonProps={{
         disabled: isPending,
       }}
     >
-      <StyledForm onFinish={handleSubmit(onSubmit)}>
+      <Form onFinish={handleSubmit(onSubmit)}>
         <Controller
           name="imageName"
           control={control}
@@ -151,41 +149,102 @@ export function CreatePrivateRegistryModal() {
             </FormItem>
           )}
         />
-        <Controller
-          name="tag"
-          control={control}
-          render={({ field }) => (
-            <FormItem
-              label="태그"
-              required
-              validateStatus={errors.tag ? "error" : undefined}
-              htmlFor="privateRegistryImageTag"
-              help={errors.tag?.message}
-            >
-              <Input
-                {...field}
-                type="text"
-                id="privateRegistryImageTag"
-                placeholder="태그를 입력해 주세요. (문자, 숫자, 하이픈(-), 밑줄(_)만 사용 가능)"
-                autoComplete="off"
-                width="100%"
-              />
-            </FormItem>
-          )}
-        />
-        <FormItem label="워크로드 선택" required htmlFor="workloadSelect">
-          <SelectSearchedWorkload
-            checkedWorkload={checkedWorkload}
-            setCheckedWorkload={setCheckedWorkload}
+        <FormRow>
+          <Controller
+            name="tag"
+            control={control}
+            render={({ field }) => (
+              <FormItem
+                label="태그"
+                required
+                validateStatus={errors.tag ? "error" : undefined}
+                htmlFor="privateRegistryImageTag"
+                help={errors.tag?.message}
+              >
+                <Input
+                  {...field}
+                  type="text"
+                  id="privateRegistryImageTag"
+                  placeholder="태그를 입력해 주세요."
+                  autoComplete="off"
+                  width="100%"
+                />
+              </FormItem>
+            )}
           />
-        </FormItem>
-      </StyledForm>
+          <Controller
+            name="registryChannel"
+            control={control}
+            render={({ field }) => (
+              <FormItem
+                label="레지스트리 채널"
+                required
+                validateStatus={errors.registryChannel ? "error" : undefined}
+                help={errors.registryChannel?.message}
+              >
+                <Dropdown
+                  options={REGISTRY_CHANNEL_OPTIONS}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="레지스트리 채널을 선택해 주세요."
+                  theme="light"
+                  width="100%"
+                />
+              </FormItem>
+            )}
+          />
+        </FormRow>
+        <FormRow>
+          <Controller
+            name="credentialId"
+            control={control}
+            render={({ field }) => (
+              <FormItem
+                label="크리덴셜"
+                required
+                validateStatus={errors.credentialId ? "error" : undefined}
+                help={errors.credentialId?.message}
+              >
+                <CredentialSelect
+                  value={field.value ?? null}
+                  setValue={(value) => {
+                    if (value !== null) {
+                      setValue("credentialId", value, { shouldValidate: true });
+                    }
+                  }}
+                />
+              </FormItem>
+            )}
+          />
+        </FormRow>
+        {formType === "SNAPSHOT" && (
+          <Controller
+            name="workloadId"
+            control={control}
+            shouldUnregister
+            render={({ field, fieldState }) => (
+              <FormItem
+                label="워크로드 선택"
+                required
+                validateStatus={fieldState.error ? "error" : undefined}
+                htmlFor="workloadSelect"
+                help={fieldState.error?.message}
+              >
+                <SelectSearchedWorkload
+                  checkedWorkload={field.value ?? null}
+                  setCheckedWorkload={(value) => {
+                    if (typeof value === "string" || value === null) {
+                      setValue("workloadId", value ?? "", {
+                        shouldValidate: true,
+                      });
+                    }
+                  }}
+                />
+              </FormItem>
+            )}
+          />
+        )}
+      </Form>
     </Modal>
   );
 }
-
-const StyledForm = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
