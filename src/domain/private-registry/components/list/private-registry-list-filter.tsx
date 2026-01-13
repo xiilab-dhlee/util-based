@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
 import {
-  openCreatePrivateRegistryModalAtom,
+  openSelectPrivateRegistryTypeModalAtom,
   privateregistryCheckedListAtom,
   privateregistryPageAtom,
   privateregistrySearchKeywordAtom,
@@ -32,7 +32,7 @@ export function PrivateRegistryListFilter({
   const resetPage = useResetAtom(privateregistryPageAtom);
   const resetCheckedList = useResetAtom(privateregistryCheckedListAtom);
 
-  const { onOpen } = useGlobalModal(openCreatePrivateRegistryModalAtom);
+  const { onOpen } = useGlobalModal(openSelectPrivateRegistryTypeModalAtom);
 
   const handleSearch = (value: string) => {
     resetCheckedList();

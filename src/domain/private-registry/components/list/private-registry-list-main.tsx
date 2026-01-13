@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useGetPrivateRegistryList } from "@/api/generated/private-registry/private-registry";
 import { CreatePrivateRegistryModal } from "@/domain/private-registry/components/create-private-registry-modal";
 import { DeletePrivateRegistryModal } from "@/domain/private-registry/components/delete-private-registry-modal";
+import { SelectPrivateRegistryTypeModal } from "@/domain/private-registry/components/select-private-registry-type-modal";
 import {
   PRIVATE_REGISTRY_PAGE_SIZE,
   PRIVATE_REGISTRY_SORT_FIELD_MAP,
@@ -90,6 +91,8 @@ export function PrivateRegistryListMain() {
           <PrivateRegistryListAside />
         </ListPageAside>
       </ListPageMain>
+      {/* 프라이빗 레지스트리 구분 선택 모달 */}
+      <SelectPrivateRegistryTypeModal />
       {/* 프라이빗 레지스트리 이미지 생성 모달 */}
       <CreatePrivateRegistryModal />
       {/* 프라이빗 레지스트리 이미지 삭제 모달 */}
