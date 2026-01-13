@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 import {
   GetPrivateRegistryListOrder,
   GetPrivateRegistryListSort,
@@ -14,6 +16,11 @@ import {
 
 /**
  * 정렬 가능한 imageDisplayName 생성
+ * 정렬 시 순서가 올바르게 유지되도록 숫자 패딩 사용
+ * ASC: private-image-001, private-image-002, ... (오름차순)
+ * DESC: private-image-999, private-image-998, ... (내림차순)
+ *
+ * keyword가 있는 경우에도 sort/order를 적용하여 정렬 순서 보장
  */
 function generateImageDisplayName(
   index: number,
@@ -23,19 +30,23 @@ function generateImageDisplayName(
 ): string {
   const prefix = keyword || "private-image";
 
-  if (sort === "CREATED_AT") {
-    return `${prefix}-${index + 1}`;
+  if (sort === "IMAGE_NAME") {
+    // 3자리 숫자로 패딩하여 정렬 순서 보장
+    const paddedIndex = String((index % 1000) + 1).padStart(3, "0");
+    // ASC: 001, 002, 003... / DESC: 999, 998, 997...
+    const sortableValue = 999 - (index % 1000);
+    const sortableNum =
+      order === GetPrivateRegistryListOrder.ASC
+        ? paddedIndex
+        : String(sortableValue).padStart(3, "0");
+    return `${prefix}-${sortableNum}`;
   }
 
-  const paddedIndex = String((index % 1000) + 1).padStart(3, "0");
-  const sortableValue = 999 - (index % 1000);
-  const sortableNum =
-    order === "ASC" ? paddedIndex : String(sortableValue).padStart(3, "0");
-  return `${prefix}-${sortableNum}`;
+  return `${prefix}-${index + 1}`;
 }
 
 /**
- * 정렬 가능한 createdAt 생성
+ * 정렬 순서에 따른 createdAt 생성
  */
 function generateCreatedAt(
   index: number,
@@ -43,13 +54,14 @@ function generateCreatedAt(
   order: string,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  if (sort === "CREATED_AT") {
+  if (sort === GetPrivateRegistryListSort.CREATED_AT) {
     const safeIndex = Math.min(Math.max(index, 0), 29);
     const offset =
-      order === "ASC" ? (30 - safeIndex) * DAY_IN_MS : safeIndex * DAY_IN_MS;
+      order === GetPrivateRegistryListOrder.ASC
+        ? (30 - safeIndex) * DAY_IN_MS
+        : safeIndex * DAY_IN_MS;
     return new Date(baseTimestamp - offset).toISOString();
   }
-
   return new Date(baseTimestamp - index * DAY_IN_MS).toISOString();
 }
 
@@ -57,54 +69,49 @@ export const privateRegistryListOverrideHandlers = [
   getGetPrivateRegistryListMockHandler(async (info) => {
     const url = new URL(info.request.url);
     const keyword = url.searchParams.get("keyword") || "";
-    const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
-    const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
+    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
+    const pageSize = Number.parseInt(
+      url.searchParams.get("pageSize") || "10",
+      10,
+    );
     const sort =
       url.searchParams.get("sort") || GetPrivateRegistryListSort.CREATED_AT;
     const order =
       url.searchParams.get("order") || GetPrivateRegistryListOrder.DESC;
 
-    const { status, message, timestamp } =
-      getGetPrivateRegistryListResponseMock();
+    const totalSize = pageSize * 3;
 
+    // 검색/정렬 관련 필드만 오버라이드, 나머지는 faker 원본 사용
     const content: RegistryListResponse[] = Array.from(
       { length: pageSize },
       (_, index) => {
         const globalIndex = pageNo * pageSize + index;
+        const baseItem =
+          getGetPrivateRegistryListResponseMock().data?.content?.[0];
 
         return {
-          imageId: globalIndex + 1,
+          ...baseItem,
           imageDisplayName: generateImageDisplayName(
             globalIndex,
             keyword,
             sort,
             order,
           ),
-          harborImageName: `harbor.example.com/private/image-${globalIndex + 1}`,
-          latestImageTagName: `v1.${globalIndex}.0`,
-          imageTagCount: (globalIndex % 10) + 1,
-          downloadCount: globalIndex * 10,
-          creatorName: `사용자-${(globalIndex % 5) + 1}`,
-          creatorId: `user-${(globalIndex % 5) + 1}`,
+          latestImageTagName: "v0.0.0",
           createdAt: generateCreatedAt(globalIndex, sort, order),
-          imageType: "PRIVATE",
-          hasMetadata: true,
-        };
+          downloadCount: faker.number.int({ min: 0, max: 10000 }),
+          imageTagCount: faker.number.int({ min: 0, max: 10000 }),
+        } as RegistryListResponse;
       },
     );
 
-    const totalSize = pageSize * 3;
-
-    return {
-      status,
-      message,
-      timestamp,
+    return getGetPrivateRegistryListResponseMock({
       data: {
         totalSize,
         totalPageNum: Math.ceil(totalSize / pageSize),
         currentPageNo: pageNo,
         content,
       },
-    };
+    });
   }),
 ];
