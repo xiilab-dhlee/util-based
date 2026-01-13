@@ -25,7 +25,7 @@ export function ViewRequestReasonButton({
   return (
     <ColumnAlignCenterWrap>
       <ColumnIconWrap onClick={handleClickIcon}>
-        <Icon name="Request" color="var(--icon-fill)" size={16} />
+        <Icon name="Information" color="var(--icon-fill)" size={16} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
   );

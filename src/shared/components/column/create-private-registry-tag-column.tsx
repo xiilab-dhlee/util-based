@@ -1,27 +1,33 @@
-import { format } from "date-fns";
 import { Label, type ResponsiveColumnType } from "xiilab-ui";
 
-import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { PrivateRegistryTagAllCheck } from "@/domain/private-registry/components/detail/private-registry-tag-all-check";
-import { PrivateRegistryTagItemCheck } from "@/domain/private-registry/components/detail/private-registry-tag-item-check";
-import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import {
+  type ImageTagListResponse,
+  ImageTagListResponseApprovalStatus,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import {
+  formatDateSafely,
+  formatDateTimeSafely,
+} from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
-import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
+import { ViewRejectReasonButton } from "../button/view-reject-reason-button";
+import { ViewRequestReasonButton } from "../button/view-request-reason-button";
 import { VulnerabilityTooltip } from "../tooltip/vulnerability-tooltip";
+
+/** 승인 상태 텍스트 매핑 */
+const APPROVAL_STATUS_TEXT: Record<ImageTagListResponseApprovalStatus, string> =
+  {
+    [ImageTagListResponseApprovalStatus.REJECTED]: "반려",
+    [ImageTagListResponseApprovalStatus.APPROVAL_REQUIRED]: "승인 필요",
+    [ImageTagListResponseApprovalStatus.AVAILABLE]: "요청 가능",
+    [ImageTagListResponseApprovalStatus.APPROVAL_WAITING]: "승인 대기",
+    [ImageTagListResponseApprovalStatus.APPROVED]: "승인",
+    [ImageTagListResponseApprovalStatus.REQUEST_BLOCKED]: "요청 불가",
+  };
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
-    {
-      title: <PrivateRegistryTagAllCheck />,
-      dataIndex: "checkbox",
-      align: "center",
-      width: CHECKBOX_COLUMN_WIDTH,
-      render: (_, record: ImageTagListResponse) => {
-        return <PrivateRegistryTagItemCheck tag={record} />;
-      },
-    },
     {
       title: "태그",
       dataIndex: "imageTagName",
@@ -45,9 +51,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 90,
       render: () => {
         return (
-          <ColumnAlignCenterWrap>
+          <span>
             <Label variant="blue">완료</Label>
-          </ColumnAlignCenterWrap>
+          </span>
         );
       },
     },
@@ -58,17 +64,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 100,
       render: (scanStatus: string) => {
         if (!scanStatus) {
-          return (
-            <ColumnAlignCenterWrap>
-              <span>미검사</span>
-            </ColumnAlignCenterWrap>
-          );
+          return <span>-</span>;
         }
-        return (
-          <ColumnAlignCenterWrap>
-            <Label variant="blue">완료</Label>
-          </ColumnAlignCenterWrap>
-        );
+
+        return <Label variant="blue">완료</Label>;
       },
     },
     {
@@ -80,15 +79,23 @@ const createColumnList = (): ResponsiveColumnType[] => {
         const vuln = record.vulnerability;
         if (!vuln) return <span>-</span>;
         return (
-          <ColumnAlignCenterWrap>
+          <span>
             <VulnerabilityTooltip
               critical={vuln.criticalCount ?? 0}
               high={vuln.highCount ?? 0}
               medium={vuln.mediumCount ?? 0}
               low={vuln.lowCount ?? 0}
             />
-          </ColumnAlignCenterWrap>
+          </span>
         );
+      },
+    },
+    {
+      title: "사용/요청 상태",
+      dataIndex: "approvalStatus",
+      align: "center",
+      render: (approvalStatus: ImageTagListResponseApprovalStatus) => {
+        return <span>{APPROVAL_STATUS_TEXT[approvalStatus] ?? "-"}</span>;
       },
     },
     {
@@ -101,15 +108,38 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "생성일",
-      dataIndex: "createdAt",
+      dataIndex: "createDateTime",
       align: "center",
       render: (createdAt: string) => {
-        if (!createdAt) return <span>-</span>;
+        return <span>{formatDateSafely(createdAt, "yyyy.MM.dd")}</span>;
+      },
+    },
+    {
+      title: "최근 검사일시",
+      dataIndex: "latestVulnerabilityScanDateTime",
+      align: "center",
+      render: (latestVulnerabilityScanDateTime: string) => {
         return (
-          <ColumnAlignCenterWrap>
-            {format(createdAt, "yyyy.MM.dd")}
-          </ColumnAlignCenterWrap>
+          <span>{formatDateTimeSafely(latestVulnerabilityScanDateTime)}</span>
         );
+      },
+    },
+    {
+      dataIndex: "requestReason",
+      title: "요청 사유",
+      align: "center",
+      width: 70,
+      render: (requestReason: string) => {
+        return <ViewRequestReasonButton reason={requestReason} />;
+      },
+    },
+    {
+      dataIndex: "decisionReason",
+      title: "승인/반려 사유",
+      align: "center",
+      width: 100,
+      render: (decisionReason: string) => {
+        return <ViewRejectReasonButton reason={decisionReason} />;
       },
     },
   ];
