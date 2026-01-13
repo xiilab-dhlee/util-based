@@ -43,5 +43,5 @@ export function PrivateRegistryListAside() {
 }
 
 const StyledAsideDetailContainer = styled(AsideDetailContainer)`
-  padding: 16px 24px;
+  padding: 16px 24px 20px 24px;
 `;

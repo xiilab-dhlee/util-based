@@ -54,15 +54,6 @@ export function PrivateRegistryDetailIntroCard() {
           </DescriptionRowBody>
           <Description>{data?.imageDisplayName || "-"}</Description>
         </Row>
-        <DescriptionRow>
-          <DescriptionRowBody>
-            <RowIconWrapper>
-              <Icon name="Description" color="var(--icon-fill)" size={22} />
-            </RowIconWrapper>
-            <RowTitle>설명</RowTitle>
-          </DescriptionRowBody>
-          <Description>{"-"}</Description>
-        </DescriptionRow>
         <Row>
           <RowBody>
             <RowIconWrapper>
@@ -102,7 +93,7 @@ export function PrivateRegistryDetailIntroCard() {
  */
 const Container = styled.div`
   width: 100%;
-  height: 447px;
+  max-height: 447px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -148,14 +139,6 @@ const Row = styled.div`
   padding: 8px 10px;
   border-radius: 4px;
   overflow: hidden;
-`;
-
-/**
- * 설명 정보 행
- * 확장 가능한 높이를 가진 설명 전용 행
- */
-const DescriptionRow = styled(Row)`
-  flex: 1;
 `;
 
 /**
