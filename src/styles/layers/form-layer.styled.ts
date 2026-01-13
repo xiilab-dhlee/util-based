@@ -28,13 +28,13 @@ export const FormItem = styled.div`
  * 여러 폼 아이템을 가로로 배치할 때 사용합니다.
  *
  * 스타일 특징:
- * - 가로 방향 레이아웃으로 여러 입력 필드를 나란히 배치
+ * - CSS Grid 레이아웃으로 하위 요소를 1:1 비율로 배치
  * - 아이템 간 적절한 간격 제공
  * - 넘치는 내용은 숨김 처리
  */
 export const FormRow = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   overflow: hidden;
   width: 100%;
