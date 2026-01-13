@@ -34,6 +34,7 @@ export function SelectSearchedWorkload({
 
   const handleSearch = (value: string) => {
     setSearchText(value);
+    setCheckedWorkload(null);
   };
 
   const handleSearchKeywordChange = (
@@ -77,7 +78,7 @@ const Container = styled.div`
   background: white;
   border: 1px solid #e9e9e9;
   border-radius: 2px;
-  height: 404px;
+  height: 380px;
   margin-top: 4px;
   padding: 14px;
   overflow: hidden;
