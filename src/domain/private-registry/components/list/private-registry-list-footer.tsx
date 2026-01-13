@@ -50,7 +50,6 @@ export function PrivateRegistryListFooter({
         <ListDeleteButton
           onClick={handleClickDelete}
           disabled={selectedRegistries.size === 0}
-          isLoading={isLoading}
         />
       }
     />

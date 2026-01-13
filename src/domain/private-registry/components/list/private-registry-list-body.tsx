@@ -57,18 +57,22 @@ export function PrivateRegistryListBody({
           {
             dataIndex: "imageDisplayName",
             title: "컨테이너 이미지 이름",
-            sorter: true,
-            sortOrder: getColumnSortOrder(sort, "imageDisplayName"),
+            // TODO: 백엔드에서 개발 완료시 주석 해제
+            // sorter: true,
+            // sortOrder: getColumnSortOrder(sort, "imageDisplayName"),
+            align: "left",
             width: "20%",
+            ellipsis: true,
           },
           { dataIndex: "imageType", width: "20%" },
           { dataIndex: "recentImageTagAndCount", width: "20%" },
           { dataIndex: "downloadCount", width: "20%" },
           {
             dataIndex: "createdAt",
-            sorter: true,
-            sortOrder: getColumnSortOrder(sort, "createdAt"),
             width: "20%",
+            sorter: true,
+            align: "left",
+            sortOrder: getColumnSortOrder(sort, "createdAt"),
           },
         ])}
         data={data}

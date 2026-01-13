@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Button, Card } from "xiilab-ui";
 
@@ -11,32 +11,32 @@ import {
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
 import { MyDropdown } from "@/shared/components/dropdown";
-import { ROUTES } from "@/shared/constants/routes.constant";
+// import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { PrivateRegistryLogButton } from "./private-registry-log-button";
 
 type PrivateRegistryImageCardProps = PullPushJobResponse;
 
 export function PrivateRegistryImageCard({
-  imageId,
+  // imageId,
   imageName,
   imageTagName,
   status,
   createdAt,
 }: PrivateRegistryImageCardProps) {
-  const router = useRouter();
+  // const router = useRouter();
   const title = `${imageName || "-"}:${imageTagName || "-"}`;
 
-  const handleClick = () => {
-    router.push(ROUTES.USER_PRIVATE_REGISTRY_DETAIL(imageId));
-  };
+  // const handleClick = () => {
+  //   router.push(ROUTES.USER_PRIVATE_REGISTRY_DETAIL(imageId));
+  // };
 
   return (
     <Card
       contentVariant="compact"
       title={title}
       height={112}
-      onClick={handleClick}
+      // onClick={handleClick}
       actionElement={
         <MyDropdown
           placement="bottomRight"
