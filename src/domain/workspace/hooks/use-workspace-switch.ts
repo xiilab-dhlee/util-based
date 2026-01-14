@@ -4,7 +4,6 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import type { WorkspaceResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { getGetWorkspaceDetailQueryKey } from "@/api/generated/workspace/workspace";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import {
   getDynamicRouteBasePath,
@@ -29,19 +28,8 @@ export function useWorkspaceSwitch() {
     setStoredWorkspaceId(workspace.workspaceId);
   };
 
-  const invalidateAllCache = async (newWorkspaceId: number) => {
-    await queryClient.cancelQueries();
-    queryClient.removeQueries({
-      predicate: (query) => {
-        const newWorkspaceDetailKey =
-          getGetWorkspaceDetailQueryKey(newWorkspaceId);
-        const queryKeyStr = String(query.queryKey[0]);
-        const detailKeyStr = String(newWorkspaceDetailKey[0]);
-
-        // 새 워크스페이스의 detail 쿼리는 보존
-        return !queryKeyStr.includes(detailKeyStr);
-      },
-    });
+  const invalidateAllCache = () => {
+    queryClient.removeQueries();
   };
 
   const navigateAfterSwitch = () => {
@@ -56,7 +44,7 @@ export function useWorkspaceSwitch() {
     }
   };
 
-  const handleSelectWorkspace = async (workspace: WorkspaceResponse) => {
+  const handleSelectWorkspace = (workspace: WorkspaceResponse) => {
     if (selectedWorkspace?.workspaceId === workspace.workspaceId) {
       return false;
     }
@@ -65,13 +53,26 @@ export function useWorkspaceSwitch() {
 
     try {
       updateWorkspaceState(workspace);
-      await invalidateAllCache(workspace.workspaceId).catch(console.error);
-      navigateAfterSwitch();
-
-      return true;
-    } finally {
+    } catch (error) {
+      console.error("Workspace state update failed:", error);
       setIsLoading(false);
+      return false;
     }
+
+    try {
+      invalidateAllCache();
+    } catch (error) {
+      console.warn("Cache invalidation failed:", error);
+    }
+
+    try {
+      navigateAfterSwitch();
+    } catch (error) {
+      console.warn("Navigation failed:", error);
+    }
+
+    setIsLoading(false);
+    return true;
   };
 
   return {

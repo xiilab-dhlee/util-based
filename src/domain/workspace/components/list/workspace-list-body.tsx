@@ -1,13 +1,28 @@
 "use client";
 
-import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
+import { useAtom, useAtomValue } from "jotai";
+import type { TableProps } from "xiilab-ui";
+
+import type { AdminWorkspaceListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  WORKSPACE_SORT_FIELDS,
+  type WorkspaceSortField,
+} from "@/domain/workspace/constants/workspace.constant";
+import { useWorkspaceListReset } from "@/domain/workspace/hooks/use-workspace-list-reset";
+import {
+  workspaceCheckedListAtom,
+  workspaceSortAtom,
+} from "@/domain/workspace/state/workspace.atom";
 import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { SELECTOR } from "@/shared/constants/selector.constant";
+import { useTableSelection } from "@/shared/hooks/use-table-selection";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface WorkspaceListBodyProps {
   /** 워크스페이스 목록 데이터 */
-  content: WorkspaceListType[];
+  content: AdminWorkspaceListResponse[];
   /** 로딩 상태 */
   loading: boolean;
 }
@@ -24,27 +39,42 @@ export function WorkspaceListBody({
   content,
   loading,
 }: WorkspaceListBodyProps) {
+  const [checkedList, setCheckedList] = useAtom(workspaceCheckedListAtom);
+  const sort = useAtomValue(workspaceSortAtom);
+  const { resetForSort } = useWorkspaceListReset();
+
+  const { rowSelection } = useTableSelection<AdminWorkspaceListResponse>(
+    checkedList,
+    setCheckedList,
+  );
+
+  const handleChange: TableProps<AdminWorkspaceListResponse>["onChange"] = (
+    _,
+    __,
+    sorter,
+  ) => {
+    const parsed = parseSorterToAntdState<
+      AdminWorkspaceListResponse,
+      WorkspaceSortField
+    >(sorter, WORKSPACE_SORT_FIELDS);
+    if (!parsed.field || !parsed.order) return;
+
+    resetForSort({
+      field: parsed.field,
+      order: parsed.order,
+    });
+  };
+
   return (
-    <ListWrapper>
+    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
-        columns={createWorkspaceColumn([
-          { dataIndex: "checkbox" },
-          { dataIndex: "name" },
-          { dataIndex: "creatorName" },
-          { dataIndex: "creatorDate" },
-          { dataIndex: "gpu" },
-          { dataIndex: "gpuUsage" },
-          { dataIndex: "gpuQuota" },
-          { dataIndex: "cpu" },
-          { dataIndex: "cpuUsage" },
-          { dataIndex: "cpuQuota" },
-          { dataIndex: "mem" },
-          { dataIndex: "memUsage" },
-          { dataIndex: "memQuota" },
-        ])}
+        columns={createWorkspaceColumn(sort)}
         data={content}
-        columnHeight={40}
+        columnHeight={38}
         loading={loading}
+        rowKey="workspaceId"
+        rowSelection={rowSelection}
+        onChange={handleChange}
       />
     </ListWrapper>
   );
