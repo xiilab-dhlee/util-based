@@ -9,6 +9,7 @@
 
 import { delay, type HttpHandler } from "msw";
 
+import { getAdminWorkspaceMock } from "@/api/generated/admin-workspace/admin-workspace.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
@@ -98,6 +99,7 @@ const rawHandlers = [
   ...sourcecodeHandlers,
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),
+  ...getAdminWorkspaceMock(),
   ...groupHandlers,
   ...workspaceHandlers,
   ...requestImageHandlers,

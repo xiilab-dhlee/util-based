@@ -1,7 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
+import {
+  getGetAllWorkspaces1QueryKey,
+  useDeleteWorkspaces,
+} from "@/api/generated/admin-workspace/admin-workspace";
 import {
   getGetAllWorkspacesQueryKey,
   getGetResourceRequestsQueryKey,
@@ -23,6 +28,8 @@ import { useWorkspaceSwitch } from "@/domain/workspace/hooks/use-workspace-switc
 import {
   openLeaveWorkspaceModalAtom,
   openOwnerTransferRequiredModalAtom,
+  workspaceCheckedListAtom,
+  workspacePageAtom,
 } from "@/domain/workspace/state/workspace.atom";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { clearStoredWorkspaceId } from "@/shared/utils/storage/workspace-session-storage.util";
@@ -229,6 +236,31 @@ export function useCancelResourceRequestAction(
         queryClient.invalidateQueries({
           queryKey: getGetResourceRequestsQueryKey(variables.workspaceId),
         });
+        options?.mutation?.onSuccess?.(data, variables, ...rest);
+      },
+    },
+  });
+}
+
+export function useDeleteWorkspacesAction(
+  options?: Parameters<typeof useDeleteWorkspaces>[0],
+) {
+  const queryClient = useQueryClient();
+  const resetPage = useResetAtom(workspacePageAtom);
+  const resetCheckedList = useResetAtom(workspaceCheckedListAtom);
+
+  return useDeleteWorkspaces({
+    ...options,
+    mutation: {
+      ...options?.mutation,
+      onSuccess: (data, variables, ...rest) => {
+        resetCheckedList();
+        resetPage();
+
+        queryClient.invalidateQueries({
+          queryKey: getGetAllWorkspaces1QueryKey(),
+        });
+
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
     },

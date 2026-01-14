@@ -1,25 +1,32 @@
 "use client";
 
 import { useAtomValue } from "jotai";
+import { useEffect } from "react";
 import { Icon } from "xiilab-ui";
 
-import { CreateWorkspaceModal } from "@/domain/workspace/components/create-workspace-modal";
+import { useGetAllWorkspaces1 } from "@/api/generated/admin-workspace/admin-workspace";
+import type { WorkspaceSortRequest } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
+import { DeleteAdminWorkspacesModal } from "@/domain/workspace/components/list/delete-admin-workspaces-modal";
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/domain/workspace/components/list/workspace-list-footer";
-import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
+import {
+  DEFAULT_WORKSPACE_SORT_STATE,
+  WORKSPACE_SORT_FIELD_MAP,
+} from "@/domain/workspace/constants/workspace.constant";
+import { useWorkspaceListReset } from "@/domain/workspace/hooks/use-workspace-list-reset";
 import {
   workspacePageAtom,
   workspaceSearchTextAtom,
+  workspaceSortAtom,
 } from "@/domain/workspace/state/workspace.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 import {
   ListPageAside,
   ListPageBody,
@@ -64,23 +71,42 @@ const GUIDES: CoreGuide[] = [
   },
 ];
 
-export function WorkspaceListMain() {
-  const { onOpen } = useGlobalModal(openCreateWorkspaceModalAtom);
+const DEFAULT_SORT_REQUEST: WorkspaceSortRequest = buildSortRequest({
+  state: DEFAULT_WORKSPACE_SORT_STATE,
+  fieldMap: WORKSPACE_SORT_FIELD_MAP,
+}) ?? {
+  sort: WORKSPACE_SORT_FIELD_MAP.workspaceName,
+  order: "ASC",
+};
 
-  // Atom 상태 읽기
+export function WorkspaceListMain() {
   const page = useAtomValue(workspacePageAtom);
   const searchText = useAtomValue(workspaceSearchTextAtom);
+  const sort = useAtomValue(workspaceSortAtom);
 
-  // API 호출 (Main에서 한 번만 호출)
-  const { data, isLoading } = useGetWorkspaces({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
+  const { resetAll } = useWorkspaceListReset();
+
+  const sortRequest =
+    buildSortRequest({
+      state: sort,
+      fieldMap: WORKSPACE_SORT_FIELD_MAP,
+    }) ?? DEFAULT_SORT_REQUEST;
+
+  const { data, isLoading } = useGetAllWorkspaces1({
+    pageSearchRequest: {
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+      keyword: searchText || undefined,
+    },
+    sortRequest,
   });
 
-  const handleCreateWorkspace = () => {
-    onOpen();
-  };
+  const totalSize = data?.totalSize ?? 0;
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: resetAll 함수는 한 번만 호출되어야 함
+  useEffect(() => {
+    resetAll();
+  }, []);
 
   return (
     <>
@@ -97,16 +123,11 @@ export function WorkspaceListMain() {
             title="워크스페이스 관리"
             icon="Plus"
             description={[
-              "AstraGo에서는 목적에 맞는 워크스페이스를 생성해 관리할 수",
+              "AstraGo에서는 목적에 맞는 워크스페이스를 관리할 수",
               "있습니다. 생성된 워크스페이스를 확인하고 관리하세요.",
             ]}
             backgroundImageName="workload-intro-background.png"
             guides={GUIDES}
-            buttonOptions={{
-              enabled: true,
-              text: "워크스페이스 생성하기",
-              onClick: handleCreateWorkspace,
-            }}
           />
 
           {/* 워크스페이스 가이드 이미지 카드 */}
@@ -119,27 +140,20 @@ export function WorkspaceListMain() {
         {/* 워크스페이스 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           {/* 워크스페이스 목록 필터 */}
-          <WorkspaceListFilter
-            total={data?.totalSize || 0}
-            loading={isLoading}
-          />
+          <WorkspaceListFilter total={totalSize} loading={isLoading} />
           {/* 워크스페이스 목록 본문 */}
           <WorkspaceListBody
             content={data?.content || []}
             loading={isLoading}
           />
           {/* 워크스페이스 목록 페이지네이션 */}
-          <WorkspaceListFooter
-            total={data?.totalSize || 0}
-            loading={isLoading}
-            workspaces={data?.content || []}
-          />
+          <WorkspaceListFooter total={totalSize} loading={isLoading} />
         </ListPageBody>
       </ListPageMain>
       {/* 워크스페이스 삭제 모달 */}
       <DeleteWorkspaceModal />
-      {/* 워크스페이스 생성 모달 */}
-      <CreateWorkspaceModal />
+      {/* 관리자용 워크스페이스 일괄 삭제 모달 */}
+      <DeleteAdminWorkspacesModal />
     </>
   );
 }
