@@ -8,7 +8,7 @@ import { Modal } from "xiilab-ui";
 
 import {
   getGetPrivateImageTagListQueryKey,
-  useDeleteImageTags1,
+  useDeletePrivateImageTags,
 } from "@/api/generated/private-registry/private-registry";
 import { openDeletePrivateRegistryTagModalAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -28,7 +28,7 @@ export function DeletePrivateRegistryTagModal() {
 
   const queryClient = useQueryClient();
 
-  const { mutate: deleteImageTags, isPending } = useDeleteImageTags1();
+  const { mutate: deleteImageTags, isPending } = useDeletePrivateImageTags();
 
   const handleOk = () => {
     if (deleteTags.length === 0) {
@@ -80,7 +80,7 @@ export function DeletePrivateRegistryTagModal() {
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >
-      <div>개인 레지스트리 이미지의 선택된 태그를 삭제합니다.</div>
+      <div>선택된 태그를 삭제합니다.</div>
       <div>정말 삭제하시겠습니까?</div>
     </Modal>
   );

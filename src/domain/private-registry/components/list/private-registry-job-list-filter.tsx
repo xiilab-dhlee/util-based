@@ -3,15 +3,19 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
-import { Input } from "xiilab-ui";
+import { Dropdown, Input } from "xiilab-ui";
 
+import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
 import {
-  pullPushJobPageAtom,
-  pullPushJobSearchKeywordAtom,
-  pullPushJobSearchTextAtom,
+  imageJobImageSourceTypeAtom,
+  imageJobPageAtom,
+  imageJobSearchKeywordAtom,
+  imageJobSearchTextAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface PrivateRegistryJobListFilterProps {
@@ -23,11 +27,12 @@ export function PrivateRegistryJobListFilter({
   totalSize,
   loading,
 }: PrivateRegistryJobListFilterProps) {
-  const [searchKeyword, setSearchKeyword] = useAtom(
-    pullPushJobSearchKeywordAtom,
+  const [searchKeyword, setSearchKeyword] = useAtom(imageJobSearchKeywordAtom);
+  const [imageSourceType, setImageSourceType] = useAtom(
+    imageJobImageSourceTypeAtom,
   );
-  const setSearchText = useSetAtom(pullPushJobSearchTextAtom);
-  const resetPage = useResetAtom(pullPushJobPageAtom);
+  const setSearchText = useSetAtom(imageJobSearchTextAtom);
+  const resetPage = useResetAtom(imageJobPageAtom);
 
   const handleSearch = (value: string) => {
     resetPage();
@@ -38,6 +43,13 @@ export function PrivateRegistryJobListFilter({
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setSearchKeyword(e.target.value);
+  };
+
+  const handleImageSourceTypeChange = (
+    value: GetPrivateRegistryListImageSourceType | "",
+  ) => {
+    resetPage();
+    setImageSourceType(value || undefined);
   };
 
   return (
@@ -60,13 +72,22 @@ export function PrivateRegistryJobListFilter({
       total={totalSize}
       totalCountTestId={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_TOTAL_COUNT}
     >
+      <Dropdown
+        options={[ALL_OPTION, ...IMAGE_SOURCE_TYPE_OPTIONS]}
+        value={imageSourceType ?? ""}
+        onChange={handleImageSourceTypeChange}
+        placeholder="구분"
+        width={100}
+        height={30}
+        disabled={loading}
+      />
       <Input.Search
         name="search"
         placeholder="컨테이너 이미지를 검색해 주세요."
         onSearch={handleSearch}
         onChange={handleSearchKeywordChange}
         autoComplete="off"
-        width={220}
+        width={240}
         height={30}
         disabled={loading}
         value={searchKeyword}

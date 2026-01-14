@@ -1,6 +1,6 @@
 "use client";
 
-import type { PrivateRegistryType } from "@/domain/private-registry/constants/private-registry.constant";
+import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 
 // =============================================================================
@@ -9,7 +9,7 @@ import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 
 interface PrivateRegistryTypeCardProps {
   /** 선택할 구분 타입 (SNAPSHOT 또는 EXTERNAL) */
-  type: PrivateRegistryType;
+  type: GetPrivateRegistryListImageSourceType;
   onClick: () => void;
 }
 
@@ -18,7 +18,7 @@ interface PrivateRegistryTypeCardProps {
 // =============================================================================
 
 const CARD_DATA: Record<
-  PrivateRegistryType,
+  GetPrivateRegistryListImageSourceType,
   {
     from: string;
     title: string;

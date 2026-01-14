@@ -97,6 +97,7 @@ export const privateRegistryTagListOverrideHandlers = [
             "IN_PROGRESS",
             null,
           ]),
+          hasMetadata: true,
         } as ImageTagListResponse;
       },
     );

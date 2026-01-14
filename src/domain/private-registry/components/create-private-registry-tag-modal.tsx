@@ -8,7 +8,7 @@ import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import {
   getGetPrivateImageTagListQueryKey,
-  useAddImageTag1,
+  useAddPrivateImageTag,
 } from "@/api/generated/private-registry/private-registry";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
 import {
@@ -37,23 +37,12 @@ export function CreatePrivateRegistryTagModal() {
     mode: "onChange",
   });
 
-  const { mutate: addImageTag, isPending } = useAddImageTag1();
+  const { mutate: addImageTag, isPending } = useAddPrivateImageTag();
 
   const onSubmit = (data: CreatePrivateRegistryTagFormType) => {
-    if (!harborImageName) {
-      toast.error("이미지 정보를 찾을 수 없습니다.");
-      return;
-    }
-
     addImageTag(
       {
-        data: {
-          harborImageName,
-          imageTagName: data.imageTagName,
-          registryChannel: "NGC", // 이후 제거
-          credentialId: data.credentialId,
-          description: data.description,
-        },
+        data,
       },
       {
         onSuccess: () => {

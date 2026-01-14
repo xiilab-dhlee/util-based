@@ -63,24 +63,20 @@ export function PrivateRegistryDetailBody({
     <ListWrapper>
       <CustomizedTable
         columns={createPrivateRegistryTagColumn([
-          { dataIndex: "imageTagName", ellipsis: true },
+          { key: "imageTagName", ellipsis: true },
+          { key: "imageTagSizeByte" },
+          { key: "scanStatus" },
+          { key: "vulnerability" },
+          { key: "creatorName" },
           {
-            dataIndex: "imageTagSizeByte",
-          },
-          { dataIndex: "scanStatus" },
-          {
-            dataIndex: "vulnerability",
-          },
-          { dataIndex: "creatorName" },
-          {
-            dataIndex: "createDateTime",
+            key: "createDateTime",
             title: "생성날짜",
             align: "left",
             sorter: true,
             sortOrder: getColumnSortOrder(sort, "createdAt"),
           },
           {
-            dataIndex: "latestVulnerabilityScanDateTime",
+            key: "latestVulnerabilityScanDateTime",
             align: "left",
             sorter: true,
             sortOrder: getColumnSortOrder(
@@ -88,15 +84,9 @@ export function PrivateRegistryDetailBody({
               "latestVulnerabilityScanDateTime",
             ),
           },
-          {
-            dataIndex: "approvalStatus",
-          },
-          {
-            dataIndex: "requestReason",
-          },
-          {
-            dataIndex: "decisionReason",
-          },
+          { key: "approvalStatus" },
+          { key: "requestReason" },
+          { key: "decisionReason" },
         ])}
         activePadding
         data={data}

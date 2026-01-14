@@ -1,12 +1,12 @@
 "use client";
 
-// import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Button, Card } from "xiilab-ui";
 
-import type { PullPushJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { PrivateRegistryLogButton } from "@/domain/private-registry/components/list/private-registry-log-button";
-import { PRIVATE_REGISTRY_JOB_CARD_HEIGHT } from "@/domain/private-registry/constants/private-registry.constant";
+import type { ImageJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { PrivateRegistryLogButton } from "@/domain/private-registry/components/list/private-registry-job-log-button";
+import { PrivateRegistryJobRestartButton } from "@/domain/private-registry/components/list/private-registry-job-restart-button";
+import { PrivateRegistryJobStopButton } from "@/domain/private-registry/components/list/private-registry-job-stop-button";
 import {
   CompactCardKey,
   CompactCardKeyValueRow,
@@ -14,36 +14,39 @@ import {
 } from "@/shared/components/card/compact-card-layer.styled";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
-// import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 
-type PrivateRegistryImageCardProps = PullPushJobResponse;
+type PrivateRegistryImageCardProps = ImageJobResponse;
 
 export function PrivateRegistryImageCard({
-  // imageId,
+  imageTagId,
   imageName,
   imageTagName,
   status,
   createdAt,
 }: PrivateRegistryImageCardProps) {
-  // const router = useRouter();
   const title = `${imageName || "-"}:${imageTagName || "-"}`;
-
-  // const handleClick = () => {
-  //   router.push(ROUTES.USER_PRIVATE_REGISTRY_DETAIL(imageId));
-  // };
 
   return (
     <CardWrapper data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CARD}>
       <Card
         contentVariant="compact"
         title={title}
-        height={PRIVATE_REGISTRY_JOB_CARD_HEIGHT}
-        // onClick={handleClick}
+        height="100%"
         actionElement={
           <MyDropdown
             placement="bottomRight"
-            items={[<PrivateRegistryLogButton key="log" />]}
+            items={[
+              <PrivateRegistryJobRestartButton
+                key="restart"
+                imageTagId={imageTagId}
+              />,
+              <PrivateRegistryJobStopButton
+                key="stop"
+                imageTagId={imageTagId}
+              />,
+              <PrivateRegistryLogButton key="log" />,
+            ]}
           >
             <Button width="100%" variant="outlined" icon="MoreHorizonal" />
           </MyDropdown>
@@ -82,12 +85,15 @@ export function PrivateRegistryImageCard({
   );
 }
 
-const CardWrapper = styled.div``;
+const CardWrapper = styled.div`
+  flex: 1;
+`;
 
 const Body = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  height: 100%;
 `;
 
 const Pane = styled.div`

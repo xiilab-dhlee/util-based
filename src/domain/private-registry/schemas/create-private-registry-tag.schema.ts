@@ -11,7 +11,7 @@ import { z } from "zod";
  * 참고: harborImageName은 PubSub을 통해 전달받음
  */
 export const createPrivateRegistryTagSchema = z.object({
-  harborImageName: z.string().describe("Harbor 이미지 경로"),
+  harborImageName: z.string(),
   imageTagName: z
     .string()
     .min(1, "태그를 입력해 주세요.")

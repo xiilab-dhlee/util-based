@@ -2,10 +2,11 @@
 
 import { useParams } from "next/navigation";
 import styled from "styled-components";
-import { Icon, Label } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
 import { useGetPrivateImageTagDetail } from "@/api/generated/private-registry/private-registry";
 import { SecurityLevelCard } from "@/domain/private-registry/components/tag/security-level-card";
+import { ScanStatusText } from "@/shared/components/text/scan-status-text";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
@@ -69,13 +70,7 @@ export function PrivateRegistryTagIntroCard({
             <RowTitle>
               <RowKey>보안 검사 상태 :</RowKey>
               <RowValue>
-                {data?.scanStatus === "SCANNED" ? (
-                  <Label variant="blue" theme="dark">
-                    완료
-                  </Label>
-                ) : (
-                  <span>-</span>
-                )}
+                <ScanStatusText status={data?.scanStatus} />
               </RowValue>
             </RowTitle>
           </RowBody>

@@ -6,7 +6,7 @@ import { Modal } from "xiilab-ui";
 
 import {
   getGetPrivateRegistryListQueryKey,
-  useDeleteImages,
+  useDeletePrivateImages,
 } from "@/api/generated/private-registry/private-registry";
 import { openDeletePrivateRegistryModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -22,7 +22,7 @@ export function DeletePrivateRegistryModal() {
   const [deleteRegistries, setDeleteRegistries] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
-  const { mutate: deleteImages, isPending } = useDeleteImages();
+  const { mutate: deleteImages, isPending } = useDeletePrivateImages();
 
   const handleOk = () => {
     if (deleteRegistries.length === 0) {

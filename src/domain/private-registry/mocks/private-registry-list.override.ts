@@ -1,9 +1,11 @@
 import { faker } from "@faker-js/faker";
 
 import {
+  GetPrivateRegistryListImageSourceType,
   GetPrivateRegistryListOrder,
   GetPrivateRegistryListSort,
   type RegistryListResponse,
+  type RegistryListResponseImageSourceType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateRegistryListMockHandler,
@@ -65,6 +67,18 @@ function generateCreatedAt(
   return new Date(baseTimestamp - index * DAY_IN_MS).toISOString();
 }
 
+/**
+ * 인덱스에 따른 이미지 소스 타입 생성
+ * 짝수: SNAPSHOT, 홀수: EXTERNAL
+ */
+function generateImageSourceType(
+  index: number,
+): RegistryListResponseImageSourceType {
+  return index % 2 === 0
+    ? GetPrivateRegistryListImageSourceType.SNAPSHOT
+    : GetPrivateRegistryListImageSourceType.EXTERNAL;
+}
+
 export const privateRegistryListOverrideHandlers = [
   getGetPrivateRegistryListMockHandler(async (info) => {
     const url = new URL(info.request.url);
@@ -78,8 +92,16 @@ export const privateRegistryListOverrideHandlers = [
       url.searchParams.get("sort") || GetPrivateRegistryListSort.CREATED_AT;
     const order =
       url.searchParams.get("order") || GetPrivateRegistryListOrder.DESC;
+    const imageSourceType = url.searchParams.get(
+      "imageSourceType",
+    ) as GetPrivateRegistryListImageSourceType | null;
 
-    const totalSize = pageSize * 3;
+    // 필터링이 있으면 해당 타입만, 없으면 전체
+    const baseTotalSize = pageSize * 3;
+    // 필터 적용 시 해당 타입의 절반 정도로 가정
+    const totalSize = imageSourceType
+      ? Math.ceil(baseTotalSize / 2)
+      : baseTotalSize;
 
     // 검색/정렬 관련 필드만 오버라이드, 나머지는 faker 원본 사용
     const content: RegistryListResponse[] = Array.from(
@@ -88,6 +110,11 @@ export const privateRegistryListOverrideHandlers = [
         const globalIndex = pageNo * pageSize + index;
         const baseItem =
           getGetPrivateRegistryListResponseMock().data?.content?.[0];
+
+        // 필터가 적용된 경우 해당 타입만, 아니면 인덱스 기반 타입
+        const itemImageSourceType = imageSourceType
+          ? imageSourceType
+          : generateImageSourceType(globalIndex);
 
         return {
           ...baseItem,
@@ -101,6 +128,7 @@ export const privateRegistryListOverrideHandlers = [
           createdAt: generateCreatedAt(globalIndex, sort, order),
           downloadCount: faker.number.int({ min: 0, max: 10000 }),
           imageTagCount: faker.number.int({ min: 0, max: 10000 }),
+          imageSourceType: itemImageSourceType,
         } as RegistryListResponse;
       },
     );

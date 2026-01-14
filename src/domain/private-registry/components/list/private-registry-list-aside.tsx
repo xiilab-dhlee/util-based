@@ -3,26 +3,39 @@
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { useGetPullPushJobs1 } from "@/api/generated/private-registry/private-registry";
+import { useGetImageJobs } from "@/api/generated/image-job/image-job";
 import { PrivateRegistryJobListBody } from "@/domain/private-registry/components/list/private-registry-job-list-body";
 import { PrivateRegistryJobListFilter } from "@/domain/private-registry/components/list/private-registry-job-list-filter";
 import { PrivateRegistryJobListFooter } from "@/domain/private-registry/components/list/private-registry-job-list-footer";
 import { PRIVATE_REGISTRY_JOB_PAGE_SIZE } from "@/domain/private-registry/constants/private-registry.constant";
 import {
-  pullPushJobPageAtom,
-  pullPushJobSearchTextAtom,
+  imageJobImageSourceTypeAtom,
+  imageJobPageAtom,
+  imageJobSearchTextAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 
 export function PrivateRegistryListAside() {
-  const page = useAtomValue(pullPushJobPageAtom);
-  const searchText = useAtomValue(pullPushJobSearchTextAtom);
+  const page = useAtomValue(imageJobPageAtom);
+  const searchText = useAtomValue(imageJobSearchTextAtom);
+  const imageSourceType = useAtomValue(imageJobImageSourceTypeAtom);
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
-  const { data, isLoading, isError } = useGetPullPushJobs1({
-    keyword: searchText,
-    pageNo: page - 1,
-    pageSize: PRIVATE_REGISTRY_JOB_PAGE_SIZE,
-  });
+  const { data, isLoading, isError } = useGetImageJobs(
+    {
+      keyword: searchText,
+      pageNo: page - 1,
+      pageSize: PRIVATE_REGISTRY_JOB_PAGE_SIZE,
+      imageType: "PRIVATE",
+      imageSourceType,
+    },
+    {
+      query: {
+        enabled: !!selectedWorkspace?.workspaceId,
+      },
+    },
+  );
 
   return (
     <StyledAsideDetailContainer>

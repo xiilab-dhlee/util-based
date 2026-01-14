@@ -21,6 +21,7 @@ import { VulnerabilityTooltip } from "../../../../shared/components/tooltip/vuln
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      key: "imageTagName",
       title: "태그",
       dataIndex: "imageTagName",
       align: "left",
@@ -29,6 +30,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "imageTagSizeByte",
       title: "이미지 크기",
       dataIndex: "imageTagSizeByte",
       align: "center",
@@ -37,6 +39,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "scanStatus",
       title: "보안 검사 상태",
       dataIndex: "scanStatus",
       align: "center",
@@ -45,6 +48,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "vulnerability",
       title: "보안 검사 결과",
       dataIndex: "vulnerability",
       align: "center",
@@ -64,6 +68,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "approvalStatus",
       title: "사용/요청 상태",
       dataIndex: "approvalStatus",
       align: "center",
@@ -76,6 +81,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "creatorName",
       title: "생성자",
       dataIndex: "creatorName",
       align: "center",
@@ -84,6 +90,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "createDateTime",
       title: "생성일",
       dataIndex: "createDateTime",
       align: "center",
@@ -92,6 +99,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "latestVulnerabilityScanDateTime",
       title: "최근 검사일시",
       dataIndex: "latestVulnerabilityScanDateTime",
       align: "center",
@@ -102,6 +110,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "requestReason",
       dataIndex: "requestReason",
       title: "요청 사유",
       align: "center",
@@ -110,6 +119,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "decisionReason",
       dataIndex: "decisionReason",
       title: "승인/반려 사유",
       align: "center",

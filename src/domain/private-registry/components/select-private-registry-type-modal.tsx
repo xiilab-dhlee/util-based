@@ -3,11 +3,9 @@
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
+import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { PrivateRegistryTypeCard } from "@/domain/private-registry/components/private-registry-type-card";
-import {
-  PRIVATE_REGISTRY_TYPE_OPTIONS,
-  type PrivateRegistryType,
-} from "@/domain/private-registry/constants/private-registry.constant";
+import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
 import { openSelectPrivateRegistryTypeModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -20,7 +18,7 @@ export function SelectPrivateRegistryTypeModal() {
     openSelectPrivateRegistryTypeModalAtom,
   );
 
-  const handleClickType = (type: PrivateRegistryType) => {
+  const handleClickType = (type: GetPrivateRegistryListImageSourceType) => {
     publish(PRIVATE_REGISTRY_EVENTS.sendType, type);
     onClose();
   };
@@ -38,7 +36,7 @@ export function SelectPrivateRegistryTypeModal() {
       centered
     >
       <Container>
-        {PRIVATE_REGISTRY_TYPE_OPTIONS.map((item) => (
+        {IMAGE_SOURCE_TYPE_OPTIONS.map((item) => (
           <PrivateRegistryTypeCard
             key={item.value}
             type={item.value}
@@ -51,8 +49,7 @@ export function SelectPrivateRegistryTypeModal() {
 }
 
 const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 `;

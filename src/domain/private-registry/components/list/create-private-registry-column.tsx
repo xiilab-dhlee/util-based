@@ -1,6 +1,9 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { RegistryListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  RegistryListResponse,
+  RegistryListResponseImageSourceType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
@@ -11,6 +14,7 @@ import { ColumnLink } from "@/styles/layers/column-layer.styled";
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      key: "imageDisplayName",
       dataIndex: "imageDisplayName",
       title: "이미지 이름",
       align: "left",
@@ -28,19 +32,24 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      dataIndex: "imageType",
+      key: "imageSourceType",
+      dataIndex: "imageSourceType",
       title: "구분",
       width: 100,
       align: "center",
-      render: () => {
+      render: (imageSourceType: RegistryListResponseImageSourceType) => {
         return (
-          <span data-testid={PRIVATE_REGISTRY_SELECTOR.IMAGE_TYPE}>
-            Snapshot
+          <span
+            style={{ textTransform: "capitalize" }}
+            data-testid={PRIVATE_REGISTRY_SELECTOR.IMAGE_TYPE}
+          >
+            {imageSourceType?.toLowerCase() ?? "-"}
           </span>
         );
       },
     },
     {
+      key: "recentImageTagAndCount",
       dataIndex: "recentImageTagAndCount",
       title: "최근 태그 / 개수",
       width: 100,
@@ -60,6 +69,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "downloadCount",
       dataIndex: "downloadCount",
       title: "다운로드 횟수",
       width: 100,
@@ -73,6 +83,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "createdAt",
       dataIndex: "createdAt",
       title: "생성일",
       align: "left",

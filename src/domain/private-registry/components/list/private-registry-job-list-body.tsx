@@ -3,17 +3,14 @@
 import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
-import type { PullPushJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { ImageJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { PrivateRegistryImageCard } from "@/domain/private-registry/components/list/private-registry-image-card";
-import {
-  PRIVATE_REGISTRY_JOB_CARD_HEIGHT,
-  PRIVATE_REGISTRY_JOB_PAGE_SIZE,
-} from "@/domain/private-registry/constants/private-registry.constant";
+import { PRIVATE_REGISTRY_JOB_PAGE_SIZE } from "@/domain/private-registry/constants/private-registry.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface PrivateRegistryJobListBodyProps {
-  data: PullPushJobResponse[];
+  data: ImageJobResponse[];
   isLoading: boolean;
   isError: boolean;
 }
@@ -28,11 +25,7 @@ export function PrivateRegistryJobListBody({
       <Container>
         {Array.from({ length: PRIVATE_REGISTRY_JOB_PAGE_SIZE }).map(
           (_, index) => (
-            <Card
-              key={`skeleton-${index}`}
-              loading
-              style={{ height: PRIVATE_REGISTRY_JOB_CARD_HEIGHT }}
-            />
+            <Card key={`skeleton-${index}`} loading style={{ flex: 1 }} />
           ),
         )}
       </Container>
@@ -69,5 +62,5 @@ const Container = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 `;

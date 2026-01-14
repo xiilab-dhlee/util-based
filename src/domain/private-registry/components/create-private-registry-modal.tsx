@@ -7,16 +7,14 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
+import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateRegistryListQueryKey,
-  useCreateExternalImage1,
+  useCreatePrivateExternalImage,
 } from "@/api/generated/private-registry/private-registry";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
 import { SelectSearchedWorkload } from "@/domain/internal-registry-image/components/list/select-searched-workload";
-import {
-  type PrivateRegistryType,
-  REGISTRY_CHANNEL_OPTIONS,
-} from "@/domain/private-registry/constants/private-registry.constant";
+import { REGISTRY_CHANNEL_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
 import {
   type CreatePrivateRegistryFormType,
   createPrivateRegistrySchema,
@@ -50,7 +48,7 @@ export function CreatePrivateRegistryModal() {
   // 폼에서 type 감시 (UI 분기용)
   const formType = watch("type");
 
-  const { mutate: createImage, isPending } = useCreateExternalImage1();
+  const { mutate: createImage, isPending } = useCreatePrivateExternalImage();
 
   const onSubmit = (data: CreatePrivateRegistryFormType) => {
     if (!selectedWorkspace) {
@@ -77,9 +75,6 @@ export function CreatePrivateRegistryModal() {
           });
           onClose();
         },
-        onError: () => {
-          toast.error("개인 레지스트리 이미지 생성에 실패했습니다.");
-        },
       },
     );
   };
@@ -87,7 +82,7 @@ export function CreatePrivateRegistryModal() {
   // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
   useSubscribe(
     PRIVATE_REGISTRY_EVENTS.sendType,
-    (type: PrivateRegistryType) => {
+    (type: GetPrivateRegistryListImageSourceType) => {
       // 폼 초기화 후 type 설정
       reset({
         type,
