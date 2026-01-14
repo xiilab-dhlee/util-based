@@ -63,6 +63,7 @@ export const updateAccountBody = zod
 export const updateAccountResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -96,6 +97,7 @@ export const updateAdminNotificationSetBody = zod
 export const updateAdminNotificationSetResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -123,6 +125,7 @@ export const updateAccountEnabledBody = zod
 export const updateAccountEnabledResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -152,6 +155,7 @@ export const rejectSignupRequestsBody = zod
 export const rejectSignupRequestsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalRequested: zod.number().describe("승인 요청한 총 계정 개수"),
@@ -206,6 +210,7 @@ export const approveSignupRequestsBody = zod
 export const approveSignupRequestsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalRequested: zod.number().describe("승인 요청한 총 계정 개수"),
@@ -247,6 +252,7 @@ export const resetPasswordByAdminParams = zod.object({
 export const resetPasswordByAdminResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         newPassword: zod
@@ -287,6 +293,7 @@ export const deleteAccountBody = zod
 export const deleteAccountResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalRequested: zod.number().describe("삭제 요청한 총 계정 개수"),
@@ -350,6 +357,7 @@ export const getAllAccountsQueryParams = zod.object({
 export const getAllAccountsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -408,6 +416,7 @@ export const getAdminNotificationSetsParams = zod.object({
 export const getAdminNotificationSetsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
@@ -454,6 +463,7 @@ export const getAccountDetailParams = zod.object({
 export const getAccountDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         accountId: zod
@@ -521,6 +531,7 @@ export const getSignupRequestsQueryParams = zod.object({
 export const getSignupRequestsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),

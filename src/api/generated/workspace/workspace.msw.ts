@@ -45,6 +45,7 @@ export const getUpdateWorkspaceResponseMock = (
   overrideResponse: Partial<BaseResponseWorkspaceResponse> = {},
 ): BaseResponseWorkspaceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     workspaceId: faker.number.int({ min: undefined, max: undefined }),
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -63,6 +64,7 @@ export const getSetDefaultWorkspaceResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -72,6 +74,7 @@ export const getGetAllWorkspacesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseWorkspaceResponse> = {},
 ): BaseResponsePageResponseWorkspaceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -98,6 +101,7 @@ export const getCreateWorkspaceResponseMock = (
   overrideResponse: Partial<BaseResponseWorkspaceResponse> = {},
 ): BaseResponseWorkspaceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     workspaceId: faker.number.int({ min: undefined, max: undefined }),
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -116,6 +120,7 @@ export const getGetResourceRequestsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseResourceRequestListResponse> = {},
 ): BaseResponsePageResponseResourceRequestListResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -181,6 +186,7 @@ export const getCreateResourceRequestResponseMock = (
   overrideResponse: Partial<BaseResponseResourceRequestResponse> = {},
 ): BaseResponseResourceRequestResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     resourceRequestId: faker.number.int({ min: undefined, max: undefined }),
     workspaceId: faker.number.int({ min: undefined, max: undefined }),
@@ -230,6 +236,7 @@ export const getGetWorkspaceDetailResponseMock = (
   overrideResponse: Partial<BaseResponseWorkspaceDetailResponse> = {},
 ): BaseResponseWorkspaceDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -245,6 +252,7 @@ export const getGetDefaultResourceResponseMock = (
   overrideResponse: Partial<BaseResponseDefaultResourceResponse> = {},
 ): BaseResponseDefaultResourceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     resource: {
       gpu: {

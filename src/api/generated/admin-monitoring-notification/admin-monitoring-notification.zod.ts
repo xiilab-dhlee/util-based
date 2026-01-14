@@ -124,6 +124,7 @@ export const updateMonitoringNotificationSetBody = zod
 export const updateMonitoringNotificationSetResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -183,6 +184,7 @@ export const updateMonitoringNotificationSetEnabledBody = zod
 export const updateMonitoringNotificationSetEnabledResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -213,6 +215,7 @@ export const getAllMonitoringNotificationSetsQueryParams = zod.object({
 export const getAllMonitoringNotificationSetsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -390,6 +393,7 @@ export const getAllMonitoringNotificationHistoriesQueryParams = zod.object({
 export const getAllMonitoringNotificationHistoriesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -445,6 +449,7 @@ export const getSendHistoryParams = zod.object({
 export const getSendHistoryResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
@@ -497,6 +502,7 @@ export const getMonitoringNotificationHistoryDetailParams = zod.object({
 export const getMonitoringNotificationHistoryDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         nodeName: zod.string().describe("노드 이름"),
@@ -557,6 +563,7 @@ export const getMonitoringNotificationSetDetailParams = zod.object({
 export const getMonitoringNotificationSetDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         notificationSetId: zod.number().describe("알림 설정 ID"),

@@ -55,6 +55,7 @@ export const getAllCredentialsQueryParams = zod.object({
 export const getAllCredentialsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -65,7 +66,7 @@ export const getAllCredentialsResponse = zod
             .object({
               credentialId: zod.number().describe("크리덴셜 ID"),
               credentialChannel: zod
-                .enum(["GIT", "DOCKER"])
+                .enum(["GIT", "DOCKER", "NGC"])
                 .describe("크리덴셜 채널"),
               credentialType: zod
                 .enum(["IMAGE", "SOURCE_CODE"])
@@ -73,7 +74,9 @@ export const getAllCredentialsResponse = zod
               credentialName: zod.string().describe("크리덴셜 이름"),
               description: zod.string().optional().describe("크리덴셜 설명"),
               createDateTime: zod.string().datetime({}).describe("생성일시"),
-              creatorName: zod.string().describe("생성자 이름"),
+              creatorName: zod
+                .string()
+                .describe("생성자 이름 (삭제된 계정이면 빈 문자열)"),
               creatorId: zod.string().describe("생성자 ID"),
             })
             .strict()

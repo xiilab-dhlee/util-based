@@ -45,6 +45,7 @@ export const getUpdateWorkspaceResourceResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -54,6 +55,7 @@ export const getGetPolicySetResponseMock = (
   overrideResponse: Partial<BaseResponseAdminPolicySetResponse> = {},
 ): BaseResponseAdminPolicySetResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     resource: {
       gpu: {
@@ -85,6 +87,7 @@ export const getUpdatePolicySetResponseMock = (
   overrideResponse: Partial<BaseResponseAdminPolicySetResponse> = {},
 ): BaseResponseAdminPolicySetResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     resource: {
       gpu: {
@@ -116,6 +119,7 @@ export const getGetAllWorkspaces1ResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminWorkspaceListResponse> = {},
 ): BaseResponsePageResponseAdminWorkspaceListResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -198,6 +202,7 @@ export const getGetWorkspaceMembers1ResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminWorkspaceMemberResponse> = {},
 ): BaseResponsePageResponseAdminWorkspaceMemberResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -228,6 +233,7 @@ export const getGetWorkspaceDetail1ResponseMock = (
   overrideResponse: Partial<BaseResponseAdminWorkspaceDetailResponse> = {},
 ): BaseResponseAdminWorkspaceDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     workspaceId: faker.number.int({ min: undefined, max: undefined }),
     workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -286,6 +292,7 @@ export const getGetResourceRequests1ResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminResourceRequestListResponse> = {},
 ): BaseResponsePageResponseAdminResourceRequestListResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -353,6 +360,7 @@ export const getGetResourceRequestDetailResponseMock = (
   overrideResponse: Partial<BaseResponseAdminResourceRequestDetailResponse> = {},
 ): BaseResponseAdminResourceRequestDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     workspaceId: faker.number.int({ min: undefined, max: undefined }),
     workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),

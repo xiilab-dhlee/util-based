@@ -77,6 +77,7 @@ export const getWorkloadResourceMetricsTimeseriesQueryParams = zod.object({
 export const getWorkloadResourceMetricsTimeseriesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
@@ -163,6 +164,7 @@ export const getResourceMetricsTimeseriesQueryParams = zod.object({
 export const getResourceMetricsTimeseriesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod

@@ -36,6 +36,7 @@ import * as zod from "zod";
 export const getLicensesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
@@ -74,6 +75,7 @@ export const createLicenseBody = zod
 export const getLatestLicenseResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         licenseId: zod.number().describe("라이센스 ID"),

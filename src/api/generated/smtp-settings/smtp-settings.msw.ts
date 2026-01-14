@@ -37,6 +37,7 @@ export const getGetSmtpSetResponseMock = (
   overrideResponse: Partial<BaseResponseSmtpSetResponse> = {},
 ): BaseResponseSmtpSetResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     smtpSetId: faker.number.int({ min: undefined, max: undefined }),
     host: faker.string.alpha({ length: { min: 10, max: 20 } }),

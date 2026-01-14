@@ -41,6 +41,7 @@ export const getGetLicensesResponseMock = (
   overrideResponse: Partial<BaseResponseListLicenseListResponse> = {},
 ): BaseResponseListLicenseListResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
@@ -60,6 +61,7 @@ export const getCreateLicenseResponseMock = (
   overrideResponse: Partial<BaseResponseLicenseCreateResponse> = {},
 ): BaseResponseLicenseCreateResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     licenseId: faker.number.int({ min: undefined, max: undefined }),
     version: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -77,6 +79,7 @@ export const getGetLatestLicenseResponseMock = (
   overrideResponse: Partial<BaseResponseLicenseLatestResponse> = {},
 ): BaseResponseLicenseLatestResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     licenseId: faker.number.int({ min: undefined, max: undefined }),
     version: faker.string.alpha({ length: { min: 10, max: 20 } }),

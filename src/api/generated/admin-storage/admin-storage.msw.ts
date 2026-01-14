@@ -41,6 +41,7 @@ export const getGetStorageDetailResponseMock = (
   overrideResponse: Partial<BaseResponseStorageResponse> = {},
 ): BaseResponseStorageResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     storageId: faker.number.int({ min: undefined, max: undefined }),
     storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -60,6 +61,7 @@ export const getUpdateStorageResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -69,6 +71,7 @@ export const getGetStoragesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseStorageResponse> = {},
 ): BaseResponsePageResponseStorageResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -96,6 +99,7 @@ export const getRegisterStorageResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,

@@ -32,13 +32,23 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-  BaseResponseListHubSummaryResponse,
-  BaseResponsePageResponseFindHubsResponse,
+  BaseResponsePageResponseImageJobResponse,
+  BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getFindHubsResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseFindHubsResponse> = {},
-): BaseResponsePageResponseFindHubsResponse => ({
+export const getRestartImageJobResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetImageJobsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseImageJobResponse> = {},
+): BaseResponsePageResponseImageJobResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
@@ -49,11 +59,14 @@ export const getFindHubsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      hubId: faker.number.int({ min: undefined, max: undefined }),
-      hubName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      modelType: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      description: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      thumbnail: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -61,37 +74,46 @@ export const getFindHubsResponseMock = (
   ...overrideResponse,
 });
 
-export const getFindHubDetailResponseMock = (): string => faker.word.sample();
-
-export const getFindHubSummariesResponseMock = (
-  overrideResponse: Partial<BaseResponseListHubSummaryResponse> = {},
-): BaseResponseListHubSummaryResponse => ({
-  status: "SUCCESS",
-  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    hubId: faker.number.int({ min: undefined, max: undefined }),
-    hubName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  })),
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getFindHubsMockHandler = (
+export const getRestartImageJobMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseFindHubsResponse
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/registries/image-jobs/image-tags/:imageTagId/restart",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getRestartImageJobResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetImageJobsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseImageJobResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseFindHubsResponse>
-        | BaseResponsePageResponseFindHubsResponse),
+        | Promise<BaseResponsePageResponseImageJobResponse>
+        | BaseResponsePageResponseImageJobResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/hubs",
+    "*/api/v1/registries/image-jobs",
     async (info) => {
       await delay(1000);
 
@@ -101,7 +123,7 @@ export const getFindHubsMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getFindHubsResponseMock(),
+            : getGetImageJobsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -110,65 +132,28 @@ export const getFindHubsMockHandler = (
   );
 };
 
-export const getFindHubDetailMockHandler = (
+export const getDeleteImageJobMockHandler = (
   overrideResponse?:
-    | string
+    | void
     | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<string> | string),
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
   options?: RequestHandlerOptions,
 ) => {
-  return http.get(
-    "*/api/v1/hubs/:hubId/detail",
+  return http.delete(
+    "*/api/v1/registries/image-jobs/image-tags/:imageTagId",
     async (info) => {
       await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getFindHubDetailResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
     },
     options,
   );
 };
-
-export const getFindHubSummariesMockHandler = (
-  overrideResponse?:
-    | BaseResponseListHubSummaryResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponseListHubSummaryResponse>
-        | BaseResponseListHubSummaryResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/hubs/summary",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getFindHubSummariesResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-export const getHubMock = () => [
-  getFindHubsMockHandler(),
-  getFindHubDetailMockHandler(),
-  getFindHubSummariesMockHandler(),
+export const getImageJobMock = () => [
+  getRestartImageJobMockHandler(),
+  getGetImageJobsMockHandler(),
+  getDeleteImageJobMockHandler(),
 ];
