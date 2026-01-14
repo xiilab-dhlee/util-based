@@ -43,7 +43,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponsePageResponseCredentialListItemResponse,
+  BaseResponsePageResponseAdminCredentialListItemResponse,
   GetAllCredentialsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -55,12 +55,14 @@ export const getAllCredentials = (
   params?: GetAllCredentialsParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponsePageResponseCredentialListItemResponse>({
-    url: `/api/v1/admin/accounts/credentials`,
-    method: "GET",
-    params,
-    signal,
-  });
+  return customInstance<BaseResponsePageResponseAdminCredentialListItemResponse>(
+    {
+      url: `/api/v1/admin/accounts/credentials`,
+      method: "GET",
+      params,
+      signal,
+    },
+  );
 };
 
 export const getGetAllCredentialsQueryKey = (

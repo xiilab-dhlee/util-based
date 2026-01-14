@@ -38,23 +38,24 @@ import * as zod from "zod";
         
  * @summary 공용 이미지 삭제
  */
-export const deleteImages1BodyHarborImageNamesMin = 0;
-export const deleteImages1BodyHarborImageNamesMax = 20;
+export const deleteImagesBodyHarborImageNamesMin = 0;
+export const deleteImagesBodyHarborImageNamesMax = 20;
 
-export const deleteImages1Body = zod
+export const deleteImagesBody = zod
   .object({
     harborImageNames: zod
       .array(zod.string())
-      .min(deleteImages1BodyHarborImageNamesMin)
-      .max(deleteImages1BodyHarborImageNamesMax)
+      .min(deleteImagesBodyHarborImageNamesMin)
+      .max(deleteImagesBodyHarborImageNamesMax)
       .describe("삭제할 Harbor 이미지 경로 목록 (최대 20개)"),
   })
   .strict()
   .describe("이미지 삭제 요청");
 
-export const deleteImages1Response = zod
+export const deleteImagesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalRequested: zod.number().describe("총 요청 개수"),

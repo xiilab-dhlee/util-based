@@ -46,12 +46,174 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponsePageResponseStorageListResponse,
+  BaseResponsePageResponseStorageResponse,
+  BaseResponseStorageResponse,
   BaseResponseUnit,
   GetStoragesParams,
   StorageCreateRequest,
   StorageUpdateRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
+
+/**
+ * 스토리지의 상세 정보를 조회합니다.
+ * @summary 스토리지 상세 조회
+ */
+export const getStorageDetail = (storageId: number, signal?: AbortSignal) => {
+  return customInstance<BaseResponseStorageResponse>({
+    url: `/api/v1/admin/storages/${storageId}`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetStorageDetailQueryKey = (storageId?: number) => {
+  return [`/api/v1/admin/storages/${storageId}`] as const;
+};
+
+export const getGetStorageDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getStorageDetail>>,
+  TError = unknown,
+>(
+  storageId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getStorageDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetStorageDetailQueryKey(storageId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getStorageDetail>>
+  > = ({ signal }) => getStorageDetail(storageId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!storageId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getStorageDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetStorageDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getStorageDetail>>
+>;
+export type GetStorageDetailQueryError = unknown;
+
+export function useGetStorageDetail<
+  TData = Awaited<ReturnType<typeof getStorageDetail>>,
+  TError = unknown,
+>(
+  storageId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getStorageDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStorageDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getStorageDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetStorageDetail<
+  TData = Awaited<ReturnType<typeof getStorageDetail>>,
+  TError = unknown,
+>(
+  storageId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getStorageDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStorageDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getStorageDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetStorageDetail<
+  TData = Awaited<ReturnType<typeof getStorageDetail>>,
+  TError = unknown,
+>(
+  storageId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getStorageDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 스토리지 상세 조회
+ */
+
+export function useGetStorageDetail<
+  TData = Awaited<ReturnType<typeof getStorageDetail>>,
+  TError = unknown,
+>(
+  storageId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getStorageDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetStorageDetailQueryOptions(storageId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
 
 /**
  * 스토리지 이름을 수정합니다.
@@ -220,7 +382,7 @@ export const getStorages = (
   params?: GetStoragesParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponsePageResponseStorageListResponse>({
+  return customInstance<BaseResponsePageResponseStorageResponse>({
     url: `/api/v1/admin/storages`,
     method: "GET",
     params,

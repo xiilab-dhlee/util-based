@@ -37,21 +37,22 @@ import * as zod from "zod";
         
  * @summary 개인 이미지 태그 수정
  */
-export const updateImageTag1Params = zod.object({
+export const updatePrivateImageTagParams = zod.object({
   imageId: zod.number().describe("이미지 ID"),
   imageTagId: zod.number().describe("이미지 태그 ID"),
 });
 
-export const updateImageTag1Body = zod
+export const updatePrivateImageTagBody = zod
   .object({
     description: zod.string().optional().describe("태그 설명"),
   })
   .strict()
   .describe("이미지 태그 수정 요청");
 
-export const updateImageTag1Response = zod
+export const updatePrivateImageTagResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -87,11 +88,16 @@ export const getPrivateRegistryListQueryParams = zod.object({
     .optional()
     .describe("정렬 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  imageSourceType: zod
+    .enum(["SNAPSHOT", "EXTERNAL"])
+    .optional()
+    .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
 });
 
 export const getPrivateRegistryListResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -128,11 +134,10 @@ export const getPrivateRegistryListResponse = zod
                 .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
                 .optional()
                 .describe("이미지 타입 (DB 메타데이터 없으면 null)"),
-              hasMetadata: zod
-                .boolean()
-                .describe(
-                  "DB 메타데이터 존재 여부 (false이면 상세조회/수정 불가)",
-                ),
+              imageSourceType: zod
+                .enum(["SNAPSHOT", "EXTERNAL"])
+                .optional()
+                .describe("이미지 소스 타입 (DB 메타데이터 없으면 null)"),
             })
             .strict()
             .describe("공용 레지스트리 목록 응답"),
@@ -149,31 +154,31 @@ export const getPrivateRegistryListResponse = zod
  * 외부 레지스트리(Docker Hub, NGC 등)의 이미지를 개인 레지스트리에 등록합니다.
  * @summary 개인 이미지 등록
  */
-export const createExternalImage1BodyImageNameMin = 0;
-export const createExternalImage1BodyImageNameMax = 255;
+export const createPrivateExternalImageBodyImageNameMin = 0;
+export const createPrivateExternalImageBodyImageNameMax = 255;
 
-export const createExternalImage1BodyImageNameRegExp =
+export const createPrivateExternalImageBodyImageNameRegExp =
   /^[a-z0-9]+([._-][a-z0-9]+)*(\/[a-z0-9]+([._-][a-z0-9]+)*)*$/;
-export const createExternalImage1BodyImageTagNameMin = 0;
-export const createExternalImage1BodyImageTagNameMax = 128;
+export const createPrivateExternalImageBodyImageTagNameMin = 0;
+export const createPrivateExternalImageBodyImageTagNameMax = 128;
 
-export const createExternalImage1BodyImageTagNameRegExp =
+export const createPrivateExternalImageBodyImageTagNameRegExp =
   /^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$/;
 
-export const createExternalImage1Body = zod
+export const createPrivateExternalImageBody = zod
   .object({
     imageName: zod
       .string()
-      .min(createExternalImage1BodyImageNameMin)
-      .max(createExternalImage1BodyImageNameMax)
-      .regex(createExternalImage1BodyImageNameRegExp)
+      .min(createPrivateExternalImageBodyImageNameMin)
+      .max(createPrivateExternalImageBodyImageNameMax)
+      .regex(createPrivateExternalImageBodyImageNameRegExp)
       .describe("외부 레지스트리의 원본 이미지 경로"),
     description: zod.string().optional().describe("이미지 설명"),
     imageTagName: zod
       .string()
-      .min(createExternalImage1BodyImageTagNameMin)
-      .max(createExternalImage1BodyImageTagNameMax)
-      .regex(createExternalImage1BodyImageTagNameRegExp)
+      .min(createPrivateExternalImageBodyImageTagNameMin)
+      .max(createPrivateExternalImageBodyImageTagNameMax)
+      .regex(createPrivateExternalImageBodyImageTagNameRegExp)
       .describe("이미지 태그"),
     registryChannel: zod
       .enum(["DOCKER", "NGC"])
@@ -240,6 +245,7 @@ export const getPrivateImageTagListQueryParams = zod.object({
 export const getPrivateImageTagListResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -320,27 +326,29 @@ export const getPrivateImageTagListResponse = zod
   .strict();
 
 /**
- * 개인 이미지에 새로운 태그를 추가합니다. 본인이 생성한 이미지만 태그를 추가할 수 있습니다. DB에 Image가 없으면 자동으로 생성됩니다.
+ * 
+            개인 이미지에 새로운 태그를 추가합니다.
+            - 본인이 생성한 이미지만 태그를 추가할 수 있습니다.
+            - DB에 Image가 없으면 자동으로 생성됩니다.
+            - 이미 등록된 태그가 있으면 덮어쓰기됩니다.
+        
  * @summary 개인 이미지 태그 추가
  */
-export const addImageTag1BodyImageTagNameMin = 0;
-export const addImageTag1BodyImageTagNameMax = 128;
+export const addPrivateImageTagBodyImageTagNameMin = 0;
+export const addPrivateImageTagBodyImageTagNameMax = 128;
 
-export const addImageTag1BodyImageTagNameRegExp =
+export const addPrivateImageTagBodyImageTagNameRegExp =
   /^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$/;
 
-export const addImageTag1Body = zod
+export const addPrivateImageTagBody = zod
   .object({
     harborImageName: zod.string().describe("Harbor 이미지 경로"),
     imageTagName: zod
       .string()
-      .min(addImageTag1BodyImageTagNameMin)
-      .max(addImageTag1BodyImageTagNameMax)
-      .regex(addImageTag1BodyImageTagNameRegExp)
+      .min(addPrivateImageTagBodyImageTagNameMin)
+      .max(addPrivateImageTagBodyImageTagNameMax)
+      .regex(addPrivateImageTagBodyImageTagNameRegExp)
       .describe("이미지 태그"),
-    registryChannel: zod
-      .enum(["DOCKER", "NGC"])
-      .describe("레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC)"),
     credentialId: zod
       .number()
       .optional()
@@ -362,15 +370,15 @@ export const addImageTag1Body = zod
         
  * @summary 개인 이미지 태그 삭제
  */
-export const deleteImageTags1BodyHarborTagIdMin = 0;
-export const deleteImageTags1BodyHarborTagIdMax = 20;
+export const deletePrivateImageTagsBodyHarborTagIdMin = 0;
+export const deletePrivateImageTagsBodyHarborTagIdMax = 20;
 
-export const deleteImageTags1Body = zod
+export const deletePrivateImageTagsBody = zod
   .object({
     harborTagId: zod
       .array(zod.number())
-      .min(deleteImageTags1BodyHarborTagIdMin)
-      .max(deleteImageTags1BodyHarborTagIdMax)
+      .min(deletePrivateImageTagsBodyHarborTagIdMin)
+      .max(deletePrivateImageTagsBodyHarborTagIdMax)
       .describe(
         "삭제할 Harbor 태그 ID 목록 (최대 20개, 목록 조회 시 반환되는 harborTagId 사용)",
       ),
@@ -378,9 +386,10 @@ export const deleteImageTags1Body = zod
   .strict()
   .describe("이미지 태그 삭제 요청");
 
-export const deleteImageTags1Response = zod
+export const deletePrivateImageTagsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalRequested: zod.number().describe("총 요청 개수"),
@@ -414,23 +423,24 @@ export const deleteImageTags1Response = zod
         
  * @summary 개인 이미지 삭제
  */
-export const deleteImagesBodyHarborImageNamesMin = 0;
-export const deleteImagesBodyHarborImageNamesMax = 20;
+export const deletePrivateImagesBodyHarborImageNamesMin = 0;
+export const deletePrivateImagesBodyHarborImageNamesMax = 20;
 
-export const deleteImagesBody = zod
+export const deletePrivateImagesBody = zod
   .object({
     harborImageNames: zod
       .array(zod.string())
-      .min(deleteImagesBodyHarborImageNamesMin)
-      .max(deleteImagesBodyHarborImageNamesMax)
+      .min(deletePrivateImagesBodyHarborImageNamesMin)
+      .max(deletePrivateImagesBodyHarborImageNamesMax)
       .describe("삭제할 Harbor 이미지 경로 목록 (최대 20개)"),
   })
   .strict()
   .describe("이미지 삭제 요청");
 
-export const deleteImagesResponse = zod
+export const deletePrivateImagesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalRequested: zod.number().describe("총 요청 개수"),
@@ -478,6 +488,7 @@ export const getPrivateImageTagDetailQueryParams = zod.object({
 export const getPrivateImageTagDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         imageTagId: zod.number().describe("이미지 태그 ID"),
@@ -508,73 +519,6 @@ export const getPrivateImageTagDetailResponse = zod
 
 /**
  * 
-            개인 레지스트리 이미지 업로드 작업 목록을 페이징하여 조회합니다.
-            본인이 등록한 작업만 조회됩니다. 특정 이미지의 작업만 필터링할 수 있습니다.
-            이미지 이름으로 검색이 가능합니다.
-        
- * @summary 개인 이미지 Pull/Push 작업 목록 조회
- */
-export const getPullPushJobs1QueryPageNoMin = 0;
-
-export const getPullPushJobs1QueryPageSizeMax = 100;
-
-export const getPullPushJobs1QueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPullPushJobs1QueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPullPushJobs1QueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  imageId: zod.number().optional().describe("특정 이미지의 작업만 조회"),
-  imageSourceType: zod
-    .enum(["SNAPSHOT", "EXTERNAL"])
-    .optional()
-    .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
-});
-
-export const getPullPushJobs1Response = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    data: zod
-      .object({
-        totalSize: zod.number(),
-        totalPageNum: zod.number(),
-        currentPageNo: zod.number(),
-        content: zod.array(
-          zod
-            .object({
-              imageId: zod.number().describe("이미지 ID"),
-              imageTagId: zod.number().describe("이미지 태그 ID"),
-              imageTagName: zod.string().describe("이미지 태그 이름"),
-              imageName: zod.string().describe("이미지 이름"),
-              creatorId: zod.string().describe("생성자 ID"),
-              creatorName: zod.string().optional().describe("생성자 이름"),
-              status: zod.string().describe("작업 상태"),
-              createdAt: zod
-                .string()
-                .datetime({})
-                .optional()
-                .describe("생성일시"),
-            })
-            .strict()
-            .describe("Pull/Push 작업 응답"),
-        ),
-      })
-      .strict()
-      .optional(),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 
             개인 레지스트리의 이미지 상세 정보를 조회합니다.
             본인 소유의 이미지만 조회할 수 있습니다.
             존재하지 않는 경우 null을 반환합니다.
@@ -589,6 +533,7 @@ export const getPrivateImageDetailQueryParams = zod.object({
 export const getPrivateImageDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         imageId: zod.number().describe("이미지 ID"),

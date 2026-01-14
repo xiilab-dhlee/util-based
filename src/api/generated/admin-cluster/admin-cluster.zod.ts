@@ -56,6 +56,7 @@ export const updateNodeSchedulingBody = zod
 export const updateNodeSchedulingResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -88,6 +89,7 @@ export const getMigConfigurationParams = zod.object({
 export const getMigConfigurationResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         nodeName: zod.string().describe("노드 이름"),
@@ -169,6 +171,7 @@ export const applyMigConfigurationBody = zod
 export const applyMigConfigurationResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -222,6 +225,7 @@ export const getClusterNodesQueryParams = zod.object({
 export const getClusterNodesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -299,6 +303,7 @@ export const getNodeSystemResourceParams = zod.object({
 export const getNodeSystemResourceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         nodeName: zod.string().describe("노드 이름"),
@@ -429,6 +434,7 @@ export const getNodeSystemMetricsQueryParams = zod.object({
 export const getNodeSystemMetricsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
@@ -506,6 +512,7 @@ export const getNodeGpuMetricsQueryParams = zod.object({
 export const getNodeGpuMetricsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
@@ -571,6 +578,7 @@ export const getNodeDetailParams = zod.object({
 export const getNodeDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         nodeName: zod.string().describe("노드 이름"),
@@ -695,6 +703,7 @@ export const getNodeDetailResponse = zod
 export const getClusterResourceSummaryResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         gpu: zod

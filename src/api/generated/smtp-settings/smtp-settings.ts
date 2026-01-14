@@ -32,23 +32,17 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
-  UseMutationOptions,
-  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
-import type {
-  BaseResponseSmtpSetResponse,
-  SmtpSetRequest,
-} from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponseSmtpSetResponse } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 현재 활성화된 SMTP 계정을 조회합니다. SMTP 설정은 시스템당 하나만 존재합니다.
@@ -177,164 +171,3 @@ export function useGetSmtpSet<
 
   return query;
 }
-
-/**
- * 새로운 SMTP 계정을 등록합니다. 등록된 SMTP 설정은 이메일 발송 시 사용됩니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
- * @summary SMTP 계정 등록
- */
-export const registerSmtpSet = (
-  smtpSetRequest: SmtpSetRequest,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponseSmtpSetResponse>({
-    url: `/api/v1/smtp-sets`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    data: smtpSetRequest,
-    signal,
-  });
-};
-
-export const getRegisterSmtpSetMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof registerSmtpSet>>,
-    TError,
-    { data: SmtpSetRequest },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof registerSmtpSet>>,
-  TError,
-  { data: SmtpSetRequest },
-  TContext
-> => {
-  const mutationKey = ["registerSmtpSet"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof registerSmtpSet>>,
-    { data: SmtpSetRequest }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return registerSmtpSet(data);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type RegisterSmtpSetMutationResult = NonNullable<
-  Awaited<ReturnType<typeof registerSmtpSet>>
->;
-export type RegisterSmtpSetMutationBody = SmtpSetRequest;
-export type RegisterSmtpSetMutationError = unknown;
-
-/**
- * @summary SMTP 계정 등록
- */
-export const useRegisterSmtpSet = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof registerSmtpSet>>,
-      TError,
-      { data: SmtpSetRequest },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof registerSmtpSet>>,
-  TError,
-  { data: SmtpSetRequest },
-  TContext
-> => {
-  const mutationOptions = getRegisterSmtpSetMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-/**
- * SMTP 계정을 삭제합니다 (soft delete). ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
- * @summary SMTP 계정 삭제
- */
-export const deleteSmtpSet = (smtpSetId: number) => {
-  return customInstance<void>({
-    url: `/api/v1/smtp-sets/${smtpSetId}`,
-    method: "DELETE",
-  });
-};
-
-export const getDeleteSmtpSetMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteSmtpSet>>,
-    TError,
-    { smtpSetId: number },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteSmtpSet>>,
-  TError,
-  { smtpSetId: number },
-  TContext
-> => {
-  const mutationKey = ["deleteSmtpSet"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteSmtpSet>>,
-    { smtpSetId: number }
-  > = (props) => {
-    const { smtpSetId } = props ?? {};
-
-    return deleteSmtpSet(smtpSetId);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteSmtpSetMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteSmtpSet>>
->;
-
-export type DeleteSmtpSetMutationError = unknown;
-
-/**
- * @summary SMTP 계정 삭제
- */
-export const useDeleteSmtpSet = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteSmtpSet>>,
-      TError,
-      { smtpSetId: number },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteSmtpSet>>,
-  TError,
-  { smtpSetId: number },
-  TContext
-> => {
-  const mutationOptions = getDeleteSmtpSetMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};

@@ -59,6 +59,7 @@ export const getCredentialsQueryParams = zod.object({
 export const getCredentialsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -69,7 +70,7 @@ export const getCredentialsResponse = zod
             .object({
               credentialId: zod.number().describe("크리덴셜 ID"),
               credentialChannel: zod
-                .enum(["GIT", "DOCKER"])
+                .enum(["GIT", "DOCKER", "NGC"])
                 .describe("크리덴셜 채널"),
               credentialType: zod
                 .enum(["IMAGE", "SOURCE_CODE"])
@@ -138,7 +139,7 @@ export const createCredentialBody = zod
       .optional()
       .describe("Docker Private Registry URL (IMAGE 타입인 경우)"),
     credentialChannel: zod
-      .enum(["GIT", "DOCKER"])
+      .enum(["GIT", "DOCKER", "NGC"])
       .describe("크리덴셜 채널 (GIT: Git 저장소, DOCKER: Docker Registry)"),
     credentialAccountId: zod
       .string()
@@ -166,13 +167,14 @@ export const getCredentialDetailParams = zod.object({
 export const getCredentialDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         credentialId: zod.number().describe("크리덴셜 ID"),
         credentialName: zod.string().describe("크리덴셜 이름"),
         description: zod.string().optional().describe("크리덴셜 설명"),
         credentialChannel: zod
-          .enum(["GIT", "DOCKER"])
+          .enum(["GIT", "DOCKER", "NGC"])
           .describe("크리덴셜 채널"),
         credentialType: zod
           .enum(["IMAGE", "SOURCE_CODE"])

@@ -57,6 +57,7 @@ export const BaseResponseWorkspaceResponseStatus = {
 
 export interface BaseResponseWorkspaceResponse {
   status: BaseResponseWorkspaceResponseStatus;
+  errorCode?: string;
   data?: WorkspaceResponse;
   message?: string;
   timestamp: number;
@@ -102,6 +103,7 @@ export const BaseResponseUnitStatus = {
 
 export interface BaseResponseUnit {
   status: BaseResponseUnitStatus;
+  errorCode?: string;
   message?: string;
   timestamp: number;
 }
@@ -138,6 +140,7 @@ export const BaseResponseMemberRoleResponseStatus = {
 
 export interface BaseResponseMemberRoleResponse {
   status: BaseResponseMemberRoleResponseStatus;
+  errorCode?: string;
   data?: MemberRoleResponse;
   message?: string;
   timestamp: number;
@@ -161,6 +164,27 @@ export const MemberRoleResponseMemberRole = {
 export interface MemberRoleResponse {
   /** 워크스페이스 구성원 역할 */
   memberRole: MemberRoleResponseMemberRole;
+}
+
+/**
+ * 볼륨 수정 요청
+ */
+export interface UpdateVolumeRequest {
+  /**
+   * 볼륨 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  volumeName: string;
+  /**
+   * 마운트 경로 (절대경로)
+   * @minLength 0
+   * @maxLength 1000
+   * @pattern ^/.*
+   */
+  mountPath: string;
+  /** 공개 여부 */
+  isPublic: boolean;
 }
 
 /**
@@ -501,6 +525,7 @@ export const BaseResponseAdminPolicySetResponseStatus = {
 
 export interface BaseResponseAdminPolicySetResponse {
   status: BaseResponseAdminPolicySetResponseStatus;
+  errorCode?: string;
   data?: AdminPolicySetResponse;
   message?: string;
   timestamp: number;
@@ -619,6 +644,7 @@ export const BaseResponseSignupApprovalResultStatus = {
 
 export interface BaseResponseSignupApprovalResult {
   status: BaseResponseSignupApprovalResultStatus;
+  errorCode?: string;
   data?: SignupApprovalResult;
   message?: string;
   timestamp: number;
@@ -720,6 +746,271 @@ export interface WorkspaceCreateRequest {
 }
 
 /**
+ * 분산 학습 설정 (DISTRIBUTED 워크로드용)
+ */
+export interface DistributedRequest {
+  /** 분산 노드(Pod) 수 */
+  numNodes: number;
+}
+
+/**
+ * 환경 변수
+ */
+export interface EnvRequest {
+  /**
+   * 환경 변수 키
+   * @minLength 0
+   * @maxLength 253
+   * @pattern ^[a-zA-Z_][a-zA-Z0-9_]*$
+   */
+  key: string;
+  /**
+   * 환경 변수 값
+   * @minLength 0
+   * @maxLength 32768
+   */
+  value: string;
+}
+
+/**
+ * 포트 정보
+ */
+export interface PortRequest {
+  /**
+   * 포트 이름 (RFC6335/K8s IANA_SVC_NAME: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 연속 하이픈 불가)
+   * @minLength 1
+   * @maxLength 15
+   */
+  portName: string;
+  /**
+   * 포트 번호 (1-65535)
+   * @maximum 65535
+   */
+  portNumber: number;
+  /**
+   * 서비스 포트 번호 (미지정 시 포트 번호와 동일, 1-65535)
+   * @maximum 65535
+   */
+  servicePortNum?: number;
+}
+
+/**
+ * 소스코드 정보
+ */
+export interface SourceCodeRequest {
+  /** 소스코드 ID */
+  sourceCodeId: number;
+  /**
+   * 마운트 경로
+   * @minLength 1
+   */
+  mountPath: string;
+  /** 브랜치명 */
+  sourceCodeBranch?: string;
+}
+
+/**
+ * 볼륨 정보
+ */
+export interface VolumeRequest {
+  /** 볼륨 ID */
+  volumeId: number;
+  /**
+   * 마운트 경로
+   * @minLength 1
+   */
+  mountPath: string;
+}
+
+/**
+ * CPU 리소스 정보
+ */
+export interface WorkloadCpuRequest {
+  /** 요청 CPU 코어 수 */
+  requestCore: number;
+}
+
+/**
+ * 워크로드 잡 타입
+ */
+export type WorkloadCreateRequestWorkloadJobType =
+  (typeof WorkloadCreateRequestWorkloadJobType)[keyof typeof WorkloadCreateRequestWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadCreateRequestWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 노드 타입
+ */
+export type WorkloadCreateRequestNodeType =
+  (typeof WorkloadCreateRequestNodeType)[keyof typeof WorkloadCreateRequestNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadCreateRequestNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
+export type WorkloadCreateRequestParameterItem = { [key: string]: unknown };
+
+/**
+ * 워크로드 생성 요청
+ */
+export interface WorkloadCreateRequest {
+  /**
+   * 워크로드 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  workloadName: string;
+  /**
+   * 워크로드 설명
+   * @minLength 0
+   * @maxLength 2000
+   */
+  description?: string;
+  /** 라벨 목록 */
+  label?: string[];
+  /** 워크로드 잡 타입 */
+  workloadJobType: WorkloadCreateRequestWorkloadJobType;
+  /** 노드 타입 */
+  nodeType: WorkloadCreateRequestNodeType;
+  /**
+   * 노드 이름 (특정 노드에 스케줄링)
+   * @minLength 0
+   * @maxLength 255
+   */
+  nodeName?: string;
+  /** 리소스 프리셋 ID */
+  resourcePresetId: number;
+  /**
+   * Harbor 이미지 이름
+   * @minLength 0
+   * @maxLength 255
+   */
+  harborImageName: string;
+  /**
+   * 이미지 태그 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  imageTagName: string;
+  /**
+   * 아웃풋 디렉토리
+   * @minLength 0
+   * @maxLength 1000
+   */
+  outputDirectory?: string;
+  /**
+   * 실행 디렉토리
+   * @minLength 0
+   * @maxLength 1000
+   */
+  executionDirectory?: string;
+  /**
+   * 실행 명령어
+   * @minLength 0
+   * @maxLength 1000
+   */
+  executionCmd?: string;
+  /** 환경 변수 목록 */
+  env?: EnvRequest[];
+  /** 포트 목록 */
+  port?: PortRequest[];
+  /** 리소스 정보 (모든 워크로드 타입 공통, DISTRIBUTED는 distributed 필드 필수) */
+  resource?: WorkloadResourceRequest;
+  /** 소스코드 정보 */
+  sourceCode?: SourceCodeRequest;
+  /** 볼륨 목록 */
+  volume?: VolumeRequest[];
+  /** 파라미터 목록 */
+  parameter?: WorkloadCreateRequestParameterItem[];
+}
+
+/**
+ * GPU 상세 정보
+ */
+export interface WorkloadGpuDetailRequest {
+  /** 일반 GPU 정보 */
+  normal?: WorkloadNormalGpuRequest;
+  /** MIG 프로파일 목록 */
+  mig?: WorkloadMigProfileRequest[];
+}
+
+/**
+ * GPU 타입 (NORMAL: 일반 GPU)
+ */
+export type WorkloadGpuRequestGpuType =
+  (typeof WorkloadGpuRequestGpuType)[keyof typeof WorkloadGpuRequestGpuType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadGpuRequestGpuType = {
+  NORMAL: "NORMAL",
+  MIG: "MIG",
+} as const;
+
+/**
+ * GPU 리소스 정보
+ */
+export interface WorkloadGpuRequest {
+  /** GPU 이름 (NodeSelector용) */
+  gpuName?: string;
+  /** GPU 타입 (NORMAL: 일반 GPU) */
+  gpuType?: WorkloadGpuRequestGpuType;
+  /** GPU 메모리 (byte) */
+  gpuMemoryByte?: number;
+  /** GPU 상세 정보 (gpuType에 따라 normal 또는 mig 설정) */
+  detail?: WorkloadGpuDetailRequest;
+}
+
+/**
+ * 메모리 리소스 정보
+ */
+export interface WorkloadMemoryRequest {
+  /** 요청 메모리 byte 수 */
+  requestByte: number;
+}
+
+/**
+ * MIG 프로파일 정보
+ */
+export interface WorkloadMigProfileRequest {
+  /**
+   * MIG 프로파일 이름
+   * @minLength 1
+   */
+  profile: string;
+  /** 요청 수량 */
+  requestCount: number;
+}
+
+/**
+ * 일반 GPU 정보
+ */
+export interface WorkloadNormalGpuRequest {
+  /** 요청 GPU 수량 */
+  requestCount: number;
+}
+
+/**
+ * 워크로드 리소스 정보
+ */
+export interface WorkloadResourceRequest {
+  /** GPU 리소스 정보 */
+  gpu?: WorkloadGpuRequest;
+  /** CPU 리소스 정보 */
+  cpu: WorkloadCpuRequest;
+  /** 메모리 리소스 정보 */
+  memory: WorkloadMemoryRequest;
+  /** 분산 학습 설정 (DISTRIBUTED 워크로드용) */
+  distributed?: DistributedRequest;
+}
+
+/**
  * 워크스페이스 리소스 추가 요청 생성
  */
 export interface ResourceRequestCreateRequest {
@@ -745,6 +1036,7 @@ export const BaseResponseResourceRequestResponseStatus = {
 
 export interface BaseResponseResourceRequestResponse {
   status: BaseResponseResourceRequestResponseStatus;
+  errorCode?: string;
   data?: ResourceRequestResponse;
   message?: string;
   timestamp: number;
@@ -886,6 +1178,7 @@ export const BaseResponseIntegerStatus = {
 
 export interface BaseResponseInteger {
   status: BaseResponseIntegerStatus;
+  errorCode?: string;
   data?: number;
   message?: string;
   timestamp: number;
@@ -897,6 +1190,74 @@ export interface BaseResponseInteger {
 export interface DeleteWorkspaceMembersRequest {
   /** 삭제할 멤버 계정 ID 목록 */
   accountId: string[];
+}
+
+/**
+ * 볼륨 폴더 생성 요청
+ */
+export interface CreateFolderRequest {
+  /**
+   * 생성할 폴더 경로 (절대경로 또는 상대경로)
+   * @minLength 0
+   * @maxLength 1000
+   */
+  path: string;
+}
+
+/**
+ * 볼륨 파일 삭제 요청
+ */
+export interface DeleteFilesRequest {
+  /**
+   * 삭제할 파일/폴더 경로 목록
+   * @minItems 0
+   * @maxItems 100
+   */
+  paths: string[];
+}
+
+/**
+ * 볼륨 파일 압축 해제 요청
+ */
+export interface DecompressRequest {
+  /**
+   * 압축 해제할 파일 경로
+   * @minLength 0
+   * @maxLength 1000
+   */
+  path: string;
+}
+
+/**
+ * 압축 파일 형식
+ */
+export type CompressRequestCompressFileType =
+  (typeof CompressRequestCompressFileType)[keyof typeof CompressRequestCompressFileType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CompressRequestCompressFileType = {
+  TAR: "TAR",
+  ZIP: "ZIP",
+} as const;
+
+/**
+ * 볼륨 파일 압축 요청
+ */
+export interface CompressRequest {
+  /**
+   * 압축할 파일/폴더 경로 목록
+   * @minItems 0
+   * @maxItems 100
+   */
+  paths: string[];
+  /**
+   * 압축 파일 저장 경로 (경로 + 파일명, 확장자 제외)
+   * @minLength 0
+   * @maxLength 1000
+   */
+  destinationPath: string;
+  /** 압축 파일 형식 */
+  compressFileType: CompressRequestCompressFileType;
 }
 
 /**
@@ -962,69 +1323,6 @@ export interface CreateAstragoVolumeRequest {
 }
 
 /**
- * SMTP 계정 등록 요청
- */
-export interface SmtpSetRequest {
-  /**
-   * SMTP 서버 호스트 주소
-   * @minLength 0
-   * @maxLength 50
-   */
-  host: string;
-  /**
-   * SMTP 서버 포트 번호
-   * @minimum 1
-   * @maximum 65535
-   */
-  hostPort: number;
-  /**
-   * SMTP 계정 이메일 주소
-   * @minLength 0
-   * @maxLength 200
-   */
-  email: string;
-  /**
-   * SMTP 계정 비밀번호 또는 앱 비밀번호
-   * @minLength 0
-   * @maxLength 255
-   */
-  password: string;
-}
-
-export type BaseResponseSmtpSetResponseStatus =
-  (typeof BaseResponseSmtpSetResponseStatus)[keyof typeof BaseResponseSmtpSetResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseSmtpSetResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseSmtpSetResponse {
-  status: BaseResponseSmtpSetResponseStatus;
-  data?: SmtpSetResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * SMTP 계정 응답
- */
-export interface SmtpSetResponse {
-  /** SMTP 설정 고유 ID */
-  smtpSetId: number;
-  /** SMTP 서버 호스트 주소 */
-  host: string;
-  /** SMTP 서버 포트 번호 */
-  hostPort: number;
-  /** SMTP 계정 이메일 주소 */
-  email: string;
-  /** SMTP 설정을 등록한 계정 ID */
-  creatorId: string;
-}
-
-/**
  * 레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC)
  */
 export type CreateExternalImageRequestRegistryChannel =
@@ -1065,18 +1363,6 @@ export interface CreateExternalImageRequest {
 }
 
 /**
- * 레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC)
- */
-export type AddImageTagRequestRegistryChannel =
-  (typeof AddImageTagRequestRegistryChannel)[keyof typeof AddImageTagRequestRegistryChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AddImageTagRequestRegistryChannel = {
-  DOCKER: "DOCKER",
-  NGC: "NGC",
-} as const;
-
-/**
  * 이미지 태그 추가 요청
  */
 export interface AddImageTagRequest {
@@ -1089,8 +1375,6 @@ export interface AddImageTagRequest {
    * @pattern ^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$
    */
   imageTagName: string;
-  /** 레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC) */
-  registryChannel: AddImageTagRequestRegistryChannel;
   /** 크레덴셜 ID (NGC는 필수, Docker Hub는 private 이미지인 경우 필수) */
   credentialId?: number;
   /** 태그 설명 */
@@ -1121,6 +1405,7 @@ export const BaseResponseDeleteImageTagsResponseStatus = {
 
 export interface BaseResponseDeleteImageTagsResponse {
   status: BaseResponseDeleteImageTagsResponseStatus;
+  errorCode?: string;
   data?: DeleteImageTagsResponse;
   message?: string;
   timestamp: number;
@@ -1172,6 +1457,7 @@ export const BaseResponseDeleteImagesResponseStatus = {
 
 export interface BaseResponseDeleteImagesResponse {
   status: BaseResponseDeleteImagesResponseStatus;
+  errorCode?: string;
   data?: DeleteImagesResponse;
   message?: string;
   timestamp: number;
@@ -1302,6 +1588,7 @@ export const BaseResponseLicenseCreateResponseStatus = {
 
 export interface BaseResponseLicenseCreateResponse {
   status: BaseResponseLicenseCreateResponseStatus;
+  errorCode?: string;
   data?: LicenseCreateResponse;
   message?: string;
   timestamp: number;
@@ -1376,6 +1663,70 @@ export interface StorageCreateRequest {
 }
 
 /**
+ * SMTP 계정 등록 요청
+ */
+export interface SmtpSetRequest {
+  /**
+   * SMTP 서버 호스트 주소
+   * @minLength 0
+   * @maxLength 50
+   */
+  host: string;
+  /**
+   * SMTP 서버 포트 번호
+   * @minimum 1
+   * @maximum 65535
+   */
+  hostPort: number;
+  /**
+   * SMTP 계정 이메일 주소
+   * @minLength 0
+   * @maxLength 200
+   */
+  email: string;
+  /**
+   * SMTP 계정 비밀번호 또는 앱 비밀번호
+   * @minLength 0
+   * @maxLength 255
+   */
+  password: string;
+}
+
+export type BaseResponseSmtpSetResponseStatus =
+  (typeof BaseResponseSmtpSetResponseStatus)[keyof typeof BaseResponseSmtpSetResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseSmtpSetResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseSmtpSetResponse {
+  status: BaseResponseSmtpSetResponseStatus;
+  errorCode?: string;
+  data?: SmtpSetResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * SMTP 계정 응답
+ */
+export interface SmtpSetResponse {
+  /** SMTP 설정 고유 ID */
+  smtpSetId: number;
+  /** SMTP 서버 호스트 주소 */
+  host: string;
+  /** SMTP 서버 포트 번호 */
+  hostPort: number;
+  /** SMTP 계정 이메일 주소 */
+  email: string;
+  /** SMTP 설정을 등록한 계정 ID */
+  creatorId: string;
+}
+
+/**
  * 그룹 생성 요청
  */
 export interface GroupCreateRequest {
@@ -1408,6 +1759,7 @@ export const BaseResponseGroupCreateResponseStatus = {
 
 export interface BaseResponseGroupCreateResponse {
   status: BaseResponseGroupCreateResponseStatus;
+  errorCode?: string;
   data?: GroupCreateResponse;
   message?: string;
   timestamp: number;
@@ -1457,6 +1809,7 @@ export const BaseResponsePasswordResetByAdminResponseStatus = {
 
 export interface BaseResponsePasswordResetByAdminResponse {
   status: BaseResponsePasswordResetByAdminResponseStatus;
+  errorCode?: string;
   data?: PasswordResetByAdminResponse;
   message?: string;
   timestamp: number;
@@ -1508,6 +1861,7 @@ export const BaseResponseAccountDeleteResultStatus = {
 
 export interface BaseResponseAccountDeleteResult {
   status: BaseResponseAccountDeleteResultStatus;
+  errorCode?: string;
   data?: AccountDeleteResult;
   message?: string;
   timestamp: number;
@@ -1547,6 +1901,7 @@ export type CreateCredentialRequestCredentialChannel =
 export const CreateCredentialRequestCredentialChannel = {
   GIT: "GIT",
   DOCKER: "DOCKER",
+  NGC: "NGC",
 } as const;
 
 /**
@@ -1600,6 +1955,7 @@ export const BaseResponseCredentialResponseStatus = {
 
 export interface BaseResponseCredentialResponse {
   status: BaseResponseCredentialResponseStatus;
+  errorCode?: string;
   data?: CredentialResponse;
   message?: string;
   timestamp: number;
@@ -1627,6 +1983,7 @@ export type CredentialResponseCredentialChannel =
 export const CredentialResponseCredentialChannel = {
   GIT: "GIT",
   DOCKER: "DOCKER",
+  NGC: "NGC",
 } as const;
 
 /**
@@ -1705,6 +2062,7 @@ export const BaseResponseSignupResponseStatus = {
 
 export interface BaseResponseSignupResponse {
   status: BaseResponseSignupResponseStatus;
+  errorCode?: string;
   data?: SignupResponse;
   message?: string;
   timestamp: number;
@@ -1773,6 +2131,7 @@ export const BaseResponsePageResponseWorkspaceResponseStatus = {
 
 export interface BaseResponsePageResponseWorkspaceResponse {
   status: BaseResponsePageResponseWorkspaceResponseStatus;
+  errorCode?: string;
   data?: PageResponseWorkspaceResponse;
   message?: string;
   timestamp: number;
@@ -1797,6 +2156,7 @@ export const BaseResponseListWorkloadMetricsTimeseriesResponseStatus = {
 
 export interface BaseResponseListWorkloadMetricsTimeseriesResponse {
   status: BaseResponseListWorkloadMetricsTimeseriesResponseStatus;
+  errorCode?: string;
   data?: WorkloadMetricsTimeseriesResponse[];
   message?: string;
   timestamp: number;
@@ -1840,6 +2200,7 @@ export const BaseResponseListTimeGroupedResourceMetricsResponseStatus = {
 
 export interface BaseResponseListTimeGroupedResourceMetricsResponse {
   status: BaseResponseListTimeGroupedResourceMetricsResponseStatus;
+  errorCode?: string;
   data?: TimeGroupedResourceMetricsResponse[];
   message?: string;
   timestamp: number;
@@ -1877,6 +2238,7 @@ export const BaseResponsePageResponseResourceRequestListResponseStatus = {
 
 export interface BaseResponsePageResponseResourceRequestListResponse {
   status: BaseResponsePageResponseResourceRequestListResponseStatus;
+  errorCode?: string;
   data?: PageResponseResourceRequestListResponse;
   message?: string;
   timestamp: number;
@@ -1938,6 +2300,7 @@ export const BaseResponsePageResponseWorkspaceMemberResponseStatus = {
 
 export interface BaseResponsePageResponseWorkspaceMemberResponse {
   status: BaseResponsePageResponseWorkspaceMemberResponseStatus;
+  errorCode?: string;
   data?: PageResponseWorkspaceMemberResponse;
   message?: string;
   timestamp: number;
@@ -1990,6 +2353,7 @@ export const BaseResponseWorkspaceDetailResponseStatus = {
 
 export interface BaseResponseWorkspaceDetailResponse {
   status: BaseResponseWorkspaceDetailResponseStatus;
+  errorCode?: string;
   data?: WorkspaceDetailResponse;
   message?: string;
   timestamp: number;
@@ -2021,6 +2385,7 @@ export const BaseResponseDefaultResourceResponseStatus = {
 
 export interface BaseResponseDefaultResourceResponse {
   status: BaseResponseDefaultResourceResponseStatus;
+  errorCode?: string;
   data?: DefaultResourceResponse;
   message?: string;
   timestamp: number;
@@ -2046,6 +2411,7 @@ export const BaseResponsePageResponseVolumeListResponseStatus = {
 
 export interface BaseResponsePageResponseVolumeListResponse {
   status: BaseResponsePageResponseVolumeListResponseStatus;
+  errorCode?: string;
   data?: PageResponseVolumeListResponse;
   message?: string;
   timestamp: number;
@@ -2094,6 +2460,124 @@ export interface VolumeListResponse {
   isPublic: boolean;
 }
 
+export type BaseResponseVolumeFileListResponseStatus =
+  (typeof BaseResponseVolumeFileListResponseStatus)[keyof typeof BaseResponseVolumeFileListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseVolumeFileListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseVolumeFileListResponse {
+  status: BaseResponseVolumeFileListResponseStatus;
+  errorCode?: string;
+  data?: VolumeFileListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 파일/폴더 타입
+ */
+export type VolumeFileItemResponseType =
+  (typeof VolumeFileItemResponseType)[keyof typeof VolumeFileItemResponseType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VolumeFileItemResponseType = {
+  FILE: "FILE",
+  DIRECTORY: "DIRECTORY",
+} as const;
+
+/**
+ * 파일 정보
+ */
+export interface VolumeFileItemResponse {
+  /** 파일/폴더 이름 */
+  name: string;
+  /** 파일/폴더 타입 */
+  type: VolumeFileItemResponseType;
+  /** 전체 경로 */
+  path: string;
+  /** 파일 크기 (바이트) */
+  size: number;
+}
+
+/**
+ * 볼륨 파일 목록 응답
+ */
+export interface VolumeFileListResponse {
+  /** 파일/폴더 목록 */
+  children: VolumeFileItemResponse[];
+  /** 디렉토리 개수 */
+  directoryCount: number;
+  /** 파일 개수 */
+  fileCount: number;
+}
+
+export type BaseResponseVolumeDetailResponseStatus =
+  (typeof BaseResponseVolumeDetailResponseStatus)[keyof typeof BaseResponseVolumeDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseVolumeDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseVolumeDetailResponse {
+  status: BaseResponseVolumeDetailResponseStatus;
+  errorCode?: string;
+  data?: VolumeDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 볼륨 타입
+ */
+export type VolumeDetailResponseVolumeType =
+  (typeof VolumeDetailResponseVolumeType)[keyof typeof VolumeDetailResponseVolumeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VolumeDetailResponseVolumeType = {
+  ASTRAGO: "ASTRAGO",
+  ON_PREMISE: "ON_PREMISE",
+} as const;
+
+/**
+ * 볼륨 상세 조회 응답
+ */
+export interface VolumeDetailResponse {
+  /** 볼륨 ID */
+  volumeId: number;
+  /** 볼륨 이름 */
+  volumeName: string;
+  /** 볼륨 타입 */
+  volumeType: VolumeDetailResponseVolumeType;
+  /** NFS 서버 IP (ON_PREMISE 타입만 해당) */
+  serverIp?: string;
+  /** 볼륨 경로 */
+  volumePath: string;
+  /** 마운트 경로 */
+  mountPath: string;
+  /** 스토리지 ID (ASTRAGO 타입만 해당) */
+  storageId?: number;
+  /** 스토리지 이름 (ASTRAGO 타입만 해당) */
+  storageName?: string;
+  /** 파일 크기 (바이트) */
+  fileSizeByte: number;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 생성 일시 */
+  createdAt: string;
+  /** 공개 여부 */
+  isPublic: boolean;
+}
+
 export type BaseResponsePageResponseRegistryListResponseStatus =
   (typeof BaseResponsePageResponseRegistryListResponseStatus)[keyof typeof BaseResponsePageResponseRegistryListResponseStatus];
 
@@ -2106,6 +2590,7 @@ export const BaseResponsePageResponseRegistryListResponseStatus = {
 
 export interface BaseResponsePageResponseRegistryListResponse {
   status: BaseResponsePageResponseRegistryListResponseStatus;
+  errorCode?: string;
   data?: PageResponseRegistryListResponse;
   message?: string;
   timestamp: number;
@@ -2133,6 +2618,18 @@ export const RegistryListResponseImageType = {
 } as const;
 
 /**
+ * 이미지 소스 타입 (DB 메타데이터 없으면 null)
+ */
+export type RegistryListResponseImageSourceType =
+  (typeof RegistryListResponseImageSourceType)[keyof typeof RegistryListResponseImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RegistryListResponseImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
+/**
  * 공용 레지스트리 목록 응답
  */
 export interface RegistryListResponse {
@@ -2156,8 +2653,8 @@ export interface RegistryListResponse {
   createdAt?: string;
   /** 이미지 타입 (DB 메타데이터 없으면 null) */
   imageType?: RegistryListResponseImageType;
-  /** DB 메타데이터 존재 여부 (false이면 상세조회/수정 불가) */
-  hasMetadata: boolean;
+  /** 이미지 소스 타입 (DB 메타데이터 없으면 null) */
+  imageSourceType?: RegistryListResponseImageSourceType;
 }
 
 export type BaseResponseImageTagDetailResponseStatus =
@@ -2172,6 +2669,7 @@ export const BaseResponseImageTagDetailResponseStatus = {
 
 export interface BaseResponseImageTagDetailResponse {
   status: BaseResponseImageTagDetailResponseStatus;
+  errorCode?: string;
   data?: ImageTagDetailResponse;
   message?: string;
   timestamp: number;
@@ -2215,52 +2713,6 @@ export interface VulnerabilityResponse {
   lowCount: number;
 }
 
-export type BaseResponsePageResponsePullPushJobResponseStatus =
-  (typeof BaseResponsePageResponsePullPushJobResponseStatus)[keyof typeof BaseResponsePageResponsePullPushJobResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponsePullPushJobResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponsePullPushJobResponse {
-  status: BaseResponsePageResponsePullPushJobResponseStatus;
-  data?: PageResponsePullPushJobResponse;
-  message?: string;
-  timestamp: number;
-}
-
-export interface PageResponsePullPushJobResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: PullPushJobResponse[];
-}
-
-/**
- * Pull/Push 작업 응답
- */
-export interface PullPushJobResponse {
-  /** 이미지 ID */
-  imageId: number;
-  /** 이미지 태그 ID */
-  imageTagId: number;
-  /** 이미지 태그 이름 */
-  imageTagName: string;
-  /** 이미지 이름 */
-  imageName: string;
-  /** 생성자 ID */
-  creatorId: string;
-  /** 생성자 이름 */
-  creatorName?: string;
-  /** 작업 상태 */
-  status: string;
-  /** 생성일시 */
-  createdAt?: string;
-}
-
 export type BaseResponsePageResponseImageTagListResponseStatus =
   (typeof BaseResponsePageResponseImageTagListResponseStatus)[keyof typeof BaseResponsePageResponseImageTagListResponseStatus];
 
@@ -2273,6 +2725,7 @@ export const BaseResponsePageResponseImageTagListResponseStatus = {
 
 export interface BaseResponsePageResponseImageTagListResponse {
   status: BaseResponsePageResponseImageTagListResponseStatus;
+  errorCode?: string;
   data?: PageResponseImageTagListResponse;
   message?: string;
   timestamp: number;
@@ -2351,6 +2804,7 @@ export const BaseResponseImageTagExistsResponseStatus = {
 
 export interface BaseResponseImageTagExistsResponse {
   status: BaseResponseImageTagExistsResponseStatus;
+  errorCode?: string;
   data?: ImageTagExistsResponse;
   message?: string;
   timestamp: number;
@@ -2380,6 +2834,7 @@ export const BaseResponseRegistryDetailResponseStatus = {
 
 export interface BaseResponseRegistryDetailResponse {
   status: BaseResponseRegistryDetailResponseStatus;
+  errorCode?: string;
   data?: RegistryDetailResponse;
   message?: string;
   timestamp: number;
@@ -2415,6 +2870,53 @@ export interface RegistryDetailResponse {
   createdAt?: string;
   /** 이미지 타입 */
   imageType: RegistryDetailResponseImageType;
+}
+
+export type BaseResponsePageResponseImageJobResponseStatus =
+  (typeof BaseResponsePageResponseImageJobResponseStatus)[keyof typeof BaseResponsePageResponseImageJobResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseImageJobResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseImageJobResponse {
+  status: BaseResponsePageResponseImageJobResponseStatus;
+  errorCode?: string;
+  data?: PageResponseImageJobResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Job 작업 응답
+ */
+export interface ImageJobResponse {
+  /** 이미지 ID */
+  imageId: number;
+  /** 이미지 태그 ID */
+  imageTagId: number;
+  /** 이미지 태그 이름 */
+  imageTagName: string;
+  /** 이미지 이름 */
+  imageName: string;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName?: string;
+  /** 작업 상태 */
+  status: string;
+  /** 생성일시 */
+  createdAt?: string;
+}
+
+export interface PageResponseImageJobResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ImageJobResponse[];
 }
 
 /**
@@ -2498,6 +3000,7 @@ export const BaseResponsePageResponseMonitoringNotificationHistoryListResponseSt
 
 export interface BaseResponsePageResponseMonitoringNotificationHistoryListResponse {
   status: BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus;
+  errorCode?: string;
   data?: PageResponseMonitoringNotificationHistoryListResponse;
   message?: string;
   timestamp: number;
@@ -2540,6 +3043,7 @@ export const BaseResponseListMonitoringNotificationSendHistoryResponseStatus = {
 
 export interface BaseResponseListMonitoringNotificationSendHistoryResponse {
   status: BaseResponseListMonitoringNotificationSendHistoryResponseStatus;
+  errorCode?: string;
   data?: MonitoringNotificationSendHistoryResponse[];
   message?: string;
   timestamp: number;
@@ -2607,6 +3111,7 @@ export const BaseResponseMonitoringNotificationHistoryDetailResponseStatus = {
 
 export interface BaseResponseMonitoringNotificationHistoryDetailResponse {
   status: BaseResponseMonitoringNotificationHistoryDetailResponseStatus;
+  errorCode?: string;
   data?: MonitoringNotificationHistoryDetailResponse;
   message?: string;
   timestamp: number;
@@ -2696,6 +3201,7 @@ export const BaseResponsePageResponseMonitoringNotificationSetListResponseStatus
 
 export interface BaseResponsePageResponseMonitoringNotificationSetListResponse {
   status: BaseResponsePageResponseMonitoringNotificationSetListResponseStatus;
+  errorCode?: string;
   data?: PageResponseMonitoringNotificationSetListResponse;
   message?: string;
   timestamp: number;
@@ -2736,6 +3242,7 @@ export const BaseResponseMonitoringNotificationSetDetailResponseStatus = {
 
 export interface BaseResponseMonitoringNotificationSetDetailResponse {
   status: BaseResponseMonitoringNotificationSetDetailResponseStatus;
+  errorCode?: string;
   data?: MonitoringNotificationSetDetailResponse;
   message?: string;
   timestamp: number;
@@ -2785,6 +3292,7 @@ export const BaseResponseListLicenseListResponseStatus = {
 
 export interface BaseResponseListLicenseListResponse {
   status: BaseResponseListLicenseListResponseStatus;
+  errorCode?: string;
   data?: LicenseListResponse[];
   message?: string;
   timestamp: number;
@@ -2818,6 +3326,7 @@ export const BaseResponseLicenseLatestResponseStatus = {
 
 export interface BaseResponseLicenseLatestResponse {
   status: BaseResponseLicenseLatestResponseStatus;
+  errorCode?: string;
   data?: LicenseLatestResponse;
   message?: string;
   timestamp: number;
@@ -2849,6 +3358,7 @@ export const BaseResponseK8sResourceResponseStatus = {
 
 export interface BaseResponseK8sResourceResponse {
   status: BaseResponseK8sResourceResponseStatus;
+  errorCode?: string;
   data?: K8sResourceResponse;
   message?: string;
   timestamp: number;
@@ -2888,6 +3398,7 @@ export const BaseResponseK8sResourceYamlResponseStatus = {
 
 export interface BaseResponseK8sResourceYamlResponse {
   status: BaseResponseK8sResourceYamlResponseStatus;
+  errorCode?: string;
   data?: K8sResourceYamlResponse;
   message?: string;
   timestamp: number;
@@ -2913,6 +3424,7 @@ export const BaseResponseK8sResourceDescribeResponseStatus = {
 
 export interface BaseResponseK8sResourceDescribeResponse {
   status: BaseResponseK8sResourceDescribeResponseStatus;
+  errorCode?: string;
   data?: K8sResourceDescribeResponse;
   message?: string;
   timestamp: number;
@@ -2938,6 +3450,7 @@ export const BaseResponsePageResponseStatefulSetResponseStatus = {
 
 export interface BaseResponsePageResponseStatefulSetResponse {
   status: BaseResponsePageResponseStatefulSetResponseStatus;
+  errorCode?: string;
   data?: PageResponseStatefulSetResponse;
   message?: string;
   timestamp: number;
@@ -2976,6 +3489,7 @@ export const BaseResponsePageResponseServiceResponseStatus = {
 
 export interface BaseResponsePageResponseServiceResponse {
   status: BaseResponsePageResponseServiceResponseStatus;
+  errorCode?: string;
   data?: PageResponseServiceResponse;
   message?: string;
   timestamp: number;
@@ -3016,6 +3530,7 @@ export const BaseResponsePageResponsePodResponseStatus = {
 
 export interface BaseResponsePageResponsePodResponse {
   status: BaseResponsePageResponsePodResponseStatus;
+  errorCode?: string;
   data?: PageResponsePodResponse;
   message?: string;
   timestamp: number;
@@ -3056,6 +3571,7 @@ export const BaseResponsePageResponsePersistentVolumeResponseStatus = {
 
 export interface BaseResponsePageResponsePersistentVolumeResponse {
   status: BaseResponsePageResponsePersistentVolumeResponseStatus;
+  errorCode?: string;
   data?: PageResponsePersistentVolumeResponse;
   message?: string;
   timestamp: number;
@@ -3094,6 +3610,7 @@ export const BaseResponsePageResponseNodeResponseStatus = {
 
 export interface BaseResponsePageResponseNodeResponse {
   status: BaseResponsePageResponseNodeResponseStatus;
+  errorCode?: string;
   data?: PageResponseNodeResponse;
   message?: string;
   timestamp: number;
@@ -3134,6 +3651,7 @@ export const BaseResponsePageResponseNamespaceResponseStatus = {
 
 export interface BaseResponsePageResponseNamespaceResponse {
   status: BaseResponsePageResponseNamespaceResponseStatus;
+  errorCode?: string;
   data?: PageResponseNamespaceResponse;
   message?: string;
   timestamp: number;
@@ -3172,6 +3690,7 @@ export const BaseResponsePageResponseDeploymentResponseStatus = {
 
 export interface BaseResponsePageResponseDeploymentResponse {
   status: BaseResponsePageResponseDeploymentResponseStatus;
+  errorCode?: string;
   data?: PageResponseDeploymentResponse;
   message?: string;
   timestamp: number;
@@ -3212,6 +3731,7 @@ export const BaseResponsePageResponseDaemonSetResponseStatus = {
 
 export interface BaseResponsePageResponseDaemonSetResponse {
   status: BaseResponsePageResponseDaemonSetResponseStatus;
+  errorCode?: string;
   data?: PageResponseDaemonSetResponse;
   message?: string;
   timestamp: number;
@@ -3250,6 +3770,7 @@ export const BaseResponsePageResponseK8sEventResponseStatus = {
 
 export interface BaseResponsePageResponseK8sEventResponse {
   status: BaseResponsePageResponseK8sEventResponseStatus;
+  errorCode?: string;
   data?: PageResponseK8sEventResponse;
   message?: string;
   timestamp: number;
@@ -3306,6 +3827,7 @@ export const BaseResponsePageResponseFindHubsResponseStatus = {
 
 export interface BaseResponsePageResponseFindHubsResponse {
   status: BaseResponsePageResponseFindHubsResponseStatus;
+  errorCode?: string;
   data?: PageResponseFindHubsResponse;
   message?: string;
   timestamp: number;
@@ -3346,6 +3868,7 @@ export const BaseResponseListHubSummaryResponseStatus = {
 
 export interface BaseResponseListHubSummaryResponse {
   status: BaseResponseListHubSummaryResponseStatus;
+  errorCode?: string;
   data?: HubSummaryResponse[];
   message?: string;
   timestamp: number;
@@ -3373,6 +3896,7 @@ export const BaseResponseGroupChildrenResponseStatus = {
 
 export interface BaseResponseGroupChildrenResponse {
   status: BaseResponseGroupChildrenResponseStatus;
+  errorCode?: string;
   data?: GroupChildrenResponse;
   message?: string;
   timestamp: number;
@@ -3396,6 +3920,8 @@ export interface GroupSummaryResponse {
   groupId: string;
   /** 그룹 이름 */
   groupName: string;
+  /** 그룹원 수 */
+  memberCount: number;
 }
 
 export type BaseResponseGroupDetailResponseStatus =
@@ -3410,6 +3936,7 @@ export const BaseResponseGroupDetailResponseStatus = {
 
 export interface BaseResponseGroupDetailResponse {
   status: BaseResponseGroupDetailResponseStatus;
+  errorCode?: string;
   data?: GroupDetailResponse;
   message?: string;
   timestamp: number;
@@ -3445,6 +3972,7 @@ export const BaseResponsePageResponseGroupMemberResponseStatus = {
 
 export interface BaseResponsePageResponseGroupMemberResponse {
   status: BaseResponsePageResponseGroupMemberResponseStatus;
+  errorCode?: string;
   data?: PageResponseGroupMemberResponse;
   message?: string;
   timestamp: number;
@@ -3468,7 +3996,7 @@ export interface AccountWithGroupsResponse {
   /** 계정 이메일 */
   email?: string;
   /** 소속 그룹명 목록 */
-  groups: string[];
+  group: string[];
 }
 
 export type BaseResponseGroupSearchResponseStatus =
@@ -3483,6 +4011,7 @@ export const BaseResponseGroupSearchResponseStatus = {
 
 export interface BaseResponseGroupSearchResponse {
   status: BaseResponseGroupSearchResponseStatus;
+  errorCode?: string;
   data?: GroupSearchResponse;
   message?: string;
   timestamp: number;
@@ -3492,24 +4021,10 @@ export interface BaseResponseGroupSearchResponse {
  * 그룹 및 계정 통합 검색 응답
  */
 export interface GroupSearchResponse {
-  /** 검색된 그룹 트리 목록 (일치하는 그룹을 포함하는 트리) */
-  group: GroupTreeNodeResponse[];
+  /** 검색된 그룹 목록 */
+  group: GroupSummaryResponse[];
   /** 검색된 계정 목록 (소속 그룹명 포함) */
   account: AccountWithGroupsResponse[];
-}
-
-/**
- * 그룹 트리 노드
- */
-export interface GroupTreeNodeResponse {
-  /** 그룹 ID (Keycloak Group ID) */
-  groupId: string;
-  /** 그룹 이름 */
-  groupName: string;
-  /** 하위 그룹 목록 */
-  children: GroupTreeNodeResponse[];
-  /** 그룹 멤버 목록 */
-  member: GroupMemberResponse[];
 }
 
 export type BaseResponseListGroupSummaryResponseStatus =
@@ -3524,6 +4039,7 @@ export const BaseResponseListGroupSummaryResponseStatus = {
 
 export interface BaseResponseListGroupSummaryResponse {
   status: BaseResponseListGroupSummaryResponseStatus;
+  errorCode?: string;
   data?: GroupSummaryResponse[];
   message?: string;
   timestamp: number;
@@ -3541,6 +4057,7 @@ export const BaseResponsePageResponseClusterNodeListResponseStatus = {
 
 export interface BaseResponsePageResponseClusterNodeListResponse {
   status: BaseResponsePageResponseClusterNodeListResponseStatus;
+  errorCode?: string;
   data?: PageResponseClusterNodeListResponse;
   message?: string;
   timestamp: number;
@@ -3610,6 +4127,7 @@ export const BaseResponseClusterNodeSystemResourceResponseStatus = {
 
 export interface BaseResponseClusterNodeSystemResourceResponse {
   status: BaseResponseClusterNodeSystemResourceResponseStatus;
+  errorCode?: string;
   data?: ClusterNodeSystemResourceResponse;
   message?: string;
   timestamp: number;
@@ -3742,6 +4260,7 @@ export const BaseResponseListNodeSystemMetricResponseStatus = {
 
 export interface BaseResponseListNodeSystemMetricResponse {
   status: BaseResponseListNodeSystemMetricResponseStatus;
+  errorCode?: string;
   data?: NodeSystemMetricResponse[];
   message?: string;
   timestamp: number;
@@ -3802,6 +4321,7 @@ export const BaseResponseListNodeGpuMetricResponseStatus = {
 
 export interface BaseResponseListNodeGpuMetricResponse {
   status: BaseResponseListNodeGpuMetricResponseStatus;
+  errorCode?: string;
   data?: NodeGpuMetricResponse[];
   message?: string;
   timestamp: number;
@@ -3841,6 +4361,7 @@ export const BaseResponseMigConfigurationResponseStatus = {
 
 export interface BaseResponseMigConfigurationResponse {
   status: BaseResponseMigConfigurationResponseStatus;
+  errorCode?: string;
   data?: MigConfigurationResponse;
   message?: string;
   timestamp: number;
@@ -3896,6 +4417,7 @@ export const BaseResponseClusterNodeDetailResponseStatus = {
 
 export interface BaseResponseClusterNodeDetailResponse {
   status: BaseResponseClusterNodeDetailResponseStatus;
+  errorCode?: string;
   data?: ClusterNodeDetailResponse;
   message?: string;
   timestamp: number;
@@ -4009,6 +4531,7 @@ export const BaseResponseClusterResourceSummaryResponseStatus = {
 
 export interface BaseResponseClusterResourceSummaryResponse {
   status: BaseResponseClusterResourceSummaryResponseStatus;
+  errorCode?: string;
   data?: ClusterResourceSummaryResponse;
   message?: string;
   timestamp: number;
@@ -4092,41 +4615,6 @@ export interface MemorySummaryResponse {
   requestedBytes: string;
   /** 실제 사용 중인 메모리 (바이트) */
   usedBytes: string;
-}
-
-/**
- * 정렬 기준 필드
- */
-export type WorkspaceSortRequestSort =
-  (typeof WorkspaceSortRequestSort)[keyof typeof WorkspaceSortRequestSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const WorkspaceSortRequestSort = {
-  WORKSPACE_NAME: "WORKSPACE_NAME",
-  CREATED_AT: "CREATED_AT",
-  CREATOR_NAME: "CREATOR_NAME",
-} as const;
-
-/**
- * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
- */
-export type WorkspaceSortRequestOrder =
-  (typeof WorkspaceSortRequestOrder)[keyof typeof WorkspaceSortRequestOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const WorkspaceSortRequestOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-/**
- * 관리자용 워크스페이스 목록 정렬 요청
- */
-export interface WorkspaceSortRequest {
-  /** 정렬 기준 필드 */
-  sort: WorkspaceSortRequestSort;
-  /** 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용 */
-  order: WorkspaceSortRequestOrder;
 }
 
 /**
@@ -4285,6 +4773,7 @@ export const BaseResponsePageResponseAdminWorkspaceListResponseStatus = {
 
 export interface BaseResponsePageResponseAdminWorkspaceListResponse {
   status: BaseResponsePageResponseAdminWorkspaceListResponseStatus;
+  errorCode?: string;
   data?: PageResponseAdminWorkspaceListResponse;
   message?: string;
   timestamp: number;
@@ -4295,41 +4784,6 @@ export interface PageResponseAdminWorkspaceListResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: AdminWorkspaceListResponse[];
-}
-
-/**
- * 정렬 기준 필드
- */
-export type AdminWorkspaceMemberSortRequestSort =
-  (typeof AdminWorkspaceMemberSortRequestSort)[keyof typeof AdminWorkspaceMemberSortRequestSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AdminWorkspaceMemberSortRequestSort = {
-  ACCOUNT_NAME: "ACCOUNT_NAME",
-  MEMBER_ROLE: "MEMBER_ROLE",
-  CREATED_AT: "CREATED_AT",
-} as const;
-
-/**
- * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
- */
-export type AdminWorkspaceMemberSortRequestOrder =
-  (typeof AdminWorkspaceMemberSortRequestOrder)[keyof typeof AdminWorkspaceMemberSortRequestOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AdminWorkspaceMemberSortRequestOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-/**
- * 관리자용 워크스페이스 멤버 목록 정렬 요청
- */
-export interface AdminWorkspaceMemberSortRequest {
-  /** 정렬 기준 필드 */
-  sort: AdminWorkspaceMemberSortRequestSort;
-  /** 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용 */
-  order: AdminWorkspaceMemberSortRequestOrder;
 }
 
 /**
@@ -4366,6 +4820,7 @@ export const BaseResponsePageResponseAdminWorkspaceMemberResponseStatus = {
 
 export interface BaseResponsePageResponseAdminWorkspaceMemberResponse {
   status: BaseResponsePageResponseAdminWorkspaceMemberResponseStatus;
+  errorCode?: string;
   data?: PageResponseAdminWorkspaceMemberResponse;
   message?: string;
   timestamp: number;
@@ -4510,65 +4965,10 @@ export const BaseResponseAdminWorkspaceDetailResponseStatus = {
 
 export interface BaseResponseAdminWorkspaceDetailResponse {
   status: BaseResponseAdminWorkspaceDetailResponseStatus;
+  errorCode?: string;
   data?: AdminWorkspaceDetailResponse;
   message?: string;
   timestamp: number;
-}
-
-/**
- * 정렬 기준 필드
- */
-export type ResourceRequestSortRequestSort =
-  (typeof ResourceRequestSortRequestSort)[keyof typeof ResourceRequestSortRequestSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResourceRequestSortRequestSort = {
-  REQUESTED_AT: "REQUESTED_AT",
-  WORKSPACE_NAME: "WORKSPACE_NAME",
-  APPROVAL_STATUS: "APPROVAL_STATUS",
-} as const;
-
-/**
- * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
- */
-export type ResourceRequestSortRequestOrder =
-  (typeof ResourceRequestSortRequestOrder)[keyof typeof ResourceRequestSortRequestOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResourceRequestSortRequestOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-/**
- * 리소스 요청 목록 정렬 요청 (User/Admin 공용)
- */
-export interface ResourceRequestSortRequest {
-  /** 정렬 기준 필드 */
-  sort: ResourceRequestSortRequestSort;
-  /** 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용 */
-  order: ResourceRequestSortRequestOrder;
-}
-
-/**
- * 승인 상태 필터 (APPROVED, REJECTED, WAITING)
- */
-export type AdminResourceRequestFilterRequestApprovalStatus =
-  (typeof AdminResourceRequestFilterRequestApprovalStatus)[keyof typeof AdminResourceRequestFilterRequestApprovalStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AdminResourceRequestFilterRequestApprovalStatus = {
-  WAITING: "WAITING",
-  APPROVED: "APPROVED",
-  REJECTED: "REJECTED",
-} as const;
-
-/**
- * 관리자용 리소스 요청 필터 요청
- */
-export interface AdminResourceRequestFilterRequest {
-  /** 승인 상태 필터 (APPROVED, REJECTED, WAITING) */
-  approvalStatus?: AdminResourceRequestFilterRequestApprovalStatus;
 }
 
 /**
@@ -4624,6 +5024,7 @@ export const BaseResponsePageResponseAdminResourceRequestListResponseStatus = {
 
 export interface BaseResponsePageResponseAdminResourceRequestListResponse {
   status: BaseResponsePageResponseAdminResourceRequestListResponseStatus;
+  errorCode?: string;
   data?: PageResponseAdminResourceRequestListResponse;
   message?: string;
   timestamp: number;
@@ -4660,6 +5061,7 @@ export const BaseResponseAdminResourceRequestDetailResponseStatus = {
 
 export interface BaseResponseAdminResourceRequestDetailResponse {
   status: BaseResponseAdminResourceRequestDetailResponseStatus;
+  errorCode?: string;
   data?: AdminResourceRequestDetailResponse;
   message?: string;
   timestamp: number;
@@ -4759,51 +5161,52 @@ export interface ResourceComparisonResponse {
   memory: MemoryComparisonResponse;
 }
 
-export type BaseResponsePageResponseStorageListResponseStatus =
-  (typeof BaseResponsePageResponseStorageListResponseStatus)[keyof typeof BaseResponsePageResponseStorageListResponseStatus];
+export type BaseResponsePageResponseStorageResponseStatus =
+  (typeof BaseResponsePageResponseStorageResponseStatus)[keyof typeof BaseResponsePageResponseStorageResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseStorageListResponseStatus = {
+export const BaseResponsePageResponseStorageResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponsePageResponseStorageListResponse {
-  status: BaseResponsePageResponseStorageListResponseStatus;
-  data?: PageResponseStorageListResponse;
+export interface BaseResponsePageResponseStorageResponse {
+  status: BaseResponsePageResponseStorageResponseStatus;
+  errorCode?: string;
+  data?: PageResponseStorageResponse;
   message?: string;
   timestamp: number;
 }
 
-export interface PageResponseStorageListResponse {
+export interface PageResponseStorageResponse {
   totalSize: number;
   totalPageNum: number;
   currentPageNo: number;
-  content: StorageListResponse[];
+  content: StorageResponse[];
 }
 
 /**
  * 스토리지 채널
  */
-export type StorageListResponseStorageChannel =
-  (typeof StorageListResponseStorageChannel)[keyof typeof StorageListResponseStorageChannel];
+export type StorageResponseStorageChannel =
+  (typeof StorageResponseStorageChannel)[keyof typeof StorageResponseStorageChannel];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StorageListResponseStorageChannel = {
+export const StorageResponseStorageChannel = {
   NFS: "NFS",
 } as const;
 
 /**
  * 스토리지 목록 응답
  */
-export interface StorageListResponse {
+export interface StorageResponse {
   /** 스토리지 고유 ID */
   storageId: number;
   /** 스토리지 이름 */
   storageName: string;
   /** 스토리지 채널 */
-  storageChannel: StorageListResponseStorageChannel;
+  storageChannel: StorageResponseStorageChannel;
   /** 스토리지 서버 IP 주소 */
   storageIp: string;
   /** 스토리지 저장 경로 */
@@ -4814,6 +5217,24 @@ export interface StorageListResponse {
   creatorId: string;
   /** 생성자 이름 */
   creatorName: string;
+}
+
+export type BaseResponseStorageResponseStatus =
+  (typeof BaseResponseStorageResponseStatus)[keyof typeof BaseResponseStorageResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseStorageResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseStorageResponse {
+  status: BaseResponseStorageResponseStatus;
+  errorCode?: string;
+  data?: StorageResponse;
+  message?: string;
+  timestamp: number;
 }
 
 /**
@@ -4865,6 +5286,7 @@ export const BaseResponsePageResponseAccountItemResponseStatus = {
 
 export interface BaseResponsePageResponseAccountItemResponse {
   status: BaseResponsePageResponseAccountItemResponseStatus;
+  errorCode?: string;
   data?: PageResponseAccountItemResponse;
   message?: string;
   timestamp: number;
@@ -4922,6 +5344,7 @@ export const BaseResponseListAdminNotificationSetResponseStatus = {
 
 export interface BaseResponseListAdminNotificationSetResponse {
   status: BaseResponseListAdminNotificationSetResponseStatus;
+  errorCode?: string;
   data?: AdminNotificationSetResponse[];
   message?: string;
   timestamp: number;
@@ -4939,6 +5362,7 @@ export const BaseResponseAccountItemResponseStatus = {
 
 export interface BaseResponseAccountItemResponse {
   status: BaseResponseAccountItemResponseStatus;
+  errorCode?: string;
   data?: AccountItemResponse;
   message?: string;
   timestamp: number;
@@ -4956,6 +5380,7 @@ export const BaseResponsePageResponseSignupRequestItemResponseStatus = {
 
 export interface BaseResponsePageResponseSignupRequestItemResponse {
   status: BaseResponsePageResponseSignupRequestItemResponseStatus;
+  errorCode?: string;
   data?: PageResponseSignupRequestItemResponse;
   message?: string;
   timestamp: number;
@@ -4982,74 +5407,76 @@ export interface SignupRequestItemResponse {
   createdAt?: string;
 }
 
-export type BaseResponsePageResponseCredentialListItemResponseStatus =
-  (typeof BaseResponsePageResponseCredentialListItemResponseStatus)[keyof typeof BaseResponsePageResponseCredentialListItemResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseCredentialListItemResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseCredentialListItemResponse {
-  status: BaseResponsePageResponseCredentialListItemResponseStatus;
-  data?: PageResponseCredentialListItemResponse;
-  message?: string;
-  timestamp: number;
-}
-
 /**
  * 크리덴셜 채널
  */
-export type CredentialListItemResponseCredentialChannel =
-  (typeof CredentialListItemResponseCredentialChannel)[keyof typeof CredentialListItemResponseCredentialChannel];
+export type AdminCredentialListItemResponseCredentialChannel =
+  (typeof AdminCredentialListItemResponseCredentialChannel)[keyof typeof AdminCredentialListItemResponseCredentialChannel];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CredentialListItemResponseCredentialChannel = {
+export const AdminCredentialListItemResponseCredentialChannel = {
   GIT: "GIT",
   DOCKER: "DOCKER",
+  NGC: "NGC",
 } as const;
 
 /**
  * 크리덴셜 타입
  */
-export type CredentialListItemResponseCredentialType =
-  (typeof CredentialListItemResponseCredentialType)[keyof typeof CredentialListItemResponseCredentialType];
+export type AdminCredentialListItemResponseCredentialType =
+  (typeof AdminCredentialListItemResponseCredentialType)[keyof typeof AdminCredentialListItemResponseCredentialType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CredentialListItemResponseCredentialType = {
+export const AdminCredentialListItemResponseCredentialType = {
   IMAGE: "IMAGE",
   SOURCE_CODE: "SOURCE_CODE",
 } as const;
 
 /**
- * 크리덴셜 목록 조회 응답 항목
+ * 관리자용 크리덴셜 목록 조회 응답 항목
  */
-export interface CredentialListItemResponse {
+export interface AdminCredentialListItemResponse {
   /** 크리덴셜 ID */
   credentialId: number;
   /** 크리덴셜 채널 */
-  credentialChannel: CredentialListItemResponseCredentialChannel;
+  credentialChannel: AdminCredentialListItemResponseCredentialChannel;
   /** 크리덴셜 타입 */
-  credentialType: CredentialListItemResponseCredentialType;
+  credentialType: AdminCredentialListItemResponseCredentialType;
   /** 크리덴셜 이름 */
   credentialName: string;
   /** 크리덴셜 설명 */
   description?: string;
   /** 생성일시 */
   createDateTime: string;
-  /** 생성자 이름 */
-  creatorName?: string;
+  /** 생성자 이름 (삭제된 계정이면 빈 문자열) */
+  creatorName: string;
   /** 생성자 ID */
   creatorId: string;
 }
 
-export interface PageResponseCredentialListItemResponse {
+export type BaseResponsePageResponseAdminCredentialListItemResponseStatus =
+  (typeof BaseResponsePageResponseAdminCredentialListItemResponseStatus)[keyof typeof BaseResponsePageResponseAdminCredentialListItemResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseAdminCredentialListItemResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseAdminCredentialListItemResponse {
+  status: BaseResponsePageResponseAdminCredentialListItemResponseStatus;
+  errorCode?: string;
+  data?: PageResponseAdminCredentialListItemResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseAdminCredentialListItemResponse {
   totalSize: number;
   totalPageNum: number;
   currentPageNo: number;
-  content: CredentialListItemResponse[];
+  content: AdminCredentialListItemResponse[];
 }
 
 export type BaseResponseListNotificationSetResponseStatus =
@@ -5064,6 +5491,7 @@ export const BaseResponseListNotificationSetResponseStatus = {
 
 export interface BaseResponseListNotificationSetResponse {
   status: BaseResponseListNotificationSetResponseStatus;
+  errorCode?: string;
   data?: NotificationSetResponse[];
   message?: string;
   timestamp: number;
@@ -5130,6 +5558,7 @@ export const BaseResponseProfileResponseStatus = {
 
 export interface BaseResponseProfileResponse {
   status: BaseResponseProfileResponseStatus;
+  errorCode?: string;
   data?: ProfileResponse;
   message?: string;
   timestamp: number;
@@ -5184,6 +5613,7 @@ export const BaseResponsePageResponseNotificationItemResponseStatus = {
 
 export interface BaseResponsePageResponseNotificationItemResponse {
   status: BaseResponsePageResponseNotificationItemResponseStatus;
+  errorCode?: string;
   data?: PageResponseNotificationItemResponse;
   message?: string;
   timestamp: number;
@@ -5229,6 +5659,78 @@ export interface PageResponseNotificationItemResponse {
   content: NotificationItemResponse[];
 }
 
+export type BaseResponsePageResponseCredentialListItemResponseStatus =
+  (typeof BaseResponsePageResponseCredentialListItemResponseStatus)[keyof typeof BaseResponsePageResponseCredentialListItemResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseCredentialListItemResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseCredentialListItemResponse {
+  status: BaseResponsePageResponseCredentialListItemResponseStatus;
+  errorCode?: string;
+  data?: PageResponseCredentialListItemResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 크리덴셜 채널
+ */
+export type CredentialListItemResponseCredentialChannel =
+  (typeof CredentialListItemResponseCredentialChannel)[keyof typeof CredentialListItemResponseCredentialChannel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CredentialListItemResponseCredentialChannel = {
+  GIT: "GIT",
+  DOCKER: "DOCKER",
+  NGC: "NGC",
+} as const;
+
+/**
+ * 크리덴셜 타입
+ */
+export type CredentialListItemResponseCredentialType =
+  (typeof CredentialListItemResponseCredentialType)[keyof typeof CredentialListItemResponseCredentialType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CredentialListItemResponseCredentialType = {
+  IMAGE: "IMAGE",
+  SOURCE_CODE: "SOURCE_CODE",
+} as const;
+
+/**
+ * 크리덴셜 목록 조회 응답 항목
+ */
+export interface CredentialListItemResponse {
+  /** 크리덴셜 ID */
+  credentialId: number;
+  /** 크리덴셜 채널 */
+  credentialChannel: CredentialListItemResponseCredentialChannel;
+  /** 크리덴셜 타입 */
+  credentialType: CredentialListItemResponseCredentialType;
+  /** 크리덴셜 이름 */
+  credentialName: string;
+  /** 크리덴셜 설명 */
+  description?: string;
+  /** 생성일시 */
+  createDateTime: string;
+  /** 생성자 이름 */
+  creatorName?: string;
+  /** 생성자 ID */
+  creatorId: string;
+}
+
+export interface PageResponseCredentialListItemResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: CredentialListItemResponse[];
+}
+
 export type BaseResponseCredentialDetailResponseStatus =
   (typeof BaseResponseCredentialDetailResponseStatus)[keyof typeof BaseResponseCredentialDetailResponseStatus];
 
@@ -5241,6 +5743,7 @@ export const BaseResponseCredentialDetailResponseStatus = {
 
 export interface BaseResponseCredentialDetailResponse {
   status: BaseResponseCredentialDetailResponseStatus;
+  errorCode?: string;
   data?: CredentialDetailResponse;
   message?: string;
   timestamp: number;
@@ -5256,6 +5759,7 @@ export type CredentialDetailResponseCredentialChannel =
 export const CredentialDetailResponseCredentialChannel = {
   GIT: "GIT",
   DOCKER: "DOCKER",
+  NGC: "NGC",
 } as const;
 
 /**
@@ -5415,6 +5919,10 @@ export type GetPublicRegistryListParams = {
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */
   order?: GetPublicRegistryListOrder;
+  /**
+   * 이미지 소스 타입 필터 (미지정 시 전체 조회)
+   */
+  imageSourceType?: GetPublicRegistryListImageSourceType;
 };
 
 export type GetPublicRegistryListSort =
@@ -5433,6 +5941,15 @@ export type GetPublicRegistryListOrder =
 export const GetPublicRegistryListOrder = {
   ASC: "ASC",
   DESC: "DESC",
+} as const;
+
+export type GetPublicRegistryListImageSourceType =
+  (typeof GetPublicRegistryListImageSourceType)[keyof typeof GetPublicRegistryListImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPublicRegistryListImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
 } as const;
 
 export type GetPublicImageTagListParams = {
@@ -5528,6 +6045,10 @@ export type GetPrivateRegistryListParams = {
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */
   order?: GetPrivateRegistryListOrder;
+  /**
+   * 이미지 소스 타입 필터 (미지정 시 전체 조회)
+   */
+  imageSourceType?: GetPrivateRegistryListImageSourceType;
 };
 
 export type GetPrivateRegistryListSort =
@@ -5546,6 +6067,15 @@ export type GetPrivateRegistryListOrder =
 export const GetPrivateRegistryListOrder = {
   ASC: "ASC",
   DESC: "DESC",
+} as const;
+
+export type GetPrivateRegistryListImageSourceType =
+  (typeof GetPrivateRegistryListImageSourceType)[keyof typeof GetPrivateRegistryListImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPrivateRegistryListImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
 } as const;
 
 export type GetPrivateImageTagListParams = {
@@ -5775,40 +6305,12 @@ export const GetVolumeListVolumeType = {
   ON_PREMISE: "ON_PREMISE",
 } as const;
 
-export type GetPullPushJobsParams = {
+export type ListFilesParams = {
   /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
+   * 조회할 경로 (기본값: /)
    */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 특정 이미지의 작업만 조회
-   */
-  imageId?: number;
-  /**
-   * 이미지 소스 타입 필터 (미지정 시 전체 조회)
-   */
-  imageSourceType?: GetPullPushJobsImageSourceType;
+  path?: string;
 };
-
-export type GetPullPushJobsImageSourceType =
-  (typeof GetPullPushJobsImageSourceType)[keyof typeof GetPullPushJobsImageSourceType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetPullPushJobsImageSourceType = {
-  SNAPSHOT: "SNAPSHOT",
-  EXTERNAL: "EXTERNAL",
-} as const;
 
 export type CheckImageTagExistsParams = {
   /**
@@ -5841,7 +6343,18 @@ export type GetPrivateImageTagDetailParams = {
   workspaceId?: number;
 };
 
-export type GetPullPushJobs1Params = {
+export type GetPrivateImageDetailParams = {
+  /**
+   * Harbor 이미지 경로
+   */
+  harborImageName: string;
+  /**
+   * 워크스페이스 ID 필터
+   */
+  workspaceId?: number;
+};
+
+export type GetImageJobsParams = {
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -5858,34 +6371,38 @@ export type GetPullPushJobs1Params = {
    */
   keyword?: string;
   /**
+   * 이미지 타입 (PUBLIC/PRIVATE)
+   */
+  imageType: GetImageJobsImageType;
+  /**
    * 특정 이미지의 작업만 조회
    */
   imageId?: number;
   /**
    * 이미지 소스 타입 필터 (미지정 시 전체 조회)
    */
-  imageSourceType?: GetPullPushJobs1ImageSourceType;
+  imageSourceType?: GetImageJobsImageSourceType;
 };
 
-export type GetPullPushJobs1ImageSourceType =
-  (typeof GetPullPushJobs1ImageSourceType)[keyof typeof GetPullPushJobs1ImageSourceType];
+export type GetImageJobsImageType =
+  (typeof GetImageJobsImageType)[keyof typeof GetImageJobsImageType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetPullPushJobs1ImageSourceType = {
+export const GetImageJobsImageType = {
+  BUILT_IN: "BUILT_IN",
+  HUB: "HUB",
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+export type GetImageJobsImageSourceType =
+  (typeof GetImageJobsImageSourceType)[keyof typeof GetImageJobsImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetImageJobsImageSourceType = {
   SNAPSHOT: "SNAPSHOT",
   EXTERNAL: "EXTERNAL",
 } as const;
-
-export type GetPrivateImageDetailParams = {
-  /**
-   * Harbor 이미지 경로
-   */
-  harborImageName: string;
-  /**
-   * 워크스페이스 ID 필터
-   */
-  workspaceId?: number;
-};
 
 export type GetAllMonitoringNotificationHistoriesParams = {
   pageSearchRequest: PageSearchRequest;
@@ -6249,20 +6766,153 @@ export type GetNodeGpuMetricsParams = {
 };
 
 export type GetAllWorkspaces1Params = {
-  pageSearchRequest: PageSearchRequest;
-  sortRequest: WorkspaceSortRequest;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetAllWorkspaces1Sort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetAllWorkspaces1Order;
 };
+
+export type GetAllWorkspaces1Sort =
+  (typeof GetAllWorkspaces1Sort)[keyof typeof GetAllWorkspaces1Sort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllWorkspaces1Sort = {
+  WORKSPACE_NAME: "WORKSPACE_NAME",
+  CREATED_AT: "CREATED_AT",
+  CREATOR_NAME: "CREATOR_NAME",
+} as const;
+
+export type GetAllWorkspaces1Order =
+  (typeof GetAllWorkspaces1Order)[keyof typeof GetAllWorkspaces1Order];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllWorkspaces1Order = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
 
 export type GetWorkspaceMembers1Params = {
-  pageSearchRequest: PageSearchRequest;
-  sortRequest: AdminWorkspaceMemberSortRequest;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetWorkspaceMembers1Sort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetWorkspaceMembers1Order;
 };
 
+export type GetWorkspaceMembers1Sort =
+  (typeof GetWorkspaceMembers1Sort)[keyof typeof GetWorkspaceMembers1Sort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetWorkspaceMembers1Sort = {
+  ACCOUNT_NAME: "ACCOUNT_NAME",
+  MEMBER_ROLE: "MEMBER_ROLE",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type GetWorkspaceMembers1Order =
+  (typeof GetWorkspaceMembers1Order)[keyof typeof GetWorkspaceMembers1Order];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetWorkspaceMembers1Order = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
 export type GetResourceRequests1Params = {
-  pageSearchRequest: PageSearchRequest;
-  sortRequest: ResourceRequestSortRequest;
-  filterRequest: AdminResourceRequestFilterRequest;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetResourceRequests1Sort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetResourceRequests1Order;
+  /**
+   * 승인 상태 필터 (APPROVED, REJECTED, WAITING)
+   */
+  approvalStatus?: GetResourceRequests1ApprovalStatus;
 };
+
+export type GetResourceRequests1Sort =
+  (typeof GetResourceRequests1Sort)[keyof typeof GetResourceRequests1Sort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetResourceRequests1Sort = {
+  REQUESTED_AT: "REQUESTED_AT",
+  WORKSPACE_NAME: "WORKSPACE_NAME",
+  APPROVAL_STATUS: "APPROVAL_STATUS",
+} as const;
+
+export type GetResourceRequests1Order =
+  (typeof GetResourceRequests1Order)[keyof typeof GetResourceRequests1Order];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetResourceRequests1Order = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetResourceRequests1ApprovalStatus =
+  (typeof GetResourceRequests1ApprovalStatus)[keyof typeof GetResourceRequests1ApprovalStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetResourceRequests1ApprovalStatus = {
+  WAITING: "WAITING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+} as const;
 
 export type GetAllAccountsParams = {
   /**

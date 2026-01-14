@@ -30,6 +30,37 @@
 import * as zod from "zod";
 
 /**
+ * 스토리지의 상세 정보를 조회합니다.
+ * @summary 스토리지 상세 조회
+ */
+export const getStorageDetailParams = zod.object({
+  storageId: zod.number().describe("스토리지 ID"),
+});
+
+export const getStorageDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        storageId: zod.number().describe("스토리지 고유 ID"),
+        storageName: zod.string().describe("스토리지 이름"),
+        storageChannel: zod.enum(["NFS"]).describe("스토리지 채널"),
+        storageIp: zod.string().describe("스토리지 서버 IP 주소"),
+        storageSavePath: zod.string().describe("스토리지 저장 경로"),
+        createdAt: zod.string().datetime({}).describe("생성일시"),
+        creatorId: zod.string().describe("생성자 ID"),
+        creatorName: zod.string().describe("생성자 이름"),
+      })
+      .strict()
+      .optional()
+      .describe("스토리지 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 스토리지 이름을 수정합니다.
  * @summary 스토리지 수정
  */
@@ -54,6 +85,7 @@ export const updateStorageBody = zod
 export const updateStorageResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -92,6 +124,7 @@ export const getStoragesQueryParams = zod.object({
 export const getStoragesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),

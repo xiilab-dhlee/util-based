@@ -46,6 +46,7 @@ export const getUpdateNodeSchedulingResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -55,6 +56,7 @@ export const getGetMigConfigurationResponseMock = (
   overrideResponse: Partial<BaseResponseMigConfigurationResponse> = {},
 ): BaseResponseMigConfigurationResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     gpuProduct: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -78,6 +80,7 @@ export const getApplyMigConfigurationResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -87,6 +90,7 @@ export const getGetClusterNodesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseClusterNodeListResponse> = {},
 ): BaseResponsePageResponseClusterNodeListResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -140,6 +144,7 @@ export const getGetNodeSystemResourceResponseMock = (
   overrideResponse: Partial<BaseResponseClusterNodeSystemResourceResponse> = {},
 ): BaseResponseClusterNodeSystemResourceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     nodeIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -184,6 +189,7 @@ export const getGetNodeSystemMetricsResponseMock = (
   overrideResponse: Partial<BaseResponseListNodeSystemMetricResponse> = {},
 ): BaseResponseListNodeSystemMetricResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
@@ -200,6 +206,7 @@ export const getGetNodeGpuMetricsResponseMock = (
   overrideResponse: Partial<BaseResponseListNodeGpuMetricResponse> = {},
 ): BaseResponseListNodeGpuMetricResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
@@ -223,6 +230,7 @@ export const getGetNodeDetailResponseMock = (
   overrideResponse: Partial<BaseResponseClusterNodeDetailResponse> = {},
 ): BaseResponseClusterNodeDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     nodeIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -309,6 +317,7 @@ export const getGetClusterResourceSummaryResponseMock = (
   overrideResponse: Partial<BaseResponseClusterResourceSummaryResponse> = {},
 ): BaseResponseClusterResourceSummaryResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     gpu: {
       detail: {

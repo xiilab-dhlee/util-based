@@ -51,7 +51,6 @@ import type {
   BaseResponseDeleteImageTagsResponse,
   BaseResponseImageTagDetailResponse,
   BaseResponsePageResponseImageTagListResponse,
-  BaseResponsePageResponsePullPushJobResponse,
   BaseResponsePageResponseRegistryListResponse,
   BaseResponseRegistryDetailResponse,
   BaseResponseUnit,
@@ -62,7 +61,6 @@ import type {
   GetPrivateImageTagDetailParams,
   GetPrivateImageTagListParams,
   GetPrivateRegistryListParams,
-  GetPullPushJobs1Params,
   UpdateImageTagRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -74,7 +72,7 @@ import type {
         
  * @summary 개인 이미지 태그 수정
  */
-export const updateImageTag1 = (
+export const updatePrivateImageTag = (
   imageId: number,
   imageTagId: number,
   updateImageTagRequest: UpdateImageTagRequest,
@@ -87,23 +85,23 @@ export const updateImageTag1 = (
   });
 };
 
-export const getUpdateImageTag1MutationOptions = <
+export const getUpdatePrivateImageTagMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateImageTag1>>,
+    Awaited<ReturnType<typeof updatePrivateImageTag>>,
     TError,
     { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof updateImageTag1>>,
+  Awaited<ReturnType<typeof updatePrivateImageTag>>,
   TError,
   { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
   TContext
 > => {
-  const mutationKey = ["updateImageTag1"];
+  const mutationKey = ["updatePrivateImageTag"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -113,30 +111,30 @@ export const getUpdateImageTag1MutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateImageTag1>>,
+    Awaited<ReturnType<typeof updatePrivateImageTag>>,
     { imageId: number; imageTagId: number; data: UpdateImageTagRequest }
   > = (props) => {
     const { imageId, imageTagId, data } = props ?? {};
 
-    return updateImageTag1(imageId, imageTagId, data);
+    return updatePrivateImageTag(imageId, imageTagId, data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type UpdateImageTag1MutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateImageTag1>>
+export type UpdatePrivateImageTagMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePrivateImageTag>>
 >;
-export type UpdateImageTag1MutationBody = UpdateImageTagRequest;
-export type UpdateImageTag1MutationError = unknown;
+export type UpdatePrivateImageTagMutationBody = UpdateImageTagRequest;
+export type UpdatePrivateImageTagMutationError = unknown;
 
 /**
  * @summary 개인 이미지 태그 수정
  */
-export const useUpdateImageTag1 = <TError = unknown, TContext = unknown>(
+export const useUpdatePrivateImageTag = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateImageTag1>>,
+      Awaited<ReturnType<typeof updatePrivateImageTag>>,
       TError,
       { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
       TContext
@@ -144,12 +142,12 @@ export const useUpdateImageTag1 = <TError = unknown, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof updateImageTag1>>,
+  Awaited<ReturnType<typeof updatePrivateImageTag>>,
   TError,
   { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
   TContext
 > => {
-  const mutationOptions = getUpdateImageTag1MutationOptions(options);
+  const mutationOptions = getUpdatePrivateImageTagMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -325,7 +323,7 @@ export function useGetPrivateRegistryList<
  * 외부 레지스트리(Docker Hub, NGC 등)의 이미지를 개인 레지스트리에 등록합니다.
  * @summary 개인 이미지 등록
  */
-export const createExternalImage1 = (
+export const createPrivateExternalImage = (
   createExternalImageRequest: CreateExternalImageRequest,
   signal?: AbortSignal,
 ) => {
@@ -338,23 +336,23 @@ export const createExternalImage1 = (
   });
 };
 
-export const getCreateExternalImage1MutationOptions = <
+export const getCreatePrivateExternalImageMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createExternalImage1>>,
+    Awaited<ReturnType<typeof createPrivateExternalImage>>,
     TError,
     { data: CreateExternalImageRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof createExternalImage1>>,
+  Awaited<ReturnType<typeof createPrivateExternalImage>>,
   TError,
   { data: CreateExternalImageRequest },
   TContext
 > => {
-  const mutationKey = ["createExternalImage1"];
+  const mutationKey = ["createPrivateExternalImage"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -364,30 +362,33 @@ export const getCreateExternalImage1MutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createExternalImage1>>,
+    Awaited<ReturnType<typeof createPrivateExternalImage>>,
     { data: CreateExternalImageRequest }
   > = (props) => {
     const { data } = props ?? {};
 
-    return createExternalImage1(data);
+    return createPrivateExternalImage(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type CreateExternalImage1MutationResult = NonNullable<
-  Awaited<ReturnType<typeof createExternalImage1>>
+export type CreatePrivateExternalImageMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createPrivateExternalImage>>
 >;
-export type CreateExternalImage1MutationBody = CreateExternalImageRequest;
-export type CreateExternalImage1MutationError = unknown;
+export type CreatePrivateExternalImageMutationBody = CreateExternalImageRequest;
+export type CreatePrivateExternalImageMutationError = unknown;
 
 /**
  * @summary 개인 이미지 등록
  */
-export const useCreateExternalImage1 = <TError = unknown, TContext = unknown>(
+export const useCreatePrivateExternalImage = <
+  TError = unknown,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createExternalImage1>>,
+      Awaited<ReturnType<typeof createPrivateExternalImage>>,
       TError,
       { data: CreateExternalImageRequest },
       TContext
@@ -395,12 +396,12 @@ export const useCreateExternalImage1 = <TError = unknown, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof createExternalImage1>>,
+  Awaited<ReturnType<typeof createPrivateExternalImage>>,
   TError,
   { data: CreateExternalImageRequest },
   TContext
 > => {
-  const mutationOptions = getCreateExternalImage1MutationOptions(options);
+  const mutationOptions = getCreatePrivateExternalImageMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -574,10 +575,15 @@ export function useGetPrivateImageTagList<
 }
 
 /**
- * 개인 이미지에 새로운 태그를 추가합니다. 본인이 생성한 이미지만 태그를 추가할 수 있습니다. DB에 Image가 없으면 자동으로 생성됩니다.
+ * 
+            개인 이미지에 새로운 태그를 추가합니다.
+            - 본인이 생성한 이미지만 태그를 추가할 수 있습니다.
+            - DB에 Image가 없으면 자동으로 생성됩니다.
+            - 이미 등록된 태그가 있으면 덮어쓰기됩니다.
+        
  * @summary 개인 이미지 태그 추가
  */
-export const addImageTag1 = (
+export const addPrivateImageTag = (
   addImageTagRequest: AddImageTagRequest,
   signal?: AbortSignal,
 ) => {
@@ -590,23 +596,23 @@ export const addImageTag1 = (
   });
 };
 
-export const getAddImageTag1MutationOptions = <
+export const getAddPrivateImageTagMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addImageTag1>>,
+    Awaited<ReturnType<typeof addPrivateImageTag>>,
     TError,
     { data: AddImageTagRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof addImageTag1>>,
+  Awaited<ReturnType<typeof addPrivateImageTag>>,
   TError,
   { data: AddImageTagRequest },
   TContext
 > => {
-  const mutationKey = ["addImageTag1"];
+  const mutationKey = ["addPrivateImageTag"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -616,30 +622,30 @@ export const getAddImageTag1MutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addImageTag1>>,
+    Awaited<ReturnType<typeof addPrivateImageTag>>,
     { data: AddImageTagRequest }
   > = (props) => {
     const { data } = props ?? {};
 
-    return addImageTag1(data);
+    return addPrivateImageTag(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type AddImageTag1MutationResult = NonNullable<
-  Awaited<ReturnType<typeof addImageTag1>>
+export type AddPrivateImageTagMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addPrivateImageTag>>
 >;
-export type AddImageTag1MutationBody = AddImageTagRequest;
-export type AddImageTag1MutationError = unknown;
+export type AddPrivateImageTagMutationBody = AddImageTagRequest;
+export type AddPrivateImageTagMutationError = unknown;
 
 /**
  * @summary 개인 이미지 태그 추가
  */
-export const useAddImageTag1 = <TError = unknown, TContext = unknown>(
+export const useAddPrivateImageTag = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addImageTag1>>,
+      Awaited<ReturnType<typeof addPrivateImageTag>>,
       TError,
       { data: AddImageTagRequest },
       TContext
@@ -647,12 +653,12 @@ export const useAddImageTag1 = <TError = unknown, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof addImageTag1>>,
+  Awaited<ReturnType<typeof addPrivateImageTag>>,
   TError,
   { data: AddImageTagRequest },
   TContext
 > => {
-  const mutationOptions = getAddImageTag1MutationOptions(options);
+  const mutationOptions = getAddPrivateImageTagMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -666,7 +672,7 @@ export const useAddImageTag1 = <TError = unknown, TContext = unknown>(
         
  * @summary 개인 이미지 태그 삭제
  */
-export const deleteImageTags1 = (
+export const deletePrivateImageTags = (
   deleteImageTagsRequest: DeleteImageTagsRequest,
   signal?: AbortSignal,
 ) => {
@@ -679,23 +685,23 @@ export const deleteImageTags1 = (
   });
 };
 
-export const getDeleteImageTags1MutationOptions = <
+export const getDeletePrivateImageTagsMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteImageTags1>>,
+    Awaited<ReturnType<typeof deletePrivateImageTags>>,
     TError,
     { data: DeleteImageTagsRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteImageTags1>>,
+  Awaited<ReturnType<typeof deletePrivateImageTags>>,
   TError,
   { data: DeleteImageTagsRequest },
   TContext
 > => {
-  const mutationKey = ["deleteImageTags1"];
+  const mutationKey = ["deletePrivateImageTags"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -705,30 +711,30 @@ export const getDeleteImageTags1MutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteImageTags1>>,
+    Awaited<ReturnType<typeof deletePrivateImageTags>>,
     { data: DeleteImageTagsRequest }
   > = (props) => {
     const { data } = props ?? {};
 
-    return deleteImageTags1(data);
+    return deletePrivateImageTags(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteImageTags1MutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteImageTags1>>
+export type DeletePrivateImageTagsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePrivateImageTags>>
 >;
-export type DeleteImageTags1MutationBody = DeleteImageTagsRequest;
-export type DeleteImageTags1MutationError = unknown;
+export type DeletePrivateImageTagsMutationBody = DeleteImageTagsRequest;
+export type DeletePrivateImageTagsMutationError = unknown;
 
 /**
  * @summary 개인 이미지 태그 삭제
  */
-export const useDeleteImageTags1 = <TError = unknown, TContext = unknown>(
+export const useDeletePrivateImageTags = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteImageTags1>>,
+      Awaited<ReturnType<typeof deletePrivateImageTags>>,
       TError,
       { data: DeleteImageTagsRequest },
       TContext
@@ -736,12 +742,12 @@ export const useDeleteImageTags1 = <TError = unknown, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof deleteImageTags1>>,
+  Awaited<ReturnType<typeof deletePrivateImageTags>>,
   TError,
   { data: DeleteImageTagsRequest },
   TContext
 > => {
-  const mutationOptions = getDeleteImageTags1MutationOptions(options);
+  const mutationOptions = getDeletePrivateImageTagsMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -754,7 +760,7 @@ export const useDeleteImageTags1 = <TError = unknown, TContext = unknown>(
         
  * @summary 개인 이미지 삭제
  */
-export const deleteImages = (
+export const deletePrivateImages = (
   deleteImagesRequest: DeleteImagesRequest,
   signal?: AbortSignal,
 ) => {
@@ -767,23 +773,23 @@ export const deleteImages = (
   });
 };
 
-export const getDeleteImagesMutationOptions = <
+export const getDeletePrivateImagesMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteImages>>,
+    Awaited<ReturnType<typeof deletePrivateImages>>,
     TError,
     { data: DeleteImagesRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteImages>>,
+  Awaited<ReturnType<typeof deletePrivateImages>>,
   TError,
   { data: DeleteImagesRequest },
   TContext
 > => {
-  const mutationKey = ["deleteImages"];
+  const mutationKey = ["deletePrivateImages"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -793,30 +799,30 @@ export const getDeleteImagesMutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteImages>>,
+    Awaited<ReturnType<typeof deletePrivateImages>>,
     { data: DeleteImagesRequest }
   > = (props) => {
     const { data } = props ?? {};
 
-    return deleteImages(data);
+    return deletePrivateImages(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteImagesMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteImages>>
+export type DeletePrivateImagesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePrivateImages>>
 >;
-export type DeleteImagesMutationBody = DeleteImagesRequest;
-export type DeleteImagesMutationError = unknown;
+export type DeletePrivateImagesMutationBody = DeleteImagesRequest;
+export type DeletePrivateImagesMutationError = unknown;
 
 /**
  * @summary 개인 이미지 삭제
  */
-export const useDeleteImages = <TError = unknown, TContext = unknown>(
+export const useDeletePrivateImages = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteImages>>,
+      Awaited<ReturnType<typeof deletePrivateImages>>,
       TError,
       { data: DeleteImagesRequest },
       TContext
@@ -824,12 +830,12 @@ export const useDeleteImages = <TError = unknown, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof deleteImages>>,
+  Awaited<ReturnType<typeof deletePrivateImages>>,
   TError,
   { data: DeleteImagesRequest },
   TContext
 > => {
-  const mutationOptions = getDeleteImagesMutationOptions(options);
+  const mutationOptions = getDeletePrivateImagesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -1017,175 +1023,6 @@ export function useGetPrivateImageTagDetail<
     params,
     options,
   );
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * 
-            개인 레지스트리 이미지 업로드 작업 목록을 페이징하여 조회합니다.
-            본인이 등록한 작업만 조회됩니다. 특정 이미지의 작업만 필터링할 수 있습니다.
-            이미지 이름으로 검색이 가능합니다.
-        
- * @summary 개인 이미지 Pull/Push 작업 목록 조회
- */
-export const getPullPushJobs1 = (
-  params?: GetPullPushJobs1Params,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponsePageResponsePullPushJobResponse>({
-    url: `/api/v1/registries/private/images/pull-push-jobs`,
-    method: "GET",
-    params,
-    signal,
-  });
-};
-
-export const getGetPullPushJobs1QueryKey = (
-  params?: GetPullPushJobs1Params,
-) => {
-  return [
-    `/api/v1/registries/private/images/pull-push-jobs`,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getGetPullPushJobs1QueryOptions = <
-  TData = Awaited<ReturnType<typeof getPullPushJobs1>>,
-  TError = unknown,
->(
-  params?: GetPullPushJobs1Params,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPullPushJobs1>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ?? getGetPullPushJobs1QueryKey(params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getPullPushJobs1>>
-  > = ({ signal }) => getPullPushJobs1(params, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getPullPushJobs1>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetPullPushJobs1QueryResult = NonNullable<
-  Awaited<ReturnType<typeof getPullPushJobs1>>
->;
-export type GetPullPushJobs1QueryError = unknown;
-
-export function useGetPullPushJobs1<
-  TData = Awaited<ReturnType<typeof getPullPushJobs1>>,
-  TError = unknown,
->(
-  params: undefined | GetPullPushJobs1Params,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPullPushJobs1>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPullPushJobs1>>,
-          TError,
-          Awaited<ReturnType<typeof getPullPushJobs1>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPullPushJobs1<
-  TData = Awaited<ReturnType<typeof getPullPushJobs1>>,
-  TError = unknown,
->(
-  params?: GetPullPushJobs1Params,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPullPushJobs1>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPullPushJobs1>>,
-          TError,
-          Awaited<ReturnType<typeof getPullPushJobs1>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPullPushJobs1<
-  TData = Awaited<ReturnType<typeof getPullPushJobs1>>,
-  TError = unknown,
->(
-  params?: GetPullPushJobs1Params,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPullPushJobs1>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 개인 이미지 Pull/Push 작업 목록 조회
- */
-
-export function useGetPullPushJobs1<
-  TData = Awaited<ReturnType<typeof getPullPushJobs1>>,
-  TError = unknown,
->(
-  params?: GetPullPushJobs1Params,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPullPushJobs1>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetPullPushJobs1QueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

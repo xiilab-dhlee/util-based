@@ -41,6 +41,7 @@ export const getWorkspaceMemberRoleParams = zod.object({
 export const getWorkspaceMemberRoleResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         memberRole: zod
@@ -74,6 +75,7 @@ export const updateMemberRoleBody = zod
 export const updateMemberRoleResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         memberRole: zod
@@ -119,6 +121,7 @@ export const getWorkspaceMembersQueryParams = zod.object({
 export const getWorkspaceMembersResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),

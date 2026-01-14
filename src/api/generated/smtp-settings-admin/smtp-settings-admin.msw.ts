@@ -33,7 +33,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import type { BaseResponseSmtpSetResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetSmtpSetResponseMock = (
+export const getRegisterSmtpSetResponseMock = (
   overrideResponse: Partial<BaseResponseSmtpSetResponse> = {},
 ): BaseResponseSmtpSetResponse => ({
   status: "SUCCESS",
@@ -50,16 +50,16 @@ export const getGetSmtpSetResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetSmtpSetMockHandler = (
+export const getRegisterSmtpSetMockHandler = (
   overrideResponse?:
     | BaseResponseSmtpSetResponse
     | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) => Promise<BaseResponseSmtpSetResponse> | BaseResponseSmtpSetResponse),
   options?: RequestHandlerOptions,
 ) => {
-  return http.get(
-    "*/api/v1/smtp-sets",
+  return http.post(
+    "*/api/v1/admin/smtp-sets",
     async (info) => {
       await delay(1000);
 
@@ -69,12 +69,36 @@ export const getGetSmtpSetMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetSmtpSetResponseMock(),
+            : getRegisterSmtpSetResponseMock(),
         ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
+        { status: 201, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
   );
 };
-export const getSmtpSettingsMock = () => [getGetSmtpSetMockHandler()];
+
+export const getDeleteSmtpSetMockHandler = (
+  overrideResponse?:
+    | void
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.delete(
+    "*/api/v1/admin/smtp-sets/:smtpSetId",
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
+    },
+    options,
+  );
+};
+export const getSmtpSettingsAdminMock = () => [
+  getRegisterSmtpSetMockHandler(),
+  getDeleteSmtpSetMockHandler(),
+];

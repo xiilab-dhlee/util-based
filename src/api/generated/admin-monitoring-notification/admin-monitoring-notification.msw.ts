@@ -44,6 +44,7 @@ export const getUpdateMonitoringNotificationSetResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -53,6 +54,7 @@ export const getUpdateMonitoringNotificationSetEnabledResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -62,6 +64,7 @@ export const getGetAllMonitoringNotificationSetsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseMonitoringNotificationSetListResponse> = {},
 ): BaseResponsePageResponseMonitoringNotificationSetListResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -86,6 +89,7 @@ export const getCreateMonitoringNotificationSetResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -95,6 +99,7 @@ export const getGetAllMonitoringNotificationHistoriesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseMonitoringNotificationHistoryListResponse> = {},
 ): BaseResponsePageResponseMonitoringNotificationHistoryListResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -120,6 +125,7 @@ export const getGetSendHistoryResponseMock = (
   overrideResponse: Partial<BaseResponseListMonitoringNotificationSendHistoryResponse> = {},
 ): BaseResponseListMonitoringNotificationSendHistoryResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
@@ -148,6 +154,7 @@ export const getGetMonitoringNotificationHistoryDetailResponseMock = (
   overrideResponse: Partial<BaseResponseMonitoringNotificationHistoryDetailResponse> = {},
 ): BaseResponseMonitoringNotificationHistoryDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     nodeIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -189,6 +196,7 @@ export const getGetMonitoringNotificationSetDetailResponseMock = (
   overrideResponse: Partial<BaseResponseMonitoringNotificationSetDetailResponse> = {},
 ): BaseResponseMonitoringNotificationSetDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     notificationSetId: faker.number.int({ min: undefined, max: undefined }),
     notificationSetName: faker.string.alpha({ length: { min: 10, max: 20 } }),

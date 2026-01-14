@@ -31,12 +31,13 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseCredentialListItemResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponsePageResponseAdminCredentialListItemResponse } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getGetAllCredentialsResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseCredentialListItemResponse> = {},
-): BaseResponsePageResponseCredentialListItemResponse => ({
+  overrideResponse: Partial<BaseResponsePageResponseAdminCredentialListItemResponse> = {},
+): BaseResponsePageResponseAdminCredentialListItemResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -46,7 +47,11 @@ export const getGetAllCredentialsResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       credentialId: faker.number.int({ min: undefined, max: undefined }),
-      credentialChannel: faker.helpers.arrayElement(["GIT", "DOCKER"] as const),
+      credentialChannel: faker.helpers.arrayElement([
+        "GIT",
+        "DOCKER",
+        "NGC",
+      ] as const),
       credentialType: faker.helpers.arrayElement([
         "IMAGE",
         "SOURCE_CODE",
@@ -65,12 +70,12 @@ export const getGetAllCredentialsResponseMock = (
 
 export const getGetAllCredentialsMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseCredentialListItemResponse
+    | BaseResponsePageResponseAdminCredentialListItemResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseCredentialListItemResponse>
-        | BaseResponsePageResponseCredentialListItemResponse),
+        | Promise<BaseResponsePageResponseAdminCredentialListItemResponse>
+        | BaseResponsePageResponseAdminCredentialListItemResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(

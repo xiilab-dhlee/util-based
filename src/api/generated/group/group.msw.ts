@@ -43,6 +43,7 @@ export const getGetGroupChildrenResponseMock = (
   overrideResponse: Partial<BaseResponseGroupChildrenResponse> = {},
 ): BaseResponseGroupChildrenResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     group: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
@@ -50,6 +51,7 @@ export const getGetGroupChildrenResponseMock = (
     ).map(() => ({
       groupId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       groupName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      memberCount: faker.number.int({ min: undefined, max: undefined }),
     })),
     account: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
@@ -69,6 +71,7 @@ export const getGetGroupDetailResponseMock = (
   overrideResponse: Partial<BaseResponseGroupDetailResponse> = {},
 ): BaseResponseGroupDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     groupName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -93,6 +96,7 @@ export const getGetUngroupedAccountsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseGroupMemberResponse> = {},
 ): BaseResponsePageResponseGroupMemberResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -115,6 +119,7 @@ export const getSearchResponseMock = (
   overrideResponse: Partial<BaseResponseGroupSearchResponse> = {},
 ): BaseResponseGroupSearchResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     group: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
@@ -122,15 +127,7 @@ export const getSearchResponseMock = (
     ).map(() => ({
       groupId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       groupName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      children: [],
-      member: Array.from(
-        { length: faker.number.int({ min: 1, max: 10 }) },
-        (_, i) => i + 1,
-      ).map(() => ({
-        accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      })),
+      memberCount: faker.number.int({ min: undefined, max: undefined }),
     })),
     account: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
@@ -139,7 +136,7 @@ export const getSearchResponseMock = (
       accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      groups: Array.from(
+      group: Array.from(
         { length: faker.number.int({ min: 1, max: 10 }) },
         (_, i) => i + 1,
       ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
@@ -154,12 +151,14 @@ export const getGetRootGroupsResponseMock = (
   overrideResponse: Partial<BaseResponseListGroupSummaryResponse> = {},
 ): BaseResponseListGroupSummaryResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
     groupId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     groupName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    memberCount: faker.number.int({ min: undefined, max: undefined }),
   })),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),

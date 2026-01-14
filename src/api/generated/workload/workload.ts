@@ -38,49 +38,56 @@ import { useMutation } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponseDeleteImagesResponse,
-  DeleteImagesRequest,
+  BaseResponseUnit,
+  WorkloadCreateRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 
-            공용 레지스트리의 이미지를 삭제합니다.
-            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
-            - 관리자만 삭제할 수 있습니다.
-            - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
+            워크스페이스에 새로운 워크로드를 생성합니다.
+
+            **워크로드 잡 타입:**
+            - INTERACTIVE: 인터랙티브 워크로드
+            - BATCH: 배치 워크로드
+            - DISTRIBUTED: 분산 워크로드 (launcherInfo, workerInfo 필요)
+
+            **노드 타입:**
+            - SINGLE: 단일 노드
+            - MULTI: 멀티 노드
         
- * @summary 공용 이미지 삭제
+ * @summary 워크로드 생성
  */
-export const deleteImages = (
-  deleteImagesRequest: DeleteImagesRequest,
+export const createWorkload = (
+  workspaceId: number,
+  workloadCreateRequest: WorkloadCreateRequest,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseDeleteImagesResponse>({
-    url: `/api/v1/admin/registries/public/delete`,
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    data: deleteImagesRequest,
+    data: workloadCreateRequest,
     signal,
   });
 };
 
-export const getDeleteImagesMutationOptions = <
+export const getCreateWorkloadMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteImages>>,
+    Awaited<ReturnType<typeof createWorkload>>,
     TError,
-    { data: DeleteImagesRequest },
+    { workspaceId: number; data: WorkloadCreateRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteImages>>,
+  Awaited<ReturnType<typeof createWorkload>>,
   TError,
-  { data: DeleteImagesRequest },
+  { workspaceId: number; data: WorkloadCreateRequest },
   TContext
 > => {
-  const mutationKey = ["deleteImages"];
+  const mutationKey = ["createWorkload"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -90,43 +97,43 @@ export const getDeleteImagesMutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteImages>>,
-    { data: DeleteImagesRequest }
+    Awaited<ReturnType<typeof createWorkload>>,
+    { workspaceId: number; data: WorkloadCreateRequest }
   > = (props) => {
-    const { data } = props ?? {};
+    const { workspaceId, data } = props ?? {};
 
-    return deleteImages(data);
+    return createWorkload(workspaceId, data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteImagesMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteImages>>
+export type CreateWorkloadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createWorkload>>
 >;
-export type DeleteImagesMutationBody = DeleteImagesRequest;
-export type DeleteImagesMutationError = unknown;
+export type CreateWorkloadMutationBody = WorkloadCreateRequest;
+export type CreateWorkloadMutationError = unknown;
 
 /**
- * @summary 공용 이미지 삭제
+ * @summary 워크로드 생성
  */
-export const useDeleteImages = <TError = unknown, TContext = unknown>(
+export const useCreateWorkload = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteImages>>,
+      Awaited<ReturnType<typeof createWorkload>>,
       TError,
-      { data: DeleteImagesRequest },
+      { workspaceId: number; data: WorkloadCreateRequest },
       TContext
     >;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof deleteImages>>,
+  Awaited<ReturnType<typeof createWorkload>>,
   TError,
-  { data: DeleteImagesRequest },
+  { workspaceId: number; data: WorkloadCreateRequest },
   TContext
 > => {
-  const mutationOptions = getDeleteImagesMutationOptions(options);
+  const mutationOptions = getCreateWorkloadMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

@@ -30,6 +30,221 @@
 import * as zod from "zod";
 
 /**
+ * 
+        볼륨 정보를 수정합니다.
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 수정 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+
+        **수정 가능 필드:**
+        - volumeName: 볼륨 이름
+        - mountPath: 마운트 경로
+        - isPublic: 공개 여부
+        
+ * @summary 볼륨 수정
+ */
+export const updateVolumeParams = zod.object({
+  volumeId: zod.number().describe("수정할 볼륨 ID"),
+});
+
+export const updateVolumeBodyVolumeNameMin = 0;
+export const updateVolumeBodyVolumeNameMax = 50;
+
+export const updateVolumeBodyMountPathMin = 0;
+export const updateVolumeBodyMountPathMax = 1000;
+
+export const updateVolumeBodyMountPathRegExp = /^\/.*/;
+
+export const updateVolumeBody = zod
+  .object({
+    volumeName: zod
+      .string()
+      .min(updateVolumeBodyVolumeNameMin)
+      .max(updateVolumeBodyVolumeNameMax)
+      .describe("볼륨 이름"),
+    mountPath: zod
+      .string()
+      .min(updateVolumeBodyMountPathMin)
+      .max(updateVolumeBodyMountPathMax)
+      .regex(updateVolumeBodyMountPathRegExp)
+      .describe("마운트 경로 (절대경로)"),
+    isPublic: zod.boolean().describe("공개 여부"),
+  })
+  .strict()
+  .describe("볼륨 수정 요청");
+
+export const updateVolumeResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        볼륨을 삭제합니다 (soft delete).
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+
+        **볼륨 타입별 처리:**
+        - ASTRAGO: DB만 soft delete
+        - ON_PREMISE: K8s 리소스 삭제 후 DB soft delete
+        
+ * @summary 볼륨 삭제
+ */
+export const deleteVolumeParams = zod.object({
+  volumeId: zod.number().describe("삭제할 볼륨 ID"),
+});
+
+/**
+ * 
+        볼륨 내에 새 폴더를 생성합니다.
+
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 생성 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 볼륨 폴더 생성
+ */
+export const createFolderParams = zod.object({
+  volumeId: zod.number().describe("볼륨 ID"),
+});
+
+export const createFolderBodyPathMin = 0;
+export const createFolderBodyPathMax = 1000;
+
+export const createFolderBody = zod
+  .object({
+    path: zod
+      .string()
+      .min(createFolderBodyPathMin)
+      .max(createFolderBodyPathMax)
+      .describe("생성할 폴더 경로 (절대경로 또는 상대경로)"),
+  })
+  .strict()
+  .describe("볼륨 폴더 생성 요청");
+
+/**
+ * 
+        볼륨 내 파일 또는 폴더를 삭제합니다.
+
+        **제약 사항:**
+        - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+        - 폴더 삭제 시 하위 파일/폴더도 함께 삭제됨 (재귀 삭제)
+
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 볼륨 파일/폴더 삭제
+ */
+export const deleteFilesParams = zod.object({
+  volumeId: zod.number().describe("볼륨 ID"),
+});
+
+export const deleteFilesBodyPathsMin = 0;
+export const deleteFilesBodyPathsMax = 100;
+
+export const deleteFilesBody = zod
+  .object({
+    paths: zod
+      .array(zod.string())
+      .min(deleteFilesBodyPathsMin)
+      .max(deleteFilesBodyPathsMax)
+      .describe("삭제할 파일/폴더 경로 목록"),
+  })
+  .strict()
+  .describe("볼륨 파일 삭제 요청");
+
+/**
+ * 
+        볼륨 내 압축 파일을 해제합니다. 압축 해제는 백그라운드에서 비동기로 실행됩니다.
+
+        **지원 압축 형식:**
+        - .tar.gz, .tgz (gzip 압축 tar)
+        - .tar (tar)
+        - .zip (zip)
+
+        **압축 해제 경로:**
+        - 압축 파일과 같은 디렉토리에 확장자를 제거한 폴더명으로 생성
+        - 예: /data/archive.tar.gz → /data/archive/
+        - 동일한 이름의 폴더가 존재하면 자동 넘버링: archive_1, archive_2, ...
+
+        **비동기 처리:**
+        - API는 압축 해제 시작 여부만 확인하고 즉시 응답을 반환합니다 (202 Accepted)
+        - 대용량 파일의 경우 압축 해제 완료까지 시간이 걸릴 수 있습니다
+        - 파일 목록 조회 API로 압축 해제 결과를 확인하세요
+
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 압축 해제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 볼륨 압축 파일 해제
+ */
+export const decompressParams = zod.object({
+  volumeId: zod.number().describe("볼륨 ID"),
+});
+
+export const decompressBodyPathMin = 0;
+export const decompressBodyPathMax = 1000;
+
+export const decompressBody = zod
+  .object({
+    path: zod
+      .string()
+      .min(decompressBodyPathMin)
+      .max(decompressBodyPathMax)
+      .describe("압축 해제할 파일 경로"),
+  })
+  .strict()
+  .describe("볼륨 파일 압축 해제 요청");
+
+/**
+ * 
+        볼륨 내 파일/폴더를 압축합니다. 압축은 백그라운드에서 비동기로 실행됩니다.
+
+        **제약 사항:**
+        - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+        - 동일한 경로에 동일한 이름의 압축 파일이 이미 존재하면 409 Conflict 에러
+
+        **압축 형식:**
+        - TAR: .tar.gz 형식
+        - ZIP: .zip 형식
+
+        **저장 경로:**
+        - destinationPath: 저장 경로와 파일명을 포함 (확장자 제외)
+        - 예: "/backup/archive" → /backup/archive.tar.gz 또는 /backup/archive.zip
+
+        **비동기 처리:**
+        - API는 압축 시작 여부만 확인하고 즉시 응답을 반환합니다 (202 Accepted)
+        - 대용량 파일의 경우 압축 완료까지 시간이 걸릴 수 있습니다
+        - 파일 목록 조회 API로 압축 파일 생성 여부를 확인하세요
+
+        **권한:** SUPER_ADMIN 또는 볼륨 생성자만 압축 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 볼륨 파일 압축
+ */
+export const compressParams = zod.object({
+  volumeId: zod.number().describe("볼륨 ID"),
+});
+
+export const compressBodyPathsMin = 0;
+export const compressBodyPathsMax = 100;
+
+export const compressBodyDestinationPathMin = 0;
+export const compressBodyDestinationPathMax = 1000;
+
+export const compressBody = zod
+  .object({
+    paths: zod
+      .array(zod.string())
+      .min(compressBodyPathsMin)
+      .max(compressBodyPathsMax)
+      .describe("압축할 파일/폴더 경로 목록"),
+    destinationPath: zod
+      .string()
+      .min(compressBodyDestinationPathMin)
+      .max(compressBodyDestinationPathMax)
+      .describe("압축 파일 저장 경로 (경로 + 파일명, 확장자 제외)"),
+    compressFileType: zod.enum(["TAR", "ZIP"]).describe("압축 파일 형식"),
+  })
+  .strict()
+  .describe("볼륨 파일 압축 요청");
+
+/**
  * 외부 NFS 서버를 참조하는 ON_PREMISE 타입 볼륨을 등록합니다.
  * @summary ON_PREMISE 볼륨 등록
  */
@@ -120,16 +335,7 @@ export const registerAstragoVolumeBody = zod
   .describe("ASTRAGO 볼륨 생성 요청");
 
 /**
- * 
-        볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
-        **접근 권한:**
-        - 공개 볼륨(isPublic=true): 모든 사용자 조회 가능
-        - 비공개 볼륨(isPublic=false): 생성자 본인만 조회 가능
-        
-        **필터 조건:**
-        - isMine=true: 본인이 생성한 비공개 볼륨만 조회
-        - isMine=false: 공개 볼륨 + 본인의 비공개 볼륨 조회
-        
+ * 볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
  * @summary 볼륨 목록 조회
  */
 export const getVolumeListQueryPageNoMin = 0;
@@ -164,6 +370,7 @@ export const getVolumeListQueryParams = zod.object({
 export const getVolumeListResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -190,6 +397,114 @@ export const getVolumeListResponse = zod
       })
       .strict()
       .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        볼륨 내 파일 및 폴더 목록을 조회합니다.
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 볼륨 조회 가능
+        - 공개 볼륨: 누구나 조회 가능 (워크스페이스 멤버 여부 확인)
+        - 비공개 볼륨: 본인(생성자)만 조회 가능
+        
+ * @summary 볼륨 파일 목록 조회
+ */
+export const listFilesParams = zod.object({
+  volumeId: zod.number().describe("볼륨 ID"),
+});
+
+export const listFilesQueryParams = zod.object({
+  path: zod.string().optional().describe("조회할 경로 (기본값: /)"),
+});
+
+export const listFilesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        children: zod
+          .array(
+            zod
+              .object({
+                name: zod.string().describe("파일/폴더 이름"),
+                type: zod
+                  .enum(["FILE", "DIRECTORY"])
+                  .describe("파일/폴더 타입"),
+                path: zod.string().describe("전체 경로"),
+                size: zod.number().describe("파일 크기 (바이트)"),
+              })
+              .strict()
+              .describe("파일 정보"),
+          )
+          .describe("파일/폴더 목록"),
+        directoryCount: zod.number().describe("디렉토리 개수"),
+        fileCount: zod.number().describe("파일 개수"),
+      })
+      .strict()
+      .optional()
+      .describe("볼륨 파일 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        볼륨 상세 정보를 조회합니다.
+
+        **응답:**
+        - 200 OK + data: 볼륨 상세 정보
+        - 200 OK + data: null (볼륨이 존재하지 않거나 삭제된 경우)
+        - 403: 접근 권한 없음
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 볼륨 조회 가능
+        - 공개 볼륨: 모든 사용자 조회 가능 (워크스페이스 멤버 여부 확인)
+        - 비공개 볼륨: 본인(생성자)만 조회 가능
+        
+ * @summary 볼륨 상세 조회
+ */
+export const getVolumeDetailParams = zod.object({
+  volumeId: zod.number().describe("조회할 볼륨 ID"),
+});
+
+export const getVolumeDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        volumeId: zod.number().describe("볼륨 ID"),
+        volumeName: zod.string().describe("볼륨 이름"),
+        volumeType: zod.enum(["ASTRAGO", "ON_PREMISE"]).describe("볼륨 타입"),
+        serverIp: zod
+          .string()
+          .optional()
+          .describe("NFS 서버 IP (ON_PREMISE 타입만 해당)"),
+        volumePath: zod.string().describe("볼륨 경로"),
+        mountPath: zod.string().describe("마운트 경로"),
+        storageId: zod
+          .number()
+          .optional()
+          .describe("스토리지 ID (ASTRAGO 타입만 해당)"),
+        storageName: zod
+          .string()
+          .optional()
+          .describe("스토리지 이름 (ASTRAGO 타입만 해당)"),
+        fileSizeByte: zod.number().describe("파일 크기 (바이트)"),
+        creatorId: zod.string().describe("생성자 ID"),
+        creatorName: zod.string().describe("생성자 이름"),
+        createdAt: zod.string().datetime({}).describe("생성 일시"),
+        isPublic: zod.boolean().describe("공개 여부"),
+      })
+      .strict()
+      .optional()
+      .describe("볼륨 상세 조회 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
