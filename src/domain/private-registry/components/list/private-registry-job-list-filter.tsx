@@ -12,6 +12,7 @@ import {
 } from "@/domain/private-registry/state/private-registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface PrivateRegistryJobListFilterProps {
   totalSize?: number;
@@ -57,6 +58,7 @@ export function PrivateRegistryJobListFilter({
         </TooltipWrapper>
       }
       total={totalSize}
+      totalCountTestId={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_TOTAL_COUNT}
     >
       <Input.Search
         name="search"
@@ -68,6 +70,7 @@ export function PrivateRegistryJobListFilter({
         height={30}
         disabled={loading}
         value={searchKeyword}
+        data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

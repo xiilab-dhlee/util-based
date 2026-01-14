@@ -14,6 +14,7 @@ import {
 } from "@/domain/private-registry/state/private-registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
 interface PrivateRegistryListFilterProps {
@@ -62,6 +63,7 @@ export function PrivateRegistryListFilter({
         </TooltipWrapper>
       }
       total={totalSize}
+      totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
     >
       <Input.Search
         name="search"
@@ -73,6 +75,7 @@ export function PrivateRegistryListFilter({
         height={30}
         disabled={loading}
         value={searchKeyword}
+        data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
       <Button
         color="primary"

@@ -10,6 +10,9 @@ import { CreatePrivateRegistryTagModal } from "@/domain/private-registry/compone
 import { DeletePrivateRegistryModal } from "@/domain/private-registry/components/delete-private-registry-modal";
 import { DeletePrivateRegistryTagModal } from "@/domain/private-registry/components/delete-private-registry-tag-modal";
 import { PrivateRegistryDetailAside } from "@/domain/private-registry/components/detail/private-registry-detail-aside";
+import { PrivateRegistryTagListBody } from "@/domain/private-registry/components/detail/private-registry-tag-list-body";
+import { PrivateRegistryTagListFilter } from "@/domain/private-registry/components/detail/private-registry-tag-list-filter";
+import { PrivateRegistryTagListFooter } from "@/domain/private-registry/components/detail/private-registry-tag-list-footer";
 import { PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP } from "@/domain/private-registry/constants/private-registry.constant";
 import {
   privateregistryImageTagCheckedListAtom,
@@ -26,9 +29,6 @@ import {
   DetailPageBody,
   DetailPageContent,
 } from "@/styles/layers/detail-page-layers.styled";
-import { PrivateRegistryTagListBody } from "./private-registry-tag-list-body";
-import { PrivateRegistryTagListFilter } from "./private-registry-tag-list-filter";
-import { PrivateRegistryTagListFooter } from "./private-registry-tag-list-footer";
 
 /**
  * 프라이빗 레지스트리 이미지 상세 페이지 메인 컴포넌트

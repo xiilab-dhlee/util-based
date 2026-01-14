@@ -7,6 +7,10 @@ import { useEffect } from "react";
 import { useGetPrivateRegistryList } from "@/api/generated/private-registry/private-registry";
 import { CreatePrivateRegistryModal } from "@/domain/private-registry/components/create-private-registry-modal";
 import { DeletePrivateRegistryModal } from "@/domain/private-registry/components/delete-private-registry-modal";
+import { PrivateRegistryListAside } from "@/domain/private-registry/components/list/private-registry-list-aside";
+import { PrivateRegistryListBody } from "@/domain/private-registry/components/list/private-registry-list-body";
+import { PrivateRegistryListFilter } from "@/domain/private-registry/components/list/private-registry-list-filter";
+import { PrivateRegistryListFooter } from "@/domain/private-registry/components/list/private-registry-list-footer";
 import { SelectPrivateRegistryTypeModal } from "@/domain/private-registry/components/select-private-registry-type-modal";
 import {
   PRIVATE_REGISTRY_PAGE_SIZE,
@@ -26,10 +30,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { PrivateRegistryListAside } from "./private-registry-list-aside";
-import { PrivateRegistryListBody } from "./private-registry-list-body";
-import { PrivateRegistryListFilter } from "./private-registry-list-filter";
-import { PrivateRegistryListFooter } from "./private-registry-list-footer";
 
 export function PrivateRegistryListMain() {
   const resetPage = useResetAtom(privateregistryPageAtom);

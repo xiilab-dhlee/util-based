@@ -11,6 +11,7 @@ import {
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface PrivateRegistryListFooterProps {
@@ -46,6 +47,7 @@ export function PrivateRegistryListFooter({
       pageSize={PRIVATE_REGISTRY_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
+      paginationTestId={SELECTOR.LIST_PAGINATION}
       rightChildren={
         <ListDeleteButton
           onClick={handleClickDelete}

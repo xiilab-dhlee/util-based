@@ -2,8 +2,10 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { RegistryListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { ColumnLink } from "@/styles/layers/column-layer.styled";
 
 const createColumnList = (): ResponsiveColumnType[] => {
@@ -18,6 +20,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
             href={ROUTES.USER_PRIVATE_REGISTRY_DETAIL(
               encodeURIComponent(record.harborImageName),
             )}
+            data-testid={PRIVATE_REGISTRY_SELECTOR.IMAGE_NAME}
           >
             {imageDisplayName || "-"}
           </ColumnLink>
@@ -30,7 +33,11 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 100,
       align: "center",
       render: () => {
-        return <span>Snapshot</span>;
+        return (
+          <span data-testid={PRIVATE_REGISTRY_SELECTOR.IMAGE_TYPE}>
+            Snapshot
+          </span>
+        );
       },
     },
     {
@@ -41,8 +48,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       render: (_: unknown, record: RegistryListResponse) => {
         return (
           <span>
-            {record.latestImageTagName || "-"} /&nbsp;
-            {(record.imageTagCount || 0).toLocaleString()}개
+            <span data-testid={PRIVATE_REGISTRY_SELECTOR.RECENT_TAG}>
+              {record.latestImageTagName || "-"}
+            </span>
+            &nbsp;/&nbsp;
+            <span data-testid={PRIVATE_REGISTRY_SELECTOR.TAG_COUNT}>
+              {(record.imageTagCount || 0).toLocaleString()}개
+            </span>
           </span>
         );
       },
@@ -53,7 +65,23 @@ const createColumnList = (): ResponsiveColumnType[] => {
       width: 100,
       align: "center",
       render: (downloadCount: number) => {
-        return <span>{(downloadCount || 0).toLocaleString()}번</span>;
+        return (
+          <span data-testid={PRIVATE_REGISTRY_SELECTOR.DOWNLOAD_COUNT}>
+            {(downloadCount || 0).toLocaleString()}번
+          </span>
+        );
+      },
+    },
+    {
+      dataIndex: "createdAt",
+      title: "생성일",
+      align: "left",
+      render: (createdAt: string) => {
+        return (
+          <span data-testid={PRIVATE_REGISTRY_SELECTOR.CREATED_AT}>
+            {formatDateSafely(createdAt)}
+          </span>
+        );
       },
     },
   ];

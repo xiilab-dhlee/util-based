@@ -11,6 +11,7 @@ import {
 } from "@/domain/private-registry/state/private-registry.atom";
 import { createPrivateRegistryColumn } from "@/shared/components/column/create-private-registry-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
 import {
   getColumnSortOrder,
@@ -51,7 +52,7 @@ export function PrivateRegistryListBody({
   };
 
   return (
-    <ListWrapper>
+    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
         columns={createPrivateRegistryColumn([
           {

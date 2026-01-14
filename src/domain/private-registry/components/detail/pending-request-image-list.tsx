@@ -2,12 +2,12 @@
 
 import styled from "styled-components";
 
+import { PendingRequestImageCard } from "@/domain/private-registry/components/detail/pending-request-image-card";
 import { useGetWaitingRequestImages } from "@/domain/request-image/hooks/use-get-waiting-request-images";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { ScrollShadowContainer } from "@/shared/components/layouts/scroll-shadow-container";
 import { MySpinner } from "@/shared/components/spinner";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
-import { PendingRequestImageCard } from "./pending-request-image-card";
 
 export function PendingRequestImageList() {
   const { data, isLoading, isError } = useGetWaitingRequestImages({

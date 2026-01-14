@@ -5,15 +5,17 @@ import styled from "styled-components";
 import { Button, Card } from "xiilab-ui";
 
 import type { PullPushJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { PrivateRegistryLogButton } from "@/domain/private-registry/components/list/private-registry-log-button";
+import { PRIVATE_REGISTRY_JOB_CARD_HEIGHT } from "@/domain/private-registry/constants/private-registry.constant";
 import {
   CompactCardKey,
   CompactCardKeyValueRow,
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
 import { MyDropdown } from "@/shared/components/dropdown";
+import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 // import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
-import { PrivateRegistryLogButton } from "./private-registry-log-button";
 
 type PrivateRegistryImageCardProps = PullPushJobResponse;
 
@@ -32,41 +34,55 @@ export function PrivateRegistryImageCard({
   // };
 
   return (
-    <Card
-      contentVariant="compact"
-      title={title}
-      height={112}
-      // onClick={handleClick}
-      actionElement={
-        <MyDropdown
-          placement="bottomRight"
-          items={[<PrivateRegistryLogButton key="log" />]}
-        >
-          <Button width="100%" variant="outlined" icon="MoreHorizonal" />
-        </MyDropdown>
-      }
-    >
-      <Body>
-        <Pane>
-          <Row>
-            <Key>구분</Key>
-            <Value>Snapshot</Value>
-          </Row>
-          <Row>
-            <Key>상태</Key>
-            <Value>{status}</Value>
-          </Row>
-        </Pane>
-        <Pane>
-          <Row>
-            <Key>생성일시</Key>
-            <Value>{formatDateTimeSafely(createdAt)}</Value>
-          </Row>
-        </Pane>
-      </Body>
-    </Card>
+    <CardWrapper data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CARD}>
+      <Card
+        contentVariant="compact"
+        title={title}
+        height={PRIVATE_REGISTRY_JOB_CARD_HEIGHT}
+        // onClick={handleClick}
+        actionElement={
+          <MyDropdown
+            placement="bottomRight"
+            items={[<PrivateRegistryLogButton key="log" />]}
+          >
+            <Button width="100%" variant="outlined" icon="MoreHorizonal" />
+          </MyDropdown>
+        }
+      >
+        <Body>
+          <Pane>
+            <Row>
+              <Key>구분</Key>
+              <Value
+                data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE}
+              >
+                Snapshot
+              </Value>
+            </Row>
+            <Row>
+              <Key>상태</Key>
+              <Value data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STATUS}>
+                {status}
+              </Value>
+            </Row>
+          </Pane>
+          <Pane>
+            <Row>
+              <Key>생성일시</Key>
+              <Value
+                data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CREATED_AT}
+              >
+                {formatDateTimeSafely(createdAt)}
+              </Value>
+            </Row>
+          </Pane>
+        </Body>
+      </Card>
+    </CardWrapper>
   );
 }
+
+const CardWrapper = styled.div``;
 
 const Body = styled.div`
   display: flex;
