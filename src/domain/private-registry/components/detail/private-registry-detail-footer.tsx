@@ -4,15 +4,15 @@ import { useAtom, useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 
 import {
-  privateregistryImageTagCheckedListAtom,
-  privateregistryImageTagPageAtom,
-} from "@/domain/private-registry/state/private-registry.atom";
+  privateRegistryTagCheckedListAtom,
+  privateRegistryTagPageAtom,
+} from "@/domain/private-registry/state/private-registry-tag.atom";
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
-interface PrivateRegistryTagListFooterProps {
+interface PrivateRegistryDetailFooterProps {
   totalSize: number;
   isLoading: boolean;
 }
@@ -24,14 +24,14 @@ const PAGE_SIZE = 20;
  *
  * 페이지네이션과 삭제 버튼을 제공합니다.
  */
-export function PrivateRegistryTagListFooter({
+export function PrivateRegistryDetailFooter({
   totalSize,
   isLoading,
-}: PrivateRegistryTagListFooterProps) {
+}: PrivateRegistryDetailFooterProps) {
   const publish = usePublish();
-  const [page, setPage] = useAtom(privateregistryImageTagPageAtom);
-  const resetCheckedList = useResetAtom(privateregistryImageTagCheckedListAtom);
-  const checkedList = useAtomValue(privateregistryImageTagCheckedListAtom);
+  const [page, setPage] = useAtom(privateRegistryTagPageAtom);
+  const resetCheckedList = useResetAtom(privateRegistryTagCheckedListAtom);
+  const checkedList = useAtomValue(privateRegistryTagCheckedListAtom);
 
   const handlePage = (newPage: number) => {
     resetCheckedList();

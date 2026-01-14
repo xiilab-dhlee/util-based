@@ -6,15 +6,15 @@ import { useParams } from "next/navigation";
 import { Button, Input } from "xiilab-ui";
 
 import {
-  privateregistryImageTagCheckedListAtom,
-  privateregistryImageTagPageAtom,
-  privateregistryImageTagSearchTextAtom,
-} from "@/domain/private-registry/state/private-registry.atom";
+  privateRegistryTagCheckedListAtom,
+  privateRegistryTagPageAtom,
+  privateRegistryTagSearchTextAtom,
+} from "@/domain/private-registry/state/private-registry-tag.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
-interface PrivateRegistryTagListFilterProps {
+interface PrivateRegistryDetailFilterProps {
   totalSize?: number;
   loading: boolean;
 }
@@ -24,16 +24,16 @@ interface PrivateRegistryTagListFilterProps {
  *
  * 태그 검색을 위한 필터를 제공합니다.
  */
-export function PrivateRegistryTagListFilter({
+export function PrivateRegistryDetailFilter({
   totalSize,
   loading,
-}: PrivateRegistryTagListFilterProps) {
+}: PrivateRegistryDetailFilterProps) {
   const { name } = useParams();
   const harborImageName = decodeURIComponent(name as string);
 
-  const setSearchText = useSetAtom(privateregistryImageTagSearchTextAtom);
-  const resetPage = useResetAtom(privateregistryImageTagPageAtom);
-  const resetCheckedList = useResetAtom(privateregistryImageTagCheckedListAtom);
+  const setSearchText = useSetAtom(privateRegistryTagSearchTextAtom);
+  const resetPage = useResetAtom(privateRegistryTagPageAtom);
+  const resetCheckedList = useResetAtom(privateRegistryTagCheckedListAtom);
   const publish = usePublish();
 
   const handleSearch = (value: string) => {
@@ -43,9 +43,7 @@ export function PrivateRegistryTagListFilter({
   };
 
   const handleCreate = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendCreateTagData, {
-      harborImageName,
-    });
+    publish(PRIVATE_REGISTRY_EVENTS.sendCreateTagData, harborImageName);
   };
 
   const handleCreateRequestImage = () => {
@@ -60,7 +58,7 @@ export function PrivateRegistryTagListFilter({
     <MySearchFilter title="태그 목록" total={totalSize}>
       <Input.Search
         name="search"
-        placeholder="검색어를 입력하세요."
+        placeholder="태그를 입력하세요."
         onSearch={handleSearch}
         autoComplete="off"
         width={220}

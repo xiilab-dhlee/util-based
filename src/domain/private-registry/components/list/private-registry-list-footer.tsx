@@ -5,8 +5,8 @@ import { useResetAtom } from "jotai/utils";
 
 import { PRIVATE_REGISTRY_PAGE_SIZE } from "@/domain/private-registry/constants/private-registry.constant";
 import {
-  privateregistryCheckedListAtom,
-  privateregistryPageAtom,
+  privateRegistryCheckedListAtom,
+  privateRegistryPageAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
@@ -23,10 +23,10 @@ export function PrivateRegistryListFooter({
   totalSize,
   isLoading,
 }: PrivateRegistryListFooterProps) {
-  const [page, setPage] = useAtom(privateregistryPageAtom);
-  const resetCheckedList = useResetAtom(privateregistryCheckedListAtom);
+  const [page, setPage] = useAtom(privateRegistryPageAtom);
+  const resetCheckedList = useResetAtom(privateRegistryCheckedListAtom);
   const publish = usePublish();
-  const selectedRegistries = useAtomValue(privateregistryCheckedListAtom);
+  const selectedRegistries = useAtomValue(privateRegistryCheckedListAtom);
 
   const handlePage = (page: number) => {
     resetCheckedList();

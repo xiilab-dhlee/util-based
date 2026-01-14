@@ -7,10 +7,10 @@ import { Button, Input } from "xiilab-ui";
 
 import {
   openSelectPrivateRegistryTypeModalAtom,
-  privateregistryCheckedListAtom,
-  privateregistryPageAtom,
-  privateregistrySearchKeywordAtom,
-  privateregistrySearchTextAtom,
+  privateRegistryCheckedListAtom,
+  privateRegistryPageAtom,
+  privateRegistrySearchKeywordAtom,
+  privateRegistrySearchTextAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
@@ -27,11 +27,11 @@ export function PrivateRegistryListFilter({
   loading,
 }: PrivateRegistryListFilterProps) {
   const [searchKeyword, setSearchKeyword] = useAtom(
-    privateregistrySearchKeywordAtom,
+    privateRegistrySearchKeywordAtom,
   );
-  const setSearchText = useSetAtom(privateregistrySearchTextAtom);
-  const resetPage = useResetAtom(privateregistryPageAtom);
-  const resetCheckedList = useResetAtom(privateregistryCheckedListAtom);
+  const setSearchText = useSetAtom(privateRegistrySearchTextAtom);
+  const resetPage = useResetAtom(privateRegistryPageAtom);
+  const resetCheckedList = useResetAtom(privateRegistryCheckedListAtom);
 
   const { onOpen } = useGlobalModal(openSelectPrivateRegistryTypeModalAtom);
 

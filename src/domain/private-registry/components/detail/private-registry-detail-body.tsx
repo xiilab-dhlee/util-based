@@ -4,12 +4,12 @@ import { useAtom } from "jotai";
 import type { TableProps } from "xiilab-ui";
 
 import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import type { PrivateRegistryTagSortField } from "@/domain/private-registry/constants/private-registry.constant";
+import { createPrivateRegistryTagColumn } from "@/domain/private-registry/components/detail/create-private-registry-tag-column";
+import type { PrivateRegistryTagSortField } from "@/domain/private-registry/constants/private-registry-tag.constant";
 import {
-  privateregistryImageTagCheckedListAtom,
-  privateregistryImageTagSortAtom,
-} from "@/domain/private-registry/state/private-registry.atom";
-import { createPrivateRegistryTagColumn } from "@/shared/components/column/create-private-registry-tag-column";
+  privateRegistryTagCheckedListAtom,
+  privateRegistryTagSortAtom,
+} from "@/domain/private-registry/state/private-registry-tag.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
 import {
@@ -18,7 +18,7 @@ import {
 } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
-interface PrivateRegistryTagListBodyProps {
+interface PrivateRegistryDetailBodyProps {
   data: ImageTagListResponse[];
   isLoading: boolean;
   isError: boolean;
@@ -31,15 +31,15 @@ interface PrivateRegistryTagListBodyProps {
  *
  * @returns 프라이빗 레지스트리 이미지 태그 목록 페이지 본문 컴포넌트
  */
-export function PrivateRegistryTagListBody({
+export function PrivateRegistryDetailBody({
   data,
   isLoading,
   isError,
-}: PrivateRegistryTagListBodyProps) {
+}: PrivateRegistryDetailBodyProps) {
   const [checkedList, setCheckedList] = useAtom(
-    privateregistryImageTagCheckedListAtom,
+    privateRegistryTagCheckedListAtom,
   );
-  const [sort, setSort] = useAtom(privateregistryImageTagSortAtom);
+  const [sort, setSort] = useAtom(privateRegistryTagSortAtom);
   const { rowSelection } = useTableSelection<ImageTagListResponse>(
     checkedList,
     setCheckedList,
@@ -67,13 +67,11 @@ export function PrivateRegistryTagListBody({
           {
             dataIndex: "imageTagSizeByte",
           },
-          { dataIndex: "uploadStatus" },
           { dataIndex: "scanStatus" },
           {
             dataIndex: "vulnerability",
-            width: "15%",
           },
-          { dataIndex: "creatorName", ellipsis: true },
+          { dataIndex: "creatorName" },
           {
             dataIndex: "createDateTime",
             title: "생성날짜",

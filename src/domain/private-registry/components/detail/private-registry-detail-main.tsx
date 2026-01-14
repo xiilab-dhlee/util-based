@@ -10,16 +10,16 @@ import { CreatePrivateRegistryTagModal } from "@/domain/private-registry/compone
 import { DeletePrivateRegistryModal } from "@/domain/private-registry/components/delete-private-registry-modal";
 import { DeletePrivateRegistryTagModal } from "@/domain/private-registry/components/delete-private-registry-tag-modal";
 import { PrivateRegistryDetailAside } from "@/domain/private-registry/components/detail/private-registry-detail-aside";
-import { PrivateRegistryTagListBody } from "@/domain/private-registry/components/detail/private-registry-tag-list-body";
-import { PrivateRegistryTagListFilter } from "@/domain/private-registry/components/detail/private-registry-tag-list-filter";
-import { PrivateRegistryTagListFooter } from "@/domain/private-registry/components/detail/private-registry-tag-list-footer";
-import { PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP } from "@/domain/private-registry/constants/private-registry.constant";
+import { PrivateRegistryDetailBody } from "@/domain/private-registry/components/detail/private-registry-detail-body";
+import { PrivateRegistryDetailFilter } from "@/domain/private-registry/components/detail/private-registry-detail-filter";
+import { PrivateRegistryDetailFooter } from "@/domain/private-registry/components/detail/private-registry-detail-footer";
+import { PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP } from "@/domain/private-registry/constants/private-registry-tag.constant";
 import {
-  privateregistryImageTagCheckedListAtom,
-  privateregistryImageTagPageAtom,
-  privateregistryImageTagSearchTextAtom,
-  privateregistryImageTagSortAtom,
-} from "@/domain/private-registry/state/private-registry.atom";
+  privateRegistryTagCheckedListAtom,
+  privateRegistryTagPageAtom,
+  privateRegistryTagSearchTextAtom,
+  privateRegistryTagSortAtom,
+} from "@/domain/private-registry/state/private-registry-tag.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
@@ -34,16 +34,17 @@ import {
  * 프라이빗 레지스트리 이미지 상세 페이지 메인 컴포넌트
  */
 export function PrivateRegistryDetailMain() {
-  const { id } = useParams();
+  const { name } = useParams();
+  const harborImageName = decodeURIComponent(name as string);
 
-  const resetPage = useResetAtom(privateregistryImageTagPageAtom);
-  const setSearchText = useSetAtom(privateregistryImageTagSearchTextAtom);
-  const setSort = useSetAtom(privateregistryImageTagSortAtom);
-  const resetCheckedList = useResetAtom(privateregistryImageTagCheckedListAtom);
+  const resetPage = useResetAtom(privateRegistryTagPageAtom);
+  const setSearchText = useSetAtom(privateRegistryTagSearchTextAtom);
+  const setSort = useSetAtom(privateRegistryTagSortAtom);
+  const resetCheckedList = useResetAtom(privateRegistryTagCheckedListAtom);
 
-  const page = useAtomValue(privateregistryImageTagPageAtom);
-  const searchText = useAtomValue(privateregistryImageTagSearchTextAtom);
-  const sort = useAtomValue(privateregistryImageTagSortAtom);
+  const page = useAtomValue(privateRegistryTagPageAtom);
+  const searchText = useAtomValue(privateRegistryTagSearchTextAtom);
+  const sort = useAtomValue(privateRegistryTagSortAtom);
 
   const sortRequest = buildSortRequest({
     state: { field: sort.field, order: sort.order },
@@ -54,7 +55,7 @@ export function PrivateRegistryDetailMain() {
     pageNo: page - 1,
     pageSize: 20,
     keyword: searchText,
-    harborImageName: decodeURIComponent(id as string),
+    harborImageName,
     ...(sortRequest
       ? { sort: sortRequest.sort, order: sortRequest.order }
       : {}),
@@ -77,16 +78,16 @@ export function PrivateRegistryDetailMain() {
         <PrivateRegistryDetailAside />
         <DetailPageContent>
           <DetailContentSection>
-            <PrivateRegistryTagListFilter
+            <PrivateRegistryDetailFilter
               totalSize={data?.totalSize}
               loading={isLoading}
             />
-            <PrivateRegistryTagListBody
+            <PrivateRegistryDetailBody
               data={data?.content || []}
               isLoading={isLoading}
               isError={isError}
             />
-            <PrivateRegistryTagListFooter
+            <PrivateRegistryDetailFooter
               totalSize={data?.totalSize || 0}
               isLoading={isLoading}
             />

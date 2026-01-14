@@ -17,10 +17,10 @@ import {
   PRIVATE_REGISTRY_SORT_FIELD_MAP,
 } from "@/domain/private-registry/constants/private-registry.constant";
 import {
-  privateregistryCheckedListAtom,
-  privateregistryPageAtom,
-  privateregistrySearchTextAtom,
-  privateregistrySortAtom,
+  privateRegistryCheckedListAtom,
+  privateRegistryPageAtom,
+  privateRegistrySearchTextAtom,
+  privateRegistrySortAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
@@ -32,14 +32,14 @@ import {
 } from "@/styles/layers/list-page-layers.styled";
 
 export function PrivateRegistryListMain() {
-  const resetPage = useResetAtom(privateregistryPageAtom);
-  const setSearchText = useSetAtom(privateregistrySearchTextAtom);
-  const setSort = useSetAtom(privateregistrySortAtom);
-  const resetCheckedList = useResetAtom(privateregistryCheckedListAtom);
+  const resetPage = useResetAtom(privateRegistryPageAtom);
+  const setSearchText = useSetAtom(privateRegistrySearchTextAtom);
+  const setSort = useSetAtom(privateRegistrySortAtom);
+  const resetCheckedList = useResetAtom(privateRegistryCheckedListAtom);
 
-  const page = useAtomValue(privateregistryPageAtom);
-  const searchText = useAtomValue(privateregistrySearchTextAtom);
-  const sort = useAtomValue(privateregistrySortAtom);
+  const page = useAtomValue(privateRegistryPageAtom);
+  const searchText = useAtomValue(privateRegistrySearchTextAtom);
+  const sort = useAtomValue(privateRegistrySortAtom);
 
   const sortRequest = buildSortRequest({
     state: { field: sort.field, order: sort.order },

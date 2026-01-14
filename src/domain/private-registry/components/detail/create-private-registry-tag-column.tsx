@@ -1,9 +1,12 @@
-import { Label, type ResponsiveColumnType } from "xiilab-ui";
+import type { ResponsiveColumnType } from "xiilab-ui";
 
-import {
-  type ImageTagListResponse,
+import type {
+  ImageTagListResponse,
   ImageTagListResponseApprovalStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { PrivateRegistryTagNameLink } from "@/domain/private-registry/components/detail/private-registry-tag-name-link";
+import { PRIVATE_REGISTRY_TAG_APPROVAL_STATUS_TEXT } from "@/domain/private-registry/constants/private-registry-tag.constant";
+import { ScanStatusText } from "@/shared/components/text/scan-status-text";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import {
@@ -11,20 +14,9 @@ import {
   formatDateTimeSafely,
 } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
-import { ViewRejectReasonButton } from "../button/view-reject-reason-button";
-import { ViewRequestReasonButton } from "../button/view-request-reason-button";
-import { VulnerabilityTooltip } from "../tooltip/vulnerability-tooltip";
-
-/** 승인 상태 텍스트 매핑 */
-const APPROVAL_STATUS_TEXT: Record<ImageTagListResponseApprovalStatus, string> =
-  {
-    [ImageTagListResponseApprovalStatus.REJECTED]: "반려",
-    [ImageTagListResponseApprovalStatus.APPROVAL_REQUIRED]: "승인 필요",
-    [ImageTagListResponseApprovalStatus.AVAILABLE]: "요청 가능",
-    [ImageTagListResponseApprovalStatus.APPROVAL_WAITING]: "승인 대기",
-    [ImageTagListResponseApprovalStatus.APPROVED]: "승인",
-    [ImageTagListResponseApprovalStatus.REQUEST_BLOCKED]: "요청 불가",
-  };
+import { ViewRejectReasonButton } from "../../../../shared/components/button/view-reject-reason-button";
+import { ViewRequestReasonButton } from "../../../../shared/components/button/view-request-reason-button";
+import { VulnerabilityTooltip } from "../../../../shared/components/tooltip/vulnerability-tooltip";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
@@ -32,8 +24,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "태그",
       dataIndex: "imageTagName",
       align: "left",
-      render: (imageTagName: string) => {
-        return <span>{imageTagName || "-"}</span>;
+      render: (_: string, record: ImageTagListResponse) => {
+        return <PrivateRegistryTagNameLink {...record} />;
       },
     },
     {
@@ -45,36 +37,17 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      title: "업로드 상태",
-      dataIndex: "uploadStatus",
-      align: "center",
-      width: 90,
-      render: () => {
-        return (
-          <span>
-            <Label variant="blue">완료</Label>
-          </span>
-        );
-      },
-    },
-    {
       title: "보안 검사 상태",
       dataIndex: "scanStatus",
       align: "center",
-      width: 100,
       render: (scanStatus: string) => {
-        if (!scanStatus) {
-          return <span>-</span>;
-        }
-
-        return <Label variant="blue">완료</Label>;
+        return <ScanStatusText status={scanStatus} />;
       },
     },
     {
       title: "보안 검사 결과",
       dataIndex: "vulnerability",
       align: "center",
-      width: 90,
       render: (_: unknown, record: ImageTagListResponse) => {
         const vuln = record.vulnerability;
         if (!vuln) return <span>-</span>;
@@ -95,7 +68,11 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "approvalStatus",
       align: "center",
       render: (approvalStatus: ImageTagListResponseApprovalStatus) => {
-        return <span>{APPROVAL_STATUS_TEXT[approvalStatus] ?? "-"}</span>;
+        return (
+          <span>
+            {PRIVATE_REGISTRY_TAG_APPROVAL_STATUS_TEXT[approvalStatus] ?? "-"}
+          </span>
+        );
       },
     },
     {
@@ -128,7 +105,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "requestReason",
       title: "요청 사유",
       align: "center",
-      width: 70,
       render: (requestReason: string) => {
         return <ViewRequestReasonButton reason={requestReason} />;
       },
@@ -137,7 +113,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "decisionReason",
       title: "승인/반려 사유",
       align: "center",
-      width: 100,
       render: (decisionReason: string) => {
         return <ViewRejectReasonButton reason={decisionReason} />;
       },

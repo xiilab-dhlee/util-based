@@ -4,12 +4,12 @@ import { useAtom } from "jotai";
 import type { TableProps } from "xiilab-ui";
 
 import type { RegistryListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { createPrivateRegistryColumn } from "@/domain/private-registry/components/list/create-private-registry-column";
 import type { PrivateRegistrySortField } from "@/domain/private-registry/constants/private-registry.constant";
 import {
-  privateregistryCheckedListAtom,
-  privateregistrySortAtom,
+  privateRegistryCheckedListAtom,
+  privateRegistrySortAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
-import { createPrivateRegistryColumn } from "@/shared/components/column/create-private-registry-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
@@ -30,8 +30,8 @@ export function PrivateRegistryListBody({
   isLoading,
   isError,
 }: PrivateRegistryListBodyProps) {
-  const [checkedList, setCheckedList] = useAtom(privateregistryCheckedListAtom);
-  const [sort, setSort] = useAtom(privateregistrySortAtom);
+  const [checkedList, setCheckedList] = useAtom(privateRegistryCheckedListAtom);
+  const [sort, setSort] = useAtom(privateRegistrySortAtom);
   const { rowSelection } = useTableSelection<RegistryListResponse>(
     checkedList,
     setCheckedList,
@@ -80,7 +80,7 @@ export function PrivateRegistryListBody({
         columnHeight={32}
         loading={isLoading}
         isError={isError}
-        rowKey="imageId"
+        rowKey="harborImageName"
         rowSelection={rowSelection}
         activePadding
         onChange={handleChange}

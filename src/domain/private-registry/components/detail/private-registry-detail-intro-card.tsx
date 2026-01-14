@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
@@ -8,6 +7,7 @@ import { Icon } from "xiilab-ui";
 import { useGetPrivateImageDetail } from "@/api/generated/private-registry/private-registry";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 /**
@@ -21,16 +21,16 @@ export function PrivateRegistryDetailIntroCard() {
   // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
 
-  const harborImageName = name as string;
-  const { data } = useGetPrivateImageDetail({ harborImageName });
+  const harborImageName = decodeURIComponent(name as string);
+  const { data, isLoading, isError } = useGetPrivateImageDetail(
+    { harborImageName },
+    { query: { enabled: !!harborImageName } },
+  );
 
-  /**
-   * 이미지 삭제 모달을 열기 위한 핸들러
-   * Pub/Sub 시스템을 통해 이미지 삭제 이벤트를 발행합니다.
-   */
   const handleDelete = () => {
-    if (!data?.imageId) return;
-    publish(PRIVATE_REGISTRY_EVENTS.sendDeletePrivateRegistry, [data.imageId]);
+    publish(PRIVATE_REGISTRY_EVENTS.sendDeletePrivateRegistry, [
+      harborImageName,
+    ]);
   };
 
   return (
@@ -38,7 +38,7 @@ export function PrivateRegistryDetailIntroCard() {
       <Header>
         <HeaderTitle>컨테이너 이미지 기본정보</HeaderTitle>
         <ToolBox>
-          <IconWrapper onClick={handleDelete}>
+          <IconWrapper onClick={handleDelete} disabled={isLoading || isError}>
             <Icon name="Delete" color="var(--icon-fill)" size={24} />
             <span className="sr-only">프라이빗 레지스트리 이미지 삭제</span>
           </IconWrapper>
@@ -52,7 +52,7 @@ export function PrivateRegistryDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>이름</RowTitle>
           </DescriptionRowBody>
-          <Description>{data?.imageDisplayName || "-"}</Description>
+          <Description>{data?.imageDisplayName ?? "-"}</Description>
         </Row>
         <Row>
           <RowBody>
@@ -61,7 +61,7 @@ export function PrivateRegistryDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자 :</RowKey>
-              <RowValue>{data?.creatorName}</RowValue>
+              <RowValue>{data?.creatorName ?? "-"}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -72,9 +72,7 @@ export function PrivateRegistryDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성일 :</RowKey>
-              <RowValue>
-                {data?.createdAt ? format(data?.createdAt, "yyyy.MM.dd") : "-"}
-              </RowValue>
+              <RowValue>{formatDateSafely(data?.createdAt)}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>

@@ -10,7 +10,6 @@ import {
   PRIVATE_REGISTRY_JOB_PAGE_SIZE,
 } from "@/domain/private-registry/constants/private-registry.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
-import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface PrivateRegistryJobListBodyProps {
@@ -43,7 +42,7 @@ export function PrivateRegistryJobListBody({
   if (isError) {
     return (
       <Container>
-        <DataErrorState />
+        <EmptyState />
       </Container>
     );
   }
