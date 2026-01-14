@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 import {
   GetPrivateImageTagListOrder,
   GetPrivateImageTagListSort,
@@ -18,6 +20,25 @@ import {
 function generateImageTagName(index: number, keyword: string): string {
   const prefix = keyword || "v1";
   return `${prefix}.${index}.0`;
+}
+
+/**
+ * 1 ~ max 범위의 랜덤 정수 생성
+ */
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * vulnerability 필드 생성 (각 개수: 1 ~ 10000)
+ */
+function generateVulnerability() {
+  return {
+    criticalCount: randomInt(1, 10000),
+    highCount: randomInt(1, 10000),
+    mediumCount: randomInt(1, 10000),
+    lowCount: randomInt(1, 10000),
+  };
 }
 
 /**
@@ -68,6 +89,14 @@ export const privateRegistryTagListOverrideHandlers = [
           ...baseItem,
           imageTagName: generateImageTagName(globalIndex, keyword),
           createDateTime: generateCreatedAt(globalIndex, sort, order),
+          vulnerability: generateVulnerability(),
+          creatorName: "관리자",
+          scanStatus: faker.helpers.arrayElement([
+            "COMPLETED",
+            "FAILED",
+            "IN_PROGRESS",
+            null,
+          ]),
         } as ImageTagListResponse;
       },
     );

@@ -103,6 +103,7 @@ export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
       onSearch={handleSearch}
       onPopupScroll={handlePopupScroll}
       loading={isLoading || isFetchingNextPage}
+      listHeight={170}
     />
   );
 }

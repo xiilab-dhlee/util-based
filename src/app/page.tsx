@@ -22,11 +22,11 @@ export default async function HomePage() {
   const session = await getServerSession(authOptions);
   const userRoles = (session as { roles?: string[] })?.roles ?? [];
 
-  // 관리자는 관리자 대시보드로
-  if (userRoles.includes(ACCOUNT_ROLES.ADMIN)) {
-    redirect(ADMIN_ROOT_PATH);
+  // 사용자는 사용자 대시보드로
+  if (userRoles.includes(ACCOUNT_ROLES.USER)) {
+    redirect(USER_ROOT_PATH);
   }
 
-  // 표준 사용자는 표준 대시보드로
-  redirect(USER_ROOT_PATH);
+  // 관리자는 관리자 대시보드로
+  redirect(ADMIN_ROOT_PATH);
 }
