@@ -18,9 +18,9 @@ import {
   settingMemberPageAtom,
   settingMemberSearchTextAtom,
 } from "@/domain/setting/state/setting.atom";
+import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import type { SelectedMember } from "@/shared/types/member-selection.type";
 
@@ -63,7 +63,7 @@ export function SettingMemberArticle() {
       id: member.accountId,
       name: member.accountName,
       email: member.email,
-      type: GROUP_TREE_NODE_TYPE.account,
+      type: ITEM_TYPES.ACCOUNT,
     }));
 
     publish(SETTING_EVENTS.sendAddWorkspaceMember, { selectedAccounts });

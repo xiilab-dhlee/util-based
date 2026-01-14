@@ -1,81 +1,69 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
-import { useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import { Button, Input } from "xiilab-ui";
+import { Button } from "xiilab-ui";
 
-import { AccountButton } from "@/domain/group/components/account-button";
 import { DeleteGroupModal } from "@/domain/group/components/delete-group-modal";
 import {
   AccountDetailPanel,
   GroupDetailPanel,
 } from "@/domain/group/components/detail-panel";
-import { GroupButton } from "@/domain/group/components/group-button";
-import { useGetAllGroups } from "@/domain/group/hooks/use-get-all-groups";
-import {
-  groupSelectedIdAtom,
-  groupSelectedInfoAtom,
-  groupTreeDataAtom,
-} from "@/domain/group/state/group.atom";
 import { OPEN_GROUP_MODAL_CREATE_PAYLOAD } from "@/domain/group/types/group.type";
-import { GroupTree } from "@/shared/components/tree/group-tree";
-import { ALL_OPTION } from "@/shared/constants/core.constant";
+import { GroupTreeSelector } from "@/shared/components/group-member-selector";
+import {
+  ITEM_TYPES,
+  type ItemType,
+  type SelectableItem,
+} from "@/shared/components/group-member-selector/types";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 import {
   DetailContentHeader,
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
 
-/**
- * 계정 관리 메인 컴포넌트
- *
- * 그룹 시스템을 관리하는 메인 컴포넌트로, 그룹 트리와 그룹 목록을
- * 좌우 분할 레이아웃으로 표시합니다. 그룹 추가, 삭제 등의
- * 기능을 제공합니다.
- *
- * @returns 계정 관리 인터페이스
- */
 export function GroupMain() {
   const publish = usePublish();
 
-  // 그룹 트리 데이터 상태 관리
-  const [treeData, setTreeData] = useAtom(groupTreeDataAtom);
-  // 선택된 노드 정보
-  const selectedInfo = useAtomValue(groupSelectedInfoAtom);
-  // 선택된 노드 ID
-  const selectedId = useAtomValue(groupSelectedIdAtom);
+  // 선택된 항목 상태 관리
+  const [selected, setSelected] = useState<{
+    id: string;
+    type: ItemType;
+  } | null>(null);
 
-  // 그룹 목록 조회 훅
-  const { data } = useGetAllGroups();
-
-  const handleSearch = (value: string) => {
-    // TODO: 그룹 검색 기능 구현
-    alert(`searched: ${value.trim()}`);
-  };
+  // GroupTreeSelector에 전달할 선택된 ID Set
+  const selectedAccountIds =
+    selected?.type === ITEM_TYPES.ACCOUNT
+      ? new Set([selected.id])
+      : new Set<string>();
+  const selectedGroupIds =
+    selected?.type === ITEM_TYPES.GROUP
+      ? new Set([selected.id])
+      : new Set<string>();
 
   const handleCreateGroup = () => {
     publish(GROUP_EVENTS.openGroupModal, OPEN_GROUP_MODAL_CREATE_PAYLOAD);
   };
 
-  useEffect(() => {
-    if (data?.content) {
-      setTreeData(data.content);
+  /**
+   * 트리에서 항목 선택 시 호출되는 핸들러
+   */
+  const handleSelectMember = (item: SelectableItem) => {
+    if (item.type === ITEM_TYPES.ACCOUNT) {
+      setSelected({ id: item.data.accountId, type: ITEM_TYPES.ACCOUNT });
+    } else {
+      setSelected({ id: item.data.groupId, type: ITEM_TYPES.GROUP });
     }
-  }, [data?.content, setTreeData]);
+  };
 
   /**
    * 오른쪽 패널 렌더링
    */
   const renderDetailPanel = () => {
-    // 전체 선택 또는 선택 없음
-    if (
-      !selectedInfo ||
-      selectedId?.toUpperCase() === ALL_OPTION.value.toUpperCase()
-    ) {
+    // 선택 없음
+    if (!selected) {
       return (
         <EmptyPanel>
           <EmptyMessage>그룹 또는 계정을 선택해주세요.</EmptyMessage>
@@ -83,13 +71,13 @@ export function GroupMain() {
       );
     }
 
-    // 그룹 선택
-    if (selectedInfo.nodeType === GROUP_TREE_NODE_TYPE.group) {
-      return <GroupDetailPanel group={selectedInfo} />;
+    // 그룹 선택 - groupId로 API 호출
+    if (selected.type === ITEM_TYPES.GROUP) {
+      return <GroupDetailPanel groupId={selected.id} />;
     }
 
-    // 계정 선택
-    return <AccountDetailPanel account={selectedInfo} />;
+    // 계정 선택 - accountId로 API 호출
+    return <AccountDetailPanel accountId={selected.id} />;
   };
 
   return (
@@ -118,26 +106,10 @@ export function GroupMain() {
         <Content>
           {/* 왼쪽: 그룹 트리 영역 */}
           <Left>
-            <ContentHeader>
-              <ContentTitle>그룹 목록</ContentTitle>
-            </ContentHeader>
-            <SearchWrapper>
-              <Input.Search
-                name="search"
-                placeholder="그룹 이름을 검색해 주세요."
-                onSearch={handleSearch}
-                autoComplete="off"
-                width="100%"
-                height={30}
-              />
-            </SearchWrapper>
-
-            {/* 그룹 트리 컴포넌트 */}
-            <GroupTree
-              treeData={treeData}
-              groupButton={GroupButton}
-              accountButton={AccountButton}
-              showRootNode
+            <GroupTreeSelector
+              selectedAccountIds={selectedAccountIds}
+              selectedGroupIds={selectedGroupIds}
+              onSelectMember={handleSelectMember}
             />
           </Left>
 
@@ -169,29 +141,9 @@ const Content = styled.div`
 
 const Left = styled.div`
   width: 334px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-`;
-
-const ContentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-`;
-
-const ContentTitle = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: #000;
-`;
-
-const SearchWrapper = styled.div`
-  margin-bottom: 16px;
 `;
 
 const EmptyPanel = styled.div`

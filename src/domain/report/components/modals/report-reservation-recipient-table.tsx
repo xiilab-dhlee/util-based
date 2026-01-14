@@ -1,16 +1,14 @@
 "use client";
 
-import {
-  createMemberColumn,
-  type MemberRow,
-} from "@/shared/components/column/create-member-column";
+import type { GroupMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { createMemberColumn } from "@/shared/components/column/create-member-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 
 interface ReportReservationRecipientTableProps {
   /** 테이블에 표시할 수신자 데이터 */
-  data: MemberRow[];
+  data: GroupMemberResponse[];
   /** 수신자 삭제 핸들러 */
-  onRemove: (id: string) => void;
+  onRemove: (accountId: string) => void;
 }
 
 /**
@@ -28,7 +26,7 @@ export function ReportReservationRecipientTable({
       data={data}
       pagination={false}
       activePadding
-      rowKey="id"
+      rowKey="accountId"
     />
   );
 }

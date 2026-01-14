@@ -1,5 +1,6 @@
 import { Icon, type ResponsiveColumnType } from "xiilab-ui";
 
+import type { GroupMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import {
@@ -8,20 +9,11 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 /**
- * 멤버 행 타입
- */
-export interface MemberRow extends Record<string, unknown> {
-  id: string;
-  name: string;
-  email?: string;
-}
-
-/**
  * 멤버 컬럼 생성 옵션
  */
 interface CreateMemberColumnOptions {
   /** 삭제 버튼 클릭 핸들러 (전달 시 삭제 컬럼 표시) */
-  onRemove?: (id: string) => void;
+  onRemove?: (accountId: string) => void;
 }
 
 /**
@@ -35,8 +27,8 @@ const createColumnList = (
   const columns: ResponsiveColumnType[] = [
     {
       title: "이름",
-      key: "name",
-      dataIndex: "name",
+      dataIndex: "accountName",
+      key: "accountName",
       align: "left",
       width: "20%",
       ellipsis: true,
@@ -58,9 +50,12 @@ const createColumnList = (
       align: "center",
       width: "15%",
 
-      render: (_: unknown, record: MemberRow) => (
+      render: (_: unknown, record: GroupMemberResponse) => (
         <ColumnAlignCenterWrap>
-          <ColumnIconWrap onClick={() => onRemove(record.id)} type="button">
+          <ColumnIconWrap
+            onClick={() => onRemove(record.accountId)}
+            type="button"
+          >
             <Icon name="Delete" color="#000" size={16} />
             <span className="sr-only">멤버 삭제</span>
           </ColumnIconWrap>
