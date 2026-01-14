@@ -88,6 +88,7 @@ export const receiveAlertBody = zod
 export const receiveAlertResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

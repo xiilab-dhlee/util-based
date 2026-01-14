@@ -36,6 +36,7 @@ import * as zod from "zod";
 export const getSmtpSetResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         smtpSetId: zod.number().describe("SMTP 설정 고유 ID"),

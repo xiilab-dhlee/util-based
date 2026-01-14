@@ -33,10 +33,11 @@ import { delay, HttpResponse, http } from "msw";
 
 import type { BaseResponseDeleteImagesResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getDeleteImages1ResponseMock = (
+export const getDeleteImagesResponseMock = (
   overrideResponse: Partial<BaseResponseDeleteImagesResponse> = {},
 ): BaseResponseDeleteImagesResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalRequested: faker.number.int({ min: undefined, max: undefined }),
     successCount: faker.number.int({ min: undefined, max: undefined }),
@@ -53,7 +54,7 @@ export const getDeleteImages1ResponseMock = (
   ...overrideResponse,
 });
 
-export const getDeleteImages1MockHandler = (
+export const getDeleteImagesMockHandler = (
   overrideResponse?:
     | BaseResponseDeleteImagesResponse
     | ((
@@ -74,7 +75,7 @@ export const getDeleteImages1MockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getDeleteImages1ResponseMock(),
+            : getDeleteImagesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -82,4 +83,4 @@ export const getDeleteImages1MockHandler = (
     options,
   );
 };
-export const getAdminPublicRegistryMock = () => [getDeleteImages1MockHandler()];
+export const getAdminPublicRegistryMock = () => [getDeleteImagesMockHandler()];

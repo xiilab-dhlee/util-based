@@ -51,7 +51,7 @@ import type {
         
  * @summary 공용 이미지 삭제
  */
-export const deleteImages1 = (
+export const deleteImages = (
   deleteImagesRequest: DeleteImagesRequest,
   signal?: AbortSignal,
 ) => {
@@ -64,23 +64,23 @@ export const deleteImages1 = (
   });
 };
 
-export const getDeleteImages1MutationOptions = <
+export const getDeleteImagesMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteImages1>>,
+    Awaited<ReturnType<typeof deleteImages>>,
     TError,
     { data: DeleteImagesRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteImages1>>,
+  Awaited<ReturnType<typeof deleteImages>>,
   TError,
   { data: DeleteImagesRequest },
   TContext
 > => {
-  const mutationKey = ["deleteImages1"];
+  const mutationKey = ["deleteImages"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -90,30 +90,30 @@ export const getDeleteImages1MutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteImages1>>,
+    Awaited<ReturnType<typeof deleteImages>>,
     { data: DeleteImagesRequest }
   > = (props) => {
     const { data } = props ?? {};
 
-    return deleteImages1(data);
+    return deleteImages(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteImages1MutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteImages1>>
+export type DeleteImagesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteImages>>
 >;
-export type DeleteImages1MutationBody = DeleteImagesRequest;
-export type DeleteImages1MutationError = unknown;
+export type DeleteImagesMutationBody = DeleteImagesRequest;
+export type DeleteImagesMutationError = unknown;
 
 /**
  * @summary 공용 이미지 삭제
  */
-export const useDeleteImages1 = <TError = unknown, TContext = unknown>(
+export const useDeleteImages = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteImages1>>,
+      Awaited<ReturnType<typeof deleteImages>>,
       TError,
       { data: DeleteImagesRequest },
       TContext
@@ -121,12 +121,12 @@ export const useDeleteImages1 = <TError = unknown, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof deleteImages1>>,
+  Awaited<ReturnType<typeof deleteImages>>,
   TError,
   { data: DeleteImagesRequest },
   TContext
 > => {
-  const mutationOptions = getDeleteImages1MutationOptions(options);
+  const mutationOptions = getDeleteImagesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

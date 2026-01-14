@@ -42,6 +42,7 @@ export const getGetCredentialsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseCredentialListItemResponse> = {},
 ): BaseResponsePageResponseCredentialListItemResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -51,7 +52,11 @@ export const getGetCredentialsResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       credentialId: faker.number.int({ min: undefined, max: undefined }),
-      credentialChannel: faker.helpers.arrayElement(["GIT", "DOCKER"] as const),
+      credentialChannel: faker.helpers.arrayElement([
+        "GIT",
+        "DOCKER",
+        "NGC",
+      ] as const),
       credentialType: faker.helpers.arrayElement([
         "IMAGE",
         "SOURCE_CODE",
@@ -72,6 +77,7 @@ export const getCreateCredentialResponseMock = (
   overrideResponse: Partial<BaseResponseCredentialResponse> = {},
 ): BaseResponseCredentialResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     credentialId: faker.number.int({ min: undefined, max: undefined }),
     credentialName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -83,7 +89,11 @@ export const getCreateCredentialResponseMock = (
     dockerPrivateRegistryUrl: faker.string.alpha({
       length: { min: 10, max: 20 },
     }),
-    credentialChannel: faker.helpers.arrayElement(["GIT", "DOCKER"] as const),
+    credentialChannel: faker.helpers.arrayElement([
+      "GIT",
+      "DOCKER",
+      "NGC",
+    ] as const),
     credentialAccountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -95,11 +105,16 @@ export const getGetCredentialDetailResponseMock = (
   overrideResponse: Partial<BaseResponseCredentialDetailResponse> = {},
 ): BaseResponseCredentialDetailResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     credentialId: faker.number.int({ min: undefined, max: undefined }),
     credentialName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    credentialChannel: faker.helpers.arrayElement(["GIT", "DOCKER"] as const),
+    credentialChannel: faker.helpers.arrayElement([
+      "GIT",
+      "DOCKER",
+      "NGC",
+    ] as const),
     credentialType: faker.helpers.arrayElement([
       "IMAGE",
       "SOURCE_CODE",
@@ -120,6 +135,7 @@ export const getDeleteCredentialResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,

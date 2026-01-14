@@ -37,6 +37,7 @@ export const getGetAllCredentialsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminCredentialListItemResponse> = {},
 ): BaseResponsePageResponseAdminCredentialListItemResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -46,7 +47,11 @@ export const getGetAllCredentialsResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       credentialId: faker.number.int({ min: undefined, max: undefined }),
-      credentialChannel: faker.helpers.arrayElement(["GIT", "DOCKER"] as const),
+      credentialChannel: faker.helpers.arrayElement([
+        "GIT",
+        "DOCKER",
+        "NGC",
+      ] as const),
       credentialType: faker.helpers.arrayElement([
         "IMAGE",
         "SOURCE_CODE",

@@ -40,6 +40,7 @@ export const getGroupChildrenParams = zod.object({
 export const getGroupChildrenResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         group: zod
@@ -86,6 +87,7 @@ export const getGroupDetailParams = zod.object({
 export const getGroupDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         groupName: zod.string().describe("그룹 이름"),
@@ -146,6 +148,7 @@ export const getUngroupedAccountsQueryParams = zod.object({
 export const getUngroupedAccountsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -180,6 +183,7 @@ export const searchQueryParams = zod.object({
 export const searchResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         group: zod
@@ -223,6 +227,7 @@ export const searchResponse = zod
 export const getRootGroupsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod

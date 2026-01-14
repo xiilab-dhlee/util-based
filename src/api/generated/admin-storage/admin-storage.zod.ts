@@ -40,6 +40,7 @@ export const getStorageDetailParams = zod.object({
 export const getStorageDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         storageId: zod.number().describe("스토리지 고유 ID"),
@@ -84,6 +85,7 @@ export const updateStorageBody = zod
 export const updateStorageResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -122,6 +124,7 @@ export const getStoragesQueryParams = zod.object({
 export const getStoragesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),

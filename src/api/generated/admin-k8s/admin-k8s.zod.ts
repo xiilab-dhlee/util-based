@@ -55,6 +55,7 @@ import * as zod from "zod";
 export const getAllResourceCountsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         nodeCount: zod.number().describe("Node 개수"),
@@ -125,6 +126,7 @@ export const getResourceYamlParams = zod.object({
 export const getResourceYamlResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         yaml: zod
@@ -194,6 +196,7 @@ export const describeResourceParams = zod.object({
 export const describeResourceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         description: zod.string().describe("kubectl describe 형식의 상세 정보"),
@@ -247,6 +250,7 @@ export const getStatefulSetsQueryParams = zod.object({
 export const getStatefulSetsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -321,6 +325,7 @@ export const getServicesQueryParams = zod.object({
 export const getServicesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -394,6 +399,7 @@ export const getPodsQueryParams = zod.object({
 export const getPodsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -467,6 +473,7 @@ export const getPersistentVolumesQueryParams = zod.object({
 export const getPersistentVolumesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -539,6 +546,7 @@ export const getNodesQueryParams = zod.object({
 export const getNodesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -612,6 +620,7 @@ export const getNamespacesQueryParams = zod.object({
 export const getNamespacesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -679,6 +688,7 @@ export const getDeploymentsQueryParams = zod.object({
 export const getDeploymentsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -749,6 +759,7 @@ export const getDaemonSetsQueryParams = zod.object({
 export const getDaemonSetsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -841,6 +852,7 @@ export const getAllNamespaceEventsQueryParams = zod.object({
 export const getAllNamespaceEventsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),

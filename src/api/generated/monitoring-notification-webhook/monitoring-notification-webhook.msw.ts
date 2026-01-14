@@ -37,6 +37,7 @@ export const getReceiveAlertResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,

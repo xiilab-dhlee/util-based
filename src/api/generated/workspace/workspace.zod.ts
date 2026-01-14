@@ -63,6 +63,7 @@ export const updateWorkspaceBody = zod
 export const updateWorkspaceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         workspaceId: zod.number().describe("워크스페이스 ID"),
@@ -107,6 +108,7 @@ export const setDefaultWorkspaceBody = zod
 export const setDefaultWorkspaceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -135,6 +137,7 @@ export const getAllWorkspacesQueryParams = zod.object({
 export const getAllWorkspacesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -287,6 +290,7 @@ export const getResourceRequestsQueryParams = zod.object({
 export const getResourceRequestsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -478,6 +482,7 @@ export const getWorkspaceDetailParams = zod.object({
 export const getWorkspaceDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         workspaceName: zod.string().describe("워크스페이스 이름"),
@@ -501,6 +506,7 @@ export const getWorkspaceDetailResponse = zod
 export const getDefaultResourceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         resource: zod

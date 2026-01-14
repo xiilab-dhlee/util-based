@@ -69,6 +69,7 @@ export const findHubsQueryParams = zod.object({
 export const findHubsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -129,6 +130,7 @@ export const findHubSummariesQueryParams = zod.object({
 export const findHubSummariesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod

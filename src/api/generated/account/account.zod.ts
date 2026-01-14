@@ -56,6 +56,7 @@ export const updateNotificationSetBody = zod
 export const updateNotificationSetResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -72,6 +73,7 @@ export const getProfileParams = zod.object({
 export const getProfileResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         accountName: zod.string().describe("계정 표시 이름 (성 + 이름)"),
@@ -162,6 +164,7 @@ export const updateProfileBody = zod
 export const updateProfileResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -179,6 +182,7 @@ export const markNotificationAsReadParams = zod.object({
 export const markNotificationAsReadResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -219,6 +223,7 @@ export const resetPasswordBody = zod
 export const resetPasswordResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -326,6 +331,7 @@ export const verifyPasswordResetCodeBody = zod
 export const verifyPasswordResetCodeResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -343,6 +349,7 @@ export const getNotificationSetsParams = zod.object({
 export const getNotificationSetsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
@@ -434,6 +441,7 @@ export const getNotificationsQueryParams = zod.object({
 export const getNotificationsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),

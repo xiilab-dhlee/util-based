@@ -46,6 +46,7 @@ export const getUpdateAccountResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -55,6 +56,7 @@ export const getUpdateAdminNotificationSetResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -64,6 +66,7 @@ export const getUpdateAccountEnabledResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -73,6 +76,7 @@ export const getRejectSignupRequestsResponseMock = (
   overrideResponse: Partial<BaseResponseSignupApprovalResult> = {},
 ): BaseResponseSignupApprovalResult => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalRequested: faker.number.int({ min: undefined, max: undefined }),
     successCount: faker.number.int({ min: undefined, max: undefined }),
@@ -95,6 +99,7 @@ export const getApproveSignupRequestsResponseMock = (
   overrideResponse: Partial<BaseResponseSignupApprovalResult> = {},
 ): BaseResponseSignupApprovalResult => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalRequested: faker.number.int({ min: undefined, max: undefined }),
     successCount: faker.number.int({ min: undefined, max: undefined }),
@@ -117,6 +122,7 @@ export const getResetPasswordByAdminResponseMock = (
   overrideResponse: Partial<BaseResponsePasswordResetByAdminResponse> = {},
 ): BaseResponsePasswordResetByAdminResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: { newPassword: faker.string.alpha({ length: { min: 10, max: 20 } }) },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -127,6 +133,7 @@ export const getDeleteAccountResponseMock = (
   overrideResponse: Partial<BaseResponseAccountDeleteResult> = {},
 ): BaseResponseAccountDeleteResult => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalRequested: faker.number.int({ min: undefined, max: undefined }),
     successCount: faker.number.int({ min: undefined, max: undefined }),
@@ -149,6 +156,7 @@ export const getGetAllAccountsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAccountItemResponse> = {},
 ): BaseResponsePageResponseAccountItemResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -184,6 +192,7 @@ export const getGetAdminNotificationSetsResponseMock = (
   overrideResponse: Partial<BaseResponseListAdminNotificationSetResponse> = {},
 ): BaseResponseListAdminNotificationSetResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
@@ -211,6 +220,7 @@ export const getGetAccountDetailResponseMock = (
   overrideResponse: Partial<BaseResponseAccountItemResponse> = {},
 ): BaseResponseAccountItemResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -238,6 +248,7 @@ export const getGetSignupRequestsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseSignupRequestItemResponse> = {},
 ): BaseResponsePageResponseSignupRequestItemResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
