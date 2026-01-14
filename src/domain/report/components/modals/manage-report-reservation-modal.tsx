@@ -34,11 +34,11 @@ import {
   type ReportReservationWeekDayKey,
 } from "@/domain/report-reservation/constants/report-reservation.constant";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
+import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { RESERVATION_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 
 /**
  * 리포트 예약 관리 모달 (생성/수정)
@@ -116,10 +116,10 @@ export function ManageReportReservationModal() {
   const handleAddMember = () => {
     publish(RESERVATION_EVENTS.openMemberModal, {
       selectedAccounts: form.recipientTableData.map((m) => ({
-        id: m.id,
-        name: m.name,
+        id: m.accountId,
+        name: m.accountName,
         email: m.email,
-        type: GROUP_TREE_NODE_TYPE.account,
+        type: ITEM_TYPES.ACCOUNT,
       })),
     });
   };

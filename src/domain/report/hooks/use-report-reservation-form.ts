@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import type { z } from "zod";
 
+import type { GroupMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   type CreateReportReservationRequest,
   createReportReservationRequestSchema,
@@ -17,7 +18,6 @@ import {
   type ReportReservationWeekDayKey,
 } from "@/domain/report-reservation/constants/report-reservation.constant";
 import type { ReservationDetailType } from "@/domain/report-reservation/schemas/report-reservation.schema";
-import type { MemberRow } from "@/shared/components/column/create-member-column";
 
 // ===== 타입 정의 =====
 
@@ -60,14 +60,14 @@ interface UseReportReservationFormReturn {
   /** 에러 상태 */
   errors: ReportReservationFormErrors;
   /** 수신자 테이블 표시용 데이터 */
-  recipientTableData: MemberRow[];
+  recipientTableData: GroupMemberResponse[];
   /** 필드 값 설정 */
   setField: <K extends keyof ReportReservationFormValue>(
     key: K,
     value: ReportReservationFormValue[K],
   ) => void;
   /** 수신자 목록 설정 */
-  setRecipients: (members: MemberRow[]) => void;
+  setRecipients: (members: GroupMemberResponse[]) => void;
   /** 수신자 삭제 */
   removeRecipient: (id: string) => void;
   /** 요일 토글 */
@@ -104,7 +104,9 @@ export function useReportReservationForm(): UseReportReservationFormReturn {
   const [formState, setFormState] =
     useState<ReportReservationFormValue>(DEFAULT_FORM_VALUE);
   const [errors, setErrors] = useState<ReportReservationFormErrors>({});
-  const [recipientTableData, setRecipientTableData] = useState<MemberRow[]>([]);
+  const [recipientTableData, setRecipientTableData] = useState<
+    GroupMemberResponse[]
+  >([]);
 
   // 필드 값 설정
   const setField = useCallback(
@@ -123,12 +125,12 @@ export function useReportReservationForm(): UseReportReservationFormReturn {
   );
 
   // 수신자 목록 설정
-  const setRecipients = useCallback((members: MemberRow[]) => {
+  const setRecipients = useCallback((members: GroupMemberResponse[]) => {
     const recipients: ReportReservationRecipient[] = members
-      .filter((m): m is MemberRow & { email: string } => !!m.email)
+      .filter((m): m is GroupMemberResponse & { email: string } => !!m.email)
       .map((m) => ({
-        id: m.id,
-        name: m.name,
+        id: m.accountId,
+        name: m.accountName,
         email: m.email,
       }));
     setRecipientTableData(members);
@@ -138,7 +140,7 @@ export function useReportReservationForm(): UseReportReservationFormReturn {
 
   // 수신자 삭제
   const removeRecipient = useCallback((id: string) => {
-    setRecipientTableData((prev) => prev.filter((m) => m.id !== id));
+    setRecipientTableData((prev) => prev.filter((m) => m.accountId !== id));
     setFormState((prev) => ({
       ...prev,
       recipients: prev.recipients.filter((r) => r.id !== id),
@@ -224,9 +226,10 @@ export function useReportReservationForm(): UseReportReservationFormReturn {
       }),
     );
 
-    const tableData: MemberRow[] = detail.recipients.map((r) => ({
-      id: r.id,
-      name: r.name,
+    // 백엔드 응답을 GroupMemberResponse 형식으로 변환
+    const tableData: GroupMemberResponse[] = detail.recipients.map((r) => ({
+      accountId: r.id,
+      accountName: r.name,
       email: r.email,
     }));
 
