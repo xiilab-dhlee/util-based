@@ -373,6 +373,12 @@ export const PAGE_META = {
       ROUTES.USER_PRIVATE_REGISTRY_DETAIL(name),
     parent: "user.private-registry",
   },
+  "user.private-registry.tag": {
+    title: "태그 상세정보",
+    href: ({ name, tagId }: { name: string; tagId: string }) =>
+      ROUTES.USER_PRIVATE_REGISTRY_TAG(name, tagId),
+    parent: "user.private-registry.detail",
+  },
   "user.internal-registry-image": {
     title: "내부 레지스트리",
     iconName: "Image",
