@@ -1,44 +1,35 @@
 "use client";
 
-import { useAtomValue } from "jotai";
 import { Button } from "xiilab-ui";
 
-import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
-import { useGetSettingRequestResources } from "@/domain/setting/hooks/use-get-setting-request-resources";
-import {
-  openCreateResourceRequestModalAtom,
-  settingRequestResourcePageAtom,
-} from "@/domain/setting/state/setting.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
-export function SettingRequestResourceListFilter() {
-  const { onOpen } = useGlobalModal(openCreateResourceRequestModalAtom);
-  const page = useAtomValue(settingRequestResourcePageAtom);
+interface SettingRequestResourceListFilterProps {
+  totalSize?: number;
+  onOpenCreate: () => void;
+  canManageWorkspace?: boolean;
+}
 
-  const { data } = useGetSettingRequestResources({
-    page,
-    size: SETTING_LIST_PAGE_SIZE,
-    searchText: "",
-  });
-
-  const handleCreateRequestResource = () => {
-    onOpen();
-  };
-
+export function SettingRequestResourceListFilter({
+  totalSize,
+  onOpenCreate,
+  canManageWorkspace = false,
+}: SettingRequestResourceListFilterProps) {
   return (
-    <MySearchFilter title="리소스 요청 목록" total={data?.totalSize}>
-      <Button
-        color="primary"
-        icon="RequestResource"
-        iconPosition="left"
-        variant="gradient"
-        width={110}
-        height={30}
-        onClick={handleCreateRequestResource}
-      >
-        리소스 요청
-      </Button>
+    <MySearchFilter title="리소스 요청 목록" total={totalSize}>
+      {canManageWorkspace && (
+        <Button
+          color="primary"
+          icon="RequestResource"
+          iconPosition="left"
+          variant="gradient"
+          width={120}
+          height={30}
+          onClick={onOpenCreate}
+        >
+          리소스 요청
+        </Button>
+      )}
     </MySearchFilter>
   );
 }

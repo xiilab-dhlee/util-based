@@ -1,16 +1,14 @@
 import styled from "styled-components";
 
+import { SettingRequestResourceListMain } from "@/domain/setting/components/setting-request-resource-list-main";
 import { SettingCredentialListBody } from "./setting-credential-list-body";
 import { SettingCredentialListFilter } from "./setting-credential-list-filter";
-import { SettingRequestResourceListBody } from "./setting-request-resource-list-body";
-import { SettingRequestResourceListFilter } from "./setting-request-resource-list-filter";
 
 export function SettingSubSection() {
   return (
     <Container>
       <Left>
-        <SettingRequestResourceListFilter />
-        <SettingRequestResourceListBody />
+        <SettingRequestResourceListMain />
       </Left>
       <Right>
         <SettingCredentialListFilter />
@@ -33,7 +31,6 @@ const Left = styled.article`
   flex-basis: 964px;
   height: 100%;
   padding: 23px;
-  padding-bottom: 0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
