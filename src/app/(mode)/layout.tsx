@@ -8,9 +8,11 @@ import { CreateWorkspaceModal } from "@/domain/workspace/components/create-works
 import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
+import { useWorkspaceInitializer } from "@/shared/hooks/use-workspace-initializer";
 import { useWorkspaceValidator } from "@/shared/hooks/use-workspace-validator";
 
 export default function ModeLayout({ children }: PropsWithChildren) {
+  useWorkspaceInitializer();
   useWorkspaceValidator();
 
   return (
@@ -25,12 +27,9 @@ export default function ModeLayout({ children }: PropsWithChildren) {
           </RightInner>
         </Right>
       </Container>
-      {/* 워크스페이스 생성 모달 */}
       <CreateFirstWorkspaceModal />
       <CreateWorkspaceModal />
-      {/* 비밀번호 재확인 모달 */}
       <CheckPasswordModal />
-      {/* 비밀번호 수정 모달 */}
       <UpdatePasswordModal />
     </>
   );

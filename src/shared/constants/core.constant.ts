@@ -45,7 +45,7 @@ export type ModalMode = (typeof MODAL_MODES)[keyof typeof MODAL_MODES];
 /** 전체 옵션 */
 export const ALL_OPTION = {
   label: "전체",
-  value: "ALL",
+  value: "",
 } as const;
 
 /** ALL_OPTION.value 타입 */

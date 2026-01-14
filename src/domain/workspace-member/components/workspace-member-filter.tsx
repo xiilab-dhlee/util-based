@@ -10,11 +10,11 @@ import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
 } from "@/domain/workspace-member/state/workspace-member.atom";
+import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 import type { SelectedMember } from "@/shared/types/member-selection.type";
 
 export function WorkspaceMemberFilter() {
@@ -56,7 +56,7 @@ export function WorkspaceMemberFilter() {
         id: member.id,
         name: member.name,
         email: member.email,
-        type: GROUP_TREE_NODE_TYPE.account,
+        type: ITEM_TYPES.ACCOUNT,
       }),
     );
 

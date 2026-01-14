@@ -19,16 +19,19 @@ const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       title: "노드 이름",
+      key: "nodeName",
       dataIndex: "nodeName",
       align: "left",
     },
     {
       title: "IP 주소",
+      key: "ip",
       dataIndex: "ip",
       align: "left",
     },
     {
       title: "알림 이름",
+      key: "name",
       dataIndex: "name",
       align: "left",
       render: (
@@ -40,6 +43,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "알림 유형",
+      key: "channel",
       dataIndex: "channel",
       align: "left",
       render: () => {
@@ -48,6 +52,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "알림 설정",
+      key: "status",
       dataIndex: "status",
       align: "center",
       render: () => {
@@ -56,6 +61,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "삭제",
+      key: "delete",
       dataIndex: "delete",
       align: "center",
       width: ICON_COLUMN_WIDTH,

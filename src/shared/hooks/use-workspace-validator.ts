@@ -7,6 +7,7 @@ import { useInfiniteWorkspaces } from "@/domain/workspace/hooks/use-infinite-wor
 import { useWorkspaceSwitch } from "@/domain/workspace/hooks/use-workspace-switch";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { openCreateFirstWorkspaceModalAtom } from "@/shared/state/modal.atom";
+import { getStoredWorkspaceId } from "@/shared/utils/storage/workspace-session-storage.util";
 import { selectInitialWorkspace } from "@/shared/utils/workspace.util";
 
 export function useWorkspaceValidator() {
@@ -45,7 +46,7 @@ export function useWorkspaceValidator() {
       return;
     }
 
-    const fallback = selectInitialWorkspace(workspaces);
+    const fallback = selectInitialWorkspace(workspaces, getStoredWorkspaceId());
     handleSelectWorkspace(fallback);
   }, [
     error,

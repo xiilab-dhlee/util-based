@@ -4,7 +4,10 @@ import { useAtom } from "jotai";
 import type { TableProps } from "xiilab-ui";
 
 import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import type { AccountSortField } from "@/domain/account-management/constants/account.constant";
+import {
+  ACCOUNT_SORT_FIELDS,
+  type AccountSortField,
+} from "@/domain/account-management/constants/account.constant";
 import {
   accountCheckedListAtom,
   accountSortAtom,
@@ -39,11 +42,14 @@ export function AccountListBody({
     __,
     sorter,
   ) => {
-    const parsed = parseSorterToAntdState(sorter);
+    const parsed = parseSorterToAntdState<
+      AccountItemResponse,
+      AccountSortField
+    >(sorter, ACCOUNT_SORT_FIELDS);
     if (!parsed.field || !parsed.order) return;
 
     setSort({
-      field: parsed.field as AccountSortField,
+      field: parsed.field,
       order: parsed.order,
     });
   };

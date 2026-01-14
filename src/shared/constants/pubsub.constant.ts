@@ -9,6 +9,8 @@ export const WORKSPACE_EVENTS = {
   sendUpdateWorkspace: "workspace:send-update-workspace",
   // 워크스페이스 삭제에 필요한 정보 전달 이벤트
   sendDeleteWorkspace: "workspace:send-delete-workspace",
+  // 관리자용 워크스페이스 일괄 삭제에 필요한 정보 전달 이벤트
+  sendDeleteAdminWorkspaces: "workspace:send-delete-admin-workspaces",
   // 워크스페이스 나가기에 필요한 정보 전달 이벤트
   sendLeaveWorkspace: "workspace:send-leave-workspace",
   // 기본 워크스페이스 설정 모달에 필요한 정보 전달 이벤트
@@ -142,6 +144,10 @@ export const PRIVATE_REGISTRY_EVENTS = {
   clearSelectDivisionModal: "private-registry:clear-select-division-modal",
   // 프라이빗 레지스트리 이미지 태그 생성에 필요한 정보 전달 이벤트
   sendCreateTagData: "private-registry:send-create-tag-data",
+  // 이미지 등록 Job 재시작에 필요한 정보 전달 이벤트
+  sendRestartImageJob: "private-registry:send-restart-image-job",
+  // 이미지 등록 Job 종료에 필요한 정보 전달 이벤트
+  sendStopImageJob: "private-registry:send-stop-image-job",
 } as const;
 
 // 내부 레지스트리 이미지 관련 이벤트
@@ -221,6 +227,8 @@ export const SETTING_EVENTS = {
   sendUpdateWorkspaceMemberRole: "setting:send-update-workspace-member-role",
   // 워크스페이스 구성원 삭제 모달에 필요한 정보 전달 이벤트
   sendDeleteWorkspaceMember: "setting:send-delete-workspace-member",
+  // 리소스 요청 취소 모달에 필요한 정보 전달 이벤트
+  sendCancelResourceRequest: "setting:send-cancel-resource-request",
 } as const;
 
 // 시스템 설정 관련 이벤트

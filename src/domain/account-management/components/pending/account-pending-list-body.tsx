@@ -4,7 +4,10 @@ import { useAtom } from "jotai";
 import type { TableProps } from "xiilab-ui";
 
 import type { SignupRequestItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import type { SignupRequestSortField } from "@/domain/account-management/constants/account.constant";
+import {
+  SIGNUP_REQUEST_SORT_FIELDS,
+  type SignupRequestSortField,
+} from "@/domain/account-management/constants/account.constant";
 import {
   accountPendingCheckedListAtom,
   accountPendingSortAtom,
@@ -39,11 +42,14 @@ export function AccountPendingListBody({
     __,
     sorter,
   ) => {
-    const parsed = parseSorterToAntdState(sorter);
+    const parsed = parseSorterToAntdState<
+      SignupRequestItemResponse,
+      SignupRequestSortField
+    >(sorter, SIGNUP_REQUEST_SORT_FIELDS);
     if (!parsed.field || !parsed.order) return;
 
     setSort({
-      field: parsed.field as SignupRequestSortField,
+      field: parsed.field,
       order: parsed.order,
     });
   };
