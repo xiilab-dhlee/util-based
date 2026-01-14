@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useResetAtom } from "jotai/utils";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
@@ -10,24 +10,23 @@ import {
   getGetPrivateImageTagListQueryKey,
   useDeleteImageTags1,
 } from "@/api/generated/private-registry/private-registry";
-import {
-  openDeletePrivateRegistryTagModalAtom,
-  privateregistryImageTagCheckedListAtom,
-  privateregistryImageTagPageAtom,
-} from "@/domain/private-registry/state/private-registry.atom";
+import { openDeletePrivateRegistryTagModalAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function DeletePrivateRegistryTagModal() {
+  const router = useRouter();
+  const { name } = useParams();
+  const harborImageName = decodeURIComponent(name as string);
+
   const { open, onOpen, onClose } = useGlobalModal(
     openDeletePrivateRegistryTagModalAtom,
   );
   const [deleteTags, setDeleteTags] = useState<number[]>([]);
 
   const queryClient = useQueryClient();
-  const resetPage = useResetAtom(privateregistryImageTagPageAtom);
-  const resetCheckedList = useResetAtom(privateregistryImageTagCheckedListAtom);
 
   const { mutate: deleteImageTags, isPending } = useDeleteImageTags1();
 
@@ -48,15 +47,13 @@ export function DeletePrivateRegistryTagModal() {
       },
       {
         onSuccess: () => {
-          resetCheckedList();
-          resetPage();
           // 이미지 태그 목록 갱신
           queryClient.invalidateQueries({
             queryKey: getGetPrivateImageTagListQueryKey(),
           });
-          // 모달 닫기
+          // 이미지 상세 페이지로 이동
           onClose();
-          // 성공 메시지 표시
+          router.replace(ROUTES.USER_PRIVATE_REGISTRY_DETAIL(harborImageName));
           toast.success("이미지 태그 삭제 완료");
         },
       },
@@ -83,7 +80,7 @@ export function DeletePrivateRegistryTagModal() {
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >
-      <div>내부 레지스트리 이미지의 선택된 태그를 삭제합니다.</div>
+      <div>개인 레지스트리 이미지의 선택된 태그를 삭제합니다.</div>
       <div>정말 삭제하시겠습니까?</div>
     </Modal>
   );

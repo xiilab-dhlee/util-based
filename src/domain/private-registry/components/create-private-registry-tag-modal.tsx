@@ -2,12 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
-import type { RegistryDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateImageTagListQueryKey,
   useAddImageTag1,
@@ -17,7 +15,7 @@ import {
   type CreatePrivateRegistryTagFormType,
   createPrivateRegistryTagSchema,
 } from "@/domain/private-registry/schemas/create-private-registry-tag.schema";
-import { openCreatePrivateRegistryTagModalAtom } from "@/domain/private-registry/state/private-registry.atom";
+import { openCreatePrivateRegistryTagModalAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -28,9 +26,6 @@ export function CreatePrivateRegistryTagModal() {
   );
   const queryClient = useQueryClient();
 
-  // filter에서 전달받은 harborImageName
-  const [harborImageName, setHarborImageName] = useState<string>("");
-
   const {
     control,
     handleSubmit,
@@ -40,28 +35,7 @@ export function CreatePrivateRegistryTagModal() {
   } = useForm<CreatePrivateRegistryTagFormType>({
     resolver: zodResolver(createPrivateRegistryTagSchema),
     mode: "onChange",
-    defaultValues: {
-      imageTagName: "",
-      registryChannel: undefined,
-      credentialId: undefined,
-      description: "",
-    },
   });
-
-  // filter에서 전달받은 데이터 구독 및 모달 열기
-  useSubscribe(
-    PRIVATE_REGISTRY_EVENTS.sendCreateTagData,
-    (data: RegistryDetailResponse) => {
-      // setHarborImageName(data.harborImageName);
-      reset({
-        imageTagName: "",
-        registryChannel: undefined,
-        credentialId: undefined,
-        description: "",
-      });
-      onOpen();
-    },
-  );
 
   const { mutate: addImageTag, isPending } = useAddImageTag1();
 
@@ -76,7 +50,7 @@ export function CreatePrivateRegistryTagModal() {
         data: {
           harborImageName,
           imageTagName: data.imageTagName,
-          registryChannel: data.registryChannel,
+          registryChannel: "NGC", // 이후 제거
           credentialId: data.credentialId,
           description: data.description,
         },
@@ -97,16 +71,28 @@ export function CreatePrivateRegistryTagModal() {
   };
 
   const handleClose = () => {
-    reset();
-    setHarborImageName("");
     onClose();
   };
+
+  // filter에서 전달받은 데이터 구독 및 모달 열기
+  useSubscribe(
+    PRIVATE_REGISTRY_EVENTS.sendCreateTagData,
+    (harborImageName: string) => {
+      reset({
+        harborImageName,
+        imageTagName: "",
+        credentialId: undefined,
+        description: "",
+      });
+      onOpen();
+    },
+  );
 
   return (
     <Modal
       type="primary"
       icon={<Icon name="Plus" color="#fff" size={18} />}
-      modalWidth={580}
+      modalWidth={370}
       open={open}
       closable={!isPending}
       maskClosable={!isPending}
@@ -150,27 +136,6 @@ export function CreatePrivateRegistryTagModal() {
             </FormItem>
           )}
         />
-        {/* <Controller
-          name="registryChannel"
-          control={control}
-          render={({ field }) => (
-            <FormItem
-              label="레지스트리 채널"
-              required
-              validateStatus={errors.registryChannel ? "error" : undefined}
-              help={errors.registryChannel?.message}
-            >
-              <Dropdown
-                options={REGISTRY_CHANNEL_OPTIONS}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="레지스트리 채널을 선택해 주세요."
-                theme="light"
-                width="100%"
-              />
-            </FormItem>
-          )}
-        /> */}
         <Controller
           name="credentialId"
           control={control}

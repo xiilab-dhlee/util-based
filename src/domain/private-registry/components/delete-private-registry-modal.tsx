@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useResetAtom } from "jotai/utils";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
@@ -8,25 +8,20 @@ import {
   getGetPrivateRegistryListQueryKey,
   useDeleteImages,
 } from "@/api/generated/private-registry/private-registry";
-import {
-  openDeletePrivateRegistryModalAtom,
-  privateregistryCheckedListAtom,
-  privateregistryPageAtom,
-} from "@/domain/private-registry/state/private-registry.atom";
+import { openDeletePrivateRegistryModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function DeletePrivateRegistryModal() {
+  const router = useRouter();
   const { open, onOpen, onClose } = useGlobalModal(
     openDeletePrivateRegistryModalAtom,
   );
   const [deleteRegistries, setDeleteRegistries] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
-  const resetPage = useResetAtom(privateregistryPageAtom);
-  const resetCheckedList = useResetAtom(privateregistryCheckedListAtom);
-
   const { mutate: deleteImages, isPending } = useDeleteImages();
 
   const handleOk = () => {
@@ -46,14 +41,13 @@ export function DeletePrivateRegistryModal() {
       },
       {
         onSuccess: () => {
-          resetCheckedList();
-          resetPage();
           // 개인 레지스트리 이미지 목록 갱신
           queryClient.invalidateQueries({
             queryKey: getGetPrivateRegistryListQueryKey(),
           });
           // 모달 닫기
           onClose();
+          router.replace(ROUTES.USER_PRIVATE_REGISTRY);
           // 성공 메시지 표시
           toast.success("개인 레지스트리 이미지 삭제 완료");
         },
