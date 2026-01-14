@@ -20,6 +20,7 @@ import {
 const createColumnList = (scanId: number): ResponsiveColumnType[] => {
   return [
     {
+      key: "volumeName",
       dataIndex: "volumeName",
       title: "볼륨 이름",
       align: "left",
@@ -35,17 +36,20 @@ const createColumnList = (scanId: number): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "fileName",
       dataIndex: "fileName",
       title: "파일 이름",
       align: "left",
       width: 150,
     },
     {
+      key: "filePath",
       dataIndex: "filePath",
       title: "파일 경로",
       align: "left",
     },
     {
+      key: "status",
       dataIndex: "status",
       title: "검사 상태",
       align: "center",
@@ -58,6 +62,7 @@ const createColumnList = (scanId: number): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "total",
       dataIndex: "total",
       title: "총 취약점 개수",
       align: "center",
@@ -76,6 +81,7 @@ const createColumnList = (scanId: number): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "playtime",
       dataIndex: "playtime",
       title: "검사 소요 시간",
       width: 120,

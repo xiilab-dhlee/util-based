@@ -20,6 +20,7 @@ import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      key: "checkbox",
       dataIndex: "checkbox",
       title: <SourcecodeAllCheck />,
       align: "center",
@@ -29,16 +30,19 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "name",
       dataIndex: "name",
       title: "소스코드 이름",
       align: "left",
     },
     {
+      key: "url",
       dataIndex: "url",
       title: "Git URL",
       align: "left",
     },
     {
+      key: "creatorName",
       dataIndex: "creatorName",
       title: "생성자",
       align: "center",
@@ -47,6 +51,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "status",
       dataIndex: "status",
       title: "공개 설정",
       align: "center",
@@ -56,11 +61,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "path",
       dataIndex: "path",
       title: "마운트 경로",
       align: "left",
     },
     {
+      key: "type",
       dataIndex: "type",
       title: "타입",
       align: "center",
@@ -77,6 +84,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "cmd",
       dataIndex: "cmd",
       title: "실행 명령어",
       align: "left",
@@ -84,24 +92,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
   ];
 };
 
-/**
- * 소스코드 관련 테이블 컬럼 생성
- *
- * @param config 컬럼 설정 (배열 형태)
- * @returns 컬럼 배열
- *
- * @example
- * // 1. 모든 컬럼 표시 (기본)
- * const columns = createSourcecodeColumn();
- *
- * @example
- * // 2. 배열 형태 - 순서 변경 가능
- * const columns = createSourcecodeColumn([
- *   { dataIndex: 'checkbox' },
- *   { dataIndex: 'title', title: '이름' },
- *   { dataIndex: 'codeType', width: 100 },
- * ]);
- */
 export const createSourcecodeColumn = (
   config?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] => {

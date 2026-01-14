@@ -15,6 +15,7 @@ export const createAccountPendingColumn = (
     {
       title: "이름",
       dataIndex: "accountName",
+      key: "accountName",
       align: "left",
       width: "30%",
       ellipsis: true,
@@ -29,6 +30,7 @@ export const createAccountPendingColumn = (
     {
       title: "이메일",
       dataIndex: "email",
+      key: "email",
       align: "left",
       width: "35%",
       ellipsis: true,
@@ -41,6 +43,7 @@ export const createAccountPendingColumn = (
     {
       title: "가입일",
       dataIndex: "createdAt",
+      key: "createdAt",
       align: "left",
       width: "25%",
       sorter: true,
@@ -55,7 +58,7 @@ export const createAccountPendingColumn = (
     },
     {
       title: "반려",
-      dataIndex: "id",
+      key: "reject",
       align: "center",
       width: "5%",
       render: (_, record: SignupRequestItemResponse) => {
@@ -64,7 +67,7 @@ export const createAccountPendingColumn = (
     },
     {
       title: "승인",
-      dataIndex: "id",
+      key: "approve",
       align: "center",
       width: "5%",
       render: (_, record: SignupRequestItemResponse) => {

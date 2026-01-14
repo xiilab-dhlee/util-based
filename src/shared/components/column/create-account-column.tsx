@@ -33,6 +33,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
   return [
     {
       title: "이름",
+      key: "accountName",
       dataIndex: "accountName",
       align: "left",
       width: "16%",
@@ -58,6 +59,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
     },
     {
       title: "이메일",
+      key: "email",
       dataIndex: "email",
       align: "left",
       width: "22%",
@@ -68,6 +70,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
     },
     {
       title: "그룹",
+      key: "groupName",
       dataIndex: "groupName",
       align: "left",
       width: "26%",
@@ -82,6 +85,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
     },
     {
       title: "권한",
+      key: "accountRole",
       dataIndex: "accountRole",
       align: "center",
       width: "12%",
@@ -91,6 +95,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
     },
     {
       title: "가입일",
+      key: "createdAt",
       dataIndex: "createdAt",
       align: "left",
       width: "6%",
@@ -106,6 +111,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
     },
     {
       title: "상태",
+      key: "isEnabled",
       dataIndex: "isEnabled",
       align: "center",
       width: "8%",
@@ -119,7 +125,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
     },
     {
       title: "수정",
-      dataIndex: "update",
+      key: "update",
       align: "center",
       width: "5%",
       render: (_, account: AccountItemResponse) => {
@@ -132,7 +138,7 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
     },
     {
       title: "PW 초기화",
-      dataIndex: "resetPassword",
+      key: "resetPassword",
       align: "center",
       width: "5%",
       render: (_, account: AccountItemResponse) => {

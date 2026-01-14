@@ -14,6 +14,7 @@ import {
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      key: "imageTag",
       dataIndex: "imageTag",
       title: "이미지 : 태그",
       align: "left",
@@ -28,6 +29,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "status",
       dataIndex: "status",
       title: "검사 상태",
       align: "center",
@@ -41,6 +43,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "total",
       dataIndex: "total",
       title: "총 취약점 개수",
       align: "center",
@@ -50,6 +53,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "critical",
       dataIndex: "critical",
       title: "Critical",
       align: "center",
@@ -59,6 +63,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "high",
       dataIndex: "high",
       title: "High",
       align: "center",
@@ -68,6 +73,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "medium",
       dataIndex: "medium",
       title: "Medium",
       align: "center",
@@ -77,6 +83,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "low",
       dataIndex: "low",
       title: "Low",
       align: "center",
@@ -86,6 +93,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "playtime",
       dataIndex: "playtime",
       title: "검사 소요 시간",
       width: 150,
@@ -95,6 +103,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "creatorDateTime",
       dataIndex: "creatorDateTime",
       title: "검사일시",
       align: "center",
@@ -104,6 +113,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "imageCount",
       dataIndex: "imageCount",
       title: "이미지 개수",
       align: "center",

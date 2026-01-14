@@ -19,6 +19,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       title: <InternalRegistryImageTagAllCheck />,
+      key: "checkbox",
       dataIndex: "checkbox",
       align: "center",
       width: CHECKBOX_COLUMN_WIDTH,
@@ -28,6 +29,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: <AdminInternalRegistryImageTagAllCheck />,
+      key: "admin-checkbox",
       dataIndex: "admin-checkbox",
       align: "center",
       width: CHECKBOX_COLUMN_WIDTH,
@@ -37,6 +39,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "태그",
+      key: "tag",
       dataIndex: "tag",
       align: "left",
       render: (tag: string, record: InternalRegistryImageTagListType) => {
@@ -45,6 +48,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "이미지 크기",
+      key: "imageSize",
       dataIndex: "imageSize",
       align: "center",
       render: (imageSize: number) => {
@@ -53,6 +57,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "업로드 상태",
+      key: "uploadStatus",
       dataIndex: "uploadStatus",
       align: "center",
       width: 90,
@@ -66,6 +71,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "보안 검사 상태",
+      key: "scanStatus",
       dataIndex: "scanStatus",
       align: "center",
       width: 90,
@@ -79,6 +85,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "보안 검사 결과",
+      key: "securityResult",
       dataIndex: "securityResult",
       align: "center",
       width: 90,
@@ -97,26 +104,31 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "Critical",
+      key: "critical",
       dataIndex: "critical",
       align: "center",
     },
     {
       title: "High",
+      key: "high",
       dataIndex: "high",
       align: "center",
     },
     {
       title: "Medium",
+      key: "medium",
       dataIndex: "medium",
       align: "center",
     },
     {
       title: "Low",
+      key: "low",
       dataIndex: "low",
       align: "center",
     },
     {
       title: "최근 검증일시",
+      key: "lastCheckedAt",
       dataIndex: "lastCheckedAt",
       align: "center",
       render: (lastCheckedAt: string) => {
@@ -129,6 +141,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "사용/요청 상태",
+      key: "status",
       dataIndex: "status",
       align: "center",
       width: 90,
@@ -139,6 +152,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
 
     {
       title: "요청 사유",
+      key: "requestReason",
       dataIndex: "requestReason",
       align: "center",
       width: 100,
@@ -148,6 +162,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "승인/반려 사유",
+      key: "rejectReason",
       dataIndex: "rejectReason",
       align: "center",
       width: 90,
@@ -171,9 +186,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * @example
  * // 2. 배열 형태 - 순서 변경 가능
  * const columns = createInternalRegistryImageTagColumn([
- *   { dataIndex: 'checkbox' },
- *   { dataIndex: 'tag' },
- *   { dataIndex: 'imageSize' },
+ *   { key: 'checkbox' },
+ *   { key: 'tag' },
+ *   { key: 'imageSize' },
  * ]);
  */
 export const createInternalRegistryImageTagColumn = (

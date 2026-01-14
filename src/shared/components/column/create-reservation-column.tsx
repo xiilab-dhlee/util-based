@@ -27,6 +27,7 @@ const createColumnList = (
   return [
     {
       title: "리포트 이름",
+      key: "reportName",
       dataIndex: "reportName",
       align: "left",
       width: "20%",
@@ -46,6 +47,7 @@ const createColumnList = (
     },
     {
       title: "리포트 종류",
+      key: "reportType",
       dataIndex: "reportType",
       align: "center",
       render: (reportType: ReservationListType["reportType"]) => {
@@ -58,6 +60,7 @@ const createColumnList = (
     },
     {
       title: "수신자 수",
+      key: "recipientCount",
       dataIndex: "recipientCount",
       align: "center",
       render: (recipientCount: number) => {
@@ -68,6 +71,7 @@ const createColumnList = (
     },
     {
       title: "발송 주기",
+      key: "dispatchCycle",
       dataIndex: "dispatchCycle",
       align: "center",
       render: (
@@ -83,6 +87,7 @@ const createColumnList = (
     },
     {
       title: "종료일시",
+      key: "endDateTime",
       dataIndex: "endDateTime",
       align: "center",
       render: (endDateTime: ReservationListType["endDateTime"]) => {
@@ -95,6 +100,7 @@ const createColumnList = (
     },
     {
       title: "예약 발송",
+      key: "isScheduled",
       dataIndex: "isScheduled",
       align: "center",
       render: (isScheduled: boolean, record: ReservationListType) => {
@@ -110,6 +116,7 @@ const createColumnList = (
     },
     {
       title: "삭제",
+      key: "delete",
       dataIndex: "delete",
       align: "center",
       render: (_: unknown, record: ReservationListType) => {
@@ -143,8 +150,8 @@ const createColumnList = (
  * @example
  * // 배열 형태 - 순서 변경 가능
  * const columns = createReservationColumn({}, [
- *   { dataIndex: 'reportName' },
- *   { dataIndex: 'reportType', width: 100 },
+ *   { key: 'reportName' },
+ *   { key: 'reportType', width: 100 },
  * ]);
  */
 export const createReservationColumn = (
