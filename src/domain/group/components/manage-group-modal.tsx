@@ -5,9 +5,9 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
+import { useGetGroupDetail } from "@/api/generated/group/group";
 import { GroupMemberTable } from "@/domain/group/components/group-member-table";
 import { ManageGroupMemberModal } from "@/domain/group/components/manage-group-member-modal";
-import { useGetGroupDetail } from "@/domain/group/hooks/use-get-group-detail";
 import { useGroupForm } from "@/domain/group/hooks/use-group-form";
 import { openCreateGroupModalAtom } from "@/domain/group/state/group.atom";
 import type {
@@ -16,11 +16,11 @@ import type {
 } from "@/domain/group/types/group.type";
 import { isUpdatePayload } from "@/domain/group/utils/group-modal.util";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
+import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 import type { ConfirmMemberSelectionPayload } from "@/shared/types/member-selection.type";
 
 /**
@@ -103,10 +103,10 @@ export function ManageGroupModal() {
   const handleAddMember = () => {
     publish(GROUP_EVENTS.openMemberModal, {
       selectedAccounts: form.memberTableData.map((m) => ({
-        id: m.id,
-        name: m.name,
+        id: m.accountId,
+        name: m.accountName,
         email: m.email,
-        type: GROUP_TREE_NODE_TYPE.account,
+        type: ITEM_TYPES.ACCOUNT,
       })),
     });
   };

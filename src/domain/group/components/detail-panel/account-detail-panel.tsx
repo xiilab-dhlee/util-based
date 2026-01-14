@@ -1,11 +1,12 @@
 "use client";
 
+import { isBoolean } from "es-toolkit";
 import styled from "styled-components";
 import { Tag } from "xiilab-ui";
 
 import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
 import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
-import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
   AsideDetailArticle,
@@ -23,29 +24,34 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface AccountDetailPanelProps {
-  /** 선택된 계정 노드 */
-  account: GroupTreeType;
+  accountId: string;
 }
 
-/**
- * 계정 상세 정보 패널
- *
- * 선택된 계정의 상세 정보를 표시합니다.
- */
-export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
-  // 계정 상세 정보는 account 도메인 API를 통해 별도로 조회
-  const { data: accountDetail } = useGetAccountDetail(account.id);
+export function AccountDetailPanel({ accountId }: AccountDetailPanelProps) {
+  const { data: accountDetail, isError } = useGetAccountDetail(accountId);
 
-  const displayId = accountDetail?.email ?? "-";
+  if (isError) {
+    return (
+      <PanelContainer>
+        <AsideDetailHeader>
+          <AsideDetailHeaderTitle>계정 정보</AsideDetailHeaderTitle>
+        </AsideDetailHeader>
+        <FullWrapper>
+          <DataErrorState />
+        </FullWrapper>
+      </PanelContainer>
+    );
+  }
+
+  const displayEmail = accountDetail?.email ?? "-";
   const displayName = accountDetail?.accountName ?? "-";
   const displayRole = accountDetail?.accountRole ?? "-";
-  const displayStatus =
-    typeof accountDetail?.isEnabled === "boolean"
-      ? getAccountStatusLabelFromBoolean(accountDetail.isEnabled)
-      : "-";
+  const isEnabled = accountDetail?.isEnabled;
+  const displayStatus = isBoolean(isEnabled)
+    ? getAccountStatusLabelFromBoolean(isEnabled)
+    : "-";
   const displayJoinedDate = formatDateSafely(accountDetail?.createdAt) ?? "-";
 
-  // 상세 응답에서 제공되는 그룹 이름 목록 (문자열 배열)
   const groupNames = accountDetail?.groupName ?? [];
 
   return (
@@ -62,12 +68,11 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
           <AsideDetailArticleBody>
             <AsideDetailArticleItem>
               <AsideDetailArticleRow>
-                {/* 좌측 컬럼 */}
                 <AsideDetailArticleRowItem>
                   <AsideDetailArticleColumn>
-                    <AsideDetailArticleKey>아이디</AsideDetailArticleKey>
+                    <AsideDetailArticleKey>이메일</AsideDetailArticleKey>
                     <AsideDetailArticleValue>
-                      {displayId}
+                      {displayEmail}
                     </AsideDetailArticleValue>
                   </AsideDetailArticleColumn>
                   <AsideDetailArticleColumn>
@@ -83,7 +88,6 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
                     </AsideDetailArticleValue>
                   </AsideDetailArticleColumn>
                 </AsideDetailArticleRowItem>
-                {/* 우측 컬럼 */}
                 <AsideDetailArticleRowItem>
                   <AsideDetailArticleColumn>
                     <AsideDetailArticleKey>권한</AsideDetailArticleKey>
@@ -103,7 +107,6 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
           </AsideDetailArticleBody>
         </AsideDetailArticle>
 
-        {/* 워크스페이스 / 그룹 정보 */}
         <ArticleGap>
           <AsideDetailArticleHeader>
             <AsideDetailArticleTitle>워크스페이스</AsideDetailArticleTitle>
@@ -134,7 +137,11 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
                   {groupNames.length > 0 ? (
                     <TagList>
                       {groupNames.map((groupName, index) => (
-                        <Tag key={index} variant="gray">
+                        <Tag
+                          key={`${groupName}-${index}`}
+                          variant="gray"
+                          maxWidth="100%"
+                        >
                           {groupName}
                         </Tag>
                       ))}
@@ -151,8 +158,6 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
     </PanelContainer>
   );
 }
-
-// ===== Local Styled Components =====
 
 export const PanelContainer = styled.div`
   flex: 1;
@@ -180,4 +185,11 @@ const TagList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+`;
+
+const FullWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

@@ -1,14 +1,16 @@
 import { useCallback, useState } from "react";
 import type { z } from "zod";
 
+import type {
+  GroupDetailResponse,
+  GroupMemberResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   type GroupFormType,
   type GroupRequestPayload,
   groupRequestSchema,
 } from "@/domain/group/schemas/group.schema";
 import type { GroupFormErrors } from "@/domain/group/types/group.type";
-import type { MemberRow } from "@/shared/components/column/create-member-column";
-import type { GroupDetailResponseType } from "@/shared/schemas/group-tree.schema";
 
 // ===== 상수 =====
 
@@ -24,8 +26,8 @@ interface UseGroupFormReturn {
   // 상태
   formState: GroupFormType;
   errors: GroupFormErrors;
-  /** 멤버 테이블 표시용 데이터 (id, name, email) */
-  memberTableData: MemberRow[];
+  /** 멤버 테이블 표시용 데이터 (accountId, accountName, email) */
+  memberTableData: GroupMemberResponse[];
 
   // 필드 변경
   setField: <Key extends keyof GroupFormType>(
@@ -34,14 +36,14 @@ interface UseGroupFormReturn {
   ) => void;
 
   // 멤버 관리 (테이블 데이터 + formState.members 동기화)
-  setMemberTableData: (members: MemberRow[]) => void;
+  setMemberTableData: (members: GroupMemberResponse[]) => void;
   removeMember: (id: string) => void;
 
   // 폼 제어
   /** 검증 후 성공 시 payload 반환, 실패 시 null 반환 */
   validate: () => GroupRequestPayload | null;
   reset: () => void;
-  initializeForEdit: (data: GroupDetailResponseType) => void;
+  initializeForEdit: (data: GroupDetailResponse) => void;
   initializeForCreate: () => void;
 }
 
@@ -59,13 +61,13 @@ function mapZodErrors(zodError: z.ZodError): GroupFormErrors {
 }
 
 /**
- * 그룹 상세 응답 데이터를 폼 상태로 변환
+ * 그룹 상세 응답 데이터를 폼 상태로 변환 (Orval-generated type)
  */
-function detailToFormState(data: GroupDetailResponseType): GroupFormType {
+function detailToFormState(data: GroupDetailResponse): GroupFormType {
   return {
     name: data.groupName,
     description: data.description ?? "",
-    members: data.users.map((user) => user.accountId),
+    members: data.users.map((user) => user.accountId) ?? [],
   };
 }
 
@@ -94,14 +96,19 @@ export function useGroupForm(): UseGroupFormReturn {
   };
 
   // ===== 멤버 테이블 데이터 (표시용) =====
-  const [memberTableData, setMemberTableDataState] = useState<MemberRow[]>([]);
+  const [memberTableData, setMemberTableDataState] = useState<
+    GroupMemberResponse[]
+  >([]);
 
   /**
    * 멤버 테이블 데이터 설정 (formState.members도 동기화)
    */
-  const setMemberTableData = useCallback((members: MemberRow[]) => {
+  const setMemberTableData = useCallback((members: GroupMemberResponse[]) => {
     setMemberTableDataState(members);
-    setFormState((prev) => ({ ...prev, members: members.map((m) => m.id) }));
+    setFormState((prev) => ({
+      ...prev,
+      members: members.map((m) => m.accountId),
+    }));
     setErrors((prev) => ({ ...prev, members: undefined }));
   }, []);
 
@@ -109,7 +116,7 @@ export function useGroupForm(): UseGroupFormReturn {
    * 멤버 삭제 (테이블 + formState 동기화)
    */
   const removeMember = useCallback((id: string) => {
-    setMemberTableDataState((prev) => prev.filter((m) => m.id !== id));
+    setMemberTableDataState((prev) => prev.filter((m) => m.accountId !== id));
     setFormState((prev) => ({
       ...prev,
       members: prev.members.filter((memberId) => memberId !== id),
@@ -141,15 +148,10 @@ export function useGroupForm(): UseGroupFormReturn {
     setErrors({});
   }, []);
 
-  const initializeForEdit = useCallback((data: GroupDetailResponseType) => {
+  const initializeForEdit = useCallback((data: GroupDetailResponse) => {
     setFormState(detailToFormState(data));
-    // 멤버 테이블 데이터도 함께 초기화
-    const members: MemberRow[] = data.users.map((user) => ({
-      id: user.accountId,
-      name: user.accountName,
-      email: user.email,
-    }));
-    setMemberTableDataState(members);
+    // 멤버 테이블 데이터도 함께 초기화 (백엔드 응답을 직접 사용)
+    setMemberTableDataState(data.users ?? []);
     setErrors({});
   }, []);
 
