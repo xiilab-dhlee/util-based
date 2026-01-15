@@ -514,6 +514,10 @@ export const PRIVATE_REGISTRY_SELECTOR = {
   /** 프라이빗 레지스트리 목록 페이지 헤더 */
   PAGE_HEADER: "user.private-registry",
 
+  // 컨테이너 이미지 목록 - 필터 셀렉터
+  /** 구분 필터 */
+  FILTER_TYPE: "private-registry-filter-type",
+
   // 컨테이너 이미지 목록 - 테이블 컬럼 셀렉터
   /** 이미지 이름 */
   IMAGE_NAME: "private-registry-image-name",
@@ -528,6 +532,8 @@ export const PRIVATE_REGISTRY_SELECTOR = {
   CREATED_AT: "private-registry-created-at",
 
   // 등록 중인 이미지 목록 (Job List)
+  /** 등록 중인 이미지 목록 구분 필터 */
+  JOB_LIST_FILTER_TYPE: "private-registry-job-list-filter-type",
   /** 등록 중인 이미지 목록 총 개수 */
   JOB_LIST_TOTAL_COUNT: "private-registry-job-list-total-count",
   /** 등록 중인 이미지 목록 검색창 */
@@ -544,6 +550,13 @@ export const PRIVATE_REGISTRY_SELECTOR = {
   JOB_LIST_STATUS: "private-registry-job-list-status",
   /** 등록 중인 이미지 생성일시 */
   JOB_LIST_CREATED_AT: "private-registry-job-list-created-at",
+  /** 등록 중인 이미지 카드 드롭다운 트리거 버튼 */
+  JOB_LIST_CARD_DROPDOWN_TRIGGER:
+    "private-registry-job-list-card-dropdown-trigger",
+  /** 등록 중인 이미지 재시작 버튼 */
+  JOB_LIST_RESTART_BUTTON: "private-registry-job-list-restart-button",
+  /** 등록 중인 이미지 종료 버튼 */
+  JOB_LIST_STOP_BUTTON: "private-registry-job-list-stop-button",
 } as const;
 
 // ============================================

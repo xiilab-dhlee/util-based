@@ -3,21 +3,18 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
-import { Button, Dropdown, Input } from "xiilab-ui";
+import { Button, Input } from "xiilab-ui";
 
-import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
+import { PrivateRegistryTypeSort } from "@/domain/private-registry/components/list/private-registry-type-sort";
 import {
   openSelectPrivateRegistryTypeModalAtom,
   privateRegistryCheckedListAtom,
-  privateRegistryImageSourceTypeAtom,
   privateRegistryPageAtom,
   privateRegistrySearchKeywordAtom,
   privateRegistrySearchTextAtom,
 } from "@/domain/private-registry/state/private-registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
-import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
@@ -32,9 +29,6 @@ export function PrivateRegistryListFilter({
 }: PrivateRegistryListFilterProps) {
   const [searchKeyword, setSearchKeyword] = useAtom(
     privateRegistrySearchKeywordAtom,
-  );
-  const [imageSourceType, setImageSourceType] = useAtom(
-    privateRegistryImageSourceTypeAtom,
   );
   const setSearchText = useSetAtom(privateRegistrySearchTextAtom);
   const resetPage = useResetAtom(privateRegistryPageAtom);
@@ -52,14 +46,6 @@ export function PrivateRegistryListFilter({
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setSearchKeyword(e.target.value);
-  };
-
-  const handleImageSourceTypeChange = (
-    value: GetPrivateRegistryListImageSourceType | "",
-  ) => {
-    resetCheckedList();
-    resetPage();
-    setImageSourceType(value || undefined);
   };
 
   const handleCreatePrivateRegistryImage = () => {
@@ -80,15 +66,7 @@ export function PrivateRegistryListFilter({
       total={totalSize}
       totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
     >
-      <Dropdown
-        options={[ALL_OPTION, ...IMAGE_SOURCE_TYPE_OPTIONS]}
-        value={imageSourceType ?? ""}
-        onChange={handleImageSourceTypeChange}
-        placeholder="구분"
-        width={120}
-        height={30}
-        disabled={loading}
-      />
+      <PrivateRegistryTypeSort disabled={loading} />
       <Input.Search
         name="search"
         placeholder="컨테이너 이미지를 검색해 주세요."
