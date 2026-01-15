@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { Label, type ResponsiveColumnType } from "xiilab-ui";
 
 import { AdminInternalRegistryImageTagAllCheck } from "@/domain/internal-registry/components/detail/admin-internal-registry-image-tag-all-check";
@@ -9,9 +8,14 @@ import { InternalRegistryImageTagLink } from "@/domain/internal-registry-image/c
 import type { InternalRegistryImageTagListType } from "@/domain/internal-registry-image/schemas/internal-registry-image-tag.schema";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
+import {
+  creatorDateColumn,
+  creatorNameColumn,
+} from "@/shared/components/column";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { VulnerabilityTooltip } from "../tooltip/vulnerability-tooltip";
 
@@ -126,6 +130,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "low",
       align: "center",
     },
+    creatorNameColumn,
+    creatorDateColumn,
     {
       title: "최근 검증일시",
       key: "lastCheckedAt",
@@ -134,7 +140,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       render: (lastCheckedAt: string) => {
         return (
           <ColumnAlignCenterWrap>
-            {format(lastCheckedAt, "yyyy.MM.dd")}
+            {formatDateSafely(lastCheckedAt)}
           </ColumnAlignCenterWrap>
         );
       },
@@ -149,7 +155,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
         return <span>승인 필요</span>;
       },
     },
-
     {
       title: "요청 사유",
       key: "requestReason",
