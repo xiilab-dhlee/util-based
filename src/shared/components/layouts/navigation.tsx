@@ -12,7 +12,7 @@ import { Profile } from "./profile";
 
 const USER_NAV_MENU: AstraGoNavMenu[] = [
   {
-    title: "Entire",
+    title: "Menu",
     items: [
       {
         key: "user.monitoring",
@@ -20,40 +20,15 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
         icon: <Icon name={PAGE_META["user.monitoring"]?.iconName} />,
       },
       {
-        type: "divider",
-      },
-    ],
-  },
-  {
-    title: "WORK",
-    items: [
-      {
         key: "user.workload",
         label: PAGE_META["user.workload"]?.title,
         icon: <Icon name={PAGE_META["user.workload"]?.iconName} />,
       },
-      // {
-      //   key: "compare",
-      //   label: "비교실험",
-      //   icon: "ComparativeExperiment",
-      // },
       {
         key: "user.private-registry",
         label: PAGE_META["user.private-registry"]?.title,
         icon: <Icon name={PAGE_META["user.private-registry"]?.iconName} />,
       },
-      {
-        key: "user.internal-registry-image",
-        label: PAGE_META["user.internal-registry-image"]?.title,
-        icon: (
-          <Icon name={PAGE_META["user.internal-registry-image"]?.iconName} />
-        ),
-      },
-      // {
-      //   key: "public-registry",
-      //   label: "외부 레지스트리",
-      //   icon: "PublicRegistry",
-      // },
       {
         key: "user.sourcecode",
         label: PAGE_META["user.sourcecode"]?.title,
@@ -64,26 +39,14 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
         label: PAGE_META["user.volume"]?.title,
         icon: <Icon name={PAGE_META["user.volume"]?.iconName} />,
       },
-      // {
-      //   key: "model",
-      //   label: "모델관리",
-      //   icon: "Model",
-      // },
-      // {
-      //   key: "service",
-      //   label: "서비스",
-      //   icon: "Service",
-      // },
       {
         key: "user.hub",
         label: PAGE_META["user.hub"]?.title,
         icon: <Icon name={PAGE_META["user.hub"]?.iconName} />,
       },
-    ],
-  },
-  {
-    title: "Setting",
-    items: [
+      {
+        type: "divider",
+      },
       {
         key: "user.setting",
         label: PAGE_META["user.setting"]?.title,
@@ -91,6 +54,16 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       },
     ],
   },
+  // {
+  //   title: "Setting",
+  //   items: [
+  //     {
+  //       key: "user.setting",
+  //       label: PAGE_META["user.setting"]?.title,
+  //       icon: <Icon name={PAGE_META["user.setting"]?.iconName} />,
+  //     },
+  //   ],
+  // },
 ];
 
 const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
