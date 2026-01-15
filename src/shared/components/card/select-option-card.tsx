@@ -1,6 +1,5 @@
 "use client";
 
-import classNames from "classnames";
 import styled from "styled-components";
 
 // =============================================================================
@@ -20,8 +19,6 @@ interface SelectOptionCardProps {
   description: string;
   /** 카드 클릭 시 호출되는 콜백 (type 값 전달) */
   onClick: (type: string) => void;
-  /** 선택 상태 여부 (선택적) */
-  isSelected?: boolean;
 }
 
 // =============================================================================
@@ -41,14 +38,9 @@ export function SelectOptionCard({
   icon,
   description,
   onClick,
-  isSelected,
 }: SelectOptionCardProps) {
   return (
-    <CardContainer
-      type="button"
-      className={classNames({ active: isSelected })}
-      onClick={() => onClick(type)}
-    >
+    <CardContainer type="button" onClick={() => onClick(type)}>
       {/* 헤더: 출처, 제목, 아이콘 */}
       <CardHeader>
         <HeaderTextGroup>
@@ -82,8 +74,7 @@ const CardContainer = styled.button`
   text-align: left;
   cursor: pointer;
 
-  &:hover,
-  &.active {
+  &:hover {
     border-color: #1f5bff;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
   }

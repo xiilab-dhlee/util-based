@@ -49,8 +49,15 @@ export function MyDropdown({
     e.stopPropagation();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Enter/Space 키 이벤트도 부모로 전파되지 않도록 차단
+    if (e.key === "Enter" || e.key === " ") {
+      e.stopPropagation();
+    }
+  };
+
   return (
-    <DropdownWrapper onClick={handleClick}>
+    <DropdownWrapper onClick={handleClick} onKeyDown={handleKeyDown}>
       <Dropdown
         menu={{ items: menuItems }}
         trigger={trigger}
