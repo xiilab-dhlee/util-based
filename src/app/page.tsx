@@ -24,8 +24,11 @@ export default async function HomePage() {
   const session = await getServerSession(authOptions);
   const userRoles = session?.roles ?? [];
 
-  // 관리자는 관리자 대시보드로 (ADMIN 권한 우선)
-  if (userRoles.includes(ACCOUNT_ROLES.ADMIN)) {
+  // 관리자는 관리자 대시보드로
+  if (
+    userRoles.includes(ACCOUNT_ROLES.ADMIN) ||
+    userRoles.includes(ACCOUNT_ROLES.SUPER_ADMIN)
+  ) {
     redirect(ADMIN_ROOT_PATH);
   }
 

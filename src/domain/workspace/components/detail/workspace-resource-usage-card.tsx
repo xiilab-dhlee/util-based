@@ -21,7 +21,7 @@ export function WorkspaceResourceUsageCard() {
           {/* 테이블 헤더 행 */}
           <HeaderLi>
             <CategoryColumn className="header">
-              <HeaderText>자원</HeaderText>
+              <HeaderText>리소스</HeaderText>
             </CategoryColumn>
             <Column>
               <HeaderText>요청량</HeaderText>

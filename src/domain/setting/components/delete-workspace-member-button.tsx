@@ -5,6 +5,7 @@ import { Icon } from "xiilab-ui";
 
 import type { WorkspaceMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 import { pubsubUtil } from "@/shared/utils/pubsub.util";
 import { ColumnIconWrap } from "@/styles/layers/column-layer.styled";
 
@@ -16,7 +17,7 @@ export function DeleteWorkspaceMemberButton({
   accountId,
 }: DeleteWorkspaceMemberButtonProps) {
   const { data: session } = useSession();
-  const sessionAccountId = session?.user?.id ?? "";
+  const sessionAccountId = getSessionAccountId(session);
   const isMyself =
     Boolean(sessionAccountId) && String(accountId) === sessionAccountId;
 

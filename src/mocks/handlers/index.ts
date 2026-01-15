@@ -9,7 +9,6 @@
 
 import { delay, type HttpHandler } from "msw";
 
-import { getAdminWorkspaceMock } from "@/api/generated/admin-workspace/admin-workspace.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
@@ -17,6 +16,7 @@ import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+import { systemSettingHandlers } from "@/domain/system-setting/mocks";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
@@ -99,7 +99,7 @@ const rawHandlers = [
   ...sourcecodeHandlers,
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),
-  ...getAdminWorkspaceMock(),
+  ...systemSettingHandlers,
   ...groupHandlers,
   ...workspaceHandlers,
   ...requestImageHandlers,

@@ -3,13 +3,15 @@
 import styled from "styled-components";
 import { Button, Label, Typography } from "xiilab-ui";
 
+import { useGetPolicySet } from "@/api/generated/admin-workspace/admin-workspace";
 import { WorkspaceResourceSettingModal } from "@/domain/system-setting/components/workspace-resource-setting-modal";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import type { CoreResourceType } from "@/shared/types/core.interface";
-import { getResourceInfo } from "@/shared/utils/resource.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
+import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
 import { TooltipHighlightText } from "@/styles/mixins/text";
 
 /**
@@ -19,120 +21,90 @@ import { TooltipHighlightText } from "@/styles/mixins/text";
 export function SystemSettingAside() {
   const publish = usePublish();
 
+  // API 데이터 가져오기
+  const { data: policySet, isLoading } = useGetPolicySet();
+
   const handleEditWorkspaceCount = () => {
     publish(SYSTEM_SETTING_EVENTS.openWorkspaceResourceSettingModal, {});
   };
 
-  // MIG 지원 여부 (실제로는 API에서 가져와야 함)
-  const isMigSupported = false; // TODO: API에서 가져오기
-
-  // TODO: API에서 가져오기 - 임시 데이터
-  const tempTotalResources = [
-    { type: "GPU" as const, value: 15 },
-    { type: "MPS" as const, value: 4 },
-    { type: "CPU" as const, value: 4 },
-    { type: "MEM" as const, value: 12 },
-  ];
-
-  const tempDefaultResources = [
-    { type: "GPU" as const, value: 15 },
-    { type: "MPS" as const, value: 4 },
-    { type: "CPU" as const, value: 4 },
-    { type: "MEM" as const, value: 12 },
-  ];
-
-  const tempMigProfiles = [
-    { profile: "1g.12gb", count: 2 },
-    { profile: "1g.12gb", count: 2 },
-    { profile: "1g.12gb", count: 2 },
-    { profile: "10g.12gb", count: 2 },
-    { profile: "10g.12gb", count: 2 },
-  ];
-
-  // Helper 함수: 리소스 라벨 렌더링
-  const renderResourceLabels = (
-    resources: Array<{ type: CoreResourceType; value: number }>,
-    keyPrefix: string,
-  ) => {
+  // 로딩 완료 후 데이터 없음 → 에러
+  if (!isLoading && !policySet) {
     return (
-      <ResourceLabelRow>
-        {resources.map((resource) => {
-          const info = getResourceInfo(resource.type);
-          return (
-            <LabelContainer key={`${keyPrefix}-${resource.type}`}>
-              <Label
-                dotColor={info.color}
-                textColor={info.color}
-                size="large"
-                theme="light"
-              >
-                <Typography.Text variant="body-3-1" as="span">
-                  {info.text}
-                </Typography.Text>
-              </Label>
-              <Typography.Text variant="body-2-3" as="span">
-                {resource.value}
-                {info.unit}
-              </Typography.Text>
-            </LabelContainer>
-          );
-        })}
-      </ResourceLabelRow>
+      <SystemSettingAsideCardWrapper>
+        <WorkspaceResourceSettingModal />
+        <AsideFillCard
+          title="워크스페이스 생성 및 기본 리소스 설정"
+          titleExtraClassName="system-setting-aside__title-extra"
+          titleExtra={
+            <TitleExtraContainer>
+              <GuideTooltip
+                placement="left"
+                maxWidth="500px"
+                title={
+                  <>
+                    워크스페이스 생성 개수 설정은 사용자가 생성할 수 있는
+                    <br />
+                    워크스페이스의{" "}
+                    <TooltipHighlightText>
+                      최대 개수를 지정
+                    </TooltipHighlightText>
+                    하고, 기본 리소스 설정은
+                    <br />
+                    워크로드 실행을 위한{" "}
+                    <TooltipHighlightText>
+                      초기 GPU, CPU, Memory 할당
+                    </TooltipHighlightText>
+                    을 지정합니다.
+                  </>
+                }
+              />
+              <Button
+                icon="Edit02"
+                width={26}
+                height={26}
+                iconSize={20}
+                onClick={handleEditWorkspaceCount}
+              />
+            </TitleExtraContainer>
+          }
+        >
+          <ContentContainer>
+            <DataErrorState />
+          </ContentContainer>
+        </AsideFillCard>
+      </SystemSettingAsideCardWrapper>
     );
-  };
+  }
 
-  // Helper 함수: MIG 섹션 렌더링
-  const renderMigSection = (
-    isMigSupported: boolean,
-    migProfiles: Array<{ profile: string; count: number }>,
-    keyPrefix: string,
-  ) => {
-    const migInfo = getResourceInfo("MIG");
+  // 값 추출 및 변환
+  const workspaceLimit = policySet?.workspaceLimitCount;
 
-    return (
-      <>
-        {isMigSupported ? (
-          <MigSection>
-            <MigLabelRow>
-              <LabelContainer>
-                <Label
-                  dotColor={migInfo.color}
-                  textColor={migInfo.color}
-                  size="large"
-                  theme="light"
-                >
-                  <Typography.Text variant="body-3-1" as="span">
-                    {migInfo.text}
-                  </Typography.Text>
-                </Label>
-              </LabelContainer>
-            </MigLabelRow>
-            <MigProfilesContainer>
-              {migProfiles.map((mig, index) => (
-                <MigProfileItem
-                  key={`${keyPrefix}-mig-${mig.profile}-${index}`}
-                >
-                  <MigProfile>{mig.profile}</MigProfile>
-                  <MigCount>{mig.count}개</MigCount>
-                </MigProfileItem>
-              ))}
-            </MigProfilesContainer>
-          </MigSection>
-        ) : (
-          <MigNotice>
-            <MigNoticeTitle>
-              해당 GPU는 MIG 분할 기능을 지원하지 않습니다.
-            </MigNoticeTitle>
-            <MigNoticeContent>
-              MIG 분할은 NVIDIA에서 해당 기능을 지원하는
-              <br />
-              GPU 모델에서만 적용할 수 있습니다.
-            </MigNoticeContent>
-          </MigNotice>
-        )}
-      </>
-    );
-  };
+  // 리소스 값 추출
+  const gpuCount = policySet?.resource.gpu?.detail?.normal?.requestCount;
+  const mpsCount = policySet?.resource.gpu?.detail?.mps?.requestCount;
+  const cpuCore = policySet?.resource.cpu.requestCore;
+  const memoryByte = policySet?.resource.memory.requestByte;
+
+  // 메모리 바이트 → GB 변환
+  const memoryGB = memoryByte
+    ? convertBytes(memoryByte, "GB").value
+    : undefined;
+
+  // MIG 프로필
+  const migProfiles =
+    policySet?.resource.gpu?.detail?.mig?.map((mig) => ({
+      profile: mig.profile,
+      count: mig.requestCount,
+    })) ?? [];
+  const isMigSupported = migProfiles.length > 0;
+
+  // 리소스 정보 추출
+  const gpuInfo = getResourceInfo("GPU");
+  const mpsInfo = getResourceInfo("MPS");
+  const cpuInfo = getResourceInfo("CPU");
+  const memInfo = getResourceInfo("MEM");
+  const migInfo = getResourceInfo("MIG");
 
   return (
     <SystemSettingAsideCardWrapper>
@@ -174,11 +146,11 @@ export function SystemSettingAside() {
         <ContentContainer>
           {/* 워크스페이스 생성 개수 */}
           <WorkspaceBox>
-            <Typography.Text variant="body-2-2" as="span">
+            <Typography.Text variant="body-2-2">
               워크스페이스 생성 개수
             </Typography.Text>
-            <Typography.Text variant="body-2-4" as="span">
-              12개
+            <Typography.Text variant="body-2-4">
+              {formatNumberWithUnit(workspaceLimit, "개", "-")}
             </Typography.Text>
           </WorkspaceBox>
 
@@ -187,23 +159,241 @@ export function SystemSettingAside() {
             {/* 전체 리소스 */}
             <ResourceSection>
               <ResourceBoxHeader>
-                <Typography.Text variant="body-2-2" as="span">
+                <Typography.Text variant="body-2-2">
                   전체 리소스
                 </Typography.Text>
               </ResourceBoxHeader>
-              {renderResourceLabels(tempTotalResources, "total")}
-              {renderMigSection(isMigSupported, tempMigProfiles, "total")}
+
+              {/* GPU, MPS, CPU, Memory 직접 렌더링 */}
+              <ResourceLabelRow>
+                {gpuCount !== undefined && (
+                  <LabelContainer>
+                    <Label
+                      dotColor={gpuInfo.color}
+                      textColor={gpuInfo.color}
+                      size="large"
+                      theme="light"
+                    >
+                      <Typography.Text variant="body-3-1">
+                        {gpuInfo.text}
+                      </Typography.Text>
+                    </Label>
+                    <Typography.Text variant="body-2-3">
+                      {formatNumberWithUnit(gpuCount, gpuInfo.unit, "-")}
+                    </Typography.Text>
+                  </LabelContainer>
+                )}
+
+                {mpsCount !== undefined && (
+                  <LabelContainer>
+                    <Label
+                      dotColor={mpsInfo.color}
+                      textColor={mpsInfo.color}
+                      size="large"
+                      theme="light"
+                    >
+                      <Typography.Text variant="body-3-1">
+                        {mpsInfo.text}
+                      </Typography.Text>
+                    </Label>
+                    <Typography.Text variant="body-2-3">
+                      {formatNumberWithUnit(mpsCount, mpsInfo.unit, "-")}
+                    </Typography.Text>
+                  </LabelContainer>
+                )}
+
+                <LabelContainer>
+                  <Label
+                    dotColor={cpuInfo.color}
+                    textColor={cpuInfo.color}
+                    size="large"
+                    theme="light"
+                  >
+                    <Typography.Text variant="body-3-1">
+                      {cpuInfo.text}
+                    </Typography.Text>
+                  </Label>
+                  <Typography.Text variant="body-2-3">
+                    {formatNumberWithUnit(cpuCore, cpuInfo.unit, "-")}
+                  </Typography.Text>
+                </LabelContainer>
+
+                <LabelContainer>
+                  <Label
+                    dotColor={memInfo.color}
+                    textColor={memInfo.color}
+                    size="large"
+                    theme="light"
+                  >
+                    <Typography.Text variant="body-3-1">
+                      {memInfo.text}
+                    </Typography.Text>
+                  </Label>
+                  <Typography.Text variant="body-2-3">
+                    {formatNumberWithUnit(memoryGB, memInfo.unit, "-")}
+                  </Typography.Text>
+                </LabelContainer>
+              </ResourceLabelRow>
+
+              {/* MIG 섹션 */}
+              {isMigSupported ? (
+                <MigSection>
+                  <MigLabelRow>
+                    <Label
+                      dotColor={migInfo.color}
+                      textColor={migInfo.color}
+                      size="large"
+                      theme="light"
+                    >
+                      <Typography.Text variant="body-3-1">
+                        {migInfo.text}
+                      </Typography.Text>
+                    </Label>
+                  </MigLabelRow>
+                  <MigProfilesContainer>
+                    {migProfiles.map((mig, index) => (
+                      <MigProfileItem key={`total-mig-${mig.profile}-${index}`}>
+                        <MigProfile>{mig.profile}</MigProfile>
+                        <MigCount>
+                          {formatNumberWithUnit(mig.count, "개")}
+                        </MigCount>
+                      </MigProfileItem>
+                    ))}
+                  </MigProfilesContainer>
+                </MigSection>
+              ) : (
+                <MigNotice>
+                  <MigNoticeTitle>
+                    해당 GPU는 MIG 분할 기능을 지원하지 않습니다.
+                  </MigNoticeTitle>
+                  <MigNoticeContent>
+                    MIG 분할은 NVIDIA에서 해당 기능을 지원하는
+                    <br />
+                    GPU 모델에서만 적용할 수 있습니다.
+                  </MigNoticeContent>
+                </MigNotice>
+              )}
             </ResourceSection>
 
             {/* 기본 리소스 */}
             <ResourceSection hasTopBorder>
               <ResourceBoxHeader>
-                <Typography.Text variant="body-2-2" as="span">
+                <Typography.Text variant="body-2-2">
                   기본 리소스
                 </Typography.Text>
               </ResourceBoxHeader>
-              {renderResourceLabels(tempDefaultResources, "default")}
-              {renderMigSection(isMigSupported, tempMigProfiles, "default")}
+
+              {/* GPU, MPS, CPU, Memory 직접 렌더링 */}
+              <ResourceLabelRow>
+                {gpuCount !== undefined && (
+                  <LabelContainer>
+                    <Label
+                      dotColor={gpuInfo.color}
+                      textColor={gpuInfo.color}
+                      size="large"
+                      theme="light"
+                    >
+                      <Typography.Text variant="body-3-1">
+                        {gpuInfo.text}
+                      </Typography.Text>
+                    </Label>
+                    <Typography.Text variant="body-2-3">
+                      {formatNumberWithUnit(gpuCount, gpuInfo.unit, "-")}
+                    </Typography.Text>
+                  </LabelContainer>
+                )}
+
+                {mpsCount !== undefined && (
+                  <LabelContainer>
+                    <Label
+                      dotColor={mpsInfo.color}
+                      textColor={mpsInfo.color}
+                      size="large"
+                      theme="light"
+                    >
+                      <Typography.Text variant="body-3-1">
+                        {mpsInfo.text}
+                      </Typography.Text>
+                    </Label>
+                    <Typography.Text variant="body-2-3">
+                      {formatNumberWithUnit(mpsCount, mpsInfo.unit, "-")}
+                    </Typography.Text>
+                  </LabelContainer>
+                )}
+
+                <LabelContainer>
+                  <Label
+                    dotColor={cpuInfo.color}
+                    textColor={cpuInfo.color}
+                    size="large"
+                    theme="light"
+                  >
+                    <Typography.Text variant="body-3-1">
+                      {cpuInfo.text}
+                    </Typography.Text>
+                  </Label>
+                  <Typography.Text variant="body-2-3">
+                    {formatNumberWithUnit(cpuCore, cpuInfo.unit, "-")}
+                  </Typography.Text>
+                </LabelContainer>
+
+                <LabelContainer>
+                  <Label
+                    dotColor={memInfo.color}
+                    textColor={memInfo.color}
+                    size="large"
+                    theme="light"
+                  >
+                    <Typography.Text variant="body-3-1">
+                      {memInfo.text}
+                    </Typography.Text>
+                  </Label>
+                  <Typography.Text variant="body-2-3">
+                    {formatNumberWithUnit(memoryGB, memInfo.unit, "-")}
+                  </Typography.Text>
+                </LabelContainer>
+              </ResourceLabelRow>
+
+              {/* MIG 섹션 */}
+              {isMigSupported ? (
+                <MigSection>
+                  <MigLabelRow>
+                    <Label
+                      dotColor={migInfo.color}
+                      textColor={migInfo.color}
+                      size="large"
+                      theme="light"
+                    >
+                      <Typography.Text variant="body-3-1">
+                        {migInfo.text}
+                      </Typography.Text>
+                    </Label>
+                  </MigLabelRow>
+                  <MigProfilesContainer>
+                    {migProfiles.map((mig, index) => (
+                      <MigProfileItem
+                        key={`default-mig-${mig.profile}-${index}`}
+                      >
+                        <MigProfile>{mig.profile}</MigProfile>
+                        <MigCount>
+                          {formatNumberWithUnit(mig.count, "개")}
+                        </MigCount>
+                      </MigProfileItem>
+                    ))}
+                  </MigProfilesContainer>
+                </MigSection>
+              ) : (
+                <MigNotice>
+                  <MigNoticeTitle>
+                    해당 GPU는 MIG 분할 기능을 지원하지 않습니다.
+                  </MigNoticeTitle>
+                  <MigNoticeContent>
+                    MIG 분할은 NVIDIA에서 해당 기능을 지원하는
+                    <br />
+                    GPU 모델에서만 적용할 수 있습니다.
+                  </MigNoticeContent>
+                </MigNotice>
+              )}
             </ResourceSection>
           </ResourceBox>
         </ContentContainer>

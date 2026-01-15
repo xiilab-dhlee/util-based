@@ -5,6 +5,7 @@ import { useResetAtom } from "jotai/utils";
 
 import {
   getGetAllWorkspaces1QueryKey,
+  getGetWorkspaceDetail1QueryKey,
   useDeleteWorkspaces,
 } from "@/api/generated/admin-workspace/admin-workspace";
 import {
@@ -43,9 +44,9 @@ export function useCreateWorkspaceAction(
     ...options,
     mutation: {
       ...options?.mutation,
-      onSuccess: async (data, ...rest) => {
+      onSuccess: (data, ...rest) => {
         if (data) {
-          await handleSelectWorkspace(data);
+          handleSelectWorkspace(data);
         }
         options?.mutation?.onSuccess?.(data, ...rest);
       },
@@ -68,12 +69,17 @@ export function useUpdateWorkspaceAction(
         if (data && variables.workspaceId === selectedWorkspace?.workspaceId) {
           setSelectedWorkspace(data);
         }
-
         queryClient.invalidateQueries({
           queryKey: getGetAllWorkspacesQueryKey(),
         });
         queryClient.invalidateQueries({
+          queryKey: getGetAllWorkspaces1QueryKey(),
+        });
+        queryClient.invalidateQueries({
           queryKey: getGetWorkspaceDetailQueryKey(variables.workspaceId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: getGetWorkspaceDetail1QueryKey(variables.workspaceId),
         });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
@@ -99,6 +105,9 @@ export function useDeleteWorkspaceAction(
         }
         queryClient.invalidateQueries({
           queryKey: getGetAllWorkspacesQueryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: getGetAllWorkspaces1QueryKey(),
         });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
@@ -242,7 +251,7 @@ export function useCancelResourceRequestAction(
   });
 }
 
-export function useDeleteWorkspacesAction(
+export function useDeleteAdminWorkspacesAction(
   options?: Parameters<typeof useDeleteWorkspaces>[0],
 ) {
   const queryClient = useQueryClient();
@@ -259,6 +268,13 @@ export function useDeleteWorkspacesAction(
 
         queryClient.invalidateQueries({
           queryKey: getGetAllWorkspaces1QueryKey(),
+        });
+
+        // 삭제된 각 워크스페이스의 상세 정보도 무효화
+        variables.data.workspaceId.forEach((workspaceId) => {
+          queryClient.invalidateQueries({
+            queryKey: getGetWorkspaceDetail1QueryKey(workspaceId),
+          });
         });
 
         options?.mutation?.onSuccess?.(data, variables, ...rest);

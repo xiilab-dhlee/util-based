@@ -76,7 +76,9 @@ export function SelectedMemberList({
                 <SelectedItem key={group.groupId}>
                   <SelectedItemContent>
                     <SelectedItemName>{group.groupName}</SelectedItemName>
-                    <SelectedItemSubName>5명</SelectedItemSubName>
+                    <SelectedItemSubName>
+                      {group.memberCount}명
+                    </SelectedItemSubName>
                   </SelectedItemContent>
                   <Button
                     icon="Delete"

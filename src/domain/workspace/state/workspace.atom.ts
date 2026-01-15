@@ -26,6 +26,8 @@ export const openUpdateWorkspaceModalAtom = atom<boolean>(false);
 export const openDeleteWorkspaceModalAtom = atom<boolean>(false);
 /** 관리자용 워크스페이스 일괄 삭제 모달 표시 여부 */
 export const openDeleteAdminWorkspacesModalAtom = atom<boolean>(false);
+/** 관리자용 워크스페이스 상세 삭제 모달 표시 여부 */
+export const openDeleteAdminWorkspaceDetailModalAtom = atom<boolean>(false);
 /** 워크스페이스 나가기 모달 표시 여부 */
 export const openLeaveWorkspaceModalAtom = atom<boolean>(false);
 /** 기본 워크스페이스 설정/해제 모달 표시 여부 */

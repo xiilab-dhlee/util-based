@@ -13,6 +13,7 @@ import {
   SelectedMemberList,
   TwoColumnLayout,
 } from "@/shared/components/group-member-selector";
+import { useGroupTreeSearchState } from "@/shared/components/group-member-selector/hooks/use-group-tree-search-state";
 import { useMemberSelection } from "@/shared/components/group-member-selector/hooks/use-member-selection";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -46,6 +47,8 @@ export function AddWorkspaceMemberModal() {
     flattenMembers,
     reset,
   } = useMemberSelection({ initialMembers: initialAccounts });
+  const searchState = useGroupTreeSearchState();
+  const { resetSearchState } = searchState;
 
   // 선택된 ID 목록 (Set 형태로 변환)
   const selectedAccountIds = useMemo(
@@ -71,6 +74,7 @@ export function AddWorkspaceMemberModal() {
         }),
       );
       setInitialAccounts(accounts);
+      resetSearchState();
       onOpen();
     },
   );
@@ -82,11 +86,13 @@ export function AddWorkspaceMemberModal() {
     // GroupMemberResponse는 이미 DisplayMember와 호환되는 구조 (accountId, accountName, email)
     // TODO: 구성원 추가 API 호출 - _flattenedMembers 사용
 
+    resetSearchState();
     reset();
     onClose();
   };
 
   const handleCancel = () => {
+    resetSearchState();
     reset();
     onClose();
   };
@@ -112,6 +118,7 @@ export function AddWorkspaceMemberModal() {
             selectedAccountIds={selectedAccountIds}
             selectedGroupIds={selectedGroupIds}
             onSelectMember={toggleMember}
+            searchState={searchState}
             treeHeight={272}
           />
         </LeftColumn>

@@ -1,9 +1,8 @@
 import type { DefaultJWT, DefaultSession } from "next-auth";
 
+import type { AccountRole } from "@/shared/constants/core.constant";
+
 declare module "next-auth" {
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
   interface Session extends DefaultSession {
     accessToken?: string;
     refresh_token?: string;
@@ -14,7 +13,7 @@ declare module "next-auth" {
       email?: string | null;
       preferred_username?: string | null;
     };
-    roles?: string[];
+    roles?: AccountRole[];
   }
 }
 
@@ -24,7 +23,7 @@ declare module "next-auth/jwt" {
     refresh_token?: string;
     expires_at?: number;
     error?: string;
-    roles?: string[];
+    roles?: AccountRole[];
     id?: string;
     name?: string;
     email?: string;

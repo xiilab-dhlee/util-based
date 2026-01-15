@@ -5,16 +5,10 @@ import { useEffect } from "react";
 import { Icon } from "xiilab-ui";
 
 import { useGetAllWorkspaces1 } from "@/api/generated/admin-workspace/admin-workspace";
-import type { WorkspaceSortRequest } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
-import { DeleteAdminWorkspacesModal } from "@/domain/workspace/components/list/delete-admin-workspaces-modal";
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/domain/workspace/components/list/workspace-list-footer";
-import {
-  DEFAULT_WORKSPACE_SORT_STATE,
-  WORKSPACE_SORT_FIELD_MAP,
-} from "@/domain/workspace/constants/workspace.constant";
+import { WORKSPACE_SORT_FIELD_MAP } from "@/domain/workspace/constants/workspace.constant";
 import { useWorkspaceListReset } from "@/domain/workspace/hooks/use-workspace-list-reset";
 import {
   workspacePageAtom,
@@ -71,14 +65,6 @@ const GUIDES: CoreGuide[] = [
   },
 ];
 
-const DEFAULT_SORT_REQUEST: WorkspaceSortRequest = buildSortRequest({
-  state: DEFAULT_WORKSPACE_SORT_STATE,
-  fieldMap: WORKSPACE_SORT_FIELD_MAP,
-}) ?? {
-  sort: WORKSPACE_SORT_FIELD_MAP.workspaceName,
-  order: "ASC",
-};
-
 export function WorkspaceListMain() {
   const page = useAtomValue(workspacePageAtom);
   const searchText = useAtomValue(workspaceSearchTextAtom);
@@ -86,19 +72,16 @@ export function WorkspaceListMain() {
 
   const { resetAll } = useWorkspaceListReset();
 
-  const sortRequest =
-    buildSortRequest({
-      state: sort,
-      fieldMap: WORKSPACE_SORT_FIELD_MAP,
-    }) ?? DEFAULT_SORT_REQUEST;
+  const sortRequest = buildSortRequest({
+    state: sort,
+    fieldMap: WORKSPACE_SORT_FIELD_MAP,
+  });
 
   const { data, isLoading } = useGetAllWorkspaces1({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    sortRequest,
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    ...(sortRequest ?? {}),
   });
 
   const totalSize = data?.totalSize ?? 0;
@@ -150,10 +133,6 @@ export function WorkspaceListMain() {
           <WorkspaceListFooter total={totalSize} loading={isLoading} />
         </ListPageBody>
       </ListPageMain>
-      {/* 워크스페이스 삭제 모달 */}
-      <DeleteWorkspaceModal />
-      {/* 관리자용 워크스페이스 일괄 삭제 모달 */}
-      <DeleteAdminWorkspacesModal />
     </>
   );
 }

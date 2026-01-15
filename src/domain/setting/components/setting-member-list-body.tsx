@@ -10,6 +10,7 @@ import { isWorkspaceOwnerRole } from "@/domain/workspace/constants/workspace.con
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface SettingMemberListBodyProps {
@@ -42,11 +43,11 @@ export function SettingMemberListBody({
   const { data: session } = useSession();
 
   const workspaceId = selectedWorkspace?.workspaceId ?? -1;
-  const accountId = session?.user?.id ?? "";
+  const accountId = getSessionAccountId(session);
 
   const { data: memberRole } = useGetWorkspaceMemberRole(
     workspaceId,
-    accountId,
+    accountId ?? "",
     {
       query: {
         enabled: Boolean(selectedWorkspace?.workspaceId) && Boolean(accountId),

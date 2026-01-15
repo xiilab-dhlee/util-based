@@ -9,6 +9,8 @@ export const WORKSPACE_EVENTS = {
   sendUpdateWorkspace: "workspace:send-update-workspace",
   // 워크스페이스 삭제에 필요한 정보 전달 이벤트
   sendDeleteWorkspace: "workspace:send-delete-workspace",
+  // 관리자용 워크스페이스 단일 삭제에 필요한 정보 전달 이벤트
+  sendDeleteAdminWorkspace: "workspace:send-delete-admin-workspace",
   // 관리자용 워크스페이스 일괄 삭제에 필요한 정보 전달 이벤트
   sendDeleteAdminWorkspaces: "workspace:send-delete-admin-workspaces",
   // 워크스페이스 나가기에 필요한 정보 전달 이벤트

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { DeleteWorkspaceModal } from "@/domain/workspace/components/delete-workspace-modal";
+import { DeleteAdminWorkspaceDetailModal } from "@/domain/workspace/components/detail/delete-admin-workspace-detail-modal";
 import { WorkspaceDetailPageAside } from "@/domain/workspace/components/detail/workspace-detail-page-aside";
+import { DeleteAdminWorkspacesModal } from "@/domain/workspace/components/list/delete-admin-workspaces-modal";
+import { UpdateWorkspaceModal } from "@/domain/workspace/components/update-workspace-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { RouteTab } from "@/shared/components/tab";
 import {
@@ -61,8 +63,12 @@ export default async function WorkspaceDetailLayout({
           <DetailContentSection>{children}</DetailContentSection>
         </DetailPageContent>
       </DetailPageBody>
-      {/* 워크스페이스 삭제 모달 */}
-      <DeleteWorkspaceModal />
+      {/* 워크스페이스 수정 모달 */}
+      <UpdateWorkspaceModal />
+      {/* 관리자 워크스페이스 상세 삭제 모달 */}
+      <DeleteAdminWorkspaceDetailModal />
+      {/* 관리자용 워크스페이스 일괄 삭제 모달 */}
+      <DeleteAdminWorkspacesModal />
     </>
   );
 }

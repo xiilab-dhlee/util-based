@@ -13,6 +13,7 @@ import {
   SelectedMemberList,
   TwoColumnLayout,
 } from "@/shared/components/group-member-selector";
+import { useGroupTreeSearchState } from "@/shared/components/group-member-selector/hooks/use-group-tree-search-state";
 import { useMemberSelection } from "@/shared/components/group-member-selector/hooks/use-member-selection";
 import { RESERVATION_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -54,6 +55,8 @@ export function ReportReservationMemberModal() {
     flattenMembers,
     reset,
   } = useMemberSelection({ initialMembers: initialAccounts });
+  const searchState = useGroupTreeSearchState();
+  const { resetSearchState } = searchState;
 
   // 선택된 ID 목록 (Set 형태로 변환)
   const selectedAccountIds = useMemo(
@@ -77,9 +80,10 @@ export function ReportReservationMemberModal() {
         }),
       );
       setInitialAccounts(accounts);
+      resetSearchState();
       onOpen();
     },
-    [onOpen],
+    [onOpen, resetSearchState],
   );
 
   useSubscribe<OpenReportReservationMemberModalPayload>(
@@ -96,11 +100,13 @@ export function ReportReservationMemberModal() {
       members: flattenedMembers,
     });
 
+    resetSearchState();
     reset();
     onClose();
   };
 
   const handleCancel = () => {
+    resetSearchState();
     reset();
     onClose();
   };
@@ -126,6 +132,7 @@ export function ReportReservationMemberModal() {
             selectedAccountIds={selectedAccountIds}
             selectedGroupIds={selectedGroupIds}
             onSelectMember={toggleMember}
+            searchState={searchState}
           />
         </LeftColumn>
         <RightColumn>
