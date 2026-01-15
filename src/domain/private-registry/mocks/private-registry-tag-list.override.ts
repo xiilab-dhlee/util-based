@@ -77,13 +77,15 @@ export const privateRegistryTagListOverrideHandlers = [
 
     const totalSize = pageSize * 3;
 
+    // baseItem을 루프 외부에서 한 번만 생성 (성능 최적화)
+    const mockResponse = getGetPrivateImageTagListResponseMock();
+    const baseItem = mockResponse.data?.content?.[0];
+
     // 검색/정렬 관련 필드만 오버라이드, 나머지는 faker 원본 사용
     const content: ImageTagListResponse[] = Array.from(
       { length: pageSize },
       (_, index) => {
         const globalIndex = pageNo * pageSize + index;
-        const baseItem =
-          getGetPrivateImageTagListResponseMock().data?.content?.[0];
 
         return {
           ...baseItem,

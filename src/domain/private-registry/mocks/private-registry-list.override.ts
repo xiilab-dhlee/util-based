@@ -103,13 +103,15 @@ export const privateRegistryListOverrideHandlers = [
       ? Math.ceil(baseTotalSize / 2)
       : baseTotalSize;
 
+    // baseItem을 루프 외부에서 한 번만 생성 (성능 최적화)
+    const mockResponse = getGetPrivateRegistryListResponseMock();
+    const baseItem = mockResponse.data?.content?.[0];
+
     // 검색/정렬 관련 필드만 오버라이드, 나머지는 faker 원본 사용
     const content: RegistryListResponse[] = Array.from(
       { length: pageSize },
       (_, index) => {
         const globalIndex = pageNo * pageSize + index;
-        const baseItem =
-          getGetPrivateRegistryListResponseMock().data?.content?.[0];
 
         // 필터가 적용된 경우 해당 타입만, 아니면 인덱스 기반 타입
         const itemImageSourceType = imageSourceType
