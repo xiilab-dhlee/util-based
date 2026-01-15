@@ -17,11 +17,11 @@ import { customScrollbar } from "@/styles/mixins/scrollbar";
  * 삭제 기능을 제공합니다.
  */
 export function PrivateRegistryDetailIntroCard() {
-  const { name } = useParams();
+  const { name } = useParams<{ name: string }>();
   // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
 
-  const harborImageName = decodeURIComponent(name as string);
+  const harborImageName = name ? decodeURIComponent(name) : "";
   const { data, isLoading, isError } = useGetPrivateImageDetail(
     { harborImageName },
     { query: { enabled: !!harborImageName } },
@@ -95,7 +95,6 @@ const Container = styled.div`
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  padding-top: 14px;
   background-color: #171b26;
   padding: 24px;
   overflow: hidden;
@@ -223,8 +222,15 @@ const IconWrapper = styled.button`
   height: 30px;
   border-radius: 2px;
   background-color: transparent;
+  cursor: pointer;
+  transition: opacity 0.2s;
 
   --icon-fill: #ced5db;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 `;
 
 /**

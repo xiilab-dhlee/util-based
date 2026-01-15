@@ -28,8 +28,8 @@ export function PrivateRegistryDetailFilter({
   totalSize,
   loading,
 }: PrivateRegistryDetailFilterProps) {
-  const { name } = useParams();
-  const harborImageName = decodeURIComponent(name as string);
+  const { name } = useParams<{ name: string }>();
+  const harborImageName = name ? decodeURIComponent(name) : "";
 
   const setSearchText = useSetAtom(privateRegistryTagSearchTextAtom);
   const resetPage = useResetAtom(privateRegistryTagPageAtom);

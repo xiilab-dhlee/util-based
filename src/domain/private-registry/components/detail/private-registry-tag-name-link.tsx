@@ -18,8 +18,8 @@ export function PrivateRegistryTagNameLink({
   imageTagName,
   hasMetadata,
 }: PrivateRegistryTagNameLinkProps) {
-  const { name } = useParams();
-  const harborImageName = decodeURIComponent(name as string);
+  const { name } = useParams<{ name: string }>();
+  const harborImageName = name ? decodeURIComponent(name) : "";
 
   // 메타데이터가 없으면 상세 조회 불가
   if (!hasMetadata || !imageTagId) {

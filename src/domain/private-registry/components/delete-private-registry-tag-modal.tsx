@@ -18,8 +18,8 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function DeletePrivateRegistryTagModal() {
   const router = useRouter();
-  const { name } = useParams();
-  const harborImageName = decodeURIComponent(name as string);
+  const { name } = useParams<{ name: string }>();
+  const harborImageName = name ? decodeURIComponent(name) : "";
 
   const { open, onOpen, onClose } = useGlobalModal(
     openDeletePrivateRegistryTagModalAtom,

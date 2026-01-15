@@ -15,8 +15,8 @@ import { CriticalVulnerabilityList } from "./critical-vulnerability-list";
  * 2. imageId, tagId, harborImageName으로 태그 상세 조회
  */
 export function PrivateRegistryTagAside() {
-  const { name } = useParams();
-  const harborImageName = decodeURIComponent(name as string);
+  const { name } = useParams<{ name: string }>();
+  const harborImageName = name ? decodeURIComponent(name) : "";
 
   // 1. 이미지 상세 조회 (imageId 획득)
   const { data } = useGetPrivateImageDetail(

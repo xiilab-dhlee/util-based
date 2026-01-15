@@ -27,7 +27,7 @@ import { privateRegistryVulnerabilityPageAtom } from "../../state/private-regist
  * - PrivateRegistryTagMain: 취약점 목록 조회 관리
  */
 export function PrivateRegistryTagMain() {
-  const { name, tagId } = useParams();
+  const { name, tagId } = useParams<{ name: string; tagId: string }>();
 
   const resetPage = useResetAtom(privateRegistryVulnerabilityPageAtom);
 
@@ -47,7 +47,7 @@ export function PrivateRegistryTagMain() {
     <>
       <PageHeader
         pageKey="user.private-registry.tag"
-        pageParams={{ name: name as string, tagId: tagId as string }}
+        pageParams={{ name: name ?? "", tagId: tagId ?? "" }}
       />
       <DetailPageBody>
         <PrivateRegistryTagAside />

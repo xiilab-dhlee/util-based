@@ -34,8 +34,8 @@ import {
  * 프라이빗 레지스트리 이미지 상세 페이지 메인 컴포넌트
  */
 export function PrivateRegistryDetailMain() {
-  const { name } = useParams();
-  const harborImageName = decodeURIComponent(name as string);
+  const { name } = useParams<{ name: string }>();
+  const harborImageName = name ? decodeURIComponent(name) : "";
 
   const resetPage = useResetAtom(privateRegistryTagPageAtom);
   const setSearchText = useSetAtom(privateRegistryTagSearchTextAtom);

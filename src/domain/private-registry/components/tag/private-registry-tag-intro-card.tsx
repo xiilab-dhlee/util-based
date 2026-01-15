@@ -25,8 +25,8 @@ interface PrivateRegistryTagIntroCardProps {
 export function PrivateRegistryTagIntroCard({
   imageId,
 }: PrivateRegistryTagIntroCardProps) {
-  const { name, tagId } = useParams();
-  const harborImageName = decodeURIComponent(name as string);
+  const { name, tagId } = useParams<{ name: string; tagId: string }>();
+  const harborImageName = name ? decodeURIComponent(name) : "";
   const imageTagId = Number(tagId) || 0;
   // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
