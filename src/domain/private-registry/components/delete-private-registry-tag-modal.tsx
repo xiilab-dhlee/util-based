@@ -80,8 +80,7 @@ export function DeletePrivateRegistryTagModal() {
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >
-      <div>선택된 태그를 삭제합니다.</div>
-      <div>정말 삭제하시겠습니까?</div>
+      <div>선택한 태그를 삭제하시겠습니까?</div>
     </Modal>
   );
 }
