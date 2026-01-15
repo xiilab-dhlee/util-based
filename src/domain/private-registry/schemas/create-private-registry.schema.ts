@@ -16,7 +16,7 @@ export const createPrivateRegistrySchema = z
   .object({
     type: z.enum(["SNAPSHOT", "EXTERNAL"]),
     imageName: z.string().min(1, "컨테이너 이미지 이름을 입력해 주세요."),
-    tag: z
+    imageTagName: z
       .string()
       .min(1, "태그를 입력해 주세요.")
       .regex(

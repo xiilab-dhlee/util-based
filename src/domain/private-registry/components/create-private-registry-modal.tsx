@@ -50,6 +50,11 @@ export function CreatePrivateRegistryModal() {
 
   const { mutate: createImage, isPending } = useCreatePrivateExternalImage();
 
+  const handleChangeCredential = (value: number | null) => {
+    if (value === null) return;
+    setValue("credentialId", value, { shouldValidate: true });
+  };
+
   const onSubmit = (data: CreatePrivateRegistryFormType) => {
     if (!selectedWorkspace) {
       toast.error("워크스페이스를 선택해 주세요.");
@@ -59,9 +64,7 @@ export function CreatePrivateRegistryModal() {
     createImage(
       {
         data: {
-          imageName: data.imageName,
-          imageTagName: data.tag,
-          registryChannel: data.registryChannel,
+          ...data,
           ...(data.type === "SNAPSHOT" &&
             data.workloadId && { workloadId: data.workloadId }),
           workspaceId: selectedWorkspace.workspaceId,
@@ -87,7 +90,7 @@ export function CreatePrivateRegistryModal() {
       reset({
         type,
         imageName: "",
-        tag: "",
+        imageTagName: "",
         registryChannel: undefined,
         credentialId: undefined,
         ...(type === "SNAPSHOT" && { workloadId: "" }),
@@ -146,15 +149,15 @@ export function CreatePrivateRegistryModal() {
         />
         <FormRow>
           <Controller
-            name="tag"
+            name="imageTagName"
             control={control}
             render={({ field }) => (
               <FormItem
                 label="태그"
                 required
-                validateStatus={errors.tag ? "error" : undefined}
+                validateStatus={errors.imageTagName ? "error" : undefined}
                 htmlFor="privateRegistryImageTag"
-                help={errors.tag?.message}
+                help={errors.imageTagName?.message}
               >
                 <Input
                   {...field}
@@ -202,11 +205,7 @@ export function CreatePrivateRegistryModal() {
               >
                 <CredentialSelect
                   value={field.value ?? null}
-                  setValue={(value) => {
-                    if (value !== null) {
-                      setValue("credentialId", value, { shouldValidate: true });
-                    }
-                  }}
+                  setValue={handleChangeCredential}
                 />
               </FormItem>
             )}
