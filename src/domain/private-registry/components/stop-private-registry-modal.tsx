@@ -31,7 +31,6 @@ export function StopPrivateRegistryModal() {
     }
 
     if (isPending) {
-      toast.error("요청 중입니다.");
       return;
     }
 
