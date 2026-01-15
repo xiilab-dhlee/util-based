@@ -14,7 +14,6 @@ interface SecurityLevelCardProps {
 export function SecurityLevelCard({ level, count }: SecurityLevelCardProps) {
   const { icon } = getVulnerabilityLevelInfo(level);
 
-  // 취약점 개수가 999999 이상인 경우 + 표시
   let countText: string;
   if (count > 99999) {
     countText = `${Number(99999).toLocaleString()}+`;
@@ -27,8 +26,8 @@ export function SecurityLevelCard({ level, count }: SecurityLevelCardProps) {
         <Left>
           <Image
             src="/images/device-bg2.png"
-            width="68"
-            height="68"
+            width={68}
+            height={68}
             alt="Device Bg"
             draggable={false}
           />
@@ -56,7 +55,6 @@ const Container = styled.div`
   border-radius: 4px;
   border: 1px solid #3A4561;
   background-color: #070913;
-  overflow: hidden;
 `;
 
 const Body = styled.div`

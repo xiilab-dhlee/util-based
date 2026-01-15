@@ -19,7 +19,7 @@ export function PrivateRegistryDetailAside() {
       <PrivateRegistryDetailIntroCard />
       <AsideFillCard
         title="이미지 사용 요청 승인 대기 목록"
-        titleExtra={`총 ${data?.totalSize}개`}
+        titleExtra={`총 ${data?.totalSize || 0}개`}
       >
         <PendingRequestImageList />
       </AsideFillCard>

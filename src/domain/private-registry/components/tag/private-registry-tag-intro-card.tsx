@@ -154,7 +154,6 @@ const Container = styled.div`
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  padding-top: 14px;
   background-color: #171b26;
   padding: 24px;
   overflow: hidden;

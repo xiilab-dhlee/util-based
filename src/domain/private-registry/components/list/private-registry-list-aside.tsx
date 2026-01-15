@@ -40,7 +40,7 @@ export function PrivateRegistryListAside() {
   return (
     <StyledAsideDetailContainer>
       <PrivateRegistryJobListFilter
-        totalSize={data?.totalSize}
+        totalSize={data?.totalSize || 0}
         loading={isLoading}
       />
       <PrivateRegistryJobListBody

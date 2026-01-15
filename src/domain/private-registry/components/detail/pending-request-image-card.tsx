@@ -44,7 +44,6 @@ export function PendingRequestImageCard({
 const StyledCard = styled(Card)`  
   & + & {
     margin-top: 8px;
-
   }
 `;
 const Body = styled.div`

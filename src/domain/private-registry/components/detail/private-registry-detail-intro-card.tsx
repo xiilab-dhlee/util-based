@@ -164,7 +164,6 @@ const DescriptionRowBody = styled(RowBody)`
  * 각 정보 섹션의 제목을 표시
  */
 const RowTitle = styled.div`
-  display: inline-block;
   height: 24px;
   display: flex;
   justify-content: flex-start;
