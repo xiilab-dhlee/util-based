@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isString } from "es-toolkit/predicate";
 import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -260,7 +261,7 @@ export function SignupMain() {
                 ]}
                 value={field.value?.[0] ?? null}
                 onChange={(value) =>
-                  field.onChange(value ? [value as string] : [])
+                  field.onChange(isString(value) ? [value] : [])
                 }
                 placeholder="그룹을 선택해 주세요."
                 width="100%"
