@@ -1,15 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
 
 export function CompleteSignup() {
-  const handleLogin = () => {
-    void signIn("keycloak", { callbackUrl: "/" });
+  const router = useRouter();
+
+  const handleGoToLogin = () => {
+    router.push(ROUTES.AUTH_SIGNIN);
   };
 
   return (
@@ -39,7 +42,7 @@ export function CompleteSignup() {
           variant="gradient"
           width="100%"
           height={34}
-          onClick={handleLogin}
+          onClick={handleGoToLogin}
           data-testid={AUTH_SELECTOR.SIGNUP_GO_TO_LOGIN_BUTTON}
         >
           로그인 페이지로 이동
