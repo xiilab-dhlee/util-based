@@ -13,10 +13,11 @@ export const privateRegistryTagPageAtom = atomWithReset<number>(1);
 /** 프라이빗 레지스트리 태그 검색어 */
 export const privateRegistryTagSearchTextAtom = atomWithReset<string>("");
 /** 프라이빗 레지스트리 태그 정렬 상태 */
-export const privateRegistryTagSortAtom = atom<PrivateRegistryTagSortState>({
-  field: "createdAt",
-  order: "descend",
-});
+export const privateRegistryTagSortAtom =
+  atomWithReset<PrivateRegistryTagSortState>({
+    field: "createdAt",
+    order: "descend",
+  });
 /** 체크된 프라이빗 레지스트리 태그 목록 */
 export const privateRegistryTagCheckedListAtom = atomWithReset<Set<Key>>(
   new Set(),

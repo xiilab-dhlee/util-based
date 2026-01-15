@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
@@ -37,8 +37,8 @@ import {
 
 export function PrivateRegistryListMain() {
   const resetPage = useResetAtom(privateRegistryPageAtom);
-  const setSearchText = useSetAtom(privateRegistrySearchTextAtom);
-  const setSort = useSetAtom(privateRegistrySortAtom);
+  const resetSearchText = useResetAtom(privateRegistrySearchTextAtom);
+  const resetSort = useResetAtom(privateRegistrySortAtom);
   const resetCheckedList = useResetAtom(privateRegistryCheckedListAtom);
   const resetImageSourceType = useResetAtom(privateRegistryImageSourceTypeAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
@@ -72,14 +72,14 @@ export function PrivateRegistryListMain() {
 
   useEffect(() => {
     resetPage();
-    setSearchText("");
-    setSort({ field: "createdAt", order: "descend" });
+    resetSearchText();
+    resetSort();
     resetCheckedList();
     resetImageSourceType();
   }, [
     resetPage,
-    setSearchText,
-    setSort,
+    resetSearchText,
+    resetSort,
     resetCheckedList,
     resetImageSourceType,
   ]);

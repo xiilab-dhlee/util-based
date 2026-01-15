@@ -21,6 +21,11 @@ export const PRIVATE_REGISTRY_SORT_FIELD_MAP = {
 export type PrivateRegistrySortField =
   keyof typeof PRIVATE_REGISTRY_SORT_FIELD_MAP;
 
+/** 프라이빗 레지스트리 허용 정렬 필드 목록 */
+export const PRIVATE_REGISTRY_SORT_FIELDS = Object.keys(
+  PRIVATE_REGISTRY_SORT_FIELD_MAP,
+) as PrivateRegistrySortField[];
+
 /** 프라이빗 레지스트리 정렬 상태 타입 */
 export type PrivateRegistrySortState =
   AntdTableSortState<PrivateRegistrySortField>;

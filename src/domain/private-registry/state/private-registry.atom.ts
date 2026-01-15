@@ -16,7 +16,7 @@ export const privateRegistrySearchKeywordAtom = atom<string>("");
 /** 프라이빗 레지스트리 검색어 (검색 실행) */
 export const privateRegistrySearchTextAtom = atomWithReset<string>("");
 /** 프라이빗 레지스트리 정렬 상태 */
-export const privateRegistrySortAtom = atom<PrivateRegistrySortState>({
+export const privateRegistrySortAtom = atomWithReset<PrivateRegistrySortState>({
   field: "createdAt",
   order: "descend",
 });

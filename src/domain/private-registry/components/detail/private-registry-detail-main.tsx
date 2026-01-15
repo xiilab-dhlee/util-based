@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
@@ -38,8 +38,8 @@ export function PrivateRegistryDetailMain() {
   const harborImageName = name ? decodeURIComponent(name) : "";
 
   const resetPage = useResetAtom(privateRegistryTagPageAtom);
-  const setSearchText = useSetAtom(privateRegistryTagSearchTextAtom);
-  const setSort = useSetAtom(privateRegistryTagSortAtom);
+  const resetSearchText = useResetAtom(privateRegistryTagSearchTextAtom);
+  const resetSort = useResetAtom(privateRegistryTagSortAtom);
   const resetCheckedList = useResetAtom(privateRegistryTagCheckedListAtom);
 
   const page = useAtomValue(privateRegistryTagPageAtom);
@@ -63,10 +63,10 @@ export function PrivateRegistryDetailMain() {
 
   useEffect(() => {
     resetPage();
-    setSearchText("");
-    setSort({ field: "createdAt", order: "descend" });
+    resetSearchText();
+    resetSort();
     resetCheckedList();
-  }, [resetPage, setSearchText, setSort, resetCheckedList]);
+  }, [resetPage, resetSearchText, resetSort, resetCheckedList]);
 
   return (
     <>

@@ -19,6 +19,11 @@ export const PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP = {
 export type PrivateRegistryTagSortField =
   keyof typeof PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP;
 
+/** 프라이빗 레지스트리 이미지 태그 허용 정렬 필드 목록 */
+export const PRIVATE_REGISTRY_TAG_SORT_FIELDS = Object.keys(
+  PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP,
+) as PrivateRegistryTagSortField[];
+
 /** 프라이빗 레지스트리 이미지 태그 정렬 상태 타입 */
 export type PrivateRegistryTagSortState =
   AntdTableSortState<PrivateRegistryTagSortField>;

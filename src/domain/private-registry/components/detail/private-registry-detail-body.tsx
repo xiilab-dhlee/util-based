@@ -5,7 +5,7 @@ import type { TableProps } from "xiilab-ui";
 
 import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createPrivateRegistryTagColumn } from "@/domain/private-registry/components/detail/create-private-registry-tag-column";
-import type { PrivateRegistryTagSortField } from "@/domain/private-registry/constants/private-registry-tag.constant";
+import { PRIVATE_REGISTRY_TAG_SORT_FIELDS } from "@/domain/private-registry/constants/private-registry-tag.constant";
 import {
   privateRegistryTagCheckedListAtom,
   privateRegistryTagSortAtom,
@@ -50,13 +50,13 @@ export function PrivateRegistryDetailBody({
     __,
     sorter,
   ) => {
-    const parsed = parseSorterToAntdState(sorter);
+    const parsed = parseSorterToAntdState(
+      sorter,
+      PRIVATE_REGISTRY_TAG_SORT_FIELDS,
+    );
     if (!parsed.field || !parsed.order) return;
 
-    setSort({
-      field: parsed.field as PrivateRegistryTagSortField,
-      order: parsed.order,
-    });
+    setSort(parsed);
   };
 
   return (
