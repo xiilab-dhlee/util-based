@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import type { JWT } from "next-auth/jwt";
 import { getToken } from "next-auth/jwt";
 
+import type { AccountRole } from "@/shared/constants/core.constant";
+
 // ============================================================================
 // 상수
 // ============================================================================
@@ -27,8 +29,8 @@ const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 // ============================================================================
 
 interface TokenWithRoles extends JWT {
-  realm_access?: { roles?: string[] };
-  roles?: string[];
+  realm_access?: { roles?: AccountRole[] };
+  roles?: AccountRole[];
 }
 
 // ============================================================================
@@ -72,7 +74,7 @@ function isPublicPath(path: string): boolean {
 }
 
 /** NextAuth 토큰에서 역할 목록 추출 */
-function extractRoles(token: TokenWithRoles | null): string[] {
+function extractRoles(token: TokenWithRoles | null): AccountRole[] {
   if (!token) return [];
 
   // auth.config.ts에서 세션 콜백으로 저장한 roles 우선 사용
@@ -89,7 +91,7 @@ function extractRoles(token: TokenWithRoles | null): string[] {
 }
 
 /** 특정 역할을 보유하고 있는지 확인 */
-function hasRole(roles: string[], requiredRole: string): boolean {
+function hasRole(roles: AccountRole[], requiredRole: AccountRole): boolean {
   return roles.includes(requiredRole);
 }
 
