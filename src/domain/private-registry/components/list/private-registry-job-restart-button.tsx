@@ -3,6 +3,7 @@
 import styled from "styled-components";
 
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
 
@@ -20,7 +21,11 @@ export function PrivateRegistryJobRestartButton({
   };
 
   return (
-    <StyledButton type="button" onClick={handleClick}>
+    <StyledButton
+      type="button"
+      onClick={handleClick}
+      data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_RESTART_BUTTON}
+    >
       재시작
     </StyledButton>
   );

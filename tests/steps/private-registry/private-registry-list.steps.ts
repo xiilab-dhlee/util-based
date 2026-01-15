@@ -55,6 +55,15 @@ Then(
   },
 );
 
+Then(
+  "개인 레지스트리 구분 필터가 {string}로 표시된다",
+  async ({ privateRegistryListPage }, expectedValue: string) => {
+    await privateRegistryListPage.imageSourceTypeFilter.assertContainsText(
+      expectedValue,
+    );
+  },
+);
+
 // ============================================
 // 3. 검색 결과 검증
 // ============================================
@@ -149,6 +158,15 @@ Then(
   "등록 중인 이미지 목록의 페이지네이션이 표시된다",
   async ({ privateRegistryListPage }) => {
     await privateRegistryListPage.assertJobListPaginationVisible();
+  },
+);
+
+Then(
+  "등록 중인 이미지 목록의 구분 필터가 {string}로 표시된다",
+  async ({ privateRegistryListPage }, expectedValue: string) => {
+    await privateRegistryListPage.jobListTypeFilter.assertContainsText(
+      expectedValue,
+    );
   },
 );
 
@@ -329,5 +347,45 @@ Then(
         DATETIME_PATTERN,
       );
     });
+  },
+);
+
+// ============================================
+// 9. 등록 중인 이미지 재시작/종료
+// ============================================
+
+Given(
+  "등록 중인 이미지 목록에 1개 이상의 데이터가 있다",
+  async ({ privateRegistryListPage }) => {
+    await privateRegistryListPage.jobListGrid.assertCardsVisible();
+    await privateRegistryListPage.jobListGrid.assertMinCardCount(1);
+  },
+);
+
+When(
+  "첫 번째 등록 중인 이미지의 드롭다운 버튼을 클릭한다",
+  async ({ privateRegistryListPage }) => {
+    await privateRegistryListPage.jobListGrid.clickCardButton(
+      0,
+      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CARD_DROPDOWN_TRIGGER,
+    );
+  },
+);
+
+When(
+  "등록 중인 이미지의 재시작 버튼을 클릭한다",
+  async ({ privateRegistryListPage }) => {
+    await privateRegistryListPage.jobListGrid.clickDropdownMenuItem(
+      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_RESTART_BUTTON,
+    );
+  },
+);
+
+When(
+  "등록 중인 이미지의 종료 버튼을 클릭한다",
+  async ({ privateRegistryListPage }) => {
+    await privateRegistryListPage.jobListGrid.clickDropdownMenuItem(
+      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STOP_BUTTON,
+    );
   },
 );

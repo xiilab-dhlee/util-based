@@ -48,7 +48,14 @@ export function PrivateRegistryImageCard({
               <PrivateRegistryLogButton key="log" />,
             ]}
           >
-            <Button width="100%" variant="outlined" icon="MoreHorizonal" />
+            <Button
+              width="100%"
+              variant="outlined"
+              icon="MoreHorizonal"
+              data-testid={
+                PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CARD_DROPDOWN_TRIGGER
+              }
+            />
           </MyDropdown>
         }
       >
