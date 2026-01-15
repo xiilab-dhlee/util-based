@@ -20,7 +20,7 @@ export const metadata = {
  */
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
-  const userRoles = (session as { roles?: string[] })?.roles ?? [];
+  const userRoles = session?.roles ?? [];
 
   // 사용자는 사용자 대시보드로
   if (userRoles.includes(ACCOUNT_ROLES.USER)) {
