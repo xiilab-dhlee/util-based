@@ -1,6 +1,9 @@
+import type { Page } from "@playwright/test";
+
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { CardGridComponent } from "../components/card-grid.component";
+import { DropdownComponent } from "../components/dropdown.component";
 import { PaginationComponent } from "../components/pagination.component";
 import { SearchInputComponent } from "../components/search-input.component";
 import type { AssertLogger } from "../fixtures";
@@ -23,6 +26,28 @@ import { ListPage } from "./list.page";
  * await privateRegistryListPage.table.assertRowCount(5);
  */
 export class PrivateRegistryListPage extends ListPage {
+  // ============================================
+  // Instance Properties
+  // ============================================
+
+  /** 구분 필터 드롭다운 */
+  readonly imageSourceTypeFilter: DropdownComponent;
+
+  /** 등록 중인 이미지 목록 구분 필터 드롭다운 */
+  readonly jobListTypeFilter: DropdownComponent;
+
+  constructor(page: Page) {
+    super(page);
+    this.imageSourceTypeFilter = new DropdownComponent(
+      page,
+      PRIVATE_REGISTRY_SELECTOR.FILTER_TYPE,
+    );
+    this.jobListTypeFilter = new DropdownComponent(
+      page,
+      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_FILTER_TYPE,
+    );
+  }
+
   // ============================================
   // Abstract 구현
   // ============================================
