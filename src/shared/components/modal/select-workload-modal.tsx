@@ -81,17 +81,17 @@ export function SelectWorkloadModal() {
       <Container>
         <CustomizedTable
           columns={createWorkloadColumn([
-            { dataIndex: "select" },
+            { key: "select" },
             {
-              dataIndex: "workloadName",
+              key: "workloadName",
               title: "워크로드 이름",
               width: 130,
               ellipsis: true,
             },
-            { dataIndex: "jobType", title: "잡 타입" },
-            { dataIndex: "creatorName" },
-            { dataIndex: "status" },
-            { dataIndex: "elapsedTime" },
+            { key: "jobType", title: "잡 타입" },
+            { key: "creatorName" },
+            { key: "status" },
+            { key: "elapsedTime" },
           ])}
           data={data?.content || []}
           columnHeight={36}

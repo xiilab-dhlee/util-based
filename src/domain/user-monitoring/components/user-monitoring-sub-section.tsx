@@ -21,17 +21,17 @@ export function UserMonitoringSubSection() {
           <CustomizedTable
             columns={createWorkloadColumn([
               {
-                dataIndex: "workloadName",
+                key: "workloadName",
                 align: "left",
                 ellipsis: true,
                 sorter: true,
               },
-              { dataIndex: "jobType", width: "20%" },
-              { dataIndex: "creatorName", width: "20%" },
-              // { dataIndex: "labels" },
-              // { dataIndex: "status", width: "10%" },
+              { key: "jobType", width: "20%" },
+              { key: "creatorName", width: "20%" },
+              // { key: "labels" },
+              // { key: "status", width: "10%" },
               {
-                dataIndex: "elapsedTime",
+                key: "elapsedTime",
                 width: "20%",
                 align: "center",
               },
@@ -60,16 +60,16 @@ export function UserMonitoringSubSection() {
           <CustomizedTable
             columns={createWorkloadColumn([
               {
-                dataIndex: "workloadName",
+                key: "workloadName",
                 title: "이름",
                 width: 130,
                 ellipsis: true,
                 sorter: true,
               },
-              { dataIndex: "creatorName" },
-              { dataIndex: "status" },
-              { dataIndex: "elapsedTime" },
-              { dataIndex: "jobType", title: "누적 경고 횟수" },
+              { key: "creatorName" },
+              { key: "status" },
+              { key: "elapsedTime" },
+              { key: "jobType", title: "누적 경고 횟수" },
             ])}
             columnHeight={40}
             activePadding

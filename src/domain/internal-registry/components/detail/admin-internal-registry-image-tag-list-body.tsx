@@ -32,17 +32,17 @@ export function AdminInternalRegistryImageTagListBody() {
     <ListWrapper>
       <CustomizedTable
         columns={createInternalRegistryImageTagColumn([
-          // { dataIndex: "admin-checkbox" },
-          { dataIndex: "tag" },
-          { dataIndex: "imageSize" },
-          { dataIndex: "scanStatus" },
-          { dataIndex: "securityResult" },
-          { dataIndex: "creatorName" },
-          { dataIndex: "creatorDate" },
-          { dataIndex: "lastCheckedAt" },
-          { dataIndex: "available" },
-          { dataIndex: "rejectReason" },
-          { dataIndex: "requestReason" },
+          // { key: "admin-checkbox" },
+          { key: "tag" },
+          { key: "imageSize" },
+          { key: "scanStatus" },
+          { key: "securityResult" },
+          { key: "creatorName" },
+          { key: "creatorDate" },
+          { key: "lastCheckedAt" },
+          { key: "available" },
+          { key: "rejectReason" },
+          { key: "requestReason" },
         ])}
         activePadding
         data={data?.content || []}

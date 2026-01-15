@@ -31,15 +31,15 @@ export function DisabledWorkloadListBody({
     <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
       <CustomizedTable
         columns={createWorkloadColumn([
-          { dataIndex: "workloadName", width: 200, ellipsis: true },
-          { dataIndex: "jobType", width: 100 },
-          { dataIndex: "creatorName", width: 60, ellipsis: true },
-          { dataIndex: "elapsedTime" },
-          { dataIndex: "status", width: 80 },
-          { dataIndex: "log" },
-          { dataIndex: "monitoring", width: 60 },
-          { dataIndex: "restart" },
-          { dataIndex: "delete" },
+          { key: "workloadName", width: 200, ellipsis: true },
+          { key: "jobType", width: 100 },
+          { key: "creatorName", width: 60, ellipsis: true },
+          { key: "elapsedTime" },
+          { key: "status", width: 80 },
+          { key: "log" },
+          { key: "monitoring", width: 60 },
+          { key: "restart" },
+          { key: "delete" },
         ])}
         data={content}
         columnHeight={36}
