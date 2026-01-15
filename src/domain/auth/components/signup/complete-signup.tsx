@@ -9,7 +9,7 @@ import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
 
 export function CompleteSignup() {
   const handleLogin = () => {
-    void signIn("keycloak");
+    void signIn("keycloak", { callbackUrl: "/" });
   };
 
   return (
