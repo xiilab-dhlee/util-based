@@ -13,13 +13,12 @@ import { test } from "../../fixtures";
  *
  * 구조:
  * 1. 페이지 진입
- * 2. 목록 영역 검증 (listGrid fixture)
- * 3. 상세 영역 검증 (hubPage POM)
- * 4. 카드 인터랙션
- * 5. 검색 (listSearchInput fixture)
- * 6. 데이터 유효성 검증
- *
- * NOTE: 워크로드의 list.steps.ts와 동일한 네이밍 컨벤션 적용
+ * 2. 페이지 표시 검증
+ * 3. 목록 영역 검증 (listGrid fixture)
+ * 4. 상세 영역 검증 (hubPage POM)
+ * 5. 카드 인터랙션
+ * 6. 버튼 액션
+ * 7. 데이터 유효성 검증
  */
 const { Given, When, Then } = createBdd(test);
 
@@ -116,32 +115,7 @@ When("허브에서 워크로드 생성 버튼을 클릭한다", async ({ hubPage
 // NOTE: "워크로드 생성 드로어가 표시된다" 스텝은 workload/detail.steps.ts에 정의됨
 
 // ============================================
-// 7. 검색 (listGrid + hubPage fixture 활용)
-// ============================================
-
-/**
- * 검색어가 포함된 데이터만 표시되는지 검증
- *
- * CardGridComponent의 validateSearch 메서드 사용
- */
-Then(
-  "허브 검색 결과 검색어가 포함된 데이터만 표시된다",
-  async ({ listGrid, listSearchInput, assertLogger, $testInfo }) => {
-    // 스켈레톤이 사라지고 카드가 표시될 때까지 대기
-    await listGrid.assertCardsVisible();
-
-    // 검색 결과 검증
-    await listGrid.validateSearch(
-      await listSearchInput.getValue(),
-      assertLogger,
-      $testInfo,
-      "허브",
-    );
-  },
-);
-
-// ============================================
-// 8. 데이터 유효성 검증 (listGrid fixture 활용)
+// 7. 데이터 유효성 검증 (listGrid fixture 활용)
 // ============================================
 
 Then(
