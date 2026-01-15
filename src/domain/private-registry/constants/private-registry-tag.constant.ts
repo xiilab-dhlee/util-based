@@ -10,6 +10,7 @@ import type { AntdTableSortState } from "@/shared/types/core.model";
 
 export const PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP = {
   createdAt: "CREATED_AT",
+  updatedAt: "UPDATED_AT",
   imageTagSizeByte: "IMAGE_TAG_SIZE_BYTE",
   vulnerability: "TOTAL_VULNERABILITY_COUNT",
   latestVulnerabilityScanDateTime: "LATEST_SCAN_DATETIME",

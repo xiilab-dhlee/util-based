@@ -150,6 +150,8 @@ export const PRIVATE_REGISTRY_EVENTS = {
   sendRestartImageJob: "private-registry:send-restart-image-job",
   // 이미지 등록 Job 종료에 필요한 정보 전달 이벤트
   sendStopImageJob: "private-registry:send-stop-image-job",
+  // 프라이빗 레지스트리 이미지 태그 상세 보기에 필요한 정보 전달 이벤트
+  sendViewTagDetail: "private-registry:send-view-tag-detail",
 } as const;
 
 // 내부 레지스트리 이미지 관련 이벤트

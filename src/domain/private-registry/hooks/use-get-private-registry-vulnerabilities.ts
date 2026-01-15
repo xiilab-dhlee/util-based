@@ -4,18 +4,17 @@ import type { VulnerabilityListType } from "@/domain/security/schemas/vulnerabil
 import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
 import type { CoreListResponse } from "@/shared/types/core.model";
 
-/**
- * 개인 레지스트리 태그 취약점 목록 조회 (임시 mock)
- */
 export const useGetPrivateRegistryVulnerabilities = ({
   pageNo,
   pageSize,
+  imageTagId,
 }: {
   pageNo: number;
   pageSize: number;
+  imageTagId: number | null;
 }) => {
   return useQuery<CoreListResponse<VulnerabilityListType>, Error>({
-    queryKey: ["private-registry", "vulnerabilities"],
+    queryKey: ["private-registry", "vulnerabilities", imageTagId],
     queryFn: async () => {
       return {
         content: vulnerabilityListMock,
@@ -26,5 +25,6 @@ export const useGetPrivateRegistryVulnerabilities = ({
         },
       };
     },
+    enabled: !!imageTagId,
   });
 };

@@ -4,7 +4,7 @@ import type {
   ImageTagListResponse,
   ImageTagListResponseApprovalStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { PrivateRegistryTagNameLink } from "@/domain/private-registry/components/detail/private-registry-tag-name-link";
+import { PrivateRegistryTagNameButton } from "@/domain/private-registry/components/detail/private-registry-tag-name-button";
 import { PRIVATE_REGISTRY_TAG_APPROVAL_STATUS_TEXT } from "@/domain/private-registry/constants/private-registry-tag.constant";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
@@ -26,7 +26,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "imageTagName",
       align: "left",
       render: (_: string, record: ImageTagListResponse) => {
-        return <PrivateRegistryTagNameLink {...record} />;
+        return <PrivateRegistryTagNameButton {...record} />;
       },
     },
     {

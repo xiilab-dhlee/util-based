@@ -89,6 +89,7 @@ export const privateRegistryTagListOverrideHandlers = [
 
         return {
           ...baseItem,
+          harborArtifactId: globalIndex + 1,
           imageTagName: generateImageTagName(globalIndex, keyword),
           createDateTime: generateCreatedAt(globalIndex, sort, order),
           vulnerability: generateVulnerability(),
