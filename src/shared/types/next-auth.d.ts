@@ -1,5 +1,7 @@
 import type { DefaultJWT, DefaultSession } from "next-auth";
 
+import type { AccountRole } from "@/shared/constants/core.constant";
+
 declare module "next-auth/providers/keycloak" {
   interface TOKEN {
     access_token: string;
@@ -31,7 +33,7 @@ declare module "next-auth" {
       image?: string | null;
       preferred_username?: string | null;
     };
-    roles?: string[];
+    roles?: AccountRole[];
   }
 }
 

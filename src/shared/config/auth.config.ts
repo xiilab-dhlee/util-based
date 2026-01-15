@@ -3,6 +3,8 @@ import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
+import type { AccountRole } from "@/shared/constants/core.constant";
+
 // ============================================================================
 // 타입 정의
 // ============================================================================
@@ -12,7 +14,7 @@ interface AuthUser {
   name: string;
   email: string;
   preferred_username: string;
-  roles: string[];
+  roles: AccountRole[];
 }
 
 interface KeycloakTokenResponse {
@@ -27,7 +29,7 @@ interface DecodedJwtPayload {
   name?: string;
   email?: string;
   preferred_username?: string;
-  realm_access?: { roles: string[] };
+  realm_access?: { roles: AccountRole[] };
 }
 
 interface CachedToken {
@@ -121,14 +123,15 @@ function parseUserFromToken(accessToken: string): AuthUser | null {
     name: payload.name ?? payload.preferred_username ?? "Unknown",
     email: payload.email ?? "",
     preferred_username: payload.preferred_username ?? payload.email ?? "",
-    roles: payload.realm_access?.roles ?? [],
+    roles: (payload.realm_access?.roles ?? []) as AccountRole[],
   };
 }
 
 /** JWT access_token에서 역할(roles) 추출 */
-function parseRolesFromToken(accessToken: string | undefined): string[] {
+function parseRolesFromToken(accessToken: string | undefined): AccountRole[] {
   if (!accessToken) return [];
-  return parseJwtPayload(accessToken)?.realm_access?.roles ?? [];
+  return (parseJwtPayload(accessToken)?.realm_access?.roles ??
+    []) as AccountRole[];
 }
 
 // ============================================================================
@@ -148,7 +151,7 @@ function createSession(session: Session, token: JWT): Session {
       email: token.email,
       preferred_username: token.preferred_username,
     },
-    roles: (token.roles as string[]) ?? [],
+    roles: (token.roles as AccountRole[]) ?? [],
     error: token.error,
   };
 }

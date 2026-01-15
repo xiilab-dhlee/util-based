@@ -1,4 +1,5 @@
 import type { CheckboxChangeEvent } from "antd";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import styled from "styled-components";
@@ -18,11 +19,14 @@ import { MySpinner } from "@/shared/components/spinner";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openCreateWorkspaceModalAtom } from "@/shared/state/modal.atom";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 export function WorkspaceSelect() {
   const [isOpen, setIsOpen] = useState(false);
   const { onOpen } = useGlobalModal(openCreateWorkspaceModalAtom);
+  const { data: session } = useSession();
+  const accountId = getSessionAccountId(session);
 
   const [isMyWorkspaceChecked, setIsMyWorkspaceChecked] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -37,7 +41,7 @@ export function WorkspaceSelect() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useWorkspaceSelect(searchKeyword);
+  } = useWorkspaceSelect(searchKeyword, isMyWorkspaceChecked);
 
   const { ref: sentinelRef, inView } = useInView({
     threshold: 0,
@@ -49,9 +53,6 @@ export function WorkspaceSelect() {
       fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, isOpen, fetchNextPage]);
-
-  // TODO: useAuth 구현 후 실제 accountId로 교체
-  const TEMP_ACCOUNT_ID = "temp-account-id";
 
   const { mutate: pinWorkspace } = usePinWorkspace();
   const { mutate: unpinWorkspace } = useUnpinWorkspace();
@@ -66,15 +67,16 @@ export function WorkspaceSelect() {
     });
   };
 
-  const handleClickOption = async (workspace: WorkspaceResponse) => {
+  const handleClickOption = (workspace: WorkspaceResponse) => {
     handleClose();
-    await handleSelectWorkspace(workspace);
+    handleSelectWorkspace(workspace);
   };
 
   const handleClose = () => {
     setIsOpen(false);
     setInputValue("");
     setSearchKeyword("");
+    setIsMyWorkspaceChecked(false);
   };
 
   const handleSearch = (value: string) => {
@@ -88,7 +90,6 @@ export function WorkspaceSelect() {
 
   const handleChangeMyWorkspace = (e: CheckboxChangeEvent) => {
     setIsMyWorkspaceChecked(e.target.checked);
-    // TODO: 백엔드 필터 API 지원 시 구현
   };
 
   const handlePinClick = (
@@ -96,10 +97,11 @@ export function WorkspaceSelect() {
     workspace: WorkspaceResponse,
   ) => {
     e.stopPropagation();
+    if (!accountId) return;
 
     if (workspace.isPinned) {
       unpinWorkspace(
-        { accountId: TEMP_ACCOUNT_ID, workspaceId: workspace.workspaceId },
+        { accountId, workspaceId: workspace.workspaceId },
         {
           onSuccess: () => {
             refetchWorkspaces();
@@ -108,7 +110,7 @@ export function WorkspaceSelect() {
       );
     } else {
       pinWorkspace(
-        { accountId: TEMP_ACCOUNT_ID, workspaceId: workspace.workspaceId },
+        { accountId, workspaceId: workspace.workspaceId },
         {
           onSuccess: () => {
             refetchWorkspaces();

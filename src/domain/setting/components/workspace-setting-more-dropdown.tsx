@@ -16,6 +16,7 @@ import {
 } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 
 export function WorkspaceSettingMoreDropdown() {
   const publish = usePublish();
@@ -25,7 +26,7 @@ export function WorkspaceSettingMoreDropdown() {
   const [isOpen, setIsOpen] = useState(false);
 
   const workspaceId = selectedWorkspace?.workspaceId ?? 0;
-  const accountId = session?.user?.id ?? "";
+  const accountId = getSessionAccountId(session);
 
   const { data: workspaceDetail } = useGetWorkspaceDetail(workspaceId, {
     query: { enabled: Boolean(selectedWorkspace?.workspaceId) },
@@ -33,7 +34,7 @@ export function WorkspaceSettingMoreDropdown() {
 
   const { data: memberRole } = useGetWorkspaceMemberRole(
     workspaceId,
-    accountId,
+    accountId ?? "",
     {
       query: {
         enabled: Boolean(selectedWorkspace?.workspaceId) && Boolean(accountId),
@@ -61,8 +62,6 @@ export function WorkspaceSettingMoreDropdown() {
 
     publish(WORKSPACE_EVENTS.sendUpdateWorkspace, {
       id: selectedWorkspace.workspaceId,
-      workspaceName: workspaceDetail?.workspaceName ?? "",
-      description: workspaceDetail?.description ?? "",
     });
   };
 

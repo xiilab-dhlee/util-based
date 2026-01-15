@@ -5,7 +5,10 @@ import { useInfiniteWorkspaces } from "@/domain/workspace/hooks/use-infinite-wor
 import { useWorkspaceSwitch } from "@/domain/workspace/hooks/use-workspace-switch";
 import { ROUTES } from "@/shared/constants/routes.constant";
 
-export function useWorkspaceSelect(searchKeyword: string) {
+export function useWorkspaceSelect(
+  searchKeyword: string,
+  hasMyWorkspace?: boolean,
+) {
   const { selectedWorkspace, isLoading, handleSelectWorkspace } =
     useWorkspaceSwitch();
 
@@ -18,7 +21,7 @@ export function useWorkspaceSelect(searchKeyword: string) {
     isFetchingNextPage,
     error,
     refetch,
-  } = useInfiniteWorkspaces({ keyword: searchKeyword });
+  } = useInfiniteWorkspaces({ keyword: searchKeyword, hasMyWorkspace });
 
   // 에러 시 에러 페이지로 이동
   useEffect(() => {

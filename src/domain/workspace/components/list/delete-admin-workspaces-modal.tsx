@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useDeleteWorkspacesAction } from "@/domain/workspace/hooks/workspace-actions";
+import { useDeleteAdminWorkspacesAction } from "@/domain/workspace/hooks/workspace-actions";
 import {
   openDeleteAdminWorkspacesModalAtom,
   workspaceCheckedListAtom,
@@ -20,7 +20,8 @@ export function DeleteAdminWorkspacesModal() {
   const { open, onClose } = useGlobalModal(openDeleteAdminWorkspacesModalAtom);
   const checkedList = useAtomValue(workspaceCheckedListAtom);
 
-  const { mutate: deleteWorkspaces, isPending } = useDeleteWorkspacesAction();
+  const { mutate: deleteWorkspaces, isPending } =
+    useDeleteAdminWorkspacesAction();
 
   const workspaceIds = useMemo(
     () => Array.from(checkedList).map((id) => Number(id)),

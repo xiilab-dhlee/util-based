@@ -1,7 +1,8 @@
 import type { DropdownOption } from "xiilab-ui";
 
-import type { WorkspaceSortRequestSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetAllWorkspaces1Sort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
+  WORKSPACE_MEMBER_ROLE_LABEL,
   WORKSPACE_MEMBER_ROLES,
   type WorkspaceMemberRole,
 } from "@/shared/constants/core.constant";
@@ -24,7 +25,7 @@ export const WORKSPACE_SORT_FIELD_MAP = {
   workspaceName: "WORKSPACE_NAME",
   creatorName: "CREATOR_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, WorkspaceSortRequestSort>;
+} as const satisfies Record<string, GetAllWorkspaces1Sort>;
 
 export type WorkspaceSortField = keyof typeof WORKSPACE_SORT_FIELD_MAP;
 
@@ -33,24 +34,14 @@ export const DEFAULT_WORKSPACE_SORT_STATE = {
   order: "ascend",
 } satisfies AntdTableSortState<WorkspaceSortField>;
 
-/**
- * 워크스페이스 멤버 역할 드롭다운 옵션
- * - value: API 요청/응답과 동일한 key
- * - label: UI 표시용
- */
-export const WORKSPACE_MEMBER_ROLE_LABELS = {
-  [WORKSPACE_MEMBER_ROLES.OWNER]: "Owner",
-  [WORKSPACE_MEMBER_ROLES.PARTICIPANT]: "Participant",
-} as const satisfies Record<WorkspaceMemberRole, string>;
-
 export const WORKSPACE_MEMBER_ROLE_OPTIONS = [
   {
     value: WORKSPACE_MEMBER_ROLES.OWNER,
-    label: WORKSPACE_MEMBER_ROLE_LABELS[WORKSPACE_MEMBER_ROLES.OWNER],
+    label: WORKSPACE_MEMBER_ROLE_LABEL[WORKSPACE_MEMBER_ROLES.OWNER],
   },
   {
     value: WORKSPACE_MEMBER_ROLES.PARTICIPANT,
-    label: WORKSPACE_MEMBER_ROLE_LABELS[WORKSPACE_MEMBER_ROLES.PARTICIPANT],
+    label: WORKSPACE_MEMBER_ROLE_LABEL[WORKSPACE_MEMBER_ROLES.PARTICIPANT],
   },
 ] as const satisfies readonly DropdownOption[];
 
@@ -71,7 +62,7 @@ export const normalizeWorkspaceMemberRole = (
 
 export const getWorkspaceMemberRoleLabel = (value?: string | null): string => {
   const role = normalizeWorkspaceMemberRole(value);
-  return WORKSPACE_MEMBER_ROLE_LABELS[role] ?? role;
+  return WORKSPACE_MEMBER_ROLE_LABEL[role] ?? role;
 };
 
 export const isWorkspaceOwnerRole = (role?: string | null): boolean => {

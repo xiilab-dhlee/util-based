@@ -28,6 +28,7 @@ import {
 import { isWorkspaceOwnerRole } from "@/domain/workspace/constants/workspace.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 import { buildSortRequest } from "@/shared/utils/sort.util";
 
 const RESOURCE_REQUEST_SORT_FIELD_MAP: Record<
@@ -45,11 +46,11 @@ export function SettingRequestResourceListMain() {
   const { data: session } = useSession();
 
   const workspaceId = selectedWorkspace?.workspaceId;
-  const accountId = session?.user?.id ?? "";
+  const accountId = getSessionAccountId(session);
 
   const { data: memberRole } = useGetWorkspaceMemberRole(
     workspaceId ?? 0,
-    accountId,
+    accountId ?? "",
     {
       query: {
         enabled: Boolean(selectedWorkspace?.workspaceId) && Boolean(accountId),

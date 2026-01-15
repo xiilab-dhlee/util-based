@@ -26,11 +26,20 @@ interface UseInfiniteWorkspacesReturn {
 export function useInfiniteWorkspaces(
   params?: Omit<GetAllWorkspacesParams, "pageNo">,
 ): UseInfiniteWorkspacesReturn {
-  const { keyword, pageSize = WORKSPACE_PAGE_SIZE } = params ?? {};
+  const {
+    keyword,
+    pageSize = WORKSPACE_PAGE_SIZE,
+    hasMyWorkspace,
+  } = params ?? {};
+  const normalizedKeyword = keyword === "" ? undefined : keyword;
 
   const query = useInfiniteQuery({
     queryKey: [
-      ...getGetAllWorkspacesQueryKey({ keyword, pageSize }),
+      ...getGetAllWorkspacesQueryKey({
+        keyword: normalizedKeyword,
+        pageSize,
+        hasMyWorkspace,
+      }),
       "infinite",
     ],
     queryFn: async ({ pageParam = 1, signal }) => {
@@ -40,7 +49,8 @@ export function useInfiniteWorkspaces(
         {
           pageNo: backendPageNo,
           pageSize,
-          keyword: keyword || undefined,
+          keyword: normalizedKeyword,
+          hasMyWorkspace,
         },
         signal,
       );

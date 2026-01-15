@@ -1,36 +1,41 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { useGetWorkspace } from "@/domain/workspace/hooks/use-get-workspace";
+import { useGetWorkspaceDetail1 } from "@/api/generated/admin-workspace/admin-workspace";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { checkIsSuperAdmin } from "@/shared/utils/auth.util";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
-/**
- * 워크스페이스 상세 페이지의 소개 카드 컴포넌트
- *
- * 워크스페이스의 기본 정보(이름, 설명, 생성자, 생성일, GPU 등)를 표시하고,
- * 삭제 기능을 제공합니다.
- */
 export function WorkspaceIntroCard() {
   const { id } = useParams();
-  // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
+  const { data: session } = useSession();
 
-  const { data } = useGetWorkspace(id as string);
+  const { data: workspace } = useGetWorkspaceDetail1(Number(id), {
+    query: {
+      enabled: Boolean(id),
+    },
+  });
 
-  /**
-   * 워크스페이스 삭제 모달을 열기 위한 핸들러
-   * Pub/Sub 시스템을 통해 워크스페이스 삭제 이벤트를 발행합니다.
-   */
+  const isSuperAdmin = checkIsSuperAdmin(session);
+
   const handleDelete = () => {
-    if (!data?.id || !data?.name) return;
-    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, {
-      workspaceId: data.id,
-      workspaceName: data.name,
+    if (!workspace?.workspaceId) return;
+    publish(WORKSPACE_EVENTS.sendDeleteAdminWorkspace, {
+      workspaceId: workspace.workspaceId,
+    });
+  };
+
+  const handleEdit = () => {
+    if (!workspace?.workspaceId) return;
+    publish(WORKSPACE_EVENTS.sendUpdateWorkspace, {
+      id: workspace.workspaceId,
     });
   };
 
@@ -39,6 +44,12 @@ export function WorkspaceIntroCard() {
       <Header>
         <HeaderTitle>워크스페이스 기본정보</HeaderTitle>
         <ToolBox>
+          {isSuperAdmin && (
+            <IconWrapper onClick={handleEdit}>
+              <Icon name="Edit01" color="var(--icon-fill)" size={24} />
+              <span className="sr-only">워크스페이스 수정</span>
+            </IconWrapper>
+          )}
           <IconWrapper onClick={handleDelete}>
             <Icon name="Delete" color="var(--icon-fill)" size={24} />
             <span className="sr-only">워크스페이스 삭제</span>
@@ -53,7 +64,7 @@ export function WorkspaceIntroCard() {
             </RowIconWrapper>
             <RowTitle>이름</RowTitle>
           </DescriptionRowBody>
-          <Description>{data?.name}</Description>
+          <Description>{workspace?.workspaceName || ""}</Description>
         </Row>
         <DescriptionRow>
           <DescriptionRowBody>
@@ -62,7 +73,7 @@ export function WorkspaceIntroCard() {
             </RowIconWrapper>
             <RowTitle>설명</RowTitle>
           </DescriptionRowBody>
-          <Description>{data?.description}</Description>
+          <Description>{workspace?.description || ""}</Description>
         </DescriptionRow>
         <Row>
           <RowBody>
@@ -71,7 +82,7 @@ export function WorkspaceIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자 :</RowKey>
-              <RowValue>{data?.creatorName}</RowValue>
+              <RowValue>{workspace?.creatorName || ""}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -82,18 +93,7 @@ export function WorkspaceIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성일 :</RowKey>
-              <RowValue>{data?.creatorDate}</RowValue>
-            </RowTitle>
-          </RowBody>
-        </Row>
-        <Row>
-          <RowBody>
-            <RowIconWrapper>
-              <Icon name="Gpu" color="var(--icon-fill)" size={24} />
-            </RowIconWrapper>
-            <RowTitle>
-              <RowKey>GPU :</RowKey>
-              <RowValue>{data?.gpu}</RowValue>
+              <RowValue>{formatDateSafely(workspace?.createdAt)}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -102,17 +102,9 @@ export function WorkspaceIntroCard() {
   );
 }
 
-// ============================================================================
-// Styled Components
-// ============================================================================
-
-/**
- * 워크스페이스 소개 카드 메인 컨테이너
- * 고정 높이와 스크롤 처리를 위한 스타일링
- */
 const Container = styled.div`
   width: 100%;
-  max-height: 490px;
+  height: 490px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -122,10 +114,6 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-/**
- * 카드 헤더 영역
- * 워크스페이스 이름과 도구 버튼들을 좌우로 배치
- */
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
@@ -134,10 +122,6 @@ const Header = styled.div`
   margin-bottom: 6px;
 `;
 
-/**
- * 카드 본문 영역
- * 워크스페이스 상세 정보들을 세로로 배치
- */
 const Body = styled.div`
   flex: 1;
   display: flex;
@@ -146,10 +130,6 @@ const Body = styled.div`
   overflow: hidden;
 `;
 
-/**
- * 정보 행 기본 스타일
- * 각 정보 섹션(상태, 라벨)을 위한 공통 스타일
- */
 const Row = styled.div`
   display: flex;
   flex-direction: column;
@@ -160,18 +140,10 @@ const Row = styled.div`
   overflow: hidden;
 `;
 
-/**
- * 설명 정보 행
- * 확장 가능한 높이를 가진 설명 전용 행
- */
 const DescriptionRow = styled(Row)`
   flex: 1;
 `;
 
-/**
- * 행 본문 영역
- * 아이콘과 제목을 포함하는 상단 영역
- */
 const RowBody = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -181,18 +153,10 @@ const RowBody = styled.div`
   color: #f5f5f5;
 `;
 
-/**
- * 설명 행 본문 영역
- * 하단 여백이 추가된 설명 전용 본문
- */
 const DescriptionRowBody = styled(RowBody)`
   margin-bottom: 6px;
 `;
 
-/**
- * 행 제목 영역
- * 각 정보 섹션의 제목을 표시
- */
 const RowTitle = styled.div`
   display: inline-block;
   height: 24px;
@@ -201,10 +165,6 @@ const RowTitle = styled.div`
   align-items: center;
 `;
 
-/**
- * 워크로드 상태 제목
- * 상태 섹션의 제목을 표시 (우측 여백 추가)
- */
 const RowKey = styled.span`
   margin-right: 4px;
   font-weight: 700;
@@ -213,10 +173,6 @@ const RowKey = styled.span`
   color: #f5f5f5;
 `;
 
-/**
- * 워크스페이스 이름 표시 영역
- * 긴 이름에 대한 텍스트 자르기 처리
- */
 const HeaderTitle = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -228,10 +184,6 @@ const HeaderTitle = styled.div`
   overflow: hidden;
 `;
 
-/**
- * 도구 버튼 컨테이너
- * 수정, 전원 제어 등의 액션 버튼들을 배치
- */
 const ToolBox = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -239,10 +191,6 @@ const ToolBox = styled.div`
   gap: 6px;
 `;
 
-/**
- * 아이콘 버튼 래퍼
- * 헤더의 액션 버튼들을 위한 스타일링
- */
 const IconWrapper = styled.button`
   display: flex;
   justify-content: center;
@@ -256,10 +204,6 @@ const IconWrapper = styled.button`
   --icon-fill: #ced5db;
 `;
 
-/**
- * 행 아이콘 래퍼
- * 각 정보 행의 아이콘을 위한 스타일링
- */
 const RowIconWrapper = styled.span`
   display: flex;
   justify-content: center;
@@ -273,17 +217,17 @@ const RowIconWrapper = styled.span`
   --icon-fill: #e8eaed;
 `;
 
-/**
- * 워크스페이스 설명 텍스트
- * 긴 설명에 대한 스크롤 처리
- */
 const Description = styled.p`
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
   color: #cbcbcb;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
   ${customScrollbar("#2A3041")}
 `;

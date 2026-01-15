@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/shared/config/auth.config";
 import {
+  ACCOUNT_ROLES,
   ADMIN_ROOT_PATH,
   USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
@@ -19,10 +20,13 @@ export const metadata = {
  */
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
-  const userRoles = (session as { roles?: string[] })?.roles ?? [];
+  const userRoles = session?.roles ?? [];
 
   // 관리자는 관리자 대시보드로
-  if (userRoles.includes("ROLE_ADMIN") || userRoles.includes("admin")) {
+  if (
+    userRoles.includes(ACCOUNT_ROLES.ADMIN) ||
+    userRoles.includes(ACCOUNT_ROLES.SUPER_ADMIN)
+  ) {
     redirect(ADMIN_ROOT_PATH);
   }
 
