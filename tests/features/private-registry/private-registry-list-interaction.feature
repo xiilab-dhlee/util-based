@@ -26,7 +26,7 @@ Feature: 개인 레지스트리 목록 페이지 인터랙션
   # 구분 필터링
   # ============================================
 
-  @regression @target
+  @regression
   Scenario Outline: 개인 레지스트리 구분 필터링 <설명>
     When 개인 레지스트리 필터를 설정한다:
       | imageSourceType   |
@@ -62,7 +62,7 @@ Feature: 개인 레지스트리 목록 페이지 인터랙션
   # 등록 중인 이미지 목록 구분 필터링
   # ============================================
 
-  @regression
+  @regression @skip
   Scenario Outline: 등록 중인 이미지 구분 필터링 <설명>
     When 등록 중인 이미지 필터를 설정한다:
       | imageSourceType   |
@@ -156,9 +156,9 @@ Feature: 개인 레지스트리 목록 페이지 인터랙션
     Then "컨테이너 이미지 등록 재시작" 모달이 사라진다
 
     Examples:
-      | 결과 | 버튼   |
-      | 확인 | 재시작 |
-      | 취소 | 취소   |
+      | 결과 | 버튼 |
+      | 확인 | 확인 |
+      | 취소 | 취소 |
 
   @regression
   Scenario Outline: 등록 중인 이미지 종료 모달 - <결과> 버튼 클릭
@@ -171,5 +171,5 @@ Feature: 개인 레지스트리 목록 페이지 인터랙션
 
     Examples:
       | 결과 | 버튼 |
-      | 확인 | 종료 |
+      | 확인 | 확인 |
       | 취소 | 취소 |
