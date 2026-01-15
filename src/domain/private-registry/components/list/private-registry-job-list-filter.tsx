@@ -5,7 +5,7 @@ import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Input } from "xiilab-ui";
 
-import { PrivateRegistryJobTypeSort } from "@/domain/private-registry/components/list/private-registry-job-type-sort";
+// import { PrivateRegistryJobTypeSort } from "@/domain/private-registry/components/list/private-registry-job-type-sort";
 import {
   imageJobPageAtom,
   imageJobSearchKeywordAtom,
@@ -59,7 +59,7 @@ export function PrivateRegistryJobListFilter({
       total={totalSize}
       totalCountTestId={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_TOTAL_COUNT}
     >
-      <PrivateRegistryJobTypeSort disabled={loading} />
+      {/* <PrivateRegistryJobTypeSort disabled={loading} /> */}
       <Input.Search
         name="search"
         placeholder="컨테이너 이미지를 검색해 주세요."

@@ -61,14 +61,14 @@ export function PrivateRegistryImageCard({
       >
         <Body>
           <Pane>
-            <Row>
+            {/* <Row>
               <Key>구분</Key>
               <Value
                 data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE}
               >
-                Snapshot
+                {imageSourceType?.toLowerCase() ?? "-"}
               </Value>
-            </Row>
+            </Row> */}
             <Row>
               <Key>상태</Key>
               <Value data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STATUS}>
@@ -136,4 +136,5 @@ const Key = styled(CompactCardKey)`
 const Value = styled(CompactCardValue)`
   line-height: 14px;
   text-indent: 16px;
+  text-transform: capitalize;
 `;
