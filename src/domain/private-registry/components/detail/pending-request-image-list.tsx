@@ -7,7 +7,6 @@ import { useGetWaitingRequestImages } from "@/domain/request-image/hooks/use-get
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { ScrollShadowContainer } from "@/shared/components/layouts/scroll-shadow-container";
 import { MySpinner } from "@/shared/components/spinner";
-import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 export function PendingRequestImageList() {
   const { data, isLoading, isError } = useGetWaitingRequestImages({
@@ -27,7 +26,7 @@ export function PendingRequestImageList() {
   if (isError) {
     return (
       <CardWrapper>
-        <EmptyState />
+        <EmptyState title="데이터를 불러오는 중 오류가 발생했습니다" />
       </CardWrapper>
     );
   }
@@ -43,7 +42,7 @@ export function PendingRequestImageList() {
   return (
     <ScrollShadowContainer shadowColor="rgba(0, 0, 0, 0.15)" shadowHeight={20}>
       <CardWrapper>
-        {data?.content?.map((item) => (
+        {data?.content.map((item) => (
           <PendingRequestImageCard key={item.id} {...item} />
         ))}
       </CardWrapper>
@@ -52,8 +51,5 @@ export function PendingRequestImageList() {
 }
 
 const CardWrapper = styled.div`
-  /* overflow-y: auto; */
   height: 503px;
-
-  /* ${customScrollbar()} */
 `;

@@ -35,7 +35,7 @@ export function PrivateRegistryJobListBody({
   if (isError) {
     return (
       <Container>
-        <EmptyState />
+        <EmptyState title="데이터를 불러오는 중 오류가 발생했습니다" />
       </Container>
     );
   }
@@ -51,7 +51,7 @@ export function PrivateRegistryJobListBody({
   return (
     <Container className={SELECTOR.LIST_CARD_GRID}>
       {data.map((job) => (
-        <PrivateRegistryImageCard key={job.imageId} {...job} />
+        <PrivateRegistryImageCard key={job.imageTagId} {...job} />
       ))}
     </Container>
   );
