@@ -54,16 +54,6 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
       },
     ],
   },
-  // {
-  //   title: "Setting",
-  //   items: [
-  //     {
-  //       key: "user.setting",
-  //       label: PAGE_META["user.setting"]?.title,
-  //       icon: <Icon name={PAGE_META["user.setting"]?.iconName} />,
-  //     },
-  //   ],
-  // },
 ];
 
 const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
