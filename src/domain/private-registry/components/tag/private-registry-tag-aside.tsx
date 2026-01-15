@@ -3,10 +3,10 @@
 import { useParams } from "next/navigation";
 
 import { useGetPrivateImageDetail } from "@/api/generated/private-registry/private-registry";
+import { CriticalVulnerabilityList } from "@/domain/private-registry/components/tag/critical-vulnerability-list";
 import { PrivateRegistryTagIntroCard } from "@/domain/private-registry/components/tag/private-registry-tag-intro-card";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
-import { CriticalVulnerabilityList } from "./critical-vulnerability-list";
 
 /**
  * 개인 레지스트리 태그 상세 페이지 왼쪽 영역 컴포넌트

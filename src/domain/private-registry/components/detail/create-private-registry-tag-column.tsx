@@ -6,7 +6,10 @@ import type {
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { PrivateRegistryTagNameLink } from "@/domain/private-registry/components/detail/private-registry-tag-name-link";
 import { PRIVATE_REGISTRY_TAG_APPROVAL_STATUS_TEXT } from "@/domain/private-registry/constants/private-registry-tag.constant";
+import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
+import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
 import { ScanStatusText } from "@/shared/components/text/scan-status-text";
+import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import {
@@ -14,9 +17,6 @@ import {
   formatDateTimeSafely,
 } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
-import { ViewRejectReasonButton } from "../../../../shared/components/button/view-reject-reason-button";
-import { ViewRequestReasonButton } from "../../../../shared/components/button/view-request-reason-button";
-import { VulnerabilityTooltip } from "../../../../shared/components/tooltip/vulnerability-tooltip";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [

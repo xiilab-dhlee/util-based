@@ -10,15 +10,15 @@ import { PrivateRegistryTagAside } from "@/domain/private-registry/components/ta
 import { PrivateRegistryTagBody } from "@/domain/private-registry/components/tag/private-registry-tag-body";
 import { PrivateRegistryTagFilter } from "@/domain/private-registry/components/tag/private-registry-tag-filter";
 import { PrivateRegistryTagFooter } from "@/domain/private-registry/components/tag/private-registry-tag-footer";
+import { PRIVATE_REGISTRY_VULNERABILITY_PAGE_SIZE } from "@/domain/private-registry/constants/private-registry-vulnerability.constant";
+import { useGetPrivateRegistryVulnerabilities } from "@/domain/private-registry/hooks/use-get-private-registry-vulnerabilities";
+import { privateRegistryVulnerabilityPageAtom } from "@/domain/private-registry/state/private-registry-vulnerability.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,
   DetailPageBody,
   DetailPageContent,
 } from "@/styles/layers/detail-page-layers.styled";
-import { PRIVATE_REGISTRY_VULNERABILITY_PAGE_SIZE } from "../../constants/private-registry-vulnerability.constant";
-import { useGetPrivateRegistryVulnerabilities } from "../../hooks/use-get-private-registry-vulnerabilities";
-import { privateRegistryVulnerabilityPageAtom } from "../../state/private-registry-vulnerability.atom";
 
 /**
  * 개인 레지스트리 태그 상세 페이지 메인 컴포넌트
