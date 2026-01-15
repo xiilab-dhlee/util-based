@@ -111,9 +111,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * @example
  * // 2. 배열 형태 - 순서 변경 가능
  * const columns = createPrivateRegistryColumn([
- *   { dataIndex: 'imageDisplayName' },
- *   { dataIndex: 'imageTagCount', width: 120 },
- *   { dataIndex: 'createdAt', title: '등록일' },
+ *   { key: 'imageDisplayName' },
+ *   { key: 'imageTagCount', width: 120 },
+ *   { key: 'createdAt', title: '등록일' },
  * ]);
  */
 export const createPrivateRegistryColumn = (

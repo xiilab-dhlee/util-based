@@ -8,9 +8,8 @@ import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 // =============================================================================
 
 interface PrivateRegistryTypeCardProps {
-  /** 선택할 구분 타입 (SNAPSHOT 또는 EXTERNAL) */
   type: GetPrivateRegistryListImageSourceType;
-  onClick: () => void;
+  onClick: (type: string) => void;
 }
 
 // =============================================================================

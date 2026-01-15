@@ -3,7 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Modal } from "xiilab-ui";
+import { Icon, Modal } from "xiilab-ui";
 
 import {
   getGetImageJobsQueryKey,
@@ -56,7 +56,8 @@ export function StopPrivateRegistryModal() {
 
   return (
     <Modal
-      variant="delete"
+      type="danger"
+      icon={<Icon name="PowerBold" color="#fff" size={18} />}
       modalWidth={300}
       open={open}
       onCancel={onClose}

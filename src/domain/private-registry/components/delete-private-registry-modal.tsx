@@ -55,9 +55,9 @@ export function DeletePrivateRegistryModal() {
     );
   };
 
-  useSubscribe(
+  useSubscribe<string[]>(
     PRIVATE_REGISTRY_EVENTS.sendDeletePrivateRegistry,
-    (registries: string[]) => {
+    (registries) => {
       setDeleteRegistries(registries);
       onOpen();
     },

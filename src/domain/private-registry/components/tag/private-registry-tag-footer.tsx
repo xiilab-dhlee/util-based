@@ -11,14 +11,6 @@ interface PrivateRegistryTagFooterProps {
   isLoading: boolean;
 }
 
-/**
- * 개인 레지스트리 태그 취약점 목록 페이지 하단 푸터 컴포넌트
- *
- * 개인 레지스트리 태그 취약점 목록 페이지에서 페이지 번호 및 검색어를 관리하고,
- * 총 개인 레지스트리 태그 취약점 수를 표시하는 푸터 컴포넌트입니다.
- *
- * @returns 개인 레지스트리 태그 취약점 목록 페이지 하단 푸터 컴포넌트
- */
 export function PrivateRegistryTagFooter({
   totalSize,
   isLoading,

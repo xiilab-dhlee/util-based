@@ -132,7 +132,7 @@ export const REQUEST_IMAGE_EVENTS = {
   sendRejectImage: "request-image:send-reject-image",
 } as const;
 
-// 내부 레지스트리 관련 이벤트
+// 개인 레지스트리 관련 이벤트
 export const PRIVATE_REGISTRY_EVENTS = {
   // 프라이빗 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
   sendDeletePrivateRegistry: "private-registry:send-delete-private-registry",
