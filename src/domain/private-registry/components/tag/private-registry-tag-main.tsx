@@ -48,7 +48,6 @@ export function PrivateRegistryTagMain() {
       <PageHeader
         pageKey="user.private-registry.tag"
         pageParams={{ name: name as string, tagId: tagId as string }}
-        description="Tag Information"
       />
       <DetailPageBody>
         <PrivateRegistryTagAside />
