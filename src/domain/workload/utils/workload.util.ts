@@ -3,6 +3,7 @@ import type {
   WorkloadJobType,
 } from "@/domain/workload/schemas/workload.schema";
 import type { FilterStatusValue } from "@/domain/workload/types/workload.type";
+import { ALL_OPTION } from "@/shared/constants/core.constant";
 
 /**
  * 워크로드 잡 타입 정보 조회
@@ -75,7 +76,7 @@ export const getWorkloadStatusInfo = (status?: FilterStatusValue) => {
     label = "에러";
     colorVariant = "red";
     icon = "Error";
-  } else if (status === "ALL") {
+  } else if (status === ALL_OPTION.value) {
     label = "전체";
     icon = "Entire";
   }
