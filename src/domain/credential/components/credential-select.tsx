@@ -76,7 +76,7 @@ function useCredentialOptions(keyword: string) {
 // ============================================================================
 
 export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
-  const { keyword, handleSearch } = useDebouncedSearch();
+  const { keyword, handleSearch, resetKeyword } = useDebouncedSearch();
   const { options, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useCredentialOptions(keyword);
   const { handlePopupScroll } = useDropdownInfiniteScroll({
@@ -88,6 +88,7 @@ export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
   const handleChange = (v: string | number) => {
     if (typeof v === "number") {
       setValue(v);
+      resetKeyword();
     }
   };
 

@@ -1,5 +1,5 @@
 import { debounce } from "es-toolkit";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface UseDebouncedSearchReturn {
   /** 현재 검색어 (debounce 적용된 값) */
@@ -33,13 +33,22 @@ export function useDebouncedSearch(delay = 300): UseDebouncedSearchReturn {
     [delay],
   );
 
+  // cleanup: unmount 또는 delay 변경 시 pending debounce 취소
+  useEffect(() => {
+    return () => {
+      debouncedSetKeyword.cancel();
+    };
+  }, [debouncedSetKeyword]);
+
   const handleSearch = (value: string) => {
     debouncedSetKeyword(value);
   };
 
-  const resetKeyword = () => {
+  const resetKeyword = useCallback(() => {
+    // pending debounce를 취소하여 reset이 덮어쓰이지 않도록 함
+    debouncedSetKeyword.cancel();
     setKeyword("");
-  };
+  }, [debouncedSetKeyword]);
 
   return {
     keyword,
