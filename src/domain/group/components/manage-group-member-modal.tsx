@@ -14,6 +14,7 @@ import {
   SelectedMemberList,
   TwoColumnLayout,
 } from "@/shared/components/group-member-selector";
+import { useGroupTreeSearchState } from "@/shared/components/group-member-selector/hooks/use-group-tree-search-state";
 import { useMemberSelection } from "@/shared/components/group-member-selector/hooks/use-member-selection";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -36,6 +37,8 @@ export function ManageGroupMemberModal() {
     flattenMembers,
     reset,
   } = useMemberSelection({ initialMembers: initialAccounts });
+  const searchState = useGroupTreeSearchState();
+  const { resetSearchState } = searchState;
 
   const selectedAccountIds = useMemo(
     () => new Set(selectedAccounts.map((a) => a.accountId)),
@@ -58,6 +61,7 @@ export function ManageGroupMemberModal() {
         }),
       );
       setInitialAccounts(accounts);
+      resetSearchState();
       onOpen();
     },
   );
@@ -69,11 +73,13 @@ export function ManageGroupMemberModal() {
       members: flattenedMembers,
     });
 
+    resetSearchState();
     reset();
     onClose();
   };
 
   const handleCancel = () => {
+    resetSearchState();
     reset();
     onClose();
   };
@@ -95,24 +101,27 @@ export function ManageGroupMemberModal() {
       }}
       centered
     >
-      <TwoColumnLayout>
-        <LeftColumn>
-          <SectionHeader>그룹 목록</SectionHeader>
-          <GroupTreeSelector
-            selectedAccountIds={selectedAccountIds}
-            selectedGroupIds={selectedGroupIds}
-            onSelectMember={toggleMember}
-            treeHeight={272}
-          />
-        </LeftColumn>
-        <RightColumn>
-          <SelectedMemberList
-            selectedAccounts={selectedAccounts}
-            selectedGroups={selectedGroups}
-            onRemoveMember={removeMember}
-          />
-        </RightColumn>
-      </TwoColumnLayout>
+      {open && (
+        <TwoColumnLayout>
+          <LeftColumn>
+            <SectionHeader>그룹 목록</SectionHeader>
+            <GroupTreeSelector
+              selectedAccountIds={selectedAccountIds}
+              selectedGroupIds={selectedGroupIds}
+              onSelectMember={toggleMember}
+              searchState={searchState}
+              treeHeight={272}
+            />
+          </LeftColumn>
+          <RightColumn>
+            <SelectedMemberList
+              selectedAccounts={selectedAccounts}
+              selectedGroups={selectedGroups}
+              onRemoveMember={removeMember}
+            />
+          </RightColumn>
+        </TwoColumnLayout>
+      )}
     </Modal>
   );
 }

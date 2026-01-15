@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import { Button } from "xiilab-ui";
+import { Button, Icon, Typography } from "xiilab-ui";
 
 import { DeleteGroupModal } from "@/domain/group/components/delete-group-modal";
 import {
@@ -10,7 +10,10 @@ import {
   GroupDetailPanel,
 } from "@/domain/group/components/detail-panel";
 import { OPEN_GROUP_MODAL_CREATE_PAYLOAD } from "@/domain/group/types/group.type";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { GroupTreeSelector } from "@/shared/components/group-member-selector";
+import { useGroupTreeSearchState } from "@/shared/components/group-member-selector/hooks/use-group-tree-search-state";
+import { UNGROUPED_GROUP_ID } from "@/shared/components/group-member-selector/hooks/use-ungrouped-accounts";
 import {
   ITEM_TYPES,
   type ItemType,
@@ -26,6 +29,7 @@ import {
 
 export function GroupMain() {
   const publish = usePublish();
+  const searchState = useGroupTreeSearchState();
 
   // 선택된 항목 상태 관리
   const [selected, setSelected] = useState<{
@@ -71,12 +75,26 @@ export function GroupMain() {
       );
     }
 
-    // 그룹 선택 - groupId로 API 호출
+    // 그룹 미지정 선택 시 EmptyState 표시
+    if (
+      selected.type === ITEM_TYPES.GROUP &&
+      selected.id === UNGROUPED_GROUP_ID
+    ) {
+      return (
+        <EmptyStatePanel>
+          <EmptyState
+            icon={<Icon name="Group01" color="#878898" />}
+            title="그룹 미지정 계정 목록 입니다."
+            content="계정을 선택해 상세를 확인하거나 그룹을 지정해 주세요."
+          />
+        </EmptyStatePanel>
+      );
+    }
+
     if (selected.type === ITEM_TYPES.GROUP) {
       return <GroupDetailPanel groupId={selected.id} />;
     }
 
-    // 계정 선택 - accountId로 API 호출
     return <AccountDetailPanel accountId={selected.id} />;
   };
 
@@ -106,11 +124,19 @@ export function GroupMain() {
         <Content>
           {/* 왼쪽: 그룹 트리 영역 */}
           <Left>
-            <GroupTreeSelector
-              selectedAccountIds={selectedAccountIds}
-              selectedGroupIds={selectedGroupIds}
-              onSelectMember={handleSelectMember}
-            />
+            <LeftCard>
+              <Typography.Text variant="subtitle-2-1">
+                그룹 목록
+              </Typography.Text>
+              <LeftTreeContent>
+                <GroupTreeSelector
+                  selectedAccountIds={selectedAccountIds}
+                  selectedGroupIds={selectedGroupIds}
+                  onSelectMember={handleSelectMember}
+                  searchState={searchState}
+                />
+              </LeftTreeContent>
+            </LeftCard>
           </Left>
 
           {/* 오른쪽: 선택된 노드에 따른 상세 패널 */}
@@ -144,6 +170,32 @@ const Left = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: #FAFAFA;
+`;
+
+const LeftCard = styled.div`
+  flex: 1;
+  min-height: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* GroupTreeSelector 내부 트리 박스 스타일을 화면별로 오버라이드 */
+  --group-tree-border: none;
+  --group-tree-border-radius: 0;
+  --group-tree-background-color: transparent;
+  --group-tree-padding: 0;
+  --group-tree-search-margin-bottom: 12px;
+`;
+
+const LeftTreeContent = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  margin-top: 14px;
 `;
 
 const EmptyPanel = styled.div`
@@ -159,4 +211,15 @@ const EmptyPanel = styled.div`
 const EmptyMessage = styled.div`
   color: #828588;
   font-size: 14px;
+`;
+
+const EmptyStatePanel = styled.div`
+  flex: 1;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fafafa;
 `;

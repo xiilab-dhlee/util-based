@@ -2,7 +2,7 @@
 
 import { isBoolean } from "es-toolkit";
 import styled from "styled-components";
-import { Tag } from "xiilab-ui";
+import { Tag, Typography } from "xiilab-ui";
 
 import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
 import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
@@ -20,7 +20,6 @@ import {
   AsideDetailArticleTitle,
   AsideDetailArticleValue,
   AsideDetailHeader,
-  AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface AccountDetailPanelProps {
@@ -34,7 +33,7 @@ export function AccountDetailPanel({ accountId }: AccountDetailPanelProps) {
     return (
       <PanelContainer>
         <AsideDetailHeader>
-          <AsideDetailHeaderTitle>계정 정보</AsideDetailHeaderTitle>
+          <Typography.Text variant="subtitle-2-1">계정 정보</Typography.Text>
         </AsideDetailHeader>
         <FullWrapper>
           <DataErrorState />
@@ -57,7 +56,7 @@ export function AccountDetailPanel({ accountId }: AccountDetailPanelProps) {
   return (
     <PanelContainer>
       <AsideDetailHeader>
-        <AsideDetailHeaderTitle>계정 정보</AsideDetailHeaderTitle>
+        <Typography.Text variant="subtitle-2-1">계정 정보</Typography.Text>
       </AsideDetailHeader>
 
       <PanelBody>
@@ -168,6 +167,7 @@ export const PanelContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
   --column-gutter-size: 20px;
+  background-color: #FAFAFA;
 `;
 
 const PanelBody = styled.div`

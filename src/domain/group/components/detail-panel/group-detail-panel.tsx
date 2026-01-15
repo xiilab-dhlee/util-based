@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { Button } from "xiilab-ui";
+import { Button, Typography } from "xiilab-ui";
 
 import { useGetGroupDetail } from "@/api/generated/group/group";
 import { createOpenGroupModalUpdatePayload } from "@/domain/group/types/group.type";
@@ -22,7 +22,6 @@ import {
   AsideDetailArticleValue,
   AsideDetailFooter,
   AsideDetailHeader,
-  AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface GroupDetailPanelProps {
@@ -54,7 +53,7 @@ export function GroupDetailPanel({ groupId }: GroupDetailPanelProps) {
     return (
       <PanelContainer>
         <AsideDetailHeader>
-          <AsideDetailHeaderTitle>그룹 정보</AsideDetailHeaderTitle>
+          <Typography.Text variant="subtitle-2-1">그룹 정보</Typography.Text>
         </AsideDetailHeader>
         <FullWrapper>
           <DataErrorState />
@@ -66,7 +65,7 @@ export function GroupDetailPanel({ groupId }: GroupDetailPanelProps) {
   return (
     <PanelContainer>
       <AsideDetailHeader>
-        <AsideDetailHeaderTitle>그룹 정보</AsideDetailHeaderTitle>
+        <Typography.Text variant="subtitle-2-1">그룹 정보</Typography.Text>
       </AsideDetailHeader>
 
       <PanelBody>
@@ -159,6 +158,7 @@ const PanelContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
   --column-gutter-size: 20px;
+  background-color: #FAFAFA;
 `;
 
 const PanelBody = styled.div`
