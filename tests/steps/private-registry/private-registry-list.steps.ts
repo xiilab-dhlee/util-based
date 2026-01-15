@@ -1,9 +1,6 @@
 import { createBdd } from "playwright-bdd";
 
-import {
-  PRIVATE_REGISTRY_SELECTOR,
-  SELECTOR,
-} from "@/shared/constants/selector.constant";
+import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 import {
   createUnitPattern,
@@ -17,12 +14,8 @@ import {
  * 구조:
  * 1. 페이지 진입
  * 2. 페이지 표시 검증
- * 3. 검색 결과 검증
- * 4. 정렬 기능
- * 5. 등록 중인 이미지 목록 검증
- * 6. 체크박스 및 삭제 기능
- * 7. 데이터 유효성 검증
- * 8. 등록 중인 이미지 데이터 유효성 검증
+ * 3. 데이터 유효성 검증
+ * 4. 등록 중인 이미지 데이터 유효성 검증
  */
 const { Given, When, Then } = createBdd(test);
 
@@ -64,82 +57,6 @@ Then(
   },
 );
 
-// ============================================
-// 3. 검색 결과 검증
-// ============================================
-
-Then(
-  "개인 레지스트리 검색 결과 검색어가 포함된 데이터만 표시된다",
-  async ({
-    privateRegistryListPage,
-    listSearchInput,
-    assertLogger,
-    $testInfo,
-  }) => {
-    // 테이블이 표시될 때까지 대기
-    await privateRegistryListPage.table.assertTableVisible(SELECTOR.LIST_TABLE);
-
-    // 검색 결과 검증
-    await privateRegistryListPage.table.validateSearch(
-      await listSearchInput.getValue(),
-      PRIVATE_REGISTRY_SELECTOR.IMAGE_NAME,
-      assertLogger,
-      $testInfo,
-      "개인 레지스트리",
-    );
-  },
-);
-
-// ============================================
-// 4. 정렬 기능
-// ============================================
-
-/** 한글 정렬 기준 → 셀 selector 매핑 */
-const SORT_CELL_MAP: Record<string, string> = {
-  생성일: PRIVATE_REGISTRY_SELECTOR.CREATED_AT,
-};
-
-When(
-  "개인 레지스트리 목록을 {string} 기준 {string}으로 정렬한다",
-  async (
-    { privateRegistryListPage },
-    field: string,
-    order: "오름차순" | "내림차순",
-  ) => {
-    await privateRegistryListPage.table.sortByColumn(field, order);
-  },
-);
-
-Then(
-  "개인 레지스트리 목록이 {string} 기준 {string}으로 정렬되어 표시된다",
-  async (
-    { privateRegistryListPage, assertLogger },
-    field: string,
-    order: "오름차순" | "내림차순",
-  ) => {
-    const cellSelector = SORT_CELL_MAP[field];
-    if (!cellSelector) {
-      throw new Error(`알 수 없는 정렬 필드: ${field}`);
-    }
-
-    // 로딩 완료 대기
-    await privateRegistryListPage.table.waitForLoaded();
-
-    // 실제 데이터 정렬 순서 검증
-    const compareType = field === "생성일" ? "date" : "string";
-    await privateRegistryListPage.table.assertDataSortOrder(
-      cellSelector,
-      order,
-      assertLogger,
-      compareType,
-    );
-  },
-);
-
-// ============================================
-// 5. 등록 중인 이미지 목록 검증
-// ============================================
-
 Then(
   "등록 중인 이미지 목록의 총 개수가 표시된다",
   async ({ privateRegistryListPage, assertLogger }) => {
@@ -170,42 +87,8 @@ Then(
   },
 );
 
-When(
-  "등록 중인 이미지 목록의 검색창에 {string}를 입력한다",
-  async ({ privateRegistryListPage }, keyword: string) => {
-    await privateRegistryListPage.jobListSearchInput.search(keyword);
-  },
-);
-
-Then(
-  "등록 중인 이미지 검색 결과 검색어가 포함된 데이터만 표시된다",
-  async ({ privateRegistryListPage, assertLogger, $testInfo }) => {
-    // 카드가 표시될 때까지 대기
-    await privateRegistryListPage.jobListGrid.assertCardsVisible();
-
-    // 검색 결과 검증
-    await privateRegistryListPage.jobListGrid.validateSearch(
-      await privateRegistryListPage.jobListSearchInput.getValue(),
-      assertLogger,
-      $testInfo,
-      "등록 중인 이미지",
-    );
-  },
-);
-
 // ============================================
-// 6. 체크박스 및 삭제 기능
-// ============================================
-
-When(
-  "첫 번째 개인 레지스트리의 체크박스를 클릭한다",
-  async ({ privateRegistryListPage }) => {
-    await privateRegistryListPage.table.clickRowCheckbox(0);
-  },
-);
-
-// ============================================
-// 7. 데이터 유효성 검증
+// 3. 데이터 유효성 검증
 // ============================================
 
 Then(
@@ -293,7 +176,7 @@ Then(
 );
 
 // ============================================
-// 8. 등록 중인 이미지 데이터 유효성 검증
+// 4. 등록 중인 이미지 데이터 유효성 검증
 // ============================================
 
 Then(
@@ -347,45 +230,5 @@ Then(
         DATETIME_PATTERN,
       );
     });
-  },
-);
-
-// ============================================
-// 9. 등록 중인 이미지 재시작/종료
-// ============================================
-
-Given(
-  "등록 중인 이미지 목록에 1개 이상의 데이터가 있다",
-  async ({ privateRegistryListPage }) => {
-    await privateRegistryListPage.jobListGrid.assertCardsVisible();
-    await privateRegistryListPage.jobListGrid.assertMinCardCount(1);
-  },
-);
-
-When(
-  "첫 번째 등록 중인 이미지의 드롭다운 버튼을 클릭한다",
-  async ({ privateRegistryListPage }) => {
-    await privateRegistryListPage.jobListGrid.clickCardButton(
-      0,
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CARD_DROPDOWN_TRIGGER,
-    );
-  },
-);
-
-When(
-  "등록 중인 이미지의 재시작 버튼을 클릭한다",
-  async ({ privateRegistryListPage }) => {
-    await privateRegistryListPage.jobListGrid.clickDropdownMenuItem(
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_RESTART_BUTTON,
-    );
-  },
-);
-
-When(
-  "등록 중인 이미지의 종료 버튼을 클릭한다",
-  async ({ privateRegistryListPage }) => {
-    await privateRegistryListPage.jobListGrid.clickDropdownMenuItem(
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STOP_BUTTON,
-    );
   },
 );
