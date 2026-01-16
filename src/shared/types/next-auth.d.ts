@@ -2,35 +2,15 @@ import type { DefaultJWT, DefaultSession } from "next-auth";
 
 import type { AccountRole } from "@/shared/constants/core.constant";
 
-declare module "next-auth/providers/keycloak" {
-  interface TOKEN {
-    access_token: string;
-    expires_in: number;
-    refresh_expires_in: number;
-    refresh_token: string;
-    token_type: string;
-    id_token: string;
-    "not-before-policy": number;
-    session_state: string;
-    scope: string;
-  }
-}
-
 declare module "next-auth" {
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
   interface Session extends DefaultSession {
     accessToken?: string;
     refresh_token?: string;
     error?: string;
-    // 엔진엑스에서 과도한 캐시로 다운이 되어서 제외
-    origin?: import("next-auth/providers/keycloak").TOKEN;
     user: {
       id?: string | null;
       name?: string | null;
       email?: string | null;
-      image?: string | null;
       preferred_username?: string | null;
     };
     roles?: AccountRole[];
@@ -43,17 +23,10 @@ declare module "next-auth/jwt" {
     refresh_token?: string;
     expires_at?: number;
     error?: string;
-    accessTokenExpired?: number;
-    refreshTokenExpired?: number;
-    roles?: string[];
-
-    preferred_username?: string;
+    roles?: AccountRole[];
+    id?: string;
     name?: string;
     email?: string;
-    sub?: string;
-    id?: string;
-    iat?: number;
-    exp?: number;
-    jti?: string;
+    preferred_username?: string;
   }
 }

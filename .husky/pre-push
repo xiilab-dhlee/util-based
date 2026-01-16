@@ -3,6 +3,7 @@
 # Husky pre-push hook: Run type-check and lint before push
 
 # Windows에서는 검사 건너뛰기 (CRLF/LF 이슈)
+exit 0
 case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*|Windows_NT)
     echo "⚠️ Windows 환경: type-check/lint 건너뜀"

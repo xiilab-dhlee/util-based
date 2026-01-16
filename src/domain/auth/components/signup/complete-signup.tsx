@@ -1,17 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
 import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
 
 export function CompleteSignup() {
-  const router = useRouter();
-
   const handleLogin = () => {
-    router.push("/signin");
+    void signIn("keycloak", { callbackUrl: "/" });
   };
 
   return (

@@ -35,17 +35,17 @@ export function InternalRegistryImageListBody() {
     <ListWrapper>
       <CustomizedTable
         columns={createInternalRegistryImageColumn([
-          { dataIndex: "checkbox" },
+          { key: "checkbox" },
           {
-            dataIndex: "name",
+            key: "name",
             title: "컨테이너 이미지 이름",
           },
-          { dataIndex: "tagCnt", title: "최신 태그 / 개수", width: 150 },
-          { dataIndex: "pullCount", width: 150 },
-          { dataIndex: "creatorName", width: 150 },
-          { dataIndex: "creatorDate", width: 150 },
+          { key: "tagCnt", title: "최신 태그 / 개수", width: 150 },
+          { key: "pullCount", width: 150 },
+          { key: "creatorName", width: 150 },
+          { key: "creatorDate", width: 150 },
           {
-            dataIndex: "description",
+            key: "description",
             title: "설명",
             width: 300,
             ellipsis: true,

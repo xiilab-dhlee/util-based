@@ -3,11 +3,14 @@ import { Icon, Typography } from "xiilab-ui";
 
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
-import { ALL_OPTION } from "@/shared/constants/core.constant";
+import {
+  ALL_OPTION,
+  type AllOptionValue,
+} from "@/shared/constants/core.constant";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface UserMonitoringWorkloadStatusProps {
-  status: WorkloadStatusType | "ALL";
+  status: WorkloadStatusType | AllOptionValue;
   count: number;
 }
 

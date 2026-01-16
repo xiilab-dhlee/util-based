@@ -2,7 +2,7 @@
 import type { CSSProperties, PropsWithChildren } from "react";
 import styled from "styled-components";
 
-import { useScrollShadow } from "@/shared/hooks/useScrollShadow";
+import { useScrollShadow } from "@/shared/hooks/use-scroll-shadow";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 interface ScrollShadowContainerProps {

@@ -171,40 +171,40 @@ export function MonitoringSubSection() {
 
   const userResourceColumns = createUserResourceColumn([
     {
-      dataIndex: "userName",
+      key: "userName",
       width: "20%",
       align: "left",
       sorter: true,
       sortOrder: getSortOrder(userResourceSort, "userName"),
     },
-    { dataIndex: "gpu", width: "16%", align: "center" },
-    { dataIndex: "mig", width: "16%", align: "center" },
-    { dataIndex: "mps", width: "16%", align: "center" },
-    { dataIndex: "cpu", width: "16%", align: "center" },
-    { dataIndex: "mem", width: "16%", align: "center" },
+    { key: "gpu", width: "16%", align: "center" },
+    { key: "mig", width: "16%", align: "center" },
+    { key: "mps", width: "16%", align: "center" },
+    { key: "cpu", width: "16%", align: "center" },
+    { key: "mem", width: "16%", align: "center" },
   ]);
 
   const activeWorkloadColumns = createWorkloadColumn([
     {
-      dataIndex: "workloadName",
+      key: "workloadName",
       width: "30%",
       ellipsis: true,
       sorter: true,
       sortOrder: getSortOrder(activeWorkloadSort, "workloadName"),
     },
     {
-      dataIndex: "nodeName",
+      key: "nodeName",
       width: "21%",
       ellipsis: true,
     },
     {
-      dataIndex: "jobType",
+      key: "jobType",
       width: "17%",
       sorter: true,
       sortOrder: getSortOrder(activeWorkloadSort, "jobType"),
     },
-    { dataIndex: "status", width: "12%" },
-    { dataIndex: "creatorName", width: "20%", ellipsis: true },
+    { key: "status", width: "12%" },
+    { key: "creatorName", width: "20%", ellipsis: true },
   ]);
 
   return (

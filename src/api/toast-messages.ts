@@ -57,9 +57,9 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.unpinWorkspace]: {
     success: "워크스페이스 고정이 해제되었습니다.",
   },
-  [MUTATION_KEYS.signup]: {
-    success: "회원가입이 완료되었습니다.",
-  },
+  // [MUTATION_KEYS.signup]: {
+  //   success: "회원가입이 완료되었습니다.",
+  // },
   [MUTATION_KEYS.requestPasswordReset]: {
     success: "비밀번호 재설정 이메일이 발송되었습니다.",
   },

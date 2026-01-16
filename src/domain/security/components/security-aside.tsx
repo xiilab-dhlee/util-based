@@ -37,13 +37,13 @@ export function SecurityAside() {
         <ListWrapper>
           <CustomizedTable
             columns={createSecurityColumn([
-              { dataIndex: "creatorName", title: "사용자" },
-              { dataIndex: "imageCount", title: "이미지 개수" },
-              { dataIndex: "total", title: "취약점 개수", width: 80 },
-              { dataIndex: "critical", title: "Critical" },
-              { dataIndex: "high", title: "High" },
-              { dataIndex: "medium", title: "Medium" },
-              { dataIndex: "low", title: "Low" },
+              { key: "creatorName", title: "사용자" },
+              { key: "imageCount", title: "이미지 개수" },
+              { key: "total", title: "취약점 개수", width: 80 },
+              { key: "critical", title: "Critical" },
+              { key: "high", title: "High" },
+              { key: "medium", title: "Medium" },
+              { key: "low", title: "Low" },
             ])}
             data={securityScanListMock}
             activePadding

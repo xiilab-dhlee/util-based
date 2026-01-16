@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { Dropdown, Icon, Input, Modal } from "xiilab-ui";
 
 import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
+import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 import { openCreateOnPremiseVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
 import { FormLabel } from "@/shared/components/form/form-label";
@@ -12,16 +13,18 @@ import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { useSelect } from "@/shared/hooks/use-select";
-import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
+import { FormItem } from "@/styles/layers/form-layer.styled";
 
 export function CreateOnPremVolumeModal() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const publish = usePublish();
 
-  const { open, onClose } = useGlobalModal(openCreateOnPremiseVolumeModalAtom);
+  const { open, onOpen, onClose } = useGlobalModal(
+    openCreateOnPremiseVolumeModalAtom,
+  );
 
   const createVolume = useCreateVolume();
 
@@ -92,6 +95,15 @@ export function CreateOnPremVolumeModal() {
     clearForm();
   };
 
+  useSubscribe(
+    VOLUME_EVENTS.sendStorageType,
+    (eventData: VolumeStorageType) => {
+      if (eventData === "LOCAL") {
+        onOpen();
+      }
+    },
+  );
+
   return (
     <Modal
       modalWidth={370}
@@ -111,18 +123,16 @@ export function CreateOnPremVolumeModal() {
       }}
     >
       <form ref={formRef} key={getFormKey()}>
-        <FormRow>
-          <FormItem>
-            <FormLabel htmlFor="onpremVolumeName">볼륨 이름</FormLabel>
-            <Input
-              type="text"
-              id="onpremVolumeName"
-              name="onpremVolumeName"
-              placeholder="볼륨 이름을 입력해 주세요."
-              width="100%"
-            />
-          </FormItem>
-        </FormRow>
+        <FormItem>
+          <FormLabel htmlFor="onpremVolumeName">볼륨 이름</FormLabel>
+          <Input
+            type="text"
+            id="onpremVolumeName"
+            name="onpremVolumeName"
+            placeholder="볼륨 이름을 입력해 주세요."
+            width="100%"
+          />
+        </FormItem>
         {/* 공개 설정 드롭다운 */}
         <FormItem>
           <FormLabel>공개 설정</FormLabel>

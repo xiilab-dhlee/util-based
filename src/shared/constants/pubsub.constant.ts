@@ -71,6 +71,8 @@ export const VOLUME_EVENTS = {
   sendCompressVolumeFile: "volume:send-compress-volume-file",
   // 볼륨 폴더 추가에 필요한 정보 전달 이벤트
   sendCreateVolumeFolder: "volume:send-create-volume-folder",
+  // 볼륨 스토리지 타입 선택에 필요한 정보 전달 이벤트
+  sendStorageType: "volume:send-storage-type",
 } as const;
 
 // 그룹 관련 이벤트
@@ -132,8 +134,23 @@ export const REQUEST_IMAGE_EVENTS = {
   sendRejectImage: "request-image:send-reject-image",
 } as const;
 
-// 내부 레지스트리 관련 이벤트
-export const INTERNAL_REGISTRY_EVENTS = {} as const;
+// 개인 레지스트리 관련 이벤트
+export const PRIVATE_REGISTRY_EVENTS = {
+  // 프라이빗 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
+  sendDeletePrivateRegistry: "private-registry:send-delete-private-registry",
+  // 프라이빗 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
+  sendDeleteImageTag: "private-registry:send-delete-image-tag",
+  // 프라이빗 레지스트리 구분 선택 후 생성 모달에 전달 이벤트
+  sendType: "private-registry:send-type",
+  // 프라이빗 레지스트리 구분 선택 모달 초기화 이벤트
+  clearSelectDivisionModal: "private-registry:clear-select-division-modal",
+  // 프라이빗 레지스트리 이미지 태그 생성에 필요한 정보 전달 이벤트
+  sendCreateTagData: "private-registry:send-create-tag-data",
+  // 이미지 등록 Job 재시작에 필요한 정보 전달 이벤트
+  sendRestartImageJob: "private-registry:send-restart-image-job",
+  // 이미지 등록 Job 종료에 필요한 정보 전달 이벤트
+  sendStopImageJob: "private-registry:send-stop-image-job",
+} as const;
 
 // 내부 레지스트리 이미지 관련 이벤트
 export const INTERNAL_REGISTRY_IMAGE_EVENTS = {

@@ -2,6 +2,7 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 import { Label } from "xiilab-ui";
 
 import type { SecurityScanResultType } from "@/domain/security/schemas/security-scan.schema";
+import { creatorNameColumn } from "@/shared/components/column";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
@@ -122,6 +123,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
         return <span>11</span>;
       },
     },
+    creatorNameColumn,
   ];
 };
 

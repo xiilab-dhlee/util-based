@@ -12,6 +12,7 @@ import {
   getSourcecodeStatusInfo,
   getSourcecodeTypeInfo,
 } from "@/domain/sourcecode/utils/sourcecode.util";
+import { creatorDateColumn } from "@/shared/components/column";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
@@ -89,6 +90,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "실행 명령어",
       align: "left",
     },
+    creatorDateColumn,
   ];
 };
 

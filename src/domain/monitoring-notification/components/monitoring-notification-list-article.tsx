@@ -52,19 +52,19 @@ export function MonitoringNotificationListArticle() {
         <CustomizedTable
           columns={createMonitoringNotificationHistoryColumn([
             {
-              dataIndex: "name",
+              key: "name",
             },
             {
-              dataIndex: "nodeName",
+              key: "nodeName",
             },
             {
-              dataIndex: "ip",
+              key: "ip",
             },
             {
-              dataIndex: "channel",
+              key: "channel",
             },
             {
-              dataIndex: "creatorDateTime",
+              key: "createdDate",
               title: "발생일시",
             },
           ])}
