@@ -72,10 +72,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "사용/요청 상태",
       dataIndex: "approvalStatus",
       align: "center",
-      render: (approvalStatus: ImageTagListResponseApprovalStatus) => {
+      render: (approvalStatus?: ImageTagListResponseApprovalStatus) => {
+        if (!approvalStatus) {
+          return <span>-</span>;
+        }
+
         return (
           <span>
-            {PRIVATE_REGISTRY_TAG_APPROVAL_STATUS_TEXT[approvalStatus] ?? "-"}
+            {PRIVATE_REGISTRY_TAG_APPROVAL_STATUS_TEXT[approvalStatus]}
           </span>
         );
       },

@@ -29,6 +29,6 @@ export const openDeletePrivateRegistryTagModalAtom = atom<boolean>(false);
 export const openViewPrivateRegistryTagDetailModalAtom = atom<boolean>(false);
 /** 프라이빗 레지스트리 태그 생성 모달 열림 상태 */
 export const openCreatePrivateRegistryTagModalAtom = atom<boolean>(false);
-/** 선택된 프라이빗 레지스트리 태그 ID */
+/** 선택된 프라이빗 레지스트리 태그 */
 export const privateRegistryTagSelectedAtom =
   atomWithReset<ImageTagListResponse | null>(null);

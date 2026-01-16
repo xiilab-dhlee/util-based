@@ -13,7 +13,7 @@ import {
   useCreatePrivateExternalImage,
 } from "@/api/generated/private-registry/private-registry";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
-import { SelectSearchedWorkload } from "@/domain/internal-registry-image/components/list/select-searched-workload";
+import { SelectWorkloadForSnapshot } from "@/domain/private-registry/components/select-workload-for-snapshot";
 import { REGISTRY_CHANNEL_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
 import {
   type CreatePrivateRegistryFormType,
@@ -224,14 +224,12 @@ export function CreatePrivateRegistryModal() {
                 htmlFor="workloadSelect"
                 help={fieldState.error?.message}
               >
-                <SelectSearchedWorkload
+                <SelectWorkloadForSnapshot
                   checkedWorkload={field.value ?? null}
                   setCheckedWorkload={(value) => {
-                    if (typeof value === "string" || value === null) {
-                      setValue("workloadId", value ?? "", {
-                        shouldValidate: true,
-                      });
-                    }
+                    setValue("workloadId", value ?? "", {
+                      shouldValidate: true,
+                    });
                   }}
                 />
               </FormItem>

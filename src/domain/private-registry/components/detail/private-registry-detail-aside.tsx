@@ -3,14 +3,15 @@
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
+import { PrivateRegistryVulnerabilityBody } from "@/domain/private-registry/components/detail/private-registry-vulnerability-body";
+import { PrivateRegistryVulnerabilityFilter } from "@/domain/private-registry/components/detail/private-registry-vulnerability-filter";
+import { PrivateRegistryVulnerabilityFooter } from "@/domain/private-registry/components/detail/private-registry-vulnerability-footer";
+import { useGetPrivateRegistryVulnerabilities } from "@/domain/private-registry/hooks/use-get-private-registry-vulnerabilities";
+import { privateRegistryTagSelectedAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
+import { privateRegistryVulnerabilityPageAtom } from "@/domain/private-registry/state/private-registry-vulnerability.atom";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
-import { useGetPrivateRegistryVulnerabilities } from "../../hooks/use-get-private-registry-vulnerabilities";
-import { privateRegistryTagSelectedAtom } from "../../state/private-registry-tag.atom";
-import { privateRegistryVulnerabilityPageAtom } from "../../state/private-registry-vulnerability.atom";
-import { PrivateRegistryVulnerabilityBody } from "./private-registry-vulnerability-body";
-import { PrivateRegistryVulnerabilityFilter } from "./private-registry-vulnerability-filter";
-import { PrivateRegistryVulnerabilityFooter } from "./private-registry-vulnerability-footer";
+import { PRIVATE_REGISTRY_VULNERABILITY_PAGE_SIZE } from "../../constants/private-registry-vulnerability.constant";
 
 export function PrivateRegistryDetailAside() {
   const page = useAtomValue(privateRegistryVulnerabilityPageAtom);
@@ -18,13 +19,9 @@ export function PrivateRegistryDetailAside() {
 
   const { data, isLoading, isError } = useGetPrivateRegistryVulnerabilities({
     pageNo: page - 1,
-    pageSize: 18,
+    pageSize: PRIVATE_REGISTRY_VULNERABILITY_PAGE_SIZE,
     imageTagId: selectedTag?.harborArtifactId ?? null,
   });
-
-  console.log(selectedTag);
-
-  console.log(data);
 
   if (selectedTag === null) {
     return (

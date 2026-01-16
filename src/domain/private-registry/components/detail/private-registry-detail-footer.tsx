@@ -3,6 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 
+import { PRIVATE_REGISTRY_TAG_PAGE_SIZE } from "@/domain/private-registry/constants/private-registry-tag.constant";
 import {
   privateRegistryTagCheckedListAtom,
   privateRegistryTagPageAtom,
@@ -16,8 +17,6 @@ interface PrivateRegistryDetailFooterProps {
   totalSize: number;
   isLoading: boolean;
 }
-
-const PAGE_SIZE = 20;
 
 /**
  * 프라이빗 레지스트리 이미지 태그 목록 페이지네이션 컴포넌트
@@ -41,7 +40,7 @@ export function PrivateRegistryDetailFooter({
   const handleClickDelete = () => {
     publish(
       PRIVATE_REGISTRY_EVENTS.sendDeleteImageTag,
-      Array.from(checkedList),
+      Array.from(checkedList).map((id) => Number(id)),
     );
   };
 
@@ -49,7 +48,7 @@ export function PrivateRegistryDetailFooter({
     <ListPageFooter
       total={totalSize}
       page={page}
-      pageSize={PAGE_SIZE}
+      pageSize={PRIVATE_REGISTRY_TAG_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
       rightChildren={

@@ -21,7 +21,6 @@ function generateVulnerability() {
 export const privateRegistryTagDetailOverrideHandlers = [
   getGetPrivateImageTagDetailMockHandler(async (info) => {
     const { imageTagId } = info.params as {
-      imageId: string;
       imageTagId: string;
     };
 

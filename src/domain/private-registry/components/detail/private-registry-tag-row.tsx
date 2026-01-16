@@ -34,7 +34,7 @@ export function PrivateRegistryTagRow({
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
 
-    if (rowData?.harborArtifactId) {
+    if (rowData.harborArtifactId !== undefined) {
       setSelectedTag(rowData);
     }
   };

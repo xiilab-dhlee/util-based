@@ -8,6 +8,8 @@ import type { AntdTableSortState } from "@/shared/types/core.model";
 // 프라이빗 레지스트리 이미지 태그 관련 상수
 // ============================================================================
 
+export const PRIVATE_REGISTRY_TAG_PAGE_SIZE = 10;
+
 export const PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP = {
   createdAt: "CREATED_AT",
   updatedAt: "UPDATED_AT",

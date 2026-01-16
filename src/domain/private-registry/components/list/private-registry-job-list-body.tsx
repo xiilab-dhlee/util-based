@@ -7,6 +7,7 @@ import type { ImageJobResponse } from "@/api/generated/astragoBackendAPIDocument
 import { PrivateRegistryImageCard } from "@/domain/private-registry/components/list/private-registry-image-card";
 import { PRIVATE_REGISTRY_JOB_PAGE_SIZE } from "@/domain/private-registry/constants/private-registry.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 
 interface PrivateRegistryJobListBodyProps {
@@ -35,7 +36,7 @@ export function PrivateRegistryJobListBody({
   if (isError) {
     return (
       <Container>
-        <EmptyState title="데이터를 불러오는 중 오류가 발생했습니다" />
+        <EmptyState title={TABLE_MESSAGE.ERROR} />
       </Container>
     );
   }

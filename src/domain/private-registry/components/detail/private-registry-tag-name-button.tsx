@@ -31,7 +31,11 @@ export function PrivateRegistryTagNameButton({
     });
   };
 
-  return <Container onClick={handleClick}>{imageTagName || "-"}</Container>;
+  return (
+    <Container as="button" onClick={handleClick}>
+      {imageTagName || "-"}
+    </Container>
+  );
 }
 
 const Container = styled.span`

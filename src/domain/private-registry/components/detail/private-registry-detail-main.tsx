@@ -12,7 +12,10 @@ import { DeletePrivateRegistryTagModal } from "@/domain/private-registry/compone
 import { PrivateRegistryDetailAside } from "@/domain/private-registry/components/detail/private-registry-detail-aside";
 import { PrivateRegistryDetailBody } from "@/domain/private-registry/components/detail/private-registry-detail-body";
 import { ViewPrivateRegistryTagDetailModal } from "@/domain/private-registry/components/view-private-registry-tag-detail-modal";
-import { PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP } from "@/domain/private-registry/constants/private-registry-tag.constant";
+import {
+  PRIVATE_REGISTRY_TAG_PAGE_SIZE,
+  PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP,
+} from "@/domain/private-registry/constants/private-registry-tag.constant";
 import {
   privateRegistryTagCheckedListAtom,
   privateRegistryTagPageAtom,
@@ -55,7 +58,7 @@ export function PrivateRegistryDetailMain() {
 
   const { data, isLoading, isError } = useGetPrivateImageTagList({
     pageNo: page - 1,
-    pageSize: 10,
+    pageSize: PRIVATE_REGISTRY_TAG_PAGE_SIZE,
     keyword: searchText,
     harborImageName,
     ...(sortRequest
