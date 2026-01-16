@@ -1,4 +1,4 @@
-import { expect, type Locator } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
 import { SELECTOR } from "@/shared/constants/selector.constant";
@@ -25,6 +25,7 @@ import { WorkloadListPage } from "./pages/workload-list.page";
 import { WorkloadLogPage } from "./pages/workload-log.page";
 import { WorkloadMonitoringPage } from "./pages/workload-monitoring.page";
 import { WorkloadTerminalPage } from "./pages/workload-terminal.page";
+import { type AssertLogger, createAssertLogger } from "./support/assert-logger";
 
 // ============================================================================
 // Constants
@@ -42,14 +43,8 @@ export const MOCK_WORKSPACE_ID = "1";
 // Types
 // ============================================================================
 
-export type AssertLogger = {
-  assertEqual: <T>(label: string, actual: T, expected: T) => void;
-  assertContains: <T>(label: string, actual: T, validValues: T[]) => void;
-  assertNotEmpty: (label: string, actual: string | null | undefined) => void;
-  assertMatch: (label: string, actual: string, pattern: RegExp) => void;
-  assertLocatorText: (label: string, locator: Locator) => Promise<void>;
-  assertTrue: (label: string, condition: boolean) => void;
-};
+// AssertLogger 타입 re-export
+export type { AssertLogger };
 
 /**
  * 목록 페이지 공통 컨텍스트
@@ -160,62 +155,6 @@ type TestContextFixtures = {
 // ============================================================================
 // Helper Functions
 // ============================================================================
-
-function logAssertion(
-  label: string,
-  actual: unknown,
-  expected: unknown,
-  passed: boolean,
-) {
-  const icon = passed ? "✓" : "✗";
-  console.log(
-    `  ${icon} ${label} (기대값: ${JSON.stringify(expected)}, 실제값: ${JSON.stringify(actual)})`,
-  );
-}
-
-function createAssertLogger(): AssertLogger {
-  return {
-    assertEqual: <T>(label: string, actual: T, expected: T) => {
-      logAssertion(label, actual, expected, actual === expected);
-      expect(actual).toBe(expected);
-    },
-
-    assertContains: <T>(label: string, actual: T, validValues: T[]) => {
-      logAssertion(
-        label,
-        actual,
-        `one of [${validValues.join(", ")}]`,
-        validValues.includes(actual),
-      );
-      expect(validValues).toContain(actual);
-    },
-
-    assertNotEmpty: (label: string, actual: string | null | undefined) => {
-      const trimmed = actual?.trim() ?? "";
-      // 빈 문자열과 "-"(UI에서 빈 값 표시)를 모두 유효하지 않은 값으로 취급
-      const isValid = trimmed.length > 0 && trimmed !== "-";
-      logAssertion(label, actual, "non-empty string (not '-')", isValid);
-      expect(isValid).toBe(true);
-    },
-
-    assertMatch: (label: string, actual: string, pattern: RegExp) => {
-      logAssertion(label, actual, pattern.toString(), pattern.test(actual));
-      expect(actual).toMatch(pattern);
-    },
-
-    assertTrue: (label: string, condition: boolean) => {
-      logAssertion(label, condition, true, condition);
-      expect(condition).toBe(true);
-    },
-
-    assertLocatorText: async (label: string, locator: Locator) => {
-      await expect(locator).toBeVisible();
-      const text = (await locator.textContent())?.trim() ?? "";
-      logAssertion(label, text, "non-empty string", text.length > 0);
-      expect(text.length).toBeGreaterThan(0);
-    },
-  };
-}
 
 function createInitialListContext(): ListContext {
   return {
