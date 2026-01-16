@@ -3,13 +3,13 @@ import styled from "styled-components";
 
 import { RequestImageStatusCard } from "@/domain/registry/components/request-image-status-card";
 import { WaitingRequestImageFilter } from "@/domain/registry/components/waiting-request-image-filter";
+import { WaitingRequestImageFooter } from "@/domain/registry/components/waiting-request-image-footer";
 import { REGISTRY_QUICK_MENUS } from "@/domain/registry/constants/registry.constant";
 import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
 import { createRequestImageColumn } from "@/shared/components/column/create-request-image-column";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
-import { WaitingRequestImageFooter } from "./waiting-request-image-footer";
 
 export function RegistryMainSection() {
   return (

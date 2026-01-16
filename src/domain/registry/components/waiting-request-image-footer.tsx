@@ -2,8 +2,8 @@
 
 import { useAtom } from "jotai";
 
+import { waitingRequestImagePageAtom } from "@/domain/registry/state/registry.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
-import { waitingRequestImagePageAtom } from "../state/registry.atom";
 
 interface WaitingRequestImageFooterProps {
   totalSize: number;
