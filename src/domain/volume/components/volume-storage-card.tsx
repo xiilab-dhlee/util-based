@@ -12,7 +12,7 @@ import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 interface VolumeStorageCardProps {
   /** 선택할 스토리지 타입 (ASTRAGO 또는 LOCAL) */
   storageType: VolumeStorageType;
-  onClick: (storageType: VolumeStorageType) => void;
+  onClick: (storageType: string) => void;
 }
 
 // =============================================================================
@@ -74,7 +74,7 @@ export function VolumeStorageCard({
       type={storageType}
       icon={cardData.icon}
       description={cardData.description}
-      onClick={(type) => onClick(type as VolumeStorageType)}
+      onClick={onClick}
     />
   );
 }

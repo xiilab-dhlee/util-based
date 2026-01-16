@@ -16,7 +16,7 @@ export function SelectVolumeTypeModal() {
 
   const { open, onClose } = useGlobalModal(openSelectVolumeModalAtom);
 
-  const handleClickStorageType = (type: VolumeStorageType) => {
+  const handleClickStorageType = (type: string) => {
     publish(VOLUME_EVENTS.sendStorageType, type);
     onClose();
   };
