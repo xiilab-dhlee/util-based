@@ -38,7 +38,6 @@ import * as zod from "zod";
  * @summary 개인 이미지 태그 수정
  */
 export const updatePrivateImageTagParams = zod.object({
-  imageId: zod.number().describe("이미지 ID"),
   imageTagId: zod.number().describe("이미지 태그 ID"),
 });
 
@@ -200,7 +199,7 @@ export const createPrivateExternalImageBody = zod
 /**
  * 
             개인 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
-            본인 소유의 이미지만 조회할 수 있습니다.
+            본인이 생성한 이미지만 조회할 수 있습니다.
             키워드, 스캔 상태로 필터링이 가능합니다.
         
  * @summary 개인 이미지 태그 목록 조회
@@ -254,9 +253,7 @@ export const getPrivateImageTagListResponse = zod
         content: zod.array(
           zod
             .object({
-              harborArtifactId: zod
-                .number()
-                .describe("Harbor Artifact ID (Source of Truth)"),
+              harborTagId: zod.number().describe("Harbor 태그 ID"),
               imageTagId: zod
                 .number()
                 .optional()
@@ -359,6 +356,34 @@ export const addPrivateImageTagBody = zod
   })
   .strict()
   .describe("이미지 태그 추가 요청");
+
+/**
+ * 
+            개인 이미지 태그에 대한 취약점 스캔을 트리거합니다.
+            - 이미지 생성자 또는 관리자만 스캔할 수 있습니다.
+            - Harbor Trivy 스캐너를 사용하여 비동기로 스캔이 진행됩니다.
+            - 이미 스캔 중인 경우에도 정상 응답합니다.
+        
+ * @summary 개인 이미지 태그 취약점 스캔 트리거
+ */
+export const scanPrivateImageTagQueryParams = zod.object({
+  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+});
+
+export const scanPrivateImageTagBodyTagNameMin = 0;
+export const scanPrivateImageTagBodyTagNameMax = 128;
+
+export const scanPrivateImageTagBody = zod
+  .object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+    tagName: zod
+      .string()
+      .min(scanPrivateImageTagBodyTagNameMin)
+      .max(scanPrivateImageTagBodyTagNameMax)
+      .describe("이미지 태그"),
+  })
+  .strict()
+  .describe("취약점 스캔/조회 요청");
 
 /**
  * 
@@ -470,13 +495,12 @@ export const deletePrivateImagesResponse = zod
 /**
  * 
             개인 레지스트리의 특정 이미지 태그 상세 정보를 조회합니다.
-            본인 소유의 이미지만 조회할 수 있습니다.
+            본인이 생성한 이미지만 조회할 수 있습니다.
             존재하지 않는 경우 null을 반환합니다.
         
  * @summary 개인 이미지 태그 상세 조회
  */
 export const getPrivateImageTagDetailParams = zod.object({
-  imageId: zod.number().describe("이미지 ID"),
   imageTagId: zod.number().describe("이미지 태그 ID"),
 });
 
@@ -519,8 +543,65 @@ export const getPrivateImageTagDetailResponse = zod
 
 /**
  * 
+            개인 이미지 태그의 취약점 상세 목록을 조회합니다.
+            - 이미지 생성자 또는 관리자만 조회할 수 있습니다.
+            - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
+            - 스캔이 완료되지 않은 경우 빈 목록을 반환합니다.
+        
+ * @summary 개인 이미지 태그 취약점 목록 조회
+ */
+export const getPrivateImageTagVulnerabilitiesQueryTagNameMin = 0;
+export const getPrivateImageTagVulnerabilitiesQueryTagNameMax = 128;
+
+export const getPrivateImageTagVulnerabilitiesQueryParams = zod.object({
+  harborImageName: zod.string().describe("Harbor 이미지 경로"),
+  tagName: zod
+    .string()
+    .min(getPrivateImageTagVulnerabilitiesQueryTagNameMin)
+    .max(getPrivateImageTagVulnerabilitiesQueryTagNameMax)
+    .describe("이미지 태그"),
+  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+});
+
+export const getPrivateImageTagVulnerabilitiesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .array(
+        zod
+          .object({
+            cveId: zod.string().describe("CVE ID"),
+            severity: zod
+              .enum(["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"])
+              .describe("심각도"),
+            packageName: zod.string().describe("패키지 이름"),
+            currentVersion: zod.string().describe("현재 버전"),
+            fixedVersion: zod
+              .string()
+              .optional()
+              .describe("수정된 버전 (없으면 null)"),
+            description: zod.string().optional().describe("취약점 설명"),
+            links: zod.array(zod.string()).describe("참고 링크 목록"),
+            cvssV3Score: zod
+              .number()
+              .optional()
+              .describe("CVSS v3 점수 (없으면 null)"),
+            cweIds: zod.array(zod.string()).describe("CWE ID 목록"),
+          })
+          .strict()
+          .describe("취약점 상세 정보"),
+      )
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             개인 레지스트리의 이미지 상세 정보를 조회합니다.
-            본인 소유의 이미지만 조회할 수 있습니다.
+            본인이 생성한 이미지만 조회할 수 있습니다.
             존재하지 않는 경우 null을 반환합니다.
         
  * @summary 개인 이미지 상세 조회

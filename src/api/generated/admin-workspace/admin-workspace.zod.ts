@@ -104,7 +104,7 @@ export const updateWorkspaceResourceResponse = zod
   .strict();
 
 /**
- * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다.
+ * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다. 반려 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 반려
  */
 export const rejectResourceRequestParams = zod.object({
@@ -126,7 +126,7 @@ export const rejectResourceRequestBody = zod
   .describe("워크스페이스 리소스 요청 반려");
 
 /**
- * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다.
+ * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다. 승인 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 승인
  */
 export const approveResourceRequestParams = zod.object({
@@ -769,7 +769,7 @@ export const getResourceRequests1QueryParams = zod.object({
     .describe("페이지 크기"),
   keyword: zod.string().optional().describe("검색 키워드"),
   sort: zod
-    .enum(["REQUESTED_AT", "WORKSPACE_NAME", "APPROVAL_STATUS"])
+    .enum(["REQUESTED_AT", "WORKSPACE_NAME"])
     .optional()
     .describe("정렬 기준 필드"),
   order: zod.enum(["ASC", "DESC"]).optional(),

@@ -248,6 +248,63 @@ export const unpinWorkspaceParams = zod.object({
 });
 
 /**
+ * 
+            선택한 알림들을 일괄 삭제합니다. 본인의 알림만 삭제할 수 있습니다.
+            존재하지 않거나 다른 사용자의 알림, 이미 삭제된 알림은 실패로 카운트됩니다.
+        
+ * @summary 알림 일괄 삭제
+ */
+export const deleteNotificationsParams = zod.object({
+  accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
+});
+
+export const deleteNotificationsBodyNotificationIdMax = 2147483647;
+
+export const deleteNotificationsBody = zod
+  .object({
+    notificationId: zod
+      .array(zod.number())
+      .min(1)
+      .max(deleteNotificationsBodyNotificationIdMax)
+      .describe("삭제할 알림 ID 목록. 최소 1개 이상의 알림 ID가 필요합니다."),
+  })
+  .strict()
+  .describe("알림 삭제 요청. 여러 알림을 한번에 삭제할 수 있습니다.");
+
+export const deleteNotificationsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalRequested: zod.number().describe("삭제 요청한 총 알림 개수"),
+        successCount: zod.number().describe("삭제 성공한 알림 개수"),
+        failureCount: zod
+          .number()
+          .describe(
+            "삭제 실패한 알림 개수 (존재하지 않거나, 이미 삭제된 알림, 다른 사용자의 알림 등)",
+          ),
+        failures: zod
+          .array(
+            zod
+              .object({
+                notificationId: zod.number().describe("삭제 실패한 알림 ID"),
+                reason: zod.string().describe("삭제 실패 사유"),
+              })
+              .strict()
+              .describe("알림 삭제 실패 상세 정보"),
+          )
+          .describe("삭제 실패한 알림 상세 목록 (실패가 없으면 빈 리스트)"),
+      })
+      .strict()
+      .optional()
+      .describe("알림 삭제 처리 결과 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 새로운 사용자 계정을 생성합니다. 가입 승인 모드가 활성화된 경우 관리자 승인 후 로그인이 가능합니다.
  * @summary 회원가입
  */
@@ -389,7 +446,7 @@ export const getNotificationSetsResponse = zod
   .strict();
 
 /**
- * 사용자의 알림 목록을 페이징하여 조회합니다. 본인의 알림만 조회할 수 있습니다.
+ * 사용자의 알림 목록을 페이징하여 조회합니다. 본인의 알림만 조회할 수 있으며, 사용자 역할(USER) 알림만 표시됩니다.
  * @summary 알림 목록 조회
  */
 export const getNotificationsParams = zod.object({
@@ -418,24 +475,12 @@ export const getNotificationsQueryParams = zod.object({
     .describe(
       "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
     ),
-  notificationType: zod
-    .enum([
-      "LICENSE",
-      "ACCOUNT",
-      "VULNERABILITY",
-      "NODE",
-      "WORKSPACE",
-      "WORKLOAD",
-      "MONITORING",
-    ])
+  workspaceId: zod
+    .number()
     .optional()
     .describe(
-      "알림 타입 필터. 가능한 값: WORKSPACE_INVITE, WORKSPACE_ROLE_CHANGE, SIGNUP_REQUEST 등. null: 전체",
+      "워크스페이스 ID 필터. 특정 워크스페이스 관련 알림만 조회. null: 전체",
     ),
-  notificationRole: zod
-    .enum(["SUPER_ADMIN", "ADMIN", "USER", "ALL"])
-    .optional()
-    .describe("알림 대상 역할 필터. 가능한 값: USER, ADMIN. null: 전체"),
 });
 
 export const getNotificationsResponse = zod

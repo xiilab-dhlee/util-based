@@ -14,10 +14,10 @@ export function SecurityScanListBody() {
     <ListWrapper>
       <CustomizedTable
         columns={createSecurityColumn([
-          { dataIndex: "imageTag" },
-          { dataIndex: "status" },
+          { key: "imageTag" },
+          { key: "status" },
           {
-            dataIndex: "total",
+            key: "total",
             title: <SecurityTotalColumnHeader />,
             render: (_: unknown, record: SecurityScanResultType) => {
               return (
@@ -32,9 +32,9 @@ export function SecurityScanListBody() {
               );
             },
           },
-          { dataIndex: "creatorName", title: "실행자" },
-          { dataIndex: "playtime" },
-          { dataIndex: "creatorDateTime", title: "검사일시" },
+          { key: "creatorName", title: "실행자" },
+          { key: "playtime" },
+          { key: "creatorDateTime", title: "검사일시" },
         ])}
         data={securityScanListMock}
         activePadding

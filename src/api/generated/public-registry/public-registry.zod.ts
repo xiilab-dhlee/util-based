@@ -38,7 +38,6 @@ import * as zod from "zod";
  * @summary 공용 이미지 태그 수정
  */
 export const updatePublicImageTagParams = zod.object({
-  imageId: zod.number().describe("이미지 ID"),
   imageTagId: zod.number().describe("이미지 태그 ID"),
 });
 
@@ -252,9 +251,7 @@ export const getPublicImageTagListResponse = zod
         content: zod.array(
           zod
             .object({
-              harborArtifactId: zod
-                .number()
-                .describe("Harbor Artifact ID (Source of Truth)"),
+              harborTagId: zod.number().describe("Harbor 태그 ID"),
               imageTagId: zod
                 .number()
                 .optional()
@@ -359,6 +356,29 @@ export const addPublicImageTagBody = zod
 
 /**
  * 
+            공용 이미지 태그에 대한 취약점 스캔을 트리거합니다.
+            - Harbor Trivy 스캐너를 사용하여 비동기로 스캔이 진행됩니다.
+            - 이미 스캔 중인 경우에도 정상 응답합니다.
+        
+ * @summary 공용 이미지 태그 취약점 스캔 트리거
+ */
+export const scanPublicImageTagBodyTagNameMin = 0;
+export const scanPublicImageTagBodyTagNameMax = 128;
+
+export const scanPublicImageTagBody = zod
+  .object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+    tagName: zod
+      .string()
+      .min(scanPublicImageTagBodyTagNameMin)
+      .max(scanPublicImageTagBodyTagNameMax)
+      .describe("이미지 태그"),
+  })
+  .strict()
+  .describe("취약점 스캔/조회 요청");
+
+/**
+ * 
             공용 레지스트리의 이미지 태그를 삭제합니다.
             - Harbor Artifact와  DB 메타데이터를 함께 삭제합니다.
             - 관리자는 모든 태그를 삭제할 수 있습니다.
@@ -419,7 +439,6 @@ export const deletePublicImageTagsResponse = zod
  * @summary 공용 이미지 태그 상세 조회
  */
 export const getPublicImageTagDetailParams = zod.object({
-  imageId: zod.number().describe("이미지 ID"),
   imageTagId: zod.number().describe("이미지 태그 ID"),
 });
 
@@ -450,6 +469,61 @@ export const getPublicImageTagDetailResponse = zod
       .strict()
       .optional()
       .describe("이미지 태그 상세 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            공용 이미지 태그의 취약점 상세 목록을 조회합니다.
+            - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
+            - 스캔이 완료되지 않은 경우 빈 목록을 반환합니다.
+        
+ * @summary 공용 이미지 태그 취약점 목록 조회
+ */
+export const getPublicImageTagVulnerabilitiesQueryTagNameMin = 0;
+export const getPublicImageTagVulnerabilitiesQueryTagNameMax = 128;
+
+export const getPublicImageTagVulnerabilitiesQueryParams = zod.object({
+  harborImageName: zod.string().describe("Harbor 이미지 경로"),
+  tagName: zod
+    .string()
+    .min(getPublicImageTagVulnerabilitiesQueryTagNameMin)
+    .max(getPublicImageTagVulnerabilitiesQueryTagNameMax)
+    .describe("이미지 태그"),
+});
+
+export const getPublicImageTagVulnerabilitiesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .array(
+        zod
+          .object({
+            cveId: zod.string().describe("CVE ID"),
+            severity: zod
+              .enum(["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"])
+              .describe("심각도"),
+            packageName: zod.string().describe("패키지 이름"),
+            currentVersion: zod.string().describe("현재 버전"),
+            fixedVersion: zod
+              .string()
+              .optional()
+              .describe("수정된 버전 (없으면 null)"),
+            description: zod.string().optional().describe("취약점 설명"),
+            links: zod.array(zod.string()).describe("참고 링크 목록"),
+            cvssV3Score: zod
+              .number()
+              .optional()
+              .describe("CVSS v3 점수 (없으면 null)"),
+            cweIds: zod.array(zod.string()).describe("CWE ID 목록"),
+          })
+          .strict()
+          .describe("취약점 상세 정보"),
+      )
+      .optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

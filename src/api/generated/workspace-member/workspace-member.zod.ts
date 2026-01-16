@@ -115,7 +115,11 @@ export const getWorkspaceMembersQueryParams = zod.object({
     .optional()
     .describe("페이지 크기"),
   keyword: zod.string().optional().describe("검색 키워드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서 (이름 기준)"),
+  sort: zod
+    .enum(["ACCOUNT_NAME", "EMAIL"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional(),
 });
 
 export const getWorkspaceMembersResponse = zod

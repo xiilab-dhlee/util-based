@@ -116,13 +116,13 @@ export function ViewMonitoringNotificationHistoryModal() {
               <CustomizedTable
                 columns={createMonitoringNotificationHistoryColumn([
                   {
-                    dataIndex: "item",
+                    key: "item",
                   },
                   {
-                    dataIndex: "setting",
+                    key: "setting",
                   },
                   {
-                    dataIndex: "duration",
+                    key: "duration",
                   },
                 ])}
                 data={data?.settings || []}
@@ -138,16 +138,16 @@ export function ViewMonitoringNotificationHistoryModal() {
             <CustomizedTable
               columns={createMonitoringNotificationHistoryColumn([
                 {
-                  dataIndex: "userName",
+                  key: "userName",
                 },
                 {
-                  dataIndex: "channel",
+                  key: "channel",
                 },
                 {
-                  dataIndex: "result",
+                  key: "result",
                 },
                 {
-                  dataIndex: "sentAt",
+                  key: "sentAt",
                 },
               ])}
               data={MOCK_SEND_HISTORY}

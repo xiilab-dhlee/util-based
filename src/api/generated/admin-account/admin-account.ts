@@ -55,10 +55,12 @@ import type {
   BaseResponseAccountItemResponse,
   BaseResponseListAdminNotificationSetResponse,
   BaseResponsePageResponseAccountItemResponse,
+  BaseResponsePageResponseAdminNotificationItemResponse,
   BaseResponsePageResponseSignupRequestItemResponse,
   BaseResponsePasswordResetByAdminResponse,
   BaseResponseSignupApprovalResult,
   BaseResponseUnit,
+  GetAdminNotificationsParams,
   GetAllAccountsParams,
   GetSignupRequestsParams,
   NotificationSetUpdateRequest,
@@ -791,6 +793,193 @@ export function useGetAllAccounts<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetAllAccountsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            관리자용 알림 목록을 페이지네이션으로 조회합니다.
+            - ADMIN 역할: ADMIN 대상 알림만 조회
+            - SUPER_ADMIN 역할: ADMIN, SUPER_ADMIN 대상 알림 모두 조회
+            알림 타입, 읽음 여부로 필터링하고, 생성일 기준으로 정렬할 수 있습니다.
+        
+ * @summary 관리자 알림 목록 조회
+ */
+export const getAdminNotifications = (
+  accountId: string,
+  params?: GetAdminNotificationsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseAdminNotificationItemResponse>({
+    url: `/api/v1/admin/accounts/${accountId}/notifications`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetAdminNotificationsQueryKey = (
+  accountId?: string,
+  params?: GetAdminNotificationsParams,
+) => {
+  return [
+    `/api/v1/admin/accounts/${accountId}/notifications`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetAdminNotificationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminNotifications>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetAdminNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminNotifications>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetAdminNotificationsQueryKey(accountId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminNotifications>>
+  > = ({ signal }) => getAdminNotifications(accountId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!accountId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminNotifications>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAdminNotificationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminNotifications>>
+>;
+export type GetAdminNotificationsQueryError = unknown;
+
+export function useGetAdminNotifications<
+  TData = Awaited<ReturnType<typeof getAdminNotifications>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params: undefined | GetAdminNotificationsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminNotifications>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminNotifications>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminNotifications>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminNotifications<
+  TData = Awaited<ReturnType<typeof getAdminNotifications>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetAdminNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminNotifications>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminNotifications>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminNotifications>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminNotifications<
+  TData = Awaited<ReturnType<typeof getAdminNotifications>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetAdminNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminNotifications>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 관리자 알림 목록 조회
+ */
+
+export function useGetAdminNotifications<
+  TData = Awaited<ReturnType<typeof getAdminNotifications>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetAdminNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminNotifications>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAdminNotificationsQueryOptions(
+    accountId,
+    params,
+    options,
+  );
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

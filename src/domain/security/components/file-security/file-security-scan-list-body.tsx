@@ -25,11 +25,11 @@ export function FileSecurityScanListBody() {
     <ListWrapper>
       <CustomizedTable
         columns={createFileSecurityScanColumn([
-          { dataIndex: "creatorDateTime", title: "검사일시" },
-          { dataIndex: "scanType", title: "구분" },
-          { dataIndex: "status", title: "검사 상태" },
+          { key: "creatorDateTime", title: "검사일시" },
+          { key: "scanType", title: "구분" },
+          { key: "status", title: "검사 상태" },
           {
-            dataIndex: "total",
+            key: "total",
             title: <SecurityTotalColumnHeader />,
             render: (_: unknown, record: FileSecurityScanResultType) => {
               return (
@@ -44,8 +44,8 @@ export function FileSecurityScanListBody() {
               );
             },
           },
-          { dataIndex: "playtime", title: "검사 소요 시간" },
-          { dataIndex: "creatorName", title: "실행자" },
+          { key: "playtime", title: "검사 소요 시간" },
+          { key: "creatorName", title: "실행자" },
         ])}
         data={data?.content || []}
         loading={isLoading}

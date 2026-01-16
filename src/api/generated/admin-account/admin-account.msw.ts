@@ -36,6 +36,7 @@ import type {
   BaseResponseAccountItemResponse,
   BaseResponseListAdminNotificationSetResponse,
   BaseResponsePageResponseAccountItemResponse,
+  BaseResponsePageResponseAdminNotificationItemResponse,
   BaseResponsePageResponseSignupRequestItemResponse,
   BaseResponsePasswordResetByAdminResponse,
   BaseResponseSignupApprovalResult,
@@ -181,6 +182,46 @@ export const getGetAllAccountsResponseMock = (
       workspaceCount: faker.number.int({ min: undefined, max: undefined }),
       workspaceLimitCount: faker.number.int({ min: undefined, max: undefined }),
       isEnabled: faker.datatype.boolean(),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetAdminNotificationsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseAdminNotificationItemResponse> = {},
+): BaseResponsePageResponseAdminNotificationItemResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      notificationId: faker.number.int({ min: undefined, max: undefined }),
+      notificationTitle: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      notificationContent: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      notificationType: faker.helpers.arrayElement([
+        "LICENSE",
+        "ACCOUNT",
+        "VULNERABILITY",
+        "NODE",
+        "WORKSPACE",
+        "WORKLOAD",
+        "MONITORING",
+      ] as const),
+      notificationRole: faker.helpers.arrayElement([
+        "SUPER_ADMIN",
+        "ADMIN",
+        "USER",
+        "ALL",
+      ] as const),
+      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      isRead: faker.datatype.boolean(),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -502,6 +543,36 @@ export const getGetAllAccountsMockHandler = (
   );
 };
 
+export const getGetAdminNotificationsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseAdminNotificationItemResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseAdminNotificationItemResponse>
+        | BaseResponsePageResponseAdminNotificationItemResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/accounts/:accountId/notifications",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAdminNotificationsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetAdminNotificationSetsMockHandler = (
   overrideResponse?:
     | BaseResponseListAdminNotificationSetResponse
@@ -600,6 +671,7 @@ export const getAdminAccountMock = () => [
   getResetPasswordByAdminMockHandler(),
   getDeleteAccountMockHandler(),
   getGetAllAccountsMockHandler(),
+  getGetAdminNotificationsMockHandler(),
   getGetAdminNotificationSetsMockHandler(),
   getGetAccountDetailMockHandler(),
   getGetSignupRequestsMockHandler(),
