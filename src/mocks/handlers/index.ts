@@ -16,6 +16,7 @@ import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
 import { systemSettingHandlers } from "@/domain/system-setting/mocks";
+import { volumeHandlers } from "@/domain/volume/mocks";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { credentialHandlers } from "@/mocks/handlers/credential.handler";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
@@ -37,7 +38,6 @@ import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 import { storageSettingHandlers } from "@/mocks/handlers/storage-setting.handler";
 import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
-import { volumeHandlers } from "@/mocks/handlers/volume.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 
 // ============================================
