@@ -531,6 +531,16 @@ export const PRIVATE_REGISTRY_SELECTOR = {
   /** 생성일 */
   CREATED_AT: "private-registry-created-at",
 
+  // 취약점 목록 (Vulnerability List)
+  /** 취약점 목록 총 개수 */
+  VULNERABILITY_LIST_TOTAL_COUNT:
+    "private-registry-vulnerability-list-total-count",
+  /** 취약점 목록 테이블 */
+  VULNERABILITY_LIST_TABLE: "private-registry-vulnerability-list-table",
+  /** 취약점 목록 페이지네이션 */
+  VULNERABILITY_LIST_PAGINATION:
+    "private-registry-vulnerability-list-pagination",
+
   // 등록 중인 이미지 목록 (Job List)
   /** 등록 중인 이미지 목록 구분 필터 */
   JOB_LIST_FILTER_TYPE: "private-registry-job-list-filter-type",

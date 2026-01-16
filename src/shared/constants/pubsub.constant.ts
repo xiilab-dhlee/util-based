@@ -154,22 +154,6 @@ export const PRIVATE_REGISTRY_EVENTS = {
   sendViewTagDetail: "private-registry:send-view-tag-detail",
 } as const;
 
-// 내부 레지스트리 이미지 관련 이벤트
-export const INTERNAL_REGISTRY_IMAGE_EVENTS = {
-  // 내부 레지스트리 이미지 수정에 필요한 정보 전달 이벤트
-  sendUpdateImage:
-    "internal-registry-image:send-update-internal-registry-image",
-  // 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImage:
-    "internal-registry-image:send-delete-internal-registry-image",
-  // 내부 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImageTag:
-    "internal-registry-image:send-delete-internal-registry-image-tag",
-  // 관리자 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteAdminRegistryImage:
-    "internal-registry-image:send-delete-admin-internal-registry-image",
-} as const;
-
 // 파일 보안 관련 이벤트
 export const FILE_SECURITY_EVENTS = {
   // 파일 보안 취약점 상세 모달에 필요한 정보 전달 이벤트

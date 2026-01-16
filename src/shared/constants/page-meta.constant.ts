@@ -221,17 +221,6 @@ export const PAGE_META = {
     iconName: "Image",
     href: ROUTES.ADMIN_REGISTRY,
   },
-  "admin.internal-registry": {
-    title: "내부 레지스트리",
-    iconName: "PrivateRegistry",
-    href: ROUTES.ADMIN_INTERNAL_REGISTRY,
-  },
-  "admin.internal-registry.image": {
-    title: "컨테이너 이미지 상세정보",
-    href: ({ name, id }: { name: string; id: string }) =>
-      ROUTES.ADMIN_INTERNAL_REGISTRY_IMAGE(name, id),
-    parent: "admin.internal-registry",
-  },
   "admin.request-image": {
     title: "이미지 사용 요청 관리",
     iconName: "ManagingImageUseRequest",
@@ -378,23 +367,6 @@ export const PAGE_META = {
     href: ({ name, tagId }: { name: string; tagId: string }) =>
       ROUTES.USER_PRIVATE_REGISTRY_TAG(name, tagId),
     parent: "user.private-registry.detail",
-  },
-  "user.internal-registry-image": {
-    title: "내부 레지스트리",
-    iconName: "Image",
-    href: ROUTES.USER_INTERNAL_REGISTRY_IMAGE,
-  },
-  "user.internal-registry-image.detail": {
-    title: "컨테이너 이미지 상세정보",
-    href: ({ id }: { id: string }) =>
-      ROUTES.USER_INTERNAL_REGISTRY_IMAGE_DETAIL(id),
-    parent: "user.internal-registry-image",
-  },
-  "user.internal-registry-image.tag": {
-    title: "태그 상세정보",
-    href: ({ id, tagId }: { id: string; tagId: string }) =>
-      ROUTES.USER_INTERNAL_REGISTRY_IMAGE_TAG(id, tagId),
-    parent: "user.internal-registry-image.detail",
   },
 
   // ============================================

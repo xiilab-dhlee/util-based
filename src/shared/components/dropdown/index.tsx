@@ -57,7 +57,11 @@ export function MyDropdown({
   };
 
   return (
-    <DropdownWrapper onClick={handleClick} onKeyDown={handleKeyDown}>
+    <DropdownWrapper
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="presentation"
+    >
       <Dropdown
         menu={{ items: menuItems }}
         trigger={trigger}

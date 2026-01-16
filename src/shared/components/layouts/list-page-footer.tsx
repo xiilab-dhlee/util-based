@@ -2,8 +2,7 @@
 
 import type { ReactNode } from "react";
 import styled from "styled-components";
-
-import { MyPagination } from "@/shared/components/paginate";
+import { Pagination } from "xiilab-ui";
 
 interface ListPageFooterProps {
   // 총 개수
@@ -32,17 +31,19 @@ export function ListPageFooter({
   rightChildren,
   leftChildren,
   paginationTestId,
+  isLoading,
 }: ListPageFooterProps) {
   return (
     <Container>
       <Left>{leftChildren}</Left>
       <Center>
-        <MyPagination
+        <Pagination
           current={page}
           total={total}
           pageSize={pageSize}
           onChange={onChange}
-          testId={paginationTestId}
+          data-testid={paginationTestId}
+          disabled={isLoading}
         />
       </Center>
       <Right>{rightChildren}</Right>

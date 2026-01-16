@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
 import type { AccountRole } from "@/shared/constants/core.constant";
+import { ROUTES } from "../constants/routes.constant";
 
 // ============================================================================
 // 타입 정의
@@ -457,7 +458,8 @@ const keycloakCallbacks: NextAuthOptions["callbacks"] = {
  * - HTTPS: secure 쿠키 사용, __Secure- 접두사
  * - HTTP: 일반 쿠키 사용
  */
-const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith("https://");
+const useSecureCookies =
+  process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
 
 /**
  * 쿠키 도메인 추출
@@ -485,7 +487,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: useTestAuth ? testCallbacks : keycloakCallbacks,
 
   pages: {
-    signIn: "/signin",
+    signIn: ROUTES.AUTH_SIGNIN,
     error: "/error",
   },
 
@@ -528,7 +530,7 @@ export const authOptions: NextAuthOptions = {
         ? "__Secure-next-auth.callback-url"
         : "next-auth.callback-url",
       options: {
-        httpOnly: true,
+        httpOnly: false,
         sameSite: "lax",
         path: "/",
         secure: useSecureCookies,
