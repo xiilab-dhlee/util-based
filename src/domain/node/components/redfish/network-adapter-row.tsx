@@ -1,6 +1,7 @@
-﻿import type { HTMLAttributes, MouseEvent } from "react";
+import type { HTMLAttributes, MouseEvent } from "react";
 import { Button } from "xiilab-ui";
 
+import { redfishNetworkAdapterColumn } from "@/domain/node/components/redfish/redfish-network-adapter-column";
 import type { NetworkAdapterInfoType } from "@/domain/node/schemas/redfish.schema";
 import { ToggleTableRow } from "@/shared/components/table/toggle-table-row";
 import { REDFISH_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -17,7 +18,6 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import { redfishNetworkAdapterColumn } from "./redfish-network-adapter-column";
 
 interface NetworkAdapterRowProps extends HTMLAttributes<HTMLTableRowElement> {
   rowData: NetworkAdapterInfoType;

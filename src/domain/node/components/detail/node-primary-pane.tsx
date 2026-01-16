@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Label } from "xiilab-ui";
 
+import { NodeConditionCard } from "@/domain/node/components/detail/node-condition-card";
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
 import {
   DetailContentHeader,
@@ -22,7 +23,6 @@ import {
   DetailContentPaneBody,
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { NodeConditionCard } from "./node-condition-card";
 
 /**
  * NodePrimaryPane 컴포넌트

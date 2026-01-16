@@ -1,6 +1,6 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import { redfishExpandColumn } from "./redfish-expand-column";
+import { redfishExpandColumn } from "@/domain/node/components/redfish/redfish-expand-column";
 
 export const redfishFirmwareColumn: ResponsiveColumnType[] = [
   {

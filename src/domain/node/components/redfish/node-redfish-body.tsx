@@ -2,9 +2,9 @@
 
 import styled from "styled-components";
 
+import { ReadyRedfish } from "@/domain/node/components/redfish/ready-redfish";
+import { UnreadyRedfish } from "@/domain/node/components/redfish/unready-redfish";
 import { useGetNodeBmcInfo } from "@/domain/node/hooks/use-get-bmc-info";
-import { ReadyRedfish } from "./ready-redfish";
-import { UnreadyRedfish } from "./unready-redfish";
 
 /**
  * 노드 Redfish 페이지의 메인 바디 컴포넌트

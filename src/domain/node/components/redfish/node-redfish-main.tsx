@@ -3,9 +3,9 @@
 import { useParams } from "next/navigation";
 
 import { ManageBmcModal } from "@/domain/node/components/manage-bmc-modal";
+import { NodeRedfishBody } from "@/domain/node/components/redfish/node-redfish-body";
+import { ViewNetworkAdapterModal } from "@/domain/node/components/redfish/view-network-adapter-modal";
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
-import { NodeRedfishBody } from "./node-redfish-body";
-import { ViewNetworkAdapterModal } from "./view-network-adapter-modal";
 
 /**
  * 노드 Redfish 페이지의 최상위 컴포넌트

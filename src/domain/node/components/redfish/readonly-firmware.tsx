@@ -1,11 +1,11 @@
 "use client";
 
+import { FirmwareRow } from "@/domain/node/components/redfish/firmware-row";
+import { redfishFirmwareColumn } from "@/domain/node/components/redfish/redfish-firmware-column";
 import { useGetRedfishSystemFirmware } from "@/domain/node/hooks/use-get-redfish-system-firmware";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
 import { DetailContentFeature } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { FirmwareRow } from "./firmware-row";
-import { redfishFirmwareColumn } from "./redfish-firmware-column";
 
 /**
  * Redfish 시스템의 펌웨어 정보를 읽기 전용으로 표시하는 컴포넌트

@@ -5,6 +5,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import { NodeLogRow } from "@/domain/node/components/log/node-log-row";
 import { redfishLogColumn } from "@/domain/node/components/redfish/redfish-log-column";
 import { useGetNodeBmcInfo } from "@/domain/node/hooks/use-get-bmc-info";
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
@@ -18,7 +19,6 @@ import {
   DetailContentTitle,
 } from "@/styles/layers/detail-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import { NodeLogRow } from "./node-log-row";
 
 /**
  * Redfish 연동 상태의 로그 컴포넌트

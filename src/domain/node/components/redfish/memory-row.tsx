@@ -1,5 +1,6 @@
 import type { HTMLAttributes, MouseEvent } from "react";
 
+import { redfishMemoryColumn } from "@/domain/node/components/redfish/redfish-memory-column";
 import type { MemoryMemberType } from "@/domain/node/schemas/redfish.schema";
 import { ToggleTableRow } from "@/shared/components/table/toggle-table-row";
 import { useToggle } from "@/shared/hooks/use-toggle";
@@ -13,7 +14,6 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import { redfishMemoryColumn } from "./redfish-memory-column";
 
 type MemoryRowProps = HTMLAttributes<HTMLTableRowElement> & {
   rowData: MemoryMemberType;

@@ -1,11 +1,11 @@
 "use client";
 
+import { NetworkAdapterRow } from "@/domain/node/components/redfish/network-adapter-row";
+import { redfishNetworkAdapterColumn } from "@/domain/node/components/redfish/redfish-network-adapter-column";
 import { useGetRedfishSystemNetworkAdapter } from "@/domain/node/hooks/use-get-redfish-system-network-adapter";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
 import { DetailContentFeature } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { NetworkAdapterRow } from "./network-adapter-row";
-import { redfishNetworkAdapterColumn } from "./redfish-network-adapter-column";
 
 /**
  * Redfish 시스템의 네트워크 어댑터 정보를 읽기 전용으로 표시하는 컴포넌트

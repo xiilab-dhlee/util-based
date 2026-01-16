@@ -2,8 +2,8 @@
 
 import styled from "styled-components";
 
-import { NodePrimaryPane } from "./node-primary-pane";
-import { NodeSecondaryPane } from "./node-secondary-pane";
+import { NodePrimaryPane } from "@/domain/node/components/detail/node-primary-pane";
+import { NodeSecondaryPane } from "@/domain/node/components/detail/node-secondary-pane";
 
 /**
  * NodeDetailMain 컴포넌트

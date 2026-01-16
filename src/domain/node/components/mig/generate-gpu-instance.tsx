@@ -2,11 +2,11 @@
 
 import { Col, Row } from "antd";
 
+import { GpuInstance } from "@/domain/node/components/mig/gpu-instance";
 import type {
   GpuInstanceNode,
   GpuInstanceRow,
 } from "@/domain/node/types/node.type";
-import { GpuInstance } from "./gpu-instance";
 
 const gutter: [number, number] = [4, 4];
 

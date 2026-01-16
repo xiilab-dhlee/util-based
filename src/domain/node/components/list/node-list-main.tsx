@@ -2,6 +2,9 @@
 
 import { Icon } from "xiilab-ui";
 
+import { NodeListBody } from "@/domain/node/components/list/node-list-body";
+import { NodeListFilter } from "@/domain/node/components/list/node-list-filter";
+import { NodeListFooter } from "@/domain/node/components/list/node-list-footer";
 import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
 import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
 import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
@@ -14,9 +17,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { NodeListBody } from "./node-list-body";
-import { NodeListFilter } from "./node-list-filter";
-import { NodeListFooter } from "./node-list-footer";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {

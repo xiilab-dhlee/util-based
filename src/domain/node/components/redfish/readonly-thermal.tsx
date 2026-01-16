@@ -1,10 +1,10 @@
 "use client";
 
+import { redfishThermalColumn } from "@/domain/node/components/redfish/redfish-thermal-column";
 import { useGetRedfishSystemChassis } from "@/domain/node/hooks/use-get-redfish-system-chassis";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
 import { DetailContentFeature } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { redfishThermalColumn } from "./redfish-thermal-column";
 
 /**
  * Redfish 시스템의 열 관리(Thermal) 정보를 읽기 전용으로 표시하는 컴포넌트
