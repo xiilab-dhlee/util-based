@@ -64,7 +64,7 @@ export function VolumeStorageCard({
   const cardData = STORAGE_CARD_DATA[storageType];
 
   if (!cardData) {
-    throw new Error(`Invalid storage type: ${storageType}`);
+    return null;
   }
 
   return (
