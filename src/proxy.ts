@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 import type { JWT } from "next-auth/jwt";
 import { getToken } from "next-auth/jwt";
 
-import type { AccountRole } from "@/shared/constants/core.constant";
+import {
+  ACCOUNT_ROLES,
+  type AccountRole,
+} from "@/shared/constants/core.constant";
 import { MODE, ROUTES } from "@/shared/constants/routes.constant";
 
 // ============================================================================
@@ -161,13 +164,15 @@ export async function proxy(request: NextRequest) {
     const roles = extractRoles(token);
 
     // /admin 경로: ADMIN 필요
-    if (path.startsWith(MODE.ADMIN) && !hasRole(roles, "ADMIN")) {
+    if (path.startsWith(MODE.ADMIN) && !hasRole(roles, ACCOUNT_ROLES.ADMIN)) {
       return NextResponse.redirect(new URL(MODE.USER, request.url));
     }
 
     // /user 경로: ADMIN 또는 USER 필요
     if (path.startsWith(MODE.USER)) {
-      const hasUserAccess = hasRole(roles, "ADMIN") || hasRole(roles, "USER");
+      const hasUserAccess =
+        hasRole(roles, ACCOUNT_ROLES.ADMIN) ||
+        hasRole(roles, ACCOUNT_ROLES.USER);
 
       if (!hasUserAccess) {
         debugLog("🔒 권한 없음 → 로그인 페이지로 리다이렉트", {
