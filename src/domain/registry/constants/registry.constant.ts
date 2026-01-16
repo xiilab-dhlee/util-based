@@ -6,13 +6,6 @@ export const REGISTRY_QUICK_MENUS = [
     iconSize: 32,
     href: "/admin/request-image",
   },
-  {
-    title: "내부 레지스트리",
-    description: "사용자별 내부 레지스트리를 관리하세요.",
-    icon: "PrivateRegistry",
-    iconSize: 32,
-    href: "/admin/internal-registry",
-  },
   // TODO: 외부 레지스트리 기능 추가 시 활성화
   // {
   //   title: "외부 레지스트리",

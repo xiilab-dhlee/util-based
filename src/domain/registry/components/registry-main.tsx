@@ -1,8 +1,8 @@
 "use client";
 
+import { RegistryMainSection } from "@/domain/registry/components/registry-main-section";
+import { RegistrySubSection } from "@/domain/registry/components/registry-sub-section";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { RegistryMainSection } from "./registry-main-section";
-import { RegistrySubSection } from "./registry-sub-section";
 
 export function RegistryMain() {
   return (

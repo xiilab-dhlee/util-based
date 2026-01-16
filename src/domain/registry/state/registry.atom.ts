@@ -1,13 +1,16 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
-/** 사용자 내부 레지스트리 페이지 번호 */
-export const userInternalRegistryPageAtom = atomWithReset<number>(1);
-/** 사용자 내부 레지스트리 검색어 */
-export const userInternalRegistrySearchTextAtom = atom<string>("");
-/** 사용자 외부 레지스트리 상태 */
-export const userPublicRegistryStatusAtom = atom<string>("");
-/** 사용자 외부 레지스트리 검색어 */
-export const userPublicRegistrySearchTextAtom = atom<string>("");
-/** 이미지 사용 요청 승인 대기 목록 검색어 */
-export const userWaitingRequestImageListSearchTextAtom = atom<string>("");
+/** 개인 레지스트리 페이지 번호 */
+export const userPrivateRegistryPageAtom = atomWithReset<number>(1);
+/** 개인 레지스트리 검색 키워드 (입력 중) */
+export const userPrivateRegistrySearchKeywordAtom = atom<string>("");
+/** 개인 레지스트리 검색어 (검색 실행) */
+export const userPrivateRegistrySearchTextAtom = atomWithReset<string>("");
+
+/** 이미지 사용 요청 대기 목록 페이지 번호 */
+export const waitingRequestImagePageAtom = atomWithReset<number>(1);
+/** 이미지 사용 요청 대기 목록 검색 키워드 (입력 중) */
+export const waitingRequestImageSearchKeywordAtom = atom<string>("");
+/** 이미지 사용 요청 대기 목록 검색어 (검색 실행) */
+export const waitingRequestImageSearchTextAtom = atomWithReset<string>("");

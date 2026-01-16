@@ -1,102 +1,38 @@
 import styled from "styled-components";
 
-import { useGetInternalRegistryImages } from "@/domain/internal-registry-image/hooks/use-get-internal-registry-images";
-import { createInternalRegistryImageColumn } from "@/shared/components/column/create-internal-registry-image-column";
+import { createPrivateRegistryColumn } from "@/domain/private-registry/components/list/create-private-registry-column";
+import { UserPrivateRegistryFilter } from "@/domain/registry/components/user-private-registry-filter";
+import { UserPrivateRegistryFooter } from "@/domain/registry/components/user-private-registry-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { UserInternalRegistryListFilter } from "./user-internal-registry-list-filter";
 
 export function RegistrySubSection() {
-  const { data } = useGetInternalRegistryImages({
-    page: 1,
-    size: 100,
-    searchText: "",
-  });
-
   return (
     <Container>
       <Pane>
-        <UserInternalRegistryListFilter />
+        <UserPrivateRegistryFilter totalSize={0} loading={false} />
         <PaneBody>
           <CustomizedTable
-            columns={createInternalRegistryImageColumn([
-              {
-                dataIndex: "name",
-                width: "30%",
-                ellipsis: true,
-              },
-              {
-                dataIndex: "tagCnt",
-              },
-              {
-                dataIndex: "pullCount",
-              },
-              {
-                dataIndex: "creatorName",
-              },
-              {
-                dataIndex: "creatorDate",
-              },
-            ])}
-            data={data?.content || []}
+            columns={createPrivateRegistryColumn()}
+            data={[]}
             activePadding
-            pagination={{
-              onChange: function Xs() {},
-              pageSize: 10,
-              total: data?.content?.length || 0,
-            }}
           />
         </PaneBody>
-      </Pane>
-      <Pane>
-        <UserInternalRegistryListFilter />
-        <PaneBody>
-          <CustomizedTable
-            columns={createInternalRegistryImageColumn([
-              {
-                dataIndex: "name",
-                width: "30%",
-                ellipsis: true,
-              },
-              {
-                dataIndex: "tagCnt",
-              },
-              {
-                dataIndex: "pullCount",
-              },
-              {
-                dataIndex: "creatorName",
-              },
-              {
-                dataIndex: "creatorDate",
-              },
-            ])}
-            data={data?.content || []}
-            activePadding
-            pagination={{
-              onChange: function Xs() {},
-              pageSize: 10,
-              total: data?.content?.length || 0,
-            }}
-          />
-        </PaneBody>
+        <UserPrivateRegistryFooter totalSize={0} isLoading={false} />
       </Pane>
     </Container>
   );
 }
 
 const Container = styled.section`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   height: 492px;
 `;
 
 const Pane = styled.article`
-  flex: 1;
   height: 100%;
   padding: 24px 26px;
-  padding-bottom: 0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;

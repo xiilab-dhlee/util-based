@@ -1,25 +1,17 @@
-import { useAtomValue } from "jotai";
 import Image from "next/image";
 import styled from "styled-components";
 
+import { RequestImageStatusCard } from "@/domain/registry/components/request-image-status-card";
+import { WaitingRequestImageFilter } from "@/domain/registry/components/waiting-request-image-filter";
 import { REGISTRY_QUICK_MENUS } from "@/domain/registry/constants/registry.constant";
-import { userWaitingRequestImageListSearchTextAtom } from "@/domain/registry/state/registry.atom";
-import { useGetWaitingRequestImages } from "@/domain/request-image/hooks/use-get-waiting-request-images";
 import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
 import { createRequestImageColumn } from "@/shared/components/column/create-request-image-column";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
-import { RequestImageStatusCard } from "./request-image-status-card";
-import { UserRequestImageWaitingListFilter } from "./request-image-waiting-list-filter";
+import { WaitingRequestImageFooter } from "./waiting-request-image-footer";
 
 export function RegistryMainSection() {
-  const searchText = useAtomValue(userWaitingRequestImageListSearchTextAtom);
-
-  const { data } = useGetWaitingRequestImages({
-    searchText,
-  });
-
   return (
     <Container>
       <Left>
@@ -52,20 +44,21 @@ export function RegistryMainSection() {
             </RequestImageBody>
           </RequestImage>
           <WaitRequestImage>
-            <UserRequestImageWaitingListFilter />
+            <WaitingRequestImageFilter totalSize={0} loading={false} />
             <WaitRequestImageBody>
               <CustomizedTable
                 columns={createRequestImageColumn([
-                  { dataIndex: "imageName", width: "30%", ellipsis: true },
+                  { dataIndex: "imageName", ellipsis: true },
                   { dataIndex: "imageTag" },
                   { dataIndex: "security" },
                   { dataIndex: "creatorName" },
                 ])}
-                data={data?.content || []}
+                data={[]}
                 activePadding
                 darkMode
               />
             </WaitRequestImageBody>
+            <WaitingRequestImageFooter totalSize={0} isLoading={false} />
           </WaitRequestImage>
         </RightBody>
       </Right>
