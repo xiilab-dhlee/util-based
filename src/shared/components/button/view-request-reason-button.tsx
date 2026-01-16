@@ -10,11 +10,13 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface ViewRequestReasonButtonProps {
-  reason: string;
+  reason?: string;
+  disabled?: boolean;
 }
 
 export function ViewRequestReasonButton({
   reason,
+  disabled = false,
 }: ViewRequestReasonButtonProps) {
   const publish = usePublish();
 
@@ -24,7 +26,11 @@ export function ViewRequestReasonButton({
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClickIcon}>
+      <ColumnIconWrap
+        type="button"
+        onClick={handleClickIcon}
+        disabled={disabled}
+      >
         <Icon name="Information" color="var(--icon-fill)" size={16} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>

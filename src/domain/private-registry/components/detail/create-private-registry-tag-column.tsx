@@ -118,8 +118,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "requestReason",
       title: "요청 사유",
       align: "center",
-      render: (requestReason: string) => {
-        return <ViewRequestReasonButton reason={requestReason} />;
+      render: (requestReason?: string) => {
+        return (
+          <ViewRequestReasonButton
+            reason={requestReason}
+            disabled={!requestReason}
+          />
+        );
       },
     },
     {
@@ -127,8 +132,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "decisionReason",
       title: "승인/반려 사유",
       align: "center",
-      render: (decisionReason: string) => {
-        return <ViewRejectReasonButton reason={decisionReason} />;
+      render: (decisionReason?: string) => {
+        return (
+          <ViewRejectReasonButton
+            reason={decisionReason}
+            disabled={!decisionReason}
+          />
+        );
       },
     },
   ];
