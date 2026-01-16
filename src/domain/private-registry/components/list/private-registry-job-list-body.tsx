@@ -50,7 +50,7 @@ export function PrivateRegistryJobListBody({
   }
 
   return (
-    <Container className={SELECTOR.LIST_CARD_GRID}>
+    <Container data-testid={SELECTOR.LIST_CARD_GRID}>
       {data.map((job) => (
         <PrivateRegistryImageCard key={job.imageTagId} {...job} />
       ))}

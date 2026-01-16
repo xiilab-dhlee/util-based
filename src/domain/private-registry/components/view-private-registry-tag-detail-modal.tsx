@@ -113,10 +113,10 @@ export function ViewPrivateRegistryTagDetailModal() {
               )}
             </DetailValue>
           </DetailRow>
-          <DetailRow>
+          {/* <DetailRow>
             <DetailLabel>최근 검사일시</DetailLabel>
             <DetailValue>{formatDateTimeSafely(data?.createdAt)}</DetailValue>
-          </DetailRow>
+          </DetailRow> */}
         </DetailCard>
       </Container>
     </Modal>
