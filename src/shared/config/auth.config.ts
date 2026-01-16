@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
 import type { AccountRole } from "@/shared/constants/core.constant";
-import { ROUTES } from "../constants/routes.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 
 // ============================================================================
 // 타입 정의
