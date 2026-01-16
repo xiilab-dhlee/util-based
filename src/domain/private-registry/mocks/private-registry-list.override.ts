@@ -131,6 +131,7 @@ export const privateRegistryListOverrideHandlers = [
           downloadCount: faker.number.int({ min: 0, max: 10000 }),
           imageTagCount: faker.number.int({ min: 0, max: 10000 }),
           imageSourceType: itemImageSourceType,
+          harborImageName: globalIndex.toString(),
         } as RegistryListResponse;
       },
     );
