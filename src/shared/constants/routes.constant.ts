@@ -140,8 +140,9 @@ export const ROUTES = {
   USER_SOURCECODE: `${MODE.USER}/sourcecode`,
   USER_SOURCECODE_DETAIL: (id: string) => `${MODE.USER}/sourcecode/${id}`,
 
-  // 볼륨 (정적)
+  // 볼륨 (동적 함수)
   USER_VOLUME: `${MODE.USER}/volume`,
+  USER_VOLUME_DETAIL: (id: number) => `${MODE.USER}/volume/${id}`,
 
   // 허브 (동적 함수)
   USER_HUB: `${MODE.USER}/hub`,

@@ -1,7 +1,6 @@
 "use client";
 
 import { format } from "date-fns";
-import { useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import styled from "styled-components";
 import {
@@ -11,10 +10,11 @@ import {
   //  Tag
 } from "xiilab-ui";
 
-import { useGetVolume } from "@/domain/volume/hooks/use-get-volume";
-import { useUpdateVolume } from "@/domain/volume/hooks/use-update-volume";
-import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
-import type { UpdateVolumePayload } from "@/domain/volume/types/volume.type";
+import type { UpdateVolumeRequest } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  useGetVolumeDetail,
+  useUpdateVolume,
+} from "@/api/generated/volume/volume";
 import { workloadListMock } from "@/mocks/data/workload.mock";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { SecurityLevelText } from "@/shared/components/text/security-status-text";
@@ -46,6 +46,7 @@ import { EmptyVolumeWorkload } from "./empty-volume-workload";
 import { VolumeWorkloadCard } from "./volume-workload-card";
 
 interface UpdateVolumeProps {
+  volumeId: number;
   readOnly: boolean;
   setReadOnly: (readOnly: boolean) => void;
 }
@@ -67,26 +68,33 @@ interface UpdateVolumeProps {
  *
  * @returns 볼륨 수정 UI를 포함한 JSX 요소
  */
-export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
-  const selectedVolume = useAtomValue(volumeSelectedAtom);
-
-  const { data } = useGetVolume(selectedVolume || "");
+export function UpdateVolume({
+  volumeId,
+  readOnly,
+  setReadOnly,
+}: UpdateVolumeProps) {
+  const { data } = useGetVolumeDetail(volumeId, {
+    query: { enabled: !Number.isNaN(volumeId) },
+  });
 
   const formRef = useRef<HTMLFormElement>(null);
   const [workloadPage, setWorkloadPage] = useState(1);
 
-  const status = useSelect(data?.status || "PUBLIC", VISIBILITY_STATUS_OPTIONS);
+  const status = useSelect(
+    data?.isPublic ? "PUBLIC" : "PRIVATE",
+    VISIBILITY_STATUS_OPTIONS,
+  );
 
   // Next.js 라우터 인스턴스 - 현재 경로 및 쿼리 파라미터 접근
 
   // PubSub 퍼블리셔 - 이벤트 발행을 위한 훅
   // const publish = usePublish();
 
-  // 수정 뮤테이션 훅
+  // 수정 뮤테이션 훅 (orval)
   const updateVolume = useUpdateVolume();
 
-  const { text } = getVolumeStorageTypeInfo(data?.storageType || "ASTRAGO");
-  const { text: statusText } = getVolumeStatusInfo(data?.status || "PUBLIC");
+  const { text } = getVolumeStorageTypeInfo(data?.volumeType || "ASTRAGO");
+  const { text: statusText } = getVolumeStatusInfo(data?.isPublic ?? false);
 
   /**
    * 수정 모드 전환 핸들러
@@ -99,7 +107,10 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
 
     if (payload) {
       // TODO: validation 추가 필요
-      updateVolume.mutate(payload);
+      updateVolume.mutate({
+        volumeId,
+        data: payload,
+      });
     }
   };
 
@@ -116,12 +127,12 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
   /**
    * 폼 데이터를 수집하여 API 요청용 페이로드 생성
    *
-   * 폼의 모든 입력 필드에서 데이터를 수집하고, UpdateVolumePayload 형태로 변환합니다.
+   * 폼의 모든 입력 필드에서 데이터를 수집하고, UpdateVolumeRequest 형태로 변환합니다.
    * 볼륨 이름과 마운트 경로 등의 기본 정보를 수집합니다.
    *
-   * @returns UpdateVolumePayload 객체 또는 null (폼 참조가 없는 경우)
+   * @returns UpdateVolumeRequest 객체 또는 null (폼 참조가 없는 경우)
    */
-  const createPayload = (): UpdateVolumePayload | null => {
+  const createPayload = (): UpdateVolumeRequest | null => {
     if (!formRef.current) return null;
 
     // 폼 데이터 수집
@@ -129,11 +140,12 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
 
     // 기본 필드들 수집
     const volumeName = formData.get("volumeName") as string;
-    const defaultPath = formData.get("defaultPath") as string;
+    const mountPath = formData.get("mountPath") as string;
 
     return {
       volumeName,
-      defaultPath,
+      mountPath,
+      isPublic: status.value === "PUBLIC",
     };
   };
 
@@ -151,7 +163,7 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
               <AsideDetailArticleColumn>
                 <AsideDetailArticleKey>볼륨 이름</AsideDetailArticleKey>
                 <AsideDetailArticleValue className="truncate">
-                  {data?.name}
+                  {data?.volumeName}
                 </AsideDetailArticleValue>
               </AsideDetailArticleColumn>
             )}
@@ -176,7 +188,7 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
                       width="100%"
                       name="volumeName"
                       autoComplete="off"
-                      defaultValue={data?.name}
+                      defaultValue={data?.volumeName}
                     />
                   </div>
                 )}
@@ -232,7 +244,7 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
               {/* 읽기 전용 모드일 때만 표시 */}
               {readOnly && (
                 <AsideDetailArticleValue className="truncate">
-                  {data?.path || "-"}
+                  {data?.mountPath || "-"}
                 </AsideDetailArticleValue>
               )}
             </AsideDetailArticleColumn>
@@ -242,9 +254,9 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
                 <Input
                   placeholder="기본 마운트 경로를 입력해주세요."
                   width="100%"
-                  name="defaultPath"
+                  name="mountPath"
                   autoComplete="off"
-                  defaultValue={data?.path || ""}
+                  defaultValue={data?.mountPath || ""}
                 />
               </div>
             )}
@@ -273,14 +285,18 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
                 <AsideDetailArticleColumn>
                   <AsideDetailArticleKey>스토리지</AsideDetailArticleKey>
                   <AsideDetailArticleValue>
-                    skybox storage
+                    {data?.storageName || "-"}
                   </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
 
                 {/* 생성일 */}
                 <AsideDetailArticleColumn>
                   <AsideDetailArticleKey>파일 용량</AsideDetailArticleKey>
-                  <AsideDetailArticleValue>10 Bytes</AsideDetailArticleValue>
+                  <AsideDetailArticleValue>
+                    {data?.fileSizeByte
+                      ? `${data.fileSizeByte} Bytes`
+                      : "0 Bytes"}
+                  </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
               </AsideDetailArticleRowItem>
               <AsideDetailArticleRowItem>
@@ -299,8 +315,7 @@ export function UpdateVolume({ readOnly, setReadOnly }: UpdateVolumeProps) {
                 <AsideDetailArticleColumn>
                   <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
                   <AsideDetailArticleValue>
-                    {data?.creatorDate &&
-                      format(data?.creatorDate, "yyyy.MM.dd")}
+                    {data?.createdAt && format(data?.createdAt, "yyyy.MM.dd")}
                   </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
               </AsideDetailArticleRowItem>

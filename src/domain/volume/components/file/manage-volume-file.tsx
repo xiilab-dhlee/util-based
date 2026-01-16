@@ -1,15 +1,13 @@
-﻿"use client";
+"use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { useEffect } from "react";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
-import { useGetVolumeFiles } from "@/domain/volume/hooks/use-get-volume-files";
-import {
-  volumeFileTreeDataAtom,
-  volumeSelectedAtom,
-} from "@/domain/volume/state/volume.atom";
+import { useListFiles } from "@/api/generated/volume/volume";
+import { volumeFileTreeDataAtom } from "@/domain/volume/state/volume.atom";
+import { convertToFileTreeType } from "@/domain/volume/utils/volume.util";
 import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { RootCustomFileNode } from "@/shared/components/tree/custom-file-node";
@@ -29,6 +27,10 @@ import { VolumeFileButton } from "./volume-file-button";
 import { VolumeFileCheckbox } from "./volume-file-checkbox";
 import { VolumeUnzipFileButton } from "./volume-unzip-file-button";
 
+interface ManageVolumeFileProps {
+  volumeId: number;
+}
+
 /**
  * ManageVolumeFile 컴포넌트
  *
@@ -46,7 +48,7 @@ import { VolumeUnzipFileButton } from "./volume-unzip-file-button";
  * - 파일별 액션 버튼 제공
  *
  * 데이터 흐름:
- * 1. useGetWorkloadFiles 훅을 통해 파일 데이터 요청
+ * 1. useListFiles 훅을 통해 파일 데이터 요청
  * 2. 받은 데이터를 Jotai atom을 통해 전역 상태로 관리
  * 3. CustomFileTree 컴포넌트를 통한 트리 구조 렌더링
  * 4. Pub/Sub 시스템을 통한 취약점 모달 제어
@@ -56,10 +58,10 @@ import { VolumeUnzipFileButton } from "./volume-unzip-file-button";
  * @example
  * ```tsx
  * // 볼륨 상세 페이지에서 사용
- * <ManageVolumeFile />
+ * <ManageVolumeFile volumeId={123} />
  * ```
  */
-export function ManageVolumeFile() {
+export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
   // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
 
@@ -67,14 +69,13 @@ export function ManageVolumeFile() {
   // Jotai atom을 통해 파일 트리 구조를 전역적으로 관리
   const [treeData, setTreeData] = useAtom(volumeFileTreeDataAtom);
 
-  const volumeSelected = useAtomValue(volumeSelectedAtom);
-
-  // 워크로드 파일 데이터 요청
-  // 루트 경로(/)에서 시작하여 최대 100개의 파일 노드를 가져옴
-  const { data } = useGetVolumeFiles({
-    id: volumeSelected || "",
-    path: "/", // 루트 경로에서 시작
-  });
+  // 볼륨 파일 데이터 요청 (orval API)
+  // 루트 경로(/)에서 시작하여 파일 노드를 가져옴
+  const { data } = useListFiles(
+    volumeId,
+    { path: "/" },
+    { query: { enabled: !Number.isNaN(volumeId) } },
+  );
 
   /**
    * 파일 보안 검사 핸들러
@@ -106,10 +107,10 @@ export function ManageVolumeFile() {
   // 파일 데이터 변경 시 트리 데이터 업데이트
   // API에서 받은 파일 노드 데이터를 전역 상태로 동기화
   useEffect(() => {
-    if (data?.content) {
-      setTreeData(data.content);
+    if (data?.children) {
+      setTreeData(convertToFileTreeType(data.children));
     }
-  }, [data?.content, setTreeData]);
+  }, [data?.children, setTreeData]);
 
   return (
     <>

@@ -1,14 +1,14 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useParams, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, type TabsSeparatedItem, Typography } from "xiilab-ui";
 
+import { useGetVolumeDetail } from "@/api/generated/volume/volume";
 import { ManageVolumeFile } from "@/domain/volume/components/file/manage-volume-file";
 import { UpdateVolume } from "@/domain/volume/components/update-volume";
-import { useGetVolume } from "@/domain/volume/hooks/use-get-volume";
-import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { StateTab } from "@/shared/components/tab";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -32,35 +32,27 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
 ];
 
 /**
- * AsideVolume 컴포넌트
+ * Volume 상세 페이지 메인 컴포넌트
  *
- * 볼륨 상세 정보를 사이드바에 탭 형태로 표시하는 컴포넌트입니다.
- * 볼륨의 기본 정보, 파일 관리, 보안 설정 등을 탭으로 구분하여 제공하며,
- * 각 탭에 따라 적절한 하위 컴포넌트를 렌더링합니다.
- *
- * 주요 기능:
- * - 볼륨 기본 정보 헤더 표시 (아이콘 및 이름)
- * - 탭 기반 네비게이션 (기본 정보, 파일 관리, 보안 등)
- * - 선택된 탭에 따른 동적 콘텐츠 렌더링
- * - 볼륨 정보 수정, 파일 관리, 보안 관리 컴포넌트 통합
- * - 상태 기반 탭 전환 및 콘텐츠 업데이트
- *
- * 탭 구성:
- * - 기본 정보: 볼륨 상세 정보 및 수정 기능
- * - 파일 관리: 볼륨 내 파일 목록 및 관리
- * - 보안: 볼륨 보안 설정 및 검증 상태
- *
- * @returns 볼륨 상세 정보를 탭으로 구성한 사이드바 JSX 요소
+ * URL 파라미터 기반으로 볼륨 상세 정보를 표시합니다.
+ * Hub 패턴을 따라 URL에서 id와 name을 추출하여 사용합니다.
  */
-export function AsideVolume() {
+export function VolumeDetailMain() {
+  const params = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const volumeId = Number(params.id);
+  const volumeName = searchParams.get("name") || "";
+
   // 현재 선택된 탭 상태 관리
   const [selectedTab, setSelectedTab] = useState("");
   // 읽기 전용 여부 - true: 읽기 전용 모드, false: 수정 모드
   const [readOnly, setReadOnly] = useState(true);
 
-  const volumeSelected = useAtomValue(volumeSelectedAtom);
-
-  const { data } = useGetVolume(volumeSelected || "");
+  const { data } = useGetVolumeDetail(volumeId, {
+    query: {
+      enabled: !Number.isNaN(volumeId),
+    },
+  });
 
   const publish = usePublish();
 
@@ -69,19 +61,32 @@ export function AsideVolume() {
   };
 
   const handleDelete = () => {
-    publish(VOLUME_EVENTS.sendDeleteVolume, [volumeSelected]);
+    publish(VOLUME_EVENTS.sendDeleteVolume, [volumeId]);
   };
+
+  // 유효하지 않은 Volume ID 체크
+  if (!params.id || Number.isNaN(volumeId)) {
+    return (
+      <AsideDetailContainer>
+        <EmptyState title="유효하지 않은 볼륨 ID입니다." />
+      </AsideDetailContainer>
+    );
+  }
 
   /**
    * 선택된 탭에 따라 적절한 콘텐츠를 렌더링하는 함수
-   *
-   * @returns 현재 탭에 해당하는 컴포넌트
    */
   const renderContent = () => {
     if (selectedTab === "file") {
-      return <ManageVolumeFile />;
+      return <ManageVolumeFile volumeId={volumeId} />;
     } else {
-      return <UpdateVolume readOnly={readOnly} setReadOnly={setReadOnly} />;
+      return (
+        <UpdateVolume
+          volumeId={volumeId}
+          readOnly={readOnly}
+          setReadOnly={setReadOnly}
+        />
+      );
     }
   };
 
@@ -90,7 +95,7 @@ export function AsideVolume() {
       <AsideDetailHeader>
         <AsideDetailHeaderTitle>상세 정보</AsideDetailHeaderTitle>
         {/* 상세 정보 탭일 때만 수정, 삭제 버튼 표시 */}
-        {/* 파일 탭일 때는 탭 표시 */}
+        {/* 파일 탭일 때는 볼륨 이름 표시 */}
         {selectedTab === "" ? (
           <Icons>
             <IconWrapper
@@ -110,7 +115,7 @@ export function AsideVolume() {
           </Icons>
         ) : (
           <Typography.Text variant="body-1-3" color="#777">
-            {data?.name}
+            {data?.volumeName || volumeName}
           </Typography.Text>
         )}
       </AsideDetailHeader>
@@ -125,6 +130,7 @@ export function AsideVolume() {
     </AsideDetailContainer>
   );
 }
+
 const IconWrapper = styled.button`
   display: flex;
   justify-content: center;

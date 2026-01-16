@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { VolumeListMain } from "@/domain/volume/components/volume-list-main";
+import { VolumeListMain } from "@/domain/volume/components/list/volume-list-main";
 
 export const metadata: Metadata = {
   title: "Volume Management",

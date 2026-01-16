@@ -10,12 +10,12 @@ import {
 
 /** 볼륨 페이지 번호 */
 export const volumePageAtom = atomWithReset<number>(1);
-/** 볼륨 검색어 */
+/** 볼륨 검색 키워드 (입력 필드 값) */
+export const volumeSearchKeywordAtom = atom<string>("");
+/** 볼륨 검색어 (실제 API 요청에 사용) */
 export const volumeSearchTextAtom = atom<string>("");
 /** 체크된 볼륨 목록 */
-export const volumeCheckedListAtom = atomWithReset<Set<string>>(new Set());
-/** 선택된 볼륨 */
-export const volumeSelectedAtom = atom<string | null>(null);
+export const volumeCheckedListAtom = atomWithReset<Set<number>>(new Set());
 /** 볼륨 타입 선택 모달 표시 여부 */
 export const openSelectVolumeModalAtom = atom<boolean>(false);
 /** 온프레미스 볼륨 생성 모달 표시 여부 */

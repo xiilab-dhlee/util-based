@@ -43,7 +43,7 @@ export function DeleteVolumeModal() {
   /**
    * 볼륨 삭제 모달 데이터 구독
    */
-  useSubscribe(VOLUME_EVENTS.sendDeleteVolume, (volumes: VolumeIdType[]) => {
+  useSubscribe<VolumeIdType[]>(VOLUME_EVENTS.sendDeleteVolume, (volumes) => {
     // 삭제할 볼륨 목록 설정
     setDeleteVolumes(volumes);
     // 삭제 모달 열기

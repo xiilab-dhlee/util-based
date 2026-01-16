@@ -1,51 +1,53 @@
 "use client";
 
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
+import { useParams, useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
-import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
-import {
-  volumeCheckedListAtom,
-  volumeSelectedAtom,
-} from "@/domain/volume/state/volume.atom";
-import {
-  getVolumeStatusInfo,
-  getVolumeStorageTypeInfo,
-} from "@/domain/volume/utils/volume.util";
-import { SecurityLevelText } from "@/shared/components/text/security-status-text";
+import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { volumeCheckedListAtom } from "@/domain/volume/state/volume.atom";
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
-// import { PreviewTag } from "@/shared/components/tag/preview-tag";
-
-interface VolumeCardProps extends VolumeListType {
-  isSelected: boolean;
-}
+interface VolumeCardProps extends VolumeListResponse {}
 
 /**
- * 볼륨 카드 컴포넌트의 실제 구현부
+ * 볼륨 카드 컴포넌트
  *
  * 볼륨 정보를 카드 형태로 표시하며, 클릭 시 상세 페이지로 이동합니다.
- * 보안 취약점 정보와 태그를 포함한 볼륨의 주요 정보를 시각적으로
+ * Hub 패턴과 동일하게 URL 기반으로 선택 상태를 관리합니다.
  */
 export function VolumeCard({
-  uid,
-  name,
+  volumeId,
+  volumeName,
   creatorName,
-  storageType,
-  path,
-  status,
-  isSelected,
+  volumeType,
+  mountPath,
+  isPublic,
 }: VolumeCardProps) {
-  const setSelectedVolume = useSetAtom(volumeSelectedAtom);
+  const router = useRouter();
+  const params = useParams<{ id?: string }>();
+
   const [checkedList, setCheckedList] = useAtom(volumeCheckedListAtom);
 
-  const { text } = getVolumeStorageTypeInfo(storageType);
-  const { icon } = getVolumeStatusInfo(status);
-  const isChecked = checkedList.has(uid);
+  const { text } = getVolumeStorageTypeInfo(volumeType);
+  const isChecked = checkedList.has(volumeId);
 
-  // 카드 클릭 핸들러 - 선택 볼륨 상태 변경
+  // URL 파라미터에서 현재 선택된 볼륨 ID 확인
+  const parsedId = params.id ? Number(params.id) : Number.NaN;
+  const selectedVolumeId = Number.isNaN(parsedId) ? -1 : parsedId;
+  const isSelected = selectedVolumeId === volumeId;
+
+  /**
+   * 카드 클릭 핸들러
+   * 해당 볼륨 상세 페이지로 이동
+   */
   const handleClickCard = () => {
-    setSelectedVolume(uid);
+    if (isSelected) return;
+
+    router.push(ROUTES.USER_VOLUME_DETAIL(volumeId));
   };
 
   /**
@@ -55,9 +57,9 @@ export function VolumeCard({
     setCheckedList((prev) => {
       const next = new Set(prev);
       if (checked) {
-        next.add(uid);
+        next.add(volumeId);
       } else {
-        next.delete(uid);
+        next.delete(volumeId);
       }
       return next;
     });
@@ -68,61 +70,30 @@ export function VolumeCard({
       contentVariant="default"
       onCheckboxChange={handleClickCheckbox}
       onClick={handleClickCard}
-      // subtitle="Optional subtitle"
-      title={name}
+      title={volumeName}
       showCheckBox
       checked={isChecked}
-      // 스토리지 타입에 따라 아이콘 변경
-      icon={icon ? <Icon name={icon} size={24} color="#464B51" /> : null}
-      // 선택된 볼륨 카드 스타일
-      style={{ borderColor: isSelected ? "#366BFF" : "" }}
+      icon={!isPublic ? <Icon name="Lock" size={24} color="#464B51" /> : null}
+      selected={isSelected}
+      data-testid={SELECTOR.LIST_CARD}
+      data-volume-id={volumeId}
+      data-selected={isSelected}
     >
       <Container>
-        {/* 카드 본문: 볼륨 정보 표시 */}
         <Body>
-          {/* 왼쪽: 정보 라벨 */}
           <CardLeft>
             <CardKey>스토리지 타입</CardKey>
-            <MultiLineKey>취약점 결과</MultiLineKey>
             <CardKey>Mount Path</CardKey>
             <CardKey>생성자</CardKey>
           </CardLeft>
-          {/* 오른쪽: 정보 값 */}
           <CardRight>
             <CardValue>{text}</CardValue>
-            <CardGrid>
-              <CardGridItem>
-                <SecurityLevelText type="engText" status="CRITICAL">
-                  <SecurityCount>77,777개</SecurityCount>
-                </SecurityLevelText>
-              </CardGridItem>
-              <CardGridItem>
-                <SecurityLevelText type="engText" status="HIGH">
-                  <SecurityCount>77,777개</SecurityCount>
-                </SecurityLevelText>
-              </CardGridItem>
-              <CardGridItem>
-                <SecurityLevelText type="engText" status="MEDIUM">
-                  <SecurityCount>77,777개</SecurityCount>
-                </SecurityLevelText>
-              </CardGridItem>
-              <CardGridItem>
-                <SecurityLevelText type="engText" status="LOW">
-                  <SecurityCount>77,777개</SecurityCount>
-                </SecurityLevelText>
-              </CardGridItem>
-            </CardGrid>
-            {/* 볼륨 경로 정보 */}
             <CardValue>
-              <div className="truncate">{path || "-"}</div>
+              <div className="truncate">{mountPath || "-"}</div>
             </CardValue>
             <CardValue>{creatorName}</CardValue>
           </CardRight>
         </Body>
-        {/* 카드 하단: 태그 및 액션 버튼 */}
-        {/* <Footer>
-          <PreviewTag labels={labels} height={20} />
-        </Footer> */}
       </Container>
     </Card>
   );
@@ -191,13 +162,6 @@ const CardKey = styled.div`
   align-items: flex-start;
 `;
 
-const MultiLineKey = styled(CardKey)`
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  height: 34px;
-`;
-
 /**
  * 오른쪽 정보 값 영역 스타일
  * 유연한 너비와 세로 배치로 정보 표시
@@ -226,27 +190,4 @@ const CardValue = styled.div`
   align-items: center;
   gap: 14px;
   flex: 1;
-`;
-
-const CardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2px;
-`;
-
-const CardGridItem = styled.div`
-  grid-column: span 1;
-`;
-
-/**
- * 보안 취약점 개수 단위 스타일
- * 기본 스타일만 정의 (추가 스타일링 필요시 확장)
- */
-const SecurityCount = styled.span`
-  color: #000;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 16px; 
-  padding-left: 4px;
 `;
