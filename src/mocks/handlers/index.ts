@@ -21,8 +21,6 @@ import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
-// import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
-// import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
 import { kubernetesMonitoringHandlers } from "@/mocks/handlers/kubernetes-monitoring.handler";
 import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
@@ -108,8 +106,6 @@ const rawHandlers = [
   ...accountManagementHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,
-  // ...internalregistryHandlers,
-  // ...internalregistryImageHandlers,
   ...privateRegistryHandlers,
   ...kubernetesMonitoringHandlers,
   ...gpuHandlers,
