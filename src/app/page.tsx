@@ -7,6 +7,7 @@ import {
   ADMIN_ROOT_PATH,
   USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 
 export const metadata = {
   title: "AstraGo",
@@ -38,5 +39,5 @@ export default async function HomePage() {
   }
 
   // 역할이 없는 사용자는 로그인 페이지로 (보안: 권한 없는 접근 차단)
-  redirect("/signin");
+  redirect(ROUTES.AUTH_SIGNIN);
 }
