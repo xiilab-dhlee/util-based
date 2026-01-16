@@ -148,7 +148,7 @@ export const useUpdateWorkspaceResource = <
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다.
+ * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다. 반려 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 반려
  */
 export const rejectResourceRequest = (
@@ -230,7 +230,7 @@ export const useRejectResourceRequest = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다.
+ * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다. 승인 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 승인
  */
 export const approveResourceRequest = (resourceRequestId: number) => {

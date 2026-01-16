@@ -50,6 +50,7 @@ import type {
   BaseResponseDeleteImageTagsResponse,
   BaseResponseImageTagDetailResponse,
   BaseResponseImageTagExistsResponse,
+  BaseResponseListVulnerabilityDetailResponse,
   BaseResponsePageResponseImageTagListResponse,
   BaseResponsePageResponseRegistryListResponse,
   BaseResponseRegistryDetailResponse,
@@ -59,8 +60,10 @@ import type {
   DeleteImageTagsRequest,
   GetPublicImageDetailParams,
   GetPublicImageTagListParams,
+  GetPublicImageTagVulnerabilitiesParams,
   GetPublicRegistryListParams,
   UpdateImageTagRequest,
+  VulnerabilityScanRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -72,12 +75,11 @@ import type {
  * @summary 공용 이미지 태그 수정
  */
 export const updatePublicImageTag = (
-  imageId: number,
   imageTagId: number,
   updateImageTagRequest: UpdateImageTagRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/registries/public/images/${imageId}/image-tags/${imageTagId}`,
+    url: `/api/v1/registries/public/images/image-tags/${imageTagId}`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: updateImageTagRequest,
@@ -91,13 +93,13 @@ export const getUpdatePublicImageTagMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updatePublicImageTag>>,
     TError,
-    { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
+    { imageTagId: number; data: UpdateImageTagRequest },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updatePublicImageTag>>,
   TError,
-  { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
+  { imageTagId: number; data: UpdateImageTagRequest },
   TContext
 > => {
   const mutationKey = ["updatePublicImageTag"];
@@ -111,11 +113,11 @@ export const getUpdatePublicImageTagMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updatePublicImageTag>>,
-    { imageId: number; imageTagId: number; data: UpdateImageTagRequest }
+    { imageTagId: number; data: UpdateImageTagRequest }
   > = (props) => {
-    const { imageId, imageTagId, data } = props ?? {};
+    const { imageTagId, data } = props ?? {};
 
-    return updatePublicImageTag(imageId, imageTagId, data);
+    return updatePublicImageTag(imageTagId, data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -135,7 +137,7 @@ export const useUpdatePublicImageTag = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof updatePublicImageTag>>,
       TError,
-      { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
+      { imageTagId: number; data: UpdateImageTagRequest },
       TContext
     >;
   },
@@ -143,7 +145,7 @@ export const useUpdatePublicImageTag = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof updatePublicImageTag>>,
   TError,
-  { imageId: number; imageTagId: number; data: UpdateImageTagRequest },
+  { imageTagId: number; data: UpdateImageTagRequest },
   TContext
 > => {
   const mutationOptions = getUpdatePublicImageTagMutationOptions(options);
@@ -661,6 +663,93 @@ export const useAddPublicImageTag = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
+            공용 이미지 태그에 대한 취약점 스캔을 트리거합니다.
+            - Harbor Trivy 스캐너를 사용하여 비동기로 스캔이 진행됩니다.
+            - 이미 스캔 중인 경우에도 정상 응답합니다.
+        
+ * @summary 공용 이미지 태그 취약점 스캔 트리거
+ */
+export const scanPublicImageTag = (
+  vulnerabilityScanRequest: VulnerabilityScanRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/registries/public/images/image-tags/scan`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: vulnerabilityScanRequest,
+    signal,
+  });
+};
+
+export const getScanPublicImageTagMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof scanPublicImageTag>>,
+    TError,
+    { data: VulnerabilityScanRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof scanPublicImageTag>>,
+  TError,
+  { data: VulnerabilityScanRequest },
+  TContext
+> => {
+  const mutationKey = ["scanPublicImageTag"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof scanPublicImageTag>>,
+    { data: VulnerabilityScanRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return scanPublicImageTag(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ScanPublicImageTagMutationResult = NonNullable<
+  Awaited<ReturnType<typeof scanPublicImageTag>>
+>;
+export type ScanPublicImageTagMutationBody = VulnerabilityScanRequest;
+export type ScanPublicImageTagMutationError = unknown;
+
+/**
+ * @summary 공용 이미지 태그 취약점 스캔 트리거
+ */
+export const useScanPublicImageTag = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof scanPublicImageTag>>,
+      TError,
+      { data: VulnerabilityScanRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof scanPublicImageTag>>,
+  TError,
+  { data: VulnerabilityScanRequest },
+  TContext
+> => {
+  const mutationOptions = getScanPublicImageTagMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
             공용 레지스트리의 이미지 태그를 삭제합니다.
             - Harbor Artifact와  DB 메타데이터를 함께 삭제합니다.
             - 관리자는 모든 태그를 삭제할 수 있습니다.
@@ -756,23 +845,19 @@ export const useDeletePublicImageTags = <TError = unknown, TContext = unknown>(
  * @summary 공용 이미지 태그 상세 조회
  */
 export const getPublicImageTagDetail = (
-  imageId: number,
   imageTagId: number,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseImageTagDetailResponse>({
-    url: `/api/v1/registries/public/images/${imageId}/image-tags/${imageTagId}/detail`,
+    url: `/api/v1/registries/public/images/image-tags/${imageTagId}/detail`,
     method: "GET",
     signal,
   });
 };
 
-export const getGetPublicImageTagDetailQueryKey = (
-  imageId?: number,
-  imageTagId?: number,
-) => {
+export const getGetPublicImageTagDetailQueryKey = (imageTagId?: number) => {
   return [
-    `/api/v1/registries/public/images/${imageId}/image-tags/${imageTagId}/detail`,
+    `/api/v1/registries/public/images/image-tags/${imageTagId}/detail`,
   ] as const;
 };
 
@@ -780,7 +865,6 @@ export const getGetPublicImageTagDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof getPublicImageTagDetail>>,
   TError = unknown,
 >(
-  imageId: number,
   imageTagId: number,
   options?: {
     query?: Partial<
@@ -795,17 +879,16 @@ export const getGetPublicImageTagDetailQueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ??
-    getGetPublicImageTagDetailQueryKey(imageId, imageTagId);
+    queryOptions?.queryKey ?? getGetPublicImageTagDetailQueryKey(imageTagId);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getPublicImageTagDetail>>
-  > = ({ signal }) => getPublicImageTagDetail(imageId, imageTagId, signal);
+  > = ({ signal }) => getPublicImageTagDetail(imageTagId, signal);
 
   return {
     queryKey,
     queryFn,
-    enabled: !!(imageId && imageTagId),
+    enabled: !!imageTagId,
     ...queryOptions,
   } as UseQueryOptions<
     Awaited<ReturnType<typeof getPublicImageTagDetail>>,
@@ -823,7 +906,6 @@ export function useGetPublicImageTagDetail<
   TData = Awaited<ReturnType<typeof getPublicImageTagDetail>>,
   TError = unknown,
 >(
-  imageId: number,
   imageTagId: number,
   options: {
     query: Partial<
@@ -850,7 +932,6 @@ export function useGetPublicImageTagDetail<
   TData = Awaited<ReturnType<typeof getPublicImageTagDetail>>,
   TError = unknown,
 >(
-  imageId: number,
   imageTagId: number,
   options?: {
     query?: Partial<
@@ -877,7 +958,6 @@ export function useGetPublicImageTagDetail<
   TData = Awaited<ReturnType<typeof getPublicImageTagDetail>>,
   TError = unknown,
 >(
-  imageId: number,
   imageTagId: number,
   options?: {
     query?: Partial<
@@ -900,7 +980,6 @@ export function useGetPublicImageTagDetail<
   TData = Awaited<ReturnType<typeof getPublicImageTagDetail>>,
   TError = unknown,
 >(
-  imageId: number,
   imageTagId: number,
   options?: {
     query?: Partial<
@@ -916,8 +995,180 @@ export function useGetPublicImageTagDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetPublicImageTagDetailQueryOptions(
-    imageId,
     imageTagId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            공용 이미지 태그의 취약점 상세 목록을 조회합니다.
+            - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
+            - 스캔이 완료되지 않은 경우 빈 목록을 반환합니다.
+        
+ * @summary 공용 이미지 태그 취약점 목록 조회
+ */
+export const getPublicImageTagVulnerabilities = (
+  params: GetPublicImageTagVulnerabilitiesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseListVulnerabilityDetailResponse>({
+    url: `/api/v1/registries/public/images/image-tags/vulnerabilities`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetPublicImageTagVulnerabilitiesQueryKey = (
+  params?: GetPublicImageTagVulnerabilitiesParams,
+) => {
+  return [
+    `/api/v1/registries/public/images/image-tags/vulnerabilities`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPublicImageTagVulnerabilitiesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagVulnerabilitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetPublicImageTagVulnerabilitiesQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>
+  > = ({ signal }) => getPublicImageTagVulnerabilities(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPublicImageTagVulnerabilitiesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>
+>;
+export type GetPublicImageTagVulnerabilitiesQueryError = unknown;
+
+export function useGetPublicImageTagVulnerabilities<
+  TData = Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagVulnerabilitiesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageTagVulnerabilities<
+  TData = Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagVulnerabilitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageTagVulnerabilities<
+  TData = Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagVulnerabilitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 공용 이미지 태그 취약점 목록 조회
+ */
+
+export function useGetPublicImageTagVulnerabilities<
+  TData = Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+  TError = unknown,
+>(
+  params: GetPublicImageTagVulnerabilitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagVulnerabilities>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPublicImageTagVulnerabilitiesQueryOptions(
+    params,
     options,
   );
 

@@ -35,6 +35,7 @@ import type {
   BaseResponseDeleteImagesResponse,
   BaseResponseDeleteImageTagsResponse,
   BaseResponseImageTagDetailResponse,
+  BaseResponseListVulnerabilityDetailResponse,
   BaseResponsePageResponseImageTagListResponse,
   BaseResponsePageResponseRegistryListResponse,
   BaseResponseRegistryDetailResponse,
@@ -113,7 +114,7 @@ export const getGetPrivateImageTagListResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      harborArtifactId: faker.number.int({ min: undefined, max: undefined }),
+      harborTagId: faker.number.int({ min: undefined, max: undefined }),
       imageTagId: faker.number.int({ min: undefined, max: undefined }),
       imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageTagSizeByte: faker.number.int({ min: undefined, max: undefined }),
@@ -149,6 +150,16 @@ export const getGetPrivateImageTagListResponseMock = (
 });
 
 export const getAddPrivateImageTagResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getScanPrivateImageTagResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
@@ -226,6 +237,46 @@ export const getGetPrivateImageTagDetailResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetPrivateImageTagVulnerabilitiesResponseMock = (
+  overrideResponse: Partial<BaseResponseListVulnerabilityDetailResponse> = {},
+): BaseResponseListVulnerabilityDetailResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    cveId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    severity: faker.helpers.arrayElement([
+      "CRITICAL",
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "UNKNOWN",
+    ] as const),
+    packageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    currentVersion: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    fixedVersion: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    links: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
+    cvssV3Score: faker.number.float({
+      min: undefined,
+      max: undefined,
+      fractionDigits: 2,
+    }),
+    cweIds: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
+  })),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetPrivateImageDetailResponseMock = (
   overrideResponse: Partial<BaseResponseRegistryDetailResponse> = {},
 ): BaseResponseRegistryDetailResponse => ({
@@ -258,7 +309,7 @@ export const getUpdatePrivateImageTagMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
-    "*/api/v1/registries/private/images/:imageId/image-tags/:imageTagId",
+    "*/api/v1/registries/private/images/image-tags/:imageTagId",
     async (info) => {
       await delay(1000);
 
@@ -393,6 +444,34 @@ export const getAddPrivateImageTagMockHandler = (
   );
 };
 
+export const getScanPrivateImageTagMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/registries/private/images/image-tags/scan",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getScanPrivateImageTagResponseMock(),
+        ),
+        { status: 202, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getDeletePrivateImageTagsMockHandler = (
   overrideResponse?:
     | BaseResponseDeleteImageTagsResponse
@@ -464,7 +543,7 @@ export const getGetPrivateImageTagDetailMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/registries/private/images/:imageId/image-tags/:imageTagId/detail",
+    "*/api/v1/registries/private/images/image-tags/:imageTagId/detail",
     async (info) => {
       await delay(1000);
 
@@ -475,6 +554,36 @@ export const getGetPrivateImageTagDetailMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getGetPrivateImageTagDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetPrivateImageTagVulnerabilitiesMockHandler = (
+  overrideResponse?:
+    | BaseResponseListVulnerabilityDetailResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseListVulnerabilityDetailResponse>
+        | BaseResponseListVulnerabilityDetailResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/registries/private/images/image-tags/vulnerabilities",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPrivateImageTagVulnerabilitiesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -518,8 +627,10 @@ export const getPrivateRegistryMock = () => [
   getCreatePrivateExternalImageMockHandler(),
   getGetPrivateImageTagListMockHandler(),
   getAddPrivateImageTagMockHandler(),
+  getScanPrivateImageTagMockHandler(),
   getDeletePrivateImageTagsMockHandler(),
   getDeletePrivateImagesMockHandler(),
   getGetPrivateImageTagDetailMockHandler(),
+  getGetPrivateImageTagVulnerabilitiesMockHandler(),
   getGetPrivateImageDetailMockHandler(),
 ];

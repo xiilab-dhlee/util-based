@@ -405,6 +405,107 @@ export const getAllAccountsResponse = zod
 
 /**
  * 
+            관리자용 알림 목록을 페이지네이션으로 조회합니다.
+            - ADMIN 역할: ADMIN 대상 알림만 조회
+            - SUPER_ADMIN 역할: ADMIN, SUPER_ADMIN 대상 알림 모두 조회
+            알림 타입, 읽음 여부로 필터링하고, 생성일 기준으로 정렬할 수 있습니다.
+        
+ * @summary 관리자 알림 목록 조회
+ */
+export const getAdminNotificationsParams = zod.object({
+  accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
+});
+
+export const getAdminNotificationsQueryPageNoMin = 0;
+
+export const getAdminNotificationsQueryPageSizeMax = 100;
+
+export const getAdminNotificationsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getAdminNotificationsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAdminNotificationsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  hasRead: zod
+    .boolean()
+    .optional()
+    .describe(
+      "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
+    ),
+  notificationType: zod
+    .array(
+      zod
+        .enum(["LICENSE", "ACCOUNT", "VULNERABILITY", "WORKSPACE", "WORKLOAD"])
+        .describe(
+          "관리자 알림 유형 필터. LICENSE: 라이선스, ACCOUNT: 회원, VULNERABILITY: 보안, WORKSPACE: 워크스페이스, WORKLOAD: 워크로드",
+        ),
+    )
+    .optional()
+    .describe(
+      "알림 유형 필터 (다중 선택 가능). null 또는 빈 리스트: 전체 조회",
+    ),
+  sort: zod
+    .enum(["CREATED_AT"])
+    .optional()
+    .describe("정렬 필드: CREATED_AT. 미입력 시 CREATED_AT"),
+  order: zod.enum(["ASC", "DESC"]).optional(),
+});
+
+export const getAdminNotificationsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              notificationId: zod.number().describe("알림 고유 ID"),
+              notificationTitle: zod.string().describe("알림 제목"),
+              notificationContent: zod.string().describe("알림 본문 메시지"),
+              notificationType: zod
+                .enum([
+                  "LICENSE",
+                  "ACCOUNT",
+                  "VULNERABILITY",
+                  "NODE",
+                  "WORKSPACE",
+                  "WORKLOAD",
+                  "MONITORING",
+                ])
+                .describe("알림 타입"),
+              notificationRole: zod
+                .enum(["SUPER_ADMIN", "ADMIN", "USER", "ALL"])
+                .describe("알림 대상 역할"),
+              createDateTime: zod
+                .string()
+                .datetime({})
+                .describe("알림 생성 일시 (ZonedDateTime)"),
+              isRead: zod.boolean().describe("사용자 읽음 여부"),
+            })
+            .strict()
+            .describe("관리자 알림 목록 조회 응답 (단일 알림 정보)"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             관리자의 전역 알림 설정 목록을 조회합니다. ADMIN 역할 알림만 조회되며, 워크스페이스별 설정이 아닌 전역 설정입니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
         
  * @summary 관리자 알림 설정 조회

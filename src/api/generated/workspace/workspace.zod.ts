@@ -281,7 +281,7 @@ export const getResourceRequestsQueryParams = zod.object({
     .optional()
     .describe("페이지 크기"),
   sort: zod
-    .enum(["REQUESTED_AT", "WORKSPACE_NAME", "APPROVAL_STATUS"])
+    .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
     .optional()
     .describe("정렬 기준 필드"),
   order: zod.enum(["ASC", "DESC"]).optional(),

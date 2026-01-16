@@ -39,7 +39,8 @@ export const updateGroupParams = zod.object({
 
 export const updateGroupBodyGroupNameMax = 50;
 
-export const updateGroupBodyDescriptionMax = 2000;
+export const updateGroupBodyDescriptionMin = 0;
+export const updateGroupBodyDescriptionMax = 255;
 
 export const updateGroupBody = zod
   .object({
@@ -52,9 +53,10 @@ export const updateGroupBody = zod
       ),
     description: zod
       .string()
+      .min(updateGroupBodyDescriptionMin)
       .max(updateGroupBodyDescriptionMax)
       .optional()
-      .describe("그룹 설명. 최대 2000자(한글 1000자)"),
+      .describe("그룹 설명. 최대 255자"),
     accountId: zod
       .array(zod.string())
       .describe(
@@ -87,7 +89,8 @@ export const deleteGroupParams = zod.object({
  */
 export const createGroupBodyGroupNameMax = 50;
 
-export const createGroupBodyDescriptionMax = 2000;
+export const createGroupBodyDescriptionMin = 0;
+export const createGroupBodyDescriptionMax = 255;
 
 export const createGroupBody = zod
   .object({
@@ -100,9 +103,10 @@ export const createGroupBody = zod
       ),
     description: zod
       .string()
+      .min(createGroupBodyDescriptionMin)
       .max(createGroupBodyDescriptionMax)
       .optional()
-      .describe("그룹 설명. 최대 2000자(한글 1000자)"),
+      .describe("그룹 설명. 최대 255자"),
     parentGroupId: zod
       .string()
       .optional()

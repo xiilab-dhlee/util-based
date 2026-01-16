@@ -33,6 +33,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import type {
   BaseResponseListNotificationSetResponse,
+  BaseResponseNotificationDeleteResponse,
   BaseResponsePageResponseNotificationItemResponse,
   BaseResponseProfileResponse,
   BaseResponseSignupResponse,
@@ -112,6 +113,28 @@ export const getPinWorkspaceResponseMock = (
 ): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getDeleteNotificationsResponseMock = (
+  overrideResponse: Partial<BaseResponseNotificationDeleteResponse> = {},
+): BaseResponseNotificationDeleteResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalRequested: faker.number.int({ min: undefined, max: undefined }),
+    successCount: faker.number.int({ min: undefined, max: undefined }),
+    failureCount: faker.number.int({ min: undefined, max: undefined }),
+    failures: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      notificationId: faker.number.int({ min: undefined, max: undefined }),
+      reason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -414,6 +437,36 @@ export const getUnpinWorkspaceMockHandler = (
   );
 };
 
+export const getDeleteNotificationsMockHandler = (
+  overrideResponse?:
+    | BaseResponseNotificationDeleteResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<BaseResponseNotificationDeleteResponse>
+        | BaseResponseNotificationDeleteResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/accounts/:accountId/notifications/delete",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getDeleteNotificationsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getSignupMockHandler = (
   overrideResponse?:
     | BaseResponseSignupResponse
@@ -565,6 +618,7 @@ export const getAccountMock = () => [
   getResetPasswordMockHandler(),
   getPinWorkspaceMockHandler(),
   getUnpinWorkspaceMockHandler(),
+  getDeleteNotificationsMockHandler(),
   getSignupMockHandler(),
   getRequestPasswordResetMockHandler(),
   getVerifyPasswordResetCodeMockHandler(),

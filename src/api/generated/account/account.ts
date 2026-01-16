@@ -47,11 +47,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponseListNotificationSetResponse,
+  BaseResponseNotificationDeleteResponse,
   BaseResponsePageResponseNotificationItemResponse,
   BaseResponseProfileResponse,
   BaseResponseSignupResponse,
   BaseResponseUnit,
   GetNotificationsParams,
+  NotificationDeleteRequest,
   NotificationSetUpdateRequest,
   PasswordCodeVerificationRequest,
   PasswordResetConfirmRequest,
@@ -719,6 +721,93 @@ export const useUnpinWorkspace = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
+ * 
+            선택한 알림들을 일괄 삭제합니다. 본인의 알림만 삭제할 수 있습니다.
+            존재하지 않거나 다른 사용자의 알림, 이미 삭제된 알림은 실패로 카운트됩니다.
+        
+ * @summary 알림 일괄 삭제
+ */
+export const deleteNotifications = (
+  accountId: string,
+  notificationDeleteRequest: NotificationDeleteRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseNotificationDeleteResponse>({
+    url: `/api/v1/accounts/${accountId}/notifications/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: notificationDeleteRequest,
+    signal,
+  });
+};
+
+export const getDeleteNotificationsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteNotifications>>,
+    TError,
+    { accountId: string; data: NotificationDeleteRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteNotifications>>,
+  TError,
+  { accountId: string; data: NotificationDeleteRequest },
+  TContext
+> => {
+  const mutationKey = ["deleteNotifications"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteNotifications>>,
+    { accountId: string; data: NotificationDeleteRequest }
+  > = (props) => {
+    const { accountId, data } = props ?? {};
+
+    return deleteNotifications(accountId, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteNotificationsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteNotifications>>
+>;
+export type DeleteNotificationsMutationBody = NotificationDeleteRequest;
+export type DeleteNotificationsMutationError = unknown;
+
+/**
+ * @summary 알림 일괄 삭제
+ */
+export const useDeleteNotifications = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteNotifications>>,
+      TError,
+      { accountId: string; data: NotificationDeleteRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteNotifications>>,
+  TError,
+  { accountId: string; data: NotificationDeleteRequest },
+  TContext
+> => {
+  const mutationOptions = getDeleteNotificationsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * 새로운 사용자 계정을 생성합니다. 가입 승인 모드가 활성화된 경우 관리자 승인 후 로그인이 가능합니다.
  * @summary 회원가입
  */
@@ -1153,7 +1242,7 @@ export function useGetNotificationSets<
 }
 
 /**
- * 사용자의 알림 목록을 페이징하여 조회합니다. 본인의 알림만 조회할 수 있습니다.
+ * 사용자의 알림 목록을 페이징하여 조회합니다. 본인의 알림만 조회할 수 있으며, 사용자 역할(USER) 알림만 표시됩니다.
  * @summary 알림 목록 조회
  */
 export const getNotifications = (
