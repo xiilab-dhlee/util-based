@@ -4,13 +4,18 @@ import type { JWT } from "next-auth/jwt";
 import { getToken } from "next-auth/jwt";
 
 import type { AccountRole } from "@/shared/constants/core.constant";
+import { MODE, ROUTES } from "@/shared/constants/routes.constant";
 
 // ============================================================================
 // 상수
 // ============================================================================
 
 /** 인증 없이 접근 가능한 공개 경로 */
-const PUBLIC_PATHS = ["/signin", "/signup", "/auth/error"] as const;
+const PUBLIC_PATHS = [
+  ROUTES.AUTH_SIGNIN,
+  ROUTES.AUTH_SIGNUP,
+  "/auth/error",
+] as const;
 
 /** 프록시 처리를 건너뛰는 경로 접두사 */
 const SKIP_PREFIXES = ["/_next", "/api"] as const;
@@ -97,7 +102,7 @@ function hasRole(roles: AccountRole[], requiredRole: AccountRole): boolean {
 
 /** 로그인 페이지로 리다이렉트 URL 생성 */
 function createSignInRedirect(request: NextRequest, callbackPath: string): URL {
-  const url = new URL("/signin", request.url);
+  const url = new URL(ROUTES.AUTH_SIGNIN, request.url);
   url.searchParams.set("callbackUrl", callbackPath);
   return url;
 }
@@ -113,7 +118,7 @@ function createSignInRedirect(request: NextRequest, callbackPath: string): URL {
  * 1. 정적 파일/API 요청 스킵
  * 2. 미인증 사용자 처리
  *    - 테스트 환경(TEST_AUTH_ENABLE=true): 통과 (auth-provider에서 자동 로그인)
- *    - 프로덕션 환경: /signin 리다이렉트 (Keycloak 로그인)
+ *    - 프로덕션 환경: 로그인 페이지로 리다이렉트 (Keycloak 로그인)
  * 3. 인증된 사용자의 로그인 페이지 접근 → 홈으로 리다이렉트
  * 4. 역할 기반 접근 제어 (admin, user 경로)
  */
@@ -142,12 +147,12 @@ export async function proxy(request: NextRequest) {
     }
 
     // 프로덕션 환경: Keycloak 로그인 페이지로 리다이렉트
-    debugLog("🔒 미인증 접근 → /signin 리다이렉트", { from: path });
+    debugLog("🔒 미인증 접근 → 로그인 페이지로 리다이렉트", { from: path });
     return NextResponse.redirect(createSignInRedirect(request, path));
   }
 
   // 4. 인증된 사용자가 로그인 페이지 접근 시 → 홈으로
-  if (token && path === "/signin") {
+  if (token && path === ROUTES.AUTH_SIGNIN) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -156,16 +161,19 @@ export async function proxy(request: NextRequest) {
     const roles = extractRoles(token);
 
     // /admin 경로: ADMIN 필요
-    if (path.startsWith("/admin") && !hasRole(roles, "ADMIN")) {
-      return NextResponse.redirect(new URL("/user", request.url));
+    if (path.startsWith(MODE.ADMIN) && !hasRole(roles, "ADMIN")) {
+      return NextResponse.redirect(new URL(MODE.USER, request.url));
     }
 
     // /user 경로: ADMIN 또는 USER 필요
-    if (path.startsWith("/user")) {
+    if (path.startsWith(MODE.USER)) {
       const hasUserAccess = hasRole(roles, "ADMIN") || hasRole(roles, "USER");
 
       if (!hasUserAccess) {
-        debugLog("🔒 권한 없음 → /signin 리다이렉트", { from: path, roles });
+        debugLog("🔒 권한 없음 → 로그인 페이지로 리다이렉트", {
+          from: path,
+          roles,
+        });
         return NextResponse.redirect(createSignInRedirect(request, path));
       }
     }
