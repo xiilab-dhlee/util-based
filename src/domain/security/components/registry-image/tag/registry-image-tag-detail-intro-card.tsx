@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon, Label } from "xiilab-ui";
@@ -8,6 +7,7 @@ import { Icon, Label } from "xiilab-ui";
 import { RegistryImageTagSecurityCard } from "@/domain/security/components/registry-image/tag/registry-image-tag-security-card";
 import { useGetRegistrySecurityTag } from "@/domain/security/hooks/use-get-registry-security-tag";
 import { VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL } from "@/shared/constants/vulnerability.constant";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
 
 /**
  * 레지스트리 이미지 상세 페이지의 소개 카드 컴포넌트
@@ -28,7 +28,7 @@ export function RegistryImageTagDetailIntroCard() {
   return (
     <Container>
       <Header>
-        <HeaderTitle>{data?.tag}</HeaderTitle>
+        <HeaderTitle>{data?.imageTagName}</HeaderTitle>
       </Header>
       <Body>
         <Row>
@@ -53,7 +53,7 @@ export function RegistryImageTagDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자 :</RowKey>
-              <RowValue>{data?.creatorName}</RowValue>
+              <RowValue>{data?.creatorName ?? "-"}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -64,11 +64,7 @@ export function RegistryImageTagDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성일</RowKey>
-              <RowValue>
-                {data?.creatorDate
-                  ? format(data?.creatorDate, "yyyy.MM.dd")
-                  : "-"}
-              </RowValue>
+              <RowValue>{formatDateTimeSafely(data?.createDateTime)}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -79,7 +75,7 @@ export function RegistryImageTagDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>크기</RowKey>
-              <RowValue>{data?.imageSize}</RowValue>
+              <RowValue>{data?.imageTagSizeByte ?? "-"}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -90,19 +86,19 @@ export function RegistryImageTagDetailIntroCard() {
           <SecurityBody>
             <RegistryImageTagSecurityCard
               level={VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL.critical}
-              count={data?.critical || 0}
+              count={data?.vulnerability?.criticalCount ?? 0}
             />
             <RegistryImageTagSecurityCard
               level={VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL.high}
-              count={data?.high || 0}
+              count={data?.vulnerability?.highCount ?? 0}
             />
             <RegistryImageTagSecurityCard
               level={VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL.medium}
-              count={data?.medium || 0}
+              count={data?.vulnerability?.mediumCount ?? 0}
             />
             <RegistryImageTagSecurityCard
               level={VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL.low}
-              count={data?.low || 0}
+              count={data?.vulnerability?.lowCount ?? 0}
             />
           </SecurityBody>
         </SecurityRow>
