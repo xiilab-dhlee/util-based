@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
@@ -7,6 +7,7 @@ import { DropdownComponent } from "../components/dropdown.component";
 import { PaginationComponent } from "../components/pagination.component";
 import { SearchInputComponent } from "../components/search-input.component";
 import type { AssertLogger } from "../fixtures";
+import { createUnitPattern } from "../support/patterns";
 import { ListPage } from "./list.page";
 
 /**
@@ -85,7 +86,7 @@ export class PrivateRegistryListPage extends ListPage {
   }
 
   /** 등록 중인 이미지 목록 총 개수 Locator */
-  get jobListTotalCount() {
+  get jobListTotalCount(): Locator {
     return this.page.getByTestId(
       PRIVATE_REGISTRY_SELECTOR.JOB_LIST_TOTAL_COUNT,
     );
@@ -105,6 +106,7 @@ export class PrivateRegistryListPage extends ListPage {
 
   /**
    * 등록 중인 이미지 목록 총 개수 표시 검증
+   * UI에서 총 개수 span에는 숫자만 표시됨 (예: "5", "1,234")
    * @param assertLogger - 검증 로거
    */
   async assertJobListTotalCountVisible(
@@ -114,7 +116,7 @@ export class PrivateRegistryListPage extends ListPage {
     assertLogger.assertMatch(
       "등록 중인 이미지 목록 총 개수",
       text,
-      /^\d+(,\d{3})*$/,
+      createUnitPattern(),
     );
   }
 
