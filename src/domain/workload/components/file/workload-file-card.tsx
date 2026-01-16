@@ -4,9 +4,9 @@ import { useSetAtom } from "jotai";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import { WorkloadFileCheckbox } from "@/domain/workload/components/file/workload-file-checkbox";
 import { workloadFileSelectedKeyAtom } from "@/domain/workload/state/workload.atom";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
-import { WorkloadFileCheckbox } from "./workload-file-checkbox";
 
 interface WorkloadFileCardProps extends FileTreeType {}
 

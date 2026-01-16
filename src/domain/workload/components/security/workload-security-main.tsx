@@ -1,11 +1,11 @@
 "use client";
 
+import { WorkloadSecurityBody } from "@/domain/workload/components/security/workload-security-body";
+import { WorkloadSecurityFooter } from "@/domain/workload/components/security/workload-security-footer";
 import {
   DetailContentHeader,
   DetailContentTitle,
 } from "@/styles/layers/detail-page-layers.styled";
-import { WorkloadSecurityBody } from "./workload-security-body";
-import { WorkloadSecurityFooter } from "./workload-security-footer";
 
 export function WorkloadSecurityMain() {
   return (

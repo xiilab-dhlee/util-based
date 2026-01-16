@@ -5,6 +5,10 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import styled from "styled-components";
 
+import { CreateWorkloadFolderModal } from "@/domain/workload/components/file/create-workload-folder-modal";
+import { WorkloadFileButton } from "@/domain/workload/components/file/workload-file-button";
+import { WorkloadFileCheckbox } from "@/domain/workload/components/file/workload-file-checkbox";
+import { WorkloadFileListBody } from "@/domain/workload/components/file/workload-file-list-body";
 import { useGetWorkloadFiles } from "@/domain/workload/hooks/use-get-workload-files";
 import {
   workloadFileSelectedNodeInfoAtom,
@@ -20,10 +24,6 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
-import { CreateWorkloadFolderModal } from "./create-workload-folder-modal";
-import { WorkloadFileButton } from "./workload-file-button";
-import { WorkloadFileCheckbox } from "./workload-file-checkbox";
-import { WorkloadFileListBody } from "./workload-file-list-body";
 
 /**
  * 워크로드 파일 관리 메인 컴포넌트

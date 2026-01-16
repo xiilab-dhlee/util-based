@@ -4,9 +4,9 @@ import { useAtomValue } from "jotai";
 import { useState } from "react";
 import styled from "styled-components";
 
+import { ResourcePresetSelect } from "@/domain/workload/components/create/resource-preset-select";
 import { nodeModeAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import { ResourcePresetSelect } from "./resource-preset-select";
 // import { SetMultinodeResource } from "./set-multinode-resource";
 // import { SetSinglenodeResource } from "./set-singlenode-resource";
 
