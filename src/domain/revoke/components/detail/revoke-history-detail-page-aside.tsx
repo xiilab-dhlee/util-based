@@ -1,9 +1,9 @@
 "use client";
 
+import { RevokeHistoryCriteriaCard } from "@/domain/revoke/components/detail/revoke-history-criteria-card";
+import { RevokeHistoryDetailInfoCard } from "@/domain/revoke/components/detail/revoke-history-detail-info-card";
 import type { RevokeHistoryDetailResponseType } from "@/domain/revoke/schemas/revoke-history.schema";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
-import { RevokeHistoryCriteriaCard } from "./revoke-history-criteria-card";
-import { RevokeHistoryDetailInfoCard } from "./revoke-history-detail-info-card";
 
 interface RevokeHistoryDetailPageAsideProps {
   detailData: RevokeHistoryDetailResponseType | undefined;

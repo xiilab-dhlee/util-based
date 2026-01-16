@@ -4,6 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Input } from "xiilab-ui";
 
+import { RequestImageStatusSort } from "@/domain/request-image/components/request-image-status-sort";
 import { useGetRequestImages } from "@/domain/request-image/hooks/use-get-request-images";
 import {
   requestImagePageAtom,
@@ -11,7 +12,6 @@ import {
 } from "@/domain/request-image/state/request-image.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { RequestImageStatusSort } from "./request-image-status-sort";
 
 /**
  * 이미지 요청 목록 페이지 상단 필터 컴포넌트

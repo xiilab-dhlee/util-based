@@ -4,12 +4,12 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import styled from "styled-components";
 
+import { VolumeCard } from "@/domain/volume/components/volume-card";
 import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { VolumeCard } from "./volume-card";
 
 interface VolumeListBodyProps {
   /** 볼륨 목록 데이터 */

@@ -1,8 +1,8 @@
 "use client";
 
-import { RevokeHistoryDetailBody } from "./revoke-history-detail-body";
-import { RevokeHistoryDetailFilter } from "./revoke-history-detail-filter";
-import { RevokeHistoryDetailFooter } from "./revoke-history-detail-footer";
+import { RevokeHistoryDetailBody } from "@/domain/revoke/components/detail/revoke-history-detail-body";
+import { RevokeHistoryDetailFilter } from "@/domain/revoke/components/detail/revoke-history-detail-filter";
+import { RevokeHistoryDetailFooter } from "@/domain/revoke/components/detail/revoke-history-detail-footer";
 
 interface RevokeHistoryDetailMainProps {
   id: string;

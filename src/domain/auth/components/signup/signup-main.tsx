@@ -15,12 +15,13 @@ import {
   Typography,
 } from "xiilab-ui";
 
+import { CompleteSignup } from "@/domain/auth/components/signup/complete-signup";
 import {
   type SignupFormType,
   signupSchema,
 } from "@/domain/auth/schemas/signup.schema";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
-import { CompleteSignup } from "./complete-signup";
 
 /**
  * 회원가입 페이지의 메인 컴포넌트
@@ -262,7 +263,7 @@ export function SignupMain() {
           계정이 있으신가요?
         </Typography.Text>
         <StyledLink
-          href="/signin"
+          href={ROUTES.AUTH_SIGNIN}
           data-testid={AUTH_SELECTOR.SIGNUP_LOGIN_LINK}
         >
           <Typography.Text variant="body-2-3" color="#544AD8">

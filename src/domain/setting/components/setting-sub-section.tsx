@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
+import { SettingCredentialListBody } from "@/domain/setting/components/setting-credential-list-body";
+import { SettingCredentialListFilter } from "@/domain/setting/components/setting-credential-list-filter";
 import { SettingRequestResourceListMain } from "@/domain/setting/components/setting-request-resource-list-main";
-import { SettingCredentialListBody } from "./setting-credential-list-body";
-import { SettingCredentialListFilter } from "./setting-credential-list-filter";
 
 export function SettingSubSection() {
   return (

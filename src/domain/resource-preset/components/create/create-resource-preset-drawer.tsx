@@ -5,14 +5,14 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button, Drawer, Typography } from "xiilab-ui";
 
+import { CreateResourcePresetBasicInfo } from "@/domain/resource-preset/components/create/create-resource-preset-basic-info";
+import { CreateResourcePresetGpuInfo } from "@/domain/resource-preset/components/create/create-resource-preset-gpu-info";
+import { CreateResourcePresetJobType } from "@/domain/resource-preset/components/create/create-resource-preset-job-type";
+import { CreateResourcePresetResourceInfo } from "@/domain/resource-preset/components/create/create-resource-preset-resource-info";
 import { useCreateResourcePreset } from "@/domain/resource-preset/hooks/use-create-resource-preset";
 import { useResourcePresetForm } from "@/domain/resource-preset/hooks/use-resource-preset-form";
 import { openCreateResourcePresetDrawerAtom } from "@/domain/resource-preset/state/resource-preset-form.atom";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
-import { CreateResourcePresetBasicInfo } from "./create-resource-preset-basic-info";
-import { CreateResourcePresetGpuInfo } from "./create-resource-preset-gpu-info";
-import { CreateResourcePresetJobType } from "./create-resource-preset-job-type";
-import { CreateResourcePresetResourceInfo } from "./create-resource-preset-resource-info";
 
 export function CreateResourcePresetDrawer() {
   const [open, setOpen] = useAtom(openCreateResourcePresetDrawerAtom);

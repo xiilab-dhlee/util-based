@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ import {
   Modal,
 } from "xiilab-ui";
 
+import { ManageMonitoringNotificationSetting } from "@/domain/monitoring-notification/components/manage-monitoring-notification-setting";
 import { useCreateMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-create-monitoring-notification";
 import { useMonitoringNotificationForm } from "@/domain/monitoring-notification/hooks/use-monitoring-notification-form";
 import { useUpdateMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-update-monitoring-notification";
@@ -27,7 +28,6 @@ import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { FormRow } from "@/styles/layers/form-layer.styled";
-import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
 
 const TEMP_NODE_OPTIONS = [
   { label: "node1", value: "node1" },

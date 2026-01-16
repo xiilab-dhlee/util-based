@@ -8,6 +8,7 @@ import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astr
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
 import { CreateVolumeFolderModal } from "@/domain/volume/components/create-volume-folder-modal";
 import { DeleteVolumeModal } from "@/domain/volume/components/delete-volume-modal";
+import { DeleteVolumeFileModal } from "@/domain/volume/components/file/delete-volume-file-modal";
 import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
 import { VolumeListBody } from "@/domain/volume/components/volume-list-body";
 import { VolumeListFilter } from "@/domain/volume/components/volume-list-filter";
@@ -25,7 +26,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { DeleteVolumeFileModal } from "./file/delete-volume-file-modal";
 
 /**
  * 볼륨 목록 페이지의 메인 컴포넌트

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+import { UserMonitoringWorkloadStatus } from "@/domain/user-monitoring/components/user-monitoring-workload-status";
 import { ResourceUsageCard } from "@/shared/components/card/resource-usage-card";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreResourceType } from "@/shared/types/core.interface";
@@ -8,7 +9,6 @@ import {
   UserMonitoringSectionDescription,
   UserMonitoringSectionHeader,
 } from "@/styles/layers/user-monitoring-layers.styled";
-import { UserMonitoringWorkloadStatus } from "./user-monitoring-workload-status";
 
 export function UserMonitoringWorkloadArticle() {
   return (

@@ -1,11 +1,12 @@
 "use client";
 
+import { SettingCredentialCard } from "@/domain/setting/components/setting-credential-card";
 import { SETTING_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
 import { useGetSettingCredentials } from "@/domain/setting/hooks/use-get-setting-credentials";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { SettingCredentialCard } from "./setting-credential-card";
 
 export function SettingCredentialListBody() {
   const { data, isLoading, isError } = useGetSettingCredentials({
@@ -25,7 +26,7 @@ export function SettingCredentialListBody() {
   if (isError) {
     return (
       <ListWrapper>
-        <EmptyState title="데이터를 불러오는 중 오류가 발생했습니다" />
+        <EmptyState title={TABLE_MESSAGE.ERROR} />
       </ListWrapper>
     );
   }

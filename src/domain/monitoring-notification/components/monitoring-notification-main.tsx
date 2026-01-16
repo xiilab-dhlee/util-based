@@ -3,6 +3,11 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import { ManageMonitoringNotificationModal } from "@/domain/monitoring-notification/components/manage-monitoring-notification-modal";
+import { MonitoringNotificationListArticle } from "@/domain/monitoring-notification/components/monitoring-notification-list-article";
+import { MonitoringNotificationSettingArticle } from "@/domain/monitoring-notification/components/monitoring-notification-setting-article";
+import { ViewMonitoringNotificationHistoryModal } from "@/domain/monitoring-notification/components/view-monitoring-notification-history-modal";
+import { ViewMonitoringNotificationModal } from "@/domain/monitoring-notification/components/view-monitoring-notification-modal";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
@@ -16,11 +21,6 @@ import {
   ListPageMain,
   ListSectionTitle,
 } from "@/styles/layers/list-page-layers.styled";
-import { ManageMonitoringNotificationModal } from "./manage-monitoring-notification-modal";
-import { MonitoringNotificationListArticle } from "./monitoring-notification-list-article";
-import { MonitoringNotificationSettingArticle } from "./monitoring-notification-setting-article";
-import { ViewMonitoringNotificationHistoryModal } from "./view-monitoring-notification-history-modal";
-import { ViewMonitoringNotificationModal } from "./view-monitoring-notification-modal";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {

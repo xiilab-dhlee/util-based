@@ -1,4 +1,4 @@
-import type { RequestResourceStatusType } from "../schemas/request-resource.schema";
+import type { RequestResourceStatusType } from "@/domain/request-resource/schemas/request-resource.schema";
 
 /** 리소스 요청 상태 타입 (re-export for convenience) */
 export type RequestResourceStatus = RequestResourceStatusType;

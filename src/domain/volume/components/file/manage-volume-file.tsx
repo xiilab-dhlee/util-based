@@ -1,10 +1,17 @@
-﻿"use client";
+"use client";
 
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
+import { PreviewVolumeFile } from "@/domain/volume/components/file/preview-volume-file";
+import { VolumeCompressFileButton } from "@/domain/volume/components/file/volume-compress-file-button";
+import { VolumeCreateFolderButton } from "@/domain/volume/components/file/volume-create-folder-button";
+import { VolumeDeleteFileButton } from "@/domain/volume/components/file/volume-delete-file-button";
+import { VolumeFileButton } from "@/domain/volume/components/file/volume-file-button";
+import { VolumeFileCheckbox } from "@/domain/volume/components/file/volume-file-checkbox";
+import { VolumeUnzipFileButton } from "@/domain/volume/components/file/volume-unzip-file-button";
 import { useGetVolumeFiles } from "@/domain/volume/hooks/use-get-volume-files";
 import {
   volumeFileTreeDataAtom,
@@ -21,13 +28,6 @@ import {
   AsideDetailArticleBody,
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
-import { PreviewVolumeFile } from "./preview-volume-file";
-import { VolumeCompressFileButton } from "./volume-compress-file-button";
-import { VolumeCreateFolderButton } from "./volume-create-folder-button";
-import { VolumeDeleteFileButton } from "./volume-delete-file-button";
-import { VolumeFileButton } from "./volume-file-button";
-import { VolumeFileCheckbox } from "./volume-file-checkbox";
-import { VolumeUnzipFileButton } from "./volume-unzip-file-button";
 
 /**
  * ManageVolumeFile 컴포넌트

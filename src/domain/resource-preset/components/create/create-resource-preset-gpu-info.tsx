@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Form, FormItem, Icon } from "xiilab-ui";
 
+import { MigProfileSelectDropdown } from "@/domain/resource-preset/components/create/dropdowns/mig-profile-select-dropdown";
+import { NodeSelectDropdown } from "@/domain/resource-preset/components/create/dropdowns/node-select-dropdown";
 import {
   GPU_TYPE_OPTIONS,
   getGpuSelectLabel,
@@ -12,7 +14,10 @@ import {
 } from "@/domain/resource-preset/constants/gpu-info.constant";
 import { useResourcePresetForm } from "@/domain/resource-preset/hooks/use-resource-preset-form";
 import type { ResourcePresetGpuType } from "@/domain/resource-preset/schemas/resource-preset.schema";
-import { INITIAL_SINGLE_NODE_RESOURCE } from "@/domain/resource-preset/state/resource-preset-form.atom";
+import {
+  INITIAL_SINGLE_NODE_RESOURCE,
+  openCreateResourcePresetDrawerAtom,
+} from "@/domain/resource-preset/state/resource-preset-form.atom";
 import {
   isMultiNodeEnabled,
   showGpuNodeDropdown,
@@ -35,9 +40,6 @@ import {
   FormSectionContainer,
   FormSectionHeader,
 } from "@/styles/layers/form-layer.styled";
-import { openCreateResourcePresetDrawerAtom } from "../../state/resource-preset-form.atom";
-import { MigProfileSelectDropdown } from "./dropdowns/mig-profile-select-dropdown";
-import { NodeSelectDropdown } from "./dropdowns/node-select-dropdown";
 
 /* =============================================================================
    메인 컴포넌트

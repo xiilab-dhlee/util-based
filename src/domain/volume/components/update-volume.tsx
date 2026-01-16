@@ -11,6 +11,8 @@ import {
   //  Tag
 } from "xiilab-ui";
 
+import { EmptyVolumeWorkload } from "@/domain/volume/components/empty-volume-workload";
+import { VolumeWorkloadCard } from "@/domain/volume/components/volume-workload-card";
 import { useGetVolume } from "@/domain/volume/hooks/use-get-volume";
 import { useUpdateVolume } from "@/domain/volume/hooks/use-update-volume";
 import { volumeSelectedAtom } from "@/domain/volume/state/volume.atom";
@@ -42,8 +44,6 @@ import {
   getVolumeStatusInfo,
   getVolumeStorageTypeInfo,
 } from "../utils/volume.util";
-import { EmptyVolumeWorkload } from "./empty-volume-workload";
-import { VolumeWorkloadCard } from "./volume-workload-card";
 
 interface UpdateVolumeProps {
   readOnly: boolean;

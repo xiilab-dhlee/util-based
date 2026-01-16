@@ -4,7 +4,10 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { Dropdown } from "xiilab-ui";
 
-import { getCredentials } from "@/api/generated/credential/credential";
+import {
+  getCredentials,
+  getGetCredentialsQueryKey,
+} from "@/api/generated/credential/credential";
 import type { CredentialIdType } from "@/domain/credential/schemas/credential.schema";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
@@ -13,7 +16,6 @@ import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 // 상수
 // ============================================================================
 
-const QUERY_KEY = "credential-select";
 const PAGE_SIZE = 30;
 
 // ============================================================================
@@ -32,16 +34,23 @@ interface CredentialSelectProps {
 function useCredentialOptions(keyword: string) {
   const { data: session } = useSession();
   const accountId = session?.user?.id ?? "";
+  const normalizedKeyword = keyword === "" ? undefined : keyword;
 
   const query = useInfiniteQuery({
-    queryKey: [QUERY_KEY, accountId, keyword, PAGE_SIZE],
+    queryKey: [
+      ...getGetCredentialsQueryKey(accountId, {
+        pageSize: PAGE_SIZE,
+        keyword: normalizedKeyword,
+      }),
+      "infinite",
+    ],
     queryFn: ({ pageParam = 0, signal }) =>
       getCredentials(
         accountId,
         {
           pageNo: pageParam,
           pageSize: PAGE_SIZE,
-          keyword: keyword || undefined,
+          keyword: normalizedKeyword,
         },
         signal,
       ),

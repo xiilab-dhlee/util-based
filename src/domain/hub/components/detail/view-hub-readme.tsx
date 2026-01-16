@@ -6,6 +6,7 @@ import { useFindHubDetail } from "@/api/generated/hub/hub";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MarkdownToHtml } from "@/shared/components/markdown-to-html";
 import { MySpinner } from "@/shared/components/spinner";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   AsideDetailArticle,
@@ -30,7 +31,7 @@ export function ViewHubReadme({ hubId }: ViewHubReadmeProps) {
   if (isError) {
     return (
       <Container>
-        <EmptyState title="데이터를 불러오는 중 오류가 발생했습니다" />
+        <EmptyState title={TABLE_MESSAGE.ERROR} />
       </Container>
     );
   }
