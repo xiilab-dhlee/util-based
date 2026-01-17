@@ -28,18 +28,23 @@ function authDebug(message: string): void {
 // ============================================================================
 
 /**
- * AxiosService에 세션 제공자 주입
- * API 요청 시 자동으로 토큰이 포함되도록 함
+ * AxiosService에 세션 제공자 및 갱신자 주입
+ * - 세션 제공자: API 요청 시 자동으로 토큰 포함
+ * - 세션 갱신자: 401 에러 시 토큰 갱신 후 재시도
  */
 function useAxiosSessionSync(session: Session | null) {
+  const { update } = useSession();
+
   useEffect(() => {
     const axiosService = AxiosService.getInstance();
     axiosService.setSessionProvider(() => session);
+    axiosService.setSessionUpdater(update);
 
     return () => {
       axiosService.clearSessionProvider();
+      axiosService.clearSessionUpdater();
     };
-  }, [session]);
+  }, [session, update]);
 }
 
 /**
