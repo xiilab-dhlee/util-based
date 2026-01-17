@@ -46,7 +46,7 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
       <MyItemsOnlySwitch checked={true} />
       <Input.Search
         name="search"
-        placeholder="볼륨 또는 생성자 이름 검색"
+        placeholder="볼륨 이름을 검색해 주세요."
         onSearch={handleSearch}
         onChange={handleSearchKeywordChange}
         autoComplete="off"

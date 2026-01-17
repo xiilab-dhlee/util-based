@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, type TabsSeparatedItem, Typography } from "xiilab-ui";
@@ -39,9 +39,7 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
  */
 export function VolumeDetailMain() {
   const params = useParams<{ id: string }>();
-  const searchParams = useSearchParams();
   const volumeId = Number(params.id);
-  const volumeName = searchParams.get("name") || "";
 
   // 현재 선택된 탭 상태 관리
   const [selectedTab, setSelectedTab] = useState("");
@@ -91,11 +89,9 @@ export function VolumeDetailMain() {
   };
 
   return (
-    <AsideDetailContainer>
-      <AsideDetailHeader>
-        <AsideDetailHeaderTitle>상세 정보</AsideDetailHeaderTitle>
-        {/* 상세 정보 탭일 때만 수정, 삭제 버튼 표시 */}
-        {/* 파일 탭일 때는 볼륨 이름 표시 */}
+    <StyledAsideDetailContainer>
+      <StyledAsideDetailHeader>
+        <AsideDetailHeaderTitle>볼륨 상세 정보</AsideDetailHeaderTitle>
         {selectedTab === "" ? (
           <Icons>
             <IconWrapper
@@ -115,10 +111,10 @@ export function VolumeDetailMain() {
           </Icons>
         ) : (
           <Typography.Text variant="body-1-3" color="#777">
-            {data?.volumeName || volumeName}
+            {data?.volumeName || "-"}
           </Typography.Text>
         )}
-      </AsideDetailHeader>
+      </StyledAsideDetailHeader>
       <div style={{ marginBottom: 16 }}>
         <StateTab
           items={TAB_ITEMS}
@@ -127,16 +123,24 @@ export function VolumeDetailMain() {
         />
       </div>
       {renderContent()}
-    </AsideDetailContainer>
+    </StyledAsideDetailContainer>
   );
 }
+
+const StyledAsideDetailContainer = styled(AsideDetailContainer)`
+  padding: 19px 24px 20px 24px;
+`;
+
+const StyledAsideDetailHeader = styled(AsideDetailHeader)`
+  margin-bottom: 12px;
+`;
 
 const IconWrapper = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   border-radius: 2px;
   border: 1px solid #e0e0e0;
 `;

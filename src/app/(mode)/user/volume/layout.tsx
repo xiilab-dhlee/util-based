@@ -46,16 +46,23 @@ export default function UserVolumeLayout({ children }: PropsWithChildren) {
   const page = useAtomValue(volumePageAtom);
   const searchText = useAtomValue(volumeSearchTextAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-  const workspaceId = selectedWorkspace?.workspaceId ?? undefined;
+  const workspaceId = selectedWorkspace?.workspaceId ?? 0;
   const pathname = usePathname();
   const isVolumeListPage = pathname === ROUTES.USER_VOLUME;
 
-  const { data, isLoading, isError } = useGetVolumeList({
-    pageNo: page - 1,
-    pageSize: VOLUME_PAGE_SIZE,
-    keyword: searchText || undefined,
-    workspaceId,
-  });
+  const { data, isLoading, isError } = useGetVolumeList(
+    {
+      pageNo: page - 1,
+      pageSize: VOLUME_PAGE_SIZE,
+      keyword: searchText || undefined,
+      workspaceId,
+    },
+    {
+      query: {
+        enabled: !!workspaceId,
+      },
+    },
+  );
 
   // orval 응답에서 데이터 추출 (customInstance가 BaseResponse.data를 자동 언랩)
   const content = data?.content ?? [];

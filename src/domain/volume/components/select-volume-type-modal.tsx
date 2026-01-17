@@ -1,6 +1,5 @@
 "use client";
 
-import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -14,9 +13,7 @@ import {
   openCreateOnPremiseVolumeModalAtom,
   openSelectVolumeModalAtom,
 } from "@/domain/volume/state/volume.atom";
-import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 /**
  * 볼륨 스토리지 타입 선택 모달 컴포넌트
@@ -29,10 +26,10 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 export function SelectVolumeTypeModal() {
   // 모달 상태 관리
   const { open, onClose } = useGlobalModal(openSelectVolumeModalAtom);
-  const setOpenCreateAstragoVolumeModal = useSetAtom(
+  const { onOpen: onOpenCreateAstragoVolumeModal } = useGlobalModal(
     openCreateAstragoVolumeModalAtom,
   );
-  const setOpenCreateOnPremiseVolumeModal = useSetAtom(
+  const { onOpen: onOpenCreateOnPremiseVolumeModal } = useGlobalModal(
     openCreateOnPremiseVolumeModalAtom,
   );
 
@@ -53,20 +50,13 @@ export function SelectVolumeTypeModal() {
     onClose();
 
     if (type === "ASTRAGO") {
-      setOpenCreateAstragoVolumeModal(true);
+      onOpenCreateAstragoVolumeModal();
     } else if (type === "LOCAL") {
-      setOpenCreateOnPremiseVolumeModal(true);
+      onOpenCreateOnPremiseVolumeModal();
     } else {
       toast.error("스토리지 타입을 선택해 주세요.");
     }
   };
-
-  /**
-   * 선택된 스토리지 타입 초기화 핸들러
-   */
-  useSubscribe(VOLUME_EVENTS.clearSelectVolumeModal, () => {
-    setStorageType(null);
-  });
 
   return (
     <InfoModal
