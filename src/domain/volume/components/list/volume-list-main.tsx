@@ -5,6 +5,7 @@ import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
 import {
+  volumeCheckedListAtom,
   volumePageAtom,
   volumeSearchKeywordAtom,
   volumeSearchTextAtom,
@@ -16,13 +17,15 @@ export function VolumeListMain() {
   const resetPage = useResetAtom(volumePageAtom);
   const setSearchText = useSetAtom(volumeSearchTextAtom);
   const setSearchKeyword = useSetAtom(volumeSearchKeywordAtom);
+  const resetCheckedList = useResetAtom(volumeCheckedListAtom);
 
   // 페이지 최초 진입 시 페이지 번호와 검색어 초기화
   useEffect(() => {
     resetPage();
     setSearchText("");
     setSearchKeyword("");
-  }, [resetPage, setSearchText, setSearchKeyword]);
+    resetCheckedList();
+  }, [resetPage, setSearchText, setSearchKeyword, resetCheckedList]);
 
   return (
     <AsideDetailContainer>
