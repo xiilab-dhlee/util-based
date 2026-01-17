@@ -10,8 +10,8 @@ import { CompressVolumeFileModal } from "@/domain/volume/components/compress-vol
 import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
 import { CreateVolumeFolderModal } from "@/domain/volume/components/create-volume-folder-modal";
+import { DeleteVolumeFileModal } from "@/domain/volume/components/delete-volume-file-modal";
 import { DeleteVolumeModal } from "@/domain/volume/components/delete-volume-modal";
-import { DeleteVolumeFileModal } from "@/domain/volume/components/file/delete-volume-file-modal";
 import { VolumeListBody } from "@/domain/volume/components/list/volume-list-body";
 import { VolumeListFilter } from "@/domain/volume/components/list/volume-list-filter";
 import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-footer";

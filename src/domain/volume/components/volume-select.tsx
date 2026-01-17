@@ -3,27 +3,39 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Dropdown } from "xiilab-ui";
 
-import { useGetVolumeOptions } from "@/domain/volume/hooks/use-get-volume-options";
-import type {
-  VolumeIdType,
-  VolumeListType,
-} from "@/domain/volume/schemas/volume.schema";
+import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetVolumeList } from "@/api/generated/volume/volume";
+import type { CoreDropdownOption } from "@/shared/types/core.model";
 
 interface VolumeSelectProps {
-  value: VolumeListType | null;
-  setValue: Dispatch<SetStateAction<VolumeListType | null>>;
+  value: VolumeListResponse | null;
+  setValue: Dispatch<SetStateAction<VolumeListResponse | null>>;
 }
 
 export function VolumeSelect({ value, setValue }: VolumeSelectProps) {
-  const { data } = useGetVolumeOptions();
+  const { data: options } = useGetVolumeList(
+    { pageNo: 0, pageSize: 100 },
+    {
+      query: {
+        select: (response) =>
+          response.content?.map(
+            (volume): CoreDropdownOption<VolumeListResponse> => ({
+              label: volume.volumeName,
+              value: volume.volumeId,
+              origin: volume,
+            }),
+          ) ?? [],
+      },
+    },
+  );
 
-  const handleChange = (next: VolumeIdType | null) => {
+  const handleChange = (next: number | null) => {
     if (next === null) {
       setValue(null);
       return;
     }
 
-    const selectedOption = data?.find((v) => v.origin.uid === next);
+    const selectedOption = options?.find((v) => v.origin.volumeId === next);
 
     if (selectedOption) {
       setValue(selectedOption.origin);
@@ -33,8 +45,8 @@ export function VolumeSelect({ value, setValue }: VolumeSelectProps) {
   return (
     <Dropdown
       placeholder="볼륨을 선택해 주세요."
-      options={data || []}
-      value={value?.uid || null}
+      options={options || []}
+      value={value?.volumeId || null}
       onChange={handleChange}
       width="100%"
     />

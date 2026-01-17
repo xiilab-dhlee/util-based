@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import styled from "styled-components";
 
 import type { VolumeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -8,6 +7,7 @@ import {
   getVolumeStatusInfo,
   getVolumeStorageTypeInfo,
 } from "@/domain/volume/utils/volume.util";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
 import {
   AsideDetailArticleBody,
@@ -22,7 +22,8 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface ViewVolumeDetailProps {
-  data: VolumeDetailResponse | undefined;
+  data?: VolumeDetailResponse;
+  isLoading: boolean;
 }
 
 /**
@@ -30,9 +31,9 @@ interface ViewVolumeDetailProps {
  *
  * 볼륨의 기본 정보, 설정 내용, 생성 정보를 표시합니다.
  */
-export function ViewVolumeDetail({ data }: ViewVolumeDetailProps) {
+export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
   const { text: storageTypeText } = getVolumeStorageTypeInfo(data?.volumeType);
-  const { text: statusText } = getVolumeStatusInfo(data?.isPublic ?? false);
+  const { text: statusText } = getVolumeStatusInfo(data?.isPublic);
 
   return (
     <StyledArticleBody>
@@ -52,13 +53,13 @@ export function ViewVolumeDetail({ data }: ViewVolumeDetailProps) {
         <AsideDetailArticleColumn>
           <AsideDetailArticleKey>스토리지 타입</AsideDetailArticleKey>
           <AsideDetailArticleValue className="truncate">
-            {storageTypeText}
+            {storageTypeText || "-"}
           </AsideDetailArticleValue>
         </AsideDetailArticleColumn>
 
         <AsideDetailArticleColumn>
           <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
-          <AsideDetailArticleValue>{statusText}</AsideDetailArticleValue>
+          <AsideDetailArticleValue>{statusText || "-"}</AsideDetailArticleValue>
         </AsideDetailArticleColumn>
 
         <AsideDetailArticleColumn>
@@ -77,6 +78,19 @@ export function ViewVolumeDetail({ data }: ViewVolumeDetailProps) {
             <AsideDetailArticleHeader>
               <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
             </AsideDetailArticleHeader>
+
+            {isLoading && (
+              <>
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>Loading...</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>-</AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+                <AsideDetailArticleColumn>
+                  <AsideDetailArticleKey>Loading...</AsideDetailArticleKey>
+                  <AsideDetailArticleValue>-</AsideDetailArticleValue>
+                </AsideDetailArticleColumn>
+              </>
+            )}
 
             {data?.volumeType === "ASTRAGO" && (
               <>
@@ -129,7 +143,7 @@ export function ViewVolumeDetail({ data }: ViewVolumeDetailProps) {
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
               <AsideDetailArticleValue>
-                {data?.createdAt ? format(data.createdAt, "yyyy.MM.dd") : "-"}
+                {formatDateSafely(data?.createdAt)}
               </AsideDetailArticleValue>
             </AsideDetailArticleColumn>
           </AsideDetailArticleRowItem>

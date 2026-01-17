@@ -47,7 +47,7 @@ export function VolumeDetailMain() {
   const [selectedTab, setSelectedTab] = useState("");
   const [mode, setMode] = useState<ViewMode>("view");
 
-  const { data } = useGetVolumeDetail(volumeId, {
+  const { data, isLoading } = useGetVolumeDetail(volumeId, {
     query: {
       enabled: !Number.isNaN(volumeId),
     },
@@ -95,7 +95,7 @@ export function VolumeDetailMain() {
       );
     }
 
-    return <ViewVolumeDetail data={data} />;
+    return <ViewVolumeDetail data={data} isLoading={isLoading} />;
   };
 
   const showActionButtons = selectedTab === "" && mode === "view";
