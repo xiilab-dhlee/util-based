@@ -1,12 +1,18 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteVolume } from "@/domain/volume/hooks/use-delete-volume";
-import type { VolumeIdType } from "@/domain/volume/schemas/volume.schema";
+import {
+  getGetVolumeListQueryKey,
+  useDeleteVolume,
+} from "@/api/generated/volume/volume";
 import { openDeleteVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -16,11 +22,14 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
  * 선택한 볼륨을 삭제할 수 있는 모달입니다.
  */
 export function DeleteVolumeModal() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   // useGlobalModal 훅을 사용하여 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(openDeleteVolumeModalAtom);
 
   // 삭제할 볼륨 목록
-  const [deleteVolumes, setDeleteVolumes] = useState<VolumeIdType[]>([]);
+  const [deleteVolumeIds, setDeleteVolumeIds] = useState<number[]>([]);
 
   const deleteVolume = useDeleteVolume();
 
@@ -30,22 +39,30 @@ export function DeleteVolumeModal() {
    * 볼륨 삭제를 실행하고 모달을 닫습니다.
    * 삭제 성공 시 관련 컴포넌트에서 데이터가 자동으로 갱신됩니다.
    */
-  const handleOk = () => {
-    // 볼륨 삭제 실행
-    deleteVolume.mutate(deleteVolumes, {
-      onSuccess: () => {
-        // 모달 닫기
-        onClose();
-      },
+  const handleOk = async () => {
+    // 볼륨 순차 삭제 실행
+    for (const volumeId of deleteVolumeIds) {
+      await deleteVolume.mutateAsync({ volumeId });
+    }
+    toast.success("볼륨 삭제 성공");
+    onClose();
+    queryClient.invalidateQueries({
+      queryKey: getGetVolumeListQueryKey(),
     });
+    router.replace(ROUTES.USER_VOLUME);
+  };
+
+  const handleCancel = () => {
+    if (deleteVolume.isPending) return;
+    onClose();
   };
 
   /**
    * 볼륨 삭제 모달 데이터 구독
    */
-  useSubscribe<VolumeIdType[]>(VOLUME_EVENTS.sendDeleteVolume, (volumes) => {
+  useSubscribe<number[]>(VOLUME_EVENTS.sendDeleteVolume, (volumeIds) => {
     // 삭제할 볼륨 목록 설정
-    setDeleteVolumes(volumes);
+    setDeleteVolumeIds(volumeIds);
     // 삭제 모달 열기
     onOpen();
   });
@@ -55,12 +72,15 @@ export function DeleteVolumeModal() {
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={onClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       title="볼륨 삭제"
       centered
       okButtonProps={{
         loading: deleteVolume.isPending,
+      }}
+      cancelButtonProps={{
+        disabled: deleteVolume.isPending,
       }}
     >
       <div>선택한 볼륨을 삭제하시겠습니까?</div>
