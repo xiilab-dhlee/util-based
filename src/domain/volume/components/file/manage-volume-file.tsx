@@ -1,31 +1,25 @@
 "use client";
 
-import { useAtom } from "jotai";
-import { useEffect } from "react";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
-import { useListFiles } from "@/api/generated/volume/volume";
-import { volumeFileTreeDataAtom } from "@/domain/volume/state/volume.atom";
-import { convertToFileTreeType } from "@/domain/volume/utils/volume.util";
-import { vulnerabilityListMock } from "@/mocks/data/vulnerability.mock";
+import { useVolumeFileTree } from "@/domain/volume/hooks/use-volume-file-tree";
 import { MyDropdown } from "@/shared/components/dropdown";
+import { MySpinner } from "@/shared/components/spinner";
 import { RootCustomFileNode } from "@/shared/components/tree/custom-file-node";
 import { CustomFileTree } from "@/shared/components/tree/custom-file-tree";
-import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
+import { CompressVolumeFileButton } from "./compress-volume-file-button";
+import { CreateVolumeFolderButton } from "./create-volume-folder-button";
+import { DeleteVolumeFileButton } from "./delete-volume-file-button";
 import { PreviewVolumeFile } from "./preview-volume-file";
-import { VolumeCompressFileButton } from "./volume-compress-file-button";
-import { VolumeCreateFolderButton } from "./volume-create-folder-button";
-import { VolumeDeleteFileButton } from "./volume-delete-file-button";
+import { UnzipVolumeFileButton } from "./unzip-volume-file-button";
 import { VolumeFileButton } from "./volume-file-button";
 import { VolumeFileCheckbox } from "./volume-file-checkbox";
-import { VolumeUnzipFileButton } from "./volume-unzip-file-button";
 
 interface ManageVolumeFileProps {
   volumeId: number;
@@ -40,7 +34,7 @@ interface ManageVolumeFileProps {
  * 구성되어 있습니다.
  *
  * 주요 기능:
- * - 파일 트리 구조 탐색 및 표시
+ * - 파일 트리 구조 탐색 및 표시 (Lazy Loading)
  * - 선택된 파일의 미리보기
  * - 파일 보안 검사 및 취약점 확인
  * - 파일 업로드/다운로드 기능
@@ -48,10 +42,11 @@ interface ManageVolumeFileProps {
  * - 파일별 액션 버튼 제공
  *
  * 데이터 흐름:
- * 1. useListFiles 훅을 통해 파일 데이터 요청
- * 2. 받은 데이터를 Jotai atom을 통해 전역 상태로 관리
- * 3. CustomFileTree 컴포넌트를 통한 트리 구조 렌더링
- * 4. Pub/Sub 시스템을 통한 취약점 모달 제어
+ * 1. useVolumeFileTree 훅을 통해 루트 경로 파일 데이터 요청
+ * 2. 폴더 클릭 시 해당 경로의 하위 파일/폴더를 API로 조회
+ * 3. 조회된 데이터를 기존 트리 데이터에 병합하여 계층 구조 유지
+ * 4. CustomFileTree 컴포넌트를 통한 트리 구조 렌더링
+ * 5. Pub/Sub 시스템을 통한 취약점 모달 제어
  *
  * @returns 볼륨 파일 관리 UI JSX 요소
  *
@@ -62,38 +57,14 @@ interface ManageVolumeFileProps {
  * ```
  */
 export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
-  // Pub/Sub 시스템을 통한 이벤트 발행 훅
-  const publish = usePublish();
-
-  // 볼륨 파일 트리 데이터 전역 상태 관리
-  // Jotai atom을 통해 파일 트리 구조를 전역적으로 관리
-  const [treeData, setTreeData] = useAtom(volumeFileTreeDataAtom);
-
-  // 볼륨 파일 데이터 요청 (orval API)
-  // 루트 경로(/)에서 시작하여 파일 노드를 가져옴
-  const { data } = useListFiles(
-    volumeId,
-    { path: "/" },
-    { query: { enabled: !Number.isNaN(volumeId) } },
+  // 볼륨 파일 트리 Lazy Loading 훅
+  // 폴더 클릭 시 해당 경로의 하위 파일/폴더를 조회하여 트리에 병합
+  const { treeData, loadingPaths, loadChildren, isLoading } = useVolumeFileTree(
+    {
+      volumeId,
+      enabled: !Number.isNaN(volumeId),
+    },
   );
-
-  /**
-   * 파일 보안 검사 핸들러
-   * 현재는 미구현 상태로 알림 메시지만 표시
-   * TODO: 실제 보안 검사 API 연동 필요
-   */
-  const handleScan = () => {
-    alert("준비 중입니다.");
-  };
-
-  /**
-   * 취약점 확인 모달 열기 핸들러
-   * Pub/Sub 시스템을 통해 취약점 데이터를 전송하고 모달을 열어줌
-   * 데모 데이터를 사용하여 취약점 정보를 표시
-   */
-  const handleShowVulnerability = () => {
-    publish(COMMON_EVENTS.sendVulnerability, vulnerabilityListMock);
-  };
 
   /**
    * 파일 다운로드 핸들러
@@ -104,22 +75,8 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
     alert("준비 중입니다.");
   };
 
-  // 파일 데이터 변경 시 트리 데이터 업데이트
-  // API에서 받은 파일 노드 데이터를 전역 상태로 동기화
-  useEffect(() => {
-    if (data?.children) {
-      setTreeData(convertToFileTreeType(data.children));
-    }
-  }, [data?.children, setTreeData]);
-
   return (
-    <>
-      {/* 파일 목록 헤더 영역 */}
-      <Header>
-        <span>전체 취약점: 77,777개</span>
-        <span>최근 검사 종료 일시: 77,777개</span>
-      </Header>
-
+    <Container>
       {/* 메인 파일 트리 영역 */}
       <PrimaryArticle>
         <PrimaryArticleHeader>
@@ -130,67 +87,46 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
           </RootCustomFileNode>
         </PrimaryArticleHeader>
         <PrimaryArticleBody>
+          {isLoading && <MySpinner />}
           {/* 커스텀 파일 트리 컴포넌트 */}
           {/* 체크박스와 액션 버튼이 포함된 파일 탐색기 */}
+          {/* 폴더 클릭 시 해당 경로의 하위 파일을 lazy loading */}
           <CustomFileTree
             treeData={treeData}
             fileCheckbox={VolumeFileCheckbox}
             fileButton={VolumeFileButton}
+            loadingPaths={loadingPaths}
+            onFolderClick={loadChildren}
           />
         </PrimaryArticleBody>
+        {/* 파일 미리보기 영역 */}
+        {/* 선택된 파일의 내용을 미리보기로 표시 */}
+        <PreviewVolumeFile treeData={treeData} />
       </PrimaryArticle>
 
-      {/* 파일 미리보기 영역 */}
-      {/* 선택된 파일의 내용을 미리보기로 표시 */}
-      <PreviewVolumeFile />
-
       {/* 하단 액션 버튼 영역 */}
-      <AsideDetailFooter>
-        {/* 좌측 버튼 - 취소 기능 */}
-        <div style={{ width: 112 }}>
-          <MyDropdown
-            items={[
-              <VolumeCreateFolderButton key="create-folder" />,
-              <VolumeCompressFileButton key="compress" />,
-              <VolumeUnzipFileButton key="unzip" />,
-              <VolumeDeleteFileButton key="delete" />,
-            ]}
-          >
-            <Button
-              width="100%"
-              variant="outlined"
-              icon="MoreHorizonal"
-            ></Button>
-          </MyDropdown>
-        </div>
+      <Footer>
+        <MyDropdown
+          items={[
+            <CreateVolumeFolderButton
+              key="create-folder"
+              volumeId={volumeId}
+            />,
+            <CompressVolumeFileButton key="compress" volumeId={volumeId} />,
+            <UnzipVolumeFileButton key="unzip" />,
+            <DeleteVolumeFileButton key="delete" volumeId={volumeId} />,
+          ]}
+        >
+          <Button
+            width={30}
+            height={30}
+            variant="outlined"
+            icon="MoreHorizonal"
+          ></Button>
+        </MyDropdown>
 
         {/* 우측 버튼 그룹 - 주요 액션들 */}
-        <FooterLeft>
-          {/* 파일 보안 검사 버튼 */}
-          <Button
-            color="primary"
-            variant="gradient"
-            icon="Prosecutor"
-            width={100}
-            height={30}
-            onClick={handleScan}
-          >
-            검사하기
-          </Button>
-
-          {/* 취약점 확인 버튼 */}
-          {/* 데모 데이터를 사용하여 취약점 모달을 열어줌 */}
-          <Button
-            color="primary"
-            variant="gradient"
-            icon="WeakPoint"
-            width={100}
-            height={30}
-            onClick={handleShowVulnerability}
-          >
-            취약점 확인
-          </Button>
-
+        <FooterRight>
           {/* 파일 다운로드 버튼 */}
           <Button
             color="primary"
@@ -213,9 +149,9 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
           >
             파일 업로드
           </Button>
-        </FooterLeft>
-      </AsideDetailFooter>
-    </>
+        </FooterRight>
+      </Footer>
+    </Container>
   );
 }
 
@@ -223,14 +159,11 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
 // Styled Components
 // ============================================================================
 
-const Header = styled.div`
+const Container = styled.div`
+  flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  color: #828588;
-  font-size: 12px;
-  font-weight: 400;
 `;
 
 /**
@@ -240,12 +173,14 @@ const Header = styled.div`
  */
 const PrimaryArticle = styled(AsideDetailArticle)`
   flex: 1;
-  margin-bottom: 10px;
   overflow: hidden;
   padding: 14px 12px;
   overflow-y: auto;
   border: 1px solid #D1D5DC;
   background-color: #F7F8FA;
+  max-height: 530px;
+  display: flex;
+  flex-direction: column;
 `;
 
 /**
@@ -270,13 +205,18 @@ const PrimaryArticleBody = styled(AsideDetailArticleBody)`
   border-radius: 4px;
 `;
 
+const Footer = styled(AsideDetailFooter)`
+  height: 30px;
+`;
+
 /**
  * 하단 버튼 그룹 컨테이너
  * 우측 정렬된 액션 버튼들을 배치
  */
-const FooterLeft = styled.div`
+const FooterRight = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
+  flex: 1;
 `;

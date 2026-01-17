@@ -1,41 +1,89 @@
 "use client";
 
-import { format } from "date-fns";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
+import { useMemo } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { volumeFileSelectedNodeInfoAtom } from "@/domain/volume/state/volume.atom";
+import { volumeFileSelectedKeyAtom } from "@/domain/volume/state/volume.atom";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import { formatFileSize } from "@/shared/utils/file.util";
+import { getFileIconName } from "@/shared/utils/file-icon.util";
 import {
   AsideDetailArticle,
   AsideDetailArticleRow,
 } from "@/styles/layers/aside-detail-layers.styled";
 
-export function PreviewVolumeFile() {
-  const selectedNode = useAtom(volumeFileSelectedNodeInfoAtom)[0];
+interface PreviewVolumeFileProps {
+  /** 파일 트리 데이터 */
+  treeData: FileTreeType[];
+}
+
+/**
+ * PreviewVolumeFile 컴포넌트
+ *
+ * 선택된 파일/폴더의 미리보기 정보를 표시합니다.
+ * treeData에서 선택된 노드를 찾아 상세 정보를 렌더링합니다.
+ *
+ * @param treeData - 파일 트리 데이터
+ */
+export function PreviewVolumeFile({ treeData }: PreviewVolumeFileProps) {
+  const selectedKey = useAtomValue(volumeFileSelectedKeyAtom);
+
+  /**
+   * 트리에서 선택된 노드를 찾는 함수
+   */
+  const selectedNode = useMemo(() => {
+    if (!selectedKey) return null;
+
+    const findNodeByKey = (
+      nodes: FileTreeType[],
+      targetKey: React.Key,
+    ): FileTreeType | null => {
+      for (const node of nodes) {
+        if (node.path === targetKey) return node;
+
+        if (node.children?.length) {
+          const found = findNodeByKey(node.children, targetKey);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    return findNodeByKey(treeData, selectedKey);
+  }, [treeData, selectedKey]);
 
   /*
    * 선택된 노드가 없으면 null 반환
    */
   if (!selectedNode) return null;
 
-  let nameKey = "";
-  let fileCount = -1;
-  if (selectedNode.type === "file") {
-    nameKey = "파일 이름";
-  } else if (selectedNode.type === "directory") {
-    nameKey = "폴더 이름";
-    fileCount = selectedNode.fileCount || 0;
-  }
+  // 파일/폴더 타입에 따른 레이블 및 정보 설정
+  const isFile = selectedNode.type === "file";
+  const nameKey = isFile ? "파일 이름" : "폴더 이름";
+  const fileCount = selectedNode.fileCount ?? -1;
+
+  // 확장자에 따른 아이콘 결정
+  const iconName = getFileIconName(
+    selectedNode.fileExtension,
+    selectedNode.type,
+  );
 
   return (
-    <AsideDetailArticle>
+    <Container>
       <AsideDetailArticleRow>
         <Preview>
           <IconWrapper>
-            <Icon name="FolderFiled" color="var(--icon-fill)" size={58} />
+            <Icon name={iconName} color="var(--icon-fill)" size={58} />
           </IconWrapper>
-          <FileName>{selectedNode.name}</FileName>
+          <FileName
+            className="truncate"
+            title={selectedNode.name}
+            style={{ textAlign: "center" }}
+          >
+            {selectedNode.name}
+          </FileName>
         </Preview>
         <FileBody>
           <FileItem>
@@ -44,7 +92,9 @@ export function PreviewVolumeFile() {
           </FileItem>
           <FileItem>
             <FileKey>파일 용량</FileKey>
-            <FileValue>35.85MB</FileValue>
+            <FileValue>
+              {formatFileSize(Number(selectedNode.fileSize)).formatted}
+            </FileValue>
           </FileItem>
           {fileCount > -1 && (
             <FileItem>
@@ -52,20 +102,19 @@ export function PreviewVolumeFile() {
               <FileValue>{fileCount}개</FileValue>
             </FileItem>
           )}
-          <FileItem>
-            <FileKey>최근 검사일</FileKey>
-            <FileValue>
-              {format(new Date(), "yyyy년 MM월 dd일 HH시 mm분")}
-            </FileValue>
-          </FileItem>
         </FileBody>
       </AsideDetailArticleRow>
-    </AsideDetailArticle>
+    </Container>
   );
 }
 
+const Container = styled(AsideDetailArticle)`
+  margin-top: 10px;
+  border-color: #E9EBEE;
+`;
+
 const Preview = styled.div`
-  border: 1px solid #d1d5dc;
+  border: 1px solid #E9EBEE;
   border-radius: 4px;
   background-color: #fafafa;
   width: 160px;
@@ -109,6 +158,9 @@ const FileName = styled.span`
   font-size: 12px;
   color: #000000;
   font-weight: 600;
+  line-height: 1;
+  width: 120px;
+  
 `;
 
 const IconWrapper = styled.div`
