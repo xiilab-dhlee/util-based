@@ -1,7 +1,6 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
-import { useResetAtom } from "jotai/utils";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
@@ -14,6 +13,7 @@ import { SettingMemberListFilter } from "@/domain/setting/components/setting-mem
 import { SettingMemberListFooter } from "@/domain/setting/components/setting-member-list-footer";
 import { UpdateWorkspaceMemberRoleModal } from "@/domain/setting/components/update-workspace-member-role-modal";
 import { MEMBER_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
+import { useMemberListReset } from "@/domain/setting/hooks/use-member-list-reset";
 import {
   settingMemberPageAtom,
   settingMemberSearchTextAtom,
@@ -30,8 +30,7 @@ export function SettingMemberArticle() {
 
   const [searchText, setSearchText] = useAtom(settingMemberSearchTextAtom);
   const [page, setPage] = useAtom(settingMemberPageAtom);
-  const resetSearchText = useResetAtom(settingMemberSearchTextAtom);
-  const resetPage = useResetAtom(settingMemberPageAtom);
+  const { resetAll, resetForSearch } = useMemberListReset();
 
   const workspaceId = selectedWorkspace?.workspaceId;
   const [inputValue, setInputValue] = useState(searchText);
@@ -54,7 +53,7 @@ export function SettingMemberArticle() {
 
   const handleSearch = (value: string) => {
     const trimmed = value.trim();
-    setPage(1);
+    resetForSearch();
     setSearchText(trimmed);
   };
 
@@ -77,9 +76,8 @@ export function SettingMemberArticle() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    resetSearchText();
-    resetPage();
-  }, [workspaceId, resetPage, resetSearchText]);
+    resetAll();
+  }, [workspaceId, resetAll]);
 
   return (
     <>

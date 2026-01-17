@@ -13,6 +13,7 @@ import {
   SectionHeader,
   SelectedMemberList,
   TwoColumnLayout,
+  useGroupTreeLoader,
 } from "@/shared/components/group-member-selector";
 import { useGroupTreeSearchState } from "@/shared/components/group-member-selector/hooks/use-group-tree-search-state";
 import { useMemberSelection } from "@/shared/components/group-member-selector/hooks/use-member-selection";
@@ -27,6 +28,9 @@ export function ManageGroupMemberModal() {
   const [initialAccounts, setInitialAccounts] = useState<GroupMemberResponse[]>(
     [],
   );
+
+  const treeLoader = useGroupTreeLoader();
+  const { resetTree } = treeLoader;
 
   const {
     selectedAccounts,
@@ -62,6 +66,7 @@ export function ManageGroupMemberModal() {
       );
       setInitialAccounts(accounts);
       resetSearchState();
+      resetTree();
       onOpen();
     },
   );
@@ -111,6 +116,7 @@ export function ManageGroupMemberModal() {
               onSelectMember={toggleMember}
               searchState={searchState}
               treeHeight={272}
+              treeLoader={treeLoader}
             />
           </LeftColumn>
           <RightColumn>

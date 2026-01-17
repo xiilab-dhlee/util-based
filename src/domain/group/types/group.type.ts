@@ -6,6 +6,7 @@ import type { SelectedMember } from "@/shared/types/member-selection.type";
  */
 export type OpenGroupModalCreatePayload = {
   mode: (typeof MODAL_MODES)["CREATE"];
+  isSubGroup?: boolean;
 };
 
 /**
@@ -33,6 +34,7 @@ export type GroupModalMode = ModalMode;
  */
 export const OPEN_GROUP_MODAL_CREATE_PAYLOAD: OpenGroupModalCreatePayload = {
   mode: MODAL_MODES.CREATE,
+  isSubGroup: false,
 };
 
 /**
@@ -43,15 +45,6 @@ export function createOpenGroupModalUpdatePayload(
   groupId: string,
 ): OpenGroupModalUpdatePayload {
   return { mode: MODAL_MODES.UPDATE, groupId };
-}
-
-/**
- * 그룹 폼 에러 타입
- */
-export interface GroupFormErrors {
-  name?: string;
-  description?: string;
-  members?: string;
 }
 
 /**

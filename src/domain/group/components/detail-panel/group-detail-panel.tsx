@@ -4,10 +4,14 @@ import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
 import { useGetGroupDetail } from "@/api/generated/group/group";
-import { createOpenGroupModalUpdatePayload } from "@/domain/group/types/group.type";
+import {
+  createOpenGroupModalUpdatePayload,
+  type OpenGroupModalCreatePayload,
+} from "@/domain/group/types/group.type";
 import { createMemberColumn } from "@/shared/components/column/create-member-column";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
@@ -42,6 +46,14 @@ export function GroupDetailPanel({ groupId }: GroupDetailPanelProps) {
     },
   });
 
+  const handleAddSubGroup = () => {
+    const payload: OpenGroupModalCreatePayload = {
+      mode: MODAL_MODES.CREATE,
+      isSubGroup: true,
+    };
+    publish(GROUP_EVENTS.openGroupModal, payload);
+  };
+
   const handleEditClick = () => {
     publish(
       GROUP_EVENTS.openGroupModal,
@@ -75,45 +87,47 @@ export function GroupDetailPanel({ groupId }: GroupDetailPanelProps) {
           </AsideDetailArticleHeader>
           <AsideDetailArticleBody>
             <AsideDetailArticleItem>
-              <AsideDetailArticleColumn>
+              <DetailColumn>
                 <AsideDetailArticleKey>그룹 이름</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {groupDetail?.groupName ?? "-"}
+                  {groupDetail?.groupName || "-"}
                 </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-              <AsideDetailArticleColumn>
+              </DetailColumn>
+              <DetailColumn>
                 <AsideDetailArticleKey>그룹 설명</AsideDetailArticleKey>
-                <AsideDetailArticleValue>
-                  {groupDetail?.description ?? "-"}
-                </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
+                <DescriptionValue>
+                  {groupDetail?.description || "-"}
+                </DescriptionValue>
+              </DetailColumn>
             </AsideDetailArticleItem>
             <AsideDetailArticleItem>
-              <AsideDetailArticleColumn>
+              <DetailColumn>
                 <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {groupDetail?.creatorName ?? "-"}
+                  {groupDetail?.creatorName || "-"}
                 </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-              <AsideDetailArticleColumn>
+              </DetailColumn>
+              <DetailColumn>
                 <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
                   {formatDateSafely(groupDetail?.createdAt)}
                 </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
+              </DetailColumn>
               <MemberColumn>
                 <AsideDetailArticleKey>멤버</AsideDetailArticleKey>
                 <MemberTableValue>
-                  <CustomizedTable
-                    columns={createMemberColumn()}
-                    data={groupDetail?.users ?? []}
-                    pagination={false}
-                    activePadding
-                    columnHeight={32}
-                    headerHeight={32}
-                    rowKey="accountId"
-                    loading={isLoading}
-                  />
+                  <MemberTableWrapper>
+                    <CustomizedTable
+                      columns={createMemberColumn()}
+                      data={groupDetail?.users ?? []}
+                      pagination={false}
+                      activePadding
+                      columnHeight={32}
+                      headerHeight={32}
+                      rowKey="accountId"
+                      loading={isLoading}
+                    />
+                  </MemberTableWrapper>
                 </MemberTableValue>
               </MemberColumn>
             </AsideDetailArticleItem>
@@ -123,6 +137,15 @@ export function GroupDetailPanel({ groupId }: GroupDetailPanelProps) {
       <AsideDetailFooter>
         <div />
         <ButtonGroup>
+          <Button
+            variant="outlined"
+            width={110}
+            height={34}
+            onClick={handleAddSubGroup}
+            disabled={isLoading || isError}
+          >
+            하위 그룹 추가
+          </Button>
           <Button
             variant="outlined"
             width={80}
@@ -172,9 +195,21 @@ const MemberColumn = styled(AsideDetailArticleColumn)`
   align-items: flex-start;
 `;
 
+const DetailColumn = styled(AsideDetailArticleColumn)`
+  align-items: flex-start;
+`;
+
+const DescriptionValue = styled(AsideDetailArticleValue)`
+  white-space: pre-wrap;
+`;
+
 const MemberTableValue = styled(AsideDetailArticleValue)`
   min-width: 0;
   overflow: hidden;
+`;
+
+const MemberTableWrapper = styled.div`
+  height: 350px;
 `;
 
 const ButtonGroup = styled.div`

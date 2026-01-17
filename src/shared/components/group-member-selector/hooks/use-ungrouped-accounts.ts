@@ -1,17 +1,11 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-import type {
-  GroupChildrenResponse,
-  GroupSummaryResponse,
-  PageResponseGroupMemberResponse,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { PageResponseGroupMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetUngroupedAccountsQueryKey,
   getUngroupedAccounts,
 } from "@/api/generated/group/group";
 
-export const UNGROUPED_GROUP_ID = "__ungrouped__";
-export const UNGROUPED_GROUP_NAME = "그룹 미지정";
 export const UNGROUPED_PAGE_SIZE = 10;
 
 export function useUngroupedAccounts() {
@@ -53,27 +47,8 @@ export function useUngroupedAccounts() {
   const allUngroupedAccounts =
     ungroupedPages?.pages.flatMap((page) => page.content ?? []) ?? [];
 
-  const totalUngroupedCount = ungroupedPages?.pages[0]?.totalSize ?? 0;
-
-  const ungroupedGroup: GroupSummaryResponse | null =
-    totalUngroupedCount > 0
-      ? {
-          groupId: UNGROUPED_GROUP_ID,
-          groupName: UNGROUPED_GROUP_NAME,
-          memberCount: totalUngroupedCount,
-        }
-      : null;
-
-  const getUngroupedChildren = (): GroupChildrenResponse => {
-    return {
-      group: [],
-      account: allUngroupedAccounts,
-    };
-  };
-
   return {
-    ungroupedGroup,
-    getUngroupedChildren,
+    ungroupedAccounts: allUngroupedAccounts,
     fetchNextUngroupedPage: fetchNextPage,
     hasMoreUngrouped: hasNextPage,
     isLoadingMoreUngrouped: isFetchingNextPage,
