@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 import {
   volumePageAtom,
+  volumeSearchKeywordAtom,
   volumeSearchTextAtom,
 } from "@/domain/volume/state/volume.atom";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
@@ -14,12 +15,14 @@ import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled
 export function VolumeListMain() {
   const resetPage = useResetAtom(volumePageAtom);
   const setSearchText = useSetAtom(volumeSearchTextAtom);
+  const setSearchKeyword = useSetAtom(volumeSearchKeywordAtom);
 
   // 페이지 최초 진입 시 페이지 번호와 검색어 초기화
   useEffect(() => {
     resetPage();
     setSearchText("");
-  }, [resetPage, setSearchText]);
+    setSearchKeyword("");
+  }, [resetPage, setSearchText, setSearchKeyword]);
 
   return (
     <AsideDetailContainer>
