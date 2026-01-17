@@ -32,98 +32,58 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-  BaseResponseDeleteImagesResponse,
-  BaseResponsePageResponsePublicImageUsageResponse,
+  BaseResponseProfileResponse,
+  BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getDeleteImagesResponseMock = (
-  overrideResponse: Partial<BaseResponseDeleteImagesResponse> = {},
-): BaseResponseDeleteImagesResponse => ({
+export const getGetProfileResponseMock = (
+  overrideResponse: Partial<BaseResponseProfileResponse> = {},
+): BaseResponseProfileResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
-    totalRequested: faker.number.int({ min: undefined, max: undefined }),
-    successCount: faker.number.int({ min: undefined, max: undefined }),
-    failureCount: faker.number.int({ min: undefined, max: undefined }),
-    failures: Array.from(
+    accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    accountRole: faker.helpers.arrayElement([
+      "SUPER_ADMIN",
+      "ADMIN",
+      "USER",
+    ] as const),
+    groupName: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
-    ).map(() => ({
-      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
+    ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    isEnabled: faker.datatype.boolean(),
+    workspaceCount: faker.number.int({ min: undefined, max: undefined }),
+    workspaceLimitCount: faker.number.int({ min: undefined, max: undefined }),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
 
-export const getGetPublicImageUsageByAccountResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponsePublicImageUsageResponse> = {},
-): BaseResponsePageResponsePublicImageUsageResponse => ({
+export const getUpdateProfileResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: {
-    totalSize: faker.number.int({ min: undefined, max: undefined }),
-    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
-    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
-    content: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      imageCount: faker.number.int({ min: undefined, max: undefined }),
-      usedStorage: faker.number.int({ min: undefined, max: undefined }),
-    })),
-  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
 
-export const getDeleteImagesMockHandler = (
+export const getGetProfileMockHandler = (
   overrideResponse?:
-    | BaseResponseDeleteImagesResponse
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) =>
-        | Promise<BaseResponseDeleteImagesResponse>
-        | BaseResponseDeleteImagesResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    "*/api/v1/admin/registries/public/delete",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getDeleteImagesResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getGetPublicImageUsageByAccountMockHandler = (
-  overrideResponse?:
-    | BaseResponsePageResponsePublicImageUsageResponse
+    | BaseResponseProfileResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponsePageResponsePublicImageUsageResponse>
-        | BaseResponsePageResponsePublicImageUsageResponse),
+      ) => Promise<BaseResponseProfileResponse> | BaseResponseProfileResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/admin/registries/public/images/usage",
+    "*/api/v1/accounts/:accountId/profile",
     async (info) => {
       await delay(1000);
 
@@ -133,7 +93,7 @@ export const getGetPublicImageUsageByAccountMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetPublicImageUsageByAccountResponseMock(),
+            : getGetProfileResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -141,7 +101,35 @@ export const getGetPublicImageUsageByAccountMockHandler = (
     options,
   );
 };
-export const getAdminPublicRegistryMock = () => [
-  getDeleteImagesMockHandler(),
-  getGetPublicImageUsageByAccountMockHandler(),
+
+export const getUpdateProfileMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/accounts/:accountId/profile",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateProfileResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+export const getAccountProfileMock = () => [
+  getGetProfileMockHandler(),
+  getUpdateProfileMockHandler(),
 ];

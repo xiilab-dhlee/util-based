@@ -424,7 +424,7 @@ export const getAllWorkspaces1QueryParams = zod.object({
     .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getAllWorkspaces1Response = zod
@@ -601,7 +601,7 @@ export const getWorkspaceMembers1QueryParams = zod.object({
     .enum(["ACCOUNT_NAME", "MEMBER_ROLE", "CREATED_AT"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getWorkspaceMembers1Response = zod
@@ -772,7 +772,7 @@ export const getResourceRequests1QueryParams = zod.object({
     .enum(["REQUESTED_AT", "WORKSPACE_NAME"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
   approvalStatus: zod
     .enum(["WAITING", "APPROVED", "REJECTED"])
     .optional()

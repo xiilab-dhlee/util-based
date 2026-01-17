@@ -284,7 +284,7 @@ export const getResourceRequestsQueryParams = zod.object({
     .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getResourceRequestsResponse = zod

@@ -68,8 +68,8 @@ import * as zod from "zod";
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
-            - NODE_MEMORY_MEM_TOTAL: 메모리 총량 (bytes)
-            - NODE_MEMORY_MEM_FREE: 메모리 여유량 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
@@ -94,8 +94,8 @@ export const streamNodeSystemMetricsQueryParams = zod.object({
       "MEMORY_UTILIZATION",
       "NODE_MEMORY_BUFFERS",
       "NODE_MEMORY_CACHED",
-      "NODE_MEMORY_MEM_TOTAL",
-      "NODE_MEMORY_MEM_FREE",
+      "NODE_MEMORY_TOTAL",
+      "NODE_MEMORY_FREE",
     ])
     .describe("시스템 메트릭 타입"),
   lastSentTime: zod

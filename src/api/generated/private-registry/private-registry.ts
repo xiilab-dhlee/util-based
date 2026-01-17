@@ -50,9 +50,9 @@ import type {
   BaseResponseDeleteImagesResponse,
   BaseResponseDeleteImageTagsResponse,
   BaseResponseImageTagDetailResponse,
-  BaseResponseListVulnerabilityDetailResponse,
   BaseResponsePageResponseImageTagListResponse,
   BaseResponsePageResponseRegistryListResponse,
+  BaseResponsePageResponseVulnerabilityDetailResponse,
   BaseResponseRegistryDetailResponse,
   BaseResponseUnit,
   CreateExternalImageRequest,
@@ -934,192 +934,6 @@ export const useDeletePrivateImages = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-            개인 레지스트리의 특정 이미지 태그 상세 정보를 조회합니다.
-            본인이 생성한 이미지만 조회할 수 있습니다.
-            존재하지 않는 경우 null을 반환합니다.
-        
- * @summary 개인 이미지 태그 상세 조회
- */
-export const getPrivateImageTagDetail = (
-  imageTagId: number,
-  params: GetPrivateImageTagDetailParams,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponseImageTagDetailResponse>({
-    url: `/api/v1/registries/private/images/image-tags/${imageTagId}/detail`,
-    method: "GET",
-    params,
-    signal,
-  });
-};
-
-export const getGetPrivateImageTagDetailQueryKey = (
-  imageTagId?: number,
-  params?: GetPrivateImageTagDetailParams,
-) => {
-  return [
-    `/api/v1/registries/private/images/image-tags/${imageTagId}/detail`,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getGetPrivateImageTagDetailQueryOptions = <
-  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-  TError = unknown,
->(
-  imageTagId: number,
-  params: GetPrivateImageTagDetailParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ??
-    getGetPrivateImageTagDetailQueryKey(imageTagId, params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getPrivateImageTagDetail>>
-  > = ({ signal }) => getPrivateImageTagDetail(imageTagId, params, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!imageTagId,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetPrivateImageTagDetailQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getPrivateImageTagDetail>>
->;
-export type GetPrivateImageTagDetailQueryError = unknown;
-
-export function useGetPrivateImageTagDetail<
-  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-  TError = unknown,
->(
-  imageTagId: number,
-  params: GetPrivateImageTagDetailParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-          TError,
-          Awaited<ReturnType<typeof getPrivateImageTagDetail>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPrivateImageTagDetail<
-  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-  TError = unknown,
->(
-  imageTagId: number,
-  params: GetPrivateImageTagDetailParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-          TError,
-          Awaited<ReturnType<typeof getPrivateImageTagDetail>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPrivateImageTagDetail<
-  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-  TError = unknown,
->(
-  imageTagId: number,
-  params: GetPrivateImageTagDetailParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 개인 이미지 태그 상세 조회
- */
-
-export function useGetPrivateImageTagDetail<
-  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-  TError = unknown,
->(
-  imageTagId: number,
-  params: GetPrivateImageTagDetailParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetPrivateImageTagDetailQueryOptions(
-    imageTagId,
-    params,
-    options,
-  );
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * 
             개인 이미지 태그의 취약점 상세 목록을 조회합니다.
             - 이미지 생성자 또는 관리자만 조회할 수 있습니다.
             - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
@@ -1131,7 +945,7 @@ export const getPrivateImageTagVulnerabilities = (
   params: GetPrivateImageTagVulnerabilitiesParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseListVulnerabilityDetailResponse>({
+  return customInstance<BaseResponsePageResponseVulnerabilityDetailResponse>({
     url: `/api/v1/registries/private/images/image-tags/vulnerabilities`,
     method: "GET",
     params,
@@ -1281,6 +1095,177 @@ export function useGetPrivateImageTagVulnerabilities<
     params,
     options,
   );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            개인 레지스트리의 특정 이미지 태그 상세 정보를 Harbor API 기준으로 조회합니다.
+            - 본인이 생성한 이미지만 조회할 수 있습니다.
+            - Harbor에 직접 올린 태그도 조회 가능합니다.
+            - DB 메타데이터가 없는 경우 hasMetadata=false로 반환됩니다.
+            - Harbor에 존재하지 않는 경우 null을 반환합니다.
+        
+ * @summary 개인 이미지 태그 상세 조회
+ */
+export const getPrivateImageTagDetail = (
+  params: GetPrivateImageTagDetailParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseImageTagDetailResponse>({
+    url: `/api/v1/registries/private/images/image-tags/detail`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetPrivateImageTagDetailQueryKey = (
+  params?: GetPrivateImageTagDetailParams,
+) => {
+  return [
+    `/api/v1/registries/private/images/image-tags/detail`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPrivateImageTagDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+  TError = unknown,
+>(
+  params: GetPrivateImageTagDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPrivateImageTagDetailQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPrivateImageTagDetail>>
+  > = ({ signal }) => getPrivateImageTagDetail(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPrivateImageTagDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPrivateImageTagDetail>>
+>;
+export type GetPrivateImageTagDetailQueryError = unknown;
+
+export function useGetPrivateImageTagDetail<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+  TError = unknown,
+>(
+  params: GetPrivateImageTagDetailParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getPrivateImageTagDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPrivateImageTagDetail<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+  TError = unknown,
+>(
+  params: GetPrivateImageTagDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getPrivateImageTagDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPrivateImageTagDetail<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+  TError = unknown,
+>(
+  params: GetPrivateImageTagDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 개인 이미지 태그 상세 조회
+ */
+
+export function useGetPrivateImageTagDetail<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+  TError = unknown,
+>(
+  params: GetPrivateImageTagDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPrivateImageTagDetailQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

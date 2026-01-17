@@ -56,7 +56,7 @@ export const getStreamNodeSystemMetricsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/:nodeName/resources/system/metrics/stream",
+    "*/sse/v1/cluster/nodes/:nodeName/resources/system/metrics/stream",
     async (info) => {
       await delay(1000);
 
@@ -84,7 +84,7 @@ export const getStreamNodeGpuMetricsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/:nodeName/resources/gpu/metrics/stream",
+    "*/sse/v1/cluster/nodes/:nodeName/resources/gpu/metrics/stream",
     async (info) => {
       await delay(1000);
 
