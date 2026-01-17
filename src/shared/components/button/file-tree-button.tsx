@@ -52,7 +52,6 @@ const Container = styled.button`
   align-items: center;
   border-radius: 2px;
   white-space: nowrap;
-  padding: 0px 3px;
 
   &:hover {
     background: rgba(0, 0, 0, 0.04);

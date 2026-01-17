@@ -1,5 +1,4 @@
 import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
 import { WORKLOAD_STATUS } from "@/domain/workload/constants/workload.constant";
 import {
   type WorkloadListType,
@@ -28,7 +27,19 @@ export const workloadDetailMock = makeMock(workloadDetailSchema, {
       path: "/workspace/project",
     },
   ],
-  volumes: [makeMock(volumeListSchema)],
+  volumes: [
+    {
+      uid: "vol-001",
+      name: "test-volume",
+      creatorName: "테스터",
+      creatorDate: new Date().toISOString(),
+      storageType: "ASTRAGO" as const,
+      status: "PUBLIC" as const,
+      path: "/data/volume",
+      labels: ["test"],
+      size: 1024,
+    },
+  ],
 });
 
 /**
