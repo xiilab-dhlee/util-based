@@ -6,8 +6,8 @@ import styled from "styled-components";
 import { Icon, type TabsSeparatedItem, Typography } from "xiilab-ui";
 
 import { useGetVolumeDetail } from "@/api/generated/volume/volume";
+import { UpdateVolume } from "@/domain/volume/components/detail/update-volume";
 import { ManageVolumeFile } from "@/domain/volume/components/file/manage-volume-file";
-import { UpdateVolume } from "@/domain/volume/components/update-volume";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { StateTab } from "@/shared/components/tab";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";

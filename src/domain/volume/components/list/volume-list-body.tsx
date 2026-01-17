@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { VolumeCard } from "@/domain/volume/components/volume-card";
+import { VolumeCard } from "@/domain/volume/components/list/volume-card";
 import {
   VOLUME_CARD_HEIGHT,
   VOLUME_PAGE_SIZE,
