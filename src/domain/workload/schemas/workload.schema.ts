@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { volumeListSchema } from "@/domain/volume/schemas/volume.schema";
 import {
   WORKLOAD_IMAGE_TYPES,
   WORKLOAD_JOB_TYPES,
@@ -79,7 +78,19 @@ const baseWorkloadSchema = z.object({
     }),
   ),
   /** 볼륨 */
-  volumes: z.array(volumeListSchema),
+  volumes: z.array(
+    z.object({
+      uid: z.string(),
+      name: z.string(),
+      creatorName: z.string(),
+      creatorDate: z.string(),
+      storageType: z.enum(["ASTRAGO", "LOCAL"]),
+      status: z.enum(["PUBLIC", "PRIVATE"]),
+      path: z.string(),
+      labels: z.array(z.string()),
+      size: z.number(),
+    }),
+  ),
   /** 실행 경로 */
   execPath: z.string().nullable(),
   /** 실행 명령어 */
