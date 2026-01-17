@@ -1,12 +1,5 @@
-import type {
-  VolumeDetailResponseVolumeType,
-  VolumeFileItemResponse,
-  VolumeListResponseVolumeType,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import type {
-  VolumeStatusType,
-  VolumeStorageType,
-} from "@/domain/volume/schemas/volume.schema";
+import type { VolumeFileItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { VolumeStatusType } from "@/domain/volume/schemas/volume.schema";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 
 /**
@@ -14,12 +7,7 @@ import type { FileTreeType } from "@/shared/schemas/filetree.schema";
  * @param storageType - 볼륨 스토리지 타입 (orval 생성 타입 또는 Zod 스키마 타입)
  * @returns 타입 정보 (텍스트, 아이콘)
  */
-export const getVolumeStorageTypeInfo = (
-  storageType:
-    | VolumeListResponseVolumeType
-    | VolumeDetailResponseVolumeType
-    | VolumeStorageType,
-) => {
+export const getVolumeStorageTypeInfo = (storageType?: string) => {
   // 타입 표시 텍스트
   let text = "";
   let icon = "";

@@ -24,6 +24,7 @@ import {
   getVolumeStorageTypeInfo,
 } from "@/domain/volume/utils/volume.util";
 import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
+import { formatFileSize } from "@/shared/utils/file.util";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleColumn,
@@ -70,17 +71,7 @@ export function UpdateVolume({
     },
   });
 
-  useEffect(() => {
-    if (data) {
-      reset({
-        volumeName: data.volumeName || "",
-        mountPath: data.mountPath || "",
-        isPublic: data.isPublic ?? false,
-      });
-    }
-  }, [data, reset]);
-
-  const { text } = getVolumeStorageTypeInfo(data?.volumeType || "ASTRAGO");
+  const { text } = getVolumeStorageTypeInfo(data?.volumeType);
   const { text: statusText } = getVolumeStatusInfo(data?.isPublic ?? false);
 
   const onSubmit = (formData: UpdateVolumeFormType) => {
@@ -114,6 +105,16 @@ export function UpdateVolume({
     }
     setReadOnly(true);
   };
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        volumeName: data.volumeName || "",
+        mountPath: data.mountPath || "",
+        isPublic: data.isPublic ?? false,
+      });
+    }
+  }, [data, reset]);
 
   return (
     <>
@@ -230,20 +231,38 @@ export function UpdateVolume({
                 <AsideDetailArticleHeader>
                   <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
                 </AsideDetailArticleHeader>
-                <AsideDetailArticleColumn>
-                  <AsideDetailArticleKey>스토리지</AsideDetailArticleKey>
-                  <AsideDetailArticleValue>
-                    {data?.storageName || "-"}
-                  </AsideDetailArticleValue>
-                </AsideDetailArticleColumn>
-                <AsideDetailArticleColumn>
-                  <AsideDetailArticleKey>파일 용량</AsideDetailArticleKey>
-                  <AsideDetailArticleValue>
-                    {data?.fileSizeByte
-                      ? `${data.fileSizeByte} Bytes`
-                      : "0 Bytes"}
-                  </AsideDetailArticleValue>
-                </AsideDetailArticleColumn>
+                {data?.volumeType === "ASTRAGO" && (
+                  <>
+                    <AsideDetailArticleColumn>
+                      <AsideDetailArticleKey>스토리지</AsideDetailArticleKey>
+                      <AsideDetailArticleValue>
+                        {data?.storageName || "-"}
+                      </AsideDetailArticleValue>
+                    </AsideDetailArticleColumn>
+                    <AsideDetailArticleColumn>
+                      <AsideDetailArticleKey>파일 용량</AsideDetailArticleKey>
+                      <AsideDetailArticleValue>
+                        {formatFileSize(data?.fileSizeByte ?? 0).formatted}
+                      </AsideDetailArticleValue>
+                    </AsideDetailArticleColumn>
+                  </>
+                )}
+                {data?.volumeType === "ON_PREMISE" && (
+                  <>
+                    <AsideDetailArticleColumn>
+                      <AsideDetailArticleKey>Server IP</AsideDetailArticleKey>
+                      <AsideDetailArticleValue>
+                        {data?.serverIp || "-"}
+                      </AsideDetailArticleValue>
+                    </AsideDetailArticleColumn>
+                    <AsideDetailArticleColumn>
+                      <AsideDetailArticleKey>Server Path</AsideDetailArticleKey>
+                      <AsideDetailArticleValue>
+                        {data?.volumePath || "-"}
+                      </AsideDetailArticleValue>
+                    </AsideDetailArticleColumn>
+                  </>
+                )}
               </AsideDetailArticleRowItem>
               <AsideDetailArticleRowItem>
                 <AsideDetailArticleHeader>
