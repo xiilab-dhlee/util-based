@@ -1,5 +1,71 @@
 import { z } from "zod";
 
+/** AstraGo 볼륨 생성 폼 스키마 */
+export const createAstragoVolumeSchema = z.object({
+  volumeName: z
+    .string()
+    .min(1, "볼륨 이름을 입력해 주세요.")
+    .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
+  isPublic: z.string().min(1, "공개 설정을 선택해 주세요."),
+  mountPath: z
+    .string()
+    .min(1, "마운트 경로를 입력해 주세요.")
+    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+  storageId: z.string().min(1, "스토리지를 선택해 주세요."),
+});
+
+export type CreateAstragoVolumeFormType = z.infer<
+  typeof createAstragoVolumeSchema
+>;
+
+/** On-Premise 볼륨 생성 폼 스키마 */
+export const createOnPremiseVolumeSchema = z.object({
+  volumeName: z
+    .string()
+    .min(1, "볼륨 이름을 입력해 주세요.")
+    .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
+  isPublic: z.string().min(1, "공개 설정을 선택해 주세요."),
+  mountPath: z
+    .string()
+    .min(1, "마운트 경로를 입력해 주세요.")
+    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+  serverIp: z
+    .string()
+    .min(1, "Server IP를 입력해 주세요.")
+    .max(50, "Server IP는 50자 이하로 입력해 주세요.")
+    .regex(
+      /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+      "유효한 IP 주소 형식이 아닙니다.",
+    ),
+  volumePath: z
+    .string()
+    .min(1, "Server Path를 입력해 주세요.")
+    .max(1000, "Server Path는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "Server Path는 /로 시작해야 합니다."),
+});
+
+export type CreateOnPremiseVolumeFormType = z.infer<
+  typeof createOnPremiseVolumeSchema
+>;
+
+/** 볼륨 수정 폼 스키마 */
+export const updateVolumeSchema = z.object({
+  volumeName: z
+    .string()
+    .min(1, "볼륨 이름을 입력해 주세요.")
+    .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
+  mountPath: z
+    .string()
+    .min(1, "마운트 경로를 입력해 주세요.")
+    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+  isPublic: z.boolean(),
+});
+
+export type UpdateVolumeFormType = z.infer<typeof updateVolumeSchema>;
+
 // 볼륨 전체 스키마
 const baseVolumeSchema = z.object({
   /** 볼륨 고유 ID */

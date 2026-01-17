@@ -13,3 +13,14 @@ export const VOLUME_STORAGE_OPTIONS: DropdownOption[] = [
     value: "LOCAL",
   },
 ];
+
+export const VOLUME_VISIBILITY_OPTIONS: DropdownOption[] = [
+  {
+    label: "공개",
+    value: "true",
+  },
+  {
+    label: "비공개",
+    value: "false",
+  },
+];
