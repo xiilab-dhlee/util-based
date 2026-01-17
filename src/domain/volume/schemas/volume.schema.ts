@@ -66,58 +66,38 @@ export const updateVolumeSchema = z.object({
 
 export type UpdateVolumeFormType = z.infer<typeof updateVolumeSchema>;
 
-// 볼륨 전체 스키마
-const baseVolumeSchema = z.object({
-  /** 볼륨 고유 ID */
-  uid: z.string().uuid(),
-  /** 리소스 이름 */
-  resourceName: z.string().min(1).max(100),
-  /** 볼륨 이름 */
-  name: z.string().min(1).max(100),
-  /** 볼륨 설명 */
-  description: z.string().max(500),
-  /** 생성일시 */
-  creatorDate: z.string().datetime(),
-  /** 생성자 이름 */
-  creatorName: z.string().min(1).max(100),
-  /** 생성자 ID */
-  creatorId: z.string().uuid(),
-  /** 워크스페이스 이름 */
-  workspaceName: z.string().min(1).max(100),
-  /** 스토리지 타입 */
-  storageType: z.enum(["ASTRAGO", "LOCAL"]),
-  /** 상태 */
-  status: z.enum(["PUBLIC", "PRIVATE"]),
-  /** 사용 여부 */
-  used: z.boolean(),
-  /** 볼륨 경로 */
-  path: z.string().nullable(),
-  /** 라벨 */
-  labels: z.array(z.string()),
-  /** 볼륨 크기 */
-  size: z.number(),
+/** 볼륨 폴더 생성 폼 스키마 */
+export const createVolumeFolderSchema = z.object({
+  folderName: z
+    .string()
+    .min(1, "폴더 이름을 입력해 주세요.")
+    .max(255, "폴더 이름은 255자 이하로 입력해 주세요.")
+    .regex(
+      /^[^/\\:*?"<>|]+$/,
+      '폴더 이름에 특수문자(/ \\ : * ? " < > |)는 사용할 수 없습니다.',
+    ),
 });
 
-// 볼륨 목록용 스키마
-export const volumeListSchema = baseVolumeSchema.pick({
-  uid: true,
-  name: true,
-  creatorName: true,
-  creatorDate: true,
-  storageType: true,
-  status: true,
-  path: true,
-  labels: true,
-  size: true,
+export type CreateVolumeFolderFormType = z.infer<
+  typeof createVolumeFolderSchema
+>;
+
+/** 볼륨 파일 압축 폼 스키마 */
+export const compressVolumeFileSchema = z.object({
+  destinationPath: z
+    .string()
+    .min(1, "저장 경로를 입력해 주세요.")
+    .max(1000, "저장 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "저장 경로는 /로 시작해야 합니다."),
+  compressFileType: z.enum(["ZIP", "TAR"]),
 });
 
-// 볼륨 상세용 스키마
-export const volumeDetailSchema = baseVolumeSchema;
+export type CompressVolumeFileFormType = z.infer<
+  typeof compressVolumeFileSchema
+>;
 
-// 타입 추출
-type Volume = z.infer<typeof baseVolumeSchema>;
-export type VolumeListType = z.infer<typeof volumeListSchema>;
-export type VolumeIdType = VolumeListType["uid"];
-export type VolumeStatusType = Volume["status"];
-export type VolumeDetailType = z.infer<typeof volumeDetailSchema>;
-export type VolumeStorageType = Volume["storageType"];
+// 볼륨 스토리지 타입
+export type VolumeStorageType = "ASTRAGO" | "LOCAL";
+
+// 볼륨 상태 타입
+export type VolumeStatusType = "PUBLIC" | "PRIVATE";
