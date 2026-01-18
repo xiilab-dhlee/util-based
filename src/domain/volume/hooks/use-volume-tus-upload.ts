@@ -3,15 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
+import type { UploadFileStatus } from "@/shared/types/upload.type";
 
-export type UploadFileStatus =
-  | "pending"
-  | "uploading"
-  | "completed"
-  | "error"
-  | "cancelled";
-
-export interface UploadFileInfo {
+interface UploadFileInfo {
   id: string;
   file: File;
   name: string;
@@ -61,6 +55,10 @@ export function useVolumeTusUpload(
   const [files, setFiles] = useState<UploadFileInfo[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const abortControllersRef = useRef<Map<string, AbortController>>(new Map());
+  const filesRef = useRef<UploadFileInfo[]>([]);
+
+  // filesRef를 최신 상태로 유지
+  filesRef.current = files;
 
   const updateFile = (fileId: string, updates: Partial<UploadFileInfo>) => {
     setFiles((prev) =>
@@ -209,7 +207,8 @@ export function useVolumeTusUpload(
   };
 
   const startUpload = async () => {
-    const uploadableFiles = files.filter(
+    // filesRef.current를 사용하여 최신 상태 참조
+    const uploadableFiles = filesRef.current.filter(
       (f) => f.status === "pending" || f.status === "error",
     );
     if (uploadableFiles.length === 0) return;
@@ -234,7 +233,8 @@ export function useVolumeTusUpload(
   };
 
   const startSingleUpload = async (fileId: string) => {
-    const fileInfo = files.find((f) => f.id === fileId);
+    // filesRef.current를 사용하여 최신 상태 참조
+    const fileInfo = filesRef.current.find((f) => f.id === fileId);
     if (!fileInfo) return;
 
     if (fileInfo.status !== "pending" && fileInfo.status !== "error") return;
@@ -260,7 +260,8 @@ export function useVolumeTusUpload(
     const controller = abortControllersRef.current.get(fileId);
     controller?.abort();
 
-    const fileInfo = files.find((f) => f.id === fileId);
+    // filesRef.current를 사용하여 최신 상태 참조
+    const fileInfo = filesRef.current.find((f) => f.id === fileId);
     if (fileInfo?.uploadId) {
       try {
         const axiosInstance = AxiosService.getInstance().getAxios();
@@ -277,7 +278,10 @@ export function useVolumeTusUpload(
   };
 
   const cancelAllUploads = async () => {
-    const uploadingFiles = files.filter((f) => f.status === "uploading");
+    // filesRef.current를 사용하여 최신 상태 참조
+    const uploadingFiles = filesRef.current.filter(
+      (f) => f.status === "uploading",
+    );
     await Promise.all(uploadingFiles.map((f) => cancelUpload(f.id)));
   };
 

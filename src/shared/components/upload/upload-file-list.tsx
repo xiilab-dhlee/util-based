@@ -2,17 +2,9 @@
 
 import styled from "styled-components";
 
+import { UploadFileListItem } from "@/shared/components/upload/upload-file-list-item";
+import type { UploadFileItem } from "@/shared/types/upload.type";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
-import {
-  type UploadFileItem,
-  UploadFileListItem,
-} from "./upload-file-list-item";
-
-// ============================================================================
-// Re-exports
-// ============================================================================
-
-export type { UploadFileItem, UploadFileStatus } from "./upload-file-list-item";
 
 // ============================================================================
 // Types
@@ -22,8 +14,6 @@ export interface UploadFileListProps {
   files: UploadFileItem[];
   totalProgress: number;
   isUploading: boolean;
-  onUpload: (fileId: string) => void;
-  onCancel: (fileId: string) => void;
   onRemove: (fileId: string) => void;
 }
 
@@ -67,8 +57,6 @@ export function UploadFileList({
   files,
   totalProgress,
   isUploading,
-  onUpload,
-  onCancel,
   onRemove,
 }: UploadFileListProps) {
   return (
@@ -81,13 +69,7 @@ export function UploadFileList({
       </FileListHeader>
       <FileList>
         {files.map((file) => (
-          <UploadFileListItem
-            key={file.id}
-            file={file}
-            onUpload={onUpload}
-            onCancel={onCancel}
-            onRemove={onRemove}
-          />
+          <UploadFileListItem key={file.id} file={file} onRemove={onRemove} />
         ))}
       </FileList>
     </FileListContainer>

@@ -26,8 +26,8 @@ export function UploadVolumeFileModal() {
     isUploading,
     addFiles,
     removeFile,
-    startSingleUpload,
-    cancelUpload,
+    startUpload,
+    cancelAllUploads,
     clearFiles,
   } = useVolumeTusUpload({
     volumeId: volumeId ?? 0,
@@ -35,6 +35,9 @@ export function UploadVolumeFileModal() {
   });
 
   const hasFiles = files.length > 0;
+  const hasPendingFiles = files.some(
+    (f) => f.status === "pending" || f.status === "error",
+  );
   const totalProgress =
     files.length > 0
       ? files.reduce((sum, f) => sum + f.progress, 0) / files.length
@@ -51,13 +54,14 @@ export function UploadVolumeFileModal() {
     resetModal();
   };
 
-  const handleUpload = (fileId: string) => {
-    if (!volumeId) return;
-    startSingleUpload(fileId);
+  const handleStartUpload = async () => {
+    if (!volumeId || !hasPendingFiles) return;
+    await startUpload();
   };
 
-  const handleCancel = (fileId: string) => {
-    cancelUpload(fileId);
+  const handleCancelAll = async () => {
+    await cancelAllUploads();
+    resetModal();
   };
 
   const handleRemove = (fileId: string) => {
@@ -84,8 +88,15 @@ export function UploadVolumeFileModal() {
       maskClosable={!isUploading}
       title="파일 업로드"
       onCancel={handleClose}
-      showCancelButton={false}
-      okButtonProps={{ style: { display: "none" } }}
+      cancelText={isUploading ? "업로드 취소" : "취소"}
+      okText="업로드"
+      okButtonProps={{
+        disabled: !hasFiles || !hasPendingFiles || isUploading,
+      }}
+      cancelButtonProps={{
+        onClick: isUploading ? handleCancelAll : handleClose,
+      }}
+      onOk={handleStartUpload}
       centered
       showHeaderBorder
     >
@@ -119,8 +130,6 @@ export function UploadVolumeFileModal() {
             files={files}
             totalProgress={totalProgress}
             isUploading={isUploading}
-            onUpload={handleUpload}
-            onCancel={handleCancel}
             onRemove={handleRemove}
           />
         )}

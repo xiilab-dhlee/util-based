@@ -5,33 +5,18 @@ import type { ReactNode } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { RefreshIcon } from "@/shared/components/icon/refresh-icon";
+import type {
+  UploadFileItem,
+  UploadFileStatus,
+} from "@/shared/types/upload.type";
 import { formatFileSize } from "@/shared/utils/file.util";
 
 // ============================================================================
 // Types
 // ============================================================================
 
-export type UploadFileStatus =
-  | "pending"
-  | "uploading"
-  | "completed"
-  | "error"
-  | "cancelled";
-
-export interface UploadFileItem {
-  id: string;
-  name: string;
-  size: number;
-  status: UploadFileStatus;
-  progress: number;
-  error?: string;
-}
-
 export interface UploadFileListItemProps {
   file: UploadFileItem;
-  onUpload: (fileId: string) => void;
-  onCancel: (fileId: string) => void;
   onRemove: (fileId: string) => void;
 }
 
@@ -97,7 +82,6 @@ const ActionButtons = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-  min-width: 56px;
   justify-content: flex-end;
 `;
 
@@ -124,8 +108,6 @@ const ActionButton = styled.button`
 
 export function UploadFileListItem({
   file,
-  onUpload,
-  onCancel,
   onRemove,
 }: UploadFileListItemProps) {
   const isPending = file.status === "pending";
@@ -152,10 +134,7 @@ export function UploadFileListItem({
         <ActionsRenderer
           fileId={file.id}
           isPending={isPending}
-          isUploading={isUploading}
           isError={isError}
-          onUpload={onUpload}
-          onCancel={onCancel}
           onRemove={onRemove}
         />
       </ActionButtons>
@@ -217,79 +196,26 @@ function StatusRenderer({
 interface ActionsRendererProps {
   fileId: string;
   isPending: boolean;
-  isUploading: boolean;
   isError: boolean;
-  onUpload: (fileId: string) => void;
-  onCancel: (fileId: string) => void;
   onRemove: (fileId: string) => void;
 }
 
 function ActionsRenderer({
   fileId,
   isPending,
-  isUploading,
   isError,
-  onUpload,
-  onCancel,
   onRemove,
 }: ActionsRendererProps): ReactNode {
-  // 업로드 중: 취소 버튼만
-  if (isUploading) {
+  // 대기 중 또는 오류: 삭제 버튼만
+  if (isPending || isError) {
     return (
-      <ActionButton
-        type="button"
-        onClick={() => onCancel(fileId)}
-        title="업로드 취소"
-      >
-        <Icon name="Close" size={14} color="#ff4d4f" />
+      <ActionButton type="button" onClick={() => onRemove(fileId)} title="삭제">
+        <Icon name="Close" size={14} color="#000" />
+        <span className="sr-only">파일 삭제</span>
       </ActionButton>
     );
   }
 
-  // 대기 중: 업로드 버튼 + 삭제 버튼
-  if (isPending) {
-    return (
-      <>
-        <ActionButton
-          type="button"
-          onClick={() => onUpload(fileId)}
-          title="업로드"
-        >
-          <Icon name="Upload" size={14} color="#000" />
-        </ActionButton>
-        <ActionButton
-          type="button"
-          onClick={() => onRemove(fileId)}
-          title="삭제"
-        >
-          <Icon name="Close" size={14} color="#000" />
-        </ActionButton>
-      </>
-    );
-  }
-
-  // 오류: 재시도 버튼 + 삭제 버튼
-  if (isError) {
-    return (
-      <>
-        <ActionButton
-          type="button"
-          onClick={() => onUpload(fileId)}
-          title="재시도"
-        >
-          <RefreshIcon width={20} height={20} fill="#000" />
-        </ActionButton>
-        <ActionButton
-          type="button"
-          onClick={() => onRemove(fileId)}
-          title="삭제"
-        >
-          <Icon name="Close" size={14} color="#000" />
-        </ActionButton>
-      </>
-    );
-  }
-
-  // 완료: 아무 버튼 없음
+  // 업로드 중 또는 완료: 아무 버튼 없음
   return null;
 }
