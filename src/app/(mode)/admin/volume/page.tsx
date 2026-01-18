@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { VolumeListMain } from "@/domain/volume/components/list/volume-list-main";
 
 export const metadata: Metadata = {
-  title: "Volume Management",
+  title: "Volume",
 };
 
-export default function AdminVolumeManagementPage() {
+export default function AdminVolumePage() {
   return <VolumeListMain />;
 }

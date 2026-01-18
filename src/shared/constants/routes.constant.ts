@@ -94,8 +94,9 @@ export const ROUTES = {
   // 소스코드 관리 (정적)
   ADMIN_SOURCECODE_MANAGEMENT: `${MODE.ADMIN}/sourcecode-management`,
 
-  // 볼륨 관리 (정적)
-  ADMIN_VOLUME_MANAGEMENT: `${MODE.ADMIN}/volume-management`,
+  // 볼륨 관리 (동적 함수)
+  ADMIN_VOLUME: `${MODE.ADMIN}/volume`,
+  ADMIN_VOLUME_DETAIL: (id: number) => `${MODE.ADMIN}/volume/${id}`,
 
   // 리포트 관리 (동적 함수)
   ADMIN_REPORT: `${MODE.ADMIN}/report`,

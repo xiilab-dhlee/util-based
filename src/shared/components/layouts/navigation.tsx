@@ -159,9 +159,9 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         ),
       },
       {
-        key: "admin.volume-management",
-        label: PAGE_META["admin.volume-management"]?.title,
-        icon: <Icon name={PAGE_META["admin.volume-management"]?.iconName} />,
+        key: "admin.volume",
+        label: PAGE_META["admin.volume"]?.title,
+        icon: <Icon name={PAGE_META["admin.volume"]?.iconName} />,
       },
       {
         key: "admin.report",

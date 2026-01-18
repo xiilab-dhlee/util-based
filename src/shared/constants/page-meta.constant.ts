@@ -253,12 +253,17 @@ export const PAGE_META = {
   },
 
   // ============================================
-  // Admin Routes - Volume Management
+  // Admin Routes - Volume
   // ============================================
-  "admin.volume-management": {
+  "admin.volume": {
     title: "볼륨 관리",
     iconName: "Volume",
-    href: ROUTES.ADMIN_VOLUME_MANAGEMENT,
+    href: ROUTES.ADMIN_VOLUME,
+  },
+  "admin.volume.detail": {
+    title: "볼륨 상세",
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_VOLUME_DETAIL(Number(id)),
+    parent: "admin.volume",
   },
 
   // ============================================
