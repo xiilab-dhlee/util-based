@@ -4,7 +4,6 @@ import type {
   GetVolumeListOrder,
   GetVolumeListSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import type { VolumeSortValue } from "@/domain/volume/state/volume.atom";
 
 // ============================================================================
 // 페이지 설정
@@ -12,6 +11,9 @@ import type { VolumeSortValue } from "@/domain/volume/state/volume.atom";
 
 export const VOLUME_PAGE_SIZE = 15;
 export const VOLUME_CARD_HEIGHT = 112;
+
+/** 볼륨 정렬 기본값 (최신순) */
+export const VOLUME_DEFAULT_SORT = "CREATED_AT_DESC";
 
 // ============================================================================
 // 정렬 옵션
@@ -29,7 +31,7 @@ export const VOLUME_SORT_OPTIONS: DropdownOption[] = [
 
 /** 정렬 값을 API 파라미터로 변환 */
 export const parseVolumeSortValue = (
-  value: VolumeSortValue | null,
+  value: string | null,
 ): { sort: GetVolumeListSort; order: GetVolumeListOrder } | null => {
   if (!value) return null;
 

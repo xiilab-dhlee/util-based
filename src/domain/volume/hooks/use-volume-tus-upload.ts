@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
 
@@ -89,6 +89,16 @@ export function useVolumeTusUpload(
     abortControllersRef.current.clear();
   };
 
+  // 컴포넌트 언마운트 시 진행 중인 업로드 취소
+  useEffect(() => {
+    return () => {
+      for (const controller of abortControllersRef.current.values()) {
+        controller.abort();
+      }
+      abortControllersRef.current.clear();
+    };
+  }, []);
+
   const createTusUpload = async (
     fileInfo: UploadFileInfo,
     signal: AbortSignal,
@@ -111,8 +121,15 @@ export function useVolumeTusUpload(
       },
     );
 
-    const location = response.headers.location as string;
-    return location?.split("/").pop() ?? "";
+    const location = response.headers.location;
+    if (!location || typeof location !== "string") {
+      throw new Error("업로드 위치를 찾을 수 없습니다.");
+    }
+    const uploadId = location.split("/").pop();
+    if (!uploadId) {
+      throw new Error("업로드 ID를 파싱할 수 없습니다.");
+    }
+    return uploadId;
   };
 
   const uploadChunk = async (
@@ -138,7 +155,12 @@ export function useVolumeTusUpload(
       },
     );
 
-    return parseInt(response.headers["upload-offset"] as string, 10);
+    const uploadOffset = response.headers["upload-offset"];
+    const parsedOffset = parseInt(uploadOffset as string, 10);
+    if (Number.isNaN(parsedOffset)) {
+      throw new Error("업로드 오프셋을 파싱할 수 없습니다.");
+    }
+    return parsedOffset;
   };
 
   const uploadSingleFile = async (fileInfo: UploadFileInfo): Promise<void> => {
@@ -149,7 +171,6 @@ export function useVolumeTusUpload(
       updateFile(fileInfo.id, { status: "uploading" });
 
       const uploadId = await createTusUpload(fileInfo, abortController.signal);
-      console.log(uploadId);
       updateFile(fileInfo.id, { uploadId });
 
       let offset = 0;

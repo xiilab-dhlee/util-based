@@ -59,12 +59,19 @@ export function DownloadVolumeFileModal() {
       });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = url;
-      link.download = `download.${selectedType.toLowerCase()}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+
+      try {
+        link.href = url;
+        link.download = `download.${selectedType.toLowerCase()}`;
+        document.body.appendChild(link);
+        link.click();
+      } finally {
+        // DOM 및 Blob URL 정리 (에러 발생 시에도 실행)
+        if (link.parentNode) {
+          document.body.removeChild(link);
+        }
+        window.URL.revokeObjectURL(url);
+      }
 
       toast.success("파일 다운로드가 완료되었습니다.");
       setCheckedNodes(new Set());

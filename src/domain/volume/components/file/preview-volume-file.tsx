@@ -72,12 +72,14 @@ export function PreviewVolumeFile({ treeData }: PreviewVolumeFileProps) {
             <FileKey>{nameKey}</FileKey>
             <FileName>{selectedNode.name}</FileName>
           </FileItem>
-          <FileItem>
-            <FileKey>파일 용량</FileKey>
-            <FileValue>
-              {formatFileSize(Number(selectedNode.fileSize)).formatted}
-            </FileValue>
-          </FileItem>
+          {selectedNode.fileSize && (
+            <FileItem>
+              <FileKey>파일 용량</FileKey>
+              <FileValue>
+                {formatFileSize(Number(selectedNode.fileSize)).formatted}
+              </FileValue>
+            </FileItem>
+          )}
           {fileCount > -1 && (
             <FileItem>
               <FileKey>파일 개수</FileKey>

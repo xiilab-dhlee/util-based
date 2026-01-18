@@ -4,10 +4,11 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
-import { VOLUME_SORT_OPTIONS } from "@/domain/volume/constants/volume.constant";
 import {
-  DEFAULT_VOLUME_SORT,
-  type VolumeSortValue,
+  VOLUME_DEFAULT_SORT,
+  VOLUME_SORT_OPTIONS,
+} from "@/domain/volume/constants/volume.constant";
+import {
   volumePageAtom,
   volumeSortAtom,
 } from "@/domain/volume/state/volume.atom";
@@ -20,9 +21,9 @@ export function VolumeSortFilter({ disabled }: VolumeSortFilterProps) {
   const [sort, setSort] = useAtom(volumeSortAtom);
   const resetPage = useResetAtom(volumePageAtom);
 
-  const handleChange = (value: VolumeSortValue | null) => {
+  const handleChange = (value: string | null) => {
     resetPage();
-    setSort(value ?? DEFAULT_VOLUME_SORT);
+    setSort(value ?? VOLUME_DEFAULT_SORT);
   };
 
   return (
