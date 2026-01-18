@@ -71,6 +71,8 @@ export const VOLUME_EVENTS = {
   sendDecompressVolumeFile: "volume:send-decompress-volume-file",
   // 볼륨 파일 다운로드에 필요한 정보 전달 이벤트
   sendDownloadVolumeFile: "volume:send-download-volume-file",
+  // 볼륨 파일 업로드에 필요한 정보 전달 이벤트
+  sendUploadVolumeFile: "volume:send-upload-volume-file",
   // 볼륨 폴더 추가에 필요한 정보 전달 이벤트
   sendCreateVolumeFolder: "volume:send-create-volume-folder",
   // 볼륨 스토리지 타입 선택에 필요한 정보 전달 이벤트
