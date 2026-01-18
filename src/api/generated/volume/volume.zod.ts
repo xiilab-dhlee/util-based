@@ -123,6 +123,54 @@ export const createFolderBody = zod
 
 /**
  * 
+        볼륨 내 파일/폴더를 압축하여 다운로드합니다.
+
+        **다운로드 방식:**
+        - 모든 파일/폴더는 선택한 압축 형식으로 압축되어 다운로드됩니다
+        - 단일 파일도 압축하여 다운로드합니다
+
+        **압축 파일명 규칙:**
+        - 단일 파일 1개: {파일명}.zip 또는 {파일명}.tar.gz
+        - 단일 폴더 1개: {폴더명}.zip 또는 {폴더명}.tar.gz
+        - 다중 파일/폴더: download.zip 또는 download.tar.gz
+
+        **압축 형식:**
+        - TAR: .tar.gz (gzip 압축 tar)
+        - ZIP: .zip
+
+        **제약 사항:**
+        - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 볼륨 다운로드 가능
+        - 공개 볼륨: 누구나 다운로드 가능 (워크스페이스 멤버 여부 확인)
+        - 비공개 볼륨: 본인(생성자)만 다운로드 가능
+        
+ * @summary 볼륨 파일 다운로드
+ */
+export const downloadParams = zod.object({
+  volumeId: zod.number().describe("볼륨 ID"),
+});
+
+export const downloadBodyPathsMin = 0;
+export const downloadBodyPathsMax = 100;
+
+export const downloadBody = zod
+  .object({
+    paths: zod
+      .array(zod.string())
+      .min(downloadBodyPathsMin)
+      .max(downloadBodyPathsMax)
+      .describe("다운로드할 파일/폴더 경로 목록"),
+    compressType: zod.enum(["TAR", "ZIP"]).describe("압축 파일 형식"),
+  })
+  .strict()
+  .describe("볼륨 파일 다운로드 요청");
+
+export const downloadResponse = zod.unknown();
+
+/**
+ * 
         볼륨 내 파일 또는 폴더를 삭제합니다.
 
         **제약 사항:**

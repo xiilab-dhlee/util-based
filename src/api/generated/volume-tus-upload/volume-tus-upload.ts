@@ -64,7 +64,7 @@ export const createUpload = (
   signal?: AbortSignal,
 ) => {
   return customInstance<string>({
-    url: `/api/v1/volumes/${volumeId}/tus`,
+    url: `/api/v1/volumes/${volumeId}/files/upload`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: createUploadBody,
@@ -151,7 +151,7 @@ export const useCreateUpload = <TError = unknown, TContext = unknown>(
  */
 export const cancelUpload = (volumeId: number, uploadId: string) => {
   return customInstance<string>({
-    url: `/api/v1/volumes/${volumeId}/tus/${uploadId}`,
+    url: `/api/v1/volumes/${volumeId}/files/upload/${uploadId}`,
     method: "DELETE",
   });
 };
@@ -242,7 +242,7 @@ export const getUploadStatus = (
   signal?: AbortSignal,
 ) => {
   return customInstance<string>({
-    url: `/api/v1/volumes/${volumeId}/tus/${uploadId}`,
+    url: `/api/v1/volumes/${volumeId}/files/upload/${uploadId}`,
     method: "HEAD",
     signal,
   });
@@ -343,7 +343,7 @@ export const uploadChunk = (
   uploadChunkBody: string,
 ) => {
   return customInstance<string>({
-    url: `/api/v1/volumes/${volumeId}/tus/${uploadId}`,
+    url: `/api/v1/volumes/${volumeId}/files/upload/${uploadId}`,
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     data: uploadChunkBody,

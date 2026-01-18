@@ -47,8 +47,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponseDeleteImagesResponse,
+  BaseResponsePageResponseAccountImageTagResponse,
   BaseResponsePageResponsePublicImageUsageResponse,
   DeleteImagesRequest,
+  GetPublicImageTagsByAccountIdParams,
   GetPublicImageUsageByAccountParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -298,6 +300,192 @@ export function useGetPublicImageUsageByAccount<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetPublicImageUsageByAccountQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            특정 사용자가 등록한 공용 이미지 태그 목록을 조회합니다.
+            - 이미지명, 태그명, 워크스페이스명, 업로드 일시, 크기, 설명, 이미지 타입 정보를 제공합니다.
+            - 이미지 소스 타입(SNAPSHOT, EXTERNAL)으로 필터링이 가능합니다.
+        
+ * @summary 사용자별 공용 이미지 태그 목록 조회
+ */
+export const getPublicImageTagsByAccountId = (
+  accountId: string,
+  params?: GetPublicImageTagsByAccountIdParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseAccountImageTagResponse>({
+    url: `/api/v1/admin/registries/public/images/usage/accounts/${accountId}`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetPublicImageTagsByAccountIdQueryKey = (
+  accountId?: string,
+  params?: GetPublicImageTagsByAccountIdParams,
+) => {
+  return [
+    `/api/v1/admin/registries/public/images/usage/accounts/${accountId}`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPublicImageTagsByAccountIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPublicImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetPublicImageTagsByAccountIdQueryKey(accountId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>
+  > = ({ signal }) => getPublicImageTagsByAccountId(accountId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!accountId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPublicImageTagsByAccountIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>
+>;
+export type GetPublicImageTagsByAccountIdQueryError = unknown;
+
+export function useGetPublicImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params: undefined | GetPublicImageTagsByAccountIdParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPublicImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPublicImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 사용자별 공용 이미지 태그 목록 조회
+ */
+
+export function useGetPublicImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPublicImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPublicImageTagsByAccountIdQueryOptions(
+    accountId,
     params,
     options,
   );

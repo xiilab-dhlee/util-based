@@ -31,7 +31,10 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponsePrivateImageUsageResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type {
+  BaseResponsePageResponseAccountImageTagResponse,
+  BaseResponsePageResponsePrivateImageUsageResponse,
+} from "../astragoBackendAPIDocumentation.schemas";
 
 export const getGetPrivateImageUsageByAccountResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponsePrivateImageUsageResponse> = {},
@@ -51,6 +54,38 @@ export const getGetPrivateImageUsageByAccountResponseMock = (
       email: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageCount: faker.number.int({ min: undefined, max: undefined }),
       usedStorage: faker.number.int({ min: undefined, max: undefined }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetPrivateImageTagsByAccountIdResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseAccountImageTagResponse> = {},
+): BaseResponsePageResponseAccountImageTagResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      tagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      uploadedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      sizeByte: faker.number.int({ min: undefined, max: undefined }),
+      description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageType: faker.helpers.arrayElement([
+        "BUILT_IN",
+        "HUB",
+        "PRIVATE",
+        "PUBLIC",
+      ] as const),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -87,6 +122,37 @@ export const getGetPrivateImageUsageByAccountMockHandler = (
     options,
   );
 };
+
+export const getGetPrivateImageTagsByAccountIdMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseAccountImageTagResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseAccountImageTagResponse>
+        | BaseResponsePageResponseAccountImageTagResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/registries/private/images/usage/accounts/:accountId",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPrivateImageTagsByAccountIdResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getAdminPrivateRegistryMock = () => [
   getGetPrivateImageUsageByAccountMockHandler(),
+  getGetPrivateImageTagsByAccountIdMockHandler(),
 ];

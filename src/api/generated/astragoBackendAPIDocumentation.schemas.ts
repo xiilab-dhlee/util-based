@@ -1234,6 +1234,34 @@ export interface CreateFolderRequest {
 }
 
 /**
+ * 압축 파일 형식
+ */
+export type DownloadRequestCompressType =
+  (typeof DownloadRequestCompressType)[keyof typeof DownloadRequestCompressType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DownloadRequestCompressType = {
+  TAR: "TAR",
+  ZIP: "ZIP",
+} as const;
+
+/**
+ * 볼륨 파일 다운로드 요청
+ */
+export interface DownloadRequest {
+  /**
+   * 다운로드할 파일/폴더 경로 목록
+   * @minItems 0
+   * @maxItems 100
+   */
+  paths: string[];
+  /** 압축 파일 형식 */
+  compressType: DownloadRequestCompressType;
+}
+
+export type StreamingResponseBody = {};
+
+/**
  * 볼륨 파일 삭제 요청
  */
 export interface DeleteFilesRequest {
@@ -5534,6 +5562,65 @@ export interface PublicImageUsageResponse {
   usedStorage: number;
 }
 
+/**
+ * 이미지 타입
+ */
+export type AccountImageTagResponseImageType =
+  (typeof AccountImageTagResponseImageType)[keyof typeof AccountImageTagResponseImageType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccountImageTagResponseImageType = {
+  BUILT_IN: "BUILT_IN",
+  HUB: "HUB",
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+/**
+ * 사용자별 이미지 태그 목록 응답
+ */
+export interface AccountImageTagResponse {
+  /** Harbor 이미지명 */
+  harborImageName: string;
+  /** 태그명 */
+  tagName: string;
+  /** 워크스페이스명 (워크스페이스 격리 비활성화 시 null) */
+  workspaceName?: string;
+  /** 업로드 일시 */
+  uploadedAt?: string;
+  /** 이미지 크기 (bytes) */
+  sizeByte?: number;
+  /** 설명 */
+  description?: string;
+  /** 이미지 타입 */
+  imageType?: AccountImageTagResponseImageType;
+}
+
+export type BaseResponsePageResponseAccountImageTagResponseStatus =
+  (typeof BaseResponsePageResponseAccountImageTagResponseStatus)[keyof typeof BaseResponsePageResponseAccountImageTagResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseAccountImageTagResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseAccountImageTagResponse {
+  status: BaseResponsePageResponseAccountImageTagResponseStatus;
+  errorCode?: string;
+  data?: PageResponseAccountImageTagResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseAccountImageTagResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: AccountImageTagResponse[];
+}
+
 export type BaseResponsePageResponsePrivateImageUsageResponseStatus =
   (typeof BaseResponsePageResponsePrivateImageUsageResponseStatus)[keyof typeof BaseResponsePageResponsePrivateImageUsageResponseStatus];
 
@@ -5786,7 +5873,7 @@ export const AdminNotificationItemResponseNotificationRole = {
 export interface AdminNotificationItemResponse {
   /** 알림 고유 ID */
   notificationId: number;
-  /** 알림 제목 */
+  /** 알림 제목 (NotificationSetName) */
   notificationTitle: string;
   /** 알림 본문 메시지 */
   notificationContent: string;
@@ -5848,7 +5935,7 @@ export const AdminNotificationSetResponseNotificationType = {
 export interface AdminNotificationSetResponse {
   /** 알림 설정 고유 ID */
   notificationSetId: number;
-  /** 알림 설정 표시 이름 (UI용) */
+  /** 알림 설정 이름 (NotificationSetName) */
   notificationSetName: string;
   /** 시스템 내 알림 수신 활성화 여부 */
   isSystemNotificationEnabled: boolean;
@@ -6024,6 +6111,33 @@ export interface BaseResponseListNotificationSetResponse {
 }
 
 /**
+ * 알림 설정 이름 (enum)
+ */
+export type NotificationSetResponseNotificationSetName =
+  (typeof NotificationSetResponseNotificationSetName)[keyof typeof NotificationSetResponseNotificationSetName];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationSetResponseNotificationSetName = {
+  LICENSE_EXPIRY_WARNING: "LICENSE_EXPIRY_WARNING",
+  USER_SIGNUP: "USER_SIGNUP",
+  VULNERABILITY_IMAGE_REQUEST: "VULNERABILITY_IMAGE_REQUEST",
+  WORKLOAD_VULNERABILITY: "WORKLOAD_VULNERABILITY",
+  NODE_FAILURE: "NODE_FAILURE",
+  MIG_APPLIED: "MIG_APPLIED",
+  MIG_FAILURE: "MIG_FAILURE",
+  WORKSPACE_CREATED: "WORKSPACE_CREATED",
+  WORKSPACE_RESOURCE_REQUEST: "WORKSPACE_RESOURCE_REQUEST",
+  WORKLOAD_RESOURCE_RECLAIM_RESULT: "WORKLOAD_RESOURCE_RECLAIM_RESULT",
+  WORKSPACE_RESOURCE_REQUEST_RESULT: "WORKSPACE_RESOURCE_REQUEST_RESULT",
+  BATCH_JOB_COMPLETED: "BATCH_JOB_COMPLETED",
+  JOB_RECLAIM_WARNING: "JOB_RECLAIM_WARNING",
+  JOB_RECLAIMED: "JOB_RECLAIMED",
+  IMAGE_COMMIT_REGISTERED: "IMAGE_COMMIT_REGISTERED",
+  WORKLOAD_STARTED: "WORKLOAD_STARTED",
+  WORKLOAD_ERROR: "WORKLOAD_ERROR",
+} as const;
+
+/**
  * 알림 타입
  */
 export type NotificationSetResponseNotificationType =
@@ -6060,8 +6174,8 @@ export const NotificationSetResponseNotificationRole = {
 export interface NotificationSetResponse {
   /** 알림 설정 고유 ID */
   notificationSetId: number;
-  /** 알림 설정 표시 이름 (UI용) */
-  notificationSetName: string;
+  /** 알림 설정 이름 (enum) */
+  notificationSetName: NotificationSetResponseNotificationSetName;
   /** 시스템 내 알림 수신 활성화 여부 */
   isSystemNotificationEnabled: boolean;
   /** 이메일 알림 수신 활성화 여부 */
@@ -6785,7 +6899,7 @@ export const StreamNodeGpuMetricsMetricName = {
 
 export type GetWorkloadResourceMetricsTimeseriesParams = {
   /**
-   * 메트릭 종류
+   * 워크스페이스 리소스 메트릭 타입
    */
   metricName: GetWorkloadResourceMetricsTimeseriesMetricName;
   /**
@@ -6814,7 +6928,7 @@ export const GetWorkloadResourceMetricsTimeseriesMetricName = {
 
 export type GetResourceMetricsTimeseriesParams = {
   /**
-   * 메트릭 종류
+   * 워크스페이스 리소스 메트릭 타입
    */
   metricsName: GetResourceMetricsTimeseriesMetricsName;
   /**
@@ -7302,15 +7416,6 @@ export type GetAllNamespaceEventsParams = {
    * @maximum 100
    */
   pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 네임스페이스 이름
-   * @pattern ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-   */
-  namespace?: string;
 };
 
 export type FindHubsParams = {
@@ -7709,6 +7814,33 @@ export const GetPublicImageUsageByAccountOrder = {
   DESC: "DESC",
 } as const;
 
+export type GetPublicImageTagsByAccountIdParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  "page.pageNo"?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  "page.pageSize"?: number;
+  /**
+   * 이미지 소스 타입 필터
+   */
+  imageSourceType?: GetPublicImageTagsByAccountIdImageSourceType;
+};
+
+export type GetPublicImageTagsByAccountIdImageSourceType =
+  (typeof GetPublicImageTagsByAccountIdImageSourceType)[keyof typeof GetPublicImageTagsByAccountIdImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPublicImageTagsByAccountIdImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
 export type GetPrivateImageUsageByAccountParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -7752,6 +7884,33 @@ export type GetPrivateImageUsageByAccountOrder =
 export const GetPrivateImageUsageByAccountOrder = {
   ASC: "ASC",
   DESC: "DESC",
+} as const;
+
+export type GetPrivateImageTagsByAccountIdParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  "page.pageNo"?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  "page.pageSize"?: number;
+  /**
+   * 이미지 소스 타입 필터
+   */
+  imageSourceType?: GetPrivateImageTagsByAccountIdImageSourceType;
+};
+
+export type GetPrivateImageTagsByAccountIdImageSourceType =
+  (typeof GetPrivateImageTagsByAccountIdImageSourceType)[keyof typeof GetPrivateImageTagsByAccountIdImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPrivateImageTagsByAccountIdImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
 } as const;
 
 export type GetAllAccountsParams = {

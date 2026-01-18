@@ -303,7 +303,14 @@ export const useResetPasswordByAdmin = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 선택한 계정을 일괄 소프트 삭제합니다. 삭제된 계정은 비활성화되며 복구할 수 없습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            선택한 계정을 일괄 소프트 삭제합니다. 삭제된 계정은 비활성화되며 복구할 수 없습니다.
+
+            **삭제 권한 정책:**
+            - 최상위 관리자(SUPER_ADMIN) 삭제: 최상위 관리자만 가능
+            - 관리자(ADMIN) / 일반 사용자(USER) 삭제: 최상위 관리자, 관리자 가능
+            - 본인 계정 삭제: 불가
+        
  * @summary 계정 삭제
  */
 export const deleteAccount = (

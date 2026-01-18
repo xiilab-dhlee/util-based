@@ -2047,10 +2047,7 @@ export function useGetDaemonSets<
 
 /**
  * 
-            관리자가 클러스터의 이벤트를 페이징 조회합니다.
-
-            **네임스페이스 필터링:**
-            - namespace 파라미터 지정 시: 해당 네임스페이스만 조회 (예: namespace=astrago)
+            관리자가 클러스터의 전체 이벤트를 페이징 조회합니다.
 
             **페이징 방식:**
             - 이벤트를 메모리로 로드 후 애플리케이션 레벨 페이징
@@ -2066,7 +2063,7 @@ export function useGetDaemonSets<
 
             **이벤트 필드:**
             - **namespace**: 이벤트가 발생한 네임스페이스
-            - **lastObservedDateTime**: 마지막 관찰 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)
+            - **lastObservedDateTime**: 마지막 관찰 시간 (UTC 기준)
             - **eventType**: 이벤트 타입 (Normal/Warning)
             - **eventReason**: 이벤트 발생 이유 (예: Started, Created, Failed)
             - **object**: 관련 객체 (kind/name 형식, 예: pod/my-app-7d8f5c9b4-xkz9m)
@@ -2082,7 +2079,7 @@ export function useGetDaemonSets<
  * @summary 클러스터 이벤트 조회
  */
 export const getAllNamespaceEvents = (
-  params: GetAllNamespaceEventsParams,
+  params?: GetAllNamespaceEventsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseK8sEventResponse>({
@@ -2106,7 +2103,7 @@ export const getGetAllNamespaceEventsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllNamespaceEvents>>,
   TError = unknown,
 >(
-  params: GetAllNamespaceEventsParams,
+  params?: GetAllNamespaceEventsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2142,7 +2139,7 @@ export function useGetAllNamespaceEvents<
   TData = Awaited<ReturnType<typeof getAllNamespaceEvents>>,
   TError = unknown,
 >(
-  params: GetAllNamespaceEventsParams,
+  params: undefined | GetAllNamespaceEventsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -2168,7 +2165,7 @@ export function useGetAllNamespaceEvents<
   TData = Awaited<ReturnType<typeof getAllNamespaceEvents>>,
   TError = unknown,
 >(
-  params: GetAllNamespaceEventsParams,
+  params?: GetAllNamespaceEventsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2194,7 +2191,7 @@ export function useGetAllNamespaceEvents<
   TData = Awaited<ReturnType<typeof getAllNamespaceEvents>>,
   TError = unknown,
 >(
-  params: GetAllNamespaceEventsParams,
+  params?: GetAllNamespaceEventsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2216,7 +2213,7 @@ export function useGetAllNamespaceEvents<
   TData = Awaited<ReturnType<typeof getAllNamespaceEvents>>,
   TError = unknown,
 >(
-  params: GetAllNamespaceEventsParams,
+  params?: GetAllNamespaceEventsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
