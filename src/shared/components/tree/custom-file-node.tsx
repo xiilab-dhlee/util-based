@@ -7,10 +7,10 @@ import { createElement } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import type { FileCheckboxProps } from "@/shared/components/tree/custom-file-tree";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
 import type { CoreFileButton } from "@/shared/types/core.model";
-import type { FileCheckboxProps } from "./custom-file-tree";
 
 /**
  * CustomFileNode 컴포넌트의 props 인터페이스
@@ -257,14 +257,14 @@ export function CustomFileNode({
       {fileCheckbox ? (
         <CheckboxWrapper>
           {createElement(fileCheckbox, {
-            activeKey: fileNode.id,
+            activeKey: fileNode.path,
             type: "file",
             node: fileNode,
           })}
         </CheckboxWrapper>
       ) : null}
       {createElement(fileButton, {
-        activeKey: fileNode.id,
+        activeKey: fileNode.path,
         fileName: fileNode.name,
         showIcon: true,
         path: fileNode.path,

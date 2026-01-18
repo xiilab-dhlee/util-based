@@ -3,6 +3,28 @@ import { type Atom, atom } from "jotai";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 
 /**
+ * 트리에서 조건에 맞는 노드를 찾는 범용 함수
+ *
+ * @param nodes - 탐색할 트리 노드 배열
+ * @param predicate - 노드를 찾는 조건 함수
+ * @returns 찾은 노드 또는 null
+ */
+function findNodeByPredicate<T extends FileTreeType>(
+  nodes: T[],
+  predicate: (node: T) => boolean,
+): T | null {
+  for (const node of nodes) {
+    if (predicate(node)) return node;
+
+    if (node.children?.length) {
+      const found = findNodeByPredicate(node.children as T[], predicate);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+/**
  * 트리에서 특정 경로의 노드를 찾는 함수
  *
  * @param nodes - 탐색할 트리 노드 배열
@@ -13,15 +35,22 @@ export function findNodeByPath<T extends FileTreeType>(
   nodes: T[],
   targetPath: string,
 ): T | null {
-  for (const node of nodes) {
-    if (node.path === targetPath) return node;
+  return findNodeByPredicate(nodes, (node) => node.path === targetPath);
+}
 
-    if (node.children?.length) {
-      const found = findNodeByPath(node.children as T[], targetPath);
-      if (found) return found;
-    }
-  }
-  return null;
+/**
+ * 트리에서 특정 키의 노드를 찾는 함수
+ * (키는 path와 동일한 값으로 간주)
+ *
+ * @param nodes - 탐색할 트리 노드 배열
+ * @param targetKey - 찾을 노드의 키
+ * @returns 찾은 노드 또는 null
+ */
+export function findNodeByKey<T extends FileTreeType>(
+  nodes: T[],
+  targetKey: React.Key,
+): T | null {
+  return findNodeByPath(nodes, String(targetKey));
 }
 
 /**
@@ -74,7 +103,7 @@ export function getAncestorPaths(path: string): string[] {
   const ancestors: string[] = [];
 
   for (let i = 1; i < parts.length; i++) {
-    ancestors.push("/" + parts.slice(0, i).join("/"));
+    ancestors.push(`/${parts.slice(0, i).join("/")}`);
   }
 
   return ancestors;
@@ -127,20 +156,7 @@ export function createSelectedNodeInfoAtom<T extends FileTreeType>(
 
     if (selectedKey === null) return null;
 
-    // 트리 노드에서 특정 키로 노드를 찾는 재귀 함수
-    const findNodeByKey = (nodes: T[], targetKey: React.Key): T | null => {
-      for (const node of nodes) {
-        if (node.path === targetKey) return node;
-
-        if (node.children?.length) {
-          const found = findNodeByKey(node.children as T[], targetKey);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-
-    return findNodeByKey(treeData as T[], selectedKey as React.Key);
+    return findNodeByKey(treeData, selectedKey);
   });
 }
 

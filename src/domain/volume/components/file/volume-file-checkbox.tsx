@@ -25,20 +25,28 @@ export function VolumeFileCheckbox({
     return [activeKey];
   }, [type, node, activeKey]);
 
+  const childPaths = useMemo(() => {
+    return descendantPaths.filter((p) => p !== activeKey);
+  }, [descendantPaths, activeKey]);
+
   const isChecked = useMemo(() => {
     if (type === "file") {
       return checkedNodes.has(activeKey);
     }
-    return descendantPaths.every((path) => checkedNodes.has(path));
-  }, [type, activeKey, descendantPaths, checkedNodes]);
+    if (childPaths.length === 0) {
+      return checkedNodes.has(activeKey);
+    }
+    return childPaths.every((path) => checkedNodes.has(path));
+  }, [type, activeKey, childPaths, checkedNodes]);
 
   const isIndeterminate = useMemo(() => {
     if (type === "file") return false;
-    const checkedCount = descendantPaths.filter((path) =>
+    if (childPaths.length === 0) return false;
+    const checkedCount = childPaths.filter((path) =>
       checkedNodes.has(path),
     ).length;
-    return checkedCount > 0 && checkedCount < descendantPaths.length;
-  }, [type, descendantPaths, checkedNodes]);
+    return checkedCount > 0 && checkedCount < childPaths.length;
+  }, [type, childPaths, checkedNodes]);
 
   const handleCheckChange = (checked: boolean) => {
     setCheckedNodes((prev) => {
