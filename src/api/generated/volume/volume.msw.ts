@@ -36,6 +36,7 @@ import type {
   BaseResponseUnit,
   BaseResponseVolumeDetailResponse,
   BaseResponseVolumeFileListResponse,
+  StreamingResponseBody,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getUpdateVolumeResponseMock = (
@@ -57,6 +58,8 @@ export const getCreateFolderResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getDownloadResponseMock = (): StreamingResponseBody => ({});
 
 export const getDecompressResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
@@ -249,6 +252,34 @@ export const getCreateFolderMockHandler = (
             : getCreateFolderResponseMock(),
         ),
         { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getDownloadMockHandler = (
+  overrideResponse?:
+    | StreamingResponseBody
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<StreamingResponseBody> | StreamingResponseBody),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/volumes/:volumeId/files/download",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getDownloadResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
@@ -481,6 +512,7 @@ export const getVolumeMock = () => [
   getUpdateVolumeMockHandler(),
   getDeleteVolumeMockHandler(),
   getCreateFolderMockHandler(),
+  getDownloadMockHandler(),
   getDeleteFilesMockHandler(),
   getDecompressMockHandler(),
   getCompressMockHandler(),

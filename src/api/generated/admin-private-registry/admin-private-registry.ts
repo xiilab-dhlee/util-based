@@ -43,7 +43,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponsePageResponseAccountImageTagResponse,
   BaseResponsePageResponsePrivateImageUsageResponse,
+  GetPrivateImageTagsByAccountIdParams,
   GetPrivateImageUsageByAccountParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -205,6 +207,192 @@ export function useGetPrivateImageUsageByAccount<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetPrivateImageUsageByAccountQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            특정 사용자가 등록한 개인 이미지 태그 목록을 조회합니다.
+            - 이미지명, 태그명, 워크스페이스명, 업로드 일시, 크기, 설명, 이미지 타입 정보를 제공합니다.
+            - 이미지 소스 타입(SNAPSHOT, EXTERNAL)으로 필터링이 가능합니다.
+        
+ * @summary 사용자별 개인 이미지 태그 목록 조회
+ */
+export const getPrivateImageTagsByAccountId = (
+  accountId: string,
+  params?: GetPrivateImageTagsByAccountIdParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseAccountImageTagResponse>({
+    url: `/api/v1/admin/registries/private/images/usage/accounts/${accountId}`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetPrivateImageTagsByAccountIdQueryKey = (
+  accountId?: string,
+  params?: GetPrivateImageTagsByAccountIdParams,
+) => {
+  return [
+    `/api/v1/admin/registries/private/images/usage/accounts/${accountId}`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPrivateImageTagsByAccountIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPrivateImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetPrivateImageTagsByAccountIdQueryKey(accountId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>
+  > = ({ signal }) => getPrivateImageTagsByAccountId(accountId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!accountId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPrivateImageTagsByAccountIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>
+>;
+export type GetPrivateImageTagsByAccountIdQueryError = unknown;
+
+export function useGetPrivateImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params: undefined | GetPrivateImageTagsByAccountIdParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+          TError,
+          Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPrivateImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPrivateImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+          TError,
+          Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPrivateImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPrivateImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 사용자별 개인 이미지 태그 목록 조회
+ */
+
+export function useGetPrivateImageTagsByAccountId<
+  TData = Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+  TError = unknown,
+>(
+  accountId: string,
+  params?: GetPrivateImageTagsByAccountIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPrivateImageTagsByAccountId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPrivateImageTagsByAccountIdQueryOptions(
+    accountId,
     params,
     options,
   );

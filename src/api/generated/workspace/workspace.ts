@@ -62,7 +62,7 @@ import type {
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
- * 워크스페이스 정보(워크스페이스명, 상세 설명)를 수정합니다. OWNER 또는 ADMIN 권한이 필요합니다.
+ * 워크스페이스 정보(워크스페이스명, 상세 설명)를 수정합니다. OWNER 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 워크스페이스 수정
  */
 export const updateWorkspace = (

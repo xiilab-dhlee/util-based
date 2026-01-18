@@ -130,7 +130,9 @@ export const getAdminNotificationsResponse = zod
           zod
             .object({
               notificationId: zod.number().describe("알림 고유 ID"),
-              notificationTitle: zod.string().describe("알림 제목"),
+              notificationTitle: zod
+                .string()
+                .describe("알림 제목 (NotificationSetName)"),
               notificationContent: zod.string().describe("알림 본문 메시지"),
               notificationType: zod
                 .enum([
@@ -184,7 +186,7 @@ export const getAdminNotificationSetsResponse = zod
             notificationSetId: zod.number().describe("알림 설정 고유 ID"),
             notificationSetName: zod
               .string()
-              .describe("알림 설정 표시 이름 (UI용)"),
+              .describe("알림 설정 이름 (NotificationSetName)"),
             isSystemNotificationEnabled: zod
               .boolean()
               .describe("시스템 내 알림 수신 활성화 여부"),

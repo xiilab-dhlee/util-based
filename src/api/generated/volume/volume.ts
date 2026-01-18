@@ -56,8 +56,10 @@ import type {
   CreateOnPremiseVolumeRequest,
   DecompressRequest,
   DeleteFilesRequest,
+  DownloadRequest,
   GetVolumeListParams,
   ListFilesParams,
+  StreamingResponseBody,
   UpdateVolumeRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -320,6 +322,113 @@ export const useCreateFolder = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateFolderMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+        볼륨 내 파일/폴더를 압축하여 다운로드합니다.
+
+        **다운로드 방식:**
+        - 모든 파일/폴더는 선택한 압축 형식으로 압축되어 다운로드됩니다
+        - 단일 파일도 압축하여 다운로드합니다
+
+        **압축 파일명 규칙:**
+        - 단일 파일 1개: {파일명}.zip 또는 {파일명}.tar.gz
+        - 단일 폴더 1개: {폴더명}.zip 또는 {폴더명}.tar.gz
+        - 다중 파일/폴더: download.zip 또는 download.tar.gz
+
+        **압축 형식:**
+        - TAR: .tar.gz (gzip 압축 tar)
+        - ZIP: .zip
+
+        **제약 사항:**
+        - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 볼륨 다운로드 가능
+        - 공개 볼륨: 누구나 다운로드 가능 (워크스페이스 멤버 여부 확인)
+        - 비공개 볼륨: 본인(생성자)만 다운로드 가능
+        
+ * @summary 볼륨 파일 다운로드
+ */
+export const download = (
+  volumeId: number,
+  downloadRequest: DownloadRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<StreamingResponseBody>({
+    url: `/api/v1/volumes/${volumeId}/files/download`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: downloadRequest,
+    signal,
+  });
+};
+
+export const getDownloadMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof download>>,
+    TError,
+    { volumeId: number; data: DownloadRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof download>>,
+  TError,
+  { volumeId: number; data: DownloadRequest },
+  TContext
+> => {
+  const mutationKey = ["download"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof download>>,
+    { volumeId: number; data: DownloadRequest }
+  > = (props) => {
+    const { volumeId, data } = props ?? {};
+
+    return download(volumeId, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DownloadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof download>>
+>;
+export type DownloadMutationBody = DownloadRequest;
+export type DownloadMutationError = unknown;
+
+/**
+ * @summary 볼륨 파일 다운로드
+ */
+export const useDownload = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof download>>,
+      TError,
+      { volumeId: number; data: DownloadRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof download>>,
+  TError,
+  { volumeId: number; data: DownloadRequest },
+  TContext
+> => {
+  const mutationOptions = getDownloadMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

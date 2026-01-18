@@ -61,7 +61,7 @@ export const getStorageDetailResponse = zod
   .strict();
 
 /**
- * 스토리지 이름을 수정합니다.
+ * 스토리지 이름을 수정합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 스토리지 수정
  */
 export const updateStorageParams = zod.object({

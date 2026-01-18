@@ -156,8 +156,26 @@ export const getNotificationSetsResponse = zod
           .object({
             notificationSetId: zod.number().describe("알림 설정 고유 ID"),
             notificationSetName: zod
-              .string()
-              .describe("알림 설정 표시 이름 (UI용)"),
+              .enum([
+                "LICENSE_EXPIRY_WARNING",
+                "USER_SIGNUP",
+                "VULNERABILITY_IMAGE_REQUEST",
+                "WORKLOAD_VULNERABILITY",
+                "NODE_FAILURE",
+                "MIG_APPLIED",
+                "MIG_FAILURE",
+                "WORKSPACE_CREATED",
+                "WORKSPACE_RESOURCE_REQUEST",
+                "WORKLOAD_RESOURCE_RECLAIM_RESULT",
+                "WORKSPACE_RESOURCE_REQUEST_RESULT",
+                "BATCH_JOB_COMPLETED",
+                "JOB_RECLAIM_WARNING",
+                "JOB_RECLAIMED",
+                "IMAGE_COMMIT_REGISTERED",
+                "WORKLOAD_STARTED",
+                "WORKLOAD_ERROR",
+              ])
+              .describe("알림 설정 이름 (enum)"),
             isSystemNotificationEnabled: zod
               .boolean()
               .describe("시스템 내 알림 수신 활성화 여부"),

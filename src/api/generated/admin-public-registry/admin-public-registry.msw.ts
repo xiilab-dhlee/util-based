@@ -33,6 +33,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import type {
   BaseResponseDeleteImagesResponse,
+  BaseResponsePageResponseAccountImageTagResponse,
   BaseResponsePageResponsePublicImageUsageResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -75,6 +76,38 @@ export const getGetPublicImageUsageByAccountResponseMock = (
       email: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageCount: faker.number.int({ min: undefined, max: undefined }),
       usedStorage: faker.number.int({ min: undefined, max: undefined }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetPublicImageTagsByAccountIdResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseAccountImageTagResponse> = {},
+): BaseResponsePageResponseAccountImageTagResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      tagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      uploadedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      sizeByte: faker.number.int({ min: undefined, max: undefined }),
+      description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageType: faker.helpers.arrayElement([
+        "BUILT_IN",
+        "HUB",
+        "PRIVATE",
+        "PUBLIC",
+      ] as const),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -141,7 +174,38 @@ export const getGetPublicImageUsageByAccountMockHandler = (
     options,
   );
 };
+
+export const getGetPublicImageTagsByAccountIdMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseAccountImageTagResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseAccountImageTagResponse>
+        | BaseResponsePageResponseAccountImageTagResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/registries/public/images/usage/accounts/:accountId",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPublicImageTagsByAccountIdResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getAdminPublicRegistryMock = () => [
   getDeleteImagesMockHandler(),
   getGetPublicImageUsageByAccountMockHandler(),
+  getGetPublicImageTagsByAccountIdMockHandler(),
 ];
