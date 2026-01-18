@@ -343,6 +343,15 @@ function createKeycloakJwt(token: JWT, user: User, account: Account): JWT {
   const roles = parseRolesFromToken(account.access_token);
   const expiresAt = account.expires_at;
 
+  // expires_at이 없으면 토큰 생성 거부
+  if (!expiresAt) {
+    console.error("[Auth] 토큰 생성 실패: expires_at 누락", {
+      userId: user.id,
+      email: user.email,
+    });
+    return { ...token, error: "MissingExpiresAt" };
+  }
+
   authDebug(
     `🎫 토큰 발급: ${user.name ?? user.email} [${roles.join(", ")}] (만료: ${formatExpiresAt(expiresAt)})`,
   );

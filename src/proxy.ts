@@ -101,6 +101,7 @@ function hasRole(roles: AccountRole[], requiredRole: AccountRole): boolean {
  * 토큰이 유효한지 확인
  * - 토큰이 존재하는지
  * - 토큰 갱신 에러가 없는지
+ * - 만료 시간이 존재하는지
  * - 토큰이 만료되지 않았는지
  */
 function isValidToken(token: TokenWithRoles | null): boolean {
@@ -112,14 +113,18 @@ function isValidToken(token: TokenWithRoles | null): boolean {
     return false;
   }
 
-  // 만료 시간 확인
+  // 만료 시간이 없으면 무효
   const expiresAt = token.expires_at;
-  if (expiresAt) {
-    const now = Math.floor(Date.now() / 1000);
-    if (now >= expiresAt) {
-      debugLog("⚠️ 토큰 만료됨", { expiresAt, now });
-      return false;
-    }
+  if (!expiresAt) {
+    debugLog("⚠️ 토큰 만료 시간 누락");
+    return false;
+  }
+
+  // 만료 시간 확인
+  const now = Math.floor(Date.now() / 1000);
+  if (now >= expiresAt) {
+    debugLog("⚠️ 토큰 만료됨", { expiresAt, now });
+    return false;
   }
 
   return true;
