@@ -22,28 +22,15 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
-// ============================================================================
-// Types
-// ============================================================================
-
 interface CompressVolumeFileEventData {
   volumeId: number;
   filePaths: string[];
 }
 
-// ============================================================================
-// Component
-// ============================================================================
-
 export function CompressVolumeFileModal() {
-  // ---------------------------------------------------------------------------
-  // State & Hooks
-  // ---------------------------------------------------------------------------
-
   const { open, onOpen, onClose } = useGlobalModal(
     openCompressVolumeFileModalAtom,
   );
-
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
   const [volumeId, setVolumeId] = useState<number | null>(null);
@@ -65,30 +52,16 @@ export function CompressVolumeFileModal() {
   });
 
   const { mutate, isPending } = useCompress();
-
   const selectedCompressType = watch("compressFileType");
 
-  // ---------------------------------------------------------------------------
-  // Handlers
-  // ---------------------------------------------------------------------------
-
-  /**
-   * 모달 닫기 처리
-   * 압축 진행 중(isPending)일 때는 닫기를 방지합니다.
-   */
   const handleCancel = () => {
     if (isPending) return;
     onClose();
   };
 
-  /**
-   * 폼 제출 핸들러
-   * 유효성 검증 통과 후 압축 API를 호출합니다.
-   */
   const onSubmit = (data: CompressVolumeFileFormType) => {
     if (!volumeId || filePaths.length === 0) return;
 
-    // 상위 폴더 경로만 추출 (하위 파일/폴더는 상위 폴더 삭제 시 함께 삭제됨)
     const filteredPaths = filterToRootPaths(filePaths);
 
     mutate(
@@ -110,25 +83,15 @@ export function CompressVolumeFileModal() {
     );
   };
 
-  // ---------------------------------------------------------------------------
-  // Subscriptions
-  // ---------------------------------------------------------------------------
-
   useSubscribe<CompressVolumeFileEventData>(
     VOLUME_EVENTS.sendCompressVolumeFile,
     (eventData) => {
       setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
-
       reset({ destinationPath: "/", compressFileType: "ZIP" });
-
       onOpen();
     },
   );
-
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
 
   return (
     <Modal
@@ -196,10 +159,6 @@ export function CompressVolumeFileModal() {
     </Modal>
   );
 }
-
-// ============================================================================
-// Styled Components
-// ============================================================================
 
 const SelectFileCompression = styled.div`
   display: flex;

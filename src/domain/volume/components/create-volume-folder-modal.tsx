@@ -24,24 +24,12 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
-// ============================================================================
-// Types
-// ============================================================================
-
 interface CreateVolumeFolderEventData {
   volumeId: number;
   filePath: string;
 }
 
-// ============================================================================
-// Component
-// ============================================================================
-
 export function CreateVolumeFolderModal() {
-  // ---------------------------------------------------------------------------
-  // State & Hooks
-  // ---------------------------------------------------------------------------
-
   const { open, onOpen, onClose } = useGlobalModal(
     openCreateVolumeFolderModalAtom,
   );
@@ -60,10 +48,6 @@ export function CreateVolumeFolderModal() {
   });
 
   const { mutate, isPending } = useCreateFolder();
-
-  // ---------------------------------------------------------------------------
-  // Handlers
-  // ---------------------------------------------------------------------------
 
   const handleCancel = () => {
     if (isPending) return;
@@ -90,10 +74,6 @@ export function CreateVolumeFolderModal() {
     );
   };
 
-  // ---------------------------------------------------------------------------
-  // Subscriptions
-  // ---------------------------------------------------------------------------
-
   useSubscribe<CreateVolumeFolderEventData>(
     VOLUME_EVENTS.sendCreateVolumeFolder,
     (eventData) => {
@@ -103,10 +83,6 @@ export function CreateVolumeFolderModal() {
       onOpen();
     },
   );
-
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
 
   return (
     <Modal

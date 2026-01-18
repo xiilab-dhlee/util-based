@@ -33,11 +33,6 @@ interface UpdateVolumeDetailProps {
   onSuccess: () => void;
 }
 
-/**
- * 볼륨 상세 정보 수정 폼 컴포넌트
- *
- * 볼륨 이름, 공개 설정, Mount Path를 수정할 수 있습니다.
- */
 export function UpdateVolumeDetail({
   volumeId,
   onCancel,

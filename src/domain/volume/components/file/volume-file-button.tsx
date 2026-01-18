@@ -9,17 +9,8 @@ import { volumeFileSelectedKeyAtom } from "@/domain/volume/state/volume.atom";
 import { FileTreeButton } from "@/shared/components/button/file-tree-button";
 import type { CoreFileButton } from "@/shared/types/core.model";
 
-/**
- * VolumeFileButton 컴포넌트의 props 인터페이스
- */
 interface VolumeFileButtonProps extends CoreFileButton {}
 
-/**
- * VolumeFileButton 컴포넌트
- *
- * 볼륨 파일 트리에서 파일/폴더를 선택하는 버튼입니다.
- * 폴더인 경우 경로 복사 아이콘이 표시됩니다.
- */
 export function VolumeFileButton({
   fileName,
   activeKey,
@@ -27,25 +18,14 @@ export function VolumeFileButton({
   path,
   type,
 }: VolumeFileButtonProps) {
-  // 현재 선택된 노드의 전역 상태를 관리하는 atom
   const [fileSelectedKey, setFileSelectedKey] = useAtom(
     volumeFileSelectedKeyAtom,
   );
 
-  /**
-   * 버튼 클릭 핸들러
-   *
-   * 버튼이 클릭되면 해당 노드를 선택된 상태로 설정합니다.
-   */
   const handleClick = () => {
     setFileSelectedKey(activeKey);
   };
 
-  /**
-   * 경로 복사 핸들러
-   *
-   * 폴더 경로를 클립보드에 복사합니다.
-   */
   const handleCopyPath = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!path) return;
@@ -101,7 +81,6 @@ const Container = styled.div`
     --copy-icon-color: #1f5bff;
   }
 
-  /* FileTreeButton 내부 호버/active 스타일 오버라이드 (Container에서 관리) */
   & > button {
     &:hover {
       background: transparent;

@@ -5,21 +5,11 @@ import { Icon } from "xiilab-ui";
 import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 
-// =============================================================================
-// Types
-// =============================================================================
-
 interface VolumeStorageCardProps {
-  /** 선택할 스토리지 타입 (ASTRAGO 또는 LOCAL) */
   storageType: VolumeStorageType;
   onClick: (storageType: VolumeStorageType) => void;
 }
 
-// =============================================================================
-// Constants
-// =============================================================================
-
-/** 스토리지 타입별 카드 데이터 */
 const STORAGE_CARD_DATA: Record<
   VolumeStorageType,
   {
@@ -47,16 +37,6 @@ const STORAGE_CARD_DATA: Record<
   },
 };
 
-// =============================================================================
-// Component
-// =============================================================================
-
-/**
- * 볼륨 스토리지 타입 선택 카드 컴포넌트
- *
- * 사용자가 볼륨을 생성할 때 스토리지 타입을 선택할 수 있는 카드입니다.
- * AstraGo Storage와 On-premise Storage 두 가지 옵션을 제공합니다.
- */
 export function VolumeStorageCard({
   storageType,
   onClick,

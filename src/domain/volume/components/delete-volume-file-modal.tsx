@@ -17,34 +17,15 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-/** 삭제 모달 이벤트 데이터 */
 interface DeleteVolumeFileEventData {
   volumeId: number;
   filePaths: string[];
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
-/**
- * 볼륨 파일 삭제 모달 컴포넌트
- *
- * 선택한 볼륨 파일을 삭제할 수 있는 모달입니다.
- */
 export function DeleteVolumeFileModal() {
-  // ---------------------------------------------------------------------------
-  // State & Hooks
-  // ---------------------------------------------------------------------------
-
   const { open, onOpen, onClose } = useGlobalModal(
     openDeleteVolumeFileModalAtom,
   );
-
   const setTreeData = useSetAtom(volumeFileTreeDataAtom);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
@@ -53,27 +34,14 @@ export function DeleteVolumeFileModal() {
 
   const { mutate, isPending } = useDeleteFiles();
 
-  // ---------------------------------------------------------------------------
-  // Handlers
-  // ---------------------------------------------------------------------------
-
-  /**
-   * 모달 닫기 처리
-   * 삭제 진행 중(isPending)일 때는 닫기를 방지합니다.
-   */
   const handleClose = () => {
     if (isPending) return;
     onClose();
   };
 
-  /**
-   * 삭제 확인 버튼 클릭 처리
-   * 상위 폴더 경로만 추출하여 API를 호출하고, 성공 시 트리 상태를 업데이트합니다.
-   */
   const handleOk = () => {
     if (!volumeId || filePaths.length === 0) return;
 
-    // 상위 폴더 경로만 추출 (하위 파일/폴더는 상위 폴더 삭제 시 함께 삭제됨)
     const filteredPaths = filterToRootPaths(filePaths);
 
     mutate(
@@ -89,10 +57,6 @@ export function DeleteVolumeFileModal() {
     );
   };
 
-  // ---------------------------------------------------------------------------
-  // Subscriptions
-  // ---------------------------------------------------------------------------
-
   useSubscribe<DeleteVolumeFileEventData>(
     VOLUME_EVENTS.sendDeleteVolumeFile,
     (eventData) => {
@@ -101,10 +65,6 @@ export function DeleteVolumeFileModal() {
       onOpen();
     },
   );
-
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
 
   return (
     <Modal

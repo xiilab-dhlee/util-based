@@ -23,7 +23,6 @@ export function VolumeListMain() {
   const resetSort = useResetAtom(volumeSortAtom);
   const resetVolumeType = useResetAtom(volumeTypeFilterAtom);
 
-  // 페이지 최초 진입 시 필터 및 검색 상태 초기화
   useEffect(() => {
     resetPage();
     setSearchText("");

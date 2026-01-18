@@ -15,24 +15,12 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface PreviewVolumeFileProps {
-  /** 파일 트리 데이터 */
   treeData: FileTreeType[];
 }
 
-/**
- * PreviewVolumeFile 컴포넌트
- *
- * 선택된 파일/폴더의 미리보기 정보를 표시합니다.
- * treeData에서 선택된 노드를 찾아 상세 정보를 렌더링합니다.
- *
- * @param treeData - 파일 트리 데이터
- */
 export function PreviewVolumeFile({ treeData }: PreviewVolumeFileProps) {
   const selectedKey = useAtomValue(volumeFileSelectedKeyAtom);
 
-  /**
-   * 트리에서 선택된 노드를 찾는 함수
-   */
   const selectedNode = useMemo(() => {
     if (!selectedKey) return null;
 
@@ -54,17 +42,11 @@ export function PreviewVolumeFile({ treeData }: PreviewVolumeFileProps) {
     return findNodeByKey(treeData, selectedKey);
   }, [treeData, selectedKey]);
 
-  /*
-   * 선택된 노드가 없으면 null 반환
-   */
   if (!selectedNode) return null;
 
-  // 파일/폴더 타입에 따른 레이블 및 정보 설정
   const isFile = selectedNode.type === "file";
   const nameKey = isFile ? "파일 이름" : "폴더 이름";
   const fileCount = selectedNode.fileCount ?? -1;
-
-  // 확장자에 따른 아이콘 결정
   const iconName = getFileIconName(
     selectedNode.fileExtension,
     selectedNode.type,

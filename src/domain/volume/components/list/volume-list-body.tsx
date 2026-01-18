@@ -25,7 +25,6 @@ export function VolumeListBody({
   loading,
   isError = false,
 }: VolumeListBodyProps) {
-  // 1. 로딩 상태 - 스켈레톤 카드 표시
   if (loading) {
     return (
       <ListWrapper>
@@ -42,7 +41,6 @@ export function VolumeListBody({
     );
   }
 
-  // 2. 에러 상태
   if (isError) {
     return (
       <ListWrapper>
@@ -51,7 +49,6 @@ export function VolumeListBody({
     );
   }
 
-  // 3. 빈 목록 상태
   if (content.length === 0) {
     return (
       <ListWrapper>

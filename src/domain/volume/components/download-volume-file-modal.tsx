@@ -6,47 +6,28 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Form, FormItem, Icon, Modal } from "xiilab-ui";
 
+import type { DownloadRequestCompressType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   openDownloadVolumeFileModalAtom,
   volumeFileCheckedNodesAtom,
 } from "@/domain/volume/state/volume.atom";
+import { AxiosService } from "@/shared/api/axios";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
-// ============================================================================
-// Types
-// ============================================================================
+type DownloadFileType = DownloadRequestCompressType;
 
-/** 다운로드 압축 파일 타입 */
-type DownloadFileType = "ZIP" | "TAR";
-
-/** 다운로드 모달 이벤트 데이터 */
 interface DownloadVolumeFileEventData {
   volumeId: number;
   filePaths: string[];
 }
 
-// ============================================================================
-// Component
-// ============================================================================
-
-/**
- * 볼륨 파일 다운로드 모달 컴포넌트
- *
- * 선택한 파일들을 압축하여 다운로드할 수 있는 모달입니다.
- * ZIP 또는 TAR 형식을 선택할 수 있습니다.
- */
 export function DownloadVolumeFileModal() {
-  // ---------------------------------------------------------------------------
-  // State & Hooks
-  // ---------------------------------------------------------------------------
-
   const { open, onOpen, onClose } = useGlobalModal(
     openDownloadVolumeFileModalAtom,
   );
-
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
   const [volumeId, setVolumeId] = useState<number | null>(null);
@@ -54,67 +35,46 @@ export function DownloadVolumeFileModal() {
   const [selectedType, setSelectedType] = useState<DownloadFileType>("ZIP");
   const [isPending, setIsPending] = useState(false);
 
-  // ---------------------------------------------------------------------------
-  // Handlers
-  // ---------------------------------------------------------------------------
-
-  /**
-   * 모달 닫기 처리
-   * 다운로드 진행 중(isPending)일 때는 닫기를 방지합니다.
-   */
   const handleCancel = () => {
     if (isPending) return;
     onClose();
   };
 
-  /**
-   * 다운로드 버튼 클릭 핸들러
-   * 선택한 파일들을 압축하여 다운로드합니다.
-   */
   const handleDownload = async () => {
     if (!volumeId || filePaths.length === 0) return;
 
-    // 상위 폴더 경로만 추출
     const filteredPaths = filterToRootPaths(filePaths);
-
     setIsPending(true);
 
     try {
-      // TODO: API 연동 후 실제 다운로드 로직 구현
-      // const response = await downloadVolumeFiles(volumeId, {
-      //   paths: filteredPaths,
-      //   compressFileType: selectedType,
-      // });
-      //
-      // // Blob으로 변환하여 다운로드
-      // const blob = new Blob([response], {
-      //   type: selectedType === "ZIP" ? "application/zip" : "application/x-tar",
-      // });
-      // const url = window.URL.createObjectURL(blob);
-      // const link = document.createElement("a");
-      // link.href = url;
-      // link.download = `download.${selectedType.toLowerCase()}`;
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-      // window.URL.revokeObjectURL(url);
+      const axiosInstance = AxiosService.getInstance().getAxios();
+      const response = await axiosInstance.post<Blob>(
+        `/api/v1/volumes/${volumeId}/files/download`,
+        { paths: filteredPaths, compressType: selectedType },
+        { responseType: "blob" },
+      );
 
-      console.log("다운로드 요청:", { volumeId, filteredPaths, selectedType });
-      toast.info("다운로드 API가 준비 중입니다.");
+      const blob = new Blob([response.data], {
+        type: selectedType === "ZIP" ? "application/zip" : "application/x-tar",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `download.${selectedType.toLowerCase()}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
 
+      toast.success("파일 다운로드가 완료되었습니다.");
       setCheckedNodes(new Set());
       onClose();
-    } catch (error) {
-      console.error("다운로드 실패:", error);
+    } catch {
       toast.error("파일 다운로드에 실패했습니다.");
     } finally {
       setIsPending(false);
     }
   };
-
-  // ---------------------------------------------------------------------------
-  // Subscriptions
-  // ---------------------------------------------------------------------------
 
   useSubscribe<DownloadVolumeFileEventData>(
     VOLUME_EVENTS.sendDownloadVolumeFile,
@@ -125,10 +85,6 @@ export function DownloadVolumeFileModal() {
       onOpen();
     },
   );
-
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
 
   return (
     <Modal
@@ -176,10 +132,6 @@ export function DownloadVolumeFileModal() {
     </Modal>
   );
 }
-
-// ============================================================================
-// Styled Components
-// ============================================================================
 
 const SelectFileCompression = styled.div`
   display: flex;

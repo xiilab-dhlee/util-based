@@ -26,18 +26,12 @@ interface ViewVolumeDetailProps {
   isLoading: boolean;
 }
 
-/**
- * 볼륨 상세 정보 읽기 전용 컴포넌트
- *
- * 볼륨의 기본 정보, 설정 내용, 생성 정보를 표시합니다.
- */
 export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
   const { text: storageTypeText } = getVolumeStorageTypeInfo(data?.volumeType);
   const { text: statusText } = getVolumeStatusInfo(data?.isPublic);
 
   return (
     <StyledArticleBody>
-      {/* 기본 정보 섹션 */}
       <AsideDetailArticleItem>
         <AsideDetailArticleHeader>
           <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
@@ -70,10 +64,8 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
         </AsideDetailArticleColumn>
       </AsideDetailArticleItem>
 
-      {/* 설정 내용 및 생성 정보 섹션 */}
       <AsideDetailArticleItem>
         <AsideDetailArticleRow>
-          {/* 설정 내용 */}
           <AsideDetailArticleRowItem>
             <AsideDetailArticleHeader>
               <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
@@ -127,7 +119,6 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
             )}
           </AsideDetailArticleRowItem>
 
-          {/* 생성 정보 */}
           <AsideDetailArticleRowItem>
             <AsideDetailArticleHeader>
               <AsideDetailArticleTitle>생성 정보</AsideDetailArticleTitle>

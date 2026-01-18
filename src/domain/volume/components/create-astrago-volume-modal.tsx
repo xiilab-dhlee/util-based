@@ -24,29 +24,14 @@ import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
-/**
- * AstraGo 볼륨 생성 모달 컴포넌트
- *
- * 사용자가 AstraGo Storage를 사용하여 새로운 볼륨을 생성할 수 있는 모달입니다.
- * 볼륨 이름 입력, 마운트 경로 설정, 파일 업로드 기능을 제공합니다.
- * 볼륨 생성 성공 시 pubsub을 통해 다른 컴포넌트에 알림을 전달합니다.
- *
- * @returns AstraGo 볼륨 생성 모달 JSX 요소
- */
 export function CreateAstragoVolumeModal() {
   const queryClient = useQueryClient();
-
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-
-  // 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(
     openCreateAstragoVolumeModalAtom,
   );
-
-  // 볼륨 생성 Hook 사용 (orval 생성)
   const registerAstragoVolume = useRegisterAstragoVolume();
 
-  // react-hook-form 설정
   const {
     control,
     handleSubmit,
@@ -62,22 +47,11 @@ export function CreateAstragoVolumeModal() {
     },
   });
 
-  /**
-   * 모달 취소 핸들러
-   *
-   * 현재 모달을 닫습니다.
-   */
   const handleCancel = () => {
     if (registerAstragoVolume.isPending) return;
     onClose();
   };
 
-  /**
-   * 볼륨 생성 제출 핸들러
-   *
-   * 폼 데이터를 수집하여 볼륨 생성 API를 호출합니다.
-   * 성공 시 성공 메시지를 표시하고 모달을 닫습니다.
-   */
   const onSubmit = (data: CreateAstragoVolumeFormType) => {
     registerAstragoVolume.mutate(
       {
@@ -120,17 +94,11 @@ export function CreateAstragoVolumeModal() {
       okText="생성"
       onOk={handleSubmit(onSubmit)}
       centered
-      okButtonProps={{
-        disabled: registerAstragoVolume.isPending,
-      }}
-      cancelButtonProps={{
-        disabled: registerAstragoVolume.isPending,
-      }}
+      okButtonProps={{ disabled: registerAstragoVolume.isPending }}
+      cancelButtonProps={{ disabled: registerAstragoVolume.isPending }}
       afterClose={reset}
     >
-      {/* 볼륨 생성 폼 */}
       <StyledForm>
-        {/* 스토리지 선택 */}
         <Controller
           name="storageId"
           control={control}
@@ -151,8 +119,6 @@ export function CreateAstragoVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* 볼륨 이름 입력 */}
         <Controller
           name="volumeName"
           control={control}
@@ -177,8 +143,6 @@ export function CreateAstragoVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* 공개 설정 드롭다운 */}
         <Controller
           name="isPublic"
           control={control}
@@ -200,8 +164,6 @@ export function CreateAstragoVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* 마운트 경로 입력 필드 */}
         <Controller
           name="mountPath"
           control={control}

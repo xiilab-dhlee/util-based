@@ -24,27 +24,14 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { VOLUME_VISIBILITY_OPTIONS } from "../constants/volume.constant";
 
-/**
- * On-Premise 볼륨 생성 모달 컴포넌트
- *
- * 사용자가 On-Premise Storage를 사용하여 새로운 볼륨을 생성할 수 있는 모달입니다.
- * 볼륨 이름, 공개 설정, Server IP, Volume Path, Mount Path 입력 기능을 제공합니다.
- * 볼륨 생성 성공 시 pubsub을 통해 다른 컴포넌트에 알림을 전달합니다.
- *
- * @returns On-Premise 볼륨 생성 모달 JSX 요소
- */
 export function CreateOnPremVolumeModal() {
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-  // 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(
     openCreateOnPremiseVolumeModalAtom,
   );
-
-  // 볼륨 생성 Hook 사용 (orval 생성)
   const registerOnPremiseVolume = useRegisterOnPremiseVolume();
 
-  // react-hook-form 설정
   const {
     control,
     handleSubmit,
@@ -61,22 +48,11 @@ export function CreateOnPremVolumeModal() {
     },
   });
 
-  /**
-   * 모달 취소 핸들러
-   *
-   * isPending 상태가 아닐 때만 모달을 닫습니다.
-   */
   const handleCancel = () => {
     if (registerOnPremiseVolume.isPending) return;
     onClose();
   };
 
-  /**
-   * 볼륨 생성 제출 핸들러
-   *
-   * 폼 데이터를 수집하여 볼륨 생성 API를 호출합니다.
-   * 성공 시 성공 메시지를 표시하고 모달을 닫습니다.
-   */
   const onSubmit = (data: CreateOnPremiseVolumeFormType) => {
     registerOnPremiseVolume.mutate(
       {
@@ -123,17 +99,11 @@ export function CreateOnPremVolumeModal() {
       okText="생성"
       onOk={handleSubmit(onSubmit)}
       centered
-      okButtonProps={{
-        loading: registerOnPremiseVolume.isPending,
-      }}
-      cancelButtonProps={{
-        disabled: registerOnPremiseVolume.isPending,
-      }}
+      okButtonProps={{ loading: registerOnPremiseVolume.isPending }}
+      cancelButtonProps={{ disabled: registerOnPremiseVolume.isPending }}
       afterClose={reset}
     >
-      {/* 볼륨 생성 폼 */}
       <StyledForm>
-        {/* 볼륨 이름 입력 */}
         <Controller
           name="volumeName"
           control={control}
@@ -158,8 +128,6 @@ export function CreateOnPremVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* 공개 설정 드롭다운 */}
         <Controller
           name="isPublic"
           control={control}
@@ -181,8 +149,6 @@ export function CreateOnPremVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* Server IP 입력 필드 */}
         <Controller
           name="serverIp"
           control={control}
@@ -207,8 +173,6 @@ export function CreateOnPremVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* Volume Path 입력 필드 */}
         <Controller
           name="volumePath"
           control={control}
@@ -233,8 +197,6 @@ export function CreateOnPremVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* Mount Path 입력 필드 */}
         <Controller
           name="mountPath"
           control={control}
