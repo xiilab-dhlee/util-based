@@ -25,6 +25,8 @@ interface UseVolumeFileTreeReturn {
   treeData: FileTreeType[];
   /** 초기 로딩 상태 */
   isLoading: boolean;
+  /** 파일 조회 에러 발생 여부 */
+  isError: boolean;
   /** 현재 로딩 중인 경로들 */
   loadingPaths: Set<string>;
   /** 특정 경로의 하위 파일/폴더 로드 */
@@ -50,6 +52,8 @@ export const useVolumeFileTree = ({
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
   // 초기 로딩 상태
   const [isLoading, setIsLoading] = useState(false);
+  // 파일 조회 에러 상태
+  const [isError, setIsError] = useState(false);
   // 현재 로딩 중인 경로들 (스피너 표시용)
   const [loadingPaths, setLoadingPaths] = useState<Set<string>>(new Set());
 
@@ -129,6 +133,10 @@ export const useVolumeFileTree = ({
       } catch (error) {
         // 에러 발생 시 재시도 가능하도록 loadedPaths에서 제거하지 않음
         console.error(`Failed to load children for path: ${path}`, error);
+        // 루트 경로 로드 실패 시 에러 상태 설정
+        if (path === "/") {
+          setIsError(true);
+        }
       } finally {
         // 로딩 종료
         setLoadingPaths((prev) => {
@@ -159,6 +167,7 @@ export const useVolumeFileTree = ({
   return {
     treeData,
     isLoading,
+    isError,
     loadingPaths,
     loadChildren,
   };

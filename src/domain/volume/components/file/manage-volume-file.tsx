@@ -4,12 +4,21 @@ import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
+import { CompressVolumeFileButton } from "@/domain/volume/components/file/compress-volume-file-button";
+import { CreateVolumeFolderButton } from "@/domain/volume/components/file/create-volume-folder-button";
+import { DeleteVolumeFileButton } from "@/domain/volume/components/file/delete-volume-file-button";
+import { PreviewVolumeFile } from "@/domain/volume/components/file/preview-volume-file";
+import { UnzipVolumeFileButton } from "@/domain/volume/components/file/unzip-volume-file-button";
+import { VolumeFileButton } from "@/domain/volume/components/file/volume-file-button";
+import { VolumeFileCheckbox } from "@/domain/volume/components/file/volume-file-checkbox";
 import { useVolumeFileTree } from "@/domain/volume/hooks/use-volume-file-tree";
 import { volumeFileCheckedNodesInfoAtom } from "@/domain/volume/state/volume.atom";
 import { MyDropdown } from "@/shared/components/dropdown";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
 import { RootCustomFileNode } from "@/shared/components/tree/custom-file-node";
 import { CustomFileTree } from "@/shared/components/tree/custom-file-tree";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
@@ -18,13 +27,6 @@ import {
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
-import { CompressVolumeFileButton } from "./compress-volume-file-button";
-import { CreateVolumeFolderButton } from "./create-volume-folder-button";
-import { DeleteVolumeFileButton } from "./delete-volume-file-button";
-import { PreviewVolumeFile } from "./preview-volume-file";
-import { UnzipVolumeFileButton } from "./unzip-volume-file-button";
-import { VolumeFileButton } from "./volume-file-button";
-import { VolumeFileCheckbox } from "./volume-file-checkbox";
 
 interface ManageVolumeFileProps {
   volumeId: number;
@@ -71,12 +73,11 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
 
   // 볼륨 파일 트리 Lazy Loading 훅
   // 폴더 클릭 시 해당 경로의 하위 파일/폴더를 조회하여 트리에 병합
-  const { treeData, loadingPaths, loadChildren, isLoading } = useVolumeFileTree(
-    {
+  const { treeData, loadingPaths, loadChildren, isLoading, isError } =
+    useVolumeFileTree({
       volumeId,
       enabled: !Number.isNaN(volumeId),
-    },
-  );
+    });
 
   // ---------------------------------------------------------------------------
   // Derived State
@@ -105,17 +106,53 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
 
   /**
    * 파일 업로드 핸들러
-   * 현재는 미구현 상태로 알림 메시지만 표시
-   * TODO: 실제 파일 업로드 API 연동 필요
+   * 업로드 모달을 열어 파일 업로드를 진행합니다.
    */
   const handleUpload = () => {
-    alert("준비 중입니다.");
+    publish(VOLUME_EVENTS.sendUploadVolumeFile, {
+      volumeId,
+    });
+  };
+
+  // ---------------------------------------------------------------------------
+  // Render Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * PrimaryArticleBody 내부 컨텐츠를 상태에 따라 렌더링
+   * 우선순위: isLoading > isError > treeData.length === 0 > 파일 트리
+   */
+  const renderContent = () => {
+    // 1. 로딩 중
+    if (isLoading) {
+      return <MySpinner />;
+    }
+
+    // 2. 에러 발생
+    if (isError) {
+      return <EmptyState title={TABLE_MESSAGE.ERROR} />;
+    }
+
+    // 3. 데이터 없음
+    if (treeData.length === 0) {
+      return <EmptyState title="파일이 없습니다." />;
+    }
+
+    // 4. 정상: 파일 트리 표시
+    return (
+      <CustomFileTree
+        treeData={treeData}
+        fileCheckbox={VolumeFileCheckbox}
+        fileButton={VolumeFileButton}
+        loadingPaths={loadingPaths}
+        onFolderClick={loadChildren}
+      />
+    );
   };
 
   return (
     <Container>
-      {/* 메인 파일 트리 영역 */}
-      <PrimaryArticle>
+      <Body>
         <PrimaryArticleHeader>
           <RootCustomFileNode>
             <Typography.Text variant="subtitle-2-1" color="#000">
@@ -123,25 +160,10 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
             </Typography.Text>
           </RootCustomFileNode>
         </PrimaryArticleHeader>
-        <PrimaryArticleBody>
-          {isLoading && <MySpinner />}
-          {/* 커스텀 파일 트리 컴포넌트 */}
-          {/* 체크박스와 액션 버튼이 포함된 파일 탐색기 */}
-          {/* 폴더 클릭 시 해당 경로의 하위 파일을 lazy loading */}
-          <CustomFileTree
-            treeData={treeData}
-            fileCheckbox={VolumeFileCheckbox}
-            fileButton={VolumeFileButton}
-            loadingPaths={loadingPaths}
-            onFolderClick={loadChildren}
-          />
-        </PrimaryArticleBody>
-        {/* 파일 미리보기 영역 */}
+        <PrimaryArticleBody>{renderContent()}</PrimaryArticleBody>
         {/* 선택된 파일의 내용을 미리보기로 표시 */}
         <PreviewVolumeFile treeData={treeData} />
-      </PrimaryArticle>
-
-      {/* 하단 액션 버튼 영역 */}
+      </Body>
       <Footer>
         <MyDropdown
           items={[
@@ -161,8 +183,6 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
             icon="MoreHorizonal"
           ></Button>
         </MyDropdown>
-
-        {/* 우측 버튼 그룹 - 주요 액션들 */}
         <FooterRight>
           {/* 파일 다운로드 버튼 */}
           <Button
@@ -209,7 +229,7 @@ const Container = styled.div`
  * 파일 트리를 표시하는 메인 영역
  * 스크롤 가능하고 유연한 높이를 가짐
  */
-const PrimaryArticle = styled(AsideDetailArticle)`
+const Body = styled(AsideDetailArticle)`
   flex: 1;
   overflow: hidden;
   padding: 14px 12px;
