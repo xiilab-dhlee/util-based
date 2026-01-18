@@ -251,6 +251,10 @@ export const KUBERNETES_MONITORING_EVENTS = {
   // 쿠버네티스 이벤트 상세 모달에 필요한 정보 전달 이벤트
   sendKubernetesEventDetail:
     "kubernetes-monitoring:send-kubernetes-event-detail",
+  // 쿠버네티스 리소스 Describe 모달에 필요한 정보 전달 이벤트
+  sendResourceDescribe: "kubernetes-monitoring:send-resource-describe",
+  // 쿠버네티스 리소스 YAML 모달에 필요한 정보 전달 이벤트
+  sendResourceYaml: "kubernetes-monitoring:send-resource-yaml",
 } as const;
 
 // 리소스 프리셋 관련 이벤트

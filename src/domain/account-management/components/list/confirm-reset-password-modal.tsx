@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useResetPasswordByAdmin } from "@/api/generated/admin-account/admin-account";
+import { useResetPasswordByAdmin } from "@/api/generated/admin-account-management/admin-account-management";
 import type { AccountItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { openResetPasswordConfirmModalAtom } from "@/domain/account-management/state/account.atom";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";

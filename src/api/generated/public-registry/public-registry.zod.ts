@@ -232,7 +232,7 @@ export const getPublicImageTagListQueryParams = zod.object({
     ])
     .optional()
     .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
   scanStatus: zod
     .enum(["SCANNED", "NOT_SCANNED"])
     .optional()
@@ -433,59 +433,31 @@ export const deletePublicImageTagsResponse = zod
 
 /**
  * 
-            공용 레지스트리의 특정 이미지 태그 상세 정보를 조회합니다.
-            존재하지 않는 경우 null을 반환합니다.
-        
- * @summary 공용 이미지 태그 상세 조회
- */
-export const getPublicImageTagDetailParams = zod.object({
-  imageTagId: zod.number().describe("이미지 태그 ID"),
-});
-
-export const getPublicImageTagDetailResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    errorCode: zod.string().optional(),
-    data: zod
-      .object({
-        imageTagId: zod.number().describe("이미지 태그 ID"),
-        imageTagName: zod.string().describe("이미지 태그 이름"),
-        imageSizeByte: zod.number().describe("이미지 크기 (바이트)"),
-        scanStatus: zod.string().describe("스캔 상태"),
-        creatorId: zod.string().describe("생성자 ID"),
-        creatorName: zod.string().optional().describe("생성자 이름"),
-        createdAt: zod.string().datetime({}).optional().describe("생성일시"),
-        description: zod.string().optional().describe("설명"),
-        vulnerability: zod
-          .object({
-            criticalCount: zod.number().describe("치명적 취약점 수"),
-            highCount: zod.number().describe("높음 취약점 수"),
-            mediumCount: zod.number().describe("중간 취약점 수"),
-            lowCount: zod.number().describe("낮음 취약점 수"),
-          })
-          .strict()
-          .describe("취약점 정보"),
-      })
-      .strict()
-      .optional()
-      .describe("이미지 태그 상세 응답"),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 
             공용 이미지 태그의 취약점 상세 목록을 조회합니다.
             - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
             - 스캔이 완료되지 않은 경우 빈 목록을 반환합니다.
         
  * @summary 공용 이미지 태그 취약점 목록 조회
  */
+export const getPublicImageTagVulnerabilitiesQueryPageNoMin = 0;
+
+export const getPublicImageTagVulnerabilitiesQueryPageSizeMax = 100;
+
 export const getPublicImageTagVulnerabilitiesQueryTagNameMin = 0;
 export const getPublicImageTagVulnerabilitiesQueryTagNameMax = 128;
 
 export const getPublicImageTagVulnerabilitiesQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getPublicImageTagVulnerabilitiesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getPublicImageTagVulnerabilitiesQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
   harborImageName: zod.string().describe("Harbor 이미지 경로"),
   tagName: zod
     .string()
@@ -499,30 +471,34 @@ export const getPublicImageTagVulnerabilitiesResponse = zod
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
     data: zod
-      .array(
-        zod
-          .object({
-            cveId: zod.string().describe("CVE ID"),
-            severity: zod
-              .enum(["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"])
-              .describe("심각도"),
-            packageName: zod.string().describe("패키지 이름"),
-            currentVersion: zod.string().describe("현재 버전"),
-            fixedVersion: zod
-              .string()
-              .optional()
-              .describe("수정된 버전 (없으면 null)"),
-            description: zod.string().optional().describe("취약점 설명"),
-            links: zod.array(zod.string()).describe("참고 링크 목록"),
-            cvssV3Score: zod
-              .number()
-              .optional()
-              .describe("CVSS v3 점수 (없으면 null)"),
-            cweIds: zod.array(zod.string()).describe("CWE ID 목록"),
-          })
-          .strict()
-          .describe("취약점 상세 정보"),
-      )
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              vulnerabilityId: zod.string().describe("취약점 ID (CVE ID)"),
+              vulnerabilityName: zod.string().describe("취약점 이름 (CVE ID)"),
+              severity: zod
+                .enum(["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"])
+                .describe("심각도"),
+              nvd: zod.number().optional().describe("NVD CVSS v3 점수"),
+              redhat: zod.number().optional().describe("RedHat CVSS v3 점수"),
+              package: zod.string().describe("패키지 이름"),
+              currentVersion: zod.string().describe("현재 버전"),
+              fixedVersion: zod
+                .string()
+                .optional()
+                .describe("수정된 버전 (없으면 null)"),
+              description: zod.string().optional().describe("취약점 설명"),
+              primaryUrl: zod.string().optional().describe("주요 참고 링크"),
+            })
+            .strict()
+            .describe("취약점 상세 정보"),
+        ),
+      })
+      .strict()
       .optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
@@ -558,6 +534,75 @@ export const checkImageTagExistsResponse = zod
       .strict()
       .optional()
       .describe("Harbor 이미지 태그 존재 여부 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            공용 레지스트리의 특정 이미지 태그 상세 정보를 Harbor API 기준으로 조회합니다.
+            - Harbor에 직접 올린 태그도 조회 가능합니다.
+            - DB 메타데이터가 없는 경우 hasMetadata=false로 반환됩니다.
+            - Harbor에 존재하지 않는 경우 null을 반환합니다.
+        
+ * @summary 공용 이미지 태그 상세 조회
+ */
+export const getPublicImageTagDetailQueryParams = zod.object({
+  harborImageName: zod.string().describe("Harbor 이미지 경로"),
+  tagName: zod.string().describe("태그 이름"),
+});
+
+export const getPublicImageTagDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        imageTagName: zod.string().describe("이미지 태그 이름"),
+        imageSizeByte: zod.number().describe("이미지 크기 (바이트)"),
+        scanStatus: zod.string().describe("스캔 상태"),
+        createdAt: zod
+          .string()
+          .datetime({})
+          .optional()
+          .describe("생성일시 (Harbor Push 시간, UTC)"),
+        vulnerability: zod
+          .object({
+            criticalCount: zod.number().describe("치명적 취약점 수"),
+            highCount: zod.number().describe("높음 취약점 수"),
+            mediumCount: zod.number().describe("중간 취약점 수"),
+            lowCount: zod.number().describe("낮음 취약점 수"),
+          })
+          .strict()
+          .describe("취약점 정보"),
+        imageTagId: zod
+          .number()
+          .optional()
+          .describe("이미지 태그 ID (DB 메타데이터 없으면 null)"),
+        approvalStatus: zod
+          .enum([
+            "AVAILABLE",
+            "APPROVAL_REQUIRED",
+            "APPROVED",
+            "REJECTED",
+            "APPROVAL_WAITING",
+            "REQUEST_BLOCKED",
+          ])
+          .optional()
+          .describe("승인 상태 (DB 메타데이터 없으면 null)"),
+        creatorName: zod
+          .string()
+          .optional()
+          .describe("생성자 이름 (DB 메타데이터 없으면 null)"),
+        description: zod
+          .string()
+          .optional()
+          .describe("설명 (DB 메타데이터 없으면 null)"),
+      })
+      .strict()
+      .optional()
+      .describe("이미지 태그 상세 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

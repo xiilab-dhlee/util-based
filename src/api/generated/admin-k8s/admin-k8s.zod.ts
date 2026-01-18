@@ -788,10 +788,7 @@ export const getDaemonSetsResponse = zod
 
 /**
  * 
-            관리자가 클러스터의 이벤트를 페이징 조회합니다.
-
-            **네임스페이스 필터링:**
-            - namespace 파라미터 지정 시: 해당 네임스페이스만 조회 (예: namespace=astrago)
+            관리자가 클러스터의 전체 이벤트를 페이징 조회합니다.
 
             **페이징 방식:**
             - 이벤트를 메모리로 로드 후 애플리케이션 레벨 페이징
@@ -807,7 +804,7 @@ export const getDaemonSetsResponse = zod
 
             **이벤트 필드:**
             - **namespace**: 이벤트가 발생한 네임스페이스
-            - **lastObservedDateTime**: 마지막 관찰 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)
+            - **lastObservedDateTime**: 마지막 관찰 시간 (UTC 기준)
             - **eventType**: 이벤트 타입 (Normal/Warning)
             - **eventReason**: 이벤트 발생 이유 (예: Started, Created, Failed)
             - **object**: 관련 객체 (kind/name 형식, 예: pod/my-app-7d8f5c9b4-xkz9m)
@@ -826,10 +823,6 @@ export const getAllNamespaceEventsQueryPageNoMin = 0;
 
 export const getAllNamespaceEventsQueryPageSizeMax = 100;
 
-export const getAllNamespaceEventsQueryNamespaceDefault = "default";
-export const getAllNamespaceEventsQueryNamespaceRegExp =
-  /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
-
 export const getAllNamespaceEventsQueryParams = zod.object({
   pageNo: zod
     .number()
@@ -842,11 +835,6 @@ export const getAllNamespaceEventsQueryParams = zod.object({
     .max(getAllNamespaceEventsQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  namespace: zod
-    .string()
-    .regex(getAllNamespaceEventsQueryNamespaceRegExp)
-    .describe("네임스페이스 이름"),
 });
 
 export const getAllNamespaceEventsResponse = zod

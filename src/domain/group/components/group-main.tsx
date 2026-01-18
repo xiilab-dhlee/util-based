@@ -1,22 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 import styled from "styled-components";
-import { Button, Icon, Typography } from "xiilab-ui";
+import { Button, Typography } from "xiilab-ui";
 
 import { DeleteGroupModal } from "@/domain/group/components/delete-group-modal";
 import {
   AccountDetailPanel,
   GroupDetailPanel,
 } from "@/domain/group/components/detail-panel";
+import { selectedItemAtom } from "@/domain/group/state/group.atom";
 import { OPEN_GROUP_MODAL_CREATE_PAYLOAD } from "@/domain/group/types/group.type";
-import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { GroupTreeSelector } from "@/shared/components/group-member-selector";
 import { useGroupTreeSearchState } from "@/shared/components/group-member-selector/hooks/use-group-tree-search-state";
-import { UNGROUPED_GROUP_ID } from "@/shared/components/group-member-selector/hooks/use-ungrouped-accounts";
 import {
   ITEM_TYPES,
-  type ItemType,
   type SelectableItem,
 } from "@/shared/components/group-member-selector/types";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -30,12 +29,7 @@ import {
 export function GroupMain() {
   const publish = usePublish();
   const searchState = useGroupTreeSearchState();
-
-  // 선택된 항목 상태 관리
-  const [selected, setSelected] = useState<{
-    id: string;
-    type: ItemType;
-  } | null>(null);
+  const [selected, setSelected] = useAtom(selectedItemAtom);
 
   // GroupTreeSelector에 전달할 선택된 ID Set
   const selectedAccountIds =
@@ -75,28 +69,17 @@ export function GroupMain() {
       );
     }
 
-    // 그룹 미지정 선택 시 EmptyState 표시
-    if (
-      selected.type === ITEM_TYPES.GROUP &&
-      selected.id === UNGROUPED_GROUP_ID
-    ) {
-      return (
-        <EmptyStatePanel>
-          <EmptyState
-            icon={<Icon name="Group01" color="#878898" />}
-            title="그룹 미지정 계정 목록 입니다."
-            content="계정을 선택해 상세를 확인하거나 그룹을 지정해 주세요."
-          />
-        </EmptyStatePanel>
-      );
-    }
-
     if (selected.type === ITEM_TYPES.GROUP) {
       return <GroupDetailPanel groupId={selected.id} />;
     }
 
     return <AccountDetailPanel accountId={selected.id} />;
   };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 초기 마운트 시 선택 상태 초기화
+  useEffect(() => {
+    setSelected(null);
+  }, []);
 
   return (
     <>
@@ -211,15 +194,4 @@ const EmptyPanel = styled.div`
 const EmptyMessage = styled.div`
   color: #828588;
   font-size: 14px;
-`;
-
-const EmptyStatePanel = styled.div`
-  flex: 1;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fafafa;
 `;

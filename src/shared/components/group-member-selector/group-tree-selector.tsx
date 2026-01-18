@@ -13,9 +13,11 @@ import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { AccountNodeLazy } from "@/shared/components/group-member-selector/components/account-node-lazy";
 import { AccountWithGroupsNode } from "@/shared/components/group-member-selector/components/account-with-groups-node";
 import { GroupNodeLazy } from "@/shared/components/group-member-selector/components/group-node-lazy";
-import { useGroupTreeLoader } from "@/shared/components/group-member-selector/hooks/use-group-tree-loader";
+import {
+  type GroupTreeLoaderState,
+  useGroupTreeLoader,
+} from "@/shared/components/group-member-selector/hooks/use-group-tree-loader";
 import type { GroupTreeSearchState } from "@/shared/components/group-member-selector/hooks/use-group-tree-search-state";
-import { UNGROUPED_GROUP_ID } from "@/shared/components/group-member-selector/hooks/use-ungrouped-accounts";
 import {
   ITEM_TYPES,
   type ItemType,
@@ -31,6 +33,8 @@ interface GroupTreeSelectorProps {
   searchState: GroupTreeSearchState;
   treeHeight?: number;
   searchPlaceholder?: string;
+  /** 외부에서 트리 상태를 관리할 경우 전달 (모달에서 resetTree 호출 등) */
+  treeLoader?: GroupTreeLoaderState;
 }
 
 // Intersection Observer를 사용한 무한 스크롤 센티널 컴포넌트
@@ -78,6 +82,7 @@ export function GroupTreeSelector({
   searchState,
   treeHeight,
   searchPlaceholder = "계정 이름 또는 그룹 이름을 입력해 주세요.",
+  treeLoader: externalTreeLoader,
 }: GroupTreeSelectorProps) {
   const {
     searchText,
@@ -92,6 +97,9 @@ export function GroupTreeSelector({
     searchKeyword,
   } = searchState;
 
+  const internalTreeLoader = useGroupTreeLoader();
+  const treeLoader = externalTreeLoader ?? internalTreeLoader;
+
   const {
     rootGroups,
     getGroupChildren,
@@ -100,11 +108,11 @@ export function GroupTreeSelector({
     toggleGroup,
     isGroupExpanded,
     isGroupLoading,
-    ungroupedGroup,
+    ungroupedAccounts,
     fetchNextUngroupedPage,
     hasMoreUngrouped,
     isLoadingMoreUngrouped,
-  } = useGroupTreeLoader();
+  } = treeLoader;
 
   const isSelected = (id: string, type: ItemType) => {
     if (type === ITEM_TYPES.ACCOUNT) {
@@ -146,10 +154,6 @@ export function GroupTreeSelector({
   };
 
   const toggleSearchGroup = (groupId: string) => {
-    if (groupId === UNGROUPED_GROUP_ID) {
-      return;
-    }
-
     setExpandedSearchGroupIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(groupId)) {
@@ -234,7 +238,6 @@ export function GroupTreeSelector({
       childrenData;
 
     const totalCount = childGroups.length + childAccounts.length;
-    const isUngroupedGroup = groupId === UNGROUPED_GROUP_ID;
 
     return (
       <>
@@ -250,19 +253,6 @@ export function GroupTreeSelector({
           );
           return renderAccount(account, depth, position, ancestorsHasNext);
         })}
-
-        {isUngroupedGroup && hasMoreUngrouped && (
-          <InfiniteScrollSentinel
-            onVisible={fetchNextUngroupedPage}
-            isLoading={isLoadingMoreUngrouped}
-          />
-        )}
-
-        {isUngroupedGroup && isLoadingMoreUngrouped && (
-          <LoadingMoreWrapper>
-            <Spin size="small" />
-          </LoadingMoreWrapper>
-        )}
       </>
     );
   };
@@ -372,7 +362,7 @@ export function GroupTreeSelector({
     !isLoadingRoot &&
     !hasRootError &&
     rootGroups.length === 0 &&
-    !ungroupedGroup;
+    ungroupedAccounts.length === 0;
 
   const isSearchMode = Boolean(searchKeyword);
 
@@ -437,15 +427,32 @@ export function GroupTreeSelector({
         </RootTreeRow>
 
         {rootGroups?.map((group, index) => {
-          const totalGroups = ungroupedGroup
-            ? rootGroups.length + 1
-            : rootGroups.length;
-          const position = getNodePosition(index, totalGroups);
+          const totalNodes = rootGroups.length + ungroupedAccounts.length;
+          const position = getNodePosition(index, totalNodes);
           return renderGroup(group, 1, position, []);
         })}
 
-        {ungroupedGroup &&
-          renderGroup(ungroupedGroup, 1, NODE_POSITIONS.LAST, [])}
+        {ungroupedAccounts.map((account, index) => {
+          const totalNodes = rootGroups.length + ungroupedAccounts.length;
+          const position = getNodePosition(
+            index + rootGroups.length,
+            totalNodes,
+          );
+          return renderAccount(account, 1, position, []);
+        })}
+
+        {hasMoreUngrouped && (
+          <InfiniteScrollSentinel
+            onVisible={fetchNextUngroupedPage}
+            isLoading={isLoadingMoreUngrouped}
+          />
+        )}
+
+        {isLoadingMoreUngrouped && (
+          <LoadingMoreWrapper>
+            <Spin size="small" />
+          </LoadingMoreWrapper>
+        )}
       </>
     );
   };
@@ -572,7 +579,6 @@ const EmptyText = styled.span`
 const SentinelDiv = styled.div`
   height: 1px;
   width: 100%;
-  background-color: red;
 `;
 
 const LoadingMoreWrapper = styled.div`

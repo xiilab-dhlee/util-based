@@ -9,6 +9,7 @@
 
 import { delay, type HttpHandler } from "msw";
 
+import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
@@ -21,7 +22,6 @@ import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
-import { kubernetesMonitoringHandlers } from "@/mocks/handlers/kubernetes-monitoring.handler";
 import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { nodeHandlers } from "@/mocks/handlers/node.handler";
@@ -97,6 +97,7 @@ const rawHandlers = [
   ...sourcecodeHandlers,
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),
+  ...getAdminK8sMock(),
   ...systemSettingHandlers,
   ...groupHandlers,
   ...workspaceHandlers,
@@ -107,7 +108,6 @@ const rawHandlers = [
   ...notificationHandlers,
   ...monitoringHandlers,
   ...privateRegistryHandlers,
-  ...kubernetesMonitoringHandlers,
   ...gpuHandlers,
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,

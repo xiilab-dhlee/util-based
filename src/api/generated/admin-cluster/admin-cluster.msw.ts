@@ -37,6 +37,7 @@ import type {
   BaseResponseClusterResourceSummaryResponse,
   BaseResponseListNodeGpuMetricResponse,
   BaseResponseListNodeSystemMetricResponse,
+  BaseResponseListString,
   BaseResponseMigConfigurationResponse,
   BaseResponsePageResponseClusterNodeListResponse,
   BaseResponseUnit,
@@ -150,6 +151,7 @@ export const getGetNodeSystemResourceResponseMock = (
     nodeIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
     resource: {
       gpu: {
+        gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
         detail: {
           normal: {
             clusterCapacityCount: faker.number.int({
@@ -372,6 +374,20 @@ export const getGetClusterResourceSummaryResponseMock = (
       usedBytes: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
   },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetNodeNamesResponseMock = (
+  overrideResponse: Partial<BaseResponseListString> = {},
+): BaseResponseListString => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -642,6 +658,34 @@ export const getGetClusterResourceSummaryMockHandler = (
     options,
   );
 };
+
+export const getGetNodeNamesMockHandler = (
+  overrideResponse?:
+    | BaseResponseListString
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<BaseResponseListString> | BaseResponseListString),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cluster/nodes/names",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetNodeNamesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getAdminClusterMock = () => [
   getUpdateNodeSchedulingMockHandler(),
   getGetMigConfigurationMockHandler(),
@@ -652,4 +696,5 @@ export const getAdminClusterMock = () => [
   getGetNodeGpuMetricsMockHandler(),
   getGetNodeDetailMockHandler(),
   getGetClusterResourceSummaryMockHandler(),
+  getGetNodeNamesMockHandler(),
 ];

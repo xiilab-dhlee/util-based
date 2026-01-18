@@ -1,7 +1,7 @@
 import {
   getGetAllAccountsMockHandler,
   getGetAllAccountsResponseMock,
-} from "@/api/generated/admin-account/admin-account.msw";
+} from "@/api/generated/admin-account-management/admin-account-management.msw";
 import {
   type AccountItemResponse,
   AccountUpdateRequestAccountRole,

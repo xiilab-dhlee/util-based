@@ -119,7 +119,7 @@ export const getWorkspaceMembersQueryParams = zod.object({
     .enum(["ACCOUNT_NAME", "EMAIL"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getWorkspaceMembersResponse = zod

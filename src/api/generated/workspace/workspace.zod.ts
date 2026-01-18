@@ -30,7 +30,7 @@
 import * as zod from "zod";
 
 /**
- * 워크스페이스 정보(워크스페이스명, 상세 설명)를 수정합니다. OWNER 또는 ADMIN 권한이 필요합니다.
+ * 워크스페이스 정보(워크스페이스명, 상세 설명)를 수정합니다. OWNER 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 워크스페이스 수정
  */
 export const updateWorkspaceParams = zod.object({
@@ -284,7 +284,7 @@ export const getResourceRequestsQueryParams = zod.object({
     .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getResourceRequestsResponse = zod

@@ -16,7 +16,7 @@ import {
   Typography,
 } from "xiilab-ui";
 
-import { useSignup } from "@/api/generated/account/account";
+import { useSignup } from "@/api/generated/account-registration/account-registration";
 import { CompleteSignup } from "@/domain/auth/components/signup/complete-signup";
 import {
   type SignupFormType,

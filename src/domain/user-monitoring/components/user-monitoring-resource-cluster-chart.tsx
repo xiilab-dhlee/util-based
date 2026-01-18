@@ -80,7 +80,7 @@ export function UserMonitoringResourceClusterChart({
         gradient: {
           shadeIntensity: 1,
           gradientToColors: [gradientToColors[1]],
-          inverseColors: true,
+          inverseColors: false,
           opacityFrom: 1,
           opacityTo: 1,
           stops: [0, 100],
