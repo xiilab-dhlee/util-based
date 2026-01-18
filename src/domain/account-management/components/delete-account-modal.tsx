@@ -52,7 +52,8 @@ export function DeleteAccountModal() {
       cancelButtonProps={{ disabled: isPending }}
     >
       <div>
-        계정을 삭제하는 경우 해당 계정에 대한 데이터는 원복할 수 없습니다.
+        선택한 {deleteAccounts.length}개의 계정을 삭제하는 경우 해당 계정에 대한
+        데이터는 원복할 수 없습니다.
       </div>
       <div>계정을 삭제하시겠습니까?</div>
     </Modal>

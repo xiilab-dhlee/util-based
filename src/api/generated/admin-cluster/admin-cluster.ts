@@ -51,6 +51,7 @@ import type {
   BaseResponseClusterResourceSummaryResponse,
   BaseResponseListNodeGpuMetricResponse,
   BaseResponseListNodeSystemMetricResponse,
+  BaseResponseListString,
   BaseResponseMigConfigurationResponse,
   BaseResponsePageResponseClusterNodeListResponse,
   BaseResponseUnit,
@@ -813,8 +814,8 @@ export function useGetNodeSystemResource<
             - **MEMORY_UTILIZATION**: 메모리 사용률 (%)
             - **NODE_MEMORY_BUFFERS**: 메모리 버퍼 (bytes)
             - **NODE_MEMORY_CACHED**: 메모리 캐시 (bytes)
-            - **NODE_MEMORY_MEM_TOTAL**: 메모리 총량 (bytes)
-            - **NODE_MEMORY_MEM_FREE**: 메모리 여유량 (bytes)
+            - **NODE_MEMORY_TOTAL**: 메모리 총량 (bytes)
+            - **NODE_MEMORY_FREE**: 메모리 여유량 (bytes)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
@@ -1511,6 +1512,142 @@ export function useGetClusterResourceSummary<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetClusterResourceSummaryQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            관리자가 클러스터 내 모든 노드의 이름 목록을 조회합니다.
+
+            **응답 데이터 구성:**
+            - 노드 이름 문자열 리스트 (오름차순 정렬)
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 이름 목록 조회
+ */
+export const getNodeNames = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseListString>({
+    url: `/api/v1/cluster/nodes/names`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetNodeNamesQueryKey = () => {
+  return [`/api/v1/cluster/nodes/names`] as const;
+};
+
+export const getGetNodeNamesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getNodeNames>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getNodeNames>>, TError, TData>
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetNodeNamesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getNodeNames>>> = ({
+    signal,
+  }) => getNodeNames(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getNodeNames>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNodeNamesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getNodeNames>>
+>;
+export type GetNodeNamesQueryError = unknown;
+
+export function useGetNodeNames<
+  TData = Awaited<ReturnType<typeof getNodeNames>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeNames>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNodeNames>>,
+          TError,
+          Awaited<ReturnType<typeof getNodeNames>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNodeNames<
+  TData = Awaited<ReturnType<typeof getNodeNames>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeNames>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNodeNames>>,
+          TError,
+          Awaited<ReturnType<typeof getNodeNames>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNodeNames<
+  TData = Awaited<ReturnType<typeof getNodeNames>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeNames>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 클러스터 노드 이름 목록 조회
+ */
+
+export function useGetNodeNames<
+  TData = Awaited<ReturnType<typeof getNodeNames>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getNodeNames>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetNodeNamesQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

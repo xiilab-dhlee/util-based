@@ -48,7 +48,7 @@ export const getCreateUploadMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    "*/api/v1/volumes/:volumeId/tus",
+    "*/api/v1/volumes/:volumeId/files/upload",
     async (info) => {
       await delay(1000);
 
@@ -76,7 +76,7 @@ export const getCancelUploadMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.delete(
-    "*/api/v1/volumes/:volumeId/tus/:uploadId",
+    "*/api/v1/volumes/:volumeId/files/upload/:uploadId",
     async (info) => {
       await delay(1000);
 
@@ -104,7 +104,7 @@ export const getGetUploadStatusMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.head(
-    "*/api/v1/volumes/:volumeId/tus/:uploadId",
+    "*/api/v1/volumes/:volumeId/files/upload/:uploadId",
     async (info) => {
       await delay(1000);
 
@@ -132,7 +132,7 @@ export const getUploadChunkMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.patch(
-    "*/api/v1/volumes/:volumeId/tus/:uploadId",
+    "*/api/v1/volumes/:volumeId/files/upload/:uploadId",
     async (info) => {
       await delay(1000);
 

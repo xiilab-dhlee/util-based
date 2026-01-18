@@ -130,6 +130,11 @@ export const ROUTES = {
     `${MODE.USER}/workload/${id}/terminal`,
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
+  USER_PRIVATE_REGISTRY: `${MODE.USER}/private-registry`,
+  USER_PRIVATE_REGISTRY_DETAIL: (name: string) =>
+    `${MODE.USER}/private-registry/${name}`,
+  USER_PRIVATE_REGISTRY_TAG: (name: string, tagId: string) =>
+    `${MODE.USER}/private-registry/${name}/${tagId}`,
   USER_INTERNAL_REGISTRY_IMAGE: `${MODE.USER}/internal-registry-image`,
   USER_INTERNAL_REGISTRY_IMAGE_DETAIL: (id: string) =>
     `${MODE.USER}/internal-registry-image/${id}`,

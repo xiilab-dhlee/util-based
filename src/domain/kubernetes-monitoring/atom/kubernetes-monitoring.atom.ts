@@ -25,3 +25,9 @@ export const openKubernetesEventDetailModalAtom = atomWithReset<boolean>(false);
 
 /** 쿠버네티스 Describe 모달 open 상태 */
 export const openKubernetesDescribeModalAtom = atomWithReset<boolean>(false);
+
+/** 쿠버네티스 YAML 모달 open 상태 */
+export const openKubernetesYamlModalAtom = atomWithReset<boolean>(false);
+
+/** 쿠버네티스 이벤트 리스트 페이지 번호 */
+export const kubernetesEventPageAtom = atomWithReset<number>(1);

@@ -67,7 +67,7 @@ const Right = styled.div`
 const Left = styled.div`
   display: flex;
   justify-content: flex-start;
-  align-items: flex-end;
+  align-items: center;
   gap: 6px;
 `;
 
@@ -80,6 +80,7 @@ const Title = styled(ListSectionTitle)`
 const Total = styled.div`
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
   color: #333333;
 
   &.dark {

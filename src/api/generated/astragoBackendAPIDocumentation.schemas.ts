@@ -544,6 +544,34 @@ export interface StorageUpdateRequest {
 }
 
 /**
+ * 큐 순서 변경 항목
+ */
+export interface QueueOrderItem {
+  /**
+   * 우선순위 (1~5, 낮을수록 높은 우선순위)
+   * @minimum 1
+   * @maximum 5
+   */
+  rank: number;
+  /** 워크스페이스 리소스명 (K8s 네임스페이스) */
+  workspaceResourceName: string;
+  /** 워크로드 리소스명 (K8s 리소스명) */
+  workloadResourceName: string;
+}
+
+/**
+ * 긴급 대기큐 순서 변경 요청
+ */
+export interface UpdateQueueOrderRequest {
+  /**
+   * 순서 변경 항목 목록
+   * @minItems 0
+   * @maxItems 5
+   */
+  queueOrderItem: QueueOrderItem[];
+}
+
+/**
  * 그룹 수정 요청
  */
 export interface GroupUpdateRequest {
@@ -1206,6 +1234,34 @@ export interface CreateFolderRequest {
 }
 
 /**
+ * 압축 파일 형식
+ */
+export type DownloadRequestCompressType =
+  (typeof DownloadRequestCompressType)[keyof typeof DownloadRequestCompressType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DownloadRequestCompressType = {
+  TAR: "TAR",
+  ZIP: "ZIP",
+} as const;
+
+/**
+ * 볼륨 파일 다운로드 요청
+ */
+export interface DownloadRequest {
+  /**
+   * 다운로드할 파일/폴더 경로 목록
+   * @minItems 0
+   * @maxItems 100
+   */
+  paths: string[];
+  /** 압축 파일 형식 */
+  compressType: DownloadRequestCompressType;
+}
+
+export type StreamingResponseBody = {};
+
+/**
  * 볼륨 파일 삭제 요청
  */
 export interface DeleteFilesRequest {
@@ -1742,6 +1798,16 @@ export interface SmtpSetResponse {
 }
 
 /**
+ * 긴급 큐 워크로드 추가 요청
+ */
+export interface AddWorkloadToUrgentQueueRequest {
+  /** 워크스페이스 리소스명 (K8s 네임스페이스) */
+  workspaceResourceName: string;
+  /** 워크로드 리소스명 (K8s 리소스명) */
+  workloadResourceName: string;
+}
+
+/**
  * 그룹 생성 요청
  */
 export interface GroupCreateRequest {
@@ -2183,10 +2249,13 @@ export interface PasswordCodeVerificationRequest {
   email: string;
   /**
    * 인증 코드 (6자리 숫자)
-   * @minLength 6
-   * @maxLength 6
+   * @pattern ^[0-9]{6}$
    */
   code: string;
+}
+
+export interface SseEmitter {
+  timeout?: number;
 }
 
 export type BaseResponsePageResponseWorkspaceResponseStatus =
@@ -2820,64 +2889,29 @@ export interface VulnerabilityResponse {
   lowCount: number;
 }
 
-export type BaseResponseImageTagDetailResponseStatus =
-  (typeof BaseResponseImageTagDetailResponseStatus)[keyof typeof BaseResponseImageTagDetailResponseStatus];
+export type BaseResponsePageResponseVulnerabilityDetailResponseStatus =
+  (typeof BaseResponsePageResponseVulnerabilityDetailResponseStatus)[keyof typeof BaseResponsePageResponseVulnerabilityDetailResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseImageTagDetailResponseStatus = {
+export const BaseResponsePageResponseVulnerabilityDetailResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponseImageTagDetailResponse {
-  status: BaseResponseImageTagDetailResponseStatus;
+export interface BaseResponsePageResponseVulnerabilityDetailResponse {
+  status: BaseResponsePageResponseVulnerabilityDetailResponseStatus;
   errorCode?: string;
-  data?: ImageTagDetailResponse;
+  data?: PageResponseVulnerabilityDetailResponse;
   message?: string;
   timestamp: number;
 }
 
-/**
- * 이미지 태그 상세 응답
- */
-export interface ImageTagDetailResponse {
-  /** 이미지 태그 ID */
-  imageTagId: number;
-  /** 이미지 태그 이름 */
-  imageTagName: string;
-  /** 이미지 크기 (바이트) */
-  imageSizeByte: number;
-  /** 스캔 상태 */
-  scanStatus: string;
-  /** 생성자 ID */
-  creatorId: string;
-  /** 생성자 이름 */
-  creatorName?: string;
-  /** 생성일시 */
-  createdAt?: string;
-  /** 설명 */
-  description?: string;
-  /** 취약점 정보 */
-  vulnerability: VulnerabilityResponse;
-}
-
-export type BaseResponseListVulnerabilityDetailResponseStatus =
-  (typeof BaseResponseListVulnerabilityDetailResponseStatus)[keyof typeof BaseResponseListVulnerabilityDetailResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseListVulnerabilityDetailResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseListVulnerabilityDetailResponse {
-  status: BaseResponseListVulnerabilityDetailResponseStatus;
-  errorCode?: string;
-  data?: VulnerabilityDetailResponse[];
-  message?: string;
-  timestamp: number;
+export interface PageResponseVulnerabilityDetailResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: VulnerabilityDetailResponse[];
 }
 
 /**
@@ -2899,24 +2933,26 @@ export const VulnerabilityDetailResponseSeverity = {
  * 취약점 상세 정보
  */
 export interface VulnerabilityDetailResponse {
-  /** CVE ID */
-  cveId: string;
+  /** 취약점 ID (CVE ID) */
+  vulnerabilityId: string;
+  /** 취약점 이름 (CVE ID) */
+  vulnerabilityName: string;
   /** 심각도 */
   severity: VulnerabilityDetailResponseSeverity;
+  /** NVD CVSS v3 점수 */
+  nvd?: number;
+  /** RedHat CVSS v3 점수 */
+  redhat?: number;
   /** 패키지 이름 */
-  packageName: string;
+  package: string;
   /** 현재 버전 */
   currentVersion: string;
   /** 수정된 버전 (없으면 null) */
   fixedVersion?: string;
   /** 취약점 설명 */
   description?: string;
-  /** 참고 링크 목록 */
-  links: string[];
-  /** CVSS v3 점수 (없으면 null) */
-  cvssV3Score?: number;
-  /** CWE ID 목록 */
-  cweIds: string[];
+  /** 주요 참고 링크 */
+  primaryUrl?: string;
 }
 
 export type BaseResponseImageTagExistsResponseStatus =
@@ -2947,6 +2983,64 @@ export interface ImageTagExistsResponse {
   tagName: string;
   /** Harbor에 존재 여부 */
   exists: boolean;
+}
+
+export type BaseResponseImageTagDetailResponseStatus =
+  (typeof BaseResponseImageTagDetailResponseStatus)[keyof typeof BaseResponseImageTagDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseImageTagDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseImageTagDetailResponse {
+  status: BaseResponseImageTagDetailResponseStatus;
+  errorCode?: string;
+  data?: ImageTagDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 승인 상태 (DB 메타데이터 없으면 null)
+ */
+export type ImageTagDetailResponseApprovalStatus =
+  (typeof ImageTagDetailResponseApprovalStatus)[keyof typeof ImageTagDetailResponseApprovalStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ImageTagDetailResponseApprovalStatus = {
+  AVAILABLE: "AVAILABLE",
+  APPROVAL_REQUIRED: "APPROVAL_REQUIRED",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  APPROVAL_WAITING: "APPROVAL_WAITING",
+  REQUEST_BLOCKED: "REQUEST_BLOCKED",
+} as const;
+
+/**
+ * 이미지 태그 상세 응답
+ */
+export interface ImageTagDetailResponse {
+  /** 이미지 태그 이름 */
+  imageTagName: string;
+  /** 이미지 크기 (바이트) */
+  imageSizeByte: number;
+  /** 스캔 상태 */
+  scanStatus: string;
+  /** 생성일시 (Harbor Push 시간, UTC) */
+  createdAt?: string;
+  /** 취약점 정보 */
+  vulnerability: VulnerabilityResponse;
+  /** 이미지 태그 ID (DB 메타데이터 없으면 null) */
+  imageTagId?: number;
+  /** 승인 상태 (DB 메타데이터 없으면 null) */
+  approvalStatus?: ImageTagDetailResponseApprovalStatus;
+  /** 생성자 이름 (DB 메타데이터 없으면 null) */
+  creatorName?: string;
+  /** 설명 (DB 메타데이터 없으면 null) */
+  description?: string;
 }
 
 export type BaseResponseRegistryDetailResponseStatus =
@@ -4308,6 +4402,8 @@ export interface NodeGpuNormalResourceResponse {
  * 노드 GPU 리소스 응답
  */
 export interface NodeGpuResourceResponse {
+  /** GPU 모델명 */
+  gpuName?: string;
   /** GPU 상세 정보 */
   detail: NodeGpuDetailResponse;
 }
@@ -4332,47 +4428,6 @@ export interface NodeResourceResponse {
   memory: NodeMemoryResourceResponse;
   /** Disk 리소스 */
   disk: NodeDiskResourceResponse;
-}
-
-/**
- * 시스템 메트릭 타입
- */
-export type NodeSystemMetricRequestMetricName =
-  (typeof NodeSystemMetricRequestMetricName)[keyof typeof NodeSystemMetricRequestMetricName];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const NodeSystemMetricRequestMetricName = {
-  CPU_TEMPERATURE: "CPU_TEMPERATURE",
-  CPU_UTILIZATION: "CPU_UTILIZATION",
-  CPU_LOAD_AVERAGE: "CPU_LOAD_AVERAGE",
-  NODE_NETWORK_RECEIVE: "NODE_NETWORK_RECEIVE",
-  NODE_NETWORK_TRANSMIT: "NODE_NETWORK_TRANSMIT",
-  DISK_READ: "DISK_READ",
-  DISK_WRITE: "DISK_WRITE",
-  DISK_UTILIZATION: "DISK_UTILIZATION",
-  MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
-  NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
-  NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
-  NODE_MEMORY_MEM_TOTAL: "NODE_MEMORY_MEM_TOTAL",
-  NODE_MEMORY_MEM_FREE: "NODE_MEMORY_MEM_FREE",
-} as const;
-
-/**
- * 노드 시스템 메트릭 조회 요청
- */
-export interface NodeSystemMetricRequest {
-  /** 시스템 메트릭 타입 */
-  metricName: NodeSystemMetricRequestMetricName;
-  /**
-   * 시작 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
-   */
-  startDateTime: string;
-  /**
-   * 종료 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
-   */
-  endDateTime: string;
 }
 
 export type BaseResponseListNodeSystemMetricResponseStatus =
@@ -4401,43 +4456,6 @@ export interface NodeSystemMetricResponse {
   dateTime: string;
   /** 메트릭 값 (사용률 %, 온도 °C, 속도 bytes/sec, 부하) */
   value: string;
-}
-
-export interface SseEmitter {
-  timeout?: number;
-}
-
-/**
- * GPU 메트릭 타입
- */
-export type NodeGpuMetricRequestMetricName =
-  (typeof NodeGpuMetricRequestMetricName)[keyof typeof NodeGpuMetricRequestMetricName];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const NodeGpuMetricRequestMetricName = {
-  GPU_UTILIZATION: "GPU_UTILIZATION",
-  GPU_MEMORY_UTILIZATION: "GPU_MEMORY_UTILIZATION",
-  GPU_TEMPERATURE: "GPU_TEMPERATURE",
-  GPU_FAN_SPEED: "GPU_FAN_SPEED",
-  GPU_POWER_USAGE: "GPU_POWER_USAGE",
-} as const;
-
-/**
- * 노드 GPU 메트릭 조회 요청
- */
-export interface NodeGpuMetricRequest {
-  /** GPU 메트릭 타입 */
-  metricName: NodeGpuMetricRequestMetricName;
-  /**
-   * 시작 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
-   */
-  startDateTime: string;
-  /**
-   * 종료 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
-   */
-  endDateTime: string;
 }
 
 export type BaseResponseListNodeGpuMetricResponseStatus =
@@ -4746,6 +4764,24 @@ export interface MemorySummaryResponse {
   requestedBytes: string;
   /** 실제 사용 중인 메모리 (바이트) */
   usedBytes: string;
+}
+
+export type BaseResponseListStringStatus =
+  (typeof BaseResponseListStringStatus)[keyof typeof BaseResponseListStringStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListStringStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListString {
+  status: BaseResponseListStringStatus;
+  errorCode?: string;
+  data?: string[];
+  message?: string;
+  timestamp: number;
 }
 
 /**
@@ -5485,6 +5521,147 @@ export interface BaseResponseStorageResponse {
   timestamp: number;
 }
 
+export type BaseResponsePageResponsePublicImageUsageResponseStatus =
+  (typeof BaseResponsePageResponsePublicImageUsageResponseStatus)[keyof typeof BaseResponsePageResponsePublicImageUsageResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponsePublicImageUsageResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponsePublicImageUsageResponse {
+  status: BaseResponsePageResponsePublicImageUsageResponseStatus;
+  errorCode?: string;
+  data?: PageResponsePublicImageUsageResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponsePublicImageUsageResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: PublicImageUsageResponse[];
+}
+
+/**
+ * 공용 레지스트리 사용자별 이미지 등록 현황 응답
+ */
+export interface PublicImageUsageResponse {
+  /** 계정 ID */
+  accountId: string;
+  /** 계정명 */
+  accountName: string;
+  /** 이메일 */
+  email?: string;
+  /** 등록한 이미지 개수 */
+  imageCount: number;
+  /** 사용 스토리지 (bytes) */
+  usedStorage: number;
+}
+
+/**
+ * 이미지 타입
+ */
+export type AccountImageTagResponseImageType =
+  (typeof AccountImageTagResponseImageType)[keyof typeof AccountImageTagResponseImageType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccountImageTagResponseImageType = {
+  BUILT_IN: "BUILT_IN",
+  HUB: "HUB",
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+/**
+ * 사용자별 이미지 태그 목록 응답
+ */
+export interface AccountImageTagResponse {
+  /** Harbor 이미지명 */
+  harborImageName: string;
+  /** 태그명 */
+  tagName: string;
+  /** 워크스페이스명 (워크스페이스 격리 비활성화 시 null) */
+  workspaceName?: string;
+  /** 업로드 일시 */
+  uploadedAt?: string;
+  /** 이미지 크기 (bytes) */
+  sizeByte?: number;
+  /** 설명 */
+  description?: string;
+  /** 이미지 타입 */
+  imageType?: AccountImageTagResponseImageType;
+}
+
+export type BaseResponsePageResponseAccountImageTagResponseStatus =
+  (typeof BaseResponsePageResponseAccountImageTagResponseStatus)[keyof typeof BaseResponsePageResponseAccountImageTagResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseAccountImageTagResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseAccountImageTagResponse {
+  status: BaseResponsePageResponseAccountImageTagResponseStatus;
+  errorCode?: string;
+  data?: PageResponseAccountImageTagResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseAccountImageTagResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: AccountImageTagResponse[];
+}
+
+export type BaseResponsePageResponsePrivateImageUsageResponseStatus =
+  (typeof BaseResponsePageResponsePrivateImageUsageResponseStatus)[keyof typeof BaseResponsePageResponsePrivateImageUsageResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponsePrivateImageUsageResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponsePrivateImageUsageResponse {
+  status: BaseResponsePageResponsePrivateImageUsageResponseStatus;
+  errorCode?: string;
+  data?: PageResponsePrivateImageUsageResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponsePrivateImageUsageResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: PrivateImageUsageResponse[];
+}
+
+/**
+ * 개인 레지스트리 사용자별 이미지 등록 현황 응답
+ */
+export interface PrivateImageUsageResponse {
+  /** 계정 ID */
+  accountId: string;
+  /** 계정명 */
+  accountName: string;
+  /** 이메일 */
+  email?: string;
+  /** 등록한 이미지 개수 */
+  imageCount: number;
+  /** 사용 스토리지 (bytes) */
+  usedStorage: number;
+}
+
 export type BaseResponseListQueueWorkloadResponseStatus =
   (typeof BaseResponseListQueueWorkloadResponseStatus)[keyof typeof BaseResponseListQueueWorkloadResponseStatus];
 
@@ -5696,7 +5873,7 @@ export const AdminNotificationItemResponseNotificationRole = {
 export interface AdminNotificationItemResponse {
   /** 알림 고유 ID */
   notificationId: number;
-  /** 알림 제목 */
+  /** 알림 제목 (NotificationSetName) */
   notificationTitle: string;
   /** 알림 본문 메시지 */
   notificationContent: string;
@@ -5758,7 +5935,7 @@ export const AdminNotificationSetResponseNotificationType = {
 export interface AdminNotificationSetResponse {
   /** 알림 설정 고유 ID */
   notificationSetId: number;
-  /** 알림 설정 표시 이름 (UI용) */
+  /** 알림 설정 이름 (NotificationSetName) */
   notificationSetName: string;
   /** 시스템 내 알림 수신 활성화 여부 */
   isSystemNotificationEnabled: boolean;
@@ -5934,6 +6111,33 @@ export interface BaseResponseListNotificationSetResponse {
 }
 
 /**
+ * 알림 설정 이름 (enum)
+ */
+export type NotificationSetResponseNotificationSetName =
+  (typeof NotificationSetResponseNotificationSetName)[keyof typeof NotificationSetResponseNotificationSetName];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationSetResponseNotificationSetName = {
+  LICENSE_EXPIRY_WARNING: "LICENSE_EXPIRY_WARNING",
+  USER_SIGNUP: "USER_SIGNUP",
+  VULNERABILITY_IMAGE_REQUEST: "VULNERABILITY_IMAGE_REQUEST",
+  WORKLOAD_VULNERABILITY: "WORKLOAD_VULNERABILITY",
+  NODE_FAILURE: "NODE_FAILURE",
+  MIG_APPLIED: "MIG_APPLIED",
+  MIG_FAILURE: "MIG_FAILURE",
+  WORKSPACE_CREATED: "WORKSPACE_CREATED",
+  WORKSPACE_RESOURCE_REQUEST: "WORKSPACE_RESOURCE_REQUEST",
+  WORKLOAD_RESOURCE_RECLAIM_RESULT: "WORKLOAD_RESOURCE_RECLAIM_RESULT",
+  WORKSPACE_RESOURCE_REQUEST_RESULT: "WORKSPACE_RESOURCE_REQUEST_RESULT",
+  BATCH_JOB_COMPLETED: "BATCH_JOB_COMPLETED",
+  JOB_RECLAIM_WARNING: "JOB_RECLAIM_WARNING",
+  JOB_RECLAIMED: "JOB_RECLAIMED",
+  IMAGE_COMMIT_REGISTERED: "IMAGE_COMMIT_REGISTERED",
+  WORKLOAD_STARTED: "WORKLOAD_STARTED",
+  WORKLOAD_ERROR: "WORKLOAD_ERROR",
+} as const;
+
+/**
  * 알림 타입
  */
 export type NotificationSetResponseNotificationType =
@@ -5970,8 +6174,8 @@ export const NotificationSetResponseNotificationRole = {
 export interface NotificationSetResponse {
   /** 알림 설정 고유 ID */
   notificationSetId: number;
-  /** 알림 설정 표시 이름 (UI용) */
-  notificationSetName: string;
+  /** 알림 설정 이름 (enum) */
+  notificationSetName: NotificationSetResponseNotificationSetName;
   /** 시스템 내 알림 수신 활성화 여부 */
   isSystemNotificationEnabled: boolean;
   /** 이메일 알림 수신 활성화 여부 */
@@ -6639,9 +6843,63 @@ export type GetCredentialsParams = {
   keyword?: string;
 };
 
+export type StreamNodeSystemMetricsParams = {
+  /**
+   * 시스템 메트릭 타입
+   */
+  metricName: StreamNodeSystemMetricsMetricName;
+  /**
+   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   */
+  lastSentTime: string;
+};
+
+export type StreamNodeSystemMetricsMetricName =
+  (typeof StreamNodeSystemMetricsMetricName)[keyof typeof StreamNodeSystemMetricsMetricName];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const StreamNodeSystemMetricsMetricName = {
+  CPU_TEMPERATURE: "CPU_TEMPERATURE",
+  CPU_UTILIZATION: "CPU_UTILIZATION",
+  CPU_LOAD_AVERAGE: "CPU_LOAD_AVERAGE",
+  NODE_NETWORK_RECEIVE: "NODE_NETWORK_RECEIVE",
+  NODE_NETWORK_TRANSMIT: "NODE_NETWORK_TRANSMIT",
+  DISK_READ: "DISK_READ",
+  DISK_WRITE: "DISK_WRITE",
+  DISK_UTILIZATION: "DISK_UTILIZATION",
+  MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
+  NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
+  NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
+  NODE_MEMORY_TOTAL: "NODE_MEMORY_TOTAL",
+  NODE_MEMORY_FREE: "NODE_MEMORY_FREE",
+} as const;
+
+export type StreamNodeGpuMetricsParams = {
+  /**
+   * GPU 메트릭 타입
+   */
+  metricName: StreamNodeGpuMetricsMetricName;
+  /**
+   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   */
+  lastSentTime: string;
+};
+
+export type StreamNodeGpuMetricsMetricName =
+  (typeof StreamNodeGpuMetricsMetricName)[keyof typeof StreamNodeGpuMetricsMetricName];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const StreamNodeGpuMetricsMetricName = {
+  GPU_UTILIZATION: "GPU_UTILIZATION",
+  GPU_MEMORY_UTILIZATION: "GPU_MEMORY_UTILIZATION",
+  GPU_TEMPERATURE: "GPU_TEMPERATURE",
+  GPU_FAN_SPEED: "GPU_FAN_SPEED",
+  GPU_POWER_USAGE: "GPU_POWER_USAGE",
+} as const;
+
 export type GetWorkloadResourceMetricsTimeseriesParams = {
   /**
-   * 메트릭 종류
+   * 워크스페이스 리소스 메트릭 타입
    */
   metricName: GetWorkloadResourceMetricsTimeseriesMetricName;
   /**
@@ -6670,17 +6928,15 @@ export const GetWorkloadResourceMetricsTimeseriesMetricName = {
 
 export type GetResourceMetricsTimeseriesParams = {
   /**
-   * 메트릭 종류
+   * 워크스페이스 리소스 메트릭 타입
    */
   metricsName: GetResourceMetricsTimeseriesMetricsName;
   /**
-   * 조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일)
-   * @pattern ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$
+   * 조회 시작 시간 (ISO 8601 형식, 미입력 시 현재 시간 - 1일)
    */
   startDate?: string;
   /**
-   * 조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간)
-   * @pattern ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$
+   * 조회 종료 시간 (ISO 8601 형식, 미입력 시 현재 시간)
    */
   endDate?: string;
 };
@@ -6770,6 +7026,17 @@ export type ListFilesParams = {
 
 export type GetPublicImageTagVulnerabilitiesParams = {
   /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
    * Harbor 이미지 경로
    */
   harborImageName: string;
@@ -6794,6 +7061,17 @@ export type CheckImageTagExistsParams = {
   tagName: string;
 };
 
+export type GetPublicImageTagDetailParams = {
+  /**
+   * Harbor 이미지 경로
+   */
+  harborImageName: string;
+  /**
+   * 태그 이름
+   */
+  tagName: string;
+};
+
 export type GetPublicImageDetailParams = {
   /**
    * Harbor 이미지 경로
@@ -6801,18 +7079,18 @@ export type GetPublicImageDetailParams = {
   harborImageName: string;
 };
 
-export type GetPrivateImageTagDetailParams = {
-  /**
-   * Harbor 이미지 경로
-   */
-  harborImageName: string;
-  /**
-   * 워크스페이스 ID 필터
-   */
-  workspaceId?: number;
-};
-
 export type GetPrivateImageTagVulnerabilitiesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
   /**
    * Harbor 이미지 경로
    */
@@ -6821,6 +7099,21 @@ export type GetPrivateImageTagVulnerabilitiesParams = {
    * 이미지 태그
    * @minLength 0
    * @maxLength 128
+   */
+  tagName: string;
+  /**
+   * 워크스페이스 ID 필터
+   */
+  workspaceId?: number;
+};
+
+export type GetPrivateImageTagDetailParams = {
+  /**
+   * Harbor 이미지 경로
+   */
+  harborImageName: string;
+  /**
+   * 태그 이름
    */
   tagName: string;
   /**
@@ -7123,15 +7416,6 @@ export type GetAllNamespaceEventsParams = {
    * @maximum 100
    */
   pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 네임스페이스 이름
-   * @pattern ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-   */
-  namespace?: string;
 };
 
 export type FindHubsParams = {
@@ -7244,25 +7528,25 @@ export const GetClusterNodesOrder = {
 } as const;
 
 export type GetNodeSystemMetricsParams = {
-  request: NodeSystemMetricRequest;
-};
-
-export type StreamNodeSystemMetricsParams = {
   /**
    * 시스템 메트릭 타입
    */
-  metricName: StreamNodeSystemMetricsMetricName;
+  metricName: GetNodeSystemMetricsMetricName;
   /**
-   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   * 시작 시간 (ISO 8601 형식)
    */
-  lastSentTime: string;
+  startDateTime: string;
+  /**
+   * 종료 시간 (ISO 8601 형식)
+   */
+  endDateTime: string;
 };
 
-export type StreamNodeSystemMetricsMetricName =
-  (typeof StreamNodeSystemMetricsMetricName)[keyof typeof StreamNodeSystemMetricsMetricName];
+export type GetNodeSystemMetricsMetricName =
+  (typeof GetNodeSystemMetricsMetricName)[keyof typeof GetNodeSystemMetricsMetricName];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StreamNodeSystemMetricsMetricName = {
+export const GetNodeSystemMetricsMetricName = {
   CPU_TEMPERATURE: "CPU_TEMPERATURE",
   CPU_UTILIZATION: "CPU_UTILIZATION",
   CPU_LOAD_AVERAGE: "CPU_LOAD_AVERAGE",
@@ -7274,30 +7558,30 @@ export const StreamNodeSystemMetricsMetricName = {
   MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
   NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
   NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
-  NODE_MEMORY_MEM_TOTAL: "NODE_MEMORY_MEM_TOTAL",
-  NODE_MEMORY_MEM_FREE: "NODE_MEMORY_MEM_FREE",
+  NODE_MEMORY_TOTAL: "NODE_MEMORY_TOTAL",
+  NODE_MEMORY_FREE: "NODE_MEMORY_FREE",
 } as const;
 
 export type GetNodeGpuMetricsParams = {
-  request: NodeGpuMetricRequest;
-};
-
-export type StreamNodeGpuMetricsParams = {
   /**
    * GPU 메트릭 타입
    */
-  metricName: StreamNodeGpuMetricsMetricName;
+  metricName: GetNodeGpuMetricsMetricName;
   /**
-   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   * 시작 시간 (ISO 8601 형식)
    */
-  lastSentTime: string;
+  startDateTime: string;
+  /**
+   * 종료 시간 (ISO 8601 형식)
+   */
+  endDateTime: string;
 };
 
-export type StreamNodeGpuMetricsMetricName =
-  (typeof StreamNodeGpuMetricsMetricName)[keyof typeof StreamNodeGpuMetricsMetricName];
+export type GetNodeGpuMetricsMetricName =
+  (typeof GetNodeGpuMetricsMetricName)[keyof typeof GetNodeGpuMetricsMetricName];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StreamNodeGpuMetricsMetricName = {
+export const GetNodeGpuMetricsMetricName = {
   GPU_UTILIZATION: "GPU_UTILIZATION",
   GPU_MEMORY_UTILIZATION: "GPU_MEMORY_UTILIZATION",
   GPU_TEMPERATURE: "GPU_TEMPERATURE",
@@ -7485,6 +7769,150 @@ export const GetPendingWorkloadsJobType = {
   DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
+export type GetPublicImageUsageByAccountParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetPublicImageUsageByAccountSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetPublicImageUsageByAccountOrder;
+};
+
+export type GetPublicImageUsageByAccountSort =
+  (typeof GetPublicImageUsageByAccountSort)[keyof typeof GetPublicImageUsageByAccountSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPublicImageUsageByAccountSort = {
+  ACCOUNT_NAME: "ACCOUNT_NAME",
+  IMAGE_COUNT: "IMAGE_COUNT",
+  USED_STORAGE: "USED_STORAGE",
+} as const;
+
+export type GetPublicImageUsageByAccountOrder =
+  (typeof GetPublicImageUsageByAccountOrder)[keyof typeof GetPublicImageUsageByAccountOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPublicImageUsageByAccountOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetPublicImageTagsByAccountIdParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  "page.pageNo"?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  "page.pageSize"?: number;
+  /**
+   * 이미지 소스 타입 필터
+   */
+  imageSourceType?: GetPublicImageTagsByAccountIdImageSourceType;
+};
+
+export type GetPublicImageTagsByAccountIdImageSourceType =
+  (typeof GetPublicImageTagsByAccountIdImageSourceType)[keyof typeof GetPublicImageTagsByAccountIdImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPublicImageTagsByAccountIdImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
+export type GetPrivateImageUsageByAccountParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetPrivateImageUsageByAccountSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetPrivateImageUsageByAccountOrder;
+};
+
+export type GetPrivateImageUsageByAccountSort =
+  (typeof GetPrivateImageUsageByAccountSort)[keyof typeof GetPrivateImageUsageByAccountSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPrivateImageUsageByAccountSort = {
+  ACCOUNT_NAME: "ACCOUNT_NAME",
+  IMAGE_COUNT: "IMAGE_COUNT",
+  USED_STORAGE: "USED_STORAGE",
+} as const;
+
+export type GetPrivateImageUsageByAccountOrder =
+  (typeof GetPrivateImageUsageByAccountOrder)[keyof typeof GetPrivateImageUsageByAccountOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPrivateImageUsageByAccountOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetPrivateImageTagsByAccountIdParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  "page.pageNo"?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  "page.pageSize"?: number;
+  /**
+   * 이미지 소스 타입 필터
+   */
+  imageSourceType?: GetPrivateImageTagsByAccountIdImageSourceType;
+};
+
+export type GetPrivateImageTagsByAccountIdImageSourceType =
+  (typeof GetPrivateImageTagsByAccountIdImageSourceType)[keyof typeof GetPrivateImageTagsByAccountIdImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPrivateImageTagsByAccountIdImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
 export type GetAllAccountsParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -7555,10 +7983,6 @@ export type GetAdminNotificationsParams = {
    */
   notificationType?: GetAdminNotificationsNotificationTypeItem[];
   /**
-   * 정렬 필드: CREATED_AT. 미입력 시 CREATED_AT
-   */
-  sort?: GetAdminNotificationsSort;
-  /**
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */
   order?: GetAdminNotificationsOrder;
@@ -7577,14 +8001,6 @@ export const GetAdminNotificationsNotificationTypeItem = {
   VULNERABILITY: "VULNERABILITY",
   WORKSPACE: "WORKSPACE",
   WORKLOAD: "WORKLOAD",
-} as const;
-
-export type GetAdminNotificationsSort =
-  (typeof GetAdminNotificationsSort)[keyof typeof GetAdminNotificationsSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetAdminNotificationsSort = {
-  CREATED_AT: "CREATED_AT",
 } as const;
 
 export type GetAdminNotificationsOrder =

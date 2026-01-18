@@ -12,12 +12,15 @@ import {
   getGetVolumeListQueryKey,
   useRegisterOnPremiseVolume,
 } from "@/api/generated/volume/volume";
+import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 import {
   type CreateOnPremiseVolumeFormType,
   createOnPremiseVolumeSchema,
 } from "@/domain/volume/schemas/volume.schema";
 import { openCreateOnPremiseVolumeModalAtom } from "@/domain/volume/state/volume.atom";
+import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { VOLUME_VISIBILITY_OPTIONS } from "../constants/volume.constant";
 
@@ -34,7 +37,9 @@ export function CreateOnPremVolumeModal() {
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   // 모달 상태 관리
-  const { open, onClose } = useGlobalModal(openCreateOnPremiseVolumeModalAtom);
+  const { open, onOpen, onClose } = useGlobalModal(
+    openCreateOnPremiseVolumeModalAtom,
+  );
 
   // 볼륨 생성 Hook 사용 (orval 생성)
   const registerOnPremiseVolume = useRegisterOnPremiseVolume();
@@ -95,6 +100,15 @@ export function CreateOnPremVolumeModal() {
       },
     );
   };
+
+  useSubscribe(
+    VOLUME_EVENTS.sendStorageType,
+    (eventData: VolumeStorageType) => {
+      if (eventData === "LOCAL") {
+        onOpen();
+      }
+    },
+  );
 
   return (
     <Modal

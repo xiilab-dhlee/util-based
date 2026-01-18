@@ -32,18 +32,110 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
-import type { BaseResponseListQueueWorkloadResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type {
+  AddWorkloadToUrgentQueueRequest,
+  BaseResponseListQueueWorkloadResponse,
+  BaseResponseUnit,
+  UpdateQueueOrderRequest,
+} from "../astragoBackendAPIDocumentation.schemas";
 
+/**
+ * urgent-standby 큐의 워크로드 순서를 변경합니다. rank 값으로 우선순위를 지정합니다 (1~5, 낮을수록 높은 우선순위).
+ * @summary 긴급 대기큐 워크로드 순서 변경
+ */
+export const updateUrgentStandbyOrder = (
+  updateQueueOrderRequest: UpdateQueueOrderRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/admin/queues/urgent-standby/order`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: updateQueueOrderRequest,
+  });
+};
+
+export const getUpdateUrgentStandbyOrderMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateUrgentStandbyOrder>>,
+    TError,
+    { data: UpdateQueueOrderRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateUrgentStandbyOrder>>,
+  TError,
+  { data: UpdateQueueOrderRequest },
+  TContext
+> => {
+  const mutationKey = ["updateUrgentStandbyOrder"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateUrgentStandbyOrder>>,
+    { data: UpdateQueueOrderRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateUrgentStandbyOrder(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateUrgentStandbyOrderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateUrgentStandbyOrder>>
+>;
+export type UpdateUrgentStandbyOrderMutationBody = UpdateQueueOrderRequest;
+export type UpdateUrgentStandbyOrderMutationError = unknown;
+
+/**
+ * @summary 긴급 대기큐 워크로드 순서 변경
+ */
+export const useUpdateUrgentStandbyOrder = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateUrgentStandbyOrder>>,
+      TError,
+      { data: UpdateQueueOrderRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateUrgentStandbyOrder>>,
+  TError,
+  { data: UpdateQueueOrderRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateUrgentStandbyOrderMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 /**
  * urgent-standby 큐에서 대기 중인 워크로드 전체 목록을 조회합니다. rank 정보가 포함됩니다.
  * @summary 긴급 대기큐 워크로드 목록 조회
@@ -194,7 +286,94 @@ export function useGetUrgentStandbyWorkloads<
 }
 
 /**
- * urgent-active 큐에서 실행 중인 워크로드 전체 목록을 조회합니다.
+ * Pending 상태의 워크로드를 urgent-standby 큐에 추가합니다. 최대 5개까지 등록 가능합니다.
+ * @summary 긴급 대기큐에 워크로드 추가
+ */
+export const addWorkloadToUrgentStandby = (
+  addWorkloadToUrgentQueueRequest: AddWorkloadToUrgentQueueRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/admin/queues/urgent-standby/workloads`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: addWorkloadToUrgentQueueRequest,
+    signal,
+  });
+};
+
+export const getAddWorkloadToUrgentStandbyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addWorkloadToUrgentStandby>>,
+    TError,
+    { data: AddWorkloadToUrgentQueueRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addWorkloadToUrgentStandby>>,
+  TError,
+  { data: AddWorkloadToUrgentQueueRequest },
+  TContext
+> => {
+  const mutationKey = ["addWorkloadToUrgentStandby"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addWorkloadToUrgentStandby>>,
+    { data: AddWorkloadToUrgentQueueRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return addWorkloadToUrgentStandby(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddWorkloadToUrgentStandbyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addWorkloadToUrgentStandby>>
+>;
+export type AddWorkloadToUrgentStandbyMutationBody =
+  AddWorkloadToUrgentQueueRequest;
+export type AddWorkloadToUrgentStandbyMutationError = unknown;
+
+/**
+ * @summary 긴급 대기큐에 워크로드 추가
+ */
+export const useAddWorkloadToUrgentStandby = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof addWorkloadToUrgentStandby>>,
+      TError,
+      { data: AddWorkloadToUrgentQueueRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof addWorkloadToUrgentStandby>>,
+  TError,
+  { data: AddWorkloadToUrgentQueueRequest },
+  TContext
+> => {
+  const mutationOptions = getAddWorkloadToUrgentStandbyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * urgent-active 큐에서 실행 대기 중인 워크로드 전체 목록을 조회합니다. rank 정보가 포함됩니다.
  * @summary 긴급 실행큐 워크로드 목록 조회
  */
 export const getUrgentActiveWorkloads = (signal?: AbortSignal) => {

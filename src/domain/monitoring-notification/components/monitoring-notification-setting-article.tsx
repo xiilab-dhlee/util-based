@@ -29,16 +29,16 @@ export function MonitoringNotificationSettingArticle() {
         <CustomizedTable
           columns={createMonitoringNotificationColumn([
             {
-              dataIndex: "name",
+              key: "name",
             },
             {
-              dataIndex: "channel",
+              key: "channel",
             },
             {
-              dataIndex: "status",
+              key: "status",
             },
             {
-              dataIndex: "delete",
+              key: "delete",
             },
           ])}
           data={data?.content || []}

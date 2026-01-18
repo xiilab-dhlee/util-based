@@ -3,6 +3,11 @@ import { NextResponse } from "next/server";
 import type { JWT } from "next-auth/jwt";
 import { getToken } from "next-auth/jwt";
 
+import {
+  ACCOUNT_ROLES,
+  type AccountRole,
+} from "@/shared/constants/core.constant";
+
 // ============================================================================
 // 상수
 // ============================================================================
@@ -27,10 +32,7 @@ const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 // ============================================================================
 
 interface TokenWithRoles extends JWT {
-  realm_access?: { roles?: string[] };
-  roles?: string[];
-  expires_at?: number;
-  error?: string;
+  realm_access?: { roles?: AccountRole[] };
 }
 
 // ============================================================================
@@ -74,7 +76,7 @@ function isPublicPath(path: string): boolean {
 }
 
 /** NextAuth 토큰에서 역할 목록 추출 */
-function extractRoles(token: TokenWithRoles | null): string[] {
+function extractRoles(token: TokenWithRoles | null): AccountRole[] {
   if (!token) return [];
 
   // auth.config.ts에서 세션 콜백으로 저장한 roles 우선 사용
@@ -91,7 +93,7 @@ function extractRoles(token: TokenWithRoles | null): string[] {
 }
 
 /** 특정 역할을 보유하고 있는지 확인 */
-function hasRole(roles: string[], requiredRole: string): boolean {
+function hasRole(roles: AccountRole[], requiredRole: AccountRole): boolean {
   return roles.includes(requiredRole);
 }
 
@@ -184,14 +186,21 @@ export async function proxy(request: NextRequest) {
   if (hasValidToken && token) {
     const roles = extractRoles(token as TokenWithRoles);
 
-    // /admin 경로: ADMIN 필요
-    if (path.startsWith("/admin") && !hasRole(roles, "ADMIN")) {
+    // /admin 경로: ADMIN 또는 SUPER_ADMIN 필요
+    if (
+      path.startsWith("/admin") &&
+      !hasRole(roles, ACCOUNT_ROLES.ADMIN) &&
+      !hasRole(roles, ACCOUNT_ROLES.SUPER_ADMIN)
+    ) {
       return NextResponse.redirect(new URL("/user", request.url));
     }
 
-    // /user 경로: ADMIN 또는 USER 필요
+    // /user 경로: ADMIN, SUPER_ADMIN 또는 USER 필요
     if (path.startsWith("/user")) {
-      const hasUserAccess = hasRole(roles, "ADMIN") || hasRole(roles, "USER");
+      const hasUserAccess =
+        hasRole(roles, ACCOUNT_ROLES.ADMIN) ||
+        hasRole(roles, ACCOUNT_ROLES.SUPER_ADMIN) ||
+        hasRole(roles, ACCOUNT_ROLES.USER);
 
       if (!hasUserAccess) {
         debugLog("🔒 권한 없음 → /signin 리다이렉트", { from: path, roles });

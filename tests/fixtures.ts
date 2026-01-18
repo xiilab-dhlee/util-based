@@ -18,6 +18,7 @@ import { AccountManagementPage } from "./pages/account-management.page";
 import { AccountPendingPage } from "./pages/account-pending.page";
 import { HubPage } from "./pages/hub.page";
 import { MonitoringPage } from "./pages/monitoring.page";
+import { PrivateRegistryListPage } from "./pages/private-registry-list.page";
 import { SignupPage } from "./pages/signup.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
 import { WorkloadListPage } from "./pages/workload-list.page";
@@ -131,6 +132,7 @@ type TestContextFixtures = {
   hubPage: HubPage;
   accountManagementPage: AccountManagementPage;
   accountPendingPage: AccountPendingPage;
+  privateRegistryListPage: PrivateRegistryListPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
   modal: ModalComponent;
@@ -190,8 +192,10 @@ function createAssertLogger(): AssertLogger {
 
     assertNotEmpty: (label: string, actual: string | null | undefined) => {
       const trimmed = actual?.trim() ?? "";
-      logAssertion(label, actual, "non-empty string", trimmed.length > 0);
-      expect(trimmed.length).toBeGreaterThan(0);
+      // 빈 문자열과 "-"(UI에서 빈 값 표시)를 모두 유효하지 않은 값으로 취급
+      const isValid = trimmed.length > 0 && trimmed !== "-";
+      logAssertion(label, actual, "non-empty string (not '-')", isValid);
+      expect(isValid).toBe(true);
     },
 
     assertMatch: (label: string, actual: string, pattern: RegExp) => {
@@ -405,6 +409,10 @@ export const test = base.extend<TestContextFixtures>({
 
   accountPendingPage: async ({ page }, use) => {
     await use(new AccountPendingPage(page));
+  },
+
+  privateRegistryListPage: async ({ page }, use) => {
+    await use(new PrivateRegistryListPage(page));
   },
 
   // ============================================================================

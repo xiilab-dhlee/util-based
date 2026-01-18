@@ -81,3 +81,141 @@ export const deleteImagesResponse = zod
     timestamp: zod.number(),
   })
   .strict();
+
+/**
+ * 
+            공용 레지스트리의 사용자별 이미지 등록 현황을 조회합니다.
+            - 계정별 등록 이미지 개수, 점유 스토리지 용량을 제공합니다.
+            - 키워드로 계정명 또는 이메일 검색이 가능합니다.
+        
+ * @summary 사용자별 공용 이미지 등록 현황 조회
+ */
+export const getPublicImageUsageByAccountQueryPageNoMin = 0;
+
+export const getPublicImageUsageByAccountQueryPageSizeMax = 100;
+
+export const getPublicImageUsageByAccountQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getPublicImageUsageByAccountQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getPublicImageUsageByAccountQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["ACCOUNT_NAME", "IMAGE_COUNT", "USED_STORAGE"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+});
+
+export const getPublicImageUsageByAccountResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              accountId: zod.string().describe("계정 ID"),
+              accountName: zod.string().describe("계정명"),
+              email: zod.string().optional().describe("이메일"),
+              imageCount: zod.number().describe("등록한 이미지 개수"),
+              usedStorage: zod.number().describe("사용 스토리지 (bytes)"),
+            })
+            .strict()
+            .describe("공용 레지스트리 사용자별 이미지 등록 현황 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            특정 사용자가 등록한 공용 이미지 태그 목록을 조회합니다.
+            - 이미지명, 태그명, 워크스페이스명, 업로드 일시, 크기, 설명, 이미지 타입 정보를 제공합니다.
+            - 이미지 소스 타입(SNAPSHOT, EXTERNAL)으로 필터링이 가능합니다.
+        
+ * @summary 사용자별 공용 이미지 태그 목록 조회
+ */
+export const getPublicImageTagsByAccountIdParams = zod.object({
+  accountId: zod.string(),
+});
+
+export const getPublicImageTagsByAccountIdQueryPagePageNoMin = 0;
+
+export const getPublicImageTagsByAccountIdQueryPagePageSizeMax = 100;
+
+export const getPublicImageTagsByAccountIdQueryParams = zod.object({
+  "page.pageNo": zod
+    .number()
+    .min(getPublicImageTagsByAccountIdQueryPagePageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  "page.pageSize": zod
+    .number()
+    .min(1)
+    .max(getPublicImageTagsByAccountIdQueryPagePageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  imageSourceType: zod
+    .enum(["SNAPSHOT", "EXTERNAL"])
+    .optional()
+    .describe("이미지 소스 타입 필터"),
+});
+
+export const getPublicImageTagsByAccountIdResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              harborImageName: zod.string().describe("Harbor 이미지명"),
+              tagName: zod.string().describe("태그명"),
+              workspaceName: zod
+                .string()
+                .optional()
+                .describe(
+                  "워크스페이스명 (워크스페이스 격리 비활성화 시 null)",
+                ),
+              uploadedAt: zod
+                .string()
+                .datetime({})
+                .optional()
+                .describe("업로드 일시"),
+              sizeByte: zod.number().optional().describe("이미지 크기 (bytes)"),
+              description: zod.string().optional().describe("설명"),
+              imageType: zod
+                .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+                .optional()
+                .describe("이미지 타입"),
+            })
+            .strict()
+            .describe("사용자별 이미지 태그 목록 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();

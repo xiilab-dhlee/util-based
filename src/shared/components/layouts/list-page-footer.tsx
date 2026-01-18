@@ -57,6 +57,7 @@ const Container = styled.div`
   overflow: hidden;
   width: 100%;
   margin-top: 12px;
+  height: 30px;
 `;
 
 const Left = styled.div``;

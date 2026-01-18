@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isString } from "es-toolkit/predicate";
 import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -15,6 +16,7 @@ import {
   Typography,
 } from "xiilab-ui";
 
+import { useSignup } from "@/api/generated/account/account";
 import {
   type SignupFormType,
   signupSchema,
@@ -49,13 +51,32 @@ export function SignupMain() {
       confirmPassword: "",
       firstName: "",
       lastName: "",
-      groupName: "",
+      groupId: [],
     },
   });
 
-  const onSubmit = () => {
-    // 회원가입 성공 - 페이지 이동 없이 상태만 변경
-    setIsSuccess(true);
+  const { mutate: signup, isPending } = useSignup();
+
+  const onSubmit = (data: SignupFormType) => {
+    if (isPending) return;
+
+    signup(
+      {
+        data: {
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          accountRole: "USER",
+          ...(data.groupId?.length && { groupId: data.groupId }),
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsSuccess(true);
+        },
+      },
+    );
   };
 
   // 회원가입 성공 UI
@@ -123,9 +144,10 @@ export function SignupMain() {
                 {...field}
                 type="password"
                 id="signup-password"
-                placeholder="영문 대소문자, 숫자, 특수문자 중 2가지 이상, 8~16자 이내로 입력해 주세요."
+                placeholder="영문, 숫자, 특수문자 포함 8~16자 이내로 입력해 주세요."
                 width="100%"
                 height={36}
+                maxLength={16}
                 autoComplete="new-password"
                 data-testid={AUTH_SELECTOR.SIGNUP_PASSWORD_INPUT}
                 prefix={<Icon name="Lock" color="var(--icon-fill)" size={20} />}
@@ -152,6 +174,7 @@ export function SignupMain() {
                 placeholder="비밀번호를 한 번 더 입력해 주세요."
                 width="100%"
                 height={36}
+                maxLength={16}
                 autoComplete="new-password"
                 data-testid={AUTH_SELECTOR.SIGNUP_CONFIRM_PASSWORD_INPUT}
                 prefix={<Icon name="Lock" color="var(--icon-fill)" size={20} />}
@@ -220,14 +243,14 @@ export function SignupMain() {
           />
         </NameRow>
         <Controller
-          name="groupName"
+          name="groupId"
           control={control}
           render={({ field }) => (
             <FormItem
-              label="Group Name"
-              validateStatus={errors.groupName ? "error" : undefined}
-              htmlFor="signup-group-name"
-              help={errors.groupName?.message}
+              label="Group"
+              validateStatus={errors.groupId ? "error" : undefined}
+              htmlFor="signup-group-id"
+              help={errors.groupId?.message}
               data-testid={AUTH_SELECTOR.SIGNUP_GROUP_NAME_FIELD}
             >
               <Dropdown
@@ -236,12 +259,14 @@ export function SignupMain() {
                   { label: "그룹 B", value: "group-b" },
                   { label: "그룹 C", value: "group-c" },
                 ]}
-                value={field.value || null}
-                onChange={(value) => field.onChange(value)}
+                value={field.value?.[0] ?? null}
+                onChange={(value) =>
+                  field.onChange(isString(value) ? [value] : [])
+                }
                 placeholder="그룹을 선택해 주세요."
                 width="100%"
                 height={36}
-                status={errors.groupName ? "error" : undefined}
+                status={errors.groupId ? "error" : undefined}
               />
             </FormItem>
           )}
@@ -252,6 +277,7 @@ export function SignupMain() {
           variant="gradient"
           width="100%"
           height={44}
+          loading={isPending}
           data-testid={AUTH_SELECTOR.SIGNUP_SUBMIT_BUTTON}
         >
           회원가입

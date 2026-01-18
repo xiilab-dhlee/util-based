@@ -506,6 +506,60 @@ export const ACCOUNT_PENDING_SELECTOR = {
 } as const;
 
 // ============================================
+// 프라이빗 레지스트리 (Private Registry)
+// ============================================
+
+export const PRIVATE_REGISTRY_SELECTOR = {
+  // 페이지 헤더
+  /** 프라이빗 레지스트리 목록 페이지 헤더 */
+  PAGE_HEADER: "user.private-registry",
+
+  // 컨테이너 이미지 목록 - 필터 셀렉터
+  /** 구분 필터 */
+  FILTER_TYPE: "private-registry-filter-type",
+
+  // 컨테이너 이미지 목록 - 테이블 컬럼 셀렉터
+  /** 이미지 이름 */
+  IMAGE_NAME: "private-registry-image-name",
+  /** 이미지 타입 */
+  IMAGE_TYPE: "private-registry-image-type",
+  /** 최근 태그/태그 수 */
+  RECENT_TAG: "private-registry-recent-tag",
+  TAG_COUNT: "private-registry-tag-count",
+  /** 다운로드 수 */
+  DOWNLOAD_COUNT: "private-registry-download-count",
+  /** 생성일 */
+  CREATED_AT: "private-registry-created-at",
+
+  // 등록 중인 이미지 목록 (Job List)
+  /** 등록 중인 이미지 목록 구분 필터 */
+  JOB_LIST_FILTER_TYPE: "private-registry-job-list-filter-type",
+  /** 등록 중인 이미지 목록 총 개수 */
+  JOB_LIST_TOTAL_COUNT: "private-registry-job-list-total-count",
+  /** 등록 중인 이미지 목록 검색창 */
+  JOB_LIST_SEARCH_INPUT: "private-registry-job-list-search-input",
+  /** 등록 중인 이미지 목록 페이지네이션 */
+  JOB_LIST_PAGINATION: "private-registry-job-list-pagination",
+  /** 등록 중인 이미지 목록 카드 */
+  JOB_LIST_CARD: "private-registry-job-list-card",
+  /** 등록 중인 이미지 이름 */
+  JOB_LIST_IMAGE_NAME: "private-registry-job-list-image-name",
+  /** 등록 중인 이미지 구분 */
+  JOB_LIST_IMAGE_TYPE: "private-registry-job-list-image-type",
+  /** 등록 중인 이미지 상태 */
+  JOB_LIST_STATUS: "private-registry-job-list-status",
+  /** 등록 중인 이미지 생성일시 */
+  JOB_LIST_CREATED_AT: "private-registry-job-list-created-at",
+  /** 등록 중인 이미지 카드 드롭다운 트리거 버튼 */
+  JOB_LIST_CARD_DROPDOWN_TRIGGER:
+    "private-registry-job-list-card-dropdown-trigger",
+  /** 등록 중인 이미지 재시작 버튼 */
+  JOB_LIST_RESTART_BUTTON: "private-registry-job-list-restart-button",
+  /** 등록 중인 이미지 종료 버튼 */
+  JOB_LIST_STOP_BUTTON: "private-registry-job-list-stop-button",
+} as const;
+
+// ============================================
 // 테스트용 헬퍼 함수
 // ============================================
 

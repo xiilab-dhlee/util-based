@@ -1,9 +1,6 @@
 import { createBdd } from "playwright-bdd";
 
-import {
-  ACCOUNT_PENDING_SELECTOR,
-  SELECTOR,
-} from "@/shared/constants/selector.constant";
+import { ACCOUNT_PENDING_SELECTOR } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 import { AccountPendingPage } from "../../pages/account-pending.page";
 import { DATE_PATTERN } from "../../support/patterns";
@@ -134,69 +131,6 @@ Then(
       (text, i) => {
         assertLogger.assertMatch(`가입 신청[${i}] 가입일`, text, DATE_PATTERN);
       },
-    );
-  },
-);
-
-// ============================================
-// 6. 검색 결과 검증
-// ============================================
-
-Then(
-  "가입 신청 검색 결과 검색어가 포함된 데이터만 표시된다",
-  async ({ accountPendingPage, listSearchInput, assertLogger, $testInfo }) => {
-    await accountPendingPage.table.assertTableVisible(SELECTOR.LIST_TABLE);
-
-    await accountPendingPage.table.validateSearch(
-      await listSearchInput.getValue(),
-      ACCOUNT_PENDING_SELECTOR.NAME,
-      assertLogger,
-      $testInfo,
-      "가입 신청",
-    );
-  },
-);
-
-// ============================================
-// 7. 정렬 기능
-// ============================================
-
-const SORT_CELL_MAP: Record<string, string> = {
-  이름: ACCOUNT_PENDING_SELECTOR.NAME,
-  가입일: ACCOUNT_PENDING_SELECTOR.CREATED_AT,
-};
-
-When(
-  "가입 승인 목록을 {string} 기준 {string}으로 정렬한다",
-  async (
-    { accountPendingPage },
-    field: string,
-    order: "오름차순" | "내림차순",
-  ) => {
-    await accountPendingPage.table.sortByColumn(field, order);
-  },
-);
-
-Then(
-  "가입 승인 목록이 {string} 기준 {string}으로 정렬되어 표시된다",
-  async (
-    { accountPendingPage, assertLogger },
-    field: string,
-    order: "오름차순" | "내림차순",
-  ) => {
-    const cellSelector = SORT_CELL_MAP[field];
-    if (!cellSelector) {
-      throw new Error(`알 수 없는 정렬 필드: ${field}`);
-    }
-
-    await accountPendingPage.table.waitForLoaded();
-
-    const compareType = field === "가입일" ? "date" : "string";
-    await accountPendingPage.table.assertDataSortOrder(
-      cellSelector,
-      order,
-      assertLogger,
-      compareType,
     );
   },
 );

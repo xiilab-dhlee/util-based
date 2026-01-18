@@ -1,16 +1,12 @@
 "use client";
 
 import { useAtomValue } from "jotai";
-import { useResetAtom } from "jotai/utils";
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import {
-  openDeleteWorkspaceMemberModalAtom,
-  settingMemberPageAtom,
-  settingMemberSearchTextAtom,
-} from "@/domain/setting/state/setting.atom";
+import { useMemberListReset } from "@/domain/setting/hooks/use-member-list-reset";
+import { openDeleteWorkspaceMemberModalAtom } from "@/domain/setting/state/setting.atom";
 import { useDeleteWorkspaceMembersAction } from "@/domain/workspace/hooks/workspace-actions";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -25,8 +21,7 @@ export function DeleteWorkspaceMemberModal() {
     openDeleteWorkspaceMemberModalAtom,
   );
 
-  const resetPage = useResetAtom(settingMemberPageAtom);
-  const resetSearchText = useResetAtom(settingMemberSearchTextAtom);
+  const { resetForPageChange } = useMemberListReset();
 
   const selectedAccountIdsRef = useRef<string[]>([]);
 
@@ -60,9 +55,8 @@ export function DeleteWorkspaceMemberModal() {
       { workspaceId, data: { accountId: selectedAccountIds } },
       {
         onSuccess: () => {
-          // 삭제 성공 시 목록/페이지 상태를 초기화
-          resetSearchText();
-          resetPage();
+          // 삭제 성공 시 페이지만 초기화 (검색어는 유지)
+          resetForPageChange();
           handleClose();
         },
       },

@@ -4,6 +4,10 @@ import { InternalRegistryImageAllCheck } from "@/domain/internal-registry-image/
 import { InternalRegistryImageItemCheck } from "@/domain/internal-registry-image/components/list/internal-registry-image-item-check";
 import { InternalRegistryImageNameLink } from "@/domain/internal-registry-image/components/list/internal-registry-image-name-link";
 import type { InternalRegistryImageListType } from "@/domain/internal-registry-image/schemas/internal-registry-image.schema";
+import {
+  creatorDateColumn,
+  creatorNameColumn,
+} from "@/shared/components/column";
 import { CHECKBOX_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
@@ -71,6 +75,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
         return <ColumnAlignCenterWrap>{status}</ColumnAlignCenterWrap>;
       },
     },
+    creatorNameColumn,
+    creatorDateColumn,
   ];
 };
 

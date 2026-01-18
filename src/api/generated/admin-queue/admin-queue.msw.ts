@@ -31,7 +31,20 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponseListQueueWorkloadResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type {
+  BaseResponseListQueueWorkloadResponse,
+  BaseResponseUnit,
+} from "../astragoBackendAPIDocumentation.schemas";
+
+export const getUpdateUrgentStandbyOrderResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getGetUrgentStandbyWorkloadsResponseMock = (
   overrideResponse: Partial<BaseResponseListQueueWorkloadResponse> = {},
@@ -74,6 +87,16 @@ export const getGetUrgentStandbyWorkloadsResponseMock = (
     creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     rank: faker.number.int({ min: undefined, max: undefined }),
   })),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getAddWorkloadToUrgentStandbyResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -125,6 +148,34 @@ export const getGetUrgentActiveWorkloadsResponseMock = (
   ...overrideResponse,
 });
 
+export const getUpdateUrgentStandbyOrderMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/admin/queues/urgent-standby/order",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateUrgentStandbyOrderResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetUrgentStandbyWorkloadsMockHandler = (
   overrideResponse?:
     | BaseResponseListQueueWorkloadResponse
@@ -149,6 +200,34 @@ export const getGetUrgentStandbyWorkloadsMockHandler = (
             : getGetUrgentStandbyWorkloadsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getAddWorkloadToUrgentStandbyMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/admin/queues/urgent-standby/workloads",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getAddWorkloadToUrgentStandbyResponseMock(),
+        ),
+        { status: 201, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
@@ -185,6 +264,8 @@ export const getGetUrgentActiveWorkloadsMockHandler = (
   );
 };
 export const getAdminQueueMock = () => [
+  getUpdateUrgentStandbyOrderMockHandler(),
   getGetUrgentStandbyWorkloadsMockHandler(),
+  getAddWorkloadToUrgentStandbyMockHandler(),
   getGetUrgentActiveWorkloadsMockHandler(),
 ];

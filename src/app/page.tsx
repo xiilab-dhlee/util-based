@@ -17,6 +17,8 @@ export const metadata = {
  *
  * 인증 체크는 proxy.ts에서 처리되므로,
  * 여기서는 역할별 대시보드 라우팅만 담당합니다.
+ *
+ * 우선순위: ADMIN > USER (높은 권한 우선)
  */
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -30,6 +32,11 @@ export default async function HomePage() {
     redirect(ADMIN_ROOT_PATH);
   }
 
-  // 표준 사용자는 표준 대시보드로
-  redirect(USER_ROOT_PATH);
+  // 사용자는 사용자 대시보드로
+  if (userRoles.includes(ACCOUNT_ROLES.USER)) {
+    redirect(USER_ROOT_PATH);
+  }
+
+  // 역할이 없는 사용자는 로그인 페이지로 (보안: 권한 없는 접근 차단)
+  redirect("/signin");
 }

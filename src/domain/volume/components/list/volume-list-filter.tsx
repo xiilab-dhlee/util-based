@@ -4,6 +4,8 @@ import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Button, Input } from "xiilab-ui";
 
+import { VolumeSortFilter } from "@/domain/volume/components/list/volume-sort-filter";
+import { VolumeTypeFilter } from "@/domain/volume/components/list/volume-type-filter";
 import {
   openSelectVolumeModalAtom,
   volumePageAtom,
@@ -44,6 +46,8 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
   return (
     <MySearchFilter title="볼륨 목록" total={total}>
       <MyItemsOnlySwitch checked={true} />
+      <VolumeTypeFilter disabled={loading} />
+      <VolumeSortFilter disabled={loading} />
       <Input.Search
         name="search"
         placeholder="볼륨 이름을 검색해 주세요."

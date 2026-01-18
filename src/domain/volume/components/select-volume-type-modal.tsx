@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
@@ -13,18 +12,13 @@ import {
   openCreateOnPremiseVolumeModalAtom,
   openSelectVolumeModalAtom,
 } from "@/domain/volume/state/volume.atom";
+import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 
-/**
- * 볼륨 스토리지 타입 선택 모달 컴포넌트
- *
- * 사용자가 볼륨을 생성할 때 사용할 스토리지 타입을 선택할 수 있는 모달입니다.
- * 선택된 스토리지 타입은 pubsub을 통해 다른 컴포넌트와 동기화됩니다.
- *
- * @returns 볼륨 스토리지 타입 선택 모달 JSX 요소
- */
 export function SelectVolumeTypeModal() {
-  // 모달 상태 관리
+  const publish = usePublish();
+
   const { open, onClose } = useGlobalModal(openSelectVolumeModalAtom);
   const { onOpen: onOpenCreateAstragoVolumeModal } = useGlobalModal(
     openCreateAstragoVolumeModalAtom,
@@ -33,20 +27,8 @@ export function SelectVolumeTypeModal() {
     openCreateOnPremiseVolumeModalAtom,
   );
 
-  // 선택된 스토리지 타입 상태 관리
-  const [storageType, setStorageType] = useState<VolumeStorageType | null>(
-    null,
-  );
-
-  /**
-   * 스토리지 타입 카드 클릭 핸들러
-   *
-   * @param type - 선택된 스토리지 타입
-   */
   const handleClickStorageType = (type: VolumeStorageType) => {
-    // 선택된 스토리지 타입을 로컬 상태에 저장
-    setStorageType(type);
-
+    publish(VOLUME_EVENTS.sendStorageType, type);
     onClose();
 
     if (type === "ASTRAGO") {
@@ -70,15 +52,12 @@ export function SelectVolumeTypeModal() {
       showHeaderBorder
       centered
     >
-      {/* 스토리지 타입 카드들을 감싸는 컨테이너 */}
       <Container>
-        {/* 사용 가능한 스토리지 타입들을 카드 형태로 렌더링 */}
         {VOLUME_STORAGE_OPTIONS.map((item) => (
           <VolumeStorageCard
             key={item.value}
             storageType={item.value as VolumeStorageType}
             onClick={handleClickStorageType}
-            isSelected={storageType === item.value}
           />
         ))}
       </Container>
@@ -86,11 +65,6 @@ export function SelectVolumeTypeModal() {
   );
 }
 
-/**
- * 스토리지 타입 카드들을 감싸는 스타일드 컴포넌트
- *
- * 카드들을 가로로 배치하고 적절한 간격을 제공합니다.
- */
 const Container = styled.div`
   display: flex;
   justify-content: space-between;

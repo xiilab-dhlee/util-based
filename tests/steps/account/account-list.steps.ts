@@ -1,11 +1,7 @@
 import { expect } from "@playwright/test";
 import { createBdd, type DataTable } from "playwright-bdd";
 
-import {
-  ACCOUNT_SELECTOR,
-  SELECTOR,
-  testId,
-} from "@/shared/constants/selector.constant";
+import { ACCOUNT_SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 import { AccountManagementPage } from "../../pages/account-management.page";
 import { DATE_PATTERN } from "../../support/patterns";
@@ -18,6 +14,10 @@ import { DATE_PATTERN } from "../../support/patterns";
  * 2. 페이지 표시 검증
  * 3. 테이블 행 액션
  * 4. 데이터 유효성 검증
+ * 5. 계정 상세 모달 검증
+ * 6. 계정 수정 모달 검증
+ * 7. 계정 수정 모달 - 폼 필드 검증
+ * 8. 패스워드 초기화 결과 모달 검증
  *
  * 도메인 상수: AccountManagementPage.ROW_BUTTON
  */
@@ -153,80 +153,7 @@ Then(
 );
 
 // ============================================
-// 5. 검색 결과 검증
-// ============================================
-
-Then(
-  "계정 검색 결과 검색어가 포함된 데이터만 표시된다",
-  async ({
-    accountManagementPage,
-    listSearchInput,
-    assertLogger,
-    $testInfo,
-  }) => {
-    // 테이블이 표시될 때까지 대기
-    await accountManagementPage.table.assertTableVisible(SELECTOR.LIST_TABLE);
-
-    // 검색 결과 검증
-    await accountManagementPage.table.validateSearch(
-      await listSearchInput.getValue(),
-      ACCOUNT_SELECTOR.NAME,
-      assertLogger,
-      $testInfo,
-      "계정",
-    );
-  },
-);
-
-// ============================================
-// 6. 정렬 기능
-// ============================================
-
-/** 한글 정렬 기준 → 셀 selector 매핑 */
-const SORT_CELL_MAP: Record<string, string> = {
-  이름: ACCOUNT_SELECTOR.NAME,
-  가입일: ACCOUNT_SELECTOR.CREATED_AT,
-};
-
-When(
-  "계정 목록을 {string} 기준 {string}으로 정렬한다",
-  async (
-    { accountManagementPage },
-    field: string,
-    order: "오름차순" | "내림차순",
-  ) => {
-    await accountManagementPage.table.sortByColumn(field, order);
-  },
-);
-
-Then(
-  "계정 목록이 {string} 기준 {string}으로 정렬되어 표시된다",
-  async (
-    { accountManagementPage, assertLogger },
-    field: string,
-    order: "오름차순" | "내림차순",
-  ) => {
-    const cellSelector = SORT_CELL_MAP[field];
-    if (!cellSelector) {
-      throw new Error(`알 수 없는 정렬 필드: ${field}`);
-    }
-
-    // 로딩 완료 대기
-    await accountManagementPage.table.waitForLoaded();
-
-    // 실제 데이터 정렬 순서 검증
-    const compareType = field === "가입일" ? "date" : "string";
-    await accountManagementPage.table.assertDataSortOrder(
-      cellSelector,
-      order,
-      assertLogger,
-      compareType,
-    );
-  },
-);
-
-// ============================================
-// 7. 계정 상세 모달 검증
+// 5. 계정 상세 모달 검증
 // ============================================
 
 Then(
@@ -237,7 +164,7 @@ Then(
 );
 
 // ============================================
-// 8. 계정 수정 모달 검증
+// 6. 계정 수정 모달 검증
 // ============================================
 
 Then(
@@ -248,7 +175,7 @@ Then(
 );
 
 // ============================================
-// 9. 계정 수정 모달 - 폼 필드 검증
+// 7. 계정 수정 모달 - 폼 필드 검증
 // ============================================
 
 Then(
@@ -279,23 +206,12 @@ Then(
 );
 
 // ============================================
-// 10. 패스워드 초기화 결과 모달 검증
+// 8. 패스워드 초기화 결과 모달 검증
 // ============================================
 
 Then(
   "패스워드 초기화 결과 모달에 새 패스워드가 표시된다",
   async ({ accountManagementPage }) => {
     await accountManagementPage.assertResetPasswordResultNotEmpty();
-  },
-);
-
-// ============================================
-// 11. 체크박스 및 삭제 기능
-// ============================================
-
-When(
-  "첫 번째 계정의 체크박스를 클릭한다",
-  async ({ accountManagementPage }) => {
-    await accountManagementPage.table.clickRowCheckbox(0);
   },
 );

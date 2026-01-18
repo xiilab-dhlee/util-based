@@ -4,7 +4,7 @@ import { ROUTES } from "@/shared/constants/routes.constant";
 import { ACCOUNT_SELECTOR, testId } from "@/shared/constants/selector.constant";
 import { DropdownComponent } from "../components/dropdown.component";
 import { FormItemComponent } from "../components/form-item.component";
-import { COUNT_PATTERN } from "../support/patterns";
+import { createUnitPattern } from "../support/patterns";
 import { ListPage } from "./list.page";
 
 /**
@@ -226,7 +226,7 @@ export class AccountManagementPage extends ListPage {
       // 개수 필드: n개 형식으로 표시되어야 함
       const element = this.page.locator(testId(countSelector));
       await expect(element).toBeVisible();
-      await expect(element).toHaveText(COUNT_PATTERN);
+      await expect(element).toHaveText(createUnitPattern("개"));
     } else {
       throw new Error(`알 수 없는 ${modalName} 모달 필드: ${fieldName}`);
     }

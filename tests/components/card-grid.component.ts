@@ -233,7 +233,19 @@ export class CardGridComponent {
     const card = this.getCard(cardIndex);
     const button = card.locator(testId(buttonTestId));
     await button.click();
-    await this.page.waitForLoadState("networkidle");
+  }
+
+  /**
+   * 드롭다운 메뉴 아이템 클릭 (Ant Design Dropdown)
+   *
+   * 드롭다운이 열린 상태에서 특정 data-testid를 가진 메뉴 아이템 클릭
+   *
+   * @param menuItemTestId - 드롭다운 메뉴 아이템의 data-testid
+   */
+  async clickDropdownMenuItem(menuItemTestId: string): Promise<void> {
+    // Ant Design 드롭다운은 body에 포탈로 렌더링됨
+    const menuItem = this.page.locator(testId(menuItemTestId));
+    await menuItem.click();
   }
 
   // ============================================

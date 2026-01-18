@@ -172,7 +172,8 @@ export function UpdateWorkspaceModal() {
                   isWorkspaceDetailFetching ||
                   isWorkspaceDetailError
                 }
-                style={{ height: "110px", resize: "none" }}
+                resize="none"
+                height="110px"
               />
             </LastFormItem>
           )}

@@ -19,7 +19,9 @@ import {
   useUpdateWorkspace,
 } from "@/api/generated/workspace/workspace";
 import {
+  getGetWorkspaceMemberRoleQueryKey,
   getGetWorkspaceMembersQueryKey,
+  useAddWorkspaceMembers,
   useDeleteWorkspaceMembers,
   useLeaveWorkspace,
   useUpdateMemberRole,
@@ -194,6 +196,25 @@ export function useSetDefaultWorkspaceAction(
   });
 }
 
+export function useAddWorkspaceMembersAction(
+  options?: Parameters<typeof useAddWorkspaceMembers>[0],
+) {
+  const queryClient = useQueryClient();
+
+  return useAddWorkspaceMembers({
+    ...options,
+    mutation: {
+      ...options?.mutation,
+      onSuccess: (data, variables, ...rest) => {
+        queryClient.invalidateQueries({
+          queryKey: getGetWorkspaceMembersQueryKey(variables.workspaceId),
+        });
+        options?.mutation?.onSuccess?.(data, variables, ...rest);
+      },
+    },
+  });
+}
+
 export function useDeleteWorkspaceMembersAction(
   options?: Parameters<typeof useDeleteWorkspaceMembers>[0],
 ) {
@@ -225,6 +246,12 @@ export function useUpdateMemberRoleAction(
       onSuccess: (data, variables, ...rest) => {
         queryClient.invalidateQueries({
           queryKey: getGetWorkspaceMembersQueryKey(variables.workspaceId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: getGetWorkspaceMemberRoleQueryKey(
+            variables.workspaceId,
+            variables.accountId,
+          ),
         });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },

@@ -18,10 +18,16 @@ import { VolumeListBody } from "@/domain/volume/components/list/volume-list-body
 import { VolumeListFilter } from "@/domain/volume/components/list/volume-list-filter";
 import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-footer";
 import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
-import { VOLUME_PAGE_SIZE } from "@/domain/volume/constants/volume.constant";
+import { UploadVolumeFileModal } from "@/domain/volume/components/upload-volume-file-modal";
+import {
+  parseVolumeSortValue,
+  VOLUME_PAGE_SIZE,
+} from "@/domain/volume/constants/volume.constant";
 import {
   volumePageAtom,
   volumeSearchTextAtom,
+  volumeSortAtom,
+  volumeTypeFilterAtom,
 } from "@/domain/volume/state/volume.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
@@ -47,10 +53,14 @@ export default function UserVolumeLayout({ children }: PropsWithChildren) {
   const router = useRouter();
   const page = useAtomValue(volumePageAtom);
   const searchText = useAtomValue(volumeSearchTextAtom);
+  const sort = useAtomValue(volumeSortAtom);
+  const volumeType = useAtomValue(volumeTypeFilterAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const workspaceId = selectedWorkspace?.workspaceId ?? 0;
   const pathname = usePathname();
   const isVolumeListPage = pathname === ROUTES.USER_VOLUME;
+
+  const sortParams = parseVolumeSortValue(sort);
 
   const { data, isLoading, isError } = useGetVolumeList(
     {
@@ -58,6 +68,9 @@ export default function UserVolumeLayout({ children }: PropsWithChildren) {
       pageSize: VOLUME_PAGE_SIZE,
       keyword: searchText || undefined,
       workspaceId,
+      sort: sortParams?.sort,
+      order: sortParams?.order,
+      volumeType: volumeType ?? undefined,
     },
     {
       query: {
@@ -114,6 +127,8 @@ export default function UserVolumeLayout({ children }: PropsWithChildren) {
       <DeleteVolumeFileModal />
       {/* 볼륨 파일 다운로드 모달 */}
       <DownloadVolumeFileModal />
+      {/* 볼륨 파일 업로드 모달 */}
+      <UploadVolumeFileModal />
     </>
   );
 }

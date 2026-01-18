@@ -7,6 +7,8 @@ import { AccountStatusSwitch } from "@/domain/account-management/components/list
 import { ResetPasswordButton } from "@/domain/account-management/components/list/reset-password-button";
 import { UpdateAccountButton } from "@/domain/account-management/components/list/update-account-button";
 import type { AccountSortState } from "@/domain/account-management/constants/account.constant";
+import type { AccountRole } from "@/shared/constants/core.constant";
+import { ACCOUNT_ROLE_LABEL } from "@/shared/constants/core.constant";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
@@ -89,8 +91,9 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       dataIndex: "accountRole",
       align: "center",
       width: "12%",
-      render: (accountRole: string) => {
-        return <span data-testid={ACCOUNT_SELECTOR.ROLE}>{accountRole}</span>;
+      render: (accountRole: AccountRole) => {
+        const roleLabel = ACCOUNT_ROLE_LABEL[accountRole] ?? accountRole;
+        return <span data-testid={ACCOUNT_SELECTOR.ROLE}>{roleLabel}</span>;
       },
     },
     {

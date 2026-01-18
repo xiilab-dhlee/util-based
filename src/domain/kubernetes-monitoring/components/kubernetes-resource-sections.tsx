@@ -4,40 +4,39 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo } from "react";
 
 import {
+  useGetDaemonSets,
+  useGetDeployments,
+  useGetNamespaces,
+  useGetNodes,
+  useGetPersistentVolumes,
+  useGetPods,
+  useGetServices,
+  useGetStatefulSets,
+} from "@/api/generated/admin-k8s/admin-k8s";
+import type {
+  DaemonSetResponse,
+  DeploymentResponse,
+  GetNamespacesStatus,
+  GetNodesStatus,
+  GetPersistentVolumesStatus,
+  GetPodsStatus,
+  GetServicesType,
+  NamespaceResponse,
+  NodeResponse,
+  PersistentVolumeResponse,
+  PodResponse,
+  ServiceResponse,
+  StatefulSetResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
   kubernetesResourcePageAtom,
   kubernetesResourceSearchTextAtom,
   kubernetesResourceStatusAtom,
 } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
-import { createKubernetesResourceColumn } from "@/domain/kubernetes-monitoring/components/kubernetes-resource-list-column";
+import { createKubernetesResourceColumn } from "@/domain/kubernetes-monitoring/components/create-kubernetes-resource-list-column";
 import { KubernetesResourceListFilter } from "@/domain/kubernetes-monitoring/components/kubernetes-resource-list-filter";
 import { KubernetesResourceListFooter } from "@/domain/kubernetes-monitoring/components/kubernetes-resource-list-footer";
 import { KUBERNETES_RESOURCE_LIST_PAGE_SIZE } from "@/domain/kubernetes-monitoring/constants/kubernetes-monitoring.constant";
-import {
-  useDaemonsetsList,
-  useDeploymentsList,
-  useNamespacesList,
-  useNodesList,
-  usePersistentVolumesList,
-  usePodsList,
-  useServicesList,
-  useStatefulsetsList,
-} from "@/domain/kubernetes-monitoring/hooks/use-kubernetes-resource-list.hook";
-import type {
-  DaemonsetResourceItem,
-  DeploymentResourceItem,
-  GetDeploymentsPayload,
-  GetNamespacesPayload,
-  GetNodesPayload,
-  GetPersistentVolumesPayload,
-  GetPodsPayload,
-  GetServicesPayload,
-  NamespaceResourceItem,
-  NodeResourceItem,
-  PersistentVolumeResourceItem,
-  PodResourceItem,
-  ServiceResourceItem,
-  StatefulsetResourceItem,
-} from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -48,7 +47,7 @@ import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 /**
  * 테이블용 고유 ID 생성 유틸리티
  */
-function createDataSourceWithId<T extends { resourceName: string }>(
+function createDataSourceWithId<T extends { name: string }>(
   items: T[],
 ): (T & { id: string })[] {
   return items.map((item, index) => {
@@ -56,7 +55,7 @@ function createDataSourceWithId<T extends { resourceName: string }>(
       "namespace" in item ? (item as T & { namespace: string }).namespace : "";
     return {
       ...item,
-      id: `${item.resourceName}-${namespace}-${index}`,
+      id: `${item.name}-${namespace}-${index}`,
     };
   });
 }
@@ -71,16 +70,15 @@ export function NodesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = useNodesList({
-    page,
-    searchText,
-    status: filterValue as GetNodesPayload["status"],
+  const { data, isLoading, isError } = useGetNodes({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: (filterValue as GetNodesStatus) || undefined,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Nodes"), []);
-  const dataSource = createDataSourceWithId<NodeResourceItem>(
-    data?.content ?? [],
-  );
+  const dataSource = createDataSourceWithId<NodeResponse>(data?.content ?? []);
 
   return (
     <>
@@ -115,14 +113,15 @@ export function ServicesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = useServicesList({
-    page,
-    searchText,
-    type: filterValue as GetServicesPayload["type"],
+  const { data, isLoading, isError } = useGetServices({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    type: (filterValue as GetServicesType) || undefined,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Service"), []);
-  const dataSource = createDataSourceWithId<ServiceResourceItem>(
+  const dataSource = createDataSourceWithId<ServiceResponse>(
     data?.content ?? [],
   );
 
@@ -136,6 +135,8 @@ export function ServicesSection() {
           columns={columns}
           data={dataSource}
           activePadding
+          columnHeight={40}
+          headerHeight={40}
         />
       </ListWrapper>
       <KubernetesResourceListFooter
@@ -158,16 +159,17 @@ export function DaemonsetsSection() {
   const searchText = useAtomValue(kubernetesResourceSearchTextAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = useDaemonsetsList({
-    page,
-    searchText,
+  const { data, isLoading, isError } = useGetDaemonSets({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   const columns = useMemo(
     () => createKubernetesResourceColumn("Daemonsets"),
     [],
   );
-  const dataSource = createDataSourceWithId<DaemonsetResourceItem>(
+  const dataSource = createDataSourceWithId<DaemonSetResponse>(
     data?.content ?? [],
   );
 
@@ -181,6 +183,8 @@ export function DaemonsetsSection() {
           columns={columns}
           data={dataSource}
           activePadding
+          columnHeight={40}
+          headerHeight={40}
         />
       </ListWrapper>
       <KubernetesResourceListFooter
@@ -204,17 +208,18 @@ export function PersistentVolumesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = usePersistentVolumesList({
-    page,
-    searchText,
-    status: filterValue as GetPersistentVolumesPayload["status"],
+  const { data, isLoading, isError } = useGetPersistentVolumes({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: (filterValue as GetPersistentVolumesStatus) || undefined,
   });
 
   const columns = useMemo(
     () => createKubernetesResourceColumn("PersistentVolume"),
     [],
   );
-  const dataSource = createDataSourceWithId<PersistentVolumeResourceItem>(
+  const dataSource = createDataSourceWithId<PersistentVolumeResponse>(
     data?.content ?? [],
   );
 
@@ -228,6 +233,8 @@ export function PersistentVolumesSection() {
           columns={columns}
           data={dataSource}
           activePadding
+          columnHeight={40}
+          headerHeight={40}
         />
       </ListWrapper>
       <KubernetesResourceListFooter
@@ -251,17 +258,18 @@ export function NamespacesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = useNamespacesList({
-    page,
-    searchText,
-    status: filterValue as GetNamespacesPayload["status"],
+  const { data, isLoading, isError } = useGetNamespaces({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: (filterValue as GetNamespacesStatus) || undefined,
   });
 
   const columns = useMemo(
     () => createKubernetesResourceColumn("Namespaces"),
     [],
   );
-  const dataSource = createDataSourceWithId<NamespaceResourceItem>(
+  const dataSource = createDataSourceWithId<NamespaceResponse>(
     data?.content ?? [],
   );
 
@@ -275,6 +283,8 @@ export function NamespacesSection() {
           columns={columns}
           data={dataSource}
           activePadding
+          columnHeight={40}
+          headerHeight={40}
         />
       </ListWrapper>
       <KubernetesResourceListFooter
@@ -295,20 +305,19 @@ export function NamespacesSection() {
 export function DeploymentsSection() {
   const page = useAtomValue(kubernetesResourcePageAtom);
   const searchText = useAtomValue(kubernetesResourceSearchTextAtom);
-  const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = useDeploymentsList({
-    page,
-    searchText,
-    conditions: filterValue as GetDeploymentsPayload["conditions"],
+  const { data, isLoading, isError } = useGetDeployments({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   const columns = useMemo(
     () => createKubernetesResourceColumn("Deployments"),
     [],
   );
-  const dataSource = createDataSourceWithId<DeploymentResourceItem>(
+  const dataSource = createDataSourceWithId<DeploymentResponse>(
     data?.content ?? [],
   );
 
@@ -322,6 +331,8 @@ export function DeploymentsSection() {
           columns={columns}
           data={dataSource}
           activePadding
+          columnHeight={40}
+          headerHeight={40}
         />
       </ListWrapper>
       <KubernetesResourceListFooter
@@ -344,16 +355,17 @@ export function StatefulsetsSection() {
   const searchText = useAtomValue(kubernetesResourceSearchTextAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = useStatefulsetsList({
-    page,
-    searchText,
+  const { data, isLoading, isError } = useGetStatefulSets({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   const columns = useMemo(
     () => createKubernetesResourceColumn("Statefulsets"),
     [],
   );
-  const dataSource = createDataSourceWithId<StatefulsetResourceItem>(
+  const dataSource = createDataSourceWithId<StatefulSetResponse>(
     data?.content ?? [],
   );
 
@@ -367,6 +379,8 @@ export function StatefulsetsSection() {
           columns={columns}
           data={dataSource}
           activePadding
+          columnHeight={40}
+          headerHeight={40}
         />
       </ListWrapper>
       <KubernetesResourceListFooter
@@ -390,16 +404,15 @@ export function PodsSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
-  const { data, isLoading, isError } = usePodsList({
-    page,
-    searchText,
-    status: filterValue as GetPodsPayload["status"],
+  const { data, isLoading, isError } = useGetPods({
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: (filterValue as GetPodsStatus) || undefined,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Pods"), []);
-  const dataSource = createDataSourceWithId<PodResourceItem>(
-    data?.content ?? [],
-  );
+  const dataSource = createDataSourceWithId<PodResponse>(data?.content ?? []);
 
   return (
     <>
@@ -411,6 +424,8 @@ export function PodsSection() {
           columns={columns}
           data={dataSource}
           activePadding
+          columnHeight={40}
+          headerHeight={40}
         />
       </ListWrapper>
       <KubernetesResourceListFooter

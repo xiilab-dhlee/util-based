@@ -1,6 +1,11 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
+import type {
+  GetVolumeListOrder,
+  GetVolumeListSort,
+  GetVolumeListVolumeType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
@@ -8,8 +13,27 @@ import {
   createSelectedNodeInfoAtom,
 } from "@/shared/state/filetree.atom";
 
+// ============================================================================
+// 볼륨 목록 필터 타입
+// ============================================================================
+
+/** 정렬 필드와 순서를 조합한 값 (예: "VOLUME_NAME_ASC") */
+export type VolumeSortValue = `${GetVolumeListSort}_${GetVolumeListOrder}`;
+
+// ============================================================================
+// 볼륨 목록 관련 Atoms
+// ============================================================================
+
 /** 볼륨 페이지 번호 */
 export const volumePageAtom = atomWithReset<number>(1);
+/** 볼륨 정렬 기본값 (최신순) */
+export const DEFAULT_VOLUME_SORT: VolumeSortValue = "CREATED_AT_DESC";
+/** 볼륨 정렬 (sort_order 조합) */
+export const volumeSortAtom =
+  atomWithReset<VolumeSortValue>(DEFAULT_VOLUME_SORT);
+/** 볼륨 타입 필터 */
+export const volumeTypeFilterAtom =
+  atomWithReset<GetVolumeListVolumeType | null>(null);
 /** 볼륨 검색 키워드 (입력 필드 값) */
 export const volumeSearchKeywordAtom = atom<string>("");
 /** 볼륨 검색어 (실제 API 요청에 사용) */
@@ -34,6 +58,8 @@ export const openCompressVolumeFileModalAtom = atom<boolean>(false);
 export const openDecompressVolumeFileModalAtom = atom<boolean>(false);
 /** 볼륨 파일 다운로드 모달 표시 여부 */
 export const openDownloadVolumeFileModalAtom = atom<boolean>(false);
+/** 볼륨 파일 업로드 모달 표시 여부 */
+export const openUploadVolumeFileModalAtom = atom<boolean>(false);
 /** 볼륨 파일 페이지 번호 */
 export const volumeFilePageAtom = atomWithReset<number>(1);
 

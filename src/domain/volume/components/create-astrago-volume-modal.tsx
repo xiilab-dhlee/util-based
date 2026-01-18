@@ -19,8 +19,9 @@ import {
 } from "@/domain/volume/schemas/volume.schema";
 import { openCreateAstragoVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import { StorageSelect } from "@/shared/components/select/storage-select";
-// import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
+import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
 /**
@@ -38,7 +39,9 @@ export function CreateAstragoVolumeModal() {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
   // 모달 상태 관리
-  const { open, onClose } = useGlobalModal(openCreateAstragoVolumeModalAtom);
+  const { open, onOpen, onClose } = useGlobalModal(
+    openCreateAstragoVolumeModalAtom,
+  );
 
   // 볼륨 생성 Hook 사용 (orval 생성)
   const registerAstragoVolume = useRegisterAstragoVolume();
@@ -58,12 +61,6 @@ export function CreateAstragoVolumeModal() {
       storageId: "",
     },
   });
-
-  // 파일 업로드 Hook 사용 (최대 5MB)
-  // const { files, handleUpload, handleFileRemove, totalSize, clearFiles } =
-  //   useUploadFile({
-  //     maxFileSize: 5 * 1024 * 1024, // 5MB
-  //   });
 
   /**
    * 모달 취소 핸들러
@@ -94,15 +91,21 @@ export function CreateAstragoVolumeModal() {
       },
       {
         onSuccess: () => {
-          toast.success("볼륨 생성 성공");
-          onClose();
           queryClient.invalidateQueries({
             queryKey: getGetVolumeListQueryKey(),
           });
+          toast.success("볼륨 생성 성공");
+          onClose();
         },
       },
     );
   };
+
+  useSubscribe(VOLUME_EVENTS.sendStorageType, (eventData: string) => {
+    if (eventData === "ASTRAGO") {
+      onOpen();
+    }
+  });
 
   return (
     <Modal
@@ -223,27 +226,6 @@ export function CreateAstragoVolumeModal() {
             </FormItem>
           )}
         />
-
-        {/* 파일 업로드 섹션 */}
-        {/* <FormItem
-          label={
-            <LabelWithSize>
-              파일 업로드
-              <FileTotalSize>
-                ({formatFileSize(totalSize).formatted})
-              </FileTotalSize>
-            </LabelWithSize>
-          }
-        >
-          <Upload
-            files={files}
-            layout="vertical"
-            multiple
-            onFileRemove={handleFileRemove}
-            onUpload={handleUpload}
-            width="100%"
-          />
-        </FormItem> */}
       </StyledForm>
     </Modal>
   );
@@ -254,21 +236,3 @@ const StyledForm = styled(Form)`
   flex-direction: column;
   gap: 16px;
 `;
-
-// const LabelWithSize = styled.span`
-//   display: flex;
-//   align-items: center;
-//   gap: 4px;
-// `;
-
-/**
- * 파일 총 크기 표시 스타일
- *
- * 파일 업로드 섹션에서 총 파일 크기를 표시하는 텍스트 스타일입니다.
- */
-// const FileTotalSize = styled.span`
-//   font-weight: 400;
-//   font-size: 11px;
-//   line-height: 13px;
-//   color: #828588;
-// `;

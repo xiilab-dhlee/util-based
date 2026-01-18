@@ -225,7 +225,7 @@ export const getPolicySetResponse = zod
   .strict();
 
 /**
- * 워크스페이스 정책을 수정합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 설정할 수 있습니다.
+ * 워크스페이스 정책을 수정합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 설정할 수 있습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 관리자용 워크스페이스 정책 수정
  */
 
@@ -424,7 +424,7 @@ export const getAllWorkspaces1QueryParams = zod.object({
     .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getAllWorkspaces1Response = zod
@@ -601,7 +601,7 @@ export const getWorkspaceMembers1QueryParams = zod.object({
     .enum(["ACCOUNT_NAME", "MEMBER_ROLE", "CREATED_AT"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getWorkspaceMembers1Response = zod
@@ -772,7 +772,7 @@ export const getResourceRequests1QueryParams = zod.object({
     .enum(["REQUESTED_AT", "WORKSPACE_NAME"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
   approvalStatus: zod
     .enum(["WAITING", "APPROVED", "REJECTED"])
     .optional()

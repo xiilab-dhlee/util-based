@@ -40,7 +40,6 @@ export function AsideFillCard({
 }
 
 const Container = styled.div`
-  flex: 1;
   border-radius: 10px;
   padding: 24px 20px;
   display: flex;

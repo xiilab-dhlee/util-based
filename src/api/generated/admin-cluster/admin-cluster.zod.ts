@@ -312,6 +312,7 @@ export const getNodeSystemResourceResponse = zod
           .object({
             gpu: zod
               .object({
+                gpuName: zod.string().optional().describe("GPU 모델명"),
                 detail: zod
                   .object({
                     normal: zod
@@ -384,8 +385,8 @@ export const getNodeSystemResourceResponse = zod
             - **MEMORY_UTILIZATION**: 메모리 사용률 (%)
             - **NODE_MEMORY_BUFFERS**: 메모리 버퍼 (bytes)
             - **NODE_MEMORY_CACHED**: 메모리 캐시 (bytes)
-            - **NODE_MEMORY_MEM_TOTAL**: 메모리 총량 (bytes)
-            - **NODE_MEMORY_MEM_FREE**: 메모리 여유량 (bytes)
+            - **NODE_MEMORY_TOTAL**: 메모리 총량 (bytes)
+            - **NODE_MEMORY_FREE**: 메모리 여유량 (bytes)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
@@ -396,39 +397,29 @@ export const getNodeSystemMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
 });
 
-export const getNodeSystemMetricsQueryRequestStartDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getNodeSystemMetricsQueryRequestEndDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-
 export const getNodeSystemMetricsQueryParams = zod.object({
-  request: zod.object({
-    metricName: zod
-      .enum([
-        "CPU_TEMPERATURE",
-        "CPU_UTILIZATION",
-        "CPU_LOAD_AVERAGE",
-        "NODE_NETWORK_RECEIVE",
-        "NODE_NETWORK_TRANSMIT",
-        "DISK_READ",
-        "DISK_WRITE",
-        "DISK_UTILIZATION",
-        "MEMORY_UTILIZATION",
-        "NODE_MEMORY_BUFFERS",
-        "NODE_MEMORY_CACHED",
-        "NODE_MEMORY_MEM_TOTAL",
-        "NODE_MEMORY_MEM_FREE",
-      ])
-      .describe("시스템 메트릭 타입"),
-    startDateTime: zod
-      .string()
-      .regex(getNodeSystemMetricsQueryRequestStartDateTimeRegExp)
-      .describe("시작 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)"),
-    endDateTime: zod
-      .string()
-      .regex(getNodeSystemMetricsQueryRequestEndDateTimeRegExp)
-      .describe("종료 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)"),
-  }),
+  metricName: zod
+    .enum([
+      "CPU_TEMPERATURE",
+      "CPU_UTILIZATION",
+      "CPU_LOAD_AVERAGE",
+      "NODE_NETWORK_RECEIVE",
+      "NODE_NETWORK_TRANSMIT",
+      "DISK_READ",
+      "DISK_WRITE",
+      "DISK_UTILIZATION",
+      "MEMORY_UTILIZATION",
+      "NODE_MEMORY_BUFFERS",
+      "NODE_MEMORY_CACHED",
+      "NODE_MEMORY_TOTAL",
+      "NODE_MEMORY_FREE",
+    ])
+    .describe("시스템 메트릭 타입"),
+  startDateTime: zod
+    .string()
+    .datetime({})
+    .describe("시작 시간 (ISO 8601 형식)"),
+  endDateTime: zod.string().datetime({}).describe("종료 시간 (ISO 8601 형식)"),
 });
 
 export const getNodeSystemMetricsResponse = zod
@@ -482,31 +473,21 @@ export const getNodeGpuMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
 });
 
-export const getNodeGpuMetricsQueryRequestStartDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getNodeGpuMetricsQueryRequestEndDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-
 export const getNodeGpuMetricsQueryParams = zod.object({
-  request: zod.object({
-    metricName: zod
-      .enum([
-        "GPU_UTILIZATION",
-        "GPU_MEMORY_UTILIZATION",
-        "GPU_TEMPERATURE",
-        "GPU_FAN_SPEED",
-        "GPU_POWER_USAGE",
-      ])
-      .describe("GPU 메트릭 타입"),
-    startDateTime: zod
-      .string()
-      .regex(getNodeGpuMetricsQueryRequestStartDateTimeRegExp)
-      .describe("시작 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)"),
-    endDateTime: zod
-      .string()
-      .regex(getNodeGpuMetricsQueryRequestEndDateTimeRegExp)
-      .describe("종료 시간 (yyyy-MM-dd HH:mm:ss, KST 기준)"),
-  }),
+  metricName: zod
+    .enum([
+      "GPU_UTILIZATION",
+      "GPU_MEMORY_UTILIZATION",
+      "GPU_TEMPERATURE",
+      "GPU_FAN_SPEED",
+      "GPU_POWER_USAGE",
+    ])
+    .describe("GPU 메트릭 타입"),
+  startDateTime: zod
+    .string()
+    .datetime({})
+    .describe("시작 시간 (ISO 8601 형식)"),
+  endDateTime: zod.string().datetime({}).describe("종료 시간 (ISO 8601 형식)"),
 });
 
 export const getNodeGpuMetricsResponse = zod
@@ -784,6 +765,28 @@ export const getClusterResourceSummaryResponse = zod
       .strict()
       .optional()
       .describe("클러스터 리소스 요약 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            관리자가 클러스터 내 모든 노드의 이름 목록을 조회합니다.
+
+            **응답 데이터 구성:**
+            - 노드 이름 문자열 리스트 (오름차순 정렬)
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 이름 목록 조회
+ */
+export const getNodeNamesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod.array(zod.string()).optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
