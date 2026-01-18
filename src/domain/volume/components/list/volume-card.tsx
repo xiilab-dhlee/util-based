@@ -1,7 +1,8 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
@@ -10,24 +11,39 @@ import { volumeCheckedListAtom } from "@/domain/volume/state/volume.atom";
 import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
+import {
+  checkIsSuperAdmin,
+  getSessionAccountId,
+} from "@/shared/utils/auth.util";
+import { isUserMode } from "@/shared/utils/router.util";
 
 interface VolumeCardProps extends VolumeListResponse {}
 
 export function VolumeCard({
   volumeId,
   volumeName,
+  creatorId,
   creatorName,
   volumeType,
   mountPath,
   isPublic,
 }: VolumeCardProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const params = useParams<{ id?: string }>();
+  const { data: session } = useSession();
 
   const [checkedList, setCheckedList] = useAtom(volumeCheckedListAtom);
 
+  const isUser = isUserMode(pathname);
   const { text } = getVolumeStorageTypeInfo(volumeType);
   const isChecked = checkedList.has(volumeId);
+
+  // 체크박스 활성화 조건: 생성자이거나 SUPER_ADMIN인 경우
+  const currentAccountId = getSessionAccountId(session);
+  const isSuperAdmin = checkIsSuperAdmin(session);
+  const isCreator = currentAccountId === creatorId;
+  const canCheck = isCreator || isSuperAdmin;
 
   const parsedId = params.id ? Number(params.id) : Number.NaN;
   const selectedVolumeId = Number.isNaN(parsedId) ? -1 : parsedId;
@@ -35,7 +51,10 @@ export function VolumeCard({
 
   const handleClickCard = () => {
     if (isSelected) return;
-    router.push(ROUTES.USER_VOLUME_DETAIL(volumeId));
+    const detailRoute = isUser
+      ? ROUTES.USER_VOLUME_DETAIL(volumeId)
+      : ROUTES.ADMIN_VOLUME_DETAIL(volumeId);
+    router.push(detailRoute);
   };
 
   const handleClickCheckbox = (checked: boolean) => {
@@ -56,7 +75,7 @@ export function VolumeCard({
       onCheckboxChange={handleClickCheckbox}
       onClick={handleClickCard}
       title={volumeName}
-      showCheckBox
+      showCheckBox={canCheck}
       checked={isChecked}
       icon={!isPublic ? <Icon name="Lock" size={24} color="#464B51" /> : null}
       selected={isSelected}

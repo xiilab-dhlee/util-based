@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, type TabsSeparatedItem, Typography } from "xiilab-ui";
@@ -13,6 +14,10 @@ import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { StateTab } from "@/shared/components/tab";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import {
+  checkIsSuperAdmin,
+  getSessionAccountId,
+} from "@/shared/utils/auth.util";
 import {
   AsideDetailContainer,
   AsideDetailHeader,
@@ -37,6 +42,7 @@ type ViewMode = "view" | "update";
 export function VolumeDetailMain() {
   const params = useParams<{ id: string }>();
   const volumeId = Number(params.id);
+  const { data: session } = useSession();
 
   const [selectedTab, setSelectedTab] = useState("");
   const [mode, setMode] = useState<ViewMode>("view");
@@ -48,6 +54,12 @@ export function VolumeDetailMain() {
   });
 
   const publish = usePublish();
+
+  // 수정/삭제 버튼 활성화 조건: 생성자이거나 SUPER_ADMIN인 경우
+  const currentAccountId = getSessionAccountId(session);
+  const isSuperAdmin = checkIsSuperAdmin(session);
+  const isCreator = currentAccountId === data?.creatorId;
+  const canEditOrDelete = isCreator || isSuperAdmin;
 
   const handleEdit = () => {
     setMode("update");
@@ -75,7 +87,9 @@ export function VolumeDetailMain() {
 
   const renderContent = () => {
     if (selectedTab === "file") {
-      return <ManageVolumeFile volumeId={volumeId} />;
+      return (
+        <ManageVolumeFile volumeId={volumeId} creatorId={data?.creatorId} />
+      );
     }
 
     if (mode === "update") {
@@ -91,7 +105,8 @@ export function VolumeDetailMain() {
     return <ViewVolumeDetail data={data} isLoading={isLoading} />;
   };
 
-  const showActionButtons = selectedTab === "" && mode === "view";
+  const showActionButtons =
+    selectedTab === "" && mode === "view" && canEditOrDelete;
 
   return (
     <StyledAsideDetailContainer>

@@ -1,6 +1,9 @@
 "use client";
 
 import { useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
@@ -12,7 +15,10 @@ import { UnzipVolumeFileButton } from "@/domain/volume/components/file/unzip-vol
 import { VolumeFileButton } from "@/domain/volume/components/file/volume-file-button";
 import { VolumeFileCheckbox } from "@/domain/volume/components/file/volume-file-checkbox";
 import { useVolumeFileTree } from "@/domain/volume/hooks/use-volume-file-tree";
-import { volumeFileCheckedNodesInfoAtom } from "@/domain/volume/state/volume.atom";
+import {
+  volumeFileCheckedNodesAtom,
+  volumeFileCheckedNodesInfoAtom,
+} from "@/domain/volume/state/volume.atom";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
@@ -22,6 +28,10 @@ import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
+  checkIsSuperAdmin,
+  getSessionAccountId,
+} from "@/shared/utils/auth.util";
+import {
   AsideDetailArticle,
   AsideDetailArticleBody,
   AsideDetailFooter,
@@ -30,11 +40,17 @@ import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 interface ManageVolumeFileProps {
   volumeId: number;
+  creatorId?: string;
 }
 
-export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
+export function ManageVolumeFile({
+  volumeId,
+  creatorId,
+}: ManageVolumeFileProps) {
   const publish = usePublish();
+  const { data: session } = useSession();
   const checkedNodesInfo = useAtomValue(volumeFileCheckedNodesInfoAtom);
+  const resetCheckedNodes = useResetAtom(volumeFileCheckedNodesAtom);
 
   const { treeData, loadingPaths, loadChildren, isLoading, isError } =
     useVolumeFileTree({
@@ -43,6 +59,12 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
     });
 
   const hasCheckedFiles = checkedNodesInfo.length > 0;
+
+  // Footer 표시 조건: 생성자이거나 SUPER_ADMIN인 경우
+  const currentAccountId = getSessionAccountId(session);
+  const isSuperAdmin = checkIsSuperAdmin(session);
+  const isCreator = currentAccountId === creatorId;
+  const canManageFiles = isCreator || isSuperAdmin;
 
   const handleDownload = () => {
     if (!hasCheckedFiles) return;
@@ -71,6 +93,10 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
     );
   };
 
+  useEffect(() => {
+    resetCheckedNodes();
+  }, [resetCheckedNodes]);
+
   return (
     <Container>
       <Body>
@@ -84,49 +110,51 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
         <PrimaryArticleBody>{renderContent()}</PrimaryArticleBody>
         <PreviewVolumeFile treeData={treeData} />
       </Body>
-      <Footer>
-        <MyDropdown
-          items={[
-            <CreateVolumeFolderButton
-              key="create-folder"
-              volumeId={volumeId}
-            />,
-            <CompressVolumeFileButton key="compress" volumeId={volumeId} />,
-            <UnzipVolumeFileButton key="unzip" volumeId={volumeId} />,
-            <DeleteVolumeFileButton key="delete" volumeId={volumeId} />,
-          ]}
-        >
-          <Button
-            width={30}
-            height={30}
-            variant="outlined"
-            icon="MoreHorizonal"
-          ></Button>
-        </MyDropdown>
-        <FooterRight>
-          <Button
-            color="primary"
-            variant="gradient"
-            icon="Download"
-            width={100}
-            height={30}
-            onClick={handleDownload}
-            disabled={!hasCheckedFiles}
+      {canManageFiles && (
+        <Footer>
+          <MyDropdown
+            items={[
+              <CreateVolumeFolderButton
+                key="create-folder"
+                volumeId={volumeId}
+              />,
+              <CompressVolumeFileButton key="compress" volumeId={volumeId} />,
+              <UnzipVolumeFileButton key="unzip" volumeId={volumeId} />,
+              <DeleteVolumeFileButton key="delete" volumeId={volumeId} />,
+            ]}
           >
-            다운로드
-          </Button>
-          <Button
-            color="primary"
-            variant="gradient"
-            icon="Upload"
-            width={100}
-            height={30}
-            onClick={handleUpload}
-          >
-            파일 업로드
-          </Button>
-        </FooterRight>
-      </Footer>
+            <Button
+              width={30}
+              height={30}
+              variant="outlined"
+              icon="MoreHorizonal"
+            ></Button>
+          </MyDropdown>
+          <FooterRight>
+            <Button
+              color="primary"
+              variant="gradient"
+              icon="Download"
+              width={100}
+              height={30}
+              onClick={handleDownload}
+              disabled={!hasCheckedFiles}
+            >
+              다운로드
+            </Button>
+            <Button
+              color="primary"
+              variant="gradient"
+              icon="Upload"
+              width={100}
+              height={30}
+              onClick={handleUpload}
+            >
+              파일 업로드
+            </Button>
+          </FooterRight>
+        </Footer>
+      )}
     </Container>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { usePathname } from "next/navigation";
 import { Button, Input } from "xiilab-ui";
 
 import { VolumeSortFilter } from "@/domain/volume/components/list/volume-sort-filter";
@@ -13,9 +14,9 @@ import {
   volumeSearchTextAtom,
 } from "@/domain/volume/state/volume.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { isUserMode } from "@/shared/utils/router.util";
 
 interface VolumeListFilterProps {
   total: number;
@@ -23,10 +24,13 @@ interface VolumeListFilterProps {
 }
 
 export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
+  const pathname = usePathname();
   const [searchKeyword, setSearchKeyword] = useAtom(volumeSearchKeywordAtom);
   const setSearchText = useSetAtom(volumeSearchTextAtom);
   const resetPage = useResetAtom(volumePageAtom);
   const { onOpen } = useGlobalModal(openSelectVolumeModalAtom);
+
+  const isUser = isUserMode(pathname);
 
   const handleCreateVolume = () => {
     onOpen();
@@ -45,7 +49,6 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
 
   return (
     <MySearchFilter title="볼륨 목록" total={total}>
-      <MyItemsOnlySwitch checked={true} />
       <VolumeTypeFilter disabled={loading} />
       <VolumeSortFilter disabled={loading} />
       <Input.Search
@@ -60,18 +63,20 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
         value={searchKeyword}
         data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
-      <Button
-        color="primary"
-        icon="Plus"
-        iconPosition="left"
-        variant="gradient"
-        width={100}
-        height={30}
-        onClick={handleCreateVolume}
-        disabled={loading}
-      >
-        볼륨 생성
-      </Button>
+      {isUser && (
+        <Button
+          color="primary"
+          icon="Plus"
+          iconPosition="left"
+          variant="gradient"
+          width={100}
+          height={30}
+          onClick={handleCreateVolume}
+          disabled={loading}
+        >
+          볼륨 생성
+        </Button>
+      )}
     </MySearchFilter>
   );
 }
