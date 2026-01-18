@@ -15,8 +15,8 @@ import {
 } from "xiilab-ui";
 import type { z } from "zod";
 
-import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
-import { updateAccountBody } from "@/api/generated/admin-account/admin-account.zod";
+import { useGetAccountDetail } from "@/api/generated/admin-account-management/admin-account-management";
+import { updateAccountBody } from "@/api/generated/admin-account-management/admin-account-management.zod";
 import {
   ACCOUNT_ROLE_OPTIONS,
   ACCOUNT_STATUS_OPTIONS,

@@ -4,7 +4,7 @@ import { isBoolean } from "es-toolkit";
 import styled from "styled-components";
 import { Tag, Typography } from "xiilab-ui";
 
-import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
+import { useGetAccountDetail } from "@/api/generated/admin-account-management/admin-account-management";
 import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { ACCOUNT_ROLE_LABEL } from "@/shared/constants/core.constant";

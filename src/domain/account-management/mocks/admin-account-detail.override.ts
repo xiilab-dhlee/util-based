@@ -1,6 +1,6 @@
 import { delay, HttpResponse, http } from "msw";
 
-import { getGetAccountDetailResponseMock } from "@/api/generated/admin-account/admin-account.msw";
+import { getGetAccountDetailResponseMock } from "@/api/generated/admin-account-management/admin-account-management.msw";
 
 export const adminAccountDetailOverrideHandlers = [
   http.get("*/api/v1/admin/accounts/:accountId/detail", async ({ params }) => {
