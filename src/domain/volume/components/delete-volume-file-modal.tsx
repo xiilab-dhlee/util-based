@@ -2,6 +2,7 @@
 
 import { useSetAtom } from "jotai";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
 import { useDeleteFiles } from "@/api/generated/volume/volume";
@@ -81,6 +82,7 @@ export function DeleteVolumeFileModal() {
         onSuccess: () => {
           setTreeData((prev) => removeNodesFromTree(prev, filteredPaths));
           setCheckedNodes(new Set());
+          toast.success("선택한 파일을 삭제하였습니다.");
           onClose();
         },
       },
