@@ -24,11 +24,7 @@ export function CompressVolumeFileButton({
   };
 
   return (
-    <StyledButton
-      type="button"
-      onClick={handleClick}
-      disabled={checkedNodesInfo.length === 0}
-    >
+    <StyledButton type="button" onClick={handleClick}>
       압축
     </StyledButton>
   );

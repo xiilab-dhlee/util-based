@@ -18,10 +18,9 @@ export function CreateVolumeFolderButton({
   const publish = usePublish();
   const selectedFile = useAtomValue(volumeFileSelectedNodeInfoAtom);
 
-  const isEnabled = selectedFile !== null && selectedFile.type === "directory";
-
   const handleClick = () => {
-    if (!isEnabled) return;
+    if (!selectedFile || selectedFile.type !== "directory") return;
+
     publish(VOLUME_EVENTS.sendCreateVolumeFolder, {
       volumeId,
       filePath: selectedFile.path,
@@ -29,7 +28,7 @@ export function CreateVolumeFolderButton({
   };
 
   return (
-    <StyledButton type="button" onClick={handleClick} disabled={!isEnabled}>
+    <StyledButton type="button" onClick={handleClick}>
       폴더 추가
     </StyledButton>
   );

@@ -18,7 +18,9 @@ import { useVolumeFileTree } from "@/domain/volume/hooks/use-volume-file-tree";
 import {
   volumeFileCheckedNodesAtom,
   volumeFileCheckedNodesInfoAtom,
+  volumeFileSelectedNodeInfoAtom,
 } from "@/domain/volume/state/volume.atom";
+import { isCompressedFile } from "@/domain/volume/utils/volume.util";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
@@ -50,6 +52,7 @@ export function ManageVolumeFile({
   const publish = usePublish();
   const { data: session } = useSession();
   const checkedNodesInfo = useAtomValue(volumeFileCheckedNodesInfoAtom);
+  const selectedNodeInfo = useAtomValue(volumeFileSelectedNodeInfoAtom);
   const resetCheckedNodes = useResetAtom(volumeFileCheckedNodesAtom);
 
   const { treeData, loadingPaths, loadChildren, isLoading, isError } =
@@ -60,11 +63,19 @@ export function ManageVolumeFile({
 
   const hasCheckedFiles = checkedNodesInfo.length > 0;
 
+  // 드롭다운 버튼 표시 조건
+  const canCreateFolder = selectedNodeInfo?.type === "directory";
+  const canCompress = hasCheckedFiles;
+  const canDecompress =
+    checkedNodesInfo.length === 1 && isCompressedFile(checkedNodesInfo[0].path);
+
   // Footer 표시 조건: 생성자이거나 SUPER_ADMIN인 경우
   const currentAccountId = getSessionAccountId(session);
   const isSuperAdmin = checkIsSuperAdmin(session);
-  const isCreator = currentAccountId === creatorId;
-  const canManageFiles = isCreator || isSuperAdmin;
+  const isCreator = Boolean(
+    creatorId && currentAccountId && currentAccountId === creatorId,
+  );
+  const canManageFiles = isSuperAdmin || isCreator;
 
   const handleDownload = () => {
     if (!hasCheckedFiles) return;
@@ -94,7 +105,7 @@ export function ManageVolumeFile({
   };
 
   useEffect(() => {
-    resetCheckedNodes();
+    return () => resetCheckedNodes();
   }, [resetCheckedNodes]);
 
   return (
@@ -114,21 +125,27 @@ export function ManageVolumeFile({
         <Footer>
           <MyDropdown
             items={[
-              <CreateVolumeFolderButton
-                key="create-folder"
-                volumeId={volumeId}
-              />,
-              <CompressVolumeFileButton key="compress" volumeId={volumeId} />,
-              <UnzipVolumeFileButton key="unzip" volumeId={volumeId} />,
+              canCreateFolder && (
+                <CreateVolumeFolderButton
+                  key="create-folder"
+                  volumeId={volumeId}
+                />
+              ),
+              canCompress && (
+                <CompressVolumeFileButton key="compress" volumeId={volumeId} />
+              ),
+              canDecompress && (
+                <UnzipVolumeFileButton key="unzip" volumeId={volumeId} />
+              ),
               <DeleteVolumeFileButton key="delete" volumeId={volumeId} />,
-            ]}
+            ].filter(Boolean)}
           >
             <Button
               width={30}
               height={30}
               variant="outlined"
               icon="MoreHorizonal"
-            ></Button>
+            />
           </MyDropdown>
           <FooterRight>
             <Button
