@@ -1,8 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
@@ -11,10 +13,14 @@ import {
   type CompressVolumeFileFormType,
   compressVolumeFileSchema,
 } from "@/domain/volume/schemas/volume.schema";
-import { openCompressVolumeFileModalAtom } from "@/domain/volume/state/volume.atom";
+import {
+  openCompressVolumeFileModalAtom,
+  volumeFileCheckedNodesAtom,
+} from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
 // ============================================================================
 // Types
@@ -38,6 +44,8 @@ export function CompressVolumeFileModal() {
     openCompressVolumeFileModalAtom,
   );
 
+  const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
+
   const [volumeId, setVolumeId] = useState<number | null>(null);
   const [filePaths, setFilePaths] = useState<string[]>([]);
 
@@ -46,11 +54,12 @@ export function CompressVolumeFileModal() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<CompressVolumeFileFormType>({
     resolver: zodResolver(compressVolumeFileSchema),
     defaultValues: {
-      destinationPath: "",
+      destinationPath: "/",
       compressFileType: "ZIP",
     },
   });
@@ -77,19 +86,24 @@ export function CompressVolumeFileModal() {
    * 유효성 검증 통과 후 압축 API를 호출합니다.
    */
   const onSubmit = (data: CompressVolumeFileFormType) => {
-    if (!volumeId) return;
+    if (!volumeId || filePaths.length === 0) return;
+
+    // 상위 폴더 경로만 추출 (하위 파일/폴더는 상위 폴더 삭제 시 함께 삭제됨)
+    const filteredPaths = filterToRootPaths(filePaths);
 
     mutate(
       {
         volumeId,
         data: {
-          paths: filePaths,
+          paths: filteredPaths,
           destinationPath: data.destinationPath,
           compressFileType: data.compressFileType,
         },
       },
       {
         onSuccess: () => {
+          setCheckedNodes(new Set());
+          toast.success("선택한 파일에 대한 압축 요청이 전송되었습니다.");
           onClose();
         },
       },
@@ -106,8 +120,7 @@ export function CompressVolumeFileModal() {
       setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
 
-      setValue("destinationPath", "");
-      setValue("compressFileType", "ZIP");
+      reset({ destinationPath: "/", compressFileType: "ZIP" });
 
       onOpen();
     },
