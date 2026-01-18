@@ -1,4 +1,7 @@
-import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  type VolumeListResponse,
+  VolumeListResponseVolumeType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetVolumeListMockHandler,
   getGetVolumeListResponseMock,
@@ -9,7 +12,7 @@ import {
 } from "@/shared/constants/date.constant";
 
 /** API 스키마에서 정의된 볼륨 타입 값 배열 */
-const VOLUME_TYPES = ["ASTRAGO", "ON_PREMISE"] as const;
+const VOLUME_TYPES = Object.values(VolumeListResponseVolumeType);
 
 /**
  * 정렬 가능한 volumeName 생성

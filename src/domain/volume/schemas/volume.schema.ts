@@ -1,7 +1,11 @@
 import { z } from "zod";
 
-/** AstraGo 볼륨 생성 폼 스키마 */
-export const createAstragoVolumeSchema = z.object({
+// ============================================================================
+// 공통 필드 정의
+// ============================================================================
+
+/** 볼륨 생성 시 공통으로 사용되는 필드 */
+const baseVolumeFields = {
   volumeName: z
     .string()
     .min(1, "볼륨 이름을 입력해 주세요.")
@@ -12,6 +16,15 @@ export const createAstragoVolumeSchema = z.object({
     .min(1, "마운트 경로를 입력해 주세요.")
     .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
     .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+};
+
+// ============================================================================
+// 볼륨 생성 스키마
+// ============================================================================
+
+/** AstraGo 볼륨 생성 폼 스키마 */
+export const createAstragoVolumeSchema = z.object({
+  ...baseVolumeFields,
   storageId: z.string().min(1, "스토리지를 선택해 주세요."),
 });
 
@@ -21,16 +34,7 @@ export type CreateAstragoVolumeFormType = z.infer<
 
 /** On-Premise 볼륨 생성 폼 스키마 */
 export const createOnPremiseVolumeSchema = z.object({
-  volumeName: z
-    .string()
-    .min(1, "볼륨 이름을 입력해 주세요.")
-    .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
-  isPublic: z.string().min(1, "공개 설정을 선택해 주세요."),
-  mountPath: z
-    .string()
-    .min(1, "마운트 경로를 입력해 주세요.")
-    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
-    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+  ...baseVolumeFields,
   serverIp: z
     .string()
     .min(1, "Server IP를 입력해 주세요.")

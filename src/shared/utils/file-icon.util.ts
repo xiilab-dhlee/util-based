@@ -17,7 +17,10 @@ export const getFileIconName = (
     return "File";
   }
 
-  const ext = extension.toLowerCase();
+  // 확장자 정규화: 공백 제거 → 앞의 점 제거 → 마지막 세그먼트 추출 → 소문자 변환
+  const normalized = extension.trim().replace(/^\.+/, "");
+  const segments = normalized.split(".");
+  const ext = segments[segments.length - 1].toLowerCase();
 
   // 압축 파일
   if (["zip", "tar", "gz", "rar", "7z", "tgz"].includes(ext)) {

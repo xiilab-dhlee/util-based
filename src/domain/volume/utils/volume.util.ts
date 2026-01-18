@@ -1,5 +1,32 @@
-import type { VolumeFileItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  GetVolumeListOrder,
+  GetVolumeListSort,
+  VolumeFileItemResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+
+/** 압축 파일 확장자 목록 */
+const COMPRESSED_FILE_EXTENSIONS = [".zip", ".tar", ".tar.gz", ".tgz"];
+
+/** 압축 파일 여부 확인 */
+export const isCompressedFile = (path: string): boolean => {
+  const lowerPath = path.toLowerCase();
+  return COMPRESSED_FILE_EXTENSIONS.some((ext) => lowerPath.endsWith(ext));
+};
+
+/** 정렬 값을 API 파라미터로 변환 */
+export const parseVolumeSortValue = (
+  value: string | null,
+): { sort: GetVolumeListSort; order: GetVolumeListOrder } | null => {
+  if (!value) return null;
+
+  // 마지막 '_'를 기준으로 분리 (예: "VOLUME_NAME_ASC" → ["VOLUME_NAME", "ASC"])
+  const lastUnderscoreIndex = value.lastIndexOf("_");
+  const sort = value.slice(0, lastUnderscoreIndex) as GetVolumeListSort;
+  const order = value.slice(lastUnderscoreIndex + 1) as GetVolumeListOrder;
+
+  return { sort, order };
+};
 
 export const getVolumeStorageTypeInfo = (storageType?: string) => {
   let text = "";
@@ -40,7 +67,7 @@ export const convertToFileTreeType = (
     path: item.path,
     type: item.type === "DIRECTORY" ? "directory" : "file",
     fileExtension: item.type === "FILE" ? getFileExtension(item.name) : null,
-    fileSize: item.size ? String(item.size) : undefined,
+    fileSize: item.size != null ? String(item.size) : undefined,
     children: [],
   }));
 };
@@ -115,9 +142,15 @@ export const addNodeToTree = (
       return {
         ...node,
         children: newChildren,
-        ...(node.directoryCount !== undefined && {
-          directoryCount: node.directoryCount + 1,
-        }),
+        // newNode.type에 따라 해당 카운트 증가
+        ...(newNode.type === "directory" &&
+          node.directoryCount !== undefined && {
+            directoryCount: node.directoryCount + 1,
+          }),
+        ...(newNode.type === "file" &&
+          node.fileCount !== undefined && {
+            fileCount: node.fileCount + 1,
+          }),
       };
     }
 

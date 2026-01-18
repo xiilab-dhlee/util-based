@@ -18,16 +18,14 @@ import { VolumeListFilter } from "@/domain/volume/components/list/volume-list-fi
 import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-footer";
 import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
 import { UploadVolumeFileModal } from "@/domain/volume/components/upload-volume-file-modal";
-import {
-  parseVolumeSortValue,
-  VOLUME_PAGE_SIZE,
-} from "@/domain/volume/constants/volume.constant";
+import { VOLUME_PAGE_SIZE } from "@/domain/volume/constants/volume.constant";
 import {
   volumePageAtom,
   volumeSearchTextAtom,
   volumeSortAtom,
   volumeTypeFilterAtom,
 } from "@/domain/volume/state/volume.atom";
+import { parseVolumeSortValue } from "@/domain/volume/utils/volume.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
