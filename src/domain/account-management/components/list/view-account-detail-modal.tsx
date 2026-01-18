@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal, Typography } from "xiilab-ui";
 
-import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
+import { useGetAccountDetail } from "@/api/generated/admin-account-management/admin-account-management";
 import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
 import { openViewAccountDetailModalAtom } from "@/domain/account-management/state/account.atom";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";

@@ -1,7 +1,7 @@
 import {
   getGetSignupRequestsMockHandler,
   getGetSignupRequestsResponseMock,
-} from "@/api/generated/admin-account/admin-account.msw";
+} from "@/api/generated/admin-account-approval/admin-account-approval.msw";
 import type {
   GetSignupRequestsOrder,
   GetSignupRequestsSort,
