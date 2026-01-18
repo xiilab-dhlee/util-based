@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSetAtom } from "jotai";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
@@ -65,37 +65,30 @@ export function CreateVolumeFolderModal() {
   // Handlers
   // ---------------------------------------------------------------------------
 
-  const handleCancel = useCallback(() => {
+  const handleCancel = () => {
     if (isPending) return;
     onClose();
-  }, [isPending, onClose]);
+  };
 
-  const handleSuccess = useCallback(
-    (folderName: string) => {
-      const newFolderNode = createFolderNode({ folderName, parentPath });
-      setTreeData((prev) => addNodeToTree(prev, parentPath, newFolderNode));
-      toast.success("볼륨 폴더 추가 성공");
-      onClose();
-    },
-    [parentPath, setTreeData, onClose],
-  );
+  const onSubmit = (data: CreateVolumeFolderFormType) => {
+    if (!volumeId) return;
 
-  const onSubmit = useCallback(
-    (data: CreateVolumeFolderFormType) => {
-      if (!volumeId) return;
+    const newFolderNode = createFolderNode({
+      folderName: data.folderName,
+      parentPath,
+    });
 
-      const fullPath = createFolderNode({
-        folderName: data.folderName,
-        parentPath,
-      }).path;
-
-      mutate(
-        { volumeId, data: { path: fullPath } },
-        { onSuccess: () => handleSuccess(data.folderName) },
-      );
-    },
-    [volumeId, parentPath, mutate, handleSuccess],
-  );
+    mutate(
+      { volumeId, data: { path: newFolderNode.path } },
+      {
+        onSuccess: () => {
+          setTreeData((prev) => addNodeToTree(prev, parentPath, newFolderNode));
+          toast.success("폴더가 추가되었습니다.");
+          onClose();
+        },
+      },
+    );
+  };
 
   // ---------------------------------------------------------------------------
   // Subscriptions
