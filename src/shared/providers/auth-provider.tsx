@@ -1,7 +1,7 @@
 "use client";
 
 import type { Session } from "next-auth";
-import { SessionProvider, signIn, useSession } from "next-auth/react";
+import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
@@ -48,8 +48,8 @@ function useAxiosSessionSync(session: Session | null) {
 }
 
 /**
- * 토큰 갱신 실패 시 자동 재로그인
- * - 세션 에러 감지 시 환경에 맞는 프로바이더로 재로그인
+ * 토큰 갱신 실패 시 로그아웃 처리
+ * - 세션 에러 감지 시 Keycloak SSO 세션까지 종료
  * - 세션 정상화 시 에러 핸들링 플래그 리셋
  */
 function useTokenRefreshErrorHandler(session: Session | null) {
@@ -65,13 +65,18 @@ function useTokenRefreshErrorHandler(session: Session | null) {
     // 이미 처리됨 → 스킵
     if (hasHandledError.current) return;
 
-    // 토큰 갱신 실패 → 재로그인
+    // 토큰 갱신 실패 → 로그아웃 (Keycloak SSO 세션까지 종료)
     if (session?.error === "RefreshAccessTokenError") {
       hasHandledError.current = true;
-      authDebug("❌ 토큰 갱신 실패 → 재로그인 시도");
+      authDebug("❌ 토큰 갱신 실패 → 로그아웃 후 재로그인 필요");
 
-      const provider = useTestAuth ? "credentials" : "keycloak";
-      void signIn(provider, { redirect: !useTestAuth });
+      // 테스트 환경: credentials 프로바이더로 재로그인
+      // 프로덕션 환경: Keycloak SSO 세션까지 종료 후 로그인 페이지로 이동
+      if (useTestAuth) {
+        void signIn("credentials", { redirect: false });
+      } else {
+        void signOut({ callbackUrl: "/signin" });
+      }
     }
   }, [session]);
 }
@@ -114,6 +119,11 @@ function SessionSync({ children }: PropsWithChildren) {
   useAxiosSessionSync(session);
   useTokenRefreshErrorHandler(session);
   useTestAutoLogin(status);
+
+  // 세션 로딩 중에는 children을 렌더링하지 않음
+  if (status === "loading") {
+    return null; // 또는 로딩 스피너
+  }
 
   return <>{children}</>;
 }
