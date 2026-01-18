@@ -1,18 +1,23 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
 import { useVolumeFileTree } from "@/domain/volume/hooks/use-volume-file-tree";
+import { volumeFileCheckedNodesInfoAtom } from "@/domain/volume/state/volume.atom";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { MySpinner } from "@/shared/components/spinner";
 import { RootCustomFileNode } from "@/shared/components/tree/custom-file-node";
 import { CustomFileTree } from "@/shared/components/tree/custom-file-tree";
+import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
 import { CompressVolumeFileButton } from "./compress-volume-file-button";
 import { CreateVolumeFolderButton } from "./create-volume-folder-button";
 import { DeleteVolumeFileButton } from "./delete-volume-file-button";
@@ -57,6 +62,13 @@ interface ManageVolumeFileProps {
  * ```
  */
 export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
+  // ---------------------------------------------------------------------------
+  // Hooks
+  // ---------------------------------------------------------------------------
+
+  const publish = usePublish();
+  const checkedNodesInfo = useAtomValue(volumeFileCheckedNodesInfoAtom);
+
   // 볼륨 파일 트리 Lazy Loading 훅
   // 폴더 클릭 시 해당 경로의 하위 파일/폴더를 조회하여 트리에 병합
   const { treeData, loadingPaths, loadChildren, isLoading } = useVolumeFileTree(
@@ -66,12 +78,37 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
     },
   );
 
+  // ---------------------------------------------------------------------------
+  // Derived State
+  // ---------------------------------------------------------------------------
+
+  /** 체크된 파일이 있는지 여부 */
+  const hasCheckedFiles = checkedNodesInfo.length > 0;
+
+  // ---------------------------------------------------------------------------
+  // Handlers
+  // ---------------------------------------------------------------------------
+
   /**
    * 파일 다운로드 핸들러
-   * 현재는 미구현 상태로 알림 메시지만 표시
-   * TODO: 실제 파일 다운로드 API 연동 필요
+   * 체크된 파일들의 경로를 전달하여 다운로드 모달을 열어줌
    */
   const handleDownload = () => {
+    if (!hasCheckedFiles) return;
+
+    const filePaths = checkedNodesInfo.map((node) => node.path);
+    publish(VOLUME_EVENTS.sendDownloadVolumeFile, {
+      volumeId,
+      filePaths,
+    });
+  };
+
+  /**
+   * 파일 업로드 핸들러
+   * 현재는 미구현 상태로 알림 메시지만 표시
+   * TODO: 실제 파일 업로드 API 연동 필요
+   */
+  const handleUpload = () => {
     alert("준비 중입니다.");
   };
 
@@ -113,7 +150,7 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
               volumeId={volumeId}
             />,
             <CompressVolumeFileButton key="compress" volumeId={volumeId} />,
-            <UnzipVolumeFileButton key="unzip" />,
+            <UnzipVolumeFileButton key="unzip" volumeId={volumeId} />,
             <DeleteVolumeFileButton key="delete" volumeId={volumeId} />,
           ]}
         >
@@ -135,6 +172,7 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
             width={100}
             height={30}
             onClick={handleDownload}
+            disabled={!hasCheckedFiles}
           >
             다운로드
           </Button>
@@ -145,7 +183,7 @@ export function ManageVolumeFile({ volumeId }: ManageVolumeFileProps) {
             icon="Upload"
             width={100}
             height={30}
-            onClick={handleDownload}
+            onClick={handleUpload}
           >
             파일 업로드
           </Button>
@@ -203,6 +241,8 @@ const PrimaryArticleBody = styled(AsideDetailArticleBody)`
   border: 1px solid #E9EBEE;
   background-color: #fff;
   border-radius: 4px;
+
+  ${customScrollbar()}
 `;
 
 const Footer = styled(AsideDetailFooter)`
