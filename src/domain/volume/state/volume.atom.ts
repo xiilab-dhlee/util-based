@@ -30,6 +30,10 @@ export const openDeleteVolumeFileModalAtom = atom<boolean>(false);
 export const openCreateVolumeFolderModalAtom = atom<boolean>(false);
 /** 볼륨 파일 압축 모달 표시 여부 */
 export const openCompressVolumeFileModalAtom = atom<boolean>(false);
+/** 볼륨 파일 압축 해제 모달 표시 여부 */
+export const openDecompressVolumeFileModalAtom = atom<boolean>(false);
+/** 볼륨 파일 다운로드 모달 표시 여부 */
+export const openDownloadVolumeFileModalAtom = atom<boolean>(false);
 /** 볼륨 파일 페이지 번호 */
 export const volumeFilePageAtom = atomWithReset<number>(1);
 

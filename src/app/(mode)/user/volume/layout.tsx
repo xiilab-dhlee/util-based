@@ -10,8 +10,10 @@ import { CompressVolumeFileModal } from "@/domain/volume/components/compress-vol
 import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
 import { CreateVolumeFolderModal } from "@/domain/volume/components/create-volume-folder-modal";
+import { DecompressVolumeFileModal } from "@/domain/volume/components/decompress-volume-file-modal";
 import { DeleteVolumeFileModal } from "@/domain/volume/components/delete-volume-file-modal";
 import { DeleteVolumeModal } from "@/domain/volume/components/delete-volume-modal";
+import { DownloadVolumeFileModal } from "@/domain/volume/components/download-volume-file-modal";
 import { VolumeListBody } from "@/domain/volume/components/list/volume-list-body";
 import { VolumeListFilter } from "@/domain/volume/components/list/volume-list-filter";
 import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-footer";
@@ -104,10 +106,14 @@ export default function UserVolumeLayout({ children }: PropsWithChildren) {
       <ViewVulnerabilityModal />
       {/* 볼륨 파일 압축 모달 */}
       <CompressVolumeFileModal />
+      {/* 볼륨 파일 압축 해제 모달 */}
+      <DecompressVolumeFileModal />
       {/* 볼륨 폴더 추가 모달 */}
       <CreateVolumeFolderModal />
       {/* 볼륨 파일 삭제 모달 */}
       <DeleteVolumeFileModal />
+      {/* 볼륨 파일 다운로드 모달 */}
+      <DownloadVolumeFileModal />
     </>
   );
 }
