@@ -60,7 +60,7 @@ export function CompressVolumeFileModal() {
   };
 
   const onSubmit = (data: CompressVolumeFileFormType) => {
-    if (!volumeId || filePaths.length === 0) return;
+    if (volumeId == null || filePaths.length === 0) return;
 
     const filteredPaths = filterToRootPaths(filePaths);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
@@ -15,14 +15,18 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { isUserMode } from "@/shared/utils/router.util";
 
 export function DeleteVolumeModal() {
   const router = useRouter();
+  const pathname = usePathname();
   const queryClient = useQueryClient();
   const { open, onOpen, onClose } = useGlobalModal(openDeleteVolumeModalAtom);
 
   const [deleteVolumeIds, setDeleteVolumeIds] = useState<number[]>([]);
   const deleteVolume = useDeleteVolume();
+
+  const isUser = isUserMode(pathname);
 
   const handleOk = async () => {
     for (const volumeId of deleteVolumeIds) {
@@ -33,7 +37,9 @@ export function DeleteVolumeModal() {
     queryClient.invalidateQueries({
       queryKey: getGetVolumeListQueryKey(),
     });
-    router.replace(ROUTES.USER_VOLUME);
+
+    const targetRoute = isUser ? ROUTES.USER_VOLUME : ROUTES.ADMIN_VOLUME;
+    router.replace(targetRoute);
   };
 
   const handleCancel = () => {

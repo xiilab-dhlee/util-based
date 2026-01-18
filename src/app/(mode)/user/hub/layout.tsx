@@ -51,7 +51,9 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
     if (content.length === 0) return;
 
     if (isHubListPage && content[0]) {
-      router.push(ROUTES.USER_HUB_DETAIL(content[0].hubId, content[0].hubName));
+      router.replace(
+        ROUTES.USER_HUB_DETAIL(content[0].hubId, content[0].hubName),
+      );
     }
   }, [isHubListPage, content, router]);
 

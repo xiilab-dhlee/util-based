@@ -41,7 +41,7 @@ export function DownloadVolumeFileModal() {
   };
 
   const handleDownload = async () => {
-    if (!volumeId || filePaths.length === 0) return;
+    if (volumeId === null || filePaths.length === 0) return;
 
     const filteredPaths = filterToRootPaths(filePaths);
     setIsPending(true);

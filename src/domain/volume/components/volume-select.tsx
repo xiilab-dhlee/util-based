@@ -46,7 +46,7 @@ export function VolumeSelect({ value, setValue }: VolumeSelectProps) {
     <Dropdown
       placeholder="볼륨을 선택해 주세요."
       options={options || []}
-      value={value?.volumeId || null}
+      value={value?.volumeId ?? null}
       onChange={handleChange}
       width="100%"
     />
