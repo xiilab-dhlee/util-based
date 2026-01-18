@@ -103,9 +103,11 @@ const CopyButton = styled.button`
   opacity: 0;
   transition:
     opacity 0.2s,
-    background 0.2s;
+    background 0.2s,
+    outline 0.2s;
 
-  ${Container}:hover & {
+  ${Container}:hover &,
+  ${Container}:focus-within & {
     opacity: 1;
   }
 
@@ -113,7 +115,15 @@ const CopyButton = styled.button`
     background: rgba(0, 0, 0, 0.08);
   }
 
-  ${Container}.active &:hover {
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid #1f5bff;
+    outline-offset: 1px;
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  ${Container}.active &:hover,
+  ${Container}.active &:focus-visible {
     background: rgba(31, 91, 255, 0.1);
   }
 `;

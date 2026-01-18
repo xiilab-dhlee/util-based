@@ -112,6 +112,7 @@ export function VolumeDetailMain() {
     <StyledAsideDetailContainer>
       <StyledAsideDetailHeader>
         <AsideDetailHeaderTitle>볼륨 상세 정보</AsideDetailHeaderTitle>
+        {/* 상세 정보 페이지에서만 수정/삭제 버튼 표시, 나머지 페이지에서는 볼륨 이름 표시 */}
         {showActionButtons ? (
           <Icons>
             <IconWrapper
@@ -120,6 +121,7 @@ export function VolumeDetailMain() {
               onClick={handleEdit}
             >
               <Icon name="Edit02" color="#000" />
+              <span className="sr-only">볼륨 수정</span>
             </IconWrapper>
             <IconWrapper
               type="button"
@@ -127,6 +129,7 @@ export function VolumeDetailMain() {
               onClick={handleDelete}
             >
               <Icon name="Delete" color="#000" />
+              <span className="sr-only">볼륨 삭제</span>
             </IconWrapper>
           </Icons>
         ) : (
