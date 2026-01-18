@@ -4,8 +4,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal, Label, Typography } from "xiilab-ui";
 
+import type { K8sEventResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { openKubernetesEventDetailModalAtom } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
-import type { KubernetesEventType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
 import { getKubernetesEventLabelProps } from "@/domain/kubernetes-monitoring/utils/kubernetes-event.util";
 import { KUBERNETES_MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -21,9 +21,9 @@ export function ViewKubernetesEventDetailModal() {
     openKubernetesEventDetailModalAtom,
   );
 
-  const [eventData, setEventData] = useState<KubernetesEventType | null>(null);
+  const [eventData, setEventData] = useState<K8sEventResponse | null>(null);
 
-  useSubscribe<KubernetesEventType>(
+  useSubscribe<K8sEventResponse>(
     KUBERNETES_MONITORING_EVENTS.sendKubernetesEventDetail,
     (data) => {
       setEventData(data);
@@ -32,7 +32,7 @@ export function ViewKubernetesEventDetailModal() {
   );
 
   const statusProps = eventData
-    ? getKubernetesEventLabelProps(eventData.status)
+    ? getKubernetesEventLabelProps(eventData.eventType)
     : null;
 
   return (
@@ -50,7 +50,7 @@ export function ViewKubernetesEventDetailModal() {
         <Container>
           <Row>
             <FieldLabel>Namespace 이름</FieldLabel>
-            <Value>{eventData.namespace}</Value>
+            <Value>{eventData.namespace || "-"}</Value>
           </Row>
           <Row>
             <FieldLabel>상태</FieldLabel>
@@ -63,16 +63,20 @@ export function ViewKubernetesEventDetailModal() {
             )}
           </Row>
           <Row>
+            <FieldLabel>이벤트 이유</FieldLabel>
+            <Value>{eventData.eventReason || "-"}</Value>
+          </Row>
+          <Row>
             <FieldLabel>오브젝트</FieldLabel>
-            <Value>{eventData.object}</Value>
+            <Value>{eventData.object || "-"}</Value>
           </Row>
           <Row>
             <FieldLabel>IP 주소</FieldLabel>
-            <Value>{eventData.ipAddress}</Value>
+            <Value>{eventData.ip || "-"}</Value>
           </Row>
           <Row>
             <FieldLabel>메시지</FieldLabel>
-            <Value>{eventData.message}</Value>
+            <Value>{eventData.message || "-"}</Value>
           </Row>
         </Container>
       )}
@@ -89,7 +93,7 @@ const Container = styled.div`
   border-radius: 2px;
   padding: 16px;
   overflow-y: auto;
-  height: 210px;
+  height: 250px;
 `;
 
 const Row = styled.div`
@@ -109,4 +113,6 @@ const Value = styled(Typography.Text).attrs({
   variant: "subtitle-2-3",
 })`
   flex: 1;
+  white-space: pre-wrap;
+  word-break: break-all;
 `;

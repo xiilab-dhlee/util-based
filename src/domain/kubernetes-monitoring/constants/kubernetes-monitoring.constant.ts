@@ -1,5 +1,18 @@
+import type { K8sResourceResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  GetNamespacesStatus,
+  GetNodesStatus,
+  GetPersistentVolumesStatus,
+  GetPodsStatus,
+  GetServicesType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { K8sResourceType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
+
 /** 목록 페이지 크기 */
 export const KUBERNETES_RESOURCE_LIST_PAGE_SIZE = 15;
+
+/** 이벤트 목록 페이지 크기  */
+export const KUBERNETES_EVENT_LIST_PAGE_SIZE = 12;
 
 type KubernetesStatusOption = {
   label: string;
@@ -44,29 +57,15 @@ export type KubernetesResourceStatusValue =
 
 /**
  * Kubernetes 이벤트 상태 코드 상수
- * - 서버/도메인에서 사용하는 영문 상태 코드
+ * - API eventType과 일치하는 값 사용
  */
 export const KUBERNETES_EVENT_STATUS = {
-  ERROR: "error",
-  WARNING: "warning",
-  NORMAL: "normal",
+  WARNING: "Warning",
+  NORMAL: "Normal",
 } as const;
 
 export type KubernetesEventStatus =
   (typeof KUBERNETES_EVENT_STATUS)[keyof typeof KUBERNETES_EVENT_STATUS];
-
-/**
- * Kubernetes 이벤트 상태 코드 → 한글 라벨 매핑
- * - 화면에 표시되는 텍스트
- */
-export const KUBERNETES_EVENT_STATUS_LABEL: Record<
-  KubernetesEventStatus,
-  string
-> = {
-  [KUBERNETES_EVENT_STATUS.ERROR]: "에러",
-  [KUBERNETES_EVENT_STATUS.WARNING]: "주의",
-  [KUBERNETES_EVENT_STATUS.NORMAL]: "정상",
-};
 
 /**
  * Kubernetes 리소스 이름 상수
@@ -85,6 +84,38 @@ export const KUBERNETES_RESOURCE_NAMES = [
 
 export type KubernetesResourceName = (typeof KUBERNETES_RESOURCE_NAMES)[number];
 
+/** KubernetesResourceName을 API용 K8sResourceType으로 변환하는 매핑 */
+export const RESOURCE_NAME_TO_TYPE: Record<
+  KubernetesResourceName,
+  K8sResourceType
+> = {
+  Nodes: "NODE",
+  Service: "SERVICE",
+  Daemonsets: "DAEMONSET",
+  PersistentVolume: "PV",
+  Namespaces: "NAMESPACE",
+  Deployments: "DEPLOYMENT",
+  Statefulsets: "STATEFULSET",
+  Pods: "POD",
+};
+
+/**
+ * 리소스 이름을 API 응답의 count 키로 매핑
+ */
+export const RESOURCE_NAME_TO_COUNT_KEY: Record<
+  KubernetesResourceName,
+  keyof K8sResourceResponse
+> = {
+  Nodes: "nodeCount",
+  Service: "serviceCount",
+  Daemonsets: "daemonsetCount",
+  PersistentVolume: "persistentVolumeCount",
+  Namespaces: "namespaceCount",
+  Deployments: "deploymentCount",
+  Statefulsets: "statefulsetCount",
+  Pods: "podCount",
+};
+
 /**
  * 리소스 타입별 필터 옵션 설정
  * - hasFilter: 필터 드롭다운 표시 여부
@@ -101,8 +132,8 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Ready", value: "Ready" },
-      { label: "Not Ready", value: "NotReady" },
+      { label: "Ready", value: GetNodesStatus.READY },
+      { label: "Not Ready", value: GetNodesStatus.NOT_READY },
     ],
   },
   Service: {
@@ -110,10 +141,10 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "type",
     filterLabel: "타입",
     options: [
-      { label: "Cluster IP", value: "ClusterIP" },
-      { label: "Node Port", value: "NodePort" },
-      { label: "Load Balancer", value: "LoadBalancer" },
-      { label: "External Name", value: "ExternalName" },
+      { label: "Cluster IP", value: GetServicesType.CLUSTER_IP },
+      { label: "Node Port", value: GetServicesType.NODE_PORT },
+      { label: "Load Balancer", value: GetServicesType.LOAD_BALANCER },
+      { label: "External Name", value: GetServicesType.EXTERNAL_NAME },
     ],
   },
   Daemonsets: {
@@ -124,10 +155,10 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Available", value: "Available" },
-      { label: "Bound", value: "Bound" },
-      { label: "Released", value: "Released" },
-      { label: "Failed", value: "Failed" },
+      { label: "Available", value: GetPersistentVolumesStatus.AVAILABLE },
+      { label: "Bound", value: GetPersistentVolumesStatus.BOUND },
+      { label: "Released", value: GetPersistentVolumesStatus.RELEASED },
+      { label: "Failed", value: GetPersistentVolumesStatus.FAILED },
     ],
   },
   Namespaces: {
@@ -135,18 +166,12 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Active", value: "Active" },
-      { label: "Terminating", value: "Terminating" },
+      { label: "Active", value: GetNamespacesStatus.ACTIVE },
+      { label: "Terminating", value: GetNamespacesStatus.TERMINATING },
     ],
   },
   Deployments: {
-    hasFilter: true,
-    filterKey: "conditions",
-    filterLabel: "조건",
-    options: [
-      { label: "Available", value: "Available" },
-      { label: "Progressing", value: "Progressing" },
-    ],
+    hasFilter: false,
   },
   Statefulsets: {
     hasFilter: false,
@@ -156,11 +181,11 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Pending", value: "Pending" },
-      { label: "Running", value: "Running" },
-      { label: "Succeeded", value: "Succeeded" },
-      { label: "Failed", value: "Failed" },
-      { label: "Unknown", value: "Unknown" },
+      { label: "Pending", value: GetPodsStatus.PENDING },
+      { label: "Running", value: GetPodsStatus.RUNNING },
+      { label: "Succeeded", value: GetPodsStatus.SUCCEEDED },
+      { label: "Failed", value: GetPodsStatus.FAILED },
+      { label: "Unknown", value: GetPodsStatus.UNKNOWN },
     ],
   },
 };

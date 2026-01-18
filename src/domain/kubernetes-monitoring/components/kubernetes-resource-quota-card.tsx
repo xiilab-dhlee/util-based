@@ -7,6 +7,7 @@ import { Icon } from "xiilab-ui";
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getPercent } from "@/shared/utils/calc.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 interface KubernetesResourceQuotaCardProps {
@@ -14,20 +15,6 @@ interface KubernetesResourceQuotaCardProps {
   total?: number | null;
   quota?: number | null;
   showDivider?: boolean;
-}
-
-/**
- * 값을 단위와 함께 포맷팅합니다.
- * 데이터가 없으면 "-"를 반환합니다.
- */
-function formatValueWithUnit(
-  value: number | null | undefined,
-  unit: string,
-): string {
-  if (value == null) {
-    return "-";
-  }
-  return `${value} ${unit}`;
 }
 
 /**
@@ -77,11 +64,11 @@ export function KubernetesResourceQuotaCard({
         <Records>
           <Record>
             <RecordKey>전체</RecordKey>
-            <RecordValue>{formatValueWithUnit(total, unit)}</RecordValue>
+            <RecordValue>{formatNumberWithUnit(total, unit)}</RecordValue>
           </Record>
           <Record>
             <RecordKey>사용</RecordKey>
-            <RecordValue>{formatValueWithUnit(quota, unit)}</RecordValue>
+            <RecordValue>{formatNumberWithUnit(quota, unit)}</RecordValue>
           </Record>
         </Records>
       </Body>

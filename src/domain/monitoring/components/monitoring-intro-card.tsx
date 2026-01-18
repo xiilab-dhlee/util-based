@@ -1,13 +1,26 @@
 "use client";
 
+import { useCallback } from "react";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { useGetClusterResourceSummary } from "@/api/generated/admin-cluster/admin-cluster";
 import { PAGE_META } from "@/shared/constants/page-meta.constant";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { gradientBackgroundButtonStyle } from "@/styles/mixins/button";
 import { subTitleStyle } from "@/styles/mixins/text";
 
 export function MonitoringIntroCard() {
+  const {
+    refetch: refetchClusterResource,
+    dataUpdatedAt,
+    isFetching,
+  } = useGetClusterResourceSummary();
+
+  const handleRefresh = useCallback(() => {
+    // 병렬로 모든 refetch 실행 (추후 더 많은 훅 추가 가능)
+    refetchClusterResource();
+  }, [refetchClusterResource]);
   return (
     <Container>
       <Header>
@@ -36,9 +49,13 @@ export function MonitoringIntroCard() {
       <Body>
         <UpdateDate>
           <UpdateDateKey>업데이트 기준 시간</UpdateDateKey>
-          <UpdateDateValue>2025. 10. 26 14:22:42</UpdateDateValue>
+          <UpdateDateValue>
+            {dataUpdatedAt
+              ? formatDateTimeSafely(new Date(dataUpdatedAt))
+              : "-"}
+          </UpdateDateValue>
         </UpdateDate>
-        <Button type="button" onClick={() => alert("준비 중입니다.")}>
+        <Button type="button" onClick={handleRefresh} disabled={isFetching}>
           모니터링 정보 새로고침
         </Button>
       </Body>

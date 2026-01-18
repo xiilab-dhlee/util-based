@@ -59,11 +59,9 @@ const IconCircle = styled.div`
 `;
 
 const Title = styled(Typography.Text).attrs({
-  variant: "body-1-3", // 13px is closest to 14px
+  variant: "body-1-1",
   as: "h3",
 })`
-  font-weight: 600; // Keep 600 weight
-  font-size: 14px; // Keep custom 14px
   color: #333333;
   margin: 0;
   text-align: center;

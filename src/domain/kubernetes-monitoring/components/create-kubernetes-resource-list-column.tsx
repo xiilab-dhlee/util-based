@@ -5,35 +5,37 @@ import { YamlLogButton } from "@/domain/kubernetes-monitoring/components/yaml-lo
 import {
   getFieldDisplayValue,
   type KubernetesResourceName,
+  RESOURCE_NAME_TO_TYPE,
 } from "@/domain/kubernetes-monitoring/constants/kubernetes-monitoring.constant";
+import type { K8sResourceType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 // 공통 액션 컬럼 (DESCRIBE, YAML) - 모든 리소스에서 재사용
-const createActionColumns = (): ResponsiveColumnType[] => [
+const createActionColumns = (
+  resourceType: K8sResourceType,
+): ResponsiveColumnType[] => [
   {
     title: "Describe",
     key: "describe",
-    dataIndex: "describe",
     align: "center",
     width: "5%",
-    render: () => (
+    render: (_: unknown, record: { name: string }) => (
       <ColumnAlignCenterWrap>
-        <DescribeButton />
+        <DescribeButton resourceType={resourceType} name={record.name} />
       </ColumnAlignCenterWrap>
     ),
   },
   {
     title: "YAML",
     key: "yaml",
-    dataIndex: "yaml",
     align: "center",
     width: "5%",
-    render: () => (
+    render: (_: unknown, record: { name: string }) => (
       <ColumnAlignCenterWrap>
-        <YamlLogButton />
+        <YamlLogButton resourceType={resourceType} name={record.name} />
       </ColumnAlignCenterWrap>
     ),
   },
@@ -43,46 +45,51 @@ const createActionColumns = (): ResponsiveColumnType[] => [
 const createNodesColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "35%",
+    width: "31%",
   },
   {
     title: "Role",
-    key: "role",
-    dataIndex: "role",
+    key: "roles",
+    dataIndex: "roles",
     align: "center",
-    width: "12%",
+    width: "20%",
+    ellipsis: true,
+    render: (roles: string[]) => roles?.join(", ") ?? "-",
   },
   {
     title: "GPU",
-    key: "gpu",
-    dataIndex: "gpu",
+    key: "gpuName",
+    dataIndex: "gpuName",
     align: "center",
-    width: "12%",
+    width: "24%",
+    ellipsis: true,
+    render: (gpuName?: string) => gpuName ?? "-",
   },
   {
     title: "Status",
     key: "status",
     dataIndex: "status",
     align: "center",
-    width: "12%",
+    width: "15%",
+    ellipsis: true,
     render: (status: string) => getFieldDisplayValue("Nodes", status),
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.Nodes),
 ];
 
 // Service 컬럼 정의
 const createServiceColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "28%",
   },
   {
     title: "Namespace",
@@ -90,14 +97,15 @@ const createServiceColumnList = (): ResponsiveColumnType[] => [
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "28%",
   },
   {
     title: "Type",
     key: "type",
     dataIndex: "type",
     align: "center",
-    width: "12%",
+    width: "15%",
+    ellipsis: true,
     render: (type: string) => getFieldDisplayValue("Service", type),
   },
   {
@@ -105,20 +113,22 @@ const createServiceColumnList = (): ResponsiveColumnType[] => [
     key: "ports",
     dataIndex: "ports",
     align: "center",
-    width: "15%",
+    width: "19%",
+    ellipsis: true,
+    render: (ports: string[]) => ports?.join(", ") ?? "-",
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.Service),
 ];
 
 // Daemonsets 컬럼 정의
 const createDaemonsetsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "30%",
+    width: "38%",
   },
   {
     title: "Namespace",
@@ -126,84 +136,85 @@ const createDaemonsetsColumnList = (): ResponsiveColumnType[] => [
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
-    width: "30%",
+    width: "38%",
   },
   {
     title: "Pods",
     key: "pods",
     dataIndex: "pods",
     align: "center",
-    width: "12%",
+    width: "14%",
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.Daemonsets),
 ];
 
 // PersistentVolume 컬럼 정의
 const createPersistentVolumeColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "30%",
+    width: "39%",
   },
   {
     title: "StorageClass",
     key: "storageClass",
     dataIndex: "storageClass",
     align: "center",
-    width: "25%",
+    width: "32%",
+    render: (storageClass?: string) => storageClass ?? "-",
   },
   {
     title: "Status",
     key: "status",
     dataIndex: "status",
     align: "center",
-    width: "15%",
+    width: "19%",
     render: (status: string) =>
       getFieldDisplayValue("PersistentVolume", status),
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.PersistentVolume),
 ];
 
 // Namespaces 컬럼 정의
 const createNamespacesColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "35%",
+    width: "45%",
   },
   {
     title: "Age",
     key: "age",
     dataIndex: "age",
     align: "left",
-    width: "20%",
+    width: "26%",
   },
   {
     title: "Status",
     key: "status",
     dataIndex: "status",
     align: "center",
-    width: "15%",
+    width: "19%",
     render: (status: string) => getFieldDisplayValue("Namespaces", status),
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.Namespaces),
 ];
 
 // Deployments 컬럼 정의
 const createDeploymentsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "28%",
   },
   {
     title: "Namespace",
@@ -211,34 +222,36 @@ const createDeploymentsColumnList = (): ResponsiveColumnType[] => [
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "28%",
   },
   {
     title: "Pods",
     key: "pods",
     dataIndex: "pods",
     align: "center",
-    width: "12%",
+    width: "15%",
   },
   {
     title: "Conditions",
     key: "conditions",
     dataIndex: "conditions",
     align: "center",
-    width: "15%",
+    width: "19%",
+    ellipsis: true,
+    render: (conditions: string[]) => conditions?.join(", ") ?? "-",
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.Deployments),
 ];
 
 // Statefulsets 컬럼 정의
 const createStatefulsetsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "30%",
+    width: "38%",
   },
   {
     title: "Namespace",
@@ -246,27 +259,27 @@ const createStatefulsetsColumnList = (): ResponsiveColumnType[] => [
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
-    width: "30%",
+    width: "38%",
   },
   {
     title: "Pods",
     key: "pods",
     dataIndex: "pods",
     align: "center",
-    width: "12%",
+    width: "14%",
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.Statefulsets),
 ];
 
 // Pods 컬럼 정의
 const createPodsColumnList = (): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "27%",
   },
   {
     title: "Namespace",
@@ -274,7 +287,7 @@ const createPodsColumnList = (): ResponsiveColumnType[] => [
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
-    width: "18%",
+    width: "22%",
   },
   {
     title: "Node",
@@ -282,28 +295,30 @@ const createPodsColumnList = (): ResponsiveColumnType[] => [
     dataIndex: "node",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "27%",
   },
   {
     title: "Status",
     key: "status",
     dataIndex: "status",
     align: "center",
-    width: "12%",
+    width: "14%",
     render: (status: string) => getFieldDisplayValue("Pods", status),
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE.Pods),
 ];
 
-// 기본 제네릭 컬럼 정의
-const createDefaultColumnList = (): ResponsiveColumnType[] => [
+// 기본 제네릭 컬럼 정의 (resourceName 파라미터 필요)
+const createDefaultColumnList = (
+  resourceName: KubernetesResourceName,
+): ResponsiveColumnType[] => [
   {
     title: "Name",
-    key: "resourceName",
-    dataIndex: "resourceName",
+    key: "name",
+    dataIndex: "name",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "28%",
   },
   {
     title: "Namespace",
@@ -311,27 +326,27 @@ const createDefaultColumnList = (): ResponsiveColumnType[] => [
     dataIndex: "namespace",
     align: "left",
     ellipsis: true,
-    width: "22%",
+    width: "28%",
   },
   {
     title: "Status",
     key: "status",
     dataIndex: "status",
     align: "center",
-    width: "15%",
+    width: "19%",
   },
   {
     title: "Created",
-    key: "createDateTime",
-    dataIndex: "createDateTime",
+    key: "createdAt",
+    dataIndex: "createdAt",
     align: "left",
-    width: "12%",
-    render: (createDateTime: Date) => {
-      const formatted = formatDateTimeSafely(createDateTime);
+    width: "15%",
+    render: (createdAt: string) => {
+      const formatted = formatDateTimeSafely(createdAt);
       return <ColumnAlignCenterWrap>{formatted}</ColumnAlignCenterWrap>;
     },
   },
-  ...createActionColumns(),
+  ...createActionColumns(RESOURCE_NAME_TO_TYPE[resourceName]),
 ];
 
 // 리소스명에 따라 컬럼 리스트를 반환하는 내부 함수
@@ -356,7 +371,7 @@ const getColumnListByResource = (
     case "Pods":
       return createPodsColumnList();
     default:
-      return createDefaultColumnList();
+      return createDefaultColumnList(resourceName);
   }
 };
 
