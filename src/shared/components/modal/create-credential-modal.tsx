@@ -20,10 +20,7 @@ import {
   getGetCredentialsQueryKey,
   useCreateCredential,
 } from "@/api/generated/credential/credential";
-import {
-  CREDENTIAL_CHANNEL_OPTIONS,
-  CREDENTIAL_TYPE_OPTIONS,
-} from "@/domain/credential/constants/credential.constant";
+import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential.constant";
 import {
   type CreateCredentialFormType,
   createCredentialFormSchema,
@@ -31,7 +28,15 @@ import {
 import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { FormRow } from "@/styles/layers/form-layer.styled";
+
+const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
+  credentialChannel: "GIT",
+  credentialType: "SOURCE_CODE",
+  credentialName: "",
+  description: "",
+  credentialAccountId: "",
+  token: "",
+};
 
 export function CreateCredentialModal() {
   const queryClient = useQueryClient();
@@ -48,14 +53,7 @@ export function CreateCredentialModal() {
     formState: { errors },
   } = useForm<CreateCredentialFormType>({
     resolver: zodResolver(createCredentialFormSchema),
-    defaultValues: {
-      credentialChannel: "GIT",
-      credentialType: "SOURCE_CODE",
-      credentialName: "",
-      description: "",
-      credentialAccountId: "",
-      token: "",
-    },
+    defaultValues: DEFAULT_FORM_VALUES,
   });
 
   const onSubmit = (data: CreateCredentialFormType) => {
@@ -69,12 +67,10 @@ export function CreateCredentialModal() {
       },
       {
         onSuccess: () => {
-          // params가 다양할 수 있으므로 exact: false로 prefix 매칭
           queryClient.invalidateQueries({
             queryKey: getGetCredentialsQueryKey(accountId),
             exact: false,
           });
-          // 토스트는 MutationCache에서 전역 처리됨 (MUTATION_MESSAGES)
           handleClose();
         },
       },
@@ -85,14 +81,7 @@ export function CreateCredentialModal() {
     if (isPending) return;
 
     setOpen(false);
-    reset({
-      credentialChannel: "GIT",
-      credentialType: "SOURCE_CODE",
-      credentialName: "",
-      description: "",
-      credentialAccountId: "",
-      token: "",
-    });
+    reset(DEFAULT_FORM_VALUES);
   };
 
   useSubscribe(CREDENTIAL_EVENTS.openCreateModal, () => {
@@ -124,51 +113,28 @@ export function CreateCredentialModal() {
       data-testid={CREDENTIAL_SELECTOR.CREATE_MODAL}
     >
       <StyledForm>
-        <FormRow>
-          <Controller
-            name="credentialType"
-            control={control}
-            render={({ field }) => (
-              <FormItem
-                label="타입"
-                required
-                validateStatus={errors.credentialType ? "error" : undefined}
-                help={errors.credentialType?.message}
-              >
-                <Dropdown
-                  options={CREDENTIAL_TYPE_OPTIONS}
-                  onChange={(value) => field.onChange(value)}
-                  value={field.value}
-                  width="100%"
-                  placeholder="타입을 선택해 주세요."
-                  status={errors.credentialType ? "error" : undefined}
-                />
-              </FormItem>
-            )}
-          />
-          <Controller
-            name="credentialChannel"
-            control={control}
-            render={({ field }) => (
-              <FormItem
-                label="채널"
-                required
-                validateStatus={errors.credentialChannel ? "error" : undefined}
-                help={errors.credentialChannel?.message}
-                data-testid={CREDENTIAL_SELECTOR.TYPE_FIELD}
-              >
-                <Dropdown
-                  options={CREDENTIAL_CHANNEL_OPTIONS}
-                  onChange={(value) => field.onChange(value)}
-                  value={field.value}
-                  width="100%"
-                  placeholder="채널을 선택해 주세요."
-                  status={errors.credentialChannel ? "error" : undefined}
-                />
-              </FormItem>
-            )}
-          />
-        </FormRow>
+        <Controller
+          name="credentialType"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="타입"
+              required
+              validateStatus={errors.credentialType ? "error" : undefined}
+              help={errors.credentialType?.message}
+              data-testid={CREDENTIAL_SELECTOR.TYPE_FIELD}
+            >
+              <Dropdown
+                options={CREDENTIAL_TYPE_OPTIONS}
+                onChange={(value) => field.onChange(value)}
+                value={field.value}
+                width="100%"
+                placeholder="타입을 선택해 주세요."
+                status={errors.credentialType ? "error" : undefined}
+              />
+            </FormItem>
+          )}
+        />
         <Controller
           name="credentialName"
           control={control}
