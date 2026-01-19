@@ -43,6 +43,10 @@ export function DeleteVolumeFileModal() {
     if (!volumeId || filePaths.length === 0) return;
 
     const filteredPaths = filterToRootPaths(filePaths);
+    if (filteredPaths.length === 0) {
+      toast.info("삭제할 파일이 없습니다.");
+      return;
+    }
 
     mutate(
       { volumeId, data: { paths: filteredPaths } },

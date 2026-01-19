@@ -63,6 +63,10 @@ export function CompressVolumeFileModal() {
     if (volumeId == null || filePaths.length === 0) return;
 
     const filteredPaths = filterToRootPaths(filePaths);
+    if (filteredPaths.length === 0) {
+      toast.info("압축할 파일이 없습니다.");
+      return;
+    }
 
     mutate(
       {
