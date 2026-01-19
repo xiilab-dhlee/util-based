@@ -3,10 +3,8 @@ import type {
   GetVolumeListSort,
   VolumeFileItemResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { COMPRESSED_FILE_EXTENSIONS } from "@/domain/volume/constants/volume.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
-
-/** 압축 파일 확장자 목록 */
-const COMPRESSED_FILE_EXTENSIONS = [".zip", ".tar", ".tar.gz", ".tgz"];
 
 /** 압축 파일 여부 확인 */
 export const isCompressedFile = (path: string): boolean => {
@@ -35,7 +33,7 @@ export const getVolumeStorageTypeInfo = (storageType?: string) => {
   if (storageType === "ASTRAGO") {
     text = "AstraGo Storage";
     icon = "Astrago";
-  } else if (storageType === "ON_PREMISE" || storageType === "LOCAL") {
+  } else if (storageType === "ON_PREMISE") {
     text = "On-premise Storage";
     icon = "OnPremiseStorage";
   }

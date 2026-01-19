@@ -10,6 +10,9 @@ export const VOLUME_CARD_HEIGHT = 112;
 /** 볼륨 정렬 기본값 (최신순) */
 export const VOLUME_DEFAULT_SORT = "CREATED_AT_DESC";
 
+/** 압축 파일 확장자 목록 */
+export const COMPRESSED_FILE_EXTENSIONS = [".zip", ".tar", ".tar.gz", ".tgz"];
+
 // ============================================================================
 // 정렬 옵션
 // ============================================================================
@@ -45,7 +48,7 @@ export const VOLUME_STORAGE_OPTIONS: DropdownOption[] = [
   },
   {
     label: "On-premise Storage",
-    value: "LOCAL",
+    value: "ON_PREMISE",
   },
 ];
 
