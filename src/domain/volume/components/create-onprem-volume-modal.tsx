@@ -53,6 +53,9 @@ export function CreateOnPremVolumeModal() {
   };
 
   const onSubmit = (data: CreateOnPremiseVolumeFormType) => {
+    if (registerOnPremiseVolume.isPending) return;
+    if (!selectedWorkspace) return;
+
     registerOnPremiseVolume.mutate(
       {
         data: {
@@ -61,16 +64,16 @@ export function CreateOnPremVolumeModal() {
           mountPath: data.mountPath,
           serverIp: data.serverIp,
           volumePath: data.volumePath,
-          workspaceId: selectedWorkspace?.workspaceId,
+          workspaceId: selectedWorkspace.workspaceId,
         },
       },
       {
         onSuccess: () => {
-          toast.success("볼륨 생성 성공");
-          onClose();
           queryClient.invalidateQueries({
             queryKey: getGetVolumeListQueryKey(),
           });
+          toast.success("볼륨 생성 성공");
+          onClose();
         },
       },
     );

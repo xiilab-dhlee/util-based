@@ -53,6 +53,9 @@ export function CreateAstragoVolumeModal() {
   };
 
   const onSubmit = (data: CreateAstragoVolumeFormType) => {
+    if (registerAstragoVolume.isPending) return;
+    if (!selectedWorkspace) return;
+
     registerAstragoVolume.mutate(
       {
         data: {
@@ -60,7 +63,7 @@ export function CreateAstragoVolumeModal() {
           isPublic: data.isPublic === "true",
           mountPath: data.mountPath,
           storageId: Number(data.storageId),
-          workspaceId: selectedWorkspace?.workspaceId,
+          workspaceId: selectedWorkspace.workspaceId,
         },
       },
       {
