@@ -62,7 +62,7 @@ export function SettingMain() {
       <ViewCredentialDetailModal />
       {/* 크리덴셜 삭제 모달 */}
       <DeleteCredentialModal />
-      {/* 리소스 요청 취소 모달 */}
+      {/* 리소스 요청 삭제 모달 */}
       <DeleteRequestResourceModal />
       {/* 워크스페이스 구성원 추가 모달 */}
       <AddWorkspaceMemberModal />
