@@ -3,7 +3,6 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { CredentialService } from "@/domain/credential/api/credential.service";
 import { InternalRegistryService } from "@/domain/internal-registry/api/internal-registry.service";
 import { AdminInternalRegistryImageService } from "@/domain/internal-registry-image/api/admin-internal-registry-image.service";
 import { InternalRegistryImageService } from "@/domain/internal-registry-image/api/internal-registry-image.service";
@@ -37,7 +36,6 @@ interface ServiceContextType {
   workspaceService: WorkspaceService;
   workloadService: WorkloadService;
   sourcecodeService: SourcecodeService;
-  credentialService: CredentialService;
   storageService: StorageService;
   notificationService: NotificationService;
   userResourceService: UserResourceService;
@@ -85,7 +83,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     workspaceService: new WorkspaceService(),
     workloadService: new WorkloadService(),
     sourcecodeService: new SourcecodeService(),
-    credentialService: new CredentialService(),
     storageService: new StorageService(),
     notificationService: new NotificationService(),
     userResourceService: new UserResourceService(),
