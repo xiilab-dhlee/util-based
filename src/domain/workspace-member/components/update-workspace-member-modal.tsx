@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Dropdown, Form, FormItem, Icon, Modal } from "xiilab-ui";
 
-import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/domain/workspace/constants/workspace-member.constant";
+import { WORKSPACE_MEMBER_ROLE_OPTIONS } from "@/domain/workspace/constants/workspace.constant";
 import { useUpdateWorkspaceMember } from "@/domain/workspace/hooks/use-update-workspace-member";
 import type { UpdateWorkspaceMemberPayload } from "@/domain/workspace/types/workspace.type";
 import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";

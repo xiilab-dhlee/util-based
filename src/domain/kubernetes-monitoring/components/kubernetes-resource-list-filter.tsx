@@ -3,7 +3,7 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
-import { Dropdown } from "xiilab-ui";
+import { Dropdown, Input } from "xiilab-ui";
 
 import {
   kubernetesResourcePageAtom,
@@ -15,7 +15,6 @@ import {
   KUBERNETES_RESOURCE_FILTER_OPTIONS,
   KUBERNETES_RESOURCE_SEARCH_CONFIG,
 } from "@/domain/kubernetes-monitoring/constants/kubernetes-monitoring.constant";
-import { SearchInput } from "@/shared/components/input/search-input";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { useSelect } from "@/shared/hooks/use-select";
@@ -57,7 +56,7 @@ export function KubernetesResourceListFilter({
    */
   const handleSearch = (value: string) => {
     resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   return (
@@ -74,10 +73,13 @@ export function KubernetesResourceListFilter({
           />
         )}
 
-        <SearchInput
-          onSearch={handleSearch}
+        <Input.Search
+          name="search"
           placeholder={searchConfig.placeholder}
+          onSearch={handleSearch}
+          autoComplete="off"
           width={220}
+          height={30}
         />
       </FilterControls>
     </MySearchFilter>

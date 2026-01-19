@@ -1,13 +1,11 @@
 "use client";
 
-import { useSetAtom } from "jotai";
-import { useResetAtom } from "jotai/utils";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect, useState } from "react";
+import { Input } from "xiilab-ui";
 
-import {
-  workspacePageAtom,
-  workspaceSearchTextAtom,
-} from "@/domain/workspace/state/workspace.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
+import { useWorkspaceListReset } from "@/domain/workspace/hooks/use-workspace-list-reset";
+import { workspaceSearchTextAtom } from "@/domain/workspace/state/workspace.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 
 interface WorkspaceListFilterProps {
@@ -29,21 +27,33 @@ export function WorkspaceListFilter({
   total,
   loading,
 }: WorkspaceListFilterProps) {
+  const searchText = useAtomValue(workspaceSearchTextAtom);
   const setSearchText = useSetAtom(workspaceSearchTextAtom);
-  const resetPage = useResetAtom(workspacePageAtom);
+  const { resetForSearch } = useWorkspaceListReset();
+  const [localSearchText, setLocalSearchText] = useState("");
 
-  /**
-   * 검색 핸들러
-   * 검색 시 페이지를 초기화하고 검색을 실행
-   */
+  useEffect(() => {
+    setLocalSearchText(searchText);
+  }, [searchText]);
+
   const handleSearch = (value: string) => {
-    resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
+    resetForSearch();
   };
 
   return (
     <MySearchFilter title="워크스페이스 목록" total={total}>
-      <SearchInput disabled={loading} onSearch={handleSearch} />
+      <Input.Search
+        name="search"
+        placeholder="검색어를 입력하세요."
+        value={localSearchText}
+        onChange={(e) => setLocalSearchText(e.target.value)}
+        onSearch={handleSearch}
+        autoComplete="off"
+        width={220}
+        height={30}
+        disabled={loading}
+      />
     </MySearchFilter>
   );
 }

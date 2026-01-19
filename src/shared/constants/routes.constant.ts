@@ -58,6 +58,8 @@ export const ROUTES = {
   ADMIN_WORKSPACE_DETAIL: (id: string) => `${MODE.ADMIN}/workspace/${id}`,
   ADMIN_WORKSPACE_MEMBER: (id: string) =>
     `${MODE.ADMIN}/workspace/${id}/member`,
+  ADMIN_WORKSPACE_DISABLED: (id: string) =>
+    `${MODE.ADMIN}/workspace/${id}/disabled`,
   ADMIN_WORKSPACE_WORKLOAD_DETAIL: (workspaceId: string, id: string) =>
     `${MODE.ADMIN}/workspace/workload/${id}?workspaceId=${workspaceId}`,
   ADMIN_WORKSPACE_WORKLOAD_LOG: (id: string) =>
@@ -92,8 +94,9 @@ export const ROUTES = {
   // 소스코드 관리 (정적)
   ADMIN_SOURCECODE_MANAGEMENT: `${MODE.ADMIN}/sourcecode-management`,
 
-  // 볼륨 관리 (정적)
-  ADMIN_VOLUME_MANAGEMENT: `${MODE.ADMIN}/volume-management`,
+  // 볼륨 관리 (동적 함수)
+  ADMIN_VOLUME: `${MODE.ADMIN}/volume`,
+  ADMIN_VOLUME_DETAIL: (id: number) => `${MODE.ADMIN}/volume/${id}`,
 
   // 리포트 관리 (동적 함수)
   ADMIN_REPORT: `${MODE.ADMIN}/report`,
@@ -116,6 +119,7 @@ export const ROUTES = {
 
   // 워크로드 (동적 함수)
   USER_WORKLOAD: `${MODE.USER}/workload`,
+  USER_WORKLOAD_DISABLED: `${MODE.USER}/workload/disabled`,
   USER_WORKLOAD_DETAIL: (id: string) => `${MODE.USER}/workload/${id}`,
   USER_WORKLOAD_LOG: (id: string) => `${MODE.USER}/workload/${id}/log`,
   USER_WORKLOAD_FILE: (id: string) => `${MODE.USER}/workload/${id}/file`,
@@ -127,6 +131,11 @@ export const ROUTES = {
     `${MODE.USER}/workload/${id}/terminal`,
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
+  USER_PRIVATE_REGISTRY: `${MODE.USER}/private-registry`,
+  USER_PRIVATE_REGISTRY_DETAIL: (name: string) =>
+    `${MODE.USER}/private-registry/${name}`,
+  USER_PRIVATE_REGISTRY_TAG: (name: string, tagId: string) =>
+    `${MODE.USER}/private-registry/${name}/${tagId}`,
   USER_INTERNAL_REGISTRY_IMAGE: `${MODE.USER}/internal-registry-image`,
   USER_INTERNAL_REGISTRY_IMAGE_DETAIL: (id: string) =>
     `${MODE.USER}/internal-registry-image/${id}`,
@@ -137,11 +146,16 @@ export const ROUTES = {
   USER_SOURCECODE: `${MODE.USER}/sourcecode`,
   USER_SOURCECODE_DETAIL: (id: string) => `${MODE.USER}/sourcecode/${id}`,
 
-  // 볼륨 (정적)
+  // 볼륨 (동적 함수)
   USER_VOLUME: `${MODE.USER}/volume`,
+  USER_VOLUME_DETAIL: (id: number) => `${MODE.USER}/volume/${id}`,
 
-  // 허브 (정적)
+  // 허브 (동적 함수)
   USER_HUB: `${MODE.USER}/hub`,
+  USER_HUB_DETAIL: (id: number | string, name?: string) =>
+    name
+      ? `${MODE.USER}/hub/${id}?name=${encodeURIComponent(name)}`
+      : `${MODE.USER}/hub/${id}`,
 
   // 설정 (정적)
   USER_SETTING: `${MODE.USER}/setting`,
@@ -150,4 +164,9 @@ export const ROUTES = {
   // Auth Routes
   // ============================================
   AUTH_SIGNIN: "/signin",
+
+  // ============================================
+  // Error Routes
+  // ============================================
+  WORKSPACE_ERROR: "/workspace-error",
 } as const;

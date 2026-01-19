@@ -1,5 +1,5 @@
-import type { MemberRow } from "@/shared/components/column/create-member-column";
-import type { GroupTreeNodeType } from "@/shared/schemas/group-tree.schema";
+import type { GroupMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { ItemType } from "@/shared/components/group-member-selector/types";
 
 /**
  * 선택된 멤버 타입 (계정과 그룹 구분)
@@ -13,7 +13,7 @@ export interface SelectedMember {
   /** 이메일 (account인 경우에만) */
   email?: string;
   /** 멤버 타입 */
-  type: GroupTreeNodeType;
+  type: ItemType;
 }
 
 /**
@@ -30,5 +30,5 @@ export interface MemberSelectionPayload {
  */
 export interface ConfirmMemberSelectionPayload {
   /** 평탄화된 멤버 목록 */
-  members: MemberRow[];
+  members: GroupMemberResponse[];
 }

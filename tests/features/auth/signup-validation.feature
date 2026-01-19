@@ -13,7 +13,7 @@ Feature: 회원가입 유효성 검증
 
   @smoke
   Scenario: Email 미입력 시 유효성 에러 표시
-    Given 회원가입 필수값이 유효하게 입력되어 있다
+    Given Email을 제외한 필수값이 유효하게 입력되어 있다
       | field            | value       |
       | Password         | xiirocks1!  |
       | Confirm Password | xiirocks1!  |
@@ -25,7 +25,7 @@ Feature: 회원가입 유효성 검증
 
   @regression
   Scenario: Password 미입력 시 유효성 에러 표시
-    Given 회원가입 필수값이 유효하게 입력되어 있다
+    Given Password를 제외한 필수값이 유효하게 입력되어 있다
       | field            | value            |
       | Email            | user1@xiilab.com |
       | Confirm Password | xiirocks1!       |
@@ -37,7 +37,7 @@ Feature: 회원가입 유효성 검증
 
   @regression
   Scenario: Confirm Password 미입력 시 유효성 에러 표시
-    Given 회원가입 필수값이 유효하게 입력되어 있다
+    Given Confirm Password를 제외한 필수값이 유효하게 입력되어 있다
       | field      | value            |
       | Email      | user1@xiilab.com |
       | Password   | xiirocks1!       |
@@ -49,7 +49,7 @@ Feature: 회원가입 유효성 검증
 
   @regression
   Scenario: First Name 미입력 시 유효성 에러 표시
-    Given 회원가입 필수값이 유효하게 입력되어 있다
+    Given First Name을 제외한 필수값이 유효하게 입력되어 있다
       | field            | value            |
       | Email            | user1@xiilab.com |
       | Password         | xiirocks1!       |
@@ -61,7 +61,7 @@ Feature: 회원가입 유효성 검증
 
   @regression
   Scenario: Last Name 미입력 시 유효성 에러 표시
-    Given 회원가입 필수값이 유효하게 입력되어 있다
+    Given Last Name을 제외한 필수값이 유효하게 입력되어 있다
       | field            | value            |
       | Email            | user1@xiilab.com |
       | Password         | xiirocks1!       |
@@ -77,51 +77,53 @@ Feature: 회원가입 유효성 검증
 
   @regression
   Scenario: Email 형식 오류 시 유효성 에러 표시
-    Given 회원가입 필수값이 유효하게 입력되어 있다
-      | field            | value        |
-      | Email            | user1@xiilab |
-      | Password         | xiirocks1!   |
-      | Confirm Password | xiirocks1!   |
-      | First Name       | 길동         |
-      | Last Name        | 홍           |
-    When 회원가입 버튼을 클릭한다
+    Given Email을 제외한 필수값이 유효하게 입력되어 있다
+      | field            | value       |
+      | Password         | xiirocks1!  |
+      | Confirm Password | xiirocks1!  |
+      | First Name       | 길동        |
+      | Last Name        | 홍          |
+    When Email 필드에 "user1@xiilab"을 입력한다
+    And 회원가입 버튼을 클릭한다
     Then Email 필드에 "올바른 이메일 형식을 입력해 주세요." 에러 메시지가 표시된다
     And 회원가입 페이지에 유지된다
 
   # --------------------------------------------
-  # Password 정책 실패 케이스 (1가지만 사용)
+  # Password 정책 실패 케이스 (영문, 숫자, 특수문자 모두 포함 필요)
   # --------------------------------------------
 
   @regression
   Scenario Outline: Password 정책 미충족 - <case>
-    Given 회원가입 필수값이 유효하게 입력되어 있다
-      | field            | value            |
-      | Email            | user1@xiilab.com |
-      | Password         | <password>       |
-      | Confirm Password | <password>       |
-      | First Name       | 길동             |
-      | Last Name        | 홍               |
-    When 회원가입 버튼을 클릭한다
-    Then Password 필드에 "영문 대소문자, 숫자, 특수문자 중 2가지 이상, 8~16자 이내로 입력해 주세요." 에러 메시지가 표시된다
+    Given Password를 제외한 필수값이 유효하게 입력되어 있다
+      | field      | value            |
+      | Email      | user1@xiilab.com |
+      | First Name | 길동             |
+      | Last Name  | 홍               |
+    When Password 필드에 "<password>"을 입력한다
+    And Confirm Password 필드에 "<password>"을 입력한다
+    And 회원가입 버튼을 클릭한다
+    Then Password 필드에 "비밀번호는 영문, 숫자, 특수문자(!@#$%^&()) 포함 8~16자 이내로 입력해 주세요." 에러 메시지가 표시된다
     And 회원가입 페이지에 유지된다
 
     Examples:
-      | case               | password          |
-      | 영문만 사용        | aaaaaaaa          |
-      | 숫자만 사용        | 12345678          |
-      | 특수문자만 사용    | !@#$%^&*          |
-      | 7자 미만           | pass1!            |
-      | 17자 초과          | password12345!@#$ |
+      | case                 | password      |
+      | 영문만 사용          | aaaaaaaa      |
+      | 숫자만 사용          | 12345678      |
+      | 특수문자만 사용      | !@#$%^&(      |
+      | 영문+숫자만 사용     | abcd1234      |
+      | 영문+특수문자만 사용 | abcd!@#$      |
+      | 숫자+특수문자만 사용 | 1234!@#$      |
+      | 8자 미만             | abc1!@#       |
 
   @regression
   Scenario: Password 불일치 시 유효성 에러 표시
-    Given 회원가입 필수값이 유효하게 입력되어 있다
-      | field            | value            |
-      | Email            | user1@xiilab.com |
-      | Password         | xiirocks1!       |
-      | Confirm Password | xiirocks2!       |
-      | First Name       | 길동             |
-      | Last Name        | 홍               |
-    When 회원가입 버튼을 클릭한다
+    Given Password를 제외한 필수값이 유효하게 입력되어 있다
+      | field      | value            |
+      | Email      | user1@xiilab.com |
+      | First Name | 길동             |
+      | Last Name  | 홍               |
+    When Password 필드에 "xiirocks1!"을 입력한다
+    And Confirm Password 필드에 "xiirocks2!"을 입력한다
+    And 회원가입 버튼을 클릭한다
     Then Confirm Password 필드에 "비밀번호가 일치하지 않습니다." 에러 메시지가 표시된다
     And 회원가입 페이지에 유지된다

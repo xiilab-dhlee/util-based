@@ -34,15 +34,10 @@ export function ListPageFooter({
   page,
   pageSize,
   onChange,
-  isLoading,
   rightChildren,
   leftChildren,
   paginationTestId,
 }: ListPageFooterProps) {
-  if (isLoading) {
-    return null;
-  }
-
   return (
     <Container justify="space-between" align="center">
       <div>{leftChildren}</div>
@@ -63,5 +58,5 @@ export function ListPageFooter({
 const Container = styled(Flex)`
   width: 100%;
   margin-top: 12px;
-  overflow: hidden;
+  height: 30px;
 `;

@@ -1,6 +1,6 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace-member.constant";
+import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace.constant";
 import { UpdateWorkspaceMemberButton } from "@/domain/workspace-member/components/update-workspace-member-button";
 import { WorkspaceMemberAllCheck } from "@/domain/workspace-member/components/workspace-member-all-check";
 import { WorkspaceMemberItemCheck } from "@/domain/workspace-member/components/workspace-member-item-check";

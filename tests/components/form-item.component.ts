@@ -65,6 +65,20 @@ export class FormItemComponent {
     return null;
   }
 
+  /**
+   * Input 요소의 Locator 반환
+   */
+  getInputLocator(): Locator {
+    return this.locator.locator("input");
+  }
+
+  /**
+   * Input 요소의 현재 값 반환
+   */
+  async getInputValue(): Promise<string> {
+    return await this.getInputLocator().inputValue();
+  }
+
   // ============================================
   // State Checks
   // ============================================

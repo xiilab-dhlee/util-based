@@ -41,33 +41,82 @@ interface CustomResponseOptions {
 
 /**
  * 엔드포인트를 Playwright glob 패턴으로 변환
+ *
+ * 쿼리 파라미터가 있는 URL도 매칭하기 위해 끝에 *를 추가합니다.
+ * 정확한 경로 매칭은 route 핸들러 내부에서 수행합니다.
+ *
+ * @param endpoint - 매칭할 API 엔드포인트 경로
+ * @returns glob 패턴 문자열
  */
 function toGlobPattern(endpoint: string): string {
   return `**${endpoint}*`;
 }
 
 /**
+ * Route 핸들러 생성 - 정확한 경로 매칭 후 응답 반환
+ *
+ * glob 패턴은 느슨하게 매칭하고, 핸들러 내부에서 pathname을 정확히 검증합니다.
+ * 이를 통해 /workload와 /workload/active를 구분합니다.
+ *
+ * @param endpoint - 정확히 매칭할 API 엔드포인트 경로
+ * @param response - 반환할 응답 객체
+ * @returns Route 핸들러 함수
+ */
+function createExactPathHandler(
+  endpoint: string,
+  response: { status: number; contentType: string; body: string },
+): (route: Route) => Promise<void> {
+  return async (route: Route) => {
+    const url = new URL(route.request().url());
+
+    // pathname이 정확히 일치하는 경우에만 응답 반환
+    if (url.pathname === endpoint) {
+      await route.fulfill(response);
+    } else {
+      // 일치하지 않으면 다음 핸들러로 전달
+      await route.fallback();
+    }
+  };
+}
+
+/**
  * 기본 500 에러 응답 생성
+ *
+ * BaseResponse 형식에 맞춰 에러 응답을 생성합니다.
  */
 function createErrorResponse() {
   return {
     status: 500,
     contentType: "application/json",
     body: JSON.stringify({
+      status: "FAIL",
       message: "Internal Server Error",
-      statusCode: 500,
+      timestamp: Date.now(),
     }),
   };
 }
 
 /**
  * 기본 빈 목록 응답 생성
+ *
+ * BaseResponse 형식에 맞춰 빈 목록 응답을 생성합니다.
+ * data 필드 안에 content와 totalSize를 포함합니다.
  */
 function createEmptyResponse() {
   return {
     status: 200,
     contentType: "application/json",
-    body: JSON.stringify({ content: [], totalSize: 0 }),
+    body: JSON.stringify({
+      status: "SUCCESS",
+      data: {
+        content: [],
+        totalSize: 0,
+        totalPageNum: 0,
+        currentPageNo: 1,
+      },
+      message: "Success",
+      timestamp: Date.now(),
+    }),
   };
 }
 
@@ -92,10 +141,9 @@ export async function mockApiError(
 ): Promise<void> {
   const response = createErrorResponse();
   const pattern = toGlobPattern(endpoint);
+  const handler = createExactPathHandler(endpoint, response);
 
-  await page.route(pattern, (route: Route) => {
-    route.fulfill(response);
-  });
+  await page.route(pattern, handler);
 }
 
 /**
@@ -115,10 +163,9 @@ export async function mockEmptyList(
 ): Promise<void> {
   const response = createEmptyResponse();
   const pattern = toGlobPattern(endpoint);
+  const handler = createExactPathHandler(endpoint, response);
 
-  await page.route(pattern, (route: Route) => {
-    route.fulfill(response);
-  });
+  await page.route(pattern, handler);
 }
 
 /**
@@ -150,8 +197,7 @@ export async function mockCustomResponse(
         : JSON.stringify(options.body),
   };
   const pattern = toGlobPattern(endpoint);
+  const handler = createExactPathHandler(endpoint, response);
 
-  await page.route(pattern, (route: Route) => {
-    route.fulfill(response);
-  });
+  await page.route(pattern, handler);
 }

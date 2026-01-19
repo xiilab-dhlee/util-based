@@ -1,5 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
 import {
   testId,
   WORKLOAD_SELECTOR,
@@ -58,7 +59,7 @@ export class WorkloadMonitoringPage extends BasePage {
   }
 
   protected get basePath(): string {
-    return "/user/workload";
+    return ROUTES.USER_WORKLOAD;
   }
 
   // ============================================
@@ -74,10 +75,11 @@ export class WorkloadMonitoringPage extends BasePage {
     workloadId: string,
     workspaceId?: string,
   ): Promise<void> {
-    const path = workspaceId
-      ? `/${workloadId}/monitoring?workspaceId=${workspaceId}`
-      : `/${workloadId}/monitoring`;
-    await this.goto(path);
+    const fullPath = workspaceId
+      ? `${ROUTES.USER_WORKLOAD_MONITORING(workloadId)}?workspaceId=${workspaceId}`
+      : ROUTES.USER_WORKLOAD_MONITORING(workloadId);
+    await this.page.goto(fullPath);
+    await this.page.waitForLoadState("networkidle");
   }
 
   // ============================================

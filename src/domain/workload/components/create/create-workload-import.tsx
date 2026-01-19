@@ -25,7 +25,7 @@ export function CreateWorkloadImport() {
     <Container>
       <Header>
         <HeaderTitle>워크스페이스</HeaderTitle>
-        <WorkspaceName>{selectedWorkspace?.name || "-"}</WorkspaceName>
+        <WorkspaceName>{selectedWorkspace?.workspaceName || "-"}</WorkspaceName>
       </Header>
       <Body>
         <BodyTitle>기존 워크로드 정보 가져오기</BodyTitle>

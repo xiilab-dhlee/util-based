@@ -20,12 +20,12 @@ export function CompactCardCollapseRow({
 }: CompactCardCollapseKeyValueProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <Container
-      type="button"
-      onClick={() => setIsOpen(!isOpen)}
-      data-testid={testId}
-    >
+    <Container type="button" onClick={handleToggle} data-testid={testId}>
       <Key>{title}</Key>
       <Description
         className={classNames({

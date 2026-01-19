@@ -1,58 +1,129 @@
 "use client";
 
 import type { Session } from "next-auth";
-import { SessionProvider, signIn, useSession } from "next-auth/react";
+import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
 
-/**
- * 세션 동기화 컴포넌트
- *
- * - 개발 환경에서 세션이 없을 때 자동 로그인
- * - AxiosService에 세션 제공자 주입
- */
-function SessionSync({ children }: PropsWithChildren) {
-  const { data: session, status } = useSession();
-  const hasAutoLoggedIn = useRef(false);
+// ============================================================================
+// 환경 설정
+// ============================================================================
 
-  // AxiosService에 세션 제공자 주입
+const isDev = process.env.NODE_ENV === "development";
+const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
+
+// ============================================================================
+// 유틸리티
+// ============================================================================
+
+function authDebug(message: string): void {
+  if (isDev) {
+    console.debug(`[AuthProvider] ${message}`);
+  }
+}
+
+// ============================================================================
+// 커스텀 훅
+// ============================================================================
+
+/**
+ * AxiosService에 세션 제공자 및 갱신자 주입
+ * - 세션 제공자: API 요청 시 자동으로 토큰 포함
+ * - 세션 갱신자: 401 에러 시 토큰 갱신 후 재시도
+ */
+function useAxiosSessionSync(session: Session | null) {
+  const { update } = useSession();
+
   useEffect(() => {
     const axiosService = AxiosService.getInstance();
-
-    // 세션 제공자 설정 - AxiosService가 동기적으로 세션에 접근 가능
-    axiosService.setSessionProvider(() => session as Session | null);
+    axiosService.setSessionProvider(() => session);
+    axiosService.setSessionUpdater(update);
 
     return () => {
       axiosService.clearSessionProvider();
+      axiosService.clearSessionUpdater();
     };
-  }, [session]);
+  }, [session, update]);
+}
 
-  // 개발 환경 자동 로그인
+/**
+ * 토큰 갱신 실패 시 로그아웃 처리
+ * - 세션 에러 감지 시 Keycloak SSO 세션까지 종료
+ * - 세션 정상화 시 에러 핸들링 플래그 리셋
+ */
+function useTokenRefreshErrorHandler(session: Session | null) {
+  const hasHandledError = useRef(false);
+
   useEffect(() => {
-    // 개발 환경에서만 동작
-    // if (process.env.NODE_ENV !== "development") {
-    //   return;
-    // }
-
-    // 로딩 중이면 대기
-    if (status === "loading") {
+    // 세션 정상 → 플래그 리셋 (다음 에러 핸들링 가능)
+    if (session && !session.error) {
+      hasHandledError.current = false;
       return;
     }
 
-    // 이미 자동 로그인 시도했으면 스킵 (중복 호출 방지)
-    if (hasAutoLoggedIn.current) {
-      return;
-    }
+    // 이미 처리됨 → 스킵
+    if (hasHandledError.current) return;
 
-    // 세션이 없으면 자동 로그인
+    // 토큰 갱신 실패 → 로그아웃 (Keycloak SSO 세션까지 종료)
+    if (session?.error === "RefreshAccessTokenError") {
+      hasHandledError.current = true;
+      authDebug("❌ 토큰 갱신 실패 → 로그아웃 후 재로그인 필요");
+
+      // 테스트 환경: credentials 프로바이더로 재로그인
+      // 프로덕션 환경: Keycloak SSO 세션까지 종료 후 로그인 페이지로 이동
+      if (useTestAuth) {
+        void signIn("credentials", { redirect: false });
+      } else {
+        void signOut({ callbackUrl: "/signin" });
+      }
+    }
+  }, [session]);
+}
+
+/**
+ * 테스트 환경 자동 로그인
+ * TEST_AUTH_ENABLE=true일 때 세션이 없으면 자동으로 로그인
+ */
+function useTestAutoLogin(
+  status: "loading" | "authenticated" | "unauthenticated",
+) {
+  const hasAutoLoggedIn = useRef(false);
+
+  useEffect(() => {
+    if (!useTestAuth) return;
+    if (status === "loading") return;
+    if (hasAutoLoggedIn.current) return;
+
     if (status === "unauthenticated") {
       hasAutoLoggedIn.current = true;
-      signIn("credentials", {
-        redirect: false,
-      });
+      authDebug("🔑 테스트 환경 자동 로그인 시도");
+      void signIn("credentials", { redirect: false });
     }
   }, [status]);
+}
+
+// ============================================================================
+// 컴포넌트
+// ============================================================================
+
+/**
+ * 세션 동기화 컴포넌트
+ * - AxiosService에 세션 주입
+ * - 토큰 갱신 실패 시 재로그인
+ * - 테스트 환경 자동 로그인
+ */
+function SessionSync({ children }: PropsWithChildren) {
+  const { data: session, status } = useSession();
+
+  useAxiosSessionSync(session);
+  useTokenRefreshErrorHandler(session);
+  useTestAutoLogin(status);
+
+  // 세션 로딩 중에는 children을 렌더링하지 않음
+  if (status === "loading") {
+    return null; // 또는 로딩 스피너
+  }
 
   return <>{children}</>;
 }
@@ -61,18 +132,13 @@ function SessionSync({ children }: PropsWithChildren) {
  * NextAuth SessionProvider 래퍼
  *
  * 클라이언트 컴포넌트에서 useSession 훅을 사용할 수 있도록 합니다.
- * 세션 정보는 자동으로 /api/auth/session 엔드포인트에서 가져옵니다.
- *
- * 개발 환경에서는 세션이 없을 때 자동으로 테스트 계정으로 로그인합니다.
  * AxiosService에 세션을 주입하여 API 요청 시 자동으로 토큰이 포함됩니다.
  */
 export function AuthProvider({ children }: PropsWithChildren) {
   return (
     <SessionProvider
-      // 세션 갱신 간격 (초 단위) - 5분마다 세션 상태 확인
-      refetchInterval={5 * 60}
-      // 윈도우 포커스 시 세션 갱신 비활성화 (중복 호출 방지)
-      refetchOnWindowFocus={false}
+      refetchInterval={5 * 60} // 5분마다 세션 상태 확인
+      refetchOnWindowFocus={false} // 윈도우 포커스 시 세션 갱신 비활성화
     >
       <SessionSync>{children}</SessionSync>
     </SessionProvider>

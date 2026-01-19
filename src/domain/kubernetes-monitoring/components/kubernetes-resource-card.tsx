@@ -2,6 +2,8 @@
 
 import styled from "styled-components";
 
+import { formatNumber } from "@/shared/utils/format.util";
+
 interface KubernetesResourceCardProps {
   resourceName: string;
   count: number;
@@ -23,7 +25,7 @@ export function KubernetesResourceCard({
       <Body>
         <Record>
           <Key>개수</Key>
-          <Value>{count.toLocaleString()}</Value>
+          <Value>{formatNumber(count)}</Value>
         </Record>
       </Body>
     </Container>

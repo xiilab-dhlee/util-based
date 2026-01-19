@@ -1,10 +1,15 @@
 "use client";
 
+import { useAtom } from "jotai";
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteGroup } from "@/domain/group/hooks/use-delete-group";
-import { openDeleteGroupModalAtom } from "@/domain/group/state/group.atom";
+import { useDeleteGroupAction } from "@/domain/group/hooks/group-actions";
+import {
+  openDeleteGroupModalAtom,
+  selectedItemAtom,
+} from "@/domain/group/state/group.atom";
+import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -21,7 +26,10 @@ export function DeleteGroupModal() {
   // 삭제할 그룹 ID
   const [deleteGroupId, setDeleteGroupId] = useState<string>("");
 
-  const deleteGroup = useDeleteGroup();
+  // 선택된 항목 (삭제 후 선택 초기화 시 사용)
+  const [selected, setSelected] = useAtom(selectedItemAtom);
+
+  const deleteGroup = useDeleteGroupAction();
 
   /**
    * 폼 제출 처리 함수
@@ -31,12 +39,23 @@ export function DeleteGroupModal() {
    */
   const handleOk = () => {
     // 그룹 삭제 실행
-    deleteGroup.mutate(deleteGroupId, {
-      onSuccess: () => {
-        // 모달 닫기
-        onClose();
+    deleteGroup.mutate(
+      { groupId: deleteGroupId },
+      {
+        onSuccess: () => {
+          // 삭제된 그룹이 현재 선택된 그룹이면 선택 초기화
+          if (
+            selected?.type === ITEM_TYPES.GROUP &&
+            selected.id === deleteGroupId
+          ) {
+            setSelected(null);
+          }
+
+          // 모달 닫기
+          onClose();
+        },
       },
-    });
+    );
   };
 
   /**

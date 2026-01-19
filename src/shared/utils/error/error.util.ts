@@ -1,163 +1,53 @@
-import type { QueryKey } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
+import { isAxiosError } from "axios";
+import { isString } from "es-toolkit/predicate";
 
-import type { ErrorConfig } from "@/shared/types/error.type";
-import { getAllErrorConfigs } from "@/shared/utils/error/error";
+import { BackendError } from "@/shared/types/error.type";
+import { isEnvelopeResponse } from "@/shared/utils/api-response-envelope.util";
 
-// 🎯 모든 도메인의 에러 설정은 `@/constants/error`에서 통합 관리합니다.
-
-/**
- * 쿼리 키를 문자열로 변환 (방어적 처리 포함)
- * ['workloads', 'list'] -> 'workloads.list'
- * [123, {id: 1}] -> '123.{"id":1}'
- * [null, undefined] -> 'null.undefined'
- */
-const normalizeQueryKeySegments = (queryKey: QueryKey): string[] => {
-  if (!Array.isArray(queryKey) || queryKey.length === 0) {
-    return [];
-  }
-
-  return queryKey
-    .map((element) => {
-      // null 명시적 처리
-      if (element === null) {
-        return "null";
-      }
-
-      // undefined 처리
-      if (element === undefined) {
-        return "undefined";
-      }
-
-      // 원시 타입 (string, number, boolean)
-      if (
-        typeof element === "string" ||
-        typeof element === "number" ||
-        typeof element === "boolean"
-      ) {
-        return String(element);
-      }
-
-      // 객체 타입 (배열 포함)
-      try {
-        return JSON.stringify(element);
-      } catch {
-        // JSON.stringify 실패 시 문자열로 변환
-        return String(element);
-      }
-    })
-    .map((str) => str.replace(/\./g, "_")) // 점을 언더스코어로 대체
-    .filter((str) => str.length > 0); // 빈 문자열 제거
-};
-
-const getQueryKeyString = (queryKey: QueryKey): string => {
-  const normalizedKeys = normalizeQueryKeySegments(queryKey);
-  if (normalizedKeys.length === 0) {
-    return "default";
-  }
-  return normalizedKeys.join(".");
+const DEFAULT_ERROR_MESSAGES: Record<number, string> = {
+  401: "로그인이 필요합니다.",
+  403: "접근 권한이 없습니다.",
+  404: "요청한 데이터를 찾을 수 없습니다.",
+  500: "서버에 문제가 발생했습니다.",
+  0: "네트워크 연결을 확인해주세요.",
 };
 
 /**
- * 쿼리 키 기반으로 에러 설정 조회
+ * 에러에서 백엔드 메시지 추출
+ * BackendError, AxiosError, 일반 Error 모두 처리
  */
-export const getQueryErrorConfig = (queryKey: QueryKey): ErrorConfig => {
-  const allErrorConfigs = getAllErrorConfigs();
-
-  const segments = normalizeQueryKeySegments(queryKey);
-  if (segments.length === 0) {
-    return allErrorConfigs.default;
-  }
-
-  // 가장 구체적인 키부터 점점 상위(domain.action.action2...)로 폴백
-  for (let depth = segments.length; depth > 0; depth--) {
-    const key = segments.slice(0, depth).join(".");
-    const config = allErrorConfigs[key];
-    if (config) {
-      return config;
-    }
-  }
-
-  return allErrorConfigs.default;
-};
-
-/**
- * 에러 메시지 가져오기 (방어적 검증 포함)
- */
-export const getErrorMessage = (
-  queryKey: QueryKey,
-  error: AxiosError,
+export const getBackendErrorMessage = (
+  error: unknown,
+  fallback = "요청 처리 중 오류가 발생했습니다.",
 ): string => {
-  // 1. getQueryErrorConfig 결과를 안전한 기본값으로 폴백
-  let config: ErrorConfig;
-  try {
-    config = getQueryErrorConfig(queryKey);
-    // config가 null이거나 undefined인 경우 기본값 사용
-    if (!config || typeof config !== "object") {
-      config = {
-        showToast: true,
-        errorMessage: "요청 처리 중 오류가 발생했습니다.",
-        statusMessages: {},
-      };
+  // 1) 백엔드 비즈니스 에러(HTTP 200이지만 FAIL/ERROR)
+  if (error instanceof BackendError) {
+    return error.message;
+  }
+
+  // 2) AxiosError
+  if (isAxiosError(error)) {
+    const responseData = error.response?.data;
+
+    // 2-1) 백엔드 엔벨로프 메시지 우선
+    if (isEnvelopeResponse(responseData) && isString(responseData.message)) {
+      return responseData.message;
     }
-  } catch {
-    // getQueryErrorConfig 호출 실패 시 기본값 사용
-    config = {
-      showToast: true,
-      errorMessage: "요청 처리 중 오류가 발생했습니다.",
-      statusMessages: {},
-    };
+
+    // 2-2) HTTP 상태코드 기본 메시지
+    const statusCode = error.response?.status ?? 0;
+    const defaultMessage = DEFAULT_ERROR_MESSAGES[statusCode];
+    if (defaultMessage) return defaultMessage;
+
+    // 2-3) axios 에러 메시지(네트워크/기타)
+    if (error.message) return error.message;
+    return fallback;
   }
 
-  // 2. statusCode 안전한 추출 (옵셔널 체이닝과 타입 강제 변환)
-  const statusCode = Number(error?.response?.status ?? error?.status) || 0;
-
-  // 3. statusMessages 객체 검증 후 안전한 인덱싱
-  if (
-    config.statusMessages &&
-    typeof config.statusMessages === "object" &&
-    config.statusMessages !== null
-  ) {
-    // statusCode로 직접 조회 (Record<number, string> 타입에 맞춰)
-    const statusMessage = config.statusMessages[statusCode];
-
-    // 상태별 메시지가 존재하고 문자열인 경우에만 반환
-    if (statusMessage && typeof statusMessage === "string") {
-      return statusMessage;
-    }
+  // 3) 일반 Error
+  if (error instanceof Error) {
+    return error.message;
   }
 
-  // 4. config.errorMessage에 대한 합리적인 폴백
-  const fallbackMessage = "요청 처리 중 오류가 발생했습니다.";
-
-  if (config.errorMessage && typeof config.errorMessage === "string") {
-    return config.errorMessage;
-  }
-
-  return fallbackMessage;
-};
-
-/**
- * 토스트 표시 여부 확인
- */
-export const shouldShowToast = (queryKey: QueryKey): boolean => {
-  const config = getQueryErrorConfig(queryKey);
-  return config.showToast;
-};
-
-/**
- * 개발 모드에서 디버깅 정보 출력
- */
-export const logErrorInfo = (queryKey: QueryKey, error: AxiosError): void => {
-  if (process.env.NODE_ENV === "development") {
-    const keyString = getQueryKeyString(queryKey);
-    const config = getQueryErrorConfig(queryKey);
-
-    console.group(`🚨 Query Error: ${keyString}`);
-    console.log("Query Key:", queryKey);
-    console.log("Error:", error);
-    console.log("Config:", config);
-    console.log("Message:", getErrorMessage(queryKey, error));
-    console.groupEnd();
-  }
+  return fallback;
 };

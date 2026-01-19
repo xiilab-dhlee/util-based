@@ -9,18 +9,20 @@
 
 import { delay, type HttpHandler } from "msw";
 
+import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
+import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
+import { groupHandlers } from "@/domain/group/mocks";
+import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
-import { credentialHandlers } from "@/mocks/handlers/credential.handler";
+import { systemSettingHandlers } from "@/domain/system-setting/mocks";
+import { volumeHandlers } from "@/domain/volume/mocks";
+import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
-import { groupHandlers } from "@/mocks/handlers/group.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
-import { internalregistryHandlers } from "@/mocks/handlers/internal-registry.handler";
-import { internalregistryImageHandlers } from "@/mocks/handlers/internal-registry-image.handler";
-import { kubernetesMonitoringHandlers } from "@/mocks/handlers/kubernetes-monitoring.handler";
 import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { nodeHandlers } from "@/mocks/handlers/node.handler";
@@ -35,10 +37,7 @@ import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 import { storageSettingHandlers } from "@/mocks/handlers/storage-setting.handler";
 import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
-import { volumeHandlers } from "@/mocks/handlers/volume.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
-import { workspaceHandlers } from "@/mocks/handlers/workspace.handler";
-import { workspaceMemberHandlers } from "@/mocks/handlers/workspace-member.handler";
 
 // ============================================
 // Lazy Mock 지연 래퍼
@@ -94,24 +93,23 @@ function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
  * 원본 핸들러 (지연 미적용)
  */
 const rawHandlers = [
+  ...hubHandlers,
   ...workloadHandlers,
   ...sourcecodeHandlers,
   ...volumeHandlers,
-  ...hubHandlers,
-  ...workspaceMemberHandlers,
+  ...getWorkspaceMemberMock(),
+  ...getAdminK8sMock(),
+  ...systemSettingHandlers,
+  ...groupHandlers,
   ...workspaceHandlers,
   ...requestResourceHandlers,
   ...requestImageHandlers,
   ...nodeHandlers,
   ...redfishHandlers,
   ...accountManagementHandlers,
-  ...groupHandlers,
   ...notificationHandlers,
   ...monitoringHandlers,
-  ...internalregistryHandlers,
-  ...internalregistryImageHandlers,
-  ...kubernetesMonitoringHandlers,
-  ...credentialHandlers,
+  ...privateRegistryHandlers,
   ...gpuHandlers,
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,

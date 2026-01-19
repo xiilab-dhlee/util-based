@@ -40,11 +40,12 @@ export const getGetWorkloadResourceMetricsTimeseriesResponseMock = (
   overrideResponse: Partial<BaseResponseListWorkloadMetricsTimeseriesResponse> = {},
 ): BaseResponseListWorkloadMetricsTimeseriesResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
     data: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
@@ -65,11 +66,12 @@ export const getGetResourceMetricsTimeseriesResponseMock = (
   overrideResponse: Partial<BaseResponseListTimeGroupedResourceMetricsResponse> = {},
 ): BaseResponseListTimeGroupedResourceMetricsResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
     data: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,

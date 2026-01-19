@@ -30,7 +30,7 @@
 import * as zod from "zod";
 
 /**
- * 워크스페이스 정보(워크스페이스명, 상세 설명)를 수정합니다. OWNER 또는 ADMIN 권한이 필요합니다.
+ * 워크스페이스 정보(워크스페이스명, 상세 설명)를 수정합니다. OWNER 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 워크스페이스 수정
  */
 export const updateWorkspaceParams = zod.object({
@@ -63,6 +63,7 @@ export const updateWorkspaceBody = zod
 export const updateWorkspaceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         workspaceId: zod.number().describe("워크스페이스 ID"),
@@ -107,6 +108,7 @@ export const setDefaultWorkspaceBody = zod
 export const setDefaultWorkspaceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -125,12 +127,17 @@ export const getAllWorkspacesQueryParams = zod.object({
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod.number().min(1).optional().describe("페이지 크기"),
+  hasMyWorkspace: zod
+    .boolean()
+    .optional()
+    .describe("내 워크스페이스만 조회 여부"),
   keyword: zod.string().optional().describe("검색 키워드"),
 });
 
 export const getAllWorkspacesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -274,15 +281,16 @@ export const getResourceRequestsQueryParams = zod.object({
     .optional()
     .describe("페이지 크기"),
   sort: zod
-    .enum(["REQUESTED_AT", "WORKSPACE_NAME", "APPROVAL_STATUS"])
+    .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
     .optional()
     .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional(),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getResourceRequestsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -474,6 +482,7 @@ export const getWorkspaceDetailParams = zod.object({
 export const getWorkspaceDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         workspaceName: zod.string().describe("워크스페이스 이름"),
@@ -497,6 +506,7 @@ export const getWorkspaceDetailResponse = zod
 export const getDefaultResourceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         resource: zod

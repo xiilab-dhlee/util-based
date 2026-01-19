@@ -1,8 +1,9 @@
 "use client";
 
 import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
-import { ListEmpty } from "@/shared/components/layouts/list-empty";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { SettingCredentialCard } from "./setting-credential-card";
 
@@ -41,10 +42,7 @@ export function SettingCredentialListBody({
   if (isError) {
     return (
       <ListWrapper>
-        <ListEmpty
-          title="오류가 발생했습니다."
-          message="잠시 후 다시 시도해 주세요."
-        />
+        <EmptyState title={TABLE_MESSAGE.ERROR} />
       </ListWrapper>
     );
   }
@@ -53,10 +51,7 @@ export function SettingCredentialListBody({
   if (content.length === 0) {
     return (
       <ListWrapper>
-        <ListEmpty
-          title="크리덴셜이 없습니다."
-          message="크리덴셜을 생성하여 사용해보세요."
-        />
+        <EmptyState />
       </ListWrapper>
     );
   }

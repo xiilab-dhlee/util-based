@@ -1,96 +1,105 @@
 "use client";
 
-import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
-import { createRequestResourceColumn } from "@/shared/components/column/create-request-resource-column";
+import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import type { TableProps } from "xiilab-ui";
+
+import type { ResourceRequestListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { createSettingRequestResourceColumn } from "@/domain/setting/components/column/create-setting-request-resource-column";
+import {
+  SETTING_REQUEST_RESOURCE_SORT_FIELDS,
+  type SettingRequestResourceSortField,
+} from "@/domain/setting/constants/setting.constant";
+import {
+  settingRequestResourcePageAtom,
+  settingRequestResourceSortAtom,
+} from "@/domain/setting/state/setting.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface SettingRequestResourceListBodyProps {
-  /** 리소스 요청 목록 데이터 */
-  content: RequestResourceListType[];
-  /** 로딩 상태 */
-  loading: boolean;
-  /** 에러 상태 */
+  items: ResourceRequestListResponse[];
+  isLoading: boolean;
   isError: boolean;
+  canManageWorkspace?: boolean;
 }
 
-/**
- * 설정 리소스 요청 목록 본문 컴포넌트
- *
- * 리소스 요청 목록의 테이블을 표시합니다.
- */
+const MANAGEABLE_COLUMN_KEYS = [
+  "creatorName",
+  "requestedAt",
+  "gpu",
+  "mps",
+  "mig",
+  "cpu",
+  "memory",
+  "approvalStatus",
+  "approvedAt",
+  "rejectReason",
+  "requestReason",
+] as const;
+
+const MANAGEABLE_WITH_ACTION_COLUMN_KEYS = [
+  ...MANAGEABLE_COLUMN_KEYS,
+  "cancel",
+] as const;
+
+type ColumnKey =
+  | (typeof MANAGEABLE_COLUMN_KEYS)[number]
+  | (typeof MANAGEABLE_WITH_ACTION_COLUMN_KEYS)[number];
+
+const toColumnConfigs = (
+  keys: readonly ColumnKey[],
+): CoreCreateColumnConfig[] => keys.map((key) => ({ key }));
+
+const ALLOWED_SORT_FIELDS = Object.values(SETTING_REQUEST_RESOURCE_SORT_FIELDS);
+
 export function SettingRequestResourceListBody({
-  content,
-  loading,
+  items,
+  isLoading,
   isError,
+  canManageWorkspace = false,
 }: SettingRequestResourceListBodyProps) {
+  const [sortState, setSortState] = useAtom(settingRequestResourceSortAtom);
+  const resetPage = useResetAtom(settingRequestResourcePageAtom);
+
+  const columns = createSettingRequestResourceColumn(
+    {
+      sortState,
+    },
+    toColumnConfigs(
+      canManageWorkspace
+        ? MANAGEABLE_WITH_ACTION_COLUMN_KEYS
+        : MANAGEABLE_COLUMN_KEYS,
+    ),
+  );
+
+  const handleChange: TableProps<ResourceRequestListResponse>["onChange"] = (
+    _,
+    __,
+    sorter,
+  ) => {
+    const next = parseSorterToAntdState<
+      ResourceRequestListResponse,
+      SettingRequestResourceSortField
+    >(sorter, ALLOWED_SORT_FIELDS);
+
+    setSortState({ field: next.field, order: next.order });
+
+    resetPage();
+  };
+
   return (
     <ListWrapper>
-      <CustomizedTable
-        columns={createRequestResourceColumn([
-          {
-            dataIndex: "requester",
-            title: "요청자",
-            align: "center",
-            width: 60,
-            sorter: true,
-          },
-          {
-            dataIndex: "creatorDateTime",
-            title: "요청일시",
-            align: "left",
-            width: 120,
-            sorter: true,
-          },
-          {
-            dataIndex: "gpuReq",
-            width: 50,
-          },
-          {
-            dataIndex: "cpuReq",
-            width: 70,
-          },
-          {
-            dataIndex: "memReq",
-            width: 70,
-          },
-          {
-            dataIndex: "migCount",
-            width: 50,
-          },
-          {
-            dataIndex: "mpsReq",
-            width: 50,
-          },
-          {
-            dataIndex: "status",
-            title: "승인여부",
-            width: 70,
-            sorter: true,
-          },
-          {
-            dataIndex: "modDate",
-            title: "승인일시",
-            align: "left",
-            width: 120,
-          },
-          {
-            dataIndex: "rejectReason",
-            width: 65,
-          },
-          {
-            dataIndex: "requestReason",
-            width: 65,
-          },
-          {
-            dataIndex: "delete",
-            width: 65,
-          },
-        ])}
-        data={content}
-        loading={loading}
+      <CustomizedTable<ResourceRequestListResponse>
+        columns={columns}
+        data={items}
+        loading={isLoading}
         isError={isError}
-        columnHeight={36}
+        activePadding
+        rowKey="resourceRequestId"
+        onChange={handleChange}
       />
     </ListWrapper>
   );

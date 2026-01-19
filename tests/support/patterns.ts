@@ -6,53 +6,6 @@
  * - Step Definition에서 import하여 사용
  */
 
-// ============================================
-// String Type Aliases
-// ============================================
-
-/**
- * 상대 시간 문자열 형식
- *
- * RELATIVE_TIME_PATTERN과 일치하는 정확한 타입 정의
- *
- * @example "방금 전"
- * @example "5분 전"
- * @example "3시간 전"
- * @example "2일 전"
- * @example "2일 3시간 전"
- * @example "2일 30분 전"
- * @example "2일 3시간 30분 전"
- */
-export type RelativeTimeString =
-  | "방금 전"
-  | `${number}분 전`
-  | `${number}시간 전`
-  | `${number}일 전`
-  | `${number}일 ${number}시간 전`
-  | `${number}일 ${number}분 전`
-  | `${number}일 ${number}시간 ${number}분 전`;
-
-/**
- * 날짜/시간 문자열 형식 (yyyy.MM.dd HH:mm:ss)
- *
- * @example "2024.01.15 14:30:00"
- * @example "2025.12.31 23:59:59"
- */
-export type DateTimeString =
-  `${number}.${number}.${number} ${number}:${number}:${number}`;
-
-/**
- * 날짜 문자열 형식 (yyyy.MM.dd)
- *
- * @example "2024.01.15"
- * @example "2025.12.31"
- */
-export type DateString = `${number}.${number}.${number}`;
-
-// ============================================
-// RegExp Patterns
-// ============================================
-
 /**
  * 상대 시간 표시 패턴 (formatElapsedTime 출력 형식)
  *
@@ -72,19 +25,52 @@ export const RELATIVE_TIME_PATTERN: RegExp =
 
 /**
  * 날짜/시간 표시 패턴 (yyyy.MM.dd HH:mm:ss)
+ * 엄격한 범위 검증: 월(01-12), 일(01-31), 시(00-23), 분/초(00-59)
  *
  * 매칭 예시:
  * - "2024.01.15 14:30:00"
  * - "2025.12.31 23:59:59"
+ *
+ * 거부 예시:
+ * - "2024.13.01 00:00:00" (월 범위 초과)
+ * - "2024.01.32 00:00:00" (일 범위 초과)
+ * - "2024.01.15 25:00:00" (시 범위 초과)
  */
 export const DATETIME_PATTERN: RegExp =
-  /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}$/;
+  /^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
 /**
  * 날짜 표시 패턴 (yyyy.MM.dd)
+ * 엄격한 범위 검증: 월(01-12), 일(01-31)
  *
  * 매칭 예시:
  * - "2024.01.15"
  * - "2025.12.31"
+ *
+ * 거부 예시:
+ * - "2024.13.01" (월 범위 초과)
+ * - "2024.01.32" (일 범위 초과)
+ * - "2024.1.5" (2자리 필수)
  */
-export const DATE_PATTERN: RegExp = /^\d{4}\.\d{2}\.\d{2}$/;
+export const DATE_PATTERN: RegExp =
+  /^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$/;
+
+// ============================================
+// 단위 패턴 (숫자 + 단위)
+// ============================================
+
+/**
+ * 단위 패턴 생성 함수
+ *
+ * 숫자(천단위 콤마 지원) + 단위 형식의 패턴을 생성합니다.
+ *
+ * @param unit - 단위 문자열 (예: "개", "번", "회")
+ * @returns 생성된 정규식 패턴
+ *
+ * @example
+ * createUnitPattern("개")  // /^\d+(,\d{3})*개$/  → "5개", "1,234개"
+ * createUnitPattern("번")  // /^\d+(,\d{3})*번$/  → "5번", "1,234번"
+ * createUnitPattern("회")  // /^\d+(,\d{3})*회$/  → "5회", "1,234회"
+ */
+export const createUnitPattern = (unit: string): RegExp =>
+  new RegExp(`^\\d+(,\\d{3})*${unit}$`);

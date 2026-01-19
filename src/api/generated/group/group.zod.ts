@@ -40,6 +40,7 @@ export const getGroupChildrenParams = zod.object({
 export const getGroupChildrenResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         group: zod
@@ -48,6 +49,7 @@ export const getGroupChildrenResponse = zod
               .object({
                 groupId: zod.string().describe("그룹 ID (Keycloak Group ID)"),
                 groupName: zod.string().describe("그룹 이름"),
+                memberCount: zod.number().describe("그룹원 수"),
               })
               .strict()
               .describe("그룹 요약 정보 응답"),
@@ -85,6 +87,7 @@ export const getGroupDetailParams = zod.object({
 export const getGroupDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         groupName: zod.string().describe("그룹 이름"),
@@ -121,18 +124,117 @@ export const getGroupDetailResponse = zod
   .strict();
 
 /**
+ * 어떤 그룹에도 소속되지 않은 승인된 사용자 목록을 페이징하여 조회합니다.
+ * @summary 그룹 미소속 사용자 목록 조회
+ */
+export const getUngroupedAccountsQueryPageNoMin = 0;
+
+export const getUngroupedAccountsQueryPageSizeMax = 100;
+
+export const getUngroupedAccountsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getUngroupedAccountsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getUngroupedAccountsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+});
+
+export const getUngroupedAccountsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              accountId: zod.string().describe("계정 ID (Keycloak User ID)"),
+              accountName: zod.string().describe("계정 이름"),
+              email: zod.string().optional().describe("계정 이메일"),
+            })
+            .strict()
+            .describe("그룹 멤버 정보 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 키워드로 그룹명과 계정명을 동시에 검색합니다. 그룹은 트리 구조로, 계정은 소속 그룹명과 함께 반환됩니다.
+ * @summary 그룹 및 계정 통합 검색
+ */
+export const searchQueryParams = zod.object({
+  keyword: zod.string().describe("검색 키워드 (그룹명, 계정명)"),
+});
+
+export const searchResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        group: zod
+          .array(
+            zod
+              .object({
+                groupId: zod.string().describe("그룹 ID (Keycloak Group ID)"),
+                groupName: zod.string().describe("그룹 이름"),
+                memberCount: zod.number().describe("그룹원 수"),
+              })
+              .strict()
+              .describe("그룹 요약 정보 응답"),
+          )
+          .describe("검색된 그룹 목록"),
+        account: zod
+          .array(
+            zod
+              .object({
+                accountId: zod.string().describe("계정 ID (Keycloak User ID)"),
+                accountName: zod.string().describe("계정 이름"),
+                email: zod.string().optional().describe("계정 이메일"),
+                group: zod.array(zod.string()).describe("소속 그룹명 목록"),
+              })
+              .strict()
+              .describe("계정 정보 (소속 그룹명 포함)"),
+          )
+          .describe("검색된 계정 목록 (소속 그룹명 포함)"),
+      })
+      .strict()
+      .optional()
+      .describe("그룹 및 계정 통합 검색 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 최상위 그룹(부모가 없는 그룹) 목록을 조회합니다.
  * @summary 루트 그룹 목록 조회
  */
 export const getRootGroupsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
           .object({
             groupId: zod.string().describe("그룹 ID (Keycloak Group ID)"),
             groupName: zod.string().describe("그룹 이름"),
+            memberCount: zod.number().describe("그룹원 수"),
           })
           .strict()
           .describe("그룹 요약 정보 응답"),

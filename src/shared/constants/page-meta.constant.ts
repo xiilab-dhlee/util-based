@@ -143,6 +143,11 @@ export const PAGE_META = {
     href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_MEMBER(id),
     parent: "admin.workspace.detail",
   },
+  "admin.workspace.disabled": {
+    title: "비활성 워크스페이스",
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_DISABLED(id),
+    parent: "admin.workspace.detail",
+  },
   "admin.workspace.request-resource": {
     title: "리소스 신청 관리",
     iconName: "Resource",
@@ -248,12 +253,17 @@ export const PAGE_META = {
   },
 
   // ============================================
-  // Admin Routes - Volume Management
+  // Admin Routes - Volume
   // ============================================
-  "admin.volume-management": {
+  "admin.volume": {
     title: "볼륨 관리",
     iconName: "Volume",
-    href: ROUTES.ADMIN_VOLUME_MANAGEMENT,
+    href: ROUTES.ADMIN_VOLUME,
+  },
+  "admin.volume.detail": {
+    title: "볼륨 상세",
+    href: ({ id }: { id: string }) => ROUTES.ADMIN_VOLUME_DETAIL(Number(id)),
+    parent: "admin.volume",
   },
 
   // ============================================
@@ -318,6 +328,11 @@ export const PAGE_META = {
     iconName: "Workload",
     href: ROUTES.USER_WORKLOAD,
   },
+  "user.workload.disabled": {
+    title: "비활성 워크로드",
+    href: ROUTES.USER_WORKLOAD_DISABLED,
+    parent: "user.workload",
+  },
   "user.workload.detail": {
     title: "워크로드 상세",
     href: ({ id }: { id: string }) => ROUTES.USER_WORKLOAD_DETAIL(id),
@@ -352,6 +367,23 @@ export const PAGE_META = {
   // ============================================
   // User Routes - Registry
   // ============================================
+  "user.private-registry": {
+    title: "개인 레지스트리",
+    iconName: "PrivateRegistry",
+    href: ROUTES.USER_PRIVATE_REGISTRY,
+  },
+  "user.private-registry.detail": {
+    title: "컨테이너 이미지 상세정보",
+    href: ({ name }: { name: string }) =>
+      ROUTES.USER_PRIVATE_REGISTRY_DETAIL(name),
+    parent: "user.private-registry",
+  },
+  "user.private-registry.tag": {
+    title: "태그 상세정보",
+    href: ({ name, tagId }: { name: string; tagId: string }) =>
+      ROUTES.USER_PRIVATE_REGISTRY_TAG(name, tagId),
+    parent: "user.private-registry.detail",
+  },
   "user.internal-registry-image": {
     title: "내부 레지스트리",
     iconName: "Image",
@@ -412,19 +444,11 @@ export const PAGE_META = {
   },
 
   // ============================================
-  // Common Settings (no href, 레이아웃 내부 설정 페이지)
+  // Error Routes
   // ============================================
-  "setting.profile": {
-    title: "프로필 관리",
-    iconName: "Profile",
-  },
-  "setting.alert": {
-    title: "알림 설정",
-    iconName: "Alert",
-  },
-  "setting.member": {
-    title: "멤버 관리",
-    iconName: "Member",
+  "workspace-error": {
+    title: "워크스페이스 오류",
+    href: ROUTES.WORKSPACE_ERROR,
   },
 } as const;
 

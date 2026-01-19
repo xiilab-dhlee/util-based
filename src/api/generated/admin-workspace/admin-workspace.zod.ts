@@ -97,13 +97,14 @@ export const updateWorkspaceResourceBody = zod
 export const updateWorkspaceResourceResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
   .strict();
 
 /**
- * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다.
+ * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다. 반려 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 반려
  */
 export const rejectResourceRequestParams = zod.object({
@@ -125,7 +126,7 @@ export const rejectResourceRequestBody = zod
   .describe("워크스페이스 리소스 요청 반려");
 
 /**
- * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다.
+ * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다. 승인 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 승인
  */
 export const approveResourceRequestParams = zod.object({
@@ -133,13 +134,14 @@ export const approveResourceRequestParams = zod.object({
 });
 
 /**
- * 워크스페이스 정책을 조회합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 확인할 수 있습니다.
+ * 워크스페이스 정책을 조회합니다. 기본 리소스 할당량과 한 계정당 워크스페이스 생성 제한 수를 확인할 수 있습니다.
  * @summary 관리자용 워크스페이스 정책 조회
  */
 
 export const getPolicySetResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         resource: zod
@@ -223,7 +225,7 @@ export const getPolicySetResponse = zod
   .strict();
 
 /**
- * 워크스페이스 정책을 수정합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 설정할 수 있습니다.
+ * 워크스페이스 정책을 수정합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 설정할 수 있습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 관리자용 워크스페이스 정책 수정
  */
 
@@ -299,6 +301,7 @@ export const updatePolicySetBody = zod
 export const updatePolicySetResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         resource: zod
@@ -400,33 +403,34 @@ export const deleteWorkspacesBody = zod
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. 워크스페이스명, 생성자명으로 검색이 가능합니다. 생성일, 워크스페이스명, 생성자명으로 정렬이 가능합니다.
  * @summary 관리자용 워크스페이스 목록 조회
  */
-export const getAllWorkspaces1QueryPageSearchRequestPageSizeMax = 100;
+export const getAllWorkspaces1QueryPageNoMin = 0;
+
+export const getAllWorkspaces1QueryPageSizeMax = 100;
 
 export const getAllWorkspaces1QueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getAllWorkspaces1QueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
-      .describe("정렬 기준 필드"),
-    order: zod
-      .enum(["ASC", "DESC"])
-      .describe(
-        "정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용",
-      ),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllWorkspaces1QueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAllWorkspaces1QueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getAllWorkspaces1Response = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -576,33 +580,34 @@ export const getWorkspaceMembers1Params = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getWorkspaceMembers1QueryPageSearchRequestPageSizeMax = 100;
+export const getWorkspaceMembers1QueryPageNoMin = 0;
+
+export const getWorkspaceMembers1QueryPageSizeMax = 100;
 
 export const getWorkspaceMembers1QueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getWorkspaceMembers1QueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["ACCOUNT_NAME", "MEMBER_ROLE", "CREATED_AT"])
-      .describe("정렬 기준 필드"),
-    order: zod
-      .enum(["ASC", "DESC"])
-      .describe(
-        "정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용",
-      ),
-  }),
+  pageNo: zod
+    .number()
+    .min(getWorkspaceMembers1QueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getWorkspaceMembers1QueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["ACCOUNT_NAME", "MEMBER_ROLE", "CREATED_AT"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getWorkspaceMembers1Response = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -618,7 +623,7 @@ export const getWorkspaceMembers1Response = zod
               email: zod.string().describe("이메일"),
               memberRole: zod
                 .string()
-                .describe("구성원 역할 (OWNER, MANAGER, PARTICIPANT)"),
+                .describe("구성원 역할 (OWNER, PARTICIPANT)"),
               createdAt: zod.string().datetime({}).describe("추가 일시 (UTC)"),
               groupName: zod.array(zod.string()).describe("소속 그룹명 목록"),
             })
@@ -634,7 +639,12 @@ export const getWorkspaceMembers1Response = zod
   .strict();
 
 /**
- * 특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+ * 
+            특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+
+            **응답 규칙:**
+            - 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+        
  * @summary 관리자용 워크스페이스 상세 조회
  */
 export const getWorkspaceDetail1Params = zod.object({
@@ -644,6 +654,7 @@ export const getWorkspaceDetail1Params = zod.object({
 export const getWorkspaceDetail1Response = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         workspaceId: zod.number().describe("워크스페이스 ID"),
@@ -740,39 +751,38 @@ export const getWorkspaceDetail1Response = zod
  * 전체 워크스페이스의 리소스 요청 목록을 페이징하여 조회합니다. 워크스페이스명, 요청자명으로 검색하고 승인 상태로 필터링할 수 있습니다.
  * @summary 관리자용 리소스 요청 목록 조회
  */
-export const getResourceRequests1QueryPageSearchRequestPageSizeMax = 100;
+export const getResourceRequests1QueryPageNoMin = 0;
+
+export const getResourceRequests1QueryPageSizeMax = 100;
 
 export const getResourceRequests1QueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getResourceRequests1QueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["REQUESTED_AT", "WORKSPACE_NAME", "APPROVAL_STATUS"])
-      .describe("정렬 기준 필드"),
-    order: zod
-      .enum(["ASC", "DESC"])
-      .describe(
-        "정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용",
-      ),
-  }),
-  filterRequest: zod.object({
-    approvalStatus: zod
-      .enum(["WAITING", "APPROVED", "REJECTED"])
-      .optional()
-      .describe("승인 상태 필터 (APPROVED, REJECTED, WAITING)"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getResourceRequests1QueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getResourceRequests1QueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["REQUESTED_AT", "WORKSPACE_NAME"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  approvalStatus: zod
+    .enum(["WAITING", "APPROVED", "REJECTED"])
+    .optional()
+    .describe("승인 상태 필터 (APPROVED, REJECTED, WAITING)"),
 });
 
 export const getResourceRequests1Response = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -875,7 +885,13 @@ export const getResourceRequests1Response = zod
   .strict();
 
 /**
- * 리소스 요청의 상세 정보를 조회합니다. 현재 할당량, 요청량, 클러스터 전체 용량을 비교하여 확인할 수 있습니다.
+ * 
+            리소스 요청의 상세 정보를 조회합니다. 현재 할당량, 요청량, 클러스터 전체 용량을 비교하여 확인할 수 있습니다.
+
+            **응답 규칙:**
+            - 리소스 요청이 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+            - 연관된 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+        
  * @summary 리소스 요청 상세 조회
  */
 export const getResourceRequestDetailParams = zod.object({
@@ -885,6 +901,7 @@ export const getResourceRequestDetailParams = zod.object({
 export const getResourceRequestDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         workspaceId: zod.number().describe("워크스페이스 ID"),

@@ -9,6 +9,14 @@ export const WORKSPACE_EVENTS = {
   sendUpdateWorkspace: "workspace:send-update-workspace",
   // 워크스페이스 삭제에 필요한 정보 전달 이벤트
   sendDeleteWorkspace: "workspace:send-delete-workspace",
+  // 관리자용 워크스페이스 단일 삭제에 필요한 정보 전달 이벤트
+  sendDeleteAdminWorkspace: "workspace:send-delete-admin-workspace",
+  // 관리자용 워크스페이스 일괄 삭제에 필요한 정보 전달 이벤트
+  sendDeleteAdminWorkspaces: "workspace:send-delete-admin-workspaces",
+  // 워크스페이스 나가기에 필요한 정보 전달 이벤트
+  sendLeaveWorkspace: "workspace:send-leave-workspace",
+  // 기본 워크스페이스 설정 모달에 필요한 정보 전달 이벤트
+  sendSetDefaultWorkspace: "workspace:send-set-default-workspace",
   // 워크스페이스 멤버 계정 정보 수정에 필요한 정보 전달 이벤트
   sendUpdateWorkspaceMember: "workspace:send-update-workspace-member",
   // 워크스페이스 멤버 삭제에 필요한 정보 전달 이벤트
@@ -59,12 +67,18 @@ export const VOLUME_EVENTS = {
   sendDeleteVolume: "volume:send-delete-volume",
   // 볼륨 파일 삭제에 필요한 정보 전달 이벤트
   sendDeleteVolumeFile: "volume:send-delete-volume-file",
-  // 볼륨 선택 모달 초기화 이벤트
-  clearSelectVolumeModal: "volume:clear-select-volume-modal",
   // 볼륨 파일 압축에 필요한 정보 전달 이벤트
   sendCompressVolumeFile: "volume:send-compress-volume-file",
+  // 볼륨 파일 압축 해제에 필요한 정보 전달 이벤트
+  sendDecompressVolumeFile: "volume:send-decompress-volume-file",
+  // 볼륨 파일 다운로드에 필요한 정보 전달 이벤트
+  sendDownloadVolumeFile: "volume:send-download-volume-file",
+  // 볼륨 파일 업로드에 필요한 정보 전달 이벤트
+  sendUploadVolumeFile: "volume:send-upload-volume-file",
   // 볼륨 폴더 추가에 필요한 정보 전달 이벤트
   sendCreateVolumeFolder: "volume:send-create-volume-folder",
+  // 볼륨 스토리지 타입 선택에 필요한 정보 전달 이벤트
+  sendStorageType: "volume:send-storage-type",
 } as const;
 
 // 그룹 관련 이벤트
@@ -126,8 +140,23 @@ export const REQUEST_IMAGE_EVENTS = {
   sendRejectImage: "request-image:send-reject-image",
 } as const;
 
-// 내부 레지스트리 관련 이벤트
-export const INTERNAL_REGISTRY_EVENTS = {} as const;
+// 개인 레지스트리 관련 이벤트
+export const PRIVATE_REGISTRY_EVENTS = {
+  // 프라이빗 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
+  sendDeletePrivateRegistry: "private-registry:send-delete-private-registry",
+  // 프라이빗 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
+  sendDeleteImageTag: "private-registry:send-delete-image-tag",
+  // 프라이빗 레지스트리 구분 선택 후 생성 모달에 전달 이벤트
+  sendType: "private-registry:send-type",
+  // 프라이빗 레지스트리 구분 선택 모달 초기화 이벤트
+  clearSelectDivisionModal: "private-registry:clear-select-division-modal",
+  // 프라이빗 레지스트리 이미지 태그 생성에 필요한 정보 전달 이벤트
+  sendCreateTagData: "private-registry:send-create-tag-data",
+  // 이미지 등록 Job 재시작에 필요한 정보 전달 이벤트
+  sendRestartImageJob: "private-registry:send-restart-image-job",
+  // 이미지 등록 Job 종료에 필요한 정보 전달 이벤트
+  sendStopImageJob: "private-registry:send-stop-image-job",
+} as const;
 
 // 내부 레지스트리 이미지 관련 이벤트
 export const INTERNAL_REGISTRY_IMAGE_EVENTS = {
@@ -202,6 +231,12 @@ export const SETTING_EVENTS = {
   sendUpdateNotificationSetting: "setting:send-update-notification-setting",
   // 워크스페이스 구성원 추가 모달에 필요한 정보 전달 이벤트
   sendAddWorkspaceMember: "setting:send-add-workspace-member",
+  // 워크스페이스 구성원 권한 수정 모달에 필요한 정보 전달 이벤트
+  sendUpdateWorkspaceMemberRole: "setting:send-update-workspace-member-role",
+  // 워크스페이스 구성원 삭제 모달에 필요한 정보 전달 이벤트
+  sendDeleteWorkspaceMember: "setting:send-delete-workspace-member",
+  // 리소스 요청 취소 모달에 필요한 정보 전달 이벤트
+  sendCancelResourceRequest: "setting:send-cancel-resource-request",
 } as const;
 
 // 시스템 설정 관련 이벤트
@@ -236,6 +271,10 @@ export const KUBERNETES_MONITORING_EVENTS = {
   // 쿠버네티스 이벤트 상세 모달에 필요한 정보 전달 이벤트
   sendKubernetesEventDetail:
     "kubernetes-monitoring:send-kubernetes-event-detail",
+  // 쿠버네티스 리소스 Describe 모달에 필요한 정보 전달 이벤트
+  sendResourceDescribe: "kubernetes-monitoring:send-resource-describe",
+  // 쿠버네티스 리소스 YAML 모달에 필요한 정보 전달 이벤트
+  sendResourceYaml: "kubernetes-monitoring:send-resource-yaml",
 } as const;
 
 // 리소스 프리셋 관련 이벤트

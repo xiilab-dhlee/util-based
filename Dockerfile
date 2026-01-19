@@ -9,17 +9,13 @@ RUN apk add --no-cache libc6-compat git
 
 WORKDIR /app
 
-# BuildKit secret mount를 사용하여 토큰 노출 방지
-RUN --mount=type=secret,id=github_token \
-    GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
-    git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-
 RUN corepack enable && corepack prepare pnpm@9.15.3 --activate
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 RUN --mount=type=secret,id=github_token \
-    GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
+    export GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
+    git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
     pnpm install --frozen-lockfile
 
 # =============================================================================
@@ -33,6 +29,8 @@ RUN corepack enable && corepack prepare pnpm@9.15.3 --activate
 COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
+
+RUN rm -f .npmrc
 
 RUN NODE_OPTIONS=--max_old_space_size=3072 pnpm build
 

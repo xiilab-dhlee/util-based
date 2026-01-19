@@ -66,6 +66,7 @@ export function ApproveAccountPendingModal() {
       onCancel={handleCancel}
       onOk={handleOk}
       closable={!isPending}
+      showCancelButton
       maskClosable={!isPending}
       keyboard={!isPending}
       okButtonProps={{ loading: isPending, disabled: isPending }}

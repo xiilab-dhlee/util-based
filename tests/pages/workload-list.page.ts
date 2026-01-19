@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { DropdownComponent } from "../components/dropdown.component";
 import { ListPage } from "./list.page";
@@ -69,7 +70,7 @@ export class WorkloadListPage extends ListPage {
   }
 
   protected get basePath(): string {
-    return "/user/workload";
+    return ROUTES.USER_WORKLOAD;
   }
 
   protected get tableIdentifierTestId(): string {

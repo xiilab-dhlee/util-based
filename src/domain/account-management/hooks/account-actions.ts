@@ -2,15 +2,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useResetAtom } from "jotai/utils";
 
 import {
-  getGetAccountDetailQueryKey,
-  getGetAllAccountsQueryKey,
   getGetSignupRequestsQueryKey,
   useApproveSignupRequests,
-  useDeleteAccount,
   useRejectSignupRequests,
+} from "@/api/generated/admin-account-approval/admin-account-approval";
+import {
+  getGetAccountDetailQueryKey,
+  getGetAllAccountsQueryKey,
+  useDeleteAccount,
   useUpdateAccount,
   useUpdateAccountEnabled,
-} from "@/api/generated/admin-account/admin-account";
+} from "@/api/generated/admin-account-management/admin-account-management";
 import {
   accountCheckedListAtom,
   accountPageAtom,

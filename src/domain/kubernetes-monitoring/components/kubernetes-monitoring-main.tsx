@@ -1,23 +1,30 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 import styled from "styled-components";
 
+import { useGetAllNamespaceEvents } from "@/api/generated/admin-k8s/admin-k8s";
+import type { K8sEventResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
+  kubernetesEventPageAtom,
   kubernetesResourcePageAtom,
   kubernetesResourceSearchTextAtom,
   kubernetesResourceStatusAtom,
   kubernetesSelectedResourceNameAtom,
 } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
 import { KubernetesEventCard } from "@/domain/kubernetes-monitoring/components/kubernetes-event-card";
+import { KubernetesEventCardSkeleton } from "@/domain/kubernetes-monitoring/components/kubernetes-event-card-skeleton";
 import { KubernetesEventListFooter } from "@/domain/kubernetes-monitoring/components/kubernetes-event-list-footer";
 import { KubernetesMonitoringAside } from "@/domain/kubernetes-monitoring/components/kubernetes-monitoring-aside";
-import { KubernetesResourceQuotaCard } from "@/domain/kubernetes-monitoring/components/kubernetes-resource-quota-card";
+import { KubernetesResourceQuotaSection } from "@/domain/kubernetes-monitoring/components/kubernetes-resource-quota-section";
 import { ViewDescribeModal } from "@/domain/kubernetes-monitoring/components/view-describe-modal";
 import { ViewKubernetesEventDetailModal } from "@/domain/kubernetes-monitoring/components/view-kubernetes-event-detail-modal";
 import { ViewYamlLogModal } from "@/domain/kubernetes-monitoring/components/view-yaml-log-modal";
-import type { KubernetesEventType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
+import { KUBERNETES_EVENT_LIST_PAGE_SIZE } from "@/domain/kubernetes-monitoring/constants/kubernetes-monitoring.constant";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
@@ -34,6 +41,70 @@ export function KubernetesMonitoringMain() {
   const resetSelectedResourceName = useResetAtom(
     kubernetesSelectedResourceNameAtom,
   );
+  const resetEventPage = useResetAtom(kubernetesEventPageAtom);
+
+  const eventPage = useAtomValue(kubernetesEventPageAtom);
+  const {
+    data: eventsResponse,
+    isError,
+    isLoading,
+  } = useGetAllNamespaceEvents({
+    pageNo: eventPage - 1,
+    pageSize: KUBERNETES_EVENT_LIST_PAGE_SIZE,
+  });
+
+  const events = eventsResponse?.content ?? [];
+
+  const renderEventSkeletonCards = (count: number) => {
+    return Array.from({ length: count }).map((_, index: number) => (
+      <KubernetesEventCardSkeleton key={`k8s-event-skeleton-${index}`} />
+    ));
+  };
+
+  const renderEventCards = (items: K8sEventResponse[]) => {
+    return items.map((event: K8sEventResponse, index: number) => (
+      <KubernetesEventCard
+        key={`${event.namespace}-${event.lastObservedDateTime}-${index}`}
+        event={event}
+      />
+    ));
+  };
+
+  const renderEventContent = () => {
+    if (isError) {
+      return (
+        <EventGridWrapper $rows={EVENT_GRID_ROWS}>
+          <EventGridStatusWrapper>
+            <DataErrorState />
+          </EventGridStatusWrapper>
+        </EventGridWrapper>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <EventGridWrapper $rows={EVENT_GRID_ROWS}>
+          {renderEventSkeletonCards(KUBERNETES_EVENT_LIST_PAGE_SIZE)}
+        </EventGridWrapper>
+      );
+    }
+
+    if (events.length === 0) {
+      return (
+        <EventGridWrapper $rows={EVENT_GRID_ROWS}>
+          <EventGridStatusWrapper>
+            <EmptyState />
+          </EventGridStatusWrapper>
+        </EventGridWrapper>
+      );
+    }
+
+    return (
+      <EventGridWrapper $rows={EVENT_GRID_ROWS}>
+        {renderEventCards(events)}
+      </EventGridWrapper>
+    );
+  };
 
   useEffect(() => {
     return () => {
@@ -41,22 +112,15 @@ export function KubernetesMonitoringMain() {
       resetSearchText();
       resetStatus();
       resetSelectedResourceName();
+      resetEventPage();
     };
-  }, [resetSearchText, resetPage, resetSelectedResourceName, resetStatus]);
-
-  // TODO: API 연동 후 실제 데이터로 교체
-  const mockEvents: KubernetesEventType[] = Array.from({ length: 12 }).map(
-    (_, index) => ({
-      eventId: `event-${index}`,
-      namespace: `네임스페이스${String(index + 1).padStart(2, "0")}`,
-      status:
-        index % 3 === 0 ? "error" : index % 3 === 1 ? "warning" : "normal",
-      object: `파드:pod-${index + 100}`,
-      ipAddress: `10.02.4.${121 + index}`,
-      message: `Pod nginx-deployment-5d4d5678b7-abcde가 CrashLoopBackOff 상태입니다. 컨테이너가 반복적으로 실패하고 있습니다.`,
-      dateTime: new Date(Date.now() - index * 1000 * 60 * 60).toISOString(),
-    }),
-  );
+  }, [
+    resetSearchText,
+    resetPage,
+    resetSelectedResourceName,
+    resetStatus,
+    resetEventPage,
+  ]);
 
   return (
     <>
@@ -69,51 +133,14 @@ export function KubernetesMonitoringMain() {
         {/* 소스코드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           <QuotaSectionTitle>리소스 할당량</QuotaSectionTitle>
-          <QuotaBody>
-            <QuotaPane>
-              <KubernetesResourceQuotaCard
-                resourceName="GPU"
-                total={100}
-                quota={77}
-                showDivider
-              />
-              <KubernetesResourceQuotaCard
-                resourceName="MIG"
-                total={100}
-                quota={77}
-              />
-              <KubernetesResourceQuotaCard
-                resourceName="MPS"
-                total={100}
-                quota={77}
-              />
-            </QuotaPane>
-            <QuotaPane>
-              <KubernetesResourceQuotaCard
-                resourceName="CPU"
-                total={100}
-                quota={77}
-              />
-              <KubernetesResourceQuotaCard
-                resourceName="MEM"
-                total={100}
-                quota={77}
-              />
-              <KubernetesResourceQuotaCard
-                resourceName="DISK"
-                total={100}
-                quota={77}
-              />
-            </QuotaPane>
-          </QuotaBody>
+          <KubernetesResourceQuotaSection />
           <ListSectionTitle>전체 쿠버네티스 이벤트 내역</ListSectionTitle>
           <EventBody>
-            <EventGridWrapper>
-              {mockEvents.map((event) => (
-                <KubernetesEventCard key={event.eventId} event={event} />
-              ))}
-            </EventGridWrapper>
-            <KubernetesEventListFooter />
+            {renderEventContent()}
+            <KubernetesEventListFooter
+              total={eventsResponse?.totalSize ?? 0}
+              isLoading={isLoading}
+            />
           </EventBody>
         </ListPageBody>
         {/* 소스코드 목록 페이지 - 왼쪽 영역 (가이드 및 생성 카드) */}
@@ -131,25 +158,6 @@ export function KubernetesMonitoringMain() {
   );
 }
 
-const QuotaBody = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin: 20px 0;
-`;
-
-const QuotaPane = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border: 1px solid #e0e0e0;
-  background-color: #f7f9fb;
-  border-radius: 4px;
-`;
-
 const EventBody = styled.div`
   flex: 1;
   overflow: hidden;
@@ -163,13 +171,25 @@ const EventBody = styled.div`
   margin-top: 14px;
 `;
 
-const EventGridWrapper = styled.div`
+const EVENT_GRID_ROWS = Math.ceil(KUBERNETES_EVENT_LIST_PAGE_SIZE / 2);
+
+const EventGridWrapper = styled.div<{ $rows: number }>`
   overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(${({ $rows }) => $rows}, minmax(0, 1fr));
   gap: 8px;
   border-radius: 4px;
   background-color: #fcfcfc;
+  height: 620px;
+`;
+
+const EventGridStatusWrapper = styled.div`
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const QuotaSectionTitle = styled(ListSectionTitle)`

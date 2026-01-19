@@ -1,55 +1,85 @@
 "use client";
 
-import { Button } from "xiilab-ui";
+import { useAtomValue } from "jotai";
+import { useSession } from "next-auth/react";
+import type { ChangeEvent } from "react";
+import { Button, Input } from "xiilab-ui";
 
+import { useGetWorkspaceMemberRole } from "@/api/generated/workspace-member/workspace-member";
+import { isWorkspaceOwnerRole } from "@/domain/workspace/constants/workspace.constant";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 
 interface SettingMemberListFilterProps {
-  /** 전체 구성원 수 */
-  total: number;
-  /** 로딩 상태 */
-  loading: boolean;
+  total?: number;
+  searchValue: string;
+  onChangeSearchValue: (next: string) => void;
+  onSearch: (value: string) => void;
+  onClickAddMember: () => void;
 }
 
-/**
- * 설정 멤버 목록 필터 컴포넌트
- *
- * 구성원 목록의 상단 필터 영역을 표시합니다.
- * (제목, 총 개수, 검색, 추가 버튼)
- */
 export function SettingMemberListFilter({
   total,
-  loading,
+  searchValue,
+  onChangeSearchValue,
+  onSearch,
+  onClickAddMember,
 }: SettingMemberListFilterProps) {
-  const publish = usePublish();
+  const { data: session } = useSession();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
+  const accountId = getSessionAccountId(session);
 
-  /**
-   * 구성원 추가 버튼 클릭 핸들러
-   * PubSub을 통해 워크스페이스 구성원 추가 모달에 데이터를 전달합니다.
-   */
-  const handleAddMember = () => {
-    // TODO: 현재 구성원 목록을 selectedAccounts로 전달 필요
-    publish(SETTING_EVENTS.sendAddWorkspaceMember, {
-      selectedAccounts: [],
-    });
+  const { data: memberRole } = useGetWorkspaceMemberRole(
+    workspaceId ?? -1,
+    accountId ?? "",
+    {
+      query: {
+        enabled: Boolean(workspaceId) && Boolean(accountId),
+      },
+    },
+  );
+
+  const canAddMember = isWorkspaceOwnerRole(memberRole?.memberRole);
+  const handleSearch = (value: string) => {
+    onSearch(value);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onChangeSearchValue(e.target.value);
+  };
+
+  const handleAddMemberClick = () => {
+    if (!canAddMember) return;
+    onClickAddMember();
   };
 
   return (
     <MySearchFilter title="구성원 관리" total={total}>
-      <Button
-        color="primary"
-        icon="Plus"
-        iconPosition="left"
-        variant="gradient"
-        width={110}
+      <Input.Search
+        name="search"
+        placeholder="검색어를 입력하세요."
+        value={searchValue}
+        onChange={handleChange}
+        onSearch={handleSearch}
+        autoComplete="off"
+        width={220}
         height={30}
-        onClick={handleAddMember}
-        disabled={loading}
-      >
-        구성원 추가
-      </Button>
+      />
+      {canAddMember && (
+        <Button
+          color="primary"
+          icon="Plus"
+          iconPosition="left"
+          variant="gradient"
+          width={110}
+          height={30}
+          onClick={handleAddMemberClick}
+        >
+          구성원 추가
+        </Button>
+      )}
     </MySearchFilter>
   );
 }

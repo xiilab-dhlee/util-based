@@ -1,66 +1,80 @@
 "use client";
 
-import type { WorkspaceMemberListType } from "@/domain/workspace-member/schemas/workspace-member.schema";
-import { createWorkspaceMemberColumn } from "@/shared/components/column/create-workspace-member-column";
+import { useAtomValue } from "jotai";
+import { useSession } from "next-auth/react";
+
+import type { WorkspaceMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetWorkspaceMemberRole } from "@/api/generated/workspace-member/workspace-member";
+import { createWorkspaceMemberColumn } from "@/domain/setting/columns/create-workspace-member-column";
+import { isWorkspaceOwnerRole } from "@/domain/workspace/constants/workspace.constant";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface SettingMemberListBodyProps {
-  /** 구성원 목록 데이터 */
-  content: WorkspaceMemberListType[];
-  /** 로딩 상태 */
-  loading: boolean;
-  /** 에러 상태 */
-  isError: boolean;
+  members: WorkspaceMemberResponse[];
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
-/**
- * 설정 멤버 목록 본문 컴포넌트
- *
- * 구성원 목록의 테이블을 표시합니다.
- */
+const MANAGEABLE_COLUMN_KEYS = ["accountName", "email", "memberRole"] as const;
+const MANAGEABLE_WITH_ACTION_COLUMN_KEYS = [
+  ...MANAGEABLE_COLUMN_KEYS,
+  "edit",
+  "delete",
+] as const;
+
+type ColumnKey =
+  | (typeof MANAGEABLE_COLUMN_KEYS)[number]
+  | (typeof MANAGEABLE_WITH_ACTION_COLUMN_KEYS)[number];
+
+const toColumnConfigs = (
+  keys: readonly ColumnKey[],
+): CoreCreateColumnConfig[] => keys.map((key) => ({ key }));
+
 export function SettingMemberListBody({
-  content,
-  loading,
-  isError,
+  members,
+  isLoading = false,
+  isError = false,
 }: SettingMemberListBodyProps) {
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const { data: session } = useSession();
+
+  const workspaceId = selectedWorkspace?.workspaceId ?? -1;
+  const accountId = getSessionAccountId(session);
+
+  const { data: memberRole } = useGetWorkspaceMemberRole(
+    workspaceId,
+    accountId ?? "",
+    {
+      query: {
+        enabled: Boolean(selectedWorkspace?.workspaceId) && Boolean(accountId),
+      },
+    },
+  );
+
+  const canManageWorkspace = isWorkspaceOwnerRole(memberRole?.memberRole);
+
+  const columns = createWorkspaceMemberColumn(
+    toColumnConfigs(
+      canManageWorkspace
+        ? MANAGEABLE_WITH_ACTION_COLUMN_KEYS
+        : MANAGEABLE_COLUMN_KEYS,
+    ),
+  );
+
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={createWorkspaceMemberColumn([
-          {
-            key: "name",
-            dataIndex: "name",
-            title: "이름",
-            width: "auto",
-            sorter: true,
-          },
-          {
-            dataIndex: "email",
-            title: "이메일",
-            width: "auto",
-          },
-          {
-            dataIndex: "role",
-            title: "권한",
-            width: 100,
-          },
-          {
-            dataIndex: "update",
-            title: "권한 수정",
-            width: 70,
-          },
-          {
-            dataIndex: "delete",
-            title: "삭제",
-            width: 50,
-          },
-        ])}
-        data={content}
+        columns={columns}
+        data={members}
+        rowKey="accountId"
         activePadding
+        loading={isLoading}
         isError={isError}
-        loading={loading}
-        columnHeight={36}
+        scroll={{ x: "100%" }}
       />
     </ListWrapper>
   );

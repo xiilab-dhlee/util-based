@@ -32,7 +32,7 @@ export function ViewRejectReasonButton({
         onClick={handleClickIcon}
         disabled={disabled}
       >
-        <Icon name="Notice" color="var(--icon-fill)" size={20} />
+        <Icon name="Information" color="var(--icon-fill)" size={16} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
   );

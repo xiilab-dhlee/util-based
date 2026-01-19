@@ -3,14 +3,14 @@
 import styled from "styled-components";
 import { Card, Label } from "xiilab-ui";
 
-import type { KubernetesEventType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
+import type { K8sEventResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getKubernetesEventLabelProps } from "@/domain/kubernetes-monitoring/utils/kubernetes-event.util";
 import { KUBERNETES_MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 
 interface KubernetesEventCardProps {
-  event: KubernetesEventType;
+  event: K8sEventResponse;
 }
 
 /**
@@ -25,17 +25,21 @@ export function KubernetesEventCard({ event }: KubernetesEventCardProps) {
     publish(KUBERNETES_MONITORING_EVENTS.sendKubernetesEventDetail, event);
   };
 
-  const { label, variant } = getKubernetesEventLabelProps(event.status);
+  const { label, variant } = getKubernetesEventLabelProps(
+    event.eventType ?? "",
+  );
 
   return (
     <Card showHeader={false} onClick={handleClick}>
       <Container>
         <Header>
           <HeaderLeft>
-            <HeaderTitle className="truncate">{event.namespace}</HeaderTitle>
+            <HeaderTitle className="truncate">
+              {event.namespace || "-"}
+            </HeaderTitle>
             <HeaderDate>
               <HeaderDateItem>
-                {formatDateTimeSafely(event.dateTime)}
+                {formatDateTimeSafely(event.lastObservedDateTime)}
               </HeaderDateItem>
             </HeaderDate>
           </HeaderLeft>
@@ -43,13 +47,13 @@ export function KubernetesEventCard({ event }: KubernetesEventCardProps) {
         </Header>
         <Body>
           <Key>오브젝트 :</Key>
-          <Value className="truncate">{event.object}</Value>
+          <Value className="truncate">{event.object || "-"}</Value>
           <Key>IP 주소 :</Key>
-          <Value>{event.ipAddress}</Value>
+          <Value>{event.ip || "-"}</Value>
         </Body>
         <Footer>
           <Key>메시지 :</Key>
-          <Message className="truncate">{event.message}</Message>
+          <Message className="truncate">{event.message || "-"}</Message>
         </Footer>
       </Container>
     </Card>
@@ -76,6 +80,7 @@ const Header = styled.div`
   margin-bottom: 8px;
   overflow: hidden;
   position: relative;
+  gap: 10px;
 `;
 
 const HeaderLeft = styled.div`
@@ -84,19 +89,25 @@ const HeaderLeft = styled.div`
   align-items: center;
   flex: 1;
   gap: 6px;
+  min-width: 0;
 `;
 
 const HeaderTitle = styled.div`
+  flex: 1;
   font-weight: 600;
   font-size: 14px;
   line-height: 17px;
   color: #191b26;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const HeaderDate = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  flex-shrink: 0;
 `;
 
 const HeaderDateItem = styled.div`

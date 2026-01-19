@@ -24,9 +24,8 @@ import { customScrollbar } from "@/styles/mixins/scrollbar";
  * CustomizedTable 컴포넌트의 props 인터페이스
  * @template TRecord - 테이블 데이터의 타입 (기본값: Record<string, unknown>)
  */
-interface CustomizedTableProps<
-  TRecord extends Record<string, unknown> = Record<string, unknown>,
-> extends Omit<TableProps<TRecord>, "columns" | "dataSource"> {
+interface CustomizedTableProps<TRecord extends object = Record<string, unknown>>
+  extends Omit<TableProps<TRecord>, "columns" | "dataSource"> {
   /** 테이블 컬럼 정의 */
   columns: ResponsiveColumnType<TRecord>[];
   /** 테이블에 표시할 데이터 배열 */
@@ -107,7 +106,7 @@ interface CustomizedTableProps<
  * ```
  */
 export function CustomizedTable<
-  TRecord extends Record<string, unknown> = Record<string, unknown>,
+  TRecord extends object = Record<string, unknown>,
 >({
   columns,
   data,

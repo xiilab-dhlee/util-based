@@ -50,6 +50,7 @@ export const getGetAllResourceCountsResponseMock = (
   overrideResponse: Partial<BaseResponseK8sResourceResponse> = {},
 ): BaseResponseK8sResourceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     nodeCount: faker.number.int({ min: undefined, max: undefined }),
     serviceCount: faker.number.int({ min: undefined, max: undefined }),
@@ -69,6 +70,7 @@ export const getGetResourceYamlResponseMock = (
   overrideResponse: Partial<BaseResponseK8sResourceYamlResponse> = {},
 ): BaseResponseK8sResourceYamlResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: { yaml: faker.string.alpha({ length: { min: 10, max: 20 } }) },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -79,6 +81,7 @@ export const getDescribeResourceResponseMock = (
   overrideResponse: Partial<BaseResponseK8sResourceDescribeResponse> = {},
 ): BaseResponseK8sResourceDescribeResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: { description: faker.string.alpha({ length: { min: 10, max: 20 } }) },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -89,6 +92,7 @@ export const getGetStatefulSetsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseStatefulSetResponse> = {},
 ): BaseResponsePageResponseStatefulSetResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -112,6 +116,7 @@ export const getGetServicesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseServiceResponse> = {},
 ): BaseResponsePageResponseServiceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -139,6 +144,7 @@ export const getGetPodsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponsePodResponse> = {},
 ): BaseResponsePageResponsePodResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -163,6 +169,7 @@ export const getGetPersistentVolumesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponsePersistentVolumeResponse> = {},
 ): BaseResponsePageResponsePersistentVolumeResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -186,6 +193,7 @@ export const getGetNodesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseNodeResponse> = {},
 ): BaseResponsePageResponseNodeResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -213,6 +221,7 @@ export const getGetNamespacesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseNamespaceResponse> = {},
 ): BaseResponsePageResponseNamespaceResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -236,6 +245,7 @@ export const getGetDeploymentsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseDeploymentResponse> = {},
 ): BaseResponsePageResponseDeploymentResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -263,6 +273,7 @@ export const getGetDaemonSetsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseDaemonSetResponse> = {},
 ): BaseResponsePageResponseDaemonSetResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -286,6 +297,7 @@ export const getGetAllNamespaceEventsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseK8sEventResponse> = {},
 ): BaseResponsePageResponseK8sEventResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),

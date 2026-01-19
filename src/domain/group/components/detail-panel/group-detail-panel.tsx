@@ -1,20 +1,19 @@
 "use client";
 
-import { useMemo } from "react";
 import styled from "styled-components";
-import { Button } from "xiilab-ui";
+import { Button, Typography } from "xiilab-ui";
 
-import { useGetGroupDetail } from "@/domain/group/hooks/use-get-group-detail";
-import { createOpenGroupModalUpdatePayload } from "@/domain/group/types/group.type";
+import { useGetGroupDetail } from "@/api/generated/group/group";
 import {
-  createMemberColumn,
-  type MemberRow,
-} from "@/shared/components/column/create-member-column";
+  createOpenGroupModalUpdatePayload,
+  type OpenGroupModalCreatePayload,
+} from "@/domain/group/types/group.type";
+import { createMemberColumn } from "@/shared/components/column/create-member-column";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { GROUP_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
   AsideDetailArticle,
@@ -27,116 +26,126 @@ import {
   AsideDetailArticleValue,
   AsideDetailFooter,
   AsideDetailHeader,
-  AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface GroupDetailPanelProps {
-  /** 선택된 그룹 노드 */
-  group: GroupTreeType;
+  /** 선택된 그룹 ID */
+  groupId: string;
 }
 
-/**
- * 그룹 상세 정보 패널
- *
- * 선택된 그룹의 상세 정보를 표시합니다.
- * 수정 버튼 클릭 시 그룹 수정 모달을 엽니다.
- */
-export function GroupDetailPanel({ group }: GroupDetailPanelProps) {
+export function GroupDetailPanel({ groupId }: GroupDetailPanelProps) {
   const publish = usePublish();
-  // 그룹 상세 정보
+
   const {
     data: groupDetail,
     isLoading,
     isError,
-    refetch,
-  } = useGetGroupDetail(group.id);
+  } = useGetGroupDetail(groupId, {
+    query: {
+      enabled: Boolean(groupId),
+    },
+  });
+
+  const handleAddSubGroup = () => {
+    const payload: OpenGroupModalCreatePayload = {
+      mode: MODAL_MODES.CREATE,
+      isSubGroup: true,
+    };
+    publish(GROUP_EVENTS.openGroupModal, payload);
+  };
 
   const handleEditClick = () => {
     publish(
       GROUP_EVENTS.openGroupModal,
-      createOpenGroupModalUpdatePayload(group.id),
+      createOpenGroupModalUpdatePayload(groupId),
     );
   };
 
-  // 멤버 테이블 데이터
-  const memberData: MemberRow[] = useMemo(
-    () =>
-      groupDetail?.users.map((user) => ({
-        id: user.accountId,
-        name: user.accountName,
-        email: user.email,
-      })) ?? [],
-    [groupDetail?.users],
-  );
+  if (isError) {
+    return (
+      <PanelContainer>
+        <AsideDetailHeader>
+          <Typography.Text variant="subtitle-2-1">그룹 정보</Typography.Text>
+        </AsideDetailHeader>
+        <FullWrapper>
+          <DataErrorState />
+        </FullWrapper>
+      </PanelContainer>
+    );
+  }
 
   return (
     <PanelContainer>
       <AsideDetailHeader>
-        <AsideDetailHeaderTitle>그룹 정보</AsideDetailHeaderTitle>
+        <Typography.Text variant="subtitle-2-1">그룹 정보</Typography.Text>
       </AsideDetailHeader>
 
       <PanelBody>
-        {isError ? (
-          <DataErrorState
-            title="그룹 정보를 불러올 수 없습니다."
-            onRetry={refetch}
-          />
-        ) : (
-          <AsideDetailArticle>
-            <AsideDetailArticleHeader>
-              <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
-            </AsideDetailArticleHeader>
-            <AsideDetailArticleBody>
-              <AsideDetailArticleItem>
-                <AsideDetailArticleColumn>
-                  <AsideDetailArticleKey>그룹 이름</AsideDetailArticleKey>
-                  <AsideDetailArticleValue>
-                    {groupDetail?.groupName ?? "-"}
-                  </AsideDetailArticleValue>
-                </AsideDetailArticleColumn>
-                <AsideDetailArticleColumn>
-                  <AsideDetailArticleKey>그룹 설명</AsideDetailArticleKey>
-                  <AsideDetailArticleValue>
-                    {groupDetail?.description ?? "-"}
-                  </AsideDetailArticleValue>
-                </AsideDetailArticleColumn>
-              </AsideDetailArticleItem>
-              <AsideDetailArticleItem>
-                <AsideDetailArticleColumn>
-                  <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
-                  <AsideDetailArticleValue>
-                    {groupDetail?.creatorName ?? "-"}
-                  </AsideDetailArticleValue>
-                </AsideDetailArticleColumn>
-                <AsideDetailArticleColumn>
-                  <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
-                  <AsideDetailArticleValue>
-                    {formatDateSafely(groupDetail?.createDateTime)}
-                  </AsideDetailArticleValue>
-                </AsideDetailArticleColumn>
-                <MemberColumn>
-                  <AsideDetailArticleKey>멤버</AsideDetailArticleKey>
-                  <MemberTableValue>
-                    <CustomizedTable<MemberRow>
+        <AsideDetailArticle>
+          <AsideDetailArticleHeader>
+            <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
+          </AsideDetailArticleHeader>
+          <AsideDetailArticleBody>
+            <AsideDetailArticleItem>
+              <DetailColumn>
+                <AsideDetailArticleKey>그룹 이름</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  {groupDetail?.groupName || "-"}
+                </AsideDetailArticleValue>
+              </DetailColumn>
+              <DetailColumn>
+                <AsideDetailArticleKey>그룹 설명</AsideDetailArticleKey>
+                <DescriptionValue>
+                  {groupDetail?.description || "-"}
+                </DescriptionValue>
+              </DetailColumn>
+            </AsideDetailArticleItem>
+            <AsideDetailArticleItem>
+              <DetailColumn>
+                <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  {groupDetail?.creatorName || "-"}
+                </AsideDetailArticleValue>
+              </DetailColumn>
+              <DetailColumn>
+                <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  {formatDateSafely(groupDetail?.createdAt)}
+                </AsideDetailArticleValue>
+              </DetailColumn>
+              <MemberColumn>
+                <AsideDetailArticleKey>멤버</AsideDetailArticleKey>
+                <MemberTableValue>
+                  <MemberTableWrapper>
+                    <CustomizedTable
                       columns={createMemberColumn()}
-                      data={memberData}
+                      data={groupDetail?.users ?? []}
                       pagination={false}
                       activePadding
                       columnHeight={32}
                       headerHeight={32}
-                      rowKey="id"
+                      rowKey="accountId"
                       loading={isLoading}
                     />
-                  </MemberTableValue>
-                </MemberColumn>
-              </AsideDetailArticleItem>
-            </AsideDetailArticleBody>
-          </AsideDetailArticle>
-        )}
+                  </MemberTableWrapper>
+                </MemberTableValue>
+              </MemberColumn>
+            </AsideDetailArticleItem>
+          </AsideDetailArticleBody>
+        </AsideDetailArticle>
       </PanelBody>
       <AsideDetailFooter>
         <div />
         <ButtonGroup>
+          <Button
+            variant="outlined"
+            width={110}
+            height={34}
+            onClick={handleAddSubGroup}
+            disabled={isLoading || isError}
+          >
+            하위 그룹 추가
+          </Button>
           <Button
             variant="outlined"
             width={80}
@@ -150,7 +159,7 @@ export function GroupDetailPanel({ group }: GroupDetailPanelProps) {
             variant="outlined"
             width={80}
             height={34}
-            onClick={() => publish(GROUP_EVENTS.sendDeleteGroup, group.id)}
+            onClick={() => publish(GROUP_EVENTS.sendDeleteGroup, groupId)}
             disabled={isLoading || isError}
           >
             삭제
@@ -172,6 +181,7 @@ const PanelContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
   --column-gutter-size: 20px;
+  background-color: #FAFAFA;
 `;
 
 const PanelBody = styled.div`
@@ -185,12 +195,31 @@ const MemberColumn = styled(AsideDetailArticleColumn)`
   align-items: flex-start;
 `;
 
+const DetailColumn = styled(AsideDetailArticleColumn)`
+  align-items: flex-start;
+`;
+
+const DescriptionValue = styled(AsideDetailArticleValue)`
+  white-space: pre-wrap;
+`;
+
 const MemberTableValue = styled(AsideDetailArticleValue)`
   min-width: 0;
   overflow: hidden;
 `;
 
+const MemberTableWrapper = styled.div`
+  height: 350px;
+`;
+
 const ButtonGroup = styled.div`
   display: flex;
   gap: 8px;
+`;
+
+const FullWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

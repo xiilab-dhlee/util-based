@@ -59,6 +59,7 @@ const formatResourceValue = (
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
+      key: "userName",
       dataIndex: "userName",
       title: "사용자",
       align: "left",
@@ -79,6 +80,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "gpu",
       dataIndex: "gpu",
       title: GPU_INFO.text,
       align: "center",
@@ -91,6 +93,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "mig",
       dataIndex: "mig",
       title: MIG_INFO.text,
       align: "center",
@@ -103,6 +106,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "mps",
       dataIndex: "mps",
       title: MPS_INFO.text,
       align: "center",
@@ -115,6 +119,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "cpu",
       dataIndex: "cpu",
       title: CPU_INFO.text,
       align: "center",
@@ -127,6 +132,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "mem",
       dataIndex: "mem",
       title: MEM_INFO.text,
       align: "center",
@@ -156,9 +162,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * @example
  * // 2. 배열 형태 - 순서 및 옵션 변경 가능
  * const columns = createUserResourceColumn([
- *   { dataIndex: 'userName', width: 150, sorter: true },
- *   { dataIndex: 'gpu', width: 100 },
- *   { dataIndex: 'cpu', width: 100 },
+ *   { key: 'userName', width: 150, sorter: true },
+ *   { key: 'gpu', width: 100 },
+ *   { key: 'cpu', width: 100 },
  * ]);
  */
 export const createUserResourceColumn = (

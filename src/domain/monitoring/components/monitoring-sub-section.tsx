@@ -20,7 +20,7 @@ import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.sch
 import { workloadListMock } from "@/mocks/data/workload.mock";
 import { createUserResourceColumn } from "@/shared/components/column/create-user-resource-column";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
-import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
+// import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
@@ -144,67 +144,67 @@ export function MonitoringSubSection() {
     }
   };
 
-  const workspaceColumns = createWorkspaceColumn([
-    {
-      dataIndex: "name",
-      width: "20%",
-      align: "left",
-      sorter: true,
-      sortOrder: getSortOrder(workspaceSort, "name"),
-      ellipsis: true,
-    },
-    { dataIndex: "gpu", width: "9%", align: "center" },
-    { dataIndex: "cpu", width: "9%", align: "center" },
-    { dataIndex: "mem", width: "11%", align: "center" },
-    { dataIndex: "running", width: "9%", align: "center" },
-    { dataIndex: "pending", width: "9%", align: "center" },
-    { dataIndex: "error", width: "9%", align: "center" },
-    { dataIndex: "creatorName", width: "12%", align: "left" },
-    {
-      dataIndex: "creatorDate",
-      width: "12%",
-      align: "left",
-      sorter: true,
-      sortOrder: getSortOrder(workspaceSort, "creatorDate"),
-    },
-  ]);
+  // const workspaceColumns = createWorkspaceColumn([
+  // {
+  //   dataIndex: "name",
+  //   width: "20%",
+  //   align: "left",
+  //   sorter: true,
+  //   sortOrder: getSortOrder(workspaceSort, "name"),
+  //   ellipsis: true,
+  // },
+  // { dataIndex: "gpu", width: "9%", align: "center" },
+  // { dataIndex: "cpu", width: "9%", align: "center" },
+  // { dataIndex: "mem", width: "11%", align: "center" },
+  // { dataIndex: "running", width: "9%", align: "center" },
+  // { dataIndex: "pending", width: "9%", align: "center" },
+  // { dataIndex: "error", width: "9%", align: "center" },
+  // { dataIndex: "creatorName", width: "12%", align: "left" },
+  // {
+  //   dataIndex: "creatorDate",
+  //   width: "12%",
+  //   align: "left",
+  //   sorter: true,
+  //   sortOrder: getSortOrder(workspaceSort, "creatorDate"),
+  // },
+  // ]);
 
   const userResourceColumns = createUserResourceColumn([
     {
-      dataIndex: "userName",
+      key: "userName",
       width: "20%",
       align: "left",
       sorter: true,
       sortOrder: getSortOrder(userResourceSort, "userName"),
     },
-    { dataIndex: "gpu", width: "16%", align: "center" },
-    { dataIndex: "mig", width: "16%", align: "center" },
-    { dataIndex: "mps", width: "16%", align: "center" },
-    { dataIndex: "cpu", width: "16%", align: "center" },
-    { dataIndex: "mem", width: "16%", align: "center" },
+    { key: "gpu", width: "16%", align: "center" },
+    { key: "mig", width: "16%", align: "center" },
+    { key: "mps", width: "16%", align: "center" },
+    { key: "cpu", width: "16%", align: "center" },
+    { key: "mem", width: "16%", align: "center" },
   ]);
 
   const activeWorkloadColumns = createWorkloadColumn([
     {
-      dataIndex: "workloadName",
+      key: "workloadName",
       width: "30%",
       ellipsis: true,
       sorter: true,
       sortOrder: getSortOrder(activeWorkloadSort, "workloadName"),
     },
     {
-      dataIndex: "nodeName",
+      key: "nodeName",
       width: "21%",
       ellipsis: true,
     },
     {
-      dataIndex: "jobType",
+      key: "jobType",
       width: "17%",
       sorter: true,
       sortOrder: getSortOrder(activeWorkloadSort, "jobType"),
     },
-    { dataIndex: "status", width: "12%" },
-    { dataIndex: "creatorName", width: "20%", ellipsis: true },
+    { key: "status", width: "12%" },
+    { key: "creatorName", width: "20%", ellipsis: true },
   ]);
 
   return (
@@ -219,7 +219,7 @@ export function MonitoringSubSection() {
           </ArticleHeader>
           <LeftBody>
             <CustomizedTable<WorkspaceListType>
-              columns={workspaceColumns}
+              columns={[]}
               data={workspaces}
               activePadding
               onChange={(_pagination, _filters, sorter) => {

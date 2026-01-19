@@ -39,10 +39,14 @@ export function JobTypeCard({ type, value, setValue }: JobTypeCardProps) {
     icon = <PytorchIcon width={20} height={20} />;
   }
 
+  const handleClick = () => {
+    setValue(type);
+  };
+
   return (
     <Box
       state={type === value ? "pressed" : "default"}
-      onClick={() => setValue(type)}
+      onClick={handleClick}
       width="100%"
       height="100px"
       data-active={type === value}

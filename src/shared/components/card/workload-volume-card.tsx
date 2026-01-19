@@ -29,7 +29,7 @@ export function WorkloadVolumeCard({
   onDelete,
 }: PropsWithChildren<WorkloadVolumeCardProps>) {
   const { text } = getVolumeStorageTypeInfo(storageType);
-  const { icon } = getVolumeStatusInfo(status);
+  const { icon } = getVolumeStatusInfo(status === "PUBLIC");
   return (
     <div data-testid={WORKLOAD_SELECTOR.VOLUME_CARD}>
       <Card

@@ -87,6 +87,16 @@ export function UpdateWorkloadModal() {
     },
   );
 
+  const handleWorkloadNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWorkloadName(e.target.value);
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setDescription(e.target.value);
+  };
+
   return (
     <Modal
       type="primary"
@@ -116,7 +126,7 @@ export function UpdateWorkloadModal() {
             data-testid={WORKLOAD_SELECTOR.UPDATE_NAME_INPUT}
             placeholder="이름을 입력해 주세요."
             value={workloadName}
-            onChange={(e) => setWorkloadName(e.target.value)}
+            onChange={handleWorkloadNameChange}
             width="100%"
           />
         </FormItem>
@@ -129,7 +139,7 @@ export function UpdateWorkloadModal() {
             data-testid={WORKLOAD_SELECTOR.UPDATE_DESCRIPTION_INPUT}
             placeholder="설명을 입력해 주세요."
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={handleDescriptionChange}
           />
         </FormItem>
         {/* TODO: 추후 라벨 기능 개발 시 추가 */}

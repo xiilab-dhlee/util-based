@@ -1,11 +1,15 @@
+import { isString } from "es-toolkit/predicate";
 import type { z } from "zod";
 
 import { ACCOUNT_UPDATE_FORM_ERROR_MESSAGES } from "@/domain/account-management/constants/update-account-form-error-message";
 
 export const updateAccountErrorMap: z.ZodErrorMap = (issue, ctx) => {
-  const fieldName = issue.path[0] as string | undefined;
+  const firstPathSegment = issue.path[0];
+  if (!isString(firstPathSegment)) {
+    return { message: ctx.defaultError };
+  }
 
-  switch (fieldName) {
+  switch (firstPathSegment) {
     case "accountRole":
       if (issue.code === "invalid_enum_value") {
         return {

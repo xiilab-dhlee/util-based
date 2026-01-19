@@ -109,7 +109,7 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
         {/* 계정 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <StyledListPageBody>
           <RouteTab items={TAB_ITEMS} />
-          {children}
+          <BodyContent>{children}</BodyContent>
         </StyledListPageBody>
       </ListPageMain>
       {/* 그룹 생성/수정 모달 */}
@@ -122,4 +122,11 @@ export default function AdminUserLayout({ children }: PropsWithChildren) {
 
 const StyledListPageBody = styled(ListPageBody)`
   padding: 0;
+`;
+
+const BodyContent = styled.div`
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 `;

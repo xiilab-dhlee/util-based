@@ -20,21 +20,21 @@ export function RegistrySubSection() {
           <CustomizedTable
             columns={createInternalRegistryImageColumn([
               {
-                dataIndex: "name",
+                key: "name",
                 width: "30%",
                 ellipsis: true,
               },
               {
-                dataIndex: "tagCnt",
+                key: "tagCnt",
               },
               {
-                dataIndex: "pullCount",
+                key: "pullCount",
               },
               {
-                dataIndex: "creatorName",
+                key: "creatorName",
               },
               {
-                dataIndex: "creatorDate",
+                key: "creatorDate",
               },
             ])}
             data={data?.content || []}
@@ -53,21 +53,21 @@ export function RegistrySubSection() {
           <CustomizedTable
             columns={createInternalRegistryImageColumn([
               {
-                dataIndex: "name",
+                key: "name",
                 width: "30%",
                 ellipsis: true,
               },
               {
-                dataIndex: "tagCnt",
+                key: "tagCnt",
               },
               {
-                dataIndex: "pullCount",
+                key: "pullCount",
               },
               {
-                dataIndex: "creatorName",
+                key: "creatorName",
               },
               {
-                dataIndex: "creatorDate",
+                key: "creatorDate",
               },
             ])}
             data={data?.content || []}

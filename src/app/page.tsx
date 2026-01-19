@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/shared/config/auth.config";
 import {
+  ACCOUNT_ROLES,
   ADMIN_ROOT_PATH,
   USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
@@ -13,23 +14,29 @@ export const metadata = {
 
 /**
  * 홈페이지 - 권한에 따른 리다이렉트
- * 인증된 사용자는 권한에 따라 admin 또는 user 영역으로 이동
  *
- * 참고: 기본 인증 체크는 middleware.ts에서 처리되며,
+ * 인증 체크는 proxy.ts에서 처리되므로,
  * 여기서는 역할별 대시보드 라우팅만 담당합니다.
+ *
+ * 우선순위: ADMIN > USER (높은 권한 우선)
  */
 export default async function HomePage() {
-  // NextAuth 세션 가져오기 (서버 컴포넌트)
   const session = await getServerSession(authOptions);
-
-  // 세션에서 역할 정보 추출
-  const userRoles = (session as { roles?: string[] })?.roles ?? [];
+  const userRoles = session?.roles ?? [];
 
   // 관리자는 관리자 대시보드로
-  if (userRoles.includes("ROLE_ADMIN") || userRoles.includes("admin")) {
+  if (
+    userRoles.includes(ACCOUNT_ROLES.ADMIN) ||
+    userRoles.includes(ACCOUNT_ROLES.SUPER_ADMIN)
+  ) {
     redirect(ADMIN_ROOT_PATH);
   }
 
-  // 표준 사용자는 표준 대시보드로
-  redirect(USER_ROOT_PATH);
+  // 사용자는 사용자 대시보드로
+  if (userRoles.includes(ACCOUNT_ROLES.USER)) {
+    redirect(USER_ROOT_PATH);
+  }
+
+  // 역할이 없는 사용자는 로그인 페이지로 (보안: 권한 없는 접근 차단)
+  redirect("/signin");
 }

@@ -1,11 +1,13 @@
 "use client";
 
+import { isBoolean } from "es-toolkit";
 import styled from "styled-components";
-import { Tag } from "xiilab-ui";
+import { Tag, Typography } from "xiilab-ui";
 
-import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
+import { useGetAccountDetail } from "@/api/generated/admin-account-management/admin-account-management";
 import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
-import type { GroupTreeType } from "@/shared/schemas/group-tree.schema";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { ACCOUNT_ROLE_LABEL } from "@/shared/constants/core.constant";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
   AsideDetailArticle,
@@ -19,39 +21,67 @@ import {
   AsideDetailArticleTitle,
   AsideDetailArticleValue,
   AsideDetailHeader,
-  AsideDetailHeaderTitle,
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface AccountDetailPanelProps {
-  /** 선택된 계정 노드 */
-  account: GroupTreeType;
+  accountId: string;
 }
 
-/**
- * 계정 상세 정보 패널
- *
- * 선택된 계정의 상세 정보를 표시합니다.
- */
-export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
-  // 계정 상세 정보는 account 도메인 API를 통해 별도로 조회
-  const { data: accountDetail } = useGetAccountDetail(account.id);
+interface GroupNameTagListProps {
+  groupNames: string[];
+}
 
-  const displayId = accountDetail?.email ?? "-";
-  const displayName = accountDetail?.accountName ?? "-";
-  const displayRole = accountDetail?.accountRole ?? "-";
-  const displayStatus =
-    typeof accountDetail?.isEnabled === "boolean"
-      ? getAccountStatusLabelFromBoolean(accountDetail.isEnabled)
-      : "-";
+function GroupNameTagList({ groupNames }: GroupNameTagListProps) {
+  if (groupNames.length === 0) {
+    return "-";
+  }
+
+  return (
+    <TagList>
+      {groupNames.map((groupName, index) => (
+        <Tag key={`${groupName}-${index}`} variant="gray" maxWidth="100%">
+          {groupName}
+        </Tag>
+      ))}
+    </TagList>
+  );
+}
+
+export function AccountDetailPanel({ accountId }: AccountDetailPanelProps) {
+  const { data: accountDetail, isError } = useGetAccountDetail(accountId);
+
+  if (isError) {
+    return (
+      <PanelContainer>
+        <AsideDetailHeader>
+          <Typography.Text variant="subtitle-2-1">계정 정보</Typography.Text>
+        </AsideDetailHeader>
+        <FullWrapper>
+          <DataErrorState />
+        </FullWrapper>
+      </PanelContainer>
+    );
+  }
+
+  const displayEmail = accountDetail?.email || "-";
+  const displayName = accountDetail?.accountName || "-";
+
+  const accountRole = accountDetail?.accountRole;
+  const displayRole = accountRole
+    ? (ACCOUNT_ROLE_LABEL[accountRole] ?? accountRole)
+    : "-";
+  const isEnabled = accountDetail?.isEnabled;
+  const displayStatus = isBoolean(isEnabled)
+    ? getAccountStatusLabelFromBoolean(isEnabled)
+    : "-";
   const displayJoinedDate = formatDateSafely(accountDetail?.createdAt) ?? "-";
 
-  // 상세 응답에서 제공되는 그룹 이름 목록 (문자열 배열)
-  const groupNames = accountDetail?.groupName ?? [];
+  const groupNames = accountDetail?.groupName || [];
 
   return (
     <PanelContainer>
       <AsideDetailHeader>
-        <AsideDetailHeaderTitle>계정 정보</AsideDetailHeaderTitle>
+        <Typography.Text variant="subtitle-2-1">계정 정보</Typography.Text>
       </AsideDetailHeader>
 
       <PanelBody>
@@ -62,88 +92,75 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
           <AsideDetailArticleBody>
             <AsideDetailArticleItem>
               <AsideDetailArticleRow>
-                {/* 좌측 컬럼 */}
                 <AsideDetailArticleRowItem>
-                  <AsideDetailArticleColumn>
-                    <AsideDetailArticleKey>아이디</AsideDetailArticleKey>
+                  <DetailColumn>
+                    <AsideDetailArticleKey>이메일</AsideDetailArticleKey>
                     <AsideDetailArticleValue>
-                      {displayId}
+                      {displayEmail}
                     </AsideDetailArticleValue>
-                  </AsideDetailArticleColumn>
-                  <AsideDetailArticleColumn>
+                  </DetailColumn>
+                  <DetailColumn>
                     <AsideDetailArticleKey>이름</AsideDetailArticleKey>
                     <AsideDetailArticleValue>
                       {displayName}
                     </AsideDetailArticleValue>
-                  </AsideDetailArticleColumn>
-                  <AsideDetailArticleColumn>
+                  </DetailColumn>
+                  <DetailColumn>
                     <AsideDetailArticleKey>상태</AsideDetailArticleKey>
                     <AsideDetailArticleValue>
                       {displayStatus}
                     </AsideDetailArticleValue>
-                  </AsideDetailArticleColumn>
+                  </DetailColumn>
                 </AsideDetailArticleRowItem>
-                {/* 우측 컬럼 */}
                 <AsideDetailArticleRowItem>
-                  <AsideDetailArticleColumn>
+                  <DetailColumn>
                     <AsideDetailArticleKey>권한</AsideDetailArticleKey>
                     <AsideDetailArticleValue>
                       {displayRole}
                     </AsideDetailArticleValue>
-                  </AsideDetailArticleColumn>
-                  <AsideDetailArticleColumn>
+                  </DetailColumn>
+                  <DetailColumn>
                     <AsideDetailArticleKey>가입일</AsideDetailArticleKey>
                     <AsideDetailArticleValue>
                       {displayJoinedDate}
                     </AsideDetailArticleValue>
-                  </AsideDetailArticleColumn>
+                  </DetailColumn>
                 </AsideDetailArticleRowItem>
               </AsideDetailArticleRow>
             </AsideDetailArticleItem>
           </AsideDetailArticleBody>
         </AsideDetailArticle>
 
-        {/* 워크스페이스 / 그룹 정보 */}
         <ArticleGap>
           <AsideDetailArticleHeader>
             <AsideDetailArticleTitle>워크스페이스</AsideDetailArticleTitle>
           </AsideDetailArticleHeader>
           <AsideDetailArticleBody>
             <AsideDetailArticleItem>
-              <AsideDetailArticleColumn>
+              <DetailColumn>
                 <AsideDetailArticleKey>보유 개수</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
                   {typeof accountDetail?.workspaceCount === "number"
                     ? `${accountDetail.workspaceCount}개`
                     : "-"}
                 </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-              <AsideDetailArticleColumn>
+              </DetailColumn>
+              <DetailColumn>
                 <AsideDetailArticleKey>생성 제한 개수</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
                   {typeof accountDetail?.workspaceLimitCount === "number"
                     ? `${accountDetail.workspaceLimitCount}개`
                     : "-"}
                 </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
+              </DetailColumn>
             </AsideDetailArticleItem>
             <AsideDetailArticleItem>
-              <AsideDetailArticleColumn>
+              <DetailColumn>
                 <AsideDetailArticleKey>그룹 목록</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {groupNames.length > 0 ? (
-                    <TagList>
-                      {groupNames.map((groupName, index) => (
-                        <Tag key={index} variant="gray">
-                          {groupName}
-                        </Tag>
-                      ))}
-                    </TagList>
-                  ) : (
-                    "-"
-                  )}
+                  <GroupNameTagList groupNames={groupNames} />
                 </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
+              </DetailColumn>
             </AsideDetailArticleItem>
           </AsideDetailArticleBody>
         </ArticleGap>
@@ -151,8 +168,6 @@ export function AccountDetailPanel({ account }: AccountDetailPanelProps) {
     </PanelContainer>
   );
 }
-
-// ===== Local Styled Components =====
 
 export const PanelContainer = styled.div`
   flex: 1;
@@ -163,6 +178,7 @@ export const PanelContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
   --column-gutter-size: 20px;
+  background-color: #FAFAFA;
 `;
 
 const PanelBody = styled.div`
@@ -180,4 +196,15 @@ const TagList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+`;
+
+const DetailColumn = styled(AsideDetailArticleColumn)`
+  align-items: flex-start;
+`;
+
+const FullWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

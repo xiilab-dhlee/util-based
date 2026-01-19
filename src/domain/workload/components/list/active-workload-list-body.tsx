@@ -32,21 +32,20 @@ export function ActiveWorkloadListBody({
       <CustomizedTable
         columns={createWorkloadColumn([
           {
-            dataIndex: "workloadName",
+            key: "workloadName",
             width: 200,
             ellipsis: true,
             sorter: true,
           },
-          { dataIndex: "jobType", width: 100 },
-          { dataIndex: "creatorName", width: 60, ellipsis: true },
-          { dataIndex: "elapsedTime" },
-          { dataIndex: "status", width: 80 },
-          { dataIndex: "log" },
-          { dataIndex: "terminal", width: 60 },
-          { dataIndex: "port" },
-          { dataIndex: "monitoring", width: 60 },
-          { dataIndex: "power" },
-          { dataIndex: "delete" },
+          { key: "jobType", width: 100 },
+          { key: "creatorName", width: 60, ellipsis: true },
+          { key: "elapsedTime" },
+          { key: "status", width: 80 },
+          { key: "log" },
+          { key: "terminal", width: 60 },
+          { key: "port" },
+          { key: "monitoring", width: 60 },
+          { key: "power" },
         ])}
         data={content}
         columnHeight={37}

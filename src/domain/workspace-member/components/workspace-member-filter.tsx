@@ -2,7 +2,7 @@
 
 import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
-import { Button } from "xiilab-ui";
+import { Button, Input } from "xiilab-ui";
 
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
 import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
@@ -10,12 +10,11 @@ import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
 } from "@/domain/workspace-member/state/workspace-member.atom";
-import { SearchInput } from "@/shared/components/input/search-input";
+import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { GROUP_TREE_NODE_TYPE } from "@/shared/schemas/group-tree.schema";
 import type { SelectedMember } from "@/shared/types/member-selection.type";
 
 export function WorkspaceMemberFilter() {
@@ -37,7 +36,7 @@ export function WorkspaceMemberFilter() {
    */
   const handleSearch = (value: string) => {
     resetPage();
-    setSearchText(value);
+    setSearchText(value.trim());
   };
 
   /**
@@ -57,7 +56,7 @@ export function WorkspaceMemberFilter() {
         id: member.id,
         name: member.name,
         email: member.email,
-        type: GROUP_TREE_NODE_TYPE.account,
+        type: ITEM_TYPES.ACCOUNT,
       }),
     );
 
@@ -69,7 +68,14 @@ export function WorkspaceMemberFilter() {
   return (
     <>
       <MySearchFilter title="워크스페이스 멤버 목록" total={data?.totalSize}>
-        <SearchInput onSearch={handleSearch} />
+        <Input.Search
+          name="search"
+          placeholder="검색어를 입력하세요."
+          onSearch={handleSearch}
+          autoComplete="off"
+          width={220}
+          height={30}
+        />
         <Button
           color="primary"
           icon="Plus"

@@ -36,3 +36,11 @@ export const CREDENTIAL_ENDPOINTS = {
   // 크리덴셜 목록 API
   base: CREDENTIAL_BASE,
 } as const;
+
+// 계정 관리 관련 엔드포인트
+const ACCOUNT_BASE = "/api/v1/admin/accounts";
+
+export const ACCOUNT_ENDPOINTS = {
+  // 계정 목록 API
+  base: ACCOUNT_BASE,
+} as const;

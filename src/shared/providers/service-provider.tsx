@@ -4,8 +4,6 @@ import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
 import { CredentialService } from "@/domain/credential/api/credential.service";
-import { GroupService } from "@/domain/group/api/group.service";
-import { HubService } from "@/domain/hub/api/hub.service";
 import { InternalRegistryService } from "@/domain/internal-registry/api/internal-registry.service";
 import { AdminInternalRegistryImageService } from "@/domain/internal-registry-image/api/admin-internal-registry-image.service";
 import { InternalRegistryImageService } from "@/domain/internal-registry-image/api/internal-registry-image.service";
@@ -29,7 +27,6 @@ import { LicenseService } from "@/domain/system-setting/api/license.service";
 import { SmtpService } from "@/domain/system-setting/api/smtp.service";
 import { StorageSettingService } from "@/domain/system-setting/api/storage-setting.service";
 import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
-import { VolumeService } from "@/domain/volume/api/volume.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
 import { WorkspaceService } from "@/domain/workspace/api/workspace.service";
@@ -41,10 +38,7 @@ interface ServiceContextType {
   workloadService: WorkloadService;
   sourcecodeService: SourcecodeService;
   credentialService: CredentialService;
-  volumeService: VolumeService;
   storageService: StorageService;
-  hubService: HubService;
-  groupService: GroupService;
   notificationService: NotificationService;
   userResourceService: UserResourceService;
   monitoringNotificationService: MonitoringNotificationService;
@@ -92,10 +86,7 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     workloadService: new WorkloadService(),
     sourcecodeService: new SourcecodeService(),
     credentialService: new CredentialService(),
-    volumeService: new VolumeService(),
     storageService: new StorageService(),
-    hubService: new HubService(),
-    groupService: new GroupService(),
     notificationService: new NotificationService(),
     userResourceService: new UserResourceService(),
     monitoringNotificationService: new MonitoringNotificationService(),

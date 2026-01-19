@@ -42,11 +42,6 @@ export const getWorkloadResourceMetricsTimeseriesParams = zod.object({
   workloadResourceName: zod.string().describe("워크로드 리소스명"),
 });
 
-export const getWorkloadResourceMetricsTimeseriesQueryStartDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getWorkloadResourceMetricsTimeseriesQueryEndDateTimeRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-
 export const getWorkloadResourceMetricsTimeseriesQueryParams = zod.object({
   metricName: zod
     .enum([
@@ -57,36 +52,37 @@ export const getWorkloadResourceMetricsTimeseriesQueryParams = zod.object({
       "GPU_MEM_UTILIZATION",
       "CPU_UTILIZATION",
       "MEM_UTILIZATION",
+      "GPU_UTILIZATION",
+      "GPU_MEM_UTILIZATION",
+      "CPU_UTILIZATION",
+      "MEM_UTILIZATION",
     ])
-    .describe(
-      "메트릭 종류 (GPU_UTILIZATION, GPU_MEM_UTILIZATION, CPU_UTILIZATION, MEM_UTILIZATION)",
-    ),
-  startDateTime: zod
+    .describe("메트릭 종류"),
+  startedAt: zod
     .string()
-    .regex(getWorkloadResourceMetricsTimeseriesQueryStartDateTimeRegExp)
+    .datetime({})
     .optional()
     .describe(
-      "조회 시작 시간 (yyyy-MM-dd HH:mm:ss 형식, KST 기준, 기본값: 현재 시간 - 1일)",
+      "조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일). 형식: yyyy-MM-ddTHH:mm:ssZ",
     ),
-  endDateTime: zod
+  endedAt: zod
     .string()
-    .regex(getWorkloadResourceMetricsTimeseriesQueryEndDateTimeRegExp)
+    .datetime({})
     .optional()
     .describe(
-      "조회 종료 시간 (yyyy-MM-dd HH:mm:ss 형식, KST 기준, 기본값: 현재 시간)",
+      "조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간). 형식: yyyy-MM-ddTHH:mm:ssZ",
     ),
 });
 
 export const getWorkloadResourceMetricsTimeseriesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
           .object({
-            dateTime: zod
-              .string()
-              .describe("측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+            dateTime: zod.string().datetime({}).describe("측정 시간 (UTC)"),
             data: zod
               .array(
                 zod
@@ -133,11 +129,6 @@ export const getResourceMetricsTimeseriesParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getResourceMetricsTimeseriesQueryStartDateRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getResourceMetricsTimeseriesQueryEndDateRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-
 export const getResourceMetricsTimeseriesQueryParams = zod.object({
   metricsName: zod
     .enum([
@@ -155,30 +146,25 @@ export const getResourceMetricsTimeseriesQueryParams = zod.object({
     .describe("메트릭 종류"),
   startDate: zod
     .string()
-    .regex(getResourceMetricsTimeseriesQueryStartDateRegExp)
+    .datetime({})
     .optional()
-    .describe(
-      "조회 시작 시간 ('yyyy-MM-dd HH:mm:ss' 형식, 미입력 시 현재 시간 - 1일)",
-    ),
+    .describe("조회 시작 시간 (ISO 8601 형식, 미입력 시 현재 시간 - 1일)"),
   endDate: zod
     .string()
-    .regex(getResourceMetricsTimeseriesQueryEndDateRegExp)
+    .datetime({})
     .optional()
-    .describe(
-      "조회 종료 시간 ('yyyy-MM-dd HH:mm:ss' 형식, 미입력 시 현재 시간)",
-    ),
+    .describe("조회 종료 시간 (ISO 8601 형식, 미입력 시 현재 시간)"),
 });
 
 export const getResourceMetricsTimeseriesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod
           .object({
-            dateTime: zod
-              .string()
-              .describe("측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+            dateTime: zod.string().datetime({}).describe("측정 시간 (UTC)"),
             data: zod
               .array(
                 zod

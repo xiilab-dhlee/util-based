@@ -25,11 +25,11 @@ export function ViewRequestReasonModal() {
     <InfoModal
       type="primary"
       modalWidth={300}
-      icon={<Icon name="AllowRequest" color="#fff" size={18} />}
+      icon={<Icon name="AllowRequest" color="#fff" size={20} />}
       open={open}
       closable
       onClose={onClose}
-      title="신청 사유"
+      title="요청 사유"
       centered
     >
       <ModalDisplayReason>{reason}</ModalDisplayReason>

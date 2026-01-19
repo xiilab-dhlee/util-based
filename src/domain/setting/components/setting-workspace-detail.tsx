@@ -1,41 +1,42 @@
-import { format } from "date-fns";
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
-import { useGetWorkspace } from "@/domain/workspace/hooks/use-get-workspace";
-import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { useGetWorkspaceDetail } from "@/api/generated/workspace/workspace";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 export function SettingWorkspaceDetail() {
-  const publish = usePublish();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
-  const { data } = useGetWorkspace("test-workspace");
+  const { data, isError } = useGetWorkspaceDetail(
+    selectedWorkspace?.workspaceId ?? 0,
+    {
+      query: {
+        enabled: Boolean(selectedWorkspace?.workspaceId),
+      },
+    },
+  );
 
-  const handleUpdateWorkspace = () => {
-    publish(WORKSPACE_EVENTS.sendUpdateWorkspace, {
-      id: data?.id,
-      name: data?.name,
-      description: data?.description,
-    });
-  };
-
-  const handleDeleteWorkspace = () => {
-    publish(WORKSPACE_EVENTS.sendDeleteWorkspace, [data?.id]);
-  };
+  if (isError) {
+    return (
+      <Container>
+        <Header>
+          <Title>상세 정보</Title>
+        </Header>
+        <Body className="error-body">
+          <DataErrorState darkMode />
+        </Body>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <Header>
         <Title>상세 정보</Title>
-        <Tools>
-          <StyledButton onClick={handleUpdateWorkspace}>
-            <Icon name="Edit02" color="#CED5DB" size={20} />
-          </StyledButton>
-          <StyledButton onClick={handleDeleteWorkspace}>
-            <Icon name="Delete" color="#CED5DB" size={20} />
-          </StyledButton>
-        </Tools>
       </Header>
       <Body>
         <Row>
@@ -45,7 +46,7 @@ export function SettingWorkspaceDetail() {
             </RowIconWrapper>
             <RowTitle>워크스페이스 이름</RowTitle>
           </DescriptionRowBody>
-          <Description>{data?.name}</Description>
+          <Description>{data?.workspaceName ?? "-"}</Description>
         </Row>
         <DescriptionRow>
           <DescriptionRowBody>
@@ -54,33 +55,31 @@ export function SettingWorkspaceDetail() {
             </RowIconWrapper>
             <RowTitle>워크스페이스 설명</RowTitle>
           </DescriptionRowBody>
-          <Description>{data?.description}</Description>
+          <Description>{data?.description ?? "-"}</Description>
         </DescriptionRow>
         <Row>
-          <RowBody>
+          <KeyValueRowBody>
             <RowIconWrapper>
               <Icon name="Person" color="var(--icon-fill)" size={18} />
             </RowIconWrapper>
-            <RowTitle>
+            <KeyValueRowTitle>
               <RowKey>생성자 :</RowKey>
-              <RowValue>{data?.creatorName}</RowValue>
-            </RowTitle>
-          </RowBody>
+              <RowValue>{data?.creatorName ?? "-"}</RowValue>
+            </KeyValueRowTitle>
+          </KeyValueRowBody>
         </Row>
         <Row>
-          <RowBody>
+          <KeyValueRowBody>
             <RowIconWrapper>
               <Icon name="Calendar01" color="var(--icon-fill)" size={18} />
             </RowIconWrapper>
-            <RowTitle>
+            <KeyValueRowTitle>
               <RowKey>생성일 :</RowKey>
               <RowValue>
-                {data?.creatorDate
-                  ? format(data.creatorDate, "yyyy.MM.dd")
-                  : "-"}
+                {formatDateSafely(data?.createdAt, "yyyy.MM.dd", "-")}
               </RowValue>
-            </RowTitle>
-          </RowBody>
+            </KeyValueRowTitle>
+          </KeyValueRowBody>
         </Row>
       </Body>
     </Container>
@@ -90,11 +89,11 @@ export function SettingWorkspaceDetail() {
 const Container = styled.div`
   background: #171b26;
   border-radius: 8px;
-  padding: 14px 24px 24px 24px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
   width: 310px;
-  height: 370px;
+  height: 362px;
   overflow: hidden;
 `;
 
@@ -102,7 +101,7 @@ const Header = styled.div`
 display: flex;
 justify-content: space-between;
 align-items: center;
-margin-bottom: 8px;
+margin-bottom: 16px;
 `;
 const Title = styled(Typography.Text).attrs({
   variant: "subtitle-2", // 16px variant
@@ -111,34 +110,24 @@ const Title = styled(Typography.Text).attrs({
   margin: 0;
   font-weight: 700; // Keep 700 weight
 `;
-const Tools = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const StyledButton = styled.button`
-  width: 30px;
-  height: 30px;
-  background: #171b26;
-  border: 1px solid #343c50;
-  border-radius: 2px;
-  color: #ced5db;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  box-shadow:
-    0px 2px 4px 0px rgba(8, 10, 15, 1),
-    inset 0px 2px 4px -1px rgba(8, 10, 15, 1);
-`;
 
 const Body = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex: 1;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  ${customScrollbar("#2A3041")}
+
+  &.error-body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
 `;
 /**
  * 정보 행 기본 스타일
@@ -151,7 +140,6 @@ const Row = styled.div`
   border: 1px solid #2a3041;
   padding: 8px 10px;
   border-radius: 4px;
-  overflow: hidden;
 `;
 
 /**
@@ -159,7 +147,7 @@ const Row = styled.div`
  * 확장 가능한 높이를 가진 설명 전용 행
  */
 const DescriptionRow = styled(Row)`
-  flex: 1;
+  min-height: 124px;
 `;
 
 /**
@@ -169,7 +157,7 @@ const DescriptionRow = styled(Row)`
 const RowBody = styled.div`
   display: flex;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   font-weight: 700;
   font-size: 12px;
   color: #f5f5f5;
@@ -188,23 +176,30 @@ const DescriptionRowBody = styled(RowBody)`
  * 각 정보 섹션의 제목을 표시
  */
 const RowTitle = styled.div`
-  display: inline-block;
-  height: 24px;
-  display: flex;
+  min-height: 24px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 4px;
   justify-content: flex-start;
   align-items: center;
+  flex: 1;
+  min-width: 0;
 `;
 
-/**
- * 워크로드 상태 제목
- * 상태 섹션의 제목을 표시 (우측 여백 추가)
- */
+const KeyValueRowBody = styled(RowBody)`
+  align-items: flex-start;
+`;
+
+const KeyValueRowTitle = styled(RowTitle)`
+  align-items: start;
+  padding-top: 4px;
+`;
 const RowKey = styled.span`
-  margin-right: 4px;
   font-weight: 700;
   font-size: 12px;
   line-height: 16px;
   color: #f5f5f5;
+  white-space: nowrap;
 `;
 
 /**
@@ -233,10 +228,8 @@ const Description = styled.p`
   font-size: 12px;
   line-height: 16px;
   color: #cbcbcb;
-  overflow-y: auto;
-  flex: 1;
-
-  ${customScrollbar("#2A3041")}
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 const RowValue = styled.span`
@@ -244,4 +237,8 @@ const RowValue = styled.span`
   font-size: 12px;
   line-height: 16px;
   color: #cacaca;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;

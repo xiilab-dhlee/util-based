@@ -25,7 +25,7 @@ export function WorkloadPrimaryArticle() {
 
   // hooks는 항상 최상위에서 호출
   const { data } = useGetWorkloadByMode({
-    workspaceId: String(searchParams?.get("workspaceId")),
+    workspaceId: Number(searchParams?.get("workspaceId")),
     workloadId: String(id),
   });
 

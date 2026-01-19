@@ -1,6 +1,4 @@
-import type { ClusterResourceData } from "@/domain/monitoring/components/monitoring-cluster-resource";
 import { PAGE_META } from "@/shared/constants/page-meta.constant";
-import type { CoreResourceType } from "@/shared/types/core.interface";
 import type { TableSortState } from "@/shared/types/core.model";
 
 /** 워크스페이스 기본 정렬: 생성일 내림차순 */
@@ -28,20 +26,6 @@ export const USER_WORKSPACE_MODAL_PAGE_SIZE = 6;
 
 /** 활성화 워크로드 목록 페이지 크기 */
 export const ACTIVE_WORKLOAD_PAGE_SIZE = 20;
-
-/** 클러스터 리소스 더미 데이터 (리소스 타입별) */
-export const CLUSTER_RESOURCE_DUMMY_DATA: Record<
-  CoreResourceType,
-  ClusterResourceData
-> = {
-  GPU: { total: 999, requested: 666, used: 333 },
-  GPU_MEMORY: { total: 999, requested: 666, used: 333 },
-  MIG: { total: 999, requested: 666, used: 333 },
-  MPS: { total: 999, requested: 666, used: 333 },
-  CPU: { total: 999, requested: 666, used: 333 },
-  MEM: { total: 999, requested: 666, used: 333 },
-  DISK: { total: 999, requested: 666, used: 333 },
-};
 
 export const MONITORING_QUICK_MENUS = [
   {

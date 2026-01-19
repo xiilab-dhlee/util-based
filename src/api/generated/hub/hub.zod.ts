@@ -30,7 +30,9 @@
 import * as zod from "zod";
 
 /**
- * 모델 타입별 HUB 목록을 페이징하여 조회합니다. keyword 검색은 hubName을 기준으로 합니다. 썸네일 로드 실패 시 thumbnail 필드는 null로 반환됩니다.
+ * 
+            모델 타입별 HUB 목록을 페이징하여 조회합니다. keyword 검색은 hubName을 기준으로 합니다. 썸네일 로드 실패 시 thumbnail 필드는 null로 반환됩니다.
+        
  * @summary HUB 목록 조회
  */
 export const findHubsQueryPageNoMin = 0;
@@ -67,6 +69,7 @@ export const findHubsQueryParams = zod.object({
 export const findHubsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .object({
         totalSize: zod.number(),
@@ -121,12 +124,13 @@ export const findHubDetailResponse = zod.string();
 export const findHubSummariesQueryParams = zod.object({
   workloadJobType: zod
     .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-    .describe("워크로드 작업 타입 (ENUM: BATCH, INTERACTIVE, INFERENCE, LLM)"),
+    .describe("워크로드 작업 타입 (ENUM: BATCH, INTERACTIVE, DISTRIBUTED)"),
 });
 
 export const findHubSummariesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
     data: zod
       .array(
         zod

@@ -4,13 +4,18 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import { CreateFirstWorkspaceModal } from "@/domain/workspace/components/create-first-workspace-modal";
+import { CreateWorkspaceModal } from "@/domain/workspace/components/create-workspace-modal";
 import { Navigation } from "@/shared/components/layouts/navigation";
 import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
-import { CreateWorkspaceModal } from "@/shared/components/modal/create-workspace-modal";
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
+import { useWorkspaceInitializer } from "@/shared/hooks/use-workspace-initializer";
+import { useWorkspaceValidator } from "@/shared/hooks/use-workspace-validator";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 export default function ModeLayout({ children }: PropsWithChildren) {
+  useWorkspaceInitializer();
+  useWorkspaceValidator();
+
   return (
     <>
       <Container>
@@ -23,12 +28,9 @@ export default function ModeLayout({ children }: PropsWithChildren) {
           </RightInner>
         </Right>
       </Container>
-      {/* 워크스페이스 생성 모달 */}
       <CreateFirstWorkspaceModal />
       <CreateWorkspaceModal />
-      {/* 비밀번호 재확인 모달 */}
       <CheckPasswordModal />
-      {/* 비밀번호 수정 모달 */}
       <UpdatePasswordModal />
     </>
   );

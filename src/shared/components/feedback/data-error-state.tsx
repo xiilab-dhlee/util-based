@@ -9,6 +9,8 @@ interface DataErrorStateProps {
   title?: string;
   /** 상세 에러 메시지 (옵션) */
   description?: string;
+  /** 다크 모드 여부 (기본: false) */
+  darkMode?: boolean;
   /** 다시 시도 버튼 클릭 시 호출되는 콜백 */
   onRetry?: () => void;
   /** 다시 시도 버튼 라벨 (기본: "다시 시도") */
@@ -28,6 +30,7 @@ interface DataErrorStateProps {
 export function DataErrorState({
   title = "데이터를 불러 올 수 없습니다.",
   description,
+  darkMode = false,
   onRetry,
   retryLabel = "다시 시도",
   className,
@@ -40,11 +43,11 @@ export function DataErrorState({
           {icon ?? <Icon name="PriorityHigh" color="#878898" />}
         </IconCircle>
         <Message>
-          <Title variant="body-1-1" as="h3">
+          <Title $darkMode={darkMode} variant="body-1-1" as="h3">
             {title}
           </Title>
           {description ? (
-            <Description variant="body-2-4" as="p">
+            <Description $darkMode={darkMode} variant="body-2-4" as="p">
               {description}
             </Description>
           ) : null}
@@ -68,6 +71,7 @@ export function DataErrorState({
 const Wrapper = styled.div`
   width: 100%;
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
   padding: 16px;
@@ -103,12 +107,12 @@ const Message = styled.div`
   gap: 8px;
 `;
 
-const Title = styled(Typography.Text)`
+const Title = styled(Typography.Text)<{ $darkMode: boolean }>`
   font-weight: 600;
-  color: #333333;
+  color: ${({ $darkMode }) => ($darkMode ? "#c5c6c8" : "#333333")};
 `;
 
-const Description = styled(Typography.Text)`
-  color: #666666;
+const Description = styled(Typography.Text)<{ $darkMode: boolean }>`
+  color: ${({ $darkMode }) => ($darkMode ? "#c5c6c8" : "#666666")};
   line-height: 1.5;
 `;

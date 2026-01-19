@@ -1,26 +1,37 @@
-import type { AxiosInstance, AxiosResponse } from "axios";
+import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
 import type { Session } from "next-auth";
-
-// Extend NextAuth Session type to include custom properties
-interface CustomSession extends Session {
-  accessToken?: string;
-  refresh_token?: string;
-  error?: string;
-  expires: string;
-  roles?: string[];
-}
 
 interface AxiosServiceConfig {
   isAuth?: boolean;
 }
 
-/**
- * 세션 제공자 타입
- * 외부에서 세션을 주입받기 위한 콜백 함수
- */
-type SessionProvider = () => CustomSession | null;
+const isDev = process.env.NODE_ENV === "development";
 
+/** 개발 환경 전용 디버깅 로그 */
+function axiosDebug(message: string, data?: Record<string, unknown>): void {
+  if (!isDev) return;
+  const dataStr = data ? ` ${JSON.stringify(data)}` : "";
+  console.debug(`[AxiosService]${dataStr} ${message}`);
+}
+
+/** 세션 제공자 타입 - 현재 세션을 동기적으로 반환 */
+type SessionProvider = () => Session | null;
+
+/** 세션 갱신자 타입 - NextAuth의 update() 함수 */
+type SessionUpdater = () => Promise<Session | null>;
+
+/** 재시도 플래그를 위한 확장 타입 */
+interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
+/**
+ * Axios 서비스
+ *
+ * - 세션 기반 인증 토큰 자동 주입
+ * - 401 등 인증 에러는 auth-provider에서 처리 (NextAuth 세션 에러 감지)
+ */
 export class AxiosService {
   private static instance: AxiosService;
   private axios: AxiosInstance;
@@ -28,8 +39,9 @@ export class AxiosService {
   private requestInterceptorId?: number;
   private responseInterceptorId?: number;
 
-  // 외부에서 주입받은 세션 제공자
+  // 외부에서 주입받은 세션 제공자 및 갱신자
   private sessionProvider: SessionProvider | null = null;
+  private sessionUpdater: SessionUpdater | null = null;
 
   constructor(config: AxiosServiceConfig = {}) {
     this.axios = axios.create({
@@ -62,10 +74,25 @@ export class AxiosService {
   }
 
   /**
+   * 세션 갱신자를 설정합니다.
+   * AuthProvider에서 NextAuth의 update() 함수를 주입합니다.
+   */
+  public setSessionUpdater(updater: SessionUpdater): void {
+    this.sessionUpdater = updater;
+  }
+
+  /**
+   * 세션 갱신자를 제거합니다.
+   */
+  public clearSessionUpdater(): void {
+    this.sessionUpdater = null;
+  }
+
+  /**
    * 현재 세션을 가져옵니다.
    * 외부에서 주입된 세션 제공자를 통해 동기적으로 세션을 반환합니다.
    */
-  private getSession(): CustomSession | null {
+  private getSession(): Session | null {
     if (this.sessionProvider) {
       return this.sessionProvider();
     }
@@ -81,7 +108,7 @@ export class AxiosService {
       this.axios.interceptors.response.eject(this.responseInterceptorId);
     }
 
-    // 요청 인터셉터 설정
+    // 요청 인터셉터: 인증 토큰 자동 주입
     this.requestInterceptorId = this.axios.interceptors.request.use(
       (config) => {
         if (!config.headers.Authorization && this.isAuth) {
@@ -93,25 +120,53 @@ export class AxiosService {
         }
         return config;
       },
-      (error) => {
-        console.log("Request interceptor error:", error);
-        return Promise.reject(error);
-      },
+      (error) => Promise.reject(error),
     );
 
-    // 응답 인터셉터 설정
+    // 응답 인터셉터: 401 에러 시 토큰 갱신 후 재시도
     this.responseInterceptorId = this.axios.interceptors.response.use(
-      (response: AxiosResponse) => {
-        return response;
-      },
-      (error: unknown) => {
-        const { response } = error as { response?: { status: number } };
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config as RetryableAxiosRequestConfig;
+        const requestUrl = originalRequest?.url || "unknown";
 
-        if (response?.status === 401 && this.isAuth) {
-          // 401 에러 시 세션 만료로 처리
-          // 실제 토큰 갱신은 NextAuth의 SessionProvider가 처리
-          console.warn("Unauthorized request - session may be expired");
+        // 401 에러 + 재시도 안 한 경우 + 세션 갱신자가 있는 경우
+        if (
+          error.response?.status === 401 &&
+          !originalRequest._retry &&
+          this.sessionUpdater
+        ) {
+          originalRequest._retry = true;
+          axiosDebug("⏰ 401 에러 감지 → 토큰 갱신 시도", { url: requestUrl });
+
+          try {
+            // NextAuth 세션 갱신 시도 (JWT 콜백에서 토큰 갱신)
+            const newSession = await this.sessionUpdater();
+
+            if (newSession?.accessToken) {
+              axiosDebug("✅ 토큰 갱신 성공 → 요청 재시도", {
+                url: requestUrl,
+              });
+              // 새 토큰으로 원래 요청 재시도
+              originalRequest.headers.Authorization = `Bearer ${newSession.accessToken}`;
+              return this.axios(originalRequest);
+            }
+
+            axiosDebug("❌ 토큰 갱신 실패 (새 토큰 없음)", { url: requestUrl });
+          } catch (refreshError) {
+            axiosDebug("❌ 토큰 갱신 실패 (예외 발생)", {
+              url: requestUrl,
+              error: String(refreshError),
+            });
+          }
+
+          // 갱신 실패 → 로그인 페이지로 리다이렉트
+          axiosDebug("🔒 로그인 페이지로 리다이렉트");
+          if (typeof window !== "undefined") {
+            window.location.href = "/signin";
+          }
         }
+
         return Promise.reject(error);
       },
     );

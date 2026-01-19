@@ -148,7 +148,7 @@ export const useUpdateWorkspaceResource = <
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다.
+ * 워크스페이스의 리소스 추가 요청을 반려합니다. 반려 사유를 함께 기록합니다. 반려 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 반려
  */
 export const rejectResourceRequest = (
@@ -230,7 +230,7 @@ export const useRejectResourceRequest = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다.
+ * 워크스페이스의 리소스 추가 요청을 승인합니다. 승인 시 요청된 리소스가 워크스페이스에 할당됩니다. 승인 시 요청자에게 알림이 발송됩니다.
  * @summary 리소스 요청 승인
  */
 export const approveResourceRequest = (resourceRequestId: number) => {
@@ -307,7 +307,7 @@ export const useApproveResourceRequest = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 워크스페이스 정책을 조회합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 확인할 수 있습니다.
+ * 워크스페이스 정책을 조회합니다. 기본 리소스 할당량과 한 계정당 워크스페이스 생성 제한 수를 확인할 수 있습니다.
  * @summary 관리자용 워크스페이스 정책 조회
  */
 export const getPolicySet = (signal?: AbortSignal) => {
@@ -435,7 +435,7 @@ export function useGetPolicySet<
 }
 
 /**
- * 워크스페이스 정책을 수정합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 설정할 수 있습니다.
+ * 워크스페이스 정책을 수정합니다. 기본 리소스 할당량과 계정별 워크스페이스 생성 제한 수를 설정할 수 있습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 관리자용 워크스페이스 정책 수정
  */
 export const updatePolicySet = (
@@ -603,7 +603,7 @@ export const useDeleteWorkspaces = <TError = unknown, TContext = unknown>(
  * @summary 관리자용 워크스페이스 목록 조회
  */
 export const getAllWorkspaces1 = (
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminWorkspaceListResponse>({
@@ -624,7 +624,7 @@ export const getGetAllWorkspaces1QueryOptions = <
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -660,7 +660,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params: undefined | GetAllWorkspaces1Params,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -686,7 +686,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -712,7 +712,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -734,7 +734,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -766,7 +766,7 @@ export function useGetAllWorkspaces1<
  */
 export const getWorkspaceMembers1 = (
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminWorkspaceMemberResponse>({
@@ -792,7 +792,7 @@ export const getGetWorkspaceMembers1QueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -835,7 +835,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params: undefined | GetWorkspaceMembers1Params,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -862,7 +862,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -889,7 +889,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -912,7 +912,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -943,7 +943,12 @@ export function useGetWorkspaceMembers1<
 }
 
 /**
- * 특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+ * 
+            특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+
+            **응답 규칙:**
+            - 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+        
  * @summary 관리자용 워크스페이스 상세 조회
  */
 export const getWorkspaceDetail1 = (
@@ -1111,7 +1116,7 @@ export function useGetWorkspaceDetail1<
  * @summary 관리자용 리소스 요청 목록 조회
  */
 export const getResourceRequests1 = (
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminResourceRequestListResponse>(
@@ -1137,7 +1142,7 @@ export const getGetResourceRequests1QueryOptions = <
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1173,7 +1178,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params: undefined | GetResourceRequests1Params,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1199,7 +1204,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1225,7 +1230,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1247,7 +1252,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1274,7 +1279,13 @@ export function useGetResourceRequests1<
 }
 
 /**
- * 리소스 요청의 상세 정보를 조회합니다. 현재 할당량, 요청량, 클러스터 전체 용량을 비교하여 확인할 수 있습니다.
+ * 
+            리소스 요청의 상세 정보를 조회합니다. 현재 할당량, 요청량, 클러스터 전체 용량을 비교하여 확인할 수 있습니다.
+
+            **응답 규칙:**
+            - 리소스 요청이 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+            - 연관된 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+        
  * @summary 리소스 요청 상세 조회
  */
 export const getResourceRequestDetail = (

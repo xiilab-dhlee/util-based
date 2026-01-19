@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
+import { ROUTES } from "@/shared/constants/routes.constant";
 import {
   testId,
   WORKLOAD_SELECTOR,
@@ -44,7 +45,7 @@ export class WorkloadLogPage extends BasePage {
   }
 
   protected get basePath(): string {
-    return "/user/workload";
+    return ROUTES.USER_WORKLOAD;
   }
 
   // ============================================
@@ -57,10 +58,11 @@ export class WorkloadLogPage extends BasePage {
    * @param workspaceId - 워크스페이스 ID (optional)
    */
   async gotoLog(workloadId: string, workspaceId?: string): Promise<void> {
-    const path = workspaceId
-      ? `/${workloadId}/log?workspaceId=${workspaceId}`
-      : `/${workloadId}/log`;
-    await this.goto(path);
+    const fullPath = workspaceId
+      ? `${ROUTES.USER_WORKLOAD_LOG(workloadId)}?workspaceId=${workspaceId}`
+      : ROUTES.USER_WORKLOAD_LOG(workloadId);
+    await this.page.goto(fullPath);
+    await this.page.waitForLoadState("networkidle");
   }
 
   // ============================================

@@ -41,6 +41,7 @@ export const getGetWorkspaceMemberRoleResponseMock = (
   overrideResponse: Partial<BaseResponseMemberRoleResponse> = {},
 ): BaseResponseMemberRoleResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     memberRole: faker.helpers.arrayElement(["OWNER", "PARTICIPANT"] as const),
   },
@@ -53,6 +54,7 @@ export const getUpdateMemberRoleResponseMock = (
   overrideResponse: Partial<BaseResponseMemberRoleResponse> = {},
 ): BaseResponseMemberRoleResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     memberRole: faker.helpers.arrayElement(["OWNER", "PARTICIPANT"] as const),
   },
@@ -65,6 +67,7 @@ export const getGetWorkspaceMembersResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseWorkspaceMemberResponse> = {},
 ): BaseResponsePageResponseWorkspaceMemberResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
@@ -92,6 +95,7 @@ export const getAddWorkspaceMembersResponseMock = (
   overrideResponse: Partial<BaseResponseInteger> = {},
 ): BaseResponseInteger => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: faker.number.int({ min: undefined, max: undefined }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),

@@ -22,16 +22,19 @@ const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       title: "노드 이름",
+      key: "nodeName",
       dataIndex: "nodeName",
       align: "left",
     },
     {
       title: "IP 주소",
+      key: "ip",
       dataIndex: "ip",
       align: "left",
     },
     {
       title: "알림 이름",
+      key: "name",
       dataIndex: "name",
       align: "left",
       render: (
@@ -45,6 +48,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "알림 유형",
+      key: "channel",
       dataIndex: "channel",
       align: "left",
       render: () => {
@@ -53,6 +57,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "발생일시",
+      key: "createdDate",
       dataIndex: "createdDate",
       align: "left",
       width: 180,
@@ -62,11 +67,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "결과",
+      key: "result",
       dataIndex: "result",
       align: "center",
     },
     {
       title: "발송일시",
+      key: "sentAt",
       dataIndex: "sentAt",
       align: "left",
       render: (sentAt: Date) => {
@@ -75,6 +82,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "항목",
+      key: "item",
       dataIndex: "item",
       align: "center",
       render: (item: string) => {
@@ -88,6 +96,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "설정",
+      key: "setting",
       dataIndex: "setting",
       align: "center",
       render: (
@@ -104,6 +113,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "감지한 값",
+      key: "duration",
       dataIndex: "duration",
       align: "center",
       render: (duration: string) =>
@@ -111,6 +121,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "이름",
+      key: "userName",
       dataIndex: "userName",
       align: "left",
     },

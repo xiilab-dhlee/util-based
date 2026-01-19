@@ -4,10 +4,11 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal, Typography } from "xiilab-ui";
 
-import { useGetAccountDetail } from "@/api/generated/admin-account/admin-account";
+import { useGetAccountDetail } from "@/api/generated/admin-account-management/admin-account-management";
 import { getAccountStatusLabelFromBoolean } from "@/domain/account-management/constants/account.constant";
 import { openViewAccountDetailModalAtom } from "@/domain/account-management/state/account.atom";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
@@ -67,15 +68,19 @@ export function ViewAccountDetailModal() {
           <SectionTitle>상세 정보</SectionTitle>
           <DetailRow>
             <DetailLabel>이름</DetailLabel>
-            <DetailValue>{accountDetail?.accountName || "-"}</DetailValue>
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_NAME}>
+              {accountDetail?.accountName || "-"}
+            </DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel>아이디</DetailLabel>
-            <DetailValue>{accountDetail?.email || "-"}</DetailValue>
+            <DetailLabel>이메일</DetailLabel>
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_EMAIL}>
+              {accountDetail?.email || "-"}
+            </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>그룹</DetailLabel>
-            <DetailValue>
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_GROUP}>
               {accountDetail?.groupName?.length
                 ? accountDetail.groupName.join(", ")
                 : "-"}
@@ -83,7 +88,7 @@ export function ViewAccountDetailModal() {
           </DetailRow>
           <DetailRow>
             <DetailLabel>상태</DetailLabel>
-            <DetailValue>
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_STATUS}>
               {accountDetail?.isEnabled != null
                 ? getAccountStatusLabelFromBoolean(accountDetail.isEnabled)
                 : "-"}
@@ -91,11 +96,13 @@ export function ViewAccountDetailModal() {
           </DetailRow>
           <DetailRow>
             <DetailLabel>권한</DetailLabel>
-            <DetailValue>{accountDetail?.accountRole || "-"}</DetailValue>
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_ROLE}>
+              {accountDetail?.accountRole || "-"}
+            </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>가입일</DetailLabel>
-            <DetailValue>
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_CREATED_AT}>
               {formatDateSafely(accountDetail?.createdAt)}
             </DetailValue>
           </DetailRow>
@@ -105,12 +112,14 @@ export function ViewAccountDetailModal() {
           <SectionTitle>워크스페이스 정보</SectionTitle>
           <DetailRow>
             <DetailLabel>보유 개수</DetailLabel>
-            <DetailValue>{accountDetail?.workspaceCount ?? 0}개</DetailValue>
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT}>
+              {(accountDetail?.workspaceCount ?? 0).toLocaleString()}개
+            </DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>생성 제한 개수</DetailLabel>
-            <DetailValue>
-              {accountDetail?.workspaceLimitCount ?? 0}개
+            <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_LIMIT}>
+              {(accountDetail?.workspaceLimitCount ?? 0).toLocaleString()}개
             </DetailValue>
           </DetailRow>
         </DetailCard>

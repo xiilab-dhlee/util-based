@@ -2,6 +2,8 @@ import { expect, type Locator } from "@playwright/test";
 import { test as base } from "playwright-bdd";
 
 import { SELECTOR } from "@/shared/constants/selector.constant";
+import { ButtonComponent } from "./components/button.component";
+import { CardGridComponent } from "./components/card-grid.component";
 import { DataTableComponent } from "./components/data-table.component";
 import { DrawerComponent } from "./components/drawer.component";
 import { ModalComponent } from "./components/modal.component";
@@ -12,7 +14,11 @@ import { SearchInputComponent } from "./components/search-input.component";
 import { SwitchComponent } from "./components/switch.component";
 import { TabsComponent } from "./components/tabs.component";
 import { ThemePopoverComponent } from "./components/theme-popover.component";
+import { AccountManagementPage } from "./pages/account-management.page";
+import { AccountPendingPage } from "./pages/account-pending.page";
+import { HubPage } from "./pages/hub.page";
 import { MonitoringPage } from "./pages/monitoring.page";
+import { PrivateRegistryListPage } from "./pages/private-registry-list.page";
 import { SettingPage } from "./pages/setting.page";
 import { SignupPage } from "./pages/signup.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
@@ -43,6 +49,7 @@ export type AssertLogger = {
   assertNotEmpty: (label: string, actual: string | null | undefined) => void;
   assertMatch: (label: string, actual: string, pattern: RegExp) => void;
   assertLocatorText: (label: string, locator: Locator) => Promise<void>;
+  assertTrue: (label: string, condition: boolean) => void;
 };
 
 /**
@@ -124,6 +131,10 @@ type TestContextFixtures = {
   workloadMonitoringPage: WorkloadMonitoringPage;
   workloadTerminalPage: WorkloadTerminalPage;
   monitoringPage: MonitoringPage;
+  hubPage: HubPage;
+  accountManagementPage: AccountManagementPage;
+  accountPendingPage: AccountPendingPage;
+  privateRegistryListPage: PrivateRegistryListPage;
 
   // 공통 UI 컴포넌트 (페이지와 무관하게 사용)
   modal: ModalComponent;
@@ -136,12 +147,16 @@ type TestContextFixtures = {
   // 목록 페이지 공통 컴포넌트
   /** 목록 테이블 험블 객체 */
   listTable: DataTableComponent;
+  /** 목록 카드 그리드 험블 객체 (허브 등 카드형 목록) */
+  listGrid: CardGridComponent;
   /** 내 항목만 보기 스위치 험블 객체 */
   myItemsSwitch: SwitchComponent;
   /** 검색 입력창 험블 객체 */
   listSearchInput: SearchInputComponent;
   /** 페이지네이션 험블 객체 */
   listPagination: PaginationComponent;
+  /** 목록 삭제 버튼 험블 객체 */
+  listDeleteButton: ButtonComponent;
 };
 
 // ============================================================================
@@ -179,13 +194,20 @@ function createAssertLogger(): AssertLogger {
 
     assertNotEmpty: (label: string, actual: string | null | undefined) => {
       const trimmed = actual?.trim() ?? "";
-      logAssertion(label, actual, "non-empty string", trimmed.length > 0);
-      expect(trimmed.length).toBeGreaterThan(0);
+      // 빈 문자열과 "-"(UI에서 빈 값 표시)를 모두 유효하지 않은 값으로 취급
+      const isValid = trimmed.length > 0 && trimmed !== "-";
+      logAssertion(label, actual, "non-empty string (not '-')", isValid);
+      expect(isValid).toBe(true);
     },
 
     assertMatch: (label: string, actual: string, pattern: RegExp) => {
       logAssertion(label, actual, pattern.toString(), pattern.test(actual));
       expect(actual).toMatch(pattern);
+    },
+
+    assertTrue: (label: string, condition: boolean) => {
+      logAssertion(label, condition, true, condition);
+      expect(condition).toBe(true);
     },
 
     assertLocatorText: async (label: string, locator: Locator) => {
@@ -383,6 +405,22 @@ export const test = base.extend<TestContextFixtures>({
     await use(new MonitoringPage(page));
   },
 
+  hubPage: async ({ page }, use) => {
+    await use(new HubPage(page));
+  },
+
+  accountManagementPage: async ({ page }, use) => {
+    await use(new AccountManagementPage(page));
+  },
+
+  accountPendingPage: async ({ page }, use) => {
+    await use(new AccountPendingPage(page));
+  },
+
+  privateRegistryListPage: async ({ page }, use) => {
+    await use(new PrivateRegistryListPage(page));
+  },
+
   // ============================================================================
   // 공통 UI 컴포넌트 (페이지와 무관)
   // ============================================================================
@@ -419,6 +457,10 @@ export const test = base.extend<TestContextFixtures>({
     await use(new DataTableComponent(page, SELECTOR.LIST_TABLE));
   },
 
+  listGrid: async ({ page }, use) => {
+    await use(new CardGridComponent(page, SELECTOR.LIST_CARD));
+  },
+
   myItemsSwitch: async ({ page }, use) => {
     await use(new SwitchComponent(page, SELECTOR.MY_ITEMS_ONLY_SWITCH));
   },
@@ -429,5 +471,9 @@ export const test = base.extend<TestContextFixtures>({
 
   listPagination: async ({ page }, use) => {
     await use(new PaginationComponent(page, SELECTOR.LIST_PAGINATION));
+  },
+
+  listDeleteButton: async ({ page }, use) => {
+    await use(new ButtonComponent(page, SELECTOR.LIST_DELETE_BUTTON));
   },
 });

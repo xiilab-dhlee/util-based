@@ -42,14 +42,14 @@ export function SourcecodeListBody({
     <ListWrapper>
       <CustomizedTable
         columns={createSourcecodeColumn([
-          { dataIndex: "checkbox" },
-          { dataIndex: "name", width: "20%", ellipsis: true, sorter: true },
-          { dataIndex: "url", width: "15%", ellipsis: true },
-          { dataIndex: "creatorName" },
-          { dataIndex: "status" },
-          { dataIndex: "type" },
-          { dataIndex: "cmd", width: "15%", ellipsis: true },
-          { dataIndex: "creatorDate" },
+          { key: "checkbox" },
+          { key: "name", width: "20%", ellipsis: true, sorter: true },
+          { key: "url", width: "15%", ellipsis: true },
+          { key: "creatorName" },
+          { key: "status" },
+          { key: "type" },
+          { key: "cmd", width: "15%", ellipsis: true },
+          { key: "creatorDate" },
         ])}
         data={content}
         loading={loading}

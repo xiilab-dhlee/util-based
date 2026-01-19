@@ -1,11 +1,12 @@
 import type { DropdownOption } from "xiilab-ui";
 
 import type {
+  AccountUpdateRequestAccountRole,
   GetAllAccountsSort,
   GetSignupRequestsSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { AccountUpdateRequestAccountRole as API_ACCOUNT_ROLE_VALUES } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { ACCOUNT_ROLES } from "@/shared/constants/core.constant";
+import { ACCOUNT_ROLE_LABEL } from "@/shared/constants/core.constant";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 export const ACCOUNT_SORT_FIELD_MAP = {
@@ -17,6 +18,12 @@ export const SIGNUP_REQUEST_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   createdAt: "CREATED_AT",
 } as const satisfies Record<string, GetSignupRequestsSort>;
+
+/** 계정 정렬 필드 배열 */
+export const ACCOUNT_SORT_FIELDS = ["accountName", "createdAt"] as const;
+
+/** 가입 신청 정렬 필드 배열 */
+export const SIGNUP_REQUEST_SORT_FIELDS = ["accountName", "createdAt"] as const;
 
 /** 계정 정렬 필드 타입  */
 export type AccountSortField = keyof typeof ACCOUNT_SORT_FIELD_MAP;
@@ -30,15 +37,24 @@ export type AccountSortState = AntdTableSortState<AccountSortField>;
 /** 가입 신청 정렬 상태 타입 */
 export type SignupRequestSortState = AntdTableSortState<SignupRequestSortField>;
 
+type AccountRoleOptionMap = {
+  [Role in AccountUpdateRequestAccountRole]: DropdownOption;
+};
+
 /** 계정 권한 드롭다운 옵션 */
-export const ACCOUNT_ROLE_OPTIONS: DropdownOption[] = [
-  {
+const ACCOUNT_ROLE_OPTIONS_MAP = {
+  SUPER_ADMIN: {
     value: API_ACCOUNT_ROLE_VALUES.SUPER_ADMIN,
-    label: ACCOUNT_ROLES.SUPER_ADMIN,
+    label: ACCOUNT_ROLE_LABEL.SUPER_ADMIN,
   },
-  { value: API_ACCOUNT_ROLE_VALUES.ADMIN, label: ACCOUNT_ROLES.ADMIN },
-  { value: API_ACCOUNT_ROLE_VALUES.USER, label: ACCOUNT_ROLES.USER },
-];
+  ADMIN: {
+    value: API_ACCOUNT_ROLE_VALUES.ADMIN,
+    label: ACCOUNT_ROLE_LABEL.ADMIN,
+  },
+  USER: { value: API_ACCOUNT_ROLE_VALUES.USER, label: ACCOUNT_ROLE_LABEL.USER },
+} as const satisfies AccountRoleOptionMap;
+
+export const ACCOUNT_ROLE_OPTIONS = Object.values(ACCOUNT_ROLE_OPTIONS_MAP);
 
 /** 계정 상태 옵션 */
 export const ACCOUNT_STATUS_OPTIONS: DropdownOption[] = [

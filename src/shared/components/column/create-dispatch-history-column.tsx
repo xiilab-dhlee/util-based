@@ -28,6 +28,7 @@ const createColumnList = (
   return [
     {
       title: "리포트 이름",
+      key: "reportName",
       dataIndex: "reportName",
       align: "left",
       width: "30%",
@@ -50,6 +51,7 @@ const createColumnList = (
     },
     {
       title: "수신자 수",
+      key: "recipientCount",
       dataIndex: "recipientCount",
       align: "center",
       render: (recipientCount: number) => {
@@ -60,6 +62,7 @@ const createColumnList = (
     },
     {
       title: "전송상태",
+      key: "transmissionStatus",
       dataIndex: "transmissionStatus",
       align: "center",
       render: (
@@ -81,6 +84,7 @@ const createColumnList = (
     },
     {
       title: "발송일시",
+      key: "dispatchDateTime",
       dataIndex: "dispatchDateTime",
       align: "center",
       render: (dispatchDateTime: string) => {

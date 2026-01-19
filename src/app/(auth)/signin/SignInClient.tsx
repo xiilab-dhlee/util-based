@@ -1,53 +1,35 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import type { BuiltInProviderType } from "next-auth/providers/index";
-import type { ClientSafeProvider, LiteralUnion } from "next-auth/react";
-import { signIn } from "next-auth/react";
+import { getProviders, signIn } from "next-auth/react";
 import { useEffect } from "react";
 
-/**
- * Props for the SignInClient component
- */
-interface SignInClientProps {
-  /**
-   * Available authentication providers
-   * Can be a record mapping provider IDs to ClientSafeProvider objects,
-   * null when no providers are available, or undefined during loading
-   */
-  providers:
-    | Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>
-    | null
-    | undefined;
-}
+/** 테스트 환경에서는 auth-provider.tsx가 자동 로그인 처리 */
+const isTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 
 /**
- * 로그인 페이지 클라이언트 컴포넌트
- * 1. 특정 경로가 아닌 경우 자동으로 Keycloak 로그인 페이지로 이동
- * 2. 실제 UI는 렌더링하지 않고 인증 로직만 처리
+ * Keycloak 자동 로그인 컴포넌트
+ *
+ * - Keycloak 프로바이더가 설정되어 있으면 자동으로 로그인 페이지로 리다이렉트
+ * - 테스트 환경에서는 동작하지 않음 (auth-provider에서 처리)
  */
-export default function SignInClient({ providers }: SignInClientProps) {
-  const pathname = usePathname();
-
+export default function SignInClient() {
   useEffect(() => {
-    // pathname이 null인 경우 early return
-    if (!pathname) return;
+    // 테스트 환경에서는 자동 로그인 처리
+    if (isTestAuth) return;
+    // Keycloak 프로바이더가 설정되어 있으면 자동으로 로그인 페이지로 리다이렉트
+    const initKeycloakLogin = async () => {
+      try {
+        const providers = await getProviders();
+        if (providers?.keycloak) {
+          void signIn("keycloak"); // fire-and-forget: 리다이렉트 발생
+        }
+      } catch (error) {
+        console.error("Failed to get auth providers:", error);
+      }
+    };
 
-    // 자동 로그인 처리를 위한 경로 제외 목록
-    const excludedPaths = ["/license-main", "/createadmin"];
-
-    // 제외 경로가 아니고, 사용 가능한 인증 제공자가 없는 경우 자동 로그인 시도
-    const hasNoProviders =
-      providers == null
-        ? true
-        : Array.isArray(providers)
-          ? providers.length === 0
-          : Object.keys(providers).length === 0;
-
-    if (!excludedPaths.includes(pathname) && hasNoProviders) {
-      signIn("keycloak");
-    }
-  }, [providers, pathname]);
+    initKeycloakLogin();
+  }, []);
 
   return null;
 }

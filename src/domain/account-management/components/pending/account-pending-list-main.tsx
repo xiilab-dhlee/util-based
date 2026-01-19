@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
-import { useGetSignupRequests } from "@/api/generated/admin-account/admin-account";
+import { useGetSignupRequests } from "@/api/generated/admin-account-approval/admin-account-approval";
 import { AccountPendingListBody } from "@/domain/account-management/components/pending/account-pending-list-body";
 import { AccountPendingListFilter } from "@/domain/account-management/components/pending/account-pending-list-filter";
 import { AccountPendingListFooter } from "@/domain/account-management/components/pending/account-pending-list-footer";
@@ -36,10 +36,11 @@ export function AccountPendingListMain() {
   });
 
   const { data, isLoading, isError } = useGetSignupRequests({
-    pageNo: page,
+    pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: searchText,
-    ...(sortRequest ? { sortRequest } : {}),
+    sort: sortRequest?.sort,
+    order: sortRequest?.order,
   });
 
   useEffect(() => {

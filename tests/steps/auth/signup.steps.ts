@@ -30,26 +30,63 @@ Then("회원가입 페이지가 표시된다", async ({ signupPage }) => {
 // ============================================
 
 /**
- * 회원가입 필수값 입력 (통합 Step)
- *
- * DataTable에 포함된 필드만 입력합니다.
- * 특정 필드의 유효성을 검증하려면 해당 필드를 DataTable에서 제외하거나
- * 유효하지 않은 값을 포함시키면 됩니다.
+ * 특정 필드를 제외한 필수값 입력 (통합 Step)
  *
  * @example
- * Given 회원가입 필수값이 유효하게 입력되어 있다
- *   | field            | value            |
- *   | Email            | user1@xiilab.com |
- *   | Password         | xiirocks1!       |
- *   | Confirm Password | xiirocks1!       |
- *   | First Name       | 길동             |
- *   | Last Name        | 홍               |
+ * Given Email을 제외한 필수값이 유효하게 입력되어 있다
+ * Given Password를 제외한 필수값이 유효하게 입력되어 있다
+ * Given Confirm Password를 제외한 필수값이 유효하게 입력되어 있다
+ *
+ * @param excludedField - 제외할 필드명 (문서화 목적, DataTable에서 실제 제외됨)
+ * @param dataTable - 입력할 필드/값 쌍
  */
 Given(
-  "회원가입 필수값이 유효하게 입력되어 있다",
-  async ({ signupPage }, dataTable) => {
+  /^(.+)를? 제외한 필수값이 유효하게 입력되어 있다$/,
+  async ({ signupPage }, excludedField: string, dataTable) => {
+    // excludedField: Feature 파일에서 문서화 목적으로 명시
+    // 실제 제외 로직은 DataTable에서 해당 필드를 생략하여 처리
+    void excludedField;
     const data = dataTable.hashes() as Array<{ field: string; value: string }>;
     await signupPage.fillFields(data);
+  },
+);
+
+// ============================================
+// When - 필드 입력
+// ============================================
+
+When(
+  "Email 필드에 {string}을 입력한다",
+  async ({ signupPage }, value: string) => {
+    await signupPage.fillEmail(value);
+  },
+);
+
+When(
+  "Password 필드에 {string}을 입력한다",
+  async ({ signupPage }, value: string) => {
+    await signupPage.fillPassword(value);
+  },
+);
+
+When(
+  "Confirm Password 필드에 {string}을 입력한다",
+  async ({ signupPage }, value: string) => {
+    await signupPage.fillConfirmPassword(value);
+  },
+);
+
+When(
+  "First Name 필드에 {string}을 입력한다",
+  async ({ signupPage }, value: string) => {
+    await signupPage.fillFirstName(value);
+  },
+);
+
+When(
+  "Last Name 필드에 {string}을 입력한다",
+  async ({ signupPage }, value: string) => {
+    await signupPage.fillLastName(value);
   },
 );
 
@@ -155,34 +192,12 @@ Then("Last Name 필드에는 25자까지만 표시된다", async ({ signupPage }
 // UI 렌더링 검증
 // ============================================
 
+Then("다음 필드가 표시된다", async ({ signupPage }, dataTable) => {
+  const fields = dataTable.hashes() as Array<{ field: string }>;
+  const fieldNames = fields.map((row) => row.field);
+  await signupPage.assertFieldsVisible(fieldNames);
+});
+
 Then("로그인하기 링크가 표시된다", async ({ signupPage }) => {
   await signupPage.assertLoginLinkVisible();
-});
-
-// ============================================
-// Then - 필드 빈 값 검증
-// ============================================
-
-Then("Email 입력창이 빈 값이다", async ({ signupPage }) => {
-  await signupPage.assertFieldEmpty("Email");
-});
-
-Then("Password 입력창이 빈 값이다", async ({ signupPage }) => {
-  await signupPage.assertFieldEmpty("Password");
-});
-
-Then("Confirm Password 입력창이 빈 값이다", async ({ signupPage }) => {
-  await signupPage.assertFieldEmpty("Confirm Password");
-});
-
-Then("First Name 입력창이 빈 값이다", async ({ signupPage }) => {
-  await signupPage.assertFieldEmpty("First Name");
-});
-
-Then("Last Name 입력창이 빈 값이다", async ({ signupPage }) => {
-  await signupPage.assertFieldEmpty("Last Name");
-});
-
-Then("Group Name 선택값이 비어있다", async ({ signupPage }) => {
-  await signupPage.groupNameDropdown.assertEmpty();
 });

@@ -1,30 +1,60 @@
 import type { AxiosRequestConfig } from "axios";
 
-import { AxiosService } from "./axios";
+import { AxiosService } from "@/shared/api/axios";
+import type { BaseResponse } from "@/shared/types/api-response.type";
+import { BackendError } from "@/shared/types/error.type";
+import { isEnvelopeResponse } from "@/shared/utils/api-response-envelope.util";
 
-type UnwrappedResponse<T> = T extends { data?: infer D } ? D : T;
+type UnwrappedResponse<T> = T extends Pick<BaseResponse, "status" | "timestamp">
+  ? BaseResponseData<T>
+  : T;
 
-export const customInstance = async <T>(
+type BaseResponseData<T> = T extends { data: infer D }
+  ? D
+  : T extends { data?: infer D }
+    ? Exclude<D, undefined>
+    : undefined;
+
+function unwrapSuccess(
+  body: BaseResponse,
   config: AxiosRequestConfig,
-): Promise<UnwrappedResponse<T>> => {
-  const axiosInstance = AxiosService.getInstance().getAxios();
-  const response = await axiosInstance.request(config);
-  const baseResponse = response.data;
+): unknown {
+  if (!("data" in body)) return undefined;
 
-  // BaseResponse 구조 확인 (status 필드 존재 여부)
-  if (
-    baseResponse &&
-    typeof baseResponse === "object" &&
-    "status" in baseResponse
-  ) {
-    if (baseResponse.status === "SUCCESS") {
-      return baseResponse.data as UnwrappedResponse<T>;
-    }
-    if (baseResponse.status === "FAIL" || baseResponse.status === "ERROR") {
-      throw new Error(baseResponse.message || "Request failed");
-    }
+  // null 허용, undefined만 에러
+  if (body.data === undefined) {
+    throw new Error(
+      `[API Error] SUCCESS 응답에 data가 누락되었습니다. (URL: ${config.url ?? "(unknown url)"})`,
+    );
   }
 
-  // BaseResponse 형식이 아닌 경우 그대로 반환 (하위 호환성)
-  return baseResponse as UnwrappedResponse<T>;
-};
+  return body.data;
+}
+
+export function customInstance<T>(
+  config: AxiosRequestConfig,
+): Promise<UnwrappedResponse<T>>;
+
+export async function customInstance(
+  config: AxiosRequestConfig,
+): Promise<unknown> {
+  const axiosInstance = AxiosService.getInstance().getAxios();
+  const response = await axiosInstance.request(config);
+  const body: unknown = response.data;
+
+  if (!isEnvelopeResponse(body)) return body;
+
+  switch (body.status) {
+    case "FAIL":
+    case "ERROR":
+      throw new BackendError(body.message ?? "서버 오류", body);
+    case "SUCCESS":
+      return unwrapSuccess(body, config);
+    default: {
+      const _exhaustiveCheck: never = body.status;
+      throw new Error(
+        `[API Error] 처리되지 않은 status: ${_exhaustiveCheck} (URL: ${config.url ?? "(unknown url)"})`,
+      );
+    }
+  }
+}

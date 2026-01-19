@@ -1,19 +1,16 @@
-// 에러 처리 관련 공통 타입
+import type { BaseResponse } from "@/shared/types/api-response.type";
 
 /**
- * 쿼리별 에러 설정 인터페이스
+ * 백엔드 비즈니스 로직 에러
+ * HTTP 200 OK이지만 status가 FAIL/ERROR인 경우
+ * axios-mutator에서 throw됨
  */
-export interface ErrorConfig {
-  /** 토스트 표시 여부 */
-  showToast: boolean;
-  /** 기본 에러 메시지 */
-  errorMessage: string;
-  /** HTTP 상태 코드별 구체적 에러 메시지 */
-  statusMessages?: Record<number, string>;
+export class BackendError extends Error {
+  constructor(
+    message: string,
+    public readonly response: BaseResponse,
+  ) {
+    super(message);
+    this.name = "BackendError";
+  }
 }
-
-/**
- * 에러 설정 맵 타입
- * 쿼리 키 패턴(domain.action)을 키로 하는 에러 설정 객체
- */
-export type ErrorConfigMap = Record<string, ErrorConfig>;

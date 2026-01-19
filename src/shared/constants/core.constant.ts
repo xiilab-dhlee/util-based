@@ -19,10 +19,35 @@ export const ADMIN_ROOT_PATH = ROUTES.ADMIN_MONITORING;
 
 /** 계정 권한 상수 */
 export const ACCOUNT_ROLES = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ADMIN: "ADMIN",
+  USER: "USER",
+} as const;
+
+export type AccountRole = (typeof ACCOUNT_ROLES)[keyof typeof ACCOUNT_ROLES];
+
+export const ACCOUNT_ROLE_LABEL: Record<AccountRole, string> = {
   SUPER_ADMIN: "SUPER ADMIN",
   ADMIN: "ADMIN",
   USER: "USER",
 } as const;
+
+/** 워크스페이스 멤버 역할 상수  */
+export const WORKSPACE_MEMBER_ROLES = {
+  OWNER: "OWNER",
+  PARTICIPANT: "PARTICIPANT",
+} as const;
+
+/** 워크스페이스 멤버 역할 타입 */
+export type WorkspaceMemberRole =
+  (typeof WORKSPACE_MEMBER_ROLES)[keyof typeof WORKSPACE_MEMBER_ROLES];
+
+/** 워크스페이스 멤버 역할 라벨 */
+export const WORKSPACE_MEMBER_ROLE_LABEL: Record<WorkspaceMemberRole, string> =
+  {
+    OWNER: "Owner",
+    PARTICIPANT: "Participant",
+  } as const;
 
 /** 공통 모달 모드 상수 */
 export const MODAL_MODES = {
@@ -35,7 +60,7 @@ export type ModalMode = (typeof MODAL_MODES)[keyof typeof MODAL_MODES];
 /** 전체 옵션 */
 export const ALL_OPTION = {
   label: "전체",
-  value: "ALL",
+  value: "",
 } as const;
 
 /** ALL_OPTION.value 타입 */

@@ -40,6 +40,7 @@ export const getUpdateGroupResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -49,6 +50,7 @@ export const getCreateGroupResponseMock = (
   overrideResponse: Partial<BaseResponseGroupCreateResponse> = {},
 ): BaseResponseGroupCreateResponse => ({
   status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     groupId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     groupName: faker.string.alpha({ length: { min: 10, max: 20 } }),

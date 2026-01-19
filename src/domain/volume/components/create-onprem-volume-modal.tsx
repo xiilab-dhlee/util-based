@@ -1,96 +1,89 @@
 "use client";
 
-import { useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Dropdown, Icon, Input, Modal } from "xiilab-ui";
+import styled from "styled-components";
+import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
-import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
+import {
+  getGetVolumeListQueryKey,
+  useRegisterOnPremiseVolume,
+} from "@/api/generated/volume/volume";
+import {
+  type CreateOnPremiseVolumeFormType,
+  createOnPremiseVolumeSchema,
+} from "@/domain/volume/schemas/volume.schema";
 import { openCreateOnPremiseVolumeModalAtom } from "@/domain/volume/state/volume.atom";
-import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
-import { FormLabel } from "@/shared/components/form/form-label";
-import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { useSelect } from "@/shared/hooks/use-select";
-import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { VOLUME_VISIBILITY_OPTIONS } from "../constants/volume.constant";
 
 export function CreateOnPremVolumeModal() {
-  const formRef = useRef<HTMLFormElement>(null);
+  const queryClient = useQueryClient();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const { open, onOpen, onClose } = useGlobalModal(
+    openCreateOnPremiseVolumeModalAtom,
+  );
+  const registerOnPremiseVolume = useRegisterOnPremiseVolume();
 
-  const publish = usePublish();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<CreateOnPremiseVolumeFormType>({
+    resolver: zodResolver(createOnPremiseVolumeSchema),
+    defaultValues: {
+      volumeName: "",
+      isPublic: "true",
+      mountPath: "",
+      serverIp: "",
+      volumePath: "",
+    },
+  });
 
-  const { open, onClose } = useGlobalModal(openCreateOnPremiseVolumeModalAtom);
-
-  const createVolume = useCreateVolume();
-
-  // 폼 초기화 훅 사용
-  const { clearForm, getFormKey } = useClearForm();
-
-  const status = useSelect(null, VISIBILITY_STATUS_OPTIONS);
-
-  /**
-   * 모달 취소 핸들러
-   *
-   * 현재 모달을 닫고 스토리지 타입 선택 모달을 다시 열어줍니다.
-   */
   const handleCancel = () => {
+    if (registerOnPremiseVolume.isPending) return;
     onClose();
   };
 
-  /**
-   * 볼륨 생성 제출 핸들러
-   *
-   * 폼 데이터를 수집하여 볼륨 생성 API를 호출합니다.
-   * 성공 시 성공 메시지를 표시하고 모달을 닫습니다.
-   */
-  const handleSubmit = () => {
-    const payload = createPayload();
+  const onSubmit = (data: CreateOnPremiseVolumeFormType) => {
+    if (registerOnPremiseVolume.isPending) return;
+    if (!selectedWorkspace) return;
 
-    if (payload) {
-      createVolume.mutate(payload, {
+    registerOnPremiseVolume.mutate(
+      {
+        data: {
+          volumeName: data.volumeName,
+          isPublic: data.isPublic === "true",
+          mountPath: data.mountPath,
+          serverIp: data.serverIp,
+          volumePath: data.volumePath,
+          workspaceId: selectedWorkspace.workspaceId,
+        },
+      },
+      {
         onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getGetVolumeListQueryKey(),
+          });
           toast.success("볼륨 생성 성공");
           onClose();
-          handleClear();
-          publish(VOLUME_EVENTS.clearSelectVolumeModal, payload);
         },
-      });
+      },
+    );
+  };
+
+  useSubscribe<string>(VOLUME_EVENTS.sendStorageType, (eventData) => {
+    if (eventData === "ON_PREMISE") {
+      onOpen();
     }
-  };
-
-  /**
-   * 폼 데이터를 기반으로 페이로드 생성
-   *
-   * 폼에서 입력된 데이터를 수집하여 볼륨 생성 API에 필요한 페이로드를 생성합니다.
-   *
-   * @returns 생성된 페이로드 또는 null (폼이 없는 경우)
-   */
-  const createPayload = (): CreateVolumePayload | null => {
-    if (!formRef.current) return null;
-
-    // 폼 데이터 수집
-    const formData = new FormData(formRef.current);
-
-    return {
-      volumeName: formData.get("onpremVolumeName") as string,
-      mountPath: formData.get("onpremVolumeMountPath") as string,
-      serverIp: formData.get("onpremVolumeServerIp") as string,
-      serverPath: formData.get("onpremVolumeServerPath") as string,
-      volumeType: "LOCAL",
-    };
-  };
-
-  /**
-   * 폼 입력값 초기화
-   *
-   * 폼의 모든 입력 필드를 초기 상태로 리셋합니다.
-   */
-  const handleClear = () => {
-    // 폼 초기화 (강제 리렌더링)
-    clearForm();
-  };
+  });
 
   return (
     <Modal
@@ -98,74 +91,142 @@ export function CreateOnPremVolumeModal() {
       type="primary"
       icon={<Icon name="OnPremiseStorage" color="#fff" size={16} />}
       open={open}
-      // closable
+      closable
       title="On-premise Storage"
       showCancelButton
-      cancelText="이전"
       onCancel={handleCancel}
       okText="생성"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
       centered
-      okButtonProps={{
-        disabled: false,
-      }}
+      okButtonProps={{ loading: registerOnPremiseVolume.isPending }}
+      cancelButtonProps={{ disabled: registerOnPremiseVolume.isPending }}
+      afterClose={reset}
     >
-      <form ref={formRef} key={getFormKey()}>
-        <FormRow>
-          <FormItem>
-            <FormLabel htmlFor="onpremVolumeName">볼륨 이름</FormLabel>
-            <Input
-              type="text"
-              id="onpremVolumeName"
-              name="onpremVolumeName"
-              placeholder="볼륨 이름을 입력해 주세요."
-              width="100%"
-            />
-          </FormItem>
-        </FormRow>
-        {/* 공개 설정 드롭다운 */}
-        <FormItem>
-          <FormLabel>공개 설정</FormLabel>
-          <Dropdown
-            options={status.options}
-            value={status.value}
-            onChange={status.onChange}
-            width="100%"
-          />
-        </FormItem>
-        {/* Server IP 입력 필드 */}
-        <FormItem>
-          <FormLabel htmlFor="onpremVolumeServerIp">Server IP</FormLabel>
-          <Input
-            type="text"
-            id="onpremVolumeServerIp"
-            name="onpremVolumeServerIp"
-            placeholder="Server IP를 입력해 주세요."
-            width="100%"
-          />
-        </FormItem>
-        <FormItem>
-          <FormLabel htmlFor="onpremVolumeServerPath">Server Path</FormLabel>
-          <Input
-            type="text"
-            id="onpremVolumeServerPath"
-            name="onpremVolumeServerPath"
-            placeholder="Server Path를 입력해 주세요."
-            width="100%"
-          />
-        </FormItem>
-        <FormItem>
-          <FormLabel htmlFor="onpremVolumeMountPath">Mount Path</FormLabel>
-          <Input
-            type="text"
-            id="onpremVolumeMountPath"
-            name="onpremVolumeMountPath"
-            placeholder="/usr/local"
-            width="100%"
-          />
-        </FormItem>
-        {/* TODO: 라벨 필드 추가 */}
-      </form>
+      <StyledForm>
+        <Controller
+          name="volumeName"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="볼륨 이름"
+              required
+              validateStatus={errors.volumeName ? "error" : undefined}
+              htmlFor="onpremVolumeName"
+              help={errors.volumeName?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="onpremVolumeName"
+                placeholder="볼륨 이름을 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+                disabled={registerOnPremiseVolume.isPending}
+                maxLength={50}
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="isPublic"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="공개 설정"
+              required
+              validateStatus={errors.isPublic ? "error" : undefined}
+              help={errors.isPublic?.message}
+            >
+              <Dropdown
+                options={VOLUME_VISIBILITY_OPTIONS}
+                value={field.value || null}
+                onChange={(value) => field.onChange(value)}
+                width="100%"
+                status={errors.isPublic ? "error" : undefined}
+                disabled={registerOnPremiseVolume.isPending}
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="serverIp"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="Server IP"
+              required
+              validateStatus={errors.serverIp ? "error" : undefined}
+              htmlFor="onpremVolumeServerIp"
+              help={errors.serverIp?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="onpremVolumeServerIp"
+                placeholder="Server IP를 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+                disabled={registerOnPremiseVolume.isPending}
+                maxLength={50}
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="volumePath"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="Server Path"
+              required
+              validateStatus={errors.volumePath ? "error" : undefined}
+              htmlFor="onpremVolumePath"
+              help={errors.volumePath?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="onpremVolumePath"
+                placeholder="Server Path를 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+                disabled={registerOnPremiseVolume.isPending}
+                maxLength={1000}
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="mountPath"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="Mount Path"
+              required
+              validateStatus={errors.mountPath ? "error" : undefined}
+              htmlFor="onpremVolumeMountPath"
+              help={errors.mountPath?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="onpremVolumeMountPath"
+                placeholder="/usr/local"
+                width="100%"
+                autoComplete="off"
+                disabled={registerOnPremiseVolume.isPending}
+                maxLength={1000}
+              />
+            </FormItem>
+          )}
+        />
+      </StyledForm>
     </Modal>
   );
 }
+
+const StyledForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;

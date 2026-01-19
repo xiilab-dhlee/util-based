@@ -81,7 +81,11 @@ export function CreateSourcecodeModal() {
   // 크리덴셜 관련
   const [credentialEnabled, setCredentialEnabled] = useState(false);
 
-  const handleValidateUrl = () => {
+  const handleCredentialToggle = () => {
+    setCredentialEnabled((prev) => !prev);
+  };
+
+  const handleValidateUrl = (_: React.MouseEvent<HTMLButtonElement>) => {
     alert("준비 중입니다.");
   };
 
@@ -130,6 +134,24 @@ export function CreateSourcecodeModal() {
     };
   };
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+
+  const handleGitUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGitUrl(e.target.value);
+  };
+
+  const handleMountPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMountPath(e.target.value);
+  };
+
+  const handleExecuteCommandChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setExecuteCommand(e.target.value);
+  };
+
   return (
     <Modal
       type="primary"
@@ -157,7 +179,7 @@ export function CreateSourcecodeModal() {
           <StyledFormItem label="소스코드 이름">
             <Input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleNameChange}
               placeholder="http://github.com/astrago-ai"
               width="100%"
             />
@@ -184,7 +206,7 @@ export function CreateSourcecodeModal() {
           <StyledFormItem label=" ">
             <Input
               value={gitUrl}
-              onChange={(e) => setGitUrl(e.target.value)}
+              onChange={handleGitUrlChange}
               placeholder="http://github.com/astrago-ai"
               width="100%"
             />
@@ -196,7 +218,7 @@ export function CreateSourcecodeModal() {
             <FormLabel>크리덴셜</FormLabel>
             <Switch
               checked={credentialEnabled}
-              onChange={() => setCredentialEnabled(!credentialEnabled)}
+              onChange={handleCredentialToggle}
             />
           </CredentialLabel>
           {/* 크리덴셜 ON일 때 탭 표시 */}
@@ -235,7 +257,7 @@ export function CreateSourcecodeModal() {
           <StyledFormItem label="기본 마운트 경로">
             <Input
               value={mountPath}
-              onChange={(e) => setMountPath(e.target.value)}
+              onChange={handleMountPathChange}
               placeholder="Mount Path를 입력해 주세요. 예) /root/volume/123"
               width="100%"
             />
@@ -243,7 +265,7 @@ export function CreateSourcecodeModal() {
           <StyledFormItem label="실행 명령어">
             <Input
               value={executeCommand}
-              onChange={(e) => setExecuteCommand(e.target.value)}
+              onChange={handleExecuteCommandChange}
               placeholder="실행 명령어를 입력해 주세요. 예) /root/code/main.py"
               width="100%"
             />

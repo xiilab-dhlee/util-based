@@ -56,10 +56,10 @@ export function RegistryMainSection() {
             <WaitRequestImageBody>
               <CustomizedTable
                 columns={createRequestImageColumn([
-                  { dataIndex: "imageName", width: "30%", ellipsis: true },
-                  { dataIndex: "imageTag" },
-                  { dataIndex: "security" },
-                  { dataIndex: "creatorName" },
+                  { key: "imageName", width: "30%", ellipsis: true },
+                  { key: "imageTag" },
+                  { key: "security" },
+                  { key: "creatorName" },
                 ])}
                 data={data?.content || []}
                 activePadding

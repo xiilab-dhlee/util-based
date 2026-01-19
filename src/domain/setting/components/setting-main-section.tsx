@@ -1,21 +1,30 @@
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
-import { Icon, Typography } from "xiilab-ui";
+import { Icon, Tooltip, Typography } from "xiilab-ui";
 
-import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
+import { SettingMemberArticle } from "@/domain/setting/components/setting-member-article";
+import { SettingWorkloadArticle } from "@/domain/setting/components/setting-workload-article";
+import { SettingWorkspaceDetail } from "@/domain/setting/components/setting-workspace-detail";
+import { WorkspaceSettingMoreDropdown } from "@/domain/setting/components/workspace-setting-more-dropdown";
+import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { SettingMemberArticle } from "./setting-member-article";
-import { SettingWorkloadArticle } from "./setting-workload-article";
-import { SettingWorkspaceDetail } from "./setting-workspace-detail";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
 export function SettingMainSection() {
   const publish = usePublish();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
-  const handleOpenUpdateNotification = () => {
-    publish(SETTING_EVENTS.sendUpdateNotificationSetting, {});
-  };
+  const isDefaultWorkspace = selectedWorkspace?.isDefault ?? false;
 
-  const handleLeaveWorkspaceMember = () => {
-    alert("준비 중입니다.");
+  const handleClickSetDefaultWorkspace = () => {
+    if (!selectedWorkspace) return;
+    if (!selectedWorkspace.workspaceId) return;
+    if (selectedWorkspace.isDefault) return;
+
+    publish(
+      WORKSPACE_EVENTS.sendSetDefaultWorkspace,
+      selectedWorkspace.workspaceId,
+    );
   };
 
   return (
@@ -24,13 +33,31 @@ export function SettingMainSection() {
         <Header>
           <Title>워크스페이스</Title>
           <Tools>
-            <StyledButton onClick={handleOpenUpdateNotification}>
-              <Icon name="Noti" color="#ffffff" size={24} />
-              <span>알림 설정</span>
-            </StyledButton>
-            <StyledButton onClick={handleLeaveWorkspaceMember}>
-              <span>워크스페이스 나가기</span>
-            </StyledButton>
+            <Tooltip
+              placement="top"
+              theme="light"
+              maxWidth={320}
+              title={
+                <>
+                  이 워크스페이스는 Default값으로 설정하며,
+                  <br />
+                  기존 워크스페이스는 해제됩니다.
+                </>
+              }
+            >
+              <PrimaryButtonTooltipAnchor>
+                <PrimaryButton
+                  type="button"
+                  onClick={handleClickSetDefaultWorkspace}
+                  disabled={isDefaultWorkspace}
+                  aria-disabled={isDefaultWorkspace}
+                >
+                  <Icon name="Workspace01" color="#ffffff" size={18} />
+                  <span>Default 워크스페이스 지정</span>
+                </PrimaryButton>
+              </PrimaryButtonTooltipAnchor>
+            </Tooltip>
+            <WorkspaceSettingMoreDropdown />
           </Tools>
         </Header>
         <LeftBody>
@@ -58,7 +85,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 `;
 
 const Tools = styled.div`
@@ -97,7 +124,7 @@ const Left = styled.article`
   position: relative;
   border-radius: 8px;
   background-color: #171b26;
-  padding: 22px 20px;
+  padding: 20px 22px;
   background-color: #070913;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
@@ -115,7 +142,7 @@ const LeftBody = styled.div`
   position: relative;
 `;
 
-const StyledButton = styled.button`
+const PrimaryButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,14 +151,25 @@ const StyledButton = styled.button`
   border: 1px solid #9a9eb4;
   border-radius: 2px;
   line-height: 1;
-  padding: 0 16px;
+  padding: 0 10px;
   color: #fff;
   cursor: pointer;
   box-shadow:
     0px 2px 4px 0px rgba(8, 10, 15, 1),
     inset 0px 2px 4px -1px rgba(8, 10, 15, 1);
 
-  // Typography styles
   font-weight: 600;
   font-size: 12px;
+
+  gap: 3px;
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
+const PrimaryButtonTooltipAnchor = styled.span`
+  display: inline-flex;
 `;

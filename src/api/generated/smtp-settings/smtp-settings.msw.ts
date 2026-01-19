@@ -37,22 +37,7 @@ export const getGetSmtpSetResponseMock = (
   overrideResponse: Partial<BaseResponseSmtpSetResponse> = {},
 ): BaseResponseSmtpSetResponse => ({
   status: "SUCCESS",
-  data: {
-    smtpSetId: faker.number.int({ min: undefined, max: undefined }),
-    host: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    hostPort: faker.number.int({ min: undefined, max: undefined }),
-    email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  },
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getRegisterSmtpSetResponseMock = (
-  overrideResponse: Partial<BaseResponseSmtpSetResponse> = {},
-): BaseResponseSmtpSetResponse => ({
-  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     smtpSetId: faker.number.int({ min: undefined, max: undefined }),
     host: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -92,57 +77,4 @@ export const getGetSmtpSetMockHandler = (
     options,
   );
 };
-
-export const getRegisterSmtpSetMockHandler = (
-  overrideResponse?:
-    | BaseResponseSmtpSetResponse
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<BaseResponseSmtpSetResponse> | BaseResponseSmtpSetResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    "*/api/v1/smtp-sets",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getRegisterSmtpSetResponseMock(),
-        ),
-        { status: 201, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getDeleteSmtpSetMockHandler = (
-  overrideResponse?:
-    | void
-    | ((
-        info: Parameters<Parameters<typeof http.delete>[1]>[0],
-      ) => Promise<void> | void),
-  options?: RequestHandlerOptions,
-) => {
-  return http.delete(
-    "*/api/v1/smtp-sets/:smtpSetId",
-    async (info) => {
-      await delay(1000);
-      if (typeof overrideResponse === "function") {
-        await overrideResponse(info);
-      }
-      return new HttpResponse(null, { status: 204 });
-    },
-    options,
-  );
-};
-export const getSmtpSettingsMock = () => [
-  getGetSmtpSetMockHandler(),
-  getRegisterSmtpSetMockHandler(),
-  getDeleteSmtpSetMockHandler(),
-];
+export const getSmtpSettingsMock = () => [getGetSmtpSetMockHandler()];
