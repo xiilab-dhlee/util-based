@@ -55,24 +55,31 @@ export function UpdateVolumeDetail({
     defaultValues: {
       volumeName: "",
       mountPath: "",
+      isPublic: false,
     },
   });
 
-  const handleFormSubmit = (formData: UpdateVolumeFormType) => {
+  const onSubmit = (formData: UpdateVolumeFormType) => {
+    if (updateVolume.isPending) return;
+
     updateVolume.mutate(
       {
         volumeId,
-        data: formData,
+        data: {
+          volumeName: formData.volumeName,
+          mountPath: formData.mountPath,
+          isPublic: formData.isPublic,
+        },
       },
       {
         onSuccess: () => {
-          toast.success("볼륨 수정 성공");
           queryClient.invalidateQueries({
             queryKey: getGetVolumeDetailQueryKey(volumeId),
           });
           queryClient.invalidateQueries({
             queryKey: getGetVolumeListQueryKey(),
           });
+          toast.success("볼륨 수정 성공");
           onSuccess();
         },
       },
@@ -82,8 +89,9 @@ export function UpdateVolumeDetail({
   const handleCancelClick = () => {
     if (data) {
       reset({
-        volumeName: data.volumeName || "",
-        mountPath: data.mountPath || "",
+        volumeName: data.volumeName ?? "",
+        mountPath: data.mountPath ?? "",
+        isPublic: data.isPublic ?? false,
       });
     }
     onCancel();
@@ -92,14 +100,15 @@ export function UpdateVolumeDetail({
   useEffect(() => {
     if (data) {
       reset({
-        volumeName: data.volumeName || "",
-        mountPath: data.mountPath || "",
+        volumeName: data.volumeName ?? "",
+        mountPath: data.mountPath ?? "",
+        isPublic: data.isPublic ?? false,
       });
     }
   }, [data, reset]);
 
   return (
-    <StyledForm onFinish={handleSubmit(handleFormSubmit)}>
+    <StyledForm onFinish={handleSubmit(onSubmit)}>
       <StyledFormBody>
         <AsideDetailArticleItem>
           <AsideDetailArticleHeader>

@@ -54,19 +54,11 @@ export type CreateOnPremiseVolumeFormType = z.infer<
   typeof createOnPremiseVolumeSchema
 >;
 
-/** 볼륨 수정 폼 스키마 */
-export const updateVolumeSchema = z.object({
-  volumeName: z
-    .string()
-    .min(1, "볼륨 이름을 입력해 주세요.")
-    .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
-  mountPath: z
-    .string()
-    .min(1, "마운트 경로를 입력해 주세요.")
-    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
-    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
-  isPublic: z.boolean(),
-});
+/** 볼륨 수정 폼 스키마 (baseVolumeFields에서 isPublic 제외 후 boolean 타입으로 재정의) */
+export const updateVolumeSchema = z
+  .object(baseVolumeFields)
+  .omit({ isPublic: true })
+  .merge(z.object({ isPublic: z.boolean() }));
 
 export type UpdateVolumeFormType = z.infer<typeof updateVolumeSchema>;
 

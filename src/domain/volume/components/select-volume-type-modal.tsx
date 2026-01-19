@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
@@ -34,8 +33,6 @@ export function SelectVolumeTypeModal() {
       onOpenCreateAstragoVolumeModal();
     } else if (type === "ON_PREMISE") {
       onOpenCreateOnPremiseVolumeModal();
-    } else {
-      toast.error("스토리지 타입을 선택해 주세요.");
     }
   };
 
