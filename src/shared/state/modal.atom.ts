@@ -2,8 +2,6 @@ import { atom } from "jotai";
 
 /** 취약점 확인 모달 표시 여부 */
 export const openViewVulnerabilityModalAtom = atom<boolean>(false);
-/** 크리덴셜 추가 모달 표시 여부 */
-export const openCreateCredentialModalAtom = atom<boolean>(false);
 /** 워크스페이스 추가 모달 표시 여부 */
 export const openCreateWorkspaceModalAtom = atom<boolean>(false);
 /** 첫 워크스페이스 생성 모달 표시 여부 */

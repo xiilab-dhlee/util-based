@@ -8,6 +8,8 @@ export const MEMBER_LIST_PAGE_SIZE = 8;
 export const SETTING_LIST_PAGE_SIZE = 9;
 /** 리소스 요청 목록 페이지 크기 */
 export const RESOURCE_REQUEST_LIST_PAGE_SIZE = 9;
+/** 크리덴셜 목록 페이지 크기 */
+export const CREDENTIAL_LIST_PAGE_SIZE = 6;
 
 /** 승인 상태 라벨 */
 export const APPROVAL_STATUS_LABEL = {

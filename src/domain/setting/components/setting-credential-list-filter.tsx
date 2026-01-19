@@ -3,9 +3,9 @@
 import { Button } from "xiilab-ui";
 
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { SETTING_SELECTOR } from "@/shared/constants/selector.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface SettingCredentialListFilterProps {
   /** 전체 크리덴셜 수 */
@@ -24,10 +24,10 @@ export function SettingCredentialListFilter({
   total,
   loading,
 }: SettingCredentialListFilterProps) {
-  const { onOpen } = useGlobalModal(openCreateCredentialModalAtom);
+  const publish = usePublish();
 
   const handleCreateCredential = () => {
-    onOpen();
+    publish(CREDENTIAL_EVENTS.openCreateModal);
   };
 
   return (

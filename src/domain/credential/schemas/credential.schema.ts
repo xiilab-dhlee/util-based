@@ -22,8 +22,6 @@ const baseCredentialSchema = z.object({
   userId: z.string().min(1).max(100),
   /** 토큰 */
   token: z.string().optional(),
-  /** Private Registry URL (선택적) */
-  registryUrl: z.string().url().optional(),
 });
 
 /**
@@ -50,65 +48,35 @@ export const credentialDetailSchema = baseCredentialSchema.omit({
 /**
  * 크리덴셜 폼 스키마 (react-hook-form 유효성 검증용)
  *
+ * Orval CreateCredentialRequest에 맞춘 스키마
+ *
  * 유효성 검증 규칙:
- * - 타입: 필수 (GIT 또는 DOCKER)
- * - 이름: 필수, 4~50자, 한글/영문/숫자/-/_/. 만 허용, 앞뒤 공백 불가
- * - 설명: 선택, 최대 500자
- * - 내부 레지스트리 URL: DOCKER 타입일 때 필수, URL 형식
- * - 아이디: 필수, 3자 이상
- * - 토큰: 필수, 4자 이상
+ * - credentialChannel: 필수 (GIT, DOCKER, NGC)
+ * - credentialType: 필수 (IMAGE, SOURCE_CODE)
+ * - credentialName: 필수, 1~50자
+ * - description: 선택, 최대 2000자
+ * - credentialAccountId: 필수
+ * - token: 필수
  */
-export const createCredentialFormSchema = z
-  .object({
-    type: z.enum(["GIT", "DOCKER"], {
-      required_error: "타입을 선택해 주세요.",
-    }),
-    name: z
-      .string()
-      .min(1, "필수 입력 값입니다.")
-      .min(4, "이름은 4자 이상 입력해 주세요.")
-      .max(50, "이름은 50자 이내로 입력해 주세요.")
-      .regex(
-        /^[가-힣a-zA-Z0-9\-_.]+$/,
-        "한글, 영문, 숫자, -, _, .만 사용할 수 있습니다.",
-      )
-      .refine(
-        (value) => value === value.trim(),
-        "이름의 앞뒤에는 공백을 포함할 수 없습니다.",
-      ),
-    description: z
-      .string()
-      .max(500, "설명은 500자 이내로 입력해 주세요.")
-      .optional()
-      .or(z.literal("")),
-    registryUrl: z
-      .string()
-      .url("올바른 URL 형식을 입력해 주세요.")
-      .optional()
-      .or(z.literal("")),
-    userId: z
-      .string()
-      .min(1, "필수 입력 값입니다.")
-      .min(3, "아이디는 3자 이상 입력해 주세요."),
-    token: z
-      .string()
-      .min(1, "필수 입력 값입니다.")
-      .min(4, "토큰은 4자 이상 입력해 주세요."),
-  })
-  .refine(
-    (data) => {
-      // DOCKER 타입일 때 internalRegistryUrl 필수
-      if (data.type === "DOCKER") {
-        return data.registryUrl && data.registryUrl.length > 0;
-      }
-
-      return true;
-    },
-    {
-      message: "Private Registry URL을 입력해 주세요.",
-      path: ["registryUrl"],
-    },
-  );
+export const createCredentialFormSchema = z.object({
+  credentialChannel: z.enum(["GIT", "DOCKER", "NGC"], {
+    required_error: "채널을 선택해 주세요.",
+  }),
+  credentialType: z.enum(["IMAGE", "SOURCE_CODE"], {
+    required_error: "타입을 선택해 주세요.",
+  }),
+  credentialName: z
+    .string()
+    .min(1, "필수 입력 값입니다.")
+    .max(50, "이름은 50자 이내로 입력해 주세요."),
+  description: z
+    .string()
+    .max(2000, "설명은 2000자 이내로 입력해 주세요.")
+    .optional()
+    .or(z.literal("")),
+  credentialAccountId: z.string().min(1, "필수 입력 값입니다."),
+  token: z.string().min(1, "필수 입력 값입니다."),
+});
 
 /**
  * 크리덴셜 폼 타입

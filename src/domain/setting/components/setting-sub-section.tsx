@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import { SettingCredentialArticle } from "./setting-credential-article";
-import { SettingRequestResourceArticle } from "./setting-request-resource-article";
+import { SettingCredentialListMain } from "@/domain/setting/components/setting-credential-list-main";
+import { SettingRequestResourceListMain } from "@/domain/setting/components/setting-request-resource-list-main";
 
 /**
  * 설정 하위 섹션 컴포넌트
@@ -13,10 +13,10 @@ export function SettingSubSection() {
   return (
     <Container>
       <Left>
-        <SettingRequestResourceArticle />
+        <SettingRequestResourceListMain />
       </Left>
       <Right>
-        <SettingCredentialArticle />
+        <SettingCredentialListMain />
       </Right>
     </Container>
   );

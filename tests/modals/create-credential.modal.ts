@@ -30,8 +30,6 @@ export class CreateCredentialModal extends BaseModal {
   readonly nameField: FormItemComponent;
   /** 설명 FormItem */
   readonly descriptionField: FormItemComponent;
-  /** Private Registry URL FormItem */
-  readonly registryUrlField: FormItemComponent;
   /** 아이디 FormItem */
   readonly userIdField: FormItemComponent;
   /** 토큰 FormItem */
@@ -45,8 +43,6 @@ export class CreateCredentialModal extends BaseModal {
   readonly nameInput: InputComponent;
   /** 설명 입력 */
   readonly descriptionInput: InputComponent;
-  /** Private Registry URL 입력 */
-  readonly registryUrlInput: InputComponent;
   /** 아이디 입력 */
   readonly userIdInput: InputComponent;
   /** 토큰 입력 */
@@ -75,10 +71,6 @@ export class CreateCredentialModal extends BaseModal {
       page,
       CREDENTIAL_SELECTOR.DESCRIPTION_FIELD,
     );
-    this.registryUrlField = new FormItemComponent(
-      page,
-      CREDENTIAL_SELECTOR.REGISTRY_URL_FIELD,
-    );
     this.userIdField = new FormItemComponent(
       page,
       CREDENTIAL_SELECTOR.USER_ID_FIELD,
@@ -93,10 +85,6 @@ export class CreateCredentialModal extends BaseModal {
     this.descriptionInput = new InputComponent(
       page,
       CREDENTIAL_SELECTOR.DESCRIPTION_INPUT,
-    );
-    this.registryUrlInput = new InputComponent(
-      page,
-      CREDENTIAL_SELECTOR.REGISTRY_URL_INPUT,
     );
     this.userIdInput = new InputComponent(
       page,
@@ -228,13 +216,6 @@ export class CreateCredentialModal extends BaseModal {
   // ============================================
   // Assertions - 필드 상태
   // ============================================
-
-  /**
-   * Private Registry URL 필드 표시 확인
-   */
-  async assertRegistryUrlFieldVisible(): Promise<void> {
-    await this.registryUrlField.assertVisible();
-  }
 
   /**
    * Private Registry URL 필드 숨김 확인

@@ -402,8 +402,6 @@ export const CREDENTIAL_SELECTOR = {
   NAME_FIELD: "credential-name-field",
   /** 설명 필드 (FormItem) */
   DESCRIPTION_FIELD: "credential-description-field",
-  /** Private Registry URL 필드 (FormItem) */
-  REGISTRY_URL_FIELD: "credential-registry-url-field",
   /** 아이디 필드 (FormItem) */
   USER_ID_FIELD: "credential-user-id-field",
   /** 토큰 필드 (FormItem) */
@@ -416,8 +414,6 @@ export const CREDENTIAL_SELECTOR = {
   NAME_INPUT: "credential-name-input",
   /** 설명 입력창 */
   DESCRIPTION_INPUT: "credential-description-input",
-  /** Private Registry URL 입력창 */
-  REGISTRY_URL_INPUT: "credential-registry-url-input",
   /** 아이디 입력창 */
   USER_ID_INPUT: "credential-user-id-input",
   /** 토큰 입력창 */

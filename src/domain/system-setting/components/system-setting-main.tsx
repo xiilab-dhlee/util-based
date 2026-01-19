@@ -8,7 +8,6 @@ import { CreateHpeModal } from "@/domain/system-setting/components/create-hpe-mo
 import { CreateLicenseModal } from "@/domain/system-setting/components/create-license-modal";
 import { CreateStorageModal } from "@/domain/system-setting/components/create-storage-modal";
 import { CredentialListSetting } from "@/domain/system-setting/components/credential-list-setting";
-import { DeleteCredentialModal } from "@/domain/system-setting/components/delete-credential-modal";
 import { DeleteSmtpModal } from "@/domain/system-setting/components/delete-smtp-modal";
 import { DeleteStorageModal } from "@/domain/system-setting/components/delete-storage-modal";
 import { HpeOneviewSetting } from "@/domain/system-setting/components/hpe-oneview-setting";
@@ -19,10 +18,11 @@ import { SmtpModal } from "@/domain/system-setting/components/smtp-modal";
 import { StorageListSetting } from "@/domain/system-setting/components/storage-list-setting";
 import { SystemSettingAside } from "@/domain/system-setting/components/system-setting-aside";
 import { UpdateStorageModal } from "@/domain/system-setting/components/update-storage-modal";
-import { ViewCredentialDetailModal } from "@/domain/system-setting/components/view-credential-detail-modal";
 import { ViewStorageModal } from "@/domain/system-setting/components/view-storage-modal";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
+import { DeleteCredentialModal } from "@/shared/components/modal/delete-credential-modal";
+import { ViewCredentialDetailModal } from "@/shared/components/modal/view-credential-detail-modal";
 import type { CoreGuide } from "@/shared/types/core.model";
 import {
   ListPageAside,

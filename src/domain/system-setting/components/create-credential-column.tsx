@@ -1,37 +1,39 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Button } from "xiilab-ui";
 
-import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
+import type { AdminCredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import { ColumnTextButton } from "@/styles/layers/column-layer.styled";
 
 interface CreateCredentialColumnOptions {
-  onDelete?: (id: number) => void;
+  onDelete?: (accountId: string, credentialId: number) => void;
   isDeleting?: boolean;
-  onNameClick?: (id: number) => void;
+  onNameClick?: (accountId: string, credentialId: number) => void;
 }
 
 /**
  * 크리덴셜 목록 컬럼 정의
+ *
+ * Orval의 AdminCredentialListItemResponse 타입을 사용합니다.
  */
 const createColumnList = (
   options?: CreateCredentialColumnOptions,
-): ResponsiveColumnType<CredentialListType>[] => {
-  const columns: ResponsiveColumnType<CredentialListType>[] = [
+): ResponsiveColumnType<AdminCredentialListItemResponse>[] => {
+  const columns: ResponsiveColumnType<AdminCredentialListItemResponse>[] = [
     {
       title: "크리덴셜 이름",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "credentialName",
+      key: "credentialName",
       align: "left",
       width: "30%",
       ellipsis: true,
-      render: (name: string, record: CredentialListType) => (
+      render: (name: string, record: AdminCredentialListItemResponse) => (
         <ColumnTextButton
           onClick={(e) => {
             e.stopPropagation();
-            options?.onNameClick?.(record.id);
+            options?.onNameClick?.(record.creatorId, record.credentialId);
           }}
         >
           {name}
@@ -39,9 +41,9 @@ const createColumnList = (
       ),
     },
     {
-      title: "타입",
-      dataIndex: "type",
-      key: "type",
+      title: "채널",
+      dataIndex: "credentialChannel",
+      key: "credentialChannel",
       align: "left",
       width: "15%",
     },
@@ -54,8 +56,8 @@ const createColumnList = (
     },
     {
       title: "생성일",
-      dataIndex: "creatorDate",
-      key: "creatorDate",
+      dataIndex: "createDateTime",
+      key: "createDateTime",
       align: "left",
       width: "20%",
       render: (date: string) => {
@@ -70,11 +72,13 @@ const createColumnList = (
       key: "actions",
       align: "center",
       width: "10%",
-      render: (_: unknown, record: CredentialListType) => (
+      render: (_: unknown, record: AdminCredentialListItemResponse) => (
         <Button
           variant="text"
           size="small"
-          onClick={() => options.onDelete?.(record.id)}
+          onClick={() =>
+            options.onDelete?.(record.creatorId, record.credentialId)
+          }
           disabled={options.isDeleting}
           icon="Delete"
         />
@@ -94,7 +98,7 @@ const createColumnList = (
 export const createCredentialColumn = (
   config?: CoreCreateColumnConfig[],
   options?: CreateCredentialColumnOptions,
-): ResponsiveColumnType<CredentialListType>[] => {
+): ResponsiveColumnType<AdminCredentialListItemResponse>[] => {
   const columnList = createColumnList(options);
 
   return applyColumnConfigs(columnList, config);

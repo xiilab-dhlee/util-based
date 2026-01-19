@@ -30,3 +30,6 @@ export const openAddWorkspaceMemberModalAtom = atom<boolean>(false);
 export const openUpdateWorkspaceMemberRoleModalAtom = atom<boolean>(false);
 /** 워크스페이스 구성원 삭제 모달 표시 여부 */
 export const openDeleteWorkspaceMemberModalAtom = atom<boolean>(false);
+
+/** 크리덴셜 삭제 모달 표시 여부 */
+export const openDeleteCredentialModalAtom = atom<boolean>(false);

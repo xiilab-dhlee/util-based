@@ -5,11 +5,11 @@ import { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Input } from "xiilab-ui";
 
-import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
+import { useGetAllCredentials } from "@/api/generated/admin-credential/admin-credential";
+import type { AdminCredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createCredentialColumn } from "@/domain/system-setting/components/create-credential-column";
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
 import { CREDENTIAL_LIST_PAGE_SIZE } from "@/domain/system-setting/constants/system-setting.constant";
-import { useGetSystemCredentials } from "@/domain/system-setting/hooks/use-get-system-credentials";
 import {
   credentialPageAtom,
   credentialSearchTextAtom,
@@ -17,7 +17,7 @@ import {
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
+import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 const CREDENTIAL_BOX_HEIGHT = 542;
@@ -32,10 +32,10 @@ export function CredentialListSetting() {
   const setSearchText = useSetAtom(credentialSearchTextAtom);
   const publish = usePublish();
 
-  const { data, isLoading, isError, refetch } = useGetSystemCredentials({
-    page,
-    size: CREDENTIAL_LIST_PAGE_SIZE,
-    searchText,
+  const { data, isLoading, isError, refetch } = useGetAllCredentials({
+    pageNo: page - 1,
+    pageSize: CREDENTIAL_LIST_PAGE_SIZE,
+    keyword: searchText,
   });
 
   /**
@@ -52,15 +52,18 @@ export function CredentialListSetting() {
   };
 
   const handleDelete = useCallback(
-    (id: number) => {
-      publish(SYSTEM_SETTING_EVENTS.openCredentialDeleteModal, { id });
+    (accountId: string, credentialId: number) => {
+      publish(CREDENTIAL_EVENTS.openDeleteModal, { accountId, credentialId });
     },
     [publish],
   );
 
   const handleNameClick = useCallback(
-    (id: number) => {
-      publish(SYSTEM_SETTING_EVENTS.openCredentialDetailModal, id);
+    (accountId: string, credentialId: number) => {
+      publish(CREDENTIAL_EVENTS.openDetailModal, {
+        accountId,
+        credentialId,
+      });
     },
     [publish],
   );
@@ -88,7 +91,7 @@ export function CredentialListSetting() {
         <SearchWrapper>
           <Input.Search
             name="search"
-            placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
+            placeholder="크리덴셜 이름 또는 생성자를 검색해 주세요."
             onSearch={handleSearch}
             autoComplete="off"
             width={290}
@@ -99,11 +102,11 @@ export function CredentialListSetting() {
     >
       <ContentWrapper>
         <TableWrapper>
-          <CustomizedTable<CredentialListType>
+          <CustomizedTable<AdminCredentialListItemResponse>
             data={data?.content || []}
             columns={columns}
             loading={isLoading}
-            rowKey="id"
+            rowKey="credentialId"
             activePadding
             columnHeight={39}
           />

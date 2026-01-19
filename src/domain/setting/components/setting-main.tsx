@@ -16,6 +16,8 @@ import { DeleteWorkspaceMemberModal } from "@/domain/workspace-member/components
 import { UpdateWorkspaceMemberModal } from "@/domain/workspace-member/components/update-workspace-member-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
+import { DeleteCredentialModal } from "@/shared/components/modal/delete-credential-modal";
+import { ViewCredentialDetailModal } from "@/shared/components/modal/view-credential-detail-modal";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
 
@@ -56,6 +58,10 @@ export function SettingMain() {
       <UpdateNotificationSettingModal />
       {/* 크리덴셜 추가 모달 */}
       <CreateCredentialModal />
+      {/* 크리덴셜 상세 모달 */}
+      <ViewCredentialDetailModal />
+      {/* 크리덴셜 삭제 모달 */}
+      <DeleteCredentialModal />
       {/* 리소스 요청 취소 모달 */}
       <DeleteRequestResourceModal />
       {/* 워크스페이스 구성원 추가 모달 */}

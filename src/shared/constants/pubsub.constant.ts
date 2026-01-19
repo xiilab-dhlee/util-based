@@ -239,6 +239,16 @@ export const SETTING_EVENTS = {
   sendCancelResourceRequest: "setting:send-cancel-resource-request",
 } as const;
 
+// 크리덴셜 관련 이벤트
+export const CREDENTIAL_EVENTS = {
+  // 크리덴셜 생성 모달 열기 이벤트
+  openCreateModal: "credential:open-create-modal",
+  // 크리덴셜 상세 모달 열기 이벤트
+  openDetailModal: "credential:open-detail-modal",
+  // 크리덴셜 삭제 모달 열기 이벤트
+  openDeleteModal: "credential:open-delete-modal",
+} as const;
+
 // 시스템 설정 관련 이벤트
 export const SYSTEM_SETTING_EVENTS = {
   // SMTP 등록/수정 모달 열기 이벤트
@@ -257,10 +267,6 @@ export const SYSTEM_SETTING_EVENTS = {
   openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
   // HPE OneView 연동 모달 열기 이벤트
   openHpeConnectionModal: "system-setting:open-hpe-connection-modal",
-  // 크리덴셜 상세 모달 열기 이벤트
-  openCredentialDetailModal: "system-setting:open-credential-detail-modal",
-  // 크리덴셜 삭제 모달 열기 이벤트
-  openCredentialDeleteModal: "system-setting:open-credential-delete-modal",
   // 워크스페이스 리소스 설정 모달 열기 이벤트
   openWorkspaceResourceSettingModal:
     "system-setting:open-workspace-resource-setting-modal",

@@ -1,15 +1,15 @@
 "use client";
 
-import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
+import type { CredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { SettingCredentialCard } from "./setting-credential-card";
+import { CredentialCard } from "./credential-card";
 
 interface SettingCredentialListBodyProps {
   /** 크리덴셜 목록 데이터 */
-  content: CredentialListType[];
+  content: CredentialListItemResponse[];
   /** 로딩 상태 */
   loading: boolean;
   /** 에러 상태 */
@@ -61,7 +61,7 @@ export function SettingCredentialListBody({
     <ListWrapper>
       <GridList>
         {content.map((credential) => (
-          <SettingCredentialCard key={credential.id} {...credential} />
+          <CredentialCard key={credential.credentialId} {...credential} />
         ))}
       </GridList>
     </ListWrapper>
