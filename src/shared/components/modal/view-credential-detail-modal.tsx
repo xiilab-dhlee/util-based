@@ -22,10 +22,10 @@ export function ViewCredentialDetailModal() {
 
   const { data, isLoading, isError, refetch } = useGetCredentialDetail(
     accountId ?? "",
-    credentialId || 0,
+    credentialId ?? 0,
     {
       query: {
-        enabled: accountId !== null && credentialId !== null,
+        enabled: Boolean(accountId) && credentialId !== null,
       },
     },
   );
