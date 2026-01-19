@@ -58,6 +58,7 @@ export function VolumeFileButton({
       {isDirectory && path && (
         <CopyButton type="button" onClick={handleCopyPath} title="경로 복사">
           <Icon name="Copy" color="var(--copy-icon-color)" size={16} />
+          <span className="sr-only">경로 복사</span>
         </CopyButton>
       )}
     </Container>

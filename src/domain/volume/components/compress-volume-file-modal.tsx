@@ -139,6 +139,7 @@ export function CompressVolumeFileModal() {
           <SelectFileCompression>
             <FileCompressionButton
               type="button"
+              aria-pressed={selectedCompressType === "ZIP"}
               $isSelected={selectedCompressType === "ZIP"}
               onClick={() => setValue("compressFileType", "ZIP")}
               disabled={isPending}
@@ -147,6 +148,7 @@ export function CompressVolumeFileModal() {
             </FileCompressionButton>
             <FileCompressionButton
               type="button"
+              aria-pressed={selectedCompressType === "TAR"}
               $isSelected={selectedCompressType === "TAR"}
               onClick={() => setValue("compressFileType", "TAR")}
               disabled={isPending}
