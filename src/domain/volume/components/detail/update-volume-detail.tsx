@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Button, Dropdown, Form, FormItem, Input } from "xiilab-ui";
+import { Button, Form, FormItem, Input } from "xiilab-ui";
 
 import {
   getGetVolumeDetailQueryKey,
@@ -18,7 +18,6 @@ import {
   type UpdateVolumeFormType,
   updateVolumeSchema,
 } from "@/domain/volume/schemas/volume.schema";
-import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleHeader,
@@ -56,7 +55,6 @@ export function UpdateVolumeDetail({
     defaultValues: {
       volumeName: "",
       mountPath: "",
-      isPublic: false,
     },
   });
 
@@ -86,7 +84,6 @@ export function UpdateVolumeDetail({
       reset({
         volumeName: data.volumeName || "",
         mountPath: data.mountPath || "",
-        isPublic: data.isPublic ?? false,
       });
     }
     onCancel();
@@ -97,7 +94,6 @@ export function UpdateVolumeDetail({
       reset({
         volumeName: data.volumeName || "",
         mountPath: data.mountPath || "",
-        isPublic: data.isPublic ?? false,
       });
     }
   }, [data, reset]);
@@ -125,28 +121,6 @@ export function UpdateVolumeDetail({
                   placeholder="볼륨 이름을 입력해 주세요."
                   width="100%"
                   autoComplete="off"
-                  disabled={updateVolume.isPending}
-                />
-              </FormItem>
-            )}
-          />
-
-          <Controller
-            name="isPublic"
-            control={control}
-            render={({ field }) => (
-              <FormItem
-                label="공개 설정"
-                required
-                validateStatus={errors.isPublic ? "error" : undefined}
-                help={errors.isPublic?.message}
-              >
-                <Dropdown
-                  options={VISIBILITY_STATUS_OPTIONS}
-                  onChange={(value) => field.onChange(value === "PUBLIC")}
-                  value={field.value ? "PUBLIC" : "PRIVATE"}
-                  width="100%"
-                  placeholder="공개 설정을 선택해 주세요."
                   disabled={updateVolume.isPending}
                 />
               </FormItem>
@@ -215,7 +189,6 @@ const StyledForm = styled(Form)`
 `;
 
 const StyledFormBody = styled(AsideDetailArticleBody)`
-  flex: 1;
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
