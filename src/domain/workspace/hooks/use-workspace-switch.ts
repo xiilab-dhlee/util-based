@@ -11,6 +11,10 @@ import {
 } from "@/shared/utils/router.util";
 import { setStoredWorkspaceId } from "@/shared/utils/storage/workspace-session-storage.util";
 
+interface SelectWorkspaceOptions {
+  skipNavigation?: boolean;
+}
+
 export function useWorkspaceSwitch() {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +48,10 @@ export function useWorkspaceSwitch() {
     }
   };
 
-  const handleSelectWorkspace = (workspace: WorkspaceResponse) => {
+  const handleSelectWorkspace = (
+    workspace: WorkspaceResponse,
+    options?: SelectWorkspaceOptions,
+  ) => {
     if (selectedWorkspace?.workspaceId === workspace.workspaceId) {
       return false;
     }
@@ -65,10 +72,12 @@ export function useWorkspaceSwitch() {
       console.warn("Cache invalidation failed:", error);
     }
 
-    try {
-      navigateAfterSwitch();
-    } catch (error) {
-      console.warn("Navigation failed:", error);
+    if (!options?.skipNavigation) {
+      try {
+        navigateAfterSwitch();
+      } catch (error) {
+        console.warn("Navigation failed:", error);
+      }
     }
 
     setIsLoading(false);
