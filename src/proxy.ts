@@ -6,6 +6,7 @@ import { getToken } from "next-auth/jwt";
 import {
   ACCOUNT_ROLES,
   type AccountRole,
+  USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
 
 // ============================================================================
@@ -197,7 +198,7 @@ export async function proxy(request: NextRequest) {
       !hasRole(roles, ACCOUNT_ROLES.ADMIN) &&
       !hasRole(roles, ACCOUNT_ROLES.SUPER_ADMIN)
     ) {
-      return NextResponse.redirect(new URL("/user", request.url));
+      return NextResponse.redirect(new URL(USER_ROOT_PATH, request.url));
     }
 
     // /user 경로: ADMIN, SUPER_ADMIN 또는 USER 필요
