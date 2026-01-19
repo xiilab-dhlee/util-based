@@ -99,9 +99,3 @@ export const compressVolumeFileSchema = z.object({
 export type CompressVolumeFileFormType = z.infer<
   typeof compressVolumeFileSchema
 >;
-
-// 볼륨 스토리지 타입
-export type VolumeStorageType = "ASTRAGO" | "LOCAL";
-
-// 볼륨 상태 타입
-export type VolumeStatusType = "PUBLIC" | "PRIVATE";

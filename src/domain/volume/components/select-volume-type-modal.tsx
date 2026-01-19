@@ -6,7 +6,6 @@ import { Icon, InfoModal } from "xiilab-ui";
 
 import { VolumeStorageCard } from "@/domain/volume/components/list/volume-storage-card";
 import { VOLUME_STORAGE_OPTIONS } from "@/domain/volume/constants/volume.constant";
-import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 import {
   openCreateAstragoVolumeModalAtom,
   openCreateOnPremiseVolumeModalAtom,
@@ -27,13 +26,13 @@ export function SelectVolumeTypeModal() {
     openCreateOnPremiseVolumeModalAtom,
   );
 
-  const handleClickStorageType = (type: VolumeStorageType) => {
+  const handleClickStorageType = (type: string) => {
     publish(VOLUME_EVENTS.sendStorageType, type);
     onClose();
 
     if (type === "ASTRAGO") {
       onOpenCreateAstragoVolumeModal();
-    } else if (type === "LOCAL") {
+    } else if (type === "ON_PREMISE") {
       onOpenCreateOnPremiseVolumeModal();
     } else {
       toast.error("스토리지 타입을 선택해 주세요.");
@@ -56,7 +55,7 @@ export function SelectVolumeTypeModal() {
         {VOLUME_STORAGE_OPTIONS.map((item) => (
           <VolumeStorageCard
             key={item.value}
-            storageType={item.value as VolumeStorageType}
+            storageType={item.value as string}
             onClick={handleClickStorageType}
           />
         ))}

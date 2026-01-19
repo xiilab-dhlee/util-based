@@ -75,7 +75,7 @@ export function CreateAstragoVolumeModal() {
     );
   };
 
-  useSubscribe(VOLUME_EVENTS.sendStorageType, (eventData: string) => {
+  useSubscribe<string>(VOLUME_EVENTS.sendStorageType, (eventData) => {
     if (eventData === "ASTRAGO") {
       onOpen();
     }

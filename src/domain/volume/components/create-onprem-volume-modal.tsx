@@ -12,7 +12,6 @@ import {
   getGetVolumeListQueryKey,
   useRegisterOnPremiseVolume,
 } from "@/api/generated/volume/volume";
-import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 import {
   type CreateOnPremiseVolumeFormType,
   createOnPremiseVolumeSchema,
@@ -77,14 +76,11 @@ export function CreateOnPremVolumeModal() {
     );
   };
 
-  useSubscribe(
-    VOLUME_EVENTS.sendStorageType,
-    (eventData: VolumeStorageType) => {
-      if (eventData === "LOCAL") {
-        onOpen();
-      }
-    },
-  );
+  useSubscribe<string>(VOLUME_EVENTS.sendStorageType, (eventData) => {
+    if (eventData === "ON_PREMISE") {
+      onOpen();
+    }
+  });
 
   return (
     <Modal

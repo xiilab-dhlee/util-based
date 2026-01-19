@@ -2,16 +2,15 @@
 
 import { Icon } from "xiilab-ui";
 
-import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
 import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 
 interface VolumeStorageCardProps {
-  storageType: VolumeStorageType;
-  onClick: (storageType: VolumeStorageType) => void;
+  storageType: string;
+  onClick: (storageType: string) => void;
 }
 
 const STORAGE_CARD_DATA: Record<
-  VolumeStorageType,
+  string,
   {
     from: string;
     title: string;
@@ -26,7 +25,7 @@ const STORAGE_CARD_DATA: Record<
     description:
       "AstraGo로 관리되어지는 File 스토리지에 데이터가 업로드 됩니다.",
   },
-  LOCAL: {
+  ON_PREMISE: {
     from: "External Data Source",
     title: "On-premise Storage",
     icon: (
@@ -54,7 +53,7 @@ export function VolumeStorageCard({
       type={storageType}
       icon={cardData.icon}
       description={cardData.description}
-      onClick={(type) => onClick(type as VolumeStorageType)}
+      onClick={(type) => onClick(type)}
     />
   );
 }
