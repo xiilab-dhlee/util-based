@@ -101,6 +101,7 @@ export const useVolumeFileTree = ({
 
         if (path === "/") {
           setTreeData(convertedChildren);
+          setIsError(false);
         } else {
           setTreeData((prev) =>
             mergeChildrenToTree(prev, path, convertedChildren, {

@@ -29,6 +29,8 @@ export function DeleteVolumeModal() {
   const isUser = isUserMode(pathname);
 
   const handleOk = async () => {
+    if (deleteVolumeIds.length === 0) return;
+
     for (const volumeId of deleteVolumeIds) {
       await deleteVolume.mutateAsync({ volumeId });
     }

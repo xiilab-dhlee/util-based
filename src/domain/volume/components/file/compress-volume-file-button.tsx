@@ -23,8 +23,10 @@ export function CompressVolumeFileButton({
     publish(VOLUME_EVENTS.sendCompressVolumeFile, { volumeId, filePaths });
   };
 
+  const isDisabled = checkedNodesInfo.length === 0;
+
   return (
-    <StyledButton type="button" onClick={handleClick}>
+    <StyledButton type="button" onClick={handleClick} disabled={isDisabled}>
       압축
     </StyledButton>
   );

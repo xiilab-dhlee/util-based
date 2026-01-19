@@ -28,8 +28,10 @@ export function UnzipVolumeFileButton({
     });
   };
 
+  const isDisabled = checkedNodesInfo.length === 0;
+
   return (
-    <StyledButton type="button" onClick={handleClick}>
+    <StyledButton type="button" onClick={handleClick} disabled={isDisabled}>
       압축 해제
     </StyledButton>
   );
