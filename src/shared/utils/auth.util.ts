@@ -14,6 +14,12 @@ export function checkIsAdmin(session: Session | null): boolean {
   return session.roles.some((role) => role === ACCOUNT_ROLES.ADMIN);
 }
 
+export function checkIsUser(session: Session | null): boolean {
+  if (!session?.roles) return false;
+
+  return session.roles.some((role) => role === ACCOUNT_ROLES.USER);
+}
+
 export function getSessionAccountId(session: Session | null): string | null {
   return session?.user?.id ?? null;
 }

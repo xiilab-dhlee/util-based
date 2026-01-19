@@ -7,7 +7,6 @@ import { Button, Icon } from "xiilab-ui";
 
 import { ProfileNotification } from "@/shared/components/layouts/profile-notification";
 import {
-  ACCOUNT_ROLES,
   ADMIN_ROOT_PATH,
   USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
@@ -15,6 +14,7 @@ import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
+import { checkIsUser } from "@/shared/utils/auth.util";
 import { isAdminMode } from "@/shared/utils/router.util";
 
 interface ProfilePopoverProps {
@@ -31,19 +31,16 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
 
   const { onClose } = useGlobalModal(openProfilePopoverAtom);
 
-  const isAdmin = isAdminMode(pathname);
-  const userRoles = session?.roles ?? [];
-  const isUserOnly = userRoles.includes(ACCOUNT_ROLES.USER);
+  const isAdminPage = isAdminMode(pathname);
+  const isUserRole = checkIsUser(session);
 
   /**
    * 현재 모드에 따른 모드 전환 함수
    */
-  const handleModeSwitch = () => {
-    if (isAdmin) {
-      // 관리자 모드에서 사용자 모드로 전환
+  const handleSwitchMode = () => {
+    if (isAdminPage) {
       router.replace(USER_ROOT_PATH);
     } else {
-      // 사용자 모드에서 관리자 모드로 전환
       router.replace(ADMIN_ROOT_PATH);
     }
   };
@@ -107,15 +104,15 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
               </WorkspaceItem>
             </WorkspaceBody>
           </Workspace>
-          {!isUserOnly && (
+          {!isUserRole && (
             <ModeSwitchButton
               icon="PersonFilled"
               iconColor="#CED5DB"
               width="100%"
               height={30}
-              onClick={handleModeSwitch}
+              onClick={handleSwitchMode}
             >
-              {isAdmin ? "사용자 " : "관리자"} 전환
+              {isAdminPage ? "사용자" : "관리자"} 전환
             </ModeSwitchButton>
           )}
         </User>
