@@ -22,7 +22,7 @@ export function ViewCredentialDetailModal() {
 
   const { data, isLoading, isError, refetch } = useGetCredentialDetail(
     accountId ?? "",
-    credentialId ?? 0,
+    credentialId || 0,
     {
       query: {
         enabled: accountId !== null && credentialId !== null,
@@ -63,15 +63,15 @@ export function ViewCredentialDetailModal() {
             <SectionTitle>기본 정보</SectionTitle>
             <DetailRow>
               <DetailLabel>타입</DetailLabel>
-              <DetailValue>{data?.credentialType ?? "-"}</DetailValue>
+              <DetailValue>{data?.credentialType || "-"}</DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel>이름</DetailLabel>
-              <DetailValue>{data?.credentialName ?? "-"}</DetailValue>
+              <DetailValue>{data?.credentialName || "-"}</DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel>설명</DetailLabel>
-              <DetailValue>{data?.description ?? "-"}</DetailValue>
+              <DetailValue>{data?.description || "-"}</DetailValue>
             </DetailRow>
 
             <Divider />
@@ -80,7 +80,7 @@ export function ViewCredentialDetailModal() {
             <SectionTitle>설정 내용</SectionTitle>
             <DetailRow>
               <DetailLabel>아이디</DetailLabel>
-              <DetailValue>{data?.credentialAccountId ?? "-"}</DetailValue>
+              <DetailValue>{data?.credentialAccountId || "-"}</DetailValue>
             </DetailRow>
 
             <Divider />
@@ -89,7 +89,7 @@ export function ViewCredentialDetailModal() {
             <SectionTitle>생성 정보</SectionTitle>
             <DetailRow>
               <DetailLabel>생성자</DetailLabel>
-              <DetailValue>{data?.creatorName ?? "-"}</DetailValue>
+              <DetailValue>{data?.creatorName || "-"}</DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel>생성일</DetailLabel>
