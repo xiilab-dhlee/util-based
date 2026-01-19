@@ -1,6 +1,5 @@
 "use client";
 
-import { useSetAtom } from "jotai";
 import Image from "next/image";
 import type { FormEvent } from "react";
 import { useRef } from "react";
@@ -14,7 +13,8 @@ import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourceco
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
 import { GuidePopover } from "@/shared/components/popover/guide-popover";
-import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { AsideDetailForm } from "@/styles/layers/aside-detail-layers.styled";
 import {
   AsideListArticleDescription,
@@ -52,10 +52,7 @@ import {
 export function CreateSourcecode() {
   // 폼 요소에 대한 참조 - 폼 초기화 및 데이터 수집에 사용
   const formRef = useRef<HTMLFormElement>(null);
-  // 크리덴셜 생성 모달 표시 설정
-  const setOpenCreateCredentialModal = useSetAtom(
-    openCreateCredentialModalAtom,
-  );
+  const publish = usePublish();
 
   // 소스코드 생성 뮤테이션 훅
   const createSourcecode = useCreateSourcecode();
@@ -112,7 +109,7 @@ export function CreateSourcecode() {
    * 크리덴셜 생성 모달을 열어 새로운 크리덴셜을 추가할 수 있게 합니다.
    */
   const handleClickCreateCredential = () => {
-    setOpenCreateCredentialModal(true);
+    publish(CREDENTIAL_EVENTS.openCreateModal);
   };
 
   /**

@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button, Dropdown } from "xiilab-ui";
 
-import { useGetCredentials } from "@/domain/credential/hooks/use-get-credentials";
-import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
+import type { CredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetCredentials } from "@/api/generated/credential/credential";
 import { useSelect } from "@/shared/hooks/use-select";
 import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
 
 interface ManageCredentialProps {
-  defaultCredential?: CredentialListType;
+  defaultCredential?: CredentialListItemResponse;
 }
 
 /**
