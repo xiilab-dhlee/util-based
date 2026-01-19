@@ -15,7 +15,7 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
 
-interface TagDetailPayload extends ImageTagListResponse {
+interface TagDetailEventData extends ImageTagListResponse {
   harborImageName: string;
 }
 
@@ -23,15 +23,16 @@ export function ViewPrivateRegistryTagDetailModal() {
   const { open, onOpen, onClose } = useGlobalModal(
     openViewPrivateRegistryTagDetailModalAtom,
   );
-  const [payload, setPayload] = useState<TagDetailPayload | null>(null);
+  const [payload, setPayload] = useState<TagDetailEventData | null>(null);
 
   const { data, isFetching } = useGetPrivateImageTagDetail(
-    1,
-    payload?.imageTagId ?? 0,
-    { harborImageName: payload?.harborImageName ?? "" },
+    {
+      harborImageName: payload?.harborImageName ?? "",
+      tagName: payload?.imageTagName ?? "",
+    },
     {
       query: {
-        enabled: open && !!payload?.imageTagId,
+        enabled: open && !!payload?.harborImageName && !!payload?.imageTagName,
       },
     },
   );
@@ -41,10 +42,10 @@ export function ViewPrivateRegistryTagDetailModal() {
     setPayload(null);
   };
 
-  useSubscribe<TagDetailPayload>(
+  useSubscribe<TagDetailEventData>(
     PRIVATE_REGISTRY_EVENTS.sendViewTagDetail,
-    (nextPayload) => {
-      setPayload(nextPayload);
+    (data) => {
+      setPayload(data);
       onOpen();
     },
   );

@@ -1,14 +1,16 @@
 "use client";
 
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useParams } from "next/navigation";
+import { toast } from "react-toastify";
 import { Button, Input } from "xiilab-ui";
 
 import {
   privateRegistryTagCheckedListAtom,
   privateRegistryTagPageAtom,
   privateRegistryTagSearchTextAtom,
+  privateRegistryTagSelectedAtom,
 } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -34,6 +36,7 @@ export function PrivateRegistryDetailFilter({
   const setSearchText = useSetAtom(privateRegistryTagSearchTextAtom);
   const resetPage = useResetAtom(privateRegistryTagPageAtom);
   const resetCheckedList = useResetAtom(privateRegistryTagCheckedListAtom);
+  const selectedTag = useAtomValue(privateRegistryTagSelectedAtom);
   const publish = usePublish();
 
   const handleSearch = (value: string) => {
@@ -51,7 +54,15 @@ export function PrivateRegistryDetailFilter({
   };
 
   const handleCreateScan = () => {
-    alert("준비 중입니다.");
+    if (!selectedTag?.imageTagName) {
+      toast.warning("검증할 태그를 선택해 주세요.");
+      return;
+    }
+
+    publish(PRIVATE_REGISTRY_EVENTS.sendScanTagData, {
+      harborImageName,
+      tagName: selectedTag.imageTagName,
+    });
   };
 
   return (

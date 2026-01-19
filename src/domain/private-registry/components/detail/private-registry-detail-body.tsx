@@ -213,7 +213,7 @@ const InfoPanel = styled.div`
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  margin-bottom: 42px;
+  margin-bottom: 38px;
   border-radius: 4px;
 `;
 

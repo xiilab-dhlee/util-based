@@ -156,6 +156,8 @@ export const PRIVATE_REGISTRY_EVENTS = {
   sendStopImageJob: "private-registry:send-stop-image-job",
   // 프라이빗 레지스트리 이미지 태그 상세 보기에 필요한 정보 전달 이벤트
   sendViewTagDetail: "private-registry:send-view-tag-detail",
+  // 프라이빗 레지스트리 이미지 태그 스캔에 필요한 정보 전달 이벤트
+  sendScanTagData: "private-registry:send-scan-tag-data",
 } as const;
 
 // 파일 보안 관련 이벤트

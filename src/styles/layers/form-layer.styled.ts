@@ -38,6 +38,10 @@ export const FormRow = styled.div`
   gap: 10px;
   overflow: hidden;
   width: 100%;
+
+  > * {
+    min-width: 0;
+  }
 `;
 
 /**

@@ -11,6 +11,7 @@ import { DeletePrivateRegistryModal } from "@/domain/private-registry/components
 import { DeletePrivateRegistryTagModal } from "@/domain/private-registry/components/delete-private-registry-tag-modal";
 import { PrivateRegistryDetailAside } from "@/domain/private-registry/components/detail/private-registry-detail-aside";
 import { PrivateRegistryDetailBody } from "@/domain/private-registry/components/detail/private-registry-detail-body";
+import { ScanPrivateRegistryTagModal } from "@/domain/private-registry/components/scan-private-registry-tag-modal";
 import { ViewPrivateRegistryTagDetailModal } from "@/domain/private-registry/components/view-private-registry-tag-detail-modal";
 import {
   PRIVATE_REGISTRY_TAG_PAGE_SIZE,
@@ -99,6 +100,8 @@ export function PrivateRegistryDetailMain() {
       <CreatePrivateRegistryTagModal />
       {/* 프라이빗 레지스트리 이미지 태그 삭제 모달 */}
       <DeletePrivateRegistryTagModal />
+      {/* 프라이빗 레지스트리 이미지 태그 스캔 확인 모달 */}
+      <ScanPrivateRegistryTagModal />
       {/* 프라이빗 레지스트리 이미지 태그 상세 모달 */}
       <ViewPrivateRegistryTagDetailModal />
       {/* 요청 사유 모달 */}

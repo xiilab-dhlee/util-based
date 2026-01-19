@@ -111,7 +111,7 @@ export const privateRegistryListOverrideHandlers = [
     const content: RegistryListResponse[] = Array.from(
       { length: pageSize },
       (_, index) => {
-        const globalIndex = pageNo * pageSize + index;
+        const globalIndex = pageNo * pageSize + index + 1;
 
         // 필터가 적용된 경우 해당 타입만, 아니면 인덱스 기반 타입
         const itemImageSourceType = imageSourceType
