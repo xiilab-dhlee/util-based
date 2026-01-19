@@ -53,8 +53,12 @@ export function CredentialCard({
   };
 
   return (
-    <StyledCard contentVariant="default" showHeader={false}>
-      <Container onClick={handleCardClick}>
+    <StyledCard
+      contentVariant="default"
+      showHeader={false}
+      onClick={handleCardClick}
+    >
+      <Container>
         <Header>
           <Title>
             <StyledTag variant={variant}>
