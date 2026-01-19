@@ -1,19 +1,38 @@
 "use client";
 
 import type { ComponentType, ReactNode } from "react";
-import { createElement, useCallback, useState } from "react";
+import { createElement, useState } from "react";
 import styled from "styled-components";
 
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
 import { CustomFileNode, RootCustomFileNode } from "./custom-file-node";
 
+/** 파일 체크박스 컴포넌트 props 인터페이스 */
+export interface FileCheckboxProps {
+  /** 체크박스가 연결된 파일/디렉토리의 고유 키 (경로) */
+  activeKey: string;
+  /** 노드 타입 (file 또는 directory) */
+  type: "file" | "directory";
+  /** 노드 데이터 (하위 노드 접근용) */
+  node: FileTreeType;
+}
+
 interface CustomFileTreeProps {
   treeData: FileTreeType[];
-  fileCheckbox?: ComponentType<{ activeKey: string }>;
-  fileButton: ComponentType<{ fileName: string; activeKey: string }>;
-  // 전체 선택 활성화 여부
+  fileCheckbox?: ComponentType<FileCheckboxProps>;
+  fileButton: ComponentType<{
+    fileName: string;
+    activeKey: string;
+    path?: string;
+    type?: "file" | "directory";
+  }>;
+  /** 전체 선택 활성화 여부 */
   isActiveRootNode?: boolean;
+  /** 현재 로딩 중인 경로들 (스피너 표시용) */
+  loadingPaths?: Set<string>;
+  /** 폴더 클릭 시 호출되는 콜백 (lazy loading용) */
+  onFolderClick?: (path: string) => void;
 }
 
 interface RenderNodeOptions {
@@ -32,14 +51,19 @@ export function CustomFileTree({
   fileCheckbox,
   fileButton,
   isActiveRootNode,
+  loadingPaths,
+  onFolderClick,
 }: CustomFileTreeProps) {
   // 각 노드의 확장/축소 상태를 관리
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
   /**
    * 노드의 확장/축소 상태를 토글하는 함수
+   * 확장 시 onFolderClick 콜백을 호출하여 lazy loading을 트리거합니다.
    */
-  const toggleNodeExpansion = useCallback((nodePath: string) => {
+  const toggleNodeExpansion = (nodePath: string) => {
+    const wasExpanded = expandedNodes.has(nodePath);
+
     setExpandedNodes((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(nodePath)) {
@@ -49,7 +73,12 @@ export function CustomFileTree({
       }
       return newSet;
     });
-  }, []);
+
+    // 확장 시에만 폴더 클릭 콜백 호출 (setExpandedNodes 외부에서 호출)
+    if (!wasExpanded) {
+      onFolderClick?.(nodePath);
+    }
+  };
 
   /**
    * 노드의 위치를 결정하는 함수
@@ -98,6 +127,8 @@ export function CustomFileTree({
     const isExpanded = expandedNodes.has(node.path);
     // 유일한 자식 노드인지 확인
     const isOnlyChild = totalSiblings === 1;
+    // 현재 노드가 로딩 중인지 확인
+    const isLoading = loadingPaths?.has(node.path) ?? false;
 
     return (
       <CustomFileNode
@@ -111,6 +142,7 @@ export function CustomFileTree({
         onToggleExpansion={toggleNodeExpansion}
         isSingleRoot={options.isSingleRoot}
         isOnlyChild={isOnlyChild}
+        isLoading={isLoading}
       />
     );
   };

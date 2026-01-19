@@ -95,6 +95,16 @@ function formatExpiresAt(expiresAt: number | undefined): string {
   return expiresAt ? new Date(expiresAt * 1000).toLocaleString("ko-KR") : "N/A";
 }
 
+/** 초를 분, 초 형식으로 변환 */
+function formatRemainingTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  if (mins > 0) {
+    return `${mins}분 ${secs}초`;
+  }
+  return `${secs}초`;
+}
+
 // ============================================================================
 // JWT 파싱
 // ============================================================================
@@ -261,9 +271,24 @@ async function createTestJwt(token: JWT): Promise<JWT> {
 // Keycloak 토큰 관리
 // ============================================================================
 
+/** 토큰 앞 10자리 추출 (비교용) */
+function getTokenPrefix(token: string | undefined): string {
+  return token ? `${token.substring(0, 10)}...` : "N/A";
+}
+
 /** Keycloak 토큰 갱신 */
 async function refreshKeycloakToken(token: JWT): Promise<JWT> {
   const { AUTH_ISSUER, AUTH_CLIENT_ID, AUTH_CLIENT_SECRET } = process.env;
+
+  const oldAccessToken = getTokenPrefix(token.access_token as string);
+  const oldRefreshToken = getTokenPrefix(token.refresh_token as string);
+  const oldExpiresAt = token.expires_at as number;
+
+  authDebug("🔄 토큰 갱신 시작", {
+    oldAccessToken,
+    oldRefreshToken,
+    oldExpiresAt: formatExpiresAt(oldExpiresAt),
+  });
 
   try {
     const response = await fetch(
@@ -284,7 +309,22 @@ async function refreshKeycloakToken(token: JWT): Promise<JWT> {
     if (!response.ok) throw data;
 
     const newExpiresAt = Math.floor(Date.now() / 1000) + data.expires_in;
-    authDebug(`✅ 토큰 갱신 완료 (만료: ${formatExpiresAt(newExpiresAt)})`);
+    const newAccessToken = getTokenPrefix(data.access_token);
+    const newRefreshToken = getTokenPrefix(
+      data.refresh_token ?? (token.refresh_token as string),
+    );
+
+    const accessTokenChanged = oldAccessToken !== newAccessToken;
+    const refreshTokenChanged =
+      data.refresh_token && oldRefreshToken !== newRefreshToken;
+
+    authDebug("✅ 토큰 갱신 완료", {
+      newAccessToken,
+      newRefreshToken,
+      newExpiresAt: formatExpiresAt(newExpiresAt),
+      accessTokenChanged,
+      refreshTokenChanged: !!refreshTokenChanged,
+    });
 
     return {
       ...token,
@@ -302,6 +342,15 @@ async function refreshKeycloakToken(token: JWT): Promise<JWT> {
 function createKeycloakJwt(token: JWT, user: User, account: Account): JWT {
   const roles = parseRolesFromToken(account.access_token);
   const expiresAt = account.expires_at;
+
+  // expires_at이 없으면 토큰 생성 거부
+  if (!expiresAt) {
+    console.error("[Auth] 토큰 생성 실패: expires_at 누락", {
+      userId: user.id,
+      email: user.email,
+    });
+    return { ...token, error: "MissingExpiresAt" };
+  }
 
   authDebug(
     `🎫 토큰 발급: ${user.name ?? user.email} [${roles.join(", ")}] (만료: ${formatExpiresAt(expiresAt)})`,
@@ -430,13 +479,20 @@ const keycloakCallbacks: NextAuthOptions["callbacks"] = {
 
     // 토큰 유효성 검사
     const expiresAt = token.expires_at as number;
-    const isValid =
-      Date.now() < (expiresAt - TOKEN_EXPIRY_BUFFER_SECONDS) * 1000;
+    const remainingSeconds = Math.floor((expiresAt * 1000 - Date.now()) / 1000);
+    const isValid = remainingSeconds > TOKEN_EXPIRY_BUFFER_SECONDS;
 
-    if (isValid) return token;
+    if (isValid) {
+      authDebug(
+        `🔄 세션 체크: 토큰 유효 (만료까지 ${formatRemainingTime(remainingSeconds)})`,
+      );
+      return token;
+    }
 
     // 토큰 갱신
-    authDebug("⏰ 토큰 만료 → 갱신 시도");
+    authDebug(
+      `⏰ 토큰 만료 임박 (${formatRemainingTime(remainingSeconds)}) → 갱신 시도`,
+    );
     return refreshKeycloakToken(token);
   },
 

@@ -1,11 +1,13 @@
 "use client";
 
+import { Spin } from "antd";
 import classNames from "classnames";
 import type { ComponentType, PropsWithChildren, ReactNode } from "react";
 import { createElement } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import type { FileCheckboxProps } from "@/shared/components/tree/custom-file-tree";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
 import type { CoreFileButton } from "@/shared/types/core.model";
@@ -21,7 +23,7 @@ interface FileNodeProps {
   /** 상위 노드들의 브리지 상태 배열 (true: 브리지 연결됨, false: 브리지 없음) */
   ancestorsHasNext: boolean[];
   /** 파일 체크박스 컴포넌트 타입 (옵셔널) */
-  fileCheckbox?: ComponentType<{ activeKey: string }>;
+  fileCheckbox?: ComponentType<FileCheckboxProps>;
   /** 파일 버튼 컴포넌트 타입 */
   fileButton: ComponentType<CoreFileButton>;
   /** 노드가 확장된 상태인지 여부 */
@@ -32,6 +34,8 @@ interface FileNodeProps {
   isSingleRoot: boolean;
   /** 유일한 자식 노드인지 여부 */
   isOnlyChild: boolean;
+  /** 현재 노드가 로딩 중인지 여부 (폴더 children 로딩 시) */
+  isLoading?: boolean;
 }
 
 /**
@@ -86,6 +90,7 @@ export function CustomFileNode({
   onToggleExpansion,
   isSingleRoot,
   isOnlyChild,
+  isLoading = false,
 }: FileNodeProps) {
   /**
    * 디렉토리 아이콘 클릭 핸들러
@@ -195,27 +200,44 @@ export function CustomFileNode({
   /**
    * 디렉토리 내용을 렌더링하는 함수
    *
-   * 디렉토리 노드의 경우 CaretDown 아이콘과 파일 버튼을 렌더링합니다.
-   * 디렉토리는 체크박스 없이 버튼만 제공하며, 아이콘 클릭 시 회전합니다.
+   * 디렉토리 노드의 경우 체크박스(옵셔널), CaretDown 아이콘, 파일 버튼을 렌더링합니다.
+   * 아이콘 클릭 시 회전합니다.
+   * 로딩 중일 때는 아이콘 대신 스피너를 표시합니다.
    *
-   * @param path - 디렉토리 경로
-   * @param name - 디렉토리 이름
+   * @param directoryNode - 디렉토리 노드 데이터
    * @returns 디렉토리 UI
    */
-  const renderDirectoryContent = (path: string, name: string): ReactNode => (
+  const renderDirectoryContent = (directoryNode: FileTreeType): ReactNode => (
     <>
-      <IconWrapper
-        type="button"
-        className={classNames({
-          rotated: isExpanded,
-        })}
-        onClick={handleIconClick}
-      >
-        <Icon name="CaretDown" color="var(--icon-fill)" size={16} />
-      </IconWrapper>
+      {fileCheckbox ? (
+        <CheckboxWrapper>
+          {createElement(fileCheckbox, {
+            activeKey: directoryNode.path,
+            type: "directory",
+            node: directoryNode,
+          })}
+        </CheckboxWrapper>
+      ) : null}
+      {isLoading ? (
+        <SpinWrapper>
+          <Spin size="small" />
+        </SpinWrapper>
+      ) : (
+        <IconWrapper
+          type="button"
+          className={classNames({
+            rotated: isExpanded,
+          })}
+          onClick={handleIconClick}
+        >
+          <Icon name="CaretDown" color="var(--icon-fill)" size={16} />
+        </IconWrapper>
+      )}
       {createElement(fileButton, {
-        activeKey: path,
-        fileName: name,
+        activeKey: directoryNode.path,
+        fileName: directoryNode.name,
+        path: directoryNode.path,
+        type: "directory",
       })}
     </>
   );
@@ -227,23 +249,26 @@ export function CustomFileNode({
    * fileCheckbox가 전달된 경우에만 체크박스를 표시합니다.
    * 파일은 선택 기능과 체크 기능을 모두 제공합니다.
    *
-   * @param path - 파일 경로
-   * @param name - 파일 이름
+   * @param fileNode - 파일 노드 데이터
    * @returns 파일 UI
    */
-  const renderFileContent = (id: string, name: string): React.ReactNode => (
+  const renderFileContent = (fileNode: FileTreeType): React.ReactNode => (
     <FileNameWrapper>
       {fileCheckbox ? (
         <CheckboxWrapper>
-          {createElement(fileCheckbox as ComponentType<{ activeKey: string }>, {
-            activeKey: id,
+          {createElement(fileCheckbox, {
+            activeKey: fileNode.path,
+            type: "file",
+            node: fileNode,
           })}
         </CheckboxWrapper>
       ) : null}
       {createElement(fileButton, {
-        activeKey: id,
-        fileName: name,
+        activeKey: fileNode.path,
+        fileName: fileNode.name,
         showIcon: true,
+        path: fileNode.path,
+        type: "file",
       })}
     </FileNameWrapper>
   );
@@ -257,9 +282,7 @@ export function CustomFileNode({
       {/* 들여쓰기 가이드 렌더링 */}
       {indents}
       {/* 노드 타입에 따라 다른 내용 렌더링 */}
-      {isDirectory
-        ? renderDirectoryContent(node.path, node.name)
-        : renderFileContent(node.id, node.name)}
+      {isDirectory ? renderDirectoryContent(node) : renderFileContent(node)}
     </Container>
   );
 }
@@ -347,4 +370,12 @@ const FileNameWrapper = styled.div`
   align-items: center;
   flex: 1;
   height: 100%;
+`;
+
+const SpinWrapper = styled.div`
+  width: var(--file-indent-size);
+  height: var(--file-indent-size);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

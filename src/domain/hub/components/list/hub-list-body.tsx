@@ -9,7 +9,7 @@ import {
   HUB_PAGE_SIZE,
 } from "@/domain/hub/constants/hub.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
-import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -45,7 +45,7 @@ export function HubListBody({
   if (isError) {
     return (
       <ListWrapper>
-        <DataErrorState />
+        <EmptyState title={TABLE_MESSAGE.ERROR} />
       </ListWrapper>
     );
   }

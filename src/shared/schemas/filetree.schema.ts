@@ -9,6 +9,7 @@ const baseFileTreeSchema: z.ZodType<{
   fileExtension: string | null;
   fileSize?: string;
   fileCount?: number;
+  directoryCount?: number;
   children: FileTreeType[];
 }> = z.lazy(() =>
   z.object({
@@ -25,7 +26,9 @@ const baseFileTreeSchema: z.ZodType<{
     /** 파일 크기 (파일인 경우) */
     fileSize: z.string().optional(),
     /** 폴더 내 파일 개수 (디렉토리인 경우) */
-    fileCount: z.number().int().min(0).max(100).optional(),
+    fileCount: z.number().int().min(0).optional(),
+    /** 폴더 내 디렉토리 개수 (디렉토리인 경우) */
+    directoryCount: z.number().int().min(0).optional(),
     /** 자식 파일/디렉토리 목록 */
     children: z.array(baseFileTreeSchema),
   }),

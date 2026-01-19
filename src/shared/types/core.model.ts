@@ -34,6 +34,10 @@ export interface CoreFileButton {
   activeKey: string;
   /** 아이콘 표시 여부 */
   showIcon?: boolean;
+  /** 파일/폴더 경로 */
+  path?: string;
+  /** 파일/폴더 타입 */
+  type?: "file" | "directory";
 }
 
 // 목록 응답 인터페이스
