@@ -272,8 +272,10 @@ export const getPrivateImageTagListResponse = zod
                   highCount: zod.number().describe("높음 취약점 수"),
                   mediumCount: zod.number().describe("중간 취약점 수"),
                   lowCount: zod.number().describe("낮음 취약점 수"),
+                  totalCount: zod.number().describe("전체 취약점 수"),
                 })
                 .strict()
+                .optional()
                 .describe("취약점 정보"),
               creatorId: zod
                 .string()
@@ -604,8 +606,10 @@ export const getPrivateImageTagDetailResponse = zod
             highCount: zod.number().describe("높음 취약점 수"),
             mediumCount: zod.number().describe("중간 취약점 수"),
             lowCount: zod.number().describe("낮음 취약점 수"),
+            totalCount: zod.number().describe("전체 취약점 수"),
           })
           .strict()
+          .optional()
           .describe("취약점 정보"),
         imageTagId: zod
           .number()

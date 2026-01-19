@@ -1380,6 +1380,65 @@ export interface CreateAstragoVolumeRequest {
 }
 
 /**
+ * 소스코드 타입
+ */
+export type CreateSourceCodeRequestSourceCodeType =
+  (typeof CreateSourceCodeRequestSourceCodeType)[keyof typeof CreateSourceCodeRequestSourceCodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CreateSourceCodeRequestSourceCodeType = {
+  GITHUB: "GITHUB",
+  GITLAB: "GITLAB",
+  BITBUCKET: "BITBUCKET",
+} as const;
+
+/**
+ * 사용자 정의 파라미터
+ */
+export type CreateSourceCodeRequestParameter = { [key: string]: string };
+
+/**
+ * 소스코드 생성 요청
+ */
+export interface CreateSourceCodeRequest {
+  /**
+   * 소스코드 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  sourceCodeName: string;
+  /**
+   * Git 저장소 URL
+   * @minLength 0
+   * @maxLength 1000
+   */
+  gitUrl: string;
+  /**
+   * 마운트 경로 (절대경로)
+   * @minLength 0
+   * @maxLength 1000
+   * @pattern ^/.*
+   */
+  mountPath: string;
+  /** 소스코드 타입 */
+  sourceCodeType: CreateSourceCodeRequestSourceCodeType;
+  /**
+   * 실행 커맨드
+   * @minLength 0
+   * @maxLength 1000
+   */
+  executionCommand: string;
+  /** 크레덴셜 ID (Private Repository인 경우 필수) */
+  credentialId?: number;
+  /** 사용자 정의 파라미터 */
+  parameter?: CreateSourceCodeRequestParameter;
+  /** 공개 여부 */
+  isPublic: boolean;
+  /** 워크스페이스 ID (격리 모드 시 필수) */
+  workspaceId?: number;
+}
+
+/**
  * 레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC)
  */
 export type CreateExternalImageRequestRegistryChannel =
@@ -1554,6 +1613,18 @@ export interface DeleteImagesResponse {
   failureCount: number;
   /** 실패한 이미지 목록 (실패가 없으면 빈 리스트) */
   failures: DeleteImageFailureDetail[];
+}
+
+/**
+ * 이미지 태그 사용 승인 신청 요청
+ */
+export interface CreateImageTagUsageRequestRequest {
+  /** 사용 승인을 신청할 이미지 태그 ID 목록 */
+  imageTagId: number[];
+  /** 사용 승인 요청 사유 (최대 2000자) */
+  requestReason: string;
+  /** 이미지를 사용할 워크스페이스 ID (선택) */
+  workspaceId?: number;
 }
 
 /**
@@ -2327,6 +2398,88 @@ export interface WorkloadMetricsTimeseriesResponse {
   data: WorkloadMetricData[];
 }
 
+export type BaseResponseTerminatedWorkloadListResponseStatus =
+  (typeof BaseResponseTerminatedWorkloadListResponseStatus)[keyof typeof BaseResponseTerminatedWorkloadListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseTerminatedWorkloadListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseTerminatedWorkloadListResponse {
+  status: BaseResponseTerminatedWorkloadListResponseStatus;
+  errorCode?: string;
+  data?: TerminatedWorkloadListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 리소스 회수 상태
+ */
+export type TerminatedWorkloadItemReclaimStatus =
+  (typeof TerminatedWorkloadItemReclaimStatus)[keyof typeof TerminatedWorkloadItemReclaimStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TerminatedWorkloadItemReclaimStatus = {
+  RECLAIMED: "RECLAIMED",
+  WARNING: "WARNING",
+  NORMAL: "NORMAL",
+} as const;
+
+/**
+ * 워크로드 잡 타입
+ */
+export type TerminatedWorkloadItemWorkloadJobType =
+  (typeof TerminatedWorkloadItemWorkloadJobType)[keyof typeof TerminatedWorkloadItemWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TerminatedWorkloadItemWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 종료된 워크로드 항목
+ */
+export interface TerminatedWorkloadItem {
+  /** 워크로드 이름 */
+  workloadName: string;
+  /** 워크로드 리소스 이름 (K8s 리소스명) */
+  workloadResourceName: string;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 생성 일시 */
+  createdAt: string;
+  /** 리소스 회수 상태 */
+  reclaimStatus: TerminatedWorkloadItemReclaimStatus;
+  /** 리소스 회수 경고 횟수 */
+  reclaimWarningCount: number;
+  /** 종료 일시 */
+  terminatedAt?: string;
+  /** 워크로드 잡 타입 */
+  workloadJobType: TerminatedWorkloadItemWorkloadJobType;
+}
+
+/**
+ * 종료된 워크로드 목록 응답
+ */
+export interface TerminatedWorkloadListResponse {
+  /** 전체 항목 수 */
+  totalSize: number;
+  /** 전체 페이지 수 */
+  totalPageNum: number;
+  /** 현재 페이지 번호 */
+  currentPage: number;
+  /** 워크로드 목록 */
+  content: TerminatedWorkloadItem[];
+}
+
 export type BaseResponseListTimeGroupedResourceMetricsResponseStatus =
   (typeof BaseResponseListTimeGroupedResourceMetricsResponseStatus)[keyof typeof BaseResponseListTimeGroupedResourceMetricsResponseStatus];
 
@@ -2363,6 +2516,117 @@ export interface TimeGroupedResourceMetricsResponse {
   dateTime: string;
   /** 해당 시간대의 모델별 메트릭 데이터 목록 */
   data: ModelMetricData[];
+}
+
+/**
+ * 리소스 회수 상태
+ */
+export type ActiveWorkloadItemReclaimStatus =
+  (typeof ActiveWorkloadItemReclaimStatus)[keyof typeof ActiveWorkloadItemReclaimStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActiveWorkloadItemReclaimStatus = {
+  RECLAIMED: "RECLAIMED",
+  WARNING: "WARNING",
+  NORMAL: "NORMAL",
+} as const;
+
+/**
+ * 워크로드 상태
+ */
+export type ActiveWorkloadItemWorkloadStatus =
+  (typeof ActiveWorkloadItemWorkloadStatus)[keyof typeof ActiveWorkloadItemWorkloadStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActiveWorkloadItemWorkloadStatus = {
+  RUNNING: "RUNNING",
+  ERROR: "ERROR",
+  PENDING: "PENDING",
+  CREATING: "CREATING",
+  TERMINATED: "TERMINATED",
+} as const;
+
+/**
+ * 워크로드 잡 타입
+ */
+export type ActiveWorkloadItemWorkloadJobType =
+  (typeof ActiveWorkloadItemWorkloadJobType)[keyof typeof ActiveWorkloadItemWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActiveWorkloadItemWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 실행 중 워크로드 항목
+ */
+export interface ActiveWorkloadItem {
+  /** 워크로드 이름 */
+  workloadName: string;
+  /** 워크로드 리소스 이름 (K8s 리소스명) */
+  workloadResourceName: string;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 생성 일시 */
+  createdAt: string;
+  /** 리소스 회수 상태 */
+  reclaimStatus: ActiveWorkloadItemReclaimStatus;
+  /** 리소스 회수 경고 횟수 */
+  reclaimWarningCount: number;
+  /** 워크로드 상태 */
+  workloadStatus: ActiveWorkloadItemWorkloadStatus;
+  /** 경과 시간 (초) */
+  ageSeconds: number;
+  /** 워크로드 잡 타입 */
+  workloadJobType: ActiveWorkloadItemWorkloadJobType;
+  /** 접속 정보 목록 */
+  connection: WorkloadConnection[];
+}
+
+/**
+ * 실행 중 워크로드 목록 응답
+ */
+export interface ActiveWorkloadListResponse {
+  /** 전체 항목 수 */
+  totalSize: number;
+  /** 전체 페이지 수 */
+  totalPageNum: number;
+  /** 현재 페이지 번호 */
+  currentPage: number;
+  /** 워크로드 목록 */
+  content: ActiveWorkloadItem[];
+}
+
+export type BaseResponseActiveWorkloadListResponseStatus =
+  (typeof BaseResponseActiveWorkloadListResponseStatus)[keyof typeof BaseResponseActiveWorkloadListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseActiveWorkloadListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseActiveWorkloadListResponse {
+  status: BaseResponseActiveWorkloadListResponseStatus;
+  errorCode?: string;
+  data?: ActiveWorkloadListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 워크로드 접속 정보
+ */
+export interface WorkloadConnection {
+  /** 포트 이름 */
+  portName: string;
+  /** 접속 URL */
+  url: string;
 }
 
 export type BaseResponsePageResponseResourceRequestListResponseStatus =
@@ -2717,6 +2981,66 @@ export interface VolumeDetailResponse {
   isPublic: boolean;
 }
 
+export type BaseResponsePageResponseSourceCodeListResponseStatus =
+  (typeof BaseResponsePageResponseSourceCodeListResponseStatus)[keyof typeof BaseResponsePageResponseSourceCodeListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseSourceCodeListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseSourceCodeListResponse {
+  status: BaseResponsePageResponseSourceCodeListResponseStatus;
+  errorCode?: string;
+  data?: PageResponseSourceCodeListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseSourceCodeListResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: SourceCodeListResponse[];
+}
+
+/**
+ * 소스코드 타입
+ */
+export type SourceCodeListResponseSourceCodeType =
+  (typeof SourceCodeListResponseSourceCodeType)[keyof typeof SourceCodeListResponseSourceCodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SourceCodeListResponseSourceCodeType = {
+  GITHUB: "GITHUB",
+  GITLAB: "GITLAB",
+  BITBUCKET: "BITBUCKET",
+} as const;
+
+/**
+ * 소스코드 목록 조회 응답
+ */
+export interface SourceCodeListResponse {
+  /** 소스코드 ID */
+  sourceCodeId: number;
+  /** 소스코드 이름 */
+  sourceCodeName: string;
+  /** Git URL */
+  gitUrl: string;
+  /** 마운트 경로 */
+  mountPath: string;
+  /** 소스코드 타입 */
+  sourceCodeType: SourceCodeListResponseSourceCodeType;
+  /** 실행 커맨드 */
+  executionCommand: string;
+  /** 생성 일시 */
+  createdAt: string;
+  /** 공개 여부 */
+  isPublic: boolean;
+}
+
 export type BaseResponsePageResponseRegistryListResponseStatus =
   (typeof BaseResponsePageResponseRegistryListResponseStatus)[keyof typeof BaseResponsePageResponseRegistryListResponseStatus];
 
@@ -2844,8 +3168,8 @@ export interface ImageTagListResponse {
   imageTagSizeByte: number;
   /** 스캔 상태 (스캔 전이면 null) */
   scanStatus?: string;
-  /** 취약점 정보 */
-  vulnerability: VulnerabilityResponse;
+  /** 취약점 정보 (스캔 미수행 시 null) */
+  vulnerability?: VulnerabilityResponse;
   /** 생성자 ID (DB 메타데이터 없으면 null) */
   creatorId?: string;
   /** 생성자 이름 */
@@ -2887,6 +3211,8 @@ export interface VulnerabilityResponse {
   mediumCount: number;
   /** 낮음 취약점 수 */
   lowCount: number;
+  /** 전체 취약점 수 */
+  totalCount: number;
 }
 
 export type BaseResponsePageResponseVulnerabilityDetailResponseStatus =
@@ -3031,8 +3357,8 @@ export interface ImageTagDetailResponse {
   scanStatus: string;
   /** 생성일시 (Harbor Push 시간, UTC) */
   createdAt?: string;
-  /** 취약점 정보 */
-  vulnerability: VulnerabilityResponse;
+  /** 취약점 정보 (스캔 미수행 시 null) */
+  vulnerability?: VulnerabilityResponse;
   /** 이미지 태그 ID (DB 메타데이터 없으면 null) */
   imageTagId?: number;
   /** 승인 상태 (DB 메타데이터 없으면 null) */
@@ -3140,74 +3466,6 @@ export interface PageResponseImageJobResponse {
   content: ImageJobResponse[];
 }
 
-/**
- * 페이징 및 검색 요청
- */
-export interface PageSearchRequest {
-  /** 페이지 번호 (0부터 시작) */
-  pageNo: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize: number;
-  /** 검색 키워드 */
-  keyword?: string;
-}
-
-/**
- * 정렬 기준 필드
- */
-export type MonitoringNotificationHistorySortRequestSort =
-  (typeof MonitoringNotificationHistorySortRequestSort)[keyof typeof MonitoringNotificationHistorySortRequestSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MonitoringNotificationHistorySortRequestSort = {
-  NODE_NAME: "NODE_NAME",
-  NODE_IP: "NODE_IP",
-  NOTIFICATION_SET_NAME: "NOTIFICATION_SET_NAME",
-  CREATED_AT: "CREATED_AT",
-} as const;
-
-/**
- * 정렬 순서
- */
-export type MonitoringNotificationHistorySortRequestOrder =
-  (typeof MonitoringNotificationHistorySortRequestOrder)[keyof typeof MonitoringNotificationHistorySortRequestOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MonitoringNotificationHistorySortRequestOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-/**
- * 모니터링 알림 히스토리 목록 정렬 요청
- */
-export interface MonitoringNotificationHistorySortRequest {
-  /** 정렬 기준 필드 */
-  sort: MonitoringNotificationHistorySortRequestSort;
-  /** 정렬 순서 */
-  order: MonitoringNotificationHistorySortRequestOrder;
-}
-
-/**
- * 모니터링 알림 히스토리 목록 필터 요청
- */
-export interface MonitoringNotificationHistoryFilterRequest {
-  /**
-   * 조회 시작 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
-   */
-  startedAt?: string;
-  /**
-   * 조회 종료 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
-   */
-  endedAt?: string;
-}
-
 export type BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus =
   (typeof BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus)[keyof typeof BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus];
 
@@ -3231,6 +3489,8 @@ export interface BaseResponsePageResponseMonitoringNotificationHistoryListRespon
  * 모니터링 알림 히스토리 목록 항목
  */
 export interface MonitoringNotificationHistoryListResponse {
+  /** 알림 히스토리 ID */
+  monitoringNotificationHistoryId: number;
   /** 노드 이름 */
   nodeName: string;
   /** 노드 IP */
@@ -3395,20 +3655,6 @@ export interface MonitoringNotificationHistoryDetailResponse {
   createdAt: string;
 }
 
-/**
- * 페이징 요청
- */
-export interface PageableRequest {
-  /** 페이지 번호 (0부터 시작) */
-  pageNo: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize: number;
-}
-
 export type BaseResponsePageResponseMonitoringNotificationSetListResponseStatus =
   (typeof BaseResponsePageResponseMonitoringNotificationSetListResponseStatus)[keyof typeof BaseResponsePageResponseMonitoringNotificationSetListResponseStatus];
 
@@ -3488,13 +3734,42 @@ export interface MonitoringNotificationSetDetailResponse {
 }
 
 /**
+ * 메트릭 타입
+ */
+export type ThresholdResponseMetric =
+  (typeof ThresholdResponseMetric)[keyof typeof ThresholdResponseMetric];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThresholdResponseMetric = {
+  GPU_TEMP: "GPU_TEMP",
+  GPU_MEMORY: "GPU_MEMORY",
+  GPU_USAGE: "GPU_USAGE",
+  MEMORY_USAGE: "MEMORY_USAGE",
+  CPU_USAGE: "CPU_USAGE",
+} as const;
+
+/**
+ * 비교 연산자
+ */
+export type ThresholdResponseOperator =
+  (typeof ThresholdResponseOperator)[keyof typeof ThresholdResponseOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThresholdResponseOperator = {
+  GREATER_THAN: "GREATER_THAN",
+  LESS_THAN: "LESS_THAN",
+  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
+} as const;
+
+/**
  * 임계값 응답
  */
 export interface ThresholdResponse {
   /** 메트릭 타입 */
-  metric: string;
+  metric: ThresholdResponseMetric;
   /** 비교 연산자 */
-  operator: string;
+  operator: ThresholdResponseOperator;
   /** 임계값 */
   value: number;
   /** 지속 시간 (분) */
@@ -5662,6 +5937,88 @@ export interface PrivateImageUsageResponse {
   usedStorage: number;
 }
 
+export type BaseResponsePageResponseImageTagUsageRequestResponseStatus =
+  (typeof BaseResponsePageResponseImageTagUsageRequestResponseStatus)[keyof typeof BaseResponsePageResponseImageTagUsageRequestResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseImageTagUsageRequestResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseImageTagUsageRequestResponse {
+  status: BaseResponsePageResponseImageTagUsageRequestResponseStatus;
+  errorCode?: string;
+  data?: PageResponseImageTagUsageRequestResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 승인 상태
+ */
+export type ImageTagUsageRequestResponseApprovalStatus =
+  (typeof ImageTagUsageRequestResponseApprovalStatus)[keyof typeof ImageTagUsageRequestResponseApprovalStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ImageTagUsageRequestResponseApprovalStatus = {
+  APPROVAL_WAITING: "APPROVAL_WAITING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+} as const;
+
+/**
+ * 이미지 태그 사용 요청 응답
+ */
+export interface ImageTagUsageRequestResponse {
+  /** 사용 요청 ID */
+  usageRequestId: number;
+  /** 이미지 태그 ID */
+  imageTagId: number;
+  /** Harbor 태그 ID (삭제 시 사용) */
+  harborTagId: number;
+  /** 이미지 태그명 */
+  imageTagName: string;
+  /** Harbor 이미지명 */
+  harborImageName: string;
+  /** 이미지 표시명 */
+  imageDisplayName?: string;
+  /** 요청 사유 */
+  requestReason: string;
+  /** 승인/반려 사유 */
+  decisionReason?: string;
+  /** 이미지 크기 (bytes) */
+  imageSizeByte?: number;
+  /** 워크스페이스 ID */
+  workspaceId?: number;
+  /** 워크스페이스명 */
+  workspaceName?: string;
+  /** 요청자 ID */
+  creatorId: string;
+  /** 요청자명 */
+  creatorName?: string;
+  /** 요청 일시 */
+  requestedAt: string;
+  /** 승인 상태 */
+  approvalStatus: ImageTagUsageRequestResponseApprovalStatus;
+  /** 결정자 ID */
+  deciderId?: string;
+  /** 결정자명 */
+  deciderName?: string;
+  /** 결정 일시 */
+  decidedAt?: string;
+  /** 취약점 정보 (스캔 미수행 시 null) */
+  vulnerability?: VulnerabilityResponse;
+}
+
+export interface PageResponseImageTagUsageRequestResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ImageTagUsageRequestResponse[];
+}
+
 export type BaseResponseListQueueWorkloadResponseStatus =
   (typeof BaseResponseListQueueWorkloadResponseStatus)[keyof typeof BaseResponseListQueueWorkloadResponseStatus];
 
@@ -6126,6 +6483,7 @@ export const NotificationSetResponseNotificationSetName = {
   MIG_APPLIED: "MIG_APPLIED",
   MIG_FAILURE: "MIG_FAILURE",
   WORKSPACE_CREATED: "WORKSPACE_CREATED",
+  WORKSPACE_RESOURCE_EXCEEDED: "WORKSPACE_RESOURCE_EXCEEDED",
   WORKSPACE_RESOURCE_REQUEST: "WORKSPACE_RESOURCE_REQUEST",
   WORKLOAD_RESOURCE_RECLAIM_RESULT: "WORKLOAD_RESOURCE_RECLAIM_RESULT",
   WORKSPACE_RESOURCE_REQUEST_RESULT: "WORKSPACE_RESOURCE_REQUEST_RESULT",
@@ -6544,6 +6902,68 @@ export const GetWorkspaceMembersOrder = {
   DESC: "DESC",
 } as const;
 
+export type GetSourceCodeListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 워크스페이스 ID 필터
+   */
+  workspaceId?: number;
+  /**
+   * 정렬 필드
+   */
+  sort?: GetSourceCodeListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetSourceCodeListOrder;
+  /**
+   * 소스코드 타입 필터
+   */
+  codeType?: GetSourceCodeListCodeType;
+};
+
+export type GetSourceCodeListSort =
+  (typeof GetSourceCodeListSort)[keyof typeof GetSourceCodeListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetSourceCodeListSort = {
+  SOURCE_CODE_NAME: "SOURCE_CODE_NAME",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type GetSourceCodeListOrder =
+  (typeof GetSourceCodeListOrder)[keyof typeof GetSourceCodeListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetSourceCodeListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetSourceCodeListCodeType =
+  (typeof GetSourceCodeListCodeType)[keyof typeof GetSourceCodeListCodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetSourceCodeListCodeType = {
+  GITHUB: "GITHUB",
+  GITLAB: "GITLAB",
+  BITBUCKET: "BITBUCKET",
+} as const;
+
 export type GetPublicRegistryListParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -6808,7 +7228,17 @@ export type ScanPrivateImageTagParams = {
 };
 
 export type GetAllMonitoringNotificationSetsParams = {
-  pageableRequest: PageableRequest;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
 };
 
 export type GetStoragesParams = {
@@ -6926,6 +7356,65 @@ export const GetWorkloadResourceMetricsTimeseriesMetricName = {
   MEM_UTILIZATION: "MEM_UTILIZATION",
 } as const;
 
+export type GetTerminatedWorkloadsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 워크로드 타입 필터
+   */
+  workloadJobType?: GetTerminatedWorkloadsWorkloadJobType;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetTerminatedWorkloadsSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetTerminatedWorkloadsOrder;
+};
+
+export type GetTerminatedWorkloadsWorkloadJobType =
+  (typeof GetTerminatedWorkloadsWorkloadJobType)[keyof typeof GetTerminatedWorkloadsWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetTerminatedWorkloadsWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+export type GetTerminatedWorkloadsSort =
+  (typeof GetTerminatedWorkloadsSort)[keyof typeof GetTerminatedWorkloadsSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetTerminatedWorkloadsSort = {
+  WORKLOAD_NAME: "WORKLOAD_NAME",
+  CREATED_AT: "CREATED_AT",
+  TERMINATED_AT: "TERMINATED_AT",
+} as const;
+
+export type GetTerminatedWorkloadsOrder =
+  (typeof GetTerminatedWorkloadsOrder)[keyof typeof GetTerminatedWorkloadsOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetTerminatedWorkloadsOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
 export type GetResourceMetricsTimeseriesParams = {
   /**
    * 워크스페이스 리소스 메트릭 타입
@@ -6953,6 +7442,80 @@ export const GetResourceMetricsTimeseriesMetricsName = {
   GPU_MEM_UTILIZATION: "GPU_MEM_UTILIZATION",
   CPU_UTILIZATION: "CPU_UTILIZATION",
   MEM_UTILIZATION: "MEM_UTILIZATION",
+} as const;
+
+export type GetActiveWorkloadsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 워크로드 타입 필터
+   */
+  workloadJobType?: GetActiveWorkloadsWorkloadJobType;
+  /**
+   * 워크로드 상태 필터 (running, pending, error)
+   */
+  workloadStatus?: GetActiveWorkloadsWorkloadStatus;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetActiveWorkloadsSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetActiveWorkloadsOrder;
+};
+
+export type GetActiveWorkloadsWorkloadJobType =
+  (typeof GetActiveWorkloadsWorkloadJobType)[keyof typeof GetActiveWorkloadsWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetActiveWorkloadsWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+export type GetActiveWorkloadsWorkloadStatus =
+  (typeof GetActiveWorkloadsWorkloadStatus)[keyof typeof GetActiveWorkloadsWorkloadStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetActiveWorkloadsWorkloadStatus = {
+  RUNNING: "RUNNING",
+  ERROR: "ERROR",
+  PENDING: "PENDING",
+  CREATING: "CREATING",
+  TERMINATED: "TERMINATED",
+} as const;
+
+export type GetActiveWorkloadsSort =
+  (typeof GetActiveWorkloadsSort)[keyof typeof GetActiveWorkloadsSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetActiveWorkloadsSort = {
+  WORKLOAD_NAME: "WORKLOAD_NAME",
+  AGE: "AGE",
+} as const;
+
+export type GetActiveWorkloadsOrder =
+  (typeof GetActiveWorkloadsOrder)[keyof typeof GetActiveWorkloadsOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetActiveWorkloadsOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
 } as const;
 
 export type GetVolumeListParams = {
@@ -7022,6 +7585,15 @@ export type ListFilesParams = {
    * 조회할 경로 (기본값: /)
    */
   path?: string;
+};
+
+export type PreviewParams = {
+  /**
+   * 미리보기할 파일 경로
+   * @minLength 0
+   * @maxLength 1000
+   */
+  path: string;
 };
 
 export type GetPublicImageTagVulnerabilitiesParams = {
@@ -7184,10 +7756,60 @@ export const GetImageJobsImageSourceType = {
 } as const;
 
 export type GetAllMonitoringNotificationHistoriesParams = {
-  pageSearchRequest: PageSearchRequest;
-  sortRequest: MonitoringNotificationHistorySortRequest;
-  filterRequest: MonitoringNotificationHistoryFilterRequest;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetAllMonitoringNotificationHistoriesSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetAllMonitoringNotificationHistoriesOrder;
+  /**
+   * 조회 시작 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)
+   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
+   */
+  startedAt?: string;
+  /**
+   * 조회 종료 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)
+   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
+   */
+  endedAt?: string;
 };
+
+export type GetAllMonitoringNotificationHistoriesSort =
+  (typeof GetAllMonitoringNotificationHistoriesSort)[keyof typeof GetAllMonitoringNotificationHistoriesSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllMonitoringNotificationHistoriesSort = {
+  NODE_NAME: "NODE_NAME",
+  NODE_IP: "NODE_IP",
+  NOTIFICATION_SET_NAME: "NOTIFICATION_SET_NAME",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type GetAllMonitoringNotificationHistoriesOrder =
+  (typeof GetAllMonitoringNotificationHistoriesOrder)[keyof typeof GetAllMonitoringNotificationHistoriesOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllMonitoringNotificationHistoriesOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
 
 export type GetStatefulSetsParams = {
   /**
@@ -7911,6 +8533,87 @@ export type GetPrivateImageTagsByAccountIdImageSourceType =
 export const GetPrivateImageTagsByAccountIdImageSourceType = {
   SNAPSHOT: "SNAPSHOT",
   EXTERNAL: "EXTERNAL",
+} as const;
+
+export type GetUsageRequestListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 이미지 타입 (PUBLIC/PRIVATE, 미지정 시 전체)
+   */
+  imageType?: GetUsageRequestListImageType;
+  /**
+   * 승인 상태 필터
+   */
+  approvalStatus?: GetUsageRequestListApprovalStatus;
+  /**
+   * 워크스페이스 ID 필터
+   */
+  workspaceId?: number;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetUsageRequestListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetUsageRequestListOrder;
+};
+
+export type GetUsageRequestListImageType =
+  (typeof GetUsageRequestListImageType)[keyof typeof GetUsageRequestListImageType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetUsageRequestListImageType = {
+  BUILT_IN: "BUILT_IN",
+  HUB: "HUB",
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+export type GetUsageRequestListApprovalStatus =
+  (typeof GetUsageRequestListApprovalStatus)[keyof typeof GetUsageRequestListApprovalStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetUsageRequestListApprovalStatus = {
+  APPROVAL_WAITING: "APPROVAL_WAITING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+} as const;
+
+export type GetUsageRequestListSort =
+  (typeof GetUsageRequestListSort)[keyof typeof GetUsageRequestListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetUsageRequestListSort = {
+  IMAGE_NAME: "IMAGE_NAME",
+  WORKSPACE_NAME: "WORKSPACE_NAME",
+  IMAGE_TAG_NAME: "IMAGE_TAG_NAME",
+  SECURITY_SCAN_RESULT: "SECURITY_SCAN_RESULT",
+  CREATOR_NAME: "CREATOR_NAME",
+  REQUESTED_AT: "REQUESTED_AT",
+} as const;
+
+export type GetUsageRequestListOrder =
+  (typeof GetUsageRequestListOrder)[keyof typeof GetUsageRequestListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetUsageRequestListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
 } as const;
 
 export type GetAllAccountsParams = {

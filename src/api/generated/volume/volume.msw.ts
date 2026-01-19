@@ -156,6 +156,8 @@ export const getListFilesResponseMock = (
   ...overrideResponse,
 });
 
+export const getPreviewResponseMock = (): string => faker.word.sample();
+
 export const getGetVolumeDetailResponseMock = (
   overrideResponse: Partial<BaseResponseVolumeDetailResponse> = {},
 ): BaseResponseVolumeDetailResponse => ({
@@ -479,6 +481,34 @@ export const getListFilesMockHandler = (
   );
 };
 
+export const getPreviewMockHandler = (
+  overrideResponse?:
+    | string
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<string> | string),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/volumes/:volumeId/files/preview",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getPreviewResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetVolumeDetailMockHandler = (
   overrideResponse?:
     | BaseResponseVolumeDetailResponse
@@ -520,5 +550,6 @@ export const getVolumeMock = () => [
   getRegisterAstragoVolumeMockHandler(),
   getGetVolumeListMockHandler(),
   getListFilesMockHandler(),
+  getPreviewMockHandler(),
   getGetVolumeDetailMockHandler(),
 ];

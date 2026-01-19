@@ -503,6 +503,46 @@ export const listFilesResponse = zod
 
 /**
  * 
+        볼륨 내 텍스트 또는 이미지 파일을 미리보기합니다.
+
+        **지원 파일 형식:**
+        - 텍스트: txt, log, md, json, yaml, yml, xml, csv, sh, bash, py, js, ts, java, kt, kts, go
+        - 이미지: png, jpg, jpeg, gif, webp, svg, bmp
+
+        **크기 제한:**
+        - 텍스트: 1MB
+        - 이미지: 10MB
+
+        **응답:**
+        - 200 OK: 미리보기 가능 (Content-Type 동적 설정)
+        - 204 No Content: 미리보기 불가 (권한 없음, 파일 없음, 미지원 타입, 디렉토리, 크기 초과)
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 볼륨 미리보기 가능
+        - 공개 볼륨: 누구나 미리보기 가능 (워크스페이스 멤버 여부 확인)
+        - 비공개 볼륨: 본인(생성자)만 미리보기 가능
+        
+ * @summary 볼륨 파일 미리보기
+ */
+export const previewParams = zod.object({
+  volumeId: zod.number().describe("볼륨 ID"),
+});
+
+export const previewQueryPathMin = 0;
+export const previewQueryPathMax = 1000;
+
+export const previewQueryParams = zod.object({
+  path: zod
+    .string()
+    .min(previewQueryPathMin)
+    .max(previewQueryPathMax)
+    .describe("미리보기할 파일 경로"),
+});
+
+export const previewResponse = zod.string();
+
+/**
+ * 
         볼륨 상세 정보를 조회합니다.
 
         **응답:**
