@@ -140,13 +140,13 @@ export function VolumeDetailMain() {
           )
         )}
       </StyledAsideDetailHeader>
-      <div style={{ marginBottom: 16 }}>
+      <TabWrapper>
         <StateTab
           items={TAB_ITEMS}
           selectedKey={selectedTab}
           setSelectedKey={setSelectedTab}
         />
-      </div>
+      </TabWrapper>
       {renderContent()}
     </StyledAsideDetailContainer>
   );
@@ -157,6 +157,7 @@ const StyledAsideDetailContainer = styled(AsideDetailContainer)`
 `;
 
 const StyledAsideDetailHeader = styled(AsideDetailHeader)`
+  min-height: 24px;
   margin-bottom: 12px;
 `;
 
@@ -175,4 +176,8 @@ const Icons = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
+`;
+
+const TabWrapper = styled.div`
+  margin-bottom: 16px;
 `;
