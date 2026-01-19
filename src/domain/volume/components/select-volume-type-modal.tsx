@@ -3,10 +3,13 @@
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
-import { VolumeStorageCard } from "@/domain/volume/components/volume-storage-card";
+import { VolumeStorageCard } from "@/domain/volume/components/list/volume-storage-card";
 import { VOLUME_STORAGE_OPTIONS } from "@/domain/volume/constants/volume.constant";
-import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
-import { openSelectVolumeModalAtom } from "@/domain/volume/state/volume.atom";
+import {
+  openCreateAstragoVolumeModalAtom,
+  openCreateOnPremiseVolumeModalAtom,
+  openSelectVolumeModalAtom,
+} from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -15,10 +18,22 @@ export function SelectVolumeTypeModal() {
   const publish = usePublish();
 
   const { open, onClose } = useGlobalModal(openSelectVolumeModalAtom);
+  const { onOpen: onOpenCreateAstragoVolumeModal } = useGlobalModal(
+    openCreateAstragoVolumeModalAtom,
+  );
+  const { onOpen: onOpenCreateOnPremiseVolumeModal } = useGlobalModal(
+    openCreateOnPremiseVolumeModalAtom,
+  );
 
   const handleClickStorageType = (type: string) => {
     publish(VOLUME_EVENTS.sendStorageType, type);
     onClose();
+
+    if (type === "ASTRAGO") {
+      onOpenCreateAstragoVolumeModal();
+    } else if (type === "ON_PREMISE") {
+      onOpenCreateOnPremiseVolumeModal();
+    }
   };
 
   return (
@@ -37,7 +52,7 @@ export function SelectVolumeTypeModal() {
         {VOLUME_STORAGE_OPTIONS.map((item) => (
           <VolumeStorageCard
             key={item.value}
-            storageType={item.value as VolumeStorageType}
+            storageType={item.value as string}
             onClick={handleClickStorageType}
           />
         ))}

@@ -1,90 +1,171 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetAtom } from "jotai";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Icon, InfoModal } from "xiilab-ui";
+import { Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
-import { useCompressVolumeFile } from "@/domain/volume/hooks/use-compress-volume-file";
-import { openCompressVolumeFileModalAtom } from "@/domain/volume/state/volume.atom";
-import { FormLabel } from "@/shared/components/form/form-label";
+import { useCompress } from "@/api/generated/volume/volume";
+import {
+  type CompressVolumeFileFormType,
+  compressVolumeFileSchema,
+} from "@/domain/volume/schemas/volume.schema";
+import {
+  openCompressVolumeFileModalAtom,
+  volumeFileCheckedNodesAtom,
+} from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import type { CoreFileCompressionType } from "@/shared/types/core.interface";
+import { filterToRootPaths } from "@/shared/state/filetree.atom";
+
+interface CompressVolumeFileEventData {
+  volumeId: number;
+  filePaths: string[];
+}
 
 export function CompressVolumeFileModal() {
-  // 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(
     openCompressVolumeFileModalAtom,
   );
-  // 압축할 파일 경로 목록
+  const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
+
+  const [volumeId, setVolumeId] = useState<number | null>(null);
   const [filePaths, setFilePaths] = useState<string[]>([]);
 
-  const compressVolumeFile = useCompressVolumeFile();
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<CompressVolumeFileFormType>({
+    resolver: zodResolver(compressVolumeFileSchema),
+    defaultValues: {
+      destinationPath: "/",
+      compressFileType: "ZIP",
+    },
+  });
 
-  /**
-   * 스토리지 타입 카드 클릭 핸들러
-   *
-   * @param type - 선택된 스토리지 타입
-   */
-  const handleClickCompressionType = (
-    compressFileType: CoreFileCompressionType,
-  ) => {
-    compressVolumeFile.mutate({
-      filePaths,
-      compressFileType,
-    });
+  const { mutate, isPending } = useCompress();
+  const selectedCompressType = watch("compressFileType");
+
+  const handleCancel = () => {
+    if (isPending) return;
+    onClose();
   };
 
-  useSubscribe(
+  const onSubmit = (data: CompressVolumeFileFormType) => {
+    if (isPending) return;
+    if (volumeId == null || filePaths.length === 0) return;
+
+    const filteredPaths = filterToRootPaths(filePaths);
+    if (filteredPaths.length === 0) {
+      toast.info("압축할 파일이 없습니다.");
+      return;
+    }
+
+    mutate(
+      {
+        volumeId,
+        data: {
+          paths: filteredPaths,
+          destinationPath: data.destinationPath,
+          compressFileType: data.compressFileType,
+        },
+      },
+      {
+        onSuccess: () => {
+          setCheckedNodes(new Set());
+          toast.success("선택한 파일에 대한 압축 요청이 전송되었습니다.");
+          onClose();
+        },
+      },
+    );
+  };
+
+  useSubscribe<CompressVolumeFileEventData>(
     VOLUME_EVENTS.sendCompressVolumeFile,
-    (eventData: { filePaths: string[] }) => {
+    (eventData) => {
+      setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
+      reset({ destinationPath: "/", compressFileType: "ZIP" });
       onOpen();
     },
   );
 
   return (
-    <InfoModal
+    <Modal
       modalWidth={370}
       type="primary"
       icon={<Icon name="Compress" color="#fff" size={18} />}
       open={open}
       closable
       title="파일 압축"
-      onClose={onClose}
-      showHeaderBorder
+      onCancel={handleCancel}
+      showCancelButton
+      cancelText="취소"
+      okText="압축"
+      onOk={handleSubmit(onSubmit)}
       centered
+      showHeaderBorder
+      okButtonProps={{ loading: isPending }}
     >
-      <Container>
-        <FormLabel>압축할 유형을 선택해주세요.</FormLabel>
-        <SelectFileCompression>
-          <FileCompressionButton
-            onClick={() => handleClickCompressionType("ZIP")}
-          >
-            ZIP 압축
-          </FileCompressionButton>
-          <FileCompressionButton
-            onClick={() => handleClickCompressionType("TAR")}
-          >
-            TAR 압축
-          </FileCompressionButton>
-        </SelectFileCompression>
-      </Container>
-    </InfoModal>
+      <Form>
+        <Controller
+          name="destinationPath"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="압축 파일 저장 경로"
+              htmlFor="destinationPath"
+              validateStatus={errors.destinationPath ? "error" : undefined}
+              help={errors.destinationPath?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="destinationPath"
+                placeholder="압축 파일이 저장될 경로를 입력해주세요."
+                width="100%"
+                disabled={isPending}
+                maxLength={1000}
+                autoComplete="off"
+              />
+            </FormItem>
+          )}
+        />
+
+        <FormItem label="압축 유형">
+          <SelectFileCompression>
+            <FileCompressionButton
+              type="button"
+              aria-pressed={selectedCompressType === "ZIP"}
+              $isSelected={selectedCompressType === "ZIP"}
+              onClick={() => setValue("compressFileType", "ZIP")}
+              disabled={isPending}
+            >
+              ZIP
+            </FileCompressionButton>
+            <FileCompressionButton
+              type="button"
+              aria-pressed={selectedCompressType === "TAR"}
+              $isSelected={selectedCompressType === "TAR"}
+              onClick={() => setValue("compressFileType", "TAR")}
+              disabled={isPending}
+            >
+              TAR
+            </FileCompressionButton>
+          </SelectFileCompression>
+        </FormItem>
+      </Form>
+    </Modal>
   );
 }
-
-/**
- * 스토리지 타입 카드들을 감싸는 스타일드 컴포넌트
- *
- * 카드들을 가로로 배치하고 적절한 간격을 제공합니다.
- */
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
 
 const SelectFileCompression = styled.div`
   display: flex;
@@ -93,21 +174,29 @@ const SelectFileCompression = styled.div`
   gap: 10px;
 `;
 
-const FileCompressionButton = styled.button`
+const FileCompressionButton = styled.button<{ $isSelected: boolean }>`
   flex: 1;
-  height: 50px;
+  height: 40px;
   border-radius: 2px;
-  border: 1px solid #e0e5f0;
+  border: 1px solid ${({ $isSelected }) => ($isSelected ? "#1f5bff" : "#e0e5f0")};
+  background-color: ${({ $isSelected }) =>
+    $isSelected ? "rgba(31, 91, 255, 0.05)" : "transparent"};
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
-  color: #000;
+  color: ${({ $isSelected }) => ($isSelected ? "#1f5bff" : "#000")};
+  cursor: pointer;
+  transition: all 0.2s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     border-color: #1f5bff;
-    outline: 1px solid rgba(54, 107, 255, 0.1) !important;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;

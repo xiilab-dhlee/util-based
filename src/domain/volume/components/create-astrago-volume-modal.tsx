@@ -1,140 +1,88 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Dropdown, Icon, Input, Modal, Upload } from "xiilab-ui";
+import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
-import { useCreateVolume } from "@/domain/volume/hooks/use-create-volume";
-import type { VolumeStorageType } from "@/domain/volume/schemas/volume.schema";
+import {
+  getGetVolumeListQueryKey,
+  useRegisterAstragoVolume,
+} from "@/api/generated/volume/volume";
+import { VOLUME_VISIBILITY_OPTIONS } from "@/domain/volume/constants/volume.constant";
+import {
+  type CreateAstragoVolumeFormType,
+  createAstragoVolumeSchema,
+} from "@/domain/volume/schemas/volume.schema";
 import { openCreateAstragoVolumeModalAtom } from "@/domain/volume/state/volume.atom";
-import type { CreateVolumePayload } from "@/domain/volume/types/volume.type";
-import { FormLabel } from "@/shared/components/form/form-label";
-import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
+import { StorageSelect } from "@/shared/components/select/storage-select";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useClearForm } from "@/shared/hooks/use-clear-form";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { useSelect } from "@/shared/hooks/use-select";
-import { useUploadFile } from "@/shared/hooks/use-upload-file";
-import { formatFileSize } from "@/shared/utils/file.util";
-import { FormItem, FormRow } from "@/styles/layers/form-layer.styled";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
-/**
- * AstraGo 볼륨 생성 모달 컴포넌트
- *
- * 사용자가 AstraGo Storage를 사용하여 새로운 볼륨을 생성할 수 있는 모달입니다.
- * 스토리지 선택, 볼륨 이름 입력, 마운트 경로 설정, 파일 업로드 기능을 제공합니다.
- * 볼륨 생성 성공 시 pubsub을 통해 다른 컴포넌트에 알림을 전달합니다.
- *
- * @returns AstraGo 볼륨 생성 모달 JSX 요소
- */
 export function CreateAstragoVolumeModal() {
-  // 폼 참조 (폼 데이터 수집용)
-  const formRef = useRef<HTMLFormElement>(null);
-
-  // pubsub 이벤트 발행을 위한 훅
-  const publish = usePublish();
-
-  // 모달 상태 관리
+  const queryClient = useQueryClient();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const { open, onOpen, onClose } = useGlobalModal(
     openCreateAstragoVolumeModalAtom,
   );
+  const registerAstragoVolume = useRegisterAstragoVolume();
 
-  // 볼륨 생성 Hook 사용
-  const createVolume = useCreateVolume();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<CreateAstragoVolumeFormType>({
+    resolver: zodResolver(createAstragoVolumeSchema),
+    defaultValues: {
+      volumeName: "",
+      isPublic: "true",
+      mountPath: "",
+      storageId: "",
+    },
+  });
 
-  // 스토리지 선택 상태 관리
-  const [storageId, setStorageId] = useState<string | null>(null);
-  // 폼 초기화 훅 사용
-  const { clearForm, getFormKey } = useClearForm();
-
-  const storageSelect = useSelect(null, []);
-  const status = useSelect(null, VISIBILITY_STATUS_OPTIONS);
-
-  // 파일 업로드 Hook 사용 (최대 5MB, 초기 파일 포함)
-  const { files, handleUpload, handleFileRemove, totalSize, clearFiles } =
-    useUploadFile({
-      maxFileSize: 5 * 1024 * 1024, // 5MB
-    });
-
-  /**
-   * 모달 취소 핸들러
-   *
-   * 현재 모달을 닫고 스토리지 타입 선택 모달을 다시 열어줍니다.
-   */
   const handleCancel = () => {
+    if (registerAstragoVolume.isPending) return;
     onClose();
-    // setOpenSelectVolumeModal(true);
   };
 
-  /**
-   * 볼륨 생성 제출 핸들러
-   *
-   * 폼 데이터를 수집하여 볼륨 생성 API를 호출합니다.
-   * 성공 시 성공 메시지를 표시하고 모달을 닫습니다.
-   */
-  const handleSubmit = () => {
-    const payload = createPayload();
+  const onSubmit = (data: CreateAstragoVolumeFormType) => {
+    if (registerAstragoVolume.isPending) return;
+    if (!selectedWorkspace) return;
 
-    if (payload) {
-      createVolume.mutate(payload, {
+    registerAstragoVolume.mutate(
+      {
+        data: {
+          volumeName: data.volumeName,
+          isPublic: data.isPublic === "true",
+          mountPath: data.mountPath,
+          storageId: Number(data.storageId),
+          workspaceId: selectedWorkspace.workspaceId,
+        },
+      },
+      {
         onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getGetVolumeListQueryKey(),
+          });
           toast.success("볼륨 생성 성공");
           onClose();
-          handleClear();
-          publish(VOLUME_EVENTS.clearSelectVolumeModal, payload);
         },
-      });
+      },
+    );
+  };
+
+  useSubscribe<string>(VOLUME_EVENTS.sendStorageType, (eventData) => {
+    if (eventData === "ASTRAGO") {
+      onOpen();
     }
-  };
-
-  /**
-   * 폼 데이터를 기반으로 페이로드 생성
-   *
-   * 폼에서 입력된 데이터를 수집하여 볼륨 생성 API에 필요한 페이로드를 생성합니다.
-   *
-   * @returns 생성된 페이로드 또는 null (폼이 없는 경우)
-   */
-  const createPayload = (): CreateVolumePayload | null => {
-    if (!formRef.current) return null;
-
-    // 폼 데이터 수집
-    const formData = new FormData(formRef.current);
-
-    return {
-      volumeName: formData.get("astragoVolumeName") as string,
-      mountPath: formData.get("astragoVolumeMountPath") as string,
-      storageId,
-      files,
-      volumeType: "ASTRAGO",
-    };
-  };
-
-  /**
-   * 폼 입력값 초기화
-   *
-   * 폼의 모든 입력 필드를 초기 상태로 리셋합니다.
-   */
-  const handleClear = () => {
-    // 폼 초기화 (강제 리렌더링)
-    clearForm();
-
-    // 스토리지 선택 초기화
-    setStorageId(null);
-
-    // 파일 초기화
-    clearFiles();
-  };
-
-  useSubscribe(
-    VOLUME_EVENTS.sendStorageType,
-    (eventData: VolumeStorageType) => {
-      if (eventData === "ASTRAGO") {
-        onOpen();
-      }
-    },
-  );
+  });
 
   return (
     <Modal
@@ -145,96 +93,111 @@ export function CreateAstragoVolumeModal() {
       closable
       title="AstraGo Storage"
       showCancelButton
-      // cancelText="이전"
       onCancel={handleCancel}
       okText="생성"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
       centered
-      okButtonProps={{
-        disabled: false,
-      }}
+      okButtonProps={{ disabled: registerAstragoVolume.isPending }}
+      cancelButtonProps={{ disabled: registerAstragoVolume.isPending }}
+      afterClose={reset}
     >
-      {/* 볼륨 생성 폼 */}
-      <form ref={formRef} key={getFormKey()}>
-        {/* 스토리지 선택 및 볼륨 이름 입력 행 */}
-        <FormRow>
-          <FormItem>
-            <FormLabel>스토리지 목록</FormLabel>
-            <Dropdown
-              options={storageSelect.options}
-              onChange={storageSelect.onChange}
-              value={storageSelect.value}
-              width="100%"
-              placeholder="스토리지를 선택해 주세요."
-            />
-          </FormItem>
-          <FormItem>
-            <FormLabel htmlFor="astragoVolumeName">볼륨 이름</FormLabel>
-            <Input
-              type="text"
-              id="astragoVolumeName"
-              name="astragoVolumeName"
-              placeholder="볼륨 이름을 입력해 주세요."
-              width="100%"
-            />
-          </FormItem>
-        </FormRow>
-        {/* 공개 설정 드롭다운 */}
-        <FormItem>
-          <FormLabel>공개 설정</FormLabel>
-          <Dropdown
-            options={status.options}
-            value={status.value}
-            onChange={status.onChange}
-            width="100%"
-          />
-        </FormItem>
-
-        {/* 마운트 경로 입력 필드 */}
-        <FormItem>
-          <FormLabel htmlFor="astragoVolumeMountPath">Mount Path</FormLabel>
-          <Input
-            type="text"
-            id="astragoVolumeMountPath"
-            name="astragoVolumeMountPath"
-            placeholder="/usr/local"
-            width="100%"
-          />
-        </FormItem>
-
-        {/* 파일 업로드 섹션 */}
-        <FormItem>
-          <FormLabel
-            rightChildren={
-              <FileTotalSize>
-                ({formatFileSize(totalSize).formatted})
-              </FileTotalSize>
-            }
-          >
-            파일 업로드
-          </FormLabel>
-          <Upload
-            files={files}
-            layout="vertical"
-            multiple
-            onFileRemove={handleFileRemove}
-            onUpload={handleUpload}
-            width="100%"
-          />
-        </FormItem>
-      </form>
+      <StyledForm>
+        <Controller
+          name="storageId"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="스토리지 목록"
+              required
+              validateStatus={errors.storageId ? "error" : undefined}
+              help={errors.storageId?.message}
+            >
+              <StorageSelect
+                value={field.value || null}
+                onChange={(value) => field.onChange(value)}
+                width="100%"
+                status={errors.storageId ? "error" : undefined}
+                disabled={registerAstragoVolume.isPending}
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="volumeName"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="볼륨 이름"
+              required
+              validateStatus={errors.volumeName ? "error" : undefined}
+              htmlFor="astragoVolumeName"
+              help={errors.volumeName?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="astragoVolumeName"
+                placeholder="볼륨 이름을 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+                disabled={registerAstragoVolume.isPending}
+                maxLength={50}
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="isPublic"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="공개 설정"
+              required
+              validateStatus={errors.isPublic ? "error" : undefined}
+              help={errors.isPublic?.message}
+            >
+              <Dropdown
+                options={VOLUME_VISIBILITY_OPTIONS}
+                value={field.value || null}
+                onChange={(value) => field.onChange(value)}
+                width="100%"
+                status={errors.isPublic ? "error" : undefined}
+                disabled={registerAstragoVolume.isPending}
+              />
+            </FormItem>
+          )}
+        />
+        <Controller
+          name="mountPath"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="Mount Path"
+              required
+              validateStatus={errors.mountPath ? "error" : undefined}
+              htmlFor="astragoVolumeMountPath"
+              help={errors.mountPath?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="astragoVolumeMountPath"
+                placeholder="/usr/local"
+                width="100%"
+                autoComplete="off"
+                disabled={registerAstragoVolume.isPending}
+                maxLength={1000}
+              />
+            </FormItem>
+          )}
+        />
+      </StyledForm>
     </Modal>
   );
 }
 
-/**
- * 파일 총 크기 표시 스타일
- *
- * 파일 업로드 섹션에서 총 파일 크기를 표시하는 텍스트 스타일입니다.
- */
-const FileTotalSize = styled.span`
-  font-weight: 400;
-  font-size: 11px;
-  line-height: 13px;
-  color: #828588;
+const StyledForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;

@@ -9,8 +9,8 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button, Icon, Input, Typography } from "xiilab-ui";
 
+import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VolumeSelect } from "@/domain/volume/components/volume-select";
-import type { VolumeListType } from "@/domain/volume/schemas/volume.schema";
 import { openSelectVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
 import { workloadVolumesAtom } from "@/domain/workload/state/create-workload.atom";
@@ -26,7 +26,7 @@ export function CreateWorkloadVolume() {
 
   const [collapsed, setCollapsed] = useState(false);
 
-  const [volume, setVolume] = useState<VolumeListType | null>(null);
+  const [volume, setVolume] = useState<VolumeListResponse | null>(null);
 
   const [mountPath, setMountPath] = useState<string | null>(null);
 
@@ -42,9 +42,17 @@ export function CreateWorkloadVolume() {
         return;
       }
 
+      // VolumeListResponse를 WorkloadVolumeType으로 변환
       const next: WorkloadVolumeType = {
-        ...volume,
+        uid: String(volume.volumeId),
+        name: volume.volumeName,
+        creatorName: volume.creatorName,
+        creatorDate: volume.createdAt,
+        storageType: volume.volumeType === "ASTRAGO" ? "ASTRAGO" : "LOCAL",
+        status: volume.isPublic ? "PUBLIC" : "PRIVATE",
         path: mountPath || "",
+        labels: [],
+        size: volume.fileSizeByte,
       };
 
       setVolumes([...volumes, next]);
@@ -69,7 +77,7 @@ export function CreateWorkloadVolume() {
   // 볼륨 선택 시 마운트경로 정보 가져오기
   useEffect(() => {
     if (volume) {
-      setMountPath(volume.path || "");
+      setMountPath(volume.mountPath || "");
     }
   }, [volume]);
 

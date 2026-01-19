@@ -12,7 +12,7 @@ import { MODE, ROUTES } from "@/shared/constants/routes.constant";
 const PUBLIC_PATHS = [
   ROUTES.AUTH_SIGNIN,
   ROUTES.AUTH_SIGNUP,
-  "/auth/error",
+  "/error",
 ] as const;
 
 const SKIP_PREFIXES = ["/_next", "/api"] as const;
@@ -62,6 +62,40 @@ function hasRole(roles: AccountRole[], requiredRole: AccountRole): boolean {
   return roles.includes(requiredRole);
 }
 
+/**
+ * 토큰이 유효한지 확인
+ * - 토큰이 존재하는지
+ * - 토큰 갱신 에러가 없는지
+ * - 만료 시간이 존재하는지
+ * - 토큰이 만료되지 않았는지
+ */
+function isValidToken(token: TokenWithRoles | null): boolean {
+  if (!token) return false;
+
+  // 토큰 갱신 실패 에러가 있으면 무효
+  if (token.error) {
+    debugLog("⚠️ 토큰 에러 감지", { error: token.error });
+    return false;
+  }
+
+  // 만료 시간이 없으면 무효
+  const expiresAt = token.expires_at;
+  if (!expiresAt) {
+    debugLog("⚠️ 토큰 만료 시간 누락");
+    return false;
+  }
+
+  // 만료 시간 확인
+  const now = Math.floor(Date.now() / 1000);
+  if (now >= expiresAt) {
+    debugLog("⚠️ 토큰 만료됨", { expiresAt, now });
+    return false;
+  }
+
+  return true;
+}
+
+/** 로그인 페이지로 리다이렉트 URL 생성 */
 function createSignInRedirect(request: NextRequest, callbackPath: string): URL {
   const url = new URL(ROUTES.AUTH_SIGNIN, request.url);
   url.searchParams.set("callbackUrl", callbackPath);
@@ -81,24 +115,35 @@ export async function proxy(request: NextRequest) {
   });
 
   const isPublic = isPublicPath(path);
+  const hasValidToken = isValidToken(token as TokenWithRoles);
 
-  if (!token && !isPublic) {
+  // 3. 미인증 또는 만료된 토큰으로 보호된 경로 접근 시
+  if (!hasValidToken && !isPublic) {
+    // 테스트 환경: auth-provider.tsx에서 자동 로그인 처리하므로 리다이렉트 안함
     if (useTestAuth) {
       debugLog("🧪 테스트 환경 - 자동 로그인 대기", { from: path });
       return NextResponse.next();
     }
-    debugLog("🔒 미인증 접근 → 로그인 페이지로 리다이렉트", { from: path });
+
+    // 프로덕션 환경: Keycloak 로그인 페이지로 리다이렉트
+    debugLog("🔒 미인증/만료 접근 → /signin 리다이렉트", { from: path });
     return NextResponse.redirect(createSignInRedirect(request, path));
   }
 
-  if (token && path === ROUTES.AUTH_SIGNIN) {
+  // 4. 유효한 토큰을 가진 사용자가 로그인 페이지 접근 시 → 홈으로
+  if (hasValidToken && path === ROUTES.AUTH_SIGNIN) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (token) {
-    const roles = extractRoles(token);
+  // 5. 역할 기반 접근 제어 - 유효한 토큰일 때만
+  if (hasValidToken && token) {
+    const roles = extractRoles(token as TokenWithRoles);
 
-    if (path.startsWith(MODE.ADMIN) && !hasRole(roles, ACCOUNT_ROLES.ADMIN)) {
+    const isAdmin =
+      hasRole(roles, ACCOUNT_ROLES.ADMIN) ||
+      hasRole(roles, ACCOUNT_ROLES.SUPER_ADMIN);
+
+    if (path.startsWith(MODE.ADMIN) && !isAdmin) {
       return NextResponse.redirect(new URL(MODE.USER, request.url));
     }
 

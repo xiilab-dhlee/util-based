@@ -24,7 +24,6 @@ import { LicenseService } from "@/domain/system-setting/api/license.service";
 import { SmtpService } from "@/domain/system-setting/api/smtp.service";
 import { StorageSettingService } from "@/domain/system-setting/api/storage-setting.service";
 import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
-import { VolumeService } from "@/domain/volume/api/volume.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
 import { WorkspaceService } from "@/domain/workspace/api/workspace.service";
@@ -36,7 +35,6 @@ interface ServiceContextType {
   workloadService: WorkloadService;
   sourcecodeService: SourcecodeService;
   credentialService: CredentialService;
-  volumeService: VolumeService;
   storageService: StorageService;
   notificationService: NotificationService;
   userResourceService: UserResourceService;
@@ -82,7 +80,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     workloadService: new WorkloadService(),
     sourcecodeService: new SourcecodeService(),
     credentialService: new CredentialService(),
-    volumeService: new VolumeService(),
     storageService: new StorageService(),
     notificationService: new NotificationService(),
     userResourceService: new UserResourceService(),

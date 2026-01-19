@@ -7,6 +7,7 @@ import { Icon } from "xiilab-ui";
 import { WorkloadFileCheckbox } from "@/domain/workload/components/file/workload-file-checkbox";
 import { workloadFileSelectedKeyAtom } from "@/domain/workload/state/workload.atom";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import { getFileIconName } from "@/shared/utils/file-icon.util";
 
 interface WorkloadFileCardProps extends FileTreeType {}
 
@@ -20,36 +21,12 @@ export function WorkloadFileCard({
 }: WorkloadFileCardProps) {
   const setSelectedKey = useSetAtom(workloadFileSelectedKeyAtom);
 
-  // 파일 타입에 따른 아이콘 이름을 반환하는 함수
-  const getFileIcon = (): string => {
-    if (type === "directory") return "FolderFiled";
-
-    const extension = fileExtension?.toLowerCase();
-    switch (extension) {
-      case "pdf":
-        return "FilePdf";
-      case "doc":
-      case "docx":
-        return "FileDoc";
-      case "xls":
-      case "xlsx":
-      case "csv":
-        return "FileCsv";
-      case "jpg":
-      case "jpeg":
-        return "FileJpg";
-      case "png":
-        return "FilePng";
-      case "zip":
-        return "FileZip";
-      default:
-        return "FileTxt";
-    }
-  };
-
   const handleClickFileName = () => {
     setSelectedKey(id);
   };
+
+  // shared utility 사용
+  const iconName = getFileIconName(fileExtension, type);
 
   return (
     <Container>
@@ -60,7 +37,7 @@ export function WorkloadFileCard({
       )}
       <Body>
         <Icon
-          name={getFileIcon()}
+          name={iconName}
           size={34}
           color={type === "directory" ? "#9DA6BC" : ""}
         />
