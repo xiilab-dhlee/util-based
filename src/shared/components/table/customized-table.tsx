@@ -62,6 +62,8 @@ interface CustomizedTableProps<TRecord extends object = Record<string, unknown>>
   onRowClick?: (record: TRecord) => void;
   /** 에러 상태 여부 - true 일 경우 에러 메시지를 표시합니다. */
   isError?: boolean;
+  /** 활성화된 행의 키 값 - rowKey와 매칭되는 값을 전달하면 해당 행이 활성화됩니다. */
+  activeRowKey?: string | number;
 }
 
 /**

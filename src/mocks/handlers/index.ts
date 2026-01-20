@@ -9,6 +9,8 @@
 
 import { delay, type HttpHandler } from "msw";
 
+import { getAccountNotificationMock } from "@/api/generated/account-notification/account-notification.msw";
+import { getAdminAccountNotificationMock } from "@/api/generated/admin-account-notification/admin-account-notification.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
@@ -26,7 +28,6 @@ import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { nodeHandlers } from "@/mocks/handlers/node.handler";
-import { notificationHandlers } from "@/mocks/handlers/notification.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
@@ -98,6 +99,8 @@ const rawHandlers = [
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),
   ...getAdminK8sMock(),
+  ...getAccountNotificationMock(),
+  ...getAdminAccountNotificationMock(),
   ...systemSettingHandlers,
   ...groupHandlers,
   ...workspaceHandlers,
@@ -105,7 +108,6 @@ const rawHandlers = [
   ...nodeHandlers,
   ...redfishHandlers,
   ...accountManagementHandlers,
-  ...notificationHandlers,
   ...monitoringHandlers,
   ...privateRegistryHandlers,
   ...gpuHandlers,

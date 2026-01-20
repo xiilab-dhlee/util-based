@@ -3,12 +3,16 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 import type { WorkspaceMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { DeleteWorkspaceMemberButton } from "@/domain/setting/components/delete-workspace-member-button";
 import { UpdateWorkspaceMemberRoleButton } from "@/domain/setting/components/update-workspace-member-role-button";
+import type { WorkspaceMemberSortState } from "@/domain/setting/constants/setting.constant";
 import { getWorkspaceMemberRoleLabel } from "@/domain/workspace/constants/workspace.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { getColumnSortOrder } from "@/shared/utils/sort.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
-const createColumnList = (): ResponsiveColumnType[] => {
+const createColumnList = (
+  sort: WorkspaceMemberSortState,
+): ResponsiveColumnType[] => {
   return [
     {
       key: "accountName",
@@ -17,6 +21,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
       width: "30%",
       ellipsis: true,
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "accountName"),
     },
     {
       key: "email",
@@ -25,6 +31,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
       width: "35%",
       ellipsis: true,
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "email"),
     },
     {
       key: "memberRole",
@@ -66,13 +74,11 @@ const createColumnList = (): ResponsiveColumnType[] => {
   ];
 };
 
-/**
- * 설정 > 구성원 관리 테이블 컬럼 생성
- */
 export const createWorkspaceMemberColumn = (
+  sort: WorkspaceMemberSortState,
   config?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] => {
-  const columnList = createColumnList();
+  const columnList = createColumnList(sort);
 
   return applyColumnConfigs(columnList, config);
 };

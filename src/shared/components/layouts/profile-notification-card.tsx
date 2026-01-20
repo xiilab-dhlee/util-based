@@ -3,14 +3,18 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { NotificationListType } from "@/domain/notification/schemas/notification.schema";
+import type { AdminNotificationItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { formatElapsedTime } from "@/shared/utils/date.util";
 
-interface ProfileNotificationCardProps extends NotificationListType {}
+interface ProfileNotificationCardProps
+  extends Pick<
+    AdminNotificationItemResponse,
+    "notificationTitle" | "createDateTime"
+  > {}
 
 export function ProfileNotificationCard({
-  contentTitle,
-  createdDate,
+  notificationTitle,
+  createDateTime,
 }: ProfileNotificationCardProps) {
   return (
     <Container>
@@ -18,8 +22,8 @@ export function ProfileNotificationCard({
         <Icon name="NotiFilled" color="#A4C8FF" size={14} />
       </IconWrapper>
       <ItemBody>
-        <ItemMessage>{contentTitle}</ItemMessage>
-        <ItemTime>{formatElapsedTime(createdDate)}</ItemTime>
+        <ItemMessage>{notificationTitle}</ItemMessage>
+        <ItemTime>{formatElapsedTime(createDateTime)}</ItemTime>
       </ItemBody>
     </Container>
   );

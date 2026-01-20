@@ -1,25 +1,27 @@
 "use client";
 
 import classNames from "classnames";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import type { HTMLAttributes, MouseEvent } from "react";
+import { toast } from "react-toastify";
 
-import type { NotificationListType } from "@/domain/notification/schemas/notification.schema";
+import type { AdminNotificationItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useMarkNotificationAsReadAction } from "@/domain/notification/hooks/notification-actions";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
+import { getBackendErrorMessage } from "@/shared/utils/error/error.util";
 
 interface NotificationRowProps extends HTMLAttributes<HTMLTableRowElement> {
-  rowData: NotificationListType;
+  rowData: AdminNotificationItemResponse;
 }
 
 /**
  * NotificationRow 컴포넌트
  *
  * 알림 목록 테이블의 행 컴포넌트입니다.
- * 행을 클릭하면 해당 알림의 상세 페이지로 이동합니다.
- * 현재 URL의 id와 일치하는 행은 활성 상태로 표시됩니다.
- *
- * @param rowData - 알림 목록 데이터
- * @returns 알림 테이블 행 컴포넌트
+ * 행을 클릭하면 해당 알림의 상세 페이지로 이동하고,
+ * 읽지 않은 알림인 경우 읽음 처리합니다.
  */
 export function NotificationRow({
   children,
@@ -28,22 +30,38 @@ export function NotificationRow({
   ...restProps
 }: NotificationRowProps) {
   const router = useRouter();
-  const { id } = useParams<{ id?: string }>();
+  const { data: session } = useSession();
+  const accountId = getSessionAccountId(session) ?? "";
 
-  const isActive = id === String(rowData?.id);
+  const { mutate: markAsRead } = useMarkNotificationAsReadAction();
 
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
 
     if (rowData) {
-      router.push(ROUTES.ADMIN_NOTIFICATION_DETAIL(rowData.id));
+      router.push(ROUTES.ADMIN_NOTIFICATION_DETAIL(rowData.notificationId));
+
+      // 읽지 않은 알림인 경우 읽음 처리
+      if (!rowData.isRead && accountId) {
+        markAsRead(
+          {
+            accountId,
+            notificationId: rowData.notificationId,
+          },
+          {
+            onError: (error) => {
+              toast.error(getBackendErrorMessage(error));
+            },
+          },
+        );
+      }
     }
   };
 
   return (
     <tr
       {...restProps}
-      className={classNames("pointer", { active: isActive }, className)}
+      className={classNames("pointer", className)}
       onClick={handleClickRow}
     >
       {children}

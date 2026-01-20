@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { toast } from "react-toastify";
 
 import {
   getGetAllWorkspaces1QueryKey,
@@ -35,6 +36,7 @@ import {
   workspacePageAtom,
 } from "@/domain/workspace/state/workspace.atom";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { getBackendErrorMessage } from "@/shared/utils/error/error.util";
 import { clearStoredWorkspaceId } from "@/shared/utils/storage/workspace-session-storage.util";
 
 export function useCreateWorkspaceAction(
@@ -132,6 +134,7 @@ export function useLeaveWorkspaceAction(
     ...options,
     mutation: {
       ...options?.mutation,
+      meta: { showToastOnError: false },
       onSuccess: (data, variables, ...rest) => {
         if (variables.workspaceId === selectedWorkspace?.workspaceId) {
           clearStoredWorkspaceId();
@@ -144,19 +147,21 @@ export function useLeaveWorkspaceAction(
 
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
-      onError: (
-        error: AxiosError<{ errorCode?: string }>,
-        variables,
-        ...rest
-      ) => {
-        if (
-          error.response?.status === 403 &&
-          error.response?.data?.errorCode ===
-            WORKSPACE_ERROR_CODES.CANNOT_LEAVE_AS_ONLY_OWNER
-        ) {
-          setOpenLeaveWorkspaceModal(false);
-          setOpenOwnerTransferModal(true);
+      onError: (error, variables, ...rest) => {
+        if (isAxiosError(error)) {
+          const errorCode = error.response?.data?.errorCode;
+          if (
+            error.response?.status === 403 &&
+            errorCode === WORKSPACE_ERROR_CODES.CANNOT_LEAVE_AS_ONLY_OWNER
+          ) {
+            setOpenLeaveWorkspaceModal(false);
+            setOpenOwnerTransferModal(true);
+            options?.mutation?.onError?.(error, variables, ...rest);
+            return;
+          }
         }
+        // 다른 에러는 토스트 띄우기
+        toast.error(getBackendErrorMessage(error));
         options?.mutation?.onError?.(error, variables, ...rest);
       },
     },
