@@ -188,6 +188,42 @@ export interface UpdateVolumeRequest {
 }
 
 /**
+ * 사용자 정의 파라미터
+ */
+export type UpdateSourceCodeRequestParameter = { [key: string]: string };
+
+/**
+ * 소스코드 수정 요청
+ */
+export interface UpdateSourceCodeRequest {
+  /**
+   * 소스코드 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  sourceCodeName: string;
+  /**
+   * 마운트 경로 (절대경로)
+   * @minLength 0
+   * @maxLength 1000
+   * @pattern ^/.*
+   */
+  mountPath: string;
+  /**
+   * 실행 커맨드
+   * @minLength 0
+   * @maxLength 1000
+   */
+  executionCmd: string;
+  /** 사용자 정의 파라미터 */
+  parameter?: UpdateSourceCodeRequestParameter;
+  /** 공개 여부 */
+  isPublic: boolean;
+  /** 크레덴셜 ID */
+  credentialId?: number;
+}
+
+/**
  * 이미지 태그 수정 요청
  */
 export interface UpdateImageTagRequest {
@@ -541,6 +577,156 @@ export interface StorageUpdateRequest {
    * @maxLength 50
    */
   storageName: string;
+}
+
+/**
+ * 
+            리소스 정보 (cpu, memory, gpu 포함)
+            GPU 타입별 설정:
+                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
+                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
+                - GPU 미사용: gpu 필드 생략
+            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
+        
+ */
+export type ResourcePresetUpdateRequestResource = { [key: string]: unknown };
+
+/**
+ * 잡 타입 (BATCH, IDE)
+ */
+export type ResourcePresetUpdateRequestJobType =
+  (typeof ResourcePresetUpdateRequestJobType)[keyof typeof ResourcePresetUpdateRequestJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetUpdateRequestJobType = {
+  BATCH: "BATCH",
+  IDE: "IDE",
+} as const;
+
+/**
+ * 노드 타입 (SINGLE, MULTI)
+ */
+export type ResourcePresetUpdateRequestNodeType =
+  (typeof ResourcePresetUpdateRequestNodeType)[keyof typeof ResourcePresetUpdateRequestNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetUpdateRequestNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
+/**
+ * 프리셋 수정 요청
+ */
+export interface ResourcePresetUpdateRequest {
+  /**
+   * 프리셋 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  presetName: string;
+  /**
+   * 프리셋 설명
+   * @minLength 0
+   * @maxLength 1000
+   */
+  description?: string;
+  /** 
+            리소스 정보 (cpu, memory, gpu 포함)
+            GPU 타입별 설정:
+                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
+                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
+                - GPU 미사용: gpu 필드 생략
+            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
+         */
+  resource: ResourcePresetUpdateRequestResource;
+  /** 잡 타입 (BATCH, IDE) */
+  jobType: ResourcePresetUpdateRequestJobType;
+  /** 노드 타입 (SINGLE, MULTI) */
+  nodeType: ResourcePresetUpdateRequestNodeType;
+}
+
+export type BaseResponseResourcePresetResponseStatus =
+  (typeof BaseResponseResourcePresetResponseStatus)[keyof typeof BaseResponseResourcePresetResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseResourcePresetResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseResourcePresetResponse {
+  status: BaseResponseResourcePresetResponseStatus;
+  errorCode?: string;
+  data?: ResourcePresetResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 리소스 정보
+
+GPU 타입별 구조:
+- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
+- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
+
+※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)
+ */
+export type ResourcePresetResponseResource = { [key: string]: unknown };
+
+/**
+ * 잡 타입
+ */
+export type ResourcePresetResponseJobType =
+  (typeof ResourcePresetResponseJobType)[keyof typeof ResourcePresetResponseJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetResponseJobType = {
+  BATCH: "BATCH",
+  IDE: "IDE",
+} as const;
+
+/**
+ * 노드 타입
+ */
+export type ResourcePresetResponseNodeType =
+  (typeof ResourcePresetResponseNodeType)[keyof typeof ResourcePresetResponseNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetResponseNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
+/**
+ * 프리셋 상세 응답
+ */
+export interface ResourcePresetResponse {
+  /** 프리셋 ID */
+  presetId: number;
+  /** 버전 */
+  version: number;
+  /** 프리셋 이름 */
+  presetName: string;
+  /** 설명 */
+  description?: string;
+  /** 리소스 정보
+
+GPU 타입별 구조:
+- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
+- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
+
+※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능) */
+  resource: ResourcePresetResponseResource;
+  /** 잡 타입 */
+  jobType: ResourcePresetResponseJobType;
+  /** 노드 타입 */
+  nodeType: ResourcePresetResponseNodeType;
+  /** 생성자 ID */
+  createdBy: string;
+  /** 생성 시간 */
+  createdAt?: string;
 }
 
 /**
@@ -1427,7 +1613,7 @@ export interface CreateSourceCodeRequest {
    * @minLength 0
    * @maxLength 1000
    */
-  executionCommand: string;
+  executionCmd: string;
   /** 크레덴셜 ID (Private Repository인 경우 필수) */
   credentialId?: number;
   /** 사용자 정의 파라미터 */
@@ -1439,15 +1625,16 @@ export interface CreateSourceCodeRequest {
 }
 
 /**
- * 레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC)
+ * 레지스트리 채널 (DOCKER_HUB: Docker Hub, NGC: NVIDIA NGC, GHCR: GitHub Container Registry)
  */
 export type CreateExternalImageRequestRegistryChannel =
   (typeof CreateExternalImageRequestRegistryChannel)[keyof typeof CreateExternalImageRequestRegistryChannel];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateExternalImageRequestRegistryChannel = {
-  DOCKER: "DOCKER",
+  DOCKER_HUB: "DOCKER_HUB",
   NGC: "NGC",
+  GHCR: "GHCR",
 } as const;
 
 /**
@@ -1470,9 +1657,9 @@ export interface CreateExternalImageRequest {
    * @pattern ^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$
    */
   imageTagName: string;
-  /** 레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC) */
+  /** 레지스트리 채널 (DOCKER_HUB: Docker Hub, NGC: NVIDIA NGC, GHCR: GitHub Container Registry) */
   registryChannel: CreateExternalImageRequestRegistryChannel;
-  /** 크레덴셜 ID (NGC는 필수, Docker Hub는 private 이미지인 경우 필수) */
+  /** 크레덴셜 ID (NGC는 필수, Docker Hub/GHCR는 선택 - 비공개 이미지 접근 시 레지스트리 인증 오류 발생 가능) */
   credentialId?: number;
   /** 워크스페이스 ID (종속버전인 경우 필수) */
   workspaceId?: number;
@@ -1491,7 +1678,7 @@ export interface AddImageTagRequest {
    * @pattern ^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$
    */
   imageTagName: string;
-  /** 크레덴셜 ID (NGC는 필수, Docker Hub는 private 이미지인 경우 필수) */
+  /** 크레덴셜 ID (NGC는 필수, Docker Hub/GHCR는 선택 - 비공개 이미지 접근 시 레지스트리 인증 오류 발생 가능) */
   credentialId?: number;
   /** 태그 설명 */
   description?: string;
@@ -1869,6 +2056,73 @@ export interface SmtpSetResponse {
 }
 
 /**
+ * 
+            리소스 정보 (cpu, memory, gpu 포함)
+            GPU 타입별 설정:
+                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
+                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
+                - GPU 미사용: gpu 필드 생략
+            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
+        
+ */
+export type ResourcePresetCreateRequestResource = { [key: string]: unknown };
+
+/**
+ * 잡 타입 (BATCH, IDE)
+ */
+export type ResourcePresetCreateRequestJobType =
+  (typeof ResourcePresetCreateRequestJobType)[keyof typeof ResourcePresetCreateRequestJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetCreateRequestJobType = {
+  BATCH: "BATCH",
+  IDE: "IDE",
+} as const;
+
+/**
+ * 노드 타입 (SINGLE, MULTI)
+ */
+export type ResourcePresetCreateRequestNodeType =
+  (typeof ResourcePresetCreateRequestNodeType)[keyof typeof ResourcePresetCreateRequestNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetCreateRequestNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
+/**
+ * 프리셋 생성 요청
+ */
+export interface ResourcePresetCreateRequest {
+  /**
+   * 프리셋 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  presetName: string;
+  /**
+   * 프리셋 설명
+   * @minLength 0
+   * @maxLength 1000
+   */
+  description?: string;
+  /** 
+            리소스 정보 (cpu, memory, gpu 포함)
+            GPU 타입별 설정:
+                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
+                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
+                - GPU 미사용: gpu 필드 생략
+            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
+         */
+  resource: ResourcePresetCreateRequestResource;
+  /** 잡 타입 (BATCH, IDE) */
+  jobType: ResourcePresetCreateRequestJobType;
+  /** 노드 타입 (SINGLE, MULTI) */
+  nodeType: ResourcePresetCreateRequestNodeType;
+}
+
+/**
  * 긴급 큐 워크로드 추가 요청
  */
 export interface AddWorkloadToUrgentQueueRequest {
@@ -2087,28 +2341,15 @@ export interface NotificationDeleteResponse {
 }
 
 /**
- * 크리덴셜 타입 (IMAGE: Docker 이미지용, SOURCE_CODE: 소스코드 저장소용)
+ * 크리덴셜 타입 (GIT_REPOSITORY: 소스코드 저장소용, IMAGE_REGISTRY: 이미지 레지스트리용)
  */
 export type CreateCredentialRequestCredentialType =
   (typeof CreateCredentialRequestCredentialType)[keyof typeof CreateCredentialRequestCredentialType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateCredentialRequestCredentialType = {
-  IMAGE: "IMAGE",
-  SOURCE_CODE: "SOURCE_CODE",
-} as const;
-
-/**
- * 크리덴셜 채널 (GIT: Git 저장소, DOCKER: Docker Registry)
- */
-export type CreateCredentialRequestCredentialChannel =
-  (typeof CreateCredentialRequestCredentialChannel)[keyof typeof CreateCredentialRequestCredentialChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateCredentialRequestCredentialChannel = {
-  GIT: "GIT",
-  DOCKER: "DOCKER",
-  NGC: "NGC",
+  IMAGE_REGISTRY: "IMAGE_REGISTRY",
+  GIT_REPOSITORY: "GIT_REPOSITORY",
 } as const;
 
 /**
@@ -2126,16 +2367,8 @@ export interface CreateCredentialRequest {
    * @maxLength 2000
    */
   description?: string;
-  /** 크리덴셜 타입 (IMAGE: Docker 이미지용, SOURCE_CODE: 소스코드 저장소용) */
+  /** 크리덴셜 타입 (GIT_REPOSITORY: 소스코드 저장소용, IMAGE_REGISTRY: 이미지 레지스트리용) */
   credentialType: CreateCredentialRequestCredentialType;
-  /**
-   * Docker Private Registry URL (IMAGE 타입인 경우)
-   * @minLength 0
-   * @maxLength 255
-   */
-  dockerPrivateRegistryUrl?: string;
-  /** 크리덴셜 채널 (GIT: Git 저장소, DOCKER: Docker Registry) */
-  credentialChannel: CreateCredentialRequestCredentialChannel;
   /**
    * 크리덴셜 계정 ID (예: GitHub 사용자명, Docker Hub 계정)
    * @minLength 0
@@ -2176,21 +2409,8 @@ export type CredentialResponseCredentialType =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CredentialResponseCredentialType = {
-  IMAGE: "IMAGE",
-  SOURCE_CODE: "SOURCE_CODE",
-} as const;
-
-/**
- * 크리덴셜 채널
- */
-export type CredentialResponseCredentialChannel =
-  (typeof CredentialResponseCredentialChannel)[keyof typeof CredentialResponseCredentialChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CredentialResponseCredentialChannel = {
-  GIT: "GIT",
-  DOCKER: "DOCKER",
-  NGC: "NGC",
+  IMAGE_REGISTRY: "IMAGE_REGISTRY",
+  GIT_REPOSITORY: "GIT_REPOSITORY",
 } as const;
 
 /**
@@ -2205,10 +2425,6 @@ export interface CredentialResponse {
   description?: string;
   /** 크리덴셜 타입 */
   credentialType: CredentialResponseCredentialType;
-  /** Docker Private Registry URL */
-  dockerPrivateRegistryUrl?: string;
-  /** 크리덴셜 채널 */
-  credentialChannel: CredentialResponseCredentialChannel;
   /** 크리덴셜 계정 ID */
   credentialAccountId: string;
 }
@@ -2396,6 +2612,32 @@ export interface WorkloadMetricsTimeseriesResponse {
   dateTime: string;
   /** 해당 시간대의 모든 Pod/GPU 메트릭 데이터 */
   data: WorkloadMetricData[];
+}
+
+export type BaseResponseDistributedPodResponseStatus =
+  (typeof BaseResponseDistributedPodResponseStatus)[keyof typeof BaseResponseDistributedPodResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseDistributedPodResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseDistributedPodResponse {
+  status: BaseResponseDistributedPodResponseStatus;
+  errorCode?: string;
+  data?: DistributedPodResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 분산 워크로드 Pod 목록 응답
+ */
+export interface DistributedPodResponse {
+  /** Pod 이름 목록 */
+  podNames: string[];
 }
 
 export type BaseResponseTerminatedWorkloadListResponseStatus =
@@ -2981,6 +3223,64 @@ export interface VolumeDetailResponse {
   isPublic: boolean;
 }
 
+export type BaseResponsePageResponseStorageResponseStatus =
+  (typeof BaseResponsePageResponseStorageResponseStatus)[keyof typeof BaseResponsePageResponseStorageResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseStorageResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseStorageResponse {
+  status: BaseResponsePageResponseStorageResponseStatus;
+  errorCode?: string;
+  data?: PageResponseStorageResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseStorageResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: StorageResponse[];
+}
+
+/**
+ * 스토리지 채널
+ */
+export type StorageResponseStorageChannel =
+  (typeof StorageResponseStorageChannel)[keyof typeof StorageResponseStorageChannel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const StorageResponseStorageChannel = {
+  NFS: "NFS",
+} as const;
+
+/**
+ * 스토리지 목록 응답
+ */
+export interface StorageResponse {
+  /** 스토리지 고유 ID */
+  storageId: number;
+  /** 스토리지 이름 */
+  storageName: string;
+  /** 스토리지 채널 */
+  storageChannel: StorageResponseStorageChannel;
+  /** 스토리지 서버 IP 주소 */
+  storageIp: string;
+  /** 스토리지 저장 경로 */
+  storageSavePath: string;
+  /** 생성일시 */
+  createdAt: string;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+}
+
 export type BaseResponsePageResponseSourceCodeListResponseStatus =
   (typeof BaseResponsePageResponseSourceCodeListResponseStatus)[keyof typeof BaseResponsePageResponseSourceCodeListResponseStatus];
 
@@ -3034,11 +3334,95 @@ export interface SourceCodeListResponse {
   /** 소스코드 타입 */
   sourceCodeType: SourceCodeListResponseSourceCodeType;
   /** 실행 커맨드 */
-  executionCommand: string;
+  executionCmd: string;
   /** 생성 일시 */
   createdAt: string;
   /** 공개 여부 */
   isPublic: boolean;
+}
+
+export type BaseResponsePageResponseResourcePresetSummaryResponseStatus =
+  (typeof BaseResponsePageResponseResourcePresetSummaryResponseStatus)[keyof typeof BaseResponsePageResponseResourcePresetSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseResourcePresetSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseResourcePresetSummaryResponse {
+  status: BaseResponsePageResponseResourcePresetSummaryResponseStatus;
+  errorCode?: string;
+  data?: PageResponseResourcePresetSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseResourcePresetSummaryResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ResourcePresetSummaryResponse[];
+}
+
+/**
+ * 리소스 정보
+
+GPU 타입별 구조:
+- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
+- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
+
+※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)
+ */
+export type ResourcePresetSummaryResponseResource = { [key: string]: unknown };
+
+/**
+ * 잡 타입
+ */
+export type ResourcePresetSummaryResponseJobType =
+  (typeof ResourcePresetSummaryResponseJobType)[keyof typeof ResourcePresetSummaryResponseJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetSummaryResponseJobType = {
+  BATCH: "BATCH",
+  IDE: "IDE",
+} as const;
+
+/**
+ * 노드 타입
+ */
+export type ResourcePresetSummaryResponseNodeType =
+  (typeof ResourcePresetSummaryResponseNodeType)[keyof typeof ResourcePresetSummaryResponseNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResourcePresetSummaryResponseNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
+/**
+ * 프리셋 목록 요약 응답 (사용자용)
+ */
+export interface ResourcePresetSummaryResponse {
+  /** 프리셋 ID */
+  presetId: number;
+  /** 프리셋 이름 */
+  presetName: string;
+  /** 설명 */
+  description?: string;
+  /** 리소스 정보
+
+GPU 타입별 구조:
+- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
+- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
+
+※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능) */
+  resource: ResourcePresetSummaryResponseResource;
+  /** 잡 타입 */
+  jobType: ResourcePresetSummaryResponseJobType;
+  /** 노드 타입 */
+  nodeType: ResourcePresetSummaryResponseNodeType;
 }
 
 export type BaseResponsePageResponseRegistryListResponseStatus =
@@ -4727,7 +5111,7 @@ export interface BaseResponseListNodeSystemMetricResponse {
  * 노드 시스템 메트릭 응답
  */
 export interface NodeSystemMetricResponse {
-  /** 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 측정 시간 (UTC, ISO 8601 형식) */
   dateTime: string;
   /** 메트릭 값 (사용률 %, 온도 °C, 속도 bytes/sec, 부하) */
   value: string;
@@ -4755,7 +5139,7 @@ export interface BaseResponseListNodeGpuMetricResponse {
  * GPU 메트릭 값 응답
  */
 export interface GpuMetricValueResponse {
-  /** 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 측정 시간 (UTC, ISO 8601 형식) */
   dateTime: string;
   /** 메트릭 값 (사용률 %, 온도 °C, 팬속도 %, 전력 W) */
   value: string;
@@ -5720,64 +6104,6 @@ export interface PageResponseAdminWorkloadResponse {
   content: AdminWorkloadResponse[];
 }
 
-export type BaseResponsePageResponseStorageResponseStatus =
-  (typeof BaseResponsePageResponseStorageResponseStatus)[keyof typeof BaseResponsePageResponseStorageResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseStorageResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseStorageResponse {
-  status: BaseResponsePageResponseStorageResponseStatus;
-  errorCode?: string;
-  data?: PageResponseStorageResponse;
-  message?: string;
-  timestamp: number;
-}
-
-export interface PageResponseStorageResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: StorageResponse[];
-}
-
-/**
- * 스토리지 채널
- */
-export type StorageResponseStorageChannel =
-  (typeof StorageResponseStorageChannel)[keyof typeof StorageResponseStorageChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StorageResponseStorageChannel = {
-  NFS: "NFS",
-} as const;
-
-/**
- * 스토리지 목록 응답
- */
-export interface StorageResponse {
-  /** 스토리지 고유 ID */
-  storageId: number;
-  /** 스토리지 이름 */
-  storageName: string;
-  /** 스토리지 채널 */
-  storageChannel: StorageResponseStorageChannel;
-  /** 스토리지 서버 IP 주소 */
-  storageIp: string;
-  /** 스토리지 저장 경로 */
-  storageSavePath: string;
-  /** 생성일시 */
-  createdAt: string;
-  /** 생성자 ID */
-  creatorId: string;
-  /** 생성자 이름 */
-  creatorName: string;
-}
-
 export type BaseResponseStorageResponseStatus =
   (typeof BaseResponseStorageResponseStatus)[keyof typeof BaseResponseStorageResponseStatus];
 
@@ -5794,6 +6120,31 @@ export interface BaseResponseStorageResponse {
   data?: StorageResponse;
   message?: string;
   timestamp: number;
+}
+
+export type BaseResponsePageResponseResourcePresetResponseStatus =
+  (typeof BaseResponsePageResponseResourcePresetResponseStatus)[keyof typeof BaseResponsePageResponseResourcePresetResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseResourcePresetResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseResourcePresetResponse {
+  status: BaseResponsePageResponseResourcePresetResponseStatus;
+  errorCode?: string;
+  data?: PageResponseResourcePresetResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseResourcePresetResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ResourcePresetResponse[];
 }
 
 export type BaseResponsePageResponsePublicImageUsageResponseStatus =
@@ -6378,19 +6729,6 @@ export interface SignupRequestItemResponse {
 }
 
 /**
- * 크리덴셜 채널
- */
-export type AdminCredentialListItemResponseCredentialChannel =
-  (typeof AdminCredentialListItemResponseCredentialChannel)[keyof typeof AdminCredentialListItemResponseCredentialChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AdminCredentialListItemResponseCredentialChannel = {
-  GIT: "GIT",
-  DOCKER: "DOCKER",
-  NGC: "NGC",
-} as const;
-
-/**
  * 크리덴셜 타입
  */
 export type AdminCredentialListItemResponseCredentialType =
@@ -6398,8 +6736,8 @@ export type AdminCredentialListItemResponseCredentialType =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminCredentialListItemResponseCredentialType = {
-  IMAGE: "IMAGE",
-  SOURCE_CODE: "SOURCE_CODE",
+  IMAGE_REGISTRY: "IMAGE_REGISTRY",
+  GIT_REPOSITORY: "GIT_REPOSITORY",
 } as const;
 
 /**
@@ -6408,8 +6746,6 @@ export const AdminCredentialListItemResponseCredentialType = {
 export interface AdminCredentialListItemResponse {
   /** 크리덴셜 ID */
   credentialId: number;
-  /** 크리덴셜 채널 */
-  credentialChannel: AdminCredentialListItemResponseCredentialChannel;
   /** 크리덴셜 타입 */
   credentialType: AdminCredentialListItemResponseCredentialType;
   /** 크리덴셜 이름 */
@@ -6676,19 +7012,6 @@ export interface BaseResponsePageResponseCredentialListItemResponse {
 }
 
 /**
- * 크리덴셜 채널
- */
-export type CredentialListItemResponseCredentialChannel =
-  (typeof CredentialListItemResponseCredentialChannel)[keyof typeof CredentialListItemResponseCredentialChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CredentialListItemResponseCredentialChannel = {
-  GIT: "GIT",
-  DOCKER: "DOCKER",
-  NGC: "NGC",
-} as const;
-
-/**
  * 크리덴셜 타입
  */
 export type CredentialListItemResponseCredentialType =
@@ -6696,8 +7019,8 @@ export type CredentialListItemResponseCredentialType =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CredentialListItemResponseCredentialType = {
-  IMAGE: "IMAGE",
-  SOURCE_CODE: "SOURCE_CODE",
+  IMAGE_REGISTRY: "IMAGE_REGISTRY",
+  GIT_REPOSITORY: "GIT_REPOSITORY",
 } as const;
 
 /**
@@ -6706,8 +7029,6 @@ export const CredentialListItemResponseCredentialType = {
 export interface CredentialListItemResponse {
   /** 크리덴셜 ID */
   credentialId: number;
-  /** 크리덴셜 채널 */
-  credentialChannel: CredentialListItemResponseCredentialChannel;
   /** 크리덴셜 타입 */
   credentialType: CredentialListItemResponseCredentialType;
   /** 크리덴셜 이름 */
@@ -6748,19 +7069,6 @@ export interface BaseResponseCredentialDetailResponse {
 }
 
 /**
- * 크리덴셜 채널
- */
-export type CredentialDetailResponseCredentialChannel =
-  (typeof CredentialDetailResponseCredentialChannel)[keyof typeof CredentialDetailResponseCredentialChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CredentialDetailResponseCredentialChannel = {
-  GIT: "GIT",
-  DOCKER: "DOCKER",
-  NGC: "NGC",
-} as const;
-
-/**
  * 크리덴셜 타입
  */
 export type CredentialDetailResponseCredentialType =
@@ -6768,8 +7076,8 @@ export type CredentialDetailResponseCredentialType =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CredentialDetailResponseCredentialType = {
-  IMAGE: "IMAGE",
-  SOURCE_CODE: "SOURCE_CODE",
+  IMAGE_REGISTRY: "IMAGE_REGISTRY",
+  GIT_REPOSITORY: "GIT_REPOSITORY",
 } as const;
 
 /**
@@ -6782,12 +7090,8 @@ export interface CredentialDetailResponse {
   credentialName: string;
   /** 크리덴셜 설명 */
   description?: string;
-  /** 크리덴셜 채널 */
-  credentialChannel: CredentialDetailResponseCredentialChannel;
   /** 크리덴셜 타입 */
   credentialType: CredentialDetailResponseCredentialType;
-  /** Docker Private Registry URL */
-  dockerPrivateRegistryUrl?: string;
   /** 크리덴셜 계정 ID */
   credentialAccountId: string;
   /** 생성자 이름 */
@@ -7255,6 +7559,46 @@ export type GetStoragesParams = {
   pageSize?: number;
 };
 
+export type GetPresetsParams = {
+  /**
+   * 잡 타입 필터 (BATCH, IDE)
+   */
+  jobType?: GetPresetsJobType;
+  /**
+   * 노드 타입 필터 (SINGLE, MULTI)
+   */
+  nodeType?: GetPresetsNodeType;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
+
+export type GetPresetsJobType =
+  (typeof GetPresetsJobType)[keyof typeof GetPresetsJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPresetsJobType = {
+  BATCH: "BATCH",
+  IDE: "IDE",
+} as const;
+
+export type GetPresetsNodeType =
+  (typeof GetPresetsNodeType)[keyof typeof GetPresetsNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPresetsNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
 export type GetCredentialsParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -7279,7 +7623,7 @@ export type StreamNodeSystemMetricsParams = {
    */
   metricName: StreamNodeSystemMetricsMetricName;
   /**
-   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송
    */
   lastSentTime: string;
 };
@@ -7310,7 +7654,7 @@ export type StreamNodeGpuMetricsParams = {
    */
   metricName: StreamNodeGpuMetricsMetricName;
   /**
-   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송
    */
   lastSentTime: string;
 };
@@ -7340,6 +7684,11 @@ export type GetWorkloadResourceMetricsTimeseriesParams = {
    * 조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간). 형식: yyyy-MM-ddTHH:mm:ssZ
    */
   endedAt?: string;
+  /**
+   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
+   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
+   */
+  step: string;
 };
 
 export type GetWorkloadResourceMetricsTimeseriesMetricName =
@@ -7355,6 +7704,20 @@ export const GetWorkloadResourceMetricsTimeseriesMetricName = {
   CPU_UTILIZATION: "CPU_UTILIZATION",
   MEM_UTILIZATION: "MEM_UTILIZATION",
 } as const;
+
+export type GetTerminatedWorkloadLogParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+};
+
+export type StreamWorkloadLogsParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+};
 
 export type GetTerminatedWorkloadsParams = {
   /**
@@ -7421,13 +7784,18 @@ export type GetResourceMetricsTimeseriesParams = {
    */
   metricsName: GetResourceMetricsTimeseriesMetricsName;
   /**
-   * 조회 시작 시간 (ISO 8601 형식, 미입력 시 현재 시간 - 1일)
+   * 조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일)
    */
   startDate?: string;
   /**
-   * 조회 종료 시간 (ISO 8601 형식, 미입력 시 현재 시간)
+   * 조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간)
    */
   endDate?: string;
+  /**
+   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
+   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
+   */
+  step: string;
 };
 
 export type GetResourceMetricsTimeseriesMetricsName =
@@ -7595,6 +7963,60 @@ export type PreviewParams = {
    */
   path: string;
 };
+
+export type GetStorages1Params = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
+
+export type GetAvailablePresetsParams = {
+  /**
+   * 잡 타입 필터 (BATCH, IDE)
+   */
+  jobType?: GetAvailablePresetsJobType;
+  /**
+   * 노드 타입 필터 (SINGLE, MULTI)
+   */
+  nodeType?: GetAvailablePresetsNodeType;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
+
+export type GetAvailablePresetsJobType =
+  (typeof GetAvailablePresetsJobType)[keyof typeof GetAvailablePresetsJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAvailablePresetsJobType = {
+  BATCH: "BATCH",
+  IDE: "IDE",
+} as const;
+
+export type GetAvailablePresetsNodeType =
+  (typeof GetAvailablePresetsNodeType)[keyof typeof GetAvailablePresetsNodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAvailablePresetsNodeType = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
 
 export type GetPublicImageTagVulnerabilitiesParams = {
   /**
@@ -7780,13 +8202,11 @@ export type GetAllMonitoringNotificationHistoriesParams = {
    */
   order?: GetAllMonitoringNotificationHistoriesOrder;
   /**
-   * 조회 시작 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
+   * 조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
    */
   startedAt?: string;
   /**
-   * 조회 종료 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)
-   * @pattern ^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
+   * 조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
    */
   endedAt?: string;
 };
@@ -8155,13 +8575,18 @@ export type GetNodeSystemMetricsParams = {
    */
   metricName: GetNodeSystemMetricsMetricName;
   /**
-   * 시작 시간 (ISO 8601 형식)
+   * 시작 시간 (ISO 8601 UTC 형식)
    */
   startDateTime: string;
   /**
-   * 종료 시간 (ISO 8601 형식)
+   * 종료 시간 (ISO 8601 UTC 형식)
    */
   endDateTime: string;
+  /**
+   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
+   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
+   */
+  step: string;
 };
 
 export type GetNodeSystemMetricsMetricName =
@@ -8190,13 +8615,18 @@ export type GetNodeGpuMetricsParams = {
    */
   metricName: GetNodeGpuMetricsMetricName;
   /**
-   * 시작 시간 (ISO 8601 형식)
+   * 시작 시간 (ISO 8601 UTC 형식)
    */
   startDateTime: string;
   /**
-   * 종료 시간 (ISO 8601 형식)
+   * 종료 시간 (ISO 8601 UTC 형식)
    */
   endDateTime: string;
+  /**
+   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
+   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
+   */
+  step: string;
 };
 
 export type GetNodeGpuMetricsMetricName =

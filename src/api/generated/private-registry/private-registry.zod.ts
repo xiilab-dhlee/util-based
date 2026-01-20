@@ -180,13 +180,15 @@ export const createPrivateExternalImageBody = zod
       .regex(createPrivateExternalImageBodyImageTagNameRegExp)
       .describe("이미지 태그"),
     registryChannel: zod
-      .enum(["DOCKER", "NGC"])
-      .describe("레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC)"),
+      .enum(["DOCKER_HUB", "NGC", "GHCR"])
+      .describe(
+        "레지스트리 채널 (DOCKER_HUB: Docker Hub, NGC: NVIDIA NGC, GHCR: GitHub Container Registry)",
+      ),
     credentialId: zod
       .number()
       .optional()
       .describe(
-        "크레덴셜 ID (NGC는 필수, Docker Hub는 private 이미지인 경우 필수)",
+        "크레덴셜 ID (NGC는 필수, Docker Hub/GHCR는 선택 - 비공개 이미지 접근 시 레지스트리 인증 오류 발생 가능)",
       ),
     workspaceId: zod
       .number()
@@ -352,7 +354,7 @@ export const addPrivateImageTagBody = zod
       .number()
       .optional()
       .describe(
-        "크레덴셜 ID (NGC는 필수, Docker Hub는 private 이미지인 경우 필수)",
+        "크레덴셜 ID (NGC는 필수, Docker Hub/GHCR는 선택 - 비공개 이미지 접근 시 레지스트리 인증 오류 발생 가능)",
       ),
     description: zod.string().optional().describe("태그 설명"),
   })

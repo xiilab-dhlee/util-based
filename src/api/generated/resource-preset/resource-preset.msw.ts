@@ -31,11 +31,11 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseAdminCredentialListItemResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponsePageResponseResourcePresetSummaryResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetAllCredentialsResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseAdminCredentialListItemResponse> = {},
-): BaseResponsePageResponseAdminCredentialListItemResponse => ({
+export const getGetAvailablePresetsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseResourcePresetSummaryResponse> = {},
+): BaseResponsePageResponseResourcePresetSummaryResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
@@ -46,16 +46,14 @@ export const getGetAllCredentialsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      credentialId: faker.number.int({ min: undefined, max: undefined }),
-      credentialType: faker.helpers.arrayElement([
-        "IMAGE_REGISTRY",
-        "GIT_REPOSITORY",
-      ] as const),
-      credentialName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      presetId: faker.number.int({ min: undefined, max: undefined }),
+      presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       description: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
-      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      resource: {
+        [faker.string.alphanumeric(5)]: {},
+      },
+      jobType: faker.helpers.arrayElement(["BATCH", "IDE"] as const),
+      nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -63,18 +61,18 @@ export const getGetAllCredentialsResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetAllCredentialsMockHandler = (
+export const getGetAvailablePresetsMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseAdminCredentialListItemResponse
+    | BaseResponsePageResponseResourcePresetSummaryResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseAdminCredentialListItemResponse>
-        | BaseResponsePageResponseAdminCredentialListItemResponse),
+        | Promise<BaseResponsePageResponseResourcePresetSummaryResponse>
+        | BaseResponsePageResponseResourcePresetSummaryResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/admin/accounts/credentials",
+    "*/api/v1/resource-presets",
     async (info) => {
       await delay(1000);
 
@@ -84,7 +82,7 @@ export const getGetAllCredentialsMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetAllCredentialsResponseMock(),
+            : getGetAvailablePresetsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -92,4 +90,6 @@ export const getGetAllCredentialsMockHandler = (
     options,
   );
 };
-export const getAdminCredentialMock = () => [getGetAllCredentialsMockHandler()];
+export const getResourcePresetMock = () => [
+  getGetAvailablePresetsMockHandler(),
+];

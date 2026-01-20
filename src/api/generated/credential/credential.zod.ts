@@ -69,11 +69,8 @@ export const getCredentialsResponse = zod
           zod
             .object({
               credentialId: zod.number().describe("크리덴셜 ID"),
-              credentialChannel: zod
-                .enum(["GIT", "DOCKER", "NGC"])
-                .describe("크리덴셜 채널"),
               credentialType: zod
-                .enum(["IMAGE", "SOURCE_CODE"])
+                .enum(["IMAGE_REGISTRY", "GIT_REPOSITORY"])
                 .describe("크리덴셜 타입"),
               credentialName: zod.string().describe("크리덴셜 이름"),
               description: zod.string().optional().describe("크리덴셜 설명"),
@@ -104,9 +101,6 @@ export const createCredentialBodyCredentialNameMax = 50;
 
 export const createCredentialBodyDescriptionMax = 2000;
 
-export const createCredentialBodyDockerPrivateRegistryUrlMin = 0;
-export const createCredentialBodyDockerPrivateRegistryUrlMax = 255;
-
 export const createCredentialBodyCredentialAccountIdMin = 0;
 export const createCredentialBodyCredentialAccountIdMax = 100;
 
@@ -128,19 +122,10 @@ export const createCredentialBody = zod
       .optional()
       .describe("크리덴셜 설명. 최대 2000자(한글 1000자)"),
     credentialType: zod
-      .enum(["IMAGE", "SOURCE_CODE"])
+      .enum(["IMAGE_REGISTRY", "GIT_REPOSITORY"])
       .describe(
-        "크리덴셜 타입 (IMAGE: Docker 이미지용, SOURCE_CODE: 소스코드 저장소용)",
+        "크리덴셜 타입 (GIT_REPOSITORY: 소스코드 저장소용, IMAGE_REGISTRY: 이미지 레지스트리용)",
       ),
-    dockerPrivateRegistryUrl: zod
-      .string()
-      .min(createCredentialBodyDockerPrivateRegistryUrlMin)
-      .max(createCredentialBodyDockerPrivateRegistryUrlMax)
-      .optional()
-      .describe("Docker Private Registry URL (IMAGE 타입인 경우)"),
-    credentialChannel: zod
-      .enum(["GIT", "DOCKER", "NGC"])
-      .describe("크리덴셜 채널 (GIT: Git 저장소, DOCKER: Docker Registry)"),
     credentialAccountId: zod
       .string()
       .min(createCredentialBodyCredentialAccountIdMin)
@@ -173,16 +158,9 @@ export const getCredentialDetailResponse = zod
         credentialId: zod.number().describe("크리덴셜 ID"),
         credentialName: zod.string().describe("크리덴셜 이름"),
         description: zod.string().optional().describe("크리덴셜 설명"),
-        credentialChannel: zod
-          .enum(["GIT", "DOCKER", "NGC"])
-          .describe("크리덴셜 채널"),
         credentialType: zod
-          .enum(["IMAGE", "SOURCE_CODE"])
+          .enum(["IMAGE_REGISTRY", "GIT_REPOSITORY"])
           .describe("크리덴셜 타입"),
-        dockerPrivateRegistryUrl: zod
-          .string()
-          .optional()
-          .describe("Docker Private Registry URL"),
         credentialAccountId: zod.string().describe("크리덴셜 계정 ID"),
         creatorName: zod.string().optional().describe("생성자 이름"),
         createDateTime: zod.string().datetime({}).describe("생성일시"),
