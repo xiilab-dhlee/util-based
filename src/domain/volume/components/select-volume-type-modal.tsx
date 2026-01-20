@@ -1,50 +1,44 @@
 "use client";
 
+import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
 import { VolumeStorageCard } from "@/domain/volume/components/list/volume-storage-card";
 import { VOLUME_STORAGE_OPTIONS } from "@/domain/volume/constants/volume.constant";
-import {
-  openCreateAstragoVolumeModalAtom,
-  openCreateOnPremiseVolumeModalAtom,
-  openSelectVolumeModalAtom,
-} from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function SelectVolumeTypeModal() {
   const publish = usePublish();
+  const [open, setOpen] = useState(false);
 
-  const { open, onClose } = useGlobalModal(openSelectVolumeModalAtom);
-  const { onOpen: onOpenCreateAstragoVolumeModal } = useGlobalModal(
-    openCreateAstragoVolumeModalAtom,
-  );
-  const { onOpen: onOpenCreateOnPremiseVolumeModal } = useGlobalModal(
-    openCreateOnPremiseVolumeModalAtom,
-  );
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleClickStorageType = (type: string) => {
-    publish(VOLUME_EVENTS.sendStorageType, type);
-    onClose();
-
+    handleClose();
     if (type === "ASTRAGO") {
-      onOpenCreateAstragoVolumeModal();
+      publish(VOLUME_EVENTS.openCreateAstragoModal);
     } else if (type === "ON_PREMISE") {
-      onOpenCreateOnPremiseVolumeModal();
+      publish(VOLUME_EVENTS.openCreateOnPremModal);
     }
   };
+
+  useSubscribe(VOLUME_EVENTS.openSelectStorageTypeModal, () => {
+    setOpen(true);
+  });
 
   return (
     <InfoModal
       modalWidth={580}
       type="primary"
-      icon={<Icon name="Folder" color="#fff" size={18} />}
+      icon={<Icon name="Volume" color="#fff" size={18} />}
       open={open}
       closable
-      title="볼륨 선택"
-      onClose={onClose}
+      title="스토리지 타입 선택"
+      onClose={handleClose}
       showHeaderBorder
       centered
     >
