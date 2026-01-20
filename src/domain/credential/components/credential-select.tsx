@@ -5,30 +5,16 @@ import { useSession } from "next-auth/react";
 import { Dropdown } from "xiilab-ui";
 
 import { getCredentials } from "@/api/generated/credential/credential";
-import type { CredentialIdType } from "@/domain/credential/schemas/credential.schema";
 import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
-// ============================================================================
-// 상수
-// ============================================================================
-
 const QUERY_KEY = "credential-select";
 const PAGE_SIZE = 30;
-
-// ============================================================================
-// 타입
-// ============================================================================
-
 interface CredentialSelectProps {
-  value: CredentialIdType | null;
-  setValue: (value: CredentialIdType | null) => void;
+  value: number | null;
+  setValue: (value: number | null) => void;
 }
-
-// ============================================================================
-// 훅
-// ============================================================================
 
 function useCredentialOptions(keyword: string) {
   const { data: session } = useSession();
@@ -71,10 +57,6 @@ function useCredentialOptions(keyword: string) {
     fetchNextPage: query.fetchNextPage,
   };
 }
-
-// ============================================================================
-// 컴포넌트
-// ============================================================================
 
 export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
   const { keyword, handleSearch, resetKeyword } = useDebouncedSearch();
