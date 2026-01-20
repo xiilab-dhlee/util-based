@@ -50,7 +50,7 @@ export function CreateVolumeFolderModal() {
 
   const onSubmit = (data: CreateVolumeFolderFormType) => {
     if (isPending) return;
-    if (!volumeId) return;
+    if (volumeId == null) return;
 
     const newFolderNode = createFolderNode({
       folderName: data.folderName,

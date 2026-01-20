@@ -19,7 +19,7 @@ export function DecompressVolumeFileModal() {
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
   const [volumeId, setVolumeId] = useState<number | null>(null);
-  const [filePath, setFilePath] = useState<string | null>("");
+  const [filePath, setFilePath] = useState<string | null>(null);
 
   const { mutate, isPending } = useDecompress();
 
