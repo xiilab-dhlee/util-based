@@ -37,10 +37,7 @@ export function VolumeListFooter({ total, loading }: VolumeListFooterProps) {
       return;
     }
 
-    publish(
-      VOLUME_EVENTS.sendDeleteVolume,
-      Array.from(checkedList).map(Number),
-    );
+    publish(VOLUME_EVENTS.openDeleteModal, Array.from(checkedList).map(Number));
   };
 
   return (

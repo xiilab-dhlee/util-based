@@ -6,11 +6,11 @@ import { useEffect } from "react";
 
 import {
   volumeCheckedListAtom,
+  volumeOrderSortAtom,
   volumePageAtom,
   volumeSearchKeywordAtom,
   volumeSearchTextAtom,
-  volumeSortAtom,
-  volumeTypeFilterAtom,
+  volumeTypeSortAtom,
 } from "@/domain/volume/state/volume.atom";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
@@ -20,8 +20,8 @@ export function VolumeListMain() {
   const setSearchText = useSetAtom(volumeSearchTextAtom);
   const setSearchKeyword = useSetAtom(volumeSearchKeywordAtom);
   const resetCheckedList = useResetAtom(volumeCheckedListAtom);
-  const resetSort = useResetAtom(volumeSortAtom);
-  const resetVolumeType = useResetAtom(volumeTypeFilterAtom);
+  const resetSort = useResetAtom(volumeOrderSortAtom);
+  const resetVolumeType = useResetAtom(volumeTypeSortAtom);
 
   useEffect(() => {
     resetPage();
