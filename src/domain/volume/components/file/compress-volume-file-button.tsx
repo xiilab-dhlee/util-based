@@ -20,7 +20,7 @@ export function CompressVolumeFileButton({
 
   const handleClick = () => {
     const filePaths = checkedNodesInfo.map((node) => node.path);
-    publish(VOLUME_EVENTS.sendCompressVolumeFile, { volumeId, filePaths });
+    publish(VOLUME_EVENTS.openCompressFileModal, { volumeId, filePaths });
   };
 
   const isDisabled = checkedNodesInfo.length === 0;

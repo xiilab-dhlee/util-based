@@ -19,11 +19,9 @@ export function CreateVolumeFolderButton({
   const selectedFile = useAtomValue(volumeFileSelectedNodeInfoAtom);
 
   const handleClick = () => {
-    if (!selectedFile || selectedFile.type !== "directory") return;
-
-    publish(VOLUME_EVENTS.sendCreateVolumeFolder, {
+    publish(VOLUME_EVENTS.openCreateFolderModal, {
       volumeId,
-      filePath: selectedFile.path,
+      filePath: selectedFile?.path ?? "/",
     });
   };
 

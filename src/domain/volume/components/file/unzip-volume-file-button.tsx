@@ -22,7 +22,7 @@ export function UnzipVolumeFileButton({
     const selectedNode = checkedNodesInfo[0];
     if (!selectedNode) return;
 
-    publish(VOLUME_EVENTS.sendDecompressVolumeFile, {
+    publish(VOLUME_EVENTS.openDecompressFileModal, {
       volumeId,
       filePath: selectedNode.path,
     });

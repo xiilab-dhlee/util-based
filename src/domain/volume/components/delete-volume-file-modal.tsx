@@ -7,25 +7,21 @@ import { Modal } from "xiilab-ui";
 
 import { useDeleteFiles } from "@/api/generated/volume/volume";
 import {
-  openDeleteVolumeFileModalAtom,
   volumeFileCheckedNodesAtom,
   volumeFileTreeDataAtom,
 } from "@/domain/volume/state/volume.atom";
 import { removeNodesFromTree } from "@/domain/volume/utils/volume.util";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
-interface DeleteVolumeFileEventData {
+interface DeleteVolumeFilePayload {
   volumeId: number;
   filePaths: string[];
 }
 
 export function DeleteVolumeFileModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openDeleteVolumeFileModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const setTreeData = useSetAtom(volumeFileTreeDataAtom);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
@@ -34,12 +30,13 @@ export function DeleteVolumeFileModal() {
 
   const { mutate, isPending } = useDeleteFiles();
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
-    onClose();
+    setOpen(false);
   };
 
   const handleOk = () => {
+    if (isPending) return;
     if (!volumeId || filePaths.length === 0) return;
 
     const filteredPaths = filterToRootPaths(filePaths);
@@ -54,19 +51,18 @@ export function DeleteVolumeFileModal() {
         onSuccess: () => {
           setTreeData((prev) => removeNodesFromTree(prev, filteredPaths));
           setCheckedNodes(new Set());
-          toast.success("선택한 파일을 삭제하였습니다.");
-          onClose();
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe<DeleteVolumeFileEventData>(
-    VOLUME_EVENTS.sendDeleteVolumeFile,
+  useSubscribe<DeleteVolumeFilePayload>(
+    VOLUME_EVENTS.openDeleteFileModal,
     (eventData) => {
       setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
-      onOpen();
+      setOpen(true);
     },
   );
 
@@ -75,11 +71,12 @@ export function DeleteVolumeFileModal() {
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       title="파일 삭제"
       centered
       okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <div>선택한 파일을 삭제하시겠습니까?</div>
       <div>삭제 시 해당 파일은 복구되지 않습니다.</div>

@@ -6,31 +6,32 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
+import { Form, FormItem, Icon, Input, Modal, Typography } from "xiilab-ui";
 
 import { useCompress } from "@/api/generated/volume/volume";
 import {
   type CompressVolumeFileFormType,
   compressVolumeFileSchema,
 } from "@/domain/volume/schemas/volume.schema";
-import {
-  openCompressVolumeFileModalAtom,
-  volumeFileCheckedNodesAtom,
-} from "@/domain/volume/state/volume.atom";
+import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
+import { FormItemLabel, LastFormItem } from "@/styles/layers/form-layer.styled";
 
-interface CompressVolumeFileEventData {
+interface CompressVolumeFilePayload {
   volumeId: number;
   filePaths: string[];
 }
 
+const DEFAULT_VALUES: CompressVolumeFileFormType = {
+  destinationPath: "",
+  compressFileType: "ZIP",
+};
+
 export function CompressVolumeFileModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openCompressVolumeFileModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
   const [volumeId, setVolumeId] = useState<number | null>(null);
@@ -45,10 +46,7 @@ export function CompressVolumeFileModal() {
     formState: { errors },
   } = useForm<CompressVolumeFileFormType>({
     resolver: zodResolver(compressVolumeFileSchema),
-    defaultValues: {
-      destinationPath: "/",
-      compressFileType: "ZIP",
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
   const { mutate, isPending } = useCompress();
@@ -56,10 +54,11 @@ export function CompressVolumeFileModal() {
 
   const handleCancel = () => {
     if (isPending) return;
-    onClose();
+    setOpen(false);
   };
 
   const onSubmit = (data: CompressVolumeFileFormType) => {
+    if (isPending) return;
     if (volumeId == null || filePaths.length === 0) return;
 
     const filteredPaths = filterToRootPaths(filePaths);
@@ -80,20 +79,19 @@ export function CompressVolumeFileModal() {
       {
         onSuccess: () => {
           setCheckedNodes(new Set());
-          toast.success("선택한 파일에 대한 압축 요청이 전송되었습니다.");
-          onClose();
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe<CompressVolumeFileEventData>(
-    VOLUME_EVENTS.sendCompressVolumeFile,
+  useSubscribe<CompressVolumeFilePayload>(
+    VOLUME_EVENTS.openCompressFileModal,
     (eventData) => {
       setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
-      reset({ destinationPath: "/", compressFileType: "ZIP" });
-      onOpen();
+      reset(DEFAULT_VALUES);
+      setOpen(true);
     },
   );
 
@@ -113,6 +111,7 @@ export function CompressVolumeFileModal() {
       centered
       showHeaderBorder
       okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <Form>
         <Controller
@@ -120,8 +119,26 @@ export function CompressVolumeFileModal() {
           control={control}
           render={({ field }) => (
             <FormItem
-              label="압축 파일 저장 경로"
+              label={
+                <FormItemLabel>
+                  압축 파일 저장 경로
+                  <GuideTooltip
+                    title={
+                      <Typography.Text variant="body-3-3" color="#000">
+                        확장자를 제외한 압축 파일명까지 입력해야 합니다.
+                        <br />
+                        예: /mnt/volume/output/result 입력 시 output 폴더에
+                        result.zip 생성
+                      </Typography.Text>
+                    }
+                    iconSize={18}
+                    maxWidth={350}
+                    placement="right"
+                  />
+                </FormItemLabel>
+              }
               htmlFor="destinationPath"
+              required
               validateStatus={errors.destinationPath ? "error" : undefined}
               help={errors.destinationPath?.message}
             >
@@ -129,7 +146,7 @@ export function CompressVolumeFileModal() {
                 {...field}
                 type="text"
                 id="destinationPath"
-                placeholder="압축 파일이 저장될 경로를 입력해주세요."
+                placeholder="/mnt/volume/output/result"
                 width="100%"
                 disabled={isPending}
                 maxLength={1000}
@@ -139,7 +156,7 @@ export function CompressVolumeFileModal() {
           )}
         />
 
-        <FormItem label="압축 유형">
+        <LastFormItem label="압축 유형">
           <SelectFileCompression>
             <FileCompressionButton
               type="button"
@@ -160,7 +177,7 @@ export function CompressVolumeFileModal() {
               TAR
             </FileCompressionButton>
           </SelectFileCompression>
-        </FormItem>
+        </LastFormItem>
       </Form>
     </Modal>
   );

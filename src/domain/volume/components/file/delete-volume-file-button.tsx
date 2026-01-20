@@ -20,7 +20,7 @@ export function DeleteVolumeFileButton({
 
   const handleClick = () => {
     const filePaths = checkedNodesInfo.map((node) => node.path);
-    publish(VOLUME_EVENTS.sendDeleteVolumeFile, { volumeId, filePaths });
+    publish(VOLUME_EVENTS.openDeleteFileModal, { volumeId, filePaths });
   };
 
   return (
