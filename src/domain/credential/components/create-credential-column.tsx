@@ -1,6 +1,9 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { AdminCredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  AdminCredentialListItemResponse,
+  AdminCredentialListItemResponseCredentialType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getCredentialTypeInfo } from "@/domain/credential/constants/credential.constant";
 import { CredentialDeleteButton } from "@/domain/system-setting/components/credential-delete-button";
 import { CredentialNameButton } from "@/domain/system-setting/components/credential-name-button";
@@ -25,7 +28,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "credentialType",
       key: "credentialType",
       align: "left",
-      render: (type: string) => getCredentialTypeInfo(type).label,
+      render: (type: AdminCredentialListItemResponseCredentialType) =>
+        getCredentialTypeInfo(type).label,
     },
 
     {

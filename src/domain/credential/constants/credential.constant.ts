@@ -1,13 +1,12 @@
 import type { DropdownOption, TagProps } from "xiilab-ui";
 
-/** 크리덴셜 타입 값 */
-export const CREDENTIAL_TYPES = {
-  GIT_REPOSITORY: "GIT_REPOSITORY",
-  IMAGE_REGISTRY: "IMAGE_REGISTRY",
-} as const;
+import {
+  CredentialListItemResponseCredentialType as CREDENTIAL_TYPES,
+  type CredentialListItemResponseCredentialType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
-export type CredentialType =
-  (typeof CREDENTIAL_TYPES)[keyof typeof CREDENTIAL_TYPES];
+/** 크리덴셜 타입 (API 스키마에서 가져온 타입) */
+export type CredentialType = CredentialListItemResponseCredentialType;
 
 /** 크리덴셜 타입별 라벨 */
 export const CREDENTIAL_TYPE_LABEL: Record<CredentialType, string> = {
@@ -29,19 +28,21 @@ export const CREDENTIAL_TYPE_TAG_VARIANT: Record<
  * @param credentialType - 크리덴셜 타입
  * @returns 라벨과 Tag variant 정보
  */
-export function getCredentialTypeInfo(credentialType?: string): {
+export function getCredentialTypeInfo(credentialType?: CredentialType): {
   label: string;
   variant: TagProps["variant"];
 } {
-  const type = credentialType as CredentialType;
+  if (!credentialType) {
+    return { label: "-", variant: undefined };
+  }
   return {
-    label: CREDENTIAL_TYPE_LABEL[type] ?? "-",
-    variant: CREDENTIAL_TYPE_TAG_VARIANT[type],
+    label: CREDENTIAL_TYPE_LABEL[credentialType] ?? "-",
+    variant: CREDENTIAL_TYPE_TAG_VARIANT[credentialType],
   };
 }
 
 /**
- * 크리덴셜 타입 옵션 (IMAGE, SOURCE_CODE)
+ * 크리덴셜 타입 옵션 (드롭다운용)
  */
 export const CREDENTIAL_TYPE_OPTIONS: DropdownOption[] = [
   {
@@ -53,3 +54,6 @@ export const CREDENTIAL_TYPE_OPTIONS: DropdownOption[] = [
     value: CREDENTIAL_TYPES.IMAGE_REGISTRY,
   },
 ];
+
+/** API 스키마에서 가져온 크리덴셜 타입 상수 재export */
+export { CREDENTIAL_TYPES };
