@@ -307,9 +307,7 @@ export const getGetAllNamespaceEventsResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       namespace: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      lastObservedDateTime: faker.string.alpha({
-        length: { min: 10, max: 20 },
-      }),
+      lastObservedAt: faker.string.alpha({ length: { min: 10, max: 20 } }),
       eventType: faker.helpers.arrayElement(["Normal", "Warning"] as const),
       eventReason: faker.string.alpha({ length: { min: 10, max: 20 } }),
       object: faker.string.alpha({ length: { min: 10, max: 20 } }),

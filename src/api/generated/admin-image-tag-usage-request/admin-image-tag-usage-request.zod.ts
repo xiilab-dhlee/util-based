@@ -30,6 +30,66 @@
 import * as zod from "zod";
 
 /**
+ * 관리자가 이미지 태그 사용 요청을 반려합니다.
+ * @summary 이미지 태그 사용 요청 반려
+ */
+export const rejectUsageRequestParams = zod.object({
+  usageRequestId: zod.number().describe("이미지 태그 사용 요청 ID"),
+});
+
+export const rejectUsageRequestBodyRejectReasonMax = 2000;
+
+export const rejectUsageRequestBody = zod
+  .object({
+    rejectReason: zod
+      .string()
+      .min(1)
+      .max(rejectUsageRequestBodyRejectReasonMax)
+      .describe("반려 사유 (필수, 최대 2000자)"),
+  })
+  .strict()
+  .describe("이미지 태그 사용 요청 반려");
+
+export const rejectUsageRequestResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 관리자가 이미지 태그 사용 요청을 승인합니다.
+ * @summary 이미지 태그 사용 요청 승인
+ */
+export const approveUsageRequestParams = zod.object({
+  usageRequestId: zod.number().describe("이미지 태그 사용 요청 ID"),
+});
+
+export const approveUsageRequestBodyApprovalReasonMax = 2000;
+
+export const approveUsageRequestBody = zod
+  .object({
+    approvalReason: zod
+      .string()
+      .max(approveUsageRequestBodyApprovalReasonMax)
+      .optional()
+      .describe("승인 사유 (선택, 최대 2000자)"),
+  })
+  .strict()
+  .describe("이미지 태그 사용 요청 승인");
+
+export const approveUsageRequestResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 
             레지스트리의 이미지 태그 사용 요청 목록을 조회합니다.
             - registryType으로 공용/개인 레지스트리를 구분합니다.

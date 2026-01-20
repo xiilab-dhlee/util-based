@@ -68,7 +68,7 @@ export const updateAdminNotificationSetResponse = zod
             관리자용 알림 목록을 페이지네이션으로 조회합니다.
             - ADMIN 역할: ADMIN 대상 알림만 조회
             - SUPER_ADMIN 역할: ADMIN, SUPER_ADMIN 대상 알림 모두 조회
-            알림 타입, 읽음 여부로 필터링하고, 생성일 기준으로 정렬할 수 있습니다.
+            알림 타입, 읽음 여부, 생성일 범위로 필터링하고, 생성일 기준으로 정렬할 수 있습니다.
         
  * @summary 관리자 알림 목록 조회
  */
@@ -111,6 +111,20 @@ export const getAdminNotificationsQueryParams = zod.object({
     .describe(
       "알림 유형 필터 (다중 선택 가능). null 또는 빈 리스트: 전체 조회",
     ),
+  startDate: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe(
+      "조회 시작 일시 (ISO 8601 UTC 형식). 이 시점 이후에 생성된 알림만 조회",
+    ),
+  endDate: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe(
+      "조회 종료 일시 (ISO 8601 UTC 형식). 이 시점 이전에 생성된 알림만 조회",
+    ),
   order: zod
     .enum(["ASC", "DESC"])
     .optional()
@@ -130,9 +144,9 @@ export const getAdminNotificationsResponse = zod
           zod
             .object({
               notificationId: zod.number().describe("알림 고유 ID"),
-              notificationTitle: zod
+              notificationSetName: zod
                 .string()
-                .describe("알림 제목 (NotificationSetName)"),
+                .describe("알림 설정 이름 (NotificationSetName)"),
               notificationContent: zod.string().describe("알림 본문 메시지"),
               notificationType: zod
                 .enum([
@@ -145,13 +159,10 @@ export const getAdminNotificationsResponse = zod
                   "MONITORING",
                 ])
                 .describe("알림 타입"),
-              notificationRole: zod
-                .enum(["SUPER_ADMIN", "ADMIN", "USER", "ALL"])
-                .describe("알림 대상 역할"),
-              createDateTime: zod
+              createdAt: zod
                 .string()
                 .datetime({})
-                .describe("알림 생성 일시 (ZonedDateTime)"),
+                .describe("알림 생성 일시 (ZonedDateTime, UTC)"),
               isRead: zod.boolean().describe("사용자 읽음 여부"),
             })
             .strict()
@@ -160,6 +171,56 @@ export const getAdminNotificationsResponse = zod
       })
       .strict()
       .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            특정 알림의 상세 정보를 조회합니다.
+            - ADMIN 역할: ADMIN 대상 알림만 조회
+            - SUPER_ADMIN 역할: ADMIN, SUPER_ADMIN 대상 알림 모두 조회
+            본인의 알림만 조회할 수 있습니다.
+        
+ * @summary 관리자 알림 상세 조회
+ */
+export const getAdminNotificationDetailParams = zod.object({
+  accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
+  notificationId: zod.number().describe("알림 ID"),
+});
+
+export const getAdminNotificationDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        notificationId: zod.number().describe("알림 고유 ID"),
+        notificationSetName: zod
+          .string()
+          .describe("알림 설정 이름 (NotificationSetName)"),
+        notificationContent: zod.string().describe("알림 본문 메시지"),
+        notificationType: zod
+          .enum([
+            "LICENSE",
+            "ACCOUNT",
+            "VULNERABILITY",
+            "NODE",
+            "WORKSPACE",
+            "WORKLOAD",
+            "MONITORING",
+          ])
+          .describe("알림 타입"),
+        createdAt: zod
+          .string()
+          .datetime({})
+          .describe("알림 생성 일시 (ZonedDateTime, UTC)"),
+        isRead: zod.boolean().describe("사용자 읽음 여부"),
+      })
+      .strict()
+      .optional()
+      .describe("관리자 알림 목록 조회 응답 (단일 알림 정보)"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

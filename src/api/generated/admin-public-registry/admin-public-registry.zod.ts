@@ -152,7 +152,7 @@ export const getPublicImageUsageByAccountResponse = zod
  * @summary 사용자별 공용 이미지 태그 목록 조회
  */
 export const getPublicImageTagsByAccountIdParams = zod.object({
-  accountId: zod.string(),
+  accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
 });
 
 export const getPublicImageTagsByAccountIdQueryPagePageNoMin = 0;

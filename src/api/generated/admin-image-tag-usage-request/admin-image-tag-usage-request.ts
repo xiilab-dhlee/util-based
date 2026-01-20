@@ -32,21 +32,192 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseImageTagUsageRequestResponse,
+  BaseResponseUnit,
   GetUsageRequestListParams,
+  ImageTagUsageRequestApprovalRequest,
+  ImageTagUsageRequestRejectRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+/**
+ * 관리자가 이미지 태그 사용 요청을 반려합니다.
+ * @summary 이미지 태그 사용 요청 반려
+ */
+export const rejectUsageRequest = (
+  usageRequestId: number,
+  imageTagUsageRequestRejectRequest: ImageTagUsageRequestRejectRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/admin/registries/images/image-tags/usage-requests/${usageRequestId}/rejection`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: imageTagUsageRequestRejectRequest,
+  });
+};
+
+export const getRejectUsageRequestMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof rejectUsageRequest>>,
+    TError,
+    { usageRequestId: number; data: ImageTagUsageRequestRejectRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof rejectUsageRequest>>,
+  TError,
+  { usageRequestId: number; data: ImageTagUsageRequestRejectRequest },
+  TContext
+> => {
+  const mutationKey = ["rejectUsageRequest"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof rejectUsageRequest>>,
+    { usageRequestId: number; data: ImageTagUsageRequestRejectRequest }
+  > = (props) => {
+    const { usageRequestId, data } = props ?? {};
+
+    return rejectUsageRequest(usageRequestId, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RejectUsageRequestMutationResult = NonNullable<
+  Awaited<ReturnType<typeof rejectUsageRequest>>
+>;
+export type RejectUsageRequestMutationBody = ImageTagUsageRequestRejectRequest;
+export type RejectUsageRequestMutationError = unknown;
+
+/**
+ * @summary 이미지 태그 사용 요청 반려
+ */
+export const useRejectUsageRequest = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof rejectUsageRequest>>,
+      TError,
+      { usageRequestId: number; data: ImageTagUsageRequestRejectRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof rejectUsageRequest>>,
+  TError,
+  { usageRequestId: number; data: ImageTagUsageRequestRejectRequest },
+  TContext
+> => {
+  const mutationOptions = getRejectUsageRequestMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 관리자가 이미지 태그 사용 요청을 승인합니다.
+ * @summary 이미지 태그 사용 요청 승인
+ */
+export const approveUsageRequest = (
+  usageRequestId: number,
+  imageTagUsageRequestApprovalRequest: ImageTagUsageRequestApprovalRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/admin/registries/images/image-tags/usage-requests/${usageRequestId}/approval`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: imageTagUsageRequestApprovalRequest,
+  });
+};
+
+export const getApproveUsageRequestMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof approveUsageRequest>>,
+    TError,
+    { usageRequestId: number; data: ImageTagUsageRequestApprovalRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof approveUsageRequest>>,
+  TError,
+  { usageRequestId: number; data: ImageTagUsageRequestApprovalRequest },
+  TContext
+> => {
+  const mutationKey = ["approveUsageRequest"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof approveUsageRequest>>,
+    { usageRequestId: number; data: ImageTagUsageRequestApprovalRequest }
+  > = (props) => {
+    const { usageRequestId, data } = props ?? {};
+
+    return approveUsageRequest(usageRequestId, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ApproveUsageRequestMutationResult = NonNullable<
+  Awaited<ReturnType<typeof approveUsageRequest>>
+>;
+export type ApproveUsageRequestMutationBody =
+  ImageTagUsageRequestApprovalRequest;
+export type ApproveUsageRequestMutationError = unknown;
+
+/**
+ * @summary 이미지 태그 사용 요청 승인
+ */
+export const useApproveUsageRequest = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof approveUsageRequest>>,
+      TError,
+      { usageRequestId: number; data: ImageTagUsageRequestApprovalRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof approveUsageRequest>>,
+  TError,
+  { usageRequestId: number; data: ImageTagUsageRequestApprovalRequest },
+  TContext
+> => {
+  const mutationOptions = getApproveUsageRequestMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 /**
  * 
             레지스트리의 이미지 태그 사용 요청 목록을 조회합니다.

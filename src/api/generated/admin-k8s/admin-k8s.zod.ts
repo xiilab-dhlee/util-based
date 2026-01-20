@@ -262,9 +262,7 @@ export const getStatefulSetsResponse = zod
               name: zod.string().describe("StatefulSet 이름"),
               namespace: zod.string().describe("네임스페이스"),
               pods: zod.string().describe("Pod 개수 (실행중/전체)"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes StatefulSet 응답"),
@@ -338,9 +336,7 @@ export const getServicesResponse = zod
               namespace: zod.string().describe("네임스페이스"),
               type: zod.string().describe("서비스 타입"),
               ports: zod.array(zod.string()).describe("포트 목록"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes Service 응답"),
@@ -412,9 +408,7 @@ export const getPodsResponse = zod
               namespace: zod.string().describe("네임스페이스"),
               node: zod.string().describe("노드 이름"),
               status: zod.string().describe("Pod 상태"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes Pod 응답"),
@@ -485,9 +479,7 @@ export const getPersistentVolumesResponse = zod
               name: zod.string().describe("PersistentVolume 이름"),
               storageClass: zod.string().optional().describe("스토리지 클래스"),
               status: zod.string().describe("PersistentVolume 상태"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes PersistentVolume 응답"),
@@ -559,9 +551,7 @@ export const getNodesResponse = zod
               roles: zod.array(zod.string()).describe("노드 역할 목록"),
               gpuName: zod.string().optional().describe("GPU 이름"),
               status: zod.string().describe("노드 상태"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes Node 응답"),
@@ -632,9 +622,7 @@ export const getNamespacesResponse = zod
               name: zod.string().describe("네임스페이스 이름"),
               age: zod.string().describe("생성 후 경과 시간"),
               status: zod.string().describe("네임스페이스 상태"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes Namespace 응답"),
@@ -703,9 +691,7 @@ export const getDeploymentsResponse = zod
               conditions: zod
                 .array(zod.string())
                 .describe("Deployment 조건 목록"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes Deployment 응답"),
@@ -771,9 +757,7 @@ export const getDaemonSetsResponse = zod
               name: zod.string().describe("DaemonSet 이름"),
               namespace: zod.string().describe("네임스페이스"),
               pods: zod.string().describe("Pod 개수 (실행중/전체)"),
-              createdAt: zod
-                .string()
-                .describe("생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+              createdAt: zod.string().describe("생성 시간 (UTC)"),
             })
             .strict()
             .describe("Kubernetes DaemonSet 응답"),
@@ -850,11 +834,7 @@ export const getAllNamespaceEventsResponse = zod
           zod
             .object({
               namespace: zod.string().describe("네임스페이스"),
-              lastObservedDateTime: zod
-                .string()
-                .describe(
-                  "마지막 관찰 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)",
-                ),
+              lastObservedAt: zod.string().describe("마지막 관찰 시간 (UTC)"),
               eventType: zod
                 .enum(["Normal", "Warning"])
                 .describe("이벤트 타입"),

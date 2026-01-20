@@ -74,7 +74,7 @@ export const getCredentialsResponse = zod
                 .describe("크리덴셜 타입"),
               credentialName: zod.string().describe("크리덴셜 이름"),
               description: zod.string().optional().describe("크리덴셜 설명"),
-              createDateTime: zod.string().datetime({}).describe("생성일시"),
+              createdAt: zod.string().datetime({}).describe("생성일시"),
               creatorName: zod.string().optional().describe("생성자 이름"),
               creatorId: zod.string().describe("생성자 ID"),
             })
@@ -163,7 +163,7 @@ export const getCredentialDetailResponse = zod
           .describe("크리덴셜 타입"),
         credentialAccountId: zod.string().describe("크리덴셜 계정 ID"),
         creatorName: zod.string().optional().describe("생성자 이름"),
-        createDateTime: zod.string().datetime({}).describe("생성일시"),
+        createdAt: zod.string().datetime({}).describe("생성일시"),
       })
       .strict()
       .optional()

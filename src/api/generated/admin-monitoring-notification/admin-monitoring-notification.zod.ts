@@ -67,9 +67,6 @@ export const updateMonitoringNotificationSetParams = zod.object({
 export const updateMonitoringNotificationSetBodyNotificationSetNameMin = 0;
 export const updateMonitoringNotificationSetBodyNotificationSetNameMax = 255;
 
-export const updateMonitoringNotificationSetBodyThresholdItemOperatorRegExp =
-  /^(>|<|>=|<=)$/;
-
 export const updateMonitoringNotificationSetBody = zod
   .object({
     notificationSetName: zod
@@ -103,12 +100,15 @@ export const updateMonitoringNotificationSetBody = zod
                 "메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE, DISK_USAGE)",
               ),
             operator: zod
-              .string()
-              .min(1)
-              .regex(
-                updateMonitoringNotificationSetBodyThresholdItemOperatorRegExp,
-              )
-              .describe("비교 연산자 (>, <, >=, <=)"),
+              .enum([
+                "GREATER_THAN",
+                "LESS_THAN",
+                "GREATER_THAN_OR_EQUAL",
+                "LESS_THAN_OR_EQUAL",
+              ])
+              .describe(
+                "비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL)",
+              ),
             value: zod.number().describe("임계값"),
             durationMinutes: zod.number().min(1).describe("지속 시간 (분)"),
           })
@@ -281,9 +281,6 @@ export const getAllMonitoringNotificationSetsResponse = zod
 export const createMonitoringNotificationSetBodyNotificationSetNameMin = 0;
 export const createMonitoringNotificationSetBodyNotificationSetNameMax = 255;
 
-export const createMonitoringNotificationSetBodyThresholdItemOperatorRegExp =
-  /^(>|<|>=|<=)$/;
-
 export const createMonitoringNotificationSetBody = zod
   .object({
     notificationSetName: zod
@@ -317,12 +314,15 @@ export const createMonitoringNotificationSetBody = zod
                 "메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE, DISK_USAGE)",
               ),
             operator: zod
-              .string()
-              .min(1)
-              .regex(
-                createMonitoringNotificationSetBodyThresholdItemOperatorRegExp,
-              )
-              .describe("비교 연산자 (>, <, >=, <=)"),
+              .enum([
+                "GREATER_THAN",
+                "LESS_THAN",
+                "GREATER_THAN_OR_EQUAL",
+                "LESS_THAN_OR_EQUAL",
+              ])
+              .describe(
+                "비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL)",
+              ),
             value: zod.number().describe("임계값"),
             durationMinutes: zod.number().min(1).describe("지속 시간 (분)"),
           })

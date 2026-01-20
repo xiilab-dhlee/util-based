@@ -128,7 +128,7 @@ export const getGetPrivateImageTagListResponseMock = (
       },
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       approvalStatus: faker.helpers.arrayElement([
         "AVAILABLE",
         "APPROVAL_REQUIRED",
@@ -137,7 +137,7 @@ export const getGetPrivateImageTagListResponseMock = (
         "APPROVAL_WAITING",
         "REQUEST_BLOCKED",
       ] as const),
-      latestVulnerabilityScanDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      latestVulnerabilityScanAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       requestReason: faker.string.alpha({ length: { min: 10, max: 20 } }),
       decisionReason: faker.string.alpha({ length: { min: 10, max: 20 } }),
       deciderId: faker.string.alpha({ length: { min: 10, max: 20 } }),

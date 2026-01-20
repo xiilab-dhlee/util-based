@@ -128,7 +128,7 @@ export const getPublicRegistryListResponse = zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("생성일시"),
+                .describe("생성일시 (UTC)"),
               imageType: zod
                 .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
                 .optional()
@@ -282,11 +282,11 @@ export const getPublicImageTagListResponse = zod
                 .optional()
                 .describe("생성자 ID (DB 메타데이터 없으면 null)"),
               creatorName: zod.string().optional().describe("생성자 이름"),
-              createDateTime: zod
+              createdAt: zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("생성일시"),
+                .describe("생성일시 (UTC)"),
               approvalStatus: zod
                 .enum([
                   "AVAILABLE",
@@ -298,11 +298,11 @@ export const getPublicImageTagListResponse = zod
                 ])
                 .optional()
                 .describe("승인 상태"),
-              latestVulnerabilityScanDateTime: zod
+              latestVulnerabilityScanAt: zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("최근 취약점 스캔 일시"),
+                .describe("최근 취약점 스캔 일시 (UTC)"),
               requestReason: zod.string().optional().describe("사용 요청 사유"),
               decisionReason: zod.string().optional().describe("결정 사유"),
               deciderId: zod.string().optional().describe("결정자 ID"),
@@ -635,7 +635,11 @@ export const getPublicImageDetailResponse = zod
         imageDisplayName: zod.string().describe("이미지 표시 이름"),
         creatorName: zod.string().optional().describe("생성자 이름"),
         creatorId: zod.string().describe("생성자 ID"),
-        createdAt: zod.string().datetime({}).optional().describe("생성일시"),
+        createdAt: zod
+          .string()
+          .datetime({})
+          .optional()
+          .describe("생성일시 (UTC)"),
         imageType: zod
           .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
           .describe("이미지 타입"),
