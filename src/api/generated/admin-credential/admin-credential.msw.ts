@@ -53,7 +53,7 @@ export const getGetAllCredentialsResponseMock = (
       ] as const),
       credentialName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       description: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     })),

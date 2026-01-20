@@ -157,7 +157,7 @@ export const getGetNotificationsResponseMock = (
         "WORKLOAD",
         "MONITORING",
       ] as const),
-      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       isRead: faker.datatype.boolean(),
     })),
   },

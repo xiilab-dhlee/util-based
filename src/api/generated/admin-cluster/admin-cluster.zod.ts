@@ -258,7 +258,7 @@ export const getClusterNodesResponse = zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("노드 생성 시각"),
+                .describe("노드 생성 시각 (UTC)"),
               isScheduling: zod
                 .boolean()
                 .describe("스케줄링 가능 여부 (cordon 상태)"),
@@ -418,14 +418,11 @@ export const getNodeSystemMetricsQueryParams = zod.object({
       "NODE_MEMORY_FREE",
     ])
     .describe("시스템 메트릭 타입"),
-  startDateTime: zod
+  startedAt: zod
     .string()
     .datetime({})
     .describe("시작 시간 (ISO 8601 UTC 형식)"),
-  endDateTime: zod
-    .string()
-    .datetime({})
-    .describe("종료 시간 (ISO 8601 UTC 형식)"),
+  endedAt: zod.string().datetime({}).describe("종료 시간 (ISO 8601 UTC 형식)"),
   step: zod
     .string()
     .regex(getNodeSystemMetricsQueryStepRegExp)
@@ -494,14 +491,11 @@ export const getNodeGpuMetricsQueryParams = zod.object({
       "GPU_POWER_USAGE",
     ])
     .describe("GPU 메트릭 타입"),
-  startDateTime: zod
+  startedAt: zod
     .string()
     .datetime({})
     .describe("시작 시간 (ISO 8601 UTC 형식)"),
-  endDateTime: zod
-    .string()
-    .datetime({})
-    .describe("종료 시간 (ISO 8601 UTC 형식)"),
+  endedAt: zod.string().datetime({}).describe("종료 시간 (ISO 8601 UTC 형식)"),
   step: zod
     .string()
     .regex(getNodeGpuMetricsQueryStepRegExp)
@@ -582,7 +576,7 @@ export const getNodeDetailResponse = zod
         nodeIp: zod.string().describe("노드 IP 주소"),
         hostName: zod.string().describe("호스트 이름"),
         role: zod.string().describe("노드 역할"),
-        createdAt: zod.string().optional().describe("노드 생성 시각"),
+        createdAt: zod.string().optional().describe("노드 생성 시각 (UTC)"),
         nodeCondition: zod
           .array(
             zod
@@ -590,11 +584,11 @@ export const getNodeDetailResponse = zod
                 lastHeartbeatTime: zod
                   .string()
                   .optional()
-                  .describe("마지막 하트비트 시각"),
+                  .describe("마지막 하트비트 시각 (UTC)"),
                 lastTransitionTime: zod
                   .string()
                   .optional()
-                  .describe("마지막 상태 변경 시각"),
+                  .describe("마지막 상태 변경 시각 (UTC)"),
                 message: zod.string().optional().describe("상태 메시지"),
                 reason: zod.string().optional().describe("상태 이유"),
                 status: zod.string().describe("상태"),

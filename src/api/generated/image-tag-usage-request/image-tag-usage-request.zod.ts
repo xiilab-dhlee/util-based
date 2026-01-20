@@ -39,12 +39,17 @@ import * as zod from "zod";
         
  * @summary 이미지 태그 사용 승인 신청
  */
+export const createUsageRequestBodyRequestReasonMax = 2000;
+
 export const createUsageRequestBody = zod
   .object({
     imageTagId: zod
       .array(zod.number())
       .describe("사용 승인을 신청할 이미지 태그 ID 목록"),
-    requestReason: zod.string().describe("사용 승인 요청 사유 (최대 2000자)"),
+    requestReason: zod
+      .string()
+      .max(createUsageRequestBodyRequestReasonMax)
+      .describe("사용 승인 요청 사유 (최대 2000자)"),
     workspaceId: zod
       .number()
       .optional()
@@ -52,3 +57,15 @@ export const createUsageRequestBody = zod
   })
   .strict()
   .describe("이미지 태그 사용 승인 신청 요청");
+
+/**
+ * 
+            본인이 신청한 이미지 태그 사용 요청을 취소합니다.
+            - 승인 대기 중인 요청만 취소할 수 있습니다.
+            - 이미 승인/반려된 요청은 취소할 수 없습니다.
+        
+ * @summary 이미지 태그 사용 요청 취소
+ */
+export const cancelUsageRequestParams = zod.object({
+  usageRequestId: zod.number().describe("이미지 태그 사용 요청 ID"),
+});

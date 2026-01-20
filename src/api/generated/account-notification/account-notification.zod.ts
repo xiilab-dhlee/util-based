@@ -270,10 +270,10 @@ export const getNotificationsResponse = zod
                   "MONITORING",
                 ])
                 .describe("알림 타입"),
-              createDateTime: zod
+              createdAt: zod
                 .string()
                 .datetime({})
-                .describe("알림 생성 일시 (ZonedDateTime)"),
+                .describe("알림 생성 일시 (UTC)"),
               isRead: zod.boolean().describe("사용자 읽음 여부"),
             })
             .strict()

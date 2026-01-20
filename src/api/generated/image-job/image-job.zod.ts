@@ -111,7 +111,7 @@ export const getImageJobsResponse = zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("생성일시"),
+                .describe("생성일시 (UTC)"),
             })
             .strict()
             .describe("Job 작업 응답"),

@@ -273,17 +273,27 @@ export const ThresholdRequestMetric = {
 } as const;
 
 /**
+ * 비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL)
+ */
+export type ThresholdRequestOperator =
+  (typeof ThresholdRequestOperator)[keyof typeof ThresholdRequestOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThresholdRequestOperator = {
+  GREATER_THAN: "GREATER_THAN",
+  LESS_THAN: "LESS_THAN",
+  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
+} as const;
+
+/**
  * 임계값 설정
  */
 export interface ThresholdRequest {
   /** 메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE, DISK_USAGE) */
   metric: ThresholdRequestMetric;
-  /**
-   * 비교 연산자 (>, <, >=, <=)
-   * @minLength 1
-   * @pattern ^(>|<|>=|<=)$
-   */
-  operator: string;
+  /** 비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL) */
+  operator: ThresholdRequestOperator;
   /** 임계값 */
   value: number;
   /**
@@ -727,6 +737,29 @@ GPU 타입별 구조:
   createdBy: string;
   /** 생성 시간 */
   createdAt?: string;
+}
+
+/**
+ * 이미지 태그 사용 요청 반려
+ */
+export interface ImageTagUsageRequestRejectRequest {
+  /**
+   * 반려 사유 (필수, 최대 2000자)
+   * @minLength 1
+   * @maxLength 2000
+   */
+  rejectReason: string;
+}
+
+/**
+ * 이미지 태그 사용 요청 승인
+ */
+export interface ImageTagUsageRequestApprovalRequest {
+  /**
+   * 승인 사유 (선택, 최대 2000자)
+   * @maxLength 2000
+   */
+  approvalReason?: string;
 }
 
 /**
@@ -1808,7 +1841,10 @@ export interface DeleteImagesResponse {
 export interface CreateImageTagUsageRequestRequest {
   /** 사용 승인을 신청할 이미지 태그 ID 목록 */
   imageTagId: number[];
-  /** 사용 승인 요청 사유 (최대 2000자) */
+  /**
+   * 사용 승인 요청 사유 (최대 2000자)
+   * @maxLength 2000
+   */
   requestReason: string;
   /** 이미지를 사용할 워크스페이스 ID (선택) */
   workspaceId?: number;
@@ -2568,6 +2604,49 @@ export interface PageResponseWorkspaceResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: WorkspaceResponse[];
+}
+
+export type BaseResponseWorkloadStatusResponseStatus =
+  (typeof BaseResponseWorkloadStatusResponseStatus)[keyof typeof BaseResponseWorkloadStatusResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkloadStatusResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkloadStatusResponse {
+  status: BaseResponseWorkloadStatusResponseStatus;
+  errorCode?: string;
+  data?: WorkloadStatusResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 워크로드 상태 (PENDING, CREATING, RUNNING, TERMINATED, ERROR)
+ */
+export type WorkloadStatusResponseWorkloadStatus =
+  (typeof WorkloadStatusResponseWorkloadStatus)[keyof typeof WorkloadStatusResponseWorkloadStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadStatusResponseWorkloadStatus = {
+  RUNNING: "RUNNING",
+  ERROR: "ERROR",
+  PENDING: "PENDING",
+  CREATING: "CREATING",
+  TERMINATED: "TERMINATED",
+} as const;
+
+/**
+ * 워크로드 상태 응답
+ */
+export interface WorkloadStatusResponse {
+  /** 워크로드 리소스 이름 */
+  workloadResourceName: string;
+  /** 워크로드 상태 (PENDING, CREATING, RUNNING, TERMINATED, ERROR) */
+  workloadStatus: WorkloadStatusResponseWorkloadStatus;
 }
 
 export type BaseResponseListWorkloadMetricsTimeseriesResponseStatus =
@@ -3496,7 +3575,7 @@ export interface RegistryListResponse {
   creatorName?: string;
   /** 생성자 ID (DB 메타데이터 없으면 null) */
   creatorId?: string;
-  /** 생성일시 */
+  /** 생성일시 (UTC) */
   createdAt?: string;
   /** 이미지 타입 (DB 메타데이터 없으면 null) */
   imageType?: RegistryListResponseImageType;
@@ -3558,12 +3637,12 @@ export interface ImageTagListResponse {
   creatorId?: string;
   /** 생성자 이름 */
   creatorName?: string;
-  /** 생성일시 */
-  createDateTime?: string;
+  /** 생성일시 (UTC) */
+  createdAt?: string;
   /** 승인 상태 */
   approvalStatus?: ImageTagListResponseApprovalStatus;
-  /** 최근 취약점 스캔 일시 */
-  latestVulnerabilityScanDateTime?: string;
+  /** 최근 취약점 스캔 일시 (UTC) */
+  latestVulnerabilityScanAt?: string;
   /** 사용 요청 사유 */
   requestReason?: string;
   /** 결정 사유 */
@@ -3797,7 +3876,7 @@ export interface RegistryDetailResponse {
   creatorName?: string;
   /** 생성자 ID */
   creatorId: string;
-  /** 생성일시 */
+  /** 생성일시 (UTC) */
   createdAt?: string;
   /** 이미지 타입 */
   imageType: RegistryDetailResponseImageType;
@@ -3839,7 +3918,7 @@ export interface ImageJobResponse {
   creatorName?: string;
   /** 작업 상태 */
   status: string;
-  /** 생성일시 */
+  /** 생성일시 (UTC) */
   createdAt?: string;
 }
 
@@ -4353,7 +4432,7 @@ export interface StatefulSetResponse {
   namespace: string;
   /** Pod 개수 (실행중/전체) */
   pods: string;
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4394,7 +4473,7 @@ export interface ServiceResponse {
   type: string;
   /** 포트 목록 */
   ports: string[];
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4435,7 +4514,7 @@ export interface PodResponse {
   node: string;
   /** Pod 상태 */
   status: string;
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4474,7 +4553,7 @@ export interface PersistentVolumeResponse {
   storageClass?: string;
   /** PersistentVolume 상태 */
   status: string;
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4508,7 +4587,7 @@ export interface NodeResponse {
   gpuName?: string;
   /** 노드 상태 */
   status: string;
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4547,7 +4626,7 @@ export interface NamespaceResponse {
   age: string;
   /** 네임스페이스 상태 */
   status: string;
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4588,7 +4667,7 @@ export interface DeploymentResponse {
   pods: string;
   /** Deployment 조건 목록 */
   conditions: string[];
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4627,7 +4706,7 @@ export interface DaemonSetResponse {
   namespace: string;
   /** Pod 개수 (실행중/전체) */
   pods: string;
-  /** 생성 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
+  /** 생성 시간 (UTC) */
   createdAt: string;
 }
 
@@ -4674,8 +4753,8 @@ export const K8sEventResponseEventType = {
 export interface K8sEventResponse {
   /** 네임스페이스 */
   namespace: string;
-  /** 마지막 관찰 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) */
-  lastObservedDateTime: string;
+  /** 마지막 관찰 시간 (UTC) */
+  lastObservedAt: string;
   /** 이벤트 타입 */
   eventType: K8sEventResponseEventType;
   /** 이벤트 발생 이유 */
@@ -4978,7 +5057,7 @@ export interface ClusterNodeListResponse {
   memoryUtilizationPercent?: number;
   /** 디스크 활용률 (%) */
   diskUtilizationPercent?: number;
-  /** 노드 생성 시각 */
+  /** 노드 생성 시각 (UTC) */
   createdAt?: string;
   /** 스케줄링 가능 여부 (cordon 상태) */
   isScheduling: boolean;
@@ -5253,7 +5332,7 @@ export interface ClusterNodeDetailResponse {
   hostName: string;
   /** 노드 역할 */
   role: string;
-  /** 노드 생성 시각 */
+  /** 노드 생성 시각 (UTC) */
   createdAt?: string;
   /** 노드 상태 조건 목록 */
   nodeCondition: NodeConditionResponse[];
@@ -5287,9 +5366,9 @@ export interface GpuInfoResponse {
  * 노드 상태 조건
  */
 export interface NodeConditionResponse {
-  /** 마지막 하트비트 시각 */
+  /** 마지막 하트비트 시각 (UTC) */
   lastHeartbeatTime?: string;
-  /** 마지막 상태 변경 시각 */
+  /** 마지막 상태 변경 시각 (UTC) */
   lastTransitionTime?: string;
   /** 상태 메시지 */
   message?: string;
@@ -6562,35 +6641,19 @@ export const AdminNotificationItemResponseNotificationType = {
 } as const;
 
 /**
- * 알림 대상 역할
- */
-export type AdminNotificationItemResponseNotificationRole =
-  (typeof AdminNotificationItemResponseNotificationRole)[keyof typeof AdminNotificationItemResponseNotificationRole];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AdminNotificationItemResponseNotificationRole = {
-  SUPER_ADMIN: "SUPER_ADMIN",
-  ADMIN: "ADMIN",
-  USER: "USER",
-  ALL: "ALL",
-} as const;
-
-/**
  * 관리자 알림 목록 조회 응답 (단일 알림 정보)
  */
 export interface AdminNotificationItemResponse {
   /** 알림 고유 ID */
   notificationId: number;
-  /** 알림 제목 (NotificationSetName) */
-  notificationTitle: string;
+  /** 알림 설정 이름 (NotificationSetName) */
+  notificationSetName: string;
   /** 알림 본문 메시지 */
   notificationContent: string;
   /** 알림 타입 */
   notificationType: AdminNotificationItemResponseNotificationType;
-  /** 알림 대상 역할 */
-  notificationRole: AdminNotificationItemResponseNotificationRole;
-  /** 알림 생성 일시 (ZonedDateTime) */
-  createDateTime: string;
+  /** 알림 생성 일시 (ZonedDateTime, UTC) */
+  createdAt: string;
   /** 사용자 읽음 여부 */
   isRead: boolean;
 }
@@ -6618,6 +6681,24 @@ export interface PageResponseAdminNotificationItemResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: AdminNotificationItemResponse[];
+}
+
+export type BaseResponseAdminNotificationItemResponseStatus =
+  (typeof BaseResponseAdminNotificationItemResponseStatus)[keyof typeof BaseResponseAdminNotificationItemResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseAdminNotificationItemResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseAdminNotificationItemResponse {
+  status: BaseResponseAdminNotificationItemResponseStatus;
+  errorCode?: string;
+  data?: AdminNotificationItemResponse;
+  message?: string;
+  timestamp: number;
 }
 
 /**
@@ -6753,7 +6834,7 @@ export interface AdminCredentialListItemResponse {
   /** 크리덴셜 설명 */
   description?: string;
   /** 생성일시 */
-  createDateTime: string;
+  createdAt: string;
   /** 생성자 이름 (삭제된 계정이면 빈 문자열) */
   creatorName: string;
   /** 생성자 ID */
@@ -6980,8 +7061,8 @@ export interface NotificationItemResponse {
   notificationContent: string;
   /** 알림 타입 */
   notificationType: NotificationItemResponseNotificationType;
-  /** 알림 생성 일시 (ZonedDateTime) */
-  createDateTime: string;
+  /** 알림 생성 일시 (UTC) */
+  createdAt: string;
   /** 사용자 읽음 여부 */
   isRead: boolean;
 }
@@ -7036,7 +7117,7 @@ export interface CredentialListItemResponse {
   /** 크리덴셜 설명 */
   description?: string;
   /** 생성일시 */
-  createDateTime: string;
+  createdAt: string;
   /** 생성자 이름 */
   creatorName?: string;
   /** 생성자 ID */
@@ -7097,7 +7178,7 @@ export interface CredentialDetailResponse {
   /** 생성자 이름 */
   creatorName?: string;
   /** 생성일시 */
-  createDateTime: string;
+  createdAt: string;
 }
 
 export type GetAllWorkspacesParams = {
@@ -8577,11 +8658,11 @@ export type GetNodeSystemMetricsParams = {
   /**
    * 시작 시간 (ISO 8601 UTC 형식)
    */
-  startDateTime: string;
+  startedAt: string;
   /**
    * 종료 시간 (ISO 8601 UTC 형식)
    */
-  endDateTime: string;
+  endedAt: string;
   /**
    * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
    * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
@@ -8617,11 +8698,11 @@ export type GetNodeGpuMetricsParams = {
   /**
    * 시작 시간 (ISO 8601 UTC 형식)
    */
-  startDateTime: string;
+  startedAt: string;
   /**
    * 종료 시간 (ISO 8601 UTC 형식)
    */
-  endDateTime: string;
+  endedAt: string;
   /**
    * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
    * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
@@ -9115,6 +9196,14 @@ export type GetAdminNotificationsParams = {
    * 알림 유형 필터 (다중 선택 가능). null 또는 빈 리스트: 전체 조회
    */
   notificationType?: GetAdminNotificationsNotificationTypeItem[];
+  /**
+   * 조회 시작 일시 (ISO 8601 UTC 형식). 이 시점 이후에 생성된 알림만 조회
+   */
+  startDate?: string;
+  /**
+   * 조회 종료 일시 (ISO 8601 UTC 형식). 이 시점 이전에 생성된 알림만 조회
+   */
+  endDate?: string;
   /**
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */

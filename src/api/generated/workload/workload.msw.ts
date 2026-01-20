@@ -36,6 +36,7 @@ import type {
   BaseResponseDistributedPodResponse,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
+  BaseResponseWorkloadStatusResponse,
   SseEmitter,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -44,6 +45,26 @@ export const getCreateWorkloadResponseMock = (
 ): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetWorkloadStatusResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadStatusResponse> = {},
+): BaseResponseWorkloadStatusResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workloadStatus: faker.helpers.arrayElement([
+      "RUNNING",
+      "ERROR",
+      "PENDING",
+      "CREATING",
+      "TERMINATED",
+    ] as const),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -189,6 +210,36 @@ export const getCreateWorkloadMockHandler = (
             : getCreateWorkloadResponseMock(),
         ),
         { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetWorkloadStatusMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadStatusResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadStatusResponse>
+        | BaseResponseWorkloadStatusResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/status",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkloadStatusResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
@@ -342,6 +393,7 @@ export const getGetActiveWorkloadsMockHandler = (
 };
 export const getWorkloadMock = () => [
   getCreateWorkloadMockHandler(),
+  getGetWorkloadStatusMockHandler(),
   getGetTerminatedWorkloadLogMockHandler(),
   getStreamWorkloadLogsMockHandler(),
   getGetDistributedPodsMockHandler(),

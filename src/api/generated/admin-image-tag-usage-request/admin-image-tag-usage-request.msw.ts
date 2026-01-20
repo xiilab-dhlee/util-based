@@ -31,7 +31,30 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseImageTagUsageRequestResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type {
+  BaseResponsePageResponseImageTagUsageRequestResponse,
+  BaseResponseUnit,
+} from "../astragoBackendAPIDocumentation.schemas";
+
+export const getRejectUsageRequestResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getApproveUsageRequestResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getGetUsageRequestListResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseImageTagUsageRequestResponse> = {},
@@ -82,6 +105,62 @@ export const getGetUsageRequestListResponseMock = (
   ...overrideResponse,
 });
 
+export const getRejectUsageRequestMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/admin/registries/images/image-tags/usage-requests/:usageRequestId/rejection",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getRejectUsageRequestResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getApproveUsageRequestMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/admin/registries/images/image-tags/usage-requests/:usageRequestId/approval",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getApproveUsageRequestResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetUsageRequestListMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseImageTagUsageRequestResponse
@@ -112,5 +191,7 @@ export const getGetUsageRequestListMockHandler = (
   );
 };
 export const getAdminImageTagUsageRequestMock = () => [
+  getRejectUsageRequestMockHandler(),
+  getApproveUsageRequestMockHandler(),
   getGetUsageRequestListMockHandler(),
 ];

@@ -289,6 +289,49 @@ export const createWorkloadBody = zod
 
 /**
  * 
+            워크로드의 실시간 상태를 조회합니다.
+
+            **조회 우선순위:**
+            1. K8s에서 실시간 상태 조회 (실행 중인 워크로드)
+            2. K8s에 없으면 DB에서 상태 조회 (종료/삭제된 워크로드)
+
+            **상태 종류:**
+            - PENDING: 대기 중
+            - CREATING: 생성 중
+            - RUNNING: 실행 중
+            - TERMINATED: 정상 종료
+            - ERROR: 오류
+        
+ * @summary 워크로드 상태 조회
+ */
+export const getWorkloadStatusParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const getWorkloadStatusResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+        workloadStatus: zod
+          .enum(["RUNNING", "ERROR", "PENDING", "CREATING", "TERMINATED"])
+          .describe(
+            "워크로드 상태 (PENDING, CREATING, RUNNING, TERMINATED, ERROR)",
+          ),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 상태 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             종료된 워크로드의 저장된 로그 파일을 다운로드합니다.
 
             **로그 저장 대상:**

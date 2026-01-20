@@ -131,3 +131,84 @@ export const useCreateUsageRequest = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 
+            본인이 신청한 이미지 태그 사용 요청을 취소합니다.
+            - 승인 대기 중인 요청만 취소할 수 있습니다.
+            - 이미 승인/반려된 요청은 취소할 수 없습니다.
+        
+ * @summary 이미지 태그 사용 요청 취소
+ */
+export const cancelUsageRequest = (usageRequestId: number) => {
+  return customInstance<void>({
+    url: `/api/v1/registries/images/image-tags/usage-requests/${usageRequestId}`,
+    method: "DELETE",
+  });
+};
+
+export const getCancelUsageRequestMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof cancelUsageRequest>>,
+    TError,
+    { usageRequestId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof cancelUsageRequest>>,
+  TError,
+  { usageRequestId: number },
+  TContext
+> => {
+  const mutationKey = ["cancelUsageRequest"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof cancelUsageRequest>>,
+    { usageRequestId: number }
+  > = (props) => {
+    const { usageRequestId } = props ?? {};
+
+    return cancelUsageRequest(usageRequestId);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CancelUsageRequestMutationResult = NonNullable<
+  Awaited<ReturnType<typeof cancelUsageRequest>>
+>;
+
+export type CancelUsageRequestMutationError = unknown;
+
+/**
+ * @summary 이미지 태그 사용 요청 취소
+ */
+export const useCancelUsageRequest = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof cancelUsageRequest>>,
+      TError,
+      { usageRequestId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof cancelUsageRequest>>,
+  TError,
+  { usageRequestId: number },
+  TContext
+> => {
+  const mutationOptions = getCancelUsageRequestMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
