@@ -53,7 +53,7 @@ import * as zod from "zod";
             - data: JSON 형식의 증분 시스템 메트릭 배열 (기존 API와 동일 형식)
 
             **응답 데이터 구성:**
-            - dateTime: 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)
+            - dateTime: 측정 시간 (UTC, ISO 8601 형식)
             - value: 메트릭 값
 
             **메트릭 타입:**
@@ -102,7 +102,7 @@ export const streamNodeSystemMetricsQueryParams = zod.object({
     .string()
     .datetime({})
     .describe(
-      "FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송",
+      "FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송",
     ),
 });
 
@@ -133,7 +133,7 @@ export const streamNodeSystemMetricsQueryParams = zod.object({
             - modelName: GPU 모델명 (예: NVIDIA-A100-SXM4-40GB)
             - gpuIndex: GPU 인덱스 (0, 1, 2, ...) - 숫자 순서로 정렬
             - values: 시계열 메트릭 값 리스트 (증분만 포함)
-              - dateTime: 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)
+              - dateTime: 측정 시간 (UTC, ISO 8601 형식)
               - value: 메트릭 값
 
             **메트릭 타입:**
@@ -166,6 +166,6 @@ export const streamNodeGpuMetricsQueryParams = zod.object({
     .string()
     .datetime({})
     .describe(
-      "FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 형식). SSE는 이 시간 이후의 증분 데이터만 전송",
+      "FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송",
     ),
 });

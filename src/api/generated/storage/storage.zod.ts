@@ -30,29 +30,28 @@
 import * as zod from "zod";
 
 /**
- * 시스템 전체 크리덴셜 목록을 조회합니다. 페이징과 검색을 지원합니다. ADMIN/SUPER_ADMIN만 접근 가능합니다.
- * @summary 전체 크리덴셜 목록 조회 (Admin)
+ * 등록된 스토리지 목록을 페이징하여 조회합니다.
+ * @summary 스토리지 목록 조회
  */
-export const getAllCredentialsQueryPageNoMin = 0;
+export const getStorages1QueryPageNoMin = 0;
 
-export const getAllCredentialsQueryPageSizeMax = 100;
+export const getStorages1QueryPageSizeMax = 100;
 
-export const getAllCredentialsQueryParams = zod.object({
+export const getStorages1QueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getAllCredentialsQueryPageNoMin)
+    .min(getStorages1QueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getAllCredentialsQueryPageSizeMax)
+    .max(getStorages1QueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
 });
 
-export const getAllCredentialsResponse = zod
+export const getStorages1Response = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -64,20 +63,17 @@ export const getAllCredentialsResponse = zod
         content: zod.array(
           zod
             .object({
-              credentialId: zod.number().describe("크리덴셜 ID"),
-              credentialType: zod
-                .enum(["IMAGE_REGISTRY", "GIT_REPOSITORY"])
-                .describe("크리덴셜 타입"),
-              credentialName: zod.string().describe("크리덴셜 이름"),
-              description: zod.string().optional().describe("크리덴셜 설명"),
-              createDateTime: zod.string().datetime({}).describe("생성일시"),
-              creatorName: zod
-                .string()
-                .describe("생성자 이름 (삭제된 계정이면 빈 문자열)"),
+              storageId: zod.number().describe("스토리지 고유 ID"),
+              storageName: zod.string().describe("스토리지 이름"),
+              storageChannel: zod.enum(["NFS"]).describe("스토리지 채널"),
+              storageIp: zod.string().describe("스토리지 서버 IP 주소"),
+              storageSavePath: zod.string().describe("스토리지 저장 경로"),
+              createdAt: zod.string().datetime({}).describe("생성일시"),
               creatorId: zod.string().describe("생성자 ID"),
+              creatorName: zod.string().describe("생성자 이름"),
             })
             .strict()
-            .describe("관리자용 크리덴셜 목록 조회 응답 항목"),
+            .describe("스토리지 목록 응답"),
         ),
       })
       .strict()

@@ -50,8 +50,188 @@ import type {
   BaseResponseUnit,
   CreateSourceCodeRequest,
   GetSourceCodeListParams,
+  UpdateSourceCodeRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+/**
+ * 
+        소스코드 정보를 수정합니다.
+
+        **수정 가능 필드:**
+        - sourceCodeName: 소스코드 이름
+        - mountPath: 마운트 경로
+        - executionCmd: 실행 커맨드
+        - parameter: 사용자 정의 파라미터
+        - isPublic: 공개 여부
+        - credentialId: 크레덴셜 ID
+
+        **수정 불가 필드:**
+        - gitUrl: Git 저장소 URL
+        - sourceCodeType: 소스코드 타입
+
+        **권한:** SUPER_ADMIN 또는 소스코드 생성자만 수정 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 소스코드 수정
+ */
+export const updateSourceCode = (
+  sourceCodeId: number,
+  updateSourceCodeRequest: UpdateSourceCodeRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/source-codes/${sourceCodeId}`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: updateSourceCodeRequest,
+  });
+};
+
+export const getUpdateSourceCodeMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSourceCode>>,
+    TError,
+    { sourceCodeId: number; data: UpdateSourceCodeRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateSourceCode>>,
+  TError,
+  { sourceCodeId: number; data: UpdateSourceCodeRequest },
+  TContext
+> => {
+  const mutationKey = ["updateSourceCode"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateSourceCode>>,
+    { sourceCodeId: number; data: UpdateSourceCodeRequest }
+  > = (props) => {
+    const { sourceCodeId, data } = props ?? {};
+
+    return updateSourceCode(sourceCodeId, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateSourceCodeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateSourceCode>>
+>;
+export type UpdateSourceCodeMutationBody = UpdateSourceCodeRequest;
+export type UpdateSourceCodeMutationError = unknown;
+
+/**
+ * @summary 소스코드 수정
+ */
+export const useUpdateSourceCode = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateSourceCode>>,
+      TError,
+      { sourceCodeId: number; data: UpdateSourceCodeRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateSourceCode>>,
+  TError,
+  { sourceCodeId: number; data: UpdateSourceCodeRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateSourceCodeMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+        소스코드를 삭제합니다 (soft delete).
+
+        **권한:** SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 소스코드 삭제
+ */
+export const deleteSourceCode = (sourceCodeId: number) => {
+  return customInstance<void>({
+    url: `/api/v1/source-codes/${sourceCodeId}`,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteSourceCodeMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteSourceCode>>,
+    TError,
+    { sourceCodeId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteSourceCode>>,
+  TError,
+  { sourceCodeId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteSourceCode"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteSourceCode>>,
+    { sourceCodeId: number }
+  > = (props) => {
+    const { sourceCodeId } = props ?? {};
+
+    return deleteSourceCode(sourceCodeId);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteSourceCodeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteSourceCode>>
+>;
+
+export type DeleteSourceCodeMutationError = unknown;
+
+/**
+ * @summary 소스코드 삭제
+ */
+export const useDeleteSourceCode = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteSourceCode>>,
+      TError,
+      { sourceCodeId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteSourceCode>>,
+  TError,
+  { sourceCodeId: number },
+  TContext
+> => {
+  const mutationOptions = getDeleteSourceCodeMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 /**
  * 
         소스코드 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.

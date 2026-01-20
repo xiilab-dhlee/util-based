@@ -31,6 +31,89 @@ import * as zod from "zod";
 
 /**
  * 
+        소스코드 정보를 수정합니다.
+
+        **수정 가능 필드:**
+        - sourceCodeName: 소스코드 이름
+        - mountPath: 마운트 경로
+        - executionCmd: 실행 커맨드
+        - parameter: 사용자 정의 파라미터
+        - isPublic: 공개 여부
+        - credentialId: 크레덴셜 ID
+
+        **수정 불가 필드:**
+        - gitUrl: Git 저장소 URL
+        - sourceCodeType: 소스코드 타입
+
+        **권한:** SUPER_ADMIN 또는 소스코드 생성자만 수정 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 소스코드 수정
+ */
+export const updateSourceCodeParams = zod.object({
+  sourceCodeId: zod.number().describe("수정할 소스코드 ID"),
+});
+
+export const updateSourceCodeBodySourceCodeNameMin = 0;
+export const updateSourceCodeBodySourceCodeNameMax = 50;
+
+export const updateSourceCodeBodyMountPathMin = 0;
+export const updateSourceCodeBodyMountPathMax = 1000;
+
+export const updateSourceCodeBodyMountPathRegExp = /^\/.*/;
+export const updateSourceCodeBodyExecutionCmdMin = 0;
+export const updateSourceCodeBodyExecutionCmdMax = 1000;
+
+export const updateSourceCodeBody = zod
+  .object({
+    sourceCodeName: zod
+      .string()
+      .min(updateSourceCodeBodySourceCodeNameMin)
+      .max(updateSourceCodeBodySourceCodeNameMax)
+      .describe("소스코드 이름"),
+    mountPath: zod
+      .string()
+      .min(updateSourceCodeBodyMountPathMin)
+      .max(updateSourceCodeBodyMountPathMax)
+      .regex(updateSourceCodeBodyMountPathRegExp)
+      .describe("마운트 경로 (절대경로)"),
+    executionCmd: zod
+      .string()
+      .min(updateSourceCodeBodyExecutionCmdMin)
+      .max(updateSourceCodeBodyExecutionCmdMax)
+      .describe("실행 커맨드"),
+    parameter: zod
+      .record(zod.string(), zod.string())
+      .optional()
+      .describe("사용자 정의 파라미터"),
+    isPublic: zod.boolean().describe("공개 여부"),
+    credentialId: zod.number().optional().describe("크레덴셜 ID"),
+  })
+  .strict()
+  .describe("소스코드 수정 요청");
+
+export const updateSourceCodeResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        소스코드를 삭제합니다 (soft delete).
+
+        **권한:** SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
+        
+ * @summary 소스코드 삭제
+ */
+export const deleteSourceCodeParams = zod.object({
+  sourceCodeId: zod.number().describe("삭제할 소스코드 ID"),
+});
+
+/**
+ * 
         소스코드 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
 
         **권한:**
@@ -87,7 +170,7 @@ export const getSourceCodeListResponse = zod
               sourceCodeType: zod
                 .enum(["GITHUB", "GITLAB", "BITBUCKET"])
                 .describe("소스코드 타입"),
-              executionCommand: zod.string().describe("실행 커맨드"),
+              executionCmd: zod.string().describe("실행 커맨드"),
               createdAt: zod.string().datetime({}).describe("생성 일시"),
               isPublic: zod.boolean().describe("공개 여부"),
             })
@@ -125,8 +208,8 @@ export const registerSourceCodeBodyMountPathMin = 0;
 export const registerSourceCodeBodyMountPathMax = 1000;
 
 export const registerSourceCodeBodyMountPathRegExp = /^\/.*/;
-export const registerSourceCodeBodyExecutionCommandMin = 0;
-export const registerSourceCodeBodyExecutionCommandMax = 1000;
+export const registerSourceCodeBodyExecutionCmdMin = 0;
+export const registerSourceCodeBodyExecutionCmdMax = 1000;
 
 export const registerSourceCodeBody = zod
   .object({
@@ -149,10 +232,10 @@ export const registerSourceCodeBody = zod
     sourceCodeType: zod
       .enum(["GITHUB", "GITLAB", "BITBUCKET"])
       .describe("소스코드 타입"),
-    executionCommand: zod
+    executionCmd: zod
       .string()
-      .min(registerSourceCodeBodyExecutionCommandMin)
-      .max(registerSourceCodeBodyExecutionCommandMax)
+      .min(registerSourceCodeBodyExecutionCmdMin)
+      .max(registerSourceCodeBodyExecutionCmdMax)
       .describe("실행 커맨드"),
     credentialId: zod
       .number()
