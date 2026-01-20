@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { Button, Dropdown, FormItem, Input, TextArea } from "xiilab-ui";
 
+import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetCredentialsQueryKey,
   useCreateCredential,
@@ -19,7 +20,7 @@ import {
 import { FormRow } from "@/styles/layers/form-layer.styled";
 
 const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
-  credentialType: "GIT_REPOSITORY",
+  credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
   credentialName: "",
   description: "",
   credentialAccountId: "",
@@ -172,7 +173,7 @@ export function CreateCredentialForm() {
             >
               <Input
                 {...field}
-                type="text"
+                type="password"
                 id="formCredentialToken"
                 placeholder="토큰을 입력해 주세요."
                 width="100%"

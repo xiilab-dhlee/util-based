@@ -16,6 +16,7 @@ import {
   TextArea,
 } from "xiilab-ui";
 
+import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetCredentialsQueryKey,
   useCreateCredential,
@@ -30,7 +31,7 @@ import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
-  credentialType: "GIT_REPOSITORY",
+  credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
   credentialName: "",
   description: "",
   credentialAccountId: "",
@@ -216,7 +217,7 @@ export function CreateCredentialModal() {
             >
               <Input
                 {...field}
-                type="text"
+                type="password"
                 id="credentialToken"
                 placeholder="토큰을 입력해 주세요."
                 width="100%"
