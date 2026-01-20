@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { FormItem as XiiLabFormItem } from "xiilab-ui";
 
 /**
  * 폼 아이템 컨테이너 스타일
@@ -70,4 +71,18 @@ export const FormSectionContainer = styled.div`
  */
 export const FormSectionHeader = styled.div`
   margin-bottom: 14px;
+`;
+
+/**
+ * 마지막 폼 아이템 스타일
+ */
+export const LastFormItem = styled(XiiLabFormItem)`
+  margin-bottom: 0 !important;
+`;
+
+export const FormItemLabel = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
 `;

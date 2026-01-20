@@ -16,6 +16,8 @@ export const ASIDE_WIDTH = 620;
 export const USER_ROOT_PATH = ROUTES.USER_MONITORING;
 /** 관리자 모드 루트 경로 */
 export const ADMIN_ROOT_PATH = ROUTES.ADMIN_MONITORING;
+/** 파일 경로 입력 플레이스홀더 */
+export const FILE_PATH_PLACEHOLDER = "/usr/local";
 
 /** 계정 권한 상수 */
 export const ACCOUNT_ROLES = {
