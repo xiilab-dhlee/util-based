@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
@@ -17,20 +17,23 @@ import {
   type CreateAstragoVolumeFormType,
   createAstragoVolumeSchema,
 } from "@/domain/volume/schemas/volume.schema";
-import { openCreateAstragoVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import { StorageSelect } from "@/shared/components/select/storage-select";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+
+const DEFAULT_FORM_VALUES: CreateAstragoVolumeFormType = {
+  volumeName: "",
+  isPublic: "true",
+  mountPath: "",
+  storageId: "",
+};
 
 export function CreateAstragoVolumeModal() {
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-  const { open, onOpen, onClose } = useGlobalModal(
-    openCreateAstragoVolumeModalAtom,
-  );
-  const registerAstragoVolume = useRegisterAstragoVolume();
+  const [open, setOpen] = useState(false);
+  const { mutate, isPending } = useRegisterAstragoVolume();
 
   const {
     control,
@@ -39,24 +42,19 @@ export function CreateAstragoVolumeModal() {
     reset,
   } = useForm<CreateAstragoVolumeFormType>({
     resolver: zodResolver(createAstragoVolumeSchema),
-    defaultValues: {
-      volumeName: "",
-      isPublic: "true",
-      mountPath: "",
-      storageId: "",
-    },
+    defaultValues: DEFAULT_FORM_VALUES,
   });
 
   const handleCancel = () => {
-    if (registerAstragoVolume.isPending) return;
-    onClose();
+    if (isPending) return;
+    setOpen(false);
   };
 
   const onSubmit = (data: CreateAstragoVolumeFormType) => {
-    if (registerAstragoVolume.isPending) return;
+    if (isPending) return;
     if (!selectedWorkspace) return;
 
-    registerAstragoVolume.mutate(
+    mutate(
       {
         data: {
           volumeName: data.volumeName,
@@ -71,17 +69,15 @@ export function CreateAstragoVolumeModal() {
           queryClient.invalidateQueries({
             queryKey: getGetVolumeListQueryKey(),
           });
-          toast.success("볼륨 생성 성공");
-          onClose();
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe<string>(VOLUME_EVENTS.sendStorageType, (eventData) => {
-    if (eventData === "ASTRAGO") {
-      onOpen();
-    }
+  useSubscribe(VOLUME_EVENTS.openCreateAstragoModal, () => {
+    reset(DEFAULT_FORM_VALUES);
+    setOpen(true);
   });
 
   return (
@@ -97,9 +93,8 @@ export function CreateAstragoVolumeModal() {
       okText="생성"
       onOk={handleSubmit(onSubmit)}
       centered
-      okButtonProps={{ disabled: registerAstragoVolume.isPending }}
-      cancelButtonProps={{ disabled: registerAstragoVolume.isPending }}
-      afterClose={reset}
+      okButtonProps={{ disabled: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <StyledForm>
         <Controller
@@ -117,7 +112,7 @@ export function CreateAstragoVolumeModal() {
                 onChange={(value) => field.onChange(value)}
                 width="100%"
                 status={errors.storageId ? "error" : undefined}
-                disabled={registerAstragoVolume.isPending}
+                disabled={isPending}
               />
             </FormItem>
           )}
@@ -140,7 +135,7 @@ export function CreateAstragoVolumeModal() {
                 placeholder="볼륨 이름을 입력해 주세요."
                 width="100%"
                 autoComplete="off"
-                disabled={registerAstragoVolume.isPending}
+                disabled={isPending}
                 maxLength={50}
               />
             </FormItem>
@@ -162,7 +157,7 @@ export function CreateAstragoVolumeModal() {
                 onChange={(value) => field.onChange(value)}
                 width="100%"
                 status={errors.isPublic ? "error" : undefined}
-                disabled={registerAstragoVolume.isPending}
+                disabled={isPending}
               />
             </FormItem>
           )}
@@ -185,7 +180,7 @@ export function CreateAstragoVolumeModal() {
                 placeholder="/usr/local"
                 width="100%"
                 autoComplete="off"
-                disabled={registerAstragoVolume.isPending}
+                disabled={isPending}
                 maxLength={1000}
               />
             </FormItem>

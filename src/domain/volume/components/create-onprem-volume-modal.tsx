@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
@@ -16,19 +16,23 @@ import {
   type CreateOnPremiseVolumeFormType,
   createOnPremiseVolumeSchema,
 } from "@/domain/volume/schemas/volume.schema";
-import { openCreateOnPremiseVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { VOLUME_VISIBILITY_OPTIONS } from "../constants/volume.constant";
 
+const DEFAULT_FORM_VALUES: CreateOnPremiseVolumeFormType = {
+  volumeName: "",
+  isPublic: "true",
+  mountPath: "",
+  serverIp: "",
+  volumePath: "",
+};
+
 export function CreateOnPremVolumeModal() {
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-  const { open, onOpen, onClose } = useGlobalModal(
-    openCreateOnPremiseVolumeModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const registerOnPremiseVolume = useRegisterOnPremiseVolume();
 
   const {
@@ -38,18 +42,12 @@ export function CreateOnPremVolumeModal() {
     reset,
   } = useForm<CreateOnPremiseVolumeFormType>({
     resolver: zodResolver(createOnPremiseVolumeSchema),
-    defaultValues: {
-      volumeName: "",
-      isPublic: "true",
-      mountPath: "",
-      serverIp: "",
-      volumePath: "",
-    },
+    defaultValues: DEFAULT_FORM_VALUES,
   });
 
   const handleCancel = () => {
     if (registerOnPremiseVolume.isPending) return;
-    onClose();
+    setOpen(false);
   };
 
   const onSubmit = (data: CreateOnPremiseVolumeFormType) => {
@@ -72,17 +70,15 @@ export function CreateOnPremVolumeModal() {
           queryClient.invalidateQueries({
             queryKey: getGetVolumeListQueryKey(),
           });
-          toast.success("볼륨 생성 성공");
-          onClose();
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe<string>(VOLUME_EVENTS.sendStorageType, (eventData) => {
-    if (eventData === "ON_PREMISE") {
-      onOpen();
-    }
+  useSubscribe(VOLUME_EVENTS.openCreateOnPremModal, () => {
+    reset(DEFAULT_FORM_VALUES);
+    setOpen(true);
   });
 
   return (
@@ -100,7 +96,6 @@ export function CreateOnPremVolumeModal() {
       centered
       okButtonProps={{ loading: registerOnPremiseVolume.isPending }}
       cancelButtonProps={{ disabled: registerOnPremiseVolume.isPending }}
-      afterClose={reset}
     >
       <StyledForm>
         <Controller

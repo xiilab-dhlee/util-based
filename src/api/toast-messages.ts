@@ -172,4 +172,32 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.createExternalImage1]: {
     success: "외부 이미지가 등록되었습니다.",
   },
+
+  // ============================================
+  // Volume
+  // ============================================
+  [MUTATION_KEYS.updateVolume]: {
+    success: "볼륨이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteVolume]: {
+    success: "볼륨이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.createFolder]: {
+    success: "폴더가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.deleteFiles]: {
+    success: "파일이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.decompress]: {
+    success: "압축 해제 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.compress]: {
+    success: "압축 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.registerOnPremiseVolume]: {
+    success: "볼륨이 생성되었습니다.",
+  },
+  [MUTATION_KEYS.registerAstragoVolume]: {
+    success: "볼륨이 생성되었습니다.",
+  },
 };

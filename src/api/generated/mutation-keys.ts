@@ -85,6 +85,18 @@ export const MUTATION_KEYS = {
   // ============================================
   createExternalImage: "createExternalImage",
   createExternalImage1: "createExternalImage1",
+
+  // ============================================
+  // Volume
+  // ============================================
+  updateVolume: "updateVolume",
+  deleteVolume: "deleteVolume",
+  createFolder: "createFolder",
+  deleteFiles: "deleteFiles",
+  decompress: "decompress",
+  compress: "compress",
+  registerOnPremiseVolume: "registerOnPremiseVolume",
+  registerAstragoVolume: "registerAstragoVolume",
 } as const;
 
 export type MutationKey = (typeof MUTATION_KEYS)[keyof typeof MUTATION_KEYS];
