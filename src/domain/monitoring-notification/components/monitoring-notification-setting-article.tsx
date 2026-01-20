@@ -1,24 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
-import { createMonitoringNotificationColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-column";
+import { useGetAllMonitoringNotificationSets } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+import { MonitoringNotificationSettingListBody } from "@/domain/monitoring-notification/components/list/monitoring-notification-setting-list-body";
+import { MonitoringNotificationSettingListFooter } from "@/domain/monitoring-notification/components/list/monitoring-notification-setting-list-footer";
 import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
-import { useGetMonitoringNotifications } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notifications";
-import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+import { monitoringNotificationSettingPageAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import { subTitleStyle } from "@/styles/mixins/text";
 
 export function MonitoringNotificationSettingArticle() {
-  const [page, setPage] = useState(1);
+  const page = useAtomValue(monitoringNotificationSettingPageAtom);
 
-  const { data } = useGetMonitoringNotifications({
-    page,
-    size: MONITORING_NOTIFICATION_PAGE_SIZE,
-    searchText: "",
+  const { data, isLoading, isError } = useGetAllMonitoringNotificationSets({
+    pageNo: page - 1,
+    pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
   });
+
+  const content = data?.content ?? [];
+  const totalSize = data?.totalSize ?? 0;
 
   return (
     <Container>
@@ -26,28 +28,14 @@ export function MonitoringNotificationSettingArticle() {
         <ArticleTitle variant="subtitle-2">알림 설정</ArticleTitle>
       </ArticleHeader>
       <ArticleBody>
-        <CustomizedTable
-          columns={createMonitoringNotificationColumn([
-            {
-              key: "name",
-            },
-            {
-              key: "channel",
-            },
-            {
-              key: "status",
-            },
-            {
-              key: "delete",
-            },
-          ])}
-          data={data?.content || []}
-          pagination={{
-            onChange: (page: number) => setPage(page),
-            pageSize: 5, // 한 페이지당 표시할 항목 수
-            total: 100, // 전체 데이터 개수
-          }}
-          activePadding
+        <MonitoringNotificationSettingListBody
+          content={content}
+          loading={isLoading}
+          isError={isError}
+        />
+        <MonitoringNotificationSettingListFooter
+          total={totalSize}
+          loading={isLoading}
         />
       </ArticleBody>
     </Container>
@@ -77,4 +65,9 @@ const ArticleTitle = styled(Typography.Text)`
   color: #000;
 `;
 
-const ArticleBody = styled(ListWrapper)``;
+const ArticleBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 48px);
+`;

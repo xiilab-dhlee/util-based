@@ -8,7 +8,6 @@ import { InternalRegistryService } from "@/domain/internal-registry/api/internal
 import { AdminInternalRegistryImageService } from "@/domain/internal-registry-image/api/admin-internal-registry-image.service";
 import { InternalRegistryImageService } from "@/domain/internal-registry-image/api/internal-registry-image.service";
 import { UserResourceService } from "@/domain/monitoring/api/user-resource.service";
-import { MonitoringNotificationService } from "@/domain/monitoring-notification/api/monitoring.service";
 import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
@@ -39,7 +38,6 @@ interface ServiceContextType {
   credentialService: CredentialService;
   storageService: StorageService;
   userResourceService: UserResourceService;
-  monitoringNotificationService: MonitoringNotificationService;
   adminWorkloadService: AdminWorkloadService;
   nodeService: NodeService;
   redfishBmcService: RedfishBmcService;
@@ -86,7 +84,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     credentialService: new CredentialService(),
     storageService: new StorageService(),
     userResourceService: new UserResourceService(),
-    monitoringNotificationService: new MonitoringNotificationService(),
     adminWorkloadService: new AdminWorkloadService(),
     nodeService: new NodeService(),
     redfishBmcService: new RedfishBmcService(),

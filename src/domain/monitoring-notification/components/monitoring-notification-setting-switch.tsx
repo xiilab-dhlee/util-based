@@ -1,12 +1,26 @@
-import { useState } from "react";
 import { Switch } from "xiilab-ui";
 
-export function MonitoringNotificationSettingSwitch() {
-  const [checked, setChecked] = useState(true);
+import { useToggleNotificationEnabledAction } from "@/domain/monitoring-notification/hooks/monitoring-notification-action";
+
+interface MonitoringNotificationSettingSwitchProps {
+  notificationSetId: number;
+  isEnabled: boolean;
+}
+
+export function MonitoringNotificationSettingSwitch({
+  notificationSetId,
+  isEnabled,
+}: MonitoringNotificationSettingSwitchProps) {
+  const { mutate, isPending } = useToggleNotificationEnabledAction();
 
   const handleChange = (checked: boolean) => {
-    setChecked(checked);
+    mutate({
+      notificationSetId,
+      data: { isEnabled: checked },
+    });
   };
 
-  return <Switch checked={checked} onChange={handleChange} />;
+  return (
+    <Switch checked={isEnabled} onChange={handleChange} disabled={isPending} />
+  );
 }

@@ -1,78 +1,95 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal, Typography } from "xiilab-ui";
 
-import { createMonitoringNotificationHistoryColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-history-column";
-import { useGetMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notification";
+import {
+  useGetMonitoringNotificationHistoryDetail,
+  useGetSendHistory,
+} from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+import {
+  createSendHistoryColumns,
+  createThresholdDetailColumns,
+  type ThresholdDetailRow,
+} from "@/domain/monitoring-notification/column/create-monitoring-notification-history-modal-column";
+import { THRESHOLD_UNIT } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { openViewMonitoringNotificationHistoryModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
+import {
+  getMetricTypeLabel,
+  getThresholdOperatorSymbol,
+} from "@/domain/monitoring-notification/utils/monitoring-notification.util";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 
-// Mock 발송 이력 데이터
-const MOCK_SEND_HISTORY = [
-  {
-    userName: "정은하",
-    type: "E-mail, System",
-    result: "성공",
-    sentAt: new Date("2024-12-12T05:23:12"),
-  },
-  {
-    userName: "손지원",
-    channel: "E-mail",
-    result: "성공",
-    sentAt: new Date("2024-12-12T05:23:12"),
-  },
-  {
-    userName: "방성은",
-    channel: "E-mail, System",
-    result: "성공",
-    sentAt: new Date("2024-12-12T05:23:12"),
-  },
-  {
-    userName: "서경덕",
-    channel: "E-mail, System",
-    result: "성공",
-    sentAt: new Date("2024-12-12T05:23:12"),
-  },
-  {
-    userName: "이수빈",
-    channel: "System",
-    result: "성공",
-    sentAt: new Date("2024-12-12T05:23:12"),
-  },
-  {
-    userName: "이수빈",
-    channel: "System",
-    result: "성공",
-    sentAt: new Date("2024-12-12T05:23:12"),
-  },
-];
-
 export function ViewMonitoringNotificationHistoryModal() {
   const { open, onOpen, onClose } = useGlobalModal(
     openViewMonitoringNotificationHistoryModalAtom,
   );
 
-  const [id, setId] = useState("");
-  const { data } = useGetMonitoringNotification(id);
+  const [id, setId] = useState<number | null>(null);
+
+  // 히스토리 상세 조회
+  const {
+    data: detail,
+    isLoading: isDetailLoading,
+    isError: isDetailError,
+  } = useGetMonitoringNotificationHistoryDetail(id ?? 0, {
+    query: { enabled: id !== null },
+  });
+
+  // 발송 이력 조회
+  const { data: sendHistory } = useGetSendHistory(id ?? 0, {
+    query: { enabled: id !== null },
+  });
+
+  // 임계 조건 테이블 데이터 변환
+  const thresholdData: ThresholdDetailRow[] = useMemo(() => {
+    if (!detail) return [];
+    return [
+      {
+        key: "threshold",
+        item: getMetricTypeLabel(detail.metricType),
+        setting: `${getThresholdOperatorSymbol(detail.thresholdOperator)} ${detail.thresholdValue}${THRESHOLD_UNIT}`,
+        observed: `${detail.observedValue}${THRESHOLD_UNIT}`,
+      },
+    ];
+  }, [detail]);
 
   useSubscribe(
     MONITORING_EVENTS.sendNotificationHistory,
-    ({ id }: { id: string }) => {
+    ({ id }: { id: number }) => {
       setId(id);
       onOpen();
     },
   );
 
+  if (isDetailError) {
+    return (
+      <InfoModal
+        type="primary"
+        icon={<Icon name="Description" color="#fff" size={18} />}
+        modalWidth={580}
+        open={open}
+        closable
+        title="알림 내역 조회"
+        onClose={onClose}
+        centered
+        showHeaderBorder
+      >
+        <DataErrorState />
+      </InfoModal>
+    );
+  }
+
   return (
     <InfoModal
       type="primary"
-      icon={<Icon name="Search" color="#fff" size={14} />}
+      icon={<Icon name="Description" color="#fff" size={18} />}
       modalWidth={580}
       open={open}
       closable
@@ -80,6 +97,7 @@ export function ViewMonitoringNotificationHistoryModal() {
       onClose={onClose}
       centered
       showHeaderBorder
+      loading={isDetailLoading}
     >
       <Container>
         <TopWrapper>
@@ -88,23 +106,23 @@ export function ViewMonitoringNotificationHistoryModal() {
             <InfoRow>
               <InfoItem>
                 <InfoLabel>알림 이름</InfoLabel>
-                <InfoValue>{data?.name || "-"}</InfoValue>
+                <InfoValue>{detail?.notificationSetName || "-"}</InfoValue>
               </InfoItem>
               <InfoItem>
                 <InfoLabel>발생 일시</InfoLabel>
                 <InfoValue>
-                  {formatDateTimeSafely(data?.creatorDateTime) ?? "-"}
+                  {formatDateTimeSafely(detail?.createdAt) ?? "-"}
                 </InfoValue>
               </InfoItem>
             </InfoRow>
             <InfoRow>
               <InfoItem>
                 <InfoLabel>IP 주소</InfoLabel>
-                <InfoValue>{data?.ip || "-"}</InfoValue>
+                <InfoValue>{detail?.nodeIp || "-"}</InfoValue>
               </InfoItem>
               <InfoItem>
                 <InfoLabel>노드 이름</InfoLabel>
-                <InfoValue>{data?.nodeName || "-"}</InfoValue>
+                <InfoValue>{detail?.nodeName || "-"}</InfoValue>
               </InfoItem>
             </InfoRow>
           </InfoSection>
@@ -114,18 +132,8 @@ export function ViewMonitoringNotificationHistoryModal() {
             <SectionTitle>알림 임계 조건 설정</SectionTitle>
             <ScrollableTableWrapper $height={128}>
               <CustomizedTable
-                columns={createMonitoringNotificationHistoryColumn([
-                  {
-                    key: "item",
-                  },
-                  {
-                    key: "setting",
-                  },
-                  {
-                    key: "duration",
-                  },
-                ])}
-                data={data?.settings || []}
+                columns={createThresholdDetailColumns()}
+                data={thresholdData}
                 activePadding
               />
             </ScrollableTableWrapper>
@@ -136,22 +144,11 @@ export function ViewMonitoringNotificationHistoryModal() {
           <SectionTitle>발송 이력</SectionTitle>
           <ScrollableTableWrapper $height={200}>
             <CustomizedTable
-              columns={createMonitoringNotificationHistoryColumn([
-                {
-                  key: "userName",
-                },
-                {
-                  key: "channel",
-                },
-                {
-                  key: "result",
-                },
-                {
-                  key: "sentAt",
-                },
-              ])}
-              data={MOCK_SEND_HISTORY}
+              columns={createSendHistoryColumns()}
+              data={sendHistory ?? []}
               activePadding
+              tableLayout="fixed"
+              scroll={{ x: "100%" }}
             />
           </ScrollableTableWrapper>
         </TableSection>
@@ -206,6 +203,8 @@ const InfoItem = styled.div`
   flex: 1;
   display: flex;
   gap: 16px;
+  align-items: flex-start;
+  min-width: 0;
 `;
 
 const InfoLabel = styled.span`
@@ -213,12 +212,18 @@ const InfoLabel = styled.span`
   font-weight: 600;
   color: #484848;
   min-width: 60px;
+  flex: 0 0 60px;
 `;
 
 const InfoValue = styled(Typography.Text).attrs({
   variant: "subtitle-2-3",
 })`
-color: #000;
+  color: #000;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 `;
 
 const TableSection = styled.div`
@@ -228,8 +233,9 @@ const TableSection = styled.div`
 `;
 
 const ScrollableTableWrapper = styled.div<{ $height: number }>`
+  width: 100%;
   max-height: ${({ $height }) => $height}px;
-  overflow-y: auto;
+  overflow: hidden;
 `;
 
 const SectionTitle = styled.h4`
