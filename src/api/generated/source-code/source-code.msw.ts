@@ -36,6 +36,16 @@ import type {
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+export const getUpdateSourceCodeResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetSourceCodeListResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseSourceCodeListResponse> = {},
 ): BaseResponsePageResponseSourceCodeListResponse => ({
@@ -58,7 +68,7 @@ export const getGetSourceCodeListResponseMock = (
         "GITLAB",
         "BITBUCKET",
       ] as const),
-      executionCommand: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      executionCmd: faker.string.alpha({ length: { min: 10, max: 20 } }),
       createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       isPublic: faker.datatype.boolean(),
     })),
@@ -77,6 +87,55 @@ export const getRegisterSourceCodeResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getUpdateSourceCodeMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/source-codes/:sourceCodeId",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateSourceCodeResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getDeleteSourceCodeMockHandler = (
+  overrideResponse?:
+    | void
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.delete(
+    "*/api/v1/source-codes/:sourceCodeId",
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
+    },
+    options,
+  );
+};
 
 export const getGetSourceCodeListMockHandler = (
   overrideResponse?:
@@ -136,6 +195,8 @@ export const getRegisterSourceCodeMockHandler = (
   );
 };
 export const getSourceCodeMock = () => [
+  getUpdateSourceCodeMockHandler(),
+  getDeleteSourceCodeMockHandler(),
   getGetSourceCodeListMockHandler(),
   getRegisterSourceCodeMockHandler(),
 ];

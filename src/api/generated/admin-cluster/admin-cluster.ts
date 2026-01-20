@@ -799,7 +799,7 @@ export function useGetNodeSystemResource<
             관리자가 특정 노드의 시스템 리소스 메트릭을 시간대별로 조회합니다.
 
             **응답 데이터 구성:**
-            - **dateTime**: 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) - 시간 순서로 정렬
+            - **dateTime**: 측정 시간 (UTC, ISO 8601 형식) - 시간 순서로 정렬
             - **value**: 메트릭 값
 
             **메트릭 타입:**
@@ -1007,7 +1007,7 @@ export function useGetNodeSystemMetrics<
             - **modelName**: GPU 모델명 (예: NVIDIA-A100-SXM4-40GB)
             - **gpuIndex**: GPU 인덱스 (0, 1, 2, ...) - 숫자 순서로 정렬
             - **values**: 시계열 메트릭 값 리스트
-              - **dateTime**: 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)
+              - **dateTime**: 측정 시간 (UTC, ISO 8601 형식)
               - **value**: 메트릭 값
 
             **메트릭 타입:**

@@ -289,6 +289,100 @@ export const createWorkloadBody = zod
 
 /**
  * 
+            종료된 워크로드의 저장된 로그 파일을 다운로드합니다.
+
+            **로그 저장 대상:**
+            - BATCH: 단일 로그 파일
+            - DISTRIBUTED: Pod별 로그 파일 (podName 필수)
+            - INTERACTIVE: 로그 저장 대상 아님 (400 Bad Request)
+
+            **응답:**
+            - Content-Type: application/octet-stream
+            - Content-Disposition: attachment; filename="xxx.log"
+            - X-Workload-Resource-Name: 워크로드 리소스 이름
+            - X-Pod-Name: Pod 이름 (분산 워크로드인 경우)
+
+            **주의:**
+            - TERMINATED 상태의 워크로드만 조회 가능
+            - 로그 파일이 없는 경우 404 Not Found 반환
+        
+ * @summary 종료된 워크로드 로그 다운로드
+ */
+export const getTerminatedWorkloadLogParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const getTerminatedWorkloadLogQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 로그를 SSE(Server-Sent Events)로 실시간 스트리밍합니다.
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **SSE 이벤트:**
+            - event: log
+            - data: 로그 라인
+        
+ * @summary 실행 중인 워크로드 로그 실시간 스트리밍
+ */
+export const streamWorkloadLogsParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const streamWorkloadLogsQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+/**
+ * 
+            분산 워크로드(TrainJob)의 Pod 이름 목록을 조회합니다.
+
+            **조회 대상:**
+            - 실행 중 및 종료된 워크로드 모두 조회 가능
+            - 워크로드 테이블에 저장된 Pod 이름 목록 반환
+
+            **제약 조건:**
+            - DISTRIBUTED 타입의 워크로드만 조회 가능
+            - 다른 타입(BATCH, INTERACTIVE)으로 요청 시 400 Bad Request 반환
+        
+ * @summary 분산 워크로드 Pod 목록 조회
+ */
+export const getDistributedPodsParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const getDistributedPodsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        podNames: zod.array(zod.string()).describe("Pod 이름 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("분산 워크로드 Pod 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             종료된 워크로드 목록을 조회합니다.
 
             **조회 대상:**

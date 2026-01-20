@@ -42,6 +42,9 @@ export const getWorkloadResourceMetricsTimeseriesParams = zod.object({
   workloadResourceName: zod.string().describe("워크로드 리소스명"),
 });
 
+export const getWorkloadResourceMetricsTimeseriesQueryStepRegExp =
+  /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
+
 export const getWorkloadResourceMetricsTimeseriesQueryParams = zod.object({
   metricName: zod
     .enum([
@@ -72,6 +75,10 @@ export const getWorkloadResourceMetricsTimeseriesQueryParams = zod.object({
     .describe(
       "조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간). 형식: yyyy-MM-ddTHH:mm:ssZ",
     ),
+  step: zod
+    .string()
+    .regex(getWorkloadResourceMetricsTimeseriesQueryStepRegExp)
+    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
 });
 
 export const getWorkloadResourceMetricsTimeseriesResponse = zod
@@ -129,6 +136,9 @@ export const getResourceMetricsTimeseriesParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
+export const getResourceMetricsTimeseriesQueryStepRegExp =
+  /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
+
 export const getResourceMetricsTimeseriesQueryParams = zod.object({
   metricsName: zod
     .enum([
@@ -148,12 +158,16 @@ export const getResourceMetricsTimeseriesQueryParams = zod.object({
     .string()
     .datetime({})
     .optional()
-    .describe("조회 시작 시간 (ISO 8601 형식, 미입력 시 현재 시간 - 1일)"),
+    .describe("조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일)"),
   endDate: zod
     .string()
     .datetime({})
     .optional()
-    .describe("조회 종료 시간 (ISO 8601 형식, 미입력 시 현재 시간)"),
+    .describe("조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간)"),
+  step: zod
+    .string()
+    .regex(getResourceMetricsTimeseriesQueryStepRegExp)
+    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
 });
 
 export const getResourceMetricsTimeseriesResponse = zod

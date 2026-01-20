@@ -356,11 +356,6 @@ export const getAllMonitoringNotificationHistoriesQueryPageNoMin = 0;
 
 export const getAllMonitoringNotificationHistoriesQueryPageSizeMax = 100;
 
-export const getAllMonitoringNotificationHistoriesQueryStartedAtRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getAllMonitoringNotificationHistoriesQueryEndedAtRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-
 export const getAllMonitoringNotificationHistoriesQueryParams = zod.object({
   pageNo: zod
     .number()
@@ -381,14 +376,14 @@ export const getAllMonitoringNotificationHistoriesQueryParams = zod.object({
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
   startedAt: zod
     .string()
-    .regex(getAllMonitoringNotificationHistoriesQueryStartedAtRegExp)
+    .datetime({})
     .optional()
-    .describe("조회 시작 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)"),
+    .describe("조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
   endedAt: zod
     .string()
-    .regex(getAllMonitoringNotificationHistoriesQueryEndedAtRegExp)
+    .datetime({})
     .optional()
-    .describe("조회 종료 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)"),
+    .describe("조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
 });
 
 export const getAllMonitoringNotificationHistoriesResponse = zod

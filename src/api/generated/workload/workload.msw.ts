@@ -33,8 +33,10 @@ import { delay, HttpResponse, http } from "msw";
 
 import type {
   BaseResponseActiveWorkloadListResponse,
+  BaseResponseDistributedPodResponse,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
+  SseEmitter,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getCreateWorkloadResponseMock = (
@@ -42,6 +44,32 @@ export const getCreateWorkloadResponseMock = (
 ): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetTerminatedWorkloadLogResponseMock = (): Blob =>
+  new Blob(faker.helpers.arrayElements(faker.word.words(10).split(" ")));
+
+export const getStreamWorkloadLogsResponseMock = (
+  overrideResponse: Partial<SseEmitter> = {},
+): SseEmitter => ({
+  timeout: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetDistributedPodsResponseMock = (
+  overrideResponse: Partial<BaseResponseDistributedPodResponse> = {},
+): BaseResponseDistributedPodResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    podNames: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -167,6 +195,92 @@ export const getCreateWorkloadMockHandler = (
   );
 };
 
+export const getGetTerminatedWorkloadLogMockHandler = (
+  overrideResponse?:
+    | Blob
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<Blob> | Blob),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/logs/terminated",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetTerminatedWorkloadLogResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getStreamWorkloadLogsMockHandler = (
+  overrideResponse?:
+    | SseEmitter
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<SseEmitter> | SseEmitter),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/logs/active",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getStreamWorkloadLogsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetDistributedPodsMockHandler = (
+  overrideResponse?:
+    | BaseResponseDistributedPodResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseDistributedPodResponse>
+        | BaseResponseDistributedPodResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/distributed/pods",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetDistributedPodsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetTerminatedWorkloadsMockHandler = (
   overrideResponse?:
     | BaseResponseTerminatedWorkloadListResponse
@@ -228,6 +342,9 @@ export const getGetActiveWorkloadsMockHandler = (
 };
 export const getWorkloadMock = () => [
   getCreateWorkloadMockHandler(),
+  getGetTerminatedWorkloadLogMockHandler(),
+  getStreamWorkloadLogsMockHandler(),
+  getGetDistributedPodsMockHandler(),
   getGetTerminatedWorkloadsMockHandler(),
   getGetActiveWorkloadsMockHandler(),
 ];
