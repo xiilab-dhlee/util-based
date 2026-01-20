@@ -37,6 +37,7 @@ export function ListPageFooter({
   rightChildren,
   leftChildren,
   paginationTestId,
+  isLoading,
 }: ListPageFooterProps) {
   return (
     <Container justify="space-between" align="center">
@@ -48,6 +49,7 @@ export function ListPageFooter({
           total={total}
           pageSize={pageSize}
           onChange={onChange}
+          disabled={isLoading}
         />
       </div>
       <div>{rightChildren}</div>
