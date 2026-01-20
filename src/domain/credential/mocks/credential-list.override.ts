@@ -1,6 +1,5 @@
 import {
   type CredentialListItemResponse,
-  CredentialListItemResponseCredentialChannel,
   CredentialListItemResponseCredentialType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -36,14 +35,10 @@ export const credentialListOverrideHandlers = [
 
         return {
           credentialId: globalIndex + 1,
-          credentialChannel:
-            index % 2 === 0
-              ? CredentialListItemResponseCredentialChannel.DOCKER
-              : CredentialListItemResponseCredentialChannel.GIT,
           credentialType:
             index % 2 === 0
-              ? CredentialListItemResponseCredentialType.IMAGE
-              : CredentialListItemResponseCredentialType.SOURCE_CODE,
+              ? CredentialListItemResponseCredentialType.IMAGE_REGISTRY
+              : CredentialListItemResponseCredentialType.GIT_REPOSITORY,
           credentialName: generateCredentialName(globalIndex, keyword),
           description: `크리덴셜 설명 ${globalIndex + 1}`,
           createDateTime: new Date(

@@ -99,7 +99,7 @@ export const getPrivateImageUsageByAccountResponse = zod
  * @summary 사용자별 개인 이미지 태그 목록 조회
  */
 export const getPrivateImageTagsByAccountIdParams = zod.object({
-  accountId: zod.string(),
+  accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
 });
 
 export const getPrivateImageTagsByAccountIdQueryPagePageNoMin = 0;

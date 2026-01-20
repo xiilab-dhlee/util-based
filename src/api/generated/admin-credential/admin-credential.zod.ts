@@ -65,15 +65,12 @@ export const getAllCredentialsResponse = zod
           zod
             .object({
               credentialId: zod.number().describe("크리덴셜 ID"),
-              credentialChannel: zod
-                .enum(["GIT", "DOCKER", "NGC"])
-                .describe("크리덴셜 채널"),
               credentialType: zod
-                .enum(["IMAGE", "SOURCE_CODE"])
+                .enum(["IMAGE_REGISTRY", "GIT_REPOSITORY"])
                 .describe("크리덴셜 타입"),
               credentialName: zod.string().describe("크리덴셜 이름"),
               description: zod.string().optional().describe("크리덴셜 설명"),
-              createDateTime: zod.string().datetime({}).describe("생성일시"),
+              createdAt: zod.string().datetime({}).describe("생성일시"),
               creatorName: zod
                 .string()
                 .describe("생성자 이름 (삭제된 계정이면 빈 문자열)"),

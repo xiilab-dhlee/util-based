@@ -1,20 +1,20 @@
 "use client";
 
-import { useSetAtom } from "jotai";
 import Image from "next/image";
 import type { FormEvent } from "react";
 import { useRef } from "react";
 import styled from "styled-components";
 import { Button, Dropdown, Input } from "xiilab-ui";
 
+import { CreateCredentialModal } from "@/domain/credential/components/create-credential-modal";
 import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
 import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 import { useCreateSourcecode } from "@/domain/sourcecode/hooks/use-create-sourcecode";
 import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
-import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
 import { GuidePopover } from "@/shared/components/popover/guide-popover";
-import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { AsideDetailForm } from "@/styles/layers/aside-detail-layers.styled";
 import {
   AsideListArticleDescription,
@@ -37,12 +37,12 @@ import {
  * 소스코드 생성 컴포넌트
  *
  * Git 리포지토리 정보를 입력받아 새로운 소스코드를 생성하는 폼을 제공합니다.
- * Git URL, 크레덴셜, 기본 마운트 경로, 실행 명령어, 파라미터 등을 설정할 수 있습니다.
+ * Git URL, 크리덴셜, 기본 마운트 경로, 실행 명령어, 파라미터 등을 설정할 수 있습니다.
  *
  * 주요 기능:
  * - 소스코드 제작 가이드 표시
  * - 소스코드 생성 폼 제공
- * - 크레덴셜 생성 모달 연동
+ * - 크리덴셜 생성 모달 연동
  * - 파라미터 동적 추가/삭제
  * - 폼 데이터 검증 및 제출
  * - 폼 초기화
@@ -52,10 +52,7 @@ import {
 export function CreateSourcecode() {
   // 폼 요소에 대한 참조 - 폼 초기화 및 데이터 수집에 사용
   const formRef = useRef<HTMLFormElement>(null);
-  // 크레덴셜 생성 모달 표시 설정
-  const setOpenCreateCredentialModal = useSetAtom(
-    openCreateCredentialModalAtom,
-  );
+  const publish = usePublish();
 
   // 소스코드 생성 뮤테이션 훅
   const createSourcecode = useCreateSourcecode();
@@ -106,13 +103,13 @@ export function CreateSourcecode() {
   };
 
   /**
-   * 크레덴셜 생성 모달 열기 핸들러
+   * 크리덴셜 생성 모달 열기 핸들러
    *
-   * 사용자가 크레덴셜 생성 버튼을 클릭했을 때 호출됩니다.
-   * 크레덴셜 생성 모달을 열어 새로운 크레덴셜을 추가할 수 있게 합니다.
+   * 사용자가 크리덴셜 생성 버튼을 클릭했을 때 호출됩니다.
+   * 크리덴셜 생성 모달을 열어 새로운 크리덴셜을 추가할 수 있게 합니다.
    */
   const handleClickCreateCredential = () => {
-    setOpenCreateCredentialModal(true);
+    publish(CREDENTIAL_EVENTS.openCreateModal);
   };
 
   /**
@@ -246,20 +243,20 @@ export function CreateSourcecode() {
               </SourcecodeFormField>
             </SourcecodeFormSingleField>
 
-            {/* 크레덴셜 선택 필드 */}
+            {/* 크리덴셜 선택 필드 */}
             <SourcecodeFormSingleField>
               <SourcecodeFormField>
                 <SourcecodeFormFieldHeader>
-                  <SourcecodeFormFieldLabel>크레덴셜</SourcecodeFormFieldLabel>
+                  <SourcecodeFormFieldLabel>크리덴셜</SourcecodeFormFieldLabel>
                   <div>
-                    {/* 크레덴셜 생성 버튼 */}
+                    {/* 크리덴셜 생성 버튼 */}
                     <CreateModelButton
                       onClick={handleClickCreateCredential}
-                      title="크레덴셜 생성"
+                      title="크리덴셜 생성"
                     />
                   </div>
                 </SourcecodeFormFieldHeader>
-                {/* 크레덴셜 관리 컴포넌트 */}
+                {/* 크리덴셜 관리 컴포넌트 */}
                 <ManageCredential />
               </SourcecodeFormField>
             </SourcecodeFormSingleField>
@@ -389,7 +386,7 @@ export function CreateSourcecode() {
         </Footer>
       </AsideDetailForm>
 
-      {/* 크레덴셜 생성 모달 */}
+      {/* 크리덴셜 생성 모달 */}
       <CreateCredentialModal />
     </>
   );

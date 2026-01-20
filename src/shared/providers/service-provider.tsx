@@ -3,13 +3,10 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { CredentialService } from "@/domain/credential/api/credential.service";
 import { UserResourceService } from "@/domain/monitoring/api/user-resource.service";
-import { MonitoringNotificationService } from "@/domain/monitoring-notification/api/monitoring.service";
 import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
-import { NotificationService } from "@/domain/notification/api/notification.service";
 import { ReportService } from "@/domain/report/api/report.service";
 import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
@@ -34,11 +31,8 @@ interface ServiceContextType {
   workspaceService: WorkspaceService;
   workloadService: WorkloadService;
   sourcecodeService: SourcecodeService;
-  credentialService: CredentialService;
   storageService: StorageService;
-  notificationService: NotificationService;
   userResourceService: UserResourceService;
-  monitoringNotificationService: MonitoringNotificationService;
   adminWorkloadService: AdminWorkloadService;
   nodeService: NodeService;
   redfishBmcService: RedfishBmcService;
@@ -79,11 +73,8 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     workspaceService: new WorkspaceService(),
     workloadService: new WorkloadService(),
     sourcecodeService: new SourcecodeService(),
-    credentialService: new CredentialService(),
     storageService: new StorageService(),
-    notificationService: new NotificationService(),
     userResourceService: new UserResourceService(),
-    monitoringNotificationService: new MonitoringNotificationService(),
     adminWorkloadService: new AdminWorkloadService(),
     nodeService: new NodeService(),
     redfishBmcService: new RedfishBmcService(),

@@ -42,7 +42,7 @@ export function useWorkspaceInitializer() {
       getStoredWorkspaceId(),
     );
 
-    handleSelectWorkspace(workspace);
+    handleSelectWorkspace(workspace, { skipNavigation: true });
   }, [
     isAdmin,
     isLoading,

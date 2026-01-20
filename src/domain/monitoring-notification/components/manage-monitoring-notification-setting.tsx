@@ -1,93 +1,99 @@
 "use client";
+
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button, Dropdown, InputNumber } from "xiilab-ui";
 
 import {
-  EMPTY_NOTIFICATION_SETTING,
-  MONITORING_NOTIFICATION_DURATION_UNIT,
-  MONITORING_NOTIFICATION_OPERATOR_OPTIONS,
-  MONITORING_NOTIFICATION_THRESHOLD_UNIT,
-  MONITORING_NOTIFICATION_TYPE_OPTIONS,
+  DURATION_UNIT,
+  EMPTY_THRESHOLD_SETTING,
+  METRIC_TYPE_OPTIONS,
+  OPERATOR_OPTIONS,
+  THRESHOLD_UNIT,
 } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
-import type { MonitoringNotificationSettingFormType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
+import type { ThresholdFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 
-/** 개별 설정 항목의 필드별 에러 타입 */
-interface SettingItemErrors {
-  item?: string;
+// ===== Types =====
+
+interface ThresholdItemErrors {
+  metric?: string;
   operator?: string;
-  threshold?: string;
-  duration?: string;
+  value?: string;
+  durationMinutes?: string;
 }
 
 interface ManageMonitoringNotificationSettingsProps {
-  settings?: MonitoringNotificationSettingFormType[];
-  onChange?: (nextSettings: MonitoringNotificationSettingFormType[]) => void;
-  /** 개별 설정 항목의 에러 배열 (Zod 검증 결과) */
-  errors?: SettingItemErrors[];
+  settings?: ThresholdFormType[];
+  onChange?: (nextSettings: ThresholdFormType[]) => void;
+  errors?: (ThresholdItemErrors | undefined)[];
   disabled?: boolean;
 }
 
-type ConditionRowStatus = "complete" | "empty" | "incomplete";
+// ===== Helpers =====
 
-const getConditionRowStatus = (
-  setting: MonitoringNotificationSettingFormType,
-): ConditionRowStatus => {
+const isRowComplete = (setting: ThresholdFormType): boolean => {
   const fields = [
-    setting.item,
+    setting.metric,
     setting.operator,
-    setting.threshold,
-    setting.duration,
+    setting.value,
+    setting.durationMinutes,
   ];
-  const filledCount = fields.filter((f) => f && f.trim().length > 0).length;
-
-  if (filledCount === 4) return "complete";
-  if (filledCount === 0) return "empty";
-  return "incomplete";
+  return fields.every((f) => f && f.trim().length > 0);
 };
 
+// ===== Component =====
+
 export function ManageMonitoringNotificationSetting({
-  settings,
+  settings = [],
   onChange,
   errors,
   disabled = false,
 }: ManageMonitoringNotificationSettingsProps) {
-  const safeSettings =
-    settings && settings.length > 0 ? settings : [EMPTY_NOTIFICATION_SETTING];
+  // 입력 행 상태 (내부 관리)
+  const [inputRow, setInputRow] = useState<ThresholdFormType>(
+    EMPTY_THRESHOLD_SETTING,
+  );
 
-  const updateSettings = (
-    updater: (
-      prev: MonitoringNotificationSettingFormType[],
-    ) => MonitoringNotificationSettingFormType[],
+  // settings가 빈 배열로 초기화되면 inputRow도 초기화
+  useEffect(() => {
+    if (settings.length === 0) {
+      setInputRow(EMPTY_THRESHOLD_SETTING);
+    }
+  }, [settings]);
+
+  const handleInputChange = (
+    field: keyof ThresholdFormType,
+    value: string | number | null,
   ) => {
-    const next = updater(safeSettings);
-    onChange?.(next);
+    setInputRow((prev) => ({
+      ...prev,
+      [field]: value?.toString() ?? "",
+    }));
   };
 
-  const handleDeleteSetting = (index: number) => {
-    if (safeSettings.length > 1) {
-      updateSettings((prev) => prev.filter((_, i) => i !== index));
+  // 같은 항목이 이미 있는지 확인
+  const isDuplicateMetric = (metric: string): boolean => {
+    return settings.some((s) => s.metric === metric);
+  };
+
+  const handleAddSetting = () => {
+    if (isRowComplete(inputRow) && !isDuplicateMetric(inputRow.metric)) {
+      // 최근 추가된 항목이 위에 오도록 (앞에 추가)
+      onChange?.([inputRow, ...settings]);
+      setInputRow(EMPTY_THRESHOLD_SETTING);
     }
   };
 
-  // 필드 변경 핸들러
-  const handleFieldChange = (
-    index: number,
-    field: keyof MonitoringNotificationSettingFormType,
-    value: string | number | null,
-  ) => {
-    updateSettings((prev) => {
-      const newSettings = [...prev];
+  const canAdd = isRowComplete(inputRow) && !isDuplicateMetric(inputRow.metric);
 
-      const finalValue = value?.toString() ?? "";
-      newSettings[index] = { ...newSettings[index], [field]: finalValue };
-      return newSettings;
-    });
+  const handleDeleteSetting = (index: number) => {
+    onChange?.(settings.filter((_, i) => i !== index));
   };
 
   return (
-    <div>
+    <Container>
       <Body>
-        {/* 컬럼 헤더 */}
+        {/* 헤더 행 */}
         <Column>
           <Field>
             <HeaderTitle>항목</HeaderTitle>
@@ -101,119 +107,167 @@ export function ManageMonitoringNotificationSetting({
           <Field>
             <HeaderTitle>지속시간</HeaderTitle>
           </Field>
-          {!disabled && <Delete></Delete>}
+          {!disabled && <Actions />}
         </Column>
-        <BodyRow>
-          {safeSettings.map((setting, index) => {
-            const status = getConditionRowStatus(setting);
-            const itemErrors = errors?.[index];
 
-            // 필드별 에러 상태 결정: Zod 에러 또는 incomplete 상태에서 빈 필드만 에러
-            const getFieldStatus = (
-              field: keyof SettingItemErrors,
-            ): "default" | "error" => {
-              // Zod 검증 에러가 있으면 에러 표시
-              if (itemErrors?.[field]) return "error";
-              // incomplete 상태에서 해당 필드가 비어있으면 에러 표시
-              if (status === "incomplete" && !setting[field]?.trim()) {
-                return "error";
-              }
-              return "default";
-            };
+        {/* 입력 행 */}
+        {!disabled && (
+          <Column>
+            <Field>
+              <Dropdown
+                status={
+                  inputRow.metric && isDuplicateMetric(inputRow.metric)
+                    ? "error"
+                    : "default"
+                }
+                options={METRIC_TYPE_OPTIONS}
+                placeholder="항목 선택"
+                onChange={(value: string | null) =>
+                  handleInputChange("metric", value)
+                }
+                value={inputRow.metric || null}
+                width="100%"
+                height={30}
+              />
+            </Field>
+            <Field>
+              <Dropdown
+                options={OPERATOR_OPTIONS}
+                placeholder="연산자 선택"
+                onChange={(value: string | null) =>
+                  handleInputChange("operator", value)
+                }
+                value={inputRow.operator || null}
+                width="100%"
+                height={30}
+              />
+            </Field>
+            <Field>
+              <InputNumber
+                width="100%"
+                height={30}
+                min={1}
+                max={100}
+                suffix={THRESHOLD_UNIT}
+                value={
+                  inputRow.value === "" ? undefined : Number(inputRow.value)
+                }
+                onChange={(value) => handleInputChange("value", value)}
+                autoComplete="off"
+              />
+            </Field>
+            <Field>
+              <InputNumber
+                width="100%"
+                height={30}
+                min={1}
+                suffix={DURATION_UNIT}
+                value={
+                  inputRow.durationMinutes === ""
+                    ? undefined
+                    : Number(inputRow.durationMinutes)
+                }
+                onChange={(value) =>
+                  handleInputChange("durationMinutes", value)
+                }
+                autoComplete="off"
+              />
+            </Field>
+            <Actions>
+              <Button
+                icon="Plus"
+                iconSize={18}
+                onClick={handleAddSetting}
+                disabled={!canAdd}
+              />
+            </Actions>
+          </Column>
+        )}
 
-            return (
-              <Column key={`${setting.item}-${index}`}>
-                <Field>
-                  <Dropdown
-                    status={getFieldStatus("item")}
-                    options={MONITORING_NOTIFICATION_TYPE_OPTIONS}
-                    placeholder="항목 선택"
-                    onChange={(value: string | null) =>
-                      handleFieldChange(index, "item", value)
-                    }
-                    value={setting.item || null}
-                    width="100%"
-                    height={30}
-                    disabled={disabled}
-                  />
-                </Field>
-                <Field>
-                  <Dropdown
-                    status={getFieldStatus("operator")}
-                    options={MONITORING_NOTIFICATION_OPERATOR_OPTIONS}
-                    placeholder="연산자 선택"
-                    onChange={(value: string | null) =>
-                      handleFieldChange(index, "operator", value)
-                    }
-                    value={setting.operator || null}
-                    width="100%"
-                    height={30}
-                    disabled={disabled}
-                  />
-                </Field>
-                <Field>
-                  <InputNumber
-                    status={getFieldStatus("threshold")}
-                    width="100%"
-                    height={30}
-                    min={1}
-                    max={100}
-                    suffix={MONITORING_NOTIFICATION_THRESHOLD_UNIT}
-                    value={
-                      setting.threshold === ""
-                        ? undefined
-                        : Number(setting.threshold)
-                    }
-                    onChange={(value) =>
-                      handleFieldChange(index, "threshold", value)
-                    }
-                    autoComplete="off"
-                    disabled={disabled}
-                  />
-                </Field>
-                <Field>
-                  <InputNumber
-                    status={getFieldStatus("duration")}
-                    width="100%"
-                    height={30}
-                    min={1}
-                    suffix={MONITORING_NOTIFICATION_DURATION_UNIT}
-                    value={
-                      setting.duration === ""
-                        ? undefined
-                        : Number(setting.duration)
-                    }
-                    onChange={(value) =>
-                      handleFieldChange(index, "duration", value)
-                    }
-                    autoComplete="off"
-                    disabled={disabled}
-                  />
-                </Field>
-                {!disabled && (
-                  <Delete>
-                    <Button
-                      icon="Close"
-                      iconSize={18}
-                      onClick={() => handleDeleteSetting(index)}
-                      disabled={safeSettings.length === 1}
+        {/* 저장된 목록 */}
+        {settings.length > 0 && (
+          <BodyRow>
+            {settings.map((setting, index) => {
+              const itemErrors = errors?.[index];
+
+              return (
+                <Column key={`threshold-${setting.metric || index}`}>
+                  <Field>
+                    <Dropdown
+                      status={itemErrors?.metric ? "error" : "default"}
+                      options={METRIC_TYPE_OPTIONS}
+                      placeholder="항목 선택"
+                      value={setting.metric || null}
+                      width="100%"
+                      height={30}
+                      disabled
                     />
-                  </Delete>
-                )}
-              </Column>
-            );
-          })}
-        </BodyRow>
+                  </Field>
+                  <Field>
+                    <Dropdown
+                      status={itemErrors?.operator ? "error" : "default"}
+                      options={OPERATOR_OPTIONS}
+                      placeholder="연산자 선택"
+                      value={setting.operator || null}
+                      width="100%"
+                      height={30}
+                      disabled
+                    />
+                  </Field>
+                  <Field>
+                    <InputNumber
+                      status={itemErrors?.value ? "error" : "default"}
+                      width="100%"
+                      height={30}
+                      min={1}
+                      max={100}
+                      suffix={THRESHOLD_UNIT}
+                      value={
+                        setting.value === "" ? undefined : Number(setting.value)
+                      }
+                      autoComplete="off"
+                      disabled
+                    />
+                  </Field>
+                  <Field>
+                    <InputNumber
+                      status={itemErrors?.durationMinutes ? "error" : "default"}
+                      width="100%"
+                      height={30}
+                      min={1}
+                      suffix={DURATION_UNIT}
+                      value={
+                        setting.durationMinutes === ""
+                          ? undefined
+                          : Number(setting.durationMinutes)
+                      }
+                      autoComplete="off"
+                      disabled
+                    />
+                  </Field>
+                  {!disabled && (
+                    <Actions>
+                      <Button
+                        icon="Close"
+                        iconSize={18}
+                        onClick={() => handleDeleteSetting(index)}
+                      />
+                    </Actions>
+                  )}
+                </Column>
+              );
+            })}
+          </BodyRow>
+        )}
       </Body>
-    </div>
+    </Container>
   );
 }
 
 // ===== Styled Components =====
 
-/** 파라미터 입력 컨테이너
- * 테두리와 패딩을 가진 카드 형태의 레이아웃
- */
+const Container = styled.div``;
+
 const Body = styled.div`
   border-radius: 4px;
   border: 1px solid #d1d5dc;
@@ -223,23 +277,14 @@ const Body = styled.div`
   gap: 6px;
   position: relative;
   width: 100%;
-
 `;
 
-/**
- * 컬럼 헤더 제목 스타일
- * 파라미터 키/값 라벨의 스타일링
- */
 const HeaderTitle = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 1;
 `;
 
-/**
- * 파라미터 행 레이아웃
- * 키, 값, 삭제 버튼을 가로로 배치
- */
 const Column = styled.div`
   display: flex;
   flex-direction: row;
@@ -247,26 +292,16 @@ const Column = styled.div`
   border-radius: 4px;
 
   & > :first-child {
-    flex: 1.5;    
+    flex: 1.5;
   }
-
 `;
 
-/**
- * 입력 필드 컨테이너
- * flex: 1로 동일한 너비를 가지며 오버플로우를 처리
- */
 const Field = styled.div`
-  flex:  1;
+  flex: 1;
   overflow: hidden;
-
 `;
 
-/**
- * 삭제 버튼 컨테이너
- * 오른쪽 정렬된 30px 너비의 삭제 버튼 영역
- */
-const Delete = styled.div`
+const Actions = styled.div`
   width: 30px;
   display: flex;
   justify-content: flex-end;

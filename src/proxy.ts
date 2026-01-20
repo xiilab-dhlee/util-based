@@ -6,6 +6,7 @@ import { getToken } from "next-auth/jwt";
 import {
   ACCOUNT_ROLES,
   type AccountRole,
+  USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
 import { MODE, ROUTES } from "@/shared/constants/routes.constant";
 
@@ -139,12 +140,13 @@ export async function proxy(request: NextRequest) {
   if (hasValidToken && token) {
     const roles = extractRoles(token as TokenWithRoles);
 
-    const isAdmin =
-      hasRole(roles, ACCOUNT_ROLES.ADMIN) ||
-      hasRole(roles, ACCOUNT_ROLES.SUPER_ADMIN);
-
-    if (path.startsWith(MODE.ADMIN) && !isAdmin) {
-      return NextResponse.redirect(new URL(MODE.USER, request.url));
+    // /admin 경로: ADMIN 또는 SUPER_ADMIN 필요
+    if (
+      path.startsWith("/admin") &&
+      !hasRole(roles, ACCOUNT_ROLES.ADMIN) &&
+      !hasRole(roles, ACCOUNT_ROLES.SUPER_ADMIN)
+    ) {
+      return NextResponse.redirect(new URL(USER_ROOT_PATH, request.url));
     }
 
     if (path.startsWith(MODE.USER)) {

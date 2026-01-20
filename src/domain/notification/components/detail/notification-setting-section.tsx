@@ -6,22 +6,16 @@ import styled from "styled-components";
 export interface NotificationSettingSectionProps {
   title: string;
   children: ReactNode;
-  grid?: boolean;
 }
 
 export function NotificationSettingSection({
   title,
   children,
-  grid = false,
 }: NotificationSettingSectionProps) {
   return (
     <SectionContainer>
       <SectionTitle>{title}</SectionTitle>
-      {grid ? (
-        <GridContent>{children}</GridContent>
-      ) : (
-        <SectionContent>{children}</SectionContent>
-      )}
+      <SectionContent>{children}</SectionContent>
     </SectionContainer>
   );
 }
@@ -43,10 +37,4 @@ const SectionContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
-`;
-
-const GridContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
 `;

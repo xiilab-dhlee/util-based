@@ -32,6 +32,7 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseAdminNotificationItemResponse,
   BaseResponseListAdminNotificationSetResponse,
   BaseResponsePageResponseAdminNotificationItemResponse,
   BaseResponseUnit,
@@ -61,7 +62,7 @@ export const getGetAdminNotificationsResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       notificationId: faker.number.int({ min: undefined, max: undefined }),
-      notificationTitle: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      notificationSetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       notificationContent: faker.string.alpha({ length: { min: 10, max: 20 } }),
       notificationType: faker.helpers.arrayElement([
         "LICENSE",
@@ -72,15 +73,35 @@ export const getGetAdminNotificationsResponseMock = (
         "WORKLOAD",
         "MONITORING",
       ] as const),
-      notificationRole: faker.helpers.arrayElement([
-        "SUPER_ADMIN",
-        "ADMIN",
-        "USER",
-        "ALL",
-      ] as const),
-      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       isRead: faker.datatype.boolean(),
     })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetAdminNotificationDetailResponseMock = (
+  overrideResponse: Partial<BaseResponseAdminNotificationItemResponse> = {},
+): BaseResponseAdminNotificationItemResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    notificationId: faker.number.int({ min: undefined, max: undefined }),
+    notificationSetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    notificationContent: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    notificationType: faker.helpers.arrayElement([
+      "LICENSE",
+      "ACCOUNT",
+      "VULNERABILITY",
+      "NODE",
+      "WORKSPACE",
+      "WORKLOAD",
+      "MONITORING",
+    ] as const),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    isRead: faker.datatype.boolean(),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -173,6 +194,36 @@ export const getGetAdminNotificationsMockHandler = (
   );
 };
 
+export const getGetAdminNotificationDetailMockHandler = (
+  overrideResponse?:
+    | BaseResponseAdminNotificationItemResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseAdminNotificationItemResponse>
+        | BaseResponseAdminNotificationItemResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/accounts/:accountId/notifications/:notificationId/detail",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAdminNotificationDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetAdminNotificationSetsMockHandler = (
   overrideResponse?:
     | BaseResponseListAdminNotificationSetResponse
@@ -205,5 +256,6 @@ export const getGetAdminNotificationSetsMockHandler = (
 export const getAdminAccountNotificationMock = () => [
   getUpdateAdminNotificationSetMockHandler(),
   getGetAdminNotificationsMockHandler(),
+  getGetAdminNotificationDetailMockHandler(),
   getGetAdminNotificationSetsMockHandler(),
 ];

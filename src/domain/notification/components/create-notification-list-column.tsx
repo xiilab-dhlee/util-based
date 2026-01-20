@@ -1,42 +1,77 @@
+import styled from "styled-components";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import type { AdminNotificationItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getNotificationTypeLabel } from "@/domain/notification/constants/notification.constant";
-import type { NotificationListType } from "@/domain/notification/schemas/notification.schema";
+import type { AntdTableSortOrder } from "@/shared/types/core.model";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
-import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
+
+const NotificationText = styled.span<{ $isRead: boolean }>`
+  font-weight: ${({ $isRead }) => ($isRead ? 400 : 700)};
+`;
 
 /**
- * 알림 목록 테이블 컬럼 정의
+ * 알림 목록 테이블 컬럼 정의 생성 함수
  *
- * 선택(체크박스) 컬럼은 Ant Design Table의 rowSelection 기능을 사용하여 처리하고,
- * 이 컬럼 정의에서는 도메인 데이터 컬럼만 관리합니다.
+ * 읽지 않은 알림은 font-weight 700으로 표시됩니다.
+ *
+ * @param sortOrder - 정렬 순서 (발생일시 컬럼에 적용)
+ * @returns 알림 목록 테이블 컬럼 정의
  */
-export const notificationListColumn: ResponsiveColumnType<NotificationListType>[] =
-  [
+export function createNotificationListColumn(
+  sortOrder: AntdTableSortOrder,
+): ResponsiveColumnType<AdminNotificationItemResponse>[] {
+  return [
     {
+      key: "notificationType",
       title: "알림 유형",
-      dataIndex: "type",
+      dataIndex: "notificationType",
       align: "left",
-      render: (_: unknown, record: NotificationListType) => {
-        return <span>{getNotificationTypeLabel(record.type) ?? "-"}</span>;
+      width: "30%",
+      render: (_: unknown, record: AdminNotificationItemResponse) => {
+        return (
+          <NotificationText $isRead={record.isRead}>
+            {getNotificationTypeLabel(record.notificationType)}
+          </NotificationText>
+        );
       },
     },
     {
+      key: "notificationContent",
       title: "알림 내용",
-      dataIndex: "contentTitle",
+      dataIndex: "notificationContent",
       align: "left",
+      ellipsis: true,
+      width: "50%",
+      render: (
+        notificationContent: AdminNotificationItemResponse["notificationContent"],
+        record: AdminNotificationItemResponse,
+      ) => {
+        return (
+          <NotificationText $isRead={record.isRead}>
+            {notificationContent}
+          </NotificationText>
+        );
+      },
     },
     {
+      key: "createDateTime",
       title: "발생일시",
-      dataIndex: "createdDate",
+      dataIndex: "createDateTime",
       align: "left",
-      width: 180,
-      render: (createdDate: NotificationListType["createdDate"]) => {
+      width: "20%",
+      sorter: true,
+      sortOrder,
+      render: (
+        createDateTime: AdminNotificationItemResponse["createDateTime"],
+        record: AdminNotificationItemResponse,
+      ) => {
         return (
-          <ColumnAlignCenterWrap>
-            {formatDateTimeSafely(createdDate) ?? "-"}
-          </ColumnAlignCenterWrap>
+          <NotificationText $isRead={record.isRead}>
+            {formatDateTimeSafely(createDateTime)}
+          </NotificationText>
         );
       },
     },
   ];
+}

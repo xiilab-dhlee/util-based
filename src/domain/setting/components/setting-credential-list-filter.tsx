@@ -2,25 +2,36 @@
 
 import { Button } from "xiilab-ui";
 
-import { useGetCredentials } from "@/domain/credential/hooks/use-get-credentials";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { openCreateCredentialModalAtom } from "@/shared/state/modal.atom";
+import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
+import { SETTING_SELECTOR } from "@/shared/constants/selector.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 
-export function SettingCredentialListFilter() {
-  const { onOpen } = useGlobalModal(openCreateCredentialModalAtom);
-  const { data } = useGetCredentials({
-    page: 1,
-    size: 100,
-    searchText: "",
-  });
+interface SettingCredentialListFilterProps {
+  /** 전체 크리덴셜 수 */
+  total: number;
+  /** 로딩 상태 */
+  loading: boolean;
+}
+
+/**
+ * 설정 크리덴셜 목록 필터 컴포넌트
+ *
+ * 크리덴셜 목록의 상단 필터 영역을 표시합니다.
+ * (제목, 총 개수, 추가 버튼)
+ */
+export function SettingCredentialListFilter({
+  total,
+  loading,
+}: SettingCredentialListFilterProps) {
+  const publish = usePublish();
 
   const handleCreateCredential = () => {
-    onOpen();
+    publish(CREDENTIAL_EVENTS.openCreateModal);
   };
 
   return (
-    <MySearchFilter title="크레덴셜 목록" total={data?.totalSize}>
+    <MySearchFilter title="크리덴셜 목록" total={total}>
       <Button
         color="primary"
         icon="Plus"
@@ -29,8 +40,10 @@ export function SettingCredentialListFilter() {
         width={120}
         height={30}
         onClick={handleCreateCredential}
+        disabled={loading}
+        data-testid={SETTING_SELECTOR.CREDENTIAL_ADD_BUTTON}
       >
-        크레덴셜 추가
+        크리덴셜 추가
       </Button>
     </MySearchFilter>
   );

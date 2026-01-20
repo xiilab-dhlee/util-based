@@ -4,56 +4,48 @@ import { useMemo, useState } from "react";
 import styled from "styled-components";
 import {
   Checkbox,
-  Dropdown,
   Form,
   FormItem,
   Icon,
   Input,
   Modal,
+  TextArea,
 } from "xiilab-ui";
 
-import { ManageMonitoringNotificationSetting } from "@/domain/monitoring-notification/components/manage-monitoring-notification-setting";
-import { useGetMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notification";
-import type {
-  MonitoringNotificationSettingFormType,
-  MonitoringNotificationSettingResponseType,
-} from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
+import { useGetMonitoringNotificationSetDetail } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+import { toFormOperator } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { openViewMonitoringNotificationModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
+import type { ThresholdFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { FormRow } from "@/styles/layers/form-layer.styled";
+import { ManageMonitoringNotificationSetting } from "./manage-monitoring-notification-setting";
 
-const TEMP_NODE_OPTIONS = [
-  { label: "node1", value: "node1" },
-  { label: "node2", value: "node2" },
-  { label: "node3", value: "node3" },
-];
+// ===== Component =====
 
 export function ViewMonitoringNotificationModal() {
   const publish = usePublish();
 
-  // useGlobalModal 훅을 사용하여 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(
     openViewMonitoringNotificationModalAtom,
   );
 
-  const [id, setId] = useState("");
+  const [id, setId] = useState<number | null>(null);
 
-  const { data } = useGetMonitoringNotification(id);
+  const { data } = useGetMonitoringNotificationSetDetail(id ?? 0, {
+    query: { enabled: id !== null },
+  });
 
-  const formSettings: MonitoringNotificationSettingFormType[] = useMemo(
+  const formSettings: ThresholdFormType[] = useMemo(
     () =>
-      (data?.settings ?? []).map(
-        (setting: MonitoringNotificationSettingResponseType) => ({
-          item: setting.item,
-          operator: setting.operator,
-          threshold: String(setting.threshold),
-          duration: String(setting.duration),
-        }),
-      ),
-    [data?.settings],
+      (data?.threshold ?? []).map((t) => ({
+        metric: t.metric,
+        operator: toFormOperator(t.operator),
+        value: String(t.value),
+        durationMinutes: String(t.durationMinutes),
+      })),
+    [data?.threshold],
   );
 
   const handleSubmit = () => {
@@ -70,7 +62,7 @@ export function ViewMonitoringNotificationModal() {
 
   useSubscribe(
     MONITORING_EVENTS.sendNotificationSetting,
-    ({ id }: { id: string }) => {
+    ({ id }: { id: number }) => {
       setId(id);
       onOpen();
     },
@@ -103,7 +95,7 @@ export function ViewMonitoringNotificationModal() {
                 </ChannelKey>
                 <Checkbox
                   size="small"
-                  checked={data?.isEmail || false}
+                  checked={data?.isEmailNotificationEnabled || false}
                   disabled
                 />
               </ChannelItem>
@@ -114,7 +106,7 @@ export function ViewMonitoringNotificationModal() {
                 </ChannelKey>
                 <Checkbox
                   size="small"
-                  checked={data?.isSystem || false}
+                  checked={data?.isSystemNotificationEnabled || false}
                   disabled
                 />
               </ChannelItem>
@@ -122,31 +114,24 @@ export function ViewMonitoringNotificationModal() {
           </ChannelRow>
         </FormItem>
 
-        <FormRow>
-          <HalfFormItem>
-            <FormItem label="알림 이름">
-              <Input
-                type="text"
-                value={data?.name || ""}
-                placeholder="알림 이름"
-                width="100%"
-                disabled
-              />
-            </FormItem>
-          </HalfFormItem>
+        <FormItem label="알림 이름">
+          <Input
+            type="text"
+            value={data?.notificationSetName || ""}
+            placeholder="알림 이름"
+            width="100%"
+            disabled
+          />
+        </FormItem>
 
-          <HalfFormItem>
-            <FormItem label="노드">
-              <Dropdown
-                options={TEMP_NODE_OPTIONS}
-                value={data?.nodeName || null}
-                width="100%"
-                placeholder="노드"
-                disabled
-              />
-            </FormItem>
-          </HalfFormItem>
-        </FormRow>
+        <FormItem label="노드">
+          <TextArea
+            value={data?.node?.join(", ") || ""}
+            placeholder="노드"
+            disabled
+            autoSize={{ minRows: 1, maxRows: 5 }}
+          />
+        </FormItem>
 
         <FormItem label="알림 임계 조건 설정">
           <ManageMonitoringNotificationSetting
@@ -158,6 +143,8 @@ export function ViewMonitoringNotificationModal() {
     </Modal>
   );
 }
+
+// ===== Styled Components =====
 
 const ChannelRow = styled.div`
   display: flex;
@@ -197,8 +184,4 @@ const ChannelKey = styled.div`
   font-size: 11px;
   line-height: 13px;
   color: #333333;
-`;
-
-const HalfFormItem = styled.div`
-  flex: 1;
 `;

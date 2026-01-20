@@ -4,7 +4,10 @@ import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import type { WorkspaceMemberResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  GetWorkspaceMembersSort,
+  WorkspaceMemberResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useGetWorkspaceMembers } from "@/api/generated/workspace-member/workspace-member";
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
 import { DeleteWorkspaceMemberModal } from "@/domain/setting/components/delete-workspace-member-modal";
@@ -12,17 +15,23 @@ import { SettingMemberListBody } from "@/domain/setting/components/setting-membe
 import { SettingMemberListFilter } from "@/domain/setting/components/setting-member-list-filter";
 import { SettingMemberListFooter } from "@/domain/setting/components/setting-member-list-footer";
 import { UpdateWorkspaceMemberRoleModal } from "@/domain/setting/components/update-workspace-member-role-modal";
-import { MEMBER_LIST_PAGE_SIZE } from "@/domain/setting/constants/setting.constant";
+import {
+  MEMBER_LIST_PAGE_SIZE,
+  WORKSPACE_MEMBER_SORT_FIELD_MAP,
+  type WorkspaceMemberSortField,
+} from "@/domain/setting/constants/setting.constant";
 import { useMemberListReset } from "@/domain/setting/hooks/use-member-list-reset";
 import {
   settingMemberPageAtom,
   settingMemberSearchTextAtom,
+  settingMemberSortAtom,
 } from "@/domain/setting/state/setting.atom";
 import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import type { SelectedMember } from "@/shared/types/member-selection.type";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 
 export function SettingMemberArticle() {
   const publish = usePublish();
@@ -30,10 +39,19 @@ export function SettingMemberArticle() {
 
   const [searchText, setSearchText] = useAtom(settingMemberSearchTextAtom);
   const [page, setPage] = useAtom(settingMemberPageAtom);
+  const sortState = useAtomValue(settingMemberSortAtom);
   const { resetAll, resetForSearch } = useMemberListReset();
 
   const workspaceId = selectedWorkspace?.workspaceId;
   const [inputValue, setInputValue] = useState(searchText);
+
+  const sortRequest = buildSortRequest<
+    WorkspaceMemberSortField,
+    GetWorkspaceMembersSort
+  >({
+    state: sortState,
+    fieldMap: WORKSPACE_MEMBER_SORT_FIELD_MAP,
+  });
 
   const { data, isLoading, isError } = useGetWorkspaceMembers(
     workspaceId ?? 0,
@@ -41,6 +59,9 @@ export function SettingMemberArticle() {
       pageNo: page - 1,
       pageSize: MEMBER_LIST_PAGE_SIZE,
       keyword: searchText,
+      ...(sortRequest
+        ? { sort: sortRequest.sort, order: sortRequest.order }
+        : {}),
     },
     {
       query: {

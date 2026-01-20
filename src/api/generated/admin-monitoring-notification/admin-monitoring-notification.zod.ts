@@ -67,9 +67,6 @@ export const updateMonitoringNotificationSetParams = zod.object({
 export const updateMonitoringNotificationSetBodyNotificationSetNameMin = 0;
 export const updateMonitoringNotificationSetBodyNotificationSetNameMax = 255;
 
-export const updateMonitoringNotificationSetBodyThresholdItemOperatorRegExp =
-  /^(>|<|>=|<=)$/;
-
 export const updateMonitoringNotificationSetBody = zod
   .object({
     notificationSetName: zod
@@ -103,12 +100,15 @@ export const updateMonitoringNotificationSetBody = zod
                 "메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE, DISK_USAGE)",
               ),
             operator: zod
-              .string()
-              .min(1)
-              .regex(
-                updateMonitoringNotificationSetBodyThresholdItemOperatorRegExp,
-              )
-              .describe("비교 연산자 (>, <, >=, <=)"),
+              .enum([
+                "GREATER_THAN",
+                "LESS_THAN",
+                "GREATER_THAN_OR_EQUAL",
+                "LESS_THAN_OR_EQUAL",
+              ])
+              .describe(
+                "비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL)",
+              ),
             value: zod.number().describe("임계값"),
             durationMinutes: zod.number().min(1).describe("지속 시간 (분)"),
           })
@@ -199,17 +199,22 @@ export const updateMonitoringNotificationSetEnabledResponse = zod
         
  * @summary 모니터링 알림 설정 목록 조회
  */
-export const getAllMonitoringNotificationSetsQueryPageableRequestPageSizeMax = 100;
+export const getAllMonitoringNotificationSetsQueryPageNoMin = 0;
+
+export const getAllMonitoringNotificationSetsQueryPageSizeMax = 100;
 
 export const getAllMonitoringNotificationSetsQueryParams = zod.object({
-  pageableRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getAllMonitoringNotificationSetsQueryPageableRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllMonitoringNotificationSetsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAllMonitoringNotificationSetsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
 });
 
 export const getAllMonitoringNotificationSetsResponse = zod
@@ -276,9 +281,6 @@ export const getAllMonitoringNotificationSetsResponse = zod
 export const createMonitoringNotificationSetBodyNotificationSetNameMin = 0;
 export const createMonitoringNotificationSetBodyNotificationSetNameMax = 255;
 
-export const createMonitoringNotificationSetBodyThresholdItemOperatorRegExp =
-  /^(>|<|>=|<=)$/;
-
 export const createMonitoringNotificationSetBody = zod
   .object({
     notificationSetName: zod
@@ -312,12 +314,15 @@ export const createMonitoringNotificationSetBody = zod
                 "메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE, DISK_USAGE)",
               ),
             operator: zod
-              .string()
-              .min(1)
-              .regex(
-                createMonitoringNotificationSetBodyThresholdItemOperatorRegExp,
-              )
-              .describe("비교 연산자 (>, <, >=, <=)"),
+              .enum([
+                "GREATER_THAN",
+                "LESS_THAN",
+                "GREATER_THAN_OR_EQUAL",
+                "LESS_THAN_OR_EQUAL",
+              ])
+              .describe(
+                "비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL)",
+              ),
             value: zod.number().describe("임계값"),
             durationMinutes: zod.number().min(1).describe("지속 시간 (분)"),
           })
@@ -347,47 +352,38 @@ export const createMonitoringNotificationSetBody = zod
         
  * @summary 모니터링 알림 히스토리 목록 조회
  */
-export const getAllMonitoringNotificationHistoriesQueryPageSearchRequestPageSizeMax = 100;
+export const getAllMonitoringNotificationHistoriesQueryPageNoMin = 0;
 
-export const getAllMonitoringNotificationHistoriesQueryFilterRequestStartedAtRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-export const getAllMonitoringNotificationHistoriesQueryFilterRequestEndedAtRegExp =
-  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+export const getAllMonitoringNotificationHistoriesQueryPageSizeMax = 100;
 
 export const getAllMonitoringNotificationHistoriesQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(
-        getAllMonitoringNotificationHistoriesQueryPageSearchRequestPageSizeMax,
-      )
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["NODE_NAME", "NODE_IP", "NOTIFICATION_SET_NAME", "CREATED_AT"])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
-  filterRequest: zod.object({
-    startedAt: zod
-      .string()
-      .regex(
-        getAllMonitoringNotificationHistoriesQueryFilterRequestStartedAtRegExp,
-      )
-      .optional()
-      .describe("조회 시작 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)"),
-    endedAt: zod
-      .string()
-      .regex(
-        getAllMonitoringNotificationHistoriesQueryFilterRequestEndedAtRegExp,
-      )
-      .optional()
-      .describe("조회 종료 일시 (yyyy-MM-dd HH:mm:ss 형식, KST 기준)"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllMonitoringNotificationHistoriesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAllMonitoringNotificationHistoriesQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["NODE_NAME", "NODE_IP", "NOTIFICATION_SET_NAME", "CREATED_AT"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  startedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
+  endedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
 });
 
 export const getAllMonitoringNotificationHistoriesResponse = zod
@@ -402,6 +398,9 @@ export const getAllMonitoringNotificationHistoriesResponse = zod
         content: zod.array(
           zod
             .object({
+              monitoringNotificationHistoryId: zod
+                .number()
+                .describe("알림 히스토리 ID"),
               nodeName: zod.string().describe("노드 이름"),
               nodeIp: zod.string().describe("노드 IP"),
               notificationSetName: zod.string().describe("알림 설정 이름"),
@@ -579,8 +578,23 @@ export const getMonitoringNotificationSetDetailResponse = zod
           .array(
             zod
               .object({
-                metric: zod.string().describe("메트릭 타입"),
-                operator: zod.string().describe("비교 연산자"),
+                metric: zod
+                  .enum([
+                    "GPU_TEMP",
+                    "GPU_MEMORY",
+                    "GPU_USAGE",
+                    "MEMORY_USAGE",
+                    "CPU_USAGE",
+                  ])
+                  .describe("메트릭 타입"),
+                operator: zod
+                  .enum([
+                    "GREATER_THAN",
+                    "LESS_THAN",
+                    "GREATER_THAN_OR_EQUAL",
+                    "LESS_THAN_OR_EQUAL",
+                  ])
+                  .describe("비교 연산자"),
                 value: zod.number().describe("임계값"),
                 durationMinutes: zod.number().describe("지속 시간 (분)"),
               })

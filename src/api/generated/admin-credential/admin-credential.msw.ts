@@ -47,18 +47,13 @@ export const getGetAllCredentialsResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       credentialId: faker.number.int({ min: undefined, max: undefined }),
-      credentialChannel: faker.helpers.arrayElement([
-        "GIT",
-        "DOCKER",
-        "NGC",
-      ] as const),
       credentialType: faker.helpers.arrayElement([
-        "IMAGE",
-        "SOURCE_CODE",
+        "IMAGE_REGISTRY",
+        "GIT_REPOSITORY",
       ] as const),
       credentialName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       description: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     })),

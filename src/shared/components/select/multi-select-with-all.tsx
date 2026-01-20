@@ -9,6 +9,7 @@ import type { MultiSelectWithAllProps } from "./multi-select-with-all.types";
  * 전체 선택 기능이 있는 다중 선택 드롭다운
  */
 export function MultiSelectWithAll({
+  id,
   options,
   value,
   onChange,
@@ -90,6 +91,7 @@ export function MultiSelectWithAll({
   return (
     <Container $width={width}>
       <Dropdown
+        id={id}
         options={dropdownOptions}
         value={dropdownValue}
         onChange={(selectedValue) => {

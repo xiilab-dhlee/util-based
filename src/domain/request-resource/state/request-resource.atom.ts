@@ -10,6 +10,8 @@ export const requestResourcePageAtom = atomWithReset<number>(1);
 export const openApproveResourceModalAtom = atom<boolean>(false);
 /** 리소스 반려 모달 표시 여부 */
 export const openRejectResourceModalAtom = atom<boolean>(false);
+/** 리소스 요청 취소(삭제) 모달 표시 여부 */
+export const openDeleteRequestResourceModalAtom = atom<boolean>(false);
 
 /** 리소스 요청 필터 - 승인 상태 (null: 미선택, ALL: 전체, 그 외: 특정 상태) */
 export const requestResourceStatusAtom = atomWithReset<

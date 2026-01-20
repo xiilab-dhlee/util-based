@@ -106,16 +106,6 @@ export class SignupPage extends BasePage {
   }
 
   /**
-   * 필드명 → FormItem 컴포넌트 매핑 (렌더링 검증용, Group Name 포함)
-   */
-  private get allFieldMap(): Record<string, FormItemComponent> {
-    return {
-      ...this.formFieldMap,
-      "Group Name": this.groupNameField,
-    };
-  }
-
-  /**
    * 필드명으로 FormItem 컴포넌트 조회 (에러 검증용)
    * @throws Error - 유효하지 않은 필드명
    */
@@ -124,20 +114,6 @@ export class SignupPage extends BasePage {
     if (!field) {
       throw new Error(
         `Unknown field name: ${fieldName}. Valid fields: ${Object.keys(this.formFieldMap).join(", ")}`,
-      );
-    }
-    return field;
-  }
-
-  /**
-   * 필드명으로 FormItem 컴포넌트 조회 (렌더링 검증용)
-   * @throws Error - 유효하지 않은 필드명
-   */
-  private getField(fieldName: string): FormItemComponent {
-    const field = this.allFieldMap[fieldName];
-    if (!field) {
-      throw new Error(
-        `Unknown field name: ${fieldName}. Valid fields: ${Object.keys(this.allFieldMap).join(", ")}`,
       );
     }
     return field;
@@ -440,21 +416,17 @@ export class SignupPage extends BasePage {
   // ============================================
 
   /**
-   * 특정 필드가 표시되는지 확인
-   * @param fieldName - 필드명 (Email, Password, Confirm Password, First Name, Last Name, Group Name)
+   * 특정 필드가 빈 값인지 확인
+   * @param fieldName - 필드명 (Email, Password, Confirm Password, First Name, Last Name)
    */
-  async assertFieldVisible(fieldName: string): Promise<void> {
-    await this.getField(fieldName).assertVisible();
-  }
-
-  /**
-   * 여러 필드가 표시되는지 확인
-   * @param fieldNames - 필드명 배열
-   */
-  async assertFieldsVisible(fieldNames: string[]): Promise<void> {
-    for (const fieldName of fieldNames) {
-      await this.assertFieldVisible(fieldName);
+  async assertFieldEmpty(fieldName: string): Promise<void> {
+    const input = this.inputFieldMap[fieldName];
+    if (!input) {
+      throw new Error(
+        `Unknown field name: ${fieldName}. Valid fields: ${Object.keys(this.inputFieldMap).join(", ")}`,
+      );
     }
+    await input.assertEmpty();
   }
 
   /**

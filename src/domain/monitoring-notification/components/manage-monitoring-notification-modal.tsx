@@ -1,39 +1,48 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import styled from "styled-components";
-import {
-  Checkbox,
-  Dropdown,
-  Form,
-  FormItem,
-  Icon,
-  Input,
-  Modal,
-} from "xiilab-ui";
+import { useForm } from "react-hook-form";
+import { Form, Icon, Modal } from "xiilab-ui";
 
-import { ManageMonitoringNotificationSetting } from "@/domain/monitoring-notification/components/manage-monitoring-notification-setting";
-import { useCreateMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-create-monitoring-notification";
-import { useMonitoringNotificationForm } from "@/domain/monitoring-notification/hooks/use-monitoring-notification-form";
-import { useUpdateMonitoringNotification } from "@/domain/monitoring-notification/hooks/use-update-monitoring-notification";
+import { useGetNodeNames } from "@/api/generated/admin-cluster/admin-cluster";
+import type { MonitoringNotificationSetDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  NotificationChannelSection,
+  NotificationInfoSection,
+  NotificationSettingsSection,
+} from "@/domain/monitoring-notification/components/notification-form-sections";
+import {
+  useCreateNotificationAction,
+  useUpdateNotificationAction,
+} from "@/domain/monitoring-notification/hooks/monitoring-notification-action";
 import { openManageMonitoringNotificationModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
-import type {
-  NotificationModalMode,
-  OpenNotificationModalPayload,
-} from "@/domain/monitoring-notification/types/monitoring-notification.type";
-import { CreateModelButton } from "@/shared/components/button/create-model-button";
+import type { NotificationModalMode } from "@/domain/monitoring-notification/types/monitoring-notification.type";
+import {
+  type NotificationFormType,
+  notificationFormSchema,
+} from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
+import {
+  toCreateRequest,
+  toFormData,
+} from "@/domain/monitoring-notification/utils/notification-mapper";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { FormRow } from "@/styles/layers/form-layer.styled";
 
-const TEMP_NODE_OPTIONS = [
-  { label: "node1", value: "node1" },
-  { label: "node2", value: "node2" },
-  { label: "node3", value: "node3" },
-];
+// ===== 상수 =====
+
+const INITIAL_FORM_STATE: NotificationFormType = {
+  notificationSetName: "",
+  nodeName: [],
+  isEmailNotificationEnabled: true,
+  isSystemNotificationEnabled: false,
+  threshold: [],
+};
+
+// ===== 컴포넌트 =====
 
 export function ManageMonitoringNotificationModal() {
   // 모달 상태 관리
@@ -43,65 +52,108 @@ export function ManageMonitoringNotificationModal() {
 
   // 모달 모드 상태
   const [mode, setMode] = useState<NotificationModalMode>(MODAL_MODES.CREATE);
-  const [editId, setEditId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<number | null>(null);
   const isEditMode = mode === MODAL_MODES.UPDATE;
+  const hasDataError = isEditMode && editId === null;
 
-  // 폼 훅 사용 (순수 폼 상태 + 검증만)
-  const form = useMonitoringNotificationForm();
+  // 노드 목록 조회
+  const { data: nodeNameData, isLoading: isNodeNamesLoading } =
+    useGetNodeNames();
+  const nodeOptions = (nodeNameData ?? []).map((name) => ({
+    label: name,
+    value: name,
+  }));
 
-  // Mutations
-  const createNotification = useCreateMonitoringNotification();
-  const updateNotification = useUpdateMonitoringNotification();
+  // react-hook-form 설정
+  const {
+    control,
+    handleSubmit,
+    reset,
+    clearErrors,
+    formState: { errors },
+  } = useForm<NotificationFormType>({
+    resolver: zodResolver(notificationFormSchema),
+    defaultValues: INITIAL_FORM_STATE,
+  });
 
-  const isSubmitting =
-    createNotification.isPending || updateNotification.isPending;
+  const createMutation = useCreateNotificationAction({
+    mutation: {
+      onSuccess: () => handleClose(),
+    },
+  });
+
+  const updateMutation = useUpdateNotificationAction({
+    mutation: {
+      onSuccess: () => handleClose(),
+    },
+  });
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   // PubSub 구독 - 생성/수정 모드 초기화
   useSubscribe(
     MONITORING_EVENTS.openNotificationModal,
-    (payload: OpenNotificationModalPayload) => {
+    (payload: {
+      mode: NotificationModalMode;
+      data?: MonitoringNotificationSetDetailResponse;
+    }) => {
       setMode(payload.mode);
-      if (payload.mode === MODAL_MODES.UPDATE) {
-        form.initializeForEdit(payload.data);
-        setEditId(payload.data.id);
+      if (payload.mode === MODAL_MODES.UPDATE && payload.data) {
+        const formData = toFormData(payload.data);
+        reset(formData);
+        setEditId(payload.data.notificationSetId);
       } else {
-        form.initializeForCreate();
+        reset(INITIAL_FORM_STATE);
         setEditId(null);
       }
       onOpen();
     },
   );
 
-  // 모달 닫기 시 폼 및 mutation 리셋
+  // 모달 닫기
   const handleClose = () => {
-    form.reset();
+    reset(INITIAL_FORM_STATE);
+    clearErrors();
     setMode(MODAL_MODES.CREATE);
     setEditId(null);
-    createNotification.reset();
-    updateNotification.reset();
+    createMutation.reset();
+    updateMutation.reset();
     onClose();
   };
 
   // 폼 제출
-  const handleSubmit = () => {
-    // 1. 검증
-    const payload = form.validate();
-    if (!payload) return;
+  const onSubmit = (data: NotificationFormType) => {
+    const request = toCreateRequest(data);
 
-    // 2. API 호출
-    const onSuccess = () => {
-      toast.success(
-        isEditMode ? "알림이 수정되었습니다." : "알림이 추가되었습니다.",
-      );
-      handleClose();
-    };
-
-    if (isEditMode && editId) {
-      updateNotification.mutate({ id: editId, ...payload }, { onSuccess });
+    if (isEditMode && editId !== null) {
+      updateMutation.mutate({
+        notificationSetId: editId,
+        data: request,
+      });
     } else {
-      createNotification.mutate(payload, { onSuccess });
+      createMutation.mutate({ data: request });
     }
   };
+
+  if (hasDataError) {
+    return (
+      <Modal
+        type="primary"
+        icon={<Icon name="Edit01" color="#fff" size={14} />}
+        modalWidth={600}
+        open={open}
+        closable
+        title="알림 수정"
+        showCancelButton={false}
+        okText="닫기"
+        onOk={handleClose}
+        centered
+        showHeaderBorder
+      >
+        <DataErrorState />
+      </Modal>
+    );
+  }
 
   return (
     <Modal
@@ -111,160 +163,41 @@ export function ManageMonitoringNotificationModal() {
       }
       modalWidth={600}
       open={open}
-      closable
+      closable={!isSubmitting}
       title={isEditMode ? "알림 수정" : "알림 추가"}
       showCancelButton
       cancelText="취소"
       onCancel={handleClose}
       okText="확인"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
-      okButtonProps={{
-        loading: isSubmitting,
-      }}
+      maskClosable={!isSubmitting}
+      keyboard={!isSubmitting}
+      cancelButtonProps={{ disabled: isSubmitting }}
+      okButtonProps={{ loading: isSubmitting }}
     >
       <Form layout="vertical">
-        <FormItem label="알림 유형" required>
-          {/* 채널 에러 표시 */}
-          {form.errors.channel && (
-            <ChannelErrorText>{form.errors.channel}</ChannelErrorText>
-          )}
-          <ChannelRow>
-            <Channels>
-              <ChannelItem>
-                <ChannelKey>
-                  <Icon name="MailFilled" size={22} />
-                  E-mail
-                </ChannelKey>
-                <Checkbox
-                  size="small"
-                  checked={form.formState.isEmail}
-                  onChange={() =>
-                    form.setField("isEmail", !form.formState.isEmail)
-                  }
-                />
-              </ChannelItem>
-              <ChannelItem>
-                <ChannelKey>
-                  <Icon name="SystemFilled" size={22} />
-                  System
-                </ChannelKey>
-                <Checkbox
-                  size="small"
-                  checked={form.formState.isSystem}
-                  onChange={() =>
-                    form.setField("isSystem", !form.formState.isSystem)
-                  }
-                />
-              </ChannelItem>
-            </Channels>
-          </ChannelRow>
-        </FormItem>
+        <NotificationChannelSection
+          control={control}
+          errors={errors}
+          disabled={isSubmitting}
+        />
 
-        <FormRow>
-          <HalfFormItem>
-            <FormItem label="알림 이름" required>
-              <Input
-                type="text"
-                placeholder="알림 이름을 입력해 주세요."
-                width="100%"
-                value={form.formState.name}
-                onChange={(e) => form.setField("name", e.target.value)}
-                status={form.errors.name ? "error" : undefined}
-              />
-            </FormItem>
-          </HalfFormItem>
+        <NotificationInfoSection
+          control={control}
+          errors={errors}
+          nodeOptions={nodeOptions}
+          isNodeNamesLoading={isNodeNamesLoading}
+          disabled={isSubmitting}
+        />
 
-          <HalfFormItem>
-            <FormItem label="노드" required>
-              <Dropdown
-                options={TEMP_NODE_OPTIONS}
-                value={form.formState.nodeName || null}
-                onChange={(value) => form.setField("nodeName", value ?? "")}
-                width="100%"
-                placeholder="노드를 선택해 주세요."
-                status={form.errors.nodeName ? "error" : undefined}
-              />
-            </FormItem>
-          </HalfFormItem>
-        </FormRow>
-
-        <FormItem label="알림 임계 조건 설정" required>
-          <CreateSettingButtonWrapper>
-            <CreateModelButton onClick={form.addSetting} title="설정 추가" />
-          </CreateSettingButtonWrapper>
-
-          <ManageMonitoringNotificationSetting
-            settings={form.formState.settings}
-            onChange={form.setSettings}
-            errors={form.errors.settingsItems}
-          />
-        </FormItem>
+        <NotificationSettingsSection
+          control={control}
+          errors={errors}
+          disabled={isSubmitting}
+        />
       </Form>
     </Modal>
   );
 }
-
-// ===== Styled Components =====
-
-const ChannelRow = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #e9e9e9;
-  background-color: #fff;
-  padding: 8px 12px;
-  border-radius: 2px;
-
-  position: relative;
-`;
-
-const Channels = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  padding: 4px 0;
-`;
-
-const ChannelItem = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 8px;
-
-  & + & {
-    border-left: 1px solid #e9ebee;
-  }
-`;
-
-const ChannelKey = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 2px;
-  font-weight: 400;
-  font-size: 11px;
-  line-height: 13px;
-  color: #333333;
-`;
-
-const HalfFormItem = styled.div`
-  flex: 1;
-`;
-
-const CreateSettingButtonWrapper = styled.div`
-  position: absolute;
-  right: 0;
-  top: -24px;
-`;
-
-const ChannelErrorText = styled.span`
-  position: absolute;
-  right: 0;
-  top: -24px;
-  color: #ff4242;
-  font-size: 12px;
-  display: block;
-`;

@@ -1,76 +1,77 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
-import { Icon } from "xiilab-ui";
 
+import type { MonitoringNotificationSetListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { MonitoringNotificationDeleteButton } from "@/domain/monitoring-notification/components/monitoring-notification-delete-button";
 import { MonitoringNotificationNameButton } from "@/domain/monitoring-notification/components/monitoring-notification-name-button";
 import { MonitoringNotificationSettingSwitch } from "@/domain/monitoring-notification/components/monitoring-notification-setting-switch";
-import type { MonitoringNotificationListResponseType } from "@/domain/monitoring-notification/schemas/monitoring-notification.schema";
-import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
+import { getChannelLabel } from "@/domain/monitoring-notification/utils/monitoring-notification.util";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
-import {
-  ColumnAlignCenterWrap,
-  ColumnIconWrap,
-} from "@/styles/layers/column-layer.styled";
+import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
-/**
- * 컬럼 정의 배열 생성 (dataIndex 한 번만 정의)
- */
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
-      title: "노드 이름",
-      key: "nodeName",
-      dataIndex: "nodeName",
-      align: "left",
-    },
-    {
-      title: "IP 주소",
-      key: "ip",
-      dataIndex: "ip",
-      align: "left",
-    },
-    {
       title: "알림 이름",
-      key: "name",
-      dataIndex: "name",
+      key: "notificationSetName",
+      dataIndex: "notificationSetName",
       align: "left",
-      render: (
-        name: string,
-        record: MonitoringNotificationListResponseType,
-      ) => {
-        return <MonitoringNotificationNameButton id={record.id} name={name} />;
+      width: "40%",
+      ellipsis: true,
+      render: (name: string, record: MonitoringNotificationSetListResponse) => {
+        return (
+          <MonitoringNotificationNameButton
+            id={String(record.notificationSetId)}
+            name={name}
+          />
+        );
       },
     },
     {
-      title: "알림 유형",
+      title: "채널",
       key: "channel",
-      dataIndex: "channel",
       align: "left",
-      render: () => {
-        return <span>E-mail, System</span>;
+      width: "25%",
+      render: (_: unknown, record: MonitoringNotificationSetListResponse) => {
+        return (
+          <span>
+            {getChannelLabel(
+              record.isSystemNotificationEnabled,
+              record.isEmailNotificationEnabled,
+            )}
+          </span>
+        );
       },
     },
     {
       title: "알림 설정",
-      key: "status",
-      dataIndex: "status",
+      key: "isEnabled",
+      dataIndex: "isEnabled",
       align: "center",
-      render: () => {
-        return <MonitoringNotificationSettingSwitch />;
+      width: "25%",
+      render: (
+        isEnabled: boolean,
+        record: MonitoringNotificationSetListResponse,
+      ) => {
+        return (
+          <MonitoringNotificationSettingSwitch
+            notificationSetId={record.notificationSetId}
+            isEnabled={isEnabled}
+          />
+        );
       },
     },
     {
       title: "삭제",
       key: "delete",
-      dataIndex: "delete",
       align: "center",
-      width: ICON_COLUMN_WIDTH,
-      render: () => {
+      width: "10%",
+      render: (_: unknown, record: MonitoringNotificationSetListResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            <ColumnIconWrap onClick={() => alert("준비 중입니다.")}>
-              <Icon name="Delete" color="var(--icon-fill)" size={16} />
-            </ColumnIconWrap>
+            <MonitoringNotificationDeleteButton
+              notificationSetId={record.notificationSetId}
+            />
           </ColumnAlignCenterWrap>
         );
       },

@@ -1,41 +1,34 @@
 "use client";
 
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useMemo } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Input } from "xiilab-ui";
 
-import type { CredentialListType } from "@/domain/credential/schemas/credential.schema";
-import { createCredentialColumn } from "@/domain/system-setting/components/create-credential-column";
+import { useGetAllCredentials } from "@/api/generated/admin-credential/admin-credential";
+import type { AdminCredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { createCredentialColumn } from "@/domain/credential/components/create-credential-column";
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
 import { CREDENTIAL_LIST_PAGE_SIZE } from "@/domain/system-setting/constants/system-setting.constant";
-import { useGetSystemCredentials } from "@/domain/system-setting/hooks/use-get-system-credentials";
-import {
-  credentialPageAtom,
-  credentialSearchTextAtom,
-} from "@/domain/system-setting/state/credential.atom";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 const CREDENTIAL_BOX_HEIGHT = 542;
 
+const columns = createCredentialColumn();
+
 /**
- * 크레덴셜 목록 설정 컴포넌트
+ * 크리덴셜 목록 설정 컴포넌트
  * 검색, 테이블, 페이지네이션 포함
  */
 export function CredentialListSetting() {
-  const [page, setPage] = useAtom(credentialPageAtom);
-  const searchText = useAtomValue(credentialSearchTextAtom);
-  const setSearchText = useSetAtom(credentialSearchTextAtom);
-  const publish = usePublish();
+  const [page, setPage] = useState(1);
+  const [searchText, setSearchText] = useState("");
 
-  const { data, isLoading, isError, refetch } = useGetSystemCredentials({
-    page,
-    size: CREDENTIAL_LIST_PAGE_SIZE,
-    searchText,
+  const { data, isLoading, isError, refetch } = useGetAllCredentials({
+    pageNo: page - 1,
+    pageSize: CREDENTIAL_LIST_PAGE_SIZE,
+    keyword: searchText,
   });
 
   /**
@@ -43,7 +36,7 @@ export function CredentialListSetting() {
    * 검색 시 페이지를 0으로 리셋하고 검색어를 저장
    */
   const handleSearch = (value: string) => {
-    setPage(0);
+    setPage(1);
     setSearchText(value.trim());
   };
 
@@ -51,30 +44,9 @@ export function CredentialListSetting() {
     setPage(newPage);
   };
 
-  const handleDelete = useCallback(
-    (id: number) => {
-      publish(SYSTEM_SETTING_EVENTS.openCredentialDeleteModal, { id });
-    },
-    [publish],
-  );
-
-  const handleNameClick = useCallback(
-    (id: number) => {
-      publish(SYSTEM_SETTING_EVENTS.openCredentialDetailModal, id);
-    },
-    [publish],
-  );
-
-  const columns = useMemo(() => {
-    return createCredentialColumn(undefined, {
-      onDelete: handleDelete,
-      onNameClick: handleNameClick,
-    });
-  }, [handleDelete, handleNameClick]);
-
   if (isError) {
     return (
-      <SettingBox title="크레덴셜 목록" height={CREDENTIAL_BOX_HEIGHT}>
+      <SettingBox title="크리덴셜 목록" height={CREDENTIAL_BOX_HEIGHT}>
         <DataErrorState onRetry={refetch} />
       </SettingBox>
     );
@@ -82,13 +54,13 @@ export function CredentialListSetting() {
 
   return (
     <SettingBox
-      title="크레덴셜 목록"
+      title="크리덴셜 목록"
       height={CREDENTIAL_BOX_HEIGHT}
       extra={
         <SearchWrapper>
           <Input.Search
             name="search"
-            placeholder="크레덴셜 이름 또는 생성자를 검색해 주세요."
+            placeholder="크리덴셜 이름 또는 생성자를 검색해 주세요."
             onSearch={handleSearch}
             autoComplete="off"
             width={290}
@@ -99,11 +71,11 @@ export function CredentialListSetting() {
     >
       <ContentWrapper>
         <TableWrapper>
-          <CustomizedTable<CredentialListType>
+          <CustomizedTable<AdminCredentialListItemResponse>
             data={data?.content || []}
             columns={columns}
             loading={isLoading}
-            rowKey="id"
+            rowKey="credentialId"
             activePadding
             columnHeight={39}
           />

@@ -19,6 +19,7 @@ import { AccountPendingPage } from "./pages/account-pending.page";
 import { HubPage } from "./pages/hub.page";
 import { MonitoringPage } from "./pages/monitoring.page";
 import { PrivateRegistryListPage } from "./pages/private-registry-list.page";
+import { SettingPage } from "./pages/setting.page";
 import { SignupPage } from "./pages/signup.page";
 import { WorkloadDetailPage } from "./pages/workload-detail.page";
 import { WorkloadListPage } from "./pages/workload-list.page";
@@ -117,6 +118,7 @@ type TestContextFixtures = {
   assertLogger: AssertLogger;
 
   // Page Objects (페이지별 그룹화)
+  settingPage: SettingPage;
   signupPage: SignupPage;
   workloadListPage: WorkloadListPage;
   workloadDetailPage: WorkloadDetailPage;
@@ -309,6 +311,10 @@ export const test = base.extend<TestContextFixtures>({
   // ============================================================================
   // Page Objects (페이지별 그룹화)
   // ============================================================================
+
+  settingPage: async ({ page }, use) => {
+    await use(new SettingPage(page));
+  },
 
   signupPage: async ({ page }, use) => {
     await use(new SignupPage(page));

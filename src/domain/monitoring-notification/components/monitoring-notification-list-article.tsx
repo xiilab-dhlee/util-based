@@ -1,81 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import { useEffect } from "react";
 import styled from "styled-components";
-import { DateRange, Input, Typography } from "xiilab-ui";
 
-import { createMonitoringNotificationHistoryColumn } from "@/domain/monitoring-notification/column/create-monitoring-notification-history-column";
-import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
-import { useGetMonitoringNotifications } from "@/domain/monitoring-notification/hooks/use-get-monitoring-notifications";
-import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
-import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { subTitleStyle } from "@/styles/mixins/text";
+import { useGetAllMonitoringNotificationHistories } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+import { MonitoringNotificationHistoryListBody } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-body";
+import { MonitoringNotificationHistoryListFilter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-filter";
+import { MonitoringNotificationHistoryListFooter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-footer";
+import {
+  MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP,
+  MONITORING_NOTIFICATION_PAGE_SIZE,
+} from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
+import {
+  monitoringNotificationHistoryDateRangeAtom,
+  monitoringNotificationHistorySortAtom,
+  monitoringNotificationPageAtom,
+  monitoringNotificationSearchTextAtom,
+} from "@/domain/monitoring-notification/state/monitoring-notification.atom";
+import { formatDateForRequest } from "@/shared/utils/date.util";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 
 export function MonitoringNotificationListArticle() {
-  const [page, setPage] = useState(1);
+  const resetPage = useResetAtom(monitoringNotificationPageAtom);
+  const resetSearchText = useResetAtom(monitoringNotificationSearchTextAtom);
+  const resetSort = useResetAtom(monitoringNotificationHistorySortAtom);
+  const resetDateRange = useResetAtom(
+    monitoringNotificationHistoryDateRangeAtom,
+  );
 
-  const { data } = useGetMonitoringNotifications({
-    page,
-    size: MONITORING_NOTIFICATION_PAGE_SIZE,
-    searchText: "",
+  const page = useAtomValue(monitoringNotificationPageAtom);
+  const searchText = useAtomValue(monitoringNotificationSearchTextAtom);
+  const sort = useAtomValue(monitoringNotificationHistorySortAtom);
+  const dateRange = useAtomValue(monitoringNotificationHistoryDateRangeAtom);
+
+  const sortRequest = buildSortRequest({
+    state: sort,
+    fieldMap: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP,
   });
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-  };
+  const { data, isLoading, isError } = useGetAllMonitoringNotificationHistories(
+    {
+      pageNo: page - 1,
+      pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+      keyword: searchText || undefined,
+      ...sortRequest,
+      startedAt: dateRange?.start
+        ? formatDateForRequest(dateRange.start)
+        : undefined,
+      endedAt: dateRange?.end ? formatDateForRequest(dateRange.end) : undefined,
+    },
+  );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 초기화 시 의존성 배열 비워둠
+  useEffect(() => {
+    resetPage();
+    resetSearchText();
+    resetSort();
+    resetDateRange();
+  }, []);
+
+  const content = data?.content ?? [];
+  const totalSize = data?.totalSize ?? 0;
 
   return (
     <Container>
-      <ArticleHeader>
-        <ArticleTitle variant="subtitle-2">알림 내역</ArticleTitle>
-        <ArticleHeaderRight>
-          <DateRange
-            height={30}
-            width={250}
-            startDate={new Date()}
-            endDate={new Date()}
-            withTime
-            onChange={() => {}}
-            maxDate={new Date()}
-          />
-          <Input.Search
-            name="search"
-            placeholder="검색어를 입력하세요."
-            autoComplete="off"
-            width={220}
-            height={30}
-          />
-        </ArticleHeaderRight>
-      </ArticleHeader>
+      <MonitoringNotificationHistoryListFilter loading={isLoading} />
       <ArticleBody>
-        <CustomizedTable
-          columns={createMonitoringNotificationHistoryColumn([
-            {
-              key: "name",
-            },
-            {
-              key: "nodeName",
-            },
-            {
-              key: "ip",
-            },
-            {
-              key: "channel",
-            },
-            {
-              key: "createdDate",
-              title: "발생일시",
-            },
-          ])}
-          data={data?.content || []}
-          activePadding
+        <MonitoringNotificationHistoryListBody
+          content={content}
+          loading={isLoading}
+          isError={isError}
         />
-        <ListPageFooter
-          total={100}
-          page={page}
-          pageSize={MONITORING_NOTIFICATION_PAGE_SIZE}
-          onChange={handlePageChange}
+        <MonitoringNotificationHistoryListFooter
+          total={totalSize}
+          loading={isLoading}
         />
       </ArticleBody>
     </Container>
@@ -93,27 +93,7 @@ const Container = styled.article`
   flex-direction: column;
 `;
 
-const ArticleHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-`;
-
-const ArticleHeaderRight = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-`;
-
-const ArticleTitle = styled(Typography.Text)`
-  ${subTitleStyle(4)}
-
-  color: #000;
-`;
-
-const ArticleBody = styled(ListWrapper)`
+const ArticleBody = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;

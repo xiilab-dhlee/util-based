@@ -1,33 +1,30 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import styled from "styled-components";
 
+import { useGetAdminNotificationSets } from "@/api/generated/admin-account-notification/admin-account-notification";
+import type {
+  AdminNotificationSetResponse,
+  NotificationSetUpdateRequest,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { AdminNotificationSettingItem } from "@/domain/notification/components/detail/admin-notification-setting-item";
 import { NotificationDetailMain } from "@/domain/notification/components/detail/notification-detail-main";
 import { NotificationSettingSection } from "@/domain/notification/components/detail/notification-setting-section";
-// 라이선스 설정
-import { LicenseExpireAlertSetting } from "@/domain/notification/components/detail/settings/license-expire-alert-setting";
-// 회원 설정
-import { MemberApprovalAlertSetting } from "@/domain/notification/components/detail/settings/member-approval-alert-setting";
-import { MemberSignupAlertSetting } from "@/domain/notification/components/detail/settings/member-signup-alert-setting";
-// 노드 설정
-import { MigApplyAlertSetting } from "@/domain/notification/components/detail/settings/mig-apply-alert-setting";
-import { MigFailAlertSetting } from "@/domain/notification/components/detail/settings/mig-fail-alert-setting";
-import { NodeFailAlertSetting } from "@/domain/notification/components/detail/settings/node-fail-alert-setting";
-// 워크로드 설정
-import { ResourceRecoveryAlertSetting } from "@/domain/notification/components/detail/settings/resource-recovery-alert-setting";
-import { ResourceWarningAlertSetting } from "@/domain/notification/components/detail/settings/resource-warning-alert-setting";
-// 보안 설정
-import { VulnerableImageAlertSetting } from "@/domain/notification/components/detail/settings/vulnerable-image-alert-setting";
-// 워크스페이스 설정
-import { WorkspaceCreateAlertSetting } from "@/domain/notification/components/detail/settings/workspace-create-alert-setting";
-import { WorkspaceResourceExceedAlertSetting } from "@/domain/notification/components/detail/settings/workspace-resource-exceed-alert-setting";
-import { WorkspaceResourceRequestAlertSetting } from "@/domain/notification/components/detail/settings/workspace-resource-request-alert-setting";
+import {
+  ADMIN_NOTIFICATION_CATEGORY_LABEL,
+  ADMIN_NOTIFICATION_SECTIONS,
+} from "@/domain/notification/constants/notification.constant";
+import { useUpdateAdminNotificationSetAction } from "@/domain/notification/hooks/notification-actions";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 import {
   AsideListArticleHeader,
   AsideListArticleTitle,
 } from "@/styles/layers/aside-list-layers.styled";
+
+type NotificationChannel = "SYSTEM" | "EMAIL";
 
 export function AsideNotification() {
   const params = useParams<{ id?: string }>();
@@ -37,7 +34,42 @@ export function AsideNotification() {
     return <NotificationDetailMain />;
   }
 
-  // 알림이 선택되지 않은 경우 알림 설정 표시
+  return <NotificationSettingsPanel />;
+}
+
+function NotificationSettingsPanel() {
+  const { data: session } = useSession();
+  const accountId = getSessionAccountId(session) ?? "";
+
+  const { data, isLoading } = useGetAdminNotificationSets(accountId, {
+    query: { enabled: Boolean(accountId) },
+  });
+  const { mutate } = useUpdateAdminNotificationSetAction(accountId);
+
+  const findByName = (name: string) =>
+    (data ?? []).find((s) => s.notificationSetName === name);
+
+  const handleToggle = (
+    setting: AdminNotificationSetResponse,
+    channel: NotificationChannel,
+    checked: boolean,
+  ) => {
+    if (!accountId) return;
+
+    const requestData: NotificationSetUpdateRequest = {
+      isSystemNotificationEnabled:
+        channel === "SYSTEM" ? checked : setting.isSystemNotificationEnabled,
+      isEmailNotificationEnabled:
+        channel === "EMAIL" ? checked : setting.isEmailNotificationEnabled,
+    };
+
+    mutate({
+      accountId,
+      notificationSetId: setting.notificationSetId,
+      data: requestData,
+    });
+  };
+
   return (
     <AsideDetailContainer>
       <AsideListArticleHeader>
@@ -45,41 +77,26 @@ export function AsideNotification() {
       </AsideListArticleHeader>
 
       <SectionsWrapper>
-        {/* 라이선스 (상단) */}
-        <NotificationSettingSection title="라이선스">
-          <LicenseExpireAlertSetting />
-        </NotificationSettingSection>
+        {ADMIN_NOTIFICATION_SECTIONS.map(({ category, items }) => {
+          const title = ADMIN_NOTIFICATION_CATEGORY_LABEL[category];
 
-        {/* 회원 */}
-        <NotificationSettingSection title="회원">
-          <MemberSignupAlertSetting />
-          <MemberApprovalAlertSetting />
-        </NotificationSettingSection>
-
-        {/* 보안 */}
-        <NotificationSettingSection title="보안">
-          <VulnerableImageAlertSetting />
-        </NotificationSettingSection>
-
-        {/* 노드 */}
-        <NotificationSettingSection title="노드" grid>
-          <NodeFailAlertSetting />
-          <MigApplyAlertSetting />
-          <MigFailAlertSetting />
-        </NotificationSettingSection>
-
-        {/* 워크스페이스 */}
-        <NotificationSettingSection title="워크스페이스" grid>
-          <WorkspaceCreateAlertSetting />
-          <WorkspaceResourceExceedAlertSetting />
-          <WorkspaceResourceRequestAlertSetting />
-        </NotificationSettingSection>
-
-        {/* 워크로드 */}
-        <NotificationSettingSection title="워크로드">
-          <ResourceWarningAlertSetting />
-          <ResourceRecoveryAlertSetting />
-        </NotificationSettingSection>
+          return (
+            <NotificationSettingSection key={category} title={title}>
+              {items.map((name) => {
+                const setting = findByName(name);
+                return (
+                  <AdminNotificationSettingItem
+                    key={name}
+                    name={name}
+                    setting={setting}
+                    disabled={isLoading || !setting}
+                    onToggle={handleToggle}
+                  />
+                );
+              })}
+            </NotificationSettingSection>
+          );
+        })}
       </SectionsWrapper>
     </AsideDetailContainer>
   );

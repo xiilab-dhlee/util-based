@@ -128,7 +128,7 @@ export const getPrivateRegistryListResponse = zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("생성일시"),
+                .describe("생성일시 (UTC)"),
               imageType: zod
                 .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
                 .optional()
@@ -180,13 +180,15 @@ export const createPrivateExternalImageBody = zod
       .regex(createPrivateExternalImageBodyImageTagNameRegExp)
       .describe("이미지 태그"),
     registryChannel: zod
-      .enum(["DOCKER", "NGC"])
-      .describe("레지스트리 채널 (DOCKER: Docker Hub, NGC: NVIDIA NGC)"),
+      .enum(["DOCKER_HUB", "NGC", "GHCR"])
+      .describe(
+        "레지스트리 채널 (DOCKER_HUB: Docker Hub, NGC: NVIDIA NGC, GHCR: GitHub Container Registry)",
+      ),
     credentialId: zod
       .number()
       .optional()
       .describe(
-        "크레덴셜 ID (NGC는 필수, Docker Hub는 private 이미지인 경우 필수)",
+        "크레덴셜 ID (NGC는 필수, Docker Hub/GHCR는 선택 - 비공개 이미지 접근 시 레지스트리 인증 오류 발생 가능)",
       ),
     workspaceId: zod
       .number()
@@ -272,19 +274,21 @@ export const getPrivateImageTagListResponse = zod
                   highCount: zod.number().describe("높음 취약점 수"),
                   mediumCount: zod.number().describe("중간 취약점 수"),
                   lowCount: zod.number().describe("낮음 취약점 수"),
+                  totalCount: zod.number().describe("전체 취약점 수"),
                 })
                 .strict()
+                .optional()
                 .describe("취약점 정보"),
               creatorId: zod
                 .string()
                 .optional()
                 .describe("생성자 ID (DB 메타데이터 없으면 null)"),
               creatorName: zod.string().optional().describe("생성자 이름"),
-              createDateTime: zod
+              createdAt: zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("생성일시"),
+                .describe("생성일시 (UTC)"),
               approvalStatus: zod
                 .enum([
                   "AVAILABLE",
@@ -296,11 +300,11 @@ export const getPrivateImageTagListResponse = zod
                 ])
                 .optional()
                 .describe("승인 상태"),
-              latestVulnerabilityScanDateTime: zod
+              latestVulnerabilityScanAt: zod
                 .string()
                 .datetime({})
                 .optional()
-                .describe("최근 취약점 스캔 일시"),
+                .describe("최근 취약점 스캔 일시 (UTC)"),
               requestReason: zod.string().optional().describe("사용 요청 사유"),
               decisionReason: zod.string().optional().describe("결정 사유"),
               deciderId: zod.string().optional().describe("결정자 ID"),
@@ -350,7 +354,7 @@ export const addPrivateImageTagBody = zod
       .number()
       .optional()
       .describe(
-        "크레덴셜 ID (NGC는 필수, Docker Hub는 private 이미지인 경우 필수)",
+        "크레덴셜 ID (NGC는 필수, Docker Hub/GHCR는 선택 - 비공개 이미지 접근 시 레지스트리 인증 오류 발생 가능)",
       ),
     description: zod.string().optional().describe("태그 설명"),
   })
@@ -604,8 +608,10 @@ export const getPrivateImageTagDetailResponse = zod
             highCount: zod.number().describe("높음 취약점 수"),
             mediumCount: zod.number().describe("중간 취약점 수"),
             lowCount: zod.number().describe("낮음 취약점 수"),
+            totalCount: zod.number().describe("전체 취약점 수"),
           })
           .strict()
+          .optional()
           .describe("취약점 정보"),
         imageTagId: zod
           .number()
@@ -662,7 +668,11 @@ export const getPrivateImageDetailResponse = zod
         imageDisplayName: zod.string().describe("이미지 표시 이름"),
         creatorName: zod.string().optional().describe("생성자 이름"),
         creatorId: zod.string().describe("생성자 ID"),
-        createdAt: zod.string().datetime({}).optional().describe("생성일시"),
+        createdAt: zod
+          .string()
+          .datetime({})
+          .optional()
+          .describe("생성일시 (UTC)"),
         imageType: zod
           .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
           .describe("이미지 타입"),

@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import { DeleteMonitoringNotificationModal } from "@/domain/monitoring-notification/components/delete-monitoring-notification-modal";
 import { ManageMonitoringNotificationModal } from "@/domain/monitoring-notification/components/manage-monitoring-notification-modal";
 import { MonitoringNotificationListArticle } from "@/domain/monitoring-notification/components/monitoring-notification-list-article";
 import { MonitoringNotificationSettingArticle } from "@/domain/monitoring-notification/components/monitoring-notification-setting-article";
@@ -114,6 +115,8 @@ export function MonitoringNotificationMain() {
       <ViewMonitoringNotificationModal />
       {/* 모니터링 알림 내역 상세 모달 */}
       <ViewMonitoringNotificationHistoryModal />
+      {/* 모니터링 알림 삭제 모달 */}
+      <DeleteMonitoringNotificationModal />
     </>
   );
 }

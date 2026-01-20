@@ -1,9 +1,14 @@
 import styled from "styled-components";
 
-import { SettingCredentialListBody } from "@/domain/setting/components/setting-credential-list-body";
-import { SettingCredentialListFilter } from "@/domain/setting/components/setting-credential-list-filter";
+import { SettingCredentialListMain } from "@/domain/setting/components/setting-credential-list-main";
 import { SettingRequestResourceListMain } from "@/domain/setting/components/setting-request-resource-list-main";
 
+/**
+ * 설정 하위 섹션 컴포넌트
+ *
+ * 리소스 요청 목록과 크리덴셜 목록을 나란히 표시합니다.
+ * Section 내에 독립적인 Article들로 구성됩니다.
+ */
 export function SettingSubSection() {
   return (
     <Container>
@@ -11,8 +16,7 @@ export function SettingSubSection() {
         <SettingRequestResourceListMain />
       </Left>
       <Right>
-        <SettingCredentialListFilter />
-        <SettingCredentialListBody />
+        <SettingCredentialListMain />
       </Right>
     </Container>
   );
