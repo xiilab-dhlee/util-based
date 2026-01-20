@@ -3,19 +3,20 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { usePathname } from "next/navigation";
+import type { ChangeEvent } from "react";
 import { Button, Input } from "xiilab-ui";
 
-import { VolumeSortFilter } from "@/domain/volume/components/list/volume-sort-filter";
-import { VolumeTypeFilter } from "@/domain/volume/components/list/volume-type-filter";
+import { VolumeOrderSort } from "@/domain/volume/components/list/volume-order-sort";
+import { VolumeTypeSort } from "@/domain/volume/components/list/volume-type-sort";
 import {
-  openSelectVolumeModalAtom,
   volumePageAtom,
   volumeSearchKeywordAtom,
   volumeSearchTextAtom,
 } from "@/domain/volume/state/volume.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { isUserMode } from "@/shared/utils/router.util";
 
 interface VolumeListFilterProps {
@@ -28,12 +29,12 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
   const [searchKeyword, setSearchKeyword] = useAtom(volumeSearchKeywordAtom);
   const setSearchText = useSetAtom(volumeSearchTextAtom);
   const resetPage = useResetAtom(volumePageAtom);
-  const { onOpen } = useGlobalModal(openSelectVolumeModalAtom);
+  const publish = usePublish();
 
   const isUser = isUserMode(pathname);
 
   const handleCreateVolume = () => {
-    onOpen();
+    publish(VOLUME_EVENTS.openSelectStorageTypeModal);
   };
 
   const handleSearch = (value: string) => {
@@ -41,16 +42,14 @@ export function VolumeListFilter({ total, loading }: VolumeListFilterProps) {
     setSearchText(value.trim());
   };
 
-  const handleSearchKeywordChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleSearchKeywordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchKeyword(e.target.value);
   };
 
   return (
     <MySearchFilter title="볼륨 목록" total={total}>
-      <VolumeSortFilter disabled={loading} />
-      <VolumeTypeFilter disabled={loading} />
+      <VolumeOrderSort disabled={loading} />
+      <VolumeTypeSort disabled={loading} />
       <Input.Search
         name="search"
         placeholder="볼륨 이름을 검색해 주세요."

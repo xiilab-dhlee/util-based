@@ -13,11 +13,11 @@ import {
   volumePageAtom,
 } from "@/domain/volume/state/volume.atom";
 
-interface VolumeSortFilterProps {
+interface VolumeOrderSortProps {
   disabled?: boolean;
 }
 
-export function VolumeSortFilter({ disabled }: VolumeSortFilterProps) {
+export function VolumeOrderSort({ disabled }: VolumeOrderSortProps) {
   const [sort, setSort] = useAtom(volumeOrderSortAtom);
   const resetPage = useResetAtom(volumePageAtom);
 

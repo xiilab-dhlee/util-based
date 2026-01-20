@@ -8,16 +8,16 @@ import type { GetVolumeListVolumeType } from "@/api/generated/astragoBackendAPID
 import { VOLUME_TYPE_OPTIONS } from "@/domain/volume/constants/volume.constant";
 import {
   volumePageAtom,
-  volumeTypeFilterAtom,
+  volumeTypeSortAtom,
 } from "@/domain/volume/state/volume.atom";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 
-interface VolumeTypeFilterProps {
+interface VolumeTypeSortProps {
   disabled?: boolean;
 }
 
-export function VolumeTypeFilter({ disabled }: VolumeTypeFilterProps) {
-  const [volumeType, setVolumeType] = useAtom(volumeTypeFilterAtom);
+export function VolumeTypeSort({ disabled }: VolumeTypeSortProps) {
+  const [volumeType, setVolumeType] = useAtom(volumeTypeSortAtom);
   const resetPage = useResetAtom(volumePageAtom);
 
   const handleChange = (value: GetVolumeListVolumeType | null) => {
