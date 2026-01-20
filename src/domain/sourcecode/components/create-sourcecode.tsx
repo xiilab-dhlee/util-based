@@ -6,12 +6,12 @@ import { useRef } from "react";
 import styled from "styled-components";
 import { Button, Dropdown, Input } from "xiilab-ui";
 
+import { CreateCredentialModal } from "@/domain/credential/components/create-credential-modal";
 import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
 import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
 import { useCreateSourcecode } from "@/domain/sourcecode/hooks/use-create-sourcecode";
 import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
-import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
 import { GuidePopover } from "@/shared/components/popover/guide-popover";
 import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";

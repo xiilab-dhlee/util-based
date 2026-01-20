@@ -1,5 +1,8 @@
 "use client";
 
+import { CreateCredentialModal } from "@/domain/credential/components/create-credential-modal";
+import { DeleteCredentialModal } from "@/domain/credential/components/delete-credential-modal";
+import { ViewCredentialDetailModal } from "@/domain/credential/components/view-credential-detail-modal";
 import { DeleteRequestResourceModal } from "@/domain/request-resource/components/delete-request-resource-modal";
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
 import { CancelResourceRequestModal } from "@/domain/setting/components/cancel-resource-request-modal";
@@ -15,9 +18,6 @@ import { UpdateWorkspaceModal } from "@/domain/workspace/components/update-works
 import { DeleteWorkspaceMemberModal } from "@/domain/workspace-member/components/delete-workspace-member-modal";
 import { UpdateWorkspaceMemberModal } from "@/domain/workspace-member/components/update-workspace-member-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { CreateCredentialModal } from "@/shared/components/modal/create-credential-modal";
-import { DeleteCredentialModal } from "@/shared/components/modal/delete-credential-modal";
-import { ViewCredentialDetailModal } from "@/shared/components/modal/view-credential-detail-modal";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
 

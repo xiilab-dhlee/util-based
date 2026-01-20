@@ -30,8 +30,7 @@ import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
-  credentialChannel: "GIT",
-  credentialType: "SOURCE_CODE",
+  credentialType: "GIT_REPOSITORY",
   credentialName: "",
   description: "",
   credentialAccountId: "",
@@ -71,20 +70,20 @@ export function CreateCredentialModal() {
             queryKey: getGetCredentialsQueryKey(accountId),
             exact: false,
           });
-          handleClose();
+          setOpen(false);
         },
       },
     );
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
 
     setOpen(false);
-    reset(DEFAULT_FORM_VALUES);
   };
 
   useSubscribe(CREDENTIAL_EVENTS.openCreateModal, () => {
+    reset(DEFAULT_FORM_VALUES);
     setOpen(true);
   });
 
@@ -98,7 +97,7 @@ export function CreateCredentialModal() {
       title="크리덴셜 추가"
       showCancelButton
       cancelText="취소"
-      onCancel={handleClose}
+      onCancel={handleCancel}
       okText="추가"
       onOk={handleSubmit(onSubmit)}
       centered

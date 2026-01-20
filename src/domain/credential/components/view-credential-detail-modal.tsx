@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Icon, InfoModal, Typography } from "xiilab-ui";
 
 import { useGetCredentialDetail } from "@/api/generated/credential/credential";
+import { getCredentialTypeInfo } from "@/domain/credential/constants/credential.constant";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -63,7 +64,9 @@ export function ViewCredentialDetailModal() {
             <SectionTitle>기본 정보</SectionTitle>
             <DetailRow>
               <DetailLabel>타입</DetailLabel>
-              <DetailValue>{data?.credentialType || "-"}</DetailValue>
+              <DetailValue>
+                {getCredentialTypeInfo(data?.credentialType).label}
+              </DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel>이름</DetailLabel>

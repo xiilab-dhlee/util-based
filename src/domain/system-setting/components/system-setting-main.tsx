@@ -3,6 +3,8 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { DeleteCredentialModal } from "@/domain/credential/components/delete-credential-modal";
+import { ViewCredentialDetailModal } from "@/domain/credential/components/view-credential-detail-modal";
 import { ResourceRevokeCriteriaModal } from "@/domain/revoke/components/edit/resource-revoke-criteria-modal";
 import { CreateHpeModal } from "@/domain/system-setting/components/create-hpe-modal";
 import { CreateLicenseModal } from "@/domain/system-setting/components/create-license-modal";
@@ -21,8 +23,6 @@ import { UpdateStorageModal } from "@/domain/system-setting/components/update-st
 import { ViewStorageModal } from "@/domain/system-setting/components/view-storage-modal";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { DeleteCredentialModal } from "@/shared/components/modal/delete-credential-modal";
-import { ViewCredentialDetailModal } from "@/shared/components/modal/view-credential-detail-modal";
 import type { CoreGuide } from "@/shared/types/core.model";
 import {
   ListPageAside,
