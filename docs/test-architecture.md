@@ -206,7 +206,7 @@ export class SignupPage extends BasePage {
 
 Ant Design의 Form 구조에 맞춰 FormItem(컨테이너)과 Input(실제 입력)을 분리합니다:
 
-```
+```text
 FormItem (data-testid="signup-email-field")
 ├── Label
 ├── Input (data-testid="signup-email-input")

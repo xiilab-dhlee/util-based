@@ -10,13 +10,11 @@ Feature: 회원가입 페이지 진입
   @smoke
   Scenario: 회원가입 페이지 조회
     Then 회원가입 페이지가 표시된다
-    And 다음 필드가 표시된다
-      | field            |
-      | Email            |
-      | Password         |
-      | Confirm Password |
-      | First Name       |
-      | Last Name        |
-      | Group Name       |
+    And Email 입력창이 빈 값이다
+    And Password 입력창이 빈 값이다
+    And Confirm Password 입력창이 빈 값이다
+    And First Name 입력창이 빈 값이다
+    And Last Name 입력창이 빈 값이다
+    And Group Name 선택값이 비어있다
     And 회원가입 버튼이 표시된다
     And 로그인하기 링크가 표시된다

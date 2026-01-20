@@ -376,6 +376,60 @@ export const AUTH_SELECTOR = {
 } as const;
 
 // ============================================
+// 설정 (Setting)
+// ============================================
+
+export const SETTING_SELECTOR = {
+  /** 사용자 설정 페이지 헤더 */
+  PAGE_HEADER: "user.setting",
+  /** 크리덴셜 추가 버튼 */
+  CREDENTIAL_ADD_BUTTON: "setting-credential-add-button",
+  /** 크리덴셜 목록 */
+  CREDENTIAL_LIST: "setting-credential-list",
+} as const;
+
+// ============================================
+// 크리덴셜 (Credential)
+// ============================================
+
+export const CREDENTIAL_SELECTOR = {
+  // 크리덴셜 추가 모달
+  /** 크리덴셜 추가 모달 */
+  CREATE_MODAL: "credential-create-modal",
+  /** 타입 드롭다운 (FormItem) */
+  TYPE_FIELD: "credential-type-field",
+  /** 이름 필드 (FormItem) */
+  NAME_FIELD: "credential-name-field",
+  /** 설명 필드 (FormItem) */
+  DESCRIPTION_FIELD: "credential-description-field",
+  /** 아이디 필드 (FormItem) */
+  USER_ID_FIELD: "credential-user-id-field",
+  /** 토큰 필드 (FormItem) */
+  TOKEN_FIELD: "credential-token-field",
+
+  // 입력창 (실제 입력 요소)
+  /** 타입 드롭다운 */
+  TYPE_DROPDOWN: "credential-type-dropdown",
+  /** 이름 입력창 */
+  NAME_INPUT: "credential-name-input",
+  /** 설명 입력창 */
+  DESCRIPTION_INPUT: "credential-description-input",
+  /** 아이디 입력창 */
+  USER_ID_INPUT: "credential-user-id-input",
+  /** 토큰 입력창 */
+  TOKEN_INPUT: "credential-token-input",
+
+  // 크리덴셜 카드 (목록)
+  /** 크리덴셜 카드 */
+  CARD: "credential-card",
+  /** 크리덴셜 이름 */
+  CARD_NAME: "credential-card-name",
+
+  // 크리덴셜 셀렉트박스 (소스코드 생성 모달 등에서 사용)
+  /** 크리덴셜 셀렉트박스 래퍼 */
+  SELECT_WRAPPER: "credential-select-wrapper",
+} as const;
+
 // 허브 (Hub)
 // ============================================
 

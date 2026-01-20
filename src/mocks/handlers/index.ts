@@ -15,6 +15,7 @@ import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationMock } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
+import { credentialHandlers } from "@/domain/credential/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
 import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
@@ -33,6 +34,7 @@ import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
+import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
 import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
@@ -100,11 +102,13 @@ const rawHandlers = [
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),
   ...getAdminK8sMock(),
+  ...credentialHandlers,
   ...getAccountNotificationMock(),
   ...getAdminAccountNotificationMock(),
   ...systemSettingHandlers,
   ...groupHandlers,
   ...workspaceHandlers,
+  ...requestResourceHandlers,
   ...requestImageHandlers,
   ...nodeHandlers,
   ...redfishHandlers,

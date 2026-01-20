@@ -131,13 +131,13 @@ export function CreateWorkloadImage() {
               >
                 <Icon name="PlusCircle" size={16} color="#666666" />
                 <Typography.Text variant="body-2-4" color="#666666">
-                  크레덴셜 생성
+                  크리덴셜 생성
                 </Typography.Text>
               </CredentialCreateButton>
             </PrivateImageHeader>
 
             <Dropdown
-              placeholder="크레덴셜을 선택해 주세요"
+              placeholder="크리덴셜을 선택해 주세요"
               options={credentialOptions}
               value={selectedCredential}
               onChange={setSelectedCredential}

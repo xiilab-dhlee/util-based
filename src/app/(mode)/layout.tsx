@@ -10,6 +10,7 @@ import { CheckPasswordModal } from "@/shared/components/modal/check-password-mod
 import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
 import { useWorkspaceInitializer } from "@/shared/hooks/use-workspace-initializer";
 import { useWorkspaceValidator } from "@/shared/hooks/use-workspace-validator";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 export default function ModeLayout({ children }: PropsWithChildren) {
   useWorkspaceInitializer();
@@ -57,6 +58,8 @@ const Right = styled.div`
   padding-bottom: var(--page-margin-bottom);
   overflow-y: auto;
   overflow-x: auto;
+
+  ${customScrollbar()}
 `;
 
 const RightInner = styled.div`

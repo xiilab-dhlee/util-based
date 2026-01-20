@@ -3,6 +3,8 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { customScrollbar } from "../mixins/scrollbar";
+
 /**
  * 목록 페이지 왼쪽 사이드바 컨테이너
  * 너비를 설정할 수 있는 세로 방향 레이아웃
@@ -54,9 +56,8 @@ export const ListWrapper = styled.div`
   flex: 1;
   overflow: hidden;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+  ${customScrollbar()}
 `;
 /**
  * 목록 그리드 컨테이너
