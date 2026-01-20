@@ -63,22 +63,6 @@ export function PrivateRegistryImageCard({
         <Body>
           <Pane>
             <Row>
-              <Key>구분</Key>
-              <Value
-                data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE}
-              >
-                {/* {imageSourceType?.toLowerCase() ?? "-"} */}
-              </Value>
-            </Row>
-            <Row>
-              <Key>상태</Key>
-              <Value data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STATUS}>
-                {status}
-              </Value>
-            </Row>
-          </Pane>
-          <Pane>
-            <Row>
               <Key>생성일시</Key>
               <Value
                 data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CREATED_AT}
@@ -89,6 +73,14 @@ export function PrivateRegistryImageCard({
             <Row>
               <Key>생성자</Key>
               <Value>{creatorName || "-"}</Value>
+            </Row>
+          </Pane>
+          <Pane>
+            <Row>
+              <Key>상태</Key>
+              <Value data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STATUS}>
+                {status}
+              </Value>
             </Row>
           </Pane>
         </Body>

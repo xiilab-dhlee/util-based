@@ -14,7 +14,7 @@ import {
   useCreatePrivateExternalImage,
 } from "@/api/generated/private-registry/private-registry";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
-import { SelectWorkloadForSnapshot } from "@/domain/private-registry/components/select-workload-for-snapshot";
+// import { SelectWorkloadForSnapshot } from "@/domain/private-registry/components/select-workload-for-snapshot";
 import { REGISTRY_CHANNEL_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
 import {
   type CreatePrivateRegistryFormType,
@@ -30,20 +30,19 @@ export function CreatePrivateRegistryModal() {
   const [open, setOpen] = useState(false);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
+  // const [type, setType] =
+  //   useState<GetPrivateRegistryListImageSourceType>("SNAPSHOT");
+
   const {
     control,
     handleSubmit,
     reset,
     setValue,
-    watch,
     formState: { errors, isValid },
   } = useForm<CreatePrivateRegistryFormType>({
     resolver: zodResolver(createPrivateRegistrySchema),
     mode: "onChange",
   });
-
-  // 폼에서 type 감시 (UI 분기용)
-  const formType = watch("type");
 
   const { mutate, isPending } = useCreatePrivateExternalImage();
 
@@ -59,8 +58,6 @@ export function CreatePrivateRegistryModal() {
       {
         data: {
           ...data,
-          ...(data.type === "SNAPSHOT" &&
-            data.workloadId && { workloadId: data.workloadId }),
           workspaceId: selectedWorkspace.workspaceId,
         },
       },
@@ -85,14 +82,13 @@ export function CreatePrivateRegistryModal() {
   useSubscribe(
     PRIVATE_REGISTRY_EVENTS.openCreateModal,
     (type: GetPrivateRegistryListImageSourceType) => {
+      // setType(type);
       // 폼 초기화 후 type 설정
       reset({
-        type,
         imageName: "",
         imageTagName: "",
         registryChannel: undefined,
         credentialId: undefined,
-        ...(type === "SNAPSHOT" && { workloadId: "" }),
       });
       setOpen(true);
     },
@@ -195,7 +191,6 @@ export function CreatePrivateRegistryModal() {
             render={({ field }) => (
               <FormItem
                 label="크리덴셜"
-                required
                 validateStatus={errors.credentialId ? "error" : undefined}
                 help={errors.credentialId?.message}
               >
@@ -207,7 +202,7 @@ export function CreatePrivateRegistryModal() {
             )}
           />
         </FormRow>
-        {formType === "SNAPSHOT" && (
+        {/* {type === "SNAPSHOT" && (
           <Controller
             name="workloadId"
             control={control}
@@ -231,7 +226,7 @@ export function CreatePrivateRegistryModal() {
               </FormItem>
             )}
           />
-        )}
+        )} */}
       </Form>
     </Modal>
   );

@@ -57,7 +57,8 @@ export const REGISTRY_CHANNEL_OPTIONS: {
 }[] = [
   {
     label: "Docker Hub",
-    value: CreateExternalImageRequestRegistryChannel.DOCKER,
+    value: CreateExternalImageRequestRegistryChannel.DOCKER_HUB,
   },
   { label: "Ngc", value: CreateExternalImageRequestRegistryChannel.NGC },
+  { label: "Ghcr", value: CreateExternalImageRequestRegistryChannel.GHCR },
 ];
