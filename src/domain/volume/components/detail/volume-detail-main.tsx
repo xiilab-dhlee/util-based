@@ -74,7 +74,7 @@ export function VolumeDetailMain() {
   };
 
   const handleDelete = () => {
-    publish(VOLUME_EVENTS.sendDeleteVolume, [volumeId]);
+    publish(VOLUME_EVENTS.openDeleteModal, [volumeId]);
   };
 
   if (!params.id || Number.isNaN(volumeId)) {
