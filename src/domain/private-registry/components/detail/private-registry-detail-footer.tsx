@@ -39,7 +39,7 @@ export function PrivateRegistryDetailFooter({
 
   const handleClickDelete = () => {
     publish(
-      PRIVATE_REGISTRY_EVENTS.sendDeleteImageTag,
+      PRIVATE_REGISTRY_EVENTS.openDeleteTagModal,
       Array.from(checkedList).map((id) => Number(id)),
     );
   };

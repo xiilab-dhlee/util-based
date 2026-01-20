@@ -20,8 +20,8 @@ import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function CreatePrivateRegistryTagModal() {
-  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
 
   const {
     control,
@@ -34,36 +34,35 @@ export function CreatePrivateRegistryTagModal() {
     mode: "onChange",
   });
 
-  const { mutate: addImageTag, isPending } = useAddPrivateImageTag();
+  const { mutate, isPending } = useAddPrivateImageTag();
 
   const onSubmit = (data: CreatePrivateRegistryTagFormType) => {
-    addImageTag(
+    if (isPending) return;
+
+    mutate(
       {
         data,
       },
       {
         onSuccess: () => {
-          toast.success("이미지 태그가 추가되었습니다.");
           queryClient.invalidateQueries({
             queryKey: getGetPrivateImageTagListQueryKey(),
           });
-          handleClose();
-        },
-        onError: () => {
-          toast.error("이미지 태그 추가에 실패했습니다.");
+          toast.success("이미지 태그가 추가되었습니다.");
+          setOpen(false);
         },
       },
     );
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
 
   // filter에서 전달받은 데이터 구독 및 모달 열기
   useSubscribe(
-    PRIVATE_REGISTRY_EVENTS.sendCreateTagData,
+    PRIVATE_REGISTRY_EVENTS.openCreateTagModal,
     (harborImageName: string) => {
       reset({
         harborImageName,
@@ -81,13 +80,10 @@ export function CreatePrivateRegistryTagModal() {
       icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable={!isPending}
-      maskClosable={!isPending}
-      keyboard={!isPending}
+      closable
       title="태그 추가"
       showCancelButton
-      cancelText="취소"
-      onCancel={handleClose}
+      onCancel={handleCancel}
       okText="추가"
       onOk={handleSubmit(onSubmit)}
       centered

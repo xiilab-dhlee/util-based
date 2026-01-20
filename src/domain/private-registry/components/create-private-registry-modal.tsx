@@ -26,8 +26,8 @@ import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { FormRow } from "@/styles/layers/form-layer.styled";
 
 export function CreatePrivateRegistryModal() {
-  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
   const {
@@ -45,7 +45,7 @@ export function CreatePrivateRegistryModal() {
   // 폼에서 type 감시 (UI 분기용)
   const formType = watch("type");
 
-  const { mutate: createImage, isPending } = useCreatePrivateExternalImage();
+  const { mutate, isPending } = useCreatePrivateExternalImage();
 
   const handleChangeCredential = (value: number | null) => {
     if (value === null) return;
@@ -53,12 +53,9 @@ export function CreatePrivateRegistryModal() {
   };
 
   const onSubmit = (data: CreatePrivateRegistryFormType) => {
-    if (!selectedWorkspace) {
-      toast.error("워크스페이스를 선택해 주세요.");
-      return;
-    }
+    if (!selectedWorkspace) return;
 
-    createImage(
+    mutate(
       {
         data: {
           ...data,
@@ -69,24 +66,24 @@ export function CreatePrivateRegistryModal() {
       },
       {
         onSuccess: () => {
-          toast.success("개인 레지스트리 이미지가 생성되었습니다.");
           queryClient.invalidateQueries({
             queryKey: getGetPrivateRegistryListQueryKey(),
           });
+          toast.success("개인 레지스트리 이미지가 생성되었습니다.");
           setOpen(false);
         },
       },
     );
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
 
   // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
   useSubscribe(
-    PRIVATE_REGISTRY_EVENTS.sendPrivateRegistryType,
+    PRIVATE_REGISTRY_EVENTS.openCreateModal,
     (type: GetPrivateRegistryListImageSourceType) => {
       // 폼 초기화 후 type 설정
       reset({
@@ -107,19 +104,16 @@ export function CreatePrivateRegistryModal() {
       icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={580}
       open={open}
-      closable={!isPending}
-      maskClosable={!isPending}
-      keyboard={!isPending}
+      closable
       title="컨테이너 이미지 생성"
       showCancelButton
-      cancelText="취소"
-      onCancel={handleClose}
+      onCancel={handleCancel}
       okText="생성"
       onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
       okButtonProps={{
-        disabled: !isValid || isPending,
+        disabled: !isValid,
         loading: isPending,
       }}
       cancelButtonProps={{

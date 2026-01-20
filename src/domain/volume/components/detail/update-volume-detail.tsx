@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button, Form, FormItem, Input } from "xiilab-ui";
 
@@ -79,7 +78,6 @@ export function UpdateVolumeDetail({
           queryClient.invalidateQueries({
             queryKey: getGetVolumeListQueryKey(),
           });
-          toast.success("볼륨 수정 성공");
           onSuccess();
         },
       },

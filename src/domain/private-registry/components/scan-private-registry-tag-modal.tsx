@@ -19,27 +19,23 @@ interface ScanTagPayload {
 
 export function ScanPrivateRegistryTagModal() {
   const [open, setOpen] = useState(false);
-  const [scanData, setScanData] = useState<ScanTagPayload | null>(null);
+  const [harborImageName, setHarborImageName] = useState<string | null>(null);
+  const [tagName, setTagName] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
-  const { mutate: scanImageTag, isPending } = useScanPrivateImageTag();
+  const { mutate, isPending } = useScanPrivateImageTag();
 
   const handleOk = () => {
-    if (!scanData) {
-      toast.error("스캔할 태그 정보가 없습니다.");
-      return;
-    }
+    if (isPending) return;
 
-    if (isPending) {
-      return;
-    }
+    if (!harborImageName || !tagName) return;
 
-    scanImageTag(
+    mutate(
       {
         data: {
-          harborImageName: scanData.harborImageName,
-          tagName: scanData.tagName,
+          harborImageName,
+          tagName,
         },
       },
       {
@@ -47,23 +43,23 @@ export function ScanPrivateRegistryTagModal() {
           queryClient.invalidateQueries({
             queryKey: getGetPrivateImageTagListQueryKey(),
           });
-          setOpen(false);
           toast.success("취약점 스캔이 시작되었습니다.");
+          setOpen(false);
         },
       },
     );
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
-    setScanData(null);
   };
 
   useSubscribe<ScanTagPayload>(
-    PRIVATE_REGISTRY_EVENTS.sendScanTagData,
+    PRIVATE_REGISTRY_EVENTS.openScanTagModal,
     (data) => {
-      setScanData(data);
+      setHarborImageName(data.harborImageName);
+      setTagName(data.tagName);
       setOpen(true);
     },
   );
@@ -74,16 +70,15 @@ export function ScanPrivateRegistryTagModal() {
       modalWidth={300}
       icon={<Icon name="SecurityCheck" color="#fff" size={18} />}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       okText="검증"
       cancelText="취소"
       title="태그 취약점 검증"
       centered
-      closable={!isPending}
-      maskClosable={!isPending}
-      keyboard={!isPending}
+      closable
       okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <div>선택한 태그에 대한 취약점 검증을 진행하시겠습니까?</div>
     </Modal>

@@ -20,10 +20,10 @@ import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-
 import { UploadVolumeFileModal } from "@/domain/volume/components/upload-volume-file-modal";
 import { VOLUME_PAGE_SIZE } from "@/domain/volume/constants/volume.constant";
 import {
+  volumeOrderSortAtom,
   volumePageAtom,
   volumeSearchTextAtom,
-  volumeSortAtom,
-  volumeTypeFilterAtom,
+  volumeTypeSortAtom,
 } from "@/domain/volume/state/volume.atom";
 import { parseVolumeSortValue } from "@/domain/volume/utils/volume.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
@@ -69,8 +69,8 @@ export function VolumeLayout({ mode, children }: VolumeLayoutProps) {
 
   const page = useAtomValue(volumePageAtom);
   const searchText = useAtomValue(volumeSearchTextAtom);
-  const sort = useAtomValue(volumeSortAtom);
-  const volumeType = useAtomValue(volumeTypeFilterAtom);
+  const sort = useAtomValue(volumeOrderSortAtom);
+  const volumeType = useAtomValue(volumeTypeSortAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
   const routes = VOLUME_ROUTES[mode];

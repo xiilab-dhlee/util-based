@@ -7,37 +7,30 @@ import styled from "styled-components";
 import { Form, FormItem, Icon, Modal } from "xiilab-ui";
 
 import type { DownloadRequestCompressType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import {
-  openDownloadVolumeFileModalAtom,
-  volumeFileCheckedNodesAtom,
-} from "@/domain/volume/state/volume.atom";
+import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
 import { AxiosService } from "@/shared/api/axios";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
-type DownloadFileType = DownloadRequestCompressType;
-
-interface DownloadVolumeFileEventData {
+interface DownloadVolumeFilePayload {
   volumeId: number;
   filePaths: string[];
 }
 
 export function DownloadVolumeFileModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openDownloadVolumeFileModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
   const [volumeId, setVolumeId] = useState<number | null>(null);
   const [filePaths, setFilePaths] = useState<string[]>([]);
-  const [selectedType, setSelectedType] = useState<DownloadFileType>("ZIP");
+  const [selectedType, setSelectedType] =
+    useState<DownloadRequestCompressType>("ZIP");
   const [isPending, setIsPending] = useState(false);
 
   const handleCancel = () => {
     if (isPending) return;
-    onClose();
+    setOpen(false);
   };
 
   const handleDownload = async () => {
@@ -82,7 +75,7 @@ export function DownloadVolumeFileModal() {
 
       toast.success("파일 다운로드가 완료되었습니다.");
       setCheckedNodes(new Set());
-      onClose();
+      setOpen(false);
     } catch {
       toast.error("파일 다운로드에 실패했습니다.");
     } finally {
@@ -90,13 +83,13 @@ export function DownloadVolumeFileModal() {
     }
   };
 
-  useSubscribe<DownloadVolumeFileEventData>(
-    VOLUME_EVENTS.sendDownloadVolumeFile,
+  useSubscribe<DownloadVolumeFilePayload>(
+    VOLUME_EVENTS.openDownloadFileModal,
     (eventData) => {
       setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
       setSelectedType("ZIP");
-      onOpen();
+      setOpen(true);
     },
   );
 

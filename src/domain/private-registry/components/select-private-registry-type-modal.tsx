@@ -19,11 +19,11 @@ export function SelectPrivateRegistryTypeModal() {
   };
 
   const handleClickType = (type: GetPrivateRegistryListImageSourceType) => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendPrivateRegistryType, type);
     handleClose();
+    publish(PRIVATE_REGISTRY_EVENTS.openCreateModal, type);
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.sendSelectPrivateRegistryType, () => {
+  useSubscribe(PRIVATE_REGISTRY_EVENTS.openSelectTypeModal, () => {
     setOpen(true);
   });
 

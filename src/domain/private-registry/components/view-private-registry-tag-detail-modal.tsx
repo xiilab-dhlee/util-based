@@ -13,13 +13,13 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
 
-interface TagDetailEventData extends ImageTagListResponse {
+interface TagDetailPayload extends ImageTagListResponse {
   harborImageName: string;
 }
 
 export function ViewPrivateRegistryTagDetailModal() {
   const [open, setOpen] = useState(false);
-  const [payload, setPayload] = useState<TagDetailEventData | null>(null);
+  const [payload, setPayload] = useState<TagDetailPayload | null>(null);
 
   const { data, isFetching } = useGetPrivateImageTagDetail(
     {
@@ -38,8 +38,8 @@ export function ViewPrivateRegistryTagDetailModal() {
     setPayload(null);
   };
 
-  useSubscribe<TagDetailEventData>(
-    PRIVATE_REGISTRY_EVENTS.sendViewTagDetail,
+  useSubscribe<TagDetailPayload>(
+    PRIVATE_REGISTRY_EVENTS.openTagDetailModal,
     (data) => {
       setPayload(data);
       setOpen(true);

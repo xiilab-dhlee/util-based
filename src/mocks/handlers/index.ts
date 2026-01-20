@@ -21,6 +21,7 @@ import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+import { storageHandlers } from "@/domain/storage/mocks";
 import { systemSettingHandlers } from "@/domain/system-setting/mocks";
 import { volumeHandlers } from "@/domain/volume/mocks";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
@@ -128,6 +129,7 @@ const rawHandlers = [
   ...reportHandlers,
   ...reportReservationHandlers,
   ...resourcePresetHandlers,
+  ...storageHandlers,
 ];
 
 /**

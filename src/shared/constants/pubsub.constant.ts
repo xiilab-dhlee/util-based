@@ -63,22 +63,26 @@ export const SOURCECODE_EVENTS = {
 
 // 볼륨 관련 이벤트
 export const VOLUME_EVENTS = {
-  // 볼륨 삭제에 필요한 정보 전달 이벤트
-  sendDeleteVolume: "volume:send-delete-volume",
-  // 볼륨 파일 삭제에 필요한 정보 전달 이벤트
-  sendDeleteVolumeFile: "volume:send-delete-volume-file",
-  // 볼륨 파일 압축에 필요한 정보 전달 이벤트
-  sendCompressVolumeFile: "volume:send-compress-volume-file",
-  // 볼륨 파일 압축 해제에 필요한 정보 전달 이벤트
-  sendDecompressVolumeFile: "volume:send-decompress-volume-file",
-  // 볼륨 파일 다운로드에 필요한 정보 전달 이벤트
-  sendDownloadVolumeFile: "volume:send-download-volume-file",
-  // 볼륨 파일 업로드에 필요한 정보 전달 이벤트
-  sendUploadVolumeFile: "volume:send-upload-volume-file",
-  // 볼륨 폴더 추가에 필요한 정보 전달 이벤트
-  sendCreateVolumeFolder: "volume:send-create-volume-folder",
-  // 볼륨 스토리지 타입 선택에 필요한 정보 전달 이벤트
-  sendStorageType: "volume:send-storage-type",
+  // 스토리지 타입 선택 모달 열기
+  openSelectStorageTypeModal: "volume:open-select-storage-type-modal",
+  // AstraGo 볼륨 생성 모달 열기
+  openCreateAstragoModal: "volume:open-create-astrago-modal",
+  // 온프레미스 볼륨 생성 모달 열기
+  openCreateOnPremModal: "volume:open-create-onprem-modal",
+  // 볼륨 삭제 모달 열기
+  openDeleteModal: "volume:open-delete-modal",
+  // 볼륨 파일 삭제 모달 열기
+  openDeleteFileModal: "volume:open-delete-file-modal",
+  // 볼륨 파일 압축 모달 열기
+  openCompressFileModal: "volume:open-compress-file-modal",
+  // 볼륨 파일 압축 해제 모달 열기
+  openDecompressFileModal: "volume:open-decompress-file-modal",
+  // 볼륨 파일 다운로드 모달 열기
+  openDownloadFileModal: "volume:open-download-file-modal",
+  // 볼륨 파일 업로드 모달 열기
+  openUploadFileModal: "volume:open-upload-file-modal",
+  // 볼륨 폴더 생성 모달 열기
+  openCreateFolderModal: "volume:open-create-folder-modal",
 } as const;
 
 // 그룹 관련 이벤트
@@ -142,27 +146,26 @@ export const REQUEST_IMAGE_EVENTS = {
 
 // 개인 레지스트리 관련 이벤트
 export const PRIVATE_REGISTRY_EVENTS = {
-  // 프라이빗 레지스트리 이미지 유형 선택 모달에 필요한 정보 전달 이벤트
-  sendSelectPrivateRegistryType:
-    "private-registry:send-select-private-registry-type",
-  // 프라이빗 레지스트리 구분 선택 후 생성 모달에 전달 이벤트
-  sendPrivateRegistryType: "private-registry:send-private-registry-type",
-  // 프라이빗 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeletePrivateRegistry: "private-registry:send-delete-private-registry",
-  // 프라이빗 레지스트리 로그 보기에 필요한 정보 전달 이벤트
-  sendViewPrivateRegistryLog: "private-registry:send-view-private-registry-log",
-  // 이미지 등록 Job 재시작에 필요한 정보 전달 이벤트
-  sendRestartImageJob: "private-registry:send-restart-image-job",
-  // 이미지 등록 Job 종료에 필요한 정보 전달 이벤트
-  sendStopImageJob: "private-registry:send-stop-image-job",
-  // 프라이빗 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImageTag: "private-registry:send-delete-image-tag",
-  // 프라이빗 레지스트리 이미지 태그 생성에 필요한 정보 전달 이벤트
-  sendCreateTagData: "private-registry:send-create-tag-data",
-  // 프라이빗 레지스트리 이미지 태그 상세 보기에 필요한 정보 전달 이벤트
-  sendViewTagDetail: "private-registry:send-view-tag-detail",
-  // 프라이빗 레지스트리 이미지 태그 스캔에 필요한 정보 전달 이벤트
-  sendScanTagData: "private-registry:send-scan-tag-data",
+  // 프라이빗 레지스트리 이미지 유형 선택 모달 열기
+  openSelectTypeModal: "private-registry:open-select-type-modal",
+  // 프라이빗 레지스트리 이미지 생성 모달 열기
+  openCreateModal: "private-registry:open-create-modal",
+  // 프라이빗 레지스트리 이미지 삭제 모달 열기
+  openDeleteModal: "private-registry:open-delete-modal",
+  // 프라이빗 레지스트리 로그 보기 모달 열기
+  openLogModal: "private-registry:open-log-modal",
+  // 이미지 등록 Job 재시작 모달 열기
+  openRestartJobModal: "private-registry:open-restart-job-modal",
+  // 이미지 등록 Job 종료 모달 열기
+  openStopJobModal: "private-registry:open-stop-job-modal",
+  // 프라이빗 레지스트리 이미지 태그 삭제 모달 열기
+  openDeleteTagModal: "private-registry:open-delete-tag-modal",
+  // 프라이빗 레지스트리 이미지 태그 생성 모달 열기
+  openCreateTagModal: "private-registry:open-create-tag-modal",
+  // 프라이빗 레지스트리 이미지 태그 상세 보기 모달 열기
+  openTagDetailModal: "private-registry:open-tag-detail-modal",
+  // 프라이빗 레지스트리 이미지 태그 스캔 모달 열기
+  openScanTagModal: "private-registry:open-scan-tag-modal",
 } as const;
 
 // 파일 보안 관련 이벤트

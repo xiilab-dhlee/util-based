@@ -49,7 +49,7 @@ export function PrivateRegistryListFilter({
   };
 
   const handleCreatePrivateRegistryImage = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendSelectPrivateRegistryType, null);
+    publish(PRIVATE_REGISTRY_EVENTS.openSelectTypeModal, null);
   };
 
   return (

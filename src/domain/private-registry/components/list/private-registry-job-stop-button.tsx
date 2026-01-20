@@ -17,7 +17,7 @@ export function PrivateRegistryJobStopButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendStopImageJob, imageTagId);
+    publish(PRIVATE_REGISTRY_EVENTS.openStopJobModal, imageTagId);
   };
 
   return (

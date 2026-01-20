@@ -78,9 +78,7 @@ export function PrivateRegistryDetailBody({
   }, [data, setSelectedTag]);
 
   const handleDelete = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendDeletePrivateRegistry, [
-      harborImageName,
-    ]);
+    publish(PRIVATE_REGISTRY_EVENTS.openDeleteModal, [harborImageName]);
   };
 
   const handleChange: TableProps<ImageTagListResponse>["onChange"] = (

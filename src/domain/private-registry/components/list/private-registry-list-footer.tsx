@@ -35,7 +35,7 @@ export function PrivateRegistryListFooter({
 
   const handleClickDelete = () => {
     publish(
-      PRIVATE_REGISTRY_EVENTS.sendDeletePrivateRegistry,
+      PRIVATE_REGISTRY_EVENTS.openDeleteModal,
       Array.from(selectedRegistries),
     );
   };

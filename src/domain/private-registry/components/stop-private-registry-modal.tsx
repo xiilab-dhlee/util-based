@@ -13,43 +13,37 @@ import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function StopPrivateRegistryModal() {
+  const queryClient = useQueryClient();
+
   const [open, setOpen] = useState(false);
   const [imageTagId, setImageTagId] = useState<number | null>(null);
 
-  const queryClient = useQueryClient();
+  const { mutate, isPending } = useDeleteImageJob();
 
-  const { mutate: deleteJob, isPending } = useDeleteImageJob();
-
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
 
   const handleOk = () => {
-    if (imageTagId === null) {
-      toast.error("컨테이너 이미지를 선택해 주세요.");
-      return;
-    }
+    if (isPending) return;
+    if (imageTagId === null) return;
 
-    if (isPending) {
-      return;
-    }
-
-    deleteJob(
+    mutate(
       { imageTagId },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
             queryKey: getGetImageJobsQueryKey(),
           });
-          setOpen(false);
           toast.success("컨테이너 이미지 등록 종료 요청이 완료되었습니다.");
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.sendStopImageJob, (id: number) => {
+  useSubscribe(PRIVATE_REGISTRY_EVENTS.openStopJobModal, (id: number) => {
     setImageTagId(id);
     setOpen(true);
   });
@@ -60,15 +54,13 @@ export function StopPrivateRegistryModal() {
       icon={<Icon name="PowerBold" color="#fff" size={18} />}
       modalWidth={300}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       okText="종료"
       title="컨테이너 이미지 등록 종료"
       showCancelButton
       centered
-      closable={!isPending}
-      maskClosable={!isPending}
-      keyboard={!isPending}
+      closable
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >

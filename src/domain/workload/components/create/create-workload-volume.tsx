@@ -11,14 +11,14 @@ import { Button, Icon, Input, Typography } from "xiilab-ui";
 
 import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VolumeSelect } from "@/domain/volume/components/volume-select";
-import { openSelectVolumeModalAtom } from "@/domain/volume/state/volume.atom";
 import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
 import { workloadVolumesAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { VolumeMountPathTooltipTitle } from "@/shared/components/tooltip-title/volume-mount-path-tooltip-title";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 
 export function CreateWorkloadVolume() {
@@ -30,9 +30,9 @@ export function CreateWorkloadVolume() {
 
   const [mountPath, setMountPath] = useState<string | null>(null);
 
-  const { onOpen } = useGlobalModal(openSelectVolumeModalAtom);
+  const publish = usePublish();
   const handleCreateVolume = () => {
-    onOpen();
+    publish(VOLUME_EVENTS.openSelectStorageTypeModal);
   };
 
   const handleAddVolume = () => {

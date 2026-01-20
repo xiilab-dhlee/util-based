@@ -14,7 +14,7 @@ export function ViewPrivateRegistryLogModal() {
     setOpen(false);
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.sendViewPrivateRegistryLog, () => {
+  useSubscribe(PRIVATE_REGISTRY_EVENTS.openLogModal, () => {
     setOpen(true);
   });
 

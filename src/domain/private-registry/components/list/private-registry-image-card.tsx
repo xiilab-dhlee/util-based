@@ -22,6 +22,7 @@ export function PrivateRegistryImageCard({
   imageTagId,
   imageName,
   imageTagName,
+  creatorName,
   status,
   createdAt,
 }: PrivateRegistryImageCardProps) {
@@ -61,14 +62,14 @@ export function PrivateRegistryImageCard({
       >
         <Body>
           <Pane>
-            {/* <Row>
+            <Row>
               <Key>구분</Key>
               <Value
                 data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE}
               >
-                {imageSourceType?.toLowerCase() ?? "-"}
+                {/* {imageSourceType?.toLowerCase() ?? "-"} */}
               </Value>
-            </Row> */}
+            </Row>
             <Row>
               <Key>상태</Key>
               <Value data-testid={PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STATUS}>
@@ -85,6 +86,10 @@ export function PrivateRegistryImageCard({
                 {formatDateTimeSafely(createdAt)}
               </Value>
             </Row>
+            <Row>
+              <Key>생성자</Key>
+              <Value>{creatorName || "-"}</Value>
+            </Row>
           </Pane>
         </Body>
       </Card>
@@ -93,7 +98,6 @@ export function PrivateRegistryImageCard({
 }
 
 const CardWrapper = styled.div`
-  flex: 1;
 `;
 
 const Body = styled.div`

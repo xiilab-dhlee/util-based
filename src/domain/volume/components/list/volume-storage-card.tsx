@@ -21,16 +21,14 @@ const STORAGE_CARD_DATA: Record<
   ASTRAGO: {
     from: "Local",
     title: "AstraGo Storage",
-    icon: <Icon name="Astrago" color="#5b29c7" size={32} />,
+    icon: <Icon name="Astrago" color="#5b29c7" size={30} />,
     description:
       "AstraGo로 관리되어지는 File 스토리지에 데이터가 업로드 됩니다.",
   },
   ON_PREMISE: {
     from: "External Data Source",
     title: "On-premise Storage",
-    icon: (
-      <Icon name="OnPremiseStorage" color="rgba(0, 20, 197, 60%)" size={24} />
-    ),
+    icon: <Icon name="OnPremiseStorage" color="#5b29c7" size={24} />,
     description:
       "On-premise 환경의 사용자 스토리지(NFS)를 연결하여 파일을 업로드 됩니다.",
   },

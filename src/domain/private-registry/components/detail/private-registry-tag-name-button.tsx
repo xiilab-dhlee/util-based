@@ -25,7 +25,7 @@ export function PrivateRegistryTagNameButton({
   }
 
   const handleClick = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendViewTagDetail, {
+    publish(PRIVATE_REGISTRY_EVENTS.openTagDetailModal, {
       harborImageName,
       imageTagId,
       imageTagName,

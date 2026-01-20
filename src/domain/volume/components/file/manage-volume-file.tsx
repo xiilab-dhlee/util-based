@@ -1,6 +1,5 @@
 "use client";
 
-import { useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
@@ -14,13 +13,9 @@ import { PreviewVolumeFile } from "@/domain/volume/components/file/preview-volum
 import { UnzipVolumeFileButton } from "@/domain/volume/components/file/unzip-volume-file-button";
 import { VolumeFileButton } from "@/domain/volume/components/file/volume-file-button";
 import { VolumeFileCheckbox } from "@/domain/volume/components/file/volume-file-checkbox";
+import { useVolumeFilePermissions } from "@/domain/volume/hooks/use-volume-file-permissions";
 import { useVolumeFileTree } from "@/domain/volume/hooks/use-volume-file-tree";
-import {
-  volumeFileCheckedNodesAtom,
-  volumeFileCheckedNodesInfoAtom,
-  volumeFileSelectedNodeInfoAtom,
-} from "@/domain/volume/state/volume.atom";
-import { isCompressedFile } from "@/domain/volume/utils/volume.util";
+import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
@@ -29,10 +24,6 @@ import { CustomFileTree } from "@/shared/components/tree/custom-file-tree";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import {
-  checkIsSuperAdmin,
-  getSessionAccountId,
-} from "@/shared/utils/auth.util";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
@@ -51,8 +42,6 @@ export function ManageVolumeFile({
 }: ManageVolumeFileProps) {
   const publish = usePublish();
   const { data: session } = useSession();
-  const checkedNodesInfo = useAtomValue(volumeFileCheckedNodesInfoAtom);
-  const selectedNodeInfo = useAtomValue(volumeFileSelectedNodeInfoAtom);
   const resetCheckedNodes = useResetAtom(volumeFileCheckedNodesAtom);
 
   const { treeData, loadingPaths, loadChildren, isLoading, isError } =
@@ -61,31 +50,30 @@ export function ManageVolumeFile({
       enabled: !Number.isNaN(volumeId),
     });
 
-  const hasCheckedFiles = checkedNodesInfo.length > 0;
-
-  // 드롭다운 버튼 표시 조건
-  const canCreateFolder = selectedNodeInfo?.type === "directory";
-  const canCompress = hasCheckedFiles;
-  const canDecompress =
-    checkedNodesInfo.length === 1 && isCompressedFile(checkedNodesInfo[0].path);
-
-  // Footer 표시 조건: 생성자이거나 SUPER_ADMIN인 경우
-  const currentAccountId = getSessionAccountId(session);
-  const isSuperAdmin = checkIsSuperAdmin(session);
-  const isCreator = Boolean(
-    creatorId && currentAccountId && currentAccountId === creatorId,
-  );
-  const canManageFiles = isSuperAdmin || isCreator;
+  const {
+    checkedNodesInfo,
+    hasCheckedFiles,
+    canCreateFolder,
+    canCompress,
+    canDecompress,
+    canDelete,
+    hasDropdownItems,
+    canManageFiles,
+  } = useVolumeFilePermissions({
+    session,
+    creatorId,
+    treeDataLength: treeData.length,
+  });
 
   const handleDownload = () => {
     if (!hasCheckedFiles) return;
 
     const filePaths = checkedNodesInfo.map((node) => node.path);
-    publish(VOLUME_EVENTS.sendDownloadVolumeFile, { volumeId, filePaths });
+    publish(VOLUME_EVENTS.openDownloadFileModal, { volumeId, filePaths });
   };
 
   const handleUpload = () => {
-    publish(VOLUME_EVENTS.sendUploadVolumeFile, { volumeId });
+    publish(VOLUME_EVENTS.openUploadFileModal, { volumeId });
   };
 
   const renderContent = () => {
@@ -103,6 +91,20 @@ export function ManageVolumeFile({
       />
     );
   };
+
+  const renderDropdownItems = () =>
+    [
+      canCreateFolder && (
+        <CreateVolumeFolderButton key="create-folder" volumeId={volumeId} />
+      ),
+      canCompress && (
+        <CompressVolumeFileButton key="compress" volumeId={volumeId} />
+      ),
+      canDecompress && (
+        <UnzipVolumeFileButton key="unzip" volumeId={volumeId} />
+      ),
+      canDelete && <DeleteVolumeFileButton key="delete" volumeId={volumeId} />,
+    ].filter(Boolean);
 
   useEffect(() => {
     return () => resetCheckedNodes();
@@ -123,30 +125,19 @@ export function ManageVolumeFile({
       </Body>
       {canManageFiles && (
         <Footer>
-          <MyDropdown
-            items={[
-              canCreateFolder && (
-                <CreateVolumeFolderButton
-                  key="create-folder"
-                  volumeId={volumeId}
-                />
-              ),
-              canCompress && (
-                <CompressVolumeFileButton key="compress" volumeId={volumeId} />
-              ),
-              canDecompress && (
-                <UnzipVolumeFileButton key="unzip" volumeId={volumeId} />
-              ),
-              <DeleteVolumeFileButton key="delete" volumeId={volumeId} />,
-            ].filter(Boolean)}
-          >
-            <Button
-              width={30}
-              height={30}
-              variant="outlined"
-              icon="MoreHorizonal"
-            />
-          </MyDropdown>
+          {hasDropdownItems && (
+            <MyDropdown items={renderDropdownItems()}>
+              <Button
+                width={30}
+                height={30}
+                variant="outlined"
+                icon="MoreHorizonal"
+                iconColor="#000"
+              >
+                <span className="sr-only">볼륨 파일 관리 메뉴</span>
+              </Button>
+            </MyDropdown>
+          )}
           <FooterRight>
             <Button
               color="primary"

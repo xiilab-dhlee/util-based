@@ -2,37 +2,30 @@
 
 import { useSetAtom } from "jotai";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import { Modal } from "xiilab-ui";
+import { Icon, Modal } from "xiilab-ui";
 
 import { useDecompress } from "@/api/generated/volume/volume";
-import {
-  openDecompressVolumeFileModalAtom,
-  volumeFileCheckedNodesAtom,
-} from "@/domain/volume/state/volume.atom";
+import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
-interface DecompressVolumeFileEventData {
+interface DecompressVolumeFilePayload {
   volumeId: number;
   filePath: string;
 }
 
 export function DecompressVolumeFileModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openDecompressVolumeFileModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
   const [volumeId, setVolumeId] = useState<number | null>(null);
-  const [filePath, setFilePath] = useState<string>("");
+  const [filePath, setFilePath] = useState<string | null>(null);
 
   const { mutate, isPending } = useDecompress();
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
-    onClose();
+    setOpen(false);
   };
 
   const handleOk = () => {
@@ -43,19 +36,18 @@ export function DecompressVolumeFileModal() {
       {
         onSuccess: () => {
           setCheckedNodes(new Set());
-          toast.success("압축 해제 요청이 전송되었습니다.");
-          onClose();
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe<DecompressVolumeFileEventData>(
-    VOLUME_EVENTS.sendDecompressVolumeFile,
+  useSubscribe<DecompressVolumeFilePayload>(
+    VOLUME_EVENTS.openDecompressFileModal,
     (eventData) => {
       setVolumeId(eventData.volumeId);
       setFilePath(eventData.filePath);
-      onOpen();
+      setOpen(true);
     },
   );
 
@@ -64,7 +56,8 @@ export function DecompressVolumeFileModal() {
       type="primary"
       modalWidth={370}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
+      icon={<Icon name="Compress" color="#fff" size={18} />}
       onOk={handleOk}
       title="압축 해제"
       okText="압축 해제"
@@ -72,6 +65,7 @@ export function DecompressVolumeFileModal() {
       cancelText="취소"
       centered
       okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <div>선택한 파일을 압축 해제하시겠습니까?</div>
     </Modal>

@@ -4,35 +4,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
+import { Form, Icon, Input, Modal } from "xiilab-ui";
 
 import { useCreateFolder } from "@/api/generated/volume/volume";
 import {
   type CreateVolumeFolderFormType,
   createVolumeFolderSchema,
 } from "@/domain/volume/schemas/volume.schema";
-import {
-  openCreateVolumeFolderModalAtom,
-  volumeFileTreeDataAtom,
-} from "@/domain/volume/state/volume.atom";
+import { volumeFileTreeDataAtom } from "@/domain/volume/state/volume.atom";
 import {
   addNodeToTree,
   createFolderNode,
 } from "@/domain/volume/utils/volume.util";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
-interface CreateVolumeFolderEventData {
+interface CreateVolumeFolderPayload {
   volumeId: number;
   filePath: string;
 }
 
 export function CreateVolumeFolderModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openCreateVolumeFolderModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const [volumeId, setVolumeId] = useState<number | null>(null);
   const [parentPath, setParentPath] = useState("");
   const setTreeData = useSetAtom(volumeFileTreeDataAtom);
@@ -44,18 +38,18 @@ export function CreateVolumeFolderModal() {
     reset,
   } = useForm<CreateVolumeFolderFormType>({
     resolver: zodResolver(createVolumeFolderSchema),
-    defaultValues: { folderName: "" },
   });
 
   const { mutate, isPending } = useCreateFolder();
 
   const handleCancel = () => {
     if (isPending) return;
-    onClose();
+    setOpen(false);
   };
 
   const onSubmit = (data: CreateVolumeFolderFormType) => {
-    if (!volumeId) return;
+    if (isPending) return;
+    if (volumeId == null) return;
 
     const newFolderNode = createFolderNode({
       folderName: data.folderName,
@@ -67,20 +61,19 @@ export function CreateVolumeFolderModal() {
       {
         onSuccess: () => {
           setTreeData((prev) => addNodeToTree(prev, parentPath, newFolderNode));
-          toast.success("폴더가 추가되었습니다.");
-          onClose();
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe<CreateVolumeFolderEventData>(
-    VOLUME_EVENTS.sendCreateVolumeFolder,
-    (eventData) => {
-      setVolumeId(eventData.volumeId);
-      setParentPath(eventData.filePath);
+  useSubscribe<CreateVolumeFolderPayload>(
+    VOLUME_EVENTS.openCreateFolderModal,
+    (payload) => {
+      setVolumeId(payload.volumeId);
+      setParentPath(payload.filePath);
       reset({ folderName: "" });
-      onOpen();
+      setOpen(true);
     },
   );
 
@@ -100,15 +93,17 @@ export function CreateVolumeFolderModal() {
       centered
       showHeaderBorder
       okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <Form>
         <Controller
           name="folderName"
           control={control}
           render={({ field }) => (
-            <FormItem
-              label="폴더를 추가하시겠습니까?"
+            <LastFormItem
+              label="폴더명"
               htmlFor="folderName"
+              required
               validateStatus={errors.folderName ? "error" : undefined}
               help={errors.folderName?.message}
             >
@@ -122,7 +117,7 @@ export function CreateVolumeFolderModal() {
                 maxLength={255}
                 autoComplete="off"
               />
-            </FormItem>
+            </LastFormItem>
           )}
         />
       </Form>

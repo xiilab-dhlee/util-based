@@ -18,46 +18,37 @@ export function DeletePrivateRegistryModal() {
   const [deleteRegistries, setDeleteRegistries] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
-  const { mutate: deleteImages, isPending } = useDeletePrivateImages();
+  const { mutate, isPending } = useDeletePrivateImages();
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
 
   const handleOk = () => {
-    if (deleteRegistries.length === 0) {
-      toast.error("삭제할 이미지를 선택해 주세요.");
-      return;
-    }
+    if (isPending) return;
+    if (deleteRegistries.length === 0) return;
 
-    if (isPending) {
-      return;
-    }
-
-    deleteImages(
+    mutate(
       {
         data: { harborImageNames: deleteRegistries },
       },
       {
         onSuccess: () => {
-          // 개인 레지스트리 이미지 목록 갱신
           queryClient.invalidateQueries({
             queryKey: getGetPrivateRegistryListQueryKey(),
           });
-          // 모달 닫기
+          toast.success("개인 레지스트리 이미지 삭제 완료");
           setOpen(false);
           router.replace(ROUTES.USER_PRIVATE_REGISTRY);
-          // 성공 메시지 표시
-          toast.success("개인 레지스트리 이미지 삭제 완료");
         },
       },
     );
   };
 
-  useSubscribe<string[]>(
-    PRIVATE_REGISTRY_EVENTS.sendDeletePrivateRegistry,
-    (registries) => {
+  useSubscribe(
+    PRIVATE_REGISTRY_EVENTS.openDeleteModal,
+    (registries: string[]) => {
       setDeleteRegistries(registries);
       setOpen(true);
     },
@@ -68,7 +59,7 @@ export function DeletePrivateRegistryModal() {
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       title="개인 레지스트리 이미지 삭제"
       centered

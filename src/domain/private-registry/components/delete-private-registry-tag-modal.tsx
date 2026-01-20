@@ -15,6 +15,7 @@ import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function DeletePrivateRegistryTagModal() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { name } = useParams<{ name: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
@@ -22,9 +23,7 @@ export function DeletePrivateRegistryTagModal() {
   const [open, setOpen] = useState(false);
   const [deleteTags, setDeleteTags] = useState<number[]>([]);
 
-  const queryClient = useQueryClient();
-
-  const { mutate: deleteImageTags, isPending } = useDeletePrivateImageTags();
+  const { mutate, isPending } = useDeletePrivateImageTags();
 
   const handleClose = () => {
     if (isPending) return;
@@ -32,35 +31,27 @@ export function DeletePrivateRegistryTagModal() {
   };
 
   const handleOk = () => {
-    if (deleteTags.length === 0) {
-      toast.error("삭제할 태그를 선택해 주세요.");
-      return;
-    }
+    if (isPending) return;
+    if (deleteTags.length === 0) return;
 
-    if (isPending) {
-      return;
-    }
-
-    deleteImageTags(
+    mutate(
       {
         data: { harborTagId: deleteTags },
       },
       {
         onSuccess: () => {
-          // 이미지 태그 목록 갱신
           queryClient.invalidateQueries({
             queryKey: getGetPrivateImageTagListQueryKey(),
           });
-          // 이미지 상세 페이지로 이동
+          toast.success("이미지 태그 삭제 완료");
           setOpen(false);
           router.replace(ROUTES.USER_PRIVATE_REGISTRY_DETAIL(harborImageName));
-          toast.success("이미지 태그 삭제 완료");
         },
       },
     );
   };
 
-  useSubscribe<number[]>(PRIVATE_REGISTRY_EVENTS.sendDeleteImageTag, (tags) => {
+  useSubscribe(PRIVATE_REGISTRY_EVENTS.openDeleteTagModal, (tags: number[]) => {
     setDeleteTags(tags);
     setOpen(true);
   });

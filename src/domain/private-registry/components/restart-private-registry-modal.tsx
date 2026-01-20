@@ -18,38 +18,32 @@ export function RestartPrivateRegistryModal() {
 
   const queryClient = useQueryClient();
 
-  const { mutate: restartJob, isPending } = useRestartImageJob();
+  const { mutate, isPending } = useRestartImageJob();
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
 
   const handleOk = () => {
-    if (imageTagId === null) {
-      toast.error("컨테이너 이미지를 선택해 주세요.");
-      return;
-    }
+    if (isPending) return;
+    if (imageTagId === null) return;
 
-    if (isPending) {
-      return;
-    }
-
-    restartJob(
+    mutate(
       { imageTagId },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
             queryKey: getGetImageJobsQueryKey(),
           });
-          setOpen(false);
           toast.success("컨테이너 이미지 등록 재시작 요청이 완료되었습니다.");
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.sendRestartImageJob, (id: number) => {
+  useSubscribe(PRIVATE_REGISTRY_EVENTS.openRestartJobModal, (id: number) => {
     setImageTagId(id);
     setOpen(true);
   });
@@ -59,15 +53,13 @@ export function RestartPrivateRegistryModal() {
       variant="confirm"
       modalWidth={300}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       okText="재시작"
       title="컨테이너 이미지 등록 재시작"
       showCancelButton
       centered
-      closable={!isPending}
-      maskClosable={!isPending}
-      keyboard={!isPending}
+      closable
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >

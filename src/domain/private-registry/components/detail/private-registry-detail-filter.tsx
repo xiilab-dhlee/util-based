@@ -46,7 +46,7 @@ export function PrivateRegistryDetailFilter({
   };
 
   const handleCreate = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendCreateTagData, harborImageName);
+    publish(PRIVATE_REGISTRY_EVENTS.openCreateTagModal, harborImageName);
   };
 
   const handleCreateRequestImage = () => {
@@ -59,7 +59,7 @@ export function PrivateRegistryDetailFilter({
       return;
     }
 
-    publish(PRIVATE_REGISTRY_EVENTS.sendScanTagData, {
+    publish(PRIVATE_REGISTRY_EVENTS.openScanTagModal, {
       harborImageName,
       tagName: selectedTag.imageTagName,
     });

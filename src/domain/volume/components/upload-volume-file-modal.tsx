@@ -1,25 +1,39 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Form, FormItem, Icon, Input, Modal, Upload } from "xiilab-ui";
 
 import { useVolumeTusUpload } from "@/domain/volume/hooks/use-volume-tus-upload";
-import { openUploadVolumeFileModalAtom } from "@/domain/volume/state/volume.atom";
+import {
+  type UploadVolumeFileFormType,
+  uploadVolumeFileSchema,
+} from "@/domain/volume/schemas/volume.schema";
 import { UploadFileList } from "@/shared/components/upload/upload-file-list";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
-interface UploadVolumeFileEventData {
+interface UploadVolumeFilePayload {
   volumeId: number;
 }
 
 export function UploadVolumeFileModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openUploadVolumeFileModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const [volumeId, setVolumeId] = useState<number | null>(null);
-  const [uploadPath, setUploadPath] = useState("/");
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<UploadVolumeFileFormType>({
+    resolver: zodResolver(uploadVolumeFileSchema),
+  });
+
+  const uploadPath = watch("uploadPath");
 
   const {
     files,
@@ -45,21 +59,21 @@ export function UploadVolumeFileModal() {
 
   const resetModal = () => {
     clearFiles();
-    setUploadPath("/");
-    onClose();
+    reset({ uploadPath: "" });
+    setOpen(false);
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isUploading) return;
     resetModal();
   };
 
-  const handleStartUpload = async () => {
+  const onSubmit = async () => {
     if (!volumeId || !hasPendingFiles) return;
     await startUpload();
   };
 
-  const handleCancelAll = async () => {
+  const handleStopUpload = async () => {
     await cancelAllUploads();
     resetModal();
   };
@@ -68,13 +82,13 @@ export function UploadVolumeFileModal() {
     removeFile(fileId);
   };
 
-  useSubscribe<UploadVolumeFileEventData>(
-    VOLUME_EVENTS.sendUploadVolumeFile,
+  useSubscribe<UploadVolumeFilePayload>(
+    VOLUME_EVENTS.openUploadFileModal,
     (eventData) => {
       setVolumeId(eventData.volumeId);
-      setUploadPath("/");
+      reset({ uploadPath: "" });
       clearFiles();
-      onOpen();
+      setOpen(true);
     },
   );
 
@@ -87,35 +101,45 @@ export function UploadVolumeFileModal() {
       closable={!isUploading}
       maskClosable={!isUploading}
       title="파일 업로드"
-      onCancel={handleClose}
+      onCancel={handleCancel}
       cancelText={isUploading ? "업로드 취소" : "취소"}
       okText="업로드"
       okButtonProps={{
         disabled: !hasFiles || !hasPendingFiles || isUploading,
       }}
       cancelButtonProps={{
-        onClick: isUploading ? handleCancelAll : handleClose,
+        onClick: isUploading ? handleStopUpload : handleCancel,
       }}
-      onOk={handleStartUpload}
+      onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
     >
       <Form>
-        <FormItem label="업로드 경로" htmlFor="uploadPath">
-          <Input
-            type="text"
-            id="uploadPath"
-            value={uploadPath}
-            onChange={(e) => setUploadPath(e.target.value)}
-            placeholder="파일을 업로드할 경로를 입력해주세요."
-            width="100%"
-            disabled={isUploading}
-            maxLength={1000}
-            autoComplete="off"
-          />
-        </FormItem>
-
-        <FormItem label="파일 선택">
+        <Controller
+          name="uploadPath"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="업로드 경로"
+              htmlFor="uploadPath"
+              required
+              validateStatus={errors.uploadPath ? "error" : undefined}
+              help={errors.uploadPath?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="uploadPath"
+                placeholder="/mnt/volume/uploads"
+                width="100%"
+                disabled={isUploading}
+                maxLength={1000}
+                autoComplete="off"
+              />
+            </FormItem>
+          )}
+        />
+        <LastFormItem label="파일 선택">
           <Upload
             onUpload={addFiles}
             disabled={isUploading}
@@ -123,7 +147,7 @@ export function UploadVolumeFileModal() {
             showFileList={false}
             hintText="파일을 드래그하거나 클릭하여 선택하세요"
           />
-        </FormItem>
+        </LastFormItem>
 
         {hasFiles && (
           <UploadFileList

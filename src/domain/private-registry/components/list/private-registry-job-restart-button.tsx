@@ -17,7 +17,7 @@ export function PrivateRegistryJobRestartButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendRestartImageJob, imageTagId);
+    publish(PRIVATE_REGISTRY_EVENTS.openRestartJobModal, imageTagId);
   };
 
   return (
