@@ -108,6 +108,10 @@ export const getGetAllMonitoringNotificationHistoriesResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
+      monitoringNotificationHistoryId: faker.number.int({
+        min: undefined,
+        max: undefined,
+      }),
       nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       nodeIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
       notificationSetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -210,8 +214,19 @@ export const getGetMonitoringNotificationSetDetailResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      metric: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      operator: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      metric: faker.helpers.arrayElement([
+        "GPU_TEMP",
+        "GPU_MEMORY",
+        "GPU_USAGE",
+        "MEMORY_USAGE",
+        "CPU_USAGE",
+      ] as const),
+      operator: faker.helpers.arrayElement([
+        "GREATER_THAN",
+        "LESS_THAN",
+        "GREATER_THAN_OR_EQUAL",
+        "LESS_THAN_OR_EQUAL",
+      ] as const),
       value: faker.number.float({
         min: undefined,
         max: undefined,

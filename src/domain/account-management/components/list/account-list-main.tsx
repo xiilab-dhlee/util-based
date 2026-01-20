@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
-import { useGetAllAccounts } from "@/api/generated/admin-account/admin-account";
+import { useGetAllAccounts } from "@/api/generated/admin-account-management/admin-account-management";
 import { DeleteAccountModal } from "@/domain/account-management/components/delete-account-modal";
 import { AccountListBody } from "@/domain/account-management/components/list/account-list-body";
 import { AccountListFilter } from "@/domain/account-management/components/list/account-list-filter";

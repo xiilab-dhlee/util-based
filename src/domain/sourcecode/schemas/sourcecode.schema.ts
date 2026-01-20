@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { credentialListResponseSchema } from "@/domain/credential/schemas/credential.schema";
-
 // 소스코드 전체 스키마
 const baseSourcecodeSchema = z.object({
   /** 소스코드 아이디 */
@@ -31,8 +29,27 @@ const baseSourcecodeSchema = z.object({
       value: z.string().min(1),
     }),
   ),
-  /** 크레덴셜 */
-  credential: credentialListResponseSchema,
+  /** 크리덴셜 */
+  credential: z.object({
+    /** 크리덴셜 ID */
+    id: z.number().int().positive(),
+    /** 크리덴셜 이름 */
+    name: z.string().min(1).max(100),
+    /** 크리덴셜 설명 */
+    description: z.string().min(1).max(500),
+    /** 크리덴셜 타입 */
+    type: z.enum(["GIT", "DOCKER"]),
+    /** 생성자 이름 */
+    creatorName: z.string().min(1).max(100),
+    /** 생성자 ID */
+    creatorId: z.string().uuid(),
+    /** 생성일 */
+    creatorDate: z.string().datetime(),
+    /** 사용자 아이디 */
+    userId: z.string().min(1).max(100),
+    /** 토큰 */
+    token: z.string().optional(),
+  }),
 });
 
 // 소스코드 목록용 스키마 (전체와 동일)

@@ -66,6 +66,13 @@ const Left = styled.div`
   flex-direction: column;
 `;
 
+const Right = styled.div`
+  position: relative;
+  height: 100%;
+  flex: 1;
+  min-width: 1300px;
+`;
+
 const LeftBody = styled.div`
   display: flex;
   justify-content: center;
@@ -97,11 +104,4 @@ const StyledLink = styled(Link)`
   &:hover {
     text-decoration: underline;
   }
-`;
-
-const Right = styled.div`
-  position: relative;
-  height: 100%;
-  flex: 1;
-  min-width: 1300px;
 `;

@@ -5,6 +5,7 @@ import {
   differenceInSeconds,
   format,
   isValid,
+  parse,
   parseISO,
 } from "date-fns";
 import { isString } from "es-toolkit/predicate";
@@ -150,4 +151,38 @@ export function formatDurationFromSeconds(totalSeconds: number): string {
   }
 
   return parts.join(" ");
+}
+
+/**
+ * Date 객체를 API 요청용 문자열로 변환합니다.
+ * 현재: "yyyy-MM-dd HH:mm:ss" 형식 (KST 기준)
+ * TODO: API가 ISO UTC로 변경될 예정 → toISOString()으로 교체
+ * @param date - 변환할 Date 객체
+ */
+export const formatDateForRequest = (date: Date): string => {
+  return format(date, "yyyy-MM-dd HH:mm:ss");
+};
+
+/**
+ * 로컬 시간 문자열을 UTC ISO 형식으로 변환합니다.
+ *
+ * @param localDateString - 로컬 시간 문자열 (yyyy-MM-dd HH:mm:ss 형식)
+ * @returns UTC ISO 형식 문자열 또는 빈 문자열
+ *
+ * @example
+ * // 로컬 시간대가 KST(+9)인 경우
+ * toUtcIsoString("2024-01-15 09:00:00") // "2024-01-15T00:00:00.000Z"
+ */
+export function toUtcIsoString(localDateString: string): string {
+  if (!localDateString) {
+    return "";
+  }
+
+  const date = parse(localDateString, "yyyy-MM-dd HH:mm:ss", new Date());
+
+  if (!isValid(date)) {
+    return "";
+  }
+
+  return date.toISOString();
 }

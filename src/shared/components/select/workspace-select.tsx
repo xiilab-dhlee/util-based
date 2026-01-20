@@ -8,7 +8,7 @@ import { Checkbox, Input } from "xiilab-ui";
 import {
   usePinWorkspace,
   useUnpinWorkspace,
-} from "@/api/generated/account/account";
+} from "@/api/generated/account-pin/account-pin";
 import type { WorkspaceResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";

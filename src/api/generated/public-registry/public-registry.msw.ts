@@ -124,6 +124,7 @@ export const getGetPublicImageTagListResponseMock = (
         highCount: faker.number.int({ min: undefined, max: undefined }),
         mediumCount: faker.number.int({ min: undefined, max: undefined }),
         lowCount: faker.number.int({ min: undefined, max: undefined }),
+        totalCount: faker.number.int({ min: undefined, max: undefined }),
       },
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -264,6 +265,7 @@ export const getGetPublicImageTagDetailResponseMock = (
       highCount: faker.number.int({ min: undefined, max: undefined }),
       mediumCount: faker.number.int({ min: undefined, max: undefined }),
       lowCount: faker.number.int({ min: undefined, max: undefined }),
+      totalCount: faker.number.int({ min: undefined, max: undefined }),
     },
     imageTagId: faker.number.int({ min: undefined, max: undefined }),
     approvalStatus: faker.helpers.arrayElement([

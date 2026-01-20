@@ -1,109 +1,187 @@
 "use client";
 
-import { useState } from "react";
-import { toast } from "react-toastify";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
-import { Button, Dropdown, FormItem, Input } from "xiilab-ui";
+import { Button, Dropdown, FormItem, Input, TextArea } from "xiilab-ui";
 
+import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getGetCredentialsQueryKey,
+  useCreateCredential,
+} from "@/api/generated/credential/credential";
 import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential.constant";
-import { useSelect } from "@/shared/hooks/use-select";
+import {
+  type CreateCredentialFormType,
+  createCredentialFormSchema,
+} from "@/domain/credential/schemas/credential.schema";
 import { FormRow } from "@/styles/layers/form-layer.styled";
 
+const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
+  credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
+  credentialName: "",
+  description: "",
+  credentialAccountId: "",
+  token: "",
+};
+
+/**
+ * 크리덴셜 생성 폼 컴포넌트
+ *
+ * react-hook-form + zod validation 적용
+ */
 export function CreateCredentialForm() {
-  /**
-   * 크레덴셜 타입 선택
-   */
-  const credentialType = useSelect(null, CREDENTIAL_TYPE_OPTIONS);
-  /**
-   * 크레덴셜 이름
-   */
-  const [credentialName, setCredentialName] = useState("");
-  /**
-   * 크레덴셜 설명
-   */
-  const [credentialDescription, setCredentialDescription] = useState("");
-  /**
-   * 크레덴셜 아이디
-   */
-  const [credentialId, setCredentialId] = useState("");
-  /**
-   * 크레덴셜 토큰
-   */
-  const [credentialToken, setCredentialToken] = useState("");
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const accountId = session?.user?.id ?? "";
 
-  const handleCreateCredential = () => {
-    toast.success("크레덴셜 생성 완료");
-  };
+  const { mutate, isPending } = useCreateCredential();
 
-  const handleCredentialNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setCredentialName(e.target.value);
-  };
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CreateCredentialFormType>({
+    resolver: zodResolver(createCredentialFormSchema),
+    defaultValues: DEFAULT_FORM_VALUES,
+  });
 
-  const handleCredentialDescriptionChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setCredentialDescription(e.target.value);
-  };
+  const onSubmit = (data: CreateCredentialFormType) => {
+    if (isPending) return;
+    if (!accountId) return;
 
-  const handleCredentialIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCredentialId(e.target.value);
-  };
-
-  const handleCredentialTokenChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setCredentialToken(e.target.value);
+    mutate(
+      {
+        accountId,
+        data,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getGetCredentialsQueryKey(accountId),
+            exact: false,
+          });
+          reset(DEFAULT_FORM_VALUES);
+        },
+      },
+    );
   };
 
   return (
     <Container>
       <StyledFormRow>
-        <StyledFormItem label="타입">
-          <Dropdown
-            options={credentialType.options}
-            value={credentialType.value}
-            onChange={credentialType.onChange}
-            width="100%"
-          />
-        </StyledFormItem>
-        <StyledFormItem label="이름">
-          <Input
-            value={credentialName}
-            onChange={handleCredentialNameChange}
-            placeholder="이름을 입력해 주세요."
-            width="100%"
-          />
-        </StyledFormItem>
+        <Controller
+          name="credentialType"
+          control={control}
+          render={({ field }) => (
+            <StyledFormItem
+              label="타입"
+              required
+              validateStatus={errors.credentialType ? "error" : undefined}
+              help={errors.credentialType?.message}
+            >
+              <Dropdown
+                options={CREDENTIAL_TYPE_OPTIONS}
+                onChange={(value) => field.onChange(value)}
+                value={field.value}
+                width="100%"
+                placeholder="타입을 선택해 주세요."
+                status={errors.credentialType ? "error" : undefined}
+              />
+            </StyledFormItem>
+          )}
+        />
+        <Controller
+          name="credentialName"
+          control={control}
+          render={({ field }) => (
+            <StyledFormItem
+              label="이름"
+              required
+              validateStatus={errors.credentialName ? "error" : undefined}
+              htmlFor="formCredentialName"
+              help={errors.credentialName?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="formCredentialName"
+                placeholder="이름을 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+              />
+            </StyledFormItem>
+          )}
+        />
       </StyledFormRow>
       <StyledFormRow>
-        <StyledFormItem label="설명">
-          <Input
-            value={credentialDescription}
-            onChange={handleCredentialDescriptionChange}
-            placeholder="설명을 입력해 주세요."
-            width="100%"
-          />
-        </StyledFormItem>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <StyledFormItem
+              label="설명"
+              validateStatus={errors.description ? "error" : undefined}
+              htmlFor="formCredentialDescription"
+              help={errors.description?.message}
+            >
+              <TextArea
+                {...field}
+                id="formCredentialDescription"
+                placeholder="설명을 입력해 주세요."
+              />
+            </StyledFormItem>
+          )}
+        />
       </StyledFormRow>
       <StyledFormRow>
-        <StyledFormItem label="아이디">
-          <Input
-            value={credentialId}
-            onChange={handleCredentialIdChange}
-            placeholder="아이디를 입력해 주세요."
-            width="100%"
-          />
-        </StyledFormItem>
-        <StyledFormItem label="토큰">
-          <Input
-            value={credentialToken}
-            onChange={handleCredentialTokenChange}
-            placeholder="토큰을 입력해 주세요."
-            width="100%"
-          />
-        </StyledFormItem>
+        <Controller
+          name="credentialAccountId"
+          control={control}
+          render={({ field }) => (
+            <StyledFormItem
+              label="아이디"
+              required
+              validateStatus={errors.credentialAccountId ? "error" : undefined}
+              htmlFor="formCredentialAccountId"
+              help={errors.credentialAccountId?.message}
+            >
+              <Input
+                {...field}
+                type="text"
+                id="formCredentialAccountId"
+                placeholder="아이디를 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+              />
+            </StyledFormItem>
+          )}
+        />
+        <Controller
+          name="token"
+          control={control}
+          render={({ field }) => (
+            <StyledFormItem
+              label="토큰"
+              required
+              validateStatus={errors.token ? "error" : undefined}
+              htmlFor="formCredentialToken"
+              help={errors.token?.message}
+            >
+              <Input
+                {...field}
+                type="password"
+                id="formCredentialToken"
+                placeholder="토큰을 입력해 주세요."
+                width="100%"
+                autoComplete="off"
+              />
+            </StyledFormItem>
+          )}
+        />
       </StyledFormRow>
 
       <Button
@@ -113,9 +191,11 @@ export function CreateCredentialForm() {
         width="100%"
         height="30px"
         iconSize={20}
-        onClick={handleCreateCredential}
+        onClick={handleSubmit(onSubmit)}
+        disabled={!accountId}
+        loading={isPending}
       >
-        크레덴셜 저장
+        크리덴셜 저장
       </Button>
     </Container>
   );

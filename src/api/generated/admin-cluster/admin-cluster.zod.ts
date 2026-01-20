@@ -370,7 +370,7 @@ export const getNodeSystemResourceResponse = zod
             관리자가 특정 노드의 시스템 리소스 메트릭을 시간대별로 조회합니다.
 
             **응답 데이터 구성:**
-            - **dateTime**: 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식) - 시간 순서로 정렬
+            - **dateTime**: 측정 시간 (UTC, ISO 8601 형식) - 시간 순서로 정렬
             - **value**: 메트릭 값
 
             **메트릭 타입:**
@@ -397,6 +397,9 @@ export const getNodeSystemMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
 });
 
+export const getNodeSystemMetricsQueryStepRegExp =
+  /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
+
 export const getNodeSystemMetricsQueryParams = zod.object({
   metricName: zod
     .enum([
@@ -418,8 +421,15 @@ export const getNodeSystemMetricsQueryParams = zod.object({
   startDateTime: zod
     .string()
     .datetime({})
-    .describe("시작 시간 (ISO 8601 형식)"),
-  endDateTime: zod.string().datetime({}).describe("종료 시간 (ISO 8601 형식)"),
+    .describe("시작 시간 (ISO 8601 UTC 형식)"),
+  endDateTime: zod
+    .string()
+    .datetime({})
+    .describe("종료 시간 (ISO 8601 UTC 형식)"),
+  step: zod
+    .string()
+    .regex(getNodeSystemMetricsQueryStepRegExp)
+    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
 });
 
 export const getNodeSystemMetricsResponse = zod
@@ -430,9 +440,7 @@ export const getNodeSystemMetricsResponse = zod
       .array(
         zod
           .object({
-            dateTime: zod
-              .string()
-              .describe("측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)"),
+            dateTime: zod.string().describe("측정 시간 (UTC, ISO 8601 형식)"),
             value: zod
               .string()
               .describe("메트릭 값 (사용률 %, 온도 °C, 속도 bytes/sec, 부하)"),
@@ -454,7 +462,7 @@ export const getNodeSystemMetricsResponse = zod
             - **modelName**: GPU 모델명 (예: NVIDIA-A100-SXM4-40GB)
             - **gpuIndex**: GPU 인덱스 (0, 1, 2, ...) - 숫자 순서로 정렬
             - **values**: 시계열 메트릭 값 리스트
-              - **dateTime**: 측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)
+              - **dateTime**: 측정 시간 (UTC, ISO 8601 형식)
               - **value**: 메트릭 값
 
             **메트릭 타입:**
@@ -473,6 +481,9 @@ export const getNodeGpuMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
 });
 
+export const getNodeGpuMetricsQueryStepRegExp =
+  /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
+
 export const getNodeGpuMetricsQueryParams = zod.object({
   metricName: zod
     .enum([
@@ -486,8 +497,15 @@ export const getNodeGpuMetricsQueryParams = zod.object({
   startDateTime: zod
     .string()
     .datetime({})
-    .describe("시작 시간 (ISO 8601 형식)"),
-  endDateTime: zod.string().datetime({}).describe("종료 시간 (ISO 8601 형식)"),
+    .describe("시작 시간 (ISO 8601 UTC 형식)"),
+  endDateTime: zod
+    .string()
+    .datetime({})
+    .describe("종료 시간 (ISO 8601 UTC 형식)"),
+  step: zod
+    .string()
+    .regex(getNodeGpuMetricsQueryStepRegExp)
+    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
 });
 
 export const getNodeGpuMetricsResponse = zod
@@ -506,9 +524,7 @@ export const getNodeGpuMetricsResponse = zod
                   .object({
                     dateTime: zod
                       .string()
-                      .describe(
-                        "측정 시간 (KST 기준, yyyy-MM-dd HH:mm:ss 형식)",
-                      ),
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
                     value: zod
                       .string()
                       .describe(

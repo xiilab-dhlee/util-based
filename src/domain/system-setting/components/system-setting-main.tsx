@@ -3,12 +3,13 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { DeleteCredentialModal } from "@/domain/credential/components/delete-credential-modal";
+import { ViewCredentialDetailModal } from "@/domain/credential/components/view-credential-detail-modal";
 import { ResourceRevokeCriteriaModal } from "@/domain/revoke/components/edit/resource-revoke-criteria-modal";
 import { CreateHpeModal } from "@/domain/system-setting/components/create-hpe-modal";
 import { CreateLicenseModal } from "@/domain/system-setting/components/create-license-modal";
 import { CreateStorageModal } from "@/domain/system-setting/components/create-storage-modal";
 import { CredentialListSetting } from "@/domain/system-setting/components/credential-list-setting";
-import { DeleteCredentialModal } from "@/domain/system-setting/components/delete-credential-modal";
 import { DeleteSmtpModal } from "@/domain/system-setting/components/delete-smtp-modal";
 import { DeleteStorageModal } from "@/domain/system-setting/components/delete-storage-modal";
 import { HpeOneviewSetting } from "@/domain/system-setting/components/hpe-oneview-setting";
@@ -19,7 +20,6 @@ import { SmtpModal } from "@/domain/system-setting/components/smtp-modal";
 import { StorageListSetting } from "@/domain/system-setting/components/storage-list-setting";
 import { SystemSettingAside } from "@/domain/system-setting/components/system-setting-aside";
 import { UpdateStorageModal } from "@/domain/system-setting/components/update-storage-modal";
-import { ViewCredentialDetailModal } from "@/domain/system-setting/components/view-credential-detail-modal";
 import { ViewStorageModal } from "@/domain/system-setting/components/view-storage-modal";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
@@ -94,7 +94,7 @@ export function SystemSettingMain() {
             {/* 스토리지 목록 */}
             <StorageListSetting />
 
-            {/* 크레덴셜 목록 */}
+            {/* 크리덴셜 목록 */}
             <CredentialListSetting />
           </SettingGridContainer>
         </ListPageBody>

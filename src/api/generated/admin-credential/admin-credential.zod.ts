@@ -65,11 +65,8 @@ export const getAllCredentialsResponse = zod
           zod
             .object({
               credentialId: zod.number().describe("크리덴셜 ID"),
-              credentialChannel: zod
-                .enum(["GIT", "DOCKER", "NGC"])
-                .describe("크리덴셜 채널"),
               credentialType: zod
-                .enum(["IMAGE", "SOURCE_CODE"])
+                .enum(["IMAGE_REGISTRY", "GIT_REPOSITORY"])
                 .describe("크리덴셜 타입"),
               credentialName: zod.string().describe("크리덴셜 이름"),
               description: zod.string().optional().describe("크리덴셜 설명"),

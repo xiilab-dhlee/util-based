@@ -165,6 +165,7 @@ export const getNotificationSetsResponse = zod
                 "MIG_APPLIED",
                 "MIG_FAILURE",
                 "WORKSPACE_CREATED",
+                "WORKSPACE_RESOURCE_EXCEEDED",
                 "WORKSPACE_RESOURCE_REQUEST",
                 "WORKLOAD_RESOURCE_RECLAIM_RESULT",
                 "WORKSPACE_RESOURCE_REQUEST_RESULT",

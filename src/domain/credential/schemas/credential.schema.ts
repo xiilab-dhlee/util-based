@@ -1,74 +1,40 @@
 import { z } from "zod";
 
+import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
 /**
- * 크레덴셜 기본 스키마
+ * 크리덴셜 타입 enum 값 (API 스키마 기반)
  */
-const baseCredentialSchema = z.object({
-  /** 크레덴셜 ID */
-  id: z.number().int().positive(),
-  /** 크레덴셜 이름 */
-  name: z.string().min(1).max(100),
-  /** 크레덴셜 설명 */
-  description: z.string().min(1).max(500),
-  /** 크레덴셜 타입 */
-  type: z.enum(["GIT", "DOCKER"]),
-  /** 생성자 이름 */
-  creatorName: z.string().min(1).max(100),
-  /** 생성자 ID */
-  creatorId: z.string().uuid(),
-  /** 생성일 */
-  creatorDate: z.string().datetime(),
-  /** 사용자 아이디 */
-  userId: z.string().min(1).max(100),
-  /** 토큰 */
-  token: z.string().optional(),
-  /** Private Registry URL (선택적) */
-  registryUrl: z.string().url().optional(),
+const credentialTypeValues = Object.values(
+  CredentialListItemResponseCredentialType,
+) as [
+  CredentialListItemResponseCredentialType,
+  ...CredentialListItemResponseCredentialType[],
+];
+
+/**
+ * 크리덴셜 생성 스키마
+ */
+export const createCredentialFormSchema = z.object({
+  credentialType: z.enum(credentialTypeValues, {
+    required_error: "타입을 선택해 주세요.",
+  }),
+  credentialName: z
+    .string()
+    .min(1, "필수 입력 값입니다.")
+    .max(50, "이름은 50자 이내로 입력해 주세요."),
+  description: z
+    .string()
+    .max(2000, "설명은 2000자 이내로 입력해 주세요.")
+    .optional()
+    .or(z.literal("")),
+  credentialAccountId: z.string().min(1, "필수 입력 값입니다."),
+  token: z.string().min(1, "필수 입력 값입니다."),
 });
 
 /**
- * 크레덴셜 목록 Response 스키마
+ * 크리덴셜 폼 타입
  */
-export const credentialListResponseSchema = baseCredentialSchema.pick({
-  id: true,
-  name: true,
-  description: true,
-  type: true,
-  creatorName: true,
-  creatorId: true,
-  creatorDate: true,
-});
-
-/**
- * 크레덴셜 상세 Response 스키마
- * 보안상 토큰은 제외
- */
-export const credentialDetailResponseSchema = baseCredentialSchema.omit({
-  token: true,
-});
-
-/**
- * 크레덴셜 생성 Request 스키마
- */
-export const credentialCreateRequestSchema = baseCredentialSchema.pick({
-  name: true,
-  description: true,
-  type: true,
-  userId: true,
-  token: true,
-  registryUrl: true,
-});
-
-/**
- * 크레덴셜 타입
- */
-type Credential = z.infer<typeof baseCredentialSchema>;
-export type CredentialListType = z.infer<typeof credentialListResponseSchema>;
-export type CredentialDetailType = z.infer<
-  typeof credentialDetailResponseSchema
+export type CreateCredentialFormType = z.infer<
+  typeof createCredentialFormSchema
 >;
-export type CredentialCreateRequest = z.infer<
-  typeof credentialCreateRequestSchema
->;
-export type CredentialIdType = Credential["id"];
-export type CredentialType = Credential["type"];

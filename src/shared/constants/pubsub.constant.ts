@@ -27,6 +27,8 @@ export const WORKSPACE_EVENTS = {
   sendRejectReason: "workspace:send-reject-reason",
   // 워크스페이스 리소스 승인 모달에 필요한 정보 전달 이벤트
   sendApproveResource: "workspace:send-approve-resource",
+  // 워크스페이스 리소스 요청 취소에 필요한 정보 전달 이벤트
+  sendDeleteResource: "workspace:send-cancel-resource",
   // 워크스페이스 리소스 반려에 필요한 정보 전달 이벤트
   sendRejectResource: "workspace:send-reject-resource",
   // 워크스페이스 리소스 할당량 수정 모달에 필요한 정보 전달 이벤트
@@ -219,12 +221,8 @@ export const MONITORING_EVENTS = {
   sendNotificationHistory: "monitoring:send-notification-history",
   // 사용자 워크스페이스 정보 모달에 필요한 정보 전달 이벤트
   sendUserWorkspace: "monitoring:send-user-workspace",
-} as const;
-
-// 알림 관련 이벤트
-export const NOTIFICATION_EVENTS = {
-  // 알림 삭제에 필요한 정보 전달 이벤트
-  sendDeleteNotification: "notification:send-delete-notification",
+  // 모니터링 알림 삭제 모달에 필요한 정보 전달 이벤트
+  sendDeleteNotification: "monitoring:send-delete-notification",
 } as const;
 
 // 설정 관련 이벤트
@@ -239,6 +237,16 @@ export const SETTING_EVENTS = {
   sendDeleteWorkspaceMember: "setting:send-delete-workspace-member",
   // 리소스 요청 취소 모달에 필요한 정보 전달 이벤트
   sendCancelResourceRequest: "setting:send-cancel-resource-request",
+} as const;
+
+// 크리덴셜 관련 이벤트
+export const CREDENTIAL_EVENTS = {
+  // 크리덴셜 생성 모달 열기 이벤트
+  openCreateModal: "credential:open-create-modal",
+  // 크리덴셜 상세 모달 열기 이벤트
+  openDetailModal: "credential:open-detail-modal",
+  // 크리덴셜 삭제 모달 열기 이벤트
+  openDeleteModal: "credential:open-delete-modal",
 } as const;
 
 // 시스템 설정 관련 이벤트
@@ -259,10 +267,6 @@ export const SYSTEM_SETTING_EVENTS = {
   openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
   // HPE OneView 연동 모달 열기 이벤트
   openHpeConnectionModal: "system-setting:open-hpe-connection-modal",
-  // 크레덴셜 상세 모달 열기 이벤트
-  openCredentialDetailModal: "system-setting:open-credential-detail-modal",
-  // 크레덴셜 삭제 모달 열기 이벤트
-  openCredentialDeleteModal: "system-setting:open-credential-delete-modal",
   // 워크스페이스 리소스 설정 모달 열기 이벤트
   openWorkspaceResourceSettingModal:
     "system-setting:open-workspace-resource-setting-modal",

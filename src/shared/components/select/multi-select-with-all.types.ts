@@ -4,6 +4,8 @@ export interface MultiSelectOption {
 }
 
 export interface MultiSelectWithAllProps {
+  /** 접근성용 식별자 */
+  id?: string;
   /** 선택 가능한 옵션 목록 */
   options: MultiSelectOption[];
   /** 선택된 값 배열 */

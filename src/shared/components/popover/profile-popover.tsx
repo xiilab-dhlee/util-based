@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Button, Icon } from "xiilab-ui";
 
@@ -13,6 +14,7 @@ import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
+import { checkIsUser } from "@/shared/utils/auth.util";
 import { isAdminMode } from "@/shared/utils/router.util";
 
 interface ProfilePopoverProps {
@@ -21,6 +23,7 @@ interface ProfilePopoverProps {
 }
 
 export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
+  const { data: session } = useSession();
   const publish = usePublish();
 
   const router = useRouter();
@@ -28,17 +31,16 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
 
   const { onClose } = useGlobalModal(openProfilePopoverAtom);
 
-  const isAdmin = isAdminMode(pathname);
+  const isAdminPage = isAdminMode(pathname);
+  const isUserRole = checkIsUser(session);
 
   /**
    * 현재 모드에 따른 모드 전환 함수
    */
-  const handleModeSwitch = () => {
-    if (isAdmin) {
-      // 관리자 모드에서 사용자 모드로 전환
+  const handleSwitchMode = () => {
+    if (isAdminPage) {
       router.replace(USER_ROOT_PATH);
     } else {
-      // 사용자 모드에서 관리자 모드로 전환
       router.replace(ADMIN_ROOT_PATH);
     }
   };
@@ -102,23 +104,17 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
               </WorkspaceItem>
             </WorkspaceBody>
           </Workspace>
-          <Button
-            icon="PersonFilled"
-            iconColor="#CED5DB"
-            width="100%"
-            height={30}
-            onClick={handleModeSwitch}
-            style={{
-              backgroundColor: "transparent",
-              borderColor: "#515E80",
-              outline: "1px solid #242A3D",
-              color: "#F5F5F5",
-              fontWeight: 600,
-              fontSize: 12,
-            }}
-          >
-            {isAdmin ? "사용자 " : "관리자"} 전환
-          </Button>
+          {!isUserRole && (
+            <ModeSwitchButton
+              icon="PersonFilled"
+              iconColor="#CED5DB"
+              width="100%"
+              height={30}
+              onClick={handleSwitchMode}
+            >
+              {isAdminPage ? "사용자" : "관리자"} 전환
+            </ModeSwitchButton>
+          )}
         </User>
         {/* 알림 */}
         <ProfileNotification />
@@ -326,4 +322,13 @@ const WorkspaceColumnValue = styled.div`
   font-size: 13px;
   line-height: 16px;
   color: #f5f5f5;
+`;
+
+const ModeSwitchButton = styled(Button)`
+  background-color: transparent;
+  border-color: #515e80;
+  outline: 1px solid #242a3d;
+  color: #f5f5f5;
+  font-weight: 600;
+  font-size: 12px;
 `;

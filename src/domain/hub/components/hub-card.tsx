@@ -81,6 +81,11 @@ export function HubCard({
 
 const CardWrapper = styled.button`
   text-align: unset;
+  cursor: pointer;
+
+  & * {
+    cursor: inherit;
+  }
 `;
 
 const Description = styled.div`

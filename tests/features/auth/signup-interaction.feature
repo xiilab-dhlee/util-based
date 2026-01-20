@@ -27,11 +27,13 @@ Feature: 회원가입 인터랙션
 
   @smoke
   Scenario: 유효한 입력 시 회원가입 성공
-    When Email 필드에 "user1@xiilab.com"을 입력한다
-    And Password 필드에 "xiirocks1!"을 입력한다
-    And Confirm Password 필드에 "xiirocks1!"을 입력한다
-    And First Name 필드에 "길동"을 입력한다
-    And Last Name 필드에 "홍"을 입력한다
-    And 회원가입 버튼을 클릭한다
+    Given 회원가입 필수값이 유효하게 입력되어 있다
+      | field            | value            |
+      | Email            | user1@xiilab.com |
+      | Password         | xiirocks1!       |
+      | Confirm Password | xiirocks1!       |
+      | First Name       | 길동             |
+      | Last Name        | 홍               |
+    When 회원가입 버튼을 클릭한다
     Then 회원가입이 성공적으로 처리된다
     And 로그인 페이지로 이동 버튼이 표시된다
