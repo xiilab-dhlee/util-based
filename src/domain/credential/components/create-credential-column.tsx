@@ -1,6 +1,7 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { AdminCredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { getCredentialTypeInfo } from "@/domain/credential/constants/credential.constant";
 import { CredentialDeleteButton } from "@/domain/system-setting/components/credential-delete-button";
 import { CredentialNameButton } from "@/domain/system-setting/components/credential-name-button";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
@@ -20,11 +21,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       ),
     },
     {
-      title: "채널",
-      dataIndex: "credentialChannel",
-      key: "credentialChannel",
+      title: "타입",
+      dataIndex: "credentialType",
+      key: "credentialType",
       align: "left",
+      render: (type: string) => getCredentialTypeInfo(type).label,
     },
+
     {
       title: "생성자",
       dataIndex: "creatorName",

@@ -1,11 +1,11 @@
 "use client";
 
 import type { CredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { CredentialCard } from "@/domain/credential/components/credential-card";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { GridList, ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { CredentialCard } from "./credential-card";
 
 interface SettingCredentialListBodyProps {
   /** 크리덴셜 목록 데이터 */

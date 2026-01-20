@@ -6,7 +6,7 @@ import { Input } from "xiilab-ui";
 
 import { useGetAllCredentials } from "@/api/generated/admin-credential/admin-credential";
 import type { AdminCredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { createCredentialColumn } from "@/domain/system-setting/components/create-credential-column";
+import { createCredentialColumn } from "@/domain/credential/components/create-credential-column";
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
 import { CREDENTIAL_LIST_PAGE_SIZE } from "@/domain/system-setting/constants/system-setting.constant";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";

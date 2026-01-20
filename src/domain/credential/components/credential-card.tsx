@@ -2,12 +2,14 @@
 
 import { useSession } from "next-auth/react";
 import styled from "styled-components";
-import { Card, Icon, Tag, type TagProps } from "xiilab-ui";
+import { Card, Icon, Tag } from "xiilab-ui";
 
 import type { CredentialListItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { getCredentialTypeInfo } from "@/domain/credential/constants/credential.constant";
 import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { checkIsSuperAdmin } from "@/shared/utils/auth.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
 
 type CredentialCardProps = CredentialListItemResponse;
@@ -16,7 +18,7 @@ export function CredentialCard({
   credentialId,
   credentialName,
   description,
-  credentialChannel,
+  credentialType,
   creatorName,
   creatorId,
   createDateTime,
@@ -25,17 +27,10 @@ export function CredentialCard({
   const publish = usePublish();
 
   const isOwner = session?.user?.id === creatorId;
+  const isSuperAdmin = checkIsSuperAdmin(session);
+  const canDelete = isOwner || isSuperAdmin;
 
-  let variant: TagProps["variant"];
-  if (credentialChannel === "GIT") {
-    variant = "yellow";
-  } else if (credentialChannel === "DOCKER") {
-    variant = "purple";
-  } else if (credentialChannel === "NGC") {
-    variant = "green";
-  } else {
-    variant = "gray";
-  }
+  const { label, variant } = getCredentialTypeInfo(credentialType);
 
   const handleCardClick = () => {
     publish(CREDENTIAL_EVENTS.openDetailModal, {
@@ -61,16 +56,14 @@ export function CredentialCard({
       <Container>
         <Header>
           <Title>
-            <StyledTag variant={variant}>
-              {credentialChannel.toLowerCase()}
-            </StyledTag>
+            <StyledTag variant={variant}>{label}</StyledTag>
             <CredentialName
               className="truncate"
               data-testid={CREDENTIAL_SELECTOR.CARD_NAME}
             >
               {credentialName || "-"}
             </CredentialName>
-            {isOwner && (
+            {canDelete && (
               <DeleteButton className="icon-button" onClick={handleDelete}>
                 <Icon name="Delete" size={20} color="#9DA6BC" />
                 <span className="sr-only">크리덴셜 삭제</span>
