@@ -1,11 +1,22 @@
+"use client";
+
+import { useState } from "react";
 import { Icon, InfoModal } from "xiilab-ui";
 
-import { openPrivateRegistryLogModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { WorkloadLogBody } from "@/domain/workload/components/log/workload-log-body";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function ViewPrivateRegistryLogModal() {
-  const { open, onClose } = useGlobalModal(openPrivateRegistryLogModalAtom);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useSubscribe(PRIVATE_REGISTRY_EVENTS.sendViewPrivateRegistryLog, () => {
+    setOpen(true);
+  });
 
   return (
     <InfoModal
@@ -14,7 +25,7 @@ export function ViewPrivateRegistryLogModal() {
       icon={<Icon name="SourceCode" color="#fff" size={20} />}
       open={open}
       closable
-      onClose={onClose}
+      onClose={handleClose}
       centered
     >
       <div style={{ height: 600 }}>

@@ -9,20 +9,21 @@ import {
   getGetImageJobsQueryKey,
   useDeleteImageJob,
 } from "@/api/generated/image-job/image-job";
-import { openStopPrivateRegistryModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function StopPrivateRegistryModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openStopPrivateRegistryModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const [imageTagId, setImageTagId] = useState<number | null>(null);
 
   const queryClient = useQueryClient();
 
   const { mutate: deleteJob, isPending } = useDeleteImageJob();
+
+  const handleClose = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
 
   const handleOk = () => {
     if (imageTagId === null) {
@@ -41,7 +42,7 @@ export function StopPrivateRegistryModal() {
           queryClient.invalidateQueries({
             queryKey: getGetImageJobsQueryKey(),
           });
-          onClose();
+          setOpen(false);
           toast.success("컨테이너 이미지 등록 종료 요청이 완료되었습니다.");
         },
       },
@@ -50,7 +51,7 @@ export function StopPrivateRegistryModal() {
 
   useSubscribe(PRIVATE_REGISTRY_EVENTS.sendStopImageJob, (id: number) => {
     setImageTagId(id);
-    onOpen();
+    setOpen(true);
   });
 
   return (
@@ -59,7 +60,7 @@ export function StopPrivateRegistryModal() {
       icon={<Icon name="PowerBold" color="#fff" size={18} />}
       modalWidth={300}
       open={open}
-      onCancel={onClose}
+      onCancel={handleClose}
       onOk={handleOk}
       okText="종료"
       title="컨테이너 이미지 등록 종료"

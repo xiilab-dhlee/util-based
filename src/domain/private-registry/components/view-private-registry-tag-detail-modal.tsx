@@ -6,11 +6,9 @@ import { Icon, Modal, Typography } from "xiilab-ui";
 
 import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useGetPrivateImageTagDetail } from "@/api/generated/private-registry/private-registry";
-import { openViewPrivateRegistryTagDetailModalAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { ScanStatusText } from "@/shared/components/text/scan-status-text";
 import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
@@ -20,9 +18,7 @@ interface TagDetailEventData extends ImageTagListResponse {
 }
 
 export function ViewPrivateRegistryTagDetailModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openViewPrivateRegistryTagDetailModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const [payload, setPayload] = useState<TagDetailEventData | null>(null);
 
   const { data, isFetching } = useGetPrivateImageTagDetail(
@@ -38,7 +34,7 @@ export function ViewPrivateRegistryTagDetailModal() {
   );
 
   const handleClose = () => {
-    onClose();
+    setOpen(false);
     setPayload(null);
   };
 
@@ -46,7 +42,7 @@ export function ViewPrivateRegistryTagDetailModal() {
     PRIVATE_REGISTRY_EVENTS.sendViewTagDetail,
     (data) => {
       setPayload(data);
-      onOpen();
+      setOpen(true);
     },
   );
 

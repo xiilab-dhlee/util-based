@@ -149,9 +149,11 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(USER_ROOT_PATH, request.url));
     }
 
+    // /user 경로: ADMIN, SUPER_ADMIN, USER 모두 접근 가능
     if (path.startsWith(MODE.USER)) {
       const hasUserAccess =
         hasRole(roles, ACCOUNT_ROLES.ADMIN) ||
+        hasRole(roles, ACCOUNT_ROLES.SUPER_ADMIN) ||
         hasRole(roles, ACCOUNT_ROLES.USER);
 
       if (!hasUserAccess) {

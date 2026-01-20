@@ -9,20 +9,21 @@ import {
   getGetImageJobsQueryKey,
   useRestartImageJob,
 } from "@/api/generated/image-job/image-job";
-import { openRestartPrivateRegistryModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function RestartPrivateRegistryModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openRestartPrivateRegistryModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const [imageTagId, setImageTagId] = useState<number | null>(null);
 
   const queryClient = useQueryClient();
 
   const { mutate: restartJob, isPending } = useRestartImageJob();
+
+  const handleClose = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
 
   const handleOk = () => {
     if (imageTagId === null) {
@@ -41,7 +42,7 @@ export function RestartPrivateRegistryModal() {
           queryClient.invalidateQueries({
             queryKey: getGetImageJobsQueryKey(),
           });
-          onClose();
+          setOpen(false);
           toast.success("컨테이너 이미지 등록 재시작 요청이 완료되었습니다.");
         },
       },
@@ -50,7 +51,7 @@ export function RestartPrivateRegistryModal() {
 
   useSubscribe(PRIVATE_REGISTRY_EVENTS.sendRestartImageJob, (id: number) => {
     setImageTagId(id);
-    onOpen();
+    setOpen(true);
   });
 
   return (
@@ -58,7 +59,7 @@ export function RestartPrivateRegistryModal() {
       variant="confirm"
       modalWidth={300}
       open={open}
-      onCancel={onClose}
+      onCancel={handleClose}
       onOk={handleOk}
       okText="재시작"
       title="컨테이너 이미지 등록 재시작"

@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
@@ -19,17 +20,13 @@ import {
   type CreatePrivateRegistryFormType,
   createPrivateRegistrySchema,
 } from "@/domain/private-registry/schemas/create-private-registry.schema";
-import { openCreatePrivateRegistryModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { FormRow } from "@/styles/layers/form-layer.styled";
 
 export function CreatePrivateRegistryModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openCreatePrivateRegistryModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
@@ -76,15 +73,20 @@ export function CreatePrivateRegistryModal() {
           queryClient.invalidateQueries({
             queryKey: getGetPrivateRegistryListQueryKey(),
           });
-          onClose();
+          setOpen(false);
         },
       },
     );
   };
 
+  const handleClose = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
+
   // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
   useSubscribe(
-    PRIVATE_REGISTRY_EVENTS.sendType,
+    PRIVATE_REGISTRY_EVENTS.sendPrivateRegistryType,
     (type: GetPrivateRegistryListImageSourceType) => {
       // 폼 초기화 후 type 설정
       reset({
@@ -95,7 +97,7 @@ export function CreatePrivateRegistryModal() {
         credentialId: undefined,
         ...(type === "SNAPSHOT" && { workloadId: "" }),
       });
-      onOpen();
+      setOpen(true);
     },
   );
 
@@ -111,7 +113,7 @@ export function CreatePrivateRegistryModal() {
       title="컨테이너 이미지 생성"
       showCancelButton
       cancelText="취소"
-      onCancel={onClose}
+      onCancel={handleClose}
       okText="생성"
       onOk={handleSubmit(onSubmit)}
       centered

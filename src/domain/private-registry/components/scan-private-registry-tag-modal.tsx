@@ -9,9 +9,7 @@ import {
   getGetPrivateImageTagListQueryKey,
   useScanPrivateImageTag,
 } from "@/api/generated/private-registry/private-registry";
-import { openScanPrivateRegistryTagModalAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 interface ScanTagPayload {
@@ -20,9 +18,7 @@ interface ScanTagPayload {
 }
 
 export function ScanPrivateRegistryTagModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openScanPrivateRegistryTagModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const [scanData, setScanData] = useState<ScanTagPayload | null>(null);
 
   const queryClient = useQueryClient();
@@ -51,7 +47,7 @@ export function ScanPrivateRegistryTagModal() {
           queryClient.invalidateQueries({
             queryKey: getGetPrivateImageTagListQueryKey(),
           });
-          onClose();
+          setOpen(false);
           toast.success("취약점 스캔이 시작되었습니다.");
         },
       },
@@ -60,7 +56,7 @@ export function ScanPrivateRegistryTagModal() {
 
   const handleClose = () => {
     if (isPending) return;
-    onClose();
+    setOpen(false);
     setScanData(null);
   };
 
@@ -68,7 +64,7 @@ export function ScanPrivateRegistryTagModal() {
     PRIVATE_REGISTRY_EVENTS.sendScanTagData,
     (data) => {
       setScanData(data);
-      onOpen();
+      setOpen(true);
     },
   );
 

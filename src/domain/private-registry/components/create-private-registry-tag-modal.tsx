@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
@@ -15,15 +16,11 @@ import {
   type CreatePrivateRegistryTagFormType,
   createPrivateRegistryTagSchema,
 } from "@/domain/private-registry/schemas/create-private-registry-tag.schema";
-import { openCreatePrivateRegistryTagModalAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function CreatePrivateRegistryTagModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openCreatePrivateRegistryTagModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const {
@@ -60,7 +57,8 @@ export function CreatePrivateRegistryTagModal() {
   };
 
   const handleClose = () => {
-    onClose();
+    if (isPending) return;
+    setOpen(false);
   };
 
   // filter에서 전달받은 데이터 구독 및 모달 열기
@@ -73,7 +71,7 @@ export function CreatePrivateRegistryTagModal() {
         credentialId: undefined,
         description: "",
       });
-      onOpen();
+      setOpen(true);
     },
   );
 

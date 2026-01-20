@@ -10,10 +10,8 @@ import {
   getGetPrivateImageTagListQueryKey,
   useDeletePrivateImageTags,
 } from "@/api/generated/private-registry/private-registry";
-import { openDeletePrivateRegistryTagModalAtom } from "@/domain/private-registry/state/private-registry-tag.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function DeletePrivateRegistryTagModal() {
@@ -21,14 +19,17 @@ export function DeletePrivateRegistryTagModal() {
   const { name } = useParams<{ name: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
 
-  const { open, onOpen, onClose } = useGlobalModal(
-    openDeletePrivateRegistryTagModalAtom,
-  );
+  const [open, setOpen] = useState(false);
   const [deleteTags, setDeleteTags] = useState<number[]>([]);
 
   const queryClient = useQueryClient();
 
   const { mutate: deleteImageTags, isPending } = useDeletePrivateImageTags();
+
+  const handleClose = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
 
   const handleOk = () => {
     if (deleteTags.length === 0) {
@@ -51,7 +52,7 @@ export function DeletePrivateRegistryTagModal() {
             queryKey: getGetPrivateImageTagListQueryKey(),
           });
           // 이미지 상세 페이지로 이동
-          onClose();
+          setOpen(false);
           router.replace(ROUTES.USER_PRIVATE_REGISTRY_DETAIL(harborImageName));
           toast.success("이미지 태그 삭제 완료");
         },
@@ -61,7 +62,7 @@ export function DeletePrivateRegistryTagModal() {
 
   useSubscribe<number[]>(PRIVATE_REGISTRY_EVENTS.sendDeleteImageTag, (tags) => {
     setDeleteTags(tags);
-    onOpen();
+    setOpen(true);
   });
 
   return (
@@ -69,7 +70,7 @@ export function DeletePrivateRegistryTagModal() {
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={onClose}
+      onCancel={handleClose}
       onOk={handleOk}
       title="태그 삭제"
       centered

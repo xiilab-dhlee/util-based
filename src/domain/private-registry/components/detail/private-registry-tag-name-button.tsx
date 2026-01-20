@@ -28,6 +28,7 @@ export function PrivateRegistryTagNameButton({
     publish(PRIVATE_REGISTRY_EVENTS.sendViewTagDetail, {
       harborImageName,
       imageTagId,
+      imageTagName,
     });
   };
 

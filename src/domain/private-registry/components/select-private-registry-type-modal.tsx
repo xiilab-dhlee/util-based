@@ -1,27 +1,31 @@
 "use client";
 
+import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
 import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { PrivateRegistryTypeCard } from "@/domain/private-registry/components/private-registry-type-card";
 import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
-import { openSelectPrivateRegistryTypeModalAtom } from "@/domain/private-registry/state/private-registry.atom";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function SelectPrivateRegistryTypeModal() {
+  const [open, setOpen] = useState(false);
   const publish = usePublish();
 
-  const { open, onClose } = useGlobalModal(
-    openSelectPrivateRegistryTypeModalAtom,
-  );
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleClickType = (type: GetPrivateRegistryListImageSourceType) => {
-    publish(PRIVATE_REGISTRY_EVENTS.sendType, type);
-    onClose();
+    publish(PRIVATE_REGISTRY_EVENTS.sendPrivateRegistryType, type);
+    handleClose();
   };
+
+  useSubscribe(PRIVATE_REGISTRY_EVENTS.sendSelectPrivateRegistryType, () => {
+    setOpen(true);
+  });
 
   return (
     <InfoModal
@@ -31,7 +35,7 @@ export function SelectPrivateRegistryTypeModal() {
       open={open}
       closable
       title="컨테이너 이미지 유형 선택"
-      onClose={onClose}
+      onClose={handleClose}
       showHeaderBorder
       centered
     >

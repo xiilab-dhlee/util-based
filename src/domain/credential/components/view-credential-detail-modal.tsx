@@ -96,9 +96,7 @@ export function ViewCredentialDetailModal() {
             </DetailRow>
             <DetailRow>
               <DetailLabel>생성일</DetailLabel>
-              <DetailValue>
-                {formatDateSafely(data?.createDateTime)}
-              </DetailValue>
+              <DetailValue>{formatDateSafely(data?.createdAt)}</DetailValue>
             </DetailRow>
           </DetailCard>
         </Container>

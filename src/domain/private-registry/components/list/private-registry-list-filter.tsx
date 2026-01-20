@@ -7,7 +7,6 @@ import { Button, Input } from "xiilab-ui";
 
 import { PrivateRegistryTypeSort } from "@/domain/private-registry/components/list/private-registry-type-sort";
 import {
-  openSelectPrivateRegistryTypeModalAtom,
   privateRegistryCheckedListAtom,
   privateRegistryPageAtom,
   privateRegistrySearchKeywordAtom,
@@ -15,8 +14,9 @@ import {
 } from "@/domain/private-registry/state/private-registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface PrivateRegistryListFilterProps {
   totalSize?: number;
@@ -34,7 +34,7 @@ export function PrivateRegistryListFilter({
   const resetPage = useResetAtom(privateRegistryPageAtom);
   const resetCheckedList = useResetAtom(privateRegistryCheckedListAtom);
 
-  const { onOpen } = useGlobalModal(openSelectPrivateRegistryTypeModalAtom);
+  const publish = usePublish();
 
   const handleSearch = (value: string) => {
     resetCheckedList();
@@ -49,7 +49,7 @@ export function PrivateRegistryListFilter({
   };
 
   const handleCreatePrivateRegistryImage = () => {
-    onOpen();
+    publish(PRIVATE_REGISTRY_EVENTS.sendSelectPrivateRegistryType, null);
   };
 
   return (

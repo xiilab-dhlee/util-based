@@ -40,11 +40,11 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       title: "생성일",
-      dataIndex: "createDateTime",
-      key: "createDateTime",
+      dataIndex: "createdAt",
+      key: "createdAt",
       align: "left",
-      render: (date: string) => {
-        return formatDateSafely(date);
+      render: (createdAt: string) => {
+        return formatDateSafely(createdAt);
       },
     },
     {
@@ -72,8 +72,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * // 2. 배열 형태 - 순서 변경 가능
  * const columns = createCredentialColumn([
  *   { key: 'credentialName' },
- *   { key: 'credentialChannel', width: 120 },
- *   { key: 'createDateTime', title: '등록일' },
  * ]);
  */
 export const createCredentialColumn = (

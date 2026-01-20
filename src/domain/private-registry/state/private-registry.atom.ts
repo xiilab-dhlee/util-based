@@ -30,18 +30,6 @@ export const privateRegistrySelectedItemAtom = atom<string>("");
 export const privateRegistryCheckedListAtom = atomWithReset<Set<Key>>(
   new Set(),
 );
-/** 프라이빗 레지스트리 구분 선택 모달 열림 상태 */
-export const openSelectPrivateRegistryTypeModalAtom = atom<boolean>(false);
-/** 프라이빗 레지스트리 생성 모달 열림 상태 */
-export const openCreatePrivateRegistryModalAtom = atom<boolean>(false);
-/** 프라이빗 레지스트리 삭제 모달 열림 상태 */
-export const openDeletePrivateRegistryModalAtom = atom<boolean>(false);
-/** 프라이빗 레지스트리 로그 모달 열림 상태 */
-export const openPrivateRegistryLogModalAtom = atom<boolean>(false);
-/** 컨테이너 이미지 등록 재시작 모달 열림 상태 */
-export const openRestartPrivateRegistryModalAtom = atom<boolean>(false);
-/** 컨테이너 이미지 등록 종료 모달 열림 상태 */
-export const openStopPrivateRegistryModalAtom = atom<boolean>(false);
 
 // ============================================================================
 // 이미지 등록 Job 관련 상태
