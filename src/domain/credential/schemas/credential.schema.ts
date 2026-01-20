@@ -1,11 +1,22 @@
 import { z } from "zod";
 
+import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
+/**
+ * 크리덴셜 타입 enum 값 (API 스키마 기반)
+ */
+const credentialTypeValues = Object.values(
+  CredentialListItemResponseCredentialType,
+) as [
+  CredentialListItemResponseCredentialType,
+  ...CredentialListItemResponseCredentialType[],
+];
+
 /**
  * 크리덴셜 생성 스키마
- *
  */
 export const createCredentialFormSchema = z.object({
-  credentialType: z.enum(["GIT_REPOSITORY", "IMAGE_REGISTRY"], {
+  credentialType: z.enum(credentialTypeValues, {
     required_error: "타입을 선택해 주세요.",
   }),
   credentialName: z
