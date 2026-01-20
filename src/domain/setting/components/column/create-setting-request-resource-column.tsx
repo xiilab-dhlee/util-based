@@ -46,6 +46,8 @@ const createColumnList = ({
       align: "left",
       width: "12%",
       ellipsis: true,
+      sorter: true,
+      sortOrder: getColumnSortOrder(sortState, "creatorName"),
       render: (creatorName: string | undefined | null) => {
         return <span>{creatorName || "-"}</span>;
       },

@@ -3,14 +3,17 @@ import { atomWithReset } from "jotai/utils";
 
 import {
   DEFAULT_SETTING_REQUEST_RESOURCE_SORT_STATE,
+  DEFAULT_WORKSPACE_MEMBER_SORT_STATE,
   type SettingRequestResourceSortField,
+  type WorkspaceMemberSortField,
 } from "@/domain/setting/constants/setting.constant";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
-/** 구성원 관리 검색 텍스트 */
 export const settingMemberSearchTextAtom = atomWithReset<string>("");
-/** 구성원 관리 페이지 번호 */
 export const settingMemberPageAtom = atomWithReset<number>(1);
+export const settingMemberSortAtom = atomWithReset<
+  AntdTableSortState<WorkspaceMemberSortField>
+>(DEFAULT_WORKSPACE_MEMBER_SORT_STATE);
 /** 리소스 요청 페이지 번호 */
 export const settingRequestResourcePageAtom = atomWithReset<number>(1);
 /** 리소스 요청 정렬 상태 */

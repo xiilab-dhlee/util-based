@@ -4,9 +4,11 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
+import { GroupHasMembersModal } from "@/domain/group/components/group-has-members-modal";
 import { useDeleteGroupAction } from "@/domain/group/hooks/group-actions";
 import {
   openDeleteGroupModalAtom,
+  openGroupHasMembersModalAtom,
   selectedItemAtom,
 } from "@/domain/group/state/group.atom";
 import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
@@ -22,6 +24,10 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 export function DeleteGroupModal() {
   // useGlobalModal 훅을 사용하여 모달 상태 관리
   const { open, onOpen, onClose } = useGlobalModal(openDeleteGroupModalAtom);
+  const {
+    open: openGroupHasMembersModal,
+    onClose: onCloseGroupHasMembersModal,
+  } = useGlobalModal(openGroupHasMembersModalAtom);
 
   // 삭제할 그룹 ID
   const [deleteGroupId, setDeleteGroupId] = useState<string>("");
@@ -69,22 +75,27 @@ export function DeleteGroupModal() {
   });
 
   return (
-    <Modal
-      variant="delete"
-      modalWidth={300}
-      open={open}
-      onCancel={onClose}
-      onOk={handleOk}
-      title="그룹 삭제"
-      centered
-      okButtonProps={{
-        loading: deleteGroup.isPending,
-      }}
-    >
-      <div>
-        그룹에서 삭제된 멤버는 '그룹 미지정 계정'으로 <br />
-        이동됩니다. 그룹을 삭제하시겠습니까?
-      </div>
-    </Modal>
+    <>
+      <Modal
+        variant="delete"
+        modalWidth={300}
+        open={open}
+        onCancel={onClose}
+        onOk={handleOk}
+        title="그룹 삭제"
+        centered
+        okButtonProps={{
+          loading: deleteGroup.isPending,
+        }}
+      >
+        삭제된 그룹은 복구할 수 없습니다.
+        <br /> 정말 삭제하시겠습니까?
+      </Modal>
+
+      <GroupHasMembersModal
+        open={openGroupHasMembersModal}
+        onClose={onCloseGroupHasMembersModal}
+      />
+    </>
   );
 }

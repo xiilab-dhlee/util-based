@@ -1,6 +1,9 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { isString } from "es-toolkit";
+import { useSetAtom } from "jotai";
+import { toast } from "react-toastify";
 
 import {
   useCreateGroup,
@@ -12,6 +15,12 @@ import {
   getGetGroupDetailQueryKey,
   getGetRootGroupsQueryKey,
 } from "@/api/generated/group/group";
+import { GROUP_ERROR_CODES } from "@/domain/group/constants/group-error-code.constant";
+import {
+  openDeleteGroupModalAtom,
+  openGroupHasMembersModalAtom,
+} from "@/domain/group/state/group.atom";
+import { getBackendErrorMessage } from "@/shared/utils/error/error.util";
 
 /**
  * 쿼리 키 패턴 추출 (하드코딩 방지)
@@ -116,12 +125,15 @@ export function useDeleteGroupAction(
   options?: Parameters<typeof useDeleteGroupApi>[0],
 ) {
   const queryClient = useQueryClient();
+  const setOpenDeleteGroupModal = useSetAtom(openDeleteGroupModalAtom);
+  const setOpenGroupHasMembersModal = useSetAtom(openGroupHasMembersModalAtom);
 
   return useDeleteGroupApi(
     {
       ...options,
       mutation: {
         ...options?.mutation,
+        meta: { showToastOnError: false },
         onSuccess: (...args) => {
           const [, variables] = args;
 
@@ -139,6 +151,21 @@ export function useDeleteGroupAction(
           });
 
           options?.mutation?.onSuccess?.(...args);
+        },
+        onError: (error, ...rest) => {
+          if (isAxiosError(error)) {
+            const errorCode = error.response?.data?.errorCode;
+            if (errorCode === GROUP_ERROR_CODES.HAS_MEMBERS) {
+              // 삭제 모달 닫고 멤버 존재 모달 띄우기
+              setOpenDeleteGroupModal(false);
+              setOpenGroupHasMembersModal(true);
+              options?.mutation?.onError?.(error, ...rest);
+              return;
+            }
+          }
+          // 다른 에러는 토스트 띄우기
+          toast.error(getBackendErrorMessage(error));
+          options?.mutation?.onError?.(error, ...rest);
         },
       },
     },

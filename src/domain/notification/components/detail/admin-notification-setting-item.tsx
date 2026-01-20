@@ -4,45 +4,56 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Switch } from "xiilab-ui";
 
+import type { AdminNotificationSetResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NotificationConfirmModal } from "@/domain/notification/components/detail/notification-confirm-modal";
-import {
-  NOTIFICATION_CHANNEL,
-  type NotificationChannelState,
-  type NotificationConfirmState,
-} from "@/domain/notification/type/notification-setting.type";
+import { getAdminNotificationSetLabel } from "@/domain/notification/constants/notification.constant";
+import type { NotificationChannel } from "@/domain/notification/hooks/use-admin-notification-settings";
 
-export interface NotificationSettingRowProps extends NotificationChannelState {
-  label: string;
-  onSystemChange: (checked: boolean) => void;
-  onEmailChange: (checked: boolean) => void;
+interface AdminNotificationSettingItemProps {
+  /** 알림 설정명 (API 스펙 기반) */
+  name: string;
+  /** API에서 가져온 설정 데이터 (없으면 기본값 사용) */
+  setting?: AdminNotificationSetResponse;
+  /** 비활성화 여부 */
+  disabled?: boolean;
+  /** 토글 변경 핸들러 */
+  onToggle: (
+    notificationSet: AdminNotificationSetResponse,
+    channel: NotificationChannel,
+    checked: boolean,
+  ) => void;
 }
 
-export function NotificationSettingRow({
-  label,
-  systemChecked,
-  emailChecked,
-  onSystemChange,
-  onEmailChange,
-}: NotificationSettingRowProps) {
-  const [confirmState, setConfirmState] =
-    useState<NotificationConfirmState>(null);
+interface ConfirmState {
+  channel: NotificationChannel;
+  value: boolean;
+}
+
+export function AdminNotificationSettingItem({
+  name,
+  setting,
+  disabled = false,
+  onToggle,
+}: AdminNotificationSettingItemProps) {
+  const [confirmState, setConfirmState] = useState<ConfirmState | null>(null);
+
+  const label = getAdminNotificationSetLabel(name);
+  const systemChecked = setting?.isSystemNotificationEnabled ?? false;
+  const emailChecked = setting?.isEmailNotificationEnabled ?? false;
 
   const handleSystemClick = (checked: boolean) => {
-    setConfirmState({ channel: NOTIFICATION_CHANNEL.SYSTEM, value: checked });
+    if (disabled || !setting) return;
+    setConfirmState({ channel: "SYSTEM", value: checked });
   };
 
   const handleEmailClick = (checked: boolean) => {
-    setConfirmState({ channel: NOTIFICATION_CHANNEL.EMAIL, value: checked });
+    if (disabled || !setting) return;
+    setConfirmState({ channel: "EMAIL", value: checked });
   };
 
   const handleConfirm = () => {
-    if (confirmState === null) return;
-
-    if (confirmState.channel === NOTIFICATION_CHANNEL.SYSTEM) {
-      onSystemChange(confirmState.value);
-    } else {
-      onEmailChange(confirmState.value);
-    }
+    if (!confirmState || !setting) return;
+    onToggle(setting, confirmState.channel, confirmState.value);
     setConfirmState(null);
   };
 
@@ -60,7 +71,11 @@ export function NotificationSettingRow({
               <Icon name="SystemFilled" size={20} color="#404040" />
               <SwitchLabel>System</SwitchLabel>
             </IconTextGroup>
-            <Switch checked={systemChecked} onChange={handleSystemClick} />
+            <Switch
+              checked={systemChecked}
+              onChange={handleSystemClick}
+              disabled={disabled}
+            />
           </SwitchGroup>
           <Divider />
           <SwitchGroup>
@@ -68,7 +83,11 @@ export function NotificationSettingRow({
               <Icon name="MailFilled" size={20} color="#404040" />
               <SwitchLabel>Email</SwitchLabel>
             </IconTextGroup>
-            <Switch checked={emailChecked} onChange={handleEmailClick} />
+            <Switch
+              checked={emailChecked}
+              onChange={handleEmailClick}
+              disabled={disabled}
+            />
           </SwitchGroup>
         </SwitchContainer>
       </RowContainer>

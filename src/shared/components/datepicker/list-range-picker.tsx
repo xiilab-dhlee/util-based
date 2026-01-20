@@ -1,7 +1,6 @@
 "use client";
 
 import { format, parse } from "date-fns";
-import styled from "styled-components";
 import { DateRange } from "xiilab-ui";
 
 interface ListRangePickerProps {
@@ -39,7 +38,7 @@ export function ListRangePicker({
   startLabel = "시작일시",
   endLabel = "종료일시",
   placeholder = "기간을 선택해 주세요.",
-  width = "250px",
+  width = "270px",
   height = "30px",
 }: ListRangePickerProps) {
   /**
@@ -47,17 +46,6 @@ export function ListRangePicker({
    * 날짜를 포맷팅하여 onChange 콜백으로 전달
    */
   const handleChangeDate = (start: Date | null, end: Date | null) => {
-    const now = new Date();
-
-    // 현재 시간 이후로 설정하려는 경우 현재 시간으로 제한
-    if (start && start > now) {
-      start = now;
-    }
-    if (end && end > now) {
-      end = now;
-    }
-
-    // 날짜 변경 이벤트 전달
     const formattedStart = start ? format(start, "yyyy-MM-dd HH:mm:ss") : "";
     const formattedEnd = end ? format(end, "yyyy-MM-dd HH:mm:ss") : "";
     onChange(formattedStart, formattedEnd);
@@ -72,26 +60,17 @@ export function ListRangePicker({
     : null;
 
   return (
-    <Container>
-      <DateRange
-        startDate={startDateObj}
-        endDate={endDateObj}
-        endLabel={endLabel}
-        height={height}
-        onChange={handleChangeDate}
-        placeholder={placeholder}
-        startLabel={startLabel}
-        width={width}
-        withTime
-        maxDate={new Date()}
-      />
-    </Container>
+    <DateRange
+      startDate={startDateObj}
+      endDate={endDateObj}
+      endLabel={endLabel}
+      height={height}
+      onChange={handleChangeDate}
+      placeholder={placeholder}
+      startLabel={startLabel}
+      width={width}
+      withTime
+      maxDate={new Date()}
+    />
   );
 }
-
-const Container = styled.div`
-  & input {
-    background-color: #fafafa !important;
-    border-color: #b9bec3 !important;
-  }
-`;

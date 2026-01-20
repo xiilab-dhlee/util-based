@@ -11,7 +11,6 @@ import { MonitoringNotificationService } from "@/domain/monitoring-notification/
 import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
-import { NotificationService } from "@/domain/notification/api/notification.service";
 import { ReportService } from "@/domain/report/api/report.service";
 import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
 import { RequestImageService } from "@/domain/request-image/api/request-image.service";
@@ -37,7 +36,6 @@ interface ServiceContextType {
   workloadService: WorkloadService;
   sourcecodeService: SourcecodeService;
   storageService: StorageService;
-  notificationService: NotificationService;
   userResourceService: UserResourceService;
   monitoringNotificationService: MonitoringNotificationService;
   adminWorkloadService: AdminWorkloadService;
@@ -84,7 +82,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     workloadService: new WorkloadService(),
     sourcecodeService: new SourcecodeService(),
     storageService: new StorageService(),
-    notificationService: new NotificationService(),
     userResourceService: new UserResourceService(),
     monitoringNotificationService: new MonitoringNotificationService(),
     adminWorkloadService: new AdminWorkloadService(),

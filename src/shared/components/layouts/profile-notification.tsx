@@ -1,27 +1,43 @@
 "use client";
 
 import classNames from "classnames";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
-import { useGetNotifications } from "@/domain/notification/hooks/use-get-notifications";
+import { useGetAdminNotifications } from "@/api/generated/admin-account-notification/admin-account-notification";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { ProfileNotificationCard } from "@/shared/components/layouts/profile-notification-card";
 import { useSelect } from "@/shared/hooks/use-select";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 
 export function ProfileNotification() {
+  const { data: session } = useSession();
+  const accountId = getSessionAccountId(session) ?? "";
+
   const [tab, setTab] = useState("all");
   const type = useSelect(null, []);
 
-  const { data } = useGetNotifications({
-    page: 0,
-    size: 10,
-  });
+  const { data: notificationData } = useGetAdminNotifications(
+    accountId,
+    {
+      pageNo: 0,
+      pageSize: 10,
+      hasRead: tab === "unread" ? false : undefined,
+    },
+    {
+      query: {
+        enabled: Boolean(accountId),
+      },
+    },
+  );
+  const notificationContent = notificationData?.content ?? [];
 
-  const handleClickTab = (tab: string) => {
-    setTab(tab);
+  const handleClickTab = (newTab: string) => {
+    setTab(newTab);
   };
+
   return (
     <Container>
       <Header>
@@ -44,7 +60,7 @@ export function ProfileNotification() {
         </Tab>
         <TabPanel>
           <TabPanelHeader>
-            <Total>알림 8개</Total>
+            <Total>알림 {notificationData?.totalSize ?? 0}개</Total>
             <Dropdown
               options={type.options}
               value={type.value}
@@ -56,11 +72,15 @@ export function ProfileNotification() {
             />
           </TabPanelHeader>
           <TabPanelBody>
-            {tab === "all" &&
-              data?.content?.map((item) => (
-                <ProfileNotificationCard key={item.id} {...item} />
-              ))}
-            {tab === "unread" && (
+            {notificationContent.length > 0 ? (
+              notificationContent.map((item) => (
+                <ProfileNotificationCard
+                  key={item.notificationId}
+                  notificationTitle={item.notificationTitle}
+                  createDateTime={item.createDateTime}
+                />
+              ))
+            ) : (
               <EmptyState title="알림이 존재하지 않습니다." />
             )}
           </TabPanelBody>

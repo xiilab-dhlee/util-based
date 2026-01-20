@@ -1,62 +1,80 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import type { TableProps } from "xiilab-ui";
 
-import { notificationListColumn } from "@/domain/notification/components/create-notification-list-column";
+import type { AdminNotificationItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { createNotificationListColumn } from "@/domain/notification/components/create-notification-list-column";
 import { NotificationRow } from "@/domain/notification/components/list/notification-row";
-import { useGetNotifications } from "@/domain/notification/hooks/use-get-notifications";
-import type { NotificationListType } from "@/domain/notification/schemas/notification.schema";
 import {
-  notificationCheckedListAtom,
-  notificationEndDateAtom,
-  notificationPageAtom,
-  notificationStartDateAtom,
-  notificationTypeAtom,
-} from "@/domain/notification/state/notification.atom";
+  NOTIFICATION_SORT_FIELDS,
+  type NotificationSortField,
+} from "@/domain/notification/constants/notification.constant";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { useTableSelection } from "@/shared/hooks/use-table-selection";
+import type { AntdTableSortOrder } from "@/shared/types/core.model";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+
+interface NotificationListBodyProps {
+  /** 알림 목록 데이터 */
+  data: AdminNotificationItemResponse[];
+  /** 로딩 상태 */
+  isLoading: boolean;
+  /** 에러 상태 */
+  isError: boolean;
+  /** 활성화된 행의 키 값 */
+  activeRowKey?: string | number;
+  /** 정렬 순서 */
+  sortOrder: AntdTableSortOrder;
+  /** 정렬 변경 핸들러 */
+  onSortChange: (order: AntdTableSortOrder) => void;
+}
 
 /**
  * 알림 목록 페이지 본문 컴포넌트
  *
  * 알림 목록 페이지에서 알림 목록을 표시하는 테이블을 제공합니다.
- * 페이지네이션과 날짜 필터 기능을 지원하며, 알림 데이터를 테이블 형태로 렌더링합니다.
+ * 알림 데이터를 테이블 형태로 렌더링합니다.
  *
+ * @param data - 알림 목록 데이터
+ * @param isLoading - 로딩 상태
+ * @param isError - 에러 상태
  * @returns 알림 목록 페이지 본문 컴포넌트
  */
-export function NotificationListBody() {
-  const page = useAtomValue(notificationPageAtom);
-  const startDate = useAtomValue(notificationStartDateAtom);
-  const endDate = useAtomValue(notificationEndDateAtom);
-  const type = useAtomValue(notificationTypeAtom);
-  const { data, isLoading, isError } = useGetNotifications({
-    page,
-    size: LIST_PAGE_SIZE,
-    startDate,
-    endDate,
-    type,
-  });
+export function NotificationListBody({
+  data,
+  isLoading,
+  isError,
+  activeRowKey,
+  sortOrder,
+  onSortChange,
+}: NotificationListBodyProps) {
+  const handleChange: TableProps<AdminNotificationItemResponse>["onChange"] = (
+    _,
+    __,
+    sorter,
+  ) => {
+    const parsed = parseSorterToAntdState<
+      AdminNotificationItemResponse,
+      NotificationSortField
+    >(sorter, NOTIFICATION_SORT_FIELDS);
+    if (!parsed.order) return;
 
-  const [checkedList, setCheckedList] = useAtom(notificationCheckedListAtom);
-  const { rowSelection } = useTableSelection<NotificationListType>(
-    checkedList,
-    setCheckedList,
-  );
+    onSortChange(parsed.order);
+  };
 
   return (
     <ListWrapper>
-      <CustomizedTable<NotificationListType>
-        columns={notificationListColumn}
-        data={data?.content || []}
-        rowKey="id"
-        rowSelection={rowSelection}
+      <CustomizedTable<AdminNotificationItemResponse>
+        columns={createNotificationListColumn(sortOrder)}
+        data={data}
+        rowKey="notificationId"
+        activeRowKey={activeRowKey}
         customRow={NotificationRow}
         activePadding
         columnHeight={32}
         loading={isLoading}
         isError={isError}
+        onChange={handleChange}
       />
     </ListWrapper>
   );
