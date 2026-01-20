@@ -20,7 +20,7 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
-interface Payload {
+interface CreateVolumeFolderPayload {
   volumeId: number;
   filePath: string;
 }
@@ -68,12 +68,15 @@ export function CreateVolumeFolderModal() {
     );
   };
 
-  useSubscribe<Payload>(VOLUME_EVENTS.openCreateFolderModal, (payload) => {
-    setVolumeId(payload.volumeId);
-    setParentPath(payload.filePath);
-    reset({ folderName: "" });
-    setOpen(true);
-  });
+  useSubscribe<CreateVolumeFolderPayload>(
+    VOLUME_EVENTS.openCreateFolderModal,
+    (payload) => {
+      setVolumeId(payload.volumeId);
+      setParentPath(payload.filePath);
+      reset({ folderName: "" });
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal

@@ -13,7 +13,7 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
-interface Payload {
+interface DownloadVolumeFilePayload {
   volumeId: number;
   filePaths: string[];
 }
@@ -83,12 +83,15 @@ export function DownloadVolumeFileModal() {
     }
   };
 
-  useSubscribe<Payload>(VOLUME_EVENTS.openDownloadFileModal, (eventData) => {
-    setVolumeId(eventData.volumeId);
-    setFilePaths(eventData.filePaths);
-    setSelectedType("ZIP");
-    setOpen(true);
-  });
+  useSubscribe<DownloadVolumeFilePayload>(
+    VOLUME_EVENTS.openDownloadFileModal,
+    (eventData) => {
+      setVolumeId(eventData.volumeId);
+      setFilePaths(eventData.filePaths);
+      setSelectedType("ZIP");
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal

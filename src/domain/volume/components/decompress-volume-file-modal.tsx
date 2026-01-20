@@ -9,7 +9,7 @@ import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
-interface Payload {
+interface DecompressVolumeFilePayload {
   volumeId: number;
   filePath: string;
 }
@@ -23,7 +23,7 @@ export function DecompressVolumeFileModal() {
 
   const { mutate, isPending } = useDecompress();
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
@@ -42,18 +42,21 @@ export function DecompressVolumeFileModal() {
     );
   };
 
-  useSubscribe<Payload>(VOLUME_EVENTS.openDecompressFileModal, (eventData) => {
-    setVolumeId(eventData.volumeId);
-    setFilePath(eventData.filePath);
-    setOpen(true);
-  });
+  useSubscribe<DecompressVolumeFilePayload>(
+    VOLUME_EVENTS.openDecompressFileModal,
+    (eventData) => {
+      setVolumeId(eventData.volumeId);
+      setFilePath(eventData.filePath);
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal
       type="primary"
       modalWidth={370}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       icon={<Icon name="Compress" color="#fff" size={18} />}
       onOk={handleOk}
       title="압축 해제"

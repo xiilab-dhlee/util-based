@@ -15,7 +15,7 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 
-interface Payload {
+interface DeleteVolumeFilePayload {
   volumeId: number;
   filePaths: string[];
 }
@@ -30,7 +30,7 @@ export function DeleteVolumeFileModal() {
 
   const { mutate, isPending } = useDeleteFiles();
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
@@ -57,18 +57,21 @@ export function DeleteVolumeFileModal() {
     );
   };
 
-  useSubscribe<Payload>(VOLUME_EVENTS.openDeleteFileModal, (eventData) => {
-    setVolumeId(eventData.volumeId);
-    setFilePaths(eventData.filePaths);
-    setOpen(true);
-  });
+  useSubscribe<DeleteVolumeFilePayload>(
+    VOLUME_EVENTS.openDeleteFileModal,
+    (eventData) => {
+      setVolumeId(eventData.volumeId);
+      setFilePaths(eventData.filePaths);
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       title="파일 삭제"
       centered

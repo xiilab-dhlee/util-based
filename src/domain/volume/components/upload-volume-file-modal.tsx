@@ -15,7 +15,7 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
-interface Payload {
+interface UploadVolumeFilePayload {
   volumeId: number;
 }
 
@@ -68,7 +68,7 @@ export function UploadVolumeFileModal() {
     setOpen(false);
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isUploading) return;
     resetModal();
   };
@@ -78,7 +78,7 @@ export function UploadVolumeFileModal() {
     await startUpload();
   };
 
-  const handleCancelAll = async () => {
+  const handleStopUpload = async () => {
     await cancelAllUploads();
     resetModal();
   };
@@ -87,12 +87,15 @@ export function UploadVolumeFileModal() {
     removeFile(fileId);
   };
 
-  useSubscribe<Payload>(VOLUME_EVENTS.openUploadFileModal, (eventData) => {
-    setVolumeId(eventData.volumeId);
-    reset(DEFAULT_VALUES);
-    clearFiles();
-    setOpen(true);
-  });
+  useSubscribe<UploadVolumeFilePayload>(
+    VOLUME_EVENTS.openUploadFileModal,
+    (eventData) => {
+      setVolumeId(eventData.volumeId);
+      reset(DEFAULT_VALUES);
+      clearFiles();
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal
@@ -103,14 +106,14 @@ export function UploadVolumeFileModal() {
       closable={!isUploading}
       maskClosable={!isUploading}
       title="파일 업로드"
-      onCancel={handleClose}
+      onCancel={handleCancel}
       cancelText={isUploading ? "업로드 취소" : "취소"}
       okText="업로드"
       okButtonProps={{
         disabled: !hasFiles || !hasPendingFiles || isUploading,
       }}
       cancelButtonProps={{
-        onClick: isUploading ? handleCancelAll : handleClose,
+        onClick: isUploading ? handleStopUpload : handleCancel,
       }}
       onOk={handleSubmit(onSubmit)}
       centered

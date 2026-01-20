@@ -20,7 +20,7 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { filterToRootPaths } from "@/shared/state/filetree.atom";
 import { FormItemLabel, LastFormItem } from "@/styles/layers/form-layer.styled";
 
-interface Payload {
+interface CompressVolumeFilePayload {
   volumeId: number;
   filePaths: string[];
 }
@@ -85,12 +85,15 @@ export function CompressVolumeFileModal() {
     );
   };
 
-  useSubscribe<Payload>(VOLUME_EVENTS.openCompressFileModal, (eventData) => {
-    setVolumeId(eventData.volumeId);
-    setFilePaths(eventData.filePaths);
-    reset(DEFAULT_VALUES);
-    setOpen(true);
-  });
+  useSubscribe<CompressVolumeFilePayload>(
+    VOLUME_EVENTS.openCompressFileModal,
+    (eventData) => {
+      setVolumeId(eventData.volumeId);
+      setFilePaths(eventData.filePaths);
+      reset(DEFAULT_VALUES);
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal
