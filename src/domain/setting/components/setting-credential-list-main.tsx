@@ -28,7 +28,6 @@ export function SettingCredentialListMain() {
     {
       pageNo: page - 1,
       pageSize: CREDENTIAL_LIST_PAGE_SIZE,
-      keyword: "",
     },
     {
       query: {
