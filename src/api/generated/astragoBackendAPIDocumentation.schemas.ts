@@ -590,6 +590,71 @@ export interface StorageUpdateRequest {
 }
 
 /**
+ * 회수 기준 메트릭
+ */
+export interface ReclaimMetricsRequest {
+  /**
+   * GPU 사용률 임계값(%)
+   * @minimum 0
+   * @maximum 100
+   */
+  gpu: number;
+  /**
+   * CPU 사용률 임계값(%)
+   * @minimum 0
+   * @maximum 100
+   */
+  cpu: number;
+  /**
+   * 메모리 사용률 임계값(%)
+   * @minimum 0
+   * @maximum 100
+   */
+  mem: number;
+}
+
+/**
+ * 회수 조건 연산자
+ */
+export type WorkloadReclaimPolicyUpdateRequestReclaimOperator =
+  (typeof WorkloadReclaimPolicyUpdateRequestReclaimOperator)[keyof typeof WorkloadReclaimPolicyUpdateRequestReclaimOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimPolicyUpdateRequestReclaimOperator = {
+  AND: "AND",
+  OR: "OR",
+} as const;
+
+/**
+ * 자원 회수 정책 수정 요청
+ */
+export interface WorkloadReclaimPolicyUpdateRequest {
+  /**
+   * 회수 기준 시간(시간)
+   * @minimum 1
+   * @maximum 24
+   */
+  operatingHour: number;
+  /** 회수 기준 메트릭 */
+  metrics: ReclaimMetricsRequest;
+  /** 회수 조건 연산자 */
+  reclaimOperator: WorkloadReclaimPolicyUpdateRequestReclaimOperator;
+  /**
+   * 회수 전 경고 횟수
+   * @minimum 0
+   */
+  reclaimWarningCount: number;
+}
+
+/**
+ * 자원 회수 정책 실행/종료 요청
+ */
+export interface WorkloadReclaimPolicyEnabledRequest {
+  /** 활성화 여부 */
+  isEnabled: boolean;
+}
+
+/**
  * 
             리소스 정보 (cpu, memory, gpu 포함)
             GPU 타입별 설정:
@@ -638,7 +703,7 @@ export interface ResourcePresetUpdateRequest {
   /**
    * 프리셋 설명
    * @minLength 0
-   * @maxLength 1000
+   * @maxLength 2000
    */
   description?: string;
   /** 
@@ -752,6 +817,18 @@ export interface ImageTagUsageRequestRejectRequest {
 }
 
 /**
+ * 이미지 태그 사용 요청 결정 사유 수정
+ */
+export interface ImageTagUsageRequestDecisionReasonRequest {
+  /**
+   * 결정 사유 (필수, 최대 2000자)
+   * @minLength 1
+   * @maxLength 2000
+   */
+  decisionReason: string;
+}
+
+/**
  * 이미지 태그 사용 요청 승인
  */
 export interface ImageTagUsageRequestApprovalRequest {
@@ -772,10 +849,11 @@ export interface QueueOrderItem {
    * @maximum 5
    */
   rank: number;
-  /** 워크스페이스 리소스명 (K8s 네임스페이스) */
-  workspaceResourceName: string;
-  /** 워크로드 리소스명 (K8s 리소스명) */
-  workloadResourceName: string;
+  /**
+   * 워크로드 ID
+   * @minimum 1
+   */
+  workloadId: number;
 }
 
 /**
@@ -1256,6 +1334,116 @@ export interface WorkloadResourceRequest {
   memory: WorkloadMemoryRequest;
   /** 분산 학습 설정 (DISTRIBUTED 워크로드용) */
   distributed?: DistributedRequest;
+}
+
+/**
+ * 워크로드 폴더 생성 요청
+ */
+export interface WorkloadCreateFolderRequest {
+  /**
+   * 생성할 폴더 경로 (절대경로 또는 상대경로)
+   * @minLength 0
+   * @maxLength 1000
+   */
+  path: string;
+}
+
+/**
+ * 워크로드 파일/폴더 삭제 요청
+ */
+export interface WorkloadDeleteFilesRequest {
+  /**
+   * 삭제할 파일/폴더 경로 목록
+   * @minItems 0
+   * @maxItems 100
+   */
+  path: string[];
+}
+
+export type BaseResponseWorkloadDeleteFilesResponseStatus =
+  (typeof BaseResponseWorkloadDeleteFilesResponseStatus)[keyof typeof BaseResponseWorkloadDeleteFilesResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkloadDeleteFilesResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkloadDeleteFilesResponse {
+  status: BaseResponseWorkloadDeleteFilesResponseStatus;
+  errorCode?: string;
+  data?: WorkloadDeleteFilesResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 워크로드 파일 삭제 처리 결과 응답
+ */
+export interface WorkloadDeleteFilesResponse {
+  /** 삭제 요청한 총 파일/폴더 개수 */
+  totalRequested: number;
+  /** 삭제 성공한 파일/폴더 개수 */
+  successCount: number;
+  /** 삭제 실패한 파일/폴더 개수 (존재하지 않거나, 삭제할 수 없는 파일/폴더 등) */
+  failureCount: number;
+  /** 삭제 실패한 파일/폴더 상세 목록 (실패가 없으면 빈 리스트) */
+  failures: WorkloadFileDeleteFailureResponse[];
+}
+
+/**
+ * 워크로드 파일 삭제 실패 상세 정보
+ */
+export interface WorkloadFileDeleteFailureResponse {
+  /** 삭제 실패한 경로 */
+  path: string;
+  /** 삭제 실패 사유 */
+  reason: string;
+}
+
+/**
+ * 워크로드 파일 압축 해제 요청
+ */
+export interface WorkloadDecompressRequest {
+  /**
+   * 압축 해제할 파일 경로
+   * @minLength 0
+   * @maxLength 1000
+   */
+  path: string;
+}
+
+/**
+ * 압축 파일 형식 (TAR: .tar.gz, ZIP: .zip)
+ */
+export type WorkloadCompressRequestCompressFileType =
+  (typeof WorkloadCompressRequestCompressFileType)[keyof typeof WorkloadCompressRequestCompressFileType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadCompressRequestCompressFileType = {
+  TAR: "TAR",
+  ZIP: "ZIP",
+} as const;
+
+/**
+ * 워크로드 파일 압축 요청
+ */
+export interface WorkloadCompressRequest {
+  /**
+   * 압축할 파일/폴더 경로 목록
+   * @minItems 0
+   * @maxItems 100
+   */
+  path: string[];
+  /**
+   * 압축 파일 저장 경로 (경로 + 파일명, 확장자 제외)
+   * @minLength 0
+   * @maxLength 1000
+   */
+  destinationPath: string;
+  /** 압축 파일 형식 (TAR: .tar.gz, ZIP: .zip) */
+  compressFileType: WorkloadCompressRequestCompressFileType;
 }
 
 /**
@@ -2140,7 +2328,7 @@ export interface ResourcePresetCreateRequest {
   /**
    * 프리셋 설명
    * @minLength 0
-   * @maxLength 1000
+   * @maxLength 2000
    */
   description?: string;
   /** 
@@ -2162,10 +2350,11 @@ export interface ResourcePresetCreateRequest {
  * 긴급 큐 워크로드 추가 요청
  */
 export interface AddWorkloadToUrgentQueueRequest {
-  /** 워크스페이스 리소스명 (K8s 네임스페이스) */
-  workspaceResourceName: string;
-  /** 워크로드 리소스명 (K8s 리소스명) */
-  workloadResourceName: string;
+  /**
+   * 워크로드 ID
+   * @minimum 1
+   */
+  workloadId: number;
 }
 
 /**
@@ -2691,6 +2880,62 @@ export interface WorkloadMetricsTimeseriesResponse {
   dateTime: string;
   /** 해당 시간대의 모든 Pod/GPU 메트릭 데이터 */
   data: WorkloadMetricData[];
+}
+
+export type BaseResponseWorkloadFileListResponseStatus =
+  (typeof BaseResponseWorkloadFileListResponseStatus)[keyof typeof BaseResponseWorkloadFileListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkloadFileListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkloadFileListResponse {
+  status: BaseResponseWorkloadFileListResponseStatus;
+  errorCode?: string;
+  data?: WorkloadFileListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 파일/폴더 타입
+ */
+export type WorkloadFileItemResponseType =
+  (typeof WorkloadFileItemResponseType)[keyof typeof WorkloadFileItemResponseType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadFileItemResponseType = {
+  FILE: "FILE",
+  DIRECTORY: "DIRECTORY",
+} as const;
+
+/**
+ * 워크로드 파일 정보
+ */
+export interface WorkloadFileItemResponse {
+  /** 파일/폴더 이름 */
+  name: string;
+  /** 파일/폴더 타입 */
+  type: WorkloadFileItemResponseType;
+  /** 전체 경로 */
+  path: string;
+  /** 파일 크기 (바이트) */
+  size: number;
+}
+
+/**
+ * 워크로드 파일 목록 응답
+ */
+export interface WorkloadFileListResponse {
+  /** 파일/폴더 목록 */
+  children: WorkloadFileItemResponse[];
+  /** 디렉토리 개수 */
+  directoryCount: number;
+  /** 파일 개수 */
+  fileCount: number;
 }
 
 export type BaseResponseDistributedPodResponseStatus =
@@ -3627,6 +3872,8 @@ export interface ImageTagListResponse {
   imageTagId?: number;
   /** 이미지 태그 이름 */
   imageTagName: string;
+  /** 이미지 표시 이름 */
+  imageDisplayName: string;
   /** 이미지 태그 크기 (바이트) */
   imageTagSizeByte: number;
   /** 스캔 상태 (스캔 전이면 null) */
@@ -3901,6 +4148,18 @@ export interface BaseResponsePageResponseImageJobResponse {
 }
 
 /**
+ * 이미지 소스 타입
+ */
+export type ImageJobResponseImageSourceType =
+  (typeof ImageJobResponseImageSourceType)[keyof typeof ImageJobResponseImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ImageJobResponseImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
+/**
  * Job 작업 응답
  */
 export interface ImageJobResponse {
@@ -3918,6 +4177,8 @@ export interface ImageJobResponse {
   creatorName?: string;
   /** 작업 상태 */
   status: string;
+  /** 이미지 소스 타입 */
+  imageSourceType: ImageJobResponseImageSourceType;
   /** 생성일시 (UTC) */
   createdAt?: string;
 }
@@ -5168,72 +5429,170 @@ export interface NodeResourceResponse {
   disk: NodeDiskResourceResponse;
 }
 
-export type BaseResponseListNodeSystemMetricResponseStatus =
-  (typeof BaseResponseListNodeSystemMetricResponseStatus)[keyof typeof BaseResponseListNodeSystemMetricResponseStatus];
+export type BaseResponseBatchSystemMetricResponseStatus =
+  (typeof BaseResponseBatchSystemMetricResponseStatus)[keyof typeof BaseResponseBatchSystemMetricResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseListNodeSystemMetricResponseStatus = {
+export const BaseResponseBatchSystemMetricResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponseListNodeSystemMetricResponse {
-  status: BaseResponseListNodeSystemMetricResponseStatus;
+export interface BaseResponseBatchSystemMetricResponse {
+  status: BaseResponseBatchSystemMetricResponseStatus;
   errorCode?: string;
-  data?: NodeSystemMetricResponse[];
+  data?: BatchSystemMetricResponse;
   message?: string;
   timestamp: number;
 }
 
 /**
- * 노드 시스템 메트릭 응답
+ * 복수 시스템 메트릭 배치 조회 응답
  */
-export interface NodeSystemMetricResponse {
+export interface BatchSystemMetricResponse {
+  /** CPU 온도 (°C) */
+  cpuTemperature?: SystemMetricResult;
+  /** CPU 사용률 (%) */
+  cpuUtilization?: SystemMetricResult;
+  /** CPU 평균 부하 (5분) */
+  cpuLoadAverage?: SystemMetricResult;
+  /** 네트워크 수신 속도 (bytes/sec) */
+  nodeNetworkReceive?: SystemMetricResult;
+  /** 네트워크 송신 속도 (bytes/sec) */
+  nodeNetworkTransmit?: SystemMetricResult;
+  /** 디스크 읽기 속도 (bytes/sec) */
+  diskRead?: SystemMetricResult;
+  /** 디스크 쓰기 속도 (bytes/sec) */
+  diskWrite?: SystemMetricResult;
+  /** 디스크 사용률 (%) */
+  diskUsage?: SystemMetricResult;
+  /** 메모리 사용률 (%) */
+  memoryUtilization?: SystemMetricResult;
+  /** 메모리 버퍼 (bytes) */
+  nodeMemoryBuffers?: SystemMetricResult;
+  /** 메모리 캐시 (bytes) */
+  nodeMemoryCached?: SystemMetricResult;
+  /** 메모리 총량 (bytes) */
+  nodeMemoryTotal?: SystemMetricResult;
+  /** 메모리 여유량 (bytes) */
+  nodeMemoryFree?: SystemMetricResult;
+  isEmpty: boolean;
+}
+
+/**
+ * 조회 상태
+ */
+export type SystemMetricResultStatus =
+  (typeof SystemMetricResultStatus)[keyof typeof SystemMetricResultStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SystemMetricResultStatus = {
+  SUCCESS: "SUCCESS",
+  FAILED: "FAILED",
+} as const;
+
+/**
+ * 개별 시스템 메트릭 조회 결과
+ */
+export interface SystemMetricResult {
+  /** 조회 상태 */
+  status: SystemMetricResultStatus;
+  /** 시계열 데이터 (성공 시) */
+  data?: SystemMetricValue[];
+  /** 에러 타입 (실패 시) */
+  error?: string;
+}
+
+/**
+ * 시스템 메트릭 측정값
+ */
+export interface SystemMetricValue {
   /** 측정 시간 (UTC, ISO 8601 형식) */
   dateTime: string;
-  /** 메트릭 값 (사용률 %, 온도 °C, 속도 bytes/sec, 부하) */
+  /** 메트릭 값 */
   value: string;
 }
 
-export type BaseResponseListNodeGpuMetricResponseStatus =
-  (typeof BaseResponseListNodeGpuMetricResponseStatus)[keyof typeof BaseResponseListNodeGpuMetricResponseStatus];
+export type BaseResponseBatchGpuMetricResponseStatus =
+  (typeof BaseResponseBatchGpuMetricResponseStatus)[keyof typeof BaseResponseBatchGpuMetricResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseListNodeGpuMetricResponseStatus = {
+export const BaseResponseBatchGpuMetricResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponseListNodeGpuMetricResponse {
-  status: BaseResponseListNodeGpuMetricResponseStatus;
+export interface BaseResponseBatchGpuMetricResponse {
+  status: BaseResponseBatchGpuMetricResponseStatus;
   errorCode?: string;
-  data?: NodeGpuMetricResponse[];
+  data?: BatchGpuMetricResponse;
   message?: string;
   timestamp: number;
 }
 
 /**
- * GPU 메트릭 값 응답
+ * 복수 GPU 메트릭 배치 조회 응답
  */
-export interface GpuMetricValueResponse {
-  /** 측정 시간 (UTC, ISO 8601 형식) */
-  dateTime: string;
-  /** 메트릭 값 (사용률 %, 온도 °C, 팬속도 %, 전력 W) */
-  value: string;
+export interface BatchGpuMetricResponse {
+  /** GPU 사용률 (%) */
+  gpuUtilization?: MetricResult;
+  /** GPU 메모리 사용률 (%) */
+  gpuMemoryUtilization?: MetricResult;
+  /** GPU 온도 (°C) */
+  gpuTemperature?: MetricResult;
+  /** GPU 팬 속도 (%) */
+  gpuFanSpeed?: MetricResult;
+  /** GPU 전력 사용량 (W) */
+  gpuPowerUsage?: MetricResult;
+  isEmpty: boolean;
 }
 
 /**
- * 노드 GPU 메트릭 응답
+ * GPU별 시계열 데이터
  */
-export interface NodeGpuMetricResponse {
+export interface GpuTimeseriesData {
   /** GPU 모델명 */
   modelName: string;
   /** GPU 인덱스 */
   gpuIndex: string;
   /** 시계열 메트릭 값 리스트 */
-  values: GpuMetricValueResponse[];
+  values: MetricValue[];
+}
+
+/**
+ * 조회 상태
+ */
+export type MetricResultStatus =
+  (typeof MetricResultStatus)[keyof typeof MetricResultStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MetricResultStatus = {
+  SUCCESS: "SUCCESS",
+  FAILED: "FAILED",
+} as const;
+
+/**
+ * 개별 메트릭 조회 결과
+ */
+export interface MetricResult {
+  /** 조회 상태 */
+  status: MetricResultStatus;
+  /** GPU별 시계열 데이터 (성공 시) */
+  data?: GpuTimeseriesData[];
+  /** 에러 타입 (실패 시) */
+  error?: string;
+}
+
+/**
+ * 메트릭 측정값
+ */
+export interface MetricValue {
+  /** 측정 시간 (UTC, ISO 8601 형식) */
+  dateTime: string;
+  /** 메트릭 값 */
+  value: string;
 }
 
 export type BaseResponseMigConfigurationResponseStatus =
@@ -6201,6 +6560,184 @@ export interface BaseResponseStorageResponse {
   timestamp: number;
 }
 
+export type BaseResponseListWorkloadReclaimPolicyResponseStatus =
+  (typeof BaseResponseListWorkloadReclaimPolicyResponseStatus)[keyof typeof BaseResponseListWorkloadReclaimPolicyResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListWorkloadReclaimPolicyResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListWorkloadReclaimPolicyResponse {
+  status: BaseResponseListWorkloadReclaimPolicyResponseStatus;
+  errorCode?: string;
+  data?: WorkloadReclaimPolicyResponse[];
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 회수 기준 메트릭 응답
+ */
+export interface ReclaimMetricsResponse {
+  /** GPU 사용률 임계값(%) */
+  gpu: number;
+  /** CPU 사용률 임계값(%) */
+  cpu: number;
+  /** 메모리 사용률 임계값(%) */
+  mem: number;
+}
+
+/**
+ * 워크로드 잡 타입
+ */
+export type WorkloadReclaimPolicyResponseWorkloadJobType =
+  (typeof WorkloadReclaimPolicyResponseWorkloadJobType)[keyof typeof WorkloadReclaimPolicyResponseWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimPolicyResponseWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 회수 조건 연산자
+ */
+export type WorkloadReclaimPolicyResponseReclaimOperator =
+  (typeof WorkloadReclaimPolicyResponseReclaimOperator)[keyof typeof WorkloadReclaimPolicyResponseReclaimOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimPolicyResponseReclaimOperator = {
+  AND: "AND",
+  OR: "OR",
+} as const;
+
+/**
+ * 자원 회수 정책 설정 응답
+ */
+export interface WorkloadReclaimPolicyResponse {
+  /** 워크로드 잡 타입 */
+  workloadJobType: WorkloadReclaimPolicyResponseWorkloadJobType;
+  /** 리소스 회수 활성화 여부 */
+  isEnabled: boolean;
+  /** 회수 기준 시간(시간) */
+  operatingHour: number;
+  /** 회수 기준 메트릭 */
+  metrics: ReclaimMetricsResponse;
+  /** 회수 조건 연산자 */
+  reclaimOperator: WorkloadReclaimPolicyResponseReclaimOperator;
+  /** 회수 전 경고 횟수 */
+  reclaimWarningCount: number;
+}
+
+export type BaseResponseWorkloadReclaimPolicyResponseStatus =
+  (typeof BaseResponseWorkloadReclaimPolicyResponseStatus)[keyof typeof BaseResponseWorkloadReclaimPolicyResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkloadReclaimPolicyResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkloadReclaimPolicyResponse {
+  status: BaseResponseWorkloadReclaimPolicyResponseStatus;
+  errorCode?: string;
+  data?: WorkloadReclaimPolicyResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export type BaseResponsePageResponseWorkloadReclaimScanHistoryResponseStatus =
+  (typeof BaseResponsePageResponseWorkloadReclaimScanHistoryResponseStatus)[keyof typeof BaseResponsePageResponseWorkloadReclaimScanHistoryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseWorkloadReclaimScanHistoryResponseStatus =
+  {
+    SUCCESS: "SUCCESS",
+    FAIL: "FAIL",
+    ERROR: "ERROR",
+  } as const;
+
+export interface BaseResponsePageResponseWorkloadReclaimScanHistoryResponse {
+  status: BaseResponsePageResponseWorkloadReclaimScanHistoryResponseStatus;
+  errorCode?: string;
+  data?: PageResponseWorkloadReclaimScanHistoryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseWorkloadReclaimScanHistoryResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: WorkloadReclaimScanHistoryResponse[];
+}
+
+/**
+ * 자원 회수 스캔 히스토리 응답
+ */
+export interface WorkloadReclaimScanHistoryResponse {
+  /** 스캔 히스토리 ID */
+  scanHistoryId: number;
+  /** 회수 경고 워크로드 수 */
+  reclaimWarningWorkloadCount: number;
+  /** 검사 대상 워크로드 수 */
+  reclaimScanWorkloadCount: number;
+  /** 회수된 워크로드 수 */
+  reclaimedWorkloadCount: number;
+  /** 회수된 GPU 수 */
+  reclaimedGpuCount: number;
+  /** 회수된 CPU 코어 수 */
+  reclaimedCpuCore: number;
+  /** 회수된 메모리(byte) */
+  reclaimedMemoryByte: number;
+  /** 스캔 실행 일시 */
+  createdAt: string;
+}
+
+export type BaseResponsePageResponseWorkloadReclaimScanResultResponseStatus =
+  (typeof BaseResponsePageResponseWorkloadReclaimScanResultResponseStatus)[keyof typeof BaseResponsePageResponseWorkloadReclaimScanResultResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseWorkloadReclaimScanResultResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseWorkloadReclaimScanResultResponse {
+  status: BaseResponsePageResponseWorkloadReclaimScanResultResponseStatus;
+  errorCode?: string;
+  data?: PageResponseWorkloadReclaimScanResultResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseWorkloadReclaimScanResultResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: WorkloadReclaimScanResultResponse[];
+}
+
+/**
+ * 자원 회수 스캔 결과 응답
+ */
+export interface WorkloadReclaimScanResultResponse {
+  /** 스캔 결과 ID */
+  scanResultId: number;
+  /** 워크로드 ID */
+  workloadId: number;
+  /** 스캔 히스토리 ID */
+  scanHistoryId: number;
+  /** 스캔 결과 생성 일시 */
+  createdAt: string;
+}
+
 export type BaseResponsePageResponseResourcePresetResponseStatus =
   (typeof BaseResponsePageResponseResourcePresetResponseStatus)[keyof typeof BaseResponsePageResponseResourcePresetResponseStatus];
 
@@ -6285,8 +6822,12 @@ export const AccountImageTagResponseImageType = {
  * 사용자별 이미지 태그 목록 응답
  */
 export interface AccountImageTagResponse {
+  /** Harbor 태그 ID */
+  harborTagId: number;
   /** Harbor 이미지명 */
   harborImageName: string;
+  /** 이미지 표시 이름 */
+  imageDisplayName: string;
   /** 태그명 */
   tagName: string;
   /** 워크스페이스명 (워크스페이스 격리 비활성화 시 null) */
@@ -6449,6 +6990,101 @@ export interface PageResponseImageTagUsageRequestResponse {
   content: ImageTagUsageRequestResponse[];
 }
 
+export type BaseResponsePageResponseImageTagUsageRequestSummaryResponseStatus =
+  (typeof BaseResponsePageResponseImageTagUsageRequestSummaryResponseStatus)[keyof typeof BaseResponsePageResponseImageTagUsageRequestSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseImageTagUsageRequestSummaryResponseStatus =
+  {
+    SUCCESS: "SUCCESS",
+    FAIL: "FAIL",
+    ERROR: "ERROR",
+  } as const;
+
+export interface BaseResponsePageResponseImageTagUsageRequestSummaryResponse {
+  status: BaseResponsePageResponseImageTagUsageRequestSummaryResponseStatus;
+  errorCode?: string;
+  data?: PageResponseImageTagUsageRequestSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 이미지 타입
+ */
+export type ImageTagUsageRequestSummaryResponseImageType =
+  (typeof ImageTagUsageRequestSummaryResponseImageType)[keyof typeof ImageTagUsageRequestSummaryResponseImageType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ImageTagUsageRequestSummaryResponseImageType = {
+  BUILT_IN: "BUILT_IN",
+  HUB: "HUB",
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+/**
+ * 이미지 태그 사용 요청 승인 대기 목록 요약 응답
+ */
+export interface ImageTagUsageRequestSummaryResponse {
+  /** 사용 요청 ID */
+  usageRequestId: number;
+  /** 이미지 태그 ID */
+  imageTagId: number;
+  /** 이미지 태그명 */
+  imageTagName: string;
+  /** Harbor 이미지명 */
+  harborImageName: string;
+  /** 이미지 표시명 */
+  imageDisplayName?: string;
+  /** 이미지 타입 */
+  imageType?: ImageTagUsageRequestSummaryResponseImageType;
+  /** 취약점 정보 (스캔 미수행 시 null) */
+  vulnerability?: VulnerabilityResponse;
+  /** 요청자 ID */
+  creatorId: string;
+  /** 요청자명 */
+  creatorName?: string;
+}
+
+export interface PageResponseImageTagUsageRequestSummaryResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ImageTagUsageRequestSummaryResponse[];
+}
+
+export type BaseResponseImageTagUsageRequestApprovalStatusSummaryResponseStatus =
+  (typeof BaseResponseImageTagUsageRequestApprovalStatusSummaryResponseStatus)[keyof typeof BaseResponseImageTagUsageRequestApprovalStatusSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseImageTagUsageRequestApprovalStatusSummaryResponseStatus =
+  {
+    SUCCESS: "SUCCESS",
+    FAIL: "FAIL",
+    ERROR: "ERROR",
+  } as const;
+
+export interface BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse {
+  status: BaseResponseImageTagUsageRequestApprovalStatusSummaryResponseStatus;
+  errorCode?: string;
+  data?: ImageTagUsageRequestApprovalStatusSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 이미지 태그 사용 요청 승인 상태 요약 응답
+ */
+export interface ImageTagUsageRequestApprovalStatusSummaryResponse {
+  /** 승인된 요청 수 */
+  approved: number;
+  /** 승인 대기 중인 요청 수 */
+  approvalWaiting: number;
+  /** 반려된 요청 수 */
+  rejected: number;
+}
+
 export type BaseResponseListQueueWorkloadResponseStatus =
   (typeof BaseResponseListQueueWorkloadResponseStatus)[keyof typeof BaseResponseListQueueWorkloadResponseStatus];
 
@@ -6537,10 +7173,14 @@ export interface QueueWorkloadResourceResponse {
  * Queue 워크로드 응답
  */
 export interface QueueWorkloadResponse {
+  /** 워크로드 ID */
+  workloadId: number;
   /** 워크로드 이름 (사용자 지정) */
   workloadName: string;
   /** 워크로드 리소스명 (K8s 리소스명) */
   workloadResourceName: string;
+  /** 워크스페이스 ID */
+  workspaceId: number;
   /** 워크스페이스 이름 */
   workspaceName: string;
   /** 워크스페이스 리소스명 (K8s Namespace) */
@@ -7202,6 +7842,34 @@ export type GetAllWorkspacesParams = {
   keyword?: string;
 };
 
+export type WorkloadCreateFolderParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+};
+
+export type WorkloadDeleteFilesParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+};
+
+export type WorkloadDecompressFileParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+};
+
+export type WorkloadCompressFilesParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+};
+
 export type GetResourceRequestsParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -7285,6 +7953,23 @@ export type GetWorkspaceMembersOrder =
 export const GetWorkspaceMembersOrder = {
   ASC: "ASC",
   DESC: "DESC",
+} as const;
+
+export type ExecuteReclaimParams = {
+  /**
+   * 워크로드 잡 타입
+   */
+  jobType: ExecuteReclaimJobType;
+};
+
+export type ExecuteReclaimJobType =
+  (typeof ExecuteReclaimJobType)[keyof typeof ExecuteReclaimJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExecuteReclaimJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
 export type GetSourceCodeListParams = {
@@ -7700,20 +8385,57 @@ export type GetCredentialsParams = {
 
 export type StreamNodeSystemMetricsParams = {
   /**
-   * 시스템 메트릭 타입
-   */
-  metricName: StreamNodeSystemMetricsMetricName;
+ * 
+            스트리밍할 시스템 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_USAGE: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
+        
+ */
+  metrics: StreamNodeSystemMetricsMetricsItem[];
   /**
    * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송
    */
   lastSentTime: string;
 };
 
-export type StreamNodeSystemMetricsMetricName =
-  (typeof StreamNodeSystemMetricsMetricName)[keyof typeof StreamNodeSystemMetricsMetricName];
+/**
+ * 
+            스트리밍할 시스템 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_USAGE: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
+        
+ */
+export type StreamNodeSystemMetricsMetricsItem =
+  (typeof StreamNodeSystemMetricsMetricsItem)[keyof typeof StreamNodeSystemMetricsMetricsItem];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StreamNodeSystemMetricsMetricName = {
+export const StreamNodeSystemMetricsMetricsItem = {
   CPU_TEMPERATURE: "CPU_TEMPERATURE",
   CPU_UTILIZATION: "CPU_UTILIZATION",
   CPU_LOAD_AVERAGE: "CPU_LOAD_AVERAGE",
@@ -7721,7 +8443,7 @@ export const StreamNodeSystemMetricsMetricName = {
   NODE_NETWORK_TRANSMIT: "NODE_NETWORK_TRANSMIT",
   DISK_READ: "DISK_READ",
   DISK_WRITE: "DISK_WRITE",
-  DISK_UTILIZATION: "DISK_UTILIZATION",
+  DISK_USAGE: "DISK_USAGE",
   MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
   NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
   NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
@@ -7731,20 +8453,41 @@ export const StreamNodeSystemMetricsMetricName = {
 
 export type StreamNodeGpuMetricsParams = {
   /**
-   * GPU 메트릭 타입
-   */
-  metricName: StreamNodeGpuMetricsMetricName;
+ * 
+            스트리밍할 GPU 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
+        
+ */
+  metrics: StreamNodeGpuMetricsMetricsItem[];
   /**
    * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송
    */
   lastSentTime: string;
 };
 
-export type StreamNodeGpuMetricsMetricName =
-  (typeof StreamNodeGpuMetricsMetricName)[keyof typeof StreamNodeGpuMetricsMetricName];
+/**
+ * 
+            스트리밍할 GPU 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
+        
+ */
+export type StreamNodeGpuMetricsMetricsItem =
+  (typeof StreamNodeGpuMetricsMetricsItem)[keyof typeof StreamNodeGpuMetricsMetricsItem];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StreamNodeGpuMetricsMetricName = {
+export const StreamNodeGpuMetricsMetricsItem = {
   GPU_UTILIZATION: "GPU_UTILIZATION",
   GPU_MEMORY_UTILIZATION: "GPU_MEMORY_UTILIZATION",
   GPU_TEMPERATURE: "GPU_TEMPERATURE",
@@ -7798,6 +8541,30 @@ export type StreamWorkloadLogsParams = {
    * Pod 이름 (분산 워크로드의 경우 필수)
    */
   podName?: string;
+};
+
+export type WorkloadListFilesParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+  /**
+   * 조회할 경로 (기본값: /)
+   */
+  path?: string;
+};
+
+export type WorkloadPreviewFileParams = {
+  /**
+   * Pod 이름 (분산 워크로드의 경우 필수)
+   */
+  podName?: string;
+  /**
+   * 미리보기할 파일 경로
+   * @minLength 0
+   * @maxLength 1000
+   */
+  path: string;
 };
 
 export type GetTerminatedWorkloadsParams = {
@@ -8036,7 +8803,7 @@ export type ListFilesParams = {
   path?: string;
 };
 
-export type PreviewParams = {
+export type PreviewFileParams = {
   /**
    * 미리보기할 파일 경로
    * @minLength 0
@@ -8652,9 +9419,26 @@ export const GetClusterNodesOrder = {
 
 export type GetNodeSystemMetricsParams = {
   /**
-   * 시스템 메트릭 타입
-   */
-  metricName: GetNodeSystemMetricsMetricName;
+ * 
+            조회할 시스템 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_USAGE: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
+        
+ */
+  metrics: GetNodeSystemMetricsMetricsItem[];
   /**
    * 시작 시간 (ISO 8601 UTC 형식)
    */
@@ -8670,11 +9454,31 @@ export type GetNodeSystemMetricsParams = {
   step: string;
 };
 
-export type GetNodeSystemMetricsMetricName =
-  (typeof GetNodeSystemMetricsMetricName)[keyof typeof GetNodeSystemMetricsMetricName];
+/**
+ * 
+            조회할 시스템 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_USAGE: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
+        
+ */
+export type GetNodeSystemMetricsMetricsItem =
+  (typeof GetNodeSystemMetricsMetricsItem)[keyof typeof GetNodeSystemMetricsMetricsItem];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetNodeSystemMetricsMetricName = {
+export const GetNodeSystemMetricsMetricsItem = {
   CPU_TEMPERATURE: "CPU_TEMPERATURE",
   CPU_UTILIZATION: "CPU_UTILIZATION",
   CPU_LOAD_AVERAGE: "CPU_LOAD_AVERAGE",
@@ -8682,7 +9486,7 @@ export const GetNodeSystemMetricsMetricName = {
   NODE_NETWORK_TRANSMIT: "NODE_NETWORK_TRANSMIT",
   DISK_READ: "DISK_READ",
   DISK_WRITE: "DISK_WRITE",
-  DISK_UTILIZATION: "DISK_UTILIZATION",
+  DISK_USAGE: "DISK_USAGE",
   MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
   NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
   NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
@@ -8692,9 +9496,18 @@ export const GetNodeSystemMetricsMetricName = {
 
 export type GetNodeGpuMetricsParams = {
   /**
-   * GPU 메트릭 타입
-   */
-  metricName: GetNodeGpuMetricsMetricName;
+ * 
+            조회할 GPU 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
+        
+ */
+  metrics: GetNodeGpuMetricsMetricsItem[];
   /**
    * 시작 시간 (ISO 8601 UTC 형식)
    */
@@ -8710,11 +9523,23 @@ export type GetNodeGpuMetricsParams = {
   step: string;
 };
 
-export type GetNodeGpuMetricsMetricName =
-  (typeof GetNodeGpuMetricsMetricName)[keyof typeof GetNodeGpuMetricsMetricName];
+/**
+ * 
+            조회할 GPU 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
+        
+ */
+export type GetNodeGpuMetricsMetricsItem =
+  (typeof GetNodeGpuMetricsMetricsItem)[keyof typeof GetNodeGpuMetricsMetricsItem];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetNodeGpuMetricsMetricName = {
+export const GetNodeGpuMetricsMetricsItem = {
   GPU_UTILIZATION: "GPU_UTILIZATION",
   GPU_MEMORY_UTILIZATION: "GPU_MEMORY_UTILIZATION",
   GPU_TEMPERATURE: "GPU_TEMPERATURE",
@@ -8901,6 +9726,108 @@ export const GetPendingWorkloadsJobType = {
   BATCH: "BATCH",
   DISTRIBUTED: "DISTRIBUTED",
 } as const;
+
+export type AdminGetVolumeListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 필드
+   */
+  sort?: AdminGetVolumeListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: AdminGetVolumeListOrder;
+  /**
+   * 볼륨 타입 필터
+   */
+  volumeType?: AdminGetVolumeListVolumeType;
+};
+
+export type AdminGetVolumeListSort =
+  (typeof AdminGetVolumeListSort)[keyof typeof AdminGetVolumeListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminGetVolumeListSort = {
+  VOLUME_NAME: "VOLUME_NAME",
+  CREATED_AT: "CREATED_AT",
+  FILE_SIZE: "FILE_SIZE",
+} as const;
+
+export type AdminGetVolumeListOrder =
+  (typeof AdminGetVolumeListOrder)[keyof typeof AdminGetVolumeListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminGetVolumeListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type AdminGetVolumeListVolumeType =
+  (typeof AdminGetVolumeListVolumeType)[keyof typeof AdminGetVolumeListVolumeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminGetVolumeListVolumeType = {
+  ASTRAGO: "ASTRAGO",
+  ON_PREMISE: "ON_PREMISE",
+} as const;
+
+export type AdminListFilesParams = {
+  /**
+   * 조회할 경로 (기본값: /)
+   */
+  path?: string;
+};
+
+export type AdminPreviewParams = {
+  /**
+   * 미리보기할 파일 경로
+   * @minLength 0
+   * @maxLength 1000
+   */
+  path: string;
+};
+
+export type GetScanHistoryListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
+
+export type GetScanResultListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
 
 export type GetPublicImageUsageByAccountParams = {
   /**
@@ -9123,6 +10050,68 @@ export type GetUsageRequestListOrder =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetUsageRequestListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetApprovalWaitingSummaryListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 이미지 타입 (PUBLIC/PRIVATE, 미지정 시 전체)
+   */
+  imageType?: GetApprovalWaitingSummaryListImageType;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetApprovalWaitingSummaryListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetApprovalWaitingSummaryListOrder;
+};
+
+export type GetApprovalWaitingSummaryListImageType =
+  (typeof GetApprovalWaitingSummaryListImageType)[keyof typeof GetApprovalWaitingSummaryListImageType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetApprovalWaitingSummaryListImageType = {
+  BUILT_IN: "BUILT_IN",
+  HUB: "HUB",
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+export type GetApprovalWaitingSummaryListSort =
+  (typeof GetApprovalWaitingSummaryListSort)[keyof typeof GetApprovalWaitingSummaryListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetApprovalWaitingSummaryListSort = {
+  IMAGE_NAME: "IMAGE_NAME",
+  IMAGE_TAG_NAME: "IMAGE_TAG_NAME",
+  SECURITY_SCAN_RESULT: "SECURITY_SCAN_RESULT",
+  IMAGE_TYPE: "IMAGE_TYPE",
+  CREATOR_NAME: "CREATOR_NAME",
+} as const;
+
+export type GetApprovalWaitingSummaryListOrder =
+  (typeof GetApprovalWaitingSummaryListOrder)[keyof typeof GetApprovalWaitingSummaryListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetApprovalWaitingSummaryListOrder = {
   ASC: "ASC",
   DESC: "DESC",
 } as const;

@@ -20,7 +20,7 @@ export function formatElapsedTime(dateStr: string): string {
   try {
     const date = parseISO(dateStr);
     if (!isValid(date)) {
-      return "잘못된 날짜";
+      return "-";
     }
 
     const now = new Date();
@@ -48,7 +48,7 @@ export function formatElapsedTime(dateStr: string): string {
     return `${diffDay}일 전`;
   } catch (error) {
     console.error("날짜 파싱 오류:", error);
-    return "잘못된 날짜";
+    return "-";
   }
 }
 

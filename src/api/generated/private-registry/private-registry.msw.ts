@@ -117,6 +117,7 @@ export const getGetPrivateImageTagListResponseMock = (
       harborTagId: faker.number.int({ min: undefined, max: undefined }),
       imageTagId: faker.number.int({ min: undefined, max: undefined }),
       imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageTagSizeByte: faker.number.int({ min: undefined, max: undefined }),
       scanStatus: faker.string.alpha({ length: { min: 10, max: 20 } }),
       vulnerability: {

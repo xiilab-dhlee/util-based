@@ -41,6 +41,9 @@ export const ROUTES = {
   ADMIN_ACCOUNT_MANAGEMENT_PENDING: `${MODE.ADMIN}/account-management/pending`,
   ADMIN_ACCOUNT_MANAGEMENT_GROUP: `${MODE.ADMIN}/account-management/group`,
 
+  // 스케쥴링 큐 관리 (정적)
+  ADMIN_SCHEDULING_QUEUE: `${MODE.ADMIN}/scheduling-queue`,
+
   // 보안 관리 (동적 함수)
   ADMIN_REGISTRY_SECURITY: `${MODE.ADMIN}/registry-security`,
   ADMIN_REGISTRY_SECURITY_TAG: (tagId: number, imageId: number) =>

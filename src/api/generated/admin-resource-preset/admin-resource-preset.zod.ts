@@ -77,7 +77,7 @@ export const updatePresetBodyPresetNameMin = 0;
 export const updatePresetBodyPresetNameMax = 50;
 
 export const updatePresetBodyDescriptionMin = 0;
-export const updatePresetBodyDescriptionMax = 1000;
+export const updatePresetBodyDescriptionMax = 2000;
 
 export const updatePresetBody = zod
   .object({
@@ -220,7 +220,7 @@ export const createPresetBodyPresetNameMin = 0;
 export const createPresetBodyPresetNameMax = 50;
 
 export const createPresetBodyDescriptionMin = 0;
-export const createPresetBodyDescriptionMax = 1000;
+export const createPresetBodyDescriptionMax = 2000;
 
 export const createPresetBody = zod
   .object({

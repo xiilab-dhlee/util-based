@@ -85,6 +85,15 @@ export const PAGE_META = {
   },
 
   // ============================================
+  // Admin Routes - Scheduling Queue
+  // ============================================
+  "admin.scheduling-queue": {
+    title: "스케쥴링 큐 관리",
+    iconName: "SchedulingQueue",
+    href: ROUTES.ADMIN_SCHEDULING_QUEUE,
+  },
+
+  // ============================================
   // Admin Routes - Security
   // ============================================
   "admin.registry-security": {

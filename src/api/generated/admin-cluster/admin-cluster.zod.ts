@@ -367,31 +367,33 @@ export const getNodeSystemResourceResponse = zod
 
 /**
  * 
-            관리자가 특정 노드의 시스템 리소스 메트릭을 시간대별로 조회합니다.
+            관리자가 특정 노드의 여러 시스템 메트릭을 한 번에 조회합니다.
+            복수 메트릭을 병렬로 Prometheus에서 조회하여 성능을 최적화합니다.
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_USAGE: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
 
             **응답 데이터 구성:**
-            - **dateTime**: 측정 시간 (UTC, ISO 8601 형식) - 시간 순서로 정렬
-            - **value**: 메트릭 값
-
-            **메트릭 타입:**
-            - **CPU_TEMPERATURE**: CPU 온도 (°C)
-            - **CPU_UTILIZATION**: CPU 사용률 (%)
-            - **CPU_LOAD_AVERAGE**: CPU 평균 부하 (5분)
-            - **NODE_NETWORK_RECEIVE**: 네트워크 수신 속도 (bytes/sec)
-            - **NODE_NETWORK_TRANSMIT**: 네트워크 송신 속도 (bytes/sec)
-            - **DISK_READ**: 디스크 읽기 속도 (bytes/sec)
-            - **DISK_WRITE**: 디스크 쓰기 속도 (bytes/sec)
-            - **DISK_UTILIZATION**: 디스크 사용률 (%)
-            - **MEMORY_UTILIZATION**: 메모리 사용률 (%)
-            - **NODE_MEMORY_BUFFERS**: 메모리 버퍼 (bytes)
-            - **NODE_MEMORY_CACHED**: 메모리 캐시 (bytes)
-            - **NODE_MEMORY_TOTAL**: 메모리 총량 (bytes)
-            - **NODE_MEMORY_FREE**: 메모리 여유량 (bytes)
+            각 메트릭별로 성공/실패 결과가 개별적으로 반환됩니다.
+            - 성공 시: `data` 필드에 시계열 데이터 포함
+            - 실패 시: `error` 필드에 에러 타입 포함 (timeout, network_error, query_error)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
         
- * @summary 노드 시스템 메트릭 시계열 조회
+ * @summary 노드 시스템 메트릭 배치 조회
  */
 export const getNodeSystemMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
@@ -401,23 +403,31 @@ export const getNodeSystemMetricsQueryStepRegExp =
   /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
 
 export const getNodeSystemMetricsQueryParams = zod.object({
-  metricName: zod
-    .enum([
-      "CPU_TEMPERATURE",
-      "CPU_UTILIZATION",
-      "CPU_LOAD_AVERAGE",
-      "NODE_NETWORK_RECEIVE",
-      "NODE_NETWORK_TRANSMIT",
-      "DISK_READ",
-      "DISK_WRITE",
-      "DISK_UTILIZATION",
-      "MEMORY_UTILIZATION",
-      "NODE_MEMORY_BUFFERS",
-      "NODE_MEMORY_CACHED",
-      "NODE_MEMORY_TOTAL",
-      "NODE_MEMORY_FREE",
-    ])
-    .describe("시스템 메트릭 타입"),
+  metrics: zod
+    .array(
+      zod
+        .enum([
+          "CPU_TEMPERATURE",
+          "CPU_UTILIZATION",
+          "CPU_LOAD_AVERAGE",
+          "NODE_NETWORK_RECEIVE",
+          "NODE_NETWORK_TRANSMIT",
+          "DISK_READ",
+          "DISK_WRITE",
+          "DISK_USAGE",
+          "MEMORY_UTILIZATION",
+          "NODE_MEMORY_BUFFERS",
+          "NODE_MEMORY_CACHED",
+          "NODE_MEMORY_TOTAL",
+          "NODE_MEMORY_FREE",
+        ])
+        .describe(
+          "\n            조회할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_USAGE: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
+        ),
+    )
+    .describe(
+      "\n            조회할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_USAGE: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
+    ),
   startedAt: zod
     .string()
     .datetime({})
@@ -434,18 +444,298 @@ export const getNodeSystemMetricsResponse = zod
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
     data: zod
-      .array(
-        zod
+      .object({
+        cpuTemperature: zod
           .object({
-            dateTime: zod.string().describe("측정 시간 (UTC, ISO 8601 형식)"),
-            value: zod
-              .string()
-              .describe("메트릭 값 (사용률 %, 온도 °C, 속도 bytes/sec, 부하)"),
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
           })
           .strict()
-          .describe("노드 시스템 메트릭 응답"),
-      )
-      .optional(),
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        cpuUtilization: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        cpuLoadAverage: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        nodeNetworkReceive: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        nodeNetworkTransmit: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        diskRead: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        diskWrite: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        diskUsage: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        memoryUtilization: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        nodeMemoryBuffers: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        nodeMemoryCached: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        nodeMemoryTotal: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        nodeMemoryFree: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                    value: zod.string().describe("메트릭 값"),
+                  })
+                  .strict()
+                  .describe("시스템 메트릭 측정값"),
+              )
+              .optional()
+              .describe("시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 시스템 메트릭 조회 결과"),
+        isEmpty: zod.boolean(),
+      })
+      .strict()
+      .optional()
+      .describe("복수 시스템 메트릭 배치 조회 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -453,26 +743,25 @@ export const getNodeSystemMetricsResponse = zod
 
 /**
  * 
-            관리자가 특정 노드의 GPU 하드웨어 메트릭을 시간대별로 조회합니다.
+            관리자가 특정 노드의 여러 GPU 하드웨어 메트릭을 한 번에 조회합니다.
+            복수 메트릭을 병렬로 Prometheus에서 조회하여 성능을 최적화합니다.
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
 
             **응답 데이터 구성:**
-            - **modelName**: GPU 모델명 (예: NVIDIA-A100-SXM4-40GB)
-            - **gpuIndex**: GPU 인덱스 (0, 1, 2, ...) - 숫자 순서로 정렬
-            - **values**: 시계열 메트릭 값 리스트
-              - **dateTime**: 측정 시간 (UTC, ISO 8601 형식)
-              - **value**: 메트릭 값
-
-            **메트릭 타입:**
-            - **GPU_UTILIZATION**: GPU 사용률 (%)
-            - **GPU_MEMORY_UTILIZATION**: GPU 메모리 사용률 (%)
-            - **GPU_TEMPERATURE**: GPU 온도 (°C)
-            - **GPU_FAN_SPEED**: GPU 팬 속도 (%)
-            - **GPU_POWER_USAGE**: GPU 전력 사용량 (W)
+            각 메트릭별로 성공/실패 결과가 개별적으로 반환됩니다.
+            - 성공 시: `data` 필드에 GPU별 시계열 데이터 포함
+            - 실패 시: `error` 필드에 에러 타입 포함 (timeout, network_error, query_error)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
         
- * @summary 노드 GPU 메트릭 시계열 조회
+ * @summary 노드 GPU 메트릭 배치 조회
  */
 export const getNodeGpuMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
@@ -482,15 +771,23 @@ export const getNodeGpuMetricsQueryStepRegExp =
   /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
 
 export const getNodeGpuMetricsQueryParams = zod.object({
-  metricName: zod
-    .enum([
-      "GPU_UTILIZATION",
-      "GPU_MEMORY_UTILIZATION",
-      "GPU_TEMPERATURE",
-      "GPU_FAN_SPEED",
-      "GPU_POWER_USAGE",
-    ])
-    .describe("GPU 메트릭 타입"),
+  metrics: zod
+    .array(
+      zod
+        .enum([
+          "GPU_UTILIZATION",
+          "GPU_MEMORY_UTILIZATION",
+          "GPU_TEMPERATURE",
+          "GPU_FAN_SPEED",
+          "GPU_POWER_USAGE",
+        ])
+        .describe(
+          "\n            조회할 GPU 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - GPU_UTILIZATION: GPU 사용률 (%)\n            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)\n            - GPU_TEMPERATURE: GPU 온도 (°C)\n            - GPU_FAN_SPEED: GPU 팬 속도 (%)\n            - GPU_POWER_USAGE: GPU 전력 사용량 (W)\n        ",
+        ),
+    )
+    .describe(
+      "\n            조회할 GPU 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - GPU_UTILIZATION: GPU 사용률 (%)\n            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)\n            - GPU_TEMPERATURE: GPU 온도 (°C)\n            - GPU_FAN_SPEED: GPU 팬 속도 (%)\n            - GPU_POWER_USAGE: GPU 전력 사용량 (W)\n        ",
+    ),
   startedAt: zod
     .string()
     .datetime({})
@@ -507,33 +804,177 @@ export const getNodeGpuMetricsResponse = zod
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
     data: zod
-      .array(
-        zod
+      .object({
+        gpuUtilization: zod
           .object({
-            modelName: zod.string().describe("GPU 모델명"),
-            gpuIndex: zod.string().describe("GPU 인덱스"),
-            values: zod
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
               .array(
                 zod
                   .object({
-                    dateTime: zod
-                      .string()
-                      .describe("측정 시간 (UTC, ISO 8601 형식)"),
-                    value: zod
-                      .string()
-                      .describe(
-                        "메트릭 값 (사용률 %, 온도 °C, 팬속도 %, 전력 W)",
-                      ),
+                    modelName: zod.string().describe("GPU 모델명"),
+                    gpuIndex: zod.string().describe("GPU 인덱스"),
+                    values: zod
+                      .array(
+                        zod
+                          .object({
+                            dateTime: zod
+                              .string()
+                              .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("메트릭 측정값"),
+                      )
+                      .describe("시계열 메트릭 값 리스트"),
                   })
                   .strict()
-                  .describe("GPU 메트릭 값 응답"),
+                  .describe("GPU별 시계열 데이터"),
               )
-              .describe("시계열 메트릭 값 리스트"),
+              .optional()
+              .describe("GPU별 시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
           })
           .strict()
-          .describe("노드 GPU 메트릭 응답"),
-      )
-      .optional(),
+          .optional()
+          .describe("개별 메트릭 조회 결과"),
+        gpuMemoryUtilization: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    modelName: zod.string().describe("GPU 모델명"),
+                    gpuIndex: zod.string().describe("GPU 인덱스"),
+                    values: zod
+                      .array(
+                        zod
+                          .object({
+                            dateTime: zod
+                              .string()
+                              .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("메트릭 측정값"),
+                      )
+                      .describe("시계열 메트릭 값 리스트"),
+                  })
+                  .strict()
+                  .describe("GPU별 시계열 데이터"),
+              )
+              .optional()
+              .describe("GPU별 시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 메트릭 조회 결과"),
+        gpuTemperature: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    modelName: zod.string().describe("GPU 모델명"),
+                    gpuIndex: zod.string().describe("GPU 인덱스"),
+                    values: zod
+                      .array(
+                        zod
+                          .object({
+                            dateTime: zod
+                              .string()
+                              .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("메트릭 측정값"),
+                      )
+                      .describe("시계열 메트릭 값 리스트"),
+                  })
+                  .strict()
+                  .describe("GPU별 시계열 데이터"),
+              )
+              .optional()
+              .describe("GPU별 시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 메트릭 조회 결과"),
+        gpuFanSpeed: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    modelName: zod.string().describe("GPU 모델명"),
+                    gpuIndex: zod.string().describe("GPU 인덱스"),
+                    values: zod
+                      .array(
+                        zod
+                          .object({
+                            dateTime: zod
+                              .string()
+                              .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("메트릭 측정값"),
+                      )
+                      .describe("시계열 메트릭 값 리스트"),
+                  })
+                  .strict()
+                  .describe("GPU별 시계열 데이터"),
+              )
+              .optional()
+              .describe("GPU별 시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 메트릭 조회 결과"),
+        gpuPowerUsage: zod
+          .object({
+            status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
+            data: zod
+              .array(
+                zod
+                  .object({
+                    modelName: zod.string().describe("GPU 모델명"),
+                    gpuIndex: zod.string().describe("GPU 인덱스"),
+                    values: zod
+                      .array(
+                        zod
+                          .object({
+                            dateTime: zod
+                              .string()
+                              .describe("측정 시간 (UTC, ISO 8601 형식)"),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("메트릭 측정값"),
+                      )
+                      .describe("시계열 메트릭 값 리스트"),
+                  })
+                  .strict()
+                  .describe("GPU별 시계열 데이터"),
+              )
+              .optional()
+              .describe("GPU별 시계열 데이터 (성공 시)"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("개별 메트릭 조회 결과"),
+        isEmpty: zod.boolean(),
+      })
+      .strict()
+      .optional()
+      .describe("복수 GPU 메트릭 배치 조회 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

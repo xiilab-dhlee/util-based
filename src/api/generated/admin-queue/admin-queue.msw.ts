@@ -55,8 +55,10 @@ export const getGetUrgentStandbyWorkloadsResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
+    workloadId: faker.number.int({ min: undefined, max: undefined }),
     workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workspaceId: faker.number.int({ min: undefined, max: undefined }),
     workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workspaceResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     jobType: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -111,8 +113,10 @@ export const getGetUrgentActiveWorkloadsResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
+    workloadId: faker.number.int({ min: undefined, max: undefined }),
     workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workspaceId: faker.number.int({ min: undefined, max: undefined }),
     workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workspaceResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     jobType: faker.string.alpha({ length: { min: 10, max: 20 } }),

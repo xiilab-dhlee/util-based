@@ -13,6 +13,8 @@ import { getAccountNotificationMock } from "@/api/generated/account-notification
 import { getAdminAccountNotificationMock } from "@/api/generated/admin-account-notification/admin-account-notification.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationMock } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification.msw";
+import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
+import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { credentialHandlers } from "@/domain/credential/mocks";
@@ -130,6 +132,8 @@ const rawHandlers = [
   ...reportReservationHandlers,
   ...resourcePresetHandlers,
   ...storageHandlers,
+  ...getAdminQueueMock(),
+  ...getAdminWorkloadMock(),
 ];
 
 /**

@@ -26,6 +26,15 @@ importers:
       '@codemirror/theme-one-dark':
         specifier: ^6.1.3
         version: 6.1.3
+      '@dnd-kit/core':
+        specifier: ^6.3.1
+        version: 6.3.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@dnd-kit/sortable':
+        specifier: ^10.0.0
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@19.2.0)
       '@faker-js/faker':
         specifier: ^9.9.0
         version: 9.9.0
@@ -45,8 +54,8 @@ importers:
         specifier: 0.0.3-dev
         version: 0.0.3-dev
       '@xiilab/astrago-openapi-spec':
-        specifier: 0.0.46-dev
-        version: 0.0.46-dev
+        specifier: 0.0.51-dev
+        version: 0.0.51-dev
       '@xterm/addon-fit':
         specifier: ^0.10.0
         version: 0.10.0(@xterm/xterm@5.5.0)
@@ -1285,8 +1294,8 @@ packages:
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
 
-  '@xiilab/astrago-openapi-spec@0.0.46-dev':
-    resolution: {integrity: sha512-NVdnw4FGmCSmrAQLQ+LGgoKpjd1DqSdElKhzC4TP2sDLTL1afLwU8gg0DiewIFtOprGFEAg4eO3zhdi/AcE4XQ==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi-spec/0.0.46-dev/a19be3b7d4f17e6af21040491defcaf6bf796778}
+  '@xiilab/astrago-openapi-spec@0.0.51-dev':
+    resolution: {integrity: sha512-zUEqKXMsHMO2sha5danujBbIEElVBuXyp3Fapwc3lrPAGOZqE0vNyu9ZCIsOlFnqVarGR6NQFOhIWg+ouyqWRA==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi-spec/0.0.51-dev/f8124f679f863ff4ad52aa54f9f2912e57a61061}
 
   '@xiilab/astrago-openapi@0.0.3-dev':
     resolution: {integrity: sha512-jP/j+75186DoKou5lFW4xuFG+JkO+zqjOa3a3MKkaQt0ZxifEdKZ3ApPJuXE1Ct6KGgjo9Rk60ZgMurYrmHrRg==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi/0.0.3-dev/fb2026d967de0b6c32ef09523892986fe63dc556}
@@ -4894,7 +4903,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@xiilab/astrago-openapi-spec@0.0.46-dev': {}
+  '@xiilab/astrago-openapi-spec@0.0.51-dev': {}
 
   '@xiilab/astrago-openapi@0.0.3-dev':
     dependencies:
