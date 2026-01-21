@@ -49,7 +49,7 @@ function generateImageDisplayName(
     return `${namePrefix}-${sortableNum}`;
   }
 
-  return `${namePrefix}-${index + 1}`;
+  return `${namePrefix}-${index}`;
 }
 
 /**
@@ -143,6 +143,7 @@ function createRegistryListHandler<T>(
 
         return {
           ...baseItem,
+          imageId: globalIndex,
           imageDisplayName: generateImageDisplayName(
             globalIndex,
             keyword,

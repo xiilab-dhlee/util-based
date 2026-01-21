@@ -117,6 +117,7 @@ function createTagListHandler<T>(
         return {
           ...baseItem,
           harborArtifactId: globalIndex + 1,
+          imageTagId: globalIndex + 1,
           imageTagName: generateImageTagName(globalIndex, keyword),
           createDateTime: generateCreatedAt(globalIndex, sort, order),
           vulnerability: generateVulnerability(),
