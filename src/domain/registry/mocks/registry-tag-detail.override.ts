@@ -1,6 +1,10 @@
 import { faker } from "@faker-js/faker";
 
 import {
+  getGetPrivateImageTagDetailMockHandler,
+  getGetPrivateImageTagDetailResponseMock,
+} from "@/api/generated/private-registry/private-registry.msw";
+import {
   getGetPublicImageTagDetailMockHandler,
   getGetPublicImageTagDetailResponseMock,
 } from "@/api/generated/public-registry/public-registry.msw";
@@ -24,13 +28,32 @@ function generateVulnerability() {
   };
 }
 
-export const publicRegistryTagDetailOverrideHandlers = [
-  getGetPublicImageTagDetailMockHandler(async (info) => {
+/**
+ * 태그 상세 mock 핸들러 생성 팩토리
+ */
+function createTagDetailHandler<T>(
+  getMockHandler: (
+    handler: (info: { params: unknown }) => Promise<T>,
+  ) => ReturnType<typeof getGetPrivateImageTagDetailMockHandler>,
+  getResponseMock: (override?: {
+    data?: {
+      imageTagId: number;
+      imageTagName: string;
+      imageSizeByte: number;
+      scanStatus: string;
+      creatorName: string;
+      createdAt: string;
+      description: string;
+      vulnerability: ReturnType<typeof generateVulnerability>;
+    };
+  }) => T,
+) {
+  return getMockHandler(async (info) => {
     const { imageTagId } = info.params as {
       imageTagId: string;
     };
 
-    return getGetPublicImageTagDetailResponseMock({
+    return getResponseMock({
       data: {
         imageTagId: Number(imageTagId),
         imageTagName: `tag-${imageTagId}`,
@@ -46,5 +69,18 @@ export const publicRegistryTagDetailOverrideHandlers = [
         vulnerability: generateVulnerability(),
       },
     });
-  }),
+  });
+}
+
+export const registryTagDetailOverrideHandlers = [
+  // Private registry tag detail handler
+  createTagDetailHandler(
+    getGetPrivateImageTagDetailMockHandler,
+    getGetPrivateImageTagDetailResponseMock,
+  ),
+  // Public registry tag detail handler
+  createTagDetailHandler(
+    getGetPublicImageTagDetailMockHandler,
+    getGetPublicImageTagDetailResponseMock,
+  ),
 ];

@@ -10,6 +10,10 @@ import {
   getGetPrivateImageTagListResponseMock,
 } from "@/api/generated/private-registry/private-registry.msw";
 import {
+  getGetPublicImageTagListMockHandler,
+  getGetPublicImageTagListResponseMock,
+} from "@/api/generated/public-registry/public-registry.msw";
+import {
   DAY_IN_MS,
   MOCK_BASE_TIMESTAMP,
 } from "@/shared/constants/date.constant";
@@ -67,8 +71,23 @@ function generateCreatedAt(
   return new Date(baseTimestamp - index * DAY_IN_MS).toISOString();
 }
 
-export const privateRegistryTagListOverrideHandlers = [
-  getGetPrivateImageTagListMockHandler(async (info) => {
+/**
+ * 태그 목록 mock 핸들러 생성 팩토리
+ */
+function createTagListHandler<T>(
+  getMockHandler: (
+    handler: (info: { request: Request }) => Promise<T>,
+  ) => ReturnType<typeof getGetPrivateImageTagListMockHandler>,
+  getResponseMock: (override?: {
+    data?: {
+      totalSize: number;
+      totalPageNum: number;
+      currentPageNo: number;
+      content: ImageTagListResponse[];
+    };
+  }) => T,
+) {
+  return getMockHandler(async (info) => {
     const url = new URL(info.request.url);
     const keyword = url.searchParams.get("keyword") || "";
     const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
@@ -84,8 +103,10 @@ export const privateRegistryTagListOverrideHandlers = [
     const totalSize = pageSize * 3;
 
     // baseItem을 루프 외부에서 한 번만 생성 (성능 최적화)
-    const mockResponse = getGetPrivateImageTagListResponseMock();
-    const baseItem = mockResponse.data?.content?.[0];
+    const mockResponse = getResponseMock();
+    const baseItem = (
+      mockResponse as { data?: { content?: ImageTagListResponse[] } }
+    ).data?.content?.[0];
 
     // 검색/정렬 관련 필드만 오버라이드, 나머지는 faker 원본 사용
     const content: ImageTagListResponse[] = Array.from(
@@ -111,7 +132,7 @@ export const privateRegistryTagListOverrideHandlers = [
       },
     );
 
-    return getGetPrivateImageTagListResponseMock({
+    return getResponseMock({
       data: {
         totalSize,
         totalPageNum: Math.ceil(totalSize / pageSize),
@@ -119,5 +140,18 @@ export const privateRegistryTagListOverrideHandlers = [
         content,
       },
     });
-  }),
+  });
+}
+
+export const registryTagListOverrideHandlers = [
+  // Private registry tag list handler
+  createTagListHandler(
+    getGetPrivateImageTagListMockHandler,
+    getGetPrivateImageTagListResponseMock,
+  ),
+  // Public registry tag list handler
+  createTagListHandler(
+    getGetPublicImageTagListMockHandler,
+    getGetPublicImageTagListResponseMock,
+  ),
 ];
