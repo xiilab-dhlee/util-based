@@ -50,13 +50,25 @@ import type {
   BaseResponseDistributedPodResponse,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
+  BaseResponseWorkloadDeleteFilesResponse,
+  BaseResponseWorkloadFileListResponse,
   BaseResponseWorkloadStatusResponse,
   GetActiveWorkloadsParams,
   GetTerminatedWorkloadLogParams,
   GetTerminatedWorkloadsParams,
   SseEmitter,
   StreamWorkloadLogsParams,
+  WorkloadCompressFilesParams,
+  WorkloadCompressRequest,
+  WorkloadCreateFolderParams,
+  WorkloadCreateFolderRequest,
   WorkloadCreateRequest,
+  WorkloadDecompressFileParams,
+  WorkloadDecompressRequest,
+  WorkloadDeleteFilesParams,
+  WorkloadDeleteFilesRequest,
+  WorkloadListFilesParams,
+  WorkloadPreviewFileParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -151,6 +163,556 @@ export const useCreateWorkload = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateWorkloadMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드의 Pod 내에 새 폴더를 생성합니다.
+
+            **생성 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 폴더 생성 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **경로:**
+            - path: 생성할 폴더 경로 (절대경로 또는 상대경로)
+            - 루트("/") 경로에는 폴더 생성 불가
+            - 이미 존재하는 경로에는 폴더 생성 불가 (409 Conflict)
+        
+ * @summary 워크로드 폴더 생성
+ */
+export const workloadCreateFolder = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadCreateFolderRequest: WorkloadCreateFolderRequest,
+  params?: WorkloadCreateFolderParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/folders`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: workloadCreateFolderRequest,
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadCreateFolderMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof workloadCreateFolder>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadCreateFolderRequest;
+      params?: WorkloadCreateFolderParams;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof workloadCreateFolder>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadCreateFolderRequest;
+    params?: WorkloadCreateFolderParams;
+  },
+  TContext
+> => {
+  const mutationKey = ["workloadCreateFolder"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof workloadCreateFolder>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadCreateFolderRequest;
+      params?: WorkloadCreateFolderParams;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data, params } = props ?? {};
+
+    return workloadCreateFolder(
+      workspaceId,
+      workloadResourceName,
+      data,
+      params,
+    );
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WorkloadCreateFolderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof workloadCreateFolder>>
+>;
+export type WorkloadCreateFolderMutationBody = WorkloadCreateFolderRequest;
+export type WorkloadCreateFolderMutationError = unknown;
+
+/**
+ * @summary 워크로드 폴더 생성
+ */
+export const useWorkloadCreateFolder = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof workloadCreateFolder>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadCreateFolderRequest;
+        params?: WorkloadCreateFolderParams;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof workloadCreateFolder>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadCreateFolderRequest;
+    params?: WorkloadCreateFolderParams;
+  },
+  TContext
+> => {
+  const mutationOptions = getWorkloadCreateFolderMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일 또는 폴더를 삭제합니다.
+
+            **삭제 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 삭제 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **삭제 방식:**
+            - 부분 성공/실패를 허용하며, 각 경로별 삭제 결과를 반환
+            - 일부 경로 삭제 실패 시에도 나머지 경로는 계속 삭제 시도
+            - 폴더 삭제 시 하위 파일/폴더도 함께 삭제됨 (재귀 삭제)
+
+            **응답:**
+            - status: 전체 성공 시 SUCCESS, 부분 실패 시 FAIL
+            - totalRequested: 삭제 요청한 총 개수
+            - successCount: 삭제 성공한 개수
+            - failureCount: 삭제 실패한 개수
+            - failures: 삭제 실패 상세 (경로, 사유)
+        
+ * @summary 워크로드 파일/폴더 삭제
+ */
+export const workloadDeleteFiles = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadDeleteFilesRequest: WorkloadDeleteFilesRequest,
+  params?: WorkloadDeleteFilesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadDeleteFilesResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/files/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: workloadDeleteFilesRequest,
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadDeleteFilesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof workloadDeleteFiles>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadDeleteFilesRequest;
+      params?: WorkloadDeleteFilesParams;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof workloadDeleteFiles>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadDeleteFilesRequest;
+    params?: WorkloadDeleteFilesParams;
+  },
+  TContext
+> => {
+  const mutationKey = ["workloadDeleteFiles"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof workloadDeleteFiles>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadDeleteFilesRequest;
+      params?: WorkloadDeleteFilesParams;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data, params } = props ?? {};
+
+    return workloadDeleteFiles(workspaceId, workloadResourceName, data, params);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WorkloadDeleteFilesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof workloadDeleteFiles>>
+>;
+export type WorkloadDeleteFilesMutationBody = WorkloadDeleteFilesRequest;
+export type WorkloadDeleteFilesMutationError = unknown;
+
+/**
+ * @summary 워크로드 파일/폴더 삭제
+ */
+export const useWorkloadDeleteFiles = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof workloadDeleteFiles>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadDeleteFilesRequest;
+        params?: WorkloadDeleteFilesParams;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof workloadDeleteFiles>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadDeleteFilesRequest;
+    params?: WorkloadDeleteFilesParams;
+  },
+  TContext
+> => {
+  const mutationOptions = getWorkloadDeleteFilesMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 압축 파일을 해제합니다.
+            압축 해제는 백그라운드에서 비동기로 실행됩니다.
+
+            **압축 해제 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 압축 해제 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **제약 사항:**
+            - 압축 파일이 존재해야 함 (없으면 404 에러)
+            - 지원되는 압축 형식: .tar.gz, .tgz, .tar, .zip
+
+            **압축 해제 경로:**
+            - 압축 파일명에서 확장자를 제거한 이름의 폴더로 해제
+            - 예: /workspace/archive.tar.gz → /workspace/archive 폴더 생성
+            - 동일 이름의 폴더가 존재하면 _1, _2 ... 형식으로 자동 증가
+            - 예: archive 폴더 존재 시 → archive_1 폴더 생성
+
+            **비동기 처리:**
+            - API는 압축 해제 시작 여부만 확인하고 즉시 응답을 반환합니다 (202 Accepted)
+            - 대용량 파일의 경우 압축 해제 완료까지 시간이 걸릴 수 있습니다
+            - 파일 목록 조회 API로 압축 해제 폴더 생성 여부를 확인하세요
+        
+ * @summary 워크로드 파일 압축 해제
+ */
+export const workloadDecompressFile = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadDecompressRequest: WorkloadDecompressRequest,
+  params?: WorkloadDecompressFileParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/decompress`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: workloadDecompressRequest,
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadDecompressFileMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof workloadDecompressFile>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadDecompressRequest;
+      params?: WorkloadDecompressFileParams;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof workloadDecompressFile>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadDecompressRequest;
+    params?: WorkloadDecompressFileParams;
+  },
+  TContext
+> => {
+  const mutationKey = ["workloadDecompressFile"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof workloadDecompressFile>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadDecompressRequest;
+      params?: WorkloadDecompressFileParams;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data, params } = props ?? {};
+
+    return workloadDecompressFile(
+      workspaceId,
+      workloadResourceName,
+      data,
+      params,
+    );
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WorkloadDecompressFileMutationResult = NonNullable<
+  Awaited<ReturnType<typeof workloadDecompressFile>>
+>;
+export type WorkloadDecompressFileMutationBody = WorkloadDecompressRequest;
+export type WorkloadDecompressFileMutationError = unknown;
+
+/**
+ * @summary 워크로드 파일 압축 해제
+ */
+export const useWorkloadDecompressFile = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof workloadDecompressFile>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadDecompressRequest;
+        params?: WorkloadDecompressFileParams;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof workloadDecompressFile>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadDecompressRequest;
+    params?: WorkloadDecompressFileParams;
+  },
+  TContext
+> => {
+  const mutationOptions = getWorkloadDecompressFileMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일/폴더를 압축합니다.
+            압축은 백그라운드에서 비동기로 실행됩니다.
+
+            **압축 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 압축 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **제약 사항:**
+            - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+            - 동일한 경로에 동일한 이름의 압축 파일이 이미 존재하면 409 Conflict 에러
+
+            **압축 형식:**
+            - TAR: .tar.gz 형식
+            - ZIP: .zip 형식
+
+            **저장 경로:**
+            - destinationPath: 저장 경로와 파일명을 포함 (확장자 제외)
+            - 예: "/workspace/backup/archive" → /workspace/backup/archive.tar.gz 또는 .zip
+
+            **비동기 처리:**
+            - API는 압축 시작 여부만 확인하고 즉시 응답을 반환합니다 (202 Accepted)
+            - 대용량 파일의 경우 압축 완료까지 시간이 걸릴 수 있습니다
+            - 파일 목록 조회 API로 압축 파일 생성 여부를 확인하세요
+        
+ * @summary 워크로드 파일 압축
+ */
+export const workloadCompressFiles = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadCompressRequest: WorkloadCompressRequest,
+  params?: WorkloadCompressFilesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/compress`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: workloadCompressRequest,
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadCompressFilesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof workloadCompressFiles>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadCompressRequest;
+      params?: WorkloadCompressFilesParams;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof workloadCompressFiles>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadCompressRequest;
+    params?: WorkloadCompressFilesParams;
+  },
+  TContext
+> => {
+  const mutationKey = ["workloadCompressFiles"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof workloadCompressFiles>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadCompressRequest;
+      params?: WorkloadCompressFilesParams;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data, params } = props ?? {};
+
+    return workloadCompressFiles(
+      workspaceId,
+      workloadResourceName,
+      data,
+      params,
+    );
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WorkloadCompressFilesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof workloadCompressFiles>>
+>;
+export type WorkloadCompressFilesMutationBody = WorkloadCompressRequest;
+export type WorkloadCompressFilesMutationError = unknown;
+
+/**
+ * @summary 워크로드 파일 압축
+ */
+export const useWorkloadCompressFiles = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof workloadCompressFiles>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadCompressRequest;
+        params?: WorkloadCompressFilesParams;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof workloadCompressFiles>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadCompressRequest;
+    params?: WorkloadCompressFilesParams;
+  },
+  TContext
+> => {
+  const mutationOptions = getWorkloadCompressFilesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -746,6 +1308,421 @@ export function useStreamWorkloadLogs<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getStreamWorkloadLogsQueryOptions(
+    workspaceId,
+    workloadResourceName,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일 및 폴더 목록을 조회합니다.
+
+            **조회 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 조회 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **경로:**
+            - path: 조회할 경로 (기본값: /)
+        
+ * @summary 워크로드 파일 목록 조회
+ */
+export const workloadListFiles = (
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: WorkloadListFilesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadFileListResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/files`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadListFilesQueryKey = (
+  workspaceId?: number,
+  workloadResourceName?: string,
+  params?: WorkloadListFilesParams,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/files`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getWorkloadListFilesQueryOptions = <
+  TData = Awaited<ReturnType<typeof workloadListFiles>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: WorkloadListFilesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadListFiles>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getWorkloadListFilesQueryKey(workspaceId, workloadResourceName, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof workloadListFiles>>
+  > = ({ signal }) =>
+    workloadListFiles(workspaceId, workloadResourceName, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!(workspaceId && workloadResourceName),
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof workloadListFiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type WorkloadListFilesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof workloadListFiles>>
+>;
+export type WorkloadListFilesQueryError = unknown;
+
+export function useWorkloadListFiles<
+  TData = Awaited<ReturnType<typeof workloadListFiles>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params: undefined | WorkloadListFilesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadListFiles>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof workloadListFiles>>,
+          TError,
+          Awaited<ReturnType<typeof workloadListFiles>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useWorkloadListFiles<
+  TData = Awaited<ReturnType<typeof workloadListFiles>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: WorkloadListFilesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadListFiles>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof workloadListFiles>>,
+          TError,
+          Awaited<ReturnType<typeof workloadListFiles>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useWorkloadListFiles<
+  TData = Awaited<ReturnType<typeof workloadListFiles>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: WorkloadListFilesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadListFiles>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 파일 목록 조회
+ */
+
+export function useWorkloadListFiles<
+  TData = Awaited<ReturnType<typeof workloadListFiles>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: WorkloadListFilesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadListFiles>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getWorkloadListFilesQueryOptions(
+    workspaceId,
+    workloadResourceName,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 텍스트 또는 이미지 파일을 미리보기합니다.
+
+            **미리보기 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 미리보기 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **지원 파일 형식:**
+            - 텍스트: txt, log, md, json, yaml, yml, xml, csv, sh, bash, py, js, ts, java, kt, kts, go
+            - 이미지: png, jpg, jpeg, gif, webp, svg, bmp
+
+            **크기 제한:**
+            - 텍스트: 1MB
+            - 이미지: 10MB
+
+            **응답:**
+            - 200 OK: 미리보기 가능 (Content-Type 동적 설정)
+            - 204 No Content: 미리보기 불가 (권한 없음, 파일 없음, 미지원 타입, 디렉토리, 크기 초과)
+        
+ * @summary 워크로드 파일 미리보기
+ */
+export const workloadPreviewFile = (
+  workspaceId: number,
+  workloadResourceName: string,
+  params: WorkloadPreviewFileParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<string>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/files/preview`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadPreviewFileQueryKey = (
+  workspaceId?: number,
+  workloadResourceName?: string,
+  params?: WorkloadPreviewFileParams,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/files/preview`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getWorkloadPreviewFileQueryOptions = <
+  TData = Awaited<ReturnType<typeof workloadPreviewFile>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params: WorkloadPreviewFileParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadPreviewFile>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getWorkloadPreviewFileQueryKey(workspaceId, workloadResourceName, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof workloadPreviewFile>>
+  > = ({ signal }) =>
+    workloadPreviewFile(workspaceId, workloadResourceName, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!(workspaceId && workloadResourceName),
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof workloadPreviewFile>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type WorkloadPreviewFileQueryResult = NonNullable<
+  Awaited<ReturnType<typeof workloadPreviewFile>>
+>;
+export type WorkloadPreviewFileQueryError = unknown;
+
+export function useWorkloadPreviewFile<
+  TData = Awaited<ReturnType<typeof workloadPreviewFile>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params: WorkloadPreviewFileParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadPreviewFile>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof workloadPreviewFile>>,
+          TError,
+          Awaited<ReturnType<typeof workloadPreviewFile>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useWorkloadPreviewFile<
+  TData = Awaited<ReturnType<typeof workloadPreviewFile>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params: WorkloadPreviewFileParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadPreviewFile>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof workloadPreviewFile>>,
+          TError,
+          Awaited<ReturnType<typeof workloadPreviewFile>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useWorkloadPreviewFile<
+  TData = Awaited<ReturnType<typeof workloadPreviewFile>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params: WorkloadPreviewFileParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadPreviewFile>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 파일 미리보기
+ */
+
+export function useWorkloadPreviewFile<
+  TData = Awaited<ReturnType<typeof workloadPreviewFile>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params: WorkloadPreviewFileParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof workloadPreviewFile>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getWorkloadPreviewFileQueryOptions(
     workspaceId,
     workloadResourceName,
     params,

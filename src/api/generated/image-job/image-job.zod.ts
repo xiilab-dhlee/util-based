@@ -107,6 +107,9 @@ export const getImageJobsResponse = zod
               creatorId: zod.string().describe("생성자 ID"),
               creatorName: zod.string().optional().describe("생성자 이름"),
               status: zod.string().describe("작업 상태"),
+              imageSourceType: zod
+                .enum(["SNAPSHOT", "EXTERNAL"])
+                .describe("이미지 소스 타입"),
               createdAt: zod
                 .string()
                 .datetime({})

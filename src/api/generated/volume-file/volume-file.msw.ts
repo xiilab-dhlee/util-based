@@ -32,12 +32,12 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-  BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
-  BaseResponseVolumeDetailResponse,
+  BaseResponseVolumeFileListResponse,
+  StreamingResponseBody,
 } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getUpdateVolumeResponseMock = (
+export const getCreateFolderResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
@@ -47,7 +47,9 @@ export const getUpdateVolumeResponseMock = (
   ...overrideResponse,
 });
 
-export const getRegisterOnPremiseVolumeResponseMock = (
+export const getDownloadFilesResponseMock = (): StreamingResponseBody => ({});
+
+export const getDecompressFileResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
@@ -57,7 +59,7 @@ export const getRegisterOnPremiseVolumeResponseMock = (
   ...overrideResponse,
 });
 
-export const getRegisterAstragoVolumeResponseMock = (
+export const getCompressFilesResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
@@ -67,73 +69,41 @@ export const getRegisterAstragoVolumeResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetVolumeListResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseVolumeListResponse> = {},
-): BaseResponsePageResponseVolumeListResponse => ({
+export const getListFilesResponseMock = (
+  overrideResponse: Partial<BaseResponseVolumeFileListResponse> = {},
+): BaseResponseVolumeFileListResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
-    totalSize: faker.number.int({ min: undefined, max: undefined }),
-    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
-    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
-    content: Array.from(
+    children: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      volumeId: faker.number.int({ min: undefined, max: undefined }),
-      volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
-      volumeType: faker.helpers.arrayElement([
-        "ASTRAGO",
-        "ON_PREMISE",
-      ] as const),
-      mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      fileSizeByte: faker.number.int({ min: undefined, max: undefined }),
-      isPublic: faker.datatype.boolean(),
+      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      type: faker.helpers.arrayElement(["FILE", "DIRECTORY"] as const),
+      path: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      size: faker.number.int({ min: undefined, max: undefined }),
     })),
+    directoryCount: faker.number.int({ min: undefined, max: undefined }),
+    fileCount: faker.number.int({ min: undefined, max: undefined }),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
 
-export const getGetVolumeDetailResponseMock = (
-  overrideResponse: Partial<BaseResponseVolumeDetailResponse> = {},
-): BaseResponseVolumeDetailResponse => ({
-  status: "SUCCESS",
-  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: {
-    volumeId: faker.number.int({ min: undefined, max: undefined }),
-    volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    volumeType: faker.helpers.arrayElement(["ASTRAGO", "ON_PREMISE"] as const),
-    serverIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    volumePath: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    storageId: faker.number.int({ min: undefined, max: undefined }),
-    storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    fileSizeByte: faker.number.int({ min: undefined, max: undefined }),
-    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
-    isPublic: faker.datatype.boolean(),
-  },
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
+export const getPreviewFileResponseMock = (): string => faker.word.sample();
 
-export const getUpdateVolumeMockHandler = (
+export const getCreateFolderMockHandler = (
   overrideResponse?:
     | BaseResponseUnit
     | ((
-        info: Parameters<Parameters<typeof http.put>[1]>[0],
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) => Promise<BaseResponseUnit> | BaseResponseUnit),
   options?: RequestHandlerOptions,
 ) => {
-  return http.put(
-    "*/api/v1/volumes/:volumeId",
+  return http.post(
+    "*/api/v1/volumes/:volumeId/folders",
     async (info) => {
       await delay(1000);
 
@@ -143,7 +113,35 @@ export const getUpdateVolumeMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getUpdateVolumeResponseMock(),
+            : getCreateFolderResponseMock(),
+        ),
+        { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getDownloadFilesMockHandler = (
+  overrideResponse?:
+    | StreamingResponseBody
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<StreamingResponseBody> | StreamingResponseBody),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/volumes/:volumeId/files/download",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getDownloadFilesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -152,16 +150,16 @@ export const getUpdateVolumeMockHandler = (
   );
 };
 
-export const getDeleteVolumeMockHandler = (
+export const getDeleteFilesMockHandler = (
   overrideResponse?:
     | void
     | ((
-        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) => Promise<void> | void),
   options?: RequestHandlerOptions,
 ) => {
-  return http.delete(
-    "*/api/v1/volumes/:volumeId",
+  return http.post(
+    "*/api/v1/volumes/:volumeId/files/delete",
     async (info) => {
       await delay(1000);
       if (typeof overrideResponse === "function") {
@@ -173,7 +171,7 @@ export const getDeleteVolumeMockHandler = (
   );
 };
 
-export const getRegisterOnPremiseVolumeMockHandler = (
+export const getDecompressFileMockHandler = (
   overrideResponse?:
     | BaseResponseUnit
     | ((
@@ -182,7 +180,7 @@ export const getRegisterOnPremiseVolumeMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    "*/api/v1/volumes/on-premise",
+    "*/api/v1/volumes/:volumeId/decompress",
     async (info) => {
       await delay(1000);
 
@@ -192,16 +190,16 @@ export const getRegisterOnPremiseVolumeMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getRegisterOnPremiseVolumeResponseMock(),
+            : getDecompressFileResponseMock(),
         ),
-        { status: 201, headers: { "Content-Type": "application/json" } },
+        { status: 202, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
   );
 };
 
-export const getRegisterAstragoVolumeMockHandler = (
+export const getCompressFilesMockHandler = (
   overrideResponse?:
     | BaseResponseUnit
     | ((
@@ -210,7 +208,7 @@ export const getRegisterAstragoVolumeMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    "*/api/v1/volumes/astrago",
+    "*/api/v1/volumes/:volumeId/compress",
     async (info) => {
       await delay(1000);
 
@@ -220,27 +218,27 @@ export const getRegisterAstragoVolumeMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getRegisterAstragoVolumeResponseMock(),
+            : getCompressFilesResponseMock(),
         ),
-        { status: 201, headers: { "Content-Type": "application/json" } },
+        { status: 202, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
   );
 };
 
-export const getGetVolumeListMockHandler = (
+export const getListFilesMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseVolumeListResponse
+    | BaseResponseVolumeFileListResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseVolumeListResponse>
-        | BaseResponsePageResponseVolumeListResponse),
+        | Promise<BaseResponseVolumeFileListResponse>
+        | BaseResponseVolumeFileListResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/volumes",
+    "*/api/v1/volumes/:volumeId/files",
     async (info) => {
       await delay(1000);
 
@@ -250,7 +248,7 @@ export const getGetVolumeListMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetVolumeListResponseMock(),
+            : getListFilesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -259,18 +257,16 @@ export const getGetVolumeListMockHandler = (
   );
 };
 
-export const getGetVolumeDetailMockHandler = (
+export const getPreviewFileMockHandler = (
   overrideResponse?:
-    | BaseResponseVolumeDetailResponse
+    | string
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponseVolumeDetailResponse>
-        | BaseResponseVolumeDetailResponse),
+      ) => Promise<string> | string),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/volumes/:volumeId/detail",
+    "*/api/v1/volumes/:volumeId/files/preview",
     async (info) => {
       await delay(1000);
 
@@ -280,7 +276,7 @@ export const getGetVolumeDetailMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetVolumeDetailResponseMock(),
+            : getPreviewFileResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -288,11 +284,12 @@ export const getGetVolumeDetailMockHandler = (
     options,
   );
 };
-export const getVolumeMock = () => [
-  getUpdateVolumeMockHandler(),
-  getDeleteVolumeMockHandler(),
-  getRegisterOnPremiseVolumeMockHandler(),
-  getRegisterAstragoVolumeMockHandler(),
-  getGetVolumeListMockHandler(),
-  getGetVolumeDetailMockHandler(),
+export const getVolumeFileMock = () => [
+  getCreateFolderMockHandler(),
+  getDownloadFilesMockHandler(),
+  getDeleteFilesMockHandler(),
+  getDecompressFileMockHandler(),
+  getCompressFilesMockHandler(),
+  getListFilesMockHandler(),
+  getPreviewFileMockHandler(),
 ];

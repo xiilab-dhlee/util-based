@@ -49,12 +49,7 @@ export const updateUrgentStandbyOrderBody = zod
               .min(1)
               .max(updateUrgentStandbyOrderBodyQueueOrderItemItemRankMax)
               .describe("우선순위 (1~5, 낮을수록 높은 우선순위)"),
-            workspaceResourceName: zod
-              .string()
-              .describe("워크스페이스 리소스명 (K8s 네임스페이스)"),
-            workloadResourceName: zod
-              .string()
-              .describe("워크로드 리소스명 (K8s 리소스명)"),
+            workloadId: zod.number().min(1).describe("워크로드 ID"),
           })
           .strict()
           .describe("큐 순서 변경 항목"),
@@ -87,10 +82,12 @@ export const getUrgentStandbyWorkloadsResponse = zod
       .array(
         zod
           .object({
+            workloadId: zod.number().describe("워크로드 ID"),
             workloadName: zod.string().describe("워크로드 이름 (사용자 지정)"),
             workloadResourceName: zod
               .string()
               .describe("워크로드 리소스명 (K8s 리소스명)"),
+            workspaceId: zod.number().describe("워크스페이스 ID"),
             workspaceName: zod.string().describe("워크스페이스 이름"),
             workspaceResourceName: zod
               .string()
@@ -168,14 +165,10 @@ export const getUrgentStandbyWorkloadsResponse = zod
  * Pending 상태의 워크로드를 urgent-standby 큐에 추가합니다. 최대 5개까지 등록 가능합니다.
  * @summary 긴급 대기큐에 워크로드 추가
  */
+
 export const addWorkloadToUrgentStandbyBody = zod
   .object({
-    workspaceResourceName: zod
-      .string()
-      .describe("워크스페이스 리소스명 (K8s 네임스페이스)"),
-    workloadResourceName: zod
-      .string()
-      .describe("워크로드 리소스명 (K8s 리소스명)"),
+    workloadId: zod.number().min(1).describe("워크로드 ID"),
   })
   .strict()
   .describe("긴급 큐 워크로드 추가 요청");
@@ -192,10 +185,12 @@ export const getUrgentActiveWorkloadsResponse = zod
       .array(
         zod
           .object({
+            workloadId: zod.number().describe("워크로드 ID"),
             workloadName: zod.string().describe("워크로드 이름 (사용자 지정)"),
             workloadResourceName: zod
               .string()
               .describe("워크로드 리소스명 (K8s 리소스명)"),
+            workspaceId: zod.number().describe("워크스페이스 ID"),
             workspaceName: zod.string().describe("워크스페이스 이름"),
             workspaceResourceName: zod
               .string()
