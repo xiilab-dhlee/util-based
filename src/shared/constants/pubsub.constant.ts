@@ -289,6 +289,12 @@ export const RESOURCE_PRESET_EVENTS = {
   sendDeleteResourcePreset: "resource-preset:send-delete-resource-preset",
 } as const;
 
+// 스케줄링 큐 관련 이벤트
+export const SCHEDULING_QUEUE_EVENTS = {
+  // 긴급 대기열 삭제 모달 열기 이벤트
+  openDeleteUrgentQueueModal: "scheduling-queue:open-delete-urgent-queue-modal",
+} as const;
+
 // 공통 이벤트
 export const COMMON_EVENTS = {
   // 공통 취약점 모달에 필요한 정보 전달 이벤트

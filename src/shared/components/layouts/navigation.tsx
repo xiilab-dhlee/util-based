@@ -86,15 +86,15 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         icon: <Icon name={PAGE_META["admin.account-management"]?.iconName} />,
       },
       {
+        key: "admin.scheduling-queue",
+        label: PAGE_META["admin.scheduling-queue"]?.title,
+        icon: <Icon name={PAGE_META["admin.scheduling-queue"]?.iconName} />,
+      },
+      {
         key: "admin.node",
         label: PAGE_META["admin.node"]?.title,
         icon: <Icon name={PAGE_META["admin.node"]?.iconName} />,
       },
-      // {
-      //   key: "schedule",
-      //   label: "스케쥴링 큐 관리",
-      //   icon: "Calendar",
-      // },
       {
         key: "security-root",
         label: "보안 관리",
