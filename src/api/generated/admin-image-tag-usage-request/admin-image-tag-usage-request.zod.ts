@@ -60,6 +60,36 @@ export const rejectUsageRequestResponse = zod
   .strict();
 
 /**
+ * 해당 요청을 결정한 관리자 또는 슈퍼 관리자만 결정 사유를 수정할 수 있습니다.
+ * @summary 이미지 태그 사용 요청 결정 사유 수정
+ */
+export const updateDecisionReasonParams = zod.object({
+  usageRequestId: zod.number().describe("이미지 태그 사용 요청 ID"),
+});
+
+export const updateDecisionReasonBodyDecisionReasonMax = 2000;
+
+export const updateDecisionReasonBody = zod
+  .object({
+    decisionReason: zod
+      .string()
+      .min(1)
+      .max(updateDecisionReasonBodyDecisionReasonMax)
+      .describe("결정 사유 (필수, 최대 2000자)"),
+  })
+  .strict()
+  .describe("이미지 태그 사용 요청 결정 사유 수정");
+
+export const updateDecisionReasonResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 관리자가 이미지 태그 사용 요청을 승인합니다.
  * @summary 이미지 태그 사용 요청 승인
  */
@@ -204,6 +234,119 @@ export const getUsageRequestListResponse = zod
       })
       .strict()
       .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            승인 대기 중인 이미지 태그 사용 요청 목록을 조회합니다.
+            - 이미지명, 태그명, 요청자명으로 검색할 수 있습니다.
+            - 이미지명, 태그명, 보안검사결과, 이미지타입, 요청자명으로 정렬 가능합니다.
+        
+ * @summary 이미지 태그 사용 요청 승인 대기 목록 조회
+ */
+export const getApprovalWaitingSummaryListQueryPageNoMin = 0;
+
+export const getApprovalWaitingSummaryListQueryPageSizeMax = 100;
+
+export const getApprovalWaitingSummaryListQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getApprovalWaitingSummaryListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getApprovalWaitingSummaryListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  imageType: zod
+    .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+    .optional()
+    .describe("이미지 타입 (PUBLIC/PRIVATE, 미지정 시 전체)"),
+  sort: zod
+    .enum([
+      "IMAGE_NAME",
+      "IMAGE_TAG_NAME",
+      "SECURITY_SCAN_RESULT",
+      "IMAGE_TYPE",
+      "CREATOR_NAME",
+    ])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+});
+
+export const getApprovalWaitingSummaryListResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              usageRequestId: zod.number().describe("사용 요청 ID"),
+              imageTagId: zod.number().describe("이미지 태그 ID"),
+              imageTagName: zod.string().describe("이미지 태그명"),
+              harborImageName: zod.string().describe("Harbor 이미지명"),
+              imageDisplayName: zod
+                .string()
+                .optional()
+                .describe("이미지 표시명"),
+              imageType: zod
+                .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+                .optional()
+                .describe("이미지 타입"),
+              vulnerability: zod
+                .object({
+                  criticalCount: zod.number().describe("치명적 취약점 수"),
+                  highCount: zod.number().describe("높음 취약점 수"),
+                  mediumCount: zod.number().describe("중간 취약점 수"),
+                  lowCount: zod.number().describe("낮음 취약점 수"),
+                  totalCount: zod.number().describe("전체 취약점 수"),
+                })
+                .strict()
+                .optional()
+                .describe("취약점 정보"),
+              creatorId: zod.string().describe("요청자 ID"),
+              creatorName: zod.string().optional().describe("요청자명"),
+            })
+            .strict()
+            .describe("이미지 태그 사용 요청 승인 대기 목록 요약 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 이미지 태그 사용 요청의 승인 상태별 개수를 조회합니다.
+ * @summary 이미지 태그 사용 요청 승인 상태 요약 조회
+ */
+export const getApprovalStatusSummaryResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        approved: zod.number().describe("승인된 요청 수"),
+        approvalWaiting: zod.number().describe("승인 대기 중인 요청 수"),
+        rejected: zod.number().describe("반려된 요청 수"),
+      })
+      .strict()
+      .optional()
+      .describe("이미지 태그 사용 요청 승인 상태 요약 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

@@ -32,11 +32,11 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseBatchGpuMetricResponse,
+  BaseResponseBatchSystemMetricResponse,
   BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
   BaseResponseClusterResourceSummaryResponse,
-  BaseResponseListNodeGpuMetricResponse,
-  BaseResponseListNodeSystemMetricResponse,
   BaseResponseListString,
   BaseResponseMigConfigurationResponse,
   BaseResponsePageResponseClusterNodeListResponse,
@@ -188,41 +188,259 @@ export const getGetNodeSystemResourceResponseMock = (
 });
 
 export const getGetNodeSystemMetricsResponseMock = (
-  overrideResponse: Partial<BaseResponseListNodeSystemMetricResponse> = {},
-): BaseResponseListNodeSystemMetricResponse => ({
+  overrideResponse: Partial<BaseResponseBatchSystemMetricResponse> = {},
+): BaseResponseBatchSystemMetricResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    value: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  })),
+  data: {
+    cpuTemperature: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    cpuUtilization: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    cpuLoadAverage: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    nodeNetworkReceive: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    nodeNetworkTransmit: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    diskRead: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    diskWrite: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    diskUsage: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    memoryUtilization: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    nodeMemoryBuffers: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    nodeMemoryCached: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    nodeMemoryTotal: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    nodeMemoryFree: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    isEmpty: faker.datatype.boolean(),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
 
 export const getGetNodeGpuMetricsResponseMock = (
-  overrideResponse: Partial<BaseResponseListNodeGpuMetricResponse> = {},
-): BaseResponseListNodeGpuMetricResponse => ({
+  overrideResponse: Partial<BaseResponseBatchGpuMetricResponse> = {},
+): BaseResponseBatchGpuMetricResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    values: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      value: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-  })),
+  data: {
+    gpuUtilization: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        values: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    gpuMemoryUtilization: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        values: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    gpuTemperature: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        values: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    gpuFanSpeed: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        values: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    gpuPowerUsage: {
+      status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
+      data: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        values: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          dateTime: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    },
+    isEmpty: faker.datatype.boolean(),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -541,12 +759,12 @@ export const getGetNodeSystemResourceMockHandler = (
 
 export const getGetNodeSystemMetricsMockHandler = (
   overrideResponse?:
-    | BaseResponseListNodeSystemMetricResponse
+    | BaseResponseBatchSystemMetricResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponseListNodeSystemMetricResponse>
-        | BaseResponseListNodeSystemMetricResponse),
+        | Promise<BaseResponseBatchSystemMetricResponse>
+        | BaseResponseBatchSystemMetricResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
@@ -571,12 +789,12 @@ export const getGetNodeSystemMetricsMockHandler = (
 
 export const getGetNodeGpuMetricsMockHandler = (
   overrideResponse?:
-    | BaseResponseListNodeGpuMetricResponse
+    | BaseResponseBatchGpuMetricResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponseListNodeGpuMetricResponse>
-        | BaseResponseListNodeGpuMetricResponse),
+        | Promise<BaseResponseBatchGpuMetricResponse>
+        | BaseResponseBatchGpuMetricResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(

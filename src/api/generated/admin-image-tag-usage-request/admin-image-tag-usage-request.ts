@@ -46,10 +46,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse,
   BaseResponsePageResponseImageTagUsageRequestResponse,
+  BaseResponsePageResponseImageTagUsageRequestSummaryResponse,
   BaseResponseUnit,
+  GetApprovalWaitingSummaryListParams,
   GetUsageRequestListParams,
   ImageTagUsageRequestApprovalRequest,
+  ImageTagUsageRequestDecisionReasonRequest,
   ImageTagUsageRequestRejectRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -132,6 +136,92 @@ export const useRejectUsageRequest = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getRejectUsageRequestMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 해당 요청을 결정한 관리자 또는 슈퍼 관리자만 결정 사유를 수정할 수 있습니다.
+ * @summary 이미지 태그 사용 요청 결정 사유 수정
+ */
+export const updateDecisionReason = (
+  usageRequestId: number,
+  imageTagUsageRequestDecisionReasonRequest: ImageTagUsageRequestDecisionReasonRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/admin/registries/images/image-tags/usage-requests/${usageRequestId}/decision-reason`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: imageTagUsageRequestDecisionReasonRequest,
+  });
+};
+
+export const getUpdateDecisionReasonMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateDecisionReason>>,
+    TError,
+    { usageRequestId: number; data: ImageTagUsageRequestDecisionReasonRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateDecisionReason>>,
+  TError,
+  { usageRequestId: number; data: ImageTagUsageRequestDecisionReasonRequest },
+  TContext
+> => {
+  const mutationKey = ["updateDecisionReason"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateDecisionReason>>,
+    { usageRequestId: number; data: ImageTagUsageRequestDecisionReasonRequest }
+  > = (props) => {
+    const { usageRequestId, data } = props ?? {};
+
+    return updateDecisionReason(usageRequestId, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateDecisionReasonMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateDecisionReason>>
+>;
+export type UpdateDecisionReasonMutationBody =
+  ImageTagUsageRequestDecisionReasonRequest;
+export type UpdateDecisionReasonMutationError = unknown;
+
+/**
+ * @summary 이미지 태그 사용 요청 결정 사유 수정
+ */
+export const useUpdateDecisionReason = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateDecisionReason>>,
+      TError,
+      {
+        usageRequestId: number;
+        data: ImageTagUsageRequestDecisionReasonRequest;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateDecisionReason>>,
+  TError,
+  { usageRequestId: number; data: ImageTagUsageRequestDecisionReasonRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateDecisionReasonMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -378,6 +468,333 @@ export function useGetUsageRequestList<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetUsageRequestListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            승인 대기 중인 이미지 태그 사용 요청 목록을 조회합니다.
+            - 이미지명, 태그명, 요청자명으로 검색할 수 있습니다.
+            - 이미지명, 태그명, 보안검사결과, 이미지타입, 요청자명으로 정렬 가능합니다.
+        
+ * @summary 이미지 태그 사용 요청 승인 대기 목록 조회
+ */
+export const getApprovalWaitingSummaryList = (
+  params?: GetApprovalWaitingSummaryListParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseImageTagUsageRequestSummaryResponse>(
+    {
+      url: `/api/v1/admin/registries/images/image-tags/usage-requests/approval-waiting`,
+      method: "GET",
+      params,
+      signal,
+    },
+  );
+};
+
+export const getGetApprovalWaitingSummaryListQueryKey = (
+  params?: GetApprovalWaitingSummaryListParams,
+) => {
+  return [
+    `/api/v1/admin/registries/images/image-tags/usage-requests/approval-waiting`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetApprovalWaitingSummaryListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetApprovalWaitingSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApprovalWaitingSummaryListQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>
+  > = ({ signal }) => getApprovalWaitingSummaryList(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetApprovalWaitingSummaryListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>
+>;
+export type GetApprovalWaitingSummaryListQueryError = unknown;
+
+export function useGetApprovalWaitingSummaryList<
+  TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+  TError = unknown,
+>(
+  params: undefined | GetApprovalWaitingSummaryListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+          TError,
+          Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApprovalWaitingSummaryList<
+  TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetApprovalWaitingSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+          TError,
+          Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApprovalWaitingSummaryList<
+  TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetApprovalWaitingSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 이미지 태그 사용 요청 승인 대기 목록 조회
+ */
+
+export function useGetApprovalWaitingSummaryList<
+  TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetApprovalWaitingSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetApprovalWaitingSummaryListQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 이미지 태그 사용 요청의 승인 상태별 개수를 조회합니다.
+ * @summary 이미지 태그 사용 요청 승인 상태 요약 조회
+ */
+export const getApprovalStatusSummary = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse>(
+    {
+      url: `/api/v1/admin/registries/images/image-tags/usage-requests/approval-status/summary`,
+      method: "GET",
+      signal,
+    },
+  );
+};
+
+export const getGetApprovalStatusSummaryQueryKey = () => {
+  return [
+    `/api/v1/admin/registries/images/image-tags/usage-requests/approval-status/summary`,
+  ] as const;
+};
+
+export const getGetApprovalStatusSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApprovalStatusSummaryQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApprovalStatusSummary>>
+  > = ({ signal }) => getApprovalStatusSummary(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetApprovalStatusSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApprovalStatusSummary>>
+>;
+export type GetApprovalStatusSummaryQueryError = unknown;
+
+export function useGetApprovalStatusSummary<
+  TData = Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getApprovalStatusSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApprovalStatusSummary<
+  TData = Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getApprovalStatusSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApprovalStatusSummary<
+  TData = Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 이미지 태그 사용 요청 승인 상태 요약 조회
+ */
+
+export function useGetApprovalStatusSummary<
+  TData = Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApprovalStatusSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetApprovalStatusSummaryQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

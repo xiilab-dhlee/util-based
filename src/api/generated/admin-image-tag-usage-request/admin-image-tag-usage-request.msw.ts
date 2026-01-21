@@ -32,11 +32,23 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse,
   BaseResponsePageResponseImageTagUsageRequestResponse,
+  BaseResponsePageResponseImageTagUsageRequestSummaryResponse,
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getRejectUsageRequestResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getUpdateDecisionReasonResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
@@ -105,6 +117,61 @@ export const getGetUsageRequestListResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetApprovalWaitingSummaryListResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseImageTagUsageRequestSummaryResponse> = {},
+): BaseResponsePageResponseImageTagUsageRequestSummaryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      usageRequestId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageType: faker.helpers.arrayElement([
+        "BUILT_IN",
+        "HUB",
+        "PRIVATE",
+        "PUBLIC",
+      ] as const),
+      vulnerability: {
+        criticalCount: faker.number.int({ min: undefined, max: undefined }),
+        highCount: faker.number.int({ min: undefined, max: undefined }),
+        mediumCount: faker.number.int({ min: undefined, max: undefined }),
+        lowCount: faker.number.int({ min: undefined, max: undefined }),
+        totalCount: faker.number.int({ min: undefined, max: undefined }),
+      },
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetApprovalStatusSummaryResponseMock = (
+  overrideResponse: Partial<BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse> = {},
+): BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    approved: faker.number.int({ min: undefined, max: undefined }),
+    approvalWaiting: faker.number.int({ min: undefined, max: undefined }),
+    rejected: faker.number.int({ min: undefined, max: undefined }),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getRejectUsageRequestMockHandler = (
   overrideResponse?:
     | BaseResponseUnit
@@ -125,6 +192,34 @@ export const getRejectUsageRequestMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getRejectUsageRequestResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getUpdateDecisionReasonMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/admin/registries/images/image-tags/usage-requests/:usageRequestId/decision-reason",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateDecisionReasonResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -190,8 +285,71 @@ export const getGetUsageRequestListMockHandler = (
     options,
   );
 };
+
+export const getGetApprovalWaitingSummaryListMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseImageTagUsageRequestSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseImageTagUsageRequestSummaryResponse>
+        | BaseResponsePageResponseImageTagUsageRequestSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/registries/images/image-tags/usage-requests/approval-waiting",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetApprovalWaitingSummaryListResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetApprovalStatusSummaryMockHandler = (
+  overrideResponse?:
+    | BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse>
+        | BaseResponseImageTagUsageRequestApprovalStatusSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/registries/images/image-tags/usage-requests/approval-status/summary",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetApprovalStatusSummaryResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getAdminImageTagUsageRequestMock = () => [
   getRejectUsageRequestMockHandler(),
+  getUpdateDecisionReasonMockHandler(),
   getApproveUsageRequestMockHandler(),
   getGetUsageRequestListMockHandler(),
+  getGetApprovalWaitingSummaryListMockHandler(),
+  getGetApprovalStatusSummaryMockHandler(),
 ];

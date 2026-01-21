@@ -74,7 +74,9 @@ export const getGetPrivateImageTagsByAccountIdResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
+      harborTagId: faker.number.int({ min: undefined, max: undefined }),
       harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       tagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       uploadedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,

@@ -261,6 +261,7 @@ export const getPrivateImageTagListResponse = zod
                 .optional()
                 .describe("DB 이미지 태그 ID (메타데이터 없으면 null)"),
               imageTagName: zod.string().describe("이미지 태그 이름"),
+              imageDisplayName: zod.string().describe("이미지 표시 이름"),
               imageTagSizeByte: zod
                 .number()
                 .describe("이미지 태그 크기 (바이트)"),

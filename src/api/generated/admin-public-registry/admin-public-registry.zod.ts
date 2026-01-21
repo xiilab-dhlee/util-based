@@ -189,7 +189,9 @@ export const getPublicImageTagsByAccountIdResponse = zod
         content: zod.array(
           zod
             .object({
+              harborTagId: zod.number().describe("Harbor 태그 ID"),
               harborImageName: zod.string().describe("Harbor 이미지명"),
+              imageDisplayName: zod.string().describe("이미지 표시 이름"),
               tagName: zod.string().describe("태그명"),
               workspaceName: zod
                 .string()

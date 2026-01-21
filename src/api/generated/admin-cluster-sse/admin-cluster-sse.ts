@@ -50,7 +50,7 @@ import type {
 
 /**
  * 
-            Server-Sent Events를 통해 특정 노드의 시스템 메트릭을 실시간으로 스트리밍합니다.
+            Server-Sent Events를 통해 특정 노드의 복수 시스템 메트릭을 실시간으로 스트리밍합니다.
 
             **사용 흐름:**
             1. 먼저 기존 HTTP API (GET /nodes/{nodeName}/resources/system/metrics)로 초기 데이터 조회
@@ -69,11 +69,27 @@ import type {
 
             **이벤트 형식:**
             - event: system-metrics
-            - data: JSON 형식의 증분 시스템 메트릭 배열 (기존 API와 동일 형식)
+            - data: JSON 형식의 배치 시스템 메트릭 (HTTP API와 동일한 BatchSystemMetricResponse 형식)
 
-            **응답 데이터 구성:**
-            - dateTime: 측정 시간 (UTC, ISO 8601 형식)
-            - value: 메트릭 값
+            **응답 데이터 구성 (HTTP API와 동일):**
+            - cpuTemperature: CPU 온도 메트릭 결과
+            - cpuUtilization: CPU 사용률 메트릭 결과
+            - cpuLoadAverage: CPU 평균 부하 메트릭 결과
+            - nodeNetworkReceive: 네트워크 수신 속도 메트릭 결과
+            - nodeNetworkTransmit: 네트워크 송신 속도 메트릭 결과
+            - diskRead: 디스크 읽기 속도 메트릭 결과
+            - diskWrite: 디스크 쓰기 속도 메트릭 결과
+            - diskUsage: 디스크 사용률 메트릭 결과
+            - memoryUtilization: 메모리 사용률 메트릭 결과
+            - nodeMemoryBuffers: 메모리 버퍼 메트릭 결과
+            - nodeMemoryCached: 메모리 캐시 메트릭 결과
+            - nodeMemoryTotal: 메모리 총량 메트릭 결과
+            - nodeMemoryFree: 메모리 여유량 메트릭 결과
+
+            각 메트릭 결과는:
+            - status: SUCCESS 또는 FAILED
+            - data: 시계열 데이터 (성공 시)
+            - error: 에러 타입 (실패 시)
 
             **메트릭 타입:**
             - CPU_TEMPERATURE: CPU 온도 (°C)
@@ -83,7 +99,7 @@ import type {
             - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
             - DISK_READ: 디스크 읽기 속도 (bytes/sec)
             - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_UTILIZATION: 디스크 사용률 (%)
+            - DISK_USAGE: 디스크 사용률 (%)
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
@@ -93,7 +109,7 @@ import type {
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
         
- * @summary 노드 시스템 메트릭 실시간 스트리밍
+ * @summary 노드 시스템 메트릭 실시간 스트리밍 (배치)
  */
 export const streamNodeSystemMetrics = (
   nodeName: string,
@@ -235,7 +251,7 @@ export function useStreamNodeSystemMetrics<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 노드 시스템 메트릭 실시간 스트리밍
+ * @summary 노드 시스템 메트릭 실시간 스트리밍 (배치)
  */
 
 export function useStreamNodeSystemMetrics<
@@ -275,7 +291,7 @@ export function useStreamNodeSystemMetrics<
 
 /**
  * 
-            Server-Sent Events를 통해 특정 노드의 GPU 메트릭을 실시간으로 스트리밍합니다.
+            Server-Sent Events를 통해 특정 노드의 복수 GPU 메트릭을 실시간으로 스트리밍합니다.
 
             **사용 흐름:**
             1. 먼저 기존 HTTP API (GET /nodes/{nodeName}/resources/gpu/metrics)로 초기 데이터 조회
@@ -294,14 +310,19 @@ export function useStreamNodeSystemMetrics<
 
             **이벤트 형식:**
             - event: gpu-metrics
-            - data: JSON 형식의 증분 GPU 메트릭 배열 (기존 API와 동일 형식)
+            - data: JSON 형식의 배치 GPU 메트릭 (HTTP API와 동일한 BatchGpuMetricResponse 형식)
 
-            **응답 데이터 구성:**
-            - modelName: GPU 모델명 (예: NVIDIA-A100-SXM4-40GB)
-            - gpuIndex: GPU 인덱스 (0, 1, 2, ...) - 숫자 순서로 정렬
-            - values: 시계열 메트릭 값 리스트 (증분만 포함)
-              - dateTime: 측정 시간 (UTC, ISO 8601 형식)
-              - value: 메트릭 값
+            **응답 데이터 구성 (HTTP API와 동일):**
+            - gpuUtilization: GPU 사용률 메트릭 결과
+            - gpuMemoryUtilization: GPU 메모리 사용률 메트릭 결과
+            - gpuTemperature: GPU 온도 메트릭 결과
+            - gpuFanSpeed: GPU 팬 속도 메트릭 결과
+            - gpuPowerUsage: GPU 전력 사용량 메트릭 결과
+
+            각 메트릭 결과는:
+            - status: SUCCESS 또는 FAILED
+            - data: GPU별 시계열 데이터 (성공 시)
+            - error: 에러 타입 (실패 시)
 
             **메트릭 타입:**
             - GPU_UTILIZATION: GPU 사용률 (%)
@@ -313,7 +334,7 @@ export function useStreamNodeSystemMetrics<
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
         
- * @summary 노드 GPU 메트릭 실시간 스트리밍
+ * @summary 노드 GPU 메트릭 실시간 스트리밍 (배치)
  */
 export const streamNodeGpuMetrics = (
   nodeName: string,
@@ -454,7 +475,7 @@ export function useStreamNodeGpuMetrics<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 노드 GPU 메트릭 실시간 스트리밍
+ * @summary 노드 GPU 메트릭 실시간 스트리밍 (배치)
  */
 
 export function useStreamNodeGpuMetrics<

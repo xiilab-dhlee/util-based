@@ -46,11 +46,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseBatchGpuMetricResponse,
+  BaseResponseBatchSystemMetricResponse,
   BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
   BaseResponseClusterResourceSummaryResponse,
-  BaseResponseListNodeGpuMetricResponse,
-  BaseResponseListNodeSystemMetricResponse,
   BaseResponseListString,
   BaseResponseMigConfigurationResponse,
   BaseResponsePageResponseClusterNodeListResponse,
@@ -796,38 +796,40 @@ export function useGetNodeSystemResource<
 
 /**
  * 
-            관리자가 특정 노드의 시스템 리소스 메트릭을 시간대별로 조회합니다.
+            관리자가 특정 노드의 여러 시스템 메트릭을 한 번에 조회합니다.
+            복수 메트릭을 병렬로 Prometheus에서 조회하여 성능을 최적화합니다.
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_USAGE: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
 
             **응답 데이터 구성:**
-            - **dateTime**: 측정 시간 (UTC, ISO 8601 형식) - 시간 순서로 정렬
-            - **value**: 메트릭 값
-
-            **메트릭 타입:**
-            - **CPU_TEMPERATURE**: CPU 온도 (°C)
-            - **CPU_UTILIZATION**: CPU 사용률 (%)
-            - **CPU_LOAD_AVERAGE**: CPU 평균 부하 (5분)
-            - **NODE_NETWORK_RECEIVE**: 네트워크 수신 속도 (bytes/sec)
-            - **NODE_NETWORK_TRANSMIT**: 네트워크 송신 속도 (bytes/sec)
-            - **DISK_READ**: 디스크 읽기 속도 (bytes/sec)
-            - **DISK_WRITE**: 디스크 쓰기 속도 (bytes/sec)
-            - **DISK_UTILIZATION**: 디스크 사용률 (%)
-            - **MEMORY_UTILIZATION**: 메모리 사용률 (%)
-            - **NODE_MEMORY_BUFFERS**: 메모리 버퍼 (bytes)
-            - **NODE_MEMORY_CACHED**: 메모리 캐시 (bytes)
-            - **NODE_MEMORY_TOTAL**: 메모리 총량 (bytes)
-            - **NODE_MEMORY_FREE**: 메모리 여유량 (bytes)
+            각 메트릭별로 성공/실패 결과가 개별적으로 반환됩니다.
+            - 성공 시: `data` 필드에 시계열 데이터 포함
+            - 실패 시: `error` 필드에 에러 타입 포함 (timeout, network_error, query_error)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
         
- * @summary 노드 시스템 메트릭 시계열 조회
+ * @summary 노드 시스템 메트릭 배치 조회
  */
 export const getNodeSystemMetrics = (
   nodeName: string,
   params: GetNodeSystemMetricsParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseListNodeSystemMetricResponse>({
+  return customInstance<BaseResponseBatchSystemMetricResponse>({
     url: `/api/v1/cluster/nodes/${nodeName}/resources/system/metrics`,
     method: "GET",
     params,
@@ -961,7 +963,7 @@ export function useGetNodeSystemMetrics<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 노드 시스템 메트릭 시계열 조회
+ * @summary 노드 시스템 메트릭 배치 조회
  */
 
 export function useGetNodeSystemMetrics<
@@ -1001,33 +1003,32 @@ export function useGetNodeSystemMetrics<
 
 /**
  * 
-            관리자가 특정 노드의 GPU 하드웨어 메트릭을 시간대별로 조회합니다.
+            관리자가 특정 노드의 여러 GPU 하드웨어 메트릭을 한 번에 조회합니다.
+            복수 메트릭을 병렬로 Prometheus에서 조회하여 성능을 최적화합니다.
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
 
             **응답 데이터 구성:**
-            - **modelName**: GPU 모델명 (예: NVIDIA-A100-SXM4-40GB)
-            - **gpuIndex**: GPU 인덱스 (0, 1, 2, ...) - 숫자 순서로 정렬
-            - **values**: 시계열 메트릭 값 리스트
-              - **dateTime**: 측정 시간 (UTC, ISO 8601 형식)
-              - **value**: 메트릭 값
-
-            **메트릭 타입:**
-            - **GPU_UTILIZATION**: GPU 사용률 (%)
-            - **GPU_MEMORY_UTILIZATION**: GPU 메모리 사용률 (%)
-            - **GPU_TEMPERATURE**: GPU 온도 (°C)
-            - **GPU_FAN_SPEED**: GPU 팬 속도 (%)
-            - **GPU_POWER_USAGE**: GPU 전력 사용량 (W)
+            각 메트릭별로 성공/실패 결과가 개별적으로 반환됩니다.
+            - 성공 시: `data` 필드에 GPU별 시계열 데이터 포함
+            - 실패 시: `error` 필드에 에러 타입 포함 (timeout, network_error, query_error)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요
         
- * @summary 노드 GPU 메트릭 시계열 조회
+ * @summary 노드 GPU 메트릭 배치 조회
  */
 export const getNodeGpuMetrics = (
   nodeName: string,
   params: GetNodeGpuMetricsParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseListNodeGpuMetricResponse>({
+  return customInstance<BaseResponseBatchGpuMetricResponse>({
     url: `/api/v1/cluster/nodes/${nodeName}/resources/gpu/metrics`,
     method: "GET",
     params,
@@ -1161,7 +1162,7 @@ export function useGetNodeGpuMetrics<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 노드 GPU 메트릭 시계열 조회
+ * @summary 노드 GPU 메트릭 배치 조회
  */
 
 export function useGetNodeGpuMetrics<
