@@ -448,9 +448,25 @@ const testCallbacks: NextAuthOptions["callbacks"] = {
   },
 
   async jwt({ token, user }) {
+    // 최초 로그인 또는 토큰이 없는 경우
     if (user || !token.access_token) {
       return createTestJwt(token);
     }
+
+    // 토큰 만료 체크
+    const expiresAt = token.expires_at as number;
+    const remainingSeconds = Math.floor((expiresAt * 1000 - Date.now()) / 1000);
+    const isValid = remainingSeconds > TOKEN_EXPIRY_BUFFER_SECONDS;
+
+    if (!isValid) {
+      authDebug(
+        `⏰ [테스트] 토큰 만료 임박 (${formatRemainingTime(remainingSeconds)}) → 재발급`,
+      );
+      // 캐시 무효화 후 새 토큰 발급
+      cachedTestToken = null;
+      return createTestJwt(token);
+    }
+
     return token;
   },
 

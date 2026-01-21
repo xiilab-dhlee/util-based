@@ -17,7 +17,6 @@ import { ResourcePresetService } from "@/domain/resource-preset/api/resource-pre
 import { RevokeHistoryService } from "@/domain/revoke/api/revoke-history.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
-import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { StorageService } from "@/domain/storage/api/storage.service";
 import { HpeService } from "@/domain/system-setting/api/hpe.service";
 import { LicenseService } from "@/domain/system-setting/api/license.service";
@@ -33,7 +32,6 @@ import { GpuService } from "@/shared/api/gpu.service";
 interface ServiceContextType {
   workspaceService: WorkspaceService;
   workloadService: WorkloadService;
-  sourcecodeService: SourcecodeService;
   storageService: StorageService;
   userResourceService: UserResourceService;
   adminWorkloadService: AdminWorkloadService;
@@ -78,7 +76,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
   const services: ServiceContextType = {
     workspaceService: new WorkspaceService(),
     workloadService: new WorkloadService(),
-    sourcecodeService: new SourcecodeService(),
     storageService: new StorageService(),
     userResourceService: new UserResourceService(),
     adminWorkloadService: new AdminWorkloadService(),

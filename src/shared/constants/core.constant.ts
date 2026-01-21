@@ -69,11 +69,11 @@ export type AllOptionValue = typeof ALL_OPTION.value;
 export const VISIBILITY_STATUS_OPTIONS: DropdownOption[] = [
   {
     label: "공개",
-    value: "PUBLIC",
+    value: "true",
   },
   {
     label: "비공개",
-    value: "PRIVATE",
+    value: "false",
   },
 ];
 
