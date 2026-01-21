@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import {
   WORKLOAD_IMAGE_TYPES,
   WORKLOAD_JOB_TYPES,
@@ -72,9 +71,14 @@ const baseWorkloadSchema = z.object({
   ),
   /** 소스코드 */
   sourcecodes: z.array(
-    sourcecodeListSchema.extend({
-      branch: z.string(),
-      path: z.string(),
+    z.object({
+      sourceCodeId: z.string(),
+      sourceCodeName: z.string(),
+      gitUrl: z.string(),
+      mountPath: z.string(),
+      sourceCodeType: z.enum(["GITHUB", "GITLAB", "BITBUCKET"]),
+      executionCmd: z.string(),
+      createdAt: z.string(),
     }),
   ),
   /** 볼륨 */
