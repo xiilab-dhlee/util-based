@@ -25,7 +25,7 @@ export function RegistryJobListBody({
     return (
       <Container>
         {Array.from({ length: REGISTRY_JOB_PAGE_SIZE }).map((_, index) => (
-          <Card key={`skeleton-${index}`} loading style={{ flex: 1 }} />
+          <Card key={`skeleton-${index}`} loading />
         ))}
       </Container>
     );
