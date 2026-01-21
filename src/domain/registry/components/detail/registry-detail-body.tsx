@@ -153,7 +153,7 @@ export function RegistryDetailBody({
           columnHeight={34}
           loading={isLoading}
           isError={isError}
-          rowKey="harborArtifactId"
+          rowKey="imageTagId"
           rowSelection={rowSelection}
           onChange={handleChange}
           customRow={RegistryTagRow}
