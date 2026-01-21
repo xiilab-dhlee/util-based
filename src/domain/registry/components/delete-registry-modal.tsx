@@ -1,0 +1,94 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { Modal } from "xiilab-ui";
+
+import { getGetPrivateRegistryListQueryKey } from "@/api/generated/private-registry/private-registry";
+import { getGetPublicRegistryListQueryKey } from "@/api/generated/public-registry/public-registry";
+import { useDeleteRegistryByMode } from "@/domain/registry/hooks/use-delete-registry-by-mode";
+import type { RegistryMode } from "@/domain/registry/types/registry.type";
+import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+
+interface DeleteRegistryModalProps {
+  mode: RegistryMode;
+}
+
+/**
+ * 레지스트리 이미지 삭제 모달
+ *
+ * Note: 현재 public 삭제 API가 없으므로 private 동작만 지원됩니다.
+ * public API가 추가되면 use-delete-registry-by-mode.ts의 TODO 주석을 참고하세요.
+ */
+export function DeleteRegistryModal({ mode }: DeleteRegistryModalProps) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [deleteRegistries, setDeleteRegistries] = useState<string[]>([]);
+
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useDeleteRegistryByMode(mode);
+
+  const handleCancel = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
+
+  const handleOk = () => {
+    if (isPending) return;
+    if (deleteRegistries.length === 0) return;
+
+    mutate(
+      {
+        data: { harborImageNames: deleteRegistries },
+      },
+      {
+        onSuccess: () => {
+          // private/public 캐시 모두 무효화
+          queryClient.invalidateQueries({
+            queryKey: getGetPrivateRegistryListQueryKey(),
+          });
+          queryClient.invalidateQueries({
+            queryKey: getGetPublicRegistryListQueryKey(),
+          });
+          toast.success("레지스트리 이미지 삭제 완료");
+          setOpen(false);
+          router.replace(
+            mode === "private"
+              ? ROUTES.USER_PRIVATE_REGISTRY
+              : ROUTES.USER_PUBLIC_REGISTRY,
+          );
+        },
+      },
+    );
+  };
+
+  useSubscribe(
+    PRIVATE_REGISTRY_EVENTS.openDeleteModal,
+    (registries: string[]) => {
+      setDeleteRegistries(registries);
+      setOpen(true);
+    },
+  );
+
+  return (
+    <Modal
+      variant="delete"
+      modalWidth={300}
+      open={open}
+      onCancel={handleCancel}
+      onOk={handleOk}
+      title="레지스트리 이미지 삭제"
+      centered
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
+    >
+      <div>선택한 레지스트리 이미지와 포함된 태그를</div>
+      <div>모두 삭제하시겠습니까?</div>
+    </Modal>
+  );
+}

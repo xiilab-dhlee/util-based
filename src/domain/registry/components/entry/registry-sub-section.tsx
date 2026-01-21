@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-import { createPrivateRegistryColumn } from "@/domain/private-registry/components/list/create-private-registry-column";
-import { UserPrivateRegistryFilter } from "@/domain/registry/components/user-private-registry-filter";
-import { UserPrivateRegistryFooter } from "@/domain/registry/components/user-private-registry-footer";
+import { UserPrivateRegistryFilter } from "@/domain/registry/components/entry/user-private-registry-filter";
+import { UserPrivateRegistryFooter } from "@/domain/registry/components/entry/user-private-registry-footer";
+import { createRegistryColumn } from "@/domain/registry/components/list/create-registry-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 
 export function RegistrySubSection() {
@@ -12,7 +12,7 @@ export function RegistrySubSection() {
         <UserPrivateRegistryFilter totalSize={0} loading={false} />
         <PaneBody>
           <CustomizedTable
-            columns={createPrivateRegistryColumn()}
+            columns={createRegistryColumn("private")}
             data={[]}
             activePadding
           />
