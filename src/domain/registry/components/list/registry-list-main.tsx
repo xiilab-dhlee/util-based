@@ -17,10 +17,7 @@ import {
   REGISTRY_PAGE_SIZE,
   REGISTRY_SORT_FIELD_MAP,
 } from "@/domain/registry/constants/registry-list.constant";
-import {
-  type RegistryMode,
-  useGetRegistryListByMode,
-} from "@/domain/registry/hooks/use-get-registry-list-by-mode";
+import { useGetRegistryListByMode } from "@/domain/registry/hooks/use-get-registry-list-by-mode";
 import {
   registryCheckedListAtom,
   registryImageSourceTypeAtom,
@@ -28,6 +25,7 @@ import {
   registrySearchTextAtom,
   registrySortAtom,
 } from "@/domain/registry/state/registry-list.atom";
+import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
