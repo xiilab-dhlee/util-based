@@ -30,6 +30,11 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
         icon: <Icon name={PAGE_META["user.private-registry"]?.iconName} />,
       },
       {
+        key: "user.public-registry",
+        label: PAGE_META["user.public-registry"]?.title,
+        icon: <Icon name={PAGE_META["user.public-registry"]?.iconName} />,
+      },
+      {
         key: "user.sourcecode",
         label: PAGE_META["user.sourcecode"]?.title,
         icon: <Icon name={PAGE_META["user.sourcecode"]?.iconName} />,

@@ -63,6 +63,16 @@ export const creatorDateTimeColumn: ResponsiveColumnType = {
   },
 };
 
+export const createdAtColumn: ResponsiveColumnType = {
+  key: "createdAt",
+  dataIndex: "createdAt",
+  title: "생성일",
+  align: "left",
+  render: (createdAt: string) => {
+    return <span>{formatDateSafely(createdAt)}</span>;
+  },
+};
+
 /**
  * 공통 컬럼: 수정일
  */
