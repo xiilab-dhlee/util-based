@@ -373,6 +373,23 @@ export const PAGE_META = {
       ROUTES.USER_PRIVATE_REGISTRY_TAG(name, tagId),
     parent: "user.private-registry.detail",
   },
+  "user.public-registry": {
+    title: "공용 레지스트리",
+    iconName: "PublicRegistry",
+    href: ROUTES.USER_PUBLIC_REGISTRY,
+  },
+  "user.public-registry.detail": {
+    title: "컨테이너 이미지 상세정보",
+    href: ({ name }: { name: string }) =>
+      ROUTES.USER_PUBLIC_REGISTRY_DETAIL(name),
+    parent: "user.public-registry",
+  },
+  "user.public-registry.tag": {
+    title: "태그 상세정보",
+    href: ({ name, tagId }: { name: string; tagId: string }) =>
+      ROUTES.USER_PUBLIC_REGISTRY_TAG(name, tagId),
+    parent: "user.public-registry.detail",
+  },
 
   // ============================================
   // User Routes - Sourcecode

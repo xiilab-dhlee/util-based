@@ -133,6 +133,11 @@ export const ROUTES = {
     `${MODE.USER}/private-registry/${name}`,
   USER_PRIVATE_REGISTRY_TAG: (name: string, tagId: string) =>
     `${MODE.USER}/private-registry/${name}/${tagId}`,
+  USER_PUBLIC_REGISTRY: `${MODE.USER}/public-registry`,
+  USER_PUBLIC_REGISTRY_DETAIL: (name: string) =>
+    `${MODE.USER}/public-registry/${name}`,
+  USER_PUBLIC_REGISTRY_TAG: (name: string, tagId: string) =>
+    `${MODE.USER}/public-registry/${name}/${tagId}`,
 
   // 소스코드 (동적 함수)
   USER_SOURCECODE: `${MODE.USER}/sourcecode`,
