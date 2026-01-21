@@ -1,6 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import type { TabsSeparatedItem } from "xiilab-ui";
 import {
@@ -14,25 +19,27 @@ import {
   Switch,
 } from "xiilab-ui";
 
+import {
+  getGetSourceCodeListQueryKey,
+  useRegisterSourceCode,
+} from "@/api/generated/source-code/source-code";
 import { CreateCredentialForm } from "@/domain/credential/components/create-credential-form";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
-import type { CredentialIdType } from "@/domain/credential/schemas/credential.schema";
-import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
+import { SourcecodeParameterFormField } from "@/domain/sourcecode/components/sourcecode-parameter-form-field";
 import { SOURCECODE_TYPE_OPTIONS } from "@/domain/sourcecode/constants/sourcecode.constant";
-import { useCreateSourcecode } from "@/domain/sourcecode/hooks/use-create-sourcecode";
-import type {
-  SourcecodeStatusType,
-  SourcecodeType,
+import { useSourcecodeParameters } from "@/domain/sourcecode/hooks/use-sourcecode-parameters";
+import {
+  type CreateSourcecodeFormType,
+  createSourcecodeSchema,
 } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { openCreateSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcecode.atom";
-import type { CreateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
+import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { StateTab } from "@/shared/components/tab";
 import { VISIBILITY_STATUS_OPTIONS } from "@/shared/constants/core.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSelect } from "@/shared/hooks/use-select";
+import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { FormRow } from "@/styles/layers/form-layer.styled";
-import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {
@@ -47,110 +54,123 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
   },
 ];
 
+const DEFAULT_FORM_VALUES: CreateSourcecodeFormType = {
+  sourceCodeName: "",
+  gitUrl: "",
+  sourceCodeType: "GITHUB",
+  mountPath: "",
+  executionCmd: "",
+  isPublic: "true",
+  credentialId: null,
+  parameter: {},
+};
+
 export function CreateSourcecodeModal() {
-  const formRef = useRef(null);
-  const { open, onClose } = useGlobalModal(openCreateSourcecodeModalAtom);
+  const queryClient = useQueryClient();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
-  const createSourcecode = useCreateSourcecode();
-  /**
-   * 소스코드 이름
-   */
-  const [name, setName] = useState("");
-  /**
-   * 소스코드 공개 설정
-   */
-  const status = useSelect<SourcecodeStatusType>(
-    null,
-    VISIBILITY_STATUS_OPTIONS,
-  );
-  /**
-   * 소스코드 Git URL
-   */
-  const [gitUrl, setGitUrl] = useState("");
-  /**
-   * 소스코드 Git 타입
-   */
-  const gitType = useSelect<SourcecodeType>(null, SOURCECODE_TYPE_OPTIONS);
-
-  // 현재 선택된 탭 상태 관리
-  const [credentialTab, setCredentialTab] = useState("select");
-  const [credential, setCredential] = useState<CredentialIdType | null>(null);
-  const [mountPath, setMountPath] = useState("");
-  const [executeCommand, setExecuteCommand] = useState("");
-
-  // 크리덴셜 관련
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState("select");
+  const [isValidateUrl, setIsValidateUrl] = useState(false);
   const [credentialEnabled, setCredentialEnabled] = useState(false);
 
+  const {
+    parameters,
+    addParameter,
+    updateParameter,
+    removeParameter,
+    resetParameters,
+    toRecord,
+  } = useSourcecodeParameters();
+
+  const { mutate, isPending } = useRegisterSourceCode();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm<CreateSourcecodeFormType>({
+    resolver: zodResolver(createSourcecodeSchema),
+    defaultValues: DEFAULT_FORM_VALUES,
+  });
+
+  const credentialId = watch("credentialId");
+
+  const handleCancel = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
+
   const handleCredentialToggle = () => {
+    setValue("credentialId", null);
     setCredentialEnabled((prev) => !prev);
+    setTab("select");
   };
 
-  const handleValidateUrl = (_: React.MouseEvent<HTMLButtonElement>) => {
-    alert("준비 중입니다.");
+  const handleValidateUrl = () => {
+    setIsValidateUrl(true);
+    toast.success("URL 검증 완료");
   };
 
-  const handleSubmit = () => {
-    const payload = createPayload();
-
-    if (payload) {
-      // TODO: validation 추가 필요
-      createSourcecode.mutate(payload);
+  const onSubmit = (data: CreateSourcecodeFormType) => {
+    if (isPending) return;
+    if (!selectedWorkspace) return;
+    if (!isValidateUrl) {
+      toast.info("URL 검증을 완료해 주세요.");
+      return;
     }
+
+    mutate(
+      {
+        data: {
+          sourceCodeName: data.sourceCodeName,
+          gitUrl: data.gitUrl,
+          sourceCodeType: data.sourceCodeType,
+          mountPath: data.mountPath,
+          executionCmd: data.executionCmd || "",
+          isPublic: data.isPublic === "true",
+          credentialId: data.credentialId ?? undefined,
+          parameter: toRecord(),
+          workspaceId: selectedWorkspace.workspaceId,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getGetSourceCodeListQueryKey(),
+          });
+          toast.success("소스코드 생성 완료");
+          setOpen(false);
+        },
+      },
+    );
   };
 
-  const createPayload = (): CreateSourcecodePayload | null => {
-    if (!formRef.current) return null;
-
-    const formData = new FormData(formRef.current);
-
-    // 파라미터 데이터 수집
-    // 파라미터는 동적으로 추가되므로 인덱스 기반으로 순차적으로 수집
-    const parameters: Array<{ key: string; value: string }> = [];
-    let index = 0;
-
-    while (true) {
-      const key = formData.get(`parameter-key-${index}`) as string;
-      const value = formData.get(`parameter-value-${index}`) as string;
-
-      if (!key && !value) break; // 더 이상 파라미터가 없으면 중단
-
-      if (key || value) {
-        // 키나 값 중 하나라도 있으면 추가 (빈 값도 허용)
-        parameters.push({ key: key || "", value: value || "" });
+  // URL 관련 필드 변경 시 URL 검증 상태 초기화 (사용자 입력 시에만 실행)
+  useEffect(() => {
+    const subscription = watch((_, { name }) => {
+      if (
+        name === "sourceCodeType" ||
+        name === "gitUrl" ||
+        name === "credentialId"
+      ) {
+        setIsValidateUrl(false);
       }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
-      index++;
-    }
-
-    return {
-      name: name,
-      status: status.value,
-      gitUrl: gitUrl,
-      gitType: gitType.value,
-      mountPath: mountPath,
-      executeCommand: executeCommand,
-      parameters: parameters,
-      credential,
-    };
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-  const handleGitUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGitUrl(e.target.value);
-  };
-
-  const handleMountPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMountPath(e.target.value);
-  };
-
-  const handleExecuteCommandChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setExecuteCommand(e.target.value);
-  };
+  useSubscribe(SOURCECODE_EVENTS.openCreateModal, () => {
+    reset(DEFAULT_FORM_VALUES);
+    setCredentialEnabled(false);
+    setTab("select");
+    setIsValidateUrl(false);
+    resetParameters();
+    setOpen(true);
+  });
 
   return (
     <Modal
@@ -160,145 +180,231 @@ export function CreateSourcecodeModal() {
       open={open}
       closable
       title="소스코드 생성"
-      onCancel={onClose}
+      onCancel={handleCancel}
       showCancelButton
       cancelText="취소"
       okText="생성"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
-      okButtonProps={
-        {
-          // disabled: !gitUrl || !mountPath || !executeCommand,
-        }
-      }
+      okButtonProps={{ disabled: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
-      <StyledForm layout="vertical" ref={formRef}>
-        {/* 소스코드 이름 */}
-        <StyledFormRow>
-          <StyledFormItem label="소스코드 이름">
-            <Input
-              value={name}
-              onChange={handleNameChange}
-              placeholder="http://github.com/astrago-ai"
-              width="100%"
-            />
-          </StyledFormItem>
-          <StyledFormItem label="공개 설정">
-            <Dropdown
-              options={status.options}
-              value={status.value}
-              onChange={status.onChange}
-              width="100%"
-            />
-          </StyledFormItem>
-        </StyledFormRow>
-        {/* Git URL */}
-        <StyledFormRow>
-          <StyledFormItem label="Git URL">
-            <Dropdown
-              options={gitType.options}
-              value={gitType.value}
-              onChange={gitType.onChange}
-              width="100%"
-            />
-          </StyledFormItem>
-          <StyledFormItem label=" ">
-            <Input
-              value={gitUrl}
-              onChange={handleGitUrlChange}
-              placeholder="http://github.com/astrago-ai"
-              width="100%"
-            />
-          </StyledFormItem>
-        </StyledFormRow>
-        {/* 크리덴셜 */}
-        <CredentialRow>
-          <CredentialLabel>
-            <FormLabel>크리덴셜</FormLabel>
-            <Switch
-              checked={credentialEnabled}
-              onChange={handleCredentialToggle}
-            />
-          </CredentialLabel>
-          {/* 크리덴셜 ON일 때 탭 표시 */}
-          {credentialEnabled && (
-            <CredentialBody>
-              <StateTab
-                items={TAB_ITEMS}
-                selectedKey={credentialTab}
-                setSelectedKey={setCredentialTab}
+      <ScrollWrapper>
+        <CustomScrollbars>
+          <StyledForm layout="vertical">
+            {/* 소스코드 이름 & 공개 설정 */}
+            <StyledFormRow>
+              <Controller
+                name="sourceCodeName"
+                control={control}
+                render={({ field }) => (
+                  <StyledFormItem
+                    label="소스코드 이름"
+                    required
+                    validateStatus={errors.sourceCodeName ? "error" : undefined}
+                    help={errors.sourceCodeName?.message}
+                  >
+                    <Input
+                      {...field}
+                      placeholder="소스코드 이름을 입력해 주세요."
+                      width="100%"
+                      disabled={isPending}
+                      autoComplete="off"
+                      maxLength={50}
+                    />
+                  </StyledFormItem>
+                )}
               />
-              {credentialTab === "select" && (
-                <CredentialSelect value={credential} setValue={setCredential} />
+              <Controller
+                name="isPublic"
+                control={control}
+                render={({ field }) => (
+                  <StyledFormItem
+                    label="공개 설정"
+                    required
+                    validateStatus={errors.isPublic ? "error" : undefined}
+                    help={errors.isPublic?.message}
+                  >
+                    <Dropdown
+                      options={VISIBILITY_STATUS_OPTIONS}
+                      value={field.value || null}
+                      onChange={(value) => field.onChange(value)}
+                      width="100%"
+                      status={errors.isPublic ? "error" : undefined}
+                      disabled={isPending}
+                    />
+                  </StyledFormItem>
+                )}
+              />
+            </StyledFormRow>
+
+            {/* Git URL */}
+            <StyledFormRow>
+              <Controller
+                name="sourceCodeType"
+                control={control}
+                render={({ field }) => (
+                  <StyledFormItem
+                    label="Git URL"
+                    required
+                    validateStatus={errors.sourceCodeType ? "error" : undefined}
+                    help={errors.sourceCodeType?.message}
+                  >
+                    <Dropdown
+                      options={SOURCECODE_TYPE_OPTIONS}
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      width="100%"
+                      disabled={isPending}
+                    />
+                  </StyledFormItem>
+                )}
+              />
+              <Controller
+                name="gitUrl"
+                control={control}
+                render={({ field }) => (
+                  <StyledFormItem
+                    label=" "
+                    validateStatus={errors.gitUrl ? "error" : undefined}
+                    help={errors.gitUrl?.message}
+                  >
+                    <Input
+                      {...field}
+                      placeholder="http://github.com/astrago-ai"
+                      width="100%"
+                      disabled={isPending}
+                      maxLength={1000}
+                      autoComplete="off"
+                    />
+                  </StyledFormItem>
+                )}
+              />
+            </StyledFormRow>
+
+            {/* 크리덴셜 */}
+            <CredentialRow>
+              <CredentialLabel>
+                <FormLabel>크리덴셜</FormLabel>
+                <Switch
+                  checked={credentialEnabled}
+                  onChange={handleCredentialToggle}
+                  disabled={isPending}
+                />
+              </CredentialLabel>
+              {credentialEnabled && (
+                <CredentialBody>
+                  <StateTab
+                    items={TAB_ITEMS}
+                    selectedKey={tab}
+                    setSelectedKey={setTab}
+                  />
+                  {tab === "select" && (
+                    <CredentialSelect
+                      value={credentialId ?? null}
+                      setValue={(value) => setValue("credentialId", value)}
+                    />
+                  )}
+                  {tab === "create" && <CreateCredentialForm />}
+                </CredentialBody>
               )}
-              {credentialTab === "create" && <CreateCredentialForm />}
-            </CredentialBody>
-          )}
-        </CredentialRow>
+            </CredentialRow>
 
-        {/* URL 검증 버튼 */}
-        <UrlValidateButton
-          variant="outlined"
-          color="primary"
-          onClick={handleValidateUrl}
-          width="100%"
-          height="30px"
-          icon="Verification02"
-          iconPosition="left"
-          iconSize={18}
-          iconColor="#154FED"
-        >
-          URL 검사
-        </UrlValidateButton>
+            {tab !== "create" && (
+              <UrlValidateButton
+                variant="outlined"
+                color="primary"
+                onClick={handleValidateUrl}
+                width="100%"
+                height="30px"
+                icon="Verification02"
+                iconPosition="left"
+                iconSize={18}
+                iconColor="#154FED"
+                disabled={isPending}
+              >
+                URL 검증
+              </UrlValidateButton>
+            )}
 
-        {/* 기본 마운트 경로 & 실행 명령어 */}
-        <StyledFormRow>
-          <StyledFormItem label="기본 마운트 경로">
-            <Input
-              value={mountPath}
-              onChange={handleMountPathChange}
-              placeholder="Mount Path를 입력해 주세요. 예) /root/volume/123"
-              width="100%"
-            />
-          </StyledFormItem>
-          <StyledFormItem label="실행 명령어">
-            <Input
-              value={executeCommand}
-              onChange={handleExecuteCommandChange}
-              placeholder="실행 명령어를 입력해 주세요. 예) /root/code/main.py"
-              width="100%"
-            />
-          </StyledFormItem>
-        </StyledFormRow>
-        {/* 파라미터 */}
-        <StyledFormItem label="파라미터" className="last">
-          <ManageParameter />
-        </StyledFormItem>
-      </StyledForm>
+            {/* 기본 마운트 경로 & 실행 명령어 */}
+            <StyledFormRow>
+              <Controller
+                name="mountPath"
+                control={control}
+                render={({ field }) => (
+                  <StyledFormItem
+                    label="기본 Mount Path"
+                    required
+                    validateStatus={errors.mountPath ? "error" : undefined}
+                    help={errors.mountPath?.message}
+                  >
+                    <Input
+                      {...field}
+                      placeholder="/usr/local"
+                      width="100%"
+                      disabled={isPending}
+                      maxLength={1000}
+                      autoComplete="off"
+                    />
+                  </StyledFormItem>
+                )}
+              />
+              <Controller
+                name="executionCmd"
+                control={control}
+                render={({ field }) => (
+                  <StyledFormItem
+                    label="실행 명령어"
+                    validateStatus={errors.executionCmd ? "error" : undefined}
+                    help={errors.executionCmd?.message}
+                    required
+                  >
+                    <Input
+                      {...field}
+                      placeholder="실행 명령어를 입력해 주세요."
+                      width="100%"
+                      disabled={isPending}
+                      maxLength={1000}
+                      autoComplete="off"
+                    />
+                  </StyledFormItem>
+                )}
+              />
+            </StyledFormRow>
+
+            {/* 파라미터 */}
+            <ParameterSection>
+              <FormLabel>파라미터</FormLabel>
+              <SourcecodeParameterFormField
+                value={parameters}
+                onAdd={addParameter}
+                onUpdate={updateParameter}
+                onRemove={removeParameter}
+                disabled={isPending}
+              />
+            </ParameterSection>
+          </StyledForm>
+        </CustomScrollbars>
+      </ScrollWrapper>
     </Modal>
   );
 }
 
-// ===== Styled Components =====
-
-const StyledForm = styled(Form)`
-  overflow-y: auto;
-  max-height: 510px;
-
-  ${hideScrollbar}
+const ScrollWrapper = styled.div`
+  height: 510px;
+  position: relative;
 `;
+
+const StyledForm = styled(Form)``;
 
 const StyledFormRow = styled(FormRow)`
   gap: 8px;
 `;
 
 const StyledFormItem = styled(FormItem)`
-  flex: 1;
-
-  &.last {
-    margin-bottom: 0;
-  }
+  margin-bottom: 10px !important;
 `;
 
 const CredentialLabel = styled.div`
@@ -319,5 +425,11 @@ const CredentialBody = styled.div`
 const CredentialRow = styled.div``;
 
 const UrlValidateButton = styled(Button)`
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+`;
+
+const ParameterSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;

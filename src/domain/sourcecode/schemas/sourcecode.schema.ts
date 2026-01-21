@@ -1,78 +1,53 @@
 import { z } from "zod";
 
-// 소스코드 전체 스키마
-const baseSourcecodeSchema = z.object({
-  /** 소스코드 아이디 */
-  id: z.number().int().positive(),
-  /** 소스코드 이름 */
-  name: z.string().min(1).max(100),
-  /** 소스코드 상태 */
-  status: z.enum(["PUBLIC", "PRIVATE"]),
-  /** 코드 타입 (GitHub, GitLab, Bitbucket) */
-  type: z.enum(["GIT_HUB", "GIT_LAB", "BIT_BUCKET"]),
-  /** Git URL */
-  url: z.string().url(),
-  /** 생성자 정보 */
-  creatorName: z.string().min(1).max(100),
-  /** 등록일 */
-  creatorDate: z.string().datetime(),
-  /** 기본 경로 */
-  path: z.string().nullable(),
-  /** 실행 명령어 */
-  cmd: z.string().nullable(),
-  /** 파라미터 목록 */
-  parameters: z.array(
-    z.object({
-      /** 파라미터 키 */
-      key: z.string().min(1).max(100),
-      /** 파라미터 값 */
-      value: z.string().min(1),
-    }),
-  ),
-  /** 크리덴셜 */
-  credential: z.object({
-    /** 크리덴셜 ID */
-    id: z.number().int().positive(),
-    /** 크리덴셜 이름 */
-    name: z.string().min(1).max(100),
-    /** 크리덴셜 설명 */
-    description: z.string().min(1).max(500),
-    /** 크리덴셜 타입 */
-    type: z.enum(["GIT", "DOCKER"]),
-    /** 생성자 이름 */
-    creatorName: z.string().min(1).max(100),
-    /** 생성자 ID */
-    creatorId: z.string().uuid(),
-    /** 생성일 */
-    creatorDate: z.string().datetime(),
-    /** 사용자 아이디 */
-    userId: z.string().min(1).max(100),
-    /** 토큰 */
-    token: z.string().optional(),
+import type { SourceCodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { CreateSourceCodeRequestSourceCodeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
+// ============================================================================
+// 소스코드 기본 타입
+// ============================================================================
+
+/** 소스코드 ID 타입 */
+export type SourcecodeIdType = SourceCodeListResponse["sourceCodeId"];
+
+/** 소스코드 목록 항목 타입 */
+export type SourcecodeListType = SourceCodeListResponse;
+
+/** 소스코드 파라미터 타입 */
+export interface SourcecodeParameterType {
+  key: string;
+  value: string;
+}
+
+// ============================================================================
+// 소스코드 생성 스키마
+// ============================================================================
+
+/** 소스코드 생성 폼 스키마 */
+export const createSourcecodeSchema = z.object({
+  sourceCodeName: z
+    .string()
+    .min(1, "소스코드 이름을 입력해 주세요.")
+    .max(50, "소스코드 이름은 50자 이하로 입력해 주세요."),
+  gitUrl: z
+    .string()
+    .min(1, "Git URL을 입력해 주세요.")
+    .max(1000, "Git URL은 1000자 이하로 입력해 주세요."),
+  sourceCodeType: z.nativeEnum(CreateSourceCodeRequestSourceCodeType, {
+    errorMap: () => ({ message: "소스코드 타입을 선택해 주세요." }),
   }),
+  mountPath: z
+    .string()
+    .min(1, "마운트 경로를 입력해 주세요.")
+    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+  executionCmd: z
+    .string()
+    .min(1, "실행 명령어를 입력해 주세요.")
+    .max(1000, "실행 명령어는 1000자 이하로 입력해 주세요."),
+  isPublic: z.string().min(1, "공개 설정을 선택해 주세요."),
+  credentialId: z.number().nullable().optional(),
+  parameter: z.record(z.string(), z.string()).optional(),
 });
 
-// 소스코드 목록용 스키마 (전체와 동일)
-export const sourcecodeListSchema = baseSourcecodeSchema.pick({
-  id: true,
-  name: true,
-  type: true,
-  creatorName: true,
-  creatorDate: true,
-  path: true,
-  cmd: true,
-  url: true,
-  status: true,
-});
-
-// 소스코드 상세용 스키마 (확장 가능)
-export const sourcecodeDetailSchema = baseSourcecodeSchema;
-
-// 타입 추출
-type Sourcecode = z.infer<typeof baseSourcecodeSchema>;
-export type SourcecodeListType = z.infer<typeof sourcecodeListSchema>;
-export type SourcecodeIdType = SourcecodeListType["id"];
-export type SourcecodeDetailType = z.infer<typeof sourcecodeDetailSchema>;
-export type SourcecodeParameterType = Sourcecode["parameters"][number];
-export type SourcecodeType = Sourcecode["type"];
-export type SourcecodeStatusType = Sourcecode["status"];
+export type CreateSourcecodeFormType = z.infer<typeof createSourcecodeSchema>;

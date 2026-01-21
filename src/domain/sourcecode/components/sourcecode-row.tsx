@@ -1,21 +1,22 @@
 "use client";
 
 import classNames from "classnames";
-import { useAtom } from "jotai";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import type { HTMLAttributes, MouseEvent } from "react";
 
-import type { SourcecodeListType } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { sourcecodeSelectedAtom } from "@/domain/sourcecode/state/sourcecode.atom";
+import type { SourceCodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import { isUserMode } from "@/shared/utils/router.util";
 
 interface SourcecodeRowProps extends HTMLAttributes<HTMLTableRowElement> {
-  rowData: SourcecodeListType;
+  rowData: SourceCodeListResponse;
 }
 
 /**
  * SourcecodeRow 컴포넌트
  *
  * 소스코드 목록 테이블의 행 컴포넌트입니다.
- * 행을 클릭하면 해당 소스코드가 선택되어 Aside에 상세 정보가 표시됩니다.
+ * 행을 클릭하면 해당 소스코드 상세 페이지로 라우팅됩니다.
  * 현재 선택된 소스코드와 일치하는 행은 활성 상태로 표시됩니다.
  *
  * @param rowData - 소스코드 목록 데이터
@@ -27,15 +28,23 @@ export function SourcecodeRow({
   className,
   ...restProps
 }: SourcecodeRowProps) {
-  const [selectedId, setSelectedId] = useAtom(sourcecodeSelectedAtom);
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams<{ id?: string }>();
 
-  const isActive = selectedId === rowData?.id;
+  const isUser = isUserMode(pathname);
+  const parsedId = params.id ? Number(params.id) : Number.NaN;
+  const selectedSourcecodeId = Number.isNaN(parsedId) ? -1 : parsedId;
+  const isActive = selectedSourcecodeId === rowData?.sourceCodeId;
 
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
 
-    if (rowData) {
-      setSelectedId(rowData.id);
+    if (rowData && !isActive) {
+      const detailRoute = isUser
+        ? ROUTES.USER_SOURCECODE_DETAIL(String(rowData.sourceCodeId))
+        : `${ROUTES.ADMIN_SOURCECODE_MANAGEMENT}/${rowData.sourceCodeId}`;
+      router.push(detailRoute);
     }
   };
 
@@ -44,6 +53,8 @@ export function SourcecodeRow({
       {...restProps}
       className={classNames("pointer", { active: isActive }, className)}
       onClick={handleClickRow}
+      data-sourcecode-id={rowData?.sourceCodeId}
+      data-selected={isActive}
     >
       {children}
     </tr>

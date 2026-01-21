@@ -1,82 +1,85 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteSourcecode } from "@/domain/sourcecode/hooks/use-delete-sourcecode";
-import type { SourcecodeIdType } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { openDeleteSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcecode.atom";
+import {
+  getGetSourceCodeListQueryKey,
+  useDeleteSourceCode,
+} from "@/api/generated/source-code/source-code";
 import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { isUserMode } from "@/shared/utils/router.util";
 
 /**
  * 소스코드 삭제 모달 컴포넌트
  *
  * 선택한 소스코드를 삭제할 수 있는 모달입니다.
- * 삭제 완료 시 pubsub 이벤트를 발행하여 다른 컴포넌트에서 처리할 수 있습니다.
+ * 삭제 완료 시 목록을 자동으로 갱신합니다.
  */
 export function DeleteSourcecodeModal() {
-  // useGlobalModal 훅을 사용하여 모달 상태 관리
-  const { open, onOpen, onClose } = useGlobalModal(
-    openDeleteSourcecodeModalAtom,
-  );
+  const router = useRouter();
+  const pathname = usePathname();
+  const queryClient = useQueryClient();
 
-  // 삭제할 소스코드 목록
-  const [deleteSourcecodes, setDeleteSourcecodes] = useState<
-    SourcecodeIdType[]
-  >([]);
+  const [open, setOpen] = useState(false);
+  const [deleteSourcecodeIds, setDeleteSourcecodeIds] = useState<number[]>([]);
 
-  const deleteSourcecode = useDeleteSourcecode();
+  const { mutateAsync, isPending } = useDeleteSourceCode();
 
-  /**
-   * 폼 제출 처리 함수
-   *
-   * 소스코드 삭제를 실행하고 모달을 닫습니다.
-   * 삭제 성공 시 관련 컴포넌트에서 데이터가 자동으로 갱신됩니다.
-   */
-  const handleOk = () => {
-    if (deleteSourcecodes.length === 0) {
-      toast.error("삭제할 소스코드를 선택해 주세요.");
-      return;
+  const isUser = isUserMode(pathname);
+
+  const handleOk = async () => {
+    if (isPending) return;
+    if (deleteSourcecodeIds.length === 0) return;
+
+    try {
+      for (const id of deleteSourcecodeIds) {
+        await mutateAsync({ sourceCodeId: id });
+      }
+
+      toast.success("소스코드 삭제 완료");
+
+      queryClient.invalidateQueries({
+        queryKey: getGetSourceCodeListQueryKey(),
+      });
+
+      setOpen(false);
+
+      const targetRoute = isUser
+        ? ROUTES.USER_SOURCECODE
+        : ROUTES.ADMIN_SOURCECODE_MANAGEMENT;
+      router.replace(targetRoute);
+    } catch {
+      toast.error("소스코드 삭제 중 오류가 발생했습니다.");
     }
-
-    // 소스코드 삭제 실행
-    deleteSourcecode.mutate(deleteSourcecodes, {
-      onSuccess: () => {
-        toast.success("소스코드 삭제 완료");
-        // 모달 닫기
-        onClose();
-      },
-    });
   };
 
-  /**
-   * 소스코드 삭제 모달 데이터 구독
-   */
-  useSubscribe(
-    SOURCECODE_EVENTS.sendDeleteSourcecode,
-    (sourcecodes: SourcecodeIdType[]) => {
-      // 삭제할 소스코드 목록 설정
-      setDeleteSourcecodes(sourcecodes);
-      // 삭제 모달 열기
-      onOpen();
-    },
-  );
+  const handleCancel = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
+
+  useSubscribe<number[]>(SOURCECODE_EVENTS.sendDeleteSourcecode, (ids) => {
+    setDeleteSourcecodeIds(ids);
+    setOpen(true);
+  });
 
   return (
     <Modal
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={onClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       title="소스코드 삭제"
       centered
-      okButtonProps={{
-        loading: deleteSourcecode.isPending,
-      }}
+      okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <div>선택한 소스코드를 삭제하시겠습니까?</div>
       <div>삭제 시 해당 소스코드는 복구되지 않습니다.</div>

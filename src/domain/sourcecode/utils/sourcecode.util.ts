@@ -1,49 +1,30 @@
 import type { TagProps } from "xiilab-ui";
 
-import type {
-  SourcecodeStatusType,
-  SourcecodeType,
-} from "@/domain/sourcecode/schemas/sourcecode.schema";
+import { SourceCodeListResponseSourceCodeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
 /**
  * 소스코드 타입 정보 조회
  * @param type - 소스코드 타입
  * @returns 타입 정보 (텍스트, 태그)
  */
-export const getSourcecodeTypeInfo = (type: SourcecodeType) => {
+export const getSourcecodeTypeInfo = (
+  type: SourceCodeListResponseSourceCodeType,
+) => {
   // 타입 표시 텍스트
   let text = "";
   // 태그 색상
   let tag: TagProps["variant"] = "yellow";
 
-  if (type === "GIT_HUB") {
+  if (type === SourceCodeListResponseSourceCodeType.GITHUB) {
     text = "GitHub";
     tag = "yellow";
-  } else if (type === "GIT_LAB") {
+  } else if (type === SourceCodeListResponseSourceCodeType.GITLAB) {
     text = "GitLab";
     tag = "yellow";
-  } else if (type === "BIT_BUCKET") {
+  } else if (type === SourceCodeListResponseSourceCodeType.BITBUCKET) {
     text = "BitBucket";
     tag = "purple";
   }
 
   return { text, tag };
-};
-
-/**
- * 소스코드 타입 정보 조회
- * @param type - 소스코드 타입
- * @returns 타입 정보 (텍스트, 태그)
- */
-export const getSourcecodeStatusInfo = (type: SourcecodeStatusType) => {
-  // 타입 표시 텍스트
-  let text = "";
-
-  if (type === "PUBLIC") {
-    text = "공개";
-  } else if (type === "PRIVATE") {
-    text = "비공개";
-  }
-
-  return { text };
 };
