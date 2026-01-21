@@ -16,12 +16,14 @@ import {
   TextArea,
 } from "xiilab-ui";
 
-import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetCredentialsQueryKey,
   useCreateCredential,
 } from "@/api/generated/credential/credential";
-import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential.constant";
+import {
+  CREDENTIAL_DEFAULT_FORM_VALUES,
+  CREDENTIAL_TYPE_OPTIONS,
+} from "@/domain/credential/constants/credential.constant";
 import {
   type CreateCredentialFormType,
   createCredentialFormSchema,
@@ -29,14 +31,6 @@ import {
 import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-
-const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
-  credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
-  credentialName: "",
-  description: "",
-  credentialAccountId: "",
-  token: "",
-};
 
 export function CreateCredentialModal() {
   const queryClient = useQueryClient();
@@ -53,7 +47,6 @@ export function CreateCredentialModal() {
     formState: { errors },
   } = useForm<CreateCredentialFormType>({
     resolver: zodResolver(createCredentialFormSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
   });
 
   const onSubmit = (data: CreateCredentialFormType) => {
@@ -84,7 +77,7 @@ export function CreateCredentialModal() {
   };
 
   useSubscribe(CREDENTIAL_EVENTS.openCreateModal, () => {
-    reset(DEFAULT_FORM_VALUES);
+    reset(CREDENTIAL_DEFAULT_FORM_VALUES);
     setOpen(true);
   });
 

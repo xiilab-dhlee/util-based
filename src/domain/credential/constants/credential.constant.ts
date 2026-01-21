@@ -2,8 +2,9 @@ import type { DropdownOption, TagProps } from "xiilab-ui";
 
 import {
   CredentialListItemResponseCredentialType as CREDENTIAL_TYPES,
-  type CredentialListItemResponseCredentialType,
+  CredentialListItemResponseCredentialType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { CreateCredentialFormType } from "../schemas/credential.schema";
 
 /** 크리덴셜 타입 (API 스키마에서 가져온 타입) */
 export type CredentialType = CredentialListItemResponseCredentialType;
@@ -54,6 +55,11 @@ export const CREDENTIAL_TYPE_OPTIONS: DropdownOption[] = [
     value: CREDENTIAL_TYPES.IMAGE_REGISTRY,
   },
 ];
-
-/** API 스키마에서 가져온 크리덴셜 타입 상수 재export */
-export { CREDENTIAL_TYPES };
+/** 크리덴셜 생성 폼 기본 값 */
+export const CREDENTIAL_DEFAULT_FORM_VALUES: CreateCredentialFormType = {
+  credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
+  credentialName: "",
+  description: "",
+  credentialAccountId: "",
+  token: "",
+};

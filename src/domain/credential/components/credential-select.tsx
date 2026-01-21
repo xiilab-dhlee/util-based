@@ -9,7 +9,7 @@ import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
-const QUERY_KEY = "credential-select";
+export const CREDENTIAL_SELECT_QUERY_KEY = "credential-select";
 const PAGE_SIZE = 30;
 interface CredentialSelectProps {
   value: number | null;
@@ -21,7 +21,7 @@ function useCredentialOptions(keyword: string) {
   const accountId = session?.user?.id ?? "";
 
   const query = useInfiniteQuery({
-    queryKey: [QUERY_KEY, accountId, keyword, PAGE_SIZE],
+    queryKey: [CREDENTIAL_SELECT_QUERY_KEY, accountId, keyword, PAGE_SIZE],
     queryFn: ({ pageParam = 0, signal }) =>
       getCredentials(
         accountId,

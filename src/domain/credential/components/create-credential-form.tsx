@@ -7,25 +7,17 @@ import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { Button, Dropdown, FormItem, Input, TextArea } from "xiilab-ui";
 
-import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useCreateCredential } from "@/api/generated/credential/credential";
+import { CREDENTIAL_SELECT_QUERY_KEY } from "@/domain/credential/components/credential-select";
 import {
-  getGetCredentialsQueryKey,
-  useCreateCredential,
-} from "@/api/generated/credential/credential";
-import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential.constant";
+  CREDENTIAL_DEFAULT_FORM_VALUES,
+  CREDENTIAL_TYPE_OPTIONS,
+} from "@/domain/credential/constants/credential.constant";
 import {
   type CreateCredentialFormType,
   createCredentialFormSchema,
 } from "@/domain/credential/schemas/credential.schema";
 import { FormRow } from "@/styles/layers/form-layer.styled";
-
-const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
-  credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
-  credentialName: "",
-  description: "",
-  credentialAccountId: "",
-  token: "",
-};
 
 /**
  * 크리덴셜 생성 폼 컴포넌트
@@ -46,7 +38,7 @@ export function CreateCredentialForm() {
     formState: { errors },
   } = useForm<CreateCredentialFormType>({
     resolver: zodResolver(createCredentialFormSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
+    defaultValues: CREDENTIAL_DEFAULT_FORM_VALUES,
   });
 
   const onSubmit = (data: CreateCredentialFormType) => {
@@ -61,10 +53,10 @@ export function CreateCredentialForm() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
-            queryKey: getGetCredentialsQueryKey(accountId),
+            queryKey: [CREDENTIAL_SELECT_QUERY_KEY],
             exact: false,
           });
-          reset(DEFAULT_FORM_VALUES);
+          reset(CREDENTIAL_DEFAULT_FORM_VALUES);
         },
       },
     );
@@ -117,26 +109,7 @@ export function CreateCredentialForm() {
           )}
         />
       </StyledFormRow>
-      <StyledFormRow>
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <StyledFormItem
-              label="설명"
-              validateStatus={errors.description ? "error" : undefined}
-              htmlFor="formCredentialDescription"
-              help={errors.description?.message}
-            >
-              <TextArea
-                {...field}
-                id="formCredentialDescription"
-                placeholder="설명을 입력해 주세요."
-              />
-            </StyledFormItem>
-          )}
-        />
-      </StyledFormRow>
+
       <StyledFormRow>
         <Controller
           name="credentialAccountId"
@@ -173,7 +146,7 @@ export function CreateCredentialForm() {
             >
               <Input
                 {...field}
-                type="password"
+                type="text"
                 id="formCredentialToken"
                 placeholder="토큰을 입력해 주세요."
                 width="100%"
@@ -183,7 +156,26 @@ export function CreateCredentialForm() {
           )}
         />
       </StyledFormRow>
-
+      <StyledFormRow>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <StyledFormItem
+              label="설명"
+              validateStatus={errors.description ? "error" : undefined}
+              htmlFor="formCredentialDescription"
+              help={errors.description?.message}
+            >
+              <TextArea
+                {...field}
+                id="formCredentialDescription"
+                placeholder="설명을 입력해 주세요."
+              />
+            </StyledFormItem>
+          )}
+        />
+      </StyledFormRow>
       <Button
         variant="outlined"
         color="primary"
@@ -217,5 +209,6 @@ const StyledFormRow = styled(FormRow)`
 `;
 
 const StyledFormItem = styled(FormItem)`
+  margin-bottom: 8px !important;
   flex: 1;
 `;
