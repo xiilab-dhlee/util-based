@@ -3,6 +3,7 @@
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 // import { toast } from "react-toastify";
 import { Button, Input } from "xiilab-ui";
 
@@ -15,6 +16,7 @@ import {
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { checkIsUser } from "@/shared/utils/auth.util";
 
 interface RegistryDetailFilterProps {
   totalSize?: number;
@@ -30,6 +32,7 @@ export function RegistryDetailFilter({
   totalSize,
   loading,
 }: RegistryDetailFilterProps) {
+  const { data: session } = useSession();
   const { name } = useParams<{ name: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
 
@@ -38,6 +41,8 @@ export function RegistryDetailFilter({
   const resetCheckedList = useResetAtom(registryTagCheckedListAtom);
   // const selectedTag = useAtomValue(registryTagSelectedAtom);
   const publish = usePublish();
+
+  const isUser = checkIsUser(session);
 
   const handleSearch = (value: string) => {
     resetCheckedList();
@@ -99,17 +104,19 @@ export function RegistryDetailFilter({
       >
         검증하기
       </Button> */}
-      <Button
-        color="primary"
-        icon="Plus"
-        iconPosition="left"
-        variant="gradient"
-        width={100}
-        height={30}
-        onClick={handleCreate}
-      >
-        태그 추가
-      </Button>
+      {isUser && (
+        <Button
+          color="primary"
+          icon="Plus"
+          iconPosition="left"
+          variant="gradient"
+          width={100}
+          height={30}
+          onClick={handleCreate}
+        >
+          태그 추가
+        </Button>
+      )}
     </MySearchFilter>
   );
 }

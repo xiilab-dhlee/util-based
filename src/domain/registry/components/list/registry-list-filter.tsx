@@ -2,6 +2,7 @@
 
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Button, Input } from "xiilab-ui";
 
@@ -17,6 +18,7 @@ import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { checkIsUser } from "@/shared/utils/auth.util";
 
 interface RegistryListFilterProps {
   totalSize?: number;
@@ -27,12 +29,14 @@ export function RegistryListFilter({
   totalSize,
   loading,
 }: RegistryListFilterProps) {
+  const { data: session } = useSession();
   const [searchKeyword, setSearchKeyword] = useAtom(registrySearchKeywordAtom);
   const setSearchText = useSetAtom(registrySearchTextAtom);
   const resetPage = useResetAtom(registryPageAtom);
   const resetCheckedList = useResetAtom(registryCheckedListAtom);
 
   const publish = usePublish();
+  const isUser = checkIsUser(session);
 
   const handleSearch = (value: string) => {
     resetCheckedList();
@@ -77,18 +81,20 @@ export function RegistryListFilter({
         value={searchKeyword}
         data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
-      <Button
-        color="primary"
-        icon="Plus"
-        iconPosition="left"
-        variant="gradient"
-        width={158}
-        height={30}
-        onClick={handleCreateRegistryImage}
-        disabled={loading}
-      >
-        컨테이너 이미지 추가
-      </Button>
+      {isUser && (
+        <Button
+          color="primary"
+          icon="Plus"
+          iconPosition="left"
+          variant="gradient"
+          width={158}
+          height={30}
+          onClick={handleCreateRegistryImage}
+          disabled={loading}
+        >
+          컨테이너 이미지 추가
+        </Button>
+      )}
     </MySearchFilter>
   );
 }

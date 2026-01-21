@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Button, Card } from "xiilab-ui";
 
@@ -14,6 +15,7 @@ import {
 } from "@/shared/components/card/compact-card-layer.styled";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
+import { checkIsUser, getSessionAccountId } from "@/shared/utils/auth.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 
 type RegistryImageCardProps = ImageJobResponse;
@@ -22,11 +24,18 @@ export function RegistryImageCard({
   imageTagId,
   imageName,
   imageTagName,
+  creatorId,
   creatorName,
   status,
   createdAt,
 }: RegistryImageCardProps) {
-  const title = `${imageName || "-"}:${imageTagName || "-"}`;
+  const { data: session } = useSession();
+  const isUser = checkIsUser(session);
+  const sessionAccountId = getSessionAccountId(session);
+  const isOwner = creatorId === sessionAccountId;
+  const canManageJob = !isUser || isOwner;
+
+  const title = [imageName, imageTagName].filter(Boolean).join(":") || "-";
 
   return (
     <CardWrapper data-testid={REGISTRY_SELECTOR.JOB_LIST_CARD}>
@@ -38,13 +47,17 @@ export function RegistryImageCard({
           <MyDropdown
             placement="bottomRight"
             items={[
-              <RegistryJobRestartButton
-                key="restart"
-                imageTagId={imageTagId}
-              />,
-              <RegistryJobStopButton key="stop" imageTagId={imageTagId} />,
+              canManageJob && (
+                <RegistryJobRestartButton
+                  key="restart"
+                  imageTagId={imageTagId}
+                />
+              ),
+              canManageJob && (
+                <RegistryJobStopButton key="stop" imageTagId={imageTagId} />
+              ),
               <RegistryLogButton key="log" />,
-            ]}
+            ].filter(Boolean)}
           >
             <Button
               width="100%"

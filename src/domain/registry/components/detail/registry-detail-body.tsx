@@ -2,6 +2,7 @@
 
 import { useAtom } from "jotai";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Button, Icon, type TableProps } from "xiilab-ui";
 
@@ -21,6 +22,7 @@ import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
+import { checkIsUser, getSessionAccountId } from "@/shared/utils/auth.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
   getColumnSortOrder,
@@ -52,6 +54,7 @@ export function RegistryDetailBody({
   isLoading,
   isError,
 }: RegistryDetailBodyProps) {
+  const { data: session } = useSession();
   const { name } = useParams<{ name: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
   const publish = usePublish();
@@ -62,12 +65,25 @@ export function RegistryDetailBody({
     { query: { enabled: !!harborImageName } },
   );
 
+  const isUser = checkIsUser(session);
+  const sessionAccountId = getSessionAccountId(session);
+  const isOwner = imageDetail?.creatorId === sessionAccountId;
+  const canDelete = !isUser || isOwner;
+
   const [checkedList, setCheckedList] = useAtom(registryTagCheckedListAtom);
   const [sort, setSort] = useAtom(registryTagSortAtom);
   const { rowSelection } = useTableSelection<ImageTagListResponse>(
     checkedList,
     setCheckedList,
   );
+
+  const rowSelectionWithDisabled: TableProps<ImageTagListResponse>["rowSelection"] =
+    {
+      ...rowSelection,
+      getCheckboxProps: (record: ImageTagListResponse) => ({
+        disabled: isUser && record.creatorId !== sessionAccountId,
+      }),
+    };
 
   const handleDelete = () => {
     publish(PRIVATE_REGISTRY_EVENTS.openDeleteModal, [harborImageName]);
@@ -89,15 +105,17 @@ export function RegistryDetailBody({
       {/* 이미지 기본 정보 헤더 */}
       <Header>
         <ListSectionTitle>컨테이너 이미지 기본 정보</ListSectionTitle>
-        <Button
-          width={80}
-          size="small"
-          variant="outlined"
-          onClick={handleDelete}
-          height={34}
-        >
-          이미지 삭제
-        </Button>
+        {canDelete && (
+          <Button
+            width={80}
+            size="small"
+            variant="outlined"
+            onClick={handleDelete}
+            height={34}
+          >
+            이미지 삭제
+          </Button>
+        )}
       </Header>
 
       {/* 이미지 기본 정보 패널 */}
@@ -134,27 +152,29 @@ export function RegistryDetailBody({
       <ListWrapper>
         <CustomizedTable
           columns={createRegistryTagColumn([
-            { key: "imageTagName", ellipsis: true },
-            { key: "imageTagSizeByte" },
-            { key: "uploadStatus" },
-            { key: "scanStatus" },
-            { key: "creatorName" },
+            { key: "imageTagName", width: "18%", ellipsis: true },
+            { key: "imageTagSizeByte", width: "10%" },
+            { key: "uploadStatus", width: "12%" },
+            { key: "scanStatus", width: "12%" },
+            { key: "creatorName", width: "10%" },
             {
               key: "createdAt",
               align: "left",
+              width: "14%",
               sorter: true,
               sortOrder: getColumnSortOrder(sort, "createdAt"),
             },
-            { key: "approvalStatus" },
-            { key: "decisionReason" },
+            { key: "approvalStatus", width: "12%" },
+            { key: "decisionReason", width: "12%" },
           ])}
-          activePadding
           data={data}
           columnHeight={34}
           loading={isLoading}
           isError={isError}
           rowKey="imageTagId"
-          rowSelection={rowSelection}
+          tableLayout="fixed"
+          scroll={{ x: "100%", y: "100%" }}
+          rowSelection={rowSelectionWithDisabled}
           onChange={handleChange}
           customRow={RegistryTagRow}
         />
@@ -170,13 +190,16 @@ export function RegistryDetailBody({
 // Styled Components
 // ============================================================================
 
-const Container = styled(ListPageBody)``;
+const Container = styled(ListPageBody)`
+  padding-top: 24px;
+  min-height: 792px;
+`;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 20px;
 `;
 
 const InfoPanel = styled.div`
