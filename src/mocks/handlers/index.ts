@@ -21,6 +21,7 @@ import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+import { sourcecodeHandlers } from "@/domain/sourcecode/mocks";
 import { storageHandlers } from "@/domain/storage/mocks";
 import { systemSettingHandlers } from "@/domain/system-setting/mocks";
 import { volumeHandlers } from "@/domain/volume/mocks";
@@ -38,7 +39,6 @@ import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
 import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
-import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 import { storageSettingHandlers } from "@/mocks/handlers/storage-setting.handler";
 import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
@@ -99,7 +99,6 @@ function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
 const rawHandlers = [
   ...hubHandlers,
   ...workloadHandlers,
-  ...sourcecodeHandlers,
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),
   ...getAdminK8sMock(),
@@ -130,6 +129,7 @@ const rawHandlers = [
   ...reportReservationHandlers,
   ...resourcePresetHandlers,
   ...storageHandlers,
+  ...sourcecodeHandlers,
 ];
 
 /**

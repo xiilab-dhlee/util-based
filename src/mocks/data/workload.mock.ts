@@ -1,4 +1,3 @@
-import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
 import { WORKLOAD_STATUS } from "@/domain/workload/constants/workload.constant";
 import {
   type WorkloadListType,
@@ -20,26 +19,8 @@ export const workloadListMock = Array.from({ length: LIST_PAGE_SIZE }, () =>
  * E2E 테스트에서 카드 검증이 가능하도록 함
  */
 export const workloadDetailMock = makeMock(workloadDetailSchema, {
-  sourcecodes: [
-    {
-      ...makeMock(sourcecodeListSchema),
-      branch: "main",
-      path: "/workspace/project",
-    },
-  ],
-  volumes: [
-    {
-      uid: "vol-001",
-      name: "test-volume",
-      creatorName: "테스터",
-      creatorDate: new Date().toISOString(),
-      storageType: "ASTRAGO" as const,
-      status: "PUBLIC" as const,
-      path: "/data/volume",
-      labels: ["test"],
-      size: 1024,
-    },
-  ],
+  sourcecodes: [],
+  volumes: [],
 });
 
 /**
