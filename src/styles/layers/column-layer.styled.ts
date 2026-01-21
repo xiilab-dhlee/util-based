@@ -111,6 +111,16 @@ export const ColumnTextButton = styled.button`
   }
 `;
 
+// 외부 링크 (hover 시 언더라인)
+export const ColumnExternalLink = styled.a`
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 // 전송 상태 텍스트
 export const ColumnStatus = styled.span`
   font-weight: 500;
