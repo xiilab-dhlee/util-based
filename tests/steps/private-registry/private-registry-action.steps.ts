@@ -1,6 +1,6 @@
 import { createBdd } from "playwright-bdd";
 
-import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
+import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 
 /**
@@ -40,7 +40,7 @@ When(
   async ({ privateRegistryListPage }) => {
     await privateRegistryListPage.jobListGrid.clickCardButton(
       0,
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CARD_DROPDOWN_TRIGGER,
+      REGISTRY_SELECTOR.JOB_LIST_CARD_DROPDOWN_TRIGGER,
     );
   },
 );
@@ -49,7 +49,7 @@ When(
   "등록 중인 이미지의 재시작 버튼을 클릭한다",
   async ({ privateRegistryListPage }) => {
     await privateRegistryListPage.jobListGrid.clickDropdownMenuItem(
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_RESTART_BUTTON,
+      REGISTRY_SELECTOR.JOB_LIST_RESTART_BUTTON,
     );
   },
 );
@@ -58,7 +58,7 @@ When(
   "등록 중인 이미지의 종료 버튼을 클릭한다",
   async ({ privateRegistryListPage }) => {
     await privateRegistryListPage.jobListGrid.clickDropdownMenuItem(
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STOP_BUTTON,
+      REGISTRY_SELECTOR.JOB_LIST_STOP_BUTTON,
     );
   },
 );

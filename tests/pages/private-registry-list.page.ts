@@ -1,7 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { ROUTES } from "@/shared/constants/routes.constant";
-import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
+import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { CardGridComponent } from "../components/card-grid.component";
 import { DropdownComponent } from "../components/dropdown.component";
 import { PaginationComponent } from "../components/pagination.component";
@@ -41,11 +41,11 @@ export class PrivateRegistryListPage extends ListPage {
     super(page);
     this.imageSourceTypeFilter = new DropdownComponent(
       page,
-      PRIVATE_REGISTRY_SELECTOR.FILTER_TYPE,
+      REGISTRY_SELECTOR.FILTER_TYPE,
     );
     this.jobListTypeFilter = new DropdownComponent(
       page,
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_FILTER_TYPE,
+      REGISTRY_SELECTOR.JOB_LIST_FILTER_TYPE,
     );
   }
 
@@ -54,7 +54,7 @@ export class PrivateRegistryListPage extends ListPage {
   // ============================================
 
   protected get pageHeaderTestId(): string {
-    return PRIVATE_REGISTRY_SELECTOR.PAGE_HEADER;
+    return REGISTRY_SELECTOR.PRIVATE_PAGE_HEADER;
   }
 
   protected get basePath(): string {
@@ -62,7 +62,7 @@ export class PrivateRegistryListPage extends ListPage {
   }
 
   protected get tableIdentifierTestId(): string {
-    return PRIVATE_REGISTRY_SELECTOR.IMAGE_NAME;
+    return REGISTRY_SELECTOR.IMAGE_NAME;
   }
 
   // ============================================
@@ -73,7 +73,7 @@ export class PrivateRegistryListPage extends ListPage {
   get jobListSearchInput(): SearchInputComponent {
     return new SearchInputComponent(
       this.page,
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_SEARCH_INPUT,
+      REGISTRY_SELECTOR.JOB_LIST_SEARCH_INPUT,
     );
   }
 
@@ -81,23 +81,18 @@ export class PrivateRegistryListPage extends ListPage {
   get jobListPagination(): PaginationComponent {
     return new PaginationComponent(
       this.page,
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_PAGINATION,
+      REGISTRY_SELECTOR.JOB_LIST_PAGINATION,
     );
   }
 
   /** 등록 중인 이미지 목록 총 개수 Locator */
   get jobListTotalCount(): Locator {
-    return this.page.getByTestId(
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_TOTAL_COUNT,
-    );
+    return this.page.getByTestId(REGISTRY_SELECTOR.JOB_LIST_TOTAL_COUNT);
   }
 
   /** 등록 중인 이미지 목록 카드 그리드 */
   get jobListGrid(): CardGridComponent {
-    return new CardGridComponent(
-      this.page,
-      PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CARD,
-    );
+    return new CardGridComponent(this.page, REGISTRY_SELECTOR.JOB_LIST_CARD);
   }
 
   // ============================================

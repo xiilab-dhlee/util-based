@@ -1,6 +1,6 @@
 import { createBdd } from "playwright-bdd";
 
-import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
+import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 import {
   createUnitPattern,
@@ -95,7 +95,7 @@ Then(
   "각 개인 레지스트리의 이미지 이름이 빈 값이 아니다",
   async ({ privateRegistryListPage, assertLogger }) => {
     await privateRegistryListPage.table.forEachCell(
-      PRIVATE_REGISTRY_SELECTOR.IMAGE_NAME,
+      REGISTRY_SELECTOR.IMAGE_NAME,
       (text, i) => {
         assertLogger.assertNotEmpty(`개인 레지스트리[${i}] 이미지 이름`, text);
       },
@@ -107,7 +107,7 @@ Then(
   "각 개인 레지스트리의 구분이 빈 값이 아니다",
   async ({ privateRegistryListPage, assertLogger }) => {
     await privateRegistryListPage.table.forEachCell(
-      PRIVATE_REGISTRY_SELECTOR.IMAGE_TYPE,
+      REGISTRY_SELECTOR.IMAGE_TYPE,
       (text, i) => {
         assertLogger.assertNotEmpty(`개인 레지스트리[${i}] 구분`, text);
       },
@@ -119,7 +119,7 @@ Then(
   "각 개인 레지스트리의 최근 태그가 빈 값이 아니다",
   async ({ privateRegistryListPage, assertLogger }) => {
     await privateRegistryListPage.table.forEachCell(
-      PRIVATE_REGISTRY_SELECTOR.RECENT_TAG,
+      REGISTRY_SELECTOR.RECENT_TAG,
       (text, i) => {
         assertLogger.assertNotEmpty(`개인 레지스트리[${i}] 최근 태그`, text);
       },
@@ -131,7 +131,7 @@ Then(
   "각 개인 레지스트리의 태그 개수가 올바른 형식으로 표시된다",
   async ({ privateRegistryListPage, assertLogger }) => {
     await privateRegistryListPage.table.forEachCell(
-      PRIVATE_REGISTRY_SELECTOR.TAG_COUNT,
+      REGISTRY_SELECTOR.TAG_COUNT,
       (text, i) => {
         assertLogger.assertMatch(
           `개인 레지스트리[${i}] 태그 개수`,
@@ -147,7 +147,7 @@ Then(
   "각 개인 레지스트리의 다운로드 횟수가 올바른 형식으로 표시된다",
   async ({ privateRegistryListPage, assertLogger }) => {
     await privateRegistryListPage.table.forEachCell(
-      PRIVATE_REGISTRY_SELECTOR.DOWNLOAD_COUNT,
+      REGISTRY_SELECTOR.DOWNLOAD_COUNT,
       (text, i) => {
         assertLogger.assertMatch(
           `개인 레지스트리[${i}] 다운로드 횟수`,
@@ -163,7 +163,7 @@ Then(
   "각 개인 레지스트리의 생성일이 올바른 형식으로 표시된다",
   async ({ privateRegistryListPage, assertLogger }) => {
     await privateRegistryListPage.table.forEachCell(
-      PRIVATE_REGISTRY_SELECTOR.CREATED_AT,
+      REGISTRY_SELECTOR.CREATED_AT,
       (text, i) => {
         assertLogger.assertMatch(
           `개인 레지스트리[${i}] 생성일`,
@@ -196,7 +196,7 @@ Then(
     await privateRegistryListPage.jobListGrid.forEachCard(async (index) => {
       const text = await privateRegistryListPage.jobListGrid.getCardElementText(
         index,
-        PRIVATE_REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE,
+        REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE,
       );
       assertLogger.assertNotEmpty(`등록 중인 이미지[${index}] 구분`, text);
     });
@@ -209,7 +209,7 @@ Then(
     await privateRegistryListPage.jobListGrid.forEachCard(async (index) => {
       const text = await privateRegistryListPage.jobListGrid.getCardElementText(
         index,
-        PRIVATE_REGISTRY_SELECTOR.JOB_LIST_STATUS,
+        REGISTRY_SELECTOR.JOB_LIST_STATUS,
       );
       assertLogger.assertNotEmpty(`등록 중인 이미지[${index}] 상태`, text);
     });
@@ -222,7 +222,7 @@ Then(
     await privateRegistryListPage.jobListGrid.forEachCard(async (index) => {
       const text = await privateRegistryListPage.jobListGrid.getCardElementText(
         index,
-        PRIVATE_REGISTRY_SELECTOR.JOB_LIST_CREATED_AT,
+        REGISTRY_SELECTOR.JOB_LIST_CREATED_AT,
       );
       assertLogger.assertMatch(
         `등록 중인 이미지[${index}] 생성일시`,

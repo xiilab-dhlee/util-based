@@ -1,6 +1,6 @@
 import { createBdd } from "playwright-bdd";
 
-import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
+import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 
 /**
@@ -10,7 +10,7 @@ const { When, Then } = createBdd(test);
 
 /** 한글 정렬 기준 → 셀 selector 매핑 */
 const SORT_CELL_MAP: Record<string, string> = {
-  생성일: PRIVATE_REGISTRY_SELECTOR.CREATED_AT,
+  생성일: REGISTRY_SELECTOR.CREATED_AT,
 };
 
 When(

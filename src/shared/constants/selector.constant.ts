@@ -584,6 +584,8 @@ export const REGISTRY_SELECTOR = {
   TAG_COUNT: "registry-tag-count",
   /** 다운로드 수 */
   DOWNLOAD_COUNT: "registry-download-count",
+  /** 생성일 */
+  CREATED_AT: "registry-created-at",
 
   // 취약점 목록 (Vulnerability List)
   /** 취약점 목록 총 개수 */
