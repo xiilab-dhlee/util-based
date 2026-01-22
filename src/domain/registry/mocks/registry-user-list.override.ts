@@ -100,14 +100,19 @@ function sortUserContent<
 const privateImageUsageHandler = getGetPrivateImageUsageByAccountMockHandler(
   async (info) => {
     const url = new URL(info.request.url);
-    const keyword = url.searchParams.get("keyword") || "";
-    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
-    const pageSize = Number.parseInt(
-      url.searchParams.get("pageSize") || "20",
+
+    // 중첩 구조 파라미터 파싱 (pageSearchRequest[keyword], sortRequest[sort] 등)
+    const keyword = url.searchParams.get("pageSearchRequest[keyword]") || "";
+    const pageNo = Number.parseInt(
+      url.searchParams.get("pageSearchRequest[pageNo]") || "0",
       10,
     );
-    const sort = url.searchParams.get("sort");
-    const order = url.searchParams.get("order");
+    const pageSize = Number.parseInt(
+      url.searchParams.get("pageSearchRequest[pageSize]") || "20",
+      10,
+    );
+    const sort = url.searchParams.get("sortRequest[sort]");
+    const order = url.searchParams.get("sortRequest[order]");
 
     const totalSize = pageSize * 3;
 
@@ -154,12 +159,14 @@ const privateImageUsageHandler = getGetPrivateImageUsageByAccountMockHandler(
 const privateImageTagsByAccountIdHandler =
   getGetPrivateImageTagsByAccountIdMockHandler(async (info) => {
     const url = new URL(info.request.url);
+
+    // 중첩 구조 파라미터 파싱 (request[page][pageNo] 등)
     const pageNo = Number.parseInt(
-      url.searchParams.get("page.pageNo") || "0",
+      url.searchParams.get("request[page][pageNo]") || "0",
       10,
     );
     const pageSize = Number.parseInt(
-      url.searchParams.get("page.pageSize") || "5",
+      url.searchParams.get("request[page][pageSize]") || "5",
       10,
     );
 
@@ -224,14 +231,19 @@ const privateImageTagsByAccountIdHandler =
 const publicImageUsageHandler = getGetPublicImageUsageByAccountMockHandler(
   async (info) => {
     const url = new URL(info.request.url);
-    const keyword = url.searchParams.get("keyword") || "";
-    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
-    const pageSize = Number.parseInt(
-      url.searchParams.get("pageSize") || "20",
+
+    // 중첩 구조 파라미터 파싱 (pageSearchRequest[keyword], sortRequest[sort] 등)
+    const keyword = url.searchParams.get("pageSearchRequest[keyword]") || "";
+    const pageNo = Number.parseInt(
+      url.searchParams.get("pageSearchRequest[pageNo]") || "0",
       10,
     );
-    const sort = url.searchParams.get("sort");
-    const order = url.searchParams.get("order");
+    const pageSize = Number.parseInt(
+      url.searchParams.get("pageSearchRequest[pageSize]") || "20",
+      10,
+    );
+    const sort = url.searchParams.get("sortRequest[sort]");
+    const order = url.searchParams.get("sortRequest[order]");
 
     const totalSize = pageSize * 3;
 
@@ -278,12 +290,14 @@ const publicImageUsageHandler = getGetPublicImageUsageByAccountMockHandler(
 const publicImageTagsByAccountIdHandler =
   getGetPublicImageTagsByAccountIdMockHandler(async (info) => {
     const url = new URL(info.request.url);
+
+    // 중첩 구조 파라미터 파싱 (request[page][pageNo] 등)
     const pageNo = Number.parseInt(
-      url.searchParams.get("page.pageNo") || "0",
+      url.searchParams.get("request[page][pageNo]") || "0",
       10,
     );
     const pageSize = Number.parseInt(
-      url.searchParams.get("page.pageSize") || "5",
+      url.searchParams.get("request[page][pageSize]") || "5",
       10,
     );
 

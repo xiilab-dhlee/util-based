@@ -89,17 +89,23 @@ function createTagListHandler<T>(
 ) {
   return getMockHandler(async (info) => {
     const url = new URL(info.request.url);
-    const keyword = url.searchParams.get("keyword") || "";
-    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
+
+    // 중첩 구조 파라미터 파싱 (pageRequest[keyword], filterRequest[sort] 등)
+    const keyword = url.searchParams.get("pageRequest[keyword]") || "";
+    const pageNo = Number.parseInt(
+      url.searchParams.get("pageRequest[pageNo]") || "0",
+      10,
+    );
     const pageSize = Number.parseInt(
-      url.searchParams.get("pageSize") || "10",
+      url.searchParams.get("pageRequest[pageSize]") || "10",
       10,
     );
     const sort =
-      url.searchParams.get("sort") ||
+      url.searchParams.get("filterRequest[sort]") ||
       RegistryImageTagFilterRequestSort.CREATED_AT;
     const order =
-      url.searchParams.get("order") || RegistryImageTagFilterRequestOrder.DESC;
+      url.searchParams.get("filterRequest[order]") ||
+      RegistryImageTagFilterRequestOrder.DESC;
 
     const totalSize = pageSize * 3;
 
@@ -117,10 +123,10 @@ function createTagListHandler<T>(
 
         return {
           ...baseItem,
-          harborArtifactId: globalIndex + 1,
+          harborTagId: globalIndex + 1,
           imageTagId: globalIndex + 1,
           imageTagName: generateImageTagName(globalIndex, keyword),
-          createDateTime: generateCreatedAt(globalIndex, sort, order),
+          createdAt: generateCreatedAt(globalIndex, sort, order),
           vulnerability: generateVulnerability(),
           creatorName: "관리자",
           scanStatus: faker.helpers.arrayElement([
@@ -129,6 +135,14 @@ function createTagListHandler<T>(
             "IN_PROGRESS",
             "NOT_SCANNED",
             null,
+          ]),
+          approvalStatus: faker.helpers.arrayElement([
+            "AVAILABLE",
+            "APPROVAL_REQUIRED",
+            "APPROVED",
+            "REJECTED",
+            "APPROVAL_WAITING",
+            "REQUEST_BLOCKED",
           ]),
           hasMetadata: true,
         } as ImageTagListResponse;
