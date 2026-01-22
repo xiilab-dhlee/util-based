@@ -1,56 +1,22 @@
 "use client";
 
-import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { useGetPrivateImageUsageByAccount } from "@/api/generated/admin-private-registry/admin-private-registry";
-import { UserPrivateRegistryBody } from "@/domain/registry/components/entry/user-private-registry-body";
-import { UserPrivateRegistryFilter } from "@/domain/registry/components/entry/user-private-registry-filter";
-import { UserPrivateRegistryFooter } from "@/domain/registry/components/entry/user-private-registry-footer";
-import { USER_REGISTRY_PAGE_SIZE } from "@/domain/registry/constants/registry.constant";
-import { REGISTRY_USER_SORT_FIELD_MAP } from "@/domain/registry/constants/registry-user-list.constant";
-import {
-  userPrivateRegistryPageAtom,
-  userPrivateRegistrySearchTextAtom,
-  userPrivateRegistrySortAtom,
-} from "@/domain/registry/state/registry.atom";
-import { buildSortRequest } from "@/shared/utils/sort.util";
+import { UserPrivateRegistryMain } from "./user-private-registry-main";
+import { UserPublicRegistryMain } from "./user-public-registry-main";
 
+/**
+ * 레지스트리 서브섹션 컴포넌트
+ * 개인(private) 레지스트리와 공개(public) 레지스트리 사용자 목록을 나란히 표시합니다.
+ */
 export function RegistrySubSection() {
-  const searchText = useAtomValue(userPrivateRegistrySearchTextAtom);
-  const page = useAtomValue(userPrivateRegistryPageAtom);
-  const sort = useAtomValue(userPrivateRegistrySortAtom);
-
-  const sortRequest = buildSortRequest({
-    state: { field: sort.field, order: sort.order },
-    fieldMap: REGISTRY_USER_SORT_FIELD_MAP,
-  });
-
-  const { data, isLoading, isError } = useGetPrivateImageUsageByAccount({
-    pageNo: page - 1,
-    pageSize: USER_REGISTRY_PAGE_SIZE,
-    keyword: searchText,
-    ...(sortRequest
-      ? { sort: sortRequest.sort, order: sortRequest.order }
-      : {}),
-  });
-
   return (
     <Container>
       <Pane>
-        <UserPrivateRegistryFilter
-          totalSize={data?.totalSize}
-          loading={isLoading}
-        />
-        <UserPrivateRegistryBody
-          data={data?.content || []}
-          isLoading={isLoading}
-          isError={isError}
-        />
-        <UserPrivateRegistryFooter
-          totalSize={data?.totalSize || 0}
-          isLoading={isLoading}
-        />
+        <UserPrivateRegistryMain />
+      </Pane>
+      <Pane>
+        <UserPublicRegistryMain />
       </Pane>
     </Container>
   );

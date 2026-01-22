@@ -5,22 +5,22 @@ import { useResetAtom } from "jotai/utils";
 import { Input } from "xiilab-ui";
 
 import {
-  waitingRequestImagePageAtom,
-  waitingRequestImageSearchTextAtom,
+  userPublicRegistryPageAtom,
+  userPublicRegistrySearchTextAtom,
 } from "@/domain/registry/state/registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 
-interface WaitingRequestImageFilterProps {
+interface UserPublicRegistryFilterProps {
   totalSize?: number;
   loading: boolean;
 }
 
-export function WaitingRequestImageFilter({
+export function UserPublicRegistryFilter({
   totalSize,
   loading,
-}: WaitingRequestImageFilterProps) {
-  const setSearchText = useSetAtom(waitingRequestImageSearchTextAtom);
-  const resetPage = useResetAtom(waitingRequestImagePageAtom);
+}: UserPublicRegistryFilterProps) {
+  const setSearchText = useSetAtom(userPublicRegistrySearchTextAtom);
+  const resetPage = useResetAtom(userPublicRegistryPageAtom);
 
   const handleSearch = (value: string) => {
     resetPage();
@@ -28,19 +28,14 @@ export function WaitingRequestImageFilter({
   };
 
   return (
-    <MySearchFilter
-      title="이미지 사용 요청 승인 대기 목록"
-      darkMode
-      total={totalSize}
-    >
+    <MySearchFilter title="사용자별 공유 레지스트리" total={totalSize}>
       <Input.Search
         name="search"
-        placeholder="이미지 이름을 입력해 주세요."
+        placeholder="사용자 이름을 검색해 주세요."
         onSearch={handleSearch}
         autoComplete="off"
         width={220}
         height={30}
-        darkMode
         disabled={loading}
       />
     </MySearchFilter>
