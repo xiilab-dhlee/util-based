@@ -81,10 +81,29 @@ export const MUTATION_KEYS = {
   deleteSmtpSet: "deleteSmtpSet",
 
   // ============================================
-  // Registry (Public/Private)
+  // Registry (Private)
   // ============================================
-  createExternalImage: "createExternalImage",
-  createExternalImage1: "createExternalImage1",
+  updatePrivateImageTag: "updatePrivateImageTag",
+  createPrivateExternalImage: "createPrivateExternalImage",
+  addPrivateImageTag: "addPrivateImageTag",
+  scanPrivateImageTag: "scanPrivateImageTag",
+  deletePrivateImageTags: "deletePrivateImageTags",
+  deletePrivateImages: "deletePrivateImages",
+
+  // ============================================
+  // Registry (Public)
+  // ============================================
+  updatePublicImageTag: "updatePublicImageTag",
+  createPublicExternalImage: "createPublicExternalImage",
+  addPublicImageTag: "addPublicImageTag",
+  scanPublicImageTag: "scanPublicImageTag",
+  deletePublicImageTags: "deletePublicImageTags",
+
+  // ============================================
+  // Image Job
+  // ============================================
+  restartImageJob: "restartImageJob",
+  deleteImageJob: "deleteImageJob",
 
   // ============================================
   // Volume

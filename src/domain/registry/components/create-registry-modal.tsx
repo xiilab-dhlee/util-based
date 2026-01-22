@@ -5,7 +5,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
 import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -74,7 +73,6 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
           queryClient.invalidateQueries({
             queryKey: getGetPublicRegistryListQueryKey(),
           });
-          toast.success("레지스트리 이미지가 생성되었습니다.");
           setOpen(false);
         },
       },

@@ -2,7 +2,6 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Icon, Modal } from "xiilab-ui";
 
 import {
@@ -36,7 +35,6 @@ export function StopRegistryModal() {
           queryClient.invalidateQueries({
             queryKey: getGetImageJobsQueryKey(),
           });
-          toast.success("컨테이너 이미지 등록 종료 요청이 완료되었습니다.");
           setOpen(false);
         },
       },

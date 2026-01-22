@@ -164,13 +164,54 @@ export const MUTATION_MESSAGES: Partial<
   },
 
   // ============================================
-  // Registry (Public/Private)
+  // Registry (Private)
   // ============================================
-  [MUTATION_KEYS.createExternalImage]: {
-    success: "외부 이미지가 등록되었습니다.",
+  [MUTATION_KEYS.updatePrivateImageTag]: {
+    success: "태그 설명이 수정되었습니다.",
   },
-  [MUTATION_KEYS.createExternalImage1]: {
-    success: "외부 이미지가 등록되었습니다.",
+  [MUTATION_KEYS.createPrivateExternalImage]: {
+    success: "레지스트리 이미지가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.addPrivateImageTag]: {
+    success: "이미지 태그가 추가되었습니다.",
+  },
+  [MUTATION_KEYS.scanPrivateImageTag]: {
+    success: "취약점 스캔이 시작되었습니다.",
+  },
+  [MUTATION_KEYS.deletePrivateImageTags]: {
+    success: "이미지 태그 삭제 완료",
+  },
+  [MUTATION_KEYS.deletePrivateImages]: {
+    success: "레지스트리 이미지 삭제 완료",
+  },
+
+  // ============================================
+  // Registry (Public)
+  // ============================================
+  [MUTATION_KEYS.updatePublicImageTag]: {
+    success: "태그 설명이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.createPublicExternalImage]: {
+    success: "레지스트리 이미지가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.addPublicImageTag]: {
+    success: "이미지 태그가 추가되었습니다.",
+  },
+  [MUTATION_KEYS.scanPublicImageTag]: {
+    success: "취약점 스캔이 시작되었습니다.",
+  },
+  [MUTATION_KEYS.deletePublicImageTags]: {
+    success: "이미지 태그 삭제 완료",
+  },
+
+  // ============================================
+  // Image Job
+  // ============================================
+  [MUTATION_KEYS.restartImageJob]: {
+    success: "컨테이너 이미지 등록 재시작 요청이 완료되었습니다.",
+  },
+  [MUTATION_KEYS.deleteImageJob]: {
+    success: "컨테이너 이미지 등록 종료 요청이 완료되었습니다.",
   },
 
   // ============================================

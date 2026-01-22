@@ -3,7 +3,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
 import { getGetPrivateImageTagListQueryKey } from "@/api/generated/private-registry/private-registry";
@@ -51,7 +50,6 @@ export function DeleteRegistryTagModal({ mode }: DeleteRegistryTagModalProps) {
           queryClient.invalidateQueries({
             queryKey: getGetPublicImageTagListQueryKey(),
           });
-          toast.success("이미지 태그 삭제 완료");
           setOpen(false);
           if (mode === "private") {
             router.replace(

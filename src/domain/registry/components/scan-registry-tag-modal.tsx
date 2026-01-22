@@ -2,7 +2,6 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Icon, Modal } from "xiilab-ui";
 
 import { getGetPrivateImageTagListQueryKey } from "@/api/generated/private-registry/private-registry";
@@ -51,7 +50,6 @@ export function ScanRegistryTagModal({ mode }: ScanRegistryTagModalProps) {
           queryClient.invalidateQueries({
             queryKey: getGetPublicImageTagListQueryKey(),
           });
-          toast.success("취약점 스캔이 시작되었습니다.");
           setOpen(false);
         },
       },

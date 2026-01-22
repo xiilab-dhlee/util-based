@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { getGetPrivateImageTagListQueryKey } from "@/api/generated/private-registry/private-registry";
@@ -56,7 +55,6 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
           queryClient.invalidateQueries({
             queryKey: getGetPublicImageTagListQueryKey(),
           });
-          toast.success("이미지 태그가 추가되었습니다.");
           setOpen(false);
         },
       },

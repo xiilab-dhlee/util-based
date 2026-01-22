@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { Form, Icon, Modal, TextArea } from "xiilab-ui";
 
 import { getGetPrivateImageTagDetailQueryKey } from "@/api/generated/private-registry/private-registry";
@@ -83,7 +82,6 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
               harborImageName,
             }),
           });
-          toast.success("태그 설명이 수정되었습니다.");
           handleClose();
         },
       },
