@@ -10,6 +10,7 @@ import type { AntdTableSortState } from "@/shared/types/core.model";
  */
 export const REGISTRY_PAGE_SIZE = 20;
 export const REGISTRY_JOB_PAGE_SIZE = 5;
+export const REGISTRY_JOB_CARD_HEIGHT = 122;
 
 export const REGISTRY_SORT_FIELD_MAP = {
   // imageDisplayName: "IMAGE_NAME",

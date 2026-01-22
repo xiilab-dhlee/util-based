@@ -92,7 +92,7 @@ const createColumnList = (mode: RegistryMode): ResponsiveColumnType[] => {
       },
     },
     creatorNameColumn,
-    createdAtColumn,
+    createdAtColumn({ includeTime: true }),
   ];
 };
 
