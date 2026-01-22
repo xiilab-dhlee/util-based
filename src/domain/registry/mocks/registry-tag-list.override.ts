@@ -126,6 +126,7 @@ function createTagListHandler<T>(
             "COMPLETED",
             "FAILED",
             "IN_PROGRESS",
+            "NOT_SCANNED",
             null,
           ]),
           hasMetadata: true,

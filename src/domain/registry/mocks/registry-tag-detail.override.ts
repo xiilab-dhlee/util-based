@@ -61,6 +61,7 @@ function createTagDetailHandler<T>(
           "COMPLETED",
           "FAILED",
           "IN_PROGRESS",
+          "NOT_SCANNED",
         ]),
         creatorName: "관리자",
         createdAt: new Date(MOCK_BASE_TIMESTAMP).toISOString(),
