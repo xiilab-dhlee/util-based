@@ -145,9 +145,7 @@ export const deletePresetParams = zod.object({
  * 등록된 리소스 프리셋 목록을 페이징하여 조회합니다. 잡 타입과 노드 타입으로 필터링할 수 있습니다.
  * @summary 리소스 프리셋 목록 조회
  */
-export const getPresetsQueryPageNoMin = 0;
-
-export const getPresetsQueryPageSizeMax = 100;
+export const getPresetsQueryPageableRequestPageSizeMax = 100;
 
 export const getPresetsQueryParams = zod.object({
   jobType: zod
@@ -158,17 +156,14 @@ export const getPresetsQueryParams = zod.object({
     .enum(["SINGLE", "MULTI"])
     .optional()
     .describe("노드 타입 필터 (SINGLE, MULTI)"),
-  pageNo: zod
-    .number()
-    .min(getPresetsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPresetsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPresetsQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
 });
 
 export const getPresetsResponse = zod

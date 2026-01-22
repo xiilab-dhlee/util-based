@@ -566,7 +566,7 @@ export const useCompressFiles = <TError = unknown, TContext = unknown>(
  */
 export const listFiles = (
   volumeId: number,
-  params?: ListFilesParams,
+  params: ListFilesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseVolumeFileListResponse>({
@@ -592,7 +592,7 @@ export const getListFilesQueryOptions = <
   TError = unknown,
 >(
   volumeId: number,
-  params?: ListFilesParams,
+  params: ListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>
@@ -628,7 +628,7 @@ export function useListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params: undefined | ListFilesParams,
+  params: ListFilesParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>
@@ -651,7 +651,7 @@ export function useListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params?: ListFilesParams,
+  params: ListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>
@@ -674,7 +674,7 @@ export function useListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params?: ListFilesParams,
+  params: ListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>
@@ -693,7 +693,7 @@ export function useListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params?: ListFilesParams,
+  params: ListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>

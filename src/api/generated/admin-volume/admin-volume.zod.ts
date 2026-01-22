@@ -302,32 +302,29 @@ export const adminCompressBody = zod
         
  * @summary 전체 볼륨 목록 조회
  */
-export const adminGetVolumeListQueryPageNoMin = 0;
-
-export const adminGetVolumeListQueryPageSizeMax = 100;
+export const adminGetVolumeListQueryPageSearchRequestPageSizeMax = 100;
 
 export const adminGetVolumeListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(adminGetVolumeListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(adminGetVolumeListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  sort: zod
-    .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
-    .optional()
-    .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  volumeType: zod
-    .enum(["ASTRAGO", "ON_PREMISE"])
-    .optional()
-    .describe("볼륨 타입 필터"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(adminGetVolumeListQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filter: zod.object({
+    sort: zod
+      .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
+      .describe("정렬 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    isMine: zod.boolean().describe("내가 생성한 볼륨만 조회"),
+    volumeType: zod
+      .enum(["ASTRAGO", "ON_PREMISE"])
+      .optional()
+      .describe("볼륨 타입 필터"),
+  }),
 });
 
 export const adminGetVolumeListResponse = zod
@@ -378,7 +375,9 @@ export const adminListFilesParams = zod.object({
 });
 
 export const adminListFilesQueryParams = zod.object({
-  path: zod.string().optional().describe("조회할 경로 (기본값: /)"),
+  request: zod.object({
+    path: zod.string().describe("조회할 경로 (기본값: /)"),
+  }),
 });
 
 export const adminListFilesResponse = zod
@@ -425,15 +424,17 @@ export const adminPreviewParams = zod.object({
   volumeId: zod.number().describe("볼륨 ID"),
 });
 
-export const adminPreviewQueryPathMin = 0;
-export const adminPreviewQueryPathMax = 1000;
+export const adminPreviewQueryRequestPathMin = 0;
+export const adminPreviewQueryRequestPathMax = 1000;
 
 export const adminPreviewQueryParams = zod.object({
-  path: zod
-    .string()
-    .min(adminPreviewQueryPathMin)
-    .max(adminPreviewQueryPathMax)
-    .describe("미리보기할 파일 경로"),
+  request: zod.object({
+    path: zod
+      .string()
+      .min(adminPreviewQueryRequestPathMin)
+      .max(adminPreviewQueryRequestPathMax)
+      .describe("미리보기할 파일 경로"),
+  }),
 });
 
 export const adminPreviewResponse = zod.string();

@@ -90,28 +90,24 @@ export const deleteImagesResponse = zod
         
  * @summary 사용자별 공용 이미지 등록 현황 조회
  */
-export const getPublicImageUsageByAccountQueryPageNoMin = 0;
-
-export const getPublicImageUsageByAccountQueryPageSizeMax = 100;
+export const getPublicImageUsageByAccountQueryPageSearchRequestPageSizeMax = 100;
 
 export const getPublicImageUsageByAccountQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPublicImageUsageByAccountQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPublicImageUsageByAccountQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  sort: zod
-    .enum(["ACCOUNT_NAME", "IMAGE_COUNT", "USED_STORAGE"])
-    .optional()
-    .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPublicImageUsageByAccountQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  sortRequest: zod.object({
+    sort: zod
+      .enum(["ACCOUNT_NAME", "IMAGE_COUNT", "USED_STORAGE"])
+      .describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+  }),
 });
 
 export const getPublicImageUsageByAccountResponse = zod
@@ -155,26 +151,25 @@ export const getPublicImageTagsByAccountIdParams = zod.object({
   accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
 });
 
-export const getPublicImageTagsByAccountIdQueryPagePageNoMin = 0;
-
-export const getPublicImageTagsByAccountIdQueryPagePageSizeMax = 100;
+export const getPublicImageTagsByAccountIdQueryRequestPagePageSizeMax = 100;
 
 export const getPublicImageTagsByAccountIdQueryParams = zod.object({
-  "page.pageNo": zod
-    .number()
-    .min(getPublicImageTagsByAccountIdQueryPagePageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  "page.pageSize": zod
-    .number()
-    .min(1)
-    .max(getPublicImageTagsByAccountIdQueryPagePageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  imageSourceType: zod
-    .enum(["SNAPSHOT", "EXTERNAL"])
-    .optional()
-    .describe("이미지 소스 타입 필터"),
+  request: zod.object({
+    page: zod
+      .object({
+        pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+        pageSize: zod
+          .number()
+          .min(1)
+          .max(getPublicImageTagsByAccountIdQueryRequestPagePageSizeMax)
+          .describe("페이지 크기"),
+      })
+      .describe("페이징 요청"),
+    imageSourceType: zod
+      .enum(["SNAPSHOT", "EXTERNAL"])
+      .optional()
+      .describe("이미지 소스 타입 필터"),
+  }),
 });
 
 export const getPublicImageTagsByAccountIdResponse = zod

@@ -52,7 +52,7 @@ import type {
  * @summary Pending 워크로드 목록 조회
  */
 export const getPendingWorkloads = (
-  params?: GetPendingWorkloadsParams,
+  params: GetPendingWorkloadsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminWorkloadResponse>({
@@ -76,7 +76,7 @@ export const getGetPendingWorkloadsQueryOptions = <
   TData = Awaited<ReturnType<typeof getPendingWorkloads>>,
   TError = unknown,
 >(
-  params?: GetPendingWorkloadsParams,
+  params: GetPendingWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -112,7 +112,7 @@ export function useGetPendingWorkloads<
   TData = Awaited<ReturnType<typeof getPendingWorkloads>>,
   TError = unknown,
 >(
-  params: undefined | GetPendingWorkloadsParams,
+  params: GetPendingWorkloadsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -138,7 +138,7 @@ export function useGetPendingWorkloads<
   TData = Awaited<ReturnType<typeof getPendingWorkloads>>,
   TError = unknown,
 >(
-  params?: GetPendingWorkloadsParams,
+  params: GetPendingWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -164,7 +164,7 @@ export function useGetPendingWorkloads<
   TData = Awaited<ReturnType<typeof getPendingWorkloads>>,
   TError = unknown,
 >(
-  params?: GetPendingWorkloadsParams,
+  params: GetPendingWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -186,7 +186,7 @@ export function useGetPendingWorkloads<
   TData = Awaited<ReturnType<typeof getPendingWorkloads>>,
   TError = unknown,
 >(
-  params?: GetPendingWorkloadsParams,
+  params: GetPendingWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

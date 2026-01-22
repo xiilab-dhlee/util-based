@@ -403,7 +403,7 @@ export const useRegisterAstragoVolume = <TError = unknown, TContext = unknown>(
  * @summary 볼륨 목록 조회
  */
 export const getVolumeList = (
-  params?: GetVolumeListParams,
+  params: GetVolumeListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseVolumeListResponse>({
@@ -422,7 +422,7 @@ export const getGetVolumeListQueryOptions = <
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params?: GetVolumeListParams,
+  params: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -453,7 +453,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params: undefined | GetVolumeListParams,
+  params: GetVolumeListParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -475,7 +475,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params?: GetVolumeListParams,
+  params: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -497,7 +497,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params?: GetVolumeListParams,
+  params: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -515,7 +515,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params?: GetVolumeListParams,
+  params: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>

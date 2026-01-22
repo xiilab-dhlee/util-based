@@ -151,7 +151,7 @@ export const useDeleteImages = <TError = unknown, TContext = unknown>(
  * @summary 사용자별 공용 이미지 등록 현황 조회
  */
 export const getPublicImageUsageByAccount = (
-  params?: GetPublicImageUsageByAccountParams,
+  params: GetPublicImageUsageByAccountParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponsePublicImageUsageResponse>({
@@ -175,7 +175,7 @@ export const getGetPublicImageUsageByAccountQueryOptions = <
   TData = Awaited<ReturnType<typeof getPublicImageUsageByAccount>>,
   TError = unknown,
 >(
-  params?: GetPublicImageUsageByAccountParams,
+  params: GetPublicImageUsageByAccountParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -211,7 +211,7 @@ export function useGetPublicImageUsageByAccount<
   TData = Awaited<ReturnType<typeof getPublicImageUsageByAccount>>,
   TError = unknown,
 >(
-  params: undefined | GetPublicImageUsageByAccountParams,
+  params: GetPublicImageUsageByAccountParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -237,7 +237,7 @@ export function useGetPublicImageUsageByAccount<
   TData = Awaited<ReturnType<typeof getPublicImageUsageByAccount>>,
   TError = unknown,
 >(
-  params?: GetPublicImageUsageByAccountParams,
+  params: GetPublicImageUsageByAccountParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -263,7 +263,7 @@ export function useGetPublicImageUsageByAccount<
   TData = Awaited<ReturnType<typeof getPublicImageUsageByAccount>>,
   TError = unknown,
 >(
-  params?: GetPublicImageUsageByAccountParams,
+  params: GetPublicImageUsageByAccountParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -285,7 +285,7 @@ export function useGetPublicImageUsageByAccount<
   TData = Awaited<ReturnType<typeof getPublicImageUsageByAccount>>,
   TError = unknown,
 >(
-  params?: GetPublicImageUsageByAccountParams,
+  params: GetPublicImageUsageByAccountParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -324,7 +324,7 @@ export function useGetPublicImageUsageByAccount<
  */
 export const getPublicImageTagsByAccountId = (
   accountId: string,
-  params?: GetPublicImageTagsByAccountIdParams,
+  params: GetPublicImageTagsByAccountIdParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAccountImageTagResponse>({
@@ -350,7 +350,7 @@ export const getGetPublicImageTagsByAccountIdQueryOptions = <
   TError = unknown,
 >(
   accountId: string,
-  params?: GetPublicImageTagsByAccountIdParams,
+  params: GetPublicImageTagsByAccountIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -393,7 +393,7 @@ export function useGetPublicImageTagsByAccountId<
   TError = unknown,
 >(
   accountId: string,
-  params: undefined | GetPublicImageTagsByAccountIdParams,
+  params: GetPublicImageTagsByAccountIdParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -420,7 +420,7 @@ export function useGetPublicImageTagsByAccountId<
   TError = unknown,
 >(
   accountId: string,
-  params?: GetPublicImageTagsByAccountIdParams,
+  params: GetPublicImageTagsByAccountIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -447,7 +447,7 @@ export function useGetPublicImageTagsByAccountId<
   TError = unknown,
 >(
   accountId: string,
-  params?: GetPublicImageTagsByAccountIdParams,
+  params: GetPublicImageTagsByAccountIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -470,7 +470,7 @@ export function useGetPublicImageTagsByAccountId<
   TError = unknown,
 >(
   accountId: string,
-  params?: GetPublicImageTagsByAccountIdParams,
+  params: GetPublicImageTagsByAccountIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

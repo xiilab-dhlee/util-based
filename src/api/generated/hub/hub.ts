@@ -55,7 +55,7 @@ import type {
         
  * @summary HUB 목록 조회
  */
-export const findHubs = (params?: FindHubsParams, signal?: AbortSignal) => {
+export const findHubs = (params: FindHubsParams, signal?: AbortSignal) => {
   return customInstance<BaseResponsePageResponseFindHubsResponse>({
     url: `/api/v1/hubs`,
     method: "GET",
@@ -72,7 +72,7 @@ export const getFindHubsQueryOptions = <
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params?: FindHubsParams,
+  params: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -103,7 +103,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params: undefined | FindHubsParams,
+  params: FindHubsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -125,7 +125,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params?: FindHubsParams,
+  params: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -147,7 +147,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params?: FindHubsParams,
+  params: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>
@@ -165,7 +165,7 @@ export function useFindHubs<
   TData = Awaited<ReturnType<typeof findHubs>>,
   TError = unknown,
 >(
-  params?: FindHubsParams,
+  params: FindHubsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof findHubs>>, TError, TData>

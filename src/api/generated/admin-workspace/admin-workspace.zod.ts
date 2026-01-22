@@ -403,28 +403,24 @@ export const deleteWorkspacesBody = zod
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. 워크스페이스명, 생성자명으로 검색이 가능합니다. 생성일, 워크스페이스명, 생성자명으로 정렬이 가능합니다.
  * @summary 관리자용 워크스페이스 목록 조회
  */
-export const getAllWorkspaces1QueryPageNoMin = 0;
-
-export const getAllWorkspaces1QueryPageSizeMax = 100;
+export const getAllWorkspaces1QueryPageSearchRequestPageSizeMax = 100;
 
 export const getAllWorkspaces1QueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getAllWorkspaces1QueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getAllWorkspaces1QueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  sort: zod
-    .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
-    .optional()
-    .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getAllWorkspaces1QueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  sortRequest: zod.object({
+    sort: zod
+      .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
+      .describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+  }),
 });
 
 export const getAllWorkspaces1Response = zod
@@ -580,28 +576,24 @@ export const getWorkspaceMembers1Params = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getWorkspaceMembers1QueryPageNoMin = 0;
-
-export const getWorkspaceMembers1QueryPageSizeMax = 100;
+export const getWorkspaceMembers1QueryPageSearchRequestPageSizeMax = 100;
 
 export const getWorkspaceMembers1QueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getWorkspaceMembers1QueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getWorkspaceMembers1QueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  sort: zod
-    .enum(["ACCOUNT_NAME", "MEMBER_ROLE", "CREATED_AT"])
-    .optional()
-    .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getWorkspaceMembers1QueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  sortRequest: zod.object({
+    sort: zod
+      .enum(["ACCOUNT_NAME", "MEMBER_ROLE", "CREATED_AT"])
+      .describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+  }),
 });
 
 export const getWorkspaceMembers1Response = zod
@@ -751,32 +743,28 @@ export const getWorkspaceDetail1Response = zod
  * 전체 워크스페이스의 리소스 요청 목록을 페이징하여 조회합니다. 워크스페이스명, 요청자명으로 검색하고 승인 상태로 필터링할 수 있습니다.
  * @summary 관리자용 리소스 요청 목록 조회
  */
-export const getResourceRequests1QueryPageNoMin = 0;
-
-export const getResourceRequests1QueryPageSizeMax = 100;
+export const getResourceRequests1QueryPageSearchRequestPageSizeMax = 100;
 
 export const getResourceRequests1QueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getResourceRequests1QueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getResourceRequests1QueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  sort: zod
-    .enum(["REQUESTED_AT", "WORKSPACE_NAME"])
-    .optional()
-    .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  approvalStatus: zod
-    .enum(["WAITING", "APPROVED", "REJECTED"])
-    .optional()
-    .describe("승인 상태 필터 (APPROVED, REJECTED, WAITING)"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getResourceRequests1QueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  sortFilterRequest: zod.object({
+    sort: zod
+      .enum(["REQUESTED_AT", "WORKSPACE_NAME"])
+      .describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    approvalStatus: zod
+      .enum(["WAITING", "APPROVED", "REJECTED"])
+      .optional()
+      .describe("승인 상태 필터 (APPROVED, REJECTED, WAITING)"),
+  }),
 });
 
 export const getResourceRequests1Response = zod

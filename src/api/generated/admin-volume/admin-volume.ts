@@ -861,7 +861,7 @@ export const useAdminCompress = <TError = unknown, TContext = unknown>(
  * @summary 전체 볼륨 목록 조회
  */
 export const adminGetVolumeList = (
-  params?: AdminGetVolumeListParams,
+  params: AdminGetVolumeListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseVolumeListResponse>({
@@ -882,7 +882,7 @@ export const getAdminGetVolumeListQueryOptions = <
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params?: AdminGetVolumeListParams,
+  params: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -918,7 +918,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params: undefined | AdminGetVolumeListParams,
+  params: AdminGetVolumeListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -944,7 +944,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params?: AdminGetVolumeListParams,
+  params: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -970,7 +970,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params?: AdminGetVolumeListParams,
+  params: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -992,7 +992,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params?: AdminGetVolumeListParams,
+  params: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1028,7 +1028,7 @@ export function useAdminGetVolumeList<
  */
 export const adminListFiles = (
   volumeId: number,
-  params?: AdminListFilesParams,
+  params: AdminListFilesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseVolumeFileListResponse>({
@@ -1054,7 +1054,7 @@ export const getAdminListFilesQueryOptions = <
   TError = unknown,
 >(
   volumeId: number,
-  params?: AdminListFilesParams,
+  params: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1092,7 +1092,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params: undefined | AdminListFilesParams,
+  params: AdminListFilesParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1115,7 +1115,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params?: AdminListFilesParams,
+  params: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1138,7 +1138,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params?: AdminListFilesParams,
+  params: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1157,7 +1157,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params?: AdminListFilesParams,
+  params: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>

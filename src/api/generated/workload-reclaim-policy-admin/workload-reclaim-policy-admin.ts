@@ -532,7 +532,7 @@ export function useGetAllPolicies<
  * @summary 자원 회수 스캔 히스토리 목록 조회
  */
 export const getScanHistoryList = (
-  params?: GetScanHistoryListParams,
+  params: GetScanHistoryListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseWorkloadReclaimScanHistoryResponse>(
@@ -558,7 +558,7 @@ export const getGetScanHistoryListQueryOptions = <
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params?: GetScanHistoryListParams,
+  params: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -594,7 +594,7 @@ export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params: undefined | GetScanHistoryListParams,
+  params: GetScanHistoryListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -620,7 +620,7 @@ export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params?: GetScanHistoryListParams,
+  params: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -646,7 +646,7 @@ export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params?: GetScanHistoryListParams,
+  params: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -668,7 +668,7 @@ export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params?: GetScanHistoryListParams,
+  params: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -700,7 +700,7 @@ export function useGetScanHistoryList<
  */
 export const getScanResultList = (
   scanHistoryId: number,
-  params?: GetScanResultListParams,
+  params: GetScanResultListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseWorkloadReclaimScanResultResponse>(
@@ -728,7 +728,7 @@ export const getGetScanResultListQueryOptions = <
   TError = unknown,
 >(
   scanHistoryId: number,
-  params?: GetScanResultListParams,
+  params: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -771,7 +771,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params: undefined | GetScanResultListParams,
+  params: GetScanResultListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -798,7 +798,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params?: GetScanResultListParams,
+  params: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -825,7 +825,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params?: GetScanResultListParams,
+  params: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -848,7 +848,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params?: GetScanResultListParams,
+  params: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

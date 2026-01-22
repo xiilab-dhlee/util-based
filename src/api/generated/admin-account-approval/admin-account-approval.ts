@@ -220,7 +220,7 @@ export const useApproveSignupRequests = <TError = unknown, TContext = unknown>(
  * @summary 가입 승인 대기 목록 조회
  */
 export const getSignupRequests = (
-  params?: GetSignupRequestsParams,
+  params: GetSignupRequestsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseSignupRequestItemResponse>({
@@ -244,7 +244,7 @@ export const getGetSignupRequestsQueryOptions = <
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params?: GetSignupRequestsParams,
+  params: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -280,7 +280,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params: undefined | GetSignupRequestsParams,
+  params: GetSignupRequestsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -306,7 +306,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params?: GetSignupRequestsParams,
+  params: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -332,7 +332,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params?: GetSignupRequestsParams,
+  params: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -354,7 +354,7 @@ export function useGetSignupRequests<
   TData = Awaited<ReturnType<typeof getSignupRequests>>,
   TError = unknown,
 >(
-  params?: GetSignupRequestsParams,
+  params: GetSignupRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

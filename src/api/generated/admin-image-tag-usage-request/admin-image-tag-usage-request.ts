@@ -319,7 +319,7 @@ export const useApproveUsageRequest = <TError = unknown, TContext = unknown>(
  * @summary 이미지 태그 사용 요청 목록 조회
  */
 export const getUsageRequestList = (
-  params?: GetUsageRequestListParams,
+  params: GetUsageRequestListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseImageTagUsageRequestResponse>({
@@ -343,7 +343,7 @@ export const getGetUsageRequestListQueryOptions = <
   TData = Awaited<ReturnType<typeof getUsageRequestList>>,
   TError = unknown,
 >(
-  params?: GetUsageRequestListParams,
+  params: GetUsageRequestListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -379,7 +379,7 @@ export function useGetUsageRequestList<
   TData = Awaited<ReturnType<typeof getUsageRequestList>>,
   TError = unknown,
 >(
-  params: undefined | GetUsageRequestListParams,
+  params: GetUsageRequestListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -405,7 +405,7 @@ export function useGetUsageRequestList<
   TData = Awaited<ReturnType<typeof getUsageRequestList>>,
   TError = unknown,
 >(
-  params?: GetUsageRequestListParams,
+  params: GetUsageRequestListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -431,7 +431,7 @@ export function useGetUsageRequestList<
   TData = Awaited<ReturnType<typeof getUsageRequestList>>,
   TError = unknown,
 >(
-  params?: GetUsageRequestListParams,
+  params: GetUsageRequestListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -453,7 +453,7 @@ export function useGetUsageRequestList<
   TData = Awaited<ReturnType<typeof getUsageRequestList>>,
   TError = unknown,
 >(
-  params?: GetUsageRequestListParams,
+  params: GetUsageRequestListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -488,7 +488,7 @@ export function useGetUsageRequestList<
  * @summary 이미지 태그 사용 요청 승인 대기 목록 조회
  */
 export const getApprovalWaitingSummaryList = (
-  params?: GetApprovalWaitingSummaryListParams,
+  params: GetApprovalWaitingSummaryListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseImageTagUsageRequestSummaryResponse>(
@@ -514,7 +514,7 @@ export const getGetApprovalWaitingSummaryListQueryOptions = <
   TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
   TError = unknown,
 >(
-  params?: GetApprovalWaitingSummaryListParams,
+  params: GetApprovalWaitingSummaryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -550,7 +550,7 @@ export function useGetApprovalWaitingSummaryList<
   TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
   TError = unknown,
 >(
-  params: undefined | GetApprovalWaitingSummaryListParams,
+  params: GetApprovalWaitingSummaryListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -576,7 +576,7 @@ export function useGetApprovalWaitingSummaryList<
   TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
   TError = unknown,
 >(
-  params?: GetApprovalWaitingSummaryListParams,
+  params: GetApprovalWaitingSummaryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -602,7 +602,7 @@ export function useGetApprovalWaitingSummaryList<
   TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
   TError = unknown,
 >(
-  params?: GetApprovalWaitingSummaryListParams,
+  params: GetApprovalWaitingSummaryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -624,7 +624,7 @@ export function useGetApprovalWaitingSummaryList<
   TData = Awaited<ReturnType<typeof getApprovalWaitingSummaryList>>,
   TError = unknown,
 >(
-  params?: GetApprovalWaitingSummaryListParams,
+  params: GetApprovalWaitingSummaryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

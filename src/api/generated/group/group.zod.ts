@@ -127,22 +127,17 @@ export const getGroupDetailResponse = zod
  * 어떤 그룹에도 소속되지 않은 승인된 사용자 목록을 페이징하여 조회합니다.
  * @summary 그룹 미소속 사용자 목록 조회
  */
-export const getUngroupedAccountsQueryPageNoMin = 0;
-
-export const getUngroupedAccountsQueryPageSizeMax = 100;
+export const getUngroupedAccountsQueryPageableRequestPageSizeMax = 100;
 
 export const getUngroupedAccountsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getUngroupedAccountsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getUngroupedAccountsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getUngroupedAccountsQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
 });
 
 export const getUngroupedAccountsResponse = zod
@@ -176,8 +171,11 @@ export const getUngroupedAccountsResponse = zod
  * 키워드로 그룹명과 계정명을 동시에 검색합니다. 그룹은 트리 구조로, 계정은 소속 그룹명과 함께 반환됩니다.
  * @summary 그룹 및 계정 통합 검색
  */
+
 export const searchQueryParams = zod.object({
-  keyword: zod.string().describe("검색 키워드 (그룹명, 계정명)"),
+  request: zod.object({
+    keyword: zod.string().min(1).describe("검색 키워드 (그룹명, 계정명)"),
+  }),
 });
 
 export const searchResponse = zod

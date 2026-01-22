@@ -61,31 +61,29 @@ export const restartImageJobResponse = zod
         
  * @summary 이미지 등록 Job 목록 조회
  */
-export const getImageJobsQueryPageNoMin = 0;
-
-export const getImageJobsQueryPageSizeMax = 100;
+export const getImageJobsQueryPageRequestPageSizeMax = 100;
 
 export const getImageJobsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getImageJobsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getImageJobsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  imageType: zod
-    .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
-    .describe("이미지 타입 (PUBLIC/PRIVATE)"),
-  imageId: zod.number().optional().describe("특정 이미지의 작업만 조회"),
-  imageSourceType: zod
-    .enum(["SNAPSHOT", "EXTERNAL"])
-    .optional()
-    .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getImageJobsQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    imageType: zod
+      .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+      .describe("이미지 타입 (PUBLIC/PRIVATE)"),
+    isMine: zod.boolean().describe("내가 등록한 작업만 조회"),
+    imageId: zod.number().optional().describe("특정 이미지의 작업만 조회"),
+    imageSourceType: zod
+      .enum(["SNAPSHOT", "EXTERNAL"])
+      .optional()
+      .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
+  }),
 });
 
 export const getImageJobsResponse = zod

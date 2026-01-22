@@ -206,22 +206,17 @@ export const getAllPoliciesResponse = zod
  * 자원 회수 스캔 히스토리 목록을 페이지네이션으로 조회합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 자원 회수 스캔 히스토리 목록 조회
  */
-export const getScanHistoryListQueryPageNoMin = 0;
-
-export const getScanHistoryListQueryPageSizeMax = 100;
+export const getScanHistoryListQueryPageRequestPageSizeMax = 100;
 
 export const getScanHistoryListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getScanHistoryListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getScanHistoryListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getScanHistoryListQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
 });
 
 export const getScanHistoryListResponse = zod
@@ -270,22 +265,17 @@ export const getScanResultListParams = zod.object({
   scanHistoryId: zod.number().describe("스캔 히스토리 ID"),
 });
 
-export const getScanResultListQueryPageNoMin = 0;
-
-export const getScanResultListQueryPageSizeMax = 100;
+export const getScanResultListQueryPageRequestPageSizeMax = 100;
 
 export const getScanResultListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getScanResultListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getScanResultListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getScanResultListQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
 });
 
 export const getScanResultListResponse = zod

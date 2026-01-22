@@ -202,24 +202,21 @@ export const applyMigConfigurationResponse = zod
         
  * @summary 클러스터 노드 목록 조회
  */
-export const getClusterNodesQueryPageNoMin = 0;
-
-export const getClusterNodesQueryPageSizeMax = 100;
+export const getClusterNodesQueryPageableRequestPageSizeMax = 100;
 
 export const getClusterNodesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getClusterNodesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getClusterNodesQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  sort: zod.enum(["NODE_NAME"]).optional().describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getClusterNodesQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
+  sortRequest: zod.object({
+    sort: zod.enum(["NODE_NAME"]).describe("정렬 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+  }),
 });
 
 export const getClusterNodesResponse = zod
@@ -378,7 +375,7 @@ export const getNodeSystemResourceResponse = zod
             - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
             - DISK_READ: 디스크 읽기 속도 (bytes/sec)
             - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
@@ -399,14 +396,14 @@ export const getNodeSystemMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
 });
 
-export const getNodeSystemMetricsQueryStepRegExp =
+export const getNodeSystemMetricsQueryRequestStepRegExp =
   /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
 
 export const getNodeSystemMetricsQueryParams = zod.object({
-  metrics: zod
-    .array(
-      zod
-        .enum([
+  request: zod.object({
+    metrics: zod
+      .array(
+        zod.enum([
           "CPU_TEMPERATURE",
           "CPU_UTILIZATION",
           "CPU_LOAD_AVERAGE",
@@ -414,29 +411,30 @@ export const getNodeSystemMetricsQueryParams = zod.object({
           "NODE_NETWORK_TRANSMIT",
           "DISK_READ",
           "DISK_WRITE",
-          "DISK_USAGE",
+          "DISK_UTILIZATION",
           "MEMORY_UTILIZATION",
           "NODE_MEMORY_BUFFERS",
           "NODE_MEMORY_CACHED",
           "NODE_MEMORY_TOTAL",
           "NODE_MEMORY_FREE",
-        ])
-        .describe(
-          "\n            조회할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_USAGE: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
-        ),
-    )
-    .describe(
-      "\n            조회할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_USAGE: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
-    ),
-  startedAt: zod
-    .string()
-    .datetime({})
-    .describe("시작 시간 (ISO 8601 UTC 형식)"),
-  endedAt: zod.string().datetime({}).describe("종료 시간 (ISO 8601 UTC 형식)"),
-  step: zod
-    .string()
-    .regex(getNodeSystemMetricsQueryStepRegExp)
-    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
+        ]),
+      )
+      .describe(
+        "\n            조회할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_UTILIZATION: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
+      ),
+    startedAt: zod
+      .string()
+      .datetime({})
+      .describe("시작 시간 (ISO 8601 UTC 형식)"),
+    endedAt: zod
+      .string()
+      .datetime({})
+      .describe("종료 시간 (ISO 8601 UTC 형식)"),
+    step: zod
+      .string()
+      .regex(getNodeSystemMetricsQueryRequestStepRegExp)
+      .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
+  }),
 });
 
 export const getNodeSystemMetricsResponse = zod
@@ -731,7 +729,6 @@ export const getNodeSystemMetricsResponse = zod
           .strict()
           .optional()
           .describe("개별 시스템 메트릭 조회 결과"),
-        isEmpty: zod.boolean(),
       })
       .strict()
       .optional()
@@ -767,36 +764,37 @@ export const getNodeGpuMetricsParams = zod.object({
   nodeName: zod.string().describe("노드 이름"),
 });
 
-export const getNodeGpuMetricsQueryStepRegExp =
+export const getNodeGpuMetricsQueryRequestStepRegExp =
   /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
 
 export const getNodeGpuMetricsQueryParams = zod.object({
-  metrics: zod
-    .array(
-      zod
-        .enum([
+  request: zod.object({
+    metrics: zod
+      .array(
+        zod.enum([
           "GPU_UTILIZATION",
           "GPU_MEMORY_UTILIZATION",
           "GPU_TEMPERATURE",
           "GPU_FAN_SPEED",
           "GPU_POWER_USAGE",
-        ])
-        .describe(
-          "\n            조회할 GPU 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - GPU_UTILIZATION: GPU 사용률 (%)\n            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)\n            - GPU_TEMPERATURE: GPU 온도 (°C)\n            - GPU_FAN_SPEED: GPU 팬 속도 (%)\n            - GPU_POWER_USAGE: GPU 전력 사용량 (W)\n        ",
-        ),
-    )
-    .describe(
-      "\n            조회할 GPU 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - GPU_UTILIZATION: GPU 사용률 (%)\n            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)\n            - GPU_TEMPERATURE: GPU 온도 (°C)\n            - GPU_FAN_SPEED: GPU 팬 속도 (%)\n            - GPU_POWER_USAGE: GPU 전력 사용량 (W)\n        ",
-    ),
-  startedAt: zod
-    .string()
-    .datetime({})
-    .describe("시작 시간 (ISO 8601 UTC 형식)"),
-  endedAt: zod.string().datetime({}).describe("종료 시간 (ISO 8601 UTC 형식)"),
-  step: zod
-    .string()
-    .regex(getNodeGpuMetricsQueryStepRegExp)
-    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
+        ]),
+      )
+      .describe(
+        "\n            조회할 GPU 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - GPU_UTILIZATION: GPU 사용률 (%)\n            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)\n            - GPU_TEMPERATURE: GPU 온도 (°C)\n            - GPU_FAN_SPEED: GPU 팬 속도 (%)\n            - GPU_POWER_USAGE: GPU 전력 사용량 (W)\n        ",
+      ),
+    startedAt: zod
+      .string()
+      .datetime({})
+      .describe("시작 시간 (ISO 8601 UTC 형식)"),
+    endedAt: zod
+      .string()
+      .datetime({})
+      .describe("종료 시간 (ISO 8601 UTC 형식)"),
+    step: zod
+      .string()
+      .regex(getNodeGpuMetricsQueryRequestStepRegExp)
+      .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
+  }),
 });
 
 export const getNodeGpuMetricsResponse = zod
@@ -970,7 +968,6 @@ export const getNodeGpuMetricsResponse = zod
           .strict()
           .optional()
           .describe("개별 메트릭 조회 결과"),
-        isEmpty: zod.boolean(),
       })
       .strict()
       .optional()

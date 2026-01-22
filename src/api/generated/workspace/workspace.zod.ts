@@ -118,20 +118,21 @@ export const setDefaultWorkspaceResponse = zod
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. default 워크스페이스, pin된 워크스페이스, 기타 워크스페이스명 가나다순으로 정렬됩니다.
  * @summary 워크스페이스 목록 조회
  */
-export const getAllWorkspacesQueryPageNoMin = 0;
+export const getAllWorkspacesQueryWorkspaceListRequestPageNoMin = 0;
 
 export const getAllWorkspacesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getAllWorkspacesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod.number().min(1).optional().describe("페이지 크기"),
-  hasMyWorkspace: zod
-    .boolean()
-    .optional()
-    .describe("내 워크스페이스만 조회 여부"),
-  keyword: zod.string().optional().describe("검색 키워드"),
+  workspaceListRequest: zod.object({
+    pageNo: zod
+      .number()
+      .min(getAllWorkspacesQueryWorkspaceListRequestPageNoMin)
+      .describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod.number().min(1).describe("페이지 크기"),
+    hasMyWorkspace: zod
+      .boolean()
+      .optional()
+      .describe("내 워크스페이스만 조회 여부"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
 });
 
 export const getAllWorkspacesResponse = zod
@@ -264,27 +265,23 @@ export const getResourceRequestsParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getResourceRequestsQueryPageNoMin = 0;
-
-export const getResourceRequestsQueryPageSizeMax = 100;
+export const getResourceRequestsQueryPageableRequestPageSizeMax = 100;
 
 export const getResourceRequestsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getResourceRequestsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getResourceRequestsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  sort: zod
-    .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
-    .optional()
-    .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getResourceRequestsQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
+  sortRequest: zod.object({
+    sort: zod
+      .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
+      .describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+  }),
 });
 
 export const getResourceRequestsResponse = zod

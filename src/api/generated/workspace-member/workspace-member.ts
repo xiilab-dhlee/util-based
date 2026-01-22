@@ -324,7 +324,7 @@ export const useUpdateMemberRole = <TError = unknown, TContext = unknown>(
  */
 export const getWorkspaceMembers = (
   workspaceId: number,
-  params?: GetWorkspaceMembersParams,
+  params: GetWorkspaceMembersParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseWorkspaceMemberResponse>({
@@ -350,7 +350,7 @@ export const getGetWorkspaceMembersQueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembersParams,
+  params: GetWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -393,7 +393,7 @@ export function useGetWorkspaceMembers<
   TError = unknown,
 >(
   workspaceId: number,
-  params: undefined | GetWorkspaceMembersParams,
+  params: GetWorkspaceMembersParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -420,7 +420,7 @@ export function useGetWorkspaceMembers<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembersParams,
+  params: GetWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -447,7 +447,7 @@ export function useGetWorkspaceMembers<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembersParams,
+  params: GetWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -470,7 +470,7 @@ export function useGetWorkspaceMembers<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembersParams,
+  params: GetWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

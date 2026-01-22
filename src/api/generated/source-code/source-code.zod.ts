@@ -122,33 +122,30 @@ export const deleteSourceCodeParams = zod.object({
         
  * @summary 소스코드 목록 조회
  */
-export const getSourceCodeListQueryPageNoMin = 0;
-
-export const getSourceCodeListQueryPageSizeMax = 100;
+export const getSourceCodeListQueryPageSearchPageSizeMax = 100;
 
 export const getSourceCodeListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getSourceCodeListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getSourceCodeListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
-  sort: zod
-    .enum(["SOURCE_CODE_NAME", "CREATED_AT"])
-    .optional()
-    .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  codeType: zod
-    .enum(["GITHUB", "GITLAB", "BITBUCKET"])
-    .optional()
-    .describe("소스코드 타입 필터"),
+  pageSearch: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getSourceCodeListQueryPageSearchPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
+  filter: zod.object({
+    sort: zod.enum(["SOURCE_CODE_NAME", "CREATED_AT"]).describe("정렬 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    isMine: zod.boolean().describe("내가 생성한 소스코드만 조회"),
+    codeType: zod
+      .enum(["GITHUB", "GITLAB", "BITBUCKET"])
+      .optional()
+      .describe("소스코드 타입 필터"),
+  }),
 });
 
 export const getSourceCodeListResponse = zod
