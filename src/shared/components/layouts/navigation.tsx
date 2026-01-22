@@ -100,21 +100,21 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         label: PAGE_META["admin.node"]?.title,
         icon: <Icon name={PAGE_META["admin.node"]?.iconName} />,
       },
-      {
-        key: "security-root",
-        label: "보안 관리",
-        icon: <Icon name="SecurityCheck" />,
-        children: [
-          {
-            key: "admin.registry-security",
-            label: PAGE_META["admin.registry-security"]?.title,
-          },
-          {
-            key: "admin.file-security",
-            label: PAGE_META["admin.file-security"]?.title,
-          },
-        ],
-      },
+      // {
+      //   key: "security-root",
+      //   label: "보안 관리",
+      //   icon: <Icon name="SecurityCheck" />,
+      //   children: [
+      //     {
+      //       key: "admin.registry-security",
+      //       label: PAGE_META["admin.registry-security"]?.title,
+      //     },
+      //     {
+      //       key: "admin.file-security",
+      //       label: PAGE_META["admin.file-security"]?.title,
+      //     },
+      //   ],
+      // },
       {
         key: "admin.workspace",
         label: PAGE_META["admin.workspace"]?.title,
