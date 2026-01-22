@@ -88,7 +88,12 @@ export const ROUTES = {
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
   ADMIN_REGISTRY: `${MODE.ADMIN}/registry`,
-  ADMIN_EXTERNAL_REGISTRY: `${MODE.ADMIN}/external-registry`,
+  ADMIN_PRIVATE_REGISTRY: `${MODE.ADMIN}/private-registry`,
+  ADMIN_PRIVATE_REGISTRY_DETAIL: (name: string, tagName: string) =>
+    `${MODE.ADMIN}/private-registry/${name}/${tagName}`,
+  ADMIN_PUBLIC_REGISTRY: `${MODE.ADMIN}/public-registry`,
+  ADMIN_PUBLIC_REGISTRY_DETAIL: (name: string, tagName: string) =>
+    `${MODE.ADMIN}/public-registry/${name}/${tagName}`,
   ADMIN_REQUEST_IMAGE: `${MODE.ADMIN}/request-image`,
 
   // 소스코드 관리 (정적)

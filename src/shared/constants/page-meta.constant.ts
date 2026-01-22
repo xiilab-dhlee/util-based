@@ -235,10 +235,27 @@ export const PAGE_META = {
     iconName: "ManagingImageUseRequest",
     href: ROUTES.ADMIN_REQUEST_IMAGE,
   },
-  "admin.external-registry": {
-    title: "외부 레지스트리",
+  "admin.private-registry": {
+    title: "개인 레지스트리",
+    iconName: "PrivateRegistry",
+    href: ROUTES.ADMIN_PRIVATE_REGISTRY,
+  },
+  "admin.private-registry.detail": {
+    title: "태그 상세 정보",
+    href: ({ name, tagName }: { name: string; tagName: string }) =>
+      ROUTES.ADMIN_PRIVATE_REGISTRY_DETAIL(name, tagName),
+    parent: "admin.private-registry",
+  },
+  "admin.public-registry": {
+    title: "공유 레지스트리",
     iconName: "PublicRegistry",
-    href: ROUTES.ADMIN_EXTERNAL_REGISTRY,
+    href: ROUTES.ADMIN_PUBLIC_REGISTRY,
+  },
+  "admin.public-registry.detail": {
+    title: "태그 상세 정보",
+    href: ({ name, tagName }: { name: string; tagName: string }) =>
+      ROUTES.ADMIN_PUBLIC_REGISTRY_DETAIL(name, tagName),
+    parent: "admin.public-registry",
   },
 
   // ============================================
@@ -376,14 +393,8 @@ export const PAGE_META = {
       ROUTES.USER_PRIVATE_REGISTRY_DETAIL(name),
     parent: "user.private-registry",
   },
-  "user.private-registry.tag": {
-    title: "태그 상세정보",
-    href: ({ name, tagId }: { name: string; tagId: string }) =>
-      ROUTES.USER_PRIVATE_REGISTRY_TAG(name, tagId),
-    parent: "user.private-registry.detail",
-  },
   "user.public-registry": {
-    title: "공용 레지스트리",
+    title: "공유 레지스트리",
     iconName: "PublicRegistry",
     href: ROUTES.USER_PUBLIC_REGISTRY,
   },
@@ -392,12 +403,6 @@ export const PAGE_META = {
     href: ({ name }: { name: string }) =>
       ROUTES.USER_PUBLIC_REGISTRY_DETAIL(name),
     parent: "user.public-registry",
-  },
-  "user.public-registry.tag": {
-    title: "태그 상세정보",
-    href: ({ name, tagId }: { name: string; tagId: string }) =>
-      ROUTES.USER_PUBLIC_REGISTRY_TAG(name, tagId),
-    parent: "user.public-registry.detail",
   },
 
   // ============================================

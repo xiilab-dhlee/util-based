@@ -147,8 +147,12 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
             label: PAGE_META["admin.request-image"]?.title,
           },
           {
-            key: "admin.external-registry",
-            label: PAGE_META["admin.external-registry"]?.title,
+            key: "admin.private-registry",
+            label: PAGE_META["admin.private-registry"]?.title,
+          },
+          {
+            key: "admin.public-registry",
+            label: PAGE_META["admin.public-registry"]?.title,
           },
         ],
       },
