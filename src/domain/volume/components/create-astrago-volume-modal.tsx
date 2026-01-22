@@ -22,11 +22,10 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
-const DEFAULT_FORM_VALUES: CreateAstragoVolumeFormType = {
+const DEFAULT_FORM_VALUES: Partial<CreateAstragoVolumeFormType> = {
   volumeName: "",
   isPublic: "true",
   mountPath: "",
-  storageId: "",
 };
 
 export function CreateAstragoVolumeModal() {
@@ -60,7 +59,7 @@ export function CreateAstragoVolumeModal() {
           volumeName: data.volumeName,
           isPublic: data.isPublic === "true",
           mountPath: data.mountPath,
-          storageId: Number(data.storageId),
+          storageId: data.storageId,
           workspaceId: selectedWorkspace.workspaceId,
         },
       },
