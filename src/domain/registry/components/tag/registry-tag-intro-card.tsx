@@ -4,10 +4,9 @@ import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import {
-  useGetPrivateImageDetail,
-  useGetPrivateImageTagDetail,
-} from "@/api/generated/private-registry/private-registry";
+import { useGetRegistryDetailByMode } from "@/domain/registry/hooks/use-get-registry-detail-by-mode";
+import { useGetRegistryTagDetailByMode } from "@/domain/registry/hooks/use-get-registry-tag-detail-by-mode";
+import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { ScanStatusText } from "@/shared/components/text/scan-status-text";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -19,26 +18,31 @@ import {
   DetailIntroCardDescriptionRowBody,
 } from "@/styles/layers/detail-page-intro-card.styled";
 
+interface RegistryTagIntroCardProps {
+  mode: RegistryMode;
+}
+
 /**
- * 개인 레지스트리 태그 상세 페이지의 소개 카드 컴포넌트
+ * 레지스트리 태그 상세 페이지의 소개 카드 컴포넌트
  *
  * 이미지의 기본 정보(이름, 설명, 상태, 생성자, 생성일 등)를 표시하고,
  * 삭제 기능을 제공합니다.
  */
-export function RegistryTagIntroCard() {
+export function RegistryTagIntroCard({ mode }: RegistryTagIntroCardProps) {
   const { name, tagName } = useParams<{ name: string; tagName: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
   // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
 
   // 태그 상세 조회
-  const { data, isLoading } = useGetPrivateImageTagDetail({
+  const { data, isLoading } = useGetRegistryTagDetailByMode(mode, {
     tagName: tagName ?? "",
     harborImageName,
   });
 
   // 이미지 상세 조회
-  const { data: imageDetail } = useGetPrivateImageDetail(
+  const { data: imageDetail } = useGetRegistryDetailByMode(
+    mode,
     { harborImageName },
     { query: { enabled: !!harborImageName } },
   );
@@ -53,18 +57,33 @@ export function RegistryTagIntroCard() {
     publish(REGISTRY_EVENTS.openDeleteTagModal, [data.imageTagId]);
   };
 
+  const handleEdit = () => {
+    if (!data?.imageTagId) return;
+
+    publish(REGISTRY_EVENTS.openEditTagModal, {
+      tagId: data.imageTagId,
+      tagName: tagName ?? "",
+      harborImageName,
+      description: data.description ?? "",
+    });
+  };
+
   return (
     <Container>
       <Header>
         <HeaderTitle className="truncate">{tagName || "-"}</HeaderTitle>
         <ToolBox>
+          <IconWrapper type="button" onClick={handleEdit} disabled={isLoading}>
+            <Icon name="Edit02" color="var(--icon-fill)" size={24} />
+            <span className="sr-only">레지스트리 태그 수정</span>
+          </IconWrapper>
           <IconWrapper
             type="button"
             onClick={handleDelete}
             disabled={isLoading}
           >
             <Icon name="Delete" color="var(--icon-fill)" size={24} />
-            <span className="sr-only">개인 레지스트리 태그 삭제</span>
+            <span className="sr-only">레지스트리 태그 삭제</span>
           </IconWrapper>
         </ToolBox>
       </Header>
