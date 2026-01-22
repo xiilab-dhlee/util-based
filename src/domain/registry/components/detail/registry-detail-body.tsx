@@ -11,6 +11,7 @@ import { createRegistryTagColumn } from "@/domain/registry/components/detail/cre
 import { RegistryDetailFilter } from "@/domain/registry/components/detail/registry-detail-filter";
 import { RegistryDetailFooter } from "@/domain/registry/components/detail/registry-detail-footer";
 import { RegistryTagRow } from "@/domain/registry/components/detail/registry-tag-row";
+import type { RegistryTagSortState } from "@/domain/registry/constants/registry-detail.constant";
 import { REGISTRY_TAG_SORT_FIELDS } from "@/domain/registry/constants/registry-detail.constant";
 import { useGetRegistryDetailByMode } from "@/domain/registry/hooks/use-get-registry-detail-by-mode";
 import {
@@ -22,6 +23,7 @@ import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
+import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { checkIsUser, getSessionAccountId } from "@/shared/utils/auth.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
@@ -33,6 +35,46 @@ import {
   ListSectionTitle,
   ListWrapper,
 } from "@/styles/layers/list-page-layers.styled";
+
+/**
+ * mode에 따른 태그 컬럼 설정 생성
+ * - private: creatorName 제외 (6개 컬럼, 각 ~16.7%)
+ * - public: creatorName 포함 (7개 컬럼, 각 ~14.3%)
+ */
+const getTagColumnConfig = (
+  mode: RegistryMode,
+  sort: RegistryTagSortState,
+): CoreCreateColumnConfig[] => {
+  const baseColumns: CoreCreateColumnConfig[] = [
+    {
+      key: "imageTagName",
+      width: mode === "private" ? "20%" : "18%",
+      ellipsis: true,
+    },
+    { key: "imageTagSizeByte", width: mode === "private" ? "13%" : "12%" },
+    { key: "scanStatus", width: mode === "private" ? "17%" : "14%" },
+  ];
+
+  // public 모드에서만 creatorName 추가
+  if (mode === "public") {
+    baseColumns.push({ key: "creatorName", width: "14%" });
+  }
+
+  // 나머지 컬럼 추가
+  baseColumns.push(
+    {
+      key: "createdAt",
+      align: "left",
+      width: mode === "private" ? "17%" : "14%",
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "createdAt"),
+    },
+    { key: "approvalStatus", width: mode === "private" ? "17%" : "14%" },
+    { key: "decisionReason", width: mode === "private" ? "16%" : "14%" },
+  );
+
+  return baseColumns;
+};
 
 interface RegistryDetailBodyProps {
   mode: RegistryMode;
@@ -135,13 +177,15 @@ export function RegistryDetailBody({
             <Key>이름 :</Key>
             <Value>{imageDetail?.imageDisplayName || "-"}</Value>
           </Record>
-          <Record>
-            <IconWrapper>
-              <Icon name="Person" color="var(--icon-fill)" size={16} />
-            </IconWrapper>
-            <Key>생성자 :</Key>
-            <Value>{imageDetail?.creatorName || "-"}</Value>
-          </Record>
+          {mode === "public" && (
+            <Record>
+              <IconWrapper>
+                <Icon name="Person" color="var(--icon-fill)" size={16} />
+              </IconWrapper>
+              <Key>생성자 :</Key>
+              <Value>{imageDetail?.creatorName || "-"}</Value>
+            </Record>
+          )}
           <Record>
             <IconWrapper>
               <Icon name="Calendar" color="var(--icon-fill)" size={20} />
@@ -158,21 +202,7 @@ export function RegistryDetailBody({
       {/* 태그 목록 테이블 */}
       <ListWrapper>
         <CustomizedTable
-          columns={createRegistryTagColumn([
-            { key: "imageTagName", width: "20%", ellipsis: true },
-            { key: "imageTagSizeByte", width: "12%" },
-            { key: "scanStatus", width: "14%" },
-            { key: "creatorName", width: "14%" },
-            {
-              key: "createdAt",
-              align: "left",
-              width: "14%",
-              sorter: true,
-              sortOrder: getColumnSortOrder(sort, "createdAt"),
-            },
-            { key: "approvalStatus", width: "12%" },
-            { key: "decisionReason", width: "12%" },
-          ])}
+          columns={createRegistryTagColumn(getTagColumnConfig(mode, sort))}
           data={data}
           columnHeight={34}
           loading={isLoading}
