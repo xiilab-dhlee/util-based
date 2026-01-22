@@ -5,22 +5,23 @@ import { useResetAtom } from "jotai/utils";
 import { Input } from "xiilab-ui";
 
 import {
-  userPrivateRegistryPageAtom,
-  userPrivateRegistrySearchTextAtom,
-} from "@/domain/registry/state/registry.atom";
+  registryUserPageAtom,
+  registryUserSearchTextAtom,
+} from "@/domain/registry/state/registry-user-list.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
+import { SELECTOR } from "@/shared/constants/selector.constant";
 
-interface UserPrivateRegistryFilterProps {
+interface RegistryUserListFilterProps {
   totalSize?: number;
   loading: boolean;
 }
 
-export function UserPrivateRegistryFilter({
+export function RegistryUserListFilter({
   totalSize,
   loading,
-}: UserPrivateRegistryFilterProps) {
-  const setSearchText = useSetAtom(userPrivateRegistrySearchTextAtom);
-  const resetPage = useResetAtom(userPrivateRegistryPageAtom);
+}: RegistryUserListFilterProps) {
+  const setSearchText = useSetAtom(registryUserSearchTextAtom);
+  const resetPage = useResetAtom(registryUserPageAtom);
 
   const handleSearch = (value: string) => {
     resetPage();
@@ -28,15 +29,20 @@ export function UserPrivateRegistryFilter({
   };
 
   return (
-    <MySearchFilter title="사용자별 개인 레지스트리" total={totalSize}>
+    <MySearchFilter
+      title="사용자별 이미지 등록 현황"
+      total={totalSize}
+      totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
+    >
       <Input.Search
         name="search"
         placeholder="사용자 이름을 검색해 주세요."
         onSearch={handleSearch}
         autoComplete="off"
-        width={220}
+        width={240}
         height={30}
         disabled={loading}
+        data-testid={SELECTOR.LIST_SEARCH_INPUT}
       />
     </MySearchFilter>
   );

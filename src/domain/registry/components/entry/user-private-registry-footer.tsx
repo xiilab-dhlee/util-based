@@ -2,8 +2,8 @@
 
 import { useAtom } from "jotai";
 
-import { REGISTRY_PAGE_SIZE } from "@/domain/registry/constants/registry-list.constant";
-import { registryPageAtom } from "@/domain/registry/state/registry-list.atom";
+import { USER_REGISTRY_PAGE_SIZE } from "@/domain/registry/constants/registry.constant";
+import { userPrivateRegistryPageAtom } from "@/domain/registry/state/registry.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 
 interface UserPrivateRegistryFooterProps {
@@ -15,7 +15,7 @@ export function UserPrivateRegistryFooter({
   totalSize,
   isLoading,
 }: UserPrivateRegistryFooterProps) {
-  const [page, setPage] = useAtom(registryPageAtom);
+  const [page, setPage] = useAtom(userPrivateRegistryPageAtom);
 
   const handlePage = (page: number) => {
     setPage(page);
@@ -25,7 +25,7 @@ export function UserPrivateRegistryFooter({
     <ListPageFooter
       total={totalSize}
       page={page}
-      pageSize={REGISTRY_PAGE_SIZE}
+      pageSize={USER_REGISTRY_PAGE_SIZE}
       onChange={handlePage}
       isLoading={isLoading}
     />
