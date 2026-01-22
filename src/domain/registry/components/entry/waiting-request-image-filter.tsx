@@ -1,12 +1,11 @@
 "use client";
 
-import { useAtom, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Input } from "xiilab-ui";
 
 import {
   waitingRequestImagePageAtom,
-  waitingRequestImageSearchKeywordAtom,
   waitingRequestImageSearchTextAtom,
 } from "@/domain/registry/state/registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
@@ -20,21 +19,12 @@ export function WaitingRequestImageFilter({
   totalSize,
   loading,
 }: WaitingRequestImageFilterProps) {
-  const [searchKeyword, setSearchKeyword] = useAtom(
-    waitingRequestImageSearchKeywordAtom,
-  );
   const setSearchText = useSetAtom(waitingRequestImageSearchTextAtom);
   const resetPage = useResetAtom(waitingRequestImagePageAtom);
 
   const handleSearch = (value: string) => {
     resetPage();
     setSearchText(value.trim());
-  };
-
-  const handleSearchKeywordChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setSearchKeyword(e.target.value);
   };
 
   return (
@@ -51,8 +41,6 @@ export function WaitingRequestImageFilter({
         width={220}
         height={30}
         darkMode
-        value={searchKeyword}
-        onChange={handleSearchKeywordChange}
         disabled={loading}
       />
     </MySearchFilter>
