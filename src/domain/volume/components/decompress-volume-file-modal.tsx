@@ -4,7 +4,7 @@ import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useDecompress } from "@/api/generated/volume/volume";
+import { useDecompressFile } from "@/api/generated/volume-file/volume-file";
 import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -21,7 +21,7 @@ export function DecompressVolumeFileModal() {
   const [volumeId, setVolumeId] = useState<number | null>(null);
   const [filePath, setFilePath] = useState<string | null>(null);
 
-  const { mutate, isPending } = useDecompress();
+  const { mutate, isPending } = useDecompressFile();
 
   const handleCancel = () => {
     if (isPending) return;
