@@ -10,6 +10,7 @@ import { DeleteRegistryModal } from "@/domain/registry/components/delete-registr
 import { DeleteRegistryTagModal } from "@/domain/registry/components/delete-registry-tag-modal";
 import { RegistryDetailAside } from "@/domain/registry/components/detail/registry-detail-aside";
 import { RegistryDetailBody } from "@/domain/registry/components/detail/registry-detail-body";
+import { RequestUseModal } from "@/domain/registry/components/request-use-modal";
 import { ScanRegistryTagModal } from "@/domain/registry/components/scan-registry-tag-modal";
 import { UpdateRegistryTagModal } from "@/domain/registry/components/update-registry-tag-modal";
 import { ViewRegistryTagDetailModal } from "@/domain/registry/components/view-registry-tag-detail-modal";
@@ -141,6 +142,8 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
       <ViewRegistryTagDetailModal mode={mode} />
       {/* 레지스트리 이미지 태그 수정 모달 */}
       <UpdateRegistryTagModal mode={mode} />
+      {/* 이미지 태그 사용 요청 모달 */}
+      <RequestUseModal />
       {/* 요청 사유 모달 */}
       <ViewRequestReasonModal />
       {/* 반려 사유 모달 */}

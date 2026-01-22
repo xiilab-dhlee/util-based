@@ -168,6 +168,8 @@ export const REGISTRY_EVENTS = {
   openScanTagModal: "registry:open-scan-tag-modal",
   // 프라이빗 레지스트리 이미지 태그 수정 모달 열기
   openEditTagModal: "registry:open-edit-tag-modal",
+  // 이미지 태그 사용 요청 모달 열기
+  openRequestUseModal: "registry:open-request-use-modal",
 } as const;
 
 // 파일 보안 관련 이벤트

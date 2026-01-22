@@ -5,6 +5,7 @@ import type {
   ImageTagListResponseApprovalStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { RegistryTagNameButton } from "@/domain/registry/components/detail/registry-tag-name-button";
+import { RequestUseButton } from "@/domain/registry/components/detail/request-use-button";
 import { REGISTRY_TAG_APPROVAL_STATUS_TEXT } from "@/domain/registry/constants/registry-detail.constant";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
@@ -108,9 +109,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "useRequest",
       title: "사용 요청",
       align: "center",
-      render: (requestReason?: string) => {
+      render: (_: unknown, record: ImageTagListResponse) => {
+        const isDisabled = !record.imageTagId;
+
         return (
-          <ViewRequestReasonButton reason={requestReason} disabled={true} />
+          <RequestUseButton
+            imageTagId={record.imageTagId ?? 0}
+            disabled={isDisabled}
+          />
         );
       },
     },
