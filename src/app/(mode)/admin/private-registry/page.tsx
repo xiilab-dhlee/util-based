@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPrivateRegistryPage() {
-  return <RegistryUserListMain />;
+  return <RegistryUserListMain mode="private" />;
 }

@@ -3,23 +3,29 @@
 import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { useGetPrivateImageTagsByAccountId } from "@/api/generated/admin-private-registry/admin-private-registry";
-import { RegistryUserTagListBody } from "@/domain/registry/components/user-list/registry-user-tag-list-body";
 import { REGISTRY_USER_TAG_PAGE_SIZE } from "@/domain/registry/constants/registry-user-list.constant";
+import { useGetRegistryUserTagsByAccountIdByMode } from "@/domain/registry/hooks/use-get-registry-user-tags-by-account-id-by-mode";
 import {
   registryUserSelectedAccountIdAtom,
   registryUserTagPageAtom,
 } from "@/domain/registry/state/registry-user-list.atom";
+import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
+import { RegistryUserTagListBody } from "./registry-user-tag-list-body";
 
-export function RegistryUserListAside() {
+interface RegistryUserListAsideProps {
+  mode: RegistryMode;
+}
+
+export function RegistryUserListAside({ mode }: RegistryUserListAsideProps) {
   const selectedAccountId = useAtomValue(registryUserSelectedAccountIdAtom);
   const [page, setPage] = useAtom(registryUserTagPageAtom);
 
-  const { data, isLoading, isError } = useGetPrivateImageTagsByAccountId(
+  const { data, isLoading, isError } = useGetRegistryUserTagsByAccountIdByMode(
+    mode,
     selectedAccountId,
     {
       "page.pageNo": page - 1,
@@ -55,6 +61,7 @@ export function RegistryUserListAside() {
         data={data?.content ?? []}
         isLoading={isLoading}
         isError={isError}
+        mode={mode}
       />
 
       {/* 푸터 영역 */}

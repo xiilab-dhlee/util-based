@@ -4,7 +4,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect, useRef } from "react";
 
-import { useGetPrivateImageUsageByAccount } from "@/api/generated/admin-private-registry/admin-private-registry";
 import { RegistryUserListAside } from "@/domain/registry/components/user-list/registry-user-list-aside";
 import { RegistryUserListBody } from "@/domain/registry/components/user-list/registry-user-list-body";
 import { RegistryUserListFilter } from "@/domain/registry/components/user-list/registry-user-list-filter";
@@ -13,6 +12,7 @@ import {
   REGISTRY_USER_PAGE_SIZE,
   REGISTRY_USER_SORT_FIELD_MAP,
 } from "@/domain/registry/constants/registry-user-list.constant";
+import { useGetRegistryUserListByMode } from "@/domain/registry/hooks/use-get-registry-user-list-by-mode";
 import {
   registryUserPageAtom,
   registryUserSearchTextAtom,
@@ -20,6 +20,7 @@ import {
   registryUserSortAtom,
   registryUserTagPageAtom,
 } from "@/domain/registry/state/registry-user-list.atom";
+import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import { buildSortRequest } from "@/shared/utils/sort.util";
@@ -29,7 +30,11 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 
-export function RegistryUserListMain() {
+interface RegistryUserListMainProps {
+  mode: RegistryMode;
+}
+
+export function RegistryUserListMain({ mode }: RegistryUserListMainProps) {
   const resetPage = useResetAtom(registryUserPageAtom);
   const resetSearchText = useSetAtom(registryUserSearchTextAtom);
   const resetSort = useResetAtom(registryUserSortAtom);
@@ -45,7 +50,7 @@ export function RegistryUserListMain() {
     fieldMap: REGISTRY_USER_SORT_FIELD_MAP,
   });
 
-  const { data, isLoading, isError } = useGetPrivateImageUsageByAccount({
+  const { data, isLoading, isError } = useGetRegistryUserListByMode(mode, {
     pageNo: page - 1,
     pageSize: REGISTRY_USER_PAGE_SIZE,
     keyword: searchText,
@@ -73,7 +78,7 @@ export function RegistryUserListMain() {
   return (
     <>
       {/* 페이지 헤더 */}
-      <PageHeader pageKey="admin.private-registry" />
+      <PageHeader pageKey={`admin.${mode}-registry`} />
       {/* 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 목록 페이지 - 왼쪽 영역 (필터, 목록, 페이지네이션) */}
@@ -97,7 +102,7 @@ export function RegistryUserListMain() {
         </ListPageBody>
         {/* 목록 페이지 - 오른쪽 영역 (사용자별 태그 목록) */}
         <ListPageAside $width={ASIDE_WIDTH}>
-          <RegistryUserListAside />
+          <RegistryUserListAside mode={mode} />
         </ListPageAside>
       </ListPageMain>
     </>

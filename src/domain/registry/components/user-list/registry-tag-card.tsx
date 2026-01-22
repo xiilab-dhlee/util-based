@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import type { AccountImageTagResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import {
   CompactCardKey,
   CompactCardKeyValueRow,
@@ -15,9 +16,12 @@ import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
 
-type RegistryTagCardProps = AccountImageTagResponse;
+interface RegistryTagCardProps extends AccountImageTagResponse {
+  mode: RegistryMode;
+}
 
 export function RegistryTagCard({
+  mode,
   harborImageName,
   imageDisplayName,
   tagName,
@@ -31,9 +35,11 @@ export function RegistryTagCard({
 
   const handleClick = () => {
     const encodedHarborImageName = encodeURIComponent(harborImageName);
-    router.push(
-      ROUTES.ADMIN_PRIVATE_REGISTRY_DETAIL(encodedHarborImageName, tagName),
-    );
+    const route =
+      mode === "private"
+        ? ROUTES.ADMIN_PRIVATE_REGISTRY_DETAIL(encodedHarborImageName, tagName)
+        : ROUTES.ADMIN_PUBLIC_REGISTRY_DETAIL(encodedHarborImageName, tagName);
+    router.push(route);
   };
 
   return (

@@ -9,6 +9,7 @@ import {
   REGISTRY_USER_CARD_HEIGHT,
   REGISTRY_USER_TAG_PAGE_SIZE,
 } from "@/domain/registry/constants/registry-user-list.constant";
+import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
@@ -17,12 +18,14 @@ interface RegistryUserTagListBodyProps {
   data: AccountImageTagResponse[];
   isLoading: boolean;
   isError: boolean;
+  mode: RegistryMode;
 }
 
 export function RegistryUserTagListBody({
   data,
   isLoading,
   isError,
+  mode,
 }: RegistryUserTagListBodyProps) {
   if (isLoading) {
     return (
@@ -57,7 +60,7 @@ export function RegistryUserTagListBody({
   return (
     <Container data-testid={SELECTOR.LIST_CARD_GRID}>
       {data.map((tag) => (
-        <RegistryTagCard key={tag.harborTagId} {...tag} />
+        <RegistryTagCard key={tag.harborTagId} mode={mode} {...tag} />
       ))}
     </Container>
   );
