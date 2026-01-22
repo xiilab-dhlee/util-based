@@ -2,7 +2,7 @@ import styled from "styled-components";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { AdminNotificationItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { getNotificationTypeLabel } from "@/domain/notification/constants/notification.constant";
+import { getNotificationTypeLabel } from "@/shared/constants/notification";
 import type { AntdTableSortOrder } from "@/shared/types/core.model";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 
@@ -10,14 +10,6 @@ const NotificationText = styled.span<{ $isRead: boolean }>`
   font-weight: ${({ $isRead }) => ($isRead ? 400 : 700)};
 `;
 
-/**
- * 알림 목록 테이블 컬럼 정의 생성 함수
- *
- * 읽지 않은 알림은 font-weight 700으로 표시됩니다.
- *
- * @param sortOrder - 정렬 순서 (발생일시 컬럼에 적용)
- * @returns 알림 목록 테이블 컬럼 정의
- */
 export function createNotificationListColumn(
   sortOrder: AntdTableSortOrder,
 ): ResponsiveColumnType<AdminNotificationItemResponse>[] {
@@ -55,20 +47,20 @@ export function createNotificationListColumn(
       },
     },
     {
-      key: "createDateTime",
+      key: "createdAt",
       title: "발생일시",
-      dataIndex: "createDateTime",
+      dataIndex: "createdAt",
       align: "left",
       width: "20%",
       sorter: true,
       sortOrder,
       render: (
-        createDateTime: AdminNotificationItemResponse["createDateTime"],
+        createdAt: AdminNotificationItemResponse["createdAt"],
         record: AdminNotificationItemResponse,
       ) => {
         return (
           <NotificationText $isRead={record.isRead}>
-            {formatDateTimeSafely(createDateTime)}
+            {formatDateTimeSafely(createdAt)}
           </NotificationText>
         );
       },

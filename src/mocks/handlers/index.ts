@@ -9,8 +9,7 @@
 
 import { delay, type HttpHandler } from "msw";
 
-import { getAccountNotificationMock } from "@/api/generated/account-notification/account-notification.msw";
-import { getAdminAccountNotificationMock } from "@/api/generated/admin-account-notification/admin-account-notification.msw";
+import { getAccountProfileMock } from "@/api/generated/account-profile/account-profile.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationMock } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
@@ -19,6 +18,7 @@ import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspa
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { credentialHandlers } from "@/domain/credential/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
+import { notificationHandlers } from "@/domain/notification/mocks";
 import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
@@ -99,6 +99,9 @@ function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
  * 원본 핸들러 (지연 미적용)
  */
 const rawHandlers = [
+  // Override handlers (우선순위 높음)
+  ...getAccountProfileMock(),
+  ...notificationHandlers,
   ...hubHandlers,
   ...workloadHandlers,
   ...sourcecodeHandlers,
@@ -106,8 +109,6 @@ const rawHandlers = [
   ...getWorkspaceMemberMock(),
   ...getAdminK8sMock(),
   ...credentialHandlers,
-  ...getAccountNotificationMock(),
-  ...getAdminAccountNotificationMock(),
   ...systemSettingHandlers,
   ...groupHandlers,
   ...workspaceHandlers,

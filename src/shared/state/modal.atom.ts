@@ -12,8 +12,8 @@ export const openViewRequestReasonModalAtom = atom<boolean>(false);
 export const openViewRejectReasonModalAtom = atom<boolean>(false);
 /** 비밀번호 재확인 모달 표시 여부 */
 export const openCheckPasswordModalAtom = atom<boolean>(false);
-/** 비밀번호 수정 모달 표시 여부 */
-export const openUpdatePasswordModalAtom = atom<boolean>(false);
+/** 프로필 수정 모달 표시 여부 */
+export const openUpdateProfileModalAtom = atom<boolean>(false);
 /** 프로필 팝오버 표시 여부 */
 export const openProfilePopoverAtom = atom<boolean>(false);
 /** 워크로드 생성 드로어 표시 여부 */

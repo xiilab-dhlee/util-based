@@ -1,58 +1,29 @@
-﻿"use client";
+"use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import styled from "styled-components";
-import { Button, Icon } from "xiilab-ui";
+import { Icon } from "xiilab-ui";
 
-import { ProfileNotification } from "@/shared/components/layouts/profile-notification";
-import {
-  ADMIN_ROOT_PATH,
-  USER_ROOT_PATH,
-} from "@/shared/constants/core.constant";
-import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
+import { useGetProfile } from "@/api/generated/account-profile/account-profile";
+import { AdminProfileNotification } from "@/domain/notification/components/profile/admin-profile-notification";
+import { ProfileNotification } from "@/domain/notification/components/profile/profile-notification";
+import { ProfileInfo } from "@/shared/components/popover/profile-info";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
-import { checkIsUser } from "@/shared/utils/auth.util";
 import { isAdminMode } from "@/shared/utils/router.util";
 
-interface ProfilePopoverProps {
-  userName: string;
-  email: string;
-}
-
-export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
+export function ProfilePopover() {
   const { data: session } = useSession();
-  const publish = usePublish();
+  const accountId = session?.user?.id ?? "";
 
-  const router = useRouter();
+  const { data: profile } = useGetProfile(accountId, {
+    query: { enabled: Boolean(accountId) },
+  });
+
   const pathname = usePathname();
-
-  const { onClose } = useGlobalModal(openProfilePopoverAtom);
-
+  const { open, onClose } = useGlobalModal(openProfilePopoverAtom);
   const isAdminPage = isAdminMode(pathname);
-  const isUserRole = checkIsUser(session);
-
-  /**
-   * 현재 모드에 따른 모드 전환 함수
-   */
-  const handleSwitchMode = () => {
-    if (isAdminPage) {
-      router.replace(USER_ROOT_PATH);
-    } else {
-      router.replace(ADMIN_ROOT_PATH);
-    }
-  };
-
-  const handleClickEdit = () => {
-    onClose();
-
-    publish(COMMON_EVENTS.sendCheckPassword, {
-      userName,
-      email,
-    });
-  };
 
   return (
     <Container>
@@ -64,60 +35,12 @@ export function ProfilePopover({ userName, email }: ProfilePopoverProps) {
         </CloseButton>
       </Header>
       <Body>
-        {/* 프로필 정보 */}
-        <User>
-          <Profile>
-            <Avatar>
-              <Icon name="Astrago" color="#fff" size={24} />
-            </Avatar>
-            <ProfileBody>
-              <UserName>{userName}</UserName>
-              <UserEmail>{email}</UserEmail>
-              <UpdateButton onClick={handleClickEdit}>
-                <Icon name="Edit02" color="#fff" />
-                <span className="sr-only">프로필 수정</span>
-              </UpdateButton>
-            </ProfileBody>
-          </Profile>
-          <Workspace>
-            <WorkspaceTitle>내 워크스페이스</WorkspaceTitle>
-            <WorkspaceBody>
-              <WorkspaceItem>
-                <WorkspaceColumn>
-                  <WorkspaceColumnKey>그룹 이름</WorkspaceColumnKey>
-                  <WorkspaceColumnValue>
-                    AstraGo PO Office_12
-                  </WorkspaceColumnValue>
-                </WorkspaceColumn>
-              </WorkspaceItem>
-              <WorkspaceItem>
-                <WorkspaceRow>
-                  <WorkspaceColumn>
-                    <WorkspaceColumnKey>보유 개수</WorkspaceColumnKey>
-                    <WorkspaceColumnValue>13개</WorkspaceColumnValue>
-                  </WorkspaceColumn>
-                  <WorkspaceColumn className="divider">
-                    <WorkspaceColumnKey>생성 제한 개수</WorkspaceColumnKey>
-                    <WorkspaceColumnValue>1개</WorkspaceColumnValue>
-                  </WorkspaceColumn>
-                </WorkspaceRow>
-              </WorkspaceItem>
-            </WorkspaceBody>
-          </Workspace>
-          {!isUserRole && (
-            <ModeSwitchButton
-              icon="PersonFilled"
-              iconColor="#CED5DB"
-              width="100%"
-              height={30}
-              onClick={handleSwitchMode}
-            >
-              {isAdminPage ? "사용자" : "관리자"} 전환
-            </ModeSwitchButton>
-          )}
-        </User>
-        {/* 알림 */}
-        <ProfileNotification />
+        <ProfileInfo profile={profile} />
+        {isAdminPage ? (
+          <AdminProfileNotification open={open} />
+        ) : (
+          <ProfileNotification open={open} />
+        )}
       </Body>
     </Container>
   );
@@ -150,6 +73,7 @@ const Header = styled.div`
 
 const Body = styled.div`
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -181,154 +105,4 @@ const CloseButton = styled.button`
   &:active {
     background-color: rgba(255, 255, 255, 0.1);
   }
-`;
-
-const User = styled.div`
-  padding-top: 6px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  background-color: var(--profile-popover-child-bg-color);
-
-  --user-detail-border-color: rgba(81, 94, 128, 0.7);
-  --user-detail-border-radius: 2px;
-  --user-detail-divider-color: rgba(81, 94, 128, 0.5);
-`;
-
-const Profile = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-`;
-
-const Avatar = styled.div`
-  width: 46px;
-  height: 46px;
-  border-radius: var(--user-detail-border-radius);
-  border: 1px solid var(--user-detail-border-color);
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  --icon-fill: #fff;
-
-  & svg {
-    width: 24px;
-    height: 24px;
-  }
-`;
-
-const ProfileBody = styled.div`
-  flex: 1;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-`;
-
-const UserName = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  color: #fff;
-`;
-
-const UserEmail = styled.div`
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  color: #d0d0d0;
-`;
-
-const UpdateButton = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--user-detail-border-radius);
-  border: 1px solid var(--user-detail-border-color);
-`;
-
-const Workspace = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const WorkspaceTitle = styled.div`
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 14px;
-  color: #eef3ff;
-`;
-
-const WorkspaceBody = styled.div`
-  background-color: #242a3d;
-  border-radius: var(--user-detail-border-radius);
-  padding: 0 10px;
-  height: 72px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const WorkspaceItem = styled.div`
-  flex: 1;
-  padding: 8px 0;
-
-  & + & {
-    border-top: 1px solid var(--user-detail-divider-color);
-  }
-`;
-
-const WorkspaceColumn = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 20px;
-  flex: 1;
-
-  & + & {
-    border-left: 1px solid var(--user-detail-divider-color);
-    margin-left: 10px;
-    padding-left: 10px;
-  }
-`;
-
-const WorkspaceRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const WorkspaceColumnKey = styled.div`
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 10px;
-  line-height: 12px;
-  color: #dfdfe0;
-`;
-
-const WorkspaceColumnValue = styled.div`
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 16px;
-  color: #f5f5f5;
-`;
-
-const ModeSwitchButton = styled(Button)`
-  background-color: transparent;
-  border-color: #515e80;
-  outline: 1px solid #242a3d;
-  color: #f5f5f5;
-  font-weight: 600;
-  font-size: 12px;
 `;

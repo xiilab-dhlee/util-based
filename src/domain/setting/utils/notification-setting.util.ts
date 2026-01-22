@@ -1,30 +1,35 @@
-import type {
-  NotificationSetResponse,
-  NotificationSetResponseNotificationSetName,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { NotificationSetResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
-  NOTIFICATION_SET_LABELS,
-  type NotificationSection,
-  SECTION_ORDER,
-} from "@/domain/setting/constants/notification-setting.constant";
+  USER_NOTIFICATION_SECTION_ORDER,
+  USER_NOTIFICATION_SET_LABELS,
+  type UserNotificationSection,
+  type UserNotificationSetName,
+} from "@/shared/constants/notification";
 
-export function getNotificationSetLabel(
-  name: NotificationSetResponseNotificationSetName,
-): string | null {
-  return NOTIFICATION_SET_LABELS[name]?.label ?? null;
+function isUserNotificationSetName(
+  name: string,
+): name is UserNotificationSetName {
+  return Object.hasOwn(USER_NOTIFICATION_SET_LABELS, name);
+}
+
+export function getNotificationSetLabel(name: string): string | null {
+  if (!isUserNotificationSetName(name)) return null;
+  return USER_NOTIFICATION_SET_LABELS[name].label;
 }
 
 export function groupNotificationSetsBySection(
   notificationSets: NotificationSetResponse[],
-): Map<NotificationSection, NotificationSetResponse[]> {
-  const grouped = new Map<NotificationSection, NotificationSetResponse[]>();
-  SECTION_ORDER.forEach((section) => {
+): Map<UserNotificationSection, NotificationSetResponse[]> {
+  const grouped = new Map<UserNotificationSection, NotificationSetResponse[]>();
+  USER_NOTIFICATION_SECTION_ORDER.forEach((section) => {
     grouped.set(section, []);
   });
 
   notificationSets.forEach((notificationSet) => {
-    const mapped = NOTIFICATION_SET_LABELS[notificationSet.notificationSetName];
-    if (!mapped) return;
+    const { notificationSetName } = notificationSet;
+    if (!isUserNotificationSetName(notificationSetName)) return;
+
+    const mapped = USER_NOTIFICATION_SET_LABELS[notificationSetName];
     const bucket = grouped.get(mapped.section);
     if (bucket) bucket.push(notificationSet);
   });

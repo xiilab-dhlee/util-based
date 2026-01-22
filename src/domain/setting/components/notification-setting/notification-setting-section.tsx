@@ -6,9 +6,9 @@ import type {
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NotificationSettingSwitch } from "@/domain/setting/components/notification-setting/notification-setting-switch";
 import {
-  NOTIFICATION_SET_LABELS,
   type NotificationChannel,
-} from "@/domain/setting/constants/notification-setting.constant";
+  USER_NOTIFICATION_SET_LABELS,
+} from "@/shared/constants/notification";
 
 interface NotificationSettingSectionProps {
   title: string;
@@ -31,7 +31,7 @@ export function NotificationSettingSection({
   isLoading = false,
   onToggle,
 }: NotificationSettingSectionProps) {
-  const sectionLabels = Object.entries(NOTIFICATION_SET_LABELS)
+  const sectionLabels = Object.entries(USER_NOTIFICATION_SET_LABELS)
     .filter(([_, config]) => config.section === section)
     .map(([name, config]) => ({ name, label: config.label }));
 

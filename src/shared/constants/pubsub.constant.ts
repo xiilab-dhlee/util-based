@@ -307,6 +307,6 @@ export const COMMON_EVENTS = {
   sendProfile: "common:send-profile",
   // 비밀번호 재확인 모달에 필요한 정보 전달 이벤트
   sendCheckPassword: "user:send-check-password",
-  // 비밀번호 수정 모달에 필요한 정보 전달 이벤트
-  sendUpdatePassword: "user:send-update-password",
+  // 프로필 수정 모달에 필요한 정보 전달 이벤트
+  sendUpdateProfile: "user:send-update-profile",
 } as const;

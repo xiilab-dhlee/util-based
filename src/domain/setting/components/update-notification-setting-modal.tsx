@@ -17,12 +17,12 @@ import type {
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NotificationSetResponseNotificationType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NotificationSettingSection } from "@/domain/setting/components/notification-setting/notification-setting-section";
-import {
-  type NotificationChannel,
-  SECTION_ORDER,
-} from "@/domain/setting/constants/notification-setting.constant";
 import { openUpdateNotificationSettingModalAtom } from "@/domain/setting/state/setting.atom";
 import { groupNotificationSetsBySection } from "@/domain/setting/utils/notification-setting.util";
+import {
+  type NotificationChannel,
+  USER_NOTIFICATION_SECTION_ORDER,
+} from "@/shared/constants/notification";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -137,7 +137,7 @@ export function UpdateNotificationSettingModal() {
       centered
     >
       <ModalContent>
-        {SECTION_ORDER.map((section) => {
+        {USER_NOTIFICATION_SECTION_ORDER.map((section) => {
           const sectionItems = groupedNotificationSets.get(section) ?? [];
           const title =
             section === NotificationSetResponseNotificationType.WORKSPACE
