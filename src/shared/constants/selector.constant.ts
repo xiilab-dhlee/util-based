@@ -618,6 +618,14 @@ export const REGISTRY_SELECTOR = {
   JOB_LIST_RESTART_BUTTON: "registry-job-list-restart-button",
   /** 등록 중인 이미지 종료 버튼 */
   JOB_LIST_STOP_BUTTON: "registry-job-list-stop-button",
+
+  // 사용자별 이미지 태그 목록 (Tag List)
+  /** 태그 목록 카드 */
+  TAG_LIST_CARD: "registry-tag-list-card",
+  /** 태그 목록 업로드 일시 */
+  TAG_LIST_UPLOADED_AT: "registry-tag-list-uploaded-at",
+  /** 태그 목록 이미지 타입 */
+  TAG_LIST_IMAGE_TYPE: "registry-tag-list-image-type",
 } as const;
 
 // ============================================

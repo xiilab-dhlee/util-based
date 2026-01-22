@@ -145,27 +145,27 @@ export const REQUEST_IMAGE_EVENTS = {
 } as const;
 
 // 개인 레지스트리 관련 이벤트
-export const PRIVATE_REGISTRY_EVENTS = {
+export const REGISTRY_EVENTS = {
   // 프라이빗 레지스트리 이미지 유형 선택 모달 열기
-  openSelectTypeModal: "private-registry:open-select-type-modal",
+  openSelectTypeModal: "registry:open-select-type-modal",
   // 프라이빗 레지스트리 이미지 생성 모달 열기
-  openCreateModal: "private-registry:open-create-modal",
+  openCreateModal: "registry:open-create-modal",
   // 프라이빗 레지스트리 이미지 삭제 모달 열기
-  openDeleteModal: "private-registry:open-delete-modal",
+  openDeleteModal: "registry:open-delete-modal",
   // 프라이빗 레지스트리 로그 보기 모달 열기
-  openLogModal: "private-registry:open-log-modal",
+  openLogModal: "registry:open-log-modal",
   // 이미지 등록 Job 재시작 모달 열기
-  openRestartJobModal: "private-registry:open-restart-job-modal",
+  openRestartJobModal: "registry:open-restart-job-modal",
   // 이미지 등록 Job 종료 모달 열기
-  openStopJobModal: "private-registry:open-stop-job-modal",
+  openStopJobModal: "registry:open-stop-job-modal",
   // 프라이빗 레지스트리 이미지 태그 삭제 모달 열기
-  openDeleteTagModal: "private-registry:open-delete-tag-modal",
+  openDeleteTagModal: "registry:open-delete-tag-modal",
   // 프라이빗 레지스트리 이미지 태그 생성 모달 열기
-  openCreateTagModal: "private-registry:open-create-tag-modal",
+  openCreateTagModal: "registry:open-create-tag-modal",
   // 프라이빗 레지스트리 이미지 태그 상세 보기 모달 열기
-  openTagDetailModal: "private-registry:open-tag-detail-modal",
+  openTagDetailModal: "registry:open-tag-detail-modal",
   // 프라이빗 레지스트리 이미지 태그 스캔 모달 열기
-  openScanTagModal: "private-registry:open-scan-tag-modal",
+  openScanTagModal: "registry:open-scan-tag-modal",
 } as const;
 
 // 파일 보안 관련 이벤트
