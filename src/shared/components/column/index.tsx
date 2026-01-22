@@ -63,15 +63,26 @@ export const creatorDateTimeColumn: ResponsiveColumnType = {
   },
 };
 
-export const createdAtColumn: ResponsiveColumnType = {
+interface CreatedAtColumnOptions {
+  /** 시간 포함 여부 (true: formatDateTimeSafely, false: formatDateSafely) */
+  includeTime?: boolean;
+  title?: string;
+}
+
+export const createdAtColumn = (
+  options?: CreatedAtColumnOptions,
+): ResponsiveColumnType => ({
   key: "createdAt",
   dataIndex: "createdAt",
-  title: "생성일",
+  title: options?.title ? options?.title : "생성일",
   align: "left",
   render: (createdAt: string) => {
-    return <span>{formatDateSafely(createdAt)}</span>;
+    const formatter = options?.includeTime
+      ? formatDateTimeSafely
+      : formatDateSafely;
+    return <span>{formatter(createdAt)}</span>;
   },
-};
+});
 
 /**
  * 공통 컬럼: 수정일
