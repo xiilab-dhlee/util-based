@@ -64,7 +64,7 @@ export function RegistryImageTagDetailIntroCard() {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성일</RowKey>
-              <RowValue>{formatDateTimeSafely(data?.createDateTime)}</RowValue>
+              <RowValue>{formatDateTimeSafely(data?.createdAt)}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>

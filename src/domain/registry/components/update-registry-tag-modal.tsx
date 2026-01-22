@@ -72,14 +72,13 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
           // private/public 캐시 모두 무효화
           queryClient.invalidateQueries({
             queryKey: getGetPrivateImageTagDetailQueryKey({
-              tagName,
-              harborImageName,
+              request: { tagName, harborImageName },
+              workspaceFilter: {},
             }),
           });
           queryClient.invalidateQueries({
             queryKey: getGetPublicImageTagDetailQueryKey({
-              tagName,
-              harborImageName,
+              request: { tagName, harborImageName },
             }),
           });
           handleClose();

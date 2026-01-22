@@ -54,12 +54,15 @@ export function UserPublicRegistryMain() {
   });
 
   const { data, isLoading, isError } = useGetPublicImageUsageByAccount({
-    pageNo: page - 1,
-    pageSize: USER_REGISTRY_PAGE_SIZE,
-    keyword: searchText,
-    ...(sortRequest
-      ? { sort: sortRequest.sort, order: sortRequest.order }
-      : {}),
+    pageSearchRequest: {
+      pageNo: page - 1,
+      pageSize: USER_REGISTRY_PAGE_SIZE,
+      keyword: searchText,
+    },
+    sortRequest: {
+      sort: sortRequest?.sort ?? "ACCOUNT_NAME",
+      order: sortRequest?.order ?? "ASC",
+    },
   });
 
   const handleChange: TableProps<PublicImageUsageResponse>["onChange"] = (

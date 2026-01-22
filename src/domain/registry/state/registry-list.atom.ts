@@ -3,8 +3,8 @@ import { atomWithReset } from "jotai/utils";
 import type { Key } from "react";
 
 import type {
-  GetPrivateRegistryListImageSourceType,
   ImageJobResponseImageSourceType,
+  RegistryImageFilterRequestImageSourceType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { RegistrySortState } from "@/domain/registry/constants/registry-list.constant";
 
@@ -23,7 +23,7 @@ export const registrySortAtom = atomWithReset<RegistrySortState>({
 });
 /** 레지스트리 이미지 소스 타입 필터 */
 export const registryImageSourceTypeAtom = atomWithReset<
-  GetPrivateRegistryListImageSourceType | undefined
+  RegistryImageFilterRequestImageSourceType | undefined
 >(undefined);
 /** 선택된 레지스트리 Harbor 이미지 경로 */
 export const registrySelectedItemAtom = atom<string>("");

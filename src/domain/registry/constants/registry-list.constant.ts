@@ -1,7 +1,7 @@
 import {
   CreateExternalImageRequestRegistryChannel,
-  GetPrivateRegistryListImageSourceType,
-  type GetPrivateRegistryListSort,
+  RegistryImageFilterRequestImageSourceType,
+  type RegistryImageFilterRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
@@ -13,10 +13,9 @@ export const REGISTRY_JOB_PAGE_SIZE = 5;
 export const REGISTRY_JOB_CARD_HEIGHT = 122;
 
 export const REGISTRY_SORT_FIELD_MAP = {
-  // imageDisplayName: "IMAGE_NAME",
   creatorName: "CREATOR_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, GetPrivateRegistryListSort>;
+} as const satisfies Record<string, RegistryImageFilterRequestSort>;
 
 /** 프라이빗 레지스트리 정렬 필드 타입 */
 export type RegistrySortField = keyof typeof REGISTRY_SORT_FIELD_MAP;
@@ -36,10 +35,16 @@ export type RegistrySortState = AntdTableSortState<RegistrySortField>;
 /** 이미지 소스 타입 옵션 */
 export const IMAGE_SOURCE_TYPE_OPTIONS: {
   label: string;
-  value: GetPrivateRegistryListImageSourceType;
+  value: RegistryImageFilterRequestImageSourceType;
 }[] = [
-  { label: "Snapshot", value: GetPrivateRegistryListImageSourceType.SNAPSHOT },
-  { label: "External", value: GetPrivateRegistryListImageSourceType.EXTERNAL },
+  {
+    label: "Snapshot",
+    value: RegistryImageFilterRequestImageSourceType.SNAPSHOT,
+  },
+  {
+    label: "External",
+    value: RegistryImageFilterRequestImageSourceType.EXTERNAL,
+  },
 ];
 
 // ============================================================================

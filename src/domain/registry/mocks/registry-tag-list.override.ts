@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
 
 import {
-  GetPrivateImageTagListOrder,
-  GetPrivateImageTagListSort,
   type ImageTagListResponse,
+  RegistryImageTagFilterRequestOrder,
+  RegistryImageTagFilterRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateImageTagListMockHandler,
@@ -60,10 +60,10 @@ function generateCreatedAt(
   order: string,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  if (sort === GetPrivateImageTagListSort.CREATED_AT) {
+  if (sort === RegistryImageTagFilterRequestSort.CREATED_AT) {
     const safeIndex = Math.min(Math.max(index, 0), 29);
     const offset =
-      order === GetPrivateImageTagListOrder.ASC
+      order === RegistryImageTagFilterRequestOrder.ASC
         ? (30 - safeIndex) * DAY_IN_MS
         : safeIndex * DAY_IN_MS;
     return new Date(baseTimestamp - offset).toISOString();
@@ -96,9 +96,10 @@ function createTagListHandler<T>(
       10,
     );
     const sort =
-      url.searchParams.get("sort") || GetPrivateImageTagListSort.CREATED_AT;
+      url.searchParams.get("sort") ||
+      RegistryImageTagFilterRequestSort.CREATED_AT;
     const order =
-      url.searchParams.get("order") || GetPrivateImageTagListOrder.DESC;
+      url.searchParams.get("order") || RegistryImageTagFilterRequestOrder.DESC;
 
     const totalSize = pageSize * 3;
 

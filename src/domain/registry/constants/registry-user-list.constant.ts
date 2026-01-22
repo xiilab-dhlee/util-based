@@ -1,4 +1,4 @@
-import type { GetPrivateImageUsageByAccountSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { ImageUsageSortRequestSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 /**
@@ -21,7 +21,7 @@ export const REGISTRY_USER_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   imageCount: "IMAGE_COUNT",
   usedStorage: "USED_STORAGE",
-} as const satisfies Record<string, GetPrivateImageUsageByAccountSort>;
+} as const satisfies Record<string, ImageUsageSortRequestSort>;
 
 /** 사용자 목록 정렬 필드 타입 */
 export type RegistryUserSortField = keyof typeof REGISTRY_USER_SORT_FIELD_MAP;

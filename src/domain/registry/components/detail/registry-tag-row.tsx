@@ -28,12 +28,12 @@ export function RegistryTagRow({
 }: RegistryTagRowProps) {
   const [selectedTag, setSelectedTag] = useAtom(registryTagSelectedAtom);
 
-  const isActive = selectedTag?.harborArtifactId === rowData?.harborArtifactId;
+  const isActive = selectedTag?.harborTagId === rowData?.harborTagId;
 
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
 
-    if (rowData.harborArtifactId !== undefined) {
+    if (rowData.harborTagId !== undefined) {
       setSelectedTag(rowData);
     }
   };
