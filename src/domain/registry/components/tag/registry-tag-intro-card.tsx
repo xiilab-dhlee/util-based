@@ -160,11 +160,11 @@ export function RegistryTagIntroCard({ mode }: RegistryTagIntroCardProps) {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <Icon name="Workspace02" color="var(--icon-fill)" size={20} />
+              <Icon name="Workspace02" color="var(--icon-fill)" size={22} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>워크스페이스 :</RowKey>
-              <RowValue>{formatDateSafely(imageDetail?.createdAt)}</RowValue>
+              <RowValue>-</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -175,7 +175,7 @@ export function RegistryTagIntroCard({ mode }: RegistryTagIntroCardProps) {
             </RowIconWrapper>
             <RowTitle>
               <RowKey>구분 :</RowKey>
-              <RowValue>{formatDateSafely(imageDetail?.createdAt)}</RowValue>
+              <RowValue>-</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -193,7 +193,7 @@ export function RegistryTagIntroCard({ mode }: RegistryTagIntroCardProps) {
         <Row>
           <RowBody>
             <RowIconWrapper>
-              <Icon name="Person" color="var(--icon-fill)" size={16} />
+              <Icon name="Person" color="var(--icon-fill)" size={20} />
             </RowIconWrapper>
             <RowTitle>
               <RowKey>생성자 :</RowKey>

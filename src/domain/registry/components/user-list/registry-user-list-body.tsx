@@ -64,7 +64,7 @@ export function RegistryUserListBody({
           },
         ])}
         data={data}
-        columnHeight={35}
+        columnHeight={32}
         loading={isLoading}
         isError={isError}
         tableLayout="fixed"
