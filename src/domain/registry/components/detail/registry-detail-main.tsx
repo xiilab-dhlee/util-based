@@ -23,6 +23,7 @@ import {
   registryTagSearchTextAtom,
   registryTagSelectedAtom,
   registryTagSortAtom,
+  registryVulnerabilityPageAtom,
 } from "@/domain/registry/state/registry-detail.atom";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { PageHeader } from "@/shared/components/layouts/page-header";
@@ -53,6 +54,7 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
   const resetSearchText = useResetAtom(registryTagSearchTextAtom);
   const resetSort = useResetAtom(registryTagSortAtom);
   const resetCheckedList = useResetAtom(registryTagCheckedListAtom);
+  const resetVulnerabilityPage = useResetAtom(registryVulnerabilityPageAtom);
 
   const page = useAtomValue(registryTagPageAtom);
   const searchText = useAtomValue(registryTagSearchTextAtom);
@@ -88,7 +90,14 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
     resetSearchText();
     resetSort();
     resetCheckedList();
-  }, [resetPage, resetSearchText, resetSort, resetCheckedList]);
+    resetVulnerabilityPage();
+  }, [
+    resetPage,
+    resetSearchText,
+    resetSort,
+    resetCheckedList,
+    resetVulnerabilityPage,
+  ]);
 
   return (
     <>

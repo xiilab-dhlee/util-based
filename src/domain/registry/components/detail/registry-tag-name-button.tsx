@@ -5,7 +5,7 @@ import type { MouseEvent } from "react";
 import styled from "styled-components";
 
 import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface RegistryTagNameButtonProps extends ImageTagListResponse {}
@@ -28,7 +28,7 @@ export function RegistryTagNameButton({
   const handleClick = (e: MouseEvent<HTMLSpanElement>) => {
     e.stopPropagation();
 
-    publish(PRIVATE_REGISTRY_EVENTS.openTagDetailModal, {
+    publish(REGISTRY_EVENTS.openTagDetailModal, {
       harborImageName,
       imageTagId,
       imageTagName,

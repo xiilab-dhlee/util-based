@@ -19,7 +19,7 @@ import {
 } from "@/domain/registry/state/registry-detail.atom";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
 import { checkIsUser, getSessionAccountId } from "@/shared/utils/auth.util";
@@ -86,7 +86,7 @@ export function RegistryDetailBody({
     };
 
   const handleDelete = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.openDeleteModal, [harborImageName]);
+    publish(REGISTRY_EVENTS.openDeleteModal, [harborImageName]);
   };
 
   const handleChange: TableProps<ImageTagListResponse>["onChange"] = (
@@ -123,7 +123,14 @@ export function RegistryDetailBody({
         <Pane>
           <Record>
             <IconWrapper>
-              <Icon name="Workspace02" color="var(--icon-fill)" size={20} />
+              <Icon name="Information" color="var(--icon-fill)" size={20} />
+            </IconWrapper>
+            <Key>구분 :</Key>
+            <Value>-</Value>
+          </Record>
+          <Record>
+            <IconWrapper>
+              <Icon name="Information" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>이름 :</Key>
             <Value>{imageDetail?.imageDisplayName || "-"}</Value>
@@ -152,11 +159,10 @@ export function RegistryDetailBody({
       <ListWrapper>
         <CustomizedTable
           columns={createRegistryTagColumn([
-            { key: "imageTagName", width: "18%", ellipsis: true },
-            { key: "imageTagSizeByte", width: "10%" },
-            { key: "uploadStatus", width: "12%" },
-            { key: "scanStatus", width: "12%" },
-            { key: "creatorName", width: "10%" },
+            { key: "imageTagName", width: "20%", ellipsis: true },
+            { key: "imageTagSizeByte", width: "12%" },
+            { key: "scanStatus", width: "14%" },
+            { key: "creatorName", width: "14%" },
             {
               key: "createdAt",
               align: "left",
@@ -199,7 +205,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 `;
 
 const InfoPanel = styled.div`

@@ -10,7 +10,7 @@ import {
 } from "@/domain/registry/state/registry-detail.atom";
 import { ListDeleteButton } from "@/shared/components/button/list-delete-button";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 interface RegistryDetailFooterProps {
@@ -39,7 +39,7 @@ export function RegistryDetailFooter({
 
   const handleClickDelete = () => {
     publish(
-      PRIVATE_REGISTRY_EVENTS.openDeleteTagModal,
+      REGISTRY_EVENTS.openDeleteTagModal,
       Array.from(checkedList).map((id) => Number(id)),
     );
   };
@@ -55,7 +55,6 @@ export function RegistryDetailFooter({
         <ListDeleteButton
           onClick={handleClickDelete}
           disabled={checkedList.size === 0}
-          isLoading={isLoading}
         />
       }
     />

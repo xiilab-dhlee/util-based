@@ -37,15 +37,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      key: "uploadStatus",
-      title: "업로드 상태",
-      dataIndex: "uploadStatus",
-      align: "center",
-      render: () => {
-        return <ScanStatusText status="COMPLETED" />;
-      },
-    },
-    {
       key: "scanStatus",
       title: "보안 검사 상태",
       dataIndex: "scanStatus",
@@ -127,7 +118,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     creatorNameColumn,
-    createdAtColumn,
+    createdAtColumn({ includeTime: true }),
   ];
 };
 

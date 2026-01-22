@@ -14,7 +14,7 @@ import {
   // registryTagSelectedAtom,
 } from "@/domain/registry/state/registry-detail.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { checkIsUser } from "@/shared/utils/auth.util";
 
@@ -51,7 +51,7 @@ export function RegistryDetailFilter({
   };
 
   const handleCreate = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.openCreateTagModal, harborImageName);
+    publish(REGISTRY_EVENTS.openCreateTagModal, harborImageName);
   };
 
   const handleCreateRequestImage = () => {
@@ -64,7 +64,7 @@ export function RegistryDetailFilter({
   //     return;
   //   }
 
-  //   publish(PRIVATE_REGISTRY_EVENTS.openScanTagModal, {
+  //   publish(REGISTRY_EVENTS.openScanTagModal, {
   //     harborImageName,
   //     tagName: selectedTag.imageTagName,
   //   });
