@@ -1,7 +1,8 @@
+"use client";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
 import { getGetPrivateRegistryListQueryKey } from "@/api/generated/private-registry/private-registry";
@@ -45,20 +46,18 @@ export function DeleteRegistryModal({ mode }: DeleteRegistryModalProps) {
       },
       {
         onSuccess: () => {
-          // private/public 캐시 모두 무효화
-          queryClient.invalidateQueries({
-            queryKey: getGetPrivateRegistryListQueryKey(),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetPublicRegistryListQueryKey(),
-          });
-          toast.success("레지스트리 이미지 삭제 완료");
+          if (mode === "private") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPrivateRegistryListQueryKey(),
+            });
+            router.replace(ROUTES.USER_PRIVATE_REGISTRY);
+          } else if (mode === "public") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPublicRegistryListQueryKey(),
+            });
+            router.replace(ROUTES.USER_PUBLIC_REGISTRY);
+          }
           setOpen(false);
-          router.replace(
-            mode === "private"
-              ? ROUTES.USER_PRIVATE_REGISTRY
-              : ROUTES.USER_PUBLIC_REGISTRY,
-          );
         },
       },
     );

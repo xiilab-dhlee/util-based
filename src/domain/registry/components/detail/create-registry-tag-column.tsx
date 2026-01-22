@@ -104,16 +104,24 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "useRequest",
+      dataIndex: "useRequest",
+      title: "사용 요청",
+      align: "center",
+      render: (requestReason?: string) => {
+        return (
+          <ViewRequestReasonButton reason={requestReason} disabled={true} />
+        );
+      },
+    },
+    {
       key: "decisionReason",
       dataIndex: "decisionReason",
       title: "승인 내역",
       align: "center",
       render: (decisionReason?: string) => {
         return (
-          <ViewRejectReasonButton
-            reason={decisionReason}
-            disabled={!decisionReason}
-          />
+          <ViewRejectReasonButton reason={decisionReason} disabled={true} />
         );
       },
     },
