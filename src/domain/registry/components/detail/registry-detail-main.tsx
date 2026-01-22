@@ -11,6 +11,7 @@ import { DeleteRegistryTagModal } from "@/domain/registry/components/delete-regi
 import { RegistryDetailAside } from "@/domain/registry/components/detail/registry-detail-aside";
 import { RegistryDetailBody } from "@/domain/registry/components/detail/registry-detail-body";
 import { ScanRegistryTagModal } from "@/domain/registry/components/scan-registry-tag-modal";
+import { UpdateRegistryTagModal } from "@/domain/registry/components/update-registry-tag-modal";
 import { ViewRegistryTagDetailModal } from "@/domain/registry/components/view-registry-tag-detail-modal";
 import {
   REGISTRY_TAG_PAGE_SIZE,
@@ -79,12 +80,17 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
   // 첫 번째 태그 자동 선택 (최초 1회만)
   const isInitializedRef = useRef(false);
   useEffect(() => {
-    if (!isInitializedRef.current && data?.content && data.content.length > 0) {
-      setSelectedTag(data.content[0]);
+    if (!isInitializedRef.current && data?.content) {
+      let tag = null;
+      if (data.content.length > 0) {
+        tag = data.content[0];
+      }
+      setSelectedTag(tag);
       isInitializedRef.current = true;
     }
   }, [data?.content, setSelectedTag]);
 
+  // 마운트 시 상태 초기화
   useEffect(() => {
     resetPage();
     resetSearchText();
@@ -130,6 +136,8 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
       <ScanRegistryTagModal mode={mode} />
       {/* 레지스트리 이미지 태그 상세 모달 */}
       <ViewRegistryTagDetailModal mode={mode} />
+      {/* 레지스트리 이미지 태그 수정 모달 */}
+      <UpdateRegistryTagModal mode={mode} />
       {/* 요청 사유 모달 */}
       <ViewRequestReasonModal />
       {/* 반려 사유 모달 */}

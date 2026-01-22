@@ -36,7 +36,7 @@ interface RegistryUserListMainProps {
 
 export function RegistryUserListMain({ mode }: RegistryUserListMainProps) {
   const resetPage = useResetAtom(registryUserPageAtom);
-  const resetSearchText = useSetAtom(registryUserSearchTextAtom);
+  const resetSearchText = useResetAtom(registryUserSearchTextAtom);
   const resetSort = useResetAtom(registryUserSortAtom);
   const resetTagPage = useResetAtom(registryUserTagPageAtom);
 
@@ -62,15 +62,21 @@ export function RegistryUserListMain({ mode }: RegistryUserListMainProps) {
   // 첫 번째 사용자 자동 선택 (최초 1회만)
   const isInitializedRef = useRef(false);
   useEffect(() => {
-    if (!isInitializedRef.current && data?.content && data.content.length > 0) {
-      setSelectedAccountId(data.content[0].accountId ?? "");
+    if (!isInitializedRef.current && data?.content) {
+      let accountId = "";
+      if (data.content.length > 0) {
+        accountId = data.content[0].accountId ?? "";
+      }
+
+      setSelectedAccountId(accountId);
       isInitializedRef.current = true;
     }
   }, [data?.content, setSelectedAccountId]);
 
+  // 마운트 시 상태 초기화
   useEffect(() => {
     resetPage();
-    resetSearchText("");
+    resetSearchText();
     resetSort();
     resetTagPage();
   }, [resetPage, resetSearchText, resetSort, resetTagPage]);

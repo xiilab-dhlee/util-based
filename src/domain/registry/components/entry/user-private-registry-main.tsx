@@ -41,12 +41,11 @@ export function UserPrivateRegistryMain() {
   const resetSearchText = useResetAtom(userPrivateRegistrySearchTextAtom);
   const resetSort = useResetAtom(userPrivateRegistrySortAtom);
 
+  // 마운트 시 상태 초기화
   useEffect(() => {
-    return () => {
-      resetPage();
-      resetSearchText();
-      resetSort();
-    };
+    resetPage();
+    resetSearchText();
+    resetSort();
   }, [resetPage, resetSearchText, resetSort]);
 
   const sortRequest = buildSortRequest({
