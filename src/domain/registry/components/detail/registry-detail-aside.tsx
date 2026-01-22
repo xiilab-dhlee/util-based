@@ -30,10 +30,14 @@ export function RegistryDetailAside({ mode }: RegistryDetailAsideProps) {
   const { data, isLoading, isError } = useGetRegistryTagVulnerabilitiesByMode(
     mode,
     {
-      harborImageName,
-      tagName: selectedTag?.imageTagName ?? "",
-      pageNo: page - 1,
-      pageSize: REGISTRY_VULNERABILITY_PAGE_SIZE,
+      pageRequest: {
+        pageNo: page - 1,
+        pageSize: REGISTRY_VULNERABILITY_PAGE_SIZE,
+      },
+      request: {
+        harborImageName,
+        tagName: selectedTag?.imageTagName ?? "",
+      },
     },
     {
       query: {

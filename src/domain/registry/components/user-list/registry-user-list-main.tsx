@@ -51,12 +51,15 @@ export function RegistryUserListMain({ mode }: RegistryUserListMainProps) {
   });
 
   const { data, isLoading, isError } = useGetRegistryUserListByMode(mode, {
-    pageNo: page - 1,
-    pageSize: REGISTRY_USER_PAGE_SIZE,
-    keyword: searchText,
-    ...(sortRequest
-      ? { sort: sortRequest.sort, order: sortRequest.order }
-      : {}),
+    pageSearchRequest: {
+      pageNo: page - 1,
+      pageSize: REGISTRY_USER_PAGE_SIZE,
+      keyword: searchText,
+    },
+    sortRequest: {
+      sort: sortRequest?.sort ?? "ACCOUNT_NAME",
+      order: sortRequest?.order ?? "ASC",
+    },
   });
 
   // 첫 번째 사용자 자동 선택 (최초 1회만)

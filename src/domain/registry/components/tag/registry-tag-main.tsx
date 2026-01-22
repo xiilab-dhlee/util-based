@@ -37,10 +37,14 @@ export function RegistryTagMain({ mode }: RegistryTagMainProps) {
   const { data, isLoading, isError } = useGetRegistryTagVulnerabilitiesByMode(
     mode,
     {
-      pageNo: page - 1,
-      pageSize: REGISTRY_TAG_VULNERABILITY_PAGE_SIZE,
-      harborImageName,
-      tagName: tagName ?? "",
+      pageRequest: {
+        pageNo: page - 1,
+        pageSize: REGISTRY_TAG_VULNERABILITY_PAGE_SIZE,
+      },
+      request: {
+        harborImageName,
+        tagName: tagName ?? "",
+      },
     },
   );
 

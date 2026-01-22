@@ -104,7 +104,7 @@ export function RegistryDetailBody({
 
   const { data: imageDetail } = useGetRegistryDetailByMode(
     mode,
-    { harborImageName },
+    { request: { harborImageName } },
     { query: { enabled: !!harborImageName } },
   );
 

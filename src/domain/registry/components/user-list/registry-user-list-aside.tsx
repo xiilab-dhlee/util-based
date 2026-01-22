@@ -28,8 +28,12 @@ export function RegistryUserListAside({ mode }: RegistryUserListAsideProps) {
     mode,
     selectedAccountId,
     {
-      "page.pageNo": page - 1,
-      "page.pageSize": REGISTRY_USER_TAG_PAGE_SIZE,
+      request: {
+        page: {
+          pageNo: page - 1,
+          pageSize: REGISTRY_USER_TAG_PAGE_SIZE,
+        },
+      },
     },
     {
       query: {

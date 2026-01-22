@@ -36,14 +36,16 @@ export function RegistryTagIntroCard({ mode }: RegistryTagIntroCardProps) {
 
   // 태그 상세 조회
   const { data, isLoading } = useGetRegistryTagDetailByMode(mode, {
-    tagName: tagName ?? "",
-    harborImageName,
+    request: {
+      tagName: tagName ?? "",
+      harborImageName,
+    },
   });
 
   // 이미지 상세 조회
   const { data: imageDetail } = useGetRegistryDetailByMode(
     mode,
-    { harborImageName },
+    { request: { harborImageName } },
     { query: { enabled: !!harborImageName } },
   );
 

@@ -31,8 +31,10 @@ export function ViewRegistryTagDetailModal({
   const { data, isFetching } = useGetRegistryTagDetailByMode(
     mode,
     {
-      harborImageName: payload?.harborImageName ?? "",
-      tagName: payload?.imageTagName ?? "",
+      request: {
+        harborImageName: payload?.harborImageName ?? "",
+        tagName: payload?.imageTagName ?? "",
+      },
     },
     {
       query: {

@@ -15,7 +15,7 @@ import {
 } from "@/api/generated/public-registry/public-registry";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 
-/** 레지스트리 태그 목록 조회 파라미터 (private/public 공통) */
+/** 레지스트리 태그 목록 조회 파라미터 (API 구조 그대로 사용) */
 export type GetRegistryTagListParams =
   | GetPrivateImageTagListParams
   | GetPublicImageTagListParams;
@@ -43,7 +43,7 @@ interface UseGetRegistryTagListByModeResult {
  * 레지스트리 이미지 태그 목록 조회 (모드에 따라 다른 API 사용)
  *
  * @param mode - 레지스트리 모드 (private | public)
- * @param params - 목록 조회 파라미터
+ * @param params - API 파라미터 (중첩 구조 그대로 전달)
  * @param options - React Query 옵션
  * @returns 레지스트리 태그 목록 조회 결과 (unwrapped data)
  */

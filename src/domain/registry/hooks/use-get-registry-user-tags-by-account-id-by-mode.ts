@@ -15,13 +15,13 @@ import type {
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 
-/** 사용자별 이미지 태그 조회 파라미터 (private/public 공통) */
-type GetRegistryUserTagsParams =
+/** 사용자별 이미지 태그 조회 파라미터 (API 구조 그대로 사용) */
+export type GetRegistryUserTagsParams =
   | GetPrivateImageTagsByAccountIdParams
   | GetPublicImageTagsByAccountIdParams;
 
 /** 사용자별 이미지 태그 조회 에러 타입 */
-type GetRegistryUserTagsQueryError =
+export type GetRegistryUserTagsQueryError =
   | GetPrivateImageTagsByAccountIdQueryError
   | GetPublicImageTagsByAccountIdQueryError;
 
@@ -41,11 +41,17 @@ interface UseGetRegistryUserTagsByAccountIdByModeResult {
 
 /**
  * 모드에 따라 private/public 사용자별 이미지 태그 목록을 조회하는 훅
+ *
+ * @param mode - 레지스트리 모드 (private | public)
+ * @param accountId - 사용자 계정 ID
+ * @param params - API 파라미터 (중첩 구조 그대로 전달)
+ * @param options - React Query 옵션
+ * @returns 사용자별 이미지 태그 목록 조회 결과 (unwrapped data)
  */
 export const useGetRegistryUserTagsByAccountIdByMode = (
   mode: RegistryMode,
   accountId: string,
-  params?: GetRegistryUserTagsParams,
+  params: GetRegistryUserTagsParams,
   options?: UseGetRegistryUserTagsByAccountIdByModeOptions,
 ): UseGetRegistryUserTagsByAccountIdByModeResult => {
   const privateQuery = useGetPrivateImageTagsByAccountId(
