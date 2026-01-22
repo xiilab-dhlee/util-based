@@ -57,10 +57,18 @@ export const imageJobsOverrideHandlers = [
     const keyword = url.searchParams.get("keyword") || "";
     const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
+    const imageSourceType = url.searchParams.get(
+      "imageSourceType",
+    ) as GetImageJobsImageSourceType | null;
 
     const { status, message, timestamp } = getGetImageJobsResponseMock();
 
-    const totalSize = pageSize * 3;
+    // 필터링이 있으면 해당 타입만, 없으면 전체
+    const baseTotalSize = pageSize * 3;
+    // 필터 적용 시 해당 타입의 절반 정도로 가정
+    const totalSize = imageSourceType
+      ? Math.ceil(baseTotalSize / 2)
+      : baseTotalSize;
 
     const content: ImageJobResponse[] = Array.from(
       { length: pageSize },
@@ -78,7 +86,10 @@ export const imageJobsOverrideHandlers = [
           creatorName: `사용자-${creatorIndex + 1}`,
           status: generateJobStatus(globalIndex),
           createdAt: generateJobCreatedAt(globalIndex),
-          imageSourceType: generateImageSourceType(globalIndex),
+          // 필터가 적용된 경우 해당 타입만, 아니면 인덱스 기반 타입
+          imageSourceType: imageSourceType
+            ? imageSourceType
+            : generateImageSourceType(globalIndex),
         };
       },
     );

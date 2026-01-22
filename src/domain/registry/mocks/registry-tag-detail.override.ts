@@ -33,7 +33,7 @@ function generateVulnerability() {
  */
 function createTagDetailHandler<T>(
   getMockHandler: (
-    handler: (info: { params: unknown }) => Promise<T>,
+    handler: (info: { request: Request }) => Promise<T>,
   ) => ReturnType<typeof getGetPrivateImageTagDetailMockHandler>,
   getResponseMock: (override?: {
     data?: {
@@ -49,14 +49,13 @@ function createTagDetailHandler<T>(
   }) => T,
 ) {
   return getMockHandler(async (info) => {
-    const { imageTagId } = info.params as {
-      imageTagId: string;
-    };
+    const url = new URL(info.request.url);
+    const tagName = url.searchParams.get("tagName") || "";
 
     return getResponseMock({
       data: {
-        imageTagId: Number(imageTagId),
-        imageTagName: `tag-${imageTagId}`,
+        imageTagId: faker.number.int({ min: 1000000, max: 5000000000 }),
+        imageTagName: tagName,
         imageSizeByte: faker.number.int({ min: 1000000, max: 5000000000 }),
         scanStatus: faker.helpers.arrayElement([
           "COMPLETED",
