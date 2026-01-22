@@ -1,14 +1,13 @@
 "use client";
 
-import { useAtom, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Input } from "xiilab-ui";
 
-// import { RegistryJobTypeSort } from "@/domain/registry/components/list/registry-job-type-sort";
+import { RegistryJobTypeSort } from "@/domain/registry/components/list/registry-job-type-sort";
 import {
   imageJobPageAtom,
-  imageJobSearchKeywordAtom,
   imageJobSearchTextAtom,
 } from "@/domain/registry/state/registry-list.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
@@ -24,19 +23,12 @@ export function RegistryJobListFilter({
   totalSize,
   loading,
 }: RegistryJobListFilterProps) {
-  const [searchKeyword, setSearchKeyword] = useAtom(imageJobSearchKeywordAtom);
   const setSearchText = useSetAtom(imageJobSearchTextAtom);
   const resetPage = useResetAtom(imageJobPageAtom);
 
   const handleSearch = (value: string) => {
     resetPage();
     setSearchText(value.trim());
-  };
-
-  const handleSearchKeywordChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setSearchKeyword(e.target.value);
   };
 
   return (
@@ -59,17 +51,15 @@ export function RegistryJobListFilter({
       total={totalSize}
       totalCountTestId={REGISTRY_SELECTOR.JOB_LIST_TOTAL_COUNT}
     >
-      {/* <RegistryJobTypeSort disabled={loading} /> */}
+      <RegistryJobTypeSort disabled={loading} />
       <Input.Search
         name="search"
-        placeholder="컨테이너 이미지를 검색해 주세요."
+        placeholder="이미지 이름을 검색해 주세요."
         onSearch={handleSearch}
-        onChange={handleSearchKeywordChange}
         autoComplete="off"
-        width={240}
+        width={220}
         height={30}
         disabled={loading}
-        value={searchKeyword}
         data-testid={REGISTRY_SELECTOR.JOB_LIST_SEARCH_INPUT}
       />
     </MySearchFilter>

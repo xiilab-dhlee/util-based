@@ -26,6 +26,7 @@ export function RegistryImageCard({
   imageTagName,
   creatorId,
   creatorName,
+  imageSourceType,
   status,
   createdAt,
 }: RegistryImageCardProps) {
@@ -71,6 +72,20 @@ export function RegistryImageCard({
         <Body>
           <Pane>
             <Row>
+              <Key>구분</Key>
+              <ImageSourceTypeValue>
+                {imageSourceType?.toLowerCase() || "-"}
+              </ImageSourceTypeValue>
+            </Row>
+            <Row>
+              <Key>상태</Key>
+              <Value data-testid={REGISTRY_SELECTOR.JOB_LIST_STATUS}>
+                {status}
+              </Value>
+            </Row>
+          </Pane>
+          <Pane>
+            <Row>
               <Key>생성일시</Key>
               <Value data-testid={REGISTRY_SELECTOR.JOB_LIST_CREATED_AT}>
                 {formatDateTimeSafely(createdAt)}
@@ -79,14 +94,6 @@ export function RegistryImageCard({
             <Row>
               <Key>생성자</Key>
               <Value>{creatorName || "-"}</Value>
-            </Row>
-          </Pane>
-          <Pane>
-            <Row>
-              <Key>상태</Key>
-              <Value data-testid={REGISTRY_SELECTOR.JOB_LIST_STATUS}>
-                {status}
-              </Value>
             </Row>
           </Pane>
         </Body>
@@ -138,5 +145,9 @@ const Key = styled(CompactCardKey)`
 const Value = styled(CompactCardValue)`
   line-height: 14px;
   text-indent: 16px;
+  text-transform: capitalize;
+`;
+
+const ImageSourceTypeValue = styled(Value)`
   text-transform: capitalize;
 `;

@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
@@ -17,7 +17,7 @@ export function RegistryJobRestartButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(PRIVATE_REGISTRY_EVENTS.openRestartJobModal, imageTagId);
+    publish(REGISTRY_EVENTS.openRestartJobModal, imageTagId);
   };
 
   return (

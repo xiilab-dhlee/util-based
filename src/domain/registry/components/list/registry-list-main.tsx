@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
@@ -19,6 +19,9 @@ import {
 } from "@/domain/registry/constants/registry-list.constant";
 import { useGetRegistryListByMode } from "@/domain/registry/hooks/use-get-registry-list-by-mode";
 import {
+  imageJobImageSourceTypeAtom,
+  imageJobPageAtom,
+  imageJobSearchTextAtom,
   registryCheckedListAtom,
   registryImageSourceTypeAtom,
   registryPageAtom,
@@ -41,11 +44,19 @@ interface RegistryListMainProps {
 }
 
 export function RegistryListMain({ mode }: RegistryListMainProps) {
+  // 레지스트리 목록 관련 상태
   const resetPage = useResetAtom(registryPageAtom);
-  const resetSearchText = useResetAtom(registrySearchTextAtom);
   const resetSort = useResetAtom(registrySortAtom);
   const resetCheckedList = useResetAtom(registryCheckedListAtom);
   const resetImageSourceType = useResetAtom(registryImageSourceTypeAtom);
+  const setSearchText = useSetAtom(registrySearchTextAtom);
+  // 이미지 등록 Job 목록 관련 상태
+  const resetImageJobPage = useResetAtom(imageJobPageAtom);
+  const resetImageJobImageSourceType = useResetAtom(
+    imageJobImageSourceTypeAtom,
+  );
+  const setImageJobSearchText = useSetAtom(imageJobSearchTextAtom);
+
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
   const page = useAtomValue(registryPageAtom);
@@ -78,16 +89,22 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
 
   useEffect(() => {
     resetPage();
-    resetSearchText();
+    setSearchText("");
     resetSort();
     resetCheckedList();
     resetImageSourceType();
+    resetImageJobPage();
+    resetImageJobImageSourceType();
+    setImageJobSearchText("");
   }, [
     resetPage,
-    resetSearchText,
+    setSearchText,
     resetSort,
     resetCheckedList,
     resetImageSourceType,
+    resetImageJobPage,
+    resetImageJobImageSourceType,
+    setImageJobSearchText,
   ]);
 
   return (
@@ -115,7 +132,9 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
         </ListPageBody>
         {/* 목록 페이지 - 오른쪽 영역 */}
         <ListPageAside $width={ASIDE_WIDTH}>
-          <RegistryListAside />
+          <RegistryListAside
+            imageType={mode === "private" ? "PRIVATE" : "PUBLIC"}
+          />
         </ListPageAside>
       </ListPageMain>
       {/* 프라이빗 레지스트리 구분 선택 모달 */}

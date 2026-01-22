@@ -5,7 +5,10 @@ import { Card } from "xiilab-ui";
 
 import type { ImageJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { RegistryImageCard } from "@/domain/registry/components/list/registry-image-card";
-import { REGISTRY_JOB_PAGE_SIZE } from "@/domain/registry/constants/registry-list.constant";
+import {
+  REGISTRY_JOB_CARD_HEIGHT,
+  REGISTRY_JOB_PAGE_SIZE,
+} from "@/domain/registry/constants/registry-list.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
@@ -25,7 +28,11 @@ export function RegistryJobListBody({
     return (
       <Container>
         {Array.from({ length: REGISTRY_JOB_PAGE_SIZE }).map((_, index) => (
-          <Card key={`skeleton-${index}`} loading />
+          <Card
+            key={`skeleton-${index}`}
+            loading
+            height={REGISTRY_JOB_CARD_HEIGHT}
+          />
         ))}
       </Container>
     );
