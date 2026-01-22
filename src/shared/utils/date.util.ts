@@ -73,7 +73,7 @@ export const formatDateTimeSafely = (
     return fallback;
   }
 
-  return format(date, "yyyy-MM-dd HH:mm:ss");
+  return format(date, "yyyy.MM.dd HH:mm:ss");
 };
 
 /**
@@ -154,19 +154,18 @@ export function formatDurationFromSeconds(totalSeconds: number): string {
 }
 
 /**
- * Date 객체를 API 요청용 문자열로 변환합니다.
- * 현재: "yyyy-MM-dd HH:mm:ss" 형식 (KST 기준)
- * TODO: API가 ISO UTC로 변경될 예정 → toISOString()으로 교체
+ * Date 객체를 API 요청용 ISO UTC 문자열로 변환합니다.
  * @param date - 변환할 Date 객체
+ * @returns ISO 8601 UTC 형식 문자열 (예: "2024-01-15T09:30:00.000Z")
  */
 export const formatDateForRequest = (date: Date): string => {
-  return format(date, "yyyy-MM-dd HH:mm:ss");
+  return date.toISOString();
 };
 
 /**
  * 로컬 시간 문자열을 UTC ISO 형식으로 변환합니다.
  *
- * @param localDateString - 로컬 시간 문자열 (yyyy-MM-dd HH:mm:ss 형식)
+ * @param localDateString - 로컬 시간 문자열 (yyyy.MM.dd HH:mm:ss 형식)
  * @returns UTC ISO 형식 문자열 또는 빈 문자열
  *
  * @example
@@ -178,7 +177,7 @@ export function toUtcIsoString(localDateString: string): string {
     return "";
   }
 
-  const date = parse(localDateString, "yyyy-MM-dd HH:mm:ss", new Date());
+  const date = parse(localDateString, "yyyy.MM.dd HH:mm:ss", new Date());
 
   if (!isValid(date)) {
     return "";

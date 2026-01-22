@@ -162,7 +162,7 @@ export const useUpdatePrivateImageTag = <TError = unknown, TContext = unknown>(
  * @summary 개인 레지스트리 목록 조회
  */
 export const getPrivateRegistryList = (
-  params?: GetPrivateRegistryListParams,
+  params: GetPrivateRegistryListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseRegistryListResponse>({
@@ -186,7 +186,7 @@ export const getGetPrivateRegistryListQueryOptions = <
   TData = Awaited<ReturnType<typeof getPrivateRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPrivateRegistryListParams,
+  params: GetPrivateRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -222,7 +222,7 @@ export function useGetPrivateRegistryList<
   TData = Awaited<ReturnType<typeof getPrivateRegistryList>>,
   TError = unknown,
 >(
-  params: undefined | GetPrivateRegistryListParams,
+  params: GetPrivateRegistryListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -248,7 +248,7 @@ export function useGetPrivateRegistryList<
   TData = Awaited<ReturnType<typeof getPrivateRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPrivateRegistryListParams,
+  params: GetPrivateRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -274,7 +274,7 @@ export function useGetPrivateRegistryList<
   TData = Awaited<ReturnType<typeof getPrivateRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPrivateRegistryListParams,
+  params: GetPrivateRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -296,7 +296,7 @@ export function useGetPrivateRegistryList<
   TData = Awaited<ReturnType<typeof getPrivateRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPrivateRegistryListParams,
+  params: GetPrivateRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -676,7 +676,7 @@ export const useAddPrivateImageTag = <TError = unknown, TContext = unknown>(
  */
 export const scanPrivateImageTag = (
   vulnerabilityScanRequest: VulnerabilityScanRequest,
-  params?: ScanPrivateImageTagParams,
+  params: ScanPrivateImageTagParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseUnit>({
@@ -696,13 +696,13 @@ export const getScanPrivateImageTagMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof scanPrivateImageTag>>,
     TError,
-    { data: VulnerabilityScanRequest; params?: ScanPrivateImageTagParams },
+    { data: VulnerabilityScanRequest; params: ScanPrivateImageTagParams },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof scanPrivateImageTag>>,
   TError,
-  { data: VulnerabilityScanRequest; params?: ScanPrivateImageTagParams },
+  { data: VulnerabilityScanRequest; params: ScanPrivateImageTagParams },
   TContext
 > => {
   const mutationKey = ["scanPrivateImageTag"];
@@ -716,7 +716,7 @@ export const getScanPrivateImageTagMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof scanPrivateImageTag>>,
-    { data: VulnerabilityScanRequest; params?: ScanPrivateImageTagParams }
+    { data: VulnerabilityScanRequest; params: ScanPrivateImageTagParams }
   > = (props) => {
     const { data, params } = props ?? {};
 
@@ -740,7 +740,7 @@ export const useScanPrivateImageTag = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof scanPrivateImageTag>>,
       TError,
-      { data: VulnerabilityScanRequest; params?: ScanPrivateImageTagParams },
+      { data: VulnerabilityScanRequest; params: ScanPrivateImageTagParams },
       TContext
     >;
   },
@@ -748,7 +748,7 @@ export const useScanPrivateImageTag = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof scanPrivateImageTag>>,
   TError,
-  { data: VulnerabilityScanRequest; params?: ScanPrivateImageTagParams },
+  { data: VulnerabilityScanRequest; params: ScanPrivateImageTagParams },
   TContext
 > => {
   const mutationOptions = getScanPrivateImageTagMutationOptions(options);

@@ -1,21 +1,62 @@
 "use client";
 
 import { Popover } from "antd";
+import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import { useGetNotifications } from "@/api/generated/account-notification/account-notification";
+import { useGetProfile } from "@/api/generated/account-profile/account-profile";
+import { useGetAdminNotifications } from "@/api/generated/admin-account-notification/admin-account-notification";
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
+import { NOTIFICATION_POLLING_INTERVAL } from "@/shared/constants/notification/notification.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
+import { isAdminMode } from "@/shared/utils/router.util";
 
 export function Profile() {
   const { data: session } = useSession();
+  const accountId = session?.user?.id ?? "";
+  const pathname = usePathname();
+  const isAdmin = isAdminMode(pathname);
 
-  const userName = session?.user?.name ?? "";
-  const email = session?.user?.email ?? "";
+  const { data: profile } = useGetProfile(accountId, {
+    query: { enabled: Boolean(accountId) },
+  });
+
+  // 읽지 않은 알림 확인 (사용자용)
+  const { data: userNotifications } = useGetNotifications(
+    accountId,
+    { hasRead: false, pageSize: 1 },
+    {
+      query: {
+        enabled: Boolean(accountId) && !isAdmin,
+        refetchInterval: NOTIFICATION_POLLING_INTERVAL,
+      },
+    },
+  );
+
+  // 읽지 않은 알림 확인 (관리자용)
+  const { data: adminNotifications } = useGetAdminNotifications(
+    accountId,
+    { hasRead: false, pageSize: 1 },
+    {
+      query: {
+        enabled: Boolean(accountId) && isAdmin,
+        refetchInterval: NOTIFICATION_POLLING_INTERVAL,
+      },
+    },
+  );
+
+  const hasUnreadNotifications = isAdmin
+    ? (adminNotifications?.totalSize ?? 0) > 0
+    : (userNotifications?.totalSize ?? 0) > 0;
+
+  const userName = profile?.accountName ?? "-";
+  const email = profile?.email ?? "-";
 
   const [showDropdown, setShowDropdown] = useState(false);
   const { open, onToggle } = useGlobalModal(openProfilePopoverAtom);
@@ -41,7 +82,7 @@ export function Profile() {
       <Left>
         <Popover
           placement="right"
-          content={<ProfilePopover userName={userName} email={email} />}
+          content={<ProfilePopover />}
           trigger="click"
           arrow={false}
           open={open}
@@ -50,7 +91,7 @@ export function Profile() {
             root: {
               left: "210px",
               top: "calc(100% - 710px)",
-              zIndex: 10000,
+              zIndex: 998,
               borderRadius: 4,
             },
             body: {
@@ -59,7 +100,7 @@ export function Profile() {
           }}
         >
           <User>
-            <Avatar>
+            <Avatar $hasUnread={hasUnreadNotifications}>
               <IconWrapper>
                 <Icon name="Astrago" color="#fff" size={18} />
               </IconWrapper>
@@ -119,7 +160,7 @@ const User = styled.button`
   overflow: hidden;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ $hasUnread?: boolean }>`
   position: relative;
 
   &:after {
@@ -130,9 +171,10 @@ const Avatar = styled.div`
     border-radius: 50%;
     top: -1px;
     right: -1px;
-    background-color: green;
+    background-color: #ae00ff;
     border: 1px solid #2d303e;
-    z-index: 10000;
+    z-index: 5;
+    display: ${({ $hasUnread }) => ($hasUnread ? "block" : "none")};
   }
 `;
 

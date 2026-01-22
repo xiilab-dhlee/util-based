@@ -542,6 +542,39 @@ export const workloadCompressFilesBody = zod
 
 /**
  * 
+            실행 중인 워크로드를 종료합니다.
+
+            **종료 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)만 삭제
+            - Service, Ingress, PVC, PV 등 부가 리소스는 유지 (재시작 시 재사용)
+            - 컨테이너 상태를 이미지로 커밋하여 Harbor에 저장 (TODO: 추후 구현)
+
+            **종료 대상:**
+            - RUNNING, PENDING, CREATING, ERROR 상태의 워크로드
+            - 이미 TERMINATED 상태인 워크로드는 종료 불가 (400 Bad Request)
+
+            **재시작:**
+            - 종료된 워크로드는 재시작 API로 다시 실행 가능
+            - 커밋된 이미지와 기존 리소스(Service, PVC 등)를 재사용
+        
+ * @summary 워크로드 종료
+ */
+export const terminateWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const terminateWorkloadResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             워크로드의 실시간 상태를 조회합니다.
 
             **조회 우선순위:**
@@ -570,7 +603,14 @@ export const getWorkloadStatusResponse = zod
       .object({
         workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
         workloadStatus: zod
-          .enum(["RUNNING", "ERROR", "PENDING", "CREATING", "TERMINATED"])
+          .enum([
+            "CREATING",
+            "PENDING",
+            "RUNNING",
+            "TERMINATING",
+            "TERMINATED",
+            "ERROR",
+          ])
           .describe(
             "워크로드 상태 (PENDING, CREATING, RUNNING, TERMINATED, ERROR)",
           ),
@@ -668,7 +708,9 @@ export const workloadListFilesQueryParams = zod.object({
     .string()
     .optional()
     .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
-  path: zod.string().optional().describe("조회할 경로 (기본값: /)"),
+  request: zod.object({
+    path: zod.string().describe("조회할 경로 (기본값: /)"),
+  }),
 });
 
 export const workloadListFilesResponse = zod
@@ -733,19 +775,21 @@ export const workloadPreviewFileParams = zod.object({
   workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
 });
 
-export const workloadPreviewFileQueryPathMin = 0;
-export const workloadPreviewFileQueryPathMax = 1000;
+export const workloadPreviewFileQueryRequestPathMin = 0;
+export const workloadPreviewFileQueryRequestPathMax = 1000;
 
 export const workloadPreviewFileQueryParams = zod.object({
   podName: zod
     .string()
     .optional()
     .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
-  path: zod
-    .string()
-    .min(workloadPreviewFileQueryPathMin)
-    .max(workloadPreviewFileQueryPathMax)
-    .describe("미리보기할 파일 경로"),
+  request: zod.object({
+    path: zod
+      .string()
+      .min(workloadPreviewFileQueryRequestPathMin)
+      .max(workloadPreviewFileQueryRequestPathMax)
+      .describe("미리보기할 파일 경로"),
+  }),
 });
 
 export const workloadPreviewFileResponse = zod.string();
@@ -807,32 +851,31 @@ export const getTerminatedWorkloadsParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getTerminatedWorkloadsQueryPageNoMin = 0;
-
-export const getTerminatedWorkloadsQueryPageSizeMax = 100;
+export const getTerminatedWorkloadsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getTerminatedWorkloadsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getTerminatedWorkloadsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getTerminatedWorkloadsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  workloadJobType: zod
-    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-    .optional()
-    .describe("워크로드 타입 필터"),
-  sort: zod
-    .enum(["WORKLOAD_NAME", "CREATED_AT", "TERMINATED_AT"])
-    .optional()
-    .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getTerminatedWorkloadsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterSortRequest: zod.object({
+    workloadJobType: zod
+      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+      .optional()
+      .describe("워크로드 타입 필터"),
+    sort: zod
+      .enum(["WORKLOAD_NAME", "CREATED_AT", "TERMINATED_AT"])
+      .describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    isMine: zod
+      .boolean()
+      .describe("내 워크로드만 조회 (true: 본인 것만, false: 전체)"),
+  }),
 });
 
 export const getTerminatedWorkloadsResponse = zod
@@ -906,36 +949,40 @@ export const getActiveWorkloadsParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getActiveWorkloadsQueryPageNoMin = 0;
-
-export const getActiveWorkloadsQueryPageSizeMax = 100;
+export const getActiveWorkloadsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getActiveWorkloadsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getActiveWorkloadsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getActiveWorkloadsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  workloadJobType: zod
-    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-    .optional()
-    .describe("워크로드 타입 필터"),
-  workloadStatus: zod
-    .enum(["RUNNING", "ERROR", "PENDING", "CREATING", "TERMINATED"])
-    .optional()
-    .describe("워크로드 상태 필터 (running, pending, error)"),
-  sort: zod
-    .enum(["WORKLOAD_NAME", "AGE"])
-    .optional()
-    .describe("정렬 기준 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getActiveWorkloadsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterSortRequest: zod.object({
+    workloadJobType: zod
+      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+      .optional()
+      .describe("워크로드 타입 필터"),
+    workloadStatus: zod
+      .enum([
+        "CREATING",
+        "PENDING",
+        "RUNNING",
+        "TERMINATING",
+        "TERMINATED",
+        "ERROR",
+      ])
+      .optional()
+      .describe("워크로드 상태 필터 (running, pending, error)"),
+    sort: zod.enum(["WORKLOAD_NAME", "AGE"]).describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    isMine: zod
+      .boolean()
+      .describe("내 워크로드만 조회 (true: 본인 것만, false: 전체)"),
+  }),
 });
 
 export const getActiveWorkloadsResponse = zod
@@ -966,11 +1013,12 @@ export const getActiveWorkloadsResponse = zod
                   .describe("리소스 회수 경고 횟수"),
                 workloadStatus: zod
                   .enum([
-                    "RUNNING",
-                    "ERROR",
-                    "PENDING",
                     "CREATING",
+                    "PENDING",
+                    "RUNNING",
+                    "TERMINATING",
                     "TERMINATED",
+                    "ERROR",
                   ])
                   .describe("워크로드 상태"),
                 ageSeconds: zod.number().describe("경과 시간 (초)"),
@@ -1001,3 +1049,27 @@ export const getActiveWorkloadsResponse = zod
     timestamp: zod.number(),
   })
   .strict();
+
+/**
+ * 
+            워크로드를 완전히 삭제합니다.
+
+            **삭제 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
+            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
+
+            **삭제 대상:**
+            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
+            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
+
+            **주의:**
+            - 삭제된 워크로드는 복구할 수 없습니다.
+            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
+        
+ * @summary 워크로드 삭제
+ */
+export const deleteWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});

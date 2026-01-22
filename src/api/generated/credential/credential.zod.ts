@@ -37,23 +37,18 @@ export const getCredentialsParams = zod.object({
   accountId: zod.string().describe("계정 ID"),
 });
 
-export const getCredentialsQueryPageNoMin = 0;
-
-export const getCredentialsQueryPageSizeMax = 100;
+export const getCredentialsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getCredentialsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getCredentialsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getCredentialsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getCredentialsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
 });
 
 export const getCredentialsResponse = zod

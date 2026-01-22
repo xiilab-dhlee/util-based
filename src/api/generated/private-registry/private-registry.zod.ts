@@ -64,33 +64,30 @@ export const updatePrivateImageTagResponse = zod
         
  * @summary 개인 레지스트리 목록 조회
  */
-export const getPrivateRegistryListQueryPageNoMin = 0;
-
-export const getPrivateRegistryListQueryPageSizeMax = 100;
+export const getPrivateRegistryListQueryPageRequestPageSizeMax = 100;
 
 export const getPrivateRegistryListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPrivateRegistryListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPrivateRegistryListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
-  sort: zod
-    .enum(["CREATED_AT", "CREATOR_NAME"])
-    .optional()
-    .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  imageSourceType: zod
-    .enum(["SNAPSHOT", "EXTERNAL"])
-    .optional()
-    .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPrivateRegistryListQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
+  filterRequest: zod.object({
+    sort: zod.enum(["CREATED_AT", "CREATOR_NAME"]).describe("정렬 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    isMine: zod.boolean().describe("내가 생성한 이미지만 조회"),
+    imageSourceType: zod
+      .enum(["SNAPSHOT", "EXTERNAL"])
+      .optional()
+      .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
+  }),
 });
 
 export const getPrivateRegistryListResponse = zod
@@ -206,41 +203,39 @@ export const createPrivateExternalImageBody = zod
         
  * @summary 개인 이미지 태그 목록 조회
  */
-export const getPrivateImageTagListQueryPageNoMin = 0;
-
-export const getPrivateImageTagListQueryPageSizeMax = 100;
+export const getPrivateImageTagListQueryPageRequestPageSizeMax = 100;
 
 export const getPrivateImageTagListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPrivateImageTagListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPrivateImageTagListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  harborImageName: zod.string().describe("Harbor 이미지 경로"),
-  sort: zod
-    .enum([
-      "CREATED_AT",
-      "UPDATED_AT",
-      "IMAGE_TAG_SIZE_BYTE",
-      "TOTAL_VULNERABILITY_COUNT",
-      "APPROVAL_STATUS",
-      "LATEST_SCAN_DATETIME",
-    ])
-    .optional()
-    .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  scanStatus: zod
-    .enum(["SCANNED", "NOT_SCANNED"])
-    .optional()
-    .describe("스캔 상태 필터"),
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPrivateImageTagListQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+    sort: zod
+      .enum([
+        "CREATED_AT",
+        "UPDATED_AT",
+        "IMAGE_TAG_SIZE_BYTE",
+        "TOTAL_VULNERABILITY_COUNT",
+        "APPROVAL_STATUS",
+        "LATEST_SCAN_DATETIME",
+      ])
+      .describe("정렬 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    scanStatus: zod
+      .enum(["SCANNED", "NOT_SCANNED"])
+      .optional()
+      .describe("스캔 상태 필터"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
 });
 
 export const getPrivateImageTagListResponse = zod
@@ -372,7 +367,9 @@ export const addPrivateImageTagBody = zod
  * @summary 개인 이미지 태그 취약점 스캔 트리거
  */
 export const scanPrivateImageTagQueryParams = zod.object({
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
 });
 
 export const scanPrivateImageTagBodyTagNameMin = 0;
@@ -506,32 +503,31 @@ export const deletePrivateImagesResponse = zod
         
  * @summary 개인 이미지 태그 취약점 목록 조회
  */
-export const getPrivateImageTagVulnerabilitiesQueryPageNoMin = 0;
+export const getPrivateImageTagVulnerabilitiesQueryPageRequestPageSizeMax = 100;
 
-export const getPrivateImageTagVulnerabilitiesQueryPageSizeMax = 100;
-
-export const getPrivateImageTagVulnerabilitiesQueryTagNameMin = 0;
-export const getPrivateImageTagVulnerabilitiesQueryTagNameMax = 128;
+export const getPrivateImageTagVulnerabilitiesQueryRequestTagNameMin = 0;
+export const getPrivateImageTagVulnerabilitiesQueryRequestTagNameMax = 128;
 
 export const getPrivateImageTagVulnerabilitiesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPrivateImageTagVulnerabilitiesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPrivateImageTagVulnerabilitiesQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  harborImageName: zod.string().describe("Harbor 이미지 경로"),
-  tagName: zod
-    .string()
-    .min(getPrivateImageTagVulnerabilitiesQueryTagNameMin)
-    .max(getPrivateImageTagVulnerabilitiesQueryTagNameMax)
-    .describe("이미지 태그"),
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  pageRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPrivateImageTagVulnerabilitiesQueryPageRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
+  request: zod.object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+    tagName: zod
+      .string()
+      .min(getPrivateImageTagVulnerabilitiesQueryRequestTagNameMin)
+      .max(getPrivateImageTagVulnerabilitiesQueryRequestTagNameMax)
+      .describe("이미지 태그"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
 });
 
 export const getPrivateImageTagVulnerabilitiesResponse = zod
@@ -584,9 +580,13 @@ export const getPrivateImageTagVulnerabilitiesResponse = zod
  * @summary 개인 이미지 태그 상세 조회
  */
 export const getPrivateImageTagDetailQueryParams = zod.object({
-  harborImageName: zod.string().describe("Harbor 이미지 경로"),
-  tagName: zod.string().describe("태그 이름"),
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  request: zod.object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+    tagName: zod.string().describe("태그 이름"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
 });
 
 export const getPrivateImageTagDetailResponse = zod
@@ -655,8 +655,12 @@ export const getPrivateImageTagDetailResponse = zod
  * @summary 개인 이미지 상세 조회
  */
 export const getPrivateImageDetailQueryParams = zod.object({
-  harborImageName: zod.string().describe("Harbor 이미지 경로"),
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  request: zod.object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
 });
 
 export const getPrivateImageDetailResponse = zod

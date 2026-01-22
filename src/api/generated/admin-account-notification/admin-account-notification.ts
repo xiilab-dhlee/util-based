@@ -174,7 +174,7 @@ export const useUpdateAdminNotificationSet = <
  */
 export const getAdminNotifications = (
   accountId: string,
-  params?: GetAdminNotificationsParams,
+  params: GetAdminNotificationsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminNotificationItemResponse>({
@@ -200,7 +200,7 @@ export const getGetAdminNotificationsQueryOptions = <
   TError = unknown,
 >(
   accountId: string,
-  params?: GetAdminNotificationsParams,
+  params: GetAdminNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -243,7 +243,7 @@ export function useGetAdminNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params: undefined | GetAdminNotificationsParams,
+  params: GetAdminNotificationsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -270,7 +270,7 @@ export function useGetAdminNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params?: GetAdminNotificationsParams,
+  params: GetAdminNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -297,7 +297,7 @@ export function useGetAdminNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params?: GetAdminNotificationsParams,
+  params: GetAdminNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -320,7 +320,7 @@ export function useGetAdminNotifications<
   TError = unknown,
 >(
   accountId: string,
-  params?: GetAdminNotificationsParams,
+  params: GetAdminNotificationsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

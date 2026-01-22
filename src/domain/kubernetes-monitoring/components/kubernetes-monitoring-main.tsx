@@ -64,7 +64,7 @@ export function KubernetesMonitoringMain() {
   const renderEventCards = (items: K8sEventResponse[]) => {
     return items.map((event: K8sEventResponse, index: number) => (
       <KubernetesEventCard
-        key={`${event.namespace}-${event.lastObservedDateTime}-${index}`}
+        key={`${event.namespace}-${event.lastObservedAt}-${index}`}
         event={event}
       />
     ));

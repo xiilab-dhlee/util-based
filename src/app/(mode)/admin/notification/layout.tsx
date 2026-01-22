@@ -2,7 +2,7 @@
 
 import type { PropsWithChildren } from "react";
 
-import { NotificationListContainer } from "@/domain/notification/components/list/notification-list-container";
+import { NotificationListArticle } from "@/domain/notification/components/list/notification-list-article";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
@@ -22,7 +22,7 @@ export default function AdminNotificationLayout({
       />
       <ListPageMain>
         <ListPageBody>
-          <NotificationListContainer />
+          <NotificationListArticle />
         </ListPageBody>
         <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
       </ListPageMain>

@@ -379,7 +379,7 @@ export const useDeleteStorage = <TError = unknown, TContext = unknown>(
  * @summary 스토리지 목록 조회
  */
 export const getStorages = (
-  params?: GetStoragesParams,
+  params: GetStoragesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseStorageResponse>({
@@ -398,7 +398,7 @@ export const getGetStoragesQueryOptions = <
   TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params: GetStoragesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
@@ -429,7 +429,7 @@ export function useGetStorages<
   TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params: undefined | GetStoragesParams,
+  params: GetStoragesParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
@@ -451,7 +451,7 @@ export function useGetStorages<
   TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params: GetStoragesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
@@ -473,7 +473,7 @@ export function useGetStorages<
   TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params: GetStoragesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
@@ -491,7 +491,7 @@ export function useGetStorages<
   TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params: GetStoragesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>

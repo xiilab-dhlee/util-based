@@ -3,26 +3,24 @@
 import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
-import { Dropdown } from "xiilab-ui";
+import { DateRange, Dropdown } from "xiilab-ui";
 
 import {
   type GetAdminNotificationsNotificationTypeItem,
   GetAdminNotificationsNotificationTypeItem as NotificationTypeEnum,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
-  NOTIFICATION_HAS_READ_OPTIONS,
-  NOTIFICATION_TYPE_OPTIONS,
-} from "@/domain/notification/constants/notification.constant";
-import {
-  notificationEndDateAtom,
+  notificationDateRangeAtom,
   notificationHasReadAtom,
   notificationPageAtom,
-  notificationStartDateAtom,
   notificationTypeAtom,
 } from "@/domain/notification/state/notification.atom";
-import { ListRangePicker } from "@/shared/components/datepicker/list-range-picker";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import {
+  NOTIFICATION_HAS_READ_OPTIONS,
+  NOTIFICATION_TYPE_OPTIONS,
+} from "@/shared/constants/notification";
 import { useSelect } from "@/shared/hooks/use-select";
 
 function isNotificationType(
@@ -48,8 +46,7 @@ interface NotificationListFilterProps {
  * @returns 알림 목록 페이지 상단 필터 컴포넌트
  */
 export function NotificationListFilter({ total }: NotificationListFilterProps) {
-  const [startDate, setStartDate] = useAtom(notificationStartDateAtom);
-  const [endDate, setEndDate] = useAtom(notificationEndDateAtom);
+  const [dateRange, setDateRange] = useAtom(notificationDateRangeAtom);
   const [, setType] = useAtom(notificationTypeAtom);
   const [, setHasRead] = useAtom(notificationHasReadAtom);
   const resetPage = useResetAtom(notificationPageAtom);
@@ -60,10 +57,6 @@ export function NotificationListFilter({ total }: NotificationListFilterProps) {
   const hasReadOptions = [ALL_OPTION, ...NOTIFICATION_HAS_READ_OPTIONS];
   const hasReadSelect = useSelect<string>(null, hasReadOptions);
 
-  /**
-   * 알림 유형 변경 핸들러
-   * 알림 유형 변경 시 페이지를 초기화
-   */
   const handleChangeType = (newValue: string | null) => {
     resetPage();
     typeSelect.onChange(newValue);
@@ -76,10 +69,6 @@ export function NotificationListFilter({ total }: NotificationListFilterProps) {
     setType([newValue]);
   };
 
-  /**
-   * 읽음 상태 변경 핸들러
-   * 읽음 상태 변경 시 페이지를 초기화
-   */
   const handleChangeHasRead = (newValue: string | null) => {
     resetPage();
     hasReadSelect.onChange(newValue);
@@ -92,14 +81,13 @@ export function NotificationListFilter({ total }: NotificationListFilterProps) {
     setHasRead(newValue === "true");
   };
 
-  /**
-   * 날짜 범위 변경 핸들러
-   * 날짜 변경 시 페이지를 초기화
-   */
-  const handleDateChange = (start: string, end: string) => {
+  const handleDateChange = (start: Date | null, end: Date | null) => {
     resetPage();
-    setStartDate(start);
-    setEndDate(end);
+    if (start && end) {
+      setDateRange({ start, end });
+    } else {
+      setDateRange(null);
+    }
   };
 
   return (
@@ -119,10 +107,13 @@ export function NotificationListFilter({ total }: NotificationListFilterProps) {
           placeholder="읽음 상태"
           width={140}
         />
-        <ListRangePicker
-          startDate={startDate}
-          endDate={endDate}
+        <DateRange
+          startDate={dateRange?.start ?? null}
+          endDate={dateRange?.end ?? null}
           onChange={handleDateChange}
+          maxDate={new Date()}
+          withTime
+          width="270px"
         />
       </FilterControls>
     </MySearchFilter>

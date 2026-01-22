@@ -37,9 +37,7 @@ import * as zod from "zod";
 - MIG GPU: nvidia.com/mig-{profile} 리소스 기준
  * @summary 사용 가능한 리소스 프리셋 목록 조회
  */
-export const getAvailablePresetsQueryPageNoMin = 0;
-
-export const getAvailablePresetsQueryPageSizeMax = 100;
+export const getAvailablePresetsQueryPageableRequestPageSizeMax = 100;
 
 export const getAvailablePresetsQueryParams = zod.object({
   jobType: zod
@@ -50,17 +48,14 @@ export const getAvailablePresetsQueryParams = zod.object({
     .enum(["SINGLE", "MULTI"])
     .optional()
     .describe("노드 타입 필터 (SINGLE, MULTI)"),
-  pageNo: zod
-    .number()
-    .min(getAvailablePresetsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getAvailablePresetsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getAvailablePresetsQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
 });
 
 export const getAvailablePresetsResponse = zod

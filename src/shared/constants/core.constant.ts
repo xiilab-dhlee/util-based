@@ -6,6 +6,13 @@ import { ROUTES } from "@/shared/constants/routes.constant";
 export const LIST_PAGE_SIZE = 20;
 /** 카드 페이지 크기 */
 export const CARD_PAGE_SIZE = 12;
+/** 드롭다운 옵션 높이 */
+export const DROPDOWN_OPTION_HEIGHT = 32;
+/** 드롭다운 표시 옵션 개수 */
+export const DROPDOWN_VISIBLE_OPTION_COUNT = 5;
+/** 드롭다운 리스트 높이 */
+export const DROPDOWN_LIST_HEIGHT =
+  DROPDOWN_OPTION_HEIGHT * DROPDOWN_VISIBLE_OPTION_COUNT;
 /** 아이콘 컬럼 너비 */
 export const ICON_COLUMN_WIDTH = 40;
 /** 체크박스 컬럼 너비 */

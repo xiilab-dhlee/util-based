@@ -56,7 +56,7 @@ import type {
  * @summary 사용 가능한 리소스 프리셋 목록 조회
  */
 export const getAvailablePresets = (
-  params?: GetAvailablePresetsParams,
+  params: GetAvailablePresetsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseResourcePresetSummaryResponse>({
@@ -77,7 +77,7 @@ export const getGetAvailablePresetsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAvailablePresets>>,
   TError = unknown,
 >(
-  params?: GetAvailablePresetsParams,
+  params: GetAvailablePresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -113,7 +113,7 @@ export function useGetAvailablePresets<
   TData = Awaited<ReturnType<typeof getAvailablePresets>>,
   TError = unknown,
 >(
-  params: undefined | GetAvailablePresetsParams,
+  params: GetAvailablePresetsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -139,7 +139,7 @@ export function useGetAvailablePresets<
   TData = Awaited<ReturnType<typeof getAvailablePresets>>,
   TError = unknown,
 >(
-  params?: GetAvailablePresetsParams,
+  params: GetAvailablePresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -165,7 +165,7 @@ export function useGetAvailablePresets<
   TData = Awaited<ReturnType<typeof getAvailablePresets>>,
   TError = unknown,
 >(
-  params?: GetAvailablePresetsParams,
+  params: GetAvailablePresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -187,7 +187,7 @@ export function useGetAvailablePresets<
   TData = Awaited<ReturnType<typeof getAvailablePresets>>,
   TError = unknown,
 >(
-  params?: GetAvailablePresetsParams,
+  params: GetAvailablePresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

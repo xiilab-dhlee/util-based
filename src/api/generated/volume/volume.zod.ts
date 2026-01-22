@@ -189,33 +189,32 @@ export const registerAstragoVolumeBody = zod
  * 볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
  * @summary 볼륨 목록 조회
  */
-export const getVolumeListQueryPageNoMin = 0;
-
-export const getVolumeListQueryPageSizeMax = 100;
+export const getVolumeListQueryPageSearchPageSizeMax = 100;
 
 export const getVolumeListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getVolumeListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getVolumeListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
-  sort: zod
-    .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
-    .optional()
-    .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  volumeType: zod
-    .enum(["ASTRAGO", "ON_PREMISE"])
-    .optional()
-    .describe("볼륨 타입 필터"),
+  pageSearch: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getVolumeListQueryPageSearchPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
+  filter: zod.object({
+    sort: zod
+      .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
+      .describe("정렬 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
+    isMine: zod.boolean().describe("내가 생성한 볼륨만 조회"),
+    volumeType: zod
+      .enum(["ASTRAGO", "ON_PREMISE"])
+      .optional()
+      .describe("볼륨 타입 필터"),
+  }),
 });
 
 export const getVolumeListResponse = zod

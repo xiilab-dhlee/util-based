@@ -242,7 +242,9 @@ export const listFilesParams = zod.object({
 });
 
 export const listFilesQueryParams = zod.object({
-  path: zod.string().optional().describe("조회할 경로 (기본값: /)"),
+  request: zod.object({
+    path: zod.string().describe("조회할 경로 (기본값: /)"),
+  }),
 });
 
 export const listFilesResponse = zod
@@ -304,15 +306,17 @@ export const previewFileParams = zod.object({
   volumeId: zod.number().describe("볼륨 ID"),
 });
 
-export const previewFileQueryPathMin = 0;
-export const previewFileQueryPathMax = 1000;
+export const previewFileQueryRequestPathMin = 0;
+export const previewFileQueryRequestPathMax = 1000;
 
 export const previewFileQueryParams = zod.object({
-  path: zod
-    .string()
-    .min(previewFileQueryPathMin)
-    .max(previewFileQueryPathMax)
-    .describe("미리보기할 파일 경로"),
+  request: zod.object({
+    path: zod
+      .string()
+      .min(previewFileQueryRequestPathMin)
+      .max(previewFileQueryRequestPathMax)
+      .describe("미리보기할 파일 경로"),
+  }),
 });
 
 export const previewFileResponse = zod.string();

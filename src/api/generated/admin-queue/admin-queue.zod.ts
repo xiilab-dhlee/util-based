@@ -33,6 +33,7 @@ import * as zod from "zod";
  * urgent-standby 큐의 워크로드 순서를 변경합니다. rank 값으로 우선순위를 지정합니다 (1~5, 낮을수록 높은 우선순위).
  * @summary 긴급 대기큐 워크로드 순서 변경
  */
+export const updateUrgentStandbyOrderBodyQueueOrderItemItemRankMin = 2;
 export const updateUrgentStandbyOrderBodyQueueOrderItemItemRankMax = 5;
 
 export const updateUrgentStandbyOrderBodyQueueOrderItemMin = 0;
@@ -46,9 +47,11 @@ export const updateUrgentStandbyOrderBody = zod
           .object({
             rank: zod
               .number()
-              .min(1)
+              .min(updateUrgentStandbyOrderBodyQueueOrderItemItemRankMin)
               .max(updateUrgentStandbyOrderBodyQueueOrderItemItemRankMax)
-              .describe("우선순위 (1~5, 낮을수록 높은 우선순위)"),
+              .describe(
+                "우선순위 (2~5, 낮을수록 높은 우선순위, rank=1은 urgent-active 전용)",
+              ),
             workloadId: zod.number().min(1).describe("워크로드 ID"),
           })
           .strict()
@@ -172,94 +175,3 @@ export const addWorkloadToUrgentStandbyBody = zod
   })
   .strict()
   .describe("긴급 큐 워크로드 추가 요청");
-
-/**
- * urgent-active 큐에서 실행 대기 중인 워크로드 전체 목록을 조회합니다. rank 정보가 포함됩니다.
- * @summary 긴급 실행큐 워크로드 목록 조회
- */
-export const getUrgentActiveWorkloadsResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    errorCode: zod.string().optional(),
-    data: zod
-      .array(
-        zod
-          .object({
-            workloadId: zod.number().describe("워크로드 ID"),
-            workloadName: zod.string().describe("워크로드 이름 (사용자 지정)"),
-            workloadResourceName: zod
-              .string()
-              .describe("워크로드 리소스명 (K8s 리소스명)"),
-            workspaceId: zod.number().describe("워크스페이스 ID"),
-            workspaceName: zod.string().describe("워크스페이스 이름"),
-            workspaceResourceName: zod
-              .string()
-              .describe("워크스페이스 리소스명 (K8s Namespace)"),
-            jobType: zod.string().optional().describe("워크로드 타입"),
-            resource: zod
-              .object({
-                gpu: zod
-                  .object({
-                    gpuName: zod.string().optional().describe("GPU 이름"),
-                    detail: zod
-                      .object({
-                        normal: zod
-                          .object({
-                            quotaCount: zod.number().describe("할당량"),
-                          })
-                          .strict()
-                          .optional()
-                          .describe("일반 GPU 할당 정보"),
-                        mig: zod
-                          .array(
-                            zod
-                              .object({
-                                profile: zod.string().describe("MIG 프로파일"),
-                                quotaCount: zod.number().describe("할당량"),
-                              })
-                              .strict()
-                              .describe("MIG 할당 정보"),
-                          )
-                          .describe("MIG 할당 목록"),
-                      })
-                      .strict()
-                      .describe("GPU 상세 할당 정보 (Normal/MIG)"),
-                  })
-                  .strict()
-                  .describe("GPU 리소스 정보"),
-                cpu: zod
-                  .object({
-                    quotaCore: zod.number().describe("CPU 코어 할당량"),
-                  })
-                  .strict()
-                  .describe("CPU 리소스 정보"),
-                memory: zod
-                  .object({
-                    quotaByte: zod.number().describe("메모리 할당량 (Byte)"),
-                  })
-                  .strict()
-                  .describe("메모리 리소스 정보"),
-              })
-              .strict()
-              .describe("워크로드 리소스 정보"),
-            status: zod.string().describe("상태"),
-            createdAt: zod
-              .string()
-              .datetime({})
-              .optional()
-              .describe("생성 일시"),
-            creatorId: zod.string().describe("생성자 ID"),
-            creatorName: zod.string().describe("생성자 이름"),
-            rank: zod
-              .number()
-              .optional()
-              .describe("우선순위 순위 (urgent-standby 큐 전용, 1부터 시작)"),
-          })
-          .strict()
-          .describe("Queue 워크로드 응답"),
-      )
-      .optional(),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();

@@ -35,35 +35,35 @@ import * as zod from "zod";
         
  * @summary HUB 목록 조회
  */
-export const findHubsQueryPageNoMin = 0;
+export const findHubsQueryFindHubsRequestPageNoMin = 0;
 
-export const findHubsQueryPageSizeMax = 100;
+export const findHubsQueryFindHubsRequestPageSizeMax = 100;
 
-export const findHubsQueryKeywordMin = 0;
-export const findHubsQueryKeywordMax = 100;
+export const findHubsQueryFindHubsRequestKeywordMin = 0;
+export const findHubsQueryFindHubsRequestKeywordMax = 100;
 
 export const findHubsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(findHubsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(findHubsQueryPageSizeMax)
-    .optional()
-    .describe("페이지당 항목 수"),
-  keyword: zod
-    .string()
-    .min(findHubsQueryKeywordMin)
-    .max(findHubsQueryKeywordMax)
-    .optional()
-    .describe("검색 키워드 (Hub 이름으로 검색)"),
-  modelType: zod
-    .enum(["OBJECT_DETECTION"])
-    .optional()
-    .describe("검색용 모델 타입 필터(enum): OBJECT_DETECTION"),
+  findHubsRequest: zod.object({
+    pageNo: zod
+      .number()
+      .min(findHubsQueryFindHubsRequestPageNoMin)
+      .describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(findHubsQueryFindHubsRequestPageSizeMax)
+      .describe("페이지당 항목 수"),
+    keyword: zod
+      .string()
+      .min(findHubsQueryFindHubsRequestKeywordMin)
+      .max(findHubsQueryFindHubsRequestKeywordMax)
+      .optional()
+      .describe("검색 키워드 (Hub 이름으로 검색)"),
+    modelType: zod
+      .enum(["OBJECT_DETECTION"])
+      .optional()
+      .describe("검색용 모델 타입 필터(enum): OBJECT_DETECTION"),
+  }),
 });
 
 export const findHubsResponse = zod
@@ -122,9 +122,11 @@ export const findHubDetailResponse = zod.string();
  * @summary HUB 요약 목록 조회
  */
 export const findHubSummariesQueryParams = zod.object({
-  workloadJobType: zod
-    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-    .describe("워크로드 작업 타입 (ENUM: BATCH, INTERACTIVE, DISTRIBUTED)"),
+  request: zod.object({
+    workloadJobType: zod
+      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+      .describe("워크로드 작업 타입 (ENUM: BATCH, INTERACTIVE, DISTRIBUTED)"),
+  }),
 });
 
 export const findHubSummariesResponse = zod

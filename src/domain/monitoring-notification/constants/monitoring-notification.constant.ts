@@ -5,6 +5,7 @@ import type {
   MonitoringNotificationHistoryDetailResponseThresholdOperator,
   SentRecipientResponseSendStatus,
   ThresholdRequestMetric,
+  ThresholdRequestOperator,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { ThresholdFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 import type { AntdTableSortState } from "@/shared/types/core.model";
@@ -63,11 +64,15 @@ export const VALID_METRICS = Object.keys(
 ) as ThresholdRequestMetric[];
 
 /**
- * 유효한 연산자 배열 (타입 가드용)
- * TODO: 추후 enum(GREATER_THAN 등)으로 전환 예정
+ * 유효한 연산자 배열 (타입 가드용) - API enum 값 사용
  */
-export const VALID_OPERATORS = [">", ">=", "<=", "<"] as const;
-export type ValidOperator = (typeof VALID_OPERATORS)[number];
+export const VALID_OPERATORS: ThresholdRequestOperator[] = [
+  "GREATER_THAN",
+  "LESS_THAN",
+  "GREATER_THAN_OR_EQUAL",
+  "LESS_THAN_OR_EQUAL",
+];
+export type ValidOperator = ThresholdRequestOperator;
 
 /** 메트릭 타입 드롭다운 옵션 (GPU_TEMP 제외) */
 export const METRIC_TYPE_OPTIONS: DropdownOption[] = [
@@ -77,11 +82,21 @@ export const METRIC_TYPE_OPTIONS: DropdownOption[] = [
   { value: "MEMORY_USAGE", label: METRIC_TYPE_LABEL_MAP.MEMORY_USAGE },
 ];
 
-/** 연산자 드롭다운 옵션 */
-export const OPERATOR_OPTIONS = VALID_OPERATORS.map((operator) => ({
-  value: operator,
-  label: operator,
-})) satisfies DropdownOption[];
+/** 연산자 → 기호 매핑 (UI 표시용) */
+export const OPERATOR_SYMBOL_MAP: Record<ThresholdRequestOperator, string> = {
+  GREATER_THAN: ">",
+  LESS_THAN: "<",
+  GREATER_THAN_OR_EQUAL: ">=",
+  LESS_THAN_OR_EQUAL: "<=",
+};
+
+/** 연산자 드롭다운 옵션 (value: enum, label: 기호) */
+export const OPERATOR_OPTIONS: DropdownOption[] = VALID_OPERATORS.map(
+  (operator) => ({
+    value: operator,
+    label: OPERATOR_SYMBOL_MAP[operator],
+  }),
+);
 
 /**
  * 임계값/지속시간 표시 단위
@@ -116,27 +131,12 @@ export const MONITORING_NOTIFICATION_FIELD_IDS = {
 } as const;
 
 /**
- * 임계 연산자 → 기호 변환 매핑
+ * 임계 연산자 → 기호 변환 매핑 (응답 타입용, UI 표시에 사용)
  */
-export const THRESHOLD_OPERATOR_SYMBOL_MAP = {
-  GREATER_THAN: ">",
-  LESS_THAN: "<",
-  GREATER_THAN_OR_EQUAL: ">=",
-  LESS_THAN_OR_EQUAL: "<=",
-} as const satisfies Record<
+export const THRESHOLD_OPERATOR_SYMBOL_MAP: Record<
   MonitoringNotificationHistoryDetailResponseThresholdOperator,
-  ValidOperator
->;
-
-/**
- * API 연산자 enum → 폼 연산자 변환
- * TODO: 추후 enum 전환 시 이 함수만 수정 (그냥 operator 반환하면 됨)
- */
-export function toFormOperator(
-  operator: MonitoringNotificationHistoryDetailResponseThresholdOperator,
-): ValidOperator {
-  return THRESHOLD_OPERATOR_SYMBOL_MAP[operator] ?? VALID_OPERATORS[0];
-}
+  string
+> = OPERATOR_SYMBOL_MAP;
 
 /**
  * 발송 상태 라벨 매핑

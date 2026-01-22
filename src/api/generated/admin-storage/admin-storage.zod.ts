@@ -103,22 +103,17 @@ export const deleteStorageParams = zod.object({
  * 등록된 스토리지 목록을 페이징하여 조회합니다.
  * @summary 스토리지 목록 조회
  */
-export const getStoragesQueryPageNoMin = 0;
-
-export const getStoragesQueryPageSizeMax = 100;
+export const getStoragesQueryPageableRequestPageSizeMax = 100;
 
 export const getStoragesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getStoragesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getStoragesQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getStoragesQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
 });
 
 export const getStoragesResponse = zod

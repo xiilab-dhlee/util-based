@@ -228,23 +228,18 @@ export const describeResourceResponse = zod
         
  * @summary StatefulSet 목록 조회
  */
-export const getStatefulSetsQueryPageNoMin = 0;
-
-export const getStatefulSetsQueryPageSizeMax = 100;
+export const getStatefulSetsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getStatefulSetsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getStatefulSetsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getStatefulSetsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getStatefulSetsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
 });
 
 export const getStatefulSetsResponse = zod
@@ -295,29 +290,26 @@ export const getStatefulSetsResponse = zod
         
  * @summary Service 목록 조회
  */
-export const getServicesQueryPageNoMin = 0;
-
-export const getServicesQueryPageSizeMax = 100;
+export const getServicesQueryPageSearchRequestPageSizeMax = 100;
 
 export const getServicesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getServicesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getServicesQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  type: zod
-    .enum(["CLUSTER_IP", "NODE_PORT", "LOAD_BALANCER", "EXTERNAL_NAME"])
-    .optional()
-    .describe(
-      "서비스 타입 필터 (cluster_ip, node_port, load_balancer, external_name)",
-    ),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getServicesQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    type: zod
+      .enum(["CLUSTER_IP", "NODE_PORT", "LOAD_BALANCER", "EXTERNAL_NAME"])
+      .optional()
+      .describe(
+        "서비스 타입 필터 (cluster_ip, node_port, load_balancer, external_name)",
+      ),
+  }),
 });
 
 export const getServicesResponse = zod
@@ -369,27 +361,24 @@ export const getServicesResponse = zod
         
  * @summary Pod 목록 조회
  */
-export const getPodsQueryPageNoMin = 0;
-
-export const getPodsQueryPageSizeMax = 100;
+export const getPodsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getPodsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPodsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPodsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  status: zod
-    .enum(["PENDING", "RUNNING", "SUCCEEDED", "FAILED", "UNKNOWN"])
-    .optional()
-    .describe("Pod 상태 필터 (pending, running, succeeded, failed, unknown)"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPodsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    status: zod
+      .enum(["PENDING", "RUNNING", "SUCCEEDED", "FAILED", "UNKNOWN"])
+      .optional()
+      .describe("Pod 상태 필터 (pending, running, succeeded, failed, unknown)"),
+  }),
 });
 
 export const getPodsResponse = zod
@@ -441,27 +430,24 @@ export const getPodsResponse = zod
         
  * @summary PersistentVolume 목록 조회
  */
-export const getPersistentVolumesQueryPageNoMin = 0;
-
-export const getPersistentVolumesQueryPageSizeMax = 100;
+export const getPersistentVolumesQueryPageSearchRequestPageSizeMax = 100;
 
 export const getPersistentVolumesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPersistentVolumesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPersistentVolumesQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  status: zod
-    .enum(["AVAILABLE", "BOUND", "RELEASED", "FAILED"])
-    .optional()
-    .describe("PV 상태 필터 (available, bound, released, failed)"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPersistentVolumesQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    status: zod
+      .enum(["AVAILABLE", "BOUND", "RELEASED", "FAILED"])
+      .optional()
+      .describe("PV 상태 필터 (available, bound, released, failed)"),
+  }),
 });
 
 export const getPersistentVolumesResponse = zod
@@ -512,27 +498,24 @@ export const getPersistentVolumesResponse = zod
         
  * @summary Node 목록 조회
  */
-export const getNodesQueryPageNoMin = 0;
-
-export const getNodesQueryPageSizeMax = 100;
+export const getNodesQueryPageSearchRequestPageSizeMax = 100;
 
 export const getNodesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getNodesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getNodesQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  status: zod
-    .enum(["READY", "NOT_READY"])
-    .optional()
-    .describe("노드 상태 필터 (ready, not_ready)"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getNodesQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    status: zod
+      .enum(["READY", "NOT_READY"])
+      .optional()
+      .describe("노드 상태 필터 (ready, not_ready)"),
+  }),
 });
 
 export const getNodesResponse = zod
@@ -584,27 +567,24 @@ export const getNodesResponse = zod
         
  * @summary Namespace 목록 조회
  */
-export const getNamespacesQueryPageNoMin = 0;
-
-export const getNamespacesQueryPageSizeMax = 100;
+export const getNamespacesQueryPageSearchRequestPageSizeMax = 100;
 
 export const getNamespacesQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getNamespacesQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getNamespacesQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  status: zod
-    .enum(["ACTIVE", "TERMINATING"])
-    .optional()
-    .describe("네임스페이스 상태 필터 (active, terminating)"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getNamespacesQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    status: zod
+      .enum(["ACTIVE", "TERMINATING"])
+      .optional()
+      .describe("네임스페이스 상태 필터 (active, terminating)"),
+  }),
 });
 
 export const getNamespacesResponse = zod
@@ -654,23 +634,18 @@ export const getNamespacesResponse = zod
         
  * @summary Deployment 목록 조회
  */
-export const getDeploymentsQueryPageNoMin = 0;
-
-export const getDeploymentsQueryPageSizeMax = 100;
+export const getDeploymentsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getDeploymentsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getDeploymentsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getDeploymentsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getDeploymentsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
 });
 
 export const getDeploymentsResponse = zod
@@ -723,23 +698,18 @@ export const getDeploymentsResponse = zod
         
  * @summary DaemonSet 목록 조회
  */
-export const getDaemonSetsQueryPageNoMin = 0;
-
-export const getDaemonSetsQueryPageSizeMax = 100;
+export const getDaemonSetsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getDaemonSetsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getDaemonSetsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getDaemonSetsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getDaemonSetsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
 });
 
 export const getDaemonSetsResponse = zod
@@ -803,22 +773,17 @@ export const getDaemonSetsResponse = zod
         
  * @summary 클러스터 이벤트 조회
  */
-export const getAllNamespaceEventsQueryPageNoMin = 0;
-
-export const getAllNamespaceEventsQueryPageSizeMax = 100;
+export const getAllNamespaceEventsQueryPageableRequestPageSizeMax = 100;
 
 export const getAllNamespaceEventsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getAllNamespaceEventsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getAllNamespaceEventsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getAllNamespaceEventsQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
 });
 
 export const getAllNamespaceEventsResponse = zod

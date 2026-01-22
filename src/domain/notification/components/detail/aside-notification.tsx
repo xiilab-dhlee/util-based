@@ -12,19 +12,17 @@ import type {
 import { AdminNotificationSettingItem } from "@/domain/notification/components/detail/admin-notification-setting-item";
 import { NotificationDetailMain } from "@/domain/notification/components/detail/notification-detail-main";
 import { NotificationSettingSection } from "@/domain/notification/components/detail/notification-setting-section";
-import {
-  ADMIN_NOTIFICATION_CATEGORY_LABEL,
-  ADMIN_NOTIFICATION_SECTIONS,
-} from "@/domain/notification/constants/notification.constant";
 import { useUpdateAdminNotificationSetAction } from "@/domain/notification/hooks/notification-actions";
+import {
+  ADMIN_NOTIFICATION_SECTIONS,
+  type NotificationChannel,
+} from "@/shared/constants/notification";
 import { getSessionAccountId } from "@/shared/utils/auth.util";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 import {
   AsideListArticleHeader,
   AsideListArticleTitle,
 } from "@/styles/layers/aside-list-layers.styled";
-
-type NotificationChannel = "SYSTEM" | "EMAIL";
 
 export function AsideNotification() {
   const params = useParams<{ id?: string }>();
@@ -77,26 +75,22 @@ function NotificationSettingsPanel() {
       </AsideListArticleHeader>
 
       <SectionsWrapper>
-        {ADMIN_NOTIFICATION_SECTIONS.map(({ category, items }) => {
-          const title = ADMIN_NOTIFICATION_CATEGORY_LABEL[category];
-
-          return (
-            <NotificationSettingSection key={category} title={title}>
-              {items.map((name) => {
-                const setting = findByName(name);
-                return (
-                  <AdminNotificationSettingItem
-                    key={name}
-                    name={name}
-                    setting={setting}
-                    disabled={isLoading || !setting}
-                    onToggle={handleToggle}
-                  />
-                );
-              })}
-            </NotificationSettingSection>
-          );
-        })}
+        {ADMIN_NOTIFICATION_SECTIONS.map(({ category, label, items }) => (
+          <NotificationSettingSection key={category} title={label}>
+            {items.map((name) => {
+              const setting = findByName(name);
+              return (
+                <AdminNotificationSettingItem
+                  key={name}
+                  name={name}
+                  setting={setting}
+                  disabled={isLoading || !setting}
+                  onToggle={handleToggle}
+                />
+              );
+            })}
+          </NotificationSettingSection>
+        ))}
       </SectionsWrapper>
     </AsideDetailContainer>
   );

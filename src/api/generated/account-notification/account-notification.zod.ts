@@ -215,34 +215,31 @@ export const getNotificationsParams = zod.object({
   accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
 });
 
-export const getNotificationsQueryPageNoMin = 0;
-
-export const getNotificationsQueryPageSizeMax = 100;
+export const getNotificationsQueryPageableRequestPageSizeMax = 100;
 
 export const getNotificationsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getNotificationsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getNotificationsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  hasRead: zod
-    .boolean()
-    .optional()
-    .describe(
-      "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
-    ),
-  workspaceId: zod
-    .number()
-    .optional()
-    .describe(
-      "워크스페이스 ID 필터. 특정 워크스페이스 관련 알림만 조회. null: 전체",
-    ),
+  pageableRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getNotificationsQueryPageableRequestPageSizeMax)
+      .describe("페이지 크기"),
+  }),
+  filterRequest: zod.object({
+    hasRead: zod
+      .boolean()
+      .optional()
+      .describe(
+        "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
+      ),
+    workspaceId: zod
+      .number()
+      .optional()
+      .describe(
+        "워크스페이스 ID 필터. 특정 워크스페이스 관련 알림만 조회. null: 전체",
+      ),
+  }),
 });
 
 export const getNotificationsResponse = zod

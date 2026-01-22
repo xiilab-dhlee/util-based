@@ -33,27 +33,24 @@ import * as zod from "zod";
  * K8s에서 Pending 상태인 워크로드 목록을 조회하고, DB 정보로 보강합니다. 페이징, 검색, 필터를 지원합니다.
  * @summary Pending 워크로드 목록 조회
  */
-export const getPendingWorkloadsQueryPageNoMin = 0;
-
-export const getPendingWorkloadsQueryPageSizeMax = 100;
+export const getPendingWorkloadsQueryPageSearchRequestPageSizeMax = 100;
 
 export const getPendingWorkloadsQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getPendingWorkloadsQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getPendingWorkloadsQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  jobType: zod
-    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-    .optional()
-    .describe("워크로드 타입 필터. null: 전체"),
+  pageSearchRequest: zod.object({
+    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
+    pageSize: zod
+      .number()
+      .min(1)
+      .max(getPendingWorkloadsQueryPageSearchRequestPageSizeMax)
+      .describe("페이지 크기"),
+    keyword: zod.string().optional().describe("검색 키워드"),
+  }),
+  filterRequest: zod.object({
+    jobType: zod
+      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+      .optional()
+      .describe("워크로드 타입 필터. null: 전체"),
+  }),
 });
 
 export const getPendingWorkloadsResponse = zod

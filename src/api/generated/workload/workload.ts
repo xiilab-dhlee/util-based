@@ -718,6 +718,103 @@ export const useWorkloadCompressFiles = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
+            실행 중인 워크로드를 종료합니다.
+
+            **종료 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)만 삭제
+            - Service, Ingress, PVC, PV 등 부가 리소스는 유지 (재시작 시 재사용)
+            - 컨테이너 상태를 이미지로 커밋하여 Harbor에 저장 (TODO: 추후 구현)
+
+            **종료 대상:**
+            - RUNNING, PENDING, CREATING, ERROR 상태의 워크로드
+            - 이미 TERMINATED 상태인 워크로드는 종료 불가 (400 Bad Request)
+
+            **재시작:**
+            - 종료된 워크로드는 재시작 API로 다시 실행 가능
+            - 커밋된 이미지와 기존 리소스(Service, PVC 등)를 재사용
+        
+ * @summary 워크로드 종료
+ */
+export const terminateWorkload = (
+  workspaceId: number,
+  workloadResourceName: string,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/actions/terminate`,
+    method: "POST",
+    signal,
+  });
+};
+
+export const getTerminateWorkloadMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof terminateWorkload>>,
+    TError,
+    { workspaceId: number; workloadResourceName: string },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof terminateWorkload>>,
+  TError,
+  { workspaceId: number; workloadResourceName: string },
+  TContext
+> => {
+  const mutationKey = ["terminateWorkload"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof terminateWorkload>>,
+    { workspaceId: number; workloadResourceName: string }
+  > = (props) => {
+    const { workspaceId, workloadResourceName } = props ?? {};
+
+    return terminateWorkload(workspaceId, workloadResourceName);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type TerminateWorkloadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof terminateWorkload>>
+>;
+
+export type TerminateWorkloadMutationError = unknown;
+
+/**
+ * @summary 워크로드 종료
+ */
+export const useTerminateWorkload = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof terminateWorkload>>,
+      TError,
+      { workspaceId: number; workloadResourceName: string },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof terminateWorkload>>,
+  TError,
+  { workspaceId: number; workloadResourceName: string },
+  TContext
+> => {
+  const mutationOptions = getTerminateWorkloadMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
             워크로드의 실시간 상태를 조회합니다.
 
             **조회 우선순위:**
@@ -1343,7 +1440,7 @@ export function useStreamWorkloadLogs<
 export const workloadListFiles = (
   workspaceId: number,
   workloadResourceName: string,
-  params?: WorkloadListFilesParams,
+  params: WorkloadListFilesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseWorkloadFileListResponse>({
@@ -1371,7 +1468,7 @@ export const getWorkloadListFilesQueryOptions = <
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params?: WorkloadListFilesParams,
+  params: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1416,7 +1513,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params: undefined | WorkloadListFilesParams,
+  params: WorkloadListFilesParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1444,7 +1541,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params?: WorkloadListFilesParams,
+  params: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1472,7 +1569,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params?: WorkloadListFilesParams,
+  params: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1496,7 +1593,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params?: WorkloadListFilesParams,
+  params: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1950,7 +2047,7 @@ export function useGetDistributedPods<
  */
 export const getTerminatedWorkloads = (
   workspaceId: number,
-  params?: GetTerminatedWorkloadsParams,
+  params: GetTerminatedWorkloadsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseTerminatedWorkloadListResponse>({
@@ -1976,7 +2073,7 @@ export const getGetTerminatedWorkloadsQueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetTerminatedWorkloadsParams,
+  params: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2019,7 +2116,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: undefined | GetTerminatedWorkloadsParams,
+  params: GetTerminatedWorkloadsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -2046,7 +2143,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetTerminatedWorkloadsParams,
+  params: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2073,7 +2170,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetTerminatedWorkloadsParams,
+  params: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2096,7 +2193,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetTerminatedWorkloadsParams,
+  params: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2147,7 +2244,7 @@ export function useGetTerminatedWorkloads<
  */
 export const getActiveWorkloads = (
   workspaceId: number,
-  params?: GetActiveWorkloadsParams,
+  params: GetActiveWorkloadsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseActiveWorkloadListResponse>({
@@ -2173,7 +2270,7 @@ export const getGetActiveWorkloadsQueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetActiveWorkloadsParams,
+  params: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2216,7 +2313,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: undefined | GetActiveWorkloadsParams,
+  params: GetActiveWorkloadsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -2243,7 +2340,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetActiveWorkloadsParams,
+  params: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2270,7 +2367,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetActiveWorkloadsParams,
+  params: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2293,7 +2390,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetActiveWorkloadsParams,
+  params: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2322,3 +2419,99 @@ export function useGetActiveWorkloads<
 
   return query;
 }
+
+/**
+ * 
+            워크로드를 완전히 삭제합니다.
+
+            **삭제 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
+            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
+
+            **삭제 대상:**
+            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
+            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
+
+            **주의:**
+            - 삭제된 워크로드는 복구할 수 없습니다.
+            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
+        
+ * @summary 워크로드 삭제
+ */
+export const deleteWorkload = (
+  workspaceId: number,
+  workloadResourceName: string,
+) => {
+  return customInstance<void>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}`,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteWorkloadMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteWorkload>>,
+    TError,
+    { workspaceId: number; workloadResourceName: string },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteWorkload>>,
+  TError,
+  { workspaceId: number; workloadResourceName: string },
+  TContext
+> => {
+  const mutationKey = ["deleteWorkload"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteWorkload>>,
+    { workspaceId: number; workloadResourceName: string }
+  > = (props) => {
+    const { workspaceId, workloadResourceName } = props ?? {};
+
+    return deleteWorkload(workspaceId, workloadResourceName);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteWorkloadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteWorkload>>
+>;
+
+export type DeleteWorkloadMutationError = unknown;
+
+/**
+ * @summary 워크로드 삭제
+ */
+export const useDeleteWorkload = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteWorkload>>,
+      TError,
+      { workspaceId: number; workloadResourceName: string },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteWorkload>>,
+  TError,
+  { workspaceId: number; workloadResourceName: string },
+  TContext
+> => {
+  const mutationOptions = getDeleteWorkloadMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};

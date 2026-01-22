@@ -39,7 +39,7 @@ export function KubernetesEventCard({ event }: KubernetesEventCardProps) {
             </HeaderTitle>
             <HeaderDate>
               <HeaderDateItem>
-                {formatDateTimeSafely(event.lastObservedDateTime)}
+                {formatDateTimeSafely(event.lastObservedAt)}
               </HeaderDateItem>
             </HeaderDate>
           </HeaderLeft>

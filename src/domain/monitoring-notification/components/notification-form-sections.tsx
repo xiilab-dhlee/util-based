@@ -15,13 +15,25 @@ import type {
 } from "@/domain/monitoring-notification/types/monitoring-notification.type";
 import type { NotificationFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 import { MultiSelectWithAll } from "@/shared/components/select";
-import { errorTextStyle } from "@/styles/mixins/text";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { errorTextStyle, TooltipHighlightText } from "@/styles/mixins/text";
 
 // ===== Helpers =====
 
 const createCheckboxChangeHandler =
   (onChange: (value: boolean) => void) => (e: CheckboxChangeEvent) =>
     onChange(e.target.checked);
+
+const thresholdTooltipTitle = (
+  <>
+    <TooltipHighlightText>MIG</TooltipHighlightText>와{" "}
+    <TooltipHighlightText>MPS</TooltipHighlightText>는 임계치 설정이
+    불가능합니다. <br />
+    <TooltipHighlightText>Normal GPU</TooltipHighlightText>에 대해서만 알림
+    설정이 가능합니다. <br />각 조건은{" "}
+    <TooltipHighlightText>OR</TooltipHighlightText> 조건으로 적용됩니다.
+  </>
+);
 
 function extractThresholdErrors(
   errors: FieldErrors<NotificationFormType>,
@@ -166,8 +178,13 @@ export function NotificationSettingsSection({
 
   return (
     <SettingsFormItem
-      label="알림 임계 조건 설정"
-      required
+      label={
+        <SettingsLabel>
+          알림 임계 조건 설정
+          <RequiredMark>*</RequiredMark>
+          <GuideTooltip title={thresholdTooltipTitle} />
+        </SettingsLabel>
+      }
       validateStatus={thresholdRootError ? "error" : undefined}
       help={thresholdRootError}
     >
@@ -235,6 +252,19 @@ const ChannelErrorText = styled.span`
   left: 0;
   bottom: -20px;
   ${errorTextStyle}
+`;
+
+const SettingsLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+`;
+
+const RequiredMark = styled.span`
+  color: var(--color-red-09);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
 `;
 
 const SettingsFormItem = styled(FormItem)``;

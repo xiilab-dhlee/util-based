@@ -377,7 +377,7 @@ export const useDeletePreset = <TError = unknown, TContext = unknown>(
  * 등록된 리소스 프리셋 목록을 페이징하여 조회합니다. 잡 타입과 노드 타입으로 필터링할 수 있습니다.
  * @summary 리소스 프리셋 목록 조회
  */
-export const getPresets = (params?: GetPresetsParams, signal?: AbortSignal) => {
+export const getPresets = (params: GetPresetsParams, signal?: AbortSignal) => {
   return customInstance<BaseResponsePageResponseResourcePresetResponse>({
     url: `/api/v1/admin/resource-presets`,
     method: "GET",
@@ -397,7 +397,7 @@ export const getGetPresetsQueryOptions = <
   TData = Awaited<ReturnType<typeof getPresets>>,
   TError = unknown,
 >(
-  params?: GetPresetsParams,
+  params: GetPresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData>
@@ -428,7 +428,7 @@ export function useGetPresets<
   TData = Awaited<ReturnType<typeof getPresets>>,
   TError = unknown,
 >(
-  params: undefined | GetPresetsParams,
+  params: GetPresetsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData>
@@ -450,7 +450,7 @@ export function useGetPresets<
   TData = Awaited<ReturnType<typeof getPresets>>,
   TError = unknown,
 >(
-  params?: GetPresetsParams,
+  params: GetPresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData>
@@ -472,7 +472,7 @@ export function useGetPresets<
   TData = Awaited<ReturnType<typeof getPresets>>,
   TError = unknown,
 >(
-  params?: GetPresetsParams,
+  params: GetPresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData>
@@ -490,7 +490,7 @@ export function useGetPresets<
   TData = Awaited<ReturnType<typeof getPresets>>,
   TError = unknown,
 >(
-  params?: GetPresetsParams,
+  params: GetPresetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData>

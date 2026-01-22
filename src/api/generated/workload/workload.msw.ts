@@ -104,6 +104,16 @@ export const getWorkloadCompressFilesResponseMock = (
   ...overrideResponse,
 });
 
+export const getTerminateWorkloadResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetWorkloadStatusResponseMock = (
   overrideResponse: Partial<BaseResponseWorkloadStatusResponse> = {},
 ): BaseResponseWorkloadStatusResponse => ({
@@ -112,11 +122,12 @@ export const getGetWorkloadStatusResponseMock = (
   data: {
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadStatus: faker.helpers.arrayElement([
-      "RUNNING",
-      "ERROR",
-      "PENDING",
       "CREATING",
+      "PENDING",
+      "RUNNING",
+      "TERMINATING",
       "TERMINATED",
+      "ERROR",
     ] as const),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -242,11 +253,12 @@ export const getGetActiveWorkloadsResponseMock = (
       ] as const),
       reclaimWarningCount: faker.number.int({ min: undefined, max: undefined }),
       workloadStatus: faker.helpers.arrayElement([
-        "RUNNING",
-        "ERROR",
-        "PENDING",
         "CREATING",
+        "PENDING",
+        "RUNNING",
+        "TERMINATING",
         "TERMINATED",
+        "ERROR",
       ] as const),
       ageSeconds: faker.number.int({ min: undefined, max: undefined }),
       workloadJobType: faker.helpers.arrayElement([
@@ -404,6 +416,34 @@ export const getWorkloadCompressFilesMockHandler = (
             : getWorkloadCompressFilesResponseMock(),
         ),
         { status: 202, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getTerminateWorkloadMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/actions/terminate",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getTerminateWorkloadResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
@@ -643,12 +683,34 @@ export const getGetActiveWorkloadsMockHandler = (
     options,
   );
 };
+
+export const getDeleteWorkloadMockHandler = (
+  overrideResponse?:
+    | void
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.delete(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName",
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
+    },
+    options,
+  );
+};
 export const getWorkloadMock = () => [
   getCreateWorkloadMockHandler(),
   getWorkloadCreateFolderMockHandler(),
   getWorkloadDeleteFilesMockHandler(),
   getWorkloadDecompressFileMockHandler(),
   getWorkloadCompressFilesMockHandler(),
+  getTerminateWorkloadMockHandler(),
   getGetWorkloadStatusMockHandler(),
   getGetTerminatedWorkloadLogMockHandler(),
   getStreamWorkloadLogsMockHandler(),
@@ -657,4 +719,5 @@ export const getWorkloadMock = () => [
   getGetDistributedPodsMockHandler(),
   getGetTerminatedWorkloadsMockHandler(),
   getGetActiveWorkloadsMockHandler(),
+  getDeleteWorkloadMockHandler(),
 ];

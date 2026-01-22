@@ -52,7 +52,7 @@ import type {
  * @summary 스토리지 목록 조회
  */
 export const getStorages1 = (
-  params?: GetStorages1Params,
+  params: GetStorages1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseStorageResponse>({
@@ -71,7 +71,7 @@ export const getGetStorages1QueryOptions = <
   TData = Awaited<ReturnType<typeof getStorages1>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params: GetStorages1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
@@ -102,7 +102,7 @@ export function useGetStorages1<
   TData = Awaited<ReturnType<typeof getStorages1>>,
   TError = unknown,
 >(
-  params: undefined | GetStorages1Params,
+  params: GetStorages1Params,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
@@ -124,7 +124,7 @@ export function useGetStorages1<
   TData = Awaited<ReturnType<typeof getStorages1>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params: GetStorages1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
@@ -146,7 +146,7 @@ export function useGetStorages1<
   TData = Awaited<ReturnType<typeof getStorages1>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params: GetStorages1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
@@ -164,7 +164,7 @@ export function useGetStorages1<
   TData = Awaited<ReturnType<typeof getStorages1>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params: GetStorages1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>

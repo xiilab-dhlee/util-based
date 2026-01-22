@@ -161,7 +161,7 @@ export const useUpdatePublicImageTag = <TError = unknown, TContext = unknown>(
  * @summary 공용 레지스트리 목록 조회
  */
 export const getPublicRegistryList = (
-  params?: GetPublicRegistryListParams,
+  params: GetPublicRegistryListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseRegistryListResponse>({
@@ -185,7 +185,7 @@ export const getGetPublicRegistryListQueryOptions = <
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPublicRegistryListParams,
+  params: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -221,7 +221,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params: undefined | GetPublicRegistryListParams,
+  params: GetPublicRegistryListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -247,7 +247,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPublicRegistryListParams,
+  params: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -273,7 +273,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPublicRegistryListParams,
+  params: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -295,7 +295,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params?: GetPublicRegistryListParams,
+  params: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

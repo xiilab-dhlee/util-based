@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import { ViewApproveRequestImageButton } from "@/domain/request-image/components/view-approve-request-image-button";
@@ -12,6 +11,7 @@ import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-
 import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 const createColumnList = (): ResponsiveColumnType[] => {
@@ -101,7 +101,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       render: (creatorDate: string) => {
         return (
           <ColumnAlignCenterWrap>
-            {format(creatorDate, "yyyy-MM-dd HH:mm:ss")}
+            {formatDateTimeSafely(creatorDate)}
           </ColumnAlignCenterWrap>
         );
       },

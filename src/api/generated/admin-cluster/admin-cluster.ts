@@ -460,7 +460,7 @@ export const useApplyMigConfiguration = <TError = unknown, TContext = unknown>(
  * @summary 클러스터 노드 목록 조회
  */
 export const getClusterNodes = (
-  params?: GetClusterNodesParams,
+  params: GetClusterNodesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseClusterNodeListResponse>({
@@ -479,7 +479,7 @@ export const getGetClusterNodesQueryOptions = <
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params?: GetClusterNodesParams,
+  params: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -514,7 +514,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params: undefined | GetClusterNodesParams,
+  params: GetClusterNodesParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -540,7 +540,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params?: GetClusterNodesParams,
+  params: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -566,7 +566,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params?: GetClusterNodesParams,
+  params: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -588,7 +588,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params?: GetClusterNodesParams,
+  params: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -807,7 +807,7 @@ export function useGetNodeSystemResource<
             - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
             - DISK_READ: 디스크 읽기 속도 (bytes/sec)
             - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)

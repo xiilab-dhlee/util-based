@@ -243,7 +243,7 @@ export const useDeleteSourceCode = <TError = unknown, TContext = unknown>(
  * @summary 소스코드 목록 조회
  */
 export const getSourceCodeList = (
-  params?: GetSourceCodeListParams,
+  params: GetSourceCodeListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseSourceCodeListResponse>({
@@ -264,7 +264,7 @@ export const getGetSourceCodeListQueryOptions = <
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params?: GetSourceCodeListParams,
+  params: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -300,7 +300,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params: undefined | GetSourceCodeListParams,
+  params: GetSourceCodeListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -326,7 +326,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params?: GetSourceCodeListParams,
+  params: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -352,7 +352,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params?: GetSourceCodeListParams,
+  params: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -374,7 +374,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params?: GetSourceCodeListParams,
+  params: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
