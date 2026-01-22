@@ -15,7 +15,7 @@ import type { RegistrySortState } from "@/domain/registry/constants/registry-lis
 /** 레지스트리 페이지 번호 */
 export const registryPageAtom = atomWithReset<number>(1);
 /** 레지스트리 검색어 (검색 실행) */
-export const registrySearchTextAtom = atom<string>("");
+export const registrySearchTextAtom = atomWithReset<string>("");
 /** 레지스트리 정렬 상태 */
 export const registrySortAtom = atomWithReset<RegistrySortState>({
   field: "createdAt",
