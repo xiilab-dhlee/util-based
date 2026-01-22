@@ -10,7 +10,7 @@ import { getGetPrivateImageTagListQueryKey } from "@/api/generated/private-regis
 import { getGetPublicImageTagListQueryKey } from "@/api/generated/public-registry/public-registry";
 import { useDeleteRegistryTagByMode } from "@/domain/registry/hooks/use-delete-registry-tag-by-mode";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -65,7 +65,7 @@ export function DeleteRegistryTagModal({ mode }: DeleteRegistryTagModalProps) {
     );
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.openDeleteTagModal, (tags: number[]) => {
+  useSubscribe(REGISTRY_EVENTS.openDeleteTagModal, (tags: number[]) => {
     setDeleteTags(tags);
     setOpen(true);
   });

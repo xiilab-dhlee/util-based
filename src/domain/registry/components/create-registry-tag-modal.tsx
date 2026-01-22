@@ -16,7 +16,7 @@ import {
   createRegistryTagSchema,
 } from "@/domain/registry/schemas/create-registry-tag.schema";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 interface CreateRegistryTagModalProps {
@@ -70,7 +70,7 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
 
   // filter에서 전달받은 데이터 구독 및 모달 열기
   useSubscribe(
-    PRIVATE_REGISTRY_EVENTS.openCreateTagModal,
+    REGISTRY_EVENTS.openCreateTagModal,
     (harborImageName: string) => {
       reset({
         harborImageName,

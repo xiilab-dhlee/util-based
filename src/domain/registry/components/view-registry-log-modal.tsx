@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Icon, InfoModal } from "xiilab-ui";
 
 import { WorkloadLogBody } from "@/domain/workload/components/log/workload-log-body";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function ViewRegistryLogModal() {
@@ -14,7 +14,7 @@ export function ViewRegistryLogModal() {
     setOpen(false);
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.openLogModal, () => {
+  useSubscribe(REGISTRY_EVENTS.openLogModal, () => {
     setOpen(true);
   });
 

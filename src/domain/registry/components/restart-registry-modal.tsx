@@ -9,7 +9,7 @@ import {
   getGetImageJobsQueryKey,
   useRestartImageJob,
 } from "@/api/generated/image-job/image-job";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function RestartRegistryModal() {
@@ -43,7 +43,7 @@ export function RestartRegistryModal() {
     );
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.openRestartJobModal, (id: number) => {
+  useSubscribe(REGISTRY_EVENTS.openRestartJobModal, (id: number) => {
     setImageTagId(id);
     setOpen(true);
   });

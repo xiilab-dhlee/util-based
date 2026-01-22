@@ -20,7 +20,7 @@ import {
   createRegistrySchema,
 } from "@/domain/registry/schemas/create-registry.schema";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { FormRow } from "@/styles/layers/form-layer.styled";
@@ -88,7 +88,7 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
 
   // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
   useSubscribe(
-    PRIVATE_REGISTRY_EVENTS.openCreateModal,
+    REGISTRY_EVENTS.openCreateModal,
     (type: GetPrivateRegistryListImageSourceType) => {
       // setType(type);
       // 폼 초기화 후 type 설정

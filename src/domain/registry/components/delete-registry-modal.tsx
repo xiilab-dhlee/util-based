@@ -8,7 +8,7 @@ import { getGetPrivateRegistryListQueryKey } from "@/api/generated/private-regis
 import { getGetPublicRegistryListQueryKey } from "@/api/generated/public-registry/public-registry";
 import { useDeleteRegistryByMode } from "@/domain/registry/hooks/use-delete-registry-by-mode";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -64,13 +64,10 @@ export function DeleteRegistryModal({ mode }: DeleteRegistryModalProps) {
     );
   };
 
-  useSubscribe(
-    PRIVATE_REGISTRY_EVENTS.openDeleteModal,
-    (registries: string[]) => {
-      setDeleteRegistries(registries);
-      setOpen(true);
-    },
-  );
+  useSubscribe(REGISTRY_EVENTS.openDeleteModal, (registries: string[]) => {
+    setDeleteRegistries(registries);
+    setOpen(true);
+  });
 
   return (
     <Modal

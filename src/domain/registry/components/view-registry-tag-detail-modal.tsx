@@ -9,7 +9,7 @@ import { useGetRegistryTagDetailByMode } from "@/domain/registry/hooks/use-get-r
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { ScanStatusText } from "@/shared/components/text/scan-status-text";
 import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
@@ -46,13 +46,10 @@ export function ViewRegistryTagDetailModal({
     setPayload(null);
   };
 
-  useSubscribe<TagDetailPayload>(
-    PRIVATE_REGISTRY_EVENTS.openTagDetailModal,
-    (data) => {
-      setPayload(data);
-      setOpen(true);
-    },
-  );
+  useSubscribe<TagDetailPayload>(REGISTRY_EVENTS.openTagDetailModal, (data) => {
+    setPayload(data);
+    setOpen(true);
+  });
 
   return (
     <Modal
@@ -84,6 +81,10 @@ export function ViewRegistryTagDetailModal({
                 ? formatFileSize(data.imageSizeByte).formatted
                 : "-"}
             </DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel>설명</DetailLabel>
+            <DetailValue>{data?.description || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel>생성자</DetailLabel>

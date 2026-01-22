@@ -7,7 +7,7 @@ import { Icon, InfoModal } from "xiilab-ui";
 import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { RegistryTypeCard } from "@/domain/registry/components/registry-type-card";
 import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/registry/constants/registry-list.constant";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 export function SelectRegistryTypeModal() {
@@ -20,10 +20,10 @@ export function SelectRegistryTypeModal() {
 
   const handleClickType = (type: GetPrivateRegistryListImageSourceType) => {
     handleClose();
-    publish(PRIVATE_REGISTRY_EVENTS.openCreateModal, type);
+    publish(REGISTRY_EVENTS.openCreateModal, type);
   };
 
-  useSubscribe(PRIVATE_REGISTRY_EVENTS.openSelectTypeModal, () => {
+  useSubscribe(REGISTRY_EVENTS.openSelectTypeModal, () => {
     setOpen(true);
   });
 

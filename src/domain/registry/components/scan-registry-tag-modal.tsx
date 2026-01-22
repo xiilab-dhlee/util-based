@@ -9,7 +9,7 @@ import { getGetPrivateImageTagListQueryKey } from "@/api/generated/private-regis
 import { getGetPublicImageTagListQueryKey } from "@/api/generated/public-registry/public-registry";
 import { useScanRegistryTagByMode } from "@/domain/registry/hooks/use-scan-registry-tag-by-mode";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
-import { PRIVATE_REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 interface ScanTagPayload {
@@ -63,14 +63,11 @@ export function ScanRegistryTagModal({ mode }: ScanRegistryTagModalProps) {
     setOpen(false);
   };
 
-  useSubscribe<ScanTagPayload>(
-    PRIVATE_REGISTRY_EVENTS.openScanTagModal,
-    (data) => {
-      setHarborImageName(data.harborImageName);
-      setTagName(data.tagName);
-      setOpen(true);
-    },
-  );
+  useSubscribe<ScanTagPayload>(REGISTRY_EVENTS.openScanTagModal, (data) => {
+    setHarborImageName(data.harborImageName);
+    setTagName(data.tagName);
+    setOpen(true);
+  });
 
   return (
     <Modal
