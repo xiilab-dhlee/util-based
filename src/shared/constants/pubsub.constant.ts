@@ -146,27 +146,27 @@ export const REQUEST_IMAGE_EVENTS = {
 
 // 개인 레지스트리 관련 이벤트
 export const REGISTRY_EVENTS = {
-  // 프라이빗 레지스트리 이미지 유형 선택 모달 열기
+  // 레지스트리 이미지 유형 선택 모달 열기
   openSelectTypeModal: "registry:open-select-type-modal",
-  // 프라이빗 레지스트리 이미지 생성 모달 열기
+  // 레지스트리 이미지 생성 모달 열기
   openCreateModal: "registry:open-create-modal",
-  // 프라이빗 레지스트리 이미지 삭제 모달 열기
+  // 레지스트리 이미지 삭제 모달 열기
   openDeleteModal: "registry:open-delete-modal",
-  // 프라이빗 레지스트리 로그 보기 모달 열기
+  // 레지스트리 로그 보기 모달 열기
   openLogModal: "registry:open-log-modal",
   // 이미지 등록 Job 재시작 모달 열기
   openRestartJobModal: "registry:open-restart-job-modal",
   // 이미지 등록 Job 종료 모달 열기
   openStopJobModal: "registry:open-stop-job-modal",
-  // 프라이빗 레지스트리 이미지 태그 삭제 모달 열기
+  // 레지스트리 이미지 태그 삭제 모달 열기
   openDeleteTagModal: "registry:open-delete-tag-modal",
-  // 프라이빗 레지스트리 이미지 태그 생성 모달 열기
+  // 레지스트리 이미지 태그 생성 모달 열기
   openCreateTagModal: "registry:open-create-tag-modal",
-  // 프라이빗 레지스트리 이미지 태그 상세 보기 모달 열기
+  // 레지스트리 이미지 태그 상세 보기 모달 열기
   openTagDetailModal: "registry:open-tag-detail-modal",
-  // 프라이빗 레지스트리 이미지 태그 스캔 모달 열기
+  // 레지스트리 이미지 태그 스캔 모달 열기
   openScanTagModal: "registry:open-scan-tag-modal",
-  // 프라이빗 레지스트리 이미지 태그 수정 모달 열기
+  // 레지스트리 이미지 태그 수정 모달 열기
   openEditTagModal: "registry:open-edit-tag-modal",
   // 이미지 태그 사용 요청 모달 열기
   openRequestUseModal: "registry:open-request-use-modal",
