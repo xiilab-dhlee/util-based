@@ -205,6 +205,13 @@ export const MUTATION_MESSAGES: Partial<
   },
 
   // ============================================
+  // Image Tag Usage Request
+  // ============================================
+  [MUTATION_KEYS.createUsageRequest]: {
+    success: "사용 요청이 전송되었습니다.",
+  },
+
+  // ============================================
   // Image Job
   // ============================================
   [MUTATION_KEYS.restartImageJob]: {

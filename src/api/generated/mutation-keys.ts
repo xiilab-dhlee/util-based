@@ -100,6 +100,11 @@ export const MUTATION_KEYS = {
   deletePublicImageTags: "deletePublicImageTags",
 
   // ============================================
+  // Image Tag Usage Request
+  // ============================================
+  createUsageRequest: "createUsageRequest",
+
+  // ============================================
   // Image Job
   // ============================================
   restartImageJob: "restartImageJob",
