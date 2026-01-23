@@ -1,18 +1,29 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { Form, FormItem, Icon, Input, Modal, Typography } from "xiilab-ui";
 
-import { useStorageUpdateForm } from "@/domain/system-setting/hooks/use-storage-setting-form";
-import type { StorageSettingDetailType } from "@/domain/system-setting/schemas/storage-setting.schema";
-import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
+import {
+  getGetStorageDetailQueryKey,
+  getGetStoragesQueryKey,
+  useUpdateStorage,
+} from "@/api/generated/admin-storage/admin-storage";
+import type { StorageResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  type UpdateStorageFormType,
+  updateStorageFormSchema,
+} from "@/domain/storage/schemas/storage.schema";
+import { STORAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 // ===== 타입 =====
 
 export interface UpdateStorageModalPayload {
-  data: StorageSettingDetailType;
+  data: StorageResponse;
 }
 
 // ===== 컴포넌트 =====
@@ -24,39 +35,58 @@ export interface UpdateStorageModalPayload {
  */
 export function UpdateStorageModal() {
   const [open, setOpen] = useState(false);
-  const [data, setData] = useState<StorageSettingDetailType | null>(null);
-  const { formState, errors, setField, initializeForEdit, validate, reset } =
-    useStorageUpdateForm();
+  const [data, setData] = useState<StorageResponse | null>(null);
+  const queryClient = useQueryClient();
 
-  // PubSub 구독 - 스토리지 수정 모달 열기 이벤트
-  useSubscribe<UpdateStorageModalPayload>(
-    SYSTEM_SETTING_EVENTS.openStorageEditModal,
-    useCallback(
-      (payload) => {
-        setData(payload.data);
-        initializeForEdit(payload.data);
-        setOpen(true);
-      },
-      [initializeForEdit],
-    ),
-  );
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UpdateStorageFormType>({
+    resolver: zodResolver(updateStorageFormSchema),
+    defaultValues: {
+      storageName: "",
+    },
+  });
+
+  const { mutate, isPending } = useUpdateStorage();
 
   const handleCancel = () => {
-    reset();
     setOpen(false);
-    setData(null);
   };
 
-  const handleSubmit = () => {
-    const payload = validate();
-    if (!payload) {
-      return;
-    }
+  const onSubmit = (formData: UpdateStorageFormType) => {
+    if (isPending) return;
+    if (!data) return;
 
-    // TODO: 스토리지 수정 API 연동
+    mutate(
+      {
+        storageId: data.storageId,
+        data: { storageName: formData.storageName },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getGetStorageDetailQueryKey(data.storageId),
+          });
+          queryClient.invalidateQueries({
+            queryKey: getGetStoragesQueryKey(),
+          });
+          setOpen(false);
+        },
+      },
+    );
   };
 
-  if (!open || !data) return null;
+  useSubscribe<UpdateStorageModalPayload>(
+    STORAGE_EVENTS.openEditModal,
+    (payload) => {
+      setData(payload.data || null);
+      reset({ storageName: payload.data?.storageName || "" });
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal
@@ -70,9 +100,12 @@ export function UpdateStorageModal() {
       cancelText="취소"
       onCancel={handleCancel}
       okText="수정 완료"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
+      okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
       centered
       showHeaderBorder
+      loading={isPending}
     >
       <ModalContent>
         <SectionGroup>
@@ -85,15 +118,15 @@ export function UpdateStorageModal() {
           <ContentBox>
             <InfoRow>
               <Label>타입</Label>
-              <Value>{data.storageType}</Value>
+              <Value>{data?.storageChannel || "-"}</Value>
             </InfoRow>
             <InfoRow>
               <Label>IP 주소</Label>
-              <Value>{data.ip}</Value>
+              <Value>{data?.storageIp || "-"}</Value>
             </InfoRow>
             <InfoRow>
               <Label>스토리지 저장 Path</Label>
-              <Value>{data.path}</Value>
+              <Value>{data?.storageSavePath || "-"}</Value>
             </InfoRow>
           </ContentBox>
         </SectionGroup>
@@ -106,14 +139,25 @@ export function UpdateStorageModal() {
           </SectionHeader>
 
           <Form layout="vertical">
-            <FormItem label="이름" required>
-              <Input
-                placeholder="스토리지 이름을 입력해 주세요."
-                value={formState.storageName}
-                onChange={(e) => setField("storageName", e.target.value)}
-                status={errors.storageName ? "error" : undefined}
-              />
-            </FormItem>
+            <Controller
+              name="storageName"
+              control={control}
+              render={({ field }) => (
+                <FormItem
+                  label="이름"
+                  required
+                  validateStatus={errors.storageName ? "error" : undefined}
+                  help={errors.storageName?.message}
+                >
+                  <Input
+                    {...field}
+                    placeholder="스토리지 이름을 입력해 주세요."
+                    autoComplete="off"
+                    disabled={isPending}
+                  />
+                </FormItem>
+              )}
+            />
           </Form>
         </SectionGroup>
       </ModalContent>
