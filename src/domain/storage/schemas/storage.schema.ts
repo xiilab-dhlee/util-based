@@ -40,6 +40,7 @@ export const createStorageFormSchema = z.object({
 export const updateStorageFormSchema = z.object({
   storageName: z
     .string()
+    .trim()
     .min(1, "스토리지 이름을 입력해 주세요.")
     .max(50, "스토리지 이름은 50자 이내로 입력해 주세요."),
 });

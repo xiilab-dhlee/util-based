@@ -53,7 +53,7 @@ export function DeleteStorageModal() {
   useSubscribe<DeleteStorageModalPayload>(
     STORAGE_EVENTS.openDeleteModal,
     (payload) => {
-      setStorageId(payload.id ?? null);
+      setStorageId(payload.id);
       setOpen(true);
     },
   );

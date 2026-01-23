@@ -39,7 +39,7 @@ export function ViewStorageDetailModal() {
   useSubscribe<ViewStorageDetailModalPayload>(
     STORAGE_EVENTS.openDetailModal,
     (payload) => {
-      setId(payload.id ?? null);
+      setId(payload.id);
       setOpen(true);
     },
   );
