@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
@@ -18,24 +19,25 @@ import {
   DetailIntroCardDescriptionRowBody,
 } from "@/styles/layers/detail-page-intro-card.styled";
 
-interface RegistryTagIntroCardProps {
+interface RegistryTagInfoPanelProps {
   mode: RegistryMode;
 }
 
 /**
- * 레지스트리 태그 상세 페이지의 소개 카드 컴포넌트
+ * 레지스트리 태그 상세 페이지의 정보 패널 컴포넌트
  *
- * 이미지의 기본 정보(이름, 설명, 상태, 생성자, 생성일 등)를 표시하고,
- * 삭제 기능을 제공합니다.
+ * 태그의 기본 정보(이름, 설명, 상태, 생성자, 생성일 등)를 표시하고,
+ * 수정/삭제 기능을 제공합니다.
  */
-export function RegistryTagIntroCard({ mode }: RegistryTagIntroCardProps) {
+export function RegistryTagInfoPanel({ mode }: RegistryTagInfoPanelProps) {
+  const router = useRouter();
   const { name, tagName } = useParams<{ name: string; tagName: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
-  // Pub/Sub 시스템을 통한 이벤트 발행 훅
+
   const publish = usePublish();
 
   // 태그 상세 조회
-  const { data, isLoading } = useGetRegistryTagDetailByMode(mode, {
+  const { data, isLoading, isError } = useGetRegistryTagDetailByMode(mode, {
     request: {
       tagName: tagName ?? "",
       harborImageName,
@@ -69,6 +71,13 @@ export function RegistryTagIntroCard({ mode }: RegistryTagIntroCardProps) {
       description: data.description ?? "",
     });
   };
+
+  // 에러 발생 시 뒤로가기
+  useEffect(() => {
+    if (isError) {
+      router.back();
+    }
+  }, [isError, router]);
 
   return (
     <Container>

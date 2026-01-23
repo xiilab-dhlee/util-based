@@ -1,8 +1,8 @@
 "use client";
 
+import { RegistryTagInfoPanel } from "@/domain/registry/components/tag/registry-tag-info-panel";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
-import { RegistryTagIntroCard } from "./registry-tag-intro-card";
 
 interface RegistryTagAsideProps {
   mode: RegistryMode;
@@ -18,7 +18,7 @@ export function RegistryTagAside({ mode }: RegistryTagAsideProps) {
   return (
     <DetailPageAside>
       {/* 이미지 기본 정보 카드 */}
-      <RegistryTagIntroCard mode={mode} />
+      <RegistryTagInfoPanel mode={mode} />
     </DetailPageAside>
   );
 }
