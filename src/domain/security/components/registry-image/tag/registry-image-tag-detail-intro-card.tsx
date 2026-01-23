@@ -28,7 +28,7 @@ export function RegistryImageTagDetailIntroCard() {
   return (
     <Container>
       <Header>
-        <HeaderTitle>{data?.imageTagName}</HeaderTitle>
+        <HeaderTitle>{data?.imageTagName || "-"}</HeaderTitle>
       </Header>
       <Body>
         <Row>
