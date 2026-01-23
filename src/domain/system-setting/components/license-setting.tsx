@@ -3,8 +3,8 @@
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
+import { useGetLatestLicense } from "@/api/generated/license/license";
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
-import { useGetLicense } from "@/domain/system-setting/hooks/use-get-license";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -22,9 +22,9 @@ import {
  */
 export function LicenseSetting() {
   const publish = usePublish();
-  const { data, isLoading, isError, refetch } = useGetLicense();
+  const { data, isLoading, isError, refetch } = useGetLatestLicense();
 
-  const isEmpty = !data?.current && !isLoading;
+  const isEmpty = !data && !isLoading;
 
   const handleRenew = () => {
     publish(SYSTEM_SETTING_EVENTS.openLicenseRenewalModal, {});
@@ -65,14 +65,14 @@ export function LicenseSetting() {
           <AsideDetailArticleColumn>
             <AsideDetailArticleKey>버전</AsideDetailArticleKey>
             <AsideDetailArticleValue>
-              V{data?.current?.version ?? "-"}
+              {data?.version ?? "-"}
             </AsideDetailArticleValue>
           </AsideDetailArticleColumn>
 
           <AsideDetailArticleColumn>
             <AsideDetailArticleKey>GPU 개수</AsideDetailArticleKey>
             <AsideDetailArticleValue>
-              {data?.current?.gpuCount ?? "-"}
+              {data?.gpuCount ?? "-"}
               {getResourceInfo("GPU").unit}
             </AsideDetailArticleValue>
           </AsideDetailArticleColumn>
@@ -80,7 +80,7 @@ export function LicenseSetting() {
           <AsideDetailArticleColumn>
             <AsideDetailArticleKey>만료기간</AsideDetailArticleKey>
             <AsideDetailArticleValue>
-              {formatDateSafely(data?.current?.expirationDate)}까지
+              {formatDateSafely(data?.expiredAt)}까지
             </AsideDetailArticleValue>
           </AsideDetailArticleColumn>
         </>

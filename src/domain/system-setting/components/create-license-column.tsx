@@ -1,20 +1,21 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { LicenseDetailType } from "@/domain/system-setting/schemas/license.schema";
+import type { LicenseListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 /**
  * 라이선스 등록 이력 컬럼 정의
  */
-const createColumnList = (): ResponsiveColumnType<LicenseDetailType>[] => {
+const createColumnList = (): ResponsiveColumnType<LicenseListResponse>[] => {
   return [
     {
       title: "등록일시",
-      key: "registrationDate",
-      dataIndex: "registrationDate",
+      key: "createdAt",
+      dataIndex: "createdAt",
       align: "left",
       width: "40%",
       render: (date: string) => {
@@ -23,8 +24,8 @@ const createColumnList = (): ResponsiveColumnType<LicenseDetailType>[] => {
     },
     {
       title: "만료기간",
-      key: "expirationDate",
-      dataIndex: "expirationDate",
+      key: "expiredAt",
+      dataIndex: "expiredAt",
       align: "left",
       width: "30%",
       render: (date: string) => {
@@ -38,7 +39,7 @@ const createColumnList = (): ResponsiveColumnType<LicenseDetailType>[] => {
       align: "left",
       width: "30%",
       render: (count: number) => {
-        return `${count}${getResourceInfo("GPU").unit}`;
+        return `${formatNumberWithUnit(count, getResourceInfo("GPU").unit)}`;
       },
     },
   ];
@@ -51,7 +52,7 @@ const createColumnList = (): ResponsiveColumnType<LicenseDetailType>[] => {
  */
 export const createLicenseColumn = (
   config?: CoreCreateColumnConfig[],
-): ResponsiveColumnType<LicenseDetailType>[] => {
+): ResponsiveColumnType<LicenseListResponse>[] => {
   const columnList = createColumnList();
 
   return applyColumnConfigs(columnList, config);
