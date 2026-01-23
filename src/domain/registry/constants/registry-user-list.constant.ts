@@ -2,7 +2,7 @@ import type { ImageUsageSortRequestSort } from "@/api/generated/astragoBackendAP
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 /**
- * 프라이빗 레지스트리 사용자 목록의 페이지당 항목 수
+ * 레지스트리 사용자 목록의 페이지당 항목 수
  */
 export const REGISTRY_USER_PAGE_SIZE = 20;
 

@@ -12,6 +12,7 @@ import type {
   GetPrivateImageUsageByAccountParams,
   GetPublicImageUsageByAccountParams,
   PageResponsePrivateImageUsageResponse,
+  PageResponsePublicImageUsageResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 
@@ -32,7 +33,10 @@ interface UseGetRegistryUserListByModeOptions {
 }
 
 interface UseGetRegistryUserListByModeResult {
-  data: PageResponsePrivateImageUsageResponse | undefined;
+  data:
+    | PageResponsePrivateImageUsageResponse
+    | PageResponsePublicImageUsageResponse
+    | undefined;
   isLoading: boolean;
   isError: boolean;
   error: GetRegistryUserListQueryError | null;

@@ -1,6 +1,6 @@
 import { atomWithReset } from "jotai/utils";
 
-import type { RegistryUserSortState } from "../constants/registry-user-list.constant";
+import type { RegistryUserSortState } from "@/domain/registry/constants/registry-user-list.constant";
 
 // ============================================================================
 // Private Registry 관련 Atoms

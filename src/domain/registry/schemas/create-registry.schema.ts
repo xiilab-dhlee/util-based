@@ -3,7 +3,7 @@ import { z } from "zod";
 import { CreateExternalImageRequestRegistryChannel } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
 /**
- * 프라이빗 레지스트리 이미지 생성 폼 스키마
+ * 레지스트리 이미지 생성 폼 스키마
  *
  * superRefine을 사용하여 type에 따라 조건부 검증을 수행합니다.
  * - SNAPSHOT: workloadId 필수

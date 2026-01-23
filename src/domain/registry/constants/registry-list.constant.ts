@@ -6,7 +6,7 @@ import {
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 /**
- * 프라이빗 레지스트리 목록의 페이지당 항목 수
+ * 레지스트리 목록의 페이지당 항목 수
  */
 export const REGISTRY_PAGE_SIZE = 20;
 export const REGISTRY_JOB_PAGE_SIZE = 5;
@@ -17,15 +17,15 @@ export const REGISTRY_SORT_FIELD_MAP = {
   createdAt: "CREATED_AT",
 } as const satisfies Record<string, RegistryImageFilterRequestSort>;
 
-/** 프라이빗 레지스트리 정렬 필드 타입 */
+/** 레지스트리 정렬 필드 타입 */
 export type RegistrySortField = keyof typeof REGISTRY_SORT_FIELD_MAP;
 
-/** 프라이빗 레지스트리 허용 정렬 필드 목록 */
+/** 레지스트리 허용 정렬 필드 목록 */
 export const REGISTRY_SORT_FIELDS = Object.keys(
   REGISTRY_SORT_FIELD_MAP,
 ) as RegistrySortField[];
 
-/** 프라이빗 레지스트리 정렬 상태 타입 */
+/** 레지스트리 정렬 상태 타입 */
 export type RegistrySortState = AntdTableSortState<RegistrySortField>;
 
 // ============================================================================

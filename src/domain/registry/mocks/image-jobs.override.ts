@@ -56,11 +56,19 @@ function generateImageSourceType(
 export const imageJobsOverrideHandlers = [
   getGetImageJobsMockHandler(async (info) => {
     const url = new URL(info.request.url);
-    const keyword = url.searchParams.get("keyword") || "";
-    const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
-    const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
+
+    // 중첩 구조 파라미터 파싱 (pageRequest[keyword], filterRequest[imageSourceType] 등)
+    const keyword = url.searchParams.get("pageRequest[keyword]") || "";
+    const pageNo = Number.parseInt(
+      url.searchParams.get("pageRequest[pageNo]") || "0",
+      10,
+    );
+    const pageSize = Number.parseInt(
+      url.searchParams.get("pageRequest[pageSize]") || "10",
+      10,
+    );
     const imageSourceType = url.searchParams.get(
-      "imageSourceType",
+      "filterRequest[imageSourceType]",
     ) as ImageJobFilterRequestImageSourceType | null;
 
     const { status, message, timestamp } = getGetImageJobsResponseMock();

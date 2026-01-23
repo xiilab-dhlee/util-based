@@ -3,7 +3,7 @@ import { atomWithReset } from "jotai/utils";
 import type { RegistryUserSortState } from "@/domain/registry/constants/registry-user-list.constant";
 
 // ============================================================================
-// 프라이빗 레지스트리 사용자 목록 관련 상태
+// 레지스트리 사용자 목록 관련 상태
 // ============================================================================
 
 /** 사용자 목록 페이지 번호 */
