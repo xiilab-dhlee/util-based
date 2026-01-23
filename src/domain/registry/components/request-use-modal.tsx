@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { Form, Icon, Modal, TextArea } from "xiilab-ui";
 
 import { useCreateUsageRequest } from "@/api/generated/image-tag-usage-request/image-tag-usage-request";
@@ -53,7 +52,6 @@ export function RequestUseModal() {
       },
       {
         onSuccess: () => {
-          toast.success("사용 요청이 전송되었습니다.");
           setOpen(false);
         },
       },
@@ -64,10 +62,10 @@ export function RequestUseModal() {
     REGISTRY_EVENTS.openRequestUseModal,
     (payload) => {
       setImageTagId(payload.imageTagId);
-      setOpen(true);
       reset({
         requestReason: "",
       });
+      setOpen(true);
     },
   );
 
@@ -77,7 +75,6 @@ export function RequestUseModal() {
       icon={<Icon name="RequestResource" color="#fff" size={18} />}
       modalWidth={400}
       open={open}
-      closable
       title="이미지 사용 요청"
       showCancelButton
       onCancel={handleCancel}
@@ -86,6 +83,9 @@ export function RequestUseModal() {
       onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{
         disabled: isPending,
         loading: isPending,
@@ -102,11 +102,13 @@ export function RequestUseModal() {
             <LastFormItem
               label="사용 요청 사유"
               required
+              htmlFor="registryTagRequestReason"
               validateStatus={errors.requestReason ? "error" : undefined}
               help={errors.requestReason?.message}
             >
               <TextArea
                 {...field}
+                id="registryTagRequestReason"
                 placeholder="사용 요청 사유를 입력해 주세요."
                 width="100%"
                 rows={4}

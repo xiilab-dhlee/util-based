@@ -121,10 +121,6 @@ export function ViewRegistryTagDetailModal({
               )}
             </DetailValue>
           </DetailRow>
-          {/* <DetailRow>
-            <DetailLabel>최근 검사일시</DetailLabel>
-            <DetailValue>{formatDateTimeSafely(data?.createdAt)}</DetailValue>
-          </DetailRow> */}
         </DetailCard>
       </Container>
     </Modal>

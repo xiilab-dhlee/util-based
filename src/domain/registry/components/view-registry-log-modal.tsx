@@ -14,7 +14,7 @@ export function ViewRegistryLogModal() {
     setOpen(false);
   };
 
-  useSubscribe(REGISTRY_EVENTS.openLogModal, () => {
+  useSubscribe<void>(REGISTRY_EVENTS.openLogModal, () => {
     setOpen(true);
   });
 

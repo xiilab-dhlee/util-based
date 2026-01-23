@@ -1,7 +1,6 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
@@ -10,7 +9,6 @@ import { getGetPublicRegistryListQueryKey } from "@/api/generated/public-registr
 import { useDeleteRegistryByMode } from "@/domain/registry/hooks/use-delete-registry-by-mode";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 interface DeleteRegistryModalProps {
@@ -24,7 +22,6 @@ interface DeleteRegistryModalProps {
  * public API가 추가되면 use-delete-registry-by-mode.ts의 TODO 주석을 참고하세요.
  */
 export function DeleteRegistryModal({ mode }: DeleteRegistryModalProps) {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [deleteRegistries, setDeleteRegistries] = useState<string[]>([]);
 
@@ -50,12 +47,10 @@ export function DeleteRegistryModal({ mode }: DeleteRegistryModalProps) {
             queryClient.invalidateQueries({
               queryKey: getGetPrivateRegistryListQueryKey(),
             });
-            router.replace(ROUTES.USER_PRIVATE_REGISTRY);
           } else if (mode === "public") {
             queryClient.invalidateQueries({
               queryKey: getGetPublicRegistryListQueryKey(),
             });
-            router.replace(ROUTES.USER_PUBLIC_REGISTRY);
           }
           setOpen(false);
         },
@@ -63,7 +58,7 @@ export function DeleteRegistryModal({ mode }: DeleteRegistryModalProps) {
     );
   };
 
-  useSubscribe(REGISTRY_EVENTS.openDeleteModal, (registries: string[]) => {
+  useSubscribe<string[]>(REGISTRY_EVENTS.openDeleteModal, (registries) => {
     setDeleteRegistries(registries);
     setOpen(true);
   });

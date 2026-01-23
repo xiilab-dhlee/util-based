@@ -41,7 +41,7 @@ export function StopRegistryModal() {
     );
   };
 
-  useSubscribe(REGISTRY_EVENTS.openStopJobModal, (id: number) => {
+  useSubscribe<number>(REGISTRY_EVENTS.openStopJobModal, (id) => {
     setImageTagId(id);
     setOpen(true);
   });
@@ -58,7 +58,9 @@ export function StopRegistryModal() {
       title="컨테이너 이미지 등록 종료"
       showCancelButton
       centered
-      closable
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >

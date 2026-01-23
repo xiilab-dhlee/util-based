@@ -23,7 +23,7 @@ export function SelectRegistryTypeModal() {
     publish(REGISTRY_EVENTS.openCreateModal, type);
   };
 
-  useSubscribe(REGISTRY_EVENTS.openSelectTypeModal, () => {
+  useSubscribe<void>(REGISTRY_EVENTS.openSelectTypeModal, () => {
     setOpen(true);
   });
 
