@@ -16,6 +16,7 @@ import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
+import { authHandlers } from "@/domain/auth/mocks";
 import { credentialHandlers } from "@/domain/credential/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
@@ -30,7 +31,6 @@ import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
-import { licenseHandlers } from "@/mocks/handlers/license.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { nodeHandlers } from "@/mocks/handlers/node.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
@@ -100,6 +100,7 @@ function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
  */
 const rawHandlers = [
   // Override handlers (우선순위 높음)
+  ...authHandlers,
   ...getAccountProfileMock(),
   ...notificationHandlers,
   ...hubHandlers,
@@ -127,7 +128,6 @@ const rawHandlers = [
   ...storageSettingHandlers,
   ...systemMonitoringHandlers,
   ...hpeHandlers,
-  ...licenseHandlers,
   ...smtpHandlers,
   ...reportHandlers,
   ...reportReservationHandlers,

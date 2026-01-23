@@ -151,7 +151,6 @@ const Key = styled(CompactCardKey)`
 const Value = styled(CompactCardValue)`
   line-height: 14px;
   text-indent: 16px;
-  text-transform: capitalize;
 `;
 
 const DescriptionKey = styled(Key)`
