@@ -88,7 +88,12 @@ export function RegistryTagCard({
           <Footer>
             <Row>
               <DescriptionKey>설 명</DescriptionKey>
-              <Description>{description || "-"}</Description>
+              <Description
+                className="truncate"
+                title={description || undefined}
+              >
+                {description || "-"}
+              </Description>
             </Row>
           </Footer>
         </Content>
@@ -162,7 +167,4 @@ const Description = styled(Value)`
   font-size: 12px;
   line-height: 16px;
   color: #6b7280;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
