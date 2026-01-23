@@ -23,12 +23,7 @@ type ScanMutationVariables =
   | PrivateScanMutationVariables
   | PublicScanMutationVariables;
 
-/**
- * 레지스트리 이미지 태그 취약점 스캔 (모드에 따라 다른 API 사용)
- *
- * @param mode - 레지스트리 모드 (private | public)
- * @returns 레지스트리 이미지 태그 스캔 mutation
- */
+/** mode에 따라 private 또는 public 이미지 태그 취약점 스캔 mutation을 반환 */
 export const useScanRegistryTagByMode = (
   mode: RegistryMode,
 ): UseMutationResult<unknown, unknown, ScanMutationVariables> => {
