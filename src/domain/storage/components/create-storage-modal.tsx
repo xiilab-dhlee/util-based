@@ -122,7 +122,7 @@ export function CreateStorageModal() {
                   placeholder="타입을 선택해 주세요."
                   options={STORAGE_CHANNEL_OPTIONS}
                   value={field.value}
-                  onChange={(value) => field.onChange(String(value))}
+                  onChange={(value) => field.onChange(value)}
                   width="100%"
                   disabled={isPending}
                 />

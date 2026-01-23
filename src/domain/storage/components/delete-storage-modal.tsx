@@ -29,6 +29,7 @@ export function DeleteStorageModal() {
   const { mutate, isPending } = useDeleteStorage();
 
   const handleCancel = () => {
+    if (isPending) return;
     setOpen(false);
   };
 

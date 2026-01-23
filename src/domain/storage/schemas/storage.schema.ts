@@ -8,6 +8,7 @@ import { StorageCreateRequestStorageChannel } from "@/api/generated/astragoBacke
 export const createStorageFormSchema = z.object({
   storageName: z
     .string()
+    .trim()
     .min(1, "스토리지 이름을 입력해 주세요.")
     .max(50, "스토리지 이름은 50자 이내로 입력해 주세요."),
   storageChannel: z.nativeEnum(StorageCreateRequestStorageChannel, {
@@ -15,6 +16,7 @@ export const createStorageFormSchema = z.object({
   }),
   storageIp: z
     .string()
+    .trim()
     .min(1, "IP 주소를 입력해 주세요.")
     .refine(
       (value) => {
@@ -27,6 +29,7 @@ export const createStorageFormSchema = z.object({
     ),
   storageSavePath: z
     .string()
+    .trim()
     .min(1, "스토리지 저장 PATH를 입력해 주세요.")
     .regex(/^\//, "경로는 /로 시작해야 합니다."),
 });

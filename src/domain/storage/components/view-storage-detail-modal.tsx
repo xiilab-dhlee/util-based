@@ -8,6 +8,7 @@ import { useGetStorageDetail } from "@/api/generated/admin-storage/admin-storage
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { STORAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { STORAGE_CHANNEL_LABEL } from "../constants/storage.constant";
 
 interface ViewStorageDetailModalPayload {
   id: number;
@@ -76,7 +77,11 @@ export function ViewStorageDetailModal() {
             </DetailRow>
             <DetailRow>
               <DetailLabel>타입</DetailLabel>
-              <DetailValue>{data?.storageChannel || "-"}</DetailValue>
+              <DetailValue>
+                {data?.storageChannel
+                  ? STORAGE_CHANNEL_LABEL[data?.storageChannel]
+                  : "-"}
+              </DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel>IP 주소</DetailLabel>
