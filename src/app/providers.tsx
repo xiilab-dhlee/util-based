@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 
 import { MySpinner } from "@/shared/components/spinner";
 import { AuthProvider } from "@/shared/providers/auth-provider";
+import { LicenseProvider } from "@/shared/providers/license-provider";
 import { MSWProvider } from "@/shared/providers/msw-provider";
 import { QueryProvider } from "@/shared/providers/query-provider";
 import { ServiceProvider } from "@/shared/providers/service-provider";
@@ -14,19 +15,21 @@ import { ThemeProvider } from "@/shared/providers/theme-provider";
 
 export function Providers({ children }: PropsWithChildren) {
   return (
-    <AuthProvider>
-      <MSWProvider>
-        <QueryProvider>
-          <StoreProvider>
-            <ServiceProvider>
-              <ThemeProvider>
-                <Suspense fallback={<MySpinner />}>{children}</Suspense>
-                <ToastContainer />
-              </ThemeProvider>
-            </ServiceProvider>
-          </StoreProvider>
-        </QueryProvider>
-      </MSWProvider>
-    </AuthProvider>
+    <MSWProvider>
+      <QueryProvider>
+        <LicenseProvider>
+          <AuthProvider>
+            <StoreProvider>
+              <ServiceProvider>
+                <ThemeProvider>
+                  <Suspense fallback={<MySpinner />}>{children}</Suspense>
+                  <ToastContainer />
+                </ThemeProvider>
+              </ServiceProvider>
+            </StoreProvider>
+          </AuthProvider>
+        </LicenseProvider>
+      </QueryProvider>
+    </MSWProvider>
   );
 }
