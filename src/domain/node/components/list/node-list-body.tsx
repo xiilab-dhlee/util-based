@@ -1,36 +1,39 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
+import type { ClusterNodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { nodeListColumn } from "@/domain/node/components/list/node-list-column";
-import { useGetNodes } from "@/domain/node/hooks/use-get-nodes";
-import { nodePageAtom } from "@/domain/node/state/node.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+
+interface NodeListBodyProps {
+  content: ClusterNodeListResponse[];
+  loading: boolean;
+  isError?: boolean;
+}
 
 /**
  * 노드 목록 페이지 본문 컴포넌트
  *
  * 노드 목록 페이지에서 노드 목록을 표시하는 테이블을 제공합니다.
  *
+ * @param content - 노드 목록 데이터
+ * @param loading - 로딩 여부
+ * @param isError - 에러 상태 여부
  * @returns 노드 목록 페이지 본문 컴포넌트
  */
-export function NodeListBody() {
-  // 페이지 번호만 사용
-  const page = useAtomValue(nodePageAtom);
-
-  const { data } = useGetNodes({
-    page,
-    size: LIST_PAGE_SIZE,
-  });
-
+export function NodeListBody({
+  content,
+  loading,
+  isError = false,
+}: NodeListBodyProps) {
   return (
     <ListWrapper>
       <CustomizedTable
         columns={nodeListColumn}
-        data={data?.content || []}
+        data={content}
         columnHeight={40}
+        loading={loading}
+        isError={isError}
       />
     </ListWrapper>
   );

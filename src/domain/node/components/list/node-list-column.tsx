@@ -1,12 +1,11 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import type { ClusterNodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NodeGpuDivisionButton } from "@/domain/node/components/list/node-gpu-division-button";
 import { NodeListIp } from "@/domain/node/components/list/node-list-ip";
 import { NodeLogButton } from "@/domain/node/components/list/node-log-button";
 import { NodeMigButton } from "@/domain/node/components/list/node-mig-button";
-import { NodeMpsButton } from "@/domain/node/components/list/node-mps-button";
 import { NodeScheduleSwitch } from "@/domain/node/components/list/node-schedule-switch";
-import type { NodeListType } from "@/domain/node/schemas/node.schema";
 import { NodeStatusText } from "@/shared/components/text/node-status-text";
 import { formatElapsedTime } from "@/shared/utils/date.util";
 import {
@@ -29,38 +28,43 @@ export const nodeListColumn: ResponsiveColumnType[] = [
     title: "노드 이름",
     dataIndex: "nodeName",
     align: "left",
-    render: (nodeName: string, record: NodeListType) => {
+    render: (nodeName: string, record: ClusterNodeListResponse) => {
+      // isScheduling이 true이면 노드가 정상 동작 중
+      const status = record.isScheduling ?? true;
       return (
         <ColumnLink href={`/admin/node/${nodeName}`}>
-          <NodeStatusText status={record.status} text={nodeName} />
+          <NodeStatusText status={status} text={nodeName} />
         </ColumnLink>
       );
     },
   },
   {
     title: "IP 주소",
-    dataIndex: "ip",
+    dataIndex: "nodeIp",
     align: "left",
     width: 140,
-    render: (ip: string, _, index: number) => {
+    render: (nodeIp: string, record: ClusterNodeListResponse) => {
+      // MIG 활성화 여부에 따라 타입 결정
       let type = "NONE";
-      if (index % 3 === 0) {
-        type = "MPS";
-      } else if (index % 4 === 0) {
+      if (record.isMigEnabled) {
         type = "MIG";
       }
+      // TODO: MPS 상태 확인 로직 추가 필요
       return (
         <ColumnAlignLeftWrap>
-          <NodeListIp ip={ip} type={type} />
+          <NodeListIp ip={nodeIp} type={type} />
         </ColumnAlignLeftWrap>
       );
     },
   },
   {
     title: "GPU 타입",
-    dataIndex: "modelName",
+    dataIndex: "gpuType",
     align: "left",
     width: 120,
+    render: (gpuType: string | undefined) => {
+      return <span>{gpuType || "-"}</span>;
+    },
   },
   {
     title: "GPU",
@@ -70,72 +74,81 @@ export const nodeListColumn: ResponsiveColumnType[] = [
   },
   {
     title: "GPU 사용량",
-    dataIndex: "gpuPercent",
+    dataIndex: "gpuUtilizationPercent",
     align: "center",
     width: 70,
-    render: (gpuPercent: number) => {
-      return <ColumnAlignCenterWrap>{gpuPercent}%</ColumnAlignCenterWrap>;
+    render: (gpuUtilizationPercent: number | undefined) => {
+      return (
+        <ColumnAlignCenterWrap>
+          {gpuUtilizationPercent != null ? `${gpuUtilizationPercent}%` : "-"}
+        </ColumnAlignCenterWrap>
+      );
     },
   },
   {
     title: "CPU",
-    dataIndex: "cpuPercent",
+    dataIndex: "cpuUtilizationPercent",
     align: "center",
     width: 50,
-    render: (cpuPercent: number) => {
-      return <ColumnAlignCenterWrap>{cpuPercent}%</ColumnAlignCenterWrap>;
+    render: (cpuUtilizationPercent: number | undefined) => {
+      return (
+        <ColumnAlignCenterWrap>
+          {cpuUtilizationPercent != null ? `${cpuUtilizationPercent}%` : "-"}
+        </ColumnAlignCenterWrap>
+      );
     },
   },
   {
     title: "Memory",
-    dataIndex: "memPercent",
+    dataIndex: "memoryUtilizationPercent",
     align: "center",
     width: 50,
-    render: (memPercent: number) => {
-      return <ColumnAlignCenterWrap>{memPercent}%</ColumnAlignCenterWrap>;
+    render: (memoryUtilizationPercent: number | undefined) => {
+      return (
+        <ColumnAlignCenterWrap>
+          {memoryUtilizationPercent != null
+            ? `${memoryUtilizationPercent}%`
+            : "-"}
+        </ColumnAlignCenterWrap>
+      );
     },
   },
   {
     title: "Disk",
-    dataIndex: "diskPercent",
+    dataIndex: "diskUtilizationPercent",
     align: "center",
     width: 50,
-    render: (diskPercent: number) => {
-      return <ColumnAlignCenterWrap>{diskPercent}%</ColumnAlignCenterWrap>;
+    render: (diskUtilizationPercent: number | undefined) => {
+      return (
+        <ColumnAlignCenterWrap>
+          {diskUtilizationPercent != null ? `${diskUtilizationPercent}%` : "-"}
+        </ColumnAlignCenterWrap>
+      );
     },
   },
   {
     title: "경과 시간",
-    dataIndex: "age",
+    dataIndex: "createdAt",
     align: "center",
     width: 120,
-    render: (age: NodeListType["age"]) => {
-      // age.days, age.hour, age.minutes를 현재 날짜에서 빼서 과거 날짜 계산
-      const now = new Date();
-      const pastDate = new Date(now);
-
-      // 일, 시간, 분을 빼서 과거 날짜 계산
-      pastDate.setDate(pastDate.getDate() - age.days);
-      pastDate.setHours(pastDate.getHours() - age.hour);
-      pastDate.setMinutes(pastDate.getMinutes() - age.minutes);
-
-      // ISO 8601 형식으로 변환
-      const isoDateStr = pastDate.toISOString();
-
-      return <span>{formatElapsedTime(isoDateStr)}</span>;
+    render: (createdAt: string | undefined) => {
+      if (!createdAt) {
+        return <span>-</span>;
+      }
+      return <span>{formatElapsedTime(createdAt)}</span>;
     },
   },
   {
     title: "스케줄링",
-    dataIndex: "schedulable",
+    dataIndex: "isScheduling",
     align: "center",
     width: 80,
-    render: (schedulable: boolean, record: NodeListType) => {
+    render: (isScheduling: boolean, record: ClusterNodeListResponse) => {
       return (
         <ColumnAlignCenterWrap>
           <NodeScheduleSwitch
             nodeName={record.nodeName}
-            schedulable={schedulable}
+            schedulable={isScheduling}
           />
         </ColumnAlignCenterWrap>
       );
@@ -146,15 +159,20 @@ export const nodeListColumn: ResponsiveColumnType[] = [
     dataIndex: "nodeName",
     align: "center",
     width: 70,
-    render: (nodeName: string, _, index: number) => {
+    render: (nodeName: string, record: ClusterNodeListResponse) => {
       let component = null;
-      if (index === 0) {
-        component = <NodeMpsButton nodeName={nodeName} />;
-      } else if (index === 1) {
+      // MIG 활성화 상태에 따라 버튼 표시
+      if (record.isMigEnabled) {
         component = <NodeMigButton nodeName={nodeName} />;
       } else {
-        component = <NodeGpuDivisionButton nodeName={nodeName} />;
+        // GPU가 있는 경우에만 분할 버튼 표시
+        if (record.gpuCount > 0) {
+          component = <NodeGpuDivisionButton nodeName={nodeName} />;
+        } else {
+          component = <span>-</span>;
+        }
       }
+      // TODO: MPS 상태 확인 로직 추가 필요
       return <ColumnAlignCenterWrap>{component}</ColumnAlignCenterWrap>;
     },
   },
