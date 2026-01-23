@@ -14,6 +14,7 @@ import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationMock } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
+import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { authHandlers } from "@/domain/auth/mocks";
@@ -39,7 +40,6 @@ import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.h
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
-import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
@@ -126,13 +126,13 @@ const rawHandlers = [
   ...revokeHistoryHandlers,
   ...systemMonitoringHandlers,
   ...hpeHandlers,
-  ...smtpHandlers,
   ...reportHandlers,
   ...reportReservationHandlers,
   ...resourcePresetHandlers,
   ...storageHandlers,
   ...getAdminQueueMock(),
   ...getAdminWorkloadMock(),
+  ...getSmtpSettingsMock(),
 ];
 
 /**
