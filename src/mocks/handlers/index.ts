@@ -20,7 +20,7 @@ import { authHandlers } from "@/domain/auth/mocks";
 import { credentialHandlers } from "@/domain/credential/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
-import { privateRegistryHandlers } from "@/domain/private-registry/mocks";
+import { registryHandlers } from "@/domain/registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
@@ -119,7 +119,7 @@ const rawHandlers = [
   ...accountManagementHandlers,
   ...monitoringHandlers,
   ...getAdminMonitoringNotificationMock(),
-  ...privateRegistryHandlers,
+  ...registryHandlers,
   ...gpuHandlers,
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,

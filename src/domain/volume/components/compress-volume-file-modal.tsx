@@ -25,11 +25,6 @@ interface CompressVolumeFilePayload {
   filePaths: string[];
 }
 
-const DEFAULT_VALUES: CompressVolumeFileFormType = {
-  destinationPath: "",
-  compressFileType: "ZIP",
-};
-
 export function CompressVolumeFileModal() {
   const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
@@ -46,7 +41,6 @@ export function CompressVolumeFileModal() {
     formState: { errors },
   } = useForm<CompressVolumeFileFormType>({
     resolver: zodResolver(compressVolumeFileSchema),
-    defaultValues: DEFAULT_VALUES,
   });
 
   const { mutate, isPending } = useCompressFiles();
@@ -90,7 +84,7 @@ export function CompressVolumeFileModal() {
     (eventData) => {
       setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
-      reset(DEFAULT_VALUES);
+      reset({ destinationPath: "", compressFileType: "ZIP" });
       setOpen(true);
     },
   );

@@ -7,11 +7,11 @@ import { Button, Switch } from "xiilab-ui";
 import { WorkloadTypeCriteriaCard } from "@/domain/revoke/components/workload-type-criteria-card";
 import { useGetRevokeCriteria } from "@/domain/revoke/hooks/use-get-revoke-criteria";
 import { openResourceRevokeCriteriaModalAtom } from "@/domain/revoke/state/revoke-history.atom";
+import { SettingBox } from "@/domain/system-setting/components/setting-box";
 import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { TooltipHighlightText } from "@/styles/mixins/text";
-import { SettingBox } from "./setting-box";
 
 /**
  * 리소스 회수 기준 설정 컴포넌트

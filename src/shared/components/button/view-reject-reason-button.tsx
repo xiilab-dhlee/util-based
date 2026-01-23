@@ -10,7 +10,7 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface ViewRejectReasonButtonProps {
-  reason: string;
+  reason?: string;
   disabled?: boolean;
 }
 

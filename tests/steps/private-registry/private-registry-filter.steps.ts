@@ -1,6 +1,6 @@
 import { createBdd, type DataTable } from "playwright-bdd";
 
-import { PRIVATE_REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
+import { REGISTRY_SELECTOR } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
 
 /** 필터 조건 타입 */
@@ -94,7 +94,7 @@ Then(
 
     // 구분 검증 (대소문자 무시 비교)
     await privateRegistryListPage.table.forEachCell(
-      PRIVATE_REGISTRY_SELECTOR.IMAGE_TYPE,
+      REGISTRY_SELECTOR.IMAGE_TYPE,
       (text, i) => {
         assertLogger.assertEqual(
           `개인 레지스트리[${i}] 구분`,
@@ -185,7 +185,7 @@ Then(
     await privateRegistryListPage.jobListGrid.forEachCard(async (index) => {
       const text = await privateRegistryListPage.jobListGrid.getCardElementText(
         index,
-        PRIVATE_REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE,
+        REGISTRY_SELECTOR.JOB_LIST_IMAGE_TYPE,
       );
       assertLogger.assertEqual(
         `등록 중인 이미지[${index}] 구분`,

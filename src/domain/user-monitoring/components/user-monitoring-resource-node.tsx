@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
+import { UserMonitoringResourceProgress } from "@/domain/user-monitoring/components/user-monitoring-resource-progress";
 import type { CoreResourceType } from "@/shared/types/core.interface";
-import { UserMonitoringResourceProgress } from "./user-monitoring-resource-progress";
 
 interface UserMonitoringResourceNodeProps {
   resourceType: CoreResourceType;

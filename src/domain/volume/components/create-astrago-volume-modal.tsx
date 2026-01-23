@@ -22,13 +22,6 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
-const DEFAULT_FORM_VALUES: CreateAstragoVolumeFormType = {
-  volumeName: "",
-  isPublic: "true",
-  mountPath: "",
-  storageId: "",
-};
-
 export function CreateAstragoVolumeModal() {
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
@@ -42,7 +35,6 @@ export function CreateAstragoVolumeModal() {
     reset,
   } = useForm<CreateAstragoVolumeFormType>({
     resolver: zodResolver(createAstragoVolumeSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
   });
 
   const handleCancel = () => {
@@ -76,7 +68,7 @@ export function CreateAstragoVolumeModal() {
   };
 
   useSubscribe(VOLUME_EVENTS.openCreateAstragoModal, () => {
-    reset(DEFAULT_FORM_VALUES);
+    reset({ volumeName: "", isPublic: "true", mountPath: "", storageId: "" });
     setOpen(true);
   });
 

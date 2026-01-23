@@ -4,6 +4,7 @@ import { useAtom } from "jotai";
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { ResourceUsageBar } from "@/domain/workload/components/create/resource-usage-bar";
 import {
   launcherCpuCoreAtom,
   launcherMemoryGbAtom,
@@ -12,7 +13,6 @@ import {
   workerMemoryGbAtom,
 } from "@/domain/workload/state/create-workload.atom";
 import { Slider } from "@/shared/components/slider";
-import { ResourceUsageBar } from "./resource-usage-bar";
 
 interface SetMultinodeResourceProps {
   nodeCount: number;

@@ -2,10 +2,10 @@
 
 import styled from "styled-components";
 
+import { ReadyLog } from "@/domain/node/components/log/ready-log";
+import { UnreadyLog } from "@/domain/node/components/log/unready-log";
 import { RedfishPrimaryArticle } from "@/domain/node/components/redfish/redfish-primary-article";
 import { useGetNodeBmcInfo } from "@/domain/node/hooks/use-get-bmc-info";
-import { ReadyLog } from "./ready-log";
-import { UnreadyLog } from "./unready-log";
 
 /**
  * 노드 로그 페이지의 메인 바디 컴포넌트

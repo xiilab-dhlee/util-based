@@ -2,8 +2,8 @@
 
 import styled from "styled-components";
 
+import { ResourceCard } from "@/domain/request-resource/components/resource-card";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
-import { ResourceCard } from "./resource-card";
 
 export function ResourcePageAside() {
   return (

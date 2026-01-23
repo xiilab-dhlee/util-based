@@ -1,5 +1,6 @@
 import type { HTMLAttributes, MouseEvent } from "react";
 
+import { redfishFirmwareColumn } from "@/domain/node/components/redfish/redfish-firmware-column";
 import type { FirmwareInfoType } from "@/domain/node/schemas/redfish.schema";
 import { ToggleTableRow } from "@/shared/components/table/toggle-table-row";
 import { useToggle } from "@/shared/hooks/use-toggle";
@@ -13,7 +14,6 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import { redfishFirmwareColumn } from "./redfish-firmware-column";
 
 interface FirmwareRowProps extends HTMLAttributes<HTMLTableRowElement> {
   rowData: FirmwareInfoType;

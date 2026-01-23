@@ -38,7 +38,6 @@ export function CreateVolumeFolderModal() {
     reset,
   } = useForm<CreateVolumeFolderFormType>({
     resolver: zodResolver(createVolumeFolderSchema),
-    defaultValues: { folderName: "" },
   });
 
   const { mutate, isPending } = useCreateFolder();

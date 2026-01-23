@@ -1,7 +1,10 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal, type TabsSeparatedItem } from "xiilab-ui";
 
+import { NetworkPortRow } from "@/domain/node/components/redfish/network-port-row";
+import { redfishNetworkDeviceColumn } from "@/domain/node/components/redfish/redfish-network-device-column";
+import { redfishNetworkPortColumn } from "@/domain/node/components/redfish/redfish-network-port-column";
 import type { NetworkAdapterInfoType } from "@/domain/node/schemas/redfish.schema";
 import { openViewNetworkPortsModalAtom } from "@/domain/node/state/node.atom";
 import { StateTab } from "@/shared/components/tab";
@@ -9,9 +12,6 @@ import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { REDFISH_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { NetworkPortRow } from "./network-port-row";
-import { redfishNetworkDeviceColumn } from "./redfish-network-device-column";
-import { redfishNetworkPortColumn } from "./redfish-network-port-column";
 
 const TAB_ITEMS: TabsSeparatedItem[] = [
   {

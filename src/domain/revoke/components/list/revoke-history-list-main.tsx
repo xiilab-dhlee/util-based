@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { Icon } from "xiilab-ui";
 
+import { RevokeHistoryListBody } from "@/domain/revoke/components/list/revoke-history-list-body";
+import { RevokeHistoryListFilter } from "@/domain/revoke/components/list/revoke-history-list-filter";
+import { RevokeHistoryListFooter } from "@/domain/revoke/components/list/revoke-history-list-footer";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
@@ -13,9 +16,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { RevokeHistoryListBody } from "./revoke-history-list-body";
-import { RevokeHistoryListFilter } from "./revoke-history-list-filter";
-import { RevokeHistoryListFooter } from "./revoke-history-list-footer";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {

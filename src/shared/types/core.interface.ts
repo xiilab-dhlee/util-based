@@ -4,7 +4,13 @@
  */
 
 // 보안 상태 타입
-export type CoreSecurityLevel = "ALL" | "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
+export type CoreSecurityLevel =
+  | "ALL"
+  | "CRITICAL"
+  | "HIGH"
+  | "MEDIUM"
+  | "LOW"
+  | "UNKNOWN";
 // 파일 트리 들여쓰기 위치 타입
 export type CoreFileIndentPosition = "first" | "middle" | "last";
 // 파일 압축 타입

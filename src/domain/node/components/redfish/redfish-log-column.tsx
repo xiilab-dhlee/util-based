@@ -2,8 +2,8 @@ import { format } from "date-fns";
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Label, type LabelColorVariant } from "xiilab-ui";
 
+import { redfishExpandColumn } from "@/domain/node/components/redfish/redfish-expand-column";
 import { getHealthStatusInfo } from "@/domain/node/utils/redfish.util";
-import { redfishExpandColumn } from "./redfish-expand-column";
 
 export const redfishLogColumn: ResponsiveColumnType[] = [
   {

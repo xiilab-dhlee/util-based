@@ -3,6 +3,8 @@
 import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 
+import { CreateWorkloadHubImageSelect } from "@/domain/workload/components/create/create-workload-hub-image-select";
+import { CreateWorkloadImageButton } from "@/domain/workload/components/create/create-workload-image-button";
 import {
   imageTypeAtom,
   jobTypeAtom,
@@ -10,10 +12,6 @@ import {
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { WorkloadImageTooltipTitle } from "@/shared/components/tooltip-title/workload-image-tooltip-title";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import { CreateWorkloadHubImageSelect } from "./create-workload-hub-image-select";
-import { CreateWorkloadImageButton } from "./create-workload-image-button";
-import { CreateWorkloadInternalRegistryImageSelect } from "./create-workload-internal-registry-image-select";
-import { CreateWorkloadInternalRegistryImageTagSelect } from "./create-workload-internal-registry-image-tag-select";
 
 export function CreateWorkloadImage() {
   const jobType = useAtomValue(jobTypeAtom);
@@ -59,12 +57,7 @@ export function CreateWorkloadImage() {
       <ImageSelectionContainer>
         {imageType === "HUB" && <CreateWorkloadHubImageSelect />}
         {imageType === "BUILTIN" && <span>준비 중입니다.</span>}
-        {imageType === "INTERNAL_REGISTRY" && (
-          <>
-            <CreateWorkloadInternalRegistryImageSelect />
-            <CreateWorkloadInternalRegistryImageTagSelect />
-          </>
-        )}
+        {imageType === "INTERNAL_REGISTRY" && <span>준비 중입니다.</span>}
         {imageType === "EXTERNAL_REGISTRY" && <span>준비 중입니다.</span>}
         {/* <Dropdown
           options={imageOptions}

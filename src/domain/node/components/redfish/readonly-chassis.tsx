@@ -1,11 +1,11 @@
 "use client";
 
 import { ChassisRow } from "@/domain/node/components/redfish/chassis-row";
+import { redfishChassisColumn } from "@/domain/node/components/redfish/redfish-chassis-column";
 import { useGetRedfishSystemChassis } from "@/domain/node/hooks/use-get-redfish-system-chassis";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
 import { DetailContentFeature } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { redfishChassisColumn } from "./redfish-chassis-column";
 
 /**
  * Redfish 시스템의 케이스 정보를 읽기 전용으로 표시하는 컴포넌트

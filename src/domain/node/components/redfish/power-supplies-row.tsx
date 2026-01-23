@@ -1,5 +1,6 @@
 import type { HTMLAttributes, MouseEvent } from "react";
 
+import { redfishPowerSupplyColumn } from "@/domain/node/components/redfish/redfish-power-supply-column";
 import type { PowerSupplyInfoType } from "@/domain/node/schemas/redfish.schema";
 import { ToggleTableRow } from "@/shared/components/table/toggle-table-row";
 import { useToggle } from "@/shared/hooks/use-toggle";
@@ -13,7 +14,6 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import { redfishPowerSupplyColumn } from "./redfish-power-supply-column";
 
 interface PowerSuppliesRowProps extends HTMLAttributes<HTMLTableRowElement> {
   rowData: PowerSupplyInfoType;

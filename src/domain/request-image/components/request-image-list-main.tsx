@@ -2,6 +2,11 @@
 
 import { Icon } from "xiilab-ui";
 
+import { ApproveRequestImageModal } from "@/domain/request-image/components/approve-request-image-modal";
+import { RejectRequestImageModal } from "@/domain/request-image/components/reject-request-image-modal";
+import { RequestImageListBody } from "@/domain/request-image/components/request-image-list-body";
+import { RequestImageListFilter } from "@/domain/request-image/components/request-image-list-filter";
+import { RequestImageListFooter } from "@/domain/request-image/components/request-image-list-footer";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
@@ -13,11 +18,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-import { ApproveRequestImageModal } from "./approve-request-image-modal";
-import { RejectRequestImageModal } from "./reject-request-image-modal";
-import { RequestImageListBody } from "./request-image-list-body";
-import { RequestImageListFilter } from "./request-image-list-filter";
-import { RequestImageListFooter } from "./request-image-list-footer";
 
 const GUIDE_IMAGES: CoreGuideImage[] = [
   {

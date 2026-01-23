@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { groupBy } from "es-toolkit";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -7,6 +7,10 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 import { Icon, Modal, Radio } from "xiilab-ui";
 
+import { MigConfigSelect } from "@/domain/node/components/mig/mig-config-select";
+import { MigCountSelect } from "@/domain/node/components/mig/mig-count-select";
+import { MigGpuItem } from "@/domain/node/components/mig/mig-gpu-item";
+import { SelectDisplayConfig } from "@/domain/node/components/mig/select-display-config";
 import { useGetNodeMigInfo } from "@/domain/node/hooks/use-get-mig-info";
 import { useUpdateMig } from "@/domain/node/hooks/use-update-mig";
 import type { NodeListType } from "@/domain/node/schemas/node.schema";
@@ -30,10 +34,6 @@ import { UpdateMigTooltipTitle } from "@/shared/components/tooltip-title/update-
 import { NODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { MigConfigSelect } from "./mig-config-select";
-import { MigCountSelect } from "./mig-count-select";
-import { MigGpuItem } from "./mig-gpu-item";
-import { SelectDisplayConfig } from "./select-display-config";
 
 // import { useDisableMig } from "@/domain/node/hooks/use-disable-mig";
 

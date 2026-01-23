@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import styled from "styled-components";
 
+import { MemoryRow } from "@/domain/node/components/redfish/memory-row";
+import { redfishMemoryColumn } from "@/domain/node/components/redfish/redfish-memory-column";
 import { useGetRedfishSystemMemory } from "@/domain/node/hooks/use-get-redfish-system-memory";
 import type {
   MemoryInfoType,
@@ -20,8 +22,6 @@ import {
   DetailContentFeatureRow,
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { MemoryRow } from "./memory-row";
-import { redfishMemoryColumn } from "./redfish-memory-column";
 
 /**
  * Redfish 시스템의 메모리 정보를 읽기 전용으로 표시하는 컴포넌트

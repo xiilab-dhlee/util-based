@@ -14,6 +14,7 @@ interface UserMonitoringQuickMenuProps {
   iconSize: number;
   /** 메뉴의 제목 (한글) */
   title: string;
+  description?: string;
   /** 컴포넌트의 높이 (픽셀 단위, 기본값: 100) */
   height?: number;
 }
@@ -57,6 +58,7 @@ export function UserMonitoringQuickMenu({
   icon,
   iconSize,
   title,
+  description,
   height = 100,
 }: UserMonitoringQuickMenuProps) {
   return (
@@ -75,6 +77,7 @@ export function UserMonitoringQuickMenu({
       {/* 텍스트 영역 - 하단에 위치 */}
       <Body>
         <Title>{title}</Title>
+        <Description>{description}</Description>
       </Body>
     </Container>
   );
@@ -161,4 +164,12 @@ const Title = styled.span`
   font-size: 14px;
   line-height: 17px;
   color: #d1d1d1;
+`;
+
+const Description = styled.p`
+font-weight: 400;
+font-size: 12px;
+line-height: 1;
+letter-spacing: 0;
+color: #868994;
 `;

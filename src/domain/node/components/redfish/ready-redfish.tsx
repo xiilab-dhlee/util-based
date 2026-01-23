@@ -1,10 +1,18 @@
-﻿"use client";
+"use client";
 
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
+import { ReadonlyChassis } from "@/domain/node/components/redfish/readonly-chassis";
+import { ReadonlyDevice } from "@/domain/node/components/redfish/readonly-device";
+import { ReadonlyFirmware } from "@/domain/node/components/redfish/readonly-firmware";
+import { ReadonlyMemory } from "@/domain/node/components/redfish/readonly-memory";
+import { ReadonlyNetworkAdapter } from "@/domain/node/components/redfish/readonly-network-adapter";
+import { ReadonlyPowerSupplies } from "@/domain/node/components/redfish/readonly-power-supplies";
+import { ReadonlyProcessor } from "@/domain/node/components/redfish/readonly-processor";
+import { ReadonlyThermal } from "@/domain/node/components/redfish/readonly-thermal";
 import { useGetNodeBmcInfo } from "@/domain/node/hooks/use-get-bmc-info";
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
 import { useGetRedfishSystems } from "@/domain/node/hooks/use-get-redfish-systems";
@@ -25,14 +33,6 @@ import {
   DetailContentFeatureRow,
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { ReadonlyChassis } from "./readonly-chassis";
-import { ReadonlyDevice } from "./readonly-device";
-import { ReadonlyFirmware } from "./readonly-firmware";
-import { ReadonlyMemory } from "./readonly-memory";
-import { ReadonlyNetworkAdapter } from "./readonly-network-adapter";
-import { ReadonlyPowerSupplies } from "./readonly-power-supplies";
-import { ReadonlyProcessor } from "./readonly-processor";
-import { ReadonlyThermal } from "./readonly-thermal";
 
 /**
  * Redfish 연동 상태의 메인 컴포넌트

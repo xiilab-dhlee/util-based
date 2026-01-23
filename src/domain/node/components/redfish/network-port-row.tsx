@@ -1,5 +1,6 @@
 import type { HTMLAttributes, MouseEvent } from "react";
 
+import { redfishNetworkPortColumn } from "@/domain/node/components/redfish/redfish-network-port-column";
 import type { NetworkAdapterInfoType } from "@/domain/node/schemas/redfish.schema";
 import { ToggleTableRow } from "@/shared/components/table/toggle-table-row";
 import { useToggle } from "@/shared/hooks/use-toggle";
@@ -13,7 +14,6 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import { redfishNetworkPortColumn } from "./redfish-network-port-column";
 
 interface NetworkPortRowProps extends HTMLAttributes<HTMLTableRowElement> {
   rowData: NetworkAdapterInfoType;

@@ -1,5 +1,6 @@
 import type { HTMLAttributes, MouseEvent } from "react";
 
+import { redfishProcessorColumn } from "@/domain/node/components/redfish/redfish-processor-column";
 import type { ProcessorInfoType } from "@/domain/node/schemas/redfish.schema";
 import { ToggleTableRow } from "@/shared/components/table/toggle-table-row";
 import { useToggle } from "@/shared/hooks/use-toggle";
@@ -13,7 +14,6 @@ import {
   TableCollapseRowRecordKey,
   TableCollapseRowRecordValue,
 } from "@/styles/layers/table-collapse-row.styled";
-import { redfishProcessorColumn } from "./redfish-processor-column";
 
 interface ProcessorRowProps extends HTMLAttributes<HTMLTableRowElement> {
   rowData: ProcessorInfoType;

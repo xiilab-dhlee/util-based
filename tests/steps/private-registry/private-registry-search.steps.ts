@@ -1,7 +1,7 @@
 import { createBdd } from "playwright-bdd";
 
 import {
-  PRIVATE_REGISTRY_SELECTOR,
+  REGISTRY_SELECTOR,
   SELECTOR,
 } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
@@ -33,7 +33,7 @@ Then(
     // 검색 결과 검증
     await privateRegistryListPage.table.validateSearch(
       await listSearchInput.getValue(),
-      PRIVATE_REGISTRY_SELECTOR.IMAGE_NAME,
+      REGISTRY_SELECTOR.IMAGE_NAME,
       assertLogger,
       $testInfo,
       "개인 레지스트리",

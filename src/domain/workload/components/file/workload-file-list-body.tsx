@@ -3,14 +3,14 @@
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
+import { EmptyFile } from "@/domain/workload/components/file/empty-file";
+import { WorkloadFileCard } from "@/domain/workload/components/file/workload-file-card";
 import {
   workloadFileSelectedNodeInfoAtom,
   workloadFileTreeDataAtom,
 } from "@/domain/workload/state/workload.atom";
 import { DetailContentKey } from "@/styles/layers/detail-page-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { EmptyFile } from "./empty-file";
-import { WorkloadFileCard } from "./workload-file-card";
 
 /**
  * 워크로드 파일 목록 본문 컴포넌트

@@ -1,4 +1,4 @@
-import type { RequestResourceStatusType } from "../schemas/request-resource.schema";
+import type { RequestResourceStatusType } from "@/domain/request-resource/schemas/request-resource.schema";
 
 /** 리소스 요청 쿼리 키 */
 export const REQUEST_RESOURCE_QUERY_KEY = "request-resource";

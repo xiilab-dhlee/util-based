@@ -3,6 +3,7 @@ import { createBdd } from "playwright-bdd";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { test } from "../../fixtures";
+import { createUnitPattern } from "../../support/patterns";
 
 /**
  * 목록 페이지 공통 Step Definitions
@@ -74,7 +75,7 @@ Given(
 Then("목록 페이지의 총 개수가 표시된다", async ({ page, assertLogger }) => {
   const totalCount = page.getByTestId(SELECTOR.LIST_TOTAL_COUNT);
   const text = (await totalCount.textContent()) ?? "";
-  assertLogger.assertMatch("총 개수", text, /^\d+(,\d{3})*$/);
+  assertLogger.assertMatch("총 개수", text, createUnitPattern());
 });
 
 Then(

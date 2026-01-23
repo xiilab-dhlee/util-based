@@ -2,9 +2,9 @@
 
 import { useParams } from "next/navigation";
 
+import { NodeLogBody } from "@/domain/node/components/log/node-log-body";
 import { ManageBmcModal } from "@/domain/node/components/manage-bmc-modal";
 import { useGetNode } from "@/domain/node/hooks/use-get-node";
-import { NodeLogBody } from "./node-log-body";
 
 /**
  * 노드 로그 페이지의 최상위 컴포넌트

@@ -3,9 +3,6 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { InternalRegistryService } from "@/domain/internal-registry/api/internal-registry.service";
-import { AdminInternalRegistryImageService } from "@/domain/internal-registry-image/api/admin-internal-registry-image.service";
-import { InternalRegistryImageService } from "@/domain/internal-registry-image/api/internal-registry-image.service";
 import { UserResourceService } from "@/domain/monitoring/api/user-resource.service";
 import { NodeService } from "@/domain/node/api/node.service";
 import { RedfishService } from "@/domain/node/api/redfish.service";
@@ -39,9 +36,6 @@ interface ServiceContextType {
   requestImageService: RequestImageService;
   reportService: ReportService;
   reportReservationService: ReportReservationService;
-  internalregistryService: InternalRegistryService;
-  internalregistryImageService: InternalRegistryImageService;
-  adminInternalRegistryImageService: AdminInternalRegistryImageService;
   gpuService: GpuService;
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
@@ -81,9 +75,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     requestImageService: new RequestImageService(),
     reportService: new ReportService(),
     reportReservationService: new ReportReservationService(),
-    internalregistryService: new InternalRegistryService(),
-    internalregistryImageService: new InternalRegistryImageService(),
-    adminInternalRegistryImageService: new AdminInternalRegistryImageService(),
     gpuService: new GpuService(),
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),

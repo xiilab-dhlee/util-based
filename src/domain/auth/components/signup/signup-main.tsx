@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { Dropdown, FormItem, Icon, Input, Typography } from "xiilab-ui";
 
 import { useSignup } from "@/api/generated/account-registration/account-registration";
+import { CompleteSignup } from "@/domain/auth/components/signup/complete-signup";
 import {
   type SignupFormType,
   signupSchema,
@@ -21,8 +22,8 @@ import {
   AuthTitle,
   AuthTitleIconWrapper,
 } from "@/domain/auth/styles/layers/auth-layers.styled";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
-import { CompleteSignup } from "./complete-signup";
 
 /**
  * 회원가입 페이지의 메인 컴포넌트
@@ -58,7 +59,9 @@ export function SignupMain() {
   const { mutate: signup, isPending } = useSignup();
 
   const onSubmit = (data: SignupFormType) => {
-    if (isPending) return;
+    if (isPending) {
+      return;
+    }
 
     signup(
       {
@@ -288,7 +291,7 @@ export function SignupMain() {
           계정이 있으신가요?
         </Typography.Text>
         <StyledLink
-          href="/signin"
+          href={ROUTES.AUTH_SIGNIN}
           data-testid={AUTH_SELECTOR.SIGNUP_LOGIN_LINK}
         >
           <Typography.Text variant="body-2-3" color="#544AD8">

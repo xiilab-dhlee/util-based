@@ -145,37 +145,31 @@ export const REQUEST_IMAGE_EVENTS = {
 } as const;
 
 // 개인 레지스트리 관련 이벤트
-export const PRIVATE_REGISTRY_EVENTS = {
-  // 프라이빗 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeletePrivateRegistry: "private-registry:send-delete-private-registry",
-  // 프라이빗 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImageTag: "private-registry:send-delete-image-tag",
-  // 프라이빗 레지스트리 구분 선택 후 생성 모달에 전달 이벤트
-  sendType: "private-registry:send-type",
-  // 프라이빗 레지스트리 구분 선택 모달 초기화 이벤트
-  clearSelectDivisionModal: "private-registry:clear-select-division-modal",
-  // 프라이빗 레지스트리 이미지 태그 생성에 필요한 정보 전달 이벤트
-  sendCreateTagData: "private-registry:send-create-tag-data",
-  // 이미지 등록 Job 재시작에 필요한 정보 전달 이벤트
-  sendRestartImageJob: "private-registry:send-restart-image-job",
-  // 이미지 등록 Job 종료에 필요한 정보 전달 이벤트
-  sendStopImageJob: "private-registry:send-stop-image-job",
-} as const;
-
-// 내부 레지스트리 이미지 관련 이벤트
-export const INTERNAL_REGISTRY_IMAGE_EVENTS = {
-  // 내부 레지스트리 이미지 수정에 필요한 정보 전달 이벤트
-  sendUpdateImage:
-    "internal-registry-image:send-update-internal-registry-image",
-  // 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImage:
-    "internal-registry-image:send-delete-internal-registry-image",
-  // 내부 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImageTag:
-    "internal-registry-image:send-delete-internal-registry-image-tag",
-  // 관리자 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteAdminRegistryImage:
-    "internal-registry-image:send-delete-admin-internal-registry-image",
+export const REGISTRY_EVENTS = {
+  // 레지스트리 이미지 유형 선택 모달 열기
+  openSelectTypeModal: "registry:open-select-type-modal",
+  // 레지스트리 이미지 생성 모달 열기
+  openCreateModal: "registry:open-create-modal",
+  // 레지스트리 이미지 삭제 모달 열기
+  openDeleteModal: "registry:open-delete-modal",
+  // 레지스트리 로그 보기 모달 열기
+  openLogModal: "registry:open-log-modal",
+  // 이미지 등록 Job 재시작 모달 열기
+  openRestartJobModal: "registry:open-restart-job-modal",
+  // 이미지 등록 Job 종료 모달 열기
+  openStopJobModal: "registry:open-stop-job-modal",
+  // 레지스트리 이미지 태그 삭제 모달 열기
+  openDeleteTagModal: "registry:open-delete-tag-modal",
+  // 레지스트리 이미지 태그 생성 모달 열기
+  openCreateTagModal: "registry:open-create-tag-modal",
+  // 레지스트리 이미지 태그 상세 보기 모달 열기
+  openTagDetailModal: "registry:open-tag-detail-modal",
+  // 레지스트리 이미지 태그 스캔 모달 열기
+  openScanTagModal: "registry:open-scan-tag-modal",
+  // 레지스트리 이미지 태그 수정 모달 열기
+  openEditTagModal: "registry:open-edit-tag-modal",
+  // 이미지 태그 사용 요청 모달 열기
+  openRequestUseModal: "registry:open-request-use-modal",
 } as const;
 
 // 파일 보안 관련 이벤트

@@ -6,6 +6,7 @@ import { useAtomValue } from "jotai";
 import { DisabledWorkloadListBody } from "@/domain/workload/components/list/disabled-workload-list-body";
 import { DisabledWorkloadListFilter } from "@/domain/workload/components/list/disabled-workload-list-filter";
 import { DisabledWorkloadListFooter } from "@/domain/workload/components/list/disabled-workload-list-footer";
+import { RestartWorkloadModal } from "@/domain/workload/components/restart-workload-modal";
 import { useGetDisabledWorkloads } from "@/domain/workload/hooks/use-get-disabled-workloads";
 import {
   disabledWorkloadJobTypeAtom,
@@ -13,7 +14,6 @@ import {
   disabledWorkloadSearchTextAtom,
 } from "@/domain/workload/state/workload.atom";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
-import { RestartWorkloadModal } from "../restart-workload-modal";
 
 /**
  * 비활성화 워크로드 목록 메인 컴포넌트

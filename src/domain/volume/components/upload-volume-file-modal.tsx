@@ -19,10 +19,6 @@ interface UploadVolumeFilePayload {
   volumeId: number;
 }
 
-const DEFAULT_VALUES: UploadVolumeFileFormType = {
-  uploadPath: "",
-};
-
 export function UploadVolumeFileModal() {
   const [open, setOpen] = useState(false);
   const [volumeId, setVolumeId] = useState<number | null>(null);
@@ -35,7 +31,6 @@ export function UploadVolumeFileModal() {
     formState: { errors },
   } = useForm<UploadVolumeFileFormType>({
     resolver: zodResolver(uploadVolumeFileSchema),
-    defaultValues: DEFAULT_VALUES,
   });
 
   const uploadPath = watch("uploadPath");
@@ -64,7 +59,7 @@ export function UploadVolumeFileModal() {
 
   const resetModal = () => {
     clearFiles();
-    reset(DEFAULT_VALUES);
+    reset({ uploadPath: "" });
     setOpen(false);
   };
 
@@ -91,7 +86,7 @@ export function UploadVolumeFileModal() {
     VOLUME_EVENTS.openUploadFileModal,
     (eventData) => {
       setVolumeId(eventData.volumeId);
-      reset(DEFAULT_VALUES);
+      reset({ uploadPath: "" });
       clearFiles();
       setOpen(true);
     },

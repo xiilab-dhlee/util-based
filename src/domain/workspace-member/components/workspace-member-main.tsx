@@ -1,10 +1,10 @@
 "use client";
 
-import { DeleteWorkspaceMemberModal } from "./delete-workspace-member-modal";
-import { UpdateWorkspaceMemberModal } from "./update-workspace-member-modal";
-import { WorkspaceMemberBody } from "./workspace-member-body";
-import { WorkspaceMemberFilter } from "./workspace-member-filter";
-import { WorkspaceMemberFooter } from "./workspace-member-footer";
+import { DeleteWorkspaceMemberModal } from "@/domain/workspace-member/components/delete-workspace-member-modal";
+import { UpdateWorkspaceMemberModal } from "@/domain/workspace-member/components/update-workspace-member-modal";
+import { WorkspaceMemberBody } from "@/domain/workspace-member/components/workspace-member-body";
+import { WorkspaceMemberFilter } from "@/domain/workspace-member/components/workspace-member-filter";
+import { WorkspaceMemberFooter } from "@/domain/workspace-member/components/workspace-member-footer";
 
 export function WorkspaceMemberMain() {
   return (

@@ -1,10 +1,10 @@
 "use client";
 
+import { GenerateGpuInstance } from "@/domain/node/components/mig/generate-gpu-instance";
 import type {
   GpuInstanceRow,
   GpuModelConfig,
 } from "@/domain/node/types/node.type";
-import { GenerateGpuInstance } from "./generate-gpu-instance";
 
 /**
  * A30 GPU 설정을 기반으로 GpuInstanceRow 배열을 생성합니다.

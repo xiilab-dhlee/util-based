@@ -12,6 +12,7 @@ import {
   getGetVolumeListQueryKey,
   useRegisterOnPremiseVolume,
 } from "@/api/generated/volume/volume";
+import { VOLUME_VISIBILITY_OPTIONS } from "@/domain/volume/constants/volume.constant";
 import {
   type CreateOnPremiseVolumeFormType,
   createOnPremiseVolumeSchema,
@@ -19,15 +20,6 @@ import {
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
-import { VOLUME_VISIBILITY_OPTIONS } from "../constants/volume.constant";
-
-const DEFAULT_FORM_VALUES: CreateOnPremiseVolumeFormType = {
-  volumeName: "",
-  isPublic: "true",
-  mountPath: "",
-  serverIp: "",
-  volumePath: "",
-};
 
 export function CreateOnPremVolumeModal() {
   const queryClient = useQueryClient();
@@ -42,7 +34,6 @@ export function CreateOnPremVolumeModal() {
     reset,
   } = useForm<CreateOnPremiseVolumeFormType>({
     resolver: zodResolver(createOnPremiseVolumeSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
   });
 
   const handleCancel = () => {
@@ -77,7 +68,13 @@ export function CreateOnPremVolumeModal() {
   };
 
   useSubscribe(VOLUME_EVENTS.openCreateOnPremModal, () => {
-    reset(DEFAULT_FORM_VALUES);
+    reset({
+      volumeName: "",
+      isPublic: "true",
+      mountPath: "",
+      serverIp: "",
+      volumePath: "",
+    });
     setOpen(true);
   });
 

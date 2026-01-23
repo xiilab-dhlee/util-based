@@ -263,12 +263,9 @@ Then(
 Then(
   "각 이벤트 이름이 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.eventCards.forEachCard(
-      "h6",
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`이벤트[${i}] 이름`, element);
-      },
-    );
+    await workloadDetailPage.eventCards.forEachCardText("h6", (text, i) => {
+      assertLogger.assertNotEmpty(`이벤트[${i}] 이름`, text);
+    });
   },
 );
 
@@ -311,10 +308,10 @@ Then(
 Then(
   "각 이벤트 From이 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.eventCards.forEachCard(
+    await workloadDetailPage.eventCards.forEachCardText(
       testId(WORKLOAD_SELECTOR.EVENT_FROM),
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`이벤트[${i}] From`, element);
+      (text, i) => {
+        assertLogger.assertNotEmpty(`이벤트[${i}] From`, text);
       },
     );
   },
@@ -323,10 +320,10 @@ Then(
 Then(
   "각 이벤트 메시지가 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.eventCards.forEachCard(
+    await workloadDetailPage.eventCards.forEachCardText(
       testId(WORKLOAD_SELECTOR.EVENT_MESSAGE),
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`이벤트[${i}] 메시지`, element);
+      (text, i) => {
+        assertLogger.assertNotEmpty(`이벤트[${i}] 메시지`, text);
       },
     );
   },
@@ -339,10 +336,10 @@ Then(
 Then(
   "각 소스코드 이름이 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.sourcecodeCards.forEachCard(
+    await workloadDetailPage.sourcecodeCards.forEachCardText(
       "h6",
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`소스코드[${i}] 이름`, element);
+      (text, i) => {
+        assertLogger.assertNotEmpty(`소스코드[${i}] 이름`, text);
       },
     );
   },
@@ -382,10 +379,10 @@ Then("각 소스코드 경로가 표시된다", async ({ workloadDetailPage }) =
 Then(
   "각 소스코드 Git URL이 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.sourcecodeCards.forEachCard(
+    await workloadDetailPage.sourcecodeCards.forEachCardText(
       testId(WORKLOAD_SELECTOR.SOURCECODE_URL),
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`소스코드[${i}] Git URL`, element);
+      (text, i) => {
+        assertLogger.assertNotEmpty(`소스코드[${i}] Git URL`, text);
       },
     );
   },
@@ -420,12 +417,9 @@ Then(
 Then(
   "각 볼륨 이름이 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.volumeCards.forEachCard(
-      "h6",
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`볼륨[${i}] 이름`, element);
-      },
-    );
+    await workloadDetailPage.volumeCards.forEachCardText("h6", (text, i) => {
+      assertLogger.assertNotEmpty(`볼륨[${i}] 이름`, text);
+    });
   },
 );
 
@@ -485,10 +479,10 @@ Then("각 볼륨 경로가 표시된다", async ({ workloadDetailPage }) => {
 Then(
   "각 볼륨 크기가 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.volumeCards.forEachCard(
+    await workloadDetailPage.volumeCards.forEachCardText(
       testId(WORKLOAD_SELECTOR.VOLUME_SIZE),
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`볼륨[${i}] 크기`, element);
+      (text, i) => {
+        assertLogger.assertNotEmpty(`볼륨[${i}] 크기`, text);
       },
     );
   },
@@ -497,10 +491,10 @@ Then(
 Then(
   "워크로드 이름이 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await assertLogger.assertLocatorText(
-      "워크로드 이름",
+    const text = await workloadDetailPage.getLocatorText(
       workloadDetailPage.name,
     );
+    assertLogger.assertNotEmpty("워크로드 이름", text);
   },
 );
 
@@ -537,36 +531,38 @@ Then(
 Then(
   "Job Type 정보가 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await assertLogger.assertLocatorText(
-      "Job Type 이름",
+    const jobTypeName = await workloadDetailPage.getLocatorText(
       workloadDetailPage.jobTypeName,
     );
-    await assertLogger.assertLocatorText(
-      "Job Type IDE",
+    assertLogger.assertNotEmpty("Job Type 이름", jobTypeName);
+
+    const jobTypeIde = await workloadDetailPage.getLocatorText(
       workloadDetailPage.jobTypeIde,
     );
+    assertLogger.assertNotEmpty("Job Type IDE", jobTypeIde);
   },
 );
 
 Then(
   "노드 타입 정보가 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await assertLogger.assertLocatorText(
-      "노드 타입",
+    const nodeTypeName = await workloadDetailPage.getLocatorText(
       workloadDetailPage.nodeTypeName,
     );
+    assertLogger.assertNotEmpty("노드 타입", nodeTypeName);
   },
 );
 
 Then("이미지 정보가 표시된다", async ({ workloadDetailPage, assertLogger }) => {
-  await assertLogger.assertLocatorText(
-    "이미지 타입",
+  const imageType = await workloadDetailPage.getLocatorText(
     workloadDetailPage.imageType,
   );
-  await assertLogger.assertLocatorText(
-    "이미지 이름",
+  assertLogger.assertNotEmpty("이미지 타입", imageType);
+
+  const imageName = await workloadDetailPage.getLocatorText(
     workloadDetailPage.imageName,
   );
+  assertLogger.assertNotEmpty("이미지 이름", imageName);
 });
 
 Then("Commit Image 생성 버튼이 표시된다", async ({ workloadDetailPage }) => {
@@ -579,7 +575,8 @@ Then(
     const securityLevels = workloadDetailPage.getSecurityLevels();
 
     for (const { locator, name } of securityLevels) {
-      await assertLogger.assertLocatorText(`보안검사 ${name}`, locator);
+      const text = await workloadDetailPage.getLocatorText(locator);
+      assertLogger.assertNotEmpty(`보안검사 ${name}`, text);
     }
   },
 );
@@ -587,61 +584,65 @@ Then(
 Then(
   "실행 경로, 실행 명령어 정보가 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await assertLogger.assertLocatorText(
-      "실행 경로",
+    const execPath = await workloadDetailPage.getLocatorText(
       workloadDetailPage.execPath,
     );
-    await assertLogger.assertLocatorText(
-      "실행 명령어",
+    assertLogger.assertNotEmpty("실행 경로", execPath);
+
+    const execCommand = await workloadDetailPage.getLocatorText(
       workloadDetailPage.execCommand,
     );
+    assertLogger.assertNotEmpty("실행 명령어", execCommand);
   },
 );
 
 Then(
   "환경변수 정보가 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await workloadDetailPage.forEachLocator(
+    await workloadDetailPage.forEachLocatorText(
       workloadDetailPage.envKeys,
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`환경변수[${i}] 키`, element);
+      (text, i) => {
+        assertLogger.assertNotEmpty(`환경변수[${i}] 키`, text);
       },
     );
 
-    await workloadDetailPage.forEachLocator(
+    await workloadDetailPage.forEachLocatorText(
       workloadDetailPage.envValues,
-      async (element, i) => {
-        await assertLogger.assertLocatorText(`환경변수[${i}] 값`, element);
+      (text, i) => {
+        assertLogger.assertNotEmpty(`환경변수[${i}] 값`, text);
       },
     );
   },
 );
 
 Then("포트 정보가 표시된다", async ({ workloadDetailPage, assertLogger }) => {
-  await workloadDetailPage.forEachLocator(
+  await workloadDetailPage.forEachLocatorText(
     workloadDetailPage.portNames,
-    async (element, i) => {
-      await assertLogger.assertLocatorText(`포트[${i}] 이름`, element);
+    (text, i) => {
+      assertLogger.assertNotEmpty(`포트[${i}] 이름`, text);
     },
   );
 
-  await workloadDetailPage.forEachLocator(
+  await workloadDetailPage.forEachLocatorText(
     workloadDetailPage.portValues,
-    async (element, i) => {
-      await assertLogger.assertLocatorText(`포트[${i}] 값`, element);
+    (text, i) => {
+      assertLogger.assertNotEmpty(`포트[${i}] 값`, text);
     },
   );
 
-  await workloadDetailPage.forEachLocator(
+  await workloadDetailPage.forEachLocatorText(
     workloadDetailPage.portUrls,
-    async (element, i) => {
-      await assertLogger.assertLocatorText(`포트[${i}] URL`, element);
+    (text, i) => {
+      assertLogger.assertNotEmpty(`포트[${i}] URL`, text);
     },
   );
 });
 
 Then("생성자가 표시된다", async ({ workloadDetailPage, assertLogger }) => {
-  await assertLogger.assertLocatorText("생성자", workloadDetailPage.creator);
+  const creator = await workloadDetailPage.getLocatorText(
+    workloadDetailPage.creator,
+  );
+  assertLogger.assertNotEmpty("생성자", creator);
 });
 
 Then(
@@ -656,23 +657,36 @@ Then(
 Then(
   "선택한 GPU 정보가 표시된다",
   async ({ workloadDetailPage, assertLogger }) => {
-    await assertLogger.assertLocatorText(
-      "GPU 타입",
+    const gpuType = await workloadDetailPage.getLocatorText(
       workloadDetailPage.gpuType,
     );
-    await assertLogger.assertLocatorText(
-      "GPU 이름",
+    assertLogger.assertNotEmpty("GPU 타입", gpuType);
+
+    const gpuName = await workloadDetailPage.getLocatorText(
       workloadDetailPage.gpuName,
     );
-    await assertLogger.assertLocatorText(
-      "GPU 메모리",
+    assertLogger.assertNotEmpty("GPU 이름", gpuName);
+
+    const gpuMemory = await workloadDetailPage.getLocatorText(
       workloadDetailPage.gpuMemory,
     );
+    assertLogger.assertNotEmpty("GPU 메모리", gpuMemory);
   },
 );
 
 Then("리소스 정보가 표시된다", async ({ workloadDetailPage, assertLogger }) => {
-  await assertLogger.assertLocatorText("GPU 개수", workloadDetailPage.gpuCount);
-  await assertLogger.assertLocatorText("CPU 코어", workloadDetailPage.cpuCore);
-  await assertLogger.assertLocatorText("메모리", workloadDetailPage.memoryGb);
+  const gpuCount = await workloadDetailPage.getLocatorText(
+    workloadDetailPage.gpuCount,
+  );
+  assertLogger.assertNotEmpty("GPU 개수", gpuCount);
+
+  const cpuCore = await workloadDetailPage.getLocatorText(
+    workloadDetailPage.cpuCore,
+  );
+  assertLogger.assertNotEmpty("CPU 코어", cpuCore);
+
+  const memoryGb = await workloadDetailPage.getLocatorText(
+    workloadDetailPage.memoryGb,
+  );
+  assertLogger.assertNotEmpty("메모리", memoryGb);
 });

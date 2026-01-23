@@ -3,9 +3,9 @@
 import styled from "styled-components";
 
 // import { CreateWorkloadGpu } from "./create-workload-gpu";
-import { CreateWorkloadImage } from "./create-workload-image";
-import { CreateWorkloadNode } from "./create-workload-node";
-import { CreateWorkloadResource } from "./create-workload-resource";
+import { CreateWorkloadImage } from "@/domain/workload/components/create/create-workload-image";
+import { CreateWorkloadNode } from "@/domain/workload/components/create/create-workload-node";
+import { CreateWorkloadResource } from "@/domain/workload/components/create/create-workload-resource";
 
 export function CreateWorkloadSecondStep() {
   return (

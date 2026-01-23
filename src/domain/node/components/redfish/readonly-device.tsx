@@ -1,11 +1,11 @@
 "use client";
 
 import { DeviceRow } from "@/domain/node/components/redfish/device-row";
+import { redfishDeviceColumn } from "@/domain/node/components/redfish/redfish-device-column";
 import { useGetRedfishSystemDevice } from "@/domain/node/hooks/use-get-redfish-system-device";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { DetailContentSubTitle } from "@/styles/layers/detail-page-layers.styled";
 import { DetailContentFeature } from "@/styles/layers/detail-page-vertical-layers.styled";
-import { redfishDeviceColumn } from "./redfish-device-column";
 
 /**
  * Redfish 시스템의 디바이스 인벤토리 정보를 읽기 전용으로 표시하는 컴포넌트
