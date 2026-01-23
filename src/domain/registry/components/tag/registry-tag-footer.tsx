@@ -6,7 +6,7 @@ import { REGISTRY_TAG_VULNERABILITY_PAGE_SIZE } from "@/domain/registry/constant
 import { registryTagVulnerabilityPageAtom } from "@/domain/registry/state/registry-tag.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 
-interface PrivateRegistryTagFooterProps {
+interface RegistryTagFooterProps {
   totalSize: number;
   isLoading: boolean;
 }
@@ -14,7 +14,7 @@ interface PrivateRegistryTagFooterProps {
 export function RegistryTagFooter({
   totalSize,
   isLoading,
-}: PrivateRegistryTagFooterProps) {
+}: RegistryTagFooterProps) {
   const [page, setPage] = useAtom(registryTagVulnerabilityPageAtom);
 
   // 페이지 변경 핸들러
