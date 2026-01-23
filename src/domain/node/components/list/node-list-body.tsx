@@ -1,7 +1,7 @@
 "use client";
 
 import type { ClusterNodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { nodeListColumn } from "@/domain/node/components/list/node-list-column";
+import { createNodeColumn } from "@/domain/node/components/list/create-node-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
@@ -29,7 +29,7 @@ export function NodeListBody({
   return (
     <ListWrapper>
       <CustomizedTable
-        columns={nodeListColumn}
+        columns={createNodeColumn()}
         data={content}
         columnHeight={40}
         loading={loading}
