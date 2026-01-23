@@ -1,16 +1,20 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import { getGetPrivateImageTagListQueryKey } from "@/api/generated/private-registry/private-registry";
-import { getGetPublicImageTagListQueryKey } from "@/api/generated/public-registry/public-registry";
+import {
+  getGetPrivateImageTagDetailQueryKey,
+  getGetPrivateImageTagListQueryKey,
+} from "@/api/generated/private-registry/private-registry";
+import {
+  getGetPublicImageTagDetailQueryKey,
+  getGetPublicImageTagListQueryKey,
+} from "@/api/generated/public-registry/public-registry";
 import { useDeleteRegistryTagByMode } from "@/domain/registry/hooks/use-delete-registry-tag-by-mode";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 interface DeleteRegistryTagModalProps {
@@ -19,16 +23,13 @@ interface DeleteRegistryTagModalProps {
 
 export function DeleteRegistryTagModal({ mode }: DeleteRegistryTagModalProps) {
   const queryClient = useQueryClient();
-  const router = useRouter();
-  const { name } = useParams<{ name: string }>();
-  const harborImageName = name ? decodeURIComponent(name) : "";
 
   const [open, setOpen] = useState(false);
   const [deleteTags, setDeleteTags] = useState<number[]>([]);
 
   const { mutate, isPending } = useDeleteRegistryTagByMode(mode);
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
@@ -43,27 +44,28 @@ export function DeleteRegistryTagModal({ mode }: DeleteRegistryTagModalProps) {
       },
       {
         onSuccess: () => {
-          // private/public 캐시 모두 무효화
-          queryClient.invalidateQueries({
-            queryKey: getGetPrivateImageTagListQueryKey(),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetPublicImageTagListQueryKey(),
-          });
-          setOpen(false);
           if (mode === "private") {
-            router.replace(
-              ROUTES.USER_PRIVATE_REGISTRY_DETAIL(harborImageName),
-            );
+            queryClient.invalidateQueries({
+              queryKey: getGetPrivateImageTagListQueryKey(),
+            });
+            queryClient.invalidateQueries({
+              queryKey: getGetPrivateImageTagDetailQueryKey(),
+            });
           } else if (mode === "public") {
-            router.replace(ROUTES.USER_PUBLIC_REGISTRY_DETAIL(harborImageName));
+            queryClient.invalidateQueries({
+              queryKey: getGetPublicImageTagListQueryKey(),
+            });
+            queryClient.invalidateQueries({
+              queryKey: getGetPublicImageTagDetailQueryKey(),
+            });
           }
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe(REGISTRY_EVENTS.openDeleteTagModal, (tags: number[]) => {
+  useSubscribe<number[]>(REGISTRY_EVENTS.openDeleteTagModal, (tags) => {
     setDeleteTags(tags);
     setOpen(true);
   });
@@ -73,7 +75,7 @@ export function DeleteRegistryTagModal({ mode }: DeleteRegistryTagModalProps) {
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={handleClose}
+      onCancel={handleCancel}
       onOk={handleOk}
       title="태그 삭제"
       centered

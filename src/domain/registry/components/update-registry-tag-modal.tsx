@@ -49,13 +49,9 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
 
   const { mutate, isPending } = useUpdateRegistryTagByMode(mode);
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
-    setImageTagId(null);
-    setTagName("");
-    setHarborImageName("");
-    reset();
   };
 
   const onSubmit = (data: UpdateRegistryTagFormType) => {
@@ -69,31 +65,33 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
       },
       {
         onSuccess: () => {
-          // private/public 캐시 모두 무효화
-          queryClient.invalidateQueries({
-            queryKey: getGetPrivateImageTagDetailQueryKey({
-              request: { tagName, harborImageName },
-              workspaceFilter: {},
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetPublicImageTagDetailQueryKey({
-              request: { tagName, harborImageName },
-            }),
-          });
-          handleClose();
+          if (mode === "private") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPrivateImageTagDetailQueryKey({
+                request: { tagName, harborImageName },
+                workspaceFilter: {},
+              }),
+            });
+          } else if (mode === "public") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPublicImageTagDetailQueryKey({
+                request: { tagName, harborImageName },
+              }),
+            });
+          }
+          setOpen(false);
         },
       },
     );
   };
 
-  useSubscribe(
+  useSubscribe<UpdateTagPayload>(
     REGISTRY_EVENTS.openEditTagModal,
-    (payload: UpdateTagPayload) => {
+    (payload) => {
       setImageTagId(payload.tagId);
-      setTagName(payload.tagName);
-      setHarborImageName(payload.harborImageName);
-      reset({ description: payload.description });
+      setTagName(payload.tagName || "");
+      setHarborImageName(payload.harborImageName || "");
+      reset({ description: payload.description || "" });
       setOpen(true);
     },
   );
@@ -104,14 +102,16 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
       icon={<Icon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable
       title="태그 수정"
       showCancelButton
-      onCancel={handleClose}
+      onCancel={handleCancel}
       okText="수정"
       onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{
         disabled: isPending,
         loading: isPending,
@@ -127,11 +127,13 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
           render={({ field }) => (
             <LastFormItem
               label="설명"
+              htmlFor="registryTagDescription"
               validateStatus={errors.description ? "error" : undefined}
               help={errors.description?.message}
             >
               <TextArea
                 {...field}
+                id="registryTagDescription"
                 placeholder="태그에 대한 설명을 입력해 주세요."
                 width="100%"
               />

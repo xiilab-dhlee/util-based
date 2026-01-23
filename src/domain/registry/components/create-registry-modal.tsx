@@ -66,13 +66,15 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
       },
       {
         onSuccess: () => {
-          // private/public 캐시 모두 무효화
-          queryClient.invalidateQueries({
-            queryKey: getGetPrivateRegistryListQueryKey(),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetPublicRegistryListQueryKey(),
-          });
+          if (mode === "private") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPrivateRegistryListQueryKey(),
+            });
+          } else if (mode === "public") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPublicRegistryListQueryKey(),
+            });
+          }
           setOpen(false);
         },
       },
@@ -85,9 +87,9 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
   };
 
   // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
-  useSubscribe(
+  useSubscribe<RegistryImageFilterRequestImageSourceType>(
     REGISTRY_EVENTS.openCreateModal,
-    (type: RegistryImageFilterRequestImageSourceType) => {
+    (type) => {
       // setType(type);
       // 폼 초기화 후 type 설정
       reset({
@@ -106,7 +108,6 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
       icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={580}
       open={open}
-      closable
       title="컨테이너 이미지 생성"
       showCancelButton
       onCancel={handleCancel}
@@ -114,6 +115,9 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
       onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{
         disabled: !isValid,
         loading: isPending,

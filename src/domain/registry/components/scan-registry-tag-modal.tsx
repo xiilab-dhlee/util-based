@@ -43,13 +43,15 @@ export function ScanRegistryTagModal({ mode }: ScanRegistryTagModalProps) {
       },
       {
         onSuccess: () => {
-          // private/public 캐시 모두 무효화
-          queryClient.invalidateQueries({
-            queryKey: getGetPrivateImageTagListQueryKey(),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetPublicImageTagListQueryKey(),
-          });
+          if (mode === "private") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPrivateImageTagListQueryKey(),
+            });
+          } else if (mode === "public") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPublicImageTagListQueryKey(),
+            });
+          }
           setOpen(false);
         },
       },
@@ -79,7 +81,9 @@ export function ScanRegistryTagModal({ mode }: ScanRegistryTagModalProps) {
       cancelText="취소"
       title="태그 취약점 검증"
       centered
-      closable
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >

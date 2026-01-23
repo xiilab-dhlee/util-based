@@ -48,13 +48,15 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
       },
       {
         onSuccess: () => {
-          // private/public 캐시 모두 무효화
-          queryClient.invalidateQueries({
-            queryKey: getGetPrivateImageTagListQueryKey(),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetPublicImageTagListQueryKey(),
-          });
+          if (mode === "private") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPrivateImageTagListQueryKey(),
+            });
+          } else if (mode === "public") {
+            queryClient.invalidateQueries({
+              queryKey: getGetPublicImageTagListQueryKey(),
+            });
+          }
           setOpen(false);
         },
       },
@@ -67,9 +69,9 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
   };
 
   // filter에서 전달받은 데이터 구독 및 모달 열기
-  useSubscribe(
+  useSubscribe<string>(
     REGISTRY_EVENTS.openCreateTagModal,
-    (harborImageName: string) => {
+    (harborImageName) => {
       reset({
         harborImageName,
         imageTagName: "",
@@ -86,7 +88,6 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
       icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable
       title="태그 추가"
       showCancelButton
       onCancel={handleCancel}
@@ -94,6 +95,9 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
       onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{
         disabled: !isValid || isPending,
         loading: isPending,
