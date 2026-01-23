@@ -98,7 +98,6 @@ export function CreateSmtpModal() {
       icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable
       title="SMTP 등록"
       showCancelButton
       cancelText="취소"
@@ -108,6 +107,15 @@ export function CreateSmtpModal() {
       confirmLoading={isPending}
       centered
       showHeaderBorder
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      okButtonProps={{
+        loading: isPending,
+      }}
+      cancelButtonProps={{
+        disabled: isPending,
+      }}
     >
       <Form layout="vertical">
         {/* 호스트 선택 */}
