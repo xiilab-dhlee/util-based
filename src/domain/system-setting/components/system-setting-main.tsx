@@ -12,13 +12,13 @@ import { UpdateStorageModal } from "@/domain/storage/components/update-storage-m
 import { ViewStorageDetailModal } from "@/domain/storage/components/view-storage-detail-modal";
 import { CreateHpeModal } from "@/domain/system-setting/components/create-hpe-modal";
 import { CreateLicenseModal } from "@/domain/system-setting/components/create-license-modal";
+import { CreateSmtpModal } from "@/domain/system-setting/components/create-smtp-modal";
 import { CredentialListSetting } from "@/domain/system-setting/components/credential-list-setting";
 import { DeleteSmtpModal } from "@/domain/system-setting/components/delete-smtp-modal";
 import { HpeOneviewSetting } from "@/domain/system-setting/components/hpe-oneview-setting";
 import { LicenseSetting } from "@/domain/system-setting/components/license-setting";
 import { ResourceRevokeSetting } from "@/domain/system-setting/components/resource-revoke-setting";
 import { SmtpAccountSetting } from "@/domain/system-setting/components/smtp-account-setting";
-import { SmtpModal } from "@/domain/system-setting/components/smtp-modal";
 import { StorageListSetting } from "@/domain/system-setting/components/storage-list-setting";
 import { SystemSettingAside } from "@/domain/system-setting/components/system-setting-aside";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
@@ -102,7 +102,7 @@ export function SystemSettingMain() {
 
       {/* 모달 */}
       <ResourceRevokeCriteriaModal />
-      <SmtpModal />
+      <CreateSmtpModal />
       <DeleteSmtpModal />
       <CreateLicenseModal />
       <CreateHpeModal />

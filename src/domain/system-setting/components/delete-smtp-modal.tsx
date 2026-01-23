@@ -1,55 +1,53 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import { smtpKeys } from "@/domain/system-setting/constants/smtp.key";
-import { useDeleteSmtp } from "@/domain/system-setting/hooks/use-delete-smtp";
-import type { SmtpIdType } from "@/domain/system-setting/schemas/smtp.schema";
+import { getGetSmtpSetQueryKey } from "@/api/generated/smtp-settings/smtp-settings";
+import { useDeleteSmtpSet } from "@/api/generated/smtp-settings-admin/smtp-settings-admin";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
-// ===== 타입 =====
-
-export interface DeleteSmtpModalPayload {
-  id: SmtpIdType;
+interface DeleteSmtpModalPayload {
+  id: number;
 }
 
 export function DeleteSmtpModal() {
   const [open, setOpen] = useState(false);
-  const [smtpId, setSmtpId] = useState<SmtpIdType | null>(null);
+  const [smtpId, setSmtpId] = useState<number | null>(null);
 
   const queryClient = useQueryClient();
-  const deleteSmtp = useDeleteSmtp();
-
-  // PubSub 구독 - SMTP 삭제 모달 열기 이벤트
-  useSubscribe<DeleteSmtpModalPayload>(
-    SYSTEM_SETTING_EVENTS.openSmtpDeleteModal,
-    useCallback((payload) => {
-      setSmtpId(payload.id);
-      setOpen(true);
-    }, []),
-  );
+  const { mutate, isPending } = useDeleteSmtpSet();
 
   const handleCancel = () => {
+    if (isPending) return;
     setOpen(false);
-    setSmtpId(null);
   };
 
   const handleDelete = () => {
-    if (smtpId === null) return;
+    if (smtpId === null || isPending) return;
 
-    deleteSmtp.mutate(smtpId, {
-      onSuccess: () => {
-        // SMTP 데이터 갱신
-        queryClient.invalidateQueries({ queryKey: smtpKeys.detail() });
-        handleCancel();
+    mutate(
+      { smtpSetId: smtpId },
+      {
+        onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: getGetSmtpSetQueryKey(),
+          });
+          setOpen(false);
+        },
       },
-    });
+    );
   };
 
-  if (!open) return null;
+  useSubscribe<DeleteSmtpModalPayload>(
+    SYSTEM_SETTING_EVENTS.openSmtpDeleteModal,
+    (payload) => {
+      setSmtpId(payload.id);
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal
@@ -60,8 +58,14 @@ export function DeleteSmtpModal() {
       onOk={handleDelete}
       title="SMTP 삭제"
       centered
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{
-        loading: deleteSmtp.isPending,
+        loading: isPending,
+      }}
+      cancelButtonProps={{
+        disabled: isPending,
       }}
     >
       <div>
