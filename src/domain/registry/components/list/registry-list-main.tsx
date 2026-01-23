@@ -143,9 +143,9 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
           />
         </ListPageAside>
       </ListPageMain>
-      {/* 프라이빗 레지스트리 구분 선택 모달 */}
+      {/* 레지스트리 구분 선택 모달 */}
       <SelectRegistryTypeModal />
-      {/* 프라이빗 레지스트리 이미지 생성 모달 */}
+      {/* 레지스트리 이미지 생성 모달 */}
       <CreateRegistryModal mode={mode} />
       {/* 레지스트리 이미지 삭제 모달 */}
       <DeleteRegistryModal mode={mode} />

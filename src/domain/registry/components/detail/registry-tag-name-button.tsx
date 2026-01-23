@@ -35,7 +35,12 @@ export function RegistryTagNameButton({
     });
   };
 
-  return <Container onClick={handleClick}>{imageTagName || "-"}</Container>;
+  return (
+    // biome-ignore lint/a11y/useSemanticElements: 테이블 내 말줄임 처리를 위해 버튼 역할 부여
+    <Container role="button" onClick={handleClick}>
+      {imageTagName || "-"}
+    </Container>
+  );
 }
 
 const Container = styled.span`

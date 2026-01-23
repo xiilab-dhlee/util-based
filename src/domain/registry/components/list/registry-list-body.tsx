@@ -121,7 +121,7 @@ export function RegistryListBody({
         isError={isError}
         tableLayout="fixed"
         scroll={{ x: "100%", y: "100%" }}
-        rowKey="imageId"
+        rowKey="harborImageName"
         rowSelection={rowSelectionWithDisabled}
         onChange={handleChange}
       />

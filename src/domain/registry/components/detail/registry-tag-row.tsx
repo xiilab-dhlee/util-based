@@ -8,7 +8,7 @@ import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocu
 import { registryTagSelectedAtom } from "@/domain/registry/state/registry-detail.atom";
 
 interface RegistryTagRowProps extends HTMLAttributes<HTMLTableRowElement> {
-  rowData: ImageTagListResponse;
+  rowData?: ImageTagListResponse;
 }
 
 /**
@@ -33,7 +33,7 @@ export function RegistryTagRow({
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
 
-    if (rowData.harborTagId !== undefined) {
+    if (rowData?.harborTagId !== undefined) {
       setSelectedTag(rowData);
     }
   };

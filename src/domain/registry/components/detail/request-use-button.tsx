@@ -25,7 +25,7 @@ export function RequestUseButton({
 }: RequestUseButtonProps) {
   const publish = usePublish();
 
-  const handleClick = (e: MouseEvent<HTMLSpanElement>) => {
+  const handleClick = (e: MouseEvent) => {
     e.stopPropagation();
 
     publish(REGISTRY_EVENTS.openRequestUseModal, { imageTagId });
@@ -33,8 +33,14 @@ export function RequestUseButton({
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap type="button" onClick={handleClick} disabled={disabled}>
+      <ColumnIconWrap
+        type="button"
+        onClick={handleClick}
+        disabled={disabled}
+        title="사용 요청 버튼"
+      >
         <Icon name="RequestResource" color="var(--icon-fill)" size={16} />
+        <span className="sr-only">사용 요청 버튼</span>
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
   );

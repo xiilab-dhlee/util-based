@@ -43,7 +43,7 @@ export function RegistryListFilter({
   };
 
   const handleCreateRegistryImage = () => {
-    publish(REGISTRY_EVENTS.openSelectTypeModal, null);
+    publish(REGISTRY_EVENTS.openSelectTypeModal);
   };
 
   return (
