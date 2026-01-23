@@ -44,6 +44,8 @@ export const getProfileResponse = zod
     data: zod
       .object({
         accountName: zod.string().describe("계정 표시 이름 (성 + 이름)"),
+        lastName: zod.string().describe("성 (Last Name)"),
+        firstName: zod.string().describe("이름 (First Name)"),
         accountId: zod
           .string()
           .describe("계정 고유 ID (Keycloak User ID, UUID 형식)"),

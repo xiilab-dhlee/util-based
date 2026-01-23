@@ -151,6 +151,70 @@ export const registerOnPremiseVolumeBody = zod
   .describe("ON_PREMISE 볼륨 생성 요청");
 
 /**
+ * 
+        여러 볼륨을 한번에 삭제합니다 (soft delete).
+        **권한:** SUPER_ADMIN, ADMIN 또는 볼륨 생성자만 삭제 가능
+
+        **처리 방식:**
+        - 각 볼륨별로 권한 검증 후 삭제 시도
+        - 일부 실패해도 나머지는 계속 처리
+        - 성공/실패 결과를 상세히 반환
+
+        **볼륨 타입별 처리:**
+        - ASTRAGO: DB만 soft delete
+        - ON_PREMISE: K8s 리소스 삭제 후 DB soft delete
+        
+ * @summary 볼륨 다중 삭제
+ */
+export const deleteVolumesBodyVolumeIdsMax = 100;
+
+export const deleteVolumesBody = zod
+  .object({
+    volumeIds: zod
+      .array(zod.number())
+      .min(1)
+      .max(deleteVolumesBodyVolumeIdsMax)
+      .describe(
+        "삭제할 볼륨 ID 목록. 최소 1개, 최대 100개까지 요청 가능합니다.",
+      ),
+  })
+  .strict()
+  .describe("볼륨 다중 삭제 요청");
+
+export const deleteVolumesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalRequested: zod.number().describe("삭제 요청한 총 볼륨 개수"),
+        successCount: zod.number().describe("삭제 성공한 볼륨 개수"),
+        failureCount: zod
+          .number()
+          .describe(
+            "삭제 실패한 볼륨 개수 (존재하지 않거나, 이미 삭제된 볼륨, 권한 없음 등)",
+          ),
+        failures: zod
+          .array(
+            zod
+              .object({
+                volumeId: zod.number().describe("삭제 실패한 볼륨 ID"),
+                reason: zod.string().describe("삭제 실패 사유"),
+              })
+              .strict()
+              .describe("볼륨 삭제 실패 상세 정보"),
+          )
+          .describe("삭제 실패한 볼륨 상세 목록 (실패가 없으면 빈 리스트)"),
+      })
+      .strict()
+      .optional()
+      .describe("볼륨 삭제 처리 결과 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 내부 스토리지를 참조하는 ASTRAGO 타입 볼륨을 등록합니다. TUS 프로토콜을 통해 파일을 업로드할 수 있습니다.
  * @summary ASTRAGO 볼륨 등록
  */
@@ -209,7 +273,7 @@ export const getVolumeListQueryParams = zod.object({
       .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
       .describe("정렬 필드"),
     order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-    isMine: zod.boolean().describe("내가 생성한 볼륨만 조회"),
+    hasMine: zod.boolean().describe("내가 생성한 볼륨만 조회"),
     volumeType: zod
       .enum(["ASTRAGO", "ON_PREMISE"])
       .optional()

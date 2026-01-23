@@ -49,6 +49,7 @@ import type {
   BaseResponsePageResponseImageJobResponse,
   BaseResponseUnit,
   GetImageJobsParams,
+  SseEmitter,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -271,6 +272,367 @@ export function useGetImageJobs<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetImageJobsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            종료된 이미지 등록 Job의 로그를 다운로드합니다.
+
+            **대상:**
+            - COMPLETED, FAILED 상태의 Job 로그 다운로드 가능
+
+            **응답:**
+            - 200 OK: 로그 파일 다운로드 (Content-Type: text/plain; charset=UTF-8)
+            - 204 No Content: Job은 존재하나 로그가 없는 경우
+            - 404 Not Found: Job이 존재하지 않는 경우
+
+            **주의:**
+            - 실행 중인 Job(IN_PROGRESS)은 실시간 로그 스트리밍 API 사용
+        
+ * @summary 종료된 이미지 등록 Job 로그 다운로드
+ */
+export const getTerminatedImageJobLog = (
+  imageTagId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<string>({
+    url: `/api/v1/registries/image-jobs/image-tags/${imageTagId}/logs/terminated`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetTerminatedImageJobLogQueryKey = (imageTagId?: number) => {
+  return [
+    `/api/v1/registries/image-jobs/image-tags/${imageTagId}/logs/terminated`,
+  ] as const;
+};
+
+export const getGetTerminatedImageJobLogQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetTerminatedImageJobLogQueryKey(imageTagId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getTerminatedImageJobLog>>
+  > = ({ signal }) => getTerminatedImageJobLog(imageTagId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!imageTagId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTerminatedImageJobLogQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTerminatedImageJobLog>>
+>;
+export type GetTerminatedImageJobLogQueryError = unknown;
+
+export function useGetTerminatedImageJobLog<
+  TData = Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+          TError,
+          Awaited<ReturnType<typeof getTerminatedImageJobLog>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetTerminatedImageJobLog<
+  TData = Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+          TError,
+          Awaited<ReturnType<typeof getTerminatedImageJobLog>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetTerminatedImageJobLog<
+  TData = Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 종료된 이미지 등록 Job 로그 다운로드
+ */
+
+export function useGetTerminatedImageJobLog<
+  TData = Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTerminatedImageJobLog>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetTerminatedImageJobLogQueryOptions(
+    imageTagId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            실행 중인 이미지 등록 Job의 Pod 로그를 SSE(Server-Sent Events)로 실시간 스트리밍합니다.
+
+            **대상:**
+            - IN_PROGRESS 상태의 Job만 로그 스트리밍 가능
+
+            **SSE 이벤트:**
+            - event: log
+            - data: 로그 라인
+
+            **주의:**
+            - Job이 존재하지 않거나 Pod가 없는 경우 404 Not Found 반환
+            - COMPLETED, FAILED, NOT_FOUND 상태의 Job은 종료된 로그 API 사용
+        
+ * @summary 실행 중인 이미지 등록 Job 로그 실시간 스트리밍
+ */
+export const streamImageJobLogs = (
+  imageTagId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<SseEmitter>({
+    url: `/api/v1/registries/image-jobs/image-tags/${imageTagId}/logs/active`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getStreamImageJobLogsQueryKey = (imageTagId?: number) => {
+  return [
+    `/api/v1/registries/image-jobs/image-tags/${imageTagId}/logs/active`,
+  ] as const;
+};
+
+export const getStreamImageJobLogsQueryOptions = <
+  TData = Awaited<ReturnType<typeof streamImageJobLogs>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof streamImageJobLogs>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getStreamImageJobLogsQueryKey(imageTagId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof streamImageJobLogs>>
+  > = ({ signal }) => streamImageJobLogs(imageTagId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!imageTagId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof streamImageJobLogs>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type StreamImageJobLogsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof streamImageJobLogs>>
+>;
+export type StreamImageJobLogsQueryError = unknown;
+
+export function useStreamImageJobLogs<
+  TData = Awaited<ReturnType<typeof streamImageJobLogs>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof streamImageJobLogs>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof streamImageJobLogs>>,
+          TError,
+          Awaited<ReturnType<typeof streamImageJobLogs>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useStreamImageJobLogs<
+  TData = Awaited<ReturnType<typeof streamImageJobLogs>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof streamImageJobLogs>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof streamImageJobLogs>>,
+          TError,
+          Awaited<ReturnType<typeof streamImageJobLogs>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useStreamImageJobLogs<
+  TData = Awaited<ReturnType<typeof streamImageJobLogs>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof streamImageJobLogs>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 실행 중인 이미지 등록 Job 로그 실시간 스트리밍
+ */
+
+export function useStreamImageJobLogs<
+  TData = Awaited<ReturnType<typeof streamImageJobLogs>>,
+  TError = unknown,
+>(
+  imageTagId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof streamImageJobLogs>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getStreamImageJobLogsQueryOptions(imageTagId, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

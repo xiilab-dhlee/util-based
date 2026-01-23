@@ -199,6 +199,10 @@ export const updateMonitoringNotificationSetEnabledResponse = zod
  * 
             관리자가 모니터링 알림 설정 목록을 페이징하여 조회합니다.
 
+            **정렬 옵션:**
+            - sort: notification_set_name, created_at
+            - order: asc, desc
+
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 권한 필요
         
@@ -214,6 +218,12 @@ export const getAllMonitoringNotificationSetsQueryParams = zod.object({
       .min(1)
       .max(getAllMonitoringNotificationSetsQueryPageableRequestPageSizeMax)
       .describe("페이지 크기"),
+  }),
+  sortRequest: zod.object({
+    sort: zod
+      .enum(["NOTIFICATION_SET_NAME", "CREATED_AT"])
+      .describe("정렬 기준 필드"),
+    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
   }),
 });
 

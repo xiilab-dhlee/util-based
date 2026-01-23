@@ -575,6 +575,118 @@ export const terminateWorkloadResponse = zod
 
 /**
  * 
+            종료된 워크로드를 재시작합니다.
+
+            **재시작 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)를 새로 생성
+            - 기존 Service, Ingress, PVC, PV, Secret 등 부가 리소스는 재사용
+            - 커밋된 이미지가 있으면 해당 이미지 사용, 없으면 원본 이미지 사용 (TODO)
+            - 리소스 설정(CPU, 메모리, GPU, 분산학습 노드 수)을 변경하여 재시작 가능
+
+            **재시작 대상:**
+            - TERMINATED 상태의 워크로드만 재시작 가능
+            - 실행 중이거나 종료 진행 중인 워크로드는 재시작 불가 (400 Bad Request)
+
+            **재시작 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼관리자 (SUPER_ADMIN)
+        
+ * @summary 워크로드 재시작
+ */
+export const restartWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const restartWorkloadBody = zod
+  .object({
+    resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
+    resource: zod
+      .object({
+        gpu: zod
+          .object({
+            gpuName: zod
+              .string()
+              .optional()
+              .describe("GPU 이름 (NodeSelector용)"),
+            gpuType: zod
+              .enum(["NORMAL", "MIG"])
+              .optional()
+              .describe("GPU 타입 (NORMAL: 일반 GPU)"),
+            gpuMemoryByte: zod
+              .number()
+              .optional()
+              .describe("GPU 메모리 (byte)"),
+            detail: zod
+              .object({
+                normal: zod
+                  .object({
+                    requestCount: zod.number().describe("요청 GPU 수량"),
+                  })
+                  .strict()
+                  .optional()
+                  .describe("일반 GPU 정보"),
+                mig: zod
+                  .array(
+                    zod
+                      .object({
+                        profile: zod
+                          .string()
+                          .min(1)
+                          .describe("MIG 프로파일 이름"),
+                        requestCount: zod.number().describe("요청 수량"),
+                      })
+                      .strict()
+                      .describe("MIG 프로파일 정보"),
+                  )
+                  .optional()
+                  .describe("MIG 프로파일 목록"),
+              })
+              .strict()
+              .optional()
+              .describe("GPU 상세 정보"),
+          })
+          .strict()
+          .optional()
+          .describe("GPU 리소스 정보"),
+        cpu: zod
+          .object({
+            requestCore: zod.number().describe("요청 CPU 코어 수"),
+          })
+          .strict()
+          .describe("CPU 리소스 정보"),
+        memory: zod
+          .object({
+            requestByte: zod.number().describe("요청 메모리 byte 수"),
+          })
+          .strict()
+          .describe("메모리 리소스 정보"),
+        distributed: zod
+          .object({
+            numNodes: zod.number().describe("분산 노드(Pod) 수"),
+          })
+          .strict()
+          .optional()
+          .describe("분산 학습 설정 (DISTRIBUTED 워크로드용)"),
+      })
+      .strict()
+      .describe("워크로드 리소스 정보"),
+  })
+  .strict()
+  .describe("워크로드 재시작 요청");
+
+export const restartWorkloadResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             워크로드의 실시간 상태를 조회합니다.
 
             **조회 우선순위:**

@@ -41,9 +41,9 @@ export const getAvailablePresetsQueryPageableRequestPageSizeMax = 100;
 
 export const getAvailablePresetsQueryParams = zod.object({
   jobType: zod
-    .enum(["BATCH", "IDE"])
+    .enum(["BATCH", "INTERACTIVE"])
     .optional()
-    .describe("잡 타입 필터 (BATCH, IDE)"),
+    .describe("잡 타입 필터 (BATCH, INTERACTIVE)"),
   nodeType: zod
     .enum(["SINGLE", "MULTI"])
     .optional()
@@ -78,7 +78,7 @@ export const getAvailablePresetsResponse = zod
                 .describe(
                   '리소스 정보\n\nGPU 타입별 구조:\n- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}\n- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}\n\n※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)',
                 ),
-              jobType: zod.enum(["BATCH", "IDE"]).describe("잡 타입"),
+              jobType: zod.enum(["BATCH", "INTERACTIVE"]).describe("잡 타입"),
               nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
             })
             .strict()

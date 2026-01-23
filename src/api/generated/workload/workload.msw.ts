@@ -114,6 +114,16 @@ export const getTerminateWorkloadResponseMock = (
   ...overrideResponse,
 });
 
+export const getRestartWorkloadResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetWorkloadStatusResponseMock = (
   overrideResponse: Partial<BaseResponseWorkloadStatusResponse> = {},
 ): BaseResponseWorkloadStatusResponse => ({
@@ -450,6 +460,34 @@ export const getTerminateWorkloadMockHandler = (
   );
 };
 
+export const getRestartWorkloadMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/actions/restart",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getRestartWorkloadResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetWorkloadStatusMockHandler = (
   overrideResponse?:
     | BaseResponseWorkloadStatusResponse
@@ -711,6 +749,7 @@ export const getWorkloadMock = () => [
   getWorkloadDecompressFileMockHandler(),
   getWorkloadCompressFilesMockHandler(),
   getTerminateWorkloadMockHandler(),
+  getRestartWorkloadMockHandler(),
   getGetWorkloadStatusMockHandler(),
   getGetTerminatedWorkloadLogMockHandler(),
   getStreamWorkloadLogsMockHandler(),

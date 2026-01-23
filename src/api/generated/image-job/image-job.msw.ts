@@ -34,6 +34,7 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponsePageResponseImageJobResponse,
   BaseResponseUnit,
+  SseEmitter,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getRestartImageJobResponseMock = (
@@ -75,6 +76,16 @@ export const getGetImageJobsResponseMock = (
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetTerminatedImageJobLogResponseMock = (): string =>
+  faker.word.sample();
+
+export const getStreamImageJobLogsResponseMock = (
+  overrideResponse: Partial<SseEmitter> = {},
+): SseEmitter => ({
+  timeout: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
 
@@ -136,6 +147,60 @@ export const getGetImageJobsMockHandler = (
   );
 };
 
+export const getGetTerminatedImageJobLogMockHandler = (
+  overrideResponse?:
+    | string
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<string> | string),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/registries/image-jobs/image-tags/:imageTagId/logs/terminated",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetTerminatedImageJobLogResponseMock(),
+        { status: 200, headers: { "Content-Type": "text/plain" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getStreamImageJobLogsMockHandler = (
+  overrideResponse?:
+    | SseEmitter
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<SseEmitter> | SseEmitter),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/registries/image-jobs/image-tags/:imageTagId/logs/active",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getStreamImageJobLogsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getDeleteImageJobMockHandler = (
   overrideResponse?:
     | void
@@ -159,5 +224,7 @@ export const getDeleteImageJobMockHandler = (
 export const getImageJobMock = () => [
   getRestartImageJobMockHandler(),
   getGetImageJobsMockHandler(),
+  getGetTerminatedImageJobLogMockHandler(),
+  getStreamImageJobLogsMockHandler(),
   getDeleteImageJobMockHandler(),
 ];

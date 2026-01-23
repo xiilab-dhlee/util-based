@@ -31,60 +31,6 @@ import * as zod from "zod";
 
 /**
  * 
-        볼륨의 상세 정보를 조회합니다.
-        워크스페이스/소유자 관계없이 모든 볼륨을 조회할 수 있습니다.
-
-        **응답:**
-        - 200 OK + data: 볼륨 상세 정보
-        - 200 OK + data: null (볼륨이 존재하지 않거나 삭제된 경우)
-
-        **권한:** ADMIN 또는 SUPER_ADMIN
-        
- * @summary 볼륨 상세 조회
- */
-export const adminGetVolumeDetailParams = zod.object({
-  volumeId: zod.number().describe("조회할 볼륨 ID"),
-});
-
-export const adminGetVolumeDetailResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    errorCode: zod.string().optional(),
-    data: zod
-      .object({
-        volumeId: zod.number().describe("볼륨 ID"),
-        volumeName: zod.string().describe("볼륨 이름"),
-        volumeType: zod.enum(["ASTRAGO", "ON_PREMISE"]).describe("볼륨 타입"),
-        serverIp: zod
-          .string()
-          .optional()
-          .describe("NFS 서버 IP (ON_PREMISE 타입만 해당)"),
-        volumePath: zod.string().describe("볼륨 경로"),
-        mountPath: zod.string().describe("마운트 경로"),
-        storageId: zod
-          .number()
-          .optional()
-          .describe("스토리지 ID (ASTRAGO 타입만 해당)"),
-        storageName: zod
-          .string()
-          .optional()
-          .describe("스토리지 이름 (ASTRAGO 타입만 해당)"),
-        fileSizeByte: zod.number().describe("파일 크기 (바이트)"),
-        creatorId: zod.string().describe("생성자 ID"),
-        creatorName: zod.string().describe("생성자 이름"),
-        createdAt: zod.string().datetime({}).describe("생성 일시"),
-        isPublic: zod.boolean().describe("공개 여부"),
-      })
-      .strict()
-      .optional()
-      .describe("볼륨 상세 조회 응답"),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 
         볼륨 정보를 수정합니다.
 
         **수정 가능 필드:**
@@ -295,6 +241,72 @@ export const adminCompressBody = zod
 
 /**
  * 
+        여러 볼륨을 한번에 삭제합니다 (soft delete).
+        워크스페이스/소유자 관계없이 모든 볼륨을 삭제할 수 있습니다.
+
+        **처리 방식:**
+        - 각 볼륨별로 삭제 시도
+        - 일부 실패해도 나머지는 계속 처리
+        - 성공/실패 결과를 상세히 반환
+
+        **볼륨 타입별 처리:**
+        - ASTRAGO: DB만 soft delete
+        - ON_PREMISE: K8s 리소스 삭제 후 DB soft delete
+
+        **권한:** ADMIN 또는 SUPER_ADMIN
+        
+ * @summary 볼륨 다중 삭제
+ */
+export const adminDeleteVolumesBodyVolumeIdsMax = 100;
+
+export const adminDeleteVolumesBody = zod
+  .object({
+    volumeIds: zod
+      .array(zod.number())
+      .min(1)
+      .max(adminDeleteVolumesBodyVolumeIdsMax)
+      .describe(
+        "삭제할 볼륨 ID 목록. 최소 1개, 최대 100개까지 요청 가능합니다.",
+      ),
+  })
+  .strict()
+  .describe("볼륨 다중 삭제 요청");
+
+export const adminDeleteVolumesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalRequested: zod.number().describe("삭제 요청한 총 볼륨 개수"),
+        successCount: zod.number().describe("삭제 성공한 볼륨 개수"),
+        failureCount: zod
+          .number()
+          .describe(
+            "삭제 실패한 볼륨 개수 (존재하지 않거나, 이미 삭제된 볼륨, 권한 없음 등)",
+          ),
+        failures: zod
+          .array(
+            zod
+              .object({
+                volumeId: zod.number().describe("삭제 실패한 볼륨 ID"),
+                reason: zod.string().describe("삭제 실패 사유"),
+              })
+              .strict()
+              .describe("볼륨 삭제 실패 상세 정보"),
+          )
+          .describe("삭제 실패한 볼륨 상세 목록 (실패가 없으면 빈 리스트)"),
+      })
+      .strict()
+      .optional()
+      .describe("볼륨 삭제 처리 결과 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
         모든 볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
         워크스페이스/소유자 관계없이 모든 볼륨을 조회할 수 있습니다.
 
@@ -319,7 +331,6 @@ export const adminGetVolumeListQueryParams = zod.object({
       .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
       .describe("정렬 필드"),
     order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-    isMine: zod.boolean().describe("내가 생성한 볼륨만 조회"),
     volumeType: zod
       .enum(["ASTRAGO", "ON_PREMISE"])
       .optional()
@@ -438,3 +449,57 @@ export const adminPreviewQueryParams = zod.object({
 });
 
 export const adminPreviewResponse = zod.string();
+
+/**
+ * 
+        볼륨의 상세 정보를 조회합니다.
+        워크스페이스/소유자 관계없이 모든 볼륨을 조회할 수 있습니다.
+
+        **응답:**
+        - 200 OK + data: 볼륨 상세 정보
+        - 200 OK + data: null (볼륨이 존재하지 않거나 삭제된 경우)
+
+        **권한:** ADMIN 또는 SUPER_ADMIN
+        
+ * @summary 볼륨 상세 조회
+ */
+export const adminGetVolumeDetailParams = zod.object({
+  volumeId: zod.number().describe("조회할 볼륨 ID"),
+});
+
+export const adminGetVolumeDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        volumeId: zod.number().describe("볼륨 ID"),
+        volumeName: zod.string().describe("볼륨 이름"),
+        volumeType: zod.enum(["ASTRAGO", "ON_PREMISE"]).describe("볼륨 타입"),
+        serverIp: zod
+          .string()
+          .optional()
+          .describe("NFS 서버 IP (ON_PREMISE 타입만 해당)"),
+        volumePath: zod.string().describe("볼륨 경로"),
+        mountPath: zod.string().describe("마운트 경로"),
+        storageId: zod
+          .number()
+          .optional()
+          .describe("스토리지 ID (ASTRAGO 타입만 해당)"),
+        storageName: zod
+          .string()
+          .optional()
+          .describe("스토리지 이름 (ASTRAGO 타입만 해당)"),
+        fileSizeByte: zod.number().describe("파일 크기 (바이트)"),
+        creatorId: zod.string().describe("생성자 ID"),
+        creatorName: zod.string().describe("생성자 이름"),
+        createdAt: zod.string().datetime({}).describe("생성 일시"),
+        isPublic: zod.boolean().describe("공개 여부"),
+      })
+      .strict()
+      .optional()
+      .describe("볼륨 상세 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();

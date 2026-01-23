@@ -597,7 +597,7 @@ export const getNodeSystemMetricsResponse = zod
           .strict()
           .optional()
           .describe("개별 시스템 메트릭 조회 결과"),
-        diskUsage: zod
+        diskUtilization: zod
           .object({
             status: zod.enum(["SUCCESS", "FAILED"]).describe("조회 상태"),
             data: zod

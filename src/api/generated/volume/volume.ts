@@ -48,11 +48,13 @@ import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseVolumeDeleteResult,
   BaseResponseVolumeDetailResponse,
   CreateAstragoVolumeRequest,
   CreateOnPremiseVolumeRequest,
   GetVolumeListParams,
   UpdateVolumeRequest,
+  VolumeDeleteRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -312,6 +314,101 @@ export const useRegisterOnPremiseVolume = <
   TContext
 > => {
   const mutationOptions = getRegisterOnPremiseVolumeMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+        여러 볼륨을 한번에 삭제합니다 (soft delete).
+        **권한:** SUPER_ADMIN, ADMIN 또는 볼륨 생성자만 삭제 가능
+
+        **처리 방식:**
+        - 각 볼륨별로 권한 검증 후 삭제 시도
+        - 일부 실패해도 나머지는 계속 처리
+        - 성공/실패 결과를 상세히 반환
+
+        **볼륨 타입별 처리:**
+        - ASTRAGO: DB만 soft delete
+        - ON_PREMISE: K8s 리소스 삭제 후 DB soft delete
+        
+ * @summary 볼륨 다중 삭제
+ */
+export const deleteVolumes = (
+  volumeDeleteRequest: VolumeDeleteRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseVolumeDeleteResult>({
+    url: `/api/v1/volumes/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: volumeDeleteRequest,
+    signal,
+  });
+};
+
+export const getDeleteVolumesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteVolumes>>,
+    TError,
+    { data: VolumeDeleteRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteVolumes>>,
+  TError,
+  { data: VolumeDeleteRequest },
+  TContext
+> => {
+  const mutationKey = ["deleteVolumes"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteVolumes>>,
+    { data: VolumeDeleteRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return deleteVolumes(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteVolumesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteVolumes>>
+>;
+export type DeleteVolumesMutationBody = VolumeDeleteRequest;
+export type DeleteVolumesMutationError = unknown;
+
+/**
+ * @summary 볼륨 다중 삭제
+ */
+export const useDeleteVolumes = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteVolumes>>,
+      TError,
+      { data: VolumeDeleteRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteVolumes>>,
+  TError,
+  { data: VolumeDeleteRequest },
+  TContext
+> => {
+  const mutationOptions = getDeleteVolumesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

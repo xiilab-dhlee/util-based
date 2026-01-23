@@ -71,7 +71,12 @@ export const getAllMonitoringNotificationHistories = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseMonitoringNotificationHistoryListResponse>(
-    { url: `/api/v1/monitoring-notifications`, method: "GET", params, signal },
+    {
+      url: `/api/v1/admin/monitoring-notifications`,
+      method: "GET",
+      params,
+      signal,
+    },
   );
 };
 
@@ -79,7 +84,7 @@ export const getGetAllMonitoringNotificationHistoriesQueryKey = (
   params?: GetAllMonitoringNotificationHistoriesParams,
 ) => {
   return [
-    `/api/v1/monitoring-notifications`,
+    `/api/v1/admin/monitoring-notifications`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -252,7 +257,7 @@ export const getSendHistory = (
 ) => {
   return customInstance<BaseResponseListMonitoringNotificationSendHistoryResponse>(
     {
-      url: `/api/v1/monitoring-notifications/${notificationHistoryId}/send-history`,
+      url: `/api/v1/admin/monitoring-notifications/${notificationHistoryId}/send-history`,
       method: "GET",
       signal,
     },
@@ -261,7 +266,7 @@ export const getSendHistory = (
 
 export const getGetSendHistoryQueryKey = (notificationHistoryId?: number) => {
   return [
-    `/api/v1/monitoring-notifications/${notificationHistoryId}/send-history`,
+    `/api/v1/admin/monitoring-notifications/${notificationHistoryId}/send-history`,
   ] as const;
 };
 
@@ -417,7 +422,7 @@ export const getMonitoringNotificationHistoryDetail = (
 ) => {
   return customInstance<BaseResponseMonitoringNotificationHistoryDetailResponse>(
     {
-      url: `/api/v1/monitoring-notifications/${notificationHistoryId}/detail`,
+      url: `/api/v1/admin/monitoring-notifications/${notificationHistoryId}/detail`,
       method: "GET",
       signal,
     },
@@ -428,7 +433,7 @@ export const getGetMonitoringNotificationHistoryDetailQueryKey = (
   notificationHistoryId?: number,
 ) => {
   return [
-    `/api/v1/monitoring-notifications/${notificationHistoryId}/detail`,
+    `/api/v1/admin/monitoring-notifications/${notificationHistoryId}/detail`,
   ] as const;
 };
 

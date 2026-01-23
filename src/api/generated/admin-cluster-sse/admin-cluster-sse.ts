@@ -79,7 +79,7 @@ import type {
             - nodeNetworkTransmit: 네트워크 송신 속도 메트릭 결과
             - diskRead: 디스크 읽기 속도 메트릭 결과
             - diskWrite: 디스크 쓰기 속도 메트릭 결과
-            - diskUsage: 디스크 사용률 메트릭 결과
+            - diskUtilization: 디스크 사용률 메트릭 결과
             - memoryUtilization: 메모리 사용률 메트릭 결과
             - nodeMemoryBuffers: 메모리 버퍼 메트릭 결과
             - nodeMemoryCached: 메모리 캐시 메트릭 결과
@@ -117,7 +117,7 @@ export const streamNodeSystemMetrics = (
   signal?: AbortSignal,
 ) => {
   return customInstance<SseEmitter>({
-    url: `/sse/v1/cluster/nodes/${nodeName}/resources/system/metrics/stream`,
+    url: `/sse/v1/admin/cluster/nodes/${nodeName}/resources/system/metrics/stream`,
     method: "GET",
     params,
     signal,
@@ -129,7 +129,7 @@ export const getStreamNodeSystemMetricsQueryKey = (
   params?: StreamNodeSystemMetricsParams,
 ) => {
   return [
-    `/sse/v1/cluster/nodes/${nodeName}/resources/system/metrics/stream`,
+    `/sse/v1/admin/cluster/nodes/${nodeName}/resources/system/metrics/stream`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -342,7 +342,7 @@ export const streamNodeGpuMetrics = (
   signal?: AbortSignal,
 ) => {
   return customInstance<SseEmitter>({
-    url: `/sse/v1/cluster/nodes/${nodeName}/resources/gpu/metrics/stream`,
+    url: `/sse/v1/admin/cluster/nodes/${nodeName}/resources/gpu/metrics/stream`,
     method: "GET",
     params,
     signal,
@@ -354,7 +354,7 @@ export const getStreamNodeGpuMetricsQueryKey = (
   params?: StreamNodeGpuMetricsParams,
 ) => {
   return [
-    `/sse/v1/cluster/nodes/${nodeName}/resources/gpu/metrics/stream`,
+    `/sse/v1/admin/cluster/nodes/${nodeName}/resources/gpu/metrics/stream`,
     ...(params ? [params] : []),
   ] as const;
 };

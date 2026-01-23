@@ -52,7 +52,12 @@ export const updateUrgentStandbyOrderBody = zod
               .describe(
                 "우선순위 (2~5, 낮을수록 높은 우선순위, rank=1은 urgent-active 전용)",
               ),
-            workloadId: zod.number().min(1).describe("워크로드 ID"),
+            workspaceResourceName: zod
+              .string()
+              .describe("워크스페이스 리소스명 (K8s Namespace)"),
+            workloadResourceName: zod
+              .string()
+              .describe("워크로드 리소스명 (K8s PodGroup)"),
           })
           .strict()
           .describe("큐 순서 변경 항목"),
@@ -168,10 +173,14 @@ export const getUrgentStandbyWorkloadsResponse = zod
  * Pending 상태의 워크로드를 urgent-standby 큐에 추가합니다. 최대 5개까지 등록 가능합니다.
  * @summary 긴급 대기큐에 워크로드 추가
  */
-
 export const addWorkloadToUrgentStandbyBody = zod
   .object({
-    workloadId: zod.number().min(1).describe("워크로드 ID"),
+    workspaceResourceName: zod
+      .string()
+      .describe("워크스페이스 리소스명 (K8s Namespace)"),
+    workloadResourceName: zod
+      .string()
+      .describe("워크로드 리소스명 (K8s PodGroup)"),
   })
   .strict()
   .describe("긴급 큐 워크로드 추가 요청");

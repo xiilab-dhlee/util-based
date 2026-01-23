@@ -60,7 +60,7 @@ import * as zod from "zod";
             - nodeNetworkTransmit: 네트워크 송신 속도 메트릭 결과
             - diskRead: 디스크 읽기 속도 메트릭 결과
             - diskWrite: 디스크 쓰기 속도 메트릭 결과
-            - diskUsage: 디스크 사용률 메트릭 결과
+            - diskUtilization: 디스크 사용률 메트릭 결과
             - memoryUtilization: 메모리 사용률 메트릭 결과
             - nodeMemoryBuffers: 메모리 버퍼 메트릭 결과
             - nodeMemoryCached: 메모리 캐시 메트릭 결과
