@@ -16,7 +16,6 @@ import { FileSecurityService } from "@/domain/security/api/file-security.service
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { HpeService } from "@/domain/system-setting/api/hpe.service";
-import { SmtpService } from "@/domain/system-setting/api/smtp.service";
 import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
@@ -42,7 +41,6 @@ interface ServiceContextType {
   resourcePresetService: ResourcePresetService;
   revokeHistoryService: RevokeHistoryService;
   hpeService: HpeService;
-  smtpService: SmtpService;
   workspaceResourceSettingService: WorkspaceResourceSettingService;
 }
 
@@ -81,7 +79,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     resourcePresetService: new ResourcePresetService(),
     revokeHistoryService: new RevokeHistoryService(),
     hpeService: new HpeService(),
-    smtpService: new SmtpService(),
     workspaceResourceSettingService: new WorkspaceResourceSettingService(),
   };
 
