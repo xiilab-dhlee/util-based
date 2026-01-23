@@ -3,7 +3,7 @@
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
-import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { RegistryImageFilterRequestImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { PrivateRegistryTypeCard } from "@/domain/private-registry/components/private-registry-type-card";
 import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
 import { openSelectPrivateRegistryTypeModalAtom } from "@/domain/private-registry/state/private-registry.atom";
@@ -18,7 +18,7 @@ export function SelectPrivateRegistryTypeModal() {
     openSelectPrivateRegistryTypeModalAtom,
   );
 
-  const handleClickType = (type: GetPrivateRegistryListImageSourceType) => {
+  const handleClickType = (type: RegistryImageFilterRequestImageSourceType) => {
     publish(PRIVATE_REGISTRY_EVENTS.sendType, type);
     onClose();
   };

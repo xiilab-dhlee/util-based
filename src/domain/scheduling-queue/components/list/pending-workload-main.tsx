@@ -7,6 +7,12 @@ import { useEffect } from "react";
 import { useGetUrgentStandbyWorkloads } from "@/api/generated/admin-queue/admin-queue";
 import { useGetPendingWorkloads } from "@/api/generated/admin-workload/admin-workload";
 import type { AdminWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
+// TODO: AdminWorkloadResponse에 workloadId가 없음 - 백엔드 API 확인 필요
+interface AdminWorkloadWithId extends AdminWorkloadResponse {
+  workloadId: number;
+}
+
 import { PendingWorkloadBody } from "@/domain/scheduling-queue/components/list/pending-workload-body";
 import { PendingWorkloadFilter } from "@/domain/scheduling-queue/components/list/pending-workload-filter";
 import { PendingWorkloadFooter } from "@/domain/scheduling-queue/components/list/pending-workload-footer";
@@ -39,10 +45,14 @@ export function PendingWorkloadMain() {
     isLoading,
     isError,
   } = useGetPendingWorkloads({
-    pageNo: page - 1,
-    pageSize: LIST_PAGE_SIZE,
-    jobType: jobType,
-    keyword: search || undefined,
+    pageSearchRequest: {
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+      keyword: search || undefined,
+    },
+    filterRequest: {
+      jobType: jobType,
+    },
   });
 
   const { mutate: addToUrgentQueue, isPending: isAddingToQueue } =
@@ -54,12 +64,13 @@ export function PendingWorkloadMain() {
 
   /**
    * 긴급 대기열에 워크로드 추가
+   * TODO: AdminWorkloadResponse에 workloadId가 없음 - 백엔드 API 확인 필요
    */
   const handleAddToUrgentQueue = (workload: AdminWorkloadResponse) => {
+    const workloadWithId = workload as AdminWorkloadWithId;
     addToUrgentQueue({
       data: {
-        workspaceResourceName: workload.workspaceResourceName,
-        workloadResourceName: workload.workloadResourceName,
+        workloadId: workloadWithId.workloadId,
       },
     });
   };

@@ -41,7 +41,7 @@ export const credentialListOverrideHandlers = [
               : CredentialListItemResponseCredentialType.GIT_REPOSITORY,
           credentialName: generateCredentialName(globalIndex, keyword),
           description: `크리덴셜 설명 ${globalIndex + 1}`,
-          createDateTime: new Date(
+          createdAt: new Date(
             Date.now() - globalIndex * 24 * 60 * 60 * 1000,
           ).toISOString(),
           creatorName: `사용자 ${(globalIndex % 5) + 1}`,

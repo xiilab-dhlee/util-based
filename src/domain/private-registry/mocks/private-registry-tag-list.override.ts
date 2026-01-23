@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
 
 import {
-  GetPrivateImageTagListOrder,
-  GetPrivateImageTagListSort,
   type ImageTagListResponse,
+  RegistryImageTagFilterRequestOrder,
+  RegistryImageTagFilterRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateImageTagListMockHandler,
@@ -33,11 +33,16 @@ function randomInt(min: number, max: number): number {
  * vulnerability 필드 생성 (각 개수: 1 ~ 10000)
  */
 function generateVulnerability() {
+  const criticalCount = randomInt(1, 10000);
+  const highCount = randomInt(1, 10000);
+  const mediumCount = randomInt(1, 10000);
+  const lowCount = randomInt(1, 10000);
   return {
-    criticalCount: randomInt(1, 10000),
-    highCount: randomInt(1, 10000),
-    mediumCount: randomInt(1, 10000),
-    lowCount: randomInt(1, 10000),
+    criticalCount,
+    highCount,
+    mediumCount,
+    lowCount,
+    totalCount: criticalCount + highCount + mediumCount + lowCount,
   };
 }
 
@@ -50,10 +55,10 @@ function generateCreatedAt(
   order: string,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  if (sort === GetPrivateImageTagListSort.CREATED_AT) {
+  if (sort === RegistryImageTagFilterRequestSort.CREATED_AT) {
     const safeIndex = Math.min(Math.max(index, 0), 29);
     const offset =
-      order === GetPrivateImageTagListOrder.ASC
+      order === RegistryImageTagFilterRequestOrder.ASC
         ? (30 - safeIndex) * DAY_IN_MS
         : safeIndex * DAY_IN_MS;
     return new Date(baseTimestamp - offset).toISOString();
@@ -71,9 +76,10 @@ export const privateRegistryTagListOverrideHandlers = [
       10,
     );
     const sort =
-      url.searchParams.get("sort") || GetPrivateImageTagListSort.CREATED_AT;
+      url.searchParams.get("sort") ||
+      RegistryImageTagFilterRequestSort.CREATED_AT;
     const order =
-      url.searchParams.get("order") || GetPrivateImageTagListOrder.DESC;
+      url.searchParams.get("order") || RegistryImageTagFilterRequestOrder.DESC;
 
     const totalSize = pageSize * 3;
 

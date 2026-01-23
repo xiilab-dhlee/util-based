@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
-import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { RegistryImageFilterRequestImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateRegistryListQueryKey,
   useCreatePrivateExternalImage,
@@ -85,7 +85,7 @@ export function CreatePrivateRegistryModal() {
   // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
   useSubscribe(
     PRIVATE_REGISTRY_EVENTS.sendType,
-    (type: GetPrivateRegistryListImageSourceType) => {
+    (type: RegistryImageFilterRequestImageSourceType) => {
       // 폼 초기화 후 type 설정
       reset({
         type,

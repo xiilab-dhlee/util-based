@@ -1,6 +1,6 @@
 import {
-  GetImageJobsImageSourceType,
   type ImageJobResponse,
+  ImageJobResponseImageSourceType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetImageJobsMockHandler,
@@ -45,10 +45,12 @@ function generateJobStatus(index: number): string {
  * 이미지 소스 타입 생성 (인덱스 기반)
  * 짝수: SNAPSHOT, 홀수: EXTERNAL
  */
-function generateImageSourceType(index: number): GetImageJobsImageSourceType {
+function generateImageSourceType(
+  index: number,
+): ImageJobResponseImageSourceType {
   return index % 2 === 0
-    ? GetImageJobsImageSourceType.SNAPSHOT
-    : GetImageJobsImageSourceType.EXTERNAL;
+    ? ImageJobResponseImageSourceType.SNAPSHOT
+    : ImageJobResponseImageSourceType.EXTERNAL;
 }
 
 export const imageJobsOverrideHandlers = [

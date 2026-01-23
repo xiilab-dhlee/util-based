@@ -36,11 +36,15 @@ export function AccountPendingListMain() {
   });
 
   const { data, isLoading, isError } = useGetSignupRequests({
-    pageNo: page - 1,
-    pageSize: LIST_PAGE_SIZE,
-    keyword: searchText,
-    sort: sortRequest?.sort,
-    order: sortRequest?.order,
+    pageSearchRequest: {
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+      keyword: searchText,
+    },
+    sortRequest: {
+      sort: sortRequest?.sort ?? "CREATED_AT",
+      order: sortRequest?.order ?? "DESC",
+    },
   });
 
   useEffect(() => {

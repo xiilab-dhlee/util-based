@@ -23,7 +23,10 @@ export function PrivateRegistryDetailIntroCard() {
 
   const harborImageName = name ? decodeURIComponent(name) : "";
   const { data, isLoading, isError } = useGetPrivateImageDetail(
-    { harborImageName },
+    {
+      request: { harborImageName },
+      workspaceFilter: {},
+    },
     { query: { enabled: !!harborImageName } },
   );
 

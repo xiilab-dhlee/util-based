@@ -20,7 +20,7 @@ import {
   monitoringNotificationSearchTextAtom,
 } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import { formatDateForRequest } from "@/shared/utils/date.util";
-import { buildSortRequest } from "@/shared/utils/sort.util";
+import { toBackendOrder } from "@/shared/utils/sort.util";
 
 export function MonitoringNotificationListArticle() {
   const resetPage = useResetAtom(monitoringNotificationPageAtom);
@@ -35,21 +35,25 @@ export function MonitoringNotificationListArticle() {
   const sort = useAtomValue(monitoringNotificationHistorySortAtom);
   const dateRange = useAtomValue(monitoringNotificationHistoryDateRangeAtom);
 
-  const sortRequest = buildSortRequest({
-    state: sort,
-    fieldMap: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP,
-  });
-
   const { data, isLoading, isError } = useGetAllMonitoringNotificationHistories(
     {
-      pageNo: page - 1,
-      pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
-      keyword: searchText || undefined,
-      ...sortRequest,
-      startedAt: dateRange?.start
-        ? formatDateForRequest(dateRange.start)
-        : undefined,
-      endedAt: dateRange?.end ? formatDateForRequest(dateRange.end) : undefined,
+      pageSearchRequest: {
+        pageNo: page - 1,
+        pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+        keyword: searchText || undefined,
+      },
+      sortRequest: {
+        sort: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP[sort.field],
+        order: toBackendOrder(sort.order),
+      },
+      filterRequest: {
+        startedAt: dateRange?.start
+          ? formatDateForRequest(dateRange.start)
+          : undefined,
+        endedAt: dateRange?.end
+          ? formatDateForRequest(dateRange.end)
+          : undefined,
+      },
     },
   );
 

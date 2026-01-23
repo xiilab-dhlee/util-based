@@ -1,6 +1,6 @@
 import {
-  type GetPrivateImageTagListSort,
   ImageTagListResponseApprovalStatus,
+  type RegistryImageTagFilterRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
@@ -13,7 +13,7 @@ export const PRIVATE_REGISTRY_TAG_SORT_FIELD_MAP = {
   imageTagSizeByte: "IMAGE_TAG_SIZE_BYTE",
   vulnerability: "TOTAL_VULNERABILITY_COUNT",
   latestVulnerabilityScanDateTime: "LATEST_SCAN_DATETIME",
-} as const satisfies Record<string, GetPrivateImageTagListSort>;
+} as const satisfies Record<string, RegistryImageTagFilterRequestSort>;
 
 /** 프라이빗 레지스트리 이미지 태그 정렬 필드 타입 */
 export type PrivateRegistryTagSortField =

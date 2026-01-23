@@ -26,9 +26,11 @@ function useCredentialOptions(keyword: string) {
       getCredentials(
         accountId,
         {
-          pageNo: pageParam,
-          pageSize: PAGE_SIZE,
-          keyword: keyword || undefined,
+          pageSearchRequest: {
+            pageNo: pageParam,
+            pageSize: PAGE_SIZE,
+            keyword: keyword || undefined,
+          },
         },
         signal,
       ),

@@ -6,7 +6,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Dropdown, Input } from "xiilab-ui";
 
-import type { GetPendingWorkloadsJobType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { PendingWorkloadFilterRequestJobType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   pendingWorkloadJobTypeAtom,
   pendingWorkloadPageAtom,
@@ -41,7 +41,9 @@ export function PendingWorkloadFilter({ total }: PendingWorkloadFilterProps) {
    * Job Type 변경 핸들러
    * Job Type 변경 시 페이지를 초기화
    */
-  const handleChangeJobType = (newValue: GetPendingWorkloadsJobType | null) => {
+  const handleChangeJobType = (
+    newValue: PendingWorkloadFilterRequestJobType | null,
+  ) => {
     resetPage();
     jobTypeSelect.onChange(newValue);
 

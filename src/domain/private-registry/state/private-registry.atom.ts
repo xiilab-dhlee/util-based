@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 import type { Key } from "react";
 
-import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { RegistryImageFilterRequestImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { PrivateRegistrySortState } from "@/domain/private-registry/constants/private-registry.constant";
 
 // ============================================================================
@@ -22,7 +22,7 @@ export const privateRegistrySortAtom = atom<PrivateRegistrySortState>({
 });
 /** 프라이빗 레지스트리 이미지 소스 타입 필터 */
 export const privateRegistryImageSourceTypeAtom = atomWithReset<
-  GetPrivateRegistryListImageSourceType | undefined
+  RegistryImageFilterRequestImageSourceType | undefined
 >(undefined);
 /** 선택된 프라이빗 레지스트리 Harbor 이미지 경로 */
 export const privateRegistrySelectedItemAtom = atom<string>("");
@@ -55,5 +55,5 @@ export const imageJobSearchKeywordAtom = atom<string>("");
 export const imageJobSearchTextAtom = atomWithReset<string>("");
 /** 이미지 등록 Job 이미지 소스 타입 필터 */
 export const imageJobImageSourceTypeAtom = atomWithReset<
-  GetPrivateRegistryListImageSourceType | undefined
+  RegistryImageFilterRequestImageSourceType | undefined
 >(undefined);

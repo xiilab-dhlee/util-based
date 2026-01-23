@@ -54,14 +54,20 @@ export function PrivateRegistryListMain() {
   });
   const { data, isLoading, isError } = useGetPrivateRegistryList(
     {
-      pageNo: page - 1,
-      pageSize: PRIVATE_REGISTRY_PAGE_SIZE,
-      keyword: searchText,
-      imageSourceType,
-      workspaceId: selectedWorkspace?.workspaceId,
-      ...(sortRequest
-        ? { sort: sortRequest.sort, order: sortRequest.order }
-        : {}),
+      pageRequest: {
+        pageNo: page - 1,
+        pageSize: PRIVATE_REGISTRY_PAGE_SIZE,
+        keyword: searchText,
+      },
+      workspaceFilter: {
+        workspaceId: selectedWorkspace?.workspaceId,
+      },
+      filterRequest: {
+        sort: sortRequest?.sort ?? "CREATED_AT",
+        order: sortRequest?.order ?? "DESC",
+        isMine: false,
+        imageSourceType,
+      },
     },
     {
       query: {

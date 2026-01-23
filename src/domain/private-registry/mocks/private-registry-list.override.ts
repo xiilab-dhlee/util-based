@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
 
 import {
-  GetPrivateRegistryListImageSourceType,
-  GetPrivateRegistryListOrder,
-  GetPrivateRegistryListSort,
+  RegistryImageFilterRequestImageSourceType,
+  RegistryImageFilterRequestOrder,
+  RegistryImageFilterRequestSort,
   type RegistryListResponse,
   type RegistryListResponseImageSourceType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -38,7 +38,7 @@ function generateImageDisplayName(
     // ASC: 001, 002, 003... / DESC: 999, 998, 997...
     const sortableValue = 999 - (index % 1000);
     const sortableNum =
-      order === GetPrivateRegistryListOrder.ASC
+      order === RegistryImageFilterRequestOrder.ASC
         ? paddedIndex
         : String(sortableValue).padStart(3, "0");
     return `${prefix}-${sortableNum}`;
@@ -56,10 +56,10 @@ function generateCreatedAt(
   order: string,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  if (sort === GetPrivateRegistryListSort.CREATED_AT) {
+  if (sort === RegistryImageFilterRequestSort.CREATED_AT) {
     const safeIndex = Math.min(Math.max(index, 0), 29);
     const offset =
-      order === GetPrivateRegistryListOrder.ASC
+      order === RegistryImageFilterRequestOrder.ASC
         ? (30 - safeIndex) * DAY_IN_MS
         : safeIndex * DAY_IN_MS;
     return new Date(baseTimestamp - offset).toISOString();
@@ -75,8 +75,8 @@ function generateImageSourceType(
   index: number,
 ): RegistryListResponseImageSourceType {
   return index % 2 === 0
-    ? GetPrivateRegistryListImageSourceType.SNAPSHOT
-    : GetPrivateRegistryListImageSourceType.EXTERNAL;
+    ? RegistryImageFilterRequestImageSourceType.SNAPSHOT
+    : RegistryImageFilterRequestImageSourceType.EXTERNAL;
 }
 
 export const privateRegistryListOverrideHandlers = [
@@ -89,12 +89,12 @@ export const privateRegistryListOverrideHandlers = [
       10,
     );
     const sort =
-      url.searchParams.get("sort") || GetPrivateRegistryListSort.CREATED_AT;
+      url.searchParams.get("sort") || RegistryImageFilterRequestSort.CREATED_AT;
     const order =
-      url.searchParams.get("order") || GetPrivateRegistryListOrder.DESC;
+      url.searchParams.get("order") || RegistryImageFilterRequestOrder.DESC;
     const imageSourceType = url.searchParams.get(
       "imageSourceType",
-    ) as GetPrivateRegistryListImageSourceType | null;
+    ) as RegistryImageFilterRequestImageSourceType | null;
 
     // 필터링이 있으면 해당 타입만, 없으면 전체
     const baseTotalSize = pageSize * 3;

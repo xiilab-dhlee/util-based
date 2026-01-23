@@ -52,13 +52,17 @@ export function PrivateRegistryDetailMain() {
   });
 
   const { data, isLoading, isError } = useGetPrivateImageTagList({
-    pageNo: page - 1,
-    pageSize: 20,
-    keyword: searchText,
-    harborImageName,
-    ...(sortRequest
-      ? { sort: sortRequest.sort, order: sortRequest.order }
-      : {}),
+    pageRequest: {
+      pageNo: page - 1,
+      pageSize: 20,
+      keyword: searchText,
+    },
+    filterRequest: {
+      harborImageName,
+      sort: sortRequest?.sort ?? "CREATED_AT",
+      order: sortRequest?.order ?? "DESC",
+    },
+    workspaceFilter: {},
   });
 
   useEffect(() => {

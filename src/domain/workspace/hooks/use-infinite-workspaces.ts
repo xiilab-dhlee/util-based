@@ -4,7 +4,7 @@ import {
 } from "@tanstack/react-query";
 
 import type {
-  GetAllWorkspacesParams,
+  WorkspaceListRequest,
   WorkspaceResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -24,7 +24,7 @@ interface UseInfiniteWorkspacesReturn {
 }
 
 export function useInfiniteWorkspaces(
-  params?: Omit<GetAllWorkspacesParams, "pageNo">,
+  params?: Omit<WorkspaceListRequest, "pageNo">,
 ): UseInfiniteWorkspacesReturn {
   const {
     keyword,
@@ -36,9 +36,12 @@ export function useInfiniteWorkspaces(
   const query = useInfiniteQuery({
     queryKey: [
       ...getGetAllWorkspacesQueryKey({
-        keyword: normalizedKeyword,
-        pageSize,
-        hasMyWorkspace,
+        workspaceListRequest: {
+          pageNo: 0,
+          pageSize,
+          keyword: normalizedKeyword,
+          hasMyWorkspace,
+        },
       }),
       "infinite",
     ],
@@ -47,10 +50,12 @@ export function useInfiniteWorkspaces(
 
       return getAllWorkspaces(
         {
-          pageNo: backendPageNo,
-          pageSize,
-          keyword: normalizedKeyword,
-          hasMyWorkspace,
+          workspaceListRequest: {
+            pageNo: backendPageNo,
+            pageSize,
+            keyword: normalizedKeyword,
+            hasMyWorkspace,
+          },
         },
         signal,
       );

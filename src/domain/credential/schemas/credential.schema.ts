@@ -38,3 +38,8 @@ export const createCredentialFormSchema = z.object({
 export type CreateCredentialFormType = z.infer<
   typeof createCredentialFormSchema
 >;
+
+/**
+ * 크리덴셜 ID 타입
+ */
+export type CredentialIdType = number;

@@ -40,11 +40,15 @@ export function AccountListMain() {
     fieldMap: ACCOUNT_SORT_FIELD_MAP,
   });
   const { data, isLoading, isError } = useGetAllAccounts({
-    pageNo: page - 1,
-    pageSize: LIST_PAGE_SIZE,
-    keyword: searchText,
-    sort: sortRequest?.sort,
-    order: sortRequest?.order,
+    pageSearchRequest: {
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+      keyword: searchText,
+    },
+    sortRequest: {
+      sort: sortRequest?.sort ?? "ACCOUNT_NAME",
+      order: sortRequest?.order ?? "ASC",
+    },
   });
 
   useEffect(() => {

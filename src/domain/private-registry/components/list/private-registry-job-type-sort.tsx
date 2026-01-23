@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
-import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { RegistryImageFilterRequestImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/private-registry/constants/private-registry.constant";
 import {
   imageJobImageSourceTypeAtom,
@@ -37,7 +37,9 @@ export function PrivateRegistryJobTypeSort({
    * 구분 변경 핸들러
    * 구분 변경 시 페이지를 초기화
    */
-  const handleChange = (value: GetPrivateRegistryListImageSourceType | "") => {
+  const handleChange = (
+    value: RegistryImageFilterRequestImageSourceType | "",
+  ) => {
     resetPage();
     setImageSourceType(value || undefined);
   };

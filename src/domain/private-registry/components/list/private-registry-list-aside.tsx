@@ -24,11 +24,16 @@ export function PrivateRegistryListAside() {
 
   const { data, isLoading, isError } = useGetImageJobs(
     {
-      keyword: searchText,
-      pageNo: page - 1,
-      pageSize: PRIVATE_REGISTRY_JOB_PAGE_SIZE,
-      imageType: "PRIVATE",
-      imageSourceType,
+      pageRequest: {
+        pageNo: page - 1,
+        pageSize: PRIVATE_REGISTRY_JOB_PAGE_SIZE,
+        keyword: searchText,
+      },
+      filterRequest: {
+        imageType: "PRIVATE",
+        isMine: false,
+        imageSourceType,
+      },
     },
     {
       query: {

@@ -3,7 +3,7 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { listFiles } from "@/api/generated/volume/volume";
+import { listFiles } from "@/api/generated/volume-file/volume-file";
 import {
   volumeFileCheckedNodesAtom,
   volumeFileTreeDataAtom,

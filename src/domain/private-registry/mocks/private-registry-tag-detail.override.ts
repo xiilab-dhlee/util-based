@@ -10,11 +10,16 @@ import { MOCK_BASE_TIMESTAMP } from "@/shared/constants/date.constant";
  * 취약점 카운트 생성
  */
 function generateVulnerability() {
+  const criticalCount = faker.number.int({ min: 0, max: 999999 });
+  const highCount = faker.number.int({ min: 0, max: 999999 });
+  const mediumCount = faker.number.int({ min: 0, max: 999999 });
+  const lowCount = faker.number.int({ min: 0, max: 999999 });
   return {
-    criticalCount: faker.number.int({ min: 0, max: 999999 }),
-    highCount: faker.number.int({ min: 0, max: 999999 }),
-    mediumCount: faker.number.int({ min: 0, max: 999999 }),
-    lowCount: faker.number.int({ min: 0, max: 999999 }),
+    criticalCount,
+    highCount,
+    mediumCount,
+    lowCount,
+    totalCount: criticalCount + highCount + mediumCount + lowCount,
   };
 }
 
@@ -35,7 +40,6 @@ export const privateRegistryTagDetailOverrideHandlers = [
           "FAILED",
           "IN_PROGRESS",
         ]),
-        creatorId: "admin",
         creatorName: "관리자",
         createdAt: new Date(MOCK_BASE_TIMESTAMP).toISOString(),
         description: faker.lorem.sentence(),
