@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Label, Switch, Typography } from "xiilab-ui";
 
 import { RequestImageStatusCard } from "@/domain/registry/components/entry/request-image-status-card";
+import { SecuritySettingCard } from "@/domain/registry/components/entry/security-setting-card";
 import { REGISTRY_QUICK_MENUS } from "@/domain/registry/constants/registry.constant";
 import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
@@ -42,68 +43,49 @@ export function RegistryMainSection() {
               레지스트리 보안 정책 설정
             </Typography.Text>
             <SecuritySettingBody>
-              <Card>
-                <CardHeader>
-                  <Typography.Text variant="subtitle-2-2" color="#fff">
+              <SecuritySettingCard
+                title={
+                  <>
                     개인 레지스트리
                     <br />
                     이미지 보안 검사
-                  </Typography.Text>
-                  <Switch checked={true} />
-                </CardHeader>
-                <CardBody>
-                  <Typography.Text variant="body-1-1" color="#BDBDBD">
-                    개인 레지스트리에 업로드한 컨테이너 이미지의 보안 검사 수행
-                    여부 설정
-                  </Typography.Text>
-                </CardBody>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <Typography.Text variant="subtitle-2-2" color="#fff">
+                  </>
+                }
+                description="개인 레지스트리에 업로드한 컨테이너 이미지의 보안 검사 수행 여부 설정"
+                action={<Switch disabled />}
+              />
+              <SecuritySettingCard
+                title={
+                  <>
                     공유 레지스트리
                     <br />
                     이미지 보안 검사
-                  </Typography.Text>
-                  <Switch checked={true} />
-                </CardHeader>
-                <CardBody>
-                  <Typography.Text variant="body-1-1" color="#BDBDBD">
-                    공유 레지스트리에 업로드한 컨테이너 이미지의 보안 검사 수행
-                    여부 설정
-                  </Typography.Text>
-                </CardBody>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <Typography.Text variant="subtitle-2-2" color="#fff">
+                  </>
+                }
+                description="공유 레지스트리에 업로드한 컨테이너 이미지의 보안 검사 수행 여부 설정"
+                action={<Switch disabled />}
+              />
+              <SecuritySettingCard
+                title={
+                  <>
                     외부 업로드 이미지
                     <br />
                     사용 허용
-                  </Typography.Text>
-                  <Switch checked={true} />
-                </CardHeader>
-                <CardBody>
-                  <Typography.Text variant="body-1-1" color="#BDBDBD">
-                    AstraGo를 통해 등록되지 않은 외부 레지스트리 이미지의 사용
-                    가능 여부를 설정
-                  </Typography.Text>
-                </CardBody>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <Typography.Text variant="subtitle-2-2" color="#fff">
+                  </>
+                }
+                description="AstraGo를 통해 등록되지 않은 외부 레지스트리 이미지의 사용 가능 여부를 설정"
+                action={<Switch disabled />}
+              />
+              <SecuritySettingCard
+                title={
+                  <>
                     보안 레벨 설정
                     <br />
                     <Label variant="blue">사용중</Label>
-                  </Typography.Text>
-                </CardHeader>
-                <CardBody>
-                  <Typography.Text variant="body-1-1" color="#BDBDBD">
-                    Critical 이상의 취약점 2개 이상 발견 시, 사용 불가
-                  </Typography.Text>
-                </CardBody>
-              </Card>
+                  </>
+                }
+                description="Critical 이상의 취약점 2개 이상 발견 시, 사용 불가"
+              />
             </SecuritySettingBody>
           </SecuritySetting>
         </RightBody>
@@ -249,30 +231,4 @@ const SecuritySettingBody = styled.div`
   gap: 12px;
   margin-top: 20px;
   height: 100%;
-`;
-
-const Card = styled.div`
-  background-color: #070913;
-  border: 1px solid #2a3041;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-`;
-
-const CardHeader = styled.div`
-  height: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-`;
-
-const CardBody = styled.div`
-  flex: 1;
-  display: flex;
-  padding: 12px 10px;
-  background-color: #171b26;
-  border: 1px solid #2A3041;
-  border-radius: 4px;
 `;

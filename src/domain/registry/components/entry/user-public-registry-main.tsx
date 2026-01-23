@@ -7,6 +7,8 @@ import type { TableProps } from "xiilab-ui";
 
 import { useGetPublicImageUsageByAccount } from "@/api/generated/admin-public-registry/admin-public-registry";
 import type { PublicImageUsageResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { UserPublicRegistryFilter } from "@/domain/registry/components/entry/user-public-registry-filter";
+import { UserPublicRegistryFooter } from "@/domain/registry/components/entry/user-public-registry-footer";
 import { createRegistryUserColumn } from "@/domain/registry/components/user-list/create-registry-user-column";
 import { USER_REGISTRY_PAGE_SIZE } from "@/domain/registry/constants/registry.constant";
 import {
@@ -25,8 +27,6 @@ import {
   parseSorterToAntdState,
 } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import { UserPublicRegistryFilter } from "./user-public-registry-filter";
-import { UserPublicRegistryFooter } from "./user-public-registry-footer";
 
 /**
  * 사용자별 공개 레지스트리 메인 컴포넌트

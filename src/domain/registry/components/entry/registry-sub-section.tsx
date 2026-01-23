@@ -2,8 +2,8 @@
 
 import styled from "styled-components";
 
-import { UserPrivateRegistryMain } from "./user-private-registry-main";
-import { UserPublicRegistryMain } from "./user-public-registry-main";
+import { UserPrivateRegistryMain } from "@/domain/registry/components/entry/user-private-registry-main";
+import { UserPublicRegistryMain } from "@/domain/registry/components/entry/user-public-registry-main";
 
 /**
  * 레지스트리 서브섹션 컴포넌트
