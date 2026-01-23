@@ -41,7 +41,6 @@ import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handl
 import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
 import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
-import { storageSettingHandlers } from "@/mocks/handlers/storage-setting.handler";
 import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 
@@ -124,7 +123,6 @@ const rawHandlers = [
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,
   ...revokeHistoryHandlers,
-  ...storageSettingHandlers,
   ...systemMonitoringHandlers,
   ...hpeHandlers,
   ...licenseHandlers,

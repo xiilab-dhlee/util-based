@@ -87,6 +87,13 @@ export const MUTATION_KEYS = {
   createExternalImage1: "createExternalImage1",
 
   // ============================================
+  // Storage (Admin)
+  // ============================================
+  registerStorage: "registerStorage",
+  updateStorage: "updateStorage",
+  deleteStorage: "deleteStorage",
+
+  // ============================================
   // Volume
   // ============================================
   updateVolume: "updateVolume",

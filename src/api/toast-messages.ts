@@ -174,6 +174,19 @@ export const MUTATION_MESSAGES: Partial<
   },
 
   // ============================================
+  // Storage (Admin)
+  // ============================================
+  [MUTATION_KEYS.registerStorage]: {
+    success: "스토리지가 등록되었습니다.",
+  },
+  [MUTATION_KEYS.updateStorage]: {
+    success: "스토리지가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteStorage]: {
+    success: "스토리지가 삭제되었습니다.",
+  },
+
+  // ============================================
   // Volume
   // ============================================
   [MUTATION_KEYS.updateVolume]: {

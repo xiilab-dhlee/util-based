@@ -3,60 +3,54 @@
 import styled from "styled-components";
 import { Button, Card, Typography } from "xiilab-ui";
 
-import type {
-  StorageSettingIdType,
-  StorageSettingListType,
-} from "@/domain/system-setting/schemas/storage-setting.schema";
+import type { StorageResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { STORAGE_CARD_HEIGHT } from "@/domain/storage/constants/storage.constant";
+import { STORAGE_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
 
-interface StorageSettingCardProps extends Partial<StorageSettingListType> {
-  /** 카드 클릭 핸들러 */
-  onClick?: (id: StorageSettingIdType) => void;
-  /** 삭제 버튼 클릭 핸들러 */
-  onDelete?: (id: StorageSettingIdType) => void;
-  /** 로딩 상태 */
-  loading?: boolean;
-}
+type StorageCardProps = StorageResponse;
 
 /**
- * 스토리지 설정 카드 컴포넌트
+ * 스토리지 카드 컴포넌트
  *
  * 스토리지 이름, IP, 등록자, 등록일을 표시하는 카드
  */
-export function StorageSettingCard({
-  id,
+export function StorageCard({
+  storageId,
   storageName,
-  ip,
+  storageIp,
   creatorName,
-  creatorDate,
-  onClick,
-  onDelete,
-  loading,
-}: StorageSettingCardProps) {
+  createdAt,
+}: StorageCardProps) {
+  const publish = usePublish();
+
   const handleClick = () => {
-    if (id && !loading) onClick?.(id);
+    publish(STORAGE_EVENTS.openDetailModal, {
+      id: storageId,
+    });
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (id) onDelete?.(id);
+
+    publish(STORAGE_EVENTS.openDeleteModal, {
+      id: storageId,
+    });
   };
 
   return (
     <Card
       title={storageName}
-      actionElement={
-        !loading && <Button icon="Delete" onClick={handleClickDelete} />
-      }
-      height={102}
+      actionElement={<Button icon="Delete" onClick={handleClickDelete} />}
+      height={STORAGE_CARD_HEIGHT}
       showHeader={true}
-      loading={loading}
       onClick={handleClick}
     >
       <Container>
         <InfoRow>
           <Label>IP</Label>
-          <Value>{ip}</Value>
+          <Value>{storageIp}</Value>
         </InfoRow>
         <InfoRow>
           <Label>등록자</Label>
@@ -64,7 +58,7 @@ export function StorageSettingCard({
         </InfoRow>
         <InfoRow>
           <Label>등록일</Label>
-          <Value>{formatDateSafely(creatorDate)}</Value>
+          <Value>{formatDateSafely(createdAt)}</Value>
         </InfoRow>
       </Container>
     </Card>
