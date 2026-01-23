@@ -58,7 +58,6 @@ export function ViewStorageDetailModal() {
       okText="수정"
       onOk={handleEdit}
       okButtonProps={{ disabled: isLoading || isError || !data }}
-      cancelButtonProps={{ disabled: isLoading }}
       centered
       showHeaderBorder
       loading={isLoading}
