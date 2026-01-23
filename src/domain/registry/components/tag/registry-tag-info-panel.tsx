@@ -33,13 +33,14 @@ export function RegistryTagInfoPanel({ mode }: RegistryTagInfoPanelProps) {
   const router = useRouter();
   const { name, tagName } = useParams<{ name: string; tagName: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
+  const decodedTagName = tagName ? decodeURIComponent(tagName) : "";
 
   const publish = usePublish();
 
   // 태그 상세 조회
   const { data, isLoading, isError } = useGetRegistryTagDetailByMode(mode, {
     request: {
-      tagName: tagName ?? "",
+      tagName: decodedTagName,
       harborImageName,
     },
   });
@@ -66,7 +67,7 @@ export function RegistryTagInfoPanel({ mode }: RegistryTagInfoPanelProps) {
 
     publish(REGISTRY_EVENTS.openEditTagModal, {
       tagId: data.imageTagId,
-      tagName: tagName ?? "",
+      tagName: decodedTagName,
       harborImageName,
       description: data.description ?? "",
     });
@@ -82,7 +83,7 @@ export function RegistryTagInfoPanel({ mode }: RegistryTagInfoPanelProps) {
   return (
     <Container>
       <Header>
-        <HeaderTitle className="truncate">{tagName || "-"}</HeaderTitle>
+        <HeaderTitle className="truncate">{decodedTagName || "-"}</HeaderTitle>
         <ToolBox>
           <IconWrapper type="button" onClick={handleEdit} disabled={isLoading}>
             <Icon name="Edit02" color="var(--icon-fill)" size={24} />

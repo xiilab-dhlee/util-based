@@ -35,11 +35,23 @@ export function RegistryTagCard({
 
   const handleClick = () => {
     const encodedHarborImageName = encodeURIComponent(harborImageName);
-    const route =
-      mode === "private"
-        ? ROUTES.ADMIN_PRIVATE_REGISTRY_DETAIL(encodedHarborImageName, tagName)
-        : ROUTES.ADMIN_PUBLIC_REGISTRY_DETAIL(encodedHarborImageName, tagName);
-    router.push(route);
+    const encodedTagName = encodeURIComponent(tagName);
+
+    if (mode === "private") {
+      router.push(
+        ROUTES.ADMIN_PRIVATE_REGISTRY_DETAIL(
+          encodedHarborImageName,
+          encodedTagName,
+        ),
+      );
+    } else {
+      router.push(
+        ROUTES.ADMIN_PUBLIC_REGISTRY_DETAIL(
+          encodedHarborImageName,
+          encodedTagName,
+        ),
+      );
+    }
   };
 
   return (

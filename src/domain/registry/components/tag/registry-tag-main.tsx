@@ -29,6 +29,7 @@ interface RegistryTagMainProps {
 export function RegistryTagMain({ mode }: RegistryTagMainProps) {
   const { name, tagName } = useParams<{ name: string; tagName: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
+  const decodedTagName = tagName ? decodeURIComponent(tagName) : "";
 
   const resetPage = useResetAtom(registryTagVulnerabilityPageAtom);
 
@@ -43,7 +44,7 @@ export function RegistryTagMain({ mode }: RegistryTagMainProps) {
       },
       request: {
         harborImageName,
-        tagName: tagName ?? "",
+        tagName: decodedTagName,
       },
     },
   );
@@ -56,7 +57,7 @@ export function RegistryTagMain({ mode }: RegistryTagMainProps) {
     <>
       <PageHeader
         pageKey={`admin.${mode}-registry.detail`}
-        pageParams={{ name: name ?? "", tagName: tagName ?? "" }}
+        pageParams={{ name: harborImageName, tagName: decodedTagName }}
       />
       <DetailPageBody>
         <RegistryTagAside mode={mode} />
