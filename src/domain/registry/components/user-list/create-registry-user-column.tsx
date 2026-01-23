@@ -41,7 +41,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
 };
 
 /**
- * 프라이빗 레지스트리 사용자별 이미지 등록 현황 테이블 컬럼 생성
+ * 레지스트리 사용자별 이미지 등록 현황 테이블 컬럼 생성
  *
  * @param config 컬럼 설정 (배열 형태)
  * @returns 컬럼 배열

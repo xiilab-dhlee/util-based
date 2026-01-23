@@ -12,7 +12,7 @@ import {
 } from "@/domain/registry/state/registry-user-list.atom";
 
 interface RegistryUserRowProps extends HTMLAttributes<HTMLTableRowElement> {
-  rowData: PrivateImageUsageResponse;
+  rowData?: PrivateImageUsageResponse;
 }
 
 /**
