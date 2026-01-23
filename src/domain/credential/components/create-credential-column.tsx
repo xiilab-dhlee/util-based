@@ -7,9 +7,9 @@ import type {
 import { getCredentialTypeInfo } from "@/domain/credential/constants/credential.constant";
 import { CredentialDeleteButton } from "@/domain/system-setting/components/credential-delete-button";
 import { CredentialNameButton } from "@/domain/system-setting/components/credential-name-button";
+import { createdAtColumn } from "@/shared/components/column";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
-import { formatDateSafely } from "@/shared/utils/date.util";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
@@ -39,15 +39,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
     },
     {
-      title: "생성일",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      align: "left",
-      render: (createdAt: string) => {
-        return formatDateSafely(createdAt);
-      },
-    },
-    {
       title: "삭제",
       key: "delete",
       align: "center",
@@ -55,6 +46,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
         <CredentialDeleteButton {...record} />
       ),
     },
+    createdAtColumn(),
   ];
 };
 

@@ -106,7 +106,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       key: "useRequest",
-      dataIndex: "useRequest",
       title: "사용 요청",
       align: "center",
       render: (_: unknown, record: ImageTagListResponse) => {

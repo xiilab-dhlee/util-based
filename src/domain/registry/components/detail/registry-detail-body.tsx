@@ -111,7 +111,7 @@ export function RegistryDetailBody({
     {
       ...rowSelection,
       getCheckboxProps: (record: ImageTagListResponse) => ({
-        disabled: isUser && record.creatorId !== sessionAccountId,
+        disabled: !session || (isUser && record.creatorId !== sessionAccountId),
       }),
     };
 

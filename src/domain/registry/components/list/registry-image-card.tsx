@@ -73,9 +73,7 @@ export function RegistryImageCard({
           <Pane>
             <Row>
               <Key>구분</Key>
-              <ImageSourceTypeValue>
-                {imageSourceType?.toLowerCase() || "-"}
-              </ImageSourceTypeValue>
+              <Value>{imageSourceType?.toLowerCase() || "-"}</Value>
             </Row>
             <Row>
               <Key>상태</Key>
@@ -145,9 +143,5 @@ const Key = styled(CompactCardKey)`
 const Value = styled(CompactCardValue)`
   line-height: 14px;
   text-indent: 16px;
-  text-transform: capitalize;
-`;
-
-const ImageSourceTypeValue = styled(Value)`
   text-transform: capitalize;
 `;

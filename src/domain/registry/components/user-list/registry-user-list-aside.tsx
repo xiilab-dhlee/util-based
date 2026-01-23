@@ -49,7 +49,7 @@ export function RegistryUserListAside({ mode }: RegistryUserListAsideProps) {
   if (!selectedAccountId) {
     return (
       <StyledAsideDetailContainer>
-        <MySearchFilter title="컨테이너 이미지 정보" total={data?.totalSize} />
+        <MySearchFilter title="컨테이너 이미지 정보" total={0} />
         <EmptyState title="사용자를 선택해 주세요." />
       </StyledAsideDetailContainer>
     );
@@ -58,7 +58,10 @@ export function RegistryUserListAside({ mode }: RegistryUserListAsideProps) {
   return (
     <StyledAsideDetailContainer>
       {/* 필터 영역 */}
-      <MySearchFilter title="컨테이너 이미지 정보" total={data?.totalSize} />
+      <MySearchFilter
+        title="컨테이너 이미지 정보"
+        total={data?.totalSize || 0}
+      />
 
       {/* 본문 영역 */}
       <RegistryUserTagListBody
