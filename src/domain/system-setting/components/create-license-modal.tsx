@@ -71,7 +71,7 @@ export function CreateLicenseModal() {
     );
   };
 
-  useSubscribe(SYSTEM_SETTING_EVENTS.openLicenseRenewalModal, () => {
+  useSubscribe(SYSTEM_SETTING_EVENTS.openCreateLicenseModal, () => {
     reset();
     setOpen(true);
   });

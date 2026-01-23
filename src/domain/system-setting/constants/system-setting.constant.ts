@@ -6,6 +6,6 @@ export const CREDENTIAL_LIST_PAGE_SIZE = 10;
 
 /** Google SMTP 기본 설정 */
 export const GOOGLE_SMTP_CONFIG = {
-  nodeAddress: "smtp.gmail.com",
-  nodePort: "587",
+  host: "smtp.gmail.com",
+  hostPort: "587",
 } as const;

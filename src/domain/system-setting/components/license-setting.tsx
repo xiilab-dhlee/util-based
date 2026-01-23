@@ -27,7 +27,7 @@ export function LicenseSetting() {
   const isEmpty = !data && !isLoading;
 
   const handleRenew = () => {
-    publish(SYSTEM_SETTING_EVENTS.openLicenseRenewalModal, {});
+    publish(SYSTEM_SETTING_EVENTS.openCreateLicenseModal, {});
   };
 
   if (isError) {
