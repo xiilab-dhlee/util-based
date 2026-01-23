@@ -179,10 +179,10 @@ export const MUTATION_MESSAGES: Partial<
     success: "취약점 스캔이 시작되었습니다.",
   },
   [MUTATION_KEYS.deletePrivateImageTags]: {
-    success: "이미지 태그 삭제 완료",
+    success: "이미지 태그가 삭제되었습니다.",
   },
   [MUTATION_KEYS.deletePrivateImages]: {
-    success: "레지스트리 이미지 삭제 완료",
+    success: "레지스트리 이미지가 삭제되었습니다.",
   },
 
   // ============================================
@@ -201,8 +201,12 @@ export const MUTATION_MESSAGES: Partial<
     success: "취약점 스캔이 시작되었습니다.",
   },
   [MUTATION_KEYS.deletePublicImageTags]: {
-    success: "이미지 태그 삭제 완료",
+    success: "이미지 태그가 삭제되었습니다.",
   },
+  // TODO: MUTATION_KEYS.deletePublicImages가 생성되면 활성화
+  // [MUTATION_KEYS.deletePublicImages]: {
+  //   success: "레지스트리 이미지가 삭제되었습니다.",
+  // },
 
   // ============================================
   // Image Tag Usage Request
