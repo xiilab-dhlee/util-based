@@ -1,6 +1,6 @@
 import type {
-  GetWorkspaceMembersSort,
   ResourceRequestListResponseApprovalStatus,
+  WorkspaceMemberSortRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
@@ -38,7 +38,7 @@ export const DEFAULT_SETTING_REQUEST_RESOURCE_SORT_STATE = {
 export const WORKSPACE_MEMBER_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   email: "EMAIL",
-} as const satisfies Record<string, GetWorkspaceMembersSort>;
+} as const satisfies Record<string, WorkspaceMemberSortRequestSort>;
 
 export const WORKSPACE_MEMBER_SORT_FIELDS = ["accountName", "email"] as const;
 

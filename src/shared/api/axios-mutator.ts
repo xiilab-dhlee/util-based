@@ -1,6 +1,11 @@
 import type { AxiosRequestConfig } from "axios";
+import { isPlainObject } from "es-toolkit";
 
 import { AxiosService } from "@/shared/api/axios";
+import {
+  serializeParams,
+  unwrapSuccess,
+} from "@/shared/api/axios-mutator.util";
 import type { BaseResponse } from "@/shared/types/api-response.type";
 import { BackendError } from "@/shared/types/error.type";
 import { isEnvelopeResponse } from "@/shared/utils/api-response-envelope.util";
@@ -15,22 +20,6 @@ type BaseResponseData<T> = T extends { data: infer D }
     ? Exclude<D, undefined>
     : undefined;
 
-function unwrapSuccess(
-  body: BaseResponse,
-  config: AxiosRequestConfig,
-): unknown {
-  if (!("data" in body)) return undefined;
-
-  // null 허용, undefined만 에러
-  if (body.data === undefined) {
-    throw new Error(
-      `[API Error] SUCCESS 응답에 data가 누락되었습니다. (URL: ${config.url ?? "(unknown url)"})`,
-    );
-  }
-
-  return body.data;
-}
-
 export function customInstance<T>(
   config: AxiosRequestConfig,
 ): Promise<UnwrappedResponse<T>>;
@@ -39,7 +28,18 @@ export async function customInstance(
   config: AxiosRequestConfig,
 ): Promise<unknown> {
   const axiosInstance = AxiosService.getInstance().getAxios();
-  const response = await axiosInstance.request(config);
+  const shouldSerializeParams = config.params && isPlainObject(config.params);
+
+  const processedConfig: AxiosRequestConfig = shouldSerializeParams
+    ? {
+        ...config,
+        paramsSerializer: {
+          serialize: (params) => serializeParams(params),
+        },
+      }
+    : config;
+
+  const response = await axiosInstance.request(processedConfig);
   const body: unknown = response.data;
 
   if (!isEnvelopeResponse(body)) return body;

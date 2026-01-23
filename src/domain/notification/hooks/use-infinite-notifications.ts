@@ -24,9 +24,14 @@ export function useInfiniteNotifications(
   const query = useInfiniteQuery({
     queryKey: [
       ...getGetNotificationsQueryKey(accountId, {
-        pageSize: NOTIFICATION_PAGE_SIZE,
-        hasRead,
-        workspaceId,
+        pageableRequest: {
+          pageNo: 0,
+          pageSize: NOTIFICATION_PAGE_SIZE,
+        },
+        filterRequest: {
+          hasRead,
+          workspaceId,
+        },
       }),
       "infinite",
     ],
@@ -36,10 +41,14 @@ export function useInfiniteNotifications(
       return getNotifications(
         accountId,
         {
-          pageNo: backendPageNo,
-          pageSize: NOTIFICATION_PAGE_SIZE,
-          hasRead,
-          workspaceId,
+          pageableRequest: {
+            pageNo: backendPageNo,
+            pageSize: NOTIFICATION_PAGE_SIZE,
+          },
+          filterRequest: {
+            hasRead,
+            workspaceId,
+          },
         },
         signal,
       );

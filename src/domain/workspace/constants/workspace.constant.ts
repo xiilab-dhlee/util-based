@@ -1,6 +1,6 @@
 import type { DropdownOption } from "xiilab-ui";
 
-import type { GetAllWorkspaces1Sort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { WorkspaceSortRequestSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   WORKSPACE_MEMBER_ROLE_LABEL,
   WORKSPACE_MEMBER_ROLES,
@@ -25,7 +25,7 @@ export const WORKSPACE_SORT_FIELD_MAP = {
   workspaceName: "WORKSPACE_NAME",
   creatorName: "CREATOR_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, GetAllWorkspaces1Sort>;
+} as const satisfies Record<string, WorkspaceSortRequestSort>;
 
 export type WorkspaceSortField = keyof typeof WORKSPACE_SORT_FIELD_MAP;
 

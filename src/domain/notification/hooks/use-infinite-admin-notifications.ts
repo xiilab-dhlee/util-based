@@ -5,7 +5,11 @@ import {
   getAdminNotifications,
   getGetAdminNotificationsQueryKey,
 } from "@/api/generated/admin-account-notification/admin-account-notification";
-import type { GetAdminNotificationsNotificationTypeItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  type AdminNotificationFilterRequestNotificationTypeItem,
+  AdminNotificationSortRequestOrder,
+  AdminNotificationSortRequestSort,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   NOTIFICATION_PAGE_SIZE,
   type NotificationTypeValue,
@@ -26,15 +30,26 @@ export function useInfiniteAdminNotifications(
   const accountId = session?.user?.id ?? "";
 
   const notificationTypeArray = notificationType
-    ? ([notificationType] as GetAdminNotificationsNotificationTypeItem[])
+    ? ([
+        notificationType,
+      ] as AdminNotificationFilterRequestNotificationTypeItem[])
     : undefined;
 
   const query = useInfiniteQuery({
     queryKey: [
       ...getGetAdminNotificationsQueryKey(accountId, {
-        pageSize: NOTIFICATION_PAGE_SIZE,
-        hasRead,
-        notificationType: notificationTypeArray,
+        pageRequest: {
+          pageNo: 0,
+          pageSize: NOTIFICATION_PAGE_SIZE,
+        },
+        filterRequest: {
+          hasRead,
+          notificationType: notificationTypeArray,
+        },
+        sortRequest: {
+          sort: AdminNotificationSortRequestSort.CREATED_AT,
+          order: AdminNotificationSortRequestOrder.DESC,
+        },
       }),
       "infinite",
     ],
@@ -44,10 +59,18 @@ export function useInfiniteAdminNotifications(
       return getAdminNotifications(
         accountId,
         {
-          pageNo: backendPageNo,
-          pageSize: NOTIFICATION_PAGE_SIZE,
-          hasRead,
-          notificationType: notificationTypeArray,
+          pageRequest: {
+            pageNo: backendPageNo,
+            pageSize: NOTIFICATION_PAGE_SIZE,
+          },
+          filterRequest: {
+            hasRead,
+            notificationType: notificationTypeArray,
+          },
+          sortRequest: {
+            sort: "CREATED_AT",
+            order: "DESC",
+          },
         },
         signal,
       );

@@ -15,8 +15,10 @@ export function MonitoringNotificationSettingArticle() {
   const page = useAtomValue(monitoringNotificationSettingPageAtom);
 
   const { data, isLoading, isError } = useGetAllMonitoringNotificationSets({
-    pageNo: page - 1,
-    pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+    pageableRequest: {
+      pageNo: page - 1,
+      pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+    },
   });
 
   const content = data?.content ?? [];

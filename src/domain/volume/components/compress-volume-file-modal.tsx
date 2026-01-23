@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Form, FormItem, Icon, Input, Modal, Typography } from "xiilab-ui";
 
-import { useCompress } from "@/api/generated/volume/volume";
+import { useCompressFiles } from "@/api/generated/volume-file/volume-file";
 import {
   type CompressVolumeFileFormType,
   compressVolumeFileSchema,
@@ -43,7 +43,7 @@ export function CompressVolumeFileModal() {
     resolver: zodResolver(compressVolumeFileSchema),
   });
 
-  const { mutate, isPending } = useCompress();
+  const { mutate, isPending } = useCompressFiles();
   const selectedCompressType = watch("compressFileType");
 
   const handleCancel = () => {

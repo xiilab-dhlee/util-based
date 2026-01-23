@@ -76,8 +76,7 @@ export function UrgentQueueList() {
         data: {
           queueOrderItem: reordered.map((w, idx) => ({
             rank: idx + 1,
-            workspaceResourceName: w.workspaceResourceName,
-            workloadResourceName: w.workloadResourceName,
+            workloadId: w.workloadId,
           })),
         },
       },

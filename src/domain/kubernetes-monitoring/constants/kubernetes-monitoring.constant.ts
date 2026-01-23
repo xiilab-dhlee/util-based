@@ -1,10 +1,10 @@
 import type { K8sResourceResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
-  GetNamespacesStatus,
-  GetNodesStatus,
-  GetPersistentVolumesStatus,
-  GetPodsStatus,
-  GetServicesType,
+  NamespaceFilterRequestStatus,
+  NodeFilterRequestStatus,
+  PersistentVolumeFilterRequestStatus,
+  PodFilterRequestStatus,
+  ServiceFilterRequestType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { K8sResourceType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
 
@@ -132,8 +132,8 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Ready", value: GetNodesStatus.READY },
-      { label: "Not Ready", value: GetNodesStatus.NOT_READY },
+      { label: "Ready", value: NodeFilterRequestStatus.READY },
+      { label: "Not Ready", value: NodeFilterRequestStatus.NOT_READY },
     ],
   },
   Service: {
@@ -141,10 +141,10 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "type",
     filterLabel: "타입",
     options: [
-      { label: "Cluster IP", value: GetServicesType.CLUSTER_IP },
-      { label: "Node Port", value: GetServicesType.NODE_PORT },
-      { label: "Load Balancer", value: GetServicesType.LOAD_BALANCER },
-      { label: "External Name", value: GetServicesType.EXTERNAL_NAME },
+      { label: "Cluster IP", value: ServiceFilterRequestType.CLUSTER_IP },
+      { label: "Node Port", value: ServiceFilterRequestType.NODE_PORT },
+      { label: "Load Balancer", value: ServiceFilterRequestType.LOAD_BALANCER },
+      { label: "External Name", value: ServiceFilterRequestType.EXTERNAL_NAME },
     ],
   },
   Daemonsets: {
@@ -155,10 +155,16 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Available", value: GetPersistentVolumesStatus.AVAILABLE },
-      { label: "Bound", value: GetPersistentVolumesStatus.BOUND },
-      { label: "Released", value: GetPersistentVolumesStatus.RELEASED },
-      { label: "Failed", value: GetPersistentVolumesStatus.FAILED },
+      {
+        label: "Available",
+        value: PersistentVolumeFilterRequestStatus.AVAILABLE,
+      },
+      { label: "Bound", value: PersistentVolumeFilterRequestStatus.BOUND },
+      {
+        label: "Released",
+        value: PersistentVolumeFilterRequestStatus.RELEASED,
+      },
+      { label: "Failed", value: PersistentVolumeFilterRequestStatus.FAILED },
     ],
   },
   Namespaces: {
@@ -166,8 +172,8 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Active", value: GetNamespacesStatus.ACTIVE },
-      { label: "Terminating", value: GetNamespacesStatus.TERMINATING },
+      { label: "Active", value: NamespaceFilterRequestStatus.ACTIVE },
+      { label: "Terminating", value: NamespaceFilterRequestStatus.TERMINATING },
     ],
   },
   Deployments: {
@@ -181,11 +187,11 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Pending", value: GetPodsStatus.PENDING },
-      { label: "Running", value: GetPodsStatus.RUNNING },
-      { label: "Succeeded", value: GetPodsStatus.SUCCEEDED },
-      { label: "Failed", value: GetPodsStatus.FAILED },
-      { label: "Unknown", value: GetPodsStatus.UNKNOWN },
+      { label: "Pending", value: PodFilterRequestStatus.PENDING },
+      { label: "Running", value: PodFilterRequestStatus.RUNNING },
+      { label: "Succeeded", value: PodFilterRequestStatus.SUCCEEDED },
+      { label: "Failed", value: PodFilterRequestStatus.FAILED },
+      { label: "Unknown", value: PodFilterRequestStatus.UNKNOWN },
     ],
   },
 };

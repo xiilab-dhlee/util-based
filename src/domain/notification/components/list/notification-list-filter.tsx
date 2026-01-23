@@ -6,8 +6,8 @@ import styled from "styled-components";
 import { DateRange, Dropdown } from "xiilab-ui";
 
 import {
-  type GetAdminNotificationsNotificationTypeItem,
-  GetAdminNotificationsNotificationTypeItem as NotificationTypeEnum,
+  type AdminNotificationFilterRequestNotificationTypeItem,
+  AdminNotificationFilterRequestNotificationTypeItem as NotificationTypeEnum,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   notificationDateRangeAtom,
@@ -25,7 +25,7 @@ import { useSelect } from "@/shared/hooks/use-select";
 
 function isNotificationType(
   value: string | null,
-): value is GetAdminNotificationsNotificationTypeItem {
+): value is AdminNotificationFilterRequestNotificationTypeItem {
   return (
     value !== null &&
     Object.values(NotificationTypeEnum).some((type) => type === value)

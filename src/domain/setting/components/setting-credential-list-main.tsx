@@ -26,8 +26,10 @@ export function SettingCredentialListMain() {
   const { data, isLoading, isError } = useGetCredentials(
     accountId,
     {
-      pageNo: page - 1,
-      pageSize: CREDENTIAL_LIST_PAGE_SIZE,
+      pageSearchRequest: {
+        pageNo: page - 1,
+        pageSize: CREDENTIAL_LIST_PAGE_SIZE,
+      },
     },
     {
       query: {

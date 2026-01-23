@@ -5,6 +5,10 @@ import { useEffect } from "react";
 import { Icon } from "xiilab-ui";
 
 import { useGetAllWorkspaces1 } from "@/api/generated/admin-workspace/admin-workspace";
+import {
+  WorkspaceSortRequestOrder,
+  WorkspaceSortRequestSort,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
 import { WorkspaceListFooter } from "@/domain/workspace/components/list/workspace-list-footer";
@@ -78,10 +82,15 @@ export function WorkspaceListMain() {
   });
 
   const { data, isLoading } = useGetAllWorkspaces1({
-    pageNo: page - 1,
-    pageSize: LIST_PAGE_SIZE,
-    keyword: searchText || undefined,
-    ...(sortRequest ?? {}),
+    pageSearchRequest: {
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+      keyword: searchText || undefined,
+    },
+    sortRequest: {
+      sort: sortRequest?.sort ?? WorkspaceSortRequestSort.WORKSPACE_NAME,
+      order: sortRequest?.order ?? WorkspaceSortRequestOrder.ASC,
+    },
   });
 
   const totalSize = data?.totalSize ?? 0;

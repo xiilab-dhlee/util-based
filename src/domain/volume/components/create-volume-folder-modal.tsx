@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Form, Icon, Input, Modal } from "xiilab-ui";
 
-import { useCreateFolder } from "@/api/generated/volume/volume";
+import { useCreateFolder } from "@/api/generated/volume-file/volume-file";
 import {
   type CreateVolumeFolderFormType,
   createVolumeFolderSchema,

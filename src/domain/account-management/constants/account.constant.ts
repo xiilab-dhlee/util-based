@@ -1,9 +1,9 @@
 import type { DropdownOption } from "xiilab-ui";
 
 import type {
+  AccountSortRequestSort,
   AccountUpdateRequestAccountRole,
-  GetAllAccountsSort,
-  GetSignupRequestsSort,
+  SignupRequestSortRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { AccountUpdateRequestAccountRole as API_ACCOUNT_ROLE_VALUES } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ACCOUNT_ROLE_LABEL } from "@/shared/constants/core.constant";
@@ -12,12 +12,12 @@ import type { AntdTableSortState } from "@/shared/types/core.model";
 export const ACCOUNT_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, GetAllAccountsSort>;
+} as const satisfies Record<string, AccountSortRequestSort>;
 
 export const SIGNUP_REQUEST_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, GetSignupRequestsSort>;
+} as const satisfies Record<string, SignupRequestSortRequestSort>;
 
 /** 계정 정렬 필드 배열 */
 export const ACCOUNT_SORT_FIELDS = ["accountName", "createdAt"] as const;

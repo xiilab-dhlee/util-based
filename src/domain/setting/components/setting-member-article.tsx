@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import type {
-  GetWorkspaceMembersSort,
   WorkspaceMemberResponse,
+  WorkspaceMemberSortRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useGetWorkspaceMembers } from "@/api/generated/workspace-member/workspace-member";
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
@@ -47,7 +47,7 @@ export function SettingMemberArticle() {
 
   const sortRequest = buildSortRequest<
     WorkspaceMemberSortField,
-    GetWorkspaceMembersSort
+    WorkspaceMemberSortRequestSort
   >({
     state: sortState,
     fieldMap: WORKSPACE_MEMBER_SORT_FIELD_MAP,
@@ -56,12 +56,15 @@ export function SettingMemberArticle() {
   const { data, isLoading, isError } = useGetWorkspaceMembers(
     workspaceId ?? 0,
     {
-      pageNo: page - 1,
-      pageSize: MEMBER_LIST_PAGE_SIZE,
-      keyword: searchText,
-      ...(sortRequest
-        ? { sort: sortRequest.sort, order: sortRequest.order }
-        : {}),
+      pageSearchRequest: {
+        pageNo: page - 1,
+        pageSize: MEMBER_LIST_PAGE_SIZE,
+        keyword: searchText,
+      },
+      sortRequest: {
+        sort: sortRequest?.sort ?? "ACCOUNT_NAME",
+        order: sortRequest?.order ?? "ASC",
+      },
     },
     {
       query: {

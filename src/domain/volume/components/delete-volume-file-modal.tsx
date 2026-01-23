@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteFiles } from "@/api/generated/volume/volume";
+import { useDeleteFiles } from "@/api/generated/volume-file/volume-file";
 import {
   volumeFileCheckedNodesAtom,
   volumeFileTreeDataAtom,

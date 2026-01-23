@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
-import type { GetVolumeListVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { VolumeFilterRequestVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VOLUME_DEFAULT_SORT } from "@/domain/volume/constants/volume.constant";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
@@ -19,9 +19,8 @@ export const volumePageAtom = atomWithReset<number>(1);
 /** 볼륨 정렬 (sort_order 조합) */
 export const volumeOrderSortAtom = atomWithReset<string>(VOLUME_DEFAULT_SORT);
 /** 볼륨 타입 필터 */
-export const volumeTypeSortAtom = atomWithReset<GetVolumeListVolumeType | null>(
-  null,
-);
+export const volumeTypeSortAtom =
+  atomWithReset<VolumeFilterRequestVolumeType | null>(null);
 /** 볼륨 검색 키워드 (입력 필드 값) */
 export const volumeSearchKeywordAtom = atom<string>("");
 /** 볼륨 검색어 (실제 API 요청에 사용) */
