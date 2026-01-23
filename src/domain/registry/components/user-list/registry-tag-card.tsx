@@ -71,7 +71,9 @@ export function RegistryTagCard({
               </Row>
               <Row>
                 <Key>이미지 전체 크기</Key>
-                <Value>{formatFileSize(sizeByte ?? 0).formatted}</Value>
+                <Value>
+                  {sizeByte != null ? formatFileSize(sizeByte).formatted : "-"}
+                </Value>
               </Row>
             </Pane>
             <Pane>

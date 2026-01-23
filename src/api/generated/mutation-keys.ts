@@ -98,6 +98,7 @@ export const MUTATION_KEYS = {
   addPublicImageTag: "addPublicImageTag",
   scanPublicImageTag: "scanPublicImageTag",
   deletePublicImageTags: "deletePublicImageTags",
+  deletePublicImages: "deletePublicImages",
 
   // ============================================
   // Image Tag Usage Request
