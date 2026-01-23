@@ -5,10 +5,10 @@ import styled from "styled-components";
 import { Icon, Modal, Typography } from "xiilab-ui";
 
 import { useGetStorageDetail } from "@/api/generated/admin-storage/admin-storage";
+import { STORAGE_CHANNEL_LABEL } from "@/domain/storage/constants/storage.constant";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { STORAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { STORAGE_CHANNEL_LABEL } from "../constants/storage.constant";
 
 interface ViewStorageDetailModalPayload {
   id: number;
