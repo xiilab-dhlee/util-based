@@ -21,7 +21,6 @@ function createValidLicenseData() {
 }
 
 export const licenseOverrideHandlers = [
-  // GET /api/v1/licenses/latest - 최신 라이선스 조회 (유효한 라이선스)
   getGetLatestLicenseMockHandler(() => {
     const { status, message, timestamp } = getGetLatestLicenseResponseMock();
 
@@ -32,5 +31,5 @@ export const licenseOverrideHandlers = [
       data: createValidLicenseData(),
     };
   }),
-  ...getLicenseMock(),
+  getLicenseMock(),
 ];

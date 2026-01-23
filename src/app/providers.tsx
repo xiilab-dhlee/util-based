@@ -15,10 +15,10 @@ import { ThemeProvider } from "@/shared/providers/theme-provider";
 
 export function Providers({ children }: PropsWithChildren) {
   return (
-    <AuthProvider>
-      <MSWProvider>
-        <QueryProvider>
-          <LicenseProvider>
+    <MSWProvider>
+      <QueryProvider>
+        <LicenseProvider>
+          <AuthProvider>
             <StoreProvider>
               <ServiceProvider>
                 <ThemeProvider>
@@ -27,9 +27,9 @@ export function Providers({ children }: PropsWithChildren) {
                 </ThemeProvider>
               </ServiceProvider>
             </StoreProvider>
-          </LicenseProvider>
-        </QueryProvider>
-      </MSWProvider>
-    </AuthProvider>
+          </AuthProvider>
+        </LicenseProvider>
+      </QueryProvider>
+    </MSWProvider>
   );
 }

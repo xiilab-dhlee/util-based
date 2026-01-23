@@ -5,7 +5,6 @@ import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 
 import { useGetLatestLicense } from "@/api/generated/license/license";
-import { MySpinner } from "@/shared/components/spinner";
 
 // 테스트 환경 여부 (pnpm dev:test)
 const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
@@ -59,16 +58,13 @@ export function LicenseProvider({ children }: PropsWithChildren) {
 
   // 라이선스 체크 결과에 따른 리다이렉트
   useEffect(() => {
-    if (shouldSkipLicenseCheck) return;
-    if (isLoading) return;
+    if (shouldSkipLicenseCheck || isLoading) return;
 
-    // API 에러 시 에러 페이지로 이동
     if (isError) {
       router.replace("/error?error=LicenseCheckFailed");
       return;
     }
 
-    // 미등록 또는 만료 시 라이선스 페이지로 이동
     if (!data || !isValid) {
       router.replace("/license");
     }
@@ -79,21 +75,11 @@ export function LicenseProvider({ children }: PropsWithChildren) {
     return <>{children}</>;
   }
 
-  // 라이선스 체크 중 로딩 표시
-  if (isLoading) {
-    return <MySpinner />;
-  }
-
-  // API 에러 시 리다이렉트 대기 중 (useEffect에서 처리)
-  if (isError) {
-    return <MySpinner />;
+  // 라이선스 체크 중 또는 리다이렉트 대기 중
+  if (isLoading || isError || !data || !isValid) {
+    return null;
   }
 
   // 유효한 라이선스가 있으면 정상 렌더링 (인증 과정 진행)
-  if (data && isValid) {
-    return <>{children}</>;
-  }
-
-  // 리다이렉트 대기 중 (useEffect에서 처리)
-  return <MySpinner />;
+  return <>{children}</>;
 }
