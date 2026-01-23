@@ -10,6 +10,7 @@
 import { delay, type HttpHandler } from "msw";
 
 import { getAccountProfileMock } from "@/api/generated/account-profile/account-profile.msw";
+import { getAdminClusterMock } from "@/api/generated/admin-cluster/admin-cluster.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationMock } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
@@ -133,6 +134,7 @@ const rawHandlers = [
   ...storageHandlers,
   ...getAdminQueueMock(),
   ...getAdminWorkloadMock(),
+  ...getAdminClusterMock(),
 ];
 
 /**
