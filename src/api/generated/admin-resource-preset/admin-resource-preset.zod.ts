@@ -52,7 +52,7 @@ export const getPresetDetailResponse = zod
           .describe(
             '리소스 정보\n\nGPU 타입별 구조:\n- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}\n- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}\n\n※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)',
           ),
-        jobType: zod.enum(["BATCH", "IDE"]).describe("잡 타입"),
+        jobType: zod.enum(["BATCH", "INTERACTIVE"]).describe("잡 타입"),
         nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
         createdBy: zod.string().describe("생성자 ID"),
         createdAt: zod.string().datetime({}).optional().describe("생성 시간"),
@@ -97,7 +97,9 @@ export const updatePresetBody = zod
       .describe(
         '\n            리소스 정보 (cpu, memory, gpu 포함)\n            GPU 타입별 설정:\n                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택\n                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택\n                - GPU 미사용: gpu 필드 생략\n            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)\n        ',
       ),
-    jobType: zod.enum(["BATCH", "IDE"]).describe("잡 타입 (BATCH, IDE)"),
+    jobType: zod
+      .enum(["BATCH", "INTERACTIVE"])
+      .describe("잡 타입 (BATCH, INTERACTIVE)"),
     nodeType: zod
       .enum(["SINGLE", "MULTI"])
       .describe("노드 타입 (SINGLE, MULTI)"),
@@ -120,7 +122,7 @@ export const updatePresetResponse = zod
           .describe(
             '리소스 정보\n\nGPU 타입별 구조:\n- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}\n- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}\n\n※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)',
           ),
-        jobType: zod.enum(["BATCH", "IDE"]).describe("잡 타입"),
+        jobType: zod.enum(["BATCH", "INTERACTIVE"]).describe("잡 타입"),
         nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
         createdBy: zod.string().describe("생성자 ID"),
         createdAt: zod.string().datetime({}).optional().describe("생성 시간"),
@@ -149,9 +151,9 @@ export const getPresetsQueryPageableRequestPageSizeMax = 100;
 
 export const getPresetsQueryParams = zod.object({
   jobType: zod
-    .enum(["BATCH", "IDE"])
+    .enum(["BATCH", "INTERACTIVE"])
     .optional()
-    .describe("잡 타입 필터 (BATCH, IDE)"),
+    .describe("잡 타입 필터 (BATCH, INTERACTIVE)"),
   nodeType: zod
     .enum(["SINGLE", "MULTI"])
     .optional()
@@ -187,7 +189,7 @@ export const getPresetsResponse = zod
                 .describe(
                   '리소스 정보\n\nGPU 타입별 구조:\n- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}\n- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}\n\n※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)',
                 ),
-              jobType: zod.enum(["BATCH", "IDE"]).describe("잡 타입"),
+              jobType: zod.enum(["BATCH", "INTERACTIVE"]).describe("잡 타입"),
               nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
               createdBy: zod.string().describe("생성자 ID"),
               createdAt: zod
@@ -235,7 +237,9 @@ export const createPresetBody = zod
       .describe(
         '\n            리소스 정보 (cpu, memory, gpu 포함)\n            GPU 타입별 설정:\n                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택\n                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택\n                - GPU 미사용: gpu 필드 생략\n            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)\n        ',
       ),
-    jobType: zod.enum(["BATCH", "IDE"]).describe("잡 타입 (BATCH, IDE)"),
+    jobType: zod
+      .enum(["BATCH", "INTERACTIVE"])
+      .describe("잡 타입 (BATCH, INTERACTIVE)"),
     nodeType: zod
       .enum(["SINGLE", "MULTI"])
       .describe("노드 타입 (SINGLE, MULTI)"),

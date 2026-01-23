@@ -145,7 +145,7 @@ export const getUpdateMonitoringNotificationSetMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
-    "*/api/v1/monitoring-notifications/sets/:notificationSetId",
+    "*/api/v1/admin/monitoring-notifications/sets/:notificationSetId",
     async (info) => {
       await delay(1000);
 
@@ -173,7 +173,7 @@ export const getDeleteMonitoringNotificationSetMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.delete(
-    "*/api/v1/monitoring-notifications/sets/:notificationSetId",
+    "*/api/v1/admin/monitoring-notifications/sets/:notificationSetId",
     async (info) => {
       await delay(1000);
       if (typeof overrideResponse === "function") {
@@ -194,7 +194,7 @@ export const getUpdateMonitoringNotificationSetEnabledMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
-    "*/api/v1/monitoring-notifications/sets/:notificationSetId/enabled",
+    "*/api/v1/admin/monitoring-notifications/sets/:notificationSetId/enabled",
     async (info) => {
       await delay(1000);
 
@@ -224,7 +224,7 @@ export const getGetAllMonitoringNotificationSetsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/monitoring-notifications/sets",
+    "*/api/v1/admin/monitoring-notifications/sets",
     async (info) => {
       await delay(1000);
 
@@ -252,7 +252,7 @@ export const getCreateMonitoringNotificationSetMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    "*/api/v1/monitoring-notifications/sets",
+    "*/api/v1/admin/monitoring-notifications/sets",
     async (info) => {
       await delay(1000);
 
@@ -282,7 +282,7 @@ export const getGetMonitoringNotificationSetDetailMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/monitoring-notifications/sets/:notificationSetId/detail",
+    "*/api/v1/admin/monitoring-notifications/sets/:notificationSetId/detail",
     async (info) => {
       await delay(1000);
 

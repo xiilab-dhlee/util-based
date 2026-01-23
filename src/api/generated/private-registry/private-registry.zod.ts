@@ -450,15 +450,15 @@ export const deletePrivateImageTagsResponse = zod
         
  * @summary 개인 이미지 삭제
  */
-export const deletePrivateImagesBodyHarborImageNamesMin = 0;
-export const deletePrivateImagesBodyHarborImageNamesMax = 20;
+export const deletePrivateImagesBodyHarborImageNameMin = 0;
+export const deletePrivateImagesBodyHarborImageNameMax = 20;
 
 export const deletePrivateImagesBody = zod
   .object({
-    harborImageNames: zod
+    harborImageName: zod
       .array(zod.string())
-      .min(deletePrivateImagesBodyHarborImageNamesMin)
-      .max(deletePrivateImagesBodyHarborImageNamesMax)
+      .min(deletePrivateImagesBodyHarborImageNameMin)
+      .max(deletePrivateImagesBodyHarborImageNameMax)
       .describe("삭제할 Harbor 이미지 경로 목록 (최대 20개)"),
   })
   .strict()

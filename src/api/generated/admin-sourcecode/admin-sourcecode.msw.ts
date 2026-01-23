@@ -38,7 +38,7 @@ import type {
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getUpdateSourceCodeResponseMock = (
+export const getAdminUpdateSourceCodeResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
@@ -48,7 +48,29 @@ export const getUpdateSourceCodeResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetSourceCodeListResponseMock = (
+export const getAdminDeleteSourceCodesResponseMock = (
+  overrideResponse: Partial<BaseResponseSourceCodeDeleteResult> = {},
+): BaseResponseSourceCodeDeleteResult => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalRequested: faker.number.int({ min: undefined, max: undefined }),
+    successCount: faker.number.int({ min: undefined, max: undefined }),
+    failureCount: faker.number.int({ min: undefined, max: undefined }),
+    failures: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      volumeId: faker.number.int({ min: undefined, max: undefined }),
+      reason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getAdminGetSourceCodeListResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseSourceCodeListResponse> = {},
 ): BaseResponsePageResponseSourceCodeListResponse => ({
   status: "SUCCESS",
@@ -82,39 +104,7 @@ export const getGetSourceCodeListResponseMock = (
   ...overrideResponse,
 });
 
-export const getRegisterSourceCodeResponseMock = (
-  overrideResponse: Partial<BaseResponseUnit> = {},
-): BaseResponseUnit => ({
-  status: "SUCCESS",
-  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getDeleteSourceCodesResponseMock = (
-  overrideResponse: Partial<BaseResponseSourceCodeDeleteResult> = {},
-): BaseResponseSourceCodeDeleteResult => ({
-  status: "SUCCESS",
-  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: {
-    totalRequested: faker.number.int({ min: undefined, max: undefined }),
-    successCount: faker.number.int({ min: undefined, max: undefined }),
-    failureCount: faker.number.int({ min: undefined, max: undefined }),
-    failures: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      volumeId: faker.number.int({ min: undefined, max: undefined }),
-      reason: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-  },
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getGetSourceCodeDetailResponseMock = (
+export const getAdminGetSourceCodeDetailResponseMock = (
   overrideResponse: Partial<BaseResponseSourceCodeDetailResponse> = {},
 ): BaseResponseSourceCodeDetailResponse => ({
   status: "SUCCESS",
@@ -148,7 +138,7 @@ export const getGetSourceCodeDetailResponseMock = (
   ...overrideResponse,
 });
 
-export const getUpdateSourceCodeMockHandler = (
+export const getAdminUpdateSourceCodeMockHandler = (
   overrideResponse?:
     | BaseResponseUnit
     | ((
@@ -157,7 +147,7 @@ export const getUpdateSourceCodeMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
-    "*/api/v1/source-codes/:sourceCodeId",
+    "*/api/v1/admin/source-codes/:sourceCodeId",
     async (info) => {
       await delay(1000);
 
@@ -167,7 +157,7 @@ export const getUpdateSourceCodeMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getUpdateSourceCodeResponseMock(),
+            : getAdminUpdateSourceCodeResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -176,7 +166,7 @@ export const getUpdateSourceCodeMockHandler = (
   );
 };
 
-export const getDeleteSourceCodeMockHandler = (
+export const getAdminDeleteSourceCodeMockHandler = (
   overrideResponse?:
     | void
     | ((
@@ -185,7 +175,7 @@ export const getDeleteSourceCodeMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.delete(
-    "*/api/v1/source-codes/:sourceCodeId",
+    "*/api/v1/admin/source-codes/:sourceCodeId",
     async (info) => {
       await delay(1000);
       if (typeof overrideResponse === "function") {
@@ -197,65 +187,7 @@ export const getDeleteSourceCodeMockHandler = (
   );
 };
 
-export const getGetSourceCodeListMockHandler = (
-  overrideResponse?:
-    | BaseResponsePageResponseSourceCodeListResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponsePageResponseSourceCodeListResponse>
-        | BaseResponsePageResponseSourceCodeListResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/source-codes",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetSourceCodeListResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getRegisterSourceCodeMockHandler = (
-  overrideResponse?:
-    | BaseResponseUnit
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    "*/api/v1/source-codes",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getRegisterSourceCodeResponseMock(),
-        ),
-        { status: 201, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getDeleteSourceCodesMockHandler = (
+export const getAdminDeleteSourceCodesMockHandler = (
   overrideResponse?:
     | BaseResponseSourceCodeDeleteResult
     | ((
@@ -266,7 +198,7 @@ export const getDeleteSourceCodesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    "*/api/v1/source-codes/delete",
+    "*/api/v1/admin/source-codes/delete",
     async (info) => {
       await delay(1000);
 
@@ -276,7 +208,7 @@ export const getDeleteSourceCodesMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getDeleteSourceCodesResponseMock(),
+            : getAdminDeleteSourceCodesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -285,7 +217,37 @@ export const getDeleteSourceCodesMockHandler = (
   );
 };
 
-export const getGetSourceCodeDetailMockHandler = (
+export const getAdminGetSourceCodeListMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseSourceCodeListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseSourceCodeListResponse>
+        | BaseResponsePageResponseSourceCodeListResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/source-codes",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getAdminGetSourceCodeListResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getAdminGetSourceCodeDetailMockHandler = (
   overrideResponse?:
     | BaseResponseSourceCodeDetailResponse
     | ((
@@ -296,7 +258,7 @@ export const getGetSourceCodeDetailMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/source-codes/:sourceCodeId/detail",
+    "*/api/v1/admin/source-codes/:sourceCodeId/detail",
     async (info) => {
       await delay(1000);
 
@@ -306,7 +268,7 @@ export const getGetSourceCodeDetailMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetSourceCodeDetailResponseMock(),
+            : getAdminGetSourceCodeDetailResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -314,11 +276,10 @@ export const getGetSourceCodeDetailMockHandler = (
     options,
   );
 };
-export const getSourceCodeMock = () => [
-  getUpdateSourceCodeMockHandler(),
-  getDeleteSourceCodeMockHandler(),
-  getGetSourceCodeListMockHandler(),
-  getRegisterSourceCodeMockHandler(),
-  getDeleteSourceCodesMockHandler(),
-  getGetSourceCodeDetailMockHandler(),
+export const getAdminSourcecodeMock = () => [
+  getAdminUpdateSourceCodeMockHandler(),
+  getAdminDeleteSourceCodeMockHandler(),
+  getAdminDeleteSourceCodesMockHandler(),
+  getAdminGetSourceCodeListMockHandler(),
+  getAdminGetSourceCodeDetailMockHandler(),
 ];

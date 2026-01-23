@@ -166,16 +166,11 @@ export const deleteAccountResponse = zod
           .array(
             zod
               .object({
-                accountId: zod
-                  .string()
-                  .describe(
-                    "삭제 실패한 계정 고유 ID (Keycloak User ID, UUID 형식)",
-                  ),
-                email: zod.string().describe("삭제 실패한 계정의 이메일 주소"),
-                reason: zod.string().describe("삭제 실패 사유 메시지"),
+                volumeId: zod.number().describe("삭제 실패한 볼륨 ID"),
+                reason: zod.string().describe("삭제 실패 사유"),
               })
               .strict()
-              .describe("계정 삭제 실패 상세 정보"),
+              .describe("볼륨 삭제 실패 상세 정보"),
           )
           .describe("삭제 실패한 계정 상세 목록 (실패가 없으면 빈 리스트)"),
       })

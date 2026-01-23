@@ -49,7 +49,7 @@ export const getGetPresetDetailResponseMock = (
     resource: {
       [faker.string.alphanumeric(5)]: {},
     },
-    jobType: faker.helpers.arrayElement(["BATCH", "IDE"] as const),
+    jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
     createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -72,7 +72,7 @@ export const getUpdatePresetResponseMock = (
     resource: {
       [faker.string.alphanumeric(5)]: {},
     },
-    jobType: faker.helpers.arrayElement(["BATCH", "IDE"] as const),
+    jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
     createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -102,7 +102,7 @@ export const getGetPresetsResponseMock = (
       resource: {
         [faker.string.alphanumeric(5)]: {},
       },
-      jobType: faker.helpers.arrayElement(["BATCH", "IDE"] as const),
+      jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
       nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
       createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
       createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -126,7 +126,7 @@ export const getCreatePresetResponseMock = (
     resource: {
       [faker.string.alphanumeric(5)]: {},
     },
-    jobType: faker.helpers.arrayElement(["BATCH", "IDE"] as const),
+    jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
     createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,

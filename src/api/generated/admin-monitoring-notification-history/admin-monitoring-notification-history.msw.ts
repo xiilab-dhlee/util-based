@@ -149,7 +149,7 @@ export const getGetAllMonitoringNotificationHistoriesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/monitoring-notifications",
+    "*/api/v1/admin/monitoring-notifications",
     async (info) => {
       await delay(1000);
 
@@ -179,7 +179,7 @@ export const getGetSendHistoryMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/monitoring-notifications/:notificationHistoryId/send-history",
+    "*/api/v1/admin/monitoring-notifications/:notificationHistoryId/send-history",
     async (info) => {
       await delay(1000);
 
@@ -209,7 +209,7 @@ export const getGetMonitoringNotificationHistoryDetailMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/monitoring-notifications/:notificationHistoryId/detail",
+    "*/api/v1/admin/monitoring-notifications/:notificationHistoryId/detail",
     async (info) => {
       await delay(1000);
 

@@ -69,6 +69,7 @@ import type {
   WorkloadDeleteFilesRequest,
   WorkloadListFilesParams,
   WorkloadPreviewFileParams,
+  WorkloadRestartRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -810,6 +811,128 @@ export const useTerminateWorkload = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getTerminateWorkloadMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            종료된 워크로드를 재시작합니다.
+
+            **재시작 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)를 새로 생성
+            - 기존 Service, Ingress, PVC, PV, Secret 등 부가 리소스는 재사용
+            - 커밋된 이미지가 있으면 해당 이미지 사용, 없으면 원본 이미지 사용 (TODO)
+            - 리소스 설정(CPU, 메모리, GPU, 분산학습 노드 수)을 변경하여 재시작 가능
+
+            **재시작 대상:**
+            - TERMINATED 상태의 워크로드만 재시작 가능
+            - 실행 중이거나 종료 진행 중인 워크로드는 재시작 불가 (400 Bad Request)
+
+            **재시작 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼관리자 (SUPER_ADMIN)
+        
+ * @summary 워크로드 재시작
+ */
+export const restartWorkload = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadRestartRequest: WorkloadRestartRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/actions/restart`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: workloadRestartRequest,
+    signal,
+  });
+};
+
+export const getRestartWorkloadMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof restartWorkload>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadRestartRequest;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof restartWorkload>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadRestartRequest;
+  },
+  TContext
+> => {
+  const mutationKey = ["restartWorkload"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof restartWorkload>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadRestartRequest;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data } = props ?? {};
+
+    return restartWorkload(workspaceId, workloadResourceName, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RestartWorkloadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof restartWorkload>>
+>;
+export type RestartWorkloadMutationBody = WorkloadRestartRequest;
+export type RestartWorkloadMutationError = unknown;
+
+/**
+ * @summary 워크로드 재시작
+ */
+export const useRestartWorkload = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof restartWorkload>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadRestartRequest;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof restartWorkload>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadRestartRequest;
+  },
+  TContext
+> => {
+  const mutationOptions = getRestartWorkloadMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

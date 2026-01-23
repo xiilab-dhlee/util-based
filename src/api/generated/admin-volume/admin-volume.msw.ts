@@ -34,35 +34,11 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseVolumeDeleteResult,
   BaseResponseVolumeDetailResponse,
   BaseResponseVolumeFileListResponse,
   StreamingResponseBody,
 } from "../astragoBackendAPIDocumentation.schemas";
-
-export const getAdminGetVolumeDetailResponseMock = (
-  overrideResponse: Partial<BaseResponseVolumeDetailResponse> = {},
-): BaseResponseVolumeDetailResponse => ({
-  status: "SUCCESS",
-  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: {
-    volumeId: faker.number.int({ min: undefined, max: undefined }),
-    volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    volumeType: faker.helpers.arrayElement(["ASTRAGO", "ON_PREMISE"] as const),
-    serverIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    volumePath: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    storageId: faker.number.int({ min: undefined, max: undefined }),
-    storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    fileSizeByte: faker.number.int({ min: undefined, max: undefined }),
-    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
-    isPublic: faker.datatype.boolean(),
-  },
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
 
 export const getAdminUpdateVolumeResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
@@ -101,6 +77,28 @@ export const getAdminCompressResponseMock = (
 ): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getAdminDeleteVolumesResponseMock = (
+  overrideResponse: Partial<BaseResponseVolumeDeleteResult> = {},
+): BaseResponseVolumeDeleteResult => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalRequested: faker.number.int({ min: undefined, max: undefined }),
+    successCount: faker.number.int({ min: undefined, max: undefined }),
+    failureCount: faker.number.int({ min: undefined, max: undefined }),
+    failures: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      volumeId: faker.number.int({ min: undefined, max: undefined }),
+      reason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -163,35 +161,30 @@ export const getAdminListFilesResponseMock = (
 
 export const getAdminPreviewResponseMock = (): string => faker.word.sample();
 
-export const getAdminGetVolumeDetailMockHandler = (
-  overrideResponse?:
-    | BaseResponseVolumeDetailResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponseVolumeDetailResponse>
-        | BaseResponseVolumeDetailResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/admin/volumes/:volumeId",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getAdminGetVolumeDetailResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
+export const getAdminGetVolumeDetailResponseMock = (
+  overrideResponse: Partial<BaseResponseVolumeDetailResponse> = {},
+): BaseResponseVolumeDetailResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    volumeId: faker.number.int({ min: undefined, max: undefined }),
+    volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    volumeType: faker.helpers.arrayElement(["ASTRAGO", "ON_PREMISE"] as const),
+    serverIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    volumePath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    storageId: faker.number.int({ min: undefined, max: undefined }),
+    storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    fileSizeByte: faker.number.int({ min: undefined, max: undefined }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    isPublic: faker.datatype.boolean(),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getAdminUpdateVolumeMockHandler = (
   overrideResponse?:
@@ -375,6 +368,36 @@ export const getAdminCompressMockHandler = (
   );
 };
 
+export const getAdminDeleteVolumesMockHandler = (
+  overrideResponse?:
+    | BaseResponseVolumeDeleteResult
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<BaseResponseVolumeDeleteResult>
+        | BaseResponseVolumeDeleteResult),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/admin/volumes/delete",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getAdminDeleteVolumesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getAdminGetVolumeListMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseVolumeListResponse
@@ -462,8 +485,37 @@ export const getAdminPreviewMockHandler = (
     options,
   );
 };
+
+export const getAdminGetVolumeDetailMockHandler = (
+  overrideResponse?:
+    | BaseResponseVolumeDetailResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseVolumeDetailResponse>
+        | BaseResponseVolumeDetailResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/volumes/:volumeId/detail",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getAdminGetVolumeDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getAdminVolumeMock = () => [
-  getAdminGetVolumeDetailMockHandler(),
   getAdminUpdateVolumeMockHandler(),
   getAdminDeleteVolumeMockHandler(),
   getAdminCreateFolderMockHandler(),
@@ -471,7 +523,9 @@ export const getAdminVolumeMock = () => [
   getAdminDeleteFilesMockHandler(),
   getAdminDecompressMockHandler(),
   getAdminCompressMockHandler(),
+  getAdminDeleteVolumesMockHandler(),
   getAdminGetVolumeListMockHandler(),
   getAdminListFilesMockHandler(),
   getAdminPreviewMockHandler(),
+  getAdminGetVolumeDetailMockHandler(),
 ];

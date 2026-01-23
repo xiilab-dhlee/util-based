@@ -91,7 +91,7 @@ export const updateMonitoringNotificationSet = (
   monitoringNotificationSetUpdateRequest: MonitoringNotificationSetUpdateRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/monitoring-notifications/sets/${notificationSetId}`,
+    url: `/api/v1/admin/monitoring-notifications/sets/${notificationSetId}`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: monitoringNotificationSetUpdateRequest,
@@ -191,7 +191,7 @@ export const useUpdateMonitoringNotificationSet = <
  */
 export const deleteMonitoringNotificationSet = (notificationSetId: number) => {
   return customInstance<void>({
-    url: `/api/v1/monitoring-notifications/sets/${notificationSetId}`,
+    url: `/api/v1/admin/monitoring-notifications/sets/${notificationSetId}`,
     method: "DELETE",
   });
 };
@@ -290,7 +290,7 @@ export const updateMonitoringNotificationSetEnabled = (
   monitoringNotificationSetEnabledRequest: MonitoringNotificationSetEnabledRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/monitoring-notifications/sets/${notificationSetId}/enabled`,
+    url: `/api/v1/admin/monitoring-notifications/sets/${notificationSetId}/enabled`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: monitoringNotificationSetEnabledRequest,
@@ -378,6 +378,10 @@ export const useUpdateMonitoringNotificationSetEnabled = <
  * 
             관리자가 모니터링 알림 설정 목록을 페이징하여 조회합니다.
 
+            **정렬 옵션:**
+            - sort: notification_set_name, created_at
+            - order: asc, desc
+
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 권한 필요
         
@@ -389,7 +393,7 @@ export const getAllMonitoringNotificationSets = (
 ) => {
   return customInstance<BaseResponsePageResponseMonitoringNotificationSetListResponse>(
     {
-      url: `/api/v1/monitoring-notifications/sets`,
+      url: `/api/v1/admin/monitoring-notifications/sets`,
       method: "GET",
       params,
       signal,
@@ -401,7 +405,7 @@ export const getGetAllMonitoringNotificationSetsQueryKey = (
   params?: GetAllMonitoringNotificationSetsParams,
 ) => {
   return [
-    `/api/v1/monitoring-notifications/sets`,
+    `/api/v1/admin/monitoring-notifications/sets`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -583,7 +587,7 @@ export const createMonitoringNotificationSet = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/monitoring-notifications/sets`,
+    url: `/api/v1/admin/monitoring-notifications/sets`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: monitoringNotificationSetCreateRequest,
@@ -679,7 +683,7 @@ export const getMonitoringNotificationSetDetail = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseMonitoringNotificationSetDetailResponse>({
-    url: `/api/v1/monitoring-notifications/sets/${notificationSetId}/detail`,
+    url: `/api/v1/admin/monitoring-notifications/sets/${notificationSetId}/detail`,
     method: "GET",
     signal,
   });
@@ -689,7 +693,7 @@ export const getGetMonitoringNotificationSetDetailQueryKey = (
   notificationSetId?: number,
 ) => {
   return [
-    `/api/v1/monitoring-notifications/sets/${notificationSetId}/detail`,
+    `/api/v1/admin/monitoring-notifications/sets/${notificationSetId}/detail`,
   ] as const;
 };
 

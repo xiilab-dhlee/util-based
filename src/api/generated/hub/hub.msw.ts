@@ -74,6 +74,7 @@ export const getFindHubSummariesResponseMock = (
   ).map(() => ({
     hubId: faker.number.int({ min: undefined, max: undefined }),
     hubName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    imageTagId: faker.number.int({ min: undefined, max: undefined }),
   })),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),

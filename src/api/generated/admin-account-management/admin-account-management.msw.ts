@@ -83,8 +83,7 @@ export const getDeleteAccountResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      volumeId: faker.number.int({ min: undefined, max: undefined }),
       reason: faker.string.alpha({ length: { min: 10, max: 20 } }),
     })),
   },

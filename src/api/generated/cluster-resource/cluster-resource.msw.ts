@@ -31,48 +31,31 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseResourcePresetSummaryResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponseResourceAvailabilityResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetAvailablePresetsResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseResourcePresetSummaryResponse> = {},
-): BaseResponsePageResponseResourcePresetSummaryResponse => ({
+export const getCheckResourceAvailabilityResponseMock = (
+  overrideResponse: Partial<BaseResponseResourceAvailabilityResponse> = {},
+): BaseResponseResourceAvailabilityResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: {
-    totalSize: faker.number.int({ min: undefined, max: undefined }),
-    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
-    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
-    content: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      presetId: faker.number.int({ min: undefined, max: undefined }),
-      presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      description: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      resource: {
-        [faker.string.alphanumeric(5)]: {},
-      },
-      jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
-      nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
-    })),
-  },
+  data: { isAvailable: faker.datatype.boolean() },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
 
-export const getGetAvailablePresetsMockHandler = (
+export const getCheckResourceAvailabilityMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseResourcePresetSummaryResponse
+    | BaseResponseResourceAvailabilityResponse
     | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseResourcePresetSummaryResponse>
-        | BaseResponsePageResponseResourcePresetSummaryResponse),
+        | Promise<BaseResponseResourceAvailabilityResponse>
+        | BaseResponseResourceAvailabilityResponse),
   options?: RequestHandlerOptions,
 ) => {
-  return http.get(
-    "*/api/v1/resource-presets",
+  return http.post(
+    "*/api/v1/cluster/resources/availability",
     async (info) => {
       await delay(1000);
 
@@ -82,7 +65,7 @@ export const getGetAvailablePresetsMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetAvailablePresetsResponseMock(),
+            : getCheckResourceAvailabilityResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -90,6 +73,6 @@ export const getGetAvailablePresetsMockHandler = (
     options,
   );
 };
-export const getResourcePresetMock = () => [
-  getGetAvailablePresetsMockHandler(),
+export const getClusterResourceMock = () => [
+  getCheckResourceAvailabilityMockHandler(),
 ];

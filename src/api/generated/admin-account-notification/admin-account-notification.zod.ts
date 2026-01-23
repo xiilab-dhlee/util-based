@@ -102,11 +102,12 @@ export const getAdminNotificationsQueryParams = zod.object({
             "LICENSE",
             "ACCOUNT",
             "VULNERABILITY",
+            "NODE",
             "WORKSPACE",
             "WORKLOAD",
           ])
           .describe(
-            "관리자 알림 유형 필터. LICENSE: 라이선스, ACCOUNT: 회원, VULNERABILITY: 보안, WORKSPACE: 워크스페이스, WORKLOAD: 워크로드",
+            "관리자 알림 유형 필터. LICENSE: 라이선스, ACCOUNT: 회원, VULNERABILITY: 보안, NODE: 노드, WORKSPACE: 워크스페이스, WORKLOAD: 워크로드",
           ),
       )
       .optional()

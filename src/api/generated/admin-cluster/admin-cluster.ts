@@ -80,7 +80,7 @@ export const updateNodeScheduling = (
   nodeSchedulingRequest: NodeSchedulingRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/cluster/nodes/${nodeName}/scheduling`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/scheduling`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: nodeSchedulingRequest,
@@ -175,14 +175,14 @@ export const useUpdateNodeScheduling = <TError = unknown, TContext = unknown>(
  */
 export const getMigConfiguration = (nodeName: string, signal?: AbortSignal) => {
   return customInstance<BaseResponseMigConfigurationResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/mig`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/mig`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetMigConfigurationQueryKey = (nodeName?: string) => {
-  return [`/api/v1/cluster/nodes/${nodeName}/mig`] as const;
+  return [`/api/v1/admin/cluster/nodes/${nodeName}/mig`] as const;
 };
 
 export const getGetMigConfigurationQueryOptions = <
@@ -361,7 +361,7 @@ export const applyMigConfiguration = (
   migConfigurationRequest: MigConfigurationRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/cluster/nodes/${nodeName}/mig`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/mig`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: migConfigurationRequest,
@@ -464,7 +464,7 @@ export const getClusterNodes = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseClusterNodeListResponse>({
-    url: `/api/v1/cluster/nodes`,
+    url: `/api/v1/admin/cluster/nodes`,
     method: "GET",
     params,
     signal,
@@ -472,7 +472,7 @@ export const getClusterNodes = (
 };
 
 export const getGetClusterNodesQueryKey = (params?: GetClusterNodesParams) => {
-  return [`/api/v1/cluster/nodes`, ...(params ? [params] : [])] as const;
+  return [`/api/v1/admin/cluster/nodes`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetClusterNodesQueryOptions = <
@@ -637,7 +637,7 @@ export const getNodeSystemResource = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseClusterNodeSystemResourceResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/system-resources/summary`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/system-resources/summary`,
     method: "GET",
     signal,
   });
@@ -645,7 +645,7 @@ export const getNodeSystemResource = (
 
 export const getGetNodeSystemResourceQueryKey = (nodeName?: string) => {
   return [
-    `/api/v1/cluster/nodes/${nodeName}/system-resources/summary`,
+    `/api/v1/admin/cluster/nodes/${nodeName}/system-resources/summary`,
   ] as const;
 };
 
@@ -830,7 +830,7 @@ export const getNodeSystemMetrics = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseBatchSystemMetricResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/resources/system/metrics`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/resources/system/metrics`,
     method: "GET",
     params,
     signal,
@@ -842,7 +842,7 @@ export const getGetNodeSystemMetricsQueryKey = (
   params?: GetNodeSystemMetricsParams,
 ) => {
   return [
-    `/api/v1/cluster/nodes/${nodeName}/resources/system/metrics`,
+    `/api/v1/admin/cluster/nodes/${nodeName}/resources/system/metrics`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1029,7 +1029,7 @@ export const getNodeGpuMetrics = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseBatchGpuMetricResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/resources/gpu/metrics`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/resources/gpu/metrics`,
     method: "GET",
     params,
     signal,
@@ -1041,7 +1041,7 @@ export const getGetNodeGpuMetricsQueryKey = (
   params?: GetNodeGpuMetricsParams,
 ) => {
   return [
-    `/api/v1/cluster/nodes/${nodeName}/resources/gpu/metrics`,
+    `/api/v1/admin/cluster/nodes/${nodeName}/resources/gpu/metrics`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1225,14 +1225,14 @@ export function useGetNodeGpuMetrics<
  */
 export const getNodeDetail = (nodeName: string, signal?: AbortSignal) => {
   return customInstance<BaseResponseClusterNodeDetailResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/detail`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/detail`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetNodeDetailQueryKey = (nodeName?: string) => {
-  return [`/api/v1/cluster/nodes/${nodeName}/detail`] as const;
+  return [`/api/v1/admin/cluster/nodes/${nodeName}/detail`] as const;
 };
 
 export const getGetNodeDetailQueryOptions = <
@@ -1381,14 +1381,14 @@ export function useGetNodeDetail<
  */
 export const getClusterResourceSummary = (signal?: AbortSignal) => {
   return customInstance<BaseResponseClusterResourceSummaryResponse>({
-    url: `/api/v1/cluster/nodes/resources/summary`,
+    url: `/api/v1/admin/cluster/nodes/resources/summary`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetClusterResourceSummaryQueryKey = () => {
-  return [`/api/v1/cluster/nodes/resources/summary`] as const;
+  return [`/api/v1/admin/cluster/nodes/resources/summary`] as const;
 };
 
 export const getGetClusterResourceSummaryQueryOptions = <
@@ -1538,14 +1538,14 @@ export function useGetClusterResourceSummary<
  */
 export const getNodeNames = (signal?: AbortSignal) => {
   return customInstance<BaseResponseListString>({
-    url: `/api/v1/cluster/nodes/names`,
+    url: `/api/v1/admin/cluster/nodes/names`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetNodeNamesQueryKey = () => {
-  return [`/api/v1/cluster/nodes/names`] as const;
+  return [`/api/v1/admin/cluster/nodes/names`] as const;
 };
 
 export const getGetNodeNamesQueryOptions = <
