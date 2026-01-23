@@ -1,4 +1,3 @@
-import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 import type { Key } from "react";
 
@@ -25,8 +24,6 @@ export const registrySortAtom = atomWithReset<RegistrySortState>({
 export const registryImageSourceTypeAtom = atomWithReset<
   RegistryImageFilterRequestImageSourceType | undefined
 >(undefined);
-/** 선택된 레지스트리 Harbor 이미지 경로 */
-export const registrySelectedItemAtom = atom<string>("");
 /** 체크된 레지스트리 목록 */
 export const registryCheckedListAtom = atomWithReset<Set<Key>>(new Set());
 
