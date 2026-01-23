@@ -1,10 +1,17 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
+import type { NodeSortState } from "@/domain/node/constants/node-list.constant";
 import type { MigGpu } from "@/domain/node/types/node.type";
 
 /** 노드 페이지 번호 */
 export const nodePageAtom = atomWithReset<number>(1);
+
+/** 노드 정렬 상태 */
+export const nodeSortAtom = atomWithReset<NodeSortState>({
+  field: null,
+  order: null,
+});
 /** MPS 설정 모달 표시 여부 */
 export const openUpdateMpsModalAtom = atom<boolean>(false);
 /** MIG 설정 모달 표시 여부 */

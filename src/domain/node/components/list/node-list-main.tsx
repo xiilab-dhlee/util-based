@@ -1,6 +1,8 @@
 "use client";
 
 import { useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import { useEffect } from "react";
 import { Icon } from "xiilab-ui";
 
 import { useGetClusterNodes } from "@/api/generated/admin-cluster/admin-cluster";
@@ -10,12 +12,14 @@ import { NodeListFooter } from "@/domain/node/components/list/node-list-footer";
 import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
 import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
 import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
-import { nodePageAtom } from "@/domain/node/state/node.atom";
+import { NODE_SORT_FIELD_MAP } from "@/domain/node/constants/node-list.constant";
+import { nodePageAtom, nodeSortAtom } from "@/domain/node/state/node.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 import {
   ListPageAside,
   ListPageBody,
@@ -60,18 +64,29 @@ const GUIDES: CoreGuide[] = [
 ];
 
 export function NodeListMain() {
+  const resetPage = useResetAtom(nodePageAtom);
+  const resetSort = useResetAtom(nodeSortAtom);
+
   const page = useAtomValue(nodePageAtom);
+  const sort = useAtomValue(nodeSortAtom);
+
+  const sortRequest = buildSortRequest({
+    state: { field: sort.field, order: sort.order },
+    fieldMap: NODE_SORT_FIELD_MAP,
+  });
 
   const { data, isLoading, isError } = useGetClusterNodes({
     pageableRequest: {
-      pageNo: page,
+      pageNo: page - 1,
       pageSize: LIST_PAGE_SIZE,
     },
-    sortRequest: {
-      sort: "NODE_NAME",
-      order: "ASC",
-    },
+    sortRequest: sortRequest ?? { sort: "NODE_NAME", order: "ASC" },
   });
+
+  useEffect(() => {
+    resetPage();
+    resetSort();
+  }, [resetPage, resetSort]);
 
   return (
     <>
