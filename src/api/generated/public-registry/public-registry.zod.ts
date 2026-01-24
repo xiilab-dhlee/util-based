@@ -646,6 +646,10 @@ export const getPublicImageTagDetailResponse = zod
           ])
           .optional()
           .describe("승인 상태 (DB 메타데이터 없으면 null)"),
+        creatorId: zod
+          .string()
+          .optional()
+          .describe("생성자 ID (DB 메타데이터 없으면 null)"),
         creatorName: zod
           .string()
           .optional()
@@ -694,6 +698,16 @@ export const getPublicImageDetailResponse = zod
         imageType: zod
           .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
           .describe("이미지 타입"),
+        imageSourceType: zod
+          .enum(["SNAPSHOT", "EXTERNAL"])
+          .optional()
+          .describe(
+            "이미지 소스 타입 (EXTERNAL: 외부 레지스트리, SNAPSHOT: 워크로드 스냅샷)",
+          ),
+        workspaceName: zod
+          .string()
+          .optional()
+          .describe("워크스페이스 이름 (PRIVATE 이미지인 경우)"),
       })
       .strict()
       .optional()
