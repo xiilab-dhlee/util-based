@@ -5,7 +5,7 @@ import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 import styled from "styled-components";
 
-import { useGetAllMonitoringNotificationHistories } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+import { useGetAllMonitoringNotificationHistories } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history";
 import { MonitoringNotificationHistoryListBody } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-body";
 import { MonitoringNotificationHistoryListFilter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-filter";
 import { MonitoringNotificationHistoryListFooter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-footer";

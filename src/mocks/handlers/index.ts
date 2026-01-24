@@ -13,6 +13,8 @@ import { getAccountProfileMock } from "@/api/generated/account-profile/account-p
 import { getAdminClusterMock } from "@/api/generated/admin-cluster/admin-cluster.msw";
 import { getAdminImageTagUsageRequestMock } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
+import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history.msw";
+import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
 import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
@@ -117,6 +119,8 @@ const rawHandlers = [
   ...redfishHandlers,
   ...accountManagementHandlers,
   ...monitoringHandlers,
+  ...getAdminMonitoringNotificationHistoryMock(),
+  ...getAdminMonitoringNotificationSetMock(),
   ...registryHandlers,
   ...gpuHandlers,
   ...fileSecurityHandlers,

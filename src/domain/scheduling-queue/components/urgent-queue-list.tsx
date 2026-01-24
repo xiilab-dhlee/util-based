@@ -13,9 +13,9 @@ import styled from "styled-components";
 import { useGetUrgentStandbyWorkloads } from "@/api/generated/admin-queue/admin-queue";
 import type { QueueWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { SortableUrgentQueueCard } from "@/domain/scheduling-queue/components/sortable-urgent-queue-card";
-import { useUpdateUrgentStandbyOrderAction } from "@/domain/scheduling-queue/hooks/scheduling-queue-actions";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { SCHEDULING_QUEUE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { pubsubUtil } from "@/shared/utils/pubsub.util";
 import { ListSectionTitle } from "@/styles/layers/list-page-layers.styled";
@@ -26,18 +26,24 @@ export function UrgentQueueList() {
     data: urgentData,
     isLoading,
     isError,
-  } = useGetUrgentStandbyWorkloads();
-
-  const { mutate: updateOrder } = useUpdateUrgentStandbyOrderAction();
+    refetch,
+  } = useGetUrgentStandbyWorkloads({
+    query: {
+      refetchInterval: 30 * 1000,
+    },
+  });
 
   // 드래그 중 순서 변경 효과를 위한 로컬 상태
   const [localWorkloads, setLocalWorkloads] = useState<QueueWorkloadResponse[]>(
     [],
   );
 
-  // 서버 데이터가 변경되면 로컬 상태 동기화
+  // 서버 데이터가 변경되면 로컬 상태 동기화 (rank로 정렬)
   useEffect(() => {
-    setLocalWorkloads(urgentData || []);
+    const sorted = [...(urgentData || [])].sort(
+      (a, b) => (a.rank ?? 0) - (b.rank ?? 0),
+    );
+    setLocalWorkloads(sorted);
   }, [urgentData]);
 
   /**
@@ -66,27 +72,28 @@ export function UrgentQueueList() {
 
     if (oldIndex === -1 || newIndex === -1) return;
 
-    // 로컬 상태 즉시 업데이트 (optimistic update)
     const reordered = arrayMove(localWorkloads, oldIndex, newIndex);
+    const movedWorkload = localWorkloads[oldIndex];
+    const originalOrder = localWorkloads;
+
+    // 1. UI 미리 업데이트 (optimistic update)
     setLocalWorkloads(reordered);
 
-    // 서버에 순서 변경 요청
-    updateOrder(
-      {
-        data: {
-          queueOrderItem: reordered.map((w, idx) => ({
-            rank: idx + 1,
-            workloadId: w.workloadId,
-          })),
-        },
+    // 2. 확인 모달 열기
+    pubsubUtil.publish(SCHEDULING_QUEUE_EVENTS.openReorderConfirmModal, {
+      workloadName: movedWorkload.workloadName,
+      oldRank: oldIndex + 1,
+      newRank: newIndex + 1,
+      reorderedList: reordered,
+      onSuccess: () => {
+        // 성공 - UI는 이미 업데이트됨
       },
-      {
-        onError: () => {
-          // 실패 시 서버 상태로 롤백
-          setLocalWorkloads(urgentData || []);
-        },
+      onCancel: () => {
+        // 취소 시 원래 순서로 복구
+        setLocalWorkloads(originalOrder);
+        refetch();
       },
-    );
+    });
   };
 
   const renderContent = () => {
@@ -127,7 +134,22 @@ export function UrgentQueueList() {
   return (
     <Container>
       <Header>
-        <ListSectionTitle>긴급 대기열 목록</ListSectionTitle>
+        <TitleWrapper>
+          <ListSectionTitle>긴급 대기열 목록</ListSectionTitle>
+          <GuideTooltip
+            iconSize={20}
+            maxWidth="100%"
+            title={
+              <>
+                드래그 앤 드롭으로 긴급 대기열 내에서 우선순위를 변경할 수
+                있으며,
+                <br />
+                긴급 대기열의 워크로드가 모두 실행되면 대기중 상태인 워크로드가
+                순차적으로 실행됩니다.
+              </>
+            }
+          />
+        </TitleWrapper>
       </Header>
 
       <CardList>{renderContent()}</CardList>
@@ -146,6 +168,12 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
 
 const CardList = styled.div`

@@ -293,6 +293,11 @@ export const RESOURCE_PRESET_EVENTS = {
 export const SCHEDULING_QUEUE_EVENTS = {
   // 긴급 대기열 삭제 모달 열기 이벤트
   openDeleteUrgentQueueModal: "scheduling-queue:open-delete-urgent-queue-modal",
+  // 긴급 대기열 순서 변경 확인 모달 열기 이벤트
+  openReorderConfirmModal: "scheduling-queue:open-reorder-confirm-modal",
+  // 긴급 대기열 등록 확인 모달 열기 이벤트
+  openAddToQueueConfirmModal:
+    "scheduling-queue:open-add-to-queue-confirm-modal",
 } as const;
 
 // 공통 이벤트

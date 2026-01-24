@@ -3,7 +3,9 @@ import { atomWithReset } from "jotai/utils";
 
 import {
   MONITORING_NOTIFICATION_HISTORY_DEFAULT_SORT,
+  MONITORING_NOTIFICATION_SETTING_DEFAULT_SORT,
   type MonitoringNotificationHistorySortState,
+  type MonitoringNotificationSettingSortState,
 } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 
 /** 날짜 범위 상태 타입 */
@@ -23,6 +25,11 @@ export const monitoringNotificationHistorySortAtom =
 /** 모니터링 알림 히스토리 날짜 범위 필터 */
 export const monitoringNotificationHistoryDateRangeAtom =
   atomWithReset<DateRangeState>(null);
+/** 모니터링 알림 설정 정렬 상태 */
+export const monitoringNotificationSettingSortAtom =
+  atomWithReset<MonitoringNotificationSettingSortState>(
+    MONITORING_NOTIFICATION_SETTING_DEFAULT_SORT,
+  );
 /** 모니터링 알림 설정 모달 표시 여부 */
 export const openManageMonitoringNotificationModalAtom = atom<boolean>(false);
 /** 모니터링 알림 설정 상세 모달 표시 여부 */

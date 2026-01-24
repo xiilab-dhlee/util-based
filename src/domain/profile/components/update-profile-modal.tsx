@@ -55,11 +55,8 @@ export function UpdateProfileModal() {
   // profile 로딩 시 defaultValues 업데이트
   useEffect(() => {
     if (profile && open) {
-      const accountName = profile.accountName ?? "";
-      const spaceIndex = accountName.indexOf(" ");
-      const lastName = spaceIndex > 0 ? accountName.slice(0, spaceIndex) : "";
-      const firstName =
-        spaceIndex > 0 ? accountName.slice(spaceIndex + 1) : accountName;
+      const firstName = profile.firstName || "";
+      const lastName = profile.lastName || "";
 
       reset({
         firstName,
@@ -118,7 +115,9 @@ export function UpdateProfileModal() {
       icon={<Icon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       title="회원정보 수정"
       showCancelButton
       cancelText="취소"

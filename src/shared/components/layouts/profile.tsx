@@ -5,11 +5,15 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+import { Icon, Tag } from "xiilab-ui";
 
 import { useGetNotifications } from "@/api/generated/account-notification/account-notification";
 import { useGetProfile } from "@/api/generated/account-profile/account-profile";
 import { useGetAdminNotifications } from "@/api/generated/admin-account-notification/admin-account-notification";
+import {
+  AdminNotificationSortRequestOrder,
+  AdminNotificationSortRequestSort,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
 import { NOTIFICATION_POLLING_INTERVAL } from "@/shared/constants/notification/notification.constant";
@@ -31,7 +35,10 @@ export function Profile() {
   // 읽지 않은 알림 확인 (사용자용)
   const { data: userNotifications } = useGetNotifications(
     accountId,
-    { hasRead: false, pageSize: 1 },
+    {
+      pageableRequest: { pageNo: 0, pageSize: 1 },
+      filterRequest: { hasRead: false },
+    },
     {
       query: {
         enabled: Boolean(accountId) && !isAdmin,
@@ -43,7 +50,14 @@ export function Profile() {
   // 읽지 않은 알림 확인 (관리자용)
   const { data: adminNotifications } = useGetAdminNotifications(
     accountId,
-    { hasRead: false, pageSize: 1 },
+    {
+      pageRequest: { pageNo: 0, pageSize: 1 },
+      filterRequest: { hasRead: false },
+      sortRequest: {
+        order: AdminNotificationSortRequestOrder.DESC,
+        sort: AdminNotificationSortRequestSort.CREATED_AT,
+      },
+    },
     {
       query: {
         enabled: Boolean(accountId) && isAdmin,
@@ -109,7 +123,19 @@ export function Profile() {
               </IconWrapper>
             </Avatar>
             <UserBody>
-              <UserName className="truncate">{userName}</UserName>
+              <UserHeader>
+                {isAdmin && (
+                  <AdminTag
+                    backgroundColor="#FFFFFF33"
+                    borderColor="#77787D"
+                    rounded
+                    color="#F8F8F8"
+                  >
+                    관리자
+                  </AdminTag>
+                )}
+                <UserName className="truncate">{userName}</UserName>
+              </UserHeader>
               <UserEmail className="truncate">{email}</UserEmail>
             </UserBody>
           </User>
@@ -155,10 +181,9 @@ const User = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  padding-right: 0;
+  padding: 10px 0 12px 12px;
   height: 100%;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
   overflow: hidden;
 `;
@@ -205,6 +230,27 @@ const UserBody = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
+`;
+
+const UserHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+`;
+
+const AdminTag = styled(Tag)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  min-height: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+  padding: 0 6px;
+  max-width: none;
+  overflow: visible;
+  text-overflow: initial;
 `;
 
 const UserEmail = styled.span`
