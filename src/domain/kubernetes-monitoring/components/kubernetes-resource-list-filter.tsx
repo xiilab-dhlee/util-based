@@ -1,10 +1,12 @@
 "use client";
 
+import { isNil } from "es-toolkit";
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Dropdown, Input } from "xiilab-ui";
 
+import type { KubernetesResourceFilterStatus } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
 import {
   kubernetesResourcePageAtom,
   kubernetesResourceSearchTextAtom,
@@ -44,10 +46,12 @@ export function KubernetesResourceListFilter({
    * 필터 변경 핸들러
    * 필터 변경 시 페이지를 초기화하고 필터를 적용
    */
-  const handleChangeStatus = (value: string | null) => {
+  const handleChangeStatus = (
+    value: KubernetesResourceFilterStatus | "" | null,
+  ) => {
     resetPage();
     statusSelect.onChange(value);
-    setStatus(value ?? undefined);
+    setStatus(isNil(value) || value === "" ? undefined : value);
   };
 
   /**

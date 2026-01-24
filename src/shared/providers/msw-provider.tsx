@@ -1,10 +1,10 @@
 "use client";
 
+import { isNil } from "es-toolkit";
+import type { RequestHandler } from "msw";
 import { setupWorker } from "msw/browser";
 import type { PropsWithChildren } from "react";
 import { useEffect, useState } from "react";
-
-import { combinedHandlers } from "@/mocks/handlers";
 
 /**
  * MSW Provider
@@ -21,6 +21,18 @@ import { combinedHandlers } from "@/mocks/handlers";
 // 빌드 타임에 결정되는 값 (서버/클라이언트 동일)
 const isMswEnabled = process.env.MSW_ENABLE === "true";
 
+type HandlerCandidate = unknown;
+
+function isRequestHandler(
+  handler: HandlerCandidate,
+): handler is RequestHandler {
+  return (
+    typeof handler === "object" &&
+    !isNil(handler) &&
+    ("info" in handler || "resolver" in handler)
+  );
+}
+
 export function MSWProvider({ children }: PropsWithChildren) {
   // MSW 비활성화 시 바로 준비 상태 (로딩 화면 없음)
   const [isReady, setIsReady] = useState(!isMswEnabled);
@@ -34,7 +46,22 @@ export function MSWProvider({ children }: PropsWithChildren) {
     // 동적으로 MSW worker를 import하고 시작
     const initMSW = async () => {
       try {
-        const worker = setupWorker(...combinedHandlers);
+        // 동적으로 handlers를 import (클라이언트에서 환경변수 문제 해결)
+        const { combinedHandlers } = await import("@/mocks/handlers");
+
+        const invalidHandlers = combinedHandlers.filter(
+          (handler) => !isRequestHandler(handler),
+        );
+        if (invalidHandlers.length > 0) {
+          console.warn(
+            "[MSW] 유효하지 않은 핸들러가 포함되어 있습니다:",
+            invalidHandlers,
+          );
+        }
+
+        const validHandlers = combinedHandlers.filter(isRequestHandler);
+
+        const worker = setupWorker(...validHandlers);
 
         // Service Worker가 완전히 활성화될 때까지 대기
         await worker.start({

@@ -7,7 +7,7 @@ import { Icon, InfoModal, Typography } from "xiilab-ui";
 import {
   useGetMonitoringNotificationHistoryDetail,
   useGetSendHistory,
-} from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+} from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history";
 import {
   createSendHistoryColumns,
   createThresholdDetailColumns,

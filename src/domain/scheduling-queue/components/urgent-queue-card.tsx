@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Button, Card, Icon } from "xiilab-ui";
 
 import type { QueueWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { usePeriodicUpdate } from "@/shared/hooks/use-periodic-update";
 import {
   formatDateTimeSafely,
   formatElapsedTime,
@@ -23,7 +24,36 @@ interface UrgentQueueCardProps {
 export function UrgentQueueCard({ workload, onDelete }: UrgentQueueCardProps) {
   const { resource } = workload;
 
-  const memoryGB = convertBytes(resource.memory.quotaByte, "GB", 0).value;
+  const memoryGB = convertBytes(resource.memory.quotaByte, "GB", 2).value;
+
+  // 매분마다 대기 시간 업데이트
+  usePeriodicUpdate(60000);
+
+  const getGpuMigInfo = () => {
+    // MIG은 배열이므로 첫 번째 요소 확인
+    if (resource.gpu.detail?.mig && resource.gpu.detail.mig.length > 0) {
+      const firstMig = resource.gpu.detail.mig[0];
+      return {
+        label: "MIG",
+        value: `${firstMig.profile} ${formatNumberWithUnit(firstMig.quotaCount, "개")}`,
+      };
+    }
+
+    if (resource.gpu.detail?.normal) {
+      return {
+        label: "GPU",
+        value: formatNumberWithUnit(
+          resource.gpu.detail.normal.quotaCount,
+          "개",
+        ),
+      };
+    }
+
+    return {
+      label: "GPU",
+      value: resource.gpu.gpuName || "-",
+    };
+  };
 
   const handleDelete = (e: MouseEvent) => {
     e.stopPropagation();
@@ -59,37 +89,34 @@ export function UrgentQueueCard({ workload, onDelete }: UrgentQueueCardProps) {
             <InfoValue className="truncate">{workload.workspaceName}</InfoValue>
           </InfoRow>
           <InfoRow>
-            <InfoLabel>Job Type</InfoLabel>
-            <InfoValue>{workload.jobType || "-"}</InfoValue>
-          </InfoRow>
-          <InfoRow>
-            <InfoLabel>리소스 프리셋</InfoLabel>
-            <InfoValue>{"미정"}</InfoValue>
+            <InfoLabel>대기 시간</InfoLabel>
+            <InfoValue>{formatElapsedTime(workload.createdAt ?? "")}</InfoValue>
           </InfoRow>
         </InfoColumn>
 
         <InfoColumn>
           <InfoRow>
             <InfoLabel>생성자</InfoLabel>
-            <InfoValue>{workload.creatorName}</InfoValue>
+            <InfoValue className="truncate">{workload.creatorName}</InfoValue>
           </InfoRow>
           <InfoRow>
             <InfoLabel>생성일시</InfoLabel>
             <InfoValue>{formatDateTimeSafely(workload.createdAt)}</InfoValue>
-          </InfoRow>
-          <InfoRow>
-            <InfoLabel>대기 시간</InfoLabel>
-            <InfoValue>{formatElapsedTime(workload.createdAt ?? "")}</InfoValue>
           </InfoRow>
         </InfoColumn>
       </Body>
 
       {/* 푸터: 리소스 정보 */}
       <Footer>
-        <ResourceItem>
-          <ResourceLabel>GPU</ResourceLabel>
-          <ResourceValue>미정</ResourceValue>
-        </ResourceItem>
+        {(() => {
+          const gpuInfo = getGpuMigInfo();
+          return (
+            <ResourceItem>
+              <ResourceLabel>{gpuInfo.label}</ResourceLabel>
+              <ResourceValue>{gpuInfo.value}</ResourceValue>
+            </ResourceItem>
+          );
+        })()}
         <ResourceItem>
           <ResourceLabel>CPU</ResourceLabel>
           <ResourceValue>
@@ -148,6 +175,7 @@ const Body = styled.div`
 
 const InfoColumn = styled.div`
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -162,6 +190,8 @@ const InfoRow = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const InfoLabel = styled.span`
@@ -174,9 +204,16 @@ const InfoLabel = styled.span`
 
 const InfoValue = styled.span`
   flex: 1;
+  min-width: 0;
   font-weight: 400;
   font-size: 12px;
   color: #191B26;
+
+  &.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 const Footer = styled.div`

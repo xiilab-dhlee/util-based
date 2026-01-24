@@ -12,7 +12,8 @@ import { delay, type HttpHandler } from "msw";
 import { getAccountProfileMock } from "@/api/generated/account-profile/account-profile.msw";
 import { getAdminClusterMock } from "@/api/generated/admin-cluster/admin-cluster.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
-import { getAdminMonitoringNotificationMock } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification.msw";
+import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history.msw";
+import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
 import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
@@ -119,7 +120,8 @@ const rawHandlers = [
   ...redfishHandlers,
   ...accountManagementHandlers,
   ...monitoringHandlers,
-  ...getAdminMonitoringNotificationMock(),
+  ...getAdminMonitoringNotificationHistoryMock(),
+  ...getAdminMonitoringNotificationSetMock(),
   ...registryHandlers,
   ...gpuHandlers,
   ...fileSecurityHandlers,
