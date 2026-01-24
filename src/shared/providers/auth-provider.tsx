@@ -7,6 +7,7 @@ import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { useLogoutSync } from "@/shared/hooks/use-logout-sync";
 
 // ============================================================================
 // 환경 설정
@@ -136,6 +137,7 @@ function ProtectedSessionSync({ children }: PropsWithChildren) {
   useAxiosSessionSync(session);
   useTokenRefreshErrorHandler(session);
   useTestAutoLogin(status);
+  useLogoutSync(); // 다중 탭 로그아웃 동기화
 
   // 세션 로딩 중에는 children을 렌더링하지 않음
   if (status === "loading") {

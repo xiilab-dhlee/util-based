@@ -14,6 +14,7 @@ import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
 import { NOTIFICATION_POLLING_INTERVAL } from "@/shared/constants/notification/notification.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useLogoutSync } from "@/shared/hooks/use-logout-sync";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
 import { isAdminMode } from "@/shared/utils/router.util";
 
@@ -60,6 +61,7 @@ export function Profile() {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const { open, onToggle } = useGlobalModal(openProfilePopoverAtom);
+  const { broadcastLogout } = useLogoutSync();
 
   const handleToggleDropdown = () => {
     setShowDropdown((prev) => !prev);
@@ -74,6 +76,7 @@ export function Profile() {
   };
 
   const handleLogout = () => {
+    broadcastLogout(); // 다른 탭에 로그아웃 알림
     signOut({});
   };
 
