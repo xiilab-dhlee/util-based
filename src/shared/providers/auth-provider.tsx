@@ -1,10 +1,12 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import type { Session } from "next-auth";
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
+import { ROUTES } from "@/shared/constants/routes.constant";
 
 // ============================================================================
 // 환경 설정
@@ -12,6 +14,21 @@ import { AxiosService } from "@/shared/api/axios";
 
 const isDev = process.env.NODE_ENV === "development";
 const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
+
+/** 인증 과정이 필요 없는 공개 경로 (세션 체크/토큰 갱신 생략) */
+const PUBLIC_AUTH_PATHS = [
+  ROUTES.AUTH_SIGNIN,
+  ROUTES.AUTH_SIGNUP,
+  ROUTES.AUTH_LICENSE,
+  ROUTES.ERROR,
+] as const;
+
+/** 현재 경로가 공개 인증 경로인지 확인 */
+function isPublicAuthPath(pathname: string): boolean {
+  return PUBLIC_AUTH_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+}
 
 // ============================================================================
 // 유틸리티
@@ -108,12 +125,12 @@ function useTestAutoLogin(
 // ============================================================================
 
 /**
- * 세션 동기화 컴포넌트
+ * 보호된 경로에서만 세션 동기화 수행
  * - AxiosService에 세션 주입
  * - 토큰 갱신 실패 시 재로그인
  * - 테스트 환경 자동 로그인
  */
-function SessionSync({ children }: PropsWithChildren) {
+function ProtectedSessionSync({ children }: PropsWithChildren) {
   const { data: session, status } = useSession();
 
   useAxiosSessionSync(session);
@@ -126,6 +143,23 @@ function SessionSync({ children }: PropsWithChildren) {
   }
 
   return <>{children}</>;
+}
+
+/**
+ * 세션 동기화 라우터
+ * - 공개 경로(signin, signup 등): 인증 과정 없이 바로 렌더링
+ * - 보호 경로: 세션 동기화 후 렌더링
+ */
+function SessionSync({ children }: PropsWithChildren) {
+  const pathname = usePathname();
+
+  // 공개 경로에서는 인증 과정 없이 바로 렌더링
+  if (isPublicAuthPath(pathname)) {
+    return <>{children}</>;
+  }
+
+  // 보호 경로에서는 세션 동기화 수행
+  return <ProtectedSessionSync>{children}</ProtectedSessionSync>;
 }
 
 /**
