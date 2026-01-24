@@ -5,8 +5,14 @@ import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 import type { TableProps } from "xiilab-ui";
 
-import { useGetPublicImageUsageByAccount } from "@/api/generated/admin-public-registry/admin-public-registry";
-import type { PublicImageUsageResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getGetPublicImageUsageByAccountQueryKey,
+  useGetPublicImageUsageByAccount,
+} from "@/api/generated/admin-public-registry/admin-public-registry";
+import type {
+  GetPublicImageUsageByAccountParams,
+  PublicImageUsageResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { UserPublicRegistryFilter } from "@/domain/registry/components/entry/user-public-registry-filter";
 import { UserPublicRegistryFooter } from "@/domain/registry/components/entry/user-public-registry-footer";
 import { createRegistryUserColumn } from "@/domain/registry/components/user-list/create-registry-user-column";
@@ -53,7 +59,7 @@ export function UserPublicRegistryMain() {
     fieldMap: REGISTRY_USER_SORT_FIELD_MAP,
   });
 
-  const { data, isLoading, isError } = useGetPublicImageUsageByAccount({
+  const params: GetPublicImageUsageByAccountParams = {
     pageSearchRequest: {
       pageNo: page - 1,
       pageSize: USER_REGISTRY_PAGE_SIZE,
@@ -62,6 +68,15 @@ export function UserPublicRegistryMain() {
     sortRequest: {
       sort: sortRequest?.sort ?? "ACCOUNT_NAME",
       order: sortRequest?.order ?? "ASC",
+    },
+  };
+
+  const { data, isLoading, isError } = useGetPublicImageUsageByAccount(params, {
+    query: {
+      queryKey: [
+        "user-public-registry-main",
+        ...getGetPublicImageUsageByAccountQueryKey(params),
+      ],
     },
   });
 
