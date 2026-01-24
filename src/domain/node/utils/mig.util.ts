@@ -17,6 +17,31 @@ export class MigUtil {
     Array<{ gpuIndex: number; compute: number }>
   >;
 
+  /**
+   * gpuProduct 문자열에서 지원되는 모델명을 찾아 반환
+   * @param gpuProduct - GPU 제품 문자열 (예: "NVIDIA A100-SXM4-80GB")
+   * @returns 지원되는 모델명 또는 null
+   */
+  public static findSupportedModel(gpuProduct: string): string | null {
+    // Alpha 모델 확인 (A30)
+    const alphaModels = Object.keys(MIG_GPU_ALPHA_MODEL);
+    for (const model of alphaModels) {
+      if (gpuProduct.includes(model)) {
+        return model;
+      }
+    }
+
+    // Beta 모델 확인 (A100, H100, H200, B200 등)
+    const betaModels = Object.keys(MIG_GPU_BETA_MODEL);
+    for (const model of betaModels) {
+      if (gpuProduct.includes(model)) {
+        return model;
+      }
+    }
+
+    return null;
+  }
+
   constructor(private readonly gpuProduct: string) {
     if (this.gpuProduct === "A30") {
       this.configMappings = MIG_GPU_ALPHA_CONFIG;
