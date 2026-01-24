@@ -1,7 +1,6 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { ClusterNodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { NodeGpuDivisionButton } from "@/domain/node/components/list/node-gpu-division-button";
 import { NodeListIp } from "@/domain/node/components/list/node-list-ip";
 import { NodeLogButton } from "@/domain/node/components/list/node-log-button";
 import { NodeMigButton } from "@/domain/node/components/list/node-mig-button";
@@ -23,7 +22,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "index",
       title: "NO.",
       align: "center",
-      width: 40,
       render: (_: unknown, __: unknown, index: number) => {
         return <span>{index + 1}</span>;
       },
@@ -48,11 +46,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "nodeIp",
       title: "IP 주소",
       align: "left",
-      width: 140,
       render: (nodeIp: string, record: ClusterNodeListResponse) => {
         // MIG 활성화 여부에 따라 타입 결정
         let type = "NONE";
-        if (record.isMigEnabled) {
+        if (record.migConfigState === "READY") {
           type = "MIG";
         }
         // TODO: MPS 상태 확인 로직 추가 필요
@@ -68,7 +65,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "gpuType",
       title: "GPU 타입",
       align: "left",
-      width: 120,
       render: (gpuType: string | undefined) => {
         return <span>{gpuType || "-"}</span>;
       },
@@ -78,14 +74,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "gpuCount",
       title: "GPU",
       align: "center",
-      width: 50,
     },
     {
       key: "gpuUtilizationPercent",
       dataIndex: "gpuUtilizationPercent",
       title: "GPU 사용량",
       align: "center",
-      width: 70,
       render: (gpuUtilizationPercent: number | undefined) => {
         return (
           <ColumnAlignCenterWrap>
@@ -99,7 +93,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "cpuUtilizationPercent",
       title: "CPU",
       align: "center",
-      width: 50,
       render: (cpuUtilizationPercent: number | undefined) => {
         return (
           <ColumnAlignCenterWrap>
@@ -113,7 +106,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "memoryUtilizationPercent",
       title: "Memory",
       align: "center",
-      width: 50,
       render: (memoryUtilizationPercent: number | undefined) => {
         return (
           <ColumnAlignCenterWrap>
@@ -129,7 +121,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "diskUtilizationPercent",
       title: "Disk",
       align: "center",
-      width: 50,
       render: (diskUtilizationPercent: number | undefined) => {
         return (
           <ColumnAlignCenterWrap>
@@ -144,8 +135,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       key: "createdAt",
       dataIndex: "createdAt",
       title: "경과 시간",
-      align: "center",
-      width: 120,
+      align: "left",
       render: (createdAt: string | undefined) => {
         if (!createdAt) {
           return <span>-</span>;
@@ -158,7 +148,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "isScheduling",
       title: "스케줄링",
       align: "center",
-      width: 80,
       render: (isScheduling: boolean, record: ClusterNodeListResponse) => {
         return (
           <ColumnAlignCenterWrap>
@@ -175,21 +164,21 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "nodeName",
       title: "GPU 분할",
       align: "center",
-      width: 70,
       render: (nodeName: string, record: ClusterNodeListResponse) => {
-        let component = null;
-        // MIG 활성화 상태에 따라 버튼 표시
-        if (record.isMigEnabled) {
-          component = <NodeMigButton nodeName={nodeName} />;
-        } else {
-          // GPU가 있는 경우에만 분할 버튼 표시
-          if (record.gpuCount > 0) {
-            component = <NodeGpuDivisionButton nodeName={nodeName} />;
-          } else {
-            component = <span>-</span>;
-          }
-        }
-        // TODO: MPS 상태 확인 로직 추가 필요
+        // GPU가 있는 경우에만 MIG 버튼 표시
+        // migConfigState가 PENDING인 경우 버튼 비활성화
+        const component =
+          record.gpuCount > 0 ? (
+            <NodeMigButton
+              nodeName={nodeName}
+              disabled={
+                record.migConfigState === "PENDING" ||
+                record.migConfigState === "NOT_SUPPORTED"
+              }
+            />
+          ) : (
+            <span>-</span>
+          );
         return <ColumnAlignCenterWrap>{component}</ColumnAlignCenterWrap>;
       },
     },
@@ -198,7 +187,6 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "nodeName",
       title: "Activity",
       align: "center",
-      width: 70,
       render: (nodeName: string) => {
         return (
           <ColumnAlignCenterWrap>

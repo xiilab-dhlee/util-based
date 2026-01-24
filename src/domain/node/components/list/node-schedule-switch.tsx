@@ -1,7 +1,11 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Switch } from "xiilab-ui";
 
-import { useUpdateNodeSchedule } from "@/domain/node/hooks/use-update-node-schedule";
+import {
+  getGetClusterNodesQueryKey,
+  useUpdateNodeScheduling,
+} from "@/api/generated/admin-cluster/admin-cluster";
 
 /**
  * 노드 스케줄링 상태를 제어하는 스위치 컴포넌트의 props 인터페이스
@@ -34,28 +38,34 @@ export function NodeScheduleSwitch({
   nodeName,
   schedulable,
 }: NodeScheduleSwitchProps) {
+  const queryClient = useQueryClient();
+
   // 로컬 상태로 현재 스위치의 체크 상태를 관리
   const [checked, setChecked] = useState(schedulable);
 
-  // 노드 스케줄링 업데이트를 위한 mutation hook
-  const updateNodeSchedule = useUpdateNodeSchedule();
+  // 노드 스케줄링 업데이트를 위한 mutation hook (orval 생성)
+  const { mutate } = useUpdateNodeScheduling();
 
   /**
    * 스위치 변경 핸들러
    * 스위치를 토글하면 서버에 스케줄링 설정 변경 요청을 전송합니다.
    *
-   * @param checked - 새로운 스위치 상태 (true: 스케줄링 활성화, false: 비활성화)
+   * @param newChecked - 새로운 스위치 상태 (true: 스케줄링 활성화, false: 비활성화)
    */
-  const handleChange = (checked: boolean) => {
-    updateNodeSchedule.mutate(
+  const handleChange = (newChecked: boolean) => {
+    mutate(
       {
         nodeName,
-        type: checked ? "ON" : "OFF",
+        data: { enabled: newChecked },
       },
       {
         onSuccess: () => {
           // 서버 요청 성공 시 로컬 상태도 업데이트
-          setChecked(checked);
+          setChecked(newChecked);
+          // 노드 목록 캐시 무효화
+          queryClient.invalidateQueries({
+            queryKey: getGetClusterNodesQueryKey(),
+          });
         },
       },
     );
