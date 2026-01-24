@@ -123,8 +123,8 @@ export const ACCOUNT_EVENTS = {
 export const NODE_EVENTS = {
   // MPS 설정 수정에 필요한 정보 전달 이벤트
   sendUpdateMps: "node:send-update-mps",
-  // MIG 설정 수정에 필요한 정보 전달 이벤트
-  sendUpdateMig: "node:send-update-mig",
+  // MIG 설정 모달 열기 이벤트
+  openUpdateMigModal: "node:open-update-mig-modal",
 } as const;
 
 // Redfish 관련 이벤트
