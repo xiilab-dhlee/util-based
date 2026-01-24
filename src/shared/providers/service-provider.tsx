@@ -9,7 +9,6 @@ import { RedfishService } from "@/domain/node/api/redfish.service";
 import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { ReportService } from "@/domain/report/api/report.service";
 import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
-import { RequestImageService } from "@/domain/request-image/api/request-image.service";
 import { ResourcePresetService } from "@/domain/resource-preset/api/resource-preset.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
@@ -31,7 +30,6 @@ interface ServiceContextType {
   nodeService: NodeService;
   redfishBmcService: RedfishBmcService;
   redfishService: RedfishService;
-  requestImageService: RequestImageService;
   reportService: ReportService;
   reportReservationService: ReportReservationService;
   gpuService: GpuService;
@@ -68,7 +66,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     nodeService: new NodeService(),
     redfishBmcService: new RedfishBmcService(),
     redfishService: new RedfishService(),
-    requestImageService: new RequestImageService(),
     reportService: new ReportService(),
     reportReservationService: new ReportReservationService(),
     gpuService: new GpuService(),

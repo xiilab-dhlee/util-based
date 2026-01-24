@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { Icon } from "xiilab-ui";
 
-import type { RequestImageListType } from "@/domain/request-image/schemas/request-image.schema";
+import type { ImageTagUsageRequestResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { REQUEST_IMAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
@@ -11,21 +11,26 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface ViewApprovalRequestImageButtonProps {
-  requestImage: RequestImageListType;
+  requestImage: ImageTagUsageRequestResponse;
 }
 
 export function ViewApproveRequestImageButton({
   requestImage,
 }: ViewApprovalRequestImageButtonProps) {
   const publish = usePublish();
+  const isDisabled = requestImage.approvalStatus !== "APPROVAL_WAITING";
 
   const handleClickIcon = () => {
-    publish(REQUEST_IMAGE_EVENTS.sendApproveImage, requestImage);
+    if (isDisabled) return;
+
+    publish(REQUEST_IMAGE_EVENTS.openApproveModal, {
+      usageRequestId: requestImage.usageRequestId,
+    });
   };
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClickIcon} disabled={false}>
+      <ColumnIconWrap onClick={handleClickIcon} disabled={isDisabled}>
         <Icon name="Check" color="var(--icon-fill)" size={16} />
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>

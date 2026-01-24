@@ -136,12 +136,12 @@ export const REDFISH_EVENTS = {
   sendNetworkAdapter: "redfish:send-view-network-adapter",
 } as const;
 
-// 이미지 요청 관련 이벤트
+// 이미지 사용 요청 관련 이벤트
 export const REQUEST_IMAGE_EVENTS = {
-  // 이미지 요청 승인 모달에 필요한 정보 전달 이벤트
-  sendApproveImage: "request-image:send-approve-image",
-  // 이미지 요청 반려 모달에 필요한 정보 전달 이벤트
-  sendRejectImage: "request-image:send-reject-image",
+  // 이미지 사용 요청 승인 모달 열기
+  openApproveModal: "request-image:open-approve-modal",
+  // 이미지 사용 요청 반려 모달 열기
+  openRejectModal: "request-image:open-reject-modal",
 } as const;
 
 // 개인 레지스트리 관련 이벤트
@@ -297,10 +297,12 @@ export const SCHEDULING_QUEUE_EVENTS = {
 export const COMMON_EVENTS = {
   // 공통 취약점 모달에 필요한 정보 전달 이벤트
   sendVulnerability: "common:send-vulnerability",
-  // 공통 신청 사유 모달에 필요한 정보 전달 이벤트
-  sendRequestReason: "common:send-request-reason",
-  // 공통 반려 사유 모달에 필요한 정보 전달 이벤트
-  sendRejectReason: "common:send-reject-reason",
+  // 공통 신청 사유 모달 열기 이벤트
+  openRequestReasonModal: "common:open-request-reason-modal",
+  // 공통 반려 사유 모달 열기 이벤트
+  openRejectReasonModal: "common:open-reject-reason-modal",
+  // 공통 승인 사유 모달 열기 이벤트
+  openApprovalReasonModal: "common:open-approval-reason-modal",
   // 프로필 팝오버에 필요한 정보 전달 이벤트
   sendProfile: "common:send-profile",
   // 비밀번호 재확인 모달에 필요한 정보 전달 이벤트

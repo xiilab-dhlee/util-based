@@ -6,10 +6,6 @@ export const openViewVulnerabilityModalAtom = atom<boolean>(false);
 export const openCreateWorkspaceModalAtom = atom<boolean>(false);
 /** 첫 워크스페이스 생성 모달 표시 여부 */
 export const openCreateFirstWorkspaceModalAtom = atom<boolean>(false);
-/** 요청 사유 조회 모달 표시 여부 */
-export const openViewRequestReasonModalAtom = atom<boolean>(false);
-/** 반려 사유 조회 모달 표시 여부 */
-export const openViewRejectReasonModalAtom = atom<boolean>(false);
 /** 비밀번호 재확인 모달 표시 여부 */
 export const openCheckPasswordModalAtom = atom<boolean>(false);
 /** 프로필 수정 모달 표시 여부 */
