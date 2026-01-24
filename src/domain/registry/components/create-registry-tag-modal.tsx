@@ -17,6 +17,7 @@ import {
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
 interface CreateRegistryTagModalProps {
   mode: RegistryMode;
@@ -88,7 +89,7 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
       icon={<Icon name="Plus" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      title="태그 추가"
+      title="컨테이너 이미지 태그 추가"
       showCancelButton
       onCancel={handleCancel}
       okText="추가"
@@ -152,7 +153,7 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
           name="description"
           control={control}
           render={({ field }) => (
-            <FormItem
+            <LastFormItem
               label="설명"
               validateStatus={errors.description ? "error" : undefined}
               help={errors.description?.message}
@@ -162,7 +163,7 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
                 placeholder="태그에 대한 설명을 입력해 주세요."
                 width="100%"
               />
-            </FormItem>
+            </LastFormItem>
           )}
         />
       </Form>

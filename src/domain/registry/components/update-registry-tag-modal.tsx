@@ -102,7 +102,7 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
       icon={<Icon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      title="태그 수정"
+      title="컨테이너 이미지 태그 수정"
       showCancelButton
       onCancel={handleCancel}
       okText="수정"
@@ -113,7 +113,6 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
       maskClosable={!isPending}
       keyboard={!isPending}
       okButtonProps={{
-        disabled: isPending,
         loading: isPending,
       }}
       cancelButtonProps={{
