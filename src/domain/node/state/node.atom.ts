@@ -7,15 +7,13 @@ import type { MigGpu } from "@/domain/node/types/node.type";
 /** 노드 페이지 번호 */
 export const nodePageAtom = atomWithReset<number>(1);
 
-/** 노드 정렬 상태 */
+/** 노드 정렬 상태 (기본값: 노드 이름 오름차순) */
 export const nodeSortAtom = atomWithReset<NodeSortState>({
-  field: null,
-  order: null,
+  field: "nodeName",
+  order: "ascend",
 });
 /** MPS 설정 모달 표시 여부 */
 export const openUpdateMpsModalAtom = atom<boolean>(false);
-/** MIG 설정 모달 표시 여부 */
-export const openUpdateMigModalAtom = atom<boolean>(false);
 /** MIG GPU 제품 */
 export const migGpuProductAtom = atom<string>("");
 /** MIG GPU 목록 */
