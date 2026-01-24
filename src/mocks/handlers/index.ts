@@ -24,6 +24,7 @@ import { groupHandlers } from "@/domain/group/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
+import { revokeHandlers } from "@/domain/revoke/mocks";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
 import { storageHandlers } from "@/domain/storage/mocks";
@@ -41,7 +42,6 @@ import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
-import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 
@@ -124,7 +124,7 @@ const rawHandlers = [
   ...gpuHandlers,
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,
-  ...revokeHistoryHandlers,
+  ...revokeHandlers,
   ...systemMonitoringHandlers,
   ...hpeHandlers,
   ...reportHandlers,

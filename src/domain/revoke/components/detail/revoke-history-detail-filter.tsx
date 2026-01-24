@@ -6,20 +6,18 @@ import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
 import { REVOKE_HISTORY_TYPE_OPTIONS } from "@/domain/revoke/constants/revoke-history.constant";
-import { useGetRevokeHistoryDetail } from "@/domain/revoke/hooks/use-get-revoke-history-detail";
 import {
-  revokeHistoryDetailEndDateAtom,
+  revokeHistoryDetailDateRangeAtom,
   revokeHistoryDetailPageAtom,
-  revokeHistoryDetailStartDateAtom,
   revokeHistoryDetailTypeAtom,
 } from "@/domain/revoke/state/revoke-history.atom";
-import type { FilterRevokeHistoryDetailType } from "@/domain/revoke/types/revoke-history.type";
+import type { RevokeHistoryDetailType } from "@/domain/revoke/types/revoke-history.type";
 import { ListRangePicker } from "@/shared/components/datepicker/list-range-picker";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { ALL_OPTION } from "@/shared/constants/core.constant";
 
 interface RevokeHistoryDetailFilterProps {
-  id: string;
+  totalSize: number;
 }
 
 /**
@@ -28,23 +26,11 @@ interface RevokeHistoryDetailFilterProps {
  * 기간 필터와 구분(경고/회수) 필터를 제공합니다.
  */
 export function RevokeHistoryDetailFilter({
-  id,
+  totalSize,
 }: RevokeHistoryDetailFilterProps) {
-  const [page] = useAtom(revokeHistoryDetailPageAtom);
-  const [startDate, setStartDate] = useAtom(revokeHistoryDetailStartDateAtom);
-  const [endDate, setEndDate] = useAtom(revokeHistoryDetailEndDateAtom);
+  const [dateRange, setDateRange] = useAtom(revokeHistoryDetailDateRangeAtom);
   const [typeValue, setTypeValue] = useAtom(revokeHistoryDetailTypeAtom);
   const resetPage = useResetAtom(revokeHistoryDetailPageAtom);
-
-  const { data } = useGetRevokeHistoryDetail(id, {
-    page,
-    size: LIST_PAGE_SIZE,
-    startDate: startDate || undefined,
-    endDate: endDate || undefined,
-    type: typeValue,
-  });
-
-  const total = data?.totalSize ?? 0;
 
   const typeOptions = [ALL_OPTION, ...REVOKE_HISTORY_TYPE_OPTIONS];
 
@@ -52,9 +38,10 @@ export function RevokeHistoryDetailFilter({
    * 구분(경고/회수) 변경 핸들러
    * 구분 변경 시 페이지를 초기화
    */
-  const handleTypeChange = (value: FilterRevokeHistoryDetailType) => {
+  const handleTypeChange = (value: string) => {
     resetPage();
-    setTypeValue(value);
+    // 빈 문자열(전체)이면 undefined로 설정
+    setTypeValue(value === "" ? undefined : (value as RevokeHistoryDetailType));
   };
 
   /**
@@ -63,16 +50,15 @@ export function RevokeHistoryDetailFilter({
    */
   const handleDateChange = (start: string, end: string) => {
     resetPage();
-    setStartDate(start);
-    setEndDate(end);
+    setDateRange({ start, end });
   };
 
   return (
-    <MySearchFilter title="경고 및 회수 목록" total={total}>
+    <MySearchFilter title="경고 및 회수 목록" total={totalSize}>
       <FilterControls>
         <ListRangePicker
-          startDate={startDate}
-          endDate={endDate}
+          startDate={dateRange.start}
+          endDate={dateRange.end}
           onChange={handleDateChange}
         />
         <Dropdown

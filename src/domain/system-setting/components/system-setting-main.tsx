@@ -5,7 +5,7 @@ import { Icon, Typography } from "xiilab-ui";
 
 import { DeleteCredentialModal } from "@/domain/credential/components/delete-credential-modal";
 import { ViewCredentialDetailModal } from "@/domain/credential/components/view-credential-detail-modal";
-import { ResourceRevokeCriteriaModal } from "@/domain/revoke/components/edit/resource-revoke-criteria-modal";
+import { ManageRevokeCriteriaModal } from "@/domain/revoke/components/edit/manage-revoke-criteria-modal";
 import { CreateStorageModal } from "@/domain/storage/components/create-storage-modal";
 import { DeleteStorageModal } from "@/domain/storage/components/delete-storage-modal";
 import { UpdateStorageModal } from "@/domain/storage/components/update-storage-modal";
@@ -101,7 +101,8 @@ export function SystemSettingMain() {
       </ListPageMain>
 
       {/* 모달 */}
-      <ResourceRevokeCriteriaModal />
+      <ManageRevokeCriteriaModal />
+      <CreateSmtpModal />
       <CreateSmtpModal />
       <DeleteSmtpModal />
       <CreateLicenseModal />

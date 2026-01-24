@@ -1,39 +1,29 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
+import type { WorkloadReclaimScanHistoryResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createRevokeHistoryColumn } from "@/domain/revoke/components/column/create-revoke-history-column";
-import { useGetRevokeHistories } from "@/domain/revoke/hooks/use-get-revoke-histories";
-import type { RevokeHistoryItemResponseType } from "@/domain/revoke/schemas/revoke-history.schema";
-import {
-  revokeHistoryEndDateAtom,
-  revokeHistoryPageAtom,
-  revokeHistoryStartDateAtom,
-} from "@/domain/revoke/state/revoke-history.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+
+interface RevokeHistoryListBodyProps {
+  content: WorkloadReclaimScanHistoryResponse[];
+  isLoading: boolean;
+  isError: boolean;
+}
 
 /**
  * 리소스 회수 이력 목록 테이블 컴포넌트
  */
-export function RevokeHistoryListBody() {
-  const page = useAtomValue(revokeHistoryPageAtom);
-  const startDate = useAtomValue(revokeHistoryStartDateAtom);
-  const endDate = useAtomValue(revokeHistoryEndDateAtom);
-
-  const { data, isError, isLoading } = useGetRevokeHistories({
-    page,
-    size: LIST_PAGE_SIZE,
-    startDate: startDate || undefined,
-    endDate: endDate || undefined,
-  });
-
+export function RevokeHistoryListBody({
+  content,
+  isLoading,
+  isError,
+}: RevokeHistoryListBodyProps) {
   return (
     <ListWrapper>
-      <CustomizedTable<RevokeHistoryItemResponseType>
+      <CustomizedTable<WorkloadReclaimScanHistoryResponse>
         columns={createRevokeHistoryColumn()}
-        data={data?.content || []}
+        data={content}
         columnHeight={40}
         activePadding
         isError={isError}

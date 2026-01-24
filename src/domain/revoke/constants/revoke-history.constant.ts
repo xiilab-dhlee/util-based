@@ -45,3 +45,9 @@ export const REVOKE_CRITERIA = {
 
 export type RevokeCriteria =
   (typeof REVOKE_CRITERIA)[keyof typeof REVOKE_CRITERIA];
+
+/**
+ * 리소스 회수 기준 기본값
+ * UI에서는 최적화 기준을 숨기고, 백엔드에는 항상 OR로 전송합니다.
+ */
+export const DEFAULT_RECLAIM_OPERATOR = REVOKE_CRITERIA.OR;

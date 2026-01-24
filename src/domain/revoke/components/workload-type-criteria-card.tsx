@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import styled from "styled-components";
 import { Icon, Switch, Typography } from "xiilab-ui";
 
-import type { RevokeCriteriaItemType } from "@/domain/revoke/schemas/revoke-history.schema";
+import type { WorkloadReclaimPolicyResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getJobTypeLabel } from "@/domain/workload/constants/workload.constant";
 import { RefreshIcon } from "@/shared/components/icon/refresh-icon";
 import { getResourceInfo } from "@/shared/utils/resource.util";
@@ -15,52 +15,46 @@ const MEM_INFO = getResourceInfo("MEM");
 
 /**
  * WorkloadTypeCriteriaCard props 타입
- * enabled와 onEnabledChange는 반드시 함께 제공되거나 함께 제공되지 않아야 합니다.
  */
 type WorkloadTypeCriteriaCardProps =
   | {
       /** 회수 기준 데이터 */
-      criteria: RevokeCriteriaItemType;
+      criteria: WorkloadReclaimPolicyResponse;
       /** 사용 유무 */
       enabled: boolean;
-      /** 사용 유무 변경 핸들러 */
-      onEnabledChange: (enabled: boolean) => void;
+
+      /** Switch UI disabled 여부 */
+      switchDisabled?: boolean;
     }
   | {
       /** 회수 기준 데이터 */
-      criteria: RevokeCriteriaItemType;
+      criteria: WorkloadReclaimPolicyResponse;
       /** 사용 유무 (제공하지 않음) */
       enabled?: never;
       /** 사용 유무 변경 핸들러 (제공하지 않음) */
-      onEnabledChange?: never;
+
+      switchDisabled?: never;
     };
 
-/**
- * Workload Type별 회수 기준 카드 컴포넌트
- *
- * Interactive Job 또는 Batch Job의 리소스 회수 기준을 표시합니다.
- * - on/off 토글 스위치 (optional)
- * - GPU, Memory, CPU 임계값
- * - 회수 기준(OR/AND), 운영시간, 경고 횟수
- */
 export function WorkloadTypeCriteriaCard({
   criteria,
   enabled,
-  onEnabledChange,
+
+  switchDisabled,
 }: WorkloadTypeCriteriaCardProps) {
-  const showToggle = enabled !== undefined && onEnabledChange !== undefined;
+  const showToggle = enabled !== undefined;
 
   return (
     <CardContainer>
       {/* 헤더: 타이틀 + 사용 유무 토글 */}
       <CardHeader>
-        <JobTitle>{`${getJobTypeLabel(criteria.jobType)} Job`}</JobTitle>
+        <JobTitle>{`${getJobTypeLabel(criteria.workloadJobType)} Job`}</JobTitle>
         {showToggle && (
           <ToggleWrapper>
             <Typography.Text variant="body-2-4" color="var(--color-gray-06)">
               사용 유무
             </Typography.Text>
-            <Switch checked={enabled} onChange={onEnabledChange} />
+            <Switch checked={enabled} disabled={switchDisabled} />
           </ToggleWrapper>
         )}
       </CardHeader>
@@ -82,7 +76,7 @@ export function WorkloadTypeCriteriaCard({
               }
               color={GPU_INFO.color}
               label={GPU_INFO.text}
-              value={`${criteria.gpuThreshold}%`}
+              value={`${criteria.metrics.gpu}%`}
               unit="미만"
             />
             <CriteriaCell
@@ -97,7 +91,7 @@ export function WorkloadTypeCriteriaCard({
               }
               color={MEM_INFO.color}
               label={MEM_INFO.text}
-              value={`${criteria.memoryThreshold}%`}
+              value={`${criteria.metrics.mem}%`}
               unit="미만"
             />
             <CriteriaCell
@@ -112,7 +106,7 @@ export function WorkloadTypeCriteriaCard({
               }
               color={CPU_INFO.color}
               label={CPU_INFO.text}
-              value={`${criteria.cpuThreshold}%`}
+              value={`${criteria.metrics.cpu}%`}
               unit="미만"
             />
           </GridColumn>
@@ -129,20 +123,20 @@ export function WorkloadTypeCriteriaCard({
               }
               color="var(--color-gray-10)"
               label="회수 기준"
-              value={criteria.revokeCriteria}
+              value={criteria.reclaimOperator}
             />
             <CriteriaCell
               icon={<Icon name="Time" size={24} color="var(--color-gray-05)" />}
               color="var(--color-gray-10)"
-              label="운영시간"
-              value={`${criteria.operationHours}시간`}
+              label="검사 주기"
+              value={`${criteria.operatingHour}시간`}
               unit="동안"
             />
             <CriteriaCell
               icon={<Icon name="Error" size={24} color="var(--color-red-05)" />}
               color="var(--color-red-03)"
               label="경고 횟수"
-              value={`${criteria.warningCount}`}
+              value={`${criteria.reclaimWarningCount}`}
               unit="회"
             />
           </GridColumn>

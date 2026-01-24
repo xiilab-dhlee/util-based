@@ -103,6 +103,15 @@ export const TABLE_MESSAGE = {
   EMPTY: "조회된 결과가 없습니다.",
 } as const;
 
+/** 날짜 범위 타입 */
+export interface DateRange {
+  start: string;
+  end: string;
+}
+
+/** 날짜 범위 기본값 */
+export const DEFAULT_DATE_RANGE: DateRange = { start: "", end: "" };
+
 /** 모니터링 날짜 모드 상수 */
 export const MONITORING_DATE_MODE = {
   /** 실시간 모드 */
@@ -111,7 +120,7 @@ export const MONITORING_DATE_MODE = {
   HISTORY: "history",
 } as const;
 
-/** 모니터링 날짜 모드 값 (편의용) */
+/** 모니터링 날짜 모드 값 */
 export const LIVE_MODE = MONITORING_DATE_MODE.LIVE;
 export const HISTORY_MODE = MONITORING_DATE_MODE.HISTORY;
 

@@ -264,4 +264,14 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.registerAstragoVolume]: {
     success: "볼륨이 생성되었습니다.",
   },
+
+  // ============================================
+  // Workload Reclaim Policy
+  // ============================================
+  [MUTATION_KEYS.updateReclaimPolicy]: {
+    success: "리소스 회수 기준이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.updateReclaimPolicyEnabled]: {
+    success: "리소스 회수 기준 활성화 상태가 변경되었습니다.",
+  },
 };
