@@ -37,7 +37,7 @@ class LogoutBroadcast {
     if (typeof window === "undefined") return;
 
     // BroadcastChannel 지원 여부 확인
-    if ("BroadcastChannel" in window) {
+    if (typeof BroadcastChannel !== "undefined") {
       this.channel = new BroadcastChannel(CHANNEL_NAME);
       this.channel.onmessage = (event: MessageEvent<LogoutMessage>) => {
         this.notifyHandlers(event.data);
