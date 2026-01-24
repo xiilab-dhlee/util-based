@@ -1,7 +1,8 @@
 "use client";
 
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
@@ -56,82 +57,69 @@ export function RegistryJobStreamLogViewer({
     }
   }, [logs.length]);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const disconnect = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  }, []);
+
   // SSE 연결 및 스트리밍
   useEffect(() => {
     const accessToken = session?.accessToken;
-    if (!imageTagId || !accessToken) return;
+    if (!imageTagId || !accessToken) {
+      return;
+    }
 
-    const controller = new AbortController();
+    abortControllerRef.current = new AbortController();
 
-    const connectSSE = async () => {
-      const url = `/api/v1/registries/image-jobs/image-tags/${imageTagId}/logs/active`;
+    const url = `/api/v1/registries/image-jobs/image-tags/${imageTagId}/logs/active`;
 
-      try {
-        setStatus("pending");
-        setErrorMessage(null);
+    setStatus("pending");
+    setErrorMessage(null);
 
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Accept: "text/event-stream",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          signal: controller.signal,
-        });
+    fetchEventSource(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      signal: abortControllerRef.current.signal,
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+      async onopen(response) {
+        if (response.ok) {
+          setStatus("streaming");
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+      },
 
-        const reader = response.body?.getReader();
-        if (!reader) {
-          throw new Error("ReadableStream not supported");
+      onmessage(event) {
+        const logData = event.data?.trim();
+        if (logData) {
+          setLogs((prev) => [...prev, logData]);
         }
+      },
 
-        setStatus("streaming");
-
-        const decoder = new TextDecoder();
-        let buffer = "";
-
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) {
-            setStatus("completed");
-            break;
-          }
-
-          buffer += decoder.decode(value, { stream: true });
-
-          // SSE 형식 파싱: "event: log\ndata: ...\n\n"
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
-
-          for (const line of lines) {
-            if (line.startsWith("data:")) {
-              const logData = line.slice(5).trim();
-              if (logData) {
-                setLogs((prev) => [...prev, logData]);
-              }
-            }
-          }
-        }
-      } catch (err) {
+      onerror(err) {
         // 컴포넌트 언마운트로 인한 정상 종료
         if (err instanceof Error && err.name === "AbortError") {
           return;
         }
         setStatus("error");
         setErrorMessage("로그 스트리밍 연결에 실패했습니다.");
-      }
-    };
+        throw err; // 재연결 방지
+      },
 
-    connectSSE();
+      onclose() {
+        setStatus("completed");
+      },
+    });
 
     return () => {
-      controller.abort();
+      disconnect();
     };
-  }, [imageTagId, session?.accessToken]);
+  }, [imageTagId, session?.accessToken, disconnect]);
 
   const statusInfo = STATUS_INFO_MAP[status];
 
