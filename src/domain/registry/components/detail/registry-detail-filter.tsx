@@ -45,7 +45,8 @@ export function RegistryDetailFilter({
   const isUser = checkIsUser(session);
   const sessionAccountId = getSessionAccountId(session);
   const isOwner = creatorId === sessionAccountId;
-  const canCreateTag = !!session && (!isUser || isOwner);
+  // 사용자이면서 생성자인 경우에만 태그 추가 가능
+  const canCreateTag = isUser && isOwner;
 
   const handleSearch = (value: string) => {
     resetCheckedList();
