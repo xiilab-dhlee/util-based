@@ -31,7 +31,7 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<CreateRegistryTagFormType>({
     resolver: zodResolver(createRegistryTagSchema),
     mode: "onChange",
@@ -99,7 +99,6 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
       maskClosable={!isPending}
       keyboard={!isPending}
       okButtonProps={{
-        disabled: !isValid || isPending,
         loading: isPending,
       }}
       cancelButtonProps={{
@@ -135,7 +134,6 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
           render={({ field }) => (
             <FormItem
               label="크리덴셜"
-              required
               validateStatus={errors.credentialId ? "error" : undefined}
               help={errors.credentialId?.message}
             >
