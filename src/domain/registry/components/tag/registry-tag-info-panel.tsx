@@ -39,16 +39,14 @@ export function RegistryTagInfoPanel({ mode }: RegistryTagInfoPanelProps) {
 
   // 태그 상세 조회
   const { data, isLoading, isError } = useGetRegistryTagDetailByMode(mode, {
-    request: {
-      tagName: decodedTagName,
-      harborImageName,
-    },
+    tagName: decodedTagName,
+    harborImageName,
   });
 
   // 이미지 상세 조회
   const { data: imageDetail } = useGetRegistryDetailByMode(
     mode,
-    { request: { harborImageName } },
+    { harborImageName },
     { query: { enabled: !!harborImageName } },
   );
 
