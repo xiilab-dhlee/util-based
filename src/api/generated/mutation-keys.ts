@@ -112,6 +112,13 @@ export const MUTATION_KEYS = {
   deleteImageJob: "deleteImageJob",
 
   // ============================================
+  // Storage (Admin)
+  // ============================================
+  registerStorage: "registerStorage",
+  updateStorage: "updateStorage",
+  deleteStorage: "deleteStorage",
+
+  // ============================================
   // Volume
   // ============================================
   updateVolume: "updateVolume",
@@ -122,6 +129,12 @@ export const MUTATION_KEYS = {
   compress: "compress",
   registerOnPremiseVolume: "registerOnPremiseVolume",
   registerAstragoVolume: "registerAstragoVolume",
+
+  // ============================================
+  // Workload Reclaim Policy
+  // ============================================
+  updateReclaimPolicy: "updateReclaimPolicy",
+  updateReclaimPolicyEnabled: "updateReclaimPolicyEnabled",
 } as const;
 
 export type MutationKey = (typeof MUTATION_KEYS)[keyof typeof MUTATION_KEYS];

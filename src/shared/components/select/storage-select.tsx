@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import type { DropdownProps } from "xiilab-ui";
 import { Dropdown } from "xiilab-ui";
 
-import { getStorages } from "@/api/generated/admin-storage/admin-storage";
+import { getStorages1 } from "@/api/generated/storage/storage";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
 const QUERY_KEY = "storage-select";
@@ -22,10 +22,12 @@ function useStorageOptions() {
   const query = useInfiniteQuery({
     queryKey: [QUERY_KEY, PAGE_SIZE],
     queryFn: ({ pageParam = 0, signal }) =>
-      getStorages(
+      getStorages1(
         {
-          pageNo: pageParam,
-          pageSize: PAGE_SIZE,
+          pageableRequest: {
+            pageNo: pageParam,
+            pageSize: PAGE_SIZE,
+          },
         },
         signal,
       ),

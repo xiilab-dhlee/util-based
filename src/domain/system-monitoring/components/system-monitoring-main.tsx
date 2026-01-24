@@ -1,93 +1,112 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled from "styled-components";
 import { Dropdown, Typography } from "xiilab-ui";
 
+import { useGetNodeNames } from "@/api/generated/admin-cluster/admin-cluster";
 import { SystemMonitoringChartList } from "@/domain/system-monitoring/components/system-monitoring-chart-list";
 import { SystemMonitoringSummary } from "@/domain/system-monitoring/components/system-monitoring-summary";
+import { useAllGpuMetrics } from "@/domain/system-monitoring/hooks/use-all-gpu-metrics.hook";
+import { useAllGpuMetricsStream } from "@/domain/system-monitoring/hooks/use-all-gpu-metrics-stream.hook";
+import { useAllSystemMetrics } from "@/domain/system-monitoring/hooks/use-all-system-metrics.hook";
+import { useAllSystemMetricsStream } from "@/domain/system-monitoring/hooks/use-all-system-metrics-stream.hook";
+import { useDateRangeMode } from "@/domain/system-monitoring/hooks/use-date-range-mode.hook";
 import { useGpuFilter } from "@/domain/system-monitoring/hooks/use-gpu-filter.hook";
-import { useNodeSummary } from "@/domain/system-monitoring/hooks/use-system-monitoring.hook";
-import { MOCK_NODE_OPTIONS } from "@/domain/system-monitoring/mocks/system-monitoring.mock";
-import {
-  buildResourceSummary,
-  normalizeMonitoringHistoryRange,
-} from "@/domain/system-monitoring/utils/system-monitoring.util";
+import { useNodeSelection } from "@/domain/system-monitoring/hooks/use-node-selection.hook";
+import { useSeriesVisibility } from "@/domain/system-monitoring/hooks/use-series-visibility.hook";
 import { ChartDateRange } from "@/shared/components/chart-date-range";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { MultiSelectWithAll } from "@/shared/components/select";
-import type { MonitoringDateMode } from "@/shared/types/monitoring.type";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
 
 export function SystemMonitoringMain() {
-  // 노드 관련 State
-  const [selectedNode, setSelectedNode] = useState<string>(
-    MOCK_NODE_OPTIONS[0].value,
+  // 노드 목록 API 호출
+  const {
+    data: nodeNames,
+    isLoading: isNodeNamesLoading,
+    isError: isNodeNamesError,
+  } = useGetNodeNames();
+
+  // 노드 목록 (API 응답 → 드롭다운 옵션 변환)
+  const nodeOptions = useMemo(
+    () => (nodeNames ?? []).map((name) => ({ value: name, label: name })),
+    [nodeNames],
   );
 
-  // 날짜 모드 및 범위 State
-  const [dateMode, setDateMode] = useState<MonitoringDateMode>("live");
+  // 노드 선택 상태 관리
+  const { selectedNode, handleChangeNode } = useNodeSelection(nodeOptions);
 
-  const initialHistoryRange = useMemo(
-    () => ({
-      // 기본 history 기간: 7일
-      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      end: new Date(),
-    }),
-    [],
+  // 날짜 모드 및 범위 상태 관리
+  const {
+    dateMode,
+    dateRange,
+    isLiveMode,
+    apiDateRange,
+    isApiReady,
+    handleToggleDateMode,
+    handleChangeDateRange,
+    handleChangeRangeFromChart,
+  } = useDateRangeMode();
+
+  // API 활성화 조건
+  const apiEnabled = selectedNode !== "" && isApiReady;
+
+  const gpuMetrics = useAllGpuMetrics({
+    nodeName: selectedNode,
+    dateRange: apiDateRange,
+    enabled: apiEnabled,
+  });
+
+  const gpuStream = useAllGpuMetricsStream({
+    nodeName: selectedNode,
+    lastHistoryTimestamp: gpuMetrics.lastTimestamp,
+    initialData: gpuMetrics.data,
+    enabled:
+      isLiveMode &&
+      isApiReady &&
+      !gpuMetrics.isLoading &&
+      gpuMetrics.lastTimestamp !== null,
+  });
+
+  const systemMetrics = useAllSystemMetrics({
+    nodeName: selectedNode,
+    dateRange: apiDateRange,
+    enabled: apiEnabled,
+  });
+
+  const systemStream = useAllSystemMetricsStream({
+    nodeName: selectedNode,
+    lastHistoryTimestamp: systemMetrics.lastTimestamp,
+    initialData: systemMetrics.data,
+    enabled:
+      isLiveMode &&
+      isApiReady &&
+      !systemMetrics.isLoading &&
+      systemMetrics.lastTimestamp !== null,
+  });
+
+  const gpuData = isLiveMode ? gpuStream.data : gpuMetrics.data;
+  const systemData = isLiveMode ? systemStream.data : systemMetrics.data;
+
+  const allGpuData = useMemo(
+    () => [
+      ...gpuData.utilization,
+      ...gpuData.memory,
+      ...gpuData.temperature,
+      ...gpuData.powerUsage,
+    ],
+    [gpuData],
   );
-  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>(
-    initialHistoryRange,
-  );
 
-  const handleChangeNode = (value: string | null) => {
-    if (!value) return;
-    setSelectedNode(value);
-  };
+  // GPU 필터 관리 (전체 메트릭에서 GPU 옵션 추출)
+  const { selectedGpuIndices, setSelectedGpuIndices, gpuOptions } =
+    useGpuFilter(allGpuData, selectedNode);
 
-  const handleToggleDateMode = () => {
-    setDateMode((prev) => (prev === "live" ? "history" : "live"));
-  };
-
-  const handleChangeDateRange = (
-    startDate: Date | null,
-    endDate: Date | null,
-  ) => {
-    if (!startDate || !endDate) return;
-    // live 모드에서는 수동 선택을 반영하지 않음
-    if (dateMode === "live") return;
-
-    const normalizedRange = normalizeMonitoringHistoryRange({
-      start: startDate,
-      end: endDate,
-    });
-
-    setDateRange(normalizedRange);
-  };
-
-  const handleChangeRangeFromChart = (range: { start: Date; end: Date }) => {
-    // LIVE 모드에서 차트 드래그 시 history 모드로 전환
-    setDateMode((prevMode) => {
-      if (prevMode === "live") {
-        return "history";
-      }
-      return prevMode;
-    });
-
-    const normalizedRange = normalizeMonitoringHistoryRange(range);
-    setDateRange(normalizedRange);
-  };
-
-  // React Query를 사용한 노드 요약 정보 조회
-  const { data: nodeSummaryData } = useNodeSummary(selectedNode);
-  const nodeSummary = nodeSummaryData?.data;
-
-  // 리소스 요약 정보 생성
-  const resourceSummary = buildResourceSummary(nodeSummary);
-
-  // GPU 필터 관리
-  const { selectedGpus, setSelectedGpus, gpuOptions, selectedGpuFilter } =
-    useGpuFilter(nodeSummary);
+  // 시리즈 가시성 관리 (Legend 필터링)
+  const { visibilityMap, toggleSeries } = useSeriesVisibility({
+    nodeName: selectedNode,
+  });
 
   return (
     <>
@@ -103,51 +122,52 @@ export function SystemMonitoringMain() {
           <ArticleHeaderRight>
             <SelectLabel>노드 목록</SelectLabel>
             <Dropdown
-              options={MOCK_NODE_OPTIONS.map((option) => ({
-                value: option.value,
-                label: option.label,
-              }))}
+              options={nodeOptions}
               onChange={handleChangeNode}
               value={selectedNode}
               width={160}
               height={30}
+              loading={isNodeNamesLoading}
+              status={isNodeNamesError ? "load-failed" : "default"}
             />
           </ArticleHeaderRight>
         </ArticleHeader>
-        {/* 시스템 모니터링 정보 */}
-        <SystemMonitoringSummary
-          nodeSummary={nodeSummary}
-          selectedNode={selectedNode}
-          resourceSummary={resourceSummary}
-        />
+        <SystemMonitoringSummary selectedNode={selectedNode} />
         <ArticleHeader>
           <Typography.Text variant="title-2">그래프</Typography.Text>
           <ArticleHeaderRight>
             <MultiSelectWithAll
               options={gpuOptions}
-              value={selectedGpus}
-              onChange={setSelectedGpus}
+              value={selectedGpuIndices}
+              onChange={setSelectedGpuIndices}
               width={200}
               height={30}
               placeholder="GPU 선택"
               allLabel="전체"
             />
-            <ChartDateRange
-              mode={dateMode}
-              value={dateRange}
-              onToggleMode={handleToggleDateMode}
-              onChangeRange={handleChangeDateRange}
-              height={30}
-              width={260}
-              withTime
-            />
+            {dateRange && (
+              <ChartDateRange
+                mode={dateMode}
+                value={dateRange}
+                onToggleMode={handleToggleDateMode}
+                onChangeRange={handleChangeDateRange}
+                height={30}
+                width={260}
+                withTime
+              />
+            )}
           </ArticleHeaderRight>
         </ArticleHeader>
         <SystemMonitoringChartList
-          nodeName={selectedNode}
-          dateRange={dateRange}
-          selectedGpu={selectedGpuFilter}
-          mode={dateMode}
+          gpuData={gpuData}
+          systemData={systemData}
+          gpuIsLoading={gpuMetrics.isLoading}
+          systemIsLoading={systemMetrics.isLoading}
+          gpuErrors={isLiveMode ? gpuStream.errors : gpuMetrics.errors}
+          systemErrors={isLiveMode ? systemStream.errors : systemMetrics.errors}
+          selectedGpuIndices={selectedGpuIndices}
+          seriesVisibilityMap={visibilityMap}
+          onSeriesToggle={toggleSeries}
           onChangeRangeFromChart={handleChangeRangeFromChart}
         />
       </Container>

@@ -102,3 +102,27 @@ export const TABLE_MESSAGE = {
   /** 빈 목록일 때 표시되는 메시지 */
   EMPTY: "조회된 결과가 없습니다.",
 } as const;
+
+/** 날짜 범위 타입 */
+export interface DateRange {
+  start: string;
+  end: string;
+}
+
+/** 날짜 범위 기본값 */
+export const DEFAULT_DATE_RANGE: DateRange = { start: "", end: "" };
+
+/** 모니터링 날짜 모드 상수 */
+export const MONITORING_DATE_MODE = {
+  /** 실시간 모드 */
+  LIVE: "live",
+  /** 히스토리 모드 */
+  HISTORY: "history",
+} as const;
+
+/** 모니터링 날짜 모드 값 */
+export const LIVE_MODE = MONITORING_DATE_MODE.LIVE;
+export const HISTORY_MODE = MONITORING_DATE_MODE.HISTORY;
+
+/** 초기 조회 기간 (ms) - 7일 */
+export const DEFAULT_DATE_RANGE_MS = 7 * 24 * 60 * 60 * 1000;

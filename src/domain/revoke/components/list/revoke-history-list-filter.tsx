@@ -1,27 +1,28 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 
-import { useGetRevokeHistories } from "@/domain/revoke/hooks/use-get-revoke-histories";
 import {
-  revokeHistoryEndDateAtom,
+  revokeHistoryDateRangeAtom,
   revokeHistoryPageAtom,
-  revokeHistoryStartDateAtom,
 } from "@/domain/revoke/state/revoke-history.atom";
 import { ListRangePicker } from "@/shared/components/datepicker/list-range-picker";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+
+interface RevokeHistoryListFilterProps {
+  totalSize: number;
+}
 
 /**
  * 리소스 회수 이력 목록 필터 컴포넌트
  *
  * 기간 필터와 총 개수를 표시합니다.
  */
-export function RevokeHistoryListFilter() {
-  const page = useAtomValue(revokeHistoryPageAtom);
-  const [startDate, setStartDate] = useAtom(revokeHistoryStartDateAtom);
-  const [endDate, setEndDate] = useAtom(revokeHistoryEndDateAtom);
+export function RevokeHistoryListFilter({
+  totalSize,
+}: RevokeHistoryListFilterProps) {
+  const [dateRange, setDateRange] = useAtom(revokeHistoryDateRangeAtom);
   const resetPage = useResetAtom(revokeHistoryPageAtom);
 
   /**
@@ -30,25 +31,14 @@ export function RevokeHistoryListFilter() {
    */
   const handleDateChange = (start: string, end: string) => {
     resetPage();
-    setStartDate(start);
-    setEndDate(end);
+    setDateRange({ start, end });
   };
 
-  const { data } = useGetRevokeHistories({
-    page,
-    size: LIST_PAGE_SIZE,
-    startDate: startDate || undefined,
-    endDate: endDate || undefined,
-  });
-
   return (
-    <MySearchFilter
-      title="리소스 회수 대상 검사 실행 이력"
-      total={data?.totalSize}
-    >
+    <MySearchFilter title="리소스 회수 대상 검사 실행 이력" total={totalSize}>
       <ListRangePicker
-        startDate={startDate}
-        endDate={endDate}
+        startDate={dateRange.start}
+        endDate={dateRange.end}
         onChange={handleDateChange}
       />
     </MySearchFilter>

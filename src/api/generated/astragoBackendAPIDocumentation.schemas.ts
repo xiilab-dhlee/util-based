@@ -4973,6 +4973,8 @@ export interface ImageTagDetailResponse {
   imageTagId?: number;
   /** 승인 상태 (DB 메타데이터 없으면 null) */
   approvalStatus?: ImageTagDetailResponseApprovalStatus;
+  /** 생성자 ID (DB 메타데이터 없으면 null) */
+  creatorId?: string;
   /** 생성자 이름 (DB 메타데이터 없으면 null) */
   creatorName?: string;
   /** 설명 (DB 메타데이터 없으면 null) */
@@ -5020,6 +5022,18 @@ export const RegistryDetailResponseImageType = {
 } as const;
 
 /**
+ * 이미지 소스 타입 (EXTERNAL: 외부 레지스트리, SNAPSHOT: 워크로드 스냅샷)
+ */
+export type RegistryDetailResponseImageSourceType =
+  (typeof RegistryDetailResponseImageSourceType)[keyof typeof RegistryDetailResponseImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RegistryDetailResponseImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
+/**
  * 레지스트리 이미지 상세 응답
  */
 export interface RegistryDetailResponse {
@@ -5035,6 +5049,10 @@ export interface RegistryDetailResponse {
   createdAt?: string;
   /** 이미지 타입 */
   imageType: RegistryDetailResponseImageType;
+  /** 이미지 소스 타입 (EXTERNAL: 외부 레지스트리, SNAPSHOT: 워크로드 스냅샷) */
+  imageSourceType?: RegistryDetailResponseImageSourceType;
+  /** 워크스페이스 이름 (PRIVATE 이미지인 경우) */
+  workspaceName?: string;
 }
 
 /**
@@ -8880,6 +8898,72 @@ export interface MemorySummaryResponse {
   usedBytes: string;
 }
 
+export type BaseResponseListClusterNodeSummaryResponseStatus =
+  (typeof BaseResponseListClusterNodeSummaryResponseStatus)[keyof typeof BaseResponseListClusterNodeSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListClusterNodeSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListClusterNodeSummaryResponse {
+  status: BaseResponseListClusterNodeSummaryResponseStatus;
+  errorCode?: string;
+  data?: ClusterNodeSummaryResponse[];
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 클러스터 노드 CPU 리소스 응답
+ */
+export interface ClusterNodeCpuResponse {
+  /** 할당량 CPU 코어 수 (소수점 지원) */
+  quotaCore: number;
+  /** 사용 중인 CPU 코어 수 (소수점 지원) */
+  usedCore: number;
+}
+
+/**
+ * 클러스터 노드 GPU 리소스 응답
+ */
+export interface ClusterNodeGpuResponse {
+  /** GPU 제품명 */
+  gpuName: string;
+  /** GPU 타입 */
+  gpuType: string;
+  /** 할당량 GPU 수 */
+  quotaCount: number;
+  /** 사용 중인 GPU 수 */
+  usedCount: number;
+  /** GPU 상세 정보 */
+  detail: AdminGpuDetailResponse;
+}
+
+/**
+ * 클러스터 노드 리소스 응답
+ */
+export interface ClusterNodeResourceResponse {
+  /** GPU 리소스 정보 */
+  gpu?: ClusterNodeGpuResponse;
+  /** CPU 리소스 정보 */
+  cpu: ClusterNodeCpuResponse;
+  /** 메모리 리소스 정보 */
+  memory: AdminMemoryResourceResponse;
+}
+
+/**
+ * 클러스터 노드 요약 정보 응답
+ */
+export interface ClusterNodeSummaryResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** 노드 리소스 정보 */
+  resource: ClusterNodeResourceResponse;
+}
+
 export type BaseResponseListStringStatus =
   (typeof BaseResponseListStringStatus)[keyof typeof BaseResponseListStringStatus];
 
@@ -9951,6 +10035,11 @@ export type GetPublicImageDetailParams = {
 export type GetPrivateImageTagVulnerabilitiesParams = {
   pageRequest: PageableRequest;
   request: VulnerabilityScanRequest;
+  workspaceFilter: RegistryWorkspaceFilterRequest;
+};
+
+export type CheckPrivateImageTagExistsParams = {
+  request: CheckImageTagExistsRequest;
   workspaceFilter: RegistryWorkspaceFilterRequest;
 };
 

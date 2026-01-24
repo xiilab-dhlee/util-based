@@ -1,59 +1,98 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { SystemResourcesSummaryResponse } from "@/domain/system-monitoring/types/system-monitoring.type";
+import type { GpuTimeseriesData } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
-/**
- * GPU 필터 관리 훅
- *
- * 노드의 GPU 정보를 기반으로 드롭다운 옵션과 API 요청용 필터를 관리합니다.
- * 빈 배열([])은 모든 GPU가 선택된 상태를 의미합니다.
- *
- * @param nodeSummary - 노드 요약 정보
- * @returns GPU 선택 상태, 옵션, 필터
- */
+interface GpuOption {
+  value: string;
+  label: string;
+}
+
+interface UseGpuFilterReturn {
+  selectedGpuIndices: string[];
+  isAllSelected: boolean;
+  setSelectedGpuIndices: React.Dispatch<React.SetStateAction<string[]>>;
+  gpuOptions: GpuOption[];
+  filterGpuData: <T extends GpuTimeseriesData>(data: T[]) => T[];
+  resetSelection: () => void;
+}
+
 export function useGpuFilter(
-  nodeSummary: SystemResourcesSummaryResponse | undefined,
-) {
-  const [selectedGpus, setSelectedGpus] = useState<string[]>([]);
+  gpuData: GpuTimeseriesData[] | undefined,
+  nodeName?: string,
+): UseGpuFilterReturn {
+  const [selectedGpuIndices, setSelectedGpuIndices] = useState<string[]>([]);
 
-  // GPU 드롭다운 옵션 생성
-  const gpuOptions = useMemo(() => {
-    if (!nodeSummary?.gpuName) return [];
+  const gpuOptions = useMemo<GpuOption[]>(() => {
+    if (!gpuData || gpuData.length === 0) return [];
 
-    return nodeSummary.gpuName.map((name) => ({
-      value: name,
-      label: name,
-    }));
-  }, [nodeSummary?.gpuName]);
-
-  // GPU 메트릭에 사용할 최종 GPU 필터 배열
-  // - 빈 배열: 노드에 존재하는 모든 GPU 이름
-  // - 특정 GPU 선택: 선택된 GPU 이름만 배열로 전달
-  const selectedGpuFilter = useMemo(() => {
-    const gpuNames = nodeSummary?.gpuName ?? [];
-    if (gpuNames.length === 0) return undefined;
-
-    // 빈 배열은 모든 GPU 선택을 의미
-    if (selectedGpus.length === 0) {
-      return gpuNames;
+    const uniqueGpus = new Map<string, GpuTimeseriesData>();
+    for (const gpu of gpuData) {
+      if (!uniqueGpus.has(gpu.gpuIndex)) {
+        uniqueGpus.set(gpu.gpuIndex, gpu);
+      }
     }
 
-    // 선택된 GPU만 필터링하여 반환
-    return selectedGpus.filter((gpu) => gpuNames.includes(gpu));
-  }, [nodeSummary?.gpuName, selectedGpus]);
+    return Array.from(uniqueGpus.values()).map((gpu) => ({
+      value: gpu.gpuIndex,
+      label: `${gpu.modelName}-${gpu.gpuIndex}`,
+    }));
+  }, [gpuData]);
 
-  // 노드가 변경될 때마다 GPU 선택 초기화
+  const isAllSelected =
+    gpuOptions.length > 0 && selectedGpuIndices.length === gpuOptions.length;
+
+  // 값 기반 변경 감지 (배열 참조 변경 무시)
+  const gpuOptionValuesKey = useMemo(
+    () =>
+      gpuOptions
+        .map((o) => o.value)
+        .sort()
+        .join(","),
+    [gpuOptions],
+  );
+
+  const gpuOptionsRef = useRef(gpuOptions);
+  gpuOptionsRef.current = gpuOptions;
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 값 기반 키로 변경 감지
   useEffect(() => {
-    setSelectedGpus([]);
-    void nodeSummary?.nodeName; // eslint-disable-line react-hooks/exhaustive-deps을 위함.
-  }, [nodeSummary?.nodeName]);
+    const options = gpuOptionsRef.current;
+    if (options.length === 0) return;
+
+    setSelectedGpuIndices((prev) => {
+      if (prev.length === 0) {
+        return options.map((o) => o.value);
+      }
+
+      const validValues = new Set(options.map((o) => o.value));
+      const filtered = prev.filter((v) => validValues.has(v));
+
+      return filtered.length > 0 ? filtered : options.map((o) => o.value);
+    });
+  }, [gpuOptionValuesKey]);
+
+  const selectedSet = new Set(selectedGpuIndices);
+
+  const filterGpuData = <T extends GpuTimeseriesData>(data: T[]): T[] => {
+    if (selectedGpuIndices.length === 0) return data;
+    return data.filter((gpu) => selectedSet.has(gpu.gpuIndex));
+  };
+
+  const resetSelection = () => setSelectedGpuIndices([]);
+
+  useEffect(() => {
+    if (!nodeName) return;
+    setSelectedGpuIndices([]);
+  }, [nodeName]);
 
   return {
-    selectedGpus,
-    setSelectedGpus,
+    selectedGpuIndices,
+    isAllSelected,
+    setSelectedGpuIndices,
     gpuOptions,
-    selectedGpuFilter,
+    filterGpuData,
+    resetSelection,
   };
 }

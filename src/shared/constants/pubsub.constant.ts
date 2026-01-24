@@ -243,22 +243,26 @@ export const CREDENTIAL_EVENTS = {
   openDeleteModal: "credential:open-delete-modal",
 } as const;
 
+// 스토리지 관련 이벤트
+export const STORAGE_EVENTS = {
+  // 스토리지 추가 모달 열기 이벤트
+  openCreateModal: "storage:open-create-modal",
+  // 스토리지 삭제 모달 열기 이벤트
+  openDeleteModal: "storage:open-delete-modal",
+  // 스토리지 상세 모달 열기 이벤트
+  openDetailModal: "storage:open-detail-modal",
+  // 스토리지 수정 모달 열기 이벤트
+  openEditModal: "storage:open-edit-modal",
+} as const;
+
 // 시스템 설정 관련 이벤트
 export const SYSTEM_SETTING_EVENTS = {
-  // SMTP 등록/수정 모달 열기 이벤트
-  openSmtpModal: "system-setting:open-smtp-modal",
+  // SMTP 등록 모달 열기 이벤트
+  openCreateSmtpModal: "system-setting:open-create-smtp-modal",
   // SMTP 삭제 모달 열기 이벤트
-  openSmtpDeleteModal: "system-setting:open-smtp-delete-modal",
-  // 스토리지 추가 모달 열기 이벤트
-  openStorageCreateModal: "system-setting:open-storage-create-modal",
-  // 스토리지 삭제 모달 열기 이벤트
-  openStorageDeleteModal: "system-setting:open-storage-delete-modal",
-  // 스토리지 상세 모달 열기 이벤트
-  openStorageDetailModal: "system-setting:open-storage-detail-modal",
-  // 스토리지 수정 모달 열기 이벤트
-  openStorageEditModal: "system-setting:open-storage-edit-modal",
+  openSmtpDeleteModal: "system-setting:open-delete-smtp-modal",
   // 라이선스 갱신 모달 열기 이벤트
-  openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
+  openCreateLicenseModal: "system-setting:open-create-license-modal",
   // HPE OneView 연동 모달 열기 이벤트
   openHpeConnectionModal: "system-setting:open-hpe-connection-modal",
   // 워크스페이스 리소스 설정 모달 열기 이벤트

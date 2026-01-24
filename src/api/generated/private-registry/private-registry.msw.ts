@@ -35,6 +35,7 @@ import type {
   BaseResponseDeleteImagesResponse,
   BaseResponseDeleteImageTagsResponse,
   BaseResponseImageTagDetailResponse,
+  BaseResponseImageTagExistsResponse,
   BaseResponsePageResponseImageTagListResponse,
   BaseResponsePageResponseRegistryListResponse,
   BaseResponsePageResponseVulnerabilityDetailResponse,
@@ -257,6 +258,21 @@ export const getGetPrivateImageTagVulnerabilitiesResponseMock = (
   ...overrideResponse,
 });
 
+export const getCheckPrivateImageTagExistsResponseMock = (
+  overrideResponse: Partial<BaseResponseImageTagExistsResponse> = {},
+): BaseResponseImageTagExistsResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    tagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    exists: faker.datatype.boolean(),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetPrivateImageTagDetailResponseMock = (
   overrideResponse: Partial<BaseResponseImageTagDetailResponse> = {},
 ): BaseResponseImageTagDetailResponse => ({
@@ -283,6 +299,7 @@ export const getGetPrivateImageTagDetailResponseMock = (
       "APPROVAL_WAITING",
       "REQUEST_BLOCKED",
     ] as const),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
   },
@@ -308,6 +325,11 @@ export const getGetPrivateImageDetailResponseMock = (
       "PRIVATE",
       "PUBLIC",
     ] as const),
+    imageSourceType: faker.helpers.arrayElement([
+      "SNAPSHOT",
+      "EXTERNAL",
+    ] as const),
+    workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -527,7 +549,7 @@ export const getDeletePrivateImagesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    "*/api/v1/registries/private/delete",
+    "*/api/v1/registries/private/images/delete",
     async (info) => {
       await delay(1000);
 
@@ -568,6 +590,36 @@ export const getGetPrivateImageTagVulnerabilitiesMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getGetPrivateImageTagVulnerabilitiesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getCheckPrivateImageTagExistsMockHandler = (
+  overrideResponse?:
+    | BaseResponseImageTagExistsResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseImageTagExistsResponse>
+        | BaseResponseImageTagExistsResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/registries/private/images/image-tags/exists",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getCheckPrivateImageTagExistsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -645,6 +697,7 @@ export const getPrivateRegistryMock = () => [
   getDeletePrivateImageTagsMockHandler(),
   getDeletePrivateImagesMockHandler(),
   getGetPrivateImageTagVulnerabilitiesMockHandler(),
+  getCheckPrivateImageTagExistsMockHandler(),
   getGetPrivateImageTagDetailMockHandler(),
   getGetPrivateImageDetailMockHandler(),
 ];

@@ -50,11 +50,13 @@ import type {
   BaseResponseDeleteImagesResponse,
   BaseResponseDeleteImageTagsResponse,
   BaseResponseImageTagDetailResponse,
+  BaseResponseImageTagExistsResponse,
   BaseResponsePageResponseImageTagListResponse,
   BaseResponsePageResponseRegistryListResponse,
   BaseResponsePageResponseVulnerabilityDetailResponse,
   BaseResponseRegistryDetailResponse,
   BaseResponseUnit,
+  CheckPrivateImageTagExistsParams,
   CreateExternalImageRequest,
   DeleteImagesRequest,
   DeleteImageTagsRequest,
@@ -858,7 +860,7 @@ export const deletePrivateImages = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseDeleteImagesResponse>({
-    url: `/api/v1/registries/private/delete`,
+    url: `/api/v1/registries/private/images/delete`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: deleteImagesRequest,
@@ -1092,6 +1094,177 @@ export function useGetPrivateImageTagVulnerabilities<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetPrivateImageTagVulnerabilitiesQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            Harbor에 특정 이미지 태그가 존재하는지 확인합니다.
+            - 본인이 생성한 이미지만 확인할 수 있습니다.
+        
+ * @summary 이미지 태그 Harbor 존재 여부 확인
+ */
+export const checkPrivateImageTagExists = (
+  params: CheckPrivateImageTagExistsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseImageTagExistsResponse>({
+    url: `/api/v1/registries/private/images/image-tags/exists`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getCheckPrivateImageTagExistsQueryKey = (
+  params?: CheckPrivateImageTagExistsParams,
+) => {
+  return [
+    `/api/v1/registries/private/images/image-tags/exists`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getCheckPrivateImageTagExistsQueryOptions = <
+  TData = Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+  TError = unknown,
+>(
+  params: CheckPrivateImageTagExistsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getCheckPrivateImageTagExistsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof checkPrivateImageTagExists>>
+  > = ({ signal }) => checkPrivateImageTagExists(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CheckPrivateImageTagExistsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof checkPrivateImageTagExists>>
+>;
+export type CheckPrivateImageTagExistsQueryError = unknown;
+
+export function useCheckPrivateImageTagExists<
+  TData = Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+  TError = unknown,
+>(
+  params: CheckPrivateImageTagExistsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+          TError,
+          Awaited<ReturnType<typeof checkPrivateImageTagExists>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckPrivateImageTagExists<
+  TData = Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+  TError = unknown,
+>(
+  params: CheckPrivateImageTagExistsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+          TError,
+          Awaited<ReturnType<typeof checkPrivateImageTagExists>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckPrivateImageTagExists<
+  TData = Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+  TError = unknown,
+>(
+  params: CheckPrivateImageTagExistsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 이미지 태그 Harbor 존재 여부 확인
+ */
+
+export function useCheckPrivateImageTagExists<
+  TData = Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+  TError = unknown,
+>(
+  params: CheckPrivateImageTagExistsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkPrivateImageTagExists>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getCheckPrivateImageTagExistsQueryOptions(
     params,
     options,
   );

@@ -93,7 +93,7 @@ export function buildMonitoringChartOptions({
       hideEmptySeries: false,
       enabled: true,
       x: {
-        format: "yyyy-MM-dd HH:mm",
+        format: "yyyy-MM-dd HH:mm:ss",
       },
     },
     xaxis: {
@@ -109,7 +109,9 @@ export function buildMonitoringChartOptions({
           year: "yyyy",
           month: "MM/dd",
           day: "MM/dd",
-          hour: "HH:mm",
+          hour: "HH:mm:ss",
+          minute: "HH:mm:ss",
+          second: "HH:mm:ss",
         },
         rotate: 0,
         style: {
@@ -124,6 +126,8 @@ export function buildMonitoringChartOptions({
       labels: {
         formatter: (value: number) => `${value}${unit}`,
       },
+      // 퍼센트 단위일 경우 0~100 범위 고정
+      ...(unit === "%" && { min: 0, max: 100 }),
     },
     colors: colors ? [...colors] : undefined,
     grid: {

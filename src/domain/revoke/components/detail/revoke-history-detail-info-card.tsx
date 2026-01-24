@@ -3,27 +3,21 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { RevokeHistoryDetailResponseType } from "@/domain/revoke/schemas/revoke-history.schema";
 import { ChangeCircleIcon } from "@/shared/components/icon/change-circle-icon";
-import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 const GPU_RESOURCE_INFO = getResourceInfo("GPU");
 const CPU_RESOURCE_INFO = getResourceInfo("CPU");
 const MEM_RESOURCE_INFO = getResourceInfo("MEM");
 
-interface RevokeHistoryDetailInfoCardProps {
-  data: RevokeHistoryDetailResponseType | undefined;
-}
-
 /**
  * 리소스 회수 이력 상세 정보 카드 컴포넌트
  *
  * 사이드바에 표시되는 회수 이력의 기본 정보를 표시합니다.
+ * 추후 별도 API 연동 예정
  */
-export function RevokeHistoryDetailInfoCard({
-  data,
-}: RevokeHistoryDetailInfoCardProps) {
+export function RevokeHistoryDetailInfoCard() {
+  // TODO: 별도 API 연동 후 데이터 표시
   return (
     <Container>
       <Header>
@@ -36,10 +30,8 @@ export function RevokeHistoryDetailInfoCard({
               <Icon name="Calendar01" color="var(--icon-fill)" size={24} />
             </RowIconWrapper>
             <RowTitle>
-              <RowKey>회수일시 :</RowKey>
-              <RowValue>
-                {data?.revokedAt ? formatDateTimeSafely(data.revokedAt) : "-"}
-              </RowValue>
+              <RowKey>스캔일시 :</RowKey>
+              <RowValue>-</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -50,7 +42,7 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>검사 대상 개수 :</RowKey>
-              <RowValue>{`${data?.targetCount ?? "-"}개`}</RowValue>
+              <RowValue>-개</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -61,7 +53,7 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>경고 워크로드 개수 :</RowKey>
-              <RowValue>{`${data?.warningWorkloadCount ?? "-"}개`}</RowValue>
+              <RowValue>-개</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -76,7 +68,7 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>회수 워크로드 개수 :</RowKey>
-              <RowValue>{`${data?.revokedWorkloadCount ?? "-"}개`}</RowValue>
+              <RowValue>-개</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -93,9 +85,7 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>회수된 GPU :</RowKey>
-              <RowValue>
-                {`${data?.revokedGpu ?? "-"} ${GPU_RESOURCE_INFO.unit}`}
-              </RowValue>
+              <RowValue>{`- ${GPU_RESOURCE_INFO.unit}`}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -112,9 +102,7 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>회수된 CPU :</RowKey>
-              <RowValue>
-                {`${data?.revokedCpu ?? "-"} ${CPU_RESOURCE_INFO.unit}`}
-              </RowValue>
+              <RowValue>{`- ${CPU_RESOURCE_INFO.unit}`}</RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -131,9 +119,7 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>회수된 Memory :</RowKey>
-              <RowValue>
-                {`${data?.revokedMemory ?? "-"} ${MEM_RESOURCE_INFO.unit}`}
-              </RowValue>
+              <RowValue>- GB</RowValue>
             </RowTitle>
           </RowBody>
         </Row>

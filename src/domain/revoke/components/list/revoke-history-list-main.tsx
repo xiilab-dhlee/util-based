@@ -1,14 +1,23 @@
 "use client";
 
+import { useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Icon } from "xiilab-ui";
 
+import { useGetScanHistoryList } from "@/api/generated/workload-reclaim-policy-admin/workload-reclaim-policy-admin";
 import { RevokeHistoryListBody } from "@/domain/revoke/components/list/revoke-history-list-body";
 import { RevokeHistoryListFilter } from "@/domain/revoke/components/list/revoke-history-list-filter";
 import { RevokeHistoryListFooter } from "@/domain/revoke/components/list/revoke-history-list-footer";
+import {
+  revokeHistoryDateRangeAtom,
+  revokeHistoryPageAtom,
+} from "@/domain/revoke/state/revoke-history.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
+import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
@@ -60,6 +69,27 @@ const GUIDES: CoreGuide[] = [
 export function RevokeHistoryListMain() {
   const router = useRouter();
 
+  const page = useAtomValue(revokeHistoryPageAtom);
+  const resetPage = useResetAtom(revokeHistoryPageAtom);
+  const resetDateRange = useResetAtom(revokeHistoryDateRangeAtom);
+
+  const { data, isLoading, isError } = useGetScanHistoryList({
+    pageRequest: {
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+    },
+  });
+
+  const content = data?.content ?? [];
+  const totalSize = data?.totalSize ?? 0;
+
+  // 마운트 시 초기화
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 마운트시 초기화
+  useEffect(() => {
+    resetPage();
+    resetDateRange();
+  }, []);
+
   const handleSettingClick = () => {
     router.push(ROUTES.ADMIN_SETTING);
   };
@@ -96,9 +126,16 @@ export function RevokeHistoryListMain() {
         </ListPageAside>
 
         <ListPageBody>
-          <RevokeHistoryListFilter />
-          <RevokeHistoryListBody />
-          <RevokeHistoryListFooter />
+          <RevokeHistoryListFilter totalSize={totalSize} />
+          <RevokeHistoryListBody
+            content={content}
+            isLoading={isLoading}
+            isError={isError}
+          />
+          <RevokeHistoryListFooter
+            totalSize={totalSize}
+            isLoading={isLoading}
+          />
         </ListPageBody>
       </ListPageMain>
     </>

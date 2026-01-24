@@ -2,149 +2,166 @@
 
 import styled from "styled-components";
 
-import { SystemMonitoringCard } from "@/domain/system-monitoring/components/system-monitoring-card";
-import type { MonitoringDateMode } from "@/shared/types/monitoring.type";
+import type { GpuTimeseriesData } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { GpuMetricCard } from "@/domain/system-monitoring/components/gpu-metric-card";
+import { SystemMetricCard } from "@/domain/system-monitoring/components/system-metric-card";
+import type {
+  AllGpuMetricsData,
+  AllGpuMetricsErrors,
+  AllSystemMetricsErrors,
+  SystemMetricSeriesGroup,
+} from "@/domain/system-monitoring/types/metrics.type";
 
 interface SystemMonitoringChartListProps {
-  nodeName: string;
-  /** history 모드에서 사용할 날짜 범위 */
-  dateRange: { start: Date; end: Date };
-  selectedGpu: string[] | undefined;
-  /** 현재 날짜 모드: live | history */
-  mode: MonitoringDateMode;
-  /**
-   * 차트에서 드래그로 선택된 구간을 상위로 전달하는 핸들러
-   * - LIVE 모드에서도 호출되며, 상위에서 history 모드 전환 여부를 결정합니다.
-   */
+  gpuData: AllGpuMetricsData;
+  systemData: SystemMetricSeriesGroup;
+  gpuIsLoading: boolean;
+  systemIsLoading: boolean;
+  gpuErrors: AllGpuMetricsErrors;
+  systemErrors: AllSystemMetricsErrors;
+  selectedGpuIndices: string[];
+  seriesVisibilityMap: Record<string, Record<string, boolean>>;
+  onSeriesToggle: (
+    metricType: string,
+    seriesName: string,
+    isActive: boolean,
+  ) => void;
   onChangeRangeFromChart?: (range: { start: Date; end: Date }) => void;
 }
 
 export function SystemMonitoringChartList({
-  nodeName,
-  dateRange,
-  selectedGpu,
-  mode,
+  gpuData,
+  systemData,
+  gpuIsLoading,
+  systemIsLoading,
+  gpuErrors,
+  systemErrors,
+  selectedGpuIndices,
+  seriesVisibilityMap,
+  onSeriesToggle,
   onChangeRangeFromChart,
 }: SystemMonitoringChartListProps) {
+  const selectedSet = new Set(selectedGpuIndices);
+
+  const filterByGpuIndices = (data: GpuTimeseriesData[]) => {
+    if (selectedGpuIndices.length === 0) {
+      return data;
+    }
+    return data.filter((gpu) => selectedSet.has(gpu.gpuIndex));
+  };
+
   return (
     <ChartArticle>
-      {/* ========== GPU 메트릭 (5개) ========== */}
       <ChartSingleRow>
-        <SystemMonitoringCard
+        <GpuMetricCard
           type="gpu-utilization"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          selectedGpu={selectedGpu}
+          data={filterByGpuIndices(gpuData.utilization)}
+          isLoading={gpuIsLoading}
+          isError={gpuErrors.utilization}
+          seriesVisibility={seriesVisibilityMap["gpu-utilization"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("gpu-utilization", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
       </ChartSingleRow>
 
       <ChartMultiRow>
-        <SystemMonitoringCard
+        <GpuMetricCard
           type="gpu-memory"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          selectedGpu={selectedGpu}
+          data={filterByGpuIndices(gpuData.memory)}
+          isLoading={gpuIsLoading}
+          isError={gpuErrors.memory}
+          seriesVisibility={seriesVisibilityMap["gpu-memory"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("gpu-memory", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
-        <SystemMonitoringCard
-          type="gpu-temperature"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          selectedGpu={selectedGpu}
-          onSelectRange={onChangeRangeFromChart}
-        />
-      </ChartMultiRow>
-
-      <ChartMultiRow>
-        <SystemMonitoringCard
-          type="gpu-fan-speed"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          selectedGpu={selectedGpu}
-          onSelectRange={onChangeRangeFromChart}
-        />
-        <SystemMonitoringCard
+        <GpuMetricCard
           type="gpu-power-usage"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          selectedGpu={selectedGpu}
+          data={filterByGpuIndices(gpuData.powerUsage)}
+          isLoading={gpuIsLoading}
+          isError={gpuErrors.powerUsage}
+          seriesVisibility={seriesVisibilityMap["gpu-power-usage"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("gpu-power-usage", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
       </ChartMultiRow>
 
-      {/* ========== CPU 메트릭 (4개) ========== */}
       <ChartMultiRow>
-        <SystemMonitoringCard
+        <GpuMetricCard
+          type="gpu-temperature"
+          data={filterByGpuIndices(gpuData.temperature)}
+          isLoading={gpuIsLoading}
+          isError={gpuErrors.temperature}
+          seriesVisibility={seriesVisibilityMap["gpu-temperature"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("gpu-temperature", name, isActive)
+          }
+          onSelectRange={onChangeRangeFromChart}
+        />
+        <SystemMetricCard
           type="cpu-utilization"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
+          seriesData={systemData.cpuUtilization}
+          isLoading={systemIsLoading}
+          isError={systemErrors.cpuUtilization}
+          seriesVisibility={seriesVisibilityMap["cpu-utilization"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("cpu-utilization", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
-        <SystemMonitoringCard
+      </ChartMultiRow>
+
+      <ChartMultiRow>
+        <SystemMetricCard
           type="cpu-temperature"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
+          seriesData={systemData.cpuTemperature}
+          isLoading={systemIsLoading}
+          isError={systemErrors.cpuTemperature}
+          seriesVisibility={seriesVisibilityMap["cpu-temperature"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("cpu-temperature", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
-      </ChartMultiRow>
-
-      <ChartMultiRow>
-        <SystemMonitoringCard
-          type="cpu-load-average"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          onSelectRange={onChangeRangeFromChart}
-        />
-        <SystemMonitoringCard
-          type="network-rt"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          onSelectRange={onChangeRangeFromChart}
-        />
-      </ChartMultiRow>
-
-      {/* ========== Memory 메트릭  ========== */}
-      <ChartMultiRow>
-        <SystemMonitoringCard
+        <SystemMetricCard
           type="memory-utilization"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
-          onSelectRange={onChangeRangeFromChart}
-        />
-        <SystemMonitoringCard
-          type="memory-detail"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
+          seriesData={systemData.memoryUtilization}
+          isLoading={systemIsLoading}
+          isError={systemErrors.memoryUtilization}
+          seriesVisibility={seriesVisibilityMap["memory-utilization"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("memory-utilization", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
       </ChartMultiRow>
 
-      {/* ========== Disk 메트릭  ========== */}
       <ChartMultiRow>
-        <SystemMonitoringCard
+        <SystemMetricCard
           type="disk-utilization"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
+          seriesData={systemData.diskUtilization}
+          isLoading={systemIsLoading}
+          isError={systemErrors.diskUtilization}
+          seriesVisibility={seriesVisibilityMap["disk-utilization"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("disk-utilization", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
-        <SystemMonitoringCard
+        <SystemMetricCard
           type="disk-rw"
-          nodeName={nodeName}
-          mode={mode}
-          dateRange={dateRange}
+          seriesData={systemData.diskRw}
+          isLoading={systemIsLoading}
+          isError={systemErrors.diskRw}
+          seriesVisibility={seriesVisibilityMap["disk-rw"]}
+          onSeriesToggle={(name, isActive) =>
+            onSeriesToggle("disk-rw", name, isActive)
+          }
           onSelectRange={onChangeRangeFromChart}
         />
       </ChartMultiRow>

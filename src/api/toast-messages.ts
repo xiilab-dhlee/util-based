@@ -225,6 +225,19 @@ export const MUTATION_MESSAGES: Partial<
   },
 
   // ============================================
+  // Storage (Admin)
+  // ============================================
+  [MUTATION_KEYS.registerStorage]: {
+    success: "스토리지가 등록되었습니다.",
+  },
+  [MUTATION_KEYS.updateStorage]: {
+    success: "스토리지가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteStorage]: {
+    success: "스토리지가 삭제되었습니다.",
+  },
+
+  // ============================================
   // Volume
   // ============================================
   [MUTATION_KEYS.updateVolume]: {
@@ -250,5 +263,15 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.registerAstragoVolume]: {
     success: "볼륨이 생성되었습니다.",
+  },
+
+  // ============================================
+  // Workload Reclaim Policy
+  // ============================================
+  [MUTATION_KEYS.updateReclaimPolicy]: {
+    success: "리소스 회수 기준이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.updateReclaimPolicyEnabled]: {
+    success: "리소스 회수 기준 활성화 상태가 변경되었습니다.",
   },
 };

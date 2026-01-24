@@ -571,6 +571,48 @@ export const getPrivateImageTagVulnerabilitiesResponse = zod
 
 /**
  * 
+            Harbor에 특정 이미지 태그가 존재하는지 확인합니다.
+            - 본인이 생성한 이미지만 확인할 수 있습니다.
+        
+ * @summary 이미지 태그 Harbor 존재 여부 확인
+ */
+export const checkPrivateImageTagExistsQueryRequestTagNameMin = 0;
+export const checkPrivateImageTagExistsQueryRequestTagNameMax = 128;
+
+export const checkPrivateImageTagExistsQueryParams = zod.object({
+  request: zod.object({
+    harborImageName: zod.string().describe("Harbor 이미지 경로"),
+    tagName: zod
+      .string()
+      .min(checkPrivateImageTagExistsQueryRequestTagNameMin)
+      .max(checkPrivateImageTagExistsQueryRequestTagNameMax)
+      .describe("이미지 태그"),
+  }),
+  workspaceFilter: zod.object({
+    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  }),
+});
+
+export const checkPrivateImageTagExistsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        harborImageName: zod.string().describe("Harbor 이미지 경로"),
+        tagName: zod.string().describe("이미지 태그"),
+        exists: zod.boolean().describe("Harbor에 존재 여부"),
+      })
+      .strict()
+      .optional()
+      .describe("Harbor 이미지 태그 존재 여부 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             개인 레지스트리의 특정 이미지 태그 상세 정보를 Harbor API 기준으로 조회합니다.
             - 본인이 생성한 이미지만 조회할 수 있습니다.
             - Harbor에 직접 올린 태그도 조회 가능합니다.
@@ -629,6 +671,10 @@ export const getPrivateImageTagDetailResponse = zod
           ])
           .optional()
           .describe("승인 상태 (DB 메타데이터 없으면 null)"),
+        creatorId: zod
+          .string()
+          .optional()
+          .describe("생성자 ID (DB 메타데이터 없으면 null)"),
         creatorName: zod
           .string()
           .optional()
@@ -681,6 +727,16 @@ export const getPrivateImageDetailResponse = zod
         imageType: zod
           .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
           .describe("이미지 타입"),
+        imageSourceType: zod
+          .enum(["SNAPSHOT", "EXTERNAL"])
+          .optional()
+          .describe(
+            "이미지 소스 타입 (EXTERNAL: 외부 레지스트리, SNAPSHOT: 워크로드 스냅샷)",
+          ),
+        workspaceName: zod
+          .string()
+          .optional()
+          .describe("워크스페이스 이름 (PRIVATE 이미지인 경우)"),
       })
       .strict()
       .optional()
