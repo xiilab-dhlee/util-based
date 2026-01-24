@@ -122,7 +122,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     {
       key: "decisionReason",
       dataIndex: "decisionReason",
-      title: "승인 내역",
+      title: "승인  내역",
       align: "center",
       render: (decisionReason?: string) => {
         return (
