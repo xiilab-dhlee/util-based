@@ -154,6 +154,8 @@ export const REGISTRY_EVENTS = {
   openDeleteModal: "registry:open-delete-modal",
   // 레지스트리 로그 보기 모달 열기
   openLogModal: "registry:open-log-modal",
+  // 레지스트리 스트리밍 로그 보기 모달 열기
+  openStreamLogModal: "registry:open-stream-log-modal",
   // 이미지 등록 Job 재시작 모달 열기
   openRestartJobModal: "registry:open-restart-job-modal",
   // 이미지 등록 Job 종료 모달 열기
