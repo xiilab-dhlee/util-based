@@ -501,7 +501,6 @@ display: grid;
 grid-template-columns: repeat(2, 1fr);
   row-gap: 4px;
   column-gap: 8px;
-  margin-left: 16px;
   max-height: 54px;
   overflow-y: auto;
 `;

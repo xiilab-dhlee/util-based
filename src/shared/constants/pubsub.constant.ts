@@ -257,12 +257,12 @@ export const STORAGE_EVENTS = {
 
 // 시스템 설정 관련 이벤트
 export const SYSTEM_SETTING_EVENTS = {
-  // SMTP 등록/수정 모달 열기 이벤트
-  openSmtpModal: "system-setting:open-smtp-modal",
+  // SMTP 등록 모달 열기 이벤트
+  openCreateSmtpModal: "system-setting:open-create-smtp-modal",
   // SMTP 삭제 모달 열기 이벤트
-  openSmtpDeleteModal: "system-setting:open-smtp-delete-modal",
+  openSmtpDeleteModal: "system-setting:open-delete-smtp-modal",
   // 라이선스 갱신 모달 열기 이벤트
-  openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
+  openCreateLicenseModal: "system-setting:open-create-license-modal",
   // HPE OneView 연동 모달 열기 이벤트
   openHpeConnectionModal: "system-setting:open-hpe-connection-modal",
   // 워크스페이스 리소스 설정 모달 열기 이벤트
@@ -291,6 +291,11 @@ export const RESOURCE_PRESET_EVENTS = {
 export const SCHEDULING_QUEUE_EVENTS = {
   // 긴급 대기열 삭제 모달 열기 이벤트
   openDeleteUrgentQueueModal: "scheduling-queue:open-delete-urgent-queue-modal",
+  // 긴급 대기열 순서 변경 확인 모달 열기 이벤트
+  openReorderConfirmModal: "scheduling-queue:open-reorder-confirm-modal",
+  // 긴급 대기열 등록 확인 모달 열기 이벤트
+  openAddToQueueConfirmModal:
+    "scheduling-queue:open-add-to-queue-confirm-modal",
 } as const;
 
 // 공통 이벤트

@@ -1,22 +1,14 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-
+import type { WorkloadReclaimScanResultResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createRevokeHistoryDetailColumn } from "@/domain/revoke/components/column/create-revoke-history-detail-column";
-import { useGetRevokeHistoryDetail } from "@/domain/revoke/hooks/use-get-revoke-history-detail";
-import type { RevokeHistoryDetailItemType } from "@/domain/revoke/schemas/revoke-history.schema";
-import {
-  revokeHistoryDetailEndDateAtom,
-  revokeHistoryDetailPageAtom,
-  revokeHistoryDetailStartDateAtom,
-  revokeHistoryDetailTypeAtom,
-} from "@/domain/revoke/state/revoke-history.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface RevokeHistoryDetailBodyProps {
-  id: string;
+  content: WorkloadReclaimScanResultResponse[];
+  isLoading: boolean;
+  isError: boolean;
 }
 
 /**
@@ -24,25 +16,16 @@ interface RevokeHistoryDetailBodyProps {
  *
  * 경고/회수 목록을 테이블로 표시합니다.
  */
-export function RevokeHistoryDetailBody({ id }: RevokeHistoryDetailBodyProps) {
-  const page = useAtomValue(revokeHistoryDetailPageAtom);
-  const startDate = useAtomValue(revokeHistoryDetailStartDateAtom);
-  const endDate = useAtomValue(revokeHistoryDetailEndDateAtom);
-  const type = useAtomValue(revokeHistoryDetailTypeAtom);
-
-  const { data, isError, isLoading } = useGetRevokeHistoryDetail(id, {
-    page,
-    size: LIST_PAGE_SIZE,
-    startDate: startDate || undefined,
-    endDate: endDate || undefined,
-    type,
-  });
-
+export function RevokeHistoryDetailBody({
+  content,
+  isLoading,
+  isError,
+}: RevokeHistoryDetailBodyProps) {
   return (
     <ListWrapper>
-      <CustomizedTable<RevokeHistoryDetailItemType>
+      <CustomizedTable<WorkloadReclaimScanResultResponse>
         columns={createRevokeHistoryDetailColumn()}
-        data={data?.content ?? []}
+        data={content}
         columnHeight={40}
         activePadding
         isError={isError}

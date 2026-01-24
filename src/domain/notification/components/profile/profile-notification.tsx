@@ -213,7 +213,7 @@ export function ProfileNotification({ open }: ProfileNotificationProps) {
               )}
               {!isLoading && isError && <DataErrorState darkMode />}
               {!isLoading && !isError && notifications.length === 0 && (
-                <EmptyState />
+                <EmptyState darkMode />
               )}
               {!isLoading &&
                 !isError &&

@@ -10,7 +10,7 @@ import {
   useDeleteMonitoringNotificationSet,
   useUpdateMonitoringNotificationSet,
   useUpdateMonitoringNotificationSetEnabled,
-} from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+} from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set";
 import { monitoringNotificationSettingPageAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 
 /**

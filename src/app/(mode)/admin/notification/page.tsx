@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { NotificationListMain } from "@/domain/notification/components/list/notification-list-main";
+import { AsideNotification } from "@/domain/notification/components/detail/aside-notification";
 
 /**
  * 관리자 알림 페이지 메타데이터
@@ -14,5 +14,5 @@ export const metadata: Metadata = {
  *
  */
 export default function AdminNotificationPage() {
-  return <NotificationListMain />;
+  return <AsideNotification />;
 }

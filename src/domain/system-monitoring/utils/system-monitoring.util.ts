@@ -1,5 +1,5 @@
+import type { ClusterNodeSystemResourceResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MIN_HISTORY_RANGE_MS } from "@/domain/system-monitoring/constants/system-monitoring.constant";
-import type { SystemResourcesSummaryResponse } from "@/domain/system-monitoring/types/system-monitoring.type";
 import type { ReturnTypeOfGetResourceInfo } from "@/shared/utils/resource.util";
 import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
 
@@ -48,36 +48,32 @@ export interface ResourceSummary {
   };
 }
 
-/**
- * 노드 요약 정보로부터 리소스 요약 객체를 생성
- *
- * @param nodeSummary - 노드 요약 정보 (API 응답)
- * @returns 화면 표시용 리소스 요약 객체
- */
 export function buildResourceSummary(
-  nodeSummary: SystemResourcesSummaryResponse | undefined,
+  nodeSummary: ClusterNodeSystemResourceResponse | undefined,
 ): ResourceSummary {
   const gpuResourceInfo = getResourceInfo("GPU");
   const cpuResourceInfo = getResourceInfo("CPU");
   const memoryResourceInfo = getResourceInfo("MEM");
   const diskResourceInfo = getResourceInfo("DISK");
 
-  const memoryValue = nodeSummary
-    ? convertBytes(nodeSummary.resource.memoryByte, "GB", 1).value
+  const resource = nodeSummary?.resource;
+
+  const memoryValue = resource?.memory?.clusterCapacityByte
+    ? convertBytes(resource.memory.clusterCapacityByte, "GB", 2).value
     : 0;
 
-  const diskValue = nodeSummary
-    ? convertBytes(nodeSummary.resource.diskByte, "GB", 0).value
+  const diskValue = resource?.disk?.clusterCapacityByte
+    ? convertBytes(resource.disk.clusterCapacityByte, "GB", 2).value
     : 0;
 
   return {
     gpu: {
       info: gpuResourceInfo,
-      count: nodeSummary?.resource.gpuCount ?? 0,
+      count: resource?.gpu?.detail?.normal?.clusterCapacityCount ?? 0,
     },
     cpu: {
       info: cpuResourceInfo,
-      core: nodeSummary?.resource.cpuCore ?? 0,
+      core: resource?.cpu?.clusterCapacityCore ?? 0,
     },
     memory: {
       info: memoryResourceInfo,

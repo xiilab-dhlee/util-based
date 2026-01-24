@@ -5,6 +5,8 @@ import { AddToUrgentQueueButton } from "@/domain/scheduling-queue/components/lis
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatElapsedTime } from "@/shared/utils/date.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
+import { convertBytes } from "@/shared/utils/resource.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 interface CreatePendingWorkloadColumnOptions {
@@ -33,7 +35,7 @@ export function createPendingWorkloadColumn({
       title: "워크로드 이름",
       dataIndex: "workloadName",
       align: "left",
-      width: "15%",
+      width: "12%",
       ellipsis: true,
     },
     {
@@ -41,24 +43,74 @@ export function createPendingWorkloadColumn({
       title: "워크스페이스 이름",
       dataIndex: "workspaceName",
       align: "left",
-      width: "15%",
+      width: "12%",
       ellipsis: true,
     },
+    // Job Type 드롭다운/컬럼은 임시 비활성화
+    // {
+    //   key: "jobType",
+    //   title: "Job Type",
+    //   dataIndex: "jobType",
+    //   align: "left",
+    //   width: "10%",
+    // },
     {
-      key: "jobType",
-      title: "Job Type",
-      dataIndex: "jobType",
+      key: "gpu",
+      title: "GPU",
+      dataIndex: ["resource", "gpu"],
       align: "left",
-      width: "12%",
+      width: "10%",
+      render: (_, record: AdminWorkloadResponse) => {
+        const gpuName = record.resource?.gpu?.gpuName;
+        return gpuName || "-";
+      },
     },
     {
-      key: "resourcePreset",
-      title: "리소스 프리셋",
-      dataIndex: "resource",
+      key: "mig",
+      title: "MIG",
+      dataIndex: ["resource", "gpu", "detail"],
       align: "left",
-      width: "12%",
-      render: () => {
-        return `미정`;
+      width: "10%",
+      render: (_, record: AdminWorkloadResponse) => {
+        const detail = record.resource?.gpu?.detail;
+
+        // MIG은 배열이므로 첫 번째 요소 확인
+        if (detail?.mig && detail.mig.length > 0) {
+          const firstMig = detail.mig[0];
+          const count = formatNumberWithUnit(firstMig.quotaCount, "개");
+          return `${firstMig.profile} ${count}`;
+        }
+
+        if (detail?.normal) {
+          return formatNumberWithUnit(detail.normal.quotaCount, "개");
+        }
+
+        return "-";
+      },
+    },
+    {
+      key: "cpu",
+      title: "CPU",
+      dataIndex: ["resource", "cpu"],
+      align: "left",
+      width: "8%",
+      render: (_, record: AdminWorkloadResponse) => {
+        return formatNumberWithUnit(record.resource?.cpu?.quotaCore, "Core");
+      },
+    },
+    {
+      key: "memory",
+      title: "Memory",
+      dataIndex: ["resource", "memory"],
+      align: "left",
+      width: "8%",
+      render: (_, record: AdminWorkloadResponse) => {
+        const memoryGB = convertBytes(
+          record.resource?.memory?.quotaByte,
+          "GB",
+          0,
+        ).value;
+        return formatNumberWithUnit(memoryGB, "GB");
       },
     },
     {
@@ -66,7 +118,7 @@ export function createPendingWorkloadColumn({
       title: "대기 시간",
       dataIndex: "createdAt",
       align: "left",
-      width: "12%",
+      width: "10%",
       render: (createdAt: AdminWorkloadResponse["createdAt"]) => {
         return formatElapsedTime(createdAt ?? "-");
       },
@@ -76,14 +128,14 @@ export function createPendingWorkloadColumn({
       title: "생성자",
       dataIndex: "creatorName",
       align: "left",
-      width: "12%",
+      width: "10%",
       ellipsis: true,
     },
     {
       key: "action",
       title: "긴급 대기열 등록",
       align: "center",
-      width: "12%",
+      width: "10%",
       render: (_: unknown, record: AdminWorkloadResponse) => {
         return (
           <ColumnAlignCenterWrap>

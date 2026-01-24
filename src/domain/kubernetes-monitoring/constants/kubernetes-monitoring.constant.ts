@@ -6,6 +6,7 @@ import {
   PodFilterRequestStatus,
   ServiceFilterRequestType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { KubernetesResourceFilterStatus } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
 import type { K8sResourceType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
 
 /** 목록 페이지 크기 */
@@ -21,7 +22,7 @@ type KubernetesStatusOption = {
 
 type FilterOptionItem = {
   readonly label: string;
-  readonly value: string;
+  readonly value: KubernetesResourceFilterStatus;
 };
 
 type FilterConfigEnabled = {

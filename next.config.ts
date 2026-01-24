@@ -19,14 +19,6 @@ const nextConfig: NextConfig = {
   rewrites: async () => {
     const rewriteRules = [
       {
-        source: "/core-api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
-      },
-      {
-        source: "/monitor-api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
-      },
-      {
         source: "/api/v1/:path*",
         destination: `${process.env.NEXT_PUBLIC_API_URL}/api/v1/:path*`,
       },

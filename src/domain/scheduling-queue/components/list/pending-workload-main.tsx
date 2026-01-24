@@ -3,27 +3,23 @@
 import { useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 import { useGetUrgentStandbyWorkloads } from "@/api/generated/admin-queue/admin-queue";
 import { useGetPendingWorkloads } from "@/api/generated/admin-workload/admin-workload";
 import type { AdminWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-
-// TODO: AdminWorkloadResponse에 workloadId가 없음 - 백엔드 API 확인 필요
-interface AdminWorkloadWithId extends AdminWorkloadResponse {
-  workloadId: number;
-}
-
 import { PendingWorkloadBody } from "@/domain/scheduling-queue/components/list/pending-workload-body";
 import { PendingWorkloadFilter } from "@/domain/scheduling-queue/components/list/pending-workload-filter";
 import { PendingWorkloadFooter } from "@/domain/scheduling-queue/components/list/pending-workload-footer";
 import { MAX_URGENT_QUEUE_SIZE } from "@/domain/scheduling-queue/constants/scheduling-queue.constant";
-import { useAddWorkloadToUrgentStandbyAction } from "@/domain/scheduling-queue/hooks/scheduling-queue-actions";
 import {
   pendingWorkloadJobTypeAtom,
   pendingWorkloadPageAtom,
   pendingWorkloadSearchAtom,
 } from "@/domain/scheduling-queue/state/scheduling-queue.atom";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { SCHEDULING_QUEUE_EVENTS } from "@/shared/constants/pubsub.constant";
+import { pubsubUtil } from "@/shared/utils/pubsub.util";
 
 /**
  * 대기중인 워크로드 목록 메인 컴포넌트
@@ -40,6 +36,8 @@ export function PendingWorkloadMain() {
   const resetSearch = useResetAtom(pendingWorkloadSearchAtom);
   const resetPage = useResetAtom(pendingWorkloadPageAtom);
 
+  const filterRequest = jobType ? { jobType } : {};
+
   const {
     data: pendingData,
     isLoading,
@@ -50,28 +48,26 @@ export function PendingWorkloadMain() {
       pageSize: LIST_PAGE_SIZE,
       keyword: search || undefined,
     },
-    filterRequest: {
-      jobType: jobType,
-    },
+    filterRequest,
   });
-
-  const { mutate: addToUrgentQueue, isPending: isAddingToQueue } =
-    useAddWorkloadToUrgentStandbyAction();
 
   // 긴급 대기열 데이터 조회 (최대 개수 제한 확인용)
   const { data: urgentData } = useGetUrgentStandbyWorkloads();
   const isQueueFull = (urgentData?.length ?? 0) >= MAX_URGENT_QUEUE_SIZE;
 
   /**
-   * 긴급 대기열에 워크로드 추가
-   * TODO: AdminWorkloadResponse에 workloadId가 없음 - 백엔드 API 확인 필요
+   * 긴급 대기열에 워크로드 추가 - 확인 모달 열기
    */
   const handleAddToUrgentQueue = (workload: AdminWorkloadResponse) => {
-    const workloadWithId = workload as AdminWorkloadWithId;
-    addToUrgentQueue({
-      data: {
-        workloadId: workloadWithId.workloadId,
-      },
+    if (isQueueFull) {
+      toast.warning(
+        `긴급 큐는 최대 ${MAX_URGENT_QUEUE_SIZE}개까지 추가할 수 있어요.`,
+      );
+      return;
+    }
+
+    pubsubUtil.publish(SCHEDULING_QUEUE_EVENTS.openAddToQueueConfirmModal, {
+      workload,
     });
   };
 
@@ -94,7 +90,6 @@ export function PendingWorkloadMain() {
         isLoading={isLoading}
         isError={isError}
         onAddToUrgentQueue={handleAddToUrgentQueue}
-        isAddingToQueue={isAddingToQueue}
         isQueueFull={isQueueFull}
       />
       {/* 대기중인 워크로드 목록 페이지네이션 */}

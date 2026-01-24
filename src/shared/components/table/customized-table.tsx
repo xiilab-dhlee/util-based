@@ -1,6 +1,7 @@
 "use client";
 
 import { ConfigProvider } from "antd";
+import { isUndefined } from "es-toolkit";
 import {
   type ComponentType,
   type HTMLAttributes,
@@ -129,6 +130,7 @@ export function CustomizedTable<
   pagination = false,
   darkMode = false,
   isError = false,
+  activeRowKey,
   rowKey = "id" as keyof TRecord,
   ...tableProps
 }: CustomizedTableProps<TRecord>) {
@@ -214,6 +216,20 @@ export function CustomizedTable<
 
   const resolvedScroll = tableProps.scroll ?? { x: "max-content", y: "100%" };
 
+  const getRowKeyValue = (record: TRecord): string | number | undefined => {
+    if (typeof rowKey === "function") {
+      return rowKey(record);
+    }
+
+    const key = rowKey as keyof TRecord;
+    const value = record[key];
+    if (typeof value === "string" || typeof value === "number") {
+      return value;
+    }
+
+    return undefined;
+  };
+
   return (
     <ConfigProvider theme={theme}>
       {/* 단일 Tooltip - 이벤트 위임으로 동적 제어 */}
@@ -241,6 +257,15 @@ export function CustomizedTable<
         scroll={resolvedScroll}
         pagination={pagination}
         rowKey={rowKey as TableProps<Record<string, unknown>>["rowKey"]}
+        rowClassName={(record) => {
+          const currentKey = getRowKeyValue(record as TRecord);
+          const isActive =
+            !isUndefined(activeRowKey) &&
+            !isUndefined(currentKey) &&
+            String(currentKey) === String(activeRowKey);
+
+          return isActive ? "active" : "";
+        }}
         locale={locale}
         $columnHeight={columnHeight}
         $headerHeight={headerHeight}

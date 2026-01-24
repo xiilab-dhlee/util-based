@@ -31,5 +31,5 @@ export const licenseOverrideHandlers = [
       data: createValidLicenseData(),
     };
   }),
-  getLicenseMock(),
+  ...getLicenseMock(),
 ];

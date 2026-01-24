@@ -4,12 +4,17 @@ import type { MonitoringNotificationSetListResponse } from "@/api/generated/astr
 import { MonitoringNotificationDeleteButton } from "@/domain/monitoring-notification/components/monitoring-notification-delete-button";
 import { MonitoringNotificationNameButton } from "@/domain/monitoring-notification/components/monitoring-notification-name-button";
 import { MonitoringNotificationSettingSwitch } from "@/domain/monitoring-notification/components/monitoring-notification-setting-switch";
+import type { MonitoringNotificationSettingSortState } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { getChannelLabel } from "@/domain/monitoring-notification/utils/monitoring-notification.util";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { formatDateTimeSafely } from "@/shared/utils/date.util";
+import { getColumnSortOrder } from "@/shared/utils/sort.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
-const createColumnList = (): ResponsiveColumnType[] => {
+const createColumnList = (
+  sort: MonitoringNotificationSettingSortState,
+): ResponsiveColumnType[] => {
   return [
     {
       title: "알림 이름",
@@ -18,6 +23,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       align: "left",
       width: "40%",
       ellipsis: true,
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "notificationSetName"),
       render: (name: string, record: MonitoringNotificationSetListResponse) => {
         return (
           <MonitoringNotificationNameButton
@@ -48,7 +55,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       key: "isEnabled",
       dataIndex: "isEnabled",
       align: "center",
-      width: "25%",
+      width: "20%",
       render: (
         isEnabled: boolean,
         record: MonitoringNotificationSetListResponse,
@@ -59,6 +66,18 @@ const createColumnList = (): ResponsiveColumnType[] => {
             isEnabled={isEnabled}
           />
         );
+      },
+    },
+    {
+      title: "생성일시",
+      key: "createdAt",
+      dataIndex: "createdAt",
+      align: "left",
+      width: "15%",
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "createdAt"),
+      render: (createdAt: string) => {
+        return <span>{formatDateTimeSafely(createdAt)}</span>;
       },
     },
     {
@@ -80,9 +99,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
 };
 
 export const createMonitoringNotificationColumn = (
+  sort: MonitoringNotificationSettingSortState,
   config?: CoreCreateColumnConfig[],
 ): ResponsiveColumnType[] => {
-  const columnList = createColumnList();
+  const columnList = createColumnList(sort);
 
   return applyColumnConfigs(columnList, config);
 };

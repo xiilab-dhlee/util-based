@@ -3,12 +3,10 @@
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
-import type { DeleteSmtpModalPayload } from "@/domain/system-setting/components/delete-smtp-modal";
+import { useGetSmtpSet } from "@/api/generated/smtp-settings/smtp-settings";
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
-import type { SmtpModalPayload } from "@/domain/system-setting/components/smtp-modal";
-import { useGetSmtp } from "@/domain/system-setting/hooks/use-get-smtp";
+import { GOOGLE_SMTP_CONFIG } from "@/domain/system-setting/constants/system-setting.constant";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
-import { MODAL_MODES } from "@/shared/constants/core.constant";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
@@ -23,28 +21,18 @@ import {
  */
 export function SmtpAccountSetting() {
   const publish = usePublish();
-  const { data, isLoading, isError, refetch } = useGetSmtp();
-
+  const { data, isLoading, isError, refetch } = useGetSmtpSet();
   const isEmpty = !data && !isLoading;
+  const isGoogle = data?.host === GOOGLE_SMTP_CONFIG.host;
 
   const handleRegister = () => {
-    publish<SmtpModalPayload>(SYSTEM_SETTING_EVENTS.openSmtpModal, {
-      mode: MODAL_MODES.CREATE,
-    });
-  };
-
-  const handleEdit = () => {
-    if (!data) return;
-    publish<SmtpModalPayload>(SYSTEM_SETTING_EVENTS.openSmtpModal, {
-      mode: MODAL_MODES.UPDATE,
-      data,
-    });
+    publish(SYSTEM_SETTING_EVENTS.openCreateSmtpModal);
   };
 
   const handleDelete = () => {
-    if (!data?.id) return;
-    publish<DeleteSmtpModalPayload>(SYSTEM_SETTING_EVENTS.openSmtpDeleteModal, {
-      id: data.id,
+    if (!data?.smtpSetId) return;
+    publish(SYSTEM_SETTING_EVENTS.openSmtpDeleteModal, {
+      id: data.smtpSetId,
     });
   };
 
@@ -71,14 +59,9 @@ export function SmtpAccountSetting() {
             등록
           </Button>
         ) : (
-          <ButtonGroup>
-            <Button variant="outlined" size="small" onClick={handleEdit}>
-              수정
-            </Button>
-            <Button variant="outlined" size="small" onClick={handleDelete}>
-              삭제
-            </Button>
-          </ButtonGroup>
+          <Button variant="outlined" size="small" onClick={handleDelete}>
+            삭제
+          </Button>
         )
       }
     >
@@ -94,14 +77,14 @@ export function SmtpAccountSetting() {
           <AsideDetailArticleColumn>
             <AsideDetailArticleKey>SMTP 호스트</AsideDetailArticleKey>
             <AsideDetailArticleValue>
-              {data?.isGoogle ? "Google" : "이외 호스트"}
+              {isGoogle ? "Google" : "이외 호스트"}
             </AsideDetailArticleValue>
           </AsideDetailArticleColumn>
 
           <AsideDetailArticleColumn>
             <AsideDetailArticleKey>계정</AsideDetailArticleKey>
             <AsideDetailArticleValue>
-              {data?.account ?? "-"}
+              {data?.email ?? "-"}
             </AsideDetailArticleValue>
           </AsideDetailArticleColumn>
         </>
@@ -129,9 +112,4 @@ const EmptyDescription = styled(Typography.Text).attrs({
   variant: "body-2-4",
 })`
   color: var(--color-gray-05);
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 4px;
 `;

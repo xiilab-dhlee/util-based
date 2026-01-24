@@ -51,6 +51,7 @@ import type {
   BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
   BaseResponseClusterResourceSummaryResponse,
+  BaseResponseListClusterNodeSummaryResponse,
   BaseResponseListString,
   BaseResponseMigConfigurationResponse,
   BaseResponsePageResponseClusterNodeListResponse,
@@ -1513,6 +1514,172 @@ export function useGetClusterResourceSummary<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetClusterResourceSummaryQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            클러스터 내 모든 노드의 리소스 할당량 정보를 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **resource**: 노드 리소스 정보
+              - **gpu**: GPU 리소스 (gpuName, gpuType, quotaCount, usedCount, detail)
+                - **detail**: GPU 세부 정보 (normal, mig, mps)
+              - **cpu**: CPU 리소스 (quotaCore, usedCore)
+              - **memory**: 메모리 리소스 (quotaByte, usedByte)
+
+            **주의:**
+            - usedCount/usedCore/usedByte는 현재 0으로 반환 (향후 워크로드 기반 계산 예정)
+            - GPU detail의 normal/mig/mps usedCount도 현재 0으로 반환
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 요약 정보 조회
+ */
+export const getClusterNodeResourceSummaries = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseListClusterNodeSummaryResponse>({
+    url: `/api/v1/admin/cluster/nodes/node-summary`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetClusterNodeResourceSummariesQueryKey = () => {
+  return [`/api/v1/admin/cluster/nodes/node-summary`] as const;
+};
+
+export const getGetClusterNodeResourceSummariesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetClusterNodeResourceSummariesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+  > = ({ signal }) => getClusterNodeResourceSummaries(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetClusterNodeResourceSummariesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+>;
+export type GetClusterNodeResourceSummariesQueryError = unknown;
+
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 클러스터 노드 요약 정보 조회
+ */
+
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetClusterNodeResourceSummariesQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

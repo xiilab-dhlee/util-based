@@ -24,6 +24,7 @@ function generateNotifications(
 
   return Array.from({ length: endIndex - startIndex }, (_, i) => ({
     notificationId: startIndex + i + 1,
+    notificationSetName: "WORKSPACE_CREATED",
     notificationContent: `테스트 알림 ${startIndex + i + 1}번 - 무한 스크롤 테스트용 알림 메시지입니다.`,
     notificationType: "WORKSPACE" as const,
     createdAt: new Date(Date.now() - (startIndex + i) * 3600000).toISOString(),

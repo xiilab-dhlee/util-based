@@ -12,9 +12,11 @@ import { delay, type HttpHandler } from "msw";
 import { getAccountProfileMock } from "@/api/generated/account-profile/account-profile.msw";
 import { getAdminClusterMock } from "@/api/generated/admin-cluster/admin-cluster.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
-import { getAdminMonitoringNotificationMock } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification.msw";
+import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history.msw";
+import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
+import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { authHandlers } from "@/domain/auth/mocks";
@@ -23,9 +25,11 @@ import { groupHandlers } from "@/domain/group/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
+import { revokeHandlers } from "@/domain/revoke/mocks";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
 import { storageHandlers } from "@/domain/storage/mocks";
+import { systemMonitoringHandlers } from "@/domain/system-monitoring/mocks";
 import { systemSettingHandlers } from "@/domain/system-setting/mocks";
 import { volumeHandlers } from "@/domain/volume/mocks";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
@@ -38,10 +42,7 @@ import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
 import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
-import { revokeHistoryHandlers } from "@/mocks/handlers/revoke-history.handler";
-import { smtpHandlers } from "@/mocks/handlers/smtp.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
-import { systemMonitoringHandlers } from "@/mocks/handlers/system-monitoring.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 
 // ============================================
@@ -117,15 +118,15 @@ const rawHandlers = [
   ...redfishHandlers,
   ...accountManagementHandlers,
   ...monitoringHandlers,
-  ...getAdminMonitoringNotificationMock(),
+  ...getAdminMonitoringNotificationHistoryMock(),
+  ...getAdminMonitoringNotificationSetMock(),
   ...registryHandlers,
   ...gpuHandlers,
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,
-  ...revokeHistoryHandlers,
+  ...revokeHandlers,
   ...systemMonitoringHandlers,
   ...hpeHandlers,
-  ...smtpHandlers,
   ...reportHandlers,
   ...reportReservationHandlers,
   ...resourcePresetHandlers,
@@ -133,6 +134,7 @@ const rawHandlers = [
   ...getAdminQueueMock(),
   ...getAdminWorkloadMock(),
   ...getAdminClusterMock(),
+  ...getSmtpSettingsMock(),
 ];
 
 /**

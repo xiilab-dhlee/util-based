@@ -1,8 +1,9 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { RevokeHistoryItemResponseType } from "@/domain/revoke/schemas/revoke-history.schema";
+import type { WorkloadReclaimScanHistoryResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
 import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
 import { ColumnLink } from "@/styles/layers/column-layer.styled";
 
@@ -15,82 +16,71 @@ export function createRevokeHistoryColumn(): ResponsiveColumnType[] {
   return [
     {
       title: "회수 일시",
-      dataIndex: "revokedAt",
+      dataIndex: "createdAt",
       align: "left",
-      render: (revokedAt: string, record: RevokeHistoryItemResponseType) => {
-        const href = ROUTES.ADMIN_REVOKE_RESOURCE_HISTORY_DETAIL(record.id);
+      render: (
+        createdAt: string,
+        record: WorkloadReclaimScanHistoryResponse,
+      ) => {
+        const href = ROUTES.ADMIN_REVOKE_RESOURCE_HISTORY_DETAIL(
+          String(record.scanHistoryId),
+        );
 
         return (
-          <ColumnLink href={href}>
-            {formatDateTimeSafely(revokedAt) ?? "-"}
-          </ColumnLink>
+          <ColumnLink href={href}>{formatDateTimeSafely(createdAt)}</ColumnLink>
         );
       },
     },
     {
       title: "검사 대상 개수",
-      dataIndex: "targetCount",
+      dataIndex: "reclaimScanWorkloadCount",
       align: "center",
-      render: (targetCount: number) => <span>{targetCount}개</span>,
+      render: (count: number) => (
+        <span>{formatNumberWithUnit(count, "개")}</span>
+      ),
     },
     {
       title: "경고 워크로드 개수",
-      dataIndex: "warningWorkloadCount",
+      dataIndex: "reclaimWarningWorkloadCount",
       align: "center",
-      render: (count: number) => <span>{count}개</span>,
+      render: (count: number) => (
+        <span>{formatNumberWithUnit(count, "개")}</span>
+      ),
     },
     {
       title: "회수 워크로드 개수",
-      dataIndex: "revokedWorkloadCount",
+      dataIndex: "reclaimedWorkloadCount",
       align: "center",
-      render: (count: number) => <span>{count}개</span>,
+      render: (count: number) => (
+        <span>{formatNumberWithUnit(count, "개")}</span>
+      ),
     },
     {
       title: "회수된 GPU",
-      dataIndex: "revokedGpu",
+      dataIndex: "reclaimedGpuCount",
       align: "center",
-      render: (gpu: string) => {
-        const gpuCount = Number(gpu);
-        const safeGpuCount =
-          Number.isFinite(gpuCount) && gpuCount > 0 ? gpuCount : 0;
+      render: (gpu: number) => {
         const { unit } = getResourceInfo("GPU");
-
-        return (
-          <span>
-            {safeGpuCount}
-            {unit}
-          </span>
-        );
+        return <span>{formatNumberWithUnit(gpu, unit)}</span>;
       },
     },
     {
       title: "회수된 CPU",
-      dataIndex: "revokedCpu",
+      dataIndex: "reclaimedCpuCore",
       align: "center",
-      render: (cpu: string) => {
-        const cpuCount = Number(cpu);
-        const safeCpuCount =
-          Number.isFinite(cpuCount) && cpuCount > 0 ? cpuCount : 0;
+      render: (cpu: number) => {
         const { unit } = getResourceInfo("CPU");
-
-        return (
-          <span>
-            {safeCpuCount}
-            {unit}
-          </span>
-        );
+        return <span>{formatNumberWithUnit(cpu, unit)}</span>;
       },
     },
     {
       title: "회수된 Memory",
-      dataIndex: "revokedMemory",
+      dataIndex: "reclaimedMemoryByte",
       align: "center",
-      render: (memory: string) => {
-        const bytes = Number(memory);
-        const safeBytes = Number.isFinite(bytes) && bytes > 0 ? bytes : 0;
-        const { value } = convertBytes(safeBytes, "GB", 1);
-
-        return <span>{value}GB</span>;
+      render: (memory: number) => {
+        const { value } = convertBytes(memory, "GB", 1);
+        const { unit } = getResourceInfo("MEM");
+        return <span>{formatNumberWithUnit(value, unit)}</span>;
       },
     },
   ];

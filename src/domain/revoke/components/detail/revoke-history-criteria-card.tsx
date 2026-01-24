@@ -2,33 +2,27 @@
 
 import styled from "styled-components";
 
+import { useGetAllPolicies } from "@/api/generated/workload-reclaim-policy-admin/workload-reclaim-policy-admin";
 import { WorkloadTypeCriteriaCard } from "@/domain/revoke/components/workload-type-criteria-card";
-import { useGetRevokeCriteria } from "@/domain/revoke/hooks/use-get-revoke-criteria";
 
-/**
- * 리소스 회수 기준 카드 컴포넌트 (상세 페이지용)
- *
- * Interactive Job과 Batch Job의 회수 기준을 세로로 표시합니다.
- * - 사용 유무 스위치 없음 (읽기 전용)
- */
 export function RevokeHistoryCriteriaCard() {
-  const { data: criteriaList } = useGetRevokeCriteria();
+  const { data: policyList } = useGetAllPolicies();
 
   // Interactive와 Batch 기준 분리
-  const interactiveCriteria = criteriaList?.find(
-    (criteria) => criteria.jobType === "INTERACTIVE",
+  const interactivePolicy = policyList?.find(
+    (policy) => policy.workloadJobType === "INTERACTIVE",
   );
-  const batchCriteria = criteriaList?.find(
-    (criteria) => criteria.jobType === "BATCH",
+  const batchPolicy = policyList?.find(
+    (policy) => policy.workloadJobType === "BATCH",
   );
 
   return (
     <Container>
       <Title>리소스 회수 기준</Title>
       <CardsWrapper>
-        {batchCriteria && <WorkloadTypeCriteriaCard criteria={batchCriteria} />}
-        {interactiveCriteria && (
-          <WorkloadTypeCriteriaCard criteria={interactiveCriteria} />
+        {batchPolicy && <WorkloadTypeCriteriaCard criteria={batchPolicy} />}
+        {interactivePolicy && (
+          <WorkloadTypeCriteriaCard criteria={interactivePolicy} />
         )}
       </CardsWrapper>
     </Container>

@@ -1220,6 +1220,127 @@ export const getClusterResourceSummaryResponse = zod
 
 /**
  * 
+            클러스터 내 모든 노드의 리소스 할당량 정보를 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **resource**: 노드 리소스 정보
+              - **gpu**: GPU 리소스 (gpuName, gpuType, quotaCount, usedCount, detail)
+                - **detail**: GPU 세부 정보 (normal, mig, mps)
+              - **cpu**: CPU 리소스 (quotaCore, usedCore)
+              - **memory**: 메모리 리소스 (quotaByte, usedByte)
+
+            **주의:**
+            - usedCount/usedCore/usedByte는 현재 0으로 반환 (향후 워크로드 기반 계산 예정)
+            - GPU detail의 normal/mig/mps usedCount도 현재 0으로 반환
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 요약 정보 조회
+ */
+export const getClusterNodeResourceSummariesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .array(
+        zod
+          .object({
+            nodeName: zod.string().describe("노드 이름"),
+            resource: zod
+              .object({
+                gpu: zod
+                  .object({
+                    gpuName: zod.string().describe("GPU 제품명"),
+                    gpuType: zod.string().describe("GPU 타입"),
+                    quotaCount: zod.number().describe("할당량 GPU 수"),
+                    usedCount: zod.number().describe("사용 중인 GPU 수"),
+                    detail: zod
+                      .object({
+                        normal: zod
+                          .object({
+                            quotaCount: zod.number().describe("할당량 GPU 수"),
+                            usedCount: zod
+                              .number()
+                              .describe("사용 중인 GPU 수"),
+                          })
+                          .strict()
+                          .optional()
+                          .describe("관리자 Normal GPU 응답"),
+                        mig: zod
+                          .array(
+                            zod
+                              .object({
+                                profile: zod
+                                  .string()
+                                  .describe("MIG 프로파일 이름"),
+                                quotaCount: zod.number().describe("할당량 수"),
+                                usedCount: zod
+                                  .number()
+                                  .describe("사용 중인 수"),
+                              })
+                              .strict()
+                              .describe("관리자 MIG GPU 응답"),
+                          )
+                          .optional()
+                          .describe("MIG GPU 목록"),
+                        mps: zod
+                          .array(
+                            zod
+                              .object({
+                                quotaCount: zod.number().describe("할당량 수"),
+                                usedCount: zod
+                                  .number()
+                                  .describe("사용 중인 수"),
+                              })
+                              .strict()
+                              .describe("관리자 MPS GPU 응답"),
+                          )
+                          .optional()
+                          .describe("MPS GPU 목록"),
+                      })
+                      .strict()
+                      .describe("관리자 GPU 상세 응답"),
+                  })
+                  .strict()
+                  .optional()
+                  .describe("클러스터 노드 GPU 리소스 응답"),
+                cpu: zod
+                  .object({
+                    quotaCore: zod
+                      .number()
+                      .describe("할당량 CPU 코어 수 (소수점 지원)"),
+                    usedCore: zod
+                      .number()
+                      .describe("사용 중인 CPU 코어 수 (소수점 지원)"),
+                  })
+                  .strict()
+                  .describe("클러스터 노드 CPU 리소스 응답"),
+                memory: zod
+                  .object({
+                    quotaByte: zod.number().describe("할당량 메모리 바이트 수"),
+                    usedByte: zod
+                      .number()
+                      .describe("사용 중인 메모리 바이트 수"),
+                  })
+                  .strict()
+                  .describe("관리자 메모리 리소스 응답"),
+              })
+              .strict()
+              .describe("클러스터 노드 리소스 응답"),
+          })
+          .strict()
+          .describe("클러스터 노드 요약 정보 응답"),
+      )
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             관리자가 클러스터 내 모든 노드의 이름 목록을 조회합니다.
 
             **응답 데이터 구성:**
