@@ -2,11 +2,26 @@
 
 import styled from "styled-components";
 
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
 
-export function RegistryLogButton() {
+interface RegistryJobLogButtonProps {
+  imageTagId: number;
+  status: string;
+}
+
+export function RegistryJobLogButton({
+  imageTagId,
+  status,
+}: RegistryJobLogButtonProps) {
+  const publish = usePublish();
+
   const handleClick = () => {
-    alert("준비 중입니다.");
+    publish(REGISTRY_EVENTS.openLogModal, {
+      imageTagId,
+      status,
+    });
   };
 
   return (
