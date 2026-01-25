@@ -20,15 +20,15 @@ import {
 } from "@/styles/layers/detail-page-intro-card.styled";
 
 /**
- * NodeIntroCard 컴포넌트
+ * NodeInfoPanel 컴포넌트
  *
- * 노드 상세 페이지의 소개 카드를 표시하는 컴포넌트입니다.
+ * 노드 상세 페이지의 정보 패널을 표시하는 컴포넌트입니다.
  * URL 파라미터에서 노드 이름을 가져와 해당 노드의 정보를 조회하고,
- * 노드의 실행 상태와 상세 정보를 카드 형태로 표시합니다.
+ * 노드의 실행 상태와 상세 정보를 패널 형태로 표시합니다.
  *
- * @returns 노드 소개 정보를 표시하는 카드 컴포넌트
+ * @returns 노드 정보를 표시하는 패널 컴포넌트
  */
-export function NodeIntroCard() {
+export function NodeInfoPanel() {
   // URL 파라미터에서 노드 이름 추출
   const { name } = useParams();
 
@@ -47,7 +47,7 @@ export function NodeIntroCard() {
       <DetailIntroCardHeader>
         {/* 노드 상세 페이지 제목 표시 영역 */}
         <DetailIntroCardTitle>
-          <span>노드 자원 상세정보 · 리소스 정보</span>
+          <span>노드 상세 정보 · 리소스 정보</span>
         </DetailIntroCardTitle>
       </DetailIntroCardHeader>
       <DetailIntroCardBody>
@@ -70,8 +70,7 @@ export function NodeIntroCard() {
             </DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
           <DetailIntroCardDescription>
-            선택한 노드의 상세, 리소스 구성, 로그를 확인할 수 있는 페이지
-            입니다.
+            선택한 노드의 상세, 리소스 구성을 확인할 수 있는 페이지 입니다.
           </DetailIntroCardDescription>
         </DetailIntroCardRow>
         {/* 노드 상세 정보 설명 섹션 */}
@@ -80,13 +79,11 @@ export function NodeIntroCard() {
             <DetailIntroCardRowIconWrapper>
               <Icon name="Description" color="var(--icon-fill)" size={20} />
             </DetailIntroCardRowIconWrapper>
-            <DetailIntroCardRowTitle>
-              노드 자원 상세정보 · 리소스 정보
-            </DetailIntroCardRowTitle>
+            <DetailIntroCardRowTitle>설명</DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
           <DetailIntroCardDescription>
-            노드의 전원 작동과 노드 내 Server, Node information 등 다양한 정보를
-            확인하는 페이지 입니다.
+            노드 내 Server, Node information 등 다양한 정보를 확인하는 페이지
+            입니다.
           </DetailIntroCardDescription>
           <DetailIntroCardDescription>
             리소스 정보는 노드에 탑재된 GPU, 리소스 용량 등 시스템 정보를 한눈에
