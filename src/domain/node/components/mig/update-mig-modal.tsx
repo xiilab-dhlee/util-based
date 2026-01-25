@@ -25,7 +25,6 @@ import {
 } from "@/domain/node/state/node.atom";
 import { MigUtil } from "@/domain/node/utils/mig.util";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
-import { ApplyOnceTooltipTitle } from "@/shared/components/tooltip-title/apply-once-tooltip-title";
 import { UpdateMigTooltipTitle } from "@/shared/components/tooltip-title/update-mig-tooltip-title";
 import { NODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -285,7 +284,7 @@ export function UpdateMigModal() {
           <Field>
             <FieldTitle>
               일괄 적용
-              <GuideTooltip title={<ApplyOnceTooltipTitle />} />
+              <GuideTooltip title="일괄적용시 상단 GPU 목록이 전부 선택되어 일괄적용할 수 있습니다." />
             </FieldTitle>
           </Field>
           <ApplyOnceWrapper>
