@@ -11,11 +11,11 @@ import {
   getMigConfiguration,
   useApplyMigConfiguration,
 } from "@/api/generated/admin-cluster/admin-cluster";
+import type { ClusterNodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MigConfigSelect } from "@/domain/node/components/mig/mig-config-select";
 import { MigCountSelect } from "@/domain/node/components/mig/mig-count-select";
 import { MigGpuItem } from "@/domain/node/components/mig/mig-gpu-item";
 import { SelectDisplayConfig } from "@/domain/node/components/mig/select-display-config";
-import type { NodeListType } from "@/domain/node/schemas/node.schema";
 import {
   migGpuProductAtom,
   migGpusAtom,
@@ -139,7 +139,6 @@ export function UpdateMigModal() {
         }
       }
     } catch (error) {
-      console.error(error);
       setErrorState({
         type: "error",
         message:
@@ -150,8 +149,9 @@ export function UpdateMigModal() {
     }
   };
 
-  useSubscribe(NODE_EVENTS.openUpdateMigModal, ({ nodeName }: NodeListType) =>
-    loadMigConfigAndOpenModal(nodeName),
+  useSubscribe<ClusterNodeListResponse>(
+    NODE_EVENTS.openUpdateMigModal,
+    ({ nodeName }) => loadMigConfigAndOpenModal(nodeName),
   );
 
   /**
@@ -189,7 +189,7 @@ export function UpdateMigModal() {
       return (
         <Overlay>
           <OverlayContent>
-            <Icon name="Warning" color="#faad14" size={24} />
+            <Icon name="Notice" color="#faad14" size={24} />
             <OverlayTitle>지원되지 않는 GPU 모델</OverlayTitle>
             <OverlayDescription>
               {originalGpuProduct
