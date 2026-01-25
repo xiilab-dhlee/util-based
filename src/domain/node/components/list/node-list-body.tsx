@@ -80,7 +80,7 @@ export function NodeListBody({
       <CustomizedTable
         columns={createNodeColumn(getColumnConfig(sort))}
         data={content}
-        columnHeight={40}
+        columnHeight={38}
         loading={loading}
         isError={isError}
         tableLayout="fixed"
