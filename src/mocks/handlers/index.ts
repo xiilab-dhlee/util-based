@@ -10,7 +10,6 @@
 import { delay, type HttpHandler } from "msw";
 
 import { getAccountProfileMock } from "@/api/generated/account-profile/account-profile.msw";
-import { getAdminClusterMock } from "@/api/generated/admin-cluster/admin-cluster.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history.msw";
 import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
@@ -22,6 +21,7 @@ import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { authHandlers } from "@/domain/auth/mocks";
 import { credentialHandlers } from "@/domain/credential/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
+import { nodeHandlers } from "@/domain/node/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
@@ -133,7 +133,7 @@ const rawHandlers = [
   ...storageHandlers,
   ...getAdminQueueMock(),
   ...getAdminWorkloadMock(),
-  ...getAdminClusterMock(),
+  ...nodeHandlers,
   ...getSmtpSettingsMock(),
 ];
 
