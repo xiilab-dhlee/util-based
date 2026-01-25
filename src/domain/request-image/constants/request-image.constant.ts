@@ -1,6 +1,6 @@
 import {
-  ImageTagUsageRequestFilterRequestApprovalStatus,
-  type ImageTagUsageRequestFilterRequestSort,
+  GetUsageRequestListApprovalStatus,
+  type GetUsageRequestListSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
@@ -11,19 +11,19 @@ import type { AntdTableSortState } from "@/shared/types/core.model";
 /** 이미지 사용 요청 승인 상태 옵션 */
 export const REQUEST_IMAGE_STATUS_OPTIONS: {
   label: string;
-  value: ImageTagUsageRequestFilterRequestApprovalStatus;
+  value: GetUsageRequestListApprovalStatus;
 }[] = [
   {
     label: "대기",
-    value: ImageTagUsageRequestFilterRequestApprovalStatus.APPROVAL_WAITING,
+    value: GetUsageRequestListApprovalStatus.APPROVAL_WAITING,
   },
   {
     label: "승인",
-    value: ImageTagUsageRequestFilterRequestApprovalStatus.APPROVED,
+    value: GetUsageRequestListApprovalStatus.APPROVED,
   },
   {
     label: "반려",
-    value: ImageTagUsageRequestFilterRequestApprovalStatus.REJECTED,
+    value: GetUsageRequestListApprovalStatus.REJECTED,
   },
 ];
 
@@ -38,7 +38,7 @@ export const REQUEST_IMAGE_SORT_FIELD_MAP = {
   vulnerability: "SECURITY_SCAN_RESULT",
   creatorName: "CREATOR_NAME",
   requestedAt: "REQUESTED_AT",
-} as const satisfies Record<string, ImageTagUsageRequestFilterRequestSort>;
+} as const satisfies Record<string, GetUsageRequestListSort>;
 
 /** 이미지 사용 요청 정렬 필드 타입 */
 export type RequestImageSortField = keyof typeof REQUEST_IMAGE_SORT_FIELD_MAP;

@@ -101,17 +101,13 @@ export function RequestImageListMain() {
   });
 
   const { data, isLoading, isError } = useGetUsageRequestList({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    filterRequest: {
-      sort: sortRequest?.sort ?? "REQUESTED_AT",
-      order: sortRequest?.order ?? "DESC",
-      approvalStatus: approvalStatus ?? undefined,
-      workspaceId: workspaceId || undefined,
-    },
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    sort: sortRequest?.sort ?? "REQUESTED_AT",
+    order: sortRequest?.order ?? "DESC",
+    approvalStatus: approvalStatus ?? undefined,
+    workspaceId: workspaceId || undefined,
   });
 
   // 컴포넌트 마운트 시 상태 초기화

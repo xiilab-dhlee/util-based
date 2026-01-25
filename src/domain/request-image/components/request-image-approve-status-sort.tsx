@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
-import type { ImageTagUsageRequestFilterRequestApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetUsageRequestListApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { REQUEST_IMAGE_STATUS_OPTIONS } from "@/domain/request-image/constants/request-image.constant";
 import {
   requestImagePageAtom,
@@ -31,9 +31,7 @@ export function RequestImageApproveStatusSort({
   const [status, setStatus] = useAtom(requestImageStatusAtom);
   const resetPage = useResetAtom(requestImagePageAtom);
 
-  const handleChange = (
-    value: ImageTagUsageRequestFilterRequestApprovalStatus | null,
-  ) => {
+  const handleChange = (value: GetUsageRequestListApprovalStatus | null) => {
     resetPage();
     setStatus(value);
   };
