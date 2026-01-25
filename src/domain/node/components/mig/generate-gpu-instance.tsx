@@ -39,12 +39,12 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
   const renderRow = (row: GpuInstanceRow, rowIndex: number) => {
     return (
       <Row key={rowIndex} gutter={gutter} style={{ height: row.height }}>
-        {row.nodes.map((node) => {
+        {row.nodes.map((node, nodeIndex) => {
           if (node.type === "node") {
             // 단일 노드인 경우 span 계산
             const span = 24 / row.nodes.length;
             return (
-              <Col key={node.name} span={span}>
+              <Col key={node.gpuIndex ?? `node-${nodeIndex}`} span={span}>
                 {renderNodeElement(node)}
               </Col>
             );
@@ -54,7 +54,7 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
             // 컬럼인 경우 자식들을 처리
             const span = 24 / row.nodes.length;
             return (
-              <Col key={node.name} span={span}>
+              <Col key={`col-${nodeIndex}`} span={span}>
                 <div
                   style={{
                     height: "100%",
@@ -63,10 +63,13 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
                     gap: gutter[1],
                   }}
                 >
-                  {node.children.map((child) => {
+                  {node.children.map((child, childIndex) => {
                     if (child.type === "node") {
                       return (
-                        <div key={child.name} style={{ height: "50%" }}>
+                        <div
+                          key={child.gpuIndex ?? `child-${childIndex}`}
+                          style={{ height: "50%" }}
+                        >
                           {renderNodeElement(child)}
                         </div>
                       );
@@ -75,13 +78,16 @@ export function GenerateGpuInstance({ rows }: GenerateGpuInstanceProps) {
                     if (child.type === "column" && child.children) {
                       return (
                         <Row
-                          key={child.name}
+                          key={`child-col-${childIndex}`}
                           gutter={gutter}
                           style={{ height: "50%" }}
                         >
-                          {child.children.map((grandChild) => (
+                          {child.children.map((grandChild, grandChildIndex) => (
                             <Col
-                              key={grandChild.name}
+                              key={
+                                grandChild.gpuIndex ??
+                                `grandchild-${grandChildIndex}`
+                              }
                               span={24 / (child.children?.length ?? 1)}
                             >
                               {renderNodeElement(grandChild)}
