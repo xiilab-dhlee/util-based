@@ -68,7 +68,7 @@ function useAxiosSessionSync(session: Session | null) {
         await signIn("credentials", { redirect: false });
       } else {
         // 프로덕션 환경: Keycloak SSO 세션까지 종료 후 로그인 페이지로 이동
-        await signOut({ callbackUrl: "/signin" });
+        await signOut({ callbackUrl: ROUTES.AUTH_SIGNIN });
       }
     };
 
@@ -117,7 +117,7 @@ function useTokenRefreshErrorHandler(
       if (useTestAuth) {
         void signIn("credentials", { redirect: false });
       } else {
-        void signOut({ callbackUrl: "/signin" });
+        void signOut({ callbackUrl: ROUTES.AUTH_SIGNIN });
       }
     }
   }, [session, broadcastLogout]);
