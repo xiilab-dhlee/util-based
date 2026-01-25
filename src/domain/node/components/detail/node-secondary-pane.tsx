@@ -1,9 +1,8 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import styled from "styled-components";
 
-import { useGetNodeResources } from "@/domain/node/hooks/use-get-node-resources";
+import type { ClusterNodeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { nodeAllocatedResourcesColumn } from "@/shared/components/column/node-allocated-resources-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import {
@@ -22,6 +21,10 @@ import {
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
 
+interface NodeSecondaryPaneProps {
+  data?: ClusterNodeDetailResponse;
+}
+
 /**
  * NodeSecondaryPane 컴포넌트
  *
@@ -29,17 +32,14 @@ import {
  * 노드의 GPU 정보, 용량(Capacity), 할당 가능한 리소스(Allocatable),
  * 할당된 리소스(Allocated resources) 정보를 표시합니다.
  *
+ * @param data - 노드 상세 정보
  * @returns 노드의 리소스 정보를 표시하는 보조 패널 컴포넌트
  */
-export function NodeSecondaryPane() {
-  // URL 파라미터에서 노드 이름 추출
-  const { name } = useParams();
-
-  // 노드 리소스 정보 조회
-  const { data } = useGetNodeResources(String(name));
-
+export function NodeSecondaryPane({ data }: NodeSecondaryPaneProps) {
+  // 첫 번째 GPU 정보 추출
+  const gpuInfo = data?.gpuInfo?.[0];
   // GPU 정보 표시 여부 확인
-  const isShowGpuInfo = !!data?.gpuType;
+  const isShowGpuInfo = !!gpuInfo?.gpuType;
 
   /**
    * 할당된 리소스 정보를 테이블 형태로 변환하는 함수
@@ -48,31 +48,14 @@ export function NodeSecondaryPane() {
    * @returns 할당된 리소스 정보 배열
    */
   const getAllocatedResources = () => {
-    let allocatedResources: unknown[] = [];
-    if (data?.requests && data?.limits) {
-      allocatedResources = [
-        {
-          id: "cpu",
-          resourceName: "CPU",
-          requests: `${data.requests.cpu}m (${data.requests.cpuPercent}%)`,
-          limits: `${data.limits.cpu}m (${data.limits.cpuPercent}%)`,
-        },
-        {
-          id: "memory",
-          resourceName: "Memory",
-          requests: `${data.requests.memory}Ki (${data.requests.memoryPercent}%)`,
-          limits: `${data.limits.memory}m (${data.limits.memoryPercent}%)`,
-        },
-        {
-          id: "gpu",
-          resourceName: "Nvidia.com/GPU",
-          requests: `${data.requests.gpu} (${data.requests.gpuPercent}%)`,
-          limits: `${data.limits.gpu} (${data.limits.gpuPercent}%)`,
-        },
-      ];
-    }
+    if (!data?.allocatedResource) return [];
 
-    return allocatedResources;
+    return data.allocatedResource.map((resource) => ({
+      id: resource.resourceName.toLowerCase(),
+      resourceName: resource.resourceName,
+      requests: `${resource.request} (${resource.requestPercent}%)`,
+      limits: `${resource.limit} (${resource.limitPercent}%)`,
+    }));
   };
 
   return (
@@ -91,14 +74,17 @@ export function NodeSecondaryPane() {
               <DetailContentFeaturePane>
                 <DetailContentFeatureRow>
                   <DetailContentKey>Type</DetailContentKey>
-                  <DetailContentPaneValue className="truncate">
-                    {data?.gpuType}
+                  <DetailContentPaneValue
+                    className="truncate"
+                    title={gpuInfo?.gpuType || undefined}
+                  >
+                    {gpuInfo?.gpuType || "-"}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
                 <DetailContentFeatureRow>
                   <DetailContentKey>Count</DetailContentKey>
                   <DetailContentPaneValue className="truncate">
-                    {data?.gpuCount}
+                    {gpuInfo?.gpuCount ? `${gpuInfo.gpuCount}개` : "-"}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
               </DetailContentFeaturePane>
@@ -107,13 +93,13 @@ export function NodeSecondaryPane() {
                 <DetailContentFeatureRow>
                   <DetailContentKey>Memory</DetailContentKey>
                   <DetailContentPaneValue className="truncate">
-                    {data?.gpuMem}
+                    {gpuInfo?.gpuMemoryMb || "-"}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
                 <DetailContentFeatureRow>
                   <DetailContentKey>Driver version</DetailContentKey>
                   <DetailContentPaneValue className="truncate">
-                    {data?.gpuDriverVersion}
+                    {gpuInfo?.gpuDriverVersion || "-"}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
               </DetailContentFeaturePane>
@@ -124,72 +110,39 @@ export function NodeSecondaryPane() {
         <DetailContentFeature className={!isShowGpuInfo ? "first" : ""}>
           <DetailContentSubTitle>Capacity</DetailContentSubTitle>
           <DetailContentFeatureBody>
-            {/* CPU, 스토리지, Hugepages 정보 */}
+            {/* CPU, 메모리, 스토리지 정보 */}
             <DetailContentFeaturePane>
               <DetailContentFeatureRow>
                 <DetailContentKey>CPU</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.capacity?.capacityCpu}
-                >
-                  {data?.capacity?.capacityCpu}
+                <DetailContentPaneValue className="truncate">
+                  {data?.capacity?.cpu ? `${data.capacity.cpu}개` : "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
-                <DetailContentKey>Eephemeral storage</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.capacity?.capacityEphemeralStorage}
-                >
-                  {data?.capacity?.capacityEphemeralStorage}
+                <DetailContentKey>Memory</DetailContentKey>
+                <DetailContentPaneValue className="truncate">
+                  {data?.capacity?.memory || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
-                <DetailContentKey>Hugepages-1Gi</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.capacity?.capacityHugepages1Gi}
-                >
-                  {data?.capacity?.capacityHugepages1Gi}
-                </DetailContentPaneValue>
-              </DetailContentFeatureRow>
-              <DetailContentFeatureRow>
-                <DetailContentKey>Hugepages-2Mi</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.capacity?.capacityHugepages2Mi}
-                >
-                  {data?.capacity?.capacityHugepages2Mi}
+                <DetailContentKey>Ephemeral storage</DetailContentKey>
+                <DetailContentPaneValue className="truncate">
+                  {data?.capacity?.["ephemeral-storage"] || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
-            {/* 메모리, GPU, Pods 정보 */}
+            {/* GPU, Pods 정보 */}
             <DetailContentFeaturePane>
               <DetailContentFeatureRow>
-                <DetailContentKey>Memory</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.capacity?.capacityMemory}
-                >
-                  {data?.capacity?.capacityMemory}
-                </DetailContentPaneValue>
-              </DetailContentFeatureRow>
-              <DetailContentFeatureRow>
                 <DetailContentKey>Nvidia.com/GPU</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.capacity?.capacityGpu}
-                >
-                  {data?.capacity?.capacityGpu}
+                <DetailContentPaneValue className="truncate">
+                  {data?.capacity?.["nvidia.com/gpu"] || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Pods</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.capacity?.capacityPods}
-                >
-                  {data?.capacity?.capacityPods}
+                <DetailContentPaneValue className="truncate">
+                  {data?.capacity?.pods || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>
@@ -198,74 +151,41 @@ export function NodeSecondaryPane() {
         </DetailContentFeature>
         {/* 할당 가능한 리소스(Allocatable) 정보 섹션 */}
         <DetailContentFeature className="last">
-          <DetailContentSubTitle>Alloctable</DetailContentSubTitle>
+          <DetailContentSubTitle>Allocatable</DetailContentSubTitle>
           <DetailContentFeatureBody>
-            {/* CPU, 스토리지, Hugepages 할당 가능 정보 */}
+            {/* CPU, 메모리, 스토리지 할당 가능 정보 */}
             <DetailContentFeaturePane>
               <DetailContentFeatureRow>
                 <DetailContentKey>CPU</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.allocatable?.allocatableCpu}
-                >
-                  {data?.allocatable?.allocatableCpu}
+                <DetailContentPaneValue className="truncate">
+                  {data?.allocatable?.cpu ? `${data.allocatable.cpu}개` : "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
-                <DetailContentKey>Eephemeral storage</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.allocatable?.allocatableEphemeralStorage}
-                >
-                  {data?.allocatable?.allocatableEphemeralStorage}
+                <DetailContentKey>Memory</DetailContentKey>
+                <DetailContentPaneValue className="truncate">
+                  {data?.allocatable?.memory || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
-                <DetailContentKey>Hugepages-1Gi</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.allocatable?.allocatableHugepages1Gi}
-                >
-                  {data?.allocatable?.allocatableHugepages1Gi}
-                </DetailContentPaneValue>
-              </DetailContentFeatureRow>
-              <DetailContentFeatureRow>
-                <DetailContentKey>Hugepages-2Mi</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.allocatable?.allocatableHugepages2Mi}
-                >
-                  {data?.allocatable?.allocatableHugepages2Mi}
+                <DetailContentKey>Ephemeral storage</DetailContentKey>
+                <DetailContentPaneValue className="truncate">
+                  {data?.allocatable?.["ephemeral-storage"] || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
-            {/* 메모리, GPU, Pods 할당 가능 정보 */}
+            {/* GPU, Pods 할당 가능 정보 */}
             <DetailContentFeaturePane>
               <DetailContentFeatureRow>
-                <DetailContentKey>Memory</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.allocatable?.allocatableMemory}
-                >
-                  {data?.allocatable?.allocatableMemory}
-                </DetailContentPaneValue>
-              </DetailContentFeatureRow>
-              <DetailContentFeatureRow>
                 <DetailContentKey>Nvidia.com/GPU</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.allocatable?.allocatableGpu}
-                >
-                  {data?.allocatable?.allocatableGpu}
+                <DetailContentPaneValue className="truncate">
+                  {data?.allocatable?.["nvidia.com/gpu"] || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Pods</DetailContentKey>
-                <DetailContentPaneValue
-                  className="truncate"
-                  title={data?.allocatable?.allocatablePods}
-                >
-                  {data?.allocatable?.allocatablePods}
+                <DetailContentPaneValue className="truncate">
+                  {data?.allocatable?.pods || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>
@@ -278,7 +198,6 @@ export function NodeSecondaryPane() {
         <DetailContentFeature className="first last">
           <DetailContentSubTitle>Allocated resources</DetailContentSubTitle>
           <TableWrapper>
-            {/* 할당된 리소스 정보를 테이블로 표시 */}
             <CustomizedTable
               columns={nodeAllocatedResourcesColumn}
               data={getAllocatedResources()}
@@ -299,7 +218,7 @@ export function NodeSecondaryPane() {
  */
 const TableSection = styled(DetailContentPaneBody)`
   flex: none;
-  height: 203px;
+  height: 382px;
   overflow: hidden;
   margin-top: 8px;
 `;
@@ -309,5 +228,5 @@ const TableSection = styled(DetailContentPaneBody)`
  * 할당된 리소스 테이블을 감싸는 컨테이너의 스타일입니다.
  */
 const TableWrapper = styled.div`
-  height: 128px;
+  height: 305px;
 `;

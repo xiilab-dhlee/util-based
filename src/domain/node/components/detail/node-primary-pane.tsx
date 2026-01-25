@@ -1,12 +1,8 @@
 "use client";
 
-import { format } from "date-fns";
-import { useParams } from "next/navigation";
-import styled from "styled-components";
-import { Label } from "xiilab-ui";
-
+import type { ClusterNodeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NodeConditionCard } from "@/domain/node/components/detail/node-condition-card";
-import { useGetNode } from "@/domain/node/hooks/use-get-node";
+import { formatDateSafely } from "@/shared/utils/date.util";
 import {
   DetailContentHeader,
   DetailContentKey,
@@ -24,6 +20,10 @@ import {
   DetailContentPaneValue,
 } from "@/styles/layers/detail-page-vertical-layers.styled";
 
+interface NodePrimaryPaneProps {
+  data?: ClusterNodeDetailResponse;
+}
+
 /**
  * NodePrimaryPane 컴포넌트
  *
@@ -31,19 +31,10 @@ import {
  * 노드의 기본 정보, 시스템 정보, 상태 정보를 포함하여 노드의 핵심 정보를
  * 한눈에 볼 수 있도록 구성되어 있습니다.
  *
+ * @param data - 노드 상세 정보
  * @returns 노드의 주요 정보를 표시하는 패널 컴포넌트
  */
-export function NodePrimaryPane() {
-  // URL 파라미터에서 노드 이름 추출
-  const { name } = useParams();
-
-  // 노드 정보 조회
-  const { data } = useGetNode(String(name));
-
-  // Redfish 기능 활성화 여부 (현재 비활성화)
-  const isRedfish = true;
-  const powerStatus = "ON";
-
+export function NodePrimaryPane({ data }: NodePrimaryPaneProps) {
   return (
     <DetailContentPane>
       {/* 노드 자원 상세정보 헤더 */}
@@ -51,27 +42,8 @@ export function NodePrimaryPane() {
         <DetailContentTitle>노드 자원 상세정보</DetailContentTitle>
       </DetailContentHeader>
       <DetailContentPaneBody>
-        {/* Redfish 기능이 활성화된 경우 서버 전원 관리 섹션 표시 */}
-        {isRedfish && (
-          <>
-            <DetailContentSubTitle>Server</DetailContentSubTitle>
-            <KeyValueContainer>
-              <ServerKey>Server Power Status</ServerKey>
-              {powerStatus === "ON" ? (
-                <Label size="medium" theme="light" variant="blue">
-                  전원 ON
-                </Label>
-              ) : (
-                <Label size="medium" theme="light" variant="black">
-                  전원 OFF
-                </Label>
-              )}
-            </KeyValueContainer>
-          </>
-        )}
-
         {/* 노드 기본 정보 섹션 */}
-        <DetailContentFeature className={!isRedfish ? "first" : ""}>
+        <DetailContentFeature className="first">
           <DetailContentSubTitle>Node Information</DetailContentSubTitle>
           <DetailContentFeatureBody>
             {/* 노드 기본 정보 (이름, IP, 호스트명) */}
@@ -80,24 +52,27 @@ export function NodePrimaryPane() {
                 <DetailContentKey>Node Name</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeName}
+                  title={data?.nodeName || undefined}
                 >
-                  {data?.nodeName}
+                  {data?.nodeName || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Internal IP</DetailContentKey>
-                <DetailContentPaneValue className="truncate" title={data?.ip}>
-                  {data?.ip}
+                <DetailContentPaneValue
+                  className="truncate"
+                  title={data?.nodeIp || undefined}
+                >
+                  {data?.nodeIp || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Host Name</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.hostName}
+                  title={data?.hostName || undefined}
                 >
-                  {data?.hostName}
+                  {data?.hostName || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
@@ -105,17 +80,20 @@ export function NodePrimaryPane() {
             <DetailContentFeaturePane>
               <DetailContentFeatureRow>
                 <DetailContentKey>Roles</DetailContentKey>
-                <DetailContentPaneValue className="truncate" title={data?.role}>
-                  {data?.role}
+                <DetailContentPaneValue
+                  className="truncate"
+                  title={data?.role || undefined}
+                >
+                  {data?.role || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Creation Timestamp</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data && format(data.creationTimestamp, "yyyy.MM.dd")}
+                  title={formatDateSafely(data?.createdAt)}
                 >
-                  {data && format(data.creationTimestamp, "yyyy.MM.dd")}
+                  {formatDateSafely(data?.createdAt)}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>
@@ -132,45 +110,45 @@ export function NodePrimaryPane() {
                 <DetailContentKey>Machine ID</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.machineID}
+                  title={data?.nodeSystemInfo?.machineID || undefined}
                 >
-                  {data?.nodeSystemInfo?.machineID}
+                  {data?.nodeSystemInfo?.machineID || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>System UUID</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.systemUUID}
+                  title={data?.nodeSystemInfo?.systemUUID || undefined}
                 >
-                  {data?.nodeSystemInfo?.systemUUID}
+                  {data?.nodeSystemInfo?.systemUUID || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Boot ID</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.bootID}
+                  title={data?.nodeSystemInfo?.bootID || undefined}
                 >
-                  {data?.nodeSystemInfo?.bootID}
+                  {data?.nodeSystemInfo?.bootID || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Kernel Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.kernelVersion}
+                  title={data?.nodeSystemInfo?.kernelVersion || undefined}
                 >
-                  {data?.nodeSystemInfo?.kernelVersion}
+                  {data?.nodeSystemInfo?.kernelVersion || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>OS Image</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.osImage}
+                  title={data?.nodeSystemInfo?.osImage || undefined}
                 >
-                  {data?.nodeSystemInfo?.osImage}
+                  {data?.nodeSystemInfo?.osImage || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
             </DetailContentFeaturePane>
@@ -180,36 +158,38 @@ export function NodePrimaryPane() {
                 <DetailContentKey>Operating System</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.operatingSystem}
+                  title={data?.nodeSystemInfo?.operatingSystem || undefined}
                 >
-                  {data?.nodeSystemInfo?.operatingSystem}
+                  {data?.nodeSystemInfo?.operatingSystem || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Container Runtime Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.containerRuntimeVersion}
+                  title={
+                    data?.nodeSystemInfo?.containerRuntimeVersion || undefined
+                  }
                 >
-                  {data?.nodeSystemInfo?.containerRuntimeVersion}
+                  {data?.nodeSystemInfo?.containerRuntimeVersion || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Kubelet Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.kubeletVersion}
+                  title={data?.nodeSystemInfo?.kubeletVersion || undefined}
                 >
-                  {data?.nodeSystemInfo?.kubeletVersion}
+                  {data?.nodeSystemInfo?.kubeletVersion || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow>
                 <DetailContentKey>Kube-Proxy Version</DetailContentKey>
                 <DetailContentPaneValue
                   className="truncate"
-                  title={data?.nodeSystemInfo?.kubeProxyVersion}
+                  title={data?.nodeSystemInfo?.kubeProxyVersion || undefined}
                 >
-                  {data?.nodeSystemInfo?.kubeProxyVersion}
+                  {data?.nodeSystemInfo?.kubeProxyVersion || "-"}
                 </DetailContentPaneValue>
               </DetailContentFeatureRow>
               <DetailContentFeatureRow></DetailContentFeatureRow>
@@ -217,40 +197,20 @@ export function NodePrimaryPane() {
           </DetailContentFeatureBody>
         </DetailContentFeature>
         {/* 노드 상태 정보 섹션 */}
-        <DetailContentFeature className="last">
-          <DetailContentSubTitle>Conditions</DetailContentSubTitle>
-          <DetailContentFeatureGridBody>
-            {/* 노드 상태 카드들을 그리드 형태로 표시 */}
-            {data?.nodeCondition.map((condition) => (
-              <NodeConditionCard key={condition.reason} {...condition} />
-            ))}
-          </DetailContentFeatureGridBody>
-        </DetailContentFeature>
+        {data?.nodeCondition && data?.nodeCondition.length > 0 && (
+          <DetailContentFeature className="last">
+            <DetailContentSubTitle>Conditions</DetailContentSubTitle>
+            <DetailContentFeatureGridBody>
+              {data?.nodeCondition.map((condition) => (
+                <NodeConditionCard
+                  key={condition.conditionName}
+                  {...condition}
+                />
+              ))}
+            </DetailContentFeatureGridBody>
+          </DetailContentFeature>
+        )}
       </DetailContentPaneBody>
     </DetailContentPane>
   );
 }
-
-/**
- * 서버 전원 상태 키 스타일
- * Redfish 기능에서 서버 전원 상태를 표시하는 키의 스타일입니다.
- */
-const ServerKey = styled(DetailContentKey)`
-  width: 120px;
-`;
-
-/**
- * 키-값 컨테이너 스타일
- * 서버 전원 상태 정보를 표시하는 키-값 쌍의 컨테이너 스타일입니다.
- */
-const KeyValueContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  overflow-x: hidden;
-  border: 1px solid #E0E0E0;
-  border-radius: 4px;
-  height: 42px;
-  padding: 0 14px;
-
-`;

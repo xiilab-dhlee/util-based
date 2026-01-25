@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon, Label } from "xiilab-ui";
 
-import { useGetNode } from "@/domain/node/hooks/use-get-node";
+import { useGetNodeDetail } from "@/api/generated/admin-cluster/admin-cluster";
 import { isNodeRunning } from "@/domain/node/utils/node.util";
 import {
   DetailIntroCardBody,
@@ -33,7 +33,7 @@ export function NodeIntroCard() {
   const { name } = useParams();
 
   // 노드 정보 조회
-  const { data } = useGetNode(String(name));
+  const { data } = useGetNodeDetail(String(name));
 
   // 노드 실행 상태 확인
   let isRunning = false;
@@ -59,12 +59,14 @@ export function NodeIntroCard() {
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
               {name}
-              {/* 노드가 실행 중일 때 상태 라벨 표시 */}
-              {isRunning && (
-                <StatusLabel variant="green" size="large" theme="light">
-                  실행중
-                </StatusLabel>
-              )}
+              {/* 노드 실행 상태 라벨 */}
+              <StatusLabel
+                variant={isRunning ? "green" : "red"}
+                size="large"
+                theme="light"
+              >
+                {isRunning ? "실행중" : "중지됨"}
+              </StatusLabel>
             </DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
           <DetailIntroCardDescription>

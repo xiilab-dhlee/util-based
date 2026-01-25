@@ -10,14 +10,13 @@ import { NodeListBody } from "@/domain/node/components/list/node-list-body";
 import { NodeListFilter } from "@/domain/node/components/list/node-list-filter";
 import { NodeListFooter } from "@/domain/node/components/list/node-list-footer";
 import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
-import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
-import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
 import { NODE_SORT_FIELD_MAP } from "@/domain/node/constants/node-list.constant";
 import { nodePageAtom, nodeSortAtom } from "@/domain/node/state/node.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { PAGE_META } from "@/shared/constants/page-meta.constant";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import { buildSortRequest } from "@/shared/utils/sort.util";
 import {
@@ -45,14 +44,14 @@ const GUIDE_IMAGES: CoreGuideImage[] = [
 ];
 
 const GUIDES: CoreGuide[] = [
-  {
-    icon: <Icon name="Mps" size={24} color="var(--icon-fill)" />,
-    title: "MPS",
-    description: [
-      "GPU를 MPS 방식으로 분할 설정하여,동일 GPU 자원을",
-      "다수 작업에서 효율적으로 활용하도록 구성합니다.",
-    ],
-  },
+  // {
+  //   icon: <Icon name="Mps" size={24} color="var(--icon-fill)" />,
+  //   title: "MPS",
+  //   description: [
+  //     "GPU를 MPS 방식으로 분할 설정하여,동일 GPU 자원을",
+  //     "다수 작업에서 효율적으로 활용하도록 구성합니다.",
+  //   ],
+  // },
   {
     icon: <Icon name="Mig" size={24} color="var(--icon-fill)" />,
     title: "MIG",
@@ -98,12 +97,12 @@ export function NodeListMain() {
         <ListPageAside $width={400}>
           <PageGuide
             title="노드 관리"
-            icon={NODE_MENU_ICON}
+            icon={PAGE_META["admin.node"]?.iconName}
             backgroundImageName="node-intro-background.png"
             description={[
-              "클러스터 내 노드들의 자원 상태, GPU 분할 모드, 스케줄링",
-              "여부 등을 종합적으로 확인하고 개별 노드의",
-              "Activity 상세 확인 가능",
+              "클러스터 내 노드들의 리소스 상태, GPU 분할 모드, 스케줄링",
+              "여부 등을 종합적으로 확인하고 개별 노드의 상세 정보를 확인",
+              "하세요.",
             ]}
             guides={GUIDES}
           />
@@ -125,8 +124,6 @@ export function NodeListMain() {
           <NodeListFooter total={data?.totalSize || 0} loading={isLoading} />
         </ListPageBody>
       </ListPageMain>
-      {/* MPS 설정 모달 */}
-      <UpdateMpsModal />
       {/* MIG 설정 모달 */}
       <UpdateMigModal />
     </>
