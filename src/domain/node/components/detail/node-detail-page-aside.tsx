@@ -35,28 +35,6 @@ export function NodeDetailPageAside() {
             priority
           />
         </GuideItem>
-        {/* 하드웨어 장치 및 구성 정보 가이드 제목 */}
-        <Title>하드웨어 장치 및 구성 정보 가이드</Title>
-        {/* 하드웨어 장치 및 구성 정보 가이드 이미지 */}
-        <GuideItem>
-          <Image
-            src="/images/node-detail-guide2.png"
-            alt="하드웨어 장치 및 구성 정보 가이드"
-            width={360}
-            height={150}
-          />
-        </GuideItem>
-        {/* 로그 가이드 제목 */}
-        <Title>로그 가이드</Title>
-        {/* 로그 가이드 이미지 */}
-        <GuideItem>
-          <Image
-            src="/images/node-detail-guide3.png"
-            alt="로그 가이드"
-            width={360}
-            height={150}
-          />
-        </GuideItem>
       </AsideFillCard>
     </DetailPageAside>
   );
