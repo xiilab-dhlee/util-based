@@ -216,14 +216,20 @@ export function CustomizedTable<
 
   const resolvedScroll = tableProps.scroll ?? { x: "max-content", y: "100%" };
 
-  const getRowKeyValue = (record: TRecord): string | number | undefined => {
+  const getRowKeyValue = (
+    record: TRecord,
+  ): string | number | bigint | undefined => {
     if (typeof rowKey === "function") {
       return rowKey(record);
     }
 
     const key = rowKey as keyof TRecord;
     const value = record[key];
-    if (typeof value === "string" || typeof value === "number") {
+    if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "bigint"
+    ) {
       return value;
     }
 
