@@ -170,10 +170,12 @@ export const MUTATION_MESSAGES: Partial<
     success: "태그 설명이 수정되었습니다.",
   },
   [MUTATION_KEYS.createPrivateExternalImage]: {
-    success: "레지스트리 이미지가 생성되었습니다.",
+    success:
+      "컨테이너 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.addPrivateImageTag]: {
-    success: "이미지 태그가 추가되었습니다.",
+    success:
+      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.scanPrivateImageTag]: {
     success: "취약점 스캔이 시작되었습니다.",
@@ -192,10 +194,12 @@ export const MUTATION_MESSAGES: Partial<
     success: "태그 설명이 수정되었습니다.",
   },
   [MUTATION_KEYS.createPublicExternalImage]: {
-    success: "레지스트리 이미지가 생성되었습니다.",
+    success:
+      "컨테이너 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.addPublicImageTag]: {
-    success: "이미지 태그가 추가되었습니다.",
+    success:
+      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.scanPublicImageTag]: {
     success: "취약점 스캔이 시작되었습니다.",
