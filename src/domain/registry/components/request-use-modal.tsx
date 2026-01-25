@@ -94,8 +94,9 @@ export function RequestUseModal() {
       maskClosable={!isPending}
       keyboard={!isPending}
       okButtonProps={{
-        disabled: isPending,
+        disabled: isPending || !selectedWorkspace,
         loading: isPending,
+        title: !selectedWorkspace ? "워크스페이스를 선택해 주세요." : undefined,
       }}
       cancelButtonProps={{
         disabled: isPending,

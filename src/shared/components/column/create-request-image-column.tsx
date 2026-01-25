@@ -106,7 +106,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "requestedAt",
       title: "요청날짜",
       align: "center",
-      render: (requestedAt: string) => {
+      render: (requestedAt?: string) => {
         return <span>{formatDateTimeSafely(requestedAt)}</span>;
       },
     },
