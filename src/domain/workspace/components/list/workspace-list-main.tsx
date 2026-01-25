@@ -6,8 +6,8 @@ import { Icon } from "xiilab-ui";
 
 import { useGetAllWorkspaces1 } from "@/api/generated/admin-workspace/admin-workspace";
 import {
-  WorkspaceSortRequestOrder,
-  WorkspaceSortRequestSort,
+  GetAllWorkspaces1Order,
+  GetAllWorkspaces1Sort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
@@ -82,15 +82,11 @@ export function WorkspaceListMain() {
   });
 
   const { data, isLoading } = useGetAllWorkspaces1({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    sortRequest: {
-      sort: sortRequest?.sort ?? WorkspaceSortRequestSort.WORKSPACE_NAME,
-      order: sortRequest?.order ?? WorkspaceSortRequestOrder.ASC,
-    },
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    sort: sortRequest?.sort ?? GetAllWorkspaces1Sort.WORKSPACE_NAME,
+    order: sortRequest?.order ?? GetAllWorkspaces1Order.ASC,
   });
 
   const totalSize = data?.totalSize ?? 0;
