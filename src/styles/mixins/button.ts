@@ -102,4 +102,9 @@ export const moveButtonStyle = css`
   align-items: center;
   border-radius: 2px;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;

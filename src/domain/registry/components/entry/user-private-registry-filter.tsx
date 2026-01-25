@@ -47,7 +47,7 @@ export function UserPrivateRegistryFilter({
         height={30}
         disabled={loading}
       />
-      <MoveButton type="button" onClick={handleMove}>
+      <MoveButton type="button" onClick={handleMove} disabled={loading}>
         <Icon name="Front" color="#fafafa" size={16} />
         <span className="sr-only">사용자별 개인 레지스트리 페이지로 이동</span>
       </MoveButton>
