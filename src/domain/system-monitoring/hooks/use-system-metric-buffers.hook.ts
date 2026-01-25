@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { BatchSystemMetricRequestMetricsItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { GetNodeSystemMetricsMetricsItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { DEFAULT_BUFFER_SIZE } from "@/domain/system-monitoring/constants/system-monitoring.constant";
 import type {
   MetricValue,
@@ -148,15 +148,14 @@ export function useSystemMetricBuffers({
           createRingBuffer(bufferSize),
           data.diskRw.find(
             (item) =>
-              item.metricName === BatchSystemMetricRequestMetricsItem.DISK_READ,
+              item.metricName === GetNodeSystemMetricsMetricsItem.DISK_READ,
           )?.data ?? [],
         ),
         diskWrite: pushToRingBuffer(
           createRingBuffer(bufferSize),
           data.diskRw.find(
             (item) =>
-              item.metricName ===
-              BatchSystemMetricRequestMetricsItem.DISK_WRITE,
+              item.metricName === GetNodeSystemMetricsMetricsItem.DISK_WRITE,
           )?.data ?? [],
         ),
       });
