@@ -218,7 +218,7 @@ export function NodeSecondaryPane({ data }: NodeSecondaryPaneProps) {
  */
 const TableSection = styled(DetailContentPaneBody)`
   flex: none;
-  height: 382px;
+  height: 500px;
   overflow: hidden;
   margin-top: 8px;
 `;
@@ -228,5 +228,5 @@ const TableSection = styled(DetailContentPaneBody)`
  * 할당된 리소스 테이블을 감싸는 컨테이너의 스타일입니다.
  */
 const TableWrapper = styled.div`
-  height: 305px;
+  height: 423px;
 `;
