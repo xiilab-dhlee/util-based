@@ -10,8 +10,8 @@ import { MonitoringNotificationHistoryListBody } from "@/domain/monitoring-notif
 import { MonitoringNotificationHistoryListFilter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-filter";
 import { MonitoringNotificationHistoryListFooter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-footer";
 import {
+  MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE,
   MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP,
-  MONITORING_NOTIFICATION_PAGE_SIZE,
 } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import {
   monitoringNotificationHistoryDateRangeAtom,
@@ -38,7 +38,7 @@ export function MonitoringNotificationListArticle() {
   const { data, isLoading, isError } = useGetAllMonitoringNotificationHistories(
     {
       pageNo: page - 1,
-      pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+      pageSize: MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE,
       keyword: searchText || undefined,
       sort: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP[sort.field],
       order: toBackendOrder(sort.order),
