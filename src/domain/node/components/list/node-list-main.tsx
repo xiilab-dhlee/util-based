@@ -44,14 +44,6 @@ const GUIDE_IMAGES: CoreGuideImage[] = [
 ];
 
 const GUIDES: CoreGuide[] = [
-  // {
-  //   icon: <Icon name="Mps" size={24} color="var(--icon-fill)" />,
-  //   title: "MPS",
-  //   description: [
-  //     "GPU를 MPS 방식으로 분할 설정하여,동일 GPU 자원을",
-  //     "다수 작업에서 효율적으로 활용하도록 구성합니다.",
-  //   ],
-  // },
   {
     icon: <Icon name="Mig" size={24} color="var(--icon-fill)" />,
     title: "MIG",
@@ -97,7 +89,7 @@ export function NodeListMain() {
         <ListPageAside $width={400}>
           <PageGuide
             title="노드 관리"
-            icon={PAGE_META["admin.node"]?.iconName}
+            icon={PAGE_META["admin.node"].iconName}
             backgroundImageName="node-intro-background.png"
             description={[
               "클러스터 내 노드들의 리소스 상태, GPU 분할 모드, 스케줄링",
