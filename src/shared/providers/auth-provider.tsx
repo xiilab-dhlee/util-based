@@ -69,8 +69,12 @@ function useAxiosSessionSync(session: Session | null) {
  * 토큰 갱신 실패 시 로그아웃 처리
  * - 세션 에러 감지 시 Keycloak SSO 세션까지 종료
  * - 세션 정상화 시 에러 핸들링 플래그 리셋
+ * - 로그아웃 시 다른 탭에 브로드캐스트
  */
-function useTokenRefreshErrorHandler(session: Session | null) {
+function useTokenRefreshErrorHandler(
+  session: Session | null,
+  broadcastLogout: () => void,
+) {
   const hasHandledError = useRef(false);
 
   useEffect(() => {
@@ -88,6 +92,9 @@ function useTokenRefreshErrorHandler(session: Session | null) {
       hasHandledError.current = true;
       authDebug("❌ 토큰 갱신 실패 → 로그아웃 후 재로그인 필요");
 
+      // 다른 탭에 로그아웃 알림
+      broadcastLogout();
+
       // 테스트 환경: credentials 프로바이더로 재로그인
       // 프로덕션 환경: Keycloak SSO 세션까지 종료 후 로그인 페이지로 이동
       if (useTestAuth) {
@@ -96,7 +103,7 @@ function useTokenRefreshErrorHandler(session: Session | null) {
         void signOut({ callbackUrl: "/signin" });
       }
     }
-  }, [session]);
+  }, [session, broadcastLogout]);
 }
 
 /**
@@ -133,11 +140,11 @@ function useTestAutoLogin(
  */
 function ProtectedSessionSync({ children }: PropsWithChildren) {
   const { data: session, status } = useSession();
+  const { broadcastLogout } = useLogoutSync(); // 다중 탭 로그아웃 동기화
 
   useAxiosSessionSync(session);
-  useTokenRefreshErrorHandler(session);
+  useTokenRefreshErrorHandler(session, broadcastLogout);
   useTestAutoLogin(status);
-  useLogoutSync(); // 다중 탭 로그아웃 동기화
 
   // 세션 로딩 중에는 children을 렌더링하지 않음
   if (status === "loading") {

@@ -80,8 +80,13 @@ class LogoutBroadcast {
     } else if (this.useFallback) {
       // localStorage 이벤트는 같은 탭에서 발생하지 않으므로
       // 값을 설정 후 즉시 삭제하여 다른 탭에만 알림
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(message));
-      localStorage.removeItem(STORAGE_KEY);
+      // Safari private mode 등에서 localStorage 접근 시 예외 발생 가능
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(message));
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        // localStorage 접근 실패 시 무시 (로그아웃 흐름은 계속 진행)
+      }
     }
   }
 
