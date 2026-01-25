@@ -4,6 +4,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
+import { useGetResourceRequests1 } from "@/api/generated/admin-workspace/admin-workspace";
 import { ApproveResourceModal } from "@/domain/request-resource/components/approve-request-resource-modal";
 import { RejectResourceModal } from "@/domain/request-resource/components/reject-request-resource-modal";
 import { RequestResourceBody } from "@/domain/request-resource/components/request-resource-body";
@@ -11,16 +12,21 @@ import { RequestResourceFilter } from "@/domain/request-resource/components/requ
 import { RequestResourceFooter } from "@/domain/request-resource/components/request-resource-footer";
 import { RequestResourceIntroCard } from "@/domain/request-resource/components/request-resource-intro-card";
 import { ResourcePageAside } from "@/domain/request-resource/components/resource-page-aside";
-import { useGetRequestResources } from "@/domain/request-resource/hooks/use-get-request-resources";
+import {
+  REQUEST_RESOURCE_SORT_DEFAULT,
+  REQUEST_RESOURCE_SORT_FIELD_MAP,
+} from "@/domain/request-resource/constants/request-resource.constant";
 import {
   requestResourceKeywordAtom,
   requestResourcePageAtom,
+  requestResourceSortAtom,
   requestResourceStatusAtom,
 } from "@/domain/request-resource/state/request-resource.atom";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
-import { ALL_OPTION, LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 import {
   ListPageAside,
   ListPageBody,
@@ -31,43 +37,48 @@ export function RequestResourceMain() {
   const [page, setPage] = useAtom(requestResourcePageAtom);
   const status = useAtomValue(requestResourceStatusAtom);
   const keyword = useAtomValue(requestResourceKeywordAtom);
+  const sort = useAtomValue(requestResourceSortAtom);
 
   // 초기화 함수
   const resetPage = useResetAtom(requestResourcePageAtom);
   const resetStatus = useResetAtom(requestResourceStatusAtom);
   const resetKeyword = useResetAtom(requestResourceKeywordAtom);
+  const resetSort = useResetAtom(requestResourceSortAtom);
+  // 정렬 요청 빌드
+  const sortRequest = buildSortRequest({
+    state: { field: sort.field, order: sort.order },
+    fieldMap: REQUEST_RESOURCE_SORT_FIELD_MAP,
+  });
 
-  // 페이지 이탈 시 초기화
-  useEffect(() => {
-    return () => {
-      resetPage();
-      resetStatus();
-      resetKeyword();
-    };
-  }, [resetPage, resetStatus, resetKeyword]);
-
-  // 필터(status, keyword) 변경 시 페이지 초기화
-  // biome-ignore lint/correctness/useExhaustiveDependencies: status, keyword 변경 감지 목적
-  useEffect(() => {
-    setPage(1);
-  }, [status, keyword, setPage]);
-
-  // API용 status 변환 (null 또는 ALL일 때는 undefined)
-  const apiStatus =
-    status === null || status === ALL_OPTION.value ? undefined : status;
-
-  // 리소스 요청 목록 조회
-  const { data, isLoading, isError } = useGetRequestResources({
-    page,
-    size: LIST_PAGE_SIZE,
-    status: apiStatus,
+  // 리소스 요청 목록 조회 (Orval 훅)
+  const { data, isLoading, isError } = useGetResourceRequests1({
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
     keyword: keyword || undefined,
+    sort: sortRequest?.sort ?? REQUEST_RESOURCE_SORT_DEFAULT.sort,
+    order: sortRequest?.order ?? REQUEST_RESOURCE_SORT_DEFAULT.order,
+    approvalStatus: status,
   });
 
   // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
+
+  // 페이지 마운트 시 초기화
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 초기화 목적
+  useEffect(() => {
+    resetPage();
+    resetStatus();
+    resetKeyword();
+    resetSort();
+  }, []);
+
+  // 필터(status, keyword) 변경 시 페이지 초기화
+  // biome-ignore lint/correctness/useExhaustiveDependencies: status, keyword 변경 감지 목적
+  useEffect(() => {
+    resetPage();
+  }, [status, keyword, sort]);
 
   return (
     <>

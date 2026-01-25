@@ -26,8 +26,12 @@ export function RequestResourceFilter({ total }: RequestResourceFilterProps) {
     setKeyword(value.trim());
   };
 
-  const handleStatusChange = (value: string) => {
-    setStatus(value as StatusFilterType);
+  const handleStatusChange = (value: StatusFilterType) => {
+    if (!value) {
+      setStatus(undefined);
+      return;
+    }
+    setStatus(value);
   };
 
   return (
