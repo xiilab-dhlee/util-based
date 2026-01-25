@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import {
@@ -14,8 +14,8 @@ import {
   Typography,
 } from "xiilab-ui";
 
-import { securityLevelSettingModal } from "@/domain/registry/utils/security-level-setting-modal.util";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import {
   DEFAULT_SECURITY_LEVEL_THRESHOLD_COUNT,
   SECURITY_LEVEL_THRESHOLD_MAX,
@@ -27,6 +27,7 @@ import {
   type SecurityUsageStatus,
 } from "@/shared/constants/security.constant";
 import { VULNERABILITY_LEVEL_KEYS } from "@/shared/constants/vulnerability.constant";
+import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { getVulnerabilityLevelsForSelect } from "@/shared/utils/vulnerability.util";
 
 const SECURITY_LEVEL_OPTIONS = getVulnerabilityLevelsForSelect();
@@ -49,11 +50,9 @@ export function SecurityLevelSettingModal() {
       },
     });
 
-  useEffect(() => {
-    return securityLevelSettingModal.subscribe(() => {
-      setOpen(true);
-    });
-  }, []);
+  useSubscribe(REGISTRY_EVENTS.openSecurityLevelSettingModal, () => {
+    setOpen(true);
+  });
 
   const isEnabled = watch("isEnabled");
   const usageStatus: SecurityUsageStatus = isEnabled

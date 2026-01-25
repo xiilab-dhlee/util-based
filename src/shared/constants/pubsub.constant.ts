@@ -146,6 +146,8 @@ export const REQUEST_IMAGE_EVENTS = {
 
 // 개인 레지스트리 관련 이벤트
 export const REGISTRY_EVENTS = {
+  // 보안 레벨 설정 모달 열기
+  openSecurityLevelSettingModal: "registry:open-security-level-setting-modal",
   // 레지스트리 이미지 유형 선택 모달 열기
   openSelectTypeModal: "registry:open-select-type-modal",
   // 레지스트리 이미지 생성 모달 열기

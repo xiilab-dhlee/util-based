@@ -3,11 +3,14 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { securityLevelSettingModal } from "@/domain/registry/utils/security-level-setting-modal.util";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 export function SecurityLevelSettingButton() {
+  const publish = usePublish();
+
   const handleOpen = () => {
-    securityLevelSettingModal.open();
+    publish(REGISTRY_EVENTS.openSecurityLevelSettingModal);
   };
 
   return (
