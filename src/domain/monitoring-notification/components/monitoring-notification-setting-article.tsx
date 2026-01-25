@@ -36,11 +36,10 @@ export function MonitoringNotificationSettingArticle() {
     };
 
   const { data, isLoading, isError } = useGetAllMonitoringNotificationSets({
-    pageableRequest: {
-      pageNo: page - 1,
-      pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
-    },
-    sortRequest,
+    pageNo: page - 1,
+    pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+    sort: sortRequest.sort,
+    order: sortRequest.order,
   });
 
   const content = data?.content ?? [];
