@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Label, Switch, Typography } from "xiilab-ui";
 
 import { useGetApprovalStatusSummary } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request";
+import { ImageTagUsageRequestResponseApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { RequestImageStatusCard } from "@/domain/registry/components/entry/request-image-status-card";
 import { SecurityLevelSettingButton } from "@/domain/registry/components/entry/security-level-setting-button";
 import { SecuritySettingCard } from "@/domain/registry/components/entry/security-setting-card";
@@ -40,17 +41,19 @@ export function RegistryMainSection() {
             </Typography.Text>
             <RequestImageBody>
               <RequestImageStatusCard
-                status="APPROVED"
+                status={ImageTagUsageRequestResponseApprovalStatus.APPROVED}
                 count={approvalStatusSummary?.approved ?? 0}
                 isLoading={isLoading}
               />
               <RequestImageStatusCard
-                status="APPROVAL_WAITING"
+                status={
+                  ImageTagUsageRequestResponseApprovalStatus.APPROVAL_WAITING
+                }
                 count={approvalStatusSummary?.approvalWaiting ?? 0}
                 isLoading={isLoading}
               />
               <RequestImageStatusCard
-                status="REJECTED"
+                status={ImageTagUsageRequestResponseApprovalStatus.REJECTED}
                 count={approvalStatusSummary?.rejected ?? 0}
                 isLoading={isLoading}
               />

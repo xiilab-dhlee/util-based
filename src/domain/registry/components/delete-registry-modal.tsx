@@ -39,7 +39,7 @@ export function DeleteRegistryModal({ mode }: DeleteRegistryModalProps) {
 
     mutate(
       {
-        data: { harborImageNames: deleteRegistries },
+        data: { harborImageName: deleteRegistries },
       },
       {
         onSuccess: () => {

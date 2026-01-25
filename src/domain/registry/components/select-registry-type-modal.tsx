@@ -4,7 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
-import type { RegistryImageFilterRequestImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { RegistryTypeCard } from "@/domain/registry/components/registry-type-card";
 import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/registry/constants/registry-list.constant";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -18,7 +18,7 @@ export function SelectRegistryTypeModal() {
     setOpen(false);
   };
 
-  const handleClickType = (type: RegistryImageFilterRequestImageSourceType) => {
+  const handleClickType = (type: GetPrivateRegistryListImageSourceType) => {
     handleClose();
     publish(REGISTRY_EVENTS.openCreateModal, type);
   };

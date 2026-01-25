@@ -1,9 +1,16 @@
 import {
   CreateExternalImageRequestRegistryChannel,
-  RegistryImageFilterRequestImageSourceType,
-  type RegistryImageFilterRequestSort,
+  GetPrivateRegistryListImageSourceType,
+  type GetPrivateRegistryListSort,
+  type GetPublicRegistryListSort,
+  ImageJobResponseStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
+
+/** 레지스트리 정렬 타입 (Private/Public 공통) */
+export type RegistryListSort =
+  | GetPrivateRegistryListSort
+  | GetPublicRegistryListSort;
 
 /**
  * 레지스트리 목록의 페이지당 항목 수
@@ -15,7 +22,7 @@ export const REGISTRY_JOB_CARD_HEIGHT = 122;
 export const REGISTRY_SORT_FIELD_MAP = {
   creatorName: "CREATOR_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, RegistryImageFilterRequestSort>;
+} as const satisfies Record<string, RegistryListSort>;
 
 /** 레지스트리 정렬 필드 타입 */
 export type RegistrySortField = keyof typeof REGISTRY_SORT_FIELD_MAP;
@@ -32,21 +39,18 @@ export type RegistrySortState = AntdTableSortState<RegistrySortField>;
 // 이미지 Job 상태 관련 상수
 // ============================================================================
 
-/** 이미지 Job 상태 값 */
-export const IMAGE_JOB_STATUS = {
-  COMPLETED: "COMPLETED",
-  IN_PROGRESS: "IN_PROGRESS",
-  FAILED: "FAILED",
-} as const;
+/** 이미지 Job 상태 값 (orval 생성 타입 재사용) */
+export const IMAGE_JOB_STATUS = ImageJobResponseStatus;
 
-export type ImageJobStatus =
-  (typeof IMAGE_JOB_STATUS)[keyof typeof IMAGE_JOB_STATUS];
+/** ImageJobResponseStatus와 호환되는 타입 */
+export type ImageJobStatus = ImageJobResponseStatus;
 
 /** 이미지 Job 상태 레이블 맵 */
-export const IMAGE_JOB_STATUS_LABEL: Record<ImageJobStatus, string> = {
-  [IMAGE_JOB_STATUS.COMPLETED]: "완료",
-  [IMAGE_JOB_STATUS.IN_PROGRESS]: "진행중",
-  [IMAGE_JOB_STATUS.FAILED]: "실패",
+export const IMAGE_JOB_STATUS_LABEL: Partial<Record<ImageJobStatus, string>> = {
+  [ImageJobResponseStatus.COMPLETED]: "완료",
+  [ImageJobResponseStatus.IN_PROGRESS]: "진행중",
+  [ImageJobResponseStatus.FAILED]: "실패",
+  [ImageJobResponseStatus.NOT_FOUND]: "미존재",
 };
 
 /**
@@ -65,15 +69,15 @@ export function getImageJobStatusLabel(status: string): string {
 /** 이미지 소스 타입 옵션 */
 export const IMAGE_SOURCE_TYPE_OPTIONS: {
   label: string;
-  value: RegistryImageFilterRequestImageSourceType;
+  value: GetPrivateRegistryListImageSourceType;
 }[] = [
   {
     label: "Snapshot",
-    value: RegistryImageFilterRequestImageSourceType.SNAPSHOT,
+    value: GetPrivateRegistryListImageSourceType.SNAPSHOT,
   },
   {
     label: "External",
-    value: RegistryImageFilterRequestImageSourceType.EXTERNAL,
+    value: GetPrivateRegistryListImageSourceType.EXTERNAL,
   },
 ];
 

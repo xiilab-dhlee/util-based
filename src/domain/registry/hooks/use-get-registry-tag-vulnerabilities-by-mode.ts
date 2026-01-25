@@ -5,9 +5,7 @@ import { useAtomValue } from "jotai";
 import type {
   GetPrivateImageTagVulnerabilitiesParams,
   GetPublicImageTagVulnerabilitiesParams,
-  PageableRequest,
   PageResponseVulnerabilityDetailResponse,
-  VulnerabilityScanRequest,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   type GetPrivateImageTagVulnerabilitiesQueryError,
@@ -24,10 +22,9 @@ export type GetRegistryTagVulnerabilitiesQueryError =
   | GetPrivateImageTagVulnerabilitiesQueryError
   | GetPublicImageTagVulnerabilitiesQueryError;
 
-interface RegistryTagVulnerabilitiesRequest {
-  pageRequest: PageableRequest;
-  request: VulnerabilityScanRequest;
-}
+export type GetRegistryTagVulnerabilitiesParams =
+  | GetPrivateImageTagVulnerabilitiesParams
+  | GetPublicImageTagVulnerabilitiesParams;
 
 interface UseGetRegistryTagVulnerabilitiesByModeOptions {
   query?: {
@@ -46,35 +43,32 @@ interface UseGetRegistryTagVulnerabilitiesByModeResult {
 /** mode에 따라 private 또는 public 이미지 태그 취약점 목록 조회 */
 export const useGetRegistryTagVulnerabilitiesByMode = (
   mode: RegistryMode,
-  params: RegistryTagVulnerabilitiesRequest,
+  params: GetRegistryTagVulnerabilitiesParams,
   options?: UseGetRegistryTagVulnerabilitiesByModeOptions,
 ): UseGetRegistryTagVulnerabilitiesByModeResult => {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const workspaceId = selectedWorkspace?.workspaceId;
 
-  const privateParams: GetPrivateImageTagVulnerabilitiesParams = {
-    ...params,
-    workspaceFilter: { workspaceId: workspaceId ?? 0 },
-  };
-
-  const publicParams: GetPublicImageTagVulnerabilitiesParams = {
-    ...params,
-  };
-
-  const privateQuery = useGetPrivateImageTagVulnerabilities(privateParams, {
-    query: {
-      enabled:
-        mode === "private" &&
-        !!workspaceId &&
-        (options?.query?.enabled ?? true),
+  const privateQuery = useGetPrivateImageTagVulnerabilities(
+    { ...params, workspaceId } as GetPrivateImageTagVulnerabilitiesParams,
+    {
+      query: {
+        enabled:
+          mode === "private" &&
+          !!workspaceId &&
+          (options?.query?.enabled ?? true),
+      },
     },
-  });
+  );
 
-  const publicQuery = useGetPublicImageTagVulnerabilities(publicParams, {
-    query: {
-      enabled: mode === "public" && (options?.query?.enabled ?? true),
+  const publicQuery = useGetPublicImageTagVulnerabilities(
+    params as GetPublicImageTagVulnerabilitiesParams,
+    {
+      query: {
+        enabled: mode === "public" && (options?.query?.enabled ?? true),
+      },
     },
-  });
+  );
 
   const query = mode === "private" ? privateQuery : publicQuery;
 

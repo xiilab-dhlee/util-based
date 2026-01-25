@@ -69,16 +69,12 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
   });
 
   const { data, isLoading, isError } = useGetRegistryTagListByMode(mode, {
-    pageRequest: {
-      pageNo: page - 1,
-      pageSize: REGISTRY_TAG_PAGE_SIZE,
-      keyword: searchText,
-    },
-    filterRequest: {
-      harborImageName,
-      sort: sortRequest?.sort ?? "CREATED_AT",
-      order: sortRequest?.order ?? "DESC",
-    },
+    pageNo: page - 1,
+    pageSize: REGISTRY_TAG_PAGE_SIZE,
+    keyword: searchText,
+    harborImageName,
+    sort: sortRequest?.sort ?? "CREATED_AT",
+    order: sortRequest?.order ?? "DESC",
   });
 
   // 첫 번째 태그 자동 선택 (최초 1회만)

@@ -1,6 +1,6 @@
 "use client";
 
-import type { RegistryImageFilterRequestImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 
 // =============================================================================
@@ -8,7 +8,7 @@ import { SelectOptionCard } from "@/shared/components/card/select-option-card";
 // =============================================================================
 
 interface RegistryTypeCardProps {
-  type: RegistryImageFilterRequestImageSourceType;
+  type: GetPrivateRegistryListImageSourceType;
   onClick: (type: string) => void;
 }
 
@@ -17,7 +17,7 @@ interface RegistryTypeCardProps {
 // =============================================================================
 
 const CARD_DATA: Record<
-  RegistryImageFilterRequestImageSourceType,
+  GetPrivateRegistryListImageSourceType,
   {
     from: string;
     title: string;

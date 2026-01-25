@@ -1,6 +1,7 @@
 import {
-  ImageJobFilterRequestImageSourceType,
+  GetImageJobsImageSourceType,
   type ImageJobResponse,
+  type ImageJobResponseStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetImageJobsMockHandler,
@@ -11,7 +12,12 @@ import { MOCK_BASE_TIMESTAMP } from "@/shared/constants/date.constant";
 /**
  * Job 상태 목록
  */
-const JOB_STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"] as const;
+const JOB_STATUSES: ImageJobResponseStatus[] = [
+  "IN_PROGRESS",
+  "COMPLETED",
+  "FAILED",
+  "NOT_FOUND",
+];
 
 /**
  * 이미지 이름 생성
@@ -37,7 +43,7 @@ function generateJobCreatedAt(
 /**
  * Job 상태 생성 (인덱스 기반)
  */
-function generateJobStatus(index: number): string {
+function generateJobStatus(index: number): ImageJobResponseStatus {
   return JOB_STATUSES[index % JOB_STATUSES.length];
 }
 
@@ -45,31 +51,26 @@ function generateJobStatus(index: number): string {
  * 이미지 소스 타입 생성 (인덱스 기반)
  * 짝수: SNAPSHOT, 홀수: EXTERNAL
  */
-function generateImageSourceType(
-  index: number,
-): ImageJobFilterRequestImageSourceType {
+function generateImageSourceType(index: number): GetImageJobsImageSourceType {
   return index % 2 === 0
-    ? ImageJobFilterRequestImageSourceType.SNAPSHOT
-    : ImageJobFilterRequestImageSourceType.EXTERNAL;
+    ? GetImageJobsImageSourceType.SNAPSHOT
+    : GetImageJobsImageSourceType.EXTERNAL;
 }
 
 export const imageJobsOverrideHandlers = [
   getGetImageJobsMockHandler(async (info) => {
     const url = new URL(info.request.url);
 
-    // 중첩 구조 파라미터 파싱 (pageRequest[keyword], filterRequest[imageSourceType] 등)
-    const keyword = url.searchParams.get("pageRequest[keyword]") || "";
-    const pageNo = Number.parseInt(
-      url.searchParams.get("pageRequest[pageNo]") || "0",
-      10,
-    );
+    // 평탄화된 파라미터 파싱
+    const keyword = url.searchParams.get("keyword") || "";
+    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = Number.parseInt(
-      url.searchParams.get("pageRequest[pageSize]") || "10",
+      url.searchParams.get("pageSize") || "10",
       10,
     );
     const imageSourceType = url.searchParams.get(
-      "filterRequest[imageSourceType]",
-    ) as ImageJobFilterRequestImageSourceType | null;
+      "imageSourceType",
+    ) as GetImageJobsImageSourceType | null;
 
     const { status, message, timestamp } = getGetImageJobsResponseMock();
 

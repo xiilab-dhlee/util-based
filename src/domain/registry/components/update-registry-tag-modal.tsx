@@ -68,14 +68,15 @@ export function UpdateRegistryTagModal({ mode }: UpdateRegistryTagModalProps) {
           if (mode === "private") {
             queryClient.invalidateQueries({
               queryKey: getGetPrivateImageTagDetailQueryKey({
-                request: { tagName, harborImageName },
-                workspaceFilter: {},
+                tagName,
+                harborImageName,
               }),
             });
           } else if (mode === "public") {
             queryClient.invalidateQueries({
               queryKey: getGetPublicImageTagDetailQueryKey({
-                request: { tagName, harborImageName },
+                tagName,
+                harborImageName,
               }),
             });
           }

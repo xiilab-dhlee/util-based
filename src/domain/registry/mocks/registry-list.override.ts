@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
 
 import {
-  RegistryImageFilterRequestImageSourceType,
-  RegistryImageFilterRequestOrder,
-  RegistryImageFilterRequestSort,
+  GetPrivateRegistryListImageSourceType,
+  GetPrivateRegistryListOrder,
+  GetPrivateRegistryListSort,
   type RegistryListResponse,
   type RegistryListResponseImageSourceType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -43,7 +43,7 @@ function generateImageDisplayName(
     // ASC: 001, 002, 003... / DESC: 999, 998, 997...
     const sortableValue = 999 - (index % 1000);
     const sortableNum =
-      order === RegistryImageFilterRequestOrder.ASC
+      order === GetPrivateRegistryListOrder.ASC
         ? paddedIndex
         : String(sortableValue).padStart(3, "0");
     return `${namePrefix}-${sortableNum}`;
@@ -61,10 +61,10 @@ function generateCreatedAt(
   order: string,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  if (sort === RegistryImageFilterRequestSort.CREATED_AT) {
+  if (sort === GetPrivateRegistryListSort.CREATED_AT) {
     const safeIndex = Math.min(Math.max(index, 0), 29);
     const offset =
-      order === RegistryImageFilterRequestOrder.ASC
+      order === GetPrivateRegistryListOrder.ASC
         ? (30 - safeIndex) * DAY_IN_MS
         : safeIndex * DAY_IN_MS;
     return new Date(baseTimestamp - offset).toISOString();
@@ -80,8 +80,8 @@ function generateImageSourceType(
   index: number,
 ): RegistryListResponseImageSourceType {
   return index % 2 === 0
-    ? RegistryImageFilterRequestImageSourceType.SNAPSHOT
-    : RegistryImageFilterRequestImageSourceType.EXTERNAL;
+    ? GetPrivateRegistryListImageSourceType.SNAPSHOT
+    : GetPrivateRegistryListImageSourceType.EXTERNAL;
 }
 
 /**
@@ -104,25 +104,20 @@ function createRegistryListHandler<T>(
   return getMockHandler(async (info) => {
     const url = new URL(info.request.url);
 
-    // 중첩 구조 파라미터 파싱 (pageRequest[keyword], filterRequest[sort] 등)
-    const keyword = url.searchParams.get("pageRequest[keyword]") || "";
-    const pageNo = Number.parseInt(
-      url.searchParams.get("pageRequest[pageNo]") || "0",
-      10,
-    );
+    // 평탄화된 파라미터 파싱
+    const keyword = url.searchParams.get("keyword") || "";
+    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = Number.parseInt(
-      url.searchParams.get("pageRequest[pageSize]") || "10",
+      url.searchParams.get("pageSize") || "10",
       10,
     );
     const sort =
-      url.searchParams.get("filterRequest[sort]") ||
-      RegistryImageFilterRequestSort.CREATED_AT;
+      url.searchParams.get("sort") || GetPrivateRegistryListSort.CREATED_AT;
     const order =
-      url.searchParams.get("filterRequest[order]") ||
-      RegistryImageFilterRequestOrder.DESC;
+      url.searchParams.get("order") || GetPrivateRegistryListOrder.DESC;
     const imageSourceType = url.searchParams.get(
-      "filterRequest[imageSourceType]",
-    ) as RegistryImageFilterRequestImageSourceType | null;
+      "imageSourceType",
+    ) as GetPrivateRegistryListImageSourceType | null;
 
     // 필터링이 있으면 해당 타입만, 없으면 전체
     const baseTotalSize = pageSize * 3;

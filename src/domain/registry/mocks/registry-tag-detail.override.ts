@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 
+import { ImageTagDetailResponseScanStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateImageTagDetailMockHandler,
   getGetPrivateImageTagDetailResponseMock,
@@ -29,58 +30,53 @@ function generateVulnerability() {
 }
 
 /**
- * 태그 상세 mock 핸들러 생성 팩토리
+ * 태그 상세 mock 데이터 생성
  */
-function createTagDetailHandler<T>(
-  getMockHandler: (
-    handler: (info: { request: Request }) => Promise<T>,
-  ) => ReturnType<typeof getGetPrivateImageTagDetailMockHandler>,
-  getResponseMock: (override?: {
-    data?: {
-      imageTagId: number;
-      imageTagName: string;
-      imageSizeByte: number;
-      scanStatus: string;
-      creatorName: string;
-      createdAt: string;
-      description: string;
-      vulnerability: ReturnType<typeof generateVulnerability>;
-    };
-  }) => T,
-) {
-  return getMockHandler(async (info) => {
-    const url = new URL(info.request.url);
-    const tagName = url.searchParams.get("tagName") || "";
-
-    return getResponseMock({
-      data: {
-        imageTagId: faker.number.int({ min: 1000000, max: 5000000000 }),
-        imageTagName: tagName,
-        imageSizeByte: faker.number.int({ min: 1000000, max: 5000000000 }),
-        scanStatus: faker.helpers.arrayElement([
-          "COMPLETED",
-          "FAILED",
-          "IN_PROGRESS",
-          "NOT_SCANNED",
-        ]),
-        creatorName: "관리자",
-        createdAt: new Date(MOCK_BASE_TIMESTAMP).toISOString(),
-        description: faker.lorem.sentence(),
-        vulnerability: generateVulnerability(),
-      },
-    });
-  });
+function generateTagDetailData(tagName: string) {
+  return {
+    imageTagId: faker.number.int({ min: 1000000, max: 5000000000 }),
+    imageTagName: tagName,
+    imageSizeByte: faker.number.int({ min: 1000000, max: 5000000000 }),
+    scanStatus: faker.helpers.arrayElement([
+      ImageTagDetailResponseScanStatus.SUCCESS,
+      ImageTagDetailResponseScanStatus.ERROR,
+      ImageTagDetailResponseScanStatus.RUNNING,
+      ImageTagDetailResponseScanStatus.NOT_SCANNED,
+    ]),
+    creatorName: "관리자",
+    createdAt: new Date(MOCK_BASE_TIMESTAMP).toISOString(),
+    description: faker.lorem.sentence(),
+    vulnerability: generateVulnerability(),
+  };
 }
 
 export const registryTagDetailOverrideHandlers = [
   // Private registry tag detail handler
-  createTagDetailHandler(
-    getGetPrivateImageTagDetailMockHandler,
-    getGetPrivateImageTagDetailResponseMock,
-  ),
+  getGetPrivateImageTagDetailMockHandler(async (info) => {
+    const url = new URL(info.request.url);
+    const tagName = url.searchParams.get("tagName") || "";
+
+    const baseMock = getGetPrivateImageTagDetailResponseMock();
+    return {
+      ...baseMock,
+      data: {
+        ...baseMock.data,
+        ...generateTagDetailData(tagName),
+      },
+    };
+  }),
   // Public registry tag detail handler
-  createTagDetailHandler(
-    getGetPublicImageTagDetailMockHandler,
-    getGetPublicImageTagDetailResponseMock,
-  ),
+  getGetPublicImageTagDetailMockHandler(async (info) => {
+    const url = new URL(info.request.url);
+    const tagName = url.searchParams.get("tagName") || "";
+
+    const baseMock = getGetPublicImageTagDetailResponseMock();
+    return {
+      ...baseMock,
+      data: {
+        ...baseMock.data,
+        ...generateTagDetailData(tagName),
+      },
+    };
+  }),
 ];
