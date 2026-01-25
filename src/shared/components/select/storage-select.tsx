@@ -5,6 +5,7 @@ import type { DropdownProps } from "xiilab-ui";
 import { Dropdown } from "xiilab-ui";
 
 import { getStorages1 } from "@/api/generated/storage/storage";
+import { DROPDOWN_LIST_HEIGHT } from "@/shared/constants/core.constant";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
 const QUERY_KEY = "storage-select";
@@ -78,7 +79,7 @@ export function StorageSelect(props: StorageSelectProps) {
       loading={isLoading || isFetchingNextPage}
       onPopupScroll={handlePopupScroll}
       placeholder={props.placeholder ?? "스토리지를 선택해 주세요."}
-      listHeight={170}
+      listHeight={DROPDOWN_LIST_HEIGHT}
     />
   );
 }

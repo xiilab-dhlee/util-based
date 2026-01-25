@@ -5,6 +5,7 @@ import type { DropdownProps } from "xiilab-ui";
 import { Dropdown } from "xiilab-ui";
 
 import { getAllWorkspaces1 } from "@/api/generated/admin-workspace/admin-workspace";
+import { DROPDOWN_LIST_HEIGHT } from "@/shared/constants/core.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
@@ -95,7 +96,7 @@ export function WorkspaceFilterSelect(props: WorkspaceFilterSelectProps) {
       loading={isLoading || isFetchingNextPage}
       onPopupScroll={handlePopupScroll}
       placeholder={props.placeholder ?? "워크스페이스 선택"}
-      listHeight={170}
+      listHeight={DROPDOWN_LIST_HEIGHT}
       showSearch
       filterOption={false}
       onSearch={handleSearch}
