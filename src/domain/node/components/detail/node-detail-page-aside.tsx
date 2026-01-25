@@ -81,7 +81,7 @@ export function NodeDetailPageAside({
   return (
     <DetailPageAside>
       {/* 노드의 기본 정보를 표시하는 패널 */}
-      <NodeInfoPanel />
+      <NodeInfoPanel data={data} />
       {/* 노드 상태 정보 */}
       <AsideFillCard title="Conditions">{renderConditions()}</AsideFillCard>
     </DetailPageAside>

@@ -1,10 +1,9 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon, Label } from "xiilab-ui";
 
-import { useGetNodeDetail } from "@/api/generated/admin-cluster/admin-cluster";
+import type { ClusterNodeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { isNodeRunning } from "@/domain/node/utils/node.util";
 import {
   DetailIntroCardBody,
@@ -19,27 +18,25 @@ import {
   DetailIntroCardTitle,
 } from "@/styles/layers/detail-page-intro-card.styled";
 
+interface NodeInfoPanelProps {
+  data?: ClusterNodeDetailResponse;
+}
+
 /**
  * NodeInfoPanel 컴포넌트
  *
  * 노드 상세 페이지의 정보 패널을 표시하는 컴포넌트입니다.
- * URL 파라미터에서 노드 이름을 가져와 해당 노드의 정보를 조회하고,
- * 노드의 실행 상태와 상세 정보를 패널 형태로 표시합니다.
+ * 부모 컴포넌트로부터 노드 데이터를 전달받아 노드의 실행 상태와
+ * 상세 정보를 패널 형태로 표시합니다.
  *
+ * @param data - 노드 상세 정보
  * @returns 노드 정보를 표시하는 패널 컴포넌트
  */
-export function NodeInfoPanel() {
-  // URL 파라미터에서 노드 이름 추출
-  const { name } = useParams();
-
-  // 노드 정보 조회
-  const { data } = useGetNodeDetail(String(name));
-
+export function NodeInfoPanel({ data }: NodeInfoPanelProps) {
   // 노드 실행 상태 확인
-  let isRunning = false;
-  if (data?.nodeCondition) {
-    isRunning = isNodeRunning(data.nodeCondition);
-  }
+  const isRunning = data?.nodeCondition
+    ? isNodeRunning(data.nodeCondition)
+    : false;
 
   return (
     <DetailIntroCardContainer>
@@ -58,7 +55,7 @@ export function NodeInfoPanel() {
               <Icon name="SingleNode" color="var(--icon-fill)" size={22} />
             </DetailIntroCardRowIconWrapper>
             <DetailIntroCardRowTitle>
-              {name}
+              {data?.nodeName || "-"}
               {/* 노드 실행 상태 라벨 */}
               <StatusLabel
                 variant={isRunning ? "green" : "red"}

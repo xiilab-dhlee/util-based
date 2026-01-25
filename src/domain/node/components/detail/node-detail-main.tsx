@@ -107,7 +107,7 @@ export function NodeDetailMain() {
 const ContentContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
   height: 100%;
 `;
