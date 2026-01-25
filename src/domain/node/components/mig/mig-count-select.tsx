@@ -12,6 +12,11 @@ import {
 } from "@/domain/node/state/node.atom";
 import { MigUtil } from "@/domain/node/utils/mig.util";
 
+interface MigCountSelectProps {
+  /** 비활성화 여부 */
+  disabled?: boolean;
+}
+
 /**
  * MIG 개수 선택 컴포넌트
  *
@@ -21,7 +26,7 @@ import { MigUtil } from "@/domain/node/utils/mig.util";
  *
  * @returns MIG 개수를 선택할 수 있는 드롭다운 컴포넌트
  */
-export function MigCountSelect() {
+export function MigCountSelect({ disabled }: MigCountSelectProps) {
   // 현재 선택된 MIG GPU 인덱스
   const selectedMigGpuIndex = useAtomValue(selectedMigGpuIndexAtom);
   // MIG GPU 제품 정보 (A30, A100 등)
@@ -75,6 +80,7 @@ export function MigCountSelect() {
       value={selectedMigCount}
       width={120}
       height={30}
+      disabled={disabled}
     />
   );
 }

@@ -100,6 +100,8 @@ export function UpdateMigModal() {
     setSelectedMigConfigId(-1);
     setErrorState({ type: null });
     setIsUnsupportedModel(false);
+    setMigGpus([]);
+    setSelectedMigGpuIndex(-1);
   };
 
   const loadMigConfigAndOpenModal = async (targetNodeName: string) => {
@@ -238,7 +240,7 @@ export function UpdateMigModal() {
           </Field>
           <GpuListBody>
             {migGpus.map((gpu) => (
-              <MigGpuItem key={gpu.gpuIndex} {...gpu} />
+              <MigGpuItem key={gpu.gpuIndex} {...gpu} disabled={isPending} />
             ))}
           </GpuListBody>
         </LeftPanel>
@@ -263,8 +265,8 @@ export function UpdateMigModal() {
           </Field>
 
           <FilterRow>
-            <MigCountSelect />
-            <MigConfigSelect />
+            <MigCountSelect disabled={isPending} />
+            <MigConfigSelect disabled={isPending} />
           </FilterRow>
 
           <ConfigDisplayArea>
@@ -287,6 +289,7 @@ export function UpdateMigModal() {
                 checked={isApplyToAll}
                 onClick={() => setApplyOnce(APPLY_ONCE_OPTIONS.YES)}
                 size="small"
+                disabled={isPending}
               />
             </RadioItem>
             <RadioItem>
@@ -296,6 +299,7 @@ export function UpdateMigModal() {
                 checked={!isApplyToAll}
                 onClick={() => setApplyOnce(APPLY_ONCE_OPTIONS.NO)}
                 size="small"
+                disabled={isPending}
               />
             </RadioItem>
           </ApplyOnceWrapper>
