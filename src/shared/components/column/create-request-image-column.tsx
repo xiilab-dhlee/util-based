@@ -22,7 +22,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "imageDisplayName",
       title: "이미지 이름",
       align: "left",
-      render: (imageDisplayName: string) => {
+      render: (imageDisplayName?: string) => {
         return <span>{imageDisplayName || "-"}</span>;
       },
     },
@@ -31,7 +31,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "workspaceName",
       title: "워크스페이스",
       align: "left",
-      render: (workspaceName: string) => {
+      render: (workspaceName?: string) => {
         return <span>{workspaceName || "-"}</span>;
       },
     },
@@ -40,7 +40,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "imageTagName",
       title: "태그",
       align: "left",
-      render: (imageTagName: string) => {
+      render: (imageTagName?: string) => {
         return <span>{imageTagName || "-"}</span>;
       },
     },

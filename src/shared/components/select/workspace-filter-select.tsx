@@ -83,7 +83,7 @@ export function WorkspaceFilterSelect(props: WorkspaceFilterSelectProps) {
     fetchNextPage,
   });
 
-  const handleChange = (value: number | null) => {
+  const handleChange: DropdownProps["onChange"] = (value) => {
     props.onChange?.(value);
     resetKeyword();
   };

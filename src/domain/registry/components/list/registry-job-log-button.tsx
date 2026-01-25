@@ -2,14 +2,17 @@
 
 import styled from "styled-components";
 
-import { IMAGE_JOB_STATUS } from "@/domain/registry/constants/registry-list.constant";
+import {
+  IMAGE_JOB_STATUS,
+  type ImageJobStatus,
+} from "@/domain/registry/constants/registry-list.constant";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
 
 interface RegistryJobLogButtonProps {
   imageTagId: number;
-  status: string;
+  status: ImageJobStatus;
 }
 
 export function RegistryJobLogButton({

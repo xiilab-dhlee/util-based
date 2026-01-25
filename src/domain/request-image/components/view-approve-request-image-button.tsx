@@ -30,8 +30,13 @@ export function ViewApproveRequestImageButton({
 
   return (
     <ColumnAlignCenterWrap>
-      <ColumnIconWrap onClick={handleClickIcon} disabled={isDisabled}>
+      <ColumnIconWrap
+        type="button"
+        onClick={handleClickIcon}
+        disabled={isDisabled}
+      >
         <Icon name="Check" color="var(--icon-fill)" size={16} />
+        <span className="sr-only">이미지 사용 요청 승인 버튼</span>
       </ColumnIconWrap>
     </ColumnAlignCenterWrap>
   );
