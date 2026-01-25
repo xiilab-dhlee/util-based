@@ -66,7 +66,12 @@ export const getGetImageJobsResponseMock = (
       imageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      status: faker.helpers.arrayElement([
+        "IN_PROGRESS",
+        "COMPLETED",
+        "FAILED",
+        "NOT_FOUND",
+      ] as const),
       imageSourceType: faker.helpers.arrayElement([
         "SNAPSHOT",
         "EXTERNAL",

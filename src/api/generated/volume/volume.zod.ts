@@ -31,7 +31,7 @@ import * as zod from "zod";
 
 /**
  * 
-        볼륨 정보를 수정합니다.
+        볼륨 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
         **권한:** SUPER_ADMIN 또는 볼륨 생성자만 수정 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
 
         **수정 가능 필드:**
@@ -82,7 +82,7 @@ export const updateVolumeResponse = zod
 
 /**
  * 
-        볼륨을 삭제합니다 (soft delete).
+        볼륨을 삭제합니다 (soft delete). 해당 볼륨의 모든 버전이 삭제됩니다.
         **권한:** SUPER_ADMIN 또는 볼륨 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
 
         **볼륨 타입별 처리:**
@@ -253,32 +253,34 @@ export const registerAstragoVolumeBody = zod
  * 볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
  * @summary 볼륨 목록 조회
  */
-export const getVolumeListQueryPageSearchPageSizeMax = 100;
+export const getVolumeListQueryPageNoMin = 0;
+
+export const getVolumeListQueryPageSizeMax = 100;
 
 export const getVolumeListQueryParams = zod.object({
-  pageSearch: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getVolumeListQueryPageSearchPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  workspaceFilter: zod.object({
-    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
-  }),
-  filter: zod.object({
-    sort: zod
-      .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
-      .describe("정렬 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-    hasMine: zod.boolean().describe("내가 생성한 볼륨만 조회"),
-    volumeType: zod
-      .enum(["ASTRAGO", "ON_PREMISE"])
-      .optional()
-      .describe("볼륨 타입 필터"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getVolumeListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getVolumeListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  sort: zod
+    .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
+    .optional()
+    .describe("정렬 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  hasMine: zod.boolean().optional().describe("내가 생성한 볼륨만 조회"),
+  volumeType: zod
+    .enum(["ASTRAGO", "ON_PREMISE"])
+    .optional()
+    .describe("볼륨 타입 필터"),
 });
 
 export const getVolumeListResponse = zod
@@ -294,6 +296,7 @@ export const getVolumeListResponse = zod
           zod
             .object({
               volumeId: zod.number().describe("볼륨 ID"),
+              entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
               volumeName: zod.string().describe("볼륨 이름"),
               creatorId: zod.string().describe("생성자 ID"),
               creatorName: zod.string().describe("생성자 이름"),
@@ -343,6 +346,7 @@ export const getVolumeDetailResponse = zod
     data: zod
       .object({
         volumeId: zod.number().describe("볼륨 ID"),
+        entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
         volumeName: zod.string().describe("볼륨 이름"),
         volumeType: zod.enum(["ASTRAGO", "ON_PREMISE"]).describe("볼륨 타입"),
         serverIp: zod

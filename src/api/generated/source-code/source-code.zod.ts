@@ -31,7 +31,7 @@ import * as zod from "zod";
 
 /**
  * 
-        소스코드 정보를 수정합니다.
+        소스코드 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
 
         **수정 가능 필드:**
         - sourceCodeName: 소스코드 이름
@@ -102,7 +102,7 @@ export const updateSourceCodeResponse = zod
 
 /**
  * 
-        소스코드를 삭제합니다 (soft delete).
+        소스코드를 삭제합니다 (soft delete). 해당 소스코드의 모든 버전이 삭제됩니다.
 
         **권한:** SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
         
@@ -122,30 +122,34 @@ export const deleteSourceCodeParams = zod.object({
         
  * @summary 소스코드 목록 조회
  */
-export const getSourceCodeListQueryPageSearchPageSizeMax = 100;
+export const getSourceCodeListQueryPageNoMin = 0;
+
+export const getSourceCodeListQueryPageSizeMax = 100;
 
 export const getSourceCodeListQueryParams = zod.object({
-  pageSearch: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getSourceCodeListQueryPageSearchPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  workspaceFilter: zod.object({
-    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
-  }),
-  filter: zod.object({
-    sort: zod.enum(["SOURCE_CODE_NAME", "CREATED_AT"]).describe("정렬 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-    hasMine: zod.boolean().describe("내가 생성한 소스코드만 조회"),
-    codeType: zod
-      .enum(["GITHUB", "GITLAB", "BITBUCKET"])
-      .optional()
-      .describe("소스코드 타입 필터"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getSourceCodeListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getSourceCodeListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  sort: zod
+    .enum(["SOURCE_CODE_NAME", "CREATED_AT"])
+    .optional()
+    .describe("정렬 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  hasMine: zod.boolean().optional().describe("내가 생성한 소스코드만 조회"),
+  codeType: zod
+    .enum(["GITHUB", "GITLAB", "BITBUCKET"])
+    .optional()
+    .describe("소스코드 타입 필터"),
 });
 
 export const getSourceCodeListResponse = zod
@@ -161,6 +165,7 @@ export const getSourceCodeListResponse = zod
           zod
             .object({
               sourceCodeId: zod.number().describe("소스코드 ID"),
+              entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
               sourceCodeName: zod.string().describe("소스코드 이름"),
               gitUrl: zod.string().describe("Git URL"),
               mountPath: zod.string().describe("마운트 경로"),
@@ -341,6 +346,7 @@ export const getSourceCodeDetailResponse = zod
     data: zod
       .object({
         sourceCodeId: zod.number().describe("소스코드 ID"),
+        entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
         sourceCodeName: zod.string().describe("소스코드 이름"),
         gitUrl: zod.string().describe("Git URL"),
         isPublic: zod.boolean().describe("공개 여부"),

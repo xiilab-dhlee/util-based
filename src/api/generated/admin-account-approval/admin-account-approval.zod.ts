@@ -143,24 +143,28 @@ export const approveSignupRequestsResponse = zod
  * 가입 승인 대기 중인 계정 목록을 페이지네이션으로 조회합니다. 키워드 검색 및 정렬 옵션을 지원합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 가입 승인 대기 목록 조회
  */
-export const getSignupRequestsQueryPageSearchRequestPageSizeMax = 100;
+export const getSignupRequestsQueryPageNoMin = 0;
+
+export const getSignupRequestsQueryPageSizeMax = 100;
 
 export const getSignupRequestsQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getSignupRequestsQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["ACCOUNT_NAME", "CREATED_AT"])
-      .describe("정렬 필드: ACCOUNT_NAME, CREATED_AT. 미입력 시 ACCOUNT_NAME"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getSignupRequestsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getSignupRequestsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["ACCOUNT_NAME", "CREATED_AT"])
+    .optional()
+    .describe("정렬 필드: ACCOUNT_NAME, CREATED_AT. 미입력 시 ACCOUNT_NAME"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getSignupRequestsResponse = zod

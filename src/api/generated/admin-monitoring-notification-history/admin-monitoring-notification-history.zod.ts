@@ -46,38 +46,38 @@ import * as zod from "zod";
         
  * @summary 모니터링 알림 히스토리 목록 조회
  */
-export const getAllMonitoringNotificationHistoriesQueryPageSearchRequestPageSizeMax = 100;
+export const getAllMonitoringNotificationHistoriesQueryPageNoMin = 0;
+
+export const getAllMonitoringNotificationHistoriesQueryPageSizeMax = 100;
 
 export const getAllMonitoringNotificationHistoriesQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(
-        getAllMonitoringNotificationHistoriesQueryPageSearchRequestPageSizeMax,
-      )
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["NODE_NAME", "NODE_IP", "NOTIFICATION_SET_NAME", "CREATED_AT"])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
-  filterRequest: zod.object({
-    startedAt: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe("조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
-    endedAt: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe("조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllMonitoringNotificationHistoriesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAllMonitoringNotificationHistoriesQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["NODE_NAME", "NODE_IP", "NOTIFICATION_SET_NAME", "CREATED_AT"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  startedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
+  endedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
 });
 
 export const getAllMonitoringNotificationHistoriesResponse = zod

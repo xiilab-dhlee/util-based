@@ -59,7 +59,7 @@ import type {
 
 /**
  * 
-        볼륨 정보를 수정합니다.
+        볼륨 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
         **권한:** SUPER_ADMIN 또는 볼륨 생성자만 수정 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
 
         **수정 가능 필드:**
@@ -149,7 +149,7 @@ export const useUpdateVolume = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-        볼륨을 삭제합니다 (soft delete).
+        볼륨을 삭제합니다 (soft delete). 해당 볼륨의 모든 버전이 삭제됩니다.
         **권한:** SUPER_ADMIN 또는 볼륨 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
 
         **볼륨 타입별 처리:**
@@ -500,7 +500,7 @@ export const useRegisterAstragoVolume = <TError = unknown, TContext = unknown>(
  * @summary 볼륨 목록 조회
  */
 export const getVolumeList = (
-  params: GetVolumeListParams,
+  params?: GetVolumeListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseVolumeListResponse>({
@@ -519,7 +519,7 @@ export const getGetVolumeListQueryOptions = <
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params: GetVolumeListParams,
+  params?: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -550,7 +550,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params: GetVolumeListParams,
+  params: undefined | GetVolumeListParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -572,7 +572,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params: GetVolumeListParams,
+  params?: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -594,7 +594,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params: GetVolumeListParams,
+  params?: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>
@@ -612,7 +612,7 @@ export function useGetVolumeList<
   TData = Awaited<ReturnType<typeof getVolumeList>>,
   TError = unknown,
 >(
-  params: GetVolumeListParams,
+  params?: GetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getVolumeList>>, TError, TData>

@@ -43,75 +43,72 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponsePageResponseStorageResponse,
-  GetStoragesParams,
+  BaseResponsePageResponseGroupRegistrationResponse,
+  GetGroupsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
- * 등록된 스토리지 목록을 페이징하여 조회합니다.
- * @summary 스토리지 목록 조회
+ * 회원가입 시 선택 가능한 그룹 목록을 페이징하여 조회합니다. 인증 없이 접근 가능합니다.
+ * @summary 회원가입용 그룹 목록 조회
  */
-export const getStorages = (
-  params?: GetStoragesParams,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponsePageResponseStorageResponse>({
-    url: `/api/v1/storages`,
+export const getGroups = (params?: GetGroupsParams, signal?: AbortSignal) => {
+  return customInstance<BaseResponsePageResponseGroupRegistrationResponse>({
+    url: `/api/v1/groups/signup`,
     method: "GET",
     params,
     signal,
   });
 };
 
-export const getGetStoragesQueryKey = (params?: GetStoragesParams) => {
-  return [`/api/v1/storages`, ...(params ? [params] : [])] as const;
+export const getGetGroupsQueryKey = (params?: GetGroupsParams) => {
+  return [`/api/v1/groups/signup`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetStoragesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export const getGetGroupsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGroups>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetGroupsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getGroups>>, TError, TData>
     >;
   },
 ) => {
   const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetStoragesQueryKey(params);
+  const queryKey = queryOptions?.queryKey ?? getGetGroupsQueryKey(params);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getStorages>>> = ({
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getGroups>>> = ({
     signal,
-  }) => getStorages(params, signal);
+  }) => getGroups(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getStorages>>,
+    Awaited<ReturnType<typeof getGroups>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetStoragesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getStorages>>
+export type GetGroupsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getGroups>>
 >;
-export type GetStoragesQueryError = unknown;
+export type GetGroupsQueryError = unknown;
 
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetGroups<
+  TData = Awaited<ReturnType<typeof getGroups>>,
   TError = unknown,
 >(
-  params: undefined | GetStoragesParams,
+  params: undefined | GetGroupsParams,
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getGroups>>, TError, TData>
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getStorages>>,
+          Awaited<ReturnType<typeof getGroups>>,
           TError,
-          Awaited<ReturnType<typeof getStorages>>
+          Awaited<ReturnType<typeof getGroups>>
         >,
         "initialData"
       >;
@@ -120,20 +117,20 @@ export function useGetStorages<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetGroups<
+  TData = Awaited<ReturnType<typeof getGroups>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetGroupsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getGroups>>, TError, TData>
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getStorages>>,
+          Awaited<ReturnType<typeof getGroups>>,
           TError,
-          Awaited<ReturnType<typeof getStorages>>
+          Awaited<ReturnType<typeof getGroups>>
         >,
         "initialData"
       >;
@@ -142,14 +139,14 @@ export function useGetStorages<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetGroups<
+  TData = Awaited<ReturnType<typeof getGroups>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetGroupsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getGroups>>, TError, TData>
     >;
   },
   queryClient?: QueryClient,
@@ -157,24 +154,24 @@ export function useGetStorages<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 스토리지 목록 조회
+ * @summary 회원가입용 그룹 목록 조회
  */
 
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetGroups<
+  TData = Awaited<ReturnType<typeof getGroups>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetGroupsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getGroups>>, TError, TData>
     >;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetStoragesQueryOptions(params, options);
+  const queryOptions = getGetGroupsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

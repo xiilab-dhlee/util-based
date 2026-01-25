@@ -603,7 +603,7 @@ export const useDeleteWorkspaces = <TError = unknown, TContext = unknown>(
  * @summary 관리자용 워크스페이스 목록 조회
  */
 export const getAllWorkspaces1 = (
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminWorkspaceListResponse>({
@@ -624,7 +624,7 @@ export const getGetAllWorkspaces1QueryOptions = <
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -660,7 +660,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params: undefined | GetAllWorkspaces1Params,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -686,7 +686,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -712,7 +712,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -734,7 +734,7 @@ export function useGetAllWorkspaces1<
   TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
   TError = unknown,
 >(
-  params: GetAllWorkspaces1Params,
+  params?: GetAllWorkspaces1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -766,7 +766,7 @@ export function useGetAllWorkspaces1<
  */
 export const getWorkspaceMembers1 = (
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminWorkspaceMemberResponse>({
@@ -792,7 +792,7 @@ export const getGetWorkspaceMembers1QueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -835,7 +835,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params: undefined | GetWorkspaceMembers1Params,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -862,7 +862,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -889,7 +889,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -912,7 +912,7 @@ export function useGetWorkspaceMembers1<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetWorkspaceMembers1Params,
+  params?: GetWorkspaceMembers1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1116,7 +1116,7 @@ export function useGetWorkspaceDetail1<
  * @summary 관리자용 리소스 요청 목록 조회
  */
 export const getResourceRequests1 = (
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminResourceRequestListResponse>(
@@ -1142,7 +1142,7 @@ export const getGetResourceRequests1QueryOptions = <
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1178,7 +1178,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params: undefined | GetResourceRequests1Params,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1204,7 +1204,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1230,7 +1230,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1252,7 +1252,7 @@ export function useGetResourceRequests1<
   TData = Awaited<ReturnType<typeof getResourceRequests1>>,
   TError = unknown,
 >(
-  params: GetResourceRequests1Params,
+  params?: GetResourceRequests1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<

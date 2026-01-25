@@ -358,7 +358,7 @@ export function useGetGroupDetail<
  * @summary 그룹 미소속 사용자 목록 조회
  */
 export const getUngroupedAccounts = (
-  params: GetUngroupedAccountsParams,
+  params?: GetUngroupedAccountsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseGroupMemberResponse>({
@@ -379,7 +379,7 @@ export const getGetUngroupedAccountsQueryOptions = <
   TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
   TError = unknown,
 >(
-  params: GetUngroupedAccountsParams,
+  params?: GetUngroupedAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -415,7 +415,7 @@ export function useGetUngroupedAccounts<
   TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
   TError = unknown,
 >(
-  params: GetUngroupedAccountsParams,
+  params: undefined | GetUngroupedAccountsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -441,7 +441,7 @@ export function useGetUngroupedAccounts<
   TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
   TError = unknown,
 >(
-  params: GetUngroupedAccountsParams,
+  params?: GetUngroupedAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -467,7 +467,7 @@ export function useGetUngroupedAccounts<
   TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
   TError = unknown,
 >(
-  params: GetUngroupedAccountsParams,
+  params?: GetUngroupedAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -489,7 +489,7 @@ export function useGetUngroupedAccounts<
   TData = Awaited<ReturnType<typeof getUngroupedAccounts>>,
   TError = unknown,
 >(
-  params: GetUngroupedAccountsParams,
+  params?: GetUngroupedAccountsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

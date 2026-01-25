@@ -51,6 +51,8 @@ import type {
   BaseResponsePageResponseWorkloadReclaimScanResultResponse,
   BaseResponseUnit,
   BaseResponseWorkloadReclaimPolicyResponse,
+  BaseResponseWorkloadReclaimPolicySnapshotResponse,
+  BaseResponseWorkloadReclaimScanHistoryResponse,
   GetScanHistoryListParams,
   GetScanResultListParams,
   WorkloadReclaimPolicyEnabledRequest,
@@ -527,12 +529,8 @@ export function useGetAllPolicies<
   return query;
 }
 
-/**
- * 자원 회수 스캔 히스토리 목록을 페이지네이션으로 조회합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
- * @summary 자원 회수 스캔 히스토리 목록 조회
- */
 export const getScanHistoryList = (
-  params: GetScanHistoryListParams,
+  params?: GetScanHistoryListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseWorkloadReclaimScanHistoryResponse>(
@@ -558,7 +556,7 @@ export const getGetScanHistoryListQueryOptions = <
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params: GetScanHistoryListParams,
+  params?: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -594,7 +592,7 @@ export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params: GetScanHistoryListParams,
+  params: undefined | GetScanHistoryListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -620,7 +618,7 @@ export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params: GetScanHistoryListParams,
+  params?: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -646,7 +644,7 @@ export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params: GetScanHistoryListParams,
+  params?: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -660,15 +658,12 @@ export function useGetScanHistoryList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-/**
- * @summary 자원 회수 스캔 히스토리 목록 조회
- */
 
 export function useGetScanHistoryList<
   TData = Awaited<ReturnType<typeof getScanHistoryList>>,
   TError = unknown,
 >(
-  params: GetScanHistoryListParams,
+  params?: GetScanHistoryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -694,13 +689,175 @@ export function useGetScanHistoryList<
   return query;
 }
 
+export const getScanHistoryDetail = (
+  scanHistoryId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadReclaimScanHistoryResponse>({
+    url: `/api/v1/admin/settings/resource-policy/scan-histories/${scanHistoryId}`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetScanHistoryDetailQueryKey = (scanHistoryId?: number) => {
+  return [
+    `/api/v1/admin/settings/resource-policy/scan-histories/${scanHistoryId}`,
+  ] as const;
+};
+
+export const getGetScanHistoryDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getScanHistoryDetail>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetScanHistoryDetailQueryKey(scanHistoryId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getScanHistoryDetail>>
+  > = ({ signal }) => getScanHistoryDetail(scanHistoryId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!scanHistoryId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getScanHistoryDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetScanHistoryDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getScanHistoryDetail>>
+>;
+export type GetScanHistoryDetailQueryError = unknown;
+
+export function useGetScanHistoryDetail<
+  TData = Awaited<ReturnType<typeof getScanHistoryDetail>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getScanHistoryDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getScanHistoryDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetScanHistoryDetail<
+  TData = Awaited<ReturnType<typeof getScanHistoryDetail>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getScanHistoryDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getScanHistoryDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetScanHistoryDetail<
+  TData = Awaited<ReturnType<typeof getScanHistoryDetail>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetScanHistoryDetail<
+  TData = Awaited<ReturnType<typeof getScanHistoryDetail>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetScanHistoryDetailQueryOptions(
+    scanHistoryId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 /**
  * 특정 스캔 히스토리에 대한 워크로드별 스캔 결과 목록을 페이지네이션으로 조회합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 자원 회수 스캔 결과 목록 조회
  */
 export const getScanResultList = (
   scanHistoryId: number,
-  params: GetScanResultListParams,
+  params?: GetScanResultListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseWorkloadReclaimScanResultResponse>(
@@ -728,7 +885,7 @@ export const getGetScanResultListQueryOptions = <
   TError = unknown,
 >(
   scanHistoryId: number,
-  params: GetScanResultListParams,
+  params?: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -771,7 +928,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params: GetScanResultListParams,
+  params: undefined | GetScanResultListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -798,7 +955,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params: GetScanResultListParams,
+  params?: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -825,7 +982,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params: GetScanResultListParams,
+  params?: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -848,7 +1005,7 @@ export function useGetScanResultList<
   TError = unknown,
 >(
   scanHistoryId: number,
-  params: GetScanResultListParams,
+  params?: GetScanResultListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -865,6 +1022,184 @@ export function useGetScanResultList<
   const queryOptions = getGetScanResultListQueryOptions(
     scanHistoryId,
     params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            특정 스캔 히스토리 실행 시 사용된 자원 회수 정책을 조회합니다.
+            스캔 히스토리에 저장된 policyId를 통해 정책 정보를 반환합니다.
+
+            **응답 규칙:**
+            - 스캔 히스토리가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+            - 레거시 데이터(policyId가 null)인 경우: 200 OK + null 반환
+
+            ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
+ * @summary 스캔 히스토리에 사용된 자원 회수 정책 조회
+ */
+export const getScanHistoryPolicy = (
+  scanHistoryId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadReclaimPolicySnapshotResponse>({
+    url: `/api/v1/admin/settings/resource-policy/scan-histories/${scanHistoryId}/policy`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetScanHistoryPolicyQueryKey = (scanHistoryId?: number) => {
+  return [
+    `/api/v1/admin/settings/resource-policy/scan-histories/${scanHistoryId}/policy`,
+  ] as const;
+};
+
+export const getGetScanHistoryPolicyQueryOptions = <
+  TData = Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetScanHistoryPolicyQueryKey(scanHistoryId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getScanHistoryPolicy>>
+  > = ({ signal }) => getScanHistoryPolicy(scanHistoryId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!scanHistoryId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetScanHistoryPolicyQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getScanHistoryPolicy>>
+>;
+export type GetScanHistoryPolicyQueryError = unknown;
+
+export function useGetScanHistoryPolicy<
+  TData = Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+          TError,
+          Awaited<ReturnType<typeof getScanHistoryPolicy>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetScanHistoryPolicy<
+  TData = Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+          TError,
+          Awaited<ReturnType<typeof getScanHistoryPolicy>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetScanHistoryPolicy<
+  TData = Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 스캔 히스토리에 사용된 자원 회수 정책 조회
+ */
+
+export function useGetScanHistoryPolicy<
+  TData = Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+  TError = unknown,
+>(
+  scanHistoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getScanHistoryPolicy>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetScanHistoryPolicyQueryOptions(
+    scanHistoryId,
     options,
   );
 

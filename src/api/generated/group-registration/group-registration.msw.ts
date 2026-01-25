@@ -31,11 +31,11 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseStorageResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponsePageResponseGroupRegistrationResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetStoragesResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseStorageResponse> = {},
-): BaseResponsePageResponseStorageResponse => ({
+export const getGetGroupsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseGroupRegistrationResponse> = {},
+): BaseResponsePageResponseGroupRegistrationResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
@@ -46,14 +46,8 @@ export const getGetStoragesResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      storageId: faker.number.int({ min: undefined, max: undefined }),
-      storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      storageChannel: faker.helpers.arrayElement(["NFS"] as const),
-      storageIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      storageSavePath: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
-      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      groupId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      groupName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -61,18 +55,18 @@ export const getGetStoragesResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetStoragesMockHandler = (
+export const getGetGroupsMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseStorageResponse
+    | BaseResponsePageResponseGroupRegistrationResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseStorageResponse>
-        | BaseResponsePageResponseStorageResponse),
+        | Promise<BaseResponsePageResponseGroupRegistrationResponse>
+        | BaseResponsePageResponseGroupRegistrationResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/storages",
+    "*/api/v1/groups/signup",
     async (info) => {
       await delay(1000);
 
@@ -82,7 +76,7 @@ export const getGetStoragesMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetStoragesResponseMock(),
+            : getGetGroupsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -90,4 +84,4 @@ export const getGetStoragesMockHandler = (
     options,
   );
 };
-export const getStorageMock = () => [getGetStoragesMockHandler()];
+export const getGroupRegistrationMock = () => [getGetGroupsMockHandler()];

@@ -37,6 +37,8 @@ import type {
   BaseResponsePageResponseWorkloadReclaimScanResultResponse,
   BaseResponseUnit,
   BaseResponseWorkloadReclaimPolicyResponse,
+  BaseResponseWorkloadReclaimPolicySnapshotResponse,
+  BaseResponseWorkloadReclaimScanHistoryResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getGetPolicyResponseMock = (
@@ -128,6 +130,11 @@ export const getGetScanHistoryListResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       scanHistoryId: faker.number.int({ min: undefined, max: undefined }),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
       reclaimWarningWorkloadCount: faker.number.int({
         min: undefined,
         max: undefined,
@@ -151,6 +158,40 @@ export const getGetScanHistoryListResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetScanHistoryDetailResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadReclaimScanHistoryResponse> = {},
+): BaseResponseWorkloadReclaimScanHistoryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    scanHistoryId: faker.number.int({ min: undefined, max: undefined }),
+    workloadJobType: faker.helpers.arrayElement([
+      "INTERACTIVE",
+      "BATCH",
+      "DISTRIBUTED",
+    ] as const),
+    reclaimWarningWorkloadCount: faker.number.int({
+      min: undefined,
+      max: undefined,
+    }),
+    reclaimScanWorkloadCount: faker.number.int({
+      min: undefined,
+      max: undefined,
+    }),
+    reclaimedWorkloadCount: faker.number.int({
+      min: undefined,
+      max: undefined,
+    }),
+    reclaimedGpuCount: faker.number.int({ min: undefined, max: undefined }),
+    reclaimedCpuCore: faker.number.int({ min: undefined, max: undefined }),
+    reclaimedMemoryByte: faker.number.int({ min: undefined, max: undefined }),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetScanResultListResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseWorkloadReclaimScanResultResponse> = {},
 ): BaseResponsePageResponseWorkloadReclaimScanResultResponse => ({
@@ -164,11 +205,51 @@ export const getGetScanResultListResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      scanResultId: faker.number.int({ min: undefined, max: undefined }),
-      workloadId: faker.number.int({ min: undefined, max: undefined }),
-      scanHistoryId: faker.number.int({ min: undefined, max: undefined }),
+      workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      reclaimStatus: faker.helpers.arrayElement([
+        "RECLAIMED",
+        "WARNING",
+        "NORMAL",
+      ] as const),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+      gpu: faker.number.int({ min: undefined, max: undefined }),
+      cpu: faker.number.int({ min: undefined, max: undefined }),
+      memory: faker.number.int({ min: undefined, max: undefined }),
       createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workerCount: faker.number.int({ min: undefined, max: undefined }),
     })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetScanHistoryPolicyResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadReclaimPolicySnapshotResponse> = {},
+): BaseResponseWorkloadReclaimPolicySnapshotResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    workloadJobType: faker.helpers.arrayElement([
+      "INTERACTIVE",
+      "BATCH",
+      "DISTRIBUTED",
+    ] as const),
+    operatingHour: faker.number.int({ min: undefined, max: undefined }),
+    metrics: {
+      gpu: faker.number.int({ min: undefined, max: undefined }),
+      cpu: faker.number.int({ min: undefined, max: undefined }),
+      mem: faker.number.int({ min: undefined, max: undefined }),
+    },
+    reclaimOperator: faker.helpers.arrayElement(["AND", "OR"] as const),
+    reclaimWarningCount: faker.number.int({ min: undefined, max: undefined }),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -321,6 +402,36 @@ export const getGetScanHistoryListMockHandler = (
   );
 };
 
+export const getGetScanHistoryDetailMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadReclaimScanHistoryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadReclaimScanHistoryResponse>
+        | BaseResponseWorkloadReclaimScanHistoryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/settings/resource-policy/scan-histories/:scanHistoryId",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetScanHistoryDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetScanResultListMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseWorkloadReclaimScanResultResponse
@@ -350,11 +461,43 @@ export const getGetScanResultListMockHandler = (
     options,
   );
 };
+
+export const getGetScanHistoryPolicyMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadReclaimPolicySnapshotResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadReclaimPolicySnapshotResponse>
+        | BaseResponseWorkloadReclaimPolicySnapshotResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/settings/resource-policy/scan-histories/:scanHistoryId/policy",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetScanHistoryPolicyResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getWorkloadReclaimPolicyAdminMock = () => [
   getGetPolicyMockHandler(),
   getUpdateReclaimPolicyMockHandler(),
   getUpdateReclaimPolicyEnabledMockHandler(),
   getGetAllPoliciesMockHandler(),
   getGetScanHistoryListMockHandler(),
+  getGetScanHistoryDetailMockHandler(),
   getGetScanResultListMockHandler(),
+  getGetScanHistoryPolicyMockHandler(),
 ];

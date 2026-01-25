@@ -208,23 +208,27 @@ export const updateMonitoringNotificationSetEnabledResponse = zod
         
  * @summary 모니터링 알림 설정 목록 조회
  */
-export const getAllMonitoringNotificationSetsQueryPageableRequestPageSizeMax = 100;
+export const getAllMonitoringNotificationSetsQueryPageNoMin = 0;
+
+export const getAllMonitoringNotificationSetsQueryPageSizeMax = 100;
 
 export const getAllMonitoringNotificationSetsQueryParams = zod.object({
-  pageableRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getAllMonitoringNotificationSetsQueryPageableRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["NOTIFICATION_SET_NAME", "CREATED_AT"])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllMonitoringNotificationSetsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAllMonitoringNotificationSetsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  sort: zod
+    .enum(["NOTIFICATION_SET_NAME", "CREATED_AT"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getAllMonitoringNotificationSetsResponse = zod
@@ -248,6 +252,7 @@ export const getAllMonitoringNotificationSetsResponse = zod
                 .boolean()
                 .describe("이메일 알림 활성화 여부"),
               isEnabled: zod.boolean().describe("알림 설정 활성화 여부"),
+              createdAt: zod.string().datetime({}).describe("생성 일시"),
             })
             .strict()
             .describe("모니터링 알림 설정 목록 조회 응답"),

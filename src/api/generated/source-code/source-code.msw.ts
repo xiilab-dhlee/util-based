@@ -62,6 +62,7 @@ export const getGetSourceCodeListResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       sourceCodeId: faker.number.int({ min: undefined, max: undefined }),
+      entityId: faker.number.int({ min: undefined, max: undefined }),
       sourceCodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       gitUrl: faker.string.alpha({ length: { min: 10, max: 20 } }),
       mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -121,6 +122,7 @@ export const getGetSourceCodeDetailResponseMock = (
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     sourceCodeId: faker.number.int({ min: undefined, max: undefined }),
+    entityId: faker.number.int({ min: undefined, max: undefined }),
     sourceCodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     gitUrl: faker.string.alpha({ length: { min: 10, max: 20 } }),
     isPublic: faker.datatype.boolean(),

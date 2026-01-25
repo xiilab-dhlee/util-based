@@ -67,7 +67,7 @@ export const getUpdateStorageResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetStoragesResponseMock = (
+export const getGetAdminStoragesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseStorageResponse> = {},
 ): BaseResponsePageResponseStorageResponse => ({
   status: "SUCCESS",
@@ -182,7 +182,7 @@ export const getDeleteStorageMockHandler = (
   );
 };
 
-export const getGetStoragesMockHandler = (
+export const getGetAdminStoragesMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseStorageResponse
     | ((
@@ -203,7 +203,7 @@ export const getGetStoragesMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetStoragesResponseMock(),
+            : getGetAdminStoragesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -243,6 +243,6 @@ export const getAdminStorageMock = () => [
   getGetStorageDetailMockHandler(),
   getUpdateStorageMockHandler(),
   getDeleteStorageMockHandler(),
-  getGetStoragesMockHandler(),
+  getGetAdminStoragesMockHandler(),
   getRegisterStorageMockHandler(),
 ];

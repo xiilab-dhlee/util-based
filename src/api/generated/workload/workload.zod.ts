@@ -260,7 +260,7 @@ export const createWorkloadBody = zod
       .describe("워크로드 리소스 정보"),
     sourceCode: zod
       .object({
-        sourceCodeId: zod.number().describe("소스코드 ID"),
+        entityId: zod.number().describe("소스코드 entityId"),
         mountPath: zod.string().min(1).describe("마운트 경로"),
         sourceCodeBranch: zod.string().optional().describe("브랜치명"),
       })
@@ -820,9 +820,7 @@ export const workloadListFilesQueryParams = zod.object({
     .string()
     .optional()
     .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
-  request: zod.object({
-    path: zod.string().describe("조회할 경로 (기본값: /)"),
-  }),
+  path: zod.string().optional().describe("조회할 경로 (기본값: /)"),
 });
 
 export const workloadListFilesResponse = zod
@@ -887,21 +885,19 @@ export const workloadPreviewFileParams = zod.object({
   workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
 });
 
-export const workloadPreviewFileQueryRequestPathMin = 0;
-export const workloadPreviewFileQueryRequestPathMax = 1000;
+export const workloadPreviewFileQueryPathMin = 0;
+export const workloadPreviewFileQueryPathMax = 1000;
 
 export const workloadPreviewFileQueryParams = zod.object({
   podName: zod
     .string()
     .optional()
     .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
-  request: zod.object({
-    path: zod
-      .string()
-      .min(workloadPreviewFileQueryRequestPathMin)
-      .max(workloadPreviewFileQueryRequestPathMax)
-      .describe("미리보기할 파일 경로"),
-  }),
+  path: zod
+    .string()
+    .min(workloadPreviewFileQueryPathMin)
+    .max(workloadPreviewFileQueryPathMax)
+    .describe("미리보기할 파일 경로"),
 });
 
 export const workloadPreviewFileResponse = zod.string();
@@ -963,31 +959,32 @@ export const getTerminatedWorkloadsParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getTerminatedWorkloadsQueryPageSearchRequestPageSizeMax = 100;
+export const getTerminatedWorkloadsQueryPageNoMin = 0;
+
+export const getTerminatedWorkloadsQueryPageSizeMax = 100;
 
 export const getTerminatedWorkloadsQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getTerminatedWorkloadsQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  filterSortRequest: zod.object({
-    workloadJobType: zod
-      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-      .optional()
-      .describe("워크로드 타입 필터"),
-    sort: zod
-      .enum(["WORKLOAD_NAME", "CREATED_AT", "TERMINATED_AT"])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-    isMine: zod
-      .boolean()
-      .describe("내 워크로드만 조회 (true: 본인 것만, false: 전체)"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getTerminatedWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getTerminatedWorkloadsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  workloadJobType: zod
+    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+    .optional()
+    .describe("워크로드 타입 필터"),
+  sort: zod
+    .enum(["WORKLOAD_NAME", "CREATED_AT", "TERMINATED_AT"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getTerminatedWorkloadsResponse = zod
@@ -1061,40 +1058,43 @@ export const getActiveWorkloadsParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getActiveWorkloadsQueryPageSearchRequestPageSizeMax = 100;
+export const getActiveWorkloadsQueryPageNoMin = 0;
+
+export const getActiveWorkloadsQueryPageSizeMax = 100;
 
 export const getActiveWorkloadsQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getActiveWorkloadsQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  filterSortRequest: zod.object({
-    workloadJobType: zod
-      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-      .optional()
-      .describe("워크로드 타입 필터"),
-    workloadStatus: zod
-      .enum([
-        "CREATING",
-        "PENDING",
-        "RUNNING",
-        "TERMINATING",
-        "TERMINATED",
-        "ERROR",
-      ])
-      .optional()
-      .describe("워크로드 상태 필터 (running, pending, error)"),
-    sort: zod.enum(["WORKLOAD_NAME", "AGE"]).describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-    isMine: zod
-      .boolean()
-      .describe("내 워크로드만 조회 (true: 본인 것만, false: 전체)"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getActiveWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getActiveWorkloadsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  workloadJobType: zod
+    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+    .optional()
+    .describe("워크로드 타입 필터"),
+  workloadStatus: zod
+    .enum([
+      "CREATING",
+      "PENDING",
+      "RUNNING",
+      "TERMINATING",
+      "TERMINATED",
+      "ERROR",
+    ])
+    .optional()
+    .describe("워크로드 상태 필터 (running, pending, error)"),
+  sort: zod
+    .enum(["WORKLOAD_NAME", "AGE"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getActiveWorkloadsResponse = zod

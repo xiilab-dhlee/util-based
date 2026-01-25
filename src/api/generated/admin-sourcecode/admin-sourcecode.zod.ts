@@ -220,6 +220,7 @@ export const adminGetSourceCodeListResponse = zod
           zod
             .object({
               sourceCodeId: zod.number().describe("소스코드 ID"),
+              entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
               sourceCodeName: zod.string().describe("소스코드 이름"),
               gitUrl: zod.string().describe("Git URL"),
               mountPath: zod.string().describe("마운트 경로"),
@@ -267,6 +268,7 @@ export const adminGetSourceCodeDetailResponse = zod
     data: zod
       .object({
         sourceCodeId: zod.number().describe("소스코드 ID"),
+        entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
         sourceCodeName: zod.string().describe("소스코드 이름"),
         gitUrl: zod.string().describe("Git URL"),
         isPublic: zod.boolean().describe("공개 여부"),

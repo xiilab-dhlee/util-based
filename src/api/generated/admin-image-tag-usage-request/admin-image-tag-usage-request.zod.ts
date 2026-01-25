@@ -129,40 +129,44 @@ export const approveUsageRequestResponse = zod
         
  * @summary 이미지 태그 사용 요청 목록 조회
  */
-export const getUsageRequestListQueryPageSearchRequestPageSizeMax = 100;
+export const getUsageRequestListQueryPageNoMin = 0;
+
+export const getUsageRequestListQueryPageSizeMax = 100;
 
 export const getUsageRequestListQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getUsageRequestListQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  filterRequest: zod.object({
-    imageType: zod
-      .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
-      .optional()
-      .describe("이미지 타입 (PUBLIC/PRIVATE, 미지정 시 전체)"),
-    approvalStatus: zod
-      .enum(["APPROVAL_WAITING", "APPROVED", "REJECTED"])
-      .optional()
-      .describe("승인 상태 필터"),
-    workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
-    sort: zod
-      .enum([
-        "IMAGE_NAME",
-        "WORKSPACE_NAME",
-        "IMAGE_TAG_NAME",
-        "SECURITY_SCAN_RESULT",
-        "CREATOR_NAME",
-        "REQUESTED_AT",
-      ])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getUsageRequestListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getUsageRequestListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  imageType: zod
+    .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+    .optional()
+    .describe("이미지 타입 (PUBLIC/PRIVATE, 미지정 시 전체)"),
+  approvalStatus: zod
+    .enum(["APPROVAL_WAITING", "APPROVED", "REJECTED"])
+    .optional()
+    .describe("승인 상태 필터"),
+  workspaceId: zod.number().optional().describe("워크스페이스 ID 필터"),
+  sort: zod
+    .enum([
+      "IMAGE_NAME",
+      "WORKSPACE_NAME",
+      "IMAGE_TAG_NAME",
+      "SECURITY_SCAN_RESULT",
+      "CREATOR_NAME",
+      "REQUESTED_AT",
+    ])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getUsageRequestListResponse = zod
@@ -243,34 +247,38 @@ export const getUsageRequestListResponse = zod
         
  * @summary 이미지 태그 사용 요청 승인 대기 목록 조회
  */
-export const getApprovalWaitingSummaryListQueryPageSearchRequestPageSizeMax = 100;
+export const getApprovalWaitingSummaryListQueryPageNoMin = 0;
+
+export const getApprovalWaitingSummaryListQueryPageSizeMax = 100;
 
 export const getApprovalWaitingSummaryListQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getApprovalWaitingSummaryListQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  filterRequest: zod.object({
-    imageType: zod
-      .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
-      .optional()
-      .describe("이미지 타입 (PUBLIC/PRIVATE, 미지정 시 전체)"),
-    sort: zod
-      .enum([
-        "IMAGE_NAME",
-        "IMAGE_TAG_NAME",
-        "SECURITY_SCAN_RESULT",
-        "IMAGE_TYPE",
-        "CREATOR_NAME",
-      ])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getApprovalWaitingSummaryListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getApprovalWaitingSummaryListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  imageType: zod
+    .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+    .optional()
+    .describe("이미지 타입 (PUBLIC/PRIVATE, 미지정 시 전체)"),
+  sort: zod
+    .enum([
+      "IMAGE_NAME",
+      "IMAGE_TAG_NAME",
+      "SECURITY_SCAN_RESULT",
+      "IMAGE_TYPE",
+      "CREATOR_NAME",
+    ])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getApprovalWaitingSummaryListResponse = zod

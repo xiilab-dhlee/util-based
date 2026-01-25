@@ -31,7 +31,7 @@ import * as zod from "zod";
 
 /**
  * 
-        볼륨 정보를 수정합니다.
+        볼륨 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
 
         **수정 가능 필드:**
         - volumeName: 볼륨 이름
@@ -83,7 +83,7 @@ export const adminUpdateVolumeResponse = zod
 
 /**
  * 
-        볼륨을 삭제합니다 (soft delete).
+        볼륨을 삭제합니다 (soft delete). 해당 볼륨의 모든 버전이 삭제됩니다.
 
         **볼륨 타입별 처리:**
         - ASTRAGO: DB만 soft delete
@@ -314,28 +314,32 @@ export const adminDeleteVolumesResponse = zod
         
  * @summary 전체 볼륨 목록 조회
  */
-export const adminGetVolumeListQueryPageSearchRequestPageSizeMax = 100;
+export const adminGetVolumeListQueryPageNoMin = 0;
+
+export const adminGetVolumeListQueryPageSizeMax = 100;
 
 export const adminGetVolumeListQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(adminGetVolumeListQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  filter: zod.object({
-    sort: zod
-      .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
-      .describe("정렬 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-    volumeType: zod
-      .enum(["ASTRAGO", "ON_PREMISE"])
-      .optional()
-      .describe("볼륨 타입 필터"),
-  }),
+  pageNo: zod
+    .number()
+    .min(adminGetVolumeListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(adminGetVolumeListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["VOLUME_NAME", "CREATED_AT", "FILE_SIZE"])
+    .optional()
+    .describe("정렬 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  volumeType: zod
+    .enum(["ASTRAGO", "ON_PREMISE"])
+    .optional()
+    .describe("볼륨 타입 필터"),
 });
 
 export const adminGetVolumeListResponse = zod
@@ -351,6 +355,7 @@ export const adminGetVolumeListResponse = zod
           zod
             .object({
               volumeId: zod.number().describe("볼륨 ID"),
+              entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
               volumeName: zod.string().describe("볼륨 이름"),
               creatorId: zod.string().describe("생성자 ID"),
               creatorName: zod.string().describe("생성자 이름"),
@@ -386,9 +391,7 @@ export const adminListFilesParams = zod.object({
 });
 
 export const adminListFilesQueryParams = zod.object({
-  request: zod.object({
-    path: zod.string().describe("조회할 경로 (기본값: /)"),
-  }),
+  path: zod.string().optional().describe("조회할 경로 (기본값: /)"),
 });
 
 export const adminListFilesResponse = zod
@@ -435,17 +438,15 @@ export const adminPreviewParams = zod.object({
   volumeId: zod.number().describe("볼륨 ID"),
 });
 
-export const adminPreviewQueryRequestPathMin = 0;
-export const adminPreviewQueryRequestPathMax = 1000;
+export const adminPreviewQueryPathMin = 0;
+export const adminPreviewQueryPathMax = 1000;
 
 export const adminPreviewQueryParams = zod.object({
-  request: zod.object({
-    path: zod
-      .string()
-      .min(adminPreviewQueryRequestPathMin)
-      .max(adminPreviewQueryRequestPathMax)
-      .describe("미리보기할 파일 경로"),
-  }),
+  path: zod
+    .string()
+    .min(adminPreviewQueryPathMin)
+    .max(adminPreviewQueryPathMax)
+    .describe("미리보기할 파일 경로"),
 });
 
 export const adminPreviewResponse = zod.string();
@@ -474,6 +475,7 @@ export const adminGetVolumeDetailResponse = zod
     data: zod
       .object({
         volumeId: zod.number().describe("볼륨 ID"),
+        entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
         volumeName: zod.string().describe("볼륨 이름"),
         volumeType: zod.enum(["ASTRAGO", "ON_PREMISE"]).describe("볼륨 타입"),
         serverIp: zod

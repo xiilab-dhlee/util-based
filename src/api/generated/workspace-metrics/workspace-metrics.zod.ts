@@ -31,49 +31,57 @@ import * as zod from "zod";
 
 /**
  * 
-            특정 워크로드의 Pod별, GPU별 메트릭 시계열 데이터를 조회합니다.
+            특정 워크로드의 여러 메트릭(GPU 사용률, GPU 메모리 사용률, CPU 사용률, 메모리 사용률)을
+            한 번에 병렬로 조회합니다. Pod별, GPU별 시계열 데이터를 반환합니다.
             분산학습 워크로드(TensorFlow, PyTorch)의 launcher/worker 구분을 지원합니다.
             워크스페이스 접근 권한이 필요합니다.
         
- * @summary 워크로드 상세 모니터링 조회
+ * @summary 워크로드 메트릭 배치 조회
  */
 export const getWorkloadResourceMetricsTimeseriesParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
   workloadResourceName: zod.string().describe("워크로드 리소스명"),
 });
 
-export const getWorkloadResourceMetricsTimeseriesQueryRequestStepRegExp =
+export const getWorkloadResourceMetricsTimeseriesQueryStepRegExp =
   /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
 
 export const getWorkloadResourceMetricsTimeseriesQueryParams = zod.object({
-  request: zod.object({
-    metricName: zod
-      .enum([
-        "GPU_UTILIZATION",
-        "GPU_MEM_UTILIZATION",
-        "CPU_UTILIZATION",
-        "MEM_UTILIZATION",
-      ])
-      .describe("메트릭 종류"),
-    startedAt: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe(
-        "조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일). 형식: yyyy-MM-ddTHH:mm:ssZ",
-      ),
-    endedAt: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe(
-        "조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간). 형식: yyyy-MM-ddTHH:mm:ssZ",
-      ),
-    step: zod
-      .string()
-      .regex(getWorkloadResourceMetricsTimeseriesQueryRequestStepRegExp)
-      .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
-  }),
+  metrics: zod
+    .array(
+      zod
+        .enum([
+          "GPU_REQUESTED_TOTAL_COUNT",
+          "CPU_REQUESTED_TOTAL_CORE",
+          "MEM_REQUESTED_TOTAL_BYTE",
+          "GPU_UTILIZATION",
+          "GPU_MEM_UTILIZATION",
+          "CPU_UTILIZATION",
+          "MEM_UTILIZATION",
+        ])
+        .describe("워크스페이스 리소스 메트릭 타입"),
+    )
+    .describe(
+      "조회할 워크로드 메트릭 종류 목록 (GPU_UTILIZATION, GPU_MEM_UTILIZATION, CPU_UTILIZATION, MEM_UTILIZATION)",
+    ),
+  startedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe(
+      "조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일). 형식: yyyy-MM-ddTHH:mm:ssZ",
+    ),
+  endedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe(
+      "조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간). 형식: yyyy-MM-ddTHH:mm:ssZ",
+    ),
+  step: zod
+    .string()
+    .regex(getWorkloadResourceMetricsTimeseriesQueryStepRegExp)
+    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
 });
 
 export const getWorkloadResourceMetricsTimeseriesResponse = zod
@@ -81,40 +89,215 @@ export const getWorkloadResourceMetricsTimeseriesResponse = zod
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
     data: zod
-      .array(
-        zod
+      .object({
+        gpuUtilization: zod
           .object({
-            dateTime: zod.string().datetime({}).describe("측정 시간 (UTC)"),
-            data: zod
+            success: zod.boolean().describe("조회 성공 여부"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+            values: zod
               .array(
                 zod
                   .object({
-                    podName: zod.string().describe("Pod 이름"),
-                    podRole: zod
+                    dateTime: zod
                       .string()
-                      .optional()
-                      .describe(
-                        "Pod 역할 (launcher, worker, chief, master, ps 등) - 추출 불가 시 null",
-                      ),
-                    gpuIndex: zod
-                      .string()
-                      .optional()
-                      .describe("GPU 인덱스 (GPU 메트릭만, CPU/MEM은 null)"),
-                    modelName: zod
-                      .string()
-                      .optional()
-                      .describe("GPU 모델명 (GPU 메트릭만, CPU/MEM은 null)"),
-                    value: zod.string().describe("메트릭 값"),
+                      .datetime({})
+                      .describe("측정 시간 (UTC)"),
+                    data: zod
+                      .array(
+                        zod
+                          .object({
+                            podName: zod.string().describe("Pod 이름"),
+                            podRole: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "Pod 역할 (launcher, worker, chief, master, ps 등) - 추출 불가 시 null",
+                              ),
+                            gpuIndex: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 인덱스 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            modelName: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 모델명 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("워크로드 메트릭 데이터"),
+                      )
+                      .describe("해당 시간대의 모든 Pod/GPU 메트릭 데이터"),
                   })
                   .strict()
-                  .describe("워크로드 메트릭 데이터"),
+                  .describe("워크로드 메트릭 시계열 값"),
               )
-              .describe("해당 시간대의 모든 Pod/GPU 메트릭 데이터"),
+              .optional()
+              .describe("메트릭 시계열 데이터 (성공 시)"),
           })
           .strict()
-          .describe("워크로드 메트릭 시계열 응답 (시간별 그룹화)"),
-      )
-      .optional(),
+          .optional()
+          .describe("워크로드 메트릭 개별 결과"),
+        gpuMemUtilization: zod
+          .object({
+            success: zod.boolean().describe("조회 성공 여부"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+            values: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .datetime({})
+                      .describe("측정 시간 (UTC)"),
+                    data: zod
+                      .array(
+                        zod
+                          .object({
+                            podName: zod.string().describe("Pod 이름"),
+                            podRole: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "Pod 역할 (launcher, worker, chief, master, ps 등) - 추출 불가 시 null",
+                              ),
+                            gpuIndex: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 인덱스 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            modelName: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 모델명 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("워크로드 메트릭 데이터"),
+                      )
+                      .describe("해당 시간대의 모든 Pod/GPU 메트릭 데이터"),
+                  })
+                  .strict()
+                  .describe("워크로드 메트릭 시계열 값"),
+              )
+              .optional()
+              .describe("메트릭 시계열 데이터 (성공 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("워크로드 메트릭 개별 결과"),
+        cpuUtilization: zod
+          .object({
+            success: zod.boolean().describe("조회 성공 여부"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+            values: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .datetime({})
+                      .describe("측정 시간 (UTC)"),
+                    data: zod
+                      .array(
+                        zod
+                          .object({
+                            podName: zod.string().describe("Pod 이름"),
+                            podRole: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "Pod 역할 (launcher, worker, chief, master, ps 등) - 추출 불가 시 null",
+                              ),
+                            gpuIndex: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 인덱스 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            modelName: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 모델명 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("워크로드 메트릭 데이터"),
+                      )
+                      .describe("해당 시간대의 모든 Pod/GPU 메트릭 데이터"),
+                  })
+                  .strict()
+                  .describe("워크로드 메트릭 시계열 값"),
+              )
+              .optional()
+              .describe("메트릭 시계열 데이터 (성공 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("워크로드 메트릭 개별 결과"),
+        memUtilization: zod
+          .object({
+            success: zod.boolean().describe("조회 성공 여부"),
+            error: zod.string().optional().describe("에러 타입 (실패 시)"),
+            values: zod
+              .array(
+                zod
+                  .object({
+                    dateTime: zod
+                      .string()
+                      .datetime({})
+                      .describe("측정 시간 (UTC)"),
+                    data: zod
+                      .array(
+                        zod
+                          .object({
+                            podName: zod.string().describe("Pod 이름"),
+                            podRole: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "Pod 역할 (launcher, worker, chief, master, ps 등) - 추출 불가 시 null",
+                              ),
+                            gpuIndex: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 인덱스 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            modelName: zod
+                              .string()
+                              .optional()
+                              .describe(
+                                "GPU 모델명 (GPU 메트릭만, CPU/MEM은 null)",
+                              ),
+                            value: zod.string().describe("메트릭 값"),
+                          })
+                          .strict()
+                          .describe("워크로드 메트릭 데이터"),
+                      )
+                      .describe("해당 시간대의 모든 Pod/GPU 메트릭 데이터"),
+                  })
+                  .strict()
+                  .describe("워크로드 메트릭 시계열 값"),
+              )
+              .optional()
+              .describe("메트릭 시계열 데이터 (성공 시)"),
+          })
+          .strict()
+          .optional()
+          .describe("워크로드 메트릭 개별 결과"),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 메트릭 배치 조회 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -131,35 +314,38 @@ export const getResourceMetricsTimeseriesParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getResourceMetricsTimeseriesQueryRequestStepRegExp =
+export const getResourceMetricsTimeseriesQueryStepRegExp =
   /^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$/;
 
 export const getResourceMetricsTimeseriesQueryParams = zod.object({
-  request: zod.object({
-    metricsName: zod
-      .enum([
-        "GPU_REQUESTED_TOTAL_COUNT",
-        "CPU_REQUESTED_TOTAL_CORE",
-        "MEM_REQUESTED_TOTAL_BYTE",
-      ])
-      .describe("메트릭 종류"),
-    startDate: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe(
-        "조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일)",
-      ),
-    endDate: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe("조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간)"),
-    step: zod
-      .string()
-      .regex(getResourceMetricsTimeseriesQueryRequestStepRegExp)
-      .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
-  }),
+  metricsName: zod
+    .enum([
+      "GPU_REQUESTED_TOTAL_COUNT",
+      "CPU_REQUESTED_TOTAL_CORE",
+      "MEM_REQUESTED_TOTAL_BYTE",
+      "GPU_UTILIZATION",
+      "GPU_MEM_UTILIZATION",
+      "CPU_UTILIZATION",
+      "MEM_UTILIZATION",
+      "GPU_REQUESTED_TOTAL_COUNT",
+      "CPU_REQUESTED_TOTAL_CORE",
+      "MEM_REQUESTED_TOTAL_BYTE",
+    ])
+    .describe("메트릭 종류"),
+  startDate: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일)"),
+  endDate: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 종료 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간)"),
+  step: zod
+    .string()
+    .regex(getResourceMetricsTimeseriesQueryStepRegExp)
+    .describe("Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)"),
 });
 
 export const getResourceMetricsTimeseriesResponse = zod

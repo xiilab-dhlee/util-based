@@ -461,7 +461,7 @@ export const useApplyMigConfiguration = <TError = unknown, TContext = unknown>(
  * @summary 클러스터 노드 목록 조회
  */
 export const getClusterNodes = (
-  params: GetClusterNodesParams,
+  params?: GetClusterNodesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseClusterNodeListResponse>({
@@ -480,7 +480,7 @@ export const getGetClusterNodesQueryOptions = <
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params: GetClusterNodesParams,
+  params?: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -515,7 +515,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params: GetClusterNodesParams,
+  params: undefined | GetClusterNodesParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -541,7 +541,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params: GetClusterNodesParams,
+  params?: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -567,7 +567,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params: GetClusterNodesParams,
+  params?: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -589,7 +589,7 @@ export function useGetClusterNodes<
   TData = Awaited<ReturnType<typeof getClusterNodes>>,
   TError = unknown,
 >(
-  params: GetClusterNodesParams,
+  params?: GetClusterNodesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

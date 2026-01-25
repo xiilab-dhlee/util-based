@@ -307,7 +307,7 @@ export const useSetDefaultWorkspace = <TError = unknown, TContext = unknown>(
  * @summary 워크스페이스 목록 조회
  */
 export const getAllWorkspaces = (
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseWorkspaceResponse>({
@@ -328,7 +328,7 @@ export const getGetAllWorkspacesQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -364,7 +364,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params: undefined | GetAllWorkspacesParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -390,7 +390,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -416,7 +416,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -438,7 +438,7 @@ export function useGetAllWorkspaces<
   TData = Awaited<ReturnType<typeof getAllWorkspaces>>,
   TError = unknown,
 >(
-  params: GetAllWorkspacesParams,
+  params?: GetAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -553,7 +553,7 @@ export const useCreateWorkspace = <TError = unknown, TContext = unknown>(
  */
 export const getResourceRequests = (
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseResourceRequestListResponse>({
@@ -579,7 +579,7 @@ export const getGetResourceRequestsQueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -622,7 +622,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params: undefined | GetResourceRequestsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -649,7 +649,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -676,7 +676,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -699,7 +699,7 @@ export function useGetResourceRequests<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetResourceRequestsParams,
+  params?: GetResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

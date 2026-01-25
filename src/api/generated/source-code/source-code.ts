@@ -58,7 +58,7 @@ import type {
 
 /**
  * 
-        소스코드 정보를 수정합니다.
+        소스코드 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
 
         **수정 가능 필드:**
         - sourceCodeName: 소스코드 이름
@@ -156,7 +156,7 @@ export const useUpdateSourceCode = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-        소스코드를 삭제합니다 (soft delete).
+        소스코드를 삭제합니다 (soft delete). 해당 소스코드의 모든 버전이 삭제됩니다.
 
         **권한:** SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
         
@@ -246,7 +246,7 @@ export const useDeleteSourceCode = <TError = unknown, TContext = unknown>(
  * @summary 소스코드 목록 조회
  */
 export const getSourceCodeList = (
-  params: GetSourceCodeListParams,
+  params?: GetSourceCodeListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseSourceCodeListResponse>({
@@ -267,7 +267,7 @@ export const getGetSourceCodeListQueryOptions = <
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params: GetSourceCodeListParams,
+  params?: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -303,7 +303,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params: GetSourceCodeListParams,
+  params: undefined | GetSourceCodeListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -329,7 +329,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params: GetSourceCodeListParams,
+  params?: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -355,7 +355,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params: GetSourceCodeListParams,
+  params?: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -377,7 +377,7 @@ export function useGetSourceCodeList<
   TData = Awaited<ReturnType<typeof getSourceCodeList>>,
   TError = unknown,
 >(
-  params: GetSourceCodeListParams,
+  params?: GetSourceCodeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

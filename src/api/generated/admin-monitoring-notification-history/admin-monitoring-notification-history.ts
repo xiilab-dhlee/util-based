@@ -67,7 +67,7 @@ import type {
  * @summary 모니터링 알림 히스토리 목록 조회
  */
 export const getAllMonitoringNotificationHistories = (
-  params: GetAllMonitoringNotificationHistoriesParams,
+  params?: GetAllMonitoringNotificationHistoriesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseMonitoringNotificationHistoryListResponse>(
@@ -93,7 +93,7 @@ export const getGetAllMonitoringNotificationHistoriesQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationHistories>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationHistoriesParams,
+  params?: GetAllMonitoringNotificationHistoriesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -130,7 +130,7 @@ export function useGetAllMonitoringNotificationHistories<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationHistories>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationHistoriesParams,
+  params: undefined | GetAllMonitoringNotificationHistoriesParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -156,7 +156,7 @@ export function useGetAllMonitoringNotificationHistories<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationHistories>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationHistoriesParams,
+  params?: GetAllMonitoringNotificationHistoriesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -182,7 +182,7 @@ export function useGetAllMonitoringNotificationHistories<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationHistories>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationHistoriesParams,
+  params?: GetAllMonitoringNotificationHistoriesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -204,7 +204,7 @@ export function useGetAllMonitoringNotificationHistories<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationHistories>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationHistoriesParams,
+  params?: GetAllMonitoringNotificationHistoriesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

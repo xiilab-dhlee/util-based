@@ -76,65 +76,66 @@ export const getAdminNotificationsParams = zod.object({
   accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
 });
 
-export const getAdminNotificationsQueryPageRequestPageSizeMax = 100;
+export const getAdminNotificationsQueryPageNoMin = 0;
+
+export const getAdminNotificationsQueryPageSizeMax = 100;
 
 export const getAdminNotificationsQueryParams = zod.object({
-  pageRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getAdminNotificationsQueryPageRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  filterRequest: zod.object({
-    hasRead: zod
-      .boolean()
-      .optional()
-      .describe(
-        "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
-      ),
-    notificationType: zod
-      .array(
-        zod
-          .enum([
-            "LICENSE",
-            "ACCOUNT",
-            "VULNERABILITY",
-            "NODE",
-            "WORKSPACE",
-            "WORKLOAD",
-          ])
-          .describe(
-            "관리자 알림 유형 필터. LICENSE: 라이선스, ACCOUNT: 회원, VULNERABILITY: 보안, NODE: 노드, WORKSPACE: 워크스페이스, WORKLOAD: 워크로드",
-          ),
-      )
-      .optional()
-      .describe(
-        "알림 유형 필터 (다중 선택 가능). null 또는 빈 리스트: 전체 조회",
-      ),
-    startDate: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe(
-        "조회 시작 일시 (ISO 8601 UTC 형식). 이 시점 이후에 생성된 알림만 조회",
-      ),
-    endDate: zod
-      .string()
-      .datetime({})
-      .optional()
-      .describe(
-        "조회 종료 일시 (ISO 8601 UTC 형식). 이 시점 이전에 생성된 알림만 조회",
-      ),
-  }),
-  sortRequest: zod.object({
-    order: zod
-      .enum(["ASC", "DESC"])
-      .describe("정렬 순서: ASC(오름차순), DESC(내림차순). 미입력 시 DESC"),
-    sort: zod.enum(["CREATED_AT"]),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAdminNotificationsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAdminNotificationsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  hasRead: zod
+    .boolean()
+    .optional()
+    .describe(
+      "읽음 여부 필터. true: 읽은 알림만, false: 읽지 않은 알림만, null: 전체",
+    ),
+  notificationType: zod
+    .array(
+      zod
+        .enum([
+          "LICENSE",
+          "ACCOUNT",
+          "VULNERABILITY",
+          "NODE",
+          "WORKSPACE",
+          "WORKLOAD",
+        ])
+        .describe(
+          "관리자 알림 유형 필터. LICENSE: 라이선스, ACCOUNT: 회원, VULNERABILITY: 보안, NODE: 노드, WORKSPACE: 워크스페이스, WORKLOAD: 워크로드",
+        ),
+    )
+    .optional()
+    .describe(
+      "알림 유형 필터 (다중 선택 가능). null 또는 빈 리스트: 전체 조회",
+    ),
+  startDate: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe(
+      "조회 시작 일시 (ISO 8601 UTC 형식). 이 시점 이후에 생성된 알림만 조회",
+    ),
+  endDate: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe(
+      "조회 종료 일시 (ISO 8601 UTC 형식). 이 시점 이전에 생성된 알림만 조회",
+    ),
+  order: zod
+    .enum(["ASC", "DESC"])
+    .optional()
+    .describe("정렬 순서: ASC(오름차순), DESC(내림차순). 미입력 시 DESC"),
 });
 
 export const getAdminNotificationsResponse = zod

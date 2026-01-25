@@ -104,6 +104,7 @@ export const getGetVolumeListResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       volumeId: faker.number.int({ min: undefined, max: undefined }),
+      entityId: faker.number.int({ min: undefined, max: undefined }),
       volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -129,6 +130,7 @@ export const getGetVolumeDetailResponseMock = (
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     volumeId: faker.number.int({ min: undefined, max: undefined }),
+    entityId: faker.number.int({ min: undefined, max: undefined }),
     volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     volumeType: faker.helpers.arrayElement(["ASTRAGO", "ON_PREMISE"] as const),
     serverIp: faker.string.alpha({ length: { min: 10, max: 20 } }),

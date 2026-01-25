@@ -52,7 +52,7 @@ import type {
  * @summary 전체 크리덴셜 목록 조회 (Admin)
  */
 export const getAllCredentials = (
-  params: GetAllCredentialsParams,
+  params?: GetAllCredentialsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminCredentialListItemResponse>(
@@ -78,7 +78,7 @@ export const getGetAllCredentialsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllCredentials>>,
   TError = unknown,
 >(
-  params: GetAllCredentialsParams,
+  params?: GetAllCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -114,7 +114,7 @@ export function useGetAllCredentials<
   TData = Awaited<ReturnType<typeof getAllCredentials>>,
   TError = unknown,
 >(
-  params: GetAllCredentialsParams,
+  params: undefined | GetAllCredentialsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -140,7 +140,7 @@ export function useGetAllCredentials<
   TData = Awaited<ReturnType<typeof getAllCredentials>>,
   TError = unknown,
 >(
-  params: GetAllCredentialsParams,
+  params?: GetAllCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -166,7 +166,7 @@ export function useGetAllCredentials<
   TData = Awaited<ReturnType<typeof getAllCredentials>>,
   TError = unknown,
 >(
-  params: GetAllCredentialsParams,
+  params?: GetAllCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -188,7 +188,7 @@ export function useGetAllCredentials<
   TData = Awaited<ReturnType<typeof getAllCredentials>>,
   TError = unknown,
 >(
-  params: GetAllCredentialsParams,
+  params?: GetAllCredentialsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

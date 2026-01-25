@@ -33,20 +33,25 @@ import * as zod from "zod";
  * 등록된 스토리지 목록을 페이징하여 조회합니다.
  * @summary 스토리지 목록 조회
  */
-export const getStorages1QueryPageableRequestPageSizeMax = 100;
+export const getStoragesQueryPageNoMin = 0;
 
-export const getStorages1QueryParams = zod.object({
-  pageableRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getStorages1QueryPageableRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
+export const getStoragesQueryPageSizeMax = 100;
+
+export const getStoragesQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getStoragesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getStoragesQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
 });
 
-export const getStorages1Response = zod
+export const getStoragesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),

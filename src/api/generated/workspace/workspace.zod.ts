@@ -118,21 +118,20 @@ export const setDefaultWorkspaceResponse = zod
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. default 워크스페이스, pin된 워크스페이스, 기타 워크스페이스명 가나다순으로 정렬됩니다.
  * @summary 워크스페이스 목록 조회
  */
-export const getAllWorkspacesQueryWorkspaceListRequestPageNoMin = 0;
+export const getAllWorkspacesQueryPageNoMin = 0;
 
 export const getAllWorkspacesQueryParams = zod.object({
-  workspaceListRequest: zod.object({
-    pageNo: zod
-      .number()
-      .min(getAllWorkspacesQueryWorkspaceListRequestPageNoMin)
-      .describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod.number().min(1).describe("페이지 크기"),
-    hasMyWorkspace: zod
-      .boolean()
-      .optional()
-      .describe("내 워크스페이스만 조회 여부"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getAllWorkspacesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod.number().min(1).optional().describe("페이지 크기"),
+  hasMyWorkspace: zod
+    .boolean()
+    .optional()
+    .describe("내 워크스페이스만 조회 여부"),
+  keyword: zod.string().optional().describe("검색 키워드"),
 });
 
 export const getAllWorkspacesResponse = zod
@@ -265,23 +264,27 @@ export const getResourceRequestsParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getResourceRequestsQueryPageableRequestPageSizeMax = 100;
+export const getResourceRequestsQueryPageNoMin = 0;
+
+export const getResourceRequestsQueryPageSizeMax = 100;
 
 export const getResourceRequestsQueryParams = zod.object({
-  pageableRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getResourceRequestsQueryPageableRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
-  sortRequest: zod.object({
-    sort: zod
-      .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
-      .describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getResourceRequestsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getResourceRequestsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  sort: zod
+    .enum(["CREATOR_NAME", "REQUESTED_AT", "APPROVAL_STATUS"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getResourceRequestsResponse = zod
@@ -327,7 +330,7 @@ export const getResourceRequestsResponse = zod
                             })
                             .strict()
                             .optional()
-                            .describe("일반 GPU 응답"),
+                            .describe("일반 GPU 설정"),
                           mig: zod
                             .array(
                               zod
@@ -340,17 +343,19 @@ export const getResourceRequestsResponse = zod
                                     .describe("요청 수량"),
                                 })
                                 .strict()
-                                .describe("MIG 프로파일 응답"),
+                                .describe("MIG GPU 프로파일 설정"),
                             )
                             .optional()
                             .describe("MIG 프로파일 목록"),
                           mps: zod
                             .object({
-                              requestCount: zod.number().describe("요청 수량"),
+                              requestCount: zod
+                                .number()
+                                .describe("요청 MPS 수량"),
                             })
                             .strict()
                             .optional()
-                            .describe("MPS 프로파일 응답"),
+                            .describe("MPS GPU 설정"),
                         })
                         .strict()
                         .describe("리소스 요청 응답용 GPU 상세"),
@@ -363,15 +368,15 @@ export const getResourceRequestsResponse = zod
                       requestCore: zod.number().describe("요청 CPU 코어 수"),
                     })
                     .strict()
-                    .describe("CPU 응답"),
+                    .describe("CPU 정보"),
                   memory: zod
                     .object({
                       requestByte: zod
                         .number()
-                        .describe("요청 메모리 바이트 수"),
+                        .describe("요청 메모리 (바이트)"),
                     })
                     .strict()
-                    .describe("메모리 응답"),
+                    .describe("메모리 정보"),
                 })
                 .strict()
                 .describe("리소스 요청 응답용 리소스"),

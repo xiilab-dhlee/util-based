@@ -388,7 +388,7 @@ export const useUpdateMonitoringNotificationSetEnabled = <
  * @summary 모니터링 알림 설정 목록 조회
  */
 export const getAllMonitoringNotificationSets = (
-  params: GetAllMonitoringNotificationSetsParams,
+  params?: GetAllMonitoringNotificationSetsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseMonitoringNotificationSetListResponse>(
@@ -414,7 +414,7 @@ export const getGetAllMonitoringNotificationSetsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationSets>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationSetsParams,
+  params?: GetAllMonitoringNotificationSetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -451,7 +451,7 @@ export function useGetAllMonitoringNotificationSets<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationSets>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationSetsParams,
+  params: undefined | GetAllMonitoringNotificationSetsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -477,7 +477,7 @@ export function useGetAllMonitoringNotificationSets<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationSets>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationSetsParams,
+  params?: GetAllMonitoringNotificationSetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -503,7 +503,7 @@ export function useGetAllMonitoringNotificationSets<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationSets>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationSetsParams,
+  params?: GetAllMonitoringNotificationSetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -525,7 +525,7 @@ export function useGetAllMonitoringNotificationSets<
   TData = Awaited<ReturnType<typeof getAllMonitoringNotificationSets>>,
   TError = unknown,
 >(
-  params: GetAllMonitoringNotificationSetsParams,
+  params?: GetAllMonitoringNotificationSetsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

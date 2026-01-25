@@ -202,21 +202,51 @@ export const getAllPoliciesResponse = zod
   })
   .strict();
 
-/**
- * 자원 회수 스캔 히스토리 목록을 페이지네이션으로 조회합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
- * @summary 자원 회수 스캔 히스토리 목록 조회
- */
-export const getScanHistoryListQueryPageRequestPageSizeMax = 100;
+export const getScanHistoryListQueryPageNoMin = 0;
+
+export const getScanHistoryListQueryPageSizeMax = 100;
 
 export const getScanHistoryListQueryParams = zod.object({
-  pageRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getScanHistoryListQueryPageRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
+  startedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
+  endedAt: zod
+    .string()
+    .datetime({})
+    .optional()
+    .describe("조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)"),
+  workloadJobType: zod
+    .enum([
+      "INTERACTIVE",
+      "BATCH",
+      "DISTRIBUTED",
+      "INTERACTIVE",
+      "BATCH",
+      "DISTRIBUTED",
+    ])
+    .optional()
+    .describe("워크로드 잡 타입 필터 (INTERACTIVE, BATCH, DISTRIBUTED)"),
+  sort: zod
+    .enum(["CREATED_AT", "created_at"])
+    .optional()
+    .describe("정렬 필드. created_at: 스캔 일시"),
+  order: zod
+    .enum(["ASC", "DESC", "asc", "desc"])
+    .optional()
+    .describe("정렬 순서. asc: 오름차순, desc: 내림차순"),
+  pageNo: zod
+    .number()
+    .min(getScanHistoryListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getScanHistoryListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
 });
 
 export const getScanHistoryListResponse = zod
@@ -232,6 +262,10 @@ export const getScanHistoryListResponse = zod
           zod
             .object({
               scanHistoryId: zod.number().describe("스캔 히스토리 ID"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .optional()
+                .describe("워크로드 잡 타입"),
               reclaimWarningWorkloadCount: zod
                 .number()
                 .describe("회수 경고 워크로드 수"),
@@ -257,6 +291,41 @@ export const getScanHistoryListResponse = zod
   })
   .strict();
 
+export const getScanHistoryDetailParams = zod.object({
+  scanHistoryId: zod.number().describe("스캔 히스토리 ID"),
+});
+
+export const getScanHistoryDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        scanHistoryId: zod.number().describe("스캔 히스토리 ID"),
+        workloadJobType: zod
+          .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+          .optional()
+          .describe("워크로드 잡 타입"),
+        reclaimWarningWorkloadCount: zod
+          .number()
+          .describe("회수 경고 워크로드 수"),
+        reclaimScanWorkloadCount: zod
+          .number()
+          .describe("검사 대상 워크로드 수"),
+        reclaimedWorkloadCount: zod.number().describe("회수된 워크로드 수"),
+        reclaimedGpuCount: zod.number().describe("회수된 GPU 수"),
+        reclaimedCpuCore: zod.number().describe("회수된 CPU 코어 수"),
+        reclaimedMemoryByte: zod.number().describe("회수된 메모리(byte)"),
+        createdAt: zod.string().datetime({}).describe("스캔 실행 일시"),
+      })
+      .strict()
+      .optional()
+      .describe("자원 회수 스캔 히스토리 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
 /**
  * 특정 스캔 히스토리에 대한 워크로드별 스캔 결과 목록을 페이지네이션으로 조회합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 자원 회수 스캔 결과 목록 조회
@@ -265,17 +334,38 @@ export const getScanResultListParams = zod.object({
   scanHistoryId: zod.number().describe("스캔 히스토리 ID"),
 });
 
-export const getScanResultListQueryPageRequestPageSizeMax = 100;
+export const getScanResultListQueryPageNoMin = 0;
+
+export const getScanResultListQueryPageSizeMax = 100;
 
 export const getScanResultListQueryParams = zod.object({
-  pageRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getScanResultListQueryPageRequestPageSizeMax)
-      .describe("페이지 크기"),
-  }),
+  reclaimStatus: zod
+    .enum(["RECLAIMED", "WARNING", "NORMAL", "RECLAIMED", "WARNING", "NORMAL"])
+    .optional()
+    .describe(
+      "회수 상태 필터 (선택). RECLAIMED: 회수됨, WARNING: 경고, NORMAL: 정상. null: 전체",
+    ),
+  sort: zod
+    .enum(["WORKLOAD_NAME", "CREATED_AT", "workload_name", "created_at"])
+    .optional()
+    .describe(
+      "정렬 필드. workload_name: 워크로드명, created_at: 워크로드 생성일시",
+    ),
+  order: zod
+    .enum(["ASC", "DESC", "asc", "desc"])
+    .optional()
+    .describe("정렬 순서. asc: 오름차순, desc: 내림차순"),
+  pageNo: zod
+    .number()
+    .min(getScanResultListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getScanResultListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
 });
 
 export const getScanResultListResponse = zod
@@ -290,13 +380,28 @@ export const getScanResultListResponse = zod
         content: zod.array(
           zod
             .object({
-              scanResultId: zod.number().describe("스캔 결과 ID"),
-              workloadId: zod.number().describe("워크로드 ID"),
-              scanHistoryId: zod.number().describe("스캔 히스토리 ID"),
+              workloadName: zod.string().describe("워크로드 이름"),
+              workspaceName: zod.string().describe("워크스페이스 이름"),
+              reclaimStatus: zod
+                .enum(["RECLAIMED", "WARNING", "NORMAL"])
+                .describe("리소스 회수 상태"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .describe("워크로드 잡 타입"),
+              gpu: zod.number().describe("GPU 요청 수량"),
+              cpu: zod.number().describe("CPU 요청 코어 수"),
+              memory: zod.number().describe("메모리 요청 바이트"),
               createdAt: zod
                 .string()
                 .datetime({})
                 .describe("스캔 결과 생성 일시"),
+              creatorId: zod.string().describe("생성자 ID"),
+              creatorName: zod.string().describe("생성자 이름"),
+              workerCount: zod
+                .number()
+                .describe(
+                  "워커(POD) 개수 - DISTRIBUTED 워크로드의 경우 numNodes 값, 그 외는 1",
+                ),
             })
             .strict()
             .describe("자원 회수 스캔 결과 응답"),
@@ -304,6 +409,52 @@ export const getScanResultListResponse = zod
       })
       .strict()
       .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            특정 스캔 히스토리 실행 시 사용된 자원 회수 정책을 조회합니다.
+            스캔 히스토리에 저장된 policyId를 통해 정책 정보를 반환합니다.
+
+            **응답 규칙:**
+            - 스캔 히스토리가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
+            - 레거시 데이터(policyId가 null)인 경우: 200 OK + null 반환
+
+            ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
+ * @summary 스캔 히스토리에 사용된 자원 회수 정책 조회
+ */
+export const getScanHistoryPolicyParams = zod.object({
+  scanHistoryId: zod.number().describe("스캔 히스토리 ID"),
+});
+
+export const getScanHistoryPolicyResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        workloadJobType: zod
+          .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+          .describe("워크로드 잡 타입"),
+        operatingHour: zod.number().describe("회수 기준 시간(시간)"),
+        metrics: zod
+          .object({
+            gpu: zod.number().describe("GPU 사용률 임계값(%)"),
+            cpu: zod.number().describe("CPU 사용률 임계값(%)"),
+            mem: zod.number().describe("메모리 사용률 임계값(%)"),
+          })
+          .strict()
+          .describe("메트릭 임계값"),
+        reclaimOperator: zod.enum(["AND", "OR"]).describe("회수 조건 (AND/OR)"),
+        reclaimWarningCount: zod.number().describe("회수 전 경고 횟수"),
+      })
+      .strict()
+      .optional()
+      .describe("자원 회수 정책 스냅샷"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

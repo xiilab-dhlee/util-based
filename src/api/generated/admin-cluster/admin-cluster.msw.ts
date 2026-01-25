@@ -541,23 +541,18 @@ export const getGetClusterResourceSummaryResponseMock = (
     gpu: {
       detail: {
         normal: {
-          clusterCapacityCount: faker.number.int({
-            min: undefined,
-            max: undefined,
-          }),
-          requestedCount: faker.number.int({ min: undefined, max: undefined }),
-          usedCount: faker.number.int({ min: undefined, max: undefined }),
-        },
-        mig: {
-          profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
           requestCount: faker.number.int({ min: undefined, max: undefined }),
         },
-        mps: Array.from(
+        mig: Array.from(
           { length: faker.number.int({ min: 1, max: 10 }) },
           (_, i) => i + 1,
         ).map(() => ({
+          profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
           requestCount: faker.number.int({ min: undefined, max: undefined }),
         })),
+        mps: {
+          requestCount: faker.number.int({ min: undefined, max: undefined }),
+        },
       },
     },
     cpu: {

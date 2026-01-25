@@ -1563,7 +1563,7 @@ export function useStreamWorkloadLogs<
 export const workloadListFiles = (
   workspaceId: number,
   workloadResourceName: string,
-  params: WorkloadListFilesParams,
+  params?: WorkloadListFilesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseWorkloadFileListResponse>({
@@ -1591,7 +1591,7 @@ export const getWorkloadListFilesQueryOptions = <
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params: WorkloadListFilesParams,
+  params?: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1636,7 +1636,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params: WorkloadListFilesParams,
+  params: undefined | WorkloadListFilesParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1664,7 +1664,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params: WorkloadListFilesParams,
+  params?: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1692,7 +1692,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params: WorkloadListFilesParams,
+  params?: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1716,7 +1716,7 @@ export function useWorkloadListFiles<
 >(
   workspaceId: number,
   workloadResourceName: string,
-  params: WorkloadListFilesParams,
+  params?: WorkloadListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2170,7 +2170,7 @@ export function useGetDistributedPods<
  */
 export const getTerminatedWorkloads = (
   workspaceId: number,
-  params: GetTerminatedWorkloadsParams,
+  params?: GetTerminatedWorkloadsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseTerminatedWorkloadListResponse>({
@@ -2196,7 +2196,7 @@ export const getGetTerminatedWorkloadsQueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetTerminatedWorkloadsParams,
+  params?: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2239,7 +2239,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetTerminatedWorkloadsParams,
+  params: undefined | GetTerminatedWorkloadsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -2266,7 +2266,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetTerminatedWorkloadsParams,
+  params?: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2293,7 +2293,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetTerminatedWorkloadsParams,
+  params?: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2316,7 +2316,7 @@ export function useGetTerminatedWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetTerminatedWorkloadsParams,
+  params?: GetTerminatedWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2367,7 +2367,7 @@ export function useGetTerminatedWorkloads<
  */
 export const getActiveWorkloads = (
   workspaceId: number,
-  params: GetActiveWorkloadsParams,
+  params?: GetActiveWorkloadsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseActiveWorkloadListResponse>({
@@ -2393,7 +2393,7 @@ export const getGetActiveWorkloadsQueryOptions = <
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetActiveWorkloadsParams,
+  params?: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2436,7 +2436,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetActiveWorkloadsParams,
+  params: undefined | GetActiveWorkloadsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -2463,7 +2463,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetActiveWorkloadsParams,
+  params?: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2490,7 +2490,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetActiveWorkloadsParams,
+  params?: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -2513,7 +2513,7 @@ export function useGetActiveWorkloads<
   TError = unknown,
 >(
   workspaceId: number,
-  params: GetActiveWorkloadsParams,
+  params?: GetActiveWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

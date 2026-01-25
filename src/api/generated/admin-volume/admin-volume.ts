@@ -66,7 +66,7 @@ import type {
 
 /**
  * 
-        볼륨 정보를 수정합니다.
+        볼륨 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
 
         **수정 가능 필드:**
         - volumeName: 볼륨 이름
@@ -157,7 +157,7 @@ export const useAdminUpdateVolume = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-        볼륨을 삭제합니다 (soft delete).
+        볼륨을 삭제합니다 (soft delete). 해당 볼륨의 모든 버전이 삭제됩니다.
 
         **볼륨 타입별 처리:**
         - ASTRAGO: DB만 soft delete
@@ -787,7 +787,7 @@ export const useAdminDeleteVolumes = <TError = unknown, TContext = unknown>(
  * @summary 전체 볼륨 목록 조회
  */
 export const adminGetVolumeList = (
-  params: AdminGetVolumeListParams,
+  params?: AdminGetVolumeListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseVolumeListResponse>({
@@ -808,7 +808,7 @@ export const getAdminGetVolumeListQueryOptions = <
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params: AdminGetVolumeListParams,
+  params?: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -844,7 +844,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params: AdminGetVolumeListParams,
+  params: undefined | AdminGetVolumeListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -870,7 +870,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params: AdminGetVolumeListParams,
+  params?: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -896,7 +896,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params: AdminGetVolumeListParams,
+  params?: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -918,7 +918,7 @@ export function useAdminGetVolumeList<
   TData = Awaited<ReturnType<typeof adminGetVolumeList>>,
   TError = unknown,
 >(
-  params: AdminGetVolumeListParams,
+  params?: AdminGetVolumeListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -954,7 +954,7 @@ export function useAdminGetVolumeList<
  */
 export const adminListFiles = (
   volumeId: number,
-  params: AdminListFilesParams,
+  params?: AdminListFilesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseVolumeFileListResponse>({
@@ -980,7 +980,7 @@ export const getAdminListFilesQueryOptions = <
   TError = unknown,
 >(
   volumeId: number,
-  params: AdminListFilesParams,
+  params?: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1018,7 +1018,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params: AdminListFilesParams,
+  params: undefined | AdminListFilesParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1041,7 +1041,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params: AdminListFilesParams,
+  params?: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1064,7 +1064,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params: AdminListFilesParams,
+  params?: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>
@@ -1083,7 +1083,7 @@ export function useAdminListFiles<
   TError = unknown,
 >(
   volumeId: number,
-  params: AdminListFilesParams,
+  params?: AdminListFilesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof adminListFiles>>, TError, TData>

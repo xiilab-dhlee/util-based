@@ -102,6 +102,16 @@ export const getCreatePrivateExternalImageResponseMock = (
   ...overrideResponse,
 });
 
+export const getCreatePrivateSnapshotImageResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetPrivateImageTagListResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseImageTagListResponse> = {},
 ): BaseResponsePageResponseImageTagListResponse => ({
@@ -120,7 +130,16 @@ export const getGetPrivateImageTagListResponseMock = (
       imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageTagSizeByte: faker.number.int({ min: undefined, max: undefined }),
-      scanStatus: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      scanStatus: faker.helpers.arrayElement([
+        "SUCCESS",
+        "PENDING",
+        "RUNNING",
+        "STOPPED",
+        "ERROR",
+        "NOT_SCANNED",
+        "UNSUPPORTED",
+        "UNKNOWN",
+      ] as const),
       vulnerability: {
         criticalCount: faker.number.int({ min: undefined, max: undefined }),
         highCount: faker.number.int({ min: undefined, max: undefined }),
@@ -281,7 +300,16 @@ export const getGetPrivateImageTagDetailResponseMock = (
   data: {
     imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     imageSizeByte: faker.number.int({ min: undefined, max: undefined }),
-    scanStatus: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    scanStatus: faker.helpers.arrayElement([
+      "SUCCESS",
+      "PENDING",
+      "RUNNING",
+      "STOPPED",
+      "ERROR",
+      "NOT_SCANNED",
+      "UNSUPPORTED",
+      "UNKNOWN",
+    ] as const),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     vulnerability: {
       criticalCount: faker.number.int({ min: undefined, max: undefined }),
@@ -416,6 +444,34 @@ export const getCreatePrivateExternalImageMockHandler = (
             : getCreatePrivateExternalImageResponseMock(),
         ),
         { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getCreatePrivateSnapshotImageMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/registries/private/images/snapshot",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getCreatePrivateSnapshotImageResponseMock(),
+        ),
+        { status: 202, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
@@ -691,6 +747,7 @@ export const getPrivateRegistryMock = () => [
   getUpdatePrivateImageTagMockHandler(),
   getGetPrivateRegistryListMockHandler(),
   getCreatePrivateExternalImageMockHandler(),
+  getCreatePrivateSnapshotImageMockHandler(),
   getGetPrivateImageTagListMockHandler(),
   getAddPrivateImageTagMockHandler(),
   getScanPrivateImageTagMockHandler(),

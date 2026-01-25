@@ -30,29 +30,28 @@
 import * as zod from "zod";
 
 /**
- * 시스템 전체 크리덴셜 목록을 조회합니다. 페이징과 검색을 지원합니다. ADMIN/SUPER_ADMIN만 접근 가능합니다.
- * @summary 전체 크리덴셜 목록 조회 (Admin)
+ * 회원가입 시 선택 가능한 그룹 목록을 페이징하여 조회합니다. 인증 없이 접근 가능합니다.
+ * @summary 회원가입용 그룹 목록 조회
  */
-export const getAllCredentialsQueryPageNoMin = 0;
+export const getGroupsQueryPageNoMin = 0;
 
-export const getAllCredentialsQueryPageSizeMax = 100;
+export const getGroupsQueryPageSizeMax = 100;
 
-export const getAllCredentialsQueryParams = zod.object({
+export const getGroupsQueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getAllCredentialsQueryPageNoMin)
+    .min(getGroupsQueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getAllCredentialsQueryPageSizeMax)
+    .max(getGroupsQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
 });
 
-export const getAllCredentialsResponse = zod
+export const getGroupsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -64,20 +63,11 @@ export const getAllCredentialsResponse = zod
         content: zod.array(
           zod
             .object({
-              credentialId: zod.number().describe("크리덴셜 ID"),
-              credentialType: zod
-                .enum(["IMAGE_REGISTRY", "GIT_REPOSITORY"])
-                .describe("크리덴셜 타입"),
-              credentialName: zod.string().describe("크리덴셜 이름"),
-              description: zod.string().optional().describe("크리덴셜 설명"),
-              createdAt: zod.string().datetime({}).describe("생성일시"),
-              creatorName: zod
-                .string()
-                .describe("생성자 이름 (삭제된 계정이면 빈 문자열)"),
-              creatorId: zod.string().describe("생성자 ID"),
+              groupId: zod.string().describe("그룹 ID"),
+              groupName: zod.string().describe("그룹명"),
             })
             .strict()
-            .describe("관리자용 크리덴셜 목록 조회 응답 항목"),
+            .describe("회원가입용 그룹 응답"),
         ),
       })
       .strict()

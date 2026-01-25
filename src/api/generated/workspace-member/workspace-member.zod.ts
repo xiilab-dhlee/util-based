@@ -98,22 +98,28 @@ export const getWorkspaceMembersParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getWorkspaceMembersQueryPageSearchRequestPageSizeMax = 100;
+export const getWorkspaceMembersQueryPageNoMin = 0;
+
+export const getWorkspaceMembersQueryPageSizeMax = 100;
 
 export const getWorkspaceMembersQueryParams = zod.object({
-  pageSearchRequest: zod.object({
-    pageNo: zod.number().describe("페이지 번호 (0부터 시작)"),
-    pageSize: zod
-      .number()
-      .min(1)
-      .max(getWorkspaceMembersQueryPageSearchRequestPageSizeMax)
-      .describe("페이지 크기"),
-    keyword: zod.string().optional().describe("검색 키워드"),
-  }),
-  sortRequest: zod.object({
-    sort: zod.enum(["ACCOUNT_NAME", "EMAIL"]).describe("정렬 기준 필드"),
-    order: zod.enum(["ASC", "DESC"]).describe("정렬 순서"),
-  }),
+  pageNo: zod
+    .number()
+    .min(getWorkspaceMembersQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getWorkspaceMembersQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["ACCOUNT_NAME", "EMAIL"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getWorkspaceMembersResponse = zod

@@ -65,6 +65,7 @@ import type {
   GetPublicImageTagListParams,
   GetPublicImageTagVulnerabilitiesParams,
   GetPublicRegistryListParams,
+  SnapshotImageRequest,
   UpdateImageTagRequest,
   VulnerabilityScanRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -163,7 +164,7 @@ export const useUpdatePublicImageTag = <TError = unknown, TContext = unknown>(
  * @summary 공용 레지스트리 목록 조회
  */
 export const getPublicRegistryList = (
-  params: GetPublicRegistryListParams,
+  params?: GetPublicRegistryListParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseRegistryListResponse>({
@@ -187,7 +188,7 @@ export const getGetPublicRegistryListQueryOptions = <
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params: GetPublicRegistryListParams,
+  params?: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -223,7 +224,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params: GetPublicRegistryListParams,
+  params: undefined | GetPublicRegistryListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -249,7 +250,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params: GetPublicRegistryListParams,
+  params?: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -275,7 +276,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params: GetPublicRegistryListParams,
+  params?: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -297,7 +298,7 @@ export function useGetPublicRegistryList<
   TData = Awaited<ReturnType<typeof getPublicRegistryList>>,
   TError = unknown,
 >(
-  params: GetPublicRegistryListParams,
+  params?: GetPublicRegistryListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -406,6 +407,97 @@ export const useCreatePublicExternalImage = <
   TContext
 > => {
   const mutationOptions = getCreatePublicExternalImageMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드 컨테이너를 스냅샷하여 공용 레지스트리에 이미지로 등록합니다.
+            - 워크로드가 RUNNING 상태여야 합니다.
+            - 워크로드의 실행 환경(명령어, 포트, 환경변수)이 이미지 태그에 저장됩니다.
+            - 비동기로 스냅샷 Job이 생성되며, Harbor에 이미지가 푸시됩니다.
+        
+ * @summary 공용 이미지 스냅샷
+ */
+export const createPublicSnapshotImage = (
+  snapshotImageRequest: SnapshotImageRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/registries/public/images/snapshot`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: snapshotImageRequest,
+    signal,
+  });
+};
+
+export const getCreatePublicSnapshotImageMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+    TError,
+    { data: SnapshotImageRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+  TError,
+  { data: SnapshotImageRequest },
+  TContext
+> => {
+  const mutationKey = ["createPublicSnapshotImage"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+    { data: SnapshotImageRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createPublicSnapshotImage(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreatePublicSnapshotImageMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createPublicSnapshotImage>>
+>;
+export type CreatePublicSnapshotImageMutationBody = SnapshotImageRequest;
+export type CreatePublicSnapshotImageMutationError = unknown;
+
+/**
+ * @summary 공용 이미지 스냅샷
+ */
+export const useCreatePublicSnapshotImage = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+      TError,
+      { data: SnapshotImageRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+  TError,
+  { data: SnapshotImageRequest },
+  TContext
+> => {
+  const mutationOptions = getCreatePublicSnapshotImageMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

@@ -33,6 +33,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import type {
   BaseResponsePageResponseResourcePresetResponse,
+  BaseResponseResourcePresetDeleteResponse,
   BaseResponseResourcePresetResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -42,16 +43,46 @@ export const getGetPresetDetailResponseMock = (
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
-    presetId: faker.number.int({ min: undefined, max: undefined }),
+    resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+    entityId: faker.number.int({ min: undefined, max: undefined }),
     version: faker.number.int({ min: undefined, max: undefined }),
     presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
     resource: {
-      [faker.string.alphanumeric(5)]: {},
+      cpu: {
+        requestCore: faker.number.int({ min: undefined, max: undefined }),
+      },
+      memory: {
+        requestByte: faker.number.int({ min: undefined, max: undefined }),
+      },
+      gpu: {
+        gpuType: faker.helpers.arrayElement(["NORMAL", "MIG", "MPS"] as const),
+        detail: {
+          normal: {
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          },
+          mig: Array.from(
+            { length: faker.number.int({ min: 1, max: 10 }) },
+            (_, i) => i + 1,
+          ).map(() => ({
+            profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          })),
+          mps: {
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          },
+        },
+        gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      },
     },
-    jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
+    jobType: faker.helpers.arrayElement([
+      "BATCH",
+      "INTERACTIVE",
+      "DISTRIBUTED",
+    ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
-    createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -65,16 +96,46 @@ export const getUpdatePresetResponseMock = (
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
-    presetId: faker.number.int({ min: undefined, max: undefined }),
+    resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+    entityId: faker.number.int({ min: undefined, max: undefined }),
     version: faker.number.int({ min: undefined, max: undefined }),
     presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
     resource: {
-      [faker.string.alphanumeric(5)]: {},
+      cpu: {
+        requestCore: faker.number.int({ min: undefined, max: undefined }),
+      },
+      memory: {
+        requestByte: faker.number.int({ min: undefined, max: undefined }),
+      },
+      gpu: {
+        gpuType: faker.helpers.arrayElement(["NORMAL", "MIG", "MPS"] as const),
+        detail: {
+          normal: {
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          },
+          mig: Array.from(
+            { length: faker.number.int({ min: 1, max: 10 }) },
+            (_, i) => i + 1,
+          ).map(() => ({
+            profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          })),
+          mps: {
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          },
+        },
+        gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      },
     },
-    jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
+    jobType: faker.helpers.arrayElement([
+      "BATCH",
+      "INTERACTIVE",
+      "DISTRIBUTED",
+    ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
-    createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -95,16 +156,59 @@ export const getGetPresetsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      presetId: faker.number.int({ min: undefined, max: undefined }),
+      resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+      entityId: faker.number.int({ min: undefined, max: undefined }),
       version: faker.number.int({ min: undefined, max: undefined }),
       presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       description: faker.string.alpha({ length: { min: 10, max: 20 } }),
       resource: {
-        [faker.string.alphanumeric(5)]: {},
+        cpu: {
+          requestCore: faker.number.int({ min: undefined, max: undefined }),
+        },
+        memory: {
+          requestByte: faker.number.int({ min: undefined, max: undefined }),
+        },
+        gpu: {
+          gpuType: faker.helpers.arrayElement([
+            "NORMAL",
+            "MIG",
+            "MPS",
+          ] as const),
+          detail: {
+            normal: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+            mig: Array.from(
+              { length: faker.number.int({ min: 1, max: 10 }) },
+              (_, i) => i + 1,
+            ).map(() => ({
+              profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            })),
+            mps: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+          },
+          gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        },
       },
-      jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
+      jobType: faker.helpers.arrayElement([
+        "BATCH",
+        "INTERACTIVE",
+        "DISTRIBUTED",
+      ] as const),
       nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
-      createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     })),
   },
@@ -119,17 +223,69 @@ export const getCreatePresetResponseMock = (
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
-    presetId: faker.number.int({ min: undefined, max: undefined }),
+    resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+    entityId: faker.number.int({ min: undefined, max: undefined }),
     version: faker.number.int({ min: undefined, max: undefined }),
     presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
     resource: {
-      [faker.string.alphanumeric(5)]: {},
+      cpu: {
+        requestCore: faker.number.int({ min: undefined, max: undefined }),
+      },
+      memory: {
+        requestByte: faker.number.int({ min: undefined, max: undefined }),
+      },
+      gpu: {
+        gpuType: faker.helpers.arrayElement(["NORMAL", "MIG", "MPS"] as const),
+        detail: {
+          normal: {
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          },
+          mig: Array.from(
+            { length: faker.number.int({ min: 1, max: 10 }) },
+            (_, i) => i + 1,
+          ).map(() => ({
+            profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          })),
+          mps: {
+            requestCount: faker.number.int({ min: undefined, max: undefined }),
+          },
+        },
+        gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      },
     },
-    jobType: faker.helpers.arrayElement(["BATCH", "INTERACTIVE"] as const),
+    jobType: faker.helpers.arrayElement([
+      "BATCH",
+      "INTERACTIVE",
+      "DISTRIBUTED",
+    ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
-    createdBy: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getDeletePresetsResponseMock = (
+  overrideResponse: Partial<BaseResponseResourcePresetDeleteResponse> = {},
+): BaseResponseResourcePresetDeleteResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalRequested: faker.number.int({ min: undefined, max: undefined }),
+    successCount: faker.number.int({ min: undefined, max: undefined }),
+    failureCount: faker.number.int({ min: undefined, max: undefined }),
+    failures: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+      reason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -147,7 +303,7 @@ export const getGetPresetDetailMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/admin/resource-presets/:presetId",
+    "*/api/v1/admin/resource-presets/:resourcePresetId",
     async (info) => {
       await delay(1000);
 
@@ -177,7 +333,7 @@ export const getUpdatePresetMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
-    "*/api/v1/admin/resource-presets/:presetId",
+    "*/api/v1/admin/resource-presets/:resourcePresetId",
     async (info) => {
       await delay(1000);
 
@@ -205,7 +361,7 @@ export const getDeletePresetMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.delete(
-    "*/api/v1/admin/resource-presets/:presetId",
+    "*/api/v1/admin/resource-presets/:resourcePresetId",
     async (info) => {
       await delay(1000);
       if (typeof overrideResponse === "function") {
@@ -276,10 +432,41 @@ export const getCreatePresetMockHandler = (
     options,
   );
 };
+
+export const getDeletePresetsMockHandler = (
+  overrideResponse?:
+    | BaseResponseResourcePresetDeleteResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<BaseResponseResourcePresetDeleteResponse>
+        | BaseResponseResourcePresetDeleteResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/admin/resource-presets/delete",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getDeletePresetsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getAdminResourcePresetMock = () => [
   getGetPresetDetailMockHandler(),
   getUpdatePresetMockHandler(),
   getDeletePresetMockHandler(),
   getGetPresetsMockHandler(),
   getCreatePresetMockHandler(),
+  getDeletePresetsMockHandler(),
 ];

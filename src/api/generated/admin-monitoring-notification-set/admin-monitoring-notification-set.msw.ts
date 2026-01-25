@@ -75,6 +75,7 @@ export const getGetAllMonitoringNotificationSetsResponseMock = (
       isSystemNotificationEnabled: faker.datatype.boolean(),
       isEmailNotificationEnabled: faker.datatype.boolean(),
       isEnabled: faker.datatype.boolean(),
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
