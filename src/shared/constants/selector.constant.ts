@@ -503,7 +503,7 @@ export const ACCOUNT_SELECTOR = {
   DETAIL_ROLE: "account-detail-role",
   /** 상세 - 가입일 */
   DETAIL_CREATED_AT: "account-detail-created-at",
-  /** 상세 - 워크스페이스 보유 개수 */
+  /** 상세 - 워크스페이스 생성 개수 */
   DETAIL_WORKSPACE_COUNT: "account-detail-workspace-count",
   /** 상세 - 워크스페이스 생성 제한 개수 */
   DETAIL_WORKSPACE_LIMIT: "account-detail-workspace-limit",
@@ -517,7 +517,7 @@ export const ACCOUNT_SELECTOR = {
   UPDATE_GROUP: "account-update-group",
   /** 수정 - 가입일 */
   UPDATE_CREATED_AT: "account-update-created-at",
-  /** 수정 - 워크스페이스 보유 개수 */
+  /** 수정 - 워크스페이스 생성 개수 */
   UPDATE_WORKSPACE_COUNT: "account-update-workspace-count",
 
   // 수정 모달 - 폼 필드

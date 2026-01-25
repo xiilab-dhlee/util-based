@@ -1,25 +1,28 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { MigProfileResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { AdminResourceRequestListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ViewApproveResourceButton } from "@/domain/request-resource/components/view-approve-resource-button";
 import { ViewRejectResourceButton } from "@/domain/request-resource/components/view-reject-resource-button";
-import { REQUEST_RESOURCE_STATUS } from "@/domain/request-resource/constants/request-resource.constant";
-import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
+import {
+  REQUEST_RESOURCE_STATUS,
+  type RequestResourceSortState,
+} from "@/domain/request-resource/constants/request-resource.constant";
 import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
 import { WorkspaceRequestResourceStatusText } from "@/shared/components/text/workspace-request-resource-status-text";
-import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
-import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
-import { getResourceInfo } from "@/shared/utils/resource.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
+import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
+import { getColumnSortOrder } from "@/shared/utils/sort.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { ColumnMig } from "./column-mig";
 
-const createColumnList = (): ResponsiveColumnType[] => {
+const createColumnList = (
+  sort: RequestResourceSortState,
+): ResponsiveColumnType<AdminResourceRequestListResponse>[] => {
   const gpuInfo = getResourceInfo("GPU");
   const migInfo = getResourceInfo("MIG");
-  const mpsInfo = getResourceInfo("MPS");
   const cpuInfo = getResourceInfo("CPU");
   const memInfo = getResourceInfo("MEM");
 
@@ -29,47 +32,34 @@ const createColumnList = (): ResponsiveColumnType[] => {
       key: "workspaceName",
       dataIndex: "workspaceName",
       align: "left",
+      width: "20%",
+      ellipsis: true,
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "workspaceName"),
     },
-    {
-      title: gpuInfo.text,
-      key: "gpuReq",
-      dataIndex: "gpuReq",
-      align: "center",
-      width: 70,
-      render: (gpuReq: number | null | undefined) => {
-        const safeGpuReq = gpuReq ?? 0;
 
-        return (
-          <ColumnAlignCenterWrap>
-            {safeGpuReq}
-            {gpuInfo.unit}
-          </ColumnAlignCenterWrap>
-        );
-      },
-    },
     {
       title: migInfo.text,
       key: "migGpu",
-      dataIndex: "migGpu",
       align: "center",
-      width: 150,
-      render: (migGpu: MigProfileResponse[]) => {
-        return <ColumnMig migProfiles={migGpu} />;
+      width: "12%",
+      render: (_: unknown, record: AdminResourceRequestListResponse) => {
+        const migProfiles = record.resource.gpu?.detail.mig ?? [];
+        return <ColumnMig migProfiles={migProfiles} />;
       },
     },
+
     {
-      title: mpsInfo.text,
-      key: "mpsReq",
-      dataIndex: "mpsReq",
+      title: gpuInfo.text,
+      key: "gpuReq",
       align: "center",
-      width: 70,
-      render: (mpsReq: number | null | undefined) => {
-        const safeMpsReq = mpsReq ?? 0;
+      width: "6%",
+      render: (_: unknown, record: AdminResourceRequestListResponse) => {
+        const gpuCount = record.resource.gpu?.detail.normal?.requestCount ?? 0;
 
         return (
           <ColumnAlignCenterWrap>
-            {safeMpsReq}
-            {mpsInfo.unit}
+            {formatNumberWithUnit(gpuCount, gpuInfo.unit)}
           </ColumnAlignCenterWrap>
         );
       },
@@ -77,16 +67,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
     {
       title: cpuInfo.text,
       key: "cpuReq",
-      dataIndex: "cpuReq",
       align: "center",
-      width: 70,
-      render: (cpuReq: number | null | undefined) => {
-        const safeCpuReq = cpuReq ?? 0;
+      width: "6%",
+      render: (_: unknown, record: AdminResourceRequestListResponse) => {
+        const cpuCore = record.resource.cpu.requestCore;
 
         return (
           <ColumnAlignCenterWrap>
-            {safeCpuReq}
-            {cpuInfo.unit}
+            {formatNumberWithUnit(cpuCore, cpuInfo.unit)}
           </ColumnAlignCenterWrap>
         );
       },
@@ -94,41 +82,54 @@ const createColumnList = (): ResponsiveColumnType[] => {
     {
       title: memInfo.text,
       key: "memReq",
-      dataIndex: "memReq",
       align: "center",
-      width: 70,
-      render: (memReq: number | null | undefined) => {
-        const safeMemReq = memReq ?? 0;
+      width: "10%",
+      render: (_: unknown, record: AdminResourceRequestListResponse) => {
+        const memoryBytes = record.resource.memory.requestByte;
+        const { label } = convertBytes(memoryBytes, "GB");
 
-        return (
-          <ColumnAlignCenterWrap>
-            {safeMemReq}
-            {memInfo.unit}
-          </ColumnAlignCenterWrap>
-        );
+        return <ColumnAlignCenterWrap>{label}</ColumnAlignCenterWrap>;
+      },
+    },
+    {
+      title: "요청일시",
+      key: "requestedAt",
+      dataIndex: "requestedAt",
+      align: "left",
+      width: "12%",
+      sortOrder: getColumnSortOrder(sort, "requestedAt"),
+      sorter: true,
+      render: (requestedAt: string | undefined) => {
+        return <span>{formatDateTimeSafely(requestedAt)}</span>;
       },
     },
     {
       title: "확정일시",
-      key: "modDate",
-      dataIndex: "modDate",
-      align: "center",
-      render: (modDate: string) => {
-        return <span>{formatDateTimeSafely(modDate) ?? "-"}</span>;
+      key: "approvedAt",
+      dataIndex: "approvedAt",
+      align: "left",
+      width: "12%",
+      render: (approvedAt: string | undefined) => {
+        return <span>{formatDateTimeSafely(approvedAt)}</span>;
       },
     },
     {
       title: "요청자",
-      key: "requester",
-      dataIndex: "requester",
-      align: "center",
+      key: "creatorName",
+      dataIndex: "creatorName",
+      align: "left",
+      width: "10%",
+      ellipsis: true,
+      render: (creatorName: string) => {
+        return <span>{creatorName || "-"}</span>;
+      },
     },
     {
       title: "요청사유",
       key: "requestReason",
       dataIndex: "requestReason",
       align: "center",
-      width: 70,
+      width: "8%",
       render: (requestReason: string) => {
         return <ViewRequestReasonButton reason={requestReason} />;
       },
@@ -136,9 +137,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
     {
       title: "승인 여부",
       key: "status",
-      dataIndex: "status",
+      dataIndex: "approvalStatus",
       align: "center",
-      width: 70,
+      width: "5%",
       render: (status: WorkspaceRequestResourceStatus) => {
         return <WorkspaceRequestResourceStatusText status={status} />;
       },
@@ -148,9 +149,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
       key: "rejectReason",
       dataIndex: "rejectReason",
       align: "center",
-      width: 70,
-      render: (rejectReason: string, record: RequestResourceListType) => {
-        const isRejected = record.status === REQUEST_RESOURCE_STATUS.REJECT;
+      width: "5%",
+      render: (
+        rejectReason: string,
+        record: AdminResourceRequestListResponse,
+      ) => {
+        const isRejected =
+          record.approvalStatus === REQUEST_RESOURCE_STATUS.REJECTED;
         return (
           <ViewRejectReasonButton
             reason={rejectReason}
@@ -160,23 +165,23 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      title: "반려",
-      key: "reject",
-      dataIndex: "reject",
-      align: "center",
-      width: 50,
-      render: (_: number, record: RequestResourceListType) => {
-        return <ViewRejectResourceButton resource={record} />;
-      },
-    },
-    {
       title: "승인",
       key: "approve",
       dataIndex: "approve",
       align: "center",
-      width: 50,
-      render: (_: number, record: RequestResourceListType) => {
+      width: "3%",
+      render: (_: number, record: AdminResourceRequestListResponse) => {
         return <ViewApproveResourceButton resource={record} />;
+      },
+    },
+    {
+      title: "반려",
+      key: "reject",
+      dataIndex: "reject",
+      align: "center",
+      width: "3%",
+      render: (_: number, record: AdminResourceRequestListResponse) => {
+        return <ViewRejectResourceButton resource={record} />;
       },
     },
   ];
@@ -185,13 +190,11 @@ const createColumnList = (): ResponsiveColumnType[] => {
 /**
  * 자원 요청 관련 테이블 컬럼 생성
  *
- * @param config 컬럼 설정 (배열 형태)
+ * @param sort 정렬 상태 (field, order)
  * @returns 컬럼 배열
  */
 export const createRequestResourceColumn = (
-  config?: CoreCreateColumnConfig[],
-): ResponsiveColumnType[] => {
-  const columnList = createColumnList();
-
-  return applyColumnConfigs(columnList, config);
+  sort: RequestResourceSortState,
+): ResponsiveColumnType<AdminResourceRequestListResponse>[] => {
+  return createColumnList(sort);
 };
