@@ -10,6 +10,8 @@
 import { delay, type HttpHandler } from "msw";
 
 import { getAccountProfileMock } from "@/api/generated/account-profile/account-profile.msw";
+import { getAdminClusterMock } from "@/api/generated/admin-cluster/admin-cluster.msw";
+import { getAdminImageTagUsageRequestMock } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history.msw";
 import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
@@ -40,7 +42,6 @@ import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
-import { requestImageHandlers } from "@/mocks/handlers/request-image.handler";
 import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
@@ -114,7 +115,6 @@ const rawHandlers = [
   ...groupHandlers,
   ...workspaceHandlers,
   ...requestResourceHandlers,
-  ...requestImageHandlers,
   ...redfishHandlers,
   ...accountManagementHandlers,
   ...monitoringHandlers,
@@ -133,8 +133,10 @@ const rawHandlers = [
   ...storageHandlers,
   ...getAdminQueueMock(),
   ...getAdminWorkloadMock(),
-  ...nodeHandlers,
+  ...getAdminClusterMock(),
   ...getSmtpSettingsMock(),
+  ...getAdminImageTagUsageRequestMock(),
+  ...nodeHandlers,
 ];
 
 /**
