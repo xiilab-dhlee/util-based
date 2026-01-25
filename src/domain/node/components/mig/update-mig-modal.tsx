@@ -1,7 +1,6 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { groupBy } from "es-toolkit";
 import { useAtom, useSetAtom } from "jotai";
 import { useState } from "react";
 import styled, { css } from "styled-components";
@@ -12,10 +11,6 @@ import {
   getMigConfiguration,
   useApplyMigConfiguration,
 } from "@/api/generated/admin-cluster/admin-cluster";
-import type {
-  MigConfigInfo,
-  MigConfigurationRequest,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MigConfigSelect } from "@/domain/node/components/mig/mig-config-select";
 import { MigCountSelect } from "@/domain/node/components/mig/mig-count-select";
 import { MigGpuItem } from "@/domain/node/components/mig/mig-gpu-item";
@@ -28,7 +23,6 @@ import {
   selectedMigCountAtom,
   selectedMigGpuIndexAtom,
 } from "@/domain/node/state/node.atom";
-import type { MigGpu } from "@/domain/node/types/node.type";
 import { MigUtil } from "@/domain/node/utils/mig.util";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { ApplyOnceTooltipTitle } from "@/shared/components/tooltip-title/apply-once-tooltip-title";
@@ -48,52 +42,6 @@ const SUPPORTED_MODELS = "A30, A100, H100, H200, B200";
 const NVIDIA_MIG_DOC_URL =
   "https://docs.nvidia.com/datacenter/tesla/mig-user-guide";
 
-function convertMigInfoToGpuList(migInfo: MigConfigInfo[]): MigGpu[] {
-  return migInfo
-    .flatMap((info) =>
-      info.gpuIndex.map((gpuIndex) => ({
-        gpuIndex,
-        migEnable: info.configId > 0,
-        configId: info.configId || -1,
-      })),
-    )
-    .sort((a, b) => a.gpuIndex - b.gpuIndex);
-}
-
-function buildMigPayload(
-  migGpus: MigGpu[],
-  selectedGpuIndex: number,
-  applyToAll: boolean,
-): MigConfigurationRequest {
-  const processedGpus = applyToAll
-    ? migGpus.map((gpu) => ({
-        ...gpu,
-        migEnable: migGpus[selectedGpuIndex].migEnable,
-        configId: migGpus[selectedGpuIndex].configId,
-      }))
-    : migGpus;
-
-  const enabledGpus = processedGpus.filter((gpu) => gpu.configId > 0);
-  const disabledGpus = processedGpus.filter((gpu) => gpu.configId <= 0);
-
-  // 활성화된 GPU: configId별로 그룹화
-  const grouped = groupBy(enabledGpus, (gpu) => gpu.configId);
-  const enabledConfigs = Object.values(grouped).map((group) => ({
-    gpuIndex: group.map((gpu) => gpu.gpuIndex),
-    configId: group[0].configId,
-  }));
-
-  // 비활성화된 GPU: configId 없이 gpuIndex만 전달
-  const disabledConfigs =
-    disabledGpus.length > 0
-      ? [{ gpuIndex: disabledGpus.map((gpu) => gpu.gpuIndex) }]
-      : [];
-
-  return {
-    migConfigs: [...enabledConfigs, ...disabledConfigs],
-  } as MigConfigurationRequest;
-}
-
 export function UpdateMigModal() {
   const [open, setOpen] = useState(false);
   const [nodeName, setNodeName] = useState("");
@@ -103,6 +51,7 @@ export function UpdateMigModal() {
   const [isUnsupportedModel, setIsUnsupportedModel] = useState(false);
   const [originalGpuProduct, setOriginalGpuProduct] = useState("");
   const [errorState, setErrorState] = useState<ErrorState>({ type: null });
+  const [isLoading, setIsLoading] = useState(false);
 
   const [migGpus, setMigGpus] = useAtom(migGpusAtom);
   const setMigGpuProduct = useSetAtom(migGpuProductAtom);
@@ -118,7 +67,7 @@ export function UpdateMigModal() {
   const isSubmitDisabled = isUnsupportedModel || errorState.type !== null;
   const isApplyToAll = applyOnce === APPLY_ONCE_OPTIONS.YES;
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (isPending) return;
     setOpen(false);
   };
@@ -126,7 +75,11 @@ export function UpdateMigModal() {
   const handleSubmit = () => {
     if (isPending) return;
 
-    const payload = buildMigPayload(migGpus, selectedMigGpuIndex, isApplyToAll);
+    const payload = MigUtil.toRequestPayload(
+      migGpus,
+      selectedMigGpuIndex,
+      isApplyToAll,
+    );
 
     mutate(
       { nodeName, data: payload },
@@ -135,7 +88,7 @@ export function UpdateMigModal() {
           queryClient.invalidateQueries({
             queryKey: getGetClusterNodesQueryKey(),
           });
-          handleClose();
+          setOpen(false);
         },
       },
     );
@@ -152,18 +105,19 @@ export function UpdateMigModal() {
   const loadMigConfigAndOpenModal = async (targetNodeName: string) => {
     setNodeName(targetNodeName);
     resetState();
+    setIsLoading(true);
+    setOpen(true);
 
     try {
       const migData = await getMigConfiguration(targetNodeName);
 
       if (!migData) {
         setErrorState({ type: "not_found" });
-        setOpen(true);
         return;
       }
 
       const { gpuProduct, migInfo } = migData;
-      const gpuList = convertMigInfoToGpuList(migInfo ?? []);
+      const gpuList = MigUtil.toGpuList(migInfo ?? []);
       const supportedModel = gpuProduct
         ? MigUtil.findSupportedModel(gpuProduct)
         : null;
@@ -184,8 +138,6 @@ export function UpdateMigModal() {
           setSelectedMigConfigId(firstGpu.configId);
         }
       }
-
-      setOpen(true);
     } catch (error) {
       console.error(error);
       setErrorState({
@@ -193,13 +145,65 @@ export function UpdateMigModal() {
         message:
           error instanceof Error ? error.message : "알 수 없는 오류입니다.",
       });
-      setOpen(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useSubscribe(NODE_EVENTS.openUpdateMigModal, ({ nodeName }: NodeListType) =>
     loadMigConfigAndOpenModal(nodeName),
   );
+
+  /**
+   * 오버레이 렌더링 (상호 배타적)
+   * - errorState가 있으면 에러 오버레이 우선 표시
+   * - 그렇지 않고 지원되지 않는 모델이면 미지원 오버레이 표시
+   */
+  const renderOverlay = () => {
+    // 에러 상태가 있으면 에러 오버레이 우선
+    if (errorState.type !== null) {
+      return (
+        <Overlay>
+          <OverlayContent>
+            <Icon name="Notice" color="#ff4d4f" size={24} />
+            <OverlayTitle>
+              {errorState.type === "not_found"
+                ? "MIG 설정 정보 없음"
+                : "MIG 설정 조회 오류"}
+            </OverlayTitle>
+            <OverlayDescription>
+              {errorState.type === "not_found"
+                ? "해당 노드의 MIG 설정 정보를 찾을 수 없습니다."
+                : "MIG 설정 정보 조회 중 오류가 발생했습니다."}
+            </OverlayDescription>
+            {errorState.message && (
+              <OverlayDetail>{errorState.message}</OverlayDetail>
+            )}
+          </OverlayContent>
+        </Overlay>
+      );
+    }
+
+    // 지원되지 않는 GPU 모델
+    if (isUnsupportedModel) {
+      return (
+        <Overlay>
+          <OverlayContent>
+            <Icon name="Warning" color="#faad14" size={24} />
+            <OverlayTitle>지원되지 않는 GPU 모델</OverlayTitle>
+            <OverlayDescription>
+              {originalGpuProduct
+                ? `"${originalGpuProduct}" 모델은 MIG 설정을 지원하지 않습니다.`
+                : "GPU 모델 정보를 확인할 수 없습니다."}
+            </OverlayDescription>
+            <OverlayHint>지원 모델: {SUPPORTED_MODELS}</OverlayHint>
+          </OverlayContent>
+        </Overlay>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <Modal
@@ -210,7 +214,7 @@ export function UpdateMigModal() {
       title={nodeName}
       showCancelButton
       cancelText="취소"
-      onCancel={handleClose}
+      onCancel={handleCancel}
       okText="확인"
       onOk={handleSubmit}
       centered
@@ -218,45 +222,15 @@ export function UpdateMigModal() {
       closable={!isPending}
       maskClosable={!isPending}
       keyboard={!isPending}
-      okButtonProps={{ disabled: isSubmitDisabled, loading: isPending }}
+      loading={isLoading}
+      okButtonProps={{
+        disabled: isSubmitDisabled,
+        loading: isPending,
+      }}
       cancelButtonProps={{ disabled: isPending }}
     >
       <Container>
-        {isUnsupportedModel && (
-          <Overlay>
-            <OverlayContent>
-              <Icon name="Warning" color="#faad14" size={24} />
-              <OverlayTitle>지원되지 않는 GPU 모델</OverlayTitle>
-              <OverlayDescription>
-                {originalGpuProduct
-                  ? `"${originalGpuProduct}" 모델은 MIG 설정을 지원하지 않습니다.`
-                  : "GPU 모델 정보를 확인할 수 없습니다."}
-              </OverlayDescription>
-              <OverlayHint>지원 모델: {SUPPORTED_MODELS}</OverlayHint>
-            </OverlayContent>
-          </Overlay>
-        )}
-
-        {errorState.type !== null && (
-          <Overlay>
-            <OverlayContent>
-              <Icon name="Warning" color="#ff4d4f" size={24} />
-              <OverlayTitle>
-                {errorState.type === "not_found"
-                  ? "MIG 설정 정보 없음"
-                  : "MIG 설정 조회 오류"}
-              </OverlayTitle>
-              <OverlayDescription>
-                {errorState.type === "not_found"
-                  ? "해당 노드의 MIG 설정 정보를 찾을 수 없습니다."
-                  : "MIG 설정 정보 조회 중 오류가 발생했습니다."}
-              </OverlayDescription>
-              {errorState.message && (
-                <OverlayDetail>{errorState.message}</OverlayDetail>
-              )}
-            </OverlayContent>
-          </Overlay>
-        )}
+        {renderOverlay()}
 
         <LeftPanel>
           <Field>
@@ -273,7 +247,7 @@ export function UpdateMigModal() {
           <Field>
             <FieldTitle>
               MIG 설정
-              <GuideTooltip title={<UpdateMigTooltipTitle />} />
+              <GuideTooltip maxWidth={300} title={<UpdateMigTooltipTitle />} />
             </FieldTitle>
             <ExternalGuide>
               Nvidia Profile 메뉴얼 원하시면{" "}
