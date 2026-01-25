@@ -101,5 +101,4 @@ const StateWrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
-  min-height: 200px;
 `;
