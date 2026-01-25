@@ -37,11 +37,9 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
   const isHubListPage = pathname === ROUTES.USER_HUB;
 
   const { data, isLoading, isError } = useFindHubs({
-    findHubsRequest: {
-      pageNo: page - 1,
-      pageSize: HUB_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
+    pageNo: page - 1,
+    pageSize: HUB_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   // orval 응답에서 데이터 추출 (customInstance가 BaseResponse.data를 자동 언랩)
