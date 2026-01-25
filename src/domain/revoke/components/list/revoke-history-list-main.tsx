@@ -74,10 +74,8 @@ export function RevokeHistoryListMain() {
   const resetDateRange = useResetAtom(revokeHistoryDateRangeAtom);
 
   const { data, isLoading, isError } = useGetScanHistoryList({
-    pageRequest: {
-      pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
-    },
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
   });
 
   const content = data?.content ?? [];

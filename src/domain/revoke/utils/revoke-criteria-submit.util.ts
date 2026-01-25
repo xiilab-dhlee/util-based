@@ -1,9 +1,9 @@
 import type { UseFormReturn } from "react-hook-form";
 
 import type {
-  GetAllPoliciesResponse,
-  UpdateReclaimPolicyParams,
-} from "@/api/generated/workload-reclaim-policy-admin/workload-reclaim-policy-admin";
+  WorkloadReclaimPolicyResponse,
+  WorkloadReclaimPolicyUpdateRequest,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   RECLAIM_POLICY_JOB_TYPES,
   type ReclaimPolicyJobType,
@@ -11,12 +11,18 @@ import {
 import { DEFAULT_RECLAIM_OPERATOR } from "@/domain/revoke/constants/revoke-history.constant";
 import type { UpdateReclaimPolicyBodyExtended } from "@/domain/revoke/utils/update-revoke-criteria-form.override.zod";
 
+/** UpdateReclaimPolicy 파라미터 타입 */
+type UpdateReclaimPolicyParams = {
+  jobType: ReclaimPolicyJobType;
+  data: WorkloadReclaimPolicyUpdateRequest;
+};
+
 /**
  * 폼 값을 API 데이터 형식으로 변환
  */
 export const createPolicyUpdateData = (
   values: UpdateReclaimPolicyBodyExtended,
-): UpdateReclaimPolicyParams["data"] => ({
+): WorkloadReclaimPolicyUpdateRequest => ({
   operatingHour: values.operatingHour,
   reclaimWarningCount: values.reclaimWarningCount,
   reclaimOperator: DEFAULT_RECLAIM_OPERATOR,
@@ -67,7 +73,7 @@ export const collectPolicyUpdates = (
  * 변경된 enabled 상태 수집
  */
 export const collectEnabledUpdates = (
-  policyList: GetAllPoliciesResponse | undefined,
+  policyList: WorkloadReclaimPolicyResponse[] | undefined,
   batchEnabled: boolean,
   interactiveEnabled: boolean,
 ): Partial<Record<ReclaimPolicyJobType, boolean>> => {
