@@ -1,12 +1,17 @@
+import { groupBy } from "es-toolkit";
 import type { DropdownOption } from "xiilab-ui";
 
+import type {
+  MigConfigInfo,
+  MigConfigurationRequest,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   MIG_GPU_ALPHA_CONFIG,
   MIG_GPU_ALPHA_MODEL,
   MIG_GPU_BETA_CONFIG,
   MIG_GPU_BETA_MODEL,
 } from "@/domain/node/constants/mig.constant";
-import type { GpuModelConfig } from "@/domain/node/types/node.type";
+import type { GpuModelConfig, MigGpu } from "@/domain/node/types/node.type";
 
 /**
  * MIG 설정 관련 유틸리티 클래스
@@ -23,23 +28,73 @@ export class MigUtil {
    * @returns 지원되는 모델명 또는 null
    */
   public static findSupportedModel(gpuProduct: string): string | null {
-    // Alpha 모델 확인 (A30)
-    const alphaModels = Object.keys(MIG_GPU_ALPHA_MODEL);
-    for (const model of alphaModels) {
-      if (gpuProduct.includes(model)) {
-        return model;
-      }
-    }
+    // 모든 지원 모델을 수집하고 길이 내림차순 정렬
+    // 더 구체적인 모델명(예: A100-80GB)이 기본 모델명(예: A100)보다 먼저 매칭되도록 함
+    const allModels = [
+      ...Object.keys(MIG_GPU_ALPHA_MODEL),
+      ...Object.keys(MIG_GPU_BETA_MODEL),
+    ].sort((a, b) => b.length - a.length);
 
-    // Beta 모델 확인 (A100, H100, H200, B200 등)
-    const betaModels = Object.keys(MIG_GPU_BETA_MODEL);
-    for (const model of betaModels) {
+    for (const model of allModels) {
       if (gpuProduct.includes(model)) {
         return model;
       }
     }
 
     return null;
+  }
+
+  /**
+   * 서버 응답(MigConfigInfo[])을 클라이언트 GPU 목록(MigGpu[])으로 변환
+   * @param migInfo - 서버에서 받은 MIG 설정 정보
+   * @returns 클라이언트에서 사용할 GPU 목록
+   */
+  public static toGpuList(migInfo: MigConfigInfo[]): MigGpu[] {
+    return migInfo
+      .flatMap((info) =>
+        info.gpuIndex.map((gpuIndex) => ({
+          gpuIndex,
+          migEnable: info.configId > 0,
+          configId: info.configId || -1,
+        })),
+      )
+      .sort((a, b) => a.gpuIndex - b.gpuIndex);
+  }
+
+  /**
+   * 클라이언트 GPU 목록(MigGpu[])을 서버 요청 형식(MigConfigurationRequest)으로 변환
+   * @param migGpus - 클라이언트 GPU 목록
+   * @param selectedGpuIndex - 선택된 GPU의 gpuIndex 값
+   * @param applyToAll - 모든 GPU에 일괄 적용 여부
+   * @returns 서버에 전송할 MIG 설정 요청
+   */
+  public static toRequestPayload(
+    migGpus: MigGpu[],
+    selectedGpuIndex: number,
+    applyToAll: boolean,
+  ): MigConfigurationRequest {
+    const selectedGpu = migGpus.find(
+      (gpu) => gpu.gpuIndex === selectedGpuIndex,
+    );
+
+    const processedGpus =
+      applyToAll && selectedGpu
+        ? migGpus.map((gpu) => ({
+            ...gpu,
+            migEnable: selectedGpu.migEnable,
+            configId: selectedGpu.configId,
+          }))
+        : migGpus;
+
+    const enabledGpus = processedGpus.filter((gpu) => gpu.configId > 0);
+    const grouped = groupBy(enabledGpus, (gpu) => gpu.configId);
+
+    return {
+      migConfigs: Object.values(grouped).map((group) => ({
+        gpuIndex: group.map((gpu) => gpu.gpuIndex),
+        configId: group[0].configId,
+      })),
+    };
   }
 
   constructor(private readonly gpuProduct: string) {
