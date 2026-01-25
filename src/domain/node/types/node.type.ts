@@ -1,18 +1,3 @@
-import type { CorePaginate, CorePayload } from "@/shared/types/api.interface";
-
-export interface GetNodesPayload extends CorePayload, CorePaginate {}
-
-export interface GetNodePayload {
-  /** Node ID */
-  id: string;
-}
-
-export interface UpdateMpsPayload {
-  nodeName: string;
-  mpsCapable: boolean;
-  mpsReplicas: number;
-}
-
 // MIG 설정 대상 GPU (클라이언트 상태 관리용)
 export type MigGpu = {
   gpuIndex: number;

@@ -121,19 +121,8 @@ export const ACCOUNT_EVENTS = {
 
 // 노드 관련 이벤트
 export const NODE_EVENTS = {
-  // MPS 설정 수정에 필요한 정보 전달 이벤트
-  sendUpdateMps: "node:send-update-mps",
   // MIG 설정 모달 열기 이벤트
   openUpdateMigModal: "node:open-update-mig-modal",
-} as const;
-
-// Redfish 관련 이벤트
-export const REDFISH_EVENTS = {
-  // BMC 관리(Create/Update)에 필요한 정보 전달 이벤트
-  sendCreateBmc: "redfish:send-manage-bmc",
-  sendUpdateBmc: "redfish:send-manage-bmc",
-  // Network Adapters 모달 표시 여부
-  sendNetworkAdapter: "redfish:send-view-network-adapter",
 } as const;
 
 // 이미지 사용 요청 관련 이벤트

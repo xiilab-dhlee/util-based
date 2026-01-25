@@ -38,7 +38,6 @@ import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
-import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
 import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
@@ -114,7 +113,6 @@ const rawHandlers = [
   ...groupHandlers,
   ...workspaceHandlers,
   ...requestResourceHandlers,
-  ...redfishHandlers,
   ...accountManagementHandlers,
   ...monitoringHandlers,
   ...getAdminMonitoringNotificationHistoryMock(),

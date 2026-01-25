@@ -12,8 +12,6 @@ export const nodeSortAtom = atomWithReset<NodeSortState>({
   field: "nodeName",
   order: "ascend",
 });
-/** MPS 설정 모달 표시 여부 */
-export const openUpdateMpsModalAtom = atom<boolean>(false);
 /** MIG GPU 제품 */
 export const migGpuProductAtom = atom<string>("");
 /** MIG GPU 목록 */
@@ -24,7 +22,3 @@ export const selectedMigGpuIndexAtom = atom<number>(-1);
 export const selectedMigCountAtom = atom<string>("DISABLED");
 /** MIG 선택된 Config ID */
 export const selectedMigConfigIdAtom = atom<number>(-1);
-/** BMC 관리 모달 표시 여부 */
-export const openManageBmcModalAtom = atom<boolean>(false);
-/** Network Ports 모달 표시 여부 */
-export const openViewNetworkPortsModalAtom = atom<boolean>(false);
