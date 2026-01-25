@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 import { UserMonitoringWorkloadStatus } from "@/domain/user-monitoring/components/user-monitoring-workload-status";
 import { ResourceUsageCard } from "@/shared/components/card/resource-usage-card";
-import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
@@ -25,10 +24,7 @@ export function UserMonitoringWorkloadArticle() {
         </RightSectionHeader>
         {/* 워크로드 정보 영역 */}
         <WorkloadStatusWrapper>
-          <UserMonitoringWorkloadStatus
-            status={ALL_OPTION.value}
-            count={8888}
-          />
+          <UserMonitoringWorkloadStatus status="ALL" count={8888} />
           <UserMonitoringWorkloadStatus status="RUNNING" count={2222} />
           <UserMonitoringWorkloadStatus status="COMPLETED" count={2222} />
           <UserMonitoringWorkloadStatus status="PENDING" count={2222} />
