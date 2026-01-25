@@ -49,19 +49,9 @@ export const PAGE_META = {
     href: ROUTES.ADMIN_NODE,
   },
   "admin.node.detail": {
-    title: "노드 정보",
+    title: "노드 상세 정보",
     href: ({ name }: { name: string }) => ROUTES.ADMIN_NODE_DETAIL(name),
     parent: "admin.node",
-  },
-  "admin.node.log": {
-    title: "노드 로그",
-    href: ({ name }: { name: string }) => ROUTES.ADMIN_NODE_LOG(name),
-    parent: "admin.node.detail",
-  },
-  "admin.node.redfish": {
-    title: "Redfish",
-    href: ({ name }: { name: string }) => ROUTES.ADMIN_NODE_REDFISH(name),
-    parent: "admin.node.detail",
   },
 
   // ============================================

@@ -211,30 +211,3 @@ export const MIG_GPU_BETA_MODEL: GpuConfigMap = {
     ],
   },
 };
-/** Current MIG Setting Info Demo */
-export const MIG_INFO_DEMO = {
-  nodeName: "worker-1",
-  // gpuProduct: "A30",
-  // gpuProduct: "A100-40GB",
-  // gpuProduct: "H100-80GB",
-  // gpuProduct: "H100-94GB",
-  // gpuProduct: "H100-96GB",
-  // gpuProduct: "H200-141GB",
-  gpuProduct: "B200-180GB",
-  migInfos: [
-    // 초기 설정 테스트
-    {
-      gpuIndexs: [0, 1],
-      configId: null,
-      migEnable: false,
-    },
-    // 설정 변경 테스트
-    // {
-    //   gpuIndexs: [0, 1],
-    //   configId: 3,
-    //   migEnable: true,
-    // },
-  ],
-  status: "SUCCESS",
-  migKey: "custom",
-};

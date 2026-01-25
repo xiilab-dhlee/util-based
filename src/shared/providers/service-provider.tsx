@@ -4,9 +4,6 @@ import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
 import { UserResourceService } from "@/domain/monitoring/api/user-resource.service";
-import { NodeService } from "@/domain/node/api/node.service";
-import { RedfishService } from "@/domain/node/api/redfish.service";
-import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { ReportService } from "@/domain/report/api/report.service";
 import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
 import { ResourcePresetService } from "@/domain/resource-preset/api/resource-preset.service";
@@ -27,9 +24,6 @@ interface ServiceContextType {
   sourcecodeService: SourcecodeService;
   userResourceService: UserResourceService;
   adminWorkloadService: AdminWorkloadService;
-  nodeService: NodeService;
-  redfishBmcService: RedfishBmcService;
-  redfishService: RedfishService;
   reportService: ReportService;
   reportReservationService: ReportReservationService;
   gpuService: GpuService;
@@ -63,9 +57,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     sourcecodeService: new SourcecodeService(),
     userResourceService: new UserResourceService(),
     adminWorkloadService: new AdminWorkloadService(),
-    nodeService: new NodeService(),
-    redfishBmcService: new RedfishBmcService(),
-    redfishService: new RedfishService(),
     reportService: new ReportService(),
     reportReservationService: new ReportReservationService(),
     gpuService: new GpuService(),

@@ -33,8 +33,6 @@ export const ROUTES = {
   // 노드 관리 (동적 함수)
   ADMIN_NODE: `${MODE.ADMIN}/node`,
   ADMIN_NODE_DETAIL: (name: string) => `${MODE.ADMIN}/node/${name}`,
-  ADMIN_NODE_LOG: (name: string) => `${MODE.ADMIN}/node/${name}/log`,
-  ADMIN_NODE_REDFISH: (name: string) => `${MODE.ADMIN}/node/${name}/redfish`,
 
   // 계정 관리 (정적)
   ADMIN_ACCOUNT_MANAGEMENT: `${MODE.ADMIN}/account-management`,
