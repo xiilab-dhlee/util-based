@@ -13,7 +13,8 @@ import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/use
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function RegistryMainSection() {
-  const { data: approvalStatusSummary } = useGetApprovalStatusSummary();
+  const { data: approvalStatusSummary, isLoading } =
+    useGetApprovalStatusSummary();
   return (
     <Container>
       <Left>
@@ -41,14 +42,17 @@ export function RegistryMainSection() {
               <RequestImageStatusCard
                 status="APPROVED"
                 count={approvalStatusSummary?.approved ?? 0}
+                isLoading={isLoading}
               />
               <RequestImageStatusCard
                 status="APPROVAL_WAITING"
                 count={approvalStatusSummary?.approvalWaiting ?? 0}
+                isLoading={isLoading}
               />
               <RequestImageStatusCard
                 status="REJECTED"
                 count={approvalStatusSummary?.rejected ?? 0}
+                isLoading={isLoading}
               />
             </RequestImageBody>
           </RequestImage>
