@@ -6,9 +6,8 @@ import {
   getGetAdminNotificationsQueryKey,
 } from "@/api/generated/admin-account-notification/admin-account-notification";
 import {
-  type AdminNotificationFilterRequestNotificationTypeItem,
-  AdminNotificationSortRequestOrder,
-  AdminNotificationSortRequestSort,
+  type GetAdminNotificationsNotificationTypeItem,
+  GetAdminNotificationsOrder,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   NOTIFICATION_PAGE_SIZE,
@@ -30,26 +29,17 @@ export function useInfiniteAdminNotifications(
   const accountId = session?.user?.id ?? "";
 
   const notificationTypeArray = notificationType
-    ? ([
-        notificationType,
-      ] as AdminNotificationFilterRequestNotificationTypeItem[])
+    ? ([notificationType] as GetAdminNotificationsNotificationTypeItem[])
     : undefined;
 
   const query = useInfiniteQuery({
     queryKey: [
       ...getGetAdminNotificationsQueryKey(accountId, {
-        pageRequest: {
-          pageNo: 0,
-          pageSize: NOTIFICATION_PAGE_SIZE,
-        },
-        filterRequest: {
-          hasRead,
-          notificationType: notificationTypeArray,
-        },
-        sortRequest: {
-          sort: AdminNotificationSortRequestSort.CREATED_AT,
-          order: AdminNotificationSortRequestOrder.DESC,
-        },
+        pageNo: 0,
+        pageSize: NOTIFICATION_PAGE_SIZE,
+        hasRead,
+        notificationType: notificationTypeArray,
+        order: GetAdminNotificationsOrder.DESC,
       }),
       "infinite",
     ],
@@ -59,18 +49,11 @@ export function useInfiniteAdminNotifications(
       return getAdminNotifications(
         accountId,
         {
-          pageRequest: {
-            pageNo: backendPageNo,
-            pageSize: NOTIFICATION_PAGE_SIZE,
-          },
-          filterRequest: {
-            hasRead,
-            notificationType: notificationTypeArray,
-          },
-          sortRequest: {
-            sort: "CREATED_AT",
-            order: "DESC",
-          },
+          pageNo: backendPageNo,
+          pageSize: NOTIFICATION_PAGE_SIZE,
+          hasRead,
+          notificationType: notificationTypeArray,
+          order: "DESC",
         },
         signal,
       );

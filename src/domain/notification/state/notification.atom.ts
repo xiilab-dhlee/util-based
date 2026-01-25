@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
-import type { AdminNotificationFilterRequestNotificationTypeItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetAdminNotificationsNotificationTypeItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortOrder } from "@/shared/types/core.model";
 
 /** 알림 페이지 번호 */
@@ -12,7 +12,7 @@ export const notificationDateRangeAtom =
   atomWithReset<NotificationDateRange>(null);
 /** 알림 유형 */
 export const notificationTypeAtom = atom<
-  AdminNotificationFilterRequestNotificationTypeItem[] | undefined
+  GetAdminNotificationsNotificationTypeItem[] | undefined
 >(undefined);
 /** 알림 읽음 상태 필터 */
 export const notificationHasReadAtom = atom<boolean | undefined>(undefined);

@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 import { useGetAdminNotifications } from "@/api/generated/admin-account-notification/admin-account-notification";
-import { AdminNotificationSortRequestSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NotificationListBody } from "@/domain/notification/components/list/notification-list-body";
 import { NotificationListFilter } from "@/domain/notification/components/list/notification-list-filter";
 import { NotificationListFooter } from "@/domain/notification/components/list/notification-list-footer";
@@ -55,24 +54,15 @@ export function NotificationListArticle() {
   } = useGetAdminNotifications(
     accountId,
     {
-      pageRequest: {
-        pageNo: page - 1,
-        pageSize: LIST_PAGE_SIZE,
-      },
-      filterRequest: {
-        hasRead,
-        notificationType: type?.length ? type : undefined,
-        startDate: dateRange?.start
-          ? formatDateForRequest(dateRange.start)
-          : undefined,
-        endDate: dateRange?.end
-          ? formatDateForRequest(dateRange.end)
-          : undefined,
-      },
-      sortRequest: {
-        order: toSortDirection(sortOrder),
-        sort: AdminNotificationSortRequestSort.CREATED_AT,
-      },
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+      hasRead,
+      notificationType: type?.length ? type : undefined,
+      startDate: dateRange?.start
+        ? formatDateForRequest(dateRange.start)
+        : undefined,
+      endDate: dateRange?.end ? formatDateForRequest(dateRange.end) : undefined,
+      order: toSortDirection(sortOrder),
     },
     {
       query: {
