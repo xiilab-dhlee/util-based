@@ -7,25 +7,31 @@ import {
 import type { ClusterNodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
 /**
- * 노드 이름 정렬을 위한 이름 생성
- * ASC: node-001, node-002, ... (오름차순)
- * DESC: node-999, node-998, ... (내림차순)
+ * 노드 이름 생성 (정렬 가능한 형식)
  */
-function generateNodeName(
-  index: number,
+function generateNodeName(index: number): string {
+  return `node-${String(index).padStart(3, "0")}`;
+}
+
+/**
+ * 노드 목록 정렬
+ */
+function sortNodeContent(
+  content: ClusterNodeListResponse[],
   sortField: string | null,
   sortOrder: string | null,
-): string {
-  if (sortField === "NODE_NAME") {
-    const paddedIndex = String((index % 1000) + 1).padStart(3, "0");
-    const sortableValue = 999 - (index % 1000);
-    const sortableNum =
-      sortOrder === "ASC"
-        ? paddedIndex
-        : String(sortableValue).padStart(3, "0");
-    return `node-${sortableNum}`;
-  }
-  return `node-${index}`;
+): ClusterNodeListResponse[] {
+  if (sortField !== "NODE_NAME") return content;
+
+  const sorted = [...content];
+  const isAsc = sortOrder === "ASC";
+
+  sorted.sort((a, b) => {
+    const comparison = (a.nodeName || "").localeCompare(b.nodeName || "");
+    return isAsc ? comparison : -comparison;
+  });
+
+  return sorted;
 }
 
 /**
@@ -64,7 +70,7 @@ export const nodeListOverrideHandlers = [
 
         return {
           ...baseItem,
-          nodeName: generateNodeName(globalIndex, sortField, sortOrder),
+          nodeName: generateNodeName(globalIndex),
           nodeIp: `192.168.1.${(globalIndex % 255) + 1}`,
           gpuType: faker.helpers.arrayElement([
             "NVIDIA A100-SXM4-80GB",
@@ -106,12 +112,15 @@ export const nodeListOverrideHandlers = [
       },
     );
 
+    // 정렬 적용
+    const sortedContent = sortNodeContent(content, sortField, sortOrder);
+
     return getGetClusterNodesResponseMock({
       data: {
         totalSize,
         totalPageNum: Math.ceil(totalSize / pageSize),
         currentPageNo: pageNo,
-        content,
+        content: sortedContent,
       },
     });
   }),
