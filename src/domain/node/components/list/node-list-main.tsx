@@ -114,7 +114,7 @@ export function NodeListMain() {
         {/* 노드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           {/* 노드 목록 필터 */}
-          <NodeListFilter total={data?.totalSize || 0} loading={isLoading} />
+          <NodeListFilter total={data?.totalSize || 0} />
           {/* 노드 목록 본문 */}
           <NodeListBody
             content={data?.content || []}
