@@ -124,7 +124,7 @@ export class AxiosService {
   /**
    * 인증 실패 시 처리
    * - 로그아웃 핸들러가 있으면 호출 (next-auth 세션 무효화)
-   * - 없으면 로그인 페이지로 직접 리다이렉트 (fallback)
+   * - 핸들러 실패 또는 없으면 로그인 페이지로 직접 리다이렉트 (fallback)
    */
   private async handleAuthFailure(): Promise<void> {
     // 이미 로그아웃 처리 중이면 스킵 (중복 호출 방지)
@@ -138,7 +138,17 @@ export class AxiosService {
     try {
       if (this.logoutHandler) {
         axiosDebug("🔒 세션 무효화 및 로그아웃 처리");
-        await this.logoutHandler();
+        try {
+          await this.logoutHandler();
+        } catch (error) {
+          // 로그아웃 핸들러 실패 시 fallback 리다이렉트
+          axiosDebug("❌ 로그아웃 핸들러 실패 → fallback 리다이렉트", {
+            error: String(error),
+          });
+          if (typeof window !== "undefined") {
+            window.location.href = "/signin";
+          }
+        }
       } else {
         // fallback: 로그아웃 핸들러가 없으면 직접 리다이렉트
         axiosDebug("🔒 로그인 페이지로 리다이렉트 (fallback)");
