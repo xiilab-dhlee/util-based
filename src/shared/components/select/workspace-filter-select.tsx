@@ -31,15 +31,11 @@ function useWorkspaceOptions(keyword: string) {
     queryFn: ({ pageParam = 0, signal }) =>
       getAllWorkspaces1(
         {
-          pageSearchRequest: {
-            pageNo: pageParam,
-            pageSize: PAGE_SIZE,
-            keyword: keyword || undefined,
-          },
-          sortRequest: {
-            sort: "WORKSPACE_NAME",
-            order: "ASC",
-          },
+          pageNo: pageParam,
+          pageSize: PAGE_SIZE,
+          keyword: keyword || undefined,
+          sort: "WORKSPACE_NAME",
+          order: "ASC",
         },
         signal,
       ),

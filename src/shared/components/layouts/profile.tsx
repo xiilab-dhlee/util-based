@@ -10,10 +10,7 @@ import { Icon, Tag } from "xiilab-ui";
 import { useGetNotifications } from "@/api/generated/account-notification/account-notification";
 import { useGetProfile } from "@/api/generated/account-profile/account-profile";
 import { useGetAdminNotifications } from "@/api/generated/admin-account-notification/admin-account-notification";
-import {
-  AdminNotificationSortRequestOrder,
-  AdminNotificationSortRequestSort,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { GetAdminNotificationsOrder } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
 import { NOTIFICATION_POLLING_INTERVAL } from "@/shared/constants/notification/notification.constant";
@@ -36,8 +33,9 @@ export function Profile() {
   const { data: userNotifications } = useGetNotifications(
     accountId,
     {
-      pageableRequest: { pageNo: 0, pageSize: 1 },
-      filterRequest: { hasRead: false },
+      pageNo: 0,
+      pageSize: 1,
+      hasRead: false,
     },
     {
       query: {
@@ -51,12 +49,10 @@ export function Profile() {
   const { data: adminNotifications } = useGetAdminNotifications(
     accountId,
     {
-      pageRequest: { pageNo: 0, pageSize: 1 },
-      filterRequest: { hasRead: false },
-      sortRequest: {
-        order: AdminNotificationSortRequestOrder.DESC,
-        sort: AdminNotificationSortRequestSort.CREATED_AT,
-      },
+      pageNo: 0,
+      pageSize: 1,
+      hasRead: false,
+      order: GetAdminNotificationsOrder.DESC,
     },
     {
       query: {
