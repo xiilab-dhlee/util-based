@@ -1,6 +1,5 @@
 import type {
   GetWorkspaceMembersPayload,
-  GetWorkspaceRequestResourcesPayload,
   GetWorkspacesPayload,
   UpdateWorkspaceMemberPayload,
   UpdateWorkspacePayload,
@@ -55,14 +54,6 @@ export class WorkspaceService extends AxiosService {
         this.getAxios().delete(`${this.BASE_URL}/member/${member}`),
       ),
     );
-  }
-
-  /** 워크스페이스 리소스 요청 목록 조회 */
-  public getRequestResourceList(payload: GetWorkspaceRequestResourcesPayload) {
-    const params = payloadToParams(payload);
-    return this.getAxios().get(`${this.BASE_URL}/admin/resource`, {
-      params,
-    });
   }
 
   /** 워크스페이스 리소스 요청 승인/반려 */
