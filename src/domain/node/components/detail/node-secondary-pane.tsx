@@ -51,7 +51,6 @@ export function NodeSecondaryPane({ data }: NodeSecondaryPaneProps) {
     if (!data?.allocatedResource) return [];
 
     return data.allocatedResource.map((resource) => ({
-      id: resource.resourceName.toLowerCase(),
       resourceName: resource.resourceName,
       requests: `${resource.request} (${resource.requestPercent}%)`,
       limits: `${resource.limit} (${resource.limitPercent}%)`,
