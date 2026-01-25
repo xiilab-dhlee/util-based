@@ -16,7 +16,7 @@ function generateNodeName(
   sortField: string | null,
   sortOrder: string | null,
 ): string {
-  if (sortField === "nodeName") {
+  if (sortField === "NODE_NAME") {
     const paddedIndex = String((index % 1000) + 1).padStart(3, "0");
     const sortableValue = 999 - (index % 1000);
     const sortableNum =
@@ -47,8 +47,8 @@ export const nodeListOverrideHandlers = [
     );
 
     // 정렬 파라미터
-    const sortField = url.searchParams.get("sortRequest[sortField]");
-    const sortOrder = url.searchParams.get("sortRequest[sortOrder]");
+    const sortField = url.searchParams.get("sortRequest[sort]");
+    const sortOrder = url.searchParams.get("sortRequest[order]");
 
     const totalSize = pageSize * 3;
 
