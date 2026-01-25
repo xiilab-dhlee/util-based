@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
-import { Form, Icon, Modal, TextArea, Typography } from "xiilab-ui";
+import { Form, Icon, Modal, TextArea } from "xiilab-ui";
 
 import { useCreateUsageRequest } from "@/api/generated/image-tag-usage-request/image-tag-usage-request";
 import type { RequestUsePayload } from "@/domain/registry/components/detail/request-use-button";
@@ -113,12 +113,8 @@ export function RequestUseModal() {
                   요청 사유
                   <GuideTooltip
                     maxWidth={240}
-                    title={
-                      <Typography.Text variant="body-4-2">
-                        요청사항은 관리자에게 전달됩니다. 관리자가 이미지를
-                        승인한 후 해당 이미지를 사용하실 수 있습니다.
-                      </Typography.Text>
-                    }
+                    title="요청사항은 관리자에게 전달됩니다. 관리자가 이미지를
+                        승인한 후 해당 이미지를 사용하실 수 있습니다."
                   />
                 </GuideTooltipWrapper>
               }
