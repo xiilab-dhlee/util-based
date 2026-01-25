@@ -67,11 +67,10 @@ export function NodeListMain() {
   });
 
   const { data, isLoading, isError } = useGetClusterNodes({
-    pageableRequest: {
-      pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
-    },
-    sortRequest: sortRequest ?? { sort: "NODE_NAME", order: "ASC" },
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    sort: sortRequest?.sort ?? "NODE_NAME",
+    order: sortRequest?.order ?? "ASC",
   });
 
   useEffect(() => {
