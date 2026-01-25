@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
 import {
-  getGetStoragesQueryKey,
+  getGetAdminStoragesQueryKey,
   useRegisterStorage,
 } from "@/api/generated/admin-storage/admin-storage";
 import { StorageCreateRequestStorageChannel } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -56,7 +56,7 @@ export function CreateStorageModal() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
-            queryKey: getGetStoragesQueryKey(),
+            queryKey: getGetAdminStoragesQueryKey(),
           });
           setOpen(false);
         },
