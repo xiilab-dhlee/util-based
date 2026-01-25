@@ -27,11 +27,10 @@ import {
  */
 export function NodeDetailMain() {
   // URL 파라미터에서 노드 이름 추출
-  const { name } = useParams();
-  const nodeName = String(name);
+  const { name } = useParams<{ name: string }>();
 
   // 노드 상세 정보 조회
-  const { data, isLoading, isError } = useGetNodeDetail(nodeName);
+  const { data, isLoading, isError } = useGetNodeDetail(name);
 
   /**
    * 콘텐츠 영역 렌더링
@@ -82,7 +81,7 @@ export function NodeDetailMain() {
       {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
       <PageHeader
         pageKey="admin.node.detail"
-        pageParams={{ name: nodeName }}
+        pageParams={{ name }}
         description="Node resource details · Resource information"
       />
 
