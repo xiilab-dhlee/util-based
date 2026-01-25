@@ -25,6 +25,7 @@ import { groupHandlers } from "@/domain/group/mocks";
 import { nodeHandlers } from "@/domain/node/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
+import { requestResourceHandlers } from "@/domain/request-resource/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { revokeHandlers } from "@/domain/revoke/mocks";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
@@ -40,7 +41,6 @@ import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
-import { requestResourceHandlers } from "@/mocks/handlers/request-resource.handler";
 import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 
@@ -99,6 +99,7 @@ function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
  */
 const rawHandlers = [
   // Override handlers (우선순위 높음)
+  ...requestResourceHandlers,
   ...authHandlers,
   ...getAccountProfileMock(),
   ...notificationHandlers,
@@ -112,7 +113,6 @@ const rawHandlers = [
   ...systemSettingHandlers,
   ...groupHandlers,
   ...workspaceHandlers,
-  ...requestResourceHandlers,
   ...accountManagementHandlers,
   ...monitoringHandlers,
   ...getAdminMonitoringNotificationHistoryMock(),
