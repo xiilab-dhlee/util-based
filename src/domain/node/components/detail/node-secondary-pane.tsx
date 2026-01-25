@@ -93,7 +93,7 @@ export function NodeSecondaryPane({ data }: NodeSecondaryPaneProps) {
                 <DetailContentFeatureRow>
                   <DetailContentKey>Memory</DetailContentKey>
                   <DetailContentPaneValue className="truncate">
-                    {gpuInfo?.gpuMemoryMb || "-"}
+                    {gpuInfo?.gpuMemoryMb ? `${gpuInfo.gpuMemoryMb}MB` : "-"}
                   </DetailContentPaneValue>
                 </DetailContentFeatureRow>
                 <DetailContentFeatureRow>
