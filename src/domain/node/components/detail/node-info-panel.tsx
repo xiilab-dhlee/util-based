@@ -57,13 +57,15 @@ export function NodeInfoPanel({ data }: NodeInfoPanelProps) {
             <DetailIntroCardRowTitle>
               {data?.nodeName || "-"}
               {/* 노드 실행 상태 라벨 */}
-              <StatusLabel
-                variant={isRunning ? "green" : "red"}
-                size="large"
-                theme="light"
-              >
-                {isRunning ? "실행중" : "중지됨"}
-              </StatusLabel>
+              {data?.nodeCondition && (
+                <StatusLabel
+                  variant={isRunning ? "green" : "red"}
+                  size="large"
+                  theme="light"
+                >
+                  {isRunning ? "실행중" : "중지됨"}
+                </StatusLabel>
+              )}
             </DetailIntroCardRowTitle>
           </DetailIntroCardDescriptionRowBody>
           <DetailIntroCardDescription>
