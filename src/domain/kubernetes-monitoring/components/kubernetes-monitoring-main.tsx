@@ -49,10 +49,8 @@ export function KubernetesMonitoringMain() {
     isError,
     isLoading,
   } = useGetAllNamespaceEvents({
-    pageableRequest: {
-      pageNo: eventPage - 1,
-      pageSize: KUBERNETES_EVENT_LIST_PAGE_SIZE,
-    },
+    pageNo: eventPage - 1,
+    pageSize: KUBERNETES_EVENT_LIST_PAGE_SIZE,
   });
 
   const events = eventsResponse?.content ?? [];
