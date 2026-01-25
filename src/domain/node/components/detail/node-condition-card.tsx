@@ -18,21 +18,15 @@ import { formatDateSafely } from "@/shared/utils/date.util";
 type NodeConditionCardProps = NodeConditionResponse;
 
 /**
- * 노드 상태 타입에 따른 Label 색상을 결정하는 함수
- * - Ready 상태: True일 때 정상 (green)
- * - MemoryPressure, DiskPressure, PIDPressure 등: False일 때 정상 (green)
+ * 상태값에 따른 Label 색상을 결정하는 함수
+ * - True: 초록색 (green)
+ * - False: 빨간색 (red)
  *
- * @param conditionName - 노드 상태 타입
  * @param status - 상태값 (True/False)
  * @returns Label variant (green 또는 red)
  */
-function getConditionVariant(
-  conditionName: string,
-  status: string,
-): "green" | "red" {
-  const isHealthyWhenTrue = conditionName === "Ready";
-  const isHealthy = isHealthyWhenTrue ? status === "True" : status === "False";
-  return isHealthy ? "green" : "red";
+function getStatusVariant(status: string): "green" | "red" {
+  return status === "True" ? "green" : "red";
 }
 
 /**
@@ -60,11 +54,7 @@ export function NodeConditionCard({
     <Card
       contentVariant="compact"
       actionElement={
-        <Label
-          size="medium"
-          theme="light"
-          variant={getConditionVariant(conditionName, status)}
-        >
+        <Label size="medium" theme="light" variant={getStatusVariant(status)}>
           {status}
         </Label>
       }
