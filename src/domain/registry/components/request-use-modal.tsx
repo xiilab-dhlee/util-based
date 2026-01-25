@@ -54,7 +54,7 @@ export function RequestUseModal() {
         data: {
           imageTagId: [imageTagId],
           requestReason: data.requestReason,
-          workspaceId: selectedWorkspace?.workspaceId,
+          workspaceId: selectedWorkspace.workspaceId,
         },
       },
       {

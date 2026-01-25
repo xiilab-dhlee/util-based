@@ -29,7 +29,7 @@ export function RegistryJobLogViewer({
     },
   });
 
-  const logLines = logData?.split("\n") ?? [];
+  const logLines = logData && logData.trim() !== "" ? logData.split("\n") : [];
 
   const renderLogContent = () => {
     if (isLoading) {

@@ -2,8 +2,8 @@
 
 import { RegistryMainSection } from "@/domain/registry/components/entry/registry-main-section";
 import { RegistrySubSection } from "@/domain/registry/components/entry/registry-sub-section";
+import { SecurityLevelSettingModal } from "@/domain/registry/components/security-level-setting-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { SecurityLevelSettingModal } from "../security-level-setting-modal";
 
 export function RegistryMain() {
   return (

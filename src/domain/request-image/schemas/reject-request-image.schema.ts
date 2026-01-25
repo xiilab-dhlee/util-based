@@ -9,6 +9,7 @@ import { z } from "zod";
 export const rejectRequestImageSchema = z.object({
   rejectReason: z
     .string()
+    .trim()
     .min(1, "반려 사유를 입력해 주세요.")
     .max(2000, "반려 사유는 최대 2000자까지 입력 가능합니다."),
 });

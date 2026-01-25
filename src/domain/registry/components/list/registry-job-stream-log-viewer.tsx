@@ -79,6 +79,7 @@ export function RegistryJobStreamLogViewer({
 
     setStatus("pending");
     setErrorMessage(null);
+    setLogs([]);
 
     fetchEventSource(url, {
       headers: {

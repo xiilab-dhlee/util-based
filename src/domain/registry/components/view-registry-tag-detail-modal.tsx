@@ -12,7 +12,10 @@ import { ScanStatusText } from "@/shared/components/text/scan-status-text";
 import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { checkIsUser, getSessionAccountId } from "@/shared/utils/auth.util";
+import {
+  checkIsSuperAdmin,
+  getSessionAccountId,
+} from "@/shared/utils/auth.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
 
@@ -46,11 +49,11 @@ export function ViewRegistryTagDetailModal({
     },
   );
 
-  // 생성자 또는 관리자인 경우 수정 가능
-  const isUser = checkIsUser(session);
+  // 생성자 또는 슈퍼 관리자인 경우 수정 가능
   const sessionAccountId = getSessionAccountId(session);
   const isOwner = data?.creatorId === sessionAccountId;
-  const canEdit = !!session && (!isUser || isOwner);
+  const isSuperAdmin = checkIsSuperAdmin(session);
+  const canEdit = !!session && (isOwner || isSuperAdmin);
 
   const handleClose = () => {
     setOpen(false);
