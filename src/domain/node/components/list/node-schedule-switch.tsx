@@ -52,9 +52,10 @@ export function NodeScheduleSwitch({
    */
   const handleChange = (newChecked: boolean) => {
     // Optimistic Update: 즉시 캐시 업데이트
+    // exact: false로 부분 매칭하여 pageableRequest/sortRequest가 포함된 쿼리도 업데이트
     queryClient.setQueriesData<{
       content?: ClusterNodeListResponse[];
-    }>({ queryKey: getGetClusterNodesQueryKey() }, (old) => {
+    }>({ queryKey: getGetClusterNodesQueryKey(), exact: false }, (old) => {
       if (!old?.content) return old;
       return {
         ...old,
