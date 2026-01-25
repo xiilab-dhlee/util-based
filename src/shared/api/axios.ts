@@ -21,6 +21,9 @@ type SessionProvider = () => Session | null;
 /** 세션 갱신자 타입 - NextAuth의 update() 함수 */
 type SessionUpdater = () => Promise<Session | null>;
 
+/** 로그아웃 핸들러 타입 - 세션 무효화 및 로그아웃 처리 */
+type LogoutHandler = () => Promise<void>;
+
 /** 재시도 플래그를 위한 확장 타입 */
 interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -39,9 +42,13 @@ export class AxiosService {
   private requestInterceptorId?: number;
   private responseInterceptorId?: number;
 
-  // 외부에서 주입받은 세션 제공자 및 갱신자
+  // 외부에서 주입받은 세션 제공자, 갱신자 및 로그아웃 핸들러
   private sessionProvider: SessionProvider | null = null;
   private sessionUpdater: SessionUpdater | null = null;
+  private logoutHandler: LogoutHandler | null = null;
+
+  // 로그아웃 처리 중인지 여부 (중복 호출 방지)
+  private isLoggingOut = false;
 
   constructor(config: AxiosServiceConfig = {}) {
     this.axios = axios.create({
@@ -89,6 +96,21 @@ export class AxiosService {
   }
 
   /**
+   * 로그아웃 핸들러를 설정합니다.
+   * AuthProvider에서 signOut 래퍼 함수를 주입합니다.
+   */
+  public setLogoutHandler(handler: LogoutHandler): void {
+    this.logoutHandler = handler;
+  }
+
+  /**
+   * 로그아웃 핸들러를 제거합니다.
+   */
+  public clearLogoutHandler(): void {
+    this.logoutHandler = null;
+  }
+
+  /**
    * 현재 세션을 가져옵니다.
    * 외부에서 주입된 세션 제공자를 통해 동기적으로 세션을 반환합니다.
    */
@@ -97,6 +119,37 @@ export class AxiosService {
       return this.sessionProvider();
     }
     return null;
+  }
+
+  /**
+   * 인증 실패 시 처리
+   * - 로그아웃 핸들러가 있으면 호출 (next-auth 세션 무효화)
+   * - 없으면 로그인 페이지로 직접 리다이렉트 (fallback)
+   */
+  private async handleAuthFailure(): Promise<void> {
+    // 이미 로그아웃 처리 중이면 스킵 (중복 호출 방지)
+    if (this.isLoggingOut) {
+      axiosDebug("⏳ 이미 로그아웃 처리 중 → 스킵");
+      return;
+    }
+
+    this.isLoggingOut = true;
+
+    try {
+      if (this.logoutHandler) {
+        axiosDebug("🔒 세션 무효화 및 로그아웃 처리");
+        await this.logoutHandler();
+      } else {
+        // fallback: 로그아웃 핸들러가 없으면 직접 리다이렉트
+        axiosDebug("🔒 로그인 페이지로 리다이렉트 (fallback)");
+        if (typeof window !== "undefined") {
+          window.location.href = "/signin";
+        }
+      }
+    } finally {
+      // 리다이렉트 후 플래그 리셋 (페이지 이동 시 새로 초기화됨)
+      this.isLoggingOut = false;
+    }
   }
 
   private setupInterceptors(): void {
@@ -143,7 +196,7 @@ export class AxiosService {
             // NextAuth 세션 갱신 시도 (JWT 콜백에서 토큰 갱신)
             const newSession = await this.sessionUpdater();
 
-            if (newSession?.accessToken) {
+            if (newSession?.accessToken && !newSession.error) {
               axiosDebug("✅ 토큰 갱신 성공 → 요청 재시도", {
                 url: requestUrl,
               });
@@ -152,7 +205,10 @@ export class AxiosService {
               return this.axios(originalRequest);
             }
 
-            axiosDebug("❌ 토큰 갱신 실패 (새 토큰 없음)", { url: requestUrl });
+            axiosDebug("❌ 토큰 갱신 실패 (새 토큰 없음 또는 세션 에러)", {
+              url: requestUrl,
+              error: newSession?.error,
+            });
           } catch (refreshError) {
             axiosDebug("❌ 토큰 갱신 실패 (예외 발생)", {
               url: requestUrl,
@@ -160,11 +216,8 @@ export class AxiosService {
             });
           }
 
-          // 갱신 실패 → 로그인 페이지로 리다이렉트
-          axiosDebug("🔒 로그인 페이지로 리다이렉트");
-          if (typeof window !== "undefined") {
-            window.location.href = "/signin";
-          }
+          // 갱신 실패 → 세션 무효화 후 로그아웃
+          await this.handleAuthFailure();
         }
 
         return Promise.reject(error);

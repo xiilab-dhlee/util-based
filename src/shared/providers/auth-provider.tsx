@@ -28,9 +28,10 @@ function authDebug(message: string): void {
 // ============================================================================
 
 /**
- * AxiosService에 세션 제공자 및 갱신자 주입
+ * AxiosService에 세션 제공자, 갱신자 및 로그아웃 핸들러 주입
  * - 세션 제공자: API 요청 시 자동으로 토큰 포함
  * - 세션 갱신자: 401 에러 시 토큰 갱신 후 재시도
+ * - 로그아웃 핸들러: 토큰 갱신 실패 시 세션 무효화 및 로그아웃
  */
 function useAxiosSessionSync(session: Session | null) {
   const { update } = useSession();
@@ -40,9 +41,25 @@ function useAxiosSessionSync(session: Session | null) {
     axiosService.setSessionProvider(() => session);
     axiosService.setSessionUpdater(update);
 
+    // 로그아웃 핸들러: 401 + 토큰 갱신 실패 시 호출됨
+    const logoutHandler = async () => {
+      authDebug("🔒 AxiosService에서 로그아웃 요청 → 세션 무효화");
+
+      if (useTestAuth) {
+        // 테스트 환경: credentials 프로바이더로 재로그인 시도
+        await signIn("credentials", { redirect: false });
+      } else {
+        // 프로덕션 환경: Keycloak SSO 세션까지 종료 후 로그인 페이지로 이동
+        await signOut({ callbackUrl: "/signin" });
+      }
+    };
+
+    axiosService.setLogoutHandler(logoutHandler);
+
     return () => {
       axiosService.clearSessionProvider();
       axiosService.clearSessionUpdater();
+      axiosService.clearLogoutHandler();
     };
   }, [session, update]);
 }
