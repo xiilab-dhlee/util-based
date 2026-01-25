@@ -89,7 +89,11 @@ export function NodeDetailMain() {
       {/* 상세 페이지 메인 콘텐츠 영역 */}
       <DetailPageBody>
         {/* 왼쪽 사이드바 영역 - 노드 요약 정보 */}
-        <NodeDetailPageAside />
+        <NodeDetailPageAside
+          data={data}
+          isLoading={isLoading}
+          isError={isError}
+        />
         {/* 오른쪽 메인 콘텐츠 영역 */}
         <DetailPageContent>
           {/* 콘텐츠 영역 */}
