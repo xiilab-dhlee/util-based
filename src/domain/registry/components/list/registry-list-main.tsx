@@ -74,20 +74,13 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
   const { data, isLoading, isError } = useGetRegistryListByMode(
     mode,
     {
-      pageRequest: {
-        pageNo: page - 1,
-        pageSize: REGISTRY_PAGE_SIZE,
-        keyword: searchText,
-      },
-      workspaceFilter: {
-        workspaceId: selectedWorkspace?.workspaceId,
-      },
-      filterRequest: {
-        sort: sortRequest?.sort ?? "CREATED_AT",
-        order: sortRequest?.order ?? "DESC",
-        isMine: false,
-        imageSourceType,
-      },
+      pageNo: page - 1,
+      pageSize: REGISTRY_PAGE_SIZE,
+      keyword: searchText,
+      workspaceId: selectedWorkspace?.workspaceId,
+      sort: sortRequest?.sort ?? "CREATED_AT",
+      order: sortRequest?.order ?? "DESC",
+      imageSourceType,
     },
     {
       query: {

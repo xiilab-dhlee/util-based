@@ -8,8 +8,8 @@ import styled from "styled-components";
 import { Form, FormItem, Icon, Input, Modal, Typography } from "xiilab-ui";
 
 import {
+  getGetAdminStoragesQueryKey,
   getGetStorageDetailQueryKey,
-  getGetStoragesQueryKey,
   useUpdateStorage,
 } from "@/api/generated/admin-storage/admin-storage";
 import type { StorageResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -71,7 +71,7 @@ export function UpdateStorageModal() {
             queryKey: getGetStorageDetailQueryKey(data.storageId),
           });
           queryClient.invalidateQueries({
-            queryKey: getGetStoragesQueryKey(),
+            queryKey: getGetAdminStoragesQueryKey(),
           });
           setOpen(false);
         },

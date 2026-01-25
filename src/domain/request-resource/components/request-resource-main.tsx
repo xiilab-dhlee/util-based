@@ -52,16 +52,12 @@ export function RequestResourceMain() {
 
   // 리소스 요청 목록 조회 (Orval 훅)
   const { data, isLoading, isError } = useGetResourceRequests1({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
-      keyword: keyword || undefined,
-    },
-    sortFilterRequest: {
-      sort: sortRequest?.sort ?? REQUEST_RESOURCE_SORT_DEFAULT.sort,
-      order: sortRequest?.order ?? REQUEST_RESOURCE_SORT_DEFAULT.order,
-      approvalStatus: status,
-    },
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: keyword || undefined,
+    sort: sortRequest?.sort ?? REQUEST_RESOURCE_SORT_DEFAULT.sort,
+    order: sortRequest?.order ?? REQUEST_RESOURCE_SORT_DEFAULT.order,
+    approvalStatus: status,
   });
 
   // 페이지 변경 핸들러

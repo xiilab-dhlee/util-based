@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { ImageTagUsageRequestFilterRequestApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { ImageTagUsageRequestResponseApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
 /** 상태별 UI 정보 */
 interface StatusInfo {
@@ -13,7 +13,7 @@ interface StatusInfo {
 
 /** 이미지 사용 요청 상태별 UI 정보 매핑 */
 const IMAGE_USAGE_REQUEST_STATUS_MAP: Record<
-  ImageTagUsageRequestFilterRequestApprovalStatus,
+  ImageTagUsageRequestResponseApprovalStatus,
   StatusInfo
 > = {
   APPROVAL_WAITING: {
@@ -37,7 +37,7 @@ const IMAGE_USAGE_REQUEST_STATUS_MAP: Record<
 } as const;
 
 interface RequestImageStatusCardProps {
-  status: ImageTagUsageRequestFilterRequestApprovalStatus;
+  status: ImageTagUsageRequestResponseApprovalStatus;
   count: number;
   isLoading?: boolean;
 }

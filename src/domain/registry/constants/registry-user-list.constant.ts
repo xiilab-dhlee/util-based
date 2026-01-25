@@ -1,4 +1,7 @@
-import type { ImageUsageSortRequestSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  GetPrivateImageUsageByAccountSort,
+  GetPublicImageUsageByAccountSort,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 /**
@@ -16,12 +19,17 @@ export const REGISTRY_USER_CARD_HEIGHT = 144;
 // 정렬 관련 상수
 // ============================================================================
 
+/** 사용자 목록 정렬 타입 (Private/Public 공통) */
+export type ImageUsageSortType =
+  | GetPrivateImageUsageByAccountSort
+  | GetPublicImageUsageByAccountSort;
+
 /** 사용자 목록 정렬 필드 매핑 (테이블 컬럼 키 -> API 정렬 필드) */
 export const REGISTRY_USER_SORT_FIELD_MAP = {
   accountName: "ACCOUNT_NAME",
   imageCount: "IMAGE_COUNT",
   usedStorage: "USED_STORAGE",
-} as const satisfies Record<string, ImageUsageSortRequestSort>;
+} as const satisfies Record<string, ImageUsageSortType>;
 
 /** 사용자 목록 정렬 필드 타입 */
 export type RegistryUserSortField = keyof typeof REGISTRY_USER_SORT_FIELD_MAP;

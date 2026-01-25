@@ -43,12 +43,10 @@ export function PendingWorkloadMain() {
     isLoading,
     isError,
   } = useGetPendingWorkloads({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: LIST_PAGE_SIZE,
-      keyword: search || undefined,
-    },
-    filterRequest,
+    pageNo: page - 1,
+    pageSize: LIST_PAGE_SIZE,
+    keyword: search || undefined,
+    ...filterRequest,
   });
 
   // 긴급 대기열 데이터 조회 (최대 개수 제한 확인용)

@@ -55,12 +55,10 @@ export function useAllGpuMetrics({
   } = useGetNodeGpuMetrics(
     nodeName,
     {
-      request: {
-        metrics: [...ALL_GPU_METRICS],
-        startedAt,
-        endedAt,
-        step,
-      },
+      metrics: [...ALL_GPU_METRICS],
+      startedAt,
+      endedAt,
+      step,
     },
     {
       query: {

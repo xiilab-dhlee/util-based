@@ -5,7 +5,6 @@ import { useAtomValue } from "jotai";
 import type {
   GetPrivateImageTagDetailParams,
   GetPublicImageTagDetailParams,
-  ImageTagDetailRequest,
   ImageTagDetailResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -22,6 +21,10 @@ import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 export type GetRegistryTagDetailQueryError =
   | GetPrivateImageTagDetailQueryError
   | GetPublicImageTagDetailQueryError;
+
+export type GetRegistryTagDetailParams =
+  | GetPrivateImageTagDetailParams
+  | GetPublicImageTagDetailParams;
 
 interface UseGetRegistryTagDetailByModeOptions {
   query?: {
@@ -41,35 +44,32 @@ interface UseGetRegistryTagDetailByModeResult {
 /** mode에 따라 private 또는 public 이미지 태그 상세 조회 */
 export const useGetRegistryTagDetailByMode = (
   mode: RegistryMode,
-  params: ImageTagDetailRequest,
+  params: GetRegistryTagDetailParams,
   options?: UseGetRegistryTagDetailByModeOptions,
 ): UseGetRegistryTagDetailByModeResult => {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const workspaceId = selectedWorkspace?.workspaceId;
 
-  const privateParams: GetPrivateImageTagDetailParams = {
-    request: params,
-    workspaceFilter: { workspaceId: workspaceId ?? 0 },
-  };
-
-  const publicParams: GetPublicImageTagDetailParams = {
-    request: params,
-  };
-
-  const privateQuery = useGetPrivateImageTagDetail(privateParams, {
-    query: {
-      enabled:
-        mode === "private" &&
-        !!workspaceId &&
-        (options?.query?.enabled ?? true),
+  const privateQuery = useGetPrivateImageTagDetail(
+    { ...params, workspaceId } as GetPrivateImageTagDetailParams,
+    {
+      query: {
+        enabled:
+          mode === "private" &&
+          !!workspaceId &&
+          (options?.query?.enabled ?? true),
+      },
     },
-  });
+  );
 
-  const publicQuery = useGetPublicImageTagDetail(publicParams, {
-    query: {
-      enabled: mode === "public" && (options?.query?.enabled ?? true),
+  const publicQuery = useGetPublicImageTagDetail(
+    params as GetPublicImageTagDetailParams,
+    {
+      query: {
+        enabled: mode === "public" && (options?.query?.enabled ?? true),
+      },
     },
-  });
+  );
 
   const query = mode === "private" ? privateQuery : publicQuery;
 

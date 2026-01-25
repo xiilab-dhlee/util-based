@@ -1,8 +1,8 @@
 import {
-  BatchGpuMetricRequestMetricsItem,
   type BatchGpuMetricResponse,
-  BatchSystemMetricRequestMetricsItem,
   type BatchSystemMetricResponse,
+  GetNodeGpuMetricsMetricsItem,
+  GetNodeSystemMetricsMetricsItem,
   type GpuTimeseriesData,
   type MetricResult,
   type SystemMetricResult,
@@ -33,13 +33,13 @@ export function isGpuMetricType(type: MonitoringMetricType): boolean {
  * 프론트엔드 GPU 메트릭 타입 → API GPU 메트릭 이름 변환
  */
 const GPU_METRIC_MAP: Partial<
-  Record<MonitoringMetricType, BatchGpuMetricRequestMetricsItem | undefined>
+  Record<MonitoringMetricType, GetNodeGpuMetricsMetricsItem | undefined>
 > = {
-  "gpu-utilization": BatchGpuMetricRequestMetricsItem.GPU_UTILIZATION,
-  "gpu-memory": BatchGpuMetricRequestMetricsItem.GPU_MEMORY_UTILIZATION,
-  "gpu-temperature": BatchGpuMetricRequestMetricsItem.GPU_TEMPERATURE,
-  "gpu-fan-speed": BatchGpuMetricRequestMetricsItem.GPU_FAN_SPEED,
-  "gpu-power-usage": BatchGpuMetricRequestMetricsItem.GPU_POWER_USAGE,
+  "gpu-utilization": GetNodeGpuMetricsMetricsItem.GPU_UTILIZATION,
+  "gpu-memory": GetNodeGpuMetricsMetricsItem.GPU_MEMORY_UTILIZATION,
+  "gpu-temperature": GetNodeGpuMetricsMetricsItem.GPU_TEMPERATURE,
+  "gpu-fan-speed": GetNodeGpuMetricsMetricsItem.GPU_FAN_SPEED,
+  "gpu-power-usage": GetNodeGpuMetricsMetricsItem.GPU_POWER_USAGE,
 };
 
 /**
@@ -49,7 +49,7 @@ const GPU_METRIC_MAP: Partial<
  */
 export function toGpuMetricName(
   type: MonitoringMetricType,
-): BatchGpuMetricRequestMetricsItem | null {
+): GetNodeGpuMetricsMetricsItem | null {
   return GPU_METRIC_MAP[type] ?? null;
 }
 
@@ -60,30 +60,25 @@ export function toGpuMetricName(
  * 멀티시리즈 메트릭: 배열로 반환
  */
 const SYSTEM_METRIC_MAP: Partial<
-  Record<
-    MonitoringMetricType,
-    BatchSystemMetricRequestMetricsItem[] | undefined
-  >
+  Record<MonitoringMetricType, GetNodeSystemMetricsMetricsItem[] | undefined>
 > = {
-  "cpu-utilization": [BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION],
-  "cpu-temperature": [BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE],
-  "cpu-load-average": [BatchSystemMetricRequestMetricsItem.CPU_LOAD_AVERAGE],
-  "memory-utilization": [
-    BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION,
-  ],
+  "cpu-utilization": [GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION],
+  "cpu-temperature": [GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE],
+  "cpu-load-average": [GetNodeSystemMetricsMetricsItem.CPU_LOAD_AVERAGE],
+  "memory-utilization": [GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION],
   "memory-detail": [
-    BatchSystemMetricRequestMetricsItem.NODE_MEMORY_BUFFERS,
-    BatchSystemMetricRequestMetricsItem.NODE_MEMORY_CACHED,
-    BatchSystemMetricRequestMetricsItem.NODE_MEMORY_FREE,
+    GetNodeSystemMetricsMetricsItem.NODE_MEMORY_BUFFERS,
+    GetNodeSystemMetricsMetricsItem.NODE_MEMORY_CACHED,
+    GetNodeSystemMetricsMetricsItem.NODE_MEMORY_FREE,
   ],
-  "disk-utilization": [BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION],
+  "disk-utilization": [GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION],
   "disk-rw": [
-    BatchSystemMetricRequestMetricsItem.DISK_READ,
-    BatchSystemMetricRequestMetricsItem.DISK_WRITE,
+    GetNodeSystemMetricsMetricsItem.DISK_READ,
+    GetNodeSystemMetricsMetricsItem.DISK_WRITE,
   ],
   "network-rt": [
-    BatchSystemMetricRequestMetricsItem.NODE_NETWORK_RECEIVE,
-    BatchSystemMetricRequestMetricsItem.NODE_NETWORK_TRANSMIT,
+    GetNodeSystemMetricsMetricsItem.NODE_NETWORK_RECEIVE,
+    GetNodeSystemMetricsMetricsItem.NODE_NETWORK_TRANSMIT,
   ],
 };
 
@@ -99,7 +94,7 @@ const SYSTEM_METRIC_MAP: Partial<
  */
 export function toSystemMetricNames(
   type: MonitoringMetricType,
-): BatchSystemMetricRequestMetricsItem[] {
+): GetNodeSystemMetricsMetricsItem[] {
   const metricNames = SYSTEM_METRIC_MAP[type];
   // GPU 메트릭 타입이나 알 수 없는 타입은 빈 배열 반환
   return metricNames ?? [];
@@ -108,24 +103,24 @@ export function toSystemMetricNames(
 /**
  * API 메트릭 이름 → 차트 시리즈 이름 변환 (멀티시리즈용)
  */
-const SERIES_NAME_MAP: Record<BatchSystemMetricRequestMetricsItem, string> = {
-  [BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION]: "CPU 사용률",
-  [BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE]: "CPU 온도",
-  [BatchSystemMetricRequestMetricsItem.CPU_LOAD_AVERAGE]: "CPU 부하",
-  [BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION]: "Memory 사용률",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_BUFFERS]: "Buffers",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_CACHED]: "Cached",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_TOTAL]: "Total",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_FREE]: "Free",
-  [BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION]: "Disk 사용률",
-  [BatchSystemMetricRequestMetricsItem.DISK_READ]: "Read",
-  [BatchSystemMetricRequestMetricsItem.DISK_WRITE]: "Write",
-  [BatchSystemMetricRequestMetricsItem.NODE_NETWORK_RECEIVE]: "Receive",
-  [BatchSystemMetricRequestMetricsItem.NODE_NETWORK_TRANSMIT]: "Transmit",
+const SERIES_NAME_MAP: Record<GetNodeSystemMetricsMetricsItem, string> = {
+  [GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION]: "CPU 사용률",
+  [GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE]: "CPU 온도",
+  [GetNodeSystemMetricsMetricsItem.CPU_LOAD_AVERAGE]: "CPU 부하",
+  [GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION]: "Memory 사용률",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_BUFFERS]: "Buffers",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_CACHED]: "Cached",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_TOTAL]: "Total",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_FREE]: "Free",
+  [GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION]: "Disk 사용률",
+  [GetNodeSystemMetricsMetricsItem.DISK_READ]: "Read",
+  [GetNodeSystemMetricsMetricsItem.DISK_WRITE]: "Write",
+  [GetNodeSystemMetricsMetricsItem.NODE_NETWORK_RECEIVE]: "Receive",
+  [GetNodeSystemMetricsMetricsItem.NODE_NETWORK_TRANSMIT]: "Transmit",
 };
 
 export function toSeriesName(
-  metricName: BatchSystemMetricRequestMetricsItem,
+  metricName: GetNodeSystemMetricsMetricsItem,
 ): string {
   return SERIES_NAME_MAP[metricName] ?? metricName;
 }
@@ -217,29 +212,27 @@ export function extractGpuMetricData(
  * 시스템 메트릭 이름 → 배치 응답 키 매핑
  */
 const SYSTEM_RESPONSE_KEY_MAP: Partial<
-  Record<BatchSystemMetricRequestMetricsItem, keyof BatchSystemMetricResponse>
+  Record<GetNodeSystemMetricsMetricsItem, keyof BatchSystemMetricResponse>
 > = {
-  [BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION]: "cpuUtilization",
-  [BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE]: "cpuTemperature",
-  [BatchSystemMetricRequestMetricsItem.CPU_LOAD_AVERAGE]: "cpuLoadAverage",
-  [BatchSystemMetricRequestMetricsItem.NODE_NETWORK_RECEIVE]:
-    "nodeNetworkReceive",
-  [BatchSystemMetricRequestMetricsItem.NODE_NETWORK_TRANSMIT]:
+  [GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION]: "cpuUtilization",
+  [GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE]: "cpuTemperature",
+  [GetNodeSystemMetricsMetricsItem.CPU_LOAD_AVERAGE]: "cpuLoadAverage",
+  [GetNodeSystemMetricsMetricsItem.NODE_NETWORK_RECEIVE]: "nodeNetworkReceive",
+  [GetNodeSystemMetricsMetricsItem.NODE_NETWORK_TRANSMIT]:
     "nodeNetworkTransmit",
-  [BatchSystemMetricRequestMetricsItem.DISK_READ]: "diskRead",
-  [BatchSystemMetricRequestMetricsItem.DISK_WRITE]: "diskWrite",
-  [BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION]: "diskUtilization",
-  [BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION]: "memoryUtilization",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_BUFFERS]:
-    "nodeMemoryBuffers",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_CACHED]: "nodeMemoryCached",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_TOTAL]: "nodeMemoryTotal",
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_FREE]: "nodeMemoryFree",
+  [GetNodeSystemMetricsMetricsItem.DISK_READ]: "diskRead",
+  [GetNodeSystemMetricsMetricsItem.DISK_WRITE]: "diskWrite",
+  [GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION]: "diskUtilization",
+  [GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION]: "memoryUtilization",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_BUFFERS]: "nodeMemoryBuffers",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_CACHED]: "nodeMemoryCached",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_TOTAL]: "nodeMemoryTotal",
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_FREE]: "nodeMemoryFree",
 };
 
 export function extractSystemMetricData(
   response: BatchSystemMetricResponse | undefined,
-  metricName: BatchSystemMetricRequestMetricsItem,
+  metricName: GetNodeSystemMetricsMetricsItem,
 ): ExtractResult<MetricValue> {
   if (!response) {
     return {

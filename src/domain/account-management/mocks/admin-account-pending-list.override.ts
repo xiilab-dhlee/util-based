@@ -3,9 +3,9 @@ import {
   getGetSignupRequestsResponseMock,
 } from "@/api/generated/admin-account-approval/admin-account-approval.msw";
 import type {
+  GetSignupRequestsOrder,
+  GetSignupRequestsSort,
   SignupRequestItemResponse,
-  SignupRequestSortRequestOrder,
-  SignupRequestSortRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   DAY_IN_MS,
@@ -18,8 +18,8 @@ import {
 function generateAccountName(
   index: number,
   keyword: string,
-  sort: SignupRequestSortRequestSort,
-  order: SignupRequestSortRequestOrder,
+  sort: GetSignupRequestsSort,
+  order: GetSignupRequestsOrder,
 ): string {
   if (keyword) {
     return `${keyword}-${index + 1}`;
@@ -41,8 +41,8 @@ function generateAccountName(
  */
 function generateCreatedAt(
   index: number,
-  sort: SignupRequestSortRequestSort,
-  order: SignupRequestSortRequestOrder,
+  sort: GetSignupRequestsSort,
+  order: GetSignupRequestsOrder,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
   if (sort === "CREATED_AT") {
@@ -63,10 +63,10 @@ export const adminAccountPendingListOverrideHandlers = [
     const keyword = url.searchParams.get("keyword") || "";
     const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
-    const sort = (url.searchParams.get("sortRequest[sort]") ||
-      "CREATED_AT") as SignupRequestSortRequestSort;
-    const order = (url.searchParams.get("sortRequest[order]") ||
-      "DESC") as SignupRequestSortRequestOrder;
+    const sort = (url.searchParams.get("sort") ||
+      "CREATED_AT") as GetSignupRequestsSort;
+    const order = (url.searchParams.get("order") ||
+      "DESC") as GetSignupRequestsOrder;
 
     const { status, message, timestamp } = getGetSignupRequestsResponseMock();
 

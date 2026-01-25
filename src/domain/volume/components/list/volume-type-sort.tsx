@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
-import type { VolumeFilterRequestVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetVolumeListVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VOLUME_TYPE_OPTIONS } from "@/domain/volume/constants/volume.constant";
 import {
   volumePageAtom,
@@ -20,7 +20,7 @@ export function VolumeTypeSort({ disabled }: VolumeTypeSortProps) {
   const [volumeType, setVolumeType] = useAtom(volumeTypeSortAtom);
   const resetPage = useResetAtom(volumePageAtom);
 
-  const handleChange = (value: VolumeFilterRequestVolumeType | null) => {
+  const handleChange = (value: GetVolumeListVolumeType | null) => {
     resetPage();
     setVolumeType(value);
   };

@@ -1,9 +1,9 @@
-import type { ClusterNodeSortRequestSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetClusterNodesSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 export const NODE_SORT_FIELD_MAP = {
   nodeName: "NODE_NAME",
-} as const satisfies Record<string, ClusterNodeSortRequestSort>;
+} as const satisfies Record<string, GetClusterNodesSort>;
 
 /** 노드 정렬 필드 타입 */
 export type NodeSortField = keyof typeof NODE_SORT_FIELD_MAP;

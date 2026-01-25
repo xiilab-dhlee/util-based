@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
 import {
-  getGetStoragesQueryKey,
+  getGetAdminStoragesQueryKey,
   useDeleteStorage,
 } from "@/api/generated/admin-storage/admin-storage";
 import { STORAGE_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -42,7 +42,7 @@ export function DeleteStorageModal() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
-            queryKey: getGetStoragesQueryKey(),
+            queryKey: getGetAdminStoragesQueryKey(),
           });
           setOpen(false);
         },

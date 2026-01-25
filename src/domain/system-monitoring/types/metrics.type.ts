@@ -1,5 +1,5 @@
 import type {
-  BatchSystemMetricRequestMetricsItem,
+  GetNodeSystemMetricsMetricsItem,
   GpuTimeseriesData,
   SystemMetricValue,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -32,7 +32,7 @@ export interface SystemMetricSeries {
   /** 차트에 표시할 시리즈 이름 */
   seriesName: string;
   /** API 메트릭 이름 */
-  metricName: BatchSystemMetricRequestMetricsItem;
+  metricName: GetNodeSystemMetricsMetricsItem;
   /** 시계열 데이터 */
   data: MetricValue[];
 }

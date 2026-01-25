@@ -35,10 +35,8 @@ export function RevokeHistoryDetailMain({ id }: RevokeHistoryDetailMainProps) {
   const { data, isLoading, isError } = useGetScanResultList(
     scanHistoryId,
     {
-      pageRequest: {
-        pageNo: page - 1,
-        pageSize: LIST_PAGE_SIZE,
-      },
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
     },
     {
       query: { enabled: Boolean(scanHistoryId) },

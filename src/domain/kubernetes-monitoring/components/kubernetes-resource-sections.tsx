@@ -75,14 +75,10 @@ export function NodesSection() {
     : undefined;
 
   const { data, isLoading, isError } = useGetNodes({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    filterRequest: {
-      status: nodeFilterStatus,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: nodeFilterStatus,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Nodes"), []);
@@ -126,14 +122,10 @@ export function ServicesSection() {
     : undefined;
 
   const { data, isLoading, isError } = useGetServices({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    filterRequest: {
-      type: serviceFilterType,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    type: serviceFilterType,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Service"), []);
@@ -176,11 +168,9 @@ export function DaemonsetsSection() {
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
   const { data, isLoading, isError } = useGetDaemonSets({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   const columns = useMemo(
@@ -231,14 +221,10 @@ export function PersistentVolumesSection() {
     : undefined;
 
   const { data, isLoading, isError } = useGetPersistentVolumes({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    filterRequest: {
-      status: pvFilterStatus,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: pvFilterStatus,
   });
 
   const columns = useMemo(
@@ -289,14 +275,10 @@ export function NamespacesSection() {
     : undefined;
 
   const { data, isLoading, isError } = useGetNamespaces({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    filterRequest: {
-      status: namespaceFilterStatus,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: namespaceFilterStatus,
   });
 
   const columns = useMemo(
@@ -342,11 +324,9 @@ export function DeploymentsSection() {
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
   const { data, isLoading, isError } = useGetDeployments({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   const columns = useMemo(
@@ -392,11 +372,9 @@ export function StatefulsetsSection() {
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
   const { data, isLoading, isError } = useGetStatefulSets({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
   });
 
   const columns = useMemo(
@@ -447,14 +425,10 @@ export function PodsSection() {
     : undefined;
 
   const { data, isLoading, isError } = useGetPods({
-    pageSearchRequest: {
-      pageNo: page - 1,
-      pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
-      keyword: searchText || undefined,
-    },
-    filterRequest: {
-      status: podFilterStatus,
-    },
+    pageNo: page - 1,
+    pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
+    keyword: searchText || undefined,
+    status: podFilterStatus,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Pods"), []);

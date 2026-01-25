@@ -3,7 +3,7 @@
 import { isNil } from "es-toolkit";
 
 import { useGetNodeSystemMetrics } from "@/api/generated/admin-cluster/admin-cluster";
-import { BatchSystemMetricRequestMetricsItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { GetNodeSystemMetricsMetricsItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   ALL_SYSTEM_METRICS,
   METRIC_EXTRACT_STATUS,
@@ -44,7 +44,7 @@ interface UseAllSystemMetricsReturn {
  * 단일 메트릭 시리즈 생성 헬퍼
  */
 function createSeries(
-  metricName: BatchSystemMetricRequestMetricsItem,
+  metricName: GetNodeSystemMetricsMetricsItem,
   data: MetricValue[],
 ): SystemMetricSeries {
   return {
@@ -92,12 +92,10 @@ export function useAllSystemMetrics({
   } = useGetNodeSystemMetrics(
     nodeName,
     {
-      request: {
-        metrics: [...ALL_SYSTEM_METRICS],
-        startedAt,
-        endedAt,
-        step,
-      },
+      metrics: [...ALL_SYSTEM_METRICS],
+      startedAt,
+      endedAt,
+      step,
     },
     {
       query: {
@@ -110,27 +108,27 @@ export function useAllSystemMetrics({
 
   const cpuUtilResult = extractSystemMetricData(
     batchResponse,
-    BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION,
+    GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION,
   );
   const cpuTempResult = extractSystemMetricData(
     batchResponse,
-    BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE,
+    GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE,
   );
   const memUtilResult = extractSystemMetricData(
     batchResponse,
-    BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION,
+    GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION,
   );
   const diskUsageResult = extractSystemMetricData(
     batchResponse,
-    BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION,
+    GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION,
   );
   const diskReadResult = extractSystemMetricData(
     batchResponse,
-    BatchSystemMetricRequestMetricsItem.DISK_READ,
+    GetNodeSystemMetricsMetricsItem.DISK_READ,
   );
   const diskWriteResult = extractSystemMetricData(
     batchResponse,
-    BatchSystemMetricRequestMetricsItem.DISK_WRITE,
+    GetNodeSystemMetricsMetricsItem.DISK_WRITE,
   );
 
   const hasAnyMetricError =
@@ -154,28 +152,28 @@ export function useAllSystemMetrics({
   return {
     data: {
       cpuUtilization: createSeries(
-        BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION,
+        GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION,
         cpuUtilResult.data,
       ),
       cpuTemperature: createSeries(
-        BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE,
+        GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE,
         cpuTempResult.data,
       ),
       memoryUtilization: createSeries(
-        BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION,
+        GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION,
         memUtilResult.data,
       ),
       diskUtilization: createSeries(
-        BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION,
+        GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION,
         diskUsageResult.data,
       ),
       diskRw: [
         createSeries(
-          BatchSystemMetricRequestMetricsItem.DISK_READ,
+          GetNodeSystemMetricsMetricsItem.DISK_READ,
           diskReadResult.data,
         ),
         createSeries(
-          BatchSystemMetricRequestMetricsItem.DISK_WRITE,
+          GetNodeSystemMetricsMetricsItem.DISK_WRITE,
           diskWriteResult.data,
         ),
       ],

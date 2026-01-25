@@ -5,8 +5,8 @@ import { useResetAtom } from "jotai/utils";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-import type { ResourceRequestSortRequestSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { ResourceRequestSortRequestSort as ResourceRequestSortRequestSortEnum } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetResourceRequestsSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { GetResourceRequestsSort as GetResourceRequestsSortEnum } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useGetResourceRequests } from "@/api/generated/workspace/workspace";
 import { useGetWorkspaceMemberRole } from "@/api/generated/workspace-member/workspace-member";
 import { SettingRequestResourceListBody } from "@/domain/setting/components/setting-request-resource-list-body";
@@ -30,14 +30,14 @@ import { buildSortRequest } from "@/shared/utils/sort.util";
 
 const RESOURCE_REQUEST_SORT_FIELD_MAP: Record<
   SettingRequestResourceSortField,
-  ResourceRequestSortRequestSort
+  GetResourceRequestsSort
 > = {
   [SETTING_REQUEST_RESOURCE_SORT_FIELDS.CREATOR_NAME]:
-    ResourceRequestSortRequestSortEnum.CREATOR_NAME,
+    GetResourceRequestsSortEnum.CREATOR_NAME,
   [SETTING_REQUEST_RESOURCE_SORT_FIELDS.REQUESTED_AT]:
-    ResourceRequestSortRequestSortEnum.REQUESTED_AT,
+    GetResourceRequestsSortEnum.REQUESTED_AT,
   [SETTING_REQUEST_RESOURCE_SORT_FIELDS.APPROVAL_STATUS]:
-    ResourceRequestSortRequestSortEnum.APPROVAL_STATUS,
+    GetResourceRequestsSortEnum.APPROVAL_STATUS,
 };
 
 export function SettingRequestResourceListMain() {
@@ -74,7 +74,7 @@ export function SettingRequestResourceListMain() {
 
   const sortRequest = buildSortRequest<
     SettingRequestResourceSortField,
-    ResourceRequestSortRequestSort
+    GetResourceRequestsSort
   >({
     state: sortState,
     fieldMap: RESOURCE_REQUEST_SORT_FIELD_MAP,
@@ -83,14 +83,10 @@ export function SettingRequestResourceListMain() {
   const { data, isLoading, isError } = useGetResourceRequests(
     workspaceId ?? 0,
     {
-      pageableRequest: {
-        pageNo: Math.max(0, page - 1),
-        pageSize: RESOURCE_REQUEST_LIST_PAGE_SIZE,
-      },
-      sortRequest: {
-        sort: sortRequest?.sort ?? "REQUESTED_AT",
-        order: sortRequest?.order ?? "DESC",
-      },
+      pageNo: Math.max(0, page - 1),
+      pageSize: RESOURCE_REQUEST_LIST_PAGE_SIZE,
+      sort: sortRequest?.sort ?? "REQUESTED_AT",
+      order: sortRequest?.order ?? "DESC",
     },
     { query: { enabled: workspaceId !== undefined } },
   );

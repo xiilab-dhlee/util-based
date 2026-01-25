@@ -3,7 +3,7 @@
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import type { ImageJobFilterRequestImageType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetImageJobsImageType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useGetImageJobs } from "@/api/generated/image-job/image-job";
 import { RegistryJobListBody } from "@/domain/registry/components/list/registry-job-list-body";
 import { RegistryJobListFilter } from "@/domain/registry/components/list/registry-job-list-filter";
@@ -18,7 +18,7 @@ import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 
 interface RegistryListAsideProps {
-  imageType: ImageJobFilterRequestImageType;
+  imageType: GetImageJobsImageType;
 }
 
 export function RegistryListAside({ imageType }: RegistryListAsideProps) {
@@ -29,16 +29,11 @@ export function RegistryListAside({ imageType }: RegistryListAsideProps) {
 
   const { data, isLoading, isError } = useGetImageJobs(
     {
-      pageRequest: {
-        pageNo: page - 1,
-        pageSize: REGISTRY_JOB_PAGE_SIZE,
-        keyword: searchText,
-      },
-      filterRequest: {
-        imageType,
-        isMine: false,
-        imageSourceType,
-      },
+      pageNo: page - 1,
+      pageSize: REGISTRY_JOB_PAGE_SIZE,
+      keyword: searchText,
+      imageType,
+      imageSourceType,
     },
     {
       query: {

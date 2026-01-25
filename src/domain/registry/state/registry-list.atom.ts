@@ -2,8 +2,8 @@ import { atomWithReset } from "jotai/utils";
 import type { Key } from "react";
 
 import type {
-  ImageJobResponseImageSourceType,
-  RegistryImageFilterRequestImageSourceType,
+  GetImageJobsImageSourceType,
+  GetPrivateRegistryListImageSourceType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { RegistrySortState } from "@/domain/registry/constants/registry-list.constant";
 
@@ -22,7 +22,7 @@ export const registrySortAtom = atomWithReset<RegistrySortState>({
 });
 /** 레지스트리 이미지 소스 타입 필터 */
 export const registryImageSourceTypeAtom = atomWithReset<
-  RegistryImageFilterRequestImageSourceType | undefined
+  GetPrivateRegistryListImageSourceType | undefined
 >(undefined);
 /** 체크된 레지스트리 목록 */
 export const registryCheckedListAtom = atomWithReset<Set<Key>>(new Set());
@@ -37,5 +37,5 @@ export const imageJobPageAtom = atomWithReset<number>(1);
 export const imageJobSearchTextAtom = atomWithReset<string>("");
 /** 이미지 등록 Job 이미지 소스 타입 필터 */
 export const imageJobImageSourceTypeAtom = atomWithReset<
-  ImageJobResponseImageSourceType | undefined
+  GetImageJobsImageSourceType | undefined
 >(undefined);

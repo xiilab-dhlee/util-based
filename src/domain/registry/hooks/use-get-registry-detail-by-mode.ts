@@ -5,7 +5,6 @@ import { useAtomValue } from "jotai";
 import type {
   GetPrivateImageDetailParams,
   GetPublicImageDetailParams,
-  ImageDetailRequest,
   RegistryDetailResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -22,6 +21,10 @@ import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 export type GetRegistryDetailQueryError =
   | GetPrivateImageDetailQueryError
   | GetPublicImageDetailQueryError;
+
+export type GetRegistryDetailParams =
+  | GetPrivateImageDetailParams
+  | GetPublicImageDetailParams;
 
 interface UseGetRegistryDetailByModeOptions {
   query?: {
@@ -40,35 +43,32 @@ interface UseGetRegistryDetailByModeResult {
 /** mode에 따라 private 또는 public 레지스트리 이미지 상세 조회 */
 export const useGetRegistryDetailByMode = (
   mode: RegistryMode,
-  params: ImageDetailRequest,
+  params: GetRegistryDetailParams,
   options?: UseGetRegistryDetailByModeOptions,
 ): UseGetRegistryDetailByModeResult => {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const workspaceId = selectedWorkspace?.workspaceId;
 
-  const privateParams: GetPrivateImageDetailParams = {
-    request: params,
-    workspaceFilter: { workspaceId: workspaceId ?? 0 },
-  };
-
-  const publicParams: GetPublicImageDetailParams = {
-    request: params,
-  };
-
-  const privateQuery = useGetPrivateImageDetail(privateParams, {
-    query: {
-      enabled:
-        mode === "private" &&
-        !!workspaceId &&
-        (options?.query?.enabled ?? true),
+  const privateQuery = useGetPrivateImageDetail(
+    { ...params, workspaceId } as GetPrivateImageDetailParams,
+    {
+      query: {
+        enabled:
+          mode === "private" &&
+          !!workspaceId &&
+          (options?.query?.enabled ?? true),
+      },
     },
-  });
+  );
 
-  const publicQuery = useGetPublicImageDetail(publicParams, {
-    query: {
-      enabled: mode === "public" && (options?.query?.enabled ?? true),
+  const publicQuery = useGetPublicImageDetail(
+    params as GetPublicImageDetailParams,
+    {
+      query: {
+        enabled: mode === "public" && (options?.query?.enabled ?? true),
+      },
     },
-  });
+  );
 
   const query = mode === "private" ? privateQuery : publicQuery;
 

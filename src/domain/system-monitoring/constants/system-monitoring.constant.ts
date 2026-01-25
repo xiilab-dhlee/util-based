@@ -1,6 +1,6 @@
 import {
-  BatchGpuMetricRequestMetricsItem,
-  BatchSystemMetricRequestMetricsItem,
+  GetNodeGpuMetricsMetricsItem,
+  GetNodeSystemMetricsMetricsItem,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
 // ============================================================================
@@ -68,12 +68,12 @@ export const SSE_RECONNECT_ATTEMPTS = 3;
  * - HTTP API, SSE 모두 동일한 상수 사용
  */
 export const ALL_SYSTEM_METRICS = [
-  BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION,
-  BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE,
-  BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION,
-  BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION,
-  BatchSystemMetricRequestMetricsItem.DISK_READ,
-  BatchSystemMetricRequestMetricsItem.DISK_WRITE,
+  GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION,
+  GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE,
+  GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION,
+  GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION,
+  GetNodeSystemMetricsMetricsItem.DISK_READ,
+  GetNodeSystemMetricsMetricsItem.DISK_WRITE,
 ] as const;
 
 /**
@@ -95,23 +95,23 @@ export type SystemMetricBufferKey = (typeof SYSTEM_METRIC_BUFFER_KEYS)[number];
  * API 메트릭 enum → 버퍼 키 매핑
  */
 export const SYSTEM_METRIC_TO_BUFFER_KEY: Record<
-  BatchSystemMetricRequestMetricsItem,
+  GetNodeSystemMetricsMetricsItem,
   SystemMetricBufferKey | null
 > = {
-  [BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION]: "cpuUtilization",
-  [BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE]: "cpuTemperature",
-  [BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION]: "memoryUtilization",
-  [BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION]: "diskUtilization",
-  [BatchSystemMetricRequestMetricsItem.DISK_READ]: "diskRead",
-  [BatchSystemMetricRequestMetricsItem.DISK_WRITE]: "diskWrite",
+  [GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION]: "cpuUtilization",
+  [GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE]: "cpuTemperature",
+  [GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION]: "memoryUtilization",
+  [GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION]: "diskUtilization",
+  [GetNodeSystemMetricsMetricsItem.DISK_READ]: "diskRead",
+  [GetNodeSystemMetricsMetricsItem.DISK_WRITE]: "diskWrite",
   // 사용하지 않는 메트릭
-  [BatchSystemMetricRequestMetricsItem.CPU_LOAD_AVERAGE]: null,
-  [BatchSystemMetricRequestMetricsItem.NODE_NETWORK_RECEIVE]: null,
-  [BatchSystemMetricRequestMetricsItem.NODE_NETWORK_TRANSMIT]: null,
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_BUFFERS]: null,
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_CACHED]: null,
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_TOTAL]: null,
-  [BatchSystemMetricRequestMetricsItem.NODE_MEMORY_FREE]: null,
+  [GetNodeSystemMetricsMetricsItem.CPU_LOAD_AVERAGE]: null,
+  [GetNodeSystemMetricsMetricsItem.NODE_NETWORK_RECEIVE]: null,
+  [GetNodeSystemMetricsMetricsItem.NODE_NETWORK_TRANSMIT]: null,
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_BUFFERS]: null,
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_CACHED]: null,
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_TOTAL]: null,
+  [GetNodeSystemMetricsMetricsItem.NODE_MEMORY_FREE]: null,
 };
 
 // ============================================================================
@@ -123,10 +123,10 @@ export const SYSTEM_METRIC_TO_BUFFER_KEY: Record<
  * - HTTP API, SSE 모두 동일한 상수 사용
  */
 export const ALL_GPU_METRICS = [
-  BatchGpuMetricRequestMetricsItem.GPU_UTILIZATION,
-  BatchGpuMetricRequestMetricsItem.GPU_MEMORY_UTILIZATION,
-  BatchGpuMetricRequestMetricsItem.GPU_TEMPERATURE,
-  BatchGpuMetricRequestMetricsItem.GPU_POWER_USAGE,
+  GetNodeGpuMetricsMetricsItem.GPU_UTILIZATION,
+  GetNodeGpuMetricsMetricsItem.GPU_MEMORY_UTILIZATION,
+  GetNodeGpuMetricsMetricsItem.GPU_TEMPERATURE,
+  GetNodeGpuMetricsMetricsItem.GPU_POWER_USAGE,
 ] as const;
 
 /**
@@ -146,13 +146,13 @@ export type GpuMetricBufferKey = (typeof GPU_METRIC_BUFFER_KEYS)[number];
  * API 메트릭 enum → 버퍼 키 매핑
  */
 export const GPU_METRIC_TO_BUFFER_KEY: Record<
-  BatchGpuMetricRequestMetricsItem,
+  GetNodeGpuMetricsMetricsItem,
   GpuMetricBufferKey | null
 > = {
-  [BatchGpuMetricRequestMetricsItem.GPU_UTILIZATION]: "utilization",
-  [BatchGpuMetricRequestMetricsItem.GPU_MEMORY_UTILIZATION]: "memory",
-  [BatchGpuMetricRequestMetricsItem.GPU_TEMPERATURE]: "temperature",
-  [BatchGpuMetricRequestMetricsItem.GPU_POWER_USAGE]: "powerUsage",
+  [GetNodeGpuMetricsMetricsItem.GPU_UTILIZATION]: "utilization",
+  [GetNodeGpuMetricsMetricsItem.GPU_MEMORY_UTILIZATION]: "memory",
+  [GetNodeGpuMetricsMetricsItem.GPU_TEMPERATURE]: "temperature",
+  [GetNodeGpuMetricsMetricsItem.GPU_POWER_USAGE]: "powerUsage",
   // 사용하지 않는 메트릭
-  [BatchGpuMetricRequestMetricsItem.GPU_FAN_SPEED]: null,
+  [GetNodeGpuMetricsMetricsItem.GPU_FAN_SPEED]: null,
 };

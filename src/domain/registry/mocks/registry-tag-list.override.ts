@@ -1,9 +1,11 @@
 import { faker } from "@faker-js/faker";
 
 import {
+  GetPrivateImageTagListOrder,
+  GetPrivateImageTagListSort,
   type ImageTagListResponse,
-  RegistryImageTagFilterRequestOrder,
-  RegistryImageTagFilterRequestSort,
+  ImageTagListResponseApprovalStatus,
+  ImageTagListResponseScanStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateImageTagListMockHandler,
@@ -60,10 +62,10 @@ function generateCreatedAt(
   order: string,
   baseTimestamp: number = MOCK_BASE_TIMESTAMP,
 ): string {
-  if (sort === RegistryImageTagFilterRequestSort.CREATED_AT) {
+  if (sort === GetPrivateImageTagListSort.CREATED_AT) {
     const safeIndex = Math.min(Math.max(index, 0), 29);
     const offset =
-      order === RegistryImageTagFilterRequestOrder.ASC
+      order === GetPrivateImageTagListOrder.ASC
         ? (30 - safeIndex) * DAY_IN_MS
         : safeIndex * DAY_IN_MS;
     return new Date(baseTimestamp - offset).toISOString();
@@ -90,22 +92,17 @@ function createTagListHandler<T>(
   return getMockHandler(async (info) => {
     const url = new URL(info.request.url);
 
-    // 중첩 구조 파라미터 파싱 (pageRequest[keyword], filterRequest[sort] 등)
-    const keyword = url.searchParams.get("pageRequest[keyword]") || "";
-    const pageNo = Number.parseInt(
-      url.searchParams.get("pageRequest[pageNo]") || "0",
-      10,
-    );
+    // 평탄화된 파라미터 파싱
+    const keyword = url.searchParams.get("keyword") || "";
+    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = Number.parseInt(
-      url.searchParams.get("pageRequest[pageSize]") || "10",
+      url.searchParams.get("pageSize") || "10",
       10,
     );
     const sort =
-      url.searchParams.get("filterRequest[sort]") ||
-      RegistryImageTagFilterRequestSort.CREATED_AT;
+      url.searchParams.get("sort") || GetPrivateImageTagListSort.CREATED_AT;
     const order =
-      url.searchParams.get("filterRequest[order]") ||
-      RegistryImageTagFilterRequestOrder.DESC;
+      url.searchParams.get("order") || GetPrivateImageTagListOrder.DESC;
 
     const totalSize = pageSize * 3;
 
@@ -130,19 +127,18 @@ function createTagListHandler<T>(
           vulnerability: generateVulnerability(),
           creatorName: "관리자",
           scanStatus: faker.helpers.arrayElement([
-            "COMPLETED",
-            "FAILED",
-            "IN_PROGRESS",
-            "NOT_SCANNED",
-            null,
+            ImageTagListResponseScanStatus.SUCCESS,
+            ImageTagListResponseScanStatus.ERROR,
+            ImageTagListResponseScanStatus.RUNNING,
+            ImageTagListResponseScanStatus.NOT_SCANNED,
           ]),
           approvalStatus: faker.helpers.arrayElement([
-            "AVAILABLE",
-            "APPROVAL_REQUIRED",
-            "APPROVED",
-            "REJECTED",
-            "APPROVAL_WAITING",
-            "REQUEST_BLOCKED",
+            ImageTagListResponseApprovalStatus.AVAILABLE,
+            ImageTagListResponseApprovalStatus.APPROVAL_REQUIRED,
+            ImageTagListResponseApprovalStatus.APPROVED,
+            ImageTagListResponseApprovalStatus.REJECTED,
+            ImageTagListResponseApprovalStatus.APPROVAL_WAITING,
+            ImageTagListResponseApprovalStatus.REQUEST_BLOCKED,
           ]),
           hasMetadata: true,
         } as ImageTagListResponse;

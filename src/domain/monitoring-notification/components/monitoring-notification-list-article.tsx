@@ -37,23 +37,15 @@ export function MonitoringNotificationListArticle() {
 
   const { data, isLoading, isError } = useGetAllMonitoringNotificationHistories(
     {
-      pageSearchRequest: {
-        pageNo: page - 1,
-        pageSize: MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE,
-        keyword: searchText || undefined,
-      },
-      sortRequest: {
-        sort: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP[sort.field],
-        order: toBackendOrder(sort.order),
-      },
-      filterRequest: {
-        startedAt: dateRange?.start
-          ? formatDateForRequest(dateRange.start)
-          : undefined,
-        endedAt: dateRange?.end
-          ? formatDateForRequest(dateRange.end)
-          : undefined,
-      },
+      pageNo: page - 1,
+      pageSize: MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE,
+      keyword: searchText || undefined,
+      sort: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP[sort.field],
+      order: toBackendOrder(sort.order),
+      startedAt: dateRange?.start
+        ? formatDateForRequest(dateRange.start)
+        : undefined,
+      endedAt: dateRange?.end ? formatDateForRequest(dateRange.end) : undefined,
     },
   );
 

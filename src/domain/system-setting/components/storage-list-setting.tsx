@@ -5,7 +5,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Button, Card } from "xiilab-ui";
 
-import { useGetStorages } from "@/api/generated/admin-storage/admin-storage";
+import { useGetAdminStorages } from "@/api/generated/admin-storage/admin-storage";
 import { StorageCard } from "@/domain/storage/components/storage-card";
 import { STORAGE_CARD_HEIGHT } from "@/domain/storage/constants/storage.constant";
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
@@ -24,11 +24,9 @@ export function StorageListSetting() {
   const [page, setPage] = useState(1);
   const publish = usePublish();
 
-  const { data, isLoading, isError, refetch } = useGetStorages({
-    pageableRequest: {
-      pageNo: page - 1,
-      pageSize: STORAGE_SETTING_PAGE_SIZE,
-    },
+  const { data, isLoading, isError, refetch } = useGetAdminStorages({
+    pageNo: page - 1,
+    pageSize: STORAGE_SETTING_PAGE_SIZE,
   });
 
   const handlePageChange = (newPage: number) => {

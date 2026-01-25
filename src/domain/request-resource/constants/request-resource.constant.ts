@@ -1,10 +1,10 @@
 import type { DropdownOption } from "xiilab-ui";
 
 import type {
-  AdminResourceRequestSortFilterRequestApprovalStatus,
-  AdminResourceRequestSortFilterRequestSort,
+  GetResourceRequests1ApprovalStatus,
+  GetResourceRequests1Sort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { AdminResourceRequestSortFilterRequestApprovalStatus as API_STATUS_VALUES } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { GetResourceRequests1ApprovalStatus as API_STATUS_VALUES } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 /** 리소스 요청 쿼리 키 */
@@ -14,7 +14,7 @@ export const REQUEST_RESOURCE_QUERY_KEY = "request-resource";
 export const REQUEST_RESOURCE_SORT_FIELD_MAP = {
   requestedAt: "REQUESTED_AT",
   workspaceName: "WORKSPACE_NAME",
-} as const satisfies Record<string, AdminResourceRequestSortFilterRequestSort>;
+} as const satisfies Record<string, GetResourceRequests1Sort>;
 
 export const REQUEST_RESOURCE_SORT_FIELDS = [
   "requestedAt",
@@ -34,8 +34,7 @@ export const REQUEST_RESOURCE_SORT_DEFAULT = {
 } as const;
 
 /** 리소스 요청 상태 타입 */
-export type RequestResourceStatus =
-  AdminResourceRequestSortFilterRequestApprovalStatus;
+export type RequestResourceStatus = GetResourceRequests1ApprovalStatus;
 
 /** 리소스 요청 상태 상수 맵 */
 export const REQUEST_RESOURCE_STATUS = {

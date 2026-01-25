@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 import {
-  BatchSystemMetricRequestMetricsItem,
   type BatchSystemMetricResponse,
+  GetNodeSystemMetricsMetricsItem,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   ALL_SYSTEM_METRICS,
@@ -55,7 +55,7 @@ interface UseAllSystemMetricsStreamReturn {
  * 버퍼에서 SystemMetricSeries 생성
  */
 function createSeriesFromBuffer<T extends { dateTime: string; value: string }>(
-  metricName: BatchSystemMetricRequestMetricsItem,
+  metricName: GetNodeSystemMetricsMetricsItem,
   buffer: RingBufferState<T>,
 ): SystemMetricSeries {
   return {
@@ -132,27 +132,27 @@ export function useAllSystemMetricsStream({
   const handleMessage = (batchResponse: BatchSystemMetricResponse) => {
     const cpuUtilResult = extractSystemMetricData(
       batchResponse,
-      BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION,
+      GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION,
     );
     const cpuTempResult = extractSystemMetricData(
       batchResponse,
-      BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE,
+      GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE,
     );
     const memUtilResult = extractSystemMetricData(
       batchResponse,
-      BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION,
+      GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION,
     );
     const diskUsageResult = extractSystemMetricData(
       batchResponse,
-      BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION,
+      GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION,
     );
     const diskReadResult = extractSystemMetricData(
       batchResponse,
-      BatchSystemMetricRequestMetricsItem.DISK_READ,
+      GetNodeSystemMetricsMetricsItem.DISK_READ,
     );
     const diskWriteResult = extractSystemMetricData(
       batchResponse,
-      BatchSystemMetricRequestMetricsItem.DISK_WRITE,
+      GetNodeSystemMetricsMetricsItem.DISK_WRITE,
     );
 
     setMetricErrors({
@@ -195,28 +195,28 @@ export function useAllSystemMetricsStream({
 
   const data: SystemMetricSeriesGroup = {
     cpuUtilization: createSeriesFromBuffer(
-      BatchSystemMetricRequestMetricsItem.CPU_UTILIZATION,
+      GetNodeSystemMetricsMetricsItem.CPU_UTILIZATION,
       buffers.cpuUtilization,
     ),
     cpuTemperature: createSeriesFromBuffer(
-      BatchSystemMetricRequestMetricsItem.CPU_TEMPERATURE,
+      GetNodeSystemMetricsMetricsItem.CPU_TEMPERATURE,
       buffers.cpuTemperature,
     ),
     memoryUtilization: createSeriesFromBuffer(
-      BatchSystemMetricRequestMetricsItem.MEMORY_UTILIZATION,
+      GetNodeSystemMetricsMetricsItem.MEMORY_UTILIZATION,
       buffers.memoryUtilization,
     ),
     diskUtilization: createSeriesFromBuffer(
-      BatchSystemMetricRequestMetricsItem.DISK_UTILIZATION,
+      GetNodeSystemMetricsMetricsItem.DISK_UTILIZATION,
       buffers.diskUtilization,
     ),
     diskRw: [
       createSeriesFromBuffer(
-        BatchSystemMetricRequestMetricsItem.DISK_READ,
+        GetNodeSystemMetricsMetricsItem.DISK_READ,
         buffers.diskRead,
       ),
       createSeriesFromBuffer(
-        BatchSystemMetricRequestMetricsItem.DISK_WRITE,
+        GetNodeSystemMetricsMetricsItem.DISK_WRITE,
         buffers.diskWrite,
       ),
     ],

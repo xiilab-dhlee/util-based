@@ -15,12 +15,12 @@ export function useApproveResourceRequestAction(
     ...options,
     mutation: {
       ...options?.mutation,
-      onSuccess: (data, variables, context) => {
+      onSuccess: (data, variables, context, client) => {
         queryClient.invalidateQueries({
           queryKey: getGetResourceRequests1QueryKey(),
         });
 
-        options?.mutation?.onSuccess?.(data, variables, context);
+        options?.mutation?.onSuccess?.(data, variables, context, client);
       },
     },
   });
@@ -35,12 +35,12 @@ export function useRejectResourceRequestAction(
     ...options,
     mutation: {
       ...options?.mutation,
-      onSuccess: (data, variables, context) => {
+      onSuccess: (data, variables, context, client) => {
         queryClient.invalidateQueries({
           queryKey: getGetResourceRequests1QueryKey(),
         });
 
-        options?.mutation?.onSuccess?.(data, variables, context);
+        options?.mutation?.onSuccess?.(data, variables, context, client);
       },
     },
   });

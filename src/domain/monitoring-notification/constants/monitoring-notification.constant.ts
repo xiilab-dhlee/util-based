@@ -1,9 +1,9 @@
 import type { DropdownOption } from "xiilab-ui";
 
 import type {
+  GetAllMonitoringNotificationHistoriesSort,
+  GetAllMonitoringNotificationSetsSort,
   MonitoringNotificationHistoryDetailResponseThresholdOperator,
-  MonitoringNotificationHistorySortRequestSort,
-  MonitoringNotificationSetSortRequestSort,
   SentRecipientResponseSendStatus,
   ThresholdRequestMetric,
   ThresholdRequestOperator,
@@ -22,10 +22,7 @@ export const MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP = {
   nodeIp: "NODE_IP",
   notificationSetName: "NOTIFICATION_SET_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<
-  string,
-  MonitoringNotificationHistorySortRequestSort
->;
+} as const satisfies Record<string, GetAllMonitoringNotificationHistoriesSort>;
 
 /** 모니터링 알림 히스토리 정렬 필드 타입 */
 export type MonitoringNotificationHistorySortField =
@@ -58,7 +55,7 @@ export const MONITORING_NOTIFICATION_HISTORY_DEFAULT_SORT: MonitoringNotificatio
 export const MONITORING_NOTIFICATION_SETTING_SORT_FIELD_MAP = {
   notificationSetName: "NOTIFICATION_SET_NAME",
   createdAt: "CREATED_AT",
-} as const satisfies Record<string, MonitoringNotificationSetSortRequestSort>;
+} as const satisfies Record<string, GetAllMonitoringNotificationSetsSort>;
 
 /** 모니터링 알림 설정 정렬 필드 타입 */
 export type MonitoringNotificationSettingSortField =
