@@ -78,6 +78,7 @@ export const volumeListOverrideHandlers = [
 
         return {
           volumeId: globalIndex + 1,
+          entityId: globalIndex + 1,
           volumeName: generateVolumeName(globalIndex, keyword),
           creatorId: "8e7bc043-c4c5-4524-b65e-845a50f4e4ba",
           creatorName: `사용자-${(globalIndex % 10) + 1}`,

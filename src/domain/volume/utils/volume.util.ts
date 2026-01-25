@@ -1,7 +1,7 @@
 import type {
+  GetVolumeListOrder,
+  GetVolumeListSort,
   VolumeFileItemResponse,
-  VolumeFilterRequestOrder,
-  VolumeFilterRequestSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { COMPRESSED_FILE_EXTENSIONS } from "@/domain/volume/constants/volume.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
@@ -16,17 +16,15 @@ export const isCompressedFile = (path: string): boolean => {
 export const parseVolumeSortValue = (
   value: string | null,
 ): {
-  sort: VolumeFilterRequestSort;
-  order: VolumeFilterRequestOrder;
+  sort: GetVolumeListSort;
+  order: GetVolumeListOrder;
 } | null => {
   if (!value) return null;
 
   // 마지막 '_'를 기준으로 분리 (예: "VOLUME_NAME_ASC" → ["VOLUME_NAME", "ASC"])
   const lastUnderscoreIndex = value.lastIndexOf("_");
-  const sort = value.slice(0, lastUnderscoreIndex) as VolumeFilterRequestSort;
-  const order = value.slice(
-    lastUnderscoreIndex + 1,
-  ) as VolumeFilterRequestOrder;
+  const sort = value.slice(0, lastUnderscoreIndex) as GetVolumeListSort;
+  const order = value.slice(lastUnderscoreIndex + 1) as GetVolumeListOrder;
 
   return { sort, order };
 };
