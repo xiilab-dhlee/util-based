@@ -42,19 +42,16 @@ export const nodeListOverrideHandlers = [
   getGetClusterNodesMockHandler(async (info) => {
     const url = new URL(info.request.url);
 
-    // 페이지네이션 파라미터
-    const pageNo = Number.parseInt(
-      url.searchParams.get("pageableRequest[pageNo]") || "0",
-      10,
-    );
+    // 페이지네이션 파라미터 (serializeParams에서 wrapper key가 제거됨)
+    const pageNo = Number.parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = Number.parseInt(
-      url.searchParams.get("pageableRequest[pageSize]") || "10",
+      url.searchParams.get("pageSize") || "10",
       10,
     );
 
-    // 정렬 파라미터
-    const sortField = url.searchParams.get("sortRequest[sort]");
-    const sortOrder = url.searchParams.get("sortRequest[order]");
+    // 정렬 파라미터 (serializeParams에서 wrapper key가 제거됨)
+    const sortField = url.searchParams.get("sort");
+    const sortOrder = url.searchParams.get("order");
 
     const totalSize = pageSize * 3;
 
