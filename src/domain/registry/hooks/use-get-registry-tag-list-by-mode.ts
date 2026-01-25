@@ -1,9 +1,13 @@
 "use client";
 
+import { useAtomValue } from "jotai";
+
 import type {
   GetPrivateImageTagListParams,
   GetPublicImageTagListParams,
   PageResponseImageTagListResponse,
+  PageSearchRequest,
+  RegistryImageTagFilterRequest,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   type GetPrivateImageTagListQueryError,
@@ -14,14 +18,16 @@ import {
   useGetPublicImageTagList,
 } from "@/api/generated/public-registry/public-registry";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
-
-export type GetRegistryTagListParams =
-  | GetPrivateImageTagListParams
-  | GetPublicImageTagListParams;
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
 export type GetRegistryTagListQueryError =
   | GetPrivateImageTagListQueryError
   | GetPublicImageTagListQueryError;
+
+interface RegistryTagListRequest {
+  pageRequest: PageSearchRequest;
+  filterRequest: RegistryImageTagFilterRequest;
+}
 
 interface UseGetRegistryTagListByModeOptions {
   query?: {
@@ -40,26 +46,35 @@ interface UseGetRegistryTagListByModeResult {
 /** mode에 따라 private 또는 public 이미지 태그 목록 조회 */
 export const useGetRegistryTagListByMode = (
   mode: RegistryMode,
-  params: GetRegistryTagListParams,
+  params: RegistryTagListRequest,
   options?: UseGetRegistryTagListByModeOptions,
 ): UseGetRegistryTagListByModeResult => {
-  const privateQuery = useGetPrivateImageTagList(
-    params as GetPrivateImageTagListParams,
-    {
-      query: {
-        enabled: mode === "private" && (options?.query?.enabled ?? true),
-      },
-    },
-  );
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
 
-  const publicQuery = useGetPublicImageTagList(
-    params as GetPublicImageTagListParams,
-    {
-      query: {
-        enabled: mode === "public" && (options?.query?.enabled ?? true),
-      },
+  const privateParams: GetPrivateImageTagListParams = {
+    ...params,
+    workspaceFilter: { workspaceId: workspaceId ?? 0 },
+  };
+
+  const publicParams: GetPublicImageTagListParams = {
+    ...params,
+  };
+
+  const privateQuery = useGetPrivateImageTagList(privateParams, {
+    query: {
+      enabled:
+        mode === "private" &&
+        !!workspaceId &&
+        (options?.query?.enabled ?? true),
     },
-  );
+  });
+
+  const publicQuery = useGetPublicImageTagList(publicParams, {
+    query: {
+      enabled: mode === "public" && (options?.query?.enabled ?? true),
+    },
+  });
 
   const query = mode === "private" ? privateQuery : publicQuery;
 

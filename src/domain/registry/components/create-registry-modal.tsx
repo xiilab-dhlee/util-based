@@ -7,8 +7,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Dropdown, Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
 
-import { getGetPrivateRegistryListQueryKey } from "@/api/generated/private-registry/private-registry";
-import { getGetPublicRegistryListQueryKey } from "@/api/generated/public-registry/public-registry";
+import { getGetImageJobsQueryKey } from "@/api/generated/image-job/image-job";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
 // import { SelectWorkloadForSnapshot } from "@/domain/registry/components/select-workload-for-snapshot";
 import { REGISTRY_CHANNEL_OPTIONS } from "@/domain/registry/constants/registry-list.constant";
@@ -62,15 +61,9 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
       },
       {
         onSuccess: () => {
-          if (mode === "private") {
-            queryClient.invalidateQueries({
-              queryKey: getGetPrivateRegistryListQueryKey(),
-            });
-          } else if (mode === "public") {
-            queryClient.invalidateQueries({
-              queryKey: getGetPublicRegistryListQueryKey(),
-            });
-          }
+          queryClient.invalidateQueries({
+            queryKey: getGetImageJobsQueryKey(),
+          });
           setOpen(false);
         },
       },

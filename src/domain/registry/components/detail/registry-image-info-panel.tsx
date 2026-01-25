@@ -1,12 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import styled from "styled-components";
 import { Button, Icon } from "xiilab-ui";
 
-import { useGetRegistryDetailByMode } from "@/domain/registry/hooks/use-get-registry-detail-by-mode";
+import type { RegistryDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -17,6 +15,7 @@ import { ListSectionTitle } from "@/styles/layers/list-page-layers.styled";
 interface RegistryImageInfoPanelProps {
   mode: RegistryMode;
   harborImageName: string;
+  data?: RegistryDetailResponse;
 }
 
 /**
@@ -28,29 +27,16 @@ interface RegistryImageInfoPanelProps {
 export function RegistryImageInfoPanel({
   mode,
   harborImageName,
+  data,
 }: RegistryImageInfoPanelProps) {
-  const router = useRouter();
   const { data: session } = useSession();
   const publish = usePublish();
-
-  const { data, isError } = useGetRegistryDetailByMode(
-    mode,
-    { request: { harborImageName } },
-    { query: { enabled: !!harborImageName } },
-  );
 
   // 생성자, 관리자(admin, super admin) 삭제 허용
   const isUser = checkIsUser(session);
   const sessionAccountId = getSessionAccountId(session);
   const isOwner = data?.creatorId === sessionAccountId;
   const canDelete = !!session && (!isUser || isOwner);
-
-  // 에러 시 뒤로가기
-  useEffect(() => {
-    if (isError) {
-      router.back();
-    }
-  }, [isError, router]);
 
   const handleDelete = () => {
     publish(REGISTRY_EVENTS.openDeleteModal, [harborImageName]);
@@ -82,7 +68,9 @@ export function RegistryImageInfoPanel({
               <Icon name="Information" color="var(--icon-fill)" size={20} />
             </IconWrapper>
             <Key>구분 :</Key>
-            <Value>-</Value>
+            <SourceTypeValue>
+              {data?.imageSourceType?.toLowerCase() || "-"}
+            </SourceTypeValue>
           </Record>
           <Record>
             <IconWrapper>
@@ -187,4 +175,8 @@ const Value = styled.span`
   font-size: 14px;
   line-height: 17px;
   color: #000;
+`;
+
+const SourceTypeValue = styled(Value)`
+  text-transform: capitalize;
 `;

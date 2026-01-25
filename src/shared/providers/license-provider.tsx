@@ -5,12 +5,13 @@ import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 
 import { useGetLatestLicense } from "@/api/generated/license/license";
+import { ROUTES } from "@/shared/constants/routes.constant";
 
 // 테스트 환경 여부 (pnpm dev:test)
 const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 
 // 라이선스 체크 제외 경로
-const EXCLUDED_PATHS = ["/license", "/error"];
+const EXCLUDED_PATHS = [ROUTES.AUTH_LICENSE, ROUTES.ERROR];
 
 // 라이선스 유효성 검사
 function isLicenseValid(expiredAt: string | undefined): boolean {
@@ -61,12 +62,12 @@ export function LicenseProvider({ children }: PropsWithChildren) {
     if (shouldSkipLicenseCheck || isLoading) return;
 
     if (isError) {
-      router.replace("/error?error=LicenseCheckFailed");
+      router.replace(`${ROUTES.ERROR}?error=LicenseCheckFailed`);
       return;
     }
 
     if (!data || !isValid) {
-      router.replace("/license");
+      router.replace(ROUTES.AUTH_LICENSE);
     }
   }, [shouldSkipLicenseCheck, isLoading, isError, data, isValid, router]);
 

@@ -1,20 +1,52 @@
-import type { DropdownOption } from "xiilab-ui";
+import {
+  ImageTagUsageRequestFilterRequestApprovalStatus,
+  type ImageTagUsageRequestFilterRequestSort,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { AntdTableSortState } from "@/shared/types/core.model";
 
-export const REQUEST_IMAGE_STATUS_OPTIONS: DropdownOption[] = [
+// ============================================================================
+// 이미지 사용 요청 승인 상태 관련 상수
+// ============================================================================
+
+/** 이미지 사용 요청 승인 상태 옵션 */
+export const REQUEST_IMAGE_STATUS_OPTIONS: {
+  label: string;
+  value: ImageTagUsageRequestFilterRequestApprovalStatus;
+}[] = [
   {
-    label: "대기중",
-    value: "PENDING",
+    label: "대기",
+    value: ImageTagUsageRequestFilterRequestApprovalStatus.APPROVAL_WAITING,
   },
   {
-    label: "승인됨",
-    value: "APPROVED",
+    label: "승인",
+    value: ImageTagUsageRequestFilterRequestApprovalStatus.APPROVED,
   },
   {
-    label: "거절됨",
-    value: "REJECTED",
-  },
-  {
-    label: "완료",
-    value: "COMPLETED",
+    label: "반려",
+    value: ImageTagUsageRequestFilterRequestApprovalStatus.REJECTED,
   },
 ];
+
+// ============================================================================
+// 이미지 사용 요청 정렬 관련 상수
+// ============================================================================
+
+export const REQUEST_IMAGE_SORT_FIELD_MAP = {
+  imageDisplayName: "IMAGE_NAME",
+  workspaceName: "WORKSPACE_NAME",
+  imageTagName: "IMAGE_TAG_NAME",
+  vulnerability: "SECURITY_SCAN_RESULT",
+  creatorName: "CREATOR_NAME",
+  requestedAt: "REQUESTED_AT",
+} as const satisfies Record<string, ImageTagUsageRequestFilterRequestSort>;
+
+/** 이미지 사용 요청 정렬 필드 타입 */
+export type RequestImageSortField = keyof typeof REQUEST_IMAGE_SORT_FIELD_MAP;
+
+/** 이미지 사용 요청 허용 정렬 필드 목록 */
+export const REQUEST_IMAGE_SORT_FIELDS = Object.keys(
+  REQUEST_IMAGE_SORT_FIELD_MAP,
+) as RequestImageSortField[];
+
+/** 이미지 사용 요청 정렬 상태 타입 */
+export type RequestImageSortState = AntdTableSortState<RequestImageSortField>;

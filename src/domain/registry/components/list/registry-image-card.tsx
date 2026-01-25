@@ -5,9 +5,10 @@ import styled from "styled-components";
 import { Button, Card } from "xiilab-ui";
 
 import type { ImageJobResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { RegistryLogButton } from "@/domain/registry/components/list/registry-job-log-button";
+import { RegistryJobLogButton } from "@/domain/registry/components/list/registry-job-log-button";
 import { RegistryJobRestartButton } from "@/domain/registry/components/list/registry-job-restart-button";
 import { RegistryJobStopButton } from "@/domain/registry/components/list/registry-job-stop-button";
+import { getImageJobStatusLabel } from "@/domain/registry/constants/registry-list.constant";
 import {
   CompactCardKey,
   CompactCardKeyValueRow,
@@ -57,7 +58,11 @@ export function RegistryImageCard({
               canManageJob && (
                 <RegistryJobStopButton key="stop" imageTagId={imageTagId} />
               ),
-              <RegistryLogButton key="log" />,
+              <RegistryJobLogButton
+                key="log"
+                imageTagId={imageTagId}
+                status={status}
+              />,
             ].filter(Boolean)}
           >
             <Button
@@ -73,12 +78,14 @@ export function RegistryImageCard({
           <Pane>
             <Row>
               <Key>구분</Key>
-              <Value>{imageSourceType?.toLowerCase() || "-"}</Value>
+              <SourceTypeValue>
+                {imageSourceType?.toLowerCase() || "-"}
+              </SourceTypeValue>
             </Row>
             <Row>
               <Key>상태</Key>
               <Value data-testid={REGISTRY_SELECTOR.JOB_LIST_STATUS}>
-                {status}
+                {getImageJobStatusLabel(status)}
               </Value>
             </Row>
           </Pane>
@@ -143,5 +150,8 @@ const Key = styled(CompactCardKey)`
 const Value = styled(CompactCardValue)`
   line-height: 14px;
   text-indent: 16px;
+`;
+
+const SourceTypeValue = styled(Value)`
   text-transform: capitalize;
 `;

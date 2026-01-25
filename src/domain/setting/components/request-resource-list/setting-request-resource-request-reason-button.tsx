@@ -15,7 +15,7 @@ export function SettingRequestResourceRequestReasonButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(COMMON_EVENTS.sendRequestReason, reason);
+    publish(COMMON_EVENTS.openRequestReasonModal, { reason });
   };
 
   return (

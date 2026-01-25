@@ -1,10 +1,13 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import type { Session } from "next-auth";
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import { useLogoutSync } from "@/shared/hooks/use-logout-sync";
 
 // ============================================================================
 // 환경 설정
@@ -12,6 +15,21 @@ import { AxiosService } from "@/shared/api/axios";
 
 const isDev = process.env.NODE_ENV === "development";
 const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
+
+/** 인증 과정이 필요 없는 공개 경로 (세션 체크/토큰 갱신 생략) */
+const PUBLIC_AUTH_PATHS = [
+  ROUTES.AUTH_SIGNIN,
+  ROUTES.AUTH_SIGNUP,
+  ROUTES.AUTH_LICENSE,
+  ROUTES.ERROR,
+] as const;
+
+/** 현재 경로가 공개 인증 경로인지 확인 */
+function isPublicAuthPath(pathname: string): boolean {
+  return PUBLIC_AUTH_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+}
 
 // ============================================================================
 // 유틸리티
@@ -51,8 +69,12 @@ function useAxiosSessionSync(session: Session | null) {
  * 토큰 갱신 실패 시 로그아웃 처리
  * - 세션 에러 감지 시 Keycloak SSO 세션까지 종료
  * - 세션 정상화 시 에러 핸들링 플래그 리셋
+ * - 로그아웃 시 다른 탭에 브로드캐스트
  */
-function useTokenRefreshErrorHandler(session: Session | null) {
+function useTokenRefreshErrorHandler(
+  session: Session | null,
+  broadcastLogout: () => void,
+) {
   const hasHandledError = useRef(false);
 
   useEffect(() => {
@@ -70,6 +92,9 @@ function useTokenRefreshErrorHandler(session: Session | null) {
       hasHandledError.current = true;
       authDebug("❌ 토큰 갱신 실패 → 로그아웃 후 재로그인 필요");
 
+      // 다른 탭에 로그아웃 알림
+      broadcastLogout();
+
       // 테스트 환경: credentials 프로바이더로 재로그인
       // 프로덕션 환경: Keycloak SSO 세션까지 종료 후 로그인 페이지로 이동
       if (useTestAuth) {
@@ -78,7 +103,7 @@ function useTokenRefreshErrorHandler(session: Session | null) {
         void signOut({ callbackUrl: "/signin" });
       }
     }
-  }, [session]);
+  }, [session, broadcastLogout]);
 }
 
 /**
@@ -108,16 +133,17 @@ function useTestAutoLogin(
 // ============================================================================
 
 /**
- * 세션 동기화 컴포넌트
+ * 보호된 경로에서만 세션 동기화 수행
  * - AxiosService에 세션 주입
  * - 토큰 갱신 실패 시 재로그인
  * - 테스트 환경 자동 로그인
  */
-function SessionSync({ children }: PropsWithChildren) {
+function ProtectedSessionSync({ children }: PropsWithChildren) {
   const { data: session, status } = useSession();
+  const { broadcastLogout } = useLogoutSync(); // 다중 탭 로그아웃 동기화
 
   useAxiosSessionSync(session);
-  useTokenRefreshErrorHandler(session);
+  useTokenRefreshErrorHandler(session, broadcastLogout);
   useTestAutoLogin(status);
 
   // 세션 로딩 중에는 children을 렌더링하지 않음
@@ -126,6 +152,23 @@ function SessionSync({ children }: PropsWithChildren) {
   }
 
   return <>{children}</>;
+}
+
+/**
+ * 세션 동기화 라우터
+ * - 공개 경로(signin, signup 등): 인증 과정 없이 바로 렌더링
+ * - 보호 경로: 세션 동기화 후 렌더링
+ */
+function SessionSync({ children }: PropsWithChildren) {
+  const pathname = usePathname();
+
+  // 공개 경로에서는 인증 과정 없이 바로 렌더링
+  if (isPublicAuthPath(pathname)) {
+    return <>{children}</>;
+  }
+
+  // 보호 경로에서는 세션 동기화 수행
+  return <ProtectedSessionSync>{children}</ProtectedSessionSync>;
 }
 
 /**

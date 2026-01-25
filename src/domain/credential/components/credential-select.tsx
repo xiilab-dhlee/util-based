@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { Dropdown } from "xiilab-ui";
 
 import { getCredentials } from "@/api/generated/credential/credential";
+import { DROPDOWN_LIST_HEIGHT } from "@/shared/constants/core.constant";
 import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
@@ -90,7 +91,7 @@ export function CredentialSelect({ value, setValue }: CredentialSelectProps) {
         onSearch={handleSearch}
         onPopupScroll={handlePopupScroll}
         loading={isLoading || isFetchingNextPage}
-        listHeight={170}
+        listHeight={DROPDOWN_LIST_HEIGHT}
       />
     </div>
   );

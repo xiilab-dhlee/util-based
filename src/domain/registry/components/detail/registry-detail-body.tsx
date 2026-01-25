@@ -14,6 +14,7 @@ import { RegistryImageInfoPanel } from "@/domain/registry/components/detail/regi
 import { RegistryTagRow } from "@/domain/registry/components/detail/registry-tag-row";
 import type { RegistryTagSortState } from "@/domain/registry/constants/registry-detail.constant";
 import { REGISTRY_TAG_SORT_FIELDS } from "@/domain/registry/constants/registry-detail.constant";
+import { useGetRegistryDetailByMode } from "@/domain/registry/hooks/use-get-registry-detail-by-mode";
 import {
   registryTagCheckedListAtom,
   registryTagSortAtom,
@@ -100,6 +101,12 @@ export function RegistryDetailBody({
   const isUser = checkIsUser(session);
   const sessionAccountId = getSessionAccountId(session);
 
+  const { data: imageDetail } = useGetRegistryDetailByMode(
+    mode,
+    { harborImageName },
+    { query: { enabled: !!harborImageName } },
+  );
+
   const [checkedList, setCheckedList] = useAtom(registryTagCheckedListAtom);
   const [sort, setSort] = useAtom(registryTagSortAtom);
   const { rowSelection } = useTableSelection<ImageTagListResponse>(
@@ -129,10 +136,18 @@ export function RegistryDetailBody({
   return (
     <Container>
       {/* 이미지 기본 정보 패널 */}
-      <RegistryImageInfoPanel mode={mode} harborImageName={harborImageName} />
+      <RegistryImageInfoPanel
+        mode={mode}
+        harborImageName={harborImageName}
+        data={imageDetail}
+      />
 
       {/* 태그 목록 필터 */}
-      <RegistryDetailFilter totalSize={totalSize} loading={isLoading} />
+      <RegistryDetailFilter
+        totalSize={totalSize}
+        loading={isLoading}
+        creatorId={imageDetail?.creatorId}
+      />
 
       {/* 태그 목록 테이블 */}
       <ListWrapper>

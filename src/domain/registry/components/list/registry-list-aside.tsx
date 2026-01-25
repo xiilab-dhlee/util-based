@@ -43,6 +43,8 @@ export function RegistryListAside({ imageType }: RegistryListAsideProps) {
     {
       query: {
         enabled: !!selectedWorkspace?.workspaceId,
+        gcTime: 0,
+        staleTime: 0,
       },
     },
   );

@@ -87,3 +87,24 @@ export const gradientBackgroundButtonStyle = css`
     pointer-events: none;
   }
 `;
+
+// 페이지 이동 버튼 스타일 mixin
+// 레지스트리 필터 영역에서 다른 페이지로 이동하는 버튼에 사용됩니다.
+export const moveButtonStyle = css`
+  background-color: #070913;
+  box-shadow:
+    0px 2px 4px 0px #0000000d inset,
+    0px 1px 2px 0px #0000001a;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;

@@ -170,9 +170,11 @@ export const ROUTES = {
   // ============================================
   AUTH_SIGNIN: "/signin",
   AUTH_SIGNUP: "/signup",
+  AUTH_LICENSE: "/license",
 
   // ============================================
   // Error Routes
   // ============================================
+  ERROR: "/error",
   WORKSPACE_ERROR: "/workspace-error",
 } as const;

@@ -21,7 +21,8 @@ export function ViewRequestReasonButton({
   const publish = usePublish();
 
   const handleClickIcon = () => {
-    publish(COMMON_EVENTS.sendRequestReason, reason);
+    if (disabled) return;
+    publish(COMMON_EVENTS.openRequestReasonModal, { reason });
   };
 
   return (
