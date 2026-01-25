@@ -11,6 +11,7 @@ import {
   selectedMigGpuIndexAtom,
 } from "@/domain/node/state/node.atom";
 import { MigUtil } from "@/domain/node/utils/mig.util";
+import { DROPDOWN_LIST_HEIGHT } from "@/shared/constants/core.constant";
 
 interface MigCountSelectProps {
   /** 비활성화 여부 */
@@ -81,6 +82,7 @@ export function MigCountSelect({ disabled }: MigCountSelectProps) {
       width={120}
       height={30}
       disabled={disabled}
+      listHeight={DROPDOWN_LIST_HEIGHT}
     />
   );
 }
