@@ -135,26 +135,25 @@ export class AxiosService {
 
     this.isLoggingOut = true;
 
+    // 로그인 페이지로 리다이렉트하는 내부 헬퍼
+    const redirectToSignin = (reason: string) => {
+      axiosDebug(`🔒 로그인 페이지로 리다이렉트 (${reason})`);
+      if (typeof window !== "undefined") {
+        window.location.href = "/signin";
+      }
+    };
+
     try {
       if (this.logoutHandler) {
         axiosDebug("🔒 세션 무효화 및 로그아웃 처리");
         try {
           await this.logoutHandler();
         } catch (error) {
-          // 로그아웃 핸들러 실패 시 fallback 리다이렉트
-          axiosDebug("❌ 로그아웃 핸들러 실패 → fallback 리다이렉트", {
-            error: String(error),
-          });
-          if (typeof window !== "undefined") {
-            window.location.href = "/signin";
-          }
+          axiosDebug("❌ 로그아웃 핸들러 실패", { error: String(error) });
+          redirectToSignin("핸들러 실패");
         }
       } else {
-        // fallback: 로그아웃 핸들러가 없으면 직접 리다이렉트
-        axiosDebug("🔒 로그인 페이지로 리다이렉트 (fallback)");
-        if (typeof window !== "undefined") {
-          window.location.href = "/signin";
-        }
+        redirectToSignin("핸들러 없음");
       }
     } finally {
       // 리다이렉트 후 플래그 리셋 (페이지 이동 시 새로 초기화됨)
