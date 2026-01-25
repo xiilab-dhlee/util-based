@@ -274,4 +274,14 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.updateReclaimPolicyEnabled]: {
     success: "리소스 회수 기준 활성화 상태가 변경되었습니다.",
   },
+
+  // ============================================
+  // Node (Admin Cluster)
+  // ============================================
+  [MUTATION_KEYS.applyMigConfiguration]: {
+    success: "MIG 설정이 적용되었습니다.",
+  },
+  [MUTATION_KEYS.updateNodeScheduling]: {
+    success: "노드 스케줄링 설정이 변경되었습니다.",
+  },
 };

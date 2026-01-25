@@ -135,6 +135,12 @@ export const MUTATION_KEYS = {
   // ============================================
   updateReclaimPolicy: "updateReclaimPolicy",
   updateReclaimPolicyEnabled: "updateReclaimPolicyEnabled",
+
+  // ============================================
+  // Node (Admin Cluster)
+  // ============================================
+  applyMigConfiguration: "applyMigConfiguration",
+  updateNodeScheduling: "updateNodeScheduling",
 } as const;
 
 export type MutationKey = (typeof MUTATION_KEYS)[keyof typeof MUTATION_KEYS];

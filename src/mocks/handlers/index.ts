@@ -10,7 +10,6 @@
 import { delay, type HttpHandler } from "msw";
 
 import { getAccountProfileMock } from "@/api/generated/account-profile/account-profile.msw";
-import { getAdminClusterMock } from "@/api/generated/admin-cluster/admin-cluster.msw";
 import { getAdminImageTagUsageRequestMock } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request.msw";
 import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history.msw";
@@ -23,6 +22,7 @@ import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { authHandlers } from "@/domain/auth/mocks";
 import { credentialHandlers } from "@/domain/credential/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
+import { nodeHandlers } from "@/domain/node/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
 import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
@@ -38,7 +38,6 @@ import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
-import { nodeHandlers } from "@/mocks/handlers/node.handler";
 import { redfishHandlers } from "@/mocks/handlers/redfish.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
@@ -115,7 +114,6 @@ const rawHandlers = [
   ...groupHandlers,
   ...workspaceHandlers,
   ...requestResourceHandlers,
-  ...nodeHandlers,
   ...redfishHandlers,
   ...accountManagementHandlers,
   ...monitoringHandlers,
@@ -134,9 +132,9 @@ const rawHandlers = [
   ...storageHandlers,
   ...getAdminQueueMock(),
   ...getAdminWorkloadMock(),
-  ...getAdminClusterMock(),
   ...getSmtpSettingsMock(),
   ...getAdminImageTagUsageRequestMock(),
+  ...nodeHandlers,
 ];
 
 /**

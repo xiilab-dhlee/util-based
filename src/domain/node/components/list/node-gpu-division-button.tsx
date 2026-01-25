@@ -34,11 +34,11 @@ export function NodeGpuDivisionButton({
    * MIG 설정 버튼 클릭 핸들러
    *
    * MIG 설정 옵션 클릭 시 MIG 설정 변경 모달을 열기 위한 이벤트를 발행합니다.
-   * NODE_EVENTS.sendUpdateMig 이벤트와 함께 노드 이름을 전달하여
+   * NODE_EVENTS.openUpdateMigModal 이벤트와 함께 노드 이름을 전달하여
    * 해당 노드의 MIG 설정 변경 모달이 열리도록 합니다.
    */
   const handleClickMig = () => {
-    publish(NODE_EVENTS.sendUpdateMig, {
+    publish(NODE_EVENTS.openUpdateMigModal, {
       nodeName,
     });
   };

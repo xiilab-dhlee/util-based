@@ -9,6 +9,10 @@ import { usePublish } from "@/shared/hooks/use-pub-sub";
 interface NodeMigButtonProps {
   /** 대상 노드의 이름 */
   nodeName: string;
+  /** 버튼 비활성화 여부 */
+  disabled?: boolean;
+  /** 버튼 비활성화 사유 (툴팁으로 표시) */
+  disabledReason?: string;
 }
 
 /**
@@ -18,9 +22,15 @@ interface NodeMigButtonProps {
  * 클릭 시 MIG 설정 변경 모달을 열기 위한 이벤트를 발행합니다.
  *
  * @param nodeName - MIG 설정을 변경할 대상 노드의 이름
+ * @param disabled - 버튼 비활성화 여부 (MIG 설정 진행 중일 때 true)
+ * @param disabledReason - 비활성화 사유 (툴팁으로 표시)
  * @returns MIG 설정 버튼 컴포넌트
  */
-export function NodeMigButton({ nodeName }: NodeMigButtonProps) {
+export function NodeMigButton({
+  nodeName,
+  disabled,
+  disabledReason,
+}: NodeMigButtonProps) {
   // Pub/Sub 이벤트 발행을 위한 훅
   const publish = usePublish();
 
@@ -28,11 +38,12 @@ export function NodeMigButton({ nodeName }: NodeMigButtonProps) {
    * MIG 설정 버튼 클릭 핸들러
    *
    * 버튼 클릭 시 MIG 설정 변경 모달을 열기 위한 이벤트를 발행합니다.
-   * NODE_EVENTS.sendUpdateMig 이벤트와 함께 노드 이름을 전달하여
+   * NODE_EVENTS.openUpdateMigModal 이벤트와 함께 노드 이름을 전달하여
    * 해당 노드의 MIG 설정 변경 모달이 열리도록 합니다.
    */
   const handleClick = () => {
-    publish(NODE_EVENTS.sendUpdateMig, {
+    if (disabled) return;
+    publish(NODE_EVENTS.openUpdateMigModal, {
       nodeName,
     });
   };
@@ -44,6 +55,8 @@ export function NodeMigButton({ nodeName }: NodeMigButtonProps) {
       width={50}
       height={26}
       onClick={handleClick}
+      disabled={disabled}
+      title={disabled ? disabledReason : undefined}
     >
       MIG
     </Button>

@@ -1,17 +1,25 @@
 "use client";
 
+import { useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import { useEffect } from "react";
 import { Icon } from "xiilab-ui";
 
+import { useGetClusterNodes } from "@/api/generated/admin-cluster/admin-cluster";
 import { NodeListBody } from "@/domain/node/components/list/node-list-body";
 import { NodeListFilter } from "@/domain/node/components/list/node-list-filter";
 import { NodeListFooter } from "@/domain/node/components/list/node-list-footer";
 import { UpdateMigModal } from "@/domain/node/components/mig/update-mig-modal";
 import { UpdateMpsModal } from "@/domain/node/components/mig/update-mps-modal";
 import { NODE_MENU_ICON } from "@/domain/node/constants/node.constant";
+import { NODE_SORT_FIELD_MAP } from "@/domain/node/constants/node-list.constant";
+import { nodePageAtom, nodeSortAtom } from "@/domain/node/state/node.atom";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
+import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 import {
   ListPageAside,
   ListPageBody,
@@ -56,9 +64,33 @@ const GUIDES: CoreGuide[] = [
 ];
 
 export function NodeListMain() {
+  const resetPage = useResetAtom(nodePageAtom);
+  const resetSort = useResetAtom(nodeSortAtom);
+
+  const page = useAtomValue(nodePageAtom);
+  const sort = useAtomValue(nodeSortAtom);
+
+  const sortRequest = buildSortRequest({
+    state: { field: sort.field, order: sort.order },
+    fieldMap: NODE_SORT_FIELD_MAP,
+  });
+
+  const { data, isLoading, isError } = useGetClusterNodes({
+    pageableRequest: {
+      pageNo: page - 1,
+      pageSize: LIST_PAGE_SIZE,
+    },
+    sortRequest: sortRequest ?? { sort: "NODE_NAME", order: "ASC" },
+  });
+
+  useEffect(() => {
+    resetPage();
+    resetSort();
+  }, [resetPage, resetSort]);
+
   return (
     <>
-      <PageHeader pageKey="admin.node" description="Node Management" />
+      <PageHeader pageKey="admin.node" />
 
       {/* 노드 목록 페이지 메인 영역 */}
       <ListPageMain>
@@ -82,11 +114,15 @@ export function NodeListMain() {
         {/* 노드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           {/* 노드 목록 필터 */}
-          <NodeListFilter />
+          <NodeListFilter total={data?.totalSize || 0} />
           {/* 노드 목록 본문 */}
-          <NodeListBody />
+          <NodeListBody
+            content={data?.content || []}
+            loading={isLoading}
+            isError={isError}
+          />
           {/* 노드 목록 페이지네이션 */}
-          <NodeListFooter />
+          <NodeListFooter total={data?.totalSize || 0} loading={isLoading} />
         </ListPageBody>
       </ListPageMain>
       {/* MPS 설정 모달 */}
