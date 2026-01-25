@@ -1,20 +1,54 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
-import { getRequestResourceStatusInfo } from "@/domain/workspace/utils/workspace.util";
+import type { ImageTagUsageRequestFilterRequestApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
+/** 상태별 UI 정보 */
+interface StatusInfo {
+  text: string;
+  icon: string;
+  iconColor: string;
+  boxShadowColor: string;
+}
+
+/** 이미지 사용 요청 상태별 UI 정보 매핑 */
+const IMAGE_USAGE_REQUEST_STATUS_MAP: Record<
+  ImageTagUsageRequestFilterRequestApprovalStatus,
+  StatusInfo
+> = {
+  APPROVAL_WAITING: {
+    text: "대기",
+    icon: "Waiting",
+    iconColor: "rgba(104, 198, 75, 0.9)",
+    boxShadowColor: "#5EB3465C",
+  },
+  APPROVED: {
+    text: "승인",
+    icon: "Verification02",
+    iconColor: "#86B6FF",
+    boxShadowColor: "#86B6FF4D",
+  },
+  REJECTED: {
+    text: "반려",
+    icon: "Error",
+    iconColor: "#ff8080",
+    boxShadowColor: "#FF80805C",
+  },
+} as const;
 
 interface RequestImageStatusCardProps {
-  status: WorkspaceRequestResourceStatus;
+  status: ImageTagUsageRequestFilterRequestApprovalStatus;
   count: number;
+  isLoading?: boolean;
 }
 
 export function RequestImageStatusCard({
   status,
   count,
+  isLoading = false,
 }: RequestImageStatusCardProps) {
   const { text, icon, iconColor, boxShadowColor } =
-    getRequestResourceStatusInfo(status);
+    IMAGE_USAGE_REQUEST_STATUS_MAP[status];
   return (
     <Container>
       <Left>
@@ -24,7 +58,7 @@ export function RequestImageStatusCard({
       </Left>
       <Right>
         <RightHeader>{text}</RightHeader>
-        <RightBody>{count.toLocaleString()}개</RightBody>
+        <RightBody>{isLoading ? "-" : `${count.toLocaleString()}개`}</RightBody>
       </Right>
     </Container>
   );

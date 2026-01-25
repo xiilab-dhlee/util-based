@@ -29,6 +29,36 @@ export const REGISTRY_SORT_FIELDS = Object.keys(
 export type RegistrySortState = AntdTableSortState<RegistrySortField>;
 
 // ============================================================================
+// 이미지 Job 상태 관련 상수
+// ============================================================================
+
+/** 이미지 Job 상태 값 */
+export const IMAGE_JOB_STATUS = {
+  COMPLETED: "COMPLETED",
+  IN_PROGRESS: "IN_PROGRESS",
+  FAILED: "FAILED",
+} as const;
+
+export type ImageJobStatus =
+  (typeof IMAGE_JOB_STATUS)[keyof typeof IMAGE_JOB_STATUS];
+
+/** 이미지 Job 상태 레이블 맵 */
+export const IMAGE_JOB_STATUS_LABEL: Record<ImageJobStatus, string> = {
+  [IMAGE_JOB_STATUS.COMPLETED]: "완료",
+  [IMAGE_JOB_STATUS.IN_PROGRESS]: "진행중",
+  [IMAGE_JOB_STATUS.FAILED]: "실패",
+};
+
+/**
+ * 이미지 Job 상태 레이블 반환
+ * @param status - 이미지 Job 상태
+ * @returns 상태 레이블 (알 수 없는 상태는 원본 값 반환)
+ */
+export function getImageJobStatusLabel(status: string): string {
+  return IMAGE_JOB_STATUS_LABEL[status as ImageJobStatus] ?? status;
+}
+
+// ============================================================================
 // 이미지 소스 타입 관련 상수
 // ============================================================================
 

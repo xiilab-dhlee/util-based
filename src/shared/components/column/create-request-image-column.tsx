@@ -1,14 +1,15 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
+import type {
+  ImageTagUsageRequestResponse,
+  ImageTagUsageRequestResponseApprovalStatus,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ViewApproveRequestImageButton } from "@/domain/request-image/components/view-approve-request-image-button";
 import { ViewRejectRequestImageButton } from "@/domain/request-image/components/view-reject-request-image-button";
-import type { RequestImageListType } from "@/domain/request-image/schemas/request-image.schema";
-import type { WorkspaceRequestResourceStatus } from "@/domain/workspace/types/workspace.type";
-import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
+import { ViewDecisionReasonButton } from "@/shared/components/button/view-decision-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
-import { WorkspaceRequestResourceStatusText } from "@/shared/components/text/workspace-request-resource-status-text";
+import { ImageTagUsageRequestStatusText } from "@/shared/components/text/image-tag-usage-request-status-text";
 import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
-import { ICON_COLUMN_WIDTH } from "@/shared/constants/core.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
@@ -17,39 +18,46 @@ import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
-      key: "imageName",
-      dataIndex: "imageName",
+      key: "imageDisplayName",
+      dataIndex: "imageDisplayName",
       title: "이미지 이름",
       align: "left",
+      render: (imageDisplayName?: string) => {
+        return <span>{imageDisplayName || "-"}</span>;
+      },
     },
     {
       key: "workspaceName",
       dataIndex: "workspaceName",
       title: "워크스페이스",
       align: "left",
-      width: 180,
+      render: (workspaceName?: string) => {
+        return <span>{workspaceName || "-"}</span>;
+      },
     },
     {
-      key: "imageTag",
-      dataIndex: "imageTag",
+      key: "imageTagName",
+      dataIndex: "imageTagName",
       title: "태그",
-      align: "center",
-      width: 100,
+      align: "left",
+      render: (imageTagName?: string) => {
+        return <span>{imageTagName || "-"}</span>;
+      },
     },
     {
-      key: "security",
-      dataIndex: "security",
+      key: "vulnerability",
+      dataIndex: "vulnerability",
       title: "보안 검사 결과",
       align: "center",
-      width: 100,
-      render: (_: unknown, record: RequestImageListType) => {
+      render: (_: unknown, record: ImageTagUsageRequestResponse) => {
+        const vulnerability = record.vulnerability;
         return (
           <ColumnAlignCenterWrap>
             <VulnerabilityTooltip
-              critical={record.critical}
-              high={record.high}
-              medium={record.medium}
-              low={record.low}
+              critical={vulnerability?.criticalCount || 0}
+              high={vulnerability?.highCount || 0}
+              medium={vulnerability?.mediumCount || 0}
+              low={vulnerability?.lowCount || 0}
             />
           </ColumnAlignCenterWrap>
         );
@@ -60,29 +68,31 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "requestReason",
       title: "요청 사유",
       align: "center",
-      width: 70,
       render: (requestReason: string) => {
         return <ViewRequestReasonButton reason={requestReason} />;
       },
     },
     {
-      key: "status",
-      dataIndex: "status",
-      title: "승인 여부",
+      key: "approvalStatus",
+      dataIndex: "approvalStatus",
+      title: "승인 상태",
       align: "center",
-      width: 80,
-      render: (status: WorkspaceRequestResourceStatus) => {
-        return <WorkspaceRequestResourceStatusText status={status} />;
+      render: (approvalStatus: ImageTagUsageRequestResponseApprovalStatus) => {
+        return <ImageTagUsageRequestStatusText status={approvalStatus} />;
       },
     },
     {
-      key: "rejectReason",
-      dataIndex: "rejectReason",
+      key: "decisionReason",
+      dataIndex: "decisionReason",
       title: "승인/반려 사유",
       align: "center",
-      width: 100,
-      render: (rejectReason: string) => {
-        return <ViewRejectReasonButton reason={rejectReason} />;
+      render: (_: unknown, record: ImageTagUsageRequestResponse) => {
+        return (
+          <ViewDecisionReasonButton
+            reason={record.decisionReason}
+            approvalStatus={record.approvalStatus}
+          />
+        );
       },
     },
     {
@@ -90,39 +100,29 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "creatorName",
       title: "요청자명",
       align: "center",
-      width: 70,
     },
     {
-      key: "creatorDate",
-      dataIndex: "creatorDate",
+      key: "requestedAt",
+      dataIndex: "requestedAt",
       title: "요청날짜",
       align: "center",
-      width: 140,
-      render: (creatorDate: string) => {
-        return (
-          <ColumnAlignCenterWrap>
-            {formatDateTimeSafely(creatorDate)}
-          </ColumnAlignCenterWrap>
-        );
+      render: (requestedAt?: string) => {
+        return <span>{formatDateTimeSafely(requestedAt)}</span>;
       },
     },
     {
       key: "reject",
-      dataIndex: "reject",
       title: "반려",
       align: "center",
-      width: ICON_COLUMN_WIDTH,
-      render: (_: unknown, record: RequestImageListType) => {
+      render: (_: unknown, record: ImageTagUsageRequestResponse) => {
         return <ViewRejectRequestImageButton requestImage={record} />;
       },
     },
     {
       key: "approve",
-      dataIndex: "approve",
       title: "승인",
       align: "center",
-      width: ICON_COLUMN_WIDTH,
-      render: (_: unknown, record: RequestImageListType) => {
+      render: (_: unknown, record: ImageTagUsageRequestResponse) => {
         return <ViewApproveRequestImageButton requestImage={record} />;
       },
     },
@@ -142,9 +142,9 @@ const createColumnList = (): ResponsiveColumnType[] => {
  * @example
  * // 2. 배열 형태 - 순서 변경 가능
  * const columns = createRequestImageColumn([
- *   { key: 'imageName' },
- *   { key: 'imageTag', width: 150 },
- *   { key: 'status', title: '상태' },
+ *   { key: 'imageDisplayName' },
+ *   { key: 'imageTagName', width: 150 },
+ *   { key: 'approvalStatus', title: '상태' },
  * ]);
  */
 export const createRequestImageColumn = (

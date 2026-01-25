@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Modal, Typography } from "xiilab-ui";
@@ -10,7 +11,11 @@ import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { ScanStatusText } from "@/shared/components/text/scan-status-text";
 import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
+import {
+  checkIsSuperAdmin,
+  getSessionAccountId,
+} from "@/shared/utils/auth.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
 
@@ -25,16 +30,17 @@ interface ViewRegistryTagDetailModalProps {
 export function ViewRegistryTagDetailModal({
   mode,
 }: ViewRegistryTagDetailModalProps) {
+  const { data: session } = useSession();
+  const publish = usePublish();
+
   const [open, setOpen] = useState(false);
   const [payload, setPayload] = useState<TagDetailPayload | null>(null);
 
   const { data, isFetching } = useGetRegistryTagDetailByMode(
     mode,
     {
-      request: {
-        harborImageName: payload?.harborImageName ?? "",
-        tagName: payload?.imageTagName ?? "",
-      },
+      harborImageName: payload?.harborImageName ?? "",
+      tagName: payload?.imageTagName ?? "",
     },
     {
       query: {
@@ -43,15 +49,37 @@ export function ViewRegistryTagDetailModal({
     },
   );
 
+  // 생성자 또는 슈퍼 관리자인 경우 수정 가능
+  const sessionAccountId = getSessionAccountId(session);
+  const isOwner = data?.creatorId === sessionAccountId;
+  const isSuperAdmin = checkIsSuperAdmin(session);
+  const canEdit = !!session && (isOwner || isSuperAdmin);
+
   const handleClose = () => {
     setOpen(false);
     setPayload(null);
   };
 
-  useSubscribe<TagDetailPayload>(REGISTRY_EVENTS.openTagDetailModal, (data) => {
-    setPayload(data);
-    setOpen(true);
-  });
+  const handleOk = () => {
+    if (canEdit && data) {
+      // 수정 모달 열기
+      publish(REGISTRY_EVENTS.openEditTagModal, {
+        tagId: data.imageTagId,
+        tagName: data.imageTagName,
+        harborImageName: payload?.harborImageName,
+        description: data.description,
+      });
+    }
+    handleClose();
+  };
+
+  useSubscribe<TagDetailPayload>(
+    REGISTRY_EVENTS.openTagDetailModal,
+    (eventData) => {
+      setPayload(eventData);
+      setOpen(true);
+    },
+  );
 
   return (
     <Modal
@@ -60,10 +88,10 @@ export function ViewRegistryTagDetailModal({
       modalWidth={400}
       open={open}
       closable
-      title="태그 상세 정보"
+      title="컨테이너 이미지 태그 상세 정보"
       showCancelButton
-      okText="확인"
-      onOk={handleClose}
+      okText={canEdit ? "수정" : "확인"}
+      onOk={handleOk}
       onCancel={handleClose}
       centered
       showHeaderBorder

@@ -7,11 +7,11 @@ import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { ModalDisplayReason } from "@/styles/layers/modal-layers.styled";
 
-interface RequestReasonPayload {
+interface ApprovalReasonPayload {
   reason?: string;
 }
 
-export function ViewRequestReasonModal() {
+export function ViewApprovalReasonModal() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<string>("");
 
@@ -19,8 +19,8 @@ export function ViewRequestReasonModal() {
     setOpen(false);
   };
 
-  useSubscribe<RequestReasonPayload>(
-    COMMON_EVENTS.openRequestReasonModal,
+  useSubscribe<ApprovalReasonPayload>(
+    COMMON_EVENTS.openApprovalReasonModal,
     (payload) => {
       setReason(payload.reason || "");
       setOpen(true);
@@ -31,11 +31,11 @@ export function ViewRequestReasonModal() {
     <InfoModal
       type="primary"
       modalWidth={300}
-      icon={<Icon name="AllowRequest" color="#fff" size={20} />}
+      icon={<Icon name="AllowRequest" color="#fff" size={18} />}
       open={open}
       closable
       onClose={handleClose}
-      title="요청 사유"
+      title="승인 사유"
       centered
     >
       <ModalDisplayReason>{reason || "-"}</ModalDisplayReason>

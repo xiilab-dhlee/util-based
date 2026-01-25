@@ -14,11 +14,12 @@ import {
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { checkIsUser } from "@/shared/utils/auth.util";
+import { checkIsUser, getSessionAccountId } from "@/shared/utils/auth.util";
 
 interface RegistryDetailFilterProps {
   totalSize?: number;
   loading: boolean;
+  creatorId?: string;
 }
 
 /**
@@ -29,6 +30,7 @@ interface RegistryDetailFilterProps {
 export function RegistryDetailFilter({
   totalSize,
   loading,
+  creatorId,
 }: RegistryDetailFilterProps) {
   const { data: session } = useSession();
   const { name } = useParams<{ name: string }>();
@@ -41,6 +43,10 @@ export function RegistryDetailFilter({
   const publish = usePublish();
 
   const isUser = checkIsUser(session);
+  const sessionAccountId = getSessionAccountId(session);
+  const isOwner = creatorId === sessionAccountId;
+  // 사용자이면서 생성자인 경우에만 태그 추가 가능
+  const canCreateTag = isUser && isOwner;
 
   const handleSearch = (value: string) => {
     resetCheckedList();
@@ -64,7 +70,7 @@ export function RegistryDetailFilter({
         disabled={loading}
       />
 
-      {isUser && (
+      {canCreateTag && (
         <Button
           color="primary"
           icon="Plus"

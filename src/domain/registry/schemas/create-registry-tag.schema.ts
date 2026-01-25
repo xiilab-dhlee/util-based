@@ -19,9 +19,7 @@ export const createRegistryTagSchema = z.object({
       /^[a-zA-Z0-9_][a-zA-Z0-9._-]*$/,
       "문자, 숫자, 하이픈(-), 밑줄(_), 점(.)만 사용 가능합니다.",
     ),
-  credentialId: z.number({
-    required_error: "크리덴셜을 선택해 주세요.",
-  }),
+  credentialId: z.number().optional(),
   description: z.string().optional(),
 });
 

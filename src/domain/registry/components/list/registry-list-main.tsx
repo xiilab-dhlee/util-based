@@ -3,6 +3,7 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
+import styled from "styled-components";
 
 import { CreateRegistryModal } from "@/domain/registry/components/create-registry-modal";
 import { DeleteRegistryModal } from "@/domain/registry/components/delete-registry-modal";
@@ -13,6 +14,8 @@ import { RegistryListFooter } from "@/domain/registry/components/list/registry-l
 import { RestartRegistryModal } from "@/domain/registry/components/restart-registry-modal";
 import { SelectRegistryTypeModal } from "@/domain/registry/components/select-registry-type-modal";
 import { StopRegistryModal } from "@/domain/registry/components/stop-registry-modal";
+import { ViewRegistryJobLogModal } from "@/domain/registry/components/view-registry-log-modal";
+import { ViewRegistryStreamLogModal } from "@/domain/registry/components/view-registry-stream-log-modal";
 import {
   REGISTRY_PAGE_SIZE,
   REGISTRY_SORT_FIELD_MAP,
@@ -120,7 +123,7 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
       {/* 목록 페이지 메인 영역 */}
       <ListPageMain>
         {/* 목록 페이지 - 왼쪽 영역 (필터, 목록, 페이지네이션) */}
-        <ListPageBody>
+        <StyledListPageBody>
           {/* 목록 필터 */}
           <RegistryListFilter totalSize={data?.totalSize} loading={isLoading} />
           {/* 목록 본문 */}
@@ -135,7 +138,7 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
             totalSize={data?.totalSize || 0}
             isLoading={isLoading}
           />
-        </ListPageBody>
+        </StyledListPageBody>
         {/* 목록 페이지 - 오른쪽 영역 */}
         <ListPageAside $width={ASIDE_WIDTH}>
           <RegistryListAside
@@ -153,6 +156,14 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
       <RestartRegistryModal />
       {/* 컨테이너 이미지 등록 종료 모달 */}
       <StopRegistryModal />
+      {/* 컨테이너 이미지 등록 로그 모달 */}
+      <ViewRegistryJobLogModal />
+      {/* 컨테이너 이미지 등록 실시간 스트리밍 로그 모달 */}
+      <ViewRegistryStreamLogModal />
     </>
   );
 }
+
+const StyledListPageBody = styled(ListPageBody)`
+  height: 760px;
+`;

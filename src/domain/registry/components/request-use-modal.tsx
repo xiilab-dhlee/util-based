@@ -1,8 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import styled from "styled-components";
 import { Form, Icon, Modal, TextArea } from "xiilab-ui";
 
 import { useCreateUsageRequest } from "@/api/generated/image-tag-usage-request/image-tag-usage-request";
@@ -11,13 +13,16 @@ import {
   type RequestUseTagFormType,
   requestUseTagSchema,
 } from "@/domain/registry/schemas/request-use-tag.schema";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
 export function RequestUseModal() {
   const [open, setOpen] = useState(false);
   const [imageTagId, setImageTagId] = useState<number | null>(null);
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
   const {
     control,
@@ -42,12 +47,14 @@ export function RequestUseModal() {
   const onSubmit = (data: RequestUseTagFormType) => {
     if (isPending) return;
     if (imageTagId === null) return;
+    if (!selectedWorkspace) return;
 
     mutate(
       {
         data: {
           imageTagId: [imageTagId],
           requestReason: data.requestReason,
+          workspaceId: selectedWorkspace.workspaceId,
         },
       },
       {
@@ -78,7 +85,7 @@ export function RequestUseModal() {
       title="이미지 사용 요청"
       showCancelButton
       onCancel={handleCancel}
-      okText="요청"
+      okText="사용 요청"
       cancelText="취소"
       onOk={handleSubmit(onSubmit)}
       centered
@@ -87,8 +94,9 @@ export function RequestUseModal() {
       maskClosable={!isPending}
       keyboard={!isPending}
       okButtonProps={{
-        disabled: isPending,
+        disabled: isPending || !selectedWorkspace,
         loading: isPending,
+        title: !selectedWorkspace ? "워크스페이스를 선택해 주세요." : undefined,
       }}
       cancelButtonProps={{
         disabled: isPending,
@@ -100,7 +108,16 @@ export function RequestUseModal() {
           control={control}
           render={({ field }) => (
             <LastFormItem
-              label="사용 요청 사유"
+              label={
+                <GuideTooltipWrapper>
+                  요청 사유
+                  <GuideTooltip
+                    maxWidth={240}
+                    title="요청사항은 관리자에게 전달됩니다. 관리자가 이미지를
+                        승인한 후 해당 이미지를 사용하실 수 있습니다."
+                  />
+                </GuideTooltipWrapper>
+              }
               required
               htmlFor="registryTagRequestReason"
               validateStatus={errors.requestReason ? "error" : undefined}
@@ -109,7 +126,7 @@ export function RequestUseModal() {
               <TextArea
                 {...field}
                 id="registryTagRequestReason"
-                placeholder="사용 요청 사유를 입력해 주세요."
+                placeholder="요청 사유를 입력해 주세요."
                 width="100%"
                 rows={4}
               />
@@ -120,3 +137,10 @@ export function RequestUseModal() {
     </Modal>
   );
 }
+
+const GuideTooltipWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+`;

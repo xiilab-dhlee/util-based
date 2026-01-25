@@ -1,14 +1,20 @@
+"use client";
+
 import Image from "next/image";
 import styled from "styled-components";
 import { Label, Switch, Typography } from "xiilab-ui";
 
+import { useGetApprovalStatusSummary } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request";
 import { RequestImageStatusCard } from "@/domain/registry/components/entry/request-image-status-card";
+import { SecurityLevelSettingButton } from "@/domain/registry/components/entry/security-level-setting-button";
 import { SecuritySettingCard } from "@/domain/registry/components/entry/security-setting-card";
 import { REGISTRY_QUICK_MENUS } from "@/domain/registry/constants/registry.constant";
 import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function RegistryMainSection() {
+  const { data: approvalStatusSummary, isLoading } =
+    useGetApprovalStatusSummary();
   return (
     <Container>
       <Left>
@@ -33,9 +39,21 @@ export function RegistryMainSection() {
               이미지 사용 승인 여부
             </Typography.Text>
             <RequestImageBody>
-              <RequestImageStatusCard status="APPROVE" count={9999} />
-              <RequestImageStatusCard status="WAITING" count={9999} />
-              <RequestImageStatusCard status="REJECT" count={9999} />
+              <RequestImageStatusCard
+                status="APPROVED"
+                count={approvalStatusSummary?.approved ?? 0}
+                isLoading={isLoading}
+              />
+              <RequestImageStatusCard
+                status="APPROVAL_WAITING"
+                count={approvalStatusSummary?.approvalWaiting ?? 0}
+                isLoading={isLoading}
+              />
+              <RequestImageStatusCard
+                status="REJECTED"
+                count={approvalStatusSummary?.rejected ?? 0}
+                isLoading={isLoading}
+              />
             </RequestImageBody>
           </RequestImage>
           <SecuritySetting>
@@ -84,7 +102,8 @@ export function RegistryMainSection() {
                     <Label variant="blue">사용중</Label>
                   </>
                 }
-                description="Critical 이상의 취약점 2개 이상 발견 시, 사용 불가"
+                description="Critical 이상의 취약점 2개 이상 발견 시, 승인 필요"
+                action={<SecurityLevelSettingButton />}
               />
             </SecuritySettingBody>
           </SecuritySetting>

@@ -2,11 +2,32 @@
 
 import styled from "styled-components";
 
+import {
+  IMAGE_JOB_STATUS,
+  type ImageJobStatus,
+} from "@/domain/registry/constants/registry-list.constant";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { myDropdownButtonStyle } from "@/styles/mixins/button";
 
-export function RegistryLogButton() {
+interface RegistryJobLogButtonProps {
+  imageTagId: number;
+  status: ImageJobStatus;
+}
+
+export function RegistryJobLogButton({
+  imageTagId,
+  status,
+}: RegistryJobLogButtonProps) {
+  const publish = usePublish();
+
   const handleClick = () => {
-    alert("준비 중입니다.");
+    const isStreaming = status === IMAGE_JOB_STATUS.IN_PROGRESS;
+    const eventName = isStreaming
+      ? REGISTRY_EVENTS.openStreamLogModal
+      : REGISTRY_EVENTS.openLogModal;
+
+    publish(eventName, { imageTagId });
   };
 
   return (

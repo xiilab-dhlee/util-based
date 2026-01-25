@@ -22,7 +22,7 @@ export function ViewRejectReasonButton({
 
   const handleClickIcon = () => {
     if (disabled) return;
-    publish(COMMON_EVENTS.sendRejectReason, reason);
+    publish(COMMON_EVENTS.openRejectReasonModal, { reason });
   };
 
   return (
