@@ -46,22 +46,13 @@ export function NodeDetailMain() {
     }
 
     // 에러 상태
-    if (isError) {
+    if (isError && !data) {
       return (
         <ErrorContainer>
           <EmptyState
             title="노드 정보를 불러올 수 없습니다"
             content="잠시 후 다시 시도해 주세요."
           />
-        </ErrorContainer>
-      );
-    }
-
-    // 데이터가 없는 경우
-    if (!data) {
-      return (
-        <ErrorContainer>
-          <EmptyState title="노드 정보가 없습니다" />
         </ErrorContainer>
       );
     }
