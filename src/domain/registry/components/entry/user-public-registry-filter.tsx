@@ -12,6 +12,7 @@ import {
 } from "@/domain/registry/state/registry.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { moveButtonStyle } from "@/styles/mixins/button";
 
 interface UserPublicRegistryFilterProps {
   totalSize?: number;
@@ -55,14 +56,5 @@ export function UserPublicRegistryFilter({
 }
 
 const MoveButton = styled.button`
-  background-color: #070913;
-  box-shadow: 0px 2px 4px 0px #0000000D inset;
-  box-shadow: 0px 1px 2px 0px #0000001a;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 2px;
-  cursor: pointer;
+  ${moveButtonStyle}
 `;
