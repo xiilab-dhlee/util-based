@@ -11,22 +11,17 @@ interface ColumnMigProps {
 
 /**
  * MIG GPU 프로파일을 표시하는 컬럼 컴포넌트
- * @param migProfiles MIG 프로파일 배열 (예: [{ "1g.5gb": 7 }, { "2g.10gb": 3 }])
+ * @param migProfiles MIG 프로파일 배열 (예: [{ profile: "1g.5gb", requestCount: 7 }, { profile: "2g.10gb", requestCount: 3 }])
  */
 export function ColumnMig({ migProfiles }: ColumnMigProps) {
-  if (migProfiles.length === 0) {
+  if (!migProfiles?.length) {
     return <ColumnAlignCenterWrap>-</ColumnAlignCenterWrap>;
   }
 
-  // 첫 번째 프로파일의 키와 값 추출
+  // 첫 번째 프로파일 추출
   const firstProfile = migProfiles[0];
-  const firstProfileEntries = Object.entries(firstProfile);
-
-  if (firstProfileEntries.length === 0) {
-    return <ColumnAlignCenterWrap>-</ColumnAlignCenterWrap>;
-  }
-
-  const [profileName, count] = firstProfileEntries[0];
+  const profileName = firstProfile.profile;
+  const count = firstProfile.requestCount;
 
   return (
     <ColumnAlignCenterWrap>

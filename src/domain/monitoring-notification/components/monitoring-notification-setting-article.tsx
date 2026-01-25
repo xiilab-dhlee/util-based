@@ -8,8 +8,8 @@ import { useGetAllMonitoringNotificationSets } from "@/api/generated/admin-monit
 import { MonitoringNotificationSettingListBody } from "@/domain/monitoring-notification/components/list/monitoring-notification-setting-list-body";
 import { MonitoringNotificationSettingListFooter } from "@/domain/monitoring-notification/components/list/monitoring-notification-setting-list-footer";
 import {
-  MONITORING_NOTIFICATION_PAGE_SIZE,
   MONITORING_NOTIFICATION_SETTING_DEFAULT_SORT,
+  MONITORING_NOTIFICATION_SETTING_PAGE_SIZE,
   MONITORING_NOTIFICATION_SETTING_SORT_FIELD_MAP,
 } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import {
@@ -38,7 +38,7 @@ export function MonitoringNotificationSettingArticle() {
   const { data, isLoading, isError } = useGetAllMonitoringNotificationSets({
     pageableRequest: {
       pageNo: page - 1,
-      pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+      pageSize: MONITORING_NOTIFICATION_SETTING_PAGE_SIZE,
     },
     sortRequest,
   });

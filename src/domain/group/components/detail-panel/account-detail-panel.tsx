@@ -138,7 +138,7 @@ export function AccountDetailPanel({ accountId }: AccountDetailPanelProps) {
           <AsideDetailArticleBody>
             <AsideDetailArticleItem>
               <DetailColumn>
-                <AsideDetailArticleKey>보유 개수</AsideDetailArticleKey>
+                <AsideDetailArticleKey>생성 개수</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
                   {typeof accountDetail?.workspaceCount === "number"
                     ? `${accountDetail.workspaceCount}개`

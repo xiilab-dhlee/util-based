@@ -11,7 +11,8 @@ import type {
 import type { ThresholdFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
-export const MONITORING_NOTIFICATION_PAGE_SIZE = 10;
+export const MONITORING_NOTIFICATION_SETTING_PAGE_SIZE = 5;
+export const MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE = 10;
 
 /**
  * 모니터링 알림 히스토리 정렬 필드 매핑 (Frontend → Backend)

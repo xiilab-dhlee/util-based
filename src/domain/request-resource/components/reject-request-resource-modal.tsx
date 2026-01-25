@@ -1,48 +1,120 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Icon, Modal, TextArea } from "xiilab-ui";
+import { Controller, useForm } from "react-hook-form";
+import { Form, Icon, Modal, TextArea } from "xiilab-ui";
 
-import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
+import { useGetResourceRequestDetail } from "@/api/generated/admin-workspace/admin-workspace";
+import { REJECT_REASON_MAX_LENGTH } from "@/domain/request-resource/constants/reject-request-resource-form-error-message";
+import { useRejectResourceRequestAction } from "@/domain/request-resource/hooks/request-resource-actions";
 import { openRejectResourceModalAtom } from "@/domain/request-resource/state/request-resource.atom";
-import { Slider } from "@/shared/components/slider/custom-slider";
+import {
+  type RejectResourceFormType,
+  rejectResourceRequestBodyExtended,
+} from "@/domain/request-resource/utils/reject-request-resource-form.override.zod";
+import { transformToRequestResourceModalData } from "@/domain/request-resource/utils/resource-detail.util";
+import { DataErrorState } from "@/shared/components/feedback/data-error-state";
+import {
+  createSliderMarks,
+  Slider,
+  SliderLegend,
+} from "@/shared/components/slider";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { getResourceInfo } from "@/shared/utils/resource.util";
+import { LastFormItem } from "@/styles/layers/form-layer.styled";
 import {
   UpdateResourceModalContainer,
+  UpdateResourceModalErrorMessage,
   UpdateResourceModalIconDescription,
   UpdateResourceModalIconWrapper,
+  UpdateResourceModalLegendWrapper,
   UpdateResourceModalResource,
   UpdateResourceModalResourceHeader,
   UpdateResourceModalResourceTitle,
+  UpdateResourceModalResourceWrapper,
   UpdateResourceModalWorkspace,
   UpdateResourceModalWorkspaceLeft,
   UpdateResourceModalWorkspaceName,
   UpdateResourceModalWorkspaceRight,
 } from "@/styles/layers/update-resource-modal-layers.styled";
 
+interface RejectResourceEvent {
+  resourceRequestId: number;
+  workspaceName: string;
+}
+
 export function RejectResourceModal() {
   const { open, onOpen, onClose } = useGlobalModal(openRejectResourceModalAtom);
 
-  const [workspaceName, setWorkspaceName] = useState<string>(
-    "Workspace_AstraGo02",
+  // resourceRequestId 상태로 관리
+  const [resourceRequestId, setResourceRequestId] = useState<number | null>(
+    null,
   );
 
-  const [gpuReq, setGpuReq] = useState<number>(1);
-  const [cpuReq, setCpuReq] = useState<number>(1);
-  const [memReq, setMemReq] = useState<number>(1);
+  // react-hook-form 설정
+  const {
+    control,
+    handleSubmit,
+    reset: resetForm,
+    formState: { errors },
+  } = useForm<RejectResourceFormType>({
+    resolver: zodResolver(rejectResourceRequestBodyExtended),
+    defaultValues: {
+      rejectReason: "",
+    },
+  });
 
-  const handleSubmit = () => {};
+  // 상세 조회 API 호출 (orval hook 사용)
+  const { data: detailResponse, isFetching: isDetailLoading } =
+    useGetResourceRequestDetail(resourceRequestId ?? 0, {
+      query: {
+        enabled: resourceRequestId !== null,
+      },
+    });
 
-  useSubscribe<RequestResourceListType>(
+  const { mutate: rejectRequest, isPending } = useRejectResourceRequestAction({
+    mutation: {
+      onSuccess: () => {
+        setResourceRequestId(null);
+        resetForm();
+        onClose();
+      },
+    },
+  });
+
+  // 변환된 데이터 준비
+  const modalData = detailResponse
+    ? transformToRequestResourceModalData(detailResponse)
+    : null;
+
+  // 에러 상태 확인
+  const hasAnyError = modalData?.resources.some((r) => r.hasError) ?? false;
+
+  // 반려 처리 핸들러 (react-hook-form의 handleSubmit 사용)
+  const onSubmit = (data: RejectResourceFormType) => {
+    if (!resourceRequestId) return;
+
+    rejectRequest({
+      resourceRequestId,
+      data,
+    });
+  };
+
+  // 모달 닫기 핸들러
+  const handleClose = () => {
+    if (isPending) return;
+    setResourceRequestId(null);
+    resetForm();
+    onClose();
+  };
+
+  // 이벤트 구독
+  useSubscribe<RejectResourceEvent>(
     WORKSPACE_EVENTS.sendRejectResource,
     (eventData) => {
-      setWorkspaceName(eventData.workspaceName);
-      setGpuReq(eventData.gpuReq);
-      setCpuReq(eventData.cpuReq);
-      setMemReq(eventData.memReq);
+      setResourceRequestId(eventData.resourceRequestId);
       onOpen();
     },
   );
@@ -53,94 +125,106 @@ export function RejectResourceModal() {
       icon={<Icon name="Close" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable
+      closable={!isPending}
       title="리소스 반려"
       showCancelButton
       cancelText="취소"
-      onCancel={onClose}
+      onCancel={handleClose}
       okText="리소스 요청 반려"
-      onOk={handleSubmit}
+      onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
-      okButtonProps={
-        {
-          // disabled: updateWorkspaceMember.isPending, // MIG 업데이트 중일 때 확인 버튼 비활성화
-        }
-      }
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      cancelButtonProps={{ disabled: isPending }}
+      okButtonProps={{
+        loading: isPending,
+        disabled: isPending || isDetailLoading,
+      }}
+      loading={isDetailLoading}
     >
       <UpdateResourceModalContainer>
-        <UpdateResourceModalWorkspace>
-          <UpdateResourceModalWorkspaceLeft>
-            <UpdateResourceModalIconWrapper>
-              <Icon name="Workspace01" color="var(--icon-fill)" size={16} />
-            </UpdateResourceModalIconWrapper>
-            <UpdateResourceModalIconDescription>
-              워크스페이스
-            </UpdateResourceModalIconDescription>
-          </UpdateResourceModalWorkspaceLeft>
-          <UpdateResourceModalWorkspaceRight>
-            <UpdateResourceModalWorkspaceName>
-              {workspaceName}
-            </UpdateResourceModalWorkspaceName>
-          </UpdateResourceModalWorkspaceRight>
-        </UpdateResourceModalWorkspace>
-        <UpdateResourceModalResource>
-          <UpdateResourceModalResourceHeader>
-            <UpdateResourceModalResourceTitle>
-              {getResourceInfo("GPU").text}
-            </UpdateResourceModalResourceTitle>
-          </UpdateResourceModalResourceHeader>
-          <Slider
-            width="100%"
-            min={0}
-            max={200}
-            value={gpuReq}
-            type="GPU"
-            readMode
-            showInput
-          />
-        </UpdateResourceModalResource>
-        <UpdateResourceModalResource>
-          <UpdateResourceModalResourceHeader>
-            <UpdateResourceModalResourceTitle>
-              {getResourceInfo("CPU").text}
-            </UpdateResourceModalResourceTitle>
-          </UpdateResourceModalResourceHeader>
-          <Slider
-            width="100%"
-            min={0}
-            max={200}
-            value={cpuReq}
-            type="CPU"
-            readMode
-            showInput
-          />
-        </UpdateResourceModalResource>
-        <UpdateResourceModalResource>
-          <UpdateResourceModalResourceHeader>
-            <UpdateResourceModalResourceTitle>
-              {getResourceInfo("MEM").text}
-            </UpdateResourceModalResourceTitle>
-          </UpdateResourceModalResourceHeader>
-          <Slider
-            width="100%"
-            min={0}
-            max={200}
-            value={memReq}
-            type="MEM"
-            readMode
-            showInput
-          />
-        </UpdateResourceModalResource>
-        <UpdateResourceModalResource>
-          <UpdateResourceModalResourceTitle>
-            반려 사유
-          </UpdateResourceModalResourceTitle>
-          <TextArea
-            placeholder="리소스 요청 반려 사유를 입력해 주세요."
-            rows={4}
-          />
-        </UpdateResourceModalResource>
+        {!modalData && !isDetailLoading && <DataErrorState />}
+        {modalData && (
+          <>
+            <UpdateResourceModalWorkspace>
+              <UpdateResourceModalWorkspaceLeft>
+                <UpdateResourceModalIconWrapper>
+                  <Icon name="Workspace01" color="var(--icon-fill)" size={16} />
+                </UpdateResourceModalIconWrapper>
+                <UpdateResourceModalIconDescription>
+                  워크스페이스
+                </UpdateResourceModalIconDescription>
+              </UpdateResourceModalWorkspaceLeft>
+              <UpdateResourceModalWorkspaceRight>
+                <UpdateResourceModalWorkspaceName>
+                  {detailResponse?.workspaceName}
+                </UpdateResourceModalWorkspaceName>
+              </UpdateResourceModalWorkspaceRight>
+            </UpdateResourceModalWorkspace>
+
+            <UpdateResourceModalResourceWrapper>
+              <UpdateResourceModalLegendWrapper>
+                <SliderLegend />
+              </UpdateResourceModalLegendWrapper>
+              {modalData.resources.map((resource) => (
+                <UpdateResourceModalResource
+                  key={
+                    resource.type === "MIG"
+                      ? `${resource.type}-${resource.profile}`
+                      : resource.type
+                  }
+                >
+                  <UpdateResourceModalResourceHeader>
+                    <UpdateResourceModalResourceTitle>
+                      {resource.displayTitle}
+                    </UpdateResourceModalResourceTitle>
+                  </UpdateResourceModalResourceHeader>
+                  <Slider
+                    width="100%"
+                    min={0}
+                    max={resource.max}
+                    value={resource.req}
+                    type={resource.type}
+                    marks={createSliderMarks(resource.current, resource.req)}
+                    showInput
+                    readOnly={true}
+                    readMode={true}
+                    error={resource.hasError}
+                  />
+                </UpdateResourceModalResource>
+              ))}
+              {hasAnyError && (
+                <UpdateResourceModalErrorMessage>
+                  요청량이 클러스터 용량을 초과한 리소스가 있습니다.
+                </UpdateResourceModalErrorMessage>
+              )}
+
+              <Form layout="vertical">
+                <LastFormItem
+                  label="반려 사유"
+                  required
+                  validateStatus={errors.rejectReason ? "error" : ""}
+                  help={errors.rejectReason?.message}
+                >
+                  <Controller
+                    name="rejectReason"
+                    control={control}
+                    render={({ field }) => (
+                      <TextArea
+                        {...field}
+                        placeholder="리소스 요청 반려 사유를 입력해 주세요."
+                        maxLength={REJECT_REASON_MAX_LENGTH}
+                        status={errors.rejectReason ? "error" : undefined}
+                        height="50px"
+                      />
+                    )}
+                  />
+                </LastFormItem>
+              </Form>
+            </UpdateResourceModalResourceWrapper>
+          </>
+        )}
       </UpdateResourceModalContainer>
     </Modal>
   );

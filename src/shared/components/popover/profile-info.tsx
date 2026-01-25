@@ -77,7 +77,7 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
         <WorkspaceBody>
           <WorkspaceRow>
             <WorkspaceColumn>
-              <WorkspaceColumnKey>보유 개수</WorkspaceColumnKey>
+              <WorkspaceColumnKey>생성 개수</WorkspaceColumnKey>
               <WorkspaceColumnValue>
                 {formatNumberWithUnit(workspaceCount, "개")}
               </WorkspaceColumnValue>

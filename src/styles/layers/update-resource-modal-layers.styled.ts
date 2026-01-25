@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import { errorTextStyle } from "@/styles/mixins/text";
+
 export const UpdateResourceModalContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -16,13 +18,24 @@ export const UpdateResourceModalWorkspace = styled.div`
   border-radius: 4px;
 `;
 
-export const UpdateResourceModalWorkspaceRight = styled.div``;
+export const UpdateResourceModalErrorMessage = styled.div`
+  ${errorTextStyle}
+  margin-top: 4px;
+`;
+
+export const UpdateResourceModalWorkspaceRight = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 0;
+`;
 
 export const UpdateResourceModalWorkspaceLeft = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 `;
 
 export const UpdateResourceModalIconWrapper = styled.div`
@@ -43,6 +56,7 @@ export const UpdateResourceModalIconDescription = styled.div`
   font-size: 12px;
   line-height: 12px;
   color: #000;
+  margin-right: 4px;
 `;
 
 export const UpdateResourceModalWorkspaceName = styled.div`
@@ -50,6 +64,10 @@ export const UpdateResourceModalWorkspaceName = styled.div`
   font-size: 12px;
   line-height: 16px;
   color: #000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 `;
 
 export const UpdateResourceModalResource = styled.div`
@@ -76,6 +94,9 @@ export const UpdateResourceModalResourceWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-height: 344px;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 export const UpdateResourceModalLegendWrapper = styled.div`
