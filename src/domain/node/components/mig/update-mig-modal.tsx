@@ -58,13 +58,19 @@ export function UpdateMigModal() {
   const [selectedMigGpuIndex, setSelectedMigGpuIndex] = useAtom(
     selectedMigGpuIndexAtom,
   );
-  const setSelectedMigCount = useSetAtom(selectedMigCountAtom);
-  const setSelectedMigConfigId = useSetAtom(selectedMigConfigIdAtom);
+  const [selectedMigCount, setSelectedMigCount] = useAtom(selectedMigCountAtom);
+  const [selectedMigConfigId, setSelectedMigConfigId] = useAtom(
+    selectedMigConfigIdAtom,
+  );
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useApplyMigConfiguration();
 
-  const isSubmitDisabled = isUnsupportedModel || errorState.type !== null;
+  // MIG가 활성화되었지만 Config가 선택되지 않은 경우 (DISABLED는 예외)
+  const isMigConfigRequired =
+    selectedMigCount !== "DISABLED" && selectedMigConfigId === -1;
+  const isSubmitDisabled =
+    isUnsupportedModel || errorState.type !== null || isMigConfigRequired;
   const isApplyToAll = applyOnce === APPLY_ONCE_OPTIONS.YES;
 
   const handleCancel = () => {
@@ -228,6 +234,7 @@ export function UpdateMigModal() {
       okButtonProps={{
         disabled: isSubmitDisabled,
         loading: isPending,
+        title: isMigConfigRequired ? "Config를 선택해 주세요." : undefined,
       }}
       cancelButtonProps={{ disabled: isPending }}
     >
