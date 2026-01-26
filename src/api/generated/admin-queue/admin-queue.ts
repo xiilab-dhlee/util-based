@@ -49,9 +49,96 @@ import type {
   AddWorkloadToUrgentQueueRequest,
   BaseResponseListQueueWorkloadResponse,
   BaseResponseUnit,
+  RemoveWorkloadFromUrgentQueueRequest,
   UpdateQueueOrderRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+/**
+ * urgent-standby 큐의 워크로드를 워크스페이스 큐(일반 대기)로 되돌립니다.
+ * @summary 긴급 대기큐에서 워크로드 제거
+ */
+export const removeWorkloadFromUrgentStandby = (
+  removeWorkloadFromUrgentQueueRequest: RemoveWorkloadFromUrgentQueueRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/admin/queues/urgent-standby/workloads/remove`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: removeWorkloadFromUrgentQueueRequest,
+  });
+};
+
+export const getRemoveWorkloadFromUrgentStandbyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+    TError,
+    { data: RemoveWorkloadFromUrgentQueueRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+  TError,
+  { data: RemoveWorkloadFromUrgentQueueRequest },
+  TContext
+> => {
+  const mutationKey = ["removeWorkloadFromUrgentStandby"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+    { data: RemoveWorkloadFromUrgentQueueRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return removeWorkloadFromUrgentStandby(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RemoveWorkloadFromUrgentStandbyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>
+>;
+export type RemoveWorkloadFromUrgentStandbyMutationBody =
+  RemoveWorkloadFromUrgentQueueRequest;
+export type RemoveWorkloadFromUrgentStandbyMutationError = unknown;
+
+/**
+ * @summary 긴급 대기큐에서 워크로드 제거
+ */
+export const useRemoveWorkloadFromUrgentStandby = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+      TError,
+      { data: RemoveWorkloadFromUrgentQueueRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+  TError,
+  { data: RemoveWorkloadFromUrgentQueueRequest },
+  TContext
+> => {
+  const mutationOptions =
+    getRemoveWorkloadFromUrgentStandbyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 /**
  * urgent-standby 큐의 워크로드 순서를 변경합니다. rank 값으로 우선순위를 지정합니다 (1~5, 낮을수록 높은 우선순위).
  * @summary 긴급 대기큐 워크로드 순서 변경

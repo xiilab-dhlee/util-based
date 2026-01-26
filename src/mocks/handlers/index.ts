@@ -17,6 +17,7 @@ import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-mon
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
 import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
+import { getWorkloadMock } from "@/api/generated/workload/workload.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { authHandlers } from "@/domain/auth/mocks";
@@ -42,7 +43,6 @@ import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
-import { workloadHandlers } from "@/mocks/handlers/workload.handler";
 
 // ============================================
 // Lazy Mock 지연 래퍼
@@ -104,7 +104,8 @@ const rawHandlers = [
   ...getAccountProfileMock(),
   ...notificationHandlers,
   ...hubHandlers,
-  ...workloadHandlers,
+  ...getWorkloadMock(),
+  ...sourcecodeHandlers,
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),
   ...getAdminK8sMock(),

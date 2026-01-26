@@ -1,17 +1,23 @@
 "use client";
 
-import { useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
+import { useSession } from "next-auth/react";
 import { Input } from "xiilab-ui";
 
+import { useGetWorkspaceMemberRole } from "@/api/generated/workspace-member/workspace-member";
 import { DisabledWorkloadJobTypeSort } from "@/domain/workload/components/list/disabled-workload-job-type-sort";
 import {
+  disabledWorkloadIsMineAtom,
   disabledWorkloadPageAtom,
   disabledWorkloadSearchTextAtom,
 } from "@/domain/workload/state/workload.atom";
+import { isWorkspaceOwnerRole } from "@/domain/workspace/constants/workspace.constant";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { MyItemsOnlySwitch } from "@/shared/components/switch/my-items-only-switch";
 import { SELECTOR } from "@/shared/constants/selector.constant";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 
 interface DisabledWorkloadListFilterProps {
   total: number;
@@ -31,8 +37,26 @@ export function DisabledWorkloadListFilter({
   total,
   isLoading,
 }: DisabledWorkloadListFilterProps) {
+  const { data: session } = useSession();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
+  const accountId = getSessionAccountId(session);
+
+  const { data: memberRole } = useGetWorkspaceMemberRole(
+    workspaceId ?? -1,
+    accountId ?? "",
+    {
+      query: {
+        enabled: Boolean(workspaceId) && Boolean(accountId),
+      },
+    },
+  );
+
+  const canShowMyItemsSwitch = isWorkspaceOwnerRole(memberRole?.memberRole);
+
   const setSearchText = useSetAtom(disabledWorkloadSearchTextAtom);
   const resetPage = useResetAtom(disabledWorkloadPageAtom);
+  const [isMine, setIsMine] = useAtom(disabledWorkloadIsMineAtom);
 
   /**
    * 검색 핸들러
@@ -43,13 +67,23 @@ export function DisabledWorkloadListFilter({
     setSearchText(value.trim());
   };
 
+  /**
+   * 내 항목만 보기 토글 핸들러
+   */
+  const handleIsMineChange = (checked: boolean) => {
+    resetPage();
+    setIsMine(checked);
+  };
+
   return (
     <MySearchFilter
       title="워크로드 목록"
       total={total}
       totalCountTestId={SELECTOR.LIST_TOTAL_COUNT}
     >
-      <MyItemsOnlySwitch checked={false} />
+      {canShowMyItemsSwitch && (
+        <MyItemsOnlySwitch checked={isMine} onChange={handleIsMineChange} />
+      )}
       <DisabledWorkloadJobTypeSort disabled={isLoading} />
       <Input.Search
         name="search"

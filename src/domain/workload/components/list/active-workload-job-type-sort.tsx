@@ -4,8 +4,8 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
+import type { ActiveWorkloadItemWorkloadJobType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { WORKLOAD_JOB_OPTIONS } from "@/domain/workload/constants/workload.constant";
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import {
   activeWorkloadJobTypeAtom,
   activeWorkloadPageAtom,
@@ -36,7 +36,7 @@ export function ActiveWorkloadJobTypeSort({
    * 작업 유형 변경 핸들러
    * 작업 유형 변경 시 페이지를 초기화
    */
-  const handleChange = (value: WorkloadJobType | null) => {
+  const handleChange = (value: ActiveWorkloadItemWorkloadJobType | null) => {
     resetPage();
     setJobType(value);
   };
@@ -45,7 +45,7 @@ export function ActiveWorkloadJobTypeSort({
     <div data-testid={WORKLOAD_SELECTOR.FILTER_JOB_TYPE}>
       <Dropdown
         options={[ALL_OPTION, ...WORKLOAD_JOB_OPTIONS]}
-        placeholder="워크로드 잡 타입"
+        placeholder="Job Type"
         onChange={handleChange}
         value={jobType}
         width={150}

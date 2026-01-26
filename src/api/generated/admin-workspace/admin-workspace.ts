@@ -55,9 +55,9 @@ import type {
   BaseResponsePageResponseAdminWorkspaceListResponse,
   BaseResponsePageResponseAdminWorkspaceMemberResponse,
   BaseResponseUnit,
-  GetAllWorkspaces1Params,
-  GetResourceRequests1Params,
-  GetWorkspaceMembers1Params,
+  GetAdminAllWorkspacesParams,
+  GetAdminResourceRequestsParams,
+  GetAdminWorkspaceMembersParams,
   ResourceRequestRejectRequest,
   WorkspaceResourceRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -602,8 +602,8 @@ export const useDeleteWorkspaces = <TError = unknown, TContext = unknown>(
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. 워크스페이스명, 생성자명으로 검색이 가능합니다. 생성일, 워크스페이스명, 생성자명으로 정렬이 가능합니다.
  * @summary 관리자용 워크스페이스 목록 조회
  */
-export const getAllWorkspaces1 = (
-  params?: GetAllWorkspaces1Params,
+export const getAdminAllWorkspaces = (
+  params?: GetAdminAllWorkspacesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminWorkspaceListResponse>({
@@ -614,21 +614,21 @@ export const getAllWorkspaces1 = (
   });
 };
 
-export const getGetAllWorkspaces1QueryKey = (
-  params?: GetAllWorkspaces1Params,
+export const getGetAdminAllWorkspacesQueryKey = (
+  params?: GetAdminAllWorkspacesParams,
 ) => {
   return [`/api/v1/admin/workspaces`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetAllWorkspaces1QueryOptions = <
-  TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
+export const getGetAdminAllWorkspacesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
   TError = unknown,
 >(
-  params?: GetAllWorkspaces1Params,
+  params?: GetAdminAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAllWorkspaces1>>,
+        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
         TError,
         TData
       >
@@ -638,42 +638,42 @@ export const getGetAllWorkspaces1QueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetAllWorkspaces1QueryKey(params);
+    queryOptions?.queryKey ?? getGetAdminAllWorkspacesQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getAllWorkspaces1>>
-  > = ({ signal }) => getAllWorkspaces1(params, signal);
+    Awaited<ReturnType<typeof getAdminAllWorkspaces>>
+  > = ({ signal }) => getAdminAllWorkspaces(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getAllWorkspaces1>>,
+    Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetAllWorkspaces1QueryResult = NonNullable<
-  Awaited<ReturnType<typeof getAllWorkspaces1>>
+export type GetAdminAllWorkspacesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminAllWorkspaces>>
 >;
-export type GetAllWorkspaces1QueryError = unknown;
+export type GetAdminAllWorkspacesQueryError = unknown;
 
-export function useGetAllWorkspaces1<
-  TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
+export function useGetAdminAllWorkspaces<
+  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
   TError = unknown,
 >(
-  params: undefined | GetAllWorkspaces1Params,
+  params: undefined | GetAdminAllWorkspacesParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAllWorkspaces1>>,
+        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAllWorkspaces1>>,
+          Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
           TError,
-          Awaited<ReturnType<typeof getAllWorkspaces1>>
+          Awaited<ReturnType<typeof getAdminAllWorkspaces>>
         >,
         "initialData"
       >;
@@ -682,24 +682,24 @@ export function useGetAllWorkspaces1<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAllWorkspaces1<
-  TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
+export function useGetAdminAllWorkspaces<
+  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
   TError = unknown,
 >(
-  params?: GetAllWorkspaces1Params,
+  params?: GetAdminAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAllWorkspaces1>>,
+        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAllWorkspaces1>>,
+          Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
           TError,
-          Awaited<ReturnType<typeof getAllWorkspaces1>>
+          Awaited<ReturnType<typeof getAdminAllWorkspaces>>
         >,
         "initialData"
       >;
@@ -708,15 +708,15 @@ export function useGetAllWorkspaces1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAllWorkspaces1<
-  TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
+export function useGetAdminAllWorkspaces<
+  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
   TError = unknown,
 >(
-  params?: GetAllWorkspaces1Params,
+  params?: GetAdminAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAllWorkspaces1>>,
+        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
         TError,
         TData
       >
@@ -730,15 +730,15 @@ export function useGetAllWorkspaces1<
  * @summary 관리자용 워크스페이스 목록 조회
  */
 
-export function useGetAllWorkspaces1<
-  TData = Awaited<ReturnType<typeof getAllWorkspaces1>>,
+export function useGetAdminAllWorkspaces<
+  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
   TError = unknown,
 >(
-  params?: GetAllWorkspaces1Params,
+  params?: GetAdminAllWorkspacesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAllWorkspaces1>>,
+        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
         TError,
         TData
       >
@@ -748,7 +748,7 @@ export function useGetAllWorkspaces1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetAllWorkspaces1QueryOptions(params, options);
+  const queryOptions = getGetAdminAllWorkspacesQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -764,9 +764,9 @@ export function useGetAllWorkspaces1<
  * 특정 워크스페이스의 구성원 목록을 페이징하여 조회합니다. 계정명, 이메일로 검색할 수 있습니다.
  * @summary 관리자용 워크스페이스 구성원 조회
  */
-export const getWorkspaceMembers1 = (
+export const getAdminWorkspaceMembers = (
   workspaceId: number,
-  params?: GetWorkspaceMembers1Params,
+  params?: GetAdminWorkspaceMembersParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminWorkspaceMemberResponse>({
@@ -777,9 +777,9 @@ export const getWorkspaceMembers1 = (
   });
 };
 
-export const getGetWorkspaceMembers1QueryKey = (
+export const getGetAdminWorkspaceMembersQueryKey = (
   workspaceId?: number,
-  params?: GetWorkspaceMembers1Params,
+  params?: GetAdminWorkspaceMembersParams,
 ) => {
   return [
     `/api/v1/admin/workspaces/${workspaceId}/members`,
@@ -787,16 +787,16 @@ export const getGetWorkspaceMembers1QueryKey = (
   ] as const;
 };
 
-export const getGetWorkspaceMembers1QueryOptions = <
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+export const getGetAdminWorkspaceMembersQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembers1Params,
+  params?: GetAdminWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
         TError,
         TData
       >
@@ -807,11 +807,11 @@ export const getGetWorkspaceMembers1QueryOptions = <
 
   const queryKey =
     queryOptions?.queryKey ??
-    getGetWorkspaceMembers1QueryKey(workspaceId, params);
+    getGetAdminWorkspaceMembersQueryKey(workspaceId, params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getWorkspaceMembers1>>
-  > = ({ signal }) => getWorkspaceMembers1(workspaceId, params, signal);
+    Awaited<ReturnType<typeof getAdminWorkspaceMembers>>
+  > = ({ signal }) => getAdminWorkspaceMembers(workspaceId, params, signal);
 
   return {
     queryKey,
@@ -819,36 +819,36 @@ export const getGetWorkspaceMembers1QueryOptions = <
     enabled: !!workspaceId,
     ...queryOptions,
   } as UseQueryOptions<
-    Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+    Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetWorkspaceMembers1QueryResult = NonNullable<
-  Awaited<ReturnType<typeof getWorkspaceMembers1>>
+export type GetAdminWorkspaceMembersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminWorkspaceMembers>>
 >;
-export type GetWorkspaceMembers1QueryError = unknown;
+export type GetAdminWorkspaceMembersQueryError = unknown;
 
-export function useGetWorkspaceMembers1<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+export function useGetAdminWorkspaceMembers<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
   TError = unknown,
 >(
   workspaceId: number,
-  params: undefined | GetWorkspaceMembers1Params,
+  params: undefined | GetAdminWorkspaceMembersParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+          Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
           TError,
-          Awaited<ReturnType<typeof getWorkspaceMembers1>>
+          Awaited<ReturnType<typeof getAdminWorkspaceMembers>>
         >,
         "initialData"
       >;
@@ -857,25 +857,25 @@ export function useGetWorkspaceMembers1<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetWorkspaceMembers1<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+export function useGetAdminWorkspaceMembers<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembers1Params,
+  params?: GetAdminWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+          Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
           TError,
-          Awaited<ReturnType<typeof getWorkspaceMembers1>>
+          Awaited<ReturnType<typeof getAdminWorkspaceMembers>>
         >,
         "initialData"
       >;
@@ -884,16 +884,16 @@ export function useGetWorkspaceMembers1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetWorkspaceMembers1<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+export function useGetAdminWorkspaceMembers<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembers1Params,
+  params?: GetAdminWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
         TError,
         TData
       >
@@ -907,16 +907,16 @@ export function useGetWorkspaceMembers1<
  * @summary 관리자용 워크스페이스 구성원 조회
  */
 
-export function useGetWorkspaceMembers1<
-  TData = Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+export function useGetAdminWorkspaceMembers<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
   TError = unknown,
 >(
   workspaceId: number,
-  params?: GetWorkspaceMembers1Params,
+  params?: GetAdminWorkspaceMembersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceMembers1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceMembers>>,
         TError,
         TData
       >
@@ -926,7 +926,7 @@ export function useGetWorkspaceMembers1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetWorkspaceMembers1QueryOptions(
+  const queryOptions = getGetAdminWorkspaceMembersQueryOptions(
     workspaceId,
     params,
     options,
@@ -951,7 +951,7 @@ export function useGetWorkspaceMembers1<
         
  * @summary 관리자용 워크스페이스 상세 조회
  */
-export const getWorkspaceDetail1 = (
+export const getAdminWorkspaceDetail = (
   workspaceId: number,
   signal?: AbortSignal,
 ) => {
@@ -962,19 +962,19 @@ export const getWorkspaceDetail1 = (
   });
 };
 
-export const getGetWorkspaceDetail1QueryKey = (workspaceId?: number) => {
+export const getGetAdminWorkspaceDetailQueryKey = (workspaceId?: number) => {
   return [`/api/v1/admin/workspaces/${workspaceId}/detail`] as const;
 };
 
-export const getGetWorkspaceDetail1QueryOptions = <
-  TData = Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+export const getGetAdminWorkspaceDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
   TError = unknown,
 >(
   workspaceId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
         TError,
         TData
       >
@@ -984,11 +984,11 @@ export const getGetWorkspaceDetail1QueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetWorkspaceDetail1QueryKey(workspaceId);
+    queryOptions?.queryKey ?? getGetAdminWorkspaceDetailQueryKey(workspaceId);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getWorkspaceDetail1>>
-  > = ({ signal }) => getWorkspaceDetail1(workspaceId, signal);
+    Awaited<ReturnType<typeof getAdminWorkspaceDetail>>
+  > = ({ signal }) => getAdminWorkspaceDetail(workspaceId, signal);
 
   return {
     queryKey,
@@ -996,35 +996,35 @@ export const getGetWorkspaceDetail1QueryOptions = <
     enabled: !!workspaceId,
     ...queryOptions,
   } as UseQueryOptions<
-    Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+    Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetWorkspaceDetail1QueryResult = NonNullable<
-  Awaited<ReturnType<typeof getWorkspaceDetail1>>
+export type GetAdminWorkspaceDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminWorkspaceDetail>>
 >;
-export type GetWorkspaceDetail1QueryError = unknown;
+export type GetAdminWorkspaceDetailQueryError = unknown;
 
-export function useGetWorkspaceDetail1<
-  TData = Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+export function useGetAdminWorkspaceDetail<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
   TError = unknown,
 >(
   workspaceId: number,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+          Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
           TError,
-          Awaited<ReturnType<typeof getWorkspaceDetail1>>
+          Awaited<ReturnType<typeof getAdminWorkspaceDetail>>
         >,
         "initialData"
       >;
@@ -1033,24 +1033,24 @@ export function useGetWorkspaceDetail1<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetWorkspaceDetail1<
-  TData = Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+export function useGetAdminWorkspaceDetail<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
   TError = unknown,
 >(
   workspaceId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+          Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
           TError,
-          Awaited<ReturnType<typeof getWorkspaceDetail1>>
+          Awaited<ReturnType<typeof getAdminWorkspaceDetail>>
         >,
         "initialData"
       >;
@@ -1059,15 +1059,15 @@ export function useGetWorkspaceDetail1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetWorkspaceDetail1<
-  TData = Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+export function useGetAdminWorkspaceDetail<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
   TError = unknown,
 >(
   workspaceId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
         TError,
         TData
       >
@@ -1081,15 +1081,15 @@ export function useGetWorkspaceDetail1<
  * @summary 관리자용 워크스페이스 상세 조회
  */
 
-export function useGetWorkspaceDetail1<
-  TData = Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+export function useGetAdminWorkspaceDetail<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
   TError = unknown,
 >(
   workspaceId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getWorkspaceDetail1>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceDetail>>,
         TError,
         TData
       >
@@ -1099,7 +1099,10 @@ export function useGetWorkspaceDetail1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetWorkspaceDetail1QueryOptions(workspaceId, options);
+  const queryOptions = getGetAdminWorkspaceDetailQueryOptions(
+    workspaceId,
+    options,
+  );
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -1115,8 +1118,8 @@ export function useGetWorkspaceDetail1<
  * 전체 워크스페이스의 리소스 요청 목록을 페이징하여 조회합니다. 워크스페이스명, 요청자명으로 검색하고 승인 상태로 필터링할 수 있습니다.
  * @summary 관리자용 리소스 요청 목록 조회
  */
-export const getResourceRequests1 = (
-  params?: GetResourceRequests1Params,
+export const getAdminResourceRequests = (
+  params?: GetAdminResourceRequestsParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminResourceRequestListResponse>(
@@ -1129,8 +1132,8 @@ export const getResourceRequests1 = (
   );
 };
 
-export const getGetResourceRequests1QueryKey = (
-  params?: GetResourceRequests1Params,
+export const getGetAdminResourceRequestsQueryKey = (
+  params?: GetAdminResourceRequestsParams,
 ) => {
   return [
     `/api/v1/admin/workspaces/resources/requests`,
@@ -1138,15 +1141,15 @@ export const getGetResourceRequests1QueryKey = (
   ] as const;
 };
 
-export const getGetResourceRequests1QueryOptions = <
-  TData = Awaited<ReturnType<typeof getResourceRequests1>>,
+export const getGetAdminResourceRequestsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminResourceRequests>>,
   TError = unknown,
 >(
-  params?: GetResourceRequests1Params,
+  params?: GetAdminResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceRequests1>>,
+        Awaited<ReturnType<typeof getAdminResourceRequests>>,
         TError,
         TData
       >
@@ -1156,42 +1159,42 @@ export const getGetResourceRequests1QueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetResourceRequests1QueryKey(params);
+    queryOptions?.queryKey ?? getGetAdminResourceRequestsQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getResourceRequests1>>
-  > = ({ signal }) => getResourceRequests1(params, signal);
+    Awaited<ReturnType<typeof getAdminResourceRequests>>
+  > = ({ signal }) => getAdminResourceRequests(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getResourceRequests1>>,
+    Awaited<ReturnType<typeof getAdminResourceRequests>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetResourceRequests1QueryResult = NonNullable<
-  Awaited<ReturnType<typeof getResourceRequests1>>
+export type GetAdminResourceRequestsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminResourceRequests>>
 >;
-export type GetResourceRequests1QueryError = unknown;
+export type GetAdminResourceRequestsQueryError = unknown;
 
-export function useGetResourceRequests1<
-  TData = Awaited<ReturnType<typeof getResourceRequests1>>,
+export function useGetAdminResourceRequests<
+  TData = Awaited<ReturnType<typeof getAdminResourceRequests>>,
   TError = unknown,
 >(
-  params: undefined | GetResourceRequests1Params,
+  params: undefined | GetAdminResourceRequestsParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceRequests1>>,
+        Awaited<ReturnType<typeof getAdminResourceRequests>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getResourceRequests1>>,
+          Awaited<ReturnType<typeof getAdminResourceRequests>>,
           TError,
-          Awaited<ReturnType<typeof getResourceRequests1>>
+          Awaited<ReturnType<typeof getAdminResourceRequests>>
         >,
         "initialData"
       >;
@@ -1200,24 +1203,24 @@ export function useGetResourceRequests1<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetResourceRequests1<
-  TData = Awaited<ReturnType<typeof getResourceRequests1>>,
+export function useGetAdminResourceRequests<
+  TData = Awaited<ReturnType<typeof getAdminResourceRequests>>,
   TError = unknown,
 >(
-  params?: GetResourceRequests1Params,
+  params?: GetAdminResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceRequests1>>,
+        Awaited<ReturnType<typeof getAdminResourceRequests>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getResourceRequests1>>,
+          Awaited<ReturnType<typeof getAdminResourceRequests>>,
           TError,
-          Awaited<ReturnType<typeof getResourceRequests1>>
+          Awaited<ReturnType<typeof getAdminResourceRequests>>
         >,
         "initialData"
       >;
@@ -1226,15 +1229,15 @@ export function useGetResourceRequests1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetResourceRequests1<
-  TData = Awaited<ReturnType<typeof getResourceRequests1>>,
+export function useGetAdminResourceRequests<
+  TData = Awaited<ReturnType<typeof getAdminResourceRequests>>,
   TError = unknown,
 >(
-  params?: GetResourceRequests1Params,
+  params?: GetAdminResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceRequests1>>,
+        Awaited<ReturnType<typeof getAdminResourceRequests>>,
         TError,
         TData
       >
@@ -1248,15 +1251,15 @@ export function useGetResourceRequests1<
  * @summary 관리자용 리소스 요청 목록 조회
  */
 
-export function useGetResourceRequests1<
-  TData = Awaited<ReturnType<typeof getResourceRequests1>>,
+export function useGetAdminResourceRequests<
+  TData = Awaited<ReturnType<typeof getAdminResourceRequests>>,
   TError = unknown,
 >(
-  params?: GetResourceRequests1Params,
+  params?: GetAdminResourceRequestsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getResourceRequests1>>,
+        Awaited<ReturnType<typeof getAdminResourceRequests>>,
         TError,
         TData
       >
@@ -1266,7 +1269,7 @@ export function useGetResourceRequests1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetResourceRequests1QueryOptions(params, options);
+  const queryOptions = getGetAdminResourceRequestsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

@@ -34,19 +34,26 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponseActiveWorkloadListResponse,
   BaseResponseDistributedPodResponse,
+  BaseResponseMapStringObject,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
   BaseResponseWorkloadDeleteFilesResponse,
+  BaseResponseWorkloadDetailResponse,
+  BaseResponseWorkloadEventHistoryResponse,
   BaseResponseWorkloadFileListResponse,
   BaseResponseWorkloadStatusResponse,
+  BaseResponseWorkloadSummaryResponse,
   SseEmitter,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getCreateWorkloadResponseMock = (
-  overrideResponse: Partial<BaseResponseUnit> = {},
-): BaseResponseUnit => ({
+  overrideResponse: Partial<BaseResponseMapStringObject> = {},
+): BaseResponseMapStringObject => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    [faker.string.alphanumeric(5)]: {},
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -115,10 +122,35 @@ export const getTerminateWorkloadResponseMock = (
 });
 
 export const getRestartWorkloadResponseMock = (
-  overrideResponse: Partial<BaseResponseUnit> = {},
-): BaseResponseUnit => ({
+  overrideResponse: Partial<BaseResponseMapStringObject> = {},
+): BaseResponseMapStringObject => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    [faker.string.alphanumeric(5)]: {},
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetWorkloadSummaryResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadSummaryResponse> = {},
+): BaseResponseWorkloadSummaryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workloadStatus: faker.helpers.arrayElement([
+      "CREATING",
+      "PENDING",
+      "RUNNING",
+      "TERMINATING",
+      "TERMINATED",
+      "ERROR",
+    ] as const),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -181,6 +213,28 @@ export const getWorkloadListFilesResponseMock = (
 export const getWorkloadPreviewFileResponseMock = (): string =>
   faker.word.sample();
 
+export const getGetWorkloadEventHistoryResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadEventHistoryResponse> = {},
+): BaseResponseWorkloadEventHistoryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    events: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      eventType: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      eventReason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      eventCreatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      eventFrom: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      eventMessage: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetDistributedPodsResponseMock = (
   overrideResponse: Partial<BaseResponseDistributedPodResponse> = {},
 ): BaseResponseDistributedPodResponse => ({
@@ -191,6 +245,282 @@ export const getGetDistributedPodsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetWorkloadDetailResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadDetailResponse> = {},
+): BaseResponseWorkloadDetailResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workloadJobType: faker.helpers.arrayElement([
+      "INTERACTIVE",
+      "BATCH",
+      "DISTRIBUTED",
+    ] as const),
+    nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
+    nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    resourcePreset: {
+      resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+      presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+      nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
+      resource: {
+        cpu: {
+          requestCore: faker.number.int({ min: undefined, max: undefined }),
+        },
+        memory: {
+          requestByte: faker.number.int({ min: undefined, max: undefined }),
+        },
+        gpu: {
+          gpuType: faker.helpers.arrayElement([
+            "NORMAL",
+            "MIG",
+            "MPS",
+          ] as const),
+          detail: {
+            normal: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+            mig: Array.from(
+              { length: faker.number.int({ min: 1, max: 10 }) },
+              (_, i) => i + 1,
+            ).map(() => ({
+              profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            })),
+            mps: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+          },
+          gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        },
+      },
+      isDeleted: faker.datatype.boolean(),
+    },
+    workerCount: faker.number.int({ min: undefined, max: undefined }),
+    image: {
+      imageId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagId: faker.number.int({ min: undefined, max: undefined }),
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageType: faker.helpers.arrayElement([
+        "BUILT_IN",
+        "HUB",
+        "PRIVATE",
+        "PUBLIC",
+      ] as const),
+    },
+    outputDirectory: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    executionDirectory: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    executionCommand: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    env: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      key: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    port: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      portName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      portNumber: faker.number.int({ min: undefined, max: undefined }),
+      servicePortNum: faker.number.int({ min: undefined, max: undefined }),
+      url: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    sourceCode: {
+      sourceCodeId: faker.number.int({ min: undefined, max: undefined }),
+      sourceCodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      gitUrl: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      branch: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      sourceCodeType: faker.helpers.arrayElement([
+        "GITHUB",
+        "GITLAB",
+        "BITBUCKET",
+      ] as const),
+    },
+    volume: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      volumeId: faker.number.int({ min: undefined, max: undefined }),
+      volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      volumeType: faker.helpers.arrayElement([
+        "ASTRAGO",
+        "ON_PREMISE",
+      ] as const),
+      mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      volumeSize: faker.number.int({ min: undefined, max: undefined }),
+      storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    parameter: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      [faker.string.alphanumeric(5)]: {},
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetWorkloadCloneDataResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadDetailResponse> = {},
+): BaseResponseWorkloadDetailResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workloadJobType: faker.helpers.arrayElement([
+      "INTERACTIVE",
+      "BATCH",
+      "DISTRIBUTED",
+    ] as const),
+    nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
+    nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    resourcePreset: {
+      resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+      presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+      nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
+      resource: {
+        cpu: {
+          requestCore: faker.number.int({ min: undefined, max: undefined }),
+        },
+        memory: {
+          requestByte: faker.number.int({ min: undefined, max: undefined }),
+        },
+        gpu: {
+          gpuType: faker.helpers.arrayElement([
+            "NORMAL",
+            "MIG",
+            "MPS",
+          ] as const),
+          detail: {
+            normal: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+            mig: Array.from(
+              { length: faker.number.int({ min: 1, max: 10 }) },
+              (_, i) => i + 1,
+            ).map(() => ({
+              profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            })),
+            mps: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+          },
+          gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        },
+      },
+      isDeleted: faker.datatype.boolean(),
+    },
+    workerCount: faker.number.int({ min: undefined, max: undefined }),
+    image: {
+      imageId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagId: faker.number.int({ min: undefined, max: undefined }),
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      imageType: faker.helpers.arrayElement([
+        "BUILT_IN",
+        "HUB",
+        "PRIVATE",
+        "PUBLIC",
+      ] as const),
+    },
+    outputDirectory: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    executionDirectory: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    executionCommand: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    env: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      key: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    port: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      portName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      portNumber: faker.number.int({ min: undefined, max: undefined }),
+      servicePortNum: faker.number.int({ min: undefined, max: undefined }),
+      url: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    sourceCode: {
+      sourceCodeId: faker.number.int({ min: undefined, max: undefined }),
+      sourceCodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      gitUrl: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      branch: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      sourceCodeType: faker.helpers.arrayElement([
+        "GITHUB",
+        "GITLAB",
+        "BITBUCKET",
+      ] as const),
+    },
+    volume: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      volumeId: faker.number.int({ min: undefined, max: undefined }),
+      volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      volumeType: faker.helpers.arrayElement([
+        "ASTRAGO",
+        "ON_PREMISE",
+      ] as const),
+      mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      volumeSize: faker.number.int({ min: undefined, max: undefined }),
+      storageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    parameter: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      [faker.string.alphanumeric(5)]: {},
+    })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -292,10 +622,10 @@ export const getGetActiveWorkloadsResponseMock = (
 
 export const getCreateWorkloadMockHandler = (
   overrideResponse?:
-    | BaseResponseUnit
+    | BaseResponseMapStringObject
     | ((
         info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+      ) => Promise<BaseResponseMapStringObject> | BaseResponseMapStringObject),
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
@@ -462,10 +792,10 @@ export const getTerminateWorkloadMockHandler = (
 
 export const getRestartWorkloadMockHandler = (
   overrideResponse?:
-    | BaseResponseUnit
+    | BaseResponseMapStringObject
     | ((
         info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+      ) => Promise<BaseResponseMapStringObject> | BaseResponseMapStringObject),
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
@@ -480,6 +810,36 @@ export const getRestartWorkloadMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getRestartWorkloadResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetWorkloadSummaryMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadSummaryResponse>
+        | BaseResponseWorkloadSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/summary",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkloadSummaryResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -632,6 +992,36 @@ export const getWorkloadPreviewFileMockHandler = (
   );
 };
 
+export const getGetWorkloadEventHistoryMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadEventHistoryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadEventHistoryResponse>
+        | BaseResponseWorkloadEventHistoryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/event-history",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkloadEventHistoryResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetDistributedPodsMockHandler = (
   overrideResponse?:
     | BaseResponseDistributedPodResponse
@@ -654,6 +1044,66 @@ export const getGetDistributedPodsMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getGetDistributedPodsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetWorkloadDetailMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadDetailResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadDetailResponse>
+        | BaseResponseWorkloadDetailResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/detail",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkloadDetailResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetWorkloadCloneDataMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadDetailResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadDetailResponse>
+        | BaseResponseWorkloadDetailResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/clone-data",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkloadCloneDataResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -750,12 +1200,16 @@ export const getWorkloadMock = () => [
   getWorkloadCompressFilesMockHandler(),
   getTerminateWorkloadMockHandler(),
   getRestartWorkloadMockHandler(),
+  getGetWorkloadSummaryMockHandler(),
   getGetWorkloadStatusMockHandler(),
   getGetTerminatedWorkloadLogMockHandler(),
   getStreamWorkloadLogsMockHandler(),
   getWorkloadListFilesMockHandler(),
   getWorkloadPreviewFileMockHandler(),
+  getGetWorkloadEventHistoryMockHandler(),
   getGetDistributedPodsMockHandler(),
+  getGetWorkloadDetailMockHandler(),
+  getGetWorkloadCloneDataMockHandler(),
   getGetTerminatedWorkloadsMockHandler(),
   getGetActiveWorkloadsMockHandler(),
   getDeleteWorkloadMockHandler(),

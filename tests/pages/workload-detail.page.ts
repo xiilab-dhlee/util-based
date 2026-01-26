@@ -84,12 +84,10 @@ export class WorkloadDetailPage extends BasePage {
   /**
    * 워크로드 상세 페이지로 이동
    * @param workloadId - 워크로드 ID
-   * @param workspaceId - 워크스페이스 ID (optional)
+   * @param workspaceId - 워크스페이스 ID (required)
    */
-  async gotoWorkload(workloadId: string, workspaceId?: string): Promise<void> {
-    const fullPath = workspaceId
-      ? `${ROUTES.USER_WORKLOAD_DETAIL(workloadId)}?workspaceId=${workspaceId}`
-      : ROUTES.USER_WORKLOAD_DETAIL(workloadId);
+  async gotoWorkload(workloadId: string, workspaceId: string): Promise<void> {
+    const fullPath = ROUTES.USER_WORKLOAD_DETAIL(workspaceId, workloadId);
     await this.page.goto(fullPath);
     await this.page.waitForLoadState("networkidle");
   }

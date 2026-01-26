@@ -109,10 +109,12 @@ export const getPresetDetailResponse = zod
           })
           .strict()
           .describe("리소스 정보"),
-        jobType: zod
-          .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
-          .describe("잡 타입"),
-        nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
+        workloadJobType: zod
+          .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+          .describe("잡 타입 (BATCH, INTERACTIVE, DISTRIBUTED)"),
+        nodeType: zod
+          .enum(["SINGLE", "MULTI"])
+          .describe("노드 타입 (SINGLE, MULTI)"),
         creatorId: zod.string().describe("생성자 ID"),
         creatorName: zod.string().optional().describe("생성자명"),
         createdAt: zod.string().datetime({}).optional().describe("생성 시간"),
@@ -216,9 +218,9 @@ export const updatePresetBody = zod
       })
       .strict()
       .describe("프리셋 리소스 요청"),
-    jobType: zod
-      .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
-      .describe("잡 타입 (BATCH, INTERACTIVE)"),
+    workloadJobType: zod
+      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+      .describe("잡 타입 (BATCH, INTERACTIVE, DISTRIBUTED)"),
     nodeType: zod
       .enum(["SINGLE", "MULTI"])
       .describe("노드 타입 (SINGLE, MULTI)"),
@@ -298,10 +300,12 @@ export const updatePresetResponse = zod
           })
           .strict()
           .describe("리소스 정보"),
-        jobType: zod
-          .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
-          .describe("잡 타입"),
-        nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
+        workloadJobType: zod
+          .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+          .describe("잡 타입 (BATCH, INTERACTIVE, DISTRIBUTED)"),
+        nodeType: zod
+          .enum(["SINGLE", "MULTI"])
+          .describe("노드 타입 (SINGLE, MULTI)"),
         creatorId: zod.string().describe("생성자 ID"),
         creatorName: zod.string().optional().describe("생성자명"),
         createdAt: zod.string().datetime({}).optional().describe("생성 시간"),
@@ -340,10 +344,10 @@ export const getPresetsQueryParams = zod.object({
     .max(getPresetsQueryKeywordMax)
     .optional()
     .describe("검색 키워드 (프리셋 이름)"),
-  jobType: zod
-    .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
+  workloadJobType: zod
+    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
     .optional()
-    .describe("잡 타입 필터 (BATCH, INTERACTIVE)"),
+    .describe("잡 타입 필터 (BATCH, INTERACTIVE, DISTRIBUTED)"),
   nodeType: zod
     .enum(["SINGLE", "MULTI"])
     .optional()
@@ -454,10 +458,12 @@ export const getPresetsResponse = zod
                 })
                 .strict()
                 .describe("리소스 정보"),
-              jobType: zod
-                .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
-                .describe("잡 타입"),
-              nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .describe("잡 타입 (BATCH, INTERACTIVE, DISTRIBUTED)"),
+              nodeType: zod
+                .enum(["SINGLE", "MULTI"])
+                .describe("노드 타입 (SINGLE, MULTI)"),
               creatorId: zod.string().describe("생성자 ID"),
               creatorName: zod.string().optional().describe("생성자명"),
               createdAt: zod
@@ -564,9 +570,9 @@ export const createPresetBody = zod
       })
       .strict()
       .describe("프리셋 리소스 요청"),
-    jobType: zod
-      .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
-      .describe("잡 타입 (BATCH, INTERACTIVE)"),
+    workloadJobType: zod
+      .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+      .describe("잡 타입 (BATCH, INTERACTIVE, DISTRIBUTED)"),
     nodeType: zod
       .enum(["SINGLE", "MULTI"])
       .describe("노드 타입 (SINGLE, MULTI)"),

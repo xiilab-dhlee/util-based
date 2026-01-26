@@ -4,7 +4,7 @@ import type { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 import { Box, Typography } from "xiilab-ui";
 
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadJobType } from "@/domain/workload/constants/workload.constant";
 import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";

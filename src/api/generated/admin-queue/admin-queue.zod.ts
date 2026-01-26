@@ -30,6 +30,31 @@
 import * as zod from "zod";
 
 /**
+ * urgent-standby 큐의 워크로드를 워크스페이스 큐(일반 대기)로 되돌립니다.
+ * @summary 긴급 대기큐에서 워크로드 제거
+ */
+export const removeWorkloadFromUrgentStandbyBody = zod
+  .object({
+    workspaceResourceName: zod
+      .string()
+      .describe("워크스페이스 리소스명 (K8s Namespace)"),
+    workloadResourceName: zod
+      .string()
+      .describe("워크로드 리소스명 (K8s PodGroup)"),
+  })
+  .strict()
+  .describe("긴급 큐 워크로드 제거 요청");
+
+export const removeWorkloadFromUrgentStandbyResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * urgent-standby 큐의 워크로드 순서를 변경합니다. rank 값으로 우선순위를 지정합니다 (1~5, 낮을수록 높은 우선순위).
  * @summary 긴급 대기큐 워크로드 순서 변경
  */

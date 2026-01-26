@@ -1,52 +1,72 @@
 "use client";
 
-import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
-import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
+import { useAtom, useAtomValue } from "jotai";
+import type { TableProps } from "xiilab-ui";
+
+import type { TerminatedWorkloadItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  DISABLED_WORKLOAD_SORT_FIELDS,
+  type DisabledWorkloadSortField,
+} from "@/domain/workload/constants/workload.constant";
+import { disabledWorkloadSortAtom } from "@/domain/workload/state/workload.atom";
+import { createDisabledWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { SELECTOR } from "@/shared/constants/selector.constant";
-import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 
 interface DisabledWorkloadListBodyProps {
-  content: WorkloadListType[];
+  content: TerminatedWorkloadItem[];
   loading: boolean;
   isError?: boolean;
 }
 
-/**
- * 비활성화 워크로드 목록 페이지 본문 컴포넌트
- *
- * 비활성화 워크로드 목록 페이지에서 워크로드 목록을 표시하는 테이블을 제공합니다.
- *
- * @param content - 워크로드 목록 데이터
- * @param loading - 로딩 여부
- * @param isError - 에러 상태 여부
- * @returns 비활성화 워크로드 목록 페이지 본문 컴포넌트
- */
 export function DisabledWorkloadListBody({
   content,
   loading,
   isError = false,
 }: DisabledWorkloadListBodyProps) {
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
+  const [sort, setSort] = useAtom(disabledWorkloadSortAtom);
+
+  const columnConfigs = [
+    { key: "workloadName", width: "30%" },
+    { key: "jobType", width: "12%" },
+    { key: "creatorName", width: "14%" },
+    { key: "terminatedAt", width: "14%" },
+    { key: "log", width: "7.5%" },
+    { key: "monitoring", width: "7.5%" },
+    { key: "restart", width: "7.5%" },
+    { key: "delete", width: "7.5%" },
+  ];
+
+  const handleChange: TableProps<TerminatedWorkloadItem>["onChange"] = (
+    _,
+    __,
+    sorter,
+  ) => {
+    const parsed = parseSorterToAntdState<
+      TerminatedWorkloadItem,
+      DisabledWorkloadSortField
+    >(sorter, DISABLED_WORKLOAD_SORT_FIELDS);
+
+    if (!parsed.field || !parsed.order) return;
+
+    setSort({
+      field: parsed.field,
+      order: parsed.order,
+    });
+  };
+
   return (
-    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
-      <CustomizedTable
-        columns={createWorkloadColumn([
-          { key: "workloadName", width: 200, ellipsis: true },
-          { key: "jobType", width: 100 },
-          { key: "creatorName", width: 60, ellipsis: true },
-          { key: "elapsedTime" },
-          { key: "status", width: 80 },
-          { key: "log" },
-          { key: "monitoring", width: 60 },
-          { key: "restart" },
-          { key: "delete" },
-        ])}
-        data={content}
-        columnHeight={36}
-        activePadding
-        loading={loading}
-        isError={isError}
-      />
-    </ListWrapper>
+    <CustomizedTable
+      columns={createDisabledWorkloadColumn(columnConfigs, workspaceId, sort)}
+      data={content}
+      activePadding
+      loading={loading}
+      isError={isError}
+      rowKey={(record) => String(record.workloadResourceName)}
+      onChange={handleChange}
+    />
   );
 }

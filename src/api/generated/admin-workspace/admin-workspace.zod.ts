@@ -403,20 +403,20 @@ export const deleteWorkspacesBody = zod
  * 전체 워크스페이스 목록을 페이징하여 조회합니다. 워크스페이스명, 생성자명으로 검색이 가능합니다. 생성일, 워크스페이스명, 생성자명으로 정렬이 가능합니다.
  * @summary 관리자용 워크스페이스 목록 조회
  */
-export const getAllWorkspaces1QueryPageNoMin = 0;
+export const getAdminAllWorkspacesQueryPageNoMin = 0;
 
-export const getAllWorkspaces1QueryPageSizeMax = 100;
+export const getAdminAllWorkspacesQueryPageSizeMax = 100;
 
-export const getAllWorkspaces1QueryParams = zod.object({
+export const getAdminAllWorkspacesQueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getAllWorkspaces1QueryPageNoMin)
+    .min(getAdminAllWorkspacesQueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getAllWorkspaces1QueryPageSizeMax)
+    .max(getAdminAllWorkspacesQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
   keyword: zod.string().optional().describe("검색 키워드"),
@@ -427,7 +427,7 @@ export const getAllWorkspaces1QueryParams = zod.object({
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
-export const getAllWorkspaces1Response = zod
+export const getAdminAllWorkspacesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -576,24 +576,24 @@ export const getAllWorkspaces1Response = zod
  * 특정 워크스페이스의 구성원 목록을 페이징하여 조회합니다. 계정명, 이메일로 검색할 수 있습니다.
  * @summary 관리자용 워크스페이스 구성원 조회
  */
-export const getWorkspaceMembers1Params = zod.object({
+export const getAdminWorkspaceMembersParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getWorkspaceMembers1QueryPageNoMin = 0;
+export const getAdminWorkspaceMembersQueryPageNoMin = 0;
 
-export const getWorkspaceMembers1QueryPageSizeMax = 100;
+export const getAdminWorkspaceMembersQueryPageSizeMax = 100;
 
-export const getWorkspaceMembers1QueryParams = zod.object({
+export const getAdminWorkspaceMembersQueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getWorkspaceMembers1QueryPageNoMin)
+    .min(getAdminWorkspaceMembersQueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getWorkspaceMembers1QueryPageSizeMax)
+    .max(getAdminWorkspaceMembersQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
   keyword: zod.string().optional().describe("검색 키워드"),
@@ -604,7 +604,7 @@ export const getWorkspaceMembers1QueryParams = zod.object({
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
-export const getWorkspaceMembers1Response = zod
+export const getAdminWorkspaceMembersResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -647,11 +647,11 @@ export const getWorkspaceMembers1Response = zod
         
  * @summary 관리자용 워크스페이스 상세 조회
  */
-export const getWorkspaceDetail1Params = zod.object({
+export const getAdminWorkspaceDetailParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
 });
 
-export const getWorkspaceDetail1Response = zod
+export const getAdminWorkspaceDetailResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -751,20 +751,20 @@ export const getWorkspaceDetail1Response = zod
  * 전체 워크스페이스의 리소스 요청 목록을 페이징하여 조회합니다. 워크스페이스명, 요청자명으로 검색하고 승인 상태로 필터링할 수 있습니다.
  * @summary 관리자용 리소스 요청 목록 조회
  */
-export const getResourceRequests1QueryPageNoMin = 0;
+export const getAdminResourceRequestsQueryPageNoMin = 0;
 
-export const getResourceRequests1QueryPageSizeMax = 100;
+export const getAdminResourceRequestsQueryPageSizeMax = 100;
 
-export const getResourceRequests1QueryParams = zod.object({
+export const getAdminResourceRequestsQueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getResourceRequests1QueryPageNoMin)
+    .min(getAdminResourceRequestsQueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getResourceRequests1QueryPageSizeMax)
+    .max(getAdminResourceRequestsQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
   keyword: zod.string().optional().describe("검색 키워드"),
@@ -779,7 +779,7 @@ export const getResourceRequests1QueryParams = zod.object({
     .describe("승인 상태 필터 (APPROVED, REJECTED, WAITING)"),
 });
 
-export const getResourceRequests1Response = zod
+export const getAdminResourceRequestsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),

@@ -4,18 +4,20 @@ import { usePathname } from "next/navigation";
 import styled from "styled-components";
 import { Icon, Tooltip } from "xiilab-ui";
 
+import type { WorkloadReclaimScanResultResponseReclaimStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ChangeCircleIcon } from "@/shared/components/icon/change-circle-icon";
 import { RevokeWarningTooltipTitle } from "@/shared/components/tooltip-title/revoke-warning-tooltip-title";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { isAdminMode } from "@/shared/utils/router.util";
 import { ColumnLink } from "@/styles/layers/column-layer.styled";
 
 interface WorkloadNameLinkProps {
-  workspaceId: string;
+  workspaceId: number;
   workloadId: string;
   workloadName: string;
-  revokeWarningCount?: number;
-  isRevoked?: boolean;
+  reclaimWarningCount?: number;
+  reclaimStatus?: WorkloadReclaimScanResultResponseReclaimStatus;
 }
 
 /**
@@ -25,28 +27,31 @@ interface WorkloadNameLinkProps {
  * @param workspaceId - 워크로드 워크스페이스 ID
  * @param workloadId - 워크로드 ID
  * @param workloadName - 워크로드 이름
- * @param revokeWarningCount - 리소스 회수 경고 횟수
- * @param isRevoked - 회수된 상태 여부
+ * @param reclaimWarningCount - 리소스 회수 경고 횟수
+ * @param reclaimStatus - 리소스 회수 상태 (RECLAIMED: 회수됨, WARNING: 경고, NORMAL: 정상)
  * @returns
  */
 export function WorkloadNameLink({
   workspaceId,
   workloadId,
   workloadName,
-  revokeWarningCount = 0,
-  isRevoked,
+  reclaimWarningCount = 0,
+  reclaimStatus = "NORMAL",
 }: WorkloadNameLinkProps) {
   const pathname = usePathname();
 
   const isAdmin = isAdminMode(pathname);
 
   // 워크로드 상세 페이지 링크
-  let href = `/user/workload/${workloadId}?workspaceId=${workspaceId}`;
-  if (isAdmin) {
-    href = `/admin/workspace/workload/${workloadId}?workspaceId=${workspaceId}`;
-  }
+  const userHref = ROUTES.USER_WORKLOAD_DETAIL(String(workspaceId), workloadId);
+  const adminHref = ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(
+    String(workspaceId),
+    workloadId,
+  );
+  const href = isAdmin ? adminHref : userHref;
 
-  const hasWarning = revokeWarningCount > 0;
+  const hasWarning = reclaimStatus === "WARNING";
+  const isReclaimed = reclaimStatus === "RECLAIMED";
 
   return (
     <ColumnLink href={href}>
@@ -54,7 +59,7 @@ export function WorkloadNameLink({
       {hasWarning && (
         <IconWrapper>
           <Tooltip
-            title={<RevokeWarningTooltipTitle count={revokeWarningCount} />}
+            title={<RevokeWarningTooltipTitle count={reclaimWarningCount} />}
             placement="bottom"
             getPopupContainer={() => document.body}
           >
@@ -69,7 +74,7 @@ export function WorkloadNameLink({
         </IconWrapper>
       )}
       {/* 회수된 상태 아이콘 */}
-      {isRevoked && (
+      {isReclaimed && (
         <IconWrapper>
           <ChangeCircleIcon fill="#FF0000" width={16} height={16} />
           <span className="sr-only">리소스 회수된 상태</span>

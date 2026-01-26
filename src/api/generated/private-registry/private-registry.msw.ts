@@ -330,6 +330,23 @@ export const getGetPrivateImageTagDetailResponseMock = (
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workloadId: faker.number.int({ min: undefined, max: undefined }),
+    workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    command: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    port: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      port: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    env: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),

@@ -213,6 +213,23 @@ export const createPublicSnapshotImageBodyImageTagNameMax = 128;
 
 export const createPublicSnapshotImageBodyImageTagNameRegExp =
   /^[a-zA-Z0-9_][a-zA-Z0-9._-]*$/;
+export const createPublicSnapshotImageBodyCommandMin = 0;
+export const createPublicSnapshotImageBodyCommandMax = 1000;
+
+export const createPublicSnapshotImageBodyEnvItemNameMin = 0;
+export const createPublicSnapshotImageBodyEnvItemNameMax = 253;
+
+export const createPublicSnapshotImageBodyEnvItemNameRegExp =
+  /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+export const createPublicSnapshotImageBodyEnvItemValueMin = 0;
+export const createPublicSnapshotImageBodyEnvItemValueMax = 32768;
+
+export const createPublicSnapshotImageBodyPortItemNameMin = 0;
+export const createPublicSnapshotImageBodyPortItemNameMax = 15;
+
+export const createPublicSnapshotImageBodyPortItemNameRegExp =
+  /^(?![0-9-])(?!.*--)(?!.*-$)[a-z0-9-]*[a-z][a-z0-9-]*$/;
+export const createPublicSnapshotImageBodyPortItemPortMax = 65535;
 
 export const createPublicSnapshotImageBody = zod
   .object({
@@ -229,6 +246,55 @@ export const createPublicSnapshotImageBody = zod
       .regex(createPublicSnapshotImageBodyImageTagNameRegExp)
       .describe("생성할 이미지 태그 이름"),
     workspaceId: zod.number().describe("워크스페이스 ID"),
+    command: zod
+      .string()
+      .min(createPublicSnapshotImageBodyCommandMin)
+      .max(createPublicSnapshotImageBodyCommandMax)
+      .optional()
+      .describe("기본 실행 명령"),
+    env: zod
+      .array(
+        zod
+          .object({
+            name: zod
+              .string()
+              .min(createPublicSnapshotImageBodyEnvItemNameMin)
+              .max(createPublicSnapshotImageBodyEnvItemNameMax)
+              .regex(createPublicSnapshotImageBodyEnvItemNameRegExp)
+              .describe("환경변수 이름"),
+            value: zod
+              .string()
+              .min(createPublicSnapshotImageBodyEnvItemValueMin)
+              .max(createPublicSnapshotImageBodyEnvItemValueMax)
+              .describe("환경변수 값"),
+          })
+          .strict()
+          .describe("스냅샷 환경변수"),
+      )
+      .optional()
+      .describe("환경변수 목록"),
+    port: zod
+      .array(
+        zod
+          .object({
+            name: zod
+              .string()
+              .min(createPublicSnapshotImageBodyPortItemNameMin)
+              .max(createPublicSnapshotImageBodyPortItemNameMax)
+              .regex(createPublicSnapshotImageBodyPortItemNameRegExp)
+              .describe(
+                "포트 이름 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수)",
+              ),
+            port: zod
+              .number()
+              .max(createPublicSnapshotImageBodyPortItemPortMax)
+              .describe("포트 번호 (1-65535)"),
+          })
+          .strict()
+          .describe("스냅샷 포트 정보"),
+      )
+      .optional()
+      .describe("포트 목록"),
   })
   .strict()
   .describe("워크로드 스냅샷 이미지 생성 요청");
@@ -727,6 +793,40 @@ export const getPublicImageTagDetailResponse = zod
           .string()
           .optional()
           .describe("설명 (DB 메타데이터 없으면 null)"),
+        workloadId: zod
+          .number()
+          .optional()
+          .describe("스냅샷 원본 워크로드 ID (스냅샷 이미지만)"),
+        workloadName: zod
+          .string()
+          .optional()
+          .describe("스냅샷 원본 워크로드 이름 (스냅샷 이미지만)"),
+        command: zod
+          .string()
+          .optional()
+          .describe("실행 명령어 (스냅샷 이미지만)"),
+        port: zod
+          .array(
+            zod
+              .object({
+                port: zod.number().describe("포트 번호"),
+                name: zod.string().describe("포트 이름"),
+              })
+              .strict()
+              .describe("포트 설정"),
+          )
+          .describe("포트 설정 목록 (스냅샷 이미지만)"),
+        env: zod
+          .array(
+            zod
+              .object({
+                name: zod.string().describe("환경변수 이름"),
+                value: zod.string().describe("환경변수 값"),
+              })
+              .strict()
+              .describe("환경변수 설정"),
+          )
+          .describe("환경변수 목록 (스냅샷 이미지만)"),
       })
       .strict()
       .optional()

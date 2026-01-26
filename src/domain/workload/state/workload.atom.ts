@@ -2,6 +2,17 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
 import type {
+  ActiveWorkloadItemWorkloadJobType,
+  ActiveWorkloadItemWorkloadStatus,
+  GetTerminatedWorkloadsWorkloadJobType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  type ActiveWorkloadSortState,
+  DEFAULT_ACTIVE_WORKLOAD_SORT_STATE,
+  DEFAULT_DISABLED_WORKLOAD_SORT_STATE,
+  type DisabledWorkloadSortState,
+} from "@/domain/workload/constants/workload.constant";
+import type {
   WorkloadIdType,
   WorkloadJobType,
 } from "@/domain/workload/schemas/workload.schema";
@@ -33,11 +44,30 @@ export const workloadStatusAtom = atom<FilterStatusValue | null>(null);
 /** 활성화 워크로드 페이지 번호 */
 export const activeWorkloadPageAtom = atomWithReset<number>(1);
 /** 활성화 워크로드 검색어 */
-export const activeWorkloadSearchTextAtom = atom<string>("");
-/** 활성화 워크로드 잡타입 */
-export const activeWorkloadJobTypeAtom = atom<WorkloadJobType | null>(null);
-/** 활성화 워크로드 상태 */
-export const activeWorkloadStatusAtom = atom<FilterStatusValue | null>(null);
+export const activeWorkloadSearchTextAtom = atomWithReset<string>("");
+/** 활성화 워크로드 잡타입 (null = 전체) */
+export const activeWorkloadJobTypeAtom =
+  atomWithReset<ActiveWorkloadItemWorkloadJobType | null>(null);
+/** 활성화 워크로드 상태 (null = 전체) */
+export const activeWorkloadStatusAtom =
+  atomWithReset<ActiveWorkloadItemWorkloadStatus | null>(null);
+/** 활성화 워크로드 내 항목만 보기 */
+export const activeWorkloadIsMineAtom = atomWithReset<boolean>(false);
+/** 활성화 워크로드 정렬 */
+export const activeWorkloadSortAtom = atomWithReset<ActiveWorkloadSortState>(
+  DEFAULT_ACTIVE_WORKLOAD_SORT_STATE,
+);
+
+// ============================================
+// 실행중 워크로드 목록
+// ============================================
+
+/** 실행중 워크로드 페이지 번호 */
+export const runningWorkloadPageAtom = atomWithReset<number>(1);
+/** 실행중 워크로드 정렬 (기본값: AGE DESC) */
+export const runningWorkloadSortAtom = atomWithReset<ActiveWorkloadSortState>(
+  DEFAULT_ACTIVE_WORKLOAD_SORT_STATE,
+);
 
 // ============================================
 // 비활성화 워크로드 목록 필터
@@ -46,9 +76,17 @@ export const activeWorkloadStatusAtom = atom<FilterStatusValue | null>(null);
 /** 비활성화 워크로드 페이지 번호 */
 export const disabledWorkloadPageAtom = atomWithReset<number>(1);
 /** 비활성화 워크로드 검색어 */
-export const disabledWorkloadSearchTextAtom = atom<string>("");
+export const disabledWorkloadSearchTextAtom = atomWithReset<string>("");
 /** 비활성화 워크로드 잡타입 */
-export const disabledWorkloadJobTypeAtom = atom<WorkloadJobType | null>(null);
+export const disabledWorkloadJobTypeAtom =
+  atomWithReset<GetTerminatedWorkloadsWorkloadJobType | null>(null);
+/** 비활성화 워크로드 정렬 (TERMINATING & TERMINATED 상태) */
+export const disabledWorkloadSortAtom =
+  atomWithReset<DisabledWorkloadSortState>(
+    DEFAULT_DISABLED_WORKLOAD_SORT_STATE,
+  );
+/** 비활성화 워크로드 내 항목만 보기 */
+export const disabledWorkloadIsMineAtom = atomWithReset<boolean>(false);
 /** 커밋 이미지 생성 모달 표시 여부 */
 export const openCreateCommitImageModalAtom = atom<boolean>(false);
 /** 워크로드 수정 모달 표시 여부 */

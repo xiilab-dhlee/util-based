@@ -1,19 +1,15 @@
 import type { DropdownOption } from "xiilab-ui";
 
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
-
-export const WORKLOAD_JOB_TYPES = [
-  "BATCH",
-  "INTERACTIVE",
-  "DISTRIBUTED",
-] as const;
-
-export const WORKLOAD_STATUS = [
-  "RUNNING",
-  "PENDING",
-  "COMPLETED",
-  "FAILED",
-] as const;
+import {
+  type ActiveWorkloadItemWorkloadJobType,
+  ActiveWorkloadItemWorkloadStatus,
+  GetActiveWorkloadsOrder,
+  GetActiveWorkloadsSort,
+  GetTerminatedWorkloadsOrder,
+  GetTerminatedWorkloadsSort,
+  type TerminatedWorkloadItemReclaimStatus,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { AntdTableSortState } from "@/shared/types/core.model";
 
 export const WORKLOAD_IMAGE_TYPES = [
   "HUB",
@@ -23,63 +19,223 @@ export const WORKLOAD_IMAGE_TYPES = [
 ] as const;
 
 /**
- * 워크로드 잡 타입 라벨 상수
+ * 워크로드 잡 타입 라벨 상수 (짧은 버전)
  */
-export const WORKLOAD_JOB_TYPE_LABEL_MAP: Record<WorkloadJobType, string> = {
+export const WORKLOAD_JOB_TYPE_LABEL_MAP: Record<
+  ActiveWorkloadItemWorkloadJobType,
+  string
+> = {
   BATCH: "Batch",
   INTERACTIVE: "Interactive",
   DISTRIBUTED: "Distributed",
 } as const;
 
 /**
+ * 워크로드 잡 타입 상세 라벨 상수
+ */
+export const WORKLOAD_JOB_TYPE_DETAIL_LABEL_MAP: Record<
+  ActiveWorkloadItemWorkloadJobType,
+  string
+> = {
+  BATCH: "Batch Job",
+  INTERACTIVE: "Interactive Job (IDE)",
+  DISTRIBUTED: "Distributed Job",
+} as const;
+
+/**
  * 워크로드 잡 타입별 색상 상수
  */
-export const WORKLOAD_JOB_TYPE_COLOR_MAP: Record<WorkloadJobType, string> = {
+export const WORKLOAD_JOB_TYPE_COLOR_MAP: Record<
+  ActiveWorkloadItemWorkloadJobType,
+  string
+> = {
   BATCH: "#2E3452",
   INTERACTIVE: "#2D64DC",
   DISTRIBUTED: "#3FC85B",
 } as const;
 
-/**
- * 워크로드 잡 타입 드롭다운 옵션
- */
 export const WORKLOAD_JOB_OPTIONS: DropdownOption[] = (
-  Object.entries(WORKLOAD_JOB_TYPE_LABEL_MAP) as [WorkloadJobType, string][]
+  Object.entries(WORKLOAD_JOB_TYPE_LABEL_MAP) as [
+    ActiveWorkloadItemWorkloadJobType,
+    string,
+  ][]
 ).map(([value, label]) => ({
   label,
   value,
 }));
 
-export const WORKLOAD_STATUS_OPTIONS: DropdownOption[] = [
+/**
+ * 워크로드 상태 라벨 상수
+ */
+export const WORKLOAD_STATUS_LABEL_MAP: Record<
+  (typeof ActiveWorkloadItemWorkloadStatus)[keyof typeof ActiveWorkloadItemWorkloadStatus],
+  string
+> = {
+  [ActiveWorkloadItemWorkloadStatus.CREATING]: "생성중",
+  [ActiveWorkloadItemWorkloadStatus.PENDING]: "대기중",
+  [ActiveWorkloadItemWorkloadStatus.RUNNING]: "실행중",
+  [ActiveWorkloadItemWorkloadStatus.TERMINATING]: "종료중",
+  [ActiveWorkloadItemWorkloadStatus.TERMINATED]: "종료",
+  [ActiveWorkloadItemWorkloadStatus.ERROR]: "에러",
+} as const;
+
+/**
+ * 활성화 워크로드 상태 옵션 (드롭다운용)
+ * TERMINATING과 TERMINATED는 활성화 상태가 아니므로 제외
+ */
+export const ACTIVE_WORKLOAD_STATUS_OPTIONS = [
   {
-    label: "실행중",
-    value: "RUNNING",
+    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.CREATING],
+    value: ActiveWorkloadItemWorkloadStatus.CREATING,
   },
   {
-    label: "대기중",
-    value: "PENDING",
+    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.PENDING],
+    value: ActiveWorkloadItemWorkloadStatus.PENDING,
   },
   {
-    label: "에러",
-    value: "FAILED",
+    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.RUNNING],
+    value: ActiveWorkloadItemWorkloadStatus.RUNNING,
   },
   {
-    label: "종료",
-    value: "COMPLETED",
+    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.ERROR],
+    value: ActiveWorkloadItemWorkloadStatus.ERROR,
   },
-];
+] as const satisfies ReadonlyArray<{
+  label: string;
+  value: ActiveWorkloadItemWorkloadStatus;
+}>;
+
+/**
+ * 활성화 워크로드 정렬 필드 매핑
+ * Ant Design 필드명 → API 정렬 필드
+ */
+export const ACTIVE_WORKLOAD_SORT_FIELD_MAP = {
+  workloadName: "WORKLOAD_NAME",
+  ageSeconds: "AGE",
+} as const satisfies Record<
+  (typeof ACTIVE_WORKLOAD_SORT_FIELDS)[number],
+  (typeof GetActiveWorkloadsSort)[keyof typeof GetActiveWorkloadsSort]
+>;
+
+/**
+ * 활성화 워크로드 정렬 가능 필드 배열
+ */
+export const ACTIVE_WORKLOAD_SORT_FIELDS = [
+  "workloadName",
+  "ageSeconds",
+] as const;
+
+/**
+ * 활성화 워크로드 정렬 필드 타입
+ */
+export type ActiveWorkloadSortField =
+  keyof typeof ACTIVE_WORKLOAD_SORT_FIELD_MAP;
+
+/**
+ * 활성화 워크로드 정렬 상태 타입
+ */
+export type ActiveWorkloadSortState =
+  AntdTableSortState<ActiveWorkloadSortField>;
+
+/**
+ * 활성화 워크로드 기본 정렬 상태 (UI용)
+ */
+export const DEFAULT_ACTIVE_WORKLOAD_SORT_STATE = {
+  field: "ageSeconds",
+  order: "descend",
+} as const satisfies ActiveWorkloadSortState;
+
+/**
+ * 활성화 워크로드 기본 정렬 (API용)
+ */
+export const ACTIVE_WORKLOAD_DEFAULT_SORT = {
+  sort: GetActiveWorkloadsSort.AGE,
+  order: GetActiveWorkloadsOrder.DESC,
+} as const;
+
+/** 실행중 워크로드 API 기본 정렬: 생성일 내림차순 */
+export const DEFAULT_RUNNING_WORKLOAD_SORT_API = {
+  sort: GetActiveWorkloadsSort.AGE,
+  order: GetActiveWorkloadsOrder.DESC,
+};
+
+/** 실행중 워크로드 목록 페이지 크기 */
+export const RUNNING_WORKLOAD_PAGE_SIZE = 10;
+
+/**
+ * 비활성화 워크로드 정렬 필드 매핑
+ * API 지원 필드: WORKLOAD_NAME, CREATED_AT, TERMINATED_AT (3개 전부)
+ */
+export const DISABLED_WORKLOAD_SORT_FIELD_MAP = {
+  workloadName: "WORKLOAD_NAME",
+  createdAt: "CREATED_AT",
+  terminatedAt: "TERMINATED_AT",
+} as const satisfies Record<
+  (typeof DISABLED_WORKLOAD_SORT_FIELDS)[number],
+  (typeof GetTerminatedWorkloadsSort)[keyof typeof GetTerminatedWorkloadsSort]
+>;
+
+export const DISABLED_WORKLOAD_SORT_FIELDS = [
+  "workloadName",
+  "createdAt",
+  "terminatedAt",
+] as const;
+
+export type DisabledWorkloadSortField =
+  keyof typeof DISABLED_WORKLOAD_SORT_FIELD_MAP;
+
+export type DisabledWorkloadSortState =
+  AntdTableSortState<DisabledWorkloadSortField>;
+
+export const DEFAULT_DISABLED_WORKLOAD_SORT_STATE = {
+  field: "terminatedAt",
+  order: "descend",
+} as const satisfies DisabledWorkloadSortState;
+
+export const DISABLED_WORKLOAD_DEFAULT_SORT = {
+  sort: GetTerminatedWorkloadsSort.TERMINATED_AT,
+  order: GetTerminatedWorkloadsOrder.DESC,
+} as const;
+
+/**
+ * 리소스 회수 상태 라벨 매핑
+ */
+export const RECLAIM_STATUS_LABEL_MAP = {
+  RECLAIMED: "회수됨",
+  WARNING: "경고",
+  NORMAL: "정상",
+} as const satisfies Record<TerminatedWorkloadItemReclaimStatus, string>;
+
+/**
+ * 리소스 회수 상태 색상 매핑
+ */
+export const RECLAIM_STATUS_COLOR_MAP = {
+  RECLAIMED: "default",
+  WARNING: "warning",
+  NORMAL: "success",
+} as const satisfies Record<TerminatedWorkloadItemReclaimStatus, string>;
+
+/**
+ * 워크로드 이미지 타입 라벨 상수
+ */
+export const WORKLOAD_IMAGE_TYPE_LABEL_MAP = {
+  BUILTIN: "빌트인 이미지",
+  HUB: "허브",
+  INTERNAL_REGISTRY: "내부 레지스트리",
+  EXTERNAL_REGISTRY: "외부 레지스트리",
+} as const satisfies Record<(typeof WORKLOAD_IMAGE_TYPES)[number], string>;
 
 /**
  * 잡 타입에 따른 라벨 반환 (워크로드 공용)
  */
-export function getJobTypeLabel(jobType: WorkloadJobType): string;
-export function getJobTypeLabel(jobType: string): string;
-export function getJobTypeLabel(jobType: string): string {
-  const label = WORKLOAD_JOB_TYPE_LABEL_MAP[jobType as WorkloadJobType];
-
-  if (label) {
-    return label;
-  }
-
-  return jobType;
+export function getJobTypeLabel(
+  jobType: ActiveWorkloadItemWorkloadJobType,
+): string {
+  return WORKLOAD_JOB_TYPE_LABEL_MAP[jobType] ?? jobType;
 }
+
+/**
+ * 워크로드 목록 폴링 인터벌 (30초)
+ * 활성화/비활성화 워크로드 목록을 자동으로 새로고침하는 주기
+ */
+export const WORKLOAD_LIST_POLLING_INTERVAL = 30000; // 30 seconds

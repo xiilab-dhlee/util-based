@@ -6,8 +6,8 @@ import { Card, Typography } from "xiilab-ui";
 import {
   WORKLOAD_JOB_TYPE_COLOR_MAP,
   WORKLOAD_JOB_TYPE_LABEL_MAP,
+  type WorkloadJobType,
 } from "@/domain/workload/constants/workload.constant";
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 
 // 최소 너비 보장 (백분율) - 시간과 퍼센트를 표시하기 위한 최소 공간

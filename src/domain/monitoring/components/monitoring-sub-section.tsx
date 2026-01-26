@@ -17,7 +17,6 @@ import type {
 } from "@/domain/workload/schemas/workload.schema";
 import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
 import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
-import { workloadListMock } from "@/mocks/data/workload.mock";
 import { createUserResourceColumn } from "@/shared/components/column/create-user-resource-column";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 // import { createWorkspaceColumn } from "@/shared/components/column/create-workspace-column";
@@ -259,7 +258,7 @@ export function MonitoringSubSection() {
           <SectionTitle>워크로드 정보</SectionTitle>
         </ArticleTitle>
         <WorkloadStatuses>
-          {["ALL", "RUNNING", "PENDING", "FAILED"].map((status) => (
+          {["ALL", "RUNNING", "PENDING", "ERROR"].map((status) => (
             <MonitoringWorkloadStatus
               key={status}
               status={status as WorkloadStatusType}
@@ -276,7 +275,7 @@ export function MonitoringSubSection() {
           <ListArticleBody>
             <CustomizedTable<WorkloadListType>
               columns={activeWorkloadColumns}
-              data={workloadListMock}
+              data={[]}
               activePadding
               onChange={(_pagination, _filters, sorter) => {
                 handleActiveWorkloadSortChange(sorter);
@@ -284,7 +283,7 @@ export function MonitoringSubSection() {
               pagination={{
                 current: activeWorkloadPage,
                 pageSize: ACTIVE_WORKLOAD_PAGE_SIZE,
-                total: workloadListMock.length, // TODO: API 연동 시 실제 total로 교체
+                total: 0,
                 onChange: setActiveWorkloadPage,
               }}
             />
