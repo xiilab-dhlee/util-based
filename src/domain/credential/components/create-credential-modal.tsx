@@ -16,14 +16,12 @@ import {
   TextArea,
 } from "xiilab-ui";
 
+import { CredentialListItemResponseCredentialType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetCredentialsQueryKey,
   useCreateCredential,
 } from "@/api/generated/credential/credential";
-import {
-  CREDENTIAL_DEFAULT_FORM_VALUES,
-  CREDENTIAL_TYPE_OPTIONS,
-} from "@/domain/credential/constants/credential.constant";
+import { CREDENTIAL_TYPE_OPTIONS } from "@/domain/credential/constants/credential.constant";
 import {
   type CreateCredentialFormType,
   createCredentialFormSchema,
@@ -47,6 +45,13 @@ export function CreateCredentialModal() {
     formState: { errors },
   } = useForm<CreateCredentialFormType>({
     resolver: zodResolver(createCredentialFormSchema),
+    defaultValues: {
+      credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
+      credentialName: "",
+      description: "",
+      credentialAccountId: "",
+      token: "",
+    },
   });
 
   const onSubmit = (data: CreateCredentialFormType) => {
@@ -77,7 +82,7 @@ export function CreateCredentialModal() {
   };
 
   useSubscribe(CREDENTIAL_EVENTS.openCreateModal, () => {
-    reset(CREDENTIAL_DEFAULT_FORM_VALUES);
+    reset();
     setOpen(true);
   });
 

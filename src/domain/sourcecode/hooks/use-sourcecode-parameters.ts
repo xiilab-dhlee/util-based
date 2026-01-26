@@ -23,6 +23,9 @@ export interface UseSourcecodeParametersReturn {
   /** 파라미터 목록 설정 (초기값 또는 외부 값으로 설정) */
   setParameters: (params: SourcecodeParameterType[]) => void;
 
+  /** Record 형태의 파라미터를 배열로 변환하여 설정 */
+  setParametersFromRecord: (record: Record<string, string> | undefined) => void;
+
   /** 파라미터 배열을 Record<string, string>으로 변환 */
   toRecord: () => Record<string, string>;
 }
@@ -64,6 +67,17 @@ export function useSourcecodeParameters(
     setParametersState(params);
   }, []);
 
+  const setParametersFromRecord = useCallback(
+    (record: Record<string, string> | undefined) => {
+      const params = Object.entries(record || {}).map(([key, value]) => ({
+        key,
+        value,
+      }));
+      setParametersState(params);
+    },
+    [],
+  );
+
   const toRecord = useCallback((): Record<string, string> => {
     return parameters.reduce<Record<string, string>>((acc, param) => {
       const key = param.key.trim();
@@ -81,6 +95,7 @@ export function useSourcecodeParameters(
     removeParameter,
     resetParameters,
     setParameters,
+    setParametersFromRecord,
     toRecord,
   };
 }

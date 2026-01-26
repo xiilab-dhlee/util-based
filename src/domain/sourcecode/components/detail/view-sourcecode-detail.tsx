@@ -19,7 +19,6 @@ import {
 
 interface ViewSourcecodeDetailProps {
   data?: SourceCodeDetailResponse;
-  isLoading: boolean;
 }
 
 export function ViewSourcecodeDetail({ data }: ViewSourcecodeDetailProps) {

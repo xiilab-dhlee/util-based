@@ -22,10 +22,10 @@ export function SourcecodeTypeSort({ disabled }: SourcecodeTypeSortProps) {
   const resetPage = useResetAtom(sourcecodePageAtom);
   const resetCheckedList = useResetAtom(sourcecodeCheckedListAtom);
 
-  const handleChange = (value: GetSourceCodeListCodeType | "" | null) => {
+  const handleChange = (value: GetSourceCodeListCodeType | null) => {
     resetPage();
     resetCheckedList();
-    setCodeType(value === "" ? null : value);
+    setCodeType(value);
   };
 
   return (

@@ -48,18 +48,6 @@ interface UpdateSourcecodeDetailProps {
   onSuccess: () => void;
 }
 
-/**
- * Record 형태의 파라미터를 배열로 변환
- */
-function toParameterArray(
-  parameter: Record<string, string> | undefined,
-): { key: string; value: string }[] {
-  return Object.entries(parameter || {}).map(([key, value]) => ({
-    key,
-    value,
-  }));
-}
-
 export function UpdateSourcecodeDetail({
   mode,
   sourceCodeId,
@@ -78,7 +66,7 @@ export function UpdateSourcecodeDetail({
     addParameter,
     updateParameter,
     removeParameter,
-    setParameters,
+    setParametersFromRecord,
     toRecord,
   } = useSourcecodeParameters();
 
@@ -145,7 +133,7 @@ export function UpdateSourcecodeDetail({
     });
 
     // 파라미터 상태 복원
-    setParameters(toParameterArray(data.parameter));
+    setParametersFromRecord(data.parameter);
 
     // 크리덴셜 토글 상태 복원
     setCredentialEnabled(!!data.credentialId);
@@ -170,11 +158,11 @@ export function UpdateSourcecodeDetail({
     });
 
     // 파라미터 배열로 변환
-    setParameters(toParameterArray(data.parameter));
+    setParametersFromRecord(data.parameter);
 
     // 크리덴셜 토글 상태 설정
     setCredentialEnabled(!!data.credentialId);
-  }, [data, reset, setParameters]);
+  }, [data, reset, setParametersFromRecord]);
 
   return (
     <StyledForm onFinish={handleSubmit(onSubmit)}>

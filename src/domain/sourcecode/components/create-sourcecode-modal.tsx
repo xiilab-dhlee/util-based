@@ -98,7 +98,7 @@ export function CreateSourcecodeModal() {
           gitUrl: data.gitUrl,
           sourceCodeType: data.sourceCodeType,
           mountPath: data.mountPath,
-          executionCmd: data.executionCmd || "",
+          executionCmd: data.executionCmd,
           isPublic: data.isPublic,
           credentialId: data.credentialId ?? undefined,
           parameter: toRecord(),
