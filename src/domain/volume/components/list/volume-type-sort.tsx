@@ -22,10 +22,10 @@ export function VolumeTypeSort({ disabled }: VolumeTypeSortProps) {
   const resetPage = useResetAtom(volumePageAtom);
   const resetCheckedList = useResetAtom(volumeCheckedListAtom);
 
-  const handleChange = (value: GetVolumeListVolumeType | null) => {
+  const handleChange = (value: GetVolumeListVolumeType | "" | null) => {
     resetPage();
     resetCheckedList();
-    setVolumeType(value);
+    setVolumeType(value === "" ? null : value);
   };
 
   return (

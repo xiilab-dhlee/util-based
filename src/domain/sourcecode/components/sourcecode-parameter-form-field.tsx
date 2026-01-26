@@ -179,7 +179,7 @@ export function SourcecodeParameterFormField({
           {value.map((param, index) => {
             const isDuplicate = isKeyDuplicate(param.key, index);
             return (
-              <ParameterRow key={`param-${index}`}>
+              <ParameterRow key={param.key || `param-${index}`}>
                 <FieldCell>
                   <Input
                     value={param.key}

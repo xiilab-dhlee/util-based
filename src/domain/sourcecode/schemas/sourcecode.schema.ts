@@ -55,8 +55,9 @@ export const createSourcecodeSchema = z.object({
       (value) => !KOREAN_CHAR_REGEX.test(value),
       "실행 명령어에 한글을 입력할 수 없습니다.",
     ),
-  isPublic: z.enum(["true", "false"], {
-    errorMap: () => ({ message: "공개 설정을 선택해 주세요." }),
+  isPublic: z.boolean({
+    required_error: "공개 설정을 선택해 주세요.",
+    invalid_type_error: "공개 설정을 선택해 주세요.",
   }),
   credentialId: z.number().nullable().optional(),
   parameter: z.record(z.string(), z.string()).optional(),

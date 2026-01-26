@@ -37,7 +37,7 @@ export function CreateAstragoVolumeModal() {
     resolver: zodResolver(createAstragoVolumeSchema),
     defaultValues: {
       volumeName: "",
-      isPublic: "true",
+      isPublic: true,
       mountPath: "",
     },
   });
@@ -55,7 +55,7 @@ export function CreateAstragoVolumeModal() {
       {
         data: {
           volumeName: data.volumeName,
-          isPublic: data.isPublic === "true",
+          isPublic: data.isPublic,
           mountPath: data.mountPath,
           storageId: data.storageId,
           workspaceId: selectedWorkspace.workspaceId,
@@ -152,8 +152,8 @@ export function CreateAstragoVolumeModal() {
             >
               <Dropdown
                 options={VOLUME_VISIBILITY_OPTIONS}
-                value={field.value || null}
-                onChange={(value) => field.onChange(value)}
+                value={field.value ? "true" : "false"}
+                onChange={(value) => field.onChange(value === "true")}
                 width="100%"
                 status={errors.isPublic ? "error" : undefined}
                 disabled={isPending}

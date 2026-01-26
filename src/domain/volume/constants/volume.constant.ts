@@ -1,5 +1,7 @@
 import type { DropdownOption } from "xiilab-ui";
 
+import { GetVolumeListVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
 // ============================================================================
 // 페이지 설정
 // ============================================================================
@@ -33,8 +35,8 @@ export const VOLUME_SORT_OPTIONS: DropdownOption[] = [
 
 /** 볼륨 타입 필터 옵션 (Dropdown용) */
 export const VOLUME_TYPE_OPTIONS: DropdownOption[] = [
-  { label: "AstraGo", value: "ASTRAGO" },
-  { label: "On-Premise", value: "ON_PREMISE" },
+  { label: "AstraGo", value: GetVolumeListVolumeType.ASTRAGO },
+  { label: "On-Premise", value: GetVolumeListVolumeType.ON_PREMISE },
 ];
 
 // ============================================================================
@@ -44,11 +46,11 @@ export const VOLUME_TYPE_OPTIONS: DropdownOption[] = [
 export const VOLUME_STORAGE_OPTIONS: DropdownOption[] = [
   {
     label: "AstraGo Storage",
-    value: "ASTRAGO",
+    value: GetVolumeListVolumeType.ASTRAGO,
   },
   {
     label: "On-premise Storage",
-    value: "ON_PREMISE",
+    value: GetVolumeListVolumeType.ON_PREMISE,
   },
 ];
 

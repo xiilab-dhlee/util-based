@@ -79,7 +79,7 @@ export function SourcecodeLayout({ mode, children }: SourcecodeLayoutProps) {
 
   // User 모드에서만 workspaceId 사용
   const isUserMode = mode === "user";
-  const workspaceId = selectedWorkspace?.workspaceId ?? -1;
+  const workspaceId = selectedWorkspace?.workspaceId;
 
   const { data, isLoading, isError } = useGetSourcecodeListByMode(
     mode,
@@ -87,7 +87,7 @@ export function SourcecodeLayout({ mode, children }: SourcecodeLayoutProps) {
       pageNo: page - 1,
       pageSize: SOURCECODE_PAGE_SIZE,
       keyword: searchText || undefined,
-      ...(isUserMode && { workspaceId, hasMine }),
+      ...(isUserMode && workspaceId != null && { workspaceId, hasMine }),
       sort: sortRequest?.sort,
       order: sortRequest?.order,
       codeType: codeType ?? undefined,
@@ -95,7 +95,7 @@ export function SourcecodeLayout({ mode, children }: SourcecodeLayoutProps) {
     {
       query: {
         // User 모드에서만 workspaceId 조건 체크
-        enabled: isUserMode ? !!workspaceId : true,
+        enabled: isUserMode ? workspaceId != null : true,
       },
     },
   );

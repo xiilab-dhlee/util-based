@@ -1,8 +1,8 @@
 import type { DropdownOption } from "xiilab-ui";
 
 import {
+  GetSourceCodeListCodeType,
   type GetSourceCodeListSort,
-  SourceCodeListResponseSourceCodeType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
@@ -33,14 +33,14 @@ export const SOURCECODE_DEFAULT_SORT: SourcecodeSortState = {
 export const SOURCECODE_TYPE_OPTIONS: DropdownOption[] = [
   {
     label: "GitHub",
-    value: SourceCodeListResponseSourceCodeType.GITHUB,
+    value: GetSourceCodeListCodeType.GITHUB,
   },
   {
     label: "GitLab",
-    value: SourceCodeListResponseSourceCodeType.GITLAB,
+    value: GetSourceCodeListCodeType.GITLAB,
   },
   {
     label: "Bitbucket",
-    value: SourceCodeListResponseSourceCodeType.BITBUCKET,
+    value: GetSourceCodeListCodeType.BITBUCKET,
   },
 ];

@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
+import type { Key } from "react";
 
 import type { GetVolumeListVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VOLUME_DEFAULT_SORT } from "@/domain/volume/constants/volume.constant";
@@ -29,7 +30,7 @@ export const volumeSearchTextAtom = atom<string>("");
 /** 내 항목만 보기 필터 (user 모드 전용) */
 export const volumeHasMineAtom = atomWithReset<boolean>(false);
 /** 체크된 볼륨 목록 */
-export const volumeCheckedListAtom = atomWithReset<Set<number>>(new Set());
+export const volumeCheckedListAtom = atomWithReset<Set<Key>>(new Set());
 
 /** 볼륨 파일 페이지 번호 */
 export const volumeFilePageAtom = atomWithReset<number>(1);

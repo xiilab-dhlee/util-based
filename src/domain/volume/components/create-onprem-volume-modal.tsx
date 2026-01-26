@@ -36,7 +36,7 @@ export function CreateOnPremVolumeModal() {
     resolver: zodResolver(createOnPremiseVolumeSchema),
     defaultValues: {
       volumeName: "",
-      isPublic: "true",
+      isPublic: true,
       mountPath: "",
       serverIp: "",
       volumePath: "",
@@ -56,7 +56,7 @@ export function CreateOnPremVolumeModal() {
       {
         data: {
           volumeName: data.volumeName,
-          isPublic: data.isPublic === "true",
+          isPublic: data.isPublic,
           mountPath: data.mountPath,
           serverIp: data.serverIp,
           volumePath: data.volumePath,
@@ -134,8 +134,8 @@ export function CreateOnPremVolumeModal() {
             >
               <Dropdown
                 options={VOLUME_VISIBILITY_OPTIONS}
-                value={field.value || null}
-                onChange={(value) => field.onChange(value)}
+                value={field.value ? "true" : "false"}
+                onChange={(value) => field.onChange(value === "true")}
                 width="100%"
                 status={errors.isPublic ? "error" : undefined}
                 disabled={registerOnPremiseVolume.isPending}

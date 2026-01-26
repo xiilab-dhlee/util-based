@@ -10,8 +10,9 @@ const baseVolumeFields = {
     .string()
     .min(1, "볼륨 이름을 입력해 주세요.")
     .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
-  isPublic: z.enum(["true", "false"], {
-    errorMap: () => ({ message: "공개 설정을 선택해 주세요." }),
+  isPublic: z.boolean({
+    required_error: "공개 설정을 선택해 주세요.",
+    invalid_type_error: "공개 설정을 선택해 주세요.",
   }),
   mountPath: z
     .string()

@@ -69,7 +69,7 @@ export function CreateSourcecodeModal() {
       sourceCodeType: "GITHUB",
       mountPath: "",
       executionCmd: "",
-      isPublic: "true",
+      isPublic: true,
       credentialId: null,
       parameter: {},
     },
@@ -99,7 +99,7 @@ export function CreateSourcecodeModal() {
           sourceCodeType: data.sourceCodeType,
           mountPath: data.mountPath,
           executionCmd: data.executionCmd || "",
-          isPublic: data.isPublic === "true",
+          isPublic: data.isPublic,
           credentialId: data.credentialId ?? undefined,
           parameter: toRecord(),
           workspaceId: selectedWorkspace.workspaceId,
@@ -179,8 +179,8 @@ export function CreateSourcecodeModal() {
                   >
                     <Dropdown
                       options={VISIBILITY_STATUS_OPTIONS}
-                      value={field.value || null}
-                      onChange={(value) => field.onChange(value)}
+                      value={field.value ? "true" : "false"}
+                      onChange={(value) => field.onChange(value === "true")}
                       width="100%"
                       status={errors.isPublic ? "error" : undefined}
                       disabled={isPending}

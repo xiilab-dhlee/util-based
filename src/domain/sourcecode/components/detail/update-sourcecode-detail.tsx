@@ -48,6 +48,18 @@ interface UpdateSourcecodeDetailProps {
   onSuccess: () => void;
 }
 
+/**
+ * Record 형태의 파라미터를 배열로 변환
+ */
+function toParameterArray(
+  parameter: Record<string, string> | undefined,
+): { key: string; value: string }[] {
+  return Object.entries(parameter || {}).map(([key, value]) => ({
+    key,
+    value,
+  }));
+}
+
 export function UpdateSourcecodeDetail({
   mode,
   sourceCodeId,
@@ -93,7 +105,7 @@ export function UpdateSourcecodeDetail({
         data: {
           sourceCodeName: formData.sourceCodeName,
           mountPath: formData.mountPath,
-          executionCmd: formData.executionCmd || "",
+          executionCmd: formData.executionCmd,
           isPublic: formData.isPublic,
           credentialId: formData.credentialId ?? undefined,
           parameter: toRecord(),
@@ -133,10 +145,7 @@ export function UpdateSourcecodeDetail({
     });
 
     // 파라미터 상태 복원
-    const parameterArray = Object.entries(data.parameter || {}).map(
-      ([key, value]) => ({ key, value }),
-    );
-    setParameters(parameterArray);
+    setParameters(toParameterArray(data.parameter));
 
     // 크리덴셜 토글 상태 복원
     setCredentialEnabled(!!data.credentialId);
@@ -161,10 +170,7 @@ export function UpdateSourcecodeDetail({
     });
 
     // 파라미터 배열로 변환
-    const parameterArray = Object.entries(data.parameter || {}).map(
-      ([key, value]) => ({ key, value }),
-    );
-    setParameters(parameterArray);
+    setParameters(toParameterArray(data.parameter));
 
     // 크리덴셜 토글 상태 설정
     setCredentialEnabled(!!data.credentialId);

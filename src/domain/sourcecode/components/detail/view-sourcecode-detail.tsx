@@ -3,6 +3,7 @@
 import styled from "styled-components";
 
 import type { SourceCodeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { ReadOnlyParameter } from "@/domain/sourcecode/components/detail/read-only-parameter";
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
@@ -15,7 +16,6 @@ import {
   AsideDetailArticleTitle,
   AsideDetailArticleValue,
 } from "@/styles/layers/aside-detail-layers.styled";
-import { ReadOnlyParameter } from "./read-only-parameter";
 
 interface ViewSourcecodeDetailProps {
   data?: SourceCodeDetailResponse;

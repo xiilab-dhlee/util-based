@@ -3,7 +3,6 @@
 import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useSession } from "next-auth/react";
-import type { Key } from "react";
 import type { TableProps } from "xiilab-ui";
 
 import type { SourceCodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -49,8 +48,8 @@ export function SourcecodeListBody({
   const resetCheckedList = useResetAtom(sourcecodeCheckedListAtom);
 
   const { rowSelection } = useTableSelection<SourceCodeListResponse>(
-    checkedList as Set<Key>,
-    setCheckedList as (value: Set<Key>) => void,
+    checkedList,
+    setCheckedList,
   );
 
   const isUser = mode === "user";
