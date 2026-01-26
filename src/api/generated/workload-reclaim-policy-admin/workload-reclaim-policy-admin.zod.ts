@@ -149,7 +149,7 @@ export const updateReclaimPolicyEnabledParams = zod.object({
 
 export const updateReclaimPolicyEnabledBody = zod
   .object({
-    isEnabled: zod.boolean().describe("활성화 여부"),
+    hasEnabled: zod.boolean().describe("활성화 여부"),
   })
   .strict()
   .describe("자원 회수 정책 실행/종료 요청");

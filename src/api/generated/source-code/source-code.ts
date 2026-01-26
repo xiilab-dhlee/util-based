@@ -46,10 +46,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseListString,
   BaseResponsePageResponseSourceCodeListResponse,
   BaseResponseSourceCodeDeleteResult,
   BaseResponseSourceCodeDetailResponse,
   BaseResponseUnit,
+  BaseResponseUpdateSourceCodeResponse,
   CreateSourceCodeRequest,
   GetSourceCodeListParams,
   SourceCodeDeleteRequest,
@@ -80,7 +82,7 @@ export const updateSourceCode = (
   sourceCodeId: number,
   updateSourceCodeRequest: UpdateSourceCodeRequest,
 ) => {
-  return customInstance<BaseResponseUnit>({
+  return customInstance<BaseResponseUpdateSourceCodeResponse>({
     url: `/api/v1/source-codes/${sourceCodeId}`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -755,6 +757,159 @@ export function useGetSourceCodeDetail<
     sourceCodeId,
     options,
   );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+        소스코드의 Git 저장소 브랜치 목록을 조회합니다.
+
+        **응답:**
+        - 200 OK + data: 브랜치 이름 목록 (알파벳순 정렬)
+        - 200 OK + data: null (소스코드가 존재하지 않거나 삭제된 경우)
+        - 403: 접근 권한 없음
+
+        **권한:**
+        - 소스코드 조회 권한과 동일
+        - 공개 소스코드: 모든 사용자 조회 가능
+        - 비공개 소스코드: 본인(생성자) 또는 ADMIN/SUPER_ADMIN
+        
+ * @summary 소스코드 브랜치 목록 조회
+ */
+export const getBranches = (sourceCodeId: number, signal?: AbortSignal) => {
+  return customInstance<BaseResponseListString>({
+    url: `/api/v1/source-codes/${sourceCodeId}/branches`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetBranchesQueryKey = (sourceCodeId?: number) => {
+  return [`/api/v1/source-codes/${sourceCodeId}/branches`] as const;
+};
+
+export const getGetBranchesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBranches>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getBranches>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetBranchesQueryKey(sourceCodeId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBranches>>> = ({
+    signal,
+  }) => getBranches(sourceCodeId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!sourceCodeId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBranches>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetBranchesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBranches>>
+>;
+export type GetBranchesQueryError = unknown;
+
+export function useGetBranches<
+  TData = Awaited<ReturnType<typeof getBranches>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getBranches>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBranches>>,
+          TError,
+          Awaited<ReturnType<typeof getBranches>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBranches<
+  TData = Awaited<ReturnType<typeof getBranches>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getBranches>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBranches>>,
+          TError,
+          Awaited<ReturnType<typeof getBranches>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBranches<
+  TData = Awaited<ReturnType<typeof getBranches>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getBranches>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 소스코드 브랜치 목록 조회
+ */
+
+export function useGetBranches<
+  TData = Awaited<ReturnType<typeof getBranches>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getBranches>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetBranchesQueryOptions(sourceCodeId, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

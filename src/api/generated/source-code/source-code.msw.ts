@@ -32,17 +32,20 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseListString,
   BaseResponsePageResponseSourceCodeListResponse,
   BaseResponseSourceCodeDeleteResult,
   BaseResponseSourceCodeDetailResponse,
   BaseResponseUnit,
+  BaseResponseUpdateSourceCodeResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getUpdateSourceCodeResponseMock = (
-  overrideResponse: Partial<BaseResponseUnit> = {},
-): BaseResponseUnit => ({
+  overrideResponse: Partial<BaseResponseUpdateSourceCodeResponse> = {},
+): BaseResponseUpdateSourceCodeResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: { sourceCodeId: faker.number.int({ min: undefined, max: undefined }) },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -142,6 +145,7 @@ export const getGetSourceCodeDetailResponseMock = (
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     credentialId: faker.number.int({ min: undefined, max: undefined }),
+    credentialName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
   },
@@ -150,12 +154,28 @@ export const getGetSourceCodeDetailResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetBranchesResponseMock = (
+  overrideResponse: Partial<BaseResponseListString> = {},
+): BaseResponseListString => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getUpdateSourceCodeMockHandler = (
   overrideResponse?:
-    | BaseResponseUnit
+    | BaseResponseUpdateSourceCodeResponse
     | ((
         info: Parameters<Parameters<typeof http.put>[1]>[0],
-      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+      ) =>
+        | Promise<BaseResponseUpdateSourceCodeResponse>
+        | BaseResponseUpdateSourceCodeResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
@@ -316,6 +336,34 @@ export const getGetSourceCodeDetailMockHandler = (
     options,
   );
 };
+
+export const getGetBranchesMockHandler = (
+  overrideResponse?:
+    | BaseResponseListString
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<BaseResponseListString> | BaseResponseListString),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/source-codes/:sourceCodeId/branches",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetBranchesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getSourceCodeMock = () => [
   getUpdateSourceCodeMockHandler(),
   getDeleteSourceCodeMockHandler(),
@@ -323,4 +371,5 @@ export const getSourceCodeMock = () => [
   getRegisterSourceCodeMockHandler(),
   getDeleteSourceCodesMockHandler(),
   getGetSourceCodeDetailMockHandler(),
+  getGetBranchesMockHandler(),
 ];

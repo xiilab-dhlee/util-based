@@ -50,7 +50,7 @@ import type {
   BaseResponsePageResponseSourceCodeListResponse,
   BaseResponseSourceCodeDeleteResult,
   BaseResponseSourceCodeDetailResponse,
-  BaseResponseUnit,
+  BaseResponseUpdateSourceCodeResponse,
   SourceCodeDeleteRequest,
   UpdateSourceCodeRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -75,7 +75,7 @@ export const adminUpdateSourceCode = (
   sourceCodeId: number,
   updateSourceCodeRequest: UpdateSourceCodeRequest,
 ) => {
-  return customInstance<BaseResponseUnit>({
+  return customInstance<BaseResponseUpdateSourceCodeResponse>({
     url: `/api/v1/admin/source-codes/${sourceCodeId}`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },

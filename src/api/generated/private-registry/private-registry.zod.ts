@@ -87,6 +87,7 @@ export const getPrivateRegistryListQueryParams = zod.object({
     .optional()
     .describe("정렬 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  hasMine: zod.boolean().optional().describe("내가 생성한 이미지만 조회"),
   imageSourceType: zod
     .enum(["SNAPSHOT", "EXTERNAL"])
     .optional()

@@ -81,7 +81,7 @@ export const adminUpdateSourceCodeBody = zod
       .record(zod.string(), zod.string())
       .optional()
       .describe("사용자 정의 파라미터"),
-    isPublic: zod.boolean().describe("공개 여부"),
+    shouldBePublic: zod.boolean().describe("공개 여부"),
     credentialId: zod.number().optional().describe("크레덴셜 ID"),
   })
   .strict()
@@ -91,6 +91,17 @@ export const adminUpdateSourceCodeResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        sourceCodeId: zod
+          .number()
+          .describe(
+            "새로 생성된 소스코드 ID (버전 업데이트로 인해 새 ID 발급)",
+          ),
+      })
+      .strict()
+      .optional()
+      .describe("소스코드 수정 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -285,6 +296,7 @@ export const adminGetSourceCodeDetailResponse = zod
         creatorId: zod.string().describe("생성자 ID"),
         creatorName: zod.string().describe("생성자 이름"),
         credentialId: zod.number().optional().describe("크레덴셜 ID"),
+        credentialName: zod.string().optional().describe("크레덴셜 이름"),
         createdAt: zod.string().datetime({}).describe("생성 일시"),
         updatedAt: zod.string().datetime({}).optional().describe("수정 일시"),
       })

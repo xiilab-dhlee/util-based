@@ -67,7 +67,7 @@ export const adminUpdateVolumeBody = zod
       .max(adminUpdateVolumeBodyMountPathMax)
       .regex(adminUpdateVolumeBodyMountPathRegExp)
       .describe("마운트 경로 (절대경로)"),
-    isPublic: zod.boolean().describe("공개 여부"),
+    shouldBePublic: zod.boolean().describe("공개 여부"),
   })
   .strict()
   .describe("볼륨 수정 요청");

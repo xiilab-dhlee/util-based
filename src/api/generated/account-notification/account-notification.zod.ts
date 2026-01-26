@@ -41,10 +41,10 @@ export const updateNotificationSetParams = zod.object({
 
 export const updateNotificationSetBody = zod
   .object({
-    isSystemNotificationEnabled: zod
+    hasSystemNotificationEnabled: zod
       .boolean()
       .describe("시스템 알림 활성화 여부"),
-    isEmailNotificationEnabled: zod
+    hasEmailNotificationEnabled: zod
       .boolean()
       .describe("이메일 알림 활성화 여부"),
   })
