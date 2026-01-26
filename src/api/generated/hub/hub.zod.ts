@@ -137,6 +137,7 @@ export const findHubSummariesResponse = zod
           .object({
             hubId: zod.number().describe("HUB 고유 ID"),
             hubName: zod.string().describe("HUB 이름"),
+            imageTagId: zod.number().describe("연결된 이미지 태그 ID"),
           })
           .strict()
           .describe("HUB 요약 목록 조회 응답"),

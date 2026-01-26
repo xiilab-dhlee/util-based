@@ -30,6 +30,11 @@ const USER_NAV_MENU: AstraGoNavMenu[] = [
         icon: <Icon name={PAGE_META["user.private-registry"]?.iconName} />,
       },
       {
+        key: "user.public-registry",
+        label: PAGE_META["user.public-registry"]?.title,
+        icon: <Icon name={PAGE_META["user.public-registry"]?.iconName} />,
+      },
+      {
         key: "user.sourcecode",
         label: PAGE_META["user.sourcecode"]?.title,
         icon: <Icon name={PAGE_META["user.sourcecode"]?.iconName} />,
@@ -86,30 +91,30 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         icon: <Icon name={PAGE_META["admin.account-management"]?.iconName} />,
       },
       {
+        key: "admin.scheduling-queue",
+        label: PAGE_META["admin.scheduling-queue"]?.title,
+        icon: <Icon name={PAGE_META["admin.scheduling-queue"]?.iconName} />,
+      },
+      {
         key: "admin.node",
         label: PAGE_META["admin.node"]?.title,
         icon: <Icon name={PAGE_META["admin.node"]?.iconName} />,
       },
       // {
-      //   key: "schedule",
-      //   label: "스케쥴링 큐 관리",
-      //   icon: "Calendar",
+      //   key: "security-root",
+      //   label: "보안 관리",
+      //   icon: <Icon name="SecurityCheck" />,
+      //   children: [
+      //     {
+      //       key: "admin.registry-security",
+      //       label: PAGE_META["admin.registry-security"]?.title,
+      //     },
+      //     {
+      //       key: "admin.file-security",
+      //       label: PAGE_META["admin.file-security"]?.title,
+      //     },
+      //   ],
       // },
-      {
-        key: "security-root",
-        label: "보안 관리",
-        icon: <Icon name="SecurityCheck" />,
-        children: [
-          {
-            key: "admin.registry-security",
-            label: PAGE_META["admin.registry-security"]?.title,
-          },
-          {
-            key: "admin.file-security",
-            label: PAGE_META["admin.file-security"]?.title,
-          },
-        ],
-      },
       {
         key: "admin.workspace",
         label: PAGE_META["admin.workspace"]?.title,
@@ -142,21 +147,19 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
             label: PAGE_META["admin.request-image"]?.title,
           },
           {
-            key: "admin.internal-registry",
-            label: PAGE_META["admin.internal-registry"]?.title,
+            key: "admin.private-registry",
+            label: PAGE_META["admin.private-registry"]?.title,
           },
           {
-            key: "admin.external-registry",
-            label: PAGE_META["admin.external-registry"]?.title,
+            key: "admin.public-registry",
+            label: PAGE_META["admin.public-registry"]?.title,
           },
         ],
       },
       {
-        key: "admin.sourcecode-management",
-        label: PAGE_META["admin.sourcecode-management"]?.title,
-        icon: (
-          <Icon name={PAGE_META["admin.sourcecode-management"]?.iconName} />
-        ),
+        key: "admin.sourcecode",
+        label: PAGE_META["admin.sourcecode"]?.title,
+        icon: <Icon name={PAGE_META["admin.sourcecode"]?.iconName} />,
       },
       {
         key: "admin.volume",

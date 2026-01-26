@@ -1,22 +1,27 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import type { TableProps } from "xiilab-ui";
 
+import type { WorkloadReclaimScanResultResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createRevokeHistoryDetailColumn } from "@/domain/revoke/components/column/create-revoke-history-detail-column";
-import { useGetRevokeHistoryDetail } from "@/domain/revoke/hooks/use-get-revoke-history-detail";
-import type { RevokeHistoryDetailItemType } from "@/domain/revoke/schemas/revoke-history.schema";
 import {
-  revokeHistoryDetailEndDateAtom,
+  REVOKE_HISTORY_DETAIL_SORT_FIELDS,
+  type RevokeHistoryDetailSortField,
+} from "@/domain/revoke/constants/revoke-history.constant";
+import {
   revokeHistoryDetailPageAtom,
-  revokeHistoryDetailStartDateAtom,
-  revokeHistoryDetailTypeAtom,
+  revokeHistoryDetailSortAtom,
 } from "@/domain/revoke/state/revoke-history.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface RevokeHistoryDetailBodyProps {
-  id: string;
+  content: WorkloadReclaimScanResultResponse[];
+  isLoading: boolean;
+  isError: boolean;
 }
 
 /**
@@ -24,29 +29,39 @@ interface RevokeHistoryDetailBodyProps {
  *
  * 경고/회수 목록을 테이블로 표시합니다.
  */
-export function RevokeHistoryDetailBody({ id }: RevokeHistoryDetailBodyProps) {
-  const page = useAtomValue(revokeHistoryDetailPageAtom);
-  const startDate = useAtomValue(revokeHistoryDetailStartDateAtom);
-  const endDate = useAtomValue(revokeHistoryDetailEndDateAtom);
-  const type = useAtomValue(revokeHistoryDetailTypeAtom);
+export function RevokeHistoryDetailBody({
+  content,
+  isLoading,
+  isError,
+}: RevokeHistoryDetailBodyProps) {
+  const [sort, setSort] = useAtom(revokeHistoryDetailSortAtom);
+  const resetPage = useResetAtom(revokeHistoryDetailPageAtom);
 
-  const { data, isError, isLoading } = useGetRevokeHistoryDetail(id, {
-    page,
-    size: LIST_PAGE_SIZE,
-    startDate: startDate || undefined,
-    endDate: endDate || undefined,
-    type,
-  });
+  const handleChange: TableProps<WorkloadReclaimScanResultResponse>["onChange"] =
+    (_, __, sorter) => {
+      const parsed = parseSorterToAntdState<
+        WorkloadReclaimScanResultResponse,
+        RevokeHistoryDetailSortField
+      >(sorter, REVOKE_HISTORY_DETAIL_SORT_FIELDS);
+      if (!parsed.field || !parsed.order) return;
+
+      resetPage();
+      setSort({
+        field: parsed.field,
+        order: parsed.order,
+      });
+    };
 
   return (
     <ListWrapper>
-      <CustomizedTable<RevokeHistoryDetailItemType>
-        columns={createRevokeHistoryDetailColumn()}
-        data={data?.content ?? []}
+      <CustomizedTable<WorkloadReclaimScanResultResponse>
+        columns={createRevokeHistoryDetailColumn(sort)}
+        data={content}
         columnHeight={40}
         activePadding
         isError={isError}
         loading={isLoading}
+        onChange={handleChange}
       />
     </ListWrapper>
   );

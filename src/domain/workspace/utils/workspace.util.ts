@@ -14,14 +14,14 @@ const REQUEST_RESOURCE_STATUS_MAP: Record<
     iconColor: "rgba(104, 198, 75, 0.9)",
     boxShadowColor: "#5EB3465C",
   },
-  APPROVE: {
+  APPROVED: {
     text: "승인",
     color: "blue",
     icon: "Verification02",
     iconColor: "#86B6FF",
     boxShadowColor: "#86B6FF4D",
   },
-  REJECT: {
+  REJECTED: {
     text: "반려",
     color: "red",
     icon: "Error",

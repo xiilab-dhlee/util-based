@@ -6,6 +6,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { GpuCard } from "@/domain/workload/components/create/gpu-card";
+import { GpuProfileCard } from "@/domain/workload/components/create/gpu-profile-card";
 import {
   gpuAtom,
   gpuProfileAtom,
@@ -15,8 +17,6 @@ import type {
   GpuListType,
   GpuProfileListType,
 } from "@/shared/schemas/gpu.schema";
-import { GpuCard } from "./gpu-card";
-import { GpuProfileCard } from "./gpu-profile-card";
 
 interface CreateWorkloadGpuMigProps {
   gpus: GpuListType[];

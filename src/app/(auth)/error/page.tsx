@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { ROUTES } from "@/shared/constants/routes.constant";
 
 /**
- * 인증 에러 페이지
- * NextAuth.js에서 발생하는 인증 오류를 처리합니다.
+ * 에러 페이지
+ * NextAuth.js에서 발생하는 인증 오류 및 라이선스 체크 오류를 처리합니다.
  */
 function AuthErrorPageContent() {
   const router = useRouter();
@@ -49,8 +49,10 @@ function AuthErrorPageContent() {
         return "자격 증명이 올바르지 않습니다.";
       case "SessionRequired":
         return "로그인이 필요합니다.";
+      case "LicenseCheckFailed":
+        return "라이선스 확인 중 오류가 발생했습니다. 서버 연결 상태를 확인해 주세요.";
       default:
-        return `인증 오류가 발생했습니다: ${error}`;
+        return `오류가 발생했습니다: ${error}`;
     }
   };
 
@@ -101,7 +103,7 @@ function AuthErrorPageContent() {
             fontSize: "1.5rem",
           }}
         >
-          인증 오류
+          {error === "LicenseCheckFailed" ? "서버 연결 오류" : "인증 오류"}
         </h1>
 
         <p

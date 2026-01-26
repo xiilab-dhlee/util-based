@@ -1,0 +1,172 @@
+/**
+ * @file Admin 역할 알림 상수
+ * @description ADMIN/SUPER_ADMIN 역할에게 표시되는 알림 상수 (11개)
+ */
+
+import type { AdminNotificationSetResponseNotificationType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  NOTIFICATION_TYPE,
+  type NotificationTypeValue,
+} from "@/shared/constants/notification/notification.constant";
+
+// ===== Admin 알림 설정명 =====
+
+/**
+ * Admin 알림 설정명 (11개)
+ */
+export const ADMIN_NOTIFICATION_SET_NAME = {
+  // LICENSE (1)
+  LICENSE_EXPIRY_WARNING: "LICENSE_EXPIRY_WARNING",
+
+  // ACCOUNT (1)
+  USER_SIGNUP: "USER_SIGNUP",
+
+  // VULNERABILITY (2)
+  VULNERABILITY_IMAGE_REQUEST: "VULNERABILITY_IMAGE_REQUEST",
+  WORKLOAD_VULNERABILITY: "WORKLOAD_VULNERABILITY",
+
+  // NODE (3)
+  NODE_FAILURE: "NODE_FAILURE",
+  MIG_APPLIED: "MIG_APPLIED",
+  MIG_FAILURE: "MIG_FAILURE",
+
+  // WORKSPACE (3)
+  WORKSPACE_CREATED: "WORKSPACE_CREATED",
+  WORKSPACE_RESOURCE_EXCEEDED: "WORKSPACE_RESOURCE_EXCEEDED",
+  WORKSPACE_RESOURCE_REQUEST: "WORKSPACE_RESOURCE_REQUEST",
+
+  // WORKLOAD (1)
+  WORKLOAD_RESOURCE_RECLAIM_RESULT: "WORKLOAD_RESOURCE_RECLAIM_RESULT",
+} as const;
+
+export type AdminNotificationSetName =
+  (typeof ADMIN_NOTIFICATION_SET_NAME)[keyof typeof ADMIN_NOTIFICATION_SET_NAME];
+
+// ===== Admin 알림 라벨 =====
+
+/**
+ * Admin 알림 설정 라벨 (한글)
+ */
+export const ADMIN_NOTIFICATION_SET_LABEL: Record<
+  AdminNotificationSetName,
+  string
+> = {
+  [ADMIN_NOTIFICATION_SET_NAME.LICENSE_EXPIRY_WARNING]:
+    "라이선스 만료 경고 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.USER_SIGNUP]: "유저 회원가입 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.VULNERABILITY_IMAGE_REQUEST]:
+    "취약점 이미지 사용 요청 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.WORKLOAD_VULNERABILITY]: "워크로드 취약점 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.NODE_FAILURE]: "노드 장애 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.MIG_APPLIED]: "MIG 적용 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.MIG_FAILURE]: "MIG 적용 장애 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_CREATED]: "워크스페이스 생성 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_RESOURCE_EXCEEDED]:
+    "워크스페이스 리소스 초과 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_RESOURCE_REQUEST]:
+    "워크스페이스 리소스 요청 알림",
+  [ADMIN_NOTIFICATION_SET_NAME.WORKLOAD_RESOURCE_RECLAIM_RESULT]:
+    "리소스 경고 및 회수 알림",
+};
+
+const ADMIN_NOTIFICATION_SET_NAMES = Object.values(ADMIN_NOTIFICATION_SET_NAME);
+
+export function isAdminNotificationSetName(
+  value: string,
+): value is AdminNotificationSetName {
+  return ADMIN_NOTIFICATION_SET_NAMES.some((name) => name === value);
+}
+
+/**
+ * Admin 알림 설정 라벨 조회
+ */
+export function getAdminNotificationSetLabel(
+  name: AdminNotificationSetName | string,
+): string {
+  if (!isAdminNotificationSetName(name)) {
+    return name || "-";
+  }
+
+  return ADMIN_NOTIFICATION_SET_LABEL[name];
+}
+
+// ===== Admin 알림 → 카테고리 매핑 =====
+
+/**
+ * Admin 알림 → 카테고리 매핑
+ */
+export const ADMIN_NOTIFICATION_TYPE_MAP: Record<
+  AdminNotificationSetName,
+  NotificationTypeValue
+> = {
+  [ADMIN_NOTIFICATION_SET_NAME.LICENSE_EXPIRY_WARNING]:
+    NOTIFICATION_TYPE.LICENSE,
+  [ADMIN_NOTIFICATION_SET_NAME.USER_SIGNUP]: NOTIFICATION_TYPE.ACCOUNT,
+  [ADMIN_NOTIFICATION_SET_NAME.VULNERABILITY_IMAGE_REQUEST]:
+    NOTIFICATION_TYPE.VULNERABILITY,
+  [ADMIN_NOTIFICATION_SET_NAME.WORKLOAD_VULNERABILITY]:
+    NOTIFICATION_TYPE.VULNERABILITY,
+  [ADMIN_NOTIFICATION_SET_NAME.NODE_FAILURE]: NOTIFICATION_TYPE.NODE,
+  [ADMIN_NOTIFICATION_SET_NAME.MIG_APPLIED]: NOTIFICATION_TYPE.NODE,
+  [ADMIN_NOTIFICATION_SET_NAME.MIG_FAILURE]: NOTIFICATION_TYPE.NODE,
+  [ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_CREATED]: NOTIFICATION_TYPE.WORKSPACE,
+  [ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_RESOURCE_EXCEEDED]:
+    NOTIFICATION_TYPE.WORKSPACE,
+  [ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_RESOURCE_REQUEST]:
+    NOTIFICATION_TYPE.WORKSPACE,
+  [ADMIN_NOTIFICATION_SET_NAME.WORKLOAD_RESOURCE_RECLAIM_RESULT]:
+    NOTIFICATION_TYPE.WORKLOAD,
+};
+
+// ===== Admin 알림 섹션 구성 =====
+
+/**
+ * Admin 알림 설정 UI 섹션 구성
+ */
+export const ADMIN_NOTIFICATION_SECTIONS: readonly {
+  category: AdminNotificationSetResponseNotificationType;
+  label: string;
+  items: readonly AdminNotificationSetName[];
+}[] = [
+  {
+    category: "LICENSE",
+    label: "라이선스",
+    items: [ADMIN_NOTIFICATION_SET_NAME.LICENSE_EXPIRY_WARNING],
+  },
+  {
+    category: "ACCOUNT",
+    label: "회원",
+    items: [ADMIN_NOTIFICATION_SET_NAME.USER_SIGNUP],
+  },
+  {
+    category: "VULNERABILITY",
+    label: "보안",
+    items: [
+      ADMIN_NOTIFICATION_SET_NAME.VULNERABILITY_IMAGE_REQUEST,
+      ADMIN_NOTIFICATION_SET_NAME.WORKLOAD_VULNERABILITY,
+    ],
+  },
+  {
+    category: "NODE",
+    label: "노드",
+    items: [
+      ADMIN_NOTIFICATION_SET_NAME.NODE_FAILURE,
+      ADMIN_NOTIFICATION_SET_NAME.MIG_APPLIED,
+      ADMIN_NOTIFICATION_SET_NAME.MIG_FAILURE,
+    ],
+  },
+  {
+    category: "WORKSPACE",
+    label: "워크스페이스",
+    items: [
+      ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_CREATED,
+      ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_RESOURCE_EXCEEDED,
+      ADMIN_NOTIFICATION_SET_NAME.WORKSPACE_RESOURCE_REQUEST,
+    ],
+  },
+  {
+    category: "WORKLOAD",
+    label: "워크로드",
+    items: [ADMIN_NOTIFICATION_SET_NAME.WORKLOAD_RESOURCE_RECLAIM_RESULT],
+  },
+];

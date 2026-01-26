@@ -56,21 +56,22 @@ export const DATE_PATTERN: RegExp =
   /^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$/;
 
 // ============================================
-// 단위 패턴 (숫자 + 단위)
+// 숫자/단위 패턴
 // ============================================
 
 /**
- * 단위 패턴 생성 함수
+ * 숫자 패턴 생성 함수
  *
- * 숫자(천단위 콤마 지원) + 단위 형식의 패턴을 생성합니다.
+ * 숫자(천단위 콤마 지원) 또는 숫자 + 단위 형식의 패턴을 생성합니다.
  *
- * @param unit - 단위 문자열 (예: "개", "번", "회")
+ * @param unit - 단위 문자열 (선택적, 예: "개", "번", "회")
  * @returns 생성된 정규식 패턴
  *
  * @example
+ * createUnitPattern()      // /^\d+(,\d{3})*$/    → "5", "1,234" (숫자만)
  * createUnitPattern("개")  // /^\d+(,\d{3})*개$/  → "5개", "1,234개"
  * createUnitPattern("번")  // /^\d+(,\d{3})*번$/  → "5번", "1,234번"
  * createUnitPattern("회")  // /^\d+(,\d{3})*회$/  → "5회", "1,234회"
  */
-export const createUnitPattern = (unit: string): RegExp =>
-  new RegExp(`^\\d+(,\\d{3})*${unit}$`);
+export const createUnitPattern = (unit?: string): RegExp =>
+  new RegExp(`^\\d+(,\\d{3})*${unit ?? ""}$`);

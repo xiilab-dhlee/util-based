@@ -47,15 +47,18 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseSourceCodeListResponse,
+  BaseResponseSourceCodeDeleteResult,
+  BaseResponseSourceCodeDetailResponse,
   BaseResponseUnit,
   CreateSourceCodeRequest,
   GetSourceCodeListParams,
+  SourceCodeDeleteRequest,
   UpdateSourceCodeRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 
-        소스코드 정보를 수정합니다.
+        소스코드 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
 
         **수정 가능 필드:**
         - sourceCodeName: 소스코드 이름
@@ -153,7 +156,7 @@ export const useUpdateSourceCode = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-        소스코드를 삭제합니다 (soft delete).
+        소스코드를 삭제합니다 (soft delete). 해당 소스코드의 모든 버전이 삭제됩니다.
 
         **권한:** SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
         
@@ -492,3 +495,273 @@ export const useRegisterSourceCode = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 
+            여러 소스코드를 한번에 삭제합니다 (soft delete).
+
+            **처리 방식:**
+            - 각 소스코드별로 권한 검증 후 삭제 시도
+            - 일부 실패해도 나머지는 계속 처리
+            - 성공/실패 결과를 상세히 반환
+
+            **권한:** ADMIN, SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능
+        
+ * @summary 소스코드 다중 삭제
+ */
+export const deleteSourceCodes = (
+  sourceCodeDeleteRequest: SourceCodeDeleteRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseSourceCodeDeleteResult>({
+    url: `/api/v1/source-codes/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: sourceCodeDeleteRequest,
+    signal,
+  });
+};
+
+export const getDeleteSourceCodesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteSourceCodes>>,
+    TError,
+    { data: SourceCodeDeleteRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteSourceCodes>>,
+  TError,
+  { data: SourceCodeDeleteRequest },
+  TContext
+> => {
+  const mutationKey = ["deleteSourceCodes"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteSourceCodes>>,
+    { data: SourceCodeDeleteRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return deleteSourceCodes(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteSourceCodesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteSourceCodes>>
+>;
+export type DeleteSourceCodesMutationBody = SourceCodeDeleteRequest;
+export type DeleteSourceCodesMutationError = unknown;
+
+/**
+ * @summary 소스코드 다중 삭제
+ */
+export const useDeleteSourceCodes = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteSourceCodes>>,
+      TError,
+      { data: SourceCodeDeleteRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteSourceCodes>>,
+  TError,
+  { data: SourceCodeDeleteRequest },
+  TContext
+> => {
+  const mutationOptions = getDeleteSourceCodesMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+        소스코드 상세 정보를 조회합니다.
+
+        **응답:**
+        - 200 OK + data: 소스코드 상세 정보
+        - 200 OK + data: null (소스코드가 존재하지 않거나 삭제된 경우)
+        - 403: 접근 권한 없음
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 소스코드 조회 가능
+        - 공개 소스코드: 모든 사용자 조회 가능 (워크스페이스 멤버 여부 확인)
+        - 비공개 소스코드: 본인(생성자)만 조회 가능
+        
+ * @summary 소스코드 상세 조회
+ */
+export const getSourceCodeDetail = (
+  sourceCodeId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseSourceCodeDetailResponse>({
+    url: `/api/v1/source-codes/${sourceCodeId}/detail`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetSourceCodeDetailQueryKey = (sourceCodeId?: number) => {
+  return [`/api/v1/source-codes/${sourceCodeId}/detail`] as const;
+};
+
+export const getGetSourceCodeDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSourceCodeDetail>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getSourceCodeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetSourceCodeDetailQueryKey(sourceCodeId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getSourceCodeDetail>>
+  > = ({ signal }) => getSourceCodeDetail(sourceCodeId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!sourceCodeId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSourceCodeDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetSourceCodeDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSourceCodeDetail>>
+>;
+export type GetSourceCodeDetailQueryError = unknown;
+
+export function useGetSourceCodeDetail<
+  TData = Awaited<ReturnType<typeof getSourceCodeDetail>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getSourceCodeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSourceCodeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getSourceCodeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSourceCodeDetail<
+  TData = Awaited<ReturnType<typeof getSourceCodeDetail>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getSourceCodeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSourceCodeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getSourceCodeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSourceCodeDetail<
+  TData = Awaited<ReturnType<typeof getSourceCodeDetail>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getSourceCodeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 소스코드 상세 조회
+ */
+
+export function useGetSourceCodeDetail<
+  TData = Awaited<ReturnType<typeof getSourceCodeDetail>>,
+  TError = unknown,
+>(
+  sourceCodeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getSourceCodeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetSourceCodeDetailQueryOptions(
+    sourceCodeId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}

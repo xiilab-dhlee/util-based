@@ -2,13 +2,13 @@
 
 import { useAtomValue } from "jotai";
 
+import { GenerateDisplayConfigAlpha } from "@/domain/node/components/mig/generate-display-config-alpha";
+import { GenerateDisplayConfigBeta } from "@/domain/node/components/mig/generate-display-config-beta";
 import {
   MIG_GPU_ALPHA_MODEL,
   MIG_GPU_BETA_MODEL,
 } from "@/domain/node/constants/mig.constant";
 import { migGpuProductAtom } from "@/domain/node/state/node.atom";
-import { GenerateDisplayConfigAlpha } from "./generate-display-config-alpha";
-import { GenerateDisplayConfigBeta } from "./generate-display-config-beta";
 
 /**
  * 디스플레이 설정 선택 컴포넌트

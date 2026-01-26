@@ -120,7 +120,7 @@ export function SourcecodeParameterFormField({
       <InputSection>
         <InputWrapper>
           <Input
-            placeholder="키"
+            placeholder="파라미터 키 입력"
             value={tempKey}
             onChange={(e) => setTempKey(e.target.value)}
             width="100%"
@@ -130,7 +130,7 @@ export function SourcecodeParameterFormField({
         </InputWrapper>
         <InputWrapper>
           <Input
-            placeholder="값"
+            placeholder="파라미터 값 입력"
             value={tempValue}
             onChange={(e) => setTempValue(e.target.value)}
             width="100%"
@@ -140,9 +140,11 @@ export function SourcecodeParameterFormField({
         </InputWrapper>
         <Button
           icon="Plus"
-          iconSize={24}
+          iconSize={20}
           onClick={handleAdd}
           disabled={disabled}
+          width={30}
+          height={30}
         />
       </InputSection>
 

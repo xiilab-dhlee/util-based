@@ -3,11 +3,18 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { FileSecurityScanListBody } from "@/domain/security/components/file-security/file-security-scan-list-body";
+import { FileSecurityScanListFooter } from "@/domain/security/components/file-security/file-security-scan-list-footer";
+import { FileSecurityLevelSettingModal } from "@/domain/security/components/file-security-level-setting-modal";
+import { FileSecurityScheduleSettingModal } from "@/domain/security/components/file-security-schedule-setting-modal";
+import { SecurityAside } from "@/domain/security/components/security-aside";
+import { SecurityLevelPolicySetting } from "@/domain/security/components/security-level-policy-setting";
 import {
   openFileSecurityLevelSettingModalAtom,
   openFileSecurityScheduleSettingModalAtom,
 } from "@/domain/security/state/file-security.atom";
 import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
+import { createSecurityScheduleDescription } from "@/domain/security/utils/security-schedule.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import {
@@ -24,13 +31,6 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import { createSecurityScheduleDescription } from "../utils/security-schedule.util";
-import { FileSecurityScanListBody } from "./file-security/file-security-scan-list-body";
-import { FileSecurityScanListFooter } from "./file-security/file-security-scan-list-footer";
-import { FileSecurityLevelSettingModal } from "./file-security-level-setting-modal";
-import { FileSecurityScheduleSettingModal } from "./file-security-schedule-setting-modal";
-import { SecurityAside } from "./security-aside";
-import { SecurityLevelPolicySetting } from "./security-level-policy-setting";
 
 export function FileSecurityMain() {
   const { onOpen: openSecurityLevelModal } = useGlobalModal(

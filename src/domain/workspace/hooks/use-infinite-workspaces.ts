@@ -36,8 +36,9 @@ export function useInfiniteWorkspaces(
   const query = useInfiniteQuery({
     queryKey: [
       ...getGetAllWorkspacesQueryKey({
-        keyword: normalizedKeyword,
+        pageNo: 0,
         pageSize,
+        keyword: normalizedKeyword,
         hasMyWorkspace,
       }),
       "infinite",

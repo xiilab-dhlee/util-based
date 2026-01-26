@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { RegistrySecurityLevelCard } from "@/domain/security/components/security-level-card";
 import { securityScanListMock } from "@/mocks/data/security-scan.mock";
 import { createSecurityColumn } from "@/shared/components/column/create-security-column";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
@@ -12,7 +13,6 @@ import type { CoreSecurityLevel } from "@/shared/types/core.interface";
 import { AsideDetailContainer } from "@/styles/layers/aside-detail-layers.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import { RegistrySecurityLevelCard } from "./security-level-card";
 
 const LEVELS: CoreSecurityLevel[] = Object.values(
   VULNERABILITY_LEVEL_KEY_TO_CORE_LEVEL,

@@ -6,6 +6,7 @@ import {
   GetPodsStatus,
   GetServicesType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { KubernetesResourceFilterStatus } from "@/domain/kubernetes-monitoring/atom/kubernetes-monitoring.atom";
 import type { K8sResourceType } from "@/domain/kubernetes-monitoring/types/kubernetes-monitoring.type";
 
 /** 목록 페이지 크기 */
@@ -21,7 +22,7 @@ type KubernetesStatusOption = {
 
 type FilterOptionItem = {
   readonly label: string;
-  readonly value: string;
+  readonly value: KubernetesResourceFilterStatus;
 };
 
 type FilterConfigEnabled = {
@@ -155,9 +156,15 @@ export const KUBERNETES_RESOURCE_FILTER_OPTIONS: Record<
     filterKey: "status",
     filterLabel: "상태",
     options: [
-      { label: "Available", value: GetPersistentVolumesStatus.AVAILABLE },
+      {
+        label: "Available",
+        value: GetPersistentVolumesStatus.AVAILABLE,
+      },
       { label: "Bound", value: GetPersistentVolumesStatus.BOUND },
-      { label: "Released", value: GetPersistentVolumesStatus.RELEASED },
+      {
+        label: "Released",
+        value: GetPersistentVolumesStatus.RELEASED,
+      },
       { label: "Failed", value: GetPersistentVolumesStatus.FAILED },
     ],
   },

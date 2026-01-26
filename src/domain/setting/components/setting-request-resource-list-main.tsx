@@ -5,10 +5,7 @@ import { useResetAtom } from "jotai/utils";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-import type {
-  GetResourceRequestsParams,
-  GetResourceRequestsSort,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { GetResourceRequestsSort } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { GetResourceRequestsSort as GetResourceRequestsSortEnum } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useGetResourceRequests } from "@/api/generated/workspace/workspace";
 import { useGetWorkspaceMemberRole } from "@/api/generated/workspace-member/workspace-member";
@@ -83,17 +80,14 @@ export function SettingRequestResourceListMain() {
     fieldMap: RESOURCE_REQUEST_SORT_FIELD_MAP,
   });
 
-  const queryParams: GetResourceRequestsParams = {
-    pageNo: Math.max(0, page - 1),
-    pageSize: RESOURCE_REQUEST_LIST_PAGE_SIZE,
-    ...(sortRequest
-      ? { sort: sortRequest.sort, order: sortRequest.order }
-      : {}),
-  };
-
   const { data, isLoading, isError } = useGetResourceRequests(
     workspaceId ?? 0,
-    queryParams,
+    {
+      pageNo: Math.max(0, page - 1),
+      pageSize: RESOURCE_REQUEST_LIST_PAGE_SIZE,
+      sort: sortRequest?.sort ?? "REQUESTED_AT",
+      order: sortRequest?.order ?? "DESC",
+    },
     { query: { enabled: workspaceId !== undefined } },
   );
 

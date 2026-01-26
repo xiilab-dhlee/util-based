@@ -21,7 +21,7 @@ export function CredentialCard({
   credentialType,
   creatorName,
   creatorId,
-  createDateTime,
+  createdAt,
 }: CredentialCardProps) {
   const { data: session } = useSession();
   const publish = usePublish();
@@ -79,7 +79,7 @@ export function CredentialCard({
           </FooterItem>
           <FooterItem>
             <Icon name="Calendar01" size={16} color="#404040" />
-            <span>{formatDateSafely(createDateTime)}</span>
+            <span>{formatDateSafely(createdAt)}</span>
           </FooterItem>
         </Footer>
       </Container>

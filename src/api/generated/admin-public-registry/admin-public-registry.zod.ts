@@ -31,59 +31,6 @@ import * as zod from "zod";
 
 /**
  * 
-            공용 레지스트리의 이미지를 삭제합니다.
-            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
-            - 관리자만 삭제할 수 있습니다.
-            - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
-        
- * @summary 공용 이미지 삭제
- */
-export const deleteImagesBodyHarborImageNamesMin = 0;
-export const deleteImagesBodyHarborImageNamesMax = 20;
-
-export const deleteImagesBody = zod
-  .object({
-    harborImageNames: zod
-      .array(zod.string())
-      .min(deleteImagesBodyHarborImageNamesMin)
-      .max(deleteImagesBodyHarborImageNamesMax)
-      .describe("삭제할 Harbor 이미지 경로 목록 (최대 20개)"),
-  })
-  .strict()
-  .describe("이미지 삭제 요청");
-
-export const deleteImagesResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    errorCode: zod.string().optional(),
-    data: zod
-      .object({
-        totalRequested: zod.number().describe("총 요청 개수"),
-        successCount: zod.number().describe("성공 개수"),
-        failureCount: zod.number().describe("실패 개수"),
-        failures: zod
-          .array(
-            zod
-              .object({
-                harborImageName: zod
-                  .string()
-                  .describe("실패한 Harbor 이미지 이름"),
-              })
-              .strict()
-              .describe("삭제 실패한 이미지 상세"),
-          )
-          .describe("실패한 이미지 목록 (실패가 없으면 빈 리스트)"),
-      })
-      .strict()
-      .optional()
-      .describe("이미지 삭제 처리 결과 응답"),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 
             공용 레지스트리의 사용자별 이미지 등록 현황을 조회합니다.
             - 계정별 등록 이미지 개수, 점유 스토리지 용량을 제공합니다.
             - 키워드로 계정명 또는 이메일 검색이 가능합니다.
@@ -189,7 +136,9 @@ export const getPublicImageTagsByAccountIdResponse = zod
         content: zod.array(
           zod
             .object({
+              harborTagId: zod.number().describe("Harbor 태그 ID"),
               harborImageName: zod.string().describe("Harbor 이미지명"),
+              imageDisplayName: zod.string().describe("이미지 표시 이름"),
               tagName: zod.string().describe("태그명"),
               workspaceName: zod
                 .string()

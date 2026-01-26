@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useSession } from "next-auth/react";
 import type { Key } from "react";
 import type { TableProps } from "xiilab-ui";
 
@@ -15,9 +16,11 @@ import {
   sourcecodeCheckedListAtom,
   sourcecodeSortAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
+import type { SourcecodeMode } from "@/domain/sourcecode/types/sourcecode.type";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { useTableSelection } from "@/shared/hooks/use-table-selection";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 import {
   getColumnSortOrder,
   parseSorterToAntdState,
@@ -28,13 +31,16 @@ interface SourcecodeListBodyProps {
   data: SourceCodeListResponse[];
   isLoading: boolean;
   isError: boolean;
+  mode: SourcecodeMode;
 }
 
 export function SourcecodeListBody({
   data,
   isLoading,
   isError,
+  mode,
 }: SourcecodeListBodyProps) {
+  const { data: session } = useSession();
   const [checkedList, setCheckedList] = useAtom(sourcecodeCheckedListAtom);
   const [sort, setSort] = useAtom(sourcecodeSortAtom);
 
@@ -42,6 +48,17 @@ export function SourcecodeListBody({
     checkedList as Set<Key>,
     setCheckedList as (value: Set<Key>) => void,
   );
+
+  const isUser = mode === "user";
+  const sessionAccountId = getSessionAccountId(session);
+
+  const rowSelectionWithDisabled: TableProps<SourceCodeListResponse>["rowSelection"] =
+    {
+      ...rowSelection,
+      getCheckboxProps: (record: SourceCodeListResponse) => ({
+        disabled: isUser && record.creatorId !== sessionAccountId,
+      }),
+    };
 
   const handleChange: TableProps<SourceCodeListResponse>["onChange"] = (
     _,
@@ -67,16 +84,21 @@ export function SourcecodeListBody({
         columns={createSourcecodeColumn([
           {
             key: "sourceCodeName",
+            width: "18%",
+            ellipsis: true,
+            sorter: true,
             sortOrder: getColumnSortOrder(sort, "sourceCodeName"),
           },
-          { key: "gitUrl" },
-          { key: "creatorName" },
-          { key: "isPublic" },
-          { key: "sourceCodeType" },
-          { key: "executionCmd" },
+          { key: "gitUrl", width: "22%", ellipsis: true },
+          { key: "isPublic", width: "8%" },
+          { key: "sourceCodeType", width: "10%" },
+          { key: "executionCmd", width: "16%", ellipsis: true },
+          { key: "creatorName", width: "10%" },
           {
             key: "createdAt",
+            width: "16%",
             align: "left",
+            sorter: true,
             sortOrder: getColumnSortOrder(sort, "createdAt"),
           },
         ])}
@@ -84,8 +106,10 @@ export function SourcecodeListBody({
         columnHeight={32}
         loading={isLoading}
         isError={isError}
+        tableLayout="fixed"
+        scroll={{ x: "100%", y: "100%" }}
         rowKey="sourceCodeId"
-        rowSelection={rowSelection}
+        rowSelection={rowSelectionWithDisabled}
         customRow={SourcecodeRow}
         onChange={handleChange}
       />

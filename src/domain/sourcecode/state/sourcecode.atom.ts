@@ -22,5 +22,7 @@ export const sourcecodeTypeSortAtom =
 export const sourcecodeSearchKeywordAtom = atom<string>("");
 /** 소스코드 검색어 (실제 API 요청에 사용) */
 export const sourcecodeSearchTextAtom = atom<string>("");
+/** 내 항목만 보기 필터 (user 모드 전용) */
+export const sourcecodeHasMineAtom = atomWithReset<boolean>(false);
 /** 체크된 소스코드 목록 */
 export const sourcecodeCheckedListAtom = atomWithReset<Set<number>>(new Set());

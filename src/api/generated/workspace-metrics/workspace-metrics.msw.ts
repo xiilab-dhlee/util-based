@@ -32,31 +32,97 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseBatchWorkloadMetricsResponse,
   BaseResponseListTimeGroupedResourceMetricsResponse,
-  BaseResponseListWorkloadMetricsTimeseriesResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getGetWorkloadResourceMetricsTimeseriesResponseMock = (
-  overrideResponse: Partial<BaseResponseListWorkloadMetricsTimeseriesResponse> = {},
-): BaseResponseListWorkloadMetricsTimeseriesResponse => ({
+  overrideResponse: Partial<BaseResponseBatchWorkloadMetricsResponse> = {},
+): BaseResponseBatchWorkloadMetricsResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
-    data: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      podName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      podRole: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      value: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-  })),
+  data: {
+    gpuUtilization: {
+      success: faker.datatype.boolean(),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      values: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        data: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          podName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          podRole: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+    },
+    gpuMemUtilization: {
+      success: faker.datatype.boolean(),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      values: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        data: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          podName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          podRole: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+    },
+    cpuUtilization: {
+      success: faker.datatype.boolean(),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      values: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        data: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          podName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          podRole: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+    },
+    memUtilization: {
+      success: faker.datatype.boolean(),
+      error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      values: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        dateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        data: Array.from(
+          { length: faker.number.int({ min: 1, max: 10 }) },
+          (_, i) => i + 1,
+        ).map(() => ({
+          podName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          podRole: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          gpuIndex: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          modelName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        })),
+      })),
+    },
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -87,12 +153,12 @@ export const getGetResourceMetricsTimeseriesResponseMock = (
 
 export const getGetWorkloadResourceMetricsTimeseriesMockHandler = (
   overrideResponse?:
-    | BaseResponseListWorkloadMetricsTimeseriesResponse
+    | BaseResponseBatchWorkloadMetricsResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponseListWorkloadMetricsTimeseriesResponse>
-        | BaseResponseListWorkloadMetricsTimeseriesResponse),
+        | Promise<BaseResponseBatchWorkloadMetricsResponse>
+        | BaseResponseBatchWorkloadMetricsResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(

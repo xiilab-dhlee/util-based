@@ -46,13 +46,55 @@ export const getGetAvailablePresetsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      presetId: faker.number.int({ min: undefined, max: undefined }),
+      resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
+      entityId: faker.number.int({ min: undefined, max: undefined }),
       presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       description: faker.string.alpha({ length: { min: 10, max: 20 } }),
       resource: {
-        [faker.string.alphanumeric(5)]: {},
+        cpu: {
+          requestCore: faker.number.int({ min: undefined, max: undefined }),
+        },
+        memory: {
+          requestByte: faker.number.int({ min: undefined, max: undefined }),
+        },
+        gpu: {
+          gpuType: faker.helpers.arrayElement([
+            "NORMAL",
+            "MIG",
+            "MPS",
+          ] as const),
+          detail: {
+            normal: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+            mig: Array.from(
+              { length: faker.number.int({ min: 1, max: 10 }) },
+              (_, i) => i + 1,
+            ).map(() => ({
+              profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            })),
+            mps: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
+          },
+          gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        },
       },
-      jobType: faker.helpers.arrayElement(["BATCH", "IDE"] as const),
+      jobType: faker.helpers.arrayElement([
+        "BATCH",
+        "INTERACTIVE",
+        "DISTRIBUTED",
+      ] as const),
       nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
     })),
   },

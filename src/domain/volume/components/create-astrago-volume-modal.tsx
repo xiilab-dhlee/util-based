@@ -22,13 +22,6 @@ import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
-const DEFAULT_FORM_VALUES: CreateAstragoVolumeFormType = {
-  volumeName: "",
-  isPublic: "true",
-  mountPath: "",
-  storageId: "",
-};
-
 export function CreateAstragoVolumeModal() {
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
@@ -42,7 +35,11 @@ export function CreateAstragoVolumeModal() {
     reset,
   } = useForm<CreateAstragoVolumeFormType>({
     resolver: zodResolver(createAstragoVolumeSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
+    defaultValues: {
+      volumeName: "",
+      isPublic: "true",
+      mountPath: "",
+    },
   });
 
   const handleCancel = () => {
@@ -60,7 +57,7 @@ export function CreateAstragoVolumeModal() {
           volumeName: data.volumeName,
           isPublic: data.isPublic === "true",
           mountPath: data.mountPath,
-          storageId: Number(data.storageId),
+          storageId: data.storageId,
           workspaceId: selectedWorkspace.workspaceId,
         },
       },
@@ -76,7 +73,7 @@ export function CreateAstragoVolumeModal() {
   };
 
   useSubscribe(VOLUME_EVENTS.openCreateAstragoModal, () => {
-    reset(DEFAULT_FORM_VALUES);
+    reset();
     setOpen(true);
   });
 
@@ -86,14 +83,16 @@ export function CreateAstragoVolumeModal() {
       type="primary"
       icon={<Icon name="Astrago" color="#fff" size={16} />}
       open={open}
-      closable
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       title="AstraGo Storage"
       showCancelButton
       onCancel={handleCancel}
       okText="생성"
       onOk={handleSubmit(onSubmit)}
       centered
-      okButtonProps={{ disabled: isPending }}
+      okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >
       <StyledForm>

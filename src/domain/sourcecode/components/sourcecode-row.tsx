@@ -42,8 +42,8 @@ export function SourcecodeRow({
 
     if (rowData && !isActive) {
       const detailRoute = isUser
-        ? ROUTES.USER_SOURCECODE_DETAIL(String(rowData.sourceCodeId))
-        : `${ROUTES.ADMIN_SOURCECODE_MANAGEMENT}/${rowData.sourceCodeId}`;
+        ? ROUTES.USER_SOURCECODE_DETAIL(rowData.sourceCodeId)
+        : ROUTES.ADMIN_SOURCECODE_DETAIL(rowData.sourceCodeId);
       router.push(detailRoute);
     }
   };

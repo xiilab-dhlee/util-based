@@ -1,13 +1,13 @@
 "use client";
 
 import { SecurityTotalColumnHeader } from "@/domain/security/components/security-total-column-header";
+import type { SecurityScanResultType } from "@/domain/security/schemas/security-scan.schema";
 import { securityScanListMock } from "@/mocks/data/security-scan.mock";
 import { createSecurityColumn } from "@/shared/components/column/create-security-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { VulnerabilityTooltip } from "@/shared/components/tooltip/vulnerability-tooltip";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
-import type { SecurityScanResultType } from "../schemas/security-scan.schema";
 
 export function SecurityScanListBody() {
   return (

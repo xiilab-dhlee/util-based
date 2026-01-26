@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
 import type { AccountRole } from "@/shared/constants/core.constant";
+import { ROUTES } from "@/shared/constants/routes.constant";
 
 // ============================================================================
 // 타입 정의
@@ -224,24 +225,26 @@ async function fetchTestToken(): Promise<KeycloakTokenResponse | null> {
   }
 }
 
-/** 테스트 환경용 JWT 토큰 생성 */
-async function createTestJwt(token: JWT): Promise<JWT> {
+/** 테스트 환경용 JWT 토큰 생성 - fetchTestToken에서 받은 정보로 완전히 대체 */
+async function createTestJwt(): Promise<JWT> {
   // 캐시된 토큰이 유효하면 재사용
   const bufferMs = TOKEN_EXPIRY_BUFFER_SECONDS * 1000;
   if (
     cachedTestToken &&
     Date.now() < cachedTestToken.expires_at * 1000 - bufferMs
   ) {
+    const { user, access_token, refresh_token, expires_at } = cachedTestToken;
     return {
-      ...token,
-      ...cachedTestToken.user,
-      access_token: cachedTestToken.access_token,
-      refresh_token: cachedTestToken.refresh_token,
-      expires_at: cachedTestToken.expires_at,
+      // 사용자 정보 (fetchTestToken에서 파싱한 정보)
+      ...user,
+      // 토큰 정보
+      access_token,
+      refresh_token,
+      expires_at,
     };
   }
 
-  // 새 토큰 발급
+  // 새 토큰 발급 - 항상 fetchTestToken 사용
   const keycloakToken = await fetchTestToken();
   if (!keycloakToken) {
     throw new Error("[Auth] 테스트 토큰 발급 실패");
@@ -264,7 +267,13 @@ async function createTestJwt(token: JWT): Promise<JWT> {
     user,
   };
 
-  return { ...token, ...user, ...cachedTestToken };
+  // fetchTestToken에서 받은 정보만 사용 (기존 token 정보 제외)
+  return {
+    ...user,
+    access_token: cachedTestToken.access_token,
+    refresh_token: cachedTestToken.refresh_token,
+    expires_at: cachedTestToken.expires_at,
+  };
 }
 
 // ============================================================================
@@ -448,26 +457,29 @@ const testCallbacks: NextAuthOptions["callbacks"] = {
   },
 
   async jwt({ token, user }) {
-    // 최초 로그인 또는 토큰이 없는 경우
+    // 초기 로그인이거나 토큰이 없는 경우
     if (user || !token.access_token) {
-      return createTestJwt(token);
+      return createTestJwt();
     }
 
-    // 토큰 만료 체크
+    // 토큰 유효성 검사
     const expiresAt = token.expires_at as number;
     const remainingSeconds = Math.floor((expiresAt * 1000 - Date.now()) / 1000);
     const isValid = remainingSeconds > TOKEN_EXPIRY_BUFFER_SECONDS;
 
-    if (!isValid) {
+    if (isValid) {
       authDebug(
-        `⏰ [테스트] 토큰 만료 임박 (${formatRemainingTime(remainingSeconds)}) → 재발급`,
+        `🔄 [테스트] 세션 체크: 토큰 유효 (만료까지 ${formatRemainingTime(remainingSeconds)})`,
       );
-      // 캐시 무효화 후 새 토큰 발급
-      cachedTestToken = null;
-      return createTestJwt(token);
+      return token;
     }
 
-    return token;
+    // 토큰 만료 → 캐시 무효화 후 새 토큰 발급
+    authDebug(
+      `⏰ [테스트] 토큰 만료 (${formatRemainingTime(remainingSeconds)}) → 재발급`,
+    );
+    cachedTestToken = null; // 캐시된 토큰 무효화
+    return createTestJwt();
   },
 
   async session({ session, token }) {
@@ -529,7 +541,8 @@ const keycloakCallbacks: NextAuthOptions["callbacks"] = {
  * - HTTPS: secure 쿠키 사용, __Secure- 접두사
  * - HTTP: 일반 쿠키 사용
  */
-const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith("https://");
+const useSecureCookies =
+  process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
 
 /**
  * 쿠키 도메인 추출
@@ -557,7 +570,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: useTestAuth ? testCallbacks : keycloakCallbacks,
 
   pages: {
-    signIn: "/signin",
+    signIn: ROUTES.AUTH_SIGNIN,
     error: "/error",
   },
 
@@ -600,7 +613,7 @@ export const authOptions: NextAuthOptions = {
         ? "__Secure-next-auth.callback-url"
         : "next-auth.callback-url",
       options: {
-        httpOnly: true,
+        httpOnly: false,
         sameSite: "lax",
         path: "/",
         secure: useSecureCookies,

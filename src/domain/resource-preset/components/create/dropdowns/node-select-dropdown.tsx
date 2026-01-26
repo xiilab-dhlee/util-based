@@ -1,7 +1,7 @@
 import { CompoundDropdown } from "xiilab-ui";
 
+import { NodeDropdownOption } from "@/domain/resource-preset/components/create/dropdowns/node-dropdown-option";
 import type { GpuNodeListType } from "@/shared/schemas/gpu.schema";
-import { NodeDropdownOption } from "./node-dropdown-option";
 
 interface NodeSelectDropdownProps {
   nodes: GpuNodeListType[];

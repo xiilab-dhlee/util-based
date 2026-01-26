@@ -6,14 +6,14 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { GpuCard } from "@/domain/workload/components/create/gpu-card";
+import { GpuNodeCard } from "@/domain/workload/components/create/gpu-node-card";
 import {
   gpuAtom,
   gpuNodeAtom,
 } from "@/domain/workload/state/create-workload.atom";
 import { useGetGpuNodes } from "@/shared/hooks/use-get-gpu-nodes";
 import type { GpuListType, GpuNodeListType } from "@/shared/schemas/gpu.schema";
-import { GpuCard } from "./gpu-card";
-import { GpuNodeCard } from "./gpu-node-card";
 
 interface CreateWorkloadGpuNormalProps {
   type: "NORMAL" | "MPS";

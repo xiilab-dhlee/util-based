@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { SOURCECODE_DEFAULT_SORT } from "@/domain/sourcecode/constants/sourcecode.constant";
 import {
   sourcecodeCheckedListAtom,
+  sourcecodeHasMineAtom,
   sourcecodePageAtom,
   sourcecodeSearchKeywordAtom,
   sourcecodeSearchTextAtom,
@@ -23,6 +24,7 @@ export function SourcecodeListMain() {
   const resetCheckedList = useResetAtom(sourcecodeCheckedListAtom);
   const setSort = useSetAtom(sourcecodeSortAtom);
   const resetCodeType = useResetAtom(sourcecodeTypeSortAtom);
+  const resetHasMine = useResetAtom(sourcecodeHasMineAtom);
 
   useEffect(() => {
     resetPage();
@@ -31,6 +33,7 @@ export function SourcecodeListMain() {
     resetCheckedList();
     setSort(SOURCECODE_DEFAULT_SORT);
     resetCodeType();
+    resetHasMine();
   }, [
     resetPage,
     setSearchText,
@@ -38,6 +41,7 @@ export function SourcecodeListMain() {
     resetCheckedList,
     setSort,
     resetCodeType,
+    resetHasMine,
   ]);
 
   return (

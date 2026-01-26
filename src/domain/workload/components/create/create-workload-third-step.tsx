@@ -4,13 +4,13 @@ import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Input, Typography } from "xiilab-ui";
 
+import { CreateWorkloadAutoSourcecode } from "@/domain/workload/components/create/create-workload-auto-sourcecode";
+import { CreateWorkloadSourcecode } from "@/domain/workload/components/create/create-workload-sourcecode";
+import { CreateWorkloadVolume } from "@/domain/workload/components/create/create-workload-volume";
 import {
   imageTypeAtom,
   workloadOutputPathAtom,
 } from "@/domain/workload/state/create-workload.atom";
-import { CreateWorkloadAutoSourcecode } from "./create-workload-auto-sourcecode";
-import { CreateWorkloadSourcecode } from "./create-workload-sourcecode";
-import { CreateWorkloadVolume } from "./create-workload-volume";
 
 export function CreateWorkloadThirdStep() {
   const imageType = useAtomValue(imageTypeAtom);

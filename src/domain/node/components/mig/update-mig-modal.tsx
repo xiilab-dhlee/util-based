@@ -1,246 +1,216 @@
-﻿"use client";
+"use client";
 
-import { groupBy } from "es-toolkit";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtom, useSetAtom } from "jotai";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 import { Icon, Modal, Radio } from "xiilab-ui";
 
-import { useGetNodeMigInfo } from "@/domain/node/hooks/use-get-mig-info";
-import { useUpdateMig } from "@/domain/node/hooks/use-update-mig";
-import type { NodeListType } from "@/domain/node/schemas/node.schema";
+import {
+  getGetClusterNodesQueryKey,
+  getMigConfiguration,
+  useApplyMigConfiguration,
+} from "@/api/generated/admin-cluster/admin-cluster";
+import type { ClusterNodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { MigConfigSelect } from "@/domain/node/components/mig/mig-config-select";
+import { MigCountSelect } from "@/domain/node/components/mig/mig-count-select";
+import { MigGpuItem } from "@/domain/node/components/mig/mig-gpu-item";
+import { SelectDisplayConfig } from "@/domain/node/components/mig/select-display-config";
 import {
   migGpuProductAtom,
   migGpusAtom,
-  openUpdateMigModalAtom,
   selectedMigConfigIdAtom,
   selectedMigCountAtom,
   selectedMigGpuIndexAtom,
 } from "@/domain/node/state/node.atom";
-import type {
-  MigGpu,
-  MigInfo,
-  UpdateMigPayload,
-} from "@/domain/node/types/node.type";
 import { MigUtil } from "@/domain/node/utils/mig.util";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
-import { ApplyOnceTooltipTitle } from "@/shared/components/tooltip-title/apply-once-tooltip-title";
 import { UpdateMigTooltipTitle } from "@/shared/components/tooltip-title/update-mig-tooltip-title";
 import { NODE_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { MigConfigSelect } from "./mig-config-select";
-import { MigCountSelect } from "./mig-count-select";
-import { MigGpuItem } from "./mig-gpu-item";
-import { SelectDisplayConfig } from "./select-display-config";
 
-// import { useDisableMig } from "@/domain/node/hooks/use-disable-mig";
+type ErrorState = {
+  type: "not_found" | "error" | null;
+  message?: string;
+};
 
-/**
- * MIG 설정 변경 모달 컴포넌트
- *
- * 노드의 MIG(Multi-Instance GPU) 설정을 변경할 수 있는 모달입니다.
- * - GPU 목록 표시 및 선택
- * - MIG 개수 및 설정 선택
- * - 일괄 적용 옵션
- * - 설정 변경 후 서버에 업데이트 요청
- *
- * @returns MIG 설정 변경 모달 컴포넌트
- */
+const APPLY_ONCE_OPTIONS = { YES: "Y", NO: "N" } as const;
+type ApplyOnceOption =
+  (typeof APPLY_ONCE_OPTIONS)[keyof typeof APPLY_ONCE_OPTIONS];
+const SUPPORTED_MODELS = "A30, A100, H100, H200, B200";
+const NVIDIA_MIG_DOC_URL =
+  "https://docs.nvidia.com/datacenter/tesla/mig-user-guide";
+
 export function UpdateMigModal() {
-  // 모달 열림/닫힘 상태 관리
-  const { open, onOpen, onClose } = useGlobalModal(openUpdateMigModalAtom);
+  const [open, setOpen] = useState(false);
+  const [nodeName, setNodeName] = useState("");
+  const [applyOnce, setApplyOnce] = useState<ApplyOnceOption>(
+    APPLY_ONCE_OPTIONS.YES,
+  );
+  const [isUnsupportedModel, setIsUnsupportedModel] = useState(false);
+  const [originalGpuProduct, setOriginalGpuProduct] = useState("");
+  const [errorState, setErrorState] = useState<ErrorState>({ type: null });
+  const [isLoading, setIsLoading] = useState(false);
 
-  // MIG 관련 상태 관리
-  const [migGpus, setMigGpus] = useAtom(migGpusAtom); // GPU 목록
-  const migGpuProduct = useAtomValue(migGpuProductAtom); // GPU 제품명 (A30, A100 등)
+  const [migGpus, setMigGpus] = useAtom(migGpusAtom);
   const setMigGpuProduct = useSetAtom(migGpuProductAtom);
   const [selectedMigGpuIndex, setSelectedMigGpuIndex] = useAtom(
-    selectedMigGpuIndexAtom, // 선택된 GPU 인덱스
+    selectedMigGpuIndexAtom,
   );
-  const setSelectedMigCount = useSetAtom(selectedMigCountAtom); // 선택된 MIG 개수
-  const setSelectedMigConfigId = useSetAtom(selectedMigConfigIdAtom); // 선택된 MIG 설정 ID
+  const [selectedMigCount, setSelectedMigCount] = useAtom(selectedMigCountAtom);
+  const [selectedMigConfigId, setSelectedMigConfigId] = useAtom(
+    selectedMigConfigIdAtom,
+  );
 
-  // 모달 내부 상태
-  const [nodeName, setNodeName] = useState(""); // 노드 이름
-  const [migKey, setMigKey] = useState(""); // MIG 키
-  const [applyOnce, setApplyOnce] = useState("Y"); // 일괄 적용 여부 (Y: 적용, N: 미적용)
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useApplyMigConfiguration();
 
-  // 커스텀 훅
-  const { execute } = useGetNodeMigInfo(); // MIG 정보 조회
-  const updateMig = useUpdateMig(); // MIG 업데이트
-  // const displayMig = useDisableMig(); // MIG 종료
+  // MIG가 활성화되었지만 Config가 선택되지 않은 경우 (DISABLED는 예외)
+  const isMigConfigRequired =
+    selectedMigCount !== "DISABLED" && selectedMigConfigId === -1;
+  const isSubmitDisabled =
+    isUnsupportedModel || errorState.type !== null || isMigConfigRequired;
+  const isApplyToAll = applyOnce === APPLY_ONCE_OPTIONS.YES;
 
-  /**
-   * MIG 설정 변경 제출 핸들러
-   *
-   * 사용자가 확인 버튼을 클릭했을 때 호출됩니다.
-   * createPayload()로 서버에 전송할 데이터를 생성하고,
-   * updateMig.mutate()로 서버에 MIG 설정 변경을 요청합니다.
-   */
-  const handleSubmit = () => {
-    const payload = createPayload();
-
-    if (payload) {
-      updateMig.mutate(payload, {
-        onSuccess: () => {
-          onClose();
-        },
-      });
-    }
+  const handleCancel = () => {
+    if (isPending) return;
+    setOpen(false);
   };
 
-  /**
-   * 서버에 전송할 MIG 설정 변경 페이로드 생성
-   *
-   * 일괄 적용 여부에 따라 GPU 설정을 처리하고,
-   * configId별로 그룹화하여 MigInfo 배열을 생성합니다.
-   * 각 MigInfo에는 GPU 인덱스, MIG 활성화 상태, profile, configId가 포함됩니다.
-   *
-   * @returns UpdateMigPayload | null - 서버에 전송할 페이로드
-   */
-  const createPayload = (): UpdateMigPayload | null => {
-    let clientMigInfos: MigGpu[] = [];
+  const handleSubmit = () => {
+    if (isPending) return;
 
-    // 일괄 적용이 활성화된 경우, 선택된 GPU의 설정을 모든 GPU에 적용
-    if (applyOnce === "Y") {
-      clientMigInfos = migGpus.map((item) => {
-        return {
-          ...item,
-          migEnable: migGpus[selectedMigGpuIndex].migEnable,
-          configId: migGpus[selectedMigGpuIndex].configId,
-        };
-      });
-    } else {
-      // 일괄 적용이 비활성화된 경우, 각 GPU의 개별 설정 유지
-      clientMigInfos = migGpus;
-    }
-
-    // configId별로 GPU 목록 그룹화
-    const groupByConfigId = groupBy(clientMigInfos, (item) => {
-      if (item.configId > 0) {
-        return item.configId;
-      }
-      return "null"; // configId가 -1인 경우 (MIG 비활성화)
-    });
-
-    // 그룹화된 데이터를 MigInfo 배열로 변환
-    const migInfos: MigInfo[] = Object.entries(groupByConfigId).map(
-      ([, group]) => {
-        const configId = group[0].configId;
-
-        // configId로부터 profile 생성 (GPU 제품 정보 필요)
-        let profile = {};
-        if (configId > 0 && migGpuProduct) {
-          const util = new MigUtil(migGpuProduct);
-          // configId와 GPU 제품을 기반으로 profile 생성
-          profile = util.createProfile(configId);
-        }
-
-        return {
-          gpuIndexs: group.map((item) => item.gpuIndex), // 해당 configId를 사용하는 GPU 인덱스들
-          migEnable: group[0].migEnable, // MIG 활성화 상태
-          profile, // GPU 인스턴스별 메모리 설정 정보
-          configId: configId === -1 ? undefined : configId, // configId (-1인 경우 undefined)
-        };
-      },
+    const payload = MigUtil.toRequestPayload(
+      migGpus,
+      selectedMigGpuIndex,
+      isApplyToAll,
     );
 
-    return {
-      nodeName, // 대상 노드 이름
-      migInfos, // MIG 설정 정보 배열
-      migKey, // MIG 키
-    };
+    mutate(
+      { nodeName, data: payload },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getGetClusterNodesQueryKey(),
+          });
+          setOpen(false);
+        },
+      },
+    );
   };
 
-  /**
-   * 일괄 적용 옵션 변경 핸들러
-   *
-   * 사용자가 일괄 적용 라디오 버튼을 클릭했을 때 호출됩니다.
-   * "Y": 선택된 GPU의 설정을 모든 GPU에 적용
-   * "N": 각 GPU의 개별 설정 유지
-   *
-   * @param value - "Y" 또는 "N"
-   */
-  const handleClickApplyOnce = (value: string) => {
-    setApplyOnce(value);
+  const resetState = () => {
+    setApplyOnce(APPLY_ONCE_OPTIONS.YES);
+    setSelectedMigCount("DISABLED");
+    setSelectedMigConfigId(-1);
+    setErrorState({ type: null });
+    setIsUnsupportedModel(false);
+    setMigGpus([]);
+    setSelectedMigGpuIndex(-1);
   };
 
-  /**
-   * MIG 설정 변경 모달 열기 이벤트 구독
-   *
-   * NODE_EVENTS.sendUpdateMig 이벤트를 구독하여
-   * 다른 컴포넌트에서 MIG 설정 변경 모달을 열도록 요청할 때 호출됩니다.
-   *
-   * 처리 과정:
-   * 1. 노드 이름 설정 및 기본값 초기화
-   * 2. 서버에서 MIG 설정 정보 조회
-   * 3. MIG 정보를 GPU 목록으로 변환
-   * 4. 첫 번째 GPU의 설정을 기본값으로 설정
-   * 5. 모달 열기
-   */
-  useSubscribe(
-    NODE_EVENTS.sendUpdateMig,
-    async ({ nodeName }: NodeListType) => {
-      // 노드 이름 설정
-      setNodeName(nodeName);
-      // 일괄 적용의 기본 값을 Y로 설정
-      setApplyOnce("Y");
-      // 개수 설정을 기본값으로 설정
-      setSelectedMigCount("DISABLED");
-      // ConfigId 설정을 기본값으로 설정
-      setSelectedMigConfigId(-1);
+  const loadMigConfigAndOpenModal = async (targetNodeName: string) => {
+    setNodeName(targetNodeName);
+    resetState();
+    setIsLoading(true);
+    setOpen(true);
 
-      try {
-        // MIG 설정 정보 조회
+    try {
+      const migData = await getMigConfiguration(targetNodeName);
 
-        const { migInfos, gpuProduct, migKey } = await execute({ nodeName });
-
-        // MIG 정보를 GPU 목록으로 변환
-        // migInfos의 각 항목에서 gpuIndexs 배열을 평면화하여 개별 GPU 항목 생성
-        const migGpus = migInfos
-          .flatMap((migInfo: MigInfo) =>
-            migInfo.gpuIndexs.map((gpuIndex: number) => ({
-              gpuIndex,
-              migEnable: migInfo.migEnable,
-              configId: migInfo.configId || -1,
-            })),
-          )
-          .sort((a: MigGpu, b: MigGpu) => a.gpuIndex - b.gpuIndex); // GPU 인덱스 순으로 정렬
-
-        // MIG 키 설정
-        setMigKey(migKey);
-        // GPU 목록 설정
-        setMigGpus(migGpus);
-        // GPU 제품 설정
-        setMigGpuProduct(gpuProduct);
-
-        // GPU 목록이 있는 경우
-        if (migGpus.length > 0) {
-          // GPU 목록 첫 번째 인덱스 선택
-          setSelectedMigGpuIndex(migGpus[0].gpuIndex);
-
-          // 첫 번째 GPU가 MIG 활성화된 경우
-          if (migGpus[0].migEnable) {
-            // GPU 제품을 기반으로 MigUtil 인스턴스 생성하여 인스턴스 개수 계산
-            const util = new MigUtil(gpuProduct);
-            const count = util.getInstanceCount(migGpus[0].configId);
-            // 개수 셀렉트 설정 (count가 0이면 "DISABLED")
-            setSelectedMigCount(count === 0 ? "DISABLED" : count.toString());
-            // config id 설정
-            setSelectedMigConfigId(migGpus[0].configId);
-          }
-        }
-
-        // 모달 열기
-        onOpen();
-      } catch (error) {
-        console.error(error);
-        toast.error("MIG 설정 정보 조회 중 오류가 발생했습니다.");
+      if (!migData) {
+        setErrorState({ type: "not_found" });
+        return;
       }
-    },
+
+      const { gpuProduct, migInfo } = migData;
+      const gpuList = MigUtil.toGpuList(migInfo ?? []);
+      const supportedModel = gpuProduct
+        ? MigUtil.findSupportedModel(gpuProduct)
+        : null;
+
+      setIsUnsupportedModel(!supportedModel);
+      setOriginalGpuProduct(gpuProduct ?? "");
+      setMigGpus(gpuList);
+      setMigGpuProduct(supportedModel ?? gpuProduct ?? "");
+
+      if (gpuList.length > 0) {
+        const firstGpu = gpuList[0];
+        setSelectedMigGpuIndex(firstGpu.gpuIndex);
+
+        if (firstGpu.migEnable && supportedModel) {
+          const util = new MigUtil(supportedModel);
+          const count = util.getInstanceCount(firstGpu.configId);
+          setSelectedMigCount(count === 0 ? "DISABLED" : count.toString());
+          setSelectedMigConfigId(firstGpu.configId);
+        }
+      }
+    } catch (error) {
+      setErrorState({
+        type: "error",
+        message:
+          error instanceof Error ? error.message : "알 수 없는 오류입니다.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useSubscribe<ClusterNodeListResponse>(
+    NODE_EVENTS.openUpdateMigModal,
+    ({ nodeName }) => loadMigConfigAndOpenModal(nodeName),
   );
+
+  /**
+   * 오버레이 렌더링 (상호 배타적)
+   * - errorState가 있으면 에러 오버레이 우선 표시
+   * - 그렇지 않고 지원되지 않는 모델이면 미지원 오버레이 표시
+   */
+  const renderOverlay = () => {
+    // 에러 상태가 있으면 에러 오버레이 우선
+    if (errorState.type !== null) {
+      return (
+        <Overlay>
+          <OverlayContent>
+            <Icon name="Notice" color="#ff4d4f" size={24} />
+            <OverlayTitle>
+              {errorState.type === "not_found"
+                ? "MIG 설정 정보 없음"
+                : "MIG 설정 조회 오류"}
+            </OverlayTitle>
+            <OverlayDescription>
+              {errorState.type === "not_found"
+                ? "해당 노드의 MIG 설정 정보를 찾을 수 없습니다."
+                : "MIG 설정 정보 조회 중 오류가 발생했습니다."}
+            </OverlayDescription>
+            {errorState.message && (
+              <OverlayDetail>{errorState.message}</OverlayDetail>
+            )}
+          </OverlayContent>
+        </Overlay>
+      );
+    }
+
+    // 지원되지 않는 GPU 모델
+    if (isUnsupportedModel) {
+      return (
+        <Overlay>
+          <OverlayContent>
+            <Icon name="Notice" color="#faad14" size={24} />
+            <OverlayTitle>지원되지 않는 GPU 모델</OverlayTitle>
+            <OverlayDescription>
+              {originalGpuProduct
+                ? `"${originalGpuProduct}" 모델은 MIG 설정을 지원하지 않습니다.`
+                : "GPU 모델 정보를 확인할 수 없습니다."}
+            </OverlayDescription>
+            <OverlayHint>지원 모델: {SUPPORTED_MODELS}</OverlayHint>
+          </OverlayContent>
+        </Overlay>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <Modal
@@ -248,44 +218,49 @@ export function UpdateMigModal() {
       icon={<Icon name="Information" color="#fff" size={14} />}
       modalWidth={580}
       open={open}
-      closable
       title={nodeName}
       showCancelButton
       cancelText="취소"
-      onCancel={onClose}
+      onCancel={handleCancel}
       okText="확인"
       onOk={handleSubmit}
       centered
       showHeaderBorder
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      loading={isLoading}
       okButtonProps={{
-        disabled: updateMig.isPending, // MIG 업데이트 중일 때 확인 버튼 비활성화
+        disabled: isSubmitDisabled,
+        loading: isPending,
+        title: isMigConfigRequired ? "Config를 선택해 주세요." : undefined,
       }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <Container>
-        {/* 왼쪽: GPU 목록 */}
-        <Left>
+        {renderOverlay()}
+
+        <LeftPanel>
           <Field>
             <FieldTitle>GPU 목록</FieldTitle>
           </Field>
-          <LeftBody>
+          <GpuListBody>
             {migGpus.map((gpu) => (
-              <MigGpuItem key={gpu.gpuIndex} {...gpu} />
+              <MigGpuItem key={gpu.gpuIndex} {...gpu} disabled={isPending} />
             ))}
-          </LeftBody>
-        </Left>
+          </GpuListBody>
+        </LeftPanel>
 
-        {/* 오른쪽: MIG 설정 */}
-        <Right>
-          {/* MIG 설정 헤더 */}
+        <RightPanel>
           <Field>
             <FieldTitle>
               MIG 설정
-              <GuideTooltip title={<UpdateMigTooltipTitle />} />
+              <GuideTooltip maxWidth={300} title={<UpdateMigTooltipTitle />} />
             </FieldTitle>
             <ExternalGuide>
               Nvidia Profile 메뉴얼 원하시면{" "}
               <a
-                href="https://docs.nvidia.com/datacenter/tesla/mig-user-guide"
+                href={NVIDIA_MIG_DOC_URL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -295,64 +270,60 @@ export function UpdateMigModal() {
             </ExternalGuide>
           </Field>
 
-          {/* MIG 개수 및 설정 선택 */}
-          <Filter>
-            <MigCountSelect />
-            <MigConfigSelect />
-          </Filter>
+          <FilterRow>
+            <MigCountSelect disabled={isPending} />
+            <MigConfigSelect disabled={isPending} />
+          </FilterRow>
 
-          {/* MIG 인스턴스 표시 */}
-          <RightBody>
-            <DisplayConfigWrapper>
+          <ConfigDisplayArea>
+            <ConfigDisplayWrapper>
               <SelectDisplayConfig />
-            </DisplayConfigWrapper>
-          </RightBody>
+            </ConfigDisplayWrapper>
+          </ConfigDisplayArea>
 
-          {/* 일괄 적용 옵션 */}
           <Field>
             <FieldTitle>
               일괄 적용
-              <GuideTooltip title={<ApplyOnceTooltipTitle />} />
+              <GuideTooltip title="일괄적용시 상단 GPU 목록이 전부 선택되어 일괄적용할 수 있습니다." />
             </FieldTitle>
           </Field>
           <ApplyOnceWrapper>
             <RadioItem>
               <Radio
-                value="Y"
+                value={APPLY_ONCE_OPTIONS.YES}
                 label="적용"
-                checked={applyOnce === "Y"}
-                onClick={() => handleClickApplyOnce("Y")}
+                checked={isApplyToAll}
+                onClick={() => setApplyOnce(APPLY_ONCE_OPTIONS.YES)}
                 size="small"
+                disabled={isPending}
               />
             </RadioItem>
             <RadioItem>
               <Radio
-                value="N"
+                value={APPLY_ONCE_OPTIONS.NO}
                 label="미적용"
-                checked={applyOnce === "N"}
-                onClick={() => handleClickApplyOnce("N")}
+                checked={!isApplyToAll}
+                onClick={() => setApplyOnce(APPLY_ONCE_OPTIONS.NO)}
                 size="small"
+                disabled={isPending}
               />
             </RadioItem>
           </ApplyOnceWrapper>
-        </Right>
+        </RightPanel>
       </Container>
     </Modal>
   );
 }
 
-// 스타일드 컴포넌트들
-
-/** 메인 컨테이너 - 좌우 레이아웃 */
 const Container = styled.div`
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
 `;
 
-/** 공통 래퍼 스타일 - 좌우 패널 공통 스타일 */
-const wrapStyle = css`
+const panelStyle = css`
   border: 1px solid var(--border-color);
   border-radius: 4px 4px 2px 2px;
   height: 346px;
@@ -361,25 +332,19 @@ const wrapStyle = css`
   display: flex;
   flex-direction: column;
   background-color: #fff;
-
   --border-color: #e9e9e9;
 `;
 
-/** 왼쪽 패널 - GPU 목록 */
-const Left = styled.div`
+const LeftPanel = styled.div`
   flex: 1;
-
-  ${wrapStyle}
+  ${panelStyle}
 `;
 
-/** 오른쪽 패널 - MIG 설정 */
-const Right = styled.div`
+const RightPanel = styled.div`
   width: 380px;
-
-  ${wrapStyle}
+  ${panelStyle}
 `;
 
-/** 필드 헤더 컨테이너 */
 const Field = styled.div`
   font-weight: 600;
   font-size: 12px;
@@ -388,12 +353,9 @@ const Field = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding-right: 10px;
-  padding-left: 10px;
-  padding-bottom: 4px;
+  padding: 0 10px 4px;
 `;
 
-/** 필드 제목 */
 const FieldTitle = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -404,7 +366,6 @@ const FieldTitle = styled.div`
   color: #000;
 `;
 
-/** 외부 가이드 링크 */
 const ExternalGuide = styled.div`
   font-weight: 400;
   font-size: 10px;
@@ -421,44 +382,37 @@ const ExternalGuide = styled.div`
   }
 `;
 
-/** 필터 영역 - MIG 개수 및 설정 선택 */
-const Filter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 10px;
-  padding-left: 10px;
-  margin-bottom: 10px;
-`;
-
-/** 왼쪽 패널 본문 - GPU 목록 */
-const LeftBody = styled.div`
+const GpuListBody = styled.div`
   display: flex;
   flex-direction: column;
   padding: 4px;
   overflow-y: auto;
 `;
 
-/** 오른쪽 패널 본문 */
-const RightBody = styled.div`
+const FilterRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  margin-bottom: 10px;
+`;
+
+const ConfigDisplayArea = styled.div`
   flex: 1;
 `;
 
-/** MIG 인스턴스 표시 영역 */
-const DisplayConfigWrapper = styled.div`
+const ConfigDisplayWrapper = styled.div`
   border: 1px solid #e1e4e7;
   background-color: #fafafa;
   padding: 10px 12px;
   border-radius: 2px;
   max-height: 190px;
-  margin: 0 10px;
+  margin: 0 10px 18px;
   gap: 4px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 18px;
 `;
 
-/** 일괄 적용 옵션 래퍼 */
 const ApplyOnceWrapper = styled.div`
   border: 1px solid #e1e4e7;
   background-color: #fafafa;
@@ -471,7 +425,6 @@ const ApplyOnceWrapper = styled.div`
   align-items: center;
 `;
 
-/** 라디오 버튼 아이템 */
 const RadioItem = styled.div`
   flex: 1;
   display: flex;
@@ -482,4 +435,55 @@ const RadioItem = styled.div`
   & + & {
     border-left: 1px solid #e1e4e7;
   }
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-radius: 4px;
+`;
+
+const OverlayContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 20px;
+`;
+
+const OverlayTitle = styled.div`
+  font-weight: 600;
+  font-size: 14px;
+  color: #262626;
+  margin-top: 4px;
+`;
+
+const OverlayDescription = styled.div`
+  font-size: 12px;
+  color: #595959;
+  max-width: 300px;
+  word-break: keep-all;
+`;
+
+const OverlayHint = styled.div`
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-top: 4px;
+`;
+
+const OverlayDetail = styled.div`
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-top: 4px;
+  max-width: 300px;
+  word-break: break-all;
 `;

@@ -1,23 +1,22 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
 import type { VolumeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { volumeCheckedListAtom } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
-import {
-  checkIsSuperAdmin,
-  getSessionAccountId,
-} from "@/shared/utils/auth.util";
-import { isUserMode } from "@/shared/utils/router.util";
+import { getSessionAccountId } from "@/shared/utils/auth.util";
 
-interface VolumeCardProps extends VolumeListResponse {}
+interface VolumeCardProps extends VolumeListResponse {
+  mode: VolumeMode;
+}
 
 export function VolumeCard({
   volumeId,
@@ -27,23 +26,26 @@ export function VolumeCard({
   volumeType,
   mountPath,
   isPublic,
+  mode,
 }: VolumeCardProps) {
   const router = useRouter();
-  const pathname = usePathname();
   const params = useParams<{ id?: string }>();
   const { data: session } = useSession();
 
   const [checkedList, setCheckedList] = useAtom(volumeCheckedListAtom);
 
-  const isUser = isUserMode(pathname);
+  const isUserMode = mode === "user";
   const { text } = getVolumeStorageTypeInfo(volumeType);
   const isChecked = checkedList.has(volumeId);
 
-  // 체크박스 활성화 조건: 생성자이거나 SUPER_ADMIN인 경우
+  // 체크박스 활성화 조건 (삭제 권한)
+  // - 사용자 모드: 생성자만 삭제 가능
+  // - 관리자 모드: 항상 삭제 가능
   const currentAccountId = getSessionAccountId(session);
-  const isSuperAdmin = checkIsSuperAdmin(session);
-  const isCreator = currentAccountId === creatorId;
-  const canCheck = isCreator || isSuperAdmin;
+  const isCreator = Boolean(
+    creatorId && currentAccountId && currentAccountId === creatorId,
+  );
+  const canCheck = isUserMode ? isCreator : true;
 
   const parsedId = params.id ? Number(params.id) : Number.NaN;
   const selectedVolumeId = Number.isNaN(parsedId) ? -1 : parsedId;
@@ -51,7 +53,7 @@ export function VolumeCard({
 
   const handleClickCard = () => {
     if (isSelected) return;
-    const detailRoute = isUser
+    const detailRoute = isUserMode
       ? ROUTES.USER_VOLUME_DETAIL(volumeId)
       : ROUTES.ADMIN_VOLUME_DETAIL(volumeId);
     router.push(detailRoute);

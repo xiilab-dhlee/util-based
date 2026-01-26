@@ -6,23 +6,24 @@ import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
-import {
-  Button,
-  Dropdown,
-  Form,
-  FormItem,
-  Icon,
-  Input,
-  Typography,
-} from "xiilab-ui";
+import { Dropdown, FormItem, Icon, Input, Typography } from "xiilab-ui";
 
 import { useSignup } from "@/api/generated/account-registration/account-registration";
+import { CompleteSignup } from "@/domain/auth/components/signup/complete-signup";
 import {
   type SignupFormType,
   signupSchema,
 } from "@/domain/auth/schemas/signup.schema";
+import {
+  AuthContainer,
+  AuthForm,
+  AuthHeader,
+  AuthSubmitButton,
+  AuthTitle,
+  AuthTitleIconWrapper,
+} from "@/domain/auth/styles/layers/auth-layers.styled";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
-import { CompleteSignup } from "./complete-signup";
 
 /**
  * 회원가입 페이지의 메인 컴포넌트
@@ -58,7 +59,9 @@ export function SignupMain() {
   const { mutate: signup, isPending } = useSignup();
 
   const onSubmit = (data: SignupFormType) => {
-    if (isPending) return;
+    if (isPending) {
+      return;
+    }
 
     signup(
       {
@@ -85,21 +88,21 @@ export function SignupMain() {
   }
 
   return (
-    <Container>
-      <Header data-testid={AUTH_SELECTOR.SIGNUP_HEADER}>
-        <Title>
-          <TitleIconWrapper>
+    <AuthContainer>
+      <AuthHeader data-testid={AUTH_SELECTOR.SIGNUP_HEADER}>
+        <AuthTitle>
+          <AuthTitleIconWrapper>
             <Icon name="Astrago" color="var(--icon-fill)" size={30} />
-          </TitleIconWrapper>
+          </AuthTitleIconWrapper>
           <Typography.Text variant="headline-1-1" color="#000">
             Sign up
           </Typography.Text>
-        </Title>
+        </AuthTitle>
         <Typography.Text variant="subtitle-2-3" color="#333">
           AstraGo 신규 회원 가입을 환영합니다.
         </Typography.Text>
-      </Header>
-      <StyledForm onFinish={handleSubmit(onSubmit)}>
+      </AuthHeader>
+      <AuthForm onFinish={handleSubmit(onSubmit)}>
         <Controller
           name="email"
           control={control}
@@ -271,7 +274,7 @@ export function SignupMain() {
             </FormItem>
           )}
         />
-        <SubmitButton
+        <AuthSubmitButton
           type="submit"
           color="primary"
           variant="gradient"
@@ -281,14 +284,14 @@ export function SignupMain() {
           data-testid={AUTH_SELECTOR.SIGNUP_SUBMIT_BUTTON}
         >
           회원가입
-        </SubmitButton>
-      </StyledForm>
+        </AuthSubmitButton>
+      </AuthForm>
       <Footer>
         <Typography.Text variant="body-2-4" color="#333">
           계정이 있으신가요?
         </Typography.Text>
         <StyledLink
-          href="/signin"
+          href={ROUTES.AUTH_SIGNIN}
           data-testid={AUTH_SELECTOR.SIGNUP_LOGIN_LINK}
         >
           <Typography.Text variant="body-2-3" color="#544AD8">
@@ -296,23 +299,9 @@ export function SignupMain() {
           </Typography.Text>
         </StyledLink>
       </Footer>
-    </Container>
+    </AuthContainer>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 36px;
-`;
 
 const Footer = styled.footer`
   display: flex;
@@ -322,47 +311,14 @@ const Footer = styled.footer`
   margin-top: 20px;
 `;
 
-const Title = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-`;
-
-const TitleIconWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
-  background-color: #5b29c7;
-  margin-right: 6px;
-  overflow: hidden;
-
-  --icon-fill: #fff;
-`;
-
-const StyledForm = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  --icon-fill: #969a9f;
-`;
-
 const NameRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 `;
 
-const SubmitButton = styled(Button)`
-  margin-top: 8px;
-`;
-
 const StyledLink = styled(Link)`
-  color: #544AD8;
+  color: #544ad8;
   text-decoration: underline;
   text-underline-offset: 2px;
 `;

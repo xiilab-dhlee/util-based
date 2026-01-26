@@ -138,7 +138,7 @@ jobs:
             DEPLOY_BRANCH="main"
           fi
           echo "DEPLOY_BRANCH=$DEPLOY_BRANCH" >> $GITHUB_ENV
-          
+
           if ! git clone --branch $DEPLOY_BRANCH --single-branch \
             https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/xiilab/astrago-deployment-v2.git \
             deployment-repo; then
@@ -237,13 +237,13 @@ jobs:
           webhook-type: incoming-webhook
           payload: |
             {
-              "text": "Frontend CI ${{ steps.status.outputs.status_text }} (env=${{ needs.setup.outputs.env }}, version=${{ needs.setup.outputs.tag_version }}, duration=${{ steps.duration.outputs.duration }})",
+              "text": "Astrago v2 Frontend CI ${{ steps.status.outputs.status_text }} (env=${{ needs.setup.outputs.env }}, version=${{ needs.setup.outputs.tag_version }}, duration=${{ steps.duration.outputs.duration }})",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "${{ steps.status.outputs.emoji }} Frontend CI ${{ steps.status.outputs.status_text }}",
+                    "text": "${{ steps.status.outputs.emoji }} Astrago v2 Frontend CI ${{ steps.status.outputs.status_text }}",
                     "emoji": true
                   }
                 },

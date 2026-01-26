@@ -59,9 +59,8 @@ export function SettingMemberArticle() {
       pageNo: page - 1,
       pageSize: MEMBER_LIST_PAGE_SIZE,
       keyword: searchText,
-      ...(sortRequest
-        ? { sort: sortRequest.sort, order: sortRequest.order }
-        : {}),
+      sort: sortRequest?.sort ?? "ACCOUNT_NAME",
+      order: sortRequest?.order ?? "ASC",
     },
     {
       query: {

@@ -3,7 +3,6 @@ import { Icon, Typography } from "xiilab-ui";
 
 import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
-import { ALL_OPTION } from "@/shared/constants/core.constant";
 
 interface CountByWorkloadStatusProps {
   status: WorkloadStatusType;
@@ -61,7 +60,7 @@ const Container = styled.div`
   }
 
   /* 전체 상태 테마 (보라색) */
-  &.${ALL_OPTION.value} {
+  &.ALL {
     --primary-color: #d77bff;
     --secondary-color: #ae8dff7a;
     --icon-fill: #d77bff;

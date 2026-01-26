@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
+import { UserMonitoringResourceArticle } from "@/domain/user-monitoring/components/user-monitoring-resource-article";
+import { UserMonitoringResourceRecoveryArticle } from "@/domain/user-monitoring/components/user-monitoring-resource-recovery-article";
+import { UserMonitoringWorkloadArticle } from "@/domain/user-monitoring/components/user-monitoring-workload-article";
 import {
   UserMonitoringSectionDescription,
   UserMonitoringSectionHeader,
   UserMonitoringSectionTitle,
 } from "@/styles/layers/user-monitoring-layers.styled";
-import { UserMonitoringResourceArticle } from "./user-monitoring-resource-article";
-import { UserMonitoringResourceRecoveryArticle } from "./user-monitoring-resource-recovery-article";
-import { UserMonitoringWorkloadArticle } from "./user-monitoring-workload-article";
 
 export function UserMonitoringMainSection() {
   return (

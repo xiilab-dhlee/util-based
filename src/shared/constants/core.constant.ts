@@ -6,6 +6,13 @@ import { ROUTES } from "@/shared/constants/routes.constant";
 export const LIST_PAGE_SIZE = 20;
 /** 카드 페이지 크기 */
 export const CARD_PAGE_SIZE = 12;
+/** 드롭다운 옵션 높이 */
+export const DROPDOWN_OPTION_HEIGHT = 32;
+/** 드롭다운 표시 옵션 개수 */
+export const DROPDOWN_VISIBLE_OPTION_COUNT = 5;
+/** 드롭다운 리스트 높이 */
+export const DROPDOWN_LIST_HEIGHT =
+  DROPDOWN_OPTION_HEIGHT * DROPDOWN_VISIBLE_OPTION_COUNT;
 /** 아이콘 컬럼 너비 */
 export const ICON_COLUMN_WIDTH = 40;
 /** 체크박스 컬럼 너비 */
@@ -95,3 +102,27 @@ export const TABLE_MESSAGE = {
   /** 빈 목록일 때 표시되는 메시지 */
   EMPTY: "조회된 결과가 없습니다.",
 } as const;
+
+/** 날짜 범위 타입 */
+export interface DateRange {
+  start: string;
+  end: string;
+}
+
+/** 날짜 범위 기본값 */
+export const DEFAULT_DATE_RANGE: DateRange = { start: "", end: "" };
+
+/** 모니터링 날짜 모드 상수 */
+export const MONITORING_DATE_MODE = {
+  /** 실시간 모드 */
+  LIVE: "live",
+  /** 히스토리 모드 */
+  HISTORY: "history",
+} as const;
+
+/** 모니터링 날짜 모드 값 */
+export const LIVE_MODE = MONITORING_DATE_MODE.LIVE;
+export const HISTORY_MODE = MONITORING_DATE_MODE.HISTORY;
+
+/** 초기 조회 기간 (ms) - 7일 */
+export const DEFAULT_DATE_RANGE_MS = 7 * 24 * 60 * 60 * 1000;

@@ -103,25 +103,25 @@ export const deleteStorageParams = zod.object({
  * 등록된 스토리지 목록을 페이징하여 조회합니다.
  * @summary 스토리지 목록 조회
  */
-export const getStoragesQueryPageNoMin = 0;
+export const getAdminStoragesQueryPageNoMin = 0;
 
-export const getStoragesQueryPageSizeMax = 100;
+export const getAdminStoragesQueryPageSizeMax = 100;
 
-export const getStoragesQueryParams = zod.object({
+export const getAdminStoragesQueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getStoragesQueryPageNoMin)
+    .min(getAdminStoragesQueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getStoragesQueryPageSizeMax)
+    .max(getAdminStoragesQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
 });
 
-export const getStoragesResponse = zod
+export const getAdminStoragesResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),

@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function UserSourcecodeDetailPage() {
-  return <SourcecodeDetailMain />;
+  return <SourcecodeDetailMain mode="user" />;
 }

@@ -1,25 +1,27 @@
 "use client";
 
-import { type ChangeEvent, useCallback, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
-import {
-  Button,
-  Form,
-  Icon,
-  Input,
-  Modal,
-  type ResponsiveColumnType,
-  Typography,
-} from "xiilab-ui";
+import { Button, Form, Icon, Input, Modal, Typography } from "xiilab-ui";
 
+import type { LicenseListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getGetLatestLicenseQueryKey,
+  getGetLicensesQueryKey,
+  useCreateLicense,
+  useGetLicenses,
+} from "@/api/generated/license/license";
 import { createLicenseColumn } from "@/domain/system-setting/components/create-license-column";
-import { useGetLicense } from "@/domain/system-setting/hooks/use-get-license";
-import { useLicenseForm } from "@/domain/system-setting/hooks/use-license-form";
-import { useUpdateLicense } from "@/domain/system-setting/hooks/use-update-license";
-import type { LicenseDetailType } from "@/domain/system-setting/schemas/license.schema";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import {
+  type LicenseFormType,
+  licenseFormSchema,
+} from "@/shared/schemas/license.schema";
 import { errorTextStyle } from "@/styles/mixins/text";
 
 /**
@@ -28,42 +30,51 @@ import { errorTextStyle } from "@/styles/mixins/text";
  */
 export function CreateLicenseModal() {
   const [open, setOpen] = useState(false);
-  const { data: licenseData } = useGetLicense();
-  const updateMutation = useUpdateLicense();
-  const { formState, errors, setField, validate, reset } = useLicenseForm();
+  const queryClient = useQueryClient();
+  const { data, isLoading, isError } = useGetLicenses();
 
-  // PubSub 구독: 모달 열기 이벤트
-  useSubscribe(
-    SYSTEM_SETTING_EVENTS.openLicenseRenewalModal,
-    useCallback(() => {
-      reset();
-      setOpen(true);
-    }, [reset]),
-  );
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<LicenseFormType>({
+    resolver: zodResolver(licenseFormSchema),
+    defaultValues: {
+      licenseKey: "",
+    },
+  });
 
-  const handleCancel = useCallback(() => {
+  const { mutate, isPending } = useCreateLicense();
+
+  const handleCancel = () => {
+    if (isPending) return;
     setOpen(false);
-    reset();
-  }, [reset]);
-
-  const handleSubmit = () => {
-    // 폼 검증
-    const payload = validate();
-    console.log("Validation errors:", errors);
-    if (!payload) {
-      return;
-    }
   };
 
-  const handleLicenseKeyChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setField("licenseKey", e.target.value);
-    },
-    [setField],
-  );
+  const onSubmit = (data: LicenseFormType) => {
+    if (isPending) return;
 
-  const columns: ResponsiveColumnType<LicenseDetailType>[] =
-    createLicenseColumn();
+    mutate(
+      { data },
+      {
+        onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: getGetLatestLicenseQueryKey(),
+          });
+          void queryClient.invalidateQueries({
+            queryKey: getGetLicensesQueryKey(),
+          });
+          reset();
+        },
+      },
+    );
+  };
+
+  useSubscribe(SYSTEM_SETTING_EVENTS.openCreateLicenseModal, () => {
+    reset();
+    setOpen(true);
+  });
 
   return (
     <Modal
@@ -89,21 +100,26 @@ export function CreateLicenseModal() {
             <InputWithButton>
               <FormItemWrapper>
                 {errors.licenseKey && (
-                  <ErrorText>{errors.licenseKey}</ErrorText>
+                  <ErrorText>{errors.licenseKey.message}</ErrorText>
                 )}
-                <Input
-                  type="password"
-                  placeholder="라이선스 키를 입력해 주세요. ex) 0000-0000-xxxx.."
-                  value={formState.licenseKey}
-                  onChange={handleLicenseKeyChange}
-                  disabled={updateMutation.isPending}
-                  width="100%"
+                <Controller
+                  name="licenseKey"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="라이선스 키를 입력해 주세요. ex) 0000-0000-xxxx.."
+                      disabled={isPending}
+                      width="100%"
+                      autoComplete="off"
+                    />
+                  )}
                 />
               </FormItemWrapper>
               <Button
-                onClick={handleSubmit}
-                loading={updateMutation.isPending}
-                disabled={updateMutation.isPending}
+                onClick={handleSubmit(onSubmit)}
+                loading={isPending}
                 color="primary"
                 variant="outlined"
                 width="106px"
@@ -114,27 +130,24 @@ export function CreateLicenseModal() {
             </InputWithButton>
           </Form.Item>
         </Form>
-
-        {/* 등록 이력 */}
-        {licenseData && licenseData.history.length > 0 && (
-          <HistorySection>
-            <HistoryHeader>
-              <Typography.Text variant="subtitle-2-1">
-                라이선스 등록 이력{" "}
-                <CountText>총 {licenseData.totalCount}개</CountText>
-              </Typography.Text>
-            </HistoryHeader>
-            <HistoryTableWrapper>
-              <CustomizedTable<LicenseDetailType>
-                columns={columns}
-                data={licenseData.history}
-                rowKey="id"
-                pagination={false}
-                activePadding
-              />
-            </HistoryTableWrapper>
-          </HistorySection>
-        )}
+        <HistorySection>
+          <HistoryHeader>
+            <Typography.Text variant="subtitle-2-1">
+              라이선스 등록 이력 <CountText>총 {data?.length || 0}개</CountText>
+            </Typography.Text>
+          </HistoryHeader>
+          <HistoryTableWrapper>
+            <CustomizedTable<LicenseListResponse>
+              columns={createLicenseColumn()}
+              data={data || []}
+              rowKey="licenseId"
+              pagination={false}
+              activePadding
+              loading={isLoading}
+              isError={isError}
+            />
+          </HistoryTableWrapper>
+        </HistorySection>
       </ModalContent>
     </Modal>
   );
@@ -175,8 +188,7 @@ const CountText = styled.span`
 `;
 
 const HistoryTableWrapper = styled.div`
-  max-height: 300px;
-  overflow-y: auto;
+  height: 300px;
 `;
 
 const FormItemWrapper = styled.div`

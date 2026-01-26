@@ -47,6 +47,7 @@ const Container = styled.div`
   overflow: hidden;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.15);
   background-color: #fafafa;
+  height: 100%;
   max-height: 920px;
 `;
 

@@ -4,7 +4,6 @@ import type {
   ThresholdRequestMetric,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
-  toFormOperator,
   VALID_METRICS,
   VALID_OPERATORS,
   type ValidOperator,
@@ -81,7 +80,7 @@ export function toFormData(
     isSystemNotificationEnabled: response.isSystemNotificationEnabled,
     threshold: response.threshold.map((t) => ({
       metric: t.metric,
-      operator: toFormOperator(t.operator),
+      operator: t.operator,
       value: String(t.value),
       durationMinutes: String(t.durationMinutes),
     })),

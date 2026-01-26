@@ -91,14 +91,14 @@ import type {
  */
 export const getAllResourceCounts = (signal?: AbortSignal) => {
   return customInstance<BaseResponseK8sResourceResponse>({
-    url: `/api/v1/k8s/resources`,
+    url: `/api/v1/admin/k8s/resources`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetAllResourceCountsQueryKey = () => {
-  return [`/api/v1/k8s/resources`] as const;
+  return [`/api/v1/admin/k8s/resources`] as const;
 };
 
 export const getGetAllResourceCountsQueryOptions = <
@@ -277,7 +277,7 @@ export const getResourceYaml = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseK8sResourceYamlResponse>({
-    url: `/api/v1/k8s/resources/${resourceType}/${name}/yaml`,
+    url: `/api/v1/admin/k8s/resources/${resourceType}/${name}/yaml`,
     method: "GET",
     signal,
   });
@@ -295,7 +295,7 @@ export const getGetResourceYamlQueryKey = (
     | "STATEFULSET",
   name?: string,
 ) => {
-  return [`/api/v1/k8s/resources/${resourceType}/${name}/yaml`] as const;
+  return [`/api/v1/admin/k8s/resources/${resourceType}/${name}/yaml`] as const;
 };
 
 export const getGetResourceYamlQueryOptions = <
@@ -538,7 +538,7 @@ export const describeResource = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseK8sResourceDescribeResponse>({
-    url: `/api/v1/k8s/resources/${resourceType}/${name}/describe`,
+    url: `/api/v1/admin/k8s/resources/${resourceType}/${name}/describe`,
     method: "GET",
     signal,
   });
@@ -556,7 +556,9 @@ export const getDescribeResourceQueryKey = (
     | "STATEFULSET",
   name?: string,
 ) => {
-  return [`/api/v1/k8s/resources/${resourceType}/${name}/describe`] as const;
+  return [
+    `/api/v1/admin/k8s/resources/${resourceType}/${name}/describe`,
+  ] as const;
 };
 
 export const getDescribeResourceQueryOptions = <
@@ -777,7 +779,7 @@ export const getStatefulSets = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseStatefulSetResponse>({
-    url: `/api/v1/k8s/resources/statefulsets`,
+    url: `/api/v1/admin/k8s/resources/statefulsets`,
     method: "GET",
     params,
     signal,
@@ -786,7 +788,7 @@ export const getStatefulSets = (
 
 export const getGetStatefulSetsQueryKey = (params?: GetStatefulSetsParams) => {
   return [
-    `/api/v1/k8s/resources/statefulsets`,
+    `/api/v1/admin/k8s/resources/statefulsets`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -955,7 +957,7 @@ export const getServices = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseServiceResponse>({
-    url: `/api/v1/k8s/resources/services`,
+    url: `/api/v1/admin/k8s/resources/services`,
     method: "GET",
     params,
     signal,
@@ -964,7 +966,7 @@ export const getServices = (
 
 export const getGetServicesQueryKey = (params?: GetServicesParams) => {
   return [
-    `/api/v1/k8s/resources/services`,
+    `/api/v1/admin/k8s/resources/services`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1110,7 +1112,7 @@ export function useGetServices<
  */
 export const getPods = (params?: GetPodsParams, signal?: AbortSignal) => {
   return customInstance<BaseResponsePageResponsePodResponse>({
-    url: `/api/v1/k8s/resources/pods`,
+    url: `/api/v1/admin/k8s/resources/pods`,
     method: "GET",
     params,
     signal,
@@ -1118,7 +1120,10 @@ export const getPods = (params?: GetPodsParams, signal?: AbortSignal) => {
 };
 
 export const getGetPodsQueryKey = (params?: GetPodsParams) => {
-  return [`/api/v1/k8s/resources/pods`, ...(params ? [params] : [])] as const;
+  return [
+    `/api/v1/admin/k8s/resources/pods`,
+    ...(params ? [params] : []),
+  ] as const;
 };
 
 export const getGetPodsQueryOptions = <
@@ -1265,7 +1270,7 @@ export const getPersistentVolumes = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponsePersistentVolumeResponse>({
-    url: `/api/v1/k8s/resources/persistentvolumes`,
+    url: `/api/v1/admin/k8s/resources/persistentvolumes`,
     method: "GET",
     params,
     signal,
@@ -1276,7 +1281,7 @@ export const getGetPersistentVolumesQueryKey = (
   params?: GetPersistentVolumesParams,
 ) => {
   return [
-    `/api/v1/k8s/resources/persistentvolumes`,
+    `/api/v1/admin/k8s/resources/persistentvolumes`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1443,7 +1448,7 @@ export function useGetPersistentVolumes<
  */
 export const getNodes = (params?: GetNodesParams, signal?: AbortSignal) => {
   return customInstance<BaseResponsePageResponseNodeResponse>({
-    url: `/api/v1/k8s/resources/nodes`,
+    url: `/api/v1/admin/k8s/resources/nodes`,
     method: "GET",
     params,
     signal,
@@ -1451,7 +1456,10 @@ export const getNodes = (params?: GetNodesParams, signal?: AbortSignal) => {
 };
 
 export const getGetNodesQueryKey = (params?: GetNodesParams) => {
-  return [`/api/v1/k8s/resources/nodes`, ...(params ? [params] : [])] as const;
+  return [
+    `/api/v1/admin/k8s/resources/nodes`,
+    ...(params ? [params] : []),
+  ] as const;
 };
 
 export const getGetNodesQueryOptions = <
@@ -1598,7 +1606,7 @@ export const getNamespaces = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseNamespaceResponse>({
-    url: `/api/v1/k8s/resources/namespaces`,
+    url: `/api/v1/admin/k8s/resources/namespaces`,
     method: "GET",
     params,
     signal,
@@ -1607,7 +1615,7 @@ export const getNamespaces = (
 
 export const getGetNamespacesQueryKey = (params?: GetNamespacesParams) => {
   return [
-    `/api/v1/k8s/resources/namespaces`,
+    `/api/v1/admin/k8s/resources/namespaces`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1755,7 +1763,7 @@ export const getDeployments = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseDeploymentResponse>({
-    url: `/api/v1/k8s/resources/deployments`,
+    url: `/api/v1/admin/k8s/resources/deployments`,
     method: "GET",
     params,
     signal,
@@ -1764,7 +1772,7 @@ export const getDeployments = (
 
 export const getGetDeploymentsQueryKey = (params?: GetDeploymentsParams) => {
   return [
-    `/api/v1/k8s/resources/deployments`,
+    `/api/v1/admin/k8s/resources/deployments`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1912,7 +1920,7 @@ export const getDaemonSets = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseDaemonSetResponse>({
-    url: `/api/v1/k8s/resources/daemonsets`,
+    url: `/api/v1/admin/k8s/resources/daemonsets`,
     method: "GET",
     params,
     signal,
@@ -1921,7 +1929,7 @@ export const getDaemonSets = (
 
 export const getGetDaemonSetsQueryKey = (params?: GetDaemonSetsParams) => {
   return [
-    `/api/v1/k8s/resources/daemonsets`,
+    `/api/v1/admin/k8s/resources/daemonsets`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -2083,7 +2091,7 @@ export const getAllNamespaceEvents = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseK8sEventResponse>({
-    url: `/api/v1/k8s/namespaces/events`,
+    url: `/api/v1/admin/k8s/namespaces/events`,
     method: "GET",
     params,
     signal,
@@ -2094,7 +2102,7 @@ export const getGetAllNamespaceEventsQueryKey = (
   params?: GetAllNamespaceEventsParams,
 ) => {
   return [
-    `/api/v1/k8s/namespaces/events`,
+    `/api/v1/admin/k8s/namespaces/events`,
     ...(params ? [params] : []),
   ] as const;
 };

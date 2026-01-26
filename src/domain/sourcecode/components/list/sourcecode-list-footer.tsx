@@ -41,7 +41,7 @@ export function SourcecodeListFooter({
     }
 
     publish(
-      SOURCECODE_EVENTS.sendDeleteSourcecode,
+      SOURCECODE_EVENTS.openDeleteModal,
       Array.from(checkedList).map(Number),
     );
   };

@@ -1,8 +1,8 @@
 "use client";
 
+import { UserMonitoringMainSection } from "@/domain/user-monitoring/components/user-monitoring-main-section";
+import { UserMonitoringSubSection } from "@/domain/user-monitoring/components/user-monitoring-sub-section";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { UserMonitoringMainSection } from "./user-monitoring-main-section";
-import { UserMonitoringSubSection } from "./user-monitoring-sub-section";
 
 export function UserMonitoringMain() {
   return (

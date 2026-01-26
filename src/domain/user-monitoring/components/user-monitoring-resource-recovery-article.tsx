@@ -3,11 +3,11 @@ import Image from "next/image";
 import { useState } from "react";
 import styled from "styled-components";
 
+import { UserMonitoringResourceRecoveryChart } from "@/domain/user-monitoring/components/user-monitoring-resource-recovery-chart";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 import { UserMonitoringCategoryTitle } from "@/styles/layers/user-monitoring-layers.styled";
-import { UserMonitoringResourceRecoveryChart } from "./user-monitoring-resource-recovery-chart";
 
 const RESOURCE_TYPES: CoreResourceType[] = ["GPU", "CPU", "MEM"];
 

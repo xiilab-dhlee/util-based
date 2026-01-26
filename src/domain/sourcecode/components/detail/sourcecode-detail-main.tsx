@@ -1,20 +1,22 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
-import {
-  useDeleteSourceCode,
-  useGetSourceCodeList,
-} from "@/api/generated/source-code/source-code";
 import { UpdateSourcecodeDetail } from "@/domain/sourcecode/components/detail/update-sourcecode-detail";
 import { ViewSourcecodeDetail } from "@/domain/sourcecode/components/detail/view-sourcecode-detail";
+import { useGetSourcecodeDetailByMode } from "@/domain/sourcecode/hooks/use-get-sourcecode-detail-by-mode";
+import type { SourcecodeMode } from "@/domain/sourcecode/types/sourcecode.type";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
-import { ROUTES } from "@/shared/constants/routes.constant";
-import { checkIsSuperAdmin } from "@/shared/utils/auth.util";
+import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
+import {
+  checkIsSuperAdmin,
+  getSessionAccountId,
+} from "@/shared/utils/auth.util";
 import {
   AsideDetailContainer,
   AsideDetailHeader,
@@ -23,62 +25,56 @@ import {
 
 type ViewMode = "view" | "update";
 
-export function SourcecodeDetailMain() {
+interface SourcecodeDetailMainProps {
+  mode: SourcecodeMode;
+}
+
+export function SourcecodeDetailMain({ mode }: SourcecodeDetailMainProps) {
   const params = useParams<{ id: string }>();
-  const router = useRouter();
   const sourceCodeId = Number(params.id);
   const { data: session } = useSession();
 
-  const [mode, setMode] = useState<ViewMode>("view");
+  const [viewMode, setViewMode] = useState<ViewMode>("view");
 
-  // 목록 API에서 현재 소스코드 데이터를 찾아서 사용
-  const { data: listData, isLoading } = useGetSourceCodeList(
-    {
-      pageNo: 0,
-      pageSize: 100,
+  const { data, isLoading } = useGetSourcecodeDetailByMode(mode, sourceCodeId, {
+    query: {
+      enabled: !Number.isNaN(sourceCodeId),
     },
-    {
-      query: {
-        enabled: !Number.isNaN(sourceCodeId),
-      },
-    },
-  );
+  });
 
-  const deleteSourceCode = useDeleteSourceCode();
+  const publish = usePublish();
 
-  const currentSourceCode = listData?.content?.find(
-    (item) => item.sourceCodeId === sourceCodeId,
-  );
-
-  // 수정/삭제 버튼 활성화 조건: 생성자이거나 SUPER_ADMIN인 경우
+  // 권한 체크
+  const currentAccountId = getSessionAccountId(session);
   const isSuperAdmin = checkIsSuperAdmin(session);
-  // TODO: API에서 creatorId가 제공되면 활성화
-  // const isCreator = currentAccountId === currentSourceCode?.creatorId;
-  const canEditOrDelete = isSuperAdmin;
+  const isCreator = Boolean(
+    data?.creatorId && currentAccountId && currentAccountId === data.creatorId,
+  );
+  const isUserMode = mode === "user";
+
+  // 수정 권한
+  // - 사용자 모드: 생성자만 수정 가능
+  // - 관리자 모드: SUPER_ADMIN 또는 생성자만 수정 가능
+  const canEdit = isUserMode ? isCreator : isSuperAdmin || isCreator;
+  // 삭제 권한
+  // - 사용자 모드: 생성자만 삭제 가능
+  // - 관리자 모드: 항상 삭제 가능
+  const canDelete = isUserMode ? isCreator : true;
 
   const handleEdit = () => {
-    setMode("update");
+    setViewMode("update");
   };
 
   const handleCancel = () => {
-    setMode("view");
+    setViewMode("view");
   };
 
   const handleSuccess = () => {
-    setMode("view");
+    setViewMode("view");
   };
 
   const handleDelete = () => {
-    if (window.confirm("소스코드를 삭제하시겠습니까?")) {
-      deleteSourceCode.mutate(
-        { sourceCodeId },
-        {
-          onSuccess: () => {
-            router.replace(ROUTES.USER_SOURCECODE);
-          },
-        },
-      );
-    }
+    publish(SOURCECODE_EVENTS.openDeleteModal, [sourceCodeId]);
   };
 
   if (!params.id || Number.isNaN(sourceCodeId)) {
@@ -89,70 +85,58 @@ export function SourcecodeDetailMain() {
     );
   }
 
-  if (isLoading) {
-    return (
-      <AsideDetailContainer>
-        <EmptyState title="로딩 중..." />
-      </AsideDetailContainer>
-    );
-  }
-
-  if (!currentSourceCode) {
-    return (
-      <AsideDetailContainer>
-        <EmptyState title="소스코드를 찾을 수 없습니다." />
-      </AsideDetailContainer>
-    );
-  }
-
   const renderContent = () => {
-    if (mode === "update") {
+    if (viewMode === "update" && data) {
       return (
         <UpdateSourcecodeDetail
+          mode={mode}
           sourceCodeId={sourceCodeId}
-          data={currentSourceCode}
+          data={data}
           onCancel={handleCancel}
           onSuccess={handleSuccess}
         />
       );
     }
 
-    return (
-      <ViewSourcecodeDetail data={currentSourceCode} isLoading={isLoading} />
-    );
+    return <ViewSourcecodeDetail data={data} isLoading={isLoading} />;
   };
 
-  const showActionButtons = mode === "view" && canEditOrDelete;
+  // data가 없으면 수정/삭제 버튼 비활성화 (상세 API 요청 실패 시)
+  const showEditButton = viewMode === "view" && canEdit && !!data;
+  const showDeleteButton = viewMode === "view" && canDelete && !!data;
 
   return (
     <StyledAsideDetailContainer>
       <StyledAsideDetailHeader>
         <AsideDetailHeaderTitle>소스코드 상세 정보</AsideDetailHeaderTitle>
-        {showActionButtons ? (
+        {(showEditButton || showDeleteButton) && (
           <Icons>
-            <IconWrapper
-              type="button"
-              className="icon-button"
-              onClick={handleEdit}
-            >
-              <Icon name="Edit02" color="#000" />
-              <span className="sr-only">소스코드 수정</span>
-            </IconWrapper>
-            <IconWrapper
-              type="button"
-              className="icon-button"
-              onClick={handleDelete}
-            >
-              <Icon name="Delete" color="#000" />
-              <span className="sr-only">소스코드 삭제</span>
-            </IconWrapper>
+            {showEditButton && (
+              <IconWrapper
+                type="button"
+                className="icon-button"
+                onClick={handleEdit}
+              >
+                <Icon name="Edit02" color="#000" />
+                <span className="sr-only">소스코드 수정</span>
+              </IconWrapper>
+            )}
+            {showDeleteButton && (
+              <IconWrapper
+                type="button"
+                className="icon-button"
+                onClick={handleDelete}
+              >
+                <Icon name="Delete" color="#000" />
+                <span className="sr-only">소스코드 삭제</span>
+              </IconWrapper>
+            )}
           </Icons>
-        ) : (
-          mode === "update" && (
-            <Typography.Text variant="body-1-3" color="#777">
-              {currentSourceCode?.sourceCodeName || "-"}
-            </Typography.Text>
-          )
+        )}
+        {viewMode === "update" && (
+          <Typography.Text variant="body-1-3" color="#777" className="truncate">
+            {data?.sourceCodeName || "-"}
+          </Typography.Text>
         )}
       </StyledAsideDetailHeader>
       {renderContent()}
@@ -167,6 +151,7 @@ const StyledAsideDetailContainer = styled(AsideDetailContainer)`
 const StyledAsideDetailHeader = styled(AsideDetailHeader)`
   min-height: 24px;
   margin-bottom: 12px;
+  gap: 10px;
 `;
 
 const IconWrapper = styled.button`

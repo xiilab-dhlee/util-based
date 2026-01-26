@@ -33,7 +33,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import type { BaseResponsePageResponseStorageResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetStorages1ResponseMock = (
+export const getGetStoragesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseStorageResponse> = {},
 ): BaseResponsePageResponseStorageResponse => ({
   status: "SUCCESS",
@@ -61,7 +61,7 @@ export const getGetStorages1ResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetStorages1MockHandler = (
+export const getGetStoragesMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseStorageResponse
     | ((
@@ -82,7 +82,7 @@ export const getGetStorages1MockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetStorages1ResponseMock(),
+            : getGetStoragesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -90,4 +90,4 @@ export const getGetStorages1MockHandler = (
     options,
   );
 };
-export const getStorageMock = () => [getGetStorages1MockHandler()];
+export const getStorageMock = () => [getGetStoragesMockHandler()];

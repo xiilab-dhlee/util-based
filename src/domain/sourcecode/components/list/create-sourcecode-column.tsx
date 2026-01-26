@@ -2,9 +2,9 @@ import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { SourceCodeListResponseSourceCodeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
+import { createdAtColumn, creatorNameColumn } from "@/shared/components/column";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
-import { formatDateSafely } from "@/shared/utils/date.util";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
@@ -13,24 +13,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "sourceCodeName",
       title: "소스코드이름",
       align: "left",
-      ellipsis: true,
-      sorter: true,
     },
     {
       key: "gitUrl",
       dataIndex: "gitUrl",
       title: "Git URL",
       align: "left",
-      ellipsis: true,
-    },
-    {
-      key: "creatorName",
-      dataIndex: "creatorName",
-      title: "생성자",
-      align: "center",
-      render: (creatorName: string) => {
-        return <span>{creatorName || "-"}</span>;
-      },
     },
     {
       key: "isPublic",
@@ -56,18 +44,10 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "executionCmd",
       title: "실행 명령어",
       align: "left",
-      ellipsis: true,
+      ellipsis: { showTitle: false },
     },
-    {
-      key: "createdAt",
-      dataIndex: "createdAt",
-      title: "생성일",
-      align: "center",
-      sorter: true,
-      render: (createdAt: string) => {
-        return <span>{formatDateSafely(createdAt)}</span>;
-      },
-    },
+    creatorNameColumn,
+    createdAtColumn(),
   ];
 };
 

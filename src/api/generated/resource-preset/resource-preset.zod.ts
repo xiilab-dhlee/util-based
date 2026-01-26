@@ -37,19 +37,33 @@ import * as zod from "zod";
 - MIG GPU: nvidia.com/mig-{profile} 리소스 기준
  * @summary 사용 가능한 리소스 프리셋 목록 조회
  */
+export const getAvailablePresetsQueryKeywordMin = 0;
+export const getAvailablePresetsQueryKeywordMax = 100;
+
 export const getAvailablePresetsQueryPageNoMin = 0;
 
 export const getAvailablePresetsQueryPageSizeMax = 100;
 
 export const getAvailablePresetsQueryParams = zod.object({
-  jobType: zod
-    .enum(["BATCH", "IDE"])
+  keyword: zod
+    .string()
+    .min(getAvailablePresetsQueryKeywordMin)
+    .max(getAvailablePresetsQueryKeywordMax)
     .optional()
-    .describe("잡 타입 필터 (BATCH, IDE)"),
+    .describe("검색 키워드 (프리셋 이름)"),
+  jobType: zod
+    .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
+    .optional()
+    .describe("잡 타입 필터 (BATCH, INTERACTIVE)"),
   nodeType: zod
     .enum(["SINGLE", "MULTI"])
     .optional()
     .describe("노드 타입 필터 (SINGLE, MULTI)"),
+  sort: zod
+    .enum(["PRESET_NAME", "CREATED_AT"])
+    .optional()
+    .describe("정렬 필드 (preset_name, created_at)"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
   pageNo: zod
     .number()
     .min(getAvailablePresetsQueryPageNoMin)
@@ -75,15 +89,84 @@ export const getAvailablePresetsResponse = zod
         content: zod.array(
           zod
             .object({
-              presetId: zod.number().describe("프리셋 ID"),
+              resourcePresetId: zod.number().describe("프리셋 ID"),
+              entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
               presetName: zod.string().describe("프리셋 이름"),
               description: zod.string().optional().describe("설명"),
               resource: zod
-                .record(zod.string(), zod.unknown())
-                .describe(
-                  '리소스 정보\n\nGPU 타입별 구조:\n- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}\n- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}\n\n※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)',
-                ),
-              jobType: zod.enum(["BATCH", "IDE"]).describe("잡 타입"),
+                .object({
+                  cpu: zod
+                    .object({
+                      requestCore: zod.number().describe("요청 CPU 코어 수"),
+                    })
+                    .strict()
+                    .describe("CPU 정보"),
+                  memory: zod
+                    .object({
+                      requestByte: zod
+                        .number()
+                        .describe("요청 메모리 (바이트)"),
+                    })
+                    .strict()
+                    .describe("메모리 정보"),
+                  gpu: zod
+                    .object({
+                      gpuType: zod
+                        .enum(["NORMAL", "MIG", "MPS"])
+                        .describe("GPU 타입"),
+                      detail: zod
+                        .object({
+                          normal: zod
+                            .object({
+                              requestCount: zod
+                                .number()
+                                .describe("요청 GPU 수량"),
+                            })
+                            .strict()
+                            .optional()
+                            .describe("일반 GPU 설정"),
+                          mig: zod
+                            .array(
+                              zod
+                                .object({
+                                  profile: zod
+                                    .string()
+                                    .describe("MIG 프로파일 이름"),
+                                  requestCount: zod
+                                    .number()
+                                    .describe("요청 수량"),
+                                })
+                                .strict()
+                                .describe("MIG GPU 프로파일 설정"),
+                            )
+                            .optional()
+                            .describe("MIG GPU 설정 (MIG 타입일 때)"),
+                          mps: zod
+                            .object({
+                              requestCount: zod
+                                .number()
+                                .describe("요청 MPS 수량"),
+                            })
+                            .strict()
+                            .optional()
+                            .describe("MPS GPU 설정"),
+                        })
+                        .strict()
+                        .describe("GPU 상세 설정"),
+                      gpuName: zod
+                        .string()
+                        .optional()
+                        .describe("GPU 이름 (선택, 자동 스케줄링 시 null)"),
+                    })
+                    .strict()
+                    .optional()
+                    .describe("GPU 정보"),
+                })
+                .strict()
+                .describe("리소스 정보"),
+              jobType: zod
+                .enum(["BATCH", "INTERACTIVE", "DISTRIBUTED"])
+                .describe("잡 타입"),
               nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
             })
             .strict()

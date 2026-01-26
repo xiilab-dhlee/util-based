@@ -9,6 +9,7 @@ import {
   VOLUME_SORT_OPTIONS,
 } from "@/domain/volume/constants/volume.constant";
 import {
+  volumeCheckedListAtom,
   volumeOrderSortAtom,
   volumePageAtom,
 } from "@/domain/volume/state/volume.atom";
@@ -20,9 +21,11 @@ interface VolumeOrderSortProps {
 export function VolumeOrderSort({ disabled }: VolumeOrderSortProps) {
   const [sort, setSort] = useAtom(volumeOrderSortAtom);
   const resetPage = useResetAtom(volumePageAtom);
+  const resetCheckedList = useResetAtom(volumeCheckedListAtom);
 
   const handleChange = (value: string | null) => {
     resetPage();
+    resetCheckedList();
     setSort(value ?? VOLUME_DEFAULT_SORT);
   };
 

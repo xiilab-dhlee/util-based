@@ -16,11 +16,6 @@ import {
 import type {
   DaemonSetResponse,
   DeploymentResponse,
-  GetNamespacesStatus,
-  GetNodesStatus,
-  GetPersistentVolumesStatus,
-  GetPodsStatus,
-  GetServicesType,
   NamespaceResponse,
   NodeResponse,
   PersistentVolumeResponse,
@@ -29,6 +24,11 @@ import type {
   StatefulSetResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
+  isNamespaceFilterStatus,
+  isNodeFilterStatus,
+  isPersistentVolumeFilterStatus,
+  isPodFilterStatus,
+  isServiceFilterType,
   kubernetesResourcePageAtom,
   kubernetesResourceSearchTextAtom,
   kubernetesResourceStatusAtom,
@@ -70,11 +70,15 @@ export function NodesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
+  const nodeFilterStatus = isNodeFilterStatus(filterValue)
+    ? filterValue
+    : undefined;
+
   const { data, isLoading, isError } = useGetNodes({
     pageNo: page - 1,
     pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
     keyword: searchText || undefined,
-    status: (filterValue as GetNodesStatus) || undefined,
+    status: nodeFilterStatus,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Nodes"), []);
@@ -113,11 +117,15 @@ export function ServicesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
+  const serviceFilterType = isServiceFilterType(filterValue)
+    ? filterValue
+    : undefined;
+
   const { data, isLoading, isError } = useGetServices({
     pageNo: page - 1,
     pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
     keyword: searchText || undefined,
-    type: (filterValue as GetServicesType) || undefined,
+    type: serviceFilterType,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Service"), []);
@@ -208,11 +216,15 @@ export function PersistentVolumesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
+  const pvFilterStatus = isPersistentVolumeFilterStatus(filterValue)
+    ? filterValue
+    : undefined;
+
   const { data, isLoading, isError } = useGetPersistentVolumes({
     pageNo: page - 1,
     pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
     keyword: searchText || undefined,
-    status: (filterValue as GetPersistentVolumesStatus) || undefined,
+    status: pvFilterStatus,
   });
 
   const columns = useMemo(
@@ -258,11 +270,15 @@ export function NamespacesSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
+  const namespaceFilterStatus = isNamespaceFilterStatus(filterValue)
+    ? filterValue
+    : undefined;
+
   const { data, isLoading, isError } = useGetNamespaces({
     pageNo: page - 1,
     pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
     keyword: searchText || undefined,
-    status: (filterValue as GetNamespacesStatus) || undefined,
+    status: namespaceFilterStatus,
   });
 
   const columns = useMemo(
@@ -404,11 +420,15 @@ export function PodsSection() {
   const filterValue = useAtomValue(kubernetesResourceStatusAtom);
   const setPage = useSetAtom(kubernetesResourcePageAtom);
 
+  const podFilterStatus = isPodFilterStatus(filterValue)
+    ? filterValue
+    : undefined;
+
   const { data, isLoading, isError } = useGetPods({
     pageNo: page - 1,
     pageSize: KUBERNETES_RESOURCE_LIST_PAGE_SIZE,
     keyword: searchText || undefined,
-    status: (filterValue as GetPodsStatus) || undefined,
+    status: podFilterStatus,
   });
 
   const columns = useMemo(() => createKubernetesResourceColumn("Pods"), []);

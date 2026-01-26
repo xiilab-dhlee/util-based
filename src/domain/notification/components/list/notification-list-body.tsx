@@ -5,11 +5,11 @@ import type { TableProps } from "xiilab-ui";
 import type { AdminNotificationItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createNotificationListColumn } from "@/domain/notification/components/create-notification-list-column";
 import { NotificationRow } from "@/domain/notification/components/list/notification-row";
+import { CustomizedTable } from "@/shared/components/table/customized-table";
 import {
   NOTIFICATION_SORT_FIELDS,
   type NotificationSortField,
-} from "@/domain/notification/constants/notification.constant";
-import { CustomizedTable } from "@/shared/components/table/customized-table";
+} from "@/shared/constants/notification";
 import type { AntdTableSortOrder } from "@/shared/types/core.model";
 import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";

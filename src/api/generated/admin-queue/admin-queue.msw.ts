@@ -55,8 +55,10 @@ export const getGetUrgentStandbyWorkloadsResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
+    workloadId: faker.number.int({ min: undefined, max: undefined }),
     workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    workspaceId: faker.number.int({ min: undefined, max: undefined }),
     workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workspaceResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     jobType: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -97,52 +99,6 @@ export const getAddWorkloadToUrgentStandbyResponseMock = (
 ): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  timestamp: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
-export const getGetUrgentActiveWorkloadsResponseMock = (
-  overrideResponse: Partial<BaseResponseListQueueWorkloadResponse> = {},
-): BaseResponseListQueueWorkloadResponse => ({
-  status: "SUCCESS",
-  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    workspaceResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    jobType: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    resource: {
-      gpu: {
-        gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        detail: {
-          normal: {
-            quotaCount: faker.number.int({ min: undefined, max: undefined }),
-          },
-          mig: Array.from(
-            { length: faker.number.int({ min: 1, max: 10 }) },
-            (_, i) => i + 1,
-          ).map(() => ({
-            profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
-            quotaCount: faker.number.int({ min: undefined, max: undefined }),
-          })),
-        },
-      },
-      cpu: { quotaCore: faker.number.int({ min: undefined, max: undefined }) },
-      memory: {
-        quotaByte: faker.number.int({ min: undefined, max: undefined }),
-      },
-    },
-    status: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
-    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    rank: faker.number.int({ min: undefined, max: undefined }),
-  })),
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -233,39 +189,8 @@ export const getAddWorkloadToUrgentStandbyMockHandler = (
     options,
   );
 };
-
-export const getGetUrgentActiveWorkloadsMockHandler = (
-  overrideResponse?:
-    | BaseResponseListQueueWorkloadResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) =>
-        | Promise<BaseResponseListQueueWorkloadResponse>
-        | BaseResponseListQueueWorkloadResponse),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/admin/queues/urgent-active/workloads",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetUrgentActiveWorkloadsResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
 export const getAdminQueueMock = () => [
   getUpdateUrgentStandbyOrderMockHandler(),
   getGetUrgentStandbyWorkloadsMockHandler(),
   getAddWorkloadToUrgentStandbyMockHandler(),
-  getGetUrgentActiveWorkloadsMockHandler(),
 ];

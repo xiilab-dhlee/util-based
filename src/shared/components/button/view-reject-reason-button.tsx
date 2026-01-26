@@ -10,7 +10,7 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface ViewRejectReasonButtonProps {
-  reason: string;
+  reason?: string;
   disabled?: boolean;
 }
 
@@ -22,7 +22,7 @@ export function ViewRejectReasonButton({
 
   const handleClickIcon = () => {
     if (disabled) return;
-    publish(COMMON_EVENTS.sendRejectReason, reason);
+    publish(COMMON_EVENTS.openRejectReasonModal, { reason });
   };
 
   return (

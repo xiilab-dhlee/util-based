@@ -3,6 +3,12 @@
 import styled from "styled-components";
 import { Typography } from "xiilab-ui";
 
+import { RegistrySecurityLevelSettingModal } from "@/domain/security/components/registry-security-level-setting-modal";
+import { SecurityAside } from "@/domain/security/components/security-aside";
+import { SecurityLevelPolicySetting } from "@/domain/security/components/security-level-policy-setting";
+import { SecurityPolicySetting } from "@/domain/security/components/security-policy-setting";
+import { SecurityScanListBody } from "@/domain/security/components/security-scan-list-body";
+import { SecurityScanListFooter } from "@/domain/security/components/security-scan-list-footer";
 import { openRegistrySecurityLevelSettingModalAtom } from "@/domain/security/state/registry-security.atom";
 import { createSecurityLevelDescription } from "@/domain/security/utils/security-level.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
@@ -18,12 +24,6 @@ import {
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
-import { RegistrySecurityLevelSettingModal } from "./registry-security-level-setting-modal";
-import { SecurityAside } from "./security-aside";
-import { SecurityLevelPolicySetting } from "./security-level-policy-setting";
-import { SecurityPolicySetting } from "./security-policy-setting";
-import { SecurityScanListBody } from "./security-scan-list-body";
-import { SecurityScanListFooter } from "./security-scan-list-footer";
 
 export function RegistrySecurityMain() {
   const { onOpen: openSecurityLevelModal } = useGlobalModal(

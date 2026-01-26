@@ -47,33 +47,38 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseResourcePresetResponse,
+  BaseResponseResourcePresetDeleteResponse,
   BaseResponseResourcePresetResponse,
   GetPresetsParams,
   ResourcePresetCreateRequest,
+  ResourcePresetDeleteRequest,
   ResourcePresetUpdateRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
- * 리소스 프리셋의 상세 정보를 조회합니다. 최신 버전의 프리셋을 반환합니다.
+ * 리소스 프리셋의 상세 정보를 조회합니다.
  * @summary 리소스 프리셋 상세 조회
  */
-export const getPresetDetail = (presetId: number, signal?: AbortSignal) => {
+export const getPresetDetail = (
+  resourcePresetId: number,
+  signal?: AbortSignal,
+) => {
   return customInstance<BaseResponseResourcePresetResponse>({
-    url: `/api/v1/admin/resource-presets/${presetId}`,
+    url: `/api/v1/admin/resource-presets/${resourcePresetId}`,
     method: "GET",
     signal,
   });
 };
 
-export const getGetPresetDetailQueryKey = (presetId?: number) => {
-  return [`/api/v1/admin/resource-presets/${presetId}`] as const;
+export const getGetPresetDetailQueryKey = (resourcePresetId?: number) => {
+  return [`/api/v1/admin/resource-presets/${resourcePresetId}`] as const;
 };
 
 export const getGetPresetDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof getPresetDetail>>,
   TError = unknown,
 >(
-  presetId: number,
+  resourcePresetId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -87,16 +92,16 @@ export const getGetPresetDetailQueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetPresetDetailQueryKey(presetId);
+    queryOptions?.queryKey ?? getGetPresetDetailQueryKey(resourcePresetId);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getPresetDetail>>> = ({
     signal,
-  }) => getPresetDetail(presetId, signal);
+  }) => getPresetDetail(resourcePresetId, signal);
 
   return {
     queryKey,
     queryFn,
-    enabled: !!presetId,
+    enabled: !!resourcePresetId,
     ...queryOptions,
   } as UseQueryOptions<
     Awaited<ReturnType<typeof getPresetDetail>>,
@@ -114,7 +119,7 @@ export function useGetPresetDetail<
   TData = Awaited<ReturnType<typeof getPresetDetail>>,
   TError = unknown,
 >(
-  presetId: number,
+  resourcePresetId: number,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -140,7 +145,7 @@ export function useGetPresetDetail<
   TData = Awaited<ReturnType<typeof getPresetDetail>>,
   TError = unknown,
 >(
-  presetId: number,
+  resourcePresetId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -166,7 +171,7 @@ export function useGetPresetDetail<
   TData = Awaited<ReturnType<typeof getPresetDetail>>,
   TError = unknown,
 >(
-  presetId: number,
+  resourcePresetId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -188,7 +193,7 @@ export function useGetPresetDetail<
   TData = Awaited<ReturnType<typeof getPresetDetail>>,
   TError = unknown,
 >(
-  presetId: number,
+  resourcePresetId: number,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -202,7 +207,10 @@ export function useGetPresetDetail<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetPresetDetailQueryOptions(presetId, options);
+  const queryOptions = getGetPresetDetailQueryOptions(
+    resourcePresetId,
+    options,
+  );
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -219,11 +227,11 @@ export function useGetPresetDetail<
  * @summary 리소스 프리셋 수정
  */
 export const updatePreset = (
-  presetId: number,
+  resourcePresetId: number,
   resourcePresetUpdateRequest: ResourcePresetUpdateRequest,
 ) => {
   return customInstance<BaseResponseResourcePresetResponse>({
-    url: `/api/v1/admin/resource-presets/${presetId}`,
+    url: `/api/v1/admin/resource-presets/${resourcePresetId}`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: resourcePresetUpdateRequest,
@@ -237,13 +245,13 @@ export const getUpdatePresetMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updatePreset>>,
     TError,
-    { presetId: number; data: ResourcePresetUpdateRequest },
+    { resourcePresetId: number; data: ResourcePresetUpdateRequest },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updatePreset>>,
   TError,
-  { presetId: number; data: ResourcePresetUpdateRequest },
+  { resourcePresetId: number; data: ResourcePresetUpdateRequest },
   TContext
 > => {
   const mutationKey = ["updatePreset"];
@@ -257,11 +265,11 @@ export const getUpdatePresetMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updatePreset>>,
-    { presetId: number; data: ResourcePresetUpdateRequest }
+    { resourcePresetId: number; data: ResourcePresetUpdateRequest }
   > = (props) => {
-    const { presetId, data } = props ?? {};
+    const { resourcePresetId, data } = props ?? {};
 
-    return updatePreset(presetId, data);
+    return updatePreset(resourcePresetId, data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -281,7 +289,7 @@ export const useUpdatePreset = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof updatePreset>>,
       TError,
-      { presetId: number; data: ResourcePresetUpdateRequest },
+      { resourcePresetId: number; data: ResourcePresetUpdateRequest },
       TContext
     >;
   },
@@ -289,7 +297,7 @@ export const useUpdatePreset = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof updatePreset>>,
   TError,
-  { presetId: number; data: ResourcePresetUpdateRequest },
+  { resourcePresetId: number; data: ResourcePresetUpdateRequest },
   TContext
 > => {
   const mutationOptions = getUpdatePresetMutationOptions(options);
@@ -300,9 +308,9 @@ export const useUpdatePreset = <TError = unknown, TContext = unknown>(
  * 리소스 프리셋을 삭제합니다 (soft delete). 해당 프리셋의 모든 버전이 삭제됩니다.
  * @summary 리소스 프리셋 삭제
  */
-export const deletePreset = (presetId: number) => {
+export const deletePreset = (resourcePresetId: number) => {
   return customInstance<void>({
-    url: `/api/v1/admin/resource-presets/${presetId}`,
+    url: `/api/v1/admin/resource-presets/${resourcePresetId}`,
     method: "DELETE",
   });
 };
@@ -314,13 +322,13 @@ export const getDeletePresetMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deletePreset>>,
     TError,
-    { presetId: number },
+    { resourcePresetId: number },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deletePreset>>,
   TError,
-  { presetId: number },
+  { resourcePresetId: number },
   TContext
 > => {
   const mutationKey = ["deletePreset"];
@@ -334,11 +342,11 @@ export const getDeletePresetMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deletePreset>>,
-    { presetId: number }
+    { resourcePresetId: number }
   > = (props) => {
-    const { presetId } = props ?? {};
+    const { resourcePresetId } = props ?? {};
 
-    return deletePreset(presetId);
+    return deletePreset(resourcePresetId);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -358,7 +366,7 @@ export const useDeletePreset = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deletePreset>>,
       TError,
-      { presetId: number },
+      { resourcePresetId: number },
       TContext
     >;
   },
@@ -366,7 +374,7 @@ export const useDeletePreset = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof deletePreset>>,
   TError,
-  { presetId: number },
+  { resourcePresetId: number },
   TContext
 > => {
   const mutationOptions = getDeletePresetMutationOptions(options);
@@ -374,7 +382,7 @@ export const useDeletePreset = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 등록된 리소스 프리셋 목록을 페이징하여 조회합니다. 잡 타입과 노드 타입으로 필터링할 수 있습니다.
+ * 등록된 리소스 프리셋 목록을 페이징하여 조회합니다. 프리셋 이름 검색, 잡 타입, 노드 타입 필터링, 정렬을 지원합니다.
  * @summary 리소스 프리셋 목록 조회
  */
 export const getPresets = (params?: GetPresetsParams, signal?: AbortSignal) => {
@@ -592,6 +600,92 @@ export const useCreatePreset = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreatePresetMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            여러 리소스 프리셋을 일괄 삭제합니다 (soft delete).
+            존재하지 않거나 이미 삭제된 프리셋은 실패로 카운트됩니다.
+        
+ * @summary 리소스 프리셋 다건 삭제
+ */
+export const deletePresets = (
+  resourcePresetDeleteRequest: ResourcePresetDeleteRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseResourcePresetDeleteResponse>({
+    url: `/api/v1/admin/resource-presets/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: resourcePresetDeleteRequest,
+    signal,
+  });
+};
+
+export const getDeletePresetsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePresets>>,
+    TError,
+    { data: ResourcePresetDeleteRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deletePresets>>,
+  TError,
+  { data: ResourcePresetDeleteRequest },
+  TContext
+> => {
+  const mutationKey = ["deletePresets"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deletePresets>>,
+    { data: ResourcePresetDeleteRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return deletePresets(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeletePresetsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePresets>>
+>;
+export type DeletePresetsMutationBody = ResourcePresetDeleteRequest;
+export type DeletePresetsMutationError = unknown;
+
+/**
+ * @summary 리소스 프리셋 다건 삭제
+ */
+export const useDeletePresets = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deletePresets>>,
+      TError,
+      { data: ResourcePresetDeleteRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deletePresets>>,
+  TError,
+  { data: ResourcePresetDeleteRequest },
+  TContext
+> => {
+  const mutationOptions = getDeletePresetsMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

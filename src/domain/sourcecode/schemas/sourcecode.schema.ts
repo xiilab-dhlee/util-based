@@ -51,3 +51,28 @@ export const createSourcecodeSchema = z.object({
 });
 
 export type CreateSourcecodeFormType = z.infer<typeof createSourcecodeSchema>;
+
+// ============================================================================
+// 소스코드 수정 스키마
+// ============================================================================
+
+/** 소스코드 수정 폼 스키마 */
+export const updateSourcecodeSchema = z.object({
+  sourceCodeName: z
+    .string()
+    .min(1, "소스코드 이름을 입력해 주세요.")
+    .max(50, "소스코드 이름은 50자 이하로 입력해 주세요."),
+  mountPath: z
+    .string()
+    .min(1, "마운트 경로를 입력해 주세요.")
+    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+  executionCmd: z
+    .string()
+    .max(1000, "실행 명령어는 1000자 이하로 입력해 주세요."),
+  isPublic: z.boolean(),
+  credentialId: z.number().nullable().optional(),
+  parameter: z.record(z.string(), z.string()).optional(),
+});
+
+export type UpdateSourcecodeFormType = z.infer<typeof updateSourcecodeSchema>;

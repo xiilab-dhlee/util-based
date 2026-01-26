@@ -43,6 +43,8 @@ export const getGetProfileResponseMock = (
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     accountName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    lastName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    firstName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     accountId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     email: faker.string.alpha({ length: { min: 10, max: 20 } }),
     accountRole: faker.helpers.arrayElement([

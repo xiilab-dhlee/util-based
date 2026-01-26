@@ -95,7 +95,9 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
                 <AsideDetailArticleColumn>
                   <AsideDetailArticleKey>파일 용량</AsideDetailArticleKey>
                   <AsideDetailArticleValue>
-                    {formatFileSize(data?.fileSizeByte ?? 0).formatted}
+                    {data?.fileSizeByte
+                      ? formatFileSize(data?.fileSizeByte).formatted
+                      : "-"}
                   </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
               </>

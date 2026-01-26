@@ -2,9 +2,9 @@
 
 import styled from "styled-components";
 
-import { CreateWorkloadImport } from "./create-workload-import";
-import { CreateWorkloadJobType } from "./create-workload-job-type";
-import { CreateWorkloadTitle } from "./create-workload-title";
+import { CreateWorkloadImport } from "@/domain/workload/components/create/create-workload-import";
+import { CreateWorkloadJobType } from "@/domain/workload/components/create/create-workload-job-type";
+import { CreateWorkloadTitle } from "@/domain/workload/components/create/create-workload-title";
 
 export function CreateWorkloadFirstStep() {
   return (

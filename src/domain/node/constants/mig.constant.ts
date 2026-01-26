@@ -147,7 +147,7 @@ export const MIG_GPU_ALPHA_MODEL: GpuConfigMap = {
 };
 /** A100 ~ Current Model Model */
 export const MIG_GPU_BETA_MODEL: GpuConfigMap = {
-  "A100-40GB": {
+  A100: {
     configs: [
       { compute: 7, memory: 40 },
       { compute: 4, memory: 20 },
@@ -165,7 +165,7 @@ export const MIG_GPU_BETA_MODEL: GpuConfigMap = {
       { compute: 1, memory: 10 },
     ],
   },
-  "H100-80GB": {
+  H100: {
     configs: [
       { compute: 7, memory: 80 },
       { compute: 4, memory: 40 },
@@ -192,7 +192,7 @@ export const MIG_GPU_BETA_MODEL: GpuConfigMap = {
       { compute: 1, memory: 12 },
     ],
   },
-  "H200-141GB": {
+  H200: {
     configs: [
       { compute: 7, memory: 141 },
       { compute: 4, memory: 71 },
@@ -201,7 +201,7 @@ export const MIG_GPU_BETA_MODEL: GpuConfigMap = {
       { compute: 1, memory: 18 },
     ],
   },
-  "B200-180GB": {
+  B200: {
     configs: [
       { compute: 7, memory: 180 },
       { compute: 4, memory: 90 },
@@ -210,31 +210,4 @@ export const MIG_GPU_BETA_MODEL: GpuConfigMap = {
       { compute: 1, memory: 23 },
     ],
   },
-};
-/** Current MIG Setting Info Demo */
-export const MIG_INFO_DEMO = {
-  nodeName: "worker-1",
-  // gpuProduct: "A30",
-  // gpuProduct: "A100-40GB",
-  // gpuProduct: "H100-80GB",
-  // gpuProduct: "H100-94GB",
-  // gpuProduct: "H100-96GB",
-  // gpuProduct: "H200-141GB",
-  gpuProduct: "B200-180GB",
-  migInfos: [
-    // 초기 설정 테스트
-    {
-      gpuIndexs: [0, 1],
-      configId: null,
-      migEnable: false,
-    },
-    // 설정 변경 테스트
-    // {
-    //   gpuIndexs: [0, 1],
-    //   configId: 3,
-    //   migEnable: true,
-    // },
-  ],
-  status: "SUCCESS",
-  migKey: "custom",
 };

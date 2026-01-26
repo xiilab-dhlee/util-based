@@ -5,11 +5,12 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteFiles } from "@/api/generated/volume/volume";
+import { useDeleteFilesByMode } from "@/domain/volume/hooks/use-delete-files-by-mode";
 import {
   volumeFileCheckedNodesAtom,
   volumeFileTreeDataAtom,
 } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { removeNodesFromTree } from "@/domain/volume/utils/volume.util";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -20,7 +21,11 @@ interface DeleteVolumeFilePayload {
   filePaths: string[];
 }
 
-export function DeleteVolumeFileModal() {
+interface DeleteVolumeFileModalProps {
+  mode: VolumeMode;
+}
+
+export function DeleteVolumeFileModal({ mode }: DeleteVolumeFileModalProps) {
   const [open, setOpen] = useState(false);
   const setTreeData = useSetAtom(volumeFileTreeDataAtom);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
@@ -28,7 +33,7 @@ export function DeleteVolumeFileModal() {
   const [volumeId, setVolumeId] = useState<number | null>(null);
   const [filePaths, setFilePaths] = useState<string[]>([]);
 
-  const { mutate, isPending } = useDeleteFiles();
+  const { mutate, isPending } = useDeleteFilesByMode(mode);
 
   const handleCancel = () => {
     if (isPending) return;
@@ -75,6 +80,9 @@ export function DeleteVolumeFileModal() {
       onOk={handleOk}
       title="파일 삭제"
       centered
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >

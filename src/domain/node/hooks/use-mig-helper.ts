@@ -32,14 +32,11 @@ export const useMigHelper = () => {
   const initMig = (gpuIndex: number, migEnable: boolean) => {
     if (gpuIndex === -1) return;
 
-    setMigGpus((prev) => {
-      const next = [...prev];
-
-      next[gpuIndex].migEnable = migEnable;
-      next[gpuIndex].configId = -1;
-
-      return next;
-    });
+    setMigGpus((prev) =>
+      prev.map((gpu) =>
+        gpu.gpuIndex === gpuIndex ? { ...gpu, migEnable, configId: -1 } : gpu,
+      ),
+    );
 
     // Config ID 초기화
     setSelectedMigConfigId(-1);
@@ -49,13 +46,11 @@ export const useMigHelper = () => {
   const updateMig = (gpuIndex: number, configId: number) => {
     if (gpuIndex === -1) return;
 
-    setMigGpus((prev) => {
-      const next = [...prev];
-
-      next[gpuIndex].configId = configId;
-
-      return next;
-    });
+    setMigGpus((prev) =>
+      prev.map((gpu) =>
+        gpu.gpuIndex === gpuIndex ? { ...gpu, configId } : gpu,
+      ),
+    );
   };
 
   return { initMig, updateMig, getInstance, getInstanceCount };

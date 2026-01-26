@@ -49,7 +49,7 @@ import type {
   BaseResponsePageResponseStorageResponse,
   BaseResponseStorageResponse,
   BaseResponseUnit,
-  GetStoragesParams,
+  GetAdminStoragesParams,
   StorageCreateRequest,
   StorageUpdateRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -378,8 +378,8 @@ export const useDeleteStorage = <TError = unknown, TContext = unknown>(
  * 등록된 스토리지 목록을 페이징하여 조회합니다.
  * @summary 스토리지 목록 조회
  */
-export const getStorages = (
-  params?: GetStoragesParams,
+export const getAdminStorages = (
+  params?: GetAdminStoragesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseStorageResponse>({
@@ -390,55 +390,66 @@ export const getStorages = (
   });
 };
 
-export const getGetStoragesQueryKey = (params?: GetStoragesParams) => {
+export const getGetAdminStoragesQueryKey = (
+  params?: GetAdminStoragesParams,
+) => {
   return [`/api/v1/admin/storages`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetStoragesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export const getGetAdminStoragesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetAdminStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminStorages>>,
+        TError,
+        TData
+      >
     >;
   },
 ) => {
   const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetStoragesQueryKey(params);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetAdminStoragesQueryKey(params);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getStorages>>> = ({
-    signal,
-  }) => getStorages(params, signal);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminStorages>>
+  > = ({ signal }) => getAdminStorages(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getStorages>>,
+    Awaited<ReturnType<typeof getAdminStorages>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetStoragesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getStorages>>
+export type GetAdminStoragesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminStorages>>
 >;
-export type GetStoragesQueryError = unknown;
+export type GetAdminStoragesQueryError = unknown;
 
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetAdminStorages<
+  TData = Awaited<ReturnType<typeof getAdminStorages>>,
   TError = unknown,
 >(
-  params: undefined | GetStoragesParams,
+  params: undefined | GetAdminStoragesParams,
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminStorages>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getStorages>>,
+          Awaited<ReturnType<typeof getAdminStorages>>,
           TError,
-          Awaited<ReturnType<typeof getStorages>>
+          Awaited<ReturnType<typeof getAdminStorages>>
         >,
         "initialData"
       >;
@@ -447,20 +458,24 @@ export function useGetStorages<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetAdminStorages<
+  TData = Awaited<ReturnType<typeof getAdminStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetAdminStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminStorages>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getStorages>>,
+          Awaited<ReturnType<typeof getAdminStorages>>,
           TError,
-          Awaited<ReturnType<typeof getStorages>>
+          Awaited<ReturnType<typeof getAdminStorages>>
         >,
         "initialData"
       >;
@@ -469,14 +484,18 @@ export function useGetStorages<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetAdminStorages<
+  TData = Awaited<ReturnType<typeof getAdminStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetAdminStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminStorages>>,
+        TError,
+        TData
+      >
     >;
   },
   queryClient?: QueryClient,
@@ -487,21 +506,25 @@ export function useGetStorages<
  * @summary 스토리지 목록 조회
  */
 
-export function useGetStorages<
-  TData = Awaited<ReturnType<typeof getStorages>>,
+export function useGetAdminStorages<
+  TData = Awaited<ReturnType<typeof getAdminStorages>>,
   TError = unknown,
 >(
-  params?: GetStoragesParams,
+  params?: GetAdminStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminStorages>>,
+        TError,
+        TData
+      >
     >;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetStoragesQueryOptions(params, options);
+  const queryOptions = getGetAdminStoragesQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

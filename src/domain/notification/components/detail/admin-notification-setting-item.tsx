@@ -6,8 +6,10 @@ import { Icon, Switch } from "xiilab-ui";
 
 import type { AdminNotificationSetResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { NotificationConfirmModal } from "@/domain/notification/components/detail/notification-confirm-modal";
-import { getAdminNotificationSetLabel } from "@/domain/notification/constants/notification.constant";
-import type { NotificationChannel } from "@/domain/notification/hooks/use-admin-notification-settings";
+import {
+  getAdminNotificationSetLabel,
+  type NotificationChannel,
+} from "@/shared/constants/notification";
 
 interface AdminNotificationSettingItemProps {
   /** 알림 설정명 (API 스펙 기반) */

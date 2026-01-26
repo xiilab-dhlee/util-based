@@ -2,7 +2,7 @@
 
 import { useAtom } from "jotai";
 
-import { MONITORING_NOTIFICATION_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
+import { MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import { monitoringNotificationPageAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
 
@@ -25,7 +25,7 @@ export function MonitoringNotificationHistoryListFooter({
     <ListPageFooter
       total={total}
       page={page}
-      pageSize={MONITORING_NOTIFICATION_PAGE_SIZE}
+      pageSize={MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE}
       onChange={handlePageChange}
       isLoading={loading}
     />

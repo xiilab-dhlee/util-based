@@ -33,7 +33,7 @@ export function useWorkspaceSwitch() {
   };
 
   const invalidateAllCache = () => {
-    queryClient.removeQueries();
+    queryClient.invalidateQueries();
   };
 
   const navigateAfterSwitch = () => {

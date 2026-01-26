@@ -108,7 +108,7 @@ export class AccountManagementPage extends ListPage {
 
   /** 상세 모달 개수 필드 셀렉터 */
   private static readonly DETAIL_COUNT_FIELDS: Record<string, string> = {
-    "워크스페이스 보유 개수": ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT,
+    "워크스페이스 생성 개수": ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT,
     "워크스페이스 생성 제한 개수": ACCOUNT_SELECTOR.DETAIL_WORKSPACE_LIMIT,
   };
 
@@ -126,7 +126,7 @@ export class AccountManagementPage extends ListPage {
 
   /** 수정 모달 개수 필드 셀렉터 */
   private static readonly UPDATE_COUNT_FIELDS: Record<string, string> = {
-    "워크스페이스 보유 개수": ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT,
+    "워크스페이스 생성 개수": ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT,
   };
 
   // ============================================
@@ -136,7 +136,7 @@ export class AccountManagementPage extends ListPage {
   /**
    * 상세 모달의 필드가 올바르게 표시되는지 검증
    *
-   * @param fieldName - 필드명 (이름, 이메일, 그룹, 상태, 권한, 가입일, 워크스페이스 보유 개수 등)
+   * @param fieldName - 필드명 (이름, 이메일, 그룹, 상태, 권한, 가입일, 워크스페이스 생성 개수 등)
    */
   async assertDetailModalFieldVisible(fieldName: string): Promise<void> {
     await this.assertModalFieldVisible(
@@ -154,7 +154,7 @@ export class AccountManagementPage extends ListPage {
   /**
    * 수정 모달의 필드가 올바르게 표시되는지 검증
    *
-   * @param fieldName - 필드명 (이름, 이메일, 그룹, 가입일, 워크스페이스 보유 개수)
+   * @param fieldName - 필드명 (이름, 이메일, 그룹, 가입일, 워크스페이스 생성 개수)
    */
   async assertUpdateModalFieldVisible(fieldName: string): Promise<void> {
     await this.assertModalFieldVisible(

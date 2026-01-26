@@ -3,21 +3,17 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import styled from "styled-components";
-import { Button } from "xiilab-ui";
+import { Button, Card } from "xiilab-ui";
 
-import type { DeleteStorageModalPayload } from "@/domain/system-setting/components/delete-storage-modal";
+import { useGetAdminStorages } from "@/api/generated/admin-storage/admin-storage";
+import { StorageCard } from "@/domain/storage/components/storage-card";
+import { STORAGE_CARD_HEIGHT } from "@/domain/storage/constants/storage.constant";
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
-import { StorageSettingCard } from "@/domain/system-setting/components/storage-setting-card";
-import {
-  STORAGE_SETTING_PAGE_SIZE,
-  STORAGE_SETTING_SKELETON_KEYS,
-} from "@/domain/system-setting/constants/system-setting.constant";
-import { useGetStorageSettings } from "@/domain/system-setting/hooks/use-get-storage-settings";
-import type { StorageSettingIdType } from "@/domain/system-setting/schemas/storage-setting.schema";
+import { STORAGE_SETTING_PAGE_SIZE } from "@/domain/system-setting/constants/system-setting.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { ListPageFooter } from "@/shared/components/layouts/list-page-footer";
-import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
+import { STORAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 
 /**
@@ -28,9 +24,9 @@ export function StorageListSetting() {
   const [page, setPage] = useState(1);
   const publish = usePublish();
 
-  const { data, isLoading, isError, refetch } = useGetStorageSettings({
-    page,
-    size: STORAGE_SETTING_PAGE_SIZE,
+  const { data, isLoading, isError, refetch } = useGetAdminStorages({
+    pageNo: page - 1,
+    pageSize: STORAGE_SETTING_PAGE_SIZE,
   });
 
   const handlePageChange = (newPage: number) => {
@@ -38,32 +34,19 @@ export function StorageListSetting() {
   };
 
   const handleAdd = () => {
-    publish(SYSTEM_SETTING_EVENTS.openStorageCreateModal);
+    publish(STORAGE_EVENTS.openCreateModal);
   };
-
-  const handleCardClick = (id: StorageSettingIdType) => {
-    publish(SYSTEM_SETTING_EVENTS.openStorageDetailModal, {
-      id,
-    });
-  };
-
-  const handleDelete = (id: StorageSettingIdType) => {
-    publish<DeleteStorageModalPayload>(
-      SYSTEM_SETTING_EVENTS.openStorageDeleteModal,
-      {
-        id,
-      },
-    );
-  };
-
-  const items = data?.content ?? [];
 
   const renderContent = (): ReactNode => {
     if (isLoading) {
       return (
         <CardGrid>
-          {STORAGE_SETTING_SKELETON_KEYS.map((key) => (
-            <StorageSettingCard key={key} loading />
+          {Array.from({ length: STORAGE_SETTING_PAGE_SIZE }).map((_, index) => (
+            <Card
+              key={`skeleton-${index}`}
+              loading
+              height={STORAGE_CARD_HEIGHT}
+            />
           ))}
         </CardGrid>
       );
@@ -73,7 +56,7 @@ export function StorageListSetting() {
       return <FullSizeErrorState onRetry={refetch} />;
     }
 
-    if (items.length === 0) {
+    if (data?.content?.length === 0) {
       return (
         <EmptyState
           title="스토리지 목록이 비어 있습니다."
@@ -84,13 +67,8 @@ export function StorageListSetting() {
 
     return (
       <CardGrid>
-        {items.map((storage) => (
-          <StorageSettingCard
-            key={storage.id}
-            {...storage}
-            onClick={handleCardClick}
-            onDelete={handleDelete}
-          />
+        {data?.content?.map((storage) => (
+          <StorageCard key={storage.storageId} {...storage} />
         ))}
       </CardGrid>
     );
@@ -108,15 +86,13 @@ export function StorageListSetting() {
     >
       <Container>
         {renderContent()}
-        {!isLoading && !isError && items.length > 0 && (
-          <ListPageFooter
-            total={data?.totalSize || 0}
-            page={page}
-            pageSize={STORAGE_SETTING_PAGE_SIZE}
-            onChange={handlePageChange}
-            isLoading={isLoading}
-          />
-        )}
+        <ListPageFooter
+          total={data?.totalSize ?? 0}
+          page={page}
+          pageSize={STORAGE_SETTING_PAGE_SIZE}
+          onChange={handlePageChange}
+          isLoading={isLoading}
+        />
       </Container>
     </SettingBox>
   );

@@ -1,24 +1,77 @@
 "use client";
 
 import { Popover } from "antd";
+import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon } from "xiilab-ui";
+import { Icon, Tag } from "xiilab-ui";
 
+import { useGetNotifications } from "@/api/generated/account-notification/account-notification";
+import { useGetProfile } from "@/api/generated/account-profile/account-profile";
+import { useGetAdminNotifications } from "@/api/generated/admin-account-notification/admin-account-notification";
+import { GetAdminNotificationsOrder } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ActiveOutsideClick } from "@/shared/components/active-outside-click";
 import { ProfilePopover } from "@/shared/components/popover/profile-popover";
+import { NOTIFICATION_POLLING_INTERVAL } from "@/shared/constants/notification/notification.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { useLogoutSync } from "@/shared/hooks/use-logout-sync";
 import { openProfilePopoverAtom } from "@/shared/state/modal.atom";
+import { isAdminMode } from "@/shared/utils/router.util";
 
 export function Profile() {
   const { data: session } = useSession();
+  const accountId = session?.user?.id ?? "";
+  const pathname = usePathname();
+  const isAdmin = isAdminMode(pathname);
 
-  const userName = session?.user?.name ?? "";
-  const email = session?.user?.email ?? "";
+  const { data: profile } = useGetProfile(accountId, {
+    query: { enabled: Boolean(accountId) },
+  });
+
+  // 읽지 않은 알림 확인 (사용자용)
+  const { data: userNotifications } = useGetNotifications(
+    accountId,
+    {
+      pageNo: 0,
+      pageSize: 1,
+      hasRead: false,
+    },
+    {
+      query: {
+        enabled: Boolean(accountId) && !isAdmin,
+        refetchInterval: NOTIFICATION_POLLING_INTERVAL,
+      },
+    },
+  );
+
+  // 읽지 않은 알림 확인 (관리자용)
+  const { data: adminNotifications } = useGetAdminNotifications(
+    accountId,
+    {
+      pageNo: 0,
+      pageSize: 1,
+      hasRead: false,
+      order: GetAdminNotificationsOrder.DESC,
+    },
+    {
+      query: {
+        enabled: Boolean(accountId) && isAdmin,
+        refetchInterval: NOTIFICATION_POLLING_INTERVAL,
+      },
+    },
+  );
+
+  const hasUnreadNotifications = isAdmin
+    ? (adminNotifications?.totalSize ?? 0) > 0
+    : (userNotifications?.totalSize ?? 0) > 0;
+
+  const userName = profile?.accountName ?? "-";
+  const email = profile?.email ?? "-";
 
   const [showDropdown, setShowDropdown] = useState(false);
   const { open, onToggle } = useGlobalModal(openProfilePopoverAtom);
+  const { broadcastLogout } = useLogoutSync();
 
   const handleToggleDropdown = () => {
     setShowDropdown((prev) => !prev);
@@ -33,6 +86,7 @@ export function Profile() {
   };
 
   const handleLogout = () => {
+    broadcastLogout(); // 다른 탭에 로그아웃 알림
     signOut({});
   };
 
@@ -41,7 +95,7 @@ export function Profile() {
       <Left>
         <Popover
           placement="right"
-          content={<ProfilePopover userName={userName} email={email} />}
+          content={<ProfilePopover />}
           trigger="click"
           arrow={false}
           open={open}
@@ -50,7 +104,7 @@ export function Profile() {
             root: {
               left: "210px",
               top: "calc(100% - 710px)",
-              zIndex: 10000,
+              zIndex: 998,
               borderRadius: 4,
             },
             body: {
@@ -59,13 +113,25 @@ export function Profile() {
           }}
         >
           <User>
-            <Avatar>
+            <Avatar $hasUnread={hasUnreadNotifications}>
               <IconWrapper>
                 <Icon name="Astrago" color="#fff" size={18} />
               </IconWrapper>
             </Avatar>
             <UserBody>
-              <UserName className="truncate">{userName}</UserName>
+              <UserHeader>
+                {isAdmin && (
+                  <AdminTag
+                    backgroundColor="#FFFFFF33"
+                    borderColor="#77787D"
+                    rounded
+                    color="#F8F8F8"
+                  >
+                    관리자
+                  </AdminTag>
+                )}
+                <UserName className="truncate">{userName}</UserName>
+              </UserHeader>
               <UserEmail className="truncate">{email}</UserEmail>
             </UserBody>
           </User>
@@ -111,15 +177,14 @@ const User = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  padding-right: 0;
+  padding: 10px 0 12px 12px;
   height: 100%;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
   overflow: hidden;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ $hasUnread?: boolean }>`
   position: relative;
 
   &:after {
@@ -130,9 +195,10 @@ const Avatar = styled.div`
     border-radius: 50%;
     top: -1px;
     right: -1px;
-    background-color: green;
+    background-color: #ae00ff;
     border: 1px solid #2d303e;
-    z-index: 10000;
+    z-index: 5;
+    display: ${({ $hasUnread }) => ($hasUnread ? "block" : "none")};
   }
 `;
 
@@ -160,6 +226,27 @@ const UserBody = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
+`;
+
+const UserHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+`;
+
+const AdminTag = styled(Tag)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  min-height: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+  padding: 0 6px;
+  max-width: none;
+  overflow: visible;
+  text-overflow: initial;
 `;
 
 const UserEmail = styled.span`

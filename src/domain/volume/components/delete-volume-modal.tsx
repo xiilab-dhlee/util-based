@@ -1,45 +1,55 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Modal } from "xiilab-ui";
 
-import {
-  getGetVolumeListQueryKey,
-  useDeleteVolume,
-} from "@/api/generated/volume/volume";
+import { getAdminGetVolumeListQueryKey } from "@/api/generated/admin-volume/admin-volume";
+import { getGetVolumeListQueryKey } from "@/api/generated/volume/volume";
+import { useDeleteVolumesByMode } from "@/domain/volume/hooks/use-delete-volumes-by-mode";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { isUserMode } from "@/shared/utils/router.util";
 
-export function DeleteVolumeModal() {
+interface DeleteVolumeModalProps {
+  mode: VolumeMode;
+}
+
+export function DeleteVolumeModal({ mode }: DeleteVolumeModalProps) {
   const router = useRouter();
-  const pathname = usePathname();
   const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
   const [deleteVolumeIds, setDeleteVolumeIds] = useState<number[]>([]);
-  const { mutateAsync, isPending } = useDeleteVolume();
 
-  const isUser = isUserMode(pathname);
+  const isUser = mode === "user";
+  const { mutate, isPending } = useDeleteVolumesByMode(mode);
 
-  const handleOk = async () => {
+  const handleOk = () => {
     if (isPending) return;
     if (deleteVolumeIds.length === 0) return;
 
-    for (const volumeId of deleteVolumeIds) {
-      await mutateAsync({ volumeId });
-    }
-
-    queryClient.invalidateQueries({
-      queryKey: getGetVolumeListQueryKey(),
-    });
-    setOpen(false);
-
-    const targetRoute = isUser ? ROUTES.USER_VOLUME : ROUTES.ADMIN_VOLUME;
-    router.replace(targetRoute);
+    mutate(
+      { data: { volumeIds: deleteVolumeIds } },
+      {
+        onSuccess: () => {
+          if (isUser) {
+            queryClient.invalidateQueries({
+              queryKey: getGetVolumeListQueryKey(),
+            });
+            router.replace(ROUTES.USER_VOLUME);
+          } else {
+            queryClient.invalidateQueries({
+              queryKey: getAdminGetVolumeListQueryKey(),
+            });
+            router.replace(ROUTES.ADMIN_VOLUME);
+          }
+          setOpen(false);
+        },
+      },
+    );
   };
 
   const handleCancel = () => {
@@ -61,6 +71,9 @@ export function DeleteVolumeModal() {
       onOk={handleOk}
       title="볼륨 삭제"
       centered
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >

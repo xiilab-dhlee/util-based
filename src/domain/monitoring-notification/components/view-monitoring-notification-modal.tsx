@@ -12,8 +12,7 @@ import {
   TextArea,
 } from "xiilab-ui";
 
-import { useGetMonitoringNotificationSetDetail } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
-import { toFormOperator } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
+import { useGetMonitoringNotificationSetDetail } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set";
 import { openViewMonitoringNotificationModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import type { ThresholdFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 import { MODAL_MODES } from "@/shared/constants/core.constant";
@@ -41,7 +40,7 @@ export function ViewMonitoringNotificationModal() {
     () =>
       (data?.threshold ?? []).map((t) => ({
         metric: t.metric,
-        operator: toFormOperator(t.operator),
+        operator: t.operator,
         value: String(t.value),
         durationMinutes: String(t.durationMinutes),
       })),

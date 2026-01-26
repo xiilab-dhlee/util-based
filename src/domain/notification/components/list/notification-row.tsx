@@ -4,13 +4,11 @@ import classNames from "classnames";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import type { HTMLAttributes, MouseEvent } from "react";
-import { toast } from "react-toastify";
 
 import type { AdminNotificationItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { useMarkNotificationAsReadAction } from "@/domain/notification/hooks/notification-actions";
+import { useMarkAdminNotificationAsReadAction } from "@/domain/notification/hooks/notification-actions";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { getSessionAccountId } from "@/shared/utils/auth.util";
-import { getBackendErrorMessage } from "@/shared/utils/error/error.util";
 
 interface NotificationRowProps extends HTMLAttributes<HTMLTableRowElement> {
   rowData: AdminNotificationItemResponse;
@@ -33,7 +31,7 @@ export function NotificationRow({
   const { data: session } = useSession();
   const accountId = getSessionAccountId(session) ?? "";
 
-  const { mutate: markAsRead } = useMarkNotificationAsReadAction();
+  const { mutate: markAsRead } = useMarkAdminNotificationAsReadAction();
 
   const handleClickRow = (evt: MouseEvent) => {
     evt.stopPropagation();
@@ -43,17 +41,10 @@ export function NotificationRow({
 
       // 읽지 않은 알림인 경우 읽음 처리
       if (!rowData.isRead && accountId) {
-        markAsRead(
-          {
-            accountId,
-            notificationId: rowData.notificationId,
-          },
-          {
-            onError: (error) => {
-              toast.error(getBackendErrorMessage(error));
-            },
-          },
-        );
+        markAsRead({
+          accountId,
+          notificationId: rowData.notificationId,
+        });
       }
     }
   };

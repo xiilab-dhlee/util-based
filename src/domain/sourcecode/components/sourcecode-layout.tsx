@@ -1,11 +1,10 @@
 "use client";
 
 import { useAtomValue } from "jotai";
-import { useResetAtom } from "jotai/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect } from "react";
+import styled from "styled-components";
 
-import { useGetSourceCodeList } from "@/api/generated/source-code/source-code";
 import { CreateSourcecodeModal } from "@/domain/sourcecode/components/create-sourcecode-modal";
 import { DeleteSourcecodeModal } from "@/domain/sourcecode/components/delete-sourcecode-modal";
 import { SourcecodeListBody } from "@/domain/sourcecode/components/list/sourcecode-list-body";
@@ -15,13 +14,15 @@ import {
   SOURCECODE_PAGE_SIZE,
   SOURCECODE_SORT_FIELD_MAP,
 } from "@/domain/sourcecode/constants/sourcecode.constant";
+import { useGetSourcecodeListByMode } from "@/domain/sourcecode/hooks/use-get-sourcecode-list-by-mode";
 import {
-  sourcecodeCheckedListAtom,
+  sourcecodeHasMineAtom,
   sourcecodePageAtom,
   sourcecodeSearchTextAtom,
   sourcecodeSortAtom,
   sourcecodeTypeSortAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
+import type { SourcecodeMode } from "@/domain/sourcecode/types/sourcecode.type";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
@@ -32,8 +33,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-
-type SourcecodeMode = "user" | "admin";
 
 interface SourcecodeLayoutProps extends PropsWithChildren {
   mode: SourcecodeMode;
@@ -46,9 +45,9 @@ const SOURCECODE_ROUTES = {
     pageKey: "user.sourcecode" as const,
   },
   admin: {
-    list: ROUTES.ADMIN_SOURCECODE_MANAGEMENT,
-    detail: (id: string) => `${ROUTES.ADMIN_SOURCECODE_MANAGEMENT}/${id}`,
-    pageKey: "admin.sourcecode-management" as const,
+    list: ROUTES.ADMIN_SOURCECODE,
+    detail: ROUTES.ADMIN_SOURCECODE_DETAIL,
+    pageKey: "admin.sourcecode" as const,
   },
 };
 
@@ -62,13 +61,12 @@ const SOURCECODE_ROUTES = {
 export function SourcecodeLayout({ mode, children }: SourcecodeLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
-
   const page = useAtomValue(sourcecodePageAtom);
   const searchText = useAtomValue(sourcecodeSearchTextAtom);
   const sort = useAtomValue(sourcecodeSortAtom);
   const codeType = useAtomValue(sourcecodeTypeSortAtom);
+  const hasMine = useAtomValue(sourcecodeHasMineAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
-  const resetCheckedList = useResetAtom(sourcecodeCheckedListAtom);
 
   const routes = SOURCECODE_ROUTES[mode];
   const isSourcecodeListPage = pathname === routes.list;
@@ -79,21 +77,25 @@ export function SourcecodeLayout({ mode, children }: SourcecodeLayoutProps) {
     fieldMap: SOURCECODE_SORT_FIELD_MAP,
   });
 
-  const workspaceId = selectedWorkspace?.workspaceId;
+  // User 모드에서만 workspaceId 사용
+  const isUserMode = mode === "user";
+  const workspaceId = selectedWorkspace?.workspaceId ?? -1;
 
-  const { data, isLoading, isError } = useGetSourceCodeList(
+  const { data, isLoading, isError } = useGetSourcecodeListByMode(
+    mode,
     {
       pageNo: page - 1,
       pageSize: SOURCECODE_PAGE_SIZE,
       keyword: searchText || undefined,
-      workspaceId,
+      ...(isUserMode && { workspaceId, hasMine }),
       sort: sortRequest?.sort,
       order: sortRequest?.order,
       codeType: codeType ?? undefined,
     },
     {
       query: {
-        enabled: !!workspaceId,
+        // User 모드에서만 workspaceId 조건 체크
+        enabled: isUserMode ? !!workspaceId : true,
       },
     },
   );
@@ -101,18 +103,12 @@ export function SourcecodeLayout({ mode, children }: SourcecodeLayoutProps) {
   const content = data?.content ?? [];
   const totalSize = data?.totalSize ?? 0;
 
-  // 데이터 변경 시 체크 상태 초기화 (검색, 필터, 정렬, 페이지 이동 등)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: 데이터 변경 시 체크 상태 초기화
-  useEffect(() => {
-    resetCheckedList();
-  }, [content, resetCheckedList]);
-
   // 목록 페이지에서만 첫 번째 소스코드로 자동 리다이렉트
   useEffect(() => {
     if (content.length === 0) return;
 
     if (isSourcecodeListPage && content[0]) {
-      router.replace(routes.detail(String(content[0].sourceCodeId)));
+      router.replace(routes.detail(content[0].sourceCodeId));
     }
   }, [isSourcecodeListPage, content, router, routes]);
 
@@ -120,21 +116,30 @@ export function SourcecodeLayout({ mode, children }: SourcecodeLayoutProps) {
     <>
       <PageHeader pageKey={routes.pageKey} />
       <ListPageMain>
-        <ListPageBody>
-          <SourcecodeListFilter total={totalSize} loading={isLoading} />
+        <StyledListPageBody>
+          <SourcecodeListFilter
+            mode={mode}
+            total={totalSize}
+            loading={isLoading}
+          />
           <SourcecodeListBody
             data={content}
             isLoading={isLoading}
             isError={isError}
+            mode={mode}
           />
           <SourcecodeListFooter total={totalSize} loading={isLoading} />
-        </ListPageBody>
+        </StyledListPageBody>
         <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
       </ListPageMain>
       {/* 소스코드 삭제 모달 */}
-      <DeleteSourcecodeModal />
+      <DeleteSourcecodeModal mode={mode} />
       {/* 소스코드 생성 모달 */}
       <CreateSourcecodeModal />
     </>
   );
 }
+
+const StyledListPageBody = styled(ListPageBody)`
+  height: 790px;
+`;

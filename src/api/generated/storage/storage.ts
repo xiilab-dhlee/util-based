@@ -44,15 +44,15 @@ import { useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseStorageResponse,
-  GetStorages1Params,
+  GetStoragesParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 등록된 스토리지 목록을 페이징하여 조회합니다.
  * @summary 스토리지 목록 조회
  */
-export const getStorages1 = (
-  params?: GetStorages1Params,
+export const getStorages = (
+  params?: GetStoragesParams,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseStorageResponse>({
@@ -63,55 +63,55 @@ export const getStorages1 = (
   });
 };
 
-export const getGetStorages1QueryKey = (params?: GetStorages1Params) => {
+export const getGetStoragesQueryKey = (params?: GetStoragesParams) => {
   return [`/api/v1/storages`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetStorages1QueryOptions = <
-  TData = Awaited<ReturnType<typeof getStorages1>>,
+export const getGetStoragesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params?: GetStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
     >;
   },
 ) => {
   const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetStorages1QueryKey(params);
+  const queryKey = queryOptions?.queryKey ?? getGetStoragesQueryKey(params);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getStorages1>>> = ({
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getStorages>>> = ({
     signal,
-  }) => getStorages1(params, signal);
+  }) => getStorages(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getStorages1>>,
+    Awaited<ReturnType<typeof getStorages>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetStorages1QueryResult = NonNullable<
-  Awaited<ReturnType<typeof getStorages1>>
+export type GetStoragesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getStorages>>
 >;
-export type GetStorages1QueryError = unknown;
+export type GetStoragesQueryError = unknown;
 
-export function useGetStorages1<
-  TData = Awaited<ReturnType<typeof getStorages1>>,
+export function useGetStorages<
+  TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params: undefined | GetStorages1Params,
+  params: undefined | GetStoragesParams,
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getStorages1>>,
+          Awaited<ReturnType<typeof getStorages>>,
           TError,
-          Awaited<ReturnType<typeof getStorages1>>
+          Awaited<ReturnType<typeof getStorages>>
         >,
         "initialData"
       >;
@@ -120,20 +120,20 @@ export function useGetStorages1<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetStorages1<
-  TData = Awaited<ReturnType<typeof getStorages1>>,
+export function useGetStorages<
+  TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params?: GetStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getStorages1>>,
+          Awaited<ReturnType<typeof getStorages>>,
           TError,
-          Awaited<ReturnType<typeof getStorages1>>
+          Awaited<ReturnType<typeof getStorages>>
         >,
         "initialData"
       >;
@@ -142,14 +142,14 @@ export function useGetStorages1<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetStorages1<
-  TData = Awaited<ReturnType<typeof getStorages1>>,
+export function useGetStorages<
+  TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params?: GetStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
     >;
   },
   queryClient?: QueryClient,
@@ -160,21 +160,21 @@ export function useGetStorages1<
  * @summary 스토리지 목록 조회
  */
 
-export function useGetStorages1<
-  TData = Awaited<ReturnType<typeof getStorages1>>,
+export function useGetStorages<
+  TData = Awaited<ReturnType<typeof getStorages>>,
   TError = unknown,
 >(
-  params?: GetStorages1Params,
+  params?: GetStoragesParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getStorages1>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getStorages>>, TError, TData>
     >;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetStorages1QueryOptions(params, options);
+  const queryOptions = getGetStoragesQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

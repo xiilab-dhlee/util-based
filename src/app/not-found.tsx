@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
+import { CheckPasswordModal } from "@/domain/profile/components/check-password-modal";
+import { UpdateProfileModal } from "@/domain/profile/components/update-profile-modal";
 import { CreateFirstWorkspaceModal } from "@/domain/workspace/components/create-first-workspace-modal";
 import { CreateWorkspaceModal } from "@/domain/workspace/components/create-workspace-modal";
 import { Navigation } from "@/shared/components/layouts/navigation";
-import { CheckPasswordModal } from "@/shared/components/modal/check-password-modal";
-import { UpdatePasswordModal } from "@/shared/components/modal/update-password-modal";
 
 export default function NotFound() {
   const router = useRouter();
@@ -50,8 +50,8 @@ export default function NotFound() {
       <CreateWorkspaceModal />
       {/* 비밀번호 재확인 모달 */}
       <CheckPasswordModal />
-      {/* 비밀번호 수정 모달 */}
-      <UpdatePasswordModal />
+      {/* 프로필 수정 모달 */}
+      <UpdateProfileModal />
     </>
   );
 }

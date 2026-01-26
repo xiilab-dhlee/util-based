@@ -1,86 +1,87 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 import type { ChartDataSeries } from "@/shared/utils/chart.util";
 import { statusTextStyle } from "@/styles/mixins/text";
 
 interface ChartLegendToggleProps {
-  /** 차트 시리즈 데이터 */
   series: ChartDataSeries[];
-  /** 시리즈별 색상 배열 */
   colors: string[] | readonly string[];
-  /**
-   * 시리즈 토글 시 콜백 (선택사항)
-   * - Legend는 내부 active 상태만 관리하고
-   * - 실제 ApexCharts 인스턴스 제어는 상위 컴포넌트에서 수행합니다.
-   */
+  activeSeriesMap?: Record<string, boolean>;
   onToggle?: (seriesName: string, isActive: boolean) => void;
 }
 
-/**
- * ApexCharts용 범례 토글 컴포넌트
- *
- * 차트 시리즈를 표시하고 클릭하여 show/hide할 수 있는 범례를 제공합니다.
- */
+const DEFAULT_COLOR = "#8a8a8a";
+
 export function ChartLegendToggle({
   series,
   colors,
+  activeSeriesMap: externalActiveMap,
   onToggle,
 }: ChartLegendToggleProps) {
-  const [activeSeriesMap, setActiveSeriesMap] = useState<
+  const [internalActiveMap, setInternalActiveMap] = useState<
     Record<string, boolean>
   >({});
+  const internalActiveMapRef = useRef<Record<string, boolean>>({});
 
-  // 시리즈가 변경될 때마다 active 상태 초기화
+  const isControlled = externalActiveMap !== undefined;
+  const activeMap = isControlled ? externalActiveMap : internalActiveMap;
+
   useEffect(() => {
-    setActiveSeriesMap((prev) => {
-      const next: Record<string, boolean> = {};
+    if (isControlled) return;
 
-      series.forEach((item) => {
-        const key = item.name;
-        // 기존 상태 유지, 없으면 기본값 true
-        next[key] = prev[key] ?? true;
-      });
+    const prev = internalActiveMapRef.current;
+    const next: Record<string, boolean> = {};
+    for (const item of series) {
+      next[item.name] = prev[item.name] ?? true;
+    }
+    internalActiveMapRef.current = next;
+    setInternalActiveMap(next);
+  }, [series, isControlled]);
 
-      return next;
-    });
-  }, [series]);
+  useEffect(() => {
+    if (series.length > 0 && colors.length === 0) {
+      console.warn(
+        "ChartLegendToggle: colors is empty. Falling back to DEFAULT_COLOR.",
+      );
+    }
+  }, [series.length, colors.length]);
 
   const handleToggle = (seriesName: string) => {
-    const currentActive = activeSeriesMap[seriesName] ?? true;
-    const nextActive = !currentActive;
+    const nextActive = !(activeMap[seriesName] ?? true);
 
-    setActiveSeriesMap((prev) => ({
-      ...prev,
-      [seriesName]: nextActive,
-    }));
-    // 상위에서 실제 차트 인스턴스를 제어하도록 위임
+    if (!isControlled) {
+      internalActiveMapRef.current = {
+        ...internalActiveMapRef.current,
+        [seriesName]: nextActive,
+      };
+      setInternalActiveMap((prev) => ({ ...prev, [seriesName]: nextActive }));
+    }
+
     onToggle?.(seriesName, nextActive);
   };
 
-  if (series.length === 0) {
-    return null;
-  }
+  if (series.length === 0) return null;
+
+  const hasColors = colors.length > 0;
 
   return (
     <Legend>
-      {series.map((item, index) => {
-        const isActive = activeSeriesMap[item.name] ?? true;
-        const color = colors[index % colors.length];
-
-        return (
-          <Series
-            key={`${item.name}-${index}`}
-            onClick={() => handleToggle(item.name)}
+      {series.map((item, index) => (
+        <Series
+          key={`${item.name}-${index}`}
+          onClick={() => handleToggle(item.name)}
+        >
+          <SeriesText
+            color={hasColors ? colors[index % colors.length] : DEFAULT_COLOR}
+            $active={activeMap[item.name] ?? true}
           >
-            <SeriesText color={color} $active={isActive}>
-              {item.name}
-            </SeriesText>
-          </Series>
-        );
-      })}
+            {item.name}
+          </SeriesText>
+        </Series>
+      ))}
     </Legend>
   );
 }

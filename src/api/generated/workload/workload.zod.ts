@@ -260,7 +260,7 @@ export const createWorkloadBody = zod
       .describe("워크로드 리소스 정보"),
     sourceCode: zod
       .object({
-        sourceCodeId: zod.number().describe("소스코드 ID"),
+        entityId: zod.number().describe("소스코드 entityId"),
         mountPath: zod.string().min(1).describe("마운트 경로"),
         sourceCodeBranch: zod.string().optional().describe("브랜치명"),
       })
@@ -286,6 +286,404 @@ export const createWorkloadBody = zod
   })
   .strict()
   .describe("워크로드 생성 요청");
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내에 새 폴더를 생성합니다.
+
+            **생성 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 폴더 생성 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **경로:**
+            - path: 생성할 폴더 경로 (절대경로 또는 상대경로)
+            - 루트("/") 경로에는 폴더 생성 불가
+            - 이미 존재하는 경로에는 폴더 생성 불가 (409 Conflict)
+        
+ * @summary 워크로드 폴더 생성
+ */
+export const workloadCreateFolderParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadCreateFolderQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+export const workloadCreateFolderBodyPathMin = 0;
+export const workloadCreateFolderBodyPathMax = 1000;
+
+export const workloadCreateFolderBody = zod
+  .object({
+    path: zod
+      .string()
+      .min(workloadCreateFolderBodyPathMin)
+      .max(workloadCreateFolderBodyPathMax)
+      .describe("생성할 폴더 경로 (절대경로 또는 상대경로)"),
+  })
+  .strict()
+  .describe("워크로드 폴더 생성 요청");
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일 또는 폴더를 삭제합니다.
+
+            **삭제 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 삭제 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **삭제 방식:**
+            - 부분 성공/실패를 허용하며, 각 경로별 삭제 결과를 반환
+            - 일부 경로 삭제 실패 시에도 나머지 경로는 계속 삭제 시도
+            - 폴더 삭제 시 하위 파일/폴더도 함께 삭제됨 (재귀 삭제)
+
+            **응답:**
+            - status: 전체 성공 시 SUCCESS, 부분 실패 시 FAIL
+            - totalRequested: 삭제 요청한 총 개수
+            - successCount: 삭제 성공한 개수
+            - failureCount: 삭제 실패한 개수
+            - failures: 삭제 실패 상세 (경로, 사유)
+        
+ * @summary 워크로드 파일/폴더 삭제
+ */
+export const workloadDeleteFilesParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadDeleteFilesQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+export const workloadDeleteFilesBodyPathMin = 0;
+export const workloadDeleteFilesBodyPathMax = 100;
+
+export const workloadDeleteFilesBody = zod
+  .object({
+    path: zod
+      .array(zod.string())
+      .min(workloadDeleteFilesBodyPathMin)
+      .max(workloadDeleteFilesBodyPathMax)
+      .describe("삭제할 파일/폴더 경로 목록"),
+  })
+  .strict()
+  .describe("워크로드 파일/폴더 삭제 요청");
+
+export const workloadDeleteFilesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalRequested: zod.number().describe("삭제 요청한 총 파일/폴더 개수"),
+        successCount: zod.number().describe("삭제 성공한 파일/폴더 개수"),
+        failureCount: zod
+          .number()
+          .describe(
+            "삭제 실패한 파일/폴더 개수 (존재하지 않거나, 삭제할 수 없는 파일/폴더 등)",
+          ),
+        failures: zod
+          .array(
+            zod
+              .object({
+                path: zod.string().describe("삭제 실패한 경로"),
+                reason: zod.string().describe("삭제 실패 사유"),
+              })
+              .strict()
+              .describe("워크로드 파일 삭제 실패 상세 정보"),
+          )
+          .describe(
+            "삭제 실패한 파일/폴더 상세 목록 (실패가 없으면 빈 리스트)",
+          ),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 파일 삭제 처리 결과 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 압축 파일을 해제합니다.
+            압축 해제는 백그라운드에서 비동기로 실행됩니다.
+
+            **압축 해제 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 압축 해제 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **제약 사항:**
+            - 압축 파일이 존재해야 함 (없으면 404 에러)
+            - 지원되는 압축 형식: .tar.gz, .tgz, .tar, .zip
+
+            **압축 해제 경로:**
+            - 압축 파일명에서 확장자를 제거한 이름의 폴더로 해제
+            - 예: /workspace/archive.tar.gz → /workspace/archive 폴더 생성
+            - 동일 이름의 폴더가 존재하면 _1, _2 ... 형식으로 자동 증가
+            - 예: archive 폴더 존재 시 → archive_1 폴더 생성
+
+            **비동기 처리:**
+            - API는 압축 해제 시작 여부만 확인하고 즉시 응답을 반환합니다 (202 Accepted)
+            - 대용량 파일의 경우 압축 해제 완료까지 시간이 걸릴 수 있습니다
+            - 파일 목록 조회 API로 압축 해제 폴더 생성 여부를 확인하세요
+        
+ * @summary 워크로드 파일 압축 해제
+ */
+export const workloadDecompressFileParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadDecompressFileQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+export const workloadDecompressFileBodyPathMin = 0;
+export const workloadDecompressFileBodyPathMax = 1000;
+
+export const workloadDecompressFileBody = zod
+  .object({
+    path: zod
+      .string()
+      .min(workloadDecompressFileBodyPathMin)
+      .max(workloadDecompressFileBodyPathMax)
+      .describe("압축 해제할 파일 경로"),
+  })
+  .strict()
+  .describe("워크로드 파일 압축 해제 요청");
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일/폴더를 압축합니다.
+            압축은 백그라운드에서 비동기로 실행됩니다.
+
+            **압축 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 압축 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **제약 사항:**
+            - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+            - 동일한 경로에 동일한 이름의 압축 파일이 이미 존재하면 409 Conflict 에러
+
+            **압축 형식:**
+            - TAR: .tar.gz 형식
+            - ZIP: .zip 형식
+
+            **저장 경로:**
+            - destinationPath: 저장 경로와 파일명을 포함 (확장자 제외)
+            - 예: "/workspace/backup/archive" → /workspace/backup/archive.tar.gz 또는 .zip
+
+            **비동기 처리:**
+            - API는 압축 시작 여부만 확인하고 즉시 응답을 반환합니다 (202 Accepted)
+            - 대용량 파일의 경우 압축 완료까지 시간이 걸릴 수 있습니다
+            - 파일 목록 조회 API로 압축 파일 생성 여부를 확인하세요
+        
+ * @summary 워크로드 파일 압축
+ */
+export const workloadCompressFilesParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadCompressFilesQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+export const workloadCompressFilesBodyPathMin = 0;
+export const workloadCompressFilesBodyPathMax = 100;
+
+export const workloadCompressFilesBodyDestinationPathMin = 0;
+export const workloadCompressFilesBodyDestinationPathMax = 1000;
+
+export const workloadCompressFilesBody = zod
+  .object({
+    path: zod
+      .array(zod.string())
+      .min(workloadCompressFilesBodyPathMin)
+      .max(workloadCompressFilesBodyPathMax)
+      .describe("압축할 파일/폴더 경로 목록"),
+    destinationPath: zod
+      .string()
+      .min(workloadCompressFilesBodyDestinationPathMin)
+      .max(workloadCompressFilesBodyDestinationPathMax)
+      .describe("압축 파일 저장 경로 (경로 + 파일명, 확장자 제외)"),
+    compressFileType: zod
+      .enum(["TAR", "ZIP"])
+      .describe("압축 파일 형식 (TAR: .tar.gz, ZIP: .zip)"),
+  })
+  .strict()
+  .describe("워크로드 파일 압축 요청");
+
+/**
+ * 
+            실행 중인 워크로드를 종료합니다.
+
+            **종료 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)만 삭제
+            - Service, Ingress, PVC, PV 등 부가 리소스는 유지 (재시작 시 재사용)
+            - 컨테이너 상태를 이미지로 커밋하여 Harbor에 저장 (TODO: 추후 구현)
+
+            **종료 대상:**
+            - RUNNING, PENDING, CREATING, ERROR 상태의 워크로드
+            - 이미 TERMINATED 상태인 워크로드는 종료 불가 (400 Bad Request)
+
+            **재시작:**
+            - 종료된 워크로드는 재시작 API로 다시 실행 가능
+            - 커밋된 이미지와 기존 리소스(Service, PVC 등)를 재사용
+        
+ * @summary 워크로드 종료
+ */
+export const terminateWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const terminateWorkloadResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            종료된 워크로드를 재시작합니다.
+
+            **재시작 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)를 새로 생성
+            - 기존 Service, Ingress, PVC, PV, Secret 등 부가 리소스는 재사용
+            - 커밋된 이미지가 있으면 해당 이미지 사용, 없으면 원본 이미지 사용 (TODO)
+            - 리소스 설정(CPU, 메모리, GPU, 분산학습 노드 수)을 변경하여 재시작 가능
+
+            **재시작 대상:**
+            - TERMINATED 상태의 워크로드만 재시작 가능
+            - 실행 중이거나 종료 진행 중인 워크로드는 재시작 불가 (400 Bad Request)
+
+            **재시작 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼관리자 (SUPER_ADMIN)
+        
+ * @summary 워크로드 재시작
+ */
+export const restartWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const restartWorkloadBody = zod
+  .object({
+    resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
+    resource: zod
+      .object({
+        gpu: zod
+          .object({
+            gpuName: zod
+              .string()
+              .optional()
+              .describe("GPU 이름 (NodeSelector용)"),
+            gpuType: zod
+              .enum(["NORMAL", "MIG"])
+              .optional()
+              .describe("GPU 타입 (NORMAL: 일반 GPU)"),
+            gpuMemoryByte: zod
+              .number()
+              .optional()
+              .describe("GPU 메모리 (byte)"),
+            detail: zod
+              .object({
+                normal: zod
+                  .object({
+                    requestCount: zod.number().describe("요청 GPU 수량"),
+                  })
+                  .strict()
+                  .optional()
+                  .describe("일반 GPU 정보"),
+                mig: zod
+                  .array(
+                    zod
+                      .object({
+                        profile: zod
+                          .string()
+                          .min(1)
+                          .describe("MIG 프로파일 이름"),
+                        requestCount: zod.number().describe("요청 수량"),
+                      })
+                      .strict()
+                      .describe("MIG 프로파일 정보"),
+                  )
+                  .optional()
+                  .describe("MIG 프로파일 목록"),
+              })
+              .strict()
+              .optional()
+              .describe("GPU 상세 정보"),
+          })
+          .strict()
+          .optional()
+          .describe("GPU 리소스 정보"),
+        cpu: zod
+          .object({
+            requestCore: zod.number().describe("요청 CPU 코어 수"),
+          })
+          .strict()
+          .describe("CPU 리소스 정보"),
+        memory: zod
+          .object({
+            requestByte: zod.number().describe("요청 메모리 byte 수"),
+          })
+          .strict()
+          .describe("메모리 리소스 정보"),
+        distributed: zod
+          .object({
+            numNodes: zod.number().describe("분산 노드(Pod) 수"),
+          })
+          .strict()
+          .optional()
+          .describe("분산 학습 설정 (DISTRIBUTED 워크로드용)"),
+      })
+      .strict()
+      .describe("워크로드 리소스 정보"),
+  })
+  .strict()
+  .describe("워크로드 재시작 요청");
+
+export const restartWorkloadResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
 
 /**
  * 
@@ -317,7 +715,14 @@ export const getWorkloadStatusResponse = zod
       .object({
         workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
         workloadStatus: zod
-          .enum(["RUNNING", "ERROR", "PENDING", "CREATING", "TERMINATED"])
+          .enum([
+            "CREATING",
+            "PENDING",
+            "RUNNING",
+            "TERMINATING",
+            "TERMINATED",
+            "ERROR",
+          ])
           .describe(
             "워크로드 상태 (PENDING, CREATING, RUNNING, TERMINATED, ERROR)",
           ),
@@ -388,6 +793,114 @@ export const streamWorkloadLogsQueryParams = zod.object({
     .optional()
     .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
 });
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일 및 폴더 목록을 조회합니다.
+
+            **조회 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 조회 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **경로:**
+            - path: 조회할 경로 (기본값: /)
+        
+ * @summary 워크로드 파일 목록 조회
+ */
+export const workloadListFilesParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadListFilesQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+  path: zod.string().optional().describe("조회할 경로 (기본값: /)"),
+});
+
+export const workloadListFilesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        children: zod
+          .array(
+            zod
+              .object({
+                name: zod.string().describe("파일/폴더 이름"),
+                type: zod
+                  .enum(["FILE", "DIRECTORY"])
+                  .describe("파일/폴더 타입"),
+                path: zod.string().describe("전체 경로"),
+                size: zod.number().describe("파일 크기 (바이트)"),
+              })
+              .strict()
+              .describe("워크로드 파일 정보"),
+          )
+          .describe("파일/폴더 목록"),
+        directoryCount: zod.number().describe("디렉토리 개수"),
+        fileCount: zod.number().describe("파일 개수"),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 파일 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 텍스트 또는 이미지 파일을 미리보기합니다.
+
+            **미리보기 대상:**
+            - 실행 중인(RUNNING) 상태의 워크로드만 미리보기 가능
+
+            **Pod 선택:**
+            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
+            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
+
+            **지원 파일 형식:**
+            - 텍스트: txt, log, md, json, yaml, yml, xml, csv, sh, bash, py, js, ts, java, kt, kts, go
+            - 이미지: png, jpg, jpeg, gif, webp, svg, bmp
+
+            **크기 제한:**
+            - 텍스트: 1MB
+            - 이미지: 10MB
+
+            **응답:**
+            - 200 OK: 미리보기 가능 (Content-Type 동적 설정)
+            - 204 No Content: 미리보기 불가 (권한 없음, 파일 없음, 미지원 타입, 디렉토리, 크기 초과)
+        
+ * @summary 워크로드 파일 미리보기
+ */
+export const workloadPreviewFileParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadPreviewFileQueryPathMin = 0;
+export const workloadPreviewFileQueryPathMax = 1000;
+
+export const workloadPreviewFileQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+  path: zod
+    .string()
+    .min(workloadPreviewFileQueryPathMin)
+    .max(workloadPreviewFileQueryPathMax)
+    .describe("미리보기할 파일 경로"),
+});
+
+export const workloadPreviewFileResponse = zod.string();
 
 /**
  * 
@@ -567,7 +1080,14 @@ export const getActiveWorkloadsQueryParams = zod.object({
     .optional()
     .describe("워크로드 타입 필터"),
   workloadStatus: zod
-    .enum(["RUNNING", "ERROR", "PENDING", "CREATING", "TERMINATED"])
+    .enum([
+      "CREATING",
+      "PENDING",
+      "RUNNING",
+      "TERMINATING",
+      "TERMINATED",
+      "ERROR",
+    ])
     .optional()
     .describe("워크로드 상태 필터 (running, pending, error)"),
   sort: zod
@@ -605,11 +1125,12 @@ export const getActiveWorkloadsResponse = zod
                   .describe("리소스 회수 경고 횟수"),
                 workloadStatus: zod
                   .enum([
-                    "RUNNING",
-                    "ERROR",
-                    "PENDING",
                     "CREATING",
+                    "PENDING",
+                    "RUNNING",
+                    "TERMINATING",
                     "TERMINATED",
+                    "ERROR",
                   ])
                   .describe("워크로드 상태"),
                 ageSeconds: zod.number().describe("경과 시간 (초)"),
@@ -640,3 +1161,27 @@ export const getActiveWorkloadsResponse = zod
     timestamp: zod.number(),
   })
   .strict();
+
+/**
+ * 
+            워크로드를 완전히 삭제합니다.
+
+            **삭제 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
+            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
+
+            **삭제 대상:**
+            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
+            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
+
+            **주의:**
+            - 삭제된 워크로드는 복구할 수 없습니다.
+            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
+        
+ * @summary 워크로드 삭제
+ */
+export const deleteWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});

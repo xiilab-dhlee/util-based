@@ -5,13 +5,13 @@ import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 import styled from "styled-components";
 
-import { useGetAllMonitoringNotificationHistories } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+import { useGetAllMonitoringNotificationHistories } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history";
 import { MonitoringNotificationHistoryListBody } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-body";
 import { MonitoringNotificationHistoryListFilter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-filter";
 import { MonitoringNotificationHistoryListFooter } from "@/domain/monitoring-notification/components/list/monitoring-notification-history-list-footer";
 import {
+  MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE,
   MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP,
-  MONITORING_NOTIFICATION_PAGE_SIZE,
 } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import {
   monitoringNotificationHistoryDateRangeAtom,
@@ -20,7 +20,7 @@ import {
   monitoringNotificationSearchTextAtom,
 } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import { formatDateForRequest } from "@/shared/utils/date.util";
-import { buildSortRequest } from "@/shared/utils/sort.util";
+import { toBackendOrder } from "@/shared/utils/sort.util";
 
 export function MonitoringNotificationListArticle() {
   const resetPage = useResetAtom(monitoringNotificationPageAtom);
@@ -35,17 +35,13 @@ export function MonitoringNotificationListArticle() {
   const sort = useAtomValue(monitoringNotificationHistorySortAtom);
   const dateRange = useAtomValue(monitoringNotificationHistoryDateRangeAtom);
 
-  const sortRequest = buildSortRequest({
-    state: sort,
-    fieldMap: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP,
-  });
-
   const { data, isLoading, isError } = useGetAllMonitoringNotificationHistories(
     {
       pageNo: page - 1,
-      pageSize: MONITORING_NOTIFICATION_PAGE_SIZE,
+      pageSize: MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE,
       keyword: searchText || undefined,
-      ...sortRequest,
+      sort: MONITORING_NOTIFICATION_HISTORY_SORT_FIELD_MAP[sort.field],
+      order: toBackendOrder(sort.order),
       startedAt: dateRange?.start
         ? formatDateForRequest(dateRange.start)
         : undefined,

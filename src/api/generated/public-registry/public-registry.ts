@@ -47,6 +47,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   AddImageTagRequest,
+  BaseResponseDeleteImagesResponse,
   BaseResponseDeleteImageTagsResponse,
   BaseResponseImageTagDetailResponse,
   BaseResponseImageTagExistsResponse,
@@ -57,12 +58,14 @@ import type {
   BaseResponseUnit,
   CheckImageTagExistsParams,
   CreateExternalImageRequest,
+  DeleteImagesRequest,
   DeleteImageTagsRequest,
   GetPublicImageDetailParams,
   GetPublicImageTagDetailParams,
   GetPublicImageTagListParams,
   GetPublicImageTagVulnerabilitiesParams,
   GetPublicRegistryListParams,
+  SnapshotImageRequest,
   UpdateImageTagRequest,
   VulnerabilityScanRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -404,6 +407,97 @@ export const useCreatePublicExternalImage = <
   TContext
 > => {
   const mutationOptions = getCreatePublicExternalImageMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드 컨테이너를 스냅샷하여 공용 레지스트리에 이미지로 등록합니다.
+            - 워크로드가 RUNNING 상태여야 합니다.
+            - 워크로드의 실행 환경(명령어, 포트, 환경변수)이 이미지 태그에 저장됩니다.
+            - 비동기로 스냅샷 Job이 생성되며, Harbor에 이미지가 푸시됩니다.
+        
+ * @summary 공용 이미지 스냅샷
+ */
+export const createPublicSnapshotImage = (
+  snapshotImageRequest: SnapshotImageRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/registries/public/images/snapshot`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: snapshotImageRequest,
+    signal,
+  });
+};
+
+export const getCreatePublicSnapshotImageMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+    TError,
+    { data: SnapshotImageRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+  TError,
+  { data: SnapshotImageRequest },
+  TContext
+> => {
+  const mutationKey = ["createPublicSnapshotImage"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+    { data: SnapshotImageRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createPublicSnapshotImage(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreatePublicSnapshotImageMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createPublicSnapshotImage>>
+>;
+export type CreatePublicSnapshotImageMutationBody = SnapshotImageRequest;
+export type CreatePublicSnapshotImageMutationError = unknown;
+
+/**
+ * @summary 공용 이미지 스냅샷
+ */
+export const useCreatePublicSnapshotImage = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+      TError,
+      { data: SnapshotImageRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createPublicSnapshotImage>>,
+  TError,
+  { data: SnapshotImageRequest },
+  TContext
+> => {
+  const mutationOptions = getCreatePublicSnapshotImageMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -835,6 +929,95 @@ export const useDeletePublicImageTags = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getDeletePublicImageTagsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            공용 레지스트리의 이미지를 삭제합니다.
+            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
+            - 관리자는 모든 이미지를 삭제할 수 있습니다.
+            - 일반 사용자는 본인이 생성한 이미지만 삭제할 수 있습니다.
+            - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
+        
+ * @summary 공용 이미지 삭제
+ */
+export const deletePublicImages = (
+  deleteImagesRequest: DeleteImagesRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseDeleteImagesResponse>({
+    url: `/api/v1/registries/public/images/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: deleteImagesRequest,
+    signal,
+  });
+};
+
+export const getDeletePublicImagesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePublicImages>>,
+    TError,
+    { data: DeleteImagesRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deletePublicImages>>,
+  TError,
+  { data: DeleteImagesRequest },
+  TContext
+> => {
+  const mutationKey = ["deletePublicImages"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deletePublicImages>>,
+    { data: DeleteImagesRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return deletePublicImages(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeletePublicImagesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePublicImages>>
+>;
+export type DeletePublicImagesMutationBody = DeleteImagesRequest;
+export type DeletePublicImagesMutationError = unknown;
+
+/**
+ * @summary 공용 이미지 삭제
+ */
+export const useDeletePublicImages = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deletePublicImages>>,
+      TError,
+      { data: DeleteImagesRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deletePublicImages>>,
+  TError,
+  { data: DeleteImagesRequest },
+  TContext
+> => {
+  const mutationOptions = getDeletePublicImagesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

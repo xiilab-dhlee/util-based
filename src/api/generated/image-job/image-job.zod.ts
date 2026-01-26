@@ -106,7 +106,12 @@ export const getImageJobsResponse = zod
               imageName: zod.string().describe("이미지 이름"),
               creatorId: zod.string().describe("생성자 ID"),
               creatorName: zod.string().optional().describe("생성자 이름"),
-              status: zod.string().describe("작업 상태"),
+              status: zod
+                .enum(["IN_PROGRESS", "COMPLETED", "FAILED", "NOT_FOUND"])
+                .describe("작업 상태"),
+              imageSourceType: zod
+                .enum(["SNAPSHOT", "EXTERNAL"])
+                .describe("이미지 소스 타입"),
               createdAt: zod
                 .string()
                 .datetime({})
@@ -123,6 +128,48 @@ export const getImageJobsResponse = zod
     timestamp: zod.number(),
   })
   .strict();
+
+/**
+ * 
+            종료된 이미지 등록 Job의 로그를 다운로드합니다.
+
+            **대상:**
+            - COMPLETED, FAILED 상태의 Job 로그 다운로드 가능
+
+            **응답:**
+            - 200 OK: 로그 파일 다운로드 (Content-Type: text/plain; charset=UTF-8)
+            - 204 No Content: Job은 존재하나 로그가 없는 경우
+            - 404 Not Found: Job이 존재하지 않는 경우
+
+            **주의:**
+            - 실행 중인 Job(IN_PROGRESS)은 실시간 로그 스트리밍 API 사용
+        
+ * @summary 종료된 이미지 등록 Job 로그 다운로드
+ */
+export const getTerminatedImageJobLogParams = zod.object({
+  imageTagId: zod.number().describe("이미지 태그 ID"),
+});
+
+/**
+ * 
+            실행 중인 이미지 등록 Job의 Pod 로그를 SSE(Server-Sent Events)로 실시간 스트리밍합니다.
+
+            **대상:**
+            - IN_PROGRESS 상태의 Job만 로그 스트리밍 가능
+
+            **SSE 이벤트:**
+            - event: log
+            - data: 로그 라인
+
+            **주의:**
+            - Job이 존재하지 않거나 Pod가 없는 경우 404 Not Found 반환
+            - COMPLETED, FAILED, NOT_FOUND 상태의 Job은 종료된 로그 API 사용
+        
+ * @summary 실행 중인 이미지 등록 Job 로그 실시간 스트리밍
+ */
+export const streamImageJobLogsParams = zod.object({
+  imageTagId: zod.number().describe("이미지 태그 ID"),
+});
 
 /**
  * 

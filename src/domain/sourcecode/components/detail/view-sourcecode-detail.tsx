@@ -1,138 +1,146 @@
 "use client";
 
 import styled from "styled-components";
-import { Tag, Typography } from "xiilab-ui";
 
-import type { SourceCodeListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { SourceCodeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
-import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import {
-  AsideDetailArticle,
   AsideDetailArticleBody,
   AsideDetailArticleColumn,
   AsideDetailArticleHeader,
   AsideDetailArticleItem,
   AsideDetailArticleKey,
+  AsideDetailArticleRowItem,
   AsideDetailArticleTitle,
   AsideDetailArticleValue,
-  AsideDetailScrollWrapper,
 } from "@/styles/layers/aside-detail-layers.styled";
+import { ReadOnlyParameter } from "./read-only-parameter";
 
 interface ViewSourcecodeDetailProps {
-  data: SourceCodeListResponse | undefined;
+  data?: SourceCodeDetailResponse;
   isLoading: boolean;
 }
 
-export function ViewSourcecodeDetail({
-  data,
-  isLoading,
-}: ViewSourcecodeDetailProps) {
-  if (isLoading) {
-    return (
-      <AsideDetailScrollWrapper>
-        <CustomScrollbars>
-          <AsideDetailArticle>
-            <AsideDetailArticleBody>
-              <AsideDetailArticleItem>
-                <Typography.Text variant="body-2-3" color="#777">
-                  로딩 중...
-                </Typography.Text>
-              </AsideDetailArticleItem>
-            </AsideDetailArticleBody>
-          </AsideDetailArticle>
-        </CustomScrollbars>
-      </AsideDetailScrollWrapper>
-    );
-  }
-
-  const { text: typeText, tag: typeTag } = getSourcecodeTypeInfo(
-    data?.sourceCodeType,
-  );
+export function ViewSourcecodeDetail({ data }: ViewSourcecodeDetailProps) {
+  const { text: typeText } = getSourcecodeTypeInfo(data?.sourceCodeType);
 
   return (
-    <AsideDetailScrollWrapper>
-      <CustomScrollbars>
-        <AsideDetailArticle>
-          <AsideDetailArticleBody>
-            {/* 소스코드 정보 섹션 */}
-            <AsideDetailArticleItem>
+    <>
+      <StyledArticleBody>
+        {/* 기본 정보 섹션 */}
+        <AsideDetailArticleItem>
+          <AsideDetailArticleHeader>
+            <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
+          </AsideDetailArticleHeader>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>소스코드 이름</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {data?.sourceCodeName || "-"}
+            </AsideDetailArticleValue>
+          </AsideDetailArticleColumn>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {data?.isPublic === undefined
+                ? "-"
+                : data.isPublic
+                  ? "공개"
+                  : "비공개"}
+            </AsideDetailArticleValue>
+          </AsideDetailArticleColumn>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>타입</AsideDetailArticleKey>
+            <AsideDetailArticleValue>{typeText}</AsideDetailArticleValue>
+          </AsideDetailArticleColumn>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>Git URL</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {data?.gitUrl || "-"}
+            </AsideDetailArticleValue>
+          </AsideDetailArticleColumn>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>Mount Path</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {data?.mountPath || "-"}
+            </AsideDetailArticleValue>
+          </AsideDetailArticleColumn>
+        </AsideDetailArticleItem>
+
+        {/* 설정 내용 및 생성 정보 섹션 */}
+        <AsideDetailArticleItem>
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleRowItem>
               <AsideDetailArticleHeader>
-                <AsideDetailArticleTitle>소스코드 정보</AsideDetailArticleTitle>
+                <AsideDetailArticleTitle>생성 정보</AsideDetailArticleTitle>
               </AsideDetailArticleHeader>
 
-              {/* 소스코드 이름 */}
               <AsideDetailArticleColumn>
-                <AsideDetailArticleKey>소스코드 이름</AsideDetailArticleKey>
+                <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {data?.sourceCodeName || "-"}
+                  {data?.creatorName || "-"}
                 </AsideDetailArticleValue>
               </AsideDetailArticleColumn>
 
-              {/* 공개 설정 */}
-              <AsideDetailArticleColumn>
-                <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
-                <AsideDetailArticleValue>
-                  {data?.isPublic ? "공개" : "비공개"}
-                </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-
-              {/* 소스코드 타입 */}
-              <AsideDetailArticleColumn>
-                <AsideDetailArticleKey>타입</AsideDetailArticleKey>
-                <AsideDetailArticleValue>
-                  <Tag variant={typeTag} theme="light">
-                    {typeText}
-                  </Tag>
-                </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-
-              {/* 소스코드 URL */}
-              <AsideDetailArticleColumn>
-                <AsideDetailArticleKey>Git URL</AsideDetailArticleKey>
-                <AsideDetailArticleValue className="truncate">
-                  {data?.gitUrl || "-"}
-                </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-
-              {/* 마운트 경로 */}
-              <AsideDetailArticleColumn>
-                <AsideDetailArticleKey>마운트 경로</AsideDetailArticleKey>
-                <AsideDetailArticleValue className="truncate">
-                  {data?.mountPath || "-"}
-                </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-            </AsideDetailArticleItem>
-
-            {/* 설정 내용 섹션 */}
-            <SecondaryArticleItem>
-              <AsideDetailArticleHeader>
-                <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
-              </AsideDetailArticleHeader>
-
-              {/* 실행 명령어 */}
-              <AsideDetailArticleColumn>
-                <AsideDetailArticleKey>실행 명령어</AsideDetailArticleKey>
-                <AsideDetailArticleValue>
-                  {data?.executionCmd || "-"}
-                </AsideDetailArticleValue>
-              </AsideDetailArticleColumn>
-
-              {/* 생성일 */}
               <AsideDetailArticleColumn>
                 <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
                   {formatDateSafely(data?.createdAt)}
                 </AsideDetailArticleValue>
               </AsideDetailArticleColumn>
-            </SecondaryArticleItem>
-          </AsideDetailArticleBody>
-        </AsideDetailArticle>
-      </CustomScrollbars>
-    </AsideDetailScrollWrapper>
+            </AsideDetailArticleRowItem>
+          </AsideDetailArticleColumn>
+        </AsideDetailArticleItem>
+      </StyledArticleBody>
+      <StyledArticleBody>
+        {/* 기본 정보 섹션 */}
+        <AsideDetailArticleItem>
+          <AsideDetailArticleHeader>
+            <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
+          </AsideDetailArticleHeader>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>크리덴셜</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {data?.credentialId || "-"}
+            </AsideDetailArticleValue>
+          </AsideDetailArticleColumn>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>실행 명령어</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {data?.executionCmd || "-"}
+            </AsideDetailArticleValue>
+          </AsideDetailArticleColumn>
+
+          <AsideDetailArticleColumn>
+            <AsideDetailArticleKey>파라미터</AsideDetailArticleKey>
+          </AsideDetailArticleColumn>
+          <AsideDetailArticleColumn>
+            <ReadOnlyParameter
+              parameters={Object.entries(data?.parameter || {}).map(
+                ([key, value]) => ({ key, value }),
+              )}
+            />
+          </AsideDetailArticleColumn>
+        </AsideDetailArticleItem>
+      </StyledArticleBody>
+    </>
   );
 }
 
-const SecondaryArticleItem = styled(AsideDetailArticleItem)`
-  margin-top: 10px;
+const StyledArticleBody = styled(AsideDetailArticleBody)`
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fcfcfc;
+
+  & + & {
+    margin-top: 10px;
+  }
 `;

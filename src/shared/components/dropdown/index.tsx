@@ -11,7 +11,7 @@ interface MyDropdownProps {
   /** 드롭다운 위치 */
   placement?: DropdownProps["placement"];
   /** 트리거 방식 */
-  trigger?: ("click" | "hover" | "contextMenu")[];
+  trigger?: ("click" | "hover")[];
   /** 드롭다운 컨테이너 스타일 */
   containerStyle?: React.CSSProperties;
 }
@@ -57,7 +57,11 @@ export function MyDropdown({
   };
 
   return (
-    <DropdownWrapper onClick={handleClick} onKeyDown={handleKeyDown}>
+    <DropdownWrapper
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="presentation"
+    >
       <Dropdown
         menu={{ items: menuItems }}
         trigger={trigger}

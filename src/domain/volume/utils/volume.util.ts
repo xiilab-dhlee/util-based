@@ -15,7 +15,10 @@ export const isCompressedFile = (path: string): boolean => {
 /** 정렬 값을 API 파라미터로 변환 */
 export const parseVolumeSortValue = (
   value: string | null,
-): { sort: GetVolumeListSort; order: GetVolumeListOrder } | null => {
+): {
+  sort: GetVolumeListSort;
+  order: GetVolumeListOrder;
+} | null => {
   if (!value) return null;
 
   // 마지막 '_'를 기준으로 분리 (예: "VOLUME_NAME_ASC" → ["VOLUME_NAME", "ASC"])
