@@ -2,9 +2,9 @@
 
 import { useAtomValue } from "jotai";
 
+import { CreateSourcecode } from "@/domain/sourcecode/components/create-sourcecode";
+import { UpdateSourcecode } from "@/domain/sourcecode/components/update-sourcecode";
 import { sourcecodeSelectedAtom } from "@/domain/sourcecode/state/sourcecode.atom";
-import { CreateSourcecode } from "./create-sourcecode";
-import { UpdateSourcecode } from "./update-sourcecode";
 
 /**
  * AsideSourcecode 컴포넌트

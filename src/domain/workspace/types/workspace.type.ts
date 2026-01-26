@@ -1,11 +1,12 @@
+import type { RequestResourceStatus } from "@/domain/request-resource/constants/request-resource.constant";
 import type {
   CorePaginate,
   CorePayload,
   CoreSearchText,
 } from "@/shared/types/api.interface";
 
-// 워크스페이스 리소스 요청 상태 타입
-export type WorkspaceRequestResourceStatus = "WAITING" | "APPROVE" | "REJECT";
+// 워크스페이스 리소스 요청 상태 타입 (Orval 생성 타입 재사용)
+export type WorkspaceRequestResourceStatus = RequestResourceStatus;
 
 export interface GetWorkspacesPayload
   extends CorePayload,
@@ -43,15 +44,6 @@ export interface UpdateWorkspaceMemberPayload {
 
 export interface DeleteWorkspaceMemberPayload {
   id: string;
-}
-
-export interface GetWorkspaceRequestResourcesPayload
-  extends CorePayload,
-    CorePaginate {
-  /** 검색어 (워크스페이스 이름 또는 요청자 이름) */
-  keyword?: string;
-  /** 승인 상태 */
-  status?: WorkspaceRequestResourceStatus;
 }
 
 export interface CreateWorkspaceRequestResourcePayload {

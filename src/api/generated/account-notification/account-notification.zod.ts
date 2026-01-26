@@ -258,6 +258,28 @@ export const getNotificationsResponse = zod
           zod
             .object({
               notificationId: zod.number().describe("알림 고유 ID"),
+              notificationSetName: zod
+                .enum([
+                  "LICENSE_EXPIRY_WARNING",
+                  "USER_SIGNUP",
+                  "VULNERABILITY_IMAGE_REQUEST",
+                  "WORKLOAD_VULNERABILITY",
+                  "NODE_FAILURE",
+                  "MIG_APPLIED",
+                  "MIG_FAILURE",
+                  "WORKSPACE_CREATED",
+                  "WORKSPACE_RESOURCE_EXCEEDED",
+                  "WORKSPACE_RESOURCE_REQUEST",
+                  "WORKLOAD_RESOURCE_RECLAIM_RESULT",
+                  "WORKSPACE_RESOURCE_REQUEST_RESULT",
+                  "BATCH_JOB_COMPLETED",
+                  "JOB_RECLAIM_WARNING",
+                  "JOB_RECLAIMED",
+                  "IMAGE_COMMIT_REGISTERED",
+                  "WORKLOAD_STARTED",
+                  "WORKLOAD_ERROR",
+                ])
+                .describe("알림 설정명"),
               notificationContent: zod.string().describe("알림 본문 메시지"),
               notificationType: zod
                 .enum([
@@ -275,6 +297,10 @@ export const getNotificationsResponse = zod
                 .datetime({})
                 .describe("알림 생성 일시 (UTC)"),
               isRead: zod.boolean().describe("사용자 읽음 여부"),
+              workspaceName: zod
+                .string()
+                .optional()
+                .describe("워크스페이스명 (워크스페이스 알림인 경우)"),
             })
             .strict()
             .describe("알림 목록 조회 응답 (단일 알림 정보)"),

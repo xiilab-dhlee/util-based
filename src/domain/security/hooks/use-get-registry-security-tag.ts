@@ -2,7 +2,7 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { isNil } from "es-toolkit";
 
-import type { InternalRegistryImageTagDetailType } from "@/domain/internal-registry-image/schemas/internal-registry-image-tag.schema";
+import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { registrySecurityKeys } from "@/domain/security/constants/registry-security.key";
 import type { GetRegistrySecurityTagDetailPayload } from "@/domain/security/types/registry-security.type";
 import { useServices } from "@/shared/providers/service-provider";
@@ -12,7 +12,7 @@ import { useServices } from "@/shared/providers/service-provider";
  */
 export const useGetRegistrySecurityTag = (
   payload: GetRegistrySecurityTagDetailPayload,
-): UseQueryResult<InternalRegistryImageTagDetailType, Error> => {
+): UseQueryResult<ImageTagListResponse, Error> => {
   const { registrySecurityService } = useServices();
 
   return useQuery({

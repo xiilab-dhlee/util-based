@@ -1,20 +1,22 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { SystemResourcesSummaryResponse } from "@/domain/system-monitoring/types/system-monitoring.type";
-import type { ResourceSummary } from "@/domain/system-monitoring/utils/system-monitoring.util";
+import { useGetNodeSystemResource } from "@/api/generated/admin-cluster/admin-cluster";
+import { buildResourceSummary } from "@/domain/system-monitoring/utils/system-monitoring.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
 
 export interface SystemMonitoringSummaryProps {
-  nodeSummary?: SystemResourcesSummaryResponse;
   selectedNode: string;
-  resourceSummary: ResourceSummary;
 }
 
 export const SystemMonitoringSummary = ({
-  nodeSummary,
   selectedNode,
-  resourceSummary,
 }: SystemMonitoringSummaryProps) => {
+  const { data: nodeSummary } = useGetNodeSystemResource(selectedNode, {
+    query: { enabled: Boolean(selectedNode) },
+  });
+  const resourceSummary = buildResourceSummary(nodeSummary);
+
   return (
     <SummaryArticle>
       <SummaryArticleItem>
@@ -23,7 +25,7 @@ export const SystemMonitoringSummary = ({
         </SummaryIconWrapper>
         <SummaryArticleBody>
           <SummaryArticleKey>
-            {nodeSummary?.nodeName || selectedNode}
+            {nodeSummary?.nodeName || selectedNode || "-"}
           </SummaryArticleKey>
           <SummaryArticleValue>
             {nodeSummary?.nodeIp || "-"}
@@ -32,30 +34,44 @@ export const SystemMonitoringSummary = ({
       </SummaryArticleItem>
       <SummaryArticleItem>
         <SummaryIconWrapper>
-          <Icon name="Gpu" color={resourceSummary.gpu.info.color} size={30} />
+          <Icon
+            name={resourceSummary.gpu.info.icon}
+            color={resourceSummary.gpu.info.color}
+            size={30}
+          />
         </SummaryIconWrapper>
         <SummaryArticleBody>
           <SummaryArticleKey>{resourceSummary.gpu.info.text}</SummaryArticleKey>
           <SummaryArticleValue>
-            {`${resourceSummary.gpu.count} ${resourceSummary.gpu.info.unit}`}
-          </SummaryArticleValue>
-        </SummaryArticleBody>
-      </SummaryArticleItem>
-      <SummaryArticleItem>
-        <SummaryIconWrapper>
-          <Icon name="Cpu" color={resourceSummary.cpu.info.color} size={30} />
-        </SummaryIconWrapper>
-        <SummaryArticleBody>
-          <SummaryArticleKey>{resourceSummary.cpu.info.text}</SummaryArticleKey>
-          <SummaryArticleValue>
-            {`${resourceSummary.cpu.core} ${resourceSummary.cpu.info.unit}`}
+            {formatNumberWithUnit(
+              resourceSummary.gpu.count,
+              resourceSummary.gpu.info.unit,
+            )}
           </SummaryArticleValue>
         </SummaryArticleBody>
       </SummaryArticleItem>
       <SummaryArticleItem>
         <SummaryIconWrapper>
           <Icon
-            name="Mem"
+            name={resourceSummary.cpu.info.icon}
+            color={resourceSummary.cpu.info.color}
+            size={30}
+          />
+        </SummaryIconWrapper>
+        <SummaryArticleBody>
+          <SummaryArticleKey>{resourceSummary.cpu.info.text}</SummaryArticleKey>
+          <SummaryArticleValue>
+            {formatNumberWithUnit(
+              resourceSummary.cpu.core,
+              resourceSummary.cpu.info.unit,
+            )}
+          </SummaryArticleValue>
+        </SummaryArticleBody>
+      </SummaryArticleItem>
+      <SummaryArticleItem>
+        <SummaryIconWrapper>
+          <Icon
+            name={resourceSummary.memory.info.icon}
             color={resourceSummary.memory.info.color}
             size={30}
           />
@@ -65,20 +81,30 @@ export const SystemMonitoringSummary = ({
             {resourceSummary.memory.info.text}
           </SummaryArticleKey>
           <SummaryArticleValue>
-            {`${resourceSummary.memory.amount} ${resourceSummary.memory.info.unit}`}
+            {formatNumberWithUnit(
+              resourceSummary.memory.amount,
+              resourceSummary.memory.info.unit,
+            )}
           </SummaryArticleValue>
         </SummaryArticleBody>
       </SummaryArticleItem>
       <SummaryArticleItem>
         <SummaryIconWrapper>
-          <Icon name="Disk" color={resourceSummary.disk.info.color} size={30} />
+          <Icon
+            name={resourceSummary.disk.info.icon}
+            color={resourceSummary.disk.info.color}
+            size={30}
+          />
         </SummaryIconWrapper>
         <SummaryArticleBody>
           <SummaryArticleKey>
             {resourceSummary.disk.info.text}
           </SummaryArticleKey>
           <SummaryArticleValue>
-            {`${resourceSummary.disk.amount} ${resourceSummary.disk.info.unit}`}
+            {formatNumberWithUnit(
+              resourceSummary.disk.amount,
+              resourceSummary.disk.info.unit,
+            )}
           </SummaryArticleValue>
         </SummaryArticleBody>
       </SummaryArticleItem>

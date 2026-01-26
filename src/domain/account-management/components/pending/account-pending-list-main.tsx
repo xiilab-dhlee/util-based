@@ -39,8 +39,8 @@ export function AccountPendingListMain() {
     pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: searchText,
-    sort: sortRequest?.sort,
-    order: sortRequest?.order,
+    sort: sortRequest?.sort ?? "CREATED_AT",
+    order: sortRequest?.order ?? "DESC",
   });
 
   useEffect(() => {

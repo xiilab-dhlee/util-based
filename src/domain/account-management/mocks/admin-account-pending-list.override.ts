@@ -63,9 +63,9 @@ export const adminAccountPendingListOverrideHandlers = [
     const keyword = url.searchParams.get("keyword") || "";
     const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
-    const sort = (url.searchParams.get("sortRequest[sort]") ||
+    const sort = (url.searchParams.get("sort") ||
       "CREATED_AT") as GetSignupRequestsSort;
-    const order = (url.searchParams.get("sortRequest[order]") ||
+    const order = (url.searchParams.get("order") ||
       "DESC") as GetSignupRequestsOrder;
 
     const { status, message, timestamp } = getGetSignupRequestsResponseMock();

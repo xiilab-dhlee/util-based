@@ -1,25 +1,31 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Icon, InfoModal } from "xiilab-ui";
 
 import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { openViewRejectReasonModalAtom } from "@/shared/state/modal.atom";
 import { ModalDisplayReason } from "@/styles/layers/modal-layers.styled";
 
-export function ViewRejectReasonModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
-    openViewRejectReasonModalAtom,
-  );
+interface RejectReasonPayload {
+  reason?: string;
+}
 
+export function ViewRejectReasonModal() {
+  const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<string>("");
 
-  useSubscribe<string>(COMMON_EVENTS.sendRejectReason, (reason) => {
-    setReason(reason);
-    onOpen();
-  });
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useSubscribe<RejectReasonPayload>(
+    COMMON_EVENTS.openRejectReasonModal,
+    (payload) => {
+      setReason(payload.reason || "");
+      setOpen(true);
+    },
+  );
 
   return (
     <InfoModal
@@ -28,11 +34,11 @@ export function ViewRejectReasonModal() {
       icon={<Icon name="AllowRequest" color="#fff" size={18} />}
       open={open}
       closable
-      onClose={onClose}
+      onClose={handleClose}
       title="반려 사유"
       centered
     >
-      <ModalDisplayReason>{reason}</ModalDisplayReason>
+      <ModalDisplayReason>{reason || "-"}</ModalDisplayReason>
     </InfoModal>
   );
 }

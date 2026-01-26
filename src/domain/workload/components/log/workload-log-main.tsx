@@ -2,6 +2,10 @@
 
 import styled from "styled-components";
 
+import { AsideWorkloadMonitoring } from "@/domain/workload/components/aside-workload-monitoring";
+import { ViewWorkloadMonitoringModal } from "@/domain/workload/components/detail/view-workload-monitoring-modal";
+import { WorkloadLogBody } from "@/domain/workload/components/log/workload-log-body";
+import { WorkloadMonitoringButton } from "@/domain/workload/components/workload-monitoring-button";
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -10,10 +14,6 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
-import { AsideWorkloadMonitoring } from "../aside-workload-monitoring";
-import { ViewWorkloadMonitoringModal } from "../detail/view-workload-monitoring-modal";
-import { WorkloadMonitoringButton } from "../workload-monitoring-button";
-import { WorkloadLogBody } from "./workload-log-body";
 
 export function WorkloadLogMain() {
   const { open } = useGlobalModal(openViewWorkloadMonitoringDrawerAtom);

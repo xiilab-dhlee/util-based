@@ -6,6 +6,7 @@ import { useFindHubDetail } from "@/api/generated/hub/hub";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MarkdownToHtml } from "@/shared/components/markdown-to-html";
 import { MySpinner } from "@/shared/components/spinner";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   AsideDetailArticle,
@@ -30,7 +31,7 @@ export function ViewHubReadme({ hubId }: ViewHubReadmeProps) {
   if (isError) {
     return (
       <Container>
-        <EmptyState />
+        <EmptyState title={TABLE_MESSAGE.ERROR} />
       </Container>
     );
   }

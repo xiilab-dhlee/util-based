@@ -37,6 +37,7 @@ import type {
   BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
   BaseResponseClusterResourceSummaryResponse,
+  BaseResponseListClusterNodeSummaryResponse,
   BaseResponseListString,
   BaseResponseMigConfigurationResponse,
   BaseResponsePageResponseClusterNodeListResponse,
@@ -270,7 +271,7 @@ export const getGetNodeSystemMetricsResponseMock = (
       })),
       error: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
-    diskUsage: {
+    diskUtilization: {
       status: faker.helpers.arrayElement(["SUCCESS", "FAILED"] as const),
       data: Array.from(
         { length: faker.number.int({ min: 1, max: 10 }) },
@@ -336,7 +337,6 @@ export const getGetNodeSystemMetricsResponseMock = (
       })),
       error: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
-    isEmpty: faker.datatype.boolean(),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -439,7 +439,6 @@ export const getGetNodeGpuMetricsResponseMock = (
       })),
       error: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
-    isEmpty: faker.datatype.boolean(),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -542,23 +541,18 @@ export const getGetClusterResourceSummaryResponseMock = (
     gpu: {
       detail: {
         normal: {
-          clusterCapacityCount: faker.number.int({
-            min: undefined,
-            max: undefined,
-          }),
-          requestedCount: faker.number.int({ min: undefined, max: undefined }),
-          usedCount: faker.number.int({ min: undefined, max: undefined }),
-        },
-        mig: {
-          profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
           requestCount: faker.number.int({ min: undefined, max: undefined }),
         },
-        mps: Array.from(
+        mig: Array.from(
           { length: faker.number.int({ min: 1, max: 10 }) },
           (_, i) => i + 1,
         ).map(() => ({
+          profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
           requestCount: faker.number.int({ min: undefined, max: undefined }),
         })),
+        mps: {
+          requestCount: faker.number.int({ min: undefined, max: undefined }),
+        },
       },
     },
     cpu: {
@@ -597,6 +591,67 @@ export const getGetClusterResourceSummaryResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetClusterNodeResourceSummariesResponseMock = (
+  overrideResponse: Partial<BaseResponseListClusterNodeSummaryResponse> = {},
+): BaseResponseListClusterNodeSummaryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    resource: {
+      gpu: {
+        gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        gpuType: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        quotaCount: faker.number.int({ min: undefined, max: undefined }),
+        usedCount: faker.number.int({ min: undefined, max: undefined }),
+        detail: {
+          normal: {
+            quotaCount: faker.number.int({ min: undefined, max: undefined }),
+            usedCount: faker.number.int({ min: undefined, max: undefined }),
+          },
+          mig: Array.from(
+            { length: faker.number.int({ min: 1, max: 10 }) },
+            (_, i) => i + 1,
+          ).map(() => ({
+            profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            quotaCount: faker.number.int({ min: undefined, max: undefined }),
+            usedCount: faker.number.int({ min: undefined, max: undefined }),
+          })),
+          mps: Array.from(
+            { length: faker.number.int({ min: 1, max: 10 }) },
+            (_, i) => i + 1,
+          ).map(() => ({
+            quotaCount: faker.number.int({ min: undefined, max: undefined }),
+            usedCount: faker.number.int({ min: undefined, max: undefined }),
+          })),
+        },
+      },
+      cpu: {
+        quotaCore: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        usedCore: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+      },
+      memory: {
+        quotaByte: faker.number.int({ min: undefined, max: undefined }),
+        usedByte: faker.number.int({ min: undefined, max: undefined }),
+      },
+    },
+  })),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getGetNodeNamesResponseMock = (
   overrideResponse: Partial<BaseResponseListString> = {},
 ): BaseResponseListString => ({
@@ -620,7 +675,7 @@ export const getUpdateNodeSchedulingMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
-    "*/api/v1/cluster/nodes/:nodeName/scheduling",
+    "*/api/v1/admin/cluster/nodes/:nodeName/scheduling",
     async (info) => {
       await delay(1000);
 
@@ -650,7 +705,7 @@ export const getGetMigConfigurationMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/:nodeName/mig",
+    "*/api/v1/admin/cluster/nodes/:nodeName/mig",
     async (info) => {
       await delay(1000);
 
@@ -678,7 +733,7 @@ export const getApplyMigConfigurationMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
-    "*/api/v1/cluster/nodes/:nodeName/mig",
+    "*/api/v1/admin/cluster/nodes/:nodeName/mig",
     async (info) => {
       await delay(1000);
 
@@ -708,7 +763,7 @@ export const getGetClusterNodesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes",
+    "*/api/v1/admin/cluster/nodes",
     async (info) => {
       await delay(1000);
 
@@ -738,7 +793,7 @@ export const getGetNodeSystemResourceMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/:nodeName/system-resources/summary",
+    "*/api/v1/admin/cluster/nodes/:nodeName/system-resources/summary",
     async (info) => {
       await delay(1000);
 
@@ -768,7 +823,7 @@ export const getGetNodeSystemMetricsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/:nodeName/resources/system/metrics",
+    "*/api/v1/admin/cluster/nodes/:nodeName/resources/system/metrics",
     async (info) => {
       await delay(1000);
 
@@ -798,7 +853,7 @@ export const getGetNodeGpuMetricsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/:nodeName/resources/gpu/metrics",
+    "*/api/v1/admin/cluster/nodes/:nodeName/resources/gpu/metrics",
     async (info) => {
       await delay(1000);
 
@@ -828,7 +883,7 @@ export const getGetNodeDetailMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/:nodeName/detail",
+    "*/api/v1/admin/cluster/nodes/:nodeName/detail",
     async (info) => {
       await delay(1000);
 
@@ -858,7 +913,7 @@ export const getGetClusterResourceSummaryMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/resources/summary",
+    "*/api/v1/admin/cluster/nodes/resources/summary",
     async (info) => {
       await delay(1000);
 
@@ -877,6 +932,36 @@ export const getGetClusterResourceSummaryMockHandler = (
   );
 };
 
+export const getGetClusterNodeResourceSummariesMockHandler = (
+  overrideResponse?:
+    | BaseResponseListClusterNodeSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseListClusterNodeSummaryResponse>
+        | BaseResponseListClusterNodeSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/cluster/nodes/node-summary",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetClusterNodeResourceSummariesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetNodeNamesMockHandler = (
   overrideResponse?:
     | BaseResponseListString
@@ -886,7 +971,7 @@ export const getGetNodeNamesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/cluster/nodes/names",
+    "*/api/v1/admin/cluster/nodes/names",
     async (info) => {
       await delay(1000);
 
@@ -914,5 +999,6 @@ export const getAdminClusterMock = () => [
   getGetNodeGpuMetricsMockHandler(),
   getGetNodeDetailMockHandler(),
   getGetClusterResourceSummaryMockHandler(),
+  getGetClusterNodeResourceSummariesMockHandler(),
   getGetNodeNamesMockHandler(),
 ];

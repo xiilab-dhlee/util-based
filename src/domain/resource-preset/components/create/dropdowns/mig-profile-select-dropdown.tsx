@@ -1,7 +1,7 @@
 import { CompoundDropdown } from "xiilab-ui";
 
+import { MigProfileDropdownOption } from "@/domain/resource-preset/components/create/dropdowns/mig-profile-dropdown-option";
 import type { GpuProfileListType } from "@/shared/schemas/gpu.schema";
-import { MigProfileDropdownOption } from "./mig-profile-dropdown-option";
 
 interface MigProfileSelectDropdownProps {
   profiles: GpuProfileListType[];

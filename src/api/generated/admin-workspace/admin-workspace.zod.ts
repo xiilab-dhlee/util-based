@@ -824,7 +824,7 @@ export const getResourceRequests1Response = zod
                             })
                             .strict()
                             .optional()
-                            .describe("일반 GPU 응답"),
+                            .describe("일반 GPU 설정"),
                           mig: zod
                             .array(
                               zod
@@ -837,17 +837,19 @@ export const getResourceRequests1Response = zod
                                     .describe("요청 수량"),
                                 })
                                 .strict()
-                                .describe("MIG 프로파일 응답"),
+                                .describe("MIG GPU 프로파일 설정"),
                             )
                             .optional()
                             .describe("MIG 프로파일 목록"),
                           mps: zod
                             .object({
-                              requestCount: zod.number().describe("요청 수량"),
+                              requestCount: zod
+                                .number()
+                                .describe("요청 MPS 수량"),
                             })
                             .strict()
                             .optional()
-                            .describe("MPS 프로파일 응답"),
+                            .describe("MPS GPU 설정"),
                         })
                         .strict()
                         .describe("리소스 요청 응답용 GPU 상세"),
@@ -860,15 +862,15 @@ export const getResourceRequests1Response = zod
                       requestCore: zod.number().describe("요청 CPU 코어 수"),
                     })
                     .strict()
-                    .describe("CPU 응답"),
+                    .describe("CPU 정보"),
                   memory: zod
                     .object({
                       requestByte: zod
                         .number()
-                        .describe("요청 메모리 바이트 수"),
+                        .describe("요청 메모리 (바이트)"),
                     })
                     .strict()
-                    .describe("메모리 응답"),
+                    .describe("메모리 정보"),
                 })
                 .strict()
                 .describe("리소스 요청 응답용 리소스"),

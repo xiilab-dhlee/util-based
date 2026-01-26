@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 
 import { RevokeHistoryDetailMain } from "@/domain/revoke/components/detail/revoke-history-detail-main";
 import { RevokeHistoryDetailPageAside } from "@/domain/revoke/components/detail/revoke-history-detail-page-aside";
-import { useGetRevokeHistoryDetail } from "@/domain/revoke/hooks/use-get-revoke-history-detail";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,
@@ -21,9 +20,6 @@ import {
 export default function RevokeHistoryDetailPage() {
   const { id } = useParams<{ id: string }>();
 
-  // 상세 정보 조회 (사이드바용)
-  const { data } = useGetRevokeHistoryDetail(id);
-
   return (
     <>
       {/* 페이지 요약 정보 및 브레드크럼 네비게이션 */}
@@ -36,7 +32,7 @@ export default function RevokeHistoryDetailPage() {
       {/* 상세 페이지 메인 콘텐츠 영역 */}
       <DetailPageBody>
         {/* 왼쪽 사이드바 영역 - 회수 이력 상세 정보 및 회수 기준 */}
-        <RevokeHistoryDetailPageAside detailData={data?.detail} />
+        <RevokeHistoryDetailPageAside />
         {/* 오른쪽 메인 콘텐츠 영역 */}
         <DetailPageContent>
           {/* 경고/회수 목록 */}

@@ -1,11 +1,11 @@
 import {
-  getGetStoragesMockHandler,
-  getGetStoragesResponseMock,
-} from "@/api/generated/admin-storage/admin-storage.msw";
-import {
   type StorageResponse,
   StorageResponseStorageChannel,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getGetStoragesMockHandler,
+  getGetStoragesResponseMock,
+} from "@/api/generated/storage/storage.msw";
 
 /**
  * 스토리지 이름 생성
@@ -31,7 +31,7 @@ function generateStorageSavePath(index: number): string {
 export const storageListOverrideHandlers = [
   // 스토리지 목록 조회 (pageSize에 맞는 개수)
   getGetStoragesMockHandler(async (info) => {
-    // URL에서 query params 추출
+    // URL에서 query params 추출 (평탄화된 파라미터)
     const url = new URL(info.request.url);
     const pageNo = parseInt(url.searchParams.get("pageNo") || "0", 10);
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);

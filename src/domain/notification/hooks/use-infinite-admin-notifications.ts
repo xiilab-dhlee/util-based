@@ -5,7 +5,10 @@ import {
   getAdminNotifications,
   getGetAdminNotificationsQueryKey,
 } from "@/api/generated/admin-account-notification/admin-account-notification";
-import type { GetAdminNotificationsNotificationTypeItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  type GetAdminNotificationsNotificationTypeItem,
+  GetAdminNotificationsOrder,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   NOTIFICATION_PAGE_SIZE,
   type NotificationTypeValue,
@@ -32,9 +35,11 @@ export function useInfiniteAdminNotifications(
   const query = useInfiniteQuery({
     queryKey: [
       ...getGetAdminNotificationsQueryKey(accountId, {
+        pageNo: 0,
         pageSize: NOTIFICATION_PAGE_SIZE,
         hasRead,
         notificationType: notificationTypeArray,
+        order: GetAdminNotificationsOrder.DESC,
       }),
       "infinite",
     ],
@@ -48,6 +53,7 @@ export function useInfiniteAdminNotifications(
           pageSize: NOTIFICATION_PAGE_SIZE,
           hasRead,
           notificationType: notificationTypeArray,
+          order: "DESC",
         },
         signal,
       );

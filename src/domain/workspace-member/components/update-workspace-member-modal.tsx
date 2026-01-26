@@ -91,7 +91,7 @@ export function UpdateWorkspaceMemberModal() {
               value: workspaceMember?.email,
             },
             {
-              label: "보유 개수",
+              label: "생성 개수",
               value: workspaceMember?.workspaceCount?.toString(),
             },
           ]}

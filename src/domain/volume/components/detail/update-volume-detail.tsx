@@ -8,15 +8,20 @@ import styled from "styled-components";
 import { Button, Form, FormItem, Input } from "xiilab-ui";
 
 import {
+  getAdminGetVolumeDetailQueryKey,
+  getAdminGetVolumeListQueryKey,
+} from "@/api/generated/admin-volume/admin-volume";
+import {
   getGetVolumeDetailQueryKey,
   getGetVolumeListQueryKey,
-  useGetVolumeDetail,
-  useUpdateVolume,
 } from "@/api/generated/volume/volume";
+import { useGetVolumeDetailByMode } from "@/domain/volume/hooks/use-get-volume-detail-by-mode";
+import { useUpdateVolumeByMode } from "@/domain/volume/hooks/use-update-volume-by-mode";
 import {
   type UpdateVolumeFormType,
   updateVolumeSchema,
 } from "@/domain/volume/schemas/volume.schema";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleHeader,
@@ -26,23 +31,25 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 interface UpdateVolumeDetailProps {
+  mode: VolumeMode;
   volumeId: number;
   onCancel: () => void;
   onSuccess: () => void;
 }
 
 export function UpdateVolumeDetail({
+  mode,
   volumeId,
   onCancel,
   onSuccess,
 }: UpdateVolumeDetailProps) {
   const queryClient = useQueryClient();
 
-  const { data } = useGetVolumeDetail(volumeId, {
+  const { data } = useGetVolumeDetailByMode(mode, volumeId, {
     query: { enabled: !Number.isNaN(volumeId) },
   });
 
-  const updateVolume = useUpdateVolume();
+  const updateVolume = useUpdateVolumeByMode(mode);
 
   const {
     control,
@@ -72,12 +79,21 @@ export function UpdateVolumeDetail({
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: getGetVolumeDetailQueryKey(volumeId),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetVolumeListQueryKey(),
-          });
+          if (mode === "user") {
+            queryClient.invalidateQueries({
+              queryKey: getGetVolumeDetailQueryKey(volumeId),
+            });
+            queryClient.invalidateQueries({
+              queryKey: getGetVolumeListQueryKey(),
+            });
+          } else {
+            queryClient.invalidateQueries({
+              queryKey: getAdminGetVolumeDetailQueryKey(volumeId),
+            });
+            queryClient.invalidateQueries({
+              queryKey: getAdminGetVolumeListQueryKey(),
+            });
+          }
           onSuccess();
         },
       },

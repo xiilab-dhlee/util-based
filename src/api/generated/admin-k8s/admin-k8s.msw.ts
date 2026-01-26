@@ -331,7 +331,7 @@ export const getGetAllResourceCountsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources",
+    "*/api/v1/admin/k8s/resources",
     async (info) => {
       await delay(1000);
 
@@ -361,7 +361,7 @@ export const getGetResourceYamlMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/:resourceType/:name/yaml",
+    "*/api/v1/admin/k8s/resources/:resourceType/:name/yaml",
     async (info) => {
       await delay(1000);
 
@@ -391,7 +391,7 @@ export const getDescribeResourceMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/:resourceType/:name/describe",
+    "*/api/v1/admin/k8s/resources/:resourceType/:name/describe",
     async (info) => {
       await delay(1000);
 
@@ -421,7 +421,7 @@ export const getGetStatefulSetsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/statefulsets",
+    "*/api/v1/admin/k8s/resources/statefulsets",
     async (info) => {
       await delay(1000);
 
@@ -451,7 +451,7 @@ export const getGetServicesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/services",
+    "*/api/v1/admin/k8s/resources/services",
     async (info) => {
       await delay(1000);
 
@@ -481,7 +481,7 @@ export const getGetPodsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/pods",
+    "*/api/v1/admin/k8s/resources/pods",
     async (info) => {
       await delay(1000);
 
@@ -511,7 +511,7 @@ export const getGetPersistentVolumesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/persistentvolumes",
+    "*/api/v1/admin/k8s/resources/persistentvolumes",
     async (info) => {
       await delay(1000);
 
@@ -541,7 +541,7 @@ export const getGetNodesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/nodes",
+    "*/api/v1/admin/k8s/resources/nodes",
     async (info) => {
       await delay(1000);
 
@@ -571,7 +571,7 @@ export const getGetNamespacesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/namespaces",
+    "*/api/v1/admin/k8s/resources/namespaces",
     async (info) => {
       await delay(1000);
 
@@ -601,7 +601,7 @@ export const getGetDeploymentsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/deployments",
+    "*/api/v1/admin/k8s/resources/deployments",
     async (info) => {
       await delay(1000);
 
@@ -631,7 +631,7 @@ export const getGetDaemonSetsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/resources/daemonsets",
+    "*/api/v1/admin/k8s/resources/daemonsets",
     async (info) => {
       await delay(1000);
 
@@ -661,7 +661,7 @@ export const getGetAllNamespaceEventsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/k8s/namespaces/events",
+    "*/api/v1/admin/k8s/namespaces/events",
     async (info) => {
       await delay(1000);
 

@@ -8,14 +8,14 @@ import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Input, Typography } from "xiilab-ui";
 
+import { CreateWorkloadEnv } from "@/domain/workload/components/create/create-workload-env";
+// import { CreateWorkloadParameter } from "@/domain/workload/components/create/create-workload-parameter";
+import { CreateWorkloadPort } from "@/domain/workload/components/create/create-workload-port";
 import {
   execCommandAtom,
   execPathAtom,
   imageTypeAtom,
 } from "@/domain/workload/state/create-workload.atom";
-import { CreateWorkloadEnv } from "./create-workload-env";
-// import { CreateWorkloadParameter } from "./create-workload-parameter";
-import { CreateWorkloadPort } from "./create-workload-port";
 
 export function CreateWorkloadFourthStep() {
   const imageType = useAtomValue(imageTypeAtom);

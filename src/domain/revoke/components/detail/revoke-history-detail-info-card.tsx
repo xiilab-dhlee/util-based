@@ -1,29 +1,36 @@
 "use client";
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: es-toolkit isFinite 사용
+import { isFinite } from "es-toolkit/compat";
+import { useParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { RevokeHistoryDetailResponseType } from "@/domain/revoke/schemas/revoke-history.schema";
+import { useGetScanHistoryDetail } from "@/api/generated/workload-reclaim-policy-admin/workload-reclaim-policy-admin";
 import { ChangeCircleIcon } from "@/shared/components/icon/change-circle-icon";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
-import { getResourceInfo } from "@/shared/utils/resource.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
+import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
 
 const GPU_RESOURCE_INFO = getResourceInfo("GPU");
 const CPU_RESOURCE_INFO = getResourceInfo("CPU");
 const MEM_RESOURCE_INFO = getResourceInfo("MEM");
-
-interface RevokeHistoryDetailInfoCardProps {
-  data: RevokeHistoryDetailResponseType | undefined;
-}
 
 /**
  * 리소스 회수 이력 상세 정보 카드 컴포넌트
  *
  * 사이드바에 표시되는 회수 이력의 기본 정보를 표시합니다.
  */
-export function RevokeHistoryDetailInfoCard({
-  data,
-}: RevokeHistoryDetailInfoCardProps) {
+export function RevokeHistoryDetailInfoCard() {
+  const { id } = useParams<{ id: string }>();
+  const scanHistoryId = Number(id);
+
+  const { data: scanHistory } = useGetScanHistoryDetail(scanHistoryId, {
+    query: {
+      enabled: Boolean(id) && isFinite(scanHistoryId),
+    },
+  });
+
   return (
     <Container>
       <Header>
@@ -38,7 +45,7 @@ export function RevokeHistoryDetailInfoCard({
             <RowTitle>
               <RowKey>회수일시 :</RowKey>
               <RowValue>
-                {data?.revokedAt ? formatDateTimeSafely(data.revokedAt) : "-"}
+                {formatDateTimeSafely(scanHistory?.createdAt)}
               </RowValue>
             </RowTitle>
           </RowBody>
@@ -50,7 +57,12 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>검사 대상 개수 :</RowKey>
-              <RowValue>{`${data?.targetCount ?? "-"}개`}</RowValue>
+              <RowValue>
+                {formatNumberWithUnit(
+                  scanHistory?.reclaimScanWorkloadCount,
+                  "개",
+                )}
+              </RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -61,7 +73,12 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>경고 워크로드 개수 :</RowKey>
-              <RowValue>{`${data?.warningWorkloadCount ?? "-"}개`}</RowValue>
+              <RowValue>
+                {formatNumberWithUnit(
+                  scanHistory?.reclaimWarningWorkloadCount,
+                  "개",
+                )}
+              </RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -76,7 +93,12 @@ export function RevokeHistoryDetailInfoCard({
             </RowIconWrapper>
             <RowTitle>
               <RowKey>회수 워크로드 개수 :</RowKey>
-              <RowValue>{`${data?.revokedWorkloadCount ?? "-"}개`}</RowValue>
+              <RowValue>
+                {formatNumberWithUnit(
+                  scanHistory?.reclaimedWorkloadCount,
+                  "개",
+                )}
+              </RowValue>
             </RowTitle>
           </RowBody>
         </Row>
@@ -94,7 +116,10 @@ export function RevokeHistoryDetailInfoCard({
             <RowTitle>
               <RowKey>회수된 GPU :</RowKey>
               <RowValue>
-                {`${data?.revokedGpu ?? "-"} ${GPU_RESOURCE_INFO.unit}`}
+                {formatNumberWithUnit(
+                  scanHistory?.reclaimedGpuCount,
+                  GPU_RESOURCE_INFO.unit,
+                )}
               </RowValue>
             </RowTitle>
           </RowBody>
@@ -113,7 +138,10 @@ export function RevokeHistoryDetailInfoCard({
             <RowTitle>
               <RowKey>회수된 CPU :</RowKey>
               <RowValue>
-                {`${data?.revokedCpu ?? "-"} ${CPU_RESOURCE_INFO.unit}`}
+                {formatNumberWithUnit(
+                  scanHistory?.reclaimedCpuCore,
+                  CPU_RESOURCE_INFO.unit,
+                )}
               </RowValue>
             </RowTitle>
           </RowBody>
@@ -132,7 +160,13 @@ export function RevokeHistoryDetailInfoCard({
             <RowTitle>
               <RowKey>회수된 Memory :</RowKey>
               <RowValue>
-                {`${data?.revokedMemory ?? "-"} ${MEM_RESOURCE_INFO.unit}`}
+                {scanHistory?.reclaimedMemoryByte
+                  ? formatNumberWithUnit(
+                      convertBytes(scanHistory.reclaimedMemoryByte, "GB", 1)
+                        .value,
+                      MEM_RESOURCE_INFO.unit,
+                    )
+                  : "-"}
               </RowValue>
             </RowTitle>
           </RowBody>

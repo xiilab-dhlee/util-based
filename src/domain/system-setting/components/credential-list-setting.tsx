@@ -28,7 +28,7 @@ export function CredentialListSetting() {
   const { data, isLoading, isError, refetch } = useGetAllCredentials({
     pageNo: page - 1,
     pageSize: CREDENTIAL_LIST_PAGE_SIZE,
-    keyword: searchText,
+    keyword: searchText || undefined,
   });
 
   /**

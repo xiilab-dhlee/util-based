@@ -16,6 +16,7 @@ import { VolumeFileCheckbox } from "@/domain/volume/components/file/volume-file-
 import { useVolumeFilePermissions } from "@/domain/volume/hooks/use-volume-file-permissions";
 import { useVolumeFileTree } from "@/domain/volume/hooks/use-volume-file-tree";
 import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { MyDropdown } from "@/shared/components/dropdown";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MySpinner } from "@/shared/components/spinner";
@@ -34,11 +35,13 @@ import { customScrollbar } from "@/styles/mixins/scrollbar";
 interface ManageVolumeFileProps {
   volumeId: number;
   creatorId?: string;
+  mode: VolumeMode;
 }
 
 export function ManageVolumeFile({
   volumeId,
   creatorId,
+  mode,
 }: ManageVolumeFileProps) {
   const publish = usePublish();
   const { data: session } = useSession();
@@ -52,21 +55,23 @@ export function ManageVolumeFile({
 
   const {
     checkedNodesInfo,
-    hasCheckedFiles,
     canCreateFolder,
     canCompress,
     canDecompress,
     canDelete,
+    canDownload,
     hasDropdownItems,
     canManageFiles,
+    canUpload,
   } = useVolumeFilePermissions({
     session,
     creatorId,
     treeDataLength: treeData.length,
+    mode,
   });
 
   const handleDownload = () => {
-    if (!hasCheckedFiles) return;
+    if (!canDownload) return;
 
     const filePaths = checkedNodesInfo.map((node) => node.path);
     publish(VOLUME_EVENTS.openDownloadFileModal, { volumeId, filePaths });
@@ -139,27 +144,30 @@ export function ManageVolumeFile({
             </MyDropdown>
           )}
           <FooterRight>
-            <Button
-              color="primary"
-              variant="gradient"
-              icon="Download"
-              width={100}
-              height={30}
-              onClick={handleDownload}
-              disabled={!hasCheckedFiles}
-            >
-              다운로드
-            </Button>
-            <Button
-              color="primary"
-              variant="gradient"
-              icon="Upload"
-              width={100}
-              height={30}
-              onClick={handleUpload}
-            >
-              파일 업로드
-            </Button>
+            {canDownload && (
+              <Button
+                color="primary"
+                variant="gradient"
+                icon="Download"
+                width={100}
+                height={30}
+                onClick={handleDownload}
+              >
+                다운로드
+              </Button>
+            )}
+            {canUpload && (
+              <Button
+                color="primary"
+                variant="gradient"
+                icon="Upload"
+                width={100}
+                height={30}
+                onClick={handleUpload}
+              >
+                파일 업로드
+              </Button>
+            )}
           </FooterRight>
         </Footer>
       )}

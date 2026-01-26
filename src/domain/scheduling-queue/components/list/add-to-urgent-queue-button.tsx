@@ -6,7 +6,7 @@ interface AddToUrgentQueueButtonProps {
   workload: AdminWorkloadResponse;
   onAddToUrgentQueue: (workload: AdminWorkloadResponse) => void;
   isAddingToQueue?: boolean;
-  /** 긴급 대기열이 가득 찼는지 여부 (최대 5개) */
+  /** 긴급 대기열이 가득 찼는지 여부 */
   isQueueFull?: boolean;
 }
 

@@ -21,6 +21,8 @@ import type { MigGpu } from "@/domain/node/types/node.type";
 interface MigGpuItemProps extends MigGpu {
   /** GPU 인덱스 (0부터 시작) */
   gpuIndex: number;
+  /** 비활성화 여부 */
+  disabled?: boolean;
 }
 
 /**
@@ -33,7 +35,7 @@ interface MigGpuItemProps extends MigGpu {
  * @param gpuIndex - GPU 인덱스
  * @returns GPU 선택 버튼 컴포넌트
  */
-export function MigGpuItem({ gpuIndex }: MigGpuItemProps) {
+export function MigGpuItem({ gpuIndex, disabled }: MigGpuItemProps) {
   // MIG GPU 목록 정보
   const migGpus = useAtomValue(migGpusAtom);
   // MIG GPU 제품 정보 (A30, A100 등)
@@ -60,6 +62,7 @@ export function MigGpuItem({ gpuIndex }: MigGpuItemProps) {
    * - MIG 인스턴스 개수에 따른 개수 상태 설정
    */
   const handleClick = () => {
+    if (disabled) return;
     // 선택된 GPU 인덱스 설정
     setSelectedMigGpuIndex(gpuIndex);
 
@@ -89,6 +92,7 @@ export function MigGpuItem({ gpuIndex }: MigGpuItemProps) {
         active: selectedMigGpuIndex === gpuIndex, // 현재 선택된 GPU인지 확인
       })}
       onClick={handleClick}
+      disabled={disabled}
     >
       GPU# {gpuIndex}
     </Container>
@@ -128,5 +132,11 @@ const Container = styled.button`
     font-weight: 600; /* 굵은 글씨 */
     border: 1px solid #1f5bff; /* 파란색 테두리 */
     outline: 1px solid #b7cbff; /* 파란색 외곽선 */
+  }
+
+  /* 비활성화 스타일 */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;

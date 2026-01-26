@@ -164,13 +164,81 @@ export const MUTATION_MESSAGES: Partial<
   },
 
   // ============================================
-  // Registry (Public/Private)
+  // Registry (Private)
   // ============================================
-  [MUTATION_KEYS.createExternalImage]: {
-    success: "외부 이미지가 등록되었습니다.",
+  [MUTATION_KEYS.updatePrivateImageTag]: {
+    success: "태그 설명이 수정되었습니다.",
   },
-  [MUTATION_KEYS.createExternalImage1]: {
-    success: "외부 이미지가 등록되었습니다.",
+  [MUTATION_KEYS.createPrivateExternalImage]: {
+    success:
+      "컨테이너 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+  },
+  [MUTATION_KEYS.addPrivateImageTag]: {
+    success:
+      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+  },
+  [MUTATION_KEYS.scanPrivateImageTag]: {
+    success: "취약점 스캔이 시작되었습니다.",
+  },
+  [MUTATION_KEYS.deletePrivateImageTags]: {
+    success: "이미지 태그가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.deletePrivateImages]: {
+    success: "레지스트리 이미지가 삭제되었습니다.",
+  },
+
+  // ============================================
+  // Registry (Public)
+  // ============================================
+  [MUTATION_KEYS.updatePublicImageTag]: {
+    success: "태그 설명이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.createPublicExternalImage]: {
+    success:
+      "컨테이너 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+  },
+  [MUTATION_KEYS.addPublicImageTag]: {
+    success:
+      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+  },
+  [MUTATION_KEYS.scanPublicImageTag]: {
+    success: "취약점 스캔이 시작되었습니다.",
+  },
+  [MUTATION_KEYS.deletePublicImageTags]: {
+    success: "이미지 태그가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.deletePublicImages]: {
+    success: "레지스트리 이미지가 삭제되었습니다.",
+  },
+
+  // ============================================
+  // Image Tag Usage Request
+  // ============================================
+  [MUTATION_KEYS.createUsageRequest]: {
+    success: "사용 요청이 전송되었습니다.",
+  },
+
+  // ============================================
+  // Image Job
+  // ============================================
+  [MUTATION_KEYS.restartImageJob]: {
+    success: "컨테이너 이미지 등록 재시작 요청이 완료되었습니다.",
+  },
+  [MUTATION_KEYS.deleteImageJob]: {
+    success: "컨테이너 이미지 등록 종료 요청이 완료되었습니다.",
+  },
+
+  // ============================================
+  // Storage (Admin)
+  // ============================================
+  [MUTATION_KEYS.registerStorage]: {
+    success: "스토리지가 등록되었습니다.",
+  },
+  [MUTATION_KEYS.updateStorage]: {
+    success: "스토리지가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteStorage]: {
+    success: "스토리지가 삭제되었습니다.",
   },
 
   // ============================================
@@ -199,5 +267,25 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.registerAstragoVolume]: {
     success: "볼륨이 생성되었습니다.",
+  },
+
+  // ============================================
+  // Workload Reclaim Policy
+  // ============================================
+  [MUTATION_KEYS.updateReclaimPolicy]: {
+    success: "리소스 회수 기준이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.updateReclaimPolicyEnabled]: {
+    success: "리소스 회수 기준 활성화 상태가 변경되었습니다.",
+  },
+
+  // ============================================
+  // Node (Admin Cluster)
+  // ============================================
+  [MUTATION_KEYS.applyMigConfiguration]: {
+    success: "MIG 설정이 적용되었습니다.",
+  },
+  [MUTATION_KEYS.updateNodeScheduling]: {
+    success: "노드 스케줄링 설정이 변경되었습니다.",
   },
 };

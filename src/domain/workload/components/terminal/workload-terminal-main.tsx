@@ -4,7 +4,9 @@ import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import { AsideWorkloadMonitoring } from "@/domain/workload/components/aside-workload-monitoring";
 import { ViewWorkloadMonitoringModal } from "@/domain/workload/components/detail/view-workload-monitoring-modal";
+import { WorkloadMonitoringButton } from "@/domain/workload/components/workload-monitoring-button";
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { TerminalThemeButton } from "@/shared/components/button/terminal-theme-button";
@@ -17,8 +19,6 @@ import {
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
 import { terminalDrawerStyle } from "@/styles/mixins/drawer";
-import { AsideWorkloadMonitoring } from "../aside-workload-monitoring";
-import { WorkloadMonitoringButton } from "../workload-monitoring-button";
 
 export function WorkloadTerminalMain() {
   const { id } = useParams();

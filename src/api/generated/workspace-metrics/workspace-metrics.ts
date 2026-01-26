@@ -43,19 +43,20 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseBatchWorkloadMetricsResponse,
   BaseResponseListTimeGroupedResourceMetricsResponse,
-  BaseResponseListWorkloadMetricsTimeseriesResponse,
   GetResourceMetricsTimeseriesParams,
   GetWorkloadResourceMetricsTimeseriesParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 
-            특정 워크로드의 Pod별, GPU별 메트릭 시계열 데이터를 조회합니다.
+            특정 워크로드의 여러 메트릭(GPU 사용률, GPU 메모리 사용률, CPU 사용률, 메모리 사용률)을
+            한 번에 병렬로 조회합니다. Pod별, GPU별 시계열 데이터를 반환합니다.
             분산학습 워크로드(TensorFlow, PyTorch)의 launcher/worker 구분을 지원합니다.
             워크스페이스 접근 권한이 필요합니다.
         
- * @summary 워크로드 상세 모니터링 조회
+ * @summary 워크로드 메트릭 배치 조회
  */
 export const getWorkloadResourceMetricsTimeseries = (
   workspaceId: number,
@@ -63,7 +64,7 @@ export const getWorkloadResourceMetricsTimeseries = (
   params: GetWorkloadResourceMetricsTimeseriesParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseListWorkloadMetricsTimeseriesResponse>({
+  return customInstance<BaseResponseBatchWorkloadMetricsResponse>({
     url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/resources/metrics/timeseries`,
     method: "GET",
     params,
@@ -213,7 +214,7 @@ export function useGetWorkloadResourceMetricsTimeseries<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 워크로드 상세 모니터링 조회
+ * @summary 워크로드 메트릭 배치 조회
  */
 
 export function useGetWorkloadResourceMetricsTimeseries<

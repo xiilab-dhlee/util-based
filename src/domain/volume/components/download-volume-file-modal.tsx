@@ -8,6 +8,7 @@ import { Form, FormItem, Icon, Modal } from "xiilab-ui";
 
 import type { DownloadRequestCompressType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { AxiosService } from "@/shared/api/axios";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -18,7 +19,13 @@ interface DownloadVolumeFilePayload {
   filePaths: string[];
 }
 
-export function DownloadVolumeFileModal() {
+interface DownloadVolumeFileModalProps {
+  mode: VolumeMode;
+}
+
+export function DownloadVolumeFileModal({
+  mode,
+}: DownloadVolumeFileModalProps) {
   const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
@@ -48,8 +55,12 @@ export function DownloadVolumeFileModal() {
 
     try {
       const axiosInstance = AxiosService.getInstance().getAxios();
+      const endpoint =
+        mode === "user"
+          ? `/api/v1/volumes/${volumeId}/files/download`
+          : `/api/v1/admin/volumes/${volumeId}/files/download`;
       const response = await axiosInstance.post<Blob>(
-        `/api/v1/volumes/${volumeId}/files/download`,
+        endpoint,
         { paths: filteredPaths, compressType: selectedType },
         { responseType: "blob" },
       );
@@ -99,7 +110,9 @@ export function DownloadVolumeFileModal() {
       type="primary"
       icon={<Icon name="Download" color="#fff" size={18} />}
       open={open}
-      closable
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       title="파일 다운로드"
       onCancel={handleCancel}
       showCancelButton
@@ -109,6 +122,7 @@ export function DownloadVolumeFileModal() {
       centered
       showHeaderBorder
       okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
     >
       <Form>
         <FormItem label="다운로드 압축 형식">

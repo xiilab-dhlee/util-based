@@ -26,6 +26,8 @@ export const volumeTypeSortAtom = atomWithReset<GetVolumeListVolumeType | null>(
 export const volumeSearchKeywordAtom = atom<string>("");
 /** 볼륨 검색어 (실제 API 요청에 사용) */
 export const volumeSearchTextAtom = atom<string>("");
+/** 내 항목만 보기 필터 (user 모드 전용) */
+export const volumeHasMineAtom = atomWithReset<boolean>(false);
 /** 체크된 볼륨 목록 */
 export const volumeCheckedListAtom = atomWithReset<Set<number>>(new Set());
 

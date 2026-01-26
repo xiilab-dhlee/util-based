@@ -3,26 +3,14 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { InternalRegistryService } from "@/domain/internal-registry/api/internal-registry.service";
-import { AdminInternalRegistryImageService } from "@/domain/internal-registry-image/api/admin-internal-registry-image.service";
-import { InternalRegistryImageService } from "@/domain/internal-registry-image/api/internal-registry-image.service";
 import { UserResourceService } from "@/domain/monitoring/api/user-resource.service";
-import { NodeService } from "@/domain/node/api/node.service";
-import { RedfishService } from "@/domain/node/api/redfish.service";
-import { RedfishBmcService } from "@/domain/node/api/redfish-bmc.service";
 import { ReportService } from "@/domain/report/api/report.service";
 import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
-import { RequestImageService } from "@/domain/request-image/api/request-image.service";
 import { ResourcePresetService } from "@/domain/resource-preset/api/resource-preset.service";
-import { RevokeHistoryService } from "@/domain/revoke/api/revoke-history.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
-import { StorageService } from "@/domain/storage/api/storage.service";
 import { HpeService } from "@/domain/system-setting/api/hpe.service";
-import { LicenseService } from "@/domain/system-setting/api/license.service";
-import { SmtpService } from "@/domain/system-setting/api/smtp.service";
-import { StorageSettingService } from "@/domain/system-setting/api/storage-setting.service";
 import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
 import { WorkloadService } from "@/domain/workload/api/workload.service";
@@ -34,27 +22,15 @@ interface ServiceContextType {
   workspaceService: WorkspaceService;
   workloadService: WorkloadService;
   sourcecodeService: SourcecodeService;
-  storageService: StorageService;
   userResourceService: UserResourceService;
   adminWorkloadService: AdminWorkloadService;
-  nodeService: NodeService;
-  redfishBmcService: RedfishBmcService;
-  redfishService: RedfishService;
-  requestImageService: RequestImageService;
   reportService: ReportService;
   reportReservationService: ReportReservationService;
-  internalregistryService: InternalRegistryService;
-  internalregistryImageService: InternalRegistryImageService;
-  adminInternalRegistryImageService: AdminInternalRegistryImageService;
   gpuService: GpuService;
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
   resourcePresetService: ResourcePresetService;
-  revokeHistoryService: RevokeHistoryService;
   hpeService: HpeService;
-  licenseService: LicenseService;
-  smtpService: SmtpService;
-  storageSettingService: StorageSettingService;
   workspaceResourceSettingService: WorkspaceResourceSettingService;
 }
 
@@ -79,27 +55,15 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     workspaceService: new WorkspaceService(),
     workloadService: new WorkloadService(),
     sourcecodeService: new SourcecodeService(),
-    storageService: new StorageService(),
     userResourceService: new UserResourceService(),
     adminWorkloadService: new AdminWorkloadService(),
-    nodeService: new NodeService(),
-    redfishBmcService: new RedfishBmcService(),
-    redfishService: new RedfishService(),
-    requestImageService: new RequestImageService(),
     reportService: new ReportService(),
     reportReservationService: new ReportReservationService(),
-    internalregistryService: new InternalRegistryService(),
-    internalregistryImageService: new InternalRegistryImageService(),
-    adminInternalRegistryImageService: new AdminInternalRegistryImageService(),
     gpuService: new GpuService(),
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),
     resourcePresetService: new ResourcePresetService(),
-    revokeHistoryService: new RevokeHistoryService(),
     hpeService: new HpeService(),
-    licenseService: new LicenseService(),
-    smtpService: new SmtpService(),
-    storageSettingService: new StorageSettingService(),
     workspaceResourceSettingService: new WorkspaceResourceSettingService(),
   };
 

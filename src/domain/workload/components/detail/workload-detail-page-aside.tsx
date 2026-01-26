@@ -3,12 +3,12 @@
 import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
+import { WorkloadEventCard } from "@/domain/workload/components/detail/workload-event-card";
+import { WorkloadIntroCard } from "@/domain/workload/components/detail/workload-intro-card";
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
-import { WorkloadEventCard } from "./workload-event-card";
-import { WorkloadIntroCard } from "./workload-intro-card";
 
 /**
  * 워크로드 상세 페이지의 공통 사이드바 컴포넌트

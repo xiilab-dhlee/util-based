@@ -8,13 +8,13 @@ import styled from "styled-components";
 
 // import { Typography } from "xiilab-ui";
 
+import { CreateWorkloadNodeButton } from "@/domain/workload/components/create/create-workload-node-button";
 import {
   jobTypeAtom,
   // labelsAtom,
 } from "@/domain/workload/state/create-workload.atom";
 // import { MyMultipleSelect } from "@/shared/components/select/multiple";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
-import { CreateWorkloadNodeButton } from "./create-workload-node-button";
 
 export function CreateWorkloadNode() {
   // const [labels, setLabels] = useAtom(labelsAtom);

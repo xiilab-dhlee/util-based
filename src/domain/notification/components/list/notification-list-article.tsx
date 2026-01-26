@@ -58,11 +58,11 @@ export function NotificationListArticle() {
       pageSize: LIST_PAGE_SIZE,
       hasRead,
       notificationType: type?.length ? type : undefined,
-      order: toSortDirection(sortOrder),
       startDate: dateRange?.start
         ? formatDateForRequest(dateRange.start)
         : undefined,
       endDate: dateRange?.end ? formatDateForRequest(dateRange.end) : undefined,
+      order: toSortDirection(sortOrder),
     },
     {
       query: {

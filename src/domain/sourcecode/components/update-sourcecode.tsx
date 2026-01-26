@@ -7,6 +7,7 @@ import { Button, Dropdown, Input } from "xiilab-ui";
 
 import { ManageCredential } from "@/domain/sourcecode/components/manage-credential";
 import { ManageParameter } from "@/domain/sourcecode/components/manage-parameter";
+import { ReadOnlyParameter } from "@/domain/sourcecode/components/read-only-parameter";
 import { useGetSourcecode } from "@/domain/sourcecode/hooks/use-get-sourcecode";
 import { useUpdateSourcecode } from "@/domain/sourcecode/hooks/use-update-sourcecode";
 import type { UpdateSourcecodePayload } from "@/domain/sourcecode/types/sourcecode.type";
@@ -35,7 +36,6 @@ import {
   AsideDetailScrollWrapper,
 } from "@/styles/layers/aside-detail-layers.styled";
 import { SourcecodeFormFieldControl } from "@/styles/layers/sourcecode-form-layers.styled";
-import { ReadOnlyParameter } from "./read-only-parameter";
 
 interface UpdateSourcecodeProps {
   id: number;

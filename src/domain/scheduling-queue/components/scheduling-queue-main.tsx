@@ -1,7 +1,9 @@
 "use client";
 
+import { AddToUrgentQueueConfirmModal } from "@/domain/scheduling-queue/components/add-to-urgent-queue-confirm-modal";
 import { DeleteUrgentQueueModal } from "@/domain/scheduling-queue/components/delete-urgent-queue-modal";
 import { PendingWorkloadMain } from "@/domain/scheduling-queue/components/list/pending-workload-main";
+import { ReorderUrgentQueueConfirmModal } from "@/domain/scheduling-queue/components/reorder-urgent-queue-confirm-modal";
 import { UrgentQueueList } from "@/domain/scheduling-queue/components/urgent-queue-list";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
@@ -35,6 +37,8 @@ export function SchedulingQueueMain() {
 
       {/* 모달 */}
       <DeleteUrgentQueueModal />
+      <ReorderUrgentQueueConfirmModal />
+      <AddToUrgentQueueConfirmModal />
     </>
   );
 }

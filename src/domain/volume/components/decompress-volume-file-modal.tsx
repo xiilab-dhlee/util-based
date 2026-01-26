@@ -4,8 +4,9 @@ import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useDecompressFile } from "@/api/generated/volume-file/volume-file";
+import { useDecompressFileByMode } from "@/domain/volume/hooks/use-decompress-file-by-mode";
 import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -14,14 +15,20 @@ interface DecompressVolumeFilePayload {
   filePath: string;
 }
 
-export function DecompressVolumeFileModal() {
+interface DecompressVolumeFileModalProps {
+  mode: VolumeMode;
+}
+
+export function DecompressVolumeFileModal({
+  mode,
+}: DecompressVolumeFileModalProps) {
   const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
   const [volumeId, setVolumeId] = useState<number | null>(null);
   const [filePath, setFilePath] = useState<string | null>(null);
 
-  const { mutate, isPending } = useDecompressFile();
+  const { mutate, isPending } = useDecompressFileByMode(mode);
 
   const handleCancel = () => {
     if (isPending) return;
@@ -29,6 +36,7 @@ export function DecompressVolumeFileModal() {
   };
 
   const handleOk = () => {
+    if (isPending) return;
     if (!volumeId || !filePath) return;
 
     mutate(
@@ -64,6 +72,9 @@ export function DecompressVolumeFileModal() {
       showCancelButton
       cancelText="취소"
       centered
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >

@@ -31,8 +31,7 @@ export function DeleteUrgentQueueModal() {
       {
         data: {
           queueOrderItem: remainingWorkloads.map((w, index) => ({
-            workspaceResourceName: w.workspaceResourceName,
-            workloadResourceName: w.workloadResourceName,
+            workloadId: w.workloadId,
             rank: index + 1,
           })),
         },

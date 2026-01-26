@@ -51,6 +51,7 @@ import type {
   BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
   BaseResponseClusterResourceSummaryResponse,
+  BaseResponseListClusterNodeSummaryResponse,
   BaseResponseListString,
   BaseResponseMigConfigurationResponse,
   BaseResponsePageResponseClusterNodeListResponse,
@@ -80,7 +81,7 @@ export const updateNodeScheduling = (
   nodeSchedulingRequest: NodeSchedulingRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/cluster/nodes/${nodeName}/scheduling`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/scheduling`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: nodeSchedulingRequest,
@@ -175,14 +176,14 @@ export const useUpdateNodeScheduling = <TError = unknown, TContext = unknown>(
  */
 export const getMigConfiguration = (nodeName: string, signal?: AbortSignal) => {
   return customInstance<BaseResponseMigConfigurationResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/mig`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/mig`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetMigConfigurationQueryKey = (nodeName?: string) => {
-  return [`/api/v1/cluster/nodes/${nodeName}/mig`] as const;
+  return [`/api/v1/admin/cluster/nodes/${nodeName}/mig`] as const;
 };
 
 export const getGetMigConfigurationQueryOptions = <
@@ -361,7 +362,7 @@ export const applyMigConfiguration = (
   migConfigurationRequest: MigConfigurationRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
-    url: `/api/v1/cluster/nodes/${nodeName}/mig`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/mig`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     data: migConfigurationRequest,
@@ -464,7 +465,7 @@ export const getClusterNodes = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseClusterNodeListResponse>({
-    url: `/api/v1/cluster/nodes`,
+    url: `/api/v1/admin/cluster/nodes`,
     method: "GET",
     params,
     signal,
@@ -472,7 +473,7 @@ export const getClusterNodes = (
 };
 
 export const getGetClusterNodesQueryKey = (params?: GetClusterNodesParams) => {
-  return [`/api/v1/cluster/nodes`, ...(params ? [params] : [])] as const;
+  return [`/api/v1/admin/cluster/nodes`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetClusterNodesQueryOptions = <
@@ -637,7 +638,7 @@ export const getNodeSystemResource = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseClusterNodeSystemResourceResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/system-resources/summary`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/system-resources/summary`,
     method: "GET",
     signal,
   });
@@ -645,7 +646,7 @@ export const getNodeSystemResource = (
 
 export const getGetNodeSystemResourceQueryKey = (nodeName?: string) => {
   return [
-    `/api/v1/cluster/nodes/${nodeName}/system-resources/summary`,
+    `/api/v1/admin/cluster/nodes/${nodeName}/system-resources/summary`,
   ] as const;
 };
 
@@ -807,7 +808,7 @@ export function useGetNodeSystemResource<
             - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
             - DISK_READ: 디스크 읽기 속도 (bytes/sec)
             - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
@@ -830,7 +831,7 @@ export const getNodeSystemMetrics = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseBatchSystemMetricResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/resources/system/metrics`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/resources/system/metrics`,
     method: "GET",
     params,
     signal,
@@ -842,7 +843,7 @@ export const getGetNodeSystemMetricsQueryKey = (
   params?: GetNodeSystemMetricsParams,
 ) => {
   return [
-    `/api/v1/cluster/nodes/${nodeName}/resources/system/metrics`,
+    `/api/v1/admin/cluster/nodes/${nodeName}/resources/system/metrics`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1029,7 +1030,7 @@ export const getNodeGpuMetrics = (
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponseBatchGpuMetricResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/resources/gpu/metrics`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/resources/gpu/metrics`,
     method: "GET",
     params,
     signal,
@@ -1041,7 +1042,7 @@ export const getGetNodeGpuMetricsQueryKey = (
   params?: GetNodeGpuMetricsParams,
 ) => {
   return [
-    `/api/v1/cluster/nodes/${nodeName}/resources/gpu/metrics`,
+    `/api/v1/admin/cluster/nodes/${nodeName}/resources/gpu/metrics`,
     ...(params ? [params] : []),
   ] as const;
 };
@@ -1225,14 +1226,14 @@ export function useGetNodeGpuMetrics<
  */
 export const getNodeDetail = (nodeName: string, signal?: AbortSignal) => {
   return customInstance<BaseResponseClusterNodeDetailResponse>({
-    url: `/api/v1/cluster/nodes/${nodeName}/detail`,
+    url: `/api/v1/admin/cluster/nodes/${nodeName}/detail`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetNodeDetailQueryKey = (nodeName?: string) => {
-  return [`/api/v1/cluster/nodes/${nodeName}/detail`] as const;
+  return [`/api/v1/admin/cluster/nodes/${nodeName}/detail`] as const;
 };
 
 export const getGetNodeDetailQueryOptions = <
@@ -1381,14 +1382,14 @@ export function useGetNodeDetail<
  */
 export const getClusterResourceSummary = (signal?: AbortSignal) => {
   return customInstance<BaseResponseClusterResourceSummaryResponse>({
-    url: `/api/v1/cluster/nodes/resources/summary`,
+    url: `/api/v1/admin/cluster/nodes/resources/summary`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetClusterResourceSummaryQueryKey = () => {
-  return [`/api/v1/cluster/nodes/resources/summary`] as const;
+  return [`/api/v1/admin/cluster/nodes/resources/summary`] as const;
 };
 
 export const getGetClusterResourceSummaryQueryOptions = <
@@ -1526,6 +1527,172 @@ export function useGetClusterResourceSummary<
 
 /**
  * 
+            클러스터 내 모든 노드의 리소스 할당량 정보를 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **resource**: 노드 리소스 정보
+              - **gpu**: GPU 리소스 (gpuName, gpuType, quotaCount, usedCount, detail)
+                - **detail**: GPU 세부 정보 (normal, mig, mps)
+              - **cpu**: CPU 리소스 (quotaCore, usedCore)
+              - **memory**: 메모리 리소스 (quotaByte, usedByte)
+
+            **주의:**
+            - usedCount/usedCore/usedByte는 현재 0으로 반환 (향후 워크로드 기반 계산 예정)
+            - GPU detail의 normal/mig/mps usedCount도 현재 0으로 반환
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 클러스터 노드 요약 정보 조회
+ */
+export const getClusterNodeResourceSummaries = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseListClusterNodeSummaryResponse>({
+    url: `/api/v1/admin/cluster/nodes/node-summary`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetClusterNodeResourceSummariesQueryKey = () => {
+  return [`/api/v1/admin/cluster/nodes/node-summary`] as const;
+};
+
+export const getGetClusterNodeResourceSummariesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetClusterNodeResourceSummariesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+  > = ({ signal }) => getClusterNodeResourceSummaries(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetClusterNodeResourceSummariesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+>;
+export type GetClusterNodeResourceSummariesQueryError = unknown;
+
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 클러스터 노드 요약 정보 조회
+ */
+
+export function useGetClusterNodeResourceSummaries<
+  TData = Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterNodeResourceSummaries>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetClusterNodeResourceSummariesQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
             관리자가 클러스터 내 모든 노드의 이름 목록을 조회합니다.
 
             **응답 데이터 구성:**
@@ -1538,14 +1705,14 @@ export function useGetClusterResourceSummary<
  */
 export const getNodeNames = (signal?: AbortSignal) => {
   return customInstance<BaseResponseListString>({
-    url: `/api/v1/cluster/nodes/names`,
+    url: `/api/v1/admin/cluster/nodes/names`,
     method: "GET",
     signal,
   });
 };
 
 export const getGetNodeNamesQueryKey = () => {
-  return [`/api/v1/cluster/nodes/names`] as const;
+  return [`/api/v1/admin/cluster/nodes/names`] as const;
 };
 
 export const getGetNodeNamesQueryOptions = <

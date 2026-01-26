@@ -260,7 +260,7 @@ export const createWorkloadBody = zod
       .describe("워크로드 리소스 정보"),
     sourceCode: zod
       .object({
-        sourceCodeId: zod.number().describe("소스코드 ID"),
+        entityId: zod.number().describe("소스코드 entityId"),
         mountPath: zod.string().min(1).describe("마운트 경로"),
         sourceCodeBranch: zod.string().optional().describe("브랜치명"),
       })
@@ -542,6 +542,151 @@ export const workloadCompressFilesBody = zod
 
 /**
  * 
+            실행 중인 워크로드를 종료합니다.
+
+            **종료 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)만 삭제
+            - Service, Ingress, PVC, PV 등 부가 리소스는 유지 (재시작 시 재사용)
+            - 컨테이너 상태를 이미지로 커밋하여 Harbor에 저장 (TODO: 추후 구현)
+
+            **종료 대상:**
+            - RUNNING, PENDING, CREATING, ERROR 상태의 워크로드
+            - 이미 TERMINATED 상태인 워크로드는 종료 불가 (400 Bad Request)
+
+            **재시작:**
+            - 종료된 워크로드는 재시작 API로 다시 실행 가능
+            - 커밋된 이미지와 기존 리소스(Service, PVC 등)를 재사용
+        
+ * @summary 워크로드 종료
+ */
+export const terminateWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const terminateWorkloadResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            종료된 워크로드를 재시작합니다.
+
+            **재시작 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)를 새로 생성
+            - 기존 Service, Ingress, PVC, PV, Secret 등 부가 리소스는 재사용
+            - 커밋된 이미지가 있으면 해당 이미지 사용, 없으면 원본 이미지 사용 (TODO)
+            - 리소스 설정(CPU, 메모리, GPU, 분산학습 노드 수)을 변경하여 재시작 가능
+
+            **재시작 대상:**
+            - TERMINATED 상태의 워크로드만 재시작 가능
+            - 실행 중이거나 종료 진행 중인 워크로드는 재시작 불가 (400 Bad Request)
+
+            **재시작 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼관리자 (SUPER_ADMIN)
+        
+ * @summary 워크로드 재시작
+ */
+export const restartWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const restartWorkloadBody = zod
+  .object({
+    resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
+    resource: zod
+      .object({
+        gpu: zod
+          .object({
+            gpuName: zod
+              .string()
+              .optional()
+              .describe("GPU 이름 (NodeSelector용)"),
+            gpuType: zod
+              .enum(["NORMAL", "MIG"])
+              .optional()
+              .describe("GPU 타입 (NORMAL: 일반 GPU)"),
+            gpuMemoryByte: zod
+              .number()
+              .optional()
+              .describe("GPU 메모리 (byte)"),
+            detail: zod
+              .object({
+                normal: zod
+                  .object({
+                    requestCount: zod.number().describe("요청 GPU 수량"),
+                  })
+                  .strict()
+                  .optional()
+                  .describe("일반 GPU 정보"),
+                mig: zod
+                  .array(
+                    zod
+                      .object({
+                        profile: zod
+                          .string()
+                          .min(1)
+                          .describe("MIG 프로파일 이름"),
+                        requestCount: zod.number().describe("요청 수량"),
+                      })
+                      .strict()
+                      .describe("MIG 프로파일 정보"),
+                  )
+                  .optional()
+                  .describe("MIG 프로파일 목록"),
+              })
+              .strict()
+              .optional()
+              .describe("GPU 상세 정보"),
+          })
+          .strict()
+          .optional()
+          .describe("GPU 리소스 정보"),
+        cpu: zod
+          .object({
+            requestCore: zod.number().describe("요청 CPU 코어 수"),
+          })
+          .strict()
+          .describe("CPU 리소스 정보"),
+        memory: zod
+          .object({
+            requestByte: zod.number().describe("요청 메모리 byte 수"),
+          })
+          .strict()
+          .describe("메모리 리소스 정보"),
+        distributed: zod
+          .object({
+            numNodes: zod.number().describe("분산 노드(Pod) 수"),
+          })
+          .strict()
+          .optional()
+          .describe("분산 학습 설정 (DISTRIBUTED 워크로드용)"),
+      })
+      .strict()
+      .describe("워크로드 리소스 정보"),
+  })
+  .strict()
+  .describe("워크로드 재시작 요청");
+
+export const restartWorkloadResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             워크로드의 실시간 상태를 조회합니다.
 
             **조회 우선순위:**
@@ -570,7 +715,14 @@ export const getWorkloadStatusResponse = zod
       .object({
         workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
         workloadStatus: zod
-          .enum(["RUNNING", "ERROR", "PENDING", "CREATING", "TERMINATED"])
+          .enum([
+            "CREATING",
+            "PENDING",
+            "RUNNING",
+            "TERMINATING",
+            "TERMINATED",
+            "ERROR",
+          ])
           .describe(
             "워크로드 상태 (PENDING, CREATING, RUNNING, TERMINATED, ERROR)",
           ),
@@ -928,7 +1080,14 @@ export const getActiveWorkloadsQueryParams = zod.object({
     .optional()
     .describe("워크로드 타입 필터"),
   workloadStatus: zod
-    .enum(["RUNNING", "ERROR", "PENDING", "CREATING", "TERMINATED"])
+    .enum([
+      "CREATING",
+      "PENDING",
+      "RUNNING",
+      "TERMINATING",
+      "TERMINATED",
+      "ERROR",
+    ])
     .optional()
     .describe("워크로드 상태 필터 (running, pending, error)"),
   sort: zod
@@ -966,11 +1125,12 @@ export const getActiveWorkloadsResponse = zod
                   .describe("리소스 회수 경고 횟수"),
                 workloadStatus: zod
                   .enum([
-                    "RUNNING",
-                    "ERROR",
-                    "PENDING",
                     "CREATING",
+                    "PENDING",
+                    "RUNNING",
+                    "TERMINATING",
                     "TERMINATED",
+                    "ERROR",
                   ])
                   .describe("워크로드 상태"),
                 ageSeconds: zod.number().describe("경과 시간 (초)"),
@@ -1001,3 +1161,27 @@ export const getActiveWorkloadsResponse = zod
     timestamp: zod.number(),
   })
   .strict();
+
+/**
+ * 
+            워크로드를 완전히 삭제합니다.
+
+            **삭제 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
+            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
+
+            **삭제 대상:**
+            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
+            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
+
+            **주의:**
+            - 삭제된 워크로드는 복구할 수 없습니다.
+            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
+        
+ * @summary 워크로드 삭제
+ */
+export const deleteWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});

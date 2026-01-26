@@ -4,7 +4,6 @@ import { useAtomValue } from "jotai";
 import { usePathname, useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect } from "react";
 
-import { useGetVolumeList } from "@/api/generated/volume/volume";
 import { CompressVolumeFileModal } from "@/domain/volume/components/compress-volume-file-modal";
 import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
@@ -19,15 +18,17 @@ import { VolumeListFooter } from "@/domain/volume/components/list/volume-list-fo
 import { SelectVolumeTypeModal } from "@/domain/volume/components/select-volume-type-modal";
 import { UploadVolumeFileModal } from "@/domain/volume/components/upload-volume-file-modal";
 import { VOLUME_PAGE_SIZE } from "@/domain/volume/constants/volume.constant";
+import { useGetVolumeListByMode } from "@/domain/volume/hooks/use-get-volume-list-by-mode";
 import {
+  volumeHasMineAtom,
   volumeOrderSortAtom,
   volumePageAtom,
   volumeSearchTextAtom,
   volumeTypeSortAtom,
 } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { parseVolumeSortValue } from "@/domain/volume/utils/volume.util";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { ViewVulnerabilityModal } from "@/shared/components/modal/view-vulnerability-modal";
 import { ASIDE_WIDTH } from "@/shared/constants/core.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
@@ -36,8 +37,6 @@ import {
   ListPageBody,
   ListPageMain,
 } from "@/styles/layers/list-page-layers.styled";
-
-type VolumeMode = "user" | "admin";
 
 interface VolumeLayoutProps extends PropsWithChildren {
   mode: VolumeMode;
@@ -66,11 +65,11 @@ const VOLUME_ROUTES = {
 export function VolumeLayout({ mode, children }: VolumeLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
-
   const page = useAtomValue(volumePageAtom);
   const searchText = useAtomValue(volumeSearchTextAtom);
   const sort = useAtomValue(volumeOrderSortAtom);
   const volumeType = useAtomValue(volumeTypeSortAtom);
+  const hasMine = useAtomValue(volumeHasMineAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
   const routes = VOLUME_ROUTES[mode];
@@ -79,16 +78,15 @@ export function VolumeLayout({ mode, children }: VolumeLayoutProps) {
 
   // User 모드에서만 workspaceId 사용
   const isUserMode = mode === "user";
-  const workspaceId = isUserMode
-    ? (selectedWorkspace?.workspaceId ?? 0)
-    : undefined;
+  const workspaceId = selectedWorkspace?.workspaceId ?? -1;
 
-  const { data, isLoading, isError } = useGetVolumeList(
+  const { data, isLoading, isError } = useGetVolumeListByMode(
+    mode,
     {
       pageNo: page - 1,
       pageSize: VOLUME_PAGE_SIZE,
       keyword: searchText || undefined,
-      workspaceId,
+      ...(isUserMode && { workspaceId, hasMine }),
       sort: sortParams?.sort,
       order: sortParams?.order,
       volumeType: volumeType ?? undefined,
@@ -118,36 +116,35 @@ export function VolumeLayout({ mode, children }: VolumeLayoutProps) {
       <PageHeader pageKey={routes.pageKey} />
       <ListPageMain>
         <ListPageBody>
-          <VolumeListFilter total={totalSize} loading={isLoading} />
+          <VolumeListFilter mode={mode} total={totalSize} loading={isLoading} />
           <VolumeListBody
             content={content}
             loading={isLoading}
             isError={isError}
+            mode={mode}
           />
           <VolumeListFooter total={totalSize} loading={isLoading} />
         </ListPageBody>
         <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
       </ListPageMain>
       {/* 볼륨 삭제 모달 */}
-      <DeleteVolumeModal />
+      <DeleteVolumeModal mode={mode} />
       {/* 볼륨 생성 모달 */}
       <SelectVolumeTypeModal />
       {/* AstraGo 볼륨 생성 모달 */}
       <CreateAstragoVolumeModal />
       {/* 온프레미스 볼륨 생성 모달 */}
       <CreateOnPremVolumeModal />
-      {/* 취약점 조회 모달 */}
-      <ViewVulnerabilityModal />
       {/* 볼륨 파일 압축 모달 */}
-      <CompressVolumeFileModal />
+      <CompressVolumeFileModal mode={mode} />
       {/* 볼륨 파일 압축 해제 모달 */}
-      <DecompressVolumeFileModal />
+      <DecompressVolumeFileModal mode={mode} />
       {/* 볼륨 폴더 추가 모달 */}
-      <CreateVolumeFolderModal />
+      <CreateVolumeFolderModal mode={mode} />
       {/* 볼륨 파일 삭제 모달 */}
-      <DeleteVolumeFileModal />
+      <DeleteVolumeFileModal mode={mode} />
       {/* 볼륨 파일 다운로드 모달 */}
-      <DownloadVolumeFileModal />
+      <DownloadVolumeFileModal mode={mode} />
       {/* 볼륨 파일 업로드 모달 */}
       <UploadVolumeFileModal />
     </>

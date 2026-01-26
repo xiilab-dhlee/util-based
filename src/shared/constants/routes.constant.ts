@@ -33,8 +33,6 @@ export const ROUTES = {
   // 노드 관리 (동적 함수)
   ADMIN_NODE: `${MODE.ADMIN}/node`,
   ADMIN_NODE_DETAIL: (name: string) => `${MODE.ADMIN}/node/${name}`,
-  ADMIN_NODE_LOG: (name: string) => `${MODE.ADMIN}/node/${name}/log`,
-  ADMIN_NODE_REDFISH: (name: string) => `${MODE.ADMIN}/node/${name}/redfish`,
 
   // 계정 관리 (정적)
   ADMIN_ACCOUNT_MANAGEMENT: `${MODE.ADMIN}/account-management`,
@@ -88,10 +86,12 @@ export const ROUTES = {
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
   ADMIN_REGISTRY: `${MODE.ADMIN}/registry`,
-  ADMIN_INTERNAL_REGISTRY: `${MODE.ADMIN}/internal-registry`,
-  ADMIN_INTERNAL_REGISTRY_IMAGE: (name: string, id: string) =>
-    `${MODE.ADMIN}/internal-registry/${name}/image/${id}`,
-  ADMIN_EXTERNAL_REGISTRY: `${MODE.ADMIN}/external-registry`,
+  ADMIN_PRIVATE_REGISTRY: `${MODE.ADMIN}/private-registry`,
+  ADMIN_PRIVATE_REGISTRY_DETAIL: (name: string, tagName: string) =>
+    `${MODE.ADMIN}/private-registry/${name}/${tagName}`,
+  ADMIN_PUBLIC_REGISTRY: `${MODE.ADMIN}/public-registry`,
+  ADMIN_PUBLIC_REGISTRY_DETAIL: (name: string, tagName: string) =>
+    `${MODE.ADMIN}/public-registry/${name}/${tagName}`,
   ADMIN_REQUEST_IMAGE: `${MODE.ADMIN}/request-image`,
 
   // 소스코드 관리 (정적)
@@ -139,11 +139,11 @@ export const ROUTES = {
     `${MODE.USER}/private-registry/${name}`,
   USER_PRIVATE_REGISTRY_TAG: (name: string, tagId: string) =>
     `${MODE.USER}/private-registry/${name}/${tagId}`,
-  USER_INTERNAL_REGISTRY_IMAGE: `${MODE.USER}/internal-registry-image`,
-  USER_INTERNAL_REGISTRY_IMAGE_DETAIL: (id: string) =>
-    `${MODE.USER}/internal-registry-image/${id}`,
-  USER_INTERNAL_REGISTRY_IMAGE_TAG: (id: string, tagId: string) =>
-    `${MODE.USER}/internal-registry-image/${id}/tag/${tagId}`,
+  USER_PUBLIC_REGISTRY: `${MODE.USER}/public-registry`,
+  USER_PUBLIC_REGISTRY_DETAIL: (name: string) =>
+    `${MODE.USER}/public-registry/${name}`,
+  USER_PUBLIC_REGISTRY_TAG: (name: string, tagId: string) =>
+    `${MODE.USER}/public-registry/${name}/${tagId}`,
 
   // 소스코드 (동적 함수)
   USER_SOURCECODE: `${MODE.USER}/sourcecode`,
@@ -167,9 +167,12 @@ export const ROUTES = {
   // Auth Routes
   // ============================================
   AUTH_SIGNIN: "/signin",
+  AUTH_SIGNUP: "/signup",
+  AUTH_LICENSE: "/license",
 
   // ============================================
   // Error Routes
   // ============================================
+  ERROR: "/error",
   WORKSPACE_ERROR: "/workspace-error",
 } as const;

@@ -200,6 +200,41 @@ export const createPublicExternalImageBody = zod
 
 /**
  * 
+            실행 중인 워크로드 컨테이너를 스냅샷하여 공용 레지스트리에 이미지로 등록합니다.
+            - 워크로드가 RUNNING 상태여야 합니다.
+            - 워크로드의 실행 환경(명령어, 포트, 환경변수)이 이미지 태그에 저장됩니다.
+            - 비동기로 스냅샷 Job이 생성되며, Harbor에 이미지가 푸시됩니다.
+        
+ * @summary 공용 이미지 스냅샷
+ */
+export const createPublicSnapshotImageBodyImageNameMax = 255;
+
+export const createPublicSnapshotImageBodyImageTagNameMax = 128;
+
+export const createPublicSnapshotImageBodyImageTagNameRegExp =
+  /^[a-zA-Z0-9_][a-zA-Z0-9._-]*$/;
+
+export const createPublicSnapshotImageBody = zod
+  .object({
+    workloadId: zod.number().describe("워크로드 ID"),
+    imageName: zod
+      .string()
+      .min(1)
+      .max(createPublicSnapshotImageBodyImageNameMax)
+      .describe("생성할 이미지 이름"),
+    imageTagName: zod
+      .string()
+      .min(1)
+      .max(createPublicSnapshotImageBodyImageTagNameMax)
+      .regex(createPublicSnapshotImageBodyImageTagNameRegExp)
+      .describe("생성할 이미지 태그 이름"),
+    workspaceId: zod.number().describe("워크스페이스 ID"),
+  })
+  .strict()
+  .describe("워크로드 스냅샷 이미지 생성 요청");
+
+/**
+ * 
             공용 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
             키워드, 스캔 상태로 필터링이 가능합니다.
         
@@ -236,7 +271,16 @@ export const getPublicImageTagListQueryParams = zod.object({
     .describe("정렬 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
   scanStatus: zod
-    .enum(["SCANNED", "NOT_SCANNED"])
+    .enum([
+      "SUCCESS",
+      "PENDING",
+      "RUNNING",
+      "STOPPED",
+      "ERROR",
+      "NOT_SCANNED",
+      "UNSUPPORTED",
+      "UNKNOWN",
+    ])
     .optional()
     .describe("스캔 상태 필터"),
 });
@@ -264,9 +308,17 @@ export const getPublicImageTagListResponse = zod
                 .number()
                 .describe("이미지 태그 크기 (바이트)"),
               scanStatus: zod
-                .string()
-                .optional()
-                .describe("스캔 상태 (스캔 전이면 null)"),
+                .enum([
+                  "SUCCESS",
+                  "PENDING",
+                  "RUNNING",
+                  "STOPPED",
+                  "ERROR",
+                  "NOT_SCANNED",
+                  "UNSUPPORTED",
+                  "UNKNOWN",
+                ])
+                .describe("스캔 상태"),
               vulnerability: zod
                 .object({
                   criticalCount: zod.number().describe("치명적 취약점 수"),
@@ -438,6 +490,60 @@ export const deletePublicImageTagsResponse = zod
 
 /**
  * 
+            공용 레지스트리의 이미지를 삭제합니다.
+            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
+            - 관리자는 모든 이미지를 삭제할 수 있습니다.
+            - 일반 사용자는 본인이 생성한 이미지만 삭제할 수 있습니다.
+            - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
+        
+ * @summary 공용 이미지 삭제
+ */
+export const deletePublicImagesBodyHarborImageNameMin = 0;
+export const deletePublicImagesBodyHarborImageNameMax = 20;
+
+export const deletePublicImagesBody = zod
+  .object({
+    harborImageName: zod
+      .array(zod.string())
+      .min(deletePublicImagesBodyHarborImageNameMin)
+      .max(deletePublicImagesBodyHarborImageNameMax)
+      .describe("삭제할 Harbor 이미지 경로 목록 (최대 20개)"),
+  })
+  .strict()
+  .describe("이미지 삭제 요청");
+
+export const deletePublicImagesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalRequested: zod.number().describe("총 요청 개수"),
+        successCount: zod.number().describe("성공 개수"),
+        failureCount: zod.number().describe("실패 개수"),
+        failures: zod
+          .array(
+            zod
+              .object({
+                harborImageName: zod
+                  .string()
+                  .describe("실패한 Harbor 이미지 이름"),
+              })
+              .strict()
+              .describe("삭제 실패한 이미지 상세"),
+          )
+          .describe("실패한 이미지 목록 (실패가 없으면 빈 리스트)"),
+      })
+      .strict()
+      .optional()
+      .describe("이미지 삭제 처리 결과 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             공용 이미지 태그의 취약점 상세 목록을 조회합니다.
             - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
             - 스캔이 완료되지 않은 경우 빈 목록을 반환합니다.
@@ -566,7 +672,18 @@ export const getPublicImageTagDetailResponse = zod
       .object({
         imageTagName: zod.string().describe("이미지 태그 이름"),
         imageSizeByte: zod.number().describe("이미지 크기 (바이트)"),
-        scanStatus: zod.string().describe("스캔 상태"),
+        scanStatus: zod
+          .enum([
+            "SUCCESS",
+            "PENDING",
+            "RUNNING",
+            "STOPPED",
+            "ERROR",
+            "NOT_SCANNED",
+            "UNSUPPORTED",
+            "UNKNOWN",
+          ])
+          .describe("스캔 상태"),
         createdAt: zod
           .string()
           .datetime({})
@@ -598,6 +715,10 @@ export const getPublicImageTagDetailResponse = zod
           ])
           .optional()
           .describe("승인 상태 (DB 메타데이터 없으면 null)"),
+        creatorId: zod
+          .string()
+          .optional()
+          .describe("생성자 ID (DB 메타데이터 없으면 null)"),
         creatorName: zod
           .string()
           .optional()
@@ -644,6 +765,16 @@ export const getPublicImageDetailResponse = zod
         imageType: zod
           .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
           .describe("이미지 타입"),
+        imageSourceType: zod
+          .enum(["SNAPSHOT", "EXTERNAL"])
+          .optional()
+          .describe(
+            "이미지 소스 타입 (EXTERNAL: 외부 레지스트리, SNAPSHOT: 워크로드 스냅샷)",
+          ),
+        workspaceName: zod
+          .string()
+          .optional()
+          .describe("워크스페이스 이름 (PRIVATE 이미지인 경우)"),
       })
       .strict()
       .optional()

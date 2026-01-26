@@ -111,7 +111,7 @@ export function ViewAccountDetailModal() {
 
           <SectionTitle>워크스페이스 정보</SectionTitle>
           <DetailRow>
-            <DetailLabel>보유 개수</DetailLabel>
+            <DetailLabel>생성 개수</DetailLabel>
             <DetailValue data-testid={ACCOUNT_SELECTOR.DETAIL_WORKSPACE_COUNT}>
               {(accountDetail?.workspaceCount ?? 0).toLocaleString()}개
             </DetailValue>

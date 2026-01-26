@@ -3,6 +3,9 @@
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Icon } from "xiilab-ui";
 
+import { CreateCommitImageModal } from "@/domain/workload/components/detail/create-commit-image-modal";
+import { WorkloadPrimaryArticle } from "@/domain/workload/components/detail/workload-primary-article";
+import { WorkloadSecondaryArticle } from "@/domain/workload/components/detail/workload-secondary-article";
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { MySpinner } from "@/shared/components/spinner";
@@ -16,9 +19,6 @@ import {
   DetailContentTitle,
   DetailContentTitleTool,
 } from "@/styles/layers/detail-page-layers.styled";
-import { CreateCommitImageModal } from "./create-commit-image-modal";
-import { WorkloadPrimaryArticle } from "./workload-primary-article";
-import { WorkloadSecondaryArticle } from "./workload-secondary-article";
 
 export function WorkloadDetailMain() {
   const publish = usePublish();

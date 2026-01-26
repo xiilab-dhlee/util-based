@@ -58,9 +58,13 @@ export function UserNotificationDetailModal({
           <DetailValue>{formatDateTimeSafely(item.createdAt)}</DetailValue>
         </DetailRow>
         <DetailRow>
+          <DetailLabel>워크스페이스</DetailLabel>
+          <DetailValue>{item.workspaceName || "-"}</DetailValue>
+        </DetailRow>
+        <DetailRow>
           <DetailLabel>내용</DetailLabel>
         </DetailRow>
-        <ContentText>{item.notificationContent}</ContentText>
+        <ContentText>{item.notificationContent || "-"}</ContentText>
       </ContentWrapper>
     </InfoModal>
   );

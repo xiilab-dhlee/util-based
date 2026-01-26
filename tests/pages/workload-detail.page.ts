@@ -360,6 +360,34 @@ export class WorkloadDetailPage extends BasePage {
     return results;
   }
 
+  /**
+   * Locator 목록의 텍스트를 순회하며 콜백 실행
+   * @param locator - 순회할 Locator
+   * @param callback - 각 텍스트에 대해 실행할 콜백
+   */
+  async forEachLocatorText<T>(
+    locator: Locator,
+    callback: (text: string, index: number) => T,
+  ): Promise<T[]> {
+    const count = await locator.count();
+    const results: T[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const text = ((await locator.nth(i).textContent()) ?? "").trim();
+      results.push(callback(text, i));
+    }
+
+    return results;
+  }
+
+  /**
+   * 단일 Locator의 텍스트 반환
+   * @param locator - 텍스트를 가져올 Locator
+   */
+  async getLocatorText(locator: Locator): Promise<string> {
+    return ((await locator.textContent()) ?? "").trim();
+  }
+
   // ============================================
   // 버튼 클릭 액션 메서드
   // ============================================

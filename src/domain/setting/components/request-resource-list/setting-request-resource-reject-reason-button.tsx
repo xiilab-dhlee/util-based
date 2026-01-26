@@ -17,7 +17,7 @@ export function SettingRequestResourceRejectReasonButton({
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(COMMON_EVENTS.sendRejectReason, reason);
+    publish(COMMON_EVENTS.openRejectReasonModal, { reason });
   };
 
   return (

@@ -60,7 +60,7 @@ import * as zod from "zod";
             - nodeNetworkTransmit: 네트워크 송신 속도 메트릭 결과
             - diskRead: 디스크 읽기 속도 메트릭 결과
             - diskWrite: 디스크 쓰기 속도 메트릭 결과
-            - diskUsage: 디스크 사용률 메트릭 결과
+            - diskUtilization: 디스크 사용률 메트릭 결과
             - memoryUtilization: 메모리 사용률 메트릭 결과
             - nodeMemoryBuffers: 메모리 버퍼 메트릭 결과
             - nodeMemoryCached: 메모리 캐시 메트릭 결과
@@ -80,7 +80,7 @@ import * as zod from "zod";
             - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
             - DISK_READ: 디스크 읽기 속도 (bytes/sec)
             - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
@@ -108,7 +108,7 @@ export const streamNodeSystemMetricsQueryParams = zod.object({
           "NODE_NETWORK_TRANSMIT",
           "DISK_READ",
           "DISK_WRITE",
-          "DISK_USAGE",
+          "DISK_UTILIZATION",
           "MEMORY_UTILIZATION",
           "NODE_MEMORY_BUFFERS",
           "NODE_MEMORY_CACHED",
@@ -116,11 +116,11 @@ export const streamNodeSystemMetricsQueryParams = zod.object({
           "NODE_MEMORY_FREE",
         ])
         .describe(
-          "\n            스트리밍할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_USAGE: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
+          "\n            스트리밍할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_UTILIZATION: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
         ),
     )
     .describe(
-      "\n            스트리밍할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_USAGE: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
+      "\n            스트리밍할 시스템 메트릭 타입 목록 (콤마 구분)\n\n            **허용 메트릭:**\n            - CPU_TEMPERATURE: CPU 온도 (°C)\n            - CPU_UTILIZATION: CPU 사용률 (%)\n            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)\n            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)\n            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)\n            - DISK_READ: 디스크 읽기 속도 (bytes/sec)\n            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)\n            - DISK_UTILIZATION: 디스크 사용률 (%)\n            - MEMORY_UTILIZATION: 메모리 사용률 (%)\n            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)\n            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)\n            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)\n            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)\n        ",
     ),
   lastSentTime: zod
     .string()

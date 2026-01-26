@@ -24,6 +24,7 @@ export function useInfiniteNotifications(
   const query = useInfiniteQuery({
     queryKey: [
       ...getGetNotificationsQueryKey(accountId, {
+        pageNo: 0,
         pageSize: NOTIFICATION_PAGE_SIZE,
         hasRead,
         workspaceId,

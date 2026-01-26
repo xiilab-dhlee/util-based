@@ -9,6 +9,7 @@ import {
   VOLUME_CARD_HEIGHT,
   VOLUME_PAGE_SIZE,
 } from "@/domain/volume/constants/volume.constant";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
@@ -18,12 +19,14 @@ interface VolumeListBodyProps {
   content: VolumeListResponse[];
   loading: boolean;
   isError?: boolean;
+  mode: VolumeMode;
 }
 
 export function VolumeListBody({
   content,
   loading,
   isError = false,
+  mode,
 }: VolumeListBodyProps) {
   if (loading) {
     return (
@@ -61,7 +64,7 @@ export function VolumeListBody({
     <ListWrapper>
       <StyledGridList data-testid={SELECTOR.LIST_CARD_GRID} role="listbox">
         {content.map((volume) => (
-          <VolumeCard key={volume.volumeId} {...volume} />
+          <VolumeCard key={volume.volumeId} {...volume} mode={mode} />
         ))}
       </StyledGridList>
     </ListWrapper>

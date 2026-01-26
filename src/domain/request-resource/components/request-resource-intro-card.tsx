@@ -69,6 +69,7 @@ const Container = styled.div`
   background-color: #171b26;
   padding: 24px;
   overflow: hidden;
+  flex-shrink: 0;
 `;
 
 const Header = styled.div`

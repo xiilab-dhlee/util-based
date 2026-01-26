@@ -232,115 +232,6 @@ export interface UpdateImageTagRequest {
 }
 
 /**
- * 모니터링 알림 설정 수정 요청
- */
-export interface MonitoringNotificationSetUpdateRequest {
-  /**
-   * 알림 설정 이름
-   * @minLength 0
-   * @maxLength 255
-   */
-  notificationSetName: string;
-  /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
-  /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
-  /**
-   * 모니터링할 노드 이름 목록
-   * @minItems 1
-   */
-  nodeName: string[];
-  /**
-   * 임계값 설정 목록
-   * @minItems 1
-   */
-  threshold: ThresholdRequest[];
-}
-
-/**
- * 메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE, DISK_USAGE)
- */
-export type ThresholdRequestMetric =
-  (typeof ThresholdRequestMetric)[keyof typeof ThresholdRequestMetric];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ThresholdRequestMetric = {
-  GPU_TEMP: "GPU_TEMP",
-  GPU_MEMORY: "GPU_MEMORY",
-  GPU_USAGE: "GPU_USAGE",
-  MEMORY_USAGE: "MEMORY_USAGE",
-  CPU_USAGE: "CPU_USAGE",
-} as const;
-
-/**
- * 비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL)
- */
-export type ThresholdRequestOperator =
-  (typeof ThresholdRequestOperator)[keyof typeof ThresholdRequestOperator];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ThresholdRequestOperator = {
-  GREATER_THAN: "GREATER_THAN",
-  LESS_THAN: "LESS_THAN",
-  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
-  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
-} as const;
-
-/**
- * 임계값 설정
- */
-export interface ThresholdRequest {
-  /** 메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE, DISK_USAGE) */
-  metric: ThresholdRequestMetric;
-  /** 비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL) */
-  operator: ThresholdRequestOperator;
-  /** 임계값 */
-  value: number;
-  /**
-   * 지속 시간 (분)
-   * @minimum 1
-   */
-  durationMinutes: number;
-}
-
-/**
- * 모니터링 알림 설정 활성화/비활성화 요청
- */
-export interface MonitoringNotificationSetEnabledRequest {
-  /** 활성화 여부 */
-  isEnabled: boolean;
-}
-
-/**
- * 노드 스케줄링 설정 요청
- */
-export interface NodeSchedulingRequest {
-  /** 스케줄링 활성화 여부 */
-  enabled: boolean;
-}
-
-/**
- * MIG 설정 항목
- */
-export interface MigConfigItem {
-  /**
-   * GPU 인덱스 목록
-   * @minItems 1
-   */
-  gpuIndex: number[];
-  /** MIG 프로파일 Config ID (1-19) */
-  configId: number;
-}
-
-/**
- * MIG 설정 요청
- */
-export interface MigConfigurationRequest {
-  /** MIG 설정 목록 (빈 배열 전송 시 전체 GPU MIG 비활성화) */
-  migConfigs: MigConfigItem[];
-}
-
-/**
  * CPU 리소스 요청
  */
 export interface CpuRequest {
@@ -655,19 +546,116 @@ export interface WorkloadReclaimPolicyEnabledRequest {
 }
 
 /**
- * 
-            리소스 정보 (cpu, memory, gpu 포함)
-            GPU 타입별 설정:
-                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
-                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
-                - GPU 미사용: gpu 필드 생략
-            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
-        
+ * CPU 리소스 요청
  */
-export type ResourcePresetUpdateRequestResource = { [key: string]: unknown };
+export interface PresetCpuRequest {
+  /**
+   * 요청 CPU 코어 수
+   * @minimum 1
+   */
+  requestCore: number;
+}
 
 /**
- * 잡 타입 (BATCH, IDE)
+ * GPU 상세 설정 요청 (normal, mig, mps 중 최소 1개 필수)
+ */
+export interface PresetGpuDetailRequest {
+  /** 일반 GPU 설정 (NORMAL 타입일 때) */
+  normal?: PresetNormalGpuRequest;
+  /** MIG GPU 설정 (MIG 타입일 때) */
+  mig?: PresetMigProfileRequest[];
+  /** MPS GPU 설정 (MPS 타입일 때) */
+  mps?: PresetMpsProfileRequest;
+}
+
+/**
+ * GPU 타입
+ */
+export type PresetGpuRequestGpuType =
+  (typeof PresetGpuRequestGpuType)[keyof typeof PresetGpuRequestGpuType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PresetGpuRequestGpuType = {
+  NORMAL: "NORMAL",
+  MIG: "MIG",
+  MPS: "MPS",
+} as const;
+
+/**
+ * GPU 리소스 요청
+ */
+export interface PresetGpuRequest {
+  /** GPU 타입 */
+  gpuType: PresetGpuRequestGpuType;
+  /** GPU 상세 설정 */
+  detail: PresetGpuDetailRequest;
+  /** GPU 이름 (선택, 자동 스케줄링 시 null) */
+  gpuName?: string;
+}
+
+/**
+ * 메모리 리소스 요청
+ */
+export interface PresetMemoryRequest {
+  /**
+   * 요청 메모리 (바이트)
+   * @minimum 1
+   */
+  requestByte: number;
+}
+
+/**
+ * MIG 프로파일 요청
+ */
+export interface PresetMigProfileRequest {
+  /**
+   * MIG 프로파일 이름
+   * @minLength 1
+   */
+  profile: string;
+  /**
+   * 요청 수량
+   * @minimum 1
+   */
+  requestCount: number;
+}
+
+/**
+ * MPS 프로파일 요청
+ */
+export interface PresetMpsProfileRequest {
+  /**
+   * 요청 MPS 수량
+   * @minimum 1
+   */
+  requestCount: number;
+}
+
+/**
+ * 일반 GPU 요청
+ */
+export interface PresetNormalGpuRequest {
+  /**
+   * 요청 GPU 수량
+   * @minimum 1
+   */
+  requestCount: number;
+}
+
+/**
+ * 프리셋 리소스 요청
+ */
+export interface PresetResourceRequest {
+  /** CPU 리소스 정보 */
+  cpu: PresetCpuRequest;
+  /** 메모리 리소스 정보 */
+  memory: PresetMemoryRequest;
+  /** GPU 리소스 정보 (선택) */
+  gpu?: PresetGpuRequest;
+}
+
+/**
+ * 잡 타입 (BATCH, INTERACTIVE)
  */
 export type ResourcePresetUpdateRequestJobType =
   (typeof ResourcePresetUpdateRequestJobType)[keyof typeof ResourcePresetUpdateRequestJobType];
@@ -675,7 +663,8 @@ export type ResourcePresetUpdateRequestJobType =
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ResourcePresetUpdateRequestJobType = {
   BATCH: "BATCH",
-  IDE: "IDE",
+  INTERACTIVE: "INTERACTIVE",
+  DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
 /**
@@ -706,16 +695,9 @@ export interface ResourcePresetUpdateRequest {
    * @maxLength 2000
    */
   description?: string;
-  /** 
-            리소스 정보 (cpu, memory, gpu 포함)
-            GPU 타입별 설정:
-                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
-                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
-                - GPU 미사용: gpu 필드 생략
-            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
-         */
-  resource: ResourcePresetUpdateRequestResource;
-  /** 잡 타입 (BATCH, IDE) */
+  /** 리소스 정보 */
+  resource: PresetResourceRequest;
+  /** 잡 타입 (BATCH, INTERACTIVE) */
   jobType: ResourcePresetUpdateRequestJobType;
   /** 노드 타입 (SINGLE, MULTI) */
   nodeType: ResourcePresetUpdateRequestNodeType;
@@ -740,15 +722,83 @@ export interface BaseResponseResourcePresetResponse {
 }
 
 /**
- * 리소스 정보
-
-GPU 타입별 구조:
-- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
-- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
-
-※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)
+ * CPU 정보
  */
-export type ResourcePresetResponseResource = { [key: string]: unknown };
+export interface CpuResponse {
+  /** 요청 CPU 코어 수 */
+  requestCore: number;
+}
+
+/**
+ * GPU 상세 설정
+ */
+export interface GpuDetailResponse {
+  /** 일반 GPU 설정 (NORMAL 타입일 때) */
+  normal?: NormalGpuResponse;
+  /** MIG GPU 설정 (MIG 타입일 때) */
+  mig?: MigProfileResponse[];
+  /** MPS GPU 설정 (MPS 타입일 때) */
+  mps?: MpsProfileResponse;
+}
+
+/**
+ * GPU 타입
+ */
+export type GpuResponseGpuType =
+  (typeof GpuResponseGpuType)[keyof typeof GpuResponseGpuType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GpuResponseGpuType = {
+  NORMAL: "NORMAL",
+  MIG: "MIG",
+  MPS: "MPS",
+} as const;
+
+/**
+ * GPU 정보
+ */
+export interface GpuResponse {
+  /** GPU 타입 */
+  gpuType: GpuResponseGpuType;
+  /** GPU 상세 설정 */
+  detail: GpuDetailResponse;
+  /** GPU 이름 (선택, 자동 스케줄링 시 null) */
+  gpuName?: string;
+}
+
+/**
+ * 메모리 정보
+ */
+export interface MemoryResponse {
+  /** 요청 메모리 (바이트) */
+  requestByte: number;
+}
+
+/**
+ * MIG GPU 프로파일 설정
+ */
+export interface MigProfileResponse {
+  /** MIG 프로파일 이름 */
+  profile: string;
+  /** 요청 수량 */
+  requestCount: number;
+}
+
+/**
+ * MPS GPU 설정
+ */
+export interface MpsProfileResponse {
+  /** 요청 MPS 수량 */
+  requestCount: number;
+}
+
+/**
+ * 일반 GPU 설정
+ */
+export interface NormalGpuResponse {
+  /** 요청 GPU 수량 */
+  requestCount: number;
+}
 
 /**
  * 잡 타입
@@ -759,7 +809,8 @@ export type ResourcePresetResponseJobType =
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ResourcePresetResponseJobType = {
   BATCH: "BATCH",
-  IDE: "IDE",
+  INTERACTIVE: "INTERACTIVE",
+  DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
 /**
@@ -779,29 +830,39 @@ export const ResourcePresetResponseNodeType = {
  */
 export interface ResourcePresetResponse {
   /** 프리셋 ID */
-  presetId: number;
+  resourcePresetId: number;
+  /** entityId (버전 그룹 식별자) */
+  entityId: number;
   /** 버전 */
   version: number;
   /** 프리셋 이름 */
   presetName: string;
   /** 설명 */
   description?: string;
-  /** 리소스 정보
-
-GPU 타입별 구조:
-- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
-- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
-
-※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능) */
-  resource: ResourcePresetResponseResource;
+  /** 리소스 정보 */
+  resource: ResourceResponse;
   /** 잡 타입 */
   jobType: ResourcePresetResponseJobType;
   /** 노드 타입 */
   nodeType: ResourcePresetResponseNodeType;
   /** 생성자 ID */
-  createdBy: string;
+  creatorId: string;
+  /** 생성자명 */
+  creatorName?: string;
   /** 생성 시간 */
   createdAt?: string;
+}
+
+/**
+ * 리소스 정보
+ */
+export interface ResourceResponse {
+  /** CPU 정보 */
+  cpu: CpuResponse;
+  /** 메모리 정보 */
+  memory: MemoryResponse;
+  /** GPU 정보 (선택) */
+  gpu?: GpuResponse;
 }
 
 /**
@@ -844,16 +905,15 @@ export interface ImageTagUsageRequestApprovalRequest {
  */
 export interface QueueOrderItem {
   /**
-   * 우선순위 (1~5, 낮을수록 높은 우선순위)
-   * @minimum 1
+   * 우선순위 (2~5, 낮을수록 높은 우선순위, rank=1은 urgent-active 전용)
+   * @minimum 2
    * @maximum 5
    */
   rank: number;
-  /**
-   * 워크로드 ID
-   * @minimum 1
-   */
-  workloadId: number;
+  /** 워크스페이스 리소스명 (K8s Namespace) */
+  workspaceResourceName: string;
+  /** 워크로드 리소스명 (K8s PodGroup) */
+  workloadResourceName: string;
 }
 
 /**
@@ -866,6 +926,89 @@ export interface UpdateQueueOrderRequest {
    * @maxItems 5
    */
   queueOrderItem: QueueOrderItem[];
+}
+
+/**
+ * 모니터링 알림 설정 수정 요청
+ */
+export interface MonitoringNotificationSetUpdateRequest {
+  /**
+   * 알림 설정 이름
+   * @minLength 0
+   * @maxLength 255
+   */
+  notificationSetName: string;
+  /** 시스템 알림 활성화 여부 */
+  isSystemNotificationEnabled: boolean;
+  /** 이메일 알림 활성화 여부 */
+  isEmailNotificationEnabled: boolean;
+  /**
+   * 모니터링할 노드 이름 목록
+   * @minItems 1
+   */
+  nodeName: string[];
+  /**
+   * 임계값 설정 목록
+   * @minItems 1
+   */
+  threshold: ThresholdRequest[];
+}
+
+/**
+ * 메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE)
+ */
+export type ThresholdRequestMetric =
+  (typeof ThresholdRequestMetric)[keyof typeof ThresholdRequestMetric];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThresholdRequestMetric = {
+  GPU_TEMP: "GPU_TEMP",
+  GPU_MEMORY: "GPU_MEMORY",
+  GPU_USAGE: "GPU_USAGE",
+  MEMORY_USAGE: "MEMORY_USAGE",
+  CPU_USAGE: "CPU_USAGE",
+} as const;
+
+/**
+ * 비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL)
+ */
+export type ThresholdRequestOperator =
+  (typeof ThresholdRequestOperator)[keyof typeof ThresholdRequestOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThresholdRequestOperator = {
+  GREATER_THAN: "GREATER_THAN",
+  LESS_THAN: "LESS_THAN",
+  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
+} as const;
+
+/**
+ * 임계값 설정
+ */
+export interface ThresholdRequest {
+  /** 메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE) */
+  metric: ThresholdRequestMetric;
+  /** 비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL) */
+  operator: ThresholdRequestOperator;
+  /**
+   * 임계값 (비율 메트릭: 0~100, GPU_TEMP: 0 이상)
+   * @minimum 0
+   */
+  value: number;
+  /**
+   * 지속 시간 (분)
+   * @minimum 1
+   */
+  durationMinutes: number;
+}
+
+/**
+ * 모니터링 알림 설정 활성화/비활성화 요청
+ */
+export interface MonitoringNotificationSetEnabledRequest {
+  /** 활성화 여부 */
+  isEnabled: boolean;
 }
 
 /**
@@ -886,6 +1029,35 @@ export interface GroupUpdateRequest {
   description?: string;
   /** 그룹에 포함할 사용자 ID 목록 (Keycloak User ID). 제공된 목록으로 그룹 멤버를 교체 */
   accountId: string[];
+}
+
+/**
+ * 노드 스케줄링 설정 요청
+ */
+export interface NodeSchedulingRequest {
+  /** 스케줄링 활성화 여부 */
+  enabled: boolean;
+}
+
+/**
+ * MIG 설정 항목
+ */
+export interface MigConfigItem {
+  /**
+   * GPU 인덱스 목록
+   * @minItems 1
+   */
+  gpuIndex: number[];
+  /** MIG 프로파일 Config ID (1-19) */
+  configId: number;
+}
+
+/**
+ * MIG 설정 요청
+ */
+export interface MigConfigurationRequest {
+  /** MIG 설정 목록 (빈 배열 전송 시 전체 GPU MIG 비활성화) */
+  migConfigs: MigConfigItem[];
 }
 
 /**
@@ -1124,8 +1296,8 @@ export interface PortRequest {
  * 소스코드 정보
  */
 export interface SourceCodeRequest {
-  /** 소스코드 ID */
-  sourceCodeId: number;
+  /** 소스코드 entityId */
+  entityId: number;
   /**
    * 마운트 경로
    * @minLength 1
@@ -1447,6 +1619,16 @@ export interface WorkloadCompressRequest {
 }
 
 /**
+ * 워크로드 재시작 요청
+ */
+export interface WorkloadRestartRequest {
+  /** 리소스 프리셋 ID */
+  resourcePresetId: number;
+  /** 리소스 정보 (CPU, 메모리, GPU, 분산학습 설정) */
+  resource: WorkloadResourceRequest;
+}
+
+/**
  * 워크스페이스 리소스 추가 요청 생성
  */
 export interface ResourceRequestCreateRequest {
@@ -1476,48 +1658,6 @@ export interface BaseResponseResourceRequestResponse {
   data?: ResourceRequestResponse;
   message?: string;
   timestamp: number;
-}
-
-/**
- * CPU 응답
- */
-export interface CpuResponse {
-  /** 요청 CPU 코어 수 */
-  requestCore: number;
-}
-
-/**
- * 메모리 응답
- */
-export interface MemoryResponse {
-  /** 요청 메모리 바이트 수 */
-  requestByte: number;
-}
-
-/**
- * MIG 프로파일 응답
- */
-export interface MigProfileResponse {
-  /** MIG 프로파일 이름 */
-  profile: string;
-  /** 요청 수량 */
-  requestCount: number;
-}
-
-/**
- * MPS 프로파일 응답
- */
-export interface MpsProfileResponse {
-  /** 요청 수량 */
-  requestCount: number;
-}
-
-/**
- * 일반 GPU 응답
- */
-export interface NormalGpuResponse {
-  /** 요청 GPU 수량 */
-  requestCount: number;
 }
 
 /**
@@ -1762,6 +1902,60 @@ export interface CreateOnPremiseVolumeRequest {
 }
 
 /**
+ * 볼륨 다중 삭제 요청
+ */
+export interface VolumeDeleteRequest {
+  /**
+   * 삭제할 볼륨 ID 목록. 최소 1개, 최대 100개까지 요청 가능합니다.
+   * @minItems 1
+   * @maxItems 100
+   */
+  volumeIds: number[];
+}
+
+export type BaseResponseVolumeDeleteResultStatus =
+  (typeof BaseResponseVolumeDeleteResultStatus)[keyof typeof BaseResponseVolumeDeleteResultStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseVolumeDeleteResultStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseVolumeDeleteResult {
+  status: BaseResponseVolumeDeleteResultStatus;
+  errorCode?: string;
+  data?: VolumeDeleteResult;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 볼륨 삭제 실패 상세 정보
+ */
+export interface DeleteFailureDetail {
+  /** 삭제 실패한 볼륨 ID */
+  volumeId: number;
+  /** 삭제 실패 사유 */
+  reason: string;
+}
+
+/**
+ * 볼륨 삭제 처리 결과 응답
+ */
+export interface VolumeDeleteResult {
+  /** 삭제 요청한 총 볼륨 개수 */
+  totalRequested: number;
+  /** 삭제 성공한 볼륨 개수 */
+  successCount: number;
+  /** 삭제 실패한 볼륨 개수 (존재하지 않거나, 이미 삭제된 볼륨, 권한 없음 등) */
+  failureCount: number;
+  /** 삭제 실패한 볼륨 상세 목록 (실패가 없으면 빈 리스트) */
+  failures: DeleteFailureDetail[];
+}
+
+/**
  * ASTRAGO 볼륨 생성 요청
  */
 export interface CreateAstragoVolumeRequest {
@@ -1846,6 +2040,50 @@ export interface CreateSourceCodeRequest {
 }
 
 /**
+ * 소스코드 다중 삭제 요청
+ */
+export interface SourceCodeDeleteRequest {
+  /**
+   * 삭제할 소스코드 ID 목록. 최소 1개, 최대 100개까지 요청 가능합니다.
+   * @minItems 1
+   * @maxItems 100
+   */
+  sourceCodeIds: number[];
+}
+
+export type BaseResponseSourceCodeDeleteResultStatus =
+  (typeof BaseResponseSourceCodeDeleteResultStatus)[keyof typeof BaseResponseSourceCodeDeleteResultStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseSourceCodeDeleteResultStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseSourceCodeDeleteResult {
+  status: BaseResponseSourceCodeDeleteResultStatus;
+  errorCode?: string;
+  data?: SourceCodeDeleteResult;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 소스코드 삭제 처리 결과 응답
+ */
+export interface SourceCodeDeleteResult {
+  /** 삭제 요청한 총 소스코드 개수 */
+  totalRequested: number;
+  /** 삭제 성공한 소스코드 개수 */
+  successCount: number;
+  /** 삭제 실패한 소스코드 개수 (존재하지 않거나, 이미 삭제된 소스코드, 권한 없음 등) */
+  failureCount: number;
+  /** 삭제 실패한 소스코드 상세 목록 (실패가 없으면 빈 리스트) */
+  failures: DeleteFailureDetail[];
+}
+
+/**
  * 레지스트리 채널 (DOCKER_HUB: Docker Hub, NGC: NVIDIA NGC, GHCR: GitHub Container Registry)
  */
 export type CreateExternalImageRequestRegistryChannel =
@@ -1884,6 +2122,29 @@ export interface CreateExternalImageRequest {
   credentialId?: number;
   /** 워크스페이스 ID (종속버전인 경우 필수) */
   workspaceId?: number;
+}
+
+/**
+ * 워크로드 스냅샷 이미지 생성 요청
+ */
+export interface SnapshotImageRequest {
+  /** 워크로드 ID */
+  workloadId: number;
+  /**
+   * 생성할 이미지 이름
+   * @minLength 1
+   * @maxLength 255
+   */
+  imageName: string;
+  /**
+   * 생성할 이미지 태그 이름
+   * @minLength 1
+   * @maxLength 128
+   * @pattern ^[a-zA-Z0-9_][a-zA-Z0-9._-]*$
+   */
+  imageTagName: string;
+  /** 워크스페이스 ID */
+  workspaceId: number;
 }
 
 /**
@@ -1980,7 +2241,7 @@ export interface DeleteImagesRequest {
    * @minItems 0
    * @maxItems 20
    */
-  harborImageNames: string[];
+  harborImageName: string[];
 }
 
 export type BaseResponseDeleteImagesResponseStatus =
@@ -2036,32 +2297,6 @@ export interface CreateImageTagUsageRequestRequest {
   requestReason: string;
   /** 이미지를 사용할 워크스페이스 ID (선택) */
   workspaceId?: number;
-}
-
-/**
- * 모니터링 알림 설정 생성 요청
- */
-export interface MonitoringNotificationSetCreateRequest {
-  /**
-   * 알림 설정 이름
-   * @minLength 0
-   * @maxLength 255
-   */
-  notificationSetName: string;
-  /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
-  /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
-  /**
-   * 모니터링할 노드 이름 목록
-   * @minItems 1
-   */
-  nodeName: string[];
-  /**
-   * 임계값 설정 목록
-   * @minItems 1
-   */
-  threshold: ThresholdRequest[];
 }
 
 export interface PrometheusAlert {
@@ -2163,6 +2398,68 @@ export interface LicenseCreateResponse {
   licenseKey: string;
   /** 등록일시 */
   createdAt: string;
+}
+
+/**
+ * GPU 타입 (NORMAL: 일반 GPU, MIG: Multi-Instance GPU)
+ */
+export type GpuAvailabilityRequestGpuType =
+  (typeof GpuAvailabilityRequestGpuType)[keyof typeof GpuAvailabilityRequestGpuType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GpuAvailabilityRequestGpuType = {
+  NORMAL: "NORMAL",
+  MIG: "MIG",
+} as const;
+
+/**
+ * GPU 가용성 확인 요청
+ */
+export interface GpuAvailabilityRequest {
+  /** GPU 타입 (NORMAL: 일반 GPU, MIG: Multi-Instance GPU) */
+  gpuType: GpuAvailabilityRequestGpuType;
+  /** 
+            GPU 이름 또는 MIG 프로파일
+            - NORMAL: nvidia.com/gpu.product 라벨 값 (예: "NVIDIA-A100-SXM4-40GB"), 미지정 시 검증 통과
+            - MIG: MIG 프로파일명 (예: "1g.5gb"), 필수
+         */
+  gpuName?: string;
+  /** 요청 GPU 수량 (검증에 사용되지 않음, 참조용) */
+  requestCount?: number;
+}
+
+/**
+ * 리소스 가용성 확인 요청
+ */
+export interface ResourceAvailabilityRequest {
+  /** GPU 리소스 정보 (GPU 미사용 시 생략) */
+  gpu?: GpuAvailabilityRequest;
+}
+
+export type BaseResponseResourceAvailabilityResponseStatus =
+  (typeof BaseResponseResourceAvailabilityResponseStatus)[keyof typeof BaseResponseResourceAvailabilityResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseResourceAvailabilityResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseResourceAvailabilityResponse {
+  status: BaseResponseResourceAvailabilityResponseStatus;
+  errorCode?: string;
+  data?: ResourceAvailabilityResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 리소스 가용성 확인 응답
+ */
+export interface ResourceAvailabilityResponse {
+  /** 리소스 지원 여부 (GPU가 클러스터에서 지원되는지) */
+  isAvailable: boolean;
 }
 
 /**
@@ -2280,19 +2577,7 @@ export interface SmtpSetResponse {
 }
 
 /**
- * 
-            리소스 정보 (cpu, memory, gpu 포함)
-            GPU 타입별 설정:
-                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
-                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
-                - GPU 미사용: gpu 필드 생략
-            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
-        
- */
-export type ResourcePresetCreateRequestResource = { [key: string]: unknown };
-
-/**
- * 잡 타입 (BATCH, IDE)
+ * 잡 타입 (BATCH, INTERACTIVE)
  */
 export type ResourcePresetCreateRequestJobType =
   (typeof ResourcePresetCreateRequestJobType)[keyof typeof ResourcePresetCreateRequestJobType];
@@ -2300,7 +2585,8 @@ export type ResourcePresetCreateRequestJobType =
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ResourcePresetCreateRequestJobType = {
   BATCH: "BATCH",
-  IDE: "IDE",
+  INTERACTIVE: "INTERACTIVE",
+  DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
 /**
@@ -2331,30 +2617,102 @@ export interface ResourcePresetCreateRequest {
    * @maxLength 2000
    */
   description?: string;
-  /** 
-            리소스 정보 (cpu, memory, gpu 포함)
-            GPU 타입별 설정:
-                - NORMAL GPU: gpuType="NORMAL", detail.normal.requestCount 설정, gpuName 선택
-                - MIG GPU: gpuType="MIG", detail.mig 배열에 profile 1개와 requestCount 설정 (다중 프로파일 불가), gpuName 선택
-                - GPU 미사용: gpu 필드 생략
-            ※ gpuName은 모든 GPU 타입에서 선택사항 (자동 스케줄링 지원)
-         */
-  resource: ResourcePresetCreateRequestResource;
-  /** 잡 타입 (BATCH, IDE) */
+  /** 리소스 정보 */
+  resource: PresetResourceRequest;
+  /** 잡 타입 (BATCH, INTERACTIVE) */
   jobType: ResourcePresetCreateRequestJobType;
   /** 노드 타입 (SINGLE, MULTI) */
   nodeType: ResourcePresetCreateRequestNodeType;
 }
 
 /**
+ * 프리셋 다건 삭제 요청
+ */
+export interface ResourcePresetDeleteRequest {
+  /**
+   * 삭제할 프리셋 ID 목록
+   * @minItems 1
+   * @maxItems 2147483647
+   */
+  resourcePresetIds: number[];
+}
+
+export type BaseResponseResourcePresetDeleteResponseStatus =
+  (typeof BaseResponseResourcePresetDeleteResponseStatus)[keyof typeof BaseResponseResourcePresetDeleteResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseResourcePresetDeleteResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseResourcePresetDeleteResponse {
+  status: BaseResponseResourcePresetDeleteResponseStatus;
+  errorCode?: string;
+  data?: ResourcePresetDeleteResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 프리셋 삭제 실패 상세 정보
+ */
+export interface PresetDeleteFailureDetail {
+  /** 삭제 실패한 프리셋 ID */
+  resourcePresetId: number;
+  /** 삭제 실패 사유 */
+  reason: string;
+}
+
+/**
+ * 프리셋 삭제 처리 결과 응답
+ */
+export interface ResourcePresetDeleteResponse {
+  /** 삭제 요청한 총 프리셋 개수 */
+  totalRequested: number;
+  /** 삭제 성공한 프리셋 개수 */
+  successCount: number;
+  /** 삭제 실패한 프리셋 개수 (존재하지 않거나 이미 삭제된 프리셋 등) */
+  failureCount: number;
+  /** 삭제 실패한 프리셋 상세 목록 (실패가 없으면 빈 리스트) */
+  failures: PresetDeleteFailureDetail[];
+}
+
+/**
  * 긴급 큐 워크로드 추가 요청
  */
 export interface AddWorkloadToUrgentQueueRequest {
+  /** 워크스페이스 리소스명 (K8s Namespace) */
+  workspaceResourceName: string;
+  /** 워크로드 리소스명 (K8s PodGroup) */
+  workloadResourceName: string;
+}
+
+/**
+ * 모니터링 알림 설정 생성 요청
+ */
+export interface MonitoringNotificationSetCreateRequest {
   /**
-   * 워크로드 ID
-   * @minimum 1
+   * 알림 설정 이름
+   * @minLength 0
+   * @maxLength 255
    */
-  workloadId: number;
+  notificationSetName: string;
+  /** 시스템 알림 활성화 여부 */
+  isSystemNotificationEnabled: boolean;
+  /** 이메일 알림 활성화 여부 */
+  isEmailNotificationEnabled: boolean;
+  /**
+   * 모니터링할 노드 이름 목록
+   * @minItems 1
+   */
+  nodeName: string[];
+  /**
+   * 임계값 설정 목록
+   * @minItems 1
+   */
+  threshold: ThresholdRequest[];
 }
 
 /**
@@ -2497,18 +2855,6 @@ export interface BaseResponseAccountDeleteResult {
   data?: AccountDeleteResult;
   message?: string;
   timestamp: number;
-}
-
-/**
- * 계정 삭제 실패 상세 정보
- */
-export interface DeleteFailureDetail {
-  /** 삭제 실패한 계정 고유 ID (Keycloak User ID, UUID 형식) */
-  accountId: string;
-  /** 삭제 실패한 계정의 이메일 주소 */
-  email: string;
-  /** 삭제 실패 사유 메시지 */
-  reason: string;
 }
 
 /**
@@ -2821,11 +3167,12 @@ export type WorkloadStatusResponseWorkloadStatus =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WorkloadStatusResponseWorkloadStatus = {
-  RUNNING: "RUNNING",
-  ERROR: "ERROR",
-  PENDING: "PENDING",
   CREATING: "CREATING",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  TERMINATING: "TERMINATING",
   TERMINATED: "TERMINATED",
+  ERROR: "ERROR",
 } as const;
 
 /**
@@ -2838,22 +3185,36 @@ export interface WorkloadStatusResponse {
   workloadStatus: WorkloadStatusResponseWorkloadStatus;
 }
 
-export type BaseResponseListWorkloadMetricsTimeseriesResponseStatus =
-  (typeof BaseResponseListWorkloadMetricsTimeseriesResponseStatus)[keyof typeof BaseResponseListWorkloadMetricsTimeseriesResponseStatus];
+export type BaseResponseBatchWorkloadMetricsResponseStatus =
+  (typeof BaseResponseBatchWorkloadMetricsResponseStatus)[keyof typeof BaseResponseBatchWorkloadMetricsResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseListWorkloadMetricsTimeseriesResponseStatus = {
+export const BaseResponseBatchWorkloadMetricsResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponseListWorkloadMetricsTimeseriesResponse {
-  status: BaseResponseListWorkloadMetricsTimeseriesResponseStatus;
+export interface BaseResponseBatchWorkloadMetricsResponse {
+  status: BaseResponseBatchWorkloadMetricsResponseStatus;
   errorCode?: string;
-  data?: WorkloadMetricsTimeseriesResponse[];
+  data?: BatchWorkloadMetricsResponse;
   message?: string;
   timestamp: number;
+}
+
+/**
+ * 워크로드 메트릭 배치 조회 응답
+ */
+export interface BatchWorkloadMetricsResponse {
+  /** GPU 사용률 (%) */
+  gpuUtilization?: WorkloadMetricResult;
+  /** GPU 메모리 사용률 (%) */
+  gpuMemUtilization?: WorkloadMetricResult;
+  /** CPU 사용률 (%) */
+  cpuUtilization?: WorkloadMetricResult;
+  /** 메모리 사용률 (%) */
+  memUtilization?: WorkloadMetricResult;
 }
 
 /**
@@ -2873,9 +3234,21 @@ export interface WorkloadMetricData {
 }
 
 /**
- * 워크로드 메트릭 시계열 응답 (시간별 그룹화)
+ * 워크로드 메트릭 개별 결과
  */
-export interface WorkloadMetricsTimeseriesResponse {
+export interface WorkloadMetricResult {
+  /** 조회 성공 여부 */
+  success: boolean;
+  /** 에러 타입 (실패 시) */
+  error?: string;
+  /** 메트릭 시계열 데이터 (성공 시) */
+  values?: WorkloadMetricTimeseriesValue[];
+}
+
+/**
+ * 워크로드 메트릭 시계열 값
+ */
+export interface WorkloadMetricTimeseriesValue {
   /** 측정 시간 (UTC) */
   dateTime: string;
   /** 해당 시간대의 모든 Pod/GPU 메트릭 데이터 */
@@ -3105,11 +3478,12 @@ export type ActiveWorkloadItemWorkloadStatus =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActiveWorkloadItemWorkloadStatus = {
-  RUNNING: "RUNNING",
-  ERROR: "ERROR",
-  PENDING: "PENDING",
   CREATING: "CREATING",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  TERMINATING: "TERMINATING",
   TERMINATED: "TERMINATED",
+  ERROR: "ERROR",
 } as const;
 
 /**
@@ -3411,6 +3785,8 @@ export const VolumeListResponseVolumeType = {
 export interface VolumeListResponse {
   /** 볼륨 ID */
   volumeId: number;
+  /** entityId (버전 그룹 식별자) */
+  entityId: number;
   /** 볼륨 이름 */
   volumeName: string;
   /** 생성자 ID */
@@ -3521,6 +3897,8 @@ export const VolumeDetailResponseVolumeType = {
 export interface VolumeDetailResponse {
   /** 볼륨 ID */
   volumeId: number;
+  /** entityId (버전 그룹 식별자) */
+  entityId: number;
   /** 볼륨 이름 */
   volumeName: string;
   /** 볼륨 타입 */
@@ -3649,6 +4027,8 @@ export const SourceCodeListResponseSourceCodeType = {
 export interface SourceCodeListResponse {
   /** 소스코드 ID */
   sourceCodeId: number;
+  /** entityId (버전 그룹 식별자) */
+  entityId: number;
   /** 소스코드 이름 */
   sourceCodeName: string;
   /** Git URL */
@@ -3659,10 +4039,86 @@ export interface SourceCodeListResponse {
   sourceCodeType: SourceCodeListResponseSourceCodeType;
   /** 실행 커맨드 */
   executionCmd: string;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
   /** 생성 일시 */
   createdAt: string;
   /** 공개 여부 */
   isPublic: boolean;
+}
+
+export type BaseResponseSourceCodeDetailResponseStatus =
+  (typeof BaseResponseSourceCodeDetailResponseStatus)[keyof typeof BaseResponseSourceCodeDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseSourceCodeDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseSourceCodeDetailResponse {
+  status: BaseResponseSourceCodeDetailResponseStatus;
+  errorCode?: string;
+  data?: SourceCodeDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 소스코드 타입
+ */
+export type SourceCodeDetailResponseSourceCodeType =
+  (typeof SourceCodeDetailResponseSourceCodeType)[keyof typeof SourceCodeDetailResponseSourceCodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SourceCodeDetailResponseSourceCodeType = {
+  GITHUB: "GITHUB",
+  GITLAB: "GITLAB",
+  BITBUCKET: "BITBUCKET",
+} as const;
+
+/**
+ * 사용자 정의 파라미터
+ */
+export type SourceCodeDetailResponseParameter = { [key: string]: string };
+
+/**
+ * 소스코드 상세 조회 응답
+ */
+export interface SourceCodeDetailResponse {
+  /** 소스코드 ID */
+  sourceCodeId: number;
+  /** entityId (버전 그룹 식별자) */
+  entityId: number;
+  /** 소스코드 이름 */
+  sourceCodeName: string;
+  /** Git URL */
+  gitUrl: string;
+  /** 공개 여부 */
+  isPublic: boolean;
+  /** 소스코드 타입 */
+  sourceCodeType: SourceCodeDetailResponseSourceCodeType;
+  /** 마운트 경로 */
+  mountPath: string;
+  /** 실행 커맨드 */
+  executionCmd: string;
+  /** 사용자 정의 파라미터 */
+  parameter?: SourceCodeDetailResponseParameter;
+  /** 워크스페이스 ID */
+  workspaceId?: number;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 크레덴셜 ID */
+  credentialId?: number;
+  /** 생성 일시 */
+  createdAt: string;
+  /** 수정 일시 */
+  updatedAt?: string;
 }
 
 export type BaseResponsePageResponseResourcePresetSummaryResponseStatus =
@@ -3691,17 +4147,6 @@ export interface PageResponseResourcePresetSummaryResponse {
 }
 
 /**
- * 리소스 정보
-
-GPU 타입별 구조:
-- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
-- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
-
-※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능)
- */
-export type ResourcePresetSummaryResponseResource = { [key: string]: unknown };
-
-/**
  * 잡 타입
  */
 export type ResourcePresetSummaryResponseJobType =
@@ -3710,7 +4155,8 @@ export type ResourcePresetSummaryResponseJobType =
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ResourcePresetSummaryResponseJobType = {
   BATCH: "BATCH",
-  IDE: "IDE",
+  INTERACTIVE: "INTERACTIVE",
+  DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
 /**
@@ -3730,19 +4176,15 @@ export const ResourcePresetSummaryResponseNodeType = {
  */
 export interface ResourcePresetSummaryResponse {
   /** 프리셋 ID */
-  presetId: number;
+  resourcePresetId: number;
+  /** entityId (버전 그룹 식별자) */
+  entityId: number;
   /** 프리셋 이름 */
   presetName: string;
   /** 설명 */
   description?: string;
-  /** 리소스 정보
-
-GPU 타입별 구조:
-- NORMAL GPU: {"gpuType": "NORMAL", "detail": {"normal": {"requestCount": N}}, "gpuName": "GPU명" (선택)}
-- MIG GPU: {"gpuType": "MIG", "detail": {"mig": [{"profile": "프로파일명", "requestCount": N}]}, "gpuName": null (선택)}
-
-※ gpuName은 모든 GPU 타입에서 선택사항 (null 가능) */
-  resource: ResourcePresetSummaryResponseResource;
+  /** 리소스 정보 */
+  resource: ResourceResponse;
   /** 잡 타입 */
   jobType: ResourcePresetSummaryResponseJobType;
   /** 노드 타입 */
@@ -3847,6 +4289,24 @@ export interface BaseResponsePageResponseImageTagListResponse {
 }
 
 /**
+ * 스캔 상태
+ */
+export type ImageTagListResponseScanStatus =
+  (typeof ImageTagListResponseScanStatus)[keyof typeof ImageTagListResponseScanStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ImageTagListResponseScanStatus = {
+  SUCCESS: "SUCCESS",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  STOPPED: "STOPPED",
+  ERROR: "ERROR",
+  NOT_SCANNED: "NOT_SCANNED",
+  UNSUPPORTED: "UNSUPPORTED",
+  UNKNOWN: "UNKNOWN",
+} as const;
+
+/**
  * 승인 상태
  */
 export type ImageTagListResponseApprovalStatus =
@@ -3876,8 +4336,8 @@ export interface ImageTagListResponse {
   imageDisplayName: string;
   /** 이미지 태그 크기 (바이트) */
   imageTagSizeByte: number;
-  /** 스캔 상태 (스캔 전이면 null) */
-  scanStatus?: string;
+  /** 스캔 상태 */
+  scanStatus: ImageTagListResponseScanStatus;
   /** 취약점 정보 (스캔 미수행 시 null) */
   vulnerability?: VulnerabilityResponse;
   /** 생성자 ID (DB 메타데이터 없으면 null) */
@@ -4040,6 +4500,24 @@ export interface BaseResponseImageTagDetailResponse {
 }
 
 /**
+ * 스캔 상태
+ */
+export type ImageTagDetailResponseScanStatus =
+  (typeof ImageTagDetailResponseScanStatus)[keyof typeof ImageTagDetailResponseScanStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ImageTagDetailResponseScanStatus = {
+  SUCCESS: "SUCCESS",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  STOPPED: "STOPPED",
+  ERROR: "ERROR",
+  NOT_SCANNED: "NOT_SCANNED",
+  UNSUPPORTED: "UNSUPPORTED",
+  UNKNOWN: "UNKNOWN",
+} as const;
+
+/**
  * 승인 상태 (DB 메타데이터 없으면 null)
  */
 export type ImageTagDetailResponseApprovalStatus =
@@ -4064,7 +4542,7 @@ export interface ImageTagDetailResponse {
   /** 이미지 크기 (바이트) */
   imageSizeByte: number;
   /** 스캔 상태 */
-  scanStatus: string;
+  scanStatus: ImageTagDetailResponseScanStatus;
   /** 생성일시 (Harbor Push 시간, UTC) */
   createdAt?: string;
   /** 취약점 정보 (스캔 미수행 시 null) */
@@ -4073,6 +4551,8 @@ export interface ImageTagDetailResponse {
   imageTagId?: number;
   /** 승인 상태 (DB 메타데이터 없으면 null) */
   approvalStatus?: ImageTagDetailResponseApprovalStatus;
+  /** 생성자 ID (DB 메타데이터 없으면 null) */
+  creatorId?: string;
   /** 생성자 이름 (DB 메타데이터 없으면 null) */
   creatorName?: string;
   /** 설명 (DB 메타데이터 없으면 null) */
@@ -4112,6 +4592,18 @@ export const RegistryDetailResponseImageType = {
 } as const;
 
 /**
+ * 이미지 소스 타입 (EXTERNAL: 외부 레지스트리, SNAPSHOT: 워크로드 스냅샷)
+ */
+export type RegistryDetailResponseImageSourceType =
+  (typeof RegistryDetailResponseImageSourceType)[keyof typeof RegistryDetailResponseImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RegistryDetailResponseImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
+/**
  * 레지스트리 이미지 상세 응답
  */
 export interface RegistryDetailResponse {
@@ -4127,6 +4619,32 @@ export interface RegistryDetailResponse {
   createdAt?: string;
   /** 이미지 타입 */
   imageType: RegistryDetailResponseImageType;
+  /** 이미지 소스 타입 (EXTERNAL: 외부 레지스트리, SNAPSHOT: 워크로드 스냅샷) */
+  imageSourceType?: RegistryDetailResponseImageSourceType;
+  /** 워크스페이스 이름 (PRIVATE 이미지인 경우) */
+  workspaceName?: string;
+}
+
+/**
+ * Harbor 이미지 태그 존재 여부 확인 요청
+ */
+export interface CheckImageTagExistsRequest {
+  /** Harbor 이미지 경로 */
+  harborImageName: string;
+  /**
+   * 이미지 태그
+   * @minLength 0
+   * @maxLength 128
+   */
+  tagName: string;
+}
+
+/**
+ * 워크스페이스 필터 요청
+ */
+export interface RegistryWorkspaceFilterRequest {
+  /** 워크스페이스 ID 필터 */
+  workspaceId?: number;
 }
 
 export type BaseResponsePageResponseImageJobResponseStatus =
@@ -4146,6 +4664,20 @@ export interface BaseResponsePageResponseImageJobResponse {
   message?: string;
   timestamp: number;
 }
+
+/**
+ * 작업 상태
+ */
+export type ImageJobResponseStatus =
+  (typeof ImageJobResponseStatus)[keyof typeof ImageJobResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ImageJobResponseStatus = {
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+  NOT_FOUND: "NOT_FOUND",
+} as const;
 
 /**
  * 이미지 소스 타입
@@ -4176,7 +4708,7 @@ export interface ImageJobResponse {
   /** 생성자 이름 */
   creatorName?: string;
   /** 작업 상태 */
-  status: string;
+  status: ImageJobResponseStatus;
   /** 이미지 소스 타입 */
   imageSourceType: ImageJobResponseImageSourceType;
   /** 생성일시 (UTC) */
@@ -4188,316 +4720,6 @@ export interface PageResponseImageJobResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: ImageJobResponse[];
-}
-
-export type BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus =
-  (typeof BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus)[keyof typeof BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus =
-  {
-    SUCCESS: "SUCCESS",
-    FAIL: "FAIL",
-    ERROR: "ERROR",
-  } as const;
-
-export interface BaseResponsePageResponseMonitoringNotificationHistoryListResponse {
-  status: BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus;
-  errorCode?: string;
-  data?: PageResponseMonitoringNotificationHistoryListResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 모니터링 알림 히스토리 목록 항목
- */
-export interface MonitoringNotificationHistoryListResponse {
-  /** 알림 히스토리 ID */
-  monitoringNotificationHistoryId: number;
-  /** 노드 이름 */
-  nodeName: string;
-  /** 노드 IP */
-  nodeIp: string;
-  /** 알림 설정 이름 */
-  notificationSetName: string;
-  /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
-  /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
-  /** 알림 발생 일시 */
-  createdAt: string;
-}
-
-export interface PageResponseMonitoringNotificationHistoryListResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: MonitoringNotificationHistoryListResponse[];
-}
-
-export type BaseResponseListMonitoringNotificationSendHistoryResponseStatus =
-  (typeof BaseResponseListMonitoringNotificationSendHistoryResponseStatus)[keyof typeof BaseResponseListMonitoringNotificationSendHistoryResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseListMonitoringNotificationSendHistoryResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseListMonitoringNotificationSendHistoryResponse {
-  status: BaseResponseListMonitoringNotificationSendHistoryResponseStatus;
-  errorCode?: string;
-  data?: MonitoringNotificationSendHistoryResponse[];
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 알림 채널
- */
-export type MonitoringNotificationSendHistoryResponseNotificationChannel =
-  (typeof MonitoringNotificationSendHistoryResponseNotificationChannel)[keyof typeof MonitoringNotificationSendHistoryResponseNotificationChannel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MonitoringNotificationSendHistoryResponseNotificationChannel = {
-  EMAIL: "EMAIL",
-  SYSTEM: "SYSTEM",
-} as const;
-
-/**
- * 알림 발송 이력 목록 항목
- */
-export interface MonitoringNotificationSendHistoryResponse {
-  /** 알림 수신자 ID */
-  notificationRecipientId: number;
-  /** 알림 채널 */
-  notificationChannel: MonitoringNotificationSendHistoryResponseNotificationChannel;
-  /** 수신자 정보 */
-  sentRecipient: SentRecipientResponse;
-  /** 발송 일시 */
-  createdAt: string;
-}
-
-/**
- * 발송 상태
- */
-export type SentRecipientResponseSendStatus =
-  (typeof SentRecipientResponseSendStatus)[keyof typeof SentRecipientResponseSendStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const SentRecipientResponseSendStatus = {
-  SENT: "SENT",
-  FAILED: "FAILED",
-} as const;
-
-/**
- * 수신자 정보
- */
-export interface SentRecipientResponse {
-  /** 수신자 ID */
-  creatorId: string;
-  /** 수신자 이름 */
-  creatorName: string;
-  /** 발송 상태 */
-  sendStatus: SentRecipientResponseSendStatus;
-}
-
-export type BaseResponseMonitoringNotificationHistoryDetailResponseStatus =
-  (typeof BaseResponseMonitoringNotificationHistoryDetailResponseStatus)[keyof typeof BaseResponseMonitoringNotificationHistoryDetailResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseMonitoringNotificationHistoryDetailResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseMonitoringNotificationHistoryDetailResponse {
-  status: BaseResponseMonitoringNotificationHistoryDetailResponseStatus;
-  errorCode?: string;
-  data?: MonitoringNotificationHistoryDetailResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 메트릭 타입
- */
-export type MonitoringNotificationHistoryDetailResponseMetricType =
-  (typeof MonitoringNotificationHistoryDetailResponseMetricType)[keyof typeof MonitoringNotificationHistoryDetailResponseMetricType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MonitoringNotificationHistoryDetailResponseMetricType = {
-  GPU_TEMP: "GPU_TEMP",
-  GPU_MEMORY: "GPU_MEMORY",
-  GPU_USAGE: "GPU_USAGE",
-  MEMORY_USAGE: "MEMORY_USAGE",
-  CPU_USAGE: "CPU_USAGE",
-} as const;
-
-/**
- * 임계값 연산자
- */
-export type MonitoringNotificationHistoryDetailResponseThresholdOperator =
-  (typeof MonitoringNotificationHistoryDetailResponseThresholdOperator)[keyof typeof MonitoringNotificationHistoryDetailResponseThresholdOperator];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MonitoringNotificationHistoryDetailResponseThresholdOperator = {
-  GREATER_THAN: "GREATER_THAN",
-  LESS_THAN: "LESS_THAN",
-  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
-  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
-} as const;
-
-/**
- * 모니터링 알림 히스토리 상세 조회 응답
- */
-export interface MonitoringNotificationHistoryDetailResponse {
-  /** 노드 이름 */
-  nodeName: string;
-  /** 노드 IP */
-  nodeIp: string;
-  /** 알림 설정 ID */
-  notificationSetId: number;
-  /** 알림 설정 이름 */
-  notificationSetName: string;
-  /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
-  /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
-  /** 메트릭 타입 */
-  metricType: MonitoringNotificationHistoryDetailResponseMetricType;
-  /** 임계값 연산자 */
-  thresholdOperator: MonitoringNotificationHistoryDetailResponseThresholdOperator;
-  /** 임계값 */
-  thresholdValue: number;
-  /** 관측값 (소수점 첫째자리) */
-  observedValue: number;
-  /** 알림 발생 일시 */
-  createdAt: string;
-}
-
-export type BaseResponsePageResponseMonitoringNotificationSetListResponseStatus =
-  (typeof BaseResponsePageResponseMonitoringNotificationSetListResponseStatus)[keyof typeof BaseResponsePageResponseMonitoringNotificationSetListResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseMonitoringNotificationSetListResponseStatus =
-  {
-    SUCCESS: "SUCCESS",
-    FAIL: "FAIL",
-    ERROR: "ERROR",
-  } as const;
-
-export interface BaseResponsePageResponseMonitoringNotificationSetListResponse {
-  status: BaseResponsePageResponseMonitoringNotificationSetListResponseStatus;
-  errorCode?: string;
-  data?: PageResponseMonitoringNotificationSetListResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 모니터링 알림 설정 목록 조회 응답
- */
-export interface MonitoringNotificationSetListResponse {
-  /** 알림 설정 ID */
-  notificationSetId: number;
-  /** 알림 설정 이름 */
-  notificationSetName: string;
-  /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
-  /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
-  /** 알림 설정 활성화 여부 */
-  isEnabled: boolean;
-}
-
-export interface PageResponseMonitoringNotificationSetListResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: MonitoringNotificationSetListResponse[];
-}
-
-export type BaseResponseMonitoringNotificationSetDetailResponseStatus =
-  (typeof BaseResponseMonitoringNotificationSetDetailResponseStatus)[keyof typeof BaseResponseMonitoringNotificationSetDetailResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseMonitoringNotificationSetDetailResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseMonitoringNotificationSetDetailResponse {
-  status: BaseResponseMonitoringNotificationSetDetailResponseStatus;
-  errorCode?: string;
-  data?: MonitoringNotificationSetDetailResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 모니터링 알림 설정 상세 조회 응답
- */
-export interface MonitoringNotificationSetDetailResponse {
-  /** 알림 설정 ID */
-  notificationSetId: number;
-  /** 알림 설정 이름 */
-  notificationSetName: string;
-  /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
-  /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
-  /** 모니터링 대상 노드 목록 */
-  node: string[];
-  /** 임계값 설정 목록 */
-  threshold: ThresholdResponse[];
-}
-
-/**
- * 메트릭 타입
- */
-export type ThresholdResponseMetric =
-  (typeof ThresholdResponseMetric)[keyof typeof ThresholdResponseMetric];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ThresholdResponseMetric = {
-  GPU_TEMP: "GPU_TEMP",
-  GPU_MEMORY: "GPU_MEMORY",
-  GPU_USAGE: "GPU_USAGE",
-  MEMORY_USAGE: "MEMORY_USAGE",
-  CPU_USAGE: "CPU_USAGE",
-} as const;
-
-/**
- * 비교 연산자
- */
-export type ThresholdResponseOperator =
-  (typeof ThresholdResponseOperator)[keyof typeof ThresholdResponseOperator];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ThresholdResponseOperator = {
-  GREATER_THAN: "GREATER_THAN",
-  LESS_THAN: "LESS_THAN",
-  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
-  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
-} as const;
-
-/**
- * 임계값 응답
- */
-export interface ThresholdResponse {
-  /** 메트릭 타입 */
-  metric: ThresholdResponseMetric;
-  /** 비교 연산자 */
-  operator: ThresholdResponseOperator;
-  /** 임계값 */
-  value: number;
-  /** 지속 시간 (분) */
-  durationMinutes: number;
 }
 
 export type BaseResponseListLicenseListResponseStatus =
@@ -4564,475 +4786,6 @@ export interface LicenseLatestResponse {
   gpuCount: number;
   /** 만료일시 */
   expiredAt: string;
-}
-
-export type BaseResponseK8sResourceResponseStatus =
-  (typeof BaseResponseK8sResourceResponseStatus)[keyof typeof BaseResponseK8sResourceResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseK8sResourceResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseK8sResourceResponse {
-  status: BaseResponseK8sResourceResponseStatus;
-  errorCode?: string;
-  data?: K8sResourceResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * Kubernetes 리소스 개수 응답
- */
-export interface K8sResourceResponse {
-  /** Node 개수 */
-  nodeCount: number;
-  /** Service 개수 */
-  serviceCount: number;
-  /** DaemonSet 개수 */
-  daemonsetCount: number;
-  /** PersistentVolume 개수 */
-  persistentVolumeCount: number;
-  /** Namespace 개수 */
-  namespaceCount: number;
-  /** Deployment 개수 */
-  deploymentCount: number;
-  /** StatefulSet 개수 */
-  statefulsetCount: number;
-  /** Pod 개수 */
-  podCount: number;
-}
-
-export type BaseResponseK8sResourceYamlResponseStatus =
-  (typeof BaseResponseK8sResourceYamlResponseStatus)[keyof typeof BaseResponseK8sResourceYamlResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseK8sResourceYamlResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseK8sResourceYamlResponse {
-  status: BaseResponseK8sResourceYamlResponseStatus;
-  errorCode?: string;
-  data?: K8sResourceYamlResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * Kubernetes 리소스 YAML 출력 응답
- */
-export interface K8sResourceYamlResponse {
-  /** YAML 형식의 전체 리소스 정의 (metadata, spec, status 포함) */
-  yaml: string;
-}
-
-export type BaseResponseK8sResourceDescribeResponseStatus =
-  (typeof BaseResponseK8sResourceDescribeResponseStatus)[keyof typeof BaseResponseK8sResourceDescribeResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseK8sResourceDescribeResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseK8sResourceDescribeResponse {
-  status: BaseResponseK8sResourceDescribeResponseStatus;
-  errorCode?: string;
-  data?: K8sResourceDescribeResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * Kubernetes 리소스 상세 조회 응답
- */
-export interface K8sResourceDescribeResponse {
-  /** kubectl describe 형식의 상세 정보 */
-  description: string;
-}
-
-export type BaseResponsePageResponseStatefulSetResponseStatus =
-  (typeof BaseResponsePageResponseStatefulSetResponseStatus)[keyof typeof BaseResponsePageResponseStatefulSetResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseStatefulSetResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseStatefulSetResponse {
-  status: BaseResponsePageResponseStatefulSetResponseStatus;
-  errorCode?: string;
-  data?: PageResponseStatefulSetResponse;
-  message?: string;
-  timestamp: number;
-}
-
-export interface PageResponseStatefulSetResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: StatefulSetResponse[];
-}
-
-/**
- * Kubernetes StatefulSet 응답
- */
-export interface StatefulSetResponse {
-  /** StatefulSet 이름 */
-  name: string;
-  /** 네임스페이스 */
-  namespace: string;
-  /** Pod 개수 (실행중/전체) */
-  pods: string;
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export type BaseResponsePageResponseServiceResponseStatus =
-  (typeof BaseResponsePageResponseServiceResponseStatus)[keyof typeof BaseResponsePageResponseServiceResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseServiceResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseServiceResponse {
-  status: BaseResponsePageResponseServiceResponseStatus;
-  errorCode?: string;
-  data?: PageResponseServiceResponse;
-  message?: string;
-  timestamp: number;
-}
-
-export interface PageResponseServiceResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: ServiceResponse[];
-}
-
-/**
- * Kubernetes Service 응답
- */
-export interface ServiceResponse {
-  /** 서비스 이름 */
-  name: string;
-  /** 네임스페이스 */
-  namespace: string;
-  /** 서비스 타입 */
-  type: string;
-  /** 포트 목록 */
-  ports: string[];
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export type BaseResponsePageResponsePodResponseStatus =
-  (typeof BaseResponsePageResponsePodResponseStatus)[keyof typeof BaseResponsePageResponsePodResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponsePodResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponsePodResponse {
-  status: BaseResponsePageResponsePodResponseStatus;
-  errorCode?: string;
-  data?: PageResponsePodResponse;
-  message?: string;
-  timestamp: number;
-}
-
-export interface PageResponsePodResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: PodResponse[];
-}
-
-/**
- * Kubernetes Pod 응답
- */
-export interface PodResponse {
-  /** Pod 이름 */
-  name: string;
-  /** 네임스페이스 */
-  namespace: string;
-  /** 노드 이름 */
-  node: string;
-  /** Pod 상태 */
-  status: string;
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export type BaseResponsePageResponsePersistentVolumeResponseStatus =
-  (typeof BaseResponsePageResponsePersistentVolumeResponseStatus)[keyof typeof BaseResponsePageResponsePersistentVolumeResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponsePersistentVolumeResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponsePersistentVolumeResponse {
-  status: BaseResponsePageResponsePersistentVolumeResponseStatus;
-  errorCode?: string;
-  data?: PageResponsePersistentVolumeResponse;
-  message?: string;
-  timestamp: number;
-}
-
-export interface PageResponsePersistentVolumeResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: PersistentVolumeResponse[];
-}
-
-/**
- * Kubernetes PersistentVolume 응답
- */
-export interface PersistentVolumeResponse {
-  /** PersistentVolume 이름 */
-  name: string;
-  /** 스토리지 클래스 */
-  storageClass?: string;
-  /** PersistentVolume 상태 */
-  status: string;
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export type BaseResponsePageResponseNodeResponseStatus =
-  (typeof BaseResponsePageResponseNodeResponseStatus)[keyof typeof BaseResponsePageResponseNodeResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseNodeResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseNodeResponse {
-  status: BaseResponsePageResponseNodeResponseStatus;
-  errorCode?: string;
-  data?: PageResponseNodeResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * Kubernetes Node 응답
- */
-export interface NodeResponse {
-  /** 노드 이름 */
-  name: string;
-  /** 노드 역할 목록 */
-  roles: string[];
-  /** GPU 이름 */
-  gpuName?: string;
-  /** 노드 상태 */
-  status: string;
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export interface PageResponseNodeResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: NodeResponse[];
-}
-
-export type BaseResponsePageResponseNamespaceResponseStatus =
-  (typeof BaseResponsePageResponseNamespaceResponseStatus)[keyof typeof BaseResponsePageResponseNamespaceResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseNamespaceResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseNamespaceResponse {
-  status: BaseResponsePageResponseNamespaceResponseStatus;
-  errorCode?: string;
-  data?: PageResponseNamespaceResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * Kubernetes Namespace 응답
- */
-export interface NamespaceResponse {
-  /** 네임스페이스 이름 */
-  name: string;
-  /** 생성 후 경과 시간 */
-  age: string;
-  /** 네임스페이스 상태 */
-  status: string;
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export interface PageResponseNamespaceResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: NamespaceResponse[];
-}
-
-export type BaseResponsePageResponseDeploymentResponseStatus =
-  (typeof BaseResponsePageResponseDeploymentResponseStatus)[keyof typeof BaseResponsePageResponseDeploymentResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseDeploymentResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseDeploymentResponse {
-  status: BaseResponsePageResponseDeploymentResponseStatus;
-  errorCode?: string;
-  data?: PageResponseDeploymentResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * Kubernetes Deployment 응답
- */
-export interface DeploymentResponse {
-  /** Deployment 이름 */
-  name: string;
-  /** 네임스페이스 */
-  namespace: string;
-  /** Pod 개수 (실행중/전체) */
-  pods: string;
-  /** Deployment 조건 목록 */
-  conditions: string[];
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export interface PageResponseDeploymentResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: DeploymentResponse[];
-}
-
-export type BaseResponsePageResponseDaemonSetResponseStatus =
-  (typeof BaseResponsePageResponseDaemonSetResponseStatus)[keyof typeof BaseResponsePageResponseDaemonSetResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseDaemonSetResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseDaemonSetResponse {
-  status: BaseResponsePageResponseDaemonSetResponseStatus;
-  errorCode?: string;
-  data?: PageResponseDaemonSetResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * Kubernetes DaemonSet 응답
- */
-export interface DaemonSetResponse {
-  /** DaemonSet 이름 */
-  name: string;
-  /** 네임스페이스 */
-  namespace: string;
-  /** Pod 개수 (실행중/전체) */
-  pods: string;
-  /** 생성 시간 (UTC) */
-  createdAt: string;
-}
-
-export interface PageResponseDaemonSetResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: DaemonSetResponse[];
-}
-
-export type BaseResponsePageResponseK8sEventResponseStatus =
-  (typeof BaseResponsePageResponseK8sEventResponseStatus)[keyof typeof BaseResponsePageResponseK8sEventResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseK8sEventResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseK8sEventResponse {
-  status: BaseResponsePageResponseK8sEventResponseStatus;
-  errorCode?: string;
-  data?: PageResponseK8sEventResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 이벤트 타입
- */
-export type K8sEventResponseEventType =
-  (typeof K8sEventResponseEventType)[keyof typeof K8sEventResponseEventType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const K8sEventResponseEventType = {
-  Normal: "Normal",
-  Warning: "Warning",
-} as const;
-
-/**
- * Kubernetes 이벤트 응답
- */
-export interface K8sEventResponse {
-  /** 네임스페이스 */
-  namespace: string;
-  /** 마지막 관찰 시간 (UTC) */
-  lastObservedAt: string;
-  /** 이벤트 타입 */
-  eventType: K8sEventResponseEventType;
-  /** 이벤트 발생 이유 */
-  eventReason: string;
-  /** 관련 객체 (kind/name 형식) */
-  object: string;
-  /** 이벤트 메시지 */
-  message: string;
-  /** 관련 객체의 IP 주소 (Pod IP 또는 Node IP) */
-  ip?: string;
-}
-
-export interface PageResponseK8sEventResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: K8sEventResponse[];
 }
 
 export type BaseResponsePageResponseFindHubsResponseStatus =
@@ -5102,6 +4855,8 @@ export interface HubSummaryResponse {
   hubId: number;
   /** HUB 이름 */
   hubName: string;
+  /** 연결된 이미지 태그 ID */
+  imageTagId: number;
 }
 
 export type BaseResponseGroupChildrenResponseStatus =
@@ -5205,6 +4960,41 @@ export interface PageResponseGroupMemberResponse {
   content: GroupMemberResponse[];
 }
 
+export type BaseResponsePageResponseGroupRegistrationResponseStatus =
+  (typeof BaseResponsePageResponseGroupRegistrationResponseStatus)[keyof typeof BaseResponsePageResponseGroupRegistrationResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseGroupRegistrationResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseGroupRegistrationResponse {
+  status: BaseResponsePageResponseGroupRegistrationResponseStatus;
+  errorCode?: string;
+  data?: PageResponseGroupRegistrationResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 회원가입용 그룹 응답
+ */
+export interface GroupRegistrationResponse {
+  /** 그룹 ID */
+  groupId: string;
+  /** 그룹명 */
+  groupName: string;
+}
+
+export interface PageResponseGroupRegistrationResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: GroupRegistrationResponse[];
+}
+
 /**
  * 계정 정보 (소속 그룹명 포함)
  */
@@ -5261,622 +5051,6 @@ export interface BaseResponseListGroupSummaryResponse {
   status: BaseResponseListGroupSummaryResponseStatus;
   errorCode?: string;
   data?: GroupSummaryResponse[];
-  message?: string;
-  timestamp: number;
-}
-
-export type BaseResponsePageResponseClusterNodeListResponseStatus =
-  (typeof BaseResponsePageResponseClusterNodeListResponseStatus)[keyof typeof BaseResponsePageResponseClusterNodeListResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponsePageResponseClusterNodeListResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponsePageResponseClusterNodeListResponse {
-  status: BaseResponsePageResponseClusterNodeListResponseStatus;
-  errorCode?: string;
-  data?: PageResponseClusterNodeListResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * MIG 설정 상태
- */
-export type ClusterNodeListResponseMigConfigState =
-  (typeof ClusterNodeListResponseMigConfigState)[keyof typeof ClusterNodeListResponseMigConfigState];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ClusterNodeListResponseMigConfigState = {
-  NOT_SUPPORTED: "NOT_SUPPORTED",
-  NONE: "NONE",
-  PENDING: "PENDING",
-  FAILED: "FAILED",
-  READY: "READY",
-} as const;
-
-/**
- * 클러스터 노드 정보 응답
- */
-export interface ClusterNodeListResponse {
-  /** 노드 이름 */
-  nodeName: string;
-  /** 노드 IP */
-  nodeIp: string;
-  /** GPU 타입 */
-  gpuType?: string;
-  /** GPU 개수 */
-  gpuCount: number;
-  /** GPU 활용률 (%) */
-  gpuUtilizationPercent?: number;
-  /** CPU 활용률 (%) */
-  cpuUtilizationPercent?: number;
-  /** 메모리 활용률 (%) */
-  memoryUtilizationPercent?: number;
-  /** 디스크 활용률 (%) */
-  diskUtilizationPercent?: number;
-  /** 노드 생성 시각 (UTC) */
-  createdAt?: string;
-  /** 스케줄링 가능 여부 (cordon 상태) */
-  isScheduling: boolean;
-  /** MIG 활성화 여부 */
-  isMigEnabled: boolean;
-  /** MIG 설정 상태 */
-  migConfigState: ClusterNodeListResponseMigConfigState;
-}
-
-export interface PageResponseClusterNodeListResponse {
-  totalSize: number;
-  totalPageNum: number;
-  currentPageNo: number;
-  content: ClusterNodeListResponse[];
-}
-
-export type BaseResponseClusterNodeSystemResourceResponseStatus =
-  (typeof BaseResponseClusterNodeSystemResourceResponseStatus)[keyof typeof BaseResponseClusterNodeSystemResourceResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseClusterNodeSystemResourceResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseClusterNodeSystemResourceResponse {
-  status: BaseResponseClusterNodeSystemResourceResponseStatus;
-  errorCode?: string;
-  data?: ClusterNodeSystemResourceResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 클러스터 노드 시스템 리소스 응답
- */
-export interface ClusterNodeSystemResourceResponse {
-  /** 노드 이름 */
-  nodeName: string;
-  /** 노드 IP 주소 */
-  nodeIp: string;
-  /** 노드 리소스 정보 */
-  resource: NodeResourceResponse;
-}
-
-/**
- * 노드 CPU 리소스 응답
- */
-export interface NodeCpuResourceResponse {
-  /** 노드 내 CPU 코어 수 */
-  clusterCapacityCore: number;
-}
-
-/**
- * 노드 Disk 리소스 응답
- */
-export interface NodeDiskResourceResponse {
-  /** 노드 내 디스크 용량 (바이트) */
-  clusterCapacityByte: number;
-}
-
-/**
- * 노드 GPU 상세 응답
- */
-export interface NodeGpuDetailResponse {
-  /** 일반 GPU 리소스 */
-  normal: NodeGpuNormalResourceResponse;
-}
-
-/**
- * 노드 일반 GPU 리소스 응답
- */
-export interface NodeGpuNormalResourceResponse {
-  /** 노드 내 GPU 개수 */
-  clusterCapacityCount: number;
-}
-
-/**
- * 노드 GPU 리소스 응답
- */
-export interface NodeGpuResourceResponse {
-  /** GPU 모델명 */
-  gpuName?: string;
-  /** GPU 상세 정보 */
-  detail: NodeGpuDetailResponse;
-}
-
-/**
- * 노드 Memory 리소스 응답
- */
-export interface NodeMemoryResourceResponse {
-  /** 노드 내 메모리 용량 (바이트) */
-  clusterCapacityByte: number;
-}
-
-/**
- * 노드 리소스 응답
- */
-export interface NodeResourceResponse {
-  /** GPU 리소스 */
-  gpu: NodeGpuResourceResponse;
-  /** CPU 리소스 */
-  cpu: NodeCpuResourceResponse;
-  /** Memory 리소스 */
-  memory: NodeMemoryResourceResponse;
-  /** Disk 리소스 */
-  disk: NodeDiskResourceResponse;
-}
-
-export type BaseResponseBatchSystemMetricResponseStatus =
-  (typeof BaseResponseBatchSystemMetricResponseStatus)[keyof typeof BaseResponseBatchSystemMetricResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseBatchSystemMetricResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseBatchSystemMetricResponse {
-  status: BaseResponseBatchSystemMetricResponseStatus;
-  errorCode?: string;
-  data?: BatchSystemMetricResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 복수 시스템 메트릭 배치 조회 응답
- */
-export interface BatchSystemMetricResponse {
-  /** CPU 온도 (°C) */
-  cpuTemperature?: SystemMetricResult;
-  /** CPU 사용률 (%) */
-  cpuUtilization?: SystemMetricResult;
-  /** CPU 평균 부하 (5분) */
-  cpuLoadAverage?: SystemMetricResult;
-  /** 네트워크 수신 속도 (bytes/sec) */
-  nodeNetworkReceive?: SystemMetricResult;
-  /** 네트워크 송신 속도 (bytes/sec) */
-  nodeNetworkTransmit?: SystemMetricResult;
-  /** 디스크 읽기 속도 (bytes/sec) */
-  diskRead?: SystemMetricResult;
-  /** 디스크 쓰기 속도 (bytes/sec) */
-  diskWrite?: SystemMetricResult;
-  /** 디스크 사용률 (%) */
-  diskUsage?: SystemMetricResult;
-  /** 메모리 사용률 (%) */
-  memoryUtilization?: SystemMetricResult;
-  /** 메모리 버퍼 (bytes) */
-  nodeMemoryBuffers?: SystemMetricResult;
-  /** 메모리 캐시 (bytes) */
-  nodeMemoryCached?: SystemMetricResult;
-  /** 메모리 총량 (bytes) */
-  nodeMemoryTotal?: SystemMetricResult;
-  /** 메모리 여유량 (bytes) */
-  nodeMemoryFree?: SystemMetricResult;
-  isEmpty: boolean;
-}
-
-/**
- * 조회 상태
- */
-export type SystemMetricResultStatus =
-  (typeof SystemMetricResultStatus)[keyof typeof SystemMetricResultStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const SystemMetricResultStatus = {
-  SUCCESS: "SUCCESS",
-  FAILED: "FAILED",
-} as const;
-
-/**
- * 개별 시스템 메트릭 조회 결과
- */
-export interface SystemMetricResult {
-  /** 조회 상태 */
-  status: SystemMetricResultStatus;
-  /** 시계열 데이터 (성공 시) */
-  data?: SystemMetricValue[];
-  /** 에러 타입 (실패 시) */
-  error?: string;
-}
-
-/**
- * 시스템 메트릭 측정값
- */
-export interface SystemMetricValue {
-  /** 측정 시간 (UTC, ISO 8601 형식) */
-  dateTime: string;
-  /** 메트릭 값 */
-  value: string;
-}
-
-export type BaseResponseBatchGpuMetricResponseStatus =
-  (typeof BaseResponseBatchGpuMetricResponseStatus)[keyof typeof BaseResponseBatchGpuMetricResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseBatchGpuMetricResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseBatchGpuMetricResponse {
-  status: BaseResponseBatchGpuMetricResponseStatus;
-  errorCode?: string;
-  data?: BatchGpuMetricResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 복수 GPU 메트릭 배치 조회 응답
- */
-export interface BatchGpuMetricResponse {
-  /** GPU 사용률 (%) */
-  gpuUtilization?: MetricResult;
-  /** GPU 메모리 사용률 (%) */
-  gpuMemoryUtilization?: MetricResult;
-  /** GPU 온도 (°C) */
-  gpuTemperature?: MetricResult;
-  /** GPU 팬 속도 (%) */
-  gpuFanSpeed?: MetricResult;
-  /** GPU 전력 사용량 (W) */
-  gpuPowerUsage?: MetricResult;
-  isEmpty: boolean;
-}
-
-/**
- * GPU별 시계열 데이터
- */
-export interface GpuTimeseriesData {
-  /** GPU 모델명 */
-  modelName: string;
-  /** GPU 인덱스 */
-  gpuIndex: string;
-  /** 시계열 메트릭 값 리스트 */
-  values: MetricValue[];
-}
-
-/**
- * 조회 상태
- */
-export type MetricResultStatus =
-  (typeof MetricResultStatus)[keyof typeof MetricResultStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MetricResultStatus = {
-  SUCCESS: "SUCCESS",
-  FAILED: "FAILED",
-} as const;
-
-/**
- * 개별 메트릭 조회 결과
- */
-export interface MetricResult {
-  /** 조회 상태 */
-  status: MetricResultStatus;
-  /** GPU별 시계열 데이터 (성공 시) */
-  data?: GpuTimeseriesData[];
-  /** 에러 타입 (실패 시) */
-  error?: string;
-}
-
-/**
- * 메트릭 측정값
- */
-export interface MetricValue {
-  /** 측정 시간 (UTC, ISO 8601 형식) */
-  dateTime: string;
-  /** 메트릭 값 */
-  value: string;
-}
-
-export type BaseResponseMigConfigurationResponseStatus =
-  (typeof BaseResponseMigConfigurationResponseStatus)[keyof typeof BaseResponseMigConfigurationResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseMigConfigurationResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseMigConfigurationResponse {
-  status: BaseResponseMigConfigurationResponseStatus;
-  errorCode?: string;
-  data?: MigConfigurationResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * MIG 설정 상세
- */
-export interface MigConfigInfo {
-  /** GPU 인덱스 목록 */
-  gpuIndex: number[];
-  /** MIG Config ID */
-  configId: number;
-}
-
-/**
- * MIG 설정 조회 응답
- */
-export interface MigConfigurationResponse {
-  /** 노드 이름 */
-  nodeName: string;
-  /** GPU 모델 (라벨이 설정되지 않은 경우 null) */
-  gpuProduct?: string;
-  /** MIG 설정 정보 (MIG 비활성화 시 null) */
-  migInfo?: MigConfigInfo[];
-}
-
-/**
- * 할당된 리소스
- */
-export interface AllocatedResourceResponse {
-  /** 리소스 이름 */
-  resourceName: string;
-  /** 요청량 (CPU: cores, Memory: bytes) */
-  request: number;
-  /** 요청량 백분율 (Allocatable 대비) */
-  requestPercent: number;
-  /** 제한량 (CPU: cores, Memory: bytes) */
-  limit: number;
-  /** 제한량 백분율 (Allocatable 대비) */
-  limitPercent: number;
-}
-
-export type BaseResponseClusterNodeDetailResponseStatus =
-  (typeof BaseResponseClusterNodeDetailResponseStatus)[keyof typeof BaseResponseClusterNodeDetailResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseClusterNodeDetailResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseClusterNodeDetailResponse {
-  status: BaseResponseClusterNodeDetailResponseStatus;
-  errorCode?: string;
-  data?: ClusterNodeDetailResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 노드 Capacity (총 리소스 용량)
- */
-export type ClusterNodeDetailResponseCapacity = { [key: string]: string };
-
-/**
- * 노드 Allocatable (할당 가능 리소스)
- */
-export type ClusterNodeDetailResponseAllocatable = { [key: string]: string };
-
-/**
- * 클러스터 노드 상세 정보 응답
- */
-export interface ClusterNodeDetailResponse {
-  /** 노드 이름 */
-  nodeName: string;
-  /** 노드 IP 주소 */
-  nodeIp: string;
-  /** 호스트 이름 */
-  hostName: string;
-  /** 노드 역할 */
-  role: string;
-  /** 노드 생성 시각 (UTC) */
-  createdAt?: string;
-  /** 노드 상태 조건 목록 */
-  nodeCondition: NodeConditionResponse[];
-  /** 노드 시스템 정보 */
-  nodeSystemInfo: NodeSystemInfoResponse;
-  /** GPU 정보 목록 */
-  gpuInfo: GpuInfoResponse[];
-  /** 노드 Capacity (총 리소스 용량) */
-  capacity: ClusterNodeDetailResponseCapacity;
-  /** 노드 Allocatable (할당 가능 리소스) */
-  allocatable: ClusterNodeDetailResponseAllocatable;
-  /** 할당된 리소스 목록 */
-  allocatedResource: AllocatedResourceResponse[];
-}
-
-/**
- * GPU 정보
- */
-export interface GpuInfoResponse {
-  /** GPU 타입 */
-  gpuType: string;
-  /** GPU 개수 */
-  gpuCount: string;
-  /** GPU 메모리 (MB) */
-  gpuMemoryMb?: string;
-  /** GPU 드라이버 버전 */
-  gpuDriverVersion?: string;
-}
-
-/**
- * 노드 상태 조건
- */
-export interface NodeConditionResponse {
-  /** 마지막 하트비트 시각 (UTC) */
-  lastHeartbeatTime?: string;
-  /** 마지막 상태 변경 시각 (UTC) */
-  lastTransitionTime?: string;
-  /** 상태 메시지 */
-  message?: string;
-  /** 상태 이유 */
-  reason?: string;
-  /** 상태 */
-  status: string;
-  /** 조건 이름 */
-  conditionName: string;
-}
-
-/**
- * 노드 시스템 정보
- */
-export interface NodeSystemInfoResponse {
-  /** CPU 아키텍처 */
-  architecture: string;
-  /** 부트 ID */
-  bootID: string;
-  /** 컨테이너 런타임 버전 */
-  containerRuntimeVersion: string;
-  /** 커널 버전 */
-  kernelVersion: string;
-  /** kube-proxy 버전 */
-  kubeProxyVersion: string;
-  /** kubelet 버전 */
-  kubeletVersion: string;
-  /** 머신 ID */
-  machineID: string;
-  /** 운영체제 */
-  operatingSystem: string;
-  /** OS 이미지 */
-  osImage: string;
-  /** 시스템 UUID */
-  systemUUID: string;
-}
-
-export type BaseResponseClusterResourceSummaryResponseStatus =
-  (typeof BaseResponseClusterResourceSummaryResponseStatus)[keyof typeof BaseResponseClusterResourceSummaryResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseClusterResourceSummaryResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseClusterResourceSummaryResponse {
-  status: BaseResponseClusterResourceSummaryResponseStatus;
-  errorCode?: string;
-  data?: ClusterResourceSummaryResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 클러스터 리소스 요약 응답
- */
-export interface ClusterResourceSummaryResponse {
-  /** GPU 리소스 요약 */
-  gpu: GpuSummaryResponse;
-  /** CPU 리소스 요약 */
-  cpu: CpuSummaryResponse;
-  /** Memory 리소스 요약 */
-  memory: MemorySummaryResponse;
-  /** Disk 리소스 요약 */
-  disk: DiskSummaryResponse;
-}
-
-/**
- * CPU 리소스 요약
- */
-export interface CpuSummaryResponse {
-  /** 클러스터 내 전체 CPU 코어 수 */
-  clusterCapacityCores: number;
-  /** 워크스페이스 quota 총합 (코어) */
-  requestedCores: number;
-  /** 실제 사용 중인 CPU 코어 수 */
-  usedCores: number;
-}
-
-/**
- * Disk 리소스 요약
- */
-export interface DiskSummaryResponse {
-  /** 클러스터 내 전체 디스크 용량 (바이트) */
-  clusterCapacityBytes: string;
-  /** 워크스페이스에서 사용 중인 디스크 (바이트) */
-  usedBytes: string;
-}
-
-/**
- * GPU 상세 정보
- */
-export interface GpuDetailResponse {
-  /** 일반 GPU (non-MIG, non-MPS) */
-  normal: GpuNormalSummaryResponse;
-  /** MIG 프로파일 */
-  mig: MigProfileResponse;
-  /** MPS 프로파일 목록 */
-  mps: MpsProfileResponse[];
-}
-
-/**
- * 일반 GPU 요약
- */
-export interface GpuNormalSummaryResponse {
-  /** 클러스터 내 전체 GPU 개수 */
-  clusterCapacityCount: number;
-  /** 워크스페이스 quota 총합 */
-  requestedCount: number;
-  /** 실제 사용 중인 GPU 개수 */
-  usedCount: number;
-}
-
-/**
- * GPU 리소스 요약
- */
-export interface GpuSummaryResponse {
-  /** GPU 상세 정보 */
-  detail: GpuDetailResponse;
-}
-
-/**
- * Memory 리소스 요약
- */
-export interface MemorySummaryResponse {
-  /** 클러스터 내 전체 메모리 용량 (바이트) */
-  clusterCapacityBytes: string;
-  /** 워크스페이스 quota 총합 (바이트) */
-  requestedBytes: string;
-  /** 실제 사용 중인 메모리 (바이트) */
-  usedBytes: string;
-}
-
-export type BaseResponseListStringStatus =
-  (typeof BaseResponseListStringStatus)[keyof typeof BaseResponseListStringStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseListStringStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseListString {
-  status: BaseResponseListStringStatus;
-  errorCode?: string;
-  data?: string[];
   message?: string;
   timestamp: number;
 }
@@ -6678,11 +5852,26 @@ export interface PageResponseWorkloadReclaimScanHistoryResponse {
 }
 
 /**
+ * 워크로드 잡 타입
+ */
+export type WorkloadReclaimScanHistoryResponseWorkloadJobType =
+  (typeof WorkloadReclaimScanHistoryResponseWorkloadJobType)[keyof typeof WorkloadReclaimScanHistoryResponseWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimScanHistoryResponseWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
  * 자원 회수 스캔 히스토리 응답
  */
 export interface WorkloadReclaimScanHistoryResponse {
   /** 스캔 히스토리 ID */
   scanHistoryId: number;
+  /** 워크로드 잡 타입 */
+  workloadJobType?: WorkloadReclaimScanHistoryResponseWorkloadJobType;
   /** 회수 경고 워크로드 수 */
   reclaimWarningWorkloadCount: number;
   /** 검사 대상 워크로드 수 */
@@ -6697,6 +5886,24 @@ export interface WorkloadReclaimScanHistoryResponse {
   reclaimedMemoryByte: number;
   /** 스캔 실행 일시 */
   createdAt: string;
+}
+
+export type BaseResponseWorkloadReclaimScanHistoryResponseStatus =
+  (typeof BaseResponseWorkloadReclaimScanHistoryResponseStatus)[keyof typeof BaseResponseWorkloadReclaimScanHistoryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkloadReclaimScanHistoryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkloadReclaimScanHistoryResponse {
+  status: BaseResponseWorkloadReclaimScanHistoryResponseStatus;
+  errorCode?: string;
+  data?: WorkloadReclaimScanHistoryResponse;
+  message?: string;
+  timestamp: number;
 }
 
 export type BaseResponsePageResponseWorkloadReclaimScanResultResponseStatus =
@@ -6725,17 +5932,128 @@ export interface PageResponseWorkloadReclaimScanResultResponse {
 }
 
 /**
+ * 리소스 회수 상태
+ */
+export type WorkloadReclaimScanResultResponseReclaimStatus =
+  (typeof WorkloadReclaimScanResultResponseReclaimStatus)[keyof typeof WorkloadReclaimScanResultResponseReclaimStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimScanResultResponseReclaimStatus = {
+  RECLAIMED: "RECLAIMED",
+  WARNING: "WARNING",
+  NORMAL: "NORMAL",
+} as const;
+
+/**
+ * 워크로드 잡 타입
+ */
+export type WorkloadReclaimScanResultResponseWorkloadJobType =
+  (typeof WorkloadReclaimScanResultResponseWorkloadJobType)[keyof typeof WorkloadReclaimScanResultResponseWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimScanResultResponseWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
  * 자원 회수 스캔 결과 응답
  */
 export interface WorkloadReclaimScanResultResponse {
-  /** 스캔 결과 ID */
-  scanResultId: number;
-  /** 워크로드 ID */
-  workloadId: number;
-  /** 스캔 히스토리 ID */
-  scanHistoryId: number;
+  /** 워크로드 이름 */
+  workloadName: string;
+  /** 워크스페이스 이름 */
+  workspaceName: string;
+  /** 리소스 회수 상태 */
+  reclaimStatus: WorkloadReclaimScanResultResponseReclaimStatus;
+  /** 워크로드 잡 타입 */
+  workloadJobType: WorkloadReclaimScanResultResponseWorkloadJobType;
+  /** GPU 요청 수량 */
+  gpu: number;
+  /** CPU 요청 코어 수 */
+  cpu: number;
+  /** 메모리 요청 바이트 */
+  memory: number;
   /** 스캔 결과 생성 일시 */
   createdAt: string;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 워커(POD) 개수 - DISTRIBUTED 워크로드의 경우 numNodes 값, 그 외는 1 */
+  workerCount: number;
+}
+
+export type BaseResponseWorkloadReclaimPolicySnapshotResponseStatus =
+  (typeof BaseResponseWorkloadReclaimPolicySnapshotResponseStatus)[keyof typeof BaseResponseWorkloadReclaimPolicySnapshotResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkloadReclaimPolicySnapshotResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkloadReclaimPolicySnapshotResponse {
+  status: BaseResponseWorkloadReclaimPolicySnapshotResponseStatus;
+  errorCode?: string;
+  data?: WorkloadReclaimPolicySnapshotResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 메트릭 임계값
+ */
+export interface MetricsResponse {
+  /** GPU 사용률 임계값(%) */
+  gpu: number;
+  /** CPU 사용률 임계값(%) */
+  cpu: number;
+  /** 메모리 사용률 임계값(%) */
+  mem: number;
+}
+
+/**
+ * 워크로드 잡 타입
+ */
+export type WorkloadReclaimPolicySnapshotResponseWorkloadJobType =
+  (typeof WorkloadReclaimPolicySnapshotResponseWorkloadJobType)[keyof typeof WorkloadReclaimPolicySnapshotResponseWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimPolicySnapshotResponseWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 회수 조건 (AND/OR)
+ */
+export type WorkloadReclaimPolicySnapshotResponseReclaimOperator =
+  (typeof WorkloadReclaimPolicySnapshotResponseReclaimOperator)[keyof typeof WorkloadReclaimPolicySnapshotResponseReclaimOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WorkloadReclaimPolicySnapshotResponseReclaimOperator = {
+  AND: "AND",
+  OR: "OR",
+} as const;
+
+/**
+ * 자원 회수 정책 스냅샷
+ */
+export interface WorkloadReclaimPolicySnapshotResponse {
+  /** 워크로드 잡 타입 */
+  workloadJobType: WorkloadReclaimPolicySnapshotResponseWorkloadJobType;
+  /** 회수 기준 시간(시간) */
+  operatingHour: number;
+  /** 메트릭 임계값 */
+  metrics: MetricsResponse;
+  /** 회수 조건 (AND/OR) */
+  reclaimOperator: WorkloadReclaimPolicySnapshotResponseReclaimOperator;
+  /** 회수 전 경고 횟수 */
+  reclaimWarningCount: number;
 }
 
 export type BaseResponsePageResponseResourcePresetResponseStatus =
@@ -7201,6 +6519,1443 @@ export interface QueueWorkloadResponse {
   rank?: number;
 }
 
+export type BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus =
+  (typeof BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus)[keyof typeof BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus =
+  {
+    SUCCESS: "SUCCESS",
+    FAIL: "FAIL",
+    ERROR: "ERROR",
+  } as const;
+
+export interface BaseResponsePageResponseMonitoringNotificationHistoryListResponse {
+  status: BaseResponsePageResponseMonitoringNotificationHistoryListResponseStatus;
+  errorCode?: string;
+  data?: PageResponseMonitoringNotificationHistoryListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 모니터링 알림 히스토리 목록 항목
+ */
+export interface MonitoringNotificationHistoryListResponse {
+  /** 알림 히스토리 ID */
+  monitoringNotificationHistoryId: number;
+  /** 노드 이름 */
+  nodeName: string;
+  /** 노드 IP */
+  nodeIp: string;
+  /** 알림 설정 이름 */
+  notificationSetName: string;
+  /** 시스템 알림 활성화 여부 */
+  isSystemNotificationEnabled: boolean;
+  /** 이메일 알림 활성화 여부 */
+  isEmailNotificationEnabled: boolean;
+  /** 알림 발생 일시 */
+  createdAt: string;
+}
+
+export interface PageResponseMonitoringNotificationHistoryListResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: MonitoringNotificationHistoryListResponse[];
+}
+
+export type BaseResponseListMonitoringNotificationSendHistoryResponseStatus =
+  (typeof BaseResponseListMonitoringNotificationSendHistoryResponseStatus)[keyof typeof BaseResponseListMonitoringNotificationSendHistoryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListMonitoringNotificationSendHistoryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListMonitoringNotificationSendHistoryResponse {
+  status: BaseResponseListMonitoringNotificationSendHistoryResponseStatus;
+  errorCode?: string;
+  data?: MonitoringNotificationSendHistoryResponse[];
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 알림 채널
+ */
+export type MonitoringNotificationSendHistoryResponseNotificationChannel =
+  (typeof MonitoringNotificationSendHistoryResponseNotificationChannel)[keyof typeof MonitoringNotificationSendHistoryResponseNotificationChannel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MonitoringNotificationSendHistoryResponseNotificationChannel = {
+  EMAIL: "EMAIL",
+  SYSTEM: "SYSTEM",
+} as const;
+
+/**
+ * 알림 발송 이력 목록 항목
+ */
+export interface MonitoringNotificationSendHistoryResponse {
+  /** 알림 수신자 ID */
+  notificationRecipientId: number;
+  /** 알림 채널 */
+  notificationChannel: MonitoringNotificationSendHistoryResponseNotificationChannel;
+  /** 수신자 정보 */
+  sentRecipient: SentRecipientResponse;
+  /** 발송 일시 */
+  createdAt: string;
+}
+
+/**
+ * 발송 상태
+ */
+export type SentRecipientResponseSendStatus =
+  (typeof SentRecipientResponseSendStatus)[keyof typeof SentRecipientResponseSendStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SentRecipientResponseSendStatus = {
+  SENT: "SENT",
+  FAILED: "FAILED",
+} as const;
+
+/**
+ * 수신자 정보
+ */
+export interface SentRecipientResponse {
+  /** 수신자 ID */
+  creatorId: string;
+  /** 수신자 이름 */
+  creatorName: string;
+  /** 발송 상태 */
+  sendStatus: SentRecipientResponseSendStatus;
+}
+
+export type BaseResponseMonitoringNotificationHistoryDetailResponseStatus =
+  (typeof BaseResponseMonitoringNotificationHistoryDetailResponseStatus)[keyof typeof BaseResponseMonitoringNotificationHistoryDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseMonitoringNotificationHistoryDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseMonitoringNotificationHistoryDetailResponse {
+  status: BaseResponseMonitoringNotificationHistoryDetailResponseStatus;
+  errorCode?: string;
+  data?: MonitoringNotificationHistoryDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 메트릭 타입
+ */
+export type MonitoringNotificationHistoryDetailResponseMetricType =
+  (typeof MonitoringNotificationHistoryDetailResponseMetricType)[keyof typeof MonitoringNotificationHistoryDetailResponseMetricType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MonitoringNotificationHistoryDetailResponseMetricType = {
+  GPU_TEMP: "GPU_TEMP",
+  GPU_MEMORY: "GPU_MEMORY",
+  GPU_USAGE: "GPU_USAGE",
+  MEMORY_USAGE: "MEMORY_USAGE",
+  CPU_USAGE: "CPU_USAGE",
+} as const;
+
+/**
+ * 임계값 연산자
+ */
+export type MonitoringNotificationHistoryDetailResponseThresholdOperator =
+  (typeof MonitoringNotificationHistoryDetailResponseThresholdOperator)[keyof typeof MonitoringNotificationHistoryDetailResponseThresholdOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MonitoringNotificationHistoryDetailResponseThresholdOperator = {
+  GREATER_THAN: "GREATER_THAN",
+  LESS_THAN: "LESS_THAN",
+  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
+} as const;
+
+/**
+ * 모니터링 알림 히스토리 상세 조회 응답
+ */
+export interface MonitoringNotificationHistoryDetailResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** 노드 IP */
+  nodeIp: string;
+  /** 알림 설정 ID */
+  notificationSetId: number;
+  /** 알림 설정 이름 */
+  notificationSetName: string;
+  /** 시스템 알림 활성화 여부 */
+  isSystemNotificationEnabled: boolean;
+  /** 이메일 알림 활성화 여부 */
+  isEmailNotificationEnabled: boolean;
+  /** 메트릭 타입 */
+  metricType: MonitoringNotificationHistoryDetailResponseMetricType;
+  /** 임계값 연산자 */
+  thresholdOperator: MonitoringNotificationHistoryDetailResponseThresholdOperator;
+  /** 임계값 */
+  thresholdValue: number;
+  /** 관측값 (소수점 첫째자리) */
+  observedValue: number;
+  /** 알림 발생 일시 */
+  createdAt: string;
+}
+
+export type BaseResponsePageResponseMonitoringNotificationSetListResponseStatus =
+  (typeof BaseResponsePageResponseMonitoringNotificationSetListResponseStatus)[keyof typeof BaseResponsePageResponseMonitoringNotificationSetListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseMonitoringNotificationSetListResponseStatus =
+  {
+    SUCCESS: "SUCCESS",
+    FAIL: "FAIL",
+    ERROR: "ERROR",
+  } as const;
+
+export interface BaseResponsePageResponseMonitoringNotificationSetListResponse {
+  status: BaseResponsePageResponseMonitoringNotificationSetListResponseStatus;
+  errorCode?: string;
+  data?: PageResponseMonitoringNotificationSetListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 모니터링 알림 설정 목록 조회 응답
+ */
+export interface MonitoringNotificationSetListResponse {
+  /** 알림 설정 ID */
+  notificationSetId: number;
+  /** 알림 설정 이름 */
+  notificationSetName: string;
+  /** 시스템 알림 활성화 여부 */
+  isSystemNotificationEnabled: boolean;
+  /** 이메일 알림 활성화 여부 */
+  isEmailNotificationEnabled: boolean;
+  /** 알림 설정 활성화 여부 */
+  isEnabled: boolean;
+  /** 생성 일시 */
+  createdAt: string;
+}
+
+export interface PageResponseMonitoringNotificationSetListResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: MonitoringNotificationSetListResponse[];
+}
+
+export type BaseResponseMonitoringNotificationSetDetailResponseStatus =
+  (typeof BaseResponseMonitoringNotificationSetDetailResponseStatus)[keyof typeof BaseResponseMonitoringNotificationSetDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseMonitoringNotificationSetDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseMonitoringNotificationSetDetailResponse {
+  status: BaseResponseMonitoringNotificationSetDetailResponseStatus;
+  errorCode?: string;
+  data?: MonitoringNotificationSetDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 모니터링 알림 설정 상세 조회 응답
+ */
+export interface MonitoringNotificationSetDetailResponse {
+  /** 알림 설정 ID */
+  notificationSetId: number;
+  /** 알림 설정 이름 */
+  notificationSetName: string;
+  /** 시스템 알림 활성화 여부 */
+  isSystemNotificationEnabled: boolean;
+  /** 이메일 알림 활성화 여부 */
+  isEmailNotificationEnabled: boolean;
+  /** 모니터링 대상 노드 목록 */
+  node: string[];
+  /** 임계값 설정 목록 */
+  threshold: ThresholdResponse[];
+}
+
+/**
+ * 메트릭 타입
+ */
+export type ThresholdResponseMetric =
+  (typeof ThresholdResponseMetric)[keyof typeof ThresholdResponseMetric];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThresholdResponseMetric = {
+  GPU_TEMP: "GPU_TEMP",
+  GPU_MEMORY: "GPU_MEMORY",
+  GPU_USAGE: "GPU_USAGE",
+  MEMORY_USAGE: "MEMORY_USAGE",
+  CPU_USAGE: "CPU_USAGE",
+} as const;
+
+/**
+ * 비교 연산자
+ */
+export type ThresholdResponseOperator =
+  (typeof ThresholdResponseOperator)[keyof typeof ThresholdResponseOperator];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThresholdResponseOperator = {
+  GREATER_THAN: "GREATER_THAN",
+  LESS_THAN: "LESS_THAN",
+  GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL: "LESS_THAN_OR_EQUAL",
+} as const;
+
+/**
+ * 임계값 응답
+ */
+export interface ThresholdResponse {
+  /** 메트릭 타입 */
+  metric: ThresholdResponseMetric;
+  /** 비교 연산자 */
+  operator: ThresholdResponseOperator;
+  /** 임계값 */
+  value: number;
+  /** 지속 시간 (분) */
+  durationMinutes: number;
+}
+
+export type BaseResponseK8sResourceResponseStatus =
+  (typeof BaseResponseK8sResourceResponseStatus)[keyof typeof BaseResponseK8sResourceResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseK8sResourceResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseK8sResourceResponse {
+  status: BaseResponseK8sResourceResponseStatus;
+  errorCode?: string;
+  data?: K8sResourceResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Kubernetes 리소스 개수 응답
+ */
+export interface K8sResourceResponse {
+  /** Node 개수 */
+  nodeCount: number;
+  /** Service 개수 */
+  serviceCount: number;
+  /** DaemonSet 개수 */
+  daemonsetCount: number;
+  /** PersistentVolume 개수 */
+  persistentVolumeCount: number;
+  /** Namespace 개수 */
+  namespaceCount: number;
+  /** Deployment 개수 */
+  deploymentCount: number;
+  /** StatefulSet 개수 */
+  statefulsetCount: number;
+  /** Pod 개수 */
+  podCount: number;
+}
+
+export type BaseResponseK8sResourceYamlResponseStatus =
+  (typeof BaseResponseK8sResourceYamlResponseStatus)[keyof typeof BaseResponseK8sResourceYamlResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseK8sResourceYamlResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseK8sResourceYamlResponse {
+  status: BaseResponseK8sResourceYamlResponseStatus;
+  errorCode?: string;
+  data?: K8sResourceYamlResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Kubernetes 리소스 YAML 출력 응답
+ */
+export interface K8sResourceYamlResponse {
+  /** YAML 형식의 전체 리소스 정의 (metadata, spec, status 포함) */
+  yaml: string;
+}
+
+export type BaseResponseK8sResourceDescribeResponseStatus =
+  (typeof BaseResponseK8sResourceDescribeResponseStatus)[keyof typeof BaseResponseK8sResourceDescribeResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseK8sResourceDescribeResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseK8sResourceDescribeResponse {
+  status: BaseResponseK8sResourceDescribeResponseStatus;
+  errorCode?: string;
+  data?: K8sResourceDescribeResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Kubernetes 리소스 상세 조회 응답
+ */
+export interface K8sResourceDescribeResponse {
+  /** kubectl describe 형식의 상세 정보 */
+  description: string;
+}
+
+export type BaseResponsePageResponseStatefulSetResponseStatus =
+  (typeof BaseResponsePageResponseStatefulSetResponseStatus)[keyof typeof BaseResponsePageResponseStatefulSetResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseStatefulSetResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseStatefulSetResponse {
+  status: BaseResponsePageResponseStatefulSetResponseStatus;
+  errorCode?: string;
+  data?: PageResponseStatefulSetResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseStatefulSetResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: StatefulSetResponse[];
+}
+
+/**
+ * Kubernetes StatefulSet 응답
+ */
+export interface StatefulSetResponse {
+  /** StatefulSet 이름 */
+  name: string;
+  /** 네임스페이스 */
+  namespace: string;
+  /** Pod 개수 (실행중/전체) */
+  pods: string;
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export type BaseResponsePageResponseServiceResponseStatus =
+  (typeof BaseResponsePageResponseServiceResponseStatus)[keyof typeof BaseResponsePageResponseServiceResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseServiceResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseServiceResponse {
+  status: BaseResponsePageResponseServiceResponseStatus;
+  errorCode?: string;
+  data?: PageResponseServiceResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseServiceResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ServiceResponse[];
+}
+
+/**
+ * Kubernetes Service 응답
+ */
+export interface ServiceResponse {
+  /** 서비스 이름 */
+  name: string;
+  /** 네임스페이스 */
+  namespace: string;
+  /** 서비스 타입 */
+  type: string;
+  /** 포트 목록 */
+  ports: string[];
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export type BaseResponsePageResponsePodResponseStatus =
+  (typeof BaseResponsePageResponsePodResponseStatus)[keyof typeof BaseResponsePageResponsePodResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponsePodResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponsePodResponse {
+  status: BaseResponsePageResponsePodResponseStatus;
+  errorCode?: string;
+  data?: PageResponsePodResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponsePodResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: PodResponse[];
+}
+
+/**
+ * Kubernetes Pod 응답
+ */
+export interface PodResponse {
+  /** Pod 이름 */
+  name: string;
+  /** 네임스페이스 */
+  namespace: string;
+  /** 노드 이름 */
+  node: string;
+  /** Pod 상태 */
+  status: string;
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export type BaseResponsePageResponsePersistentVolumeResponseStatus =
+  (typeof BaseResponsePageResponsePersistentVolumeResponseStatus)[keyof typeof BaseResponsePageResponsePersistentVolumeResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponsePersistentVolumeResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponsePersistentVolumeResponse {
+  status: BaseResponsePageResponsePersistentVolumeResponseStatus;
+  errorCode?: string;
+  data?: PageResponsePersistentVolumeResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponsePersistentVolumeResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: PersistentVolumeResponse[];
+}
+
+/**
+ * Kubernetes PersistentVolume 응답
+ */
+export interface PersistentVolumeResponse {
+  /** PersistentVolume 이름 */
+  name: string;
+  /** 스토리지 클래스 */
+  storageClass?: string;
+  /** PersistentVolume 상태 */
+  status: string;
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export type BaseResponsePageResponseNodeResponseStatus =
+  (typeof BaseResponsePageResponseNodeResponseStatus)[keyof typeof BaseResponsePageResponseNodeResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseNodeResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseNodeResponse {
+  status: BaseResponsePageResponseNodeResponseStatus;
+  errorCode?: string;
+  data?: PageResponseNodeResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Kubernetes Node 응답
+ */
+export interface NodeResponse {
+  /** 노드 이름 */
+  name: string;
+  /** 노드 역할 목록 */
+  roles: string[];
+  /** GPU 이름 */
+  gpuName?: string;
+  /** 노드 상태 */
+  status: string;
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export interface PageResponseNodeResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: NodeResponse[];
+}
+
+export type BaseResponsePageResponseNamespaceResponseStatus =
+  (typeof BaseResponsePageResponseNamespaceResponseStatus)[keyof typeof BaseResponsePageResponseNamespaceResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseNamespaceResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseNamespaceResponse {
+  status: BaseResponsePageResponseNamespaceResponseStatus;
+  errorCode?: string;
+  data?: PageResponseNamespaceResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Kubernetes Namespace 응답
+ */
+export interface NamespaceResponse {
+  /** 네임스페이스 이름 */
+  name: string;
+  /** 생성 후 경과 시간 */
+  age: string;
+  /** 네임스페이스 상태 */
+  status: string;
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export interface PageResponseNamespaceResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: NamespaceResponse[];
+}
+
+export type BaseResponsePageResponseDeploymentResponseStatus =
+  (typeof BaseResponsePageResponseDeploymentResponseStatus)[keyof typeof BaseResponsePageResponseDeploymentResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseDeploymentResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseDeploymentResponse {
+  status: BaseResponsePageResponseDeploymentResponseStatus;
+  errorCode?: string;
+  data?: PageResponseDeploymentResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Kubernetes Deployment 응답
+ */
+export interface DeploymentResponse {
+  /** Deployment 이름 */
+  name: string;
+  /** 네임스페이스 */
+  namespace: string;
+  /** Pod 개수 (실행중/전체) */
+  pods: string;
+  /** Deployment 조건 목록 */
+  conditions: string[];
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export interface PageResponseDeploymentResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: DeploymentResponse[];
+}
+
+export type BaseResponsePageResponseDaemonSetResponseStatus =
+  (typeof BaseResponsePageResponseDaemonSetResponseStatus)[keyof typeof BaseResponsePageResponseDaemonSetResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseDaemonSetResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseDaemonSetResponse {
+  status: BaseResponsePageResponseDaemonSetResponseStatus;
+  errorCode?: string;
+  data?: PageResponseDaemonSetResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Kubernetes DaemonSet 응답
+ */
+export interface DaemonSetResponse {
+  /** DaemonSet 이름 */
+  name: string;
+  /** 네임스페이스 */
+  namespace: string;
+  /** Pod 개수 (실행중/전체) */
+  pods: string;
+  /** 생성 시간 (UTC) */
+  createdAt: string;
+}
+
+export interface PageResponseDaemonSetResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: DaemonSetResponse[];
+}
+
+export type BaseResponsePageResponseK8sEventResponseStatus =
+  (typeof BaseResponsePageResponseK8sEventResponseStatus)[keyof typeof BaseResponsePageResponseK8sEventResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseK8sEventResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseK8sEventResponse {
+  status: BaseResponsePageResponseK8sEventResponseStatus;
+  errorCode?: string;
+  data?: PageResponseK8sEventResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 이벤트 타입
+ */
+export type K8sEventResponseEventType =
+  (typeof K8sEventResponseEventType)[keyof typeof K8sEventResponseEventType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const K8sEventResponseEventType = {
+  Normal: "Normal",
+  Warning: "Warning",
+} as const;
+
+/**
+ * Kubernetes 이벤트 응답
+ */
+export interface K8sEventResponse {
+  /** 네임스페이스 */
+  namespace: string;
+  /** 마지막 관찰 시간 (UTC) */
+  lastObservedAt: string;
+  /** 이벤트 타입 */
+  eventType: K8sEventResponseEventType;
+  /** 이벤트 발생 이유 */
+  eventReason: string;
+  /** 관련 객체 (kind/name 형식) */
+  object: string;
+  /** 이벤트 메시지 */
+  message: string;
+  /** 관련 객체의 IP 주소 (Pod IP 또는 Node IP) */
+  ip?: string;
+}
+
+export interface PageResponseK8sEventResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: K8sEventResponse[];
+}
+
+export type BaseResponsePageResponseClusterNodeListResponseStatus =
+  (typeof BaseResponsePageResponseClusterNodeListResponseStatus)[keyof typeof BaseResponsePageResponseClusterNodeListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseClusterNodeListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseClusterNodeListResponse {
+  status: BaseResponsePageResponseClusterNodeListResponseStatus;
+  errorCode?: string;
+  data?: PageResponseClusterNodeListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * MIG 설정 상태
+ */
+export type ClusterNodeListResponseMigConfigState =
+  (typeof ClusterNodeListResponseMigConfigState)[keyof typeof ClusterNodeListResponseMigConfigState];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ClusterNodeListResponseMigConfigState = {
+  NOT_SUPPORTED: "NOT_SUPPORTED",
+  NONE: "NONE",
+  PENDING: "PENDING",
+  FAILED: "FAILED",
+  READY: "READY",
+} as const;
+
+/**
+ * 클러스터 노드 정보 응답
+ */
+export interface ClusterNodeListResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** 노드 IP */
+  nodeIp: string;
+  /** GPU 타입 */
+  gpuType?: string;
+  /** GPU 개수 */
+  gpuCount: number;
+  /** GPU 활용률 (%) */
+  gpuUtilizationPercent?: number;
+  /** CPU 활용률 (%) */
+  cpuUtilizationPercent?: number;
+  /** 메모리 활용률 (%) */
+  memoryUtilizationPercent?: number;
+  /** 디스크 활용률 (%) */
+  diskUtilizationPercent?: number;
+  /** 노드 생성 시각 (UTC) */
+  createdAt?: string;
+  /** 스케줄링 가능 여부 (cordon 상태) */
+  isScheduling: boolean;
+  /** MIG 활성화 여부 */
+  isMigEnabled: boolean;
+  /** MIG 설정 상태 */
+  migConfigState: ClusterNodeListResponseMigConfigState;
+}
+
+export interface PageResponseClusterNodeListResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ClusterNodeListResponse[];
+}
+
+export type BaseResponseClusterNodeSystemResourceResponseStatus =
+  (typeof BaseResponseClusterNodeSystemResourceResponseStatus)[keyof typeof BaseResponseClusterNodeSystemResourceResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseClusterNodeSystemResourceResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseClusterNodeSystemResourceResponse {
+  status: BaseResponseClusterNodeSystemResourceResponseStatus;
+  errorCode?: string;
+  data?: ClusterNodeSystemResourceResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 클러스터 노드 시스템 리소스 응답
+ */
+export interface ClusterNodeSystemResourceResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** 노드 IP 주소 */
+  nodeIp: string;
+  /** 노드 리소스 정보 */
+  resource: NodeResourceResponse;
+}
+
+/**
+ * 노드 CPU 리소스 응답
+ */
+export interface NodeCpuResourceResponse {
+  /** 노드 내 CPU 코어 수 */
+  clusterCapacityCore: number;
+}
+
+/**
+ * 노드 Disk 리소스 응답
+ */
+export interface NodeDiskResourceResponse {
+  /** 노드 내 디스크 용량 (바이트) */
+  clusterCapacityByte: number;
+}
+
+/**
+ * 노드 GPU 상세 응답
+ */
+export interface NodeGpuDetailResponse {
+  /** 일반 GPU 리소스 */
+  normal: NodeGpuNormalResourceResponse;
+}
+
+/**
+ * 노드 일반 GPU 리소스 응답
+ */
+export interface NodeGpuNormalResourceResponse {
+  /** 노드 내 GPU 개수 */
+  clusterCapacityCount: number;
+}
+
+/**
+ * 노드 GPU 리소스 응답
+ */
+export interface NodeGpuResourceResponse {
+  /** GPU 모델명 */
+  gpuName?: string;
+  /** GPU 상세 정보 */
+  detail: NodeGpuDetailResponse;
+}
+
+/**
+ * 노드 Memory 리소스 응답
+ */
+export interface NodeMemoryResourceResponse {
+  /** 노드 내 메모리 용량 (바이트) */
+  clusterCapacityByte: number;
+}
+
+/**
+ * 노드 리소스 응답
+ */
+export interface NodeResourceResponse {
+  /** GPU 리소스 */
+  gpu: NodeGpuResourceResponse;
+  /** CPU 리소스 */
+  cpu: NodeCpuResourceResponse;
+  /** Memory 리소스 */
+  memory: NodeMemoryResourceResponse;
+  /** Disk 리소스 */
+  disk: NodeDiskResourceResponse;
+}
+
+export type BaseResponseBatchSystemMetricResponseStatus =
+  (typeof BaseResponseBatchSystemMetricResponseStatus)[keyof typeof BaseResponseBatchSystemMetricResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseBatchSystemMetricResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseBatchSystemMetricResponse {
+  status: BaseResponseBatchSystemMetricResponseStatus;
+  errorCode?: string;
+  data?: BatchSystemMetricResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 복수 시스템 메트릭 배치 조회 응답
+ */
+export interface BatchSystemMetricResponse {
+  /** CPU 온도 (°C) */
+  cpuTemperature?: SystemMetricResult;
+  /** CPU 사용률 (%) */
+  cpuUtilization?: SystemMetricResult;
+  /** CPU 평균 부하 (5분) */
+  cpuLoadAverage?: SystemMetricResult;
+  /** 네트워크 수신 속도 (bytes/sec) */
+  nodeNetworkReceive?: SystemMetricResult;
+  /** 네트워크 송신 속도 (bytes/sec) */
+  nodeNetworkTransmit?: SystemMetricResult;
+  /** 디스크 읽기 속도 (bytes/sec) */
+  diskRead?: SystemMetricResult;
+  /** 디스크 쓰기 속도 (bytes/sec) */
+  diskWrite?: SystemMetricResult;
+  /** 디스크 사용률 (%) */
+  diskUtilization?: SystemMetricResult;
+  /** 메모리 사용률 (%) */
+  memoryUtilization?: SystemMetricResult;
+  /** 메모리 버퍼 (bytes) */
+  nodeMemoryBuffers?: SystemMetricResult;
+  /** 메모리 캐시 (bytes) */
+  nodeMemoryCached?: SystemMetricResult;
+  /** 메모리 총량 (bytes) */
+  nodeMemoryTotal?: SystemMetricResult;
+  /** 메모리 여유량 (bytes) */
+  nodeMemoryFree?: SystemMetricResult;
+}
+
+/**
+ * 조회 상태
+ */
+export type SystemMetricResultStatus =
+  (typeof SystemMetricResultStatus)[keyof typeof SystemMetricResultStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SystemMetricResultStatus = {
+  SUCCESS: "SUCCESS",
+  FAILED: "FAILED",
+} as const;
+
+/**
+ * 개별 시스템 메트릭 조회 결과
+ */
+export interface SystemMetricResult {
+  /** 조회 상태 */
+  status: SystemMetricResultStatus;
+  /** 시계열 데이터 (성공 시) */
+  data?: SystemMetricValue[];
+  /** 에러 타입 (실패 시) */
+  error?: string;
+}
+
+/**
+ * 시스템 메트릭 측정값
+ */
+export interface SystemMetricValue {
+  /** 측정 시간 (UTC, ISO 8601 형식) */
+  dateTime: string;
+  /** 메트릭 값 */
+  value: string;
+}
+
+export type BaseResponseBatchGpuMetricResponseStatus =
+  (typeof BaseResponseBatchGpuMetricResponseStatus)[keyof typeof BaseResponseBatchGpuMetricResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseBatchGpuMetricResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseBatchGpuMetricResponse {
+  status: BaseResponseBatchGpuMetricResponseStatus;
+  errorCode?: string;
+  data?: BatchGpuMetricResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 복수 GPU 메트릭 배치 조회 응답
+ */
+export interface BatchGpuMetricResponse {
+  /** GPU 사용률 (%) */
+  gpuUtilization?: MetricResult;
+  /** GPU 메모리 사용률 (%) */
+  gpuMemoryUtilization?: MetricResult;
+  /** GPU 온도 (°C) */
+  gpuTemperature?: MetricResult;
+  /** GPU 팬 속도 (%) */
+  gpuFanSpeed?: MetricResult;
+  /** GPU 전력 사용량 (W) */
+  gpuPowerUsage?: MetricResult;
+}
+
+/**
+ * GPU별 시계열 데이터
+ */
+export interface GpuTimeseriesData {
+  /** GPU 모델명 */
+  modelName: string;
+  /** GPU 인덱스 */
+  gpuIndex: string;
+  /** 시계열 메트릭 값 리스트 */
+  values: MetricValue[];
+}
+
+/**
+ * 조회 상태
+ */
+export type MetricResultStatus =
+  (typeof MetricResultStatus)[keyof typeof MetricResultStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MetricResultStatus = {
+  SUCCESS: "SUCCESS",
+  FAILED: "FAILED",
+} as const;
+
+/**
+ * 개별 메트릭 조회 결과
+ */
+export interface MetricResult {
+  /** 조회 상태 */
+  status: MetricResultStatus;
+  /** GPU별 시계열 데이터 (성공 시) */
+  data?: GpuTimeseriesData[];
+  /** 에러 타입 (실패 시) */
+  error?: string;
+}
+
+/**
+ * 메트릭 측정값
+ */
+export interface MetricValue {
+  /** 측정 시간 (UTC, ISO 8601 형식) */
+  dateTime: string;
+  /** 메트릭 값 */
+  value: string;
+}
+
+export type BaseResponseMigConfigurationResponseStatus =
+  (typeof BaseResponseMigConfigurationResponseStatus)[keyof typeof BaseResponseMigConfigurationResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseMigConfigurationResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseMigConfigurationResponse {
+  status: BaseResponseMigConfigurationResponseStatus;
+  errorCode?: string;
+  data?: MigConfigurationResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * MIG 설정 상세
+ */
+export interface MigConfigInfo {
+  /** GPU 인덱스 목록 */
+  gpuIndex: number[];
+  /** MIG Config ID */
+  configId: number;
+}
+
+/**
+ * MIG 설정 조회 응답
+ */
+export interface MigConfigurationResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** GPU 모델 (라벨이 설정되지 않은 경우 null) */
+  gpuProduct?: string;
+  /** MIG 설정 정보 (MIG 비활성화 시 null) */
+  migInfo?: MigConfigInfo[];
+}
+
+/**
+ * 할당된 리소스
+ */
+export interface AllocatedResourceResponse {
+  /** 리소스 이름 */
+  resourceName: string;
+  /** 요청량 (CPU: cores, Memory: bytes) */
+  request: number;
+  /** 요청량 백분율 (Allocatable 대비) */
+  requestPercent: number;
+  /** 제한량 (CPU: cores, Memory: bytes) */
+  limit: number;
+  /** 제한량 백분율 (Allocatable 대비) */
+  limitPercent: number;
+}
+
+export type BaseResponseClusterNodeDetailResponseStatus =
+  (typeof BaseResponseClusterNodeDetailResponseStatus)[keyof typeof BaseResponseClusterNodeDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseClusterNodeDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseClusterNodeDetailResponse {
+  status: BaseResponseClusterNodeDetailResponseStatus;
+  errorCode?: string;
+  data?: ClusterNodeDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 노드 Capacity (총 리소스 용량)
+ */
+export type ClusterNodeDetailResponseCapacity = { [key: string]: string };
+
+/**
+ * 노드 Allocatable (할당 가능 리소스)
+ */
+export type ClusterNodeDetailResponseAllocatable = { [key: string]: string };
+
+/**
+ * 클러스터 노드 상세 정보 응답
+ */
+export interface ClusterNodeDetailResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** 노드 IP 주소 */
+  nodeIp: string;
+  /** 호스트 이름 */
+  hostName: string;
+  /** 노드 역할 */
+  role: string;
+  /** 노드 생성 시각 (UTC) */
+  createdAt?: string;
+  /** 노드 상태 조건 목록 */
+  nodeCondition: NodeConditionResponse[];
+  /** 노드 시스템 정보 */
+  nodeSystemInfo: NodeSystemInfoResponse;
+  /** GPU 정보 목록 */
+  gpuInfo: GpuInfoResponse[];
+  /** 노드 Capacity (총 리소스 용량) */
+  capacity: ClusterNodeDetailResponseCapacity;
+  /** 노드 Allocatable (할당 가능 리소스) */
+  allocatable: ClusterNodeDetailResponseAllocatable;
+  /** 할당된 리소스 목록 */
+  allocatedResource: AllocatedResourceResponse[];
+}
+
+/**
+ * GPU 정보
+ */
+export interface GpuInfoResponse {
+  /** GPU 타입 */
+  gpuType: string;
+  /** GPU 개수 */
+  gpuCount: string;
+  /** GPU 메모리 (MB) */
+  gpuMemoryMb?: string;
+  /** GPU 드라이버 버전 */
+  gpuDriverVersion?: string;
+}
+
+/**
+ * 노드 상태 조건
+ */
+export interface NodeConditionResponse {
+  /** 마지막 하트비트 시각 (UTC) */
+  lastHeartbeatTime?: string;
+  /** 마지막 상태 변경 시각 (UTC) */
+  lastTransitionTime?: string;
+  /** 상태 메시지 */
+  message?: string;
+  /** 상태 이유 */
+  reason?: string;
+  /** 상태 */
+  status: string;
+  /** 조건 이름 */
+  conditionName: string;
+}
+
+/**
+ * 노드 시스템 정보
+ */
+export interface NodeSystemInfoResponse {
+  /** CPU 아키텍처 */
+  architecture: string;
+  /** 부트 ID */
+  bootID: string;
+  /** 컨테이너 런타임 버전 */
+  containerRuntimeVersion: string;
+  /** 커널 버전 */
+  kernelVersion: string;
+  /** kube-proxy 버전 */
+  kubeProxyVersion: string;
+  /** kubelet 버전 */
+  kubeletVersion: string;
+  /** 머신 ID */
+  machineID: string;
+  /** 운영체제 */
+  operatingSystem: string;
+  /** OS 이미지 */
+  osImage: string;
+  /** 시스템 UUID */
+  systemUUID: string;
+}
+
+export type BaseResponseClusterResourceSummaryResponseStatus =
+  (typeof BaseResponseClusterResourceSummaryResponseStatus)[keyof typeof BaseResponseClusterResourceSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseClusterResourceSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseClusterResourceSummaryResponse {
+  status: BaseResponseClusterResourceSummaryResponseStatus;
+  errorCode?: string;
+  data?: ClusterResourceSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 클러스터 리소스 요약 응답
+ */
+export interface ClusterResourceSummaryResponse {
+  /** GPU 리소스 요약 */
+  gpu: GpuSummaryResponse;
+  /** CPU 리소스 요약 */
+  cpu: CpuSummaryResponse;
+  /** Memory 리소스 요약 */
+  memory: MemorySummaryResponse;
+  /** Disk 리소스 요약 */
+  disk: DiskSummaryResponse;
+}
+
+/**
+ * CPU 리소스 요약
+ */
+export interface CpuSummaryResponse {
+  /** 클러스터 내 전체 CPU 코어 수 */
+  clusterCapacityCores: number;
+  /** 워크스페이스 quota 총합 (코어) */
+  requestedCores: number;
+  /** 실제 사용 중인 CPU 코어 수 */
+  usedCores: number;
+}
+
+/**
+ * Disk 리소스 요약
+ */
+export interface DiskSummaryResponse {
+  /** 클러스터 내 전체 디스크 용량 (바이트) */
+  clusterCapacityBytes: string;
+  /** 워크스페이스에서 사용 중인 디스크 (바이트) */
+  usedBytes: string;
+}
+
+/**
+ * GPU 리소스 요약
+ */
+export interface GpuSummaryResponse {
+  /** GPU 상세 정보 */
+  detail: GpuDetailResponse;
+}
+
+/**
+ * Memory 리소스 요약
+ */
+export interface MemorySummaryResponse {
+  /** 클러스터 내 전체 메모리 용량 (바이트) */
+  clusterCapacityBytes: string;
+  /** 워크스페이스 quota 총합 (바이트) */
+  requestedBytes: string;
+  /** 실제 사용 중인 메모리 (바이트) */
+  usedBytes: string;
+}
+
+export type BaseResponseListClusterNodeSummaryResponseStatus =
+  (typeof BaseResponseListClusterNodeSummaryResponseStatus)[keyof typeof BaseResponseListClusterNodeSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListClusterNodeSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListClusterNodeSummaryResponse {
+  status: BaseResponseListClusterNodeSummaryResponseStatus;
+  errorCode?: string;
+  data?: ClusterNodeSummaryResponse[];
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 클러스터 노드 CPU 리소스 응답
+ */
+export interface ClusterNodeCpuResponse {
+  /** 할당량 CPU 코어 수 (소수점 지원) */
+  quotaCore: number;
+  /** 사용 중인 CPU 코어 수 (소수점 지원) */
+  usedCore: number;
+}
+
+/**
+ * 클러스터 노드 GPU 리소스 응답
+ */
+export interface ClusterNodeGpuResponse {
+  /** GPU 제품명 */
+  gpuName: string;
+  /** GPU 타입 */
+  gpuType: string;
+  /** 할당량 GPU 수 */
+  quotaCount: number;
+  /** 사용 중인 GPU 수 */
+  usedCount: number;
+  /** GPU 상세 정보 */
+  detail: AdminGpuDetailResponse;
+}
+
+/**
+ * 클러스터 노드 리소스 응답
+ */
+export interface ClusterNodeResourceResponse {
+  /** GPU 리소스 정보 */
+  gpu?: ClusterNodeGpuResponse;
+  /** CPU 리소스 정보 */
+  cpu: ClusterNodeCpuResponse;
+  /** 메모리 리소스 정보 */
+  memory: AdminMemoryResourceResponse;
+}
+
+/**
+ * 클러스터 노드 요약 정보 응답
+ */
+export interface ClusterNodeSummaryResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** 노드 리소스 정보 */
+  resource: ClusterNodeResourceResponse;
+}
+
+export type BaseResponseListStringStatus =
+  (typeof BaseResponseListStringStatus)[keyof typeof BaseResponseListStringStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListStringStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListString {
+  status: BaseResponseListStringStatus;
+  errorCode?: string;
+  data?: string[];
+  message?: string;
+  timestamp: number;
+}
+
 /**
  * 계정 역할. 가능한 값: SUPER_ADMIN, ADMIN, USER
  */
@@ -7638,6 +8393,10 @@ export const ProfileResponseAccountRole = {
 export interface ProfileResponse {
   /** 계정 표시 이름 (성 + 이름) */
   accountName: string;
+  /** 성 (Last Name) */
+  lastName: string;
+  /** 이름 (First Name) */
+  firstName: string;
   /** 계정 고유 ID (Keycloak User ID, UUID 형식) */
   accountId: string;
   /** 이메일 주소 */
@@ -7675,6 +8434,34 @@ export interface BaseResponsePageResponseNotificationItemResponse {
 }
 
 /**
+ * 알림 설정명
+ */
+export type NotificationItemResponseNotificationSetName =
+  (typeof NotificationItemResponseNotificationSetName)[keyof typeof NotificationItemResponseNotificationSetName];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationItemResponseNotificationSetName = {
+  LICENSE_EXPIRY_WARNING: "LICENSE_EXPIRY_WARNING",
+  USER_SIGNUP: "USER_SIGNUP",
+  VULNERABILITY_IMAGE_REQUEST: "VULNERABILITY_IMAGE_REQUEST",
+  WORKLOAD_VULNERABILITY: "WORKLOAD_VULNERABILITY",
+  NODE_FAILURE: "NODE_FAILURE",
+  MIG_APPLIED: "MIG_APPLIED",
+  MIG_FAILURE: "MIG_FAILURE",
+  WORKSPACE_CREATED: "WORKSPACE_CREATED",
+  WORKSPACE_RESOURCE_EXCEEDED: "WORKSPACE_RESOURCE_EXCEEDED",
+  WORKSPACE_RESOURCE_REQUEST: "WORKSPACE_RESOURCE_REQUEST",
+  WORKLOAD_RESOURCE_RECLAIM_RESULT: "WORKLOAD_RESOURCE_RECLAIM_RESULT",
+  WORKSPACE_RESOURCE_REQUEST_RESULT: "WORKSPACE_RESOURCE_REQUEST_RESULT",
+  BATCH_JOB_COMPLETED: "BATCH_JOB_COMPLETED",
+  JOB_RECLAIM_WARNING: "JOB_RECLAIM_WARNING",
+  JOB_RECLAIMED: "JOB_RECLAIMED",
+  IMAGE_COMMIT_REGISTERED: "IMAGE_COMMIT_REGISTERED",
+  WORKLOAD_STARTED: "WORKLOAD_STARTED",
+  WORKLOAD_ERROR: "WORKLOAD_ERROR",
+} as const;
+
+/**
  * 알림 타입
  */
 export type NotificationItemResponseNotificationType =
@@ -7697,6 +8484,8 @@ export const NotificationItemResponseNotificationType = {
 export interface NotificationItemResponse {
   /** 알림 고유 ID */
   notificationId: number;
+  /** 알림 설정명 */
+  notificationSetName: NotificationItemResponseNotificationSetName;
   /** 알림 본문 메시지 */
   notificationContent: string;
   /** 알림 타입 */
@@ -7705,6 +8494,8 @@ export interface NotificationItemResponse {
   createdAt: string;
   /** 사용자 읽음 여부 */
   isRead: boolean;
+  /** 워크스페이스명 (워크스페이스 알림인 경우) */
+  workspaceName?: string;
 }
 
 export interface PageResponseNotificationItemResponse {
@@ -8001,6 +8792,10 @@ export type GetSourceCodeListParams = {
    */
   order?: GetSourceCodeListOrder;
   /**
+   * 내가 생성한 소스코드만 조회
+   */
+  hasMine?: boolean;
+  /**
    * 소스코드 타입 필터
    */
   codeType?: GetSourceCodeListCodeType;
@@ -8156,8 +8951,14 @@ export type GetPublicImageTagListScanStatus =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetPublicImageTagListScanStatus = {
-  SCANNED: "SCANNED",
+  SUCCESS: "SUCCESS",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  STOPPED: "STOPPED",
+  ERROR: "ERROR",
   NOT_SCANNED: "NOT_SCANNED",
+  UNSUPPORTED: "UNSUPPORTED",
+  UNKNOWN: "UNKNOWN",
 } as const;
 
 export type GetPrivateRegistryListParams = {
@@ -8286,8 +9087,14 @@ export type GetPrivateImageTagListScanStatus =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetPrivateImageTagListScanStatus = {
-  SCANNED: "SCANNED",
+  SUCCESS: "SUCCESS",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  STOPPED: "STOPPED",
+  ERROR: "ERROR",
   NOT_SCANNED: "NOT_SCANNED",
+  UNSUPPORTED: "UNSUPPORTED",
+  UNKNOWN: "UNKNOWN",
 } as const;
 
 export type ScanPrivateImageTagParams = {
@@ -8297,21 +9104,7 @@ export type ScanPrivateImageTagParams = {
   workspaceId?: number;
 };
 
-export type GetAllMonitoringNotificationSetsParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-};
-
-export type GetStoragesParams = {
+export type GetAdminStoragesParams = {
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -8327,13 +9120,27 @@ export type GetStoragesParams = {
 
 export type GetPresetsParams = {
   /**
-   * 잡 타입 필터 (BATCH, IDE)
+   * 검색 키워드 (프리셋 이름)
+   * @minLength 0
+   * @maxLength 100
+   */
+  keyword?: string;
+  /**
+   * 잡 타입 필터 (BATCH, INTERACTIVE)
    */
   jobType?: GetPresetsJobType;
   /**
    * 노드 타입 필터 (SINGLE, MULTI)
    */
   nodeType?: GetPresetsNodeType;
+  /**
+   * 정렬 필드 (preset_name, created_at)
+   */
+  sort?: GetPresetsSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetPresetsOrder;
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -8353,7 +9160,8 @@ export type GetPresetsJobType =
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetPresetsJobType = {
   BATCH: "BATCH",
-  IDE: "IDE",
+  INTERACTIVE: "INTERACTIVE",
+  DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
 export type GetPresetsNodeType =
@@ -8363,6 +9171,64 @@ export type GetPresetsNodeType =
 export const GetPresetsNodeType = {
   SINGLE: "SINGLE",
   MULTI: "MULTI",
+} as const;
+
+export type GetPresetsSort =
+  (typeof GetPresetsSort)[keyof typeof GetPresetsSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPresetsSort = {
+  PRESET_NAME: "PRESET_NAME",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type GetPresetsOrder =
+  (typeof GetPresetsOrder)[keyof typeof GetPresetsOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPresetsOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetAllMonitoringNotificationSetsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetAllMonitoringNotificationSetsSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetAllMonitoringNotificationSetsOrder;
+};
+
+export type GetAllMonitoringNotificationSetsSort =
+  (typeof GetAllMonitoringNotificationSetsSort)[keyof typeof GetAllMonitoringNotificationSetsSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllMonitoringNotificationSetsSort = {
+  NOTIFICATION_SET_NAME: "NOTIFICATION_SET_NAME",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type GetAllMonitoringNotificationSetsOrder =
+  (typeof GetAllMonitoringNotificationSetsOrder)[keyof typeof GetAllMonitoringNotificationSetsOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllMonitoringNotificationSetsOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
 } as const;
 
 export type GetCredentialsParams = {
@@ -8383,6 +9249,67 @@ export type GetCredentialsParams = {
   keyword?: string;
 };
 
+export type StreamWorkloadMetricsParams = {
+  /**
+ * 
+            스트리밍할 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEM_UTILIZATION: GPU 메모리 사용률 (%)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - MEM_UTILIZATION: 메모리 사용률 (%)
+        
+ */
+  metrics: StreamWorkloadMetricsMetricsItem[];
+  /**
+   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   */
+  lastSentTime: string;
+};
+
+/**
+ * 워크스페이스 리소스 메트릭 타입
+ */
+export type StreamWorkloadMetricsMetricsItem =
+  (typeof StreamWorkloadMetricsMetricsItem)[keyof typeof StreamWorkloadMetricsMetricsItem];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const StreamWorkloadMetricsMetricsItem = {
+  GPU_REQUESTED_TOTAL_COUNT: "GPU_REQUESTED_TOTAL_COUNT",
+  CPU_REQUESTED_TOTAL_CORE: "CPU_REQUESTED_TOTAL_CORE",
+  MEM_REQUESTED_TOTAL_BYTE: "MEM_REQUESTED_TOTAL_BYTE",
+  GPU_UTILIZATION: "GPU_UTILIZATION",
+  GPU_MEM_UTILIZATION: "GPU_MEM_UTILIZATION",
+  CPU_UTILIZATION: "CPU_UTILIZATION",
+  MEM_UTILIZATION: "MEM_UTILIZATION",
+} as const;
+
+export type StreamWorkspaceResourceMetricsParams = {
+  /**
+   * 워크스페이스 리소스 메트릭 타입
+   */
+  metricsName: StreamWorkspaceResourceMetricsMetricsName;
+  /**
+   * FE가 HTTP API로 마지막으로 받은 데이터 시간 (ISO 8601 UTC 형식). SSE는 이 시간 이후의 증분 데이터만 전송
+   */
+  lastSentTime: string;
+};
+
+export type StreamWorkspaceResourceMetricsMetricsName =
+  (typeof StreamWorkspaceResourceMetricsMetricsName)[keyof typeof StreamWorkspaceResourceMetricsMetricsName];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const StreamWorkspaceResourceMetricsMetricsName = {
+  GPU_REQUESTED_TOTAL_COUNT: "GPU_REQUESTED_TOTAL_COUNT",
+  CPU_REQUESTED_TOTAL_CORE: "CPU_REQUESTED_TOTAL_CORE",
+  MEM_REQUESTED_TOTAL_BYTE: "MEM_REQUESTED_TOTAL_BYTE",
+  GPU_UTILIZATION: "GPU_UTILIZATION",
+  GPU_MEM_UTILIZATION: "GPU_MEM_UTILIZATION",
+  CPU_UTILIZATION: "CPU_UTILIZATION",
+  MEM_UTILIZATION: "MEM_UTILIZATION",
+} as const;
+
 export type StreamNodeSystemMetricsParams = {
   /**
  * 
@@ -8396,7 +9323,7 @@ export type StreamNodeSystemMetricsParams = {
             - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
             - DISK_READ: 디스크 읽기 속도 (bytes/sec)
             - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
@@ -8423,7 +9350,7 @@ export type StreamNodeSystemMetricsParams = {
             - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
             - DISK_READ: 디스크 읽기 속도 (bytes/sec)
             - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
             - MEMORY_UTILIZATION: 메모리 사용률 (%)
             - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
             - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
@@ -8443,7 +9370,7 @@ export const StreamNodeSystemMetricsMetricsItem = {
   NODE_NETWORK_TRANSMIT: "NODE_NETWORK_TRANSMIT",
   DISK_READ: "DISK_READ",
   DISK_WRITE: "DISK_WRITE",
-  DISK_USAGE: "DISK_USAGE",
+  DISK_UTILIZATION: "DISK_UTILIZATION",
   MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
   NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
   NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
@@ -8497,9 +9424,9 @@ export const StreamNodeGpuMetricsMetricsItem = {
 
 export type GetWorkloadResourceMetricsTimeseriesParams = {
   /**
-   * 워크스페이스 리소스 메트릭 타입
+   * 조회할 워크로드 메트릭 종류 목록 (GPU_UTILIZATION, GPU_MEM_UTILIZATION, CPU_UTILIZATION, MEM_UTILIZATION)
    */
-  metricName: GetWorkloadResourceMetricsTimeseriesMetricName;
+  metrics: GetWorkloadResourceMetricsTimeseriesMetricsItem[];
   /**
    * 조회 시작 시간 (ISO 8601 UTC 형식, 미입력 시 현재 시간 - 1일). 형식: yyyy-MM-ddTHH:mm:ssZ
    */
@@ -8515,11 +9442,14 @@ export type GetWorkloadResourceMetricsTimeseriesParams = {
   step: string;
 };
 
-export type GetWorkloadResourceMetricsTimeseriesMetricName =
-  (typeof GetWorkloadResourceMetricsTimeseriesMetricName)[keyof typeof GetWorkloadResourceMetricsTimeseriesMetricName];
+/**
+ * 워크스페이스 리소스 메트릭 타입
+ */
+export type GetWorkloadResourceMetricsTimeseriesMetricsItem =
+  (typeof GetWorkloadResourceMetricsTimeseriesMetricsItem)[keyof typeof GetWorkloadResourceMetricsTimeseriesMetricsItem];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetWorkloadResourceMetricsTimeseriesMetricName = {
+export const GetWorkloadResourceMetricsTimeseriesMetricsItem = {
   GPU_REQUESTED_TOTAL_COUNT: "GPU_REQUESTED_TOTAL_COUNT",
   CPU_REQUESTED_TOTAL_CORE: "CPU_REQUESTED_TOTAL_CORE",
   MEM_REQUESTED_TOTAL_BYTE: "MEM_REQUESTED_TOTAL_BYTE",
@@ -8709,11 +9639,12 @@ export type GetActiveWorkloadsWorkloadStatus =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetActiveWorkloadsWorkloadStatus = {
-  RUNNING: "RUNNING",
-  ERROR: "ERROR",
-  PENDING: "PENDING",
   CREATING: "CREATING",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  TERMINATING: "TERMINATING",
   TERMINATED: "TERMINATED",
+  ERROR: "ERROR",
 } as const;
 
 export type GetActiveWorkloadsSort =
@@ -8762,6 +9693,10 @@ export type GetVolumeListParams = {
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */
   order?: GetVolumeListOrder;
+  /**
+   * 내가 생성한 볼륨만 조회
+   */
+  hasMine?: boolean;
   /**
    * 볼륨 타입 필터
    */
@@ -8812,7 +9747,7 @@ export type PreviewFileParams = {
   path: string;
 };
 
-export type GetStorages1Params = {
+export type GetStoragesParams = {
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -8828,13 +9763,27 @@ export type GetStorages1Params = {
 
 export type GetAvailablePresetsParams = {
   /**
-   * 잡 타입 필터 (BATCH, IDE)
+   * 검색 키워드 (프리셋 이름)
+   * @minLength 0
+   * @maxLength 100
+   */
+  keyword?: string;
+  /**
+   * 잡 타입 필터 (BATCH, INTERACTIVE)
    */
   jobType?: GetAvailablePresetsJobType;
   /**
    * 노드 타입 필터 (SINGLE, MULTI)
    */
   nodeType?: GetAvailablePresetsNodeType;
+  /**
+   * 정렬 필드 (preset_name, created_at)
+   */
+  sort?: GetAvailablePresetsSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetAvailablePresetsOrder;
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -8854,7 +9803,8 @@ export type GetAvailablePresetsJobType =
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetAvailablePresetsJobType = {
   BATCH: "BATCH",
-  IDE: "IDE",
+  INTERACTIVE: "INTERACTIVE",
+  DISTRIBUTED: "DISTRIBUTED",
 } as const;
 
 export type GetAvailablePresetsNodeType =
@@ -8864,6 +9814,24 @@ export type GetAvailablePresetsNodeType =
 export const GetAvailablePresetsNodeType = {
   SINGLE: "SINGLE",
   MULTI: "MULTI",
+} as const;
+
+export type GetAvailablePresetsSort =
+  (typeof GetAvailablePresetsSort)[keyof typeof GetAvailablePresetsSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAvailablePresetsSort = {
+  PRESET_NAME: "PRESET_NAME",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type GetAvailablePresetsOrder =
+  (typeof GetAvailablePresetsOrder)[keyof typeof GetAvailablePresetsOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAvailablePresetsOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
 } as const;
 
 export type GetPublicImageTagVulnerabilitiesParams = {
@@ -8949,6 +9917,11 @@ export type GetPrivateImageTagVulnerabilitiesParams = {
   workspaceId?: number;
 };
 
+export type CheckPrivateImageTagExistsParams = {
+  request: CheckImageTagExistsRequest;
+  workspaceFilter: RegistryWorkspaceFilterRequest;
+};
+
 export type GetPrivateImageTagDetailParams = {
   /**
    * Harbor 이미지 경로
@@ -9025,289 +9998,6 @@ export const GetImageJobsImageSourceType = {
   EXTERNAL: "EXTERNAL",
 } as const;
 
-export type GetAllMonitoringNotificationHistoriesParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 정렬 기준 필드
-   */
-  sort?: GetAllMonitoringNotificationHistoriesSort;
-  /**
-   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
-   */
-  order?: GetAllMonitoringNotificationHistoriesOrder;
-  /**
-   * 조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
-   */
-  startedAt?: string;
-  /**
-   * 조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
-   */
-  endedAt?: string;
-};
-
-export type GetAllMonitoringNotificationHistoriesSort =
-  (typeof GetAllMonitoringNotificationHistoriesSort)[keyof typeof GetAllMonitoringNotificationHistoriesSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetAllMonitoringNotificationHistoriesSort = {
-  NODE_NAME: "NODE_NAME",
-  NODE_IP: "NODE_IP",
-  NOTIFICATION_SET_NAME: "NOTIFICATION_SET_NAME",
-  CREATED_AT: "CREATED_AT",
-} as const;
-
-export type GetAllMonitoringNotificationHistoriesOrder =
-  (typeof GetAllMonitoringNotificationHistoriesOrder)[keyof typeof GetAllMonitoringNotificationHistoriesOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetAllMonitoringNotificationHistoriesOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-export type GetStatefulSetsParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-};
-
-export type GetServicesParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 서비스 타입 필터 (cluster_ip, node_port, load_balancer, external_name)
-   */
-  type?: GetServicesType;
-};
-
-export type GetServicesType =
-  (typeof GetServicesType)[keyof typeof GetServicesType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetServicesType = {
-  CLUSTER_IP: "CLUSTER_IP",
-  NODE_PORT: "NODE_PORT",
-  LOAD_BALANCER: "LOAD_BALANCER",
-  EXTERNAL_NAME: "EXTERNAL_NAME",
-} as const;
-
-export type GetPodsParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * Pod 상태 필터 (pending, running, succeeded, failed, unknown)
-   */
-  status?: GetPodsStatus;
-};
-
-export type GetPodsStatus = (typeof GetPodsStatus)[keyof typeof GetPodsStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetPodsStatus = {
-  PENDING: "PENDING",
-  RUNNING: "RUNNING",
-  SUCCEEDED: "SUCCEEDED",
-  FAILED: "FAILED",
-  UNKNOWN: "UNKNOWN",
-} as const;
-
-export type GetPersistentVolumesParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * PV 상태 필터 (available, bound, released, failed)
-   */
-  status?: GetPersistentVolumesStatus;
-};
-
-export type GetPersistentVolumesStatus =
-  (typeof GetPersistentVolumesStatus)[keyof typeof GetPersistentVolumesStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetPersistentVolumesStatus = {
-  AVAILABLE: "AVAILABLE",
-  BOUND: "BOUND",
-  RELEASED: "RELEASED",
-  FAILED: "FAILED",
-} as const;
-
-export type GetNodesParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 노드 상태 필터 (ready, not_ready)
-   */
-  status?: GetNodesStatus;
-};
-
-export type GetNodesStatus =
-  (typeof GetNodesStatus)[keyof typeof GetNodesStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetNodesStatus = {
-  READY: "READY",
-  NOT_READY: "NOT_READY",
-} as const;
-
-export type GetNamespacesParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 네임스페이스 상태 필터 (active, terminating)
-   */
-  status?: GetNamespacesStatus;
-};
-
-export type GetNamespacesStatus =
-  (typeof GetNamespacesStatus)[keyof typeof GetNamespacesStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetNamespacesStatus = {
-  ACTIVE: "ACTIVE",
-  TERMINATING: "TERMINATING",
-} as const;
-
-export type GetDeploymentsParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-};
-
-export type GetDaemonSetsParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-};
-
-export type GetAllNamespaceEventsParams = {
-  /**
-   * 페이지 번호 (0부터 시작)
-   * @minimum 0
-   */
-  pageNo?: number;
-  /**
-   * 페이지 크기
-   * @minimum 1
-   * @maximum 100
-   */
-  pageSize?: number;
-};
-
 export type FindHubsParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -9371,14 +10061,7 @@ export type GetUngroupedAccountsParams = {
   pageSize?: number;
 };
 
-export type SearchParams = {
-  /**
-   * 검색 키워드 (그룹명, 계정명)
-   */
-  keyword: string;
-};
-
-export type GetClusterNodesParams = {
+export type GetGroupsParams = {
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -9390,162 +10073,14 @@ export type GetClusterNodesParams = {
    * @maximum 100
    */
   pageSize?: number;
-  /**
-   * 정렬 필드
-   */
-  sort?: GetClusterNodesSort;
-  /**
-   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
-   */
-  order?: GetClusterNodesOrder;
 };
 
-export type GetClusterNodesSort =
-  (typeof GetClusterNodesSort)[keyof typeof GetClusterNodesSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetClusterNodesSort = {
-  NODE_NAME: "NODE_NAME",
-} as const;
-
-export type GetClusterNodesOrder =
-  (typeof GetClusterNodesOrder)[keyof typeof GetClusterNodesOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetClusterNodesOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-export type GetNodeSystemMetricsParams = {
+export type SearchParams = {
   /**
- * 
-            조회할 시스템 메트릭 타입 목록 (콤마 구분)
-
-            **허용 메트릭:**
-            - CPU_TEMPERATURE: CPU 온도 (°C)
-            - CPU_UTILIZATION: CPU 사용률 (%)
-            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
-            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
-            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
-            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
-            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
-            - MEMORY_UTILIZATION: 메모리 사용률 (%)
-            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
-            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
-            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
-            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
-        
- */
-  metrics: GetNodeSystemMetricsMetricsItem[];
-  /**
-   * 시작 시간 (ISO 8601 UTC 형식)
+   * 검색 키워드 (그룹명, 계정명)
    */
-  startedAt: string;
-  /**
-   * 종료 시간 (ISO 8601 UTC 형식)
-   */
-  endedAt: string;
-  /**
-   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
-   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
-   */
-  step: string;
+  keyword: string;
 };
-
-/**
- * 
-            조회할 시스템 메트릭 타입 목록 (콤마 구분)
-
-            **허용 메트릭:**
-            - CPU_TEMPERATURE: CPU 온도 (°C)
-            - CPU_UTILIZATION: CPU 사용률 (%)
-            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
-            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
-            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
-            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
-            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
-            - DISK_USAGE: 디스크 사용률 (%)
-            - MEMORY_UTILIZATION: 메모리 사용률 (%)
-            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
-            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
-            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
-            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
-        
- */
-export type GetNodeSystemMetricsMetricsItem =
-  (typeof GetNodeSystemMetricsMetricsItem)[keyof typeof GetNodeSystemMetricsMetricsItem];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetNodeSystemMetricsMetricsItem = {
-  CPU_TEMPERATURE: "CPU_TEMPERATURE",
-  CPU_UTILIZATION: "CPU_UTILIZATION",
-  CPU_LOAD_AVERAGE: "CPU_LOAD_AVERAGE",
-  NODE_NETWORK_RECEIVE: "NODE_NETWORK_RECEIVE",
-  NODE_NETWORK_TRANSMIT: "NODE_NETWORK_TRANSMIT",
-  DISK_READ: "DISK_READ",
-  DISK_WRITE: "DISK_WRITE",
-  DISK_USAGE: "DISK_USAGE",
-  MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
-  NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
-  NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
-  NODE_MEMORY_TOTAL: "NODE_MEMORY_TOTAL",
-  NODE_MEMORY_FREE: "NODE_MEMORY_FREE",
-} as const;
-
-export type GetNodeGpuMetricsParams = {
-  /**
- * 
-            조회할 GPU 메트릭 타입 목록 (콤마 구분)
-
-            **허용 메트릭:**
-            - GPU_UTILIZATION: GPU 사용률 (%)
-            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
-            - GPU_TEMPERATURE: GPU 온도 (°C)
-            - GPU_FAN_SPEED: GPU 팬 속도 (%)
-            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
-        
- */
-  metrics: GetNodeGpuMetricsMetricsItem[];
-  /**
-   * 시작 시간 (ISO 8601 UTC 형식)
-   */
-  startedAt: string;
-  /**
-   * 종료 시간 (ISO 8601 UTC 형식)
-   */
-  endedAt: string;
-  /**
-   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
-   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
-   */
-  step: string;
-};
-
-/**
- * 
-            조회할 GPU 메트릭 타입 목록 (콤마 구분)
-
-            **허용 메트릭:**
-            - GPU_UTILIZATION: GPU 사용률 (%)
-            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
-            - GPU_TEMPERATURE: GPU 온도 (°C)
-            - GPU_FAN_SPEED: GPU 팬 속도 (%)
-            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
-        
- */
-export type GetNodeGpuMetricsMetricsItem =
-  (typeof GetNodeGpuMetricsMetricsItem)[keyof typeof GetNodeGpuMetricsMetricsItem];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetNodeGpuMetricsMetricsItem = {
-  GPU_UTILIZATION: "GPU_UTILIZATION",
-  GPU_MEMORY_UTILIZATION: "GPU_MEMORY_UTILIZATION",
-  GPU_TEMPERATURE: "GPU_TEMPERATURE",
-  GPU_FAN_SPEED: "GPU_FAN_SPEED",
-  GPU_POWER_USAGE: "GPU_POWER_USAGE",
-} as const;
 
 export type GetAllWorkspaces1Params = {
   /**
@@ -9801,7 +10336,85 @@ export type AdminPreviewParams = {
   path: string;
 };
 
+export type AdminGetSourceCodeListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 필드
+   */
+  sort?: AdminGetSourceCodeListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: AdminGetSourceCodeListOrder;
+  /**
+   * 소스코드 타입 필터
+   */
+  codeType?: AdminGetSourceCodeListCodeType;
+};
+
+export type AdminGetSourceCodeListSort =
+  (typeof AdminGetSourceCodeListSort)[keyof typeof AdminGetSourceCodeListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminGetSourceCodeListSort = {
+  SOURCE_CODE_NAME: "SOURCE_CODE_NAME",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type AdminGetSourceCodeListOrder =
+  (typeof AdminGetSourceCodeListOrder)[keyof typeof AdminGetSourceCodeListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminGetSourceCodeListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type AdminGetSourceCodeListCodeType =
+  (typeof AdminGetSourceCodeListCodeType)[keyof typeof AdminGetSourceCodeListCodeType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminGetSourceCodeListCodeType = {
+  GITHUB: "GITHUB",
+  GITLAB: "GITLAB",
+  BITBUCKET: "BITBUCKET",
+} as const;
+
 export type GetScanHistoryListParams = {
+  /**
+   * 조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
+   */
+  startedAt?: string;
+  /**
+   * 조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
+   */
+  endedAt?: string;
+  /**
+   * 워크로드 잡 타입 필터 (INTERACTIVE, BATCH, DISTRIBUTED)
+   */
+  workloadJobType?: GetScanHistoryListWorkloadJobType;
+  /**
+   * 정렬 필드. created_at: 스캔 일시
+   */
+  sort?: GetScanHistoryListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetScanHistoryListOrder;
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -9815,7 +10428,49 @@ export type GetScanHistoryListParams = {
   pageSize?: number;
 };
 
+export type GetScanHistoryListWorkloadJobType =
+  (typeof GetScanHistoryListWorkloadJobType)[keyof typeof GetScanHistoryListWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetScanHistoryListWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+export type GetScanHistoryListSort =
+  (typeof GetScanHistoryListSort)[keyof typeof GetScanHistoryListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetScanHistoryListSort = {
+  CREATED_AT: "CREATED_AT",
+  created_at: "created_at",
+} as const;
+
+export type GetScanHistoryListOrder =
+  (typeof GetScanHistoryListOrder)[keyof typeof GetScanHistoryListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetScanHistoryListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+  asc: "asc",
+  desc: "desc",
+} as const;
+
 export type GetScanResultListParams = {
+  /**
+   * 회수 상태 필터 (선택). RECLAIMED: 회수됨, WARNING: 경고, NORMAL: 정상. null: 전체
+   */
+  reclaimStatus?: GetScanResultListReclaimStatus;
+  /**
+   * 정렬 필드. workload_name: 워크로드명, created_at: 워크로드 생성일시
+   */
+  sort?: GetScanResultListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetScanResultListOrder;
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -9828,6 +10483,38 @@ export type GetScanResultListParams = {
    */
   pageSize?: number;
 };
+
+export type GetScanResultListReclaimStatus =
+  (typeof GetScanResultListReclaimStatus)[keyof typeof GetScanResultListReclaimStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetScanResultListReclaimStatus = {
+  RECLAIMED: "RECLAIMED",
+  WARNING: "WARNING",
+  NORMAL: "NORMAL",
+} as const;
+
+export type GetScanResultListSort =
+  (typeof GetScanResultListSort)[keyof typeof GetScanResultListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetScanResultListSort = {
+  WORKLOAD_NAME: "WORKLOAD_NAME",
+  CREATED_AT: "CREATED_AT",
+  workload_name: "workload_name",
+  created_at: "created_at",
+} as const;
+
+export type GetScanResultListOrder =
+  (typeof GetScanResultListOrder)[keyof typeof GetScanResultListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetScanResultListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+  asc: "asc",
+  desc: "desc",
+} as const;
 
 export type GetPublicImageUsageByAccountParams = {
   /**
@@ -10116,6 +10803,458 @@ export const GetApprovalWaitingSummaryListOrder = {
   DESC: "DESC",
 } as const;
 
+export type GetAllMonitoringNotificationHistoriesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetAllMonitoringNotificationHistoriesSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetAllMonitoringNotificationHistoriesOrder;
+  /**
+   * 조회 시작 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
+   */
+  startedAt?: string;
+  /**
+   * 조회 종료 일시 (ISO 8601 UTC 형식, 예: yyyy-MM-ddTHH:mm:ssZ)
+   */
+  endedAt?: string;
+};
+
+export type GetAllMonitoringNotificationHistoriesSort =
+  (typeof GetAllMonitoringNotificationHistoriesSort)[keyof typeof GetAllMonitoringNotificationHistoriesSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllMonitoringNotificationHistoriesSort = {
+  NODE_NAME: "NODE_NAME",
+  NODE_IP: "NODE_IP",
+  NOTIFICATION_SET_NAME: "NOTIFICATION_SET_NAME",
+  CREATED_AT: "CREATED_AT",
+} as const;
+
+export type GetAllMonitoringNotificationHistoriesOrder =
+  (typeof GetAllMonitoringNotificationHistoriesOrder)[keyof typeof GetAllMonitoringNotificationHistoriesOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllMonitoringNotificationHistoriesOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetStatefulSetsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+};
+
+export type GetServicesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 서비스 타입 필터 (cluster_ip, node_port, load_balancer, external_name)
+   */
+  type?: GetServicesType;
+};
+
+export type GetServicesType =
+  (typeof GetServicesType)[keyof typeof GetServicesType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetServicesType = {
+  CLUSTER_IP: "CLUSTER_IP",
+  NODE_PORT: "NODE_PORT",
+  LOAD_BALANCER: "LOAD_BALANCER",
+  EXTERNAL_NAME: "EXTERNAL_NAME",
+} as const;
+
+export type GetPodsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * Pod 상태 필터 (pending, running, succeeded, failed, unknown)
+   */
+  status?: GetPodsStatus;
+};
+
+export type GetPodsStatus = (typeof GetPodsStatus)[keyof typeof GetPodsStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPodsStatus = {
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  SUCCEEDED: "SUCCEEDED",
+  FAILED: "FAILED",
+  UNKNOWN: "UNKNOWN",
+} as const;
+
+export type GetPersistentVolumesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * PV 상태 필터 (available, bound, released, failed)
+   */
+  status?: GetPersistentVolumesStatus;
+};
+
+export type GetPersistentVolumesStatus =
+  (typeof GetPersistentVolumesStatus)[keyof typeof GetPersistentVolumesStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPersistentVolumesStatus = {
+  AVAILABLE: "AVAILABLE",
+  BOUND: "BOUND",
+  RELEASED: "RELEASED",
+  FAILED: "FAILED",
+} as const;
+
+export type GetNodesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 노드 상태 필터 (ready, not_ready)
+   */
+  status?: GetNodesStatus;
+};
+
+export type GetNodesStatus =
+  (typeof GetNodesStatus)[keyof typeof GetNodesStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetNodesStatus = {
+  READY: "READY",
+  NOT_READY: "NOT_READY",
+} as const;
+
+export type GetNamespacesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 네임스페이스 상태 필터 (active, terminating)
+   */
+  status?: GetNamespacesStatus;
+};
+
+export type GetNamespacesStatus =
+  (typeof GetNamespacesStatus)[keyof typeof GetNamespacesStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetNamespacesStatus = {
+  ACTIVE: "ACTIVE",
+  TERMINATING: "TERMINATING",
+} as const;
+
+export type GetDeploymentsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+};
+
+export type GetDaemonSetsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+};
+
+export type GetAllNamespaceEventsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
+
+export type GetClusterNodesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 정렬 필드
+   */
+  sort?: GetClusterNodesSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetClusterNodesOrder;
+};
+
+export type GetClusterNodesSort =
+  (typeof GetClusterNodesSort)[keyof typeof GetClusterNodesSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetClusterNodesSort = {
+  NODE_NAME: "NODE_NAME",
+} as const;
+
+export type GetClusterNodesOrder =
+  (typeof GetClusterNodesOrder)[keyof typeof GetClusterNodesOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetClusterNodesOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetNodeSystemMetricsParams = {
+  /**
+ * 
+            조회할 시스템 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
+        
+ */
+  metrics: GetNodeSystemMetricsMetricsItem[];
+  /**
+   * 시작 시간 (ISO 8601 UTC 형식)
+   */
+  startedAt: string;
+  /**
+   * 종료 시간 (ISO 8601 UTC 형식)
+   */
+  endedAt: string;
+  /**
+   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
+   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
+   */
+  step: string;
+};
+
+/**
+ * 
+            조회할 시스템 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - CPU_TEMPERATURE: CPU 온도 (°C)
+            - CPU_UTILIZATION: CPU 사용률 (%)
+            - CPU_LOAD_AVERAGE: CPU 평균 부하 (5분)
+            - NODE_NETWORK_RECEIVE: 네트워크 수신 속도 (bytes/sec)
+            - NODE_NETWORK_TRANSMIT: 네트워크 송신 속도 (bytes/sec)
+            - DISK_READ: 디스크 읽기 속도 (bytes/sec)
+            - DISK_WRITE: 디스크 쓰기 속도 (bytes/sec)
+            - DISK_UTILIZATION: 디스크 사용률 (%)
+            - MEMORY_UTILIZATION: 메모리 사용률 (%)
+            - NODE_MEMORY_BUFFERS: 메모리 버퍼 (bytes)
+            - NODE_MEMORY_CACHED: 메모리 캐시 (bytes)
+            - NODE_MEMORY_TOTAL: 메모리 총량 (bytes)
+            - NODE_MEMORY_FREE: 메모리 여유량 (bytes)
+        
+ */
+export type GetNodeSystemMetricsMetricsItem =
+  (typeof GetNodeSystemMetricsMetricsItem)[keyof typeof GetNodeSystemMetricsMetricsItem];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetNodeSystemMetricsMetricsItem = {
+  CPU_TEMPERATURE: "CPU_TEMPERATURE",
+  CPU_UTILIZATION: "CPU_UTILIZATION",
+  CPU_LOAD_AVERAGE: "CPU_LOAD_AVERAGE",
+  NODE_NETWORK_RECEIVE: "NODE_NETWORK_RECEIVE",
+  NODE_NETWORK_TRANSMIT: "NODE_NETWORK_TRANSMIT",
+  DISK_READ: "DISK_READ",
+  DISK_WRITE: "DISK_WRITE",
+  DISK_UTILIZATION: "DISK_UTILIZATION",
+  MEMORY_UTILIZATION: "MEMORY_UTILIZATION",
+  NODE_MEMORY_BUFFERS: "NODE_MEMORY_BUFFERS",
+  NODE_MEMORY_CACHED: "NODE_MEMORY_CACHED",
+  NODE_MEMORY_TOTAL: "NODE_MEMORY_TOTAL",
+  NODE_MEMORY_FREE: "NODE_MEMORY_FREE",
+} as const;
+
+export type GetNodeGpuMetricsParams = {
+  /**
+ * 
+            조회할 GPU 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
+        
+ */
+  metrics: GetNodeGpuMetricsMetricsItem[];
+  /**
+   * 시작 시간 (ISO 8601 UTC 형식)
+   */
+  startedAt: string;
+  /**
+   * 종료 시간 (ISO 8601 UTC 형식)
+   */
+  endedAt: string;
+  /**
+   * Prometheus 쿼리 간격 (예: 100ms, 15s, 1m, 1.5m, 5m, 1h, 1.5)
+   * @pattern ^(?:[1-9]\d*(?:\.\d+)?|0\.(?:0*[1-9]\d*))(?:ms|s|m|h|d|w|y)?$
+   */
+  step: string;
+};
+
+/**
+ * 
+            조회할 GPU 메트릭 타입 목록 (콤마 구분)
+
+            **허용 메트릭:**
+            - GPU_UTILIZATION: GPU 사용률 (%)
+            - GPU_MEMORY_UTILIZATION: GPU 메모리 사용률 (%)
+            - GPU_TEMPERATURE: GPU 온도 (°C)
+            - GPU_FAN_SPEED: GPU 팬 속도 (%)
+            - GPU_POWER_USAGE: GPU 전력 사용량 (W)
+        
+ */
+export type GetNodeGpuMetricsMetricsItem =
+  (typeof GetNodeGpuMetricsMetricsItem)[keyof typeof GetNodeGpuMetricsMetricsItem];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetNodeGpuMetricsMetricsItem = {
+  GPU_UTILIZATION: "GPU_UTILIZATION",
+  GPU_MEMORY_UTILIZATION: "GPU_MEMORY_UTILIZATION",
+  GPU_TEMPERATURE: "GPU_TEMPERATURE",
+  GPU_FAN_SPEED: "GPU_FAN_SPEED",
+  GPU_POWER_USAGE: "GPU_POWER_USAGE",
+} as const;
+
 export type GetAllAccountsParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -10200,7 +11339,7 @@ export type GetAdminNotificationsParams = {
 };
 
 /**
- * 관리자 알림 유형 필터. LICENSE: 라이선스, ACCOUNT: 회원, VULNERABILITY: 보안, WORKSPACE: 워크스페이스, WORKLOAD: 워크로드
+ * 관리자 알림 유형 필터. LICENSE: 라이선스, ACCOUNT: 회원, VULNERABILITY: 보안, NODE: 노드, WORKSPACE: 워크스페이스, WORKLOAD: 워크로드
  */
 export type GetAdminNotificationsNotificationTypeItem =
   (typeof GetAdminNotificationsNotificationTypeItem)[keyof typeof GetAdminNotificationsNotificationTypeItem];
@@ -10210,6 +11349,7 @@ export const GetAdminNotificationsNotificationTypeItem = {
   LICENSE: "LICENSE",
   ACCOUNT: "ACCOUNT",
   VULNERABILITY: "VULNERABILITY",
+  NODE: "NODE",
   WORKSPACE: "WORKSPACE",
   WORKLOAD: "WORKLOAD",
 } as const;

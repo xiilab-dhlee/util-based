@@ -4,6 +4,8 @@ import { useAtom, useSetAtom } from "jotai";
 import styled from "styled-components";
 import { Switch, Typography } from "xiilab-ui";
 
+import { CreateWorkloadGpuMig } from "@/domain/workload/components/create/create-workload-gpu-mig";
+import { CreateWorkloadGpuNormal } from "@/domain/workload/components/create/create-workload-gpu-normal";
 import {
   gpuAtom,
   gpuEnabledAtom,
@@ -12,8 +14,6 @@ import {
 } from "@/domain/workload/state/create-workload.atom";
 import { useGetGpus } from "@/shared/hooks/use-get-gpus";
 import type { GpuListType } from "@/shared/schemas/gpu.schema";
-import { CreateWorkloadGpuMig } from "./create-workload-gpu-mig";
-import { CreateWorkloadGpuNormal } from "./create-workload-gpu-normal";
 
 export function CreateWorkloadGpu() {
   const [gpuEnabled, setGpuEnabled] = useAtom(gpuEnabledAtom);

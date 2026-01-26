@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
-import { Form, FormItem, Icon, Input, Modal } from "xiilab-ui";
+import { Form, Icon, Input, Modal } from "xiilab-ui";
 
 import { useGetProfile } from "@/api/generated/account-profile/account-profile";
 import { useVerifyPassword } from "@/domain/profile/hooks/use-verify-password";
@@ -12,6 +12,7 @@ import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { openCheckPasswordModalAtom } from "@/shared/state/modal.atom";
+import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
 /**
  * 비밀번호 재확인 모달 컴포넌트
@@ -89,14 +90,17 @@ export function CheckPasswordModal() {
       icon={<Icon name="Lock" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable
       title="비밀번호 재확인"
       showCancelButton
       cancelText="취소"
       onCancel={handleClose}
       okText="확인"
       onOk={handleSubmit}
-      okButtonProps={{ disabled: isPending }}
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      okButtonProps={{ loading: isPending }}
+      cancelButtonProps={{ disabled: isPending }}
       centered
       showHeaderBorder
     >
@@ -106,7 +110,7 @@ export function CheckPasswordModal() {
         email={profile?.email ?? "-"}
       />
       <Form layout="vertical">
-        <FormItem
+        <LastFormItem
           label="비밀번호"
           required
           help={mergedErrorMessage}
@@ -123,7 +127,7 @@ export function CheckPasswordModal() {
             onChange={handlePasswordChange}
             status={validateStatus}
           />
-        </FormItem>
+        </LastFormItem>
       </Form>
     </Modal>
   );

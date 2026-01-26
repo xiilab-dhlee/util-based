@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 import {
   volumeCheckedListAtom,
+  volumeHasMineAtom,
   volumeOrderSortAtom,
   volumePageAtom,
   volumeSearchKeywordAtom,
@@ -22,6 +23,7 @@ export function VolumeListMain() {
   const resetCheckedList = useResetAtom(volumeCheckedListAtom);
   const resetSort = useResetAtom(volumeOrderSortAtom);
   const resetVolumeType = useResetAtom(volumeTypeSortAtom);
+  const resetHasMine = useResetAtom(volumeHasMineAtom);
 
   useEffect(() => {
     resetPage();
@@ -30,6 +32,7 @@ export function VolumeListMain() {
     resetCheckedList();
     resetSort();
     resetVolumeType();
+    resetHasMine();
   }, [
     resetPage,
     setSearchText,
@@ -37,6 +40,7 @@ export function VolumeListMain() {
     resetCheckedList,
     resetSort,
     resetVolumeType,
+    resetHasMine,
   ]);
 
   return (

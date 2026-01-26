@@ -51,6 +51,7 @@ import type {
   AdminPreviewParams,
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseVolumeDeleteResult,
   BaseResponseVolumeDetailResponse,
   BaseResponseVolumeFileListResponse,
   CompressRequest,
@@ -60,184 +61,12 @@ import type {
   DownloadRequest,
   StreamingResponseBody,
   UpdateVolumeRequest,
+  VolumeDeleteRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 
-        볼륨의 상세 정보를 조회합니다.
-        워크스페이스/소유자 관계없이 모든 볼륨을 조회할 수 있습니다.
-
-        **응답:**
-        - 200 OK + data: 볼륨 상세 정보
-        - 200 OK + data: null (볼륨이 존재하지 않거나 삭제된 경우)
-
-        **권한:** ADMIN 또는 SUPER_ADMIN
-        
- * @summary 볼륨 상세 조회
- */
-export const adminGetVolumeDetail = (
-  volumeId: number,
-  signal?: AbortSignal,
-) => {
-  return customInstance<BaseResponseVolumeDetailResponse>({
-    url: `/api/v1/admin/volumes/${volumeId}`,
-    method: "GET",
-    signal,
-  });
-};
-
-export const getAdminGetVolumeDetailQueryKey = (volumeId?: number) => {
-  return [`/api/v1/admin/volumes/${volumeId}`] as const;
-};
-
-export const getAdminGetVolumeDetailQueryOptions = <
-  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-  TError = unknown,
->(
-  volumeId: number,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ?? getAdminGetVolumeDetailQueryKey(volumeId);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof adminGetVolumeDetail>>
-  > = ({ signal }) => adminGetVolumeDetail(volumeId, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!volumeId,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type AdminGetVolumeDetailQueryResult = NonNullable<
-  Awaited<ReturnType<typeof adminGetVolumeDetail>>
->;
-export type AdminGetVolumeDetailQueryError = unknown;
-
-export function useAdminGetVolumeDetail<
-  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-  TError = unknown,
->(
-  volumeId: number,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-          TError,
-          Awaited<ReturnType<typeof adminGetVolumeDetail>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useAdminGetVolumeDetail<
-  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-  TError = unknown,
->(
-  volumeId: number,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-          TError,
-          Awaited<ReturnType<typeof adminGetVolumeDetail>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useAdminGetVolumeDetail<
-  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-  TError = unknown,
->(
-  volumeId: number,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 볼륨 상세 조회
- */
-
-export function useAdminGetVolumeDetail<
-  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-  TError = unknown,
->(
-  volumeId: number,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getAdminGetVolumeDetailQueryOptions(volumeId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * 
-        볼륨 정보를 수정합니다.
+        볼륨 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
 
         **수정 가능 필드:**
         - volumeName: 볼륨 이름
@@ -328,7 +157,7 @@ export const useAdminUpdateVolume = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-        볼륨을 삭제합니다 (soft delete).
+        볼륨을 삭제합니다 (soft delete). 해당 볼륨의 모든 버전이 삭제됩니다.
 
         **볼륨 타입별 처리:**
         - ASTRAGO: DB만 soft delete
@@ -853,6 +682,103 @@ export const useAdminCompress = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
+        여러 볼륨을 한번에 삭제합니다 (soft delete).
+        워크스페이스/소유자 관계없이 모든 볼륨을 삭제할 수 있습니다.
+
+        **처리 방식:**
+        - 각 볼륨별로 삭제 시도
+        - 일부 실패해도 나머지는 계속 처리
+        - 성공/실패 결과를 상세히 반환
+
+        **볼륨 타입별 처리:**
+        - ASTRAGO: DB만 soft delete
+        - ON_PREMISE: K8s 리소스 삭제 후 DB soft delete
+
+        **권한:** ADMIN 또는 SUPER_ADMIN
+        
+ * @summary 볼륨 다중 삭제
+ */
+export const adminDeleteVolumes = (
+  volumeDeleteRequest: VolumeDeleteRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseVolumeDeleteResult>({
+    url: `/api/v1/admin/volumes/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: volumeDeleteRequest,
+    signal,
+  });
+};
+
+export const getAdminDeleteVolumesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteVolumes>>,
+    TError,
+    { data: VolumeDeleteRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminDeleteVolumes>>,
+  TError,
+  { data: VolumeDeleteRequest },
+  TContext
+> => {
+  const mutationKey = ["adminDeleteVolumes"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminDeleteVolumes>>,
+    { data: VolumeDeleteRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return adminDeleteVolumes(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminDeleteVolumesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminDeleteVolumes>>
+>;
+export type AdminDeleteVolumesMutationBody = VolumeDeleteRequest;
+export type AdminDeleteVolumesMutationError = unknown;
+
+/**
+ * @summary 볼륨 다중 삭제
+ */
+export const useAdminDeleteVolumes = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof adminDeleteVolumes>>,
+      TError,
+      { data: VolumeDeleteRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteVolumes>>,
+  TError,
+  { data: VolumeDeleteRequest },
+  TContext
+> => {
+  const mutationOptions = getAdminDeleteVolumesMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
         모든 볼륨 목록을 페이지네이션과 필터링 조건에 따라 조회합니다.
         워크스페이스/소유자 관계없이 모든 볼륨을 조회할 수 있습니다.
 
@@ -1329,6 +1255,179 @@ export function useAdminPreview<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getAdminPreviewQueryOptions(volumeId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+        볼륨의 상세 정보를 조회합니다.
+        워크스페이스/소유자 관계없이 모든 볼륨을 조회할 수 있습니다.
+
+        **응답:**
+        - 200 OK + data: 볼륨 상세 정보
+        - 200 OK + data: null (볼륨이 존재하지 않거나 삭제된 경우)
+
+        **권한:** ADMIN 또는 SUPER_ADMIN
+        
+ * @summary 볼륨 상세 조회
+ */
+export const adminGetVolumeDetail = (
+  volumeId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseVolumeDetailResponse>({
+    url: `/api/v1/admin/volumes/${volumeId}/detail`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getAdminGetVolumeDetailQueryKey = (volumeId?: number) => {
+  return [`/api/v1/admin/volumes/${volumeId}/detail`] as const;
+};
+
+export const getAdminGetVolumeDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getAdminGetVolumeDetailQueryKey(volumeId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminGetVolumeDetail>>
+  > = ({ signal }) => adminGetVolumeDetail(volumeId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!volumeId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type AdminGetVolumeDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminGetVolumeDetail>>
+>;
+export type AdminGetVolumeDetailQueryError = unknown;
+
+export function useAdminGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetVolumeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useAdminGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetVolumeDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useAdminGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 볼륨 상세 조회
+ */
+
+export function useAdminGetVolumeDetail<
+  TData = Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof adminGetVolumeDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getAdminGetVolumeDetailQueryOptions(volumeId, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

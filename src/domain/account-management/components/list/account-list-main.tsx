@@ -43,8 +43,8 @@ export function AccountListMain() {
     pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: searchText,
-    sort: sortRequest?.sort,
-    order: sortRequest?.order,
+    sort: sortRequest?.sort ?? "ACCOUNT_NAME",
+    order: sortRequest?.order ?? "ASC",
   });
 
   useEffect(() => {

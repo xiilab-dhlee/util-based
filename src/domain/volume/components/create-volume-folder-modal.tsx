@@ -6,12 +6,13 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Form, Icon, Input, Modal } from "xiilab-ui";
 
-import { useCreateFolder } from "@/api/generated/volume-file/volume-file";
+import { useCreateFolderByMode } from "@/domain/volume/hooks/use-create-folder-by-mode";
 import {
   type CreateVolumeFolderFormType,
   createVolumeFolderSchema,
 } from "@/domain/volume/schemas/volume.schema";
 import { volumeFileTreeDataAtom } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import {
   addNodeToTree,
   createFolderNode,
@@ -25,7 +26,13 @@ interface CreateVolumeFolderPayload {
   filePath: string;
 }
 
-export function CreateVolumeFolderModal() {
+interface CreateVolumeFolderModalProps {
+  mode: VolumeMode;
+}
+
+export function CreateVolumeFolderModal({
+  mode,
+}: CreateVolumeFolderModalProps) {
   const [open, setOpen] = useState(false);
   const [volumeId, setVolumeId] = useState<number | null>(null);
   const [parentPath, setParentPath] = useState("");
@@ -41,7 +48,7 @@ export function CreateVolumeFolderModal() {
     defaultValues: { folderName: "" },
   });
 
-  const { mutate, isPending } = useCreateFolder();
+  const { mutate, isPending } = useCreateFolderByMode(mode);
 
   const handleCancel = () => {
     if (isPending) return;
@@ -73,7 +80,7 @@ export function CreateVolumeFolderModal() {
     (payload) => {
       setVolumeId(payload.volumeId);
       setParentPath(payload.filePath);
-      reset({ folderName: "" });
+      reset();
       setOpen(true);
     },
   );
@@ -84,7 +91,9 @@ export function CreateVolumeFolderModal() {
       type="primary"
       icon={<Icon name="Plus" color="#fff" size={18} />}
       open={open}
-      closable
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       title="폴더 추가"
       onCancel={handleCancel}
       showCancelButton

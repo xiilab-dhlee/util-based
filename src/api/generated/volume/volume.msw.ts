@@ -34,6 +34,7 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseVolumeDeleteResult,
   BaseResponseVolumeDetailResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -52,6 +53,28 @@ export const getRegisterOnPremiseVolumeResponseMock = (
 ): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getDeleteVolumesResponseMock = (
+  overrideResponse: Partial<BaseResponseVolumeDeleteResult> = {},
+): BaseResponseVolumeDeleteResult => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalRequested: faker.number.int({ min: undefined, max: undefined }),
+    successCount: faker.number.int({ min: undefined, max: undefined }),
+    failureCount: faker.number.int({ min: undefined, max: undefined }),
+    failures: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      volumeId: faker.number.int({ min: undefined, max: undefined }),
+      reason: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -81,6 +104,7 @@ export const getGetVolumeListResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       volumeId: faker.number.int({ min: undefined, max: undefined }),
+      entityId: faker.number.int({ min: undefined, max: undefined }),
       volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -106,6 +130,7 @@ export const getGetVolumeDetailResponseMock = (
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     volumeId: faker.number.int({ min: undefined, max: undefined }),
+    entityId: faker.number.int({ min: undefined, max: undefined }),
     volumeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     volumeType: faker.helpers.arrayElement(["ASTRAGO", "ON_PREMISE"] as const),
     serverIp: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -195,6 +220,36 @@ export const getRegisterOnPremiseVolumeMockHandler = (
             : getRegisterOnPremiseVolumeResponseMock(),
         ),
         { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getDeleteVolumesMockHandler = (
+  overrideResponse?:
+    | BaseResponseVolumeDeleteResult
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<BaseResponseVolumeDeleteResult>
+        | BaseResponseVolumeDeleteResult),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/volumes/delete",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getDeleteVolumesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
@@ -292,6 +347,7 @@ export const getVolumeMock = () => [
   getUpdateVolumeMockHandler(),
   getDeleteVolumeMockHandler(),
   getRegisterOnPremiseVolumeMockHandler(),
+  getDeleteVolumesMockHandler(),
   getRegisterAstragoVolumeMockHandler(),
   getGetVolumeListMockHandler(),
   getGetVolumeDetailMockHandler(),

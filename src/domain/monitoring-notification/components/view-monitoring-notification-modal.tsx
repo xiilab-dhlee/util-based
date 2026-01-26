@@ -12,7 +12,7 @@ import {
   TextArea,
 } from "xiilab-ui";
 
-import { useGetMonitoringNotificationSetDetail } from "@/api/generated/admin-monitoring-notification/admin-monitoring-notification";
+import { useGetMonitoringNotificationSetDetail } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set";
 import { openViewMonitoringNotificationModalAtom } from "@/domain/monitoring-notification/state/monitoring-notification.atom";
 import type { ThresholdFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 import { MODAL_MODES } from "@/shared/constants/core.constant";

@@ -31,7 +31,7 @@ import * as zod from "zod";
 
 /**
  * 
-        소스코드 정보를 수정합니다.
+        소스코드 정보를 수정합니다. 수정 시 새로운 버전이 생성됩니다.
 
         **수정 가능 필드:**
         - sourceCodeName: 소스코드 이름
@@ -102,7 +102,7 @@ export const updateSourceCodeResponse = zod
 
 /**
  * 
-        소스코드를 삭제합니다 (soft delete).
+        소스코드를 삭제합니다 (soft delete). 해당 소스코드의 모든 버전이 삭제됩니다.
 
         **권한:** SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능 (격리 모드 시 워크스페이스 멤버 여부도 확인)
         
@@ -145,6 +145,7 @@ export const getSourceCodeListQueryParams = zod.object({
     .optional()
     .describe("정렬 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  hasMine: zod.boolean().optional().describe("내가 생성한 소스코드만 조회"),
   codeType: zod
     .enum(["GITHUB", "GITLAB", "BITBUCKET"])
     .optional()
@@ -164,6 +165,7 @@ export const getSourceCodeListResponse = zod
           zod
             .object({
               sourceCodeId: zod.number().describe("소스코드 ID"),
+              entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
               sourceCodeName: zod.string().describe("소스코드 이름"),
               gitUrl: zod.string().describe("Git URL"),
               mountPath: zod.string().describe("마운트 경로"),
@@ -171,6 +173,8 @@ export const getSourceCodeListResponse = zod
                 .enum(["GITHUB", "GITLAB", "BITBUCKET"])
                 .describe("소스코드 타입"),
               executionCmd: zod.string().describe("실행 커맨드"),
+              creatorId: zod.string().describe("생성자 ID"),
+              creatorName: zod.string().describe("생성자 이름"),
               createdAt: zod.string().datetime({}).describe("생성 일시"),
               isPublic: zod.boolean().describe("공개 여부"),
             })
@@ -253,3 +257,119 @@ export const registerSourceCodeBody = zod
   })
   .strict()
   .describe("소스코드 생성 요청");
+
+/**
+ * 
+            여러 소스코드를 한번에 삭제합니다 (soft delete).
+
+            **처리 방식:**
+            - 각 소스코드별로 권한 검증 후 삭제 시도
+            - 일부 실패해도 나머지는 계속 처리
+            - 성공/실패 결과를 상세히 반환
+
+            **권한:** ADMIN, SUPER_ADMIN 또는 소스코드 생성자만 삭제 가능
+        
+ * @summary 소스코드 다중 삭제
+ */
+export const deleteSourceCodesBodySourceCodeIdsMax = 100;
+
+export const deleteSourceCodesBody = zod
+  .object({
+    sourceCodeIds: zod
+      .array(zod.number())
+      .min(1)
+      .max(deleteSourceCodesBodySourceCodeIdsMax)
+      .describe(
+        "삭제할 소스코드 ID 목록. 최소 1개, 최대 100개까지 요청 가능합니다.",
+      ),
+  })
+  .strict()
+  .describe("소스코드 다중 삭제 요청");
+
+export const deleteSourceCodesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalRequested: zod.number().describe("삭제 요청한 총 소스코드 개수"),
+        successCount: zod.number().describe("삭제 성공한 소스코드 개수"),
+        failureCount: zod
+          .number()
+          .describe(
+            "삭제 실패한 소스코드 개수 (존재하지 않거나, 이미 삭제된 소스코드, 권한 없음 등)",
+          ),
+        failures: zod
+          .array(
+            zod
+              .object({
+                volumeId: zod.number().describe("삭제 실패한 볼륨 ID"),
+                reason: zod.string().describe("삭제 실패 사유"),
+              })
+              .strict()
+              .describe("볼륨 삭제 실패 상세 정보"),
+          )
+          .describe("삭제 실패한 소스코드 상세 목록 (실패가 없으면 빈 리스트)"),
+      })
+      .strict()
+      .optional()
+      .describe("소스코드 삭제 처리 결과 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        소스코드 상세 정보를 조회합니다.
+
+        **응답:**
+        - 200 OK + data: 소스코드 상세 정보
+        - 200 OK + data: null (소스코드가 존재하지 않거나 삭제된 경우)
+        - 403: 접근 권한 없음
+
+        **권한:**
+        - SUPER_ADMIN, ADMIN: 모든 소스코드 조회 가능
+        - 공개 소스코드: 모든 사용자 조회 가능 (워크스페이스 멤버 여부 확인)
+        - 비공개 소스코드: 본인(생성자)만 조회 가능
+        
+ * @summary 소스코드 상세 조회
+ */
+export const getSourceCodeDetailParams = zod.object({
+  sourceCodeId: zod.number().describe("조회할 소스코드 ID"),
+});
+
+export const getSourceCodeDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        sourceCodeId: zod.number().describe("소스코드 ID"),
+        entityId: zod.number().describe("entityId (버전 그룹 식별자)"),
+        sourceCodeName: zod.string().describe("소스코드 이름"),
+        gitUrl: zod.string().describe("Git URL"),
+        isPublic: zod.boolean().describe("공개 여부"),
+        sourceCodeType: zod
+          .enum(["GITHUB", "GITLAB", "BITBUCKET"])
+          .describe("소스코드 타입"),
+        mountPath: zod.string().describe("마운트 경로"),
+        executionCmd: zod.string().describe("실행 커맨드"),
+        parameter: zod
+          .record(zod.string(), zod.string())
+          .optional()
+          .describe("사용자 정의 파라미터"),
+        workspaceId: zod.number().optional().describe("워크스페이스 ID"),
+        creatorId: zod.string().describe("생성자 ID"),
+        creatorName: zod.string().describe("생성자 이름"),
+        credentialId: zod.number().optional().describe("크레덴셜 ID"),
+        createdAt: zod.string().datetime({}).describe("생성 일시"),
+        updatedAt: zod.string().datetime({}).optional().describe("수정 일시"),
+      })
+      .strict()
+      .optional()
+      .describe("소스코드 상세 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();

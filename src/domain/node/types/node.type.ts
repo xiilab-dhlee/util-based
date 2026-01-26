@@ -1,53 +1,8 @@
-import type { CorePaginate, CorePayload } from "@/shared/types/api.interface";
-
-export interface GetNodesPayload extends CorePayload, CorePaginate {}
-
-export interface GetNodePayload {
-  /** Node ID */
-  id: string;
-}
-
-export interface UpdateMpsPayload {
-  nodeName: string;
-  mpsCapable: boolean;
-  mpsReplicas: number;
-}
-
-export interface UpdateMigPayload {
-  [key: string]: unknown;
-}
-
-export interface UpdateNodeSchedulingPayload {
-  nodeName: string;
-  type: "ON" | "OFF";
-}
-
-// MIG 설정 대상 GPU
+// MIG 설정 대상 GPU (클라이언트 상태 관리용)
 export type MigGpu = {
   gpuIndex: number;
   migEnable: boolean;
   configId: number;
-};
-
-export type NodeMigInfo = {
-  nodeName: string;
-  migInfos: MigInfo[];
-  migKey: string;
-  gpuProduct: string;
-};
-
-export type MigInfo = {
-  // 대상 GPU 인덱스 목록
-  gpuIndexs: number[];
-  // MIG Config (Nvidia MIG Config 참조)
-  configId?: number;
-  // MIG 활성화 여부
-  migEnable: boolean;
-  /**
-   * 선택한 프로파일 목록 (key: 프로파일 이름, value: 프로파일 ID)
-   * 예시: { "1g.12gb": 1, "2g.24gb": 2 }
-   */
-  profile: Record<string, number>;
 };
 
 /**

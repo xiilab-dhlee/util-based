@@ -5,11 +5,15 @@ import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
 import { useDeleteRequestResource } from "@/domain/request-resource/hooks/use-delete-request-resource";
-import type { RequestResourceListType } from "@/domain/request-resource/schemas/request-resource.schema";
 import { openDeleteRequestResourceModalAtom } from "@/domain/request-resource/state/request-resource.atom";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+
+interface DeleteResourceEvent {
+  resourceRequestId: number;
+  workspaceName: string;
+}
 
 /**
  * 리소스 요청 취소(삭제) 모달 컴포넌트
@@ -23,9 +27,10 @@ export function DeleteRequestResourceModal() {
     openDeleteRequestResourceModalAtom,
   );
 
-  // 삭제할 리소스 요청 정보
-  const [deleteResource, setDeleteResource] =
-    useState<RequestResourceListType | null>(null);
+  // 삭제할 리소스 요청 ID
+  const [resourceRequestId, setResourceRequestId] = useState<number | null>(
+    null,
+  );
 
   const deleteRequestResource = useDeleteRequestResource();
 
@@ -36,12 +41,12 @@ export function DeleteRequestResourceModal() {
    * 취소 성공 시 관련 컴포넌트에서 데이터가 자동으로 갱신됩니다.
    */
   const handleOk = () => {
-    if (!deleteResource) {
+    if (!resourceRequestId) {
       toast.error("취소할 리소스 요청을 선택해 주세요.");
       return;
     }
 
-    deleteRequestResource.mutate(deleteResource.id, {
+    deleteRequestResource.mutate(resourceRequestId, {
       onSuccess: () => {
         toast.success("리소스 요청이 취소되었습니다.");
         onClose();
@@ -52,11 +57,11 @@ export function DeleteRequestResourceModal() {
   /**
    * 리소스 요청 취소 모달 데이터 구독
    */
-  useSubscribe(
+  useSubscribe<DeleteResourceEvent>(
     WORKSPACE_EVENTS.sendDeleteResource,
-    (resource: RequestResourceListType) => {
-      // 삭제할 리소스 요청 정보 설정
-      setDeleteResource(resource);
+    (eventData) => {
+      // 삭제할 리소스 요청 ID 설정
+      setResourceRequestId(eventData.resourceRequestId);
       // 삭제 모달 열기
       onOpen();
     },

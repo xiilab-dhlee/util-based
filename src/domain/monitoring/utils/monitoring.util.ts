@@ -41,8 +41,8 @@ const METRIC_MAP: Record<MonitoringMetricType, MetricInfo> = {
     colors: GPU_CHART_COLORS,
   },
   "gpu-memory": {
-    text: "GPU 메모리",
-    unit: "GB",
+    text: "GPU Memory 사용률",
+    unit: "%",
     colors: GPU_CHART_COLORS,
   },
   "gpu-temperature": {

@@ -3,6 +3,7 @@
 import type { AdminWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createPendingWorkloadColumn } from "@/domain/scheduling-queue/columns/create-pending-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
+import { usePeriodicUpdate } from "@/shared/hooks/use-periodic-update";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface PendingWorkloadBodyProps {
@@ -33,6 +34,9 @@ export function PendingWorkloadBody({
   isAddingToQueue,
   isQueueFull,
 }: PendingWorkloadBodyProps) {
+  // 대기 시간 컬럼 갱신을 위해 주기적으로 리렌더링
+  usePeriodicUpdate(60000);
+
   return (
     <ListWrapper>
       <CustomizedTable<AdminWorkloadResponse>

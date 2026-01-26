@@ -81,10 +81,42 @@ export const MUTATION_KEYS = {
   deleteSmtpSet: "deleteSmtpSet",
 
   // ============================================
-  // Registry (Public/Private)
+  // Registry (Private)
   // ============================================
-  createExternalImage: "createExternalImage",
-  createExternalImage1: "createExternalImage1",
+  updatePrivateImageTag: "updatePrivateImageTag",
+  createPrivateExternalImage: "createPrivateExternalImage",
+  addPrivateImageTag: "addPrivateImageTag",
+  scanPrivateImageTag: "scanPrivateImageTag",
+  deletePrivateImageTags: "deletePrivateImageTags",
+  deletePrivateImages: "deletePrivateImages",
+
+  // ============================================
+  // Registry (Public)
+  // ============================================
+  updatePublicImageTag: "updatePublicImageTag",
+  createPublicExternalImage: "createPublicExternalImage",
+  addPublicImageTag: "addPublicImageTag",
+  scanPublicImageTag: "scanPublicImageTag",
+  deletePublicImageTags: "deletePublicImageTags",
+  deletePublicImages: "deletePublicImages",
+
+  // ============================================
+  // Image Tag Usage Request
+  // ============================================
+  createUsageRequest: "createUsageRequest",
+
+  // ============================================
+  // Image Job
+  // ============================================
+  restartImageJob: "restartImageJob",
+  deleteImageJob: "deleteImageJob",
+
+  // ============================================
+  // Storage (Admin)
+  // ============================================
+  registerStorage: "registerStorage",
+  updateStorage: "updateStorage",
+  deleteStorage: "deleteStorage",
 
   // ============================================
   // Volume
@@ -97,6 +129,18 @@ export const MUTATION_KEYS = {
   compress: "compress",
   registerOnPremiseVolume: "registerOnPremiseVolume",
   registerAstragoVolume: "registerAstragoVolume",
+
+  // ============================================
+  // Workload Reclaim Policy
+  // ============================================
+  updateReclaimPolicy: "updateReclaimPolicy",
+  updateReclaimPolicyEnabled: "updateReclaimPolicyEnabled",
+
+  // ============================================
+  // Node (Admin Cluster)
+  // ============================================
+  applyMigConfiguration: "applyMigConfiguration",
+  updateNodeScheduling: "updateNodeScheduling",
 } as const;
 
 export type MutationKey = (typeof MUTATION_KEYS)[keyof typeof MUTATION_KEYS];

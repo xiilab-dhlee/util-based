@@ -121,61 +121,48 @@ export const ACCOUNT_EVENTS = {
 
 // 노드 관련 이벤트
 export const NODE_EVENTS = {
-  // MPS 설정 수정에 필요한 정보 전달 이벤트
-  sendUpdateMps: "node:send-update-mps",
-  // MIG 설정 수정에 필요한 정보 전달 이벤트
-  sendUpdateMig: "node:send-update-mig",
+  // MIG 설정 모달 열기 이벤트
+  openUpdateMigModal: "node:open-update-mig-modal",
 } as const;
 
-// Redfish 관련 이벤트
-export const REDFISH_EVENTS = {
-  // BMC 관리(Create/Update)에 필요한 정보 전달 이벤트
-  sendCreateBmc: "redfish:send-manage-bmc",
-  sendUpdateBmc: "redfish:send-manage-bmc",
-  // Network Adapters 모달 표시 여부
-  sendNetworkAdapter: "redfish:send-view-network-adapter",
-} as const;
-
-// 이미지 요청 관련 이벤트
+// 이미지 사용 요청 관련 이벤트
 export const REQUEST_IMAGE_EVENTS = {
-  // 이미지 요청 승인 모달에 필요한 정보 전달 이벤트
-  sendApproveImage: "request-image:send-approve-image",
-  // 이미지 요청 반려 모달에 필요한 정보 전달 이벤트
-  sendRejectImage: "request-image:send-reject-image",
+  // 이미지 사용 요청 승인 모달 열기
+  openApproveModal: "request-image:open-approve-modal",
+  // 이미지 사용 요청 반려 모달 열기
+  openRejectModal: "request-image:open-reject-modal",
 } as const;
 
 // 개인 레지스트리 관련 이벤트
-export const PRIVATE_REGISTRY_EVENTS = {
-  // 프라이빗 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeletePrivateRegistry: "private-registry:send-delete-private-registry",
-  // 프라이빗 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImageTag: "private-registry:send-delete-image-tag",
-  // 프라이빗 레지스트리 구분 선택 후 생성 모달에 전달 이벤트
-  sendType: "private-registry:send-type",
-  // 프라이빗 레지스트리 구분 선택 모달 초기화 이벤트
-  clearSelectDivisionModal: "private-registry:clear-select-division-modal",
-  // 프라이빗 레지스트리 이미지 태그 생성에 필요한 정보 전달 이벤트
-  sendCreateTagData: "private-registry:send-create-tag-data",
-  // 이미지 등록 Job 재시작에 필요한 정보 전달 이벤트
-  sendRestartImageJob: "private-registry:send-restart-image-job",
-  // 이미지 등록 Job 종료에 필요한 정보 전달 이벤트
-  sendStopImageJob: "private-registry:send-stop-image-job",
-} as const;
-
-// 내부 레지스트리 이미지 관련 이벤트
-export const INTERNAL_REGISTRY_IMAGE_EVENTS = {
-  // 내부 레지스트리 이미지 수정에 필요한 정보 전달 이벤트
-  sendUpdateImage:
-    "internal-registry-image:send-update-internal-registry-image",
-  // 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImage:
-    "internal-registry-image:send-delete-internal-registry-image",
-  // 내부 레지스트리 이미지 태그 삭제에 필요한 정보 전달 이벤트
-  sendDeleteImageTag:
-    "internal-registry-image:send-delete-internal-registry-image-tag",
-  // 관리자 내부 레지스트리 이미지 삭제에 필요한 정보 전달 이벤트
-  sendDeleteAdminRegistryImage:
-    "internal-registry-image:send-delete-admin-internal-registry-image",
+export const REGISTRY_EVENTS = {
+  // 보안 레벨 설정 모달 열기
+  openSecurityLevelSettingModal: "registry:open-security-level-setting-modal",
+  // 레지스트리 이미지 유형 선택 모달 열기
+  openSelectTypeModal: "registry:open-select-type-modal",
+  // 레지스트리 이미지 생성 모달 열기
+  openCreateModal: "registry:open-create-modal",
+  // 레지스트리 이미지 삭제 모달 열기
+  openDeleteModal: "registry:open-delete-modal",
+  // 레지스트리 로그 보기 모달 열기
+  openLogModal: "registry:open-log-modal",
+  // 레지스트리 스트리밍 로그 보기 모달 열기
+  openStreamLogModal: "registry:open-stream-log-modal",
+  // 이미지 등록 Job 재시작 모달 열기
+  openRestartJobModal: "registry:open-restart-job-modal",
+  // 이미지 등록 Job 종료 모달 열기
+  openStopJobModal: "registry:open-stop-job-modal",
+  // 레지스트리 이미지 태그 삭제 모달 열기
+  openDeleteTagModal: "registry:open-delete-tag-modal",
+  // 레지스트리 이미지 태그 생성 모달 열기
+  openCreateTagModal: "registry:open-create-tag-modal",
+  // 레지스트리 이미지 태그 상세 보기 모달 열기
+  openTagDetailModal: "registry:open-tag-detail-modal",
+  // 레지스트리 이미지 태그 스캔 모달 열기
+  openScanTagModal: "registry:open-scan-tag-modal",
+  // 레지스트리 이미지 태그 수정 모달 열기
+  openEditTagModal: "registry:open-edit-tag-modal",
+  // 이미지 태그 사용 요청 모달 열기
+  openRequestUseModal: "registry:open-request-use-modal",
 } as const;
 
 // 파일 보안 관련 이벤트
@@ -249,22 +236,26 @@ export const CREDENTIAL_EVENTS = {
   openDeleteModal: "credential:open-delete-modal",
 } as const;
 
+// 스토리지 관련 이벤트
+export const STORAGE_EVENTS = {
+  // 스토리지 추가 모달 열기 이벤트
+  openCreateModal: "storage:open-create-modal",
+  // 스토리지 삭제 모달 열기 이벤트
+  openDeleteModal: "storage:open-delete-modal",
+  // 스토리지 상세 모달 열기 이벤트
+  openDetailModal: "storage:open-detail-modal",
+  // 스토리지 수정 모달 열기 이벤트
+  openEditModal: "storage:open-edit-modal",
+} as const;
+
 // 시스템 설정 관련 이벤트
 export const SYSTEM_SETTING_EVENTS = {
-  // SMTP 등록/수정 모달 열기 이벤트
-  openSmtpModal: "system-setting:open-smtp-modal",
+  // SMTP 등록 모달 열기 이벤트
+  openCreateSmtpModal: "system-setting:open-create-smtp-modal",
   // SMTP 삭제 모달 열기 이벤트
-  openSmtpDeleteModal: "system-setting:open-smtp-delete-modal",
-  // 스토리지 추가 모달 열기 이벤트
-  openStorageCreateModal: "system-setting:open-storage-create-modal",
-  // 스토리지 삭제 모달 열기 이벤트
-  openStorageDeleteModal: "system-setting:open-storage-delete-modal",
-  // 스토리지 상세 모달 열기 이벤트
-  openStorageDetailModal: "system-setting:open-storage-detail-modal",
-  // 스토리지 수정 모달 열기 이벤트
-  openStorageEditModal: "system-setting:open-storage-edit-modal",
+  openSmtpDeleteModal: "system-setting:open-delete-smtp-modal",
   // 라이선스 갱신 모달 열기 이벤트
-  openLicenseRenewalModal: "system-setting:open-license-renewal-modal",
+  openCreateLicenseModal: "system-setting:open-create-license-modal",
   // HPE OneView 연동 모달 열기 이벤트
   openHpeConnectionModal: "system-setting:open-hpe-connection-modal",
   // 워크스페이스 리소스 설정 모달 열기 이벤트
@@ -293,16 +284,23 @@ export const RESOURCE_PRESET_EVENTS = {
 export const SCHEDULING_QUEUE_EVENTS = {
   // 긴급 대기열 삭제 모달 열기 이벤트
   openDeleteUrgentQueueModal: "scheduling-queue:open-delete-urgent-queue-modal",
+  // 긴급 대기열 순서 변경 확인 모달 열기 이벤트
+  openReorderConfirmModal: "scheduling-queue:open-reorder-confirm-modal",
+  // 긴급 대기열 등록 확인 모달 열기 이벤트
+  openAddToQueueConfirmModal:
+    "scheduling-queue:open-add-to-queue-confirm-modal",
 } as const;
 
 // 공통 이벤트
 export const COMMON_EVENTS = {
   // 공통 취약점 모달에 필요한 정보 전달 이벤트
   sendVulnerability: "common:send-vulnerability",
-  // 공통 신청 사유 모달에 필요한 정보 전달 이벤트
-  sendRequestReason: "common:send-request-reason",
-  // 공통 반려 사유 모달에 필요한 정보 전달 이벤트
-  sendRejectReason: "common:send-reject-reason",
+  // 공통 신청 사유 모달 열기 이벤트
+  openRequestReasonModal: "common:open-request-reason-modal",
+  // 공통 반려 사유 모달 열기 이벤트
+  openRejectReasonModal: "common:open-reject-reason-modal",
+  // 공통 승인 사유 모달 열기 이벤트
+  openApprovalReasonModal: "common:open-approval-reason-modal",
   // 프로필 팝오버에 필요한 정보 전달 이벤트
   sendProfile: "common:send-profile",
   // 비밀번호 재확인 모달에 필요한 정보 전달 이벤트

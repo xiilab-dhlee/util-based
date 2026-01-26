@@ -76,15 +76,8 @@ export const DetailContentFeatureRow = styled.div`
 export const DetailContentFeatureGridBody = styled.div`
   display: grid;
   gap: 12px;
+  grid-template-columns: 1fr 1fr;
   overflow-y: auto;
   height: 100%;
   width: 100%;
-
-  /* CSS Grid를 사용한 고정 컬럼 조정 */
-  /* auto-fill: 요소 개수와 상관없이 컨테이너 너비에 맞춰 컬럼 개수 결정 */
-  /* 각 그리드 아이템의 최소 너비를 280px로 설정 */
-  grid-template-columns: repeat(auto-fill, minmax(249px, 1fr));
-
-  /* 그리드 아이템이 늘어나지 않도록 설정 */
-  grid-auto-rows: min-content;
 `;

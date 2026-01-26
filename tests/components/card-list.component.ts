@@ -13,9 +13,8 @@ import { testId, testIdPrefix } from "@/shared/constants/selector.constant";
  * @example
  * const eventCards = new CardListComponent(page, WORKLOAD_SELECTOR.EVENT_CARD);
  * const count = await eventCards.getCount();
- * await eventCards.forEachCard("h6", async (element, i) => {
- *   const text = await element.textContent();
- *   console.log(`카드[${i}] 이름: ${text}`);
+ * await eventCards.forEachCardText("h6", (text, i) => {
+ *   assertLogger.assertNotEmpty(`카드[${i}] 이름`, text);
  * });
  */
 export class CardListComponent {
@@ -49,7 +48,7 @@ export class CardListComponent {
    *
    * @example
    * await cardList.forEachCard("h6", async (element, i) => {
-   *   await assertLogger.assertLocatorText(`카드[${i}] 이름`, element);
+   *   await expect(element).toBeVisible();
    * });
    */
   async forEachCard<T>(

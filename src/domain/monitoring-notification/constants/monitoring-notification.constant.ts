@@ -2,6 +2,7 @@ import type { DropdownOption } from "xiilab-ui";
 
 import type {
   GetAllMonitoringNotificationHistoriesSort,
+  GetAllMonitoringNotificationSetsSort,
   MonitoringNotificationHistoryDetailResponseThresholdOperator,
   SentRecipientResponseSendStatus,
   ThresholdRequestMetric,
@@ -10,7 +11,8 @@ import type {
 import type { ThresholdFormType } from "@/domain/monitoring-notification/utils/monitoring-notification.override.zod";
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
-export const MONITORING_NOTIFICATION_PAGE_SIZE = 10;
+export const MONITORING_NOTIFICATION_SETTING_PAGE_SIZE = 5;
+export const MONITORING_NOTIFICATION_HISTORY_PAGE_SIZE = 10;
 
 /**
  * 모니터링 알림 히스토리 정렬 필드 매핑 (Frontend → Backend)
@@ -42,6 +44,39 @@ export type MonitoringNotificationHistorySortState = {
 
 /** 모니터링 알림 히스토리 기본 정렬 상태 */
 export const MONITORING_NOTIFICATION_HISTORY_DEFAULT_SORT: MonitoringNotificationHistorySortState =
+  {
+    field: "createdAt",
+    order: "descend",
+  };
+
+/**
+ * 모니터링 알림 설정 정렬 필드 매핑 (Frontend → Backend)
+ */
+export const MONITORING_NOTIFICATION_SETTING_SORT_FIELD_MAP = {
+  notificationSetName: "NOTIFICATION_SET_NAME",
+  createdAt: "CREATED_AT",
+} as const satisfies Record<string, GetAllMonitoringNotificationSetsSort>;
+
+/** 모니터링 알림 설정 정렬 필드 타입 */
+export type MonitoringNotificationSettingSortField =
+  keyof typeof MONITORING_NOTIFICATION_SETTING_SORT_FIELD_MAP;
+
+export const MONITORING_NOTIFICATION_SETTING_SORT_FIELDS = Object.keys(
+  MONITORING_NOTIFICATION_SETTING_SORT_FIELD_MAP,
+) as MonitoringNotificationSettingSortField[];
+
+/** 모니터링 알림 설정 정렬 상태 타입 (non-nullable) */
+export type MonitoringNotificationSettingSortState = {
+  field: NonNullable<
+    AntdTableSortState<MonitoringNotificationSettingSortField>["field"]
+  >;
+  order: NonNullable<
+    AntdTableSortState<MonitoringNotificationSettingSortField>["order"]
+  >;
+};
+
+/** 모니터링 알림 설정 기본 정렬 상태 */
+export const MONITORING_NOTIFICATION_SETTING_DEFAULT_SORT: MonitoringNotificationSettingSortState =
   {
     field: "createdAt",
     order: "descend",
