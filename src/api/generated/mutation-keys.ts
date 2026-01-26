@@ -131,6 +131,17 @@ export const MUTATION_KEYS = {
   registerAstragoVolume: "registerAstragoVolume",
 
   // ============================================
+  // Sourcecode
+  // ============================================
+  registerSourceCode: "registerSourceCode",
+  updateSourceCode: "updateSourceCode",
+  deleteSourceCode: "deleteSourceCode",
+  deleteSourceCodes: "deleteSourceCodes",
+  adminUpdateSourceCode: "adminUpdateSourceCode",
+  adminDeleteSourceCode: "adminDeleteSourceCode",
+  adminDeleteSourceCodes: "adminDeleteSourceCodes",
+
+  // ============================================
   // Workload Reclaim Policy
   // ============================================
   updateReclaimPolicy: "updateReclaimPolicy",

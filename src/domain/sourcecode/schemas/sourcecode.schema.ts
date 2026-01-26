@@ -23,6 +23,8 @@ export interface SourcecodeParameterType {
 // 소스코드 생성 스키마
 // ============================================================================
 
+const KOREAN_CHAR_REGEX = /[ㄱ-ㅎㅏ-ㅣ가-힣]/;
+
 /** 소스코드 생성 폼 스키마 */
 export const createSourcecodeSchema = z.object({
   sourceCodeName: z
@@ -40,14 +42,25 @@ export const createSourcecodeSchema = z.object({
     .string()
     .min(1, "마운트 경로를 입력해 주세요.")
     .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
-    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다.")
+    .refine(
+      (value) => !KOREAN_CHAR_REGEX.test(value),
+      "마운트 경로에 한글을 입력할 수 없습니다.",
+    ),
   executionCmd: z
     .string()
     .min(1, "실행 명령어를 입력해 주세요.")
-    .max(1000, "실행 명령어는 1000자 이하로 입력해 주세요."),
-  isPublic: z.string().min(1, "공개 설정을 선택해 주세요."),
+    .max(1000, "실행 명령어는 1000자 이하로 입력해 주세요.")
+    .refine(
+      (value) => !KOREAN_CHAR_REGEX.test(value),
+      "실행 명령어에 한글을 입력할 수 없습니다.",
+    ),
+  isPublic: z.enum(["true", "false"], {
+    errorMap: () => ({ message: "공개 설정을 선택해 주세요." }),
+  }),
   credentialId: z.number().nullable().optional(),
   parameter: z.record(z.string(), z.string()).optional(),
+  workspaceId: z.number().optional(),
 });
 
 export type CreateSourcecodeFormType = z.infer<typeof createSourcecodeSchema>;
@@ -66,10 +79,19 @@ export const updateSourcecodeSchema = z.object({
     .string()
     .min(1, "마운트 경로를 입력해 주세요.")
     .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
-    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다.")
+    .refine(
+      (value) => !KOREAN_CHAR_REGEX.test(value),
+      "마운트 경로에 한글을 입력할 수 없습니다.",
+    ),
   executionCmd: z
     .string()
-    .max(1000, "실행 명령어는 1000자 이하로 입력해 주세요."),
+    .min(1, "실행 명령어를 입력해 주세요.")
+    .max(1000, "실행 명령어는 1000자 이하로 입력해 주세요.")
+    .refine(
+      (value) => !KOREAN_CHAR_REGEX.test(value),
+      "실행 명령어에 한글을 입력할 수 없습니다.",
+    ),
   isPublic: z.boolean(),
   credentialId: z.number().nullable().optional(),
   parameter: z.record(z.string(), z.string()).optional(),

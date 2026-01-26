@@ -1,6 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { useSession } from "next-auth/react";
 import type { Key } from "react";
 import type { TableProps } from "xiilab-ui";
@@ -14,6 +15,7 @@ import {
 } from "@/domain/sourcecode/constants/sourcecode.constant";
 import {
   sourcecodeCheckedListAtom,
+  sourcecodePageAtom,
   sourcecodeSortAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
 import type { SourcecodeMode } from "@/domain/sourcecode/types/sourcecode.type";
@@ -43,6 +45,8 @@ export function SourcecodeListBody({
   const { data: session } = useSession();
   const [checkedList, setCheckedList] = useAtom(sourcecodeCheckedListAtom);
   const [sort, setSort] = useAtom(sourcecodeSortAtom);
+  const resetPage = useResetAtom(sourcecodePageAtom);
+  const resetCheckedList = useResetAtom(sourcecodeCheckedListAtom);
 
   const { rowSelection } = useTableSelection<SourceCodeListResponse>(
     checkedList as Set<Key>,
@@ -72,6 +76,8 @@ export function SourcecodeListBody({
 
     if (!parsed.field || !parsed.order) return;
 
+    resetPage();
+    resetCheckedList();
     setSort({
       field: parsed.field,
       order: parsed.order,

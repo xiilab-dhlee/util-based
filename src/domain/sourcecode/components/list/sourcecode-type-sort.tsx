@@ -7,6 +7,7 @@ import { Dropdown } from "xiilab-ui";
 import type { GetSourceCodeListCodeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { SOURCECODE_TYPE_OPTIONS } from "@/domain/sourcecode/constants/sourcecode.constant";
 import {
+  sourcecodeCheckedListAtom,
   sourcecodePageAtom,
   sourcecodeTypeSortAtom,
 } from "@/domain/sourcecode/state/sourcecode.atom";
@@ -19,9 +20,11 @@ interface SourcecodeTypeSortProps {
 export function SourcecodeTypeSort({ disabled }: SourcecodeTypeSortProps) {
   const [codeType, setCodeType] = useAtom(sourcecodeTypeSortAtom);
   const resetPage = useResetAtom(sourcecodePageAtom);
+  const resetCheckedList = useResetAtom(sourcecodeCheckedListAtom);
 
   const handleChange = (value: GetSourceCodeListCodeType | null) => {
     resetPage();
+    resetCheckedList();
     setCodeType(value);
   };
 

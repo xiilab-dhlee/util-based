@@ -10,7 +10,9 @@ const baseVolumeFields = {
     .string()
     .min(1, "볼륨 이름을 입력해 주세요.")
     .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
-  isPublic: z.string().min(1, "공개 설정을 선택해 주세요."),
+  isPublic: z.enum(["true", "false"], {
+    errorMap: () => ({ message: "공개 설정을 선택해 주세요." }),
+  }),
   mountPath: z
     .string()
     .min(1, "마운트 경로를 입력해 주세요.")
@@ -26,6 +28,7 @@ const baseVolumeFields = {
 export const createAstragoVolumeSchema = z.object({
   ...baseVolumeFields,
   storageId: z.number({ required_error: "스토리지를 선택해 주세요." }),
+  workspaceId: z.number().optional(),
 });
 
 export type CreateAstragoVolumeFormType = z.infer<
@@ -48,6 +51,7 @@ export const createOnPremiseVolumeSchema = z.object({
     .min(1, "Server Path를 입력해 주세요.")
     .max(1000, "Server Path는 1000자 이하로 입력해 주세요.")
     .regex(/^\/.*/, "Server Path는 /로 시작해야 합니다."),
+  workspaceId: z.number().optional(),
 });
 
 export type CreateOnPremiseVolumeFormType = z.infer<
