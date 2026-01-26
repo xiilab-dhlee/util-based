@@ -48,14 +48,19 @@ import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponseActiveWorkloadListResponse,
   BaseResponseDistributedPodResponse,
+  BaseResponseMapStringObject,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
   BaseResponseWorkloadDeleteFilesResponse,
+  BaseResponseWorkloadDetailResponse,
+  BaseResponseWorkloadEventHistoryResponse,
   BaseResponseWorkloadFileListResponse,
   BaseResponseWorkloadStatusResponse,
+  BaseResponseWorkloadSummaryResponse,
   GetActiveWorkloadsParams,
   GetTerminatedWorkloadLogParams,
   GetTerminatedWorkloadsParams,
+  GetWorkloadEventHistoryParams,
   SseEmitter,
   StreamWorkloadLogsParams,
   WorkloadCompressFilesParams,
@@ -79,11 +84,19 @@ import type {
             **워크로드 잡 타입:**
             - INTERACTIVE: 인터랙티브 워크로드
             - BATCH: 배치 워크로드
-            - DISTRIBUTED: 분산 워크로드 (launcherInfo, workerInfo 필요)
+            - DISTRIBUTED: 분산 워크로드 (workerCount 필수)
 
             **노드 타입:**
             - SINGLE: 단일 노드
             - MULTI: 멀티 노드
+
+            **분산 워크로드 설정:**
+            - workerCount: Worker 수 (DISTRIBUTED 타입만 필수, 1 이상)
+            - workloadResource: 노드당 리소스 (cpu, memory, gpu)
+
+            **GPU 리소스 가용성:**
+            - 선택한 리소스 프리셋의 GPU가 클러스터에서 가용하지 않으면 실패 응답
+            - status: FAIL, errorCode: RESOURCE_PRESET_UNAVAILABLE
         
  * @summary 워크로드 생성
  */
@@ -92,7 +105,7 @@ export const createWorkload = (
   workloadCreateRequest: WorkloadCreateRequest,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseUnit>({
+  return customInstance<BaseResponseMapStringObject>({
     url: `/api/v1/workspaces/${workspaceId}/workloads`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -722,8 +735,8 @@ export const useWorkloadCompressFiles = <TError = unknown, TContext = unknown>(
             실행 중인 워크로드를 종료합니다.
 
             **종료 동작:**
-            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)만 삭제
-            - Service, Ingress, PVC, PV 등 부가 리소스는 유지 (재시작 시 재사용)
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
             - 컨테이너 상태를 이미지로 커밋하여 Harbor에 저장 (TODO: 추후 구현)
 
             **종료 대상:**
@@ -732,7 +745,7 @@ export const useWorkloadCompressFiles = <TError = unknown, TContext = unknown>(
 
             **재시작:**
             - 종료된 워크로드는 재시작 API로 다시 실행 가능
-            - 커밋된 이미지와 기존 리소스(Service, PVC 등)를 재사용
+            - 커밋된 이미지 사용 및 리소스(Service, PVC, Secret 등) 재생성
         
  * @summary 워크로드 종료
  */
@@ -820,9 +833,10 @@ export const useTerminateWorkload = <TError = unknown, TContext = unknown>(
 
             **재시작 동작:**
             - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)를 새로 생성
-            - 기존 Service, Ingress, PVC, PV, Secret 등 부가 리소스는 재사용
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 재생성
             - 커밋된 이미지가 있으면 해당 이미지 사용, 없으면 원본 이미지 사용 (TODO)
-            - 리소스 설정(CPU, 메모리, GPU, 분산학습 노드 수)을 변경하여 재시작 가능
+            - 리소스 프리셋을 변경하여 리소스(CPU, 메모리, GPU) 설정 변경 가능
+            - DISTRIBUTED 워크로드: workerCount 변경 가능 (미입력 시 기존 값 유지)
 
             **재시작 대상:**
             - TERMINATED 상태의 워크로드만 재시작 가능
@@ -841,7 +855,7 @@ export const restartWorkload = (
   workloadRestartRequest: WorkloadRestartRequest,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseUnit>({
+  return customInstance<BaseResponseMapStringObject>({
     url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/actions/restart`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -936,6 +950,192 @@ export const useRestartWorkload = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 
+            워크로드의 요약 정보(이름, 설명, 상태)를 조회합니다.
+
+            이름과 설명은 DB에서 조회하고,
+            상태는 K8s 실시간 조회를 우선하며 K8s에 없으면 DB 상태를 사용합니다.
+        
+ * @summary 워크로드 요약 정보 조회
+ */
+export const getWorkloadSummary = (
+  workspaceId: number,
+  workloadResourceName: string,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadSummaryResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/summary`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetWorkloadSummaryQueryKey = (
+  workspaceId?: number,
+  workloadResourceName?: string,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/summary`,
+  ] as const;
+};
+
+export const getGetWorkloadSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkloadSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetWorkloadSummaryQueryKey(workspaceId, workloadResourceName);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkloadSummary>>
+  > = ({ signal }) =>
+    getWorkloadSummary(workspaceId, workloadResourceName, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!(workspaceId && workloadResourceName),
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkloadSummary>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkloadSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkloadSummary>>
+>;
+export type GetWorkloadSummaryQueryError = unknown;
+
+export function useGetWorkloadSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 요약 정보 조회
+ */
+
+export function useGetWorkloadSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkloadSummaryQueryOptions(
+    workspaceId,
+    workloadResourceName,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 /**
  * 
             워크로드의 실시간 상태를 조회합니다.
@@ -1961,6 +2161,209 @@ export function useWorkloadPreviewFile<
 
 /**
  * 
+            워크로드 Pod의 K8s 이벤트 이력을 조회합니다.
+
+            **분산 워크로드(DISTRIBUTED)의 경우:**
+            - podName 쿼리 파라미터로 특정 Pod 지정 필요
+
+            **BATCH/INTERACTIVE의 경우:**
+            - podName 생략 시 자동으로 Pod 탐색
+        
+ * @summary 워크로드 이벤트 이력 조회
+ */
+export const getWorkloadEventHistory = (
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: GetWorkloadEventHistoryParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadEventHistoryResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/event-history`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetWorkloadEventHistoryQueryKey = (
+  workspaceId?: number,
+  workloadResourceName?: string,
+  params?: GetWorkloadEventHistoryParams,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/event-history`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetWorkloadEventHistoryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: GetWorkloadEventHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetWorkloadEventHistoryQueryKey(
+      workspaceId,
+      workloadResourceName,
+      params,
+    );
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkloadEventHistory>>
+  > = ({ signal }) =>
+    getWorkloadEventHistory(workspaceId, workloadResourceName, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!(workspaceId && workloadResourceName),
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkloadEventHistoryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkloadEventHistory>>
+>;
+export type GetWorkloadEventHistoryQueryError = unknown;
+
+export function useGetWorkloadEventHistory<
+  TData = Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params: undefined | GetWorkloadEventHistoryParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadEventHistory>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadEventHistory<
+  TData = Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: GetWorkloadEventHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadEventHistory>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadEventHistory<
+  TData = Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: GetWorkloadEventHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 이벤트 이력 조회
+ */
+
+export function useGetWorkloadEventHistory<
+  TData = Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  params?: GetWorkloadEventHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadEventHistory>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkloadEventHistoryQueryOptions(
+    workspaceId,
+    workloadResourceName,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
             분산 워크로드(TrainJob)의 Pod 이름 목록을 조회합니다.
 
             **조회 대상:**
@@ -2135,6 +2538,390 @@ export function useGetDistributedPods<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetDistributedPodsQueryOptions(
+    workspaceId,
+    workloadResourceName,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            워크로드의 상세 정보를 조회합니다.
+            워크로드 생성 시 입력한 모든 정보를 반환합니다.
+
+            **포함 정보:**
+            - 기본 정보: 이름, 설명, 타입, 노드 설정, workerCount(분산 워크로드)
+            - 이미지 정보: Harbor 이미지명, 태그, Astrago 등록 여부
+            - 리소스 정보: CPU, 메모리, GPU
+            - 소스코드 정보: Git URL, 마운트 경로, 브랜치
+            - 볼륨 정보: 볼륨명, 타입, 마운트 경로, 스토리지명
+        
+ * @summary 워크로드 상세 조회
+ */
+export const getWorkloadDetail = (
+  workspaceId: number,
+  workloadResourceName: string,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadDetailResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/detail`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetWorkloadDetailQueryKey = (
+  workspaceId?: number,
+  workloadResourceName?: string,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/detail`,
+  ] as const;
+};
+
+export const getGetWorkloadDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkloadDetail>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetWorkloadDetailQueryKey(workspaceId, workloadResourceName);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkloadDetail>>
+  > = ({ signal }) =>
+    getWorkloadDetail(workspaceId, workloadResourceName, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!(workspaceId && workloadResourceName),
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkloadDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkloadDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkloadDetail>>
+>;
+export type GetWorkloadDetailQueryError = unknown;
+
+export function useGetWorkloadDetail<
+  TData = Awaited<ReturnType<typeof getWorkloadDetail>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadDetail<
+  TData = Awaited<ReturnType<typeof getWorkloadDetail>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadDetail<
+  TData = Awaited<ReturnType<typeof getWorkloadDetail>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 상세 조회
+ */
+
+export function useGetWorkloadDetail<
+  TData = Awaited<ReturnType<typeof getWorkloadDetail>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkloadDetailQueryOptions(
+    workspaceId,
+    workloadResourceName,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            워크로드를 복제하기 위한 데이터를 조회합니다.
+            기존 워크로드의 설정을 기반으로 새로운 워크로드를 생성할 때 사용합니다.
+
+            **응답 내용:**
+            - 워크로드 상세 조회와 동일한 구조
+            - 단, 소스코드/볼륨은 접근 권한에 따라 필터링됨
+
+            **소스코드/볼륨 접근 권한:**
+            - 공개(isPublic=true): 모든 사용자 접근 가능
+            - 비공개(isPublic=false): 생성자만 접근 가능 (권한 없으면 null 반환)
+            - 삭제됨(isDeleted=true): null 반환
+        
+ * @summary 워크로드 복제용 데이터 조회
+ */
+export const getWorkloadCloneData = (
+  workspaceId: number,
+  workloadResourceName: string,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadDetailResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/clone-data`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetWorkloadCloneDataQueryKey = (
+  workspaceId?: number,
+  workloadResourceName?: string,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/clone-data`,
+  ] as const;
+};
+
+export const getGetWorkloadCloneDataQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkloadCloneData>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadCloneData>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetWorkloadCloneDataQueryKey(workspaceId, workloadResourceName);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkloadCloneData>>
+  > = ({ signal }) =>
+    getWorkloadCloneData(workspaceId, workloadResourceName, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!(workspaceId && workloadResourceName),
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkloadCloneData>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkloadCloneDataQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkloadCloneData>>
+>;
+export type GetWorkloadCloneDataQueryError = unknown;
+
+export function useGetWorkloadCloneData<
+  TData = Awaited<ReturnType<typeof getWorkloadCloneData>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadCloneData>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadCloneData>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadCloneData>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadCloneData<
+  TData = Awaited<ReturnType<typeof getWorkloadCloneData>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadCloneData>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadCloneData>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadCloneData>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadCloneData<
+  TData = Awaited<ReturnType<typeof getWorkloadCloneData>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadCloneData>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 복제용 데이터 조회
+ */
+
+export function useGetWorkloadCloneData<
+  TData = Awaited<ReturnType<typeof getWorkloadCloneData>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  workloadResourceName: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadCloneData>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkloadCloneDataQueryOptions(
     workspaceId,
     workloadResourceName,
     options,

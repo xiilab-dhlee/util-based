@@ -36,6 +36,16 @@ import type {
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+export const getRemoveWorkloadFromUrgentStandbyResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getUpdateUrgentStandbyOrderResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
@@ -103,6 +113,34 @@ export const getAddWorkloadToUrgentStandbyResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getRemoveWorkloadFromUrgentStandbyMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/admin/queues/urgent-standby/workloads/remove",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getRemoveWorkloadFromUrgentStandbyResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 
 export const getUpdateUrgentStandbyOrderMockHandler = (
   overrideResponse?:
@@ -190,6 +228,7 @@ export const getAddWorkloadToUrgentStandbyMockHandler = (
   );
 };
 export const getAdminQueueMock = () => [
+  getRemoveWorkloadFromUrgentStandbyMockHandler(),
   getUpdateUrgentStandbyOrderMockHandler(),
   getGetUrgentStandbyWorkloadsMockHandler(),
   getAddWorkloadToUrgentStandbyMockHandler(),

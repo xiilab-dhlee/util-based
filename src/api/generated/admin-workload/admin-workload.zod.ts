@@ -54,6 +54,8 @@ export const getPendingWorkloadsQueryParams = zod.object({
     .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
     .optional()
     .describe("워크로드 타입 필터. null: 전체"),
+  sort: zod.enum(["CREATED_AT"]).optional().describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getPendingWorkloadsResponse = zod

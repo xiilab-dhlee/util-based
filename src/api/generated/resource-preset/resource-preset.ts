@@ -43,23 +43,30 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponsePageResponseResourcePresetSummaryResponse,
+  BaseResponseListResourcePresetSummaryResponse,
   GetAvailablePresetsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 워크로드 생성 시 선택할 수 있는 리소스 프리셋 목록을 조회합니다.
 
-클러스터의 현재 가용 리소스(CPU, Memory, GPU)를 기준으로 실제 사용 가능한 프리셋만 반환합니다.
+**workspaceId 파라미터가 있는 경우**:
+- 워크스페이스에 할당된 자원(CPU, Memory, GPU)을 기준으로 실제 사용 가능한 프리셋만 반환합니다.
+- 긴급 큐로 인해 Kubernetes Queue의 현재 상태와 무관하게 워크스페이스 할당 자원 기준으로 필터링됩니다.
+
+**workspaceId 파라미터가 없는 경우**:
+- 클러스터 전체 가용 리소스를 기준으로 사용 가능한 프리셋만 반환합니다.
+
 - NORMAL GPU: nvidia.com/gpu 리소스 기준
 - MIG GPU: nvidia.com/mig-{profile} 리소스 기준
+- 필터링, 페이징, 정렬 없이 전체 목록을 반환합니다.
  * @summary 사용 가능한 리소스 프리셋 목록 조회
  */
 export const getAvailablePresets = (
   params?: GetAvailablePresetsParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponsePageResponseResourcePresetSummaryResponse>({
+  return customInstance<BaseResponseListResourcePresetSummaryResponse>({
     url: `/api/v1/resource-presets`,
     method: "GET",
     params,

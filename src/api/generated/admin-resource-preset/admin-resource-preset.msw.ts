@@ -75,9 +75,9 @@ export const getGetPresetDetailResponseMock = (
         gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       },
     },
-    jobType: faker.helpers.arrayElement([
-      "BATCH",
+    workloadJobType: faker.helpers.arrayElement([
       "INTERACTIVE",
+      "BATCH",
       "DISTRIBUTED",
     ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
@@ -128,9 +128,9 @@ export const getUpdatePresetResponseMock = (
         gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       },
     },
-    jobType: faker.helpers.arrayElement([
-      "BATCH",
+    workloadJobType: faker.helpers.arrayElement([
       "INTERACTIVE",
+      "BATCH",
       "DISTRIBUTED",
     ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
@@ -201,9 +201,9 @@ export const getGetPresetsResponseMock = (
           gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
         },
       },
-      jobType: faker.helpers.arrayElement([
-        "BATCH",
+      workloadJobType: faker.helpers.arrayElement([
         "INTERACTIVE",
+        "BATCH",
         "DISTRIBUTED",
       ] as const),
       nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
@@ -255,9 +255,9 @@ export const getCreatePresetResponseMock = (
         gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       },
     },
-    jobType: faker.helpers.arrayElement([
-      "BATCH",
+    workloadJobType: faker.helpers.arrayElement([
       "INTERACTIVE",
+      "BATCH",
       "DISTRIBUTED",
     ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),

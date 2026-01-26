@@ -115,7 +115,7 @@ export const getUpdatePolicySetResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetAllWorkspaces1ResponseMock = (
+export const getGetAdminAllWorkspacesResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminWorkspaceListResponse> = {},
 ): BaseResponsePageResponseAdminWorkspaceListResponse => ({
   status: "SUCCESS",
@@ -198,7 +198,7 @@ export const getGetAllWorkspaces1ResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetWorkspaceMembers1ResponseMock = (
+export const getGetAdminWorkspaceMembersResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminWorkspaceMemberResponse> = {},
 ): BaseResponsePageResponseAdminWorkspaceMemberResponse => ({
   status: "SUCCESS",
@@ -229,7 +229,7 @@ export const getGetWorkspaceMembers1ResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetWorkspaceDetail1ResponseMock = (
+export const getGetAdminWorkspaceDetailResponseMock = (
   overrideResponse: Partial<BaseResponseAdminWorkspaceDetailResponse> = {},
 ): BaseResponseAdminWorkspaceDetailResponse => ({
   status: "SUCCESS",
@@ -288,7 +288,7 @@ export const getGetWorkspaceDetail1ResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetResourceRequests1ResponseMock = (
+export const getGetAdminResourceRequestsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminResourceRequestListResponse> = {},
 ): BaseResponsePageResponseAdminResourceRequestListResponse => ({
   status: "SUCCESS",
@@ -572,7 +572,7 @@ export const getDeleteWorkspacesMockHandler = (
   );
 };
 
-export const getGetAllWorkspaces1MockHandler = (
+export const getGetAdminAllWorkspacesMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseAdminWorkspaceListResponse
     | ((
@@ -593,7 +593,7 @@ export const getGetAllWorkspaces1MockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetAllWorkspaces1ResponseMock(),
+            : getGetAdminAllWorkspacesResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -602,7 +602,7 @@ export const getGetAllWorkspaces1MockHandler = (
   );
 };
 
-export const getGetWorkspaceMembers1MockHandler = (
+export const getGetAdminWorkspaceMembersMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseAdminWorkspaceMemberResponse
     | ((
@@ -623,7 +623,7 @@ export const getGetWorkspaceMembers1MockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetWorkspaceMembers1ResponseMock(),
+            : getGetAdminWorkspaceMembersResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -632,7 +632,7 @@ export const getGetWorkspaceMembers1MockHandler = (
   );
 };
 
-export const getGetWorkspaceDetail1MockHandler = (
+export const getGetAdminWorkspaceDetailMockHandler = (
   overrideResponse?:
     | BaseResponseAdminWorkspaceDetailResponse
     | ((
@@ -653,7 +653,7 @@ export const getGetWorkspaceDetail1MockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetWorkspaceDetail1ResponseMock(),
+            : getGetAdminWorkspaceDetailResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -662,7 +662,7 @@ export const getGetWorkspaceDetail1MockHandler = (
   );
 };
 
-export const getGetResourceRequests1MockHandler = (
+export const getGetAdminResourceRequestsMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseAdminResourceRequestListResponse
     | ((
@@ -683,7 +683,7 @@ export const getGetResourceRequests1MockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetResourceRequests1ResponseMock(),
+            : getGetAdminResourceRequestsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -728,9 +728,9 @@ export const getAdminWorkspaceMock = () => [
   getGetPolicySetMockHandler(),
   getUpdatePolicySetMockHandler(),
   getDeleteWorkspacesMockHandler(),
-  getGetAllWorkspaces1MockHandler(),
-  getGetWorkspaceMembers1MockHandler(),
-  getGetWorkspaceDetail1MockHandler(),
-  getGetResourceRequests1MockHandler(),
+  getGetAdminAllWorkspacesMockHandler(),
+  getGetAdminWorkspaceMembersMockHandler(),
+  getGetAdminWorkspaceDetailMockHandler(),
+  getGetAdminResourceRequestsMockHandler(),
   getGetResourceRequestDetailMockHandler(),
 ];

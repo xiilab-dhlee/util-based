@@ -36,11 +36,19 @@ import * as zod from "zod";
             **워크로드 잡 타입:**
             - INTERACTIVE: 인터랙티브 워크로드
             - BATCH: 배치 워크로드
-            - DISTRIBUTED: 분산 워크로드 (launcherInfo, workerInfo 필요)
+            - DISTRIBUTED: 분산 워크로드 (workerCount 필수)
 
             **노드 타입:**
             - SINGLE: 단일 노드
             - MULTI: 멀티 노드
+
+            **분산 워크로드 설정:**
+            - workerCount: Worker 수 (DISTRIBUTED 타입만 필수, 1 이상)
+            - workloadResource: 노드당 리소스 (cpu, memory, gpu)
+
+            **GPU 리소스 가용성:**
+            - 선택한 리소스 프리셋의 GPU가 클러스터에서 가용하지 않으면 실패 응답
+            - status: FAIL, errorCode: RESOURCE_PRESET_UNAVAILABLE
         
  * @summary 워크로드 생성
  */
@@ -187,80 +195,9 @@ export const createWorkloadBody = zod
       )
       .optional()
       .describe("포트 목록"),
-    resource: zod
-      .object({
-        gpu: zod
-          .object({
-            gpuName: zod
-              .string()
-              .optional()
-              .describe("GPU 이름 (NodeSelector용)"),
-            gpuType: zod
-              .enum(["NORMAL", "MIG"])
-              .optional()
-              .describe("GPU 타입 (NORMAL: 일반 GPU)"),
-            gpuMemoryByte: zod
-              .number()
-              .optional()
-              .describe("GPU 메모리 (byte)"),
-            detail: zod
-              .object({
-                normal: zod
-                  .object({
-                    requestCount: zod.number().describe("요청 GPU 수량"),
-                  })
-                  .strict()
-                  .optional()
-                  .describe("일반 GPU 정보"),
-                mig: zod
-                  .array(
-                    zod
-                      .object({
-                        profile: zod
-                          .string()
-                          .min(1)
-                          .describe("MIG 프로파일 이름"),
-                        requestCount: zod.number().describe("요청 수량"),
-                      })
-                      .strict()
-                      .describe("MIG 프로파일 정보"),
-                  )
-                  .optional()
-                  .describe("MIG 프로파일 목록"),
-              })
-              .strict()
-              .optional()
-              .describe("GPU 상세 정보"),
-          })
-          .strict()
-          .optional()
-          .describe("GPU 리소스 정보"),
-        cpu: zod
-          .object({
-            requestCore: zod.number().describe("요청 CPU 코어 수"),
-          })
-          .strict()
-          .describe("CPU 리소스 정보"),
-        memory: zod
-          .object({
-            requestByte: zod.number().describe("요청 메모리 byte 수"),
-          })
-          .strict()
-          .describe("메모리 리소스 정보"),
-        distributed: zod
-          .object({
-            numNodes: zod.number().describe("분산 노드(Pod) 수"),
-          })
-          .strict()
-          .optional()
-          .describe("분산 학습 설정 (DISTRIBUTED 워크로드용)"),
-      })
-      .strict()
-      .optional()
-      .describe("워크로드 리소스 정보"),
     sourceCode: zod
       .object({
-        entityId: zod.number().describe("소스코드 entityId"),
+        sourceCodeId: zod.number().describe("소스코드 ID (PK)"),
         mountPath: zod.string().min(1).describe("마운트 경로"),
         sourceCodeBranch: zod.string().optional().describe("브랜치명"),
       })
@@ -271,7 +208,7 @@ export const createWorkloadBody = zod
       .array(
         zod
           .object({
-            volumeId: zod.number().describe("볼륨 ID"),
+            volumeId: zod.number().describe("볼륨 ID (PK)"),
             mountPath: zod.string().min(1).describe("마운트 경로"),
           })
           .strict()
@@ -283,6 +220,10 @@ export const createWorkloadBody = zod
       .array(zod.record(zod.string(), zod.unknown()))
       .optional()
       .describe("파라미터 목록"),
+    workerCount: zod
+      .number()
+      .optional()
+      .describe("Worker 수 (분산 워크로드용, Pod 복제본 수)"),
   })
   .strict()
   .describe("워크로드 생성 요청");
@@ -545,8 +486,8 @@ export const workloadCompressFilesBody = zod
             실행 중인 워크로드를 종료합니다.
 
             **종료 동작:**
-            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)만 삭제
-            - Service, Ingress, PVC, PV 등 부가 리소스는 유지 (재시작 시 재사용)
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
             - 컨테이너 상태를 이미지로 커밋하여 Harbor에 저장 (TODO: 추후 구현)
 
             **종료 대상:**
@@ -555,7 +496,7 @@ export const workloadCompressFilesBody = zod
 
             **재시작:**
             - 종료된 워크로드는 재시작 API로 다시 실행 가능
-            - 커밋된 이미지와 기존 리소스(Service, PVC 등)를 재사용
+            - 커밋된 이미지 사용 및 리소스(Service, PVC, Secret 등) 재생성
         
  * @summary 워크로드 종료
  */
@@ -579,9 +520,10 @@ export const terminateWorkloadResponse = zod
 
             **재시작 동작:**
             - K8s에서 워크로드 리소스(Job/Deployment/TrainJob)를 새로 생성
-            - 기존 Service, Ingress, PVC, PV, Secret 등 부가 리소스는 재사용
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 재생성
             - 커밋된 이미지가 있으면 해당 이미지 사용, 없으면 원본 이미지 사용 (TODO)
-            - 리소스 설정(CPU, 메모리, GPU, 분산학습 노드 수)을 변경하여 재시작 가능
+            - 리소스 프리셋을 변경하여 리소스(CPU, 메모리, GPU) 설정 변경 가능
+            - DISTRIBUTED 워크로드: workerCount 변경 가능 (미입력 시 기존 값 유지)
 
             **재시작 대상:**
             - TERMINATED 상태의 워크로드만 재시작 가능
@@ -602,76 +544,13 @@ export const restartWorkloadParams = zod.object({
 export const restartWorkloadBody = zod
   .object({
     resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
-    resource: zod
-      .object({
-        gpu: zod
-          .object({
-            gpuName: zod
-              .string()
-              .optional()
-              .describe("GPU 이름 (NodeSelector용)"),
-            gpuType: zod
-              .enum(["NORMAL", "MIG"])
-              .optional()
-              .describe("GPU 타입 (NORMAL: 일반 GPU)"),
-            gpuMemoryByte: zod
-              .number()
-              .optional()
-              .describe("GPU 메모리 (byte)"),
-            detail: zod
-              .object({
-                normal: zod
-                  .object({
-                    requestCount: zod.number().describe("요청 GPU 수량"),
-                  })
-                  .strict()
-                  .optional()
-                  .describe("일반 GPU 정보"),
-                mig: zod
-                  .array(
-                    zod
-                      .object({
-                        profile: zod
-                          .string()
-                          .min(1)
-                          .describe("MIG 프로파일 이름"),
-                        requestCount: zod.number().describe("요청 수량"),
-                      })
-                      .strict()
-                      .describe("MIG 프로파일 정보"),
-                  )
-                  .optional()
-                  .describe("MIG 프로파일 목록"),
-              })
-              .strict()
-              .optional()
-              .describe("GPU 상세 정보"),
-          })
-          .strict()
-          .optional()
-          .describe("GPU 리소스 정보"),
-        cpu: zod
-          .object({
-            requestCore: zod.number().describe("요청 CPU 코어 수"),
-          })
-          .strict()
-          .describe("CPU 리소스 정보"),
-        memory: zod
-          .object({
-            requestByte: zod.number().describe("요청 메모리 byte 수"),
-          })
-          .strict()
-          .describe("메모리 리소스 정보"),
-        distributed: zod
-          .object({
-            numNodes: zod.number().describe("분산 노드(Pod) 수"),
-          })
-          .strict()
-          .optional()
-          .describe("분산 학습 설정 (DISTRIBUTED 워크로드용)"),
-      })
-      .strict()
-      .describe("워크로드 리소스 정보"),
+    workerCount: zod
+      .number()
+      .min(1)
+      .optional()
+      .describe(
+        "분산 학습 워커 수 (DISTRIBUTED 워크로드 전용, 미입력 시 기존 값 유지)",
+      ),
   })
   .strict()
   .describe("워크로드 재시작 요청");
@@ -680,6 +559,50 @@ export const restartWorkloadResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
+    data: zod.record(zod.string(), zod.unknown()).optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            워크로드의 요약 정보(이름, 설명, 상태)를 조회합니다.
+
+            이름과 설명은 DB에서 조회하고,
+            상태는 K8s 실시간 조회를 우선하며 K8s에 없으면 DB 상태를 사용합니다.
+        
+ * @summary 워크로드 요약 정보 조회
+ */
+export const getWorkloadSummaryParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const getWorkloadSummaryResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        workloadName: zod.string().describe("워크로드 이름"),
+        description: zod.string().optional().describe("워크로드 설명"),
+        workloadStatus: zod
+          .enum([
+            "CREATING",
+            "PENDING",
+            "RUNNING",
+            "TERMINATING",
+            "TERMINATED",
+            "ERROR",
+          ])
+          .describe(
+            "워크로드 상태 (PENDING, CREATING, RUNNING, TERMINATED, ERROR)",
+          ),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 요약 정보 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -904,6 +827,64 @@ export const workloadPreviewFileResponse = zod.string();
 
 /**
  * 
+            워크로드 Pod의 K8s 이벤트 이력을 조회합니다.
+
+            **분산 워크로드(DISTRIBUTED)의 경우:**
+            - podName 쿼리 파라미터로 특정 Pod 지정 필요
+
+            **BATCH/INTERACTIVE의 경우:**
+            - podName 생략 시 자동으로 Pod 탐색
+        
+ * @summary 워크로드 이벤트 이력 조회
+ */
+export const getWorkloadEventHistoryParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const getWorkloadEventHistoryQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+export const getWorkloadEventHistoryResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        events: zod
+          .array(
+            zod
+              .object({
+                eventType: zod
+                  .string()
+                  .describe("이벤트 타입 (Normal/Warning)"),
+                eventReason: zod.string().describe("이벤트 발생 이유"),
+                eventCreatedAt: zod
+                  .string()
+                  .datetime({})
+                  .describe("이벤트 발생 시간"),
+                eventFrom: zod.string().describe("이벤트 발생 주체"),
+                eventMessage: zod.string().describe("이벤트 메시지"),
+              })
+              .strict()
+              .describe("워크로드 이벤트 항목"),
+          )
+          .describe("이벤트 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 이벤트 이력 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             분산 워크로드(TrainJob)의 Pod 이름 목록을 조회합니다.
 
             **조회 대상:**
@@ -932,6 +913,390 @@ export const getDistributedPodsResponse = zod
       .strict()
       .optional()
       .describe("분산 워크로드 Pod 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            워크로드의 상세 정보를 조회합니다.
+            워크로드 생성 시 입력한 모든 정보를 반환합니다.
+
+            **포함 정보:**
+            - 기본 정보: 이름, 설명, 타입, 노드 설정, workerCount(분산 워크로드)
+            - 이미지 정보: Harbor 이미지명, 태그, Astrago 등록 여부
+            - 리소스 정보: CPU, 메모리, GPU
+            - 소스코드 정보: Git URL, 마운트 경로, 브랜치
+            - 볼륨 정보: 볼륨명, 타입, 마운트 경로, 스토리지명
+        
+ * @summary 워크로드 상세 조회
+ */
+export const getWorkloadDetailParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const getWorkloadDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        workloadName: zod.string().describe("워크로드 이름"),
+        workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+        description: zod.string().optional().describe("워크로드 설명"),
+        workloadJobType: zod
+          .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+          .describe("워크로드 잡 타입"),
+        nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
+        nodeName: zod.string().optional().describe("노드 이름"),
+        resourcePreset: zod
+          .object({
+            resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
+            presetName: zod.string().describe("프리셋 이름"),
+            description: zod.string().optional().describe("프리셋 설명"),
+            workloadJobType: zod
+              .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+              .describe("워크로드 잡 타입"),
+            nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
+            resource: zod
+              .object({
+                cpu: zod
+                  .object({
+                    requestCore: zod.number(),
+                  })
+                  .strict(),
+                memory: zod
+                  .object({
+                    requestByte: zod.number(),
+                  })
+                  .strict(),
+                gpu: zod
+                  .object({
+                    gpuType: zod.enum(["NORMAL", "MIG", "MPS"]),
+                    detail: zod
+                      .object({
+                        normal: zod
+                          .object({
+                            requestCount: zod.number(),
+                          })
+                          .strict()
+                          .optional(),
+                        mig: zod
+                          .array(
+                            zod
+                              .object({
+                                profile: zod.string(),
+                                requestCount: zod.number(),
+                              })
+                              .strict(),
+                          )
+                          .optional(),
+                        mps: zod
+                          .object({
+                            requestCount: zod.number(),
+                          })
+                          .strict()
+                          .optional(),
+                      })
+                      .strict(),
+                    gpuName: zod.string().optional(),
+                  })
+                  .strict()
+                  .optional(),
+              })
+              .strict(),
+            isDeleted: zod.boolean().describe("삭제 여부"),
+          })
+          .strict()
+          .optional()
+          .describe("워크로드 리소스 프리셋 상세 정보"),
+        workerCount: zod
+          .number()
+          .optional()
+          .describe("분산 학습 워커 수 (DISTRIBUTED 워크로드 전용)"),
+        image: zod
+          .object({
+            imageId: zod
+              .number()
+              .optional()
+              .describe("이미지 ID (Astrago 미등록 시 null)"),
+            imageTagId: zod
+              .number()
+              .optional()
+              .describe("이미지 태그 ID (Astrago 미등록 시 null)"),
+            harborImageName: zod.string().describe("Harbor 이미지 이름"),
+            imageTagName: zod.string().describe("이미지 태그 이름"),
+            imageType: zod
+              .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+              .describe("이미지 타입 (Astrago 미등록 시 PUBLIC)"),
+          })
+          .strict()
+          .describe("워크로드 이미지 상세 정보"),
+        outputDirectory: zod.string().optional().describe("아웃풋 디렉토리"),
+        executionDirectory: zod.string().optional().describe("실행 디렉토리"),
+        executionCommand: zod.string().optional().describe("실행 명령어"),
+        env: zod
+          .array(
+            zod
+              .object({
+                key: zod.string(),
+                value: zod.string(),
+              })
+              .strict(),
+          )
+          .optional()
+          .describe("환경 변수 목록"),
+        port: zod
+          .array(
+            zod
+              .object({
+                portName: zod.string(),
+                portNumber: zod.number(),
+                servicePortNum: zod.number().optional(),
+                url: zod.string().optional(),
+              })
+              .strict(),
+          )
+          .optional()
+          .describe("포트 목록"),
+        sourceCode: zod
+          .object({
+            sourceCodeId: zod.number().describe("소스코드 ID"),
+            sourceCodeName: zod.string().describe("소스코드 이름"),
+            gitUrl: zod.string().describe("Git URL"),
+            mountPath: zod.string().describe("마운트 경로"),
+            branch: zod.string().optional().describe("소스코드 브랜치"),
+            sourceCodeType: zod
+              .enum(["GITHUB", "GITLAB", "BITBUCKET"])
+              .describe("소스코드 타입"),
+          })
+          .strict()
+          .optional()
+          .describe("워크로드 소스코드 상세 정보"),
+        volume: zod
+          .array(
+            zod
+              .object({
+                volumeId: zod.number().describe("볼륨 ID"),
+                volumeName: zod.string().describe("볼륨 이름"),
+                volumeType: zod
+                  .enum(["ASTRAGO", "ON_PREMISE"])
+                  .describe("볼륨 타입"),
+                mountPath: zod.string().describe("마운트 경로"),
+                volumeSize: zod.number().describe("볼륨 파일 사이즈 (bytes)"),
+                storageName: zod
+                  .string()
+                  .optional()
+                  .describe("스토리지 이름 (ASTRAGO 타입만)"),
+              })
+              .strict()
+              .describe("워크로드 볼륨 상세 정보"),
+          )
+          .optional()
+          .describe("볼륨 목록"),
+        parameter: zod
+          .array(zod.record(zod.string(), zod.unknown()))
+          .optional()
+          .describe("파라미터 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 상세 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            워크로드를 복제하기 위한 데이터를 조회합니다.
+            기존 워크로드의 설정을 기반으로 새로운 워크로드를 생성할 때 사용합니다.
+
+            **응답 내용:**
+            - 워크로드 상세 조회와 동일한 구조
+            - 단, 소스코드/볼륨은 접근 권한에 따라 필터링됨
+
+            **소스코드/볼륨 접근 권한:**
+            - 공개(isPublic=true): 모든 사용자 접근 가능
+            - 비공개(isPublic=false): 생성자만 접근 가능 (권한 없으면 null 반환)
+            - 삭제됨(isDeleted=true): null 반환
+        
+ * @summary 워크로드 복제용 데이터 조회
+ */
+export const getWorkloadCloneDataParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const getWorkloadCloneDataResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        workloadName: zod.string().describe("워크로드 이름"),
+        workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+        description: zod.string().optional().describe("워크로드 설명"),
+        workloadJobType: zod
+          .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+          .describe("워크로드 잡 타입"),
+        nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
+        nodeName: zod.string().optional().describe("노드 이름"),
+        resourcePreset: zod
+          .object({
+            resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
+            presetName: zod.string().describe("프리셋 이름"),
+            description: zod.string().optional().describe("프리셋 설명"),
+            workloadJobType: zod
+              .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+              .describe("워크로드 잡 타입"),
+            nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
+            resource: zod
+              .object({
+                cpu: zod
+                  .object({
+                    requestCore: zod.number(),
+                  })
+                  .strict(),
+                memory: zod
+                  .object({
+                    requestByte: zod.number(),
+                  })
+                  .strict(),
+                gpu: zod
+                  .object({
+                    gpuType: zod.enum(["NORMAL", "MIG", "MPS"]),
+                    detail: zod
+                      .object({
+                        normal: zod
+                          .object({
+                            requestCount: zod.number(),
+                          })
+                          .strict()
+                          .optional(),
+                        mig: zod
+                          .array(
+                            zod
+                              .object({
+                                profile: zod.string(),
+                                requestCount: zod.number(),
+                              })
+                              .strict(),
+                          )
+                          .optional(),
+                        mps: zod
+                          .object({
+                            requestCount: zod.number(),
+                          })
+                          .strict()
+                          .optional(),
+                      })
+                      .strict(),
+                    gpuName: zod.string().optional(),
+                  })
+                  .strict()
+                  .optional(),
+              })
+              .strict(),
+            isDeleted: zod.boolean().describe("삭제 여부"),
+          })
+          .strict()
+          .optional()
+          .describe("워크로드 리소스 프리셋 상세 정보"),
+        workerCount: zod
+          .number()
+          .optional()
+          .describe("분산 학습 워커 수 (DISTRIBUTED 워크로드 전용)"),
+        image: zod
+          .object({
+            imageId: zod
+              .number()
+              .optional()
+              .describe("이미지 ID (Astrago 미등록 시 null)"),
+            imageTagId: zod
+              .number()
+              .optional()
+              .describe("이미지 태그 ID (Astrago 미등록 시 null)"),
+            harborImageName: zod.string().describe("Harbor 이미지 이름"),
+            imageTagName: zod.string().describe("이미지 태그 이름"),
+            imageType: zod
+              .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
+              .describe("이미지 타입 (Astrago 미등록 시 PUBLIC)"),
+          })
+          .strict()
+          .describe("워크로드 이미지 상세 정보"),
+        outputDirectory: zod.string().optional().describe("아웃풋 디렉토리"),
+        executionDirectory: zod.string().optional().describe("실행 디렉토리"),
+        executionCommand: zod.string().optional().describe("실행 명령어"),
+        env: zod
+          .array(
+            zod
+              .object({
+                key: zod.string(),
+                value: zod.string(),
+              })
+              .strict(),
+          )
+          .optional()
+          .describe("환경 변수 목록"),
+        port: zod
+          .array(
+            zod
+              .object({
+                portName: zod.string(),
+                portNumber: zod.number(),
+                servicePortNum: zod.number().optional(),
+                url: zod.string().optional(),
+              })
+              .strict(),
+          )
+          .optional()
+          .describe("포트 목록"),
+        sourceCode: zod
+          .object({
+            sourceCodeId: zod.number().describe("소스코드 ID"),
+            sourceCodeName: zod.string().describe("소스코드 이름"),
+            gitUrl: zod.string().describe("Git URL"),
+            mountPath: zod.string().describe("마운트 경로"),
+            branch: zod.string().optional().describe("소스코드 브랜치"),
+            sourceCodeType: zod
+              .enum(["GITHUB", "GITLAB", "BITBUCKET"])
+              .describe("소스코드 타입"),
+          })
+          .strict()
+          .optional()
+          .describe("워크로드 소스코드 상세 정보"),
+        volume: zod
+          .array(
+            zod
+              .object({
+                volumeId: zod.number().describe("볼륨 ID"),
+                volumeName: zod.string().describe("볼륨 이름"),
+                volumeType: zod
+                  .enum(["ASTRAGO", "ON_PREMISE"])
+                  .describe("볼륨 타입"),
+                mountPath: zod.string().describe("마운트 경로"),
+                volumeSize: zod.number().describe("볼륨 파일 사이즈 (bytes)"),
+                storageName: zod
+                  .string()
+                  .optional()
+                  .describe("스토리지 이름 (ASTRAGO 타입만)"),
+              })
+              .strict()
+              .describe("워크로드 볼륨 상세 정보"),
+          )
+          .optional()
+          .describe("볼륨 목록"),
+        parameter: zod
+          .array(zod.record(zod.string(), zod.unknown()))
+          .optional()
+          .describe("파라미터 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 상세 조회 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
