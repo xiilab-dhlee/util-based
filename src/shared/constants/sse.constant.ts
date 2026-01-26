@@ -12,6 +12,10 @@ export const SSE_ENDPOINTS = {
     `/sse/v1/admin/cluster/nodes/${encodeURIComponent(nodeName)}/resources/system/metrics/stream`,
   gpuMetrics: (nodeName: string) =>
     `/sse/v1/admin/cluster/nodes/${encodeURIComponent(nodeName)}/resources/gpu/metrics/stream`,
+  workspaceMetrics: (workspaceId: number | string) =>
+    `/sse/v1/workspaces/${encodeURIComponent(
+      String(workspaceId),
+    )}/workloads/resources/metrics/stream`,
 } as const;
 
 /**

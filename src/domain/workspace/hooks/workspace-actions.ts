@@ -5,8 +5,8 @@ import { useResetAtom } from "jotai/utils";
 import { toast } from "react-toastify";
 
 import {
-  getGetAllWorkspaces1QueryKey,
-  getGetWorkspaceDetail1QueryKey,
+  getGetAdminAllWorkspacesQueryKey,
+  getGetAdminWorkspaceDetailQueryKey,
   useDeleteWorkspaces,
 } from "@/api/generated/admin-workspace/admin-workspace";
 import {
@@ -77,13 +77,13 @@ export function useUpdateWorkspaceAction(
           queryKey: getGetAllWorkspacesQueryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: getGetAllWorkspaces1QueryKey(),
+          queryKey: getGetAdminAllWorkspacesQueryKey(),
         });
         queryClient.invalidateQueries({
           queryKey: getGetWorkspaceDetailQueryKey(variables.workspaceId),
         });
         queryClient.invalidateQueries({
-          queryKey: getGetWorkspaceDetail1QueryKey(variables.workspaceId),
+          queryKey: getGetAdminWorkspaceDetailQueryKey(variables.workspaceId),
         });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
@@ -111,7 +111,7 @@ export function useDeleteWorkspaceAction(
           queryKey: getGetAllWorkspacesQueryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: getGetAllWorkspaces1QueryKey(),
+          queryKey: getGetAdminAllWorkspacesQueryKey(),
         });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
@@ -299,13 +299,13 @@ export function useDeleteAdminWorkspacesAction(
         resetPage();
 
         queryClient.invalidateQueries({
-          queryKey: getGetAllWorkspaces1QueryKey(),
+          queryKey: getGetAdminAllWorkspacesQueryKey(),
         });
 
         // 삭제된 각 워크스페이스의 상세 정보도 무효화
         variables.data.workspaceId.forEach((workspaceId) => {
           queryClient.invalidateQueries({
-            queryKey: getGetWorkspaceDetail1QueryKey(workspaceId),
+            queryKey: getGetAdminWorkspaceDetailQueryKey(workspaceId),
           });
         });
 
