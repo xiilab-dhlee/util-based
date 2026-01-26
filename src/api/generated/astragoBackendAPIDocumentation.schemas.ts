@@ -5671,6 +5671,198 @@ export interface BaseResponseListGroupSummaryResponse {
   timestamp: number;
 }
 
+export type BaseResponseClusterTotalResourceResponseStatus =
+  (typeof BaseResponseClusterTotalResourceResponseStatus)[keyof typeof BaseResponseClusterTotalResourceResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseClusterTotalResourceResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseClusterTotalResourceResponse {
+  status: BaseResponseClusterTotalResourceResponseStatus;
+  errorCode?: string;
+  data?: ClusterTotalResourceResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 클러스터 전체 자원 응답
+ */
+export interface ClusterTotalResourceResponse {
+  /** GPU Capacity 정보 */
+  gpu: GpuCapacityInfo;
+  /** CPU Capacity 정보 */
+  cpu: CpuCapacityInfo;
+  /** Memory Capacity 정보 */
+  memory: MemoryCapacityInfo;
+}
+
+/**
+ * CPU Capacity 정보
+ */
+export interface CpuCapacityInfo {
+  /** 클러스터 전체 CPU 코어 수 */
+  clusterCapacityCores: number;
+}
+
+/**
+ * GPU Capacity 정보
+ */
+export interface GpuCapacityInfo {
+  /** 클러스터 전체 GPU 개수 */
+  clusterCapacityCount: number;
+}
+
+/**
+ * Memory Capacity 정보
+ */
+export interface MemoryCapacityInfo {
+  /** 클러스터 전체 메모리 용량 (바이트) */
+  clusterCapacityBytes: string;
+}
+
+export type BaseResponseListNodeGpuInfoResponseStatus =
+  (typeof BaseResponseListNodeGpuInfoResponseStatus)[keyof typeof BaseResponseListNodeGpuInfoResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListNodeGpuInfoResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListNodeGpuInfoResponse {
+  status: BaseResponseListNodeGpuInfoResponseStatus;
+  errorCode?: string;
+  data?: NodeGpuInfoResponse[];
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 노드 GPU 정보
+ */
+export interface NodeGpuInfoResponse {
+  /** 노드 이름 */
+  nodeName: string;
+  /** GPU 노드 여부 */
+  isGpuNode: boolean;
+}
+
+export type BaseResponseMigProfileListResponseStatus =
+  (typeof BaseResponseMigProfileListResponseStatus)[keyof typeof BaseResponseMigProfileListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseMigProfileListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseMigProfileListResponse {
+  status: BaseResponseMigProfileListResponseStatus;
+  errorCode?: string;
+  data?: MigProfileListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * MIG Profile 정보
+ */
+export interface MigProfileInfo {
+  /** MIG Profile 이름 */
+  profile: string;
+  /** 해당 Profile의 최대 개수 */
+  maxCount: number;
+}
+
+/**
+ * MIG Profile 목록 및 최대 개수 응답
+ */
+export interface MigProfileListResponse {
+  /** MIG Profile별 Capacity 정보 목록 */
+  migProfiles: MigProfileInfo[];
+}
+
+export type BaseResponseMigProfileResponseStatus =
+  (typeof BaseResponseMigProfileResponseStatus)[keyof typeof BaseResponseMigProfileResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseMigProfileResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseMigProfileResponse {
+  status: BaseResponseMigProfileResponseStatus;
+  errorCode?: string;
+  data?: MigProfileResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export type BaseResponseGpuListResponseStatus =
+  (typeof BaseResponseGpuListResponseStatus)[keyof typeof BaseResponseGpuListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseGpuListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseGpuListResponse {
+  status: BaseResponseGpuListResponseStatus;
+  errorCode?: string;
+  data?: GpuListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * GPU 목록 응답
+ */
+export interface GpuListResponse {
+  /** GPU Product 이름 목록 */
+  gpuNames: string[];
+}
+
+export type BaseResponseGpuResourceCapacityResponseStatus =
+  (typeof BaseResponseGpuResourceCapacityResponseStatus)[keyof typeof BaseResponseGpuResourceCapacityResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseGpuResourceCapacityResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseGpuResourceCapacityResponse {
+  status: BaseResponseGpuResourceCapacityResponseStatus;
+  errorCode?: string;
+  data?: GpuResourceCapacityResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * GPU 리소스 Capacity 응답
+ */
+export interface GpuResourceCapacityResponse {
+  /** GPU Capacity */
+  gpuCapacity: number;
+  /** CPU Capacity (전체 클러스터) */
+  cpuCapacity: number;
+  /** Memory Capacity (전체 클러스터, bytes) */
+  memCapacity: number;
+}
+
 /**
  * 관리자 CPU 리소스 응답
  */
@@ -7914,170 +8106,6 @@ export interface PageResponseK8sEventResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: K8sEventResponse[];
-}
-
-export type BaseResponseClusterTotalResourceResponseStatus =
-  (typeof BaseResponseClusterTotalResourceResponseStatus)[keyof typeof BaseResponseClusterTotalResourceResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseClusterTotalResourceResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseClusterTotalResourceResponse {
-  status: BaseResponseClusterTotalResourceResponseStatus;
-  errorCode?: string;
-  data?: ClusterTotalResourceResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 클러스터 전체 자원 응답
- */
-export interface ClusterTotalResourceResponse {
-  /** GPU Capacity 정보 */
-  gpu: GpuCapacityInfo;
-  /** CPU Capacity 정보 */
-  cpu: CpuCapacityInfo;
-  /** Memory Capacity 정보 */
-  memory: MemoryCapacityInfo;
-}
-
-/**
- * CPU Capacity 정보
- */
-export interface CpuCapacityInfo {
-  /** 클러스터 전체 CPU 코어 수 */
-  clusterCapacityCores: number;
-}
-
-/**
- * GPU Capacity 정보
- */
-export interface GpuCapacityInfo {
-  /** 클러스터 전체 GPU 개수 */
-  clusterCapacityCount: number;
-}
-
-/**
- * Memory Capacity 정보
- */
-export interface MemoryCapacityInfo {
-  /** 클러스터 전체 메모리 용량 (바이트) */
-  clusterCapacityBytes: string;
-}
-
-export type BaseResponseMigProfileListResponseStatus =
-  (typeof BaseResponseMigProfileListResponseStatus)[keyof typeof BaseResponseMigProfileListResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseMigProfileListResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseMigProfileListResponse {
-  status: BaseResponseMigProfileListResponseStatus;
-  errorCode?: string;
-  data?: MigProfileListResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * MIG Profile 정보
- */
-export interface MigProfileInfo {
-  /** MIG Profile 이름 */
-  profile: string;
-  /** 해당 Profile의 최대 개수 */
-  maxCount: number;
-}
-
-/**
- * MIG Profile 목록 및 최대 개수 응답
- */
-export interface MigProfileListResponse {
-  /** MIG Profile별 Capacity 정보 목록 */
-  migProfiles: MigProfileInfo[];
-}
-
-export type BaseResponseMigProfileResponseStatus =
-  (typeof BaseResponseMigProfileResponseStatus)[keyof typeof BaseResponseMigProfileResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseMigProfileResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseMigProfileResponse {
-  status: BaseResponseMigProfileResponseStatus;
-  errorCode?: string;
-  data?: MigProfileResponse;
-  message?: string;
-  timestamp: number;
-}
-
-export type BaseResponseGpuListResponseStatus =
-  (typeof BaseResponseGpuListResponseStatus)[keyof typeof BaseResponseGpuListResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseGpuListResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseGpuListResponse {
-  status: BaseResponseGpuListResponseStatus;
-  errorCode?: string;
-  data?: GpuListResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * GPU 목록 응답
- */
-export interface GpuListResponse {
-  /** GPU Product 이름 목록 */
-  gpuNames: string[];
-}
-
-export type BaseResponseGpuResourceCapacityResponseStatus =
-  (typeof BaseResponseGpuResourceCapacityResponseStatus)[keyof typeof BaseResponseGpuResourceCapacityResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseGpuResourceCapacityResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseGpuResourceCapacityResponse {
-  status: BaseResponseGpuResourceCapacityResponseStatus;
-  errorCode?: string;
-  data?: GpuResourceCapacityResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * GPU 리소스 Capacity 응답
- */
-export interface GpuResourceCapacityResponse {
-  /** GPU Capacity */
-  gpuCapacity: number;
-  /** CPU Capacity (전체 클러스터) */
-  cpuCapacity: number;
-  /** Memory Capacity (전체 클러스터, bytes) */
-  memCapacity: number;
 }
 
 export type BaseResponsePageResponseClusterNodeListResponseStatus =
@@ -10836,6 +10864,53 @@ export type SearchParams = {
   keyword: string;
 };
 
+export type GetMigProfilesByGpuParams = {
+  /**
+   * GPU Product 이름
+   */
+  gpuName: string;
+};
+
+export type GetGpuListParams = {
+  /**
+   * GPU 타입 (normal 또는 mig, 기본값: normal)
+   */
+  gpuType?: GetGpuListGpuType;
+};
+
+export type GetGpuListGpuType =
+  (typeof GetGpuListGpuType)[keyof typeof GetGpuListGpuType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetGpuListGpuType = {
+  NORMAL: "NORMAL",
+  MIG: "MIG",
+} as const;
+
+export type GetGpuResourceCapacityParams = {
+  /**
+   * GPU 타입 (normal 또는 mig)
+   */
+  gpuType: GetGpuResourceCapacityGpuType;
+  /**
+   * GPU Product 이름
+   */
+  gpuName: string;
+  /**
+   * MIG Profile (MIG 타입일 때 필수)
+   */
+  profile?: string;
+};
+
+export type GetGpuResourceCapacityGpuType =
+  (typeof GetGpuResourceCapacityGpuType)[keyof typeof GetGpuResourceCapacityGpuType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetGpuResourceCapacityGpuType = {
+  NORMAL: "NORMAL",
+  MIG: "MIG",
+} as const;
+
 export type GetAdminAllWorkspacesParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -11864,53 +11939,6 @@ export type GetAllNamespaceEventsParams = {
    */
   pageSize?: number;
 };
-
-export type GetMigProfilesByGpuParams = {
-  /**
-   * GPU Product 이름
-   */
-  gpuName: string;
-};
-
-export type GetGpuListParams = {
-  /**
-   * GPU 타입 (normal 또는 mig, 기본값: normal)
-   */
-  gpuType?: GetGpuListGpuType;
-};
-
-export type GetGpuListGpuType =
-  (typeof GetGpuListGpuType)[keyof typeof GetGpuListGpuType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetGpuListGpuType = {
-  NORMAL: "NORMAL",
-  MIG: "MIG",
-} as const;
-
-export type GetGpuResourceCapacityParams = {
-  /**
-   * GPU 타입 (normal 또는 mig)
-   */
-  gpuType: GetGpuResourceCapacityGpuType;
-  /**
-   * GPU Product 이름
-   */
-  gpuName: string;
-  /**
-   * MIG Profile (MIG 타입일 때 필수)
-   */
-  profile?: string;
-};
-
-export type GetGpuResourceCapacityGpuType =
-  (typeof GetGpuResourceCapacityGpuType)[keyof typeof GetGpuResourceCapacityGpuType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetGpuResourceCapacityGpuType = {
-  NORMAL: "NORMAL",
-  MIG: "MIG",
-} as const;
 
 export type GetClusterNodesParams = {
   /**

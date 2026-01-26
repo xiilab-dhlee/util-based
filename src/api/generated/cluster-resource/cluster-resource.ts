@@ -29,16 +29,33 @@
  */
 
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseClusterTotalResourceResponse,
+  BaseResponseGpuListResponse,
+  BaseResponseGpuResourceCapacityResponse,
+  BaseResponseListNodeGpuInfoResponse,
+  BaseResponseMigProfileListResponse,
+  BaseResponseMigProfileResponse,
   BaseResponseResourceAvailabilityResponse,
+  GetGpuListParams,
+  GetGpuResourceCapacityParams,
+  GetMigProfilesByGpuParams,
   ResourceAvailabilityRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -175,3 +192,949 @@ export const useCheckResourceAvailability = <
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 
+            K8s 클러스터의 전체 자원(GPU, CPU, MEM)을 조회합니다.
+
+            **응답 데이터 구성:**
+            - **gpu**: 전체 GPU Capacity (Normal)
+            - **cpu**: 전체 CPU Capacity
+            - **memory**: 전체 Memory Capacity
+        
+ * @summary 클러스터 전체 자원(GPU, CPU, MEM) 조회
+ */
+export const getClusterTotalResources = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseClusterTotalResourceResponse>({
+    url: `/api/v1/cluster/resources/total`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetClusterTotalResourcesQueryKey = () => {
+  return [`/api/v1/cluster/resources/total`] as const;
+};
+
+export const getGetClusterTotalResourcesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getClusterTotalResources>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getClusterTotalResources>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetClusterTotalResourcesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getClusterTotalResources>>
+  > = ({ signal }) => getClusterTotalResources(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getClusterTotalResources>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetClusterTotalResourcesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getClusterTotalResources>>
+>;
+export type GetClusterTotalResourcesQueryError = unknown;
+
+export function useGetClusterTotalResources<
+  TData = Awaited<ReturnType<typeof getClusterTotalResources>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterTotalResources>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterTotalResources>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterTotalResources>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterTotalResources<
+  TData = Awaited<ReturnType<typeof getClusterTotalResources>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterTotalResources>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterTotalResources>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterTotalResources>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterTotalResources<
+  TData = Awaited<ReturnType<typeof getClusterTotalResources>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterTotalResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 클러스터 전체 자원(GPU, CPU, MEM) 조회
+ */
+
+export function useGetClusterTotalResources<
+  TData = Awaited<ReturnType<typeof getClusterTotalResources>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterTotalResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetClusterTotalResourcesQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            클러스터 내 모든 노드의 이름과 GPU 노드 여부를 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **isGpuNode**: GPU 노드 여부 (GPU 리소스가 있으면 true)
+        
+ * @summary 노드 GPU 정보 목록 조회
+ */
+export const getNodeGpuInfoList = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseListNodeGpuInfoResponse>({
+    url: `/api/v1/cluster/resources/nodes/gpu-info`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetNodeGpuInfoListQueryKey = () => {
+  return [`/api/v1/cluster/resources/nodes/gpu-info`] as const;
+};
+
+export const getGetNodeGpuInfoListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetNodeGpuInfoListQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getNodeGpuInfoList>>
+  > = ({ signal }) => getNodeGpuInfoList(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNodeGpuInfoListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getNodeGpuInfoList>>
+>;
+export type GetNodeGpuInfoListQueryError = unknown;
+
+export function useGetNodeGpuInfoList<
+  TData = Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+          TError,
+          Awaited<ReturnType<typeof getNodeGpuInfoList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNodeGpuInfoList<
+  TData = Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+          TError,
+          Awaited<ReturnType<typeof getNodeGpuInfoList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNodeGpuInfoList<
+  TData = Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 노드 GPU 정보 목록 조회
+ */
+
+export function useGetNodeGpuInfoList<
+  TData = Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNodeGpuInfoList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetNodeGpuInfoListQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            K8s 클러스터에 적용된 모든 MIG Profile과 Profile별 최대 개수를 조회합니다.
+
+            **응답 데이터 구성:**
+            - **migProfiles**: MIG Profile별 정보 목록
+              - **profile**: MIG Profile 이름
+              - **maxCount**: 해당 Profile의 최대 개수
+        
+ * @summary 클러스터 MIG Profile 목록 및 최대 개수 조회
+ */
+export const getMigProfiles = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseMigProfileListResponse>({
+    url: `/api/v1/cluster/resources/mig-profiles`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetMigProfilesQueryKey = () => {
+  return [`/api/v1/cluster/resources/mig-profiles`] as const;
+};
+
+export const getGetMigProfilesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMigProfiles>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getMigProfiles>>, TError, TData>
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMigProfilesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMigProfiles>>> = ({
+    signal,
+  }) => getMigProfiles(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMigProfiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMigProfilesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMigProfiles>>
+>;
+export type GetMigProfilesQueryError = unknown;
+
+export function useGetMigProfiles<
+  TData = Awaited<ReturnType<typeof getMigProfiles>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMigProfiles>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMigProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof getMigProfiles>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMigProfiles<
+  TData = Awaited<ReturnType<typeof getMigProfiles>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMigProfiles>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMigProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof getMigProfiles>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMigProfiles<
+  TData = Awaited<ReturnType<typeof getMigProfiles>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMigProfiles>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 클러스터 MIG Profile 목록 및 최대 개수 조회
+ */
+
+export function useGetMigProfiles<
+  TData = Awaited<ReturnType<typeof getMigProfiles>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMigProfiles>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMigProfilesQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            특정 GPU의 MIG Profile 목록을 조회합니다.
+
+            **Query Parameters:**
+            - **gpuName**: GPU Product 이름
+
+            **응답:**
+            - 해당 GPU에 적용된 MIG Profile 목록
+        
+ * @summary MIG Profile 목록 조회
+ */
+export const getMigProfilesByGpu = (
+  params: GetMigProfilesByGpuParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseMigProfileResponse>({
+    url: `/api/v1/cluster/resources/mig-profiles-by-gpu`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetMigProfilesByGpuQueryKey = (
+  params?: GetMigProfilesByGpuParams,
+) => {
+  return [
+    `/api/v1/cluster/resources/mig-profiles-by-gpu`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetMigProfilesByGpuQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+  TError = unknown,
+>(
+  params: GetMigProfilesByGpuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMigProfilesByGpuQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMigProfilesByGpu>>
+  > = ({ signal }) => getMigProfilesByGpu(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMigProfilesByGpuQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMigProfilesByGpu>>
+>;
+export type GetMigProfilesByGpuQueryError = unknown;
+
+export function useGetMigProfilesByGpu<
+  TData = Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+  TError = unknown,
+>(
+  params: GetMigProfilesByGpuParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+          TError,
+          Awaited<ReturnType<typeof getMigProfilesByGpu>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMigProfilesByGpu<
+  TData = Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+  TError = unknown,
+>(
+  params: GetMigProfilesByGpuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+          TError,
+          Awaited<ReturnType<typeof getMigProfilesByGpu>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMigProfilesByGpu<
+  TData = Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+  TError = unknown,
+>(
+  params: GetMigProfilesByGpuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary MIG Profile 목록 조회
+ */
+
+export function useGetMigProfilesByGpu<
+  TData = Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+  TError = unknown,
+>(
+  params: GetMigProfilesByGpuParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMigProfilesByGpu>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMigProfilesByGpuQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            K8s 클러스터의 GPU Product명 목록을 조회합니다.
+
+            **Query Parameters:**
+            - **gpuType**: GPU 타입 (선택, 기본값: NORMAL)
+              - NORMAL: 일반 GPU
+              - MIG: Multi-Instance GPU
+
+            **응답:**
+            - NORMAL: Normal GPU의 Product명 목록
+            - MIG: MIG가 적용된 GPU의 Product명 목록
+        
+ * @summary GPU 목록 조회
+ */
+export const getGpuList = (params?: GetGpuListParams, signal?: AbortSignal) => {
+  return customInstance<BaseResponseGpuListResponse>({
+    url: `/api/v1/cluster/resources/gpu-list`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetGpuListQueryKey = (params?: GetGpuListParams) => {
+  return [
+    `/api/v1/cluster/resources/gpu-list`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetGpuListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGpuList>>,
+  TError = unknown,
+>(
+  params?: GetGpuListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getGpuList>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetGpuListQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getGpuList>>> = ({
+    signal,
+  }) => getGpuList(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getGpuList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetGpuListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getGpuList>>
+>;
+export type GetGpuListQueryError = unknown;
+
+export function useGetGpuList<
+  TData = Awaited<ReturnType<typeof getGpuList>>,
+  TError = unknown,
+>(
+  params: undefined | GetGpuListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getGpuList>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGpuList>>,
+          TError,
+          Awaited<ReturnType<typeof getGpuList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGpuList<
+  TData = Awaited<ReturnType<typeof getGpuList>>,
+  TError = unknown,
+>(
+  params?: GetGpuListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getGpuList>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGpuList>>,
+          TError,
+          Awaited<ReturnType<typeof getGpuList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGpuList<
+  TData = Awaited<ReturnType<typeof getGpuList>>,
+  TError = unknown,
+>(
+  params?: GetGpuListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getGpuList>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary GPU 목록 조회
+ */
+
+export function useGetGpuList<
+  TData = Awaited<ReturnType<typeof getGpuList>>,
+  TError = unknown,
+>(
+  params?: GetGpuListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getGpuList>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetGpuListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            GPU 리소스 Capacity를 조회합니다.
+
+            **Query Parameters:**
+            - **gpuType**: GPU 타입 (필수)
+              - normal: 일반 GPU
+              - mig: Multi-Instance GPU
+            - **gpuName**: GPU Product 이름 (필수)
+            - **profile**: MIG Profile (MIG 타입일 때 필수)
+
+            **응답:**
+            - **gpuCapacity**: GPU Capacity
+            - **cpuCapacity**: 전체 클러스터 CPU Capacity
+            - **memCapacity**: 전체 클러스터 Memory Capacity
+        
+ * @summary GPU 리소스 Capacity 조회
+ */
+export const getGpuResourceCapacity = (
+  params: GetGpuResourceCapacityParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseGpuResourceCapacityResponse>({
+    url: `/api/v1/cluster/resources/gpu-capacity`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetGpuResourceCapacityQueryKey = (
+  params?: GetGpuResourceCapacityParams,
+) => {
+  return [
+    `/api/v1/cluster/resources/gpu-capacity`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetGpuResourceCapacityQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+  TError = unknown,
+>(
+  params: GetGpuResourceCapacityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetGpuResourceCapacityQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getGpuResourceCapacity>>
+  > = ({ signal }) => getGpuResourceCapacity(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetGpuResourceCapacityQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getGpuResourceCapacity>>
+>;
+export type GetGpuResourceCapacityQueryError = unknown;
+
+export function useGetGpuResourceCapacity<
+  TData = Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+  TError = unknown,
+>(
+  params: GetGpuResourceCapacityParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+          TError,
+          Awaited<ReturnType<typeof getGpuResourceCapacity>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGpuResourceCapacity<
+  TData = Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+  TError = unknown,
+>(
+  params: GetGpuResourceCapacityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+          TError,
+          Awaited<ReturnType<typeof getGpuResourceCapacity>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGpuResourceCapacity<
+  TData = Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+  TError = unknown,
+>(
+  params: GetGpuResourceCapacityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary GPU 리소스 Capacity 조회
+ */
+
+export function useGetGpuResourceCapacity<
+  TData = Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+  TError = unknown,
+>(
+  params: GetGpuResourceCapacityParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGpuResourceCapacity>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetGpuResourceCapacityQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}

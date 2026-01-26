@@ -122,3 +122,237 @@ export const checkResourceAvailabilityResponse = zod
     timestamp: zod.number(),
   })
   .strict();
+
+/**
+ * 
+            K8s 클러스터의 전체 자원(GPU, CPU, MEM)을 조회합니다.
+
+            **응답 데이터 구성:**
+            - **gpu**: 전체 GPU Capacity (Normal)
+            - **cpu**: 전체 CPU Capacity
+            - **memory**: 전체 Memory Capacity
+        
+ * @summary 클러스터 전체 자원(GPU, CPU, MEM) 조회
+ */
+export const getClusterTotalResourcesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        gpu: zod
+          .object({
+            clusterCapacityCount: zod
+              .number()
+              .describe("클러스터 전체 GPU 개수"),
+          })
+          .strict()
+          .describe("GPU Capacity 정보"),
+        cpu: zod
+          .object({
+            clusterCapacityCores: zod
+              .number()
+              .describe("클러스터 전체 CPU 코어 수"),
+          })
+          .strict()
+          .describe("CPU Capacity 정보"),
+        memory: zod
+          .object({
+            clusterCapacityBytes: zod
+              .string()
+              .describe("클러스터 전체 메모리 용량 (바이트)"),
+          })
+          .strict()
+          .describe("Memory Capacity 정보"),
+      })
+      .strict()
+      .optional()
+      .describe("클러스터 전체 자원 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            클러스터 내 모든 노드의 이름과 GPU 노드 여부를 조회합니다.
+
+            **응답 데이터 구성:**
+            - **nodeName**: 노드 이름
+            - **isGpuNode**: GPU 노드 여부 (GPU 리소스가 있으면 true)
+        
+ * @summary 노드 GPU 정보 목록 조회
+ */
+export const getNodeGpuInfoListResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .array(
+        zod
+          .object({
+            nodeName: zod.string().describe("노드 이름"),
+            isGpuNode: zod.boolean().describe("GPU 노드 여부"),
+          })
+          .strict()
+          .describe("노드 GPU 정보"),
+      )
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            K8s 클러스터에 적용된 모든 MIG Profile과 Profile별 최대 개수를 조회합니다.
+
+            **응답 데이터 구성:**
+            - **migProfiles**: MIG Profile별 정보 목록
+              - **profile**: MIG Profile 이름
+              - **maxCount**: 해당 Profile의 최대 개수
+        
+ * @summary 클러스터 MIG Profile 목록 및 최대 개수 조회
+ */
+export const getMigProfilesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        migProfiles: zod
+          .array(
+            zod
+              .object({
+                profile: zod.string().describe("MIG Profile 이름"),
+                maxCount: zod.number().describe("해당 Profile의 최대 개수"),
+              })
+              .strict()
+              .describe("MIG Profile 정보"),
+          )
+          .describe("MIG Profile별 Capacity 정보 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("MIG Profile 목록 및 최대 개수 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            특정 GPU의 MIG Profile 목록을 조회합니다.
+
+            **Query Parameters:**
+            - **gpuName**: GPU Product 이름
+
+            **응답:**
+            - 해당 GPU에 적용된 MIG Profile 목록
+        
+ * @summary MIG Profile 목록 조회
+ */
+export const getMigProfilesByGpuQueryParams = zod.object({
+  gpuName: zod.string().describe("GPU Product 이름"),
+});
+
+export const getMigProfilesByGpuResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        profile: zod.string().describe("MIG 프로파일 이름"),
+        requestCount: zod.number().describe("요청 수량"),
+      })
+      .strict()
+      .optional()
+      .describe("MIG GPU 프로파일 설정"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            K8s 클러스터의 GPU Product명 목록을 조회합니다.
+
+            **Query Parameters:**
+            - **gpuType**: GPU 타입 (선택, 기본값: NORMAL)
+              - NORMAL: 일반 GPU
+              - MIG: Multi-Instance GPU
+
+            **응답:**
+            - NORMAL: Normal GPU의 Product명 목록
+            - MIG: MIG가 적용된 GPU의 Product명 목록
+        
+ * @summary GPU 목록 조회
+ */
+export const getGpuListQueryGpuTypeDefault = "NORMAL";
+
+export const getGpuListQueryParams = zod.object({
+  gpuType: zod
+    .enum(["NORMAL", "MIG"])
+    .default(getGpuListQueryGpuTypeDefault)
+    .describe("GPU 타입 (normal 또는 mig, 기본값: normal)"),
+});
+
+export const getGpuListResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        gpuNames: zod.array(zod.string()).describe("GPU Product 이름 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("GPU 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            GPU 리소스 Capacity를 조회합니다.
+
+            **Query Parameters:**
+            - **gpuType**: GPU 타입 (필수)
+              - normal: 일반 GPU
+              - mig: Multi-Instance GPU
+            - **gpuName**: GPU Product 이름 (필수)
+            - **profile**: MIG Profile (MIG 타입일 때 필수)
+
+            **응답:**
+            - **gpuCapacity**: GPU Capacity
+            - **cpuCapacity**: 전체 클러스터 CPU Capacity
+            - **memCapacity**: 전체 클러스터 Memory Capacity
+        
+ * @summary GPU 리소스 Capacity 조회
+ */
+export const getGpuResourceCapacityQueryParams = zod.object({
+  gpuType: zod.enum(["NORMAL", "MIG"]).describe("GPU 타입 (normal 또는 mig)"),
+  gpuName: zod.string().describe("GPU Product 이름"),
+  profile: zod.string().optional().describe("MIG Profile (MIG 타입일 때 필수)"),
+});
+
+export const getGpuResourceCapacityResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        gpuCapacity: zod.number().describe("GPU Capacity"),
+        cpuCapacity: zod.number().describe("CPU Capacity (전체 클러스터)"),
+        memCapacity: zod
+          .number()
+          .describe("Memory Capacity (전체 클러스터, bytes)"),
+      })
+      .strict()
+      .optional()
+      .describe("GPU 리소스 Capacity 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
