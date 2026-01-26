@@ -31,7 +31,15 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponseResourceAvailabilityResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type {
+  BaseResponseClusterTotalResourceResponse,
+  BaseResponseGpuListResponse,
+  BaseResponseGpuResourceCapacityResponse,
+  BaseResponseListNodeGpuInfoResponse,
+  BaseResponseMigProfileListResponse,
+  BaseResponseMigProfileResponse,
+  BaseResponseResourceAvailabilityResponse,
+} from "../astragoBackendAPIDocumentation.schemas";
 
 export const getCheckResourceAvailabilityResponseMock = (
   overrideResponse: Partial<BaseResponseResourceAvailabilityResponse> = {},
@@ -39,6 +47,121 @@ export const getCheckResourceAvailabilityResponseMock = (
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: { isAvailable: faker.datatype.boolean() },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetClusterTotalResourcesResponseMock = (
+  overrideResponse: Partial<BaseResponseClusterTotalResourceResponse> = {},
+): BaseResponseClusterTotalResourceResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    gpu: {
+      clusterCapacityCount: faker.number.int({
+        min: undefined,
+        max: undefined,
+      }),
+    },
+    cpu: {
+      clusterCapacityCores: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+    },
+    memory: {
+      clusterCapacityBytes: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+    },
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetNodeGpuInfoListResponseMock = (
+  overrideResponse: Partial<BaseResponseListNodeGpuInfoResponse> = {},
+): BaseResponseListNodeGpuInfoResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    isGpuNode: faker.datatype.boolean(),
+  })),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetMigProfilesResponseMock = (
+  overrideResponse: Partial<BaseResponseMigProfileListResponse> = {},
+): BaseResponseMigProfileListResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    migProfiles: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      maxCount: faker.number.int({ min: undefined, max: undefined }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetMigProfilesByGpuResponseMock = (
+  overrideResponse: Partial<BaseResponseMigProfileResponse> = {},
+): BaseResponseMigProfileResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    requestCount: faker.number.int({ min: undefined, max: undefined }),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetGpuListResponseMock = (
+  overrideResponse: Partial<BaseResponseGpuListResponse> = {},
+): BaseResponseGpuListResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    gpuNames: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetGpuResourceCapacityResponseMock = (
+  overrideResponse: Partial<BaseResponseGpuResourceCapacityResponse> = {},
+): BaseResponseGpuResourceCapacityResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    gpuCapacity: faker.number.int({ min: undefined, max: undefined }),
+    cpuCapacity: faker.number.float({
+      min: undefined,
+      max: undefined,
+      fractionDigits: 2,
+    }),
+    memCapacity: faker.number.int({ min: undefined, max: undefined }),
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -73,6 +196,190 @@ export const getCheckResourceAvailabilityMockHandler = (
     options,
   );
 };
+
+export const getGetClusterTotalResourcesMockHandler = (
+  overrideResponse?:
+    | BaseResponseClusterTotalResourceResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseClusterTotalResourceResponse>
+        | BaseResponseClusterTotalResourceResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cluster/resources/total",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetClusterTotalResourcesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetNodeGpuInfoListMockHandler = (
+  overrideResponse?:
+    | BaseResponseListNodeGpuInfoResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseListNodeGpuInfoResponse>
+        | BaseResponseListNodeGpuInfoResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cluster/resources/nodes/gpu-info",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetNodeGpuInfoListResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetMigProfilesMockHandler = (
+  overrideResponse?:
+    | BaseResponseMigProfileListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseMigProfileListResponse>
+        | BaseResponseMigProfileListResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cluster/resources/mig-profiles",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetMigProfilesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetMigProfilesByGpuMockHandler = (
+  overrideResponse?:
+    | BaseResponseMigProfileResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseMigProfileResponse>
+        | BaseResponseMigProfileResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cluster/resources/mig-profiles-by-gpu",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetMigProfilesByGpuResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetGpuListMockHandler = (
+  overrideResponse?:
+    | BaseResponseGpuListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<BaseResponseGpuListResponse> | BaseResponseGpuListResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cluster/resources/gpu-list",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetGpuListResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetGpuResourceCapacityMockHandler = (
+  overrideResponse?:
+    | BaseResponseGpuResourceCapacityResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseGpuResourceCapacityResponse>
+        | BaseResponseGpuResourceCapacityResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/cluster/resources/gpu-capacity",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetGpuResourceCapacityResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 export const getClusterResourceMock = () => [
   getCheckResourceAvailabilityMockHandler(),
+  getGetClusterTotalResourcesMockHandler(),
+  getGetNodeGpuInfoListMockHandler(),
+  getGetMigProfilesMockHandler(),
+  getGetMigProfilesByGpuMockHandler(),
+  getGetGpuListMockHandler(),
+  getGetGpuResourceCapacityMockHandler(),
 ];
