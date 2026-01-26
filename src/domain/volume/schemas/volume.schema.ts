@@ -25,7 +25,7 @@ const baseVolumeFields = {
 /** AstraGo 볼륨 생성 폼 스키마 */
 export const createAstragoVolumeSchema = z.object({
   ...baseVolumeFields,
-  storageId: z.string().min(1, "스토리지를 선택해 주세요."),
+  storageId: z.number({ required_error: "스토리지를 선택해 주세요." }),
 });
 
 export type CreateAstragoVolumeFormType = z.infer<

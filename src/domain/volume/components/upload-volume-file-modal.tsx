@@ -31,6 +31,7 @@ export function UploadVolumeFileModal() {
     formState: { errors },
   } = useForm<UploadVolumeFileFormType>({
     resolver: zodResolver(uploadVolumeFileSchema),
+    defaultValues: { uploadPath: "" },
   });
 
   const uploadPath = watch("uploadPath");
@@ -59,7 +60,7 @@ export function UploadVolumeFileModal() {
 
   const resetModal = () => {
     clearFiles();
-    reset({ uploadPath: "" });
+    reset();
     setOpen(false);
   };
 
@@ -86,7 +87,7 @@ export function UploadVolumeFileModal() {
     VOLUME_EVENTS.openUploadFileModal,
     (eventData) => {
       setVolumeId(eventData.volumeId);
-      reset({ uploadPath: "" });
+      reset();
       clearFiles();
       setOpen(true);
     },
@@ -100,6 +101,7 @@ export function UploadVolumeFileModal() {
       open={open}
       closable={!isUploading}
       maskClosable={!isUploading}
+      keyboard={!isUploading}
       title="파일 업로드"
       onCancel={handleCancel}
       cancelText={isUploading ? "업로드 취소" : "취소"}

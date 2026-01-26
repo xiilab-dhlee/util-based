@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function UserVolumeDetailPage() {
-  return <VolumeDetailMain />;
+  return <VolumeDetailMain mode="user" />;
 }

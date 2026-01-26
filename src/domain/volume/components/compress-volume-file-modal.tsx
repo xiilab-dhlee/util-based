@@ -8,12 +8,13 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Form, FormItem, Icon, Input, Modal, Typography } from "xiilab-ui";
 
-import { useCompressFiles } from "@/api/generated/volume-file/volume-file";
+import { useCompressFilesByMode } from "@/domain/volume/hooks/use-compress-files-by-mode";
 import {
   type CompressVolumeFileFormType,
   compressVolumeFileSchema,
 } from "@/domain/volume/schemas/volume.schema";
 import { volumeFileCheckedNodesAtom } from "@/domain/volume/state/volume.atom";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -25,7 +26,13 @@ interface CompressVolumeFilePayload {
   filePaths: string[];
 }
 
-export function CompressVolumeFileModal() {
+interface CompressVolumeFileModalProps {
+  mode: VolumeMode;
+}
+
+export function CompressVolumeFileModal({
+  mode,
+}: CompressVolumeFileModalProps) {
   const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(volumeFileCheckedNodesAtom);
 
@@ -41,9 +48,13 @@ export function CompressVolumeFileModal() {
     formState: { errors },
   } = useForm<CompressVolumeFileFormType>({
     resolver: zodResolver(compressVolumeFileSchema),
+    defaultValues: {
+      destinationPath: "",
+      compressFileType: "ZIP",
+    },
   });
 
-  const { mutate, isPending } = useCompressFiles();
+  const { mutate, isPending } = useCompressFilesByMode(mode);
   const selectedCompressType = watch("compressFileType");
 
   const handleCancel = () => {
@@ -84,7 +95,7 @@ export function CompressVolumeFileModal() {
     (eventData) => {
       setVolumeId(eventData.volumeId);
       setFilePaths(eventData.filePaths);
-      reset({ destinationPath: "", compressFileType: "ZIP" });
+      reset();
       setOpen(true);
     },
   );
@@ -95,7 +106,9 @@ export function CompressVolumeFileModal() {
       type="primary"
       icon={<Icon name="Compress" color="#fff" size={18} />}
       open={open}
-      closable
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       title="파일 압축"
       onCancel={handleCancel}
       showCancelButton

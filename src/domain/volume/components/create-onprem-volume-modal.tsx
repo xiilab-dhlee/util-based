@@ -34,6 +34,13 @@ export function CreateOnPremVolumeModal() {
     reset,
   } = useForm<CreateOnPremiseVolumeFormType>({
     resolver: zodResolver(createOnPremiseVolumeSchema),
+    defaultValues: {
+      volumeName: "",
+      isPublic: "true",
+      mountPath: "",
+      serverIp: "",
+      volumePath: "",
+    },
   });
 
   const handleCancel = () => {
@@ -68,13 +75,7 @@ export function CreateOnPremVolumeModal() {
   };
 
   useSubscribe(VOLUME_EVENTS.openCreateOnPremModal, () => {
-    reset({
-      volumeName: "",
-      isPublic: "true",
-      mountPath: "",
-      serverIp: "",
-      volumePath: "",
-    });
+    reset();
     setOpen(true);
   });
 
@@ -84,7 +85,9 @@ export function CreateOnPremVolumeModal() {
       type="primary"
       icon={<Icon name="OnPremiseStorage" color="#fff" size={16} />}
       open={open}
-      closable
+      closable={!registerOnPremiseVolume.isPending}
+      maskClosable={!registerOnPremiseVolume.isPending}
+      keyboard={!registerOnPremiseVolume.isPending}
       title="On-premise Storage"
       showCancelButton
       onCancel={handleCancel}

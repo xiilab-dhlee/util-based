@@ -7,6 +7,7 @@ import { Dropdown } from "xiilab-ui";
 import type { GetVolumeListVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VOLUME_TYPE_OPTIONS } from "@/domain/volume/constants/volume.constant";
 import {
+  volumeCheckedListAtom,
   volumePageAtom,
   volumeTypeSortAtom,
 } from "@/domain/volume/state/volume.atom";
@@ -19,16 +20,18 @@ interface VolumeTypeSortProps {
 export function VolumeTypeSort({ disabled }: VolumeTypeSortProps) {
   const [volumeType, setVolumeType] = useAtom(volumeTypeSortAtom);
   const resetPage = useResetAtom(volumePageAtom);
+  const resetCheckedList = useResetAtom(volumeCheckedListAtom);
 
   const handleChange = (value: GetVolumeListVolumeType | null) => {
     resetPage();
+    resetCheckedList();
     setVolumeType(value);
   };
 
   return (
     <Dropdown
       options={[ALL_OPTION, ...VOLUME_TYPE_OPTIONS]}
-      placeholder="볼륨 타입"
+      placeholder="스토리지 타입"
       onChange={handleChange}
       value={volumeType}
       width={120}

@@ -6,10 +6,11 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, type TabsSeparatedItem, Typography } from "xiilab-ui";
 
-import { useGetVolumeDetail } from "@/api/generated/volume/volume";
 import { UpdateVolumeDetail } from "@/domain/volume/components/detail/update-volume-detail";
 import { ViewVolumeDetail } from "@/domain/volume/components/detail/view-volume-detail";
 import { ManageVolumeFile } from "@/domain/volume/components/file/manage-volume-file";
+import { useGetVolumeDetailByMode } from "@/domain/volume/hooks/use-get-volume-detail-by-mode";
+import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { StateTab } from "@/shared/components/tab";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -39,15 +40,19 @@ const TAB_ITEMS: TabsSeparatedItem[] = [
 
 type ViewMode = "view" | "update";
 
-export function VolumeDetailMain() {
+interface VolumeDetailMainProps {
+  mode: VolumeMode;
+}
+
+export function VolumeDetailMain({ mode }: VolumeDetailMainProps) {
   const params = useParams<{ id: string }>();
   const volumeId = Number(params.id);
   const { data: session } = useSession();
 
   const [selectedTab, setSelectedTab] = useState("");
-  const [mode, setMode] = useState<ViewMode>("view");
+  const [viewMode, setViewMode] = useState<ViewMode>("view");
 
-  const { data, isLoading } = useGetVolumeDetail(volumeId, {
+  const { data, isLoading } = useGetVolumeDetailByMode(mode, volumeId, {
     query: {
       enabled: !Number.isNaN(volumeId),
     },
@@ -55,22 +60,33 @@ export function VolumeDetailMain() {
 
   const publish = usePublish();
 
-  // 수정/삭제 버튼 활성화 조건: 생성자이거나 SUPER_ADMIN인 경우
+  // 권한 체크
   const currentAccountId = getSessionAccountId(session);
   const isSuperAdmin = checkIsSuperAdmin(session);
-  const isCreator = currentAccountId === data?.creatorId;
-  const canEditOrDelete = isCreator || isSuperAdmin;
+  const isCreator = Boolean(
+    data?.creatorId && currentAccountId && currentAccountId === data.creatorId,
+  );
+  const isUserMode = mode === "user";
+
+  // 수정 권한
+  // - 사용자 모드: 생성자만 수정 가능
+  // - 관리자 모드: SUPER_ADMIN 또는 생성자만 수정 가능
+  const canEdit = isUserMode ? isCreator : isSuperAdmin || isCreator;
+  // 삭제 권한
+  // - 사용자 모드: 생성자만 삭제 가능
+  // - 관리자 모드: 항상 삭제 가능
+  const canDelete = isUserMode ? isCreator : true;
 
   const handleEdit = () => {
-    setMode("update");
+    setViewMode("update");
   };
 
   const handleCancel = () => {
-    setMode("view");
+    setViewMode("view");
   };
 
   const handleSuccess = () => {
-    setMode("view");
+    setViewMode("view");
   };
 
   const handleDelete = () => {
@@ -88,13 +104,18 @@ export function VolumeDetailMain() {
   const renderContent = () => {
     if (selectedTab === "file") {
       return (
-        <ManageVolumeFile volumeId={volumeId} creatorId={data?.creatorId} />
+        <ManageVolumeFile
+          volumeId={volumeId}
+          creatorId={data?.creatorId}
+          mode={mode}
+        />
       );
     }
 
-    if (mode === "update") {
+    if (viewMode === "update") {
       return (
         <UpdateVolumeDetail
+          mode={mode}
           volumeId={volumeId}
           onCancel={handleCancel}
           onSuccess={handleSuccess}
@@ -105,39 +126,43 @@ export function VolumeDetailMain() {
     return <ViewVolumeDetail data={data} isLoading={isLoading} />;
   };
 
-  const showActionButtons =
-    selectedTab === "" && mode === "view" && canEditOrDelete;
+  const showEditButton = selectedTab === "" && viewMode === "view" && canEdit;
+  const showDeleteButton =
+    selectedTab === "" && viewMode === "view" && canDelete;
 
   return (
     <StyledAsideDetailContainer>
       <StyledAsideDetailHeader>
         <AsideDetailHeaderTitle>볼륨 상세 정보</AsideDetailHeaderTitle>
         {/* 상세 정보 페이지에서만 수정/삭제 버튼 표시, 나머지 페이지에서는 볼륨 이름 표시 */}
-        {showActionButtons ? (
+        {(showEditButton || showDeleteButton) && (
           <Icons>
-            <IconWrapper
-              type="button"
-              className="icon-button"
-              onClick={handleEdit}
-            >
-              <Icon name="Edit02" color="#000" />
-              <span className="sr-only">볼륨 수정</span>
-            </IconWrapper>
-            <IconWrapper
-              type="button"
-              className="icon-button"
-              onClick={handleDelete}
-            >
-              <Icon name="Delete" color="#000" />
-              <span className="sr-only">볼륨 삭제</span>
-            </IconWrapper>
+            {showEditButton && (
+              <IconWrapper
+                type="button"
+                className="icon-button"
+                onClick={handleEdit}
+              >
+                <Icon name="Edit02" color="#000" />
+                <span className="sr-only">볼륨 수정</span>
+              </IconWrapper>
+            )}
+            {showDeleteButton && (
+              <IconWrapper
+                type="button"
+                className="icon-button"
+                onClick={handleDelete}
+              >
+                <Icon name="Delete" color="#000" />
+                <span className="sr-only">볼륨 삭제</span>
+              </IconWrapper>
+            )}
           </Icons>
-        ) : (
-          selectedTab !== "" && (
-            <Typography.Text variant="body-1-3" color="#777">
-              {data?.volumeName || "-"}
-            </Typography.Text>
-          )
+        )}
+        {selectedTab !== "" && (
+          <Typography.Text variant="body-1-3" color="#777">
+            {data?.volumeName || "-"}
+          </Typography.Text>
         )}
       </StyledAsideDetailHeader>
       <TabWrapper>

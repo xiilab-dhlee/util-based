@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminVolumeDetailPage() {
-  return <VolumeDetailMain />;
+  return <VolumeDetailMain mode="admin" />;
 }
