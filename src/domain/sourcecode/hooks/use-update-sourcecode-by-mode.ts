@@ -5,11 +5,16 @@ import type { UpdateSourceCodeRequest } from "@/api/generated/astragoBackendAPID
 import { useUpdateSourceCode } from "@/api/generated/source-code/source-code";
 import type { SourcecodeMode } from "@/domain/sourcecode/types/sourcecode.type";
 
+/** 소스코드 수정 응답 타입 */
+export interface UpdateSourcecodeResponse {
+  sourceCodeId: number;
+}
+
 interface UseUpdateSourcecodeByModeResult {
   mutate: (
     variables: { sourceCodeId: number; data: UpdateSourceCodeRequest },
     options?: {
-      onSuccess?: () => void;
+      onSuccess?: (data: UpdateSourcecodeResponse) => void;
       onError?: (error: unknown) => void;
     },
   ) => void;
@@ -26,7 +31,14 @@ export const useUpdateSourcecodeByMode = (
   const mutation = mode === "user" ? userMutation : adminMutation;
 
   return {
-    mutate: mutation.mutate,
+    mutate: (variables, options) => {
+      mutation.mutate(variables, {
+        onSuccess: (data) => {
+          options?.onSuccess?.(data as unknown as UpdateSourcecodeResponse);
+        },
+        onError: options?.onError,
+      });
+    },
     isPending: mutation.isPending,
   };
 };

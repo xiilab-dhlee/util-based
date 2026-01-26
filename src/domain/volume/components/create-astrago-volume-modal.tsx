@@ -21,6 +21,7 @@ import { StorageSelect } from "@/shared/components/select/storage-select";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
 export function CreateAstragoVolumeModal() {
   const queryClient = useQueryClient();
@@ -165,7 +166,7 @@ export function CreateAstragoVolumeModal() {
           name="mountPath"
           control={control}
           render={({ field }) => (
-            <FormItem
+            <LastFormItem
               label="Mount Path"
               required
               validateStatus={errors.mountPath ? "error" : undefined}
@@ -176,13 +177,13 @@ export function CreateAstragoVolumeModal() {
                 {...field}
                 type="text"
                 id="astragoVolumeMountPath"
-                placeholder="/usr/local"
+                placeholder="Mount Path를 입력해 주세요."
                 width="100%"
                 autoComplete="off"
                 disabled={isPending}
                 maxLength={1000}
               />
-            </FormItem>
+            </LastFormItem>
           )}
         />
       </StyledForm>

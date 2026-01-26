@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
@@ -28,6 +29,7 @@ import type { SourcecodeMode } from "@/domain/sourcecode/types/sourcecode.type";
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { FormLabel } from "@/shared/components/form/form-label";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleColumn,
@@ -55,6 +57,7 @@ export function UpdateSourcecodeDetail({
   onCancel,
   onSuccess,
 }: UpdateSourcecodeDetailProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const [credentialEnabled, setCredentialEnabled] = useState(false);
@@ -66,7 +69,8 @@ export function UpdateSourcecodeDetail({
     addParameter,
     updateParameter,
     removeParameter,
-    setParametersFromRecord,
+    setParameters,
+    fromRecord,
     toRecord,
   } = useSourcecodeParameters();
 
@@ -100,21 +104,33 @@ export function UpdateSourcecodeDetail({
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: ({ sourceCodeId: newSourceCodeId }) => {
           if (mode === "user") {
-            queryClient.invalidateQueries({
-              queryKey: getGetSourceCodeDetailQueryKey(sourceCodeId),
-            });
+            // 리스트 캐시 무효화
             queryClient.invalidateQueries({
               queryKey: getGetSourceCodeListQueryKey(),
             });
-          } else {
-            queryClient.invalidateQueries({
-              queryKey: getAdminGetSourceCodeDetailQueryKey(sourceCodeId),
+
+            // 기존 sourceCodeId의 상세 캐시 제거
+            queryClient.removeQueries({
+              queryKey: getGetSourceCodeDetailQueryKey(sourceCodeId),
             });
+
+            // 새 sourceCodeId로 라우트 변경
+            router.replace(ROUTES.USER_SOURCECODE_DETAIL(newSourceCodeId));
+          } else {
+            // 리스트 캐시 무효화
             queryClient.invalidateQueries({
               queryKey: getAdminGetSourceCodeListQueryKey(),
             });
+
+            // 기존 sourceCodeId의 상세 캐시 제거
+            queryClient.removeQueries({
+              queryKey: getAdminGetSourceCodeDetailQueryKey(sourceCodeId),
+            });
+
+            // 새 sourceCodeId로 라우트 변경
+            router.replace(ROUTES.ADMIN_SOURCECODE_DETAIL(newSourceCodeId));
           }
           onSuccess();
         },
@@ -133,7 +149,7 @@ export function UpdateSourcecodeDetail({
     });
 
     // 파라미터 상태 복원
-    setParametersFromRecord(data.parameter);
+    setParameters(fromRecord(data.parameter));
 
     // 크리덴셜 토글 상태 복원
     setCredentialEnabled(!!data.credentialId);
@@ -158,16 +174,16 @@ export function UpdateSourcecodeDetail({
     });
 
     // 파라미터 배열로 변환
-    setParametersFromRecord(data.parameter);
+    setParameters(fromRecord(data.parameter));
 
     // 크리덴셜 토글 상태 설정
     setCredentialEnabled(!!data.credentialId);
-  }, [data, reset, setParametersFromRecord]);
+  }, [data, reset, setParameters, fromRecord]);
 
   return (
     <StyledForm onFinish={handleSubmit(onSubmit)}>
       <ScrollWrapper>
-        <CustomScrollbars autoHide={false}>
+        <CustomScrollbars autoHide={true}>
           {/* 수정 가능한 기본 정보 섹션 */}
           <StyledArticleBody>
             <AsideDetailArticleItem>
@@ -199,7 +215,11 @@ export function UpdateSourcecodeDetail({
               <ReadOnlyFormItem>
                 <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {data.isPublic ? "공개" : "비공개"}
+                  {data.isPublic === undefined
+                    ? "-"
+                    : data.isPublic
+                      ? "공개"
+                      : "비공개"}
                 </AsideDetailArticleValue>
               </ReadOnlyFormItem>
               <ReadOnlyFormItem>

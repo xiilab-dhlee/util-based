@@ -5,8 +5,8 @@ import { useResetAtom } from "jotai/utils";
 import { toast } from "react-toastify";
 
 import {
-  getGetAllWorkspaces1QueryKey,
-  getGetWorkspaceDetail1QueryKey,
+  // getGetAllWorkspaces1QueryKey,
+  // getGetWorkspaceDetail1QueryKey,
   useDeleteWorkspaces,
 } from "@/api/generated/admin-workspace/admin-workspace";
 import {
@@ -76,15 +76,15 @@ export function useUpdateWorkspaceAction(
         queryClient.invalidateQueries({
           queryKey: getGetAllWorkspacesQueryKey(),
         });
-        queryClient.invalidateQueries({
-          queryKey: getGetAllWorkspaces1QueryKey(),
-        });
+        // queryClient.invalidateQueries({
+        //   queryKey: getGetAllWorkspaces1QueryKey(),
+        // });
         queryClient.invalidateQueries({
           queryKey: getGetWorkspaceDetailQueryKey(variables.workspaceId),
         });
-        queryClient.invalidateQueries({
-          queryKey: getGetWorkspaceDetail1QueryKey(variables.workspaceId),
-        });
+        // queryClient.invalidateQueries({
+        //   queryKey: getGetWorkspaceDetail1QueryKey(variables.workspaceId),
+        // });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
     },
@@ -110,9 +110,9 @@ export function useDeleteWorkspaceAction(
         queryClient.invalidateQueries({
           queryKey: getGetAllWorkspacesQueryKey(),
         });
-        queryClient.invalidateQueries({
-          queryKey: getGetAllWorkspaces1QueryKey(),
-        });
+        // queryClient.invalidateQueries({
+        //   queryKey: getGetAllWorkspaces1QueryKey(),
+        // });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
     },
@@ -286,7 +286,7 @@ export function useCancelResourceRequestAction(
 export function useDeleteAdminWorkspacesAction(
   options?: Parameters<typeof useDeleteWorkspaces>[0],
 ) {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const resetPage = useResetAtom(workspacePageAtom);
   const resetCheckedList = useResetAtom(workspaceCheckedListAtom);
 
@@ -298,16 +298,16 @@ export function useDeleteAdminWorkspacesAction(
         resetCheckedList();
         resetPage();
 
-        queryClient.invalidateQueries({
-          queryKey: getGetAllWorkspaces1QueryKey(),
-        });
+        // queryClient.invalidateQueries({
+        //   queryKey: getGetAllWorkspaces1QueryKey(),
+        // });
 
         // 삭제된 각 워크스페이스의 상세 정보도 무효화
-        variables.data.workspaceId.forEach((workspaceId) => {
-          queryClient.invalidateQueries({
-            queryKey: getGetWorkspaceDetail1QueryKey(workspaceId),
-          });
-        });
+        // variables.data.workspaceId.forEach((workspaceId) => {
+        //   queryClient.invalidateQueries({
+        //     queryKey: getGetWorkspaceDetail1QueryKey(workspaceId),
+        //   });
+        // });
 
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },

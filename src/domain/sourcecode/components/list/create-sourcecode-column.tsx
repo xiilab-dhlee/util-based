@@ -25,8 +25,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       dataIndex: "isPublic",
       title: "공개 설정",
       align: "center",
-      render: (isPublic: boolean) => {
-        return <span>{isPublic ? "공개" : "비공개"}</span>;
+      render: (isPublic?: boolean) => {
+        return (
+          <span>
+            {isPublic === undefined ? "-" : isPublic ? "공개" : "비공개"}
+          </span>
+        );
       },
     },
     {

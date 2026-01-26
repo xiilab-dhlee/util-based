@@ -1,8 +1,20 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 import type { SourcecodeParameterType } from "@/domain/sourcecode/schemas/sourcecode.schema";
+
+/**
+ * Record 형태의 파라미터를 배열로 변환
+ */
+const fromRecord = (
+  record: Record<string, string> | undefined,
+): SourcecodeParameterType[] => {
+  return Object.entries(record || {}).map(([key, value]) => ({
+    key,
+    value,
+  }));
+};
 
 export interface UseSourcecodeParametersReturn {
   /** 파라미터 목록 */
@@ -26,6 +38,11 @@ export interface UseSourcecodeParametersReturn {
   /** Record 형태의 파라미터를 배열로 변환하여 설정 */
   setParametersFromRecord: (record: Record<string, string> | undefined) => void;
 
+  /** Record 형태의 파라미터를 배열로 변환 */
+  fromRecord: (
+    record: Record<string, string> | undefined,
+  ) => SourcecodeParameterType[];
+
   /** 파라미터 배열을 Record<string, string>으로 변환 */
   toRecord: () => Record<string, string>;
 }
@@ -42,43 +59,33 @@ export function useSourcecodeParameters(
     initialParameters ?? [],
   );
 
-  const addParameter = useCallback((param: SourcecodeParameterType) => {
+  const addParameter = (param: SourcecodeParameterType) => {
     setParametersState((prev) => [...prev, param]);
-  }, []);
+  };
 
-  const updateParameter = useCallback(
-    (index: number, param: SourcecodeParameterType) => {
-      setParametersState((prev) =>
-        prev.map((p, i) => (i === index ? param : p)),
-      );
-    },
-    [],
-  );
+  const updateParameter = (index: number, param: SourcecodeParameterType) => {
+    setParametersState((prev) => prev.map((p, i) => (i === index ? param : p)));
+  };
 
-  const removeParameter = useCallback((index: number) => {
+  const removeParameter = (index: number) => {
     setParametersState((prev) => prev.filter((_, i) => i !== index));
-  }, []);
+  };
 
-  const resetParameters = useCallback(() => {
+  const resetParameters = () => {
     setParametersState([]);
-  }, []);
+  };
 
-  const setParameters = useCallback((params: SourcecodeParameterType[]) => {
+  const setParameters = (params: SourcecodeParameterType[]) => {
     setParametersState(params);
-  }, []);
+  };
 
-  const setParametersFromRecord = useCallback(
-    (record: Record<string, string> | undefined) => {
-      const params = Object.entries(record || {}).map(([key, value]) => ({
-        key,
-        value,
-      }));
-      setParametersState(params);
-    },
-    [],
-  );
+  const setParametersFromRecord = (
+    record: Record<string, string> | undefined,
+  ) => {
+    setParametersState(fromRecord(record));
+  };
 
-  const toRecord = useCallback((): Record<string, string> => {
+  const toRecord = (): Record<string, string> => {
     return parameters.reduce<Record<string, string>>((acc, param) => {
       const key = param.key.trim();
       if (key) {
@@ -86,7 +93,7 @@ export function useSourcecodeParameters(
       }
       return acc;
     }, {});
-  }, [parameters]);
+  };
 
   return {
     parameters,
@@ -96,6 +103,7 @@ export function useSourcecodeParameters(
     resetParameters,
     setParameters,
     setParametersFromRecord,
+    fromRecord,
     toRecord,
   };
 }

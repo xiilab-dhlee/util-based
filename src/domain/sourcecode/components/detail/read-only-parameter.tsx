@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 
 import type { SourcecodeParameterType } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 /**
  * ReadOnlyParameter 컴포넌트의 Props 인터페이스
@@ -120,10 +119,6 @@ const Header = styled.div`
  * - customScrollbar mixin으로 스크롤바 스타일 적용
  */
 const Body = styled.div`
-  max-height: 110px;
-  overflow: auto;
-
-  ${customScrollbar()}
 `;
 
 /**
