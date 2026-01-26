@@ -1,11 +1,12 @@
 "use client";
 
+import { useResetAtom } from "jotai/utils";
 import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
-import { useGetUrgentStandbyWorkloads } from "@/api/generated/admin-queue/admin-queue";
 import type { QueueWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { useUpdateUrgentStandbyOrderAction } from "@/domain/scheduling-queue/hooks/scheduling-queue-actions";
+import { useRemoveWorkloadFromUrgentStandbyAction } from "@/domain/scheduling-queue/hooks/scheduling-queue-actions";
+import { pendingWorkloadPageAtom } from "@/domain/scheduling-queue/state/scheduling-queue.atom";
 import { SCHEDULING_QUEUE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -13,31 +14,24 @@ export function DeleteUrgentQueueModal() {
   const [open, setOpen] = useState(false);
   const [workloadToDelete, setWorkloadToDelete] =
     useState<QueueWorkloadResponse | null>(null);
+  const resetPendingPage = useResetAtom(pendingWorkloadPageAtom);
 
-  const { data: urgentData } = useGetUrgentStandbyWorkloads();
-  const { mutate: updateOrder, isPending } =
-    useUpdateUrgentStandbyOrderAction();
-
-  const workloads = urgentData || [];
+  const { mutate: removeWorkload, isPending } =
+    useRemoveWorkloadFromUrgentStandbyAction();
 
   const handleOk = () => {
     if (!workloadToDelete || isPending) return;
 
-    const remainingWorkloads = workloads.filter(
-      (w) => w.workloadResourceName !== workloadToDelete.workloadResourceName,
-    );
-
-    updateOrder(
+    removeWorkload(
       {
         data: {
-          queueOrderItem: remainingWorkloads.map((w, index) => ({
-            workloadId: w.workloadId,
-            rank: index + 1,
-          })),
+          workspaceResourceName: workloadToDelete.workspaceResourceName,
+          workloadResourceName: workloadToDelete.workloadResourceName,
         },
       },
       {
         onSuccess: () => {
+          resetPendingPage();
           setOpen(false);
           setWorkloadToDelete(null);
         },

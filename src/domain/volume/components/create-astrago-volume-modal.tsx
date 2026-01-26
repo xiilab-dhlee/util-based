@@ -38,7 +38,7 @@ export function CreateAstragoVolumeModal() {
     resolver: zodResolver(createAstragoVolumeSchema),
     defaultValues: {
       volumeName: "",
-      isPublic: true,
+      shouldBePublic: true,
       mountPath: "",
     },
   });
@@ -56,7 +56,7 @@ export function CreateAstragoVolumeModal() {
       {
         data: {
           volumeName: data.volumeName,
-          isPublic: data.isPublic,
+          shouldBePublic: data.shouldBePublic,
           mountPath: data.mountPath,
           storageId: data.storageId,
           workspaceId: selectedWorkspace.workspaceId,
@@ -142,21 +142,21 @@ export function CreateAstragoVolumeModal() {
           )}
         />
         <Controller
-          name="isPublic"
+          name="shouldBePublic"
           control={control}
           render={({ field }) => (
             <FormItem
               label="공개 설정"
               required
-              validateStatus={errors.isPublic ? "error" : undefined}
-              help={errors.isPublic?.message}
+              validateStatus={errors.shouldBePublic ? "error" : undefined}
+              help={errors.shouldBePublic?.message}
             >
               <Dropdown
                 options={VOLUME_VISIBILITY_OPTIONS}
                 value={field.value ? "true" : "false"}
                 onChange={(value) => field.onChange(value === "true")}
                 width="100%"
-                status={errors.isPublic ? "error" : undefined}
+                status={errors.shouldBePublic ? "error" : undefined}
                 disabled={isPending}
               />
             </FormItem>

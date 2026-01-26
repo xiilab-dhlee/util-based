@@ -1,4 +1,5 @@
 import type { MonitoringMetricType } from "@/domain/monitoring/types/monitoring.type";
+import type { MetricInfo } from "@/shared/types/metric-info.type";
 
 /**
  * GPU 차트 및 노드별 구분에 사용되는 색상 팔레트
@@ -15,20 +16,6 @@ export const GPU_CHART_COLORS = [
   "#FF8080", // 빨강
   "#77B900", // 연두
 ] as const;
-
-/**
- * 메트릭 정보 인터페이스
- * - text: 차트/카드 제목 등 메트릭명
- * - unit: Y축/tooltip에 사용되는 단위
- * - colors: 기본 색상 팔레트 (GPU는 종류별, 기타는 시리즈별로 순환 사용)
- * - series: 멀티 시리즈 메트릭의 경우, 시리즈(항목) key 목록
- */
-interface MetricInfo {
-  text: string;
-  unit: string;
-  colors: readonly string[];
-  series?: string[];
-}
 
 /**
  * 모니터링 메트릭 타입과 정보를 한 번에 관리하는 매핑

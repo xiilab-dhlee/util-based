@@ -31,6 +31,135 @@ import * as zod from "zod";
 
 /**
  * 
+            워크로드의 기본 정보(이름, 설명)를 수정합니다.
+
+            **수정 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼 관리자 (SUPER_ADMIN)
+
+            **수정 가능 항목:**
+            - workloadName: 워크로드 이름 (필수, 최대 50자)
+            - description: 워크로드 설명 (선택, 최대 2000자)
+
+            **수정 가능 상태:**
+            - 모든 상태에서 수정 가능 (RUNNING, PENDING, TERMINATED 등)
+        
+ * @summary 워크로드 정보 수정
+ */
+export const updateWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const updateWorkloadBodyWorkloadNameMin = 0;
+export const updateWorkloadBodyWorkloadNameMax = 50;
+
+export const updateWorkloadBodyDescriptionMin = 0;
+export const updateWorkloadBodyDescriptionMax = 2000;
+
+export const updateWorkloadBody = zod
+  .object({
+    workloadName: zod
+      .string()
+      .min(updateWorkloadBodyWorkloadNameMin)
+      .max(updateWorkloadBodyWorkloadNameMax)
+      .describe("워크로드 이름"),
+    description: zod
+      .string()
+      .min(updateWorkloadBodyDescriptionMin)
+      .max(updateWorkloadBodyDescriptionMax)
+      .optional()
+      .describe("워크로드 설명"),
+  })
+  .strict()
+  .describe("워크로드 정보 수정 요청");
+
+export const updateWorkloadResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            워크로드를 완전히 삭제합니다.
+
+            **삭제 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
+            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
+
+            **삭제 대상:**
+            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
+            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
+
+            **주의:**
+            - 삭제된 워크로드는 복구할 수 없습니다.
+            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
+        
+ * @summary 워크로드 삭제
+ */
+export const deleteWorkloadParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+/**
+ * 
+            종료된 워크로드의 리소스 프리셋을 변경합니다.
+
+            **변경 조건:**
+            - TERMINATED 상태의 워크로드만 변경 가능
+            - 재시작 시 변경된 리소스 프리셋이 적용됨
+
+            **검증 항목:**
+            - 리소스 프리셋 존재/삭제 여부
+            - 노드 타입 일치 (BATCH/INTERACTIVE → SINGLE, DISTRIBUTED → MULTI)
+            - DISTRIBUTED 워크로드 MIG GPU 사용 불가
+            - GPU 지원 여부 (클러스터 가용성)
+            - Queue Capability (워크스페이스 할당량)
+
+            **변경 권한:**
+            - 워크로드 생성자
+            - 슈퍼관리자 (SUPER_ADMIN)
+        
+ * @summary 워크로드 리소스 프리셋 변경
+ */
+export const updateResourcePresetParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const updateResourcePresetBody = zod
+  .object({
+    resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
+    workerCount: zod
+      .number()
+      .min(1)
+      .optional()
+      .describe(
+        "분산 학습 워커 수 (DISTRIBUTED 워크로드 전용, 미입력 시 기존 값 유지)",
+      ),
+  })
+  .strict()
+  .describe("워크로드 리소스 프리셋 변경 요청");
+
+export const updateResourcePresetResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod.record(zod.string(), zod.unknown()).optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             워크스페이스에 새로운 워크로드를 생성합니다.
 
             **워크로드 잡 타입:**
@@ -1350,6 +1479,10 @@ export const getTerminatedWorkloadsQueryParams = zod.object({
     .optional()
     .describe("정렬 기준 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  hasMine: zod
+    .boolean()
+    .optional()
+    .describe("내 워크로드만 조회 (true: 본인 것만, false: 전체)"),
 });
 
 export const getTerminatedWorkloadsResponse = zod
@@ -1460,6 +1593,10 @@ export const getActiveWorkloadsQueryParams = zod.object({
     .optional()
     .describe("정렬 기준 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+  hasMine: zod
+    .boolean()
+    .optional()
+    .describe("내 워크로드만 조회 (true: 본인 것만, false: 전체)"),
 });
 
 export const getActiveWorkloadsResponse = zod
@@ -1513,6 +1650,30 @@ export const getActiveWorkloadsResponse = zod
                       .describe("워크로드 접속 정보"),
                   )
                   .describe("접속 정보 목록"),
+                port: zod
+                  .array(
+                    zod
+                      .object({
+                        portName: zod.string(),
+                        portNumber: zod.number(),
+                        servicePortNum: zod.number().optional(),
+                        url: zod.string().optional(),
+                      })
+                      .strict(),
+                  )
+                  .optional()
+                  .describe("포트 설정 목록"),
+                env: zod
+                  .array(
+                    zod
+                      .object({
+                        key: zod.string(),
+                        value: zod.string(),
+                      })
+                      .strict(),
+                  )
+                  .optional()
+                  .describe("환경변수 목록"),
               })
               .strict()
               .describe("실행 중 워크로드 항목"),
@@ -1526,27 +1687,3 @@ export const getActiveWorkloadsResponse = zod
     timestamp: zod.number(),
   })
   .strict();
-
-/**
- * 
-            워크로드를 완전히 삭제합니다.
-
-            **삭제 동작:**
-            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
-            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
-            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
-
-            **삭제 대상:**
-            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
-            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
-
-            **주의:**
-            - 삭제된 워크로드는 복구할 수 없습니다.
-            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
-        
- * @summary 워크로드 삭제
- */
-export const deleteWorkloadParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
-});

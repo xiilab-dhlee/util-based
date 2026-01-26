@@ -35,14 +35,15 @@ import type {
   BaseResponsePageResponseSourceCodeListResponse,
   BaseResponseSourceCodeDeleteResult,
   BaseResponseSourceCodeDetailResponse,
-  BaseResponseUnit,
+  BaseResponseUpdateSourceCodeResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getAdminUpdateSourceCodeResponseMock = (
-  overrideResponse: Partial<BaseResponseUnit> = {},
-): BaseResponseUnit => ({
+  overrideResponse: Partial<BaseResponseUpdateSourceCodeResponse> = {},
+): BaseResponseUpdateSourceCodeResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: { sourceCodeId: faker.number.int({ min: undefined, max: undefined }) },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -132,6 +133,7 @@ export const getAdminGetSourceCodeDetailResponseMock = (
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     credentialId: faker.number.int({ min: undefined, max: undefined }),
+    credentialName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
   },
@@ -142,10 +144,12 @@ export const getAdminGetSourceCodeDetailResponseMock = (
 
 export const getAdminUpdateSourceCodeMockHandler = (
   overrideResponse?:
-    | BaseResponseUnit
+    | BaseResponseUpdateSourceCodeResponse
     | ((
         info: Parameters<Parameters<typeof http.put>[1]>[0],
-      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+      ) =>
+        | Promise<BaseResponseUpdateSourceCodeResponse>
+        | BaseResponseUpdateSourceCodeResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.put(

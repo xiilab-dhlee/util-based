@@ -100,7 +100,7 @@ export const setDefaultWorkspaceParams = zod.object({
 
 export const setDefaultWorkspaceBody = zod
   .object({
-    isDefault: zod.boolean().describe("default 워크스페이스 설정 여부"),
+    shouldBeDefault: zod.boolean().describe("default 워크스페이스 설정 여부"),
   })
   .strict()
   .describe("default 워크스페이스 설정 요청");

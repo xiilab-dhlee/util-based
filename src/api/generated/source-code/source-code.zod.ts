@@ -85,7 +85,7 @@ export const updateSourceCodeBody = zod
       .record(zod.string(), zod.string())
       .optional()
       .describe("사용자 정의 파라미터"),
-    isPublic: zod.boolean().describe("공개 여부"),
+    shouldBePublic: zod.boolean().describe("공개 여부"),
     credentialId: zod.number().optional().describe("크레덴셜 ID"),
   })
   .strict()
@@ -95,6 +95,17 @@ export const updateSourceCodeResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        sourceCodeId: zod
+          .number()
+          .describe(
+            "새로 생성된 소스코드 ID (버전 업데이트로 인해 새 ID 발급)",
+          ),
+      })
+      .strict()
+      .optional()
+      .describe("소스코드 수정 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -249,7 +260,7 @@ export const registerSourceCodeBody = zod
       .record(zod.string(), zod.string())
       .optional()
       .describe("사용자 정의 파라미터"),
-    isPublic: zod.boolean().describe("공개 여부"),
+    shouldBePublic: zod.boolean().describe("공개 여부"),
     workspaceId: zod
       .number()
       .optional()
@@ -363,12 +374,43 @@ export const getSourceCodeDetailResponse = zod
         creatorId: zod.string().describe("생성자 ID"),
         creatorName: zod.string().describe("생성자 이름"),
         credentialId: zod.number().optional().describe("크레덴셜 ID"),
+        credentialName: zod.string().optional().describe("크레덴셜 이름"),
         createdAt: zod.string().datetime({}).describe("생성 일시"),
         updatedAt: zod.string().datetime({}).optional().describe("수정 일시"),
       })
       .strict()
       .optional()
       .describe("소스코드 상세 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+        소스코드의 Git 저장소 브랜치 목록을 조회합니다.
+
+        **응답:**
+        - 200 OK + data: 브랜치 이름 목록 (알파벳순 정렬)
+        - 200 OK + data: null (소스코드가 존재하지 않거나 삭제된 경우)
+        - 403: 접근 권한 없음
+
+        **권한:**
+        - 소스코드 조회 권한과 동일
+        - 공개 소스코드: 모든 사용자 조회 가능
+        - 비공개 소스코드: 본인(생성자) 또는 ADMIN/SUPER_ADMIN
+        
+ * @summary 소스코드 브랜치 목록 조회
+ */
+export const getBranchesParams = zod.object({
+  sourceCodeId: zod.number().describe("조회할 소스코드 ID"),
+});
+
+export const getBranchesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod.array(zod.string()).optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

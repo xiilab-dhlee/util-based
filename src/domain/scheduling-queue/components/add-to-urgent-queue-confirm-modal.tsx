@@ -1,11 +1,13 @@
 "use client";
 
+import { useResetAtom } from "jotai/utils";
 import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
 import type { AdminWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MAX_URGENT_QUEUE_SIZE } from "@/domain/scheduling-queue/constants/scheduling-queue.constant";
 import { useAddWorkloadToUrgentStandbyAction } from "@/domain/scheduling-queue/hooks/scheduling-queue-actions";
+import { pendingWorkloadPageAtom } from "@/domain/scheduling-queue/state/scheduling-queue.atom";
 import { SCHEDULING_QUEUE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -17,6 +19,7 @@ interface AddToQueueData {
 export function AddToUrgentQueueConfirmModal() {
   const [open, setOpen] = useState(false);
   const [addData, setAddData] = useState<AddToQueueData | null>(null);
+  const resetPendingPage = useResetAtom(pendingWorkloadPageAtom);
   const { mutate: addToQueue, isPending } =
     useAddWorkloadToUrgentStandbyAction();
 
@@ -32,6 +35,7 @@ export function AddToUrgentQueueConfirmModal() {
       },
       {
         onSuccess: () => {
+          resetPendingPage();
           setOpen(false);
           setAddData(null);
           addData.onSuccess?.();

@@ -1,48 +1,77 @@
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 import { Dropdown } from "xiilab-ui";
 
-import { UserMonitoringGraphChart } from "@/domain/user-monitoring/components/user-monitoring-graph-chart";
+import type { WorkspaceMetricType } from "@/domain/user-monitoring/constants/workspace-monitoring.constant";
 import {
-  USER_MONITORING_RESOURCE_OPTIONS,
-  USER_MONITORING_SERIES_DEMO,
-} from "@/domain/user-monitoring/constants/user-monitoring.constant";
+  WORKSPACE_MONITORING_CHART_COLOR_OPTIONS,
+  WORKSPACE_MONITORING_RESOURCE_OPTIONS,
+} from "@/domain/user-monitoring/constants/workspace-monitoring.constant";
+import { useWorkspaceMetrics } from "@/domain/user-monitoring/hooks/use-workspace-metrics.hook";
+import { useWorkspaceMetricsStream } from "@/domain/user-monitoring/hooks/use-workspace-metrics-stream.hook";
+import { getWorkspaceMetricInfo } from "@/domain/user-monitoring/utils/workspace-monitoring.util";
+import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSelect } from "@/shared/hooks/use-select";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { UserMonitoringCategoryTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function UserMonitoringResourceArticle() {
-  // 선택된 자원
-  const resourceSelect = useSelect<string>(
-    "GPU",
-    USER_MONITORING_RESOURCE_OPTIONS,
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
+
+  const resourceSelect = useSelect<WorkspaceMetricType>(
+    WORKSPACE_MONITORING_RESOURCE_OPTIONS[0].value,
+    WORKSPACE_MONITORING_RESOURCE_OPTIONS,
   );
 
-  // value가 null이 아니고 유효한 리소스 타입인지 확인
-  const seriesData = resourceSelect.value
-    ? USER_MONITORING_SERIES_DEMO[resourceSelect.value]
-    : null;
+  const metricType =
+    resourceSelect.value ?? WORKSPACE_MONITORING_RESOURCE_OPTIONS[0].value;
+
+  const historyMetrics = useWorkspaceMetrics({
+    workspaceId,
+    metricType,
+    enabled: Boolean(workspaceId),
+  });
+
+  const streamMetrics = useWorkspaceMetricsStream({
+    workspaceId,
+    metricType,
+    lastHistoryTimestamp: historyMetrics.lastTimestamp,
+    initialData: historyMetrics.data,
+    enabled: Boolean(workspaceId) && !historyMetrics.isLoading,
+  });
+
+  const currentData = streamMetrics.data;
+  const metricInfo = getWorkspaceMetricInfo(metricType);
+  const unit = metricInfo.unit;
+  const colors = metricInfo.colors;
 
   return (
     <Container data-testid={USER_MONITORING_SELECTOR.RESOURCE_GRAPH}>
-      {/* CPU 그래프 영역 */}
       <Graph>
         <GraphHeader>
           <UserMonitoringCategoryTitle>
-            {resourceSelect.value} 그래프
+            {metricInfo.text} 그래프
           </UserMonitoringCategoryTitle>
         </GraphHeader>
+
         <GraphBody>
-          {/* 선택된 옵션이 변경될 때마다 컴포넌트를 리렌더링하기 위한 key 속성 추가 */}
-          {seriesData && (
-            <UserMonitoringGraphChart
-              key={resourceSelect.value}
-              series={seriesData.series}
-              unit={seriesData.unit}
-            />
-          )}
+          <MonitoringChart
+            key={metricType}
+            series={currentData}
+            unit={unit}
+            colors={colors}
+            isLoading={historyMetrics.isLoading}
+            isError={historyMetrics.isError}
+            chartType="area"
+            height={320}
+            // width={650}
+            customOptions={WORKSPACE_MONITORING_CHART_COLOR_OPTIONS}
+            isDarkMode={true}
+          />
         </GraphBody>
       </Graph>
-      {/* 그래프 선택 영역 */}
       <GraphSelect>
         <Dropdown
           options={resourceSelect.options}
@@ -64,7 +93,6 @@ const Container = styled.article`
   position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
 
   padding-right: 10px;
 
@@ -74,10 +102,11 @@ const Container = styled.article`
 `;
 
 const Graph = styled.div`
-  flex: 1;
+
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 `;
 
 const GraphHeader = styled.div`
@@ -90,12 +119,13 @@ const GraphBody = styled.div`
   justify-content: center;
   align-items: center;
   flex: 1;
+  position: relative;
 `;
 
 const GraphSelect = styled.div`
   position: absolute;
   top: 0;
   right: 20px;
-  width: 84px;
+  width: 130px;
   height: 30px;
 `;

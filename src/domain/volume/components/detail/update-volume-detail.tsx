@@ -72,7 +72,7 @@ export function UpdateVolumeDetail({
     defaultValues: {
       volumeName: "",
       mountPath: "",
-      isPublic: false,
+      shouldBePublic: false,
     },
   });
 
@@ -85,7 +85,7 @@ export function UpdateVolumeDetail({
         data: {
           volumeName: formData.volumeName,
           mountPath: formData.mountPath,
-          isPublic: formData.isPublic,
+          shouldBePublic: formData.shouldBePublic,
         },
       },
       {
@@ -116,7 +116,7 @@ export function UpdateVolumeDetail({
       reset({
         volumeName: data.volumeName ?? "",
         mountPath: data.mountPath ?? "",
-        isPublic: data.isPublic ?? false,
+        shouldBePublic: data.isPublic ?? false,
       });
     }
     onCancel();
@@ -127,7 +127,7 @@ export function UpdateVolumeDetail({
       reset({
         volumeName: data.volumeName ?? "",
         mountPath: data.mountPath ?? "",
-        isPublic: data.isPublic ?? false,
+        shouldBePublic: data.isPublic ?? false,
       });
     }
   }, [data, reset]);

@@ -39,7 +39,7 @@ export const updateAccountParams = zod.object({
 
 export const updateAccountBody = zod
   .object({
-    isEnabled: zod
+    hasEnabled: zod
       .boolean()
       .optional()
       .describe("계정 활성화 여부 (선택적). null인 경우 변경하지 않습니다."),
@@ -79,7 +79,7 @@ export const updateAccountEnabledParams = zod.object({
 
 export const updateAccountEnabledBody = zod
   .object({
-    isEnabled: zod
+    hasEnabled: zod
       .boolean()
       .describe("계정 활성화 여부. true: 계정 활성화, false: 계정 비활성화"),
   })

@@ -11,15 +11,20 @@ import type { AdminWorkloadResponse } from "@/api/generated/astragoBackendAPIDoc
 import { PendingWorkloadBody } from "@/domain/scheduling-queue/components/list/pending-workload-body";
 import { PendingWorkloadFilter } from "@/domain/scheduling-queue/components/list/pending-workload-filter";
 import { PendingWorkloadFooter } from "@/domain/scheduling-queue/components/list/pending-workload-footer";
-import { MAX_URGENT_QUEUE_SIZE } from "@/domain/scheduling-queue/constants/scheduling-queue.constant";
+import {
+  MAX_URGENT_QUEUE_SIZE,
+  PENDING_WORKLOAD_SORT_FIELD_MAP,
+} from "@/domain/scheduling-queue/constants/scheduling-queue.constant";
 import {
   pendingWorkloadJobTypeAtom,
   pendingWorkloadPageAtom,
   pendingWorkloadSearchAtom,
+  pendingWorkloadSortAtom,
 } from "@/domain/scheduling-queue/state/scheduling-queue.atom";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SCHEDULING_QUEUE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { pubsubUtil } from "@/shared/utils/pubsub.util";
+import { buildSortRequest } from "@/shared/utils/sort.util";
 
 /**
  * 대기중인 워크로드 목록 메인 컴포넌트
@@ -31,12 +36,18 @@ export function PendingWorkloadMain() {
   const page = useAtomValue(pendingWorkloadPageAtom);
   const jobType = useAtomValue(pendingWorkloadJobTypeAtom);
   const search = useAtomValue(pendingWorkloadSearchAtom);
+  const sort = useAtomValue(pendingWorkloadSortAtom);
 
   const resetJobType = useResetAtom(pendingWorkloadJobTypeAtom);
   const resetSearch = useResetAtom(pendingWorkloadSearchAtom);
   const resetPage = useResetAtom(pendingWorkloadPageAtom);
+  const resetSort = useResetAtom(pendingWorkloadSortAtom);
 
   const filterRequest = jobType ? { jobType } : {};
+  const sortRequest = buildSortRequest({
+    state: sort,
+    fieldMap: PENDING_WORKLOAD_SORT_FIELD_MAP,
+  });
 
   const {
     data: pendingData,
@@ -46,6 +57,7 @@ export function PendingWorkloadMain() {
     pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: search || undefined,
+    ...(sortRequest ?? {}),
     ...filterRequest,
   });
 
@@ -76,6 +88,7 @@ export function PendingWorkloadMain() {
     resetJobType();
     resetSearch();
     resetPage();
+    resetSort();
   }, []);
 
   return (

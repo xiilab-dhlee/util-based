@@ -85,9 +85,6 @@ export function UrgentQueueList() {
       oldRank: oldIndex + 1,
       newRank: newIndex + 1,
       reorderedList: reordered,
-      onSuccess: () => {
-        // 성공 - UI는 이미 업데이트됨
-      },
       onCancel: () => {
         // 취소 시 원래 순서로 복구
         setLocalWorkloads(originalOrder);

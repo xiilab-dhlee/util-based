@@ -66,7 +66,7 @@ export const updateVolumeBody = zod
       .max(updateVolumeBodyMountPathMax)
       .regex(updateVolumeBodyMountPathRegExp)
       .describe("마운트 경로 (절대경로)"),
-    isPublic: zod.boolean().describe("공개 여부"),
+    shouldBePublic: zod.boolean().describe("공개 여부"),
   })
   .strict()
   .describe("볼륨 수정 요청");
@@ -123,7 +123,7 @@ export const registerOnPremiseVolumeBody = zod
       .min(registerOnPremiseVolumeBodyVolumeNameMin)
       .max(registerOnPremiseVolumeBodyVolumeNameMax)
       .describe("볼륨 이름"),
-    isPublic: zod.boolean().describe("공개 여부"),
+    shouldBePublic: zod.boolean().describe("공개 여부"),
     mountPath: zod
       .string()
       .min(registerOnPremiseVolumeBodyMountPathMin)
@@ -233,7 +233,7 @@ export const registerAstragoVolumeBody = zod
       .min(registerAstragoVolumeBodyVolumeNameMin)
       .max(registerAstragoVolumeBodyVolumeNameMax)
       .describe("볼륨 이름"),
-    isPublic: zod.boolean().describe("공개 여부"),
+    shouldBePublic: zod.boolean().describe("공개 여부"),
     mountPath: zod
       .string()
       .min(registerAstragoVolumeBodyMountPathMin)

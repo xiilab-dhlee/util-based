@@ -1,12 +1,15 @@
+import { isNil } from "es-toolkit";
 import type { ResponsiveColumnType } from "xiilab-ui";
 
 import type { AdminWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { AddToUrgentQueueButton } from "@/domain/scheduling-queue/components/list/add-to-urgent-queue-button";
+import type { PendingWorkloadSortState } from "@/domain/scheduling-queue/constants/scheduling-queue.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatElapsedTime } from "@/shared/utils/date.util";
 import { formatNumberWithUnit } from "@/shared/utils/format.util";
 import { convertBytes } from "@/shared/utils/resource.util";
+import { getColumnSortOrder } from "@/shared/utils/sort.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
 interface CreatePendingWorkloadColumnOptions {
@@ -14,6 +17,8 @@ interface CreatePendingWorkloadColumnOptions {
   isAddingToQueue?: boolean;
   /** 긴급 대기열이 가득 찼는지 여부 (최대 5개) */
   isQueueFull?: boolean;
+  /** 정렬 상태 */
+  sort?: PendingWorkloadSortState;
 }
 
 type CreatePendingWorkloadColumnParams = CreatePendingWorkloadColumnOptions & {
@@ -27,6 +32,7 @@ export function createPendingWorkloadColumn({
   onAddToUrgentQueue,
   isAddingToQueue,
   isQueueFull,
+  sort,
   config,
 }: CreatePendingWorkloadColumnParams): ResponsiveColumnType<AdminWorkloadResponse>[] {
   const columnList: ResponsiveColumnType<AdminWorkloadResponse>[] = [
@@ -57,41 +63,32 @@ export function createPendingWorkloadColumn({
     {
       key: "gpu",
       title: "GPU",
-      dataIndex: ["resource", "gpu"],
       align: "left",
       width: "10%",
       render: (_, record: AdminWorkloadResponse) => {
-        const gpuName = record.resource?.gpu?.gpuName;
-        return gpuName || "-";
+        const quotaCount = record.resource?.gpu?.detail?.normal?.quotaCount;
+        return isNil(quotaCount) ? "-" : formatNumberWithUnit(quotaCount, "개");
       },
     },
     {
       key: "mig",
       title: "MIG",
-      dataIndex: ["resource", "gpu", "detail"],
       align: "left",
       width: "10%",
       render: (_, record: AdminWorkloadResponse) => {
         const detail = record.resource?.gpu?.detail;
-
         // MIG은 배열이므로 첫 번째 요소 확인
         if (detail?.mig && detail.mig.length > 0) {
           const firstMig = detail.mig[0];
           const count = formatNumberWithUnit(firstMig.quotaCount, "개");
           return `${firstMig.profile} ${count}`;
         }
-
-        if (detail?.normal) {
-          return formatNumberWithUnit(detail.normal.quotaCount, "개");
-        }
-
         return "-";
       },
     },
     {
       key: "cpu",
       title: "CPU",
-      dataIndex: ["resource", "cpu"],
       align: "left",
       width: "8%",
       render: (_, record: AdminWorkloadResponse) => {
@@ -101,7 +98,6 @@ export function createPendingWorkloadColumn({
     {
       key: "memory",
       title: "Memory",
-      dataIndex: ["resource", "memory"],
       align: "left",
       width: "8%",
       render: (_, record: AdminWorkloadResponse) => {
@@ -119,6 +115,8 @@ export function createPendingWorkloadColumn({
       dataIndex: "createdAt",
       align: "left",
       width: "10%",
+      sorter: true,
+      sortOrder: sort ? getColumnSortOrder(sort, "createdAt") : undefined,
       render: (createdAt: AdminWorkloadResponse["createdAt"]) => {
         return formatElapsedTime(createdAt ?? "-");
       },

@@ -19,6 +19,7 @@ interface MonitoringChartProps {
   width?: number | string;
   unit: string;
   colors?: string[] | readonly string[];
+  isDarkMode?: boolean;
   /** 로딩 상태 여부 (true면 스피너 표시) */
   isLoading?: boolean;
   /** 에러 상태 여부 (true면 에러 상태로 간주) */
@@ -50,6 +51,7 @@ export function MonitoringChart({
   width,
   unit,
   colors,
+  isDarkMode = false,
   isLoading,
   isError = false,
   chartId = "monitoring-chart",
@@ -193,19 +195,19 @@ export function MonitoringChart({
       />
 
       {isLoading && (
-        <Overlay>
+        <Overlay $isDarkMode={isDarkMode}>
           <MySpinner />
         </Overlay>
       )}
 
       {shouldShowError && (
-        <Overlay>
+        <Overlay $isDarkMode={isDarkMode}>
           <OverlayMessage>데이터를 불러 올 수 없습니다.</OverlayMessage>
         </Overlay>
       )}
 
       {shouldShowEmpty && (
-        <Overlay>
+        <Overlay $isDarkMode={isDarkMode}>
           <OverlayMessage>데이터가 없습니다.</OverlayMessage>
         </Overlay>
       )}
@@ -230,13 +232,14 @@ const ChartContainer = styled.div<{
   height: ${({ $height }) => ($height ? `${$height}px` : "100%")};
 `;
 
-const Overlay = styled.div`
+const Overlay = styled.div<{ $isDarkMode: boolean }>`
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: ${({ $isDarkMode }) =>
+    $isDarkMode ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.6)"};
   z-index: 900;
 `;
 

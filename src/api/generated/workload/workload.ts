@@ -74,9 +74,344 @@ import type {
   WorkloadDeleteFilesRequest,
   WorkloadListFilesParams,
   WorkloadPreviewFileParams,
+  WorkloadResourcePresetUpdateRequest,
   WorkloadRestartRequest,
+  WorkloadUpdateRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+/**
+ * 
+            워크로드의 기본 정보(이름, 설명)를 수정합니다.
+
+            **수정 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼 관리자 (SUPER_ADMIN)
+
+            **수정 가능 항목:**
+            - workloadName: 워크로드 이름 (필수, 최대 50자)
+            - description: 워크로드 설명 (선택, 최대 2000자)
+
+            **수정 가능 상태:**
+            - 모든 상태에서 수정 가능 (RUNNING, PENDING, TERMINATED 등)
+        
+ * @summary 워크로드 정보 수정
+ */
+export const updateWorkload = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadUpdateRequest: WorkloadUpdateRequest,
+) => {
+  return customInstance<BaseResponseUnit>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: workloadUpdateRequest,
+  });
+};
+
+export const getUpdateWorkloadMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateWorkload>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadUpdateRequest;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateWorkload>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadUpdateRequest;
+  },
+  TContext
+> => {
+  const mutationKey = ["updateWorkload"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateWorkload>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadUpdateRequest;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data } = props ?? {};
+
+    return updateWorkload(workspaceId, workloadResourceName, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateWorkloadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateWorkload>>
+>;
+export type UpdateWorkloadMutationBody = WorkloadUpdateRequest;
+export type UpdateWorkloadMutationError = unknown;
+
+/**
+ * @summary 워크로드 정보 수정
+ */
+export const useUpdateWorkload = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateWorkload>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadUpdateRequest;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateWorkload>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadUpdateRequest;
+  },
+  TContext
+> => {
+  const mutationOptions = getUpdateWorkloadMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            워크로드를 완전히 삭제합니다.
+
+            **삭제 동작:**
+            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
+            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
+            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
+
+            **삭제 대상:**
+            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
+            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
+
+            **주의:**
+            - 삭제된 워크로드는 복구할 수 없습니다.
+            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
+        
+ * @summary 워크로드 삭제
+ */
+export const deleteWorkload = (
+  workspaceId: number,
+  workloadResourceName: string,
+) => {
+  return customInstance<void>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}`,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteWorkloadMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteWorkload>>,
+    TError,
+    { workspaceId: number; workloadResourceName: string },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteWorkload>>,
+  TError,
+  { workspaceId: number; workloadResourceName: string },
+  TContext
+> => {
+  const mutationKey = ["deleteWorkload"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteWorkload>>,
+    { workspaceId: number; workloadResourceName: string }
+  > = (props) => {
+    const { workspaceId, workloadResourceName } = props ?? {};
+
+    return deleteWorkload(workspaceId, workloadResourceName);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteWorkloadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteWorkload>>
+>;
+
+export type DeleteWorkloadMutationError = unknown;
+
+/**
+ * @summary 워크로드 삭제
+ */
+export const useDeleteWorkload = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteWorkload>>,
+      TError,
+      { workspaceId: number; workloadResourceName: string },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteWorkload>>,
+  TError,
+  { workspaceId: number; workloadResourceName: string },
+  TContext
+> => {
+  const mutationOptions = getDeleteWorkloadMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            종료된 워크로드의 리소스 프리셋을 변경합니다.
+
+            **변경 조건:**
+            - TERMINATED 상태의 워크로드만 변경 가능
+            - 재시작 시 변경된 리소스 프리셋이 적용됨
+
+            **검증 항목:**
+            - 리소스 프리셋 존재/삭제 여부
+            - 노드 타입 일치 (BATCH/INTERACTIVE → SINGLE, DISTRIBUTED → MULTI)
+            - DISTRIBUTED 워크로드 MIG GPU 사용 불가
+            - GPU 지원 여부 (클러스터 가용성)
+            - Queue Capability (워크스페이스 할당량)
+
+            **변경 권한:**
+            - 워크로드 생성자
+            - 슈퍼관리자 (SUPER_ADMIN)
+        
+ * @summary 워크로드 리소스 프리셋 변경
+ */
+export const updateResourcePreset = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadResourcePresetUpdateRequest: WorkloadResourcePresetUpdateRequest,
+) => {
+  return customInstance<BaseResponseMapStringObject>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/resource-preset`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: workloadResourcePresetUpdateRequest,
+  });
+};
+
+export const getUpdateResourcePresetMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateResourcePreset>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadResourcePresetUpdateRequest;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateResourcePreset>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadResourcePresetUpdateRequest;
+  },
+  TContext
+> => {
+  const mutationKey = ["updateResourcePreset"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateResourcePreset>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadResourcePresetUpdateRequest;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data } = props ?? {};
+
+    return updateResourcePreset(workspaceId, workloadResourceName, data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateResourcePresetMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateResourcePreset>>
+>;
+export type UpdateResourcePresetMutationBody =
+  WorkloadResourcePresetUpdateRequest;
+export type UpdateResourcePresetMutationError = unknown;
+
+/**
+ * @summary 워크로드 리소스 프리셋 변경
+ */
+export const useUpdateResourcePreset = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateResourcePreset>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadResourcePresetUpdateRequest;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateResourcePreset>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadResourcePresetUpdateRequest;
+  },
+  TContext
+> => {
+  const mutationOptions = getUpdateResourcePresetMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 /**
  * 
             워크스페이스에 새로운 워크로드를 생성합니다.
@@ -3329,99 +3664,3 @@ export function useGetActiveWorkloads<
 
   return query;
 }
-
-/**
- * 
-            워크로드를 완전히 삭제합니다.
-
-            **삭제 동작:**
-            - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
-            - K8s에서 부가 리소스(Service, Ingress, PVC, PV, Secret) 삭제
-            - DB에서 워크로드 소프트 삭제 (is_deleted = true)
-
-            **삭제 대상:**
-            - 모든 상태의 워크로드 (RUNNING, TERMINATED 등)
-            - TERMINATING 상태인 워크로드는 삭제 불가 (409 Conflict)
-
-            **주의:**
-            - 삭제된 워크로드는 복구할 수 없습니다.
-            - 연결된 PVC/PV가 삭제되어 데이터가 유실됩니다.
-        
- * @summary 워크로드 삭제
- */
-export const deleteWorkload = (
-  workspaceId: number,
-  workloadResourceName: string,
-) => {
-  return customInstance<void>({
-    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}`,
-    method: "DELETE",
-  });
-};
-
-export const getDeleteWorkloadMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteWorkload>>,
-    TError,
-    { workspaceId: number; workloadResourceName: string },
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteWorkload>>,
-  TError,
-  { workspaceId: number; workloadResourceName: string },
-  TContext
-> => {
-  const mutationKey = ["deleteWorkload"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteWorkload>>,
-    { workspaceId: number; workloadResourceName: string }
-  > = (props) => {
-    const { workspaceId, workloadResourceName } = props ?? {};
-
-    return deleteWorkload(workspaceId, workloadResourceName);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteWorkloadMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteWorkload>>
->;
-
-export type DeleteWorkloadMutationError = unknown;
-
-/**
- * @summary 워크로드 삭제
- */
-export const useDeleteWorkload = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteWorkload>>,
-      TError,
-      { workspaceId: number; workloadResourceName: string },
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteWorkload>>,
-  TError,
-  { workspaceId: number; workloadResourceName: string },
-  TContext
-> => {
-  const mutationOptions = getDeleteWorkloadMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};

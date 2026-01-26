@@ -396,7 +396,7 @@ const createDisabledColumnList = (
 ): ResponsiveColumnType[] => {
   // 종료된 워크로드 목록은 항상 TERMINATED 상태
   // API endpoint: GET /workloads/terminated (종료 완료된 워크로드만 반환)
-  const getActionStates = (record?: TerminatedWorkloadItem) => {
+  const getActionStates = () => {
     return getWorkloadActionStates(
       WorkloadStatusResponseWorkloadStatus.TERMINATED,
     );

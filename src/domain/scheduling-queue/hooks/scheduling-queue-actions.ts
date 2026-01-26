@@ -3,8 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   getGetUrgentStandbyWorkloadsQueryKey,
   useAddWorkloadToUrgentStandby,
+  useRemoveWorkloadFromUrgentStandby,
   useUpdateUrgentStandbyOrder,
 } from "@/api/generated/admin-queue/admin-queue";
+import { getGetPendingWorkloadsQueryKey } from "@/api/generated/admin-workload/admin-workload";
 
 /**
  * 긴급 대기열에 워크로드 추가 액션 훅
@@ -23,6 +25,9 @@ export function useAddWorkloadToUrgentStandbyAction(
       onSuccess: (...args) => {
         queryClient.invalidateQueries({
           queryKey: getGetUrgentStandbyWorkloadsQueryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: getGetPendingWorkloadsQueryKey(),
         });
 
         options?.mutation?.onSuccess?.(...args);
@@ -48,6 +53,34 @@ export function useUpdateUrgentStandbyOrderAction(
       onSuccess: (...args) => {
         queryClient.invalidateQueries({
           queryKey: getGetUrgentStandbyWorkloadsQueryKey(),
+        });
+
+        options?.mutation?.onSuccess?.(...args);
+      },
+    },
+  });
+}
+
+/**
+ * 긴급 대기열 워크로드 삭제 액션 훅
+ *
+ * 삭제 성공 시 긴급 대기열과 Pending 워크로드 목록을 자동으로 무효화합니다.
+ */
+export function useRemoveWorkloadFromUrgentStandbyAction(
+  options?: Parameters<typeof useRemoveWorkloadFromUrgentStandby>[0],
+) {
+  const queryClient = useQueryClient();
+
+  return useRemoveWorkloadFromUrgentStandby({
+    ...options,
+    mutation: {
+      ...options?.mutation,
+      onSuccess: (...args) => {
+        queryClient.invalidateQueries({
+          queryKey: getGetUrgentStandbyWorkloadsQueryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: getGetPendingWorkloadsQueryKey(),
         });
 
         options?.mutation?.onSuccess?.(...args);

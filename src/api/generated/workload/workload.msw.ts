@@ -46,6 +46,29 @@ import type {
   SseEmitter,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+export const getUpdateWorkloadResponseMock = (
+  overrideResponse: Partial<BaseResponseUnit> = {},
+): BaseResponseUnit => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getUpdateResourcePresetResponseMock = (
+  overrideResponse: Partial<BaseResponseMapStringObject> = {},
+): BaseResponseMapStringObject => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    [faker.string.alphanumeric(5)]: {},
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
 export const getCreateWorkloadResponseMock = (
   overrideResponse: Partial<BaseResponseMapStringObject> = {},
 ): BaseResponseMapStringObject => ({
@@ -613,12 +636,105 @@ export const getGetActiveWorkloadsResponseMock = (
         portName: faker.string.alpha({ length: { min: 10, max: 20 } }),
         url: faker.string.alpha({ length: { min: 10, max: 20 } }),
       })),
+      port: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        portName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        portNumber: faker.number.int({ min: undefined, max: undefined }),
+        servicePortNum: faker.number.int({ min: undefined, max: undefined }),
+        url: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      env: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        key: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getUpdateWorkloadMockHandler = (
+  overrideResponse?:
+    | BaseResponseUnit
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateWorkloadResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getDeleteWorkloadMockHandler = (
+  overrideResponse?:
+    | void
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.delete(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName",
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
+    },
+    options,
+  );
+};
+
+export const getUpdateResourcePresetMockHandler = (
+  overrideResponse?:
+    | BaseResponseMapStringObject
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<BaseResponseMapStringObject> | BaseResponseMapStringObject),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/resource-preset",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateResourcePresetResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 
 export const getCreateWorkloadMockHandler = (
   overrideResponse?:
@@ -1171,28 +1287,10 @@ export const getGetActiveWorkloadsMockHandler = (
     options,
   );
 };
-
-export const getDeleteWorkloadMockHandler = (
-  overrideResponse?:
-    | void
-    | ((
-        info: Parameters<Parameters<typeof http.delete>[1]>[0],
-      ) => Promise<void> | void),
-  options?: RequestHandlerOptions,
-) => {
-  return http.delete(
-    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName",
-    async (info) => {
-      await delay(1000);
-      if (typeof overrideResponse === "function") {
-        await overrideResponse(info);
-      }
-      return new HttpResponse(null, { status: 204 });
-    },
-    options,
-  );
-};
 export const getWorkloadMock = () => [
+  getUpdateWorkloadMockHandler(),
+  getDeleteWorkloadMockHandler(),
+  getUpdateResourcePresetMockHandler(),
   getCreateWorkloadMockHandler(),
   getWorkloadCreateFolderMockHandler(),
   getWorkloadDeleteFilesMockHandler(),
@@ -1212,5 +1310,4 @@ export const getWorkloadMock = () => [
   getGetWorkloadCloneDataMockHandler(),
   getGetTerminatedWorkloadsMockHandler(),
   getGetActiveWorkloadsMockHandler(),
-  getDeleteWorkloadMockHandler(),
 ];

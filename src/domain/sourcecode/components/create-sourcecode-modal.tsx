@@ -69,7 +69,7 @@ export function CreateSourcecodeModal() {
       sourceCodeType: "GITHUB",
       mountPath: "",
       executionCmd: "",
-      isPublic: true,
+      shouldBePublic: true,
       credentialId: null,
       parameter: {},
     },
@@ -99,7 +99,7 @@ export function CreateSourcecodeModal() {
           sourceCodeType: data.sourceCodeType,
           mountPath: data.mountPath,
           executionCmd: data.executionCmd,
-          isPublic: data.isPublic,
+          shouldBePublic: data.shouldBePublic,
           credentialId: data.credentialId ?? undefined,
           parameter: toRecord(),
           workspaceId: selectedWorkspace.workspaceId,
@@ -168,21 +168,21 @@ export function CreateSourcecodeModal() {
                 )}
               />
               <Controller
-                name="isPublic"
+                name="shouldBePublic"
                 control={control}
                 render={({ field }) => (
                   <StyledFormItem
                     label="공개 설정"
                     required
-                    validateStatus={errors.isPublic ? "error" : undefined}
-                    help={errors.isPublic?.message}
+                    validateStatus={errors.shouldBePublic ? "error" : undefined}
+                    help={errors.shouldBePublic?.message}
                   >
                     <Dropdown
                       options={VISIBILITY_STATUS_OPTIONS}
                       value={field.value ? "true" : "false"}
                       onChange={(value) => field.onChange(value === "true")}
                       width="100%"
-                      status={errors.isPublic ? "error" : undefined}
+                      status={errors.shouldBePublic ? "error" : undefined}
                       disabled={isPending}
                     />
                   </StyledFormItem>

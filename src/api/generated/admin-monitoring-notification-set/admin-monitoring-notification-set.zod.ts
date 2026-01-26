@@ -76,10 +76,10 @@ export const updateMonitoringNotificationSetBody = zod
       .min(updateMonitoringNotificationSetBodyNotificationSetNameMin)
       .max(updateMonitoringNotificationSetBodyNotificationSetNameMax)
       .describe("알림 설정 이름"),
-    isSystemNotificationEnabled: zod
+    hasSystemNotificationEnabled: zod
       .boolean()
       .describe("시스템 알림 활성화 여부"),
-    isEmailNotificationEnabled: zod
+    hasEmailNotificationEnabled: zod
       .boolean()
       .describe("이메일 알림 활성화 여부"),
     nodeName: zod
@@ -181,7 +181,7 @@ export const updateMonitoringNotificationSetEnabledParams = zod.object({
 
 export const updateMonitoringNotificationSetEnabledBody = zod
   .object({
-    isEnabled: zod.boolean().describe("활성화 여부"),
+    hasEnabled: zod.boolean().describe("활성화 여부"),
   })
   .strict()
   .describe("모니터링 알림 설정 활성화/비활성화 요청");
@@ -305,10 +305,10 @@ export const createMonitoringNotificationSetBody = zod
       .min(createMonitoringNotificationSetBodyNotificationSetNameMin)
       .max(createMonitoringNotificationSetBodyNotificationSetNameMax)
       .describe("알림 설정 이름"),
-    isSystemNotificationEnabled: zod
+    hasSystemNotificationEnabled: zod
       .boolean()
       .describe("시스템 알림 활성화 여부"),
-    isEmailNotificationEnabled: zod
+    hasEmailNotificationEnabled: zod
       .boolean()
       .describe("이메일 알림 활성화 여부"),
     nodeName: zod

@@ -41,7 +41,7 @@ const baseSourcecodeFields = {
       (value) => !KOREAN_CHAR_REGEX.test(value),
       "실행 명령어에 한글을 입력할 수 없습니다.",
     ),
-  isPublic: z.boolean({
+  shouldBePublic: z.boolean({
     required_error: "공개 설정을 선택해 주세요.",
     invalid_type_error: "공개 설정을 선택해 주세요.",
   }),
@@ -75,7 +75,7 @@ export type CreateSourcecodeFormType = z.infer<typeof createSourcecodeSchema>;
 /** 소스코드 수정 폼 스키마 (baseSourcecodeFields에서 isPublic 제외 후 boolean 타입으로 재정의) */
 export const updateSourcecodeSchema = z
   .object(baseSourcecodeFields)
-  .omit({ isPublic: true })
-  .merge(z.object({ isPublic: z.boolean() }));
+  .omit({ shouldBePublic: true })
+  .merge(z.object({ shouldBePublic: z.boolean() }));
 
 export type UpdateSourcecodeFormType = z.infer<typeof updateSourcecodeSchema>;

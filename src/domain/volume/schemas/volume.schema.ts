@@ -10,7 +10,7 @@ const baseVolumeFields = {
     .string()
     .min(1, "볼륨 이름을 입력해 주세요.")
     .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
-  isPublic: z.boolean({
+  shouldBePublic: z.boolean({
     required_error: "공개 설정을 선택해 주세요.",
     invalid_type_error: "공개 설정을 선택해 주세요.",
   }),
@@ -62,8 +62,8 @@ export type CreateOnPremiseVolumeFormType = z.infer<
 /** 볼륨 수정 폼 스키마 (baseVolumeFields에서 isPublic 제외 후 boolean 타입으로 재정의) */
 export const updateVolumeSchema = z
   .object(baseVolumeFields)
-  .omit({ isPublic: true })
-  .merge(z.object({ isPublic: z.boolean() }));
+  .omit({ shouldBePublic: true })
+  .merge(z.object({ shouldBePublic: z.boolean() }));
 
 export type UpdateVolumeFormType = z.infer<typeof updateVolumeSchema>;
 

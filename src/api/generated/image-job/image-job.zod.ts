@@ -81,6 +81,7 @@ export const getImageJobsQueryParams = zod.object({
   imageType: zod
     .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
     .describe("이미지 타입 (PUBLIC/PRIVATE)"),
+  hasMine: zod.boolean().optional().describe("내가 등록한 작업만 조회"),
   imageId: zod.number().optional().describe("특정 이미지의 작업만 조회"),
   imageSourceType: zod
     .enum(["SNAPSHOT", "EXTERNAL"])

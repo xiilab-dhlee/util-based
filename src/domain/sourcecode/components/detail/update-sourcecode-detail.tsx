@@ -8,15 +8,9 @@ import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { Button, Form, FormItem, Input, Switch } from "xiilab-ui";
 
-import {
-  getAdminGetSourceCodeDetailQueryKey,
-  getAdminGetSourceCodeListQueryKey,
-} from "@/api/generated/admin-sourcecode/admin-sourcecode";
+import { getAdminGetSourceCodeListQueryKey } from "@/api/generated/admin-sourcecode/admin-sourcecode";
 import type { SourceCodeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import {
-  getGetSourceCodeDetailQueryKey,
-  getGetSourceCodeListQueryKey,
-} from "@/api/generated/source-code/source-code";
+import { getGetSourceCodeListQueryKey } from "@/api/generated/source-code/source-code";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
 import { SourcecodeParameterFormField } from "@/domain/sourcecode/components/sourcecode-parameter-form-field";
 import { useSourcecodeParameters } from "@/domain/sourcecode/hooks/use-sourcecode-parameters";
@@ -98,7 +92,7 @@ export function UpdateSourcecodeDetail({
           sourceCodeName: formData.sourceCodeName,
           mountPath: formData.mountPath,
           executionCmd: formData.executionCmd,
-          isPublic: formData.isPublic,
+          shouldBePublic: formData.shouldBePublic,
           credentialId: formData.credentialId ?? undefined,
           parameter: toRecord(),
         },
@@ -111,22 +105,12 @@ export function UpdateSourcecodeDetail({
               queryKey: getGetSourceCodeListQueryKey(),
             });
 
-            // 기존 sourceCodeId의 상세 캐시 제거
-            queryClient.removeQueries({
-              queryKey: getGetSourceCodeDetailQueryKey(sourceCodeId),
-            });
-
             // 새 sourceCodeId로 라우트 변경
             router.replace(ROUTES.USER_SOURCECODE_DETAIL(newSourceCodeId));
           } else {
             // 리스트 캐시 무효화
             queryClient.invalidateQueries({
               queryKey: getAdminGetSourceCodeListQueryKey(),
-            });
-
-            // 기존 sourceCodeId의 상세 캐시 제거
-            queryClient.removeQueries({
-              queryKey: getAdminGetSourceCodeDetailQueryKey(sourceCodeId),
             });
 
             // 새 sourceCodeId로 라우트 변경
@@ -143,7 +127,7 @@ export function UpdateSourcecodeDetail({
       sourceCodeName: data.sourceCodeName ?? "",
       mountPath: data.mountPath ?? "",
       executionCmd: data.executionCmd ?? "",
-      isPublic: data.isPublic ?? false,
+      shouldBePublic: data.isPublic ?? false,
       credentialId: data.credentialId ?? null,
       parameter: data.parameter ?? {},
     });
@@ -168,7 +152,7 @@ export function UpdateSourcecodeDetail({
       sourceCodeName: data.sourceCodeName ?? "",
       mountPath: data.mountPath ?? "",
       executionCmd: data.executionCmd ?? "",
-      isPublic: data.isPublic ?? false,
+      shouldBePublic: data.isPublic ?? false,
       credentialId: data.credentialId ?? null,
       parameter: data.parameter ?? {},
     });

@@ -84,11 +84,21 @@ export interface WorkspaceResponse {
 }
 
 /**
- * default 워크스페이스 설정 요청
+ * 워크로드 정보 수정 요청
  */
-export interface DefaultWorkspaceRequest {
-  /** default 워크스페이스 설정 여부 */
-  isDefault: boolean;
+export interface WorkloadUpdateRequest {
+  /**
+   * 워크로드 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  workloadName: string;
+  /**
+   * 워크로드 설명
+   * @minLength 0
+   * @maxLength 2000
+   */
+  description?: string;
 }
 
 export type BaseResponseUnitStatus =
@@ -106,6 +116,47 @@ export interface BaseResponseUnit {
   errorCode?: string;
   message?: string;
   timestamp: number;
+}
+
+/**
+ * 워크로드 리소스 프리셋 변경 요청
+ */
+export interface WorkloadResourcePresetUpdateRequest {
+  /** 리소스 프리셋 ID */
+  resourcePresetId: number;
+  /**
+   * 분산 학습 워커 수 (DISTRIBUTED 워크로드 전용, 미입력 시 기존 값 유지)
+   * @minimum 1
+   */
+  workerCount?: number;
+}
+
+export type BaseResponseMapStringObjectStatus =
+  (typeof BaseResponseMapStringObjectStatus)[keyof typeof BaseResponseMapStringObjectStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseMapStringObjectStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export type BaseResponseMapStringObjectData = { [key: string]: unknown };
+
+export interface BaseResponseMapStringObject {
+  status: BaseResponseMapStringObjectStatus;
+  errorCode?: string;
+  data?: BaseResponseMapStringObjectData;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * default 워크스페이스 설정 요청
+ */
+export interface DefaultWorkspaceRequest {
+  /** default 워크스페이스 설정 여부 */
+  shouldBeDefault: boolean;
 }
 
 /**
@@ -184,7 +235,7 @@ export interface UpdateVolumeRequest {
    */
   mountPath: string;
   /** 공개 여부 */
-  isPublic: boolean;
+  shouldBePublic: boolean;
 }
 
 /**
@@ -218,9 +269,35 @@ export interface UpdateSourceCodeRequest {
   /** 사용자 정의 파라미터 */
   parameter?: UpdateSourceCodeRequestParameter;
   /** 공개 여부 */
-  isPublic: boolean;
+  shouldBePublic: boolean;
   /** 크레덴셜 ID */
   credentialId?: number;
+}
+
+export type BaseResponseUpdateSourceCodeResponseStatus =
+  (typeof BaseResponseUpdateSourceCodeResponseStatus)[keyof typeof BaseResponseUpdateSourceCodeResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseUpdateSourceCodeResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseUpdateSourceCodeResponse {
+  status: BaseResponseUpdateSourceCodeResponseStatus;
+  errorCode?: string;
+  data?: UpdateSourceCodeResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 소스코드 수정 응답
+ */
+export interface UpdateSourceCodeResponse {
+  /** 새로 생성된 소스코드 ID (버전 업데이트로 인해 새 ID 발급) */
+  sourceCodeId: number;
 }
 
 /**
@@ -242,7 +319,7 @@ export interface VulnerabilityScanPolicyUpdateRequest {
   /** 이미지 타입 (PRIVATE: 개인 레지스트리, PUBLIC: 공유 레지스트리) */
   imageType: VulnerabilityScanPolicyUpdateRequestImageType;
   /** 취약점 스캔 활성화 여부 */
-  isEnabled: boolean;
+  hasEnabled: boolean;
 }
 
 /**
@@ -264,7 +341,7 @@ export const VulnerabilityLevelPolicyUpdateRequestSeverity = {
  */
 export interface VulnerabilityLevelPolicyUpdateRequest {
   /** 보안 수준 기반 이미지 사용 제한 활성화 여부 */
-  isEnabled: boolean;
+  hasEnabled: boolean;
   /** 차단 기준 취약점 심각도 */
   severity: VulnerabilityLevelPolicyUpdateRequestSeverity;
   /**
@@ -279,7 +356,7 @@ export interface VulnerabilityLevelPolicyUpdateRequest {
  */
 export interface AstragoOnlyPolicyUpdateRequest {
   /** Astrago를 통해 등록된 이미지만 사용 허용 여부 */
-  isEnabled: boolean;
+  hasEnabled: boolean;
 }
 
 /**
@@ -601,7 +678,7 @@ export interface WorkloadReclaimPolicyUpdateRequest {
  */
 export interface WorkloadReclaimPolicyEnabledRequest {
   /** 활성화 여부 */
-  isEnabled: boolean;
+  hasEnabled: boolean;
 }
 
 /**
@@ -1008,9 +1085,9 @@ export interface MonitoringNotificationSetUpdateRequest {
    */
   notificationSetName: string;
   /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
+  hasSystemNotificationEnabled: boolean;
   /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
+  hasEmailNotificationEnabled: boolean;
   /**
    * 모니터링할 노드 이름 목록
    * @minItems 1
@@ -1077,7 +1154,7 @@ export interface ThresholdRequest {
  */
 export interface MonitoringNotificationSetEnabledRequest {
   /** 활성화 여부 */
-  isEnabled: boolean;
+  hasEnabled: boolean;
 }
 
 /**
@@ -1147,7 +1224,7 @@ export const AccountUpdateRequestAccountRole = {
  */
 export interface AccountUpdateRequest {
   /** 계정 활성화 여부 (선택적). null인 경우 변경하지 않습니다. */
-  isEnabled?: boolean;
+  hasEnabled?: boolean;
   /** 계정 역할 (선택적). null인 경우 변경하지 않습니다. 가능한 값: SUPER_ADMIN, ADMIN, USER */
   accountRole?: AccountUpdateRequestAccountRole;
   /**
@@ -1162,9 +1239,9 @@ export interface AccountUpdateRequest {
  */
 export interface NotificationSetUpdateRequest {
   /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
+  hasSystemNotificationEnabled: boolean;
   /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
+  hasEmailNotificationEnabled: boolean;
 }
 
 /**
@@ -1172,7 +1249,7 @@ export interface NotificationSetUpdateRequest {
  */
 export interface AccountEnabledUpdateRequest {
   /** 계정 활성화 여부. true: 계정 활성화, false: 계정 비활성화 */
-  isEnabled: boolean;
+  hasEnabled: boolean;
 }
 
 /**
@@ -1480,26 +1557,6 @@ export interface WorkloadCreateRequest {
   parameter?: WorkloadCreateRequestParameterItem[];
   /** Worker 수 (분산 워크로드용, Pod 복제본 수) */
   workerCount?: number;
-}
-
-export type BaseResponseMapStringObjectStatus =
-  (typeof BaseResponseMapStringObjectStatus)[keyof typeof BaseResponseMapStringObjectStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseMapStringObjectStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export type BaseResponseMapStringObjectData = { [key: string]: unknown };
-
-export interface BaseResponseMapStringObject {
-  status: BaseResponseMapStringObjectStatus;
-  errorCode?: string;
-  data?: BaseResponseMapStringObjectData;
-  message?: string;
-  timestamp: number;
 }
 
 /**
@@ -1872,7 +1929,7 @@ export interface CreateOnPremiseVolumeRequest {
    */
   volumeName: string;
   /** 공개 여부 */
-  isPublic: boolean;
+  shouldBePublic: boolean;
   /**
    * 마운트 경로 (절대경로)
    * @minLength 0
@@ -1963,7 +2020,7 @@ export interface CreateAstragoVolumeRequest {
    */
   volumeName: string;
   /** 공개 여부 */
-  isPublic: boolean;
+  shouldBePublic: boolean;
   /**
    * 마운트 경로 (절대경로)
    * @minLength 0
@@ -2031,7 +2088,7 @@ export interface CreateSourceCodeRequest {
   /** 사용자 정의 파라미터 */
   parameter?: CreateSourceCodeRequestParameter;
   /** 공개 여부 */
-  isPublic: boolean;
+  shouldBePublic: boolean;
   /** 워크스페이스 ID (격리 모드 시 필수) */
   workspaceId?: number;
 }
@@ -2744,9 +2801,9 @@ export interface MonitoringNotificationSetCreateRequest {
    */
   notificationSetName: string;
   /** 시스템 알림 활성화 여부 */
-  isSystemNotificationEnabled: boolean;
+  hasSystemNotificationEnabled: boolean;
   /** 이메일 알림 활성화 여부 */
-  isEmailNotificationEnabled: boolean;
+  hasEmailNotificationEnabled: boolean;
   /**
    * 모니터링할 노드 이름 목록
    * @minItems 1
@@ -3939,6 +3996,10 @@ export interface ActiveWorkloadItem {
   workloadJobType: ActiveWorkloadItemWorkloadJobType;
   /** 접속 정보 목록 */
   connection: WorkloadConnection[];
+  /** 포트 설정 목록 */
+  port?: PortItem[];
+  /** 환경변수 목록 */
+  env?: EnvItem[];
 }
 
 /**
@@ -4529,10 +4590,30 @@ export interface SourceCodeDetailResponse {
   creatorName: string;
   /** 크레덴셜 ID */
   credentialId?: number;
+  /** 크레덴셜 이름 */
+  credentialName?: string;
   /** 생성 일시 */
   createdAt: string;
   /** 수정 일시 */
   updatedAt?: string;
+}
+
+export type BaseResponseListStringStatus =
+  (typeof BaseResponseListStringStatus)[keyof typeof BaseResponseListStringStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseListStringStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseListString {
+  status: BaseResponseListStringStatus;
+  errorCode?: string;
+  data?: string[];
+  message?: string;
+  timestamp: number;
 }
 
 export type BaseResponseListResourcePresetSummaryResponseStatus =
@@ -8637,24 +8718,6 @@ export interface ClusterNodeSummaryResponse {
   resource: ClusterNodeResourceResponse;
 }
 
-export type BaseResponseListStringStatus =
-  (typeof BaseResponseListStringStatus)[keyof typeof BaseResponseListStringStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseListStringStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseListString {
-  status: BaseResponseListStringStatus;
-  errorCode?: string;
-  data?: string[];
-  message?: string;
-  timestamp: number;
-}
-
 /**
  * 계정 역할. 가능한 값: SUPER_ADMIN, ADMIN, USER
  */
@@ -9557,6 +9620,10 @@ export type GetPublicRegistryListParams = {
    */
   order?: GetPublicRegistryListOrder;
   /**
+   * 내가 생성한 이미지만 조회
+   */
+  hasMine?: boolean;
+  /**
    * 이미지 소스 타입 필터 (미지정 시 전체 조회)
    */
   imageSourceType?: GetPublicRegistryListImageSourceType;
@@ -9688,6 +9755,10 @@ export type GetPrivateRegistryListParams = {
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */
   order?: GetPrivateRegistryListOrder;
+  /**
+   * 내가 생성한 이미지만 조회
+   */
+  hasMine?: boolean;
   /**
    * 이미지 소스 타입 필터 (미지정 시 전체 조회)
    */
@@ -10231,6 +10302,10 @@ export type GetTerminatedWorkloadsParams = {
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */
   order?: GetTerminatedWorkloadsOrder;
+  /**
+   * 내 워크로드만 조회 (true: 본인 것만, false: 전체)
+   */
+  hasMine?: boolean;
 };
 
 export type GetTerminatedWorkloadsWorkloadJobType =
@@ -10328,6 +10403,10 @@ export type GetActiveWorkloadsParams = {
    * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
    */
   order?: GetActiveWorkloadsOrder;
+  /**
+   * 내 워크로드만 조회 (true: 본인 것만, false: 전체)
+   */
+  hasMine?: boolean;
 };
 
 export type GetActiveWorkloadsWorkloadJobType =
@@ -10639,6 +10718,10 @@ export type GetImageJobsParams = {
    * 이미지 타입 (PUBLIC/PRIVATE)
    */
   imageType: GetImageJobsImageType;
+  /**
+   * 내가 등록한 작업만 조회
+   */
+  hasMine?: boolean;
   /**
    * 특정 이미지의 작업만 조회
    */
