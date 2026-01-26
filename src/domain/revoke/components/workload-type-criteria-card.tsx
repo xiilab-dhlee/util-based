@@ -4,7 +4,10 @@ import type { ReactNode } from "react";
 import styled from "styled-components";
 import { Icon, Switch, Typography } from "xiilab-ui";
 
-import type { WorkloadReclaimPolicyResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  WorkloadReclaimPolicyResponse,
+  WorkloadReclaimPolicySnapshotResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getJobTypeLabel } from "@/domain/workload/constants/workload.constant";
 import { RefreshIcon } from "@/shared/components/icon/refresh-icon";
 import { getResourceInfo } from "@/shared/utils/resource.util";
@@ -19,7 +22,9 @@ const MEM_INFO = getResourceInfo("MEM");
 type WorkloadTypeCriteriaCardProps =
   | {
       /** 회수 기준 데이터 */
-      criteria: WorkloadReclaimPolicyResponse;
+      criteria:
+        | WorkloadReclaimPolicyResponse
+        | WorkloadReclaimPolicySnapshotResponse;
       /** 사용 유무 */
       enabled: boolean;
 
@@ -28,7 +33,9 @@ type WorkloadTypeCriteriaCardProps =
     }
   | {
       /** 회수 기준 데이터 */
-      criteria: WorkloadReclaimPolicyResponse;
+      criteria:
+        | WorkloadReclaimPolicyResponse
+        | WorkloadReclaimPolicySnapshotResponse;
       /** 사용 유무 (제공하지 않음) */
       enabled?: never;
       /** 사용 유무 변경 핸들러 (제공하지 않음) */
@@ -39,7 +46,6 @@ type WorkloadTypeCriteriaCardProps =
 export function WorkloadTypeCriteriaCard({
   criteria,
   enabled,
-
   switchDisabled,
 }: WorkloadTypeCriteriaCardProps) {
   const showToggle = enabled !== undefined;

@@ -1,29 +1,28 @@
 "use client";
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: es-toolkit isFinite 사용
+import { isFinite } from "es-toolkit/compat";
+import { useParams } from "next/navigation";
 import styled from "styled-components";
 
-import { useGetAllPolicies } from "@/api/generated/workload-reclaim-policy-admin/workload-reclaim-policy-admin";
+import { useGetScanHistoryPolicy } from "@/api/generated/workload-reclaim-policy-admin/workload-reclaim-policy-admin";
 import { WorkloadTypeCriteriaCard } from "@/domain/revoke/components/workload-type-criteria-card";
 
 export function RevokeHistoryCriteriaCard() {
-  const { data: policyList } = useGetAllPolicies();
+  const { id } = useParams<{ id: string }>();
+  const scanHistoryId = Number(id);
 
-  // Interactive와 Batch 기준 분리
-  const interactivePolicy = policyList?.find(
-    (policy) => policy.workloadJobType === "INTERACTIVE",
-  );
-  const batchPolicy = policyList?.find(
-    (policy) => policy.workloadJobType === "BATCH",
-  );
+  const { data: policy } = useGetScanHistoryPolicy(scanHistoryId, {
+    query: {
+      enabled: Boolean(id) && isFinite(scanHistoryId),
+    },
+  });
 
   return (
     <Container>
       <Title>리소스 회수 기준</Title>
       <CardsWrapper>
-        {batchPolicy && <WorkloadTypeCriteriaCard criteria={batchPolicy} />}
-        {interactivePolicy && (
-          <WorkloadTypeCriteriaCard criteria={interactivePolicy} />
-        )}
+        {policy && <WorkloadTypeCriteriaCard criteria={policy} />}
       </CardsWrapper>
     </Container>
   );

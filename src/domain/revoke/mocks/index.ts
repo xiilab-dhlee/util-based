@@ -3,7 +3,9 @@ import type { HttpHandler } from "msw";
 import {
   getGetAllPoliciesMockHandler,
   getGetPolicyMockHandler,
+  getGetScanHistoryDetailMockHandler,
   getGetScanHistoryListMockHandler,
+  getGetScanHistoryPolicyMockHandler,
   getGetScanResultListMockHandler,
   getUpdateReclaimPolicyEnabledMockHandler,
   getUpdateReclaimPolicyMockHandler,
@@ -17,10 +19,12 @@ import {
  * - /:jobType (파라미터) 나중에
  */
 export const revokeHandlers: HttpHandler[] = [
-  // 구체적 라우트 먼저 등록
-  getGetScanHistoryListMockHandler(),
-  getGetScanResultListMockHandler(),
+  // 구체적 라우트 먼저 등록 (파라미터 라우트보다 우선순위 높음)
   getGetAllPoliciesMockHandler(),
+  getGetScanHistoryListMockHandler(),
+  getGetScanHistoryDetailMockHandler(),
+  getGetScanResultListMockHandler(),
+  getGetScanHistoryPolicyMockHandler(),
 
   // 파라미터 라우트 나중에 등록
   getGetPolicyMockHandler(),

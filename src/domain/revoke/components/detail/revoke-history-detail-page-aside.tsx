@@ -12,9 +12,7 @@ import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 export function RevokeHistoryDetailPageAside() {
   return (
     <DetailPageAside>
-      {/* 리소스 회수 이력 상세 정보 (추후 별도 API 연동 예정) */}
       <RevokeHistoryDetailInfoCard />
-      {/* 리소스 회수 기준 (API 호출) */}
       <RevokeHistoryCriteriaCard />
     </DetailPageAside>
   );

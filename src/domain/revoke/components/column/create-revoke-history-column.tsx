@@ -1,23 +1,36 @@
 import type { ResponsiveColumnType } from "xiilab-ui";
 
-import type { WorkloadReclaimScanHistoryResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  WorkloadReclaimScanHistoryResponse,
+  WorkloadReclaimScanHistoryResponseWorkloadJobType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getRevokeJobTypeLabel,
+  type RevokeHistoryListSortState,
+} from "@/domain/revoke/constants/revoke-history.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { formatNumberWithUnit } from "@/shared/utils/format.util";
 import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
+import { getColumnSortOrder } from "@/shared/utils/sort.util";
 import { ColumnLink } from "@/styles/layers/column-layer.styled";
 
 /**
  * 리소스 회수 이력 테이블 컬럼 생성
  *
+ * @param sort - 정렬 상태
  * @returns 컬럼 배열
  */
-export function createRevokeHistoryColumn(): ResponsiveColumnType[] {
+export function createRevokeHistoryColumn(
+  sort: RevokeHistoryListSortState,
+): ResponsiveColumnType[] {
   return [
     {
       title: "회수 일시",
       dataIndex: "createdAt",
       align: "left",
+      sorter: true,
+      sortOrder: getColumnSortOrder(sort, "createdAt"),
       render: (
         createdAt: string,
         record: WorkloadReclaimScanHistoryResponse,
@@ -30,6 +43,14 @@ export function createRevokeHistoryColumn(): ResponsiveColumnType[] {
           <ColumnLink href={href}>{formatDateTimeSafely(createdAt)}</ColumnLink>
         );
       },
+    },
+    {
+      title: "Job Type",
+      dataIndex: "workloadJobType",
+      align: "center",
+      render: (jobType: WorkloadReclaimScanHistoryResponseWorkloadJobType) => (
+        <span>{jobType ? getRevokeJobTypeLabel(jobType) : "-"}</span>
+      ),
     },
     {
       title: "검사 대상 개수",

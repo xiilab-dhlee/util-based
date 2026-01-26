@@ -3,6 +3,7 @@
 import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 
+import { RevokeHistoryJobTypeFilter } from "@/domain/revoke/components/list/revoke-history-job-type-filter";
 import {
   revokeHistoryDateRangeAtom,
   revokeHistoryPageAtom,
@@ -36,6 +37,7 @@ export function RevokeHistoryListFilter({
 
   return (
     <MySearchFilter title="리소스 회수 대상 검사 실행 이력" total={totalSize}>
+      <RevokeHistoryJobTypeFilter />
       <ListRangePicker
         startDate={dateRange.start}
         endDate={dateRange.end}
