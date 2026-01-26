@@ -123,15 +123,18 @@ export const ROUTES = {
   // 워크로드 (동적 함수)
   USER_WORKLOAD: `${MODE.USER}/workload`,
   USER_WORKLOAD_DISABLED: `${MODE.USER}/workload/disabled`,
-  USER_WORKLOAD_DETAIL: (id: string) => `${MODE.USER}/workload/${id}`,
-  USER_WORKLOAD_LOG: (id: string) => `${MODE.USER}/workload/${id}/log`,
-  USER_WORKLOAD_FILE: (id: string) => `${MODE.USER}/workload/${id}/file`,
-  USER_WORKLOAD_MONITORING: (id: string) =>
-    `${MODE.USER}/workload/${id}/monitoring`,
-  USER_WORKLOAD_SECURITY: (id: string) =>
-    `${MODE.USER}/workload/${id}/security`,
-  USER_WORKLOAD_TERMINAL: (id: string) =>
-    `${MODE.USER}/workload/${id}/terminal`,
+  USER_WORKLOAD_DETAIL: (workspaceId: string, id: string) =>
+    `${MODE.USER}/workload/${id}?workspaceId=${workspaceId}`,
+  USER_WORKLOAD_LOG: (workspaceId: string, id: string) =>
+    `${MODE.USER}/workload/${id}/log?workspaceId=${workspaceId}`,
+  USER_WORKLOAD_FILE: (workspaceId: string, id: string) =>
+    `${MODE.USER}/workload/${id}/file?workspaceId=${workspaceId}`,
+  USER_WORKLOAD_MONITORING: (workspaceId: string, id: string) =>
+    `${MODE.USER}/workload/${id}/monitoring?workspaceId=${workspaceId}`,
+  USER_WORKLOAD_SECURITY: (workspaceId: string, id: string) =>
+    `${MODE.USER}/workload/${id}/security?workspaceId=${workspaceId}`,
+  USER_WORKLOAD_TERMINAL: (workspaceId: string, id: string) =>
+    `${MODE.USER}/workload/${id}/terminal?workspaceId=${workspaceId}`,
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
   USER_PRIVATE_REGISTRY: `${MODE.USER}/private-registry`,

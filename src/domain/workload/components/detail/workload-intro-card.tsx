@@ -44,7 +44,7 @@ export function WorkloadIntroCard({
   // Pub/Sub 시스템을 통한 이벤트 발행 훅
   const publish = usePublish();
 
-  const isCompleted = status === "COMPLETED";
+  const isTerminated = status === "TERMINATED";
 
   /**
    * 워크로드 수정 모달을 열기 위한 핸들러
@@ -95,7 +95,7 @@ export function WorkloadIntroCard({
             <span className="sr-only">워크로드 설명, 라벨 수정</span>
           </IconWrapper>
           {/* 워크로드 전원 제어 버튼 */}
-          {isCompleted ? (
+          {isTerminated ? (
             <IconWrapper
               onClick={handleRestart}
               data-testid={WORKLOAD_SELECTOR.DETAIL_RESTART_BUTTON}
@@ -112,7 +112,7 @@ export function WorkloadIntroCard({
               <span className="sr-only">워크로드 종료</span>
             </IconWrapper>
           )}
-          {isCompleted && (
+          {isTerminated && (
             <IconWrapper
               onClick={handleDelete}
               data-testid={WORKLOAD_SELECTOR.DETAIL_DELETE_BUTTON}
@@ -250,7 +250,7 @@ const IconWrapper = styled.button`
 // `;
 
 const WorkloadStatusWrapper = styled.div`
-  &.COMPLETED p {
+  &.TERMINATED p {
     color: #868994 !important;
   }
 `;

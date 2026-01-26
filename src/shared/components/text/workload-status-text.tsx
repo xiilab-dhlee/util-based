@@ -1,14 +1,13 @@
 "use client";
 
-import type { LabelColorVariant } from "xiilab-ui";
 import { Label } from "xiilab-ui";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
-import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
+import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { getWorkloadStatusInfoByStatus } from "@/domain/workload/utils/workload.util";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface WorkloadStatusTextProps {
-  status: WorkloadStatusType;
+  status: WorkloadStatusResponseWorkloadStatus;
 }
 /**
  * 워크로드 상태 텍스트
@@ -16,11 +15,11 @@ interface WorkloadStatusTextProps {
  * @returns 워크로드 상태 텍스트
  */
 export function WorkloadStatusText({ status }: WorkloadStatusTextProps) {
-  const { label, colorVariant } = getWorkloadStatusInfo(status);
+  const { label, colorVariant } = getWorkloadStatusInfoByStatus(status);
 
   return (
     <Label
-      variant={colorVariant as LabelColorVariant}
+      variant={colorVariant}
       data-testid={WORKLOAD_SELECTOR.status(status.toLowerCase())}
     >
       {label}

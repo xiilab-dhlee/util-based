@@ -1,23 +1,43 @@
-import type {
-  WorkloadJobType,
-  WorkloadStatusType,
-} from "@/domain/workload/schemas/workload.schema";
+import type { ACTIVE_WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
+import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
+import type { AllOptionValue } from "@/shared/constants/core.constant";
 import type {
   CorePaginate,
   CorePayload,
   CoreSearchText,
 } from "@/shared/types/api.interface";
 
-/** 필터에서 사용되는 워크로드 상태 값 타입 (전체 옵션 포함) */
-export type FilterStatusValue = WorkloadStatusType | "ALL";
+/**
+ * Active workload statuses (excluding terminated states)
+ * Aligned with ACTIVE_WORKLOAD_STATUS_OPTIONS constant
+ */
+export type ActiveWorkloadStatusValue =
+  (typeof ACTIVE_WORKLOAD_STATUS_OPTIONS)[number]["value"];
+
+/**
+ * Filter value for active workload status dropdown (includes ALL_OPTION.value)
+ */
+export type ActiveWorkloadFilterStatusValue =
+  | ActiveWorkloadStatusValue
+  | AllOptionValue;
+
+/**
+ * @deprecated Use ActiveWorkloadFilterStatusValue instead
+ * 필터에서 사용되는 워크로드 상태 값 타입 (ALL_OPTION.value 포함)
+ */
+export type FilterStatusValue = WorkloadStatusType | AllOptionValue;
 
 export type WorkloadFileIndentPosition = "first" | "middle" | "last";
 
+/**
+ * @deprecated
+ * 밑으로 다
+ */
 export interface GetWorkloadsPayload
   extends CorePayload,
     Partial<CorePaginate>,
     CoreSearchText {
-  jobType?: WorkloadJobType;
+  jobType?: string;
   status?: WorkloadStatusType;
 }
 
@@ -25,7 +45,6 @@ export interface GetWorkloadPayload extends CorePayload {
   workspaceId: number | string;
   workloadId: string;
 }
-
 export interface GetWorkloadFilesPayload extends CorePayload {
   workspaceId: number | string;
   workloadId: string;

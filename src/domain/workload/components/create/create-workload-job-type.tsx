@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import styled from "styled-components";
 
 import { JobTypeCard } from "@/domain/workload/components/create/job-type-card";
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadJobType } from "@/domain/workload/constants/workload.constant";
 import { jobTypeAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 

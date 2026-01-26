@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
@@ -75,7 +76,10 @@ const GUIDES: CoreGuide[] = [
 export default function UserWorkloadListLayout({
   children,
 }: PropsWithChildren) {
+  const searchParams = useSearchParams();
   const publish = usePublish();
+
+  const workspaceId = searchParams?.get("workspaceId") || "";
 
   const handleCreateWorkload = () => {
     publish(WORKLOAD_EVENTS.sendCreateWorkload, null);
@@ -83,7 +87,11 @@ export default function UserWorkloadListLayout({
 
   return (
     <>
-      <PageHeader pageKey="user.workload" description="Workload" />
+      <PageHeader
+        pageKey="user.workload"
+        pageParams={{ workspaceId }}
+        description="Workload"
+      />
 
       {/* 워크로드 목록 페이지 메인 영역 */}
       <DetailPageBody>

@@ -18,8 +18,8 @@ import {
 import {
   WORKLOAD_JOB_TYPE_COLOR_MAP,
   WORKLOAD_JOB_TYPE_LABEL_MAP,
+  type WorkloadJobType,
 } from "@/domain/workload/constants/workload.constant";
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 
 interface JobTypeData {

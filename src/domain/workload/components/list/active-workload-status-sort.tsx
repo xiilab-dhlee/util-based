@@ -4,12 +4,12 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
-import { WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
+import type { ActiveWorkloadItemWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { ACTIVE_WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
 import {
   activeWorkloadPageAtom,
   activeWorkloadStatusAtom,
 } from "@/domain/workload/state/workload.atom";
-import type { FilterStatusValue } from "@/domain/workload/types/workload.type";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
@@ -35,7 +35,7 @@ export function ActiveWorkloadStatusSort({
    * 상태 변경 핸들러
    * 상태 변경 시 페이지를 초기화
    */
-  const handleChange = (value: FilterStatusValue | null) => {
+  const handleChange = (value: ActiveWorkloadItemWorkloadStatus | null) => {
     resetPage();
     setStatus(value);
   };
@@ -43,12 +43,7 @@ export function ActiveWorkloadStatusSort({
   return (
     <div data-testid={WORKLOAD_SELECTOR.FILTER_STATUS}>
       <Dropdown
-        options={[
-          ALL_OPTION,
-          ...WORKLOAD_STATUS_OPTIONS.filter(
-            (option) => option.value !== "COMPLETED",
-          ),
-        ]}
+        options={[ALL_OPTION, ...ACTIVE_WORKLOAD_STATUS_OPTIONS]}
         value={status}
         onChange={handleChange}
         placeholder="상태"

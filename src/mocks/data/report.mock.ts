@@ -25,7 +25,7 @@ import {
   nodeWorkloadDistributionSchema,
   reportListResponseSchema,
 } from "@/domain/report/schemas/report.schema";
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadJobType } from "@/domain/workload/constants/workload.constant";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { makeMock } from "@/shared/utils/mock.util";
 

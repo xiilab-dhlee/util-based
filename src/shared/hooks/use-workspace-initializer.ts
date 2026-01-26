@@ -2,6 +2,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+import { WORKSPACE_PAGE_SIZE } from "@/domain/workspace/constants/workspace.constant";
 import { useInfiniteWorkspaces } from "@/domain/workspace/hooks/use-infinite-workspaces";
 import { useWorkspaceSwitch } from "@/domain/workspace/hooks/use-workspace-switch";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
@@ -14,7 +15,11 @@ export function useWorkspaceInitializer() {
   const pathname = usePathname();
   const [selectedWorkspace] = useAtom(selectedWorkspaceAtom);
   const { handleSelectWorkspace } = useWorkspaceSwitch();
-  const { workspaces, isLoading } = useInfiniteWorkspaces({ keyword: "" });
+  const { workspaces, isLoading } = useInfiniteWorkspaces({
+    keyword: "",
+    pageSize: WORKSPACE_PAGE_SIZE,
+    hasMyWorkspace: false,
+  });
   const setOpenCreateFirstWorkspaceModal = useSetAtom(
     openCreateFirstWorkspaceModalAtom,
   );
@@ -25,11 +30,16 @@ export function useWorkspaceInitializer() {
     if (isAdmin) return;
     if (isLoading) return;
 
+    const storedWorkspaceId = getStoredWorkspaceId();
+
     if (selectedWorkspace) {
       const isValid = workspaces.some(
         (ws) => ws.workspaceId === selectedWorkspace.workspaceId,
       );
-      if (isValid) return;
+
+      if (isValid || selectedWorkspace.workspaceId === storedWorkspaceId) {
+        return;
+      }
     }
 
     if (!workspaces.length) {
@@ -37,10 +47,7 @@ export function useWorkspaceInitializer() {
       return;
     }
 
-    const workspace = selectInitialWorkspace(
-      workspaces,
-      getStoredWorkspaceId(),
-    );
+    const workspace = selectInitialWorkspace(workspaces, storedWorkspaceId);
 
     handleSelectWorkspace(workspace, { skipNavigation: true });
   }, [
@@ -51,4 +58,6 @@ export function useWorkspaceInitializer() {
     handleSelectWorkspace,
     setOpenCreateFirstWorkspaceModal,
   ]);
+
+  return null;
 }

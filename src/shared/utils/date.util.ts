@@ -4,10 +4,12 @@ import {
   differenceInMinutes,
   differenceInSeconds,
   format,
+  formatDistanceToNow,
   isValid,
   parse,
   parseISO,
 } from "date-fns";
+import { ko } from "date-fns/locale";
 import { isString } from "es-toolkit/predicate";
 
 /**
@@ -48,6 +50,40 @@ export function formatElapsedTime(dateStr: string): string {
     return `${diffDay}일 전`;
   } catch (error) {
     console.error("날짜 파싱 오류:", error);
+    return "-";
+  }
+}
+
+/**
+ * 경과 시간(초)을 한국어 상대 시간 표시로 변환 (date-fns 사용)
+ *
+ * @param seconds - 경과 시간(초 단위)
+ * @returns 경과 시간을 나타내는 한국어 문자열 ("약 3분 전", "약 2시간 전" 등)
+ *
+ * @example
+ * formatElapsedTimeFromSeconds(30)    // "약 1분 전"
+ * formatElapsedTimeFromSeconds(180)   // "3분 전"
+ * formatElapsedTimeFromSeconds(3600)  // "약 1시간 전"
+ * formatElapsedTimeFromSeconds(0)     // "방금 전"
+ * formatElapsedTimeFromSeconds(-10)   // "-"
+ */
+export function formatElapsedTimeFromSeconds(seconds: number): string {
+  try {
+    // Edge case: 음수 또는 유효하지 않은 값
+    if (!Number.isFinite(seconds) || seconds < 0) {
+      return "-";
+    }
+
+    // 현재 시간에서 ageSeconds를 뺀 생성 시각 계산
+    const createdAt = Date.now() - seconds * 1000;
+
+    // date-fns의 formatDistanceToNow로 상대 시간 표시
+    return formatDistanceToNow(new Date(createdAt), {
+      addSuffix: true, // "전" 접미사 추가
+      locale: ko, // 한국어 locale
+    });
+  } catch (error) {
+    console.error("경과 시간 계산 오류:", error);
     return "-";
   }
 }

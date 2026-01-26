@@ -4,8 +4,10 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
-import { WORKLOAD_JOB_OPTIONS } from "@/domain/workload/constants/workload.constant";
-import type { WorkloadJobType } from "@/domain/workload/schemas/workload.schema";
+import {
+  WORKLOAD_JOB_OPTIONS,
+  type WorkloadJobType,
+} from "@/domain/workload/constants/workload.constant";
 import {
   disabledWorkloadJobTypeAtom,
   disabledWorkloadPageAtom,
@@ -45,7 +47,7 @@ export function DisabledWorkloadJobTypeSort({
     <div data-testid={WORKLOAD_SELECTOR.FILTER_JOB_TYPE}>
       <Dropdown
         options={[ALL_OPTION, ...WORKLOAD_JOB_OPTIONS]}
-        placeholder="워크로드 잡 타입"
+        placeholder="Job Type"
         onChange={handleChange}
         value={jobType}
         width={150}

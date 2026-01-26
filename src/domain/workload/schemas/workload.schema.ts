@@ -1,11 +1,6 @@
 import { z } from "zod";
 
 import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
-import {
-  WORKLOAD_IMAGE_TYPES,
-  WORKLOAD_JOB_TYPES,
-  WORKLOAD_STATUS,
-} from "@/domain/workload/constants/workload.constant";
 
 // 워크로드 스키마
 const baseWorkloadSchema = z.object({
@@ -20,13 +15,13 @@ const baseWorkloadSchema = z.object({
   /** 워크로드 설명 */
   description: z.string().nullable(),
   /** 작업 유형 */
-  jobType: z.enum(WORKLOAD_JOB_TYPES),
+  jobType: z.string(),
   /** 사용자 이름 */
   creatorName: z.string(),
   /** 라벨 */
   labels: z.array(z.string()),
   /** 상태 */
-  status: z.enum(WORKLOAD_STATUS),
+  status: z.string(),
   /** 경과 시간 */
   elapsedTime: z.string().datetime(),
   /** 생성일 */
@@ -39,7 +34,7 @@ const baseWorkloadSchema = z.object({
   image: z.object({
     id: z.string().uuid(),
     /** 타입 */
-    type: z.enum(WORKLOAD_IMAGE_TYPES),
+    type: z.string(),
     /** 이미지 이름 */
     name: z.string(),
   }),

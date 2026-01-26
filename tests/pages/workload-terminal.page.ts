@@ -55,12 +55,10 @@ export class WorkloadTerminalPage extends BasePage {
   /**
    * 워크로드 웹터미널 페이지로 이동
    * @param workloadId - 워크로드 ID
-   * @param workspaceId - 워크스페이스 ID (optional)
+   * @param workspaceId - 워크스페이스 ID (required)
    */
-  async gotoTerminal(workloadId: string, workspaceId?: string): Promise<void> {
-    const fullPath = workspaceId
-      ? `${ROUTES.USER_WORKLOAD_TERMINAL(workloadId)}?workspaceId=${workspaceId}`
-      : ROUTES.USER_WORKLOAD_TERMINAL(workloadId);
+  async gotoTerminal(workloadId: string, workspaceId: string): Promise<void> {
+    const fullPath = ROUTES.USER_WORKLOAD_TERMINAL(workspaceId, workloadId);
     await this.page.goto(fullPath);
     await this.page.waitForLoadState("networkidle");
   }

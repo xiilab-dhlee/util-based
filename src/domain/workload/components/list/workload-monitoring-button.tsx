@@ -3,11 +3,12 @@
 import { usePathname } from "next/navigation";
 
 import { ColumnRouteIcon } from "@/shared/components/column/column-route-icon";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { isAdminMode } from "@/shared/utils/router.util";
 
 interface WorkloadMonitoringButtonProps {
-  workspaceId: string;
+  workspaceId: number;
   workloadId: string;
   disabled: boolean;
 }
@@ -21,10 +22,9 @@ export function WorkloadMonitoringButton({
 
   const isAdmin = isAdminMode(pathname);
 
-  let href = `/user/workload/${workloadId}/monitoring?workspaceId=${workspaceId}`;
-  if (isAdmin) {
-    href = `/admin/workspace/workload/${workloadId}/monitoring?workspaceId=${workspaceId}`;
-  }
+  const href = isAdmin
+    ? ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING(workloadId)
+    : ROUTES.USER_WORKLOAD_MONITORING(String(workspaceId), workloadId);
 
   return (
     <ColumnRouteIcon

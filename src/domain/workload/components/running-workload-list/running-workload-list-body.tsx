@@ -8,39 +8,36 @@ import {
   ACTIVE_WORKLOAD_SORT_FIELDS,
   type ActiveWorkloadSortField,
 } from "@/domain/workload/constants/workload.constant";
-import { activeWorkloadSortAtom } from "@/domain/workload/state/workload.atom";
+import { runningWorkloadSortAtom } from "@/domain/workload/state/workload.atom";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { SELECTOR } from "@/shared/constants/selector.constant";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { parseSorterToAntdState } from "@/shared/utils/sort.util";
-import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
-interface ActiveWorkloadListBodyProps {
+interface RunningWorkloadListBodyProps {
   content: ActiveWorkloadItem[];
   loading: boolean;
   isError?: boolean;
 }
 
-export function ActiveWorkloadListBody({
+/**
+ * 실행중(RUNNING) 워크로드 목록 테이블 컴포넌트
+ *
+ * 워크로드 목록을 테이블 형태로 표시합니다.
+ */
+export function RunningWorkloadListBody({
   content,
   loading,
   isError = false,
-}: ActiveWorkloadListBodyProps) {
+}: RunningWorkloadListBodyProps) {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const workspaceId = selectedWorkspace?.workspaceId;
-  const [sort, setSort] = useAtom(activeWorkloadSortAtom);
+  const [sort, setSort] = useAtom(runningWorkloadSortAtom);
   const columnConfigs = [
-    { key: "workloadName", width: "28%" },
-    { key: "jobType", width: "9%" },
-    { key: "creatorName", width: "12%" },
-    { key: "ageSeconds", width: "14%" },
-    { key: "status", width: "7%" },
-    { key: "log", width: "6%" },
-    { key: "terminal", width: "6%" },
-    { key: "port", width: "6%" },
-    { key: "monitoring", width: "6%" },
-    { key: "power", width: "6%" },
+    { key: "workloadName", width: "44%" },
+    { key: "jobType", width: "16%" },
+    { key: "creatorName", width: "18%" },
+    { key: "ageSeconds", width: "22%" },
   ];
 
   const handleChange: TableProps<ActiveWorkloadItem>["onChange"] = (
@@ -61,17 +58,14 @@ export function ActiveWorkloadListBody({
   };
 
   return (
-    <ListWrapper data-testid={SELECTOR.LIST_TABLE}>
-      <CustomizedTable
-        columns={createWorkloadColumn(columnConfigs, workspaceId, sort)}
-        data={content}
-        columnHeight={37}
-        activePadding
-        loading={loading}
-        isError={isError}
-        rowKey={(record) => String(record.workloadResourceName)}
-        onChange={handleChange}
-      />
-    </ListWrapper>
+    <CustomizedTable
+      columns={createWorkloadColumn(columnConfigs, workspaceId, sort)}
+      data={content}
+      activePadding
+      loading={loading}
+      isError={isError}
+      rowKey={(record) => String(record.workloadResourceName)}
+      onChange={handleChange}
+    />
   );
 }

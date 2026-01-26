@@ -1,60 +1,25 @@
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { workloadListMock } from "@/mocks/data/workload.mock";
+import { RunningWorkloadListMain } from "@/domain/workload/components/running-workload-list/running-workload-list-main";
 import { createWorkloadColumn } from "@/shared/components/column/create-workload-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function UserMonitoringSubSection() {
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
   return (
     <Container>
       <Left data-testid={USER_MONITORING_SELECTOR.RUNNING_WORKLOAD_LIST}>
-        <ArticleTitle>
-          <SectionTitle>실행중인 워크로드 목록</SectionTitle>
-          {/* <ArticleDescription>
-            고정한 워크로드 정보를 확인할 수 있습니다.
-          </ArticleDescription> */}
-        </ArticleTitle>
-        <ListWrapper>
-          <CustomizedTable
-            columns={createWorkloadColumn([
-              {
-                key: "workloadName",
-                align: "left",
-                ellipsis: true,
-                sorter: true,
-              },
-              { key: "jobType", width: "20%" },
-              { key: "creatorName", width: "20%" },
-              // { key: "labels" },
-              // { key: "status", width: "10%" },
-              {
-                key: "elapsedTime",
-                width: "20%",
-                align: "center",
-              },
-            ])}
-            columnHeight={40}
-            activePadding
-            data={workloadListMock}
-            pagination={{
-              onChange: () => {
-                alert("준비 중입니다.");
-              },
-              pageSize: 8,
-              total: workloadListMock.length,
-            }}
-          />
-        </ListWrapper>
+        <RunningWorkloadListMain workspaceId={workspaceId} />
       </Left>
       <Right data-testid={USER_MONITORING_SELECTOR.RECOVERY_WORKLOAD_LIST}>
         <ArticleTitle>
           <SectionTitle>리소스 회수 예정 워크로드 정보</SectionTitle>
-          {/* <ArticleDescription>
-            자원회수가 예정된 워크로드 정보를 확인할 수 있습니다.
-          </ArticleDescription> */}
         </ArticleTitle>
         <ListWrapper>
           <CustomizedTable
@@ -72,14 +37,14 @@ export function UserMonitoringSubSection() {
               { key: "jobType", title: "누적 경고 횟수" },
             ])}
             columnHeight={40}
+            data={[]}
             activePadding
-            data={workloadListMock}
             pagination={{
               onChange: () => {
                 alert("준비 중입니다.");
               },
               pageSize: 8,
-              total: workloadListMock.length,
+              total: 0,
             }}
             loading
           />
@@ -101,7 +66,6 @@ const Left = styled.article`
   flex: 1;
   height: 100%;
   padding: 23px;
-  padding-bottom: 0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
