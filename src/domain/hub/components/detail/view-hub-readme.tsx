@@ -3,6 +3,7 @@
 import styled from "styled-components";
 
 import { useFindHubDetail } from "@/api/generated/hub/hub";
+import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { MarkdownToHtml } from "@/shared/components/markdown-to-html";
 import { MySpinner } from "@/shared/components/spinner";
@@ -38,15 +39,21 @@ export function ViewHubReadme({ hubId }: ViewHubReadmeProps) {
 
   return (
     <Container data-testid={HUB_SELECTOR.DETAIL_README}>
-      <AsideDetailArticleBody>
-        <MarkdownToHtml markdown={data || ""} />
-      </AsideDetailArticleBody>
+      <CustomScrollbars autoHide>
+        <StyledArticleBody>
+          <MarkdownToHtml markdown={data || ""} />
+        </StyledArticleBody>
+      </CustomScrollbars>
     </Container>
   );
 }
 
 const Container = styled(AsideDetailArticle)`
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
+`;
+
+const StyledArticleBody = styled(AsideDetailArticleBody)`
+  height: 100%;
 `;

@@ -54,7 +54,11 @@ const StyledMarkdown = styled(ReactMarkdown)`
     margin-bottom: 10px;
   }
 
-  h1,
+  h1 {
+    margin-bottom: 14px;
+    line-height: 1;
+  }
+
   p {
     margin-bottom: 14px;
     line-height: 16px;
@@ -69,7 +73,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
   ol li {
     display: list-item;
     list-style-position: outside;
-    margin-bottom: 0;
+    margin-bottom: 3px;
   }
 
   /* 순서 없는 목록 스타일 */

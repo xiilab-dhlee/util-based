@@ -34,7 +34,7 @@ export const useUpdateSourcecodeByMode = (
     mutate: (variables, options) => {
       mutation.mutate(variables, {
         onSuccess: (data) => {
-          options?.onSuccess?.(data as unknown as UpdateSourcecodeResponse);
+          options?.onSuccess?.({ sourceCodeId: data.sourceCodeId });
         },
         onError: options?.onError,
       });

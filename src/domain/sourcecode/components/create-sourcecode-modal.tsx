@@ -71,7 +71,6 @@ export function CreateSourcecodeModal() {
       executionCmd: "",
       shouldBePublic: true,
       credentialId: null,
-      parameter: {},
     },
   });
 

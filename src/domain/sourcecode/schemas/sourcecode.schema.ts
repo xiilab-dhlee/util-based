@@ -46,7 +46,6 @@ const baseSourcecodeFields = {
     invalid_type_error: "공개 설정을 선택해 주세요.",
   }),
   credentialId: z.number().nullable().optional(),
-  parameter: z.record(z.string(), z.string()).optional(),
 };
 
 // ============================================================================
@@ -72,10 +71,7 @@ export type CreateSourcecodeFormType = z.infer<typeof createSourcecodeSchema>;
 // 소스코드 수정 스키마
 // ============================================================================
 
-/** 소스코드 수정 폼 스키마 (baseSourcecodeFields에서 isPublic 제외 후 boolean 타입으로 재정의) */
-export const updateSourcecodeSchema = z
-  .object(baseSourcecodeFields)
-  .omit({ shouldBePublic: true })
-  .merge(z.object({ shouldBePublic: z.boolean() }));
+/** 소스코드 수정 폼 스키마 (parameter는 별도 상태로 관리) */
+export const updateSourcecodeSchema = z.object(baseSourcecodeFields);
 
 export type UpdateSourcecodeFormType = z.infer<typeof updateSourcecodeSchema>;

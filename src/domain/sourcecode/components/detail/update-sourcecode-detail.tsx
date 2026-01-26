@@ -129,7 +129,6 @@ export function UpdateSourcecodeDetail({
       executionCmd: data.executionCmd ?? "",
       shouldBePublic: data.isPublic ?? false,
       credentialId: data.credentialId ?? null,
-      parameter: data.parameter ?? {},
     });
 
     // 파라미터 상태 복원
@@ -154,7 +153,6 @@ export function UpdateSourcecodeDetail({
       executionCmd: data.executionCmd ?? "",
       shouldBePublic: data.isPublic ?? false,
       credentialId: data.credentialId ?? null,
-      parameter: data.parameter ?? {},
     });
 
     // 파라미터 배열로 변환

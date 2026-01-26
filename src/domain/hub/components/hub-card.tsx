@@ -65,6 +65,7 @@ export function HubCard({
                 src={`data:image/gif;base64,${thumbnail}`}
                 alt="Hub Thumbnail"
                 fill
+                unoptimized
                 draggable={false}
               />
             </ImageWrapper>

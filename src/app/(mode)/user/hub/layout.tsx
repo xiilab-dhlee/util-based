@@ -3,6 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import { usePathname, useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect } from "react";
+import styled from "styled-components";
 
 import { useFindHubs } from "@/api/generated/hub/hub";
 import { HubListBody } from "@/domain/hub/components/list/hub-list-body";
@@ -61,7 +62,7 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
     <>
       <PageHeader pageKey="user.hub" />
       <ListPageMain>
-        <ListPageBody>
+        <StyledListPageBody>
           <HubListFilter total={totalSize} loading={isLoading} />
           <HubListBody
             content={content}
@@ -75,7 +76,7 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
             onChange={setPage}
             isLoading={isLoading}
           />
-        </ListPageBody>
+        </StyledListPageBody>
         <ListPageAside $width={ASIDE_WIDTH}>{children}</ListPageAside>
       </ListPageMain>
       {/* 워크로드 생성 드로어 */}
@@ -83,3 +84,7 @@ export default function UserHubLayout({ children }: PropsWithChildren) {
     </>
   );
 }
+
+const StyledListPageBody = styled(ListPageBody)`
+  height: 725px
+`;
