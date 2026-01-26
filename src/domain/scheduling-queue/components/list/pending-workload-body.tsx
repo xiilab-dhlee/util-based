@@ -1,9 +1,22 @@
 "use client";
 
+import { useAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import type { TableProps } from "xiilab-ui";
+
 import type { AdminWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { createPendingWorkloadColumn } from "@/domain/scheduling-queue/columns/create-pending-workload-column";
+import {
+  PENDING_WORKLOAD_SORT_FIELDS,
+  type PendingWorkloadSortField,
+} from "@/domain/scheduling-queue/constants/scheduling-queue.constant";
+import {
+  pendingWorkloadPageAtom,
+  pendingWorkloadSortAtom,
+} from "@/domain/scheduling-queue/state/scheduling-queue.atom";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { usePeriodicUpdate } from "@/shared/hooks/use-periodic-update";
+import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface PendingWorkloadBodyProps {
@@ -34,6 +47,24 @@ export function PendingWorkloadBody({
   isAddingToQueue,
   isQueueFull,
 }: PendingWorkloadBodyProps) {
+  const [sort, setSort] = useAtom(pendingWorkloadSortAtom);
+  const resetPage = useResetAtom(pendingWorkloadPageAtom);
+
+  const handleChange: TableProps<AdminWorkloadResponse>["onChange"] = (
+    _,
+    __,
+    sorter,
+  ) => {
+    const parsed = parseSorterToAntdState<
+      AdminWorkloadResponse,
+      PendingWorkloadSortField
+    >(sorter, PENDING_WORKLOAD_SORT_FIELDS);
+    if (!parsed.field || !parsed.order) return;
+
+    resetPage();
+    setSort(parsed);
+  };
+
   // 대기 시간 컬럼 갱신을 위해 주기적으로 리렌더링
   usePeriodicUpdate(60000);
 
@@ -44,6 +75,7 @@ export function PendingWorkloadBody({
           onAddToUrgentQueue,
           isAddingToQueue,
           isQueueFull,
+          sort,
         })}
         data={data}
         rowKey="workloadResourceName"
@@ -51,6 +83,7 @@ export function PendingWorkloadBody({
         loading={isLoading}
         isError={isError}
         activePadding
+        onChange={handleChange}
       />
     </ListWrapper>
   );
