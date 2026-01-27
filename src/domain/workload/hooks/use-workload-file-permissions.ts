@@ -37,6 +37,7 @@ export function useWorkloadFilePermissions({
   // 사용자 권한 확인
   // ============================================
   const currentAccountId = getSessionAccountId(session);
+  // TODO: 실제 권한 체크 로직 복원 필요
   const isCreator = Boolean(
     creatorId && currentAccountId && currentAccountId === creatorId,
   );
