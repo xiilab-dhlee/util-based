@@ -77,6 +77,12 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
   const onSubmit = async (data: CreateRegistryTagFormType) => {
     if (isPending || isChecking) return;
 
+    // private 모드에서는 workspaceId가 필수
+    if (mode === "private" && !selectedWorkspace?.workspaceId) {
+      toast.error("워크스페이스를 선택해 주세요.");
+      return;
+    }
+
     setIsChecking(true);
     try {
       const result = await checkImageTagExistsByMode(mode, {

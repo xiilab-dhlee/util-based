@@ -185,6 +185,7 @@ export function CreateSnapshotRegistryModal({
           imageName: data.imageName,
           imageTagName: data.imageTagName,
           workspaceId: selectedWorkspace.workspaceId,
+          description: data.description || undefined,
           env: envData?.length ? envData : undefined,
           port: portData?.length ? portData : undefined,
         },
@@ -445,14 +446,13 @@ export function CreateSnapshotRegistryModal({
                     <Button
                       icon="Plus"
                       iconSize={14}
+                      disabled={!portNameInput || !portNumberInput}
                       onClick={() => {
-                        if (portNameInput || portNumberInput) {
+                        if (portNameInput && portNumberInput) {
                           appendPort({
                             id: uuidv4(),
                             name: portNameInput,
-                            port: portNumberInput
-                              ? Number(portNumberInput)
-                              : undefined,
+                            port: Number(portNumberInput),
                           });
                           setPortNameInput("");
                           setPortNumberInput("");
