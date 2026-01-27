@@ -71,8 +71,11 @@ export function WorkloadFileHeader({
    * 파일 업로드 버튼 클릭 핸들러
    */
   const handleUpload = () => {
-    // TODO: 업로드 기능 구현
-    alert("업로드 Action");
+    publish(WORKLOAD_EVENTS.openUploadFileModal, {
+      workspaceId,
+      workloadResourceName,
+      podName: isDistributed ? selectedPodName : undefined,
+    });
   };
 
   return (
