@@ -59,7 +59,7 @@ export type CreateOnPremiseVolumeFormType = z.infer<
   typeof createOnPremiseVolumeSchema
 >;
 
-/** 볼륨 수정 폼 스키마 (baseVolumeFields에서 isPublic 제외 후 boolean 타입으로 재정의) */
+/** 볼륨 수정 폼 스키마 */
 export const updateVolumeSchema = z
   .object(baseVolumeFields)
   .omit({ shouldBePublic: true })

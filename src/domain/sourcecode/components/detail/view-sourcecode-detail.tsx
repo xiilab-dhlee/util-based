@@ -68,8 +68,6 @@ export function ViewSourcecodeDetail({ data }: ViewSourcecodeDetailProps) {
               </AsideDetailArticleValue>
             </AsideDetailArticleColumn>
           </AsideDetailArticleItem>
-
-          {/* 설정 내용 및 생성 정보 섹션 */}
           <AsideDetailArticleItem>
             <AsideDetailArticleColumn>
               <AsideDetailArticleRowItem>

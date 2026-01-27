@@ -51,7 +51,7 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
 
         <AsideDetailArticleColumn>
           <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
-          <AsideDetailArticleValue>{statusText || "-"}</AsideDetailArticleValue>
+          <AsideDetailArticleValue>{statusText}</AsideDetailArticleValue>
         </AsideDetailArticleColumn>
 
         <AsideDetailArticleColumn>
