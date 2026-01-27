@@ -18,6 +18,7 @@ import type {
 } from "@/domain/workload/schemas/workload.schema";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import { getFileExtension } from "@/shared/utils/file.util";
 
 /**
  * 워크로드 잡 타입 정보 조회
@@ -264,12 +265,4 @@ export const convertWorkloadFileToTreeType = (
     fileSize: item.size != null ? String(item.size) : undefined,
     children: [],
   }));
-};
-
-const getFileExtension = (fileName: string): string | null => {
-  const lastDotIndex = fileName.lastIndexOf(".");
-  if (lastDotIndex === -1 || lastDotIndex === 0) {
-    return null;
-  }
-  return fileName.slice(lastDotIndex + 1);
 };

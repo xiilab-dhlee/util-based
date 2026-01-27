@@ -65,6 +65,28 @@ export function formatFileSize(
 // 파일 확장자 관련
 // ============================================
 
+/**
+ * 파일명에서 확장자를 추출하는 함수
+ *
+ * @param fileName - 파일명
+ * @returns 확장자 (점 제외) 또는 null
+ *
+ * @example
+ * ```typescript
+ * getFileExtension("document.pdf"); // "pdf"
+ * getFileExtension("archive.tar.gz"); // "gz"
+ * getFileExtension(".gitignore"); // null (숨김 파일)
+ * getFileExtension("readme"); // null (확장자 없음)
+ * ```
+ */
+export const getFileExtension = (fileName: string): string | null => {
+  const lastDotIndex = fileName.lastIndexOf(".");
+  if (lastDotIndex === -1 || lastDotIndex === 0) {
+    return null;
+  }
+  return fileName.slice(lastDotIndex + 1);
+};
+
 /** 미리보기 가능한 이미지 확장자 */
 export const PREVIEWABLE_IMAGE_EXTENSIONS = [
   "png",

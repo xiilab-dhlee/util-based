@@ -4,6 +4,7 @@ import type {
   VolumeFileItemResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import { getFileExtension } from "@/shared/utils/file.util";
 
 // 파일 트리 관련 유틸리티 re-export (하위 호환성 유지)
 export {
@@ -59,12 +60,4 @@ export const convertToFileTreeType = (
     fileSize: item.size != null ? String(item.size) : undefined,
     children: [],
   }));
-};
-
-const getFileExtension = (fileName: string): string | null => {
-  const lastDotIndex = fileName.lastIndexOf(".");
-  if (lastDotIndex === -1 || lastDotIndex === 0) {
-    return null;
-  }
-  return fileName.slice(lastDotIndex + 1);
 };
