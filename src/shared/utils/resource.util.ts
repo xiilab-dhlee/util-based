@@ -125,3 +125,26 @@ export function convertBytes(
     label: `${value} ${unit}`,
   };
 }
+
+/**
+ * 지정한 단위의 값을 bytes로 변환
+ * @example
+ * convertToBytes(1, "GB") // 1073741824
+ * convertToBytes(100, "MB") // 104857600
+ */
+export function convertToBytes(value: number, unit: ByteUnit): number {
+  if (!Number.isFinite(value) || value < 0) {
+    return 0;
+  }
+
+  switch (unit) {
+    case "MB":
+      return value * BYTES_IN_MB;
+    case "GB":
+      return value * BYTES_IN_GB;
+    case "TB":
+      return value * BYTES_IN_TB;
+    default:
+      return 0;
+  }
+}

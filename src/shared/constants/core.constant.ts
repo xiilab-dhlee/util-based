@@ -68,7 +68,6 @@ export type ModalMode = (typeof MODAL_MODES)[keyof typeof MODAL_MODES];
 export const ALL_OPTION = {
   label: "전체",
   value: "",
-  colorVariant: "var(--color-purple-07)",
 } as const;
 
 /** ALL_OPTION.value 타입 */

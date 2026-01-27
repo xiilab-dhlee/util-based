@@ -1,43 +1,41 @@
-import { CompoundDropdown } from "xiilab-ui";
-
-import { MigProfileDropdownOption } from "@/domain/resource-preset/components/create/dropdowns/mig-profile-dropdown-option";
-import type { GpuProfileListType } from "@/shared/schemas/gpu.schema";
+import type { DropdownOption } from "xiilab-ui";
+import { Dropdown } from "xiilab-ui";
 
 interface MigProfileSelectDropdownProps {
-  profiles: GpuProfileListType[];
-  value: GpuProfileListType["id"] | undefined;
-  onChange: (value: GpuProfileListType["id"]) => void;
-  error?: boolean;
-  loading?: boolean;
+  profiles: string[];
+  value: string | undefined;
+  onChange: (profileName: string) => void;
+  isError?: boolean;
+  isLoading?: boolean;
 }
 
 export function MigProfileSelectDropdown({
   profiles,
   value,
   onChange,
-  error,
-  loading,
+  isError,
+  isLoading,
 }: MigProfileSelectDropdownProps) {
+  const options: DropdownOption[] = profiles.map((profile) => ({
+    label: profile,
+    value: profile,
+  }));
+
+  const handleChange = (nextValue: string | number | null) => {
+    if (nextValue === null) return;
+    onChange(String(nextValue));
+  };
+
   return (
-    <CompoundDropdown
-      theme="light"
+    <Dropdown
+      placeholder={"MIG Profile을 선택해 주세요."}
+      value={value ?? null}
+      options={options}
+      onChange={handleChange}
+      loading={isLoading}
+      disabled={isLoading}
+      status={isError ? "error" : undefined}
       width="100%"
-      height={30}
-      placeholder="MIG 선택해 주세요."
-      value={value}
-      onChange={(value) => onChange(value as GpuProfileListType["id"])}
-      status={error ? "error" : undefined}
-      loading={loading}
-    >
-      {profiles.map((profile) => (
-        <CompoundDropdown.Option
-          key={profile.id}
-          value={profile.id}
-          display={profile.name}
-        >
-          <MigProfileDropdownOption profile={profile} />
-        </CompoundDropdown.Option>
-      ))}
-    </CompoundDropdown>
+    />
   );
 }

@@ -1,3 +1,5 @@
+import { WORKSPACE_DESCRIPTION_MAX_LENGTH } from "@/domain/workspace/constants/workspace-validation.constant";
+
 export const CREATE_WORKSPACE_ERROR_MESSAGES = {
   workspaceName: {
     required: "워크스페이스 이름을 입력해 주세요.",
@@ -6,7 +8,7 @@ export const CREATE_WORKSPACE_ERROR_MESSAGES = {
       "워크스페이스 이름은 한글, 영문, 숫자, -, _ 만 사용할 수 있습니다.",
   },
   description: {
-    too_long: "워크스페이스 설명은 최대 1000자까지 입력할 수 있습니다.",
+    too_long: `워크스페이스 설명은 최대 ${WORKSPACE_DESCRIPTION_MAX_LENGTH}자까지 입력할 수 있습니다.`,
   },
 } as const;
 

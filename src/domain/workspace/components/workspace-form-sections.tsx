@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { FormItem, Input, TextArea, Typography } from "xiilab-ui";
 
 import type { WorkspaceResourceRequest } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { WORKSPACE_DESCRIPTION_MAX_LENGTH } from "@/domain/workspace/constants/workspace-validation.constant";
 import type { CreateWorkspaceFormType } from "@/domain/workspace/utils/create-workspace-form.override.zod";
 import { ResourceSummaryCard } from "@/shared/components/resource-summary-card";
 import { subTitleStyle } from "@/styles/mixins/text";
@@ -79,7 +80,7 @@ export function WorkspaceInfoSection({
               {...field}
               value={field.value ?? ""}
               placeholder="워크스페이스 설명을 입력해 주세요."
-              maxLength={1000}
+              maxLength={WORKSPACE_DESCRIPTION_MAX_LENGTH}
               disabled={isPending}
               id="workspace-description"
             />

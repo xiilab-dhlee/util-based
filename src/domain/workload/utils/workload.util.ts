@@ -110,7 +110,7 @@ const WORKLOAD_STATUS_INFO_MAP: Record<
   },
 };
 
-const DEFAULT_WORKLOAD_STATUS_COLOR = ALL_OPTION.colorVariant;
+const DEFAULT_WORKLOAD_STATUS_COLOR = "var(--color-purple-07)";
 
 export const getWorkloadStatusInfo = (
   status?:

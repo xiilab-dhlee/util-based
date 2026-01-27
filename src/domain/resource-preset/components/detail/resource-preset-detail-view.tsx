@@ -1,15 +1,19 @@
 "use client";
 
 import styled from "styled-components";
-import { Button, Tag } from "xiilab-ui";
+import { Button } from "xiilab-ui";
 
-import { ResourcePresetNodeInfoCard } from "@/domain/resource-preset/components/detail/resource-preset-node-info-card";
-import type { ResourcePresetDetailResponseType } from "@/domain/resource-preset/schemas/resource-preset.schema";
-import { WORKLOAD_JOB_TYPE_LABEL_MAP } from "@/domain/workload/constants/workload.constant";
+import type { ResourcePresetResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  formatCpuResource,
+  formatGpuResource,
+  formatMemoryResource,
+  getGpuResourceLabel,
+  getJobTypeLabel,
+  getNodeTypeLabel,
+} from "@/domain/resource-preset/utils/resource-preset-detail.util";
 import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
-import { Slider } from "@/shared/components/slider/custom-slider";
 import { formatDateSafely } from "@/shared/utils/date.util";
-import { getResourceInfo } from "@/shared/utils/resource.util";
 import {
   AsideDetailArticle,
   AsideDetailArticleBody,
@@ -26,21 +30,8 @@ import {
   AsideDetailScrollWrapper,
 } from "@/styles/layers/aside-detail-layers.styled";
 
-const GPU_RESOURCE_TYPE = "GPU" as const;
-const GPU_MEMORY_RESOURCE_TYPE = "GPU_MEMORY" as const;
-const CPU_RESOURCE_TYPE = "CPU" as const;
-const MEM_RESOURCE_TYPE = "MEM" as const;
-
-/** Tag를 표시해야 하는 GPU 타입 (MIG, MPS) */
-const GPU_TYPES_WITH_TAG: ReadonlySet<string> = new Set(["MIG", "MPS"]);
-
-const gpuInfo = getResourceInfo(GPU_RESOURCE_TYPE);
-const gpuMemoryInfo = getResourceInfo(GPU_MEMORY_RESOURCE_TYPE);
-const cpuInfo = getResourceInfo(CPU_RESOURCE_TYPE);
-const memInfo = getResourceInfo(MEM_RESOURCE_TYPE);
-
 interface ResourcePresetDetailViewProps {
-  data: ResourcePresetDetailResponseType;
+  data: ResourcePresetResponse;
   onUpdate: () => void;
   onDelete: () => void;
 }
@@ -55,9 +46,29 @@ export function ResourcePresetDetailView({
   onUpdate,
   onDelete,
 }: ResourcePresetDetailViewProps) {
-  const getNodeTypeLabel = (nodeType: string) => {
-    return nodeType === "single" ? "Single Node" : "Multi Node";
-  };
+  const { resource } = data;
+  const gpuResource = resource.gpu;
+  const jobTypeLabel = getJobTypeLabel(data.workloadJobType);
+
+  const gpuResourceLabel = getGpuResourceLabel(gpuResource);
+
+  const resourceRows = [
+    {
+      key: "gpu",
+      label: gpuResourceLabel,
+      value: formatGpuResource(gpuResource),
+    },
+    {
+      key: "cpu",
+      label: "CPU",
+      value: formatCpuResource(resource.cpu.requestCore),
+    },
+    {
+      key: "memory",
+      label: "Memory",
+      value: formatMemoryResource(resource.memory.requestByte),
+    },
+  ];
 
   return (
     <>
@@ -81,7 +92,9 @@ export function ResourcePresetDetailView({
 
                 <AsideDetailArticleColumn>
                   <ResourcePresetKey>리소스 프리셋 이름</ResourcePresetKey>
-                  <AsideDetailArticleValue>{data.name}</AsideDetailArticleValue>
+                  <AsideDetailArticleValue>
+                    {data.presetName}
+                  </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
 
                 <AsideDetailArticleColumn>
@@ -101,7 +114,7 @@ export function ResourcePresetDetailView({
                 <AsideDetailArticleColumn>
                   <ResourcePresetKey>Job Type</ResourcePresetKey>
                   <AsideDetailArticleValue>
-                    {WORKLOAD_JOB_TYPE_LABEL_MAP[data.jobType]} Job
+                    {jobTypeLabel}
                   </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
               </AsideDetailArticleItem>
@@ -118,36 +131,14 @@ export function ResourcePresetDetailView({
                     {getNodeTypeLabel(data.nodeType)}
                   </AsideDetailArticleValue>
                 </AsideDetailArticleColumn>
-
-                <AsideDetailArticleColumn>
-                  <ResourcePresetKey>GPU 이름</ResourcePresetKey>
-                  <GpuNameValue>
-                    {GPU_TYPES_WITH_TAG.has(data.gpuType) && (
-                      <Tag variant="gray">{data.gpuType}</Tag>
-                    )}
-                    {data.gpuName}
-                  </GpuNameValue>
-                </AsideDetailArticleColumn>
-
-                <AsideDetailArticleColumn>
-                  <ResourcePresetKey>Memory</ResourcePresetKey>
-                  <AsideDetailArticleValue>
-                    {data.gpuMemory} {gpuMemoryInfo.unit}
-                  </AsideDetailArticleValue>
-                </AsideDetailArticleColumn>
-
-                {/* 노드 정보 카드 목록 */}
-                <NodeInfoColumn>
-                  <ResourcePresetKey>노드 정보</ResourcePresetKey>
-                  <NodeInfoCardsContainer>
-                    {data.nodes.map((node, index) => (
-                      <ResourcePresetNodeInfoCard
-                        key={`${node.nodeName}-${index}`}
-                        node={node}
-                      />
-                    ))}
-                  </NodeInfoCardsContainer>
-                </NodeInfoColumn>
+                {gpuResource?.gpuName && (
+                  <AsideDetailArticleColumn>
+                    <ResourcePresetKey>GPU 이름</ResourcePresetKey>
+                    <GpuNameValue>
+                      <GpuNameText>{gpuResource?.gpuName || "-"}</GpuNameText>
+                    </GpuNameValue>
+                  </AsideDetailArticleColumn>
+                )}
               </AsideDetailArticleItem>
 
               {/* 리소스 정보 */}
@@ -156,43 +147,12 @@ export function ResourcePresetDetailView({
                   <AsideDetailArticleTitle>리소스 정보</AsideDetailArticleTitle>
                 </AsideDetailArticleHeader>
 
-                <ResourceSliderContainer>
-                  <ResourceSliderRow>
-                    <ResourceSliderLabel>{gpuInfo.text}</ResourceSliderLabel>
-                    <Slider
-                      type={GPU_RESOURCE_TYPE}
-                      value={data.gpu}
-                      min={0}
-                      max={data.gpuMax}
-                      readMode
-                      width="100%"
-                    />
-                  </ResourceSliderRow>
-
-                  <ResourceSliderRow>
-                    <ResourceSliderLabel>{cpuInfo.text}</ResourceSliderLabel>
-                    <Slider
-                      type={CPU_RESOURCE_TYPE}
-                      value={data.cpu}
-                      min={0}
-                      max={data.cpuMax}
-                      readMode
-                      width="100%"
-                    />
-                  </ResourceSliderRow>
-
-                  <ResourceSliderRow>
-                    <ResourceSliderLabel>{memInfo.text}</ResourceSliderLabel>
-                    <Slider
-                      type={MEM_RESOURCE_TYPE}
-                      value={data.memory}
-                      min={0}
-                      max={data.memoryMax}
-                      readMode
-                      width="100%"
-                    />
-                  </ResourceSliderRow>
-                </ResourceSliderContainer>
+                {resourceRows.map(({ key, label, value }) => (
+                  <AsideDetailArticleColumn key={key}>
+                    <ResourcePresetKey>{label}</ResourcePresetKey>
+                    <AsideDetailArticleValue>{value}</AsideDetailArticleValue>
+                  </AsideDetailArticleColumn>
+                ))}
               </AsideDetailArticleItem>
 
               {/* 생성 정보 */}
@@ -206,7 +166,7 @@ export function ResourcePresetDetailView({
                     <AsideDetailArticleColumn>
                       <ResourcePresetKey>생성자</ResourcePresetKey>
                       <AsideDetailArticleValue>
-                        {data.creatorName}
+                        {data.creatorName ?? "-"}
                       </AsideDetailArticleValue>
                     </AsideDetailArticleColumn>
                   </AsideDetailArticleRowItem>
@@ -233,61 +193,21 @@ export function ResourcePresetDetailView({
  */
 const GpuNameValue = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   font-size: 14px;
   font-weight: 400;
   color: #000;
 `;
 
-/**
- * 노드 정보 카드 컨테이너
- */
-const NodeInfoCardsContainer = styled.div`
+const GpuNameText = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 100%;
-`;
-
-/**
- * 리소스 슬라이더 컨테이너
- */
-const ResourceSliderContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-`;
-
-/**
- * 리소스 슬라이더 행
- */
-const ResourceSliderRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-`;
-
-/**
- * 리소스 슬라이더 라벨
- */
-const ResourceSliderLabel = styled.span`
-  width: 50px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #484848;
+  gap: 4px;
 `;
 
 const ResourcePresetKey = styled(AsideDetailArticleKey)`
   width: 100px;
-`;
-
-/**
- * 노드 정보 컬럼 (상단 정렬)
- */
-const NodeInfoColumn = styled(AsideDetailArticleColumn)`
-  align-items: flex-start;
 `;
 
 /**
