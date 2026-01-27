@@ -120,8 +120,11 @@ export const selectedWorkloadAtom = atom<WorkloadIdType | null>(null);
 // 워크로드 파일 관리
 // ============================================
 
+/** 파일 액션 목록 (single source of truth) */
+export const FILE_ACTIONS = ["delete", "compress", "download"] as const;
+
 /** 파일 액션 모드 타입 */
-export type FileActionMode = "delete" | "compress" | "download" | null;
+export type FileActionMode = (typeof FILE_ACTIONS)[number] | null;
 
 /** 워크로드 파일 트리 데이터 */
 export const workloadFileTreeDataAtom = atomWithReset<FileTreeType[]>([]);
