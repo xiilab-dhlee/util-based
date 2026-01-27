@@ -112,6 +112,7 @@ export function WorkloadFileMain() {
   ]);
 
   // 워크로드 파일 트리 훅 (선택된 노드 변경 시 자동으로 하위 파일 로드)
+  // workloadDetail이 로드된 후에만 트리 요청 시작 (isDistributed 판단을 위해)
   const { treeData, loadingPaths, isLoading, isError } = useWorkloadFileTree({
     workspaceId,
     workloadResourceName,
@@ -119,6 +120,7 @@ export function WorkloadFileMain() {
     enabled:
       !!workspaceId &&
       !!workloadResourceName &&
+      !!workloadDetail &&
       (!isDistributed || !!selectedPodName),
   });
 

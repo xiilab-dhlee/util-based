@@ -29,7 +29,7 @@ interface UseWorkloadFileUploadReturn {
   addFiles: (fileList: FileList) => void;
   removeFile: (fileId: string) => void;
   startUpload: () => Promise<void>;
-  cancelAllUploads: () => Promise<void>;
+  cancelAllUploads: () => void;
   clearFiles: () => void;
 }
 
@@ -181,17 +181,20 @@ export function useWorkloadFileUpload(
     }
   };
 
-  const cancelAllUploads = async () => {
+  const cancelAllUploads = () => {
+    // 모든 진행 중인 요청 중단
     for (const controller of abortControllersRef.current.values()) {
       controller.abort();
     }
     abortControllersRef.current.clear();
 
-    setFiles((prev) =>
+    // 업로드 중인 파일들의 상태를 취소로 변경
+    safeSetFiles((prev) =>
       prev.map((f) =>
         f.status === "uploading" ? { ...f, status: "cancelled" } : f,
       ),
     );
+    safeSetIsUploading(false);
   };
 
   return {
