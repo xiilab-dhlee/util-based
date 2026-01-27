@@ -1,15 +1,19 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isString } from "es-toolkit/predicate";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
-import { Dropdown, FormItem, Icon, Input, Typography } from "xiilab-ui";
+import { FormItem, Icon, Input, Typography } from "xiilab-ui";
 
-import { useSignup } from "@/api/generated/account-registration/account-registration";
+import {
+  useCheckSuperAdminExists,
+  useSignup,
+} from "@/api/generated/account-registration/account-registration";
 import { CompleteSignup } from "@/domain/auth/components/signup/complete-signup";
+import { GroupSelectOnlySignup } from "@/domain/auth/components/signup/group-select-only-signup";
 import {
   type SignupFormType,
   signupSchema,
@@ -25,6 +29,15 @@ import {
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
 
+interface SignupMainProps {
+  /**
+   * 회원가입 모드 (accountRole)
+   * - USER: 일반 사용자 (기본값)
+   * - SUPER_ADMIN: 슈퍼 관리자
+   */
+  mode?: "USER" | "SUPER_ADMIN";
+}
+
 /**
  * 회원가입 페이지의 메인 컴포넌트
  *
@@ -37,8 +50,24 @@ import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
  *
  * 회원가입 성공 시 페이지 이동 없이 성공 UI를 표시합니다.
  */
-export function SignupMain() {
+export function SignupMain({ mode = "USER" }: SignupMainProps) {
+  const router = useRouter();
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // SUPER_ADMIN 모드일 때만 슈퍼 관리자 존재 여부 확인
+  const { data: superAdminData, isLoading: isSuperAdminLoading } =
+    useCheckSuperAdminExists({
+      query: {
+        enabled: mode === "SUPER_ADMIN",
+      },
+    });
+
+  // SUPER_ADMIN 모드에서 이미 슈퍼 관리자가 존재하면 error 페이지로 리다이렉트
+  useEffect(() => {
+    if (mode === "SUPER_ADMIN" && superAdminData?.hasSuperAdmin) {
+      router.replace(`${ROUTES.ERROR}?error=SuperAdminAlreadyExists`);
+    }
+  }, [mode, superAdminData?.hasSuperAdmin, router]);
 
   const {
     control,
@@ -56,21 +85,21 @@ export function SignupMain() {
     },
   });
 
-  const { mutate: signup, isPending } = useSignup();
+  const { mutate, isPending } = useSignup();
 
   const onSubmit = (data: SignupFormType) => {
     if (isPending) {
       return;
     }
 
-    signup(
+    mutate(
       {
         data: {
           email: data.email,
           password: data.password,
           firstName: data.firstName,
           lastName: data.lastName,
-          accountRole: "USER",
+          accountRole: mode,
           ...(data.groupId?.length && { groupId: data.groupId }),
         },
       },
@@ -81,6 +110,14 @@ export function SignupMain() {
       },
     );
   };
+
+  // SUPER_ADMIN 모드: 체크 중이거나 이미 슈퍼 관리자가 존재하면 렌더링 안함
+  if (
+    mode === "SUPER_ADMIN" &&
+    (isSuperAdminLoading || superAdminData?.hasSuperAdmin)
+  ) {
+    return null;
+  }
 
   // 회원가입 성공 UI
   if (isSuccess) {
@@ -256,20 +293,11 @@ export function SignupMain() {
               help={errors.groupId?.message}
               data-testid={AUTH_SELECTOR.SIGNUP_GROUP_NAME_FIELD}
             >
-              <Dropdown
-                options={[
-                  { label: "그룹 A", value: "group-a" },
-                  { label: "그룹 B", value: "group-b" },
-                  { label: "그룹 C", value: "group-c" },
-                ]}
+              <GroupSelectOnlySignup
                 value={field.value?.[0] ?? null}
-                onChange={(value) =>
-                  field.onChange(isString(value) ? [value] : [])
-                }
-                placeholder="그룹을 선택해 주세요."
-                width="100%"
-                height={36}
-                status={errors.groupId ? "error" : undefined}
+                setValue={(value) => {
+                  field.onChange(value ? [value] : []);
+                }}
               />
             </FormItem>
           )}

@@ -16,6 +16,7 @@ import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin
 import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
+import { getGroupRegistrationMock } from "@/api/generated/group-registration/group-registration.msw";
 import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
@@ -99,6 +100,7 @@ function wrapHandlersWithDelay(handlers: HttpHandler[]): HttpHandler[] {
  */
 const rawHandlers = [
   // Override handlers (우선순위 높음)
+  ...getGroupRegistrationMock(),
   ...requestResourceHandlers,
   ...authHandlers,
   ...getAccountProfileMock(),

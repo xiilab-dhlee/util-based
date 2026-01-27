@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import { SignupMain } from "@/domain/auth/components/signup/signup-main";
 
 export const metadata: Metadata = {
-  title: "Sign up",
+  title: "관리자 회원가입",
 };
 
 /**
- * 회원가입 페이지
+ * 관리자 회원가입 페이지
  */
-export default function SignupPage() {
-  return <SignupMain mode="USER" />;
+export default function AdminSignupPage() {
+  return <SignupMain mode="SUPER_ADMIN" />;
 }

@@ -172,6 +172,7 @@ export const ROUTES = {
   // ============================================
   AUTH_SIGNIN: "/signin",
   AUTH_SIGNUP: "/signup",
+  AUTH_SIGNUP_ADMIN: "/signup/admin",
   AUTH_LICENSE: "/license",
 
   // ============================================

@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 
+import { useCheckSuperAdminExists } from "@/api/generated/account-registration/account-registration";
 import { useGetLatestLicense } from "@/api/generated/license/license";
 import { ROUTES } from "@/shared/constants/routes.constant";
 
@@ -11,10 +12,14 @@ import { ROUTES } from "@/shared/constants/routes.constant";
 const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
 
 // 라이선스 체크 제외 경로
-const EXCLUDED_PATHS = [ROUTES.AUTH_LICENSE, ROUTES.ERROR];
+const EXCLUDED_PATHS = [
+  ROUTES.AUTH_LICENSE,
+  ROUTES.AUTH_SIGNUP_ADMIN,
+  ROUTES.ERROR,
+];
 
 // 라이선스 유효성 검사
-function isLicenseValid(expiredAt: string | undefined): boolean {
+function checkLicenseValid(expiredAt: string | undefined): boolean {
   if (!expiredAt) return false;
   return new Date(expiredAt) > new Date();
 }
@@ -28,11 +33,13 @@ function isLicenseValid(expiredAt: string | undefined): boolean {
  * 동작 흐름:
  * 1. 프로젝트 접근
  * 2. 라이선스 체크 (인증 과정 X)
- * 3. 유효한 라이선스 확인 시 → 인증 과정 진행 → 로그인 화면
- * 4. 미등록 또는 만료 시 → /license 페이지로 리다이렉트
- * 5. API 에러 시 → /error 페이지로 리다이렉트
+ * 3. 유효한 라이선스 확인 시 → 슈퍼 관리자 존재 여부 확인
+ * 4. 슈퍼 관리자 없음 → /signup/admin 페이지로 리다이렉트
+ * 5. 슈퍼 관리자 있음 → 인증 과정 진행 → 로그인 화면
+ * 6. 미등록 또는 만료 시 → /license 페이지로 리다이렉트
+ * 7. API 에러 시 → /error 페이지로 리다이렉트
  *
- * - 제외 경로 (/license, /error): 라이선스 체크 스킵
+ * - 제외 경로 (/license, /signup/admin, /error): 라이선스 체크 스킵
  * - 테스트 환경 (TEST_AUTH_ENABLE=true): 라이선스 체크 스킵
  */
 export function LicenseProvider({ children }: PropsWithChildren) {
@@ -47,7 +54,11 @@ export function LicenseProvider({ children }: PropsWithChildren) {
   // 테스트 환경이거나 제외 경로면 라이선스 체크 스킵
   const shouldSkipLicenseCheck = useTestAuth || isExcludedPath;
 
-  const { data, isLoading, isError } = useGetLatestLicense({
+  const {
+    data: licenseData,
+    isLoading: isLicenseLoading,
+    isError: isLicenseError,
+  } = useGetLatestLicense({
     query: {
       enabled: !shouldSkipLicenseCheck,
       staleTime: 5 * 60 * 1000, // 5분 캐싱
@@ -55,32 +66,76 @@ export function LicenseProvider({ children }: PropsWithChildren) {
     },
   });
 
-  const isValid = isLicenseValid(data?.expiredAt);
+  const isLicenseValid = checkLicenseValid(licenseData?.expiredAt);
 
-  // 라이선스 체크 결과에 따른 리다이렉트
+  // 라이선스가 유효할 때만 슈퍼 관리자 체크
+  const {
+    data: superAdminData,
+    isLoading: isSuperAdminLoading,
+    isError: isSuperAdminError,
+  } = useCheckSuperAdminExists({
+    query: {
+      enabled: !shouldSkipLicenseCheck && isLicenseValid,
+      staleTime: 5 * 60 * 1000, // 5분 캐싱
+      refetchOnWindowFocus: false,
+    },
+  });
+
+  const hasSuperAdmin = superAdminData?.hasSuperAdmin ?? false;
+  const isLoading = isLicenseLoading || (isLicenseValid && isSuperAdminLoading);
+
+  // 라이선스 및 슈퍼 관리자 체크 결과에 따른 리다이렉트
   useEffect(() => {
     if (shouldSkipLicenseCheck || isLoading) return;
 
-    if (isError) {
+    // 라이선스 API 에러
+    if (isLicenseError) {
       router.replace(`${ROUTES.ERROR}?error=LicenseCheckFailed`);
       return;
     }
 
-    if (!data || !isValid) {
+    // 라이선스 미등록 또는 만료
+    if (!licenseData || !isLicenseValid) {
       router.replace(ROUTES.AUTH_LICENSE);
+      return;
     }
-  }, [shouldSkipLicenseCheck, isLoading, isError, data, isValid, router]);
+
+    // 슈퍼 관리자 API 에러
+    if (isSuperAdminError) {
+      router.replace(`${ROUTES.ERROR}?error=SuperAdminCheckFailed`);
+      return;
+    }
+
+    // 슈퍼 관리자 없음 → 관리자 회원가입 페이지로 리다이렉트
+    if (!hasSuperAdmin) {
+      router.replace(ROUTES.AUTH_SIGNUP_ADMIN);
+    }
+  }, [
+    shouldSkipLicenseCheck,
+    isLoading,
+    isLicenseError,
+    licenseData,
+    isLicenseValid,
+    isSuperAdminError,
+    hasSuperAdmin,
+    router,
+  ]);
 
   // 테스트 환경이거나 제외 경로면 바로 렌더링
   if (shouldSkipLicenseCheck) {
     return <>{children}</>;
   }
 
-  // 라이선스 체크 중 또는 리다이렉트 대기 중
-  if (isLoading || isError || !data || !isValid) {
+  // 체크 중 또는 리다이렉트 대기 중
+  if (isLoading || isLicenseError || !licenseData || !isLicenseValid) {
     return null;
   }
 
-  // 유효한 라이선스가 있으면 정상 렌더링 (인증 과정 진행)
+  // 슈퍼 관리자 체크 중 또는 슈퍼 관리자 없음 (리다이렉트 대기)
+  if (isSuperAdminError || !hasSuperAdmin) {
+    return null;
+  }
+
+  // 유효한 라이선스와 슈퍼 관리자가 있으면 정상 렌더링 (인증 과정 진행)
   return <>{children}</>;
 }
