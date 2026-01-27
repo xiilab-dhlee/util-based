@@ -2,19 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { Button, Form, FormItem, Input } from "xiilab-ui";
 
-import {
-  getAdminGetVolumeDetailQueryKey,
-  getAdminGetVolumeListQueryKey,
-} from "@/api/generated/admin-volume/admin-volume";
-import {
-  getGetVolumeDetailQueryKey,
-  getGetVolumeListQueryKey,
-} from "@/api/generated/volume/volume";
+import { getAdminGetVolumeListQueryKey } from "@/api/generated/admin-volume/admin-volume";
+import { getGetVolumeListQueryKey } from "@/api/generated/volume/volume";
 import { useGetVolumeDetailByMode } from "@/domain/volume/hooks/use-get-volume-detail-by-mode";
 import { useUpdateVolumeByMode } from "@/domain/volume/hooks/use-update-volume-by-mode";
 import {
@@ -22,12 +17,11 @@ import {
   updateVolumeSchema,
 } from "@/domain/volume/schemas/volume.schema";
 import type { VolumeMode } from "@/domain/volume/types/volume.type";
-import {
-  getVolumeStatusInfo,
-  getVolumeStorageTypeInfo,
-} from "@/domain/volume/utils/volume.util";
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
+import { getVisibilityLabel } from "@/shared/utils/visibility.util";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleColumn,
@@ -54,13 +48,14 @@ export function UpdateVolumeDetail({
   onCancel,
   onSuccess,
 }: UpdateVolumeDetailProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data } = useGetVolumeDetailByMode(mode, volumeId, {
     query: { enabled: !Number.isNaN(volumeId) },
   });
 
-  const updateVolume = useUpdateVolumeByMode(mode);
+  const { mutate, isPending } = useUpdateVolumeByMode(mode);
 
   const {
     control,
@@ -69,17 +64,12 @@ export function UpdateVolumeDetail({
     formState: { errors },
   } = useForm<UpdateVolumeFormType>({
     resolver: zodResolver(updateVolumeSchema),
-    defaultValues: {
-      volumeName: "",
-      mountPath: "",
-      shouldBePublic: false,
-    },
   });
 
   const onSubmit = (formData: UpdateVolumeFormType) => {
-    if (updateVolume.isPending) return;
+    if (isPending) return;
 
-    updateVolume.mutate(
+    mutate(
       {
         volumeId,
         data: {
@@ -89,21 +79,19 @@ export function UpdateVolumeDetail({
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: ({ volumeId: newVolumeId }) => {
           if (mode === "user") {
-            queryClient.invalidateQueries({
-              queryKey: getGetVolumeDetailQueryKey(volumeId),
-            });
             queryClient.invalidateQueries({
               queryKey: getGetVolumeListQueryKey(),
             });
+
+            router.replace(ROUTES.USER_VOLUME_DETAIL(newVolumeId));
           } else {
-            queryClient.invalidateQueries({
-              queryKey: getAdminGetVolumeDetailQueryKey(volumeId),
-            });
             queryClient.invalidateQueries({
               queryKey: getAdminGetVolumeListQueryKey(),
             });
+
+            router.replace(ROUTES.ADMIN_VOLUME_DETAIL(newVolumeId));
           }
           onSuccess();
         },
@@ -133,7 +121,7 @@ export function UpdateVolumeDetail({
   }, [data, reset]);
 
   const { text: storageTypeText } = getVolumeStorageTypeInfo(data?.volumeType);
-  const { text: statusText } = getVolumeStatusInfo(data?.isPublic);
+  const statusText = getVisibilityLabel(data?.isPublic);
 
   return (
     <StyledForm onFinish={handleSubmit(onSubmit)}>
@@ -159,7 +147,7 @@ export function UpdateVolumeDetail({
                   placeholder="볼륨 이름을 입력해 주세요."
                   width="100%"
                   autoComplete="off"
-                  disabled={updateVolume.isPending}
+                  disabled={isPending}
                   maxLength={50}
                 />
               </StyledFormItem>
@@ -195,7 +183,7 @@ export function UpdateVolumeDetail({
                   placeholder="마운트 경로를 입력해 주세요. (예: /mnt/data)"
                   width="100%"
                   autoComplete="off"
-                  disabled={updateVolume.isPending}
+                  disabled={isPending}
                   maxLength={1000}
                 />
               </StyledFormItem>
@@ -274,7 +262,7 @@ export function UpdateVolumeDetail({
           width={112}
           variant="outlined"
           onClick={handleCancelClick}
-          disabled={updateVolume.isPending}
+          disabled={isPending}
         >
           취소
         </Button>
@@ -287,7 +275,7 @@ export function UpdateVolumeDetail({
           size="medium"
           variant="gradient"
           width="100%"
-          loading={updateVolume.isPending}
+          loading={isPending}
         >
           저장
         </Button>

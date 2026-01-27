@@ -5,6 +5,7 @@ import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util
 import { createdAtColumn, creatorNameColumn } from "@/shared/components/column";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
+import { getVisibilityLabel } from "@/shared/utils/visibility.util";
 
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
@@ -26,11 +27,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "공개 설정",
       align: "center",
       render: (isPublic?: boolean) => {
-        return (
-          <span>
-            {isPublic === undefined ? "-" : isPublic ? "공개" : "비공개"}
-          </span>
-        );
+        return <span>{getVisibilityLabel(isPublic)}</span>;
       },
     },
     {

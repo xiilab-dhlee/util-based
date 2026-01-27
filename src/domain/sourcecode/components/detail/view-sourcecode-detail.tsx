@@ -7,6 +7,7 @@ import { ReadOnlyParameter } from "@/domain/sourcecode/components/detail/read-on
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { formatDateSafely } from "@/shared/utils/date.util";
+import { getVisibilityLabel } from "@/shared/utils/visibility.util";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleColumn,
@@ -44,11 +45,7 @@ export function ViewSourcecodeDetail({ data }: ViewSourcecodeDetailProps) {
             <AsideDetailArticleColumn>
               <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
               <AsideDetailArticleValue>
-                {data?.isPublic === undefined
-                  ? "-"
-                  : data.isPublic
-                    ? "공개"
-                    : "비공개"}
+                {getVisibilityLabel(data?.isPublic)}
               </AsideDetailArticleValue>
             </AsideDetailArticleColumn>
 

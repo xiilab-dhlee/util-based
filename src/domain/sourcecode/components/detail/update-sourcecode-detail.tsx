@@ -24,6 +24,7 @@ import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util
 import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { FormLabel } from "@/shared/components/form/form-label";
 import { ROUTES } from "@/shared/constants/routes.constant";
+import { getVisibilityLabel } from "@/shared/utils/visibility.util";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleColumn,
@@ -100,20 +101,16 @@ export function UpdateSourcecodeDetail({
       {
         onSuccess: ({ sourceCodeId: newSourceCodeId }) => {
           if (mode === "user") {
-            // 리스트 캐시 무효화
             queryClient.invalidateQueries({
               queryKey: getGetSourceCodeListQueryKey(),
             });
 
-            // 새 sourceCodeId로 라우트 변경
             router.replace(ROUTES.USER_SOURCECODE_DETAIL(newSourceCodeId));
           } else {
-            // 리스트 캐시 무효화
             queryClient.invalidateQueries({
               queryKey: getAdminGetSourceCodeListQueryKey(),
             });
 
-            // 새 sourceCodeId로 라우트 변경
             router.replace(ROUTES.ADMIN_SOURCECODE_DETAIL(newSourceCodeId));
           }
           onSuccess();
@@ -197,11 +194,7 @@ export function UpdateSourcecodeDetail({
               <ReadOnlyFormItem>
                 <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
                 <AsideDetailArticleValue>
-                  {data.isPublic === undefined
-                    ? "-"
-                    : data.isPublic
-                      ? "공개"
-                      : "비공개"}
+                  {getVisibilityLabel(data.isPublic)}
                 </AsideDetailArticleValue>
               </ReadOnlyFormItem>
               <ReadOnlyFormItem>

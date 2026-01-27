@@ -66,13 +66,14 @@ const baseWorkloadSchema = z.object({
   /** 소스코드 */
   sourcecodes: z.array(
     z.object({
-      sourceCodeId: z.string(),
+      sourceCodeId: z.number(),
       sourceCodeName: z.string(),
       gitUrl: z.string(),
       mountPath: z.string(),
       sourceCodeType: z.enum(["GITHUB", "GITLAB", "BITBUCKET"]),
+      isPublic: z.boolean().nullish(),
       executionCmd: z.string(),
-      createdAt: z.string(),
+      createdAt: z.string().datetime(),
     }),
   ),
   /** 볼륨 */
