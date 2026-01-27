@@ -40,6 +40,12 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
   } = useForm<CreateRegistryFormType>({
     resolver: zodResolver(createRegistrySchema),
     mode: "onChange",
+    defaultValues: {
+      imageName: "",
+      imageTagName: "",
+      registryChannel: undefined,
+      credentialId: undefined,
+    },
   });
 
   const { mutate, isPending } = useCreateRegistryByMode(mode);
@@ -77,12 +83,7 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
 
   // 구분 선택 카드에서 전달받은 구분 타입 구독 및 모달 열기
   useSubscribe<void>(REGISTRY_EVENTS.openCreateModal, () => {
-    reset({
-      imageName: "",
-      imageTagName: "",
-      registryChannel: undefined,
-      credentialId: undefined,
-    });
+    reset();
     setOpen(true);
   });
 

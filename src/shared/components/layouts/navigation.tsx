@@ -157,11 +157,9 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         ],
       },
       {
-        key: "admin.sourcecode-management",
-        label: PAGE_META["admin.sourcecode-management"]?.title,
-        icon: (
-          <Icon name={PAGE_META["admin.sourcecode-management"]?.iconName} />
-        ),
+        key: "admin.sourcecode",
+        label: PAGE_META["admin.sourcecode"]?.title,
+        icon: <Icon name={PAGE_META["admin.sourcecode"]?.iconName} />,
       },
       {
         key: "admin.volume",

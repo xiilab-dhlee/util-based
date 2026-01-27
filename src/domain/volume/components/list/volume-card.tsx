@@ -13,6 +13,7 @@ import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { SELECTOR } from "@/shared/constants/selector.constant";
 import { getSessionAccountId } from "@/shared/utils/auth.util";
+import { getVisibilityInfo } from "@/shared/utils/visibility.util";
 
 interface VolumeCardProps extends VolumeListResponse {
   mode: VolumeMode;
@@ -36,6 +37,7 @@ export function VolumeCard({
 
   const isUserMode = mode === "user";
   const { text } = getVolumeStorageTypeInfo(volumeType);
+  const { iconName } = getVisibilityInfo(isPublic);
   const isChecked = checkedList.has(volumeId);
 
   // 체크박스 활성화 조건 (삭제 권한)
@@ -79,7 +81,9 @@ export function VolumeCard({
       title={volumeName}
       showCheckBox={canCheck}
       checked={isChecked}
-      icon={!isPublic ? <Icon name="Lock" size={24} color="#464B51" /> : null}
+      icon={
+        iconName ? <Icon name={iconName} size={24} color="#464B51" /> : null
+      }
       selected={isSelected}
       data-testid={SELECTOR.LIST_CARD}
       data-volume-id={volumeId}

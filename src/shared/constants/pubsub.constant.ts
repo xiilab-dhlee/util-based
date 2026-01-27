@@ -57,8 +57,10 @@ export const WORKLOAD_EVENTS = {
 
 // 소스코드 관련 이벤트
 export const SOURCECODE_EVENTS = {
+  // 소스코드 생성 모달 열기 이벤트
+  openCreateModal: "sourcecode:open-create-modal",
   // 소스코드 삭제에 필요한 정보 전달 이벤트
-  sendDeleteSourcecode: "sourcecode:send-delete-sourcecode",
+  openDeleteModal: "sourcecode:open-delete-modal",
 } as const;
 
 // 볼륨 관련 이벤트

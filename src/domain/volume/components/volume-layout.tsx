@@ -78,7 +78,7 @@ export function VolumeLayout({ mode, children }: VolumeLayoutProps) {
 
   // User 모드에서만 workspaceId 사용
   const isUserMode = mode === "user";
-  const workspaceId = selectedWorkspace?.workspaceId ?? -1;
+  const workspaceId = selectedWorkspace?.workspaceId;
 
   const { data, isLoading, isError } = useGetVolumeListByMode(
     mode,
@@ -86,7 +86,7 @@ export function VolumeLayout({ mode, children }: VolumeLayoutProps) {
       pageNo: page - 1,
       pageSize: VOLUME_PAGE_SIZE,
       keyword: searchText || undefined,
-      ...(isUserMode && { workspaceId, hasMine }),
+      ...(isUserMode && workspaceId != null && { workspaceId, hasMine }),
       sort: sortParams?.sort,
       order: sortParams?.order,
       volumeType: volumeType ?? undefined,
@@ -94,7 +94,7 @@ export function VolumeLayout({ mode, children }: VolumeLayoutProps) {
     {
       query: {
         // User 모드에서만 workspaceId 조건 체크
-        enabled: isUserMode ? !!workspaceId : true,
+        enabled: isUserMode ? workspaceId != null : true,
       },
     },
   );

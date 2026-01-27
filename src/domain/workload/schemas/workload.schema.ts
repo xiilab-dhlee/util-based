@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { sourcecodeListSchema } from "@/domain/sourcecode/schemas/sourcecode.schema";
-
 // 워크로드 스키마
 const baseWorkloadSchema = z.object({
   /** 워크로드 아이디 */
@@ -67,9 +65,15 @@ const baseWorkloadSchema = z.object({
   ),
   /** 소스코드 */
   sourcecodes: z.array(
-    sourcecodeListSchema.extend({
-      branch: z.string(),
-      path: z.string(),
+    z.object({
+      sourceCodeId: z.number(),
+      sourceCodeName: z.string(),
+      gitUrl: z.string(),
+      mountPath: z.string(),
+      sourceCodeType: z.enum(["GITHUB", "GITLAB", "BITBUCKET"]),
+      isPublic: z.boolean().nullish(),
+      executionCmd: z.string(),
+      createdAt: z.string().datetime(),
     }),
   ),
   /** 볼륨 */

@@ -95,7 +95,8 @@ export const ROUTES = {
   ADMIN_REQUEST_IMAGE: `${MODE.ADMIN}/request-image`,
 
   // 소스코드 관리 (정적)
-  ADMIN_SOURCECODE_MANAGEMENT: `${MODE.ADMIN}/sourcecode-management`,
+  ADMIN_SOURCECODE: `${MODE.ADMIN}/sourcecode`,
+  ADMIN_SOURCECODE_DETAIL: (id: number) => `${MODE.ADMIN}/sourcecode/${id}`,
 
   // 볼륨 관리 (동적 함수)
   ADMIN_VOLUME: `${MODE.ADMIN}/volume`,
@@ -150,7 +151,7 @@ export const ROUTES = {
 
   // 소스코드 (동적 함수)
   USER_SOURCECODE: `${MODE.USER}/sourcecode`,
-  USER_SOURCECODE_DETAIL: (id: string) => `${MODE.USER}/sourcecode/${id}`,
+  USER_SOURCECODE_DETAIL: (id: number) => `${MODE.USER}/sourcecode/${id}`,
 
   // 볼륨 (동적 함수)
   USER_VOLUME: `${MODE.USER}/volume`,

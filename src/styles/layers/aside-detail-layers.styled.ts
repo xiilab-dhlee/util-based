@@ -68,6 +68,7 @@ export const AsideDetailHeaderTitle = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 
   --icon-fill: #5b29c7;
 `;

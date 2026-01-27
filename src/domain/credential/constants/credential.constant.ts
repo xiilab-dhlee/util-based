@@ -1,12 +1,9 @@
 import type { DropdownOption, TagProps } from "xiilab-ui";
 
-import {
-  CredentialListItemResponseCredentialType as CREDENTIAL_TYPES,
-  type CredentialListItemResponseCredentialType,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { CredentialListItemResponseCredentialType as CREDENTIAL_TYPES } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 
 /** 크리덴셜 타입 (API 스키마에서 가져온 타입) */
-export type CredentialType = CredentialListItemResponseCredentialType;
+export type CredentialType = CREDENTIAL_TYPES;
 
 /** 크리덴셜 타입별 라벨 */
 export const CREDENTIAL_TYPE_LABEL: Record<CredentialType, string> = {
@@ -54,6 +51,3 @@ export const CREDENTIAL_TYPE_OPTIONS: DropdownOption[] = [
     value: CREDENTIAL_TYPES.IMAGE_REGISTRY,
   },
 ];
-
-/** API 스키마에서 가져온 크리덴셜 타입 상수 재export */
-export { CREDENTIAL_TYPES };

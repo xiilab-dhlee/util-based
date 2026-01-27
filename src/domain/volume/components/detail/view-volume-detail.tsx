@@ -3,12 +3,10 @@
 import styled from "styled-components";
 
 import type { VolumeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import {
-  getVolumeStatusInfo,
-  getVolumeStorageTypeInfo,
-} from "@/domain/volume/utils/volume.util";
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import { formatFileSize } from "@/shared/utils/file.util";
+import { getVisibilityLabel } from "@/shared/utils/visibility.util";
 import {
   AsideDetailArticleBody,
   AsideDetailArticleColumn,
@@ -28,7 +26,7 @@ interface ViewVolumeDetailProps {
 
 export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
   const { text: storageTypeText } = getVolumeStorageTypeInfo(data?.volumeType);
-  const { text: statusText } = getVolumeStatusInfo(data?.isPublic);
+  const statusText = getVisibilityLabel(data?.isPublic);
 
   return (
     <StyledArticleBody>
@@ -53,7 +51,7 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
 
         <AsideDetailArticleColumn>
           <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
-          <AsideDetailArticleValue>{statusText || "-"}</AsideDetailArticleValue>
+          <AsideDetailArticleValue>{statusText}</AsideDetailArticleValue>
         </AsideDetailArticleColumn>
 
         <AsideDetailArticleColumn>

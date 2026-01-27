@@ -1,79 +1,76 @@
 "use client";
 
 import classNames from "classnames";
-import { isNull } from "es-toolkit";
-import { isEmpty } from "es-toolkit/compat";
-import { useAtom } from "jotai";
+// import { isNull } from "es-toolkit";
+// import { isEmpty } from "es-toolkit/compat";
+// import { useAtom } from "jotai";
 import type { ChangeEvent } from "react";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
+// import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Button, Dropdown, Icon, Input, Typography } from "xiilab-ui";
 
-import { SourcecodeSelect } from "@/domain/sourcecode/components/sourcecode-select";
-import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
-import type {
-  SourcecodeIdType,
-  SourcecodeListType,
-} from "@/domain/sourcecode/schemas/sourcecode.schema";
-import { openCreateSourcecodeModalAtom } from "@/domain/sourcecode/state/sourcecode.atom";
-import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
-import { workloadSourcecodesAtom } from "@/domain/workload/state/create-workload.atom";
+// import { SourcecodeSelect } from "@/domain/sourcecode/components/sourcecode-select";
+// import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
+// import type {
+//   SourcecodeIdType,
+//   SourcecodeListType,
+// } from "@/domain/sourcecode/schemas/sourcecode.schema";
+// import type { WorkloadSourcecodeType } from "@/domain/workload/schemas/workload.schema";
+// import { workloadSourcecodesAtom } from "@/domain/workload/state/create-workload.atom";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { SourcecodeCommandTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-command-tooltip-title";
 import { SourcecodeMountPathTooltipTitle } from "@/shared/components/tooltip-title/sourcecode-mount-path-tooltip-title";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { SOURCECODE_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 
 export function CreateWorkloadSourcecode() {
-  const [sourcecodes, setSourcecodes] = useAtom(workloadSourcecodesAtom);
+  // const [sourcecodes, setSourcecodes] = useAtom(workloadSourcecodesAtom);
 
   const [collapsed, setCollapsed] = useState(false);
 
-  const [sourcecode, setSourcecode] = useState<SourcecodeListType | null>(null);
+  // const [sourcecode, setSourcecode] = useState<SourcecodeListType | null>(null);
 
   const [branch, setBranch] = useState<string | null>(null);
   const [mountPath, setMountPath] = useState<string | null>(null);
   const [cmd, setCmd] = useState<string | null>(null);
 
-  const { onOpen } = useGlobalModal(openCreateSourcecodeModalAtom);
+  const publish = usePublish();
   const handleSourceCodeCreate = () => {
-    onOpen();
+    publish(SOURCECODE_EVENTS.openCreateModal);
   };
 
   const handleAddSourcecode = () => {
-    if (sourcecode) {
-      if (isNull(branch)) {
-        toast.error("Branch를 선택해 주세요.");
-        return;
-      }
-
-      if (isEmpty(mountPath)) {
-        toast.error("마운트 경로를 입력해 주세요.");
-        return;
-      }
-
-      const next: WorkloadSourcecodeType = {
-        ...sourcecode,
-        branch: branch || "",
-        path: mountPath || "",
-        cmd: cmd || "",
-      };
-
-      setSourcecodes([...sourcecodes, next]);
-      setSourcecode(null);
-      setBranch(null);
-      setMountPath(null);
-      setCmd(null);
-    } else {
-      toast.error("소스코드를 선택해 주세요.");
-    }
+    // if (sourcecode) {
+    //   if (isNull(branch)) {
+    //     toast.error("Branch를 선택해 주세요.");
+    //     return;
+    //   }
+    //   if (isEmpty(mountPath)) {
+    //     toast.error("마운트 경로를 입력해 주세요.");
+    //     return;
+    //   }
+    //   const next: WorkloadSourcecodeType = {
+    //     ...sourcecode,
+    //     branch: branch || "",
+    //     path: mountPath || "",
+    //     cmd: cmd || "",
+    //   };
+    //   setSourcecodes([...sourcecodes, next]);
+    //   // setSourcecode(null);
+    //   setBranch(null);
+    //   setMountPath(null);
+    //   setCmd(null);
+    // } else {
+    //   toast.error("소스코드를 선택해 주세요.");
+    // }
   };
 
-  const handleDeleteSourcecode = (id: SourcecodeIdType) => {
-    setSourcecodes(sourcecodes.filter((sourcecode) => sourcecode.id !== id));
-  };
+  // const handleDeleteSourcecode = (id: SourcecodeIdType) => {
+  //   setSourcecodes(sourcecodes.filter((sourcecode) => sourcecode.id !== id));
+  // };
 
   const handleBranchChange = (value: string | number | null) => {
     setBranch(typeof value === "string" ? value : null);
@@ -92,12 +89,12 @@ export function CreateWorkloadSourcecode() {
   };
 
   // 소스코드 선택 시 마운트경로 및 명령어 정보 가져오기
-  useEffect(() => {
-    if (sourcecode) {
-      setMountPath(sourcecode.path || "");
-      setCmd(sourcecode.cmd || "");
-    }
-  }, [sourcecode]);
+  // useEffect(() => {
+  //   if (sourcecode) {
+  //     setMountPath(sourcecode.path || "");
+  //     setCmd(sourcecode.cmd || "");
+  //   }
+  // }, [sourcecode]);
   return (
     <Container>
       <Header>
@@ -115,7 +112,7 @@ export function CreateWorkloadSourcecode() {
             <Typography.Text variant="body-2-4" color="#000000">
               소스코드 목록
             </Typography.Text>
-            <SourcecodeSelect value={sourcecode} setValue={setSourcecode} />
+            {/* <SourcecodeSelect value={sourcecode} setValue={setSourcecode} /> */}
           </Pane>
           <Pane>
             <Typography.Text variant="body-2-4" color="#000000">
@@ -193,20 +190,20 @@ export function CreateWorkloadSourcecode() {
 
         {!collapsed && (
           <SourceCodeCardsContainer>
-            {sourcecodes.map((sourcecode) => (
+            {/* {sourcecodes.map((sourcecode) => (
               <WorkloadSourcecodeCard
                 key={sourcecode.id}
                 {...sourcecode}
                 onDelete={() => handleDeleteSourcecode(sourcecode.id)}
               />
-            ))}
-            {sourcecodes.length === 0 && (
+            ))} */}
+            {/* {sourcecodes.length === 0 && (
               <EmptyVolumeMessage>
                 <Typography.Text variant="body-2-4" color="#707070">
                   선택된 소스코드가 없습니다.
                 </Typography.Text>
               </EmptyVolumeMessage>
-            )}
+            )} */}
           </SourceCodeCardsContainer>
         )}
       </Footer>
@@ -291,14 +288,14 @@ const SourceCodeCardsContainer = styled.div`
   gap: 8px;
 `;
 
-const EmptyVolumeMessage = styled.div`
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-`;
+// const EmptyVolumeMessage = styled.div`
+//   grid-column: 1 / -1;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   padding: 40px 20px;
+//   text-align: center;
+// `;
 
 const StyledAddButton = styled(Button)`
   font-size: 12px !important;

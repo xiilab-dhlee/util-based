@@ -44,21 +44,6 @@ export const getVolumeStorageTypeInfo = (storageType?: string) => {
   return { text, icon };
 };
 
-export const getVolumeStatusInfo = (status?: boolean) => {
-  let text = "";
-  let icon = "";
-
-  if (status) {
-    text = "공개";
-    icon = "";
-  } else {
-    text = "비공개";
-    icon = "Lock";
-  }
-
-  return { text, icon };
-};
-
 export const convertToFileTreeType = (
   items: VolumeFileItemResponse[],
 ): FileTreeType[] => {

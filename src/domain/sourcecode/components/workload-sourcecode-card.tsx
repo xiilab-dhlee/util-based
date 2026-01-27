@@ -20,21 +20,22 @@ interface WorkloadSourcecodeCardProps extends WorkloadSourcecodeType {
  * 소스 코드 카드 컴포넌트
  */
 export function WorkloadSourcecodeCard({
-  status,
-  name,
-  path,
-  url,
-  type,
+  sourceCodeName,
+  mountPath,
+  gitUrl,
+  sourceCodeType,
+  isPublic,
   onDelete,
 }: WorkloadSourcecodeCardProps) {
-  const { text, tag } = getSourcecodeTypeInfo(type);
+  const { text, tag } = getSourcecodeTypeInfo(sourceCodeType);
+  const isPrivate = isPublic === false;
 
   return (
     <CardWrapper data-testid={WORKLOAD_SELECTOR.SOURCECODE_CARD}>
       <Card
         contentVariant="compact"
-        title={name}
-        icon={status === "PRIVATE" ? <Icon name="Lock" /> : undefined}
+        title={sourceCodeName}
+        icon={isPrivate ? <Icon name="Lock" /> : undefined}
         actionElement={
           onDelete ? (
             <IconWrapper onClick={onDelete}>
@@ -51,7 +52,7 @@ export function WorkloadSourcecodeCard({
               className="truncate"
               data-testid={WORKLOAD_SELECTOR.SOURCECODE_URL}
             >
-              {url}
+              {gitUrl}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
@@ -60,13 +61,13 @@ export function WorkloadSourcecodeCard({
               className="truncate"
               data-testid={WORKLOAD_SELECTOR.SOURCECODE_PATH}
             >
-              {path}
+              {mountPath}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
             <LikeCompactCardKey>타입 :</LikeCompactCardKey>
             <LikeCompactCardValue
-              data-testid={WORKLOAD_SELECTOR.sourcecodeType(type)}
+              data-testid={WORKLOAD_SELECTOR.sourcecodeType(sourceCodeType)}
             >
               <Tag variant={tag}>{text}</Tag>
             </LikeCompactCardValue>

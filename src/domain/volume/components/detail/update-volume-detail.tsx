@@ -2,19 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { Button, Form, FormItem, Input } from "xiilab-ui";
 
-import {
-  getAdminGetVolumeDetailQueryKey,
-  getAdminGetVolumeListQueryKey,
-} from "@/api/generated/admin-volume/admin-volume";
-import {
-  getGetVolumeDetailQueryKey,
-  getGetVolumeListQueryKey,
-} from "@/api/generated/volume/volume";
+import { getAdminGetVolumeListQueryKey } from "@/api/generated/admin-volume/admin-volume";
+import { getGetVolumeListQueryKey } from "@/api/generated/volume/volume";
 import { useGetVolumeDetailByMode } from "@/domain/volume/hooks/use-get-volume-detail-by-mode";
 import { useUpdateVolumeByMode } from "@/domain/volume/hooks/use-update-volume-by-mode";
 import {
@@ -22,11 +17,21 @@ import {
   updateVolumeSchema,
 } from "@/domain/volume/schemas/volume.schema";
 import type { VolumeMode } from "@/domain/volume/types/volume.type";
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import { formatDateSafely } from "@/shared/utils/date.util";
+import { formatFileSize } from "@/shared/utils/file.util";
+import { getVisibilityLabel } from "@/shared/utils/visibility.util";
 import {
   AsideDetailArticleBody,
+  AsideDetailArticleColumn,
   AsideDetailArticleHeader,
   AsideDetailArticleItem,
+  AsideDetailArticleKey,
+  AsideDetailArticleRow,
+  AsideDetailArticleRowItem,
   AsideDetailArticleTitle,
+  AsideDetailArticleValue,
   AsideDetailFooter,
 } from "@/styles/layers/aside-detail-layers.styled";
 
@@ -43,13 +48,14 @@ export function UpdateVolumeDetail({
   onCancel,
   onSuccess,
 }: UpdateVolumeDetailProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data } = useGetVolumeDetailByMode(mode, volumeId, {
     query: { enabled: !Number.isNaN(volumeId) },
   });
 
-  const updateVolume = useUpdateVolumeByMode(mode);
+  const { mutate, isPending } = useUpdateVolumeByMode(mode);
 
   const {
     control,
@@ -58,41 +64,34 @@ export function UpdateVolumeDetail({
     formState: { errors },
   } = useForm<UpdateVolumeFormType>({
     resolver: zodResolver(updateVolumeSchema),
-    defaultValues: {
-      volumeName: "",
-      mountPath: "",
-      isPublic: false,
-    },
   });
 
   const onSubmit = (formData: UpdateVolumeFormType) => {
-    if (updateVolume.isPending) return;
+    if (isPending) return;
 
-    updateVolume.mutate(
+    mutate(
       {
         volumeId,
         data: {
           volumeName: formData.volumeName,
           mountPath: formData.mountPath,
-          isPublic: formData.isPublic,
+          shouldBePublic: formData.shouldBePublic,
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: ({ volumeId: newVolumeId }) => {
           if (mode === "user") {
-            queryClient.invalidateQueries({
-              queryKey: getGetVolumeDetailQueryKey(volumeId),
-            });
             queryClient.invalidateQueries({
               queryKey: getGetVolumeListQueryKey(),
             });
+
+            router.replace(ROUTES.USER_VOLUME_DETAIL(newVolumeId));
           } else {
-            queryClient.invalidateQueries({
-              queryKey: getAdminGetVolumeDetailQueryKey(volumeId),
-            });
             queryClient.invalidateQueries({
               queryKey: getAdminGetVolumeListQueryKey(),
             });
+
+            router.replace(ROUTES.ADMIN_VOLUME_DETAIL(newVolumeId));
           }
           onSuccess();
         },
@@ -105,7 +104,7 @@ export function UpdateVolumeDetail({
       reset({
         volumeName: data.volumeName ?? "",
         mountPath: data.mountPath ?? "",
-        isPublic: data.isPublic ?? false,
+        shouldBePublic: data.isPublic ?? false,
       });
     }
     onCancel();
@@ -116,24 +115,28 @@ export function UpdateVolumeDetail({
       reset({
         volumeName: data.volumeName ?? "",
         mountPath: data.mountPath ?? "",
-        isPublic: data.isPublic ?? false,
+        shouldBePublic: data.isPublic ?? false,
       });
     }
   }, [data, reset]);
 
+  const { text: storageTypeText } = getVolumeStorageTypeInfo(data?.volumeType);
+  const statusText = getVisibilityLabel(data?.isPublic);
+
   return (
     <StyledForm onFinish={handleSubmit(onSubmit)}>
-      <StyledFormBody>
+      {/* 수정 가능한 기본 정보 섹션 */}
+      <StyledArticleBody>
         <AsideDetailArticleItem>
           <AsideDetailArticleHeader>
-            <AsideDetailArticleTitle>기본 정보 수정</AsideDetailArticleTitle>
+            <AsideDetailArticleTitle>기본 정보</AsideDetailArticleTitle>
           </AsideDetailArticleHeader>
 
           <Controller
             name="volumeName"
             control={control}
             render={({ field }) => (
-              <FormItem
+              <StyledFormItem
                 label="볼륨 이름"
                 required
                 validateStatus={errors.volumeName ? "error" : undefined}
@@ -144,17 +147,32 @@ export function UpdateVolumeDetail({
                   placeholder="볼륨 이름을 입력해 주세요."
                   width="100%"
                   autoComplete="off"
-                  disabled={updateVolume.isPending}
+                  disabled={isPending}
+                  maxLength={50}
                 />
-              </FormItem>
+              </StyledFormItem>
             )}
           />
+
+          <ReadOnlyFormItem>
+            <AsideDetailArticleKey>스토리지 타입</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {storageTypeText || "-"}
+            </AsideDetailArticleValue>
+          </ReadOnlyFormItem>
+
+          <ReadOnlyFormItem>
+            <AsideDetailArticleKey>공개 설정</AsideDetailArticleKey>
+            <AsideDetailArticleValue>
+              {statusText || "-"}
+            </AsideDetailArticleValue>
+          </ReadOnlyFormItem>
 
           <Controller
             name="mountPath"
             control={control}
             render={({ field }) => (
-              <FormItem
+              <StyledFormItem
                 label="Mount Path"
                 required
                 validateStatus={errors.mountPath ? "error" : undefined}
@@ -165,20 +183,86 @@ export function UpdateVolumeDetail({
                   placeholder="마운트 경로를 입력해 주세요. (예: /mnt/data)"
                   width="100%"
                   autoComplete="off"
-                  disabled={updateVolume.isPending}
+                  disabled={isPending}
+                  maxLength={1000}
                 />
-              </FormItem>
+              </StyledFormItem>
             )}
           />
         </AsideDetailArticleItem>
-      </StyledFormBody>
+        <AsideDetailArticleItem>
+          <AsideDetailArticleRow>
+            <AsideDetailArticleRowItem>
+              <AsideDetailArticleHeader>
+                <AsideDetailArticleTitle>설정 내용</AsideDetailArticleTitle>
+              </AsideDetailArticleHeader>
+
+              {data?.volumeType === "ASTRAGO" && (
+                <>
+                  <ReadOnlyFormItem>
+                    <AsideDetailArticleKey>스토리지</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {data?.storageName || "-"}
+                    </AsideDetailArticleValue>
+                  </ReadOnlyFormItem>
+                  <ReadOnlyFormItem>
+                    <AsideDetailArticleKey>파일 용량</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {data?.fileSizeByte
+                        ? formatFileSize(data?.fileSizeByte).formatted
+                        : "-"}
+                    </AsideDetailArticleValue>
+                  </ReadOnlyFormItem>
+                </>
+              )}
+
+              {data?.volumeType === "ON_PREMISE" && (
+                <>
+                  <ReadOnlyFormItem>
+                    <AsideDetailArticleKey>Server IP</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {data?.serverIp || "-"}
+                    </AsideDetailArticleValue>
+                  </ReadOnlyFormItem>
+                  <ReadOnlyFormItem>
+                    <AsideDetailArticleKey>Server Path</AsideDetailArticleKey>
+                    <AsideDetailArticleValue>
+                      {data?.volumePath || "-"}
+                    </AsideDetailArticleValue>
+                  </ReadOnlyFormItem>
+                </>
+              )}
+            </AsideDetailArticleRowItem>
+
+            <AsideDetailArticleRowItem>
+              <AsideDetailArticleHeader>
+                <AsideDetailArticleTitle>생성 정보</AsideDetailArticleTitle>
+              </AsideDetailArticleHeader>
+
+              <ReadOnlyFormItem>
+                <AsideDetailArticleKey>생성자</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  {data?.creatorName || "-"}
+                </AsideDetailArticleValue>
+              </ReadOnlyFormItem>
+
+              <ReadOnlyFormItem>
+                <AsideDetailArticleKey>생성일</AsideDetailArticleKey>
+                <AsideDetailArticleValue>
+                  {formatDateSafely(data?.createdAt)}
+                </AsideDetailArticleValue>
+              </ReadOnlyFormItem>
+            </AsideDetailArticleRowItem>
+          </AsideDetailArticleRow>
+        </AsideDetailArticleItem>
+      </StyledArticleBody>
 
       <Footer>
         <Button
           width={112}
           variant="outlined"
           onClick={handleCancelClick}
-          disabled={updateVolume.isPending}
+          disabled={isPending}
         >
           취소
         </Button>
@@ -191,9 +275,9 @@ export function UpdateVolumeDetail({
           size="medium"
           variant="gradient"
           width="100%"
-          loading={updateVolume.isPending}
+          loading={isPending}
         >
-          상세 정보 저장
+          저장
         </Button>
       </Footer>
     </StyledForm>
@@ -201,7 +285,6 @@ export function UpdateVolumeDetail({
 }
 
 const StyledForm = styled(Form)`
-  gap: 16px;
   height: 100%;
 
   & form {
@@ -211,14 +294,33 @@ const StyledForm = styled(Form)`
   }
 `;
 
-const StyledFormBody = styled(AsideDetailArticleBody)`
+const StyledArticleBody = styled(AsideDetailArticleBody)`
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   background-color: #fcfcfc;
+
+  & + & {
+    margin-top: 10px;
+  }
+`;
+
+const StyledFormItem = styled(FormItem)`
+  margin-bottom: 10px !important;
+`;
+
+const ReadOnlyFormItem = styled(AsideDetailArticleColumn)`
+  &.last {
+    margin-bottom: 10px;
+  }
+
+  & + & {
+    margin-top: 10px;
+  }
 `;
 
 const Footer = styled(AsideDetailFooter)`
-  align-items: flex-end;
   flex: 1;
+  flex-shrink: 0;
+  align-items: flex-end;
 `;

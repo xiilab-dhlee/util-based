@@ -30,14 +30,6 @@ import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { CREDENTIAL_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
-const DEFAULT_FORM_VALUES: CreateCredentialFormType = {
-  credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
-  credentialName: "",
-  description: "",
-  credentialAccountId: "",
-  token: "",
-};
-
 export function CreateCredentialModal() {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
@@ -53,7 +45,13 @@ export function CreateCredentialModal() {
     formState: { errors },
   } = useForm<CreateCredentialFormType>({
     resolver: zodResolver(createCredentialFormSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
+    defaultValues: {
+      credentialType: CredentialListItemResponseCredentialType.GIT_REPOSITORY,
+      credentialName: "",
+      description: "",
+      credentialAccountId: "",
+      token: "",
+    },
   });
 
   const onSubmit = (data: CreateCredentialFormType) => {
@@ -84,7 +82,7 @@ export function CreateCredentialModal() {
   };
 
   useSubscribe(CREDENTIAL_EVENTS.openCreateModal, () => {
-    reset(DEFAULT_FORM_VALUES);
+    reset();
     setOpen(true);
   });
 

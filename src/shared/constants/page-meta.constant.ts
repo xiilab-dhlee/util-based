@@ -251,10 +251,10 @@ export const PAGE_META = {
   // ============================================
   // Admin Routes - Sourcecode Management
   // ============================================
-  "admin.sourcecode-management": {
+  "admin.sourcecode": {
     title: "소스코드 관리",
     iconName: "SourceCode",
-    href: ROUTES.ADMIN_SOURCECODE_MANAGEMENT,
+    href: ROUTES.ADMIN_SOURCECODE,
   },
 
   // ============================================
