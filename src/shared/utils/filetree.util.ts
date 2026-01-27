@@ -54,10 +54,7 @@ export const addNodeToTree = (
     const exists = treeData.some((node) => node.path === newNode.path);
     if (exists) return treeData;
 
-    const directories = treeData.filter((node) => node.type === "directory");
-    const files = treeData.filter((node) => node.type === "file");
-
-    return [...directories, newNode, ...files].sort((a, b) => {
+    return [...treeData, newNode].sort((a, b) => {
       if (a.type === "directory" && b.type === "file") return -1;
       if (a.type === "file" && b.type === "directory") return 1;
       return a.name.localeCompare(b.name, "ko");
