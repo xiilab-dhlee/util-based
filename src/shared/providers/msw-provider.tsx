@@ -2,7 +2,6 @@
 
 import { isNil } from "es-toolkit";
 import type { RequestHandler } from "msw";
-import { setupWorker } from "msw/browser";
 import type { PropsWithChildren } from "react";
 import { useEffect, useState } from "react";
 
@@ -61,6 +60,8 @@ export function MSWProvider({ children }: PropsWithChildren) {
 
         const validHandlers = combinedHandlers.filter(isRequestHandler);
 
+        // 동적으로 msw/browser import (서버 사이드에서 로드되지 않도록)
+        const { setupWorker } = await import("msw/browser");
         const worker = setupWorker(...validHandlers);
 
         // Service Worker가 완전히 활성화될 때까지 대기
