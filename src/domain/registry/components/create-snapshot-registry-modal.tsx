@@ -217,12 +217,8 @@ export function CreateSnapshotRegistryModal({
         setSelectedWorkloadKey(null);
         setValue("workloadId", undefined, { shouldValidate: true });
       } else {
-        // 백엔드에서 workloadId 필드 추가 예정
-        const workloadId = (
-          workload as ActiveWorkloadResponse & { workloadId: number }
-        ).workloadId;
         setSelectedWorkloadKey(workload.workloadResourceName);
-        setValue("workloadId", workloadId, { shouldValidate: true });
+        setValue("workloadId", workload.workloadId, { shouldValidate: true });
       }
     },
     [selectedWorkloadKey, setValue],
