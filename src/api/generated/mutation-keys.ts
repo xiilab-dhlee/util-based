@@ -127,23 +127,6 @@ export const MUTATION_KEYS = {
   registerAstragoVolume: "registerAstragoVolume",
 
   // ============================================
-  // Workload
-  // ============================================
-  createWorkload: "createWorkload",
-  updateWorkload: "updateWorkload",
-  deleteWorkload: "deleteWorkload",
-  terminateWorkload: "terminateWorkload",
-  restartWorkload: "restartWorkload",
-
-  // ============================================
-  // Workload File
-  // ============================================
-  workloadCreateFolder: "workloadCreateFolder",
-  workloadDeleteFiles: "workloadDeleteFiles",
-  workloadDecompressFile: "workloadDecompressFile",
-  workloadCompressFiles: "workloadCompressFiles",
-
-  // ============================================
   // Sourcecode
   // ============================================
   registerSourceCode: "registerSourceCode",
@@ -256,6 +239,20 @@ export const MUTATION_KEYS = {
   updateMonitoringNotificationSetEnabled:
     "updateMonitoringNotificationSetEnabled",
   createMonitoringNotificationSet: "createMonitoringNotificationSet",
+
+  // ============================================
+  // Workload
+  // ============================================
+  updateWorkload: "updateWorkload",
+  deleteWorkload: "deleteWorkload",
+  updateResourcePreset: "updateResourcePreset",
+  createWorkload: "createWorkload",
+  workloadCreateFolder: "workloadCreateFolder",
+  workloadDeleteFiles: "workloadDeleteFiles",
+  workloadDecompressFile: "workloadDecompressFile",
+  workloadCompressFiles: "workloadCompressFiles",
+  terminateWorkload: "terminateWorkload",
+  restartWorkload: "restartWorkload",
 
   // ============================================
   // Volume (Admin)
