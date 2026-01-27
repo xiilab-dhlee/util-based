@@ -18,8 +18,12 @@ export function filterToRootPaths(paths: string[]): string[] {
 
   for (const path of sorted) {
     // 이미 추가된 상위 경로의 하위인지 확인
+    // rootPath가 "/"인 경우 모든 경로를 자식으로 간주 (${rootPath}/가 "//"가 되는 문제 방지)
     const isChildOfExisting = rootPaths.some(
-      (rootPath) => path.startsWith(`${rootPath}/`) || path === rootPath,
+      (rootPath) =>
+        path === rootPath ||
+        rootPath === "/" ||
+        path.startsWith(`${rootPath}/`),
     );
 
     if (!isChildOfExisting) {
