@@ -11,7 +11,7 @@ import { workloadFileCheckedNodesAtom } from "@/domain/workload/state/workload.a
 import { AxiosService } from "@/shared/api/axios";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { filterToRootPaths } from "@/shared/state/filetree.atom";
+import { filterToRootPaths } from "@/shared/utils/filetree.util";
 
 interface DownloadWorkloadFilePayload {
   workspaceId: number;

@@ -5,6 +5,25 @@ import styled from "styled-components";
 
 import { MySpinner } from "@/shared/components/spinner";
 
+/**
+ * 파일 확장자를 MIME 타입용으로 정규화
+ *
+ * - 앞의 점(.) 제거
+ * - 소문자 변환
+ * - jpg → jpeg 매핑
+ * - svg → svg+xml 매핑
+ */
+function normalizeExtensionForMime(extension: string | null): string {
+  if (!extension) return "png";
+
+  const normalized = extension.replace(/^\./, "").toLowerCase();
+
+  if (normalized === "jpg") return "jpeg";
+  if (normalized === "svg") return "svg+xml";
+
+  return normalized;
+}
+
 export interface WorkloadFilePreviewProps {
   previewType: "image" | "text" | null;
   previewData: string | undefined;
@@ -46,8 +65,7 @@ export function WorkloadFilePreview({
 
   // 이미지 미리보기
   if (previewType === "image") {
-    const extension = fileExtension?.toLowerCase() || "png";
-    const mimeType = extension === "svg" ? "svg+xml" : extension;
+    const mimeType = normalizeExtensionForMime(fileExtension);
     const imageSrc = `data:image/${mimeType};base64,${previewData}`;
 
     return (

@@ -47,6 +47,7 @@ export function WorkloadFileCard(props: WorkloadFileCardProps) {
       </Body>
       <Footer>
         <FileName
+          type="button"
           className="truncate"
           onClick={handleClickFileName}
           title={name || undefined}
@@ -55,7 +56,11 @@ export function WorkloadFileCard(props: WorkloadFileCardProps) {
         </FileName>
 
         <FileSize>
-          {fileSize ? formatFileSize(Number(fileSize) || 0).formatted : null}
+          <FileSize>
+            {fileSize != null
+              ? formatFileSize(Number(fileSize) || 0).formatted
+              : null}
+          </FileSize>
         </FileSize>
       </Footer>
     </Container>

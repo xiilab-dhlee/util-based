@@ -22,7 +22,6 @@ export function WorkloadFileButton({
     workloadFileSelectedKeyAtom,
   );
 
-  // 선택 상태만 변경 (하위 파일 로드는 useWorkloadFileTree에서 반응형으로 처리)
   const handleClick = () => {
     setFileSelectedKey(activeKey);
   };

@@ -18,7 +18,7 @@ import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { filterToRootPaths } from "@/shared/state/filetree.atom";
+import { filterToRootPaths } from "@/shared/utils/filetree.util";
 import { FormItemLabel, LastFormItem } from "@/styles/layers/form-layer.styled";
 
 interface CompressVolumeFilePayload {

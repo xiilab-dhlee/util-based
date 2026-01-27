@@ -12,8 +12,10 @@ import {
 } from "@/domain/workload/state/workload.atom";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { filterToRootPaths } from "@/shared/state/filetree.atom";
-import { removeNodesFromTree } from "@/shared/utils/filetree.util";
+import {
+  filterToRootPaths,
+  removeNodesFromTree,
+} from "@/shared/utils/filetree.util";
 
 interface DeleteWorkloadFilePayload {
   workspaceId: number;

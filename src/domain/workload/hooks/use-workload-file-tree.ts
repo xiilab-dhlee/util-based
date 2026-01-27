@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { workloadListFiles } from "@/api/generated/workload/workload";
 import {
@@ -63,87 +63,79 @@ export const useWorkloadFileTree = ({
   const loadedPathsRef = useRef<Set<string>>(new Set());
   const inFlightPathsRef = useRef<Set<string>>(new Set());
 
-  const updateCheckedNodesForChildren = useCallback(
-    (parentPath: string, children: FileTreeType[]) => {
-      setCheckedNodes((prev) => {
-        // 부모 폴더가 체크되어 있지 않으면 아무것도 하지 않음
-        if (!prev.has(parentPath)) {
-          return prev;
-        }
+  const updateCheckedNodesForChildren = (
+    parentPath: string,
+    children: FileTreeType[],
+  ) => {
+    setCheckedNodes((prev) => {
+      // 부모 폴더가 체크되어 있지 않으면 아무것도 하지 않음
+      if (!prev.has(parentPath)) {
+        return prev;
+      }
 
-        // 부모가 체크되어 있으면 모든 자식 경로를 체크 상태에 추가
-        const next = new Set(prev);
-        for (const child of children) {
-          const childPaths = collectAllDescendantPaths(child);
-          for (const path of childPaths) {
-            next.add(path);
-          }
+      // 부모가 체크되어 있으면 모든 자식 경로를 체크 상태에 추가
+      const next = new Set(prev);
+      for (const child of children) {
+        const childPaths = collectAllDescendantPaths(child);
+        for (const path of childPaths) {
+          next.add(path);
         }
+      }
+      return next;
+    });
+  };
+
+  const loadChildren = async (path: string) => {
+    if (loadedPathsRef.current.has(path)) return;
+    if (inFlightPathsRef.current.has(path)) return;
+    if (!workspaceId || !workloadResourceName) return;
+
+    inFlightPathsRef.current.add(path);
+    setLoadingPaths((prev) => new Set(prev).add(path));
+
+    try {
+      const response = await workloadListFiles(
+        workspaceId,
+        workloadResourceName,
+        { path, podName: podName || undefined },
+      );
+
+      const children = response?.children ?? [];
+      const fileCount = response?.fileCount;
+      const directoryCount = response?.directoryCount;
+      const convertedChildren = convertWorkloadFileToTreeType(children);
+
+      if (path === "/") {
+        setTreeData(convertedChildren);
+        setIsError(false);
+      } else {
+        setTreeData((prev) =>
+          mergeChildrenToTree(prev, path, convertedChildren, {
+            fileCount,
+            directoryCount,
+          }),
+        );
+        updateCheckedNodesForChildren(path, convertedChildren);
+      }
+
+      loadedPathsRef.current.add(path);
+    } catch (error) {
+      console.error(`Failed to load children for path: ${path}`, error);
+      if (path === "/") {
+        setIsError(true);
+      }
+    } finally {
+      inFlightPathsRef.current.delete(path);
+      setLoadingPaths((prev) => {
+        const next = new Set(prev);
+        next.delete(path);
         return next;
       });
-    },
-    [setCheckedNodes],
-  );
-
-  const loadChildren = useCallback(
-    async (path: string) => {
-      if (loadedPathsRef.current.has(path)) return;
-      if (inFlightPathsRef.current.has(path)) return;
-      if (!workspaceId || !workloadResourceName) return;
-
-      inFlightPathsRef.current.add(path);
-      setLoadingPaths((prev) => new Set(prev).add(path));
-
-      try {
-        const response = await workloadListFiles(
-          workspaceId,
-          workloadResourceName,
-          { path, podName: podName || undefined },
-        );
-
-        const children = response?.children ?? [];
-        const fileCount = response?.fileCount;
-        const directoryCount = response?.directoryCount;
-        const convertedChildren = convertWorkloadFileToTreeType(children);
-
-        if (path === "/") {
-          setTreeData(convertedChildren);
-          setIsError(false);
-        } else {
-          setTreeData((prev) =>
-            mergeChildrenToTree(prev, path, convertedChildren, {
-              fileCount,
-              directoryCount,
-            }),
-          );
-          updateCheckedNodesForChildren(path, convertedChildren);
-        }
-
-        loadedPathsRef.current.add(path);
-      } catch (error) {
-        console.error(`Failed to load children for path: ${path}`, error);
-        if (path === "/") {
-          setIsError(true);
-        }
-      } finally {
-        inFlightPathsRef.current.delete(path);
-        setLoadingPaths((prev) => {
-          const next = new Set(prev);
-          next.delete(path);
-          return next;
-        });
-      }
-    },
-    [
-      workspaceId,
-      workloadResourceName,
-      podName,
-      setTreeData,
-      updateCheckedNodesForChildren,
-    ],
-  );
+    }
+  };
 
   // 루트 로드 (최초 마운트 시)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: React Compiler handles memoization
   useEffect(() => {
     if (!enabled || !workspaceId || !workloadResourceName) {
       return;
@@ -161,11 +153,12 @@ export const useWorkloadFileTree = ({
     };
 
     loadRoot();
-  }, [enabled, workspaceId, workloadResourceName, loadChildren]);
+  }, [enabled, workspaceId, workloadResourceName]);
 
   // 선택된 노드가 디렉토리인 경우 자동으로 하위 파일 로드 (반응형 패턴)
   const selectedNodePath = selectedNode?.path;
   const selectedNodeType = selectedNode?.type;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: React Compiler handles memoization
   useEffect(() => {
     if (!selectedNodePath) return;
     if (selectedNodeType !== "directory") return;
@@ -173,7 +166,7 @@ export const useWorkloadFileTree = ({
     if (loadedPathsRef.current.has(selectedNodePath)) return;
 
     loadChildren(selectedNodePath);
-  }, [selectedNodePath, selectedNodeType, loadChildren]);
+  }, [selectedNodePath, selectedNodeType]);
 
   return {
     treeData,
