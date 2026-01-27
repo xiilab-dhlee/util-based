@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Dropdown } from "xiilab-ui";
 
-import type { ActiveWorkloadItemWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { ActiveWorkloadResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ACTIVE_WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
 import {
   activeWorkloadPageAtom,
@@ -35,7 +35,7 @@ export function ActiveWorkloadStatusSort({
    * 상태 변경 핸들러
    * 상태 변경 시 페이지를 초기화
    */
-  const handleChange = (value: ActiveWorkloadItemWorkloadStatus | null) => {
+  const handleChange = (value: ActiveWorkloadResponseWorkloadStatus | null) => {
     resetPage();
     setStatus(value);
   };

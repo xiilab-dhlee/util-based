@@ -1,8 +1,8 @@
 import type { DropdownOption } from "xiilab-ui";
 
 import {
-  type ActiveWorkloadItemWorkloadJobType,
-  ActiveWorkloadItemWorkloadStatus,
+  type ActiveWorkloadResponseWorkloadJobType,
+  ActiveWorkloadResponseWorkloadStatus,
   GetActiveWorkloadsOrder,
   GetActiveWorkloadsSort,
   GetTerminatedWorkloadsOrder,
@@ -22,7 +22,7 @@ export const WORKLOAD_IMAGE_TYPES = [
  * 워크로드 잡 타입 라벨 상수 (짧은 버전)
  */
 export const WORKLOAD_JOB_TYPE_LABEL_MAP: Record<
-  ActiveWorkloadItemWorkloadJobType,
+  ActiveWorkloadResponseWorkloadJobType,
   string
 > = {
   BATCH: "Batch",
@@ -34,7 +34,7 @@ export const WORKLOAD_JOB_TYPE_LABEL_MAP: Record<
  * 워크로드 잡 타입 상세 라벨 상수
  */
 export const WORKLOAD_JOB_TYPE_DETAIL_LABEL_MAP: Record<
-  ActiveWorkloadItemWorkloadJobType,
+  ActiveWorkloadResponseWorkloadJobType,
   string
 > = {
   BATCH: "Batch Job",
@@ -46,7 +46,7 @@ export const WORKLOAD_JOB_TYPE_DETAIL_LABEL_MAP: Record<
  * 워크로드 잡 타입별 색상 상수
  */
 export const WORKLOAD_JOB_TYPE_COLOR_MAP: Record<
-  ActiveWorkloadItemWorkloadJobType,
+  ActiveWorkloadResponseWorkloadJobType,
   string
 > = {
   BATCH: "#2E3452",
@@ -56,7 +56,7 @@ export const WORKLOAD_JOB_TYPE_COLOR_MAP: Record<
 
 export const WORKLOAD_JOB_OPTIONS: DropdownOption[] = (
   Object.entries(WORKLOAD_JOB_TYPE_LABEL_MAP) as [
-    ActiveWorkloadItemWorkloadJobType,
+    ActiveWorkloadResponseWorkloadJobType,
     string,
   ][]
 ).map(([value, label]) => ({
@@ -68,15 +68,15 @@ export const WORKLOAD_JOB_OPTIONS: DropdownOption[] = (
  * 워크로드 상태 라벨 상수
  */
 export const WORKLOAD_STATUS_LABEL_MAP: Record<
-  (typeof ActiveWorkloadItemWorkloadStatus)[keyof typeof ActiveWorkloadItemWorkloadStatus],
+  (typeof ActiveWorkloadResponseWorkloadStatus)[keyof typeof ActiveWorkloadResponseWorkloadStatus],
   string
 > = {
-  [ActiveWorkloadItemWorkloadStatus.CREATING]: "생성중",
-  [ActiveWorkloadItemWorkloadStatus.PENDING]: "대기중",
-  [ActiveWorkloadItemWorkloadStatus.RUNNING]: "실행중",
-  [ActiveWorkloadItemWorkloadStatus.TERMINATING]: "종료중",
-  [ActiveWorkloadItemWorkloadStatus.TERMINATED]: "종료",
-  [ActiveWorkloadItemWorkloadStatus.ERROR]: "에러",
+  [ActiveWorkloadResponseWorkloadStatus.CREATING]: "생성중",
+  [ActiveWorkloadResponseWorkloadStatus.PENDING]: "대기중",
+  [ActiveWorkloadResponseWorkloadStatus.RUNNING]: "실행중",
+  [ActiveWorkloadResponseWorkloadStatus.TERMINATING]: "종료중",
+  [ActiveWorkloadResponseWorkloadStatus.TERMINATED]: "종료",
+  [ActiveWorkloadResponseWorkloadStatus.ERROR]: "에러",
 } as const;
 
 /**
@@ -85,24 +85,28 @@ export const WORKLOAD_STATUS_LABEL_MAP: Record<
  */
 export const ACTIVE_WORKLOAD_STATUS_OPTIONS = [
   {
-    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.CREATING],
-    value: ActiveWorkloadItemWorkloadStatus.CREATING,
+    label:
+      WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadResponseWorkloadStatus.CREATING],
+    value: ActiveWorkloadResponseWorkloadStatus.CREATING,
   },
   {
-    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.PENDING],
-    value: ActiveWorkloadItemWorkloadStatus.PENDING,
+    label:
+      WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadResponseWorkloadStatus.PENDING],
+    value: ActiveWorkloadResponseWorkloadStatus.PENDING,
   },
   {
-    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.RUNNING],
-    value: ActiveWorkloadItemWorkloadStatus.RUNNING,
+    label:
+      WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadResponseWorkloadStatus.RUNNING],
+    value: ActiveWorkloadResponseWorkloadStatus.RUNNING,
   },
   {
-    label: WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadItemWorkloadStatus.ERROR],
-    value: ActiveWorkloadItemWorkloadStatus.ERROR,
+    label:
+      WORKLOAD_STATUS_LABEL_MAP[ActiveWorkloadResponseWorkloadStatus.ERROR],
+    value: ActiveWorkloadResponseWorkloadStatus.ERROR,
   },
 ] as const satisfies ReadonlyArray<{
   label: string;
-  value: ActiveWorkloadItemWorkloadStatus;
+  value: ActiveWorkloadResponseWorkloadStatus;
 }>;
 
 /**
@@ -229,7 +233,7 @@ export const WORKLOAD_IMAGE_TYPE_LABEL_MAP = {
  * 잡 타입에 따른 라벨 반환 (워크로드 공용)
  */
 export function getJobTypeLabel(
-  jobType: ActiveWorkloadItemWorkloadJobType,
+  jobType: ActiveWorkloadResponseWorkloadJobType,
 ): string {
   return WORKLOAD_JOB_TYPE_LABEL_MAP[jobType] ?? jobType;
 }

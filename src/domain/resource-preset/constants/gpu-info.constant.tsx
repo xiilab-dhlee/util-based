@@ -1,7 +1,5 @@
-import type {
-  ResourcePresetGpuType,
-  ResourcePresetNodeType,
-} from "@/domain/resource-preset/schemas/resource-preset.schema";
+import type { GpuResponseGpuType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { GetPresetsNodeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MultiNodeTooltipTitle } from "@/shared/components/tooltip-title/multi-node-tooltip-title";
 import { SingleNodeTooltipTitle } from "@/shared/components/tooltip-title/single-node-tooltip-title";
 
@@ -9,19 +7,22 @@ import { SingleNodeTooltipTitle } from "@/shared/components/tooltip-title/single
    GPU 타입 옵션
 ============================================================================= */
 
+export type GpuUiType = GpuResponseGpuType | "NONE";
+
 export const GPU_TYPE_OPTIONS: {
-  type: ResourcePresetGpuType;
+  type: GpuUiType;
   label: string;
 }[] = [
   { type: "NORMAL", label: "Normal GPU" },
   { type: "MIG", label: "MIG" },
   { type: "MPS", label: "MPS" },
+  { type: "NONE", label: "GPU 미사용" },
 ];
 
 /**
  * GPU 선택 라벨 반환 (gpuType에 따라 동적 변경)
  */
-export const getGpuSelectLabel = (gpuType: ResourcePresetGpuType): string => {
+export const getGpuSelectLabel = (gpuType: GpuUiType): string => {
   switch (gpuType) {
     case "NORMAL":
       return "Normal GPU 선택";
@@ -29,6 +30,8 @@ export const getGpuSelectLabel = (gpuType: ResourcePresetGpuType): string => {
       return "MIG GPU 선택";
     case "MPS":
       return "MPS GPU 선택";
+    case "NONE":
+      return "GPU 미사용";
     default:
       return "GPU 선택";
   }
@@ -39,19 +42,19 @@ export const getGpuSelectLabel = (gpuType: ResourcePresetGpuType): string => {
 ============================================================================= */
 
 export const NODE_TYPE_OPTIONS: {
-  type: ResourcePresetNodeType;
+  type: GetPresetsNodeType;
   label: string;
   icon: "SingleNode" | "MultiNode";
   tooltip: React.ReactNode;
 }[] = [
   {
-    type: "single",
+    type: GetPresetsNodeType.SINGLE,
     label: "Single Node",
     icon: "SingleNode",
     tooltip: <SingleNodeTooltipTitle />,
   },
   {
-    type: "multi",
+    type: GetPresetsNodeType.MULTI,
     label: "Multi Node",
     icon: "MultiNode",
     tooltip: <MultiNodeTooltipTitle />,

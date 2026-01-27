@@ -3,8 +3,8 @@ import { Icon } from "xiilab-ui";
 
 import {
   type ActiveWorkloadItem,
-  type ActiveWorkloadItemWorkloadJobType,
-  type ActiveWorkloadItemWorkloadStatus,
+  type ActiveWorkloadResponseWorkloadJobType,
+  type ActiveWorkloadResponseWorkloadStatus,
   type TerminatedWorkloadItem,
   WorkloadStatusResponseWorkloadStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
@@ -228,7 +228,7 @@ const createColumnList = (
       title: "Job Type",
       align: "center",
       width: "8%",
-      render: (jobType: ActiveWorkloadItemWorkloadJobType) => {
+      render: (jobType: ActiveWorkloadResponseWorkloadJobType) => {
         return (
           <ColumnAlignCenterWrap>
             <span data-testid={WORKLOAD_SELECTOR.JOB_TYPE}>
@@ -276,7 +276,7 @@ const createColumnList = (
       title: "상태",
       align: "center",
       width: "6%",
-      render: (status: ActiveWorkloadItemWorkloadStatus) => {
+      render: (status: ActiveWorkloadResponseWorkloadStatus) => {
         return (
           <ColumnAlignCenterWrap>
             <WorkloadStatusText status={status} />
