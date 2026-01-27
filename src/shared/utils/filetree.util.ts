@@ -72,25 +72,46 @@ export const addNodeToTree = (
         return a.name.localeCompare(b.name, "ko");
       });
 
+      // 자식 노드들의 count 재계산 (removeNodesFromTree와 동일한 집계 로직)
+      const fileCount = newChildren.reduce((acc, child) => {
+        if (child.type === "file") return acc + 1;
+        return acc + (child.fileCount ?? 0);
+      }, 0);
+
+      const directoryCount = newChildren.reduce((acc, child) => {
+        if (child.type === "directory")
+          return acc + 1 + (child.directoryCount ?? 0);
+        return acc;
+      }, 0);
+
       return {
         ...node,
         children: newChildren,
-        // newNode.type에 따라 해당 카운트 증가
-        ...(newNode.type === "directory" &&
-          node.directoryCount !== undefined && {
-            directoryCount: node.directoryCount + 1,
-          }),
-        ...(newNode.type === "file" &&
-          node.fileCount !== undefined && {
-            fileCount: node.fileCount + 1,
-          }),
+        ...(node.fileCount !== undefined && { fileCount }),
+        ...(node.directoryCount !== undefined && { directoryCount }),
       };
     }
 
     if (node.children.length > 0) {
+      const newChildren = addNodeToTree(node.children, parentPath, newNode);
+
+      // 자식 노드들의 count 재계산 (removeNodesFromTree와 동일한 집계 로직)
+      const fileCount = newChildren.reduce((acc, child) => {
+        if (child.type === "file") return acc + 1;
+        return acc + (child.fileCount ?? 0);
+      }, 0);
+
+      const directoryCount = newChildren.reduce((acc, child) => {
+        if (child.type === "directory")
+          return acc + 1 + (child.directoryCount ?? 0);
+        return acc;
+      }, 0);
+
       return {
         ...node,
-        children: addNodeToTree(node.children, parentPath, newNode),
+        children: newChildren,
+        ...(node.fileCount !== undefined && { fileCount }),
+        ...(node.directoryCount !== undefined && { directoryCount }),
       };
     }
     return node;
@@ -104,7 +125,7 @@ export const mergeChildrenToTree = (
   treeData: FileTreeType[],
   parentPath: string,
   children: FileTreeType[],
-  metadata?: MergeMetadata,
+  metadata: MergeMetadata,
 ): FileTreeType[] => {
   return treeData.map((node) => {
     // 현재 노드가 타겟인 경우
@@ -112,10 +133,10 @@ export const mergeChildrenToTree = (
       return {
         ...node,
         children,
-        ...(metadata?.fileCount !== undefined && {
+        ...(metadata.fileCount !== undefined && {
           fileCount: metadata.fileCount,
         }),
-        ...(metadata?.directoryCount !== undefined && {
+        ...(metadata.directoryCount !== undefined && {
           directoryCount: metadata.directoryCount,
         }),
       };
