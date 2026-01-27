@@ -34,11 +34,13 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponseAdminPolicySetResponse,
   BaseResponseAdminResourceRequestDetailResponse,
-  BaseResponseAdminWorkspaceDetailResponse,
+  BaseResponseAdminWorkspaceDetailListResponse,
+  BaseResponseAdminWorkspaceSingleDetailResponse,
   BaseResponseAdminWorkspaceSummaryListResponse,
+  BaseResponsePageResponseActiveWorkloadResponse,
   BaseResponsePageResponseAdminResourceRequestListResponse,
-  BaseResponsePageResponseAdminWorkspaceListResponse,
   BaseResponsePageResponseAdminWorkspaceMemberResponse,
+  BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -116,15 +118,15 @@ export const getUpdatePolicySetResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetAdminAllWorkspacesResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseAdminWorkspaceListResponse> = {},
-): BaseResponsePageResponseAdminWorkspaceListResponse => ({
+export const getGetAdminWorkspaceListResponseMock = (
+  overrideResponse: Partial<BaseResponseAdminWorkspaceDetailListResponse> = {},
+): BaseResponseAdminWorkspaceDetailListResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
-    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    currentPage: faker.number.int({ min: undefined, max: undefined }),
     content: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
@@ -135,63 +137,184 @@ export const getGetAdminAllWorkspacesResponseMock = (
         gpu: {
           quotaCount: faker.number.int({ min: undefined, max: undefined }),
           usedCount: faker.number.int({ min: undefined, max: undefined }),
+          requestCount: faker.number.int({ min: undefined, max: undefined }),
+          utilization: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
           detail: {
             normal: {
-              quotaCount: faker.number.int({ min: undefined, max: undefined }),
-              usedCount: faker.number.int({ min: undefined, max: undefined }),
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
             },
             mig: Array.from(
               { length: faker.number.int({ min: 1, max: 10 }) },
               (_, i) => i + 1,
             ).map(() => ({
               profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
-              quotaCount: faker.number.int({ min: undefined, max: undefined }),
-              usedCount: faker.number.int({ min: undefined, max: undefined }),
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
             })),
-            mps: Array.from(
-              { length: faker.number.int({ min: 1, max: 10 }) },
-              (_, i) => i + 1,
-            ).map(() => ({
-              quotaCount: faker.number.int({ min: undefined, max: undefined }),
-              usedCount: faker.number.int({ min: undefined, max: undefined }),
-            })),
+            mps: {
+              requestCount: faker.number.int({
+                min: undefined,
+                max: undefined,
+              }),
+            },
           },
         },
         cpu: {
-          quotaCore: faker.number.int({ min: undefined, max: undefined }),
-          usedCore: faker.number.int({ min: undefined, max: undefined }),
+          quotaCore: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
+          usedCore: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
+          requestCore: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
+          utilization: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
         },
         memory: {
           quotaByte: faker.number.int({ min: undefined, max: undefined }),
           usedByte: faker.number.int({ min: undefined, max: undefined }),
-        },
-        utilization: {
-          gpu: {
-            currentPercent: faker.number.float({
-              min: undefined,
-              max: undefined,
-              fractionDigits: 2,
-            }),
-          },
-          cpu: {
-            currentPercent: faker.number.float({
-              min: undefined,
-              max: undefined,
-              fractionDigits: 2,
-            }),
-          },
-          memory: {
-            currentPercent: faker.number.float({
-              min: undefined,
-              max: undefined,
-              fractionDigits: 2,
-            }),
-          },
+          requestByte: faker.number.int({ min: undefined, max: undefined }),
+          utilization: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
         },
       },
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetAdminTerminatedWorkloadsResponseMock = (
+  overrideResponse: Partial<BaseResponseTerminatedWorkloadListResponse> = {},
+): BaseResponseTerminatedWorkloadListResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPage: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
+      workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadResourceName: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      reclaimStatus: faker.helpers.arrayElement([
+        "RECLAIMED",
+        "WARNING",
+        "NORMAL",
+      ] as const),
+      reclaimWarningCount: faker.number.int({ min: undefined, max: undefined }),
+      terminatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetAdminActiveWorkloadsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseActiveWorkloadResponse> = {},
+): BaseResponsePageResponseActiveWorkloadResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
+      workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadResourceName: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      reclaimStatus: faker.helpers.arrayElement([
+        "RECLAIMED",
+        "WARNING",
+        "NORMAL",
+      ] as const),
+      reclaimWarningCount: faker.number.int({ min: undefined, max: undefined }),
+      workloadStatus: faker.helpers.arrayElement([
+        "CREATING",
+        "PENDING",
+        "RUNNING",
+        "TERMINATING",
+        "TERMINATED",
+        "ERROR",
+      ] as const),
+      ageSeconds: faker.number.int({ min: undefined, max: undefined }),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+      connection: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        portName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        url: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      port: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        portName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        portNumber: faker.number.int({ min: undefined, max: undefined }),
+        servicePortNum: faker.number.int({ min: undefined, max: undefined }),
+        url: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
+      env: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        key: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        value: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      })),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -231,8 +354,8 @@ export const getGetAdminWorkspaceMembersResponseMock = (
 });
 
 export const getGetAdminWorkspaceDetailResponseMock = (
-  overrideResponse: Partial<BaseResponseAdminWorkspaceDetailResponse> = {},
-): BaseResponseAdminWorkspaceDetailResponse => ({
+  overrideResponse: Partial<BaseResponseAdminWorkspaceSingleDetailResponse> = {},
+): BaseResponseAdminWorkspaceSingleDetailResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
@@ -244,10 +367,13 @@ export const getGetAdminWorkspaceDetailResponseMock = (
         quotaCount: faker.number.int({ min: undefined, max: undefined }),
         usedCount: faker.number.int({ min: undefined, max: undefined }),
         requestCount: faker.number.int({ min: undefined, max: undefined }),
+        utilization: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
         detail: {
           normal: {
-            quotaCount: faker.number.int({ min: undefined, max: undefined }),
-            usedCount: faker.number.int({ min: undefined, max: undefined }),
             requestCount: faker.number.int({ min: undefined, max: undefined }),
           },
           mig: Array.from(
@@ -255,29 +381,44 @@ export const getGetAdminWorkspaceDetailResponseMock = (
             (_, i) => i + 1,
           ).map(() => ({
             profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
-            quotaCount: faker.number.int({ min: undefined, max: undefined }),
-            usedCount: faker.number.int({ min: undefined, max: undefined }),
             requestCount: faker.number.int({ min: undefined, max: undefined }),
           })),
-          mps: Array.from(
-            { length: faker.number.int({ min: 1, max: 10 }) },
-            (_, i) => i + 1,
-          ).map(() => ({
-            quotaCount: faker.number.int({ min: undefined, max: undefined }),
-            usedCount: faker.number.int({ min: undefined, max: undefined }),
+          mps: {
             requestCount: faker.number.int({ min: undefined, max: undefined }),
-          })),
+          },
         },
       },
       cpu: {
-        quotaCore: faker.number.int({ min: undefined, max: undefined }),
-        usedCore: faker.number.int({ min: undefined, max: undefined }),
-        requestCore: faker.number.int({ min: undefined, max: undefined }),
+        quotaCore: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        usedCore: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        requestCore: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        utilization: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
       },
       memory: {
         quotaByte: faker.number.int({ min: undefined, max: undefined }),
         usedByte: faker.number.int({ min: undefined, max: undefined }),
         requestByte: faker.number.int({ min: undefined, max: undefined }),
+        utilization: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
       },
     },
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -306,7 +447,7 @@ export const getGetWorkspaceSummaryListResponseMock = (
       workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
       resource: {
         utilization: {
           gpu: {
@@ -632,14 +773,14 @@ export const getDeleteWorkspacesMockHandler = (
   );
 };
 
-export const getGetAdminAllWorkspacesMockHandler = (
+export const getGetAdminWorkspaceListMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseAdminWorkspaceListResponse
+    | BaseResponseAdminWorkspaceDetailListResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseAdminWorkspaceListResponse>
-        | BaseResponsePageResponseAdminWorkspaceListResponse),
+        | Promise<BaseResponseAdminWorkspaceDetailListResponse>
+        | BaseResponseAdminWorkspaceDetailListResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
@@ -653,7 +794,67 @@ export const getGetAdminAllWorkspacesMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetAdminAllWorkspacesResponseMock(),
+            : getGetAdminWorkspaceListResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetAdminTerminatedWorkloadsMockHandler = (
+  overrideResponse?:
+    | BaseResponseTerminatedWorkloadListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseTerminatedWorkloadListResponse>
+        | BaseResponseTerminatedWorkloadListResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/workspaces/:workspaceId/workloads/terminated",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAdminTerminatedWorkloadsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetAdminActiveWorkloadsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseActiveWorkloadResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseActiveWorkloadResponse>
+        | BaseResponsePageResponseActiveWorkloadResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/workspaces/:workspaceId/workloads/active",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAdminActiveWorkloadsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -694,12 +895,12 @@ export const getGetAdminWorkspaceMembersMockHandler = (
 
 export const getGetAdminWorkspaceDetailMockHandler = (
   overrideResponse?:
-    | BaseResponseAdminWorkspaceDetailResponse
+    | BaseResponseAdminWorkspaceSingleDetailResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponseAdminWorkspaceDetailResponse>
-        | BaseResponseAdminWorkspaceDetailResponse),
+        | Promise<BaseResponseAdminWorkspaceSingleDetailResponse>
+        | BaseResponseAdminWorkspaceSingleDetailResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
@@ -818,7 +1019,9 @@ export const getAdminWorkspaceMock = () => [
   getGetPolicySetMockHandler(),
   getUpdatePolicySetMockHandler(),
   getDeleteWorkspacesMockHandler(),
-  getGetAdminAllWorkspacesMockHandler(),
+  getGetAdminWorkspaceListMockHandler(),
+  getGetAdminTerminatedWorkloadsMockHandler(),
+  getGetAdminActiveWorkloadsMockHandler(),
   getGetAdminWorkspaceMembersMockHandler(),
   getGetAdminWorkspaceDetailMockHandler(),
   getGetWorkspaceSummaryListMockHandler(),

@@ -401,7 +401,7 @@ export const createResourceRequestParams = zod.object({
 });
 
 export const createResourceRequestBodyRequestReasonMin = 0;
-export const createResourceRequestBodyRequestReasonMax = 2000;
+export const createResourceRequestBodyRequestReasonMax = 1000;
 
 export const createResourceRequestBody = zod
   .object({
@@ -468,7 +468,7 @@ export const createResourceRequestBody = zod
       .string()
       .min(createResourceRequestBodyRequestReasonMin)
       .max(createResourceRequestBodyRequestReasonMax)
-      .describe("요청 사유 (한글 1,000자, 영문 2,000자)"),
+      .describe("요청 사유 (최대 1,000자)"),
   })
   .strict()
   .describe("워크스페이스 리소스 추가 요청 생성");
@@ -543,13 +543,13 @@ export const getWorkspaceResourceUsageResponse = zod
           })
           .strict()
           .describe("리소스 사용량 항목"),
-        memoryGiB: zod
+        memoryBytes: zod
           .object({
-            total: zod.number().describe("총 할당량"),
-            used: zod.number().describe("사용 중인 양"),
+            total: zod.number().describe("총 할당량 (바이트)"),
+            used: zod.number().describe("사용 중인 양 (바이트)"),
           })
           .strict()
-          .describe("리소스 사용량 항목"),
+          .describe("메모리 사용량 항목 (바이트)"),
       })
       .strict()
       .optional()

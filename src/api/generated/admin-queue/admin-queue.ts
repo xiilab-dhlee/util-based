@@ -54,10 +54,10 @@ import type {
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
- * urgent-standby 큐의 워크로드를 워크스페이스 큐(일반 대기)로 되돌립니다.
- * @summary 긴급 대기큐에서 워크로드 제거
+ * 긴급 우선순위 큐에서 워크로드를 제거하여 일반 대기 상태로 되돌립니다. 제거 후 남은 워크로드들의 우선순위가 자동으로 재조정됩니다.
+ * @summary 긴급 큐에서 워크로드 제거
  */
-export const removeWorkloadFromUrgentStandby = (
+export const removeWorkloadFromUrgentQueue = (
   removeWorkloadFromUrgentQueueRequest: RemoveWorkloadFromUrgentQueueRequest,
 ) => {
   return customInstance<BaseResponseUnit>({
@@ -68,23 +68,23 @@ export const removeWorkloadFromUrgentStandby = (
   });
 };
 
-export const getRemoveWorkloadFromUrgentStandbyMutationOptions = <
+export const getRemoveWorkloadFromUrgentQueueMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+    Awaited<ReturnType<typeof removeWorkloadFromUrgentQueue>>,
     TError,
     { data: RemoveWorkloadFromUrgentQueueRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+  Awaited<ReturnType<typeof removeWorkloadFromUrgentQueue>>,
   TError,
   { data: RemoveWorkloadFromUrgentQueueRequest },
   TContext
 > => {
-  const mutationKey = ["removeWorkloadFromUrgentStandby"];
+  const mutationKey = ["removeWorkloadFromUrgentQueue"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -94,34 +94,34 @@ export const getRemoveWorkloadFromUrgentStandbyMutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+    Awaited<ReturnType<typeof removeWorkloadFromUrgentQueue>>,
     { data: RemoveWorkloadFromUrgentQueueRequest }
   > = (props) => {
     const { data } = props ?? {};
 
-    return removeWorkloadFromUrgentStandby(data);
+    return removeWorkloadFromUrgentQueue(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type RemoveWorkloadFromUrgentStandbyMutationResult = NonNullable<
-  Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>
+export type RemoveWorkloadFromUrgentQueueMutationResult = NonNullable<
+  Awaited<ReturnType<typeof removeWorkloadFromUrgentQueue>>
 >;
-export type RemoveWorkloadFromUrgentStandbyMutationBody =
+export type RemoveWorkloadFromUrgentQueueMutationBody =
   RemoveWorkloadFromUrgentQueueRequest;
-export type RemoveWorkloadFromUrgentStandbyMutationError = unknown;
+export type RemoveWorkloadFromUrgentQueueMutationError = unknown;
 
 /**
- * @summary 긴급 대기큐에서 워크로드 제거
+ * @summary 긴급 큐에서 워크로드 제거
  */
-export const useRemoveWorkloadFromUrgentStandby = <
+export const useRemoveWorkloadFromUrgentQueue = <
   TError = unknown,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+      Awaited<ReturnType<typeof removeWorkloadFromUrgentQueue>>,
       TError,
       { data: RemoveWorkloadFromUrgentQueueRequest },
       TContext
@@ -129,18 +129,18 @@ export const useRemoveWorkloadFromUrgentStandby = <
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof removeWorkloadFromUrgentStandby>>,
+  Awaited<ReturnType<typeof removeWorkloadFromUrgentQueue>>,
   TError,
   { data: RemoveWorkloadFromUrgentQueueRequest },
   TContext
 > => {
   const mutationOptions =
-    getRemoveWorkloadFromUrgentStandbyMutationOptions(options);
+    getRemoveWorkloadFromUrgentQueueMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * urgent-standby 큐의 워크로드 순서를 변경합니다. rank 값으로 우선순위를 지정합니다 (1~5, 낮을수록 높은 우선순위).
+ * 긴급 큐의 워크로드 우선순위를 변경합니다. rank 값이 낮을수록 높은 우선순위입니다.
  * @summary 긴급 대기큐 워크로드 순서 변경
  */
 export const updateUrgentStandbyOrder = (
@@ -224,7 +224,7 @@ export const useUpdateUrgentStandbyOrder = <
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * urgent-standby 큐에서 대기 중인 워크로드 전체 목록을 조회합니다. rank 정보가 포함됩니다.
+ * 긴급 우선순위로 대기 중인 워크로드 목록을 우선순위 순서대로 조회합니다.
  * @summary 긴급 대기큐 워크로드 목록 조회
  */
 export const getUrgentStandbyWorkloads = (signal?: AbortSignal) => {
@@ -373,7 +373,7 @@ export function useGetUrgentStandbyWorkloads<
 }
 
 /**
- * Pending 상태의 워크로드를 urgent-standby 큐에 추가합니다. 최대 5개까지 등록 가능합니다.
+ * Pending 상태의 워크로드를 긴급 우선순위 큐에 추가합니다. 최대 5개까지 등록 가능합니다.
  * @summary 긴급 대기큐에 워크로드 추가
  */
 export const addWorkloadToUrgentStandby = (

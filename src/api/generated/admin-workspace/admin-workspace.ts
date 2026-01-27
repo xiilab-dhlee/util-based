@@ -50,14 +50,18 @@ import type {
   AdminWorkspaceDeleteRequest,
   BaseResponseAdminPolicySetResponse,
   BaseResponseAdminResourceRequestDetailResponse,
-  BaseResponseAdminWorkspaceDetailResponse,
+  BaseResponseAdminWorkspaceDetailListResponse,
+  BaseResponseAdminWorkspaceSingleDetailResponse,
   BaseResponseAdminWorkspaceSummaryListResponse,
+  BaseResponsePageResponseActiveWorkloadResponse,
   BaseResponsePageResponseAdminResourceRequestListResponse,
-  BaseResponsePageResponseAdminWorkspaceListResponse,
   BaseResponsePageResponseAdminWorkspaceMemberResponse,
+  BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
-  GetAdminAllWorkspacesParams,
+  GetAdminActiveWorkloadsParams,
   GetAdminResourceRequestsParams,
+  GetAdminTerminatedWorkloadsParams,
+  GetAdminWorkspaceListParams,
   GetAdminWorkspaceMembersParams,
   GetWorkspaceSummaryListParams,
   ResourceRequestRejectRequest,
@@ -601,14 +605,26 @@ export const useDeleteWorkspaces = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 전체 워크스페이스 목록을 페이징하여 조회합니다. 워크스페이스명, 생성자명으로 검색이 가능합니다. 생성일, 워크스페이스명, 생성자명으로 정렬이 가능합니다.
+ * 
+            워크스페이스 목록을 상세 리소스 정보와 함께 조회합니다.
+
+            **포함 정보:**
+            - 워크스페이스 기본 정보 (ID, 이름, 생성자, 생성일시)
+            - GPU 리소스 (Normal GPU + MIG 프로필별 quota/used/utilization)
+            - CPU 리소스 (quota/used/utilization)
+            - Memory 리소스 (quota/used/utilization)
+
+            **참고:**
+            - MIG 프로필 quota는 Queue annotation (astrago.xiilab.com/original-capability)에서 조회
+            - MIG 프로필 used는 Queue status.allocated에서 조회
+        
  * @summary 관리자용 워크스페이스 목록 조회
  */
-export const getAdminAllWorkspaces = (
-  params?: GetAdminAllWorkspacesParams,
+export const getAdminWorkspaceList = (
+  params?: GetAdminWorkspaceListParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponsePageResponseAdminWorkspaceListResponse>({
+  return customInstance<BaseResponseAdminWorkspaceDetailListResponse>({
     url: `/api/v1/admin/workspaces`,
     method: "GET",
     params,
@@ -616,21 +632,21 @@ export const getAdminAllWorkspaces = (
   });
 };
 
-export const getGetAdminAllWorkspacesQueryKey = (
-  params?: GetAdminAllWorkspacesParams,
+export const getGetAdminWorkspaceListQueryKey = (
+  params?: GetAdminWorkspaceListParams,
 ) => {
   return [`/api/v1/admin/workspaces`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetAdminAllWorkspacesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+export const getGetAdminWorkspaceListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceList>>,
   TError = unknown,
 >(
-  params?: GetAdminAllWorkspacesParams,
+  params?: GetAdminWorkspaceListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceList>>,
         TError,
         TData
       >
@@ -640,42 +656,42 @@ export const getGetAdminAllWorkspacesQueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetAdminAllWorkspacesQueryKey(params);
+    queryOptions?.queryKey ?? getGetAdminWorkspaceListQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getAdminAllWorkspaces>>
-  > = ({ signal }) => getAdminAllWorkspaces(params, signal);
+    Awaited<ReturnType<typeof getAdminWorkspaceList>>
+  > = ({ signal }) => getAdminWorkspaceList(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+    Awaited<ReturnType<typeof getAdminWorkspaceList>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetAdminAllWorkspacesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getAdminAllWorkspaces>>
+export type GetAdminWorkspaceListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminWorkspaceList>>
 >;
-export type GetAdminAllWorkspacesQueryError = unknown;
+export type GetAdminWorkspaceListQueryError = unknown;
 
-export function useGetAdminAllWorkspaces<
-  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+export function useGetAdminWorkspaceList<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceList>>,
   TError = unknown,
 >(
-  params: undefined | GetAdminAllWorkspacesParams,
+  params: undefined | GetAdminWorkspaceListParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceList>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+          Awaited<ReturnType<typeof getAdminWorkspaceList>>,
           TError,
-          Awaited<ReturnType<typeof getAdminAllWorkspaces>>
+          Awaited<ReturnType<typeof getAdminWorkspaceList>>
         >,
         "initialData"
       >;
@@ -684,24 +700,24 @@ export function useGetAdminAllWorkspaces<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAdminAllWorkspaces<
-  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+export function useGetAdminWorkspaceList<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceList>>,
   TError = unknown,
 >(
-  params?: GetAdminAllWorkspacesParams,
+  params?: GetAdminWorkspaceListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceList>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+          Awaited<ReturnType<typeof getAdminWorkspaceList>>,
           TError,
-          Awaited<ReturnType<typeof getAdminAllWorkspaces>>
+          Awaited<ReturnType<typeof getAdminWorkspaceList>>
         >,
         "initialData"
       >;
@@ -710,15 +726,15 @@ export function useGetAdminAllWorkspaces<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAdminAllWorkspaces<
-  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+export function useGetAdminWorkspaceList<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceList>>,
   TError = unknown,
 >(
-  params?: GetAdminAllWorkspacesParams,
+  params?: GetAdminWorkspaceListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceList>>,
         TError,
         TData
       >
@@ -732,15 +748,15 @@ export function useGetAdminAllWorkspaces<
  * @summary 관리자용 워크스페이스 목록 조회
  */
 
-export function useGetAdminAllWorkspaces<
-  TData = Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+export function useGetAdminWorkspaceList<
+  TData = Awaited<ReturnType<typeof getAdminWorkspaceList>>,
   TError = unknown,
 >(
-  params?: GetAdminAllWorkspacesParams,
+  params?: GetAdminWorkspaceListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminAllWorkspaces>>,
+        Awaited<ReturnType<typeof getAdminWorkspaceList>>,
         TError,
         TData
       >
@@ -750,7 +766,408 @@ export function useGetAdminAllWorkspaces<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetAdminAllWorkspacesQueryOptions(params, options);
+  const queryOptions = getGetAdminWorkspaceListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            특정 워크스페이스의 종료된 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - DB에서 workloadStatus가 TERMINATED인 워크로드
+
+            **필터링:**
+            - workloadJobType: 워크로드 타입 (batch, interactive, distributed)
+            - keyword: 워크로드 이름 검색
+
+            **정렬:**
+            - workloadName: 워크로드 이름순
+            - createdAt: 생성일시순
+            - terminatedAt: 종료일시순 (기본값: terminatedAt DESC)
+
+            **참고:**
+            - 사용자 API와 달리 hasMine 파라미터 없음 (관리자는 전체 조회)
+            - DB 레벨 페이징/정렬 적용
+        
+ * @summary 관리자용 특정 워크스페이스 종료된 워크로드 목록 조회
+ */
+export const getAdminTerminatedWorkloads = (
+  workspaceId: number,
+  params?: GetAdminTerminatedWorkloadsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseTerminatedWorkloadListResponse>({
+    url: `/api/v1/admin/workspaces/${workspaceId}/workloads/terminated`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetAdminTerminatedWorkloadsQueryKey = (
+  workspaceId?: number,
+  params?: GetAdminTerminatedWorkloadsParams,
+) => {
+  return [
+    `/api/v1/admin/workspaces/${workspaceId}/workloads/terminated`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetAdminTerminatedWorkloadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminTerminatedWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetAdminTerminatedWorkloadsQueryKey(workspaceId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>
+  > = ({ signal }) => getAdminTerminatedWorkloads(workspaceId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAdminTerminatedWorkloadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>
+>;
+export type GetAdminTerminatedWorkloadsQueryError = unknown;
+
+export function useGetAdminTerminatedWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params: undefined | GetAdminTerminatedWorkloadsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminTerminatedWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminTerminatedWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminTerminatedWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminTerminatedWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 관리자용 특정 워크스페이스 종료된 워크로드 목록 조회
+ */
+
+export function useGetAdminTerminatedWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminTerminatedWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminTerminatedWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAdminTerminatedWorkloadsQueryOptions(
+    workspaceId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            특정 워크스페이스의 실행 중인 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - K8s에서 실행 중인 워크로드 (Job/Deployment/TrainJob)
+            - 상태: CREATING, PENDING, RUNNING, ERROR
+
+            **필터링:**
+            - workloadJobType: 워크로드 타입 (batch, interactive, distributed)
+            - workloadStatus: 워크로드 상태 (running, pending, error)
+            - keyword: 워크로드 이름 검색
+
+            **정렬:**
+            - workloadName: 워크로드 이름순
+            - age: 실행 시간순 (기본값: age DESC)
+
+            **참고:**
+            - 사용자 API와 달리 hasMine 파라미터 없음 (관리자는 전체 조회)
+            - 어플리케이션 레벨 페이징 적용 (K8s 실시간 데이터 + DB 메타데이터 병합)
+        
+ * @summary 관리자용 특정 워크스페이스 실행 중인 워크로드 목록 조회
+ */
+export const getAdminActiveWorkloads = (
+  workspaceId: number,
+  params?: GetAdminActiveWorkloadsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseActiveWorkloadResponse>({
+    url: `/api/v1/admin/workspaces/${workspaceId}/workloads/active`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetAdminActiveWorkloadsQueryKey = (
+  workspaceId?: number,
+  params?: GetAdminActiveWorkloadsParams,
+) => {
+  return [
+    `/api/v1/admin/workspaces/${workspaceId}/workloads/active`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetAdminActiveWorkloadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetAdminActiveWorkloadsQueryKey(workspaceId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+  > = ({ signal }) => getAdminActiveWorkloads(workspaceId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAdminActiveWorkloadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+>;
+export type GetAdminActiveWorkloadsQueryError = unknown;
+
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params: undefined | GetAdminActiveWorkloadsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 관리자용 특정 워크스페이스 실행 중인 워크로드 목록 조회
+ */
+
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAdminActiveWorkloadsQueryOptions(
+    workspaceId,
+    params,
+    options,
+  );
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -946,7 +1363,13 @@ export function useGetAdminWorkspaceMembers<
 
 /**
  * 
-            특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+            특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 사용 현황을 확인할 수 있습니다.
+
+            **포함 정보:**
+            - 워크스페이스 기본 정보 (ID, 이름, 설명, 생성자, 생성일시)
+            - GPU 리소스 (Normal GPU + MIG 프로필별 quota/used/utilization)
+            - CPU 리소스 (quota/used/utilization)
+            - Memory 리소스 (quota/used/utilization)
 
             **응답 규칙:**
             - 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
@@ -957,7 +1380,7 @@ export const getAdminWorkspaceDetail = (
   workspaceId: number,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseAdminWorkspaceDetailResponse>({
+  return customInstance<BaseResponseAdminWorkspaceSingleDetailResponse>({
     url: `/api/v1/admin/workspaces/${workspaceId}/detail`,
     method: "GET",
     signal,

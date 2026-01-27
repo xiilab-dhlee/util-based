@@ -111,7 +111,7 @@ export const getGetPendingWorkloadsResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetAdminActiveWorkloadsResponseMock = (
+export const getGetAdminActiveWorkloads1ResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminActiveWorkloadResponse> = {},
 ): BaseResponsePageResponseAdminActiveWorkloadResponse => ({
   status: "SUCCESS",
@@ -124,6 +124,7 @@ export const getGetAdminActiveWorkloadsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
       workloadResourceName: faker.string.alpha({
         length: { min: 10, max: 20 },
       }),
@@ -210,7 +211,7 @@ export const getGetPendingWorkloadsMockHandler = (
   );
 };
 
-export const getGetAdminActiveWorkloadsMockHandler = (
+export const getGetAdminActiveWorkloads1MockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseAdminActiveWorkloadResponse
     | ((
@@ -231,7 +232,7 @@ export const getGetAdminActiveWorkloadsMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetAdminActiveWorkloadsResponseMock(),
+            : getGetAdminActiveWorkloads1ResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -242,5 +243,5 @@ export const getGetAdminActiveWorkloadsMockHandler = (
 export const getAdminWorkloadMock = () => [
   getGetAdminWorkloadStatusSummaryMockHandler(),
   getGetPendingWorkloadsMockHandler(),
-  getGetAdminActiveWorkloadsMockHandler(),
+  getGetAdminActiveWorkloads1MockHandler(),
 ];

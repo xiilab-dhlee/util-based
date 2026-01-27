@@ -50,6 +50,7 @@ import type {
   BaseResponseBatchSystemMetricResponse,
   BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
+  BaseResponseClusterResourceOverviewResponse,
   BaseResponseClusterResourceSummaryResponse,
   BaseResponseListClusterNodeSummaryResponse,
   BaseResponseListString,
@@ -435,6 +436,178 @@ export const useApplyMigConfiguration = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 
+            관리자가 자원 할당 전 시스템 전체의 잔여 리소스 및 전체 리소스를 파악합니다.
+
+            **응답 데이터 구성:**
+            - **gpuCount**: GPU 리소스 현황 (개수)
+              - **used**: 실제 사용 중인 GPU 개수
+              - **available**: 사용 가능한 GPU 개수 (total - used)
+              - **total**: 클러스터 전체 GPU 개수
+            - **migCount**: MIG 리소스 현황 (개수)
+              - **used**: 실제 사용 중인 MIG 인스턴스 개수
+              - **available**: 사용 가능한 MIG 인스턴스 개수
+              - **total**: 클러스터 전체 MIG 인스턴스 개수
+            - **cpuCore**: CPU 리소스 현황 (코어)
+              - **used**: 실제 사용 중인 CPU 코어 수
+              - **available**: 사용 가능한 CPU 코어 수
+              - **total**: 클러스터 전체 CPU 코어 수
+            - **memoryBytes**: 메모리 리소스 현황 (바이트)
+              - **used**: 실제 사용 중인 메모리 (바이트)
+              - **available**: 사용 가능한 메모리 (바이트)
+              - **total**: 클러스터 전체 메모리 (바이트)
+
+            **권한:**
+            - ADMIN 또는 SUPER_ADMIN 역할 필요
+        
+ * @summary 전체 리소스 현황 조회
+ */
+export const getClusterResourceOverview = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseClusterResourceOverviewResponse>({
+    url: `/api/v1/admin/cluster/resources/overview`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetClusterResourceOverviewQueryKey = () => {
+  return [`/api/v1/admin/cluster/resources/overview`] as const;
+};
+
+export const getGetClusterResourceOverviewQueryOptions = <
+  TData = Awaited<ReturnType<typeof getClusterResourceOverview>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getClusterResourceOverview>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetClusterResourceOverviewQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getClusterResourceOverview>>
+  > = ({ signal }) => getClusterResourceOverview(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getClusterResourceOverview>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetClusterResourceOverviewQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getClusterResourceOverview>>
+>;
+export type GetClusterResourceOverviewQueryError = unknown;
+
+export function useGetClusterResourceOverview<
+  TData = Awaited<ReturnType<typeof getClusterResourceOverview>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterResourceOverview>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterResourceOverview>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterResourceOverview>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterResourceOverview<
+  TData = Awaited<ReturnType<typeof getClusterResourceOverview>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterResourceOverview>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClusterResourceOverview>>,
+          TError,
+          Awaited<ReturnType<typeof getClusterResourceOverview>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClusterResourceOverview<
+  TData = Awaited<ReturnType<typeof getClusterResourceOverview>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterResourceOverview>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 전체 리소스 현황 조회
+ */
+
+export function useGetClusterResourceOverview<
+  TData = Awaited<ReturnType<typeof getClusterResourceOverview>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClusterResourceOverview>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetClusterResourceOverviewQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 /**
  * 
             관리자가 클러스터 노드 목록을 페이징 조회합니다.
