@@ -10,34 +10,17 @@ import {
   Typography,
 } from "xiilab-ui";
 
-import type { MigResourceType } from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
 import { useMigForm } from "@/shared/hooks/use-mig-form";
+import type { MigResourceType } from "@/shared/types/mig.type";
 import { hasDuplicateMigProfile } from "@/shared/utils/mig-resource.util";
 
 // ===== 타입 =====
 
 /** MIG 프로필 옵션 타입 */
-interface MigProfileOption {
+export interface MigProfileOption {
   profile: string;
   availableCount: number;
 }
-
-// ===== 상수 =====
-
-/** MIG 프로필 옵션 (하드코딩 - 각 프로필별 사용 가능한 개수 포함) */
-const MIG_PROFILE_OPTIONS: MigProfileOption[] = [
-  { profile: "1g.5gb", availableCount: 10 },
-  { profile: "1g.10gb", availableCount: 8 },
-  { profile: "1g.12gb", availableCount: 7 },
-  { profile: "2g.12gb", availableCount: 6 },
-  { profile: "2g.20gb", availableCount: 5 },
-  { profile: "3g.20gb", availableCount: 4 },
-  { profile: "3g.40gb", availableCount: 3 },
-  { profile: "4g.20gb", availableCount: 2 },
-  { profile: "4g.40gb", availableCount: 2 },
-  { profile: "7g.40gb", availableCount: 1 },
-  { profile: "7g.80gb", availableCount: 1 },
-];
 
 // ===== 헬퍼 함수 =====
 
@@ -57,11 +40,12 @@ const renderMigOption = (profile: string, availableCount: number) => {
   );
 };
 
-// ===== 타입 =====
-
 export interface MigFormFieldProps {
   /** MIG 리소스 목록 (controlled) */
   value: MigResourceType[];
+
+  /** 사용 가능한 MIG 프로필 옵션 목록 */
+  migProfileOptions: MigProfileOption[];
 
   /** 전체 필드 에러 (예: 중복 프로필) */
   error?: string;
@@ -91,6 +75,7 @@ export interface MigFormFieldProps {
  */
 export function MigFormField({
   value,
+  migProfileOptions,
   error,
   onAdd,
   onUpdate,
@@ -115,8 +100,29 @@ export function MigFormField({
     profile: string | undefined,
   ): number | undefined => {
     if (!profile) return undefined;
-    return MIG_PROFILE_OPTIONS.find((opt) => opt.profile === profile)
+    return migProfileOptions.find((opt) => opt.profile === profile)
       ?.availableCount;
+  };
+
+  /**
+   * 프로필이 클러스터에 존재하는지 확인
+   */
+  const isProfileValid = (profile: string): boolean => {
+    return migProfileOptions.some((opt) => opt.profile === profile);
+  };
+
+  /**
+   * MIG 개수가 최대값을 초과하는지 확인
+   */
+  const isCountExceeded = (
+    profile: string | undefined,
+    count: string,
+  ): boolean => {
+    if (!profile) return false;
+    const maxCount = getAvailableCount(profile);
+    if (maxCount === undefined) return false;
+    const numericCount = Number(count);
+    return !Number.isNaN(numericCount) && numericCount > maxCount;
   };
 
   /**
@@ -157,7 +163,7 @@ export function MigFormField({
           status={inputError || error ? "error" : undefined}
           disabled={disabled}
         >
-          {MIG_PROFILE_OPTIONS.map((option) => (
+          {migProfileOptions.map((option) => (
             <CompoundDropdown.Option
               key={option.profile}
               value={option.profile}
@@ -220,9 +226,10 @@ export function MigFormField({
                     count: mig.count,
                   });
                 }}
+                status={!isProfileValid(mig.profile) ? "error" : undefined}
                 disabled={disabled}
               >
-                {MIG_PROFILE_OPTIONS.map((option) => (
+                {migProfileOptions.map((option) => (
                   <CompoundDropdown.Option
                     key={option.profile}
                     value={option.profile}
@@ -247,10 +254,13 @@ export function MigFormField({
                 max={getAvailableCount(mig.profile)}
                 controls={true}
                 disabled={disabled}
+                status={
+                  isCountExceeded(mig.profile, mig.count) ? "error" : undefined
+                }
               />
               <Button
-                icon="Delete"
-                iconSize={24}
+                icon="Close"
+                iconSize={18}
                 onClick={() => onRemove(index)}
                 disabled={disabled}
               />

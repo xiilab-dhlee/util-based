@@ -30,6 +30,10 @@ interface UseWorkspaceResourceSettingFormReturn {
    */
   validate: () => WorkspaceResourceSettingRequestType | null;
   reset: () => void;
+  /**
+   * 폼 데이터 초기화 (외부에서 데이터를 설정할 때 사용)
+   */
+  initialize: (data: WorkspaceResourceSettingFormType) => void;
 }
 
 // ===== 유틸 함수 =====
@@ -40,7 +44,6 @@ interface UseWorkspaceResourceSettingFormReturn {
 function createInitialFormState(): WorkspaceResourceSettingFormType {
   return {
     gpu: "15",
-    mps: "",
     cpu: "4",
     memory: "12",
     workspaceCount: "12",
@@ -83,7 +86,7 @@ export function useWorkspaceResourceSettingForm(
   const [formState, setFormState] =
     useState<WorkspaceResourceSettingFormType>(getInitialState);
   const [errors, setErrors] = useState<WorkspaceResourceSettingFormErrors>({});
-  const [initialState] =
+  const [initialState, setInitialState] =
     useState<WorkspaceResourceSettingFormType>(getInitialState);
 
   /**
@@ -200,13 +203,10 @@ export function useWorkspaceResourceSettingForm(
     // 2차: Request 스키마 검증 (숫자 타입, 제약 등)
     const requestResult = workspaceResourceSettingRequestSchema.safeParse({
       gpu: Number(formState.gpu),
+      mps: 0, // 항상 0으로 하드코딩
       cpu: Number(formState.cpu),
       memory: Number(formState.memory),
       workspaceCount: Number(formState.workspaceCount),
-      mps:
-        formState.mps && formState.mps !== ""
-          ? Number(formState.mps)
-          : undefined,
       migResources:
         formState.migResources && formState.migResources.length > 0
           ? formState.migResources.map((mig) => ({
@@ -236,6 +236,15 @@ export function useWorkspaceResourceSettingForm(
     setErrors({});
   };
 
+  /**
+   * 폼 데이터 초기화 (외부에서 데이터를 설정할 때 사용)
+   */
+  const initialize = (data: WorkspaceResourceSettingFormType) => {
+    setFormState(data);
+    setInitialState(data);
+    setErrors({});
+  };
+
   return {
     formState,
     errors,
@@ -245,5 +254,6 @@ export function useWorkspaceResourceSettingForm(
     removeMigResource,
     validate,
     reset,
+    initialize,
   };
 }
