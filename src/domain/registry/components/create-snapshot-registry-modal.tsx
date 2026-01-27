@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { useCallback, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -9,6 +10,7 @@ import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import {
   Button,
+  Card,
   Form,
   FormItem,
   Icon,
@@ -18,19 +20,26 @@ import {
   Typography,
 } from "xiilab-ui";
 
+import type {
+  ActiveWorkloadResponse,
+  PageResponseActiveWorkloadResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getGetImageJobsQueryKey } from "@/api/generated/image-job/image-job";
+import { getActiveWorkloads } from "@/api/generated/workload/workload";
 import { useCreateSnapshotRegistryByMode } from "@/domain/registry/hooks/use-create-snapshot-registry-by-mode";
 import {
   type CreateSnapshotRegistryFormType,
   createSnapshotRegistrySchema,
 } from "@/domain/registry/schemas/create-snapshot-registry.schema";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
-import { WorkloadCard } from "@/domain/workload/components/workload-card";
-import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
+import {
+  CompactCardKey,
+  CompactCardKeyValueRow,
+  CompactCardValue,
+} from "@/shared/components/card/compact-card-layer.styled";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { useServices } from "@/shared/providers/service-provider";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
 interface CreateSnapshotRegistryModalProps {
@@ -40,33 +49,39 @@ interface CreateSnapshotRegistryModalProps {
 const PAGE_SIZE = 10;
 
 /**
- * 워크로드 목록 조회 훅 (무한 스크롤)
+ * 활성화 워크로드 목록 조회 훅 (무한 스크롤)
+ * /api/v1/workspaces/{workspaceId}/workloads/active API 사용
  */
-function useWorkloadInfiniteList(keyword: string, enabled: boolean) {
-  const { workloadService } = useServices();
+function useActiveWorkloadInfiniteList(keyword: string, enabled: boolean) {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
 
   return useInfiniteQuery({
-    queryKey: [
-      "snapshot-workload-list",
-      selectedWorkspace?.workspaceId,
-      keyword,
-    ],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await workloadService.getList({
-        page: pageParam,
-        size: PAGE_SIZE,
-        searchText: keyword || undefined,
+    queryKey: ["snapshot-active-workload-list", workspaceId, keyword],
+    queryFn: async ({
+      pageParam,
+    }): Promise<PageResponseActiveWorkloadResponse> => {
+      if (!workspaceId) throw new Error("Workspace ID is required");
+
+      return getActiveWorkloads(workspaceId, {
+        pageNo: pageParam as number,
+        pageSize: PAGE_SIZE,
+        keyword: keyword || undefined,
       });
-      return response.data;
     },
-    getNextPageParam: (lastPage) => {
-      if (!lastPage) return undefined;
-      const { currentPageNo = 1, totalPageNum = 1 } = lastPage;
-      return currentPageNo < totalPageNum ? currentPageNo + 1 : undefined;
+    getNextPageParam: (
+      lastPage: PageResponseActiveWorkloadResponse,
+      allPages,
+    ) => {
+      const content = lastPage?.content ?? [];
+      // 마지막 페이지가 PAGE_SIZE보다 작으면 더 이상 데이터 없음
+      if (content.length < PAGE_SIZE) return undefined;
+      // 전체 페이지 수를 초과하면 undefined
+      if (allPages.length >= lastPage.totalPageNum) return undefined;
+      return allPages.length; // 다음 페이지 번호 (0-indexed)
     },
-    initialPageParam: 1,
-    enabled: enabled && !!selectedWorkspace?.workspaceId,
+    initialPageParam: 0,
+    enabled: enabled && !!workspaceId,
   });
 }
 
@@ -82,7 +97,7 @@ export function CreateSnapshotRegistryModal({
   const queryClient = useQueryClient();
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const [open, setOpen] = useState(false);
-  const [selectedWorkloadId, setSelectedWorkloadId] = useState<number | null>(
+  const [selectedWorkloadKey, setSelectedWorkloadKey] = useState<string | null>(
     null,
   );
 
@@ -99,10 +114,12 @@ export function CreateSnapshotRegistryModal({
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useWorkloadInfiniteList(keyword, open);
+  } = useActiveWorkloadInfiniteList(keyword, open);
 
-  const workloads =
-    workloadData?.pages.flatMap((page) => page.content ?? []) ?? [];
+  const workloads: ActiveWorkloadResponse[] =
+    (workloadData?.pages as PageResponseActiveWorkloadResponse[])?.flatMap(
+      (page) => page?.content ?? [],
+    ) ?? [];
 
   const {
     control,
@@ -173,20 +190,29 @@ export function CreateSnapshotRegistryModal({
   const handleClose = () => {
     if (isPending) return;
     setOpen(false);
-    setSelectedWorkloadId(null);
+    setSelectedWorkloadKey(null);
     resetKeyword();
   };
 
   const handleSelectWorkload = useCallback(
-    (workload: WorkloadListType) => {
-      const numericId =
-        typeof workload.id === "string"
-          ? parseInt(workload.id, 10)
-          : workload.id;
-      setSelectedWorkloadId(numericId);
-      setValue("workloadId", numericId, { shouldValidate: true });
+    (workload: ActiveWorkloadResponse) => {
+      const isAlreadySelected =
+        selectedWorkloadKey === workload.workloadResourceName;
+
+      if (isAlreadySelected) {
+        // 이미 선택된 워크로드를 다시 클릭하면 선택 해제
+        setSelectedWorkloadKey(null);
+        setValue("workloadId", undefined, { shouldValidate: true });
+      } else {
+        // 백엔드에서 workloadId 필드 추가 예정
+        const workloadId = (
+          workload as ActiveWorkloadResponse & { workloadId: number }
+        ).workloadId;
+        setSelectedWorkloadKey(workload.workloadResourceName);
+        setValue("workloadId", workloadId, { shouldValidate: true });
+      }
     },
-    [setValue],
+    [selectedWorkloadKey, setValue],
   );
 
   const handleScroll = useCallback(
@@ -211,7 +237,7 @@ export function CreateSnapshotRegistryModal({
       env: [],
       port: [],
     });
-    setSelectedWorkloadId(null);
+    setSelectedWorkloadKey(null);
     resetKeyword();
     // 입력 필드 초기화
     setEnvKeyInput("");
@@ -492,17 +518,45 @@ export function CreateSnapshotRegistryModal({
             ) : (
               <WorkloadGrid>
                 {workloads.map((workload) => {
-                  const numericId =
-                    typeof workload.id === "string"
-                      ? parseInt(workload.id, 10)
-                      : workload.id;
+                  const isSelected =
+                    selectedWorkloadKey === workload.workloadResourceName;
                   return (
-                    <WorkloadCard
-                      key={workload.id}
-                      {...workload}
-                      isChecked={selectedWorkloadId === numericId}
-                      onCheck={() => handleSelectWorkload(workload)}
-                    />
+                    <WorkloadCardWrapper key={workload.workloadResourceName}>
+                      <Card
+                        contentVariant="compact"
+                        title={workload.workloadName}
+                        height={138}
+                        showCheckBox
+                        checked={isSelected}
+                        onCheckboxChange={() => handleSelectWorkload(workload)}
+                      >
+                        <CardBody>
+                          <CompactCardKeyValueRow>
+                            <CardKey>상&nbsp;&nbsp;&nbsp;태</CardKey>
+                            <CompactCardValue>
+                              {workload.workloadStatus}
+                            </CompactCardValue>
+                          </CompactCardKeyValueRow>
+                          <CompactCardKeyValueRow>
+                            <CardKey>생성일</CardKey>
+                            <CompactCardValue>
+                              {format(
+                                new Date(workload.createdAt),
+                                "yyyy.MM.dd",
+                              )}
+                            </CompactCardValue>
+                          </CompactCardKeyValueRow>
+                        </CardBody>
+                        <CardFooter>
+                          <CompactCardKeyValueRow>
+                            <CardKey>타&nbsp;&nbsp;&nbsp;입</CardKey>
+                            <JobTypeValue>
+                              {workload.workloadJobType.toLowerCase()}
+                            </JobTypeValue>
+                          </CompactCardKeyValueRow>
+                        </CardFooter>
+                      </Card>
+                    </WorkloadCardWrapper>
                   );
                 })}
               </WorkloadGrid>
@@ -638,4 +692,44 @@ const EmptyMessage = styled.div`
 const ErrorMessage = styled.div`
   color: #ff4d4f;
   font-size: 12px;
+`;
+
+const WorkloadCardWrapper = styled.div`
+  cursor: pointer;
+`;
+
+const CardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #e9ebee;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  gap: 4px;
+  width: 100%;
+`;
+
+const CardKey = styled(CompactCardKey)`
+  width: 37px;
+  position: relative;
+  line-height: 14px;
+
+  &::after {
+    position: absolute;
+    content: ":";
+    line-height: 12px;
+    top: 0;
+    right: 0;
+  }
+`;
+
+const JobTypeValue = styled(CompactCardValue)`
+  text-transform: capitalize;
+`;
+
+const CardFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2px;
+  width: 100%;
 `;
