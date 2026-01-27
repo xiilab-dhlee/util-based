@@ -1,20 +1,34 @@
 import { z } from "zod";
 
 import {
+  ThresholdRequestMetric,
+  ThresholdRequestOperator,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
   NOTIFICATION_FORM_CONSTRAINTS,
   NOTIFICATION_FORM_ERROR_MESSAGES,
 } from "@/domain/monitoring-notification/constants/notification-form-error-message";
 
+const metricFieldSchema = z
+  .string()
+  .min(1, { message: "항목을 선택해 주세요." })
+  .pipe(z.nativeEnum(ThresholdRequestMetric));
+
+const operatorFieldSchema = z
+  .string()
+  .min(1, { message: "연산자를 선택해 주세요." })
+  .pipe(z.nativeEnum(ThresholdRequestOperator));
+
 // ===== 임계 조건 스키마 =====
 
 export const thresholdFormSchema = z.object({
-  metric: z.string(),
-  operator: z.string(),
+  metric: metricFieldSchema,
+  operator: operatorFieldSchema,
   value: z.string(),
   durationMinutes: z.string(),
 });
 
-export type ThresholdFormType = z.infer<typeof thresholdFormSchema>;
+export type ThresholdFormType = z.input<typeof thresholdFormSchema>;
 
 // ===== 알림 폼 스키마 =====
 
@@ -30,8 +44,8 @@ export const notificationFormSchema = z
         NOTIFICATION_FORM_CONSTRAINTS.notificationSetName.MAX_LENGTH,
         NOTIFICATION_FORM_ERROR_MESSAGES.notificationSetName.too_big,
       ),
-    isSystemNotificationEnabled: z.boolean(),
-    isEmailNotificationEnabled: z.boolean(),
+    hasSystemNotificationEnabled: z.boolean(),
+    hasEmailNotificationEnabled: z.boolean(),
     nodeName: z
       .array(z.string())
       .min(
@@ -47,11 +61,11 @@ export const notificationFormSchema = z
   })
   .refine(
     (data) =>
-      data.isEmailNotificationEnabled || data.isSystemNotificationEnabled,
+      data.hasEmailNotificationEnabled || data.hasSystemNotificationEnabled,
     {
       message: NOTIFICATION_FORM_ERROR_MESSAGES.channel.required,
-      path: ["isEmailNotificationEnabled"],
+      path: ["hasEmailNotificationEnabled"],
     },
   );
 
-export type NotificationFormType = z.infer<typeof notificationFormSchema>;
+export type NotificationFormType = z.input<typeof notificationFormSchema>;

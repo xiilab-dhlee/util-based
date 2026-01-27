@@ -1,11 +1,18 @@
 "use client";
 
-import { useMemo } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { Dropdown, Typography } from "xiilab-ui";
 
-import { useGetNodeNames } from "@/api/generated/admin-cluster/admin-cluster";
-import { SystemMonitoringChartList } from "@/domain/system-monitoring/components/system-monitoring-chart-list";
+import { useGetNodeGpuInfoList } from "@/api/generated/cluster-resource/cluster-resource";
+import { SystemMonitoringCharts } from "@/domain/system-monitoring/components/system-monitoring-charts";
+import { SystemMonitoringFilters } from "@/domain/system-monitoring/components/system-monitoring-filters";
 import { SystemMonitoringSummary } from "@/domain/system-monitoring/components/system-monitoring-summary";
 import { useAllGpuMetrics } from "@/domain/system-monitoring/hooks/use-all-gpu-metrics.hook";
 import { useAllGpuMetricsStream } from "@/domain/system-monitoring/hooks/use-all-gpu-metrics-stream.hook";
@@ -15,47 +22,93 @@ import { useDateRangeMode } from "@/domain/system-monitoring/hooks/use-date-rang
 import { useGpuFilter } from "@/domain/system-monitoring/hooks/use-gpu-filter.hook";
 import { useNodeSelection } from "@/domain/system-monitoring/hooks/use-node-selection.hook";
 import { useSeriesVisibility } from "@/domain/system-monitoring/hooks/use-series-visibility.hook";
-import { ChartDateRange } from "@/shared/components/chart-date-range";
+import type {
+  SystemMonitoringTabItem,
+  SystemMonitoringTabKey,
+} from "@/domain/system-monitoring/types/system-monitoring.type";
 import { PageHeader } from "@/shared/components/layouts/page-header";
-import { MultiSelectWithAll } from "@/shared/components/select";
 import { hideScrollbar } from "@/styles/mixins/scrollbar";
+
+const TAB_ITEMS: SystemMonitoringTabItem[] = [
+  { key: "gpu", label: "GPU" },
+  { key: "system", label: "시스템" },
+];
 
 export function SystemMonitoringMain() {
   // 노드 목록 API 호출
   const {
-    data: nodeNames,
+    data: nodeGpuInfoList,
     isLoading: isNodeNamesLoading,
     isError: isNodeNamesError,
-  } = useGetNodeNames();
+  } = useGetNodeGpuInfoList();
 
   // 노드 목록 (API 응답 → 드롭다운 옵션 변환)
   const nodeOptions = useMemo(
-    () => (nodeNames ?? []).map((name) => ({ value: name, label: name })),
-    [nodeNames],
+    () =>
+      (nodeGpuInfoList ?? []).map((node) => ({
+        value: node.nodeName,
+        label: node.nodeName,
+      })),
+    [nodeGpuInfoList],
   );
 
   // 노드 선택 상태 관리
   const { selectedNode, handleChangeNode } = useNodeSelection(nodeOptions);
 
-  // 날짜 모드 및 범위 상태 관리
-  const {
-    dateMode,
-    dateRange,
-    isLiveMode,
-    apiDateRange,
-    isApiReady,
-    handleToggleDateMode,
-    handleChangeDateRange,
-    handleChangeRangeFromChart,
-  } = useDateRangeMode();
+  const [activeTab, setActiveTab] = useState<SystemMonitoringTabKey>("gpu");
+
+  const selectedNodeInfo = useMemo(
+    () => nodeGpuInfoList?.find((node) => node.nodeName === selectedNode),
+    [nodeGpuInfoList, selectedNode],
+  );
+
+  const isGpuNode = selectedNodeInfo?.isGpuNode ?? false;
+
+  useEffect(() => {
+    if (!isGpuNode && activeTab === "gpu") {
+      setActiveTab("system");
+    }
+  }, [activeTab, isGpuNode]);
+
+  const tabItems = useMemo<SystemMonitoringTabItem[]>(
+    () =>
+      TAB_ITEMS.map((item) =>
+        item.key === "gpu" ? { ...item, disabled: !isGpuNode } : item,
+      ),
+    [isGpuNode],
+  );
+
+  const handleChangeTab: Dispatch<SetStateAction<SystemMonitoringTabKey>> = (
+    value,
+  ) => {
+    setActiveTab((prev) => {
+      const next = typeof value === "function" ? value(prev) : value;
+      if (next === "gpu" && !isGpuNode) {
+        return prev;
+      }
+      return next;
+    });
+  };
+
+  // 날짜 모드 및 범위 상태 관리 (탭별)
+  const gpuDate = useDateRangeMode();
+  const systemDate = useDateRangeMode();
+
+  const isGpuTabActive = activeTab === "gpu" && isGpuNode;
+  const isSystemTabActive = activeTab === "system";
+
+  const activeDateState = isGpuTabActive ? gpuDate : systemDate;
 
   // API 활성화 조건
-  const apiEnabled = selectedNode !== "" && isApiReady;
+  const gpuApiEnabled =
+    selectedNode !== "" && isGpuTabActive && gpuDate.isApiReady;
+  const systemApiEnabled =
+    selectedNode !== "" && isSystemTabActive && systemDate.isApiReady;
 
   const gpuMetrics = useAllGpuMetrics({
     nodeName: selectedNode,
-    dateRange: apiDateRange,
-    enabled: apiEnabled,
+    dateRange: gpuDate.apiDateRange,
+    enabled: gpuApiEnabled,
   });
 
   const gpuStream = useAllGpuMetricsStream({
@@ -63,16 +116,17 @@ export function SystemMonitoringMain() {
     lastHistoryTimestamp: gpuMetrics.lastTimestamp,
     initialData: gpuMetrics.data,
     enabled:
-      isLiveMode &&
-      isApiReady &&
+      isGpuTabActive &&
+      gpuDate.isLiveMode &&
+      gpuDate.isApiReady &&
       !gpuMetrics.isLoading &&
       gpuMetrics.lastTimestamp !== null,
   });
 
   const systemMetrics = useAllSystemMetrics({
     nodeName: selectedNode,
-    dateRange: apiDateRange,
-    enabled: apiEnabled,
+    dateRange: systemDate.apiDateRange,
+    enabled: systemApiEnabled,
   });
 
   const systemStream = useAllSystemMetricsStream({
@@ -80,14 +134,17 @@ export function SystemMonitoringMain() {
     lastHistoryTimestamp: systemMetrics.lastTimestamp,
     initialData: systemMetrics.data,
     enabled:
-      isLiveMode &&
-      isApiReady &&
+      isSystemTabActive &&
+      systemDate.isLiveMode &&
+      systemDate.isApiReady &&
       !systemMetrics.isLoading &&
       systemMetrics.lastTimestamp !== null,
   });
 
-  const gpuData = isLiveMode ? gpuStream.data : gpuMetrics.data;
-  const systemData = isLiveMode ? systemStream.data : systemMetrics.data;
+  const gpuData = gpuDate.isLiveMode ? gpuStream.data : gpuMetrics.data;
+  const systemData = systemDate.isLiveMode
+    ? systemStream.data
+    : systemMetrics.data;
 
   const allGpuData = useMemo(
     () => [
@@ -133,42 +190,37 @@ export function SystemMonitoringMain() {
           </ArticleHeaderRight>
         </ArticleHeader>
         <SystemMonitoringSummary selectedNode={selectedNode} />
-        <ArticleHeader>
-          <Typography.Text variant="title-2">그래프</Typography.Text>
-          <ArticleHeaderRight>
-            <MultiSelectWithAll
-              options={gpuOptions}
-              value={selectedGpuIndices}
-              onChange={setSelectedGpuIndices}
-              width={200}
-              height={30}
-              placeholder="GPU 선택"
-              allLabel="전체"
-            />
-            {dateRange && (
-              <ChartDateRange
-                mode={dateMode}
-                value={dateRange}
-                onToggleMode={handleToggleDateMode}
-                onChangeRange={handleChangeDateRange}
-                height={30}
-                width={260}
-                withTime
-              />
-            )}
-          </ArticleHeaderRight>
-        </ArticleHeader>
-        <SystemMonitoringChartList
+        <SystemMonitoringFilters
+          tabItems={tabItems}
+          activeTab={activeTab}
+          onChangeTab={handleChangeTab}
+          isGpuTabActive={isGpuTabActive}
+          gpuOptions={gpuOptions}
+          selectedGpuIndices={selectedGpuIndices}
+          onChangeGpuIndices={setSelectedGpuIndices}
+          dateMode={activeDateState.dateMode}
+          dateRange={activeDateState.dateRange}
+          onToggleDateMode={activeDateState.handleToggleDateMode}
+          onChangeDateRange={activeDateState.handleChangeDateRange}
+        />
+        <SystemMonitoringCharts
+          activeTab={activeTab}
           gpuData={gpuData}
           systemData={systemData}
           gpuIsLoading={gpuMetrics.isLoading}
           systemIsLoading={systemMetrics.isLoading}
-          gpuErrors={isLiveMode ? gpuStream.errors : gpuMetrics.errors}
-          systemErrors={isLiveMode ? systemStream.errors : systemMetrics.errors}
+          gpuErrors={gpuDate.isLiveMode ? gpuStream.errors : gpuMetrics.errors}
+          systemErrors={
+            systemDate.isLiveMode ? systemStream.errors : systemMetrics.errors
+          }
           selectedGpuIndices={selectedGpuIndices}
           seriesVisibilityMap={visibilityMap}
           onSeriesToggle={toggleSeries}
-          onChangeRangeFromChart={handleChangeRangeFromChart}
+          onChangeRangeFromChart={
+            isGpuTabActive
+              ? gpuDate.handleChangeRangeFromChart
+              : systemDate.handleChangeRangeFromChart
+          }
         />
       </Container>
     </>

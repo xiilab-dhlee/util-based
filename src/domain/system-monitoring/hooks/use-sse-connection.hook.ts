@@ -30,24 +30,6 @@ export interface UseSSEConnectionReturn extends SSEConnectionState {
   reconnect: () => void;
 }
 
-/**
- * SSE 연결 관리 훅
- *
- * SSE 연결의 생명주기를 관리합니다:
- * - 연결 상태 추적 (isConnected)
- * - 에러 처리 및 재연결
- * - AbortController를 통한 정리
- *
- * @example
- * const { isConnected, isError, error } = useSSEConnection({
- *   url: "https://api.example.com/sse",
- *   eventName: "system-metrics",
- *   enabled: true,
- *   onMessage: (data) => {
- *     // 메시지 처리
- *   },
- * });
- */
 export function useSSEConnection<T>({
   url,
   eventName,
@@ -89,7 +71,7 @@ export function useSSEConnection<T>({
     setIsConnected(false);
   }, []);
 
-  const connectRef = useRef<() => Promise<void>>();
+  const connectRef = useRef<(() => Promise<void>) | null>(null);
 
   connectRef.current = async () => {
     const {

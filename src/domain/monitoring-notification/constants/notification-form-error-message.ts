@@ -25,6 +25,7 @@ export const NOTIFICATION_FORM_ERROR_MESSAGES = {
   },
   threshold: {
     too_small: `최소 ${NOTIFICATION_FORM_CONSTRAINTS.threshold.MIN_COUNT}개의 설정이 필요합니다.`,
+    gpu_not_available: "GPU 항목을 사용할 수 없습니다.",
   },
   channel: {
     required: "알림 유형을 1개 이상 선택해 주세요.",

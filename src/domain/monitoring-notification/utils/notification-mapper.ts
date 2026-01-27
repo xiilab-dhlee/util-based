@@ -55,8 +55,8 @@ export function toCreateRequest(
 
   return {
     notificationSetName: formData.notificationSetName,
-    isEmailNotificationEnabled: formData.isEmailNotificationEnabled,
-    isSystemNotificationEnabled: formData.isSystemNotificationEnabled,
+    hasEmailNotificationEnabled: formData.hasEmailNotificationEnabled,
+    hasSystemNotificationEnabled: formData.hasSystemNotificationEnabled,
     nodeName: formData.nodeName,
     threshold: validThresholds.map((t) => ({
       metric: t.metric,
@@ -76,8 +76,8 @@ export function toFormData(
   return {
     notificationSetName: response.notificationSetName,
     nodeName: response.node,
-    isEmailNotificationEnabled: response.isEmailNotificationEnabled,
-    isSystemNotificationEnabled: response.isSystemNotificationEnabled,
+    hasEmailNotificationEnabled: response.isEmailNotificationEnabled,
+    hasSystemNotificationEnabled: response.isSystemNotificationEnabled,
     threshold: response.threshold.map((t) => ({
       metric: t.metric,
       operator: t.operator,

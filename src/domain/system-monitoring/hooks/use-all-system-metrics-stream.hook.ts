@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   type BatchSystemMetricResponse,
@@ -119,15 +119,15 @@ export function useAllSystemMetricsStream({
     }
   }, [enabled, resetBuffers]);
 
-  const sseUrl = (() => {
-    if (!nodeName || !SSE_BASE_URL) return "";
+  const sseUrl = useMemo(() => {
+    if (!enabled || !nodeName || !SSE_BASE_URL) return "";
     const effectiveLastSentTime =
       lastHistoryTimestamp ?? new Date().toISOString();
     const url = new URL(SSE_ENDPOINTS.systemMetrics(nodeName), SSE_BASE_URL);
     url.searchParams.set("metrics", ALL_SYSTEM_METRICS.join(","));
     url.searchParams.set("lastSentTime", effectiveLastSentTime);
     return url.toString();
-  })();
+  }, [enabled, lastHistoryTimestamp, nodeName]);
 
   const handleMessage = (batchResponse: BatchSystemMetricResponse) => {
     const cpuUtilResult = extractSystemMetricData(
@@ -182,7 +182,7 @@ export function useAllSystemMetricsStream({
   } = useSSEConnection<BatchSystemMetricResponse>({
     url: sseUrl,
     eventName: "system-metrics",
-    enabled: enabled && !!nodeName,
+    enabled: enabled && !!sseUrl,
     onMessage: handleMessage,
   });
 

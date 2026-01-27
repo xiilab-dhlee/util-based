@@ -7,6 +7,7 @@ import { Checkbox, FormItem, Icon, Input } from "xiilab-ui";
 
 import { ManageMonitoringNotificationSetting } from "@/domain/monitoring-notification/components/manage-monitoring-notification-setting";
 import { MONITORING_NOTIFICATION_FIELD_IDS } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
+import { NOTIFICATION_FORM_ERROR_MESSAGES } from "@/domain/monitoring-notification/constants/notification-form-error-message";
 import type {
   NotificationChannelSectionProps,
   NotificationInfoSectionProps,
@@ -59,7 +60,7 @@ export function NotificationChannelSection({
   errors,
   disabled = false,
 }: NotificationChannelSectionProps) {
-  const channelError = errors.isEmailNotificationEnabled?.message;
+  const channelError = errors.hasEmailNotificationEnabled?.message;
 
   return (
     <FormItem label="알림 유형" required>
@@ -71,7 +72,7 @@ export function NotificationChannelSection({
               E-mail
             </ChannelKey>
             <Controller
-              name="isEmailNotificationEnabled"
+              name="hasEmailNotificationEnabled"
               control={control}
               render={({ field }) => (
                 <Checkbox
@@ -89,7 +90,7 @@ export function NotificationChannelSection({
               System
             </ChannelKey>
             <Controller
-              name="isSystemNotificationEnabled"
+              name="hasSystemNotificationEnabled"
               control={control}
               render={({ field }) => (
                 <Checkbox
@@ -171,10 +172,18 @@ export function NotificationSettingsSection({
   control,
   errors,
   disabled = false,
+  isGpuMetricDisabled = false,
+  hasGpuMetricError = false,
 }: NotificationSettingsSectionProps) {
   // threshold 배열 자체의 에러 메시지 (min 1개 필요)
   const thresholdRootError =
     errors.threshold?.root?.message || errors.threshold?.message;
+
+  // 에러 메시지 결정 (GPU 에러가 우선)
+  const helpMessage = hasGpuMetricError
+    ? NOTIFICATION_FORM_ERROR_MESSAGES.threshold.gpu_not_available
+    : thresholdRootError;
+  const hasError = hasGpuMetricError || !!thresholdRootError;
 
   return (
     <SettingsFormItem
@@ -185,8 +194,6 @@ export function NotificationSettingsSection({
           <GuideTooltip title={thresholdTooltipTitle} />
         </SettingsLabel>
       }
-      validateStatus={thresholdRootError ? "error" : undefined}
-      help={thresholdRootError}
     >
       <Controller
         name="threshold"
@@ -197,9 +204,11 @@ export function NotificationSettingsSection({
             onChange={field.onChange}
             errors={extractThresholdErrors(errors)}
             disabled={disabled}
+            isGpuMetricDisabled={isGpuMetricDisabled}
           />
         )}
       />
+      {hasError && <SettingsErrorText>{helpMessage}</SettingsErrorText>}
     </SettingsFormItem>
   );
 }
@@ -268,3 +277,9 @@ const RequiredMark = styled.span`
 `;
 
 const SettingsFormItem = styled(FormItem)``;
+
+const SettingsErrorText = styled.div`
+  color: var(--color-red-09, #dc2626);
+  font-size: 12px;
+  margin-top: 4px;
+`;

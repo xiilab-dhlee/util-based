@@ -31,13 +31,13 @@ interface RouteTabProps {
   items: TabsSeparatedItem[];
 }
 
-interface StateTabProps {
+interface StateTabProps<TKey extends string = string> {
   /** 표시할 탭 목록 */
-  items: TabsSeparatedItem[];
+  items: Array<Omit<TabsSeparatedItem, "key"> & { key: TKey }>;
   /** 선택된 탭 키 */
-  selectedKey: string;
+  selectedKey: TKey;
   /** 선택된 탭 키 설정 함수 */
-  setSelectedKey: Dispatch<SetStateAction<string>>;
+  setSelectedKey: Dispatch<SetStateAction<TKey>>;
 }
 
 /**
@@ -108,11 +108,11 @@ export function RouteTab({ items }: RouteTabProps) {
  * 탭 클릭 시 상태 변경을 통해 탭 전환을 수행합니다.
  *
  */
-export function StateTab({
+export function StateTab<TKey extends string = string>({
   items,
   selectedKey,
   setSelectedKey,
-}: StateTabProps) {
+}: StateTabProps<TKey>) {
   // 탭 아이템의 아이콘을 Icon 컴포넌트로 변환
   const mappedTabs = mapIconToComponent(items);
 
@@ -120,13 +120,18 @@ export function StateTab({
   const activeKey = selectedKey;
 
   const handleTabChange = (key: string) => {
+    const foundItem = items.find((item) => item.key === key);
+    if (!foundItem) {
+      return;
+    }
+
     // 탭 키가 현재 선택된 탭 키와 같으면 상태 변경하지 않음
-    if (key === selectedKey) {
+    if (foundItem.key === selectedKey) {
       return;
     }
 
     // 새로운 탭 키로 상태 업데이트
-    setSelectedKey(key);
+    setSelectedKey(foundItem.key);
   };
 
   return (
