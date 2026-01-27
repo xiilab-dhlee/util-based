@@ -64,7 +64,6 @@ function useGroupOptions() {
 export function GroupSelectOnlySignup({
   value,
   setValue,
-  disabled = false,
 }: GroupSelectOnlySignupProps) {
   const { options, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useGroupOptions();
@@ -91,7 +90,6 @@ export function GroupSelectOnlySignup({
       optionFilterProp="children"
       loading={isLoading || isFetchingNextPage}
       onPopupScroll={handlePopupScroll}
-      disabled={disabled || options.length === 0}
       listHeight={DROPDOWN_LIST_HEIGHT}
     />
   );
