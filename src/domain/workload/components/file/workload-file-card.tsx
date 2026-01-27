@@ -56,11 +56,9 @@ export function WorkloadFileCard(props: WorkloadFileCardProps) {
         </FileName>
 
         <FileSize>
-          <FileSize>
-            {fileSize != null
-              ? formatFileSize(Number(fileSize) || 0).formatted
-              : null}
-          </FileSize>
+          {fileSize != null
+            ? formatFileSize(Number(fileSize) || 0).formatted
+            : null}
         </FileSize>
       </Footer>
     </Container>

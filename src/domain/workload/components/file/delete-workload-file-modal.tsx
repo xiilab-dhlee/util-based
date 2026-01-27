@@ -32,7 +32,9 @@ export function DeleteWorkloadFileModal() {
   const setActionMode = useSetAtom(workloadFileActionModeAtom);
 
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
-  const [workloadResourceName, setWorkloadResourceName] = useState("");
+  const [workloadResourceName, setWorkloadResourceName] = useState<
+    string | null
+  >(null);
   const [filePaths, setFilePaths] = useState<string[]>([]);
   const [podName, setPodName] = useState<string | null>(null);
 
@@ -45,7 +47,12 @@ export function DeleteWorkloadFileModal() {
 
   const handleOk = () => {
     if (isPending) return;
-    if (!workspaceId || !workloadResourceName || filePaths.length === 0) return;
+    if (
+      workspaceId === null ||
+      workloadResourceName === null ||
+      filePaths.length === 0
+    )
+      return;
 
     const filteredPaths = filterToRootPaths(filePaths);
     if (filteredPaths.length === 0) {
@@ -94,7 +101,13 @@ export function DeleteWorkloadFileModal() {
       closable={!isPending}
       maskClosable={!isPending}
       keyboard={!isPending}
-      okButtonProps={{ loading: isPending }}
+      okButtonProps={{
+        disabled:
+          workspaceId === null ||
+          workloadResourceName === null ||
+          filePaths.length === 0,
+        loading: isPending,
+      }}
       cancelButtonProps={{ disabled: isPending }}
     >
       <div>선택한 파일을 삭제하시겠습니까?</div>
