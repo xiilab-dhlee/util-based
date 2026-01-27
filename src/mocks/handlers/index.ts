@@ -17,12 +17,12 @@ import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-mon
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
 import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
-import { getWorkloadMock } from "@/api/generated/workload/workload.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
 import { accountManagementHandlers } from "@/domain/account-management/mocks";
 import { authHandlers } from "@/domain/auth/mocks";
 import { credentialHandlers } from "@/domain/credential/mocks";
 import { groupHandlers } from "@/domain/group/mocks";
+import { hubHandlers } from "@/domain/hub/mocks";
 import { nodeHandlers } from "@/domain/node/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
@@ -36,10 +36,10 @@ import { storageHandlers } from "@/domain/storage/mocks";
 import { systemMonitoringHandlers } from "@/domain/system-monitoring/mocks";
 import { systemSettingHandlers } from "@/domain/system-setting/mocks";
 import { volumeHandlers } from "@/domain/volume/mocks";
+import { workloadHandlers } from "@/domain/workload/mocks";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
 import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
-import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
@@ -104,7 +104,7 @@ const rawHandlers = [
   ...getAccountProfileMock(),
   ...notificationHandlers,
   ...hubHandlers,
-  ...getWorkloadMock(),
+  ...workloadHandlers,
   ...sourcecodeHandlers,
   ...volumeHandlers,
   ...getWorkspaceMemberMock(),

@@ -2,6 +2,7 @@ import type { LabelColorVariant } from "xiilab-ui";
 
 import type {
   TerminatedWorkloadItemReclaimStatus,
+  WorkloadFileItemResponse,
   WorkloadStatusResponseWorkloadStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -16,6 +17,7 @@ import type {
   WorkloadJobType,
 } from "@/domain/workload/schemas/workload.schema";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 
 /**
  * 워크로드 잡 타입 정보 조회
@@ -246,3 +248,28 @@ export function getReclaimStatusInfo(
     color: RECLAIM_STATUS_COLOR_MAP[status],
   };
 }
+
+/**
+ * 워크로드 파일 API 응답을 FileTreeType으로 변환
+ */
+export const convertWorkloadFileToTreeType = (
+  items: WorkloadFileItemResponse[],
+): FileTreeType[] => {
+  return items.map((item) => ({
+    id: item.path,
+    name: item.name,
+    path: item.path,
+    type: item.type === "DIRECTORY" ? "directory" : "file",
+    fileExtension: item.type === "FILE" ? getFileExtension(item.name) : null,
+    fileSize: item.size != null ? String(item.size) : undefined,
+    children: [],
+  }));
+};
+
+const getFileExtension = (fileName: string): string | null => {
+  const lastDotIndex = fileName.lastIndexOf(".");
+  if (lastDotIndex === -1 || lastDotIndex === 0) {
+    return null;
+  }
+  return fileName.slice(lastDotIndex + 1);
+};

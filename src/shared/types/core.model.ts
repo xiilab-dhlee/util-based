@@ -38,6 +38,8 @@ export interface CoreFileButton {
   path?: string;
   /** 파일/폴더 타입 */
   type?: "file" | "directory";
+  /** 폴더 클릭 시 하위 파일 로드 콜백 */
+  onFolderClick?: (path: string) => void;
 }
 
 // 목록 응답 인터페이스

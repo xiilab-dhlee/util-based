@@ -1,0 +1,162 @@
+import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+
+/** 압축 파일 확장자 목록 */
+export const COMPRESSED_FILE_EXTENSIONS = [".zip", ".tar", ".tar.gz", ".tgz"];
+
+/** 압축 파일 여부 확인 */
+export const isCompressedFile = (path: string): boolean => {
+  const lowerPath = path.toLowerCase();
+  return COMPRESSED_FILE_EXTENSIONS.some((ext) => lowerPath.endsWith(ext));
+};
+
+interface MergeMetadata {
+  fileCount?: number;
+  directoryCount?: number;
+}
+
+interface CreateFolderNodeParams {
+  folderName: string;
+  parentPath: string;
+}
+
+/**
+ * 새 폴더 노드 생성
+ */
+export const createFolderNode = ({
+  folderName,
+  parentPath,
+}: CreateFolderNodeParams): FileTreeType => {
+  const fullPath =
+    parentPath === "/" || parentPath === ""
+      ? `/${folderName}`
+      : `${parentPath}/${folderName}`;
+
+  return {
+    id: fullPath,
+    name: folderName,
+    path: fullPath,
+    type: "directory",
+    fileExtension: null,
+    fileSize: "0",
+    children: [],
+  };
+};
+
+/**
+ * 트리에 새 노드 추가
+ */
+export const addNodeToTree = (
+  treeData: FileTreeType[],
+  parentPath: string,
+  newNode: FileTreeType,
+): FileTreeType[] => {
+  if (parentPath === "/" || parentPath === "") {
+    const exists = treeData.some((node) => node.path === newNode.path);
+    if (exists) return treeData;
+
+    const directories = treeData.filter((node) => node.type === "directory");
+    const files = treeData.filter((node) => node.type === "file");
+
+    return [...directories, newNode, ...files].sort((a, b) => {
+      if (a.type === "directory" && b.type === "file") return -1;
+      if (a.type === "file" && b.type === "directory") return 1;
+      return a.name.localeCompare(b.name, "ko");
+    });
+  }
+
+  return treeData.map((node) => {
+    if (node.path === parentPath) {
+      const exists = node.children.some((child) => child.path === newNode.path);
+      if (exists) return node;
+
+      const newChildren = [...node.children, newNode].sort((a, b) => {
+        if (a.type === "directory" && b.type === "file") return -1;
+        if (a.type === "file" && b.type === "directory") return 1;
+        return a.name.localeCompare(b.name, "ko");
+      });
+
+      return {
+        ...node,
+        children: newChildren,
+        // newNode.type에 따라 해당 카운트 증가
+        ...(newNode.type === "directory" &&
+          node.directoryCount !== undefined && {
+            directoryCount: node.directoryCount + 1,
+          }),
+        ...(newNode.type === "file" &&
+          node.fileCount !== undefined && {
+            fileCount: node.fileCount + 1,
+          }),
+      };
+    }
+
+    if (node.children.length > 0) {
+      return {
+        ...node,
+        children: addNodeToTree(node.children, parentPath, newNode),
+      };
+    }
+    return node;
+  });
+};
+
+/**
+ * 트리의 특정 노드에 자식 병합
+ */
+export const mergeChildrenToTree = (
+  treeData: FileTreeType[],
+  parentPath: string,
+  children: FileTreeType[],
+  metadata?: MergeMetadata,
+): FileTreeType[] => {
+  return treeData.map((node) => {
+    // 현재 노드가 타겟인 경우
+    if (node.path === parentPath) {
+      return {
+        ...node,
+        children,
+        ...(metadata?.fileCount !== undefined && {
+          fileCount: metadata.fileCount,
+        }),
+        ...(metadata?.directoryCount !== undefined && {
+          directoryCount: metadata.directoryCount,
+        }),
+      };
+    }
+    // 자식에서 재귀 탐색
+    if (node.children.length > 0) {
+      return {
+        ...node,
+        children: mergeChildrenToTree(
+          node.children,
+          parentPath,
+          children,
+          metadata,
+        ),
+      };
+    }
+    return node;
+  });
+};
+
+/**
+ * 트리에서 특정 노드들 제거
+ */
+export const removeNodesFromTree = (
+  treeData: FileTreeType[],
+  pathsToRemove: string[],
+): FileTreeType[] => {
+  const pathSet = new Set(pathsToRemove);
+
+  return treeData
+    .filter((node) => !pathSet.has(node.path))
+    .map((node) => {
+      if (node.children.length > 0) {
+        return {
+          ...node,
+          children: removeNodesFromTree(node.children, pathsToRemove),
+        };
+      }
+      return node;
+    });
+};

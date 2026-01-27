@@ -1,6 +1,7 @@
 "use client";
 
 import styled from "styled-components";
+import { Button } from "xiilab-ui";
 
 import { subTitleStyle } from "@/styles/mixins/text";
 
@@ -21,38 +22,14 @@ export const DetailContentArticle = styled.article`
 
 /**
  * 상세 페이지 액션 버튼
- * 모니터링, 삭제 등의 액션을 수행하는 버튼
+ * xiilab-ui Button 기반 outline 스타일
  */
-export const DetailContentButton = styled.button`
-  border-radius: 2px;
-  border: 1px solid #b9bec3;
+export const DetailContentButton = styled(Button).attrs({
+  variant: "outlined",
+  size: "small",
+})`
   height: 100%;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 500;
-  color: #000;
-  font-size: 12px;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  --icon-fill: #404040;
-
-  &:hover {
-    background: #f5f5f5;
-    border-color: #a0a0a0;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  &:active {
-    background: #e5e5e5;
-  }
 `;
 
 /**
@@ -159,4 +136,5 @@ export const DetailContentKey = styled.div`
   color: #484848;
   font-weight: 600;
   font-size: 12px;
+  white-space: nowrap;
 `;

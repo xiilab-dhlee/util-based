@@ -87,6 +87,11 @@ export const disabledWorkloadSortAtom =
   );
 /** 비활성화 워크로드 내 항목만 보기 */
 export const disabledWorkloadIsMineAtom = atomWithReset<boolean>(false);
+
+// ============================================
+// 워크로드 모달
+// ============================================
+
 /** 커밋 이미지 생성 모달 표시 여부 */
 export const openCreateCommitImageModalAtom = atom<boolean>(false);
 /** 워크로드 수정 모달 표시 여부 */
@@ -101,14 +106,34 @@ export const openRestartWorkloadModalAtom = atom<boolean>(false);
 export const openViewWorkloadMonitoringModalAtom = atom<boolean>(false);
 /** 워크로드 모니터링 드로어 표시 여부 */
 export const openViewWorkloadMonitoringDrawerAtom = atom<boolean>(false);
-/** 워크로드 폴더 추가 모달 표시 여부 */
-export const openCreateWorkloadFolderModalAtom = atom<boolean>(false);
-/** 워크로드 파일 트리 데이터 */
-export const workloadFileTreeDataAtom = atomWithReset<FileTreeType[]>([]);
+
+// ============================================
+// 워크로드 기타
+// ============================================
+
 /** 워크로드 보안 페이지 번호 */
 export const workloadSecurityPageAtom = atomWithReset<number>(1);
 /** 워크로드 선택 모달 - 선택한 워크로드 정보 */
 export const selectedWorkloadAtom = atom<WorkloadIdType | null>(null);
+
+// ============================================
+// 워크로드 파일 관리
+// ============================================
+
+/** 파일 액션 모드 타입 */
+export type FileActionMode = "delete" | "compress" | "download" | null;
+
+/** 워크로드 파일 트리 데이터 */
+export const workloadFileTreeDataAtom = atomWithReset<FileTreeType[]>([]);
+
+/** 워크로드 파일 액션 모드 (삭제/압축/다운로드) */
+export const workloadFileActionModeAtom = atomWithReset<FileActionMode>(null);
+
+/** 워크로드 파일 현재 페이지 */
+export const workloadFileCurrentPageAtom = atomWithReset<number>(1);
+
+/** 분산 워크로드 선택된 Pod 이름 */
+export const workloadSelectedPodNameAtom = atomWithReset<string | null>(null);
 
 /** 워크로드 파일 선택된 노드 키 */
 export const workloadFileSelectedKeyAtom = atomWithReset<React.Key>(

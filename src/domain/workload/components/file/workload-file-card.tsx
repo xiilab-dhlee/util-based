@@ -7,49 +7,55 @@ import { Icon } from "xiilab-ui";
 import { WorkloadFileCheckbox } from "@/domain/workload/components/file/workload-file-checkbox";
 import { workloadFileSelectedKeyAtom } from "@/domain/workload/state/workload.atom";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
-import { getFileIconName } from "@/shared/utils/file-icon.util";
+import { formatFileSize, getFileIconName } from "@/shared/utils/file.util";
 
-interface WorkloadFileCardProps extends FileTreeType {}
+interface WorkloadFileCardProps extends FileTreeType {
+  /** 체크박스 표시 여부 */
+  showCheckbox?: boolean;
+}
 
-export function WorkloadFileCard({
-  id,
-  type,
-  name,
-  fileCount,
-  fileExtension,
-  fileSize,
-}: WorkloadFileCardProps) {
+export function WorkloadFileCard(props: WorkloadFileCardProps) {
+  const {
+    id,
+    type,
+    name,
+    fileExtension,
+    fileSize,
+    children,
+    showCheckbox = false,
+  } = props;
   const setSelectedKey = useSetAtom(workloadFileSelectedKeyAtom);
 
+  // 선택 상태만 변경 (하위 파일 로드는 useWorkloadFileTree에서 반응형으로 처리)
   const handleClickFileName = () => {
     setSelectedKey(id);
   };
 
-  // shared utility 사용
   const iconName = getFileIconName(fileExtension, type);
+
+  const node = { ...props, path: id, children: children ?? [] };
 
   return (
     <Container>
-      {type === "file" && (
+      {showCheckbox && (
         <CheckboxWraper>
-          <WorkloadFileCheckbox activeKey={id} />
+          <WorkloadFileCheckbox activeKey={id} type={type} node={node} />
         </CheckboxWraper>
       )}
       <Body>
-        <Icon
-          name={iconName}
-          size={34}
-          color={type === "directory" ? "#9DA6BC" : ""}
-        />
+        <Icon name={iconName} size={34} color="#868994" />
       </Body>
       <Footer>
-        <FileName className="truncate" onClick={handleClickFileName}>
-          {name}
+        <FileName
+          className="truncate"
+          onClick={handleClickFileName}
+          title={name || undefined}
+        >
+          {name || "-"}
         </FileName>
+
         <FileSize>
-          {type === "directory"
-            ? `${fileCount || 0} items`
-            : `${fileSize || 0}B`}
+          {fileSize ? formatFileSize(Number(fileSize) || 0).formatted : null}
         </FileSize>
       </Footer>
     </Container>

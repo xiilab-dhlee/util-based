@@ -1,47 +1,69 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useMemo } from "react";
 import { Checkbox } from "xiilab-ui";
 
 import { workloadFileCheckedNodesAtom } from "@/domain/workload/state/workload.atom";
+import type { FileCheckboxProps } from "@/shared/components/tree/custom-file-tree";
+import {
+  collectAllDescendantPaths,
+  getAncestorPaths,
+} from "@/shared/state/filetree.atom";
 
-/**
- * WorkloadFileCheckbox 컴포넌트의 props 인터페이스
- */
-interface WorkloadFileCheckboxProps {
-  /** 체크박스가 연결된 파일/디렉토리의 고유 키 (경로) */
-  activeKey: string;
-}
-
-/**
- * WorkloadFileCheckbox 컴포넌트
- *
- * 워크로드 파일 트리에서 개별 파일/디렉토리의 선택 상태를 관리하는 체크박스 컴포넌트입니다.
- * Jotai atom을 사용하여 전역 상태로 체크된 노드들을 관리하며,
- * 체크박스의 상태 변경 시 자동으로 전역 상태를 업데이트합니다.
- *
- * @param activeKey - 체크박스가 연결된 파일/디렉토리의 고유 키 (경로)
- * @returns 체크박스 UI 컴포넌트
- */
-export function WorkloadFileCheckbox({ activeKey }: WorkloadFileCheckboxProps) {
-  // 체크된 노드들의 전역 상태를 관리하는 atom
+export function WorkloadFileCheckbox({
+  activeKey,
+  type,
+  node,
+}: FileCheckboxProps) {
   const [checkedNodes, setCheckedNodes] = useAtom(workloadFileCheckedNodesAtom);
 
-  /**
-   * 체크박스 상태 변경 핸들러
-   *
-   * @param path - 파일/디렉토리 경로
-   * @param checked - 체크 상태 (true: 체크됨, false: 체크 해제됨)
-   */
-  const handleCheckChange = (activeKey: string, checked: boolean) => {
+  const descendantPaths = useMemo(() => {
+    if (type === "directory") {
+      return collectAllDescendantPaths(node);
+    }
+    return [activeKey];
+  }, [type, node, activeKey]);
+
+  const childPaths = useMemo(() => {
+    return descendantPaths.filter((p) => p !== activeKey);
+  }, [descendantPaths, activeKey]);
+
+  const isChecked = useMemo(() => {
+    if (type === "file") {
+      return checkedNodes.has(activeKey);
+    }
+    if (childPaths.length === 0) {
+      return checkedNodes.has(activeKey);
+    }
+    return childPaths.every((path) => checkedNodes.has(path));
+  }, [type, activeKey, childPaths, checkedNodes]);
+
+  const isIndeterminate = useMemo(() => {
+    if (type === "file") return false;
+    if (childPaths.length === 0) return false;
+    const checkedCount = childPaths.filter((path) =>
+      checkedNodes.has(path),
+    ).length;
+    return checkedCount > 0 && checkedCount < childPaths.length;
+  }, [type, childPaths, checkedNodes]);
+
+  const handleCheckChange = (checked: boolean) => {
     setCheckedNodes((prev) => {
-      // 기존 체크된 노드들의 Set을 복사
       const next = new Set(prev);
 
       if (checked) {
-        next.add(activeKey);
+        for (const path of descendantPaths) {
+          next.add(path);
+        }
       } else {
-        next.delete(activeKey);
+        for (const path of descendantPaths) {
+          next.delete(path);
+        }
+        const ancestorPaths = getAncestorPaths(activeKey);
+        for (const ancestorPath of ancestorPaths) {
+          next.delete(ancestorPath);
+        }
       }
 
       return next;
@@ -51,8 +73,9 @@ export function WorkloadFileCheckbox({ activeKey }: WorkloadFileCheckboxProps) {
   return (
     <Checkbox
       size="small"
-      checked={checkedNodes.has(activeKey)}
-      onChange={(e) => handleCheckChange(activeKey, e.target.checked)}
+      checked={isChecked}
+      indeterminate={isIndeterminate}
+      onChange={(e) => handleCheckChange(e.target.checked)}
     />
   );
 }

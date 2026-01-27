@@ -17,6 +17,7 @@ export function VolumeFileButton({
   showIcon = false,
   path,
   type,
+  onFolderClick,
 }: VolumeFileButtonProps) {
   const [fileSelectedKey, setFileSelectedKey] = useAtom(
     volumeFileSelectedKeyAtom,
@@ -24,6 +25,10 @@ export function VolumeFileButton({
 
   const handleClick = () => {
     setFileSelectedKey(activeKey);
+    // 디렉토리 클릭 시 하위 파일 자동 로드
+    if (type === "directory" && path && onFolderClick) {
+      onFolderClick(path);
+    }
   };
 
   const handleCopyPath = async (e: React.MouseEvent) => {

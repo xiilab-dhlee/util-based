@@ -169,3 +169,33 @@ export type WorkloadStatusType = Workload["status"];
 export type WorkloadEventStatusType = WorkloadEventType["status"];
 export type WorkloadJobType = Workload["jobType"];
 export type WorkloadImageType = Workload["image"]["type"];
+
+/** 워크로드 폴더 생성 폼 스키마 */
+export const createWorkloadFolderSchema = z.object({
+  folderName: z
+    .string()
+    .min(1, "폴더 이름을 입력해 주세요.")
+    .max(255, "폴더 이름은 255자 이하로 입력해 주세요.")
+    .regex(
+      /^[^/\\:*?"<>|]+$/,
+      '폴더 이름에 특수문자(/ \\ : * ? " < > |)는 사용할 수 없습니다.',
+    ),
+});
+
+export type CreateWorkloadFolderFormType = z.infer<
+  typeof createWorkloadFolderSchema
+>;
+
+/** 워크로드 파일 압축 폼 스키마 */
+export const compressWorkloadFileSchema = z.object({
+  destinationPath: z
+    .string()
+    .min(1, "저장 경로를 입력해 주세요.")
+    .max(1000, "저장 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "저장 경로는 /로 시작해야 합니다."),
+  compressFileType: z.enum(["ZIP", "TAR"]),
+});
+
+export type CompressWorkloadFileFormType = z.infer<
+  typeof compressWorkloadFileSchema
+>;

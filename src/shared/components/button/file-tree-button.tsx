@@ -26,7 +26,7 @@ export function FileTreeButton({
     <Container
       type="button"
       onClick={onClick}
-      className={classNames({
+      className={classNames("truncate", {
         active: isActive,
       })}
     >

@@ -51,8 +51,18 @@ export const WORKLOAD_EVENTS = {
   sendWorkloadMonitoring: "workload:send-workload-monitoring",
   // 워크로드 생성 시 필요한 정보 전달 이벤트
   sendCreateWorkload: "workload:send-create-workload",
-  // 워크로드 폴더 추가에 필요한 정보 전달 이벤트
-  sendCreateWorkloadFolder: "workload:send-create-workload-folder",
+  // 워크로드 파일 삭제 모달 열기
+  openDeleteFileModal: "workload:open-delete-file-modal",
+  // 워크로드 파일 압축 모달 열기
+  openCompressFileModal: "workload:open-compress-file-modal",
+  // 워크로드 파일 압축 해제 모달 열기
+  openDecompressFileModal: "workload:open-decompress-file-modal",
+  // 워크로드 파일 다운로드 모달 열기
+  openDownloadFileModal: "workload:open-download-file-modal",
+  // 워크로드 파일 업로드 모달 열기
+  openUploadFileModal: "workload:open-upload-file-modal",
+  // 워크로드 폴더 생성 모달 열기
+  openCreateFolderModal: "workload:open-create-folder-modal",
 } as const;
 
 // 소스코드 관련 이벤트
