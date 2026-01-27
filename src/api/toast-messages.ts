@@ -270,6 +270,31 @@ export const MUTATION_MESSAGES: Partial<
   },
 
   // ============================================
+  // Sourcecode
+  // ============================================
+  [MUTATION_KEYS.registerSourceCode]: {
+    success: "소스코드가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.updateSourceCode]: {
+    success: "소스코드가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteSourceCode]: {
+    success: "소스코드가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.deleteSourceCodes]: {
+    success: "소스코드가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.adminUpdateSourceCode]: {
+    success: "소스코드가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteSourceCode]: {
+    success: "소스코드가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteSourceCodes]: {
+    success: "소스코드가 삭제되었습니다.",
+  },
+
+  // ============================================
   // Workload Reclaim Policy
   // ============================================
   [MUTATION_KEYS.updateReclaimPolicy]: {

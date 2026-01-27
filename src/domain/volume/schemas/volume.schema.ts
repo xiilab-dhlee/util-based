@@ -10,12 +10,15 @@ const baseVolumeFields = {
     .string()
     .min(1, "볼륨 이름을 입력해 주세요.")
     .max(50, "볼륨 이름은 50자 이하로 입력해 주세요."),
-  isPublic: z.string().min(1, "공개 설정을 선택해 주세요."),
+  shouldBePublic: z.boolean({
+    required_error: "공개 설정을 선택해 주세요.",
+    invalid_type_error: "공개 설정을 선택해 주세요.",
+  }),
   mountPath: z
     .string()
-    .min(1, "마운트 경로를 입력해 주세요.")
-    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
-    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다."),
+    .min(1, "Mount Path를 입력해 주세요.")
+    .max(1000, "Mount Path는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "Mount Path는 /로 시작해야 합니다."),
 };
 
 // ============================================================================
@@ -26,6 +29,7 @@ const baseVolumeFields = {
 export const createAstragoVolumeSchema = z.object({
   ...baseVolumeFields,
   storageId: z.number({ required_error: "스토리지를 선택해 주세요." }),
+  workspaceId: z.number().optional(),
 });
 
 export type CreateAstragoVolumeFormType = z.infer<
@@ -48,17 +52,18 @@ export const createOnPremiseVolumeSchema = z.object({
     .min(1, "Server Path를 입력해 주세요.")
     .max(1000, "Server Path는 1000자 이하로 입력해 주세요.")
     .regex(/^\/.*/, "Server Path는 /로 시작해야 합니다."),
+  workspaceId: z.number().optional(),
 });
 
 export type CreateOnPremiseVolumeFormType = z.infer<
   typeof createOnPremiseVolumeSchema
 >;
 
-/** 볼륨 수정 폼 스키마 (baseVolumeFields에서 isPublic 제외 후 boolean 타입으로 재정의) */
+/** 볼륨 수정 폼 스키마 */
 export const updateVolumeSchema = z
   .object(baseVolumeFields)
-  .omit({ isPublic: true })
-  .merge(z.object({ isPublic: z.boolean() }));
+  .omit({ shouldBePublic: true })
+  .merge(z.object({ shouldBePublic: z.boolean() }));
 
 export type UpdateVolumeFormType = z.infer<typeof updateVolumeSchema>;
 

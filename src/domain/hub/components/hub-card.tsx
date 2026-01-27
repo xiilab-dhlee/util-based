@@ -62,11 +62,11 @@ export function HubCard({
           {thumbnail && (
             <ImageWrapper data-testid={HUB_SELECTOR.THUMBNAIL}>
               <Image
-                src={thumbnail}
+                src={`data:image/gif;base64,${thumbnail}`}
                 alt="Hub Thumbnail"
                 fill
                 unoptimized
-                style={{ objectFit: "cover" }}
+                draggable={false}
               />
             </ImageWrapper>
           )}

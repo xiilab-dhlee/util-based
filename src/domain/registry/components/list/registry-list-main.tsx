@@ -158,5 +158,5 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
 }
 
 const StyledListPageBody = styled(ListPageBody)`
-  height: 760px;
+  height: 790px;
 `;

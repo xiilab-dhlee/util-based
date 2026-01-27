@@ -21,6 +21,7 @@ import { StorageSelect } from "@/shared/components/select/storage-select";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
 export function CreateAstragoVolumeModal() {
   const queryClient = useQueryClient();
@@ -37,7 +38,7 @@ export function CreateAstragoVolumeModal() {
     resolver: zodResolver(createAstragoVolumeSchema),
     defaultValues: {
       volumeName: "",
-      isPublic: "true",
+      shouldBePublic: true,
       mountPath: "",
     },
   });
@@ -55,7 +56,7 @@ export function CreateAstragoVolumeModal() {
       {
         data: {
           volumeName: data.volumeName,
-          isPublic: data.isPublic === "true",
+          shouldBePublic: data.shouldBePublic,
           mountPath: data.mountPath,
           storageId: data.storageId,
           workspaceId: selectedWorkspace.workspaceId,
@@ -141,21 +142,21 @@ export function CreateAstragoVolumeModal() {
           )}
         />
         <Controller
-          name="isPublic"
+          name="shouldBePublic"
           control={control}
           render={({ field }) => (
             <FormItem
               label="공개 설정"
               required
-              validateStatus={errors.isPublic ? "error" : undefined}
-              help={errors.isPublic?.message}
+              validateStatus={errors.shouldBePublic ? "error" : undefined}
+              help={errors.shouldBePublic?.message}
             >
               <Dropdown
                 options={VOLUME_VISIBILITY_OPTIONS}
-                value={field.value || null}
-                onChange={(value) => field.onChange(value)}
+                value={field.value ? "true" : "false"}
+                onChange={(value) => field.onChange(value === "true")}
                 width="100%"
-                status={errors.isPublic ? "error" : undefined}
+                status={errors.shouldBePublic ? "error" : undefined}
                 disabled={isPending}
               />
             </FormItem>
@@ -165,7 +166,7 @@ export function CreateAstragoVolumeModal() {
           name="mountPath"
           control={control}
           render={({ field }) => (
-            <FormItem
+            <LastFormItem
               label="Mount Path"
               required
               validateStatus={errors.mountPath ? "error" : undefined}
@@ -176,13 +177,13 @@ export function CreateAstragoVolumeModal() {
                 {...field}
                 type="text"
                 id="astragoVolumeMountPath"
-                placeholder="/usr/local"
+                placeholder="Mount Path를 입력해 주세요."
                 width="100%"
                 autoComplete="off"
                 disabled={isPending}
                 maxLength={1000}
               />
-            </FormItem>
+            </LastFormItem>
           )}
         />
       </StyledForm>

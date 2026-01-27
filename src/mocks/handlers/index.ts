@@ -31,6 +31,7 @@ import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-
 import { revokeHandlers } from "@/domain/revoke/mocks";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+import { sourcecodeHandlers } from "@/domain/sourcecode/mocks";
 import { storageHandlers } from "@/domain/storage/mocks";
 import { systemMonitoringHandlers } from "@/domain/system-monitoring/mocks";
 import { systemSettingHandlers } from "@/domain/system-setting/mocks";
@@ -42,7 +43,6 @@ import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
 import { reportHandlers } from "@/mocks/handlers/report.handler";
 import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
-import { sourcecodeHandlers } from "@/mocks/handlers/sourcecode.handler";
 
 // ============================================
 // Lazy Mock 지연 래퍼
@@ -133,6 +133,7 @@ const rawHandlers = [
   ...getSmtpSettingsMock(),
   ...getAdminImageTagUsageRequestMock(),
   ...nodeHandlers,
+  ...sourcecodeHandlers,
 ];
 
 /**

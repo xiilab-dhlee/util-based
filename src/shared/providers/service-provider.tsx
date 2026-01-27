@@ -9,7 +9,6 @@ import { ReportReservationService } from "@/domain/report-reservation/api/report
 import { ResourcePresetService } from "@/domain/resource-preset/api/resource-preset.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
-import { SourcecodeService } from "@/domain/sourcecode/api/sourcecode.service";
 import { HpeService } from "@/domain/system-setting/api/hpe.service";
 import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
@@ -21,7 +20,6 @@ import { GpuService } from "@/shared/api/gpu.service";
 interface ServiceContextType {
   workspaceService: WorkspaceService;
   workloadService: WorkloadService;
-  sourcecodeService: SourcecodeService;
   userResourceService: UserResourceService;
   adminWorkloadService: AdminWorkloadService;
   reportService: ReportService;
@@ -54,7 +52,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
   const services: ServiceContextType = {
     workspaceService: new WorkspaceService(),
     workloadService: new WorkloadService(),
-    sourcecodeService: new SourcecodeService(),
     userResourceService: new UserResourceService(),
     adminWorkloadService: new AdminWorkloadService(),
     reportService: new ReportService(),

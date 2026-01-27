@@ -4,12 +4,10 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
-import {
-  getVolumeStatusInfo,
-  getVolumeStorageTypeInfo,
-} from "@/domain/volume/utils/volume.util";
+import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
+import { getVisibilityInfo } from "@/shared/utils/visibility.util";
 import {
   LikeCompactCardKey,
   LikeCompactCardRecord,
@@ -29,13 +27,15 @@ export function WorkloadVolumeCard({
   onDelete,
 }: PropsWithChildren<WorkloadVolumeCardProps>) {
   const { text } = getVolumeStorageTypeInfo(storageType);
-  const { icon } = getVolumeStatusInfo(status === "PUBLIC");
+  const { iconName } = getVisibilityInfo(status === "PUBLIC");
   return (
     <div data-testid={WORKLOAD_SELECTOR.VOLUME_CARD}>
       <Card
         contentVariant="compact"
         title={name}
-        icon={icon ? <Icon name={icon} color="#464B51" size={18} /> : null}
+        icon={
+          iconName ? <Icon name={iconName} color="#464B51" size={18} /> : null
+        }
         actionElement={
           onDelete ? (
             <IconWrapper

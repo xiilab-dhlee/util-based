@@ -56,6 +56,7 @@ const StyledScrollbars = styled(Scrollbars)`
  */
 const ScrollView = styled.div`
   padding-right: 10px;
+  margin-bottom: 0 !important;
 
   /* 네이티브 스크롤바 숨기기 */
   &::-webkit-scrollbar {
