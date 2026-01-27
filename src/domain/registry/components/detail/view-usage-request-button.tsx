@@ -1,0 +1,50 @@
+"use client";
+
+import type { MouseEvent } from "react";
+import { Icon } from "xiilab-ui";
+
+import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
+import {
+  ColumnAlignCenterWrap,
+  ColumnIconWrap,
+} from "@/styles/layers/column-layer.styled";
+
+interface ViewUsageRequestButtonProps {
+  record: ImageTagListResponse;
+}
+
+/**
+ * 이미지 사용 요청 상세 보기 버튼
+ *
+ * 승인 대기 상태(APPROVAL_WAITING)인 경우 클릭 시 상세 모달을 열어
+ * 요청 정보를 확인하고 취소할 수 있습니다.
+ */
+export function ViewUsageRequestButton({
+  record,
+}: ViewUsageRequestButtonProps) {
+  const publish = usePublish();
+
+  const handleClick = (e: MouseEvent) => {
+    e.stopPropagation();
+
+    publish(REGISTRY_EVENTS.openUsageRequestDetailModal, {
+      ...record,
+      usageRequestId: record.imageTagId, // TODO: 실제 usageRequestId가 필요할 수 있음
+    });
+  };
+
+  return (
+    <ColumnAlignCenterWrap>
+      <ColumnIconWrap
+        type="button"
+        onClick={handleClick}
+        title="사용 요청 상세"
+      >
+        <Icon name="RequestResource" color="var(--icon-fill)" size={16} />
+        <span className="sr-only">사용 요청 상세 버튼</span>
+      </ColumnIconWrap>
+    </ColumnAlignCenterWrap>
+  );
+}

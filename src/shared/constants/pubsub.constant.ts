@@ -165,6 +165,10 @@ export const REGISTRY_EVENTS = {
   openEditTagModal: "registry:open-edit-tag-modal",
   // 이미지 태그 사용 요청 모달 열기
   openRequestUseModal: "registry:open-request-use-modal",
+  // 이미지 태그 사용 요청 취소 모달 열기
+  openCancelUsageRequestModal: "registry:open-cancel-usage-request-modal",
+  // 이미지 태그 사용 요청 상세 모달 열기
+  openUsageRequestDetailModal: "registry:open-usage-request-detail-modal",
 } as const;
 
 // 파일 보안 관련 이벤트
