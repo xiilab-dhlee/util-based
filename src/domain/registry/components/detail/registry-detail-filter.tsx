@@ -67,6 +67,7 @@ export function RegistryDetailFilter({
         width={100}
         height={30}
         onClick={handleCreate}
+        disabled={loading}
       >
         태그 추가
       </Button>

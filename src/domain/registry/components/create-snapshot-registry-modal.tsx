@@ -313,7 +313,7 @@ export function CreateSnapshotRegistryModal({
                       {...field}
                       type="text"
                       id="snapshotImageTag"
-                      placeholder="문자, 숫자, 하이픈(-), 밑줄(_)만 사용 가능합니다."
+                      placeholder="첫 글자: 문자/숫자/밑줄, 이후: 문자/숫자/-/_/. (최대 128자)"
                       autoComplete="off"
                       width="100%"
                     />
