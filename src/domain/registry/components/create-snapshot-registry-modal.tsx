@@ -157,13 +157,19 @@ export function CreateSnapshotRegistryModal({
   const onSubmit = (data: CreateSnapshotRegistryFormType) => {
     if (!selectedWorkspace) return;
 
-    // API 요청 형태로 변환
+    // API 요청 형태로 변환 (name/value 또는 name/port가 모두 있는 항목만 전송)
     const envData = data.env
-      ?.filter((e) => e.name && e.value)
-      .map((e) => ({ name: e.name!, value: e.value! }));
+      ?.filter(
+        (e): e is typeof e & { name: string; value: string } =>
+          !!e.name && !!e.value,
+      )
+      .map((e) => ({ name: e.name, value: e.value }));
     const portData = data.port
-      ?.filter((p) => p.name && p.port)
-      .map((p) => ({ name: p.name!, port: p.port! }));
+      ?.filter(
+        (p): p is typeof p & { name: string; port: number } =>
+          !!p.name && p.port !== undefined,
+      )
+      .map((p) => ({ name: p.name, port: p.port }));
 
     mutate(
       {
