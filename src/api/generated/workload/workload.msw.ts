@@ -35,15 +35,17 @@ import type {
   BaseResponseDistributedPodResponse,
   BaseResponseMapStringObject,
   BaseResponsePageResponseActiveWorkloadResponse,
+  BaseResponsePageResponseMyWorkloadItem,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
   BaseResponseWorkloadDeleteFilesResponse,
   BaseResponseWorkloadDetailResponse,
   BaseResponseWorkloadEventHistoryResponse,
   BaseResponseWorkloadFileListResponse,
+  BaseResponseWorkloadFileUploadResponse,
   BaseResponseWorkloadStatusResponse,
   BaseResponseWorkloadSummaryResponse,
-  SseEmitter,
+  StreamingResponseBody,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getUpdateWorkloadResponseMock = (
@@ -63,6 +65,38 @@ export const getUpdateResourcePresetResponseMock = (
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     [faker.string.alphanumeric(5)]: {},
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetMyWorkloadsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseMyWorkloadItem> = {},
+): BaseResponsePageResponseMyWorkloadItem => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
+      workloadResourceName: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+      workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -91,6 +125,24 @@ export const getWorkloadCreateFolderResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getWorkloadUploadFileResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadFileUploadResponse> = {},
+): BaseResponseWorkloadFileUploadResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    path: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    fileName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    size: faker.number.int({ min: undefined, max: undefined }),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getWorkloadDownloadFilesResponseMock =
+  (): StreamingResponseBody => ({});
 
 export const getWorkloadDeleteFilesResponseMock = (
   overrideResponse: Partial<BaseResponseWorkloadDeleteFilesResponse> = {},
@@ -203,13 +255,6 @@ export const getGetWorkloadStatusResponseMock = (
 export const getGetTerminatedWorkloadLogResponseMock = (): Blob =>
   new Blob(faker.helpers.arrayElements(faker.word.words(10).split(" ")));
 
-export const getStreamWorkloadLogsResponseMock = (
-  overrideResponse: Partial<SseEmitter> = {},
-): SseEmitter => ({
-  timeout: faker.number.int({ min: undefined, max: undefined }),
-  ...overrideResponse,
-});
-
 export const getWorkloadListFilesResponseMock = (
   overrideResponse: Partial<BaseResponseWorkloadFileListResponse> = {},
 ): BaseResponseWorkloadFileListResponse => ({
@@ -282,6 +327,7 @@ export const getGetWorkloadDetailResponseMock = (
   data: {
     workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadJobType: faker.helpers.arrayElement([
       "INTERACTIVE",
@@ -289,7 +335,6 @@ export const getGetWorkloadDetailResponseMock = (
       "DISTRIBUTED",
     ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
-    nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     resourcePreset: {
       resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
       presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -353,6 +398,15 @@ export const getGetWorkloadDetailResponseMock = (
         "HUB",
         "PRIVATE",
         "PUBLIC",
+      ] as const),
+      frameworkType: faker.helpers.arrayElement([
+        "PYTORCH",
+        "TENSORFLOW",
+        "JUPYTER",
+        "VSCODE",
+        "RSTUDIO",
+        "HUB",
+        "REGISTRY",
       ] as const),
     },
     outputDirectory: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -420,6 +474,7 @@ export const getGetWorkloadCloneDataResponseMock = (
   data: {
     workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadJobType: faker.helpers.arrayElement([
       "INTERACTIVE",
@@ -427,7 +482,6 @@ export const getGetWorkloadCloneDataResponseMock = (
       "DISTRIBUTED",
     ] as const),
     nodeType: faker.helpers.arrayElement(["SINGLE", "MULTI"] as const),
-    nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     resourcePreset: {
       resourcePresetId: faker.number.int({ min: undefined, max: undefined }),
       presetName: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -491,6 +545,15 @@ export const getGetWorkloadCloneDataResponseMock = (
         "HUB",
         "PRIVATE",
         "PUBLIC",
+      ] as const),
+      frameworkType: faker.helpers.arrayElement([
+        "PYTORCH",
+        "TENSORFLOW",
+        "JUPYTER",
+        "VSCODE",
+        "RSTUDIO",
+        "HUB",
+        "REGISTRY",
       ] as const),
     },
     outputDirectory: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -563,6 +626,7 @@ export const getGetTerminatedWorkloadsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
       workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       workloadResourceName: faker.string.alpha({
         length: { min: 10, max: 20 },
@@ -602,6 +666,7 @@ export const getGetActiveWorkloadsResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
       workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       workloadResourceName: faker.string.alpha({
         length: { min: 10, max: 20 },
@@ -736,6 +801,36 @@ export const getUpdateResourcePresetMockHandler = (
   );
 };
 
+export const getGetMyWorkloadsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseMyWorkloadItem
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseMyWorkloadItem>
+        | BaseResponsePageResponseMyWorkloadItem),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetMyWorkloadsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getCreateWorkloadMockHandler = (
   overrideResponse?:
     | BaseResponseMapStringObject
@@ -786,6 +881,64 @@ export const getWorkloadCreateFolderMockHandler = (
             : getWorkloadCreateFolderResponseMock(),
         ),
         { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getWorkloadUploadFileMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadFileUploadResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadFileUploadResponse>
+        | BaseResponseWorkloadFileUploadResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/files/upload",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getWorkloadUploadFileResponseMock(),
+        ),
+        { status: 201, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getWorkloadDownloadFilesMockHandler = (
+  overrideResponse?:
+    | StreamingResponseBody
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<StreamingResponseBody> | StreamingResponseBody),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/files/download",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getWorkloadDownloadFilesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
       );
     },
     options,
@@ -1014,34 +1167,6 @@ export const getGetTerminatedWorkloadLogMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getGetTerminatedWorkloadLogResponseMock(),
-        ),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    },
-    options,
-  );
-};
-
-export const getStreamWorkloadLogsMockHandler = (
-  overrideResponse?:
-    | SseEmitter
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<SseEmitter> | SseEmitter),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    "*/api/v1/workspaces/:workspaceId/workloads/:workloadResourceName/logs/active",
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === "function"
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getStreamWorkloadLogsResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -1291,8 +1416,11 @@ export const getWorkloadMock = () => [
   getUpdateWorkloadMockHandler(),
   getDeleteWorkloadMockHandler(),
   getUpdateResourcePresetMockHandler(),
+  getGetMyWorkloadsMockHandler(),
   getCreateWorkloadMockHandler(),
   getWorkloadCreateFolderMockHandler(),
+  getWorkloadUploadFileMockHandler(),
+  getWorkloadDownloadFilesMockHandler(),
   getWorkloadDeleteFilesMockHandler(),
   getWorkloadDecompressFileMockHandler(),
   getWorkloadCompressFilesMockHandler(),
@@ -1301,7 +1429,6 @@ export const getWorkloadMock = () => [
   getGetWorkloadSummaryMockHandler(),
   getGetWorkloadStatusMockHandler(),
   getGetTerminatedWorkloadLogMockHandler(),
-  getStreamWorkloadLogsMockHandler(),
   getWorkloadListFilesMockHandler(),
   getWorkloadPreviewFileMockHandler(),
   getGetWorkloadEventHistoryMockHandler(),

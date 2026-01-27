@@ -55,7 +55,7 @@
     "@tanstack/react-query-devtools": "^5.90.2",
     "@uiw/react-codemirror": "^4.25.3",
     "@xiilab/astrago-openapi": "0.0.3-dev",
-    "@xiilab/astrago-openapi-spec": "0.0.78-dev",
+    "@xiilab/astrago-openapi-spec": "0.0.87-dev",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "ansi-colors": "^4.1.3",

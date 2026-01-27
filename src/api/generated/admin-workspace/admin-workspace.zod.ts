@@ -112,7 +112,7 @@ export const rejectResourceRequestParams = zod.object({
 });
 
 export const rejectResourceRequestBodyRejectReasonMin = 0;
-export const rejectResourceRequestBodyRejectReasonMax = 2000;
+export const rejectResourceRequestBodyRejectReasonMax = 1000;
 
 export const rejectResourceRequestBody = zod
   .object({
@@ -120,7 +120,7 @@ export const rejectResourceRequestBody = zod
       .string()
       .min(rejectResourceRequestBodyRejectReasonMin)
       .max(rejectResourceRequestBodyRejectReasonMax)
-      .describe("반려 사유 (한글 1,000자, 영문 2,000자)"),
+      .describe("반려 사유 (최대 1,000자)"),
   })
   .strict()
   .describe("워크스페이스 리소스 요청 반려");
@@ -400,23 +400,35 @@ export const deleteWorkspacesBody = zod
   .describe("관리자용 워크스페이스 다건 삭제 요청");
 
 /**
- * 전체 워크스페이스 목록을 페이징하여 조회합니다. 워크스페이스명, 생성자명으로 검색이 가능합니다. 생성일, 워크스페이스명, 생성자명으로 정렬이 가능합니다.
+ * 
+            워크스페이스 목록을 상세 리소스 정보와 함께 조회합니다.
+
+            **포함 정보:**
+            - 워크스페이스 기본 정보 (ID, 이름, 생성자, 생성일시)
+            - GPU 리소스 (Normal GPU + MIG 프로필별 quota/used/utilization)
+            - CPU 리소스 (quota/used/utilization)
+            - Memory 리소스 (quota/used/utilization)
+
+            **참고:**
+            - MIG 프로필 quota는 Queue annotation (astrago.xiilab.com/original-capability)에서 조회
+            - MIG 프로필 used는 Queue status.allocated에서 조회
+        
  * @summary 관리자용 워크스페이스 목록 조회
  */
-export const getAdminAllWorkspacesQueryPageNoMin = 0;
+export const getAdminWorkspaceListQueryPageNoMin = 0;
 
-export const getAdminAllWorkspacesQueryPageSizeMax = 100;
+export const getAdminWorkspaceListQueryPageSizeMax = 100;
 
-export const getAdminAllWorkspacesQueryParams = zod.object({
+export const getAdminWorkspaceListQueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getAdminAllWorkspacesQueryPageNoMin)
+    .min(getAdminWorkspaceListQueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getAdminAllWorkspacesQueryPageSizeMax)
+    .max(getAdminWorkspaceListQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
   keyword: zod.string().optional().describe("검색 키워드"),
@@ -427,7 +439,303 @@ export const getAdminAllWorkspacesQueryParams = zod.object({
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
-export const getAdminAllWorkspacesResponse = zod
+export const getAdminWorkspaceListResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number().describe("전체 워크스페이스 수"),
+        totalPageNum: zod.number().describe("전체 페이지 수"),
+        currentPage: zod.number().describe("현재 페이지 번호 (0부터 시작)"),
+        content: zod
+          .array(
+            zod
+              .object({
+                workspaceId: zod.number().describe("워크스페이스 ID"),
+                workspaceName: zod.string().describe("워크스페이스 이름"),
+                resource: zod
+                  .object({
+                    gpu: zod
+                      .object({
+                        quotaCount: zod
+                          .number()
+                          .describe("할당된 GPU 총 개수 (Normal + MIG 합산)"),
+                        usedCount: zod
+                          .number()
+                          .describe(
+                            "사용 중인 GPU 총 개수 (Normal + MIG 합산)",
+                          ),
+                        requestCount: zod
+                          .number()
+                          .describe(
+                            "Pending 워크로드 요청 GPU 총 개수 (Normal + MIG 합산)",
+                          ),
+                        utilization: zod.number().describe("GPU 총 사용률 (%)"),
+                        detail: zod
+                          .object({
+                            normal: zod
+                              .object({
+                                requestCount: zod
+                                  .number()
+                                  .describe("요청 GPU 수량"),
+                              })
+                              .strict()
+                              .optional()
+                              .describe("일반 GPU 설정"),
+                            mig: zod
+                              .array(
+                                zod
+                                  .object({
+                                    profile: zod
+                                      .string()
+                                      .describe("MIG 프로파일 이름"),
+                                    requestCount: zod
+                                      .number()
+                                      .describe("요청 수량"),
+                                  })
+                                  .strict()
+                                  .describe("MIG GPU 프로파일 설정"),
+                              )
+                              .optional()
+                              .describe("MIG GPU 설정 (MIG 타입일 때)"),
+                            mps: zod
+                              .object({
+                                requestCount: zod
+                                  .number()
+                                  .describe("요청 MPS 수량"),
+                              })
+                              .strict()
+                              .optional()
+                              .describe("MPS GPU 설정"),
+                          })
+                          .strict()
+                          .describe("GPU 상세 설정"),
+                      })
+                      .strict()
+                      .describe("GPU 리소스 응답"),
+                    cpu: zod
+                      .object({
+                        quotaCore: zod.number().describe("할당된 CPU 코어 수"),
+                        usedCore: zod
+                          .number()
+                          .describe("사용 중인 CPU 코어 수"),
+                        requestCore: zod
+                          .number()
+                          .describe("Pending 워크로드 요청 CPU 코어 수"),
+                        utilization: zod.number().describe("CPU 사용률 (%)"),
+                      })
+                      .strict()
+                      .describe("CPU 리소스 응답"),
+                    memory: zod
+                      .object({
+                        quotaByte: zod
+                          .number()
+                          .describe("할당된 메모리 (bytes)"),
+                        usedByte: zod
+                          .number()
+                          .describe("사용 중인 메모리 (bytes)"),
+                        requestByte: zod
+                          .number()
+                          .describe("Pending 워크로드 요청 메모리 (bytes)"),
+                        utilization: zod.number().describe("메모리 사용률 (%)"),
+                      })
+                      .strict()
+                      .describe("메모리 리소스 응답"),
+                  })
+                  .strict()
+                  .describe("워크스페이스 상세 리소스 응답"),
+                creatorId: zod.string().describe("생성자 계정 ID"),
+                creatorName: zod.string().describe("생성자 이름"),
+                createdAt: zod
+                  .string()
+                  .datetime({})
+                  .optional()
+                  .describe("생성 일시 (UTC)"),
+              })
+              .strict()
+              .describe("관리자 워크스페이스 상세 항목 응답"),
+          )
+          .describe("워크스페이스 상세 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("관리자 워크스페이스 상세 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            특정 워크스페이스의 종료된 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - DB에서 workloadStatus가 TERMINATED인 워크로드
+
+            **필터링:**
+            - workloadJobType: 워크로드 타입 (batch, interactive, distributed)
+            - keyword: 워크로드 이름 검색
+
+            **정렬:**
+            - workloadName: 워크로드 이름순
+            - createdAt: 생성일시순
+            - terminatedAt: 종료일시순 (기본값: terminatedAt DESC)
+
+            **참고:**
+            - 사용자 API와 달리 hasMine 파라미터 없음 (관리자는 전체 조회)
+            - DB 레벨 페이징/정렬 적용
+        
+ * @summary 관리자용 특정 워크스페이스 종료된 워크로드 목록 조회
+ */
+export const getAdminTerminatedWorkloadsParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getAdminTerminatedWorkloadsQueryPageNoMin = 0;
+
+export const getAdminTerminatedWorkloadsQueryPageSizeMax = 100;
+
+export const getAdminTerminatedWorkloadsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getAdminTerminatedWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAdminTerminatedWorkloadsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  workloadJobType: zod
+    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+    .optional()
+    .describe("워크로드 타입 필터"),
+  sort: zod
+    .enum(["WORKLOAD_NAME", "CREATED_AT", "TERMINATED_AT"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+});
+
+export const getAdminTerminatedWorkloadsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number().describe("전체 항목 수"),
+        totalPageNum: zod.number().describe("전체 페이지 수"),
+        currentPage: zod.number().describe("현재 페이지 번호"),
+        content: zod
+          .array(
+            zod
+              .object({
+                workloadId: zod.number().describe("워크로드 ID"),
+                workloadName: zod.string().describe("워크로드 이름"),
+                workloadResourceName: zod
+                  .string()
+                  .describe("워크로드 리소스 이름 (K8s 리소스명)"),
+                creatorId: zod.string().describe("생성자 ID"),
+                creatorName: zod.string().describe("생성자 이름"),
+                createdAt: zod.string().datetime({}).describe("생성 일시"),
+                reclaimStatus: zod
+                  .enum(["RECLAIMED", "WARNING", "NORMAL"])
+                  .describe("리소스 회수 상태"),
+                reclaimWarningCount: zod
+                  .number()
+                  .describe("리소스 회수 경고 횟수"),
+                terminatedAt: zod
+                  .string()
+                  .datetime({})
+                  .optional()
+                  .describe("종료 일시"),
+                workloadJobType: zod
+                  .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                  .describe("워크로드 잡 타입"),
+              })
+              .strict()
+              .describe("종료된 워크로드 항목"),
+          )
+          .describe("워크로드 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("종료된 워크로드 목록 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            특정 워크스페이스의 실행 중인 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - K8s에서 실행 중인 워크로드 (Job/Deployment/TrainJob)
+            - 상태: CREATING, PENDING, RUNNING, ERROR
+
+            **필터링:**
+            - workloadJobType: 워크로드 타입 (batch, interactive, distributed)
+            - workloadStatus: 워크로드 상태 (running, pending, error)
+            - keyword: 워크로드 이름 검색
+
+            **정렬:**
+            - workloadName: 워크로드 이름순
+            - age: 실행 시간순 (기본값: age DESC)
+
+            **참고:**
+            - 사용자 API와 달리 hasMine 파라미터 없음 (관리자는 전체 조회)
+            - 어플리케이션 레벨 페이징 적용 (K8s 실시간 데이터 + DB 메타데이터 병합)
+        
+ * @summary 관리자용 특정 워크스페이스 실행 중인 워크로드 목록 조회
+ */
+export const getAdminActiveWorkloadsParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getAdminActiveWorkloadsQueryPageNoMin = 0;
+
+export const getAdminActiveWorkloadsQueryPageSizeMax = 100;
+
+export const getAdminActiveWorkloadsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getAdminActiveWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAdminActiveWorkloadsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  workloadJobType: zod
+    .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+    .optional()
+    .describe("워크로드 타입 필터"),
+  workloadStatus: zod
+    .enum([
+      "CREATING",
+      "PENDING",
+      "RUNNING",
+      "TERMINATING",
+      "TERMINATED",
+      "ERROR",
+    ])
+    .optional()
+    .describe("워크로드 상태 필터 (running, pending, error)"),
+  sort: zod
+    .enum(["WORKLOAD_NAME", "AGE"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+});
+
+export const getAdminActiveWorkloadsResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -439,130 +747,72 @@ export const getAdminAllWorkspacesResponse = zod
         content: zod.array(
           zod
             .object({
-              workspaceId: zod.number().describe("워크스페이스 ID"),
-              workspaceName: zod.string().describe("워크스페이스 이름"),
-              resource: zod
-                .object({
-                  gpu: zod
-                    .object({
-                      quotaCount: zod.number().describe("할당량 GPU 수"),
-                      usedCount: zod.number().describe("사용 중인 GPU 수"),
-                      detail: zod
-                        .object({
-                          normal: zod
-                            .object({
-                              quotaCount: zod
-                                .number()
-                                .describe("할당량 GPU 수"),
-                              usedCount: zod
-                                .number()
-                                .describe("사용 중인 GPU 수"),
-                            })
-                            .strict()
-                            .optional()
-                            .describe("관리자 Normal GPU 응답"),
-                          mig: zod
-                            .array(
-                              zod
-                                .object({
-                                  profile: zod
-                                    .string()
-                                    .describe("MIG 프로파일 이름"),
-                                  quotaCount: zod
-                                    .number()
-                                    .describe("할당량 수"),
-                                  usedCount: zod
-                                    .number()
-                                    .describe("사용 중인 수"),
-                                })
-                                .strict()
-                                .describe("관리자 MIG GPU 응답"),
-                            )
-                            .optional()
-                            .describe("MIG GPU 목록"),
-                          mps: zod
-                            .array(
-                              zod
-                                .object({
-                                  quotaCount: zod
-                                    .number()
-                                    .describe("할당량 수"),
-                                  usedCount: zod
-                                    .number()
-                                    .describe("사용 중인 수"),
-                                })
-                                .strict()
-                                .describe("관리자 MPS GPU 응답"),
-                            )
-                            .optional()
-                            .describe("MPS GPU 목록"),
-                        })
-                        .strict()
-                        .describe("관리자 GPU 상세 응답"),
-                    })
-                    .strict()
-                    .optional()
-                    .describe("관리자 GPU 리소스 응답"),
-                  cpu: zod
-                    .object({
-                      quotaCore: zod.number().describe("할당량 CPU 코어 수"),
-                      usedCore: zod.number().describe("사용 중인 CPU 코어 수"),
-                    })
-                    .strict()
-                    .describe("관리자 CPU 리소스 응답"),
-                  memory: zod
-                    .object({
-                      quotaByte: zod
-                        .number()
-                        .describe("할당량 메모리 바이트 수"),
-                      usedByte: zod
-                        .number()
-                        .describe("사용 중인 메모리 바이트 수"),
-                    })
-                    .strict()
-                    .describe("관리자 메모리 리소스 응답"),
-                  utilization: zod
-                    .object({
-                      gpu: zod
-                        .object({
-                          currentPercent: zod
-                            .number()
-                            .describe("현재 사용률 (%)"),
-                        })
-                        .strict()
-                        .describe("GPU 사용률"),
-                      cpu: zod
-                        .object({
-                          currentPercent: zod
-                            .number()
-                            .describe("현재 사용률 (%)"),
-                        })
-                        .strict()
-                        .describe("CPU 사용률"),
-                      memory: zod
-                        .object({
-                          currentPercent: zod
-                            .number()
-                            .describe("현재 사용률 (%)"),
-                        })
-                        .strict()
-                        .describe("메모리 사용률"),
-                    })
-                    .strict()
-                    .describe("관리자 리소스 사용률 응답"),
-                })
-                .strict()
-                .describe("관리자 워크스페이스 리소스 응답"),
-              creatorId: zod.string().describe("생성자 계정 ID"),
-              creatorName: zod.string().describe("생성자 이름"),
-              createdAt: zod
+              workloadId: zod.number().describe("워크로드 ID"),
+              workloadName: zod.string().describe("워크로드 이름"),
+              workloadResourceName: zod
                 .string()
-                .datetime({})
+                .describe("워크로드 리소스 이름 (K8s 리소스명)"),
+              creatorId: zod.string().describe("생성자 ID"),
+              creatorName: zod.string().describe("생성자 이름"),
+              createdAt: zod.string().datetime({}).describe("생성 일시"),
+              reclaimStatus: zod
+                .enum(["RECLAIMED", "WARNING", "NORMAL"])
+                .describe("리소스 회수 상태"),
+              reclaimWarningCount: zod
+                .number()
+                .describe("리소스 회수 경고 횟수"),
+              workloadStatus: zod
+                .enum([
+                  "CREATING",
+                  "PENDING",
+                  "RUNNING",
+                  "TERMINATING",
+                  "TERMINATED",
+                  "ERROR",
+                ])
+                .describe("워크로드 상태"),
+              ageSeconds: zod.number().describe("경과 시간 (초)"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .describe("워크로드 잡 타입"),
+              connection: zod
+                .array(
+                  zod
+                    .object({
+                      portName: zod.string().describe("포트 이름"),
+                      url: zod.string().describe("접속 URL"),
+                    })
+                    .strict()
+                    .describe("워크로드 접속 정보"),
+                )
+                .describe("접속 정보 목록"),
+              port: zod
+                .array(
+                  zod
+                    .object({
+                      portName: zod.string(),
+                      portNumber: zod.number(),
+                      servicePortNum: zod.number().optional(),
+                      url: zod.string().optional(),
+                    })
+                    .strict(),
+                )
                 .optional()
-                .describe("생성 일시 (UTC)"),
+                .describe("포트 설정 목록"),
+              env: zod
+                .array(
+                  zod
+                    .object({
+                      key: zod.string(),
+                      value: zod.string(),
+                    })
+                    .strict(),
+                )
+                .optional()
+                .describe("환경변수 목록"),
             })
             .strict()
-            .describe("관리자 워크스페이스 목록 조회 응답"),
+            .describe("실행 중 워크로드 항목"),
         ),
       })
       .strict()
@@ -640,7 +890,13 @@ export const getAdminWorkspaceMembersResponse = zod
 
 /**
  * 
-            특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 할당 현황을 확인할 수 있습니다.
+            특정 워크스페이스의 상세 정보를 조회합니다. 워크스페이스 기본 정보와 리소스 사용 현황을 확인할 수 있습니다.
+
+            **포함 정보:**
+            - 워크스페이스 기본 정보 (ID, 이름, 설명, 생성자, 생성일시)
+            - GPU 리소스 (Normal GPU + MIG 프로필별 quota/used/utilization)
+            - CPU 리소스 (quota/used/utilization)
+            - Memory 리소스 (quota/used/utilization)
 
             **응답 규칙:**
             - 워크스페이스가 존재하지 않거나 삭제된 경우: 200 OK + null 반환
@@ -664,73 +920,77 @@ export const getAdminWorkspaceDetailResponse = zod
           .object({
             gpu: zod
               .object({
-                quotaCount: zod.number().describe("할당량 GPU 수"),
-                usedCount: zod.number().describe("사용 중인 GPU 수"),
-                requestCount: zod.number().describe("요청 GPU 수"),
+                quotaCount: zod
+                  .number()
+                  .describe("할당된 GPU 총 개수 (Normal + MIG 합산)"),
+                usedCount: zod
+                  .number()
+                  .describe("사용 중인 GPU 총 개수 (Normal + MIG 합산)"),
+                requestCount: zod
+                  .number()
+                  .describe(
+                    "Pending 워크로드 요청 GPU 총 개수 (Normal + MIG 합산)",
+                  ),
+                utilization: zod.number().describe("GPU 총 사용률 (%)"),
                 detail: zod
                   .object({
                     normal: zod
                       .object({
-                        quotaCount: zod.number().describe("할당량 GPU 수"),
-                        usedCount: zod.number().describe("사용 중인 GPU 수"),
-                        requestCount: zod.number().describe("요청 GPU 수"),
+                        requestCount: zod.number().describe("요청 GPU 수량"),
                       })
                       .strict()
                       .optional()
-                      .describe("관리자 상세 Normal GPU 응답"),
+                      .describe("일반 GPU 설정"),
                     mig: zod
                       .array(
                         zod
                           .object({
                             profile: zod.string().describe("MIG 프로파일 이름"),
-                            quotaCount: zod.number().describe("할당량 수"),
-                            usedCount: zod.number().describe("사용 중인 수"),
-                            requestCount: zod.number().describe("요청 수"),
+                            requestCount: zod.number().describe("요청 수량"),
                           })
                           .strict()
-                          .describe("관리자 상세 MIG GPU 응답"),
+                          .describe("MIG GPU 프로파일 설정"),
                       )
                       .optional()
-                      .describe("MIG GPU 목록"),
+                      .describe("MIG GPU 설정 (MIG 타입일 때)"),
                     mps: zod
-                      .array(
-                        zod
-                          .object({
-                            quotaCount: zod.number().describe("할당량 수"),
-                            usedCount: zod.number().describe("사용 중인 수"),
-                            requestCount: zod.number().describe("요청 수"),
-                          })
-                          .strict()
-                          .describe("관리자 상세 MPS GPU 응답"),
-                      )
+                      .object({
+                        requestCount: zod.number().describe("요청 MPS 수량"),
+                      })
+                      .strict()
                       .optional()
-                      .describe("MPS GPU 목록"),
+                      .describe("MPS GPU 설정"),
                   })
                   .strict()
-                  .describe("관리자 상세 GPU 상세 응답"),
+                  .describe("GPU 상세 설정"),
               })
               .strict()
-              .optional()
-              .describe("관리자 상세 GPU 리소스 응답"),
+              .describe("GPU 리소스 응답"),
             cpu: zod
               .object({
-                quotaCore: zod.number().describe("할당량 CPU 코어 수"),
+                quotaCore: zod.number().describe("할당된 CPU 코어 수"),
                 usedCore: zod.number().describe("사용 중인 CPU 코어 수"),
-                requestCore: zod.number().describe("요청 CPU 코어 수"),
+                requestCore: zod
+                  .number()
+                  .describe("Pending 워크로드 요청 CPU 코어 수"),
+                utilization: zod.number().describe("CPU 사용률 (%)"),
               })
               .strict()
-              .describe("관리자 상세 CPU 리소스 응답"),
+              .describe("CPU 리소스 응답"),
             memory: zod
               .object({
-                quotaByte: zod.number().describe("할당량 메모리 바이트 수"),
-                usedByte: zod.number().describe("사용 중인 메모리 바이트 수"),
-                requestByte: zod.number().describe("요청 메모리 바이트 수"),
+                quotaByte: zod.number().describe("할당된 메모리 (bytes)"),
+                usedByte: zod.number().describe("사용 중인 메모리 (bytes)"),
+                requestByte: zod
+                  .number()
+                  .describe("Pending 워크로드 요청 메모리 (bytes)"),
+                utilization: zod.number().describe("메모리 사용률 (%)"),
               })
               .strict()
-              .describe("관리자 상세 메모리 리소스 응답"),
+              .describe("메모리 리소스 응답"),
           })
           .strict()
-          .describe("관리자 워크스페이스 상세 리소스 응답"),
+          .describe("워크스페이스 상세 리소스 응답"),
         creatorId: zod.string().describe("생성자 계정 ID"),
         creatorName: zod.string().describe("생성자 이름"),
         createdAt: zod
@@ -741,7 +1001,7 @@ export const getAdminWorkspaceDetailResponse = zod
       })
       .strict()
       .optional()
-      .describe("관리자 워크스페이스 상세 응답"),
+      .describe("관리자 워크스페이스 단건 상세 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })
@@ -803,7 +1063,7 @@ export const getWorkspaceSummaryListResponse = zod
                 workspaceName: zod.string().describe("워크스페이스 이름"),
                 creatorId: zod.string().describe("생성자 계정 ID"),
                 creatorName: zod.string().describe("생성자 이름"),
-                createDateTime: zod
+                createdAt: zod
                   .string()
                   .datetime({})
                   .optional()

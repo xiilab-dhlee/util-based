@@ -283,17 +283,9 @@ export const getGetWorkspaceResourceUsageResponseMock = (
         fractionDigits: 2,
       }),
     },
-    memoryGiB: {
-      total: faker.number.float({
-        min: undefined,
-        max: undefined,
-        fractionDigits: 2,
-      }),
-      used: faker.number.float({
-        min: undefined,
-        max: undefined,
-        fractionDigits: 2,
-      }),
+    memoryBytes: {
+      total: faker.number.int({ min: undefined, max: undefined }),
+      used: faker.number.int({ min: undefined, max: undefined }),
     },
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),

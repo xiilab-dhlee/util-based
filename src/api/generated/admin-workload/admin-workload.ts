@@ -46,7 +46,7 @@ import type {
   BaseResponseAdminWorkloadSummaryResponse,
   BaseResponsePageResponseAdminActiveWorkloadResponse,
   BaseResponsePageResponseAdminWorkloadResponse,
-  GetAdminActiveWorkloadsParams,
+  GetAdminActiveWorkloads1Params,
   GetPendingWorkloadsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -381,8 +381,8 @@ export function useGetPendingWorkloads<
         
  * @summary 실행 중 워크로드 목록 조회
  */
-export const getAdminActiveWorkloads = (
-  params?: GetAdminActiveWorkloadsParams,
+export const getAdminActiveWorkloads1 = (
+  params?: GetAdminActiveWorkloads1Params,
   signal?: AbortSignal,
 ) => {
   return customInstance<BaseResponsePageResponseAdminActiveWorkloadResponse>({
@@ -393,8 +393,8 @@ export const getAdminActiveWorkloads = (
   });
 };
 
-export const getGetAdminActiveWorkloadsQueryKey = (
-  params?: GetAdminActiveWorkloadsParams,
+export const getGetAdminActiveWorkloads1QueryKey = (
+  params?: GetAdminActiveWorkloads1Params,
 ) => {
   return [
     `/api/v1/admin/workloads/active`,
@@ -402,15 +402,15 @@ export const getGetAdminActiveWorkloadsQueryKey = (
   ] as const;
 };
 
-export const getGetAdminActiveWorkloadsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+export const getGetAdminActiveWorkloads1QueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
   TError = unknown,
 >(
-  params?: GetAdminActiveWorkloadsParams,
+  params?: GetAdminActiveWorkloads1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
         TError,
         TData
       >
@@ -420,42 +420,42 @@ export const getGetAdminActiveWorkloadsQueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetAdminActiveWorkloadsQueryKey(params);
+    queryOptions?.queryKey ?? getGetAdminActiveWorkloads1QueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getAdminActiveWorkloads>>
-  > = ({ signal }) => getAdminActiveWorkloads(params, signal);
+    Awaited<ReturnType<typeof getAdminActiveWorkloads1>>
+  > = ({ signal }) => getAdminActiveWorkloads1(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+    Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetAdminActiveWorkloadsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+export type GetAdminActiveWorkloads1QueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminActiveWorkloads1>>
 >;
-export type GetAdminActiveWorkloadsQueryError = unknown;
+export type GetAdminActiveWorkloads1QueryError = unknown;
 
-export function useGetAdminActiveWorkloads<
-  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+export function useGetAdminActiveWorkloads1<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
   TError = unknown,
 >(
-  params: undefined | GetAdminActiveWorkloadsParams,
+  params: undefined | GetAdminActiveWorkloads1Params,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+          Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
           TError,
-          Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+          Awaited<ReturnType<typeof getAdminActiveWorkloads1>>
         >,
         "initialData"
       >;
@@ -464,24 +464,24 @@ export function useGetAdminActiveWorkloads<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAdminActiveWorkloads<
-  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+export function useGetAdminActiveWorkloads1<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
   TError = unknown,
 >(
-  params?: GetAdminActiveWorkloadsParams,
+  params?: GetAdminActiveWorkloads1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+          Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
           TError,
-          Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+          Awaited<ReturnType<typeof getAdminActiveWorkloads1>>
         >,
         "initialData"
       >;
@@ -490,15 +490,15 @@ export function useGetAdminActiveWorkloads<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAdminActiveWorkloads<
-  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+export function useGetAdminActiveWorkloads1<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
   TError = unknown,
 >(
-  params?: GetAdminActiveWorkloadsParams,
+  params?: GetAdminActiveWorkloads1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
         TError,
         TData
       >
@@ -512,15 +512,15 @@ export function useGetAdminActiveWorkloads<
  * @summary 실행 중 워크로드 목록 조회
  */
 
-export function useGetAdminActiveWorkloads<
-  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+export function useGetAdminActiveWorkloads1<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
   TError = unknown,
 >(
-  params?: GetAdminActiveWorkloadsParams,
+  params?: GetAdminActiveWorkloads1Params,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        Awaited<ReturnType<typeof getAdminActiveWorkloads1>>,
         TError,
         TData
       >
@@ -530,7 +530,7 @@ export function useGetAdminActiveWorkloads<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetAdminActiveWorkloadsQueryOptions(params, options);
+  const queryOptions = getGetAdminActiveWorkloads1QueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

@@ -49,20 +49,22 @@ import type {
   BaseResponseDistributedPodResponse,
   BaseResponseMapStringObject,
   BaseResponsePageResponseActiveWorkloadResponse,
+  BaseResponsePageResponseMyWorkloadItem,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
   BaseResponseWorkloadDeleteFilesResponse,
   BaseResponseWorkloadDetailResponse,
   BaseResponseWorkloadEventHistoryResponse,
   BaseResponseWorkloadFileListResponse,
+  BaseResponseWorkloadFileUploadResponse,
   BaseResponseWorkloadStatusResponse,
   BaseResponseWorkloadSummaryResponse,
   GetActiveWorkloadsParams,
+  GetMyWorkloadsParams,
   GetTerminatedWorkloadLogParams,
   GetTerminatedWorkloadsParams,
   GetWorkloadEventHistoryParams,
-  SseEmitter,
-  StreamWorkloadLogsParams,
+  StreamingResponseBody,
   WorkloadCompressFilesParams,
   WorkloadCompressRequest,
   WorkloadCreateFolderParams,
@@ -72,11 +74,15 @@ import type {
   WorkloadDecompressRequest,
   WorkloadDeleteFilesParams,
   WorkloadDeleteFilesRequest,
+  WorkloadDownloadFilesParams,
+  WorkloadDownloadRequest,
   WorkloadListFilesParams,
   WorkloadPreviewFileParams,
   WorkloadResourcePresetUpdateRequest,
   WorkloadRestartRequest,
   WorkloadUpdateRequest,
+  WorkloadUploadFileBody,
+  WorkloadUploadFileParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
@@ -414,6 +420,176 @@ export const useUpdateResourcePreset = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
+            해당 워크스페이스에서 내가 생성한 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - 워크로드 상태(실행/종료)와 관계없이 모든 워크로드
+            - 삭제된 워크로드는 제외
+
+            **정렬:**
+            - 생성 일시 기준 내림차순 (최신순)
+        
+ * @summary 내 워크로드 목록 조회
+ */
+export const getMyWorkloads = (
+  workspaceId: number,
+  params?: GetMyWorkloadsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseMyWorkloadItem>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetMyWorkloadsQueryKey = (
+  workspaceId?: number,
+  params?: GetMyWorkloadsParams,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetMyWorkloadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetMyWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyWorkloads>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMyWorkloadsQueryKey(workspaceId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyWorkloads>>> = ({
+    signal,
+  }) => getMyWorkloads(workspaceId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMyWorkloads>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMyWorkloadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyWorkloads>>
+>;
+export type GetMyWorkloadsQueryError = unknown;
+
+export function useGetMyWorkloads<
+  TData = Awaited<ReturnType<typeof getMyWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params: undefined | GetMyWorkloadsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyWorkloads>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getMyWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyWorkloads<
+  TData = Awaited<ReturnType<typeof getMyWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetMyWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyWorkloads>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getMyWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyWorkloads<
+  TData = Awaited<ReturnType<typeof getMyWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetMyWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyWorkloads>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 내 워크로드 목록 조회
+ */
+
+export function useGetMyWorkloads<
+  TData = Awaited<ReturnType<typeof getMyWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetMyWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyWorkloads>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMyWorkloadsQueryOptions(
+    workspaceId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
             워크스페이스에 새로운 워크로드를 생성합니다.
 
             **워크로드 잡 타입:**
@@ -643,6 +819,272 @@ export const useWorkloadCreateFolder = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getWorkloadCreateFolderMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드의 Pod 내부로 파일을 업로드합니다.
+
+            **제약사항:**
+            - RUNNING 상태의 워크로드만 파일 업로드 가능
+            - DISTRIBUTED 워크로드는 podName 파라미터 필수
+            - 동일한 경로에 파일이 존재하면 덮어씀
+            - 빈 파일은 업로드 불가
+
+            **요청 형식:**
+            - multipart/form-data
+            - file: 업로드할 파일 (필수)
+            - path: 업로드할 디렉토리 경로 (기본값: /)
+        
+ * @summary 워크로드 파일 업로드
+ */
+export const workloadUploadFile = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadUploadFileBody: WorkloadUploadFileBody,
+  params?: WorkloadUploadFileParams,
+  signal?: AbortSignal,
+) => {
+  const formData = new FormData();
+  formData.append(`file`, workloadUploadFileBody.file);
+
+  return customInstance<BaseResponseWorkloadFileUploadResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/files/upload`,
+    method: "POST",
+    headers: { "Content-Type": "multipart/form-data" },
+    data: formData,
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadUploadFileMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof workloadUploadFile>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadUploadFileBody;
+      params?: WorkloadUploadFileParams;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof workloadUploadFile>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadUploadFileBody;
+    params?: WorkloadUploadFileParams;
+  },
+  TContext
+> => {
+  const mutationKey = ["workloadUploadFile"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof workloadUploadFile>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadUploadFileBody;
+      params?: WorkloadUploadFileParams;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data, params } = props ?? {};
+
+    return workloadUploadFile(workspaceId, workloadResourceName, data, params);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WorkloadUploadFileMutationResult = NonNullable<
+  Awaited<ReturnType<typeof workloadUploadFile>>
+>;
+export type WorkloadUploadFileMutationBody = WorkloadUploadFileBody;
+export type WorkloadUploadFileMutationError = unknown;
+
+/**
+ * @summary 워크로드 파일 업로드
+ */
+export const useWorkloadUploadFile = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof workloadUploadFile>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadUploadFileBody;
+        params?: WorkloadUploadFileParams;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof workloadUploadFile>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadUploadFileBody;
+    params?: WorkloadUploadFileParams;
+  },
+  TContext
+> => {
+  const mutationOptions = getWorkloadUploadFileMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일/폴더를 압축하여 다운로드합니다.
+
+            **다운로드 방식:**
+            - 모든 파일/폴더는 선택한 압축 형식으로 압축되어 다운로드됩니다
+            - 단일 파일도 압축하여 다운로드합니다
+
+            **압축 파일명 규칙:**
+            - 단일 파일 1개: {파일명}.zip 또는 {파일명}.tar.gz
+            - 단일 폴더 1개: {폴더명}.zip 또는 {폴더명}.tar.gz
+            - 다중 파일/폴더: download.zip 또는 download.tar.gz
+
+            **압축 형식:**
+            - TAR: .tar.gz (gzip 압축 tar)
+            - ZIP: .zip
+
+            **제약사항:**
+            - RUNNING 상태의 워크로드만 다운로드 가능
+            - DISTRIBUTED 워크로드는 podName 파라미터 필수
+            - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+            - 다운로드 최대 용량: 10GB (환경변수로 변경 가능)
+        
+ * @summary 워크로드 파일 다운로드
+ */
+export const workloadDownloadFiles = (
+  workspaceId: number,
+  workloadResourceName: string,
+  workloadDownloadRequest: WorkloadDownloadRequest,
+  params?: WorkloadDownloadFilesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<StreamingResponseBody>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/files/download`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: workloadDownloadRequest,
+    params,
+    signal,
+  });
+};
+
+export const getWorkloadDownloadFilesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof workloadDownloadFiles>>,
+    TError,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadDownloadRequest;
+      params?: WorkloadDownloadFilesParams;
+    },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof workloadDownloadFiles>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadDownloadRequest;
+    params?: WorkloadDownloadFilesParams;
+  },
+  TContext
+> => {
+  const mutationKey = ["workloadDownloadFiles"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof workloadDownloadFiles>>,
+    {
+      workspaceId: number;
+      workloadResourceName: string;
+      data: WorkloadDownloadRequest;
+      params?: WorkloadDownloadFilesParams;
+    }
+  > = (props) => {
+    const { workspaceId, workloadResourceName, data, params } = props ?? {};
+
+    return workloadDownloadFiles(
+      workspaceId,
+      workloadResourceName,
+      data,
+      params,
+    );
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WorkloadDownloadFilesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof workloadDownloadFiles>>
+>;
+export type WorkloadDownloadFilesMutationBody = WorkloadDownloadRequest;
+export type WorkloadDownloadFilesMutationError = unknown;
+
+/**
+ * @summary 워크로드 파일 다운로드
+ */
+export const useWorkloadDownloadFiles = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof workloadDownloadFiles>>,
+      TError,
+      {
+        workspaceId: number;
+        workloadResourceName: string;
+        data: WorkloadDownloadRequest;
+        params?: WorkloadDownloadFilesParams;
+      },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof workloadDownloadFiles>>,
+  TError,
+  {
+    workspaceId: number;
+    workloadResourceName: string;
+    data: WorkloadDownloadRequest;
+    params?: WorkloadDownloadFilesParams;
+  },
+  TContext
+> => {
+  const mutationOptions = getWorkloadDownloadFilesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -1862,207 +2304,6 @@ export function useGetTerminatedWorkloadLog<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetTerminatedWorkloadLogQueryOptions(
-    workspaceId,
-    workloadResourceName,
-    params,
-    options,
-  );
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * 
-            실행 중인 워크로드의 Pod 로그를 SSE(Server-Sent Events)로 실시간 스트리밍합니다.
-
-            **Pod 선택:**
-            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
-            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
-
-            **SSE 이벤트:**
-            - event: log
-            - data: 로그 라인
-        
- * @summary 실행 중인 워크로드 로그 실시간 스트리밍
- */
-export const streamWorkloadLogs = (
-  workspaceId: number,
-  workloadResourceName: string,
-  params?: StreamWorkloadLogsParams,
-  signal?: AbortSignal,
-) => {
-  return customInstance<SseEmitter>({
-    url: `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/logs/active`,
-    method: "GET",
-    params,
-    signal,
-  });
-};
-
-export const getStreamWorkloadLogsQueryKey = (
-  workspaceId?: number,
-  workloadResourceName?: string,
-  params?: StreamWorkloadLogsParams,
-) => {
-  return [
-    `/api/v1/workspaces/${workspaceId}/workloads/${workloadResourceName}/logs/active`,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getStreamWorkloadLogsQueryOptions = <
-  TData = Awaited<ReturnType<typeof streamWorkloadLogs>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params?: StreamWorkloadLogsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof streamWorkloadLogs>>,
-        TError,
-        TData
-      >
-    >;
-  },
-) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ??
-    getStreamWorkloadLogsQueryKey(workspaceId, workloadResourceName, params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof streamWorkloadLogs>>
-  > = ({ signal }) =>
-    streamWorkloadLogs(workspaceId, workloadResourceName, params, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!(workspaceId && workloadResourceName),
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof streamWorkloadLogs>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type StreamWorkloadLogsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof streamWorkloadLogs>>
->;
-export type StreamWorkloadLogsQueryError = unknown;
-
-export function useStreamWorkloadLogs<
-  TData = Awaited<ReturnType<typeof streamWorkloadLogs>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params: undefined | StreamWorkloadLogsParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof streamWorkloadLogs>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof streamWorkloadLogs>>,
-          TError,
-          Awaited<ReturnType<typeof streamWorkloadLogs>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useStreamWorkloadLogs<
-  TData = Awaited<ReturnType<typeof streamWorkloadLogs>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params?: StreamWorkloadLogsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof streamWorkloadLogs>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof streamWorkloadLogs>>,
-          TError,
-          Awaited<ReturnType<typeof streamWorkloadLogs>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useStreamWorkloadLogs<
-  TData = Awaited<ReturnType<typeof streamWorkloadLogs>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params?: StreamWorkloadLogsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof streamWorkloadLogs>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 실행 중인 워크로드 로그 실시간 스트리밍
- */
-
-export function useStreamWorkloadLogs<
-  TData = Awaited<ReturnType<typeof streamWorkloadLogs>>,
-  TError = unknown,
->(
-  workspaceId: number,
-  workloadResourceName: string,
-  params?: StreamWorkloadLogsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof streamWorkloadLogs>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getStreamWorkloadLogsQueryOptions(
     workspaceId,
     workloadResourceName,
     params,

@@ -197,27 +197,27 @@ export const getPendingWorkloadsResponse = zod
         
  * @summary 실행 중 워크로드 목록 조회
  */
-export const getAdminActiveWorkloadsQueryPageNoDefault = 0;
-export const getAdminActiveWorkloadsQueryPageNoMin = 0;
+export const getAdminActiveWorkloads1QueryPageNoDefault = 0;
+export const getAdminActiveWorkloads1QueryPageNoMin = 0;
 
-export const getAdminActiveWorkloadsQueryPageSizeDefault = 20;
-export const getAdminActiveWorkloadsQueryPageSizeMax = 100;
+export const getAdminActiveWorkloads1QueryPageSizeDefault = 20;
+export const getAdminActiveWorkloads1QueryPageSizeMax = 100;
 
-export const getAdminActiveWorkloadsQueryParams = zod.object({
+export const getAdminActiveWorkloads1QueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getAdminActiveWorkloadsQueryPageNoMin)
+    .min(getAdminActiveWorkloads1QueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getAdminActiveWorkloadsQueryPageSizeMax)
-    .default(getAdminActiveWorkloadsQueryPageSizeDefault)
+    .max(getAdminActiveWorkloads1QueryPageSizeMax)
+    .default(getAdminActiveWorkloads1QueryPageSizeDefault)
     .describe("페이지 크기"),
 });
 
-export const getAdminActiveWorkloadsResponse = zod
+export const getAdminActiveWorkloads1Response = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -229,6 +229,7 @@ export const getAdminActiveWorkloadsResponse = zod
         content: zod.array(
           zod
             .object({
+              workloadId: zod.number().describe("워크로드 ID"),
               workloadResourceName: zod
                 .string()
                 .describe("워크로드 리소스 이름 (K8s 리소스명)"),

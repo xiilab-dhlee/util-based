@@ -34,9 +34,10 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponseAccountDeleteResult,
   BaseResponseAccountItemResponse,
-  BaseResponseAccountResourceDetailResponse,
+  BaseResponseAccountResourceDetailSummaryResponse,
   BaseResponsePageResponseAccountItemResponse,
   BaseResponsePageResponseAccountResourceSummaryResponse,
+  BaseResponsePageResponseAccountWorkloadItemResponse,
   BaseResponsePasswordResetByAdminResponse,
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -72,7 +73,7 @@ export const getResetPasswordByAdminResponseMock = (
   ...overrideResponse,
 });
 
-export const getDeleteAccountResponseMock = (
+export const getDeleteAccountBulkResponseMock = (
   overrideResponse: Partial<BaseResponseAccountDeleteResult> = {},
 ): BaseResponseAccountDeleteResult => ({
   status: "SUCCESS",
@@ -130,9 +131,55 @@ export const getGetAllAccountsResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetAccountResourceDetailResponseMock = (
-  overrideResponse: Partial<BaseResponseAccountResourceDetailResponse> = {},
-): BaseResponseAccountResourceDetailResponse => ({
+export const getGetAccountWorkloadsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseAccountWorkloadItemResponse> = {},
+): BaseResponsePageResponseAccountWorkloadItemResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
+      workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      resource: {
+        gpu: {
+          gpuName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          detail: {
+            normal: {
+              quotaCount: faker.number.int({ min: undefined, max: undefined }),
+            },
+            mig: Array.from(
+              { length: faker.number.int({ min: 1, max: 10 }) },
+              (_, i) => i + 1,
+            ).map(() => ({
+              profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
+              quotaCount: faker.number.int({ min: undefined, max: undefined }),
+            })),
+          },
+        },
+        cpu: {
+          quotaCore: faker.number.int({ min: undefined, max: undefined }),
+        },
+        memory: {
+          quotaByte: faker.number.int({ min: undefined, max: undefined }),
+        },
+      },
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetAccountResourceSummaryResponseMock = (
+  overrideResponse: Partial<BaseResponseAccountResourceDetailSummaryResponse> = {},
+): BaseResponseAccountResourceDetailSummaryResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
@@ -150,40 +197,7 @@ export const getGetAccountResourceDetailResponseMock = (
       max: undefined,
       fractionDigits: 2,
     }),
-    totalMemoryGiB: faker.number.float({
-      min: undefined,
-      max: undefined,
-      fractionDigits: 2,
-    }),
-    workspaceWorkloads: Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      workspaceId: faker.number.int({ min: undefined, max: undefined }),
-      workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      workloads: Array.from(
-        { length: faker.number.int({ min: 1, max: 10 }) },
-        (_, i) => i + 1,
-      ).map(() => ({
-        workloadId: faker.number.int({ min: undefined, max: undefined }),
-        workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        workloadJobType: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        workloadStatus: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        gpuCount: faker.number.int({ min: undefined, max: undefined }),
-        migCount: faker.number.int({ min: undefined, max: undefined }),
-        cpuCores: faker.number.float({
-          min: undefined,
-          max: undefined,
-          fractionDigits: 2,
-        }),
-        memoryGiB: faker.number.float({
-          min: undefined,
-          max: undefined,
-          fractionDigits: 2,
-        }),
-        numNodes: faker.number.int({ min: undefined, max: undefined }),
-      })),
-    })),
+    totalMemoryBytes: faker.number.int({ min: undefined, max: undefined }),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -242,11 +256,7 @@ export const getGetAllAccountResourcesResponseMock = (
         max: undefined,
         fractionDigits: 2,
       }),
-      memoryGiB: faker.number.float({
-        min: undefined,
-        max: undefined,
-        fractionDigits: 2,
-      }),
+      memoryBytes: faker.number.int({ min: undefined, max: undefined }),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -277,6 +287,27 @@ export const getUpdateAccountMockHandler = (
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
+    },
+    options,
+  );
+};
+
+export const getDeleteAccountSingleMockHandler = (
+  overrideResponse?:
+    | void
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.delete(
+    "*/api/v1/admin/accounts/:accountId",
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === "function") {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
     },
     options,
   );
@@ -340,7 +371,7 @@ export const getResetPasswordByAdminMockHandler = (
   );
 };
 
-export const getDeleteAccountMockHandler = (
+export const getDeleteAccountBulkMockHandler = (
   overrideResponse?:
     | BaseResponseAccountDeleteResult
     | ((
@@ -361,7 +392,7 @@ export const getDeleteAccountMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getDeleteAccountResponseMock(),
+            : getDeleteAccountBulkResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -400,18 +431,18 @@ export const getGetAllAccountsMockHandler = (
   );
 };
 
-export const getGetAccountResourceDetailMockHandler = (
+export const getGetAccountWorkloadsMockHandler = (
   overrideResponse?:
-    | BaseResponseAccountResourceDetailResponse
+    | BaseResponsePageResponseAccountWorkloadItemResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponseAccountResourceDetailResponse>
-        | BaseResponseAccountResourceDetailResponse),
+        | Promise<BaseResponsePageResponseAccountWorkloadItemResponse>
+        | BaseResponsePageResponseAccountWorkloadItemResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    "*/api/v1/admin/accounts/:accountId/resources",
+    "*/api/v1/admin/accounts/:accountId/workloads",
     async (info) => {
       await delay(1000);
 
@@ -421,7 +452,37 @@ export const getGetAccountResourceDetailMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetAccountResourceDetailResponseMock(),
+            : getGetAccountWorkloadsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetAccountResourceSummaryMockHandler = (
+  overrideResponse?:
+    | BaseResponseAccountResourceDetailSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseAccountResourceDetailSummaryResponse>
+        | BaseResponseAccountResourceDetailSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/accounts/:accountId/resources/summary",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAccountResourceSummaryResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -491,11 +552,13 @@ export const getGetAllAccountResourcesMockHandler = (
 };
 export const getAdminAccountManagementMock = () => [
   getUpdateAccountMockHandler(),
+  getDeleteAccountSingleMockHandler(),
   getUpdateAccountEnabledMockHandler(),
   getResetPasswordByAdminMockHandler(),
-  getDeleteAccountMockHandler(),
+  getDeleteAccountBulkMockHandler(),
   getGetAllAccountsMockHandler(),
-  getGetAccountResourceDetailMockHandler(),
+  getGetAccountWorkloadsMockHandler(),
+  getGetAccountResourceSummaryMockHandler(),
   getGetAccountDetailMockHandler(),
   getGetAllAccountResourcesMockHandler(),
 ];
