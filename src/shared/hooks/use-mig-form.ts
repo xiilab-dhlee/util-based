@@ -1,9 +1,6 @@
 import { useState } from "react";
 
-import {
-  type MigResourceType,
-  migResourceSchema,
-} from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
+import type { MigResourceType } from "@/shared/types/mig.type";
 
 // ===== 타입 =====
 
@@ -66,21 +63,23 @@ export function useMigForm(): UseMigFormReturn {
       return null;
     }
 
-    // Zod 스키마 검증
-    const result = migResourceSchema.safeParse({
-      profile: tempProfile,
-      count: tempCount,
-    });
+    // 숫자 형식 검증
+    if (!/^\d+$/.test(tempCount)) {
+      setInputError("개수는 숫자여야 합니다.");
+      return null;
+    }
 
-    if (!result.success) {
-      const firstError =
-        result.error.issues[0]?.message ?? "입력값이 유효하지 않습니다.";
-      setInputError(firstError);
+    const numericCount = parseInt(tempCount, 10);
+    if (Number.isNaN(numericCount) || numericCount < 1) {
+      setInputError("개수는 1 이상이어야 합니다.");
       return null;
     }
 
     clearInputError();
-    return result.data;
+    return {
+      profile: tempProfile,
+      count: tempCount,
+    };
   };
 
   /**

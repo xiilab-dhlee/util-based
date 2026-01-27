@@ -19,6 +19,8 @@ interface ResourcePresetDetailUpdateProps {
   onCancel: () => void;
   onSave: () => void;
   isSaving: boolean;
+  isNormalGpuListEnabled: boolean;
+  onChangeNormalGpuListEnabled: (checked: boolean) => void;
 }
 
 /**
@@ -31,6 +33,8 @@ export function ResourcePresetDetailUpdate({
   onCancel,
   onSave,
   isSaving,
+  isNormalGpuListEnabled,
+  onChangeNormalGpuListEnabled,
 }: ResourcePresetDetailUpdateProps) {
   return (
     <>
@@ -43,8 +47,13 @@ export function ResourcePresetDetailUpdate({
           <ScrollContent>
             <CreateResourcePresetBasicInfo />
             <CreateResourcePresetJobType />
-            <CreateResourcePresetGpuInfo />
-            <CreateResourcePresetResourceInfo />
+            <CreateResourcePresetGpuInfo
+              isNormalGpuListEnabled={isNormalGpuListEnabled}
+              onChangeNormalGpuListEnabled={onChangeNormalGpuListEnabled}
+            />
+            <CreateResourcePresetResourceInfo
+              isNormalGpuListEnabled={isNormalGpuListEnabled}
+            />
           </ScrollContent>
         </CustomScrollbars>
       </AsideDetailScrollWrapper>

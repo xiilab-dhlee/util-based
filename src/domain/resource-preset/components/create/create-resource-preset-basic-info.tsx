@@ -1,8 +1,10 @@
 "use client";
 
+import { Controller, useFormContext } from "react-hook-form";
 import { Form, FormItem, Input, TextArea } from "xiilab-ui";
 
-import { useResourcePresetForm } from "@/domain/resource-preset/hooks/use-resource-preset-form";
+import { CREATE_RESOURCE_PRESET_FORM_CONSTANTS } from "@/domain/resource-preset/constants/create-resource-preset-form.constant";
+import type { CreatePresetBodyExtended } from "@/domain/resource-preset/utils/create-resource-preset-form.override.zod";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 import {
   FormSectionContainer,
@@ -10,7 +12,10 @@ import {
 } from "@/styles/layers/form-layer.styled";
 
 export function CreateResourcePresetBasicInfo() {
-  const { form, errors, setField } = useResourcePresetForm();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<CreatePresetBodyExtended>();
 
   return (
     <FormSectionContainer>
@@ -21,25 +26,48 @@ export function CreateResourcePresetBasicInfo() {
         <FormItem
           label="리소스 프리셋 이름"
           required
-          validateStatus={errors.name ? "error" : undefined}
+          validateStatus={errors.presetName ? "error" : undefined}
+          help={errors.presetName?.message}
         >
-          <Input
-            value={form.name}
-            onChange={(e) => setField("name", e.target.value)}
-            placeholder="리소스 프리셋 이름을 입력해 주세요."
-            status={errors.name ? "error" : undefined}
-            width="100%"
+          <Controller
+            control={control}
+            name="presetName"
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value ?? ""}
+                placeholder="리소스 프리셋 이름을 입력해 주세요."
+                status={errors.presetName ? "error" : undefined}
+                maxLength={
+                  CREATE_RESOURCE_PRESET_FORM_CONSTANTS.presetName.maxLength
+                }
+                width="100%"
+              />
+            )}
           />
         </FormItem>
 
-        <FormItem label="설명">
-          <TextArea
-            value={form.description}
-            onChange={(e) => setField("description", e.target.value)}
-            placeholder="리소스 프리셋 설명을 입력해 주세요."
-            width="100%"
-            height="100px"
-            resize="none"
+        <FormItem
+          label="설명"
+          validateStatus={errors.description ? "error" : undefined}
+          help={errors.description?.message}
+        >
+          <Controller
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <TextArea
+                {...field}
+                value={field.value ?? ""}
+                placeholder="리소스 프리셋 설명을 입력해 주세요."
+                maxLength={
+                  CREATE_RESOURCE_PRESET_FORM_CONSTANTS.description.maxLength
+                }
+                width="100%"
+                height="100px"
+                resize="none"
+              />
+            )}
           />
         </FormItem>
       </Form>

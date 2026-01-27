@@ -8,6 +8,7 @@ import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
 import type { z } from "zod";
 
 import { useGetWorkspaceDetail } from "@/api/generated/workspace/workspace";
+import { WORKSPACE_DESCRIPTION_MAX_LENGTH } from "@/domain/workspace/constants/workspace-validation.constant";
 import { useUpdateWorkspaceAction } from "@/domain/workspace/hooks/workspace-actions";
 import { openUpdateWorkspaceModalAtom } from "@/domain/workspace/state/workspace.atom";
 import { updateWorkspaceBodyExtended } from "@/domain/workspace/utils/update-workspace-form.override.zod";
@@ -166,7 +167,7 @@ export function UpdateWorkspaceModal() {
                 value={field.value ?? ""}
                 id="update-workspace-description"
                 placeholder="워크스페이스 설명을 입력해 주세요."
-                maxLength={1000}
+                maxLength={WORKSPACE_DESCRIPTION_MAX_LENGTH}
                 disabled={
                   isPending ||
                   isWorkspaceDetailFetching ||

@@ -2,8 +2,8 @@ import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
 import type {
-  ActiveWorkloadItemWorkloadJobType,
-  ActiveWorkloadItemWorkloadStatus,
+  ActiveWorkloadResponseWorkloadJobType,
+  ActiveWorkloadResponseWorkloadStatus,
   GetTerminatedWorkloadsWorkloadJobType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -47,10 +47,10 @@ export const activeWorkloadPageAtom = atomWithReset<number>(1);
 export const activeWorkloadSearchTextAtom = atomWithReset<string>("");
 /** 활성화 워크로드 잡타입 (null = 전체) */
 export const activeWorkloadJobTypeAtom =
-  atomWithReset<ActiveWorkloadItemWorkloadJobType | null>(null);
+  atomWithReset<ActiveWorkloadResponseWorkloadJobType | null>(null);
 /** 활성화 워크로드 상태 (null = 전체) */
 export const activeWorkloadStatusAtom =
-  atomWithReset<ActiveWorkloadItemWorkloadStatus | null>(null);
+  atomWithReset<ActiveWorkloadResponseWorkloadStatus | null>(null);
 /** 활성화 워크로드 내 항목만 보기 */
 export const activeWorkloadIsMineAtom = atomWithReset<boolean>(false);
 /** 활성화 워크로드 정렬 */
@@ -156,3 +156,10 @@ export const workloadFileCheckedNodesInfoAtom = createCheckedNodesInfoAtom(
   workloadFileTreeDataAtom,
   workloadFileCheckedNodesAtom,
 );
+
+// ============================================
+// 터미널 관련 상태
+// ============================================
+
+/** 터미널용 선택된 Pod 이름 (DISTRIBUTED 워크로드용) */
+export const terminalSelectedPodNameAtom = atomWithReset<string | null>(null);

@@ -5,7 +5,14 @@ import { useResetAtom } from "jotai/utils";
 import styled from "styled-components";
 import { Button, Dropdown, Input } from "xiilab-ui";
 
-import { RESOURCE_PRESET_JOB_OPTIONS } from "@/domain/resource-preset/constants/resource-preset.constant";
+import type {
+  GetPresetsNodeType,
+  GetPresetsWorkloadJobType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  RESOURCE_PRESET_JOB_OPTIONS,
+  RESOURCE_PRESET_NODE_OPTIONS,
+} from "@/domain/resource-preset/constants/resource-preset.constant";
 import {
   resourcePresetJobTypeAtom,
   resourcePresetNodeTypeAtom,
@@ -13,10 +20,7 @@ import {
   resourcePresetSearchTextAtom,
 } from "@/domain/resource-preset/state/resource-preset.atom";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import {
-  ALL_OPTION,
-  NODE_MODE_OPTIONS,
-} from "@/shared/constants/core.constant";
+import { ALL_OPTION } from "@/shared/constants/core.constant";
 
 interface ResourcePresetListFilterProps {
   /** 전체 개수 */
@@ -42,19 +46,28 @@ export function ResourcePresetListFilter({
   const setSearchText = useSetAtom(resourcePresetSearchTextAtom);
   const resetPage = useResetAtom(resourcePresetPageAtom);
 
-  /**
-   * Job Type 변경 핸들러
-   */
-  const handleChangeJobType = (value: typeof jobType) => {
+  const handleChangeJobType = (
+    value: GetPresetsWorkloadJobType | "" | null,
+  ) => {
     resetPage();
+    if (!value) {
+      setJobType(undefined);
+      return;
+    }
+
     setJobType(value);
   };
 
   /**
    * Node Type 변경 핸들러
    */
-  const handleChangeNodeType = (value: typeof nodeType) => {
+  const handleChangeNodeType = (value: GetPresetsNodeType | "" | null) => {
     resetPage();
+    if (!value) {
+      setNodeType(undefined);
+      return;
+    }
+
     setNodeType(value);
   };
 
@@ -69,14 +82,14 @@ export function ResourcePresetListFilter({
 
   // 드롭다운 옵션
   const jobTypeOptions = [ALL_OPTION, ...RESOURCE_PRESET_JOB_OPTIONS];
-  const nodeTypeOptions = [ALL_OPTION, ...NODE_MODE_OPTIONS];
+  const nodeTypeOptions = [ALL_OPTION, ...RESOURCE_PRESET_NODE_OPTIONS];
 
   return (
     <MySearchFilter title="리소스 프리셋 목록" total={total}>
       <FilterControls>
         <Dropdown
           options={jobTypeOptions}
-          value={jobType ?? null}
+          value={jobType ?? ALL_OPTION.value}
           onChange={handleChangeJobType}
           placeholder="Job Type"
           width={140}
@@ -84,7 +97,7 @@ export function ResourcePresetListFilter({
         />
         <Dropdown
           options={nodeTypeOptions}
-          value={nodeType ?? null}
+          value={nodeType ?? ALL_OPTION.value}
           onChange={handleChangeNodeType}
           placeholder="노드 Type"
           width={140}
