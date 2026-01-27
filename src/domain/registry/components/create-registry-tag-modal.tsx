@@ -5,12 +5,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
 import { getGetPrivateImageTagListQueryKey } from "@/api/generated/private-registry/private-registry";
 import { getGetPublicImageTagListQueryKey } from "@/api/generated/public-registry/public-registry";
 import { CredentialSelect } from "@/domain/credential/components/credential-select";
-import { checkImageTagExistsByMode } from "@/domain/registry/hooks/use-check-image-tag-exists-by-mode";
+import { checkImageTagExistsByMode } from "@/domain/registry/hooks/check-image-tag-exists-by-mode";
 import { useCreateRegistryTagByMode } from "@/domain/registry/hooks/use-create-registry-tag-by-mode";
 import {
   type CreateRegistryTagFormType,
@@ -100,8 +101,12 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
         // 존재하지 않으면 바로 생성
         executeCreate(data);
       }
-    } catch {
-      // API 에러 시 그냥 생성 시도 (백엔드에서 처리)
+    } catch (error) {
+      // API 에러 발생 시 사용자에게 알림 후 생성 진행
+      console.error("이미지 태그 중복 확인 실패:", error);
+      toast.warning(
+        "태그 중복 확인에 실패했습니다. 태그 추가를 계속 진행합니다.",
+      );
       executeCreate(data);
     } finally {
       setIsChecking(false);
@@ -196,13 +201,13 @@ export function CreateRegistryTagModal({ mode }: CreateRegistryTagModalProps) {
                   label="태그"
                   required
                   validateStatus={errors.imageTagName ? "error" : undefined}
-                  htmlFor="privateRegistryTagName"
+                  htmlFor="imageTagName"
                   help={errors.imageTagName?.message}
                 >
                   <Input
                     {...field}
                     type="text"
-                    id="privateRegistryTagName"
+                    id="imageTagName"
                     placeholder="태그를 입력해 주세요."
                     autoComplete="off"
                     width="100%"
