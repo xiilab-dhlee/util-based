@@ -25,9 +25,10 @@ import {
   nodeWorkloadDistributionSchema,
   reportListResponseSchema,
 } from "@/domain/report/schemas/report.schema";
-import type { WorkloadJobType } from "@/domain/workload/constants/workload.constant";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { makeMock } from "@/shared/utils/mock.util";
+
+type ReportWorkloadJobType = "BATCH" | "INTERACTIVE" | "DISTRIBUTED";
 
 /**
  * 고정된 UUID 목록 (테스트 시 일관성 유지)
@@ -174,7 +175,11 @@ const createNodeGpuInfo = (
  * Job Type별 분포 데이터 생성
  */
 const createJobTypeDistribution = (): JobTypeDistribution[] => {
-  const jobTypes: WorkloadJobType[] = ["BATCH", "INTERACTIVE", "DISTRIBUTED"];
+  const jobTypes: ReportWorkloadJobType[] = [
+    "BATCH",
+    "INTERACTIVE",
+    "DISTRIBUTED",
+  ];
 
   // 랜덤 count 생성
   const counts = jobTypes.map(() => Math.floor(Math.random() * 50) + 10);
@@ -191,7 +196,11 @@ const createJobTypeDistribution = (): JobTypeDistribution[] => {
  * Job Type별 사용 시간 데이터 생성
  */
 const createJobTypeUsageTime = (): JobTypeUsageTime[] => {
-  const jobTypes: WorkloadJobType[] = ["BATCH", "INTERACTIVE", "DISTRIBUTED"];
+  const jobTypes: ReportWorkloadJobType[] = [
+    "BATCH",
+    "INTERACTIVE",
+    "DISTRIBUTED",
+  ];
 
   // 랜덤 시간 생성 (시간 단위, float로 생성하여 분 포함)
   const hours = jobTypes.map(() => Math.random() * 500 + 50);
@@ -217,7 +226,11 @@ const createWorkloadCreation = (
   startDate: string,
   endDate: string,
 ): WorkloadCreationSeries[] => {
-  const jobTypes: WorkloadJobType[] = ["BATCH", "INTERACTIVE", "DISTRIBUTED"];
+  const jobTypes: ReportWorkloadJobType[] = [
+    "BATCH",
+    "INTERACTIVE",
+    "DISTRIBUTED",
+  ];
   const start = new Date(startDate);
   const end = new Date(endDate);
   const dayCount = Math.ceil(

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { Button, Dropdown, InputNumber } from "xiilab-ui";
 
 import {
   DURATION_UNIT,
   EMPTY_THRESHOLD_SETTING,
+  GPU_METRICS,
   METRIC_TYPE_OPTIONS,
   OPERATOR_OPTIONS,
   THRESHOLD_UNIT,
@@ -27,6 +28,7 @@ interface ManageMonitoringNotificationSettingsProps {
   onChange?: (nextSettings: ThresholdFormType[]) => void;
   errors?: (ThresholdItemErrors | undefined)[];
   disabled?: boolean;
+  isGpuMetricDisabled?: boolean;
 }
 
 // ===== Helpers =====
@@ -48,11 +50,27 @@ export function ManageMonitoringNotificationSetting({
   onChange,
   errors,
   disabled = false,
+  isGpuMetricDisabled = false,
 }: ManageMonitoringNotificationSettingsProps) {
   // 입력 행 상태 (내부 관리)
   const [inputRow, setInputRow] = useState<ThresholdFormType>(
     EMPTY_THRESHOLD_SETTING,
   );
+
+  // GPU 메트릭 비활성화 시 옵션 필터링
+  const filteredMetricOptions = useMemo(() => {
+    if (!isGpuMetricDisabled) return METRIC_TYPE_OPTIONS;
+    return METRIC_TYPE_OPTIONS.map((option) => ({
+      ...option,
+      disabled: GPU_METRICS.some((metric) => metric === option.value),
+    }));
+  }, [isGpuMetricDisabled]);
+
+  // GPU 관련 메트릭이고 비활성화 상태인지 확인
+  const isGpuMetricError = (metric?: string | null): boolean => {
+    if (!metric || !isGpuMetricDisabled) return false;
+    return GPU_METRICS.some((gpuMetric) => gpuMetric === metric);
+  };
 
   // settings가 빈 배열로 초기화되면 inputRow도 초기화
   useEffect(() => {
@@ -120,7 +138,7 @@ export function ManageMonitoringNotificationSetting({
                     ? "error"
                     : "default"
                 }
-                options={METRIC_TYPE_OPTIONS}
+                options={filteredMetricOptions}
                 placeholder="항목 선택"
                 onChange={(value: string | null) =>
                   handleInputChange("metric", value)
@@ -189,12 +207,15 @@ export function ManageMonitoringNotificationSetting({
           <BodyRow>
             {settings.map((setting, index) => {
               const itemErrors = errors?.[index];
+              const hasGpuError = isGpuMetricError(setting.metric);
 
               return (
                 <Column key={`threshold-${setting.metric || index}`}>
                   <Field>
                     <Dropdown
-                      status={itemErrors?.metric ? "error" : "default"}
+                      status={
+                        itemErrors?.metric || hasGpuError ? "error" : "default"
+                      }
                       options={METRIC_TYPE_OPTIONS}
                       placeholder="항목 선택"
                       value={setting.metric || null}

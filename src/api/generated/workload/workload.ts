@@ -46,9 +46,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponseActiveWorkloadListResponse,
   BaseResponseDistributedPodResponse,
   BaseResponseMapStringObject,
+  BaseResponsePageResponseActiveWorkloadResponse,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
   BaseResponseWorkloadDeleteFilesResponse,
@@ -3492,7 +3492,7 @@ export const getActiveWorkloads = (
   params?: GetActiveWorkloadsParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseActiveWorkloadListResponse>({
+  return customInstance<BaseResponsePageResponseActiveWorkloadResponse>({
     url: `/api/v1/workspaces/${workspaceId}/workloads/active`,
     method: "GET",
     params,

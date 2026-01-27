@@ -32,9 +32,31 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseDeleteImagesResponse,
   BaseResponsePageResponseAccountImageTagResponse,
   BaseResponsePageResponsePublicImageUsageResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
+
+export const getDeletePublicImagesResponseMock = (
+  overrideResponse: Partial<BaseResponseDeleteImagesResponse> = {},
+): BaseResponseDeleteImagesResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalRequested: faker.number.int({ min: undefined, max: undefined }),
+    successCount: faker.number.int({ min: undefined, max: undefined }),
+    failureCount: faker.number.int({ min: undefined, max: undefined }),
+    failures: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getGetPublicImageUsageByAccountResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponsePublicImageUsageResponse> = {},
@@ -94,6 +116,36 @@ export const getGetPublicImageTagsByAccountIdResponseMock = (
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
 });
+
+export const getDeletePublicImagesMockHandler = (
+  overrideResponse?:
+    | BaseResponseDeleteImagesResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<BaseResponseDeleteImagesResponse>
+        | BaseResponseDeleteImagesResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    "*/api/v1/admin/registries/public/images/delete",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getDeletePublicImagesResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
 
 export const getGetPublicImageUsageByAccountMockHandler = (
   overrideResponse?:
@@ -155,6 +207,7 @@ export const getGetPublicImageTagsByAccountIdMockHandler = (
   );
 };
 export const getAdminPublicRegistryMock = () => [
+  getDeletePublicImagesMockHandler(),
   getGetPublicImageUsageByAccountMockHandler(),
   getGetPublicImageTagsByAccountIdMockHandler(),
 ];

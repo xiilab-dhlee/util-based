@@ -209,13 +209,7 @@ export const getMonitoringNotificationHistoryDetailResponse = zod
           .boolean()
           .describe("이메일 알림 활성화 여부"),
         metricType: zod
-          .enum([
-            "GPU_TEMP",
-            "GPU_MEMORY",
-            "GPU_USAGE",
-            "MEMORY_USAGE",
-            "CPU_USAGE",
-          ])
+          .enum(["GPU_MEMORY", "GPU_USAGE", "MEMORY_USAGE", "CPU_USAGE"])
           .describe("메트릭 타입"),
         thresholdOperator: zod
           .enum([

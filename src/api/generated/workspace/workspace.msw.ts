@@ -33,11 +33,15 @@ import { delay, HttpResponse, http } from "msw";
 
 import type {
   BaseResponseDefaultResourceResponse,
+  BaseResponsePageResponseReclaimPendingWorkloadResponse,
   BaseResponsePageResponseResourceRequestListResponse,
   BaseResponsePageResponseWorkspaceResponse,
+  BaseResponseReclaimPendingResourceSummaryResponse,
   BaseResponseResourceRequestResponse,
   BaseResponseUnit,
+  BaseResponseWorkloadStatusSummaryResponse,
   BaseResponseWorkspaceDetailResponse,
+  BaseResponseWorkspaceResourceUsageResponse,
   BaseResponseWorkspaceResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -226,6 +230,140 @@ export const getCreateResourceRequestResponseMock = (
     ] as const),
     approvedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetWorkloadStatusSummaryResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkloadStatusSummaryResponse> = {},
+): BaseResponseWorkloadStatusSummaryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    total: faker.number.int({ min: undefined, max: undefined }),
+    running: faker.number.int({ min: undefined, max: undefined }),
+    pending: faker.number.int({ min: undefined, max: undefined }),
+    error: faker.number.int({ min: undefined, max: undefined }),
+    terminated: faker.number.int({ min: undefined, max: undefined }),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetWorkspaceResourceUsageResponseMock = (
+  overrideResponse: Partial<BaseResponseWorkspaceResourceUsageResponse> = {},
+): BaseResponseWorkspaceResourceUsageResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    gpuCount: {
+      total: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      used: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+    },
+    cpuCore: {
+      total: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      used: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+    },
+    memoryGiB: {
+      total: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      used: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+    },
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetPendingReclaimWorkloadsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseReclaimPendingWorkloadResponse> = {},
+): BaseResponsePageResponseReclaimPendingWorkloadResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
+      workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadResourceName: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+      workspaceId: faker.number.int({ min: undefined, max: undefined }),
+      workspaceResourceName: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadStatus: faker.helpers.arrayElement([
+        "CREATING",
+        "PENDING",
+        "RUNNING",
+        "TERMINATING",
+        "TERMINATED",
+        "ERROR",
+      ] as const),
+      ageSeconds: faker.number.int({ min: undefined, max: undefined }),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+      reclaimWarningCount: faker.number.int({ min: undefined, max: undefined }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetPendingReclaimResourceSummaryResponseMock = (
+  overrideResponse: Partial<BaseResponseReclaimPendingResourceSummaryResponse> = {},
+): BaseResponseReclaimPendingResourceSummaryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    toBeReclaimed: {
+      gpuCount: faker.number.int({ min: undefined, max: undefined }),
+      cpuCores: faker.number.int({ min: undefined, max: undefined }),
+      memoryBytes: faker.number.int({ min: undefined, max: undefined }),
+    },
+    allocated: {
+      gpuCount: faker.number.int({ min: undefined, max: undefined }),
+      cpuCores: faker.number.int({ min: undefined, max: undefined }),
+      memoryBytes: faker.number.int({ min: undefined, max: undefined }),
+    },
+    nextReclaimJobTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -478,6 +616,126 @@ export const getCreateResourceRequestMockHandler = (
   );
 };
 
+export const getGetWorkloadStatusSummaryMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkloadStatusSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkloadStatusSummaryResponse>
+        | BaseResponseWorkloadStatusSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/status-summary",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkloadStatusSummaryResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetWorkspaceResourceUsageMockHandler = (
+  overrideResponse?:
+    | BaseResponseWorkspaceResourceUsageResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseWorkspaceResourceUsageResponse>
+        | BaseResponseWorkspaceResourceUsageResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/resources/usage",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkspaceResourceUsageResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetPendingReclaimWorkloadsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseReclaimPendingWorkloadResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseReclaimPendingWorkloadResponse>
+        | BaseResponsePageResponseReclaimPendingWorkloadResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/reclaim-pending",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPendingReclaimWorkloadsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetPendingReclaimResourceSummaryMockHandler = (
+  overrideResponse?:
+    | BaseResponseReclaimPendingResourceSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseReclaimPendingResourceSummaryResponse>
+        | BaseResponseReclaimPendingResourceSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/workspaces/:workspaceId/workloads/reclaim-pending-resources",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetPendingReclaimResourceSummaryResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetWorkspaceDetailMockHandler = (
   overrideResponse?:
     | BaseResponseWorkspaceDetailResponse
@@ -566,6 +824,10 @@ export const getWorkspaceMock = () => [
   getCreateWorkspaceMockHandler(),
   getGetResourceRequestsMockHandler(),
   getCreateResourceRequestMockHandler(),
+  getGetWorkloadStatusSummaryMockHandler(),
+  getGetWorkspaceResourceUsageMockHandler(),
+  getGetPendingReclaimWorkloadsMockHandler(),
+  getGetPendingReclaimResourceSummaryMockHandler(),
   getGetWorkspaceDetailMockHandler(),
   getGetDefaultResourceMockHandler(),
   getCancelResourceRequestMockHandler(),

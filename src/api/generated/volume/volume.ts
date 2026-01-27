@@ -48,6 +48,7 @@ import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseUpdateVolumeResponse,
   BaseResponseVolumeDeleteResult,
   BaseResponseVolumeDetailResponse,
   CreateAstragoVolumeRequest,
@@ -73,7 +74,7 @@ export const updateVolume = (
   volumeId: number,
   updateVolumeRequest: UpdateVolumeRequest,
 ) => {
-  return customInstance<BaseResponseUnit>({
+  return customInstance<BaseResponseUpdateVolumeResponse>({
     url: `/api/v1/volumes/${volumeId}`,
     method: "PUT",
     headers: { "Content-Type": "application/json" },

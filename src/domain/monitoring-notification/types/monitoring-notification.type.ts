@@ -23,6 +23,8 @@ export interface NotificationSettingsSectionProps {
   control: Control<NotificationFormType>;
   errors: FieldErrors<NotificationFormType>;
   disabled?: boolean;
+  isGpuMetricDisabled?: boolean;
+  hasGpuMetricError?: boolean;
 }
 
 export interface ThresholdFieldError {

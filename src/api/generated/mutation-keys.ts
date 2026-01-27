@@ -123,11 +123,6 @@ export const MUTATION_KEYS = {
   // ============================================
   updateVolume: "updateVolume",
   deleteVolume: "deleteVolume",
-  deleteVolumes: "deleteVolumes",
-  createFolder: "createFolder",
-  deleteFiles: "deleteFiles",
-  decompress: "decompress",
-  compress: "compress",
   registerOnPremiseVolume: "registerOnPremiseVolume",
   registerAstragoVolume: "registerAstragoVolume",
 
@@ -172,23 +167,105 @@ export const MUTATION_KEYS = {
   updateNodeScheduling: "updateNodeScheduling",
 
   // ============================================
-  // Admin Volume
+  // Volume TUS Upload
   // ============================================
-  adminUpdateVolume: "adminUpdateVolume",
-  adminDeleteVolume: "adminDeleteVolume",
-  adminDeleteVolumes: "adminDeleteVolumes",
-  adminCreateFolder: "adminCreateFolder",
-  adminDeleteFiles: "adminDeleteFiles",
-  adminDecompress: "adminDecompress",
-  adminCompress: "adminCompress",
+  createUpload: "createUpload",
+  cancelUpload: "cancelUpload",
+  getUploadStatus: "getUploadStatus",
+  uploadChunk: "uploadChunk",
 
   // ============================================
   // Admin Resource Preset
   // ============================================
-  createPreset: "createPreset",
   updatePreset: "updatePreset",
   deletePreset: "deletePreset",
+  createPreset: "createPreset",
   deletePresets: "deletePresets",
+
+  // ============================================
+  // Image Tag Usage Request (Admin)
+  // ============================================
+  cancelUsageRequest: "cancelUsageRequest",
+  rejectUsageRequest: "rejectUsageRequest",
+  updateDecisionReason: "updateDecisionReason",
+  approveUsageRequest: "approveUsageRequest",
+
+  // ============================================
+  // Cluster Resource
+  // ============================================
+  checkResourceAvailability: "checkResourceAvailability",
+
+  // ============================================
+  // Workload Reclaim Webhook
+  // ============================================
+  executeReclaim: "executeReclaim",
+
+  // ============================================
+  // Vulnerability Policy (Admin)
+  // ============================================
+  updateScanPolicy: "updateScanPolicy",
+  updateLevelPolicy: "updateLevelPolicy",
+  updateAstragoOnlyPolicy: "updateAstragoOnlyPolicy",
+
+  // ============================================
+  // Account Notification
+  // ============================================
+  deleteNotifications: "deleteNotifications",
+
+  // ============================================
+  // Registry (Private) - Snapshot
+  // ============================================
+  createPrivateSnapshotImage: "createPrivateSnapshotImage",
+
+  // ============================================
+  // Registry (Public) - Snapshot
+  // ============================================
+  createPublicSnapshotImage: "createPublicSnapshotImage",
+
+  // ============================================
+  // Admin Volume
+  // ============================================
+  adminUpdateVolume: "adminUpdateVolume",
+  adminDeleteVolume: "adminDeleteVolume",
+  adminCreateFolder: "adminCreateFolder",
+  adminDownload: "adminDownload",
+  adminDeleteFiles: "adminDeleteFiles",
+  adminDecompress: "adminDecompress",
+  adminCompress: "adminCompress",
+  adminDeleteVolumes: "adminDeleteVolumes",
+
+  // ============================================
+  // Volume File
+  // ============================================
+  downloadFiles: "downloadFiles",
+  decompressFile: "decompressFile",
+  compressFiles: "compressFiles",
+
+  // ============================================
+  // Admin Queue
+  // ============================================
+  removeWorkloadFromUrgentStandby: "removeWorkloadFromUrgentStandby",
+  updateUrgentStandbyOrder: "updateUrgentStandbyOrder",
+  addWorkloadToUrgentStandby: "addWorkloadToUrgentStandby",
+
+  // ============================================
+  // Admin Monitoring Notification
+  // ============================================
+  updateMonitoringNotificationSet: "updateMonitoringNotificationSet",
+  deleteMonitoringNotificationSet: "deleteMonitoringNotificationSet",
+  updateMonitoringNotificationSetEnabled:
+    "updateMonitoringNotificationSetEnabled",
+  createMonitoringNotificationSet: "createMonitoringNotificationSet",
+
+  // ============================================
+  // Volume (Admin)
+  // ============================================
+  deleteVolumes: "deleteVolumes",
+
+  // ============================================
+  // Monitoring Notification Webhook
+  // ============================================
+  receiveAlert: "receiveAlert",
 } as const;
 
 export type MutationKey = (typeof MUTATION_KEYS)[keyof typeof MUTATION_KEYS];

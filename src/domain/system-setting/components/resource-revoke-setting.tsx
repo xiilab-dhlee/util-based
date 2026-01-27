@@ -58,7 +58,6 @@ export function ResourceRevokeSetting() {
           <WorkloadTypeCriteriaCard
             criteria={batchPolicy}
             enabled={batchPolicy.isEnabled}
-            onEnabledChange={() => {}}
             switchDisabled
           />
         )}
@@ -66,7 +65,6 @@ export function ResourceRevokeSetting() {
           <WorkloadTypeCriteriaCard
             criteria={interactivePolicy}
             enabled={interactivePolicy.isEnabled}
-            onEnabledChange={() => {}}
             switchDisabled
           />
         )}

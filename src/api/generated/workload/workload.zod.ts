@@ -1605,84 +1605,81 @@ export const getActiveWorkloadsResponse = zod
     errorCode: zod.string().optional(),
     data: zod
       .object({
-        totalSize: zod.number().describe("전체 항목 수"),
-        totalPageNum: zod.number().describe("전체 페이지 수"),
-        currentPage: zod.number().describe("현재 페이지 번호"),
-        content: zod
-          .array(
-            zod
-              .object({
-                workloadName: zod.string().describe("워크로드 이름"),
-                workloadResourceName: zod
-                  .string()
-                  .describe("워크로드 리소스 이름 (K8s 리소스명)"),
-                creatorId: zod.string().describe("생성자 ID"),
-                creatorName: zod.string().describe("생성자 이름"),
-                createdAt: zod.string().datetime({}).describe("생성 일시"),
-                reclaimStatus: zod
-                  .enum(["RECLAIMED", "WARNING", "NORMAL"])
-                  .describe("리소스 회수 상태"),
-                reclaimWarningCount: zod
-                  .number()
-                  .describe("리소스 회수 경고 횟수"),
-                workloadStatus: zod
-                  .enum([
-                    "CREATING",
-                    "PENDING",
-                    "RUNNING",
-                    "TERMINATING",
-                    "TERMINATED",
-                    "ERROR",
-                  ])
-                  .describe("워크로드 상태"),
-                ageSeconds: zod.number().describe("경과 시간 (초)"),
-                workloadJobType: zod
-                  .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
-                  .describe("워크로드 잡 타입"),
-                connection: zod
-                  .array(
-                    zod
-                      .object({
-                        portName: zod.string().describe("포트 이름"),
-                        url: zod.string().describe("접속 URL"),
-                      })
-                      .strict()
-                      .describe("워크로드 접속 정보"),
-                  )
-                  .describe("접속 정보 목록"),
-                port: zod
-                  .array(
-                    zod
-                      .object({
-                        portName: zod.string(),
-                        portNumber: zod.number(),
-                        servicePortNum: zod.number().optional(),
-                        url: zod.string().optional(),
-                      })
-                      .strict(),
-                  )
-                  .optional()
-                  .describe("포트 설정 목록"),
-                env: zod
-                  .array(
-                    zod
-                      .object({
-                        key: zod.string(),
-                        value: zod.string(),
-                      })
-                      .strict(),
-                  )
-                  .optional()
-                  .describe("환경변수 목록"),
-              })
-              .strict()
-              .describe("실행 중 워크로드 항목"),
-          )
-          .describe("워크로드 목록"),
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              workloadName: zod.string().describe("워크로드 이름"),
+              workloadResourceName: zod
+                .string()
+                .describe("워크로드 리소스 이름 (K8s 리소스명)"),
+              creatorId: zod.string().describe("생성자 ID"),
+              creatorName: zod.string().describe("생성자 이름"),
+              createdAt: zod.string().datetime({}).describe("생성 일시"),
+              reclaimStatus: zod
+                .enum(["RECLAIMED", "WARNING", "NORMAL"])
+                .describe("리소스 회수 상태"),
+              reclaimWarningCount: zod
+                .number()
+                .describe("리소스 회수 경고 횟수"),
+              workloadStatus: zod
+                .enum([
+                  "CREATING",
+                  "PENDING",
+                  "RUNNING",
+                  "TERMINATING",
+                  "TERMINATED",
+                  "ERROR",
+                ])
+                .describe("워크로드 상태"),
+              ageSeconds: zod.number().describe("경과 시간 (초)"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .describe("워크로드 잡 타입"),
+              connection: zod
+                .array(
+                  zod
+                    .object({
+                      portName: zod.string().describe("포트 이름"),
+                      url: zod.string().describe("접속 URL"),
+                    })
+                    .strict()
+                    .describe("워크로드 접속 정보"),
+                )
+                .describe("접속 정보 목록"),
+              port: zod
+                .array(
+                  zod
+                    .object({
+                      portName: zod.string(),
+                      portNumber: zod.number(),
+                      servicePortNum: zod.number().optional(),
+                      url: zod.string().optional(),
+                    })
+                    .strict(),
+                )
+                .optional()
+                .describe("포트 설정 목록"),
+              env: zod
+                .array(
+                  zod
+                    .object({
+                      key: zod.string(),
+                      value: zod.string(),
+                    })
+                    .strict(),
+                )
+                .optional()
+                .describe("환경변수 목록"),
+            })
+            .strict()
+            .describe("실행 중 워크로드 항목"),
+        ),
       })
       .strict()
-      .optional()
-      .describe("실행 중 워크로드 목록 응답"),
+      .optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

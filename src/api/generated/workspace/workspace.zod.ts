@@ -474,6 +474,223 @@ export const createResourceRequestBody = zod
   .describe("워크스페이스 리소스 추가 요청 생성");
 
 /**
+ * 워크스페이스 내 워크로드의 상태별 개수를 조회합니다. PodGroup Phase 기반으로 실행중/대기중/에러/종료 상태를 집계합니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 워크로드 상태별 개수 조회
+ */
+export const getWorkloadStatusSummaryParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getWorkloadStatusSummaryResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        total: zod
+          .number()
+          .describe("전체 워크로드 개수 (실행중 + 대기중 + 에러 + 종료)"),
+        running: zod
+          .number()
+          .describe("실행중 워크로드 개수 (PodGroup Phase: Running)"),
+        pending: zod
+          .number()
+          .describe(
+            "대기중 워크로드 개수 (PodGroup Phase: Pending, Inqueue, Unknown)",
+          ),
+        error: zod
+          .number()
+          .describe("에러 워크로드 개수 (PodGroup status.failed > 0)"),
+        terminated: zod
+          .number()
+          .describe(
+            "종료 워크로드 개수 (PodGroup Phase: Completed + DB 보완 조회)",
+          ),
+      })
+      .strict()
+      .optional()
+      .describe("워크로드 상태별 개수 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 워크스페이스의 리소스 할당량(total)과 사용량(used)을 조회합니다.Volcano Queue 기반으로 GPU, CPU, Memory 정보를 제공합니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 워크스페이스 리소스 사용량 조회
+ */
+export const getWorkspaceResourceUsageParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getWorkspaceResourceUsageResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        gpuCount: zod
+          .object({
+            total: zod.number().describe("총 할당량"),
+            used: zod.number().describe("사용 중인 양"),
+          })
+          .strict()
+          .describe("리소스 사용량 항목"),
+        cpuCore: zod
+          .object({
+            total: zod.number().describe("총 할당량"),
+            used: zod.number().describe("사용 중인 양"),
+          })
+          .strict()
+          .describe("리소스 사용량 항목"),
+        memoryGiB: zod
+          .object({
+            total: zod.number().describe("총 할당량"),
+            used: zod.number().describe("사용 중인 양"),
+          })
+          .strict()
+          .describe("리소스 사용량 항목"),
+      })
+      .strict()
+      .optional()
+      .describe("워크스페이스 리소스 사용량 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 워크스페이스의 회수 예정 워크로드 목록을 조회합니다. K8s 실행 상태 기준으로 RUNNING 이면서 경고를 받은 워크로드만 포함됩니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 회수 예정 워크로드 목록 조회
+ */
+export const getPendingReclaimWorkloadsParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getPendingReclaimWorkloadsQueryPageNoDefault = 0;
+export const getPendingReclaimWorkloadsQueryPageNoMin = 0;
+
+export const getPendingReclaimWorkloadsQueryPageSizeDefault = 20;
+
+export const getPendingReclaimWorkloadsQuerySortDefault = "AGE_SECONDS";
+export const getPendingReclaimWorkloadsQueryOrderDefault = "DESC";
+
+export const getPendingReclaimWorkloadsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getPendingReclaimWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .default(getPendingReclaimWorkloadsQueryPageSizeDefault)
+    .describe("페이지 크기"),
+  sort: zod
+    .enum(["WORKLOAD_NAME", "WORKLOAD_STATUS", "WARNING_COUNT", "AGE_SECONDS"])
+    .default(getPendingReclaimWorkloadsQuerySortDefault)
+    .describe("정렬 필드"),
+  order: zod
+    .enum(["ASC", "DESC"])
+    .default(getPendingReclaimWorkloadsQueryOrderDefault)
+    .describe("정렬 순서"),
+});
+
+export const getPendingReclaimWorkloadsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              workloadId: zod.number().describe("워크로드 ID"),
+              workloadName: zod.string().describe("워크로드 이름"),
+              workloadResourceName: zod
+                .string()
+                .describe("워크로드 리소스 이름 (K8s 리소스명)"),
+              workspaceId: zod.number().describe("워크스페이스 ID"),
+              workspaceResourceName: zod
+                .string()
+                .describe("워크스페이스 리소스명 (K8s Namespace)"),
+              creatorId: zod.string().describe("생성자 ID"),
+              creatorName: zod.string().describe("생성자 이름"),
+              workloadStatus: zod
+                .enum([
+                  "CREATING",
+                  "PENDING",
+                  "RUNNING",
+                  "TERMINATING",
+                  "TERMINATED",
+                  "ERROR",
+                ])
+                .describe("워크로드 상태"),
+              ageSeconds: zod.number().describe("경과 시간 (초)"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .describe("워크로드 잡 타입"),
+              reclaimWarningCount: zod.number().describe("현재 경고 횟수"),
+            })
+            .strict()
+            .describe("회수 예정 워크로드 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 워크스페이스의 회수 예정 워크로드들의 자원 합계를 조회합니다. 다음 스캔에서 회수될 자원(toBeReclaimed)과 전체 회수 예정 자원(allocated)을 제공합니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 회수 예정 자원 합계 조회
+ */
+export const getPendingReclaimResourceSummaryParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getPendingReclaimResourceSummaryResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        toBeReclaimed: zod
+          .object({
+            gpuCount: zod.number().describe("GPU 개수"),
+            cpuCores: zod.number().describe("CPU 코어 수"),
+            memoryBytes: zod.number().describe("메모리 바이트"),
+          })
+          .strict()
+          .describe("자원 할당 정보"),
+        allocated: zod
+          .object({
+            gpuCount: zod.number().describe("GPU 개수"),
+            cpuCores: zod.number().describe("CPU 코어 수"),
+            memoryBytes: zod.number().describe("메모리 바이트"),
+          })
+          .strict()
+          .describe("자원 할당 정보"),
+        nextReclaimJobTime: zod
+          .string()
+          .datetime({})
+          .optional()
+          .describe("다음 회수 Job 실행 시간 (UTC)"),
+      })
+      .strict()
+      .optional()
+      .describe("회수 예정 자원 합계 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 워크스페이스 상세 정보를 조회합니다. 존재하지 않는 경우 null을 반환합니다.
  * @summary 워크스페이스 상세 조회
  */

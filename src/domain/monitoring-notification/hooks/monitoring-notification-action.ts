@@ -99,7 +99,7 @@ export function useToggleNotificationEnabledAction(
     mutation: {
       ...options?.mutation,
       onSuccess: (data, variables, ...rest) => {
-        const message = variables.data.isEnabled
+        const message = variables.data.hasEnabled
           ? "알림이 활성화되었습니다."
           : "알림이 비활성화되었습니다.";
         toast.success(message);

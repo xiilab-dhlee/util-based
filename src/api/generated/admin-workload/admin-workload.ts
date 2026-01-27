@@ -43,9 +43,161 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseAdminWorkloadSummaryResponse,
+  BaseResponsePageResponseAdminActiveWorkloadResponse,
   BaseResponsePageResponseAdminWorkloadResponse,
+  GetAdminActiveWorkloadsParams,
   GetPendingWorkloadsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
+
+/**
+ * 전체 워크스페이스의 워크로드 상태별 개수를 조회합니다.
+ * @summary 워크로드 상태별 개수 조회
+ */
+export const getAdminWorkloadStatusSummary = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseAdminWorkloadSummaryResponse>({
+    url: `/api/v1/admin/workloads/summary`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetAdminWorkloadStatusSummaryQueryKey = () => {
+  return [`/api/v1/admin/workloads/summary`] as const;
+};
+
+export const getGetAdminWorkloadStatusSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetAdminWorkloadStatusSummaryQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>
+  > = ({ signal }) => getAdminWorkloadStatusSummary(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAdminWorkloadStatusSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>
+>;
+export type GetAdminWorkloadStatusSummaryQueryError = unknown;
+
+export function useGetAdminWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 상태별 개수 조회
+ */
+
+export function useGetAdminWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAdminWorkloadStatusSummaryQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
 
 /**
  * K8s에서 Pending 상태인 워크로드 목록을 조회하고, DB 정보로 보강합니다. 페이징, 검색, 필터를 지원합니다.
@@ -201,6 +353,184 @@ export function useGetPendingWorkloads<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetPendingWorkloadsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            전체 워크스페이스에서 실행 중인 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - K8s에 Job/Deployment/TrainJob이 존재하는 모든 워크로드
+
+            **반환 정보:**
+            - workloadResourceName: K8s 리소스명
+            - workloadName: 워크로드 이름
+            - workloadStatus: 워크로드 상태 (RUNNING, PENDING, ERROR 등)
+            - workloadJobType: 워크로드 타입 (BATCH, INTERACTIVE, DISTRIBUTED)
+            - nodeName: Pod가 배치된 노드명 (Pending 상태인 경우 null)
+            - creatorName: 생성자 이름
+        
+ * @summary 실행 중 워크로드 목록 조회
+ */
+export const getAdminActiveWorkloads = (
+  params?: GetAdminActiveWorkloadsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseAdminActiveWorkloadResponse>({
+    url: `/api/v1/admin/workloads/active`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetAdminActiveWorkloadsQueryKey = (
+  params?: GetAdminActiveWorkloadsParams,
+) => {
+  return [
+    `/api/v1/admin/workloads/active`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetAdminActiveWorkloadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetAdminActiveWorkloadsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+  > = ({ signal }) => getAdminActiveWorkloads(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAdminActiveWorkloadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+>;
+export type GetAdminActiveWorkloadsQueryError = unknown;
+
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  params: undefined | GetAdminActiveWorkloadsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminActiveWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 실행 중 워크로드 목록 조회
+ */
+
+export function useGetAdminActiveWorkloads<
+  TData = Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+  TError = unknown,
+>(
+  params?: GetAdminActiveWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAdminActiveWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAdminActiveWorkloadsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

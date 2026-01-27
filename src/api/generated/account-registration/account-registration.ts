@@ -29,16 +29,25 @@
  */
 
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponseSignupResponse,
+  BaseResponseSuperAdminCheckResponse,
   SignupRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -122,3 +131,150 @@ export const useSignup = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 시스템에 슈퍼 관리자(SUPER_ADMIN)가 1명 이상 존재하는지 확인합니다. 인증 없이 접근 가능합니다.
+ * @summary 슈퍼 관리자 존재 여부 확인
+ */
+export const checkSuperAdminExists = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseSuperAdminCheckResponse>({
+    url: `/api/v1/accounts/super-admin/exists`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getCheckSuperAdminExistsQueryKey = () => {
+  return [`/api/v1/accounts/super-admin/exists`] as const;
+};
+
+export const getCheckSuperAdminExistsQueryOptions = <
+  TData = Awaited<ReturnType<typeof checkSuperAdminExists>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof checkSuperAdminExists>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getCheckSuperAdminExistsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof checkSuperAdminExists>>
+  > = ({ signal }) => checkSuperAdminExists(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof checkSuperAdminExists>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CheckSuperAdminExistsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof checkSuperAdminExists>>
+>;
+export type CheckSuperAdminExistsQueryError = unknown;
+
+export function useCheckSuperAdminExists<
+  TData = Awaited<ReturnType<typeof checkSuperAdminExists>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkSuperAdminExists>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof checkSuperAdminExists>>,
+          TError,
+          Awaited<ReturnType<typeof checkSuperAdminExists>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckSuperAdminExists<
+  TData = Awaited<ReturnType<typeof checkSuperAdminExists>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkSuperAdminExists>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof checkSuperAdminExists>>,
+          TError,
+          Awaited<ReturnType<typeof checkSuperAdminExists>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckSuperAdminExists<
+  TData = Awaited<ReturnType<typeof checkSuperAdminExists>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkSuperAdminExists>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 슈퍼 관리자 존재 여부 확인
+ */
+
+export function useCheckSuperAdminExists<
+  TData = Awaited<ReturnType<typeof checkSuperAdminExists>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkSuperAdminExists>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getCheckSuperAdminExistsQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}

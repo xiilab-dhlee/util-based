@@ -41,7 +41,7 @@ import * as zod from "zod";
 
             **검증 규칙:**
             - 노드 이름: 클러스터에 존재하는 노드여야 함
-            - GPU 메트릭 (GPU_TEMP, GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
+            - GPU 메트릭 (GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
             - 임계값: 최소 1개 이상 필요
 
             **PrometheusRule 업데이트:**
@@ -68,6 +68,7 @@ export const updateMonitoringNotificationSetBodyNotificationSetNameMin = 0;
 export const updateMonitoringNotificationSetBodyNotificationSetNameMax = 255;
 
 export const updateMonitoringNotificationSetBodyThresholdItemValueMin = 0;
+export const updateMonitoringNotificationSetBodyThresholdItemValueMax = 100;
 
 export const updateMonitoringNotificationSetBody = zod
   .object({
@@ -91,15 +92,9 @@ export const updateMonitoringNotificationSetBody = zod
         zod
           .object({
             metric: zod
-              .enum([
-                "GPU_TEMP",
-                "GPU_MEMORY",
-                "GPU_USAGE",
-                "MEMORY_USAGE",
-                "CPU_USAGE",
-              ])
+              .enum(["GPU_MEMORY", "GPU_USAGE", "MEMORY_USAGE", "CPU_USAGE"])
               .describe(
-                "메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE)",
+                "메트릭 타입 (GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE)",
               ),
             operator: zod
               .enum([
@@ -114,7 +109,8 @@ export const updateMonitoringNotificationSetBody = zod
             value: zod
               .number()
               .min(updateMonitoringNotificationSetBodyThresholdItemValueMin)
-              .describe("임계값 (비율 메트릭: 0~100, GPU_TEMP: 0 이상)"),
+              .max(updateMonitoringNotificationSetBodyThresholdItemValueMax)
+              .describe("임계값 (0~100)"),
             durationMinutes: zod.number().min(1).describe("지속 시간 (분)"),
           })
           .strict()
@@ -276,7 +272,7 @@ export const getAllMonitoringNotificationSetsResponse = zod
 
             **검증 규칙:**
             - 노드 이름: 클러스터에 존재하는 노드여야 함
-            - GPU 메트릭 (GPU_TEMP, GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
+            - GPU 메트릭 (GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
             - 임계값: 최소 1개 이상 필요
 
             **PrometheusRule 생성:**
@@ -297,6 +293,7 @@ export const createMonitoringNotificationSetBodyNotificationSetNameMin = 0;
 export const createMonitoringNotificationSetBodyNotificationSetNameMax = 255;
 
 export const createMonitoringNotificationSetBodyThresholdItemValueMin = 0;
+export const createMonitoringNotificationSetBodyThresholdItemValueMax = 100;
 
 export const createMonitoringNotificationSetBody = zod
   .object({
@@ -320,15 +317,9 @@ export const createMonitoringNotificationSetBody = zod
         zod
           .object({
             metric: zod
-              .enum([
-                "GPU_TEMP",
-                "GPU_MEMORY",
-                "GPU_USAGE",
-                "MEMORY_USAGE",
-                "CPU_USAGE",
-              ])
+              .enum(["GPU_MEMORY", "GPU_USAGE", "MEMORY_USAGE", "CPU_USAGE"])
               .describe(
-                "메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE)",
+                "메트릭 타입 (GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE)",
               ),
             operator: zod
               .enum([
@@ -343,7 +334,8 @@ export const createMonitoringNotificationSetBody = zod
             value: zod
               .number()
               .min(createMonitoringNotificationSetBodyThresholdItemValueMin)
-              .describe("임계값 (비율 메트릭: 0~100, GPU_TEMP: 0 이상)"),
+              .max(createMonitoringNotificationSetBodyThresholdItemValueMax)
+              .describe("임계값 (0~100)"),
             durationMinutes: zod.number().min(1).describe("지속 시간 (분)"),
           })
           .strict()
@@ -392,7 +384,6 @@ export const getMonitoringNotificationSetDetailResponse = zod
               .object({
                 metric: zod
                   .enum([
-                    "GPU_TEMP",
                     "GPU_MEMORY",
                     "GPU_USAGE",
                     "MEMORY_USAGE",

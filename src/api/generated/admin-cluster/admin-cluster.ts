@@ -1533,13 +1533,20 @@ export function useGetClusterResourceSummary<
             - **nodeName**: 노드 이름
             - **resource**: 노드 리소스 정보
               - **gpu**: GPU 리소스 (gpuName, gpuType, quotaCount, usedCount, detail)
+                - **quotaCount**: 총 GPU 개수 (capacity)
+                - **usedCount**: 할당된 GPU 개수 (Pod requests 합계)
                 - **detail**: GPU 세부 정보 (normal, mig, mps)
               - **cpu**: CPU 리소스 (quotaCore, usedCore)
+                - **quotaCore**: 총 CPU 코어 (capacity)
+                - **usedCore**: 할당된 CPU 코어 (Pod requests 합계)
               - **memory**: 메모리 리소스 (quotaByte, usedByte)
+                - **quotaByte**: 총 메모리 바이트 (capacity)
+                - **usedByte**: 할당된 메모리 바이트 (Pod requests 합계)
 
-            **주의:**
-            - usedCount/usedCore/usedByte는 현재 0으로 반환 (향후 워크로드 기반 계산 예정)
-            - GPU detail의 normal/mig/mps usedCount도 현재 0으로 반환
+            **리소스 계산:**
+            - **capacity**: node.status.capacity (총 하드웨어 자원)
+            - **allocated**: 해당 노드의 Running/Pending/Unknown Pod requests 합계
+            - **available**: capacity - allocated (Frontend에서 계산 가능)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요

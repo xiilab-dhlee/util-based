@@ -262,12 +262,11 @@ export const getMigProfilesByGpuResponse = zod
     errorCode: zod.string().optional(),
     data: zod
       .object({
-        profile: zod.string().describe("MIG 프로파일 이름"),
-        requestCount: zod.number().describe("요청 수량"),
+        profiles: zod.array(zod.string()).describe("MIG Profile 이름 목록"),
       })
       .strict()
       .optional()
-      .describe("MIG GPU 프로파일 설정"),
+      .describe("GPU별 MIG Profile 목록 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

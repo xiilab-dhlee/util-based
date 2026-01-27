@@ -3,6 +3,7 @@
 import { useAtom } from "jotai";
 import styled from "styled-components";
 
+import type { SseEmitter } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { TERMINAL_THEME_LIST } from "@/shared/constants/terminal.constant";
 import { terminalThemeAtom } from "@/shared/state/terminal.atom";
@@ -11,9 +12,20 @@ import { createTermBgClasses } from "@/styles/mixins/terminal";
 
 const DEFAULT_THEME = "MaterialDark";
 
-export function WorkloadLogBody() {
+interface WorkloadLogBodyProps {
+  /** 로그 데이터 (Active: SseEmitter, Terminated: Blob) */
+  logData: SseEmitter | Blob | undefined;
+  /** 로딩 상태 */
+  isLoading: boolean;
+}
+
+export function WorkloadLogBody({ logData, isLoading }: WorkloadLogBodyProps) {
   const [selectedTheme] = useAtom(terminalThemeAtom);
   const currentTheme = selectedTheme || DEFAULT_THEME;
+
+  // TODO: logData 파싱 및 렌더링 로직 구현 필요
+  // - Active 로그: SseEmitter (SSE 스트림)
+  // - Terminated 로그: Blob (텍스트 파일)
 
   return (
     <Container className={currentTheme}>
@@ -22,54 +34,24 @@ export function WorkloadLogBody() {
         className={currentTheme}
         data-testid={WORKLOAD_SELECTOR.LOG_VIEWER}
       >
-        <LogLine data-testid={WORKLOAD_SELECTOR.LOG_LINE}>
-          <LogTimestamp className={currentTheme}>
-            [2024-01-15 10:30:15]
-          </LogTimestamp>
-          <LogMessage className={currentTheme}>
-            INFO: 워크로드가 시작되었습니다.
-          </LogMessage>
-        </LogLine>
-        <LogLine>
-          <LogTimestamp className={currentTheme}>
-            [2024-01-15 10:30:16]
-          </LogTimestamp>
-          <LogMessage className={currentTheme}>
-            INFO: 컨테이너 초기화 중...
-          </LogMessage>
-        </LogLine>
-        <LogLine>
-          <LogTimestamp className={currentTheme}>
-            [2024-01-15 10:30:17]
-          </LogTimestamp>
-          <LogMessage className={currentTheme}>
-            INFO: 환경 변수 설정 완료
-          </LogMessage>
-        </LogLine>
-        <LogLine>
-          <LogTimestamp className={currentTheme}>
-            [2024-01-15 10:30:18]
-          </LogTimestamp>
-          <LogMessage className={currentTheme}>
-            INFO: 애플리케이션 시작
-          </LogMessage>
-        </LogLine>
-        <LogLine>
-          <LogTimestamp className={currentTheme}>
-            [2024-01-15 10:30:19]
-          </LogTimestamp>
-          <LogMessage className={currentTheme}>
-            WARN: 메모리 사용량이 높습니다 (85%)
-          </LogMessage>
-        </LogLine>
-        <LogLine>
-          <LogTimestamp className={currentTheme}>
-            [2024-01-15 10:30:20]
-          </LogTimestamp>
-          <LogMessage className={currentTheme}>
-            INFO: 요청 처리 중...
-          </LogMessage>
-        </LogLine>
+        {isLoading ? (
+          <LogLine>
+            <LogMessage className={currentTheme}>로딩 중...</LogMessage>
+          </LogLine>
+        ) : logData ? (
+          <LogLine data-testid={WORKLOAD_SELECTOR.LOG_LINE}>
+            <LogMessage className={currentTheme}>
+              {/* TODO: 실제 로그 데이터 파싱 후 표시 */}
+              로그 데이터가 있습니다.
+            </LogMessage>
+          </LogLine>
+        ) : (
+          <LogLine>
+            <LogMessage className={currentTheme}>
+              로그 데이터가 없습니다.
+            </LogMessage>
+          </LogLine>
+        )}
       </LogViewer>
     </Container>
   );
@@ -116,23 +98,6 @@ const LogLine = styled.div`
   gap: 12px;
   margin-bottom: 4px;
   word-break: break-all;
-`;
-
-const LogTimestamp = styled.span`
-  white-space: nowrap;
-  flex-shrink: 0;
-
-  /* 기본 테마 - foreground 색상의 50% 밝기 */
-  color: ${TERMINAL_THEME_LIST[DEFAULT_THEME].foreground}80;
-
-  /* 테마별 타임스탬프 색상 (foreground의 50% 투명도) */
-  ${Object.entries(TERMINAL_THEME_LIST).map(
-    ([key, value]) => `
-      &.${key} {
-        color: ${value.foreground}80;
-      }
-    `,
-  )}
 `;
 
 const LogMessage = styled.span`

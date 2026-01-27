@@ -36,8 +36,8 @@ import type {
   BaseResponseGpuListResponse,
   BaseResponseGpuResourceCapacityResponse,
   BaseResponseListNodeGpuInfoResponse,
+  BaseResponseMigProfileListByGpuResponse,
   BaseResponseMigProfileListResponse,
-  BaseResponseMigProfileResponse,
   BaseResponseResourceAvailabilityResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
@@ -119,13 +119,15 @@ export const getGetMigProfilesResponseMock = (
 });
 
 export const getGetMigProfilesByGpuResponseMock = (
-  overrideResponse: Partial<BaseResponseMigProfileResponse> = {},
-): BaseResponseMigProfileResponse => ({
+  overrideResponse: Partial<BaseResponseMigProfileListByGpuResponse> = {},
+): BaseResponseMigProfileListByGpuResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
-    profile: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    requestCount: faker.number.int({ min: undefined, max: undefined }),
+    profiles: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => faker.string.alpha({ length: { min: 10, max: 20 } })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -289,12 +291,12 @@ export const getGetMigProfilesMockHandler = (
 
 export const getGetMigProfilesByGpuMockHandler = (
   overrideResponse?:
-    | BaseResponseMigProfileResponse
+    | BaseResponseMigProfileListByGpuResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponseMigProfileResponse>
-        | BaseResponseMigProfileResponse),
+        | Promise<BaseResponseMigProfileListByGpuResponse>
+        | BaseResponseMigProfileListByGpuResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(

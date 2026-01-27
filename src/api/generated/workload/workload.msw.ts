@@ -32,9 +32,9 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-  BaseResponseActiveWorkloadListResponse,
   BaseResponseDistributedPodResponse,
   BaseResponseMapStringObject,
+  BaseResponsePageResponseActiveWorkloadResponse,
   BaseResponseTerminatedWorkloadListResponse,
   BaseResponseUnit,
   BaseResponseWorkloadDeleteFilesResponse,
@@ -590,14 +590,14 @@ export const getGetTerminatedWorkloadsResponseMock = (
 });
 
 export const getGetActiveWorkloadsResponseMock = (
-  overrideResponse: Partial<BaseResponseActiveWorkloadListResponse> = {},
-): BaseResponseActiveWorkloadListResponse => ({
+  overrideResponse: Partial<BaseResponsePageResponseActiveWorkloadResponse> = {},
+): BaseResponsePageResponseActiveWorkloadResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
     totalSize: faker.number.int({ min: undefined, max: undefined }),
     totalPageNum: faker.number.int({ min: undefined, max: undefined }),
-    currentPage: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
     content: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
@@ -1260,12 +1260,12 @@ export const getGetTerminatedWorkloadsMockHandler = (
 
 export const getGetActiveWorkloadsMockHandler = (
   overrideResponse?:
-    | BaseResponseActiveWorkloadListResponse
+    | BaseResponsePageResponseActiveWorkloadResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponseActiveWorkloadListResponse>
-        | BaseResponseActiveWorkloadListResponse),
+        | Promise<BaseResponsePageResponseActiveWorkloadResponse>
+        | BaseResponsePageResponseActiveWorkloadResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(

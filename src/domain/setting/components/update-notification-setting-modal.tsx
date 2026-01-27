@@ -68,9 +68,9 @@ export function UpdateNotificationSettingModal() {
               ? {
                   ...item,
                   isSystemNotificationEnabled:
-                    variables.data.isSystemNotificationEnabled,
+                    variables.data.hasSystemNotificationEnabled,
                   isEmailNotificationEnabled:
-                    variables.data.isEmailNotificationEnabled,
+                    variables.data.hasEmailNotificationEnabled,
                 }
               : item,
           ),
@@ -98,11 +98,11 @@ export function UpdateNotificationSettingModal() {
     if (!accountId || !workspaceId) return;
 
     const requestData: NotificationSetUpdateRequest = {
-      isSystemNotificationEnabled:
+      hasSystemNotificationEnabled:
         channel === "SYSTEM"
           ? checked
           : notificationSet.isSystemNotificationEnabled,
-      isEmailNotificationEnabled:
+      hasEmailNotificationEnabled:
         channel === "EMAIL"
           ? checked
           : notificationSet.isEmailNotificationEnabled,

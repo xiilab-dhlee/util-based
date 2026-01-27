@@ -4,7 +4,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useEffect } from "react";
 
-import { useGetResourceRequests1 } from "@/api/generated/admin-workspace/admin-workspace";
+import { useGetAdminResourceRequests } from "@/api/generated/admin-workspace/admin-workspace";
 import { ApproveResourceModal } from "@/domain/request-resource/components/approve-request-resource-modal";
 import { RejectResourceModal } from "@/domain/request-resource/components/reject-request-resource-modal";
 import { RequestResourceBody } from "@/domain/request-resource/components/request-resource-body";
@@ -51,7 +51,7 @@ export function RequestResourceMain() {
   });
 
   // 리소스 요청 목록 조회 (Orval 훅)
-  const { data, isLoading, isError } = useGetResourceRequests1({
+  const { data, isLoading, isError } = useGetAdminResourceRequests({
     pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: keyword || undefined,

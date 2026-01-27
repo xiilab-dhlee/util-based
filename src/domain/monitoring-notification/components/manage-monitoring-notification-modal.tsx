@@ -1,17 +1,18 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form, Icon, Modal } from "xiilab-ui";
 
-import { useGetNodeNames } from "@/api/generated/admin-cluster/admin-cluster";
 import type { MonitoringNotificationSetDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetNodeGpuInfoList } from "@/api/generated/cluster-resource/cluster-resource";
 import {
   NotificationChannelSection,
   NotificationInfoSection,
   NotificationSettingsSection,
 } from "@/domain/monitoring-notification/components/notification-form-sections";
+import { GPU_METRICS } from "@/domain/monitoring-notification/constants/monitoring-notification.constant";
 import {
   useCreateNotificationAction,
   useUpdateNotificationAction,
@@ -37,8 +38,8 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 const INITIAL_FORM_STATE: NotificationFormType = {
   notificationSetName: "",
   nodeName: [],
-  isEmailNotificationEnabled: true,
-  isSystemNotificationEnabled: false,
+  hasEmailNotificationEnabled: true,
+  hasSystemNotificationEnabled: false,
   threshold: [],
 };
 
@@ -56,13 +57,25 @@ export function ManageMonitoringNotificationModal() {
   const isEditMode = mode === MODAL_MODES.UPDATE;
   const hasDataError = isEditMode && editId === null;
 
-  // 노드 목록 조회
-  const { data: nodeNameData, isLoading: isNodeNamesLoading } =
-    useGetNodeNames();
-  const nodeOptions = (nodeNameData ?? []).map((name) => ({
-    label: name,
-    value: name,
-  }));
+  // 노드 목록 조회 (GPU 정보 포함) - 모달이 열릴 때만 호출
+  const { data: nodeGpuInfoData, isLoading: isNodeNamesLoading } =
+    useGetNodeGpuInfoList({ query: { enabled: open } });
+
+  const nodeOptions = useMemo(
+    () =>
+      (nodeGpuInfoData ?? []).map((node) => ({
+        label: node.nodeName,
+        value: node.nodeName,
+        isGpuNode: node.isGpuNode,
+      })),
+    [nodeGpuInfoData],
+  );
+
+  // GPU 노드 여부 빠른 조회를 위한 Map
+  const nodeGpuMap = useMemo(
+    () => new Map(nodeOptions.map((n) => [n.value, n.isGpuNode])),
+    [nodeOptions],
+  );
 
   // react-hook-form 설정
   const {
@@ -70,6 +83,7 @@ export function ManageMonitoringNotificationModal() {
     handleSubmit,
     reset,
     clearErrors,
+    watch,
     formState: { errors },
   } = useForm<NotificationFormType>({
     resolver: zodResolver(notificationFormSchema),
@@ -89,6 +103,28 @@ export function ManageMonitoringNotificationModal() {
   });
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
+
+  // 선택된 노드 감시 및 GPU 메트릭 비활성화 여부 계산
+  const selectedNodes = watch("nodeName");
+  const threshold = watch("threshold");
+
+  const isGpuMetricDisabled = useMemo(() => {
+    if (isNodeNamesLoading) return true;
+    if (!selectedNodes?.length) return false;
+    // non-GPU 노드가 하나라도 선택되면 GPU 메트릭 비활성화
+    const hasNonGpuNode = selectedNodes.some(
+      (name) => nodeGpuMap.get(name) !== true,
+    );
+    return hasNonGpuNode;
+  }, [selectedNodes, nodeGpuMap, isNodeNamesLoading]);
+
+  // GPU 메트릭 에러 여부 (비활성화 상태에서 GPU 메트릭이 선택된 경우)
+  const hasGpuMetricError = useMemo(() => {
+    if (!isGpuMetricDisabled || !threshold?.length) return false;
+    return threshold.some((setting) =>
+      GPU_METRICS.some((metric) => metric === setting.metric),
+    );
+  }, [isGpuMetricDisabled, threshold]);
 
   // PubSub 구독 - 생성/수정 모드 초기화
   useSubscribe(
@@ -123,6 +159,9 @@ export function ManageMonitoringNotificationModal() {
 
   // 폼 제출
   const onSubmit = (data: NotificationFormType) => {
+    // GPU 메트릭 에러가 있거나 로딩 중이면 제출 차단
+    if (hasGpuMetricError || isNodeNamesLoading) return;
+
     const request = toCreateRequest(data);
 
     if (isEditMode && editId !== null) {
@@ -175,7 +214,10 @@ export function ManageMonitoringNotificationModal() {
       maskClosable={!isSubmitting}
       keyboard={!isSubmitting}
       cancelButtonProps={{ disabled: isSubmitting }}
-      okButtonProps={{ loading: isSubmitting }}
+      okButtonProps={{
+        loading: isSubmitting,
+        disabled: hasGpuMetricError || isNodeNamesLoading,
+      }}
     >
       <Form layout="vertical">
         <NotificationChannelSection
@@ -196,6 +238,8 @@ export function ManageMonitoringNotificationModal() {
           control={control}
           errors={errors}
           disabled={isSubmitting}
+          isGpuMetricDisabled={isGpuMetricDisabled}
+          hasGpuMetricError={hasGpuMetricError}
         />
       </Form>
     </Modal>

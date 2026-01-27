@@ -246,7 +246,10 @@ export const createPublicSnapshotImageBody = zod
       .max(createPublicSnapshotImageBodyImageTagNameMax)
       .regex(createPublicSnapshotImageBodyImageTagNameRegExp)
       .describe("생성할 이미지 태그 이름"),
-    workspaceId: zod.number().describe("워크스페이스 ID"),
+    workspaceId: zod
+      .number()
+      .optional()
+      .describe("워크스페이스 ID (종속버전인 경우 필수)"),
     command: zod
       .string()
       .min(createPublicSnapshotImageBodyCommandMin)
@@ -550,60 +553,6 @@ export const deletePublicImageTagsResponse = zod
       .strict()
       .optional()
       .describe("이미지 태그 삭제 처리 결과 응답"),
-    message: zod.string().optional(),
-    timestamp: zod.number(),
-  })
-  .strict();
-
-/**
- * 
-            공용 레지스트리의 이미지를 삭제합니다.
-            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
-            - 관리자는 모든 이미지를 삭제할 수 있습니다.
-            - 일반 사용자는 본인이 생성한 이미지만 삭제할 수 있습니다.
-            - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
-        
- * @summary 공용 이미지 삭제
- */
-export const deletePublicImagesBodyHarborImageNameMin = 0;
-export const deletePublicImagesBodyHarborImageNameMax = 20;
-
-export const deletePublicImagesBody = zod
-  .object({
-    harborImageName: zod
-      .array(zod.string())
-      .min(deletePublicImagesBodyHarborImageNameMin)
-      .max(deletePublicImagesBodyHarborImageNameMax)
-      .describe("삭제할 Harbor 이미지 경로 목록 (최대 20개)"),
-  })
-  .strict()
-  .describe("이미지 삭제 요청");
-
-export const deletePublicImagesResponse = zod
-  .object({
-    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
-    errorCode: zod.string().optional(),
-    data: zod
-      .object({
-        totalRequested: zod.number().describe("총 요청 개수"),
-        successCount: zod.number().describe("성공 개수"),
-        failureCount: zod.number().describe("실패 개수"),
-        failures: zod
-          .array(
-            zod
-              .object({
-                harborImageName: zod
-                  .string()
-                  .describe("실패한 Harbor 이미지 이름"),
-              })
-              .strict()
-              .describe("삭제 실패한 이미지 상세"),
-          )
-          .describe("실패한 이미지 목록 (실패가 없으면 빈 리스트)"),
-      })
-      .strict()
-      .optional()
-      .describe("이미지 삭제 처리 결과 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

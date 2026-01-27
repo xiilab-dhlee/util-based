@@ -109,7 +109,7 @@ export function getLastTimestamp(data: ChartDataSeries[]): string | null {
   const allTimestamps = data
     .flatMap((series) => series.data)
     .map((point) => point.x)
-    .filter((x): x is Date => x);
+    .filter((x): x is Date => x instanceof Date && !Number.isNaN(x.getTime()));
 
   const latestTimestamp = maxBy(allTimestamps, (date) => date.getTime());
 

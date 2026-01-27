@@ -90,13 +90,18 @@ export const METRIC_TYPE_LABEL_MAP: Record<ThresholdRequestMetric, string> = {
   GPU_MEMORY: "GPU Memory 사용률",
   CPU_USAGE: "CPU 사용률",
   MEMORY_USAGE: "Memory 사용률",
-  GPU_TEMP: "GPU 온도",
 };
 
 /** 유효한 메트릭 타입 배열 (타입 가드용) */
 export const VALID_METRICS = Object.keys(
   METRIC_TYPE_LABEL_MAP,
 ) as ThresholdRequestMetric[];
+
+/** GPU 관련 메트릭 타입 배열 */
+export const GPU_METRICS: ThresholdRequestMetric[] = [
+  "GPU_USAGE",
+  "GPU_MEMORY",
+];
 
 /**
  * 유효한 연산자 배열 (타입 가드용) - API enum 값 사용

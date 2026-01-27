@@ -30,6 +30,34 @@
 import * as zod from "zod";
 
 /**
+ * 전체 워크스페이스의 워크로드 상태별 개수를 조회합니다.
+ * @summary 워크로드 상태별 개수 조회
+ */
+export const getAdminWorkloadStatusSummaryResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        workloadCount: zod
+          .object({
+            totalCount: zod.number().describe("전체 워크로드 수"),
+            runningCount: zod.number().describe("실행 중인 워크로드 수"),
+            pendingCount: zod.number().describe("대기 중인 워크로드 수"),
+            errorCount: zod.number().describe("오류 상태 워크로드 수"),
+          })
+          .strict()
+          .describe("워크로드 상태별 개수"),
+      })
+      .strict()
+      .optional()
+      .describe("관리자용 워크로드 요약 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * K8s에서 Pending 상태인 워크로드 목록을 조회하고, DB 정보로 보강합니다. 페이징, 검색, 필터를 지원합니다.
  * @summary Pending 워크로드 목록 조회
  */
@@ -54,7 +82,10 @@ export const getPendingWorkloadsQueryParams = zod.object({
     .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
     .optional()
     .describe("워크로드 타입 필터. null: 전체"),
-  sort: zod.enum(["CREATED_AT"]).optional().describe("정렬 기준 필드"),
+  sort: zod
+    .enum(["WORKLOAD_NAME", "WORKLOAD_STATUS", "WARNING_COUNT", "AGE_SECONDS"])
+    .optional()
+    .describe("정렬 기준 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
@@ -140,6 +171,89 @@ export const getPendingWorkloadsResponse = zod
             })
             .strict()
             .describe("관리자용 Pending 상태 워크로드 응답"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            전체 워크스페이스에서 실행 중인 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - K8s에 Job/Deployment/TrainJob이 존재하는 모든 워크로드
+
+            **반환 정보:**
+            - workloadResourceName: K8s 리소스명
+            - workloadName: 워크로드 이름
+            - workloadStatus: 워크로드 상태 (RUNNING, PENDING, ERROR 등)
+            - workloadJobType: 워크로드 타입 (BATCH, INTERACTIVE, DISTRIBUTED)
+            - nodeName: Pod가 배치된 노드명 (Pending 상태인 경우 null)
+            - creatorName: 생성자 이름
+        
+ * @summary 실행 중 워크로드 목록 조회
+ */
+export const getAdminActiveWorkloadsQueryPageNoDefault = 0;
+export const getAdminActiveWorkloadsQueryPageNoMin = 0;
+
+export const getAdminActiveWorkloadsQueryPageSizeDefault = 20;
+export const getAdminActiveWorkloadsQueryPageSizeMax = 100;
+
+export const getAdminActiveWorkloadsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getAdminActiveWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAdminActiveWorkloadsQueryPageSizeMax)
+    .default(getAdminActiveWorkloadsQueryPageSizeDefault)
+    .describe("페이지 크기"),
+});
+
+export const getAdminActiveWorkloadsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              workloadResourceName: zod
+                .string()
+                .describe("워크로드 리소스 이름 (K8s 리소스명)"),
+              workloadName: zod.string().describe("워크로드 이름"),
+              workloadStatus: zod
+                .enum([
+                  "CREATING",
+                  "PENDING",
+                  "RUNNING",
+                  "TERMINATING",
+                  "TERMINATED",
+                  "ERROR",
+                ])
+                .describe("워크로드 상태"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .describe("워크로드 잡 타입"),
+              nodeName: zod
+                .string()
+                .optional()
+                .describe("Pod가 배치된 노드명 (Pending 상태인 경우 null)"),
+              creatorName: zod.string().describe("생성자 이름"),
+            })
+            .strict()
+            .describe("관리자용 실행 중 워크로드 항목"),
         ),
       })
       .strict()

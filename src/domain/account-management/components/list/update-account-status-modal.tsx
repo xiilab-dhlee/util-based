@@ -37,7 +37,7 @@ export function UpdateAccountStatusModal() {
     updateAccountEnabledMutation.mutate(
       {
         accountId: payload.accountId,
-        data: { isEnabled: nextStatus },
+        data: { hasEnabled: nextStatus },
       },
       {
         onSuccess: () => {

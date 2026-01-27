@@ -80,7 +80,7 @@ export function UpdateAccountModal() {
     onClose();
     resetForm({
       accountRole: undefined,
-      isEnabled: undefined,
+      hasEnabled: undefined,
       workspaceLimitCount: 1,
     });
     setAccountId("");
@@ -107,7 +107,7 @@ export function UpdateAccountModal() {
     if (accountDetail) {
       resetForm({
         accountRole: accountDetail.accountRole,
-        isEnabled: accountDetail.isEnabled,
+        hasEnabled: accountDetail.isEnabled,
         workspaceLimitCount: accountDetail.workspaceLimitCount ?? 1,
       });
     }
@@ -210,14 +210,14 @@ export function UpdateAccountModal() {
               </HalfFormItem>
               <HalfFormItem>
                 <Controller
-                  name="isEnabled"
+                  name="hasEnabled"
                   control={control}
                   render={({ field }) => (
                     <FormItem
                       label="상태"
                       required
-                      help={errors.isEnabled?.message}
-                      validateStatus={errors.isEnabled ? "error" : undefined}
+                      help={errors.hasEnabled?.message}
+                      validateStatus={errors.hasEnabled ? "error" : undefined}
                       data-testid={ACCOUNT_SELECTOR.UPDATE_STATUS_FIELD}
                     >
                       <Dropdown
@@ -226,7 +226,7 @@ export function UpdateAccountModal() {
                         onChange={handleStatusChange(field.onChange)}
                         placeholder="상태 선택"
                         width="100%"
-                        status={errors.isEnabled ? "error" : undefined}
+                        status={errors.hasEnabled ? "error" : undefined}
                         disabled={isPending}
                       />
                     </FormItem>

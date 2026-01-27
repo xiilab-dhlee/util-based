@@ -67,7 +67,7 @@ import type {
 
             **검증 규칙:**
             - 노드 이름: 클러스터에 존재하는 노드여야 함
-            - GPU 메트릭 (GPU_TEMP, GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
+            - GPU 메트릭 (GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
             - 임계값: 최소 1개 이상 필요
 
             **PrometheusRule 업데이트:**
@@ -565,7 +565,7 @@ export function useGetAllMonitoringNotificationSets<
 
             **검증 규칙:**
             - 노드 이름: 클러스터에 존재하는 노드여야 함
-            - GPU 메트릭 (GPU_TEMP, GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
+            - GPU 메트릭 (GPU_MEMORY, GPU_USAGE): GPU 노드에서만 사용 가능
             - 임계값: 최소 1개 이상 필요
 
             **PrometheusRule 생성:**

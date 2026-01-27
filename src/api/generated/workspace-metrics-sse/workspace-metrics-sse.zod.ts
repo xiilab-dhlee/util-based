@@ -129,7 +129,7 @@ export const streamWorkloadMetricsQueryParams = zod.object({
             - data: JSON 형식의 시간별 그룹화된 리소스 메트릭 (HTTP API와 동일한 TimeGroupedResourceMetricsResponse 형식)
 
             **메트릭 타입:**
-            - GPU_REQUESTED_TOTAL_COUNT: GPU 요청 총 개수
+            - GPU_REQUESTED_TOTAL_COUNT: GPU 요청 총 개수 (Normal + MIG 포함, MIG는 "GPU모델명_mig프로파일" 형식)
             - CPU_REQUESTED_TOTAL_CORE: CPU 요청 총 코어
             - MEM_REQUESTED_TOTAL_BYTE: 메모리 요청 총 바이트
 
@@ -157,7 +157,7 @@ export const streamWorkspaceResourceMetricsQueryParams = zod.object({
       "MEM_REQUESTED_TOTAL_BYTE",
     ])
     .describe(
-      "\n            스트리밍할 메트릭 타입\n\n            **허용 메트릭:**\n            - GPU_REQUESTED_TOTAL_COUNT: GPU 요청 총 개수\n            - CPU_REQUESTED_TOTAL_CORE: CPU 요청 총 코어\n            - MEM_REQUESTED_TOTAL_BYTE: 메모리 요청 총 바이트\n        ",
+      "\n            스트리밍할 메트릭 타입\n\n            **허용 메트릭:**\n            - GPU_REQUESTED_TOTAL_COUNT: GPU 요청 총 개수 (Normal + MIG 포함)\n            - CPU_REQUESTED_TOTAL_CORE: CPU 요청 총 코어\n            - MEM_REQUESTED_TOTAL_BYTE: 메모리 요청 총 바이트\n        ",
     ),
   lastSentTime: zod
     .string()

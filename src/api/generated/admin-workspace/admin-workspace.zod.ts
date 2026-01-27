@@ -748,6 +748,122 @@ export const getAdminWorkspaceDetailResponse = zod
   .strict();
 
 /**
+ * 
+            워크스페이스 목록을 요약 정보와 함께 조회합니다.
+
+            **포함 정보:**
+            - 워크스페이스 기본 정보 (ID, 이름, 생성자, 생성일시)
+            - 리소스 사용률 (GPU, CPU, Memory) - used/quota * 100
+            - 워크로드 상태별 카운트 (실행 중, 대기 중, 오류)
+
+            **참고:**
+            - GPU 사용률은 Normal GPU + MIG GPU 합산 (MPS 제외)
+            - 대기 중 카운트에는 PodGroup phase PENDING, INQUEUE 포함
+        
+ * @summary 관리자용 워크스페이스 요약 목록 조회
+ */
+export const getWorkspaceSummaryListQueryPageNoMin = 0;
+
+export const getWorkspaceSummaryListQueryPageSizeMax = 100;
+
+export const getWorkspaceSummaryListQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getWorkspaceSummaryListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getWorkspaceSummaryListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["WORKSPACE_NAME", "CREATED_AT", "CREATOR_NAME"])
+    .optional()
+    .describe("정렬 기준 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+});
+
+export const getWorkspaceSummaryListResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number().describe("전체 워크스페이스 수"),
+        totalPageNum: zod.number().describe("전체 페이지 수"),
+        currentPage: zod.number().describe("현재 페이지 번호 (0부터 시작)"),
+        content: zod
+          .array(
+            zod
+              .object({
+                workspaceId: zod.number().describe("워크스페이스 ID"),
+                workspaceName: zod.string().describe("워크스페이스 이름"),
+                creatorId: zod.string().describe("생성자 계정 ID"),
+                creatorName: zod.string().describe("생성자 이름"),
+                createDateTime: zod
+                  .string()
+                  .datetime({})
+                  .optional()
+                  .describe("생성 일시 (UTC)"),
+                resource: zod
+                  .object({
+                    utilization: zod
+                      .object({
+                        gpu: zod
+                          .object({
+                            currentPercent: zod
+                              .number()
+                              .describe("현재 사용률 (%)"),
+                          })
+                          .strict()
+                          .describe("사용률 퍼센트 응답"),
+                        cpu: zod
+                          .object({
+                            currentPercent: zod
+                              .number()
+                              .describe("현재 사용률 (%)"),
+                          })
+                          .strict()
+                          .describe("사용률 퍼센트 응답"),
+                        memory: zod
+                          .object({
+                            currentPercent: zod
+                              .number()
+                              .describe("현재 사용률 (%)"),
+                          })
+                          .strict()
+                          .describe("사용률 퍼센트 응답"),
+                      })
+                      .strict()
+                      .describe("워크스페이스 요약 사용률 응답"),
+                  })
+                  .strict()
+                  .describe("워크스페이스 요약 리소스 응답"),
+                runningWorkloadCount: zod
+                  .number()
+                  .describe("실행 중인 워크로드 수"),
+                pendingWorkloadCount: zod
+                  .number()
+                  .describe("대기 중인 워크로드 수"),
+                errorWorkloadCount: zod.number().describe("오류 워크로드 수"),
+              })
+              .strict()
+              .describe("관리자 워크스페이스 요약 응답"),
+          )
+          .describe("워크스페이스 요약 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("관리자 워크스페이스 요약 목록 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 전체 워크스페이스의 리소스 요청 목록을 페이징하여 조회합니다. 워크스페이스명, 요청자명으로 검색하고 승인 상태로 필터링할 수 있습니다.
  * @summary 관리자용 리소스 요청 목록 조회
  */

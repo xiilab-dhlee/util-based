@@ -16,7 +16,7 @@ export function MonitoringNotificationSettingSwitch({
   const handleChange = (checked: boolean) => {
     mutate({
       notificationSetId,
-      data: { isEnabled: checked },
+      data: { hasEnabled: checked },
     });
   };
 

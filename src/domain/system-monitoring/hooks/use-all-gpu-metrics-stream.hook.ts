@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { BatchGpuMetricResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -89,15 +89,15 @@ export function useAllGpuMetricsStream({
     }
   }, [enabled, resetBuffers]);
 
-  const sseUrl = (() => {
-    if (!nodeName || !SSE_BASE_URL) return "";
+  const sseUrl = useMemo(() => {
+    if (!enabled || !nodeName || !SSE_BASE_URL) return "";
     const effectiveLastSentTime =
       lastHistoryTimestamp ?? new Date().toISOString();
     const url = new URL(SSE_ENDPOINTS.gpuMetrics(nodeName), SSE_BASE_URL);
     url.searchParams.set("metrics", ALL_GPU_METRICS.join(","));
     url.searchParams.set("lastSentTime", effectiveLastSentTime);
     return url.toString();
-  })();
+  }, [enabled, lastHistoryTimestamp, nodeName]);
 
   const handleMessage = (batchResponse: BatchGpuMetricResponse) => {
     const utilizationResult = extractGpuMetricData(
@@ -136,7 +136,7 @@ export function useAllGpuMetricsStream({
   } = useSSEConnection<BatchGpuMetricResponse>({
     url: sseUrl,
     eventName: "gpu-metrics",
-    enabled: enabled && !!nodeName,
+    enabled: enabled && !!sseUrl,
     onMessage: handleMessage,
   });
 

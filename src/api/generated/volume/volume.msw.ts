@@ -34,15 +34,17 @@ import { delay, HttpResponse, http } from "msw";
 import type {
   BaseResponsePageResponseVolumeListResponse,
   BaseResponseUnit,
+  BaseResponseUpdateVolumeResponse,
   BaseResponseVolumeDeleteResult,
   BaseResponseVolumeDetailResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 export const getUpdateVolumeResponseMock = (
-  overrideResponse: Partial<BaseResponseUnit> = {},
-): BaseResponseUnit => ({
+  overrideResponse: Partial<BaseResponseUpdateVolumeResponse> = {},
+): BaseResponseUpdateVolumeResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: { volumeId: faker.number.int({ min: undefined, max: undefined }) },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -151,10 +153,12 @@ export const getGetVolumeDetailResponseMock = (
 
 export const getUpdateVolumeMockHandler = (
   overrideResponse?:
-    | BaseResponseUnit
+    | BaseResponseUpdateVolumeResponse
     | ((
         info: Parameters<Parameters<typeof http.put>[1]>[0],
-      ) => Promise<BaseResponseUnit> | BaseResponseUnit),
+      ) =>
+        | Promise<BaseResponseUpdateVolumeResponse>
+        | BaseResponseUpdateVolumeResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.put(
