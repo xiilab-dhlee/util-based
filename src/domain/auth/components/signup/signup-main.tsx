@@ -18,6 +18,8 @@ import {
   type SignupFormType,
   signupSchema,
 } from "@/domain/auth/schemas/signup.schema";
+import { ROUTES } from "@/shared/constants/routes.constant";
+import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
 import {
   AuthContainer,
   AuthForm,
@@ -25,9 +27,7 @@ import {
   AuthSubmitButton,
   AuthTitle,
   AuthTitleIconWrapper,
-} from "@/domain/auth/styles/layers/auth-layers.styled";
-import { ROUTES } from "@/shared/constants/routes.constant";
-import { AUTH_SELECTOR } from "@/shared/constants/selector.constant";
+} from "@/styles/layers/auth-layers.styled";
 
 interface SignupMainProps {
   /**

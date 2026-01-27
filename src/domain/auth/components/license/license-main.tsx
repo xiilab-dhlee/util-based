@@ -7,17 +7,17 @@ import { FormItem, Icon, Input, Typography } from "xiilab-ui";
 
 import { useCreateLicense } from "@/api/generated/license/license";
 import {
+  type LicenseFormType,
+  licenseFormSchema,
+} from "@/shared/schemas/license.schema";
+import {
   AuthContainer,
   AuthForm,
   AuthHeader,
   AuthSubmitButton,
   AuthTitle,
   AuthTitleIconWrapper,
-} from "@/domain/auth/styles/layers/auth-layers.styled";
-import {
-  type LicenseFormType,
-  licenseFormSchema,
-} from "@/shared/schemas/license.schema";
+} from "@/styles/layers/auth-layers.styled";
 
 /**
  * 라이선스 등록 페이지의 메인 컴포넌트

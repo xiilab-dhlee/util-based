@@ -3,18 +3,13 @@ import { NextResponse } from "next/server";
 import type { JWT } from "next-auth/jwt";
 import { getToken } from "next-auth/jwt";
 
+import { PUBLIC_AUTH_PATHS } from "@/shared/constants/auth.constant";
 import {
   ACCOUNT_ROLES,
   type AccountRole,
   USER_ROOT_PATH,
 } from "@/shared/constants/core.constant";
 import { MODE, ROUTES } from "@/shared/constants/routes.constant";
-
-const PUBLIC_PATHS = [
-  ROUTES.AUTH_SIGNIN,
-  ROUTES.AUTH_SIGNUP,
-  "/error",
-] as const;
 
 const SKIP_PREFIXES = ["/_next", "/api"] as const;
 
@@ -47,7 +42,7 @@ function shouldSkip(path: string): boolean {
 }
 
 function isPublicPath(path: string): boolean {
-  return PUBLIC_PATHS.some(
+  return PUBLIC_AUTH_PATHS.some(
     (publicPath) => path === publicPath || path.startsWith(`${publicPath}/`),
   );
 }
