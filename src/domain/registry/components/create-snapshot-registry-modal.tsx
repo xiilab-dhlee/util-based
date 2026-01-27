@@ -37,6 +37,7 @@ import {
   CompactCardKeyValueRow,
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
+import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -57,7 +58,12 @@ function useActiveWorkloadInfiniteList(keyword: string, enabled: boolean) {
   const workspaceId = selectedWorkspace?.workspaceId;
 
   return useInfiniteQuery({
-    queryKey: ["snapshot-active-workload-list", workspaceId, keyword],
+    queryKey: [
+      "snapshot-active-workload-list",
+      workspaceId,
+      keyword,
+      "INTERACTIVE",
+    ],
     queryFn: async ({
       pageParam,
     }): Promise<PageResponseActiveWorkloadResponse> => {
@@ -67,6 +73,7 @@ function useActiveWorkloadInfiniteList(keyword: string, enabled: boolean) {
         pageNo: pageParam as number,
         pageSize: PAGE_SIZE,
         keyword: keyword || undefined,
+        workloadJobType: "INTERACTIVE",
       });
     },
     getNextPageParam: (
@@ -510,6 +517,10 @@ export function CreateSnapshotRegistryModal({
               워크로드 선택
             </Typography.Text>
             <RequiredMark>*</RequiredMark>
+            <GuideTooltip
+              title="INTERACTIVE 타입의 워크로드만 스냅샷 이미지 생성이 가능합니다."
+              iconSize={14}
+            />
           </WorkloadHeader>
           <SearchInput
             placeholder="워크로드 이름을 입력해 주세요."
