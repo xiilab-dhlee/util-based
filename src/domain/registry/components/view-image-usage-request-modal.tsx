@@ -114,7 +114,7 @@ export function ViewImageUsageRequestModal() {
             </DetailRow>
 
             <DescriptionSection>
-              <DetailLabel>설명</DetailLabel>
+              <DetailLabel>결정 사유</DetailLabel>
               <DescriptionText>
                 {payload?.decisionReason || "-"}
               </DescriptionText>
