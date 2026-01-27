@@ -3,6 +3,7 @@
 import type { UseMutationResult } from "@tanstack/react-query";
 
 import { useDeletePublicImages } from "@/api/generated/admin-public-registry/admin-public-registry";
+import type { DeleteImagesRequest } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { useDeletePrivateImages } from "@/api/generated/private-registry/private-registry";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 
@@ -15,11 +16,9 @@ import type { RegistryMode } from "@/domain/registry/types/registry.type";
  */
 export const useDeleteRegistryByMode = (
   mode: RegistryMode,
-): UseMutationResult<unknown, unknown, { data: unknown }> => {
+): UseMutationResult<unknown, unknown, { data: DeleteImagesRequest }> => {
   const privateMutation = useDeletePrivateImages();
   const publicMutation = useDeletePublicImages();
 
-  return (
-    mode === "private" ? privateMutation : publicMutation
-  ) as UseMutationResult<unknown, unknown, { data: unknown }>;
+  return mode === "private" ? privateMutation : publicMutation;
 };

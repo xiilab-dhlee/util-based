@@ -372,8 +372,9 @@ export function CreateSnapshotRegistryModal({
                     <Button
                       icon="Plus"
                       iconSize={14}
+                      disabled={!envKeyInput || !envValueInput}
                       onClick={() => {
-                        if (envKeyInput || envValueInput) {
+                        if (envKeyInput && envValueInput) {
                           appendEnv({
                             id: uuidv4(),
                             name: envKeyInput,

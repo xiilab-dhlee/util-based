@@ -51,6 +51,7 @@ export function ViewImageUsageRequestModal() {
   const handleCancel = () => {
     if (isPending) return;
     if (!payload?.usageRequestId) return;
+    if (!isApprovalWaiting) return;
 
     cancelMutation.mutate(
       { usageRequestId: payload.usageRequestId },
