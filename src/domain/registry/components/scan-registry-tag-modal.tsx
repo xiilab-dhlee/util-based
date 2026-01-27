@@ -77,9 +77,9 @@ export function ScanRegistryTagModal({ mode }: ScanRegistryTagModalProps) {
       open={open}
       onCancel={handleCancel}
       onOk={handleOk}
-      okText="검증"
+      okText="검사"
       cancelText="취소"
-      title="태그 취약점 검증"
+      title="태그 취약점 검사"
       centered
       closable={!isPending}
       maskClosable={!isPending}
@@ -87,7 +87,7 @@ export function ScanRegistryTagModal({ mode }: ScanRegistryTagModalProps) {
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >
-      <div>선택한 태그에 대한 취약점 검증을 진행하시겠습니까?</div>
+      <div>선택한 태그에 대한 취약점 검사를 진행하시겠습니까?</div>
     </Modal>
   );
 }

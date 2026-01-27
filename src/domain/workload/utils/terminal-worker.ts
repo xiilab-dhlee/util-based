@@ -14,9 +14,6 @@ type WorkerMessageType =
 
 type ConnectPayload = {
   url: string;
-  workspaceId: string;
-  workloadId: string;
-  workloadType: string;
 };
 
 type ResizePayload = {
@@ -41,7 +38,6 @@ type TerminalPayload = {
 };
 
 type SendType =
-  | "TERMINAL_HOST"
   | "TERMINAL_INIT"
   | "TERMINAL_COMMAND"
   | "TERMINAL_RESIZE"
@@ -59,9 +55,6 @@ let socket: WebSocket | null = null;
 let pingInterval: NodeJS.Timeout | null = null;
 let columns = INITIAL_TERMINAL_SIZE;
 let rows = INITIAL_TERMINAL_SIZE;
-let workspace = "";
-let workload = "";
-let workloadType = "";
 
 // 메인 스레드에서 온 메시지 처리
 self.addEventListener("message", (event: MessageEvent<WorkerMessage>) => {
@@ -70,9 +63,6 @@ self.addEventListener("message", (event: MessageEvent<WorkerMessage>) => {
   switch (type) {
     case "CONNECT": {
       const connectPayload = payload as ConnectPayload;
-      workspace = connectPayload.workspaceId;
-      workload = connectPayload.workloadId;
-      workloadType = connectPayload.workloadType;
       initializeWebSocket(connectPayload.url);
       break;
     }
@@ -106,7 +96,8 @@ function handleSocketOpen(): void {
   startPing();
   console.log("WEBSOCKET_OPEN");
 
-  sendMessage("TERMINAL_HOST", { workspace, workload, workloadType });
+  // URL에 workspaceId, workloadId, podName이 포함되어 있으므로
+  // TERMINAL_HOST 메시지 없이 바로 TERMINAL_INIT 전송
   sendMessage("TERMINAL_INIT");
 }
 

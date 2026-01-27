@@ -151,8 +151,10 @@ export const REGISTRY_EVENTS = {
   openSecurityLevelSettingModal: "registry:open-security-level-setting-modal",
   // 레지스트리 이미지 유형 선택 모달 열기
   openSelectTypeModal: "registry:open-select-type-modal",
-  // 레지스트리 이미지 생성 모달 열기
+  // 레지스트리 이미지 생성 모달 열기 (External)
   openCreateModal: "registry:open-create-modal",
+  // 레지스트리 스냅샷 이미지 생성 모달 열기
+  openCreateSnapshotModal: "registry:open-create-snapshot-modal",
   // 레지스트리 이미지 삭제 모달 열기
   openDeleteModal: "registry:open-delete-modal",
   // 레지스트리 로그 보기 모달 열기
@@ -175,6 +177,10 @@ export const REGISTRY_EVENTS = {
   openEditTagModal: "registry:open-edit-tag-modal",
   // 이미지 태그 사용 요청 모달 열기
   openRequestUseModal: "registry:open-request-use-modal",
+  // 이미지 태그 사용 요청 취소 모달 열기
+  openCancelUsageRequestModal: "registry:open-cancel-usage-request-modal",
+  // 이미지 태그 사용 요청 상세 모달 열기
+  openUsageRequestDetailModal: "registry:open-usage-request-detail-modal",
 } as const;
 
 // 파일 보안 관련 이벤트

@@ -4,8 +4,11 @@ import type {
   ImageTagListResponse,
   ImageTagListResponseApprovalStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { ImageTagListResponseApprovalStatus as ApprovalStatusEnum } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { RegistryTagNameButton } from "@/domain/registry/components/detail/registry-tag-name-button";
 import { RequestUseButton } from "@/domain/registry/components/detail/request-use-button";
+import { ScanRegistryTagButton } from "@/domain/registry/components/detail/scan-registry-tag-button";
+import { ViewUsageRequestButton } from "@/domain/registry/components/detail/view-usage-request-button";
 import { REGISTRY_TAG_APPROVAL_STATUS_TEXT } from "@/domain/registry/constants/registry-detail.constant";
 import { ViewRejectReasonButton } from "@/shared/components/button/view-reject-reason-button";
 import { ViewRequestReasonButton } from "@/shared/components/button/view-request-reason-button";
@@ -91,6 +94,14 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
+      key: "scanAction",
+      title: "취약점 검사",
+      align: "center",
+      render: (_: unknown, record: ImageTagListResponse) => {
+        return <ScanRegistryTagButton record={record} />;
+      },
+    },
+    {
       key: "requestReason",
       dataIndex: "requestReason",
       title: "요청 사유",
@@ -109,8 +120,16 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "사용 요청",
       align: "center",
       render: (_: unknown, record: ImageTagListResponse) => {
-        const isDisabled = !record.imageTagId;
+        const isApprovalWaiting =
+          record.approvalStatus === ApprovalStatusEnum.APPROVAL_WAITING;
 
+        // 승인 대기 상태면 상세 모달 (취소 가능)
+        if (isApprovalWaiting) {
+          return <ViewUsageRequestButton record={record} />;
+        }
+
+        // 그 외 상태면 새 요청 생성 모달
+        const isDisabled = !record.imageTagId;
         return (
           <RequestUseButton
             imageTagId={record.imageTagId ?? 0}

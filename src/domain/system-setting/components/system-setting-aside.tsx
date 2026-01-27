@@ -4,6 +4,10 @@ import styled from "styled-components";
 import { Button, Label, Typography } from "xiilab-ui";
 
 import { useGetPolicySet } from "@/api/generated/admin-workspace/admin-workspace";
+import {
+  useGetClusterTotalResources,
+  useGetMigProfiles,
+} from "@/api/generated/cluster-resource/cluster-resource";
 import { WorkspaceResourceSettingModal } from "@/domain/system-setting/components/workspace-resource-setting-modal";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
@@ -23,9 +27,22 @@ export function SystemSettingAside() {
 
   // API 데이터 가져오기
   const { data: policySet, isLoading } = useGetPolicySet();
+  const { data: clusterTotalResources } = useGetClusterTotalResources();
+  const { data: clusterMigProfiles } = useGetMigProfiles();
 
   const handleEditWorkspaceCount = () => {
-    publish(SYSTEM_SETTING_EVENTS.openWorkspaceResourceSettingModal, {});
+    if (!policySet) return;
+
+    publish(SYSTEM_SETTING_EVENTS.openWorkspaceResourceSettingModal, {
+      gpu: String(defaultGpuCount ?? 0),
+      cpu: String(defaultCpuCore ?? 0),
+      memory: String(defaultMemoryGB ?? 0),
+      workspaceCount: String(workspaceLimit ?? 0),
+      migResources: defaultMigProfiles.map((mig) => ({
+        profile: mig.profile,
+        count: String(mig.count),
+      })),
+    });
   };
 
   // 로딩 완료 후 데이터 없음 → 에러
@@ -80,24 +97,41 @@ export function SystemSettingAside() {
   // 값 추출 및 변환
   const workspaceLimit = policySet?.workspaceLimitCount;
 
-  // 리소스 값 추출
-  const gpuCount = policySet?.resource.gpu?.detail?.normal?.requestCount;
-  const mpsCount = policySet?.resource.gpu?.detail?.mps?.requestCount;
-  const cpuCore = policySet?.resource.cpu.requestCore;
-  const memoryByte = policySet?.resource.memory.requestByte;
+  // 전체 리소스 값 추출 (클러스터 전체)
+  const totalGpuCount = clusterTotalResources?.gpu.clusterCapacityCount;
+  const totalCpuCore = clusterTotalResources?.cpu.clusterCapacityCores;
+  const totalMemoryByte = clusterTotalResources?.memory.clusterCapacityBytes;
 
-  // 메모리 바이트 → GB 변환
-  const memoryGB = memoryByte
-    ? convertBytes(memoryByte, "GB").value
+  // 전체 메모리 바이트 → GB 변환
+  const totalMemoryGB = totalMemoryByte
+    ? convertBytes(Number(totalMemoryByte), "GB").value
     : undefined;
 
-  // MIG 프로필
-  const migProfiles =
+  // 전체 MIG 프로필 (클러스터 전체)
+  const totalMigProfiles =
+    clusterMigProfiles?.migProfiles.map((mig) => ({
+      profile: mig.profile,
+      count: mig.maxCount,
+    })) ?? [];
+  const isMigSupported = totalMigProfiles.length > 0;
+
+  // 기본 리소스 값 추출 (워크스페이스 기본값)
+  const defaultGpuCount = policySet?.resource.gpu?.detail?.normal?.requestCount;
+  const defaultMpsCount = policySet?.resource.gpu?.detail?.mps?.requestCount;
+  const defaultCpuCore = policySet?.resource.cpu.requestCore;
+  const defaultMemoryByte = policySet?.resource.memory.requestByte;
+
+  // 기본 메모리 바이트 → GB 변환
+  const defaultMemoryGB = defaultMemoryByte
+    ? convertBytes(defaultMemoryByte, "GB").value
+    : undefined;
+
+  // 기본 MIG 프로필
+  const defaultMigProfiles =
     policySet?.resource.gpu?.detail?.mig?.map((mig) => ({
       profile: mig.profile,
       count: mig.requestCount,
     })) ?? [];
-  const isMigSupported = migProfiles.length > 0;
 
   // 리소스 정보 추출
   const gpuInfo = getResourceInfo("GPU");
@@ -164,9 +198,9 @@ export function SystemSettingAside() {
                 </Typography.Text>
               </ResourceBoxHeader>
 
-              {/* GPU, MPS, CPU, Memory 직접 렌더링 */}
+              {/* GPU, CPU, Memory 직접 렌더링 */}
               <ResourceLabelRow>
-                {gpuCount !== undefined && (
+                {totalGpuCount !== undefined && (
                   <LabelContainer>
                     <Label
                       dotColor={gpuInfo.color}
@@ -179,25 +213,7 @@ export function SystemSettingAside() {
                       </Typography.Text>
                     </Label>
                     <Typography.Text variant="body-2-3">
-                      {formatNumberWithUnit(gpuCount, gpuInfo.unit, "-")}
-                    </Typography.Text>
-                  </LabelContainer>
-                )}
-
-                {mpsCount !== undefined && (
-                  <LabelContainer>
-                    <Label
-                      dotColor={mpsInfo.color}
-                      textColor={mpsInfo.color}
-                      size="large"
-                      theme="light"
-                    >
-                      <Typography.Text variant="body-3-1">
-                        {mpsInfo.text}
-                      </Typography.Text>
-                    </Label>
-                    <Typography.Text variant="body-2-3">
-                      {formatNumberWithUnit(mpsCount, mpsInfo.unit, "-")}
+                      {formatNumberWithUnit(totalGpuCount, gpuInfo.unit, "-")}
                     </Typography.Text>
                   </LabelContainer>
                 )}
@@ -214,7 +230,7 @@ export function SystemSettingAside() {
                     </Typography.Text>
                   </Label>
                   <Typography.Text variant="body-2-3">
-                    {formatNumberWithUnit(cpuCore, cpuInfo.unit, "-")}
+                    {formatNumberWithUnit(totalCpuCore, cpuInfo.unit, "-")}
                   </Typography.Text>
                 </LabelContainer>
 
@@ -230,7 +246,7 @@ export function SystemSettingAside() {
                     </Typography.Text>
                   </Label>
                   <Typography.Text variant="body-2-3">
-                    {formatNumberWithUnit(memoryGB, memInfo.unit, "-")}
+                    {formatNumberWithUnit(totalMemoryGB, memInfo.unit, "-")}
                   </Typography.Text>
                 </LabelContainer>
               </ResourceLabelRow>
@@ -251,7 +267,7 @@ export function SystemSettingAside() {
                     </Label>
                   </MigLabelRow>
                   <MigProfilesContainer>
-                    {migProfiles.map((mig, index) => (
+                    {totalMigProfiles.map((mig, index) => (
                       <MigProfileItem key={`total-mig-${mig.profile}-${index}`}>
                         <MigProfile>{mig.profile}</MigProfile>
                         <MigCount>
@@ -285,7 +301,7 @@ export function SystemSettingAside() {
 
               {/* GPU, MPS, CPU, Memory 직접 렌더링 */}
               <ResourceLabelRow>
-                {gpuCount !== undefined && (
+                {defaultGpuCount !== undefined && (
                   <LabelContainer>
                     <Label
                       dotColor={gpuInfo.color}
@@ -298,12 +314,12 @@ export function SystemSettingAside() {
                       </Typography.Text>
                     </Label>
                     <Typography.Text variant="body-2-3">
-                      {formatNumberWithUnit(gpuCount, gpuInfo.unit, "-")}
+                      {formatNumberWithUnit(defaultGpuCount, gpuInfo.unit, "-")}
                     </Typography.Text>
                   </LabelContainer>
                 )}
 
-                {mpsCount !== undefined && (
+                {defaultMpsCount !== undefined && (
                   <LabelContainer>
                     <Label
                       dotColor={mpsInfo.color}
@@ -316,7 +332,7 @@ export function SystemSettingAside() {
                       </Typography.Text>
                     </Label>
                     <Typography.Text variant="body-2-3">
-                      {formatNumberWithUnit(mpsCount, mpsInfo.unit, "-")}
+                      {formatNumberWithUnit(defaultMpsCount, mpsInfo.unit, "-")}
                     </Typography.Text>
                   </LabelContainer>
                 )}
@@ -333,7 +349,7 @@ export function SystemSettingAside() {
                     </Typography.Text>
                   </Label>
                   <Typography.Text variant="body-2-3">
-                    {formatNumberWithUnit(cpuCore, cpuInfo.unit, "-")}
+                    {formatNumberWithUnit(defaultCpuCore, cpuInfo.unit, "-")}
                   </Typography.Text>
                 </LabelContainer>
 
@@ -349,13 +365,13 @@ export function SystemSettingAside() {
                     </Typography.Text>
                   </Label>
                   <Typography.Text variant="body-2-3">
-                    {formatNumberWithUnit(memoryGB, memInfo.unit, "-")}
+                    {formatNumberWithUnit(defaultMemoryGB, memInfo.unit, "-")}
                   </Typography.Text>
                 </LabelContainer>
               </ResourceLabelRow>
 
               {/* MIG 섹션 */}
-              {isMigSupported ? (
+              {defaultMigProfiles.length > 0 ? (
                 <MigSection>
                   <MigLabelRow>
                     <Label
@@ -370,7 +386,7 @@ export function SystemSettingAside() {
                     </Label>
                   </MigLabelRow>
                   <MigProfilesContainer>
-                    {migProfiles.map((mig, index) => (
+                    {defaultMigProfiles.map((mig, index) => (
                       <MigProfileItem
                         key={`default-mig-${mig.profile}-${index}`}
                       >
@@ -382,6 +398,15 @@ export function SystemSettingAside() {
                     ))}
                   </MigProfilesContainer>
                 </MigSection>
+              ) : isMigSupported ? (
+                <MigNotice>
+                  <MigNoticeTitle>
+                    기본 MIG 리소스가 설정되지 않았습니다.
+                  </MigNoticeTitle>
+                  <MigNoticeContent>
+                    워크스페이스 생성 시 MIG 리소스가 할당되지 않습니다.
+                  </MigNoticeContent>
+                </MigNotice>
               ) : (
                 <MigNotice>
                   <MigNoticeTitle>
@@ -420,6 +445,7 @@ const TitleExtraContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 `;
 

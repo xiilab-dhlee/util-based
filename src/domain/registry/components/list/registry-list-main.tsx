@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import styled from "styled-components";
 
 import { CreateRegistryModal } from "@/domain/registry/components/create-registry-modal";
+import { CreateSnapshotRegistryModal } from "@/domain/registry/components/create-snapshot-registry-modal";
 import { DeleteRegistryModal } from "@/domain/registry/components/delete-registry-modal";
 import { RegistryListAside } from "@/domain/registry/components/list/registry-list-aside";
 import { RegistryListBody } from "@/domain/registry/components/list/registry-list-body";
@@ -141,8 +142,10 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
       </ListPageMain>
       {/* 레지스트리 구분 선택 모달 */}
       <SelectRegistryTypeModal />
-      {/* 레지스트리 이미지 생성 모달 */}
+      {/* 레지스트리 이미지 생성 모달 (External) */}
       <CreateRegistryModal mode={mode} />
+      {/* 레지스트리 스냅샷 이미지 생성 모달 */}
+      <CreateSnapshotRegistryModal mode={mode} />
       {/* 레지스트리 이미지 삭제 모달 */}
       <DeleteRegistryModal mode={mode} />
       {/* 컨테이너 이미지 등록 재시작 모달 */}

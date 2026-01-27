@@ -45,16 +45,16 @@ const getTagColumnConfig = (
   const baseColumns: CoreCreateColumnConfig[] = [
     {
       key: "imageTagName",
-      width: mode === "private" ? "18%" : "16%",
+      width: mode === "private" ? "16%" : "14%",
       ellipsis: true,
     },
-    { key: "imageTagSizeByte", width: mode === "private" ? "12%" : "10%" },
-    { key: "scanStatus", width: mode === "private" ? "14%" : "12%" },
+    { key: "imageTagSizeByte", width: mode === "private" ? "10%" : "9%" },
+    { key: "scanStatus", width: mode === "private" ? "12%" : "10%" },
   ];
 
   // public 모드에서만 creatorName 추가
   if (mode === "public") {
-    baseColumns.push({ key: "creatorName", width: "12%" });
+    baseColumns.push({ key: "creatorName", width: "10%" });
   }
 
   // 나머지 컬럼 추가
@@ -62,12 +62,13 @@ const getTagColumnConfig = (
     {
       key: "createdAt",
       align: "left",
-      width: mode === "private" ? "14%" : "12%",
+      width: mode === "private" ? "12%" : "10%",
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "createdAt"),
     },
-    { key: "approvalStatus", width: mode === "private" ? "14%" : "12%" },
-    { key: "useRequest", width: mode === "private" ? "14%" : "12%" },
+    { key: "approvalStatus", width: mode === "private" ? "12%" : "10%" },
+    { key: "useRequest", width: mode === "private" ? "12%" : "10%" },
+    { key: "scanAction", width: mode === "private" ? "12%" : "10%" },
     { key: "decisionReason", width: mode === "private" ? "14%" : "14%" },
   );
 
@@ -143,11 +144,7 @@ export function RegistryDetailBody({
       />
 
       {/* 태그 목록 필터 */}
-      <RegistryDetailFilter
-        totalSize={totalSize}
-        loading={isLoading}
-        creatorId={imageDetail?.creatorId}
-      />
+      <RegistryDetailFilter totalSize={totalSize} loading={isLoading} />
 
       {/* 태그 목록 테이블 */}
       <ListWrapper>

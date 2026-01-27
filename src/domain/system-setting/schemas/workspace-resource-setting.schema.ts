@@ -68,12 +68,6 @@ export const migResourceSchema = z.object({
 export const workspaceResourceSettingFormSchema = z.object({
   /** GPU 개수 */
   gpu: createNumericStringSchema({ minValue: 0, fieldName: "GPU 개수" }),
-  /** MPS 개수 (선택사항) */
-  mps: createNumericStringSchema({
-    minValue: 0,
-    fieldName: "MPS 개수",
-    required: false,
-  }),
   /** CPU Core 수 */
   cpu: createNumericStringSchema({ minValue: 1, fieldName: "CPU Core 수" }),
   /** Memory GB */
@@ -92,7 +86,7 @@ export const workspaceResourceSettingFormSchema = z.object({
  */
 export const workspaceResourceSettingBaseSchema = z.object({
   gpu: z.number().int().nonnegative(),
-  mps: z.number().int().nonnegative().optional(),
+  mps: z.number().int().nonnegative(), // 항상 0으로 전송
   cpu: z.number().int().positive(),
   memory: z.number().int().positive(),
   workspaceCount: z.number().int().positive(),

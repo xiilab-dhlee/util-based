@@ -9,7 +9,7 @@ import type { MigResourceType } from "@/domain/system-setting/schemas/workspace-
  * @returns 중복 존재 여부
  */
 export const hasDuplicateMigProfile = (
-  resources: MigResourceType[], // 임시 타입
+  resources: MigResourceType[],
   profile: string,
   ignoreIndex?: number,
 ): boolean => {

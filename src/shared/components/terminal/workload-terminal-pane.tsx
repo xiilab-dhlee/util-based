@@ -47,6 +47,8 @@ interface WorkloadTermianlPaneProps extends TerminalEventProps {
   workloadId: string;
   /** 워크로드 타입 */
   workloadType: string;
+  /** Pod 이름 (DISTRIBUTED 워크로드인 경우 필수) */
+  podName?: string;
 }
 
 /**
@@ -80,6 +82,7 @@ export function WorkloadTerminalPane({
   workspaceId,
   workloadId,
   workloadType,
+  podName,
 }: WorkloadTermianlPaneProps) {
   // 현재 pane 내의 터미널 목록
   const terminals = panes[x][2];
@@ -194,6 +197,7 @@ export function WorkloadTerminalPane({
             workspaceId={workspaceId}
             workloadId={workloadId}
             workloadType={workloadType}
+            podName={podName}
           />
         );
       })}

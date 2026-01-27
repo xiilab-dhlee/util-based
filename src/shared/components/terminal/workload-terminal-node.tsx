@@ -4,7 +4,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import c from "ansi-colors";
 import { useAtomValue } from "jotai";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 import { Arthur } from "xterm-theme";
@@ -44,6 +44,8 @@ interface WorkloadTerminalNodeProps extends TerminalEventProps {
   workloadId: string;
   /** 워크로드 타입 */
   workloadType: string;
+  /** Pod 이름 (DISTRIBUTED 워크로드인 경우 필수) */
+  podName?: string;
 }
 
 /**
@@ -69,6 +71,7 @@ export function WorkloadTerminalNode({
   workspaceId,
   workloadId,
   workloadType,
+  podName,
 }: WorkloadTerminalNodeProps) {
   // xterm.js 터미널 인스턴스
   const term = useRef<XTerminal | null>(null);
@@ -195,10 +198,52 @@ export function WorkloadTerminalNode({
   }, []);
 
   /**
+   * WebSocket URL 생성
+   * 새 형식: /ws/workspaces/{workspaceId}/workloads/{workloadId}/terminal?podName=xxx
+   */
+  const buildWebSocketUrl = useCallback(() => {
+    let isSSL: boolean;
+    let host: string;
+
+    if (process.env.NODE_ENV === "development") {
+      // 개발 환경: NEXT_PUBLIC_API_URL 사용
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (apiUrl) {
+        isSSL = apiUrl.indexOf("https") !== -1;
+        host = apiUrl.replace(/https?:\/\//, "").split("/")[0];
+      } else {
+        // 환경 변수가 없으면 현재 호스트 사용
+        isSSL = window.location.protocol === "https:";
+        host = window.location.host;
+      }
+    } else {
+      // 배포 환경: window.location.host 사용
+      isSSL = window.location.protocol === "https:";
+      host = window.location.host;
+    }
+
+    const protocol = isSSL ? "wss://" : "ws://";
+    const basePath = `/ws/workspaces/${workspaceId}/workloads/${workloadId}/terminal`;
+
+    // DISTRIBUTED 워크로드인 경우에만 podName 쿼리 파라미터 추가
+    const queryParams =
+      workloadType === "DISTRIBUTED" && podName
+        ? `?podName=${encodeURIComponent(podName)}`
+        : "";
+
+    return `${protocol}${host}${basePath}${queryParams}`;
+  }, [workspaceId, workloadId, workloadType, podName]);
+
+  /**
    * 터미널 로드 시 WebSocket 연결 설정
    * Web Worker를 통해 WebSocket 연결을 관리하고 터미널 통신을 처리
    */
   useEffect(() => {
+    // DISTRIBUTED 워크로드인데 podName이 없으면 연결하지 않음
+    if (workloadType === "DISTRIBUTED" && !podName) {
+      return;
+    }
+
     // worker 작동 여부로 여러 connect 방지
     if (term.current && !worker.current) {
       // Web Worker 초기화
@@ -206,22 +251,7 @@ export function WorkloadTerminalNode({
         new URL("@/domain/workload/utils/terminal-worker.ts", import.meta.url),
       );
 
-      let isSSL: boolean;
-      let url: string;
-
-      /* ==== 1. 로컬 환경시 사용  */
-      if (process.env.NODE_ENV === "development") {
-        isSSL = process.env.NEXT_PUBLIC_WEBSOCKET_HOST?.indexOf("https") !== -1;
-        url = `${process.env.NEXT_PUBLIC_WEBSOCKET_HOST}/ws/workload/terminal`
-          .replace(/https?:\/\//, "")
-          .split("/")
-          .filter(Boolean)
-          .join("/");
-      } else {
-        /* ==== 2. 배포된 환경시 사용 ==== */
-        isSSL = window.location.protocol === "https:";
-        url = `${window.location.host}/ws/workload/terminal`;
-      }
+      const wsUrl = buildWebSocketUrl();
 
       // Web Worker에서 오는 메시지 처리
       worker.current.onmessage = ({ data }: MessageEvent) => {
@@ -241,14 +271,11 @@ export function WorkloadTerminalNode({
 
           if (connect.current) {
             console.log("👀 RECONNECT WEBSOCKET (onclose) : ", connect.current);
-            // 재연결 시도
+            // 재연결 시도 (동일한 URL 사용)
             worker.current?.postMessage({
               type: "CONNECT",
               payload: {
-                url: `${isSSL ? "wss://" : "ws://"}${url}`,
-                workspaceId: workspaceId,
-                workloadId: workloadId,
-                workloadType: workloadType,
+                url: wsUrl,
               },
             });
           }
@@ -262,14 +289,11 @@ export function WorkloadTerminalNode({
       worker.current.postMessage({
         type: "CONNECT",
         payload: {
-          url: `${isSSL ? "wss://" : "ws://"}${url}`,
-          workspaceId: workspaceId,
-          workloadId: workloadId,
-          workloadType: workloadType,
+          url: wsUrl,
         },
       });
     }
-  }, [workspaceId, workloadId, workloadType]);
+  }, [workloadType, podName, buildWebSocketUrl]);
 
   /**
    * 테마 변경 시 터미널 테마 업데이트
