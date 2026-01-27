@@ -7,7 +7,6 @@ import { Typography } from "xiilab-ui";
 
 import { LoginBackgroundIcon } from "@/shared/components/icon/login-background";
 import { LEGAL_INFO } from "@/shared/constants/legal.constant";
-import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 /**
  * 사용자 인증 관련 페이지 공통 레이아웃
@@ -55,8 +54,6 @@ const Container = styled.div`
   overflow-x: auto;
   overflow-y: hidden;
   background-color: #fff;
-
-  ${customScrollbar()}
 `;
 
 const ContainerInner = styled.div`
