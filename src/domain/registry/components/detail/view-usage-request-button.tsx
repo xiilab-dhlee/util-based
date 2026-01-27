@@ -11,8 +11,13 @@ import {
   ColumnIconWrap,
 } from "@/styles/layers/column-layer.styled";
 
+/** API 응답에 usageRequestId가 포함된 확장 타입 (orval 스키마 업데이트 전까지 임시 사용) */
+type ImageTagListResponseWithUsageRequestId = ImageTagListResponse & {
+  usageRequestId?: number;
+};
+
 interface ViewUsageRequestButtonProps {
-  record: ImageTagListResponse;
+  record: ImageTagListResponseWithUsageRequestId;
 }
 
 /**
@@ -31,7 +36,7 @@ export function ViewUsageRequestButton({
 
     publish(REGISTRY_EVENTS.openUsageRequestDetailModal, {
       ...record,
-      usageRequestId: record.imageTagId, // TODO: 실제 usageRequestId가 필요할 수 있음
+      usageRequestId: record.usageRequestId,
     });
   };
 
