@@ -109,7 +109,6 @@ export const getGetMonitoringNotificationHistoryDetailResponseMock = (
     isSystemNotificationEnabled: faker.datatype.boolean(),
     isEmailNotificationEnabled: faker.datatype.boolean(),
     metricType: faker.helpers.arrayElement([
-      "GPU_TEMP",
       "GPU_MEMORY",
       "GPU_USAGE",
       "MEMORY_USAGE",

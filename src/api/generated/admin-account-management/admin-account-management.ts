@@ -51,14 +51,25 @@ import type {
   AccountUpdateRequest,
   BaseResponseAccountDeleteResult,
   BaseResponseAccountItemResponse,
+  BaseResponseAccountResourceDetailResponse,
   BaseResponsePageResponseAccountItemResponse,
+  BaseResponsePageResponseAccountResourceSummaryResponse,
   BaseResponsePasswordResetByAdminResponse,
   BaseResponseUnit,
+  GetAllAccountResourcesParams,
   GetAllAccountsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
- * 특정 계정의 정보를 수정합니다. 활성화 여부, 역할, 워크스페이스 생성 제한 수를 변경할 수 있습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            특정 계정의 정보를 수정합니다. 활성화 여부, 역할, 워크스페이스 생성 제한 수를 변경할 수 있습니다.
+
+            **수정 권한 정책:**
+            - 최상위 관리자(SUPER_ADMIN) 수정: 최상위 관리자만 가능
+            - 관리자(ADMIN) / 일반 사용자(USER) 수정: 최상위 관리자, 관리자 가능
+            - 본인 비활성화: 불가
+            - 마지막 최상위 관리자 비활성화: 불가
+        
  * @summary 계정 정보 수정
  */
 export const updateAccount = (
@@ -140,7 +151,15 @@ export const useUpdateAccount = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 특정 계정의 활성화/비활성화 상태를 변경합니다. 비활성화된 계정은 로그인할 수 없습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            특정 계정의 활성화/비활성화 상태를 변경합니다. 비활성화된 계정은 로그인할 수 없습니다.
+
+            **수정 권한 정책:**
+            - 최상위 관리자(SUPER_ADMIN) 활성화 상태 변경: 최상위 관리자만 가능
+            - 관리자(ADMIN) / 일반 사용자(USER) 활성화 상태 변경: 최상위 관리자, 관리자 가능
+            - 본인 비활성화: 불가
+            - 마지막 최상위 관리자 비활성화: 불가
+        
  * @summary 계정 활성화 상태 변경
  */
 export const updateAccountEnabled = (
@@ -532,6 +551,178 @@ export function useGetAllAccounts<
 }
 
 /**
+ * 
+            특정 계정의 리소스 점유 상세 정보를 조회합니다.
+            해당 계정이 사용 중인 활성 워크로드를 워크스페이스별로 그룹화하여 보여줍니다.
+            각 워크로드의 GPU, MIG, CPU, 메모리 점유량과 분산 학습 노드 수를 확인할 수 있습니다.
+            ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
+ * @summary 특정 계정의 리소스 점유 상세 조회
+ */
+export const getAccountResourceDetail = (
+  accountId: string,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseAccountResourceDetailResponse>({
+    url: `/api/v1/admin/accounts/${accountId}/resources`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetAccountResourceDetailQueryKey = (accountId?: string) => {
+  return [`/api/v1/admin/accounts/${accountId}/resources`] as const;
+};
+
+export const getGetAccountResourceDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetAccountResourceDetailQueryKey(accountId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAccountResourceDetail>>
+  > = ({ signal }) => getAccountResourceDetail(accountId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!accountId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAccountResourceDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAccountResourceDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAccountResourceDetail>>
+>;
+export type GetAccountResourceDetailQueryError = unknown;
+
+export function useGetAccountResourceDetail<
+  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAccountResourceDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getAccountResourceDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAccountResourceDetail<
+  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAccountResourceDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getAccountResourceDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAccountResourceDetail<
+  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 계정의 리소스 점유 상세 조회
+ */
+
+export function useGetAccountResourceDetail<
+  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAccountResourceDetailQueryOptions(
+    accountId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * 특정 계정의 상세 정보를 조회합니다. 계정 기본 정보, 소속 그룹, 워크스페이스 수를 확인할 수 있습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 계정 상세 조회
  */
@@ -681,6 +872,173 @@ export function useGetAccountDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetAccountDetailQueryOptions(accountId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            전체 계정의 리소스 점유 현황을 페이지네이션으로 조회합니다.
+            각 계정이 현재 사용 중인 활성 워크로드(CREATING, PENDING, RUNNING)의 리소스 합계를 보여줍니다.
+            분산 학습 워크로드의 경우 노드 수(workerCount)를 곱한 실제 점유량을 반영합니다.
+            ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
+ * @summary 계정별 리소스 점유 현황 목록 조회
+ */
+export const getAllAccountResources = (
+  params?: GetAllAccountResourcesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseAccountResourceSummaryResponse>(
+    { url: `/api/v1/admin/accounts/resources`, method: "GET", params, signal },
+  );
+};
+
+export const getGetAllAccountResourcesQueryKey = (
+  params?: GetAllAccountResourcesParams,
+) => {
+  return [
+    `/api/v1/admin/accounts/resources`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetAllAccountResourcesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAllAccountResources>>,
+  TError = unknown,
+>(
+  params?: GetAllAccountResourcesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAllAccountResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetAllAccountResourcesQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAllAccountResources>>
+  > = ({ signal }) => getAllAccountResources(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAllAccountResources>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAllAccountResourcesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAllAccountResources>>
+>;
+export type GetAllAccountResourcesQueryError = unknown;
+
+export function useGetAllAccountResources<
+  TData = Awaited<ReturnType<typeof getAllAccountResources>>,
+  TError = unknown,
+>(
+  params: undefined | GetAllAccountResourcesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAllAccountResources>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllAccountResources>>,
+          TError,
+          Awaited<ReturnType<typeof getAllAccountResources>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllAccountResources<
+  TData = Awaited<ReturnType<typeof getAllAccountResources>>,
+  TError = unknown,
+>(
+  params?: GetAllAccountResourcesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAllAccountResources>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllAccountResources>>,
+          TError,
+          Awaited<ReturnType<typeof getAllAccountResources>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllAccountResources<
+  TData = Awaited<ReturnType<typeof getAllAccountResources>>,
+  TError = unknown,
+>(
+  params?: GetAllAccountResourcesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAllAccountResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 계정별 리소스 점유 현황 목록 조회
+ */
+
+export function useGetAllAccountResources<
+  TData = Awaited<ReturnType<typeof getAllAccountResources>>,
+  TError = unknown,
+>(
+  params?: GetAllAccountResourcesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAllAccountResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAllAccountResourcesQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

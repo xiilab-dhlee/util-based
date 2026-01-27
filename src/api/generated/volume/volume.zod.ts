@@ -75,6 +75,15 @@ export const updateVolumeResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        volumeId: zod
+          .number()
+          .describe("새로 생성된 볼륨 ID (버전 업데이트로 인해 새 ID 발급)"),
+      })
+      .strict()
+      .optional()
+      .describe("볼륨 수정 응답"),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

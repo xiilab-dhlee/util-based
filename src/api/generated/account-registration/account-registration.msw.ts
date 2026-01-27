@@ -31,7 +31,10 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponseSignupResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type {
+  BaseResponseSignupResponse,
+  BaseResponseSuperAdminCheckResponse,
+} from "../astragoBackendAPIDocumentation.schemas";
 
 export const getSignupResponseMock = (
   overrideResponse: Partial<BaseResponseSignupResponse> = {},
@@ -49,6 +52,17 @@ export const getSignupResponseMock = (
       "USER",
     ] as const),
   },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getCheckSuperAdminExistsResponseMock = (
+  overrideResponse: Partial<BaseResponseSuperAdminCheckResponse> = {},
+): BaseResponseSuperAdminCheckResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: { hasSuperAdmin: faker.datatype.boolean() },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -81,4 +95,37 @@ export const getSignupMockHandler = (
     options,
   );
 };
-export const getAccountRegistrationMock = () => [getSignupMockHandler()];
+
+export const getCheckSuperAdminExistsMockHandler = (
+  overrideResponse?:
+    | BaseResponseSuperAdminCheckResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseSuperAdminCheckResponse>
+        | BaseResponseSuperAdminCheckResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/accounts/super-admin/exists",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getCheckSuperAdminExistsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+export const getAccountRegistrationMock = () => [
+  getSignupMockHandler(),
+  getCheckSuperAdminExistsMockHandler(),
+];

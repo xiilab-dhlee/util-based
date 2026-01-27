@@ -250,18 +250,6 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.deleteVolume]: {
     success: "볼륨이 삭제되었습니다.",
   },
-  [MUTATION_KEYS.createFolder]: {
-    success: "폴더가 생성되었습니다.",
-  },
-  [MUTATION_KEYS.deleteFiles]: {
-    success: "파일이 삭제되었습니다.",
-  },
-  [MUTATION_KEYS.decompress]: {
-    success: "압축 해제 요청이 전송되었습니다.",
-  },
-  [MUTATION_KEYS.compress]: {
-    success: "압축 요청이 전송되었습니다.",
-  },
   [MUTATION_KEYS.registerOnPremiseVolume]: {
     success: "볼륨이 생성되었습니다.",
   },
@@ -312,5 +300,221 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.updateNodeScheduling]: {
     success: "노드 스케줄링 설정이 변경되었습니다.",
+  },
+
+  // ============================================
+  // Volume TUS Upload
+  // ============================================
+  [MUTATION_KEYS.createUpload]: {
+    success: "업로드가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.cancelUpload]: {
+    success: "업로드가 취소되었습니다.",
+  },
+  [MUTATION_KEYS.getUploadStatus]: {
+    success: "업로드 상태를 조회했습니다.",
+  },
+  [MUTATION_KEYS.uploadChunk]: {
+    success: "청크가 업로드되었습니다.",
+  },
+
+  // ============================================
+  // Admin Resource Preset
+  // ============================================
+  [MUTATION_KEYS.updatePreset]: {
+    success: "리소스 프리셋이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deletePreset]: {
+    success: "리소스 프리셋이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.createPreset]: {
+    success: "리소스 프리셋이 생성되었습니다.",
+  },
+  [MUTATION_KEYS.deletePresets]: {
+    success: "리소스 프리셋이 삭제되었습니다.",
+  },
+
+  // ============================================
+  // Image Tag Usage Request (Admin)
+  // ============================================
+  [MUTATION_KEYS.cancelUsageRequest]: {
+    success: "사용 요청이 취소되었습니다.",
+  },
+  [MUTATION_KEYS.rejectUsageRequest]: {
+    success: "사용 요청을 반려했습니다.",
+  },
+  [MUTATION_KEYS.updateDecisionReason]: {
+    success: "승인/반려 사유가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.approveUsageRequest]: {
+    success: "사용 요청이 승인되었습니다.",
+  },
+
+  // ============================================
+  // Cluster Resource
+  // ============================================
+  [MUTATION_KEYS.checkResourceAvailability]: {
+    success: "리소스 가용성을 확인했습니다.",
+  },
+
+  // ============================================
+  // Workload Reclaim Webhook
+  // ============================================
+  [MUTATION_KEYS.executeReclaim]: {
+    success: "워크로드 회수가 실행되었습니다.",
+  },
+
+  // ============================================
+  // Vulnerability Policy (Admin)
+  // ============================================
+  [MUTATION_KEYS.updateScanPolicy]: {
+    success: "취약점 스캔 정책이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.updateLevelPolicy]: {
+    success: "취약점 수준 정책이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.updateAstragoOnlyPolicy]: {
+    success: "Astrago 전용 정책이 수정되었습니다.",
+  },
+
+  // ============================================
+  // Account Notification
+  // ============================================
+  [MUTATION_KEYS.deleteNotifications]: {
+    success: "알림이 삭제되었습니다.",
+  },
+
+  // ============================================
+  // Registry (Private) - Snapshot
+  // ============================================
+  [MUTATION_KEYS.createPrivateSnapshotImage]: {
+    success:
+      "스냅샷 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+  },
+
+  // ============================================
+  // Registry (Public) - Snapshot
+  // ============================================
+  [MUTATION_KEYS.createPublicSnapshotImage]: {
+    success:
+      "스냅샷 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+  },
+
+  // ============================================
+  // Admin Volume
+  // ============================================
+  [MUTATION_KEYS.adminUpdateVolume]: {
+    success: "볼륨이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteVolume]: {
+    success: "볼륨이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.adminCreateFolder]: {
+    success: "폴더가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.adminDownload]: {
+    success: "다운로드가 시작되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteFiles]: {
+    success: "파일이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.adminDecompress]: {
+    success: "압축 해제 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.adminCompress]: {
+    success: "압축 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteVolumes]: {
+    success: "볼륨이 삭제되었습니다.",
+  },
+
+  // ============================================
+  // Volume File
+  // ============================================
+  [MUTATION_KEYS.downloadFiles]: {
+    success: "다운로드가 시작되었습니다.",
+  },
+  [MUTATION_KEYS.decompressFile]: {
+    success: "압축 해제 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.compressFiles]: {
+    success: "압축 요청이 전송되었습니다.",
+  },
+
+  // ============================================
+  // Admin Queue
+  // ============================================
+  [MUTATION_KEYS.removeWorkloadFromUrgentStandby]: {
+    success: "긴급 대기 목록에서 제거되었습니다.",
+  },
+  [MUTATION_KEYS.updateUrgentStandbyOrder]: {
+    success: "긴급 대기 순서가 변경되었습니다.",
+  },
+  [MUTATION_KEYS.addWorkloadToUrgentStandby]: {
+    success: "긴급 대기 목록에 추가되었습니다.",
+  },
+
+  // ============================================
+  // Admin Monitoring Notification
+  // ============================================
+  [MUTATION_KEYS.updateMonitoringNotificationSet]: {
+    success: "모니터링 알림 설정이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteMonitoringNotificationSet]: {
+    success: "모니터링 알림 설정이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.updateMonitoringNotificationSetEnabled]: {
+    success: "모니터링 알림 설정 활성화 상태가 변경되었습니다.",
+  },
+  [MUTATION_KEYS.createMonitoringNotificationSet]: {
+    success: "모니터링 알림 설정이 생성되었습니다.",
+  },
+
+  // ============================================
+  // Workload
+  // ============================================
+  [MUTATION_KEYS.updateWorkload]: {
+    success: "워크로드가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteWorkload]: {
+    success: "워크로드가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.updateResourcePreset]: {
+    success: "리소스 프리셋이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.createWorkload]: {
+    success: "워크로드가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.workloadCreateFolder]: {
+    success: "폴더가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.workloadDeleteFiles]: {
+    success: "파일이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.workloadDecompressFile]: {
+    success: "압축 해제 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.workloadCompressFiles]: {
+    success: "압축 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.terminateWorkload]: {
+    success: "워크로드가 종료되었습니다.",
+  },
+  [MUTATION_KEYS.restartWorkload]: {
+    success: "워크로드가 재시작되었습니다.",
+  },
+
+  // ============================================
+  // Volume (Admin)
+  // ============================================
+  [MUTATION_KEYS.deleteVolumes]: {
+    success: "볼륨이 삭제되었습니다.",
+  },
+
+  // ============================================
+  // Monitoring Notification Webhook
+  // ============================================
+  [MUTATION_KEYS.receiveAlert]: {
+    success: "알림이 수신되었습니다.",
   },
 };

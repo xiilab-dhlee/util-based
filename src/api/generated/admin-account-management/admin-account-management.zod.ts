@@ -30,7 +30,15 @@
 import * as zod from "zod";
 
 /**
- * 특정 계정의 정보를 수정합니다. 활성화 여부, 역할, 워크스페이스 생성 제한 수를 변경할 수 있습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            특정 계정의 정보를 수정합니다. 활성화 여부, 역할, 워크스페이스 생성 제한 수를 변경할 수 있습니다.
+
+            **수정 권한 정책:**
+            - 최상위 관리자(SUPER_ADMIN) 수정: 최상위 관리자만 가능
+            - 관리자(ADMIN) / 일반 사용자(USER) 수정: 최상위 관리자, 관리자 가능
+            - 본인 비활성화: 불가
+            - 마지막 최상위 관리자 비활성화: 불가
+        
  * @summary 계정 정보 수정
  */
 export const updateAccountParams = zod.object({
@@ -70,7 +78,15 @@ export const updateAccountResponse = zod
   .strict();
 
 /**
- * 특정 계정의 활성화/비활성화 상태를 변경합니다. 비활성화된 계정은 로그인할 수 없습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            특정 계정의 활성화/비활성화 상태를 변경합니다. 비활성화된 계정은 로그인할 수 없습니다.
+
+            **수정 권한 정책:**
+            - 최상위 관리자(SUPER_ADMIN) 활성화 상태 변경: 최상위 관리자만 가능
+            - 관리자(ADMIN) / 일반 사용자(USER) 활성화 상태 변경: 최상위 관리자, 관리자 가능
+            - 본인 비활성화: 불가
+            - 마지막 최상위 관리자 비활성화: 불가
+        
  * @summary 계정 활성화 상태 변경
  */
 export const updateAccountEnabledParams = zod.object({
@@ -262,6 +278,95 @@ export const getAllAccountsResponse = zod
   .strict();
 
 /**
+ * 
+            특정 계정의 리소스 점유 상세 정보를 조회합니다.
+            해당 계정이 사용 중인 활성 워크로드를 워크스페이스별로 그룹화하여 보여줍니다.
+            각 워크로드의 GPU, MIG, CPU, 메모리 점유량과 분산 학습 노드 수를 확인할 수 있습니다.
+            ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
+ * @summary 특정 계정의 리소스 점유 상세 조회
+ */
+export const getAccountResourceDetailParams = zod.object({
+  accountId: zod.string().describe("계정 ID (Keycloak User ID, UUID 형식)"),
+});
+
+export const getAccountResourceDetailResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        accountId: zod.string().describe("계정 고유 ID (Keycloak User ID)"),
+        accountName: zod.string().describe("계정 이름 (성 + 이름)"),
+        email: zod.string().describe("이메일 주소"),
+        totalActiveWorkloadCount: zod
+          .number()
+          .describe("활성 워크로드 총 개수"),
+        totalGpuCount: zod.number().describe("점유 중인 총 일반 GPU 개수"),
+        totalMigCount: zod.number().describe("점유 중인 총 MIG 개수"),
+        totalCpuCores: zod.number().describe("점유 중인 총 CPU 코어 수"),
+        totalMemoryGiB: zod.number().describe("점유 중인 총 메모리 (GiB 단위)"),
+        workspaceWorkloads: zod
+          .array(
+            zod
+              .object({
+                workspaceId: zod.number().describe("워크스페이스 ID"),
+                workspaceName: zod.string().describe("워크스페이스 이름"),
+                workloads: zod
+                  .array(
+                    zod
+                      .object({
+                        workloadId: zod.number().describe("워크로드 ID"),
+                        workloadName: zod.string().describe("워크로드 이름"),
+                        workloadJobType: zod
+                          .string()
+                          .describe("워크로드 작업 유형"),
+                        workloadStatus: zod.string().describe("워크로드 상태"),
+                        gpuCount: zod
+                          .number()
+                          .describe(
+                            "일반 GPU 개수 (실제 점유량 = 노드 수 × GPU 수)",
+                          ),
+                        migCount: zod
+                          .number()
+                          .describe(
+                            "MIG 개수 (실제 점유량 = 노드 수 × MIG 수)",
+                          ),
+                        cpuCores: zod
+                          .number()
+                          .describe(
+                            "CPU 코어 수 (실제 점유량 = 노드 수 × CPU)",
+                          ),
+                        memoryGiB: zod
+                          .number()
+                          .describe(
+                            "메모리 (GiB 단위, 실제 점유량 = 노드 수 × 메모리)",
+                          ),
+                        numNodes: zod
+                          .number()
+                          .describe(
+                            "분산 학습 노드 수 (분산 학습이 아닌 경우 1)",
+                          ),
+                      })
+                      .strict()
+                      .describe("워크로드별 리소스 상세 정보"),
+                  )
+                  .describe("해당 워크스페이스의 워크로드 목록"),
+              })
+              .strict()
+              .describe("워크스페이스별 워크로드 그룹"),
+          )
+          .describe("워크스페이스별 워크로드 그룹 목록"),
+      })
+      .strict()
+      .optional()
+      .describe("계정 리소스 점유 상세 정보"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 특정 계정의 상세 정보를 조회합니다. 계정 기본 정보, 소속 그룹, 워크스페이스 수를 확인할 수 있습니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
  * @summary 계정 상세 조회
  */
@@ -304,6 +409,91 @@ export const getAccountDetailResponse = zod
       .strict()
       .optional()
       .describe("계정 목록 조회 응답 DTO (단일 계정 정보)"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
+            전체 계정의 리소스 점유 현황을 페이지네이션으로 조회합니다.
+            각 계정이 현재 사용 중인 활성 워크로드(CREATING, PENDING, RUNNING)의 리소스 합계를 보여줍니다.
+            분산 학습 워크로드의 경우 노드 수(workerCount)를 곱한 실제 점유량을 반영합니다.
+            ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
+ * @summary 계정별 리소스 점유 현황 목록 조회
+ */
+export const getAllAccountResourcesQueryPageNoMin = 0;
+
+export const getAllAccountResourcesQueryPageSizeMax = 100;
+
+export const getAllAccountResourcesQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getAllAccountResourcesQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getAllAccountResourcesQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+  keyword: zod.string().optional().describe("검색 키워드"),
+  sort: zod
+    .enum(["ACCOUNT_NAME", "GPU", "MIG", "CPU", "MEMORY"])
+    .optional()
+    .describe(
+      "정렬 필드 (AccountResourceSortField enum): ACCOUNT_NAME, GPU, MIG, CPU, MEMORY. 미입력 시 ACCOUNT_NAME",
+    ),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
+});
+
+export const getAllAccountResourcesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              accountId: zod
+                .string()
+                .describe("계정 고유 ID (Keycloak User ID)"),
+              accountName: zod.string().describe("계정 이름 (성 + 이름)"),
+              email: zod.string().describe("이메일 주소"),
+              activeWorkloadCount: zod.number().describe("활성 워크로드 개수"),
+              gpuCount: zod
+                .number()
+                .describe(
+                  "점유 중인 일반 GPU 개수 (DISTRIBUTED 워크로드는 numNodes를 곱한 값)",
+                ),
+              migCount: zod
+                .number()
+                .describe(
+                  "점유 중인 MIG 개수 (DISTRIBUTED 워크로드는 numNodes를 곱한 값)",
+                ),
+              cpuCores: zod
+                .number()
+                .describe(
+                  "점유 중인 CPU 코어 수 (DISTRIBUTED 워크로드는 numNodes를 곱한 값)",
+                ),
+              memoryGiB: zod
+                .number()
+                .describe(
+                  "점유 중인 메모리 (GiB 단위, DISTRIBUTED 워크로드는 numNodes를 곱한 값)",
+                ),
+            })
+            .strict()
+            .describe("계정별 리소스 점유 현황 요약"),
+        ),
+      })
+      .strict()
+      .optional(),
     message: zod.string().optional(),
     timestamp: zod.number(),
   })

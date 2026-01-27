@@ -35,6 +35,7 @@ import type {
   BaseResponseAdminPolicySetResponse,
   BaseResponseAdminResourceRequestDetailResponse,
   BaseResponseAdminWorkspaceDetailResponse,
+  BaseResponseAdminWorkspaceSummaryListResponse,
   BaseResponsePageResponseAdminResourceRequestListResponse,
   BaseResponsePageResponseAdminWorkspaceListResponse,
   BaseResponsePageResponseAdminWorkspaceMemberResponse,
@@ -282,6 +283,65 @@ export const getGetAdminWorkspaceDetailResponseMock = (
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetWorkspaceSummaryListResponseMock = (
+  overrideResponse: Partial<BaseResponseAdminWorkspaceSummaryListResponse> = {},
+): BaseResponseAdminWorkspaceSummaryListResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPage: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workspaceId: faker.number.int({ min: undefined, max: undefined }),
+      workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      createDateTime: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      resource: {
+        utilization: {
+          gpu: {
+            currentPercent: faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+          },
+          cpu: {
+            currentPercent: faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+          },
+          memory: {
+            currentPercent: faker.number.float({
+              min: undefined,
+              max: undefined,
+              fractionDigits: 2,
+            }),
+          },
+        },
+      },
+      runningWorkloadCount: faker.number.int({
+        min: undefined,
+        max: undefined,
+      }),
+      pendingWorkloadCount: faker.number.int({
+        min: undefined,
+        max: undefined,
+      }),
+      errorWorkloadCount: faker.number.int({ min: undefined, max: undefined }),
+    })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -662,6 +722,36 @@ export const getGetAdminWorkspaceDetailMockHandler = (
   );
 };
 
+export const getGetWorkspaceSummaryListMockHandler = (
+  overrideResponse?:
+    | BaseResponseAdminWorkspaceSummaryListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseAdminWorkspaceSummaryListResponse>
+        | BaseResponseAdminWorkspaceSummaryListResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/workspaces/summary",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetWorkspaceSummaryListResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetAdminResourceRequestsMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseAdminResourceRequestListResponse
@@ -731,6 +821,7 @@ export const getAdminWorkspaceMock = () => [
   getGetAdminAllWorkspacesMockHandler(),
   getGetAdminWorkspaceMembersMockHandler(),
   getGetAdminWorkspaceDetailMockHandler(),
+  getGetWorkspaceSummaryListMockHandler(),
   getGetAdminResourceRequestsMockHandler(),
   getGetResourceRequestDetailMockHandler(),
 ];

@@ -47,14 +47,19 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponseDefaultResourceResponse,
+  BaseResponsePageResponseReclaimPendingWorkloadResponse,
   BaseResponsePageResponseResourceRequestListResponse,
   BaseResponsePageResponseWorkspaceResponse,
+  BaseResponseReclaimPendingResourceSummaryResponse,
   BaseResponseResourceRequestResponse,
   BaseResponseUnit,
+  BaseResponseWorkloadStatusSummaryResponse,
   BaseResponseWorkspaceDetailResponse,
+  BaseResponseWorkspaceResourceUsageResponse,
   BaseResponseWorkspaceResponse,
   DefaultWorkspaceRequest,
   GetAllWorkspacesParams,
+  GetPendingReclaimWorkloadsParams,
   GetResourceRequestsParams,
   ResourceRequestCreateRequest,
   WorkspaceCreateRequest,
@@ -813,6 +818,700 @@ export const useCreateResourceRequest = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * 워크스페이스 내 워크로드의 상태별 개수를 조회합니다. PodGroup Phase 기반으로 실행중/대기중/에러/종료 상태를 집계합니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 워크로드 상태별 개수 조회
+ */
+export const getWorkloadStatusSummary = (
+  workspaceId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkloadStatusSummaryResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/status-summary`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetWorkloadStatusSummaryQueryKey = (workspaceId?: number) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/status-summary`,
+  ] as const;
+};
+
+export const getGetWorkloadStatusSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetWorkloadStatusSummaryQueryKey(workspaceId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkloadStatusSummary>>
+  > = ({ signal }) => getWorkloadStatusSummary(workspaceId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkloadStatusSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkloadStatusSummary>>
+>;
+export type GetWorkloadStatusSummaryQueryError = unknown;
+
+export function useGetWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadStatusSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkloadStatusSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크로드 상태별 개수 조회
+ */
+
+export function useGetWorkloadStatusSummary<
+  TData = Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkloadStatusSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkloadStatusSummaryQueryOptions(
+    workspaceId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 워크스페이스의 리소스 할당량(total)과 사용량(used)을 조회합니다.Volcano Queue 기반으로 GPU, CPU, Memory 정보를 제공합니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 워크스페이스 리소스 사용량 조회
+ */
+export const getWorkspaceResourceUsage = (
+  workspaceId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkspaceResourceUsageResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/resources/usage`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetWorkspaceResourceUsageQueryKey = (workspaceId?: number) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/resources/usage`,
+  ] as const;
+};
+
+export const getGetWorkspaceResourceUsageQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetWorkspaceResourceUsageQueryKey(workspaceId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkspaceResourceUsage>>
+  > = ({ signal }) => getWorkspaceResourceUsage(workspaceId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkspaceResourceUsageQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkspaceResourceUsage>>
+>;
+export type GetWorkspaceResourceUsageQueryError = unknown;
+
+export function useGetWorkspaceResourceUsage<
+  TData = Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkspaceResourceUsage>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkspaceResourceUsage<
+  TData = Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkspaceResourceUsage>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkspaceResourceUsage<
+  TData = Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크스페이스 리소스 사용량 조회
+ */
+
+export function useGetWorkspaceResourceUsage<
+  TData = Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResourceUsage>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkspaceResourceUsageQueryOptions(
+    workspaceId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 워크스페이스의 회수 예정 워크로드 목록을 조회합니다. K8s 실행 상태 기준으로 RUNNING 이면서 경고를 받은 워크로드만 포함됩니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 회수 예정 워크로드 목록 조회
+ */
+export const getPendingReclaimWorkloads = (
+  workspaceId: number,
+  params?: GetPendingReclaimWorkloadsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseReclaimPendingWorkloadResponse>(
+    {
+      url: `/api/v1/workspaces/${workspaceId}/workloads/reclaim-pending`,
+      method: "GET",
+      params,
+      signal,
+    },
+  );
+};
+
+export const getGetPendingReclaimWorkloadsQueryKey = (
+  workspaceId?: number,
+  params?: GetPendingReclaimWorkloadsParams,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/reclaim-pending`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPendingReclaimWorkloadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetPendingReclaimWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetPendingReclaimWorkloadsQueryKey(workspaceId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPendingReclaimWorkloads>>
+  > = ({ signal }) => getPendingReclaimWorkloads(workspaceId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPendingReclaimWorkloadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPendingReclaimWorkloads>>
+>;
+export type GetPendingReclaimWorkloadsQueryError = unknown;
+
+export function useGetPendingReclaimWorkloads<
+  TData = Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params: undefined | GetPendingReclaimWorkloadsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getPendingReclaimWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingReclaimWorkloads<
+  TData = Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetPendingReclaimWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getPendingReclaimWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingReclaimWorkloads<
+  TData = Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetPendingReclaimWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 회수 예정 워크로드 목록 조회
+ */
+
+export function useGetPendingReclaimWorkloads<
+  TData = Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  params?: GetPendingReclaimWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPendingReclaimWorkloadsQueryOptions(
+    workspaceId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 워크스페이스의 회수 예정 워크로드들의 자원 합계를 조회합니다. 다음 스캔에서 회수될 자원(toBeReclaimed)과 전체 회수 예정 자원(allocated)을 제공합니다. 워크스페이스 접근 권한이 필요합니다.
+ * @summary 회수 예정 자원 합계 조회
+ */
+export const getPendingReclaimResourceSummary = (
+  workspaceId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseReclaimPendingResourceSummaryResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/workloads/reclaim-pending-resources`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetPendingReclaimResourceSummaryQueryKey = (
+  workspaceId?: number,
+) => {
+  return [
+    `/api/v1/workspaces/${workspaceId}/workloads/reclaim-pending-resources`,
+  ] as const;
+};
+
+export const getGetPendingReclaimResourceSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetPendingReclaimResourceSummaryQueryKey(workspaceId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>
+  > = ({ signal }) => getPendingReclaimResourceSummary(workspaceId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPendingReclaimResourceSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>
+>;
+export type GetPendingReclaimResourceSummaryQueryError = unknown;
+
+export function useGetPendingReclaimResourceSummary<
+  TData = Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingReclaimResourceSummary<
+  TData = Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingReclaimResourceSummary<
+  TData = Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 회수 예정 자원 합계 조회
+ */
+
+export function useGetPendingReclaimResourceSummary<
+  TData = Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingReclaimResourceSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPendingReclaimResourceSummaryQueryOptions(
+    workspaceId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 /**
  * 워크스페이스 상세 정보를 조회합니다. 존재하지 않는 경우 null을 반환합니다.
  * @summary 워크스페이스 상세 조회

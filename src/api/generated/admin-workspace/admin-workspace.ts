@@ -51,6 +51,7 @@ import type {
   BaseResponseAdminPolicySetResponse,
   BaseResponseAdminResourceRequestDetailResponse,
   BaseResponseAdminWorkspaceDetailResponse,
+  BaseResponseAdminWorkspaceSummaryListResponse,
   BaseResponsePageResponseAdminResourceRequestListResponse,
   BaseResponsePageResponseAdminWorkspaceListResponse,
   BaseResponsePageResponseAdminWorkspaceMemberResponse,
@@ -58,6 +59,7 @@ import type {
   GetAdminAllWorkspacesParams,
   GetAdminResourceRequestsParams,
   GetAdminWorkspaceMembersParams,
+  GetWorkspaceSummaryListParams,
   ResourceRequestRejectRequest,
   WorkspaceResourceRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -1103,6 +1105,182 @@ export function useGetAdminWorkspaceDetail<
     workspaceId,
     options,
   );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            워크스페이스 목록을 요약 정보와 함께 조회합니다.
+
+            **포함 정보:**
+            - 워크스페이스 기본 정보 (ID, 이름, 생성자, 생성일시)
+            - 리소스 사용률 (GPU, CPU, Memory) - used/quota * 100
+            - 워크로드 상태별 카운트 (실행 중, 대기 중, 오류)
+
+            **참고:**
+            - GPU 사용률은 Normal GPU + MIG GPU 합산 (MPS 제외)
+            - 대기 중 카운트에는 PodGroup phase PENDING, INQUEUE 포함
+        
+ * @summary 관리자용 워크스페이스 요약 목록 조회
+ */
+export const getWorkspaceSummaryList = (
+  params?: GetWorkspaceSummaryListParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseAdminWorkspaceSummaryListResponse>({
+    url: `/api/v1/admin/workspaces/summary`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetWorkspaceSummaryListQueryKey = (
+  params?: GetWorkspaceSummaryListParams,
+) => {
+  return [
+    `/api/v1/admin/workspaces/summary`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetWorkspaceSummaryListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetWorkspaceSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetWorkspaceSummaryListQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkspaceSummaryList>>
+  > = ({ signal }) => getWorkspaceSummaryList(params, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkspaceSummaryListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkspaceSummaryList>>
+>;
+export type GetWorkspaceSummaryListQueryError = unknown;
+
+export function useGetWorkspaceSummaryList<
+  TData = Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+  TError = unknown,
+>(
+  params: undefined | GetWorkspaceSummaryListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkspaceSummaryList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkspaceSummaryList<
+  TData = Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetWorkspaceSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkspaceSummaryList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkspaceSummaryList<
+  TData = Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetWorkspaceSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 관리자용 워크스페이스 요약 목록 조회
+ */
+
+export function useGetWorkspaceSummaryList<
+  TData = Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+  TError = unknown,
+>(
+  params?: GetWorkspaceSummaryListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceSummaryList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkspaceSummaryListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

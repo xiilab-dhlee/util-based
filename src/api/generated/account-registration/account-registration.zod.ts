@@ -75,3 +75,25 @@ export const signupBody = zod
   })
   .strict()
   .describe("회원가입 요청");
+
+/**
+ * 시스템에 슈퍼 관리자(SUPER_ADMIN)가 1명 이상 존재하는지 확인합니다. 인증 없이 접근 가능합니다.
+ * @summary 슈퍼 관리자 존재 여부 확인
+ */
+export const checkSuperAdminExistsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        hasSuperAdmin: zod
+          .boolean()
+          .describe("슈퍼 관리자 존재 여부 (1명 이상이면 true)"),
+      })
+      .strict()
+      .optional()
+      .describe("슈퍼 관리자 존재 여부 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();

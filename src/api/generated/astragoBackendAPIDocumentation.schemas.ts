@@ -238,6 +238,32 @@ export interface UpdateVolumeRequest {
   shouldBePublic: boolean;
 }
 
+export type BaseResponseUpdateVolumeResponseStatus =
+  (typeof BaseResponseUpdateVolumeResponseStatus)[keyof typeof BaseResponseUpdateVolumeResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseUpdateVolumeResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseUpdateVolumeResponse {
+  status: BaseResponseUpdateVolumeResponseStatus;
+  errorCode?: string;
+  data?: UpdateVolumeResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 볼륨 수정 응답
+ */
+export interface UpdateVolumeResponse {
+  /** 새로 생성된 볼륨 ID (버전 업데이트로 인해 새 ID 발급) */
+  volumeId: number;
+}
+
 /**
  * 사용자 정의 파라미터
  */
@@ -298,65 +324,6 @@ export interface BaseResponseUpdateSourceCodeResponse {
 export interface UpdateSourceCodeResponse {
   /** 새로 생성된 소스코드 ID (버전 업데이트로 인해 새 ID 발급) */
   sourceCodeId: number;
-}
-
-/**
- * 이미지 타입 (PRIVATE: 개인 레지스트리, PUBLIC: 공유 레지스트리)
- */
-export type VulnerabilityScanPolicyUpdateRequestImageType =
-  (typeof VulnerabilityScanPolicyUpdateRequestImageType)[keyof typeof VulnerabilityScanPolicyUpdateRequestImageType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const VulnerabilityScanPolicyUpdateRequestImageType = {
-  PRIVATE: "PRIVATE",
-  PUBLIC: "PUBLIC",
-} as const;
-
-/**
- * 취약점 스캔 정책 수정 요청
- */
-export interface VulnerabilityScanPolicyUpdateRequest {
-  /** 이미지 타입 (PRIVATE: 개인 레지스트리, PUBLIC: 공유 레지스트리) */
-  imageType: VulnerabilityScanPolicyUpdateRequestImageType;
-  /** 취약점 스캔 활성화 여부 */
-  hasEnabled: boolean;
-}
-
-/**
- * 차단 기준 취약점 심각도
- */
-export type VulnerabilityLevelPolicyUpdateRequestSeverity =
-  (typeof VulnerabilityLevelPolicyUpdateRequestSeverity)[keyof typeof VulnerabilityLevelPolicyUpdateRequestSeverity];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const VulnerabilityLevelPolicyUpdateRequestSeverity = {
-  CRITICAL: "CRITICAL",
-  HIGH: "HIGH",
-  MEDIUM: "MEDIUM",
-  LOW: "LOW",
-} as const;
-
-/**
- * 보안 레벨 정책 수정 요청
- */
-export interface VulnerabilityLevelPolicyUpdateRequest {
-  /** 보안 수준 기반 이미지 사용 제한 활성화 여부 */
-  hasEnabled: boolean;
-  /** 차단 기준 취약점 심각도 */
-  severity: VulnerabilityLevelPolicyUpdateRequestSeverity;
-  /**
-   * 해당 심각도 이상 취약점 허용 최대 개수
-   * @minimum 0
-   */
-  severityCount: number;
-}
-
-/**
- * Astrago 이미지 전용 정책 수정 요청
- */
-export interface AstragoOnlyPolicyUpdateRequest {
-  /** Astrago를 통해 등록된 이미지만 사용 허용 여부 */
-  hasEnabled: boolean;
 }
 
 /**
@@ -1002,6 +969,65 @@ export interface ResourceResponse {
 }
 
 /**
+ * 이미지 타입 (PRIVATE: 개인 레지스트리, PUBLIC: 공유 레지스트리)
+ */
+export type VulnerabilityScanPolicyUpdateRequestImageType =
+  (typeof VulnerabilityScanPolicyUpdateRequestImageType)[keyof typeof VulnerabilityScanPolicyUpdateRequestImageType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VulnerabilityScanPolicyUpdateRequestImageType = {
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+/**
+ * 취약점 스캔 정책 수정 요청
+ */
+export interface VulnerabilityScanPolicyUpdateRequest {
+  /** 이미지 타입 (PRIVATE: 개인 레지스트리, PUBLIC: 공유 레지스트리) */
+  imageType: VulnerabilityScanPolicyUpdateRequestImageType;
+  /** 취약점 스캔 활성화 여부 */
+  hasEnabled: boolean;
+}
+
+/**
+ * 차단 기준 취약점 심각도
+ */
+export type VulnerabilityLevelPolicyUpdateRequestSeverity =
+  (typeof VulnerabilityLevelPolicyUpdateRequestSeverity)[keyof typeof VulnerabilityLevelPolicyUpdateRequestSeverity];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VulnerabilityLevelPolicyUpdateRequestSeverity = {
+  CRITICAL: "CRITICAL",
+  HIGH: "HIGH",
+  MEDIUM: "MEDIUM",
+  LOW: "LOW",
+} as const;
+
+/**
+ * 보안 레벨 정책 수정 요청
+ */
+export interface VulnerabilityLevelPolicyUpdateRequest {
+  /** 보안 수준 기반 이미지 사용 제한 활성화 여부 */
+  hasEnabled: boolean;
+  /** 차단 기준 취약점 심각도 */
+  severity: VulnerabilityLevelPolicyUpdateRequestSeverity;
+  /**
+   * 해당 심각도 이상 취약점 허용 최대 개수
+   * @minimum 0
+   */
+  severityCount: number;
+}
+
+/**
+ * Astrago 이미지 전용 정책 수정 요청
+ */
+export interface AstragoOnlyPolicyUpdateRequest {
+  /** Astrago를 통해 등록된 이미지만 사용 허용 여부 */
+  hasEnabled: boolean;
+}
+
+/**
  * 이미지 태그 사용 요청 반려
  */
 export interface ImageTagUsageRequestRejectRequest {
@@ -1101,14 +1127,13 @@ export interface MonitoringNotificationSetUpdateRequest {
 }
 
 /**
- * 메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE)
+ * 메트릭 타입 (GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE)
  */
 export type ThresholdRequestMetric =
   (typeof ThresholdRequestMetric)[keyof typeof ThresholdRequestMetric];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ThresholdRequestMetric = {
-  GPU_TEMP: "GPU_TEMP",
   GPU_MEMORY: "GPU_MEMORY",
   GPU_USAGE: "GPU_USAGE",
   MEMORY_USAGE: "MEMORY_USAGE",
@@ -1133,13 +1158,14 @@ export const ThresholdRequestOperator = {
  * 임계값 설정
  */
 export interface ThresholdRequest {
-  /** 메트릭 타입 (GPU_TEMP, GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE) */
+  /** 메트릭 타입 (GPU_MEMORY, GPU_USAGE, MEMORY_USAGE, CPU_USAGE) */
   metric: ThresholdRequestMetric;
   /** 비교 연산자 (GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL) */
   operator: ThresholdRequestOperator;
   /**
-   * 임계값 (비율 메트릭: 0~100, GPU_TEMP: 0 이상)
+   * 임계값 (0~100)
    * @minimum 0
+   * @maximum 100
    */
   value: number;
   /**
@@ -2216,8 +2242,8 @@ export interface SnapshotImageRequest {
    * @pattern ^[a-zA-Z0-9_][a-zA-Z0-9._-]*$
    */
   imageTagName: string;
-  /** 워크스페이스 ID */
-  workspaceId: number;
+  /** 워크스페이스 ID (종속버전인 경우 필수) */
+  workspaceId?: number;
   /**
    * 기본 실행 명령
    * @minLength 0
@@ -3890,6 +3916,80 @@ export interface TerminatedWorkloadListResponse {
   content: TerminatedWorkloadItem[];
 }
 
+export type BaseResponseWorkloadStatusSummaryResponseStatus =
+  (typeof BaseResponseWorkloadStatusSummaryResponseStatus)[keyof typeof BaseResponseWorkloadStatusSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkloadStatusSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkloadStatusSummaryResponse {
+  status: BaseResponseWorkloadStatusSummaryResponseStatus;
+  errorCode?: string;
+  data?: WorkloadStatusSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 워크로드 상태별 개수 응답
+ */
+export interface WorkloadStatusSummaryResponse {
+  /** 전체 워크로드 개수 (실행중 + 대기중 + 에러 + 종료) */
+  total: number;
+  /** 실행중 워크로드 개수 (PodGroup Phase: Running) */
+  running: number;
+  /** 대기중 워크로드 개수 (PodGroup Phase: Pending, Inqueue, Unknown) */
+  pending: number;
+  /** 에러 워크로드 개수 (PodGroup status.failed > 0) */
+  error: number;
+  /** 종료 워크로드 개수 (PodGroup Phase: Completed + DB 보완 조회) */
+  terminated: number;
+}
+
+export type BaseResponseWorkspaceResourceUsageResponseStatus =
+  (typeof BaseResponseWorkspaceResourceUsageResponseStatus)[keyof typeof BaseResponseWorkspaceResourceUsageResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkspaceResourceUsageResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkspaceResourceUsageResponse {
+  status: BaseResponseWorkspaceResourceUsageResponseStatus;
+  errorCode?: string;
+  data?: WorkspaceResourceUsageResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 리소스 사용량 항목
+ */
+export interface ResourceUsageItem {
+  /** 총 할당량 */
+  total: number;
+  /** 사용 중인 양 */
+  used: number;
+}
+
+/**
+ * 워크스페이스 리소스 사용량 응답
+ */
+export interface WorkspaceResourceUsageResponse {
+  /** GPU 리소스 사용량 (개수) */
+  gpuCount: ResourceUsageItem;
+  /** CPU 리소스 사용량 (코어) */
+  cpuCore: ResourceUsageItem;
+  /** 메모리 리소스 사용량 (GiB) */
+  memoryGiB: ResourceUsageItem;
+}
+
 export type BaseResponseListTimeGroupedResourceMetricsResponseStatus =
   (typeof BaseResponseListTimeGroupedResourceMetricsResponseStatus)[keyof typeof BaseResponseListTimeGroupedResourceMetricsResponseStatus];
 
@@ -3928,27 +4028,39 @@ export interface TimeGroupedResourceMetricsResponse {
   data: ModelMetricData[];
 }
 
-/**
- * 리소스 회수 상태
- */
-export type ActiveWorkloadItemReclaimStatus =
-  (typeof ActiveWorkloadItemReclaimStatus)[keyof typeof ActiveWorkloadItemReclaimStatus];
+export type BaseResponsePageResponseReclaimPendingWorkloadResponseStatus =
+  (typeof BaseResponsePageResponseReclaimPendingWorkloadResponseStatus)[keyof typeof BaseResponsePageResponseReclaimPendingWorkloadResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ActiveWorkloadItemReclaimStatus = {
-  RECLAIMED: "RECLAIMED",
-  WARNING: "WARNING",
-  NORMAL: "NORMAL",
+export const BaseResponsePageResponseReclaimPendingWorkloadResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
 } as const;
+
+export interface BaseResponsePageResponseReclaimPendingWorkloadResponse {
+  status: BaseResponsePageResponseReclaimPendingWorkloadResponseStatus;
+  errorCode?: string;
+  data?: PageResponseReclaimPendingWorkloadResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseReclaimPendingWorkloadResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ReclaimPendingWorkloadResponse[];
+}
 
 /**
  * 워크로드 상태
  */
-export type ActiveWorkloadItemWorkloadStatus =
-  (typeof ActiveWorkloadItemWorkloadStatus)[keyof typeof ActiveWorkloadItemWorkloadStatus];
+export type ReclaimPendingWorkloadResponseWorkloadStatus =
+  (typeof ReclaimPendingWorkloadResponseWorkloadStatus)[keyof typeof ReclaimPendingWorkloadResponseWorkloadStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ActiveWorkloadItemWorkloadStatus = {
+export const ReclaimPendingWorkloadResponseWorkloadStatus = {
   CREATING: "CREATING",
   PENDING: "PENDING",
   RUNNING: "RUNNING",
@@ -3960,11 +4072,123 @@ export const ActiveWorkloadItemWorkloadStatus = {
 /**
  * 워크로드 잡 타입
  */
-export type ActiveWorkloadItemWorkloadJobType =
-  (typeof ActiveWorkloadItemWorkloadJobType)[keyof typeof ActiveWorkloadItemWorkloadJobType];
+export type ReclaimPendingWorkloadResponseWorkloadJobType =
+  (typeof ReclaimPendingWorkloadResponseWorkloadJobType)[keyof typeof ReclaimPendingWorkloadResponseWorkloadJobType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ActiveWorkloadItemWorkloadJobType = {
+export const ReclaimPendingWorkloadResponseWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 회수 예정 워크로드 응답
+ */
+export interface ReclaimPendingWorkloadResponse {
+  /** 워크로드 ID */
+  workloadId: number;
+  /** 워크로드 이름 */
+  workloadName: string;
+  /** 워크로드 리소스 이름 (K8s 리소스명) */
+  workloadResourceName: string;
+  /** 워크스페이스 ID */
+  workspaceId: number;
+  /** 워크스페이스 리소스명 (K8s Namespace) */
+  workspaceResourceName: string;
+  /** 생성자 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 워크로드 상태 */
+  workloadStatus: ReclaimPendingWorkloadResponseWorkloadStatus;
+  /** 경과 시간 (초) */
+  ageSeconds: number;
+  /** 워크로드 잡 타입 */
+  workloadJobType: ReclaimPendingWorkloadResponseWorkloadJobType;
+  /** 현재 경고 횟수 */
+  reclaimWarningCount: number;
+}
+
+export type BaseResponseReclaimPendingResourceSummaryResponseStatus =
+  (typeof BaseResponseReclaimPendingResourceSummaryResponseStatus)[keyof typeof BaseResponseReclaimPendingResourceSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseReclaimPendingResourceSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseReclaimPendingResourceSummaryResponse {
+  status: BaseResponseReclaimPendingResourceSummaryResponseStatus;
+  errorCode?: string;
+  data?: ReclaimPendingResourceSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 회수 예정 자원 합계 응답
+ */
+export interface ReclaimPendingResourceSummaryResponse {
+  /** 회수될 자원 (다음 스캔에서 회수될 워크로드의 자원) */
+  toBeReclaimed: ResourceAllocation;
+  /** 워크스페이스에서 실행 중인 모든 워크로드의 자원 */
+  allocated: ResourceAllocation;
+  /** 다음 회수 Job 실행 시간 (UTC) */
+  nextReclaimJobTime?: string;
+}
+
+/**
+ * 자원 할당 정보
+ */
+export interface ResourceAllocation {
+  /** GPU 개수 */
+  gpuCount: number;
+  /** CPU 코어 수 */
+  cpuCores: number;
+  /** 메모리 바이트 */
+  memoryBytes: number;
+}
+
+/**
+ * 리소스 회수 상태
+ */
+export type ActiveWorkloadResponseReclaimStatus =
+  (typeof ActiveWorkloadResponseReclaimStatus)[keyof typeof ActiveWorkloadResponseReclaimStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActiveWorkloadResponseReclaimStatus = {
+  RECLAIMED: "RECLAIMED",
+  WARNING: "WARNING",
+  NORMAL: "NORMAL",
+} as const;
+
+/**
+ * 워크로드 상태
+ */
+export type ActiveWorkloadResponseWorkloadStatus =
+  (typeof ActiveWorkloadResponseWorkloadStatus)[keyof typeof ActiveWorkloadResponseWorkloadStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActiveWorkloadResponseWorkloadStatus = {
+  CREATING: "CREATING",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  TERMINATING: "TERMINATING",
+  TERMINATED: "TERMINATED",
+  ERROR: "ERROR",
+} as const;
+
+/**
+ * 워크로드 잡 타입
+ */
+export type ActiveWorkloadResponseWorkloadJobType =
+  (typeof ActiveWorkloadResponseWorkloadJobType)[keyof typeof ActiveWorkloadResponseWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActiveWorkloadResponseWorkloadJobType = {
   INTERACTIVE: "INTERACTIVE",
   BATCH: "BATCH",
   DISTRIBUTED: "DISTRIBUTED",
@@ -3973,7 +4197,7 @@ export const ActiveWorkloadItemWorkloadJobType = {
 /**
  * 실행 중 워크로드 항목
  */
-export interface ActiveWorkloadItem {
+export interface ActiveWorkloadResponse {
   /** 워크로드 이름 */
   workloadName: string;
   /** 워크로드 리소스 이름 (K8s 리소스명) */
@@ -3985,15 +4209,15 @@ export interface ActiveWorkloadItem {
   /** 생성 일시 */
   createdAt: string;
   /** 리소스 회수 상태 */
-  reclaimStatus: ActiveWorkloadItemReclaimStatus;
+  reclaimStatus: ActiveWorkloadResponseReclaimStatus;
   /** 리소스 회수 경고 횟수 */
   reclaimWarningCount: number;
   /** 워크로드 상태 */
-  workloadStatus: ActiveWorkloadItemWorkloadStatus;
+  workloadStatus: ActiveWorkloadResponseWorkloadStatus;
   /** 경과 시간 (초) */
   ageSeconds: number;
   /** 워크로드 잡 타입 */
-  workloadJobType: ActiveWorkloadItemWorkloadJobType;
+  workloadJobType: ActiveWorkloadResponseWorkloadJobType;
   /** 접속 정보 목록 */
   connection: WorkloadConnection[];
   /** 포트 설정 목록 */
@@ -4002,36 +4226,29 @@ export interface ActiveWorkloadItem {
   env?: EnvItem[];
 }
 
-/**
- * 실행 중 워크로드 목록 응답
- */
-export interface ActiveWorkloadListResponse {
-  /** 전체 항목 수 */
-  totalSize: number;
-  /** 전체 페이지 수 */
-  totalPageNum: number;
-  /** 현재 페이지 번호 */
-  currentPage: number;
-  /** 워크로드 목록 */
-  content: ActiveWorkloadItem[];
-}
-
-export type BaseResponseActiveWorkloadListResponseStatus =
-  (typeof BaseResponseActiveWorkloadListResponseStatus)[keyof typeof BaseResponseActiveWorkloadListResponseStatus];
+export type BaseResponsePageResponseActiveWorkloadResponseStatus =
+  (typeof BaseResponsePageResponseActiveWorkloadResponseStatus)[keyof typeof BaseResponsePageResponseActiveWorkloadResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseActiveWorkloadListResponseStatus = {
+export const BaseResponsePageResponseActiveWorkloadResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponseActiveWorkloadListResponse {
-  status: BaseResponseActiveWorkloadListResponseStatus;
+export interface BaseResponsePageResponseActiveWorkloadResponse {
+  status: BaseResponsePageResponseActiveWorkloadResponseStatus;
   errorCode?: string;
-  data?: ActiveWorkloadListResponse;
+  data?: PageResponseActiveWorkloadResponse;
   message?: string;
   timestamp: number;
+}
+
+export interface PageResponseActiveWorkloadResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: ActiveWorkloadResponse[];
 }
 
 /**
@@ -4677,104 +4894,6 @@ export interface ResourcePresetSummaryResponse {
   workloadJobType: ResourcePresetSummaryResponseWorkloadJobType;
   /** 노드 타입 (SINGLE, MULTI) */
   nodeType: ResourcePresetSummaryResponseNodeType;
-}
-
-export type BaseResponseVulnerabilityScanPolicyResponseStatus =
-  (typeof BaseResponseVulnerabilityScanPolicyResponseStatus)[keyof typeof BaseResponseVulnerabilityScanPolicyResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseVulnerabilityScanPolicyResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseVulnerabilityScanPolicyResponse {
-  status: BaseResponseVulnerabilityScanPolicyResponseStatus;
-  errorCode?: string;
-  data?: VulnerabilityScanPolicyResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 취약점 스캔 정책 응답
- */
-export interface VulnerabilityScanPolicyResponse {
-  /** 개인 레지스트리 취약점 스캔 활성화 여부 */
-  isPrivateScanEnabled: boolean;
-  /** 공유 레지스트리 취약점 스캔 활성화 여부 */
-  isPublicScanEnabled: boolean;
-}
-
-export type BaseResponseVulnerabilityLevelPolicyResponseStatus =
-  (typeof BaseResponseVulnerabilityLevelPolicyResponseStatus)[keyof typeof BaseResponseVulnerabilityLevelPolicyResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseVulnerabilityLevelPolicyResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseVulnerabilityLevelPolicyResponse {
-  status: BaseResponseVulnerabilityLevelPolicyResponseStatus;
-  errorCode?: string;
-  data?: VulnerabilityLevelPolicyResponse;
-  message?: string;
-  timestamp: number;
-}
-
-/**
- * 차단 기준 취약점 심각도
- */
-export type VulnerabilityLevelPolicyResponseSeverity =
-  (typeof VulnerabilityLevelPolicyResponseSeverity)[keyof typeof VulnerabilityLevelPolicyResponseSeverity];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const VulnerabilityLevelPolicyResponseSeverity = {
-  CRITICAL: "CRITICAL",
-  HIGH: "HIGH",
-  MEDIUM: "MEDIUM",
-  LOW: "LOW",
-} as const;
-
-/**
- * 보안 레벨 정책 응답
- */
-export interface VulnerabilityLevelPolicyResponse {
-  /** 보안 수준 기반 이미지 사용 제한 활성화 여부 */
-  isRestrictionEnabled: boolean;
-  /** 차단 기준 취약점 심각도 */
-  severity: VulnerabilityLevelPolicyResponseSeverity;
-  /** 해당 심각도 이상 취약점 허용 최대 개수 */
-  severityCount: number;
-}
-
-/**
- * Astrago 이미지 전용 정책 응답
- */
-export interface AstragoOnlyPolicyResponse {
-  /** Astrago를 통해 등록된 이미지만 사용 허용 여부 */
-  isEnabled: boolean;
-}
-
-export type BaseResponseAstragoOnlyPolicyResponseStatus =
-  (typeof BaseResponseAstragoOnlyPolicyResponseStatus)[keyof typeof BaseResponseAstragoOnlyPolicyResponseStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseAstragoOnlyPolicyResponseStatus = {
-  SUCCESS: "SUCCESS",
-  FAIL: "FAIL",
-  ERROR: "ERROR",
-} as const;
-
-export interface BaseResponseAstragoOnlyPolicyResponse {
-  status: BaseResponseAstragoOnlyPolicyResponseStatus;
-  errorCode?: string;
-  data?: AstragoOnlyPolicyResponse;
-  message?: string;
-  timestamp: number;
 }
 
 export type BaseResponsePageResponseRegistryListResponseStatus =
@@ -5789,22 +5908,30 @@ export interface MigProfileListResponse {
   migProfiles: MigProfileInfo[];
 }
 
-export type BaseResponseMigProfileResponseStatus =
-  (typeof BaseResponseMigProfileResponseStatus)[keyof typeof BaseResponseMigProfileResponseStatus];
+export type BaseResponseMigProfileListByGpuResponseStatus =
+  (typeof BaseResponseMigProfileListByGpuResponseStatus)[keyof typeof BaseResponseMigProfileListByGpuResponseStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseResponseMigProfileResponseStatus = {
+export const BaseResponseMigProfileListByGpuResponseStatus = {
   SUCCESS: "SUCCESS",
   FAIL: "FAIL",
   ERROR: "ERROR",
 } as const;
 
-export interface BaseResponseMigProfileResponse {
-  status: BaseResponseMigProfileResponseStatus;
+export interface BaseResponseMigProfileListByGpuResponse {
+  status: BaseResponseMigProfileListByGpuResponseStatus;
   errorCode?: string;
-  data?: MigProfileResponse;
+  data?: MigProfileListByGpuResponse;
   message?: string;
   timestamp: number;
+}
+
+/**
+ * GPU별 MIG Profile 목록 응답
+ */
+export interface MigProfileListByGpuResponse {
+  /** MIG Profile 이름 목록 */
+  profiles: string[];
 }
 
 export type BaseResponseGpuListResponseStatus =
@@ -6218,6 +6345,90 @@ export interface BaseResponseAdminWorkspaceDetailResponse {
 }
 
 /**
+ * 관리자 워크스페이스 요약 목록 조회 응답
+ */
+export interface AdminWorkspaceSummaryListResponse {
+  /** 전체 워크스페이스 수 */
+  totalSize: number;
+  /** 전체 페이지 수 */
+  totalPageNum: number;
+  /** 현재 페이지 번호 (0부터 시작) */
+  currentPage: number;
+  /** 워크스페이스 요약 목록 */
+  content: AdminWorkspaceSummaryResponse[];
+}
+
+/**
+ * 관리자 워크스페이스 요약 응답
+ */
+export interface AdminWorkspaceSummaryResponse {
+  /** 워크스페이스 ID */
+  workspaceId: number;
+  /** 워크스페이스 이름 */
+  workspaceName: string;
+  /** 생성자 계정 ID */
+  creatorId: string;
+  /** 생성자 이름 */
+  creatorName: string;
+  /** 생성 일시 (UTC) */
+  createDateTime?: string;
+  /** 리소스 사용률 정보 */
+  resource: WorkspaceSummaryResourceResponse;
+  /** 실행 중인 워크로드 수 */
+  runningWorkloadCount: number;
+  /** 대기 중인 워크로드 수 */
+  pendingWorkloadCount: number;
+  /** 오류 워크로드 수 */
+  errorWorkloadCount: number;
+}
+
+export type BaseResponseAdminWorkspaceSummaryListResponseStatus =
+  (typeof BaseResponseAdminWorkspaceSummaryListResponseStatus)[keyof typeof BaseResponseAdminWorkspaceSummaryListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseAdminWorkspaceSummaryListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseAdminWorkspaceSummaryListResponse {
+  status: BaseResponseAdminWorkspaceSummaryListResponseStatus;
+  errorCode?: string;
+  data?: AdminWorkspaceSummaryListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 사용률 퍼센트 응답
+ */
+export interface UtilizationPercentResponse {
+  /** 현재 사용률 (%) */
+  currentPercent: number;
+}
+
+/**
+ * 워크스페이스 요약 리소스 응답
+ */
+export interface WorkspaceSummaryResourceResponse {
+  /** 리소스 사용률 정보 (used/quota * 100) */
+  utilization: WorkspaceSummaryUtilizationResponse;
+}
+
+/**
+ * 워크스페이스 요약 사용률 응답
+ */
+export interface WorkspaceSummaryUtilizationResponse {
+  /** GPU 사용률 */
+  gpu: UtilizationPercentResponse;
+  /** CPU 사용률 */
+  cpu: UtilizationPercentResponse;
+  /** 메모리 사용률 */
+  memory: UtilizationPercentResponse;
+}
+
+/**
  * 승인 상태 (APPROVED, REJECTED, WAITING)
  */
 export type AdminResourceRequestListResponseApprovalStatus =
@@ -6408,6 +6619,46 @@ export interface ResourceComparisonResponse {
 }
 
 /**
+ * 관리자용 워크로드 요약 응답
+ */
+export interface AdminWorkloadSummaryResponse {
+  /** 워크로드 상태별 개수 */
+  workloadCount: WorkloadCountResponse;
+}
+
+export type BaseResponseAdminWorkloadSummaryResponseStatus =
+  (typeof BaseResponseAdminWorkloadSummaryResponseStatus)[keyof typeof BaseResponseAdminWorkloadSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseAdminWorkloadSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseAdminWorkloadSummaryResponse {
+  status: BaseResponseAdminWorkloadSummaryResponseStatus;
+  errorCode?: string;
+  data?: AdminWorkloadSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 워크로드 상태별 개수
+ */
+export interface WorkloadCountResponse {
+  /** 전체 워크로드 수 */
+  totalCount: number;
+  /** 실행 중인 워크로드 수 */
+  runningCount: number;
+  /** 대기 중인 워크로드 수 */
+  pendingCount: number;
+  /** 오류 상태 워크로드 수 */
+  errorCount: number;
+}
+
+/**
  * CPU 리소스 정보
  */
 export interface AdminWorkloadCpuResponse {
@@ -6522,6 +6773,78 @@ export interface PageResponseAdminWorkloadResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: AdminWorkloadResponse[];
+}
+
+/**
+ * 워크로드 상태
+ */
+export type AdminActiveWorkloadResponseWorkloadStatus =
+  (typeof AdminActiveWorkloadResponseWorkloadStatus)[keyof typeof AdminActiveWorkloadResponseWorkloadStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminActiveWorkloadResponseWorkloadStatus = {
+  CREATING: "CREATING",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  TERMINATING: "TERMINATING",
+  TERMINATED: "TERMINATED",
+  ERROR: "ERROR",
+} as const;
+
+/**
+ * 워크로드 잡 타입
+ */
+export type AdminActiveWorkloadResponseWorkloadJobType =
+  (typeof AdminActiveWorkloadResponseWorkloadJobType)[keyof typeof AdminActiveWorkloadResponseWorkloadJobType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AdminActiveWorkloadResponseWorkloadJobType = {
+  INTERACTIVE: "INTERACTIVE",
+  BATCH: "BATCH",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const;
+
+/**
+ * 관리자용 실행 중 워크로드 항목
+ */
+export interface AdminActiveWorkloadResponse {
+  /** 워크로드 리소스 이름 (K8s 리소스명) */
+  workloadResourceName: string;
+  /** 워크로드 이름 */
+  workloadName: string;
+  /** 워크로드 상태 */
+  workloadStatus: AdminActiveWorkloadResponseWorkloadStatus;
+  /** 워크로드 잡 타입 */
+  workloadJobType: AdminActiveWorkloadResponseWorkloadJobType;
+  /** Pod가 배치된 노드명 (Pending 상태인 경우 null) */
+  nodeName?: string;
+  /** 생성자 이름 */
+  creatorName: string;
+}
+
+export type BaseResponsePageResponseAdminActiveWorkloadResponseStatus =
+  (typeof BaseResponsePageResponseAdminActiveWorkloadResponseStatus)[keyof typeof BaseResponsePageResponseAdminActiveWorkloadResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseAdminActiveWorkloadResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseAdminActiveWorkloadResponse {
+  status: BaseResponsePageResponseAdminActiveWorkloadResponseStatus;
+  errorCode?: string;
+  data?: PageResponseAdminActiveWorkloadResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseAdminActiveWorkloadResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: AdminActiveWorkloadResponse[];
 }
 
 export type BaseResponseStorageResponseStatus =
@@ -6887,6 +7210,104 @@ export interface PageResponseResourcePresetResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: ResourcePresetResponse[];
+}
+
+export type BaseResponseVulnerabilityScanPolicyResponseStatus =
+  (typeof BaseResponseVulnerabilityScanPolicyResponseStatus)[keyof typeof BaseResponseVulnerabilityScanPolicyResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseVulnerabilityScanPolicyResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseVulnerabilityScanPolicyResponse {
+  status: BaseResponseVulnerabilityScanPolicyResponseStatus;
+  errorCode?: string;
+  data?: VulnerabilityScanPolicyResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 취약점 스캔 정책 응답 - Harbor View에서 조회한 자동 스캔 설정 반환
+ */
+export interface VulnerabilityScanPolicyResponse {
+  /** 개인 레지스트리 취약점 스캔 활성화 여부 */
+  isPrivateScanEnabled: boolean;
+  /** 공유 레지스트리 취약점 스캔 활성화 여부 */
+  isPublicScanEnabled: boolean;
+}
+
+export type BaseResponseVulnerabilityLevelPolicyResponseStatus =
+  (typeof BaseResponseVulnerabilityLevelPolicyResponseStatus)[keyof typeof BaseResponseVulnerabilityLevelPolicyResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseVulnerabilityLevelPolicyResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseVulnerabilityLevelPolicyResponse {
+  status: BaseResponseVulnerabilityLevelPolicyResponseStatus;
+  errorCode?: string;
+  data?: VulnerabilityLevelPolicyResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 차단 기준 취약점 심각도
+ */
+export type VulnerabilityLevelPolicyResponseSeverity =
+  (typeof VulnerabilityLevelPolicyResponseSeverity)[keyof typeof VulnerabilityLevelPolicyResponseSeverity];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VulnerabilityLevelPolicyResponseSeverity = {
+  CRITICAL: "CRITICAL",
+  HIGH: "HIGH",
+  MEDIUM: "MEDIUM",
+  LOW: "LOW",
+} as const;
+
+/**
+ * 보안 레벨 정책 응답
+ */
+export interface VulnerabilityLevelPolicyResponse {
+  /** 보안 수준 기반 이미지 사용 제한 활성화 여부 */
+  isRestrictionEnabled: boolean;
+  /** 차단 기준 취약점 심각도 */
+  severity: VulnerabilityLevelPolicyResponseSeverity;
+  /** 해당 심각도 이상 취약점 허용 최대 개수 */
+  severityCount: number;
+}
+
+/**
+ * Astrago 이미지 전용 정책 응답
+ */
+export interface AstragoOnlyPolicyResponse {
+  /** Astrago를 통해 등록된 이미지만 사용 허용 여부 */
+  isEnabled: boolean;
+}
+
+export type BaseResponseAstragoOnlyPolicyResponseStatus =
+  (typeof BaseResponseAstragoOnlyPolicyResponseStatus)[keyof typeof BaseResponseAstragoOnlyPolicyResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseAstragoOnlyPolicyResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseAstragoOnlyPolicyResponse {
+  status: BaseResponseAstragoOnlyPolicyResponseStatus;
+  errorCode?: string;
+  data?: AstragoOnlyPolicyResponse;
+  message?: string;
+  timestamp: number;
 }
 
 export type BaseResponsePageResponsePublicImageUsageResponseStatus =
@@ -7467,7 +7888,6 @@ export type MonitoringNotificationHistoryDetailResponseMetricType =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MonitoringNotificationHistoryDetailResponseMetricType = {
-  GPU_TEMP: "GPU_TEMP",
   GPU_MEMORY: "GPU_MEMORY",
   GPU_USAGE: "GPU_USAGE",
   MEMORY_USAGE: "MEMORY_USAGE",
@@ -7604,7 +8024,6 @@ export type ThresholdResponseMetric =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ThresholdResponseMetric = {
-  GPU_TEMP: "GPU_TEMP",
   GPU_MEMORY: "GPU_MEMORY",
   GPU_USAGE: "GPU_USAGE",
   MEMORY_USAGE: "MEMORY_USAGE",
@@ -8625,11 +9044,43 @@ export interface BaseResponseClusterResourceSummaryResponse {
 }
 
 /**
+ * GPU 상세 정보
+ */
+export interface ClusterGpuDetailResponse {
+  /** 일반 GPU (non-MIG, non-MPS) */
+  normal: ClusterGpuNormalSummaryResponse;
+  /** MIG 프로파일 */
+  mig: MigProfileCapacityInfo;
+  /** MPS 프로파일 목록 */
+  mps: MpsProfileResponse[];
+}
+
+/**
+ * 일반 GPU 요약
+ */
+export interface ClusterGpuNormalSummaryResponse {
+  /** 클러스터 내 전체 GPU 개수 */
+  clusterCapacityCount: number;
+  /** 워크스페이스 quota 총합 */
+  requestedCount: number;
+  /** 실제 사용 중인 GPU 개수 */
+  usedCount: number;
+}
+
+/**
+ * GPU 리소스 요약
+ */
+export interface ClusterGpuSummaryResponse {
+  /** GPU 상세 정보 */
+  detail: ClusterGpuDetailResponse;
+}
+
+/**
  * 클러스터 리소스 요약 응답
  */
 export interface ClusterResourceSummaryResponse {
   /** GPU 리소스 요약 */
-  gpu: GpuSummaryResponse;
+  gpu: ClusterGpuSummaryResponse;
   /** CPU 리소스 요약 */
   cpu: CpuSummaryResponse;
   /** Memory 리소스 요약 */
@@ -8661,14 +9112,6 @@ export interface DiskSummaryResponse {
 }
 
 /**
- * GPU 리소스 요약
- */
-export interface GpuSummaryResponse {
-  /** GPU 상세 정보 */
-  detail: GpuDetailResponse;
-}
-
-/**
  * Memory 리소스 요약
  */
 export interface MemorySummaryResponse {
@@ -8678,6 +9121,18 @@ export interface MemorySummaryResponse {
   requestedBytes: string;
   /** 실제 사용 중인 메모리 (바이트) */
   usedBytes: string;
+}
+
+/**
+ * MIG 프로파일 Capacity
+ */
+export interface MigProfileCapacityInfo {
+  /** 클러스터 내 전체 MIG 인스턴스 개수 */
+  clusterCapacityCount: number;
+  /** 워크스페이스 quota 총합 */
+  requestedCount: number;
+  /** 실제 사용 중인 MIG 인스턴스 개수 */
+  usedCount: number;
 }
 
 export type BaseResponseListClusterNodeSummaryResponseStatus =
@@ -8806,6 +9261,84 @@ export interface PageResponseAccountItemResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: AccountItemResponse[];
+}
+
+/**
+ * 계정 리소스 점유 상세 정보
+ */
+export interface AccountResourceDetailResponse {
+  /** 계정 고유 ID (Keycloak User ID) */
+  accountId: string;
+  /** 계정 이름 (성 + 이름) */
+  accountName: string;
+  /** 이메일 주소 */
+  email: string;
+  /** 활성 워크로드 총 개수 */
+  totalActiveWorkloadCount: number;
+  /** 점유 중인 총 일반 GPU 개수 */
+  totalGpuCount: number;
+  /** 점유 중인 총 MIG 개수 */
+  totalMigCount: number;
+  /** 점유 중인 총 CPU 코어 수 */
+  totalCpuCores: number;
+  /** 점유 중인 총 메모리 (GiB 단위) */
+  totalMemoryGiB: number;
+  /** 워크스페이스별 워크로드 그룹 목록 */
+  workspaceWorkloads: WorkspaceWorkloadsResponse[];
+}
+
+export type BaseResponseAccountResourceDetailResponseStatus =
+  (typeof BaseResponseAccountResourceDetailResponseStatus)[keyof typeof BaseResponseAccountResourceDetailResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseAccountResourceDetailResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseAccountResourceDetailResponse {
+  status: BaseResponseAccountResourceDetailResponseStatus;
+  errorCode?: string;
+  data?: AccountResourceDetailResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 워크로드별 리소스 상세 정보
+ */
+export interface WorkloadResourceDetailResponse {
+  /** 워크로드 ID */
+  workloadId: number;
+  /** 워크로드 이름 */
+  workloadName: string;
+  /** 워크로드 작업 유형 */
+  workloadJobType: string;
+  /** 워크로드 상태 */
+  workloadStatus: string;
+  /** 일반 GPU 개수 (실제 점유량 = 노드 수 × GPU 수) */
+  gpuCount: number;
+  /** MIG 개수 (실제 점유량 = 노드 수 × MIG 수) */
+  migCount: number;
+  /** CPU 코어 수 (실제 점유량 = 노드 수 × CPU) */
+  cpuCores: number;
+  /** 메모리 (GiB 단위, 실제 점유량 = 노드 수 × 메모리) */
+  memoryGiB: number;
+  /** 분산 학습 노드 수 (분산 학습이 아닌 경우 1) */
+  numNodes: number;
+}
+
+/**
+ * 워크스페이스별 워크로드 그룹
+ */
+export interface WorkspaceWorkloadsResponse {
+  /** 워크스페이스 ID */
+  workspaceId: number;
+  /** 워크스페이스 이름 */
+  workspaceName: string;
+  /** 해당 워크스페이스의 워크로드 목록 */
+  workloads: WorkloadResourceDetailResponse[];
 }
 
 /**
@@ -8992,6 +9525,53 @@ export interface SignupRequestItemResponse {
   email: string;
   /** 가입 요청 일시 (ZonedDateTime, ISO 8601 형식) */
   createdAt?: string;
+}
+
+/**
+ * 계정별 리소스 점유 현황 요약
+ */
+export interface AccountResourceSummaryResponse {
+  /** 계정 고유 ID (Keycloak User ID) */
+  accountId: string;
+  /** 계정 이름 (성 + 이름) */
+  accountName: string;
+  /** 이메일 주소 */
+  email: string;
+  /** 활성 워크로드 개수 */
+  activeWorkloadCount: number;
+  /** 점유 중인 일반 GPU 개수 (DISTRIBUTED 워크로드는 numNodes를 곱한 값) */
+  gpuCount: number;
+  /** 점유 중인 MIG 개수 (DISTRIBUTED 워크로드는 numNodes를 곱한 값) */
+  migCount: number;
+  /** 점유 중인 CPU 코어 수 (DISTRIBUTED 워크로드는 numNodes를 곱한 값) */
+  cpuCores: number;
+  /** 점유 중인 메모리 (GiB 단위, DISTRIBUTED 워크로드는 numNodes를 곱한 값) */
+  memoryGiB: number;
+}
+
+export type BaseResponsePageResponseAccountResourceSummaryResponseStatus =
+  (typeof BaseResponsePageResponseAccountResourceSummaryResponseStatus)[keyof typeof BaseResponsePageResponseAccountResourceSummaryResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseAccountResourceSummaryResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseAccountResourceSummaryResponse {
+  status: BaseResponsePageResponseAccountResourceSummaryResponseStatus;
+  errorCode?: string;
+  data?: PageResponseAccountResourceSummaryResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseAccountResourceSummaryResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: AccountResourceSummaryResponse[];
 }
 
 /**
@@ -9400,6 +9980,32 @@ export interface CredentialDetailResponse {
   creatorName?: string;
   /** 생성일시 */
   createdAt: string;
+}
+
+export type BaseResponseSuperAdminCheckResponseStatus =
+  (typeof BaseResponseSuperAdminCheckResponseStatus)[keyof typeof BaseResponseSuperAdminCheckResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseSuperAdminCheckResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseSuperAdminCheckResponse {
+  status: BaseResponseSuperAdminCheckResponseStatus;
+  errorCode?: string;
+  data?: SuperAdminCheckResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 슈퍼 관리자 존재 여부 응답
+ */
+export interface SuperAdminCheckResponse {
+  /** 슈퍼 관리자 존재 여부 (1명 이상이면 true) */
+  hasSuperAdmin: boolean;
 }
 
 export type GetAllWorkspacesParams = {
@@ -10399,6 +11005,47 @@ export const GetResourceMetricsTimeseriesMetricsName = {
   MEM_UTILIZATION: "MEM_UTILIZATION",
 } as const;
 
+export type GetPendingReclaimWorkloadsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   */
+  pageSize?: number;
+  /**
+   * 정렬 필드
+   */
+  sort?: GetPendingReclaimWorkloadsSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetPendingReclaimWorkloadsOrder;
+};
+
+export type GetPendingReclaimWorkloadsSort =
+  (typeof GetPendingReclaimWorkloadsSort)[keyof typeof GetPendingReclaimWorkloadsSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPendingReclaimWorkloadsSort = {
+  WORKLOAD_NAME: "WORKLOAD_NAME",
+  WORKLOAD_STATUS: "WORKLOAD_STATUS",
+  WARNING_COUNT: "WARNING_COUNT",
+  AGE_SECONDS: "AGE_SECONDS",
+} as const;
+
+export type GetPendingReclaimWorkloadsOrder =
+  (typeof GetPendingReclaimWorkloadsOrder)[keyof typeof GetPendingReclaimWorkloadsOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPendingReclaimWorkloadsOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
 export type GetActiveWorkloadsParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -11001,6 +11648,51 @@ export const GetAdminWorkspaceMembersOrder = {
   DESC: "DESC",
 } as const;
 
+export type GetWorkspaceSummaryListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 기준 필드
+   */
+  sort?: GetWorkspaceSummaryListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetWorkspaceSummaryListOrder;
+};
+
+export type GetWorkspaceSummaryListSort =
+  (typeof GetWorkspaceSummaryListSort)[keyof typeof GetWorkspaceSummaryListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetWorkspaceSummaryListSort = {
+  WORKSPACE_NAME: "WORKSPACE_NAME",
+  CREATED_AT: "CREATED_AT",
+  CREATOR_NAME: "CREATOR_NAME",
+} as const;
+
+export type GetWorkspaceSummaryListOrder =
+  (typeof GetWorkspaceSummaryListOrder)[keyof typeof GetWorkspaceSummaryListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetWorkspaceSummaryListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
 export type GetAdminResourceRequestsParams = {
   /**
    * 페이지 번호 (0부터 시작)
@@ -11104,7 +11796,10 @@ export type GetPendingWorkloadsSort =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetPendingWorkloadsSort = {
-  CREATED_AT: "CREATED_AT",
+  WORKLOAD_NAME: "WORKLOAD_NAME",
+  WORKLOAD_STATUS: "WORKLOAD_STATUS",
+  WARNING_COUNT: "WARNING_COUNT",
+  AGE_SECONDS: "AGE_SECONDS",
 } as const;
 
 export type GetPendingWorkloadsOrder =
@@ -11115,6 +11810,20 @@ export const GetPendingWorkloadsOrder = {
   ASC: "ASC",
   DESC: "DESC",
 } as const;
+
+export type GetAdminActiveWorkloadsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
 
 export type AdminGetVolumeListParams = {
   /**
@@ -12257,6 +12966,53 @@ export type GetSignupRequestsOrder =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetSignupRequestsOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetAllAccountResourcesParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 필드 (AccountResourceSortField enum): ACCOUNT_NAME, GPU, MIG, CPU, MEMORY. 미입력 시 ACCOUNT_NAME
+   */
+  sort?: GetAllAccountResourcesSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetAllAccountResourcesOrder;
+};
+
+export type GetAllAccountResourcesSort =
+  (typeof GetAllAccountResourcesSort)[keyof typeof GetAllAccountResourcesSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllAccountResourcesSort = {
+  ACCOUNT_NAME: "ACCOUNT_NAME",
+  GPU: "GPU",
+  MIG: "MIG",
+  CPU: "CPU",
+  MEMORY: "MEMORY",
+} as const;
+
+export type GetAllAccountResourcesOrder =
+  (typeof GetAllAccountResourcesOrder)[keyof typeof GetAllAccountResourcesOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAllAccountResourcesOrder = {
   ASC: "ASC",
   DESC: "DESC",
 } as const;

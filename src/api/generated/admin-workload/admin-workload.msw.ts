@@ -31,7 +31,29 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseAdminWorkloadResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type {
+  BaseResponseAdminWorkloadSummaryResponse,
+  BaseResponsePageResponseAdminActiveWorkloadResponse,
+  BaseResponsePageResponseAdminWorkloadResponse,
+} from "../astragoBackendAPIDocumentation.schemas";
+
+export const getGetAdminWorkloadStatusSummaryResponseMock = (
+  overrideResponse: Partial<BaseResponseAdminWorkloadSummaryResponse> = {},
+): BaseResponseAdminWorkloadSummaryResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    workloadCount: {
+      totalCount: faker.number.int({ min: undefined, max: undefined }),
+      runningCount: faker.number.int({ min: undefined, max: undefined }),
+      pendingCount: faker.number.int({ min: undefined, max: undefined }),
+      errorCount: faker.number.int({ min: undefined, max: undefined }),
+    },
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
 
 export const getGetPendingWorkloadsResponseMock = (
   overrideResponse: Partial<BaseResponsePageResponseAdminWorkloadResponse> = {},
@@ -89,6 +111,75 @@ export const getGetPendingWorkloadsResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetAdminActiveWorkloadsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseAdminActiveWorkloadResponse> = {},
+): BaseResponsePageResponseAdminActiveWorkloadResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workloadResourceName: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+      workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadStatus: faker.helpers.arrayElement([
+        "CREATING",
+        "PENDING",
+        "RUNNING",
+        "TERMINATING",
+        "TERMINATED",
+        "ERROR",
+      ] as const),
+      workloadJobType: faker.helpers.arrayElement([
+        "INTERACTIVE",
+        "BATCH",
+        "DISTRIBUTED",
+      ] as const),
+      nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetAdminWorkloadStatusSummaryMockHandler = (
+  overrideResponse?:
+    | BaseResponseAdminWorkloadSummaryResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseAdminWorkloadSummaryResponse>
+        | BaseResponseAdminWorkloadSummaryResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/workloads/summary",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAdminWorkloadStatusSummaryResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetPendingWorkloadsMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseAdminWorkloadResponse
@@ -118,4 +209,38 @@ export const getGetPendingWorkloadsMockHandler = (
     options,
   );
 };
-export const getAdminWorkloadMock = () => [getGetPendingWorkloadsMockHandler()];
+
+export const getGetAdminActiveWorkloadsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseAdminActiveWorkloadResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseAdminActiveWorkloadResponse>
+        | BaseResponsePageResponseAdminActiveWorkloadResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/workloads/active",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAdminActiveWorkloadsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+export const getAdminWorkloadMock = () => [
+  getGetAdminWorkloadStatusSummaryMockHandler(),
+  getGetPendingWorkloadsMockHandler(),
+  getGetAdminActiveWorkloadsMockHandler(),
+];

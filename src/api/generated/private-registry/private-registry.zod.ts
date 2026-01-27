@@ -246,7 +246,10 @@ export const createPrivateSnapshotImageBody = zod
       .max(createPrivateSnapshotImageBodyImageTagNameMax)
       .regex(createPrivateSnapshotImageBodyImageTagNameRegExp)
       .describe("생성할 이미지 태그 이름"),
-    workspaceId: zod.number().describe("워크스페이스 ID"),
+    workspaceId: zod
+      .number()
+      .optional()
+      .describe("워크스페이스 ID (종속버전인 경우 필수)"),
     command: zod
       .string()
       .min(createPrivateSnapshotImageBodyCommandMin)

@@ -112,7 +112,6 @@ export const getGetMonitoringNotificationSetDetailResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       metric: faker.helpers.arrayElement([
-        "GPU_TEMP",
         "GPU_MEMORY",
         "GPU_USAGE",
         "MEMORY_USAGE",

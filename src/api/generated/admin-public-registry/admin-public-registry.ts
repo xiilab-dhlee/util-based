@@ -32,23 +32,115 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  BaseResponseDeleteImagesResponse,
   BaseResponsePageResponseAccountImageTagResponse,
   BaseResponsePageResponsePublicImageUsageResponse,
+  DeleteImagesRequest,
   GetPublicImageTagsByAccountIdParams,
   GetPublicImageUsageByAccountParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
+/**
+ * 
+            공용 레지스트리의 이미지를 삭제합니다.
+            - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
+            - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
+        
+ * @summary 공용 이미지 삭제
+ */
+export const deletePublicImages = (
+  deleteImagesRequest: DeleteImagesRequest,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseDeleteImagesResponse>({
+    url: `/api/v1/admin/registries/public/images/delete`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: deleteImagesRequest,
+    signal,
+  });
+};
+
+export const getDeletePublicImagesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePublicImages>>,
+    TError,
+    { data: DeleteImagesRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deletePublicImages>>,
+  TError,
+  { data: DeleteImagesRequest },
+  TContext
+> => {
+  const mutationKey = ["deletePublicImages"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deletePublicImages>>,
+    { data: DeleteImagesRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return deletePublicImages(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeletePublicImagesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePublicImages>>
+>;
+export type DeletePublicImagesMutationBody = DeleteImagesRequest;
+export type DeletePublicImagesMutationError = unknown;
+
+/**
+ * @summary 공용 이미지 삭제
+ */
+export const useDeletePublicImages = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deletePublicImages>>,
+      TError,
+      { data: DeleteImagesRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deletePublicImages>>,
+  TError,
+  { data: DeleteImagesRequest },
+  TContext
+> => {
+  const mutationOptions = getDeletePublicImagesMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 /**
  * 
             공용 레지스트리의 사용자별 이미지 등록 현황을 조회합니다.

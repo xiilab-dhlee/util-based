@@ -1142,33 +1142,43 @@ export const getClusterResourceSummaryResponse = zod
               .object({
                 normal: zod
                   .object({
-                    requestCount: zod.number().describe("요청 GPU 수량"),
+                    clusterCapacityCount: zod
+                      .number()
+                      .describe("클러스터 내 전체 GPU 개수"),
+                    requestedCount: zod
+                      .number()
+                      .describe("워크스페이스 quota 총합"),
+                    usedCount: zod.number().describe("실제 사용 중인 GPU 개수"),
                   })
                   .strict()
-                  .optional()
-                  .describe("일반 GPU 설정"),
+                  .describe("일반 GPU 요약"),
                 mig: zod
+                  .object({
+                    clusterCapacityCount: zod
+                      .number()
+                      .describe("클러스터 내 전체 MIG 인스턴스 개수"),
+                    requestedCount: zod
+                      .number()
+                      .describe("워크스페이스 quota 총합"),
+                    usedCount: zod
+                      .number()
+                      .describe("실제 사용 중인 MIG 인스턴스 개수"),
+                  })
+                  .strict()
+                  .describe("MIG 프로파일 Capacity"),
+                mps: zod
                   .array(
                     zod
                       .object({
-                        profile: zod.string().describe("MIG 프로파일 이름"),
-                        requestCount: zod.number().describe("요청 수량"),
+                        requestCount: zod.number().describe("요청 MPS 수량"),
                       })
                       .strict()
-                      .describe("MIG GPU 프로파일 설정"),
+                      .describe("MPS GPU 설정"),
                   )
-                  .optional()
-                  .describe("MIG GPU 설정 (MIG 타입일 때)"),
-                mps: zod
-                  .object({
-                    requestCount: zod.number().describe("요청 MPS 수량"),
-                  })
-                  .strict()
-                  .optional()
-                  .describe("MPS GPU 설정"),
+                  .describe("MPS 프로파일 목록"),
               })
               .strict()
-              .describe("GPU 상세 설정"),
+              .describe("GPU 상세 정보"),
           })
           .strict()
           .describe("GPU 리소스 요약"),
@@ -1224,13 +1234,20 @@ export const getClusterResourceSummaryResponse = zod
             - **nodeName**: 노드 이름
             - **resource**: 노드 리소스 정보
               - **gpu**: GPU 리소스 (gpuName, gpuType, quotaCount, usedCount, detail)
+                - **quotaCount**: 총 GPU 개수 (capacity)
+                - **usedCount**: 할당된 GPU 개수 (Pod requests 합계)
                 - **detail**: GPU 세부 정보 (normal, mig, mps)
               - **cpu**: CPU 리소스 (quotaCore, usedCore)
+                - **quotaCore**: 총 CPU 코어 (capacity)
+                - **usedCore**: 할당된 CPU 코어 (Pod requests 합계)
               - **memory**: 메모리 리소스 (quotaByte, usedByte)
+                - **quotaByte**: 총 메모리 바이트 (capacity)
+                - **usedByte**: 할당된 메모리 바이트 (Pod requests 합계)
 
-            **주의:**
-            - usedCount/usedCore/usedByte는 현재 0으로 반환 (향후 워크로드 기반 계산 예정)
-            - GPU detail의 normal/mig/mps usedCount도 현재 0으로 반환
+            **리소스 계산:**
+            - **capacity**: node.status.capacity (총 하드웨어 자원)
+            - **allocated**: 해당 노드의 Running/Pending/Unknown Pod requests 합계
+            - **available**: capacity - allocated (Frontend에서 계산 가능)
 
             **권한:**
             - ADMIN 또는 SUPER_ADMIN 역할 필요

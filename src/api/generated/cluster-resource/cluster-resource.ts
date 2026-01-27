@@ -50,8 +50,8 @@ import type {
   BaseResponseGpuListResponse,
   BaseResponseGpuResourceCapacityResponse,
   BaseResponseListNodeGpuInfoResponse,
+  BaseResponseMigProfileListByGpuResponse,
   BaseResponseMigProfileListResponse,
-  BaseResponseMigProfileResponse,
   BaseResponseResourceAvailabilityResponse,
   GetGpuListParams,
   GetGpuResourceCapacityParams,
@@ -653,7 +653,7 @@ export const getMigProfilesByGpu = (
   params: GetMigProfilesByGpuParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseMigProfileResponse>({
+  return customInstance<BaseResponseMigProfileListByGpuResponse>({
     url: `/api/v1/cluster/resources/mig-profiles-by-gpu`,
     method: "GET",
     params,
