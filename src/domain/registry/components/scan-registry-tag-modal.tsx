@@ -87,7 +87,7 @@ export function ScanRegistryTagModal({ mode }: ScanRegistryTagModalProps) {
       okButtonProps={{ loading: isPending }}
       cancelButtonProps={{ disabled: isPending }}
     >
-      <div>선택한 태그에 대한 취약점 검사을 진행하시겠습니까?</div>
+      <div>선택한 태그에 대한 취약점 검사를 진행하시겠습니까?</div>
     </Modal>
   );
 }
