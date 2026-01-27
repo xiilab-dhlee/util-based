@@ -31,7 +31,7 @@ export function useUpdateRevokeCriteriaEnabledAction() {
         promises.push(
           batchEnabledMutation.mutateAsync({
             jobType: RECLAIM_POLICY_JOB_TYPES.BATCH,
-            data: { isEnabled: batchEnabled },
+            data: { hasEnabled: batchEnabled },
           }),
         );
       }
@@ -40,7 +40,7 @@ export function useUpdateRevokeCriteriaEnabledAction() {
         promises.push(
           interactiveEnabledMutation.mutateAsync({
             jobType: RECLAIM_POLICY_JOB_TYPES.INTERACTIVE,
-            data: { isEnabled: interactiveEnabled },
+            data: { hasEnabled: interactiveEnabled },
           }),
         );
       }

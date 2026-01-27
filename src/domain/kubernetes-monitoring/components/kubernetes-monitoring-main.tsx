@@ -128,9 +128,8 @@ export function KubernetesMonitoringMain() {
         pageKey="admin.kubernetes-monitoring"
         description="Kubernetes Monitoring"
       />
-      {/* 소스코드 목록 페이지 메인 영역 */}
+
       <ListPageMain>
-        {/* 소스코드 목록 페이지 - 오른쪽 영역 (필터, 목록, 페이지네이션) */}
         <ListPageBody>
           <QuotaSectionTitle>리소스 할당량</QuotaSectionTitle>
           <KubernetesResourceQuotaSection />

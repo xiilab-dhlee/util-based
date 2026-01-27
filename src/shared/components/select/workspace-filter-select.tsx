@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import type { DropdownProps } from "xiilab-ui";
 import { Dropdown } from "xiilab-ui";
 
-import { getAllWorkspaces1 } from "@/api/generated/admin-workspace/admin-workspace";
+import { getAdminAllWorkspaces } from "@/api/generated/admin-workspace/admin-workspace";
 import { DROPDOWN_LIST_HEIGHT } from "@/shared/constants/core.constant";
 import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
 import { useDropdownInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
@@ -29,7 +29,7 @@ function useWorkspaceOptions(keyword: string) {
   const query = useInfiniteQuery({
     queryKey: [QUERY_KEY, keyword, PAGE_SIZE],
     queryFn: ({ pageParam = 0, signal }) =>
-      getAllWorkspaces1(
+      getAdminAllWorkspaces(
         {
           pageNo: pageParam,
           pageSize: PAGE_SIZE,

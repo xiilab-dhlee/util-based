@@ -184,7 +184,7 @@ export function useSetDefaultWorkspaceAction(
         if (selectedWorkspace?.workspaceId === variables.workspaceId) {
           setSelectedWorkspace({
             ...selectedWorkspace,
-            isDefault: variables.data.isDefault,
+            isDefault: variables.data.shouldBeDefault,
           });
         }
 

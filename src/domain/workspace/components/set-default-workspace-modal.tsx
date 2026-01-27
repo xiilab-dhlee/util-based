@@ -28,7 +28,7 @@ export function SetDefaultWorkspaceModal() {
   const handleOk = () => {
     if (!workspaceIdRef.current) return;
 
-    const body = { isDefault: true } satisfies DefaultWorkspaceRequest;
+    const body = { shouldBeDefault: true } satisfies DefaultWorkspaceRequest;
 
     setDefaultWorkspaceMutation.mutate(
       { workspaceId: workspaceIdRef.current, data: body },

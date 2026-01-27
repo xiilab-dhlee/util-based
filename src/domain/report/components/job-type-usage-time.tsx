@@ -6,12 +6,16 @@ import { Card, Typography } from "xiilab-ui";
 import {
   WORKLOAD_JOB_TYPE_COLOR_MAP,
   WORKLOAD_JOB_TYPE_LABEL_MAP,
-  type WorkloadJobType,
 } from "@/domain/workload/constants/workload.constant";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 
 // 최소 너비 보장 (백분율) - 시간과 퍼센트를 표시하기 위한 최소 공간
 const MIN_WIDTH_PERCENT = 5;
+
+/**
+ * @deprecated 리포트 전용 임시 타입 (워크로드 의존 제거)
+ */
+type WorkloadJobType = "BATCH" | "INTERACTIVE" | "DISTRIBUTED";
 
 interface JobTypeData {
   type: WorkloadJobType;

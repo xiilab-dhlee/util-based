@@ -55,9 +55,9 @@ function NotificationSettingsPanel() {
     if (!accountId) return;
 
     const requestData: NotificationSetUpdateRequest = {
-      isSystemNotificationEnabled:
+      hasSystemNotificationEnabled:
         channel === "SYSTEM" ? checked : setting.isSystemNotificationEnabled,
-      isEmailNotificationEnabled:
+      hasEmailNotificationEnabled:
         channel === "EMAIL" ? checked : setting.isEmailNotificationEnabled,
     };
 

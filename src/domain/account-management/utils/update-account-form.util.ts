@@ -33,9 +33,9 @@ export const updateAccountErrorMap: z.ZodErrorMap = (issue, ctx) => {
           ACCOUNT_UPDATE_FORM_ERROR_MESSAGES.workspaceLimitCount.invalid_type,
       };
 
-    case "isEnabled":
+    case "hasEnabled":
       return {
-        message: ACCOUNT_UPDATE_FORM_ERROR_MESSAGES.isEnabled.invalid_type,
+        message: ACCOUNT_UPDATE_FORM_ERROR_MESSAGES.hasEnabled.invalid_type,
       };
 
     default:

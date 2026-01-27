@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
-  getGetResourceRequests1QueryKey,
+  getGetAdminResourceRequestsQueryKey,
   useApproveResourceRequest,
   useRejectResourceRequest,
 } from "@/api/generated/admin-workspace/admin-workspace";
@@ -17,7 +17,7 @@ export function useApproveResourceRequestAction(
       ...options?.mutation,
       onSuccess: (data, variables, context, client) => {
         queryClient.invalidateQueries({
-          queryKey: getGetResourceRequests1QueryKey(),
+          queryKey: getGetAdminResourceRequestsQueryKey(),
         });
 
         options?.mutation?.onSuccess?.(data, variables, context, client);
@@ -37,7 +37,7 @@ export function useRejectResourceRequestAction(
       ...options?.mutation,
       onSuccess: (data, variables, context, client) => {
         queryClient.invalidateQueries({
-          queryKey: getGetResourceRequests1QueryKey(),
+          queryKey: getGetAdminResourceRequestsQueryKey(),
         });
 
         options?.mutation?.onSuccess?.(data, variables, context, client);

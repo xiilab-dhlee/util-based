@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { useGetWorkspaceDetail1 } from "@/api/generated/admin-workspace/admin-workspace";
+import { useGetAdminWorkspaceDetail } from "@/api/generated/admin-workspace/admin-workspace";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { checkIsSuperAdmin } from "@/shared/utils/auth.util";
@@ -17,7 +17,7 @@ export function WorkspaceIntroCard() {
   const publish = usePublish();
   const { data: session } = useSession();
 
-  const { data: workspace } = useGetWorkspaceDetail1(Number(id), {
+  const { data: workspace } = useGetAdminWorkspaceDetail(Number(id), {
     query: {
       enabled: Boolean(id),
     },
