@@ -6,7 +6,6 @@ import { createContext, useContext } from "react";
 import { UserResourceService } from "@/domain/monitoring/api/user-resource.service";
 import { ReportService } from "@/domain/report/api/report.service";
 import { ReportReservationService } from "@/domain/report-reservation/api/report-reservation.service";
-import { ResourcePresetService } from "@/domain/resource-preset/api/resource-preset.service";
 import { FileSecurityService } from "@/domain/security/api/file-security.service";
 import { RegistrySecurityService } from "@/domain/security/api/registry-security.service";
 import { HpeService } from "@/domain/system-setting/api/hpe.service";
@@ -27,7 +26,7 @@ interface ServiceContextType {
   gpuService: GpuService;
   registrySecurityService: RegistrySecurityService;
   fileSecurityService: FileSecurityService;
-  resourcePresetService: ResourcePresetService;
+
   hpeService: HpeService;
   workspaceResourceSettingService: WorkspaceResourceSettingService;
 }
@@ -59,7 +58,6 @@ export function ServiceProvider({ children }: ServiceProviderProps) {
     gpuService: new GpuService(),
     registrySecurityService: new RegistrySecurityService(),
     fileSecurityService: new FileSecurityService(),
-    resourcePresetService: new ResourcePresetService(),
     hpeService: new HpeService(),
     workspaceResourceSettingService: new WorkspaceResourceSettingService(),
   };

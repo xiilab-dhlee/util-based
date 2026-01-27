@@ -131,3 +131,10 @@ export const workloadFileCheckedNodesInfoAtom = createCheckedNodesInfoAtom(
   workloadFileTreeDataAtom,
   workloadFileCheckedNodesAtom,
 );
+
+// ============================================
+// 터미널 관련 상태
+// ============================================
+
+/** 터미널용 선택된 Pod 이름 (DISTRIBUTED 워크로드용) */
+export const terminalSelectedPodNameAtom = atomWithReset<string | null>(null);

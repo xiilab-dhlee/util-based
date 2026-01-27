@@ -1,11 +1,15 @@
 "use client";
 
 import type { ComponentType } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 import styled from "styled-components";
 import { Box, Form, FormItem } from "xiilab-ui";
 
-import { useResourcePresetForm } from "@/domain/resource-preset/hooks/use-resource-preset-form";
-import type { ResourcePresetJobType } from "@/domain/resource-preset/schemas/resource-preset.schema";
+import {
+  GetPresetsNodeType,
+  GetPresetsWorkloadJobType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { CreatePresetBodyExtended } from "@/domain/resource-preset/utils/create-resource-preset-form.override.zod";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
@@ -15,7 +19,7 @@ import {
 } from "@/styles/layers/form-layer.styled";
 
 interface JobTypeOption {
-  type: ResourcePresetJobType;
+  type: GetPresetsWorkloadJobType;
   label: string;
   icon: ComponentType<{ width: number; height: number }>;
   description: string[];
@@ -23,7 +27,7 @@ interface JobTypeOption {
 
 const JOB_TYPE_OPTIONS: JobTypeOption[] = [
   {
-    type: "BATCH",
+    type: GetPresetsWorkloadJobType.BATCH,
     label: "Batch Job",
     icon: PytorchIcon,
     description: [
@@ -33,7 +37,7 @@ const JOB_TYPE_OPTIONS: JobTypeOption[] = [
     ],
   },
   {
-    type: "INTERACTIVE",
+    type: GetPresetsWorkloadJobType.INTERACTIVE,
     label: "Interactive Job (IDE)",
     icon: JupyterIcon,
     description: [
@@ -45,7 +49,18 @@ const JOB_TYPE_OPTIONS: JobTypeOption[] = [
 ];
 
 export function CreateResourcePresetJobType() {
-  const { form, setJobType } = useResourcePresetForm();
+  const { setValue, control } = useFormContext<CreatePresetBodyExtended>();
+  const workloadJobType = useWatch({ control, name: "workloadJobType" });
+
+  // Job Type 변경 핸들러 (비즈니스 규칙 적용)
+  const handleJobTypeChange = (type: GetPresetsWorkloadJobType) => {
+    setValue("workloadJobType", type);
+    // INTERACTIVE는 SINGLE 노드만 가능
+    if (type === GetPresetsWorkloadJobType.INTERACTIVE) {
+      setValue("nodeType", GetPresetsNodeType.SINGLE);
+    }
+  };
+
   return (
     <FormSectionContainer>
       <FormSectionHeader>
@@ -55,13 +70,13 @@ export function CreateResourcePresetJobType() {
         <FormItem label="Job Type" required>
           <JobTypeBody>
             {JOB_TYPE_OPTIONS.map((option) => {
-              const isSelected = option.type === form.jobType;
+              const isSelected = option.type === workloadJobType;
               const Icon = option.icon;
               return (
                 <Box
                   key={option.type}
                   state={isSelected ? "pressed" : "default"}
-                  onClick={() => setJobType(option.type)}
+                  onClick={() => handleJobTypeChange(option.type)}
                   width="100%"
                   height="100px"
                 >
@@ -134,5 +149,5 @@ const IconWrapper = styled.div`
   height: 24px;
   background-color: var(--color-white);
   border-radius: 50%;
-  border: 1px solid #D5D4D8;
+  border: 1px solid #d5d4d8;
 `;

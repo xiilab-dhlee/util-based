@@ -25,6 +25,8 @@ interface SplitableTerminalProps {
   workloadId: string;
   /** 워크로드 타입 */
   workloadType: string;
+  /** Pod 이름 (DISTRIBUTED 워크로드인 경우 필수) */
+  podName?: string;
 }
 
 /**
@@ -35,6 +37,7 @@ export function WorkloadTerminal({
   workspaceId,
   workloadId,
   workloadType,
+  podName,
 }: SplitableTerminalProps) {
   const splitInstance = useRef<Split.Instance | null>(null);
 
@@ -52,7 +55,8 @@ export function WorkloadTerminal({
   // 현재 적용된 터미널 테마
   const resultTheme = useAtomValue(terminalThemeAtom);
 
-  const isActive = workspaceId && workloadId && workloadType;
+  // workloadType은 DISTRIBUTED 판단에만 필요하므로 필수 조건에서 제외
+  const isActive = workspaceId && workloadId;
 
   /**
    * 특정 터미널에 포커스를 설정합니다.
@@ -236,6 +240,7 @@ export function WorkloadTerminal({
             workspaceId={workspaceId}
             workloadId={workloadId}
             workloadType={workloadType}
+            podName={podName}
           />
         ))
       ) : (

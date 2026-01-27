@@ -1,57 +1,107 @@
 "use client";
 
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import styled from "styled-components";
-import { Form, FormItem, InputNumber, Typography } from "xiilab-ui";
+import { Typography } from "xiilab-ui";
 
 import {
-  DISTRIBUTED_TYPE_OPTIONS,
-  NODE_COUNT_RANGE,
-  WORKER_RESOURCE_MAX,
-} from "@/domain/resource-preset/constants/resource-preset.constant";
-import { useResourcePresetForm } from "@/domain/resource-preset/hooks/use-resource-preset-form";
+  GetGpuResourceCapacityGpuType,
+  GpuResponseGpuType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
-  isGpuCountFixed,
-  showDistributedSection,
-  showSingleNodeResource,
-} from "@/domain/resource-preset/utils/resource-preset.rules";
-import { SelectableBox } from "@/shared/components/selectable-box";
+  useGetClusterTotalResources,
+  useGetGpuResourceCapacity,
+} from "@/api/generated/cluster-resource/cluster-resource";
+import type { CreatePresetBodyExtended } from "@/domain/resource-preset/utils/create-resource-preset-form.override.zod";
 import { Slider } from "@/shared/components/slider";
+import { convertBytes, convertToBytes } from "@/shared/utils/resource.util";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 import {
   FormSectionContainer,
   FormSectionHeader,
 } from "@/styles/layers/form-layer.styled";
+import { errorTextStyle } from "@/styles/mixins/text";
 
-/* =============================================================================
-   메인 컴포넌트
-============================================================================= */
+interface CreateResourcePresetResourceInfoProps {
+  isNormalGpuListEnabled: boolean;
+}
 
-export function CreateResourcePresetResourceInfo() {
-  // Hook으로 폼 상태 및 메서드 가져오기
-  const { form, updateSingleNodeResource, updateMultiNodeResource } =
-    useResourcePresetForm();
-
-  // 폼 상태 추출
+export function CreateResourcePresetResourceInfo({
+  isNormalGpuListEnabled,
+}: CreateResourcePresetResourceInfoProps) {
   const {
-    nodeType,
-    selectedNode,
-    gpuType,
-    singleNodeResource,
-    multiNodeResource,
-  } = form;
-  const { gpu, cpu, memory } = singleNodeResource;
-  const { distributedType, nodeCount, workerGpu, workerCpu, workerMemory } =
-    multiNodeResource;
-  // 비즈니스 룰 적용
-  const shouldShowSingleNode = showSingleNodeResource(nodeType);
-  const shouldShowMultiNode = showDistributedSection(nodeType);
-  const isGpuFixed = isGpuCountFixed(gpuType);
+    control,
+    formState: { errors },
+  } = useFormContext<CreatePresetBodyExtended>();
 
-  // Single Node: 최대값은 선택된 노드의 리소스 값
-  const maxGpu = selectedNode?.gpuTotal ?? 0;
-  const maxCpu = selectedNode?.cpuTotal ?? 0;
-  const maxMemory = selectedNode?.memoryTotal ?? 0;
-  const isSingleNodeDisabled = !selectedNode;
+  // 폼 값 구독
+  const gpu = useWatch({ control, name: "resource.gpu" });
+  const gpuType = useWatch({ control, name: "resource.gpu.gpuType" });
+  const gpuName = useWatch({ control, name: "resource.gpu.gpuName" });
+  const migProfile = useWatch({
+    control,
+    name: "resource.gpu.detail.mig.0.profile",
+  });
+
+  const isGpuUnused = gpu === null;
+
+  const isUsingClusterTotal =
+    !isNormalGpuListEnabled &&
+    (isGpuUnused || gpuType === GpuResponseGpuType.NORMAL);
+
+  const isCapacityQueryEnabled =
+    !isGpuUnused &&
+    !isUsingClusterTotal &&
+    Boolean(gpuName) &&
+    (gpuType === GpuResponseGpuType.MIG
+      ? Boolean(migProfile)
+      : Boolean(gpuType));
+
+  // GPU 타입을 API 파라미터로 변환
+  const capacityGpuType =
+    gpuType === GpuResponseGpuType.MIG
+      ? GetGpuResourceCapacityGpuType.MIG
+      : GetGpuResourceCapacityGpuType.NORMAL;
+
+  // 리소스 Capacity 조회 (GPU 선택 시에만)
+  const { data: capacityData } = useGetGpuResourceCapacity(
+    {
+      gpuType: capacityGpuType,
+      gpuName: gpuName ?? "",
+      profile: gpuType === GpuResponseGpuType.MIG ? migProfile : undefined,
+    },
+    { query: { enabled: isCapacityQueryEnabled } },
+  );
+
+  const { data: clusterTotalData } = useGetClusterTotalResources({
+    query: { enabled: isUsingClusterTotal },
+  });
+
+  const maxGpu = isUsingClusterTotal
+    ? (clusterTotalData?.gpu?.clusterCapacityCount ?? 0)
+    : (capacityData?.gpuCapacity ?? 0);
+  const maxCpu = isUsingClusterTotal
+    ? (clusterTotalData?.cpu?.clusterCapacityCores ?? 0)
+    : (capacityData?.cpuCapacity ?? 0);
+  const maxMemoryBytes = isUsingClusterTotal
+    ? Number(clusterTotalData?.memory?.clusterCapacityBytes ?? 0)
+    : (capacityData?.memCapacity ?? 0);
+
+  // 메모리 bytes → GB 변환
+  const { value: maxMemoryGB } = convertBytes(maxMemoryBytes, "GB");
+
+  // GPU 슬라이더 표시 조건
+  const showNormalGpuSlider =
+    gpuType === GpuResponseGpuType.NORMAL || isGpuUnused;
+  const showMigGpuSlider = gpuType === GpuResponseGpuType.MIG;
+
+  const isResourceDisabled = isUsingClusterTotal ? false : !gpuName;
+  const isMigGpuDisabled = isGpuUnused ? true : !gpuName || !migProfile;
+  const isNormalGpuDisabled = isGpuUnused ? true : isResourceDisabled;
+  const gpuCountErrorMessage =
+    errors.resource?.gpu?.detail?.normal?.requestCount?.message ??
+    errors.resource?.gpu?.detail?.mig?.[0]?.requestCount?.message ??
+    errors.resource?.gpu?.detail?.mps?.requestCount?.message;
 
   return (
     <FormSectionContainer>
@@ -60,10 +110,9 @@ export function CreateResourcePresetResourceInfo() {
           리소스 정보
         </CreateWorkloadSectionTitle>
       </FormSectionHeader>
-
-      {/* Single Node 리소스 UI */}
-      {shouldShowSingleNode && (
-        <SliderContainer>
+      <SliderContainer>
+        {/* GPU 슬라이더 (NORMAL 타입, 0 가능) */}
+        {showNormalGpuSlider && (
           <SliderRow>
             <SliderLabel>
               <Typography.Text variant="body-2-3" color="#484848">
@@ -71,189 +120,117 @@ export function CreateResourcePresetResourceInfo() {
               </Typography.Text>
             </SliderLabel>
             <SliderWrapper>
-              <Slider
-                min={0}
-                max={maxGpu}
-                value={gpu}
-                onChange={(value) => updateSingleNodeResource({ gpu: value })}
-                type="GPU"
-                width="100%"
-                disabled={isSingleNodeDisabled}
-                readOnly={isGpuFixed}
+              <Controller
+                control={control}
+                name="resource.gpu.detail.normal.requestCount"
+                render={({ field }) => (
+                  <Slider
+                    min={0}
+                    max={maxGpu}
+                    value={field.value ?? 0}
+                    onChange={field.onChange}
+                    type="GPU"
+                    width="100%"
+                    disabled={isNormalGpuDisabled}
+                  />
+                )}
               />
             </SliderWrapper>
           </SliderRow>
+        )}
 
+        {/* GPU 슬라이더 (MIG 타입, 0 가능) */}
+        {showMigGpuSlider && (
           <SliderRow>
             <SliderLabel>
               <Typography.Text variant="body-2-3" color="#484848">
-                CPU
+                GPU
               </Typography.Text>
             </SliderLabel>
             <SliderWrapper>
-              <Slider
-                min={0}
-                max={maxCpu}
-                value={cpu}
-                onChange={(value) => updateSingleNodeResource({ cpu: value })}
-                type="CPU"
-                width="100%"
-                disabled={isSingleNodeDisabled}
+              <Controller
+                control={control}
+                name="resource.gpu.detail.mig.0.requestCount"
+                render={({ field }) => (
+                  <Slider
+                    min={0}
+                    max={maxGpu}
+                    value={field.value ?? 0}
+                    onChange={field.onChange}
+                    type="GPU"
+                    width="100%"
+                    disabled={isMigGpuDisabled}
+                  />
+                )}
               />
             </SliderWrapper>
           </SliderRow>
+        )}
 
-          <SliderRow>
-            <SliderLabel>
-              <Typography.Text variant="body-2-3" color="#484848">
-                Memory
-              </Typography.Text>
-            </SliderLabel>
-            <SliderWrapper>
-              <Slider
-                min={0}
-                max={maxMemory}
-                value={memory}
-                onChange={(value) =>
-                  updateSingleNodeResource({ memory: value })
-                }
-                type="MEM"
-                width="100%"
-                disabled={isSingleNodeDisabled}
-              />
-            </SliderWrapper>
-          </SliderRow>
-        </SliderContainer>
-      )}
-
-      {/* Multi Node 리소스 UI */}
-      {shouldShowMultiNode && (
-        <Form layout="vertical">
-          {/* 분산 학습 타입 선택 */}
-          <FormItem label="분산 학습 타입" required>
-            <ButtonGrid>
-              {DISTRIBUTED_TYPE_OPTIONS.map((option) => (
-                <SelectableBox
-                  key={option.id}
-                  title={option.label}
-                  meta={
-                    <DistributedTypeDescription>
-                      {option.description}
-                    </DistributedTypeDescription>
-                  }
-                  isSelected={distributedType === option.id}
-                  onClick={() =>
-                    updateMultiNodeResource({ distributedType: option.id })
-                  }
-                  height="64px"
-                  direction="column"
-                />
-              ))}
-            </ButtonGrid>
-          </FormItem>
-
-          {/* 분산 학습 구성 */}
-          <FormItem label="분산 학습 구성">
-            <NodeCountRow>
-              <Typography.Text variant="body-2-3" color="#484848">
-                노드 수
-              </Typography.Text>
-              <NodeCountInputWrapper>
-                <InputNumber
-                  value={nodeCount}
-                  onChange={(value) => {
-                    const numValue =
-                      typeof value === "number" ? value : NODE_COUNT_RANGE.min;
-                    updateMultiNodeResource({ nodeCount: numValue });
-                  }}
-                  min={NODE_COUNT_RANGE.min}
-                  max={NODE_COUNT_RANGE.max}
-                  width={80}
-                />
-                <Typography.Text variant="body-3-3" color="#484848">
-                  개
-                </Typography.Text>
-              </NodeCountInputWrapper>
-            </NodeCountRow>
-          </FormItem>
-
-          {/* Worker 리소스 */}
-          <WorkerSection>
-            <WorkerHeader>
-              <Typography.Text variant="subtitle-2-1" color="#484848">
-                Worker
-              </Typography.Text>
-            </WorkerHeader>
-
-            <SliderRow>
-              <SliderLabel>
-                <Typography.Text variant="body-2-3" color="#484848">
-                  GPU
-                </Typography.Text>
-              </SliderLabel>
-              <SliderWrapper>
+        {/* CPU 슬라이더 (0 가능) */}
+        <SliderRow>
+          <SliderLabel>
+            <Typography.Text variant="body-2-3" color="#484848">
+              CPU
+            </Typography.Text>
+          </SliderLabel>
+          <SliderWrapper>
+            <Controller
+              control={control}
+              name="resource.cpu.requestCore"
+              render={({ field }) => (
                 <Slider
                   min={0}
-                  max={WORKER_RESOURCE_MAX.gpu}
-                  value={workerGpu}
-                  onChange={(value) =>
-                    updateMultiNodeResource({ workerGpu: value })
-                  }
-                  type="GPU"
-                  width="100%"
-                />
-              </SliderWrapper>
-            </SliderRow>
-
-            <SliderRow>
-              <SliderLabel>
-                <Typography.Text variant="body-2-3" color="#484848">
-                  CPU
-                </Typography.Text>
-              </SliderLabel>
-              <SliderWrapper>
-                <Slider
-                  min={0}
-                  max={WORKER_RESOURCE_MAX.cpu}
-                  value={workerCpu}
-                  onChange={(value) =>
-                    updateMultiNodeResource({ workerCpu: value })
-                  }
+                  max={maxCpu}
+                  value={field.value}
+                  onChange={field.onChange}
                   type="CPU"
                   width="100%"
+                  disabled={false}
                 />
-              </SliderWrapper>
-            </SliderRow>
+              )}
+            />
+          </SliderWrapper>
+        </SliderRow>
 
-            <SliderRow>
-              <SliderLabel>
-                <Typography.Text variant="body-2-3" color="#484848">
-                  Memory
-                </Typography.Text>
-              </SliderLabel>
-              <SliderWrapper>
-                <Slider
-                  min={0}
-                  max={WORKER_RESOURCE_MAX.memory}
-                  value={workerMemory}
-                  onChange={(value) =>
-                    updateMultiNodeResource({ workerMemory: value })
-                  }
-                  type="MEM"
-                  width="100%"
-                />
-              </SliderWrapper>
-            </SliderRow>
-          </WorkerSection>
-        </Form>
+        {/* Memory 슬라이더 (GB 단위로 표시, bytes로 저장, 0 가능) */}
+        <SliderRow>
+          <SliderLabel>
+            <Typography.Text variant="body-2-3" color="#484848">
+              Memory
+            </Typography.Text>
+          </SliderLabel>
+          <SliderWrapper>
+            <Controller
+              control={control}
+              name="resource.memory.requestByte"
+              render={({ field }) => {
+                const currentGB = convertBytes(field.value, "GB").value;
+                return (
+                  <Slider
+                    min={0}
+                    max={maxMemoryGB}
+                    value={currentGB}
+                    onChange={(gb) => field.onChange(convertToBytes(gb, "GB"))}
+                    type="MEM"
+                    width="100%"
+                    disabled={false}
+                  />
+                );
+              }}
+            />
+          </SliderWrapper>
+        </SliderRow>
+      </SliderContainer>
+      {errors.resource?.message && (
+        <ErrorMessage>{errors.resource.message}</ErrorMessage>
+      )}
+      {gpuCountErrorMessage && (
+        <ErrorMessage>{gpuCountErrorMessage}</ErrorMessage>
       )}
     </FormSectionContainer>
   );
 }
-
-/* =============================================================================
-   스타일 컴포넌트
-============================================================================= */
 
 const SliderContainer = styled.div`
   display: flex;
@@ -280,42 +257,7 @@ const SliderWrapper = styled.div`
   flex: 1;
 `;
 
-const ButtonGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-`;
-
-const DistributedTypeDescription = styled.span`
-  font-family: Pretendard, sans-serif;
-  font-weight: 400;
-  font-size: 11px;
-  line-height: 1.4;
-  color: #787878;
-`;
-
-const NodeCountRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const NodeCountInputWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const WorkerSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  background-color: #fafafa;
-  border: 1px solid #d1d5dc;
-  border-radius: 4px;
-`;
-
-const WorkerHeader = styled.div`
-  margin-bottom: 4px;
+const ErrorMessage = styled.span`
+  margin-top: 4px;
+  ${errorTextStyle};
 `;

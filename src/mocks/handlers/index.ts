@@ -15,7 +15,10 @@ import { getAdminK8sMock } from "@/api/generated/admin-k8s/admin-k8s.msw";
 import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin-monitoring-notification-history/admin-monitoring-notification-history.msw";
 import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
+import { getAdminResourcePresetMock } from "@/api/generated/admin-resource-preset/admin-resource-preset.msw";
 import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
+import { getClusterResourceMock } from "@/api/generated/cluster-resource/cluster-resource.msw";
+import { getResourcePresetMock } from "@/api/generated/resource-preset/resource-preset.msw";
 import { getSmtpSettingsMock } from "@/api/generated/smtp-settings/smtp-settings.msw";
 import { getWorkloadMock } from "@/api/generated/workload/workload.msw";
 import { getWorkspaceMemberMock } from "@/api/generated/workspace-member/workspace-member.msw";
@@ -27,7 +30,6 @@ import { nodeHandlers } from "@/domain/node/mocks";
 import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
 import { requestResourceHandlers } from "@/domain/request-resource/mocks";
-import { resourcePresetHandlers } from "@/domain/resource-preset/mocks/resource-preset.handler";
 import { revokeHandlers } from "@/domain/revoke/mocks";
 import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
 import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
@@ -37,7 +39,6 @@ import { systemMonitoringHandlers } from "@/domain/system-monitoring/mocks";
 import { systemSettingHandlers } from "@/domain/system-setting/mocks";
 import { volumeHandlers } from "@/domain/volume/mocks";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
-import { gpuHandlers } from "@/mocks/handlers/gpu.handler";
 import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
 import { hubHandlers } from "@/mocks/handlers/hub.handler";
 import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
@@ -118,7 +119,6 @@ const rawHandlers = [
   ...getAdminMonitoringNotificationHistoryMock(),
   ...getAdminMonitoringNotificationSetMock(),
   ...registryHandlers,
-  ...gpuHandlers,
   ...fileSecurityHandlers,
   ...registrySecurityHandlers,
   ...revokeHandlers,
@@ -126,7 +126,6 @@ const rawHandlers = [
   ...hpeHandlers,
   ...reportHandlers,
   ...reportReservationHandlers,
-  ...resourcePresetHandlers,
   ...storageHandlers,
   ...getAdminQueueMock(),
   ...getAdminWorkloadMock(),
@@ -134,6 +133,9 @@ const rawHandlers = [
   ...getAdminImageTagUsageRequestMock(),
   ...nodeHandlers,
   ...sourcecodeHandlers,
+  ...getAdminResourcePresetMock(),
+  ...getResourcePresetMock(),
+  ...getClusterResourceMock(),
 ];
 
 /**

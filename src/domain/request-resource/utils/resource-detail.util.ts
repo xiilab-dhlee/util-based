@@ -5,6 +5,21 @@ import type {
 import { convertBytes } from "@/shared/utils/resource.util";
 
 /**
+ * 리소스 에러 타입
+ */
+export type ResourceErrorType = "CAPACITY_EXCEEDED" | "MIG_NOT_FOUND";
+
+/**
+ * 클러스터 최대값 인터페이스
+ */
+export interface ClusterMaxValues {
+  gpuMax: number;
+  cpuMax: number;
+  memMax: number;
+  migProfileMaxMap: Map<string, number>;
+}
+
+/**
  * 요청 리소스 모달에서 사용되는 리소스 타입
  */
 type BaseRequestResource = {
@@ -13,6 +28,7 @@ type BaseRequestResource = {
   req: number;
   max: number;
   hasError: boolean; // 용량 초과 여부
+  errorType?: ResourceErrorType; // 에러 타입
 };
 
 type StandardRequestResource = BaseRequestResource & {
@@ -66,62 +82,98 @@ export function calculateResourceMax(resource: ResourceComparisonResponse) {
  */
 export function transformToRequestResourceModalData(
   detail: AdminResourceRequestDetailResponse,
+  clusterMaxValues: ClusterMaxValues,
 ): {
   workspaceName: string;
   resources: RequestResourceModalResource[];
+  errorSummary: {
+    hasCapacityError: boolean;
+    hasMigNotFoundError: boolean;
+  };
 } {
   const values = extractResourceValues(detail.resource);
-  const maxValues = calculateResourceMax(detail.resource);
 
   // GPU 리소스
+  const gpuMax = clusterMaxValues.gpuMax;
+  const gpuHasError = values.gpuRequest > gpuMax;
   const gpuResource = {
     type: "GPU",
     displayTitle: "GPU",
     current: values.gpuQuota,
     req: values.gpuRequest,
-    max: maxValues.gpuMax,
-    hasError: values.gpuRequest > maxValues.gpuMax, // 용량 초과 검증
+    max: gpuMax,
+    hasError: gpuHasError,
+    errorType: gpuHasError ? ("CAPACITY_EXCEEDED" as const) : undefined,
   } satisfies StandardRequestResource;
 
   // MIG 리소스들 (각 프로파일별로)
-  const migResources = values.migProfiles.map(
-    (profile) =>
-      ({
-        type: "MIG",
-        displayTitle: `MIG | ${profile.profile}`,
-        profile: profile.profile,
-        current: profile.quotaCount,
-        req: profile.requestCount,
-        max: profile.clusterCapacityCount,
-        hasError: profile.requestCount > profile.clusterCapacityCount, // 용량 초과 검증
-      }) satisfies MigRequestResource,
-  );
+  const migResources = values.migProfiles.map((profile) => {
+    const clusterMax = clusterMaxValues.migProfileMaxMap.get(profile.profile);
+    const max = clusterMax ?? 0;
+    const hasError = profile.requestCount > max;
+    const errorType: ResourceErrorType | undefined = hasError
+      ? clusterMax === undefined
+        ? "MIG_NOT_FOUND"
+        : "CAPACITY_EXCEEDED"
+      : undefined;
+
+    return {
+      type: "MIG",
+      displayTitle: `MIG | ${profile.profile}`,
+      profile: profile.profile,
+      current: profile.quotaCount,
+      req: profile.requestCount,
+      max,
+      hasError,
+      errorType,
+    } satisfies MigRequestResource;
+  });
 
   // CPU 리소스
+  const cpuMax = clusterMaxValues.cpuMax;
+  const cpuHasError = values.cpuRequest > cpuMax;
   const cpuResource = {
     type: "CPU",
     displayTitle: "CPU",
     current: values.cpuQuota,
     req: values.cpuRequest,
-    max: maxValues.cpuMax,
-    hasError: values.cpuRequest > maxValues.cpuMax, // 용량 초과 검증
+    max: cpuMax,
+    hasError: cpuHasError,
+    errorType: cpuHasError ? ("CAPACITY_EXCEEDED" as const) : undefined,
   } satisfies StandardRequestResource;
 
   // Memory 리소스
+  const memMax = clusterMaxValues.memMax;
+  const memHasError = values.memRequest > memMax;
   const memResource = {
     type: "MEM",
     displayTitle: "Memory",
     current: values.memQuota,
     req: values.memRequest,
-    max: maxValues.memMax,
-    hasError: values.memRequest > maxValues.memMax, // 용량 초과 검증
+    max: memMax,
+    hasError: memHasError,
+    errorType: memHasError ? ("CAPACITY_EXCEEDED" as const) : undefined,
   } satisfies StandardRequestResource;
 
   // 순서: GPU → MIG → CPU → Memory
+  const allResources = [gpuResource, ...migResources, cpuResource, memResource];
+
+  // 요청량이 있는 것만 필터링
+  const filteredResources = allResources.filter((r) => r.req > 0);
+
+  // 에러 요약 생성
+  const errorSummary = {
+    hasCapacityError: filteredResources.some(
+      (r) => r.errorType === "CAPACITY_EXCEEDED",
+    ),
+    hasMigNotFoundError: filteredResources.some(
+      (r) => r.errorType === "MIG_NOT_FOUND",
+    ),
+  };
+
   return {
     workspaceName: detail.workspaceName,
-    resources: [gpuResource, ...migResources, cpuResource, memResource].filter(
-      (r) => r.req > 0,
-    ), // 요청량이 있는 것만 표시
+    resources: filteredResources,
+    errorSummary,
   };
 }
