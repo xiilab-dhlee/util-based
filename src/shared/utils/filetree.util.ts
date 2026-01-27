@@ -140,19 +140,17 @@ export const mergeChildrenToTree = (
 };
 
 /**
- * 트리에서 특정 노드들 제거
+ * 트리에서 특정 노드들 제거 (내부 헬퍼)
  */
-export const removeNodesFromTree = (
+const removeNodesFromTreeInternal = (
   treeData: FileTreeType[],
-  pathsToRemove: string[],
+  pathSet: Set<string>,
 ): FileTreeType[] => {
-  const pathSet = new Set(pathsToRemove);
-
   return treeData
     .filter((node) => !pathSet.has(node.path))
     .map((node) => {
       if (node.children.length > 0) {
-        const newChildren = removeNodesFromTree(node.children, pathsToRemove);
+        const newChildren = removeNodesFromTreeInternal(node.children, pathSet);
 
         // 자식 노드들의 count 집계
         const fileCount = newChildren.reduce((acc, child) => {
@@ -175,4 +173,15 @@ export const removeNodesFromTree = (
       }
       return node;
     });
+};
+
+/**
+ * 트리에서 특정 노드들 제거
+ */
+export const removeNodesFromTree = (
+  treeData: FileTreeType[],
+  pathsToRemove: string[],
+): FileTreeType[] => {
+  const pathSet = new Set(pathsToRemove);
+  return removeNodesFromTreeInternal(treeData, pathSet);
 };
