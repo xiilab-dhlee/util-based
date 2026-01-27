@@ -141,8 +141,10 @@ export const REGISTRY_EVENTS = {
   openSecurityLevelSettingModal: "registry:open-security-level-setting-modal",
   // 레지스트리 이미지 유형 선택 모달 열기
   openSelectTypeModal: "registry:open-select-type-modal",
-  // 레지스트리 이미지 생성 모달 열기
+  // 레지스트리 이미지 생성 모달 열기 (External)
   openCreateModal: "registry:open-create-modal",
+  // 레지스트리 스냅샷 이미지 생성 모달 열기
+  openCreateSnapshotModal: "registry:open-create-snapshot-modal",
   // 레지스트리 이미지 삭제 모달 열기
   openDeleteModal: "registry:open-delete-modal",
   // 레지스트리 로그 보기 모달 열기

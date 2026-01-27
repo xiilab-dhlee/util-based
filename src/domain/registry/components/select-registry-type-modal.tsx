@@ -4,7 +4,10 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Icon, InfoModal } from "xiilab-ui";
 
-import type { GetPrivateRegistryListImageSourceType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  GetPrivateRegistryListImageSourceType,
+  type GetPrivateRegistryListImageSourceType as ImageSourceType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { RegistryTypeCard } from "@/domain/registry/components/registry-type-card";
 import { IMAGE_SOURCE_TYPE_OPTIONS } from "@/domain/registry/constants/registry-list.constant";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -18,9 +21,14 @@ export function SelectRegistryTypeModal() {
     setOpen(false);
   };
 
-  const handleClickType = (type: GetPrivateRegistryListImageSourceType) => {
+  const handleClickType = (type: ImageSourceType) => {
     handleClose();
-    publish(REGISTRY_EVENTS.openCreateModal, type);
+
+    if (type === GetPrivateRegistryListImageSourceType.SNAPSHOT) {
+      publish(REGISTRY_EVENTS.openCreateSnapshotModal);
+    } else {
+      publish(REGISTRY_EVENTS.openCreateModal);
+    }
   };
 
   useSubscribe<void>(REGISTRY_EVENTS.openSelectTypeModal, () => {
