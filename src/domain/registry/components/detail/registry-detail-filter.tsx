@@ -3,7 +3,6 @@
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { Button, Input } from "xiilab-ui";
 
 import {
@@ -14,12 +13,10 @@ import {
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { checkIsUser, getSessionAccountId } from "@/shared/utils/auth.util";
 
 interface RegistryDetailFilterProps {
   totalSize?: number;
   loading: boolean;
-  creatorId?: string;
 }
 
 /**
@@ -30,9 +27,7 @@ interface RegistryDetailFilterProps {
 export function RegistryDetailFilter({
   totalSize,
   loading,
-  creatorId,
 }: RegistryDetailFilterProps) {
-  const { data: session } = useSession();
   const { name } = useParams<{ name: string }>();
   const harborImageName = name ? decodeURIComponent(name) : "";
 
@@ -41,12 +36,6 @@ export function RegistryDetailFilter({
   const resetCheckedList = useResetAtom(registryTagCheckedListAtom);
 
   const publish = usePublish();
-
-  const isUser = checkIsUser(session);
-  const sessionAccountId = getSessionAccountId(session);
-  const isOwner = creatorId === sessionAccountId;
-  // 사용자이면서 생성자인 경우에만 태그 추가 가능
-  const canCreateTag = isUser && isOwner;
 
   const handleSearch = (value: string) => {
     resetCheckedList();
@@ -70,19 +59,17 @@ export function RegistryDetailFilter({
         disabled={loading}
       />
 
-      {canCreateTag && (
-        <Button
-          color="primary"
-          icon="Plus"
-          iconPosition="left"
-          variant="gradient"
-          width={100}
-          height={30}
-          onClick={handleCreate}
-        >
-          태그 추가
-        </Button>
-      )}
+      <Button
+        color="primary"
+        icon="Plus"
+        iconPosition="left"
+        variant="gradient"
+        width={100}
+        height={30}
+        onClick={handleCreate}
+      >
+        태그 추가
+      </Button>
     </MySearchFilter>
   );
 }
