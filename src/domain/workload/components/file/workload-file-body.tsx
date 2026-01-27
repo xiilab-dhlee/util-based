@@ -91,24 +91,28 @@ export function WorkloadFileBody({
     : null;
   const canPreview = isFileView && previewType !== null;
 
-  const { data: previewData, isLoading: isPreviewLoading } =
-    useWorkloadPreviewFile(
-      workspaceId,
-      workloadResourceName,
-      {
-        path: selectedNode?.path ?? "",
-        podName: selectedPodName || undefined,
+  const {
+    data: previewData,
+    isLoading: isPreviewLoading,
+    isError: isPreviewError,
+  } = useWorkloadPreviewFile(
+    workspaceId,
+    workloadResourceName,
+    {
+      path: selectedNode?.path ?? "",
+      podName: selectedPodName || undefined,
+    },
+    {
+      query: {
+        enabled:
+          canPreview &&
+          !!workspaceId &&
+          !!workloadResourceName &&
+          !!selectedNode?.path,
+        meta: { showToastOnError: true },
       },
-      {
-        query: {
-          enabled:
-            canPreview &&
-            !!workspaceId &&
-            !!workloadResourceName &&
-            !!selectedNode?.path,
-        },
-      },
-    );
+    },
+  );
 
   // ============================================
   // 렌더링: 로딩
@@ -158,6 +162,7 @@ export function WorkloadFileBody({
               previewType={previewType}
               previewData={previewData}
               isLoading={isPreviewLoading}
+              isError={isPreviewError}
               fileName={selectedNode.name}
               fileExtension={selectedNode.fileExtension}
             />

@@ -199,3 +199,16 @@ export const compressWorkloadFileSchema = z.object({
 export type CompressWorkloadFileFormType = z.infer<
   typeof compressWorkloadFileSchema
 >;
+
+/** 워크로드 파일 업로드 폼 스키마 */
+export const uploadWorkloadFileSchema = z.object({
+  uploadPath: z
+    .string()
+    .min(1, "업로드 경로를 입력해 주세요.")
+    .max(1000, "업로드 경로는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "업로드 경로는 /로 시작해야 합니다."),
+});
+
+export type UploadWorkloadFileFormType = z.infer<
+  typeof uploadWorkloadFileSchema
+>;

@@ -28,6 +28,7 @@ export interface WorkloadFilePreviewProps {
   previewType: "image" | "text" | null;
   previewData: string | undefined;
   isLoading: boolean;
+  isError: boolean;
   fileName: string;
   fileExtension: string | null;
 }
@@ -41,6 +42,7 @@ export function WorkloadFilePreview({
   previewType,
   previewData,
   isLoading,
+  isError,
   fileName,
   fileExtension,
 }: WorkloadFilePreviewProps) {
@@ -55,6 +57,13 @@ export function WorkloadFilePreview({
       <PreviewLoading>
         <MySpinner />
       </PreviewLoading>
+    );
+  }
+
+  // 에러 발생
+  if (isError) {
+    return (
+      <Description>미리보기를 불러오는 중 오류가 발생했습니다.</Description>
     );
   }
 

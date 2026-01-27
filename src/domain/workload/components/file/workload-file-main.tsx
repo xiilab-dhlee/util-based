@@ -12,6 +12,7 @@ import { CreateWorkloadFolderModal } from "@/domain/workload/components/file/cre
 import { DecompressWorkloadFileModal } from "@/domain/workload/components/file/decompress-workload-file-modal";
 import { DeleteWorkloadFileModal } from "@/domain/workload/components/file/delete-workload-file-modal";
 import { DownloadWorkloadFileModal } from "@/domain/workload/components/file/download-workload-file-modal";
+import { UploadWorkloadFileModal } from "@/domain/workload/components/file/upload-workload-file-modal";
 import { WorkloadFileBody } from "@/domain/workload/components/file/workload-file-body";
 import { WorkloadFileButton } from "@/domain/workload/components/file/workload-file-button";
 import { WorkloadFileFooter } from "@/domain/workload/components/file/workload-file-footer";
@@ -72,7 +73,7 @@ export function WorkloadFileMain() {
   const isDistributed = workloadDetail?.workloadJobType === "DISTRIBUTED";
 
   // 현재 워크로드의 creatorId 찾기
-  const creatorId = "test-creator-id";
+  const creatorId = workloadDetail?.creatorId;
 
   // 컴포넌트 마운트 시 파일 관련 상태 초기화
   useEffect(() => {
@@ -89,6 +90,25 @@ export function WorkloadFileMain() {
     resetActionMode,
     resetCurrentPage,
     resetSelectedPodName,
+  ]);
+
+  // selectedPodName 변경 시 파일 관련 상태 초기화
+  useEffect(() => {
+    if (isDistributed && selectedPodName) {
+      resetTreeData();
+      resetSelectedKey();
+      resetCheckedNodes();
+      resetActionMode();
+      resetCurrentPage();
+    }
+  }, [
+    selectedPodName,
+    isDistributed,
+    resetTreeData,
+    resetSelectedKey,
+    resetCheckedNodes,
+    resetActionMode,
+    resetCurrentPage,
   ]);
 
   // 워크로드 파일 트리 훅 (선택된 노드 변경 시 자동으로 하위 파일 로드)
@@ -198,6 +218,8 @@ export function WorkloadFileMain() {
       <DeleteWorkloadFileModal />
       {/* 워크로드 파일 다운로드 모달 */}
       <DownloadWorkloadFileModal />
+      {/* 워크로드 파일 업로드 모달 */}
+      <UploadWorkloadFileModal />
       {/* 워크로드 파일 압축 모달 */}
       <CompressWorkloadFileModal />
       {/* 워크로드 파일 압축 해제 모달 */}

@@ -37,6 +37,7 @@ export function useWorkloadFilePermissions({
   // 사용자 권한 확인
   // ============================================
   const currentAccountId = getSessionAccountId(session);
+  // TODO: 실제 권한 체크 로직 복원 필요
   const isCreator = Boolean(
     creatorId && currentAccountId && currentAccountId === creatorId,
   );
@@ -66,10 +67,11 @@ export function useWorkloadFilePermissions({
   // 압축 가능 여부: 권한이 있고 체크된 파일이 있을 때
   const canCompress = canManageFiles && hasCheckedFiles;
 
-  // 압축 해제 가능 여부: 권한이 있고 체크된 파일이 1개이고 압축 파일일 때
+  // 압축 해제 가능 여부: 권한이 있고 체크된 파일이 1개이고 파일 타입이며 압축 파일일 때
   const canDecompress =
     canManageFiles &&
     checkedNodesInfo.length === 1 &&
+    checkedNodesInfo[0].type === "file" &&
     isCompressedFile(checkedNodesInfo[0].path);
 
   // 삭제 가능 여부: 권한이 있고 체크된 파일이 있을 때

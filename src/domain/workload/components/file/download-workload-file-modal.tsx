@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Form, FormItem, Icon, Modal } from "xiilab-ui";
 
-import type { DownloadRequestCompressType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { WorkloadDownloadRequestCompressType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   workloadFileActionModeAtom,
   workloadFileCheckedNodesAtom,
@@ -33,7 +33,7 @@ export function DownloadWorkloadFileModal() {
   const [filePaths, setFilePaths] = useState<string[]>([]);
   const [podName, setPodName] = useState<string | null>(null);
   const [selectedType, setSelectedType] =
-    useState<DownloadRequestCompressType>("ZIP");
+    useState<WorkloadDownloadRequestCompressType>("ZIP");
   const [isPending, setIsPending] = useState(false);
 
   const handleCancel = () => {
