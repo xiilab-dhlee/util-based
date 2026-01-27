@@ -6,6 +6,11 @@ import { Icon, Modal, TextArea, Typography } from "xiilab-ui";
 
 import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ImageTagListResponseApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  DetailLabel,
+  DetailRow,
+  DetailValue,
+} from "@/domain/registry/components/shared/detail-row.styles";
 import { useCancelImageUsageRequestAction } from "@/domain/registry/hooks/use-cancel-image-usage-request";
 import { VulnerabilitySummary } from "@/shared/components/summary/vulnerability-summary";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -153,9 +158,7 @@ export function ViewImageUsageRequestModal() {
             <Divider />
 
             <RequestReasonSection>
-              <RequestReasonLabel>
-                요청 사유 <RequiredMark>*</RequiredMark>
-              </RequestReasonLabel>
+              <RequestReasonLabel>요청 사유</RequestReasonLabel>
               <TextArea
                 value={payload?.requestReason || ""}
                 readOnly
@@ -207,27 +210,6 @@ const SectionTitle = styled.div`
   color: #000;
 `;
 
-const DetailRow = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const DetailLabel = styled(Typography.Text).attrs({
-  variant: "body-2-2",
-})`
-  color: #484848;
-  min-width: 80px;
-  margin-right: 16px;
-`;
-
-const DetailValue = styled(Typography.Text).attrs({
-  variant: "subtitle-2-3",
-})`
-  color: #000;
-  flex: 1;
-  word-break: break-all;
-`;
-
 const DescriptionSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -261,10 +243,6 @@ const RequestReasonLabel = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-`;
-
-const RequiredMark = styled.span`
-  color: #ff4d4f;
 `;
 
 const NoDataText = styled(Typography.Text).attrs({

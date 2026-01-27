@@ -3,9 +3,14 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import styled from "styled-components";
-import { Icon, Modal, Typography } from "xiilab-ui";
+import { Icon, Modal } from "xiilab-ui";
 
 import type { ImageTagListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  DetailLabel,
+  DetailRow,
+  DetailValue,
+} from "@/domain/registry/components/shared/detail-row.styles";
 import { useGetRegistryTagDetailByMode } from "@/domain/registry/hooks/use-get-registry-tag-detail-by-mode";
 import type { RegistryMode } from "@/domain/registry/types/registry.type";
 import { ScanStatusText } from "@/shared/components/text/scan-status-text";
@@ -101,11 +106,11 @@ export function ViewRegistryTagDetailModal({
         <DetailCard>
           <SectionTitle>기본 정보</SectionTitle>
           <DetailRow>
-            <DetailLabel>태그명</DetailLabel>
+            <DetailLabel $minWidth="100px">태그명</DetailLabel>
             <DetailValue>{data?.imageTagName || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel>이미지 크기</DetailLabel>
+            <DetailLabel $minWidth="100px">이미지 크기</DetailLabel>
             <DetailValue>
               {data?.imageSizeByte
                 ? formatFileSize(data.imageSizeByte).formatted
@@ -113,15 +118,15 @@ export function ViewRegistryTagDetailModal({
             </DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel>설명</DetailLabel>
+            <DetailLabel $minWidth="100px">설명</DetailLabel>
             <DetailValue>{data?.description || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel>생성자</DetailLabel>
+            <DetailLabel $minWidth="100px">생성자</DetailLabel>
             <DetailValue>{data?.creatorName || "-"}</DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel>생성일시</DetailLabel>
+            <DetailLabel $minWidth="100px">생성일시</DetailLabel>
             <DetailValue>{formatDateTimeSafely(data?.createdAt)}</DetailValue>
           </DetailRow>
 
@@ -129,13 +134,13 @@ export function ViewRegistryTagDetailModal({
 
           <SectionTitle>보안 검사 정보</SectionTitle>
           <DetailRow>
-            <DetailLabel>검사 상태</DetailLabel>
+            <DetailLabel $minWidth="100px">검사 상태</DetailLabel>
             <DetailValue>
               <ScanStatusText status={data?.scanStatus} />
             </DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel>검사 결과</DetailLabel>
+            <DetailLabel $minWidth="100px">검사 결과</DetailLabel>
             <DetailValue>
               {data?.vulnerability ? (
                 <VulnerabilityTooltip
@@ -178,26 +183,6 @@ const SectionTitle = styled.div`
   font-size: 14px;
   line-height: 17px;
   color: #000;
-`;
-
-const DetailRow = styled.div`
-  display: flex;
-`;
-
-const DetailLabel = styled(Typography.Text).attrs({
-  variant: "body-2-2",
-})`
-  color: #484848;
-  min-width: 100px;
-  margin-right: 16px;
-`;
-
-const DetailValue = styled(Typography.Text).attrs({
-  variant: "subtitle-2-3",
-})`
-  color: #000;
-  flex: 1;
-  word-break: break-all;
 `;
 
 const Divider = styled.div`
