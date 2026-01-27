@@ -319,17 +319,6 @@ func main() {
 };
 
 /**
- * 파일 경로에서 확장자 추출
- */
-function getExtensionFromPath(path: string): string | null {
-  const parts = path.split("/");
-  const filename = parts[parts.length - 1];
-  const dotIndex = filename.lastIndexOf(".");
-  if (dotIndex === -1) return null;
-  return filename.substring(dotIndex + 1).toLowerCase();
-}
-
-/**
  * 워크로드 파일 미리보기 override 핸들러
  *
  * 이미지 파일: 순수 base64 문자열 반환 (data: prefix 없음)
@@ -340,17 +329,18 @@ export const workloadFilePreviewOverrideHandlers = [
     const url = new URL(info.request.url);
     const path = url.searchParams.get("path") || "";
 
-    const extension = getExtensionFromPath(path);
-    const normalizedExt = normalizeExtension(extension);
+    // 파일 경로에서 파일명 추출 후 확장자 정규화
+    const filename = path.split("/").pop() ?? "";
+    const normalizedExt = normalizeExtension(filename);
 
     // 이미지 파일인 경우 순수 base64 문자열 반환 (hub-card 스타일)
     // SVG는 SVG 형식의 base64, 나머지는 PNG base64 반환
-    if (isPreviewableImage(extension)) {
+    if (isPreviewableImage(normalizedExt)) {
       return normalizedExt === "svg" ? SAMPLE_IMAGE_SVG : SAMPLE_IMAGE_PNG;
     }
 
     // 텍스트 파일인 경우 샘플 텍스트 반환
-    if (isPreviewableText(extension)) {
+    if (isPreviewableText(normalizedExt)) {
       return (
         SAMPLE_TEXT_CONTENTS[normalizedExt ?? "txt"] ?? SAMPLE_TEXT_CONTENTS.txt
       );

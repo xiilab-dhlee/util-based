@@ -121,7 +121,7 @@ export const isPreviewableImage = (
 ): boolean => {
   const ext = normalizeExtension(extension);
   if (!ext) return false;
-  return (PREVIEWABLE_IMAGE_EXTENSIONS as readonly string[]).includes(ext);
+  return PREVIEWABLE_IMAGE_EXTENSIONS.some((e) => e === ext);
 };
 
 /**
@@ -134,7 +134,7 @@ export const isPreviewableText = (
 ): boolean => {
   const ext = normalizeExtension(extension);
   if (!ext) return false;
-  return (PREVIEWABLE_TEXT_EXTENSIONS as readonly string[]).includes(ext);
+  return PREVIEWABLE_TEXT_EXTENSIONS.some((e) => e === ext);
 };
 
 /**

@@ -130,9 +130,9 @@ export function WorkloadFileBody({
     <StyledListWrapper>
       {/* 파일/폴더 그리드 */}
       <FileGridWrapper>
-        {paginatedFiles.map((file, index) => (
+        {paginatedFiles.map((file) => (
           <WorkloadFileCard
-            key={`${file.path}-${index}`}
+            key={file.path}
             {...file}
             showCheckbox={actionMode !== null}
           />

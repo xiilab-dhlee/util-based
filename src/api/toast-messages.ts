@@ -250,6 +250,9 @@ export const MUTATION_MESSAGES: Partial<
   [MUTATION_KEYS.deleteVolume]: {
     success: "볼륨이 삭제되었습니다.",
   },
+  [MUTATION_KEYS.deleteVolumes]: {
+    success: "볼륨이 삭제되었습니다.",
+  },
   [MUTATION_KEYS.createFolder]: {
     success: "폴더가 생성되었습니다.",
   },
@@ -267,6 +270,41 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.registerAstragoVolume]: {
     success: "볼륨이 생성되었습니다.",
+  },
+
+  // ============================================
+  // Workload
+  // ============================================
+  [MUTATION_KEYS.createWorkload]: {
+    success: "워크로드가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.updateWorkload]: {
+    success: "워크로드가 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deleteWorkload]: {
+    success: "워크로드가 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.terminateWorkload]: {
+    success: "워크로드가 종료되었습니다.",
+  },
+  [MUTATION_KEYS.restartWorkload]: {
+    success: "워크로드가 재시작되었습니다.",
+  },
+
+  // ============================================
+  // Workload File
+  // ============================================
+  [MUTATION_KEYS.workloadCreateFolder]: {
+    success: "폴더가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.workloadDeleteFiles]: {
+    success: "파일이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.workloadDecompressFile]: {
+    success: "압축 해제 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.workloadCompressFiles]: {
+    success: "압축 요청이 전송되었습니다.",
   },
 
   // ============================================
@@ -312,5 +350,46 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.updateNodeScheduling]: {
     success: "노드 스케줄링 설정이 변경되었습니다.",
+  },
+
+  // ============================================
+  // Admin Volume
+  // ============================================
+  [MUTATION_KEYS.adminUpdateVolume]: {
+    success: "볼륨이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteVolume]: {
+    success: "볼륨이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteVolumes]: {
+    success: "볼륨이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.adminCreateFolder]: {
+    success: "폴더가 생성되었습니다.",
+  },
+  [MUTATION_KEYS.adminDeleteFiles]: {
+    success: "파일이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.adminDecompress]: {
+    success: "압축 해제 요청이 전송되었습니다.",
+  },
+  [MUTATION_KEYS.adminCompress]: {
+    success: "압축 요청이 전송되었습니다.",
+  },
+
+  // ============================================
+  // Admin Resource Preset
+  // ============================================
+  [MUTATION_KEYS.createPreset]: {
+    success: "프리셋이 생성되었습니다.",
+  },
+  [MUTATION_KEYS.updatePreset]: {
+    success: "프리셋이 수정되었습니다.",
+  },
+  [MUTATION_KEYS.deletePreset]: {
+    success: "프리셋이 삭제되었습니다.",
+  },
+  [MUTATION_KEYS.deletePresets]: {
+    success: "프리셋이 삭제되었습니다.",
   },
 };

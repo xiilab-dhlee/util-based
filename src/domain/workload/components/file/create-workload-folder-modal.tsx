@@ -17,7 +17,7 @@ import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { addNodeToTree, createFolderNode } from "@/shared/utils/filetree.util";
 import { LastFormItem } from "@/styles/layers/form-layer.styled";
 
-interface CreateWorkloadFolderPayload {
+interface CreateWorkloadFolderModalPayload {
   workspaceId: number;
   workloadResourceName: string;
   filePath: string;
@@ -71,7 +71,7 @@ export function CreateWorkloadFolderModal() {
     );
   };
 
-  useSubscribe<CreateWorkloadFolderPayload>(
+  useSubscribe<CreateWorkloadFolderModalPayload>(
     WORKLOAD_EVENTS.openCreateFolderModal,
     (payload) => {
       setWorkspaceId(payload.workspaceId);
@@ -101,7 +101,7 @@ export function CreateWorkloadFolderModal() {
       showHeaderBorder
       okButtonProps={{
         loading: isPending,
-        disabled: workspaceId == null || workloadResourceName == null,
+        disabled: workspaceId == null || !workloadResourceName,
       }}
       cancelButtonProps={{ disabled: isPending }}
     >

@@ -34,7 +34,7 @@ export function DecompressWorkloadFileModal() {
 
   const handleOk = () => {
     if (isPending) return;
-    if (!workspaceId || !workloadResourceName || !filePath) return;
+    if (workspaceId === null || !workloadResourceName || !filePath) return;
 
     mutate(
       {

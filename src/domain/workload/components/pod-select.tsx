@@ -1,5 +1,6 @@
 "use client";
 
+import { isString } from "es-toolkit/predicate";
 import { Dropdown } from "xiilab-ui";
 
 import { useGetDistributedPods } from "@/api/generated/workload/workload";
@@ -43,7 +44,7 @@ export function PodSelect({
   );
 
   const handleChange = (v: string | number) => {
-    if (typeof v === "string") {
+    if (isString(v)) {
       setValue(v);
     }
   };

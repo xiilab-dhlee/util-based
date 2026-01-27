@@ -28,6 +28,13 @@ const ACTION_MODE_LABELS: Record<Exclude<FileActionMode, null>, string> = {
   download: "다운로드",
 };
 
+/** 액션 모드별 이벤트 매핑 */
+const ACTION_EVENT_MAP: Record<Exclude<FileActionMode, null>, string> = {
+  delete: WORKLOAD_EVENTS.openDeleteFileModal,
+  compress: WORKLOAD_EVENTS.openCompressFileModal,
+  download: WORKLOAD_EVENTS.openDownloadFileModal,
+};
+
 interface WorkloadFileFooterProps {
   /** 워크로드 생성자 ID */
   creatorId?: string;
@@ -88,34 +95,12 @@ export function WorkloadFileFooter({
   const handleActionClick = (mode: Exclude<FileActionMode, null>) => {
     // 파일이 선택된 경우 즉시 해당 파일에 대한 작업 수행
     if (selectedNode?.type === "file") {
-      const filePaths = [selectedNode.path];
-
-      switch (mode) {
-        case "delete":
-          publish(WORKLOAD_EVENTS.openDeleteFileModal, {
-            workspaceId,
-            workloadResourceName,
-            filePaths,
-            podName: selectedPodName,
-          });
-          break;
-        case "compress":
-          publish(WORKLOAD_EVENTS.openCompressFileModal, {
-            workspaceId,
-            workloadResourceName,
-            filePaths,
-            podName: selectedPodName,
-          });
-          break;
-        case "download":
-          publish(WORKLOAD_EVENTS.openDownloadFileModal, {
-            workspaceId,
-            workloadResourceName,
-            filePaths,
-            podName: selectedPodName,
-          });
-          break;
-      }
+      publish(ACTION_EVENT_MAP[mode], {
+        workspaceId,
+        workloadResourceName,
+        filePaths: [selectedNode.path],
+        podName: selectedPodName,
+      });
       return;
     }
 
@@ -136,36 +121,14 @@ export function WorkloadFileFooter({
    * 선택 액션 확인 핸들러
    */
   const handleConfirmAction = () => {
-    if (checkedNodesInfo.length === 0) return;
+    if (checkedNodesInfo.length === 0 || actionMode === null) return;
 
-    const filePaths = checkedNodesInfo.map((node) => node.path);
-
-    switch (actionMode) {
-      case "delete":
-        publish(WORKLOAD_EVENTS.openDeleteFileModal, {
-          workspaceId,
-          workloadResourceName,
-          filePaths,
-          podName: selectedPodName,
-        });
-        break;
-      case "compress":
-        publish(WORKLOAD_EVENTS.openCompressFileModal, {
-          workspaceId,
-          workloadResourceName,
-          filePaths,
-          podName: selectedPodName,
-        });
-        break;
-      case "download":
-        publish(WORKLOAD_EVENTS.openDownloadFileModal, {
-          workspaceId,
-          workloadResourceName,
-          filePaths,
-          podName: selectedPodName,
-        });
-        break;
-    }
+    publish(ACTION_EVENT_MAP[actionMode], {
+      workspaceId,
+      workloadResourceName,
+      filePaths: checkedNodesInfo.map((node) => node.path),
+      podName: selectedPodName,
+    });
 
     // 액션 완료 후 모드 초기화
     handleCancelActionMode();

@@ -72,8 +72,8 @@ export function useWorkloadFilePermissions({
     checkedNodesInfo.length === 1 &&
     isCompressedFile(checkedNodesInfo[0].path);
 
-  // 삭제 가능 여부: 권한이 있고 체크된 파일이 있고 트리 데이터가 있을 때
-  const canDelete = canManageFiles && hasCheckedFiles && treeDataLength > 0;
+  // 삭제 가능 여부: 권한이 있고 체크된 파일이 있을 때
+  const canDelete = canManageFiles && hasCheckedFiles;
 
   // 다운로드 가능 여부: 권한이 있고 체크된 파일이 있을 때
   const canDownload = canManageFiles && hasCheckedFiles;

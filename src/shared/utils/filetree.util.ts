@@ -152,9 +152,25 @@ export const removeNodesFromTree = (
     .filter((node) => !pathSet.has(node.path))
     .map((node) => {
       if (node.children.length > 0) {
+        const newChildren = removeNodesFromTree(node.children, pathsToRemove);
+
+        // 자식 노드들의 count 집계
+        const fileCount = newChildren.reduce((acc, child) => {
+          if (child.type === "file") return acc + 1;
+          return acc + (child.fileCount ?? 0);
+        }, 0);
+
+        const directoryCount = newChildren.reduce((acc, child) => {
+          if (child.type === "directory")
+            return acc + 1 + (child.directoryCount ?? 0);
+          return acc;
+        }, 0);
+
         return {
           ...node,
-          children: removeNodesFromTree(node.children, pathsToRemove),
+          children: newChildren,
+          ...(node.fileCount !== undefined && { fileCount }),
+          ...(node.directoryCount !== undefined && { directoryCount }),
         };
       }
       return node;

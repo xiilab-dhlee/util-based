@@ -123,12 +123,30 @@ export const MUTATION_KEYS = {
   // ============================================
   updateVolume: "updateVolume",
   deleteVolume: "deleteVolume",
+  deleteVolumes: "deleteVolumes",
   createFolder: "createFolder",
   deleteFiles: "deleteFiles",
   decompress: "decompress",
   compress: "compress",
   registerOnPremiseVolume: "registerOnPremiseVolume",
   registerAstragoVolume: "registerAstragoVolume",
+
+  // ============================================
+  // Workload
+  // ============================================
+  createWorkload: "createWorkload",
+  updateWorkload: "updateWorkload",
+  deleteWorkload: "deleteWorkload",
+  terminateWorkload: "terminateWorkload",
+  restartWorkload: "restartWorkload",
+
+  // ============================================
+  // Workload File
+  // ============================================
+  workloadCreateFolder: "workloadCreateFolder",
+  workloadDeleteFiles: "workloadDeleteFiles",
+  workloadDecompressFile: "workloadDecompressFile",
+  workloadCompressFiles: "workloadCompressFiles",
 
   // ============================================
   // Sourcecode
@@ -152,6 +170,25 @@ export const MUTATION_KEYS = {
   // ============================================
   applyMigConfiguration: "applyMigConfiguration",
   updateNodeScheduling: "updateNodeScheduling",
+
+  // ============================================
+  // Admin Volume
+  // ============================================
+  adminUpdateVolume: "adminUpdateVolume",
+  adminDeleteVolume: "adminDeleteVolume",
+  adminDeleteVolumes: "adminDeleteVolumes",
+  adminCreateFolder: "adminCreateFolder",
+  adminDeleteFiles: "adminDeleteFiles",
+  adminDecompress: "adminDecompress",
+  adminCompress: "adminCompress",
+
+  // ============================================
+  // Admin Resource Preset
+  // ============================================
+  createPreset: "createPreset",
+  updatePreset: "updatePreset",
+  deletePreset: "deletePreset",
+  deletePresets: "deletePresets",
 } as const;
 
 export type MutationKey = (typeof MUTATION_KEYS)[keyof typeof MUTATION_KEYS];
