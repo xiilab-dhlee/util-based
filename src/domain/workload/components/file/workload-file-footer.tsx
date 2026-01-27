@@ -119,6 +119,7 @@ export function WorkloadFileFooter({
 
   /**
    * 선택 액션 확인 핸들러
+   * 모달이 열리고, 실제 submit 성공 시 모달에서 actionMode를 초기화함
    */
   const handleConfirmAction = () => {
     if (checkedNodesInfo.length === 0 || actionMode === null) return;
@@ -129,9 +130,6 @@ export function WorkloadFileFooter({
       filePaths: checkedNodesInfo.map((node) => node.path),
       podName: selectedPodName,
     });
-
-    // 액션 완료 후 모드 초기화
-    handleCancelActionMode();
   };
 
   /**

@@ -67,17 +67,10 @@ const DIRECTORIES: WorkloadFileItemResponse[] = [
 ];
 
 /**
- * 루트 디렉토리 (workspace)
- */
-const ROOT_DIRECTORY: WorkloadFileItemResponse[] = [
-  { name: "workspace", type: "DIRECTORY", path: "/workspace", size: 0 },
-];
-
-/**
  * 경로별 하위 파일 목록 매핑
  */
 const PATH_CHILDREN_MAP: Record<string, WorkloadFileItemResponse[]> = {
-  "/": ROOT_DIRECTORY,
+  "/": [...DIRECTORIES, ...ARCHIVE_FILES],
   "/workspace": [...DIRECTORIES, ...ARCHIVE_FILES],
   "/workspace/images": IMAGE_FILES,
   "/workspace/codes": TEXT_FILES,

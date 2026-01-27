@@ -13,7 +13,10 @@ import {
   type CompressWorkloadFileFormType,
   compressWorkloadFileSchema,
 } from "@/domain/workload/schemas/workload.schema";
-import { workloadFileCheckedNodesAtom } from "@/domain/workload/state/workload.atom";
+import {
+  workloadFileActionModeAtom,
+  workloadFileCheckedNodesAtom,
+} from "@/domain/workload/state/workload.atom";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -30,6 +33,7 @@ interface CompressWorkloadFilePayload {
 export function CompressWorkloadFileModal() {
   const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(workloadFileCheckedNodesAtom);
+  const setActionMode = useSetAtom(workloadFileActionModeAtom);
 
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
   const [workloadResourceName, setWorkloadResourceName] = useState("");
@@ -84,6 +88,7 @@ export function CompressWorkloadFileModal() {
       {
         onSuccess: () => {
           setCheckedNodes(new Set());
+          setActionMode(null);
           setOpen(false);
         },
       },

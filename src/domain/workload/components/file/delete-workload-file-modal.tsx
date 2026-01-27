@@ -7,6 +7,7 @@ import { Modal } from "xiilab-ui";
 
 import { useWorkloadDeleteFiles } from "@/api/generated/workload/workload";
 import {
+  workloadFileActionModeAtom,
   workloadFileCheckedNodesAtom,
   workloadFileTreeDataAtom,
 } from "@/domain/workload/state/workload.atom";
@@ -28,6 +29,7 @@ export function DeleteWorkloadFileModal() {
   const [open, setOpen] = useState(false);
   const setTreeData = useSetAtom(workloadFileTreeDataAtom);
   const setCheckedNodes = useSetAtom(workloadFileCheckedNodesAtom);
+  const setActionMode = useSetAtom(workloadFileActionModeAtom);
 
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
   const [workloadResourceName, setWorkloadResourceName] = useState("");
@@ -62,6 +64,7 @@ export function DeleteWorkloadFileModal() {
         onSuccess: () => {
           setTreeData((prev) => removeNodesFromTree(prev, filteredPaths));
           setCheckedNodes(new Set());
+          setActionMode(null);
           setOpen(false);
         },
       },

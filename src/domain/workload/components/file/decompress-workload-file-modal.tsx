@@ -5,7 +5,10 @@ import { useState } from "react";
 import { Icon, Modal } from "xiilab-ui";
 
 import { useWorkloadDecompressFile } from "@/api/generated/workload/workload";
-import { workloadFileCheckedNodesAtom } from "@/domain/workload/state/workload.atom";
+import {
+  workloadFileActionModeAtom,
+  workloadFileCheckedNodesAtom,
+} from "@/domain/workload/state/workload.atom";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
@@ -19,6 +22,7 @@ interface DecompressWorkloadFilePayload {
 export function DecompressWorkloadFileModal() {
   const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(workloadFileCheckedNodesAtom);
+  const setActionMode = useSetAtom(workloadFileActionModeAtom);
 
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
   const [workloadResourceName, setWorkloadResourceName] = useState("");
@@ -46,6 +50,7 @@ export function DecompressWorkloadFileModal() {
       {
         onSuccess: () => {
           setCheckedNodes(new Set());
+          setActionMode(null);
           setOpen(false);
         },
       },

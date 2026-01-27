@@ -7,7 +7,10 @@ import styled from "styled-components";
 import { Form, FormItem, Icon, Modal } from "xiilab-ui";
 
 import type { DownloadRequestCompressType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { workloadFileCheckedNodesAtom } from "@/domain/workload/state/workload.atom";
+import {
+  workloadFileActionModeAtom,
+  workloadFileCheckedNodesAtom,
+} from "@/domain/workload/state/workload.atom";
 import { AxiosService } from "@/shared/api/axios";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
@@ -23,6 +26,7 @@ interface DownloadWorkloadFilePayload {
 export function DownloadWorkloadFileModal() {
   const [open, setOpen] = useState(false);
   const setCheckedNodes = useSetAtom(workloadFileCheckedNodesAtom);
+  const setActionMode = useSetAtom(workloadFileActionModeAtom);
 
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
   const [workloadResourceName, setWorkloadResourceName] = useState("");
@@ -84,6 +88,7 @@ export function DownloadWorkloadFileModal() {
 
       toast.success("파일 다운로드가 완료되었습니다.");
       setCheckedNodes(new Set());
+      setActionMode(null);
       setOpen(false);
     } catch {
       toast.error("파일 다운로드에 실패했습니다.");
