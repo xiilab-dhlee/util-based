@@ -13,6 +13,7 @@ import { RegistryDetailBody } from "@/domain/registry/components/detail/registry
 import { RequestUseModal } from "@/domain/registry/components/request-use-modal";
 import { ScanRegistryTagModal } from "@/domain/registry/components/scan-registry-tag-modal";
 import { UpdateRegistryTagModal } from "@/domain/registry/components/update-registry-tag-modal";
+import { ViewImageUsageRequestModal } from "@/domain/registry/components/view-image-usage-request-modal";
 import { ViewRegistryTagDetailModal } from "@/domain/registry/components/view-registry-tag-detail-modal";
 import {
   REGISTRY_TAG_PAGE_SIZE,
@@ -140,6 +141,8 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
       <UpdateRegistryTagModal mode={mode} />
       {/* 이미지 태그 사용 요청 모달 */}
       <RequestUseModal />
+      {/* 이미지 사용 요청 상세 모달 */}
+      <ViewImageUsageRequestModal />
       {/* 요청 사유 모달 */}
       <ViewRequestReasonModal />
       {/* 반려 사유 모달 */}
