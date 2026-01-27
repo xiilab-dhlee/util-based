@@ -107,7 +107,7 @@ export function ViewImageUsageRequestModal() {
             <DetailRow>
               <DetailLabel>이미지 크기</DetailLabel>
               <DetailValue>
-                {payload?.imageTagSizeByte
+                {payload?.imageTagSizeByte != null
                   ? formatFileSize(payload.imageTagSizeByte).formatted
                   : "-"}
               </DetailValue>
