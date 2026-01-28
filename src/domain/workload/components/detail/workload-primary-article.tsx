@@ -1,10 +1,9 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
+import type { WorkloadDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
@@ -14,23 +13,18 @@ import {
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
 
+interface WorkloadPrimaryArticleProps {
+  data?: WorkloadDetailResponse;
+}
+
 /**
  * 워크로드 기본 정보 아티클 컴포넌트
  *
  * 워크로드 잡 타입, 노드 타입, IDE 정보를 표시합니다.
  */
-export function WorkloadPrimaryArticle() {
-  const { id } = useParams();
-  const searchParams = useSearchParams();
-
-  // hooks는 항상 최상위에서 호출
-  const { data } = useGetWorkloadByMode({
-    workspaceId: Number(searchParams?.get("workspaceId")),
-    workloadId: String(id),
-  });
-
+export function WorkloadPrimaryArticle({ data }: WorkloadPrimaryArticleProps) {
   const { label, ideName, ideIcon, nodeType, nodeIcon } =
-    getWorkloadJobTypeInfo(data?.jobType);
+    getWorkloadJobTypeInfo(data?.workloadJobType);
 
   return (
     <DetailContentArticle>

@@ -2,10 +2,8 @@ import type { ApexOptions } from "apexcharts";
 import { useState } from "react";
 import { Icon, InfoModal } from "xiilab-ui";
 
-import { openViewWorkloadMonitoringModalAtom } from "@/domain/workload/state/workload.atom";
 import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 
 /**
@@ -42,16 +40,18 @@ type SyncWorkloadMonitoringPayload = {
  * @returns 워크로드 모니터링 모달 JSX 요소
  */
 export function ViewWorkloadMonitoringModal() {
+  // 모달 상태 관리
+  const [open, setOpen] = useState(false);
+
   // 모달 내부 상태 관리
   const [title, setTitle] = useState("");
   const [series, setSeries] = useState<ApexOptions["series"]>([]);
   const [unit, setUnit] = useState("");
   const [colors, setColors] = useState<string[]>([]);
 
-  // useGlobalModal 훅을 사용하여 모달 상태 관리
-  const { open, onOpen, onClose } = useGlobalModal(
-    openViewWorkloadMonitoringModalAtom,
-  );
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   /**
    * 워크로드 모니터링 데이터 구독
@@ -66,7 +66,7 @@ export function ViewWorkloadMonitoringModal() {
       setUnit(eventData.unit);
       setColors(eventData.colors);
       // 모달 열기
-      onOpen();
+      setOpen(true);
     },
   );
 
@@ -77,7 +77,7 @@ export function ViewWorkloadMonitoringModal() {
       icon={<Icon name="Monitoring02" color="#fff" size={16} />}
       open={open}
       closable
-      onClose={onClose}
+      onClose={handleClose}
       showHeaderBorder
       centered
     >

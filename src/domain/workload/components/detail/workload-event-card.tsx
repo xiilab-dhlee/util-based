@@ -4,7 +4,10 @@ import { format } from "date-fns";
 import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
-import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
+import type {
+  BaseResponseWorkloadEventHistoryResponseStatus,
+  WorkloadEventItem,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { CompactCardCollapseRow } from "@/shared/components/card/compact-card-collapse-row";
 import {
   CompactCardKey,
@@ -14,22 +17,26 @@ import {
 import { EventStatusText } from "@/shared/components/text/event-status-text";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 
-type WorkloadEventCardProps = Omit<WorkloadEventType, "id">;
+type WorkloadEventCardProps = WorkloadEventItem;
 
 // 이벤트 이력 카드 컴포넌트
 export function WorkloadEventCard({
-  name,
-  elapsedTime,
-  from,
-  message,
-  status,
+  eventType,
+  eventReason,
+  eventCreatedAt,
+  eventFrom,
+  eventMessage,
 }: WorkloadEventCardProps) {
   return (
     <CardWrapper data-testid={WORKLOAD_SELECTOR.EVENT_CARD}>
       <StyledCard
         contentVariant="compact"
-        actionElement={<EventStatusText status={status} />}
-        title={name}
+        actionElement={
+          <EventStatusText
+            status={eventType as BaseResponseWorkloadEventHistoryResponseStatus}
+          />
+        }
+        title={eventReason}
       >
         <Body>
           <CompactCardKeyValueRow>
@@ -37,20 +44,22 @@ export function WorkloadEventCard({
             <CompactCardValue
               data-testid={WORKLOAD_SELECTOR.EVENT_ELAPSED_TIME}
             >
-              {elapsedTime ? format(elapsedTime, "yyyy.MM.dd HH:mm:ss") : "-"}
+              {eventCreatedAt
+                ? format(eventCreatedAt, "yyyy.MM.dd HH:mm:ss")
+                : "-"}
             </CompactCardValue>
           </CompactCardKeyValueRow>
           <CompactCardKeyValueRow>
             <Key>From</Key>
             <CompactCardValue data-testid={WORKLOAD_SELECTOR.EVENT_FROM}>
-              {from}
+              {eventFrom}
             </CompactCardValue>
           </CompactCardKeyValueRow>
         </Body>
         <Footer>
           <CompactCardCollapseRow
             title="메 세 지"
-            description={message}
+            description={eventMessage}
             testId={WORKLOAD_SELECTOR.EVENT_MESSAGE}
           />
         </Footer>
