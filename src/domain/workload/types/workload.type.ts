@@ -1,5 +1,5 @@
+import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { ACTIVE_WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
 import type { AllOptionValue } from "@/shared/constants/core.constant";
 import type {
   CorePaginate,
@@ -25,7 +25,9 @@ export type ActiveWorkloadFilterStatusValue =
  * @deprecated Use ActiveWorkloadFilterStatusValue instead
  * 필터에서 사용되는 워크로드 상태 값 타입 (ALL_OPTION.value 포함)
  */
-export type FilterStatusValue = WorkloadStatusType | AllOptionValue;
+export type FilterStatusValue =
+  | WorkloadStatusResponseWorkloadStatus
+  | AllOptionValue;
 
 export type WorkloadFileIndentPosition = "first" | "middle" | "last";
 
@@ -38,7 +40,7 @@ export interface GetWorkloadsPayload
     Partial<CorePaginate>,
     CoreSearchText {
   jobType?: string;
-  status?: WorkloadStatusType;
+  status?: WorkloadStatusResponseWorkloadStatus;
 }
 
 export interface GetWorkloadPayload extends CorePayload {

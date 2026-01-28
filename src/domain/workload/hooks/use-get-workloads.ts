@@ -1,8 +1,8 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
+import type { ActiveWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { workloadKeys } from "@/domain/workload/constants/workload.key";
-import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
 import type { GetWorkloadsPayload } from "@/domain/workload/types/workload.type";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
@@ -13,7 +13,7 @@ import type { CoreListResponse } from "@/shared/types/core.model";
  */
 export const useGetWorkloads = (
   payload: GetWorkloadsPayload,
-): UseQueryResult<CoreListResponse<WorkloadListType>, Error> => {
+): UseQueryResult<CoreListResponse<ActiveWorkloadResponse>, Error> => {
   const { workloadService } = useServices();
 
   return useQuery({

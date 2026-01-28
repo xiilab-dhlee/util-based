@@ -4,8 +4,8 @@ import type { QueryKey, UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 
+import type { ActiveWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { workloadKeys } from "@/domain/workload/constants/workload.key";
-import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
 import type { GetWorkloadsPayload } from "@/domain/workload/types/workload.type";
 import { useServices } from "@/shared/providers/service-provider";
 import type { CoreListResponse } from "@/shared/types/core.model";
@@ -16,7 +16,7 @@ import { isAdminMode } from "@/shared/utils/router.util";
  */
 export const useGetWorkloadsByMode = (
   payload: GetWorkloadsPayload,
-): UseQueryResult<CoreListResponse<WorkloadListType>, Error> => {
+): UseQueryResult<CoreListResponse<ActiveWorkloadResponse>, Error> => {
   // 현재 경로명을 가져와서 모드 판별에 사용
   const pathname = usePathname();
 
@@ -28,7 +28,7 @@ export const useGetWorkloadsByMode = (
 
   // 모드에 따라 적절한 쿼리 키와 쿼리 함수를 설정
   let queryKey: QueryKey;
-  let queryFn: () => Promise<CoreListResponse<WorkloadListType>>;
+  let queryFn: () => Promise<CoreListResponse<ActiveWorkloadResponse>>;
   if (isAdmin) {
     // 관리자 모드: 관리자 전용 서비스와 쿼리 키 사용
     queryKey = workloadKeys.adminList(payload);

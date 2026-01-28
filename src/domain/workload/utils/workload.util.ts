@@ -2,7 +2,9 @@ import type { LabelColorVariant } from "xiilab-ui";
 
 import type {
   TerminatedWorkloadItemReclaimStatus,
+  WorkloadDetailResponseWorkloadJobType,
   WorkloadFileItemResponse,
+  WorkloadImageDetailImageType,
   WorkloadStatusResponseWorkloadStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
@@ -12,10 +14,6 @@ import {
   WORKLOAD_JOB_TYPE_DETAIL_LABEL_MAP,
   WORKLOAD_STATUS_LABEL_MAP,
 } from "@/domain/workload/constants/workload.constant";
-import type {
-  WorkloadImageType,
-  WorkloadJobType,
-} from "@/domain/workload/schemas/workload.schema";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import { getFileExtension } from "@/shared/utils/file.util";
@@ -24,7 +22,9 @@ import { getFileExtension } from "@/shared/utils/file.util";
  * 워크로드 잡 타입 정보 조회
  * @param jobType - 워크로드 잡 타입
  */
-export const getWorkloadJobTypeInfo = (jobType?: WorkloadJobType) => {
+export const getWorkloadJobTypeInfo = (
+  jobType?: WorkloadDetailResponseWorkloadJobType,
+) => {
   // 잡 타입 표시 텍스트
   let label = "";
   // 노드
@@ -155,23 +155,25 @@ export const getWorkloadStatusInfoByStatus = (
  * 워크로드 이미지 타입 정보 조회
  * @param imageType - 워크로드 이미지 타입
  */
-export const getWorkloadImageTypeInfo = (imageType?: WorkloadImageType) => {
+export const getWorkloadImageTypeInfo = (
+  imageType?: WorkloadImageDetailImageType,
+) => {
   // 이미지 타입 표시 텍스트
   let label = "";
   // 이미지 타입 아이콘
   let icon = "";
 
-  if (imageType === "BUILTIN") {
-    label = WORKLOAD_IMAGE_TYPE_LABEL_MAP.BUILTIN;
+  if (imageType === "BUILT_IN") {
+    label = WORKLOAD_IMAGE_TYPE_LABEL_MAP.BUILT_IN;
     icon = "BuiltInImage";
   } else if (imageType === "HUB") {
     label = WORKLOAD_IMAGE_TYPE_LABEL_MAP.HUB;
     icon = "Hub";
-  } else if (imageType === "INTERNAL_REGISTRY") {
-    label = WORKLOAD_IMAGE_TYPE_LABEL_MAP.INTERNAL_REGISTRY;
+  } else if (imageType === "PRIVATE") {
+    label = WORKLOAD_IMAGE_TYPE_LABEL_MAP.PRIVATE;
     icon = "PrivateRegistry";
-  } else if (imageType === "EXTERNAL_REGISTRY") {
-    label = WORKLOAD_IMAGE_TYPE_LABEL_MAP.EXTERNAL_REGISTRY;
+  } else if (imageType === "PUBLIC") {
+    label = WORKLOAD_IMAGE_TYPE_LABEL_MAP.PUBLIC;
     icon = "PublicRegistry";
   }
 

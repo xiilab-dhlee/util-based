@@ -1,8 +1,8 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
+import type { WorkloadDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { workloadKeys } from "@/domain/workload/constants/workload.key";
-import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
 import type { GetWorkloadPayload } from "@/domain/workload/types/workload.type";
 import { useServices } from "@/shared/providers/service-provider";
 
@@ -11,7 +11,7 @@ import { useServices } from "@/shared/providers/service-provider";
  */
 export const useGetAdminWorkload = (
   payload: GetWorkloadPayload,
-): UseQueryResult<WorkloadDetailType, Error> => {
+): UseQueryResult<WorkloadDetailResponse, Error> => {
   const { adminWorkloadService } = useServices();
 
   return useQuery({

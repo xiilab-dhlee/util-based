@@ -12,10 +12,6 @@ import {
   DEFAULT_DISABLED_WORKLOAD_SORT_STATE,
   type DisabledWorkloadSortState,
 } from "@/domain/workload/constants/workload.constant";
-import type {
-  WorkloadIdType,
-  WorkloadJobType,
-} from "@/domain/workload/schemas/workload.schema";
 import type { FilterStatusValue } from "@/domain/workload/types/workload.type";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
 import type { FileTreeType } from "@/shared/schemas/filetree.schema";
@@ -33,7 +29,8 @@ export const workloadPageAtom = atomWithReset<number>(1);
 /** 워크로드 검색어 */
 export const workloadSearchTextAtom = atom<string>("");
 /** 워크로드 잡타입 */
-export const workloadJobTypeAtom = atom<WorkloadJobType | null>(null);
+export const workloadJobTypeAtom =
+  atom<ActiveWorkloadResponseWorkloadJobType | null>(null);
 /** 워크로드 상태 */
 export const workloadStatusAtom = atom<FilterStatusValue | null>(null);
 
@@ -89,21 +86,9 @@ export const disabledWorkloadSortAtom =
 export const disabledWorkloadIsMineAtom = atomWithReset<boolean>(false);
 
 // ============================================
-// 워크로드 모달
+// 워크로드 드로어
 // ============================================
 
-/** 커밋 이미지 생성 모달 표시 여부 */
-export const openCreateCommitImageModalAtom = atom<boolean>(false);
-/** 워크로드 수정 모달 표시 여부 */
-export const openUpdateWorkloadModalAtom = atom<boolean>(false);
-/** 워크로드 삭제 모달 표시 여부 */
-export const openDeleteWorkloadModalAtom = atom<boolean>(false);
-/** 워크로드 종료 모달 표시 여부 */
-export const openStopWorkloadModalAtom = atom<boolean>(false);
-/** 워크로드 재시작 모달 표시 여부 */
-export const openRestartWorkloadModalAtom = atom<boolean>(false);
-/** 워크로드 모니터링 모달 표시 여부 */
-export const openViewWorkloadMonitoringModalAtom = atom<boolean>(false);
 /** 워크로드 모니터링 드로어 표시 여부 */
 export const openViewWorkloadMonitoringDrawerAtom = atom<boolean>(false);
 
@@ -114,7 +99,7 @@ export const openViewWorkloadMonitoringDrawerAtom = atom<boolean>(false);
 /** 워크로드 보안 페이지 번호 */
 export const workloadSecurityPageAtom = atomWithReset<number>(1);
 /** 워크로드 선택 모달 - 선택한 워크로드 정보 */
-export const selectedWorkloadAtom = atom<WorkloadIdType | null>(null);
+export const selectedWorkloadAtom = atom<string | null>(null);
 
 // ============================================
 // 워크로드 파일 관리
