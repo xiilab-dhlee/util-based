@@ -133,6 +133,12 @@ export const REQUEST_IMAGE_EVENTS = {
   openApproveModal: "request-image:open-approve-modal",
   // 이미지 사용 요청 반려 모달 열기
   openRejectModal: "request-image:open-reject-modal",
+  // 이미지 사용 요청 결정 사유 수정 모달 열기
+  openUpdateDecisionReasonModal:
+    "request-image:open-update-decision-reason-modal",
+  // 이미지 사용 요청 결정 사유 보기 및 수정 통합 모달 열기
+  openViewAndEditDecisionReasonModal:
+    "request-image:open-view-and-edit-decision-reason-modal",
 } as const;
 
 // 개인 레지스트리 관련 이벤트

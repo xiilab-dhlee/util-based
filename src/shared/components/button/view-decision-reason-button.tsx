@@ -3,7 +3,7 @@
 import { Icon } from "xiilab-ui";
 
 import type { ImageTagUsageRequestResponseApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import { COMMON_EVENTS } from "@/shared/constants/pubsub.constant";
+import { REQUEST_IMAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import {
   ColumnAlignCenterWrap,
@@ -11,13 +11,21 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface ViewDecisionReasonButtonProps {
-  reason?: string;
+  usageRequestId: number;
+  decisionReason?: string;
   approvalStatus: ImageTagUsageRequestResponseApprovalStatus;
+  deciderName?: string;
+  deciderId?: string;
+  decidedAt?: string;
 }
 
 export function ViewDecisionReasonButton({
-  reason,
+  usageRequestId,
+  decisionReason,
   approvalStatus,
+  deciderName,
+  deciderId,
+  decidedAt,
 }: ViewDecisionReasonButtonProps) {
   const publish = usePublish();
   const isDisabled = approvalStatus === "APPROVAL_WAITING";
@@ -25,11 +33,14 @@ export function ViewDecisionReasonButton({
   const handleClickIcon = () => {
     if (isDisabled) return;
 
-    if (approvalStatus === "APPROVED") {
-      publish(COMMON_EVENTS.openApprovalReasonModal, { reason });
-    } else if (approvalStatus === "REJECTED") {
-      publish(COMMON_EVENTS.openRejectReasonModal, { reason });
-    }
+    publish(REQUEST_IMAGE_EVENTS.openViewAndEditDecisionReasonModal, {
+      usageRequestId,
+      decisionReason,
+      approvalStatus,
+      deciderName,
+      deciderId,
+      decidedAt,
+    });
   };
 
   return (

@@ -11,6 +11,7 @@ import { RejectRequestImageModal } from "@/domain/request-image/components/rejec
 import { RequestImageListBody } from "@/domain/request-image/components/request-image-list-body";
 import { RequestImageListFilter } from "@/domain/request-image/components/request-image-list-filter";
 import { RequestImageListFooter } from "@/domain/request-image/components/request-image-list-footer";
+import { ViewAndEditDecisionReasonModal } from "@/domain/request-image/components/view-and-edit-decision-reason-modal";
 import { REQUEST_IMAGE_SORT_FIELD_MAP } from "@/domain/request-image/constants/request-image.constant";
 import {
   requestImagePageAtom,
@@ -22,8 +23,6 @@ import {
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
-import { ViewApprovalReasonModal } from "@/shared/components/modal/view-approval-reason-modal";
-import { ViewRejectReasonModal } from "@/shared/components/modal/view-reject-reason-modal";
 import { ViewRequestReasonModal } from "@/shared/components/modal/view-request-reason-modal";
 import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
@@ -171,14 +170,12 @@ export function RequestImageListMain() {
       </ListPageMain>
       {/* 요청 사유 모달 */}
       <ViewRequestReasonModal />
-      {/* 반려 사유 모달 */}
-      <ViewRejectReasonModal />
-      {/* 승인 사유 모달 */}
-      <ViewApprovalReasonModal />
       {/* 이미지 요청 승인 모달 */}
       <ApproveRequestImageModal />
       {/* 이미지 요청 반려 모달 */}
       <RejectRequestImageModal />
+      {/* 승인/반려 사유 보기 및 수정 통합 모달 */}
+      <ViewAndEditDecisionReasonModal />
     </>
   );
 }
