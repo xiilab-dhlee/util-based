@@ -25,6 +25,11 @@ import type {
   PageResponseActiveWorkloadResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getGetImageJobsQueryKey } from "@/api/generated/image-job/image-job";
+import {
+  createPrivateSnapshotImageBodyPortItemNameMax,
+  createPrivateSnapshotImageBodyPortItemNameRegExp,
+  createPrivateSnapshotImageBodyPortItemPortMax,
+} from "@/api/generated/private-registry/private-registry.zod";
 import { getActiveWorkloads } from "@/api/generated/workload/workload";
 import { useCreateSnapshotRegistryByMode } from "@/domain/registry/hooks/use-create-snapshot-registry-by-mode";
 import {
@@ -161,6 +166,24 @@ export function CreateSnapshotRegistryModal({
   } = useFieldArray({ control, name: "port" });
 
   const { mutate, isPending } = useCreateSnapshotRegistryByMode(mode);
+
+  // 포트 번호 유효성 검사 (1-65535)
+  const isValidPortNumber = useCallback((portStr: string): boolean => {
+    if (!portStr) return false;
+    const num = Number(portStr);
+    return (
+      !isNaN(num) &&
+      num >= 1 &&
+      num <= createPrivateSnapshotImageBodyPortItemPortMax
+    );
+  }, []);
+
+  // 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자)
+  const isValidPortName = useCallback((name: string): boolean => {
+    if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
+      return false;
+    return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
+  }, []);
 
   const onSubmit = (data: CreateSnapshotRegistryFormType) => {
     if (!selectedWorkspace) return;
@@ -446,9 +469,15 @@ export function CreateSnapshotRegistryModal({
                     <Button
                       icon="Plus"
                       iconSize={14}
-                      disabled={!portNameInput || !portNumberInput}
+                      disabled={
+                        !isValidPortName(portNameInput) ||
+                        !isValidPortNumber(portNumberInput)
+                      }
                       onClick={() => {
-                        if (portNameInput && portNumberInput) {
+                        if (
+                          isValidPortName(portNameInput) &&
+                          isValidPortNumber(portNumberInput)
+                        ) {
                           appendPort({
                             id: uuidv4(),
                             name: portNameInput,
