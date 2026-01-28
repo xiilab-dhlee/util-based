@@ -6,7 +6,7 @@ import { Icon } from "xiilab-ui";
 import { CreateCommitImageModal } from "@/domain/workload/components/detail/create-commit-image-modal";
 import { WorkloadPrimaryArticle } from "@/domain/workload/components/detail/workload-primary-article";
 import { WorkloadSecondaryArticle } from "@/domain/workload/components/detail/workload-secondary-article";
-import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
+import { useGetWorkload } from "@/domain/workload/hooks/use-get-workload";
 import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { MySpinner } from "@/shared/components/spinner";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -29,7 +29,7 @@ export function WorkloadDetailMain() {
   const searchParams = useSearchParams();
 
   // hooks는 항상 최상위에서 호출
-  const { data, isLoading } = useGetWorkloadByMode({
+  const { data, isLoading } = useGetWorkload({
     workspaceId: Number(searchParams?.get("workspaceId")),
     workloadId: String(id),
   });

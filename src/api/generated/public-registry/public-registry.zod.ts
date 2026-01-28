@@ -92,6 +92,20 @@ export const getPublicRegistryListQueryParams = zod.object({
     .enum(["SNAPSHOT", "EXTERNAL"])
     .optional()
     .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
+  frameworkType: zod
+    .enum([
+      "PYTORCH",
+      "TENSORFLOW",
+      "JUPYTER",
+      "VSCODE",
+      "RSTUDIO",
+      "HUB",
+      "REGISTRY",
+    ])
+    .optional()
+    .describe(
+      "프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)",
+    ),
 });
 
 export const getPublicRegistryListResponse = zod
@@ -210,6 +224,8 @@ export const createPublicExternalImageBody = zod
  */
 export const createPublicSnapshotImageBodyImageNameMax = 255;
 
+export const createPublicSnapshotImageBodyImageNameRegExp =
+  /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
 export const createPublicSnapshotImageBodyImageTagNameMax = 128;
 
 export const createPublicSnapshotImageBodyImageTagNameRegExp =
@@ -239,6 +255,7 @@ export const createPublicSnapshotImageBody = zod
       .string()
       .min(1)
       .max(createPublicSnapshotImageBodyImageNameMax)
+      .regex(createPublicSnapshotImageBodyImageNameRegExp)
       .describe("생성할 이미지 이름"),
     imageTagName: zod
       .string()
@@ -306,7 +323,7 @@ export const createPublicSnapshotImageBody = zod
 /**
  * 
             공용 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
-            키워드, 스캔 상태로 필터링이 가능합니다.
+            키워드, 스캔 상태, 사용 가능 여부로 필터링이 가능합니다.
         
  * @summary 공용 이미지 태그 목록 조회
  */

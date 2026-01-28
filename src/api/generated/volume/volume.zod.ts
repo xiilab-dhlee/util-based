@@ -330,6 +330,90 @@ export const getVolumeListResponse = zod
 
 /**
  * 
+        특정 볼륨을 사용 중인 워크로드 목록을 페이지네이션으로 조회합니다.
+
+        **응답:**
+        - 200 OK + data: 워크로드 목록 (페이지네이션)
+        - 200 OK + data: null (볼륨이 존재하지 않거나 삭제된 경우)
+        - 403: 접근 권한 없음
+
+        **권한:**
+        - 볼륨 상세 조회와 동일한 권한 검증 적용
+
+        **정렬:**
+        - 기본 정렬: 워크로드-볼륨 매핑 생성 시각 내림차순 (최신순)
+        
+ * @summary 볼륨을 사용 중인 워크로드 목록 조회
+ */
+export const getVolumeWorkloadsParams = zod.object({
+  volumeId: zod.number().describe("조회할 볼륨 ID"),
+});
+
+export const getVolumeWorkloadsQueryPageNoMin = 0;
+
+export const getVolumeWorkloadsQueryPageSizeMax = 100;
+
+export const getVolumeWorkloadsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getVolumeWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getVolumeWorkloadsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+});
+
+export const getVolumeWorkloadsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              workloadId: zod.number().describe("워크로드 ID"),
+              workloadResourceName: zod
+                .string()
+                .describe("워크로드 리소스 이름"),
+              workspaceName: zod.string().describe("워크스페이스 이름"),
+              workspaceId: zod.number().describe("워크스페이스 ID"),
+              createdAt: zod
+                .string()
+                .datetime({})
+                .describe("워크로드 생성 시각"),
+              creatorName: zod.string().describe("워크로드 생성자 이름"),
+              workloadStatus: zod
+                .enum([
+                  "CREATING",
+                  "PENDING",
+                  "RUNNING",
+                  "TERMINATING",
+                  "TERMINATED",
+                  "ERROR",
+                ])
+                .describe("워크로드 상태"),
+            })
+            .strict()
+            .describe("볼륨을 사용 중인 워크로드 정보"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
         볼륨 상세 정보를 조회합니다.
 
         **응답:**

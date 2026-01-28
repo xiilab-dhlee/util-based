@@ -25,10 +25,17 @@ interface UseDateRangeModeReturn {
   isApiReady: boolean;
   /** 날짜 모드 토글 핸들러 */
   handleToggleDateMode: () => void;
+  /** History 모드 강제 전환 */
+  setHistoryMode: () => void;
   /** 날짜 범위 변경 핸들러 (DatePicker용) */
   handleChangeDateRange: (startDate: Date | null, endDate: Date | null) => void;
   /** 차트에서 범위 변경 시 핸들러 (자동으로 History 모드 전환) */
   handleChangeRangeFromChart: (range: DateRange) => void;
+}
+
+interface UseDateRangeModeOptions {
+  /** 초기 모드 */
+  initialMode?: MonitoringDateMode;
 }
 
 /**
@@ -39,8 +46,11 @@ interface UseDateRangeModeReturn {
  * - 날짜 범위 정규화 (최소 1분 보장)
  * - 차트에서 범위 선택 시 자동 History 모드 전환
  */
-export function useDateRangeMode(): UseDateRangeModeReturn {
-  const [dateMode, setDateMode] = useState<MonitoringDateMode>(LIVE_MODE);
+export function useDateRangeMode(
+  options: UseDateRangeModeOptions = {},
+): UseDateRangeModeReturn {
+  const { initialMode = LIVE_MODE } = options;
+  const [dateMode, setDateMode] = useState<MonitoringDateMode>(initialMode);
   const [dateRange, setDateRange] = useState<DateRange | null>(null);
   const [liveHistoryRange, setLiveHistoryRange] = useState<DateRange | null>(
     null,
@@ -66,6 +76,10 @@ export function useDateRangeMode(): UseDateRangeModeReturn {
 
   const handleToggleDateMode = () => {
     setDateMode((prev) => (prev === LIVE_MODE ? HISTORY_MODE : LIVE_MODE));
+  };
+
+  const setHistoryMode = () => {
+    setDateMode(HISTORY_MODE);
   };
 
   const handleChangeDateRange = (
@@ -109,6 +123,7 @@ export function useDateRangeMode(): UseDateRangeModeReturn {
     apiDateRange,
     isApiReady,
     handleToggleDateMode,
+    setHistoryMode,
     handleChangeDateRange,
     handleChangeRangeFromChart,
   };
