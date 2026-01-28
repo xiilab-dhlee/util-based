@@ -5,8 +5,8 @@ import { useResetAtom } from "jotai/utils";
 import { toast } from "react-toastify";
 
 import {
-  getGetAdminAllWorkspacesQueryKey,
   getGetAdminWorkspaceDetailQueryKey,
+  getGetAdminWorkspaceListQueryKey,
   useDeleteWorkspaces,
 } from "@/api/generated/admin-workspace/admin-workspace";
 import {
@@ -77,7 +77,7 @@ export function useUpdateWorkspaceAction(
           queryKey: getGetAllWorkspacesQueryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: getGetAdminAllWorkspacesQueryKey(),
+          queryKey: getGetAdminWorkspaceListQueryKey(),
         });
         queryClient.invalidateQueries({
           queryKey: getGetWorkspaceDetailQueryKey(variables.workspaceId),
@@ -111,7 +111,7 @@ export function useDeleteWorkspaceAction(
           queryKey: getGetAllWorkspacesQueryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: getGetAdminAllWorkspacesQueryKey(),
+          queryKey: getGetAdminWorkspaceListQueryKey(),
         });
         options?.mutation?.onSuccess?.(data, variables, ...rest);
       },
@@ -299,7 +299,7 @@ export function useDeleteAdminWorkspacesAction(
         resetPage();
 
         queryClient.invalidateQueries({
-          queryKey: getGetAdminAllWorkspacesQueryKey(),
+          queryKey: getGetAdminWorkspaceListQueryKey(),
         });
 
         // 삭제된 각 워크스페이스의 상세 정보도 무효화
