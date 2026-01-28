@@ -218,6 +218,15 @@ export class CreateCredentialModal extends BaseModal {
   // ============================================
 
   /**
+   * Private Registry URL 필드 표시 확인
+   */
+  async assertRegistryUrlFieldVisible(): Promise<void> {
+    await expect(
+      this.modalLocator.getByText("Private Registry URL", { exact: true }),
+    ).toBeVisible();
+  }
+
+  /**
    * Private Registry URL 필드 숨김 확인
    */
   async assertRegistryUrlFieldHidden(): Promise<void> {
