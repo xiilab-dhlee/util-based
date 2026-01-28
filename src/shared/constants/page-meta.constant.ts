@@ -165,36 +165,32 @@ export const PAGE_META = {
   },
   "admin.workspace.workload.detail": {
     title: "워크로드 상세",
-    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
       ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(workspaceId, id),
     parent: "admin.workspace.detail",
   },
   "admin.workspace.workload.log": {
     title: "로그",
-    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_WORKLOAD_LOG(id),
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_LOG(workspaceId, id),
     parent: "admin.workspace.workload.detail",
   },
   "admin.workspace.workload.file": {
     title: "파일",
-    href: ({ id }: { id: string }) => ROUTES.ADMIN_WORKSPACE_WORKLOAD_FILE(id),
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_FILE(workspaceId, id),
     parent: "admin.workspace.workload.detail",
   },
   "admin.workspace.workload.monitoring": {
     title: "모니터링",
-    href: ({ id }: { id: string }) =>
-      ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING(id),
-    parent: "admin.workspace.workload.detail",
-  },
-  "admin.workspace.workload.security": {
-    title: "보안",
-    href: ({ id }: { id: string }) =>
-      ROUTES.ADMIN_WORKSPACE_WORKLOAD_SECURITY(id),
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING(workspaceId, id),
     parent: "admin.workspace.workload.detail",
   },
   "admin.workspace.workload.terminal": {
     title: "터미널",
-    href: ({ id }: { id: string }) =>
-      ROUTES.ADMIN_WORKSPACE_WORKLOAD_TERMINAL(id),
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
+      ROUTES.ADMIN_WORKSPACE_WORKLOAD_TERMINAL(workspaceId, id),
     parent: "admin.workspace.workload.detail",
   },
 
@@ -340,37 +336,37 @@ export const PAGE_META = {
   },
   "user.workload.detail": {
     title: "워크로드 상세",
-    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
       ROUTES.USER_WORKLOAD_DETAIL(workspaceId, id),
     parent: "user.workload",
   },
   "user.workload.log": {
     title: "로그",
-    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
       ROUTES.USER_WORKLOAD_LOG(workspaceId, id),
     parent: "user.workload.detail",
   },
   "user.workload.file": {
     title: "파일",
-    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
       ROUTES.USER_WORKLOAD_FILE(workspaceId, id),
     parent: "user.workload.detail",
   },
   "user.workload.monitoring": {
     title: "모니터링",
-    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
       ROUTES.USER_WORKLOAD_MONITORING(workspaceId, id),
     parent: "user.workload.detail",
   },
   "user.workload.security": {
     title: "보안",
-    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
       ROUTES.USER_WORKLOAD_SECURITY(workspaceId, id),
     parent: "user.workload.detail",
   },
   "user.workload.terminal": {
     title: "터미널",
-    href: ({ workspaceId, id }: { workspaceId: string; id: string }) =>
+    href: ({ workspaceId, id }: { workspaceId: number; id: string }) =>
       ROUTES.USER_WORKLOAD_TERMINAL(workspaceId, id),
     parent: "user.workload.detail",
   },
