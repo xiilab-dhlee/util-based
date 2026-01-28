@@ -37,14 +37,14 @@ export const WORKSPACE_EVENTS = {
 
 // 워크로드 관련 이벤트
 export const WORKLOAD_EVENTS = {
-  // 워크로드 수정에 필요한 정보 전달 이벤트
-  sendUpdateWorkload: "workload:send-update-workload",
-  // 워크로드 삭제에 필요한 정보 전달 이벤트
-  sendDeleteWorkload: "workload:send-delete-workload",
-  // 워크로드 종료에 필요한 정보 전달 이벤트
-  sendStopWorkload: "workload:send-stop-workload",
-  // 워크로드 재시작에 필요한 정보 전달 이벤트
-  sendRestartWorkload: "workload:send-restart-workload",
+  // 워크로드 수정 모달 열기
+  openUpdateModal: "workload:open-update-modal",
+  // 워크로드 삭제 모달 열기
+  openDeleteModal: "workload:open-delete-modal",
+  // 워크로드 종료 모달 열기
+  openStopModal: "workload:open-stop-modal",
+  // 워크로드 재시작 모달 열기
+  openRestartModal: "workload:open-restart-modal",
   // 커밋 이미지 생성에 필요한 정보 전달 이벤트
   sendCommitImage: "workload:send-commit-image",
   // 워크로드 모니터링에 필요한 정보 전달 이벤트
@@ -63,6 +63,8 @@ export const WORKLOAD_EVENTS = {
   openUploadFileModal: "workload:open-upload-file-modal",
   // 워크로드 폴더 생성 모달 열기
   openCreateFolderModal: "workload:open-create-folder-modal",
+  // 워크로드 리소스 프리셋 변경 모달 열기
+  openChangeResourceModal: "workload:open-change-resource-modal",
 } as const;
 
 // 소스코드 관련 이벤트

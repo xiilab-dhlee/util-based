@@ -1,66 +1,88 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteWorkload } from "@/domain/workload/hooks/use-delete-workload";
-import type { WorkloadIdType } from "@/domain/workload/schemas/workload.schema";
-import { openDeleteWorkloadModalAtom } from "@/domain/workload/state/workload.atom";
+import { useDeleteWorkload } from "@/api/generated/workload/workload";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
-import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { isUserMode } from "@/shared/utils/router.util";
+
+/** 이벤트 페이로드 타입 */
+interface DeleteWorkloadPayload {
+  workloadResourceName: string;
+  workspaceId: number;
+}
 
 /**
  * 워크로드 삭제 모달 컴포넌트
  *
  * 선택한 워크로드를 삭제할 수 있는 모달입니다.
- * 삭제 완료 시 pubsub 이벤트를 발행하여 다른 컴포넌트에서 처리할 수 있습니다.
+ * 삭제 완료 시 사용자 모드에 따라 적절한 페이지로 리다이렉트합니다.
+ * - 사용자 모드: 워크로드 목록 페이지
+ * - 관리자 모드: 워크스페이스 상세 페이지
  */
 export function DeleteWorkloadModal() {
-  // useGlobalModal 훅을 사용하여 모달 상태 관리
-  const { open, onOpen, onClose } = useGlobalModal(openDeleteWorkloadModalAtom);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // 삭제할 워크로드 ID
-  const [deleteWorkloadId, setDeleteWorkloadId] =
-    useState<WorkloadIdType | null>(null);
+  // 모달 열림 상태
+  const [open, setOpen] = useState(false);
 
-  const deleteWorkload = useDeleteWorkload();
+  // 삭제할 워크로드 정보
+  const [workloadResourceName, setWorkloadResourceName] = useState<
+    string | null
+  >(null);
+  const [workspaceId, setWorkspaceId] = useState<number | null>(null);
+
+  const { mutate, isPending } = useDeleteWorkload();
+
+  const isUser = isUserMode(pathname);
 
   /**
-   * 폼 제출 처리 함수
-   *
-   * 워크로드 삭제를 실행하고 모달을 닫습니다.
-   * 삭제 성공 시 관련 컴포넌트에서 데이터가 자동으로 갱신됩니다.
+   * 모달 닫기
+   */
+  const handleClose = () => {
+    if (isPending) return;
+    setOpen(false);
+  };
+
+  /**
+   * 워크로드 삭제 처리 함수
    */
   const handleOk = () => {
-    if (!deleteWorkloadId) {
-      toast.error("삭제할 워크로드를 선택해 주세요.");
-      return;
-    }
+    if (isPending) return;
+    if (workloadResourceName === null || workspaceId === null) return;
 
-    onClose();
-
-    // 워크로드 삭제 실행
-    // deleteWorkload.mutate(deleteWorkloadId, {
-    //   onSuccess: () => {
-    //     toast.success("워크로드 삭제 완료");
-    //     // 모달 닫기
-    //     onClose();
-    //   },
-    // });
+    mutate(
+      {
+        workspaceId,
+        workloadResourceName,
+      },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          if (isUser) {
+            router.replace(ROUTES.USER_WORKLOAD);
+          } else {
+            router.replace(ROUTES.ADMIN_WORKSPACE_DETAIL(String(workspaceId)));
+          }
+        },
+      },
+    );
   };
 
   /**
    * 워크로드 삭제 모달 데이터 구독
    */
-  useSubscribe(
-    WORKLOAD_EVENTS.sendDeleteWorkload,
-    (workloadId: WorkloadIdType) => {
-      // 삭제할 워크로드 ID 설정
-      setDeleteWorkloadId(workloadId);
-      // 삭제 모달 열기
-      onOpen();
+  useSubscribe<DeleteWorkloadPayload>(
+    WORKLOAD_EVENTS.openDeleteModal,
+    (payload) => {
+      setWorkloadResourceName(payload.workloadResourceName);
+      setWorkspaceId(payload.workspaceId);
+      setOpen(true);
     },
   );
 
@@ -69,12 +91,19 @@ export function DeleteWorkloadModal() {
       variant="delete"
       modalWidth={300}
       open={open}
-      onCancel={onClose}
+      onCancel={handleClose}
       onOk={handleOk}
       title="워크로드 삭제"
       centered
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       okButtonProps={{
-        loading: deleteWorkload.isPending,
+        disabled: workloadResourceName === null || workspaceId === null,
+        loading: isPending,
+      }}
+      cancelButtonProps={{
+        disabled: isPending,
       }}
     >
       <div>선택한 워크로드를 삭제하시겠습니까?</div>
