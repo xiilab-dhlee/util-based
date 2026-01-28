@@ -36,7 +36,7 @@ export function SourcecodeDetailMain({ mode }: SourcecodeDetailMainProps) {
 
   const [viewMode, setViewMode] = useState<ViewMode>("view");
 
-  const { data, isLoading } = useGetSourcecodeDetailByMode(mode, sourceCodeId, {
+  const { data } = useGetSourcecodeDetailByMode(mode, sourceCodeId, {
     query: {
       enabled: !Number.isNaN(sourceCodeId),
     },
@@ -98,7 +98,7 @@ export function SourcecodeDetailMain({ mode }: SourcecodeDetailMainProps) {
       );
     }
 
-    return <ViewSourcecodeDetail data={data} isLoading={isLoading} />;
+    return <ViewSourcecodeDetail data={data} />;
   };
 
   // data가 없으면 수정/삭제 버튼 비활성화 (상세 API 요청 실패 시)

@@ -3,7 +3,7 @@ import type {
   GetVolumeListSort,
   VolumeFileItemResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { FileTreeType } from "@/shared/types/core.model";
 import { getFileExtension } from "@/shared/utils/file.util";
 
 // 파일 트리 관련 유틸리티 re-export (하위 호환성 유지)

@@ -34,8 +34,9 @@ export const useUpdateVolumeByMode = (
     mutate: (variables, options) => {
       mutation.mutate(variables, {
         onSuccess: (data) => {
-          // 볼륨 수정 응답에는 volumeId가 없으므로, 요청 변수에서 전달
-          options?.onSuccess?.({ volumeId: data.volumeId });
+          options?.onSuccess?.({
+            volumeId: data?.volumeId ?? variables.volumeId,
+          });
         },
         onError: options?.onError,
       });

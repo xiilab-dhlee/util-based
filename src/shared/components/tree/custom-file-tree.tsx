@@ -5,8 +5,8 @@ import { createElement, useState } from "react";
 import styled from "styled-components";
 
 import { ALL_OPTION } from "@/shared/constants/core.constant";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
+import type { FileTreeType } from "@/shared/types/core.model";
 import { CustomFileNode, RootCustomFileNode } from "./custom-file-node";
 
 /** 파일 체크박스 컴포넌트 props 인터페이스 */

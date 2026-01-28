@@ -15,7 +15,7 @@ import {
   WORKLOAD_STATUS_LABEL_MAP,
 } from "@/domain/workload/constants/workload.constant";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { FileTreeType } from "@/shared/types/core.model";
 import { getFileExtension } from "@/shared/utils/file.util";
 
 /**

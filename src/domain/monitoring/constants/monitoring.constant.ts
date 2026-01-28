@@ -1,23 +1,4 @@
 import { PAGE_META } from "@/shared/constants/page-meta.constant";
-import type { TableSortState } from "@/shared/types/core.model";
-
-/** 워크스페이스 기본 정렬: 생성일 내림차순 */
-export const DEFAULT_WORKSPACE_SORT: TableSortState = {
-  sortBy: "creatorDate",
-  sortDirection: "DESC",
-};
-
-/** 사용자 리소스 기본 정렬: 사용자 오름차순 */
-export const DEFAULT_USER_RESOURCE_SORT: TableSortState = {
-  sortBy: "userName",
-  sortDirection: "ASC",
-};
-
-/** 활성화 워크로드 기본 정렬: 워크로드 이름 오름차순 */
-export const DEFAULT_ACTIVE_WORKLOAD_SORT: TableSortState = {
-  sortBy: "workloadName",
-  sortDirection: "ASC",
-};
 
 export const MONITORING_MENU_ICON = PAGE_META["admin.monitoring"]?.iconName;
 
@@ -26,6 +7,15 @@ export const USER_WORKSPACE_MODAL_PAGE_SIZE = 6;
 
 /** 활성화 워크로드 목록 페이지 크기 */
 export const ACTIVE_WORKLOAD_PAGE_SIZE = 20;
+
+/** 모니터링 워크스페이스 목록 페이지 크기 */
+export const MONITORING_WORKSPACE_PAGE_SIZE = 10;
+
+/** 모니터링 사용자 리소스 목록 페이지 크기 */
+export const MONITORING_USER_RESOURCE_PAGE_SIZE = 10;
+
+/** 모니터링 워크스페이스 모달 페이지 크기 */
+export const MONITORING_WORKSPACE_MODAL_PAGE_SIZE = 5;
 
 export const MONITORING_QUICK_MENUS = [
   {

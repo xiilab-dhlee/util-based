@@ -6,7 +6,33 @@
 import type { ReactNode } from "react";
 import type { DropdownOption, MenuItem, ResponsiveColumnType } from "xiilab-ui";
 
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+/**
+ * 파일 트리 타입 (재귀적 구조)
+ * Orval의 WorkloadFileItemResponse와 호환되도록 설계
+ */
+export interface FileTreeType {
+  /** 파일/디렉토리 고유 ID */
+  id: string;
+  /** 파일/디렉토리 이름 */
+  name: string;
+  /** 파일 경로 */
+  path: string;
+  /** 파일 타입 */
+  type: "file" | "directory";
+  /** 파일 확장자 (파일인 경우) */
+  fileExtension: string | null;
+  /** 파일 크기 (파일인 경우) */
+  fileSize?: string;
+  /** 폴더 내 파일 개수 (디렉토리인 경우) */
+  fileCount?: number;
+  /** 폴더 내 디렉토리 개수 (디렉토리인 경우) */
+  directoryCount?: number;
+  /** 자식 파일/디렉토리 목록 */
+  children: FileTreeType[];
+}
+
+/** 파일 트리 배열 타입 */
+export type FileTreeArrayType = FileTreeType[];
 
 // 네비게이션 메뉴
 export type CoreNavMenu = {

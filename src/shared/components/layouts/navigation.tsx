@@ -166,18 +166,18 @@ const ADMIN_NAV_MENU: AstraGoNavMenu[] = [
         label: PAGE_META["admin.volume"]?.title,
         icon: <Icon name={PAGE_META["admin.volume"]?.iconName} />,
       },
-      {
-        key: "admin.report",
-        label: PAGE_META["admin.report"]?.title,
-        icon: <Icon name={PAGE_META["admin.report"]?.iconName} />,
-        navigateToSelfOnOpen: true,
-        children: [
-          {
-            key: "admin.report-reservation",
-            label: PAGE_META["admin.report-reservation"]?.title,
-          },
-        ],
-      },
+      // {
+      //   key: "admin.report",
+      //   label: PAGE_META["admin.report"]?.title,
+      //   icon: <Icon name={PAGE_META["admin.report"]?.iconName} />,
+      //   navigateToSelfOnOpen: true,
+      //   children: [
+      //     {
+      //       key: "admin.report-reservation",
+      //       label: PAGE_META["admin.report-reservation"]?.title,
+      //     },
+      //   ],
+      // },
       {
         key: "admin.setting",
         label: PAGE_META["admin.setting"]?.title,

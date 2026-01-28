@@ -1,6 +1,6 @@
 import { type Atom, atom } from "jotai";
 
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { FileTreeType } from "@/shared/types/core.model";
 
 /**
  * 트리에서 조건에 맞는 노드를 찾는 범용 함수

@@ -2,7 +2,6 @@
 
 import { useAtom } from "jotai";
 import styled from "styled-components";
-import { v4 as uuidv4 } from "uuid";
 import { Button, Input, Typography } from "xiilab-ui";
 
 import { envsAtom } from "@/domain/workload/state/create-workload.atom";
@@ -12,7 +11,7 @@ export function CreateWorkloadEnv() {
   const [envs, setEnvs] = useAtom(envsAtom);
 
   const handleCreate = () => {
-    setEnvs((prev) => [...prev, { id: uuidv4(), envKey: "", envValue: "" }]);
+    setEnvs((prev) => [...prev, { key: "", value: "" }]);
   };
 
   const handleDelete = (index: number) => {
@@ -21,7 +20,7 @@ export function CreateWorkloadEnv() {
 
   const handleChangeEnv = (
     index: number,
-    field: "envKey" | "envValue",
+    field: "key" | "value",
     value: string,
   ) => {
     setEnvs((prev) =>
@@ -41,17 +40,15 @@ export function CreateWorkloadEnv() {
       </Header>
       <Body>
         {envs.map((env, index) => (
-          <Row key={env.id}>
+          <Row key={`env-${index}`}>
             <StyledInput
-              value={env.envKey}
-              onChange={(e) => handleChangeEnv(index, "envKey", e.target.value)}
+              value={env.key}
+              onChange={(e) => handleChangeEnv(index, "key", e.target.value)}
               placeholder="환경변수 키 입력"
             />
             <StyledInput
-              value={env.envValue}
-              onChange={(e) =>
-                handleChangeEnv(index, "envValue", e.target.value)
-              }
+              value={env.value}
+              onChange={(e) => handleChangeEnv(index, "value", e.target.value)}
               placeholder="환경변수 값 입력"
             />
             <Delete>

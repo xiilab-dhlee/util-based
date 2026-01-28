@@ -10,8 +10,8 @@ import {
   workloadFileTreeDataAtom,
 } from "@/domain/workload/state/workload.atom";
 import { convertWorkloadFileToTreeType } from "@/domain/workload/utils/workload.util";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import { collectAllDescendantPaths } from "@/shared/state/filetree.atom";
+import type { FileTreeType } from "@/shared/types/core.model";
 import { mergeChildrenToTree } from "@/shared/utils/filetree.util";
 
 interface UseWorkloadFileTreeOptions {

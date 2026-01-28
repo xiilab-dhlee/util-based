@@ -14,11 +14,11 @@ import {
 } from "@/domain/workload/constants/workload.constant";
 import type { FilterStatusValue } from "@/domain/workload/types/workload.type";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
 } from "@/shared/state/filetree.atom";
+import type { FileTreeType } from "@/shared/types/core.model";
 
 // ============================================
 // 일반 워크로드 목록 필터 (관리자용)

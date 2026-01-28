@@ -31,8 +31,9 @@ import { notificationHandlers } from "@/domain/notification/mocks";
 import { registryHandlers } from "@/domain/registry/mocks";
 import { requestResourceHandlers } from "@/domain/request-resource/mocks";
 import { revokeHandlers } from "@/domain/revoke/mocks";
-import { fileSecurityHandlers } from "@/domain/security/mocks/file-security.handler";
-import { registrySecurityHandlers } from "@/domain/security/mocks/registry-security.handler";
+
+// TODO: Security 도메인 삭제됨
+
 import { sourcecodeHandlers } from "@/domain/sourcecode/mocks";
 import { storageHandlers } from "@/domain/storage/mocks";
 import { systemMonitoringHandlers } from "@/domain/system-monitoring/mocks";
@@ -40,10 +41,6 @@ import { systemSettingHandlers } from "@/domain/system-setting/mocks";
 import { volumeHandlers } from "@/domain/volume/mocks";
 import { workloadHandlers } from "@/domain/workload/mocks";
 import { workspaceHandlers } from "@/domain/workspace/mocks";
-import { hpeHandlers } from "@/mocks/handlers/hpe.handler";
-import { monitoringHandlers } from "@/mocks/handlers/monitoring.handler";
-import { reportHandlers } from "@/mocks/handlers/report.handler";
-import { reportReservationHandlers } from "@/mocks/handlers/report-reservation.handler";
 
 // ============================================
 // Lazy Mock 지연 래퍼
@@ -116,17 +113,11 @@ const rawHandlers = [
   ...groupHandlers,
   ...workspaceHandlers,
   ...accountManagementHandlers,
-  ...monitoringHandlers,
   ...getAdminMonitoringNotificationHistoryMock(),
   ...getAdminMonitoringNotificationSetMock(),
   ...registryHandlers,
-  ...fileSecurityHandlers,
-  ...registrySecurityHandlers,
   ...revokeHandlers,
   ...systemMonitoringHandlers,
-  ...hpeHandlers,
-  ...reportHandlers,
-  ...reportReservationHandlers,
   ...storageHandlers,
   ...getAdminQueueMock(),
   ...getSmtpSettingsMock(),

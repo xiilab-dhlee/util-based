@@ -23,8 +23,8 @@ export function WorkloadMonitoringButton({
   const isAdmin = isAdminMode(pathname);
 
   const href = isAdmin
-    ? ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING(workloadId)
-    : ROUTES.USER_WORKLOAD_MONITORING(String(workspaceId), workloadId);
+    ? ROUTES.ADMIN_WORKSPACE_WORKLOAD_MONITORING(workspaceId, workloadId)
+    : ROUTES.USER_WORKLOAD_MONITORING(workspaceId, workloadId);
 
   return (
     <ColumnRouteIcon

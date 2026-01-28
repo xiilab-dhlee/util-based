@@ -236,6 +236,8 @@ export const MONITORING_EVENTS = {
   sendUserWorkspace: "monitoring:send-user-workspace",
   // 모니터링 알림 삭제 모달에 필요한 정보 전달 이벤트
   sendDeleteNotification: "monitoring:send-delete-notification",
+  // 워크스페이스 요약 정보 모달에 필요한 정보 전달 이벤트
+  sendWorkspaceSummary: "monitoring:send-workspace-summary",
 } as const;
 
 // 설정 관련 이벤트

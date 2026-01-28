@@ -12,8 +12,8 @@ import {
   convertToFileTreeType,
   mergeChildrenToTree,
 } from "@/domain/volume/utils/volume.util";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import { collectAllDescendantPaths } from "@/shared/state/filetree.atom";
+import type { FileTreeType } from "@/shared/types/core.model";
 
 interface UseVolumeFileTreeOptions {
   volumeId: number;

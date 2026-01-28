@@ -6,7 +6,7 @@ import { Icon } from "xiilab-ui";
 
 import { WorkloadFileCheckbox } from "@/domain/workload/components/file/workload-file-checkbox";
 import { workloadFileSelectedKeyAtom } from "@/domain/workload/state/workload.atom";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { FileTreeType } from "@/shared/types/core.model";
 import { formatFileSize, getFileIconName } from "@/shared/utils/file.util";
 
 interface WorkloadFileCardProps extends FileTreeType {

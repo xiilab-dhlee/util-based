@@ -8,11 +8,6 @@ import type {
   WorkloadSourceCodeDetail,
   WorkloadVolumeDetail,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
-import type {
-  GpuListType,
-  GpuNodeListType,
-  GpuProfileListType,
-} from "@/shared/schemas/gpu.schema";
 
 // Step
 export const stepAtom = atom(0);
@@ -26,9 +21,6 @@ export const workloadDescriptionAtom = atom("");
 export const nodeModeAtom = atom<"single" | "multi">("single");
 // export const labelsAtom = atom<string[]>(["test1", "test2"]);
 export const gpuEnabledAtom = atom(false);
-export const gpuAtom = atom<GpuListType | null>(null);
-export const gpuNodeAtom = atom<GpuNodeListType | null>(null);
-export const gpuProfileAtom = atom<GpuProfileListType | null>(null);
 
 // Step 2: Resource - Single Mode
 export const gpuCountAtom = atom(2);

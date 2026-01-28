@@ -1,4 +1,4 @@
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { FileTreeType } from "@/shared/types/core.model";
 
 /**
  * 경로 배열에서 최상위 경로만 필터링하는 함수

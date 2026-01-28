@@ -15,7 +15,8 @@ import { CreateWorkloadFirstStep } from "@/domain/workload/components/create/cre
 import { CreateWorkloadFourthStep } from "@/domain/workload/components/create/create-workload-fourth-step";
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
 import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
-import { useCreateWorkload } from "@/domain/workload/hooks/use-create-workload";
+// TODO: Orval API 연동 필요
+// import { useCreateWorkload } from "@/domain/workload/hooks/use-create-workload";
 import {
   envsAtom,
   execCommandAtom,
@@ -64,7 +65,16 @@ export function CreateWorkloadDrawer() {
     openCreateWorkloadDrawerAtom,
   );
 
-  const createWorkload = useCreateWorkload();
+  // TODO: Orval API 연동 필요
+  // const createWorkload = useCreateWorkload();
+  const createWorkload = {
+    mutate: (
+      _payload: CreateWorkloadPayload,
+      _options?: { onSuccess?: () => void },
+    ) => {
+      console.log("TODO: Orval API 연동 필요");
+    },
+  };
 
   const [step, setStep] = useAtom(stepAtom);
   // step 1
@@ -152,12 +162,12 @@ export function CreateWorkloadDrawer() {
       // eventData가 있는 경우 워크로드 복제
       // step 1
       // 잡타입 설정
-      if (eventData?.jobType) {
+      if (eventData?.workloadJobType) {
         // 분산 잡 타입인 경우 배치 잡 타입으로 설정
-        if (eventData?.jobType === "DISTRIBUTED") {
+        if (eventData?.workloadJobType === "DISTRIBUTED") {
           setJobType("BATCH");
         } else {
-          setJobType(eventData.jobType);
+          setJobType(eventData.workloadJobType);
         }
       } else {
         setJobType("BATCH");
@@ -171,13 +181,17 @@ export function CreateWorkloadDrawer() {
       setNodeMode("single");
       // 리소스 프리셋(현재 X)
       // 이미지 설정
-      setImageType(eventData?.image?.type || "HUB");
-      setImageId(eventData?.image?.name || null);
+      setImageType(eventData?.image?.imageType || "HUB");
+      setImageId(
+        eventData?.image?.imageId ? String(eventData.image.imageId) : null,
+      );
       // step 3
       // 소스코드
-      setWorkloadSourcecodes(eventData?.sourcecodes || []);
+      setWorkloadSourcecodes(
+        eventData?.sourceCode ? [eventData.sourceCode] : [],
+      );
       // 볼륨
-      setWorkloadVolumes(eventData?.volumes || []);
+      setWorkloadVolumes(eventData?.volume || []);
       // output 경로(현재 X)
       setWorkloadOutputPath("");
       // step 4
@@ -186,8 +200,8 @@ export function CreateWorkloadDrawer() {
       // 실행 명령어
       setExecCommand("");
       // 환경 변수
-      setEnvs(eventData?.envs || []);
-      setPorts(eventData?.ports || []);
+      setEnvs(eventData?.env || []);
+      setPorts(eventData?.port || []);
       setStep(0);
       onOpen();
     },

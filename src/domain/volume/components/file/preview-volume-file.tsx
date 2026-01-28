@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import { volumeFileSelectedKeyAtom } from "@/domain/volume/state/volume.atom";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { FileTreeType } from "@/shared/types/core.model";
 import { formatFileSize, getFileIconName } from "@/shared/utils/file.util";
 import {
   AsideDetailArticle,

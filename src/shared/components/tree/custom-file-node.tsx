@@ -8,9 +8,8 @@ import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import type { FileCheckboxProps } from "@/shared/components/tree/custom-file-tree";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
-import type { CoreFileButton } from "@/shared/types/core.model";
+import type { CoreFileButton, FileTreeType } from "@/shared/types/core.model";
 
 /**
  * CustomFileNode 컴포넌트의 props 인터페이스

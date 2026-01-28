@@ -3,7 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import type { TableProps } from "xiilab-ui";
 
-import type { ActiveWorkloadItem } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { ActiveWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   ACTIVE_WORKLOAD_SORT_FIELDS,
   type ActiveWorkloadSortField,
@@ -17,7 +17,7 @@ import { parseSorterToAntdState } from "@/shared/utils/sort.util";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface ActiveWorkloadListBodyProps {
-  content: ActiveWorkloadItem[];
+  content: ActiveWorkloadResponse[];
   loading: boolean;
   isError?: boolean;
 }
@@ -43,13 +43,13 @@ export function ActiveWorkloadListBody({
     { key: "power", width: "6%" },
   ];
 
-  const handleChange: TableProps<ActiveWorkloadItem>["onChange"] = (
+  const handleChange: TableProps<ActiveWorkloadResponse>["onChange"] = (
     _,
     __,
     sorter,
   ) => {
     const parsed = parseSorterToAntdState<
-      ActiveWorkloadItem,
+      ActiveWorkloadResponse,
       ActiveWorkloadSortField
     >(sorter, ACTIVE_WORKLOAD_SORT_FIELDS);
     if (!parsed.field || !parsed.order) return;

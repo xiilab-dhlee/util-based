@@ -1,18 +1,20 @@
 "use client";
 
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { Button, Input } from "xiilab-ui";
 
 import { AddWorkspaceMemberModal } from "@/domain/setting/components/add-workspace-member-modal";
-import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
+// TODO: Orval API 연동 필요
+// import { useAtomValue } from "jotai";
+// import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
 import {
   workspaceMemberPageAtom,
   workspaceMemberSearchTextAtom,
 } from "@/domain/workspace-member/state/workspace-member.atom";
 import { ITEM_TYPES } from "@/shared/components/group-member-selector/types";
 import { MySearchFilter } from "@/shared/components/layouts/search-filter";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+// import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import type { SelectedMember } from "@/shared/types/member-selection.type";
@@ -21,14 +23,22 @@ export function WorkspaceMemberFilter() {
   const setSearchText = useSetAtom(workspaceMemberSearchTextAtom);
   const resetPage = useResetAtom(workspaceMemberPageAtom);
   const publish = usePublish();
-  const page = useAtomValue(workspaceMemberPageAtom);
-  const searchText = useAtomValue(workspaceMemberSearchTextAtom);
+  // TODO: Orval API 연동 필요
+  // const page = useAtomValue(workspaceMemberPageAtom);
+  // const searchText = useAtomValue(workspaceMemberSearchTextAtom);
 
-  const { data, isLoading, isError } = useGetWorkspaceMembers({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
+  // TODO: Orval API 연동 필요
+  // const { data, isLoading, isError } = useGetWorkspaceMembers({
+  //   page,
+  //   size: LIST_PAGE_SIZE,
+  //   searchText,
+  // });
+  const data = {
+    content: [] as { id: string; name: string; email: string }[],
+    totalSize: 0,
+  };
+  const isLoading = false;
+  const isError = false;
 
   /**
    * 검색 핸들러
