@@ -9,7 +9,7 @@ import {
 import {
   getGetAccountDetailQueryKey,
   getGetAllAccountsQueryKey,
-  useDeleteAccount,
+  useDeleteAccountBulk,
   useUpdateAccount,
   useUpdateAccountEnabled,
 } from "@/api/generated/admin-account-management/admin-account-management";
@@ -21,13 +21,13 @@ import {
 } from "@/domain/account-management/state/account.atom";
 
 export function useDeleteAccountAction(
-  options?: Parameters<typeof useDeleteAccount>[0],
+  options?: Parameters<typeof useDeleteAccountBulk>[0],
 ) {
   const queryClient = useQueryClient();
   const resetPage = useResetAtom(accountPageAtom);
   const resetCheckedList = useResetAtom(accountCheckedListAtom);
 
-  return useDeleteAccount({
+  return useDeleteAccountBulk({
     ...options,
     mutation: {
       ...options?.mutation,
