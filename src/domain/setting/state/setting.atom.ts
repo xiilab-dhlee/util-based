@@ -24,6 +24,8 @@ export const settingRequestResourceSortAtom = atomWithReset<
 export const openCreateResourceRequestModalAtom = atom<boolean>(false);
 /** 리소스 요청 취소 모달 표시 여부 */
 export const openCancelResourceRequestModalAtom = atom<boolean>(false);
+/** 이미지 사용 요청 취소 모달 표시 여부 */
+export const openCancelImageUsageRequestModalAtom = atom<boolean>(false);
 /** 알림설정 모달 표시 여부 */
 export const openUpdateNotificationSettingModalAtom = atom<boolean>(false);
 /** 워크스페이스 구성원 추가 모달 표시 여부 */

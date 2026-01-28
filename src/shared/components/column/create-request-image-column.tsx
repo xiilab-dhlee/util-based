@@ -89,8 +89,12 @@ const createColumnList = (): ResponsiveColumnType[] => {
       render: (_: unknown, record: ImageTagUsageRequestResponse) => {
         return (
           <ViewDecisionReasonButton
-            reason={record.decisionReason}
+            usageRequestId={record.usageRequestId}
+            decisionReason={record.decisionReason}
             approvalStatus={record.approvalStatus}
+            deciderName={record.deciderName}
+            deciderId={record.deciderId}
+            decidedAt={record.decidedAt}
           />
         );
       },
