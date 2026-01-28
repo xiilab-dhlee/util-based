@@ -3,13 +3,23 @@
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import { useSeriesVisibility } from "@/domain/system-monitoring/hooks/use-series-visibility.hook";
 import { WorkloadMonitoringCard } from "@/domain/workload/components/detail/workload-monitoring-card";
+import { useWorkloadMonitoringData } from "@/domain/workload/hooks/use-workload-monitoring-data.hook";
 import { openViewWorkloadMonitoringDrawerAtom } from "@/domain/workload/state/workload.atom";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 
 export function AsideWorkloadMonitoring() {
   const { onToggle } = useGlobalModal(openViewWorkloadMonitoringDrawerAtom);
+
+  const { data, isLoading, errors, workloadResourceName } =
+    useWorkloadMonitoringData();
+
+  // 1. 시리즈 가시성 관리
+  const { visibilityMap, toggleSeries } = useSeriesVisibility({
+    nodeName: workloadResourceName,
+  });
 
   const handleCloseMonitoring = () => {
     onToggle();
@@ -25,16 +35,44 @@ export function AsideWorkloadMonitoring() {
       </Header>
       <Body>
         <CardWrapper>
-          <WorkloadMonitoringCard type="cpu-usage" />
+          <WorkloadMonitoringCard
+            type="gpu-memory"
+            data={data.gpuMemUtilization}
+            seriesVisibilityMap={visibilityMap}
+            onSeriesToggle={toggleSeries}
+            isLoading={isLoading}
+            hasError={errors.gpuMemUtilization}
+          />
         </CardWrapper>
         <CardWrapper>
-          <WorkloadMonitoringCard type="memory-usage" />
+          <WorkloadMonitoringCard
+            type="gpu-utilization"
+            data={data.gpuUtilization}
+            seriesVisibilityMap={visibilityMap}
+            onSeriesToggle={toggleSeries}
+            isLoading={isLoading}
+            hasError={errors.gpuUtilization}
+          />
         </CardWrapper>
         <CardWrapper>
-          <WorkloadMonitoringCard type="gpu-utilization" />
+          <WorkloadMonitoringCard
+            type="cpu-usage"
+            data={data.cpuUtilization}
+            seriesVisibilityMap={visibilityMap}
+            onSeriesToggle={toggleSeries}
+            isLoading={isLoading}
+            hasError={errors.cpuUtilization}
+          />
         </CardWrapper>
         <CardWrapper>
-          <WorkloadMonitoringCard type="gpu-memory" />
+          <WorkloadMonitoringCard
+            type="memory-usage"
+            data={data.memUtilization}
+            seriesVisibilityMap={visibilityMap}
+            onSeriesToggle={toggleSeries}
+            isLoading={isLoading}
+            hasError={errors.memUtilization}
+          />
         </CardWrapper>
       </Body>
     </Container>

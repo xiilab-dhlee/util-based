@@ -8,7 +8,7 @@ import { Icon } from "xiilab-ui";
 import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
 import { workloadEnvColumn } from "@/domain/workload/components/detail/workload-env-column";
 import { workloadPortColumn } from "@/domain/workload/components/detail/workload-port-column";
-import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
+import { useGetWorkload } from "@/domain/workload/hooks/use-get-workload";
 import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
@@ -35,7 +35,7 @@ export function WorkloadSecondaryArticle() {
   const searchParams = useSearchParams();
 
   // hooks는 항상 최상위에서 호출
-  const { data } = useGetWorkloadByMode({
+  const { data } = useGetWorkload({
     workspaceId: Number(searchParams?.get("workspaceId")),
     workloadId: String(id),
   });

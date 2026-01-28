@@ -24,6 +24,8 @@ const baseWorkloadSchema = z.object({
   elapsedTime: z.string().datetime(),
   /** 생성일 */
   creatorDate: z.string().datetime(),
+  /** 종료 일시 (TERMINATED 상태일 때만) */
+  terminatedAt: z.string().datetime().optional(),
   /** 회수 경고 회수 */
   revokeWarningCount: z.number().min(0),
   /** 회수 여부 */

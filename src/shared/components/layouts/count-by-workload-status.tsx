@@ -1,11 +1,16 @@
+import type { CSSProperties } from "react";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
 
 interface CountByWorkloadStatusProps {
-  status: WorkloadStatusType;
+  status: WorkloadStatusResponseWorkloadStatus | "ALL";
+  count: number;
+  testId?: string;
+  countTestId?: string;
 }
 
 /**
@@ -18,16 +23,26 @@ interface CountByWorkloadStatusProps {
  * @returns 워크로드 상태 통계 컴포넌트
  *
  */
-export function CountByWorkloadStatus({ status }: CountByWorkloadStatusProps) {
+export function CountByWorkloadStatus({
+  status,
+  count,
+  testId,
+  countTestId,
+}: CountByWorkloadStatusProps) {
   // 상태에 따른 텍스트와 아이콘 정보 가져오기
   const { label, icon } = getWorkloadStatusInfo(status);
+  const theme = getWorkloadStatusTheme(status);
 
   return (
-    <Container key={status} className={status}>
+    <Container key={status} style={theme} data-testid={testId}>
       <Legend variant="body-2-4">{label}</Legend>
       <DataLabel>
-        <Typography.Text variant="subtitle-2-1" color="#fff">
-          {Number(9999).toLocaleString()}건
+        <Typography.Text
+          variant="subtitle-2-1"
+          color="#fff"
+          data-testid={countTestId}
+        >
+          {formatNumberWithUnit(count, "건")}
         </Typography.Text>
 
         <Boundary />
@@ -59,45 +74,6 @@ const Container = styled.div`
     border-left: 1px solid var(--primary-border-color);
   }
 
-  /* 전체 상태 테마 (보라색) */
-  &.ALL {
-    --primary-color: #d77bff;
-    --secondary-color: #ae8dff7a;
-    --icon-fill: #d77bff;
-    --circle-bg-color: linear-gradient(180deg, #ae8dff66 0%, #171b2600 15%);
-  }
-
-  /* 실행 중 상태 테마 (파란색) */
-  &.RUNNING {
-    --primary-color: #86b6ff;
-    --secondary-color: #86b6ff7a;
-    --icon-fill: #86b6ff;
-    --circle-bg-color: linear-gradient(180deg, #86b6ff66 0%, #171b2600 15%);
-  }
-
-  /* 대기 중 상태 테마 (초록색) */
-  &.PENDING {
-    --primary-color: #52bc4a;
-    --secondary-color: #bababa7a;
-    --icon-fill: #4f9838;
-    --circle-bg-color: linear-gradient(180deg, #6ecf2d57 0%, #1b261700 15%);
-  }
-
-  /* 종료 상태 테마 (초록색) */
-  &.COMPLETED {
-    --primary-color: #bdbdbd;
-    --secondary-color: #bababa66;
-    --icon-fill: #a3afd0;
-    --circle-bg-color: linear-gradient(180deg, #c3c3c366 0%, #171b2600 15%);
-  }
-
-  /* 실패 상태 테마 (빨간색) */
-  &.FAILED {
-    --primary-color: #ff8080;
-    --secondary-color: #ff80807a;
-    --icon-fill: #ff8080;
-    --circle-bg-color: linear-gradient(180deg, #ff808066 0%, #171b2600 15%);
-  }
 `;
 
 /**
@@ -181,3 +157,63 @@ const DataLabel = styled.div`
   padding-bottom: 14px;
   position: relative;
 `;
+
+type WorkloadStatusTheme = CSSProperties & {
+  "--primary-color": string;
+  "--secondary-color": string;
+  "--icon-fill": string;
+  "--circle-bg-color": string;
+};
+
+const WORKLOAD_STATUS_THEME_MAP: Record<
+  CountByWorkloadStatusProps["status"],
+  WorkloadStatusTheme
+> = {
+  ALL: {
+    "--primary-color": "#d77bff",
+    "--secondary-color": "#ae8dff7a",
+    "--icon-fill": "#d77bff",
+    "--circle-bg-color": "linear-gradient(180deg, #ae8dff66 0%, #171b2600 15%)",
+  },
+  RUNNING: {
+    "--primary-color": "#86b6ff",
+    "--secondary-color": "#86b6ff7a",
+    "--icon-fill": "#86b6ff",
+    "--circle-bg-color": "linear-gradient(180deg, #86b6ff66 0%, #171b2600 15%)",
+  },
+  PENDING: {
+    "--primary-color": "#52bc4a",
+    "--secondary-color": "#bababa7a",
+    "--icon-fill": "#4f9838",
+    "--circle-bg-color": "linear-gradient(180deg, #6ecf2d57 0%, #1b261700 15%)",
+  },
+  TERMINATED: {
+    "--primary-color": "#bdbdbd",
+    "--secondary-color": "#bababa66",
+    "--icon-fill": "#a3afd0",
+    "--circle-bg-color": "linear-gradient(180deg, #c3c3c366 0%, #171b2600 15%)",
+  },
+  ERROR: {
+    "--primary-color": "#ff8080",
+    "--secondary-color": "#ff80807a",
+    "--icon-fill": "#ff8080",
+    "--circle-bg-color": "linear-gradient(180deg, #ff808066 0%, #171b2600 15%)",
+  },
+  CREATING: {
+    "--primary-color": "#52bc4a",
+    "--secondary-color": "#bababa7a",
+    "--icon-fill": "#4f9838",
+    "--circle-bg-color": "linear-gradient(180deg, #6ecf2d57 0%, #1b261700 15%)",
+  },
+  TERMINATING: {
+    "--primary-color": "#ffb35c",
+    "--secondary-color": "#ffb35c7a",
+    "--icon-fill": "#ffb35c",
+    "--circle-bg-color": "linear-gradient(180deg, #ffb35c66 0%, #171b2600 15%)",
+  },
+};
+
+const getWorkloadStatusTheme = (
+  status: CountByWorkloadStatusProps["status"],
+): WorkloadStatusTheme =>
+  WORKLOAD_STATUS_THEME_MAP[status] ?? WORKLOAD_STATUS_THEME_MAP.ALL;

@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import { WorkloadEventCard } from "@/domain/workload/components/detail/workload-event-card";
 import { WorkloadIntroCard } from "@/domain/workload/components/detail/workload-intro-card";
-import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
+import { useGetWorkload } from "@/domain/workload/hooks/use-get-workload";
 import { useWorkloadStatusPolling } from "@/domain/workload/hooks/use-workload-status-polling";
 import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
@@ -23,7 +23,7 @@ export function WorkloadDetailPageAside() {
   const workspaceId = searchParams?.get("workspaceId") || "";
 
   // 워크로드 전체 데이터 조회
-  const { data } = useGetWorkloadByMode({
+  const { data } = useGetWorkload({
     workspaceId: Number(workspaceId),
     workloadId,
   });

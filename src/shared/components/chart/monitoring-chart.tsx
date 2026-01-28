@@ -240,7 +240,7 @@ const Overlay = styled.div<{ $isDarkMode: boolean }>`
   justify-content: center;
   background-color: ${({ $isDarkMode }) =>
     $isDarkMode ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.6)"};
-  z-index: 900;
+  z-index: 0;
 `;
 
 const OverlayMessage = styled.span`
