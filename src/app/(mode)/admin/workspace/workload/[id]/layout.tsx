@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 
-import { UpdateWorkloadModal } from "@/domain/workload/components/detail/update-workload-modal";
 import { WorkloadDetailPageAside } from "@/domain/workload/components/detail/workload-detail-page-aside";
+import { UpdateWorkloadModal } from "@/domain/workload/components/update-workload-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { RouteTab } from "@/shared/components/tab";
 import {

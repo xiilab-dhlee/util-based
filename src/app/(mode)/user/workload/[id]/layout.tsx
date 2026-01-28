@@ -1,11 +1,11 @@
 import type { PropsWithChildren } from "react";
 
 import { DeleteWorkloadModal } from "@/domain/workload/components/delete-workload-modal";
-import { UpdateWorkloadModal } from "@/domain/workload/components/detail/update-workload-modal";
 import { WorkloadDetailPageAside } from "@/domain/workload/components/detail/workload-detail-page-aside";
 import { WorkloadDetailTabs } from "@/domain/workload/components/detail/workload-detail-tabs";
 import { RestartWorkloadModal } from "@/domain/workload/components/restart-workload-modal";
 import { StopWorkloadModal } from "@/domain/workload/components/stop-workload-modal";
+import { UpdateWorkloadModal } from "@/domain/workload/components/update-workload-modal";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import {
   DetailContentSection,

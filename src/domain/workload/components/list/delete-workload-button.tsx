@@ -11,18 +11,23 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface DeleteWorkloadButtonProps {
-  workloadId: string;
+  workloadResourceName: string;
+  workspaceId: number;
   disabled?: boolean;
 }
 
 export function DeleteWorkloadButton({
-  workloadId,
+  workloadResourceName,
+  workspaceId,
   disabled,
 }: DeleteWorkloadButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(WORKLOAD_EVENTS.sendDeleteWorkload, workloadId);
+    publish(WORKLOAD_EVENTS.openDeleteModal, {
+      workloadResourceName,
+      workspaceId,
+    });
   };
 
   return (

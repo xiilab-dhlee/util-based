@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
-import type { WorkloadListType } from "@/domain/workload/schemas/workload.schema";
+import type { ActiveWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
 import {
   CompactCardKey,
@@ -12,7 +12,7 @@ import {
   CompactCardValue,
 } from "@/shared/components/card/compact-card-layer.styled";
 
-interface WorkloadCardProps extends WorkloadListType {
+interface WorkloadCardProps extends ActiveWorkloadResponse {
   isChecked: boolean;
   onCheck: () => void;
 }
