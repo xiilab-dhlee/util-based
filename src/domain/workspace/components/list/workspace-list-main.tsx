@@ -4,10 +4,10 @@ import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { Icon } from "xiilab-ui";
 
-import { useGetAdminAllWorkspaces } from "@/api/generated/admin-workspace/admin-workspace";
+import { useGetAdminWorkspaceList } from "@/api/generated/admin-workspace/admin-workspace";
 import {
-  GetAdminAllWorkspacesOrder,
-  GetAdminAllWorkspacesSort,
+  GetAdminWorkspaceListOrder,
+  GetAdminWorkspaceListSort,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { WorkspaceListBody } from "@/domain/workspace/components/list/workspace-list-body";
 import { WorkspaceListFilter } from "@/domain/workspace/components/list/workspace-list-filter";
@@ -81,12 +81,12 @@ export function WorkspaceListMain() {
     fieldMap: WORKSPACE_SORT_FIELD_MAP,
   });
 
-  const { data, isLoading } = useGetAdminAllWorkspaces({
+  const { data, isLoading } = useGetAdminWorkspaceList({
     pageNo: page - 1,
     pageSize: LIST_PAGE_SIZE,
     keyword: searchText || undefined,
-    sort: sortRequest?.sort ?? GetAdminAllWorkspacesSort.WORKSPACE_NAME,
-    order: sortRequest?.order ?? GetAdminAllWorkspacesOrder.ASC,
+    sort: sortRequest?.sort ?? GetAdminWorkspaceListSort.WORKSPACE_NAME,
+    order: sortRequest?.order ?? GetAdminWorkspaceListOrder.ASC,
   });
 
   const totalSize = data?.totalSize ?? 0;

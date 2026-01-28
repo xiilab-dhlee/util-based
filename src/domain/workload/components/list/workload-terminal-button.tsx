@@ -23,8 +23,8 @@ export function WorkloadTerminalButton({
   const isAdmin = isAdminMode(pathname);
 
   const href = isAdmin
-    ? ROUTES.ADMIN_WORKSPACE_WORKLOAD_TERMINAL(workloadId)
-    : ROUTES.USER_WORKLOAD_TERMINAL(String(workspaceId), workloadId);
+    ? ROUTES.ADMIN_WORKSPACE_WORKLOAD_TERMINAL(workspaceId, workloadId)
+    : ROUTES.USER_WORKLOAD_TERMINAL(workspaceId, workloadId);
 
   return (
     <ColumnRouteIcon

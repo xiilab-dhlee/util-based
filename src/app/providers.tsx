@@ -9,7 +9,6 @@ import { AuthProvider } from "@/shared/providers/auth-provider";
 import { LicenseProvider } from "@/shared/providers/license-provider";
 import { MSWProvider } from "@/shared/providers/msw-provider";
 import { QueryProvider } from "@/shared/providers/query-provider";
-import { ServiceProvider } from "@/shared/providers/service-provider";
 import { StoreProvider } from "@/shared/providers/store-provider";
 import { ThemeProvider } from "@/shared/providers/theme-provider";
 
@@ -20,12 +19,10 @@ export function Providers({ children }: PropsWithChildren) {
         <LicenseProvider>
           <AuthProvider>
             <StoreProvider>
-              <ServiceProvider>
-                <ThemeProvider>
-                  <Suspense fallback={<MySpinner />}>{children}</Suspense>
-                  <ToastContainer hideProgressBar />
-                </ThemeProvider>
-              </ServiceProvider>
+              <ThemeProvider>
+                <Suspense fallback={<MySpinner />}>{children}</Suspense>
+                <ToastContainer hideProgressBar />
+              </ThemeProvider>
             </StoreProvider>
           </AuthProvider>
         </LicenseProvider>

@@ -172,7 +172,7 @@ export function CreateSnapshotRegistryModal({
     if (!portStr) return false;
     const num = Number(portStr);
     return (
-      !isNaN(num) &&
+      !Number.isNaN(num) &&
       num >= 1 &&
       num <= createPrivateSnapshotImageBodyPortItemPortMax
     );

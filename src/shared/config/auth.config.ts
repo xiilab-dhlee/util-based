@@ -505,6 +505,18 @@ const keycloakCallbacks: NextAuthOptions["callbacks"] = {
       return createKeycloakJwt(token, user, account);
     }
 
+    // 필수 토큰 정보 누락 시 즉시 에러 처리 (NaN/무한 갱신 루프 방지)
+    if (!token.expires_at || !token.refresh_token) {
+      console.error(
+        "[Auth] JWT 콜백 실패: expires_at 또는 refresh_token 누락",
+        {
+          hasExpiresAt: Boolean(token.expires_at),
+          hasRefreshToken: Boolean(token.refresh_token),
+        },
+      );
+      return { ...token, error: "InvalidTokenState" };
+    }
+
     // 토큰 유효성 검사
     const expiresAt = token.expires_at as number;
     const remainingSeconds = Math.floor((expiresAt * 1000 - Date.now()) / 1000);

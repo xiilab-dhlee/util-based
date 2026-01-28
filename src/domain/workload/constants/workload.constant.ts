@@ -8,15 +8,9 @@ import {
   GetTerminatedWorkloadsOrder,
   GetTerminatedWorkloadsSort,
   type TerminatedWorkloadItemReclaimStatus,
+  type WorkloadImageDetailImageType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { AntdTableSortState } from "@/shared/types/core.model";
-
-export const WORKLOAD_IMAGE_TYPES = [
-  "HUB",
-  "BUILTIN",
-  "INTERNAL_REGISTRY",
-  "EXTERNAL_REGISTRY",
-] as const;
 
 /**
  * 워크로드 잡 타입 라벨 상수 (짧은 버전)
@@ -222,12 +216,15 @@ export const RECLAIM_STATUS_COLOR_MAP = {
 /**
  * 워크로드 이미지 타입 라벨 상수
  */
-export const WORKLOAD_IMAGE_TYPE_LABEL_MAP = {
-  BUILTIN: "빌트인 이미지",
+export const WORKLOAD_IMAGE_TYPE_LABEL_MAP: Record<
+  WorkloadImageDetailImageType,
+  string
+> = {
+  BUILT_IN: "빌트인 이미지",
   HUB: "허브",
-  INTERNAL_REGISTRY: "내부 레지스트리",
-  EXTERNAL_REGISTRY: "외부 레지스트리",
-} as const satisfies Record<(typeof WORKLOAD_IMAGE_TYPES)[number], string>;
+  PRIVATE: "개인 레지스트리",
+  PUBLIC: "공유 레지스트리",
+} as const;
 
 /**
  * 잡 타입에 따른 라벨 반환 (워크로드 공용)

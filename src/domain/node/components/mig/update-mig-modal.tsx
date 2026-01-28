@@ -28,6 +28,7 @@ import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { UpdateMigTooltipTitle } from "@/shared/components/tooltip-title/update-mig-tooltip-title";
 import { NODE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+import { customScrollbar } from "@/styles/mixins/scrollbar";
 
 type ErrorState = {
   type: "not_found" | "error" | null;
@@ -43,7 +44,7 @@ const NVIDIA_MIG_DOC_URL =
 
 export function UpdateMigModal() {
   const [open, setOpen] = useState(false);
-  const [nodeName, setNodeName] = useState("");
+  const [nodeName, setNodeName] = useState<string | null>(null);
   const [applyOnce, setApplyOnce] = useState<ApplyOnceOption>(
     APPLY_ONCE_OPTIONS.YES,
   );
@@ -79,6 +80,7 @@ export function UpdateMigModal() {
 
   const handleSubmit = () => {
     if (isPending) return;
+    if (nodeName === null) return;
 
     const payload = MigUtil.toRequestPayload(
       migGpus,
@@ -218,7 +220,7 @@ export function UpdateMigModal() {
       icon={<Icon name="Information" color="#fff" size={14} />}
       modalWidth={580}
       open={open}
-      title={nodeName}
+      title={nodeName ?? "-"}
       showCancelButton
       cancelText="취소"
       onCancel={handleCancel}
@@ -238,49 +240,64 @@ export function UpdateMigModal() {
       cancelButtonProps={{ disabled: isPending }}
     >
       <Container>
-        {renderOverlay()}
+        <Panel>
+          {renderOverlay()}
 
-        <LeftPanel>
-          <Field>
-            <FieldTitle>GPU 목록</FieldTitle>
-          </Field>
-          <GpuListBody>
-            {migGpus.map((gpu) => (
-              <MigGpuItem key={gpu.gpuIndex} {...gpu} disabled={isPending} />
-            ))}
-          </GpuListBody>
-        </LeftPanel>
+          <LeftPanel>
+            <Field>
+              <FieldTitle>GPU 목록</FieldTitle>
+            </Field>
+            <GpuListBody>
+              {migGpus.map((gpu) => (
+                <MigGpuItem
+                  key={gpu.gpuIndex}
+                  {...gpu}
+                  disabled={
+                    isPending ||
+                    (isApplyToAll && gpu.gpuIndex !== selectedMigGpuIndex)
+                  }
+                />
+              ))}
+            </GpuListBody>
+          </LeftPanel>
 
-        <RightPanel>
-          <Field>
-            <FieldTitle>
-              MIG 설정
-              <GuideTooltip maxWidth={300} title={<UpdateMigTooltipTitle />} />
-            </FieldTitle>
-            <ExternalGuide>
-              Nvidia Profile 메뉴얼 원하시면{" "}
-              <a
-                href={NVIDIA_MIG_DOC_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                여기
-              </a>
-              를 클릭해 주세요.
-            </ExternalGuide>
-          </Field>
+          <RightPanelWrapper>
+            <RightPanel>
+              <Field>
+                <FieldTitle>
+                  MIG 설정
+                  <GuideTooltip
+                    maxWidth={300}
+                    title={<UpdateMigTooltipTitle />}
+                  />
+                </FieldTitle>
+                <ExternalGuide>
+                  Nvidia Profile 메뉴얼 원하시면{" "}
+                  <a
+                    href={NVIDIA_MIG_DOC_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    여기
+                  </a>
+                  를 클릭해 주세요.
+                </ExternalGuide>
+              </Field>
 
-          <FilterRow>
-            <MigCountSelect disabled={isPending} />
-            <MigConfigSelect disabled={isPending} />
-          </FilterRow>
+              <FilterRow>
+                <MigCountSelect disabled={isPending} />
+                <MigConfigSelect disabled={isPending} />
+              </FilterRow>
 
-          <ConfigDisplayArea>
-            <ConfigDisplayWrapper>
-              <SelectDisplayConfig />
-            </ConfigDisplayWrapper>
-          </ConfigDisplayArea>
-
+              <ConfigDisplayArea>
+                <ConfigDisplayWrapper>
+                  <SelectDisplayConfig />
+                </ConfigDisplayWrapper>
+              </ConfigDisplayArea>
+            </RightPanel>
+          </RightPanelWrapper>
+        </Panel>
+        <ApplyOncePanel>
           <Field>
             <FieldTitle>
               일괄 적용
@@ -309,7 +326,7 @@ export function UpdateMigModal() {
               />
             </RadioItem>
           </ApplyOnceWrapper>
-        </RightPanel>
+        </ApplyOncePanel>
       </Container>
     </Modal>
   );
@@ -318,15 +335,21 @@ export function UpdateMigModal() {
 const Container = styled.div`
   position: relative;
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Panel = styled.div`
+  display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
   gap: 10px;
 `;
 
 const panelStyle = css`
   border: 1px solid var(--border-color);
   border-radius: 4px 4px 2px 2px;
-  height: 346px;
+  height: 276px;
   padding-top: 14px;
   padding-bottom: 10px;
   display: flex;
@@ -340,9 +363,23 @@ const LeftPanel = styled.div`
   ${panelStyle}
 `;
 
-const RightPanel = styled.div`
+const RightPanelWrapper = styled.div`
   width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const RightPanel = styled.div`
   ${panelStyle}
+  height: auto;
+  flex: 1;
+`;
+
+const ApplyOncePanel = styled.div`
+  ${panelStyle}
+  height: auto;
+  padding-bottom: 14px;
 `;
 
 const Field = styled.div`
@@ -387,6 +424,8 @@ const GpuListBody = styled.div`
   flex-direction: column;
   padding: 4px;
   overflow-y: auto;
+
+  ${customScrollbar()}
 `;
 
 const FilterRow = styled.div`
@@ -399,6 +438,7 @@ const FilterRow = styled.div`
 
 const ConfigDisplayArea = styled.div`
   flex: 1;
+  overflow: hidden;
 `;
 
 const ConfigDisplayWrapper = styled.div`
@@ -407,7 +447,7 @@ const ConfigDisplayWrapper = styled.div`
   padding: 10px 12px;
   border-radius: 2px;
   max-height: 190px;
-  margin: 0 10px 18px;
+  margin: 0 10px 0 10px;
   gap: 4px;
   display: flex;
   flex-direction: column;

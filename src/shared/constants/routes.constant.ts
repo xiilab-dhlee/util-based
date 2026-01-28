@@ -61,18 +61,16 @@ export const ROUTES = {
     `${MODE.ADMIN}/workspace/${id}/member`,
   ADMIN_WORKSPACE_DISABLED: (id: string) =>
     `${MODE.ADMIN}/workspace/${id}/disabled`,
-  ADMIN_WORKSPACE_WORKLOAD_DETAIL: (workspaceId: string, id: string) =>
+  ADMIN_WORKSPACE_WORKLOAD_DETAIL: (workspaceId: number, id: string) =>
     `${MODE.ADMIN}/workspace/workload/${id}?workspaceId=${workspaceId}`,
-  ADMIN_WORKSPACE_WORKLOAD_LOG: (id: string) =>
-    `${MODE.ADMIN}/workspace/workload/${id}/log`,
-  ADMIN_WORKSPACE_WORKLOAD_FILE: (id: string) =>
-    `${MODE.ADMIN}/workspace/workload/${id}/file`,
-  ADMIN_WORKSPACE_WORKLOAD_MONITORING: (id: string) =>
-    `${MODE.ADMIN}/workspace/workload/${id}/monitoring`,
-  ADMIN_WORKSPACE_WORKLOAD_SECURITY: (id: string) =>
-    `${MODE.ADMIN}/workspace/workload/${id}/security`,
-  ADMIN_WORKSPACE_WORKLOAD_TERMINAL: (id: string) =>
-    `${MODE.ADMIN}/workspace/workload/${id}/terminal`,
+  ADMIN_WORKSPACE_WORKLOAD_LOG: (workspaceId: number, id: string) =>
+    `${MODE.ADMIN}/workspace/workload/${id}/log?workspaceId=${workspaceId}`,
+  ADMIN_WORKSPACE_WORKLOAD_FILE: (workspaceId: number, id: string) =>
+    `${MODE.ADMIN}/workspace/workload/${id}/file?workspaceId=${workspaceId}`,
+  ADMIN_WORKSPACE_WORKLOAD_MONITORING: (workspaceId: number, id: string) =>
+    `${MODE.ADMIN}/workspace/workload/${id}/monitoring?workspaceId=${workspaceId}`,
+  ADMIN_WORKSPACE_WORKLOAD_TERMINAL: (workspaceId: number, id: string) =>
+    `${MODE.ADMIN}/workspace/workload/${id}/terminal?workspaceId=${workspaceId}`,
 
   ADMIN_REQUEST_RESOURCE: `${MODE.ADMIN}/request-resource`,
   ADMIN_REVOKE_RESOURCE_HISTORY: `${MODE.ADMIN}/revoke-history`,
@@ -124,17 +122,17 @@ export const ROUTES = {
   // 워크로드 (동적 함수)
   USER_WORKLOAD: `${MODE.USER}/workload`,
   USER_WORKLOAD_DISABLED: `${MODE.USER}/workload/disabled`,
-  USER_WORKLOAD_DETAIL: (workspaceId: string, id: string) =>
+  USER_WORKLOAD_DETAIL: (workspaceId: number, id: string) =>
     `${MODE.USER}/workload/${id}?workspaceId=${workspaceId}`,
-  USER_WORKLOAD_LOG: (workspaceId: string, id: string) =>
+  USER_WORKLOAD_LOG: (workspaceId: number, id: string) =>
     `${MODE.USER}/workload/${id}/log?workspaceId=${workspaceId}`,
-  USER_WORKLOAD_FILE: (workspaceId: string, id: string) =>
+  USER_WORKLOAD_FILE: (workspaceId: number, id: string) =>
     `${MODE.USER}/workload/${id}/file?workspaceId=${workspaceId}`,
-  USER_WORKLOAD_MONITORING: (workspaceId: string, id: string) =>
+  USER_WORKLOAD_MONITORING: (workspaceId: number, id: string) =>
     `${MODE.USER}/workload/${id}/monitoring?workspaceId=${workspaceId}`,
-  USER_WORKLOAD_SECURITY: (workspaceId: string, id: string) =>
+  USER_WORKLOAD_SECURITY: (workspaceId: number, id: string) =>
     `${MODE.USER}/workload/${id}/security?workspaceId=${workspaceId}`,
-  USER_WORKLOAD_TERMINAL: (workspaceId: string, id: string) =>
+  USER_WORKLOAD_TERMINAL: (workspaceId: number, id: string) =>
     `${MODE.USER}/workload/${id}/terminal?workspaceId=${workspaceId}`,
 
   // 레지스트리 (동적 함수 - 복수 파라미터)
@@ -172,6 +170,7 @@ export const ROUTES = {
   // ============================================
   AUTH_SIGNIN: "/signin",
   AUTH_SIGNUP: "/signup",
+  AUTH_SIGNUP_ADMIN: "/signup/admin",
   AUTH_LICENSE: "/license",
 
   // ============================================

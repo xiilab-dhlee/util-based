@@ -23,7 +23,7 @@ type GpuType = "normal" | "mig" | "mps";
 
 interface UserWorkloadType {
   id: string;
-  workspaceId: string;
+  workspaceId: number;
   workloadName: string;
   workspaceName: string;
   nodeName: string;
@@ -36,7 +36,7 @@ interface UserWorkloadType {
 const USER_WORKLOAD_MOCK: UserWorkloadType[] = [
   {
     id: "1",
-    workspaceId: "ws-1",
+    workspaceId: 1,
     workloadName: "workload-1",
     workspaceName: "workspace-1",
     nodeName: "node-1",
@@ -46,7 +46,7 @@ const USER_WORKLOAD_MOCK: UserWorkloadType[] = [
   },
   {
     id: "2",
-    workspaceId: "ws-2",
+    workspaceId: 2,
     workloadName: "workload-2",
     workspaceName: "workspace-2",
     nodeName: "node-2",
@@ -56,7 +56,7 @@ const USER_WORKLOAD_MOCK: UserWorkloadType[] = [
   },
   {
     id: "3",
-    workspaceId: "ws-3",
+    workspaceId: 3,
     workloadName: "workload-3",
     workspaceName: "workspace-3",
     nodeName: "node-3",
@@ -66,7 +66,7 @@ const USER_WORKLOAD_MOCK: UserWorkloadType[] = [
   },
   {
     id: "4",
-    workspaceId: "ws-4",
+    workspaceId: 4,
     workloadName: "workload-4",
     workspaceName: "workspace-4",
     nodeName: "node-4",
@@ -76,7 +76,7 @@ const USER_WORKLOAD_MOCK: UserWorkloadType[] = [
   },
   {
     id: "5",
-    workspaceId: "ws-5",
+    workspaceId: 5,
     workloadName: "workload-5",
     workspaceName: "workspace-5",
     nodeName: "node-5",
@@ -86,7 +86,7 @@ const USER_WORKLOAD_MOCK: UserWorkloadType[] = [
   },
   {
     id: "6",
-    workspaceId: "ws-6",
+    workspaceId: 6,
     workloadName: "workload-6",
     workspaceName: "workspace-6",
     nodeName: "node-6",

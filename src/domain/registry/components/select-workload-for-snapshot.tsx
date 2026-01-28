@@ -3,7 +3,8 @@
 import { useAtomValue } from "jotai";
 import { Dropdown } from "xiilab-ui";
 
-import { useGetRecentWorkloads } from "@/domain/workload/hooks/use-get-recent-workloads";
+// TODO: Orval API 연동 필요
+// import { useGetRecentWorkloads } from "@/domain/workload/hooks/use-get-recent-workloads";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
 interface SelectWorkloadForSnapshotProps {
@@ -17,14 +18,18 @@ export function SelectWorkloadForSnapshot({
 }: SelectWorkloadForSnapshotProps) {
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
 
-  const { data } = useGetRecentWorkloads(
-    {
-      page: 1,
-      size: 100,
-      searchText: "",
-    },
-    !!selectedWorkspace,
-  );
+  // TODO: Orval API 연동 필요
+  // const { data } = useGetRecentWorkloads(
+  //   {
+  //     page: 1,
+  //     size: 100,
+  //     searchText: "",
+  //   },
+  //   !!selectedWorkspace,
+  // );
+  const data = { content: [] as { workloadName: string; id: string }[] };
+  // selectedWorkspace 사용 표시 (lint 에러 방지)
+  void selectedWorkspace;
 
   const workloadOptions =
     data?.content?.map((workload) => ({

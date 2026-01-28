@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   getGetUrgentStandbyWorkloadsQueryKey,
   useAddWorkloadToUrgentStandby,
-  useRemoveWorkloadFromUrgentStandby,
+  useRemoveWorkloadFromUrgentQueue,
   useUpdateUrgentStandbyOrder,
 } from "@/api/generated/admin-queue/admin-queue";
 import { getGetPendingWorkloadsQueryKey } from "@/api/generated/admin-workload/admin-workload";
@@ -66,12 +66,12 @@ export function useUpdateUrgentStandbyOrderAction(
  *
  * 삭제 성공 시 긴급 대기열과 Pending 워크로드 목록을 자동으로 무효화합니다.
  */
-export function useRemoveWorkloadFromUrgentStandbyAction(
-  options?: Parameters<typeof useRemoveWorkloadFromUrgentStandby>[0],
+export function useRemoveWorkloadFromUrgentQueueAction(
+  options?: Parameters<typeof useRemoveWorkloadFromUrgentQueue>[0],
 ) {
   const queryClient = useQueryClient();
 
-  return useRemoveWorkloadFromUrgentStandby({
+  return useRemoveWorkloadFromUrgentQueue({
     ...options,
     mutation: {
       ...options?.mutation,

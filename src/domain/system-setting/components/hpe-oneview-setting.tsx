@@ -4,7 +4,8 @@ import styled from "styled-components";
 import { Button, Typography } from "xiilab-ui";
 
 import { SettingBox } from "@/domain/system-setting/components/setting-box";
-import { useGetHpe } from "@/domain/system-setting/hooks/use-get-hpe";
+// TODO: Orval API 연동 필요
+// import { useGetHpe } from "@/domain/system-setting/hooks/use-get-hpe";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -20,7 +21,12 @@ import {
  */
 export function HpeOneviewSetting() {
   const publish = usePublish();
-  const { data, isLoading, isError, refetch } = useGetHpe();
+  // TODO: Orval API 연동 필요
+  // const { data, isLoading, isError, refetch } = useGetHpe();
+  const data = null as { id: string; serverIp: string } | null;
+  const isLoading = false;
+  const isError = false;
+  const refetch = () => {};
 
   const isEmpty = !data && !isLoading;
 
@@ -45,7 +51,8 @@ export function HpeOneviewSetting() {
           variant="outlined"
           size="small"
           onClick={handleConnect}
-          disabled={isLoading}
+          // disabled={isLoading}
+          disabled
         >
           {data ? "수정" : "연동"}
         </Button>

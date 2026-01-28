@@ -1,6 +1,6 @@
 import { type Atom, atom } from "jotai";
 
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
+import type { FileTreeType } from "@/shared/types/core.model";
 
 /**
  * 트리에서 조건에 맞는 노드를 찾는 범용 함수
@@ -107,36 +107,6 @@ export function getAncestorPaths(path: string): string[] {
   }
 
   return ancestors;
-}
-
-/**
- * 경로 배열에서 최상위 경로만 필터링하는 함수
- *
- * 하위 경로는 상위 경로에 포함되므로, 상위 경로만 남기고 중복을 제거합니다.
- * 예: ["/folder", "/folder/file1", "/folder/file2"] → ["/folder"]
- *
- * @param paths - 필터링할 경로 배열
- * @returns 최상위 경로만 포함된 배열
- */
-export function filterToRootPaths(paths: string[]): string[] {
-  if (paths.length === 0) return [];
-
-  // 경로 길이순으로 정렬 (짧은 것이 상위 경로)
-  const sorted = [...paths].sort((a, b) => a.length - b.length);
-  const rootPaths: string[] = [];
-
-  for (const path of sorted) {
-    // 이미 추가된 상위 경로의 하위인지 확인
-    const isChildOfExisting = rootPaths.some(
-      (rootPath) => path.startsWith(`${rootPath}/`) || path === rootPath,
-    );
-
-    if (!isChildOfExisting) {
-      rootPaths.push(path);
-    }
-  }
-
-  return rootPaths;
 }
 
 /**

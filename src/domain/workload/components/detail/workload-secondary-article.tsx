@@ -1,19 +1,17 @@
 "use client";
 
-import { format } from "date-fns";
-import { useParams, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
+import type { WorkloadDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-sourcecode-card";
 import { workloadEnvColumn } from "@/domain/workload/components/detail/workload-env-column";
 import { workloadPortColumn } from "@/domain/workload/components/detail/workload-port-column";
-import { useGetWorkload } from "@/domain/workload/hooks/use-get-workload";
+import { useWorkloadStatusPolling } from "@/domain/workload/hooks/use-workload-status-polling";
 import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { SecurityLevelText } from "@/shared/components/text/security-status-text";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
@@ -23,35 +21,41 @@ import {
   DetailContentSubTitle,
 } from "@/styles/layers/detail-page-layers.styled";
 
+interface WorkloadSecondaryArticleProps {
+  data?: WorkloadDetailResponse;
+  workspaceId: number;
+}
+
 /**
  * 워크로드 추가 정보 아티클 컴포넌트
  *
- * 워크로드 이미지, 환경 변수, 포트, 소스코드, 볼륨, 생성자, 생성일을 표시합니다
+ * 워크로드 이미지, 환경 변수, 포트, 소스코드, 볼륨을 표시합니다
  */
-export function WorkloadSecondaryArticle() {
+export function WorkloadSecondaryArticle({
+  data,
+  workspaceId,
+}: WorkloadSecondaryArticleProps) {
   const publish = usePublish();
 
-  const { id } = useParams();
-  const searchParams = useSearchParams();
-
-  // hooks는 항상 최상위에서 호출
-  const { data } = useGetWorkload({
-    workspaceId: Number(searchParams?.get("workspaceId")),
-    workloadId: String(id),
+  const { status } = useWorkloadStatusPolling({
+    workspaceId,
+    workloadResourceName: data?.workloadResourceName ?? "",
+    enabled: Boolean(workspaceId && data?.workloadResourceName),
   });
 
   const handleClickCommitImage = () => {
     publish(WORKLOAD_EVENTS.sendCommitImage, data);
   };
 
-  const { label, icon } = getWorkloadImageTypeInfo(data?.image.type);
+  const { label, icon } = getWorkloadImageTypeInfo(data?.image?.imageType);
+  const isRunning = status === "RUNNING";
 
   return (
     <Container>
       <Pane>
         {/* 이미지 영역 */}
         <DetailContentSubTitle>이미지</DetailContentSubTitle>
-        <KeyValueContainer className="connect">
+        <KeyValueContainer className={isRunning ? "connect" : "split"}>
           <ImageKey>이미지</ImageKey>
           <Value>
             <ImageName data-testid={WORKLOAD_SELECTOR.DETAIL_IMAGE_TYPE}>
@@ -62,73 +66,29 @@ export function WorkloadSecondaryArticle() {
             </ImageName>
             <div>
               <Code data-testid={WORKLOAD_SELECTOR.DETAIL_IMAGE_NAME}>
-                {data?.image.name}
+                {data?.image?.harborImageName}
               </Code>
             </div>
           </Value>
         </KeyValueContainer>
-        <KeyValueContainer className="connect">
-          <LeftKey>내부 레지스트리</LeftKey>
-          <Value>
-            <CreateModelButton
-              onClick={handleClickCommitImage}
-              title="Commit Image 생성"
-              data-testid={WORKLOAD_SELECTOR.DETAIL_COMMIT_IMAGE_BUTTON}
-            />
-          </Value>
-        </KeyValueContainer>
-        <KeyValueContainer className="split">
-          <LeftKey>보안검사 결과</LeftKey>
-          <Value>
-            <SecurityStatuses>
-              <SecurityLevelText type="engText" status="CRITICAL">
-                <SecurityCount
-                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_CRITICAL}
-                >
-                  {data?.scanResult?.critical?.toLocaleString() || "-"}개
-                </SecurityCount>
-              </SecurityLevelText>
-              <SecurityLevelText type="engText" status="HIGH">
-                <SecurityCount
-                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_HIGH}
-                >
-                  {data?.scanResult?.high?.toLocaleString() || "-"}개
-                </SecurityCount>
-              </SecurityLevelText>
-              <SecurityLevelText type="engText" status="MEDIUM">
-                <SecurityCount
-                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_MEDIUM}
-                >
-                  {data?.scanResult?.medium?.toLocaleString() || "-"}개
-                </SecurityCount>
-              </SecurityLevelText>
-              <SecurityLevelText type="engText" status="LOW">
-                <SecurityCount
-                  data-testid={WORKLOAD_SELECTOR.DETAIL_SECURITY_LEVEL_LOW}
-                >
-                  {data?.scanResult?.low?.toLocaleString() || "-"}개
-                </SecurityCount>
-              </SecurityLevelText>
-            </SecurityStatuses>
-          </Value>
-        </KeyValueContainer>
-        {/* <DetailContentSubTitle>Output</DetailContentSubTitle>
-        <KeyValueContainer className="split">
-          <LeftKey>Output 경로</LeftKey>
-          <Value>
-            <Text>
-              python train.py --save_model_dir=/input/ASTRAGO
-              --data_dir=/tmp/test/data.yaml --image_size=640 --batch=16
-              --epoch=120 --learning_rate=0.01
-            </Text>
-          </Value>
-        </KeyValueContainer> */}
+        {isRunning && (
+          <KeyValueContainer className="split">
+            <LeftKey>개인 레지스트리</LeftKey>
+            <Value>
+              <CreateModelButton
+                onClick={handleClickCommitImage}
+                title="Snapshot Image 생성"
+                data-testid={WORKLOAD_SELECTOR.DETAIL_COMMIT_IMAGE_BUTTON}
+              />
+            </Value>
+          </KeyValueContainer>
+        )}
         <DetailContentSubTitle>실행 경로, 실행 명령어</DetailContentSubTitle>
         <KeyValueContainer className="connect">
           <LeftKey>실행 경로</LeftKey>
           <Value>
             <Text data-testid={WORKLOAD_SELECTOR.DETAIL_EXEC_PATH}>
-              {data?.execPath || "-"}
+              {data?.executionDirectory || "-"}
             </Text>
           </Value>
         </KeyValueContainer>
@@ -136,7 +96,7 @@ export function WorkloadSecondaryArticle() {
           <LeftKey>실행 명령어</LeftKey>
           <Value>
             <Text data-testid={WORKLOAD_SELECTOR.DETAIL_EXEC_COMMAND}>
-              {data?.execCommand || "-"}
+              {data?.executionCommand || "-"}
             </Text>
           </Value>
         </KeyValueContainer>
@@ -144,7 +104,7 @@ export function WorkloadSecondaryArticle() {
         <KeyValueContainer className="connect">
           <CustomizedTable
             columns={workloadEnvColumn}
-            data={data?.envs || []}
+            data={data?.env || []}
             headerHeight={26}
             columnHeight={32}
             bodyBgColor="transparent"
@@ -155,7 +115,7 @@ export function WorkloadSecondaryArticle() {
         <KeyValueContainer className="split">
           <CustomizedTable
             columns={workloadPortColumn}
-            data={data?.ports || []}
+            data={data?.port || []}
             headerHeight={26}
             columnHeight={32}
             bodyBgColor="transparent"
@@ -167,17 +127,7 @@ export function WorkloadSecondaryArticle() {
           <LeftKey>생성자</LeftKey>
           <Value>
             <Text data-testid={WORKLOAD_SELECTOR.DETAIL_CREATOR}>
-              {data?.creatorName || "-"}
-            </Text>
-          </Value>
-        </KeyValueContainer>
-        <KeyValueContainer className="connect">
-          <LeftKey>생성일</LeftKey>
-          <Value>
-            <Text data-testid={WORKLOAD_SELECTOR.DETAIL_CREATED_DATE}>
-              {data?.creatorDate
-                ? format(data?.creatorDate, "yyyy.MM.dd")
-                : "-"}
+              {data?.creatorId || "-"}
             </Text>
           </Value>
         </KeyValueContainer>
@@ -190,19 +140,12 @@ export function WorkloadSecondaryArticle() {
             <Codes>
               <Code>
                 <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_TYPE}>
-                  {data?.gpuType || ""}
+                  {data?.resourcePreset?.resource?.gpu?.gpuType || ""}
                 </span>
                 &nbsp;|&nbsp;
                 <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_NAME}>
-                  {data?.gpuName || ""}
+                  {data?.resourcePreset?.resource?.gpu?.gpuName || ""}
                 </span>
-              </Code>
-              <Code>
-                GPU-MEM |&nbsp;
-                <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_MEMORY_GB}>
-                  {data?.gpuMemoryGb ?? ""}
-                </span>
-                GB
               </Code>
             </Codes>
           </Value>
@@ -215,7 +158,8 @@ export function WorkloadSecondaryArticle() {
                 GPU
                 <ResourceCount>
                   <span data-testid={WORKLOAD_SELECTOR.DETAIL_GPU_COUNT}>
-                    {data?.gpuCount ?? ""}
+                    {data?.resourcePreset?.resource?.gpu?.detail?.normal
+                      ?.requestCount ?? ""}
                   </span>
                   개
                 </ResourceCount>
@@ -224,7 +168,7 @@ export function WorkloadSecondaryArticle() {
                 CPU
                 <ResourceCount>
                   <span data-testid={WORKLOAD_SELECTOR.DETAIL_CPU_CORE}>
-                    {data?.cpuCore ?? ""}
+                    {data?.resourcePreset?.resource?.cpu?.requestCore ?? ""}
                   </span>
                   Core
                 </ResourceCount>
@@ -233,7 +177,12 @@ export function WorkloadSecondaryArticle() {
                 MEM
                 <ResourceCount>
                   <span data-testid={WORKLOAD_SELECTOR.DETAIL_MEMORY_GB}>
-                    {data?.memoryGb ?? ""}
+                    {data?.resourcePreset?.resource?.memory?.requestByte
+                      ? Math.round(
+                          data.resourcePreset.resource.memory.requestByte /
+                            (1024 * 1024 * 1024),
+                        )
+                      : ""}
                   </span>
                   GB
                 </ResourceCount>
@@ -245,16 +194,29 @@ export function WorkloadSecondaryArticle() {
         <KeyValueContainer className="connect">
           <RightKey>소스코드</RightKey>
           <Value>
-            {data?.sourcecodes.map((v) => (
-              <WorkloadSourcecodeCard key={v.sourceCodeId} {...v} />
-            ))}
+            {data?.sourceCode && (
+              <WorkloadSourcecodeCard
+                sourceCodeId={data.sourceCode.sourceCodeId}
+                sourceCodeName={data.sourceCode.sourceCodeName}
+                gitUrl={data.sourceCode.gitUrl}
+                mountPath={data.sourceCode.mountPath}
+                sourceCodeType={data.sourceCode.sourceCodeType}
+              />
+            )}
           </Value>
         </KeyValueContainer>
         <KeyValueContainer>
           <RightKey>볼륨</RightKey>
           <Value>
-            {data?.volumes.map((v) => (
-              <WorkloadVolumeCard key={v.uid} {...v} />
+            {data?.volume?.map((v) => (
+              <WorkloadVolumeCard
+                key={v.volumeId}
+                volumeId={v.volumeId}
+                volumeName={v.volumeName}
+                volumeType={v.volumeType}
+                mountPath={v.mountPath}
+                volumeSize={v.volumeSize}
+              />
             ))}
           </Value>
         </KeyValueContainer>
@@ -300,7 +262,7 @@ const KeyValueContainer = styled.div`
   overflow-x: hidden;
 
   &.connect {
-    margin-bottom: 10px;
+    margin-bottom: 14px;
   }
 
   &.split {
@@ -358,20 +320,6 @@ const Code = styled.div`
   display: inline-block;
 `;
 
-const SecurityStatuses = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 20px;
-`;
-
-const SecurityCount = styled.span`
-  font-weight: 400;
-  font-size: 12px;
-  color: #22212a;
-  margin-left: 4px;
-`;
-
 const ResourceCount = styled.span`
   font-weight: 400;
   font-size: 14px;
@@ -401,4 +349,5 @@ const Resource = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
 `;

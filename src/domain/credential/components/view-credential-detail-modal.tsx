@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styled from "styled-components";
-import { Icon, InfoModal, Typography } from "xiilab-ui";
+import { Icon, InfoModal } from "xiilab-ui";
 
 import { useGetCredentialDetail } from "@/api/generated/credential/credential";
 import { getCredentialTypeInfo } from "@/domain/credential/constants/credential.constant";
@@ -10,6 +9,15 @@ import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { CREDENTIAL_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
+import {
+  ModalDetailCard,
+  ModalDetailContainer,
+  ModalDetailDivider,
+  ModalDetailLabel,
+  ModalDetailRow,
+  ModalDetailSectionTitle,
+  ModalDetailValue,
+} from "@/styles/layers/modal-detail-layers.styled";
 
 interface Payload {
   accountId: string;
@@ -58,100 +66,53 @@ export function ViewCredentialDetailModal() {
       {isError ? (
         <DataErrorState onRetry={refetch} />
       ) : (
-        <Container>
-          <DetailCard>
+        <ModalDetailContainer>
+          <ModalDetailCard>
             {/* 기본 정보 */}
-            <SectionTitle>기본 정보</SectionTitle>
-            <DetailRow>
-              <DetailLabel>타입</DetailLabel>
-              <DetailValue>
+            <ModalDetailSectionTitle>기본 정보</ModalDetailSectionTitle>
+            <ModalDetailRow>
+              <ModalDetailLabel>타입</ModalDetailLabel>
+              <ModalDetailValue>
                 {getCredentialTypeInfo(data?.credentialType).label}
-              </DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>이름</DetailLabel>
-              <DetailValue>{data?.credentialName || "-"}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>설명</DetailLabel>
-              <DetailValue>{data?.description || "-"}</DetailValue>
-            </DetailRow>
+              </ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel>이름</ModalDetailLabel>
+              <ModalDetailValue>{data?.credentialName || "-"}</ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel>설명</ModalDetailLabel>
+              <ModalDetailValue>{data?.description || "-"}</ModalDetailValue>
+            </ModalDetailRow>
 
-            <Divider />
+            <ModalDetailDivider />
 
             {/* 설정 내용 */}
-            <SectionTitle>설정 내용</SectionTitle>
-            <DetailRow>
-              <DetailLabel>아이디</DetailLabel>
-              <DetailValue>{data?.credentialAccountId || "-"}</DetailValue>
-            </DetailRow>
+            <ModalDetailSectionTitle>설정 내용</ModalDetailSectionTitle>
+            <ModalDetailRow>
+              <ModalDetailLabel>아이디</ModalDetailLabel>
+              <ModalDetailValue>
+                {data?.credentialAccountId || "-"}
+              </ModalDetailValue>
+            </ModalDetailRow>
 
-            <Divider />
+            <ModalDetailDivider />
 
             {/* 생성 정보 */}
-            <SectionTitle>생성 정보</SectionTitle>
-            <DetailRow>
-              <DetailLabel>생성자</DetailLabel>
-              <DetailValue>{data?.creatorName || "-"}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>생성일</DetailLabel>
-              <DetailValue>{formatDateSafely(data?.createdAt)}</DetailValue>
-            </DetailRow>
-          </DetailCard>
-        </Container>
+            <ModalDetailSectionTitle>생성 정보</ModalDetailSectionTitle>
+            <ModalDetailRow>
+              <ModalDetailLabel>생성자</ModalDetailLabel>
+              <ModalDetailValue>{data?.creatorName || "-"}</ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel>생성일</ModalDetailLabel>
+              <ModalDetailValue>
+                {formatDateSafely(data?.createdAt)}
+              </ModalDetailValue>
+            </ModalDetailRow>
+          </ModalDetailCard>
+        </ModalDetailContainer>
       )}
     </InfoModal>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-`;
-
-const DetailCard = styled.div`
-  border-radius: 2px;
-  border: 1px solid #e9e9e9;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  width: 100%;
-`;
-
-const SectionTitle = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  color: #000;
-`;
-
-const DetailRow = styled.div`
-  display: flex;
-`;
-
-const DetailLabel = styled(Typography.Text).attrs({
-  variant: "body-2-2",
-})`
-  color: #484848;
-  min-width: 82px;
-  margin-right: 24px;
-`;
-
-const DetailValue = styled(Typography.Text).attrs({
-  variant: "subtitle-2-3",
-})`
-  color: #000;
-  word-break: break-all;
-`;
-
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 4px 0;
-`;

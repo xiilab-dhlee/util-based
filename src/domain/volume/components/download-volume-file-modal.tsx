@@ -12,7 +12,7 @@ import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { AxiosService } from "@/shared/api/axios";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { filterToRootPaths } from "@/shared/state/filetree.atom";
+import { filterToRootPaths } from "@/shared/utils/filetree.util";
 
 interface DownloadVolumeFilePayload {
   volumeId: number;

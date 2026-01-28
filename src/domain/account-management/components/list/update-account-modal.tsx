@@ -4,15 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
-import {
-  Dropdown,
-  Form,
-  FormItem,
-  Icon,
-  InputNumber,
-  Modal,
-  Typography,
-} from "xiilab-ui";
+import { Dropdown, Form, FormItem, Icon, InputNumber, Modal } from "xiilab-ui";
 import type { z } from "zod";
 
 import { useGetAccountDetail } from "@/api/generated/admin-account-management/admin-account-management";
@@ -30,6 +22,14 @@ import { ACCOUNT_SELECTOR } from "@/shared/constants/selector.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { formatDateSafely } from "@/shared/utils/date.util";
+import {
+  ModalDetailCard,
+  ModalDetailDivider,
+  ModalDetailLabel,
+  ModalDetailRow,
+  ModalDetailSectionTitle,
+  ModalDetailValue,
+} from "@/styles/layers/modal-detail-layers.styled";
 import { subTitleStyle } from "@/styles/mixins/text";
 
 type AccountUpdateFormType = z.infer<typeof updateAccountBody>;
@@ -140,40 +140,47 @@ export function UpdateAccountModal() {
         {/* 계정 기본 정보 */}
         <section>
           <SubTitle>계정 기본 정보</SubTitle>
-          <DetailCard>
-            <SectionTitle>상세 정보</SectionTitle>
-            <InfoRow
-              label="이름"
-              value={accountDetail?.accountName}
-              testId={ACCOUNT_SELECTOR.UPDATE_NAME}
-            />
-            <InfoRow
-              label="이메일"
-              value={accountDetail?.email}
-              testId={ACCOUNT_SELECTOR.UPDATE_EMAIL}
-            />
-            <InfoRow
-              label="그룹"
-              value={
-                accountDetail?.groupName?.length
+          <ModalDetailCard>
+            <ModalDetailSectionTitle>상세 정보</ModalDetailSectionTitle>
+            <ModalDetailRow>
+              <ModalDetailLabel>이름</ModalDetailLabel>
+              <ModalDetailValue data-testid={ACCOUNT_SELECTOR.UPDATE_NAME}>
+                {accountDetail?.accountName || "-"}
+              </ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel>이메일</ModalDetailLabel>
+              <ModalDetailValue data-testid={ACCOUNT_SELECTOR.UPDATE_EMAIL}>
+                {accountDetail?.email || "-"}
+              </ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel>그룹</ModalDetailLabel>
+              <ModalDetailValue data-testid={ACCOUNT_SELECTOR.UPDATE_GROUP}>
+                {accountDetail?.groupName?.length
                   ? accountDetail.groupName.join(", ")
-                  : undefined
-              }
-              testId={ACCOUNT_SELECTOR.UPDATE_GROUP}
-            />
-            <InfoRow
-              label="가입일"
-              value={formatDateSafely(accountDetail?.createdAt)}
-              testId={ACCOUNT_SELECTOR.UPDATE_CREATED_AT}
-            />
-            <Divider />
-            <SectionTitle>워크스페이스 정보</SectionTitle>
-            <InfoRow
-              label="생성 개수"
-              value={`${(accountDetail?.workspaceCount ?? 0).toLocaleString()}개`}
-              testId={ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT}
-            />
-          </DetailCard>
+                  : "-"}
+              </ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel>가입일</ModalDetailLabel>
+              <ModalDetailValue
+                data-testid={ACCOUNT_SELECTOR.UPDATE_CREATED_AT}
+              >
+                {formatDateSafely(accountDetail?.createdAt)}
+              </ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailDivider />
+            <ModalDetailSectionTitle>워크스페이스 정보</ModalDetailSectionTitle>
+            <ModalDetailRow>
+              <ModalDetailLabel>생성 개수</ModalDetailLabel>
+              <ModalDetailValue
+                data-testid={ACCOUNT_SELECTOR.UPDATE_WORKSPACE_COUNT}
+              >
+                {(accountDetail?.workspaceCount ?? 0).toLocaleString()}개
+              </ModalDetailValue>
+            </ModalDetailRow>
+          </ModalDetailCard>
         </section>
 
         {/* 계정 수정 정보 */}
@@ -268,23 +275,6 @@ export function UpdateAccountModal() {
   );
 }
 
-function InfoRow({
-  label,
-  value,
-  testId,
-}: {
-  label: string;
-  value?: string | number;
-  testId?: string;
-}) {
-  return (
-    <DetailRow>
-      <DetailLabel>{label}</DetailLabel>
-      <DetailValue data-testid={testId}>{value || "-"}</DetailValue>
-    </DetailRow>
-  );
-}
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -296,51 +286,6 @@ const SubTitle = styled.div`
   ${subTitleStyle(6)}
   margin-left: 6px;
   margin-bottom: 8px;
-
-
-`;
-
-const DetailCard = styled.div`
-  border-radius: 2px;
-  border: 1px solid #e9e9e9;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  width: 100%;
-`;
-
-const SectionTitle = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  color: #000;
-`;
-
-const DetailRow = styled.div`
-  display: flex;
-`;
-
-const DetailLabel = styled(Typography.Text).attrs({
-  variant: "body-2-2",
-})`
-  color: #484848;
-  min-width: 82px;
-  margin-right: 24px;
-`;
-
-const DetailValue = styled(Typography.Text).attrs({
-  variant: "subtitle-2-3",
-})`
-  color: #000;
-`;
-
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 4px 0;
 `;
 
 const FormRowHorizontal = styled.div`

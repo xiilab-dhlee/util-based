@@ -186,6 +186,8 @@ export const sourcecodeListOverrideHandlers = [
           createdAt: generateCreatedAt(globalIndex, sort, order),
           isPublic: globalIndex % 3 !== 0,
           creatorName: `사용자-${(globalIndex % 10) + 1}`,
+          entityId: globalIndex + 1,
+          creatorId: String((globalIndex % 10) + 1),
         };
       },
     );

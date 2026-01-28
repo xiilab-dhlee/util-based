@@ -192,12 +192,6 @@ Then("Last Name 필드에는 25자까지만 표시된다", async ({ signupPage }
 // UI 렌더링 검증
 // ============================================
 
-Then("다음 필드가 표시된다", async ({ signupPage }, dataTable) => {
-  const fields = dataTable.hashes() as Array<{ field: string }>;
-  const fieldNames = fields.map((row) => row.field);
-  await signupPage.assertFieldsVisible(fieldNames);
-});
-
 Then("로그인하기 링크가 표시된다", async ({ signupPage }) => {
   await signupPage.assertLoginLinkVisible();
 });

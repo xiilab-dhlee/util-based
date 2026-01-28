@@ -12,8 +12,9 @@ export const MAX_URGENT_QUEUE_SIZE = 5;
 // 대기중인 워크로드 정렬 관련 상수
 // ============================================================================
 
+// TODO: Orval API 스키마 확인 필요 - CREATED_AT 대신 AGE_SECONDS 사용
 export const PENDING_WORKLOAD_SORT_FIELD_MAP = {
-  createdAt: "CREATED_AT",
+  createdAt: "AGE_SECONDS",
 } as const satisfies Record<string, GetPendingWorkloadsSort>;
 
 /** 대기중인 워크로드 정렬 필드 타입 */

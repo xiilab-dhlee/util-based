@@ -14,7 +14,7 @@ import type { VolumeMode } from "@/domain/volume/types/volume.type";
 import { removeNodesFromTree } from "@/domain/volume/utils/volume.util";
 import { VOLUME_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import { filterToRootPaths } from "@/shared/state/filetree.atom";
+import { filterToRootPaths } from "@/shared/utils/filetree.util";
 
 interface DeleteVolumeFilePayload {
   volumeId: number;

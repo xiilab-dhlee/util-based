@@ -92,7 +92,7 @@ type WorkloadStatusItem = {
 };
 
 const Container = styled.article`
-  min-width: 596px;
+  width: 596px;
   height: 100%;
   display: flex;
   flex-direction: column;

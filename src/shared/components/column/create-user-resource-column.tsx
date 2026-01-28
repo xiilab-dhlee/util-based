@@ -2,7 +2,7 @@ import styled from "styled-components";
 import type { ResponsiveColumnType } from "xiilab-ui";
 import { Tooltip } from "xiilab-ui";
 
-import type { UserResourceSchemaType } from "@/domain/monitoring/schemas/user-resource.schema";
+import type { AccountResourceSummaryResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MONITORING_EVENTS } from "@/shared/constants/pubsub.constant";
 import type { CoreCreateColumnConfig } from "@/shared/types/core.model";
 import { applyColumnConfigs } from "@/shared/utils/column.util";
@@ -16,7 +16,6 @@ import {
 
 const GPU_INFO = getResourceInfo("GPU");
 const MIG_INFO = getResourceInfo("MIG");
-const MPS_INFO = getResourceInfo("MPS");
 const CPU_INFO = getResourceInfo("CPU");
 const MEM_INFO = getResourceInfo("MEM");
 
@@ -27,14 +26,14 @@ const MEM_INFO = getResourceInfo("MEM");
  * - 둘 다 있을 때: 사용자명(이메일)
  * - 둘 다 없을 때: -
  */
-const formatUserName = (record: UserResourceSchemaType): string => {
-  const { userName, email } = record;
+const formatUserName = (record: AccountResourceSummaryResponse): string => {
+  const { accountName, email } = record;
 
-  if (userName && email) {
-    return `${userName}(${email})`;
+  if (accountName && email) {
+    return `${accountName}(${email})`;
   }
-  if (userName) {
-    return userName;
+  if (accountName) {
+    return accountName;
   }
   if (email) {
     return email;
@@ -54,18 +53,26 @@ const formatResourceValue = (
 };
 
 /**
+ * 바이트를 GB로 변환
+ */
+const bytesToGB = (bytes: number | null | undefined): number | null => {
+  if (bytes == null) return null;
+  return Math.round(bytes / (1024 * 1024 * 1024));
+};
+
+/**
  * 컬럼 정의 배열 생성
  */
 const createColumnList = (): ResponsiveColumnType[] => {
   return [
     {
       key: "userName",
-      dataIndex: "userName",
+      dataIndex: "accountName",
       title: "사용자",
       align: "left",
       sorter: true,
       defaultSortOrder: "ascend",
-      render: (_: unknown, record: UserResourceSchemaType) => {
+      render: (_: unknown, record: AccountResourceSummaryResponse) => {
         const displayText = formatUserName(record);
 
         const handleClick = () => {
@@ -81,7 +88,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       key: "gpu",
-      dataIndex: "gpu",
+      dataIndex: "gpuCount",
       title: GPU_INFO.text,
       align: "center",
       render: (gpu: number | null | undefined) => {
@@ -94,7 +101,7 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       key: "mig",
-      dataIndex: "mig",
+      dataIndex: "migCount",
       title: MIG_INFO.text,
       align: "center",
       render: (mig: number | null | undefined) => {
@@ -106,21 +113,8 @@ const createColumnList = (): ResponsiveColumnType[] => {
       },
     },
     {
-      key: "mps",
-      dataIndex: "mps",
-      title: MPS_INFO.text,
-      align: "center",
-      render: (mps: number | null | undefined) => {
-        return (
-          <ColumnAlignCenterWrap>
-            {formatResourceValue(mps, MPS_INFO.unit)}
-          </ColumnAlignCenterWrap>
-        );
-      },
-    },
-    {
       key: "cpu",
-      dataIndex: "cpu",
+      dataIndex: "cpuCores",
       title: CPU_INFO.text,
       align: "center",
       render: (cpu: number | null | undefined) => {
@@ -133,13 +127,13 @@ const createColumnList = (): ResponsiveColumnType[] => {
     },
     {
       key: "mem",
-      dataIndex: "mem",
+      dataIndex: "memoryBytes",
       title: MEM_INFO.text,
       align: "center",
       render: (mem: number | null | undefined) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatResourceValue(mem, MEM_INFO.unit)}
+            {formatResourceValue(bytesToGB(mem), MEM_INFO.unit)}
           </ColumnAlignCenterWrap>
         );
       },

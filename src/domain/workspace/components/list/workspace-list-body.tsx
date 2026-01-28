@@ -3,7 +3,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import type { TableProps } from "xiilab-ui";
 
-import type { AdminWorkspaceListResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type { AdminWorkspaceDetailItemResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   WORKSPACE_SORT_FIELDS,
   type WorkspaceSortField,
@@ -22,7 +22,7 @@ import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 interface WorkspaceListBodyProps {
   /** 워크스페이스 목록 데이터 */
-  content: AdminWorkspaceListResponse[];
+  content: AdminWorkspaceDetailItemResponse[];
   /** 로딩 상태 */
   loading: boolean;
 }
@@ -43,27 +43,24 @@ export function WorkspaceListBody({
   const sort = useAtomValue(workspaceSortAtom);
   const { resetForSort } = useWorkspaceListReset();
 
-  const { rowSelection } = useTableSelection<AdminWorkspaceListResponse>(
+  const { rowSelection } = useTableSelection<AdminWorkspaceDetailItemResponse>(
     checkedList,
     setCheckedList,
   );
 
-  const handleChange: TableProps<AdminWorkspaceListResponse>["onChange"] = (
-    _,
-    __,
-    sorter,
-  ) => {
-    const parsed = parseSorterToAntdState<
-      AdminWorkspaceListResponse,
-      WorkspaceSortField
-    >(sorter, WORKSPACE_SORT_FIELDS);
-    if (!parsed.field || !parsed.order) return;
+  const handleChange: TableProps<AdminWorkspaceDetailItemResponse>["onChange"] =
+    (_, __, sorter) => {
+      const parsed = parseSorterToAntdState<
+        AdminWorkspaceDetailItemResponse,
+        WorkspaceSortField
+      >(sorter, WORKSPACE_SORT_FIELDS);
+      if (!parsed.field || !parsed.order) return;
 
-    resetForSort({
-      field: parsed.field,
-      order: parsed.order,
-    });
-  };
+      resetForSort({
+        field: parsed.field,
+        order: parsed.order,
+      });
+    };
 
   return (
     <ListWrapper data-testid={SELECTOR.LIST_TABLE}>

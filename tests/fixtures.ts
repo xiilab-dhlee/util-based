@@ -38,7 +38,7 @@ export const TEST_MODE: TestMode =
   (process.env.TEST_MODE as TestMode) || "mock";
 
 export const MOCK_WORKLOAD_ID = "mock-workload-001";
-export const MOCK_WORKSPACE_ID = "1";
+export const MOCK_WORKSPACE_ID = 1;
 
 // ============================================================================
 // Types
@@ -113,7 +113,7 @@ type TestContextFixtures = {
   workloadContext: WorkloadContext & WorkloadContextActions;
   themeContext: ThemeContext & ThemeContextActions;
   workloadId: string;
-  workspaceId: string;
+  workspaceId: number;
   testMode: TestMode;
   assertLogger: AssertLogger;
 

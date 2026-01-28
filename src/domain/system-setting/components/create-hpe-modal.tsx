@@ -4,9 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Form, Icon, Input, Modal } from "xiilab-ui";
 
-import { useGetHpe } from "@/domain/system-setting/hooks/use-get-hpe";
+// TODO: Orval API 연동 필요
+// import { useGetHpe } from "@/domain/system-setting/hooks/use-get-hpe";
 import { useHpeForm } from "@/domain/system-setting/hooks/use-hpe-form";
-import { useUpdateHpe } from "@/domain/system-setting/hooks/use-update-hpe";
+// TODO: Orval API 연동 필요
+// import { useUpdateHpe } from "@/domain/system-setting/hooks/use-update-hpe";
 import { SYSTEM_SETTING_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { errorTextStyle } from "@/styles/mixins/text";
@@ -17,8 +19,20 @@ import { errorTextStyle } from "@/styles/mixins/text";
  */
 export function CreateHpeModal() {
   const [open, setOpen] = useState(false);
-  const { data: hpeData } = useGetHpe();
-  const updateMutation = useUpdateHpe();
+  // TODO: Orval API 연동 필요
+  // const { data: hpeData } = useGetHpe();
+  const hpeData = null as { id: string; serverIp: string } | null;
+  // TODO: Orval API 연동 필요
+  // const updateMutation = useUpdateHpe();
+  const updateMutation = {
+    mutate: (
+      _payload: { id: string; password: string; serverIp: string },
+      _options?: { onSuccess?: () => void },
+    ) => {
+      console.log("TODO: Orval API 연동 필요");
+    },
+    isPending: false,
+  };
   const { formState, errors, setField, validate, reset, setInitialData } =
     useHpeForm();
 
@@ -32,6 +46,7 @@ export function CreateHpeModal() {
   );
 
   // 모달이 열릴 때 기존 데이터가 있으면 폼에 채우기 (수정 모드)
+  // TODO: Orval API 연동 후 hpeData 의존성 복원 필요
   useEffect(() => {
     if (open && hpeData) {
       setInitialData({
@@ -39,7 +54,8 @@ export function CreateHpeModal() {
         serverIp: hpeData.serverIp,
       });
     }
-  }, [open, hpeData, setInitialData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, setInitialData]);
 
   const handleCancel = useCallback(() => {
     setOpen(false);

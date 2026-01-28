@@ -1,28 +1,33 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+// TODO: Orval API 연동 필요
+// import { useAtomValue } from "jotai";
 
-import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
-import {
-  workspaceMemberPageAtom,
-  workspaceMemberSearchTextAtom,
-} from "@/domain/workspace-member/state/workspace-member.atom";
+// TODO: Orval API 연동 필요
+// import { useGetWorkspaceMembers } from "@/domain/workspace/hooks/use-get-workspace-members";
+// import {
+//   workspaceMemberPageAtom,
+//   workspaceMemberSearchTextAtom,
+// } from "@/domain/workspace-member/state/workspace-member.atom";
 import { workspaceMemberColumn } from "@/shared/components/column/workspace-member-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
-import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
+// import { LIST_PAGE_SIZE } from "@/shared/constants/core.constant";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 
 export function WorkspaceMemberBody() {
+  // TODO: Orval API 연동 필요
   // 페이지 번호
-  const page = useAtomValue(workspaceMemberPageAtom);
+  // const page = useAtomValue(workspaceMemberPageAtom);
   // 검색어
-  const searchText = useAtomValue(workspaceMemberSearchTextAtom);
+  // const searchText = useAtomValue(workspaceMemberSearchTextAtom);
 
-  const { data } = useGetWorkspaceMembers({
-    page,
-    size: LIST_PAGE_SIZE,
-    searchText,
-  });
+  // TODO: Orval API 연동 필요
+  // const { data } = useGetWorkspaceMembers({
+  //   page,
+  //   size: LIST_PAGE_SIZE,
+  //   searchText,
+  // });
+  const data = { content: [] };
 
   return (
     <ListWrapper>

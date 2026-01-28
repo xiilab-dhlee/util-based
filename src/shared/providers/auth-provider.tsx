@@ -6,6 +6,7 @@ import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { AxiosService } from "@/shared/api/axios";
+import { PUBLIC_AUTH_PATHS } from "@/shared/constants/auth.constant";
 import { ROUTES } from "@/shared/constants/routes.constant";
 import { useLogoutSync } from "@/shared/hooks/use-logout-sync";
 
@@ -15,14 +16,6 @@ import { useLogoutSync } from "@/shared/hooks/use-logout-sync";
 
 const isDev = process.env.NODE_ENV === "development";
 const useTestAuth = process.env.TEST_AUTH_ENABLE === "true";
-
-/** 인증 과정이 필요 없는 공개 경로 (세션 체크/토큰 갱신 생략) */
-const PUBLIC_AUTH_PATHS = [
-  ROUTES.AUTH_SIGNIN,
-  ROUTES.AUTH_SIGNUP,
-  ROUTES.AUTH_LICENSE,
-  ROUTES.ERROR,
-] as const;
 
 /** 현재 경로가 공개 인증 경로인지 확인 */
 function isPublicAuthPath(pathname: string): boolean {

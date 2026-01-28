@@ -5,7 +5,7 @@ import { useSetAtom } from "jotai";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
-import type { WorkloadImageType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadImageDetailImageType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   imageIdAtom,
   imageTagIdAtom,
@@ -13,8 +13,8 @@ import {
 import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
 
 interface CreateWorkloadImageButtonProps {
-  type: WorkloadImageType;
-  setType: (type: WorkloadImageType) => void;
+  type: WorkloadImageDetailImageType;
+  setType: (type: WorkloadImageDetailImageType) => void;
   isSelected: boolean;
   disabled?: boolean;
 }

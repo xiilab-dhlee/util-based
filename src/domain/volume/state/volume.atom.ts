@@ -5,11 +5,11 @@ import type { Key } from "react";
 import type { GetVolumeListVolumeType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { VOLUME_DEFAULT_SORT } from "@/domain/volume/constants/volume.constant";
 import { ALL_OPTION } from "@/shared/constants/core.constant";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import {
   createCheckedNodesInfoAtom,
   createSelectedNodeInfoAtom,
 } from "@/shared/state/filetree.atom";
+import type { FileTreeType } from "@/shared/types/core.model";
 
 // ============================================================================
 // 볼륨 목록 관련 Atoms

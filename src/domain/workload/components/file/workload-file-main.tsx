@@ -1,29 +1,37 @@
 "use client";
 
-import { useAtom } from "jotai";
-import { useParams, useSearchParams } from "next/navigation";
+import { useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import styled from "styled-components";
 
+import { useGetWorkloadDetail } from "@/api/generated/workload/workload";
+import { CompressWorkloadFileModal } from "@/domain/workload/components/file/compress-workload-file-modal";
 import { CreateWorkloadFolderModal } from "@/domain/workload/components/file/create-workload-folder-modal";
+import { DecompressWorkloadFileModal } from "@/domain/workload/components/file/decompress-workload-file-modal";
+import { DeleteWorkloadFileModal } from "@/domain/workload/components/file/delete-workload-file-modal";
+import { DownloadWorkloadFileModal } from "@/domain/workload/components/file/download-workload-file-modal";
+import { UploadWorkloadFileModal } from "@/domain/workload/components/file/upload-workload-file-modal";
+import { WorkloadFileBody } from "@/domain/workload/components/file/workload-file-body";
 import { WorkloadFileButton } from "@/domain/workload/components/file/workload-file-button";
-import { WorkloadFileCheckbox } from "@/domain/workload/components/file/workload-file-checkbox";
-import { WorkloadFileListBody } from "@/domain/workload/components/file/workload-file-list-body";
-import { useGetWorkloadFiles } from "@/domain/workload/hooks/use-get-workload-files";
+import { WorkloadFileFooter } from "@/domain/workload/components/file/workload-file-footer";
+import { WorkloadFileHeader } from "@/domain/workload/components/file/workload-file-header";
+import { useWorkloadFileTree } from "@/domain/workload/hooks/use-workload-file-tree";
 import {
+  workloadFileActionModeAtom,
+  workloadFileCheckedNodesAtom,
+  workloadFileCurrentPageAtom,
+  workloadFileSelectedKeyAtom,
   workloadFileSelectedNodeInfoAtom,
   workloadFileTreeDataAtom,
+  workloadSelectedPodNameAtom,
 } from "@/domain/workload/state/workload.atom";
+import { EmptyState } from "@/shared/components/empty-state/empty-state";
+import { MySpinner } from "@/shared/components/spinner";
 import { CustomFileTree } from "@/shared/components/tree/custom-file-tree";
-import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
-import {
-  DetailContentButton,
-  DetailContentHeader,
-  DetailContentTitle,
-  DetailContentTitleTool,
-} from "@/styles/layers/detail-page-layers.styled";
+import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 
 /**
  * 워크로드 파일 관리 메인 컴포넌트
@@ -35,34 +43,86 @@ import {
  * @returns 워크로드 파일 관리 인터페이스
  */
 export function WorkloadFileMain() {
-  const { id } = useParams();
-  const searchParams = useSearchParams();
-  const publish = usePublish();
+  const { id } = useParams<{ id: string }>();
 
-  const workspaceId = searchParams?.get("workspaceId") || "";
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const selectedNode = useAtomValue(workloadFileSelectedNodeInfoAtom);
+  const selectedPodName = useAtomValue(workloadSelectedPodNameAtom);
 
-  // 현재 선택된 파일/폴더 노드 정보
-  const selectedNode = useAtom(workloadFileSelectedNodeInfoAtom)[0];
-  // 파일 트리 데이터 상태 관리
-  const [treeData, setTreeData] = useAtom(workloadFileTreeDataAtom);
+  const resetTreeData = useResetAtom(workloadFileTreeDataAtom);
+  const resetSelectedKey = useResetAtom(workloadFileSelectedKeyAtom);
+  const resetCheckedNodes = useResetAtom(workloadFileCheckedNodesAtom);
+  const resetActionMode = useResetAtom(workloadFileActionModeAtom);
+  const resetCurrentPage = useResetAtom(workloadFileCurrentPageAtom);
+  const resetSelectedPodName = useResetAtom(workloadSelectedPodNameAtom);
 
-  // 워크로드 파일 목록 조회 훅
-  const { data } = useGetWorkloadFiles({
+  const workloadResourceName = id;
+  const workspaceId = selectedWorkspace?.workspaceId ?? 0;
+
+  // 워크로드 상세 조회 (workloadJobType 확인용)
+  const { data: workloadDetail } = useGetWorkloadDetail(
     workspaceId,
-    workloadId: String(id),
-    path: "/", // 루트 경로에서 시작
-  });
+    workloadResourceName,
+    {
+      query: {
+        enabled: !!workspaceId && !!workloadResourceName,
+      },
+    },
+  );
 
-  /**
-   * 파일 목록 데이터가 변경될 때 트리 데이터 업데이트
-   *
-   * TODO: 파일 목록 조회 시마다 특정 노드의 children에 추가하도록 변경 필요
-   */
+  const isDistributed = workloadDetail?.workloadJobType === "DISTRIBUTED";
+
+  // 현재 워크로드의 creatorId 찾기
+  const creatorId = workloadDetail?.creatorId;
+
+  // 컴포넌트 마운트 시 파일 관련 상태 초기화
   useEffect(() => {
-    if (data?.content) {
-      setTreeData(data.content);
+    resetTreeData();
+    resetSelectedKey();
+    resetCheckedNodes();
+    resetActionMode();
+    resetCurrentPage();
+    resetSelectedPodName();
+  }, [
+    resetTreeData,
+    resetSelectedKey,
+    resetCheckedNodes,
+    resetActionMode,
+    resetCurrentPage,
+    resetSelectedPodName,
+  ]);
+
+  // selectedPodName 변경 시 파일 관련 상태 초기화
+  useEffect(() => {
+    if (isDistributed && selectedPodName) {
+      resetTreeData();
+      resetSelectedKey();
+      resetCheckedNodes();
+      resetActionMode();
+      resetCurrentPage();
     }
-  }, [data?.content, setTreeData]);
+  }, [
+    selectedPodName,
+    isDistributed,
+    resetTreeData,
+    resetSelectedKey,
+    resetCheckedNodes,
+    resetActionMode,
+    resetCurrentPage,
+  ]);
+
+  // 워크로드 파일 트리 훅 (선택된 노드 변경 시 자동으로 하위 파일 로드)
+  // workloadDetail이 로드된 후에만 트리 요청 시작 (isDistributed 판단을 위해)
+  const { treeData, loadingPaths, isLoading, isError } = useWorkloadFileTree({
+    workspaceId,
+    workloadResourceName,
+    podName: isDistributed ? selectedPodName : undefined,
+    enabled:
+      !!workspaceId &&
+      !!workloadResourceName &&
+      !!workloadDetail &&
+      (!isDistributed || !!selectedPodName),
+  });
 
   /**
    * 선택된 노드에 따른 제목 텍스트 반환
@@ -75,53 +135,51 @@ export function WorkloadFileMain() {
   };
 
   /**
-   * 파일 개수 통계 텍스트 반환
+   * 선택된 폴더의 폴더 수와 파일 수 계산
    */
-  const getFileTotalText = () => {
-    const directoryCount = data?.directoryCnt || 0;
-    const fileCount = data?.content.reduce(
-      (acc: number, cur: FileTreeType) => acc + (Number(cur.fileCount) || 0),
-      0,
-    );
-    return `폴더 ${directoryCount}개, 파일 ${fileCount}개`;
+  const getFileCounts = () => {
+    // 파일이 선택된 경우 카운트 표시 안함
+    if (selectedNode?.type === "file") return null;
+
+    // 전체(root) 또는 디렉토리 선택 시 children 사용
+    const children = selectedNode ? selectedNode.children : treeData;
+
+    const directoryCount = children.filter(
+      (item) => item.type === "directory",
+    ).length;
+    const fileCount = children.filter((item) => item.type === "file").length;
+
+    return { directoryCount, fileCount };
   };
 
+  const fileCounts = getFileCounts();
+
   /**
-   * 폴더 추가 버튼 클릭 핸들러
+   * 파일 트리 컨텐츠 렌더링
    */
-  const handleAddFolder = () => {
-    publish(WORKLOAD_EVENTS.sendCreateWorkloadFolder, {
-      workspaceId,
-      workloadId: String(id),
-      filePath: selectedNode?.path || "/",
-    });
+  const renderTreeContent = () => {
+    if (isLoading) return <MySpinner />;
+    if (isError) return <EmptyState title={TABLE_MESSAGE.ERROR} />;
+    if (treeData.length === 0) return <EmptyState title="파일이 없습니다." />;
+
+    return (
+      <CustomFileTree
+        treeData={treeData}
+        fileButton={WorkloadFileButton}
+        loadingPaths={loadingPaths}
+        isActiveRootNode
+      />
+    );
   };
 
   return (
     <>
-      {/* 파일 페이지 영역 */}
       {/* 파일 관리 헤더 영역 */}
-      <DetailContentHeader>
-        <DetailContentTitle>파일목록</DetailContentTitle>
-        {/* 파일 관리 도구 버튼들 */}
-        <DetailContentTitleTool>
-          <div style={{ width: 80, height: 30 }}>
-            <DetailContentButton onClick={handleAddFolder}>
-              폴더 추가
-            </DetailContentButton>
-          </div>
-          <div style={{ width: 80, height: 30 }}>
-            <DetailContentButton onClick={() => alert("업로드 Action")}>
-              파일 업로드
-            </DetailContentButton>
-          </div>
-          <div style={{ width: 80, height: 30 }}>
-            <DetailContentButton onClick={() => alert("다운로드 Action")}>
-              다운로드
-            </DetailContentButton>
-          </div>
-        </DetailContentTitleTool>
-      </DetailContentHeader>
+      <WorkloadFileHeader
+        creatorId={creatorId}
+        isDistributed={isDistributed}
+        treeDataLength={treeData.length}
+      />
 
       {/* 워크로드 파일 내용 - 좌우 분할 레이아웃 */}
       <FileContent>
@@ -131,12 +189,7 @@ export function WorkloadFileMain() {
             <FileTitle>파일 리스트</FileTitle>
           </FileContentHeader>
           {/* 커스텀 파일 트리 컴포넌트 */}
-          <CustomFileTree
-            treeData={treeData} // 트리 데이터
-            fileCheckbox={WorkloadFileCheckbox} // 파일 체크박스 컴포넌트
-            fileButton={WorkloadFileButton} // 파일 버튼 컴포넌트
-            isActiveRootNode
-          />
+          {renderTreeContent()}
         </Left>
 
         {/* 오른쪽: 파일 상세 정보 및 목록 영역 */}
@@ -144,16 +197,35 @@ export function WorkloadFileMain() {
           <FileContentHeader>
             {/* 선택된 노드에 따른 제목 표시 */}
             <FileTitle>{getFileTitle()}</FileTitle>
-            {/* 폴더 및 파일 개수 통계 */}
-            <FileTotal>{getFileTotalText()}</FileTotal>
+            {fileCounts && (
+              <FileCountInfo>
+                폴더 {fileCounts.directoryCount || 0}개, 파일&nbsp;
+                {fileCounts.fileCount || 0}개
+              </FileCountInfo>
+            )}
           </FileContentHeader>
           {/* 파일 목록 본문 */}
-          <WorkloadFileListBody />
+          <WorkloadFileBody isLoading={isLoading} loadingPaths={loadingPaths} />
+          {/* 파일 푸터 (페이지네이션 + 액션 버튼) */}
+          <WorkloadFileFooter
+            creatorId={creatorId}
+            treeDataLength={treeData.length}
+          />
         </Right>
       </FileContent>
 
-      {/* 워크로드 폴더 추가 모달 */}
+      {/* 워크로드 파일 관련 모달 */}
       <CreateWorkloadFolderModal />
+      {/* 워크로드 파일 삭제 모달 */}
+      <DeleteWorkloadFileModal />
+      {/* 워크로드 파일 다운로드 모달 */}
+      <DownloadWorkloadFileModal />
+      {/* 워크로드 파일 업로드 모달 */}
+      <UploadWorkloadFileModal />
+      {/* 워크로드 파일 압축 모달 */}
+      <CompressWorkloadFileModal />
+      {/* 워크로드 파일 압축 해제 모달 */}
+      <DecompressWorkloadFileModal />
     </>
   );
 }
@@ -164,6 +236,7 @@ const FileContent = styled.div`
   flex-direction: row;
   gap: 10px;
   overflow: hidden;
+  max-height: 700px;
 `;
 
 const Left = styled.div`
@@ -171,9 +244,11 @@ const Left = styled.div`
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 20px;
+  padding-right: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 `;
 
 const Right = styled.div`
@@ -198,8 +273,10 @@ const FileTitle = styled.div`
   color: #000;
 `;
 
-const FileTotal = styled.div`
+const FileCountInfo = styled.span`
   font-size: 12px;
   font-weight: 400;
   color: #828588;
+  letter-spacing: 0;
+  line-height: 1;
 `;

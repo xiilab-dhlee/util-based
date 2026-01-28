@@ -8,9 +8,8 @@ import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
 import type { FileCheckboxProps } from "@/shared/components/tree/custom-file-tree";
-import type { FileTreeType } from "@/shared/schemas/filetree.schema";
 import type { CoreFileIndentPosition } from "@/shared/types/core.interface";
-import type { CoreFileButton } from "@/shared/types/core.model";
+import type { CoreFileButton, FileTreeType } from "@/shared/types/core.model";
 
 /**
  * CustomFileNode 컴포넌트의 props 인터페이스
@@ -238,6 +237,7 @@ export function CustomFileNode({
         fileName: directoryNode.name,
         path: directoryNode.path,
         type: "directory",
+        onFolderClick: onToggleExpansion,
       })}
     </>
   );
@@ -291,6 +291,7 @@ const Container = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  flex-shrink: 0;
 
   --file-indent-size: 24px;
   --file-leaf-size: 12px;
@@ -304,6 +305,7 @@ const IconWrapper = styled.button`
   justify-content: center;
   align-items: center;
   transition: all 0.3s;
+  flex-shrink: 0;
 
   --icon-fill: #9da6bc;
 
@@ -320,6 +322,7 @@ const ListIconWrapper = styled(IconWrapper)`
   background-color: #37455e;
   border-radius: 2px;
   margin-right: 6px;
+  flex-shrink: 0;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -328,12 +331,14 @@ const CheckboxWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 `;
 
 const Indent = styled.div`
   min-width: var(--file-indent-size);
   height: var(--file-indent-size);
   position: relative;
+  flex-shrink: 0;
 `;
 
 const IndentStart = styled.div`
@@ -344,6 +349,7 @@ const IndentStart = styled.div`
   border-left: 1px solid var(--file-leaf-border-color);
   width: var(--file-leaf-size);
   height: var(--file-leaf-size);
+  flex-shrink: 0;
 `;
 
 const IndentBridge = styled.div`
@@ -352,6 +358,7 @@ const IndentBridge = styled.div`
   border-left: 1px solid var(--file-leaf-border-color);
   width: var(--file-leaf-size);
   height: 100%;
+  flex-shrink: 0;
 `;
 
 const IndentEnd = styled.div`
@@ -362,6 +369,7 @@ const IndentEnd = styled.div`
   border-left: 1px solid var(--file-leaf-border-color);
   width: var(--file-leaf-size);
   height: var(--file-leaf-size);
+  flex-shrink: 0;
 `;
 
 const FileNameWrapper = styled.div`
@@ -370,6 +378,7 @@ const FileNameWrapper = styled.div`
   align-items: center;
   flex: 1;
   height: 100%;
+  overflow: hidden;
 `;
 
 const SpinWrapper = styled.div`
