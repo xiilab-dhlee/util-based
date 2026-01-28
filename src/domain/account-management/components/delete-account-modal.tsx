@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Modal } from "xiilab-ui";
 
-import { useDeleteAccountAction } from "@/domain/account-management/hooks/account-actions";
+import { useDeleteAccountBulkAction } from "@/domain/account-management/hooks/account-actions";
 import { openDeleteAccountModalAtom } from "@/domain/account-management/state/account.atom";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
@@ -12,7 +12,7 @@ export function DeleteAccountModal() {
   const { open, onOpen, onClose } = useGlobalModal(openDeleteAccountModalAtom);
   const [deleteAccounts, setDeleteAccounts] = useState<string[]>([]);
 
-  const deleteAccountMutation = useDeleteAccountAction();
+  const deleteAccountMutation = useDeleteAccountBulkAction();
   const isPending = deleteAccountMutation.isPending;
 
   const handleOk = () => {
