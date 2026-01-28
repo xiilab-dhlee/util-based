@@ -1,15 +1,20 @@
 "use client";
 
+import { useMemo } from "react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import type { MonitoringMetricType } from "@/domain/monitoring/types/monitoring.type";
-import { getMetricInfo } from "@/domain/monitoring/utils/monitoring.util";
+import type { WorkloadMetricSeries } from "@/domain/workload/types/workload-metrics.type";
+import {
+  getWorkloadMetricInfo,
+  type WorkloadMonitoringMetricType,
+} from "@/domain/workload/utils/workload-monitoring.util";
+import { mapWorkloadMetricSeriesToChartData } from "@/domain/workload/utils/workload-monitoring-chart.util";
+import { ChartLegendToggle } from "@/shared/components/chart/chart-legend-toggle";
 import { MonitoringChart } from "@/shared/components/chart/monitoring-chart";
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { mapToChartData } from "@/shared/utils/chart.util";
 import {
   LikeCompactCardBody,
   LikeCompactCardContainer,
@@ -17,78 +22,63 @@ import {
   LikeCompactCardTitle,
 } from "@/styles/layers/like-card-layers.styled";
 
-/**
- * 워크로드 모니터링 카드 컴포넌트의 Props 인터페이스
- */
 interface WorkloadMonitoringCardProps {
-  /** 모니터링할 메트릭 타입 (CPU, 메모리, GPU 등) */
-  type: MonitoringMetricType;
+  type: WorkloadMonitoringMetricType;
+  data?: WorkloadMetricSeries;
+  seriesVisibilityMap?: Record<string, Record<string, boolean>>;
+  onSeriesToggle?: (
+    metricType: string,
+    seriesName: string,
+    isActive: boolean,
+  ) => void;
+  isLoading?: boolean;
+  hasError?: boolean;
+  onChangeRange?: (range: { start: Date; end: Date }) => void;
 }
 
-// 데모 모니터링 데이터 생성
-const generateDemoData = () => {
-  const now = new Date();
-  const dataPoints = [];
-
-  // 최근 60개의 데이터 포인트 생성 (5분 간격, 총 5시간)
-  for (let i = 59; i >= 0; i--) {
-    const dateTime = new Date(now.getTime() - i * 5 * 60000); // 5분 간격
-    dataPoints.push({
-      dateTime: dateTime.toISOString(),
-      value: Math.floor(Math.random() * 30) + 40, // 40-70 사이의 랜덤 값
-    });
-  }
-
-  return [
-    {
-      modelName: "workload-1",
-      gpuIndex: 0,
-      valueDTOS: dataPoints,
-    },
-  ];
-};
-
-/**
- * 워크로드의 특정 메트릭(CPU, 메모리, GPU 등)을 실시간으로 모니터링하는 카드 컴포넌트
- */
-export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
-  // PubSub 이벤트 발행을 위한 훅
+export function WorkloadMonitoringCard({
+  type,
+  data,
+  seriesVisibilityMap = {},
+  onSeriesToggle,
+  isLoading = false,
+  hasError = false,
+  onChangeRange,
+}: WorkloadMonitoringCardProps) {
   const publish = usePublish();
+  const metricInfo = getWorkloadMetricInfo(type);
 
-  /**
-   * 데모 모니터링 데이터를 차트 시리즈로 변환
-   * ChartUtil.mapToChartData를 활용하여 UserMonitoringNodeGpuLineChart와 동일한
-   * 형태의 area 차트 데이터를 생성합니다.
-   */
-  const demoData = generateDemoData();
-  const series = mapToChartData(demoData, "area");
+  // WorkloadMetricSeries → ApexCharts 데이터 변환
+  const chartData = useMemo(() => {
+    if (!data) return [];
+    return mapWorkloadMetricSeriesToChartData(data, type, "line");
+  }, [data, type]);
 
-  /**
-   * 메트릭 타입에 따른 모니터링 정보 조회
-   * Workload를 통해 type에 맞는 텍스트, 단위, 색상 정보를 가져옵니다.
-   */
-  const { text, unit, colors } = getMetricInfo(type);
+  // Legend 필터링 적용
+  const filteredChartData = useMemo(() => {
+    const visibility = seriesVisibilityMap[type];
+    if (!visibility) return chartData;
+    return chartData.filter((series) => visibility[series.name] !== false);
+  }, [chartData, seriesVisibilityMap, type]);
 
-  /**
-   * 확대 아이콘 클릭 핸들러
-   *
-   * 사용자가 확대 버튼을 클릭했을 때 실행되며:
-   * 1. PubSub 시스템을 통해 모니터링 데이터를 모달과 동기화
-   * 2. 모달을 열어 상세 모니터링 차트를 표시
-   *
-   * 전달되는 데이터:
-   * - title: 메트릭 이름 (차트 제목으로 사용)
-   * - series: 차트 시리즈 데이터
-   * - unit: 데이터 단위
-   * - colors: 차트 색상 배열
-   */
+  // Legend 활성 상태 맵
+  const activeSeriesMap = useMemo(() => {
+    const visibility = seriesVisibilityMap[type] || {};
+    const map: Record<string, boolean> = {};
+    for (const series of chartData) {
+      map[series.name] = visibility[series.name] !== false;
+    }
+    return map;
+  }, [chartData, seriesVisibilityMap, type]);
+
+  const hasData = chartData.length > 0;
+
   const handleClickIcon = () => {
-    // 모달과 데이터 동기화를 위한 PubSub 이벤트 발행
     publish(WORKLOAD_EVENTS.sendWorkloadMonitoring, {
-      title: text,
-      series,
-      unit,
-      colors,
+      title: metricInfo.text,
+      series: filteredChartData,
+      unit: metricInfo.unit,
+      colors: metricInfo.colors,
     });
   };
 
@@ -101,7 +91,7 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
           className="truncate"
           data-testid={WORKLOAD_SELECTOR.MONITORING_CHART_TITLE}
         >
-          {text}
+          {metricInfo.text}
         </LikeCompactCardTitle>
         <IconButton
           type="button"
@@ -113,13 +103,26 @@ export function WorkloadMonitoringCard({ type }: WorkloadMonitoringCardProps) {
         </IconButton>
       </LikeCompactCardHeader>
       <LikeCompactCardBody>
-        {/* 차트 데이터가 있을 경우에만 모니터링 차트 렌더링 */}
-        {series.length > 0 && (
-          <MonitoringChart
-            series={series}
-            height={290}
-            unit={unit}
-            colors={colors}
+        <MonitoringChart
+          onSelectRange={onChangeRange}
+          height={290}
+          series={filteredChartData}
+          unit={metricInfo.unit}
+          colors={metricInfo.colors}
+          isLoading={isLoading}
+          isError={hasError}
+          chartType="line"
+        />
+        {!isLoading && !hasError && hasData && (
+          <ChartLegendToggle
+            series={chartData}
+            colors={metricInfo.colors}
+            activeSeriesMap={activeSeriesMap}
+            onToggle={(name, isActive) => {
+              if (onSeriesToggle) {
+                onSeriesToggle(type, name, isActive);
+              }
+            }}
           />
         )}
       </LikeCompactCardBody>
@@ -135,7 +138,6 @@ const IconButton = styled.button`
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.2s;
-
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }

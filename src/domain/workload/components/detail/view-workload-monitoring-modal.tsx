@@ -90,6 +90,7 @@ export function ViewWorkloadMonitoringModal() {
           height={340}
           unit={unit}
           colors={colors}
+          chartType="line"
         />
       )}
     </InfoModal>

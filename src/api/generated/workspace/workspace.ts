@@ -55,6 +55,7 @@ import type {
   BaseResponseUnit,
   BaseResponseWorkloadStatusSummaryResponse,
   BaseResponseWorkspaceDetailResponse,
+  BaseResponseWorkspaceResourceResponse,
   BaseResponseWorkspaceResourceUsageResponse,
   BaseResponseWorkspaceResponse,
   DefaultWorkspaceRequest,
@@ -1498,6 +1499,185 @@ export function useGetPendingReclaimResourceSummary<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetPendingReclaimResourceSummaryQueryOptions(
+    workspaceId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            워크스페이스에 할당된 리소스(Queue Capability)를 조회합니다.
+
+            **권한:** OWNER만 조회 가능
+
+            **응답 데이터:**
+            - GPU: Normal GPU + MIG 프로필별 할당량
+            - CPU: 코어 수
+            - Memory: 바이트 단위
+
+            **데이터 소스:**
+            - Volcano Queue의 original-capability annotation 또는 spec.capability
+        
+ * @summary 워크스페이스 리소스 할당량 조회
+ */
+export const getWorkspaceResources = (
+  workspaceId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseWorkspaceResourceResponse>({
+    url: `/api/v1/workspaces/${workspaceId}/resources`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetWorkspaceResourcesQueryKey = (workspaceId?: number) => {
+  return [`/api/v1/workspaces/${workspaceId}/resources`] as const;
+};
+
+export const getGetWorkspaceResourcesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkspaceResources>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetWorkspaceResourcesQueryKey(workspaceId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkspaceResources>>
+  > = ({ signal }) => getWorkspaceResources(workspaceId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!workspaceId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkspaceResources>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkspaceResourcesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkspaceResources>>
+>;
+export type GetWorkspaceResourcesQueryError = unknown;
+
+export function useGetWorkspaceResources<
+  TData = Awaited<ReturnType<typeof getWorkspaceResources>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResources>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkspaceResources>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkspaceResources>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkspaceResources<
+  TData = Awaited<ReturnType<typeof getWorkspaceResources>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResources>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkspaceResources>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkspaceResources>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWorkspaceResources<
+  TData = Awaited<ReturnType<typeof getWorkspaceResources>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 워크스페이스 리소스 할당량 조회
+ */
+
+export function useGetWorkspaceResources<
+  TData = Awaited<ReturnType<typeof getWorkspaceResources>>,
+  TError = unknown,
+>(
+  workspaceId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWorkspaceResources>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWorkspaceResourcesQueryOptions(
     workspaceId,
     options,
   );

@@ -4,7 +4,6 @@ import type {
   CreateWorkloadPayload,
   DeleteWorkloadPayload,
   GetWorkloadFilesPayload,
-  GetWorkloadPayload,
   GetWorkloadsPayload,
   GetWorkloadVulnerabilitiesPayload,
   RestartWorkloadPayload,
@@ -33,11 +32,6 @@ export class WorkloadService extends AxiosService {
     return this.getAxios().get(`${this.BASE_URL}/active`, {
       params,
     });
-  }
-
-  /** 상세 조회 */
-  public getDetail(payload: GetWorkloadPayload) {
-    return this.getAxios().get(`${this.BASE_URL}/${payload.workloadId}`);
   }
 
   /** 파일 목록 조회 */

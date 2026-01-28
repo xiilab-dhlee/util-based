@@ -1,8 +1,12 @@
+"use client";
+
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetWorkloadStatusSummary } from "@/api/generated/workspace/workspace";
 import { ResourceUsageCard } from "@/shared/components/card/resource-usage-card";
 import { CountByWorkloadStatus } from "@/shared/components/layouts/count-by-workload-status";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import type { CoreResourceType } from "@/shared/types/core.interface";
 import {
   UserMonitoringCategoryTitle,
@@ -11,6 +15,44 @@ import {
 } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function SettingWorkloadArticle() {
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const workspaceId = selectedWorkspace?.workspaceId;
+
+  const { data: statusSummary } = useGetWorkloadStatusSummary(
+    workspaceId ?? 0,
+    {
+      query: {
+        enabled: Boolean(workspaceId),
+      },
+    },
+  );
+
+  const totalCount = statusSummary?.total ?? 0;
+  const runningCount = statusSummary?.running ?? 0;
+  const terminatedCount = statusSummary?.terminated ?? 0;
+  const pendingCount = statusSummary?.pending ?? 0;
+  const errorCount = statusSummary?.error ?? 0;
+  const statusItems: WorkloadStatusItem[] = [
+    { status: "ALL", count: totalCount },
+    { status: "RUNNING", count: runningCount },
+    { status: "TERMINATED", count: terminatedCount },
+    { status: "PENDING", count: pendingCount },
+    { status: "ERROR", count: errorCount },
+  ];
+  const resourceTypes: CoreResourceType[] = ["GPU", "CPU", "MEM"];
+
+  const renderStatusItem = ({ status, count }: WorkloadStatusItem) => (
+    <CountByWorkloadStatus key={status} status={status} count={count} />
+  );
+  const renderResourceUsageCard = (resourceType: CoreResourceType) => (
+    <ResourceUsageCard
+      key={resourceType}
+      resourceType={resourceType}
+      total={20}
+      count={10}
+    />
+  );
+
   return (
     <Container>
       <Workload>
@@ -24,14 +66,7 @@ export function SettingWorkloadArticle() {
         </RightSectionHeader>
         {/* 워크로드 정보 영역 */}
         <WorkloadStatusWrapper>
-          {["ALL", "RUNNING", "TERMINATED", "PENDING", "ERROR"].map(
-            (status) => (
-              <CountByWorkloadStatus
-                key={status}
-                status={status as WorkloadStatusResponseWorkloadStatus}
-              />
-            ),
-          )}
+          {statusItems.map(renderStatusItem)}
         </WorkloadStatusWrapper>
       </Workload>
       <Resource>
@@ -44,19 +79,17 @@ export function SettingWorkloadArticle() {
           </UserMonitoringSectionDescription>
         </RightSectionHeader>
         <WorkloadResourceWrapper>
-          {["GPU", "CPU", "MEM"].map((v) => (
-            <ResourceUsageCard
-              key={v}
-              resourceType={v as CoreResourceType}
-              total={20}
-              count={10}
-            />
-          ))}
+          {resourceTypes.map(renderResourceUsageCard)}
         </WorkloadResourceWrapper>
       </Resource>
     </Container>
   );
 }
+
+type WorkloadStatusItem = {
+  status: Parameters<typeof CountByWorkloadStatus>[0]["status"];
+  count: number;
+};
 
 const Container = styled.article`
   min-width: 596px;

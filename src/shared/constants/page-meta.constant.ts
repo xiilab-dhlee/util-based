@@ -411,7 +411,7 @@ export const PAGE_META = {
   },
   "user.sourcecode.detail": {
     title: "소스코드 상세",
-    href: ({ id }: { id: string }) => ROUTES.USER_SOURCECODE_DETAIL(id),
+    href: ({ id }: { id: number }) => ROUTES.USER_SOURCECODE_DETAIL(id),
     parent: "user.sourcecode",
   },
 

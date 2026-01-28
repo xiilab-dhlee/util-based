@@ -47,6 +47,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
   BaseResponsePageResponseVolumeListResponse,
+  BaseResponsePageResponseVolumeWorkloadResponse,
   BaseResponseUnit,
   BaseResponseUpdateVolumeResponse,
   BaseResponseVolumeDeleteResult,
@@ -54,6 +55,7 @@ import type {
   CreateAstragoVolumeRequest,
   CreateOnPremiseVolumeRequest,
   GetVolumeListParams,
+  GetVolumeWorkloadsParams,
   UpdateVolumeRequest,
   VolumeDeleteRequest,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -624,6 +626,200 @@ export function useGetVolumeList<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetVolumeListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+        특정 볼륨을 사용 중인 워크로드 목록을 페이지네이션으로 조회합니다.
+
+        **응답:**
+        - 200 OK + data: 워크로드 목록 (페이지네이션)
+        - 200 OK + data: null (볼륨이 존재하지 않거나 삭제된 경우)
+        - 403: 접근 권한 없음
+
+        **권한:**
+        - 볼륨 상세 조회와 동일한 권한 검증 적용
+
+        **정렬:**
+        - 기본 정렬: 워크로드-볼륨 매핑 생성 시각 내림차순 (최신순)
+        
+ * @summary 볼륨을 사용 중인 워크로드 목록 조회
+ */
+export const getVolumeWorkloads = (
+  volumeId: number,
+  params?: GetVolumeWorkloadsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponsePageResponseVolumeWorkloadResponse>({
+    url: `/api/v1/volumes/${volumeId}/workloads`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetVolumeWorkloadsQueryKey = (
+  volumeId?: number,
+  params?: GetVolumeWorkloadsParams,
+) => {
+  return [
+    `/api/v1/volumes/${volumeId}/workloads`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetVolumeWorkloadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVolumeWorkloads>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  params?: GetVolumeWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetVolumeWorkloadsQueryKey(volumeId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getVolumeWorkloads>>
+  > = ({ signal }) => getVolumeWorkloads(volumeId, params, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!volumeId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVolumeWorkloads>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVolumeWorkloadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVolumeWorkloads>>
+>;
+export type GetVolumeWorkloadsQueryError = unknown;
+
+export function useGetVolumeWorkloads<
+  TData = Awaited<ReturnType<typeof getVolumeWorkloads>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  params: undefined | GetVolumeWorkloadsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVolumeWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getVolumeWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVolumeWorkloads<
+  TData = Awaited<ReturnType<typeof getVolumeWorkloads>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  params?: GetVolumeWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeWorkloads>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVolumeWorkloads>>,
+          TError,
+          Awaited<ReturnType<typeof getVolumeWorkloads>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVolumeWorkloads<
+  TData = Awaited<ReturnType<typeof getVolumeWorkloads>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  params?: GetVolumeWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 볼륨을 사용 중인 워크로드 목록 조회
+ */
+
+export function useGetVolumeWorkloads<
+  TData = Awaited<ReturnType<typeof getVolumeWorkloads>>,
+  TError = unknown,
+>(
+  volumeId: number,
+  params?: GetVolumeWorkloadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVolumeWorkloads>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetVolumeWorkloadsQueryOptions(
+    volumeId,
+    params,
+    options,
+  );
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

@@ -92,6 +92,20 @@ export const getPrivateRegistryListQueryParams = zod.object({
     .enum(["SNAPSHOT", "EXTERNAL"])
     .optional()
     .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
+  frameworkType: zod
+    .enum([
+      "PYTORCH",
+      "TENSORFLOW",
+      "JUPYTER",
+      "VSCODE",
+      "RSTUDIO",
+      "HUB",
+      "REGISTRY",
+    ])
+    .optional()
+    .describe(
+      "프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)",
+    ),
 });
 
 export const getPrivateRegistryListResponse = zod
@@ -210,6 +224,8 @@ export const createPrivateExternalImageBody = zod
  */
 export const createPrivateSnapshotImageBodyImageNameMax = 255;
 
+export const createPrivateSnapshotImageBodyImageNameRegExp =
+  /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
 export const createPrivateSnapshotImageBodyImageTagNameMax = 128;
 
 export const createPrivateSnapshotImageBodyImageTagNameRegExp =
@@ -239,6 +255,7 @@ export const createPrivateSnapshotImageBody = zod
       .string()
       .min(1)
       .max(createPrivateSnapshotImageBodyImageNameMax)
+      .regex(createPrivateSnapshotImageBodyImageNameRegExp)
       .describe("생성할 이미지 이름"),
     imageTagName: zod
       .string()
@@ -307,7 +324,7 @@ export const createPrivateSnapshotImageBody = zod
  * 
             개인 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
             본인이 생성한 이미지만 조회할 수 있습니다.
-            키워드, 스캔 상태로 필터링이 가능합니다.
+            키워드, 스캔 상태, 사용 가능 여부로 필터링이 가능합니다.
         
  * @summary 개인 이미지 태그 목록 조회
  */
