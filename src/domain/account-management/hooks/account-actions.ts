@@ -14,7 +14,6 @@ import {
   useUpdateAccountEnabled,
 } from "@/api/generated/admin-account-management/admin-account-management";
 import {
-  accountCheckedListAtom,
   accountPageAtom,
   accountPendingCheckedListAtom,
   accountPendingPageAtom,
@@ -25,7 +24,6 @@ export function useDeleteAccountAction(
 ) {
   const queryClient = useQueryClient();
   const resetPage = useResetAtom(accountPageAtom);
-  const resetCheckedList = useResetAtom(accountCheckedListAtom);
 
   return useDeleteAccountBulk({
     ...options,
@@ -34,7 +32,6 @@ export function useDeleteAccountAction(
       onSuccess: (...args) => {
         const [, variables] = args;
 
-        resetCheckedList();
         resetPage();
 
         queryClient.invalidateQueries({
