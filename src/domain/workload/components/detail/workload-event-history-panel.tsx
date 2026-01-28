@@ -2,13 +2,13 @@
 
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
+import { Card } from "xiilab-ui";
 
 import { useGetWorkloadEventHistory } from "@/api/generated/workload/workload";
 import { WorkloadEventCard } from "@/domain/workload/components/detail/workload-event-card";
 import { workloadSelectedPodNameAtom } from "@/domain/workload/state/workload.atom";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
 import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
-import { MySpinner } from "@/shared/components/spinner";
 import { TABLE_MESSAGE } from "@/shared/constants/core.constant";
 
 interface WorkloadEventHistoryPanelProps {
@@ -48,7 +48,9 @@ export function WorkloadEventHistoryPanel({
 
   const renderContent = () => {
     if (isLoading) {
-      return <MySpinner />;
+      return Array.from({ length: 4 }).map((_, index) => (
+        <Card key={`skeleton-${index}`} loading style={{ height: 145 }} />
+      ));
     }
     if (isError) {
       return <EmptyState title={TABLE_MESSAGE.ERROR} />;
