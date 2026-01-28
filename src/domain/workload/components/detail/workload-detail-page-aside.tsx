@@ -1,14 +1,11 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import styled from "styled-components";
 
-import { WorkloadEventCard } from "@/domain/workload/components/detail/workload-event-card";
+import { WorkloadEventHistoryCard } from "@/domain/workload/components/detail/workload-event-history-card";
 import { WorkloadIntroCard } from "@/domain/workload/components/detail/workload-intro-card";
 import { useGetWorkloadByMode } from "@/domain/workload/hooks/use-get-workload-by-mode";
 import { useWorkloadStatusPolling } from "@/domain/workload/hooks/use-workload-status-polling";
-import type { WorkloadEventType } from "@/domain/workload/schemas/workload.schema";
-import { AsideFillCard } from "@/shared/components/layouts/aside-fill-card";
 import { DetailPageAside } from "@/styles/layers/detail-page-layers.styled";
 
 /**
@@ -42,20 +39,10 @@ export function WorkloadDetailPageAside() {
         <WorkloadIntroCard {...data} status={polledStatus || data.status} />
       )}
       {/* 이벤트 이력 */}
-      <AsideFillCard title="이벤트 이력">
-        <CardWrapper>
-          {data?.events.map((item: WorkloadEventType) => (
-            <WorkloadEventCard key={item.id} {...item} />
-          ))}
-        </CardWrapper>
-      </AsideFillCard>
+      <WorkloadEventHistoryCard
+        workspaceId={Number(workspaceId)}
+        workloadResourceName={workloadId}
+      />
     </DetailPageAside>
   );
 }
-
-const CardWrapper = styled.div`
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
