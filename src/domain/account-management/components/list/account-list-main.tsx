@@ -16,7 +16,6 @@ import { UpdateAccountStatusModal } from "@/domain/account-management/components
 import { ViewAccountDetailModal } from "@/domain/account-management/components/list/view-account-detail-modal";
 import { ACCOUNT_SORT_FIELD_MAP } from "@/domain/account-management/constants/account.constant";
 import {
-  accountCheckedListAtom,
   accountPageAtom,
   accountSearchTextAtom,
   accountSortAtom,
@@ -29,7 +28,6 @@ export function AccountListMain() {
   const resetPage = useResetAtom(accountPageAtom);
   const setSearchText = useSetAtom(accountSearchTextAtom);
   const setSort = useSetAtom(accountSortAtom);
-  const resetCheckedList = useResetAtom(accountCheckedListAtom);
 
   const page = useAtomValue(accountPageAtom);
   const searchText = useAtomValue(accountSearchTextAtom);
@@ -51,8 +49,7 @@ export function AccountListMain() {
     resetPage();
     setSearchText("");
     setSort({ field: "accountName", order: "ascend" });
-    resetCheckedList();
-  }, [resetPage, setSearchText, setSort, resetCheckedList]);
+  }, [resetPage, setSearchText, setSort]);
 
   return (
     <>

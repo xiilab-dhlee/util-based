@@ -13,7 +13,6 @@ export const accountSortAtom = atom<AccountSortState>({
   field: "accountName",
   order: "ascend",
 });
-export const accountCheckedListAtom = atomWithReset<Set<Key>>(new Set());
 export const openUpdateAccountModalAtom = atom<boolean>(false);
 export const openDeleteAccountModalAtom = atom<boolean>(false);
 export const accountPendingPageAtom = atomWithReset<number>(1);
