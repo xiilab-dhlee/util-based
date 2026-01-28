@@ -70,7 +70,7 @@ export function ViewAndEditDecisionReasonModal() {
   const isApproved = payload?.approvalStatus === "APPROVED";
   const statusLabel = isApproved ? "승인" : "반려";
 
-  const handleClose = () => {
+  const resetModalState = () => {
     if (isPending) return;
     setOpen(false);
     setMode("view");
@@ -82,13 +82,6 @@ export function ViewAndEditDecisionReasonModal() {
       reset({ decisionReason: payload.decisionReason || "" });
       setMode("edit");
     }
-  };
-
-  const handleCancelEdit = () => {
-    if (isPending) return;
-    setOpen(false);
-    setMode("view");
-    setPayload(null);
   };
 
   const onSubmit = (data: UpdateDecisionReasonFormType) => {
@@ -135,8 +128,8 @@ export function ViewAndEditDecisionReasonModal() {
         showCancelButton={canEdit}
         okText={canEdit ? "수정" : "확인"}
         cancelText="취소"
-        onOk={canEdit ? handleEditClick : handleClose}
-        onCancel={handleClose}
+        onOk={canEdit ? handleEditClick : resetModalState}
+        onCancel={resetModalState}
         centered
         showHeaderBorder
         closable
@@ -177,7 +170,7 @@ export function ViewAndEditDecisionReasonModal() {
       okText="수정 완료"
       cancelText="취소"
       onOk={handleSubmit(onSubmit)}
-      onCancel={handleCancelEdit}
+      onCancel={resetModalState}
       centered
       showHeaderBorder
       closable={!isPending}
