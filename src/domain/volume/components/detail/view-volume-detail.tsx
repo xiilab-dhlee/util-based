@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Card } from "xiilab-ui";
 
 import type { VolumeDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetVolumeWorkloads } from "@/api/generated/volume/volume";
 import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
 import { CustomScrollbars } from "@/shared/components/custom-scrollbars";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
@@ -31,23 +32,34 @@ interface ViewVolumeDetailProps {
   isLoading: boolean;
 }
 
+const PAGE_SIZE = 10;
+
 export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
   const [page, setPage] = useState(0);
   const { text: storageTypeText } = getVolumeStorageTypeInfo(data?.volumeType);
   const statusText = getVisibilityLabel(data?.isPublic);
 
-  const volumeWorkloadApiIsLoading = true;
-  const volumeWorkloadApiIsError = false;
-  const volumeWorkloadApiEmptyData = false;
+  const {
+    data: workloadData,
+    isLoading: isWorkloadLoading,
+    isError: isWorkloadError,
+  } = useGetVolumeWorkloads(
+    data?.volumeId ?? 0,
+    { pageNo: page, pageSize: PAGE_SIZE },
+    { query: { enabled: !!data?.volumeId } },
+  );
+
+  const workloads = workloadData?.content ?? [];
+  const totalSize = workloadData?.totalSize ?? 0;
 
   const renderWorkloadList = () => {
-    if (volumeWorkloadApiIsLoading) {
-      return Array.from({ length: 10 }).map((_, index) => (
+    if (isWorkloadLoading) {
+      return Array.from({ length: PAGE_SIZE }).map((_, index) => (
         <Card key={`skeleton-${index}`} loading style={{ height: 66 }} />
       ));
     }
 
-    if (volumeWorkloadApiIsError) {
+    if (isWorkloadError) {
       return (
         <EmptyStateWrapper>
           <EmptyState title={TABLE_MESSAGE.ERROR} />
@@ -55,7 +67,7 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
       );
     }
 
-    if (volumeWorkloadApiEmptyData) {
+    if (workloads.length === 0) {
       return (
         <EmptyStateWrapper>
           <EmptyState title="사용 중인 워크로드가 없습니다." />
@@ -63,8 +75,8 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
       );
     }
 
-    return Array.from({ length: 10 }).map((_, index) => (
-      <VolumeWorkloadCard key={index} />
+    return workloads.map((workload) => (
+      <VolumeWorkloadCard key={workload.workloadId} data={workload} />
     ));
   };
 
@@ -193,9 +205,9 @@ export function ViewVolumeDetail({ data, isLoading }: ViewVolumeDetailProps) {
           </AsideDetailArticleItem>
           <WorkloadList>{renderWorkloadList()}</WorkloadList>
           <ListPageFooter
-            total={100}
+            total={totalSize}
             page={page}
-            pageSize={10}
+            pageSize={PAGE_SIZE}
             onChange={setPage}
           />
         </StyledArticleBody>

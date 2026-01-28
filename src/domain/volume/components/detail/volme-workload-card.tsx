@@ -1,29 +1,52 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import styled from "styled-components";
 
+import type { VolumeWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { getWorkloadStatusInfoByStatus } from "@/domain/workload/utils/workload.util";
 import { WorkloadStatusText } from "@/shared/components/text/workload-status-text";
+import { ROUTES } from "@/shared/constants/routes.constant";
 import { formatDateSafely } from "@/shared/utils/date.util";
+import { isUserMode } from "@/shared/utils/router.util";
 import { statusColorStyle } from "@/styles/mixins/color";
 
-type VolumeWorkloadCardProps = {};
+interface VolumeWorkloadCardProps {
+  data: VolumeWorkloadResponse;
+}
 
-export function VolumeWorkloadCard(props: VolumeWorkloadCardProps) {
+export function VolumeWorkloadCard({ data }: VolumeWorkloadCardProps) {
+  const pathname = usePathname();
+  const { colorVariant } = getWorkloadStatusInfoByStatus(data.workloadStatus);
+
+  const isUser = isUserMode(pathname);
+  let href = "";
+  if (isUser) {
+    href = ROUTES.USER_WORKLOAD_DETAIL(
+      data.workspaceId,
+      data.workloadResourceName,
+    );
+  } else {
+    href = ROUTES.ADMIN_WORKSPACE_WORKLOAD_DETAIL(
+      data.workspaceId,
+      data.workloadResourceName,
+    );
+  }
+
   return (
-    <Container href={`/standard/workload/`}>
-      <Left className="green">
-        <Title className="truncate">워크로드 이름</Title>
-        <Description>AstraGo팀-Workspace</Description>
+    <Container href={href}>
+      <Left className={colorVariant}>
+        <Title className="truncate">{data.workspaceName ?? "-"}</Title>
+        <Description>{data.workspaceName}</Description>
         <Description>
-          <span>{formatDateSafely(new Date())}</span>
-          <span>홍길동</span>
+          <span>{formatDateSafely(data.createdAt)}</span>
+          <span>{data.creatorName || "-"}</span>
         </Description>
       </Left>
 
-      {/* 오른쪽 영역: 워크로드 상태 표시 */}
       <Right>
-        <WorkloadStatusText status="RUNNING" />
+        <WorkloadStatusText status={data.workloadStatus} />
       </Right>
     </Container>
   );
