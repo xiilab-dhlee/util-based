@@ -6,6 +6,7 @@ import styled from "styled-components";
 import type { StepItem } from "xiilab-ui";
 import { Button, Drawer, Step, Typography } from "xiilab-ui";
 
+import type { WorkloadDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { CreateSourcecodeModal } from "@/domain/sourcecode/components/create-sourcecode-modal";
 import { CreateAstragoVolumeModal } from "@/domain/volume/components/create-astrago-volume-modal";
 import { CreateOnPremVolumeModal } from "@/domain/volume/components/create-onprem-volume-modal";
@@ -15,7 +16,6 @@ import { CreateWorkloadFourthStep } from "@/domain/workload/components/create/cr
 import { CreateWorkloadSecondStep } from "@/domain/workload/components/create/create-workload-second-step";
 import { CreateWorkloadThirdStep } from "@/domain/workload/components/create/create-workload-third-step";
 import { useCreateWorkload } from "@/domain/workload/hooks/use-create-workload";
-import type { WorkloadDetailType } from "@/domain/workload/schemas/workload.schema";
 import {
   envsAtom,
   execCommandAtom,
@@ -147,7 +147,7 @@ export function CreateWorkloadDrawer() {
 
   useSubscribe(
     WORKLOAD_EVENTS.sendCreateWorkload,
-    (eventData: WorkloadDetailType) => {
+    (eventData: WorkloadDetailResponse) => {
       // eventData가 없는 경우 워크로드 생성
       // eventData가 있는 경우 워크로드 복제
       // step 1

@@ -2,6 +2,7 @@ import type { SorterResult } from "antd/es/table/interface";
 import { useState } from "react";
 import styled from "styled-components";
 
+import type { ActiveWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MonitoringWorkloadStatus } from "@/domain/monitoring/components/monitoring-workload-status";
 import {
   ACTIVE_WORKLOAD_PAGE_SIZE,
@@ -11,10 +12,6 @@ import {
 } from "@/domain/monitoring/constants/monitoring.constant";
 import { useGetUserResources } from "@/domain/monitoring/hooks/use-get-user-resources";
 import type { UserResourceSchemaType } from "@/domain/monitoring/schemas/user-resource.schema";
-import type {
-  WorkloadListType,
-  WorkloadStatusType,
-} from "@/domain/workload/schemas/workload.schema";
 import { useGetWorkspaces } from "@/domain/workspace/hooks/use-get-workspaces";
 import type { WorkspaceListType } from "@/domain/workspace/schemas/workspace.schema";
 import { createUserResourceColumn } from "@/shared/components/column/create-user-resource-column";
@@ -131,7 +128,9 @@ export function MonitoringSubSection() {
 
   /** 활성화 워크로드 테이블 정렬 변경 핸들러 */
   const handleActiveWorkloadSortChange = (
-    sorter: SorterResult<WorkloadListType> | SorterResult<WorkloadListType>[],
+    sorter:
+      | SorterResult<ActiveWorkloadResponse>
+      | SorterResult<ActiveWorkloadResponse>[],
   ) => {
     const parsed = parseSorter(sorter);
     if (parsed) {
@@ -261,7 +260,7 @@ export function MonitoringSubSection() {
           {["ALL", "RUNNING", "PENDING", "ERROR"].map((status) => (
             <MonitoringWorkloadStatus
               key={status}
-              status={status as WorkloadStatusType}
+              status={status}
               total={9999}
             />
           ))}
@@ -273,7 +272,7 @@ export function MonitoringSubSection() {
             <ArticleDescription>총 24개</ArticleDescription>
           </ArticleTitle>
           <ListArticleBody>
-            <CustomizedTable<WorkloadListType>
+            <CustomizedTable<ActiveWorkloadResponse>
               columns={activeWorkloadColumns}
               data={[]}
               activePadding

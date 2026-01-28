@@ -2,6 +2,7 @@
 
 import { Card } from "xiilab-ui";
 
+import type { ActiveWorkloadResponseWorkloadJobType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   LegendDot,
   LegendGroup,
@@ -18,11 +19,10 @@ import {
 import {
   WORKLOAD_JOB_TYPE_COLOR_MAP,
   WORKLOAD_JOB_TYPE_LABEL_MAP,
-  type WorkloadJobType,
 } from "@/domain/workload/constants/workload.constant";
 
 interface JobTypeData {
-  type: WorkloadJobType;
+  type: ActiveWorkloadResponseWorkloadJobType;
   time: string;
   percentage: number;
 }

@@ -4,38 +4,41 @@ import type { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { Card, Icon } from "xiilab-ui";
 
+import type { WorkloadVolumeDetail } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getVolumeStorageTypeInfo } from "@/domain/volume/utils/volume.util";
-import type { WorkloadVolumeType } from "@/domain/workload/schemas/workload.schema";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
-import { getVisibilityInfo } from "@/shared/utils/visibility.util";
 import {
   LikeCompactCardKey,
   LikeCompactCardRecord,
   LikeCompactCardValue,
 } from "@/styles/layers/like-card-layers.styled";
 
-interface WorkloadVolumeCardProps extends WorkloadVolumeType {
+interface WorkloadVolumeCardProps
+  extends Pick<
+    WorkloadVolumeDetail,
+    "volumeId" | "volumeName" | "volumeType" | "mountPath" | "volumeSize"
+  > {
   onDelete?: () => void;
 }
 
+/**
+ * 워크로드 볼륨 카드 컴포넌트
+ *
+ * 워크로드에 연결된 볼륨 정보를 표시합니다.
+ */
 export function WorkloadVolumeCard({
-  name,
-  storageType,
-  path,
-  size,
-  status,
+  volumeName,
+  volumeType,
+  mountPath,
+  volumeSize,
   onDelete,
 }: PropsWithChildren<WorkloadVolumeCardProps>) {
-  const { text } = getVolumeStorageTypeInfo(storageType);
-  const { iconName } = getVisibilityInfo(status === "PUBLIC");
+  const { text } = getVolumeStorageTypeInfo(volumeType);
   return (
     <div data-testid={WORKLOAD_SELECTOR.VOLUME_CARD}>
       <Card
         contentVariant="compact"
-        title={name}
-        icon={
-          iconName ? <Icon name={iconName} color="#464B51" size={18} /> : null
-        }
+        title={volumeName}
         actionElement={
           onDelete ? (
             <IconWrapper
@@ -55,7 +58,7 @@ export function WorkloadVolumeCard({
             <LikeCompactCardValue
               className="truncate"
               data-testid={WORKLOAD_SELECTOR.volumeStorageType(
-                storageType.toLowerCase(),
+                volumeType.toLowerCase(),
               )}
             >
               {text}
@@ -67,7 +70,7 @@ export function WorkloadVolumeCard({
               className="truncate"
               data-testid={WORKLOAD_SELECTOR.VOLUME_PATH}
             >
-              {path || "-"}
+              {mountPath || "-"}
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
           <LikeCompactCardRecord>
@@ -76,7 +79,7 @@ export function WorkloadVolumeCard({
               className="truncate"
               data-testid={WORKLOAD_SELECTOR.VOLUME_SIZE}
             >
-              {size.toLocaleString()} Bytes
+              {volumeSize.toLocaleString()} Bytes
             </LikeCompactCardValue>
           </LikeCompactCardRecord>
         </Body>

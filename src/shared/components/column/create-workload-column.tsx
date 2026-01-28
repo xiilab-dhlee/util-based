@@ -171,11 +171,14 @@ const createSharedColumns = <
     align: "center",
     width: "5%",
     render: (_, record: T) => {
+      if (!workspaceId) return null;
+
       const { canDelete } = getActionStates(record);
 
       return (
         <DeleteWorkloadButton
-          workloadId={record.workloadResourceName}
+          workloadResourceName={record.workloadResourceName}
+          workspaceId={workspaceId}
           disabled={!canDelete}
         />
       );
