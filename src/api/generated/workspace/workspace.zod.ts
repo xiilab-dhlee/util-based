@@ -691,6 +691,83 @@ export const getPendingReclaimResourceSummaryResponse = zod
   .strict();
 
 /**
+ * 
+            워크스페이스에 할당된 리소스(Queue Capability)를 조회합니다.
+
+            **권한:** OWNER만 조회 가능
+
+            **응답 데이터:**
+            - GPU: Normal GPU + MIG 프로필별 할당량
+            - CPU: 코어 수
+            - Memory: 바이트 단위
+
+            **데이터 소스:**
+            - Volcano Queue의 original-capability annotation 또는 spec.capability
+        
+ * @summary 워크스페이스 리소스 할당량 조회
+ */
+export const getWorkspaceResourcesParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getWorkspaceResourcesResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        gpu: zod
+          .object({
+            quotaCount: zod
+              .number()
+              .describe("GPU 총 할당량 (Normal + MIG 합산)"),
+            detail: zod
+              .object({
+                normal: zod
+                  .object({
+                    quotaCount: zod.number().describe("Normal GPU 할당량"),
+                  })
+                  .strict()
+                  .describe("Normal GPU 할당량"),
+                mig: zod
+                  .array(
+                    zod
+                      .object({
+                        profile: zod.string().describe("MIG 프로필 이름"),
+                        quotaCount: zod.number().describe("MIG 프로필 할당량"),
+                      })
+                      .strict()
+                      .describe("MIG 프로필 할당량"),
+                  )
+                  .describe("MIG 프로필별 할당량"),
+              })
+              .strict()
+              .describe("GPU 상세 할당량 응답"),
+          })
+          .strict()
+          .describe("GPU 할당량 응답"),
+        cpu: zod
+          .object({
+            quotaCore: zod.number().describe("CPU 할당량 (코어)"),
+          })
+          .strict()
+          .describe("CPU 할당량 응답"),
+        memory: zod
+          .object({
+            quotaByte: zod.number().describe("메모리 할당량 (bytes)"),
+          })
+          .strict()
+          .describe("메모리 할당량 응답"),
+      })
+      .strict()
+      .optional()
+      .describe("워크스페이스 리소스 할당량 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 워크스페이스 상세 정보를 조회합니다. 존재하지 않는 경우 null을 반환합니다.
  * @summary 워크스페이스 상세 조회
  */

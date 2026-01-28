@@ -2283,6 +2283,7 @@ export interface SnapshotImageRequest {
    * 생성할 이미지 이름
    * @minLength 1
    * @maxLength 255
+   * @pattern ^[a-z0-9]+(?:[._-][a-z0-9]+)*$
    */
   imageName: string;
   /**
@@ -4400,6 +4401,90 @@ export interface WorkloadConnection {
   url: string;
 }
 
+export type BaseResponseWorkspaceResourceResponseStatus =
+  (typeof BaseResponseWorkspaceResourceResponseStatus)[keyof typeof BaseResponseWorkspaceResourceResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseWorkspaceResourceResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseWorkspaceResourceResponse {
+  status: BaseResponseWorkspaceResourceResponseStatus;
+  errorCode?: string;
+  data?: WorkspaceResourceResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * CPU 할당량 응답
+ */
+export interface CpuQuotaResponse {
+  /** CPU 할당량 (코어) */
+  quotaCore: number;
+}
+
+/**
+ * GPU 상세 할당량 응답
+ */
+export interface GpuQuotaDetailResponse {
+  /** Normal GPU 할당량 */
+  normal: NormalGpuQuotaResponse;
+  /** MIG 프로필별 할당량 */
+  mig: MigProfileQuotaResponse[];
+}
+
+/**
+ * GPU 할당량 응답
+ */
+export interface GpuQuotaResponse {
+  /** GPU 총 할당량 (Normal + MIG 합산) */
+  quotaCount: number;
+  /** GPU 상세 할당량 */
+  detail: GpuQuotaDetailResponse;
+}
+
+/**
+ * 메모리 할당량 응답
+ */
+export interface MemoryQuotaResponse {
+  /** 메모리 할당량 (bytes) */
+  quotaByte: number;
+}
+
+/**
+ * MIG 프로필 할당량
+ */
+export interface MigProfileQuotaResponse {
+  /** MIG 프로필 이름 */
+  profile: string;
+  /** MIG 프로필 할당량 */
+  quotaCount: number;
+}
+
+/**
+ * Normal GPU 할당량
+ */
+export interface NormalGpuQuotaResponse {
+  /** Normal GPU 할당량 */
+  quotaCount: number;
+}
+
+/**
+ * 워크스페이스 리소스 할당량 응답
+ */
+export interface WorkspaceResourceResponse {
+  /** GPU 리소스 할당량 */
+  gpu: GpuQuotaResponse;
+  /** CPU 리소스 할당량 */
+  cpu: CpuQuotaResponse;
+  /** 메모리 리소스 할당량 */
+  memory: MemoryQuotaResponse;
+}
+
 export type BaseResponsePageResponseResourceRequestListResponseStatus =
   (typeof BaseResponsePageResponseResourceRequestListResponseStatus)[keyof typeof BaseResponsePageResponseResourceRequestListResponseStatus];
 
@@ -4634,6 +4719,67 @@ export interface VolumeListResponse {
   fileSizeByte: number;
   /** 공개 여부 */
   isPublic: boolean;
+}
+
+export type BaseResponsePageResponseVolumeWorkloadResponseStatus =
+  (typeof BaseResponsePageResponseVolumeWorkloadResponseStatus)[keyof typeof BaseResponsePageResponseVolumeWorkloadResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseVolumeWorkloadResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseVolumeWorkloadResponse {
+  status: BaseResponsePageResponseVolumeWorkloadResponseStatus;
+  errorCode?: string;
+  data?: PageResponseVolumeWorkloadResponse;
+  message?: string;
+  timestamp: number;
+}
+
+export interface PageResponseVolumeWorkloadResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: VolumeWorkloadResponse[];
+}
+
+/**
+ * 워크로드 상태
+ */
+export type VolumeWorkloadResponseWorkloadStatus =
+  (typeof VolumeWorkloadResponseWorkloadStatus)[keyof typeof VolumeWorkloadResponseWorkloadStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VolumeWorkloadResponseWorkloadStatus = {
+  CREATING: "CREATING",
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  TERMINATING: "TERMINATING",
+  TERMINATED: "TERMINATED",
+  ERROR: "ERROR",
+} as const;
+
+/**
+ * 볼륨을 사용 중인 워크로드 정보
+ */
+export interface VolumeWorkloadResponse {
+  /** 워크로드 ID */
+  workloadId: number;
+  /** 워크로드 리소스 이름 */
+  workloadResourceName: string;
+  /** 워크스페이스 이름 */
+  workspaceName: string;
+  /** 워크스페이스 ID */
+  workspaceId: number;
+  /** 워크로드 생성 시각 */
+  createdAt: string;
+  /** 워크로드 생성자 이름 */
+  creatorName: string;
+  /** 워크로드 상태 */
+  workloadStatus: VolumeWorkloadResponseWorkloadStatus;
 }
 
 export type BaseResponseVolumeFileListResponseStatus =
@@ -10455,6 +10601,10 @@ export type GetPublicRegistryListParams = {
    * 이미지 소스 타입 필터 (미지정 시 전체 조회)
    */
   imageSourceType?: GetPublicRegistryListImageSourceType;
+  /**
+   * 프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)
+   */
+  frameworkType?: GetPublicRegistryListFrameworkType;
 };
 
 export type GetPublicRegistryListSort =
@@ -10482,6 +10632,20 @@ export type GetPublicRegistryListImageSourceType =
 export const GetPublicRegistryListImageSourceType = {
   SNAPSHOT: "SNAPSHOT",
   EXTERNAL: "EXTERNAL",
+} as const;
+
+export type GetPublicRegistryListFrameworkType =
+  (typeof GetPublicRegistryListFrameworkType)[keyof typeof GetPublicRegistryListFrameworkType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPublicRegistryListFrameworkType = {
+  PYTORCH: "PYTORCH",
+  TENSORFLOW: "TENSORFLOW",
+  JUPYTER: "JUPYTER",
+  VSCODE: "VSCODE",
+  RSTUDIO: "RSTUDIO",
+  HUB: "HUB",
+  REGISTRY: "REGISTRY",
 } as const;
 
 export type GetPublicImageTagListParams = {
@@ -10595,6 +10759,10 @@ export type GetPrivateRegistryListParams = {
    * 이미지 소스 타입 필터 (미지정 시 전체 조회)
    */
   imageSourceType?: GetPrivateRegistryListImageSourceType;
+  /**
+   * 프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)
+   */
+  frameworkType?: GetPrivateRegistryListFrameworkType;
 };
 
 export type GetPrivateRegistryListSort =
@@ -10622,6 +10790,20 @@ export type GetPrivateRegistryListImageSourceType =
 export const GetPrivateRegistryListImageSourceType = {
   SNAPSHOT: "SNAPSHOT",
   EXTERNAL: "EXTERNAL",
+} as const;
+
+export type GetPrivateRegistryListFrameworkType =
+  (typeof GetPrivateRegistryListFrameworkType)[keyof typeof GetPrivateRegistryListFrameworkType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetPrivateRegistryListFrameworkType = {
+  PYTORCH: "PYTORCH",
+  TENSORFLOW: "TENSORFLOW",
+  JUPYTER: "JUPYTER",
+  VSCODE: "VSCODE",
+  RSTUDIO: "RSTUDIO",
+  HUB: "HUB",
+  REGISTRY: "REGISTRY",
 } as const;
 
 export type GetPrivateImageTagListParams = {
@@ -11393,6 +11575,20 @@ export const GetVolumeListVolumeType = {
   ON_PREMISE: "ON_PREMISE",
 } as const;
 
+export type GetVolumeWorkloadsParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+};
+
 export type ListFilesParams = {
   /**
    * 조회할 경로 (기본값: /)
@@ -11627,6 +11823,164 @@ export type GetImageJobsImageSourceType =
 export const GetImageJobsImageSourceType = {
   SNAPSHOT: "SNAPSHOT",
   EXTERNAL: "EXTERNAL",
+} as const;
+
+export type GetHubRegistryListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 필드
+   */
+  sort?: GetHubRegistryListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetHubRegistryListOrder;
+  /**
+   * 내가 생성한 이미지만 조회
+   */
+  hasMine?: boolean;
+  /**
+   * 이미지 소스 타입 필터 (미지정 시 전체 조회)
+   */
+  imageSourceType?: GetHubRegistryListImageSourceType;
+  /**
+   * 프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)
+   */
+  frameworkType?: GetHubRegistryListFrameworkType;
+};
+
+export type GetHubRegistryListSort =
+  (typeof GetHubRegistryListSort)[keyof typeof GetHubRegistryListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetHubRegistryListSort = {
+  CREATED_AT: "CREATED_AT",
+  CREATOR_NAME: "CREATOR_NAME",
+} as const;
+
+export type GetHubRegistryListOrder =
+  (typeof GetHubRegistryListOrder)[keyof typeof GetHubRegistryListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetHubRegistryListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetHubRegistryListImageSourceType =
+  (typeof GetHubRegistryListImageSourceType)[keyof typeof GetHubRegistryListImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetHubRegistryListImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
+export type GetHubRegistryListFrameworkType =
+  (typeof GetHubRegistryListFrameworkType)[keyof typeof GetHubRegistryListFrameworkType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetHubRegistryListFrameworkType = {
+  PYTORCH: "PYTORCH",
+  TENSORFLOW: "TENSORFLOW",
+  JUPYTER: "JUPYTER",
+  VSCODE: "VSCODE",
+  RSTUDIO: "RSTUDIO",
+  HUB: "HUB",
+  REGISTRY: "REGISTRY",
+} as const;
+
+export type GetBuiltInRegistryListParams = {
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  pageNo?: number;
+  /**
+   * 페이지 크기
+   * @minimum 1
+   * @maximum 100
+   */
+  pageSize?: number;
+  /**
+   * 검색 키워드
+   */
+  keyword?: string;
+  /**
+   * 정렬 필드
+   */
+  sort?: GetBuiltInRegistryListSort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetBuiltInRegistryListOrder;
+  /**
+   * 내가 생성한 이미지만 조회
+   */
+  hasMine?: boolean;
+  /**
+   * 이미지 소스 타입 필터 (미지정 시 전체 조회)
+   */
+  imageSourceType?: GetBuiltInRegistryListImageSourceType;
+  /**
+   * 프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)
+   */
+  frameworkType?: GetBuiltInRegistryListFrameworkType;
+};
+
+export type GetBuiltInRegistryListSort =
+  (typeof GetBuiltInRegistryListSort)[keyof typeof GetBuiltInRegistryListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetBuiltInRegistryListSort = {
+  CREATED_AT: "CREATED_AT",
+  CREATOR_NAME: "CREATOR_NAME",
+} as const;
+
+export type GetBuiltInRegistryListOrder =
+  (typeof GetBuiltInRegistryListOrder)[keyof typeof GetBuiltInRegistryListOrder];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetBuiltInRegistryListOrder = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
+
+export type GetBuiltInRegistryListImageSourceType =
+  (typeof GetBuiltInRegistryListImageSourceType)[keyof typeof GetBuiltInRegistryListImageSourceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetBuiltInRegistryListImageSourceType = {
+  SNAPSHOT: "SNAPSHOT",
+  EXTERNAL: "EXTERNAL",
+} as const;
+
+export type GetBuiltInRegistryListFrameworkType =
+  (typeof GetBuiltInRegistryListFrameworkType)[keyof typeof GetBuiltInRegistryListFrameworkType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetBuiltInRegistryListFrameworkType = {
+  PYTORCH: "PYTORCH",
+  TENSORFLOW: "TENSORFLOW",
+  JUPYTER: "JUPYTER",
+  VSCODE: "VSCODE",
+  RSTUDIO: "RSTUDIO",
+  HUB: "HUB",
+  REGISTRY: "REGISTRY",
 } as const;
 
 export type FindHubsParams = {

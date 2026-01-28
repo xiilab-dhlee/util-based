@@ -33,6 +33,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import type {
   BaseResponsePageResponseVolumeListResponse,
+  BaseResponsePageResponseVolumeWorkloadResponse,
   BaseResponseUnit,
   BaseResponseUpdateVolumeResponse,
   BaseResponseVolumeDeleteResult,
@@ -118,6 +119,42 @@ export const getGetVolumeListResponseMock = (
       mountPath: faker.string.alpha({ length: { min: 10, max: 20 } }),
       fileSizeByte: faker.number.int({ min: undefined, max: undefined }),
       isPublic: faker.datatype.boolean(),
+    })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetVolumeWorkloadsResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseVolumeWorkloadResponse> = {},
+): BaseResponsePageResponseVolumeWorkloadResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    totalSize: faker.number.int({ min: undefined, max: undefined }),
+    totalPageNum: faker.number.int({ min: undefined, max: undefined }),
+    currentPageNo: faker.number.int({ min: undefined, max: undefined }),
+    content: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1,
+    ).map(() => ({
+      workloadId: faker.number.int({ min: undefined, max: undefined }),
+      workloadResourceName: faker.string.alpha({
+        length: { min: 10, max: 20 },
+      }),
+      workspaceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workspaceId: faker.number.int({ min: undefined, max: undefined }),
+      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      workloadStatus: faker.helpers.arrayElement([
+        "CREATING",
+        "PENDING",
+        "RUNNING",
+        "TERMINATING",
+        "TERMINATED",
+        "ERROR",
+      ] as const),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -318,6 +355,36 @@ export const getGetVolumeListMockHandler = (
   );
 };
 
+export const getGetVolumeWorkloadsMockHandler = (
+  overrideResponse?:
+    | BaseResponsePageResponseVolumeWorkloadResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponsePageResponseVolumeWorkloadResponse>
+        | BaseResponsePageResponseVolumeWorkloadResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/volumes/:volumeId/workloads",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetVolumeWorkloadsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetVolumeDetailMockHandler = (
   overrideResponse?:
     | BaseResponseVolumeDetailResponse
@@ -354,5 +421,6 @@ export const getVolumeMock = () => [
   getDeleteVolumesMockHandler(),
   getRegisterAstragoVolumeMockHandler(),
   getGetVolumeListMockHandler(),
+  getGetVolumeWorkloadsMockHandler(),
   getGetVolumeDetailMockHandler(),
 ];
