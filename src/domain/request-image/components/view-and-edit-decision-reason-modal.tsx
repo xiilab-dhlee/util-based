@@ -198,7 +198,7 @@ export function ViewAndEditDecisionReasonModal() {
           </DetailRow>
         </DetailCard>
 
-        <Form onFinish={handleSubmit(onSubmit)}>
+        <Form>
           <Controller
             name="decisionReason"
             control={control}
