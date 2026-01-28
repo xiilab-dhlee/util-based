@@ -11,14 +11,12 @@ import { RegistrySecurityService } from "@/domain/security/api/registry-security
 import { HpeService } from "@/domain/system-setting/api/hpe.service";
 import { WorkspaceResourceSettingService } from "@/domain/system-setting/api/workspace-resource-setting.service";
 import { AdminWorkloadService } from "@/domain/workload/api/admin-workload.service";
-import { WorkloadService } from "@/domain/workload/api/workload.service";
 import { WorkspaceService } from "@/domain/workspace/api/workspace.service";
 import { GpuService } from "@/shared/api/gpu.service";
 
 // 서비스 컨텍스트 타입 정의
 interface ServiceContextType {
   workspaceService: WorkspaceService;
-  workloadService: WorkloadService;
   userResourceService: UserResourceService;
   adminWorkloadService: AdminWorkloadService;
   reportService: ReportService;
@@ -50,7 +48,6 @@ interface ServiceProviderProps {
 export function ServiceProvider({ children }: ServiceProviderProps) {
   const services: ServiceContextType = {
     workspaceService: new WorkspaceService(),
-    workloadService: new WorkloadService(),
     userResourceService: new UserResourceService(),
     adminWorkloadService: new AdminWorkloadService(),
     reportService: new ReportService(),

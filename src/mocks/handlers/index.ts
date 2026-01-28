@@ -16,7 +16,6 @@ import { getAdminMonitoringNotificationHistoryMock } from "@/api/generated/admin
 import { getAdminMonitoringNotificationSetMock } from "@/api/generated/admin-monitoring-notification-set/admin-monitoring-notification-set.msw";
 import { getAdminQueueMock } from "@/api/generated/admin-queue/admin-queue.msw";
 import { getAdminResourcePresetMock } from "@/api/generated/admin-resource-preset/admin-resource-preset.msw";
-import { getAdminWorkloadMock } from "@/api/generated/admin-workload/admin-workload.msw";
 import { getClusterResourceMock } from "@/api/generated/cluster-resource/cluster-resource.msw";
 import { getGroupRegistrationMock } from "@/api/generated/group-registration/group-registration.msw";
 import { getResourcePresetMock } from "@/api/generated/resource-preset/resource-preset.msw";
@@ -130,7 +129,6 @@ const rawHandlers = [
   ...reportReservationHandlers,
   ...storageHandlers,
   ...getAdminQueueMock(),
-  ...getAdminWorkloadMock(),
   ...getSmtpSettingsMock(),
   ...getAdminImageTagUsageRequestMock(),
   ...nodeHandlers,
