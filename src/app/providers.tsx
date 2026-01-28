@@ -23,7 +23,7 @@ export function Providers({ children }: PropsWithChildren) {
               <ServiceProvider>
                 <ThemeProvider>
                   <Suspense fallback={<MySpinner />}>{children}</Suspense>
-                  <ToastContainer />
+                  <ToastContainer hideProgressBar />
                 </ThemeProvider>
               </ServiceProvider>
             </StoreProvider>
