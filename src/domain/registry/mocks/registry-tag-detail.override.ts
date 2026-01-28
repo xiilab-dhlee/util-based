@@ -1,5 +1,9 @@
 import { faker } from "@faker-js/faker";
 
+import type {
+  BaseResponseImageTagDetailResponse,
+  ImageTagDetailResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ImageTagDetailResponseScanStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetPrivateImageTagDetailMockHandler,
@@ -32,7 +36,9 @@ function generateVulnerability() {
 /**
  * 태그 상세 mock 데이터 생성
  */
-function generateTagDetailData(tagName: string) {
+function generateTagDetailData(
+  tagName: string,
+): Partial<ImageTagDetailResponse> {
   return {
     imageTagId: faker.number.int({ min: 1000000, max: 5000000000 }),
     imageTagName: tagName,
@@ -52,31 +58,35 @@ function generateTagDetailData(tagName: string) {
 
 export const registryTagDetailOverrideHandlers = [
   // Private registry tag detail handler
-  getGetPrivateImageTagDetailMockHandler(async (info) => {
-    const url = new URL(info.request.url);
-    const tagName = url.searchParams.get("tagName") || "";
+  getGetPrivateImageTagDetailMockHandler(
+    (info): BaseResponseImageTagDetailResponse => {
+      const url = new URL(info.request.url);
+      const tagName = url.searchParams.get("tagName") || "";
 
-    const baseMock = getGetPrivateImageTagDetailResponseMock();
-    return {
-      ...baseMock,
-      data: {
-        ...baseMock.data,
-        ...generateTagDetailData(tagName),
-      },
-    };
-  }),
+      const baseMock = getGetPrivateImageTagDetailResponseMock();
+      const tagDetailData = generateTagDetailData(tagName);
+      return {
+        ...baseMock,
+        data: baseMock.data
+          ? { ...baseMock.data, ...tagDetailData }
+          : undefined,
+      };
+    },
+  ),
   // Public registry tag detail handler
-  getGetPublicImageTagDetailMockHandler(async (info) => {
-    const url = new URL(info.request.url);
-    const tagName = url.searchParams.get("tagName") || "";
+  getGetPublicImageTagDetailMockHandler(
+    (info): BaseResponseImageTagDetailResponse => {
+      const url = new URL(info.request.url);
+      const tagName = url.searchParams.get("tagName") || "";
 
-    const baseMock = getGetPublicImageTagDetailResponseMock();
-    return {
-      ...baseMock,
-      data: {
-        ...baseMock.data,
-        ...generateTagDetailData(tagName),
-      },
-    };
-  }),
+      const baseMock = getGetPublicImageTagDetailResponseMock();
+      const tagDetailData = generateTagDetailData(tagName);
+      return {
+        ...baseMock,
+        data: baseMock.data
+          ? { ...baseMock.data, ...tagDetailData }
+          : undefined,
+      };
+    },
+  ),
 ];

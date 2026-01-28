@@ -25,6 +25,11 @@ import type {
   PageResponseActiveWorkloadResponse,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getGetImageJobsQueryKey } from "@/api/generated/image-job/image-job";
+import {
+  createPrivateSnapshotImageBodyPortItemNameMax,
+  createPrivateSnapshotImageBodyPortItemNameRegExp,
+  createPrivateSnapshotImageBodyPortItemPortMax,
+} from "@/api/generated/private-registry/private-registry.zod";
 import { getActiveWorkloads } from "@/api/generated/workload/workload";
 import { useCreateSnapshotRegistryByMode } from "@/domain/registry/hooks/use-create-snapshot-registry-by-mode";
 import {
@@ -133,6 +138,7 @@ export function CreateSnapshotRegistryModal({
     handleSubmit,
     reset,
     setValue,
+    resetField,
     formState: { errors },
   } = useForm<CreateSnapshotRegistryFormType>({
     resolver: zodResolver(createSnapshotRegistrySchema),
@@ -160,6 +166,24 @@ export function CreateSnapshotRegistryModal({
   } = useFieldArray({ control, name: "port" });
 
   const { mutate, isPending } = useCreateSnapshotRegistryByMode(mode);
+
+  // 포트 번호 유효성 검사 (1-65535)
+  const isValidPortNumber = useCallback((portStr: string): boolean => {
+    if (!portStr) return false;
+    const num = Number(portStr);
+    return (
+      !isNaN(num) &&
+      num >= 1 &&
+      num <= createPrivateSnapshotImageBodyPortItemPortMax
+    );
+  }, []);
+
+  // 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자)
+  const isValidPortName = useCallback((name: string): boolean => {
+    if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
+      return false;
+    return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
+  }, []);
 
   const onSubmit = (data: CreateSnapshotRegistryFormType) => {
     if (!selectedWorkspace) return;
@@ -215,13 +239,13 @@ export function CreateSnapshotRegistryModal({
       if (isAlreadySelected) {
         // 이미 선택된 워크로드를 다시 클릭하면 선택 해제
         setSelectedWorkloadKey(null);
-        setValue("workloadId", undefined, { shouldValidate: true });
+        resetField("workloadId");
       } else {
         setSelectedWorkloadKey(workload.workloadResourceName);
         setValue("workloadId", workload.workloadId, { shouldValidate: true });
       }
     },
-    [selectedWorkloadKey, setValue],
+    [selectedWorkloadKey, setValue, resetField],
   );
 
   const handleScroll = useCallback(
@@ -445,14 +469,19 @@ export function CreateSnapshotRegistryModal({
                     <Button
                       icon="Plus"
                       iconSize={14}
+                      disabled={
+                        !isValidPortName(portNameInput) ||
+                        !isValidPortNumber(portNumberInput)
+                      }
                       onClick={() => {
-                        if (portNameInput || portNumberInput) {
+                        if (
+                          isValidPortName(portNameInput) &&
+                          isValidPortNumber(portNumberInput)
+                        ) {
                           appendPort({
                             id: uuidv4(),
                             name: portNameInput,
-                            port: portNumberInput
-                              ? Number(portNumberInput)
-                              : undefined,
+                            port: Number(portNumberInput),
                           });
                           setPortNameInput("");
                           setPortNumberInput("");
@@ -593,7 +622,7 @@ const ModalContent = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  min-height: 500px;
+  height: 450px;
 `;
 
 const FormSection = styled.div`
@@ -678,7 +707,6 @@ const WorkloadListContainer = styled.div`
   border: 1px solid #e9ebee;
   border-radius: 4px;
   padding: 12px;
-  min-height: 380px;
 `;
 
 const WorkloadGrid = styled.div`

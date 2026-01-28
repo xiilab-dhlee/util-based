@@ -45,7 +45,7 @@ const getTagColumnConfig = (
   const baseColumns: CoreCreateColumnConfig[] = [
     {
       key: "imageTagName",
-      width: mode === "private" ? "16%" : "14%",
+      width: mode === "private" ? "14%" : "12%",
       ellipsis: true,
     },
     { key: "imageTagSizeByte", width: mode === "private" ? "10%" : "9%" },
@@ -62,7 +62,7 @@ const getTagColumnConfig = (
     {
       key: "createdAt",
       align: "left",
-      width: mode === "private" ? "12%" : "10%",
+      width: mode === "private" ? "14%" : "12%",
       sorter: true,
       sortOrder: getColumnSortOrder(sort, "createdAt"),
     },
