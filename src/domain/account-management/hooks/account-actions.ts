@@ -9,7 +9,7 @@ import {
 import {
   getGetAccountDetailQueryKey,
   getGetAllAccountsQueryKey,
-  useDeleteAccountBulk,
+  useDeleteAccountSingle,
   useUpdateAccount,
   useUpdateAccountEnabled,
 } from "@/api/generated/admin-account-management/admin-account-management";
@@ -20,12 +20,12 @@ import {
 } from "@/domain/account-management/state/account.atom";
 
 export function useDeleteAccountAction(
-  options?: Parameters<typeof useDeleteAccountBulk>[0],
+  options?: Parameters<typeof useDeleteAccountSingle>[0],
 ) {
   const queryClient = useQueryClient();
   const resetPage = useResetAtom(accountPageAtom);
 
-  return useDeleteAccountBulk({
+  return useDeleteAccountSingle({
     ...options,
     mutation: {
       ...options?.mutation,
@@ -38,10 +38,8 @@ export function useDeleteAccountAction(
           queryKey: getGetAllAccountsQueryKey(),
         });
 
-        variables.data.accountId.forEach((id) => {
-          queryClient.invalidateQueries({
-            queryKey: getGetAccountDetailQueryKey(id),
-          });
+        queryClient.invalidateQueries({
+          queryKey: getGetAccountDetailQueryKey(variables.accountId),
         });
 
         options?.mutation?.onSuccess?.(...args);

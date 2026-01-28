@@ -13,7 +13,7 @@ export function DeleteAccountButton({ account }: DeleteAccountButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(ACCOUNT_EVENTS.sendDeleteAccount, [account.accountId]);
+    publish(ACCOUNT_EVENTS.sendDeleteAccount, account.accountId);
   };
 
   return (
