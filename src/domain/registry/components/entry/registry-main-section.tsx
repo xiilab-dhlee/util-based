@@ -1,11 +1,25 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
+import { useState } from "react";
 import styled from "styled-components";
 import { Label, Switch, Typography } from "xiilab-ui";
 
 import { useGetApprovalStatusSummary } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request";
-import { ImageTagUsageRequestResponseApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  ImageTagUsageRequestResponseApprovalStatus,
+  VulnerabilityScanPolicyUpdateRequestImageType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getGetAstragoOnlyPolicyQueryKey,
+  getGetScanPolicyQueryKey,
+  useGetAstragoOnlyPolicy,
+  useGetLevelPolicy,
+  useGetScanPolicy,
+  useUpdateAstragoOnlyPolicy,
+  useUpdateScanPolicy,
+} from "@/api/generated/vulnerability-policy-admin/vulnerability-policy-admin";
 import { RequestImageStatusCard } from "@/domain/registry/components/entry/request-image-status-card";
 import { SecurityLevelSettingButton } from "@/domain/registry/components/entry/security-level-setting-button";
 import { SecuritySettingCard } from "@/domain/registry/components/entry/security-setting-card";
@@ -14,8 +28,69 @@ import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/use
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function RegistryMainSection() {
+  const queryClient = useQueryClient();
+
+  // 현재 수정 중인 스캔 정책 타입 추적
+  const [updatingImageType, setUpdatingImageType] =
+    useState<VulnerabilityScanPolicyUpdateRequestImageType | null>(null);
+
+  // 이미지 사용 요청 상태 조회
   const { data: approvalStatusSummary, isLoading } =
     useGetApprovalStatusSummary();
+
+  // 보안 정책 조회
+  const { data: scanPolicy, isLoading: isScanPolicyLoading } =
+    useGetScanPolicy();
+  const { data: astragoOnlyPolicy, isLoading: isAstragoOnlyPolicyLoading } =
+    useGetAstragoOnlyPolicy();
+  const { data: levelPolicy } = useGetLevelPolicy();
+
+  // 스캔 정책 수정
+  const updateScanMutation = useUpdateScanPolicy({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetScanPolicyQueryKey(),
+        });
+      },
+      onSettled: () => {
+        setUpdatingImageType(null);
+      },
+    },
+  });
+
+  // Astrago 전용 정책 수정
+  const updateAstragoOnlyMutation = useUpdateAstragoOnlyPolicy({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetAstragoOnlyPolicyQueryKey(),
+        });
+      },
+    },
+  });
+
+  // 스캔 정책 변경 핸들러
+  const handleScanPolicyChange = (
+    imageType: VulnerabilityScanPolicyUpdateRequestImageType,
+    hasEnabled: boolean,
+  ) => {
+    setUpdatingImageType(imageType);
+    updateScanMutation.mutate({ data: { imageType, hasEnabled } });
+  };
+
+  // Astrago 전용 정책 변경 핸들러
+  const handleAstragoOnlyPolicyChange = (hasEnabled: boolean) => {
+    updateAstragoOnlyMutation.mutate({ data: { hasEnabled } });
+  };
+
+  // 특정 이미지 타입이 수정 중인지 확인
+  const isUpdatingImageType = (
+    imageType: VulnerabilityScanPolicyUpdateRequestImageType,
+  ) => {
+    return updateScanMutation.isPending && updatingImageType === imageType;
+  };
+
   return (
     <Container>
       <Left>
@@ -73,7 +148,24 @@ export function RegistryMainSection() {
                   </>
                 }
                 description="개인 레지스트리에 업로드한 컨테이너 이미지의 보안 검사 수행 여부 설정"
-                action={<Switch disabled />}
+                action={
+                  <Switch
+                    darkMode
+                    checked={scanPolicy?.isPrivateScanEnabled}
+                    onChange={(checked) =>
+                      handleScanPolicyChange(
+                        VulnerabilityScanPolicyUpdateRequestImageType.PRIVATE,
+                        checked,
+                      )
+                    }
+                    disabled={
+                      isScanPolicyLoading ||
+                      isUpdatingImageType(
+                        VulnerabilityScanPolicyUpdateRequestImageType.PRIVATE,
+                      )
+                    }
+                  />
+                }
               />
               <SecuritySettingCard
                 title={
@@ -84,7 +176,24 @@ export function RegistryMainSection() {
                   </>
                 }
                 description="공유 레지스트리에 업로드한 컨테이너 이미지의 보안 검사 수행 여부 설정"
-                action={<Switch disabled />}
+                action={
+                  <Switch
+                    darkMode
+                    checked={scanPolicy?.isPublicScanEnabled}
+                    onChange={(checked) =>
+                      handleScanPolicyChange(
+                        VulnerabilityScanPolicyUpdateRequestImageType.PUBLIC,
+                        checked,
+                      )
+                    }
+                    disabled={
+                      isScanPolicyLoading ||
+                      isUpdatingImageType(
+                        VulnerabilityScanPolicyUpdateRequestImageType.PUBLIC,
+                      )
+                    }
+                  />
+                }
               />
               <SecuritySettingCard
                 title={
@@ -95,17 +204,39 @@ export function RegistryMainSection() {
                   </>
                 }
                 description="AstraGo를 통해 등록되지 않은 외부 레지스트리 이미지의 사용 가능 여부를 설정"
-                action={<Switch disabled />}
+                action={
+                  <Switch
+                    darkMode
+                    checked={!astragoOnlyPolicy?.isEnabled}
+                    onChange={(checked) =>
+                      handleAstragoOnlyPolicyChange(!checked)
+                    }
+                    disabled={
+                      isAstragoOnlyPolicyLoading ||
+                      updateAstragoOnlyMutation.isPending
+                    }
+                  />
+                }
               />
               <SecuritySettingCard
                 title={
                   <>
                     보안 레벨 설정
                     <br />
-                    <Label variant="blue">사용중</Label>
+                    <Label
+                      variant={
+                        levelPolicy?.isRestrictionEnabled ? "blue" : "black"
+                      }
+                    >
+                      {levelPolicy?.isRestrictionEnabled ? "사용중" : "미사용"}
+                    </Label>
                   </>
                 }
-                description="Critical 이상의 취약점 2개 이상 발견 시, 승인 필요"
+                description={
+                  levelPolicy?.isRestrictionEnabled
+                    ? `${levelPolicy?.severity} 이상의 취약점 ${levelPolicy?.severityCount}개 이상 발견 시, 승인 필요`
+                    : "보안 레벨 기능이 비활성화되어 있습니다"
+                }
                 action={<SecurityLevelSettingButton />}
               />
             </SecuritySettingBody>

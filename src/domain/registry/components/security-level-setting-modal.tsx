@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import {
@@ -14,6 +15,12 @@ import {
   Typography,
 } from "xiilab-ui";
 
+import type { VulnerabilityLevelPolicyUpdateRequestSeverity } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getGetLevelPolicyQueryKey,
+  useGetLevelPolicy,
+  useUpdateLevelPolicy,
+} from "@/api/generated/vulnerability-policy-admin/vulnerability-policy-admin";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import {
@@ -39,9 +46,13 @@ interface SecurityLevelSettingFormValue {
 }
 
 export function SecurityLevelSettingModal() {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
-  const { control, handleSubmit, watch } =
+  // 보안 레벨 정책 조회
+  const { data: levelPolicy } = useGetLevelPolicy();
+
+  const { control, handleSubmit, watch, reset } =
     useForm<SecurityLevelSettingFormValue>({
       defaultValues: {
         isEnabled: true,
@@ -50,8 +61,31 @@ export function SecurityLevelSettingModal() {
       },
     });
 
+  // 조회된 데이터로 폼 초기화
+  useEffect(() => {
+    if (levelPolicy) {
+      reset({
+        isEnabled: levelPolicy.isRestrictionEnabled,
+        level: levelPolicy.severity.toLowerCase() as SecurityLevelKey,
+        thresholdCount: levelPolicy.severityCount,
+      });
+    }
+  }, [levelPolicy, reset]);
+
   useSubscribe(REGISTRY_EVENTS.openSecurityLevelSettingModal, () => {
     setOpen(true);
+  });
+
+  // 보안 레벨 정책 수정
+  const updateLevelMutation = useUpdateLevelPolicy({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetLevelPolicyQueryKey(),
+        });
+        handleClose();
+      },
+    },
   });
 
   const isEnabled = watch("isEnabled");
@@ -62,7 +96,16 @@ export function SecurityLevelSettingModal() {
 
   const handleClose = () => setOpen(false);
 
-  const onSubmit = () => {};
+  const onSubmit = (formData: SecurityLevelSettingFormValue) => {
+    updateLevelMutation.mutate({
+      data: {
+        hasEnabled: formData.isEnabled,
+        severity:
+          formData.level.toUpperCase() as VulnerabilityLevelPolicyUpdateRequestSeverity,
+        severityCount: formData.thresholdCount,
+      },
+    });
+  };
 
   const handleModalOk = () => {
     handleSubmit(onSubmit)();
