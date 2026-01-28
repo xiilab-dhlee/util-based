@@ -26,9 +26,9 @@ export function UserMonitoringWorkloadArticle() {
         <WorkloadStatusWrapper>
           <UserMonitoringWorkloadStatus status="ALL" count={8888} />
           <UserMonitoringWorkloadStatus status="RUNNING" count={2222} />
-          <UserMonitoringWorkloadStatus status="COMPLETED" count={2222} />
+          <UserMonitoringWorkloadStatus status="TERMINATED" count={2222} />
           <UserMonitoringWorkloadStatus status="PENDING" count={2222} />
-          <UserMonitoringWorkloadStatus status="FAILED" count={2222} />
+          <UserMonitoringWorkloadStatus status="ERROR" count={2222} />
         </WorkloadStatusWrapper>
       </Workload>
       <Resource data-testid={USER_MONITORING_SELECTOR.RESOURCE_USAGE}>

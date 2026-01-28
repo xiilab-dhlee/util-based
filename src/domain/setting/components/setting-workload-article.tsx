@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { ResourceUsageCard } from "@/shared/components/card/resource-usage-card";
 import { CountByWorkloadStatus } from "@/shared/components/layouts/count-by-workload-status";
 import type { CoreResourceType } from "@/shared/types/core.interface";
@@ -24,11 +24,11 @@ export function SettingWorkloadArticle() {
         </RightSectionHeader>
         {/* 워크로드 정보 영역 */}
         <WorkloadStatusWrapper>
-          {["ALL", "RUNNING", "COMPLETED", "PENDING", "FAILED"].map(
+          {["ALL", "RUNNING", "TERMINATED", "PENDING", "ERROR"].map(
             (status) => (
               <CountByWorkloadStatus
                 key={status}
-                status={status as WorkloadStatusType}
+                status={status as WorkloadStatusResponseWorkloadStatus}
               />
             ),
           )}

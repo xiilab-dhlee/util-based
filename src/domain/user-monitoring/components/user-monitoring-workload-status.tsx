@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
-import type { WorkloadStatusType } from "@/domain/workload/schemas/workload.schema";
+import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getWorkloadStatusInfo } from "@/domain/workload/utils/workload.util";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 
 interface UserMonitoringWorkloadStatusProps {
-  status: WorkloadStatusType | "ALL";
+  status: WorkloadStatusResponseWorkloadStatus | "ALL";
   count: number;
 }
 
@@ -100,7 +100,7 @@ const Container = styled.div`
   }
 
   /* 종료 상태 테마 (초록색) */
-  &.COMPLETED {
+  &.TERMINATED {
     --primary-color: #bdbdbd;
     --secondary-color: #bababa66;
     --icon-fill: #a3afd0;
@@ -108,7 +108,7 @@ const Container = styled.div`
   }
 
   /* 실패 상태 테마 (빨간색) */
-  &.FAILED {
+  &.ERROR {
     --primary-color: #ff8080;
     --secondary-color: #ff80807a;
     --icon-fill: #ff8080;
