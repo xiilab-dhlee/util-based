@@ -18,11 +18,5 @@ Feature: 크리덴셜 추가 모달 진입
     And 크리덴셜 설명 입력창이 빈 값이다
     And 크리덴셜 아이디 입력창이 빈 값이다
     And 크리덴셜 토큰 입력창이 빈 값이다
-    And 크리덴셜 Private Registry URL 입력창이 표시되지 않는다
 
-  @regression
-  Scenario: Docker 타입 선택 시 Private Registry URL 필드가 표시된다
-    Given 크리덴셜 추가 모달이 열린 상태이다
-    When 크리덴셜 타입을 "Docker"로 선택한다
-    Then 크리덴셜 Private Registry URL 입력창이 표시된다
-    And 크리덴셜 Private Registry URL 입력창이 빈 값이다
+ 

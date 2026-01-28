@@ -86,7 +86,7 @@ export class WorkloadDetailPage extends BasePage {
    * @param workloadId - 워크로드 ID
    * @param workspaceId - 워크스페이스 ID (required)
    */
-  async gotoWorkload(workloadId: string, workspaceId: string): Promise<void> {
+  async gotoWorkload(workloadId: string, workspaceId: number): Promise<void> {
     const fullPath = ROUTES.USER_WORKLOAD_DETAIL(workspaceId, workloadId);
     await this.page.goto(fullPath);
     await this.page.waitForLoadState("networkidle");
