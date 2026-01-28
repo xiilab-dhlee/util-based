@@ -164,6 +164,7 @@ export const getGetPrivateImageTagListResponseMock = (
       deciderId: faker.string.alpha({ length: { min: 10, max: 20 } }),
       deciderName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       hasMetadata: faker.datatype.boolean(),
+      usageRequestId: faker.number.int({ min: undefined, max: undefined }),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),

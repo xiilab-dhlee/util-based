@@ -36,6 +36,7 @@ import type {
   BaseResponseBatchSystemMetricResponse,
   BaseResponseClusterNodeDetailResponse,
   BaseResponseClusterNodeSystemResourceResponse,
+  BaseResponseClusterResourceOverviewResponse,
   BaseResponseClusterResourceSummaryResponse,
   BaseResponseListClusterNodeSummaryResponse,
   BaseResponseListString,
@@ -83,6 +84,74 @@ export const getApplyMigConfigurationResponseMock = (
 ): BaseResponseUnit => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetClusterResourceOverviewResponseMock = (
+  overrideResponse: Partial<BaseResponseClusterResourceOverviewResponse> = {},
+): BaseResponseClusterResourceOverviewResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    gpuCount: {
+      used: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      available: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      total: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+    },
+    migCount: {
+      used: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      available: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      total: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+    },
+    cpuCore: {
+      used: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      available: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      total: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+    },
+    memoryBytes: {
+      used: faker.number.int({ min: undefined, max: undefined }),
+      available: faker.number.int({ min: undefined, max: undefined }),
+      total: faker.number.int({ min: undefined, max: undefined }),
+    },
+  },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -761,6 +830,36 @@ export const getApplyMigConfigurationMockHandler = (
   );
 };
 
+export const getGetClusterResourceOverviewMockHandler = (
+  overrideResponse?:
+    | BaseResponseClusterResourceOverviewResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseClusterResourceOverviewResponse>
+        | BaseResponseClusterResourceOverviewResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/cluster/resources/overview",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetClusterResourceOverviewResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetClusterNodesMockHandler = (
   overrideResponse?:
     | BaseResponsePageResponseClusterNodeListResponse
@@ -1002,6 +1101,7 @@ export const getAdminClusterMock = () => [
   getUpdateNodeSchedulingMockHandler(),
   getGetMigConfigurationMockHandler(),
   getApplyMigConfigurationMockHandler(),
+  getGetClusterResourceOverviewMockHandler(),
   getGetClusterNodesMockHandler(),
   getGetNodeSystemResourceMockHandler(),
   getGetNodeSystemMetricsMockHandler(),

@@ -160,6 +160,75 @@ export const updateResourcePresetResponse = zod
 
 /**
  * 
+            해당 워크스페이스에서 내가 생성한 워크로드 목록을 조회합니다.
+
+            **조회 대상:**
+            - 워크로드 상태(실행/종료)와 관계없이 모든 워크로드
+            - 삭제된 워크로드는 제외
+
+            **정렬:**
+            - 생성 일시 기준 내림차순 (최신순)
+        
+ * @summary 내 워크로드 목록 조회
+ */
+export const getMyWorkloadsParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+});
+
+export const getMyWorkloadsQueryPageNoMin = 0;
+
+export const getMyWorkloadsQueryPageSizeMax = 100;
+
+export const getMyWorkloadsQueryParams = zod.object({
+  pageNo: zod
+    .number()
+    .min(getMyWorkloadsQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getMyWorkloadsQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
+});
+
+export const getMyWorkloadsResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        totalSize: zod.number(),
+        totalPageNum: zod.number(),
+        currentPageNo: zod.number(),
+        content: zod.array(
+          zod
+            .object({
+              workloadId: zod.number().describe("워크로드 ID"),
+              workloadResourceName: zod
+                .string()
+                .describe("워크로드 리소스 이름 (K8s 리소스명)"),
+              workloadName: zod.string().describe("워크로드 이름"),
+              workloadJobType: zod
+                .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
+                .describe("워크로드 잡 타입"),
+              creatorName: zod.string().describe("생성자 이름"),
+              createdAt: zod.string().datetime({}).describe("생성 일시"),
+            })
+            .strict()
+            .describe("내 워크로드 항목"),
+        ),
+      })
+      .strict()
+      .optional(),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * 
             워크스페이스에 새로운 워크로드를 생성합니다.
 
             **워크로드 잡 타입:**
@@ -190,9 +259,6 @@ export const createWorkloadBodyWorkloadNameMax = 50;
 
 export const createWorkloadBodyDescriptionMin = 0;
 export const createWorkloadBodyDescriptionMax = 2000;
-
-export const createWorkloadBodyNodeNameMin = 0;
-export const createWorkloadBodyNodeNameMax = 255;
 
 export const createWorkloadBodyHarborImageNameMin = 0;
 export const createWorkloadBodyHarborImageNameMax = 255;
@@ -240,12 +306,6 @@ export const createWorkloadBody = zod
       .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
       .describe("워크로드 잡 타입"),
     nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
-    nodeName: zod
-      .string()
-      .min(createWorkloadBodyNodeNameMin)
-      .max(createWorkloadBodyNodeNameMax)
-      .optional()
-      .describe("노드 이름 (특정 노드에 스케줄링)"),
     resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
     harborImageName: zod
       .string()
@@ -400,6 +460,98 @@ export const workloadCreateFolderBody = zod
   })
   .strict()
   .describe("워크로드 폴더 생성 요청");
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내부로 파일을 업로드합니다.
+
+            **제약사항:**
+            - RUNNING 상태의 워크로드만 파일 업로드 가능
+            - DISTRIBUTED 워크로드는 podName 파라미터 필수
+            - 동일한 경로에 파일이 존재하면 덮어씀
+            - 빈 파일은 업로드 불가
+
+            **요청 형식:**
+            - multipart/form-data
+            - file: 업로드할 파일 (필수)
+            - path: 업로드할 디렉토리 경로 (기본값: /)
+        
+ * @summary 워크로드 파일 업로드
+ */
+export const workloadUploadFileParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadUploadFileQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+  path: zod.string().optional().describe("업로드할 디렉토리 경로 (기본값: /)"),
+});
+
+export const workloadUploadFileBody = zod
+  .object({
+    file: zod.instanceof(File).describe("업로드할 파일"),
+  })
+  .strict();
+
+/**
+ * 
+            실행 중인 워크로드의 Pod 내 파일/폴더를 압축하여 다운로드합니다.
+
+            **다운로드 방식:**
+            - 모든 파일/폴더는 선택한 압축 형식으로 압축되어 다운로드됩니다
+            - 단일 파일도 압축하여 다운로드합니다
+
+            **압축 파일명 규칙:**
+            - 단일 파일 1개: {파일명}.zip 또는 {파일명}.tar.gz
+            - 단일 폴더 1개: {폴더명}.zip 또는 {폴더명}.tar.gz
+            - 다중 파일/폴더: download.zip 또는 download.tar.gz
+
+            **압축 형식:**
+            - TAR: .tar.gz (gzip 압축 tar)
+            - ZIP: .zip
+
+            **제약사항:**
+            - RUNNING 상태의 워크로드만 다운로드 가능
+            - DISTRIBUTED 워크로드는 podName 파라미터 필수
+            - 모든 경로가 존재해야 함 (하나라도 없으면 404 에러)
+            - 다운로드 최대 용량: 10GB (환경변수로 변경 가능)
+        
+ * @summary 워크로드 파일 다운로드
+ */
+export const workloadDownloadFilesParams = zod.object({
+  workspaceId: zod.number().describe("워크스페이스 ID"),
+  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+});
+
+export const workloadDownloadFilesQueryParams = zod.object({
+  podName: zod
+    .string()
+    .optional()
+    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
+});
+
+export const workloadDownloadFilesBodyPathsMin = 0;
+export const workloadDownloadFilesBodyPathsMax = 100;
+
+export const workloadDownloadFilesBody = zod
+  .object({
+    paths: zod
+      .array(zod.string())
+      .min(workloadDownloadFilesBodyPathsMin)
+      .max(workloadDownloadFilesBodyPathsMax)
+      .describe("다운로드할 파일/폴더 경로 목록"),
+    compressType: zod
+      .enum(["TAR", "ZIP"])
+      .describe("압축 파일 형식 (TAR: .tar.gz, ZIP: .zip)"),
+  })
+  .strict()
+  .describe("워크로드 파일 다운로드 요청");
+
+export const workloadDownloadFilesResponse = zod.unknown();
 
 /**
  * 
@@ -822,32 +974,6 @@ export const getTerminatedWorkloadLogQueryParams = zod.object({
 
 /**
  * 
-            실행 중인 워크로드의 Pod 로그를 SSE(Server-Sent Events)로 실시간 스트리밍합니다.
-
-            **Pod 선택:**
-            - BATCH/INTERACTIVE: podName 생략 시 첫 번째 Pod 자동 선택
-            - DISTRIBUTED: podName 필수 (분산 워크로드 Pod 목록 조회 API로 Pod 이름 확인)
-
-            **SSE 이벤트:**
-            - event: log
-            - data: 로그 라인
-        
- * @summary 실행 중인 워크로드 로그 실시간 스트리밍
- */
-export const streamWorkloadLogsParams = zod.object({
-  workspaceId: zod.number().describe("워크스페이스 ID"),
-  workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
-});
-
-export const streamWorkloadLogsQueryParams = zod.object({
-  podName: zod
-    .string()
-    .optional()
-    .describe("Pod 이름 (분산 워크로드의 경우 필수)"),
-});
-
-/**
- * 
             실행 중인 워크로드의 Pod 내 파일 및 폴더 목록을 조회합니다.
 
             **조회 대상:**
@@ -1074,12 +1200,12 @@ export const getWorkloadDetailResponse = zod
       .object({
         workloadName: zod.string().describe("워크로드 이름"),
         workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+        creatorId: zod.string().describe("워크로드 생성자 ID"),
         description: zod.string().optional().describe("워크로드 설명"),
         workloadJobType: zod
           .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
           .describe("워크로드 잡 타입"),
         nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
-        nodeName: zod.string().optional().describe("노드 이름"),
         resourcePreset: zod
           .object({
             resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
@@ -1160,6 +1286,18 @@ export const getWorkloadDetailResponse = zod
             imageType: zod
               .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
               .describe("이미지 타입 (Astrago 미등록 시 PUBLIC)"),
+            frameworkType: zod
+              .enum([
+                "PYTORCH",
+                "TENSORFLOW",
+                "JUPYTER",
+                "VSCODE",
+                "RSTUDIO",
+                "HUB",
+                "REGISTRY",
+              ])
+              .optional()
+              .describe("프레임워크 타입 (Astrago 미등록 시 null)"),
           })
           .strict()
           .describe("워크로드 이미지 상세 정보"),
@@ -1267,12 +1405,12 @@ export const getWorkloadCloneDataResponse = zod
       .object({
         workloadName: zod.string().describe("워크로드 이름"),
         workloadResourceName: zod.string().describe("워크로드 리소스 이름"),
+        creatorId: zod.string().describe("워크로드 생성자 ID"),
         description: zod.string().optional().describe("워크로드 설명"),
         workloadJobType: zod
           .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
           .describe("워크로드 잡 타입"),
         nodeType: zod.enum(["SINGLE", "MULTI"]).describe("노드 타입"),
-        nodeName: zod.string().optional().describe("노드 이름"),
         resourcePreset: zod
           .object({
             resourcePresetId: zod.number().describe("리소스 프리셋 ID"),
@@ -1353,6 +1491,18 @@ export const getWorkloadCloneDataResponse = zod
             imageType: zod
               .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
               .describe("이미지 타입 (Astrago 미등록 시 PUBLIC)"),
+            frameworkType: zod
+              .enum([
+                "PYTORCH",
+                "TENSORFLOW",
+                "JUPYTER",
+                "VSCODE",
+                "RSTUDIO",
+                "HUB",
+                "REGISTRY",
+              ])
+              .optional()
+              .describe("프레임워크 타입 (Astrago 미등록 시 null)"),
           })
           .strict()
           .describe("워크로드 이미지 상세 정보"),
@@ -1498,6 +1648,7 @@ export const getTerminatedWorkloadsResponse = zod
           .array(
             zod
               .object({
+                workloadId: zod.number().describe("워크로드 ID"),
                 workloadName: zod.string().describe("워크로드 이름"),
                 workloadResourceName: zod
                   .string()
@@ -1611,6 +1762,7 @@ export const getActiveWorkloadsResponse = zod
         content: zod.array(
           zod
             .object({
+              workloadId: zod.number().describe("워크로드 ID"),
               workloadName: zod.string().describe("워크로드 이름"),
               workloadResourceName: zod
                 .string()

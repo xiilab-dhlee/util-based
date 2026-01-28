@@ -36,7 +36,7 @@ import type {
   BaseResponseUnit,
 } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getRemoveWorkloadFromUrgentStandbyResponseMock = (
+export const getRemoveWorkloadFromUrgentQueueResponseMock = (
   overrideResponse: Partial<BaseResponseUnit> = {},
 ): BaseResponseUnit => ({
   status: "SUCCESS",
@@ -114,7 +114,7 @@ export const getAddWorkloadToUrgentStandbyResponseMock = (
   ...overrideResponse,
 });
 
-export const getRemoveWorkloadFromUrgentStandbyMockHandler = (
+export const getRemoveWorkloadFromUrgentQueueMockHandler = (
   overrideResponse?:
     | BaseResponseUnit
     | ((
@@ -133,7 +133,7 @@ export const getRemoveWorkloadFromUrgentStandbyMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getRemoveWorkloadFromUrgentStandbyResponseMock(),
+            : getRemoveWorkloadFromUrgentQueueResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -228,7 +228,7 @@ export const getAddWorkloadToUrgentStandbyMockHandler = (
   );
 };
 export const getAdminQueueMock = () => [
-  getRemoveWorkloadFromUrgentStandbyMockHandler(),
+  getRemoveWorkloadFromUrgentQueueMockHandler(),
   getUpdateUrgentStandbyOrderMockHandler(),
   getGetUrgentStandbyWorkloadsMockHandler(),
   getAddWorkloadToUrgentStandbyMockHandler(),

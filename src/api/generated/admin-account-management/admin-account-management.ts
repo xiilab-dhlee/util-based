@@ -51,11 +51,13 @@ import type {
   AccountUpdateRequest,
   BaseResponseAccountDeleteResult,
   BaseResponseAccountItemResponse,
-  BaseResponseAccountResourceDetailResponse,
+  BaseResponseAccountResourceDetailSummaryResponse,
   BaseResponsePageResponseAccountItemResponse,
   BaseResponsePageResponseAccountResourceSummaryResponse,
+  BaseResponsePageResponseAccountWorkloadItemResponse,
   BaseResponsePasswordResetByAdminResponse,
   BaseResponseUnit,
+  GetAccountWorkloadsParams,
   GetAllAccountResourcesParams,
   GetAllAccountsParams,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -147,6 +149,95 @@ export const useUpdateAccount = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getUpdateAccountMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * 
+            특정 계정을 소프트 삭제합니다. OWNER 검증이 포함되어 있습니다.
+
+            **삭제 처리:**
+            - 해당 계정의 OWNER가 아닌 워크스페이스 멤버십 삭제
+            - 해당 계정의 활성 워크로드(CREATING, PENDING, RUNNING, ERROR) 강제 종료
+            - Keycloak 계정 소프트 삭제
+
+            **삭제 불가 조건:**
+            - OWNER인 워크스페이스가 있는 경우 (409 Conflict, 워크스페이스 목록 반환)
+            - 본인 계정 삭제 (403 Forbidden)
+            - SUPER_ADMIN이 아닌 사용자가 SUPER_ADMIN 삭제 시도 (403 Forbidden)
+        
+ * @summary 단건 계정 삭제
+ */
+export const deleteAccountSingle = (accountId: string) => {
+  return customInstance<void>({
+    url: `/api/v1/admin/accounts/${accountId}`,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteAccountSingleMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteAccountSingle>>,
+    TError,
+    { accountId: string },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteAccountSingle>>,
+  TError,
+  { accountId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteAccountSingle"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteAccountSingle>>,
+    { accountId: string }
+  > = (props) => {
+    const { accountId } = props ?? {};
+
+    return deleteAccountSingle(accountId);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteAccountSingleMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteAccountSingle>>
+>;
+
+export type DeleteAccountSingleMutationError = unknown;
+
+/**
+ * @summary 단건 계정 삭제
+ */
+export const useDeleteAccountSingle = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteAccountSingle>>,
+      TError,
+      { accountId: string },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteAccountSingle>>,
+  TError,
+  { accountId: string },
+  TContext
+> => {
+  const mutationOptions = getDeleteAccountSingleMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -323,16 +414,21 @@ export const useResetPasswordByAdmin = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
+            [Deprecated] 단건 삭제 API(DELETE /api/v1/admin/accounts/{accountId})를 사용하세요.
+
             선택한 계정을 일괄 소프트 삭제합니다. 삭제된 계정은 비활성화되며 복구할 수 없습니다.
 
             **삭제 권한 정책:**
             - 최상위 관리자(SUPER_ADMIN) 삭제: 최상위 관리자만 가능
             - 관리자(ADMIN) / 일반 사용자(USER) 삭제: 최상위 관리자, 관리자 가능
             - 본인 계정 삭제: 불가
+
+            **주의:** 이 API는 OWNER 검증을 하지 않습니다.
         
- * @summary 계정 삭제
+ * @deprecated
+ * @summary [Deprecated] 계정 일괄 삭제
  */
-export const deleteAccount = (
+export const deleteAccountBulk = (
   accountDeleteRequest: AccountDeleteRequest,
   signal?: AbortSignal,
 ) => {
@@ -345,23 +441,23 @@ export const deleteAccount = (
   });
 };
 
-export const getDeleteAccountMutationOptions = <
+export const getDeleteAccountBulkMutationOptions = <
   TError = unknown,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteAccount>>,
+    Awaited<ReturnType<typeof deleteAccountBulk>>,
     TError,
     { data: AccountDeleteRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteAccount>>,
+  Awaited<ReturnType<typeof deleteAccountBulk>>,
   TError,
   { data: AccountDeleteRequest },
   TContext
 > => {
-  const mutationKey = ["deleteAccount"];
+  const mutationKey = ["deleteAccountBulk"];
   const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -371,30 +467,31 @@ export const getDeleteAccountMutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteAccount>>,
+    Awaited<ReturnType<typeof deleteAccountBulk>>,
     { data: AccountDeleteRequest }
   > = (props) => {
     const { data } = props ?? {};
 
-    return deleteAccount(data);
+    return deleteAccountBulk(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteAccountMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteAccount>>
+export type DeleteAccountBulkMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteAccountBulk>>
 >;
-export type DeleteAccountMutationBody = AccountDeleteRequest;
-export type DeleteAccountMutationError = unknown;
+export type DeleteAccountBulkMutationBody = AccountDeleteRequest;
+export type DeleteAccountBulkMutationError = unknown;
 
 /**
- * @summary 계정 삭제
+ * @deprecated
+ * @summary [Deprecated] 계정 일괄 삭제
  */
-export const useDeleteAccount = <TError = unknown, TContext = unknown>(
+export const useDeleteAccountBulk = <TError = unknown, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteAccount>>,
+      Awaited<ReturnType<typeof deleteAccountBulk>>,
       TError,
       { data: AccountDeleteRequest },
       TContext
@@ -402,12 +499,12 @@ export const useDeleteAccount = <TError = unknown, TContext = unknown>(
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof deleteAccount>>,
+  Awaited<ReturnType<typeof deleteAccountBulk>>,
   TError,
   { data: AccountDeleteRequest },
   TContext
 > => {
-  const mutationOptions = getDeleteAccountMutationOptions(options);
+  const mutationOptions = getDeleteAccountBulkMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -552,37 +649,46 @@ export function useGetAllAccounts<
 
 /**
  * 
-            특정 계정의 리소스 점유 상세 정보를 조회합니다.
-            해당 계정이 사용 중인 활성 워크로드를 워크스페이스별로 그룹화하여 보여줍니다.
-            각 워크로드의 GPU, MIG, CPU, 메모리 점유량과 분산 학습 노드 수를 확인할 수 있습니다.
+            특정 계정의 활성 워크로드 목록을 페이지네이션으로 조회합니다.
+            활성 워크로드(CREATING, PENDING, RUNNING)만 조회되며, 플랫 리스트 형식으로 반환됩니다.
+            각 워크로드의 GPU, MIG, CPU, 메모리 할당량을 확인할 수 있습니다.
             ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
         
- * @summary 특정 계정의 리소스 점유 상세 조회
+ * @summary 특정 계정의 워크로드 목록 조회
  */
-export const getAccountResourceDetail = (
+export const getAccountWorkloads = (
   accountId: string,
+  params?: GetAccountWorkloadsParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponseAccountResourceDetailResponse>({
-    url: `/api/v1/admin/accounts/${accountId}/resources`,
+  return customInstance<BaseResponsePageResponseAccountWorkloadItemResponse>({
+    url: `/api/v1/admin/accounts/${accountId}/workloads`,
     method: "GET",
+    params,
     signal,
   });
 };
 
-export const getGetAccountResourceDetailQueryKey = (accountId?: string) => {
-  return [`/api/v1/admin/accounts/${accountId}/resources`] as const;
+export const getGetAccountWorkloadsQueryKey = (
+  accountId?: string,
+  params?: GetAccountWorkloadsParams,
+) => {
+  return [
+    `/api/v1/admin/accounts/${accountId}/workloads`,
+    ...(params ? [params] : []),
+  ] as const;
 };
 
-export const getGetAccountResourceDetailQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+export const getGetAccountWorkloadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAccountWorkloads>>,
   TError = unknown,
 >(
   accountId: string,
+  params?: GetAccountWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        Awaited<ReturnType<typeof getAccountWorkloads>>,
         TError,
         TData
       >
@@ -592,11 +698,11 @@ export const getGetAccountResourceDetailQueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetAccountResourceDetailQueryKey(accountId);
+    queryOptions?.queryKey ?? getGetAccountWorkloadsQueryKey(accountId, params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getAccountResourceDetail>>
-  > = ({ signal }) => getAccountResourceDetail(accountId, signal);
+    Awaited<ReturnType<typeof getAccountWorkloads>>
+  > = ({ signal }) => getAccountWorkloads(accountId, params, signal);
 
   return {
     queryKey,
@@ -604,35 +710,36 @@ export const getGetAccountResourceDetailQueryOptions = <
     enabled: !!accountId,
     ...queryOptions,
   } as UseQueryOptions<
-    Awaited<ReturnType<typeof getAccountResourceDetail>>,
+    Awaited<ReturnType<typeof getAccountWorkloads>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetAccountResourceDetailQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getAccountResourceDetail>>
+export type GetAccountWorkloadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAccountWorkloads>>
 >;
-export type GetAccountResourceDetailQueryError = unknown;
+export type GetAccountWorkloadsQueryError = unknown;
 
-export function useGetAccountResourceDetail<
-  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+export function useGetAccountWorkloads<
+  TData = Awaited<ReturnType<typeof getAccountWorkloads>>,
   TError = unknown,
 >(
   accountId: string,
+  params: undefined | GetAccountWorkloadsParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        Awaited<ReturnType<typeof getAccountWorkloads>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAccountResourceDetail>>,
+          Awaited<ReturnType<typeof getAccountWorkloads>>,
           TError,
-          Awaited<ReturnType<typeof getAccountResourceDetail>>
+          Awaited<ReturnType<typeof getAccountWorkloads>>
         >,
         "initialData"
       >;
@@ -641,24 +748,25 @@ export function useGetAccountResourceDetail<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAccountResourceDetail<
-  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+export function useGetAccountWorkloads<
+  TData = Awaited<ReturnType<typeof getAccountWorkloads>>,
   TError = unknown,
 >(
   accountId: string,
+  params?: GetAccountWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        Awaited<ReturnType<typeof getAccountWorkloads>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAccountResourceDetail>>,
+          Awaited<ReturnType<typeof getAccountWorkloads>>,
           TError,
-          Awaited<ReturnType<typeof getAccountResourceDetail>>
+          Awaited<ReturnType<typeof getAccountWorkloads>>
         >,
         "initialData"
       >;
@@ -667,15 +775,16 @@ export function useGetAccountResourceDetail<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetAccountResourceDetail<
-  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+export function useGetAccountWorkloads<
+  TData = Awaited<ReturnType<typeof getAccountWorkloads>>,
   TError = unknown,
 >(
   accountId: string,
+  params?: GetAccountWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        Awaited<ReturnType<typeof getAccountWorkloads>>,
         TError,
         TData
       >
@@ -686,18 +795,19 @@ export function useGetAccountResourceDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 특정 계정의 리소스 점유 상세 조회
+ * @summary 특정 계정의 워크로드 목록 조회
  */
 
-export function useGetAccountResourceDetail<
-  TData = Awaited<ReturnType<typeof getAccountResourceDetail>>,
+export function useGetAccountWorkloads<
+  TData = Awaited<ReturnType<typeof getAccountWorkloads>>,
   TError = unknown,
 >(
   accountId: string,
+  params?: GetAccountWorkloadsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getAccountResourceDetail>>,
+        Awaited<ReturnType<typeof getAccountWorkloads>>,
         TError,
         TData
       >
@@ -707,7 +817,180 @@ export function useGetAccountResourceDetail<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetAccountResourceDetailQueryOptions(
+  const queryOptions = getGetAccountWorkloadsQueryOptions(
+    accountId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * 
+            특정 계정의 리소스 점유 요약 정보를 조회합니다.
+            해당 계정이 현재 사용 중인 활성 워크로드(CREATING, PENDING, RUNNING)의 리소스 합계를 보여줍니다.
+            분산 학습 워크로드의 경우 노드 수(workerCount)를 곱한 실제 점유량을 반영합니다.
+            ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+        
+ * @summary 특정 계정의 리소스 점유 요약 조회
+ */
+export const getAccountResourceSummary = (
+  accountId: string,
+  signal?: AbortSignal,
+) => {
+  return customInstance<BaseResponseAccountResourceDetailSummaryResponse>({
+    url: `/api/v1/admin/accounts/${accountId}/resources/summary`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetAccountResourceSummaryQueryKey = (accountId?: string) => {
+  return [`/api/v1/admin/accounts/${accountId}/resources/summary`] as const;
+};
+
+export const getGetAccountResourceSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAccountResourceSummary>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetAccountResourceSummaryQueryKey(accountId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAccountResourceSummary>>
+  > = ({ signal }) => getAccountResourceSummary(accountId, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!accountId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAccountResourceSummary>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAccountResourceSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAccountResourceSummary>>
+>;
+export type GetAccountResourceSummaryQueryError = unknown;
+
+export function useGetAccountResourceSummary<
+  TData = Awaited<ReturnType<typeof getAccountResourceSummary>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAccountResourceSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getAccountResourceSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAccountResourceSummary<
+  TData = Awaited<ReturnType<typeof getAccountResourceSummary>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAccountResourceSummary>>,
+          TError,
+          Awaited<ReturnType<typeof getAccountResourceSummary>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAccountResourceSummary<
+  TData = Awaited<ReturnType<typeof getAccountResourceSummary>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 특정 계정의 리소스 점유 요약 조회
+ */
+
+export function useGetAccountResourceSummary<
+  TData = Awaited<ReturnType<typeof getAccountResourceSummary>>,
+  TError = unknown,
+>(
+  accountId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getAccountResourceSummary>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAccountResourceSummaryQueryOptions(
     accountId,
     options,
   );

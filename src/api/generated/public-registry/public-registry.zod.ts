@@ -160,10 +160,10 @@ export const createPublicExternalImageBodyImageNameMax = 255;
 export const createPublicExternalImageBodyImageNameRegExp =
   /^[a-z0-9]+([._-][a-z0-9]+)*(\/[a-z0-9]+([._-][a-z0-9]+)*)*$/;
 export const createPublicExternalImageBodyImageTagNameMin = 0;
-export const createPublicExternalImageBodyImageTagNameMax = 128;
+export const createPublicExternalImageBodyImageTagNameMax = 50;
 
 export const createPublicExternalImageBodyImageTagNameRegExp =
-  /^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$/;
+  /^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,49}$/;
 
 export const createPublicExternalImageBody = zod
   .object({
@@ -353,6 +353,10 @@ export const getPublicImageTagListQueryParams = zod.object({
     ])
     .optional()
     .describe("스캔 상태 필터"),
+  usableOnly: zod
+    .boolean()
+    .optional()
+    .describe("사용 가능 상태만 조회 (true: APPROVED, AVAILABLE 상태만 조회)"),
 });
 
 export const getPublicImageTagListResponse = zod
@@ -435,6 +439,10 @@ export const getPublicImageTagListResponse = zod
                 .describe(
                   "DB 메타데이터 존재 여부 (false이면 상세조회/수정 불가)",
                 ),
+              usageRequestId: zod
+                .number()
+                .optional()
+                .describe("사용 요청 ID (요청 취소 시 사용, 요청 없으면 null)"),
             })
             .strict()
             .describe("이미지 태그 목록 응답"),
@@ -456,10 +464,10 @@ export const getPublicImageTagListResponse = zod
  * @summary 공용 이미지 태그 추가
  */
 export const addPublicImageTagBodyImageTagNameMin = 0;
-export const addPublicImageTagBodyImageTagNameMax = 128;
+export const addPublicImageTagBodyImageTagNameMax = 50;
 
 export const addPublicImageTagBodyImageTagNameRegExp =
-  /^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$/;
+  /^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,49}$/;
 
 export const addPublicImageTagBody = zod
   .object({
