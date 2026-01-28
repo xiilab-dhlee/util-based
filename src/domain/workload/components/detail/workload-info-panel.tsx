@@ -19,6 +19,7 @@ import {
   DetailIntroCardDescriptionRowBody,
   DetailIntroCardHeader,
   DetailIntroCardRow,
+  DetailIntroCardRowBody,
   DetailIntroCardRowIconWrapper,
   DetailIntroCardRowTitle,
   DetailIntroCardTitle,
@@ -135,7 +136,7 @@ export function WorkloadInfoPanel({ data }: WorkloadInfoPanelProps) {
       <DetailIntroCardBody>
         {/* 워크로드 상태 정보 */}
         <DetailIntroCardRow>
-          <DetailIntroCardDescriptionRowBody>
+          <DetailIntroCardRowBody>
             <DetailIntroCardRowIconWrapper>
               <Icon name="Info" color="var(--icon-fill)" size={24} />
             </DetailIntroCardRowIconWrapper>
@@ -145,7 +146,7 @@ export function WorkloadInfoPanel({ data }: WorkloadInfoPanelProps) {
                 {status && <WorkloadStatusText status={status} />}
               </StatusWrapper>
             </DetailIntroCardRowTitle>
-          </DetailIntroCardDescriptionRowBody>
+          </DetailIntroCardRowBody>
         </DetailIntroCardRow>
 
         {/* 워크로드 설명 정보 */}
