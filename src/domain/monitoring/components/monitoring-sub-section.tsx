@@ -2,7 +2,10 @@ import type { SorterResult } from "antd/es/table/interface";
 import { useState } from "react";
 import styled from "styled-components";
 
-import type { ActiveWorkloadResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  ActiveWorkloadResponse,
+  WorkloadStatusResponseWorkloadStatus,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { MonitoringWorkloadStatus } from "@/domain/monitoring/components/monitoring-workload-status";
 import {
   ACTIVE_WORKLOAD_PAGE_SIZE,
@@ -260,7 +263,7 @@ export function MonitoringSubSection() {
           {["ALL", "RUNNING", "PENDING", "ERROR"].map((status) => (
             <MonitoringWorkloadStatus
               key={status}
-              status={status}
+              status={status as WorkloadStatusResponseWorkloadStatus}
               total={9999}
             />
           ))}
