@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import styled from "styled-components";
-import { Icon, Modal, Typography } from "xiilab-ui";
+import { Icon, Modal } from "xiilab-ui";
 
 import { useGetStorageDetail } from "@/api/generated/admin-storage/admin-storage";
 import { STORAGE_CHANNEL_LABEL } from "@/domain/storage/constants/storage.constant";
 import { DataErrorState } from "@/shared/components/feedback/data-error-state";
 import { STORAGE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish, useSubscribe } from "@/shared/hooks/use-pub-sub";
+import {
+  ModalDetailCard,
+  ModalDetailContainer,
+  ModalDetailLabel,
+  ModalDetailRow,
+  ModalDetailValue,
+} from "@/styles/layers/modal-detail-layers.styled";
 
 interface ViewStorageDetailModalPayload {
   id: number;
@@ -68,68 +74,35 @@ export function ViewStorageDetailModal() {
           onRetry={refetch}
         />
       ) : (
-        <Container>
-          <DetailCard>
-            <DetailRow>
-              <DetailLabel>이름</DetailLabel>
-              <DetailValue>{data?.storageName || "-"}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>타입</DetailLabel>
-              <DetailValue>
+        <ModalDetailContainer>
+          <ModalDetailCard>
+            <ModalDetailRow>
+              <ModalDetailLabel $minWidth="110px">이름</ModalDetailLabel>
+              <ModalDetailValue>{data?.storageName || "-"}</ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel $minWidth="110px">타입</ModalDetailLabel>
+              <ModalDetailValue>
                 {data?.storageChannel
                   ? STORAGE_CHANNEL_LABEL[data?.storageChannel]
                   : "-"}
-              </DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>IP 주소</DetailLabel>
-              <DetailValue>{data?.storageIp || "-"}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>스토리지 저장 Path</DetailLabel>
-              <DetailValue>{data?.storageSavePath || "-"}</DetailValue>
-            </DetailRow>
-          </DetailCard>
-        </Container>
+              </ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel $minWidth="110px">IP 주소</ModalDetailLabel>
+              <ModalDetailValue>{data?.storageIp || "-"}</ModalDetailValue>
+            </ModalDetailRow>
+            <ModalDetailRow>
+              <ModalDetailLabel $minWidth="110px">
+                스토리지 저장 Path
+              </ModalDetailLabel>
+              <ModalDetailValue>
+                {data?.storageSavePath || "-"}
+              </ModalDetailValue>
+            </ModalDetailRow>
+          </ModalDetailCard>
+        </ModalDetailContainer>
       )}
     </Modal>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-`;
-
-const DetailCard = styled.div`
-  border-radius: 2px;
-  border: 1px solid #e9e9e9;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  width: 100%;
-`;
-
-const DetailRow = styled.div`
-  display: flex;
-`;
-
-const DetailLabel = styled(Typography.Text).attrs({
-  variant: "body-2-2",
-})`
-  color: #484848;
-  min-width: 110px;
-  margin-right: 24px;
-`;
-
-const DetailValue = styled(Typography.Text).attrs({
-  variant: "subtitle-2-3",
-})`
-  color: #000;
-  word-break: break-all;
-`;
