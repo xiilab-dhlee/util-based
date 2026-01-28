@@ -14,6 +14,7 @@ import {
   requestUseTagSchema,
 } from "@/domain/registry/schemas/request-use-tag.schema";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
+import { RequestUseTooltipTitle } from "@/shared/components/tooltip-title/request-use-tooltip-title";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
@@ -113,8 +114,7 @@ export function RequestUseModal() {
                   요청 사유
                   <GuideTooltip
                     maxWidth={240}
-                    title="요청사항은 관리자에게 전달됩니다. 관리자가 이미지를
-                        승인한 후 해당 이미지를 사용하실 수 있습니다."
+                    title={<RequestUseTooltipTitle />}
                   />
                 </GuideTooltipWrapper>
               }

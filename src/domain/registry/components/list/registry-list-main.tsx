@@ -131,6 +131,7 @@ export function RegistryListMain({ mode }: RegistryListMainProps) {
           <RegistryListFooter
             totalSize={data?.totalSize || 0}
             isLoading={isLoading}
+            mode={mode}
           />
         </StyledListPageBody>
         {/* 목록 페이지 - 오른쪽 영역 */}

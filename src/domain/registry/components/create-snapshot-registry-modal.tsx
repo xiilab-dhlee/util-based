@@ -133,6 +133,7 @@ export function CreateSnapshotRegistryModal({
     handleSubmit,
     reset,
     setValue,
+    resetField,
     formState: { errors },
   } = useForm<CreateSnapshotRegistryFormType>({
     resolver: zodResolver(createSnapshotRegistrySchema),
@@ -185,7 +186,6 @@ export function CreateSnapshotRegistryModal({
           imageName: data.imageName,
           imageTagName: data.imageTagName,
           workspaceId: selectedWorkspace.workspaceId,
-          description: data.description || undefined,
           env: envData?.length ? envData : undefined,
           port: portData?.length ? portData : undefined,
         },
@@ -216,13 +216,13 @@ export function CreateSnapshotRegistryModal({
       if (isAlreadySelected) {
         // 이미 선택된 워크로드를 다시 클릭하면 선택 해제
         setSelectedWorkloadKey(null);
-        setValue("workloadId", undefined, { shouldValidate: true });
+        resetField("workloadId");
       } else {
         setSelectedWorkloadKey(workload.workloadResourceName);
         setValue("workloadId", workload.workloadId, { shouldValidate: true });
       }
     },
-    [selectedWorkloadKey, setValue],
+    [selectedWorkloadKey, setValue, resetField],
   );
 
   const handleScroll = useCallback(
@@ -593,7 +593,7 @@ const ModalContent = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  min-height: 500px;
+  height: 450px;
 `;
 
 const FormSection = styled.div`
@@ -678,7 +678,6 @@ const WorkloadListContainer = styled.div`
   border: 1px solid #e9ebee;
   border-radius: 4px;
   padding: 12px;
-  min-height: 380px;
 `;
 
 const WorkloadGrid = styled.div`
