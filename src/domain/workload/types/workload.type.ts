@@ -1,4 +1,3 @@
-import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type {
   ActiveWorkloadResponseWorkloadJobType,
   EnvRequest,
@@ -6,14 +5,10 @@ import type {
   SourceCodeRequest,
   VolumeRequest,
   WorkloadCreateRequestNodeType,
+  WorkloadStatusResponseWorkloadStatus,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { ACTIVE_WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
 import type { AllOptionValue } from "@/shared/constants/core.constant";
-import type {
-  CorePaginate,
-  CorePayload,
-  CoreSearchText,
-} from "@/shared/types/api.interface";
 
 /**
  * Re-export types from generated API for cleaner imports
@@ -49,10 +44,6 @@ export type FilterStatusValue =
   | AllOptionValue;
 
 export type WorkloadFileIndentPosition = "first" | "middle" | "last";
-
-export interface GetWorkloadVulnerabilitiesPayload
-  extends CorePayload,
-    CorePaginate {}
 
 /**
  * 워크로드 생성 요청 타입 (API 스펙: WorkloadCreateRequest 기준)

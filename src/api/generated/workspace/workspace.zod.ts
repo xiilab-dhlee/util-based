@@ -83,8 +83,8 @@ export const updateWorkspaceResponse = zod
   .strict();
 
 /**
- * 워크스페이스를 삭제합니다. OWNER 또는 ADMIN 권한이 필요합니다.
- * @summary 워크스페이스 삭제
+ * 워크스페이스를 삭제합니다. OWNER 권한이 필요합니다.관리자(ADMIN/SUPER_ADMIN)는 관리자용 다건 삭제 API(POST /api/v1/admin/workspaces/delete)를 사용하세요.
+ * @summary 사용자 워크스페이스 삭제
  */
 export const deleteWorkspaceParams = zod.object({
   workspaceId: zod.number().describe("워크스페이스 ID"),
@@ -115,7 +115,7 @@ export const setDefaultWorkspaceResponse = zod
   .strict();
 
 /**
- * 전체 워크스페이스 목록을 페이징하여 조회합니다. default 워크스페이스, pin된 워크스페이스, 기타 워크스페이스명 가나다순으로 정렬됩니다.
+ * 전체 워크스페이스 목록을 페이징하여 조회합니다.default 워크스페이스, pin된 워크스페이스, 기타 워크스페이스명 가나다순으로 정렬됩니다.
  * @summary 워크스페이스 목록 조회
  */
 export const getAllWorkspacesQueryPageNoMin = 0;

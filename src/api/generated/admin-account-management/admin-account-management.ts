@@ -337,7 +337,13 @@ export const useUpdateAccountEnabled = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * 관리자가 특정 계정의 비밀번호를 초기화합니다. 새로운 임시 비밀번호가 생성되며, 해당 계정 이메일로 발송됩니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * 
+            관리자가 특정 계정의 비밀번호를 초기화합니다. 새로운 임시 비밀번호가 생성되며, 해당 계정 이메일로 발송됩니다.
+
+            **비밀번호 초기화 권한 정책:**
+            - 최상위 관리자(SUPER_ADMIN): 본인 외 모든 계정 비밀번호 초기화 가능
+            - 관리자(ADMIN): 일반 사용자(USER)만 비밀번호 초기화 가능
+        
  * @summary 비밀번호 초기화
  */
 export const resetPasswordByAdmin = (

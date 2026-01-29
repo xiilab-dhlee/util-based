@@ -55,13 +55,13 @@ importers:
         version: 5.90.2(@tanstack/react-query@5.90.7(react@19.2.4))(react@19.2.4)
       '@uiw/react-codemirror':
         specifier: ^4.25.3
-        version: 4.25.3(@babel/runtime@7.28.4)(@codemirror/autocomplete@6.19.1)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.5.2)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.39.11)(codemirror@6.0.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 4.25.3(@babel/runtime@7.28.4)(@codemirror/autocomplete@6.19.1)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.5.2)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.39.11)(codemirror@6.0.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xiilab/astrago-openapi':
         specifier: 0.0.3-dev
         version: 0.0.3-dev
       '@xiilab/astrago-openapi-spec':
-        specifier: 0.0.96-dev
-        version: 0.0.96-dev
+        specifier: 0.0.99-dev
+        version: 0.0.99-dev
       '@xterm/addon-fit':
         specifier: ^0.10.0
         version: 0.10.0(@xterm/xterm@5.5.0)
@@ -387,9 +387,6 @@ packages:
 
   '@codemirror/theme-one-dark@6.1.3':
     resolution: {integrity: sha512-NzBdIvEJmx6fjeremiGp3t/okrLPYT0d9orIc7AFun8oZcRk58aejkqhv6spnz4MLAevrKNPMQYXEWMg4s+sKA==}
-
-  '@codemirror/view@6.38.6':
-    resolution: {integrity: sha512-qiS0z1bKs5WOvHIAC0Cybmv4AJSkAXgX5aD6Mqd2epSLlVJsQl8NG23jCVouIgkh4All/mrbdsf2UOLFnJw0tw==}
 
   '@codemirror/view@6.39.11':
     resolution: {integrity: sha512-bWdeR8gWM87l4DB/kYSF9A+dVackzDb/V56Tq7QVrQ7rn86W0rgZFtlL3g3pem6AeGcb9NQNoy3ao4WpW4h5tQ==}
@@ -1306,8 +1303,8 @@ packages:
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
 
-  '@xiilab/astrago-openapi-spec@0.0.96-dev':
-    resolution: {integrity: sha512-e2TxhZqUH83Ru/RdLAJOqBOfZk+YUqiW8bQjOcnHQBVfQ9B8FLAvS1FGScHO2EHP6yIaARxc33vhHMTKSerE4A==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi-spec/0.0.96-dev/613ba384d3e9c68ab34b2a1e2d379afe48c10ede}
+  '@xiilab/astrago-openapi-spec@0.0.99-dev':
+    resolution: {integrity: sha512-MMTueZ7e6iRTzI5OXyQIhCDJ61CisX4F34OliwQZVIDs48M7nIK/VDR5A00rx1CG2aYpv4YT5/Z+EAF2vl60Fw==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi-spec/0.0.99-dev/3bcd3ba9524f841c053cb39e6bae970f307adccc}
 
   '@xiilab/astrago-openapi@0.0.3-dev':
     resolution: {integrity: sha512-jP/j+75186DoKou5lFW4xuFG+JkO+zqjOa3a3MKkaQt0ZxifEdKZ3ApPJuXE1Ct6KGgjo9Rk60ZgMurYrmHrRg==, tarball: https://npm.pkg.github.com/download/@xiilab/astrago-openapi/0.0.3-dev/fb2026d967de0b6c32ef09523892986fe63dc556}
@@ -3868,7 +3865,7 @@ snapshots:
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.6
+      '@codemirror/view': 6.39.11
       '@lezer/common': 1.5.0
 
   '@codemirror/lang-javascript@6.2.4':
@@ -3907,7 +3904,7 @@ snapshots:
   '@codemirror/search@6.5.11':
     dependencies:
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.6
+      '@codemirror/view': 6.39.11
       crelt: 1.0.6
 
   '@codemirror/state@6.5.2':
@@ -3920,13 +3917,6 @@ snapshots:
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.39.11
       '@lezer/highlight': 1.2.3
-
-  '@codemirror/view@6.38.6':
-    dependencies:
-      '@codemirror/state': 6.5.2
-      crelt: 1.0.6
-      style-mod: 4.1.3
-      w3c-keyname: 2.2.8
 
   '@codemirror/view@6.39.11':
     dependencies:
@@ -4904,7 +4894,8 @@ snapshots:
       '@codemirror/search': 6.5.11
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.39.11
-  '@uiw/react-codemirror@4.25.3(@babel/runtime@7.28.4)(@codemirror/autocomplete@6.19.1)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.5.2)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.39.11)(codemirror@6.0.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+
+  '@uiw/react-codemirror@4.25.3(@babel/runtime@7.28.4)(@codemirror/autocomplete@6.19.1)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.5.2)(@codemirror/theme-one-dark@6.1.3)(@codemirror/view@6.39.11)(codemirror@6.0.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@babel/runtime': 7.28.4
       '@codemirror/commands': 6.10.0
@@ -4923,7 +4914,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@xiilab/astrago-openapi-spec@0.0.96-dev': {}
+  '@xiilab/astrago-openapi-spec@0.0.99-dev': {}
 
   '@xiilab/astrago-openapi@0.0.3-dev':
     dependencies:
@@ -5231,7 +5222,7 @@ snapshots:
       '@codemirror/lint': 6.9.2
       '@codemirror/search': 6.5.11
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.6
+      '@codemirror/view': 6.39.11
 
   color-convert@2.0.1:
     dependencies:

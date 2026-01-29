@@ -32,6 +32,7 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseHubImageResponse,
   BaseResponseListHubSummaryResponse,
   BaseResponsePageResponseFindHubsResponse,
 } from "../astragoBackendAPIDocumentation.schemas";
@@ -55,6 +56,22 @@ export const getFindHubsResponseMock = (
       description: faker.string.alpha({ length: { min: 10, max: 20 } }),
       thumbnail: faker.string.alpha({ length: { min: 10, max: 20 } }),
     })),
+  },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getFindHubImageResponseMock = (
+  overrideResponse: Partial<BaseResponseHubImageResponse> = {},
+): BaseResponseHubImageResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: {
+    imageTagId: faker.number.int({ min: undefined, max: undefined }),
+    harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    tagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
@@ -103,6 +120,36 @@ export const getFindHubsMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getFindHubsResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getFindHubImageMockHandler = (
+  overrideResponse?:
+    | BaseResponseHubImageResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseHubImageResponse>
+        | BaseResponseHubImageResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/hubs/:hubId/image",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getFindHubImageResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -170,6 +217,7 @@ export const getFindHubSummariesMockHandler = (
 };
 export const getHubMock = () => [
   getFindHubsMockHandler(),
+  getFindHubImageMockHandler(),
   getFindHubDetailMockHandler(),
   getFindHubSummariesMockHandler(),
 ];

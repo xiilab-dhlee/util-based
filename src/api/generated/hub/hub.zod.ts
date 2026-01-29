@@ -101,6 +101,33 @@ export const findHubsResponse = zod
   .strict();
 
 /**
+ * Hub ID로 연결된 Harbor 이미지 정보를 조회합니다. Hub 또는 이미지 정보가 없으면 null을 반환합니다.
+ * @summary HUB 이미지 정보 조회
+ */
+export const findHubImageParams = zod.object({
+  hubId: zod.number().describe("조회할 HUB ID"),
+});
+
+export const findHubImageResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        imageTagId: zod.number().describe("이미지 태그 ID"),
+        harborImageName: zod.string().describe("Harbor 이미지 이름"),
+        imageDisplayName: zod.string().describe("이미지 표시 이름"),
+        tagName: zod.string().describe("태그 이름"),
+      })
+      .strict()
+      .optional()
+      .describe("Hub 이미지 정보 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 
             Hub ID로 상세 정보(마크다운 원문)를 조회합니다.
             응답 형식: 마크다운 원문 형식을 유지하기 위해 별도 Response DTO 없이 String으로 직접 반환합니다.
