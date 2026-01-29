@@ -437,7 +437,7 @@ export function CreateSnapshotRegistryModal({
                     />
                   </ButtonWrapper>
                 </DynamicFieldRow>
-                {/* 추가된 데이터 행: 삭제 버튼 */}
+                {/* 추가된 데이터 행: 읽기 전용 + 삭제 버튼 */}
                 {envFields.map((field, index) => (
                   <DynamicFieldRow key={field.id}>
                     <Controller
@@ -447,6 +447,7 @@ export function CreateSnapshotRegistryModal({
                         <FieldInput
                           {...inputField}
                           placeholder="환경변수 키 입력"
+                          disabled
                         />
                       )}
                     />
@@ -457,6 +458,7 @@ export function CreateSnapshotRegistryModal({
                         <FieldInput
                           {...inputField}
                           placeholder="환경변수 값 입력"
+                          disabled
                         />
                       )}
                     />
@@ -516,7 +518,7 @@ export function CreateSnapshotRegistryModal({
                     />
                   </ButtonWrapper>
                 </DynamicFieldRow>
-                {/* 추가된 데이터 행: 삭제 버튼 */}
+                {/* 추가된 데이터 행: 읽기 전용 + 삭제 버튼 */}
                 {portFields.map((field, index) => (
                   <DynamicFieldRow key={field.id}>
                     <Controller
@@ -526,6 +528,7 @@ export function CreateSnapshotRegistryModal({
                         <FieldInput
                           {...inputField}
                           placeholder="포트 이름 입력"
+                          disabled
                         />
                       )}
                     />
@@ -537,14 +540,8 @@ export function CreateSnapshotRegistryModal({
                           {...inputField}
                           type="number"
                           placeholder="포트 번호 입력"
-                          onChange={(e) =>
-                            inputField.onChange(
-                              e.target.value
-                                ? Number(e.target.value)
-                                : undefined,
-                            )
-                          }
                           value={inputField.value ?? ""}
+                          disabled
                         />
                       )}
                     />
