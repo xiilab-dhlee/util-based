@@ -127,6 +127,18 @@ export function SecurityLevelSettingModal() {
       centered
       showHeaderBorder
     >
+      <SettingGuideBox>
+        <SettingGuideText>
+          보안 레벨 기능을 <SettingGuideHighlight>'사용'</SettingGuideHighlight>
+          으로 설정하면, 설정 변경 이후 업로드되는 컨테이너 이미지부터 보안
+          기준이 적용됩니다.
+        </SettingGuideText>
+        <SettingGuideText>
+          <SettingGuideHighlight>'미사용'</SettingGuideHighlight>으로 변경할
+          경우, 기존에 승인 대상이었던 이미지도 모두 사용 가능 상태로
+          전환됩니다.
+        </SettingGuideText>
+      </SettingGuideBox>
       <Form layout="vertical">
         <FormItem label="보안 레벨 기능 사용 여부">
           <Controller
@@ -280,4 +292,28 @@ const CriteriaItem = styled.div`
   & > * {
     width: 100%;
   }
+`;
+
+const SettingGuideBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  margin-bottom: 16px;
+`;
+
+const SettingGuideText = styled.p`
+  font-size: 13px;
+  font-weight: 400;
+  color: #000;
+  line-height: 1.6;
+  margin: 0;
+`;
+
+const SettingGuideHighlight = styled.span`
+  font-weight: 700;
+  color: var(--color-blue-04);
 `;
