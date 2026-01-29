@@ -8,7 +8,10 @@ import { WorkloadSourcecodeCard } from "@/domain/sourcecode/components/workload-
 import { workloadEnvColumn } from "@/domain/workload/components/detail/workload-env-column";
 import { workloadPortColumn } from "@/domain/workload/components/detail/workload-port-column";
 import { useWorkloadStatusPolling } from "@/domain/workload/hooks/use-workload-status-polling";
-import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
+import {
+  getWorkloadActionStates,
+  getWorkloadImageTypeInfo,
+} from "@/domain/workload/utils/workload.util";
 import { CreateModelButton } from "@/shared/components/button/create-model-button";
 import { WorkloadVolumeCard } from "@/shared/components/card/workload-volume-card";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
@@ -44,11 +47,21 @@ export function WorkloadSecondaryArticle({
   });
 
   const handleClickCommitImage = () => {
-    publish(WORKLOAD_EVENTS.sendCommitImage, data);
+    if (!data) return;
+    publish(WORKLOAD_EVENTS.sendCommitImage, {
+      workloadId: data.workloadId,
+      workspaceId,
+      env: data.env ?? null,
+      port: data.port ?? null,
+    });
   };
 
   const { label, icon } = getWorkloadImageTypeInfo(data?.image?.imageType);
   const isRunning = status === "RUNNING";
+  const { canCreateSnapshot } = getWorkloadActionStates(
+    status ?? "CREATING",
+    data?.workloadJobType,
+  );
 
   return (
     <Container>
@@ -71,7 +84,7 @@ export function WorkloadSecondaryArticle({
             </div>
           </Value>
         </KeyValueContainer>
-        {isRunning && (
+        {canCreateSnapshot && (
           <KeyValueContainer className="split">
             <LeftKey>개인 레지스트리</LeftKey>
             <Value>

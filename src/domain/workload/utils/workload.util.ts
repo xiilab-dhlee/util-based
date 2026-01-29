@@ -196,20 +196,25 @@ export interface WorkloadActionStates {
   canStop: boolean; // 종료 가능
   canRestart: boolean; // 재시작 가능
   canDelete: boolean; // 삭제 가능
+  canCreateSnapshot: boolean; // 스냅샷 이미지 생성 가능 (INTERACTIVE + RUNNING)
 }
 
 export function getWorkloadActionStates(
   status: WorkloadStatusResponseWorkloadStatus,
+  jobType?: WorkloadDetailResponseWorkloadJobType,
 ): WorkloadActionStates {
+  const isRunning = status === "RUNNING";
+  const isInteractive = jobType === "INTERACTIVE";
+
   return {
     // 로그 접근: RUNNING / TERMINATED
     canAccessLog: status === "RUNNING" || status === "TERMINATED",
 
     // 웹터미널 접근: RUNNING만
-    canAccessTerminal: status === "RUNNING",
+    canAccessTerminal: isRunning,
 
     // 포트 접근: RUNNING만 (ports, imageType은 별도 체크 필요)
-    canAccessPort: status === "RUNNING",
+    canAccessPort: isRunning,
 
     // 모니터링 접근: RUNNING / TERMINATING / TERMINATED
     canAccessMonitoring:
@@ -218,7 +223,7 @@ export function getWorkloadActionStates(
       status === "TERMINATED",
 
     // 파일 목록 접근: RUNNING만
-    canAccessFileList: status === "RUNNING",
+    canAccessFileList: isRunning,
 
     // 상세 정보 접근: 모든 상태
     canAccessDetails: true,
@@ -237,6 +242,10 @@ export function getWorkloadActionStates(
 
     // 삭제: TERMINATED만
     canDelete: status === "TERMINATED",
+
+    // 스냅샷 이미지 생성: INTERACTIVE 타입 + RUNNING 상태
+    // (BATCH, DISTRIBUTED는 스냅샷 의미 없음)
+    canCreateSnapshot: isRunning && isInteractive,
   };
 }
 
