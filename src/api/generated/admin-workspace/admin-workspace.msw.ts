@@ -32,6 +32,7 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+  BaseResponseAdminCommitImagePolicyResponse,
   BaseResponseAdminPolicySetResponse,
   BaseResponseAdminResourceRequestDetailResponse,
   BaseResponseAdminWorkspaceDetailListResponse,
@@ -113,6 +114,28 @@ export const getUpdatePolicySetResponseMock = (
     },
     workspaceLimitCount: faker.number.int({ min: undefined, max: undefined }),
   },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getGetCommitImagePolicyResponseMock = (
+  overrideResponse: Partial<BaseResponseAdminCommitImagePolicyResponse> = {},
+): BaseResponseAdminCommitImagePolicyResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: { isCommitImageEnabled: faker.datatype.boolean() },
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  timestamp: faker.number.int({ min: undefined, max: undefined }),
+  ...overrideResponse,
+});
+
+export const getUpdateCommitImagePolicyResponseMock = (
+  overrideResponse: Partial<BaseResponseAdminCommitImagePolicyResponse> = {},
+): BaseResponseAdminCommitImagePolicyResponse => ({
+  status: "SUCCESS",
+  errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  data: { isCommitImageEnabled: faker.datatype.boolean() },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   timestamp: faker.number.int({ min: undefined, max: undefined }),
   ...overrideResponse,
@@ -752,6 +775,66 @@ export const getUpdatePolicySetMockHandler = (
   );
 };
 
+export const getGetCommitImagePolicyMockHandler = (
+  overrideResponse?:
+    | BaseResponseAdminCommitImagePolicyResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) =>
+        | Promise<BaseResponseAdminCommitImagePolicyResponse>
+        | BaseResponseAdminCommitImagePolicyResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    "*/api/v1/admin/workspaces/policy-sets/commit-image",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetCommitImagePolicyResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
+export const getUpdateCommitImagePolicyMockHandler = (
+  overrideResponse?:
+    | BaseResponseAdminCommitImagePolicyResponse
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) =>
+        | Promise<BaseResponseAdminCommitImagePolicyResponse>
+        | BaseResponseAdminCommitImagePolicyResponse),
+  options?: RequestHandlerOptions,
+) => {
+  return http.put(
+    "*/api/v1/admin/workspaces/policy-sets/commit-image",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getUpdateCommitImagePolicyResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+    options,
+  );
+};
+
 export const getDeleteWorkspacesMockHandler = (
   overrideResponse?:
     | void
@@ -1018,6 +1101,8 @@ export const getAdminWorkspaceMock = () => [
   getApproveResourceRequestMockHandler(),
   getGetPolicySetMockHandler(),
   getUpdatePolicySetMockHandler(),
+  getGetCommitImagePolicyMockHandler(),
+  getUpdateCommitImagePolicyMockHandler(),
   getDeleteWorkspacesMockHandler(),
   getGetAdminWorkspaceListMockHandler(),
   getGetAdminTerminatedWorkloadsMockHandler(),

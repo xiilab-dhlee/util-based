@@ -125,6 +125,7 @@ export const getGetAdminActiveWorkloads1ResponseMock = (
       (_, i) => i + 1,
     ).map(() => ({
       workloadId: faker.number.int({ min: undefined, max: undefined }),
+      workspaceId: faker.number.int({ min: undefined, max: undefined }),
       workloadResourceName: faker.string.alpha({
         length: { min: 10, max: 20 },
       }),
@@ -144,6 +145,7 @@ export const getGetAdminActiveWorkloads1ResponseMock = (
       ] as const),
       nodeName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      ageSeconds: faker.number.int({ min: undefined, max: undefined }),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),

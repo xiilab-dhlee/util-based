@@ -31,11 +31,11 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseRegistryListResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponsePageResponseBuiltInImageListResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetBuiltInRegistryListResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseRegistryListResponse> = {},
-): BaseResponsePageResponseRegistryListResponse => ({
+export const getGetBuiltInImageListResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseBuiltInImageListResponse> = {},
+): BaseResponsePageResponseBuiltInImageListResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
@@ -46,24 +46,18 @@ export const getGetBuiltInRegistryListResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      imageId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagId: faker.number.int({ min: undefined, max: undefined }),
+      tagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      latestImageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      imageTagCount: faker.number.int({ min: undefined, max: undefined }),
-      downloadCount: faker.number.int({ min: undefined, max: undefined }),
-      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
-      imageType: faker.helpers.arrayElement([
-        "BUILT_IN",
+      frameworkType: faker.helpers.arrayElement([
+        "PYTORCH",
+        "TENSORFLOW",
+        "JUPYTER",
+        "VSCODE",
+        "RSTUDIO",
         "HUB",
-        "PRIVATE",
-        "PUBLIC",
-      ] as const),
-      imageSourceType: faker.helpers.arrayElement([
-        "SNAPSHOT",
-        "EXTERNAL",
+        "REGISTRY",
       ] as const),
     })),
   },
@@ -72,14 +66,14 @@ export const getGetBuiltInRegistryListResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetBuiltInRegistryListMockHandler = (
+export const getGetBuiltInImageListMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseRegistryListResponse
+    | BaseResponsePageResponseBuiltInImageListResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseRegistryListResponse>
-        | BaseResponsePageResponseRegistryListResponse),
+        | Promise<BaseResponsePageResponseBuiltInImageListResponse>
+        | BaseResponsePageResponseBuiltInImageListResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
@@ -93,7 +87,7 @@ export const getGetBuiltInRegistryListMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetBuiltInRegistryListResponseMock(),
+            : getGetBuiltInImageListResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -102,5 +96,5 @@ export const getGetBuiltInRegistryListMockHandler = (
   );
 };
 export const getBuiltInRegistryMock = () => [
-  getGetBuiltInRegistryListMockHandler(),
+  getGetBuiltInImageListMockHandler(),
 ];

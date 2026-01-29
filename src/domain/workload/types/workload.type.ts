@@ -1,4 +1,12 @@
 import type { WorkloadStatusResponseWorkloadStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  ActiveWorkloadResponseWorkloadJobType,
+  EnvRequest,
+  PortRequest,
+  SourceCodeRequest,
+  VolumeRequest,
+  WorkloadCreateRequestNodeType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import type { ACTIVE_WORKLOAD_STATUS_OPTIONS } from "@/domain/workload/constants/workload.constant";
 import type { AllOptionValue } from "@/shared/constants/core.constant";
 import type {
@@ -6,6 +14,17 @@ import type {
   CorePayload,
   CoreSearchText,
 } from "@/shared/types/api.interface";
+
+/**
+ * Re-export types from generated API for cleaner imports
+ */
+export type WorkloadJobType = ActiveWorkloadResponseWorkloadJobType;
+export type WorkloadNodeMode = WorkloadCreateRequestNodeType;
+export type WorkloadImageType = string;
+export type WorkloadEnvType = EnvRequest;
+export type WorkloadPortType = PortRequest;
+export type WorkloadSourcecodeType = SourceCodeRequest;
+export type WorkloadVolumeType = VolumeRequest;
 
 /**
  * Active workload statuses (excluding terminated states)
@@ -31,43 +50,33 @@ export type FilterStatusValue =
 
 export type WorkloadFileIndentPosition = "first" | "middle" | "last";
 
-/**
- * @deprecated
- * 밑으로 다
- */
-export interface GetWorkloadsPayload
-  extends CorePayload,
-    Partial<CorePaginate>,
-    CoreSearchText {
-  jobType?: string;
-  status?: WorkloadStatusResponseWorkloadStatus;
-}
-
-export interface GetWorkloadPayload extends CorePayload {
-  workspaceId: number | string;
-  workloadId: string;
-}
-export interface GetWorkloadFilesPayload extends CorePayload {
-  workspaceId: number | string;
-  workloadId: string;
-  path: string;
-}
-
 export interface GetWorkloadVulnerabilitiesPayload
   extends CorePayload,
     CorePaginate {}
 
-export interface CreateWorkloadPayload extends CorePayload {}
-
-export interface UpdateWorkloadPayload extends CorePayload {}
-
-export interface DeleteWorkloadPayload extends CorePayload {}
-
-export interface StopWorkloadPayload extends CorePayload {}
-
-export interface RestartWorkloadPayload extends CorePayload {}
-
-export interface CreateCommitImagePayload extends CorePayload {}
+/**
+ * 워크로드 생성 요청 타입 (API 스펙: WorkloadCreateRequest 기준)
+ */
+export interface CreateWorkloadPayload {
+  workloadName: string;
+  description?: string;
+  label?: string[];
+  workloadJobType: WorkloadJobType;
+  nodeType: WorkloadNodeMode;
+  nodeName?: string;
+  resourcePresetId: number;
+  harborImageName: string;
+  imageTagName: string;
+  outputDirectory?: string;
+  executionDirectory?: string;
+  executionCmd?: string;
+  env?: WorkloadEnvType[];
+  port?: WorkloadPortType[];
+  sourceCode?: WorkloadSourcecodeType;
+  volume?: WorkloadVolumeType[];
+  parameter?: { [key: string]: unknown }[];
+  workerCount?: number;
+}
 
 export interface CreateWorkloadFolderPayload {
   workspaceId: number | string;

@@ -4,12 +4,13 @@ import type { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 import { Box, Typography } from "xiilab-ui";
 
-import type { ActiveWorkloadResponseWorkloadJobType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { WORKLOAD_JOB_TYPES } from "@/domain/workload/constants/workload.constant";
+import type { WorkloadJobType } from "@/domain/workload/types/workload.type";
 import { getWorkloadJobTypeInfo } from "@/domain/workload/utils/workload.util";
 import { JupyterIcon } from "@/shared/components/icon/jupyter-icon";
 import { PytorchIcon } from "@/shared/components/icon/pytorch-icon";
 
-const DESCRIPTION_MAP: Record<ActiveWorkloadResponseWorkloadJobType, string[]> =
+const DESCRIPTION_MAP: Record<WorkloadJobType, string[]> =
   {
     BATCH: [
       "쿠버네티스에서 한 번 실행하고 종료되는 태스크를",
@@ -25,18 +26,18 @@ const DESCRIPTION_MAP: Record<ActiveWorkloadResponseWorkloadJobType, string[]> =
   };
 
 interface JobTypeCardProps {
-  type: ActiveWorkloadResponseWorkloadJobType;
-  value: ActiveWorkloadResponseWorkloadJobType;
-  setValue: Dispatch<SetStateAction<ActiveWorkloadResponseWorkloadJobType>>;
+  type: WorkloadJobType;
+  value: WorkloadJobType;
+  setValue: Dispatch<SetStateAction<WorkloadJobType>>;
 }
 
 export function JobTypeCard({ type, value, setValue }: JobTypeCardProps) {
   const { label } = getWorkloadJobTypeInfo(type);
 
   let icon = null;
-  if (type === "INTERACTIVE") {
+  if (type === WORKLOAD_JOB_TYPES.INTERACTIVE) {
     icon = <JupyterIcon width={20} height={20} />;
-  } else if (type === "BATCH") {
+  } else if (type === WORKLOAD_JOB_TYPES.BATCH) {
     icon = <PytorchIcon width={20} height={20} />;
   }
 

@@ -572,6 +572,40 @@ export interface BaseResponseAdminPolicySetResponse {
 }
 
 /**
+ * 관리자용 커밋 이미지 정책 업데이트 요청
+ */
+export interface AdminCommitImagePolicyUpdateRequest {
+  /** 이미지 커밋 활성화 여부 */
+  isCommitImageEnabled: boolean;
+}
+
+/**
+ * 관리자용 커밋 이미지 정책 조회 응답
+ */
+export interface AdminCommitImagePolicyResponse {
+  /** 이미지 커밋 활성화 여부 */
+  isCommitImageEnabled: boolean;
+}
+
+export type BaseResponseAdminCommitImagePolicyResponseStatus =
+  (typeof BaseResponseAdminCommitImagePolicyResponseStatus)[keyof typeof BaseResponseAdminCommitImagePolicyResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponseAdminCommitImagePolicyResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponseAdminCommitImagePolicyResponse {
+  status: BaseResponseAdminCommitImagePolicyResponseStatus;
+  errorCode?: string;
+  data?: AdminCommitImagePolicyResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
  * 스토리지 수정 요청
  */
 export interface StorageUpdateRequest {
@@ -2296,11 +2330,11 @@ export interface SnapshotImageRequest {
   /** 워크스페이스 ID (종속버전인 경우 필수) */
   workspaceId?: number;
   /**
-   * 기본 실행 명령
+   * 이미지 태그 설명
    * @minLength 0
-   * @maxLength 1000
+   * @maxLength 500
    */
-  command?: string;
+  description?: string;
   /** 환경변수 목록 */
   env?: SnapshotEnvRequest[];
   /** 포트 목록 */
@@ -3769,6 +3803,8 @@ export type WorkloadDetailResponseParameterItem = { [key: string]: unknown };
  * 워크로드 상세 조회 응답
  */
 export interface WorkloadDetailResponse {
+  /** 워크로드 ID */
+  workloadId: number;
   /** 워크로드 이름 */
   workloadName: string;
   /** 워크로드 리소스 이름 */
@@ -3777,6 +3813,10 @@ export interface WorkloadDetailResponse {
   creatorId: string;
   /** 워크로드 설명 */
   description?: string;
+  /** 워크로드 생성 일시 */
+  createdAt: string;
+  /** 워크로드 종료 일시 (종료되지 않은 경우 null) */
+  terminatedAt?: string;
   /** 워크로드 잡 타입 */
   workloadJobType: WorkloadDetailResponseWorkloadJobType;
   /** 노드 타입 */
@@ -5233,7 +5273,7 @@ export const RegistryListResponseImageSourceType = {
 } as const;
 
 /**
- * 공용 레지스트리 목록 응답
+ * 공유 레지스트리 목록 응답
  */
 export interface RegistryListResponse {
   /** 이미지 ID (DB 메타데이터 없으면 null) */
@@ -5742,6 +5782,103 @@ export interface PageResponseImageJobResponse {
   totalPageNum: number;
   currentPageNo: number;
   content: ImageJobResponse[];
+}
+
+export type BaseResponsePageResponseHubImageListResponseStatus =
+  (typeof BaseResponsePageResponseHubImageListResponseStatus)[keyof typeof BaseResponsePageResponseHubImageListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseHubImageListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseHubImageListResponse {
+  status: BaseResponsePageResponseHubImageListResponseStatus;
+  errorCode?: string;
+  data?: PageResponseHubImageListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * Hub 이미지 태그 목록 응답
+ */
+export interface HubImageListResponse {
+  /** 이미지 태그 ID */
+  imageTagId: number;
+  /** 태그 이름 */
+  tagName: string;
+  /** 이미지 표시 이름 */
+  imageDisplayName: string;
+  /** Harbor 이미지 경로 */
+  harborImageName: string;
+}
+
+export interface PageResponseHubImageListResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: HubImageListResponse[];
+}
+
+export type BaseResponsePageResponseBuiltInImageListResponseStatus =
+  (typeof BaseResponsePageResponseBuiltInImageListResponseStatus)[keyof typeof BaseResponsePageResponseBuiltInImageListResponseStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseResponsePageResponseBuiltInImageListResponseStatus = {
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  ERROR: "ERROR",
+} as const;
+
+export interface BaseResponsePageResponseBuiltInImageListResponse {
+  status: BaseResponsePageResponseBuiltInImageListResponseStatus;
+  errorCode?: string;
+  data?: PageResponseBuiltInImageListResponse;
+  message?: string;
+  timestamp: number;
+}
+
+/**
+ * 프레임워크 타입
+ */
+export type BuiltInImageListResponseFrameworkType =
+  (typeof BuiltInImageListResponseFrameworkType)[keyof typeof BuiltInImageListResponseFrameworkType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BuiltInImageListResponseFrameworkType = {
+  PYTORCH: "PYTORCH",
+  TENSORFLOW: "TENSORFLOW",
+  JUPYTER: "JUPYTER",
+  VSCODE: "VSCODE",
+  RSTUDIO: "RSTUDIO",
+  HUB: "HUB",
+  REGISTRY: "REGISTRY",
+} as const;
+
+/**
+ * Built-in 이미지 태그 목록 응답
+ */
+export interface BuiltInImageListResponse {
+  /** 이미지 태그 ID */
+  imageTagId: number;
+  /** 태그 이름 */
+  tagName: string;
+  /** 이미지 표시 이름 */
+  imageDisplayName: string;
+  /** Harbor 이미지 경로 */
+  harborImageName: string;
+  /** 프레임워크 타입 */
+  frameworkType: BuiltInImageListResponseFrameworkType;
+}
+
+export interface PageResponseBuiltInImageListResponse {
+  totalSize: number;
+  totalPageNum: number;
+  currentPageNo: number;
+  content: BuiltInImageListResponse[];
 }
 
 export type BaseResponseListLicenseListResponseStatus =
@@ -6934,6 +7071,8 @@ export const AdminActiveWorkloadResponseWorkloadJobType = {
 export interface AdminActiveWorkloadResponse {
   /** 워크로드 ID */
   workloadId: number;
+  /** 워크스페이스 ID */
+  workspaceId: number;
   /** 워크로드 리소스 이름 (K8s 리소스명) */
   workloadResourceName: string;
   /** 워크로드 이름 */
@@ -6946,6 +7085,8 @@ export interface AdminActiveWorkloadResponse {
   nodeName?: string;
   /** 생성자 이름 */
   creatorName: string;
+  /** 경과 시간 (초) */
+  ageSeconds: number;
 }
 
 export type BaseResponsePageResponseAdminActiveWorkloadResponseStatus =
@@ -7462,7 +7603,7 @@ export interface PageResponsePublicImageUsageResponse {
 }
 
 /**
- * 공용 레지스트리 사용자별 이미지 등록 현황 응답
+ * 공유 레지스트리 사용자별 이미지 등록 현황 응답
  */
 export interface PublicImageUsageResponse {
   /** 계정 ID */
@@ -11825,7 +11966,7 @@ export const GetImageJobsImageSourceType = {
   EXTERNAL: "EXTERNAL",
 } as const;
 
-export type GetHubRegistryListParams = {
+export type GetHubImageListParams = {
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -11837,74 +11978,13 @@ export type GetHubRegistryListParams = {
    * @maximum 100
    */
   pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 정렬 필드
-   */
-  sort?: GetHubRegistryListSort;
-  /**
-   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
-   */
-  order?: GetHubRegistryListOrder;
-  /**
-   * 내가 생성한 이미지만 조회
-   */
-  hasMine?: boolean;
-  /**
-   * 이미지 소스 타입 필터 (미지정 시 전체 조회)
-   */
-  imageSourceType?: GetHubRegistryListImageSourceType;
-  /**
-   * 프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)
-   */
-  frameworkType?: GetHubRegistryListFrameworkType;
 };
 
-export type GetHubRegistryListSort =
-  (typeof GetHubRegistryListSort)[keyof typeof GetHubRegistryListSort];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetHubRegistryListSort = {
-  CREATED_AT: "CREATED_AT",
-  CREATOR_NAME: "CREATOR_NAME",
-} as const;
-
-export type GetHubRegistryListOrder =
-  (typeof GetHubRegistryListOrder)[keyof typeof GetHubRegistryListOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetHubRegistryListOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-export type GetHubRegistryListImageSourceType =
-  (typeof GetHubRegistryListImageSourceType)[keyof typeof GetHubRegistryListImageSourceType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetHubRegistryListImageSourceType = {
-  SNAPSHOT: "SNAPSHOT",
-  EXTERNAL: "EXTERNAL",
-} as const;
-
-export type GetHubRegistryListFrameworkType =
-  (typeof GetHubRegistryListFrameworkType)[keyof typeof GetHubRegistryListFrameworkType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetHubRegistryListFrameworkType = {
-  PYTORCH: "PYTORCH",
-  TENSORFLOW: "TENSORFLOW",
-  JUPYTER: "JUPYTER",
-  VSCODE: "VSCODE",
-  RSTUDIO: "RSTUDIO",
-  HUB: "HUB",
-  REGISTRY: "REGISTRY",
-} as const;
-
-export type GetBuiltInRegistryListParams = {
+export type GetBuiltInImageListParams = {
+  /**
+   * 프레임워크 타입 필터
+   */
+  frameworkType?: GetBuiltInImageListFrameworkType;
   /**
    * 페이지 번호 (0부터 시작)
    * @minimum 0
@@ -11916,64 +11996,13 @@ export type GetBuiltInRegistryListParams = {
    * @maximum 100
    */
   pageSize?: number;
-  /**
-   * 검색 키워드
-   */
-  keyword?: string;
-  /**
-   * 정렬 필드
-   */
-  sort?: GetBuiltInRegistryListSort;
-  /**
-   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
-   */
-  order?: GetBuiltInRegistryListOrder;
-  /**
-   * 내가 생성한 이미지만 조회
-   */
-  hasMine?: boolean;
-  /**
-   * 이미지 소스 타입 필터 (미지정 시 전체 조회)
-   */
-  imageSourceType?: GetBuiltInRegistryListImageSourceType;
-  /**
-   * 프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)
-   */
-  frameworkType?: GetBuiltInRegistryListFrameworkType;
 };
 
-export type GetBuiltInRegistryListSort =
-  (typeof GetBuiltInRegistryListSort)[keyof typeof GetBuiltInRegistryListSort];
+export type GetBuiltInImageListFrameworkType =
+  (typeof GetBuiltInImageListFrameworkType)[keyof typeof GetBuiltInImageListFrameworkType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetBuiltInRegistryListSort = {
-  CREATED_AT: "CREATED_AT",
-  CREATOR_NAME: "CREATOR_NAME",
-} as const;
-
-export type GetBuiltInRegistryListOrder =
-  (typeof GetBuiltInRegistryListOrder)[keyof typeof GetBuiltInRegistryListOrder];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetBuiltInRegistryListOrder = {
-  ASC: "ASC",
-  DESC: "DESC",
-} as const;
-
-export type GetBuiltInRegistryListImageSourceType =
-  (typeof GetBuiltInRegistryListImageSourceType)[keyof typeof GetBuiltInRegistryListImageSourceType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetBuiltInRegistryListImageSourceType = {
-  SNAPSHOT: "SNAPSHOT",
-  EXTERNAL: "EXTERNAL",
-} as const;
-
-export type GetBuiltInRegistryListFrameworkType =
-  (typeof GetBuiltInRegistryListFrameworkType)[keyof typeof GetBuiltInRegistryListFrameworkType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetBuiltInRegistryListFrameworkType = {
+export const GetBuiltInImageListFrameworkType = {
   PYTORCH: "PYTORCH",
   TENSORFLOW: "TENSORFLOW",
   JUPYTER: "JUPYTER",
@@ -12486,10 +12515,7 @@ export type GetPendingWorkloadsSort =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetPendingWorkloadsSort = {
-  WORKLOAD_NAME: "WORKLOAD_NAME",
-  WORKLOAD_STATUS: "WORKLOAD_STATUS",
-  WARNING_COUNT: "WARNING_COUNT",
-  AGE_SECONDS: "AGE_SECONDS",
+  CREATED_AT: "CREATED_AT",
 } as const;
 
 export type GetPendingWorkloadsOrder =
@@ -12513,7 +12539,32 @@ export type GetAdminActiveWorkloads1Params = {
    * @maximum 100
    */
   pageSize?: number;
+  /**
+   * 정렬 필드
+   */
+  sort?: GetAdminActiveWorkloads1Sort;
+  /**
+   * 정렬 순서 (SortOrder enum): ASC, DESC. 미입력 시 각 사용처에서 기본값 ASC, DESC 설정하여 사용
+   */
+  order?: GetAdminActiveWorkloads1Order;
 };
+
+export type GetAdminActiveWorkloads1Sort =
+  (typeof GetAdminActiveWorkloads1Sort)[keyof typeof GetAdminActiveWorkloads1Sort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAdminActiveWorkloads1Sort = {
+  WORKLOAD_NAME: "WORKLOAD_NAME",
+} as const;
+
+export type GetAdminActiveWorkloads1Order =
+  (typeof GetAdminActiveWorkloads1Order)[keyof typeof GetAdminActiveWorkloads1Order];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetAdminActiveWorkloads1Order = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
 
 export type AdminGetVolumeListParams = {
   /**

@@ -1,6 +1,8 @@
 import type {
   ResourcePresetResponse,
   ResourcePresetResponseNodeType,
+  ResourcePresetSummaryResponse,
+  ResourcePresetSummaryResponseNodeType,
 } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   RESOURCE_PRESET_JOB_OPTIONS,
@@ -15,25 +17,33 @@ const mpsInfo = getResourceInfo("MPS");
 const cpuInfo = getResourceInfo("CPU");
 const memInfo = getResourceInfo("MEM");
 
-export function getNodeTypeLabel(nodeType: ResourcePresetResponseNodeType) {
+type ResourcePresetNodeType =
+  | ResourcePresetResponseNodeType
+  | ResourcePresetSummaryResponseNodeType;
+
+type ResourcePresetJobType =
+  | ResourcePresetResponse["workloadJobType"]
+  | ResourcePresetSummaryResponse["workloadJobType"];
+
+type ResourcePresetGpu =
+  | ResourcePresetResponse["resource"]["gpu"]
+  | ResourcePresetSummaryResponse["resource"]["gpu"];
+
+export function getNodeTypeLabel(nodeType: ResourcePresetNodeType) {
   return (
     RESOURCE_PRESET_NODE_OPTIONS.find((option) => option.value === nodeType)
       ?.label ?? "-"
   );
 }
 
-export function getJobTypeLabel(
-  jobType: ResourcePresetResponse["workloadJobType"],
-) {
+export function getJobTypeLabel(jobType: ResourcePresetJobType) {
   return (
     RESOURCE_PRESET_JOB_OPTIONS.find((option) => option.value === jobType)
       ?.label ?? "-"
   );
 }
 
-export function getGpuResourceLabel(
-  gpu: ResourcePresetResponse["resource"]["gpu"] | undefined,
-) {
+export function getGpuResourceLabel(gpu: ResourcePresetGpu | undefined) {
   if (!gpu) {
     return gpuInfo.text;
   }
@@ -50,9 +60,7 @@ export function getGpuResourceLabel(
   }
 }
 
-export function formatGpuResource(
-  gpu: ResourcePresetResponse["resource"]["gpu"],
-): string {
+export function formatGpuResource(gpu: ResourcePresetGpu | undefined): string {
   if (!gpu) {
     return "-";
   }

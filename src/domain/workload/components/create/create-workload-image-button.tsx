@@ -7,8 +7,8 @@ import { Icon, Typography } from "xiilab-ui";
 
 import type { WorkloadImageDetailImageType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
-  imageIdAtom,
-  imageTagIdAtom,
+  harborImageNameAtom,
+  imageTagNameAtom,
 } from "@/domain/workload/state/create-workload.atom";
 import { getWorkloadImageTypeInfo } from "@/domain/workload/utils/workload.util";
 
@@ -25,15 +25,15 @@ export function CreateWorkloadImageButton({
   isSelected,
   disabled,
 }: CreateWorkloadImageButtonProps) {
-  const setImageId = useSetAtom(imageIdAtom);
-  const setImageTagId = useSetAtom(imageTagIdAtom);
+  const setHarborImageName = useSetAtom(harborImageNameAtom);
+  const setImageTagName = useSetAtom(imageTagNameAtom);
 
   const { label, icon } = getWorkloadImageTypeInfo(type);
 
   const handleClick = () => {
     setType(type);
-    setImageId(null);
-    setImageTagId(null);
+    setHarborImageName("");
+    setImageTagName("");
   };
 
   return (

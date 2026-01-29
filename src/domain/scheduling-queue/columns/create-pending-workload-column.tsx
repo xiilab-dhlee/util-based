@@ -43,6 +43,8 @@ export function createPendingWorkloadColumn({
       align: "left",
       width: "12%",
       ellipsis: true,
+      sorter: true,
+      sortOrder: sort ? getColumnSortOrder(sort, "workloadName") : undefined,
     },
     {
       key: "workspaceName",

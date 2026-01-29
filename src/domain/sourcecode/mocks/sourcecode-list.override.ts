@@ -101,7 +101,7 @@ function generateGitUrl(
 }
 
 /**
- * 마운트 경로 생성
+ * Mount Path 생성
  * @param index - 데이터 인덱스
  */
 function generateMountPath(index: number): string {

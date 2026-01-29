@@ -1,27 +1,28 @@
 "use client";
 
 import styled from "styled-components";
-import { Card, Icon, Tag } from "xiilab-ui";
+import { Button, Card, Icon } from "xiilab-ui";
 
-import type { WorkloadSourceCodeDetail } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import type {
+  SourceCodeDetailResponseSourceCodeType,
+  SourceCodeListResponseSourceCodeType,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { getSourcecodeTypeInfo } from "@/domain/sourcecode/utils/sourcecode.util";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
-import {
-  LikeCompactCardKey,
-  LikeCompactCardRecord,
-  LikeCompactCardValue,
-} from "@/styles/layers/like-card-layers.styled";
+import { getVisibilityInfo } from "@/shared/utils/visibility.util";
 
-interface WorkloadSourcecodeCardProps
-  extends Pick<
-    WorkloadSourceCodeDetail,
-    | "sourceCodeId"
-    | "sourceCodeName"
-    | "gitUrl"
-    | "mountPath"
-    | "sourceCodeType"
-  > {
-  onDelete?: () => void;
+type SourceCodeType =
+  | SourceCodeListResponseSourceCodeType
+  | SourceCodeDetailResponseSourceCodeType;
+
+interface WorkloadSourcecodeCardProps {
+  sourceCodeId: number;
+  sourceCodeName: string;
+  gitUrl: string;
+  mountPath: string;
+  sourceCodeType?: SourceCodeType;
+  isPublic?: boolean;
+  onDelete?: (sourceCodeId: number) => void;
 }
 
 /**
@@ -37,73 +38,121 @@ export function WorkloadSourcecodeCard({
   mountPath,
   gitUrl,
   sourceCodeType,
+  isPublic,
+  sourceCodeId,
   onDelete,
 }: WorkloadSourcecodeCardProps) {
-  const { text, tag } = getSourcecodeTypeInfo(sourceCodeType);
+  const { text } = getSourcecodeTypeInfo(sourceCodeType);
+  const { iconName } = getVisibilityInfo(isPublic);
+  const handleDeleteClick = () => {
+    onDelete?.(sourceCodeId);
+  };
 
   return (
     <CardWrapper data-testid={WORKLOAD_SELECTOR.SOURCECODE_CARD}>
       <Card
-        contentVariant="compact"
+        contentVariant="default"
         title={sourceCodeName}
+        icon={
+          iconName ? <Icon name={iconName} size={24} color="#464B51" /> : null
+        }
         actionElement={
           onDelete ? (
-            <IconWrapper onClick={onDelete}>
-              <Icon name="Close" size={16} color="#484848" />
-              <span className="sr-only">워크로드 소스코드 삭제</span>
-            </IconWrapper>
+            <Button icon="Close" iconSize={14} onClick={handleDeleteClick} />
           ) : undefined
         }
       >
-        <Body>
-          <LikeCompactCardRecord>
-            <LikeCompactCardKey>Git URL :</LikeCompactCardKey>
-            <LikeCompactCardValue
-              className="truncate"
-              data-testid={WORKLOAD_SELECTOR.SOURCECODE_URL}
-            >
-              {gitUrl}
-            </LikeCompactCardValue>
-          </LikeCompactCardRecord>
-          <LikeCompactCardRecord>
-            <LikeCompactCardKey>경로 :</LikeCompactCardKey>
-            <LikeCompactCardValue
-              className="truncate"
-              data-testid={WORKLOAD_SELECTOR.SOURCECODE_PATH}
-            >
-              {mountPath}
-            </LikeCompactCardValue>
-          </LikeCompactCardRecord>
-          <LikeCompactCardRecord>
-            <LikeCompactCardKey>타입 :</LikeCompactCardKey>
-            <LikeCompactCardValue
-              data-testid={WORKLOAD_SELECTOR.sourcecodeType(sourceCodeType)}
-            >
-              <Tag variant={tag}>{text}</Tag>
-            </LikeCompactCardValue>
-          </LikeCompactCardRecord>
-        </Body>
+        <CardContainer>
+          <CardBody>
+            <CardLeft>
+              <CardKey>Git URL</CardKey>
+              <CardKey>경로</CardKey>
+              <CardKey>타입</CardKey>
+            </CardLeft>
+            <CardRight>
+              <CardValue
+                className="truncate"
+                data-testid={WORKLOAD_SELECTOR.SOURCECODE_URL}
+              >
+                {gitUrl || "-"}
+              </CardValue>
+              <CardValue data-testid={WORKLOAD_SELECTOR.SOURCECODE_PATH}>
+                <div className="truncate">{mountPath || "-"}</div>
+              </CardValue>
+              <CardValue
+                data-testid={WORKLOAD_SELECTOR.sourcecodeType(
+                  sourceCodeType ?? "",
+                )}
+              >
+                {text || "-"}
+              </CardValue>
+            </CardRight>
+          </CardBody>
+        </CardContainer>
       </Card>
     </CardWrapper>
   );
 }
 
-const CardWrapper = styled.div``;
-
-const Body = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 8px;
+const CardWrapper = styled.div`
+  .card-header {
+    padding-right: 30px;
+  }
 `;
 
-const IconWrapper = styled.button`
+const CardContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 2px 6px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  position: relative;
+`;
+
+const CardBody = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 1;
+`;
+
+const CardLeft = styled.div`
+  width: 65px;
+  border-right: 1px solid #e9ebee;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const CardKey = styled.div`
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 12px;
+  color: #484848;
+  word-spacing: 0.1px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const CardRight = styled.div`
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 10px;
+`;
+
+const CardValue = styled.div`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: #000;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
   align-items: center;
-  width: 26px;
-  height: 26px;
-  background: #FAFAFA;
-  border-radius: 2px;
-  border: 1px solid #CED2D6;
+  gap: 14px;
+  flex: 1;
 `;

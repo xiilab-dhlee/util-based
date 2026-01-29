@@ -70,11 +70,11 @@ import type {
 
 /**
  * 
-            공용 레지스트리의 이미지 태그를 수정합니다.
+            공유 레지스트리의 이미지 태그를 수정합니다.
             - 태그 설명(description)을 수정할 수 있습니다.
             - 태그 생성자 또는 관리자만 수정할 수 있습니다.
         
- * @summary 공용 이미지 태그 수정
+ * @summary 공유 이미지 태그 수정
  */
 export const updatePublicImageTag = (
   imageTagId: number,
@@ -132,7 +132,7 @@ export type UpdatePublicImageTagMutationBody = UpdateImageTagRequest;
 export type UpdatePublicImageTagMutationError = unknown;
 
 /**
- * @summary 공용 이미지 태그 수정
+ * @summary 공유 이미지 태그 수정
  */
 export const useUpdatePublicImageTag = <TError = unknown, TContext = unknown>(
   options?: {
@@ -156,10 +156,10 @@ export const useUpdatePublicImageTag = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-            공용 레지스트리(이미지) 목록을 페이징하여 조회합니다.
+            공유 레지스트리(이미지) 목록을 페이징하여 조회합니다.
             이미지 타입, 키워드, 내가 생성한 이미지 필터링이 가능합니다.
         
- * @summary 공용 레지스트리 목록 조회
+ * @summary 공유 레지스트리 목록 조회
  */
 export const getPublicRegistryList = (
   params?: GetPublicRegistryListParams,
@@ -289,7 +289,7 @@ export function useGetPublicRegistryList<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 공용 레지스트리 목록 조회
+ * @summary 공유 레지스트리 목록 조회
  */
 
 export function useGetPublicRegistryList<
@@ -323,8 +323,8 @@ export function useGetPublicRegistryList<
 }
 
 /**
- * 공용 레지스트리(Docker Hub, NGC 등)의 이미지를 공용 레지스트리에 등록합니다.
- * @summary 공용 이미지 등록
+ * 외부 레지스트리(Docker Hub, NGC 등)의 이미지를 공유 레지스트리에 등록합니다.
+ * @summary 공유 이미지 등록
  */
 export const createPublicExternalImage = (
   createExternalImageRequest: CreateExternalImageRequest,
@@ -383,7 +383,7 @@ export type CreatePublicExternalImageMutationBody = CreateExternalImageRequest;
 export type CreatePublicExternalImageMutationError = unknown;
 
 /**
- * @summary 공용 이미지 등록
+ * @summary 공유 이미지 등록
  */
 export const useCreatePublicExternalImage = <
   TError = unknown,
@@ -410,12 +410,12 @@ export const useCreatePublicExternalImage = <
 };
 /**
  * 
-            실행 중인 워크로드 컨테이너를 스냅샷하여 공용 레지스트리에 이미지로 등록합니다.
+            실행 중인 워크로드 컨테이너를 스냅샷하여 공유 레지스트리에 이미지로 등록합니다.
             - 워크로드가 RUNNING 상태여야 합니다.
             - 워크로드의 실행 환경(명령어, 포트, 환경변수)이 이미지 태그에 저장됩니다.
             - 비동기로 스냅샷 Job이 생성되며, Harbor에 이미지가 푸시됩니다.
         
- * @summary 공용 이미지 스냅샷
+ * @summary 공유 이미지 스냅샷
  */
 export const createPublicSnapshotImage = (
   snapshotImageRequest: SnapshotImageRequest,
@@ -474,7 +474,7 @@ export type CreatePublicSnapshotImageMutationBody = SnapshotImageRequest;
 export type CreatePublicSnapshotImageMutationError = unknown;
 
 /**
- * @summary 공용 이미지 스냅샷
+ * @summary 공유 이미지 스냅샷
  */
 export const useCreatePublicSnapshotImage = <
   TError = unknown,
@@ -501,10 +501,10 @@ export const useCreatePublicSnapshotImage = <
 };
 /**
  * 
-            공용 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
+            공유 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
             키워드, 스캔 상태, 사용 가능 여부로 필터링이 가능합니다.
         
- * @summary 공용 이미지 태그 목록 조회
+ * @summary 공유 이미지 태그 목록 조회
  */
 export const getPublicImageTagList = (
   params: GetPublicImageTagListParams,
@@ -634,7 +634,7 @@ export function useGetPublicImageTagList<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 공용 이미지 태그 목록 조회
+ * @summary 공유 이미지 태그 목록 조회
  */
 
 export function useGetPublicImageTagList<
@@ -669,11 +669,11 @@ export function useGetPublicImageTagList<
 
 /**
  * 
-            공용 이미지에 새로운 태그를 추가합니다.
+            공유 이미지에 새로운 태그를 추가합니다.
             - DB에 Image가 없으면 자동으로 생성됩니다.
             - 이미 등록된 태그가 있으면 덮어쓰기가 불가능합니다. (PUBLIC_IMAGE_TAG_ALREADY_EXISTS 에러)
         
- * @summary 공용 이미지 태그 추가
+ * @summary 공유 이미지 태그 추가
  */
 export const addPublicImageTag = (
   addImageTagRequest: AddImageTagRequest,
@@ -732,7 +732,7 @@ export type AddPublicImageTagMutationBody = AddImageTagRequest;
 export type AddPublicImageTagMutationError = unknown;
 
 /**
- * @summary 공용 이미지 태그 추가
+ * @summary 공유 이미지 태그 추가
  */
 export const useAddPublicImageTag = <TError = unknown, TContext = unknown>(
   options?: {
@@ -756,11 +756,11 @@ export const useAddPublicImageTag = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-            공용 이미지 태그에 대한 취약점 스캔을 트리거합니다.
+            공유 이미지 태그에 대한 취약점 스캔을 트리거합니다.
             - Harbor Trivy 스캐너를 사용하여 비동기로 스캔이 진행됩니다.
             - 이미 스캔 중인 경우에도 정상 응답합니다.
         
- * @summary 공용 이미지 태그 취약점 스캔 트리거
+ * @summary 공유 이미지 태그 취약점 스캔 트리거
  */
 export const scanPublicImageTag = (
   vulnerabilityScanRequest: VulnerabilityScanRequest,
@@ -819,7 +819,7 @@ export type ScanPublicImageTagMutationBody = VulnerabilityScanRequest;
 export type ScanPublicImageTagMutationError = unknown;
 
 /**
- * @summary 공용 이미지 태그 취약점 스캔 트리거
+ * @summary 공유 이미지 태그 취약점 스캔 트리거
  */
 export const useScanPublicImageTag = <TError = unknown, TContext = unknown>(
   options?: {
@@ -843,13 +843,13 @@ export const useScanPublicImageTag = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-            공용 레지스트리의 이미지 태그를 삭제합니다.
+            공유 레지스트리의 이미지 태그를 삭제합니다.
             - Harbor Artifact와  DB 메타데이터를 함께 삭제합니다.
             - 관리자는 모든 태그를 삭제할 수 있습니다.
             - 일반 사용자는 본인이 생성한 태그만 삭제할 수 있습니다.
             - 부분 실패 시에도 성공한 태그는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
         
- * @summary 공용 이미지 태그 삭제
+ * @summary 공유 이미지 태그 삭제
  */
 export const deletePublicImageTags = (
   deleteImageTagsRequest: DeleteImageTagsRequest,
@@ -908,7 +908,7 @@ export type DeletePublicImageTagsMutationBody = DeleteImageTagsRequest;
 export type DeletePublicImageTagsMutationError = unknown;
 
 /**
- * @summary 공용 이미지 태그 삭제
+ * @summary 공유 이미지 태그 삭제
  */
 export const useDeletePublicImageTags = <TError = unknown, TContext = unknown>(
   options?: {
@@ -932,11 +932,11 @@ export const useDeletePublicImageTags = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-            공용 이미지 태그의 취약점 상세 목록을 조회합니다.
+            공유 이미지 태그의 취약점 상세 목록을 조회합니다.
             - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
             - 스캔이 완료되지 않은 경우 빈 목록을 반환합니다.
         
- * @summary 공용 이미지 태그 취약점 목록 조회
+ * @summary 공유 이미지 태그 취약점 목록 조회
  */
 export const getPublicImageTagVulnerabilities = (
   params: GetPublicImageTagVulnerabilitiesParams,
@@ -1067,7 +1067,7 @@ export function useGetPublicImageTagVulnerabilities<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 공용 이미지 태그 취약점 목록 조회
+ * @summary 공유 이미지 태그 취약점 목록 조회
  */
 
 export function useGetPublicImageTagVulnerabilities<
@@ -1270,12 +1270,12 @@ export function useCheckImageTagExists<
 
 /**
  * 
-            공용 레지스트리의 특정 이미지 태그 상세 정보를 Harbor API 기준으로 조회합니다.
+            공유 레지스트리의 특정 이미지 태그 상세 정보를 Harbor API 기준으로 조회합니다.
             - Harbor에 직접 올린 태그도 조회 가능합니다.
             - DB 메타데이터가 없는 경우 hasMetadata=false로 반환됩니다.
             - Harbor에 존재하지 않는 경우 null을 반환합니다.
         
- * @summary 공용 이미지 태그 상세 조회
+ * @summary 공유 이미지 태그 상세 조회
  */
 export const getPublicImageTagDetail = (
   params: GetPublicImageTagDetailParams,
@@ -1405,7 +1405,7 @@ export function useGetPublicImageTagDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 공용 이미지 태그 상세 조회
+ * @summary 공유 이미지 태그 상세 조회
  */
 
 export function useGetPublicImageTagDetail<
@@ -1440,10 +1440,10 @@ export function useGetPublicImageTagDetail<
 
 /**
  * 
-            공용 레지스트리의 이미지 상세 정보를 조회합니다.
+            공유 레지스트리의 이미지 상세 정보를 조회합니다.
             존재하지 않는 경우 null을 반환합니다.
         
- * @summary 공용 이미지 상세 조회
+ * @summary 공유 이미지 상세 조회
  */
 export const getPublicImageDetail = (
   params: GetPublicImageDetailParams,
@@ -1573,7 +1573,7 @@ export function useGetPublicImageDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 공용 이미지 상세 조회
+ * @summary 공유 이미지 상세 조회
  */
 
 export function useGetPublicImageDetail<

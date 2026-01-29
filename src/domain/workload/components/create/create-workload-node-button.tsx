@@ -5,34 +5,43 @@ import { useAtom } from "jotai";
 import styled from "styled-components";
 import { Icon, Typography } from "xiilab-ui";
 
+import { WORKLOAD_NODE_MODES } from "@/domain/workload/constants/workload.constant";
 import { nodeModeAtom } from "@/domain/workload/state/create-workload.atom";
+import type { WorkloadNodeMode } from "@/domain/workload/types/workload.type";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { MultiNodeTooltipTitle } from "@/shared/components/tooltip-title/multi-node-tooltip-title";
 import { SingleNodeTooltipTitle } from "@/shared/components/tooltip-title/single-node-tooltip-title";
 
 interface CreateWorkloadNodeButtonProps {
-  type: "single" | "multi";
+  type: WorkloadNodeMode;
   disabled?: boolean;
+  value?: WorkloadNodeMode;
+  onChange?: (value: WorkloadNodeMode) => void;
 }
 
 export function CreateWorkloadNodeButton({
   type,
   disabled = false,
+  value,
+  onChange,
 }: CreateWorkloadNodeButtonProps) {
   const [nodeMode, setNodeMode] = useAtom(nodeModeAtom);
 
   const handleClick = () => {
-    setNodeMode(type);
+    onChange?.(type);
+    if (value === undefined) {
+      setNodeMode(type);
+    }
   };
 
   let buttonText = "";
   let tooltipTitle = null;
   let iconName = "";
-  if (type === "single") {
+  if (type === WORKLOAD_NODE_MODES.SINGLE) {
     buttonText = "Single Node";
     tooltipTitle = <SingleNodeTooltipTitle />;
     iconName = "SingleNode";
-  } else if (type === "multi") {
+  } else if (type === WORKLOAD_NODE_MODES.MULTI) {
     buttonText = "Multi Node";
     tooltipTitle = <MultiNodeTooltipTitle />;
     iconName = "MultiNode";
@@ -42,14 +51,16 @@ export function CreateWorkloadNodeButton({
     <Container
       type="button"
       className={classNames({
-        active: nodeMode === type,
+        active: (value ?? nodeMode) === type,
       })}
       onClick={handleClick}
       disabled={disabled}
     >
       <ButtonContent>
         <Icon name={iconName} size={20} color="var(--icon-fill)" />
-        <Typography.Text variant={nodeMode === type ? "body-2-2" : "body-2-3"}>
+        <Typography.Text
+          variant={(value ?? nodeMode) === type ? "body-2-2" : "body-2-3"}
+        >
           {buttonText}
         </Typography.Text>
         <GuideTooltip title={tooltipTitle} />

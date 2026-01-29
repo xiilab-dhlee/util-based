@@ -82,10 +82,7 @@ export const getPendingWorkloadsQueryParams = zod.object({
     .enum(["INTERACTIVE", "BATCH", "DISTRIBUTED"])
     .optional()
     .describe("워크로드 타입 필터. null: 전체"),
-  sort: zod
-    .enum(["WORKLOAD_NAME", "WORKLOAD_STATUS", "WARNING_COUNT", "AGE_SECONDS"])
-    .optional()
-    .describe("정렬 기준 필드"),
+  sort: zod.enum(["CREATED_AT"]).optional().describe("정렬 기준 필드"),
   order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
@@ -197,10 +194,8 @@ export const getPendingWorkloadsResponse = zod
         
  * @summary 실행 중 워크로드 목록 조회
  */
-export const getAdminActiveWorkloads1QueryPageNoDefault = 0;
 export const getAdminActiveWorkloads1QueryPageNoMin = 0;
 
-export const getAdminActiveWorkloads1QueryPageSizeDefault = 20;
 export const getAdminActiveWorkloads1QueryPageSizeMax = 100;
 
 export const getAdminActiveWorkloads1QueryParams = zod.object({
@@ -213,8 +208,10 @@ export const getAdminActiveWorkloads1QueryParams = zod.object({
     .number()
     .min(1)
     .max(getAdminActiveWorkloads1QueryPageSizeMax)
-    .default(getAdminActiveWorkloads1QueryPageSizeDefault)
+    .optional()
     .describe("페이지 크기"),
+  sort: zod.enum(["WORKLOAD_NAME"]).optional().describe("정렬 필드"),
+  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
 });
 
 export const getAdminActiveWorkloads1Response = zod
@@ -230,6 +227,7 @@ export const getAdminActiveWorkloads1Response = zod
           zod
             .object({
               workloadId: zod.number().describe("워크로드 ID"),
+              workspaceId: zod.number().describe("워크스페이스 ID"),
               workloadResourceName: zod
                 .string()
                 .describe("워크로드 리소스 이름 (K8s 리소스명)"),
@@ -252,6 +250,7 @@ export const getAdminActiveWorkloads1Response = zod
                 .optional()
                 .describe("Pod가 배치된 노드명 (Pending 상태인 경우 null)"),
               creatorName: zod.string().describe("생성자 이름"),
+              ageSeconds: zod.number().describe("경과 시간 (초)"),
             })
             .strict()
             .describe("관리자용 실행 중 워크로드 항목"),

@@ -56,11 +56,11 @@ import type {
 
 /**
  * 
-            공용 레지스트리의 이미지를 삭제합니다.
+            공유 레지스트리의 이미지를 삭제합니다.
             - Harbor Repository와 DB 메타데이터(이미지, 태그)를 함께 삭제합니다.
             - 부분 실패 시에도 성공한 이미지는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
         
- * @summary 공용 이미지 삭제
+ * @summary 공유 이미지 삭제
  */
 export const deletePublicImages = (
   deleteImagesRequest: DeleteImagesRequest,
@@ -119,7 +119,7 @@ export type DeletePublicImagesMutationBody = DeleteImagesRequest;
 export type DeletePublicImagesMutationError = unknown;
 
 /**
- * @summary 공용 이미지 삭제
+ * @summary 공유 이미지 삭제
  */
 export const useDeletePublicImages = <TError = unknown, TContext = unknown>(
   options?: {
@@ -143,11 +143,11 @@ export const useDeletePublicImages = <TError = unknown, TContext = unknown>(
 };
 /**
  * 
-            공용 레지스트리의 사용자별 이미지 등록 현황을 조회합니다.
+            공유 레지스트리의 사용자별 이미지 등록 현황을 조회합니다.
             - 계정별 등록 이미지 개수, 점유 스토리지 용량을 제공합니다.
             - 키워드로 계정명 또는 이메일 검색이 가능합니다.
         
- * @summary 사용자별 공용 이미지 등록 현황 조회
+ * @summary 사용자별 공유 이미지 등록 현황 조회
  */
 export const getPublicImageUsageByAccount = (
   params?: GetPublicImageUsageByAccountParams,
@@ -277,7 +277,7 @@ export function useGetPublicImageUsageByAccount<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 사용자별 공용 이미지 등록 현황 조회
+ * @summary 사용자별 공유 이미지 등록 현황 조회
  */
 
 export function useGetPublicImageUsageByAccount<
@@ -315,11 +315,11 @@ export function useGetPublicImageUsageByAccount<
 
 /**
  * 
-            특정 사용자가 등록한 공용 이미지 태그 목록을 조회합니다.
+            특정 사용자가 등록한 공유 이미지 태그 목록을 조회합니다.
             - 이미지명, 태그명, 워크스페이스명, 업로드 일시, 크기, 설명, 이미지 타입 정보를 제공합니다.
             - 이미지 소스 타입(SNAPSHOT, EXTERNAL)으로 필터링이 가능합니다.
         
- * @summary 사용자별 공용 이미지 태그 목록 조회
+ * @summary 사용자별 공유 이미지 태그 목록 조회
  */
 export const getPublicImageTagsByAccountId = (
   accountId: string,
@@ -461,7 +461,7 @@ export function useGetPublicImageTagsByAccountId<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 사용자별 공용 이미지 태그 목록 조회
+ * @summary 사용자별 공유 이미지 태그 목록 조회
  */
 
 export function useGetPublicImageTagsByAccountId<

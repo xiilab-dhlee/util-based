@@ -1,381 +1,197 @@
 "use client";
 
-import type { Dispatch, SetStateAction } from "react";
+import { useAtomValue } from "jotai";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
+import { Fragment } from "react";
 import styled from "styled-components";
 import { CompoundDropdown, Typography } from "xiilab-ui";
 
-import type { CoreNodeMode } from "@/shared/types/core.interface";
+import {
+  GpuResponseGpuType,
+  type ResourcePresetSummaryResponse,
+} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { useGetAvailablePresets } from "@/api/generated/resource-preset/resource-preset";
+import type {
+  WorkloadJobType,
+  WorkloadNodeMode,
+} from "@/domain/workload/types/workload.type";
+import { DROPDOWN_LIST_HEIGHT } from "@/shared/constants/core.constant";
+import { useDebouncedSearch } from "@/shared/hooks/use-debounced-search";
+import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
+import { formatNumberWithUnit } from "@/shared/utils/format.util";
+import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
 
 interface ResourcePresetSelectProps {
-  nodeMode: CoreNodeMode;
-  preset: string | null;
-  setPreset: Dispatch<SetStateAction<string | null>>;
+  nodeMode: WorkloadNodeMode;
+  workloadJobType: WorkloadJobType;
+  preset: number | null;
+  setPreset: Dispatch<SetStateAction<number | null>>;
+  onSelectPreset?: (preset: ResourcePresetSummaryResponse | null) => void;
 }
 
 export function ResourcePresetSelect({
   nodeMode,
+  workloadJobType,
   preset,
   setPreset,
+  onSelectPreset,
 }: ResourcePresetSelectProps) {
+  const { keyword, handleSearch, resetKeyword } = useDebouncedSearch();
+  const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
+  const {
+    data: presets,
+    isLoading,
+    isError,
+  } = useGetAvailablePresets({
+    workspaceId: selectedWorkspace?.workspaceId,
+    keyword: keyword || undefined,
+    workloadJobType,
+    nodeType: nodeMode,
+  });
+
   const handlePresetChange = (value: string | number) => {
-    setPreset(value as string);
+    const selectedId = typeof value === "number" ? value : Number(value);
+    if (!Number.isFinite(selectedId)) {
+      return;
+    }
+    const selectedPreset =
+      presets?.find(
+        (presetItem) => presetItem.resourcePresetId === selectedId,
+      ) ?? null;
+    setPreset(selectedId);
+    onSelectPreset?.(selectedPreset);
+    resetKeyword();
   };
+
+  const renderResourceSpecItem = (label: string, value: string) => (
+    <ResourceSpecItem>
+      <Typography.Text variant="body-4-1" color="#22212A">
+        {label}
+      </Typography.Text>
+      <Typography.Text variant="body-4-2" color="#22212A">
+        {value}
+      </Typography.Text>
+    </ResourceSpecItem>
+  );
+
+  const renderSpecsWithDividers = (items: ReactNode[]) => (
+    <ResourceSpecsContainer>
+      {items.map((item, index) => (
+        <Fragment key={`spec-${index}`}>
+          {index > 0 && <ResourceSpecDivider />}
+          {item}
+        </Fragment>
+      ))}
+    </ResourceSpecsContainer>
+  );
+
+  const renderPresetOption = (presetItem: ResourcePresetSummaryResponse) => {
+    const cpu = presetItem.resource.cpu.requestCore;
+    const cpuInfo = getResourceInfo("CPU");
+    const memInfo = getResourceInfo("MEM");
+    const gpuInfo = getResourceInfo("GPU");
+    const migInfo = getResourceInfo("MIG");
+
+    const { value: memValue } = convertBytes(
+      presetItem.resource.memory.requestByte,
+      "GB",
+      0,
+    );
+    const memLabel = formatNumberWithUnit(memValue, memInfo.unit);
+    const gpu = presetItem.resource.gpu;
+    const gpuType = gpu?.gpuType;
+    const isSelected = preset === presetItem.resourcePresetId;
+
+    const presetName = (
+      <PresetNameText
+        variant={isSelected ? "body-2-2" : "body-2-4"}
+        color={isSelected ? "#382CE0" : "#000000"}
+      >
+        {presetItem.presetName}
+      </PresetNameText>
+    );
+
+    const cpuSpec = renderResourceSpecItem(
+      cpuInfo.text,
+      formatNumberWithUnit(cpu, cpuInfo.unit),
+    );
+    const memSpec = renderResourceSpecItem(memInfo.text, memLabel);
+
+    // MIG GPU 타입
+    if (gpuType === GpuResponseGpuType.MIG) {
+      const mig = gpu?.detail.mig || [];
+      return (
+        <ResourcePresetOptionContainer>
+          {presetName}
+          {renderSpecsWithDividers([
+            ...mig.map((profile) => (
+              <ResourceSpecItem key={profile.profile}>
+                <Typography.Text variant="body-4-1" color="#22212A">
+                  {migInfo.text} {profile.profile}
+                </Typography.Text>
+                <Typography.Text variant="body-4-2" color="#22212A">
+                  {formatNumberWithUnit(profile.requestCount, migInfo.unit)}
+                </Typography.Text>
+              </ResourceSpecItem>
+            )),
+            cpuSpec,
+            memSpec,
+          ])}
+        </ResourcePresetOptionContainer>
+      );
+    }
+
+    // Normal GPU 또는 GPU 없음
+    const normalGpuSpec =
+      gpu && gpuType === GpuResponseGpuType.NORMAL
+        ? renderResourceSpecItem(
+            gpuInfo.text,
+            formatNumberWithUnit(
+              gpu.detail.normal?.requestCount || 0,
+              gpuInfo.unit,
+            ),
+          )
+        : null;
+
+    return (
+      <ResourcePresetOptionContainer>
+        {presetName}
+        {renderSpecsWithDividers([
+          ...(normalGpuSpec ? [normalGpuSpec] : []),
+          cpuSpec,
+          memSpec,
+        ])}
+      </ResourcePresetOptionContainer>
+    );
+  };
+
+  const presetOptionNodes =
+    presets?.map((presetItem: ResourcePresetSummaryResponse) => (
+      <CompoundDropdown.Option
+        key={presetItem.resourcePresetId}
+        value={presetItem.resourcePresetId}
+        display={presetItem.presetName}
+      >
+        {renderPresetOption(presetItem)}
+      </CompoundDropdown.Option>
+    )) ?? [];
 
   return (
     <CompoundDropdown
       theme="light"
       width="100%"
       height={30}
-      placeholder="리소스 프리셋을 선택하세요"
+      maxLength={DROPDOWN_LIST_HEIGHT}
+      placeholder="리소스 프리셋을 선택 하세요"
       value={preset ?? undefined}
       onChange={handlePresetChange}
+      showSearch
+      filterOption={false}
+      onSearch={handleSearch}
+      loading={isLoading}
+      status={isError ? "error" : undefined}
     >
-      {/* <CompoundDropdown.Option value="custom" display="사용자 설정 리소스 할당">
-        <ResourcePresetOptionContainer>
-          <Typography.Text
-            variant={preset === "custom" ? "body-2-2" : "body-2-4"}
-            color={preset === "custom" ? "#382CE0" : "#000000"}
-          >
-            사용자 설정 리소스 할당
-          </Typography.Text>
-        </ResourcePresetOptionContainer>
-      </CompoundDropdown.Option> */}
-
-      <CompoundDropdown.Option value="small" display="SMALL">
-        {nodeMode === "multi" ? (
-          <MultiNodePresetOption>
-            <Typography.Text variant="body-2-4" color="#000000">
-              SMALL
-            </Typography.Text>
-            <PresetSpecsContainer>
-              <PresetSpecsRow $width={176}>
-                <PresetSection $bgColor="#E6F5F4">
-                  <Typography.Text variant="body-4-1" color="#000000">
-                    Launcher
-                  </Typography.Text>
-                </PresetSection>
-                <PresetSectionDivider />
-                <PresetResourceGroup>
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      CPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      3Core
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      MEM
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      5GB
-                    </Typography.Text>
-                  </PresetResourceItem>
-                </PresetResourceGroup>
-              </PresetSpecsRow>
-              <PresetSpecsRow $width={223}>
-                <PresetSection $bgColor="#E7F6FF">
-                  <Typography.Text variant="body-4-1" color="#000000">
-                    Worker
-                  </Typography.Text>
-                </PresetSection>
-                <PresetSectionDivider />
-                <PresetResourceGroup>
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      GPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      2개
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      CPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      2Core
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      MEM
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      4GB
-                    </Typography.Text>
-                  </PresetResourceItem>
-                </PresetResourceGroup>
-              </PresetSpecsRow>
-            </PresetSpecsContainer>
-          </MultiNodePresetOption>
-        ) : (
-          <ResourcePresetOptionContainer>
-            <Typography.Text
-              variant={preset === "small" ? "body-2-2" : "body-2-4"}
-              color={preset === "small" ? "#382CE0" : "#000000"}
-            >
-              SMALL
-            </Typography.Text>
-            <ResourceSpecsContainer>
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  GPU
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  1개
-                </Typography.Text>
-              </ResourceSpecItem>
-              <ResourceSpecDivider />
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  CPU
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  2Core
-                </Typography.Text>
-              </ResourceSpecItem>
-              <ResourceSpecDivider />
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  MEM
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  4GB
-                </Typography.Text>
-              </ResourceSpecItem>
-            </ResourceSpecsContainer>
-          </ResourcePresetOptionContainer>
-        )}
-      </CompoundDropdown.Option>
-
-      <CompoundDropdown.Option value="medium" display="MEDIUM">
-        {nodeMode === "multi" ? (
-          <MultiNodePresetOption>
-            <Typography.Text variant="body-2-4" color="#000000">
-              MEDIUM
-            </Typography.Text>
-            <PresetSpecsContainer>
-              <PresetSpecsRow $width={176}>
-                <PresetSection $bgColor="#E6F5F4">
-                  <Typography.Text variant="body-4-1" color="#000000">
-                    Launcher
-                  </Typography.Text>
-                </PresetSection>
-                <PresetSectionDivider />
-                <PresetResourceGroup>
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      CPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      3Core
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      MEM
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      7GB
-                    </Typography.Text>
-                  </PresetResourceItem>
-                </PresetResourceGroup>
-              </PresetSpecsRow>
-              <PresetSpecsRow $width={223}>
-                <PresetSection $bgColor="#E7F6FF">
-                  <Typography.Text variant="body-4-1" color="#000000">
-                    Worker
-                  </Typography.Text>
-                </PresetSection>
-                <PresetSectionDivider />
-                <PresetResourceGroup>
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      GPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      3개
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      CPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      4Core
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      MEM
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      8GB
-                    </Typography.Text>
-                  </PresetResourceItem>
-                </PresetResourceGroup>
-              </PresetSpecsRow>
-            </PresetSpecsContainer>
-          </MultiNodePresetOption>
-        ) : (
-          <ResourcePresetOptionContainer>
-            <Typography.Text
-              variant={preset === "medium" ? "body-2-2" : "body-2-4"}
-              color={preset === "medium" ? "#382CE0" : "#000000"}
-            >
-              MEDIUM
-            </Typography.Text>
-            <ResourceSpecsContainer>
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  GPU
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  2개
-                </Typography.Text>
-              </ResourceSpecItem>
-              <ResourceSpecDivider />
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  CPU
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  4Core
-                </Typography.Text>
-              </ResourceSpecItem>
-              <ResourceSpecDivider />
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  MEM
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  8GB
-                </Typography.Text>
-              </ResourceSpecItem>
-            </ResourceSpecsContainer>
-          </ResourcePresetOptionContainer>
-        )}
-      </CompoundDropdown.Option>
-
-      <CompoundDropdown.Option value="large" display="LARGE">
-        {nodeMode === "multi" ? (
-          <MultiNodePresetOption>
-            <Typography.Text variant="body-2-4" color="#000000">
-              LARGE
-            </Typography.Text>
-            <PresetSpecsContainer>
-              <PresetSpecsRow $width={176}>
-                <PresetSection $bgColor="#E6F5F4">
-                  <Typography.Text variant="body-4-1" color="#000000">
-                    Launcher
-                  </Typography.Text>
-                </PresetSection>
-                <PresetSectionDivider />
-                <PresetResourceGroup>
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      CPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      5Core
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      MEM
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      10GB
-                    </Typography.Text>
-                  </PresetResourceItem>
-                </PresetResourceGroup>
-              </PresetSpecsRow>
-              <PresetSpecsRow $width={223}>
-                <PresetSection $bgColor="#E7F6FF">
-                  <Typography.Text variant="body-4-1" color="#000000">
-                    Worker
-                  </Typography.Text>
-                </PresetSection>
-                <PresetSectionDivider />
-                <PresetResourceGroup>
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      GPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      4개
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      CPU
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      8Core
-                    </Typography.Text>
-                  </PresetResourceItem>
-                  <PresetResourceDivider />
-                  <PresetResourceItem>
-                    <Typography.Text variant="body-4-1" color="#22212A">
-                      MEM
-                    </Typography.Text>
-                    <Typography.Text variant="body-4-2" color="#22212A">
-                      16GB
-                    </Typography.Text>
-                  </PresetResourceItem>
-                </PresetResourceGroup>
-              </PresetSpecsRow>
-            </PresetSpecsContainer>
-          </MultiNodePresetOption>
-        ) : (
-          <ResourcePresetOptionContainer>
-            <Typography.Text
-              variant={preset === "large" ? "body-2-2" : "body-2-4"}
-              color={preset === "large" ? "#382CE0" : "#000000"}
-            >
-              LARGE
-            </Typography.Text>
-            <ResourceSpecsContainer>
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  GPU
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  4개
-                </Typography.Text>
-              </ResourceSpecItem>
-              <ResourceSpecDivider />
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  CPU
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  8Core
-                </Typography.Text>
-              </ResourceSpecItem>
-              <ResourceSpecDivider />
-              <ResourceSpecItem>
-                <Typography.Text variant="body-4-1" color="#22212A">
-                  MEM
-                </Typography.Text>
-                <Typography.Text variant="body-4-2" color="#22212A">
-                  16GB
-                </Typography.Text>
-              </ResourceSpecItem>
-            </ResourceSpecsContainer>
-          </ResourcePresetOptionContainer>
-        )}
-      </CompoundDropdown.Option>
+      {presetOptionNodes}
     </CompoundDropdown>
   );
 }
@@ -389,9 +205,15 @@ const ResourcePresetOptionContainer = styled.div`
   padding: 0;
 `;
 
-const ResourceSpecsContainer = styled(Typography.Text).attrs({
-  variant: "body-4-2", // 10px, 400 weight
-})`
+const PresetNameText = styled(Typography.Text)`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ResourceSpecsContainer = styled.div`
   display: flex;
   align-items: center;
   background-color: #fafafa;
@@ -401,6 +223,7 @@ const ResourceSpecsContainer = styled(Typography.Text).attrs({
   gap: 6px;
   margin-left: auto;
   height: 22px;
+  flex-shrink: 0;
 `;
 
 const ResourceSpecItem = styled.div`
@@ -413,76 +236,4 @@ const ResourceSpecDivider = styled.div`
   width: 1px;
   height: 8px;
   background-color: #e0e0e0;
-`;
-
-const MultiNodePresetOption = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  height: 34px;
-  padding: 0;
-`;
-
-const PresetSpecsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-  margin-left: auto;
-`;
-
-const PresetSpecsRow = styled.div<{ $width?: number }>`
-  display: flex;
-  align-items: center;
-  height: 22px;
-  width: ${(props) => (props.$width ? `${props.$width}px` : "auto")};
-  border: 1px solid #c1c7ce;
-  border-radius: 2px;
-  background-color: #fafafa;
-  flex-shrink: 0;
-`;
-
-const PresetSection = styled.div<{ $bgColor: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-  height: 20px;
-  background-color: ${(props) => props.$bgColor};
-  border-radius: 1px 0 0 1px;
-  margin: 1px;
-  margin-right: 0;
-`;
-
-const PresetSectionDivider = styled.div`
-  width: 1px;
-  height: 20px;
-  background-color: #c1c7ce;
-`;
-
-const PresetResourceGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0;
-  padding: 0 6px;
-  flex: 1;
-`;
-
-const PresetResourceItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 2px;
-
-  & > span:first-child {
-    min-width: 26px;
-  }
-`;
-
-const PresetResourceDivider = styled.div`
-  width: 1px;
-  height: 12px;
-  background-color: #e0e0e0;
-  margin: 0 6px;
 `;

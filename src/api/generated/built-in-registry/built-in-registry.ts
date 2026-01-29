@@ -43,22 +43,23 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponsePageResponseRegistryListResponse,
-  GetBuiltInRegistryListParams,
+  BaseResponsePageResponseBuiltInImageListResponse,
+  GetBuiltInImageListParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 
-            빌트인 레지스트리(이미지) 목록을 페이징하여 조회합니다.
-            시스템에서 제공하는 기본 이미지(PyTorch, TensorFlow, Jupyter 등)를 조회합니다.
+            빌트인 이미지 목록을 조회합니다.
+            시스템에서 제공하는 기본 이미지(PyTorch, TensorFlow, Jupyter 등)와 태그 목록을 반환합니다.
+            frameworkType 파라미터로 특정 프레임워크 이미지만 필터링할 수 있습니다.
         
- * @summary 빌트인 레지스트리 목록 조회
+ * @summary 빌트인 이미지 목록 조회
  */
-export const getBuiltInRegistryList = (
-  params?: GetBuiltInRegistryListParams,
+export const getBuiltInImageList = (
+  params?: GetBuiltInImageListParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponsePageResponseRegistryListResponse>({
+  return customInstance<BaseResponsePageResponseBuiltInImageListResponse>({
     url: `/api/v1/registries/built-in/images`,
     method: "GET",
     params,
@@ -66,8 +67,8 @@ export const getBuiltInRegistryList = (
   });
 };
 
-export const getGetBuiltInRegistryListQueryKey = (
-  params?: GetBuiltInRegistryListParams,
+export const getGetBuiltInImageListQueryKey = (
+  params?: GetBuiltInImageListParams,
 ) => {
   return [
     `/api/v1/registries/built-in/images`,
@@ -75,15 +76,15 @@ export const getGetBuiltInRegistryListQueryKey = (
   ] as const;
 };
 
-export const getGetBuiltInRegistryListQueryOptions = <
-  TData = Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+export const getGetBuiltInImageListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBuiltInImageList>>,
   TError = unknown,
 >(
-  params?: GetBuiltInRegistryListParams,
+  params?: GetBuiltInImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+        Awaited<ReturnType<typeof getBuiltInImageList>>,
         TError,
         TData
       >
@@ -93,42 +94,42 @@ export const getGetBuiltInRegistryListQueryOptions = <
   const { query: queryOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetBuiltInRegistryListQueryKey(params);
+    queryOptions?.queryKey ?? getGetBuiltInImageListQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getBuiltInRegistryList>>
-  > = ({ signal }) => getBuiltInRegistryList(params, signal);
+    Awaited<ReturnType<typeof getBuiltInImageList>>
+  > = ({ signal }) => getBuiltInImageList(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+    Awaited<ReturnType<typeof getBuiltInImageList>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetBuiltInRegistryListQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getBuiltInRegistryList>>
+export type GetBuiltInImageListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBuiltInImageList>>
 >;
-export type GetBuiltInRegistryListQueryError = unknown;
+export type GetBuiltInImageListQueryError = unknown;
 
-export function useGetBuiltInRegistryList<
-  TData = Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+export function useGetBuiltInImageList<
+  TData = Awaited<ReturnType<typeof getBuiltInImageList>>,
   TError = unknown,
 >(
-  params: undefined | GetBuiltInRegistryListParams,
+  params: undefined | GetBuiltInImageListParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+        Awaited<ReturnType<typeof getBuiltInImageList>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+          Awaited<ReturnType<typeof getBuiltInImageList>>,
           TError,
-          Awaited<ReturnType<typeof getBuiltInRegistryList>>
+          Awaited<ReturnType<typeof getBuiltInImageList>>
         >,
         "initialData"
       >;
@@ -137,24 +138,24 @@ export function useGetBuiltInRegistryList<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetBuiltInRegistryList<
-  TData = Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+export function useGetBuiltInImageList<
+  TData = Awaited<ReturnType<typeof getBuiltInImageList>>,
   TError = unknown,
 >(
-  params?: GetBuiltInRegistryListParams,
+  params?: GetBuiltInImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+        Awaited<ReturnType<typeof getBuiltInImageList>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+          Awaited<ReturnType<typeof getBuiltInImageList>>,
           TError,
-          Awaited<ReturnType<typeof getBuiltInRegistryList>>
+          Awaited<ReturnType<typeof getBuiltInImageList>>
         >,
         "initialData"
       >;
@@ -163,15 +164,15 @@ export function useGetBuiltInRegistryList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetBuiltInRegistryList<
-  TData = Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+export function useGetBuiltInImageList<
+  TData = Awaited<ReturnType<typeof getBuiltInImageList>>,
   TError = unknown,
 >(
-  params?: GetBuiltInRegistryListParams,
+  params?: GetBuiltInImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+        Awaited<ReturnType<typeof getBuiltInImageList>>,
         TError,
         TData
       >
@@ -182,18 +183,18 @@ export function useGetBuiltInRegistryList<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary 빌트인 레지스트리 목록 조회
+ * @summary 빌트인 이미지 목록 조회
  */
 
-export function useGetBuiltInRegistryList<
-  TData = Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+export function useGetBuiltInImageList<
+  TData = Awaited<ReturnType<typeof getBuiltInImageList>>,
   TError = unknown,
 >(
-  params?: GetBuiltInRegistryListParams,
+  params?: GetBuiltInImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBuiltInRegistryList>>,
+        Awaited<ReturnType<typeof getBuiltInImageList>>,
         TError,
         TData
       >
@@ -203,7 +204,7 @@ export function useGetBuiltInRegistryList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetBuiltInRegistryListQueryOptions(params, options);
+  const queryOptions = getGetBuiltInImageListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
