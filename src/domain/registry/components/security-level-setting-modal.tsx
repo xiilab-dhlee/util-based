@@ -37,6 +37,22 @@ import { VULNERABILITY_LEVEL_KEYS } from "@/shared/constants/vulnerability.const
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { getVulnerabilityLevelsForSelect } from "@/shared/utils/vulnerability.util";
 
+const DEFAULT_SECURITY_LEVEL: SecurityLevelKey = VULNERABILITY_LEVEL_KEYS[0];
+
+function isValidSecurityLevelKey(value: string): value is SecurityLevelKey {
+  return (VULNERABILITY_LEVEL_KEYS as readonly string[]).includes(value);
+}
+
+function toSecurityLevelKey(severity: string | undefined): SecurityLevelKey {
+  if (!severity) {
+    return DEFAULT_SECURITY_LEVEL;
+  }
+  const normalized = severity.toLowerCase();
+  return isValidSecurityLevelKey(normalized)
+    ? normalized
+    : DEFAULT_SECURITY_LEVEL;
+}
+
 const SECURITY_LEVEL_OPTIONS = getVulnerabilityLevelsForSelect();
 
 interface SecurityLevelSettingFormValue {
@@ -50,27 +66,45 @@ export function SecurityLevelSettingModal() {
   const [open, setOpen] = useState(false);
 
   // 보안 레벨 정책 조회
-  const { data: levelPolicy } = useGetLevelPolicy();
+  const {
+    data: levelPolicy,
+    isError: isLevelPolicyError,
+    error: levelPolicyError,
+  } = useGetLevelPolicy();
 
   const { control, handleSubmit, watch, reset } =
     useForm<SecurityLevelSettingFormValue>({
       defaultValues: {
         isEnabled: true,
-        level: VULNERABILITY_LEVEL_KEYS[0],
+        level: DEFAULT_SECURITY_LEVEL,
         thresholdCount: DEFAULT_SECURITY_LEVEL_THRESHOLD_COUNT,
       },
     });
 
   // 조회된 데이터로 폼 초기화
   useEffect(() => {
+    if (isLevelPolicyError) {
+      console.error(
+        "보안 레벨 정책 조회에 실패했습니다. 기본값을 사용합니다.",
+        levelPolicyError,
+      );
+      reset({
+        isEnabled: true,
+        level: DEFAULT_SECURITY_LEVEL,
+        thresholdCount: DEFAULT_SECURITY_LEVEL_THRESHOLD_COUNT,
+      });
+      return;
+    }
+
     if (levelPolicy) {
+      const validatedLevel = toSecurityLevelKey(levelPolicy.severity);
       reset({
         isEnabled: levelPolicy.isRestrictionEnabled,
-        level: levelPolicy.severity.toLowerCase() as SecurityLevelKey,
+        level: validatedLevel,
         thresholdCount: levelPolicy.severityCount,
       });
     }
-  }, [levelPolicy, reset]);
+  }, [levelPolicy, isLevelPolicyError, levelPolicyError, reset]);
 
   useSubscribe(REGISTRY_EVENTS.openSecurityLevelSettingModal, () => {
     setOpen(true);
