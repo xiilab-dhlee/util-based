@@ -83,6 +83,18 @@ export function SecurityLevelSettingModal() {
 
   // 조회된 데이터로 폼 초기화
   useEffect(() => {
+    // 1) 데이터가 있으면 해당 값으로 초기화
+    if (levelPolicy) {
+      const validatedLevel = toSecurityLevelKey(levelPolicy.severity);
+      reset({
+        isEnabled: levelPolicy.isRestrictionEnabled,
+        level: validatedLevel,
+        thresholdCount: levelPolicy.severityCount,
+      });
+      return;
+    }
+
+    // 2) 데이터가 없고 에러일 때만 기본값으로 초기화
     if (isLevelPolicyError) {
       console.error(
         "보안 레벨 정책 조회에 실패했습니다. 기본값을 사용합니다.",
@@ -92,16 +104,6 @@ export function SecurityLevelSettingModal() {
         isEnabled: true,
         level: DEFAULT_SECURITY_LEVEL,
         thresholdCount: DEFAULT_SECURITY_LEVEL_THRESHOLD_COUNT,
-      });
-      return;
-    }
-
-    if (levelPolicy) {
-      const validatedLevel = toSecurityLevelKey(levelPolicy.severity);
-      reset({
-        isEnabled: levelPolicy.isRestrictionEnabled,
-        level: validatedLevel,
-        thresholdCount: levelPolicy.severityCount,
       });
     }
   }, [levelPolicy, isLevelPolicyError, levelPolicyError, reset]);
