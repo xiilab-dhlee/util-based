@@ -8,6 +8,11 @@ import { DeleteAccountButton } from "@/domain/account-management/components/list
 import { ResetPasswordButton } from "@/domain/account-management/components/list/reset-password-button";
 import { UpdateAccountButton } from "@/domain/account-management/components/list/update-account-button";
 import type { AccountSortState } from "@/domain/account-management/constants/account.constant";
+import {
+  type AccountActionAuthContext,
+  DEFAULT_ACCOUNT_ACTION_AUTH_CONTEXT,
+  getAccountActionState,
+} from "@/domain/account-management/utils/account-permission.util";
 import type { AccountRole } from "@/shared/constants/core.constant";
 import { ACCOUNT_ROLE_LABEL } from "@/shared/constants/core.constant";
 import { ACCOUNT_EVENTS } from "@/shared/constants/pubsub.constant";
@@ -32,7 +37,10 @@ const createGroupTagItems = (groupNames: string[]): TagGroupItem[] => {
   }));
 };
 
-const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
+const createColumnList = (
+  sort: AccountSortState,
+  authContext: AccountActionAuthContext,
+): ResponsiveColumnType[] => {
   return [
     {
       title: "이름",
@@ -120,9 +128,14 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       align: "center",
       width: "8%",
       render: (_, record: AccountItemResponse) => {
+        const { isStatusDisabled } = getAccountActionState(record, authContext);
+
         return (
           <ColumnAlignCenterWrap>
-            <AccountStatusSwitch account={record} />
+            <AccountStatusSwitch
+              account={record}
+              isDisabled={isStatusDisabled}
+            />
           </ColumnAlignCenterWrap>
         );
       },
@@ -133,9 +146,17 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       align: "center",
       width: "6%",
       render: (_, account: AccountItemResponse) => {
+        const { isUpdateDisabled } = getAccountActionState(
+          account,
+          authContext,
+        );
+
         return (
           <ColumnAlignCenterWrap>
-            <UpdateAccountButton account={account} />
+            <UpdateAccountButton
+              account={account}
+              isDisabled={isUpdateDisabled}
+            />
           </ColumnAlignCenterWrap>
         );
       },
@@ -146,9 +167,17 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       align: "center",
       width: "6%",
       render: (_, account: AccountItemResponse) => {
+        const { isResetPasswordDisabled } = getAccountActionState(
+          account,
+          authContext,
+        );
+
         return (
           <ColumnAlignCenterWrap>
-            <ResetPasswordButton account={account} />
+            <ResetPasswordButton
+              account={account}
+              isDisabled={isResetPasswordDisabled}
+            />
           </ColumnAlignCenterWrap>
         );
       },
@@ -159,9 +188,17 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
       align: "center",
       width: "5%",
       render: (_, account: AccountItemResponse) => {
+        const { isDeleteDisabled } = getAccountActionState(
+          account,
+          authContext,
+        );
+
         return (
           <ColumnAlignCenterWrap>
-            <DeleteAccountButton account={account} />
+            <DeleteAccountButton
+              account={account}
+              isDisabled={isDeleteDisabled}
+            />
           </ColumnAlignCenterWrap>
         );
       },
@@ -172,8 +209,9 @@ const createColumnList = (sort: AccountSortState): ResponsiveColumnType[] => {
 export const createAccountColumn = (
   sort: AccountSortState,
   config?: CoreCreateColumnConfig[],
+  authContext: AccountActionAuthContext = DEFAULT_ACCOUNT_ACTION_AUTH_CONTEXT,
 ): ResponsiveColumnType[] => {
-  const columnList = createColumnList(sort);
+  const columnList = createColumnList(sort, authContext);
 
   return applyColumnConfigs(columnList, config);
 };
