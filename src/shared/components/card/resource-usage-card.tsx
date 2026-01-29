@@ -4,6 +4,8 @@ import { Icon, Typography } from "xiilab-ui";
 
 import { ResourceProgress } from "@/shared/components/progress/resource-progress";
 import type { CoreResourceType } from "@/shared/types/core.interface";
+import { getPercent } from "@/shared/utils/calc.util";
+import { formatNumber, formatNumberWithUnit } from "@/shared/utils/format.util";
 import { getResourceInfo } from "@/shared/utils/resource.util";
 
 interface ResourceUsageCardProps {
@@ -22,6 +24,11 @@ export function ResourceUsageCard({
   count,
 }: ResourceUsageCardProps) {
   const { text, unit, icon } = getResourceInfo(resourceType);
+  const safeTotal = Number.isFinite(total) ? total : 0;
+  const safeCount = Number.isFinite(count) ? count : 0;
+  const usagePercent = Math.min(100, getPercent(safeCount, safeTotal));
+  const formattedCount = formatNumber(safeCount, "0");
+  const formattedTotalWithUnit = formatNumberWithUnit(safeTotal, unit, "0");
   return (
     <Container>
       <Body>
@@ -48,18 +55,17 @@ export function ResourceUsageCard({
       <Footer>
         <ResourceProgress
           resourceType={resourceType}
-          usagePercent={(count / total) * 100}
+          usagePercent={usagePercent}
           height={4}
           borderRadius={1}
           backgroundColor="#292B32"
         />
         <Count>
           <Typography.Text variant="title-2" color="#F5F5F5">
-            {count.toLocaleString()}
+            {formattedCount}
           </Typography.Text>
           <Typography.Text variant="body-1-3" color="#AEAEAE">
-            /&nbsp;{total.toLocaleString()}
-            {unit}
+            /&nbsp;{formattedTotalWithUnit}
           </Typography.Text>
         </Count>
       </Footer>

@@ -1,41 +1,38 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { Icon } from "xiilab-ui";
 
-import { useGetAdminWorkspaceDetail } from "@/api/generated/admin-workspace/admin-workspace";
+import type { AdminWorkspaceSingleDetailResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { usePublish } from "@/shared/hooks/use-pub-sub";
 import { checkIsSuperAdmin } from "@/shared/utils/auth.util";
 import { formatDateSafely } from "@/shared/utils/date.util";
 import { customScrollbar } from "@/styles/mixins/scrollbar";
 
-export function WorkspaceIntroCard() {
-  const { id } = useParams();
+interface WorkspaceIntroCardProps {
+  workspace?: AdminWorkspaceSingleDetailResponse;
+}
+
+export function WorkspaceIntroCard({ workspace }: WorkspaceIntroCardProps) {
   const publish = usePublish();
   const { data: session } = useSession();
-
-  const { data: workspace } = useGetAdminWorkspaceDetail(Number(id), {
-    query: {
-      enabled: Boolean(id),
-    },
-  });
+  const workspaceId = workspace?.workspaceId;
 
   const isSuperAdmin = checkIsSuperAdmin(session);
 
   const handleDelete = () => {
-    if (!workspace?.workspaceId) return;
+    if (!workspaceId) return;
     publish(WORKSPACE_EVENTS.sendDeleteAdminWorkspace, {
-      workspaceId: workspace.workspaceId,
+      workspaceId,
     });
   };
 
   const handleEdit = () => {
-    if (!workspace?.workspaceId) return;
+    if (!workspaceId) return;
     publish(WORKSPACE_EVENTS.sendUpdateWorkspace, {
-      id: workspace.workspaceId,
+      id: workspaceId,
     });
   };
 
@@ -73,7 +70,7 @@ export function WorkspaceIntroCard() {
             </RowIconWrapper>
             <RowTitle>설명</RowTitle>
           </DescriptionRowBody>
-          <Description>{workspace?.description || ""}</Description>
+          <Description>{workspace?.description ?? ""}</Description>
         </DescriptionRow>
         <Row>
           <RowBody>

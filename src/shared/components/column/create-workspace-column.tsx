@@ -83,7 +83,7 @@ const createColumnList = (
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(record.resource.gpu.utilization, "%")}
+            {formatNumberWithUnit(record?.resource?.gpu?.utilization, "%")}
           </ColumnAlignCenterWrap>
         );
       },
@@ -94,7 +94,7 @@ const createColumnList = (
       align: "center",
       width: "5%",
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
-        const usedCount = record.resource.gpu?.usedCount;
+        const usedCount = record?.resource?.gpu?.usedCount;
         return (
           <ColumnAlignCenterWrap>
             {formatNumberWithUnit(usedCount, GPU_INFO.unit)}
@@ -108,7 +108,7 @@ const createColumnList = (
       align: "center",
       width: "5%",
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
-        const quotaCount = record.resource.gpu?.quotaCount;
+        const quotaCount = record?.resource?.gpu?.quotaCount;
         return (
           <ColumnAlignCenterWrap>
             {formatNumberWithUnit(quotaCount, GPU_INFO.unit)}
@@ -124,7 +124,7 @@ const createColumnList = (
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(record.resource.cpu.utilization, "%")}
+            {formatNumberWithUnit(record?.resource?.cpu?.utilization, "%")}
           </ColumnAlignCenterWrap>
         );
       },
@@ -137,7 +137,10 @@ const createColumnList = (
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(record.resource.cpu.usedCore, CPU_INFO.unit)}
+            {formatNumberWithUnit(
+              record?.resource?.cpu?.usedCore,
+              CPU_INFO.unit,
+            )}
           </ColumnAlignCenterWrap>
         );
       },
@@ -150,7 +153,10 @@ const createColumnList = (
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(record.resource.cpu.quotaCore, CPU_INFO.unit)}
+            {formatNumberWithUnit(
+              record?.resource?.cpu?.quotaCore,
+              CPU_INFO.unit,
+            )}
           </ColumnAlignCenterWrap>
         );
       },
@@ -163,7 +169,7 @@ const createColumnList = (
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
         return (
           <ColumnAlignCenterWrap>
-            {formatNumberWithUnit(record.resource.memory.utilization, "%")}
+            {formatNumberWithUnit(record?.resource?.memory?.utilization, "%")}
           </ColumnAlignCenterWrap>
         );
       },
@@ -189,7 +195,7 @@ const createColumnList = (
       width: "7%",
       render: (_, record: AdminWorkspaceDetailItemResponse) => {
         const memQuota = convertBytes(
-          record.resource.memory.quotaByte,
+          record?.resource?.memory?.quotaByte,
           "GB",
           2,
         );

@@ -24,7 +24,7 @@ export function ResourceCard({
   const { text, unit, icon } = getResourceInfo(resourceType);
 
   const usagePercent = getPercent(usage, limit, 0);
-  const requestPercent = getPercent(request, limit, 0);
+  const totalPercent = getPercent(usage + request, limit, 0);
 
   return (
     <Container>
@@ -43,12 +43,12 @@ export function ResourceCard({
         <ResourceProgress
           resourceType={resourceType}
           usagePercent={usagePercent}
-          requestPercent={requestPercent}
+          requestPercent={totalPercent}
           height={6}
           borderRadius={4}
           backgroundColor="#CED2D6"
         />
-        <ProgressAssist>
+        {/* <ProgressAssist>
           <ProgressCount className="min" $percent={0}>
             0
           </ProgressCount>
@@ -58,7 +58,7 @@ export function ResourceCard({
           <ProgressCount className="max" $percent={100}>
             {limit}
           </ProgressCount>
-        </ProgressAssist>
+        </ProgressAssist> */}
       </Body>
       <Footer>
         <RowFooterItem>
@@ -137,11 +137,15 @@ const Category = styled.div`
     margin-left: 0;
   }
 
-  &.GPU.usage::before {
+  &.total::before {
+    background-color: #5F6368;
+  }
+
+  &.GPU.usage::before, &.MIG.usage::before {
     background-color: var(--gpu-usage-color);
   }
 
-  &.GPU.remain::before {
+  &.GPU.remain::before, &.MIG.remain::before {
     background-color: var(--gpu-request-color);
   }
 
@@ -176,31 +180,31 @@ const RowFooterItem = styled.div`
   }
 `;
 
-const ProgressAssist = styled.div`
-  position: relative;
-  padding: 4px 0;
-  height: 20px;
-`;
+// const ProgressAssist = styled.div`
+//   position: relative;
+//   padding: 4px 0;
+//   height: 20px;
+// `;
 
-const ProgressCount = styled.span<{ $percent: number }>`
-  position: absolute;
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 12px;
-  color: var(--color-gray-03);
+// const ProgressCount = styled.span<{ $percent: number }>`
+//   position: absolute;
+//   font-weight: 400;
+//   font-size: 10px;
+//   line-height: 12px;
+//   color: var(--color-gray-03);
 
-  &.min {
-    left: 0px;
-  }
+//   &.min {
+//     left: 0px;
+//   }
 
-  &.request {
-    left: ${({ $percent }) => $percent - 2}%;
-  }
+//   &.request {
+//     left: ${({ $percent }) => $percent - 2}%;
+//   }
 
-  &.max {
-    right: 0px;
-  }
-`;
+//   &.max {
+//     right: 0px;
+//   }
+// `;
 
 const Count = styled.span`
   font-weight: 600;

@@ -1,18 +1,57 @@
 "use client";
 
-// TODO: Orval API 연동 필요
-// import { useParams } from "next/navigation";
+import { useSetAtom } from "jotai";
+import { useParams } from "next/navigation";
+import { useMemo } from "react";
 import styled from "styled-components";
 import { Button } from "xiilab-ui";
 
-import type { ResourceAllocationData } from "@/domain/workspace/components/detail/update-resource-allocation-modal";
+import { useGetAdminWorkspaceDetail } from "@/api/generated/admin-workspace/admin-workspace";
+import {
+  useGetClusterTotalResources,
+  useGetMigProfiles,
+} from "@/api/generated/cluster-resource/cluster-resource";
 import { UpdateResourceAllocationModal } from "@/domain/workspace/components/detail/update-resource-allocation-modal";
-// TODO: Orval API 연동 필요
-// import { useGetWorkspace } from "@/domain/workspace/hooks/use-get-workspace";
+import { openUpdateResourceAllocationModalAtom } from "@/domain/workspace/state/workspace.atom";
 import { Slider } from "@/shared/components/slider";
-import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
-import { getResourceInfo } from "@/shared/utils/resource.util";
+import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
+
+/**
+ * 실제 API 응답 구조 (타입 정의와 실제 응답이 다름)
+ */
+interface ActualResourceResponse {
+  gpu?: {
+    quotaCount?: number;
+    usedCount?: number;
+    requestCount?: number;
+    utilization?: number;
+    detail?: {
+      normal?: {
+        quotaCount?: number;
+        usedCount?: number;
+        requestCount?: number;
+      };
+      mig?: Array<{
+        profile: string;
+        quotaCount?: number;
+        usedCount?: number;
+        requestCount?: number;
+      }>;
+    };
+  };
+  cpu?: {
+    quotaCore?: number;
+    usedCore?: number;
+    requestCore?: number;
+    utilization?: number;
+  };
+  memory?: {
+    quotaByte?: number;
+    usedByte?: number;
+    requestByte?: number;
+    utilization?: number;
+  };
+}
 
 /**
  * 워크스페이스 리소스 할당량 카드 컴포넌트
@@ -22,46 +61,130 @@ import { getResourceInfo } from "@/shared/utils/resource.util";
  * MIG(Multi-Instance GPU) 설정도 포함합니다.
  */
 export function WorkspaceResourceAllocCard() {
-  // TODO: Orval API 연동 필요
-  // const { id } = useParams();
-  const publish = usePublish();
-  // TODO: Orval API 연동 필요
-  // const { data: workspaceData } = useGetWorkspace(id as string);
-  const workspaceData = null as {
-    gpu: number;
-    gpuQuota: number;
-    cpu: number;
-    cpuQuota: number;
-    mem: number;
-    memQuota: number;
-  } | null;
+  const setOpen = useSetAtom(openUpdateResourceAllocationModalAtom);
+  const { id } = useParams<{ id: string }>();
+  const workspaceId = Number(id);
+  const isValidWorkspaceId = Number.isFinite(workspaceId);
 
-  const gpuValue = workspaceData?.gpu ?? 0;
-  const gpuLimit = workspaceData?.gpuQuota ?? 0;
-  const cpuValue = workspaceData?.cpu ?? 0;
-  const cpuLimit = workspaceData?.cpuQuota ?? 0;
-  const memValue = workspaceData?.mem ?? 0;
-  const memLimit = workspaceData?.memQuota ?? 0;
+  const { data: clusterResources } = useGetClusterTotalResources();
+  const { data: migProfiles } = useGetMigProfiles();
+  const {
+    data: workspaceDetail,
+    isLoading: isLoadingWorkspaceQuota,
+    isError: isErrorWorkspaceQuota,
+  } = useGetAdminWorkspaceDetail(workspaceId, {
+    query: {
+      enabled: isValidWorkspaceId,
+    },
+  });
+
+  const workspaceQuotaData = workspaceDetail?.resource as
+    | ActualResourceResponse
+    | undefined;
+
+  const gpuValue = workspaceQuotaData?.gpu?.detail?.normal?.quotaCount ?? 0;
+  const cpuValue = workspaceQuotaData?.cpu?.quotaCore ?? 0;
+  const memValue = convertBytes(
+    workspaceQuotaData?.memory?.quotaByte ?? 0,
+    "GB",
+    0,
+  ).value;
+
+  const gpuLimit = clusterResources?.gpu?.clusterCapacityCount ?? gpuValue;
+  const cpuLimit = clusterResources?.cpu?.clusterCapacityCores ?? cpuValue;
+  const memLimit = convertBytes(
+    Number(clusterResources?.memory?.clusterCapacityBytes ?? 0),
+    "GB",
+    0,
+  ).value;
+
+  const migResources = workspaceQuotaData?.gpu?.detail?.mig ?? [];
+
+  const migProfileMaxMap = useMemo(
+    () =>
+      new Map(
+        (migProfiles?.migProfiles ?? []).map((profile) => [
+          profile.profile,
+          profile.maxCount,
+        ]),
+      ),
+    [migProfiles],
+  );
+
+  const migResourceItems = useMemo(
+    () =>
+      migResources
+        .filter(
+          (mig) =>
+            mig.quotaCount != null &&
+            Number.isFinite(mig.quotaCount) &&
+            mig.quotaCount > 0,
+        )
+        .map((mig) => {
+          const quotaCount = mig.quotaCount ?? 0;
+          return {
+            name: mig.profile,
+            value: quotaCount,
+            limit: migProfileMaxMap.get(mig.profile) ?? quotaCount,
+          };
+        }),
+    [migProfileMaxMap, migResources],
+  );
+
+  const migResourceElements = useMemo(
+    () =>
+      migResourceItems.map((mig) => (
+        <Resource key={mig.name}>
+          <ResourceKey>{mig.name}</ResourceKey>
+          <Slider
+            min={0}
+            max={mig.limit}
+            value={mig.value}
+            type="MIG"
+            width="100%"
+            readMode
+            showInput={true}
+          />
+        </Resource>
+      )),
+    [migResourceItems],
+  );
 
   /**
    * 수정 버튼 클릭 핸들러
-   * PubSub을 통해 리소스 할당량 수정 모달에 데이터를 전달합니다.
+   * 모달을 엽니다. 모달은 자체적으로 API를 호출하여 데이터를 가져옵니다.
    */
   const handleClickEdit = () => {
-    if (!workspaceData) return;
-
-    const resourceData: ResourceAllocationData = {
-      gpuValue: workspaceData.gpu,
-      gpuLimit: workspaceData.gpuQuota,
-      cpuValue: workspaceData.cpu,
-      cpuLimit: workspaceData.cpuQuota,
-      memValue: workspaceData.mem,
-      memLimit: workspaceData.memQuota,
-      // TODO: MIG 리소스는 별도 API 또는 필드가 추가되면 매핑 처리
-      migResources: [],
-    };
-    publish(WORKSPACE_EVENTS.sendUpdateResourceAllocation, resourceData);
+    setOpen(true);
   };
+
+  if (isLoadingWorkspaceQuota) {
+    return (
+      <Container>
+        <Header>
+          <Title>리소스 할당량</Title>
+        </Header>
+        <Body>
+          <LoadingMessage>리소스 할당량 로딩 중...</LoadingMessage>
+        </Body>
+      </Container>
+    );
+  }
+
+  if (isErrorWorkspaceQuota || !workspaceQuotaData) {
+    return (
+      <Container>
+        <Header>
+          <Title>리소스 할당량</Title>
+        </Header>
+        <Body>
+          <ErrorMessage>
+            리소스 할당량 정보를 불러오는데 실패했습니다.
+          </ErrorMessage>
+        </Body>
+      </Container>
+    );
+  }
 
   return (
     <>
@@ -127,45 +250,18 @@ export function WorkspaceResourceAllocCard() {
           </Resources>
         </Body>
 
-        {/* MIG(Multi-Instance GPU) 설정 섹션 */}
-        <Body>
-          <BodyHeader>
-            <BodyHeaderTitle>
-              <span>{getResourceInfo("GPU").text}</span>
-              <BodyHeaderTitleDivdier />
-              <span>{getResourceInfo("MIG").text}</span>
-            </BodyHeaderTitle>
-          </BodyHeader>
-          <Resources>
-            {/* 1g.12gb MIG 설정 */}
-            <Resource>
-              <ResourceKey>1g.12gb</ResourceKey>
-              <Slider
-                min={0}
-                max={5}
-                value={4}
-                type="MIG"
-                width="100%"
-                readMode
-                showInput={true}
-              />
-            </Resource>
-
-            {/* 2g.24gb MIG 설정 */}
-            <Resource>
-              <ResourceKey>2g.24gb</ResourceKey>
-              <Slider
-                min={0}
-                max={5}
-                value={4}
-                type="MIG"
-                width="100%"
-                readMode
-                showInput={true}
-              />
-            </Resource>
-          </Resources>
-        </Body>
+        {migResourceItems.length > 0 && (
+          <Body>
+            <BodyHeader>
+              <BodyHeaderTitle>
+                <span>{getResourceInfo("GPU").text}</span>
+                <BodyHeaderTitleDivdier />
+                <span>{getResourceInfo("MIG").text}</span>
+              </BodyHeaderTitle>
+            </BodyHeader>
+            <Resources>{migResourceElements}</Resources>
+          </Body>
+        )}
       </Container>
 
       {/* 리소스 할당량 수정 모달 */}
@@ -281,4 +377,22 @@ const ResourceKey = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+`;
+
+const LoadingMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
+`;
+
+const ErrorMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #d32f2f;
+  font-size: 14px;
 `;

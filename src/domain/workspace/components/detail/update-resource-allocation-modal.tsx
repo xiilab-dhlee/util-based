@@ -1,49 +1,95 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Icon, Modal } from "xiilab-ui";
+import { z } from "zod";
 
+import {
+  getGetAdminWorkspaceDetailQueryKey,
+  type UpdateWorkspaceResourceMutationBody,
+  useGetAdminWorkspaceDetail,
+  useUpdateWorkspaceResource,
+} from "@/api/generated/admin-workspace/admin-workspace";
+import { updateWorkspaceResourceBody } from "@/api/generated/admin-workspace/admin-workspace.zod";
+import {
+  useGetClusterTotalResources,
+  useGetMigProfiles,
+} from "@/api/generated/cluster-resource/cluster-resource";
+import {
+  type MigResourceType,
+  migResourceSchema,
+} from "@/domain/system-setting/schemas/workspace-resource-setting.schema";
 import { openUpdateResourceAllocationModalAtom } from "@/domain/workspace/state/workspace.atom";
+import {
+  MigFormField,
+  type MigFormFieldProps,
+} from "@/shared/components/form/mig-form-field";
 import { Slider } from "@/shared/components/slider";
-import { WORKSPACE_EVENTS } from "@/shared/constants/pubsub.constant";
 import { useGlobalModal } from "@/shared/hooks/use-global-modal";
-import { useSubscribe } from "@/shared/hooks/use-pub-sub";
-import type { CoreResourceType } from "@/shared/types/core.interface";
-import { getResourceInfo } from "@/shared/utils/resource.util";
+import { hasDuplicateMigProfile } from "@/shared/utils/mig-resource.util";
+import { convertBytes, convertToBytes } from "@/shared/utils/resource.util";
+import {
+  UpdateResourceModalContainer,
+  UpdateResourceModalErrorMessage,
+  UpdateResourceModalResource,
+  UpdateResourceModalResourceHeader,
+  UpdateResourceModalResourceTitle,
+} from "@/styles/layers/update-resource-modal-layers.styled";
+import { requiredTextStyle } from "@/styles/mixins/text";
 
 /**
- * 리소스 할당에서 지원하는 리소스 타입
- * - GPU_MEMORY, DISK는 할당 대상이 아님
+ * 실제 API 응답 구조 (타입 정의와 실제 응답이 다름)
  */
-type AllocationResourceType = Extract<
-  CoreResourceType,
-  "GPU" | "CPU" | "MEM" | "MIG" | "MPS"
->;
-
-/**
- * 리소스 할당량 데이터 타입
- */
-export interface ResourceAllocationData {
-  /** GPU 현재 할당량 */
-  gpuValue: number;
-  /** GPU 최대 할당량 */
-  gpuLimit: number;
-  /** CPU 현재 할당량 */
-  cpuValue: number;
-  /** CPU 최대 할당량 */
-  cpuLimit: number;
-  /** MEM 현재 할당량 */
-  memValue: number;
-  /** MEM 최대 할당량 */
-  memLimit: number;
-  /** MIG 리소스 목록 */
-  migResources: Array<{
-    name: string;
-    value: number;
-    limit: number;
-  }>;
+interface ActualResourceResponse {
+  gpu?: {
+    quotaCount?: number;
+    usedCount?: number;
+    requestCount?: number;
+    utilization?: number;
+    detail?: {
+      normal?: {
+        quotaCount?: number;
+        usedCount?: number;
+        requestCount?: number;
+      };
+      mig?: Array<{
+        profile: string;
+        quotaCount?: number;
+        usedCount?: number;
+        requestCount?: number;
+      }>;
+    };
+  };
+  cpu?: {
+    quotaCore?: number;
+    usedCore?: number;
+    requestCore?: number;
+    utilization?: number;
+  };
+  memory?: {
+    quotaByte?: number;
+    usedByte?: number;
+    requestByte?: number;
+    utilization?: number;
+  };
 }
+
+const updateResourceAllocationFormSchema = z.object({
+  gpu: z.number().min(0),
+  cpu: z.number().min(1, "CPU는 필수값입니다."),
+  memory: z.number().min(1, "Memory는 필수값입니다."),
+  migResources: z.array(migResourceSchema).optional(),
+});
+
+type UpdateResourceAllocationFormType = z.infer<
+  typeof updateResourceAllocationFormSchema
+>;
 
 /**
  * 리소스 할당량 수정 모달 컴포넌트
@@ -53,108 +99,241 @@ export interface ResourceAllocationData {
  * PubSub 패턴을 사용하여 데이터를 전달받습니다.
  */
 export function UpdateResourceAllocationModal() {
-  const { open, onOpen, onClose } = useGlobalModal(
+  const { open, onClose } = useGlobalModal(
     openUpdateResourceAllocationModalAtom,
   );
+  const queryClient = useQueryClient();
+  const { id } = useParams<{ id: string }>();
+  const workspaceId = Number(id);
+  const isValidWorkspaceId = Number.isFinite(workspaceId);
 
-  // 리소스 할당량 데이터
-  const [resourceData, setResourceData] = useState<ResourceAllocationData>({
-    gpuValue: 0,
-    gpuLimit: 0,
-    cpuValue: 0,
-    cpuLimit: 0,
-    memValue: 0,
-    memLimit: 0,
-    migResources: [],
-  });
-
-  // 폼 입력 값 상태
-  const [formValues, setFormValues] = useState<{
-    gpu: number;
-    cpu: number;
-    mem: number;
-    mig: Record<string, number>;
-  }>({
-    gpu: 0,
-    cpu: 0,
-    mem: 0,
-    mig: {},
-  });
-
-  /**
-   */
-  const handleResourceAllocationUpdate = useCallback(
-    (data: ResourceAllocationData) => {
-      setResourceData(data);
-      // 폼 초기값 설정
-      setFormValues({
-        gpu: data.gpuValue,
-        cpu: data.cpuValue,
-        mem: data.memValue,
-        mig: data.migResources.reduce(
-          (acc, mig) => {
-            acc[mig.name] = mig.value;
-            return acc;
-          },
-          {} as Record<string, number>,
-        ),
-      });
-      onOpen();
+  const { data: clusterResources } = useGetClusterTotalResources({
+    query: {
+      enabled: open,
     },
-    [onOpen],
+  });
+  const { data: migProfiles } = useGetMigProfiles({
+    query: {
+      enabled: open,
+    },
+  });
+  const {
+    data: workspaceDetail,
+    isLoading: isLoadingWorkspaceResource,
+    isError: isErrorWorkspaceResource,
+  } = useGetAdminWorkspaceDetail(workspaceId, {
+    query: {
+      enabled: open && isValidWorkspaceId,
+    },
+  });
+
+  const workspaceResourceData = workspaceDetail?.resource as
+    | ActualResourceResponse
+    | undefined;
+
+  const updateWorkspaceResourceMutation = useUpdateWorkspaceResource();
+  const isPending = updateWorkspaceResourceMutation.isPending;
+
+  const defaultValues = useMemo<UpdateResourceAllocationFormType>(
+    () => ({
+      gpu: 0,
+      cpu: 0,
+      memory: 0,
+      migResources: [],
+    }),
+    [],
   );
 
-  /**
-   * 리소스 할당량 수정 모달 데이터 구독
-   */
-  useSubscribe(
-    WORKSPACE_EVENTS.sendUpdateResourceAllocation,
-    handleResourceAllocationUpdate,
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<UpdateResourceAllocationFormType>({
+    resolver: zodResolver(updateResourceAllocationFormSchema),
+    defaultValues,
+  });
+
+  const watchedMigResources = watch("migResources");
+  const currentMigResources = useMemo<MigFormFieldProps["value"]>(
+    () =>
+      (watchedMigResources ?? []).map((mig) => ({
+        profile: mig.profile ?? "",
+        count: mig.count ?? "",
+      })),
+    [watchedMigResources],
   );
 
-  /**
-   * 폼 제출 처리 함수
-   */
-  const handleOk = () => {
-    // TODO: 리소스 할당량 수정 API 호출
-    console.log("리소스 할당량 수정:", formValues);
-    onClose();
-  };
+  const clusterMaxValues = useMemo(() => {
+    if (!clusterResources || !migProfiles) return null;
 
-  /**
-   * 입력값 변경 핸들러
-   */
-  const handleInputChange = ({
-    type,
-    value,
-    migName,
-  }: {
-    type: AllocationResourceType;
-    value: number;
-    migName?: string;
-  }) => {
-    if (type === "MIG") {
-      if (!migName) {
-        return;
-      }
+    return {
+      gpuMax: clusterResources.gpu.clusterCapacityCount,
+      cpuMax: clusterResources.cpu.clusterCapacityCores,
+      memMax: convertBytes(
+        Number(clusterResources.memory.clusterCapacityBytes),
+        "GB",
+        0,
+      ).value,
+      migProfileOptions: migProfiles.migProfiles.map((profile) => ({
+        profile: profile.profile,
+        availableCount: profile.maxCount,
+      })),
+    };
+  }, [clusterResources, migProfiles]);
 
-      setFormValues((prev) => ({
-        ...prev,
-        mig: { ...prev.mig, [migName]: value },
-      }));
+  const migProfileOptions = useMemo(
+    () => clusterMaxValues?.migProfileOptions ?? [],
+    [clusterMaxValues],
+  );
 
+  const initialValues = useMemo<UpdateResourceAllocationFormType | null>(() => {
+    if (!workspaceResourceData) return null;
+
+    const memoryValue = convertBytes(
+      Number(workspaceResourceData?.memory?.quotaByte ?? 0),
+      "GB",
+      0,
+    ).value;
+
+    return {
+      gpu: workspaceResourceData?.gpu?.detail?.normal?.quotaCount ?? 0,
+      cpu: workspaceResourceData?.cpu?.quotaCore ?? 0,
+      memory: memoryValue,
+      migResources:
+        workspaceResourceData?.gpu?.detail?.mig
+          ?.filter(
+            (mig) =>
+              mig.quotaCount != null &&
+              Number.isFinite(mig.quotaCount) &&
+              mig.quotaCount > 0,
+          )
+          .map((mig) => ({
+            profile: mig.profile,
+            count: String(mig.quotaCount ?? 0),
+          })) ?? [],
+    };
+  }, [workspaceResourceData]);
+
+  const hasInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      hasInitializedRef.current = false;
       return;
     }
 
-    if (type === "GPU" || type === "CPU" || type === "MEM") {
-      const key = type.toLowerCase() as "gpu" | "cpu" | "mem";
+    if (!initialValues || hasInitializedRef.current) return;
 
-      setFormValues((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
-    }
+    reset(initialValues);
+    hasInitializedRef.current = true;
+  }, [open, initialValues, reset]);
+
+  const handleAddMigResource = useCallback(
+    (migResource: MigResourceType) => {
+      const currentList = currentMigResources ?? [];
+      if (hasDuplicateMigProfile(currentList, migResource.profile)) {
+        return false;
+      }
+
+      setValue("migResources", [...currentList, migResource], {
+        shouldValidate: true,
+      });
+      return true;
+    },
+    [currentMigResources, setValue],
+  );
+
+  const handleUpdateMigResource = useCallback(
+    (index: number, migResource: MigResourceType) => {
+      const currentList = currentMigResources ?? [];
+      if (hasDuplicateMigProfile(currentList, migResource.profile, index)) {
+        return false;
+      }
+
+      const updatedList = currentList.map((item, i) =>
+        i === index ? migResource : item,
+      );
+      setValue("migResources", updatedList, { shouldValidate: true });
+      return true;
+    },
+    [currentMigResources, setValue],
+  );
+
+  const handleRemoveMigResource = useCallback(
+    (index: number) => {
+      const currentList = currentMigResources ?? [];
+      setValue(
+        "migResources",
+        currentList.filter((_, i) => i !== index),
+        { shouldValidate: true },
+      );
+    },
+    [currentMigResources, setValue],
+  );
+
+  const handleClose = () => {
+    if (isPending) return;
+    reset(defaultValues);
+    onClose();
   };
+
+  const onSubmit = (data: UpdateResourceAllocationFormType) => {
+    if (!isValidWorkspaceId) {
+      toast.error("워크스페이스 정보가 올바르지 않습니다.");
+      return;
+    }
+
+    const hasMigResources = (data.migResources?.length ?? 0) > 0;
+    const hasGpuDetail = data.gpu > 0 || hasMigResources;
+    const memoryByte = convertToBytes(data.memory, "GB");
+
+    const payload: UpdateWorkspaceResourceMutationBody = {
+      ...(hasGpuDetail && {
+        gpu: {
+          detail: {
+            ...(data.gpu > 0 && {
+              normal: { requestCount: data.gpu },
+            }),
+            ...(hasMigResources && {
+              mig:
+                data.migResources?.map((mig) => ({
+                  profile: mig.profile,
+                  requestCount: Number(mig.count),
+                })) ?? [],
+            }),
+          },
+        },
+      }),
+      cpu: { requestCore: data.cpu },
+      memory: { requestByte: memoryByte },
+    };
+
+    const parsed = updateWorkspaceResourceBody.safeParse(payload);
+    if (!parsed.success) {
+      toast.error("입력값을 확인해 주세요.");
+      return;
+    }
+
+    updateWorkspaceResourceMutation.mutate(
+      { workspaceId, data: parsed.data },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getGetAdminWorkspaceDetailQueryKey(workspaceId),
+          });
+          handleClose();
+        },
+      },
+    );
+  };
+
+  if (!open) return null;
+
+  const isDataLoading = isLoadingWorkspaceResource;
+  const hasDataError = isErrorWorkspaceResource || !workspaceResourceData;
 
   return (
     <Modal
@@ -162,96 +341,133 @@ export function UpdateResourceAllocationModal() {
       icon={<Icon name="Edit02" color="#fff" size={18} />}
       modalWidth={370}
       open={open}
-      closable
       title="리소스 할당량 수정"
       showCancelButton
       cancelText="취소"
-      onCancel={onClose}
+      onCancel={handleClose}
       okText="리소스 수정"
-      onOk={handleOk}
+      onOk={handleSubmit(onSubmit)}
       centered
       showHeaderBorder
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
+      cancelButtonProps={{ disabled: isPending }}
+      okButtonProps={{ disabled: isPending || isDataLoading || hasDataError }}
+      confirmLoading={isPending}
     >
-      <ModalContent>
-        {/* GPU 리소스 */}
-        <ResourceSection>
-          <ResourceLabel>{getResourceInfo("GPU").text}</ResourceLabel>
-          <Slider
-            value={formValues.gpu}
-            min={0}
-            max={resourceData.gpuLimit}
-            type="GPU"
-            width="100%"
-            onChange={(value) =>
-              handleInputChange({
-                type: "GPU",
-                value,
-              })
-            }
-          />
-        </ResourceSection>
+      <UpdateResourceModalContainer>
+        {isDataLoading && (
+          <LoadingContainer>
+            <LoadingMessage>리소스 정보를 불러오는 중...</LoadingMessage>
+          </LoadingContainer>
+        )}
+        {!isDataLoading && hasDataError && (
+          <ErrorContainer>
+            <ErrorMessage>리소스 정보를 불러오는데 실패했습니다.</ErrorMessage>
+          </ErrorContainer>
+        )}
+        {!isDataLoading && !hasDataError && (
+          <ResourceList>
+            <UpdateResourceModalResource>
+              <UpdateResourceModalResourceHeader>
+                <UpdateResourceModalResourceTitle>
+                  GPU
+                </UpdateResourceModalResourceTitle>
+              </UpdateResourceModalResourceHeader>
+              <Controller
+                name="gpu"
+                control={control}
+                render={({ field }) => (
+                  <Slider
+                    min={0}
+                    max={clusterMaxValues?.gpuMax}
+                    value={field.value}
+                    onChange={field.onChange}
+                    type="GPU"
+                    width="100%"
+                    disabled={isPending}
+                  />
+                )}
+              />
+            </UpdateResourceModalResource>
 
-        {/* MIG 리소스 */}
-        {resourceData.migResources.map((mig) => (
-          <ResourceSection key={mig.name}>
-            <MigLabel>
-              <span>{getResourceInfo("MIG").text}</span>
-              <MigDivider />
-              <span>{mig.name}</span>
-            </MigLabel>
-            <Slider
-              value={formValues.mig[mig.name] ?? mig.value}
-              min={0}
-              max={mig.limit}
-              type="MIG"
-              width="100%"
-              onChange={(value) =>
-                handleInputChange({
-                  type: "MIG",
-                  value,
-                  migName: mig.name,
-                })
-              }
-            />
-          </ResourceSection>
-        ))}
+            <UpdateResourceModalResource>
+              <UpdateResourceModalResourceHeader>
+                <UpdateResourceModalResourceTitle>
+                  MIG
+                </UpdateResourceModalResourceTitle>
+              </UpdateResourceModalResourceHeader>
+              <MigFormField
+                value={currentMigResources}
+                migProfileOptions={migProfileOptions}
+                onAdd={handleAddMigResource}
+                onUpdate={handleUpdateMigResource}
+                onRemove={handleRemoveMigResource}
+                disabled={isPending}
+              />
+            </UpdateResourceModalResource>
 
-        {/* CPU 리소스 */}
-        <ResourceSection>
-          <ResourceLabel>{getResourceInfo("CPU").text}</ResourceLabel>
-          <Slider
-            value={formValues.cpu}
-            min={0}
-            max={resourceData.cpuLimit}
-            type="CPU"
-            width="100%"
-            onChange={(value) =>
-              handleInputChange({
-                type: "CPU",
-                value,
-              })
-            }
-          />
-        </ResourceSection>
+            <UpdateResourceModalResource>
+              <UpdateResourceModalResourceHeader>
+                <RequiredResourceTitle className="required">
+                  CPU
+                </RequiredResourceTitle>
+              </UpdateResourceModalResourceHeader>
+              <Controller
+                name="cpu"
+                control={control}
+                render={({ field }) => (
+                  <Slider
+                    min={0}
+                    max={clusterMaxValues?.cpuMax}
+                    value={field.value}
+                    onChange={field.onChange}
+                    type="CPU"
+                    width="100%"
+                    disabled={isPending}
+                    error={!!errors.cpu}
+                  />
+                )}
+              />
+              {errors.cpu?.message && (
+                <UpdateResourceModalErrorMessage>
+                  {errors.cpu.message}
+                </UpdateResourceModalErrorMessage>
+              )}
+            </UpdateResourceModalResource>
 
-        {/* MEM 리소스 */}
-        <ResourceSection>
-          <ResourceLabel>{getResourceInfo("MEM").text}</ResourceLabel>
-          <Slider
-            value={formValues.mem}
-            min={0}
-            max={resourceData.memLimit}
-            type="MEM"
-            width="100%"
-            onChange={(value) =>
-              handleInputChange({
-                type: "MEM",
-                value,
-              })
-            }
-          />
-        </ResourceSection>
-      </ModalContent>
+            <UpdateResourceModalResource>
+              <UpdateResourceModalResourceHeader>
+                <RequiredResourceTitle className="required">
+                  Memory
+                </RequiredResourceTitle>
+              </UpdateResourceModalResourceHeader>
+              <Controller
+                name="memory"
+                control={control}
+                render={({ field }) => (
+                  <Slider
+                    min={0}
+                    max={clusterMaxValues?.memMax}
+                    value={field.value}
+                    onChange={field.onChange}
+                    type="MEM"
+                    width="100%"
+                    disabled={isPending}
+                    error={!!errors.memory}
+                  />
+                )}
+              />
+              {errors.memory?.message && (
+                <UpdateResourceModalErrorMessage>
+                  {errors.memory.message}
+                </UpdateResourceModalErrorMessage>
+              )}
+            </UpdateResourceModalResource>
+          </ResourceList>
+        )}
+      </UpdateResourceModalContainer>
     </Modal>
   );
 }
@@ -260,40 +476,37 @@ export function UpdateResourceAllocationModal() {
 // Styled Components
 // ============================================================================
 
-const ModalContent = styled.div`
+const ResourceList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 4px 0;
+  gap: 16px;
 `;
 
-/** 리소스 섹션 (레이블 + 컨트롤) */
-const ResourceSection = styled.div`
+const RequiredResourceTitle = styled(UpdateResourceModalResourceTitle)`
+  ${requiredTextStyle}
+`;
+
+const LoadingContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-`;
-
-const ResourceLabel = styled.div`
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
-  color: #000;
-`;
-
-const MigLabel = styled.div`
-  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
-  color: #000;
+  padding: 40px 20px;
 `;
 
-const MigDivider = styled.div`
-  width: 1px;
-  height: 9px;
-  background-color: #acacac;
+const LoadingMessage = styled.div`
+  color: #666;
+  font-size: 14px;
+`;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+`;
+
+const ErrorMessage = styled.div`
+  color: #d32f2f;
+  font-size: 14px;
+  text-align: center;
 `;

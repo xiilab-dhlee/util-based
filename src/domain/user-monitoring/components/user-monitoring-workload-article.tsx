@@ -3,12 +3,16 @@
 import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { useGetWorkloadStatusSummary } from "@/api/generated/workspace/workspace";
+import {
+  useGetWorkloadStatusSummary,
+  useGetWorkspaceResourceUsage,
+} from "@/api/generated/workspace/workspace";
 import { ResourceUsageCard } from "@/shared/components/card/resource-usage-card";
 import { CountByWorkloadStatus } from "@/shared/components/layouts/count-by-workload-status";
 import { USER_MONITORING_SELECTOR } from "@/shared/constants/selector.constant";
 import { selectedWorkspaceAtom } from "@/shared/state/core.atom";
 import type { CoreResourceType } from "@/shared/types/core.interface";
+import { convertBytes } from "@/shared/utils/resource.util";
 import {
   UserMonitoringCategoryTitle,
   UserMonitoringSectionDescription,
@@ -20,6 +24,14 @@ export function UserMonitoringWorkloadArticle() {
   const workspaceId = selectedWorkspace?.workspaceId;
 
   const { data: statusSummary } = useGetWorkloadStatusSummary(
+    workspaceId ?? 0,
+    {
+      query: {
+        enabled: Boolean(workspaceId),
+      },
+    },
+  );
+  const { data: resourceUsage } = useGetWorkspaceResourceUsage(
     workspaceId ?? 0,
     {
       query: {
@@ -51,14 +63,58 @@ export function UserMonitoringWorkloadArticle() {
       countTestId={USER_MONITORING_SELECTOR.statusCount(status.toLowerCase())}
     />
   );
-  const renderResourceUsageCard = (resourceType: CoreResourceType) => (
-    <ResourceUsageCard
-      key={resourceType}
-      resourceType={resourceType}
-      total={999}
-      count={777}
-    />
-  );
+  const renderResourceUsageCard = (resourceType: CoreResourceType) => {
+    if (!resourceUsage) {
+      return (
+        <ResourceUsageCard
+          key={resourceType}
+          resourceType={resourceType}
+          total={0}
+          count={0}
+        />
+      );
+    }
+
+    if (resourceType === "GPU") {
+      return (
+        <ResourceUsageCard
+          key={resourceType}
+          resourceType={resourceType}
+          total={resourceUsage.gpuCount.total}
+          count={resourceUsage.gpuCount.used}
+        />
+      );
+    }
+
+    if (resourceType === "CPU") {
+      return (
+        <ResourceUsageCard
+          key={resourceType}
+          resourceType={resourceType}
+          total={resourceUsage.cpuCore.total}
+          count={resourceUsage.cpuCore.used}
+        />
+      );
+    }
+
+    const totalMemoryGb = convertBytes(
+      resourceUsage?.memoryBytes?.total ?? 0,
+      "GB",
+    ).value;
+    const usedMemoryGb = convertBytes(
+      resourceUsage?.memoryBytes?.used ?? 0,
+      "GB",
+    ).value;
+
+    return (
+      <ResourceUsageCard
+        key={resourceType}
+        resourceType={resourceType}
+        total={totalMemoryGb}
+        count={usedMemoryGb}
+      />
+    );
+  };
 
   return (
     <Container>

@@ -2,13 +2,50 @@
 
 import styled from "styled-components";
 
+import type { WorkspaceDetailResourceResponse } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { convertBytes, getResourceInfo } from "@/shared/utils/resource.util";
+
 /**
  * 워크스페이스 리소스 사용량 카드 컴포넌트
  *
  * 워크스페이스의 리소스 사용량 정보를 표시합니다.
  * GPU, CPU, MEM의 요청량, 사용량, 할당량을 테이블 형태로 보여줍니다.
  */
-export function WorkspaceResourceUsageCard() {
+interface WorkspaceResourceUsageCardProps {
+  resource?: WorkspaceDetailResourceResponse;
+}
+
+export function WorkspaceResourceUsageCard({
+  resource,
+}: WorkspaceResourceUsageCardProps) {
+  const gpuUnit = getResourceInfo("GPU").unit;
+  const cpuUnit = getResourceInfo("CPU").unit;
+  const memUnit = getResourceInfo("MEM").unit;
+
+  const gpuRequest = resource?.gpu.requestCount ?? 0;
+  const gpuUsed = resource?.gpu.usedCount ?? 0;
+  const gpuQuota = resource?.gpu.quotaCount ?? 0;
+
+  const cpuRequest = resource?.cpu.requestCore ?? 0;
+  const cpuUsed = resource?.cpu.usedCore ?? 0;
+  const cpuQuota = resource?.cpu.quotaCore ?? 0;
+
+  const memoryRequest = convertBytes(
+    resource?.memory.requestByte ?? 0,
+    "GB",
+    0,
+  ).value;
+  const memoryUsed = convertBytes(
+    resource?.memory.usedByte ?? 0,
+    "GB",
+    0,
+  ).value;
+  const memoryQuota = convertBytes(
+    resource?.memory.quotaByte ?? 0,
+    "GB",
+    0,
+  ).value;
+
   return (
     <>
       {/* 리소스 사용량 카드 컨테이너 */}
@@ -40,13 +77,13 @@ export function WorkspaceResourceUsageCard() {
               <Key>GPU</Key>
             </CategoryColumn>
             <Column>
-              <Value>8개</Value>
+              <Value>{`${gpuRequest}${gpuUnit}`}</Value>
             </Column>
             <Column>
-              <Value>0개</Value>
+              <Value>{`${gpuUsed}${gpuUnit}`}</Value>
             </Column>
             <Column>
-              <Value>0개</Value>
+              <Value>{`${gpuQuota}${gpuUnit}`}</Value>
             </Column>
           </Li>
 
@@ -56,13 +93,13 @@ export function WorkspaceResourceUsageCard() {
               <Key>CPU</Key>
             </CategoryColumn>
             <Column>
-              <Value>12Core</Value>
+              <Value>{`${cpuRequest}${cpuUnit}`}</Value>
             </Column>
             <Column>
-              <Value>0Core</Value>
+              <Value>{`${cpuUsed}${cpuUnit}`}</Value>
             </Column>
             <Column>
-              <Value>0Core</Value>
+              <Value>{`${cpuQuota}${cpuUnit}`}</Value>
             </Column>
           </Li>
 
@@ -72,13 +109,13 @@ export function WorkspaceResourceUsageCard() {
               <Key>MEM</Key>
             </CategoryColumn>
             <Column>
-              <Value>2GB</Value>
+              <Value>{`${memoryRequest}${memUnit}`}</Value>
             </Column>
             <Column>
-              <Value>0GB</Value>
+              <Value>{`${memoryUsed}${memUnit}`}</Value>
             </Column>
             <Column>
-              <Value>0GB</Value>
+              <Value>{`${memoryQuota}${memUnit}`}</Value>
             </Column>
           </Li>
         </Ul>
