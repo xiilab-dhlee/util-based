@@ -284,7 +284,7 @@ export function CreateSnapshotRegistryModal({
     <Modal
       type="primary"
       icon={<Icon name="Plus" color="#fff" size={18} />}
-      modalWidth={900}
+      modalWidth={1096}
       open={open}
       title="컨테이너 이미지 생성"
       showCancelButton
@@ -685,6 +685,7 @@ const WorkloadSection = styled.div`
   gap: 12px;
   border-left: 1px solid #e9ebee;
   padding-left: 24px;
+  overflow: hidden;
 `;
 
 const WorkloadHeader = styled.div`
@@ -703,6 +704,7 @@ const SearchInput = styled(Input)`
 
 const WorkloadListContainer = styled.div`
   flex: 1;
+  overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid #e9ebee;
   border-radius: 4px;
@@ -738,6 +740,8 @@ const ErrorMessage = styled.div`
 
 const WorkloadCardWrapper = styled.div`
   cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const CardBody = styled.div`
