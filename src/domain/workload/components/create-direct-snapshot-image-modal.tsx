@@ -25,7 +25,6 @@ import { LastFormItem } from "@/styles/layers/form-layer.styled";
 interface DirectSnapshotImagePayload {
   workloadId: number;
   workspaceId: number;
-  command: string | null;
   env: SnapshotEnvRequest[] | null;
   port: SnapshotPortRequest[] | null;
 }
@@ -43,7 +42,6 @@ export function CreateDirectSnapshotImageModal() {
   // subscription으로 전달받는 데이터 상태
   const [workloadId, setWorkloadId] = useState<number | null>(null);
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
-  const [command, setCommand] = useState<string | null>(null);
   const [env, setEnv] = useState<SnapshotEnvRequest[] | null>(null);
   const [port, setPort] = useState<SnapshotPortRequest[] | null>(null);
 
@@ -79,7 +77,6 @@ export function CreateDirectSnapshotImageModal() {
           workspaceId: workspaceId ?? undefined,
           imageName: data.imageName,
           imageTagName: data.imageTagName,
-          command: command ?? undefined,
           env: env ?? undefined,
           port: port ?? undefined,
         },
@@ -101,7 +98,6 @@ export function CreateDirectSnapshotImageModal() {
       // 전달받은 데이터 설정
       setWorkloadId(eventData.workloadId);
       setWorkspaceId(eventData.workspaceId);
-      setCommand(eventData.command);
       setEnv(eventData.env);
       setPort(eventData.port);
       reset();
