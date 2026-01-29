@@ -17,7 +17,7 @@ export const directSnapshotEnvSchema = z.object({
 export const directSnapshotPortSchema = z.object({
   id: z.string(),
   name: z.string(),
-  port: z.coerce.number(),
+  port: z.coerce.number().int().min(1).max(65535),
 });
 
 /**
