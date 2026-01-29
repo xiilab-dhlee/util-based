@@ -31,38 +31,17 @@ import * as zod from "zod";
 
 /**
  * 
-            빌트인 레지스트리(이미지) 목록을 페이징하여 조회합니다.
-            시스템에서 제공하는 기본 이미지(PyTorch, TensorFlow, Jupyter 등)를 조회합니다.
+            빌트인 이미지 목록을 조회합니다.
+            시스템에서 제공하는 기본 이미지(PyTorch, TensorFlow, Jupyter 등)와 태그 목록을 반환합니다.
+            frameworkType 파라미터로 특정 프레임워크 이미지만 필터링할 수 있습니다.
         
- * @summary 빌트인 레지스트리 목록 조회
+ * @summary 빌트인 이미지 목록 조회
  */
-export const getBuiltInRegistryListQueryPageNoMin = 0;
+export const getBuiltInImageListQueryPageNoMin = 0;
 
-export const getBuiltInRegistryListQueryPageSizeMax = 100;
+export const getBuiltInImageListQueryPageSizeMax = 100;
 
-export const getBuiltInRegistryListQueryParams = zod.object({
-  pageNo: zod
-    .number()
-    .min(getBuiltInRegistryListQueryPageNoMin)
-    .optional()
-    .describe("페이지 번호 (0부터 시작)"),
-  pageSize: zod
-    .number()
-    .min(1)
-    .max(getBuiltInRegistryListQueryPageSizeMax)
-    .optional()
-    .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  sort: zod
-    .enum(["CREATED_AT", "CREATOR_NAME"])
-    .optional()
-    .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  hasMine: zod.boolean().optional().describe("내가 생성한 이미지만 조회"),
-  imageSourceType: zod
-    .enum(["SNAPSHOT", "EXTERNAL"])
-    .optional()
-    .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
+export const getBuiltInImageListQueryParams = zod.object({
   frameworkType: zod
     .enum([
       "PYTORCH",
@@ -74,12 +53,21 @@ export const getBuiltInRegistryListQueryParams = zod.object({
       "REGISTRY",
     ])
     .optional()
-    .describe(
-      "프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)",
-    ),
+    .describe("프레임워크 타입 필터"),
+  pageNo: zod
+    .number()
+    .min(getBuiltInImageListQueryPageNoMin)
+    .optional()
+    .describe("페이지 번호 (0부터 시작)"),
+  pageSize: zod
+    .number()
+    .min(1)
+    .max(getBuiltInImageListQueryPageSizeMax)
+    .optional()
+    .describe("페이지 크기"),
 });
 
-export const getBuiltInRegistryListResponse = zod
+export const getBuiltInImageListResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -91,41 +79,24 @@ export const getBuiltInRegistryListResponse = zod
         content: zod.array(
           zod
             .object({
-              imageId: zod
-                .number()
-                .optional()
-                .describe("이미지 ID (DB 메타데이터 없으면 null)"),
-              imageDisplayName: zod
-                .string()
-                .describe("목록에 표시되는 이미지 이름"),
+              imageTagId: zod.number().describe("이미지 태그 ID"),
+              tagName: zod.string().describe("태그 이름"),
+              imageDisplayName: zod.string().describe("이미지 표시 이름"),
               harborImageName: zod.string().describe("Harbor 이미지 경로"),
-              latestImageTagName: zod
-                .string()
-                .optional()
-                .describe("최신 태그명"),
-              imageTagCount: zod.number().describe("태그 수"),
-              downloadCount: zod.number().describe("다운로드 수"),
-              creatorName: zod.string().optional().describe("생성자 이름"),
-              creatorId: zod
-                .string()
-                .optional()
-                .describe("생성자 ID (DB 메타데이터 없으면 null)"),
-              createdAt: zod
-                .string()
-                .datetime({})
-                .optional()
-                .describe("생성일시 (UTC)"),
-              imageType: zod
-                .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
-                .optional()
-                .describe("이미지 타입 (DB 메타데이터 없으면 null)"),
-              imageSourceType: zod
-                .enum(["SNAPSHOT", "EXTERNAL"])
-                .optional()
-                .describe("이미지 소스 타입 (DB 메타데이터 없으면 null)"),
+              frameworkType: zod
+                .enum([
+                  "PYTORCH",
+                  "TENSORFLOW",
+                  "JUPYTER",
+                  "VSCODE",
+                  "RSTUDIO",
+                  "HUB",
+                  "REGISTRY",
+                ])
+                .describe("프레임워크 타입"),
             })
             .strict()
-            .describe("공용 레지스트리 목록 응답"),
+            .describe("Built-in 이미지 태그 목록 응답"),
         ),
       })
       .strict()

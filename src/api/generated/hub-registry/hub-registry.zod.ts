@@ -31,55 +31,30 @@ import * as zod from "zod";
 
 /**
  * 
-            HUB 레지스트리(이미지) 목록을 페이징하여 조회합니다.
-            AI/ML 모델 학습용 HUB 이미지를 조회합니다.
+            HUB 이미지 목록을 조회합니다.
+            AI/ML 모델 학습용 HUB 이미지와 태그 목록을 반환합니다.
         
- * @summary HUB 레지스트리 목록 조회
+ * @summary HUB 이미지 목록 조회
  */
-export const getHubRegistryListQueryPageNoMin = 0;
+export const getHubImageListQueryPageNoMin = 0;
 
-export const getHubRegistryListQueryPageSizeMax = 100;
+export const getHubImageListQueryPageSizeMax = 100;
 
-export const getHubRegistryListQueryParams = zod.object({
+export const getHubImageListQueryParams = zod.object({
   pageNo: zod
     .number()
-    .min(getHubRegistryListQueryPageNoMin)
+    .min(getHubImageListQueryPageNoMin)
     .optional()
     .describe("페이지 번호 (0부터 시작)"),
   pageSize: zod
     .number()
     .min(1)
-    .max(getHubRegistryListQueryPageSizeMax)
+    .max(getHubImageListQueryPageSizeMax)
     .optional()
     .describe("페이지 크기"),
-  keyword: zod.string().optional().describe("검색 키워드"),
-  sort: zod
-    .enum(["CREATED_AT", "CREATOR_NAME"])
-    .optional()
-    .describe("정렬 필드"),
-  order: zod.enum(["ASC", "DESC"]).optional().describe("정렬 순서"),
-  hasMine: zod.boolean().optional().describe("내가 생성한 이미지만 조회"),
-  imageSourceType: zod
-    .enum(["SNAPSHOT", "EXTERNAL"])
-    .optional()
-    .describe("이미지 소스 타입 필터 (미지정 시 전체 조회)"),
-  frameworkType: zod
-    .enum([
-      "PYTORCH",
-      "TENSORFLOW",
-      "JUPYTER",
-      "VSCODE",
-      "RSTUDIO",
-      "HUB",
-      "REGISTRY",
-    ])
-    .optional()
-    .describe(
-      "프레임워크 타입 필터 (미지정 시 전체 조회, Built-in: TENSORFLOW/JUPYTER)",
-    ),
 });
 
-export const getHubRegistryListResponse = zod
+export const getHubImageListResponse = zod
   .object({
     status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
     errorCode: zod.string().optional(),
@@ -91,41 +66,13 @@ export const getHubRegistryListResponse = zod
         content: zod.array(
           zod
             .object({
-              imageId: zod
-                .number()
-                .optional()
-                .describe("이미지 ID (DB 메타데이터 없으면 null)"),
-              imageDisplayName: zod
-                .string()
-                .describe("목록에 표시되는 이미지 이름"),
+              imageTagId: zod.number().describe("이미지 태그 ID"),
+              tagName: zod.string().describe("태그 이름"),
+              imageDisplayName: zod.string().describe("이미지 표시 이름"),
               harborImageName: zod.string().describe("Harbor 이미지 경로"),
-              latestImageTagName: zod
-                .string()
-                .optional()
-                .describe("최신 태그명"),
-              imageTagCount: zod.number().describe("태그 수"),
-              downloadCount: zod.number().describe("다운로드 수"),
-              creatorName: zod.string().optional().describe("생성자 이름"),
-              creatorId: zod
-                .string()
-                .optional()
-                .describe("생성자 ID (DB 메타데이터 없으면 null)"),
-              createdAt: zod
-                .string()
-                .datetime({})
-                .optional()
-                .describe("생성일시 (UTC)"),
-              imageType: zod
-                .enum(["BUILT_IN", "HUB", "PRIVATE", "PUBLIC"])
-                .optional()
-                .describe("이미지 타입 (DB 메타데이터 없으면 null)"),
-              imageSourceType: zod
-                .enum(["SNAPSHOT", "EXTERNAL"])
-                .optional()
-                .describe("이미지 소스 타입 (DB 메타데이터 없으면 null)"),
             })
             .strict()
-            .describe("공용 레지스트리 목록 응답"),
+            .describe("Hub 이미지 태그 목록 응답"),
         ),
       })
       .strict()

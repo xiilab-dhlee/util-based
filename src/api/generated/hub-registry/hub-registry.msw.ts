@@ -31,11 +31,11 @@ import { faker } from "@faker-js/faker";
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
-import type { BaseResponsePageResponseRegistryListResponse } from "../astragoBackendAPIDocumentation.schemas";
+import type { BaseResponsePageResponseHubImageListResponse } from "../astragoBackendAPIDocumentation.schemas";
 
-export const getGetHubRegistryListResponseMock = (
-  overrideResponse: Partial<BaseResponsePageResponseRegistryListResponse> = {},
-): BaseResponsePageResponseRegistryListResponse => ({
+export const getGetHubImageListResponseMock = (
+  overrideResponse: Partial<BaseResponsePageResponseHubImageListResponse> = {},
+): BaseResponsePageResponseHubImageListResponse => ({
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
@@ -46,25 +46,10 @@ export const getGetHubRegistryListResponseMock = (
       { length: faker.number.int({ min: 1, max: 10 }) },
       (_, i) => i + 1,
     ).map(() => ({
-      imageId: faker.number.int({ min: undefined, max: undefined }),
+      imageTagId: faker.number.int({ min: undefined, max: undefined }),
+      tagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       imageDisplayName: faker.string.alpha({ length: { min: 10, max: 20 } }),
       harborImageName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      latestImageTagName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      imageTagCount: faker.number.int({ min: undefined, max: undefined }),
-      downloadCount: faker.number.int({ min: undefined, max: undefined }),
-      creatorName: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
-      imageType: faker.helpers.arrayElement([
-        "BUILT_IN",
-        "HUB",
-        "PRIVATE",
-        "PUBLIC",
-      ] as const),
-      imageSourceType: faker.helpers.arrayElement([
-        "SNAPSHOT",
-        "EXTERNAL",
-      ] as const),
     })),
   },
   message: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -72,14 +57,14 @@ export const getGetHubRegistryListResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetHubRegistryListMockHandler = (
+export const getGetHubImageListMockHandler = (
   overrideResponse?:
-    | BaseResponsePageResponseRegistryListResponse
+    | BaseResponsePageResponseHubImageListResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) =>
-        | Promise<BaseResponsePageResponseRegistryListResponse>
-        | BaseResponsePageResponseRegistryListResponse),
+        | Promise<BaseResponsePageResponseHubImageListResponse>
+        | BaseResponsePageResponseHubImageListResponse),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
@@ -93,7 +78,7 @@ export const getGetHubRegistryListMockHandler = (
             ? typeof overrideResponse === "function"
               ? await overrideResponse(info)
               : overrideResponse
-            : getGetHubRegistryListResponseMock(),
+            : getGetHubImageListResponseMock(),
         ),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
@@ -101,4 +86,4 @@ export const getGetHubRegistryListMockHandler = (
     options,
   );
 };
-export const getHubRegistryMock = () => [getGetHubRegistryListMockHandler()];
+export const getHubRegistryMock = () => [getGetHubImageListMockHandler()];

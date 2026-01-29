@@ -91,7 +91,6 @@ import type {
 
             **수정 권한:**
             - 워크로드 생성자
-            - 관리자 (ADMIN)
             - 슈퍼 관리자 (SUPER_ADMIN)
 
             **수정 가능 항목:**
@@ -205,6 +204,11 @@ export const useUpdateWorkload = <TError = unknown, TContext = unknown>(
 /**
  * 
             워크로드를 완전히 삭제합니다.
+
+            **삭제 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼관리자 (SUPER_ADMIN)
 
             **삭제 동작:**
             - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
@@ -1510,6 +1514,11 @@ export const useWorkloadCompressFiles = <TError = unknown, TContext = unknown>(
 /**
  * 
             실행 중인 워크로드를 종료합니다.
+
+            **종료 권한:**
+            - 워크로드 생성자
+            - 관리자 (ADMIN)
+            - 슈퍼관리자 (SUPER_ADMIN)
 
             **종료 동작:**
             - K8s에서 워크로드 리소스(Job/Deployment/TrainJob) 삭제
@@ -3133,6 +3142,12 @@ export function useGetDistributedPods<
  * 
             워크로드의 상세 정보를 조회합니다.
             워크로드 생성 시 입력한 모든 정보를 반환합니다.
+
+            **권한:**
+            - 슈퍼관리자 (SUPER_ADMIN)
+            - 관리자 (ADMIN)
+            - 워크스페이스 OWNER
+            - 워크로드 생성자
 
             **포함 정보:**
             - 기본 정보: 이름, 설명, 타입, 노드 설정, workerCount(분산 워크로드)

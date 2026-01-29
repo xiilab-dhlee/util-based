@@ -154,7 +154,7 @@ export const getPrivateRegistryListResponse = zod
                 .describe("이미지 소스 타입 (DB 메타데이터 없으면 null)"),
             })
             .strict()
-            .describe("공용 레지스트리 목록 응답"),
+            .describe("공유 레지스트리 목록 응답"),
         ),
       })
       .strict()
@@ -230,8 +230,8 @@ export const createPrivateSnapshotImageBodyImageTagNameMax = 128;
 
 export const createPrivateSnapshotImageBodyImageTagNameRegExp =
   /^[a-zA-Z0-9_][a-zA-Z0-9._-]*$/;
-export const createPrivateSnapshotImageBodyCommandMin = 0;
-export const createPrivateSnapshotImageBodyCommandMax = 1000;
+export const createPrivateSnapshotImageBodyDescriptionMin = 0;
+export const createPrivateSnapshotImageBodyDescriptionMax = 500;
 
 export const createPrivateSnapshotImageBodyEnvItemNameMin = 0;
 export const createPrivateSnapshotImageBodyEnvItemNameMax = 253;
@@ -267,12 +267,12 @@ export const createPrivateSnapshotImageBody = zod
       .number()
       .optional()
       .describe("워크스페이스 ID (종속버전인 경우 필수)"),
-    command: zod
+    description: zod
       .string()
-      .min(createPrivateSnapshotImageBodyCommandMin)
-      .max(createPrivateSnapshotImageBodyCommandMax)
+      .min(createPrivateSnapshotImageBodyDescriptionMin)
+      .max(createPrivateSnapshotImageBodyDescriptionMax)
       .optional()
-      .describe("기본 실행 명령"),
+      .describe("이미지 태그 설명"),
     env: zod
       .array(
         zod

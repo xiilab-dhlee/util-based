@@ -46,8 +46,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
+  AdminCommitImagePolicyUpdateRequest,
   AdminPolicySetRequest,
   AdminWorkspaceDeleteRequest,
+  BaseResponseAdminCommitImagePolicyResponse,
   BaseResponseAdminPolicySetResponse,
   BaseResponseAdminResourceRequestDetailResponse,
   BaseResponseAdminWorkspaceDetailListResponse,
@@ -518,6 +520,239 @@ export const useUpdatePolicySet = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getUpdatePolicySetMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * INTERACTIVE 워크로드 종료 시 컨테이너 이미지 커밋 활성화 여부를 조회합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * @summary 관리자용 커밋 이미지 정책 조회
+ */
+export const getCommitImagePolicy = (signal?: AbortSignal) => {
+  return customInstance<BaseResponseAdminCommitImagePolicyResponse>({
+    url: `/api/v1/admin/workspaces/policy-sets/commit-image`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetCommitImagePolicyQueryKey = () => {
+  return [`/api/v1/admin/workspaces/policy-sets/commit-image`] as const;
+};
+
+export const getGetCommitImagePolicyQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCommitImagePolicy>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getCommitImagePolicy>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetCommitImagePolicyQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCommitImagePolicy>>
+  > = ({ signal }) => getCommitImagePolicy(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCommitImagePolicy>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCommitImagePolicyQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCommitImagePolicy>>
+>;
+export type GetCommitImagePolicyQueryError = unknown;
+
+export function useGetCommitImagePolicy<
+  TData = Awaited<ReturnType<typeof getCommitImagePolicy>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommitImagePolicy>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCommitImagePolicy>>,
+          TError,
+          Awaited<ReturnType<typeof getCommitImagePolicy>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommitImagePolicy<
+  TData = Awaited<ReturnType<typeof getCommitImagePolicy>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommitImagePolicy>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCommitImagePolicy>>,
+          TError,
+          Awaited<ReturnType<typeof getCommitImagePolicy>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommitImagePolicy<
+  TData = Awaited<ReturnType<typeof getCommitImagePolicy>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommitImagePolicy>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 관리자용 커밋 이미지 정책 조회
+ */
+
+export function useGetCommitImagePolicy<
+  TData = Awaited<ReturnType<typeof getCommitImagePolicy>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommitImagePolicy>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCommitImagePolicyQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * INTERACTIVE 워크로드 종료 시 컨테이너 이미지 커밋 활성화 여부를 설정합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * @summary 관리자용 커밋 이미지 정책 업데이트
+ */
+export const updateCommitImagePolicy = (
+  adminCommitImagePolicyUpdateRequest: AdminCommitImagePolicyUpdateRequest,
+) => {
+  return customInstance<BaseResponseAdminCommitImagePolicyResponse>({
+    url: `/api/v1/admin/workspaces/policy-sets/commit-image`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: adminCommitImagePolicyUpdateRequest,
+  });
+};
+
+export const getUpdateCommitImagePolicyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateCommitImagePolicy>>,
+    TError,
+    { data: AdminCommitImagePolicyUpdateRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateCommitImagePolicy>>,
+  TError,
+  { data: AdminCommitImagePolicyUpdateRequest },
+  TContext
+> => {
+  const mutationKey = ["updateCommitImagePolicy"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateCommitImagePolicy>>,
+    { data: AdminCommitImagePolicyUpdateRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateCommitImagePolicy(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateCommitImagePolicyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateCommitImagePolicy>>
+>;
+export type UpdateCommitImagePolicyMutationBody =
+  AdminCommitImagePolicyUpdateRequest;
+export type UpdateCommitImagePolicyMutationError = unknown;
+
+/**
+ * @summary 관리자용 커밋 이미지 정책 업데이트
+ */
+export const useUpdateCommitImagePolicy = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateCommitImagePolicy>>,
+      TError,
+      { data: AdminCommitImagePolicyUpdateRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateCommitImagePolicy>>,
+  TError,
+  { data: AdminCommitImagePolicyUpdateRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateCommitImagePolicyMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

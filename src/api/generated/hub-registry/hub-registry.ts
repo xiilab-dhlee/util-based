@@ -43,22 +43,22 @@ import { useQuery } from "@tanstack/react-query";
 
 import { customInstance } from "../../../shared/api/axios-mutator";
 import type {
-  BaseResponsePageResponseRegistryListResponse,
-  GetHubRegistryListParams,
+  BaseResponsePageResponseHubImageListResponse,
+  GetHubImageListParams,
 } from "../astragoBackendAPIDocumentation.schemas";
 
 /**
  * 
-            HUB 레지스트리(이미지) 목록을 페이징하여 조회합니다.
-            AI/ML 모델 학습용 HUB 이미지를 조회합니다.
+            HUB 이미지 목록을 조회합니다.
+            AI/ML 모델 학습용 HUB 이미지와 태그 목록을 반환합니다.
         
- * @summary HUB 레지스트리 목록 조회
+ * @summary HUB 이미지 목록 조회
  */
-export const getHubRegistryList = (
-  params?: GetHubRegistryListParams,
+export const getHubImageList = (
+  params?: GetHubImageListParams,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BaseResponsePageResponseRegistryListResponse>({
+  return customInstance<BaseResponsePageResponseHubImageListResponse>({
     url: `/api/v1/registries/hub/images`,
     method: "GET",
     params,
@@ -66,24 +66,22 @@ export const getHubRegistryList = (
   });
 };
 
-export const getGetHubRegistryListQueryKey = (
-  params?: GetHubRegistryListParams,
-) => {
+export const getGetHubImageListQueryKey = (params?: GetHubImageListParams) => {
   return [
     `/api/v1/registries/hub/images`,
     ...(params ? [params] : []),
   ] as const;
 };
 
-export const getGetHubRegistryListQueryOptions = <
-  TData = Awaited<ReturnType<typeof getHubRegistryList>>,
+export const getGetHubImageListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getHubImageList>>,
   TError = unknown,
 >(
-  params?: GetHubRegistryListParams,
+  params?: GetHubImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getHubRegistryList>>,
+        Awaited<ReturnType<typeof getHubImageList>>,
         TError,
         TData
       >
@@ -92,43 +90,42 @@ export const getGetHubRegistryListQueryOptions = <
 ) => {
   const { query: queryOptions } = options ?? {};
 
-  const queryKey =
-    queryOptions?.queryKey ?? getGetHubRegistryListQueryKey(params);
+  const queryKey = queryOptions?.queryKey ?? getGetHubImageListQueryKey(params);
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getHubRegistryList>>
-  > = ({ signal }) => getHubRegistryList(params, signal);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getHubImageList>>> = ({
+    signal,
+  }) => getHubImageList(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getHubRegistryList>>,
+    Awaited<ReturnType<typeof getHubImageList>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetHubRegistryListQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getHubRegistryList>>
+export type GetHubImageListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getHubImageList>>
 >;
-export type GetHubRegistryListQueryError = unknown;
+export type GetHubImageListQueryError = unknown;
 
-export function useGetHubRegistryList<
-  TData = Awaited<ReturnType<typeof getHubRegistryList>>,
+export function useGetHubImageList<
+  TData = Awaited<ReturnType<typeof getHubImageList>>,
   TError = unknown,
 >(
-  params: undefined | GetHubRegistryListParams,
+  params: undefined | GetHubImageListParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getHubRegistryList>>,
+        Awaited<ReturnType<typeof getHubImageList>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getHubRegistryList>>,
+          Awaited<ReturnType<typeof getHubImageList>>,
           TError,
-          Awaited<ReturnType<typeof getHubRegistryList>>
+          Awaited<ReturnType<typeof getHubImageList>>
         >,
         "initialData"
       >;
@@ -137,24 +134,24 @@ export function useGetHubRegistryList<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetHubRegistryList<
-  TData = Awaited<ReturnType<typeof getHubRegistryList>>,
+export function useGetHubImageList<
+  TData = Awaited<ReturnType<typeof getHubImageList>>,
   TError = unknown,
 >(
-  params?: GetHubRegistryListParams,
+  params?: GetHubImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getHubRegistryList>>,
+        Awaited<ReturnType<typeof getHubImageList>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getHubRegistryList>>,
+          Awaited<ReturnType<typeof getHubImageList>>,
           TError,
-          Awaited<ReturnType<typeof getHubRegistryList>>
+          Awaited<ReturnType<typeof getHubImageList>>
         >,
         "initialData"
       >;
@@ -163,15 +160,15 @@ export function useGetHubRegistryList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetHubRegistryList<
-  TData = Awaited<ReturnType<typeof getHubRegistryList>>,
+export function useGetHubImageList<
+  TData = Awaited<ReturnType<typeof getHubImageList>>,
   TError = unknown,
 >(
-  params?: GetHubRegistryListParams,
+  params?: GetHubImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getHubRegistryList>>,
+        Awaited<ReturnType<typeof getHubImageList>>,
         TError,
         TData
       >
@@ -182,18 +179,18 @@ export function useGetHubRegistryList<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary HUB 레지스트리 목록 조회
+ * @summary HUB 이미지 목록 조회
  */
 
-export function useGetHubRegistryList<
-  TData = Awaited<ReturnType<typeof getHubRegistryList>>,
+export function useGetHubImageList<
+  TData = Awaited<ReturnType<typeof getHubImageList>>,
   TError = unknown,
 >(
-  params?: GetHubRegistryListParams,
+  params?: GetHubImageListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getHubRegistryList>>,
+        Awaited<ReturnType<typeof getHubImageList>>,
         TError,
         TData
       >
@@ -203,7 +200,7 @@ export function useGetHubRegistryList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetHubRegistryListQueryOptions(params, options);
+  const queryOptions = getGetHubImageListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

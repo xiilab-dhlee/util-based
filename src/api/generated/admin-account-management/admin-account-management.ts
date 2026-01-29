@@ -250,6 +250,11 @@ export const useDeleteAccountSingle = <TError = unknown, TContext = unknown>(
             - 관리자(ADMIN) / 일반 사용자(USER) 활성화 상태 변경: 최상위 관리자, 관리자 가능
             - 본인 비활성화: 불가
             - 마지막 최상위 관리자 비활성화: 불가
+            - OWNER인 워크스페이스가 있으면 비활성화: 불가
+
+            **비활성화 시 추가 동작:**
+            - PARTICIPANT인 워크스페이스에서 탈퇴
+            - 실행 중인 워크로드 삭제
         
  * @summary 계정 활성화 상태 변경
  */

@@ -31,11 +31,11 @@ import * as zod from "zod";
 
 /**
  * 
-            공용 레지스트리의 이미지 태그를 수정합니다.
+            공유 레지스트리의 이미지 태그를 수정합니다.
             - 태그 설명(description)을 수정할 수 있습니다.
             - 태그 생성자 또는 관리자만 수정할 수 있습니다.
         
- * @summary 공용 이미지 태그 수정
+ * @summary 공유 이미지 태그 수정
  */
 export const updatePublicImageTagParams = zod.object({
   imageTagId: zod.number().describe("이미지 태그 ID"),
@@ -59,10 +59,10 @@ export const updatePublicImageTagResponse = zod
 
 /**
  * 
-            공용 레지스트리(이미지) 목록을 페이징하여 조회합니다.
+            공유 레지스트리(이미지) 목록을 페이징하여 조회합니다.
             이미지 타입, 키워드, 내가 생성한 이미지 필터링이 가능합니다.
         
- * @summary 공용 레지스트리 목록 조회
+ * @summary 공유 레지스트리 목록 조회
  */
 export const getPublicRegistryListQueryPageNoMin = 0;
 
@@ -154,7 +154,7 @@ export const getPublicRegistryListResponse = zod
                 .describe("이미지 소스 타입 (DB 메타데이터 없으면 null)"),
             })
             .strict()
-            .describe("공용 레지스트리 목록 응답"),
+            .describe("공유 레지스트리 목록 응답"),
         ),
       })
       .strict()
@@ -165,8 +165,8 @@ export const getPublicRegistryListResponse = zod
   .strict();
 
 /**
- * 공용 레지스트리(Docker Hub, NGC 등)의 이미지를 공용 레지스트리에 등록합니다.
- * @summary 공용 이미지 등록
+ * 외부 레지스트리(Docker Hub, NGC 등)의 이미지를 공유 레지스트리에 등록합니다.
+ * @summary 공유 이미지 등록
  */
 export const createPublicExternalImageBodyImageNameMin = 0;
 export const createPublicExternalImageBodyImageNameMax = 255;
@@ -215,12 +215,12 @@ export const createPublicExternalImageBody = zod
 
 /**
  * 
-            실행 중인 워크로드 컨테이너를 스냅샷하여 공용 레지스트리에 이미지로 등록합니다.
+            실행 중인 워크로드 컨테이너를 스냅샷하여 공유 레지스트리에 이미지로 등록합니다.
             - 워크로드가 RUNNING 상태여야 합니다.
             - 워크로드의 실행 환경(명령어, 포트, 환경변수)이 이미지 태그에 저장됩니다.
             - 비동기로 스냅샷 Job이 생성되며, Harbor에 이미지가 푸시됩니다.
         
- * @summary 공용 이미지 스냅샷
+ * @summary 공유 이미지 스냅샷
  */
 export const createPublicSnapshotImageBodyImageNameMax = 255;
 
@@ -230,8 +230,8 @@ export const createPublicSnapshotImageBodyImageTagNameMax = 128;
 
 export const createPublicSnapshotImageBodyImageTagNameRegExp =
   /^[a-zA-Z0-9_][a-zA-Z0-9._-]*$/;
-export const createPublicSnapshotImageBodyCommandMin = 0;
-export const createPublicSnapshotImageBodyCommandMax = 1000;
+export const createPublicSnapshotImageBodyDescriptionMin = 0;
+export const createPublicSnapshotImageBodyDescriptionMax = 500;
 
 export const createPublicSnapshotImageBodyEnvItemNameMin = 0;
 export const createPublicSnapshotImageBodyEnvItemNameMax = 253;
@@ -267,12 +267,12 @@ export const createPublicSnapshotImageBody = zod
       .number()
       .optional()
       .describe("워크스페이스 ID (종속버전인 경우 필수)"),
-    command: zod
+    description: zod
       .string()
-      .min(createPublicSnapshotImageBodyCommandMin)
-      .max(createPublicSnapshotImageBodyCommandMax)
+      .min(createPublicSnapshotImageBodyDescriptionMin)
+      .max(createPublicSnapshotImageBodyDescriptionMax)
       .optional()
-      .describe("기본 실행 명령"),
+      .describe("이미지 태그 설명"),
     env: zod
       .array(
         zod
@@ -322,10 +322,10 @@ export const createPublicSnapshotImageBody = zod
 
 /**
  * 
-            공용 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
+            공유 레지스트리의 특정 이미지에 대한 태그 목록을 페이징하여 조회합니다.
             키워드, 스캔 상태, 사용 가능 여부로 필터링이 가능합니다.
         
- * @summary 공용 이미지 태그 목록 조회
+ * @summary 공유 이미지 태그 목록 조회
  */
 export const getPublicImageTagListQueryPageNoMin = 0;
 
@@ -474,11 +474,11 @@ export const getPublicImageTagListResponse = zod
 
 /**
  * 
-            공용 이미지에 새로운 태그를 추가합니다.
+            공유 이미지에 새로운 태그를 추가합니다.
             - DB에 Image가 없으면 자동으로 생성됩니다.
             - 이미 등록된 태그가 있으면 덮어쓰기가 불가능합니다. (PUBLIC_IMAGE_TAG_ALREADY_EXISTS 에러)
         
- * @summary 공용 이미지 태그 추가
+ * @summary 공유 이미지 태그 추가
  */
 export const addPublicImageTagBodyImageTagNameMin = 0;
 export const addPublicImageTagBodyImageTagNameMax = 50;
@@ -508,11 +508,11 @@ export const addPublicImageTagBody = zod
 
 /**
  * 
-            공용 이미지 태그에 대한 취약점 스캔을 트리거합니다.
+            공유 이미지 태그에 대한 취약점 스캔을 트리거합니다.
             - Harbor Trivy 스캐너를 사용하여 비동기로 스캔이 진행됩니다.
             - 이미 스캔 중인 경우에도 정상 응답합니다.
         
- * @summary 공용 이미지 태그 취약점 스캔 트리거
+ * @summary 공유 이미지 태그 취약점 스캔 트리거
  */
 export const scanPublicImageTagBodyTagNameMin = 0;
 export const scanPublicImageTagBodyTagNameMax = 128;
@@ -531,13 +531,13 @@ export const scanPublicImageTagBody = zod
 
 /**
  * 
-            공용 레지스트리의 이미지 태그를 삭제합니다.
+            공유 레지스트리의 이미지 태그를 삭제합니다.
             - Harbor Artifact와  DB 메타데이터를 함께 삭제합니다.
             - 관리자는 모든 태그를 삭제할 수 있습니다.
             - 일반 사용자는 본인이 생성한 태그만 삭제할 수 있습니다.
             - 부분 실패 시에도 성공한 태그는 삭제되며, 결과에 성공/실패 개수가 포함됩니다.
         
- * @summary 공용 이미지 태그 삭제
+ * @summary 공유 이미지 태그 삭제
  */
 export const deletePublicImageTagsBodyHarborTagIdMin = 0;
 export const deletePublicImageTagsBodyHarborTagIdMax = 20;
@@ -585,11 +585,11 @@ export const deletePublicImageTagsResponse = zod
 
 /**
  * 
-            공용 이미지 태그의 취약점 상세 목록을 조회합니다.
+            공유 이미지 태그의 취약점 상세 목록을 조회합니다.
             - 심각도(CRITICAL > HIGH > MEDIUM > LOW > UNKNOWN) 순으로 정렬됩니다.
             - 스캔이 완료되지 않은 경우 빈 목록을 반환합니다.
         
- * @summary 공용 이미지 태그 취약점 목록 조회
+ * @summary 공유 이미지 태그 취약점 목록 조회
  */
 export const getPublicImageTagVulnerabilitiesQueryPageNoMin = 0;
 
@@ -693,12 +693,12 @@ export const checkImageTagExistsResponse = zod
 
 /**
  * 
-            공용 레지스트리의 특정 이미지 태그 상세 정보를 Harbor API 기준으로 조회합니다.
+            공유 레지스트리의 특정 이미지 태그 상세 정보를 Harbor API 기준으로 조회합니다.
             - Harbor에 직접 올린 태그도 조회 가능합니다.
             - DB 메타데이터가 없는 경우 hasMetadata=false로 반환됩니다.
             - Harbor에 존재하지 않는 경우 null을 반환합니다.
         
- * @summary 공용 이미지 태그 상세 조회
+ * @summary 공유 이미지 태그 상세 조회
  */
 export const getPublicImageTagDetailQueryParams = zod.object({
   harborImageName: zod.string().describe("Harbor 이미지 경로"),
@@ -813,10 +813,10 @@ export const getPublicImageTagDetailResponse = zod
 
 /**
  * 
-            공용 레지스트리의 이미지 상세 정보를 조회합니다.
+            공유 레지스트리의 이미지 상세 정보를 조회합니다.
             존재하지 않는 경우 null을 반환합니다.
         
- * @summary 공용 이미지 상세 조회
+ * @summary 공유 이미지 상세 조회
  */
 export const getPublicImageDetailQueryParams = zod.object({
   harborImageName: zod.string().describe("Harbor 이미지 경로"),

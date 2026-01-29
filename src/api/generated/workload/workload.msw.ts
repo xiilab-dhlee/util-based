@@ -325,10 +325,13 @@ export const getGetWorkloadDetailResponseMock = (
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
+    workloadId: faker.number.int({ min: undefined, max: undefined }),
     workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    terminatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     workloadJobType: faker.helpers.arrayElement([
       "INTERACTIVE",
       "BATCH",
@@ -472,10 +475,13 @@ export const getGetWorkloadCloneDataResponseMock = (
   status: "SUCCESS",
   errorCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
   data: {
+    workloadId: faker.number.int({ min: undefined, max: undefined }),
     workloadName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     workloadResourceName: faker.string.alpha({ length: { min: 10, max: 20 } }),
     creatorId: faker.string.alpha({ length: { min: 10, max: 20 } }),
     description: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    terminatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
     workloadJobType: faker.helpers.arrayElement([
       "INTERACTIVE",
       "BATCH",

@@ -385,6 +385,53 @@ export const updatePolicySetResponse = zod
   .strict();
 
 /**
+ * INTERACTIVE 워크로드 종료 시 컨테이너 이미지 커밋 활성화 여부를 조회합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * @summary 관리자용 커밋 이미지 정책 조회
+ */
+export const getCommitImagePolicyResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        isCommitImageEnabled: zod.boolean().describe("이미지 커밋 활성화 여부"),
+      })
+      .strict()
+      .optional()
+      .describe("관리자용 커밋 이미지 정책 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
+ * INTERACTIVE 워크로드 종료 시 컨테이너 이미지 커밋 활성화 여부를 설정합니다. ADMIN 또는 SUPER_ADMIN 권한이 필요합니다.
+ * @summary 관리자용 커밋 이미지 정책 업데이트
+ */
+export const updateCommitImagePolicyBody = zod
+  .object({
+    isCommitImageEnabled: zod.boolean().describe("이미지 커밋 활성화 여부"),
+  })
+  .strict()
+  .describe("관리자용 커밋 이미지 정책 업데이트 요청");
+
+export const updateCommitImagePolicyResponse = zod
+  .object({
+    status: zod.enum(["SUCCESS", "FAIL", "ERROR"]),
+    errorCode: zod.string().optional(),
+    data: zod
+      .object({
+        isCommitImageEnabled: zod.boolean().describe("이미지 커밋 활성화 여부"),
+      })
+      .strict()
+      .optional()
+      .describe("관리자용 커밋 이미지 정책 조회 응답"),
+    message: zod.string().optional(),
+    timestamp: zod.number(),
+  })
+  .strict();
+
+/**
  * 여러 워크스페이스를 한 번에 삭제합니다. 삭제 시 해당 워크스페이스의 모든 멤버와 리소스 요청 이력도 함께 삭제됩니다.
  * @summary 관리자용 워크스페이스 다건 삭제
  */
