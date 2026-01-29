@@ -589,6 +589,7 @@ export function CreateSnapshotRegistryModal({
                   return (
                     <WorkloadCardWrapper
                       key={workload.workloadResourceName}
+                      type="button"
                       onClick={() => handleSelectWorkload(workload)}
                     >
                       <Card
@@ -763,10 +764,19 @@ const ErrorMessage = styled.div`
   font-size: 12px;
 `;
 
-const WorkloadCardWrapper = styled.div`
+const WorkloadCardWrapper = styled.button`
   cursor: pointer;
   min-width: 0;
   overflow: hidden;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 
   & > * {
     cursor: inherit;

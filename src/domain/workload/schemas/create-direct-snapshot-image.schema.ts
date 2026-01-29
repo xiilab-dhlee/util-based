@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * 스냅샷 환경변수 스키마
- * 추가된 행은 disabled로 표시되어 수정 불가능하므로 optional 유지
+ * 추가된 행은 disabled로 표시되어 수정 불가능 (필수 필드 유지)
  */
 export const directSnapshotEnvSchema = z.object({
   id: z.string(),
@@ -12,7 +12,7 @@ export const directSnapshotEnvSchema = z.object({
 
 /**
  * 스냅샷 포트 스키마
- * 추가된 행은 disabled로 표시되어 수정 불가능하므로 optional 유지
+ * 추가된 행은 disabled로 표시되어 수정 불가능 (필수 필드 유지)
  */
 export const directSnapshotPortSchema = z.object({
   id: z.string(),
