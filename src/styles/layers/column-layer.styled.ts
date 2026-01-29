@@ -121,6 +121,27 @@ export const ColumnExternalLink = styled.a`
   }
 `;
 
+// 버튼 형태의 링크 스타일 (클릭 가능한 텍스트)
+export const ColumnButtonLink = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1f5bff;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+`;
+
 // 전송 상태 텍스트
 export const ColumnStatus = styled.span`
   font-weight: 500;
@@ -132,4 +153,11 @@ export const ColumnStatus = styled.span`
   &.failure {
     color: var(--red-main);
   }
+`;
+
+// 컬럼 제목 + 툴팁
+export const ColumnTitleWithTooltip = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 `;

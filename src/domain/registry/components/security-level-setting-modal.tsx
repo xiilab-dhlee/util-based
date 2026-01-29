@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 import {
@@ -14,6 +15,12 @@ import {
   Typography,
 } from "xiilab-ui";
 
+import type { VulnerabilityLevelPolicyUpdateRequestSeverity } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import {
+  getGetLevelPolicyQueryKey,
+  useGetLevelPolicy,
+  useUpdateLevelPolicy,
+} from "@/api/generated/vulnerability-policy-admin/vulnerability-policy-admin";
 import { GuideTooltip } from "@/shared/components/tooltip/guide-tooltip";
 import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
 import {
@@ -30,6 +37,22 @@ import { VULNERABILITY_LEVEL_KEYS } from "@/shared/constants/vulnerability.const
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
 import { getVulnerabilityLevelsForSelect } from "@/shared/utils/vulnerability.util";
 
+const DEFAULT_SECURITY_LEVEL: SecurityLevelKey = VULNERABILITY_LEVEL_KEYS[0];
+
+function isValidSecurityLevelKey(value: string): value is SecurityLevelKey {
+  return (VULNERABILITY_LEVEL_KEYS as readonly string[]).includes(value);
+}
+
+function toSecurityLevelKey(severity: string | undefined): SecurityLevelKey {
+  if (!severity) {
+    return DEFAULT_SECURITY_LEVEL;
+  }
+  const normalized = severity.toLowerCase();
+  return isValidSecurityLevelKey(normalized)
+    ? normalized
+    : DEFAULT_SECURITY_LEVEL;
+}
+
 const SECURITY_LEVEL_OPTIONS = getVulnerabilityLevelsForSelect();
 
 interface SecurityLevelSettingFormValue {
@@ -39,19 +62,66 @@ interface SecurityLevelSettingFormValue {
 }
 
 export function SecurityLevelSettingModal() {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
-  const { control, handleSubmit, watch } =
+  // 보안 레벨 정책 조회
+  const {
+    data: levelPolicy,
+    isError: isLevelPolicyError,
+    error: levelPolicyError,
+  } = useGetLevelPolicy();
+
+  const { control, handleSubmit, watch, reset } =
     useForm<SecurityLevelSettingFormValue>({
       defaultValues: {
         isEnabled: true,
-        level: VULNERABILITY_LEVEL_KEYS[0],
+        level: DEFAULT_SECURITY_LEVEL,
         thresholdCount: DEFAULT_SECURITY_LEVEL_THRESHOLD_COUNT,
       },
     });
 
+  // 조회된 데이터로 폼 초기화
+  useEffect(() => {
+    // 1) 데이터가 있으면 해당 값으로 초기화
+    if (levelPolicy) {
+      const validatedLevel = toSecurityLevelKey(levelPolicy.severity);
+      reset({
+        isEnabled: levelPolicy.isRestrictionEnabled,
+        level: validatedLevel,
+        thresholdCount: levelPolicy.severityCount,
+      });
+      return;
+    }
+
+    // 2) 데이터가 없고 에러일 때만 기본값으로 초기화
+    if (isLevelPolicyError) {
+      console.error(
+        "보안 레벨 정책 조회에 실패했습니다. 기본값을 사용합니다.",
+        levelPolicyError,
+      );
+      reset({
+        isEnabled: true,
+        level: DEFAULT_SECURITY_LEVEL,
+        thresholdCount: DEFAULT_SECURITY_LEVEL_THRESHOLD_COUNT,
+      });
+    }
+  }, [levelPolicy, isLevelPolicyError, levelPolicyError, reset]);
+
   useSubscribe(REGISTRY_EVENTS.openSecurityLevelSettingModal, () => {
     setOpen(true);
+  });
+
+  // 보안 레벨 정책 수정
+  const updateLevelMutation = useUpdateLevelPolicy({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetLevelPolicyQueryKey(),
+        });
+        handleClose();
+      },
+    },
   });
 
   const isEnabled = watch("isEnabled");
@@ -62,7 +132,16 @@ export function SecurityLevelSettingModal() {
 
   const handleClose = () => setOpen(false);
 
-  const onSubmit = () => {};
+  const onSubmit = (formData: SecurityLevelSettingFormValue) => {
+    updateLevelMutation.mutate({
+      data: {
+        hasEnabled: formData.isEnabled,
+        severity:
+          formData.level.toUpperCase() as VulnerabilityLevelPolicyUpdateRequestSeverity,
+        severityCount: formData.thresholdCount,
+      },
+    });
+  };
 
   const handleModalOk = () => {
     handleSubmit(onSubmit)();
@@ -84,6 +163,18 @@ export function SecurityLevelSettingModal() {
       centered
       showHeaderBorder
     >
+      <SettingGuideBox>
+        <SettingGuideText>
+          보안 레벨 기능을 <SettingGuideHighlight>'사용'</SettingGuideHighlight>
+          으로 설정하면, 설정 변경 이후 업로드되는 컨테이너 이미지부터 보안
+          기준이 적용됩니다.
+        </SettingGuideText>
+        <SettingGuideText>
+          <SettingGuideHighlight>'미사용'</SettingGuideHighlight>으로 변경할
+          경우, 기존에 승인 대상이었던 이미지도 모두 사용 가능 상태로
+          전환됩니다.
+        </SettingGuideText>
+      </SettingGuideBox>
       <Form layout="vertical">
         <FormItem label="보안 레벨 기능 사용 여부">
           <Controller
@@ -237,4 +328,28 @@ const CriteriaItem = styled.div`
   & > * {
     width: 100%;
   }
+`;
+
+const SettingGuideBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  margin-bottom: 16px;
+`;
+
+const SettingGuideText = styled.p`
+  font-size: 13px;
+  font-weight: 400;
+  color: #000;
+  line-height: 1.6;
+  margin: 0;
+`;
+
+const SettingGuideHighlight = styled.span`
+  font-weight: 700;
+  color: var(--color-blue-04);
 `;

@@ -157,6 +157,15 @@ export const REQUEST_IMAGE_EVENTS = {
 export const REGISTRY_EVENTS = {
   // 보안 레벨 설정 모달 열기
   openSecurityLevelSettingModal: "registry:open-security-level-setting-modal",
+  // 개인 레지스트리 보안 스캔 정책 변경 확인 모달 열기
+  openPrivateScanPolicyConfirmModal:
+    "registry:open-private-scan-policy-confirm-modal",
+  // 공유 레지스트리 보안 스캔 정책 변경 확인 모달 열기
+  openPublicScanPolicyConfirmModal:
+    "registry:open-public-scan-policy-confirm-modal",
+  // 외부 업로드 이미지 사용 허용 정책 변경 확인 모달 열기
+  openExternalImagePolicyConfirmModal:
+    "registry:open-external-image-policy-confirm-modal",
   // 레지스트리 이미지 유형 선택 모달 열기
   openSelectTypeModal: "registry:open-select-type-modal",
   // 레지스트리 이미지 생성 모달 열기 (External)
@@ -201,6 +210,9 @@ export const FILE_SECURITY_EVENTS = {
 export const REGISTRY_SECURITY_EVENTS = {
   // 레지스트리 보안 취약점 상세 모달에 필요한 정보 전달 이벤트
   sendVulnerabilityInfo: "registry-security:send-vulnerability-info",
+  // 컨테이너 이미지 취약점 상세 모달 열기 이벤트
+  openVulnerabilityDetailModal:
+    "registry-security:open-vulnerability-detail-modal",
 } as const;
 
 // 리포트 관련 이벤트

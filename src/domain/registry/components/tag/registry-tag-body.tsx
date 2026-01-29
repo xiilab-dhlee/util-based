@@ -1,6 +1,6 @@
 "use client";
 
-import { createVulnerabilityColumn } from "@/shared/components/column/create-vulnerability-column";
+import { createVulnerabilityColumn } from "@/domain/registry/components/column/create-vulnerability-column";
 import { CustomizedTable } from "@/shared/components/table/customized-table";
 import { ListWrapper } from "@/styles/layers/list-page-layers.styled";
 

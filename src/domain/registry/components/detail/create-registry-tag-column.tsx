@@ -120,19 +120,20 @@ const createColumnList = (): ResponsiveColumnType[] => {
       title: "사용 요청",
       align: "center",
       render: (_: unknown, record: ImageTagListResponse) => {
-        const isApprovalWaiting =
-          record.approvalStatus === ApprovalStatusEnum.APPROVAL_WAITING;
+        const { approvalStatus, imageTagId } = record;
 
         // 승인 대기 상태면 상세 모달 (취소 가능)
-        if (isApprovalWaiting) {
+        if (approvalStatus === ApprovalStatusEnum.APPROVAL_WAITING) {
           return <ViewUsageRequestButton record={record} />;
         }
 
-        // 그 외 상태면 새 요청 생성 모달
-        const isDisabled = !record.imageTagId;
+        // AVAILABLE: 보안 레벨 설정이 꺼져있어 승인 불필요 → 요청 버튼 비활성화
+        const isAvailable = approvalStatus === ApprovalStatusEnum.AVAILABLE;
+        const isDisabled = !imageTagId || isAvailable;
+
         return (
           <RequestUseButton
-            imageTagId={record.imageTagId ?? 0}
+            imageTagId={imageTagId ?? 0}
             disabled={isDisabled}
           />
         );

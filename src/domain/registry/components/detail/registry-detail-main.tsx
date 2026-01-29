@@ -10,6 +10,7 @@ import { DeleteRegistryModal } from "@/domain/registry/components/delete-registr
 import { DeleteRegistryTagModal } from "@/domain/registry/components/delete-registry-tag-modal";
 import { RegistryDetailAside } from "@/domain/registry/components/detail/registry-detail-aside";
 import { RegistryDetailBody } from "@/domain/registry/components/detail/registry-detail-body";
+import { ViewVulnerabilityDetailModal } from "@/domain/registry/components/modal/view-vulnerability-detail-modal";
 import { RequestUseModal } from "@/domain/registry/components/request-use-modal";
 import { ScanRegistryTagModal } from "@/domain/registry/components/scan-registry-tag-modal";
 import { UpdateRegistryTagModal } from "@/domain/registry/components/update-registry-tag-modal";
@@ -147,6 +148,8 @@ export function RegistryDetailMain({ mode }: RegistryDetailMainProps) {
       <ViewRequestReasonModal />
       {/* 반려 사유 모달 */}
       <ViewRejectReasonModal />
+      {/* 취약점 상세 모달 */}
+      <ViewVulnerabilityDetailModal />
     </>
   );
 }

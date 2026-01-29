@@ -1,27 +1,34 @@
 "use client";
 
+import type { LabelColorVariant } from "xiilab-ui";
 import { Label } from "xiilab-ui";
 
-/** 스캔 상태 타입 */
-type ScanStatus = "COMPLETED" | "FAILED" | "IN_PROGRESS" | "NOT_SCANNED";
+import { ImageTagListResponseScanStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+
+type ScanStatus = ImageTagListResponseScanStatus;
 
 /** 스캔 상태 텍스트 매핑 */
 const SCAN_STATUS_TEXT: Record<ScanStatus, string> = {
-  COMPLETED: "완료",
-  FAILED: "실패",
-  IN_PROGRESS: "진행중",
-  NOT_SCANNED: "검사 미실시",
+  [ImageTagListResponseScanStatus.SUCCESS]: "완료",
+  [ImageTagListResponseScanStatus.PENDING]: "대기중",
+  [ImageTagListResponseScanStatus.RUNNING]: "진행중",
+  [ImageTagListResponseScanStatus.STOPPED]: "중지됨",
+  [ImageTagListResponseScanStatus.ERROR]: "실패",
+  [ImageTagListResponseScanStatus.NOT_SCANNED]: "검사 미실시",
+  [ImageTagListResponseScanStatus.UNSUPPORTED]: "지원안함",
+  [ImageTagListResponseScanStatus.UNKNOWN]: "알 수 없음",
 };
 
 /** 스캔 상태 Label variant 매핑 */
-const SCAN_STATUS_VARIANT: Record<
-  ScanStatus,
-  "blue" | "red" | "green" | "orange"
-> = {
-  COMPLETED: "blue",
-  FAILED: "red",
-  IN_PROGRESS: "green",
-  NOT_SCANNED: "orange",
+const SCAN_STATUS_VARIANT: Record<ScanStatus, LabelColorVariant> = {
+  [ImageTagListResponseScanStatus.SUCCESS]: "blue",
+  [ImageTagListResponseScanStatus.PENDING]: "orange",
+  [ImageTagListResponseScanStatus.RUNNING]: "green",
+  [ImageTagListResponseScanStatus.STOPPED]: "black",
+  [ImageTagListResponseScanStatus.ERROR]: "red",
+  [ImageTagListResponseScanStatus.NOT_SCANNED]: "black",
+  [ImageTagListResponseScanStatus.UNSUPPORTED]: "black",
+  [ImageTagListResponseScanStatus.UNKNOWN]: "black",
 };
 
 interface ScanStatusTextProps {
