@@ -157,6 +157,12 @@ export const REQUEST_IMAGE_EVENTS = {
 export const REGISTRY_EVENTS = {
   // 보안 레벨 설정 모달 열기
   openSecurityLevelSettingModal: "registry:open-security-level-setting-modal",
+  // 개인 레지스트리 보안 스캔 정책 변경 확인 모달 열기
+  openPrivateScanPolicyConfirmModal:
+    "registry:open-private-scan-policy-confirm-modal",
+  // 공유 레지스트리 보안 스캔 정책 변경 확인 모달 열기
+  openPublicScanPolicyConfirmModal:
+    "registry:open-public-scan-policy-confirm-modal",
   // 레지스트리 이미지 유형 선택 모달 열기
   openSelectTypeModal: "registry:open-select-type-modal",
   // 레지스트리 이미지 생성 모달 열기 (External)

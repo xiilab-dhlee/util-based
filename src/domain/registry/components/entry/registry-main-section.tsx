@@ -2,37 +2,34 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useState } from "react";
 import styled from "styled-components";
 import { Label, Switch, Typography } from "xiilab-ui";
 
 import { useGetApprovalStatusSummary } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request";
-import {
-  ImageTagUsageRequestResponseApprovalStatus,
-  VulnerabilityScanPolicyUpdateRequestImageType,
-} from "@/api/generated/astragoBackendAPIDocumentation.schemas";
+import { ImageTagUsageRequestResponseApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
   getGetAstragoOnlyPolicyQueryKey,
-  getGetScanPolicyQueryKey,
   useGetAstragoOnlyPolicy,
   useGetLevelPolicy,
   useGetScanPolicy,
   useUpdateAstragoOnlyPolicy,
-  useUpdateScanPolicy,
 } from "@/api/generated/vulnerability-policy-admin/vulnerability-policy-admin";
+import { PrivateScanPolicyConfirmModal } from "@/domain/registry/components/entry/private-scan-policy-confirm-modal";
+import { PublicScanPolicyConfirmModal } from "@/domain/registry/components/entry/public-scan-policy-confirm-modal";
 import { RequestImageStatusCard } from "@/domain/registry/components/entry/request-image-status-card";
 import { SecurityLevelSettingButton } from "@/domain/registry/components/entry/security-level-setting-button";
 import { SecuritySettingCard } from "@/domain/registry/components/entry/security-setting-card";
 import { REGISTRY_QUICK_MENUS } from "@/domain/registry/constants/registry.constant";
 import { UserMonitoringQuickMenu } from "@/domain/user-monitoring/components/user-monitoring-quick-menu";
+import { REGISTRY_EVENTS } from "@/shared/constants/pubsub.constant";
+import { usePublish } from "@/shared/hooks/use-pub-sub";
+import type { CoreSecurityLevel } from "@/shared/types/core.interface";
+import { getVulnerabilityLevelInfo } from "@/shared/utils/vulnerability.util";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function RegistryMainSection() {
   const queryClient = useQueryClient();
-
-  // 현재 수정 중인 스캔 정책 타입 추적
-  const [updatingImageType, setUpdatingImageType] =
-    useState<VulnerabilityScanPolicyUpdateRequestImageType | null>(null);
+  const publish = usePublish();
 
   // 이미지 사용 요청 상태 조회
   const { data: approvalStatusSummary, isLoading } =
@@ -45,20 +42,6 @@ export function RegistryMainSection() {
     useGetAstragoOnlyPolicy();
   const { data: levelPolicy } = useGetLevelPolicy();
 
-  // 스캔 정책 수정
-  const updateScanMutation = useUpdateScanPolicy({
-    mutation: {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: getGetScanPolicyQueryKey(),
-        });
-      },
-      onSettled: () => {
-        setUpdatingImageType(null);
-      },
-    },
-  });
-
   // Astrago 전용 정책 수정
   const updateAstragoOnlyMutation = useUpdateAstragoOnlyPolicy({
     mutation: {
@@ -70,25 +53,19 @@ export function RegistryMainSection() {
     },
   });
 
-  // 스캔 정책 변경 핸들러
-  const handleScanPolicyChange = (
-    imageType: VulnerabilityScanPolicyUpdateRequestImageType,
-    hasEnabled: boolean,
-  ) => {
-    setUpdatingImageType(imageType);
-    updateScanMutation.mutate({ data: { imageType, hasEnabled } });
+  // 개인 레지스트리 스캔 정책 변경 핸들러
+  const handlePrivateScanPolicyChange = (hasEnabled: boolean) => {
+    publish(REGISTRY_EVENTS.openPrivateScanPolicyConfirmModal, { hasEnabled });
+  };
+
+  // 공유 레지스트리 스캔 정책 변경 핸들러
+  const handlePublicScanPolicyChange = (hasEnabled: boolean) => {
+    publish(REGISTRY_EVENTS.openPublicScanPolicyConfirmModal, { hasEnabled });
   };
 
   // Astrago 전용 정책 변경 핸들러
   const handleAstragoOnlyPolicyChange = (hasEnabled: boolean) => {
     updateAstragoOnlyMutation.mutate({ data: { hasEnabled } });
-  };
-
-  // 특정 이미지 타입이 수정 중인지 확인
-  const isUpdatingImageType = (
-    imageType: VulnerabilityScanPolicyUpdateRequestImageType,
-  ) => {
-    return updateScanMutation.isPending && updatingImageType === imageType;
   };
 
   return (
@@ -152,18 +129,8 @@ export function RegistryMainSection() {
                   <Switch
                     darkMode
                     checked={scanPolicy?.isPrivateScanEnabled}
-                    onChange={(checked) =>
-                      handleScanPolicyChange(
-                        VulnerabilityScanPolicyUpdateRequestImageType.PRIVATE,
-                        checked,
-                      )
-                    }
-                    disabled={
-                      isScanPolicyLoading ||
-                      isUpdatingImageType(
-                        VulnerabilityScanPolicyUpdateRequestImageType.PRIVATE,
-                      )
-                    }
+                    onChange={handlePrivateScanPolicyChange}
+                    disabled={isScanPolicyLoading}
                   />
                 }
               />
@@ -180,18 +147,8 @@ export function RegistryMainSection() {
                   <Switch
                     darkMode
                     checked={scanPolicy?.isPublicScanEnabled}
-                    onChange={(checked) =>
-                      handleScanPolicyChange(
-                        VulnerabilityScanPolicyUpdateRequestImageType.PUBLIC,
-                        checked,
-                      )
-                    }
-                    disabled={
-                      isScanPolicyLoading ||
-                      isUpdatingImageType(
-                        VulnerabilityScanPolicyUpdateRequestImageType.PUBLIC,
-                      )
-                    }
+                    onChange={handlePublicScanPolicyChange}
+                    disabled={isScanPolicyLoading}
                   />
                 }
               />
@@ -234,7 +191,7 @@ export function RegistryMainSection() {
                 }
                 description={
                   levelPolicy?.isRestrictionEnabled
-                    ? `${levelPolicy?.severity} 이상의 취약점 ${levelPolicy?.severityCount}개 이상 발견 시, 승인 필요`
+                    ? `${getVulnerabilityLevelInfo(levelPolicy.severity as CoreSecurityLevel).text} 이상의 취약점 ${levelPolicy.severityCount}개 이상 발견 시, 승인 필요`
                     : "보안 레벨 기능이 비활성화되어 있습니다"
                 }
                 action={<SecurityLevelSettingButton />}
@@ -243,6 +200,10 @@ export function RegistryMainSection() {
           </SecuritySetting>
         </RightBody>
       </Right>
+      {/* 개인 레지스트리 보안 스캔 정책 변경 확인 모달 */}
+      <PrivateScanPolicyConfirmModal />
+      {/* 공유 레지스트리 보안 스캔 정책 변경 확인 모달 */}
+      <PublicScanPolicyConfirmModal />
     </Container>
   );
 }
