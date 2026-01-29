@@ -570,7 +570,7 @@ export function CreateSnapshotRegistryModal({
             </Typography.Text>
             <RequiredMark>*</RequiredMark>
             <GuideTooltip
-              title="INTERACTIVE 타입의 워크로드만 스냅샷 이미지 생성이 가능합니다."
+              title="실행 중인 Interactive 타입 워크로드만 스냅샷 이미지 생성이 가능합니다."
               iconSize={14}
             />
           </WorkloadHeader>
