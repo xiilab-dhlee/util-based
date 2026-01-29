@@ -13,6 +13,14 @@ import { applyColumnConfigs } from "@/shared/utils/column.util";
 import { formatDateTimeSafely } from "@/shared/utils/date.util";
 import { ColumnAlignCenterWrap } from "@/styles/layers/column-layer.styled";
 
+const formatListOrDash = (items?: string[]): string => {
+  if (!items || items.length === 0) {
+    return "-";
+  }
+
+  return items.join(", ");
+};
+
 // 공통 액션 컬럼 (DESCRIBE, YAML) - 모든 리소스에서 재사용
 const createActionColumns = (
   resourceType: K8sResourceType,
@@ -58,7 +66,7 @@ const createNodesColumnList = (): ResponsiveColumnType[] => [
     align: "center",
     width: "20%",
     ellipsis: true,
-    render: (roles: string[]) => roles?.join(", ") ?? "-",
+    render: (roles: string[]) => formatListOrDash(roles),
   },
   {
     title: "GPU",
@@ -115,7 +123,7 @@ const createServiceColumnList = (): ResponsiveColumnType[] => [
     align: "center",
     width: "19%",
     ellipsis: true,
-    render: (ports: string[]) => ports?.join(", ") ?? "-",
+    render: (ports: string[]) => formatListOrDash(ports),
   },
   ...createActionColumns(RESOURCE_NAME_TO_TYPE.Service),
 ];
@@ -238,7 +246,7 @@ const createDeploymentsColumnList = (): ResponsiveColumnType[] => [
     align: "center",
     width: "19%",
     ellipsis: true,
-    render: (conditions: string[]) => conditions?.join(", ") ?? "-",
+    render: (conditions: string[]) => formatListOrDash(conditions),
   },
   ...createActionColumns(RESOURCE_NAME_TO_TYPE.Deployments),
 ];
