@@ -240,9 +240,35 @@ export function CreateSnapshotRegistryModal({
         // 이미 선택된 워크로드를 다시 클릭하면 선택 해제
         setSelectedWorkloadKey(null);
         resetField("workloadId");
+        resetField("env");
+        resetField("port");
       } else {
         setSelectedWorkloadKey(workload.workloadResourceName);
         setValue("workloadId", workload.workloadId, { shouldValidate: true });
+
+        // 워크로드의 환경변수 자동 채우기
+        if (workload.env && workload.env.length > 0) {
+          const envData = workload.env.map((e) => ({
+            id: uuidv4(),
+            name: e.key,
+            value: e.value,
+          }));
+          setValue("env", envData);
+        } else {
+          resetField("env");
+        }
+
+        // 워크로드의 포트 자동 채우기
+        if (workload.port && workload.port.length > 0) {
+          const portData = workload.port.map((p) => ({
+            id: uuidv4(),
+            name: p.portName,
+            port: p.portNumber,
+          }));
+          setValue("port", portData);
+        } else {
+          resetField("port");
+        }
       }
     },
     [selectedWorkloadKey, setValue, resetField],
@@ -564,7 +590,10 @@ export function CreateSnapshotRegistryModal({
                   const isSelected =
                     selectedWorkloadKey === workload.workloadResourceName;
                   return (
-                    <WorkloadCardWrapper key={workload.workloadResourceName}>
+                    <WorkloadCardWrapper
+                      key={workload.workloadResourceName}
+                      onClick={() => handleSelectWorkload(workload)}
+                    >
                       <Card
                         contentVariant="compact"
                         title={workload.workloadName}
@@ -742,6 +771,10 @@ const WorkloadCardWrapper = styled.div`
   cursor: pointer;
   min-width: 0;
   overflow: hidden;
+
+  & * {
+    cursor: pointer;
+  }
 `;
 
 const CardBody = styled.div`
