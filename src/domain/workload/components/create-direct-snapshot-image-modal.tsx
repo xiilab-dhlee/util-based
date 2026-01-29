@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
@@ -33,6 +33,24 @@ import {
 import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
 import { useSubscribe } from "@/shared/hooks/use-pub-sub";
+
+// 포트 번호 유효성 검사 (1-65535)
+const isValidPortNumber = (portStr: string): boolean => {
+  if (!portStr) return false;
+  const num = Number(portStr);
+  return (
+    !Number.isNaN(num) &&
+    num >= 1 &&
+    num <= createPrivateSnapshotImageBodyPortItemPortMax
+  );
+};
+
+// 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자)
+const isValidPortName = (name: string): boolean => {
+  if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
+    return false;
+  return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
+};
 
 /**
  * Direct Snapshot Image 생성 모달에 전달되는 데이터 타입
@@ -94,24 +112,6 @@ export function CreateDirectSnapshotImageModal() {
   } = useFieldArray({ control, name: "port" });
 
   const { mutate, isPending } = useCreatePrivateSnapshotImage();
-
-  // 포트 번호 유효성 검사 (1-65535)
-  const isValidPortNumber = useCallback((portStr: string): boolean => {
-    if (!portStr) return false;
-    const num = Number(portStr);
-    return (
-      !Number.isNaN(num) &&
-      num >= 1 &&
-      num <= createPrivateSnapshotImageBodyPortItemPortMax
-    );
-  }, []);
-
-  // 포트 이름 유효성 검사 (RFC6335: 소문자/숫자/하이픈, 최소 1개 영문자 필수, 최대 15자)
-  const isValidPortName = useCallback((name: string): boolean => {
-    if (!name || name.length > createPrivateSnapshotImageBodyPortItemNameMax)
-      return false;
-    return createPrivateSnapshotImageBodyPortItemNameRegExp.test(name);
-  }, []);
 
   const handleClose = () => {
     if (isPending) return;
