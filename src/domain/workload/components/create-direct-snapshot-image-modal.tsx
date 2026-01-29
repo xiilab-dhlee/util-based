@@ -122,19 +122,13 @@ export function CreateDirectSnapshotImageModal() {
     if (isPending) return;
     if (workloadId === null || workspaceId === null) return;
 
-    // API 요청 형태로 변환 (name/value 또는 name/port가 모두 있는 항목만 전송)
+    // API 요청 형태로 변환
     const envData = data.env
-      ?.filter(
-        (e): e is typeof e & { name: string; value: string } =>
-          !!e.name && !!e.value,
-      )
+      ?.filter((e) => e.name && e.value)
       .map((e) => ({ name: e.name, value: e.value }));
 
     const portData = data.port
-      ?.filter(
-        (p): p is typeof p & { name: string; port: number } =>
-          !!p.name && p.port !== undefined,
-      )
+      ?.filter((p) => p.name && p.port !== undefined)
       .map((p) => ({ name: p.name, port: p.port }));
 
     mutate(
@@ -337,7 +331,7 @@ export function CreateDirectSnapshotImageModal() {
                   />
                 </ButtonWrapper>
               </DynamicFieldRow>
-              {/* 추가된 데이터 행: 삭제 버튼 */}
+              {/* 추가된 데이터 행: 읽기 전용 + 삭제 버튼 */}
               {envFields.map((field, index) => (
                 <DynamicFieldRow key={field.id}>
                   <Controller
@@ -347,6 +341,7 @@ export function CreateDirectSnapshotImageModal() {
                       <FieldInput
                         {...inputField}
                         placeholder="환경변수 키 입력"
+                        disabled
                       />
                     )}
                   />
@@ -357,6 +352,7 @@ export function CreateDirectSnapshotImageModal() {
                       <FieldInput
                         {...inputField}
                         placeholder="환경변수 값 입력"
+                        disabled
                       />
                     )}
                   />
@@ -416,7 +412,7 @@ export function CreateDirectSnapshotImageModal() {
                   />
                 </ButtonWrapper>
               </DynamicFieldRow>
-              {/* 추가된 데이터 행: 삭제 버튼 */}
+              {/* 추가된 데이터 행: 읽기 전용 + 삭제 버튼 */}
               {portFields.map((field, index) => (
                 <DynamicFieldRow key={field.id}>
                   <Controller
@@ -426,6 +422,7 @@ export function CreateDirectSnapshotImageModal() {
                       <FieldInput
                         {...inputField}
                         placeholder="포트 이름 입력"
+                        disabled
                       />
                     )}
                   />
@@ -437,12 +434,8 @@ export function CreateDirectSnapshotImageModal() {
                         {...inputField}
                         type="number"
                         placeholder="포트 번호 입력"
-                        onChange={(e) =>
-                          inputField.onChange(
-                            e.target.value ? Number(e.target.value) : undefined,
-                          )
-                        }
                         value={inputField.value ?? ""}
+                        disabled
                       />
                     )}
                   />
