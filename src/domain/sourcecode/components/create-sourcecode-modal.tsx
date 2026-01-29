@@ -250,7 +250,7 @@ export function CreateSourcecodeModal() {
                 />
               )}
             </CredentialRow>
-            {/* 기본 마운트 경로 & 실행 명령어 */}
+            {/* 기본 Mount Path & 실행 명령어 */}
             <StyledFormRow>
               <Controller
                 name="mountPath"

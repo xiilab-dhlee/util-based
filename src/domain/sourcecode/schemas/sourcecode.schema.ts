@@ -26,12 +26,12 @@ const baseSourcecodeFields = {
     .max(50, "소스코드 이름은 50자 이하로 입력해 주세요."),
   mountPath: z
     .string()
-    .min(1, "마운트 경로를 입력해 주세요.")
-    .max(1000, "마운트 경로는 1000자 이하로 입력해 주세요.")
-    .regex(/^\/.*/, "마운트 경로는 /로 시작해야 합니다.")
+    .min(1, "Mount Path를 입력해 주세요.")
+    .max(1000, "Mount Path는 1000자 이하로 입력해 주세요.")
+    .regex(/^\/.*/, "Mount Path는 /로 시작해야 합니다.")
     .refine(
       (value) => !KOREAN_CHAR_REGEX.test(value),
-      "마운트 경로에 한글을 입력할 수 없습니다.",
+      "Mount Path에 한글을 입력할 수 없습니다.",
     ),
   executionCmd: z
     .string()

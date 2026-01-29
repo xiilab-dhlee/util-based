@@ -12,11 +12,9 @@ export function CreateWorkloadSecondStep() {
     <Container>
       {/* 1. 노드, 라벨 컨테이너 */}
       <CreateWorkloadNode />
-      {/* 2. GPU 컨테이너 */}
-      {/* <CreateWorkloadGpu /> */}
-      {/* 3. 자원 컨테이너 */}
+      {/* 2. 자원 컨테이너 */}
       <CreateWorkloadResource />
-      {/* 4. 이미지 컨테이너 */}
+      {/* 3. 이미지 컨테이너 */}
       <CreateWorkloadImage />
     </Container>
   );

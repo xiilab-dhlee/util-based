@@ -220,7 +220,7 @@ export function UpdateSourcecodeDetail({
                   >
                     <Input
                       {...field}
-                      placeholder="마운트 경로를 입력해 주세요. (예: /mnt/data)"
+                      placeholder="Mount Path를 입력해 주세요. (예: /mnt/data)"
                       width="100%"
                       autoComplete="off"
                       disabled={isPending}

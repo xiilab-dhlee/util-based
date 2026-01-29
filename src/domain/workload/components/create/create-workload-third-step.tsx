@@ -1,24 +1,17 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
-import { Input, Typography } from "xiilab-ui";
+import { Typography } from "xiilab-ui";
 
 import { CreateWorkloadAutoSourcecode } from "@/domain/workload/components/create/create-workload-auto-sourcecode";
 import { CreateWorkloadSourcecode } from "@/domain/workload/components/create/create-workload-sourcecode";
 import { CreateWorkloadVolume } from "@/domain/workload/components/create/create-workload-volume";
-import {
-  imageTypeAtom,
-  workloadOutputPathAtom,
-} from "@/domain/workload/state/create-workload.atom";
+import { WORKLOAD_IMAGE_TYPES } from "@/domain/workload/constants/workload.constant";
+import { imageTypeAtom } from "@/domain/workload/state/create-workload.atom";
 
 export function CreateWorkloadThirdStep() {
   const imageType = useAtomValue(imageTypeAtom);
-  const [outputPath, setOutputPath] = useAtom(workloadOutputPathAtom);
-
-  const handleOutputPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOutputPath(e.target.value);
-  };
 
   return (
     <Container>
@@ -33,24 +26,15 @@ export function CreateWorkloadThirdStep() {
         </Field>
         <FieldBody>
           {/* 소스코드 추가 영역 */}
-          {imageType === "HUB" && <CreateWorkloadAutoSourcecode />}
-          {imageType !== "HUB" && <CreateWorkloadSourcecode />}
+          {imageType === WORKLOAD_IMAGE_TYPES.HUB && (
+            <CreateWorkloadAutoSourcecode />
+          )}
+          {imageType !== WORKLOAD_IMAGE_TYPES.HUB && (
+            <CreateWorkloadSourcecode />
+          )}
           {/* 볼륨 추가 영역 */}
           <CreateWorkloadVolume />
         </FieldBody>
-      </Section>
-      <Section>
-        <FieldHeader>
-          <Typography.Text variant="subtitle-2-1">Output 경로</Typography.Text>
-          <Typography.Text variant="body-2-4" color="#707070">
-            (선택사항)
-          </Typography.Text>
-        </FieldHeader>
-        <Input
-          placeholder="Output 경로를 입력해주세요."
-          value={outputPath}
-          onChange={handleOutputPathChange}
-        />
       </Section>
     </Container>
   );

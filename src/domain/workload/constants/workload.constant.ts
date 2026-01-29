@@ -13,6 +13,39 @@ import {
 import type { AntdTableSortState } from "@/shared/types/core.model";
 
 /**
+ * 워크로드 노드 모드 상수 (API 스펙: WorkloadCreateRequestNodeType)
+ */
+export const WORKLOAD_NODE_MODES = {
+  SINGLE: "SINGLE",
+  MULTI: "MULTI",
+} as const;
+
+/**
+ * 워크로드 잡 타입 상수
+ * Note: Types are defined in generated API schemas (ActiveWorkloadResponseWorkloadJobType)
+ */
+export const WORKLOAD_JOB_TYPES = {
+  BATCH: "BATCH",
+  INTERACTIVE: "INTERACTIVE",
+  DISTRIBUTED: "DISTRIBUTED",
+} as const satisfies Record<string, ActiveWorkloadResponseWorkloadJobType>;
+
+/**
+ * 워크로드 이미지 타입 상수
+ */
+export const WORKLOAD_IMAGE_TYPES = {
+  HUB: "HUB",
+  BUILT_IN: "BUILT_IN",
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
+} as const;
+
+/**
+ * 기본 이미지 타입
+ */
+export const DEFAULT_IMAGE_TYPE = WORKLOAD_IMAGE_TYPES.HUB;
+
+/**
  * 워크로드 잡 타입 라벨 상수 (짧은 버전)
  */
 export const WORKLOAD_JOB_TYPE_LABEL_MAP: Record<
@@ -140,7 +173,7 @@ export type ActiveWorkloadSortState =
  */
 export const DEFAULT_ACTIVE_WORKLOAD_SORT_STATE = {
   field: "ageSeconds",
-  order: "descend",
+  order: "ascend",
 } as const satisfies ActiveWorkloadSortState;
 
 /**
@@ -224,7 +257,8 @@ export const WORKLOAD_IMAGE_TYPE_LABEL_MAP: Record<
   HUB: "허브",
   PRIVATE: "개인 레지스트리",
   PUBLIC: "공유 레지스트리",
-} as const;
+} as const satisfies Record<keyof typeof WORKLOAD_IMAGE_TYPES, string>;
+
 
 /**
  * 잡 타입에 따른 라벨 반환 (워크로드 공용)

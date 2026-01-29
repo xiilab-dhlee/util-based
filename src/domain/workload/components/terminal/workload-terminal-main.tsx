@@ -13,6 +13,7 @@ import {
 import { AsideWorkloadMonitoring } from "@/domain/workload/components/aside-workload-monitoring";
 import { ViewWorkloadMonitoringModal } from "@/domain/workload/components/detail/view-workload-monitoring-modal";
 import { WorkloadMonitoringButton } from "@/domain/workload/components/workload-monitoring-button";
+import { WORKLOAD_JOB_TYPES } from "@/domain/workload/constants/workload.constant";
 import {
   openViewWorkloadMonitoringDrawerAtom,
   terminalSelectedPodNameAtom,
@@ -42,7 +43,7 @@ export function WorkloadTerminalMain() {
   });
 
   const workloadType = data?.workloadJobType;
-  const isDistributed = workloadType === "DISTRIBUTED";
+  const isDistributed = workloadType === WORKLOAD_JOB_TYPES.DISTRIBUTED;
 
   // DISTRIBUTED 워크로드인 경우 Pod 목록 조회
   const { data: podsData } = useGetDistributedPods(

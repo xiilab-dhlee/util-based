@@ -1,20 +1,47 @@
 "use client";
 
 import { useAtom } from "jotai";
+import type { Dispatch, SetStateAction } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import styled from "styled-components";
 
-import type { ActiveWorkloadResponseWorkloadJobType } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import { JobTypeCard } from "@/domain/workload/components/create/job-type-card";
+import { WORKLOAD_JOB_TYPES } from "@/domain/workload/constants/workload.constant";
+import type { CreateWorkloadFormValues } from "@/domain/workload/schemas/create-workload.schema";
 import { jobTypeAtom } from "@/domain/workload/state/create-workload.atom";
+import type { WorkloadJobType } from "@/domain/workload/types/workload.type";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 
-const JOB_TYPES: ActiveWorkloadResponseWorkloadJobType[] = [
-  "BATCH",
-  "INTERACTIVE",
+const JOB_TYPES: WorkloadJobType[] = [
+  WORKLOAD_JOB_TYPES.BATCH,
+  WORKLOAD_JOB_TYPES.INTERACTIVE,
 ];
 
 export function CreateWorkloadJobType() {
   const [jobType, setJobType] = useAtom(jobTypeAtom);
+  const { control } = useFormContext<CreateWorkloadFormValues>();
+  const { field: jobTypeField } = useController({
+    name: "workloadJobType",
+    control,
+  });
+
+  const handleSelectJobType: Dispatch<SetStateAction<WorkloadJobType>> = (
+    nextType,
+  ) => {
+    const resolvedType =
+      typeof nextType === "function" ? nextType(jobType) : nextType;
+    jobTypeField.onChange(resolvedType);
+    setJobType(resolvedType);
+  };
+
+  const jobTypeCards = JOB_TYPES.map((type) => (
+    <JobTypeCard
+      key={type}
+      type={type}
+      value={jobTypeField.value ?? jobType}
+      setValue={handleSelectJobType}
+    />
+  ));
 
   return (
     <Container>
@@ -23,16 +50,7 @@ export function CreateWorkloadJobType() {
           Job Type
         </CreateWorkloadSectionTitle>
       </Header>
-      <Body>
-        {JOB_TYPES.map((type) => (
-          <JobTypeCard
-            key={type}
-            type={type}
-            value={jobType}
-            setValue={setJobType}
-          />
-        ))}
-      </Body>
+      <Body>{jobTypeCards}</Body>
     </Container>
   );
 }

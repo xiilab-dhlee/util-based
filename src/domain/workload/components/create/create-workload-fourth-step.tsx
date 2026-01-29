@@ -3,31 +3,55 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { EditorView } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
 import { useAtom, useAtomValue } from "jotai";
+import { useController, useFormContext } from "react-hook-form";
 import styled from "styled-components";
 import { Input, Typography } from "xiilab-ui";
 
 import { CreateWorkloadEnv } from "@/domain/workload/components/create/create-workload-env";
 // import { CreateWorkloadParameter } from "@/domain/workload/components/create/create-workload-parameter";
 import { CreateWorkloadPort } from "@/domain/workload/components/create/create-workload-port";
+import type { CreateWorkloadFormValues } from "@/domain/workload/schemas/create-workload.schema";
 import {
-  execCommandAtom,
-  execPathAtom,
+  executionCmdAtom,
+  executionDirectoryAtom,
   imageTypeAtom,
 } from "@/domain/workload/state/create-workload.atom";
+import { errorTextStyle } from "@/styles/mixins/text";
+import { WORKLOAD_IMAGE_TYPES } from "../../constants/workload.constant";
 
 export function CreateWorkloadFourthStep() {
   const imageType = useAtomValue(imageTypeAtom);
-  const [execPath, setExecPath] = useAtom(execPathAtom);
-  const [execCommand, setExecCommand] = useAtom(execCommandAtom);
+  const isHubImage = imageType === WORKLOAD_IMAGE_TYPES.HUB;
+  const [executionDirectory, setExecutionDirectory] = useAtom(
+    executionDirectoryAtom,
+  );
+  const [executionCmd, setExecutionCmd] = useAtom(executionCmdAtom);
+  const { control } = useFormContext<CreateWorkloadFormValues>();
+  const {
+    field: executionDirectoryField,
+    fieldState: executionDirectoryFieldState,
+  } = useController({
+    name: "executionDirectory",
+    control,
+  });
+  const { field: executionCmdField, fieldState: executionCmdFieldState } =
+    useController({
+      name: "executionCmd",
+      control,
+    });
 
   const handleExecPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setExecPath(e.target.value);
+    const nextValue = e.target.value;
+    executionDirectoryField.onChange(nextValue);
+    setExecutionDirectory(nextValue);
   };
 
   const handleExecCommandChange = (value: string) => {
-    setExecCommand(value);
+    executionCmdField.onChange(value);
+    setExecutionCmd(value);
   };
 
   return (
@@ -46,9 +70,15 @@ export function CreateWorkloadFourthStep() {
             </Typography.Text>
             <Input
               placeholder="실행 경로를 입력해 주세요."
-              value={execPath || ""}
+              value={executionDirectory || ""}
               onChange={handleExecPathChange}
+              maxLength={1000}
             />
+            {executionDirectoryFieldState.error?.message && (
+              <ErrorMessage>
+                {executionDirectoryFieldState.error.message}
+              </ErrorMessage>
+            )}
           </FieldItem>
           <FieldItem>
             <Typography.Text variant="body-2-1" color="#484848">
@@ -56,10 +86,11 @@ export function CreateWorkloadFourthStep() {
             </Typography.Text>
             <CodeMirrorWrapper>
               <CodeMirror
-                value={execCommand || ""}
+                value={executionCmd || ""}
+                width="100%"
                 height="136px"
                 theme={oneDark}
-                extensions={[python(), javascript()]}
+                extensions={[python(), javascript(), EditorView.lineWrapping]}
                 onChange={handleExecCommandChange}
                 placeholder="실행 명령어를 입력해 주세요."
                 basicSetup={{
@@ -70,45 +101,35 @@ export function CreateWorkloadFourthStep() {
                 }}
               />
             </CodeMirrorWrapper>
+            {executionCmdFieldState.error?.message && (
+              <ErrorMessage>
+                {executionCmdFieldState.error.message}
+              </ErrorMessage>
+            )}
           </FieldItem>
         </Field>
       </Section>
-      <Section>
-        <Field>
-          <FieldHeader>
-            <Typography.Text variant="subtitle-2-1">Variables</Typography.Text>
-            <Typography.Text variant="body-2-4" color="#707070">
-              (선택사항)
-            </Typography.Text>
-          </FieldHeader>
-          {imageType !== "HUB" && (
-            <>
-              <FieldItem>
-                <CreateWorkloadEnv />
-              </FieldItem>
-              <FieldItem>
-                <CreateWorkloadPort />
-              </FieldItem>
-            </>
-          )}
-        </Field>
-      </Section>
-      {/* {imageType !== "HUB" && (
+      {!isHubImage && (
         <Section>
           <Field>
             <FieldHeader>
               <Typography.Text variant="subtitle-2-1">
-                시간 예측 파라미터
+                Variables
               </Typography.Text>
               <Typography.Text variant="body-2-4" color="#707070">
-                파라미터 값 입력 시, 워크로드의 종료 예상 시간을 확인할 수
-                있습니다.
+                (선택사항)
               </Typography.Text>
             </FieldHeader>
-            <CreateWorkloadParameter />
+
+            <FieldItem>
+              <CreateWorkloadEnv />
+            </FieldItem>
+            <FieldItem>
+              <CreateWorkloadPort />
+            </FieldItem>
           </Field>
         </Section>
-      )} */}
+      )}
     </Container>
   );
 }
@@ -152,6 +173,8 @@ const CodeMirrorWrapper = styled.div`
 
   .cm-scroller {
     font-family: Pretendard, monospace;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .cm-content {
@@ -172,4 +195,8 @@ const FieldItem = styled.div`
   & + & {
     margin-top: 16px;
   }
+`;
+
+const ErrorMessage = styled.div`
+  ${errorTextStyle}
 `;

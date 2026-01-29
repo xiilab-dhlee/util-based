@@ -1,24 +1,55 @@
 "use client";
 
-import {
-  // useAtom,
-  useAtomValue,
-} from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import { useEffect } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import styled from "styled-components";
 
-// import { Typography } from "xiilab-ui";
-
 import { CreateWorkloadNodeButton } from "@/domain/workload/components/create/create-workload-node-button";
+import { WORKLOAD_NODE_MODES } from "@/domain/workload/constants/workload.constant";
+import type { CreateWorkloadFormValues } from "@/domain/workload/schemas/create-workload.schema";
 import {
-  jobTypeAtom,
-  // labelsAtom,
+  canUseMultiNodeAtom,
+  distributedTypeAtom,
+  isDistributedLearningAtom,
+  nodeModeAtom,
+  resourcePresetIdAtom,
+  workerCountAtom,
 } from "@/domain/workload/state/create-workload.atom";
-// import { MyMultipleSelect } from "@/shared/components/select/multiple";
 import { CreateWorkloadSectionTitle } from "@/styles/layers/create-workload-layers.styled";
 
 export function CreateWorkloadNode() {
-  // const [labels, setLabels] = useAtom(labelsAtom);
-  const jobType = useAtomValue(jobTypeAtom);
+  const canUseMultiNode = useAtomValue(canUseMultiNodeAtom);
+  const isDistributedLearning = useAtomValue(isDistributedLearningAtom);
+  const [, setNodeMode] = useAtom(nodeModeAtom);
+  const [, setResourcePresetId] = useAtom(resourcePresetIdAtom);
+  const [, setDistributedType] = useAtom(distributedTypeAtom);
+  const [, setWorkerCount] = useAtom(workerCountAtom);
+  const { control, setValue } = useFormContext<CreateWorkloadFormValues>();
+  const { field: nodeTypeField } = useController({
+    name: "nodeType",
+    control,
+  });
+
+  const handleNodeTypeChange = (
+    nextValue: CreateWorkloadFormValues["nodeType"],
+  ) => {
+    nodeTypeField.onChange(nextValue);
+    setNodeMode(nextValue);
+    setValue("resourcePresetId", null);
+    setResourcePresetId(null);
+  };
+
+  useEffect(() => {
+    if (isDistributedLearning) {
+      return;
+    }
+
+    setValue("distributedType", null);
+    setValue("workerCount", undefined);
+    setDistributedType(null);
+    setWorkerCount(null);
+  }, [isDistributedLearning, setDistributedType, setValue, setWorkerCount]);
 
   return (
     <Container>
@@ -28,28 +59,18 @@ export function CreateWorkloadNode() {
         </CreateWorkloadSectionTitle>
       </Label>
       <Buttons>
-        <CreateWorkloadNodeButton type="single" />
-        {/* 멀티 노드 버튼의 경우 인터랙티브 작업 타입일 때 비활성화 */}
         <CreateWorkloadNodeButton
-          type="multi"
-          disabled={jobType === "INTERACTIVE"}
+          type={WORKLOAD_NODE_MODES.SINGLE}
+          value={nodeTypeField.value}
+          onChange={handleNodeTypeChange}
+        />
+        <CreateWorkloadNodeButton
+          type={WORKLOAD_NODE_MODES.MULTI}
+          disabled={!canUseMultiNode}
+          value={nodeTypeField.value}
+          onChange={handleNodeTypeChange}
         />
       </Buttons>
-      {/* <Label>
-        <CreateWorkloadSectionTitle>라벨</CreateWorkloadSectionTitle>
-        <Typography.Text variant="body-4-1" color="#707070">
-          (선택사항)
-        </Typography.Text>
-      </Label>
-      <MyMultipleSelect
-        options={[
-          { label: "test", value: "test" },
-          { label: "test2", value: "test2" },
-          { label: "test3", value: "test3" },
-        ]}
-        value={labels}
-        onChange={(value) => setLabels(value)}
-      /> */}
     </Container>
   );
 }
