@@ -171,7 +171,7 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.createPrivateExternalImage]: {
     success:
-      "컨테이너 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+      "컨테이너 이미지 생성이 정상적으로 요청되었습니다.\n등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.addPrivateImageTag]: {
     success:
@@ -195,7 +195,7 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.createPublicExternalImage]: {
     success:
-      "컨테이너 이미지 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+      "컨테이너 이미지 생성이 정상적으로 요청되었습니다.\n등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.addPublicImageTag]: {
     success:

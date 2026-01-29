@@ -26,6 +26,7 @@ export const createRegistrySchema = z.object({
     required_error: "레지스트리 채널을 선택해 주세요.",
   }),
   credentialId: z.number().optional(),
+  description: z.string().optional(),
   // workloadId: z.string().optional(),
 });
 // .superRefine((data, ctx) => {

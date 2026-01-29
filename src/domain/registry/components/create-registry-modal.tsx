@@ -43,16 +43,16 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
     defaultValues: {
       imageName: "",
       imageTagName: "",
-      registryChannel: undefined,
+      registryChannel: null as unknown as undefined,
       credentialId: undefined,
+      description: "",
     },
   });
 
   const { mutate, isPending } = useCreateRegistryByMode(mode);
 
   const handleChangeCredential = (value: number | null) => {
-    if (value === null) return;
-    setValue("credentialId", value, { shouldValidate: true });
+    setValue("credentialId", value ?? undefined, { shouldValidate: true });
   };
 
   const onSubmit = (data: CreateRegistryFormType) => {
@@ -111,29 +111,29 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
       }}
     >
       <Form onFinish={handleSubmit(onSubmit)}>
-        <Controller
-          name="imageName"
-          control={control}
-          render={({ field }) => (
-            <FormItem
-              label="컨테이너 이미지 이름"
-              required
-              validateStatus={errors.imageName ? "error" : undefined}
-              htmlFor="privateRegistryImageName"
-              help={errors.imageName?.message}
-            >
-              <Input
-                {...field}
-                type="text"
-                id="privateRegistryImageName"
-                placeholder="컨테이너 이미지 이름을 입력해 주세요."
-                autoComplete="off"
-                width="100%"
-              />
-            </FormItem>
-          )}
-        />
         <FormRow>
+          <Controller
+            name="imageName"
+            control={control}
+            render={({ field }) => (
+              <FormItem
+                label="컨테이너 이미지 이름"
+                required
+                validateStatus={errors.imageName ? "error" : undefined}
+                htmlFor="privateRegistryImageName"
+                help={errors.imageName?.message}
+              >
+                <Input
+                  {...field}
+                  type="text"
+                  id="privateRegistryImageName"
+                  placeholder="컨테이너 이미지 이름을 입력해 주세요."
+                  autoComplete="off"
+                  width="100%"
+                />
+              </FormItem>
+            )}
+          />
           <Controller
             name="imageTagName"
             control={control}
@@ -156,6 +156,8 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
               </FormItem>
             )}
           />
+        </FormRow>
+        <FormRow>
           <Controller
             name="registryChannel"
             control={control}
@@ -168,17 +170,14 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
               >
                 <Dropdown
                   options={REGISTRY_CHANNEL_OPTIONS}
-                  value={field.value}
+                  value={field.value ?? null}
                   onChange={field.onChange}
                   placeholder="레지스트리 채널을 선택해 주세요."
-                  theme="light"
                   width="100%"
                 />
               </FormItem>
             )}
           />
-        </FormRow>
-        <FormRow>
           <Controller
             name="credentialId"
             control={control}
@@ -196,6 +195,27 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
             )}
           />
         </FormRow>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <FormItem
+              label="설명"
+              validateStatus={errors.description ? "error" : undefined}
+              htmlFor="privateRegistryDescription"
+              help={errors.description?.message}
+            >
+              <Input.TextArea
+                {...field}
+                id="privateRegistryDescription"
+                placeholder="설명을 입력해 주세요."
+                autoComplete="off"
+                width="100%"
+                rows={3}
+              />
+            </FormItem>
+          )}
+        />
         {/* {type === "SNAPSHOT" && (
           <Controller
             name="workloadId"
