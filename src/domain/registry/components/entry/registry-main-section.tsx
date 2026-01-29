@@ -1,6 +1,5 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import styled from "styled-components";
 import { Label, Switch, Typography } from "xiilab-ui";
@@ -8,12 +7,11 @@ import { Label, Switch, Typography } from "xiilab-ui";
 import { useGetApprovalStatusSummary } from "@/api/generated/admin-image-tag-usage-request/admin-image-tag-usage-request";
 import { ImageTagUsageRequestResponseApprovalStatus } from "@/api/generated/astragoBackendAPIDocumentation.schemas";
 import {
-  getGetAstragoOnlyPolicyQueryKey,
   useGetAstragoOnlyPolicy,
   useGetLevelPolicy,
   useGetScanPolicy,
-  useUpdateAstragoOnlyPolicy,
 } from "@/api/generated/vulnerability-policy-admin/vulnerability-policy-admin";
+import { ExternalImagePolicyConfirmModal } from "@/domain/registry/components/entry/external-image-policy-confirm-modal";
 import { PrivateScanPolicyConfirmModal } from "@/domain/registry/components/entry/private-scan-policy-confirm-modal";
 import { PublicScanPolicyConfirmModal } from "@/domain/registry/components/entry/public-scan-policy-confirm-modal";
 import { RequestImageStatusCard } from "@/domain/registry/components/entry/request-image-status-card";
@@ -28,7 +26,6 @@ import { getVulnerabilityLevelInfo } from "@/shared/utils/vulnerability.util";
 import { UserMonitoringSectionTitle } from "@/styles/layers/user-monitoring-layers.styled";
 
 export function RegistryMainSection() {
-  const queryClient = useQueryClient();
   const publish = usePublish();
 
   // 이미지 사용 요청 상태 조회
@@ -42,17 +39,6 @@ export function RegistryMainSection() {
     useGetAstragoOnlyPolicy();
   const { data: levelPolicy } = useGetLevelPolicy();
 
-  // Astrago 전용 정책 수정
-  const updateAstragoOnlyMutation = useUpdateAstragoOnlyPolicy({
-    mutation: {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: getGetAstragoOnlyPolicyQueryKey(),
-        });
-      },
-    },
-  });
-
   // 개인 레지스트리 스캔 정책 변경 핸들러
   const handlePrivateScanPolicyChange = (hasEnabled: boolean) => {
     publish(REGISTRY_EVENTS.openPrivateScanPolicyConfirmModal, { hasEnabled });
@@ -63,9 +49,13 @@ export function RegistryMainSection() {
     publish(REGISTRY_EVENTS.openPublicScanPolicyConfirmModal, { hasEnabled });
   };
 
-  // Astrago 전용 정책 변경 핸들러
-  const handleAstragoOnlyPolicyChange = (hasEnabled: boolean) => {
-    updateAstragoOnlyMutation.mutate({ data: { hasEnabled } });
+  // 외부 업로드 이미지 사용 허용 정책 변경 핸들러
+  // checked = true → 외부 이미지 허용 (astragoOnly = false)
+  // checked = false → 외부 이미지 제한 (astragoOnly = true)
+  const handleExternalImagePolicyChange = (allowExternalImage: boolean) => {
+    publish(REGISTRY_EVENTS.openExternalImagePolicyConfirmModal, {
+      allowExternalImage,
+    });
   };
 
   return (
@@ -165,13 +155,8 @@ export function RegistryMainSection() {
                   <Switch
                     darkMode
                     checked={!astragoOnlyPolicy?.isEnabled}
-                    onChange={(checked) =>
-                      handleAstragoOnlyPolicyChange(!checked)
-                    }
-                    disabled={
-                      isAstragoOnlyPolicyLoading ||
-                      updateAstragoOnlyMutation.isPending
-                    }
+                    onChange={handleExternalImagePolicyChange}
+                    disabled={isAstragoOnlyPolicyLoading}
                   />
                 }
               />
@@ -204,6 +189,8 @@ export function RegistryMainSection() {
       <PrivateScanPolicyConfirmModal />
       {/* 공유 레지스트리 보안 스캔 정책 변경 확인 모달 */}
       <PublicScanPolicyConfirmModal />
+      {/* 외부 업로드 이미지 사용 허용 정책 변경 확인 모달 */}
+      <ExternalImagePolicyConfirmModal />
     </Container>
   );
 }
