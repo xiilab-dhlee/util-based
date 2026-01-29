@@ -30,7 +30,7 @@ export function ActiveWorkloadListMain() {
   const searchText = useAtomValue(activeWorkloadSearchTextAtom);
   const jobType = useAtomValue(activeWorkloadJobTypeAtom);
   const status = useAtomValue(activeWorkloadStatusAtom);
-  const isMine = useAtomValue(activeWorkloadIsMineAtom);
+  const hasMine = useAtomValue(activeWorkloadIsMineAtom);
   const sort = useAtomValue(activeWorkloadSortAtom);
   const selectedWorkspace = useAtomValue(selectedWorkspaceAtom);
   const workspaceId = selectedWorkspace?.workspaceId;
@@ -71,7 +71,7 @@ export function ActiveWorkloadListMain() {
     ...(jobType && { workloadJobType: jobType }),
     ...(status && { workloadStatus: status }),
     ...(sortRequest || ACTIVE_WORKLOAD_DEFAULT_SORT),
-    ...(isMine && { isMine }),
+    hasMine,
   };
 
   const { data, isLoading, isError } = useGetActiveWorkloadsWithPolling({

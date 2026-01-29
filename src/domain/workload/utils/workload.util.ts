@@ -196,6 +196,7 @@ export interface WorkloadActionStates {
   canStop: boolean; // 종료 가능
   canRestart: boolean; // 재시작 가능
   canDelete: boolean; // 삭제 가능
+  canChangeResource: boolean; // 리소스 변경 가능
 }
 
 export function getWorkloadActionStates(
@@ -237,6 +238,9 @@ export function getWorkloadActionStates(
 
     // 삭제: TERMINATED만
     canDelete: status === "TERMINATED",
+
+    // 리소스 변경: TERMINATED만
+    canChangeResource: status === "TERMINATED",
   };
 }
 
@@ -251,6 +255,19 @@ export function getReclaimStatusInfo(
     color: RECLAIM_STATUS_COLOR_MAP[status],
   };
 }
+
+/**
+ * 워크로드 복제 권한 확인
+ * @param creatorId - 워크로드 생성자 ID
+ * @param currentSessionId - 현재 사용자의 세션 ID
+ * @returns 복제 가능 여부 (생성자 본인만 복제 가능)
+ */
+export const canDuplicateWorkload = (
+  creatorId: string,
+  currentSessionId: string,
+): boolean => {
+  return creatorId === currentSessionId;
+};
 
 /**
  * 워크로드 파일 API 응답을 FileTreeType으로 변환

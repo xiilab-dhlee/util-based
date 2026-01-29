@@ -6,9 +6,9 @@ import { Button } from "xiilab-ui";
 
 import { ViewHubReadme } from "@/domain/hub/components/detail/view-hub-readme";
 import { EmptyState } from "@/shared/components/empty-state/empty-state";
-import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { HUB_SELECTOR } from "@/shared/constants/selector.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import {
   AsideDetailContainer,
   AsideDetailHeader,
@@ -16,19 +16,16 @@ import {
 } from "@/styles/layers/aside-detail-layers.styled";
 
 export function HubDetailMain() {
-  const publish = usePublish();
+  const { onOpen } = useGlobalModal(openCreateWorkloadDrawerAtom);
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const hubId = Number(params.id);
   const hubName = searchParams.get("name") || "";
 
   const handleCreateWorkload = () => {
-    publish(WORKLOAD_EVENTS.sendCreateWorkload, {
-      image: {
-        type: "HUB",
-        id: hubId,
-      },
-    });
+    // TODO: Hub 이미지 정보를 atom에 설정해야 함
+    // 현재는 drawer만 열기
+    onOpen();
   };
 
   // 유효하지 않은 Hub ID 체크

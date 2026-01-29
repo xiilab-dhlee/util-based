@@ -1,15 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Form, FormItem, Icon, Input, Modal, TextArea } from "xiilab-ui";
 
-import {
-  getGetWorkloadDetailQueryKey,
-  useUpdateWorkload,
-} from "@/api/generated/workload/workload";
+import { useUpdateWorkloadAction } from "@/domain/workload/hooks/workload-actions";
 import {
   type UpdateWorkloadFormType,
   updateWorkloadSchema,
@@ -34,8 +30,6 @@ interface UpdateWorkloadPayload {
  * 워크로드 상세 페이지에서 사용됩니다.
  */
 export function UpdateWorkloadModal() {
-  const queryClient = useQueryClient();
-
   const [open, setOpen] = useState(false);
   const [workloadResourceName, setWorkloadResourceName] = useState<
     string | null
@@ -52,7 +46,7 @@ export function UpdateWorkloadModal() {
     mode: "onChange",
   });
 
-  const { mutate, isPending } = useUpdateWorkload();
+  const { mutate, isPending } = useUpdateWorkloadAction();
 
   const handleCancel = () => {
     if (isPending) return;
@@ -74,12 +68,6 @@ export function UpdateWorkloadModal() {
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: getGetWorkloadDetailQueryKey(
-              workspaceId,
-              workloadResourceName,
-            ),
-          });
           setOpen(false);
         },
       },

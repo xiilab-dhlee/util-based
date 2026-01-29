@@ -30,6 +30,7 @@ export function ResourcePresetDetailSummary({
   const { resource } = preset;
   const gpuResource = resource.gpu;
   const gpuResourceLabel = getGpuResourceLabel(gpuResource);
+  const hasGpuInfo = Boolean(gpuResource?.gpuName);
 
   const resourceRows = [
     {
@@ -59,17 +60,19 @@ export function ResourcePresetDetailSummary({
   return (
     <AsideDetailArticle>
       <AsideDetailArticleBody>
-        <ResourcePresetDetailItem>
-          <ResourcePresetHeader>
-            <ResourcePresetTitle>GPU 정보</ResourcePresetTitle>
-          </ResourcePresetHeader>
-          {gpuResource?.gpuName && (
+        {hasGpuInfo && (
+          <ResourcePresetDetailItem>
+            <ResourcePresetHeader>
+              <ResourcePresetTitle>GPU 정보</ResourcePresetTitle>
+            </ResourcePresetHeader>
             <ResourcePresetDetailColumn>
               <ResourcePresetKey>GPU 이름</ResourcePresetKey>
-              <ResourcePresetValue>{gpuResource.gpuName}</ResourcePresetValue>
+              <ResourcePresetValue>
+                {gpuResource?.gpuName || "-"}
+              </ResourcePresetValue>
             </ResourcePresetDetailColumn>
-          )}
-        </ResourcePresetDetailItem>
+          </ResourcePresetDetailItem>
+        )}
 
         <ResourcePresetDetailItem>
           <ResourcePresetHeader>

@@ -43,6 +43,7 @@ function useVolumeOptions(keyword: string) {
     },
     initialPageParam: 0,
     enabled: !!workspaceId,
+    staleTime: 0,
     select: (data) =>
       data.pages.flatMap(
         (page) =>

@@ -1,5 +1,6 @@
 "use client";
 
+import { isBrowser } from "es-toolkit/predicate";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -33,6 +34,55 @@ function getAccountLabel({ accountName, email }: AccountLabelParams = {}) {
   return "-";
 }
 
+/**
+ * 클립보드 복사: 보안 컨텍스트에서는 Clipboard API 사용,
+ * 그 외에는 execCommand 폴백을 시도합니다.
+ */
+async function copyTextToClipboard(text: string) {
+  if (isBrowser() && navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  if (!isBrowser()) {
+    throw new Error("clipboard-not-available");
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "absolute";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+
+  const selection = document.getSelection();
+  const range =
+    selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+  let isCopied = false;
+  let hasFailed = false;
+
+  try {
+    textarea.select();
+    isCopied = document.execCommand("copy");
+    if (!isCopied) {
+      hasFailed = true;
+    }
+  } catch {
+    hasFailed = true;
+  } finally {
+    document.body.removeChild(textarea);
+    if (selection && range) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }
+
+  if (hasFailed) {
+    throw new Error("clipboard-copy-failed");
+  }
+}
+
 export function ResetPasswordResultModal() {
   const { open, onOpen, onClose } = useGlobalModal(
     openResetPasswordResultModalAtom,
@@ -43,7 +93,7 @@ export function ResetPasswordResultModal() {
     if (!result?.newPassword) return;
 
     try {
-      await navigator.clipboard.writeText(result.newPassword);
+      await copyTextToClipboard(result.newPassword);
       toast.success("비밀번호가 복사되었습니다.");
     } catch {
       toast.error("비밀번호 복사에 실패했습니다.");

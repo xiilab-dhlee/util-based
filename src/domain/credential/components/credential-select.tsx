@@ -40,6 +40,7 @@ function useCredentialOptions(keyword: string) {
     },
     initialPageParam: 0,
     enabled: !!accountId,
+    staleTime: 0,
     select: (data) =>
       data.pages.flatMap(
         (page) =>

@@ -30,12 +30,12 @@ export const RESOURCE_PRESET_NODE_OPTIONS: {
  */
 export const DISTRIBUTED_TYPE_OPTIONS = [
   {
-    id: "tensorflow",
+    id: "TENSORFLOW",
     label: "TensorFlow (Training Operator)",
     description: "MPI를 사용한 분산 학습 프레임워크",
   },
   {
-    id: "pytorch",
+    id: "PYTORCH",
     label: "PyTorch (Training Operator)",
     description: "PyTorch 네이티브 분산 학습",
   },

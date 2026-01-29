@@ -10,18 +10,23 @@ import {
 } from "@/styles/layers/column-layer.styled";
 
 interface RestartWorkloadButtonProps {
-  workloadId: string;
+  workloadResourceName: string;
+  workspaceId: number;
   disabled?: boolean;
 }
 
 export function RestartWorkloadButton({
-  workloadId,
+  workloadResourceName,
+  workspaceId,
   disabled,
 }: RestartWorkloadButtonProps) {
   const publish = usePublish();
 
   const handleClick = () => {
-    publish(WORKLOAD_EVENTS.openRestartModal, { workloadId });
+    publish(WORKLOAD_EVENTS.openRestartModal, {
+      workloadResourceName,
+      workspaceId,
+    });
   };
 
   return (

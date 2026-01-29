@@ -1,20 +1,24 @@
 "use client";
 
+import { useAtomCallback } from "jotai/utils";
 import { useSearchParams } from "next/navigation";
 import type { PropsWithChildren } from "react";
+import { useCallback } from "react";
 import type { TabsSeparatedItem } from "xiilab-ui";
 import { Icon } from "xiilab-ui";
 
 import { DeleteWorkloadModal } from "@/domain/workload/components/delete-workload-modal";
 import { StopWorkloadModal } from "@/domain/workload/components/stop-workload-modal";
+import { UpdateWorkloadPresetModal } from "@/domain/workload/components/update-workload-preset-modal";
+import { resetAllWorkloadAtoms } from "@/domain/workload/utils/reset-workload-atoms";
 import { CreateWorkloadDrawer } from "@/shared/components/drawer/create-workload-drawer";
 import { PageGuide } from "@/shared/components/layouts/page-guide";
 import { PageHeader } from "@/shared/components/layouts/page-header";
 import { PageImageGuide } from "@/shared/components/layouts/page-image-guide";
 import { RouteTab } from "@/shared/components/tab";
-import { WORKLOAD_EVENTS } from "@/shared/constants/pubsub.constant";
 import { WORKLOAD_SELECTOR } from "@/shared/constants/selector.constant";
-import { usePublish } from "@/shared/hooks/use-pub-sub";
+import { useGlobalModal } from "@/shared/hooks/use-global-modal";
+import { openCreateWorkloadDrawerAtom } from "@/shared/state/modal.atom";
 import type { CoreGuide, CoreGuideImage } from "@/shared/types/core.model";
 import {
   DetailContentSection,
@@ -77,13 +81,20 @@ export default function UserWorkloadListLayout({
   children,
 }: PropsWithChildren) {
   const searchParams = useSearchParams();
-  const publish = usePublish();
+  const { onOpen } = useGlobalModal(openCreateWorkloadDrawerAtom);
 
   const workspaceId = searchParams?.get("workspaceId") || "";
 
-  const handleCreateWorkload = () => {
-    publish(WORKLOAD_EVENTS.sendCreateWorkload, null);
-  };
+  const handleCreateWorkload = useAtomCallback(
+    useCallback(
+      (_get, set) => {
+        // 새로운 워크로드 생성 시 atom 초기화
+        resetAllWorkloadAtoms(set);
+        onOpen();
+      },
+      [onOpen],
+    ),
+  );
 
   return (
     <>
@@ -133,6 +144,8 @@ export default function UserWorkloadListLayout({
       <DeleteWorkloadModal />
       {/* 워크로드 종료 모달 */}
       <StopWorkloadModal />
+      {/* 워크로드 리소스 프리셋 변경/재시작 모달 */}
+      <UpdateWorkloadPresetModal />
     </>
   );
 }
