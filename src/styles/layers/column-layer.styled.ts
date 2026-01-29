@@ -123,12 +123,22 @@ export const ColumnExternalLink = styled.a`
 
 // 버튼 형태의 링크 스타일 (클릭 가능한 텍스트)
 export const ColumnButtonLink = styled.button`
-  all: unset;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
   color: inherit;
   cursor: pointer;
 
   &:hover {
     text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1f5bff;
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 `;
 
