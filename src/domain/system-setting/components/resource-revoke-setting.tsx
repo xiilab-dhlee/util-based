@@ -1,8 +1,9 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import styled from "styled-components";
-import { Button, Switch, Typography } from "xiilab-ui";
+import { Button, Icon, Modal, Switch, Typography } from "xiilab-ui";
 
 import {
   getGetCommitImagePolicyQueryKey,
@@ -21,9 +22,13 @@ export function ResourceRevokeSetting() {
   const queryClient = useQueryClient();
   const { data: policyList } = useGetAllPolicies();
   const { data: commitImagePolicy } = useGetCommitImagePolicy();
-  const { mutate: updateCommitImagePolicy } = useUpdateCommitImagePolicy();
+  const { mutate: updateCommitImagePolicy, isPending } =
+    useUpdateCommitImagePolicy();
 
   const { onOpen } = useGlobalModal(openResourceRevokeCriteriaModalAtom);
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingChecked, setPendingChecked] = useState(false);
 
   const isCommitImageEnabled = commitImagePolicy?.isCommitImageEnabled ?? false;
 
@@ -33,16 +38,29 @@ export function ResourceRevokeSetting() {
   };
 
   const handleSnapshotToggle = (checked: boolean) => {
+    setPendingChecked(checked);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmOk = () => {
+    if (isPending) return;
+
     updateCommitImagePolicy(
-      { data: { isCommitImageEnabled: checked } },
+      { data: { isCommitImageEnabled: pendingChecked } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
             queryKey: getGetCommitImagePolicyQueryKey(),
           });
+          setConfirmOpen(false);
         },
       },
     );
+  };
+
+  const handleConfirmCancel = () => {
+    if (isPending) return;
+    setConfirmOpen(false);
   };
 
   // Interactive와 Batch 기준 분리
@@ -117,6 +135,29 @@ export function ResourceRevokeSetting() {
           onChange={handleSnapshotToggle}
         />
       </SnapshotImageSection>
+
+      <Modal
+        variant={pendingChecked ? "confirm" : "error"}
+        icon={
+          <Icon
+            name={pendingChecked ? "Setting01" : "Error"}
+            color="#fff"
+            size={20}
+          />
+        }
+        modalWidth={340}
+        open={confirmOpen}
+        onCancel={handleConfirmCancel}
+        onOk={handleConfirmOk}
+        title={`Snapshot Image 자동 생성 ${pendingChecked ? "활성화" : "비활성화"}`}
+        centered
+        okButtonProps={{ loading: isPending }}
+        cancelButtonProps={{ disabled: isPending }}
+      >
+        Snapshot Image 자동 생성을{" "}
+        <strong>{pendingChecked ? "활성화" : "비활성화"}</strong>
+        하시겠습니까?
+      </Modal>
     </SettingBox>
   );
 }
