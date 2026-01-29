@@ -772,8 +772,8 @@ const WorkloadCardWrapper = styled.div`
   min-width: 0;
   overflow: hidden;
 
-  & * {
-    cursor: pointer;
+  & > * {
+    cursor: inherit;
   }
 `;
 

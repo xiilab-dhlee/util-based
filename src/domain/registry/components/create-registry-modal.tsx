@@ -43,7 +43,7 @@ export function CreateRegistryModal({ mode }: CreateRegistryModalProps) {
     defaultValues: {
       imageName: "",
       imageTagName: "",
-      registryChannel: null as unknown as undefined,
+      registryChannel: null,
       credentialId: undefined,
       description: "",
     },

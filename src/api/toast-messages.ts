@@ -175,7 +175,7 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.addPrivateImageTag]: {
     success:
-      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다.\n등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.scanPrivateImageTag]: {
     success: "취약점 스캔이 시작되었습니다.",
@@ -199,7 +199,7 @@ export const MUTATION_MESSAGES: Partial<
   },
   [MUTATION_KEYS.addPublicImageTag]: {
     success:
-      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다. 등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
+      "컨테이너 이미지 태그 생성이 정상적으로 요청되었습니다.\n등록 중인 이미지 목록에서 상태 확인이 가능합니다.",
   },
   [MUTATION_KEYS.scanPublicImageTag]: {
     success: "취약점 스캔이 시작되었습니다.",
