@@ -210,6 +210,9 @@ export const FILE_SECURITY_EVENTS = {
 export const REGISTRY_SECURITY_EVENTS = {
   // 레지스트리 보안 취약점 상세 모달에 필요한 정보 전달 이벤트
   sendVulnerabilityInfo: "registry-security:send-vulnerability-info",
+  // 컨테이너 이미지 취약점 상세 모달 열기 이벤트
+  openVulnerabilityDetailModal:
+    "registry-security:open-vulnerability-detail-modal",
 } as const;
 
 // 리포트 관련 이벤트
