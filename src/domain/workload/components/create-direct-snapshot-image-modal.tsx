@@ -314,6 +314,7 @@ export function CreateDirectSnapshotImageModal() {
                 />
                 <ButtonWrapper>
                   <Button
+                    type="button"
                     icon="Plus"
                     iconSize={14}
                     disabled={!envKeyInput || !envValueInput}
@@ -358,6 +359,7 @@ export function CreateDirectSnapshotImageModal() {
                   />
                   <ButtonWrapper>
                     <Button
+                      type="button"
                       icon="Delete"
                       iconSize={16}
                       onClick={() => removeEnv(index)}
@@ -389,6 +391,7 @@ export function CreateDirectSnapshotImageModal() {
                 />
                 <ButtonWrapper>
                   <Button
+                    type="button"
                     icon="Plus"
                     iconSize={14}
                     disabled={
@@ -441,6 +444,7 @@ export function CreateDirectSnapshotImageModal() {
                   />
                   <ButtonWrapper>
                     <Button
+                      type="button"
                       icon="Delete"
                       iconSize={16}
                       onClick={() => removePort(index)}
